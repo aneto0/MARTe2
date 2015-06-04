@@ -1,0 +1,1 @@
+The Multi-threaded Application Real-Time executor (MARTe) is a C++ framework for the development of real-time applications.
