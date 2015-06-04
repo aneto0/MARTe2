@@ -1,0 +1,5 @@
+CPPFILES+= CharBuffer.cpp FormatDescriptor.cpp ErrorManagement.cpp IOBuffer.cpp \
+BufferedStream.cpp BufferedStreamIOBuffer.cpp \
+StreamWrapperIOBuffer.cpp Streamable.cpp StreamStringIOBuffer.cpp  StreamString.cpp \
+StreamMemoryReference.cpp MemoryReferenceIOBuffer.cpp
+

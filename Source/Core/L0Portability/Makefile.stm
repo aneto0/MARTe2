@@ -1,0 +1,16 @@
+CPPFILES=  Atomic.cpp \
+        Endianity.cpp \
+		HighResolutionTimer.cpp \
+        Memory.cpp \
+        Processor.cpp \
+        ProcessorType.cpp \
+        Threads.cpp  \
+        ThreadsDatabase.cpp \
+        Sleep.cpp \
+		LoadableLibrary.cpp \
+		Timer.cpp \
+		FastMath.cpp \
+		StringHelper.cpp \
+		StringPortable.cpp \
+		BasicConsole.cpp 
+

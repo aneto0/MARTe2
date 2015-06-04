@@ -1,0 +1,3 @@
+-For each project create its own folder which contains and Inc and a Build folder.
+-Change Makefile paths definitions accordingly with your paths location and copy it in your project folder.
+-The used compiler is arm-none-eabi-g++, the used STM toolchain is STM32Cube_FW_F4_V1.5.0

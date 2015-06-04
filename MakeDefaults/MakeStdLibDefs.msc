@@ -1,0 +1,72 @@
+#############################################################
+#
+# Copyright 2011 EFDA | European Fusion Development Agreement
+#
+# Licensed under the EUPL, Version 1.1 or - as soon they 
+# will be approved by the European Commission - subsequent  
+# versions of the EUPL (the "Licence"); 
+# You may not use this work except in compliance with the 
+# Licence. 
+# You may obtain a copy of the Licence at: 
+#  
+# http:k/ec.europa.eu/idabc/eupl
+#
+# Unless required by applicable law or agreed to in 
+# writing, software distributed under the Licence is 
+# distributed on an "AS IS" basis, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+# express or implied. 
+# See the Licence for the specific language governing 
+# permissions and limitations under the Licence. 
+#
+# $Id$
+#
+#############################################################
+
+#BUILD_DIR=..\..\..\Build\$(TARGET)\$(lastword $(subst \\,\ ,$(CURDIR)))
+#BUILD_DIR=..\..\..\Build\$(TARGET)\$(lastword $(CURDIR))
+BUILD_DIR=$(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\$(PACKAGE)\$(lastword $(subst /,\\ ,$(CURDIR)))
+
+EXEEXT=.exe
+DLLEXT=.dll
+LIBEXT=.lib
+OBJEXT=.obj
+ASMEXT=.asm
+DRVEXT=.drv
+GAMEXT=.gam
+GCNOEXT=.gcno
+GCDAEXT=.gcda
+ILKEXT=.ilk
+PDBEXT=.pdb
+
+OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.obj) 
+OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.obj) 
+OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)/%.obj) 
+
+PP=   $(PPX:%.x=msc\%.pp) 
+
+#OBJS += $(OBJSXRTTI:%.x=msc\%.rtti.obj) 
+
+OBJS_=  $(OBJSX:%.x=msc/%.obj) 
+OBJS2_= $(OBJSX2:%.x=msc/%.obj) 
+OBJS3_= $(OBJSX3:%.x=msc/%.obj) 
+
+SUBPROJ = $(SPB:%.x=%.spb)
+SUBPROJ2 = $(SPB2:%.x=%.spb)
+SUBPROJC = $(SPB:%.x=%.spc)
+SUBPROJC += $(SPB2:%.x=%.spc)
+
+MAKE     =   make
+COMPILER =   cl 
+FCOMPILER =  f77
+DEBUG    =   -Zi
+OPTIM    =   -W1 -O2 -Ob2
+CFLAGSPEC=   -MD -GR -DARCHITECTURE=x86_cl -DOPERATING_SYSTEM=Windows
+LFLAGS   =   
+LOPTS    =  
+CFLAGS   =    
+FFLAGS   =   
+FOPTS    =   -optimize:4
+
+.SUFFIXES:     .cpp .obj  .o .a .lib .exe 
+
