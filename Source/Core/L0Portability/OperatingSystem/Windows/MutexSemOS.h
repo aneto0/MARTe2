@@ -33,13 +33,13 @@
 #include "../../TimeoutType.h"
 
 /** @see MutexSem::Create */
-bool MutexSemOSCreate(HANDLE semH, bool locked) {
+static inline bool MutexSemOSCreate(HANDLE semH, bool locked) {
     semH = CreateMutex(NULL, (locked == True), NULL);
     return (semH != NULL);
 }
 
 /** @see MutexSem::Close */
-bool MutexSemOSClose(HANDLE semH) {
+static inline bool MutexSemOSClose(HANDLE semH) {
     if (semH == (HANDLE) NULL)
         return True;
     if (CloseHandle(semH) == FALSE) {
@@ -50,7 +50,7 @@ bool MutexSemOSClose(HANDLE semH) {
 }
 
 /** @see MutexSem::Lock */
-bool MutexSemOSLock(HANDLE semH, TimeoutType msecTimeout) {
+static inline bool MutexSemOSLock(HANDLE semH, TimeoutType msecTimeout) {
     DWORD ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
     if (ret == WAIT_FAILED) {
         return False;
@@ -61,7 +61,7 @@ bool MutexSemOSLock(HANDLE semH, TimeoutType msecTimeout) {
 }
 
 /** @see MutexSem::UnLock */
-bool MutexSemOSUnLock(HANDLE semH) {
+static inline bool MutexSemOSUnLock(HANDLE semH) {
     if (ReleaseMutex(semH) == FALSE) {
         return False;
     }
@@ -69,18 +69,18 @@ bool MutexSemOSUnLock(HANDLE semH) {
 }
 
 /** @see MutexSem::FastLock */
-inline bool MutexSemOSFastLock(HANDLE semH, TimeoutType msecTimeout) {
+static inline bool MutexSemOSFastLock(HANDLE semH, TimeoutType msecTimeout) {
     int ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
     return ((ret != (int) WAIT_FAILED) && (ret != (int) WAIT_TIMEOUT));
 }
 
 /** @see MutexSem::UnLock */
-inline bool MutexSemOSFastUnLock(HANDLE semH) {
+static inline bool MutexSemOSFastUnLock(HANDLE semH) {
     return (ReleaseMutex(semH) == TRUE);
 }
 
 /** @see MutexSem::FastTryLock */
-inline bool MutexSemOSFastTryLock(HANDLE semH) {
+static inline bool MutexSemOSFastTryLock(HANDLE semH) {
     int ret = WaitForSingleObject(semH, 0);
     return ((ret != (int) WAIT_FAILED) && (ret != (int) WAIT_TIMEOUT));
 }

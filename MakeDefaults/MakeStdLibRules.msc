@@ -25,39 +25,35 @@
 
 $(BUILD_DIR)/%.obj : %.cpp
 	@echo $(BUILD_DIR)
-	@test -d (BUILD_DIR) || mkdir (BUILD_DIR)
-	@mkdir -p $(BUILD_DIR)
 	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  $*.cpp  -Fa
-#	ifneq ($(wildcard $(BUILD_DIR)), )
-#		@mkdir -p $(BUILD_DIR)
-#		@echo "ok"
-#	endif
-#	if [ ! -d $(BUILD_DIR) ] ; then mkdir $(BUILD_DIR) ; fi
-	@touch $(BUILD_DIR)/$*.obj >temp/temp
-	@rm $(BUILD_DIR)/$*.obj >temp/temp
-	@mv $*.obj $(BUILD_DIR) >temp/temp
-	@touch $(BUILD_DIR)/$*.asm >temp/temp
-	@rm $(BUILD_DIR)/$*.asm >temp/temp
-	@touch $*.asm >temp/temp
-	@mv $*.asm $(BUILD_DIR) >temp/temp
+	@test -d $(BUILD_DIR) || mkdir $(BUILD_DIR)
+	@touch $(BUILD_DIR)/$*.obj 
+	@-rm $(BUILD_DIR)/$*.obj 
+	@mv $*.obj $(BUILD_DIR) 
+	@touch $(BUILD_DIR)/$*.asm 
+	@-rm $(BUILD_DIR)/$*.asm 
+	@touch $*.asm 
+	@mv $*.asm $(BUILD_DIR) 
 
 $(BUILD_DIR)/%.obj : %.c
-	@mkdir -p $(BUILD_DIR)
+#@mkdir -p $(BUILD_DIR)
+	@test -d $(BUILD_DIR) || mkdir $(BUILD_DIR)
 	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $(INCLUDES) $*.c  -Fa
-	@touch $(BUILD_DIR)/$*.obj >temp/temp
-	@rm $(BUILD_DIR)/$*.obj >temp/temp
-	@mv $*.obj $(BUILD_DIR) >temp/temp
-	@touch $(BUILD_DIR)/$*.asm >temp/temp
-	@rm $(BUILD_DIR)/$*.asm >temp/temp
-	@touch $*.asm >temp/temp
-	@mv $*.asm $(BUILD_DIR) >temp/temp
+	@touch $(BUILD_DIR)/$*.obj 
+	@-rm $(BUILD_DIR)/$*.obj 
+	@mv $*.obj $(BUILD_DIR) 
+	@touch $(BUILD_DIR)/$*.asm 
+	@-rm $(BUILD_DIR)/$*.asm 
+	@touch $*.asm 
+	@mv $*.asm $(BUILD_DIR) 
 
 $(BUILD_DIR)/%.obj : %.f
-	@mkdir -p $(BUILD_DIR)
+#@mkdir -p $(BUILD_DIR)
+	@test -d $(BUILD_DIR) || mkdir $(BUILD_DIR)
 	$(FCOMPILER) -compile_only $(FFLAGS) $(FOPTS) $*.f  
-	@touch $(BUILD_DIR)/$*.obj >temp/temp
-	@rm $(BUILD_DIR)/$*.obj >temp/temp
-	@mv $*.obj $(BUILD_DIR) >temp/temp
+	@touch $(BUILD_DIR)/$*.obj 
+	@-rm $(BUILD_DIR)/$*.obj 
+	@mv $*.obj $(BUILD_DIR) 
 
 $(BUILD_DIR)/%.pp :  %.cpp
 	$(COMPILER) -E $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.cpp > $(BUILD_DIR)/$*.pp
@@ -77,7 +73,7 @@ $(BUILD_DIR)/%.pp :  %.cpp
 	
 $(BUILD_DIR)/%.lib : $(OBJS) $(OBJSRTTI)
 	@touch $@
-	@rm $(BUILD_DIR)/$*.lib
+	@-rm $(BUILD_DIR)/$*.lib
 	lib -OUT:$@  $(OBJS) -NODEFAULTLIB
 
 $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.obj $(OBJS) $(LIBRARIES)
@@ -92,12 +88,12 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
 depends.msc : dependsRaw.msc
 	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > CreateMSCDepends.sed
 	sed -f CreateMSCDepends.sed dependsRaw.msc > depends.msc
-	rm -f CreateMSCDepends.sed 
+	-rm -f CreateMSCDepends.sed 
 
 dependsRaw.msc: 
 	gcc -MM -D_CY32 -DWIN32 $(CFLAGS) -DARCHITECTURE=x86_cl -DOPERATING_SYSTEM=windows *.c* > dependsRaw.msc
-	@mkdir -p temp
-	@mkdir -p $(BUILD_DIR)
+	@test -d temp || mkdir temp
+	@test -d $(BUILD_DIR) || mkdir $(BUILD_DIR)
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
 	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) $*.def -o $@
@@ -110,15 +106,15 @@ $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
 
 
 clean:  $(SUBPROJC)
-	@rm -f depends.*
-	@rm -f $(BUILD_DIR)/*$(OBJEXT)
-	@rm -f $(BUILD_DIR)/*$(DLLEXT)	
-	@rm -f $(BUILD_DIR)/*$(EXEEXT)
-	@rm -f $(BUILD_DIR)/*$(LIBEXT)
-	@rm -f $(BUILD_DIR)/*$(GAMEXT)
-	@rm -f $(BUILD_DIR)/*$(DRVEXT)
-	@rm -f $(BUILD_DIR)/*$(ASMEXT)
-	@rm -f $(BUILD_DIR)/*$(GCNOEXT)
-	@rm -f $(BUILD_DIR)/*$(GCDAEXT)
-	@rm -f $(BUILD_DIR)/*$(ILKEXT)
-	@rm -f $(BUILD_DIR)/*$(PDBEXT)
+	@-rm -f depends.*
+	@-rm -f $(BUILD_DIR)/*$(OBJEXT)
+	@-rm -f $(BUILD_DIR)/*$(DLLEXT)	
+	@-rm -f $(BUILD_DIR)/*$(EXEEXT)
+	@-rm -f $(BUILD_DIR)/*$(LIBEXT)
+	@-rm -f $(BUILD_DIR)/*$(GAMEXT)
+	@-rm -f $(BUILD_DIR)/*$(DRVEXT)
+	@-rm -f $(BUILD_DIR)/*$(ASMEXT)
+	@-rm -f $(BUILD_DIR)/*$(GCNOEXT)
+	@-rm -f $(BUILD_DIR)/*$(GCDAEXT)
+	@-rm -f $(BUILD_DIR)/*$(ILKEXT)
+	@-rm -f $(BUILD_DIR)/*$(PDBEXT)

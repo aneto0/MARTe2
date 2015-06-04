@@ -90,7 +90,7 @@ void GetInfo(ThreadsDatabaseTest &threadDatabaseTest) {
 
     if (n > 0) {
 
-        if (!ThreadsDatabase::GetInfo(controller, n - 1, -1)) {
+        if (!ThreadsDatabase::GetInfo(controller, n - 1, (TID)-1)) {
             threadDatabaseTest.returnValue = False;
             threadDatabaseTest.exitCondition++;
             ThreadsDatabase::UnLock();

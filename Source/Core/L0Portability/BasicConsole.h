@@ -189,13 +189,15 @@ bool BasicConsolePlotChar(BasicConsole &con, char c, Colours foreGroundColour,
 class BasicConsole {
 
 
+public:
+
     /** how long since last paging. */
     int64 lastPagingTime;
 
    /** how long to wait when reading. */
     TimeoutType msecTimeout;
 
-public:
+
      /** how many lines since last paging. */
     uint32 lineCount;
 

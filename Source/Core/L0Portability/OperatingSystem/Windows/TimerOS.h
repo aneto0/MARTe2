@@ -24,21 +24,22 @@
 **/
 
 #include "Timer.h"
+#include "Windows.h"
 
 static MMRESULT FTimerID=NULL;
 
-void CALLBACK TimerOSServiceRoutine(UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2){
+static void CALLBACK TimerOSServiceRoutine(UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2){
 	Timer *timer = (Timer*)dwUser;
 	if( timer == NULL) return;
 	timer->TimerServiceRoutine();
 }
 
 
-void TimerOSInit(Timer &t) {
+static void TimerOSInit(Timer &t) {
   t.timerUsecPeriod = 0;
 }
 
-bool TimerOSConfigTimer(Timer &t, int32 usec, int32 cpuMask) {
+static bool TimerOSConfigTimer(Timer &t, int32 usec, int32 cpuMask) {
 
 	t.timerUsecPeriod = usec;
 
@@ -46,7 +47,7 @@ bool TimerOSConfigTimer(Timer &t, int32 usec, int32 cpuMask) {
   return True;
 }
 
-bool TimerOSStartTimer(Timer &t) {
+static bool TimerOSStartTimer(Timer &t) {
 
 
   /** Reset statistic variables */
@@ -68,7 +69,8 @@ bool TimerOSStartTimer(Timer &t) {
   return True;
 }
 
-bool TimerOSStopTimer(Timer &t) {
+
+static bool TimerOSStopTimer(Timer &t) {
 
   if( FTimerID != NULL ){
     timeKillEvent(FTimerID);
@@ -82,7 +84,7 @@ bool TimerOSStopTimer(Timer &t) {
 }
 
 
-bool TimerOSDeleteTimer(Timer &t){
+static bool TimerOSDeleteTimer(Timer &t){
     return TimerOSStopTimer(t);
 }
 

@@ -34,7 +34,7 @@ OBJSX=  EndianityGTest.x \
 	EventSemGTest.x \
 	TimerGTest.x \
 	MutexGTest.x \
-	BasicConsoleGTest.x \
+	#BasicConsoleGTest.x \
 	HighResolutionTimerGTest.x \
 	ThreadsDatabaseGTest.x \
 	LoadableLibraryGTest.x \

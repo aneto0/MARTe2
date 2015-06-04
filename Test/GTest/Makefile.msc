@@ -35,4 +35,4 @@ LIBRARIES   += ../../Build/$(TARGET)/Core/L0Portability/L0PortabilityTest$(LIBEX
 #LIBRARIES   += ..\..\Build\$(TARGET)\Core\LXTypeDev\LXTypeDev$(LIBEXT)
 #LIBRARIES   += ..\..\Build\$(TARGET)\Core\LXTypeDev\LXTypeDevTest$(LIBEXT)
 LIBRARIES   += ..\..\Lib\gtest-1.7.0\gtest_main-md.lib ..\..\Lib\gtest-1.7.0\gtest-md.lib 
-  
+LIBRARIES   += Winmm.lib
