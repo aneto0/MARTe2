@@ -60,7 +60,7 @@ bool MemoryTest::TestMallocAndFree(int32 size) {
     MemoryFree((void*&) allocated);
     uint32 nothing = 0;
     return allocated == NULL
-            && !MemoryAllocationStatistics(nothing, nothing, (void*)nothing);
+            && !MemoryAllocationStatistics(nothing, nothing, (TID)nothing);
 }
 
 //Tests the realloc function.

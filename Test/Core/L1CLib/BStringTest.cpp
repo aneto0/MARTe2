@@ -100,7 +100,7 @@ bool BStringTest::TestStringOperators(const char* string1,
 
     uint32 sizeConcatenate = size1 + size2;
 
-    char result[sizeConcatenate + 2];
+    char result[64];
     StringTestHelper::Append((char*) string1, (char*) string2, result);
 
     //Concatenate operator between BStrings
@@ -202,7 +202,7 @@ bool BStringTest::TestCharOperators(char char1, char char2) {
 
     int32 sizeConcatenate = size1 + size2;
 
-    char result[sizeConcatenate + 2];
+    char result[64];
     StringTestHelper::Append((char*) string1, (char*) string2, result);
 
     //Test the concatenate operator between BStrings 

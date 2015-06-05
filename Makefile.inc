@@ -24,9 +24,11 @@
 #
 #############################################################
 OBJSX=
-SPB    = Source/Core/L0Portability.x Source/Core/L1CLib.x Source/Core/LXTypeDev.x \
-Test/Core/L0Portability.x Test/Core/L1CLib.x Test/Core/LXTypeDev.x \
-Test/GTest.x
+SPB    = Source/Core/L0Portability.x Source/Core/L1CLib.x Test/Core/L0Portability.x Test/GTest.x
+#Test/Core/L1CLib.x  
+#Source/Core/LXTypeDev.x \
+#Test/Core/LXTypeDev.x \
+
  
 MAKEDEFAULTDIR=MakeDefaults
 

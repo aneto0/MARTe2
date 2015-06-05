@@ -23,8 +23,7 @@
  *
 **/
 
-#include "Timer.h"
-#include "Windows.h"
+#include <Windows.h>
 
 static MMRESULT FTimerID=NULL;
 

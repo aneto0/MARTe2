@@ -819,7 +819,7 @@ void FullFillList(StaticListHolderTest &tt) {
 }
 
 bool StaticListHolderTest::SetAccessTimeoutTest() {
-    int32 numberOfThreads = 10; //number of threads you want generate
+    const int32 numberOfThreads = 10; //number of threads you want generate
     int32 i = 0; //index to count the number of threads generated
     successful = true;
     counter = 0;

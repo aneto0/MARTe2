@@ -103,7 +103,7 @@ bool CStreamTest::TestCRead(const char* string) {
     size++;
 
     //Create a buffer due to read from CStream
-    char result[size];
+    char result[64];
     char* begin = myCStream.bufferPtr;
     if (!CRead(&myCStream, (void*) result, size)) {
         FreeAll(&myCStream);
