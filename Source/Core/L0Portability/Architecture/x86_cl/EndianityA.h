@@ -48,12 +48,6 @@ static inline void EndianitySwap32(volatile void * x) {
 
     unsigned long *xx = (unsigned long *) x;
     *xx = _byteswap_ulong(*xx);
-    /*__asm {
-     mov ebx,x
-     mov eax,DWORD PTR [ebx]
-     bswap eax
-     mov DWORD PTR [ebx],eax
-     }*/
 }
 
 /**
@@ -69,23 +63,6 @@ static inline void EndianitySwap32(volatile void *x,
     for (int i = 0; i < sizer; i++) {
         xx[i] = _byteswap_ulong(xx[i]);
     }
-
-    /*
-
-     __asm {
-     mov ecx,sizer
-     test ecx,ecx
-     je SHORT $swap_32_mul_2
-     mov ebx,x
-     $swap_32_mul_1:
-     mov eax,DWORD PTR [ebx]
-     bswap eax
-     mov DWORD PTR [ebx],eax
-     add ebx,4
-     dec ecx
-     jne SHORT $swap_32_mul_1
-     $swap_32_mul_2:
-     }*/
 }
 
 /**
@@ -104,22 +81,6 @@ static inline void EndianityMemCopySwap32(volatile void *dest,
     for (int i = 0; i < sizer; i++) {
         destCopy[i] = _byteswap_ulong(srcCopy[i]);
     }
-    /*__asm {
-     mov ecx,sizer
-     test ecx,ecx
-     je SHORT $swap_32_copy_mul_2
-     mov ebx,src
-     mov edx,dest
-     $swap_32_copy_mul_1:
-     mov eax,DWORD PTR [ebx]
-     add ebx,4
-     bswap eax
-     mov DWORD PTR [edx],eax
-     add edx,4
-     dec ecx
-     jne SHORT $swap_32_copy_mul_1
-     $swap_32_copy_mul_2:
-     }*/
 }
 
 /**
@@ -129,12 +90,6 @@ static inline void EndianityMemCopySwap32(volatile void *dest,
 static inline void EndianitySwap16(volatile void *x) {
     unsigned short *xx = (unsigned short *) x;
     *xx = _byteswap_ushort(*xx);
-    /*__asm {
-     mov ebx,x
-     mov cx,WORD PTR [ebx]
-     xchg cl, ch
-     mov WORD PTR [ebx], cx
-     }*/
 }
 
 /**
@@ -150,20 +105,6 @@ static inline void EndianitySwap16(volatile void *x,
     for (int i = 0; i < sizer; i++) {
         xx[i] = _byteswap_ushort(xx[i]);
     }
-    /*__asm {
-     mov ecx,sizer
-     test ecx,ecx
-     je SHORT $swap_16_mul_2
-     mov ebx,x
-     $swap_16_mul_1:
-     mov ax,WORD PTR [ebx]
-     xchg al, ah
-     mov WORD PTR [ebx],ax
-     add ebx,2
-     dec ecx
-     jne SHORT $swap_16_mul_1
-     $swap_16_mul_2:
-     }*/
 }
 
 /**
@@ -182,28 +123,11 @@ static inline void EndianityMemCopySwap16(volatile void *dest,
     for (int i = 0; i < sizer; i++) {
         destCopy[i] = _byteswap_ushort(srcCopy[i]);
     }
-
-    /*__asm {
-     mov ecx,sizer
-     test ecx,ecx
-     je SHORT $swap_16_copy_mul_2
-     mov ebx,src
-     mov edx,dest
-     $swap_16_copy_mul_1:
-     mov ax,WORD PTR [ebx]
-     add ebx,2
-     xchg al, ah
-     mov WORD PTR [edx],ax
-     add edx,2
-     dec ecx
-     jne SHORT $swap_16_copy_mul_1
-     $swap_16_copy_mul_2:
-     }*/
 }
 
 /**
  * @brief EndianitySwaps the 8 bytes in a 64 bit number.
- * Not optimised!
+ * @detail Not optimised!
  * @param[in][out] x the number to be swapped
  */
 static inline void EndianitySwap64(volatile void *x) {
@@ -219,7 +143,7 @@ static inline void EndianitySwap64(volatile void *x) {
 
 /**
  * @brief EndianitySwaps the 8 bytes while copying a vector of 64 bit numbers
- * Not optimised!
+ * @detail Not optimised!
  * @param[out] dest the destination vector (must be allocated in memory)
  * @param[in] src the source vector
  * @param[in] sizer the number of elements in the vector
