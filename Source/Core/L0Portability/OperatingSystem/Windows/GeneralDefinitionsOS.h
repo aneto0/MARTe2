@@ -30,7 +30,7 @@
 #define GENERAL_DEFINITIONS_OS_H
 
 #define HEV   HANDLE
-#define TID   HANDLE
+#define TID   DWORD//HANDLE
 
 #endif
 

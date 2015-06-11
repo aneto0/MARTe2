@@ -27,11 +27,11 @@ ctags : %.cpp %.c %.h
 	ctags -R
 
 $(BUILD_DIR)/%.o : %.cpp
-	$(COMPILER) -c $(OPTIM) $(INCLUDE) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(OPTIM) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.o : %.c
-	$(COMPILER) -c $(OPTIM) $(INCLUDE) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.c -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.a : $(OBJS)
@@ -67,7 +67,7 @@ depends.cov: dependsRaw.cov
 	rm -f CreateLinuxDepends.sed 
 
 dependsRaw.cov: 
-	$(COMPILER) $(INCLUDE) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.cov
+	$(COMPILER) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.cov
 	@mkdir -p temp
 	@mkdir -p $(BUILD_DIR)
 

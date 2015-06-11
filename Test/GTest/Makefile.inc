@@ -25,7 +25,6 @@
 #############################################################
 
 OBJSX=  EndianityGTest.x \
-	ThreadsGTest.x \
 	FastMathGTest.x \
 	SleepGTest.x \
 	ProcessorGTest.x \
@@ -34,7 +33,6 @@ OBJSX=  EndianityGTest.x \
 	EventSemGTest.x \
 	TimerGTest.x \
 	MutexGTest.x \
-	#BasicConsoleGTest.x \
 	HighResolutionTimerGTest.x \
 	ThreadsDatabaseGTest.x \
 	LoadableLibraryGTest.x \
@@ -42,6 +40,10 @@ OBJSX=  EndianityGTest.x \
 	FastPollingMutexGTest.x	\
 	StringPortableGTest.x \
 	StringHelperGTest.x \
+	MutexGTest.x \
+	ThreadsDatabaseGTest.x \
+	ThreadsGTest.x  
+	#BasicConsoleGTest.x \
 	#	LinkedListableGTest.x \
 	#BStringGTest.x \
 	#LinkedListHolderGTest.x \

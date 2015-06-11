@@ -29,6 +29,7 @@
 #include "Memory.h"
 #include "Threads.h"
 #include "Sleep.h"
+#include "StringHelper.h"
 
 int32 ThreadsDatabase::atomicSem = 0;
 int32 ThreadsDatabase::nOfEntries = 0;
@@ -245,5 +246,26 @@ bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy, int32 n,
         //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetThreadID(%i) mismatch between actual entries and TDB_NOfEntries ");
     }
     return False;
+}
+
+TID ThreadsDatabaseFind(const char *name) {
+
+    if ((name == NULL) || (name[0] == 0)) {
+        return 0;
+    }
+
+    // search for empty space staring from guess
+    int index = 0;
+    while (index < ThreadsDatabase::maxNOfEntries) {
+        if (ThreadsDatabase::entries[index] != NULL) {
+            if (StringHelper::Compare(ThreadsDatabase::entries[index]->ThreadName(), name) == 0) {
+                return ThreadsDatabase::entries[index]->threadId;
+            }
+        }
+        index++;
+    }
+
+    return 0;
+
 }
 

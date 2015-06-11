@@ -25,7 +25,6 @@
 
 
 
-
 $(BUILD_DIR)/%.obj : %.cpp
 	@echo $(BUILD_DIR)
 	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) $(INCLUDES)  $*.cpp  -Fa
