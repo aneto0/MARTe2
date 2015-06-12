@@ -1,27 +1,34 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for 
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file ThreadsDatabase.cpp
+ * @brief Header file for class ThreadsDatabase
+ * @date 11/06/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they 
- will be approved by the European Commission - subsequent  
- versions of the EUPL (the "Licence"); 
- * You may not use this work except in compliance with the 
- Licence. 
- * You may obtain a copy of the Licence at: 
- *  
- * http://ec.europa.eu/idabc/eupl
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in 
- writing, software distributed under the Licence is 
- distributed on an "AS IS" basis, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
- express or implied. 
- * See the Licence  
- permissions and limitations under the Licence. 
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
  *
- * $Id: $
- *
- **/
+ * @details This header file contains the declaration of the class ThreadsDatabase
+ * (all of its public, protected and private members). It may also include
+ * definitions for inline and friend methods which need to be visible to
+ * the compiler.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "ThreadsDatabase.h"
 #include "ThreadInformation.h"
@@ -31,10 +38,18 @@
 #include "Sleep.h"
 #include "StringHelper.h"
 
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
 int32 ThreadsDatabase::atomicSem = 0;
 int32 ThreadsDatabase::nOfEntries = 0;
 int32 ThreadsDatabase::maxNOfEntries = 0;
 ThreadInformation **ThreadsDatabase::entries = NULL;
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
 bool ThreadsDatabase::AllocMore() {
     // no need
@@ -44,8 +59,7 @@ bool ThreadsDatabase::AllocMore() {
 
     // first time?
     if (entries == NULL) {
-        entries = (ThreadInformation **) MemoryMalloc(
-                sizeof(ThreadInformation *) * GRANULARITY);
+        entries = (ThreadInformation **) MemoryMalloc(sizeof(ThreadInformation *) * GRANULARITY);
         if (entries != NULL) {
             maxNOfEntries = GRANULARITY;
             nOfEntries = 0;
@@ -56,9 +70,7 @@ bool ThreadsDatabase::AllocMore() {
         }
     }
     else {
-        entries = (ThreadInformation **) MemoryRealloc(
-                (void *&) entries,
-                sizeof(ThreadInformation *) * (GRANULARITY + maxNOfEntries));
+        entries = (ThreadInformation **) MemoryRealloc((void *&) entries, sizeof(ThreadInformation *) * (GRANULARITY + maxNOfEntries));
         if (entries != NULL) {
             maxNOfEntries += GRANULARITY;
         }
@@ -76,7 +88,7 @@ bool ThreadsDatabase::AllocMore() {
     return True;
 }
 
-/** create new TDB entry associated to the threadInfo 
+/** create new TDB entry associated to the threadInfo
  threadId = 0 --> current TID */
 bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo) {
     if (threadInfo == NULL) {
@@ -221,12 +233,12 @@ TID ThreadsDatabaseGetThreadID(int32 n) {
 
 /** retrieves information about a thread identified either by name or TID or index
  to be called between Lock/UnLock*/
-bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy, int32 n,
+bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
+                            int32 n,
                             TID threadId) {
     if (n >= 0) {
         TID threadId = ThreadsDatabaseGetThreadID(n);
-        ThreadInformation *threadInfo = ThreadsDatabaseGetThreadInformation(
-                threadId);
+        ThreadInformation *threadInfo = ThreadsDatabaseGetThreadInformation(threadId);
         if (threadInfo == NULL) {
             return False;
         }
@@ -234,8 +246,7 @@ bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy, int32 n,
         return True;
     }
     else if (threadId != (TID) - 1) {
-        ThreadInformation *threadInfo = ThreadsDatabaseGetThreadInformation(
-                threadId);
+        ThreadInformation *threadInfo = ThreadsDatabaseGetThreadInformation(threadId);
         if (threadInfo == NULL) {
             return False;
         }
@@ -268,4 +279,3 @@ TID ThreadsDatabaseFind(const char *name) {
     return 0;
 
 }
-

@@ -1,7 +1,7 @@
 /**
  * @file ThreadsOS.h
  * @brief Header file for class ThreadsOS
- * @date 09/giu/2015
+ * @date 09/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -55,8 +55,8 @@ void __thread_decl SystemThreadFunction(void *threadData) {
     ThreadsDatabase::NewEntry(threadInfo);
     ThreadsDatabase::UnLock();
 
-    threadInfo->priorityLevel = Threads::PRIORITY_NORMAL;
-    Threads::SetPriorityClass(Threads::Id(), Threads::PRIORITY_CLASS_NORMAL);
+    threadInfo->priorityLevel = PRIORITY_NORMAL;
+    Threads::SetPriorityClass(Threads::Id(), PRIORITY_CLASS_NORMAL);
     //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
     threadInfo->ThreadWait();
     //Start the user thread
@@ -102,7 +102,6 @@ bool ThreadProtectedExecute(ThreadFunctionType userFunction,
     return False;
 }
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -113,7 +112,6 @@ bool ThreadProtectedExecute(ThreadFunctionType userFunction,
  * which provides a smart way to obtain informations of all alive threads.
  */
 class ThreadsOS {
-
 
 public:
 
@@ -131,8 +129,8 @@ public:
      * @param[in] threadId is the thread identifier.
      * @return the thread state.
      */
-    static uint32 GetState(TID threadId) {
-        return Threads::STATE_UNKNOWN;
+    static ThreadStateType GetState(TID threadId) {
+        return STATE_UNKNOWN;
     }
 
     /**
@@ -163,62 +161,76 @@ public:
      * The maximum priority for REALTIME_PRIORITY_CLASS is 6(THREAD_PRIORITY_TIME_CRITICAL).
      */
     static void SetPriorityLevel(TID threadId,
-                              uint32 priorityClass,
-                              uint32 priorityLevel) {
+                                 PriorityClassType priorityClass,
+                                 ThreadPriorityType priorityLevel) {
+
+        //Cannot set an unknown priority
+        if (priorityLevel == 0 && priorityClass == 0) {
+            return;
+        }
 
         ThreadsDatabase::Lock();
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
         if (threadInfo == NULL) {
+            ThreadsDatabase::UnLock();
             return;
         }
-        threadInfo->priorityLevel = priorityLevel;
-
-        priorityLevel /= 5;
 
         HANDLE threadHandle = OpenThread(THREAD_ALL_ACCESS, TRUE, threadId);
 
-        switch (::GetPriorityClass(threadHandle)) {
-        case IDLE_PRIORITY_CLASS:
-            if (priorityLevel > 5)
-                priorityLevel = 5;
-            break;
-        case REALTIME_PRIORITY_CLASS:
-            if (priorityLevel > 6)
-                priorityLevel = 6;
-            break;
-        case HIGH_PRIORITY_CLASS:
-        case NORMAL_PRIORITY_CLASS:
-        default:
-            if (priorityLevel > 5)
-                priorityLevel = 5;
-            if (priorityLevel == 0)
-                priorityLevel = 1;
-            break;
+        //change the priority level
+        if (priorityLevel > 0) {
+
+            threadInfo->priorityLevel = priorityLevel;
+
+            switch (priorityLevel) {
+            case 1:
+                SetThreadPriority(threadHandle, THREAD_PRIORITY_IDLE);
+                break;
+            case 2:
+                SetThreadPriority(threadHandle, THREAD_PRIORITY_LOWEST);
+                break;
+            case 3:
+                SetThreadPriority(threadHandle, THREAD_PRIORITY_BELOW_NORMAL);
+                break;
+            case 4:
+                SetThreadPriority(threadHandle, THREAD_PRIORITY_NORMAL);
+                break;
+            case 5:
+                SetThreadPriority(threadHandle, THREAD_PRIORITY_ABOVE_NORMAL);
+                break;
+            case 6:
+                SetThreadPriority(threadHandle, THREAD_PRIORITY_HIGHEST);
+                break;
+            case 7:
+                SetThreadPriority(threadHandle, THREAD_PRIORITY_TIME_CRITICAL);
+                break;
+            }
+
         }
 
-        switch (priorityLevel) {
-        case 0:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_IDLE);
-            break;
-        case 1:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_LOWEST);
-            break;
-        case 2:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_BELOW_NORMAL);
-            break;
-        case 3:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_NORMAL);
-            break;
-        case 4:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_ABOVE_NORMAL);
-            break;
-        case 5:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_HIGHEST);
-            break;
-        case 6:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_TIME_CRITICAL);
-            break;
+        //Change the priority class: this is applied to the current process.
+        if (priorityClass > 0) {
+
+            threadInfo->priorityClass = priorityClass;
+
+            switch (priorityClass) {
+            case 1:
+                SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);
+                break;
+            case 2:
+                SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
+                break;
+            case 3:
+                SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+                break;
+            case 4:
+                SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
+                break;
+            }
+
         }
+
         ThreadsDatabase::UnLock();
 
     }
@@ -229,8 +241,8 @@ public:
      * @param[in] threadId is the thread identifier.
      * @return the priority of the specified thread.
      */
-    static uint32 GetPriorityLevel(TID threadId) {
-        uint32 priorityLevel = Threads::PRIORITY_UNKNOWN;
+    static ThreadPriorityType GetPriorityLevel(TID threadId) {
+        ThreadPriorityType priorityLevel = PRIORITY_UNKNOWN;
 
         ThreadsDatabase::Lock();
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
@@ -247,9 +259,9 @@ public:
      * @param[in] threadId is the thread identifier.
      * @return the priority class of the specified thread.
      */
-    static uint32 GetPriorityClass(TID threadId) {
+    static PriorityClassType GetPriorityClass(TID threadId) {
 
-        uint32 priorityClass = Threads::PRIORITY_CLASS_UNKNOWN;
+        PriorityClassType priorityClass = PRIORITY_CLASS_UNKNOWN;
         ThreadsDatabase::Lock();
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
         if (threadInfo != NULL) {

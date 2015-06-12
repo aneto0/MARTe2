@@ -25,12 +25,10 @@
 #ifndef THREADS_H_
 #define 		THREADS_H_
 
-
 /** Defines the default stack size for a thread. */
 #ifndef THREADS_DEFAULT_STACKSIZE
 #define THREADS_DEFAULT_STACKSIZE 32768
 #endif
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -48,7 +46,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Friend method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 
 extern "C" {
 /** @brief Threads::BeginThread. */
@@ -78,27 +75,21 @@ const char *ThreadsName(TID tid);
 int32 ThreadsGetCPUs(TID tid);
 
 /** @brief Threads::GetState. */
-uint32 ThreadsGetState(TID tid);
+ThreadStateType ThreadsGetState(TID tid);
 
 /** @brief Threads::GetPriorityLevel. */
-uint32 ThreadsGetPriorityLevel(TID tid);
+ThreadPriorityType ThreadsGetPriorityLevel(TID tid);
 
 /** @brief Threads::GetPriorityClass. */
-uint32 ThreadsGetPriorityClass(TID tid);
+PriorityClassType ThreadsGetPriorityClass(TID tid);
 
 /** @brief Threads::SetPriorityLevel. */
 void ThreadsSetPriorityLevel(TID tid,
-                             uint32 level);
+                             ThreadPriorityType level);
 
 /** @brief Threads::SetPriorityClass. */
 void ThreadsSetPriorityClass(TID tid,
-                             uint32 priotityClass);
-
-/**
- * @brief Allows to set the initialization method for the ThreadInformation type to store the thread informations.
- * @param[in] threadInitialisationInterfaceConstructor is the a pointer to the function which build the ThreadInformation type.
- */
-//void ThreadsSetInitialisationInterfaceConstructor(ThreadInformationConstructorType threadInitialisationInterfaceConstructor);
+                             PriorityClassType priotityClass);
 
 /**
  * @brief This function allows to call a subroutine within an exception handler protection.
@@ -111,21 +102,47 @@ bool ThreadProtectedExecute(ThreadFunctionType userFunction,
                             ExceptionHandler *eh);
 }
 
-
-
-
-
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 
 /**
  * @brief Functions for threads management.
  *
  * @details These methods allows to begin and end threads holding all information in a general thread database (ThreadsDatabase.h),
  * other functions allows to a thread to kill, check the life, get informations of other threads by their identifier.
+ *
+ * @details It is possible to query the state of a thread. The return value is a ThreadStateType value (defined in ThreadInformation.h) and could be one of the following:
+ *
+ * STATE_UNKNOWN = -1\n
+ * STATE_READY = 1024\n
+ * STATE_PEND = 512\n
+ * STATE_SUSP = 256\n
+ * STATE_BLOCKED = 2\n
+ * STATE_SEM = 4\n
+ * STATE_DELAY = 8\n
+ * STATE_TOUT = 16\n
+ * STATE_RUN = 32\n
+ * STATE_DEAD = 64
+ *
+ * @details It is possible to query or set the priority class of a thread. The priority class is a PriorityClassType and could be one of the following:
+ *
+ * PRIORITY_CLASS_UNKNOWN = 0\n
+ * PRIORITY_CLASS_IDLE = 1\n
+ * PRIORITY_CLASS_NORMAL = 2\n
+ * PRIORITY_CLASS_HIGH = 3\n
+ * PRIORITY_CLASS_REAL_TIME = 4
+ *
+ * @details It is possible to query or set the priority of a thread. The thread priority is a ThreadPriorityType and could be one of the following:
+ *
+ * PRIORITY_UNKNOWN = 0\n
+ * PRIORITY_IDLE = 1\n
+ * PRIORITY_LOWEST = 2\n
+ * PRIORITY_BELOW_NORMAL = 3\n
+ * PRIORITY_NORMAL = 4\n
+ * PRIORITY_ABOVE_NORMAL = 5\n
+ * PRIORITY_HIGHEST = 6\n
+ * PRIORITY_TIME_CRITICAL = 7\n
  *
  * @details Most of the implementation is delegated to ThreadsOS.h which provides system level functions for threads management.
  */
@@ -149,89 +166,14 @@ public:
     friend bool ThreadsKill(TID tid);
     friend bool ThreadsIsAlive(TID tid);
 
-/*
-    friend void ThreadsSetNormalClass();
-    friend void ThreadsSetRealTimeClass();
-    friend void ThreadsSetIdleClass();
-    friend void ThreadsSetHighClass();
-*/
-
+    /*
+     friend void ThreadsSetNormalClass();
+     friend void ThreadsSetRealTimeClass();
+     friend void ThreadsSetIdleClass();
+     friend void ThreadsSetHighClass();
+     */
 
 public:
-    /**
-     * Unknown state.
-     * */
-    static const uint32 STATE_UNKNOWN = -1;
-
-    /**
-     * Ready state.
-     */
-    static const uint32 STATE_READY = 1024;
-
-    /**
-     * Pendent state.
-     */
-    static const uint32 STATE_PEND = 512;
-
-    /**
-     * Suspended state.
-     */
-    static const uint32 STATE_SUSP = 256;
-
-    /**
-     * Blocked state.
-     */
-    static const uint32 STATE_BLOCKED = 2;
-
-    /**
-     * Semaphore waiting state.
-     */
-    static const uint32 STATE_SEM = 4;
-
-    /**
-     * Delay state.
-     */
-    static const uint32 STATE_DELAY = 8;
-
-    /**
-     * Tout state.
-     */
-    static const uint32 STATE_TOUT = 16;
-
-    /**
-     * Run state.
-     */
-    static const uint32 STATE_RUN = 32;
-
-    /**
-     * Dead state.
-     */
-    static const uint32 STATE_DEAD = 64;
-
-    /**
-     * Unknown Class Priority 0.
-     */
-    static const uint32 PRIORITY_CLASS_UNKNOWN = 0;
-
-    /**
-     * Idle Class Priority 1.
-     */
-    static const uint32 PRIORITY_CLASS_IDLE = 1;
-
-    /**
-     * Normal Class Priority 2.
-     */
-    static const uint32 PRIORITY_CLASS_NORMAL = 2;
-
-    /**
-     * High Class Priority 3.
-     */
-    static const uint32 PRIORITY_CLASS_HIGH = 3;
-
-    /**
-     * Real Time Class Priority 4.
-     */
-    static const uint32 PRIORITY_CLASS_REAL_TIME = 4;
 
     /*
      * List of possible priorities. Each of the above classes can contain any of the
@@ -241,64 +183,12 @@ public:
      */
 
     /**
-     * Unknown Thread Priority 0.
-     */
-    static const uint32 PRIORITY_UNKNOWN = 0;
-
-    /**
-     * Idle Thread Priority 1.
-     */
-    static const uint32 PRIORITY_IDLE = 1;
-
-    /**
-     * Lowest Thread Priority 2.
-     */
-    static const uint32 PRIORITY_LOWEST = 2;
-
-    /**
-     * Below Normal Thread Priority 3.
-     */
-    static const uint32 PRIORITY_BELOW_NORMAL = 3;
-
-    /**
-     * Normal Thread Priority 4.
-     */
-    static const uint32 PRIORITY_NORMAL = 4;
-
-    /**
-     * Above Normal Thread Priority 5.
-     */
-    static const uint32 PRIORITY_ABOVE_NORMAL = 5;
-
-    /**
-     * Highest Thread Priority 6.
-     */
-    static const uint32 PRIORITY_HIGHEST = 6;
-
-
-    /**
-     * Time Critical Thread Priority.
-     */
-    static const uint32 PRIORITY_TIME_CRITICAL = 7;
-
-    /**
-     * @brief Sets the function used to build the thread initialization interface.
-     *
-     * @details An initialisation interface object is created using either the default value
-     * or the parameter passed to this function by the BeginThread method.
-     * @param[in] tiic A pointer to the function to be used in the BeginThread method.
-     */
-    static void SetThreadInformationConstructor(ThreadInformationConstructorType tiic) {
-        ThreadsSetInitialisationInterfaceConstructor(tiic);
-    }
-
-    /**
      * @brief Change thread priority.
      * @param[in] tid is the thread identifier.
      * @param[in] level is the level to assign to the thread.
      */
     static void SetPriorityLevel(TID tid,
-                                 uint32 level) {
+                                 ThreadPriorityType level) {
         ThreadsSetPriorityLevel(tid, level);
     }
 
@@ -308,7 +198,7 @@ public:
      * @param[in] priorityClass is the class to assign to the thread.
      */
     static void SetPriorityClass(TID tid,
-                                 uint32 priorityClass) {
+                                 PriorityClassType priorityClass) {
         ThreadsSetPriorityClass(tid, priorityClass);
     }
 
@@ -384,13 +274,13 @@ public:
      * @brief Returns the task state.
      *
      * @details This can be a masked combination of any of the
-     * defined THREAD_STATE. So for instance a value of "6" means:
-     * THREAD_STATE_BLOCKED + THREAD_STATE_SEM.
+     * defined ThreadStateType. So for instance a value of "6" means:
+     * ThreadStateType_BLOCKED + ThreadStateType_SEM.
      *
      * @param[in] tid is the id of the requested thread.
      * @return the thread state(s).
      */
-    static uint32 GetState(TID tid) {
+    static ThreadStateType GetState(TID tid) {
         return ThreadsGetState(tid);
     }
 
@@ -399,7 +289,7 @@ public:
      * @param[in] tid is the id of the requested thread.
      * @return the thread priority level.
      */
-    static int32 GetPriorityLevel(TID tid) {
+    static ThreadPriorityType GetPriorityLevel(TID tid) {
         return ThreadsGetPriorityLevel(tid);
     }
 
@@ -408,7 +298,7 @@ public:
      * @param[in] tid is the id of the requested thread.
      * @return the thread priority class.
      */
-    static int32 GetPriorityClass(TID tid) {
+    static PriorityClassType GetPriorityClass(TID tid) {
         return ThreadsGetPriorityClass(tid);
     }
 };
@@ -416,8 +306,6 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-
 
 #endif /* THREADS_H_ */
 

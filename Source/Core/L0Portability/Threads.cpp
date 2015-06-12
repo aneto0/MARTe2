@@ -72,16 +72,16 @@ bool ThreadsKill(TID threadId) {
 }
 
 void ThreadsSetPriorityLevel(TID threadId,
-                             uint32 priorityLevel) {
+                             ThreadPriorityType priorityLevel) {
 
-    ThreadsOS::SetPriorityLevel(threadId, priorityLevel, 0);
+    ThreadsOS::SetPriorityLevel(threadId, PRIORITY_CLASS_UNKNOWN, priorityLevel);
 
 }
 
 void ThreadsSetPriorityClass(TID threadId,
-                             uint32 priorityClass) {
+                             PriorityClassType priorityClass) {
 
-    ThreadsOS::SetPriorityLevel(threadId, priorityClass, 0);
+    ThreadsOS::SetPriorityLevel(threadId, priorityClass, PRIORITY_UNKNOWN);
 
 }
 
@@ -89,15 +89,15 @@ int32 ThreadsGetCPUs(TID threadId) {
     return ThreadsOS::GetCPUs(threadId);
 }
 
-uint32 ThreadsGetPriorityLevel(TID threadId) {
+ThreadPriorityType ThreadsGetPriorityLevel(TID threadId) {
     return ThreadsOS::GetPriorityLevel(threadId);
 }
 
-uint32 ThreadsGetPriorityClass(TID threadId) {
+PriorityClassType ThreadsGetPriorityClass(TID threadId) {
     return ThreadsOS::GetPriorityClass(threadId);
 }
 
-uint32 ThreadsGetState(TID threadId) {
+ThreadStateType ThreadsGetState(TID threadId) {
     return ThreadsOS::GetState(threadId);
 }
 

@@ -1,7 +1,7 @@
 /**
  * @file ThreadsOS.h
  * @brief Header file for class ThreadsOS
- * @date 09/giu/2015
+ * @date 09/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -56,8 +56,8 @@ void __thread_decl SystemThreadFunction(void *threadData) {
     ThreadsDatabase::NewEntry(threadInfo);
     ThreadsDatabase::UnLock();
 
-    threadInfo->priorityLevel = Threads::PRIORITY_NORMAL;
-    Threads::SetPriorityClass(Threads::Id(), Threads::PRIORITY_CLASS_NORMAL);
+    threadInfo->priorityLevel = PRIORITY_NORMAL;
+    Threads::SetPriorityClass(Threads::Id(), PRIORITY_CLASS_NORMAL);
     //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
     threadInfo->ThreadWait();
     //Start the user thread
@@ -131,8 +131,8 @@ public:
      * @param[in] threadId is the thread identifier.
      * @return the thread state.
      */
-    static uint32 GetState(TID threadId) {
-        return Threads::STATE_UNKNOWN;
+    static ThreadStateType GetState(TID threadId) {
+        return STATE_UNKNOWN;
     }
 
     /**
@@ -176,30 +176,39 @@ public:
      * and priorityLevel = PRIORITY_TIME_CRITICAL
      */
     static void SetPriorityLevel(TID threadId,
-                                 uint32 priorityClass,
-                                 uint32 priorityLevel) {
+                                 PriorityClassType priorityClass,
+                                 ThreadPriorityType priorityLevel) {
+
+        //Cannot set an unknown priority
+        if (priorityLevel == 0 && priorityClass == 0) {
+            return;
+        }
 
         ThreadsDatabase::Lock();
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
         if (threadInfo == NULL) {
+            ThreadsDatabase::UnLock();
             return;
         }
 
         if (priorityClass == 0) {
+            threadInfo->priorityLevel = priorityLevel;
             priorityClass = threadInfo->priorityClass;
         }
 
         if (priorityLevel == 0) {
+            threadInfo->priorityClass = priorityClass;
             priorityLevel = threadInfo->priorityLevel;
         }
 
-        priorityLevel = 20 * priorityClass + priorityLevel + 12;
+        uint32 priorityLevelToAssign = 20 * (uint32) priorityClass + (uint32) priorityLevel + 12;
+
         int32 policy = 0;
         sched_param param;
         pthread_getschedparam(threadId, &policy, &param);
         policy = SCHED_RR;
-        param.sched_priority = priorityLevel;
-        pthread_setschedparam(ThreadsOSId(), policy, &param);
+        param.sched_priority = priorityLevelToAssign;
+        pthread_setschedparam(Id(), policy, &param);
 
         ThreadsDatabase::UnLock();
     }
@@ -210,8 +219,8 @@ public:
      * @param[in] threadId is the thread identifier.
      * @return the priority of the specified thread.
      */
-    static uint32 GetPriorityLevel(TID threadId) {
-        uint32 priorityLevel = Threads::PRIORITY_UNKNOWN;
+    static ThreadPriorityType GetPriorityLevel(TID threadId) {
+        ThreadPriorityType priorityLevel = PRIORITY_UNKNOWN;
 
         ThreadsDatabase::Lock();
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
@@ -228,9 +237,9 @@ public:
      * @param[in] threadId is the thread identifier.
      * @return the priority class of the specified thread.
      */
-    static uint32 GetPriorityClass(TID threadId) {
+    static PriorityClassType GetPriorityClass(TID threadId) {
 
-        uint32 priorityClass = Threads::PRIORITY_CLASS_UNKNOWN;
+        PriorityClassType priorityClass = PRIORITY_CLASS_UNKNOWN;
         ThreadsDatabase::Lock();
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
         if (threadInfo != NULL) {
@@ -239,28 +248,6 @@ public:
         ThreadsDatabase::UnLock();
         return priorityClass;
 
-    }
-
-    /**
-     * @brief Called by Threads::Kill
-     * @param[in] threadId is the thread identifier.
-     * @details A thread cannot be deleted if it locks a mutex semaphore.
-     */
-    static bool Kill(TID threadId) {
-
-        ThreadsDatabase::Lock();
-        ThreadsDatabase::RemoveEntry(threadId);
-        ThreadsDatabase::UnLock();
-
-        if (threadId == 0) {
-            return True;
-        }
-        int32 ret = pthread_cancel(threadId);
-        if (ret == 0) {
-            pthread_join(threadId, NULL);
-            return True;
-        }
-        return False;
     }
 
     /**
@@ -283,6 +270,32 @@ public:
         else {
             return False;
         }
+    }
+
+    /**
+     * @brief Called by Threads::Kill
+     * @param[in] threadId is the thread identifier.
+     * @details A thread cannot be deleted if it locks a mutex semaphore.
+     */
+    static bool Kill(TID threadId) {
+
+        if (!IsAlive(threadId)) {
+            return False;
+        }
+
+        ThreadsDatabase::Lock();
+        ThreadsDatabase::RemoveEntry(threadId);
+        ThreadsDatabase::UnLock();
+
+        if (threadId == 0) {
+            return True;
+        }
+        int32 ret = pthread_cancel(threadId);
+        if (ret == 0) {
+            pthread_join(threadId, NULL);
+            return True;
+        }
+        return False;
     }
 
     /**
@@ -320,7 +333,7 @@ public:
         pthread_attr_t stackSizeAttribute;
         pthread_attr_init(&stackSizeAttribute);
         pthread_attr_setstacksize(&stackSizeAttribute, stacksize);
-        pthread_create(&threadId, &stackSizeAttribute, StandardThreadFunction, threadInfo);
+        pthread_create(&threadId, &stackSizeAttribute, (StandardThreadFunction) SystemThreadFunction, threadInfo);
         pthread_detach(threadId);
         pthread_setaffinity_np(threadId, sizeof(runOnCPUs.processorMask), (cpu_set_t *) &runOnCPUs.processorMask);
         threadInfo->ThreadPost();
