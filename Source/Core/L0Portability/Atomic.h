@@ -107,7 +107,7 @@ public:
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
-    static inline bool TestAndSet(int32 volatile *p);
+    static inline bool TestAndSet(volatile int32 *p);
 
     /**
      * @brief Test and set a 16 bit memory location in a thread safe way.
@@ -115,7 +115,7 @@ public:
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
-    static inline bool TestAndSet(int16 volatile *p);
+    static inline bool TestAndSet(volatile int16 *p);
 
     /**
      * @brief Test and set a 8 bit memory location in a thread safe way.
@@ -123,7 +123,7 @@ public:
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
-    static inline bool TestAndSet(int8 volatile *p);
+    static inline bool TestAndSet(volatile int8 *p);
 
     /**
      * @brief Atomic addition.
@@ -175,15 +175,15 @@ int32 Atomic::Exchange(volatile int32 *p,
     return AtomicA::Exchange32(p, v);
 }
 
-bool Atomic::TestAndSet(int32 volatile *p) {
+bool Atomic::TestAndSet(volatile int32 *p) {
     return AtomicA::TestAndSet32(p);
 }
 
-bool Atomic::TestAndSet(int16 volatile *p) {
+bool Atomic::TestAndSet(volatile int16 *p) {
     return AtomicA::TestAndSet16(p);
 }
 
-bool Atomic::TestAndSet(int8 volatile *p) {
+bool Atomic::TestAndSet(volatile int8 *p) {
     return AtomicA::TestAndSet8(p);
 }
 

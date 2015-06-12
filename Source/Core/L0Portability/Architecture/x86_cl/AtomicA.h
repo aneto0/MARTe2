@@ -116,7 +116,7 @@ public:
      * @param[in,out] p is the 32 bit variable to test and set.
      * @return return true if p=0 and it sets p to one, else return false.
      */
-    static inline bool TestAndSet32(int32 volatile *p) {
+    static inline bool TestAndSet32(volatile int32 *p) {
         volatile long* pp = (volatile long *) p;
         //returns the initial value of *pp
         return _InterlockedCompareExchange(pp, 1, 0) == 0;
@@ -128,7 +128,7 @@ public:
      * @return return true if p=0 and it sets p to one, else return false.
      */
 
-    static inline bool TestAndSet16(int16 volatile *p) {
+    static inline bool TestAndSet16(volatile int16 *p) {
         volatile short* pp = (volatile short *) p;
         //returns the initial value of *pp
         return _InterlockedCompareExchange16(pp, 1, 0) == 0;
@@ -139,7 +139,7 @@ public:
      * @param[in,out] p is the 8 bit variable to test and set.
      * @return return true if p=0 and it sets p to one, else return false.
      */
-    static inline bool TestAndSet8(int8 volatile *p) {
+    static inline bool TestAndSet8(volatile int8 *p) {
         volatile char* pp = (volatile char*) p;
 
         //returns the initial value of *pp
