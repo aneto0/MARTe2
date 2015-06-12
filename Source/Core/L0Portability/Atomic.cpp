@@ -1,7 +1,7 @@
 /**
  * @file Atomic.cpp
  * @brief Header file for class Atomic
- * @date 08/giu/2015
+ * @date 08/06/2015
  * @author Giuseppe
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

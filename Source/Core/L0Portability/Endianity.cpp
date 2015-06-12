@@ -1,7 +1,7 @@
 /**
  * @file Endianity.cpp
  * @brief Header file for class Endianity
- * @date 05/giu/2015
+ * @date 05/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

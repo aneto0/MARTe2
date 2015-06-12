@@ -32,19 +32,17 @@ OBJSX=  EndianityGTest.x \
 	ProcessorTypeGTest.x \
 	EventSemGTest.x \
 	TimerGTest.x \
-	MutexGTest.x \
 	HighResolutionTimerGTest.x \
-	ThreadsDatabaseGTest.x \
 	LoadableLibraryGTest.x \
 	MemoryGTest.x \
 	FastPollingMutexGTest.x	\
 	StringPortableGTest.x \
 	StringHelperGTest.x \
-	MutexGTest.x \
+	ThreadsGTest.x \
 	ThreadsDatabaseGTest.x \
-	ThreadsGTest.x  
+	MutexGTest.x 
 	#BasicConsoleGTest.x \
-	#	LinkedListableGTest.x \
+	#LinkedListableGTest.x \
 	#BStringGTest.x \
 	#LinkedListHolderGTest.x \
 	#StaticListHolderGTest.x \
