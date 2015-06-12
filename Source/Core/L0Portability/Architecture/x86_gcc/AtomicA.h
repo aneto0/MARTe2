@@ -37,7 +37,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 /**
  * @brief Platform dependent functions for atomic operations.
  * @details These functions define atomic operation optimizing as more as possible the performance.
@@ -117,7 +116,7 @@ public:
      * @param[in] v is the variable to store.
      */
     static inline int32 Exchange32(volatile int32 *p,
-                                         int32 v) {
+                                   int32 v) {
         asm volatile(
                 "lock xchg (%1), %0"
                 :"=r" (v) : "r" (p), "0" (v)
@@ -130,7 +129,7 @@ public:
      * @param[in,out] p is the 32 bit variable to test and set.
      * @return return true if p=0 and it sets p to one, else return false.
      */
-    static inline bool TestAndSet32(int32 volatile *p) {
+    static inline bool TestAndSet32(volatile int32 *p) {
         register int32 out = 1;
         asm volatile (
                 "lock xchg (%2),%1"
@@ -144,7 +143,7 @@ public:
      * @param[in,out] p is the 16 bit variable to test and set.
      * @return return true if p=0 and it sets p to one, else return false.
      */
-    static inline bool TestAndSet16(int16 volatile *p) {
+    static inline bool TestAndSet16(volatile int16 *p) {
         register int16 out = 1;
         asm volatile (
                 "lock xchgw (%2),%1"
@@ -158,7 +157,7 @@ public:
      * @param[in,out] p is the 8 bit variable to test and set.
      * @return return true if p=0 and it sets p to one, else return false.
      */
-    static inline bool TestAndSet8(int8 volatile *p) {
+    static inline bool TestAndSet8(volatile int8 *p) {
         register int8 out = 1;
         asm volatile (
                 "lock xchgb (%2),%1"
@@ -173,7 +172,7 @@ public:
      * @param[in] value is the value to sum to p.
      */
     static inline void Add32(volatile int32 *p,
-                                   int32 value) {
+                             int32 value) {
         asm volatile (
                 "lock addl %1, (%0)"
                 : /* output */
@@ -187,7 +186,7 @@ public:
      * @param[in] value is the value to subtract to p.
      */
     static inline void Sub32(volatile int32 *p,
-                                   int32 value) {
+                             int32 value) {
         asm volatile (
                 "lock subl %1, (%0)"
                 : /* output */
