@@ -1,37 +1,43 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for 
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file TimeoutType.h
+ * @brief Header file for class TimeoutType
+ * @date 15/06/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they 
- will be approved by the European Commission - subsequent  
- versions of the EUPL (the "Licence"); 
- * You may not use this work except in compliance with the 
- Licence. 
- * You may obtain a copy of the Licence at: 
- *  
- * http://ec.europa.eu/idabc/eupl
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in 
- writing, software distributed under the Licence is 
- distributed on an "AS IS" basis, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
- express or implied. 
- * See the Licence  
- permissions and limitations under the Licence. 
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
  *
- * $Id:  $
- *
- **/
-/** 
- * @file
- * @brief Defines the timeout
+ * @details This header file contains the declaration of the class TimeoutType
+ * (all of its public, protected and private members). It may also include
+ * definitions for inline and friend methods which need to be visible to
+ * the compiler.
  */
-#ifndef TIMEOUT_TYPE_H
-#define TIMEOUT_TYPE_H
 
+#ifndef TIMEOUTTYPE_H_
+#define 		TIMEOUTTYPE_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "HighResolutionTimer.h"
 
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
 
 /** max value for the delay that is treated  */
 const uint32 TTMaxDelay = 0xFFFF0000;
@@ -40,42 +46,50 @@ const uint32 TTMaxDelay = 0xFFFF0000;
 
 /**
  * @brief Functions for timeout definition.
- * 
- * These methods define the timeout object which is simply an integer which represent a time in milliseconds.
- * Futhermore here are defined flags for different types of timeout.
- *  
- * This class is used to implement semaphores based on spinlocks with timed locks and in applications which needs
+ *
+ * @details These methods define the timeout object which is simply an integer which represent a time in milliseconds.
+ * Furthermore here are defined flags for different types of timeout.
+ *
+ * @details This class is used to implement semaphores based on spinlocks with timed locks and in applications which needs
  * timeouts.
  */
-
 class TimeoutType {
 public:
     /** how many msecs to wait */
     uint32 msecTimeout;
 public:
-    /** @brief Constructor from integer.
-      * @param msecs is the time in milliseconds. */
+    /**
+     * @brief Constructor from integer.
+     * @param[in] msecs is the time in milliseconds.
+     */
     TimeoutType(uint32 msecs = (uint32) 0xFFFFFFFF) {
         msecTimeout = msecs;
     }
 
-    /** @brief Set timeout from float.
-      * @param secs is the time in seconds. */
+    /**
+     * @brief Set timeout from float.
+     * @param[in] secs is the time in seconds.
+     */
     void SetTimeOutSec(double secs) {
         msecTimeout = (uint32) (secs * 1000.0);
     }
 
-    /** @brief Set timeout from HRT ticks.
-      * @param ticks are the number of cpu ticks. */
+    /**
+     * @brief Set timeout from HRT ticks.
+     * @param[in] ticks are the number of cpu ticks.
+     */
     void SetTimeOutHighResolutionTimerTicks(int64 ticks) {
-        if (ticks < 0)
+        if (ticks < 0) {
             ticks = 0;
+        }
         double msDT = 1000.0 * (ticks * HighResolutionTimer::Period());
         msecTimeout = (uint32) msDT;
     }
 
-    /** @brief Get the timeout in HighResolutionTimer Ticks
-      * @return the number of ticks related to the timeout. */
+    /**
+     * @brief Get the timeout in HighResolutionTimer Ticks
+     * @return the number of ticks related to the timeout.
+     */
     int64 HighResolutionTimerTicks() const {
         double dT = msecTimeout;
         dT = dT * 1e-3;
@@ -85,8 +99,10 @@ public:
         return ticks;
     }
 
-    /** @brief Subtract n to the timeout.
-      * @param n is the value which must be subtracted to the timeout (milliseconds). */
+    /**
+     * @brief Subtract n to the timeout.
+     * @param[in] n is the value which must be subtracted to the timeout (milliseconds).
+     */
     void operator-=(uint32 n) {
         if (msecTimeout > n)
             msecTimeout -= n;
@@ -94,29 +110,37 @@ public:
             msecTimeout = 0;
     }
 
-    /** @brief Compare two timeout times.
-      * @param tt is another timeout object.
-      * @return true of msecTimeout attributes of both timeout object are equal. */
-    bool operator==(const TimeoutType &tt) {
+    /**
+     * @brief Compare two timeout times.
+     * @param[in] tt is the timeout object to be compared with this.
+     * @return true of msecTimeout attributes of both timeout object are equal.
+     */
+    bool operator==(const TimeoutType &tt) const {
         return msecTimeout == tt.msecTimeout;
     }
 
-    /** @brief Check if two timeout are different.
-      * @param tt is another timeout.
-      * @return true if msecTimeout attributes of both timeout object are different. */
-    bool operator!=(const TimeoutType &tt) {
+    /**
+     * @brief Check if two timeout are different.
+     * @param[in] tt is another timeout.
+     * @return true if msecTimeout attributes of both timeout object are different.
+     */
+    bool operator!=(const TimeoutType &tt) const {
         return msecTimeout != tt.msecTimeout;
     }
 
-    /** @brief Assignment operator.
-      * @param tt is the timout to copy in this. */
+    /**
+     * @brief Copy operator.
+     * @param[in] tt is the timout to copy in this.
+     */
     void operator=(const TimeoutType &tt) {
         msecTimeout = tt.msecTimeout;
     }
 
-    /** @brief Check if the timeout is finite.
-      * @return true if the timeout is less than the max timeout accettable. */
-    bool IsFinite() {
+    /**
+     * @brief Check if the timeout is finite.
+     * @return true if the timeout is less than the max timeout acceptable.
+     */
+    bool IsFinite() const {
         return (msecTimeout < (uint32) 0xFFFFFFFE);
     }
 
@@ -134,5 +158,13 @@ const TimeoutType TTUnProtected((uint32) 0xFFFFFFFD);
 /** Used in semafore protected codes to specify to bypass the check! */
 const TimeoutType TTDefault((uint32) 0xFFFFFFFE);
 
-#endif
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Friend method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* TIMEOUTTYPE_H_ */
 
