@@ -97,20 +97,20 @@ public:
     /** @brief Compare two timeout times.
       * @param tt is another timeout object.
       * @return true of msecTimeout attributes of both timeout object are equal. */
-    bool operator==(const TimeoutType tt) {
+    bool operator==(const TimeoutType &tt) {
         return msecTimeout == tt.msecTimeout;
     }
 
     /** @brief Check if two timeout are different.
       * @param tt is another timeout.
       * @return true if msecTimeout attributes of both timeout object are different. */
-    bool operator!=(const TimeoutType tt) {
+    bool operator!=(const TimeoutType &tt) {
         return msecTimeout != tt.msecTimeout;
     }
 
     /** @brief Assignment operator.
       * @param tt is the timout to copy in this. */
-    void operator=(const TimeoutType tt) {
+    void operator=(const TimeoutType &tt) {
         msecTimeout = tt.msecTimeout;
     }
 

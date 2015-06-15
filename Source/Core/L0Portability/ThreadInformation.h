@@ -232,6 +232,8 @@ public:
         threadId = threadInfo.threadId;
         priorityClass = threadInfo.priorityClass;
         priorityLevel = threadInfo.priorityLevel;
+        startThreadSynchSem.Create();
+        startThreadSynchSem.Reset();
     }
 
     /**
