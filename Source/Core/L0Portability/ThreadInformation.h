@@ -221,38 +221,12 @@ public:
         startThreadSynchSem.Reset();
     }
 
-    /**
-     * @brief Copy constructor.
-     * @param[in] threadInfo contains informations to initialize this object.
-     */
-    ThreadInformation(ThreadInformation &threadInfo) {
-        userThreadFunction = threadInfo.userThreadFunction;
-        userData = threadInfo.userData;
-        name = MemoryStringDup(threadInfo.name);
-        threadId = threadInfo.threadId;
-        priorityClass = threadInfo.priorityClass;
-        priorityLevel = threadInfo.priorityLevel;
-        startThreadSynchSem.Create();
-        startThreadSynchSem.Reset();
-    }
 
-    /**
-     * @brief Equal operator to copy a thread info in this.
-     * @param[in] threadInfo contains informations to initialize this object.
-     */
-    void operator=(ThreadInformation &threadInfo) {
-        userThreadFunction = threadInfo.userThreadFunction;
-        userData = threadInfo.userData;
-        name = MemoryStringDup(threadInfo.name);
-        threadId = threadInfo.threadId;
-        priorityClass = threadInfo.priorityClass;
-        priorityLevel = threadInfo.priorityLevel;
-    }
 
     /**
      * @brief Constructor.
      * @param[in] userThreadFunction Actually the thread that has to be executed.
-     * @param[in] userData A pointer to a structure containing thread data.
+     * @param[in] userData A pointer to a structure containing thread's data.
      * @param[in] name The name of the thread.
      */
     ThreadInformation(ThreadFunctionType userThreadFunction,
@@ -272,6 +246,38 @@ public:
         startThreadSynchSem.Create();
         startThreadSynchSem.Reset();
     }
+
+
+
+    /**
+     * @brief Copy constructor.
+     * @param[in] threadInfo contains informations to initialize this object.
+     */
+    ThreadInformation(const ThreadInformation &threadInfo) {
+        userThreadFunction = threadInfo.userThreadFunction;
+        userData = threadInfo.userData;
+        name = MemoryStringDup(threadInfo.name);
+        threadId = threadInfo.threadId;
+        priorityClass = threadInfo.priorityClass;
+        priorityLevel = threadInfo.priorityLevel;
+        startThreadSynchSem.Create();
+        startThreadSynchSem.Reset();
+    }
+
+    /**
+     * @brief Equal operator to copy a thread info in this.
+     * @param[in] threadInfo contains informations to initialize this object.
+     */
+    void operator=(const ThreadInformation &threadInfo) {
+        userThreadFunction = threadInfo.userThreadFunction;
+        userData = threadInfo.userData;
+        name = MemoryStringDup(threadInfo.name);
+        threadId = threadInfo.threadId;
+        priorityClass = threadInfo.priorityClass;
+        priorityLevel = threadInfo.priorityLevel;
+    }
+
+
 
     /**
      * @brief Destructor.
@@ -315,7 +321,7 @@ public:
 
     /**
      *  @brief The thread waits a post condition.
-     * */
+     */
     inline void ThreadWait() {
         startThreadSynchSem.Wait();
     }
