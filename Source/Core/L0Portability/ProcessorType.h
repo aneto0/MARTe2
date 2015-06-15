@@ -144,7 +144,7 @@ public:
      * @param[in] pt is the Processor type which will be compared with this.
      * @return true if masks are equal.
      */
-    bool operator==(const ProcessorType &pt) {
+    bool operator==(const ProcessorType &pt) const {
         return processorMask == pt.processorMask;
     }
 
@@ -152,7 +152,7 @@ public:
      * @brief Compares this cpu mask with an input mask.
      * @param[in] mask is the mask which will be compared with this cpu mask.
      * @return true if masks are equal. */
-    bool operator==(const uint32 mask) {
+    bool operator==(const uint32 mask) const {
         return processorMask == mask;
     }
 
@@ -161,7 +161,7 @@ public:
      * @param[in] pt is the ProcessorType which will be compared with this.
      * @return true if masks are different.
      */
-    bool operator!=(const ProcessorType &pt) {
+    bool operator!=(const ProcessorType &pt) const {
         return processorMask != pt.processorMask;
     }
 
@@ -170,7 +170,7 @@ public:
      * @param[in] mask is the mask which will be compared with this cpu mask.
      * @return true if masks are different.
      */
-    bool operator!=(const uint32 mask) {
+    bool operator!=(const uint32 mask) const {
         return processorMask != mask;
     }
 
