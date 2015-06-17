@@ -1,7 +1,7 @@
 /**
  * @file ProcessorType.cpp
- * @brief Header file for class ProcessorType
- * @date 12/06/2015
+ * @brief Source file for class ProcessorType
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
- * @details This header file contains the declaration of the class ProcessorType
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+
+ * @details This source file contains the definition of all the methods for
+ * the class ProcessorType (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
@@ -54,3 +53,14 @@ void ProcessorTypeSetDefaultCPUs(uint32 defaultMask) {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+ProcessorType::ProcessorType(const uint32 cpuMask) {
+    processorMask = cpuMask;
+}
+
+/**
+ * @brief Constructor from another ProcessorType object
+ * @param[in] pt is the object to be copied in this.
+ */
+ProcessorType::ProcessorType(const ProcessorType &pt) {
+    processorMask = pt.processorMask;
+}

@@ -1,7 +1,7 @@
 /**
  * @file Processor.h
  * @brief Header file for class Processor
- * @date 15/06/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
+
  * @details This header file contains the declaration of the class Processor
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef PROCESSOR_H_
@@ -68,42 +67,46 @@ public:
      * @brief Returns the processor type.
      * @return a string which contains the processor type.
      */
-    static inline const char *VendorId() {
-        return ProcessorVendorId();
-    }
+    static inline const char *VendorId();
 
     /**
      * @brief Returns the processor family.
      * @return processor family.
      */
-    static inline uint32 Family() {
-        return ProcessorFamily();
-    }
+    static inline uint32 Family();
 
     /**
      * @brief Returns the processor model.
      * @return processor model.
      */
-    static inline uint32 Model() {
-        return ProcessorModel();
-    }
+    static inline uint32 Model();
 
     /**
      * @brief Returns the number of available cpus.
      * @returns the number of available cpus.
      */
-    static inline uint32 Available() {
-        return ProcessorsAvailable();
-    }
+    static inline uint32 Available();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
-/*---------------------------------------------------------------------------*/
+const char *Processor::VendorId() {
+    return ProcessorVendorId();
+}
+
+uint32 Processor::Family() {
+    return ProcessorFamily();
+}
+
+uint32 Processor::Model() {
+    return ProcessorModel();
+}
+
+uint32 Processor::Available() {
+    return ProcessorsAvailable();
+}
 
 #endif /* PROCESSOR_H_ */
 

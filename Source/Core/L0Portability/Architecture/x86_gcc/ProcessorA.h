@@ -1,7 +1,7 @@
 /**
  * @file ProcessorA.h
  * @brief Header file for class ProcessorA
- * @date 12/06/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
+
  * @details This header file contains the declaration of the class ProcessorA
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef PROCESSORA_H_
@@ -38,9 +37,14 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * Stores the processor vendor
+ * @brief Basically a global variable used to store the processor vendor
  */
-static char processorVendorId[13];
+class ProcessorId {
+public:
+    static char processorVendorId[13];
+};
+
+char ProcessorId::processorVendorId[13]={0};
 
 /**
  * @brief Platform dependent functions to get the processor's informations.
@@ -110,19 +114,15 @@ public:
     static const char *VendorId() {
 
         uint32 eax = 0;
-        CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
-        processorVendorId[12] = 0;
-        return &processorVendorId[0];
+        CPUID(0, eax, (uint32 &) ProcessorId::processorVendorId[0], (uint32 &) ProcessorId::processorVendorId[8], (uint32 &) ProcessorId::processorVendorId[4]);
+        ProcessorId::processorVendorId[12] = 0;
+        return &(ProcessorId::processorVendorId[0]);
     }
 
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* PROCESSORA_H_ */
