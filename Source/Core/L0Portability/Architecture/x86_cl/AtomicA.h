@@ -1,7 +1,7 @@
 /**
  * @file AtomicA.h
  * @brief Header file for class AtomicA
- * @date 08/06/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
+
  * @details This header file contains the declaration of the class AtomicA
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef ATOMICA_H_
@@ -28,12 +27,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include <intrin.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -171,7 +170,7 @@ public:
 };
 
 /*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* ATOMICA_H_ */

@@ -1,8 +1,8 @@
 /**
  * @file Atomic.cpp
- * @brief Header file for class Atomic
- * @date 08/06/2015
- * @author Giuseppe
+ * @brief Source file for class Atomic
+ * @date 17/06/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
- * @details This header file contains the declaration of the class Atomic
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+
+ * @details This source file contains the definition of all the methods for
+ * the class Atomic (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
