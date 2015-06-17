@@ -1,7 +1,7 @@
 /**
- * @file Endianity.h
- * @brief Header file for class Endianity
- * @date 05/06/2015
+ * @file EndianityA.h
+ * @brief Header file for class EndianityA
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,15 +15,14 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
- * @details This header file contains the declaration of the class Endianity
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+
+ * @details This header file contains the declaration of the class EndianityA
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ENDIANITY_H_
-#define 		ENDIANITY_H_
+#ifndef ENDIANITYA_H_
+#define 		ENDIANITYA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -808,9 +807,10 @@ public:
     }
 
 };
+
 /*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* ENDIANITY_H_ */
+#endif /* ENDIANITYA_H_ */
 
