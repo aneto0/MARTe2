@@ -1,7 +1,7 @@
 /**
  * @file ThreadsDatabase.h
  * @brief Header file for class ThreadsDatabase
- * @date 11/06/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
+
  * @details This header file contains the declaration of the class ThreadsDatabase
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef THREADSDATABASE_H_
@@ -109,36 +108,19 @@ TID ThreadsDatabaseFind(const char *name);
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/** @brief A database of pointers to threadInformation objects.
+/**
+ * @brief A database of pointers to threadInformation objects.
  *
- * These methods allows to store and remove pointers to threadInformation objects. A new entry is automatically
+ * @details These methods allows to store and remove pointers to threadInformation objects. A new entry is automatically
  * add to the database when a thread begin its execution and it's removed from database automatically when the
  * thread terminate. An internal mutex could be implemented here to make consistent all operations on database between
  * threads. The database allows to threads the access to other threads informations.
  *
- * Most of the implementation is delegated to ThreadsDatabaseOS because there are OS which implements most
+ * @details Most of the implementation is delegated to ThreadsDatabaseOS because there are OS which implements most
  * of these functions natively.
  */
 class ThreadsDatabase {
-private:
 
-    /** Database memory granularity */
-    static const uint32 GRANULARITY = 64;
-
-    /** Fast ram semafore using Atomic TestAndSet*/
-    static int32 atomicSem;
-
-    /** Actual number of entries used */
-    static int32 nOfEntries;
-
-    /** Max number of entries currently possible */
-    static int maxNOfEntries;
-
-    /** Vector of ti pointers */
-    static ThreadInformation **entries;
-
-    /** Allocate more space in the database*/
-    static bool AllocMore();
 public:
     friend bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo);
     friend ThreadInformation *ThreadsDatabaseRemoveEntry(TID threadId);
@@ -159,27 +141,20 @@ public:
      * @param[in] ti is a pointer to the thread information.
      * @return true if ti is added to the database, false in case of failure.
      */
-    static bool NewEntry(ThreadInformation *ti) {
-        return ThreadsDatabaseNewEntry(ti);
-    }
-
+    static bool NewEntry(ThreadInformation *ti);
     /**
      * @brief Remove the entry from database searching by tid.
      * @param[in] tid is the id of the threads which must be removed from database.
      * @return true if the thread with tid as id is in the database and if it is removed without errors.
      */
-    static ThreadInformation *RemoveEntry(TID tid) {
-        return ThreadsDatabaseRemoveEntry(tid);
-    }
+    static ThreadInformation *RemoveEntry(TID tid);
 
     /**
      * @brief Get thread informations.
      * @param[in] tid is the id of the requested thread.
      * @return the ThreadInformation object related to the thread with tid as id.
      */
-    static ThreadInformation *GetThreadInformation(TID tid) {
-        return ThreadsDatabaseGetThreadInformation(tid);
-    }
+    static ThreadInformation *GetThreadInformation(TID tid);
 
     /**
      * @brief Lock a spinlock mutex to allow exclusive access to the database.
@@ -187,62 +162,68 @@ public:
      * @param[in] tt is the timeout.
      * @return false if the lock fails because the timeout.
      */
-    static bool Lock(TimeoutType tt = TTInfiniteWait) {
-        return ThreadsDatabaseLock(tt);
-    }
+    static bool Lock(TimeoutType tt = TTInfiniteWait);
 
     /**
      * @brief Unlock the internal mutex.
      * @return true.
      */
-    static bool UnLock() {
-        return ThreadsDatabaseUnLock();
-    }
+    static bool UnLock();
 
     /**
      * @brief Return the number of threads registered.
      * @return the number of threads currently saved in database.
      */
-    static int32 NumberOfThreads() {
-        return ThreadsDatabaseNumberOfThreads();
-    }
+    static int32 NumberOfThreads();
 
-    /** @brief Get the thread id of the n-th thread saved in database.
+    /**
+     * @brief Get the thread id of the n-th thread saved in database.
      * @param[in] n is the index of the requested thread.
-     * @return the tid of the requested thread. */
-    static TID GetThreadID(int32 n) {
-        return ThreadsDatabaseGetThreadID(n);
-    }
+     * @return the tid of the requested thread.
+     */
+    static TID GetThreadID(int32 n);
 
     /**
      * @brief Get the informations searching a thread by index or by id.
      * @param[out] tiCopy contains the thread informations in return.
      * @param[in] n is the index of the requested thread.
      * @param[in] tid is the tid of the requested thread.
-     * @return true if the requested thread is in the database. */
+     * @return true if the requested thread is in the database.
+     */
     static bool GetInfo(ThreadInformation &tiCopy,
                         int32 n = -1,
-                        TID tid = (TID) - 1) {
-        return ThreadsDatabaseGetInfo(tiCopy, n, tid);
-    }
+                        TID tid = (TID) - 1);
 
     /**
      * @brief Returns the id searching by name.
      * @param[in] name is the name of the thread.
      * @return the id of the first thread found with the name specified or 0 if it is not in the database.
      */
-    static TID Find(const char *name) {
-        return ThreadsDatabaseFind(name);
-    }
+    static TID Find(const char *name);
 
+private:
+
+    /** Database memory granularity */
+    static const uint32 GRANULARITY = 64;
+
+    /** Fast ram semafore using Atomic TestAndSet*/
+    static int32 atomicSem;
+
+    /** Actual number of entries used */
+    static int32 nOfEntries;
+
+    /** Max number of entries currently possible */
+    static int maxNOfEntries;
+
+    /** Vector of thread information pointers */
+    static ThreadInformation **entries;
+
+    /** Allocate more space in the database*/
+    static bool AllocMore();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* THREADSDATABASE_H_ */

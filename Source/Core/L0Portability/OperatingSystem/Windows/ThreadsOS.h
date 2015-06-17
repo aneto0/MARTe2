@@ -1,7 +1,7 @@
 /**
  * @file ThreadsOS.h
  * @brief Header file for class ThreadsOS
- * @date 09/06/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
+
  * @details This header file contains the declaration of the class ThreadsOS
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef THREADSOS_H_
@@ -155,10 +154,6 @@ public:
      * @param[in] threadId is the thread identifier.
      * @param[in] priorityClass is the desired class priority to assign to the thread.
      * @param[in] priorityLevel is the desired thread priority to assign to the thread.
-     *
-     * @details Windows thread provides seven priority thread levels here divided in two priority classes.
-     * The maximum priority for IDLE_PRIORITY_CLASS is 5 (THREAD_PRIORITY_HIGHEST).
-     * The maximum priority for REALTIME_PRIORITY_CLASS is 6(THREAD_PRIORITY_TIME_CRITICAL).
      */
     static void SetPriorityLevel(TID threadId,
                                  PriorityClassType priorityClass,
@@ -274,8 +269,10 @@ public:
 
     /**
      * @brief Called by Threads::IsAlive
-     * @param[in] threadId is the thread identifier.
+     *
      * @details A signal is used to know if the other thread is alive.
+     *
+     * @param[in] threadId is the thread identifier.
      */
     static bool IsAlive(TID threadId) {
         ThreadsDatabase::Lock();
@@ -402,12 +399,9 @@ public:
     }
 
 };
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* THREADSOS_H_ */

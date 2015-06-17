@@ -38,7 +38,8 @@ OBJSX=  Atomic.x \
 		Timer.x \
 		FastMath.x \
 		StringHelper.x \
-		StringPortable.x
+		StringPortable.x \
+		ThreadInformation.x
 
 PACKAGE=Core
 ROOT_DIR=../../..

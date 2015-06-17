@@ -1,7 +1,7 @@
 /**
  * @file Threads.cpp
- * @brief Header file for class Threads
- * @date 09/06/2015
+ * @brief Source file for class Threads
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
- * @details This header file contains the declaration of the class Threads
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+
+ * @details This source file contains the definition of all the methods for
+ * the class Threads (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
@@ -32,16 +31,6 @@
 
 #include "Threads.h"
 #include "ThreadsDatabase.h"
-
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,ThreadsOS.h)
-
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
 
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,ThreadsOS.h)
 
@@ -108,5 +97,64 @@ void ThreadsEndThread() {
 
 const char *ThreadsName(TID threadId) {
     return ThreadsOS::Name(threadId);
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+void Threads::SetPriorityLevel(TID tid,
+                               ThreadPriorityType level) {
+    ThreadsSetPriorityLevel(tid, level);
+}
+
+void Threads::SetPriorityClass(TID tid,
+                               PriorityClassType priorityClass) {
+    ThreadsSetPriorityClass(tid, priorityClass);
+}
+
+void Threads::EndThread() {
+    ThreadsEndThread();
+}
+
+TID Threads::BeginThread(ThreadFunctionType function,
+                         void *parameters,
+                         uint32 stacksize,
+                         const char *name,
+                         uint32 exceptionHandlerBehaviour,
+                         ProcessorType runOnCPUs) {
+    return ThreadsBeginThread(function, parameters, stacksize, name, exceptionHandlerBehaviour, runOnCPUs);
+}
+
+TID Threads::Id() {
+    return ThreadsId();
+}
+
+bool Threads::Kill(TID tid) {
+    return ThreadsKill(tid);
+}
+
+bool Threads::IsAlive(TID tid) {
+    return ThreadsIsAlive(tid);
+}
+
+const char *Threads::Name(TID tid) {
+    return ThreadsName(tid);
+}
+
+ThreadStateType Threads::GetState(TID tid) {
+    return ThreadsGetState(tid);
+}
+
+ThreadPriorityType Threads::GetPriorityLevel(TID tid) {
+    return ThreadsGetPriorityLevel(tid);
+}
+
+PriorityClassType Threads::GetPriorityClass(TID tid) {
+    return ThreadsGetPriorityClass(tid);
 }
 

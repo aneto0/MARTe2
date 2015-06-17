@@ -1,7 +1,7 @@
 /**
  * @file ThreadsOS.h
  * @brief Header file for class ThreadsOS
- * @date 09/06/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
+
  * @details This header file contains the declaration of the class ThreadsOS
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef THREADSOS_H_
@@ -167,6 +166,11 @@ public:
 
     /**
      * @brief Called by Threads::SetPriorityLevel.
+     *
+     * @details In linux the priority will vary between 33, i.e. priorityClass = IDLE_PRIORITY_CLASS
+     * and priorityLevel = PRIORITY_IDLE and 99, i.e. priorityClass = REAL_TIME_PRIORITY_CLASS
+     * and priorityLevel = PRIORITY_TIME_CRITICAL
+     *
      * @param[in] threadId is the thread identifier.
      * @param[in] priorityClass is the desired class priority to assign to the thread.
      * @param[in] priorityLevel is the desired thread priority to assign to the thread.
@@ -252,8 +256,10 @@ public:
 
     /**
      * @brief Called by Threads::IsAlive
-     * @param[in] threadId is the thread identifier.
+     *
      * @details A signal is used to know if the other thread is alive.
+     *
+     * @param[in] threadId is the thread identifier.
      */
     static bool IsAlive(TID threadId) {
 
@@ -357,12 +363,10 @@ public:
         return NULL;
     }
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
-/*---------------------------------------------------------------------------*/
-
 #endif /* THREADSOS_H_ */
+

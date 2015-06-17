@@ -1,7 +1,7 @@
 /**
  * @file SleepOS.h
  * @brief Header file for class SleepOS
- * @date 10/06/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
+
  * @details This header file contains the declaration of the class SleepOS
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef SLEEPOS_H_
@@ -37,9 +36,6 @@
 
 #include "../../HighResolutionTimer.h"
 
-#ifndef LINUX_SLEEP_NO_MORE_MIN_USEC_TIME
-#define LINUX_SLEEP_NO_MORE_MIN_USEC_TIME 5000
-#endif
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -96,7 +92,7 @@ public:
      */
     static inline void NoMore(double sec) {
         int64 secCounts = (int64) (sec * HighResolutionTimer::Frequency());
-        sec -= LINUX_SLEEP_NO_MORE_MIN_USEC_TIME * 1e-6;
+        sec -= linuxSleepNoMoreMinUsecTime * 1e-6;
         int64 start = HighResolutionTimer::Counter();
         if (sec > 0) {
             struct timespec timesValues;
@@ -208,14 +204,14 @@ public:
         return (int32) time((time_t *) NULL);
     }
 
+private:
+
+    static const uint32 linuxSleepNoMoreMinUsecTime = 5000;
+
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* SLEEPOS_H_ */

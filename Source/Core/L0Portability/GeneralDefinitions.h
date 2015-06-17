@@ -1,35 +1,28 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for 
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file GeneralDefinitions.h
+ * @brief Header file for class GeneralDefinitions
+ * @date 17/06/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they 
- will be approved by the European Commission - subsequent  
- versions of the EUPL (the "Licence"); 
- * You may not use this work except in compliance with the 
- Licence. 
- * You may obtain a copy of the Licence at: 
- *  
- * http://ec.europa.eu/idabc/eupl
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in 
- writing, software distributed under the Licence is 
- distributed on an "AS IS" basis, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
- express or implied. 
- * See the Licence  
- permissions and limitations under the Licence. 
- *
- * $Id: Endianity.h 3 2012-01-15 16:26:07Z aneto $
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
 
-/** 
- * @file
- * @brief Definition of the basic properties and types.
+ * @details This header file contains the declaration of the class GeneralDefinitions
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GENERAL_DEFINITIONS_H
-#define GENERAL_DEFINITIONS_H
+#ifndef GENERALDEFINITIONS_H_
+#define 		GENERALDEFINITIONS_H_
 
 #define QUOTE(x) QUOTE_1(x)
 #define QUOTE_1(x) #x
@@ -39,7 +32,9 @@
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,GeneralDefinitionsA.h)
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,GeneralDefinitionsOS.h)
 
-enum Colours {
+
+/** List of colors */
+typedef enum {
     Black = 0,
     Red = 1,
     Green = 2,
@@ -57,13 +52,9 @@ enum Colours {
     DarkCyan = 14,
     DarkGrey = 15
 
-};
+}Colours;
 
-
-
-
-
-/** Large enought to store a pointer*/
+/** Large enough to store a pointer*/
 #ifdef __LP64__
 typedef unsigned long intptr;
 #elif defined __ILP64__
@@ -84,5 +75,5 @@ typedef unsigned long intptr;
 /** Builds a 64 bit field with two 32 bit values. */
 #define load64(x,a,b)  ((uint32 *)&x)[0] = b; ((uint32 *)&x)[1] = a;
 
-#endif
+#endif /* GENERALDEFINITIONS_H_ */
 

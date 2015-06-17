@@ -1,7 +1,7 @@
 /**
  * @file ThreadInformation.h
  * @brief Header file for class ThreadInformation
- * @date 11/06/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
+
  * @details This header file contains the declaration of the class ThreadInformation
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef THREADINFORMATION_H_
@@ -183,19 +182,7 @@ typedef void (*ThreadFunctionType)(void *parameters);
  */
 
 class ThreadInformation {
-protected:
-    /** The user thread entry point. */
-    ThreadFunctionType userThreadFunction;
 
-    /** A pointer to a structure containing thread data. */
-    void *userData;
-
-    /** The name of the thread. */
-    const char *name;
-
-    /** enables the operating system to perform some housekeeping
-     * before releasing the thread to the user code. */
-    EventSem startThreadSynchSem;
 
 public:
     /** The thread identifier */
@@ -210,18 +197,7 @@ public:
     /**
      * @brief Default constructor.
      */
-    ThreadInformation() {
-        userThreadFunction = NULL;
-        userData = NULL;
-        name = NULL;
-        threadId = (TID) 0;
-        priorityClass = PRIORITY_CLASS_UNKNOWN;
-        priorityLevel = PRIORITY_UNKNOWN;
-        startThreadSynchSem.Create();
-        startThreadSynchSem.Reset();
-    }
-
-
+    ThreadInformation();
 
     /**
      * @brief Constructor.
@@ -231,80 +207,38 @@ public:
      */
     ThreadInformation(ThreadFunctionType userThreadFunction,
                       void *userData,
-                      const char *name) {
-        this->userThreadFunction = userThreadFunction;
-        this->userData = userData;
-        if (name != NULL) {
-            this->name = MemoryStringDup(name);
-        }
-        else {
-            this->name = MemoryStringDup("Unknown");
-        }
-        threadId = (TID) 0;
-        priorityClass = PRIORITY_CLASS_UNKNOWN;
-        priorityLevel = PRIORITY_UNKNOWN;
-        startThreadSynchSem.Create();
-        startThreadSynchSem.Reset();
-    }
-
-
+                      const char *name);
 
     /**
      * @brief Copy constructor.
      * @param[in] threadInfo contains informations to initialize this object.
      */
-    ThreadInformation(const ThreadInformation &threadInfo) {
-        userThreadFunction = threadInfo.userThreadFunction;
-        userData = threadInfo.userData;
-        name = MemoryStringDup(threadInfo.name);
-        threadId = threadInfo.threadId;
-        priorityClass = threadInfo.priorityClass;
-        priorityLevel = threadInfo.priorityLevel;
-        startThreadSynchSem.Create();
-        startThreadSynchSem.Reset();
-    }
+    ThreadInformation(const ThreadInformation &threadInfo);
 
     /**
      * @brief Equal operator to copy a thread info in this.
      * @param[in] threadInfo contains informations to initialize this object.
      */
-    void operator=(const ThreadInformation &threadInfo) {
-        userThreadFunction = threadInfo.userThreadFunction;
-        userData = threadInfo.userData;
-        name = MemoryStringDup(threadInfo.name);
-        threadId = threadInfo.threadId;
-        priorityClass = threadInfo.priorityClass;
-        priorityLevel = threadInfo.priorityLevel;
-    }
-
-
+    void operator=(const ThreadInformation &threadInfo);
 
     /**
      * @brief Destructor.
      * @details It just frees the memory allocated for the name string.
      */
-    virtual ~ThreadInformation() {
-        MemoryFree((void *&) name);
-        startThreadSynchSem.Close();
-    }
-    ;
+    virtual ~ThreadInformation();
+
 
     /**
      * @brief Launch the function of the thread.
      * The function representing the thread. This is the most basic implementation.
      */
-    virtual void UserThreadFunction() {
-        if (userThreadFunction != NULL)
-            userThreadFunction(userData);
-    }
+    virtual void UserThreadFunction();
 
     /**
      * @brief Get the name of the thread.
      * @return A reference to the dynamically allocated string representing the name of the thread.
      */
-    virtual const char *ThreadName() {
-        return name;
-    }
+    virtual const char *ThreadName();
 
     /**
      * @brief Call the thread function with an exception handler protection.
@@ -314,24 +248,32 @@ public:
      */
     bool ExceptionProtectedExecute(ThreadFunctionType userFunction,
                                    void *userData,
-                                   ExceptionHandler *eh) {
-        userFunction(userData);
-        return True;
-    }
+                                   ExceptionHandler *eh);
 
     /**
      *  @brief The thread waits a post condition.
      */
-    inline void ThreadWait() {
-        startThreadSynchSem.Wait();
-    }
+    inline void ThreadWait();
 
     /**
      * @brief Stop waiting condition.
      */
-    inline void ThreadPost() {
-        startThreadSynchSem.Post();
-    }
+    inline void ThreadPost();
+
+
+protected:
+    /** The user thread entry point. */
+    ThreadFunctionType userThreadFunction;
+
+    /** A pointer to a structure containing thread data. */
+    void *userData;
+
+    /** The name of the thread. */
+    const char *name;
+
+    /** enables the operating system to perform some housekeeping
+     * before releasing the thread to the user code. */
+    EventSem startThreadSynchSem;
 };
 
 /**
@@ -339,7 +281,7 @@ public:
  * @param[in] userFunction The thread entry point.
  * @param[in] userData A pointer to data that can be passed to the thread.
  * @param[in] threadName The thread name.
- * @param[in] exceptionHandlerAction Describes the behaviour of threads when an exception occurs.
+ * @param[in] exceptionHandlerAction Describes the behavior of threads when an exception occurs.
  */
 typedef ThreadInformation *(*ThreadInformationConstructorType)(ThreadFunctionType userFunction,
                                                                void *userData,
@@ -350,9 +292,16 @@ typedef ThreadInformation *(*ThreadInformationConstructorType)(ThreadFunctionTyp
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
-/*---------------------------------------------------------------------------*/
+void ThreadInformation::ThreadWait() {
+    startThreadSynchSem.Wait();
+}
+
+/**
+ * @brief Stop waiting condition.
+ */
+void ThreadInformation::ThreadPost() {
+    startThreadSynchSem.Post();
+}
 
 #endif /* THREADINFORMATION_H_ */
 

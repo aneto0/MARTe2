@@ -1,7 +1,7 @@
 /**
  * @file SleepOS.h
  * @brief Header file for class SleepOS
- * @date 10/06/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
+
  * @details This header file contains the declaration of the class SleepOS
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef SLEEPOS_H_
@@ -36,9 +35,6 @@
 
 #include "../../HighResolutionTimer.h"
 
-#ifndef WIN_SLEEP_FREQ
-#define WIN_SLEEP_FREQ 1000
-#endif
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -60,7 +56,7 @@ public:
      * @param[in] sec defines the minimum number of seconds to sleep.
      */
     static inline void AtLeast(double sec) {
-        int ticks = (int) (WIN_SLEEP_FREQ * sec + 0.9999);
+        int ticks = (int) (winSleepFreq * sec + 0.9999);
         if (ticks < 0)
             return;
 
@@ -73,7 +69,7 @@ public:
      * @param[in] sec defines the maximum number of seconds to sleep.
      */
     static inline void NoMore(double sec) {
-        int ticks = (int) (WIN_SLEEP_FREQ * sec);
+        int ticks = (int) (winSleepFreq * sec);
         if (ticks < 0)
             return;
 
@@ -132,14 +128,12 @@ public:
         return (int32) time((time_t *) NULL);
     }
 
-};
+private:
+    static const uint32 winSleepFreq = 1000;
 
+};
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* SLEEPOS_H_ */

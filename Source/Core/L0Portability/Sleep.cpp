@@ -1,7 +1,7 @@
 /**
  * @file Sleep.cpp
- * @brief Header file for class Sleep
- * @date 09/06/2015
+ * @brief Source file for class Sleep
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
- * @details This header file contains the declaration of the class Sleep
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+
+ * @details This source file contains the definition of all the methods for
+ * the class Sleep (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
@@ -32,6 +31,42 @@
 
 #include "Sleep.h"
 
+int GetDateSeconds() {
+    return SleepOS::GetDateSeconds();
+}
+
+void SleepAtLeast(double sec) {
+    SleepOS::AtLeast(sec);
+}
+
+void SleepNoMore(double sec) {
+    SleepOS::NoMore(sec);
+}
+
+void SleepSecDouble(double sec) {
+    SleepOS::SecDouble(sec);
+}
+
+void SleepSec(float sec) {
+    SleepOS::SecFloat(sec);
+}
+
+void SleepMSec(int32 msec) {
+    SleepOS::MSec(msec);
+}
+
+void SleepBusy(double sec) {
+    int64 startCounter = HighResolutionTimer::Counter();
+    int64 sleepUntil = startCounter + (int64) (sec * HighResolutionTimer::Frequency());
+    while (HighResolutionTimer::Counter() < sleepUntil) {
+    }
+}
+
+void SleepSemiBusy(double totalSleepSec,
+                   double nonBusySleepSec) {
+    SleepOS::SemiBusy(totalSleepSec, nonBusySleepSec);
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,7 +75,35 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-int GetDateSeconds() {
-    return SleepOS::GetDateSeconds();
+int Sleep::GetDateSeconds() {
+    return ::GetDateSeconds();
 }
 
+void Sleep::AtLeast(double sec) {
+    SleepAtLeast(sec);
+}
+
+void Sleep::NoMore(double sec) {
+    SleepNoMore(sec);
+}
+
+void Sleep::Sec(double sec) {
+    SleepSecDouble(sec);
+}
+
+void Sleep::Sec(float sec) {
+    SleepSec(sec);
+}
+
+void Sleep::MSec(int32 msec) {
+    SleepMSec(msec);
+}
+
+void Sleep::Busy(double sec) {
+    SleepBusy(sec);
+}
+
+void Sleep::SemiBusy(double totalSleepSec,
+                     double nonBusySleepSec) {
+    SleepSemiBusy(totalSleepSec, nonBusySleepSec);
+}
