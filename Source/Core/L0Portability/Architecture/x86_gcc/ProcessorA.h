@@ -36,20 +36,14 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief Basically a global variable used to store the processor vendor
- */
-class ProcessorId {
-public:
-    static char processorVendorId[13];
-};
-
-char ProcessorId::processorVendorId[13]={0};
 
 /**
  * @brief Platform dependent functions to get the processor's informations.
  */
 class ProcessorA {
+
+    static char processorVendorId[13];
+
 
 public:
 
@@ -114,12 +108,15 @@ public:
     static const char *VendorId() {
 
         uint32 eax = 0;
-        CPUID(0, eax, (uint32 &) ProcessorId::processorVendorId[0], (uint32 &) ProcessorId::processorVendorId[8], (uint32 &) ProcessorId::processorVendorId[4]);
+        CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
         ProcessorId::processorVendorId[12] = 0;
-        return &(ProcessorId::processorVendorId[0]);
+        return &(processorVendorId[0]);
     }
 
 };
+
+char ProcessorA::processorVendorId[13]={0};
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
