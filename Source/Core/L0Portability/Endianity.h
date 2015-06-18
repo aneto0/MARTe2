@@ -1,7 +1,7 @@
 /**
  * @file Endianity.h
  * @brief Header file for class Endianity
- * @date 17/giu/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -52,15 +52,7 @@
  * are drivers and network interfaces.
  */
 class Endianity {
-private:
-    /**
-     * Set to True when the Endianity::Type() is called for the first time
-     */
-    static bool endianityTypeChecked;
-    /**
-     * The target machine endianity
-     */
-    static uint8 endianityType;
+
 public:
 
     /**
@@ -559,6 +551,16 @@ public:
      */
     static inline void MemCopyToLittleEndian(int16 *dest,const int16 *src,uint32 size);
 
+private:
+    /**
+     * Set to True when the Endianity::Type() is called for the first time
+     */
+    static bool endianityTypeChecked;
+    /**
+     * The target machine endianity
+     */
+    static uint8 endianityType;
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -893,6 +895,7 @@ void Endianity::MemCopyToLittleEndian(int16 *dest,
                                       const int16 *src,
                                       uint32 size) {
     EndianityA::MemCopyToLittleEndianInt16(dest, src, size);
+
 }
 
 #endif /* ENDIANITY_H_ */
