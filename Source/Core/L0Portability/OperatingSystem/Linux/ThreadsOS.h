@@ -345,7 +345,7 @@ public:
 
     /**
      * @brief Called by Threads::Name
-     * @param threadId is the thread identifier.
+     * @param[in] threadId is the thread identifier.
      * @return the name of the specified thread.
      */
     static const char* Name(TID threadId) {
