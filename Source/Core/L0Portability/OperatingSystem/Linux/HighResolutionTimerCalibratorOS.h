@@ -94,7 +94,11 @@ public:
         HRTmSecTics = HRTFrequency / 1000;
     }
 
-    //Get the current timestamp
+    /**
+     * @brief Get the current time stamp.
+     * @param[in] timeStamp is a structure which contains the time stamp fields.
+     * @return true if successful, false otherwise.
+     */
     bool GetTimeStamp(TimeValues &timeStamp) {
 
         uint64 ticks = HighResolutionTimerA::Read64() - initialTicks;
@@ -119,12 +123,12 @@ public:
         if (tValues == NULL) {
             return False;
         }
-        timeStamp.seconds = tValues.tm_sec;
-        timeStamp.minutes = tValues.tm_min;
-        timeStamp.hours = tValues.tm_hour;
-        timeStamp.days = tValues.tm_mday;
-        timeStamp.month = tValues.tm_mon;
-        timeStamp.year = tValues.tm_year;
+        timeStamp.seconds = tValues->tm_sec;
+        timeStamp.minutes = tValues->tm_min;
+        timeStamp.hours = tValues->tm_hour;
+        timeStamp.days = tValues->tm_mday;
+        timeStamp.month = tValues->tm_mon;
+        timeStamp.year = tValues->tm_year;
         return True;
     }
 

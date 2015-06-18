@@ -95,7 +95,12 @@ public:
         HRTPeriod = 1.0 / (int64) HRTFrequency;
         HRTmSecTics = HRTFrequency / 1000;
     }
-    //Get the current timestamp
+
+    /**
+     * @brief Get the current time stamp.
+     * @param[in] timeStamp is a structure which contains the time stamp fields.
+     * @return true if successful, false otherwise.
+     */
     bool GetTimeStamp(TimeValues &timeStamp) {
 
         uint64 ticks = HighResolutionTimerA::Read64() - initialTicks;
@@ -116,7 +121,7 @@ public:
 
         //fill the time structure
         struct tm tValues;
-        if(localtime_s(&tValues, (const time_t*) &sec) != 0){
+        if (localtime_s(&tValues, (const time_t*) &sec) != 0) {
             return False;
         }
         timeStamp.seconds = tValues.tm_sec;
