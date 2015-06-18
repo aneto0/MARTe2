@@ -38,8 +38,8 @@ typedef struct termio HANDLE_CONSOLE;
 /** Defines the default stack size for a thread. */
 #define THREADS_DEFAULT_STACKSIZE 32768
 
-
-
+/** Defines the maximum number of elements in the memory database */
+#define MAX_NO_OF_MEMORY_MONITORS 256
 
 		#endif /* GENERALDEFINITIONSOS_H_ */
 	
