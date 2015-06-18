@@ -24,15 +24,15 @@
 #ifndef ATOMIC_H_
 #define 		ATOMIC_H_
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "GeneralDefinitions.h"
+
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,AtomicA.h)
 
 /*---------------------------------------------------------------------------*/
@@ -56,7 +56,8 @@ public:
     /**
      * @brief Atomically increment a 32 bit integer in memory.
      * @param[in,out] p is the pointer to the 32 bit variable to increment.
-     * @pre p != NULL. */
+     * @pre p != NULL.
+     */
     static inline void Increment (volatile int32 *p );
 
     /**
@@ -136,7 +137,7 @@ public:
     /**
      * @brief Atomic subtraction.
      * @param[in,out] p is the pointer to the variable which must be decremented.
-     * @param value is the value to subtract to *p.
+     * @param[in] value is the value to subtract to *p.
      * @pre p != NULL.
      */
     static inline void Sub (volatile int32 *p, int32 value);
