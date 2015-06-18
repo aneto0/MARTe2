@@ -1,7 +1,7 @@
 /**
- * @file HighResolutionTimer.cpp
- * @brief Header file for class HighResolutionTimer
- * @date 11/06/2015
+ * @file HighResolutionTime.cpp
+ * @brief Source file for class HighResolutionTime
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,13 +15,11 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
- * @details This header file contains the declaration of the class HighResolutionTimer
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
- */
 
+ * @details This source file contains the definition of all the methods for
+ * the class HighResolutionTime (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -36,23 +34,24 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-static HighResolutionTimerCalibratorOS highResolutionTimerCalibratorOS;
+HighResolutionTimerCalibratorOS HighResolutionTimer::highResolutionTimerCalibratorOS;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-/** the frequency of the HRT Clock. */
 int64 HighResolutionTimerFrequency() {
-    return highResolutionTimerCalibratorOS.HRTFrequency;
+    return HighResolutionTimer::highResolutionTimerCalibratorOS.HRTFrequency;
 }
 
-/** the HRT Clock period in seconds */
 double HighResolutionTimerPeriod() {
-    return highResolutionTimerCalibratorOS.HRTPeriod;
+    return HighResolutionTimer::highResolutionTimerCalibratorOS.HRTPeriod;
 }
 
-/** how many ticks in a msec for the HRT */
 uint32 HighResolutionTimerMSecTics() {
-    return highResolutionTimerCalibratorOS.HRTmSecTics;
+    return HighResolutionTimer::highResolutionTimerCalibratorOS.HRTmSecTics;
+}
+
+bool HighResolutionTimerGetTimeStamp(TimeValues &date) {
+    return HighResolutionTimer::highResolutionTimerCalibratorOS.GetTimeStamp(date);
 }

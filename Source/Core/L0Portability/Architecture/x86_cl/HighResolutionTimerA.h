@@ -1,7 +1,7 @@
 /**
  * @file HighResolutionTimerA.h
  * @brief Header file for class HighResolutionTimerA
- * @date 11/06/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
+
  * @details This header file contains the declaration of the class HighResolutionTimerA
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef HIGHRESOLUTIONTIMERA_H_
@@ -52,10 +51,7 @@ public:
     static inline uint32 Read32() {
 
         return (uint32) __rdtsc();
-        /*__asm {
-         _emit 0x0F
-         _emit 0x31
-         }*/
+
     }
 
     /**
@@ -65,20 +61,13 @@ public:
     static inline int64 Read64() {
 
         return (int64) __rdtsc();
-        /*__asm {
-         _emit 0x0F
-         _emit 0x31
-         }*/
+
     }
 
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* HIGHRESOLUTIONTIMERA_H_ */

@@ -1,7 +1,7 @@
 /**
  * @file HighResolutionTimerCalibratorOS.h
  * @brief Header file for class HighResolutionTimerCalibratorOS
- * @date 11/06/2015
+ * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -15,11 +15,10 @@
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
- *
+
  * @details This header file contains the declaration of the class HighResolutionTimerCalibratorOS
- * (all of its public, protected and private members). It may also include
- * definitions for inline and friend methods which need to be visible to
- * the compiler.
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef HIGHRESOLUTIONTIMERCALIBRATOROS_H_
@@ -28,7 +27,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#include <windows.h>
+#include <Windows.h>
+#include <time.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -52,8 +52,24 @@ public:
     /** Time between a tick and the other in seconds. */
     double HRTPeriod;
 
+    /** Contains the seconds and microseconds from epoch */
+    struct timeval initialTime;
+
+    /** Used to save the number of ticks at the calibration moment. */
+    uint64 initialTicks;
+
     /** @brief Get the frequency and the period of the cpu clock. */
     HighResolutionTimerCalibratorOS() {
+
+        time((time_t *) &initialTime.tv_sec);
+
+        //The precision is at the millisecond!
+        SYSTEMTIME forMs;
+        GetSystemTime(&forMs);
+        initialTime.tv_usec = forMs.wMilliseconds * 1000;
+
+        initialTicks = HighResolutionTimerA::Read64();
+
         uint64 tt0, tt1, tt2, tt3, tt4, tt5, dTa, dTb;
         dTa = 0;
         dTb = 0;
@@ -79,13 +95,45 @@ public:
         HRTPeriod = 1.0 / (int64) HRTFrequency;
         HRTmSecTics = HRTFrequency / 1000;
     }
+    //Get the current timestamp
+    bool GetTimeStamp(TimeValues &timeStamp) {
+
+        uint64 ticks = HighResolutionTimerA::Read64() - initialTicks;
+
+        //Use HRT
+        uint32 secHRT = (uint32) (ticks * HRTPeriod);
+        uint32 uSecHRT = (uint32) ((ticks * HRTPeriod - secHRT) * 1e6);
+
+        //Add HRT to the the initial time saved in the calibration.
+        time_t sec = (time_t)(initialTime.tv_sec + secHRT);
+        timeStamp.microseconds = initialTime.tv_usec + uSecHRT;
+
+        //Check the overflow
+        if (timeStamp.microseconds >= 1e6) {
+            timeStamp.microseconds -= 1e6;
+            sec++;
+        }
+
+        //fill the time structure
+        struct tm tValues;
+        if(localtime_s(&tValues, (const time_t*) &sec) != 0){
+            return False;
+        }
+        timeStamp.seconds = tValues.tm_sec;
+        timeStamp.minutes = tValues.tm_min;
+        timeStamp.hours = tValues.tm_hour;
+        timeStamp.days = tValues.tm_mday;
+        timeStamp.month = tValues.tm_mon;
+        timeStamp.year = tValues.tm_year;
+        return True;
+    }
+
+private:
+    static const uint32 LINUX_CPUINFO_BUFFER_SIZE = 1023;
 };
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Friend method definitions                          */
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* HIGHRESOLUTIONTIMERCALIBRATOROS_H_ */
