@@ -55,7 +55,7 @@ void ProcessorTypeSetDefaultCPUs(uint32 defaultMask);
  * @brief Defines the processors where a particular task should run.
  *
  * @details Cpus are setted by a mask of bits (32 bits max => 32 processors max).
- * System dependent calls to get the used cpu could be found in ProcessorTypeOS.h
+ * System dependent calls to get the used cpus could be found in ProcessorTypeOS.h
  */
 class ProcessorType {
 public:
@@ -132,7 +132,8 @@ public:
     /**
      * @brief Compares this cpu mask with an input mask.
      * @param[in] mask is the mask which will be compared with this cpu mask.
-     * @return true if masks are equal. */
+     * @return true if masks are equal.
+     */
     inline bool operator==(const uint32 mask) const;
 
     /**

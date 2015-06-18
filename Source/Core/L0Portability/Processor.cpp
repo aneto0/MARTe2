@@ -41,22 +41,18 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-/** @see ProcessorA::Family() */
 uint32 ProcessorFamily() {
     return ProcessorA::Family();
 }
 
-/** @see Processor::VendorId(). */
 const char *ProcessorVendorId() {
     return ProcessorA::VendorId();
 }
 
-/** @see Processor::Model(). */
 uint32 ProcessorModel() {
     return ProcessorA::Model();
 }
 
-/** @see Processor::ProcessorsAvaiable(). */
 uint32 ProcessorsAvailable() {
     return ProcessorOS::Available();
 }

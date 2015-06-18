@@ -36,14 +36,10 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 /**
  * @brief Platform dependent functions to get the processor's informations.
  */
 class ProcessorA {
-
-    static char processorVendorId[13];
-
 
 public:
 
@@ -109,14 +105,18 @@ public:
 
         uint32 eax = 0;
         CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
-        ProcessorId::processorVendorId[12] = 0;
+        processorVendorId[12] = 0;
         return &(processorVendorId[0]);
     }
 
+private:
+
+    /** Buffer used to store the processor identifier */
+    static char processorVendorId[13];
+
 };
 
-char ProcessorA::processorVendorId[13]={0};
-
+char ProcessorA::processorVendorId[13] = { 0 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

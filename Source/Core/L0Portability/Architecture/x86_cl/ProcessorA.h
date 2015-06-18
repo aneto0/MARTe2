@@ -36,17 +36,10 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
-
 /**
  * @brief Platform dependent functions to get the processor's informations.
  */
 class ProcessorA {
-
-private:
-
-    static char processorVendorId[13];
-
 
 public:
 
@@ -118,10 +111,14 @@ public:
         return &(processorVendorId[0]);
     }
 
+private:
+
+    /** Buffer used to store the processor identifier */
+    static char processorVendorId[13];
+
 };
 
-
-char ProcessorA::processorVendorId[13]={0};
+char ProcessorA::processorVendorId[13] = { 0 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

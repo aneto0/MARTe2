@@ -57,10 +57,7 @@ ProcessorType::ProcessorType(const uint32 cpuMask) {
     processorMask = cpuMask;
 }
 
-/**
- * @brief Constructor from another ProcessorType object
- * @param[in] pt is the object to be copied in this.
- */
+
 ProcessorType::ProcessorType(const ProcessorType &pt) {
     processorMask = pt.processorMask;
 }
