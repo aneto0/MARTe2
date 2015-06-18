@@ -39,8 +39,9 @@ OBJSX=  Atomic.x \
 		FastMath.x \
 		StringHelper.x \
 		StringPortable.x \
-		ThreadInformation.x
-
+		ThreadInformation.x \
+		MutexSem.x \
+		EventSem.x	
 PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
