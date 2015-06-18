@@ -37,7 +37,6 @@
 #include "Sleep.h"
 #include "StringHelper.h"
 
-// create new TDB entry associated to the threadInfo threadId = 0 --> current TID
 bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo) {
     if (threadInfo == NULL) {
         return False;
@@ -76,7 +75,6 @@ bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo) {
 
 }
 
-// destroy TDB entry
 ThreadInformation *ThreadsDatabaseRemoveEntry(TID threadId) {
     // search for empty space staring from guess
     int index = 0;
@@ -104,7 +102,6 @@ ThreadInformation *ThreadsDatabaseRemoveEntry(TID threadId) {
 
 }
 
-// access private thread information on timeout returns NULL threadId = 0 --> current TID */
 ThreadInformation *ThreadsDatabaseGetThreadInformation(TID threadId) {
     // search for empty space staring from guess
     int32 index = 0;
@@ -122,8 +119,7 @@ ThreadInformation *ThreadsDatabaseGetThreadInformation(TID threadId) {
     return NULL;
 }
 
-// global functions
-// must be locked before accessing TDB information
+
 bool ThreadsDatabaseLock(TimeoutType tt) {
     int64 ticksStop = tt.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
@@ -140,18 +136,15 @@ bool ThreadsDatabaseLock(TimeoutType tt) {
     return True;
 }
 
-// must be unlocked after accessing TDB information
 bool ThreadsDatabaseUnLock() {
     ThreadsDatabase::atomicSem = 0;
     return True;
 }
 
-// how many threads are registered value meaningful only between Lock/UnLock
 int32 ThreadsDatabaseNumberOfThreads() {
     return ThreadsDatabase::nOfEntries;
 }
 
-// the TID of thread #n value meaningful only between Lock/UnLock
 TID ThreadsDatabaseGetThreadID(int32 n) {
 
     if ((n < 0) || (n >= ThreadsDatabase::nOfEntries)) {
@@ -175,7 +168,6 @@ TID ThreadsDatabaseGetThreadID(int32 n) {
     return 0;
 }
 
-// retrieves information about a thread identified either by name or TID or index to be called between Lock/UnLock
 bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
                             int32 n,
                             TID threadId) {

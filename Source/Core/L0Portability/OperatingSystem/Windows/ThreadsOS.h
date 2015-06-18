@@ -34,6 +34,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+
 #define __thread_decl
 /**
  * @brief Callback thread function
@@ -88,6 +89,15 @@ ThreadInformation * threadInitialisationInterfaceConstructor(ThreadFunctionType 
     return new ThreadInformation(userThreadFunction, userData, threadName);
 }
 
+
+/**
+ * @brief Executes the function specified.
+ * @param[in] userFunction is the function to be called.
+ * @param[in] userData is the function argument.
+ * @param[in] ehi is the exception handler.
+ * @return true.
+ * @see ThreadInformation::ExceptionProtectedExecute.
+ */
 bool ThreadProtectedExecute(ThreadFunctionType userFunction,
                             void *userData,
                             ExceptionHandler *ehi) {
@@ -384,7 +394,7 @@ public:
 
     /**
      * @brief Called by Threads::Name
-     * @param threadId is the thread identifier.
+     * @param[in] threadId is the thread identifier.
      * @return the name of the specified thread.
      */
     static const char* Name(TID threadId) {

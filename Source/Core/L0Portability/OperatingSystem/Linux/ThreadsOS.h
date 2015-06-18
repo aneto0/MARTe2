@@ -174,10 +174,6 @@ public:
      * @param[in] threadId is the thread identifier.
      * @param[in] priorityClass is the desired class priority to assign to the thread.
      * @param[in] priorityLevel is the desired thread priority to assign to the thread.
-     *
-     * @details In linux the priority will vary between 33, i.e. priorityClass = IDLE_PRIORITY_CLASS
-     * and priorityLevel = PRIORITY_IDLE and 99, i.e. priorityClass = REAL_TIME_PRIORITY_CLASS
-     * and priorityLevel = PRIORITY_TIME_CRITICAL
      */
     static void SetPriorityLevel(TID threadId,
                                  PriorityClassType priorityClass,

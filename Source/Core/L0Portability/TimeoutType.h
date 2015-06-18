@@ -41,7 +41,6 @@
 /** max value for the delay that is treated  */
 const uint32 TTMaxDelay = 0xFFFF0000;
 
-/** type to indicate specific wait in the timeout parameters */
 
 /**
  * @brief Functions for timeout definition.
@@ -62,9 +61,9 @@ public:
      * @brief Constructor from integer.
      * @param[in] msecs is the time in milliseconds.
      */
-    TimeoutType(uint32 msecs = (uint32) 0xFFFFFFFF) {
-        msecTimeout = msecs;
-    }
+    inline TimeoutType(uint32 msecs = (uint32) 0xFFFFFFFF);
+
+
     /**
      * @brief Set timeout from float.
      * @param[in] secs is the time in seconds.
@@ -123,15 +122,18 @@ const TimeoutType TTNoWait((uint32) 0x00000000);
 /** Infinite wait Timeout */
 const TimeoutType TTInfiniteWait((uint32) 0xFFFFFFFF);
 
-/** Used in semafore protected codes to specify to bypass the check! */
+/** Used in semaphore protected codes to specify to bypass the check! */
 const TimeoutType TTUnProtected((uint32) 0xFFFFFFFD);
 
-/** Used in semafore protected codes to specify to bypass the check! */
+/** Used in semaphore protected codes to specify to bypass the check! */
 const TimeoutType TTDefault((uint32) 0xFFFFFFFE);
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+TimeoutType::TimeoutType(uint32 msecs) {
+    msecTimeout = msecs;
+}
 
 void TimeoutType::SetTimeOutSec(double secs) {
     msecTimeout = (uint32) (secs * 1000.0);
