@@ -29,7 +29,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HighResolutionTimer.h"
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,HighResolutionTimerCalibratorOS.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

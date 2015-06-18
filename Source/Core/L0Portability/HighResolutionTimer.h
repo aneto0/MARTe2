@@ -34,8 +34,6 @@
 #include "GeneralDefinitions.h"
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
 
-class HighResolutionTimerCalibratorOS;
-
 /**
  * @brief A structure containing the time stamp informations.
  */
@@ -62,6 +60,8 @@ struct TimeValues {
     /** year since 1990 */
     uint32 year;
 };
+
+#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,HighResolutionTimerCalibratorOS.h)
 
 extern "C" {
 /**

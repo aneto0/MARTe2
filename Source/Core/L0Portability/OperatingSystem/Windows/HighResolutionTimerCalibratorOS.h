@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "../../HighResolutionTimer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -74,13 +73,13 @@ public:
         dTa = 0;
         dTb = 0;
         for (int i = 0; i < 50; i++) {
-            tt2 = HighResolutionTimer::Counter();
+            tt2 = HighResolutionTimerA::Read64();
             QueryPerformanceCounter((LARGE_INTEGER *) &tt0);
-            tt3 = tt4 = HighResolutionTimer::Counter();
+            tt3 = tt4 = HighResolutionTimerA::Read64();
             while ((tt4 - tt3) < 100000)
-                tt4 = HighResolutionTimer::Counter(); // .5 ms at 200 Mhz
+                tt4 = HighResolutionTimerA::Read64(); // .5 ms at 200 Mhz
             QueryPerformanceCounter((LARGE_INTEGER *) &tt1);
-            tt5 = HighResolutionTimer::Counter();
+            tt5 = HighResolutionTimerA::Read64();
             dTa += (tt1 - tt0);
             dTb += ((tt5 + tt4) - (tt3 + tt2)) / 2;
         }
