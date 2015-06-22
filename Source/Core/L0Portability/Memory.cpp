@@ -34,7 +34,6 @@
 #endif
 #include "Memory.h"
 #include "Threads.h"
-#include "MutexSem.h"
 
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,MemoryOS.h)
 
@@ -63,7 +62,6 @@ struct MemoryInformation {
 
 };
 
-
 MemoryAllocationFlags Memory::defaultAllocationFlag = MemoryStandardMemory;
 
 void *MemoryMalloc(uint32 size) {
@@ -71,8 +69,6 @@ void *MemoryMalloc(uint32 size) {
         return NULL;
     }
     void *data = NULL;
-
-
 
     if (Memory::defaultAllocationFlag & MemoryAddHeader) {
         //add the memory information space
@@ -92,13 +88,8 @@ void *MemoryMalloc(uint32 size) {
 #ifdef MEMORY_STATISTICS
 
     if (Memory::defaultAllocationFlag & MemoryStatistics) {
-        MutexSem mutex;
-        mutex.Create();
-        mutex.Lock();
         //add the information to the database
         MemoryStatisticsDatabase::AddMemoryChunk(Threads::Id(), size);
-        mutex.UnLock();
-        mutex.Close();
     }
 
 #endif
@@ -120,12 +111,19 @@ void *MemoryRealloc(void *&data,
         return data;
     }
 
+#ifdef MEMORY_STATISTICS
     uint32 sizeToFree = 0;
+#endif
+
+
     if (Memory::defaultAllocationFlag & MemoryAddHeader) {
         //add the memory information space
         newSize += sizeof(MemoryInformation);
         MemoryInformation *header = (MemoryInformation*) data - 1;
+
+#ifdef MEMORY_STATISTICS
         sizeToFree = header->size;
+#endif
     }
 
     data = MemoryOS::Realloc(data, newSize);
@@ -142,14 +140,9 @@ void *MemoryRealloc(void *&data,
 #ifdef MEMORY_STATISTICS
 
     if (Memory::defaultAllocationFlag & MemoryStatistics) {
-        MutexSem mutex;
-        mutex.Create();
-        mutex.Lock();
         //add the information to the database
         MemoryStatisticsDatabase::FreeMemoryChunk(Threads::Id(), sizeToFree);
         MemoryStatisticsDatabase::AddMemoryChunk(Threads::Id(), newSize);
-        mutex.UnLock();
-        mutex.Close();
     }
 
 #endif
@@ -164,12 +157,17 @@ bool MemoryFree(void *&data) {
     if (data == NULL) {
         return False;
     }
-
+#ifdef MEMORY_STATISTICS
     uint32 sizeToFree = 0;
+#endif
+
     if (Memory::defaultAllocationFlag & MemoryAddHeader) {
         //return at the beginning
         MemoryInformation *header = (MemoryInformation*) data - 1;
+
+#ifdef MEMORY_STATISTICS
         sizeToFree = header->size;
+#endif
         data = (void*) header;
         if (data == NULL) {
             return False;
@@ -182,12 +180,7 @@ bool MemoryFree(void *&data) {
 #ifdef MEMORY_STATISTICS
 
     if (Memory::defaultAllocationFlag & MemoryStatistics) {
-        MutexSem mutex;
-        mutex.Create();
-        mutex.Lock();
         MemoryStatisticsDatabase::FreeMemoryChunk(Threads::Id(), sizeToFree);
-        mutex.UnLock();
-        mutex.Close();
     }
 
 #endif
@@ -204,16 +197,11 @@ bool MemoryAllocationStatistics(uint32 &size,
     }
 
     if (Memory::defaultAllocationFlag & MemoryStatistics) {
-        MutexSem mutex;
-        mutex.Create();
-        mutex.Lock();
         ThreadAllocationStatistics *ret = MemoryStatisticsDatabase::Find(tid);
         if (ret != NULL) {
             size = ret->totalMemorySize;
             chunks = ret->nOfMemoryChunks;
         }
-        mutex.UnLock();
-        mutex.Close();
         return ret != NULL;
     }
     else {

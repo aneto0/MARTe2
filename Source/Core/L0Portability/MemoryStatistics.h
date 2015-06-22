@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Threads.h"
+#include "FastPollingMutexSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -90,6 +91,9 @@ private:
     /** The current number of elements in the database. */
     static uint32 nOfElements;
 
+    /** Internal mutex */
+    static FastPollingMutexSem internalMutex;
+
     /**
      * @brief Adds a new element in the database.
      * @param[in] tid is the identifier of the thread which has to be monitored.
@@ -104,6 +108,13 @@ private:
      */
     static inline bool Remove(TID tid);
 
+    /**
+     * @brief Finds an element in the database by the thread identifier.
+     * @param[in] tid is the thread identifier.
+     * @return a pointer to the element in the database.
+     */
+    static inline ThreadAllocationStatistics* PrivateFind(TID tid) const;
+
 public:
 
     /**
@@ -111,7 +122,7 @@ public:
      * @param[in] tid is the thread identifier.
      * @return a pointer to the element in the database.
      */
-    static inline ThreadAllocationStatistics* Find(TID tid) const;
+    static inline ThreadAllocationStatistics* Find(TID tid);
 
     /**
      * @brief Signs a new memory chunk of memory for the specified element.
@@ -166,11 +177,13 @@ bool MemoryStatisticsDatabase::Add(TID tid) {
 }
 
 bool MemoryStatisticsDatabase::Remove(TID tid) {
-    ThreadAllocationStatistics* ret = Find(tid);
+
+    ThreadAllocationStatistics* ret = PrivateFind(tid);
 
     //not found
-    if (ret == NULL)
+    if (ret == NULL) {
         return False;
+    }
 
     //set the element as empty
     ret->setEmpty();
@@ -178,7 +191,7 @@ bool MemoryStatisticsDatabase::Remove(TID tid) {
     return True;
 }
 
-ThreadAllocationStatistics* MemoryStatisticsDatabase::Find(TID tid) const {
+ThreadAllocationStatistics* MemoryStatisticsDatabase::PrivateFind(TID tid) const {
 
     for (uint32 i = 0, counter = 0; counter < nOfElements && i < MAX_NO_OF_MEMORY_MONITORS; i++) {
         //skip in case of empty element
@@ -196,33 +209,45 @@ ThreadAllocationStatistics* MemoryStatisticsDatabase::Find(TID tid) const {
     return NULL;
 }
 
+ThreadAllocationStatistics* MemoryStatisticsDatabase::Find(TID tid) {
+    internalMutex.FastLock();
+    ThreadAllocationStatistics *ret = PrivateFind(tid);
+    internalMutex.FastUnLock();
+    return ret;
+}
+
 bool MemoryStatisticsDatabase::AddMemoryChunk(TID tid,
                                               uint32 memSize) {
 
+    internalMutex.FastLock();
+
     //if it is not in the db try to add it
-    ThreadAllocationStatistics *ret = Find(tid);
+    ThreadAllocationStatistics *ret = PrivateFind(tid);
     if (ret == NULL) {
         if (!Add(tid)) {
+            internalMutex.FastUnLock();
             return False;
         }
     }
 
-    ret = Find(tid);
+    ret = PrivateFind(tid);
 
     //This should never happen
     if (ret == NULL) {
+        internalMutex.FastUnLock();
         return False;
     }
 
     //increment the number of chunks and add the memory size
     ret->nOfMemoryChunks++;
     ret->totalMemorySize += memSize;
+    internalMutex.FastUnLock();
     return True;
 }
 
 bool MemoryStatisticsDatabase::FreeMemoryChunk(TID tid,
                                                uint32 memSize) {
-    ThreadAllocationStatistics *ret = Find(tid);
+    ThreadAllocationStatistics *ret = PrivateFind(tid);
     if (ret == NULL) {
         return False;
     }
