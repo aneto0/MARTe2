@@ -24,19 +24,17 @@
 #ifndef MUTEXSEMOS_H_
 #define 		MUTEXSEMOS_H_
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
 #include "../../TimeoutType.h"
 #include <pthread.h>
 #include <math.h>
 #include <sys/timeb.h>
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,10 +46,14 @@
 class PrivateMutexSemStruct {
 
 public:
-    /** @brief Constructor. */
+    /**
+     * @brief Constructor.
+     */
     PrivateMutexSemStruct() {
     }
-    /** @brief Destructor. */
+    /**
+     * @brief Destructor.
+     */
     ~PrivateMutexSemStruct() {
     }
 
@@ -87,9 +89,9 @@ public:
 
     /**
      * @brief Lock the semaphore until an unlock or the timeout expire.
+     * @details The thread that locks a semaphore cannot be killed in the critical region.
      * @param[in] msecTimeout is the desired timeout.
      * @return false if lock fails also because the expire of the timeout, true otherwise.
-     * The thread that locks a semaphore cannot be killed.
      */
     bool Lock(TimeoutType msecTimeout = TTInfiniteWait) {
         if (msecTimeout == TTInfiniteWait) {
@@ -225,7 +227,10 @@ public:
         return ((PrivateMutexSemStruct *) semH)->UnLock();
     }
 
-    /** @brief MutexSem::Lock MutexSemOSLock. */
+    /**
+     * @see MutexSem::Lock
+     * @see MutexSemOSLock.
+     */
     static inline bool FastLock(HANDLE &semH,
                                 TimeoutType msecTimeout) {
         if (semH == (HANDLE) NULL) {
@@ -234,7 +239,10 @@ public:
         return ((PrivateMutexSemStruct *) semH)->Lock(msecTimeout);
     }
 
-    /** @brief MutexSem::UnLock MutexSemOS::UnLock. */
+    /**
+     * @see MutexSem::UnLock
+     * @see MutexSemOS::UnLock.
+     */
     static inline bool FastUnLock(HANDLE &semH) {
         if (semH == (HANDLE) NULL) {
             return False;
