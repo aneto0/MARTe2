@@ -1,315 +1,526 @@
-/*
- * Copyright 2011 EFDA | European Fusion Development Agreement
+/**
+ * @file BasicConsoleOS.h
+ * @brief Header file for class BasicConsoleOS
+ * @date 22/06/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or – as soon they
-   will be approved by the European Commission - subsequent
-   versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
-   Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
-   writing, software distributed under the Licence is
-   distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
-   express or implied.
- * See the Licence for the specific language governing
-   permissions and limitations under the Licence.
- *
- * $Id: BasicConsole.cpp 3 2012-01-15 16:26:07Z aneto $
- *
-**/
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
 
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <setjmp.h>
-#include <float.h>
-#include <math.h>
-#include <io.h>
-#include <sys/types.h>
-#include <windows.h>
-#include <winuser.h>
-#include <winbase.h>
-#include <process.h>
-#include <conio.h>
-#include <typeinfo.h>
-#include "../../HighResolutionTimer.h"
+ * @details This header file contains the declaration of the class BasicConsoleOS
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+ */
 
-bool BasicConsoleOSSetSize(BasicConsole &con,int numberOfColumns, int numberOfRows){
+#ifndef BASICCONSOLEOS_H_
+#define 		BASICCONSOLEOS_H_
 
-    COORD max = GetLargestConsoleWindowSize(con.outputConsoleHandle);
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
 
-    CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(con.outputConsoleHandle,&info);
+#include <Windows.h>
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 
-    COORD stage1BufferSize;
-    stage1BufferSize.X =info.dwSize.X;
-    if (stage1BufferSize.X < numberOfColumns) stage1BufferSize.X = numberOfColumns;
-    stage1BufferSize.Y =info.dwSize.Y;
-    if (stage1BufferSize.Y < numberOfRows) stage1BufferSize.Y = numberOfRows;
-    if (!SetConsoleScreenBufferSize(con.outputConsoleHandle,stage1BufferSize)){
-       // CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:SetSize:failed SetConsoleScreenBufferSize ");
-        return False;
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+/**
+ * @brief System dependent functions for console management.
+ */
+class BasicConsoleOS {
+
+public:
+
+    /**
+     * @brief Sets the buffer size of the console.
+     * @details Since the buffer size must be always greater or equal to the window size, if the current
+     * window size is greater than the desired buffer size it will be reduced.
+     * @param[in,out] con is the console.
+     * @param[in] numberOfColumns is the desired x axis size.
+     * @param[in] numberOfRows is the desired y axis size.
+     * return true if successful, false otherwise.
+     */
+    static bool SetSize(BasicConsole &con,
+                        int numberOfColumns,
+                        int numberOfRows) {
+
+        //do nothing in case of negative parameters
+        if (numberOfColumns < 0 || numberOfRows < 0) {
+            return False;
+        }
+
+        //aligns the buffer and window sizes as much as possible to the specified parameters.
+
+        //Note: the width and height specified cannot be less than the console screen buffer's ones.
+
+        CONSOLE_SCREEN_BUFFER_INFO info;
+
+        //get the console informations
+        if (GetConsoleScreenBufferInfo(con.outputConsoleHandle, &info) == 0) {
+            return False;
+        }
+
+        COORD stage1BufferSize;
+        stage1BufferSize.X = info.dwSize.X;
+
+        //enlarge the coordinates if they are minor than the desired size
+        //now i can only enlarge them!
+        if (stage1BufferSize.X < numberOfColumns) {
+            stage1BufferSize.X = numberOfColumns;
+        }
+
+        stage1BufferSize.Y = info.dwSize.Y;
+        if (stage1BufferSize.Y < numberOfRows) {
+            stage1BufferSize.Y = numberOfRows;
+        }
+
+        //set the buffer size
+        if (!SetConsoleScreenBufferSize(con.outputConsoleHandle, stage1BufferSize)) {
+            // CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:SetSize:failed SetConsoleScreenBufferSize ");
+            return False;
+        }
+
+        SHORT windowColumns = info.srWindow.Right - info.srWindow.Left + 1;
+        SHORT windowRows = info.srWindow.Bottom - info.srWindow.Top + 1;
+
+        if (windowColumns < 0 || windowRows < 0) {
+            return False;
+        }
+
+        if (windowColumns > numberOfColumns) {
+            windowColumns = numberOfColumns;
+
+        }
+        if (windowRows > numberOfRows) {
+            windowRows = numberOfRows;
+        }
+
+        SMALL_RECT srect;
+        srect.Left = info.srWindow.Left;
+        srect.Top = info.srWindow.Top;
+        srect.Right = srect.Left + windowColumns - 1;
+        srect.Bottom = srect.Top + windowRows - 1;
+
+        //set the new windows size
+        if (!SetConsoleWindowInfo(con.outputConsoleHandle, TRUE, &srect)) {
+            //  CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:SetSize:failed SetConsoleWindowInfo ");
+            return False;
+        }
+
+        //now if buffersize is greater than windows size they become aligned.
+        COORD stage2BufferSize;
+        stage2BufferSize.X = numberOfColumns;
+        stage2BufferSize.Y = numberOfRows;
+
+        return SetConsoleScreenBufferSize(con.outputConsoleHandle, stage2BufferSize) != FALSE;
+
     }
 
-    int windowColumns = info.srWindow.Right  - info.srWindow.Left + 1;
-    int windowRows    = info.srWindow.Bottom - info.srWindow.Top   + 1;
-
-    if (windowColumns > numberOfColumns)  windowColumns = numberOfColumns;
-    if (windowRows    > numberOfRows)     windowRows    = numberOfRows;
-
-    SMALL_RECT srect;
-    srect.Left   = info.srWindow.Left;
-    srect.Top    = info.srWindow.Top;
-    srect.Right  = srect.Left + windowColumns - 1;
-    srect.Bottom = srect.Top  + windowRows - 1;
-
-    if (!SetConsoleWindowInfo(con.outputConsoleHandle,TRUE,&srect)){
-      //  CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:SetSize:failed SetConsoleWindowInfo ");
-        return False;
-    }
-
-    COORD stage2BufferSize;
-    stage2BufferSize.X =numberOfColumns;
-    stage2BufferSize.Y =numberOfRows;
-    return (SetConsoleScreenBufferSize(con.outputConsoleHandle,stage2BufferSize) != FALSE);
-
-}
-
-bool BasicConsoleOSOpen(
-    BasicConsole             &con,
-    int                 numberOfColumns,
-    int                 numberOfRows){
+    /**
+     * @brief Open a console with the specified properties.
+     * @param[in,out] con is the console.
+     * @param[in] numberOfColumns is the desired x axis size for the buffer.
+     * @param[in] numberOfRows is the desired y axis size for the buffer.
+     * return true if successful, false otherwise.
+     */
+    static bool Open(BasicConsole &con,
+                     int numberOfColumns,
+                     int numberOfRows) {
 
 //    con.selectedStream      = NormalStreamMode;
+        int32 shortMask = 0xffff;
 
-    int stdConsoleColumns;
-    int stdConsoleRows;
+        int stdConsoleColumns;
+        int stdConsoleRows;
 
-    CONSOLE_SCREEN_BUFFER_INFO info;
-    //get the screen information (size, cursor position, ecc...)
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&info);
-
-    if (con.openingMode & CreateNewBuffer){
-        //get the console handles
-        con.inputConsoleHandle  = GetStdHandle(STD_INPUT_HANDLE);
-        con.outputConsoleHandle = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE,0,NULL,CONSOLE_TEXTMODE_BUFFER,NULL);
-    } else {
-        con.inputConsoleHandle  = GetStdHandle(STD_INPUT_HANDLE);
-        con.outputConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-    }
-
-
-    stdConsoleColumns = info.dwSize.X;
-    stdConsoleRows    = info.dwSize.Y;
-
-    if (numberOfColumns <= 0) numberOfColumns = stdConsoleColumns;
-    if (numberOfRows <= 0)    numberOfRows    = stdConsoleRows;
-
-    BasicConsoleOSSetSize(con,numberOfColumns,numberOfRows);
-
-    DWORD consoleMode = 0;
-    if (con.openingMode & PerformCharacterInput){
-        consoleMode |= 0;
-    } else {
-        consoleMode |= ENABLE_ECHO_INPUT;
-        consoleMode |= ENABLE_LINE_INPUT;
-    }
-
-    if (con.openingMode & DisableControlBreak){
-        consoleMode |= 0;
-    } else {
-        consoleMode |= ENABLE_PROCESSED_INPUT;
-    }
-
-
-    SetConsoleMode(con.inputConsoleHandle,consoleMode);
-
-    FlushConsoleInputBuffer(con.inputConsoleHandle);
-
-    return True;
-}
-
-bool BasicConsoleOSClose(BasicConsole &con){
-    if (con.openingMode & CreateNewBuffer){
-        CloseHandle(con.outputConsoleHandle);
-    }
-
-
-    return True;
-}
-
-bool BasicConsoleOSShow(BasicConsole &con){
-    return (SetConsoleActiveScreenBuffer(con.outputConsoleHandle)==TRUE);
-}
-
-
-bool BasicConsoleOSWrite(BasicConsole &con,const void* buffer, uint32 &size){
-
-        return WriteConsole(con.outputConsoleHandle,buffer,size,(unsigned long *)&size,NULL);
-
-}
-
-bool BasicConsoleOSRead(BasicConsole &con,void* buffer, uint32 &size,TimeoutType msecTimeout){
-    DWORD ret=0;
-    if (con.msecTimeout.IsFinite()){
-       
-        FlushConsoleInputBuffer(con.inputConsoleHandle);
-        ret = WaitForSingleObject(con.inputConsoleHandle,(DWORD)con.msecTimeout.msecTimeout);
-        FlushConsoleInputBuffer(con.inputConsoleHandle);
-        ret = WaitForSingleObject(con.inputConsoleHandle,(DWORD)con.msecTimeout.msecTimeout);
-        if (ret!=0) {
-            size = 0;
-            return True;
+        if (con.openingMode & CreateNewBuffer) {
+            //get the console handles
+            con.inputConsoleHandle = GetStdHandle(STD_INPUT_HANDLE);
+            if (con.inputConsoleHandle == INVALID_HANDLE_VALUE) {
+                return False;
+            }
+            con.outputConsoleHandle = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+            if (con.outputConsoleHandle == INVALID_HANDLE_VALUE) {
+                return False;
+            }
         }
-    }
-
-	if(con.openingMode & PerformCharacterInput){
-	    size=1;
-	    DWORD ret = ReadConsole(con.inputConsoleHandle,buffer,size,(unsigned long *)&size,NULL);	
-	}
-	else{
-            //in this cas buffer is a string accordingly with linux behavior.
-    	    DWORD ret = ReadConsole(con.inputConsoleHandle,buffer,size-1,(unsigned long *)&size,NULL);
-
-	    //anyway terminate the string
-	    ((char*)buffer)[size]='\0';
+        else {
+            con.inputConsoleHandle = GetStdHandle(STD_INPUT_HANDLE);
+            if (con.inputConsoleHandle == INVALID_HANDLE_VALUE) {
+                return False;
+            }
+            con.outputConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+            if (con.outputConsoleHandle == INVALID_HANDLE_VALUE) {
+                return False;
+            }
         }
-    return ret!=0;
 
+        CONSOLE_SCREEN_BUFFER_INFO info;
+        if (GetConsoleScreenBufferInfo(con.outputConsoleHandle, &(con.initialInfo)) == 0) {
+            return False;
+        }
 
-}
+        stdConsoleColumns = con.initialInfo.dwSize.X;
 
+        stdConsoleRows = con.initialInfo.dwSize.Y;
 
-bool BasicConsoleOSSetTitleBar(BasicConsole &con, const char *title){
-    return SetConsoleTitle(title);
+        //if they are <= 0 set them as the default.
+        if (numberOfColumns <= 0) {
+            numberOfColumns = stdConsoleColumns;
+        }
+        if (numberOfRows <= 0) {
+            numberOfRows = stdConsoleRows;
+        }
 
-}
+        SetSize(con, numberOfColumns, numberOfRows);
 
-bool BasicConsoleOSSetWindowSize(BasicConsole &con,int numberOfColumns, int numberOfRows){
-    COORD max = GetLargestConsoleWindowSize(con.outputConsoleHandle);
-    CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(con.outputConsoleHandle,&info);
+        //set the console mode
+        DWORD consoleMode = 0;
+        if (con.openingMode & PerformCharacterInput) {
+            consoleMode |= 0;
+        }
+        else {
+            consoleMode |= ENABLE_ECHO_INPUT;
+            consoleMode |= ENABLE_LINE_INPUT;
+        }
 
-    if (numberOfColumns > max.X)         numberOfColumns = max.X;
-    if (numberOfColumns > info.dwSize.X) numberOfColumns = info.dwSize.X;
-    if (numberOfRows    > max.Y)         numberOfRows    = max.Y;
-    if (numberOfRows    > info.dwSize.Y) numberOfRows    = info.dwSize.Y;
-    if (numberOfColumns < 1    )         numberOfColumns = 1;
-    if (numberOfRows    < 1    )         numberOfRows    = 1;
+        if (con.openingMode & DisableControlBreak) {
+            consoleMode |= 0;
+        }
+        else {
+            consoleMode |= ENABLE_PROCESSED_INPUT;
+        }
 
-    SMALL_RECT srect;
-    srect.Left   = info.srWindow.Left;
-    srect.Top    = info.srWindow.Top;
-    srect.Right  = srect.Left + numberOfColumns - 1;
-    srect.Bottom = srect.Top  + numberOfRows - 1;
+        SetConsoleMode(con.inputConsoleHandle, consoleMode);
 
-    if (!SetConsoleWindowInfo(con.outputConsoleHandle,TRUE,&srect)){
-      //  CStaticPlatformErrorCondition(OSError,"BasicConsole:SetWindowSize:failed SetConsoleWindowInfo ");
-        return False;
+        FlushConsoleInputBuffer(con.inputConsoleHandle);
+
+        return True;
     }
 
-    return True;
-}
-
-bool BasicConsoleOSGetWindowSize(BasicConsole &con,int &numberOfColumns, int &numberOfRows){
-
-    CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(con.outputConsoleHandle,&info);
-
-    numberOfColumns = info.srWindow.Right  - info.srWindow.Left + 1;
-    numberOfRows    = info.srWindow.Bottom - info.srWindow.Top   + 1;
-    return True;
-
-
-}
-
-
-bool BasicConsoleOSGetSize(BasicConsole &con,int &numberOfColumns, int &numberOfRows){
-    CONSOLE_SCREEN_BUFFER_INFO info;
-    if (GetConsoleScreenBufferInfo(con.outputConsoleHandle,&info)== FALSE) {
-     //  CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:GetSize:failed GetConsoleScreenBufferInfo ");
-        return False;
+    /**
+     * @brief Switch to a specified console.
+     * @param[in,out] con is the console to show.
+     * @return true if successful, false otherwise.
+     */
+    static bool Show(BasicConsole &con) {
+        return (SetConsoleActiveScreenBuffer(con.outputConsoleHandle) == TRUE);
     }
-    numberOfColumns = info.dwSize.X;
-    numberOfRows    = info.dwSize.Y;
-    return True;
 
+    /**
+     * @brief Writes the specified number of bytes on the console.
+     * @param[in,out] con is the console.
+     * @param[in] buffer contains the data to be printed on the console.
+     * @param[in,out] size is the number of bytes to be printed.
+     * @return true if successful, false otherwise.
+     * @post size = number of bytes written.
+     */
+    static bool Write(BasicConsole &con,
+                      const void* buffer,
+                      uint32 &size) {
 
-}
+        return WriteConsole(con.outputConsoleHandle, buffer, size, (unsigned long *) &size, NULL);
 
-bool BasicConsoleOSSetCursorPosition(BasicConsole &con,int column, int row){
-    COORD c = {column,row};
-    return (SetConsoleCursorPosition(con.outputConsoleHandle,c) == TRUE);
-}
+    }
 
-bool BasicConsoleOSGetCursorPosition(BasicConsole &con,int &column, int &row){
-    CONSOLE_SCREEN_BUFFER_INFO info;
-    if (GetConsoleScreenBufferInfo(con.outputConsoleHandle,&info)== FALSE) return False;
-    column = info.dwCursorPosition.X;
-    row = info.dwCursorPosition.Y;
-    return True;
-}
+    /**
+     * @brief Reads the specified number of bytes from the console.
+     * @param[in,out] con is the console.
+     * @param[in,out] size is the number of bytes to read.
+     * @param[in] msecTimeout is the desired timeout.
+     * @return true if successful, false otherwise.
+     */
+    static bool Read(BasicConsole &con,
+                     void* buffer,
+                     uint32 &size,
+                     TimeoutType msecTimeout) {
+        DWORD ret = 0;
+        if (con.msecTimeout.IsFinite()) {
 
+            FlushConsoleInputBuffer(con.inputConsoleHandle);
+            ret = WaitForSingleObject(con.inputConsoleHandle, (DWORD) con.msecTimeout.msecTimeout);
+            if (ret != 0) {
+                size = 0;
+                return False;
+            }
+        }
 
-bool BasicConsoleOSSetColour(BasicConsole &con,Colours foreGroundColour,Colours backGroundColour){
+        if (con.openingMode & PerformCharacterInput) {
+            size = 1;
+            ret = ReadConsole(con.inputConsoleHandle, buffer, size, (unsigned long *) &size, NULL);
+        }
+        else {
+            ret = ReadConsole(con.inputConsoleHandle, buffer, size, (unsigned long *) &size, NULL);
 
+        }
+        return ret;
 
-    WORD attribute;
-    attribute = (int)foreGroundColour & 0xF;
-    attribute |= ((int)backGroundColour & 0xF) << 4;
+    }
 
-    if (!SetConsoleTextAttribute(con.outputConsoleHandle,attribute)) return False;
+    /**
+     * @brief Sets the title of the console.
+     * @param[in,out] con is the console.
+     * @param[in] title is the desired title.
+     * @return true if successful, false otherwise.
+     */
+    static bool SetTitleBar(BasicConsole &con,
+                            const char *title) {
+        return SetConsoleTitle(title);
 
-    return True;
+    }
 
-}
+    /**
+     * @brief Sets the window size.
+     * @details Since the window size must be smaller than the buffer size, if the desired
+     * size is greater than the current buffer size it will be saturated.
+     * @param[in,out] con is the console.
+     * @param[in] numberOfColumns is the desired x axis size.
+     * @param[in] numberOfRows is the desired y axis size.
+     * @return true if successful, false otherwise.
+     */
+    static bool SetWindowSize(BasicConsole &con,
+                              int numberOfColumns,
+                              int numberOfRows) {
 
-bool BasicConsoleOSClear(BasicConsole &con){
-    COORD c;
-    c.X = 0;
-    c.Y = 0;
+        if (numberOfColumns < 0 || numberOfRows < 0) {
+            return False;
+        }
 
-    CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(con.outputConsoleHandle,&info);
-    int nOfChars = info.dwSize.Y * info.dwSize.X;
+        COORD max = GetLargestConsoleWindowSize(con.outputConsoleHandle);
+        CONSOLE_SCREEN_BUFFER_INFO info;
+        GetConsoleScreenBufferInfo(con.outputConsoleHandle, &info);
 
-    FillConsoleOutputAttribute(con.outputConsoleHandle,info.wAttributes,nOfChars,c,NULL);
-    return (FillConsoleOutputCharacter(con.outputConsoleHandle,' ',nOfChars,c,NULL));
+        if (info.dwSize.X < 0 || info.dwSize.Y < 0) {
+            return False;
+        }
 
+        //saturate values at the max or at the buffer size
+        if (numberOfColumns > max.X) {
+            numberOfColumns = max.X;
+        }
+        if (numberOfColumns > info.dwSize.X) {
+            numberOfColumns = info.dwSize.X;
+        }
+        if (numberOfRows > max.Y) {
+            numberOfRows = max.Y;
+        }
+        if (numberOfRows > info.dwSize.Y) {
+            numberOfRows = info.dwSize.Y;
+        }
+        if (numberOfColumns < 1) {
+            numberOfColumns = 1;
+        }
+        if (numberOfRows < 1) {
+            numberOfRows = 1;
+        }
 
-}
+        SMALL_RECT srect;
+        srect.Left = info.srWindow.Left;
+        srect.Top = info.srWindow.Top;
+        srect.Right = srect.Left + numberOfColumns - 1;
+        srect.Bottom = srect.Top + numberOfRows - 1;
 
-bool BasicConsoleOSPlotChar(BasicConsole &con,char c,Colours foreGroundColour,Colours backGroundColour,int column, int row){
+        if (!SetConsoleWindowInfo(con.outputConsoleHandle, TRUE, &srect)) {
+            //  CStaticPlatformErrorCondition(OSError,"BasicConsole:SetWindowSize:failed SetConsoleWindowInfo ");
+            return False;
+        }
 
-    COORD coord;
-    coord.X = 0;
-    coord.Y = 0;
+        return True;
+    }
 
-    COORD bufferSize;
-    bufferSize.X = 1;
-    bufferSize.Y = 1;
+    /**
+     * @brief Gets the window size.
+     * @param[in,out] con is the console.
+     * @param[out] numberOfColumns is the x axis window size in return.
+     * @param[out] numberOfRows is the y axis window size in return.
+     * @return true if successful, false otherwise.
+     */
+    static bool GetWindowSize(BasicConsole &con,
+                              int &numberOfColumns,
+                              int &numberOfRows) {
 
-    WORD attribute;
-    attribute = (int)foreGroundColour & 0xF;
-    attribute |= ((int)backGroundColour & 0xF) << 4;
+        CONSOLE_SCREEN_BUFFER_INFO info;
+        GetConsoleScreenBufferInfo(con.outputConsoleHandle, &info);
 
-    CHAR_INFO cInfo;
-    cInfo.Char.AsciiChar = c;
-    cInfo.Attributes = attribute;
+        numberOfColumns = info.srWindow.Right - info.srWindow.Left + 1;
+        numberOfRows = info.srWindow.Bottom - info.srWindow.Top + 1;
+        return True;
 
-    SMALL_RECT writeRegion;
-    writeRegion.Left   = row;
-    writeRegion.Right  = row;
-    writeRegion.Top    = column;
-    writeRegion.Bottom = column;
+    }
 
-    return (WriteConsoleOutput(con.outputConsoleHandle,&cInfo,bufferSize,coord,&writeRegion) != FALSE);
+    /**
+     * @brief Gets the buffer size.
+     * @param[in,out] console is the console.
+     * @param[out] numberOfColumns is the x axis buffer size in return.
+     * @param[out] numberOfRows is the y axis buffer size in return.
+     * @return true if successful, false otherwise.
+     */
+    static bool GetSize(BasicConsole &con,
+                        int &numberOfColumns,
+                        int &numberOfRows) {
+        CONSOLE_SCREEN_BUFFER_INFO info;
+        if (GetConsoleScreenBufferInfo(con.outputConsoleHandle, &info) == FALSE) {
+            //  CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:GetSize:failed GetConsoleScreenBufferInfo ");
+            return False;
+        }
+        numberOfColumns = info.dwSize.X;
+        numberOfRows = info.dwSize.Y;
+        return True;
 
-}
+    }
+
+    /**
+     * @brief Sets the cursor position.
+     * @param[in,out] is the console.
+     * @param[in] column is the x axis position.
+     * @param[in] row is the y axis position.
+     * @return true if successful, false otherwise.
+     */
+    static bool SetCursorPosition(BasicConsole &con,
+                                  int column,
+                                  int row) {
+        COORD c = { column, row };
+        return (SetConsoleCursorPosition(con.outputConsoleHandle, c) == TRUE);
+    }
+
+    static bool GetCursorPosition(BasicConsole &con,
+                                  int &column,
+                                  int &row) {
+        CONSOLE_SCREEN_BUFFER_INFO info;
+        if (GetConsoleScreenBufferInfo(con.outputConsoleHandle, &info) == FALSE) {
+            return False;
+        }
+        column = info.dwCursorPosition.X;
+        row = info.dwCursorPosition.Y;
+        return True;
+    }
+
+    /**
+     * @brief Sets the foreground and background colors.
+     * @param[in,out] con is the console.
+     * @param[in] foreGroundColour is the desired foreground color.
+     * @param[in] backGroundColour is the desired background color.
+     * @return true if successful, false otherwise.
+     */
+    static bool SetColour(BasicConsole &con,
+                          Colours foreGroundColour,
+                          Colours backGroundColour) {
+
+        WORD attribute;
+        attribute = (int) foreGroundColour & 0xF;
+        attribute |= ((int) backGroundColour & 0xF) << 4;
+
+        if (!SetConsoleTextAttribute(con.outputConsoleHandle, attribute))
+            return False;
+
+        return True;
+
+    }
+
+    /**
+     * @brief Cleans the console screen.
+     * @param[in,out] con is the console.
+     * @return true if successful, false otherwise.
+     */
+    static bool Clear(BasicConsole &con) {
+        COORD c;
+        c.X = 0;
+        c.Y = 0;
+
+        CONSOLE_SCREEN_BUFFER_INFO info;
+        GetConsoleScreenBufferInfo(con.outputConsoleHandle, &info);
+        int nOfChars = info.dwSize.Y * info.dwSize.X;
+
+        FillConsoleOutputAttribute(con.outputConsoleHandle, info.wAttributes, nOfChars, c, NULL);
+        return (FillConsoleOutputCharacter(con.outputConsoleHandle, ' ', nOfChars, c, NULL));
+
+    }
+
+    /**
+     * @brief Prints a character with specified colors and position.
+     * @param[in,out] con is the console.
+     * @param[in] c is the character to be printed.
+     * @param[in] foreGroundColour is the desired foreground color.
+     * @param[in] backGroundColour is the desired background color.
+     * @param[in] column is the x axis desired position.
+     * @param[in] row is the y axis desired position.
+     * @return true if successful, false otherwise.
+     */
+    static bool PlotChar(BasicConsole &con,
+                         char c,
+                         Colours foreGroundColour,
+                         Colours backGroundColour,
+                         int column,
+                         int row) {
+
+        COORD coord;
+        coord.X = 0;
+        coord.Y = 0;
+
+        COORD bufferSize;
+        bufferSize.X = 1;
+        bufferSize.Y = 1;
+
+        WORD attribute;
+        attribute = (int) foreGroundColour & 0xF;
+        attribute |= ((int) backGroundColour & 0xF) << 4;
+
+        CHAR_INFO cInfo;
+        cInfo.Char.AsciiChar = c;
+        cInfo.Attributes = attribute;
+
+        SMALL_RECT writeRegion;
+        writeRegion.Left = row;
+        writeRegion.Right = row;
+        writeRegion.Top = column;
+        writeRegion.Bottom = column;
+
+        return (WriteConsoleOutput(con.outputConsoleHandle, &cInfo, bufferSize, coord, &writeRegion) != FALSE);
+
+    }
+
+    /**
+     * @brief Closes the console resetting the previous properties.
+     * @param[in,out] con is the console.
+     * @return true if successful, false otherwise.
+     */
+    static bool Close(BasicConsole &con) {
+
+        DWORD consoleMode = ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT;
+        if (con.openingMode & CreateNewBuffer) {
+            CloseHandle(con.outputConsoleHandle);
+        }
+        else {
+            //reset the initial conditions of the console.
+            int nCol = con.initialInfo.dwSize.X;
+            int nRow = con.initialInfo.dwSize.Y;
+            SetSize(con, nCol, nRow);
+            SetConsoleWindowInfo(con.outputConsoleHandle, TRUE, &(con.initialInfo.srWindow));
+            SetConsoleMode(con.outputConsoleHandle, consoleMode);
+            SetConsoleTextAttribute(con.outputConsoleHandle, con.initialInfo.wAttributes);
+        }
+
+        return True;
+    }
+
+};
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* BASICCONSOLEOS_H_ */
 

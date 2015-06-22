@@ -32,14 +32,20 @@
 
 #define TID pthread_t
 
-/** Defines the console handle */
-typedef struct termio HANDLE_CONSOLE;
+/** Defines the console handle. */
+typedef struct termio ConsoleHandle;
+
+/** Defines the console informations structure */
+typedef struct termio ConsoleInfo;
 
 /** Defines the default stack size for a thread. */
 #define THREADS_DEFAULT_STACKSIZE 32768
 
 /** Defines the maximum number of elements in the memory database */
 #define MAX_NO_OF_MEMORY_MONITORS 256
+
+/** In windows the newline is specified with \r\n */
+#define N_CHARS_NEWLINE 1
 
 		#endif /* GENERALDEFINITIONSOS_H_ */
 	

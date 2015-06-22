@@ -24,8 +24,15 @@
 #ifndef GENERALDEFINITIONSOS_H_
 #define 		GENERALDEFINITIONSOS_H_
 
+
 /** Defines the event handle */
 #define HEV   HANDLE
+
+/** Defines the console handle. */
+#define ConsoleHandle HANDLE
+
+/** Defines the console informations structure. */
+#define ConsoleInfo CONSOLE_SCREEN_BUFFER_INFO
 
 /** Defines the TID type */
 #define TID DWORD
@@ -35,6 +42,9 @@
 
 /** Defines the maximum number of elements in the memory database */
 #define MAX_NO_OF_MEMORY_MONITORS 256
+
+/** In windows the newline is specified with \r\n */
+#define N_CHARS_NEWLINE 2
 
 #endif /* GENERALDEFINITIONSOS_H_ */
 
