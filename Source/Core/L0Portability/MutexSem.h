@@ -58,10 +58,14 @@ public:
      */
     MutexSem(HANDLE h);
 
-    /** @brief Default constructor. */
+    /**
+     * @brief Default constructor.
+     */
     MutexSem();
 
-    /** @brief Destructor. */
+    /**
+     * @brief Destructor.
+     */
     ~MutexSem();
 
     /**

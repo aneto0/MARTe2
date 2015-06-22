@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- @brief This class provides basic facilities to use semaphores.
+ * @brief This class provides basic facilities to use semaphores.
  */
 class SemCore {
 

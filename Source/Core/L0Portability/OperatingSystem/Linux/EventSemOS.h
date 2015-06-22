@@ -50,11 +50,15 @@
 class PrivateEventSemStruct {
 
 public:
-    /** @brief Constructor. */
+    /**
+     * @brief Constructor.
+     */
     PrivateEventSemStruct() {
         stop = True;
     }
-    /** @brief Destructor. */
+    /**
+     * @brief Destructor.
+     */
     ~PrivateEventSemStruct() {
     }
 

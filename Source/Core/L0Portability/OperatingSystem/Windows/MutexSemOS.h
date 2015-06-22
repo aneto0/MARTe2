@@ -104,14 +104,18 @@ public:
         return True;
     }
 
-    /** @brief MutexSem::Lock MutexSemOS::Lock. */
+    /**
+     * @brief MutexSem::Lock MutexSemOS::Lock.
+     */
     static inline bool FastLock(HANDLE &semH,
                                 TimeoutType msecTimeout) {
         int ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
         return ((ret != (int) WAIT_FAILED) && (ret != (int) WAIT_TIMEOUT));
     }
 
-    /** @brief MutexSem::UnLock MutexSemOS::UnLock. */
+    /**
+     * @brief MutexSem::UnLock MutexSemOS::UnLock.
+     */
     static inline bool FastUnLock(HANDLE &semH) {
         return (ReleaseMutex(semH) == TRUE);
     }
