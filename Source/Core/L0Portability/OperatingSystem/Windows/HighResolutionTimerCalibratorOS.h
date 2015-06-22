@@ -75,7 +75,8 @@ public:
         for (int i = 0; i < 50; i++) {
             tt2 = HighResolutionTimerA::Read64();
             QueryPerformanceCounter((LARGE_INTEGER *) &tt0);
-            tt3 = tt4 = HighResolutionTimerA::Read64();
+            tt3 = HighResolutionTimerA::Read64();
+            tt4 = tt3;
             while ((tt4 - tt3) < 100000)
                 tt4 = HighResolutionTimerA::Read64(); // .5 ms at 200 Mhz
             QueryPerformanceCounter((LARGE_INTEGER *) &tt1);
@@ -132,8 +133,7 @@ public:
         return True;
     }
 
-private:
-    static const uint32 LINUX_CPUINFO_BUFFER_SIZE = 1023;
+
 };
 
 /*---------------------------------------------------------------------------*/

@@ -133,6 +133,8 @@ public:
     }
 
 private:
+
+    /** The size of the buffer to retrieve the cpu informations by the system. */
     static const uint32 LINUX_CPUINFO_BUFFER_SIZE = 1023;
 };
 /*---------------------------------------------------------------------------*/
