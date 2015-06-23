@@ -81,7 +81,8 @@ public:
      * @return true if the thread locks the semaphore before the timeout expired,
      * false otherwise.
      */
-    inline bool FastLock(TimeoutType msecTimeout = TTInfiniteWait);
+    inline bool FastLock(TimeoutType msecTimeout = TTInfiniteWait,
+                         Error &error = Global::errorType);
 
     /**
      * @brief Tries to lock and in case of failure returns immediately.
@@ -100,6 +101,7 @@ protected:
 
     /** Atomic variable */
     volatile int32 flag;
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -110,10 +112,12 @@ inline FastPollingMutexSem::FastPollingMutexSem() {
 }
 
 bool FastPollingMutexSem::Create(bool locked) {
-    if (locked == True)
+    if (locked == True) {
         flag = 1;
-    else
+    }
+    else {
         flag = 0;
+    }
     return True;
 }
 
@@ -125,14 +129,17 @@ bool FastPollingMutexSem::Locked() {
     return flag == 1;
 }
 
-bool FastPollingMutexSem::FastLock(TimeoutType msecTimeout) {
+bool FastPollingMutexSem::FastLock(TimeoutType msecTimeout,
+                                   Error &error) {
     int64 ticksStop = msecTimeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
     while (!Atomic::TestAndSet((int32 *) &flag)) {
         if (msecTimeout != TTInfiniteWait) {
             int64 ticks = HighResolutionTimer::Counter();
-            if (ticks > ticksStop)
+            if (ticks > ticksStop) {
+                error = Timeout;
                 return False;
+            }
         }
         // yield CPU
         SleepMSec(1);

@@ -46,6 +46,9 @@
  * Mutex semaphores are generally used in multi-threading applications to guarantee exclusive access in critical code sections
  * shared by different threads.
  *
+ * @details The Lock functions uses an ErrorType object defined in GeneralDefinition.h that could be used by the user to
+ * know if an eventual lock error happened because of the timeout or for other reasons.
+ *
  * @details Most of the implementation is delegated to MutexSemOS.h which provides system level functions for mutex semaphores.
  *
  */
@@ -84,9 +87,10 @@ public:
     /**
      * @brief Lock the semaphore until the desired timeout.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error specifies the error type in case of errors (timeout fail or other error types).
      * @return false if something in the lock system level function goes wrong.
      */
-    bool Lock(TimeoutType msecTimeout = TTInfiniteWait);
+    bool Lock(TimeoutType msecTimeout = TTInfiniteWait, Error &error=Global::errorType);
 
     /**
      * @brief Unlock the semaphore.
@@ -96,9 +100,11 @@ public:
 
     /**
      * @brief Fast lock.
+     * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error specifies the error type in case of errors (timeout fail or other error types).
      * @return true if successful, false otherwise.
      */
-    inline bool FastLock(TimeoutType msecTimeout = TTInfiniteWait);
+    inline bool FastLock(TimeoutType msecTimeout = TTInfiniteWait, Error &error=Global::errorType);
 
     /**
      * @brief Fast unlock.
@@ -111,14 +117,16 @@ public:
      * @return true if the semaphore was unlocked and the function locks it, false if it was already locked.
      */
     inline bool FastTryLock();
+
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-bool MutexSem::FastLock(TimeoutType msecTimeout) {
-    return MutexSemOS::FastLock(semH, msecTimeout);
+bool MutexSem::FastLock(TimeoutType msecTimeout,
+                        Error &error) {
+    return MutexSemOS::FastLock(semH, msecTimeout, error);
 }
 
 bool MutexSem::FastUnLock() {

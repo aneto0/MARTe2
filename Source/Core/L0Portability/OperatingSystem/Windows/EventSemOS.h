@@ -81,17 +81,21 @@ public:
      * @details Called by EventSem::Create
      * @param[in,out] semH is the semaphore handle.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error is the error type.
      * @return true if successful, false otherwise.
      */
     static inline bool Wait(HANDLE &semH,
-                            TimeoutType msecTimeout = TTInfiniteWait) {
+                            TimeoutType msecTimeout,
+                            Error &error) {
         int ret;
 
         ret = WaitForSingleObject((HEV) semH, msecTimeout.msecTimeout);
         if (ret == (int) WAIT_FAILED) {
+            error = OSError;
             return False;
         }
         if (ret == (int) WAIT_TIMEOUT) {
+            error = Timeout;
             return False;
         }
         return True;
@@ -130,12 +134,14 @@ public:
      * @details Called by EventSem::Reset
      * @param[in,out] semH is a pointer to the event semaphore.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error is the error type.
      * @return true if successful, false otherwise.
      */
     static inline bool ResetWait(HANDLE &semH,
-                                 TimeoutType msecTimeout = TTInfiniteWait) {
+                                 TimeoutType msecTimeout,
+                                 Error &error) {
         Reset(semH);
-        return Wait(semH, msecTimeout);
+        return Wait(semH, msecTimeout, error);
     }
 };
 

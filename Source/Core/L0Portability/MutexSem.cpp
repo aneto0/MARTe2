@@ -58,8 +58,9 @@ bool MutexSem::Close() {
     return MutexSemOS::Close(semH);
 }
 
-bool MutexSem::Lock(TimeoutType msecTimeout) {
-    return MutexSemOS::Lock(semH, msecTimeout);
+bool MutexSem::Lock(TimeoutType msecTimeout,
+                    Error &error) {
+    return MutexSemOS::Lock(semH, msecTimeout, error);
 }
 
 bool MutexSem::UnLock() {

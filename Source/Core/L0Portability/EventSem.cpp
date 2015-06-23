@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -44,7 +43,6 @@ EventSem::EventSem() {
 EventSem::EventSem(HANDLE h) {
     Init(h);
 }
-
 
 EventSem::~EventSem() {
     Close();
@@ -58,12 +56,12 @@ bool EventSem::Close(void) {
     return EventSemOS::Close(semH);
 }
 
-bool EventSem::Wait(TimeoutType msecTimeout) {
-    return EventSemOS::Wait(semH, msecTimeout);
+bool EventSem::Wait(TimeoutType msecTimeout, Error &error) {
+    return EventSemOS::Wait(semH, msecTimeout, error);
 }
 
-bool EventSem::ResetWait(TimeoutType msecTimeout) {
-    return EventSemOS::ResetWait(semH, msecTimeout);
+bool EventSem::ResetWait(TimeoutType msecTimeout, Error &error) {
+    return EventSemOS::ResetWait(semH, msecTimeout, error);
 }
 
 bool EventSem::Post() {
@@ -73,3 +71,4 @@ bool EventSem::Post() {
 bool EventSem::Reset() {
     return EventSemOS::Reset(semH);
 }
+

@@ -32,7 +32,6 @@
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,GeneralDefinitionsA.h)
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,GeneralDefinitionsOS.h)
 
-
 /** List of colors */
 typedef enum {
     Black = 0,
@@ -53,6 +52,116 @@ typedef enum {
     DarkGrey = 15
 
 }Colours;
+
+/** values to be used in ErrorManagementFunction */
+typedef enum {
+    /** Debug Information (should never be found in production code) */
+    Debug = 2,
+    /** Application Information to be used to understand the working of the code */
+    Information = 1,
+    /** Application warns of suspicious conditions */
+    Warning = 0,
+    /** Application reports a fatal error */
+    FatalError = -1,
+    /** Application reports an error that allows recovery */
+    RecoverableError = -2,
+    /** Application reports an error during initialization */
+    InitialisationError = -3,
+    /** Error while calling an operating system function */
+    OSError = -4,
+    /** Unexpected parameter value that was passed to a function */
+    ParametersError = -5,
+    /** The operation was illegal in the run time context */
+    IllegalOperation = -6,
+    /** The operation failed because of a sharing problem */
+    ErrorSharing = -7,
+    /** The operation failed because of a sharing problem */
+    ErrorAccessDenied = -8,
+    /** an exception has occurred */
+    Exception = -9,
+    /** a Timeout has occurred */
+    Timeout = -10,
+    /** error during a communication */
+    CommunicationError = -11,
+    /** error while parsing */
+    SyntaxError = -12,
+    /**something that should be possible but still it is not supported */
+    UnsupportedError = -13
+} ErrorType;
+
+/**
+ * @brief A class that could be used to return the error type in the functions.
+ * @details In many functions the user can pass by reference this type of object to know
+ * which type of error causes the eventual function's failure. By Default in many functions
+ * it is defined a global variable Global::errorType then the user can in any moment
+ * access to this variable knowing the type of the last error triggered.
+ */
+class Error {
+
+public:
+    /**
+     * @brief Default constructor.
+     */
+    inline Error() {
+        errorType = Debug;
+    }
+
+    /**
+     * @brief Copy constructor.
+     * @param[in] errorArg is the initial value to be assigned to this.
+     */
+    inline Error(ErrorType errorArg) {
+        errorType = errorArg;
+    }
+
+    /**
+     * @brief Copy operator.
+     * @param[in] errorArg is the value to be assigned to this.
+     */
+    inline void operator=(ErrorType errorArg) {
+        errorType = errorArg;
+    }
+
+    /**
+     * @brief Is equal operator.
+     * @param[in] errorArg is the value for the comparison.
+     * @return true if errorArg is equal to this.
+     */
+    inline bool operator==(ErrorType errorArg) const {
+        return errorType == errorArg;
+    }
+
+    /**
+     * @brief Is different operator.
+     * @param[in] errorArg is the value for the comparison.
+     * @return true if errorArg is different from this.
+     */
+    inline bool operator!=(ErrorType errorArg) const {
+        return errorType != errorArg;
+    }
+
+    /**
+     * @brief Returns the error type.
+     * @return errorType attribute.
+     */
+    inline ErrorType GetLastError() const {
+        return errorType;
+    }
+private:
+
+    /** The error type. */
+    ErrorType errorType;
+};
+
+/**
+ * @brief Here are defined the global static variables.
+ */
+namespace Global {
+/**
+ * Global error static variable.
+ */
+static Error errorType;
+}
 
 /** Large enough to store a pointer*/
 #ifdef __LP64__

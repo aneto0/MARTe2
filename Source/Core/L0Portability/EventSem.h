@@ -47,6 +47,9 @@
  * the semaphore. After the post all tasks are allowed to proceed.
  * A Reset is then required to use the semaphore again.
  *
+ * @details The Lock functions uses an ErrorType object defined in GeneralDefinition.h that could be used by the user to
+ * know if an eventual lock error happened because of the timeout or for other reasons.
+ *
  * @details Most of the implementation is delegated to the EventSemOS.h file
  * which is different for each operating system and provides non-portable
  * functions to implement this kind of semaphore.
@@ -66,7 +69,6 @@ public:
     /** @brief Destructor */
     ~EventSem();
 
-
     /**
      *  @brief Creates the semaphore.
      *  @return true if the initialization of the semH handle has success.
@@ -82,16 +84,18 @@ public:
     /**
      * @brief Wait for an event until the timeout expire or a post condition.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error is the error type in return.
      * @return true if the system level function returns without errors.
      */
-    bool Wait(TimeoutType msecTimeout = TTInfiniteWait);
+    bool Wait(TimeoutType msecTimeout = TTInfiniteWait, Error &error=Global::errorType);
 
     /**
      * @brief Resets the semaphore and then waits.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error is the error type in return.
      * @return true if both system level Reset and Wait functions return true.
      */
-    bool ResetWait(TimeoutType msecTimeout = TTInfiniteWait);
+    bool ResetWait(TimeoutType msecTimeout = TTInfiniteWait, Error &error=Global::errorType);
 
     /**
      * @brief Unlocks the semaphore.
@@ -104,6 +108,7 @@ public:
      * @return true if the semaphore state is resetted correctly.
      */
     bool Reset();
+
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

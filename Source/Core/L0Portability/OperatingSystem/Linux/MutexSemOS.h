@@ -91,15 +91,21 @@ public:
      * @brief Lock the semaphore until an unlock or the timeout expire.
      * @details The thread that locks a semaphore cannot be killed in the critical region.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error is the error type.
      * @return false if lock fails also because the expire of the timeout, true otherwise.
      */
-    bool Lock(TimeoutType msecTimeout = TTInfiniteWait) {
+    bool Lock(TimeoutType msecTimeout,
+              Error &error) {
         if (msecTimeout == TTInfiniteWait) {
-            if (pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL) != 0)
+            if (pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL) != 0) {
+                error = OSError;
                 return False;
+            }
 
-            if (pthread_mutex_lock(&mutexHandle) != 0)
+            if (pthread_mutex_lock(&mutexHandle) != 0) {
+                error = OSError;
                 return False;
+            }
         }
         else {
             struct timespec timesValues;
@@ -111,6 +117,7 @@ public:
             timesValues.tv_nsec = (int) ((sec - roundValue) * 1E9);
             int err = 0;
             if ((err = pthread_mutex_timedlock(&mutexHandle, &timesValues)) != 0) {
+                error = Timeout;
                 return False;
             }
         }
@@ -178,11 +185,13 @@ public:
             semH = (HANDLE) NULL;
             return False;
         }
+
+        Error error;
         if (locked == True) {
-            ((PrivateMutexSemStruct *) semH)->Lock(TTInfiniteWait);
+            ((PrivateMutexSemStruct *) semH)->Lock(TTInfiniteWait, error);
         }
 
-        return True;
+        return error != Debug;
     }
 
     /**
@@ -204,14 +213,16 @@ public:
      * @details Called by MutexSem::Lock
      * @param[in,out] semH is the mutex semaphore handle.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error is the error type.
      * @return the result of PrivateMutexSemStruct::Lock
      */
     static inline bool Lock(HANDLE &semH,
-                            TimeoutType msecTimeout) {
+                            TimeoutType msecTimeout,
+                            Error &error) {
         if (semH == (HANDLE) NULL) {
             return False;
         }
-        return ((PrivateMutexSemStruct *) semH)->Lock(msecTimeout);
+        return ((PrivateMutexSemStruct *) semH)->Lock(msecTimeout, error);
     }
 
     /**
@@ -232,11 +243,12 @@ public:
      * @see MutexSemOSLock.
      */
     static inline bool FastLock(HANDLE &semH,
-                                TimeoutType msecTimeout) {
+                                TimeoutType msecTimeout,
+                                Error &error) {
         if (semH == (HANDLE) NULL) {
             return False;
         }
-        return ((PrivateMutexSemStruct *) semH)->Lock(msecTimeout);
+        return ((PrivateMutexSemStruct *) semH)->Lock(msecTimeout, error);
     }
 
     /**

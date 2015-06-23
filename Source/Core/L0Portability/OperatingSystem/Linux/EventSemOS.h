@@ -101,20 +101,25 @@ public:
     /**
      * @brief Wait until a post condition or until the timeout expire.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error is the error type.
      * @return false if lock or wait functions fail or if the timeout causes the wait fail.
      */
-    bool Wait(TimeoutType msecTimeout = TTInfiniteWait) {
+    bool Wait(TimeoutType msecTimeout,
+              Error &error) {
         if (msecTimeout == TTInfiniteWait) {
             if (pthread_mutex_lock(&mutexHandle) != 0) {
+                error = OSError;
                 return False;
             }
             if (stop == True) {
                 if (pthread_cond_wait(&eventVariable, &mutexHandle) != 0) {
                     pthread_mutex_unlock(&mutexHandle);
+                    error = OSError;
                     return False;
                 }
             }
             if (pthread_mutex_unlock(&mutexHandle) != 0) {
+                error = OSError;
                 return False;
             }
         }
@@ -129,16 +134,19 @@ public:
             timesValues.tv_sec = (int) roundValue;
             timesValues.tv_nsec = (int) ((sec - roundValue) * 1E9);
             if (pthread_mutex_timedlock(&mutexHandle, &timesValues) != 0) {
+                error = Timeout;
                 return False;
             }
             if (stop == True) {
 
                 if (pthread_cond_timedwait(&eventVariable, &mutexHandle, &timesValues) != 0) {
                     pthread_mutex_unlock(&mutexHandle);
+                    error = Timeout;
                     return False;
                 }
             }
             if (pthread_mutex_unlock(&mutexHandle) != 0) {
+                error = OSError;
                 return False;
             }
         }
@@ -248,14 +256,16 @@ public:
      * @details Called by EventSem::Create
      * @param[in,out] semH is the semaphore handle.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error is the error type.
      * @return the result of PrivateEventSemStruct::Wait.
      */
     static inline bool Wait(HANDLE &semH,
-                            TimeoutType msecTimeout) {
+                            TimeoutType msecTimeout,
+                            Error &error) {
         if (semH == (HANDLE) NULL) {
             return False;
         }
-        return ((PrivateEventSemStruct *) semH)->Wait(msecTimeout);
+        return ((PrivateEventSemStruct *) semH)->Wait(msecTimeout, error);
     }
 
     /**
@@ -289,12 +299,14 @@ public:
      * @details Called by EventSem::Reset
      * @param[in,out] semH is a pointer to the event semaphore.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error is the error type.
      * @return the result of PrivateEventSemStruct::Wait.
      */
     static inline bool ResetWait(HANDLE &semH,
-                                 TimeoutType msecTimeout) {
+                                 TimeoutType msecTimeout,
+                                 Error &error) {
         Reset(semH);
-        return Wait(semH, msecTimeout);
+        return Wait(semH, msecTimeout, error);
     }
 
 };

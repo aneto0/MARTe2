@@ -78,16 +78,21 @@ public:
      * @details Called by MutexSem::Lock
      * @param[in,out] semH is the mutex semaphore handle.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error specified if the error is because of the timeout or not.
      * @return the result of PrivateMutexSemStruct::Lock
      */
     static inline bool Lock(HANDLE &semH,
-                            TimeoutType msecTimeout) {
+                            TimeoutType msecTimeout,
+                            Error &error) {
         DWORD ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
         if (ret == WAIT_FAILED) {
+            error = OSError;
             return False;
         }
-        if (ret == WAIT_TIMEOUT)
+        if (ret == WAIT_TIMEOUT) {
+            error = Timeout;
             return False;
+        }
         return True;
     }
 
@@ -108,9 +113,17 @@ public:
      * @brief MutexSem::Lock MutexSemOS::Lock.
      */
     static inline bool FastLock(HANDLE &semH,
-                                TimeoutType msecTimeout) {
+                                TimeoutType msecTimeout,
+                                Error &error) {
         int ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
-        return ((ret != (int) WAIT_FAILED) && (ret != (int) WAIT_TIMEOUT));
+        if (ret == WAIT_FAILED) {
+            error = OSError;
+            return False;
+        }
+        if (ret == WAIT_TIMEOUT) {
+            error = Timeout;
+            return False;
+        }
     }
 
     /**
