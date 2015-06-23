@@ -41,7 +41,8 @@ OBJSX=  Atomic.x \
 		StringPortable.x \
 		ThreadInformation.x \
 		MutexSem.x \
-		EventSem.x	
+		EventSem.x \
+		MemoryStatisticsDatabase.x	
 PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
@@ -49,7 +50,8 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 all: $(OBJS)    \
-                $(BUILD_DIR)/L0Portability$(LIBEXT) 
+                $(BUILD_DIR)/L0Portability$(LIBEXT) \
+                $(BUILD_DIR)/Test$(EXEEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

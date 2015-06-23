@@ -57,19 +57,13 @@ public:
      * @brief Checks if this element is zero.
      * @return true if all attributes are equal to zero.
      */
-    inline bool isEmpty() const {
-        return threadId == 0 && totalMemorySize == 0 && nOfMemoryChunks == 0;
-    }
+    inline bool isEmpty() const;
 
     /**
      * @brief Sets this element to zero.
      * @details Sets all the attributes to zero.
      */
-    inline void setEmpty() {
-        threadId = 0;
-        totalMemorySize = 0;
-        nOfMemoryChunks = 0;
-    }
+    inline void setEmpty();
 
 };
 
@@ -83,6 +77,35 @@ public:
  * Since the database allocates space on the stack, the maximum size MAX_NO_OF_MEMORY_MONITORS is defined in GeneralDefinitionsOS.h
  */
 class MemoryStatisticsDatabase {
+public:
+
+    /**
+     * @brief Finds an element in the database by the thread identifier.
+     * @param[in] tid is the thread identifier.
+     * @return a pointer to the element in the database.
+     */
+    static inline ThreadAllocationStatistics* Find(TID tid);
+
+    /**
+     * @brief Signs a new memory chunk of memory for the specified element.
+     * @details if the element is not in the database it is added.
+     * @param[in] tid is the thread identifier used to find the element in the database.
+     * @param[in] memSize is the size of the memory chunk
+     * @return true if the element is not in the database and this is already full.
+     */
+    static inline bool AddMemoryChunk(TID tid,
+                                      uint32 memSize);
+
+    /**
+     * @brief Deletes a memory chunk of memory from the specified element informations.
+     * @details If the remained memory is zero, the element is removed from the database.
+     * @param[in] tid is the thread identifier used to find the element.
+     * @param[in] memSize is the size of the memory chunk freed.
+     * @return true if the element is already in the database, false otherwise.
+     */
+    static inline bool FreeMemoryChunk(TID tid,
+                                       uint32 memSize);
+
 private:
 
     /** The memory database array. */
@@ -113,41 +136,9 @@ private:
      * @param[in] tid is the thread identifier.
      * @return a pointer to the element in the database.
      */
-    static inline ThreadAllocationStatistics* PrivateFind(TID tid) const;
-
-public:
-
-    /**
-     * @brief Finds an element in the database by the thread identifier.
-     * @param[in] tid is the thread identifier.
-     * @return a pointer to the element in the database.
-     */
-    static inline ThreadAllocationStatistics* Find(TID tid);
-
-    /**
-     * @brief Signs a new memory chunk of memory for the specified element.
-     * @details if the element is not in the database it is added.
-     * @param[in] tid is the thread identifier used to find the element in the database.
-     * @param[in] memSize is the size of the memory chunk
-     * @return true if the element is not in the database and this is already full.
-     */
-    static inline bool AddMemoryChunk(TID tid,
-                                      uint32 memSize);
-
-    /**
-     * @brief Deletes a memory chunk of memory from the specified element informations.
-     * @details If the remained memory is zero, the element is removed from the database.
-     * @param[in] tid is the thread identifier used to find the element.
-     * @param[in] memSize is the size of the memory chunk freed.
-     * @return true if the element is already in the database, false otherwise.
-     */
-    static inline bool FreeMemoryChunk(TID tid,
-                                       uint32 memSize);
+    static inline ThreadAllocationStatistics* PrivateFind(TID tid);
 
 };
-
-ThreadAllocationStatistics MemoryStatisticsDatabase::stackDatabase[MAX_NO_OF_MEMORY_MONITORS] = { { 0, 0, 0 } };
-uint32 MemoryStatisticsDatabase::nOfElements = 0;
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
@@ -191,7 +182,7 @@ bool MemoryStatisticsDatabase::Remove(TID tid) {
     return True;
 }
 
-ThreadAllocationStatistics* MemoryStatisticsDatabase::PrivateFind(TID tid) const {
+ThreadAllocationStatistics* MemoryStatisticsDatabase::PrivateFind(TID tid) {
 
     for (uint32 i = 0, counter = 0; counter < nOfElements && i < MAX_NO_OF_MEMORY_MONITORS; i++) {
         //skip in case of empty element

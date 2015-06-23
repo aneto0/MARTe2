@@ -30,10 +30,17 @@
 /*---------------------------------------------------------------------------*/
 
 #ifdef MEMORY_STATISTICS
-#include "MemoryStatistics.h"
+#include "MemoryStatisticsDatabase.h"
 #endif
 #include "Memory.h"
 #include "Threads.h"
+
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+MemoryAllocationFlags Memory::defaultAllocationFlag = MemoryStandardMemory;
+
 
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,MemoryOS.h)
 
@@ -62,7 +69,6 @@ struct MemoryInformation {
 
 };
 
-MemoryAllocationFlags Memory::defaultAllocationFlag = MemoryStandardMemory;
 
 void *MemoryMalloc(uint32 size) {
     if (size == 0) {
@@ -286,9 +292,7 @@ bool MemorySet(void* mem,
     return MemoryOS::Set(mem, c, size);
 }
 
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

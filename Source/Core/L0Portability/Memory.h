@@ -239,6 +239,8 @@ bool MemorySet(void* mem,
 class Memory {
 
 public:
+
+    /** The default memory allocation flag */
     static MemoryAllocationFlags defaultAllocationFlag;
 
     /**

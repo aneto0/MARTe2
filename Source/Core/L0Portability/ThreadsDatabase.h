@@ -206,7 +206,7 @@ private:
     /** Database memory granularity */
     static const uint32 GRANULARITY = 64;
 
-    /** Fast ram semafore using Atomic TestAndSet*/
+    /** Fast semaphore using Atomic TestAndSet*/
     static int32 atomicSem;
 
     /** Actual number of entries used */
