@@ -119,9 +119,8 @@ void *MemoryRealloc(void *&data,
     if (Memory::defaultAllocationFlag & MemoryAddHeader) {
         //add the memory information space
         newSize += sizeof(MemoryInformation);
-        MemoryInformation *header = (MemoryInformation*) data - 1;
-
 #ifdef MEMORY_STATISTICS
+        MemoryInformation *header = (MemoryInformation*) data - 1;
         sizeToFree = header->size;
 #endif
     }
