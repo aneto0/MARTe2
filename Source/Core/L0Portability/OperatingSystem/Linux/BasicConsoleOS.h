@@ -296,7 +296,7 @@ public:
      * @return true.
      */
     static bool Clear(BasicConsole &con) {
-        for (int32 i = 0; i < BASIC_CONSOLE_LINUX_CLEAR_ROWS; i++) {
+        for (uint32 i = 0; i < BASIC_CONSOLE_LINUX_CLEAR_ROWS; i++) {
             write(STDOUT, "\n", 1);
         }
         return True;
