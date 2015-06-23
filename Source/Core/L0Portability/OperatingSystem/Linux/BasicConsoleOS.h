@@ -186,7 +186,7 @@ public:
     }
 
     /**
-     * @brief Not implemented.
+     * @warning Not implemented.
      * @param[in,out] con is the console.
      * @param[in] title is the title.
      * @return false.
@@ -251,7 +251,7 @@ public:
     }
 
     /**
-     * @brief Not implemented.
+     * @warning Not implemented.
      * @param[in,out] con is the console.
      * @param[in] column is the desired x position.
      * @param[in] row is the desired y position.
@@ -264,7 +264,7 @@ public:
     }
 
     /**
-     * @brief Not implemented.
+     * @warning Not implemented.
      * @param[in,out] con is the console.
      * @param[out] column is the cursor x position.
      * @param[out] row is the cursor y position.
@@ -277,7 +277,7 @@ public:
     }
 
     /**
-     * @brief Not implemented.
+     * @warning Not implemented.
      * @param[in,out] con is the console.
      * @param[in] foreGroundColour is the desired foreground color.
      * @param[in] backGroundColour is the desired background color.
@@ -303,7 +303,7 @@ public:
     }
 
     /**
-     * @brief Not implemented.
+     * @warning Not implemented.
      * @param[in,out] con is the console.
      * @param[in] c is the char to write.
      * @param[in] foreGroundColour is the desired foreground color.

@@ -401,7 +401,7 @@ public:
     /**
      * @brief Gets the cursor position.
      * @param[out] column is the x coordinate of the cursor in return.
-     * @param[in] row is the y coordinate of the cursor in return.
+     * @param[out] row is the y coordinate of the cursor in return.
      * @return true if successful, false otherwise.
      */
     inline bool GetCursorPosition(int32 & column,

@@ -239,6 +239,7 @@ public:
     /**
      * @brief Reads the specified number of bytes from the console.
      * @param[in,out] con is the console.
+     * param[out] buffer is the buffer which contains the read data in return.
      * @param[in,out] size is the number of bytes to read.
      * @param[in] msecTimeout is the desired timeout.
      * @return true if successful, false otherwise.
@@ -363,7 +364,7 @@ public:
 
     /**
      * @brief Gets the buffer size.
-     * @param[in,out] console is the console.
+     * @param[in,out] con is the console.
      * @param[out] numberOfColumns is the x axis buffer size in return.
      * @param[out] numberOfRows is the y axis buffer size in return.
      * @return true if successful, false otherwise.
