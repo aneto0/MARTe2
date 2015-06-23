@@ -57,7 +57,9 @@ public:
     /** Used to save the number of ticks at the calibration moment. */
     uint64 initialTicks;
 
-    /** @brief Get the frequency and the period of the cpu clock. */
+    /**
+     * @brief Get the frequency and the period of the cpu clock.
+     */
     HighResolutionTimerCalibratorOS() {
 
         time((time_t *) &initialTime.tv_sec);
