@@ -1,29 +1,39 @@
-/* Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file ThreadsDatabaseTest.cpp
+ * @brief Source file for class ThreadsDatabaseTest
+ * @date 23/06/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http: //ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id:$
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This source file contains the definition of all the methods for
+ * the class ThreadsDatabaseTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
 #include "ThreadsDatabaseTest.h"
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 
 //return the number of thread's informations saved in the database
 int32 nDatabasedThreads() {
@@ -54,9 +64,7 @@ void GetInfo(ThreadsDatabaseTest &threadDatabaseTest) {
     ThreadsDatabase::Lock();
     int32 state = threadDatabaseTest.exitCondition;
     threadDatabaseTest.returnValue = threadDatabaseTest.returnValue
-            && ((threadDatabaseTest.threadInfo =
-                    ThreadsDatabase::GetThreadInformation(Threads::Id()))
-                    != NULL);
+            && ((threadDatabaseTest.threadInfo = ThreadsDatabase::GetThreadInformation(Threads::Id())) != NULL);
 
     if (!threadDatabaseTest.returnValue) {
         threadDatabaseTest.exitCondition++;
@@ -90,7 +98,7 @@ void GetInfo(ThreadsDatabaseTest &threadDatabaseTest) {
 
     if (n > 0) {
 
-        if (!ThreadsDatabase::GetInfo(controller, n - 1, (TID)-1)) {
+        if (!ThreadsDatabase::GetInfo(controller, n - 1, (TID) - 1)) {
             threadDatabaseTest.returnValue = False;
             threadDatabaseTest.exitCondition++;
             ThreadsDatabase::UnLock();
@@ -119,29 +127,24 @@ void GetInfo(ThreadsDatabaseTest &threadDatabaseTest) {
 void GetId(ThreadsDatabaseTest &threadDatabaseTest) {
     TID tid;
     for (int32 i = 0; i < threadDatabaseTest.tidsDim; i++) {
-        threadDatabaseTest.returnValue = threadDatabaseTest.returnValue
-                && ((tid = ThreadsDatabase::GetThreadID(0)) != 0);
+        threadDatabaseTest.returnValue = threadDatabaseTest.returnValue && ((tid = ThreadsDatabase::GetThreadID(0)) != 0);
         if (!threadDatabaseTest.returnValue) {
             break;
         }
         if (tid != Threads::Id()) {
-            threadDatabaseTest.returnValue = threadDatabaseTest.returnValue
-                    && Threads::Kill(tid);
+            threadDatabaseTest.returnValue = threadDatabaseTest.returnValue && Threads::Kill(tid);
         }
         if (!threadDatabaseTest.returnValue) {
             break;
         }
     }
     threadDatabaseTest.exitCondition++;
-    threadDatabaseTest.returnValue = threadDatabaseTest.returnValue
-            && nDatabasedThreads() == 1
-            && ThreadsDatabase::GetThreadID(0) == Threads::Id();
+    threadDatabaseTest.returnValue = threadDatabaseTest.returnValue && nDatabasedThreads() == 1 && ThreadsDatabase::GetThreadID(0) == Threads::Id();
 }
 
 //Only Increment exit condition after the lock. It's used to test the lock with timeout.
 void DoNothings(void *myThreadDatabaseTest) {
-    ThreadsDatabaseTest *threadDatabaseTest =
-            (ThreadsDatabaseTest*) myThreadDatabaseTest;
+    ThreadsDatabaseTest *threadDatabaseTest = (ThreadsDatabaseTest*) myThreadDatabaseTest;
 
     while (threadDatabaseTest->exitCondition < 1) {
         SleepSec(1e-3);
@@ -173,6 +176,9 @@ void LockTimeout(ThreadsDatabaseTest &threadDatabaseTest) {
 void DoNothingsProtected(ThreadsDatabaseTest *threadDatabaseTest) {
     ThreadProtectedExecute(DoNothings, (void*) threadDatabaseTest, NULL);
 }
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
 //Test the goodness of the informations in the database and the efficiency of lock and unlock functions
 bool ThreadsDatabaseTest::TestGetInfoAndLock(int32 nOfThreads) {
@@ -181,27 +187,34 @@ bool ThreadsDatabaseTest::TestGetInfoAndLock(int32 nOfThreads) {
     if (!eventsem.Reset()) {
         return False;
     }
+    //launches threads
     for (int32 i = 0; i < nOfThreads; i++) {
         tids[i] = Threads::BeginThread((ThreadFunctionType) GetInfo, this);
     }
     SleepSec(10e-3);
     if (!eventsem.Post()) {
+        //in case of failure kill the threads and exit
         for (int32 i = 0; i < nOfThreads; i++) {
             Threads::Kill(tids[i]);
         }
+        SleepSec(1.0);
         return False;
     }
 
     int32 j = 0;
+
+    //wait that each thread do its job
     while (exitCondition < nOfThreads) {
-        if (j++ > 10 * nOfThreads) {
+
+        //if too much time is elapsed, kill the threads and exit
+        if (j++ > nOfThreads) {
             for (int32 i = 0; i < nOfThreads; i++) {
                 Threads::Kill(tids[i]);
             }
             returnValue = False;
             break;
         }
-        SleepSec(100e-3);
+        SleepSec(1.0);
     }
 
     return returnValue && (nDatabasedThreads() == 0);
@@ -223,20 +236,19 @@ bool ThreadsDatabaseTest::TestRemoveEntry(int32 nOfThreads) {
 
     //wait that all threads begin
     while (exitCondition < nOfThreads) {
-        if (j++ > 10 * nOfThreads) {
+        if (j++ > nOfThreads) {
             for (int32 i = 0; i < tidsDim; i++) {
                 Threads::Kill(tids[i]);
             }
             return False;
         }
-        SleepSec(10e-3);
+        SleepSec(1.0);
     }
 
     //for each thread...
     for (int32 i = 0; i < nOfThreads; i++) {
         //compare the tid in database with tids saved in the array,
-        if ((threadInfo = ThreadsDatabase::GetThreadInformation(tids[i]))
-                == NULL) {
+        if ((threadInfo = ThreadsDatabase::GetThreadInformation(tids[i])) == NULL) {
             returnValue = False;
             break;
         }
@@ -253,9 +265,7 @@ bool ThreadsDatabaseTest::TestRemoveEntry(int32 nOfThreads) {
         }
 
         //check if the informations were removed from database
-        returnValue = returnValue
-                && ThreadsDatabase::GetThreadInformation(tids[i]) == NULL
-                && nDatabasedThreads() == (nOfThreads - i - 1);
+        returnValue = returnValue && ThreadsDatabase::GetThreadInformation(tids[i]) == NULL && nDatabasedThreads() == (nOfThreads - i - 1);
 
         //re-add the informations in the database
         ThreadsDatabase::NewEntry(threadInfo);
@@ -267,14 +277,17 @@ bool ThreadsDatabaseTest::TestRemoveEntry(int32 nOfThreads) {
         else {
             returnValue = False;
         }
-        if (!returnValue)
+        if (!returnValue) {
             break;
+        }
     }
 
     //check if the database is empty
-    if (returnValue)
+    if (returnValue) {
         return returnValue && (nDatabasedThreads() == 0);
+    }
     else {
+        //in case of failure kill threads
         for (int32 i = 0; i < tidsDim; i++) {
             if (Threads::IsAlive(tids[i])) {
                 Threads::Kill(tids[i]);
@@ -346,8 +359,7 @@ bool ThreadsDatabaseTest::TestTimeoutLock(TimeoutType time) {
     TID tid1 = Threads::BeginThread((ThreadFunctionType) LockTimeout, this);
 
     //launching a thread which locks with timeout and then increment the exitCondition variable
-    TID tid2 = Threads::BeginThread((ThreadFunctionType) DoNothingsProtected,
-                                    this);
+    TID tid2 = Threads::BeginThread((ThreadFunctionType) DoNothingsProtected, this);
     uint32 j = 0;
 
     //wait until the second thread increments exitCondition or too much time is elapsed
