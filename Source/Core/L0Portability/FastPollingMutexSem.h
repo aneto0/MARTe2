@@ -78,6 +78,7 @@ public:
     /**
      * @brief If the semaphore is locked tries to lock until the timeout is expired.
      * @param[in] msecTimeout is the desired timeout.
+     * @param[out] error is the error type in return.
      * @return true if the thread locks the semaphore before the timeout expired,
      * false otherwise.
      */
