@@ -55,7 +55,9 @@ public:
      */
     inline SemCore();
 
-    /** @brief Set the semaphore handle to 0. */
+    /**
+     * @brief Set the semaphore handle to 0.
+     */
     inline void Init();
 
     /**

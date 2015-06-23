@@ -57,7 +57,9 @@
 
 class EventSem: public SemCore {
 public:
-    /** @brief Constructor. */
+    /**
+     * @brief Constructor.
+     */
     EventSem();
 
     /**
@@ -66,7 +68,9 @@ public:
      */
     EventSem(HANDLE h);
 
-    /** @brief Destructor */
+    /**
+     * @brief Destructor
+     */
     ~EventSem();
 
     /**

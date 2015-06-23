@@ -59,21 +59,15 @@ public:
     /**
      * @brief Initializes the semaphore and reads it.
      * @param[in] locked defines if the semaphore must be initialized locked or unlocked.
-     * @return true.
      */
-    inline bool Create(bool locked = False);
+    inline void Create(bool locked = False);
 
-    /**
-     * @brief Close the semaphore.
-     * @return true.
-     */
-    inline bool Close();
 
     /**
      * @brief Returns the status of the semaphore.
      * @return true if the semaphore is locked.
      */
-    inline bool Locked();
+    inline bool Locked() const;
 
     /**
      * @brief If the semaphore is locked tries to lock until the timeout is expired.
@@ -91,12 +85,12 @@ public:
      * already locked.
      */
     inline bool FastTryLock();
+
     /**
      * @brief Unlocks the semaphore.
      * @details If a thread locks this type of semaphore, another threads can unlock it.
-     * @return true.
      */
-    inline bool FastUnLock();
+    inline void FastUnLock();
 
 protected:
 
@@ -112,21 +106,17 @@ inline FastPollingMutexSem::FastPollingMutexSem() {
     flag = 0;
 }
 
-bool FastPollingMutexSem::Create(bool locked) {
+void FastPollingMutexSem::Create(bool locked) {
     if (locked == True) {
         flag = 1;
     }
     else {
         flag = 0;
     }
-    return True;
 }
 
-bool FastPollingMutexSem::Close() {
-    return True;
-}
 
-bool FastPollingMutexSem::Locked() {
+bool FastPollingMutexSem::Locked() const{
     return flag == 1;
 }
 
@@ -152,9 +142,8 @@ bool FastPollingMutexSem::FastTryLock() {
     return (Atomic::TestAndSet((int32 *) &flag));
 }
 
-bool FastPollingMutexSem::FastUnLock() {
+void FastPollingMutexSem::FastUnLock() {
     flag = 0;
-    return True;
 }
 
 #endif /* FASTPOLLINGMUTEXSEM_H_ */

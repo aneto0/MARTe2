@@ -80,7 +80,7 @@ public:
 
     /**
      * @brief Close the semaphore handle.
-     * @return true.
+     * @return true if successful, false otherwise.
      */
     bool Close();
 
@@ -94,7 +94,7 @@ public:
 
     /**
      * @brief Unlock the semaphore.
-     * @return true if the unlock system level function return true.
+     * @return true if the unlock system level function return true, false otherwise.
      */
     bool UnLock();
 
