@@ -39,9 +39,10 @@ OBJSX=  EndianityGTest.x \
 	StringPortableGTest.x \
 	StringHelperGTest.x \
 	ThreadsGTest.x \
-	ThreadsDatabaseGTest.x \
-	MutexGTest.x 
-	#BasicConsoleGTest.x \
+	ThreadsDatabaseIntegrationGTest.x \
+	MutexGTest.x \
+	ThreadsIntegrationGTest.x \
+	#BasicConsoleGTest.x 
 	#LinkedListableGTest.x \
 	#BStringGTest.x \
 	#LinkedListHolderGTest.x \
@@ -53,7 +54,7 @@ OBJSX=  EndianityGTest.x \
 	#ComplexGTest.x \
 	#StackHolderGTest.x \
 	#QueueHolderGTest.x \
-	#	IntegerToStreamGTest.x \
+	#IntegerToStreamGTest.x \
 	#FloatToStreamGTest.x \
 	#BitSetToIntegerGTest.x \
 	#SafeShiftGTest.x \

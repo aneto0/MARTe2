@@ -1,6 +1,6 @@
 /**
- * @file SleepGTest.cpp
- * @brief Source file for class SleepGTest
+ * @file ThreadsIntegrationGTest.cpp
+ * @brief Source file for class ThreadsIntegrationGTest
  * @date 25/06/2015
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class SleepGTest (public, protected, and private). Be aware that some 
+ * the class ThreadsIntegrationGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -31,7 +31,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "gtest/gtest.h"
-#include "SleepTest.h"
+#include "ThreadsIntegrationTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,12 +41,11 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class SleepGTest: public ::testing::Test {
+class ThreadsIntegrationGTest: public ::testing::Test {
 protected:
     virtual void SetUp() {
         // Code here will be called immediately after the constructor
         // (right before each test).
-
     }
 
     virtual void TearDown() {
@@ -54,7 +54,43 @@ protected:
     }
 };
 
-TEST_F(SleepGTest,SleepTest) {
-    SleepTest sleepTest;
-    ASSERT_TRUE(sleepTest.All());
+TEST_F(ThreadsIntegrationGTest,BeginThreadTest) {
+    ThreadsIntegrationTest beginThread;
+    ASSERT_TRUE(beginThread.BeginThread(100));
 }
+
+TEST_F(ThreadsIntegrationGTest,PrioritiesThreadTest) {
+    ThreadsIntegrationTest prioritiesThread;
+    ASSERT_TRUE(prioritiesThread.Priorities());
+}
+
+TEST_F(ThreadsIntegrationGTest,PrioritiesPropagationStartFirst) {
+    ThreadsIntegrationTest prioritiesPropagationStartFirst;
+    ASSERT_TRUE(prioritiesPropagationStartFirst.PrioritiesPropagationStartFirst());
+}
+
+TEST_F(ThreadsIntegrationGTest,ThreadIdTest) {
+    ThreadsIntegrationTest threadIdTest;
+    ASSERT_TRUE(threadIdTest.ThreadIdTest());
+}
+
+TEST_F(ThreadsIntegrationGTest,ThreadKillTest) {
+    ThreadsIntegrationTest threadKillTest;
+    ASSERT_TRUE(threadKillTest.ThreadKillTest());
+}
+
+TEST_F(ThreadsIntegrationGTest,ThreadNameTest) {
+    ThreadsIntegrationTest threadNameTest;
+    ASSERT_TRUE(threadNameTest.ThreadNameTest());
+}
+
+TEST_F(ThreadsIntegrationGTest,ThreadEndTest) {
+    ThreadsIntegrationTest threadEndTest;
+    ASSERT_TRUE(threadEndTest.ThreadEndTest());
+}
+
+TEST_F(ThreadsIntegrationGTest,CpuRunTest) {
+    ThreadsIntegrationTest cpuRunTest;
+    ASSERT_TRUE(cpuRunTest.CpuRunTest());
+}
+

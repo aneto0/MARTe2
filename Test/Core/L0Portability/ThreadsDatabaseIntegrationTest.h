@@ -1,7 +1,7 @@
 /**
- * @file ThreadsDatabaseTest.h
- * @brief Header file for class ThreadsDatabaseTest
- * @date 23/06/2015
+ * @file ThreadsDatabaseIntegrationTest.h
+ * @brief Header file for class ThreadsDatabaseIntegrationTest
+ * @date 25/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ThreadsDatabaseTest
+ * @details This header file contains the declaration of the class ThreadsDatabaseIntegrationTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef THREADSDATABASETEST_H_
-#define 		THREADSDATABASETEST_H_
+#ifndef THREADSDATABASEINTEGRATIONTEST_H_
+#define 		THREADSDATABASEINTEGRATIONTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -41,11 +41,10 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief A class for ThreadsDatabase function tests.
+ * @brief A class for ThreadsDatabase functions test.
  */
-class ThreadsDatabaseTest {
+class ThreadsDatabaseIntegrationTest {
 
-private:
 
 public:
 
@@ -73,8 +72,10 @@ public:
     /** semaphore for threads syncronization. */
     EventSem eventsem;
 
-    /** @brief Constructor. */
-    ThreadsDatabaseTest() {
+    /**
+     * @brief Constructor.
+     */
+    ThreadsDatabaseIntegrationTest() {
         returnValue = True;
         exitCondition = 0;
         threadInfo = NULL;
@@ -82,13 +83,18 @@ public:
         timeout = TTInfiniteWait;
         eventsem.Create();
     }
-    ~ThreadsDatabaseTest() {
+
+    /**
+     * @brief Destructor.
+     */
+    ~ThreadsDatabaseIntegrationTest() {
         eventsem.Close();
     }
     /**
      * @brief Tests the efficiency of the Lock function of the database and compare the thread information returned by database with the thread's attributes.
      * @param[in] nOfThreads number of threads to launch.
-     * @return true if the exit condition value remains consistent and all the information received by database are correct. False otherwise. **/
+     * @return true if the exit condition value remains consistent and all the information received by database are correct. False otherwise.
+     */
     bool TestGetInfoAndLock(int32 nOfThreads);
 
     /**
@@ -97,15 +103,25 @@ public:
      * Then, it kills the other threads and
      * check if they are removed from the database.
      * @param[in] nOfThreads number of threads to launch.
-     * @return true if the returned tids are correct and after kills all thread's information are removed from database, false otherwise. **/
+     * @return true if the returned tids are correct and after kills all thread's information are removed from database, false otherwise.
+     */
     bool TestGetId(int32 nOfThreads);
+
+    /**
+     * @brief Tests the Find() function.
+     * @details Finds the tid of the thread with a specified name in the database.
+     * @param[in] the desired thread name.
+     * @return true if the returned tid belongs to the thread with the specified name, false otherwise.
+     */
+    bool TestFind(const char *name);
 
     /**
      * @brief Test the remove operation from the database.
      * @details Launchs nOfThreads threads and for each thread the main process control before that its tid is in the database, then remove the entry from the database
      * and check that the informations are not in the database anymore.
      * @param[in] nOfThreads numbero of threads to launch.
-     * @return true if the thread information pointer for each thread is in the database before the removing, and it's NULL after, false otherwise. **/
+     * @return true if the thread information pointer for each thread is in the database before the removing, and it's NULL after, false otherwise.
+     */
     bool TestRemoveEntry(int32 nOfThreads);
 
     /**
@@ -114,14 +130,16 @@ public:
      * then another thread locks the database and it must wait until the timeout is expired, after that it exit incrementing the exitCondition.
      * @param[in] the timeout for the lock function.
      * @return true if the second thread exit incrementing exitCondition after the expire of the timeout, false if too much time pass because this means that both thread are locked and the timeout
-     * does not work. **/
+     * does not work.
+     */
     bool TestTimeoutLock(TimeoutType time);
 
 };
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* THREADSDATABASETEST_H_ */
+#endif /* THREADSDATABASEINTEGRATIONTEST_H_ */
 

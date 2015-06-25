@@ -1,6 +1,6 @@
 /**
- * @file SleepGTest.cpp
- * @brief Source file for class SleepGTest
+ * @file ThreadsDatabaseIntegrationGTest.cpp
+ * @brief Source file for class ThreadsDatabaseIntegrationGTest
  * @date 25/06/2015
  * @author Giuseppe Ferrò
  *
@@ -17,10 +17,11 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class SleepGTest (public, protected, and private). Be aware that some 
+ * the class ThreadsDatabaseIntegrationGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+/*-
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -31,7 +32,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "gtest/gtest.h"
-#include "SleepTest.h"
+#include "ThreadsDatabaseIntegrationTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,12 +42,11 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class SleepGTest: public ::testing::Test {
+class ThreadsDatabaseIntegrationGTest: public ::testing::Test {
 protected:
     virtual void SetUp() {
         // Code here will be called immediately after the constructor
         // (right before each test).
-
     }
 
     virtual void TearDown() {
@@ -54,7 +55,30 @@ protected:
     }
 };
 
-TEST_F(SleepGTest,SleepTest) {
-    SleepTest sleepTest;
-    ASSERT_TRUE(sleepTest.All());
+TEST_F(ThreadsDatabaseIntegrationGTest,TestGetInfoAndLock) {
+    ThreadsDatabaseIntegrationTest TDtest;
+    ASSERT_TRUE(TDtest.TestGetInfoAndLock(10));
 }
+
+TEST_F(ThreadsDatabaseIntegrationGTest,TestRemoveEntry) {
+    ThreadsDatabaseIntegrationTest TDtest;
+    ASSERT_TRUE(TDtest.TestRemoveEntry(100));
+}
+
+TEST_F(ThreadsDatabaseIntegrationGTest,TestGetId) {
+    ThreadsDatabaseIntegrationTest TDtest;
+    ASSERT_TRUE(TDtest.TestGetId(10));
+}
+
+TEST_F(ThreadsDatabaseIntegrationGTest,TestFind) {
+    ThreadsDatabaseIntegrationTest TDtest;
+    ASSERT_TRUE(TDtest.TestFind("name"));
+}
+
+TEST_F(ThreadsDatabaseIntegrationGTest,TestTimeoutLock) {
+    ThreadsDatabaseIntegrationTest TDtest;
+    ASSERT_TRUE(TDtest.TestTimeoutLock(500));
+}
+
+
+	

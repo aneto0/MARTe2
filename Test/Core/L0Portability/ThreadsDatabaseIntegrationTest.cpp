@@ -1,7 +1,7 @@
 /**
- * @file ThreadsDatabaseTest.cpp
- * @brief Source file for class ThreadsDatabaseTest
- * @date 23/06/2015
+ * @file ThreadsDatabaseIntegrationTest.cpp
+ * @brief Source file for class ThreadsDatabaseIntegrationTest
+ * @date 25/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ThreadsDatabaseTest (public, protected, and private). Be aware that some 
+ * the class ThreadsDatabaseIntegrationTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include "ThreadsDatabaseTest.h"
+#include "ThreadsDatabaseIntegrationTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -44,7 +44,7 @@ int32 nDatabasedThreads() {
 }
 
 //Infinite loop
-void DoNothing(ThreadsDatabaseTest &threadDatabaseTest) {
+void DoNothing(ThreadsDatabaseIntegrationTest &threadDatabaseTest) {
     threadDatabaseTest.exitCondition++;
     SleepSec(1e-3);
     while (1) {
@@ -53,7 +53,7 @@ void DoNothing(ThreadsDatabaseTest &threadDatabaseTest) {
 }
 
 //return false if at least one thread does not match its tid in the database or if the exitCondition variable change in the locked block (this means that lock function does not work).
-void GetInfo(ThreadsDatabaseTest &threadDatabaseTest) {
+void GetInfo(ThreadsDatabaseIntegrationTest &threadDatabaseTest) {
 
     if (!threadDatabaseTest.eventsem.Wait()) {
         threadDatabaseTest.exitCondition++;
@@ -124,7 +124,7 @@ void GetInfo(ThreadsDatabaseTest &threadDatabaseTest) {
 }
 
 //The thread that calls this function, gets tids from database and kill the other threads. Then, checks if it remains alone in the database and exit.
-void GetId(ThreadsDatabaseTest &threadDatabaseTest) {
+void GetId(ThreadsDatabaseIntegrationTest &threadDatabaseTest) {
     TID tid;
     for (int32 i = 0; i < threadDatabaseTest.tidsDim; i++) {
         threadDatabaseTest.returnValue = threadDatabaseTest.returnValue && ((tid = ThreadsDatabase::GetThreadID(0)) != 0);
@@ -144,7 +144,7 @@ void GetId(ThreadsDatabaseTest &threadDatabaseTest) {
 
 //Only Increment exit condition after the lock. It's used to test the lock with timeout.
 void DoNothings(void *myThreadDatabaseTest) {
-    ThreadsDatabaseTest *threadDatabaseTest = (ThreadsDatabaseTest*) myThreadDatabaseTest;
+    ThreadsDatabaseIntegrationTest *threadDatabaseTest = (ThreadsDatabaseIntegrationTest*) myThreadDatabaseTest;
 
     while (threadDatabaseTest->exitCondition < 1) {
         SleepSec(1e-3);
@@ -159,7 +159,7 @@ void DoNothings(void *myThreadDatabaseTest) {
 }
 
 //It locks the mutex and goes in an infinite loop.
-void LockTimeout(ThreadsDatabaseTest &threadDatabaseTest) {
+void LockTimeout(ThreadsDatabaseIntegrationTest &threadDatabaseTest) {
 
     threadDatabaseTest.exitCondition++;
     while (threadDatabaseTest.exitCondition < 2) {
@@ -173,7 +173,7 @@ void LockTimeout(ThreadsDatabaseTest &threadDatabaseTest) {
     ThreadsDatabase::UnLock();
 }
 
-void DoNothingsProtected(ThreadsDatabaseTest *threadDatabaseTest) {
+void DoNothingsProtected(ThreadsDatabaseIntegrationTest *threadDatabaseTest) {
     ThreadProtectedExecute(DoNothings, (void*) threadDatabaseTest, NULL);
 }
 /*---------------------------------------------------------------------------*/
@@ -181,7 +181,7 @@ void DoNothingsProtected(ThreadsDatabaseTest *threadDatabaseTest) {
 /*---------------------------------------------------------------------------*/
 
 //Test the goodness of the informations in the database and the efficiency of lock and unlock functions
-bool ThreadsDatabaseTest::TestGetInfoAndLock(int32 nOfThreads) {
+bool ThreadsDatabaseIntegrationTest::TestGetInfoAndLock(int32 nOfThreads) {
     exitCondition = 0;
     returnValue = True;
     if (!eventsem.Reset()) {
@@ -222,7 +222,7 @@ bool ThreadsDatabaseTest::TestGetInfoAndLock(int32 nOfThreads) {
 }
 
 //Test the behavior of the function RemoveEntry()
-bool ThreadsDatabaseTest::TestRemoveEntry(int32 nOfThreads) {
+bool ThreadsDatabaseIntegrationTest::TestRemoveEntry(int32 nOfThreads) {
     exitCondition = 0;
     returnValue = True;
 
@@ -298,7 +298,7 @@ bool ThreadsDatabaseTest::TestRemoveEntry(int32 nOfThreads) {
 }
 
 //Test the behavior of the GetId function
-bool ThreadsDatabaseTest::TestGetId(int32 nOfThreads) {
+bool ThreadsDatabaseIntegrationTest::TestGetId(int32 nOfThreads) {
     exitCondition = 0;
     returnValue = True;
     tidsDim = 0;
@@ -349,27 +349,58 @@ bool ThreadsDatabaseTest::TestGetId(int32 nOfThreads) {
     }
 }
 
+bool ThreadsDatabaseIntegrationTest::TestFind(const char* name) {
+    exitCondition = 0;
+    int32 j = 0;
+    TID tid = Threads::BeginThread((ThreadFunctionType) DoNothing, this, THREADS_DEFAULT_STACKSIZE, name);
+    while (exitCondition < 1) {
+        if (j++ > 100) {
+            Threads::Kill(tid);
+            return False;
+        }
+        SleepSec(10e-3);
+    }
+
+    if (ThreadsDatabase::Find(name) != tid) {
+        Threads::Kill(tid);
+        return False;
+    }
+
+//kill the thread in the infinite loop.
+    Threads::Kill(tid);
+
+    if (ThreadsDatabase::Find(NULL) != 0) {
+        return False;
+    }
+
+    if (ThreadsDatabase::Find("") != 0) {
+        return False;
+    }
+
+    return True;
+}
+
 //Test the lock with timeout
-bool ThreadsDatabaseTest::TestTimeoutLock(TimeoutType time) {
+bool ThreadsDatabaseIntegrationTest::TestTimeoutLock(TimeoutType time) {
     timeout = time;
     exitCondition = 0;
     returnValue = False;
 
-    //launching a thread which locks with timeout and goes in an infinite loop.
+//launching a thread which locks with timeout and goes in an infinite loop.
     TID tid1 = Threads::BeginThread((ThreadFunctionType) LockTimeout, this);
 
-    //launching a thread which locks with timeout and then increment the exitCondition variable
+//launching a thread which locks with timeout and then increment the exitCondition variable
     TID tid2 = Threads::BeginThread((ThreadFunctionType) DoNothingsProtected, this);
     uint32 j = 0;
 
-    //wait until the second thread increments exitCondition or too much time is elapsed
+//wait until the second thread increments exitCondition or too much time is elapsed
     while (exitCondition < 4) {
         if (j++ > (4 * time.msecTimeout))
             break;
         SleepSec(1e-3);
     }
 
-    //kill both threads and return false if too much time is elapsed
+//kill both threads and return false if too much time is elapsed
     if (exitCondition < 4) {
         if (Threads::IsAlive(tid2)) {
             Threads::Kill(tid2);
@@ -380,7 +411,7 @@ bool ThreadsDatabaseTest::TestTimeoutLock(TimeoutType time) {
         return False;
     }
 
-    //kill the first thread and return true if after the expire the second thread did his job.
+//kill the first thread and return true if after the expire the second thread did his job.
     return Threads::Kill(tid1);
 }
 

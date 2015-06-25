@@ -1,7 +1,7 @@
 /**
  * @file ThreadsTest.h
  * @brief Header file for class ThreadsTest
- * @date 23/06/2015
+ * @date 25/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -32,124 +32,73 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Threads.h"
-#include "EventSem.h"
-#include "MutexSem.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief A class for testing of Threads functions.
+ * @brief A class to test the Threads functions.
  */
 class ThreadsTest {
 public:
 
-    /**
-     * Variable incremented by the call back function ThreadsTestIncrementCounter
-     */
-    int32 incrementCounter;
-
-    /**
-     * Indicates how many threads will be created
-     */
-    int32 nOfThreads1;
-
-    /**
-     * Variable mutexSem to protect parts of the code
-     */
-    MutexSem mutexSem;
-
-    /**
-     * Store the Id of one thread
-     */
-    TID threadIdTarget;
-
-    /**
-     * Random Id to check Thread function with a non existing Thread Id
-     */
-    TID falseId;
-
-    /**
-     * Name of a thread
-     */
-
-    const char *nameThreadTest;
-
-    /**
-     * Generic event sem used for synchronisations in the test
-     */
-    EventSem eventSem;
-
-    /**
-     * event semaphore used to indicate the end of the thread MANAGEMENT
-     */
-    EventSem eventSemEndManagement;
-
-    /**
-     * To be used for synchronization.
-     */
-    bool callbackTestSuccessful;
-
     ThreadsTest();
 
-    ~ThreadsTest();
+    /**
+     * @brief Tests the begin function.
+     * @details Launchs a thread and checks if it is alive and if the related name is correct.
+     * @param[in] name is the desired thread name.
+     * @param[in] stackSize is the desired stack size.
+     * @return true if successful, false otherwise.
+     */
+    bool TestBegin(const char* name,
+                   uint32 stackSize);
 
     /**
-     * @brief Tests the thread creation
-     * @param[in] nOfThreads number of threads to test
-     * @return True if nOfThreads are created
+     * @brief Tests the end function.
+     * @details Checks if the thread terminates after the end function call.
+     * @return true if successful, false otherwise.
      */
-    bool BeginThread(uint32 nOfThreads);
+    bool TestEnd();
 
     /**
-     * @brief Test changes of priority levels and classes.
-     * @details This a very basic test and does not check if (and how) the priority request is actually propagated to
-     * the operating system
-     * @return True if the priority level and class are changed consistently with
-     * the request
+     * @brief Tests the set priority and get priority (for all priority levels and classes) functions.
+     * @return true if successful, false otherwise.
      */
-    bool Priorities();
+    bool TestPriority();
 
     /**
-     * @brief Test if the OS respect the priorities given to different threads. ATTENTION root is required to change priorities
-     * @details Initialize threats with different priorities and stop them in a semaphore. When all the threats are inicialized set the semaphore "green" and check which threat goes first
-     * @return true when the threads with more priority go first than the threads with less priority.
+     * @brief Tests the get state function which should return the state of the specified thread.
+     * @return ture if successful, false otherwise.
      */
-    bool PrioritiesPropagationStartFirst();
+    bool TestState();
 
     /**
-     * @brief Checks if Threads::Id returns a Id different to 0
-     * @return true when the Id of the threads is different to 0
+     * @brief Tests the Id function which should return the own id.
+     * @return true if successful, false otherwise.
      */
-    bool ThreadIdTest();
+    bool TestId();
 
     /**
-     * @brief Test if a thread can kill itself and if one threat can kill another thread.
-     * @details First part of the test is auto-kill. Second part of the test, target thread and a management thread are created. Thread MANAGEMENT tries to kill the thread target and then checks if the target is alive.
-     * Moreover additional cases are tested. For instant the MANAGEMENT tries to kill the target twice, the second kill fails as expected but the program shouldn't crash.
-     * @return true when all the threads are kill successfully and the return of the function ThreadsIsAlive() is what is expected.
+     * @brief Test the get cpu function.
+     * @return true if successful, false otherwise.
      */
-    bool ThreadKillTest();
+    bool TestCPUs();
 
     /**
-     * @brief Test if TheadsGetsName gets the correct name
-     * @details Also checks the case of a non valid Id. The expected name is NULL.
-     * @return true when the name is the expected name
+     * A shared variable used for synchronization.
      */
-    bool ThreadNameTest();
+    int32 exitCondition;
 
     /**
-     * @brief Test if Threads::EndThread ends the thread
-     * @return true when the target thread is alive at the beginning and dead at the end
+     * A variable used to save a thread identifier.
      */
-    bool ThreadEndTest();
+    TID tidTest;
 
     /**
-     * @brief Checks if @see Threads::GetCPUs returns the expected CPU mask
-     * @details Threads are created and assigned to different CPUs, then is checked if the ThreadsGetCPUs returns the expected value
-     * @return true when ThreadsGetCPUs returns the expected value.
+     * A boolean to store the return value.
      */
-    bool CpuRunTest();
+    bool retValue;
 };
 
 /*---------------------------------------------------------------------------*/

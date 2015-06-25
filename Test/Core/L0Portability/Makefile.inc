@@ -36,13 +36,14 @@ OBJSX=  EndianityTest.x \
 		MutexTest.x \
 		BasicConsoleTest.x \
 		HighResolutionTimerTest.x \
-		ThreadsDatabaseTest.x \
+		ThreadsDatabaseIntegrationTest.x \
 		LoadableLibraryTest.x \
 		MemoryTest.x \
 		FastPollingMutexTest.x \
 		StringPortableTest.x \
 		StringHelperTest.x \
-		SafeShiftTest.x
+		SafeShiftTest.x \
+		ThreadsIntegrationTest.x
 
 PACKAGE=Core
 ROOT_DIR=../../..
@@ -53,7 +54,7 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES += -I../../../Source/Core/L0Portability
 all: $(OBJS) \
                 $(BUILD_DIR)/L0PortabilityTest$(LIBEXT) \
-		#         $(BUILD_DIR)/Test$(EXEEXT) 
+		#	$(BUILD_DIR)/Test$(EXEEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

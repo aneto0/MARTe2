@@ -1,36 +1,45 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file SleepTest.h
+ * @brief Header file for class SleepTest
+ * @date 25/06/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id$
- *
- **/
-/** @file SleepTest.h
-  * @brief Tests the Sleep functions. */
-#ifndef SLEEP_TEST_H
-#define SLEEP_TEST_H
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This header file contains the declaration of the class SleepTest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+ */
+
+#ifndef SLEEPTEST_H_
+#define 		SLEEPTEST_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
 
 #include "Sleep.h"
-#include <time.h>
 
-/** @brief A class for testing of the sleep functions. */
+/** @brief A class to test all the Sleep functions. */
 class SleepTest {
 
 public:
@@ -39,147 +48,64 @@ public:
 
     /**
      * @brief Tests the SleepAtLeast function.
-     * @param sec is the minimum time to sleep.
+     * @param[in] sec is the minimum time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepAtleast(double sec) {
-        bool testResult = false;
-        double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
-        int initialTime = clock();
-
-        SleepAtLeast(sec);
-
-        testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000))
-                <= maxSleepTime);
-
-        return testResult;
-    }
+    bool TestSleepAtleast(double sec);
 
     /**
      * @brief Tests the SleepNoMore function
-     * @param sec is the maximum time to sleep.
+     * @param[in] sec is the maximum time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepNoMore(double sec) {
-        bool testResult = false;
-        double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
-        int initialTime = clock();
-
-        SleepNoMore(sec);
-
-        testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000))
-                <= maxSleepTime);
-
-        return testResult;
-    }
+    bool TestSleepNoMore(double sec);
 
     /**
      * @brief Tests the SleepSec function
-     * @param sec is the time to sleep.
+     * @param[in] sec is the time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepSec(double sec) {
-        bool testResult = false;
-        double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
-        int initialTime = clock();
-
-        SleepSec(sec);
-
-        testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000))
-                <= maxSleepTime);
-
-        return testResult;
-    }
+    bool TestSleepSec(double sec);
 
     /**
      * @brief Tests the SleepSec function
-     * @param sec is the time to sleep.
+     * @param[in] sec is the time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepSec(float sec) {
-        bool testResult = false;
-        float maxSleepTime = 2 * 1000 * sec; /* 100% margin */
-        int initialTime = clock();
-
-        SleepSec(sec);
-
-        testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000))
-                <= maxSleepTime);
-
-        return testResult;
-    }
+    bool TestSleepSec(float sec);
 
     /**
      * @brief Tests the SleepMSec function
-     * @param sec is the time to sleep in milliseconds.
+     * @param[in] sec is the time to sleep in milliseconds.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepMSec(int32 msec) {
-        bool testResult = false;
-        double maxSleepTime = 2 * msec; /* 100% margin */
-        int initialTime = clock();
-
-        SleepMSec(msec);
-
-        testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000))
-                <= maxSleepTime);
-
-        return testResult;
-    }
+    bool TestSleepMSec(int32 msec);
 
     /**
      * @brief Tests the SleepBusy function.
-     * @param sec is the time to sleep.
+     * @param[in] sec is the time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepBusy(double sec) {
-        bool testResult = false;
-        double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
-        int initialTime = clock();
-
-        SleepBusy(sec);
-
-        testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000))
-                <= maxSleepTime);
-
-        return testResult;
-    }
+    bool TestSleepBusy(double sec);
 
     /**
      * @brief Tests the SleepSemiBusy function.
-     * @param totalSleepSec is the time to sleep using cpu.
-     * @param nonBusySleepSec is the time to sleep without using cpu.
+     * @param[in] totalSleepSec is the time to sleep using cpu.
+     * @param[in] nonBusySleepSec is the time to sleep without using cpu.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSemiBusy(double totalSleepSec, double nonBusySleepSec) {
-        bool testResult = false;
-        double maxSleepTime = 2 * 1000 * totalSleepSec; /* 100% margin */
-        int initialTime = clock();
-
-        SleepSemiBusy(totalSleepSec, nonBusySleepSec);
-
-        testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000))
-                <= maxSleepTime);
-
-        return testResult;
-    }
+    bool TestSemiBusy(double totalSleepSec, double nonBusySleepSec);
 
     /**
      * @brief Executes all the tests
      * @return true if all tests return true.
      */
-    bool All() {
-        bool ok = TestSleepAtleast(1.2);
-        ok = ok && TestSleepNoMore(0.8);
-        ok = ok && TestSleepSec(0.3);
-        ok = ok && TestSleepSec(0.2);
-        ok = ok && TestSleepMSec(120);
-        ok = ok && TestSleepBusy(0.4);
-        ok = ok && TestSemiBusy(0.5, 0.2);
-        GetDateSeconds();
-        return ok;
-    }
+    bool All();
 };
 
-#endif
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* SLEEPTEST_H_ */
 
