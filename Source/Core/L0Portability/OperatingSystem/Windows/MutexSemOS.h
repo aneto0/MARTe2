@@ -110,7 +110,8 @@ public:
     }
 
     /**
-     * @brief MutexSem::Lock MutexSemOS::Lock.
+     * @see MutexSem::Lock.
+     * @see MutexSemOS::Lock.
      */
     static inline bool FastLock(HANDLE &semH,
                                 TimeoutType msecTimeout,
@@ -128,7 +129,8 @@ public:
     }
 
     /**
-     * @brief MutexSem::UnLock MutexSemOS::UnLock.
+     * @see MutexSem::UnLock.
+     * @see MutexSemOS::UnLock.
      */
     static inline bool FastUnLock(HANDLE &semH) {
         return (ReleaseMutex(semH) == TRUE);

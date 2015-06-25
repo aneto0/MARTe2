@@ -64,7 +64,7 @@ public:
      * @brief Destroy the event semaphore.
      * @details Called by EventSem::Create
      * @param[in,out] semH is the semaphore handle.
-     * @return true if the CloseHandle function has success, false otherwise.
+     * @return true if successful, false otherwise.
      */
     static bool Close(HANDLE &semH) {
         if (semH == (HANDLE) NULL)
