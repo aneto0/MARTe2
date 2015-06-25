@@ -119,7 +119,6 @@ ThreadInformation *ThreadsDatabaseGetThreadInformation(TID threadId) {
     return NULL;
 }
 
-
 bool ThreadsDatabaseLock(TimeoutType tt) {
     int64 ticksStop = tt.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();

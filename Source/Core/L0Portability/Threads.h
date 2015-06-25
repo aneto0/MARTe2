@@ -242,6 +242,14 @@ public:
      * @return the thread priority class.
      */
     static PriorityClassType GetPriorityClass(TID tid);
+
+    /**
+     * @brief Get the cpu related to a specified thread.
+     * @param[in] tid is the thread identifier.
+     * @return the number if the cpu associated to the specified thread.
+     */
+    static int32 GetCPUs(TID tid);
+
 };
 
 /*---------------------------------------------------------------------------*/

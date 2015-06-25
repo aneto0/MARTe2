@@ -124,6 +124,7 @@ public:
             error = Timeout;
             return False;
         }
+        return True;
     }
 
     /**

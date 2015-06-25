@@ -158,3 +158,7 @@ PriorityClassType Threads::GetPriorityClass(TID tid) {
     return ThreadsGetPriorityClass(tid);
 }
 
+int32 Threads::GetCPUs(TID tid){
+    return ThreadsGetCPUs(tid);
+}
+
