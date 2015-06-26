@@ -31,14 +31,17 @@ OBJSX=  EndianityTest.x \
         ProcessorTest.x \
         AtomicTest.x \
 		ProcessorTypeTest.x \
+		EventSemIntegrationTest.x \
 		EventSemTest.x \
 		TimerTest.x \
+		MutexIntegrationTest.x \
 		MutexTest.x \
 		BasicConsoleTest.x \
 		HighResolutionTimerTest.x \
 		ThreadsDatabaseIntegrationTest.x \
 		LoadableLibraryTest.x \
 		MemoryTest.x \
+		FastPollingMutexIntegrationTest.x \
 		FastPollingMutexTest.x \
 		StringPortableTest.x \
 		StringHelperTest.x \

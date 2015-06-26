@@ -1,102 +1,80 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
- *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
- *
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id$
- *
- **/
 /**
  * @file ProcessorTest.h
- * @brief Tests the Processor functions. */
-#ifndef PROCESSOR_TEST_H
-#define PROCESSOR_TEST_H
+ * @brief Header file for class ProcessorTest
+ * @date 25/06/2015
+ * @author Giuseppe Ferrò
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
 
+ * @details This header file contains the declaration of the class ProcessorTest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+ */
+
+#ifndef PROCESSORTEST_H_
+#define 		PROCESSORTEST_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 #include "Processor.h"
 
-/** @brief A class for testing of the Processor functions. */
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+/** @brief A class to test the Processor functions. */
 class ProcessorTest {
 
 public:
 
-    /** @brief Constructor */
-    ProcessorTest() {
-    }
+    /**
+     * @brief Constructor
+     */
+    ProcessorTest();
 
     /**
      * @brief Tests the vendor identifier function.
-     * @return true if the function returns the vendor id. */
-    bool TestVendorId() {
-        bool testResult = false;
-        const char * vendorId = NULL;
-
-        vendorId = Processor::VendorId();
-        testResult = (vendorId != NULL);
-
-        return testResult;
-    }
+     * @return true if the function returns the vendor id.
+     */
+    bool TestVendorId();
 
     /**
      * @brief Tests the family function.
      * @return true.
      */
-    bool TestFamily() {
-        bool testResult = false;
-        uint32 family = -1;
-        uint32 familyAux = family;
-
-        family = Processor::Family();
-        testResult = (family != familyAux);
-
-        return testResult;
-    }
+    bool TestFamily();
 
     /**
      * @brief Tests the model function.
      * @return true.
      */
-    bool TestModel() {
-        bool testResult = false;
-        uint32 model = -1;
-        uint32 modelAux = model;
-
-        model = Processor::Model();
-        testResult = (model != modelAux);
-
-        return testResult;
-    }
+    bool TestModel();
 
     /**
      * @brief Tests the available function.
      * @return true.
      */
-    bool TestAvailable() {
-        bool testResult = false;
-        uint32 available = -1;
-        uint32 availableAux = available;
-
-        available = Processor::Available();
-        testResult = (available != availableAux);
-
-        return testResult;
-    }
+    bool TestAvailable();
 
 };
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
-#endif
+#endif /* PROCESSORTEST_H_ */
+
