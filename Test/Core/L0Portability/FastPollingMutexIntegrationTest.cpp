@@ -46,7 +46,7 @@ FastPollingMutexIntegrationTest::FastPollingMutexIntegrationTest() {
     expired = false;
     free = false;
     deadlock = false;
-    for (int32 i = 0; i < N_MUTEX; i++) {
+    for (uint32 i = 0; i < N_MUTEX; i++) {
         fastMutexSem[i].Create(False);
     }
 }

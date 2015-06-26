@@ -21,7 +21,6 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
-/*-
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
