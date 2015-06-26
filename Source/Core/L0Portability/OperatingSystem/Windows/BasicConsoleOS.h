@@ -403,7 +403,7 @@ public:
      * @param[in,out] con is the console.
      * @param[out] column is the cursor x position.
      * @param[out] row is the cursor y position.
-     * @return false.
+     * @return true if successful, false otherwise.
      */
     static bool GetCursorPosition(BasicConsole &con,
                                   int &column,

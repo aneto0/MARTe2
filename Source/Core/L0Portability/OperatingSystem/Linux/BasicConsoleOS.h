@@ -347,7 +347,7 @@ private:
     /**
      * @brief Read immediately.
      * @details Sets equal to 1 the characters in the read buffer and equal to zero the time to wait between read operations.\n
-     * It does not wait the \n to read.
+     * It does not wait the newline char to read.
      * @param[in,out] con is the console.
      */
     static void SetImmediateRead(BasicConsole &con) {
