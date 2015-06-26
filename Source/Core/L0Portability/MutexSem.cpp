@@ -40,18 +40,22 @@
 /*---------------------------------------------------------------------------*/
 
 MutexSem::MutexSem(HANDLE h) {
+    isRecursive=False;
     Init(h);
 }
 
 MutexSem::MutexSem() {
+    isRecursive=False;
 }
 
 MutexSem::~MutexSem() {
     Close();
 }
 
-bool MutexSem::Create(bool locked) {
-    return MutexSemOS::Create(semH, locked);
+bool MutexSem::Create(bool locked, bool recursive) {
+    bool ret = MutexSemOS::Create(semH, locked, recursive);
+    isRecursive=recursive;
+    return ret;
 }
 
 bool MutexSem::Close() {

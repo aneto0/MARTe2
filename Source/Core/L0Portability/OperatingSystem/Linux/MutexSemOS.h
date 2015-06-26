@@ -61,17 +61,29 @@ public:
      * @brief Initialize the semaphore with the right attributes.
      * @return false if something wrong with pthread_mutex initialization.
      */
-    bool Init() {
-        if (pthread_mutexattr_init(&mutexAttributes) != 0)
+    bool Init(bool &recursive) {
+        if (pthread_mutexattr_init(&mutexAttributes) != 0) {
             return False;
-        if (pthread_mutexattr_setprotocol(&mutexAttributes, PTHREAD_PRIO_INHERIT) != 0)
+        }
+        if (pthread_mutexattr_setprotocol(&mutexAttributes, PTHREAD_PRIO_INHERIT) != 0) {
             return False;
-        //This was pthread PTHREAD_MUTEX_RECURSIVE but it was crashing when a deadlock was forced on purpose
-        //with PTHREAD_MUTEX_NORMAL the same thread cannot lock the semaphore without unlocking it first.
-        if (pthread_mutexattr_settype(&mutexAttributes, PTHREAD_MUTEX_NORMAL) != 0)
+        }
+        if (recursive) {
+            //The deadlock condition causes a crash at operating system level.
+            if (pthread_mutexattr_settype(&mutexAttributes, PTHREAD_MUTEX_RECURSIVE) != 0) {
+                return False;
+            }
+        }
+        else {
+            //This was pthread PTHREAD_MUTEX_RECURSIVE but it was crashing when a deadlock was forced on purpose
+            //with PTHREAD_MUTEX_NORMAL the same thread cannot lock the semaphore without unlocking it first.
+            if (pthread_mutexattr_settype(&mutexAttributes, PTHREAD_MUTEX_NORMAL) != 0) {
+                return False;
+            }
+        }
+        if (pthread_mutex_init(&mutexHandle, &mutexAttributes) != 0) {
             return False;
-        if (pthread_mutex_init(&mutexHandle, &mutexAttributes) != 0)
-            return False;
+        }
         return True;
     }
 
@@ -80,10 +92,12 @@ public:
      * @return false if something wrong in pthread_mutex destruction.
      */
     bool Close() {
-        if (!pthread_mutexattr_destroy(&mutexAttributes))
+        if (!pthread_mutexattr_destroy(&mutexAttributes)) {
             return False;
-        if (!pthread_mutex_destroy(&mutexHandle))
+        }
+        if (!pthread_mutex_destroy(&mutexHandle)) {
             return False;
+        }
         return True;
     }
 
@@ -126,8 +140,8 @@ public:
 
     /**
      * @brief Unlock the semaphore.
-     * @return true if the unlock has success.
      * @details Enable the possibility to kill the thread after the unlock.
+     * @return true if the unlock has success.
      */
     bool UnLock() {
         bool condition = (pthread_mutex_unlock(&mutexHandle) == 0);
@@ -166,10 +180,12 @@ public:
      * @details Called by MutexSem::Create.
      * @param[in,out] semH is the mutex semaphore handle in return.
      * @param[in] locked defines the initial state (true = locked, false = unlocked).
+     * @param[in] recursive specifies if the mutex created is recursive or not.
      * @return false if the new or Init fail, true otherwise
      */
     static bool Create(HANDLE &semH,
-                       bool locked) {
+                       bool locked,
+                       bool &recursive) {
         if (semH != (HANDLE) NULL) {
             delete (PrivateMutexSemStruct *) semH;
         }
@@ -179,7 +195,7 @@ public:
             return False;
         }
         // Initialize the Semaphore
-        bool ret = ((PrivateMutexSemStruct *) semH)->Init();
+        bool ret = ((PrivateMutexSemStruct *) semH)->Init(recursive);
         if (!ret) {
             delete (PrivateMutexSemStruct *) semH;
             semH = (HANDLE) NULL;
@@ -217,8 +233,8 @@ public:
      * @return the result of PrivateMutexSemStruct::Lock
      */
     static inline bool Lock(HANDLE &semH,
-                            TimeoutType msecTimeout,
-                            Error &error) {
+    TimeoutType msecTimeout,
+    Error &error) {
         if (semH == (HANDLE) NULL) {
             return False;
         }
@@ -243,8 +259,8 @@ public:
      * @see MutexSemOSLock.
      */
     static inline bool FastLock(HANDLE &semH,
-                                TimeoutType msecTimeout,
-                                Error &error) {
+    TimeoutType msecTimeout,
+    Error &error) {
         if (semH == (HANDLE) NULL) {
             return False;
         }

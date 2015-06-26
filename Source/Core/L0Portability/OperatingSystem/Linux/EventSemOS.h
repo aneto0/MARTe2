@@ -260,8 +260,8 @@ public:
      * @return the result of PrivateEventSemStruct::Wait.
      */
     static inline bool Wait(HANDLE &semH,
-                            TimeoutType msecTimeout,
-                            Error &error) {
+    TimeoutType msecTimeout,
+    Error &error) {
         if (semH == (HANDLE) NULL) {
             return False;
         }
@@ -303,8 +303,8 @@ public:
      * @return the result of PrivateEventSemStruct::Wait.
      */
     static inline bool ResetWait(HANDLE &semH,
-                                 TimeoutType msecTimeout,
-                                 Error &error) {
+    TimeoutType msecTimeout,
+    Error &error) {
         Reset(semH);
         return Wait(semH, msecTimeout, error);
     }

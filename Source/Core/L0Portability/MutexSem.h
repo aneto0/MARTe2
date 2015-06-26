@@ -73,10 +73,14 @@ public:
 
     /**
      * @brief Open the semaphore with a given initial state.
+     * @details We can specify using the "recursive" parameter if we want to create a recursive or notmal mutex.
+     * Anyway not all the operating systems supports both this modes, then the
+     * function could ignore the "recursive" argument. Use MutexSem::IsRecursive to know if the created mutex is recursive or not.
      * @param[in] locked is the desired initial state: true = locked, false = unlocked.
-     * @return false if something in the system level mutex initialization goes wrong.
+     * @param[in] recursive specifies if the mutex should be created recursive or not.
+     * @return false if something in the system level mutex initialization fails.
      */
-    bool Create(bool locked=False);
+    bool Create(bool locked=False, bool recursive=False);
 
     /**
      * @brief Close the semaphore handle.
@@ -118,6 +122,19 @@ public:
      */
     inline bool FastTryLock();
 
+    /**
+     * @brief Returns true if the mutex is recursive, false otherwise.
+     * @details The mutex implementation could be different for each operating system. If the created mutex is not recursive, this means that
+     * if the same thread locks it twice it triggers a deadlock condition.
+     * @return true if the mutex is recursive, false otherwise.
+     */
+    inline bool IsRecursive();
+
+private:
+
+    /** True if the mutex is recursive, false otherwise. */
+    bool isRecursive;
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -137,6 +154,9 @@ bool MutexSem::FastTryLock() {
     return MutexSemOS::FastTryLock(semH);
 }
 
+bool MutexSem::IsRecursive() {
+    return isRecursive;
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

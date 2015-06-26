@@ -93,7 +93,8 @@ public:
 
     /**
      * @see BasicConsole::Show
-     * @brief Not Implemented.
+     * @warning Not Implemented.
+     * @brief Switch to a specified console.
      * @param[in,out] con is the console.
      * @return true.
      */
@@ -187,6 +188,7 @@ public:
 
     /**
      * @warning Not implemented.
+     * @brief Sets the title of the console.
      * @param[in,out] con is the console.
      * @param[in] title is the title.
      * @return false.
@@ -229,7 +231,8 @@ public:
     }
 
     /**
-     * @see BasicConsoleOSSetWindowSize BasicConsole::SetWindowSize
+     * @see BasicConsoleOSSetWindowSize
+     * @see BasicConsole::SetWindowSize
      */
     static bool SetSize(BasicConsole &con,
                         int numberOfColumns,
@@ -240,7 +243,8 @@ public:
     }
 
     /**
-     * @see BasicConsoleOSGetWindowSize BasicConsole::GetWindowSize
+     * @see BasicConsoleOSGetWindowSize
+     * @see BasicConsole::GetWindowSize
      */
     static bool GetSize(BasicConsole &con,
                         int &numberOfColumns,
@@ -252,6 +256,7 @@ public:
 
     /**
      * @warning Not implemented.
+     * @brief Sets the cursor position.
      * @param[in,out] con is the console.
      * @param[in] column is the desired x position.
      * @param[in] row is the desired y position.
@@ -265,6 +270,7 @@ public:
 
     /**
      * @warning Not implemented.
+     * @brief Gets the cursor position.
      * @param[in,out] con is the console.
      * @param[out] column is the cursor x position.
      * @param[out] row is the cursor y position.
@@ -278,6 +284,7 @@ public:
 
     /**
      * @warning Not implemented.
+     * @brief Sets the foreground and background colors.
      * @param[in,out] con is the console.
      * @param[in] foreGroundColour is the desired foreground color.
      * @param[in] backGroundColour is the desired background color.
@@ -304,6 +311,7 @@ public:
 
     /**
      * @warning Not implemented.
+     * @brief Prints a character with specified colors and position.
      * @param[in,out] con is the console.
      * @param[in] c is the char to write.
      * @param[in] foreGroundColour is the desired foreground color.
