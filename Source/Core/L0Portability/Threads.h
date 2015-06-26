@@ -95,7 +95,7 @@ void ThreadsSetPriorityClass(TID tid,
  */
 bool ThreadProtectedExecute(ThreadFunctionType userFunction,
                             void *userData,
-                            ExceptionHandler *eh);
+                            ExceptionHandler *ehi);
 }
 
 /*---------------------------------------------------------------------------*/

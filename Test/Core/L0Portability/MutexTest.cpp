@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MutexTest.h"
-#include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -84,55 +83,46 @@ bool MutexTest::TestUnLock() {
     Error myErrorReturn;
 
     if (!mutexSem.Lock(TTInfiniteWait, myErrorReturn)) {
-        printf("\nerror0\n");
 
         return False;
     }
 
     if (myErrorReturn != Debug) {
-        printf("\nerror1\n");
         return False;
     }
 
     //the unlock should allow a new lock without errors
     if (!mutexSem.UnLock()) {
-        printf("\nerror2\n");
 
         return False;
     }
 
     if (!mutexSem.Lock(TTInfiniteWait, myErrorReturn)) {
-        printf("\nerror3\n");
 
         return False;
     }
 
     if (myErrorReturn != Debug) {
-        printf("\nerror4\n");
 
         return False;
     }
 
     if (!mutexSem.FastUnLock()) {
-        printf("\nerror5\n");
 
         return False;
     }
 
     if (!mutexSem.FastLock(TTInfiniteWait, myErrorReturn)) {
-        printf("\nerror6\n");
 
         return False;
     }
 
     if (myErrorReturn != Debug) {
-        printf("\nerror7\n");
 
         return False;
     }
 
     if (!mutexSem.FastUnLock()) {
-        printf("\nerror8\n");
         return False;
     }
 

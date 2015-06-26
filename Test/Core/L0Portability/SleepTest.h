@@ -76,7 +76,7 @@ public:
 
     /**
      * @brief Tests the SleepMSec function
-     * @param[in] sec is the time to sleep in milliseconds.
+     * @param[in] msec is the time to sleep in milliseconds.
      * @return true if it sleeps less than the double of sec.
      */
     bool TestSleepMSec(int32 msec);

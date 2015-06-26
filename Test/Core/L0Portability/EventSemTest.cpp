@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "EventSemTest.h"
-#include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,48 +39,42 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-EventSemTest::EventSemTest(){
+EventSemTest::EventSemTest() {
     eventSem.Create();
 }
 
-EventSemTest::~EventSemTest(){
+EventSemTest::~EventSemTest() {
     eventSem.Close();
 }
 
-bool EventSemTest::TestWait(TimeoutType timeout){
+bool EventSemTest::TestWait(TimeoutType timeout) {
 
-    Error myErrorType=Debug;
+    Error myErrorType = Debug;
 
-
-    if(eventSem.Wait(timeout, myErrorType)){
+    if (eventSem.Wait(timeout, myErrorType)) {
         return False;
     }
-
 
     return myErrorType == Timeout;
 
 }
 
-bool EventSemTest::TestPost(){
-    if(!eventSem.Post()){
-        printf("\nerror 1\n");
+bool EventSemTest::TestPost() {
+    if (!eventSem.Post()) {
         return False;
     }
 
-    if(eventSem.Post()){
-        printf("\nerror 2\n");
+    if (eventSem.Post()) {
         return False;
     }
 
-    if(!eventSem.Reset()){
+    if (!eventSem.Reset()) {
         return False;
     }
 
-    if(!eventSem.Post()){
+    if (!eventSem.Post()) {
         return False;
     }
-
-
 
     return True;
 }

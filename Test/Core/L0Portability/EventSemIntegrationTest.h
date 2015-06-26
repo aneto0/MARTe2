@@ -44,17 +44,19 @@
 class EventSemIntegrationTest {
 private:
     /**
-     * Implements the test logic.
-     * The value of the sharedVariable is initialised to 0xABCD\n
+     * @brief Implements the test logic.
+     * @details The value of the sharedVariable is initialised to 0xABCD\n
      * The EventSem is reset and all the threads are created.\n
      * The threads will then wait on the event semaphore being allowed to proceed.\n
      * The Test function waits for some time before posting the semaphore. If the semaphore
      * is functioning as expected, the value of the sharedVariable should still be 0xABCD
-     * before posting.\n
-     * The value of the sharedVariable is then set to zero and the semaphore is posted.\n
+     * before posting.
+     *
+     * @details The value of the sharedVariable is then set to zero and the semaphore is posted.\n
      * It is then expected that the sharedVariable is individually incremented by each thread.
-     * @param[in] nOfThread the number of threads for the test
-     * @return True if the final value of sharedVariable == nOfThreads
+     *
+     * @param[in] nOfThreads the number of threads for the test
+     * @return True if the final value of sharedVariable is equal to nOfThreads
      */
     bool TestWait(uint32 nOfThreads);
 public:

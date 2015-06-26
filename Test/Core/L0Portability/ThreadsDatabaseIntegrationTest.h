@@ -69,7 +69,7 @@ public:
     /** timeout for the lock with timeout **/
     TimeoutType timeout;
 
-    /** semaphore for threads syncronization. */
+    /** semaphore for threads synchronization. */
     EventSem eventsem;
 
     /**
@@ -110,16 +110,16 @@ public:
     /**
      * @brief Tests the Find() function.
      * @details Finds the tid of the thread with a specified name in the database.
-     * @param[in] the desired thread name.
+     * @param[in] name is the desired thread name.
      * @return true if the returned tid belongs to the thread with the specified name, false otherwise.
      */
     bool TestFind(const char *name);
 
     /**
      * @brief Test the remove operation from the database.
-     * @details Launchs nOfThreads threads and for each thread the main process control before that its tid is in the database, then remove the entry from the database
+     * @details Launches nOfThreads threads and for each thread the main process control before that its tid is in the database, then remove the entry from the database
      * and check that the informations are not in the database anymore.
-     * @param[in] nOfThreads numbero of threads to launch.
+     * @param[in] nOfThreads number of threads to launch.
      * @return true if the thread information pointer for each thread is in the database before the removing, and it's NULL after, false otherwise.
      */
     bool TestRemoveEntry(int32 nOfThreads);
@@ -128,7 +128,7 @@ public:
      * @brief Tests the lock of the database with a provided timeout.
      * @details A thread lock the database and goes in an infinite loop,
      * then another thread locks the database and it must wait until the timeout is expired, after that it exit incrementing the exitCondition.
-     * @param[in] the timeout for the lock function.
+     * @param[in] time is the timeout for the lock function.
      * @return true if the second thread exit incrementing exitCondition after the expire of the timeout, false if too much time pass because this means that both thread are locked and the timeout
      * does not work.
      */
