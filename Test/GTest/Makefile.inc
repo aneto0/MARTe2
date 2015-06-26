@@ -30,16 +30,19 @@ OBJSX=  EndianityGTest.x \
 	ProcessorGTest.x \
 	AtomicGTest.x \
 	ProcessorTypeGTest.x \
+	EventSemIntegrationGTest.x \
 	EventSemGTest.x \
 	TimerGTest.x \
 	HighResolutionTimerGTest.x \
 	LoadableLibraryGTest.x \
 	MemoryGTest.x \
-	FastPollingMutexGTest.x	\
+	FastPollingMutexIntegrationGTest.x	\
+	FastPollingMutexGTest.x \
 	StringPortableGTest.x \
 	StringHelperGTest.x \
 	ThreadsGTest.x \
 	ThreadsDatabaseIntegrationGTest.x \
+	MutexIntegrationGTest.x \
 	MutexGTest.x \
 	ThreadsIntegrationGTest.x \
 	#BasicConsoleGTest.x 
