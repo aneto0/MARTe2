@@ -20,39 +20,13 @@ protected:
     }
 };
 
-
-
-TEST_F(MutexGTest,TestSyncTimeout) {
+TEST_F(MutexGTest,TestLock) {
     MutexTest mutextest;
-    ASSERT_TRUE(mutextest.TestSyncTimeout(2000, 10));
+    ASSERT_TRUE(mutextest.TestLock(500));
 }
 
-TEST_F(MutexGTest,TestSyncFast) {
+TEST_F(MutexGTest,TestUnLock) {
     MutexTest mutextest;
-    ASSERT_TRUE(mutextest.TestSyncFast(10));
+    ASSERT_TRUE(mutextest.TestUnLock());
 }
 
-TEST_F(MutexGTest,TestSyncTimeoutFast) {
-    MutexTest mutextest;
-    ASSERT_TRUE(mutextest.TestSyncTimeoutFast(2000, 10));
-}
-
-TEST_F(MutexGTest,FakeLock) {
-    MutexTest mutextest;
-    ASSERT_TRUE(mutextest.FakeLock());
-}
-
-TEST_F(MutexGTest,DeadLock) {
-    MutexTest mutextest;
-    ASSERT_TRUE(mutextest.DeadLock());
-}
-
-TEST_F(MutexGTest,KillWithLock) {
-    MutexTest mutextest;
-    ASSERT_TRUE(mutextest.KillWithLock());
-}
-
-TEST_F(MutexGTest,TestSync) {
-    MutexTest mutextest;
-    ASSERT_TRUE(mutextest.TestSync(10));
-}
