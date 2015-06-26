@@ -39,23 +39,7 @@ protected:
     }
 };
 
-TEST_F(EventSemGTest,WaitNoTimeoutTest) {
+TEST_F(EventSemGTest,TestWait) {
     EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.WaitNoTimeoutTest(100));
+    ASSERT_TRUE(eventSemTest.TestWait(500));
 }
-
-TEST_F(EventSemGTest,WaitTimeoutTestSuccess) {
-    EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.WaitTimeoutTestSuccess(100));
-}
-
-TEST_F(EventSemGTest,WaitTimeoutTestFailure) {
-    EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.WaitTimeoutTestFailure(100));
-}
-
-TEST_F(EventSemGTest,WaitTimeoutTestFailureFollowedBySuccess) {
-    EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.WaitTimeoutTestFailureFollowedBySuccess(100));
-}
-
