@@ -1,7 +1,7 @@
 /**
- * @file FastPollingMutexTest.cpp
- * @brief Source file for class FastPollingMutexTest
- * @date 26/giu/2015
+ * @file FastPollingMutexIntegrationGTest.cpp
+ * @brief Source file for class FastPollingMutexIntegrationGTest
+ * @date 26/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,19 +17,21 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class FastPollingMutexTest (public, protected, and private). Be aware that some 
+ * the class FastPollingMutexIntegrationGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "FastPollingMutexTest.h"
+#include "gtest/gtest.h"
+#include "FastPollingMutexIntegrationTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,53 +41,47 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-FastPollingMutexTest::FastPollingMutexTest(){
-    fastSem.Create();
+
+
+	
+
+class FastPollingMutexIntegrationGTest: public ::testing::Test {
+protected:
+    virtual void SetUp() {
+        // Code here will be called immediately after the constructor
+        // (right before each test).
+    }
+
+    virtual void TearDown() {
+        // Code here will be called immediately after each test
+        // (right before the destructor).
+    }
+};
+
+
+
+TEST_F(FastPollingMutexIntegrationGTest,TestSyncTimeout) {
+    FastPollingMutexIntegrationTest mutextest;
+    ASSERT_TRUE(mutextest.TestSyncTimeout(2000, 20));
 }
 
 
-bool FastPollingMutexTest::TestLock(TimeoutType timeout){
-
-    Error myErrorType;
-
-    if(!fastSem.FastLock()){
-        return False;
-    }
-
-
-    if(fastSem.FastTryLock()){
-        return False;
-    }
-
-    if(fastSem.FastLock(timeout, myErrorType)){
-        return False;
-    }
-
-
-    if(myErrorType!=Timeout){
-        return False;
-    }
-
-    return True;
-
-
-
+TEST_F(FastPollingMutexIntegrationGTest,FakeLock) {
+    FastPollingMutexIntegrationTest mutextest;
+    ASSERT_TRUE(mutextest.FakeLock());
 }
 
+TEST_F(FastPollingMutexIntegrationGTest,DeadLock) {
+    FastPollingMutexIntegrationTest mutextest;
+    ASSERT_TRUE(mutextest.DeadLock());
+}
 
+TEST_F(FastPollingMutexIntegrationGTest,KillWithLock) {
+    FastPollingMutexIntegrationTest mutextest;
+    ASSERT_TRUE(mutextest.KillWithLock());
+}
 
-bool FastPollingMutexTest::TestUnLock(){
-
-    if(!fastSem.FastLock()){
-        return False;
-    }
-
-    fastSem.FastUnLock();
-
-    if(!fastSem.FastTryLock()){
-        return False;
-    }
-
-    return True;
-
+TEST_F(FastPollingMutexIntegrationGTest,TestSync) {
+    FastPollingMutexIntegrationTest mutextest;
+    ASSERT_TRUE(mutextest.TestSync(10));
 }
