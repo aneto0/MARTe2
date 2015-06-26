@@ -239,7 +239,7 @@ public:
     /**
      * @brief Reads the specified number of bytes from the console.
      * @param[in,out] con is the console.
-     * param[out] buffer is the buffer which contains the read data in return.
+     * @param[out] buffer is the buffer which contains the read data in return.
      * @param[in,out] size is the number of bytes to read.
      * @param[in] msecTimeout is the desired timeout.
      * @return true if successful, false otherwise.
@@ -385,7 +385,7 @@ public:
 
     /**
      * @brief Sets the cursor position.
-     * @param[in,out] is the console.
+     * @param[in,out] con is the console.
      * @param[in] column is the x axis position.
      * @param[in] row is the y axis position.
      * @return true if successful, false otherwise.
@@ -397,6 +397,14 @@ public:
         return (SetConsoleCursorPosition(con.outputConsoleHandle, c) == TRUE);
     }
 
+
+    /**
+     * @brief Gets the cursor position.
+     * @param[in,out] con is the console.
+     * @param[out] column is the cursor x position.
+     * @param[out] row is the cursor y position.
+     * @return false.
+     */
     static bool GetCursorPosition(BasicConsole &con,
                                   int &column,
                                   int &row) {

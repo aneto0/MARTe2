@@ -38,11 +38,13 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/** @brief A class to get the period and the frequency of the clock. */
+/**
+ * @brief A class to get the period and the frequency of the clock.
+ */
 class HighResolutionTimerCalibratorOS {
 
 public:
-    /** Number of cpu ticks in a milliseconsd. */
+    /** Number of cpu ticks in a milliseconds. */
     uint32 HRTmSecTics;
 
     /** Number of cpu ticks in a second. */
@@ -134,7 +136,6 @@ public:
         timeStamp.year = tValues.tm_year;
         return True;
     }
-
 
 };
 

@@ -49,11 +49,17 @@ public:
      * @details Called by MutexSem::Create.
      * @param[in,out] semH is the mutex semaphore handle in return.
      * @param[in] locked defines the initial state (true = locked, false = unlocked).
+     * @param[in,out] recursive specifies if the mutex created is recursive or not.
      * @return false if the new or Init fail, true otherwise
      */
     static inline bool Create(HANDLE &semH,
-                              bool locked) {
+                              bool locked,
+                              bool &recursive) {
+
         semH = CreateMutex(NULL, (locked == True), NULL);
+
+        //only recursive mode is supported.
+        recursive = True;
         return (semH != NULL);
     }
 
@@ -65,7 +71,7 @@ public:
      */
     static inline bool Close(HANDLE &semH) {
         if (semH == (HANDLE) NULL)
-            return True;
+        return True;
         if (CloseHandle(semH) == FALSE) {
             return False;
         }
@@ -103,9 +109,11 @@ public:
      * @return the return of PrivateMutexSemStruct::UnLock.
      */
     static inline bool UnLock(HANDLE &semH) {
+
         if (ReleaseMutex(semH) == FALSE) {
             return False;
         }
+
         return True;
     }
 
@@ -116,7 +124,7 @@ public:
     static inline bool FastLock(HANDLE &semH,
                                 TimeoutType msecTimeout,
                                 Error &error) {
-        int ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
+        DWORD ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
         if (ret == WAIT_FAILED) {
             error = OSError;
             return False;
@@ -143,8 +151,8 @@ public:
      * @return the result of PrivateMutexSemStruct::FastLock.
      */
     static inline bool FastTryLock(HANDLE &semH) {
-        int ret = WaitForSingleObject(semH, 0);
-        return ((ret != (int) WAIT_FAILED) && (ret != (int) WAIT_TIMEOUT));
+        DWORD ret = WaitForSingleObject(semH, 0);
+        return ((ret != WAIT_FAILED) && (ret != WAIT_TIMEOUT));
     }
 };
 
