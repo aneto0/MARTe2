@@ -4,3 +4,6 @@ endianity
 dest
 src
 pre
+mutex
+tid
+inline
