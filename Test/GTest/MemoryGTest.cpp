@@ -49,3 +49,13 @@ TEST_F(MemoryGTest,TestSetAndSearch) {
     MemoryTest memorytest;
     ASSERT_TRUE(memorytest.TestSetAndSearch());
 }
+
+TEST_F(MemoryGTest,TestHeader) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestHeader());
+}
+
+TEST_F(MemoryGTest,TestDatabase) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestDatabase());
+}

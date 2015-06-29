@@ -38,8 +38,8 @@
 #include "Sleep.h"
 
 /**Definitions of the dimensions of the console.**/
-#define N_ROWS 10
-#define N_COLUMNS 50
+#define N_ROWS 40
+#define N_COLUMNS 170
 
 class BasicConsoleTest {
 
@@ -48,7 +48,7 @@ private:
 public:
 
     /**Basic console object.**/
-    BasicConsole myConsole;
+   // BasicConsole myConsole;
 
     /** @brief Empty constructor. */
     BasicConsoleTest() {
@@ -73,7 +73,7 @@ public:
      * @param stringArg is the string to match with the read string. 
      * @param sizeArg is the size to match with the read string size.
      * @return true if the read string is equal to the passed argument. **/
-    bool TestRead(const char* stringArg, int32 sizeArg);
+    bool TestRead(const char* stringArg);
 
     /**
      * @brief Tests the behavior of the paging property. This means that if the rows of string to write exceeds the row dimension of the console, you must press enter to begin a new page. 

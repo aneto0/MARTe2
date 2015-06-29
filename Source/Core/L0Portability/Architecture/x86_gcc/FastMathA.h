@@ -40,6 +40,7 @@
  */
 
 class FastMathA {
+public:
     /**
      * @see FastMath::Sin
      * @brief Calculate the sine of an angle.

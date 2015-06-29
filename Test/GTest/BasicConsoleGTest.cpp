@@ -34,20 +34,21 @@ TEST_F(BasicConsoleGTest,TestWrite) {
 
  TEST_F(BasicConsoleGTest,TestRead) {
  BasicConsoleTest console;
- ASSERT_TRUE(console.TestRead("Hello\n", 6));
+ ASSERT_TRUE(console.TestRead("Hello\r\n"));
  }
 
  TEST_F(BasicConsoleGTest,TestPaging) {
  BasicConsoleTest console;
- ASSERT_TRUE(console.TestPaging(10,5,5));
+ ASSERT_TRUE(console.TestPaging(14,15,15));
  }
-/*
+
  TEST_F(BasicConsoleGTest,TestPerfChar) {
  BasicConsoleTest console;
  ASSERT_TRUE(console.TestPerfChar());
- }*/
+ }
 
  TEST_F(BasicConsoleGTest,TestNotImplemented) {
  BasicConsoleTest console;
  ASSERT_TRUE(console.TestNotImplemented());
  }
+

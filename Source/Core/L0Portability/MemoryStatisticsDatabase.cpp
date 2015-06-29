@@ -35,6 +35,7 @@
 /*---------------------------------------------------------------------------*/
 ThreadAllocationStatistics MemoryStatisticsDatabase::stackDatabase[MAX_NO_OF_MEMORY_MONITORS] = { { 0, 0, 0 } };
 uint32 MemoryStatisticsDatabase::nOfElements = 0;
+FastPollingMutexSem MemoryStatisticsDatabase::internalMutex;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/

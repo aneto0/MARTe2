@@ -29,18 +29,18 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "Memory.h"
+#include "Threads.h"
 #ifdef MEMORY_STATISTICS
 #include "MemoryStatisticsDatabase.h"
 #endif
-#include "Memory.h"
-#include "Threads.h"
 
+#include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 MemoryAllocationFlags Memory::defaultAllocationFlag = MemoryStandardMemory;
-
 
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,MemoryOS.h)
 
@@ -50,6 +50,9 @@ MemoryAllocationFlags Memory::defaultAllocationFlag = MemoryStandardMemory;
  * defined in this structure will be allocated too. This allows to the user to know all the informations related to the heap memory allocated.
  */
 struct MemoryInformation {
+
+    /** A variable used to recognize the header. */
+    static const unsigned char code=0xff;
 
     /** The identifier of the thread that allocates the memory. */
     TID tid;
@@ -69,7 +72,6 @@ struct MemoryInformation {
 
 };
 
-
 void *MemoryMalloc(uint32 size) {
     if (size == 0) {
         return NULL;
@@ -83,22 +85,27 @@ void *MemoryMalloc(uint32 size) {
 
     data = MemoryOS::Malloc(size, Memory::defaultAllocationFlag);
 
-    if (Memory::defaultAllocationFlag & MemoryAddHeader) {
-        //add the header
-        MemoryInformation *header = (MemoryInformation*) data;
-        header->Init(size);
-        //return the beginning of the memory
-        header++;
-        data = (void *) header;
-    }
+
+    //return null if malloc fails
+    if (data != NULL) {
+        if (Memory::defaultAllocationFlag & MemoryAddHeader) {
+            //add the header
+            MemoryInformation *header = (MemoryInformation*) data;
+            header->Init(size);
+            //return the beginning of the memory
+            header++;
+            data = (void *) header;
+        }
 #ifdef MEMORY_STATISTICS
 
-    if (Memory::defaultAllocationFlag & MemoryStatistics) {
-        //add the information to the database
-        MemoryStatisticsDatabase::AddMemoryChunk(Threads::Id(), size);
-    }
+        if (Memory::defaultAllocationFlag & MemoryStatistics) {
+            //add the information to the database
+            MemoryStatisticsDatabase::AddMemoryChunk(Threads::Id(), size);
+        }
 
 #endif
+    }
+
     return data;
 
 }
@@ -121,36 +128,45 @@ void *MemoryRealloc(void *&data,
     uint32 sizeToFree = 0;
 #endif
 
-
     if (Memory::defaultAllocationFlag & MemoryAddHeader) {
         //add the memory information space
         newSize += sizeof(MemoryInformation);
 #ifdef MEMORY_STATISTICS
         MemoryInformation *header = (MemoryInformation*) data - 1;
-        sizeToFree = header->size;
+
+        //if the header is valid set the size to free
+        if(header!=NULL) {
+            if(header->code==0xff) {
+                sizeToFree = header->size;
+            }
+        }
 #endif
     }
 
     data = MemoryOS::Realloc(data, newSize);
 
-    if (Memory::defaultAllocationFlag & MemoryAddHeader) {
-        //add the header
-        MemoryInformation *header = (MemoryInformation*) data;
-        header->Init(newSize);
-        //return the beginning of the memory
-        header++;
-        data = (void *) header;
-    }
+    //if data is null return directly because the realloc fails.
+    if (data != NULL) {
+
+        if (Memory::defaultAllocationFlag & MemoryAddHeader) {
+            //add the header
+            MemoryInformation *header = (MemoryInformation*) data;
+            header->Init(newSize);
+            //return to the beginning of the memory
+            header++;
+            data = (void *) header;
+        }
 
 #ifdef MEMORY_STATISTICS
 
-    if (Memory::defaultAllocationFlag & MemoryStatistics) {
-        //add the information to the database
-        MemoryStatisticsDatabase::FreeMemoryChunk(Threads::Id(), sizeToFree);
-        MemoryStatisticsDatabase::AddMemoryChunk(Threads::Id(), newSize);
-    }
+        if (Memory::defaultAllocationFlag & MemoryStatistics) {
+            //add the information to the database
+            MemoryStatisticsDatabase::FreeMemoryChunk(Threads::Id(), sizeToFree);
+            MemoryStatisticsDatabase::AddMemoryChunk(Threads::Id(), newSize);
+        }
 
 #endif
+    }
     return data;
 }
 
@@ -170,13 +186,22 @@ bool MemoryFree(void *&data) {
         //return at the beginning
         MemoryInformation *header = (MemoryInformation*) data - 1;
 
+        //the pointer is invalid
+        if (header == NULL) {
+            return False;
+        }
+
+        //return false if the test fail. This means that the header is invalid.
+        if ((header)->code != 0xff) {
+            return False;
+        }
+
+        data = (void*) header;
+
 #ifdef MEMORY_STATISTICS
         sizeToFree = header->size;
 #endif
-        data = (void*) header;
-        if (data == NULL) {
-            return False;
-        }
+
     }
 
     //free the memory
@@ -197,6 +222,8 @@ bool MemoryAllocationStatistics(uint32 &size,
                                 uint32 &chunks,
                                 TID tid) {
 #ifdef MEMORY_STATISTICS
+    printf("\nim here!\n");
+
     if (tid == 0xFFFFFFFF) {
         tid = Threads::Id();
     }
@@ -204,6 +231,8 @@ bool MemoryAllocationStatistics(uint32 &size,
     if (Memory::defaultAllocationFlag & MemoryStatistics) {
         ThreadAllocationStatistics *ret = MemoryStatisticsDatabase::Find(tid);
         if (ret != NULL) {
+            printf("\nim here2!\n");
+
             size = ret->totalMemorySize;
             chunks = ret->nOfMemoryChunks;
         }
@@ -237,6 +266,12 @@ bool MemoryGetHeaderInfo(void *pointer,
         if (header == NULL) {
             return False;
         }
+
+        //invalid header
+        if(header->code != 0xff){
+            return False;
+        }
+
         size = header->size;
         tid = header->tid;
         return True;
@@ -291,8 +326,6 @@ bool MemorySet(void* mem,
                uint32 size) {
     return MemoryOS::Set(mem, c, size);
 }
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

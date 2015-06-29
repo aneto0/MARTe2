@@ -1,42 +1,51 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
- *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
- *
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id:$
- *
- **/
 /**
  * @file MemoryTest.h
- * @brief Tests the Memory class and associated functions.
+ * @brief Header file for class MemoryTest
+ * @date 26/06/2015
+ * @author Giuseppe Ferrò
  *
- * The test consists in allocate and reallocate parts of memory observing if it's possible de-reference it later.
- * For the shared memory, tests it's behavior sharing it between different threads.
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This header file contains the declaration of the class MemoryTest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MEMORY_TEST_H
-#define MEMORY_TEST_H
+
+//Use the memory database.
+#define MEMORY_STATISTICS
+
+
+#ifndef MEMORYTEST_H_
+#define 		MEMORYTEST_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 
 #include "Memory.h"
 #include "Sleep.h"
 #include "Threads.h"
 #include "EventSem.h"
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+
 
 /** @brief Class for testing of Memory functions. */
 class MemoryTest {
@@ -44,47 +53,76 @@ class MemoryTest {
 private:
 
 public:
-    /** a semaphore used for the shared memory test. */
+    /**
+     * A semaphore used for the shared memory test.
+     */
     EventSem eventSem;
 
-    /** @brief Constructor. */
-    MemoryTest() {
-        eventSem.Create();
-    }
+    bool signals[MAX_NO_OF_MEMORY_MONITORS];
+
+    uint32 counter;
+
+    /**
+     * @brief Constructor.
+     */
+    MemoryTest();
+
+    /**
+     * @brief Destructor.
+     */
+    ~MemoryTest();
+
 
     /**
      * @brief Tests the correct behavior of the malloc function.
-     * @param size is the number of integers to allocate.
-     * @return true if the pointers to the allocated memory are valid. **/
+     * @param[in] size is the number of integers to allocate.
+     * @return true if the pointers to the allocated memory are valid.
+     */
     bool TestMallocAndFree(int32 size);
 
-    /** 
+    /**
      * @brief Tests the correct behavior of the realloc function.
-     * @param size1 is the number of integers to allocate with initial malloc.
-     * @param size2 is the additional memory which must be allocated.
-     * @return true if the pointers are valid and the realloc does not corrupt the initial memory. **/
+     * @param[in] size1 is the number of integers to allocate with initial malloc.
+     * @param[in] size2 is the additional memory which must be allocated.
+     * @return true if the pointers are valid and the realloc does not corrupt the initial memory.
+     */
     bool TestRealloc(int32 size1, int32 size2);
 
-    /** 
+    /**
      * @brief Tests the correct behavior of the string duplicate.
-     * @param s is the string to duplicate.
-     * @return true if the string result of the function is equal to s.**/
+     * @param[in] s is the string to duplicate.
+     * @return true if the string result of the function is equal to s.
+     */
     bool TestMemoryStringDup(const char *s);
 
-    /** 
+    /**
      * @brief Tests the shared memory between two different threads and the main process.
-     * @return true if the shared int and the shared bool are consistent with the operations done by threads. **/
+     * @details creates a shared memory for a boolean value and an integer value  by threads and
+     * checks if the values are effectively shared changing and accessing and checking them with different threads.
+     * @return true if the shared integer and the shared boolean remain consistent with the operations done by threads.
+     */
     bool TestSharedMemory();
 
-    /** 
+    /**
      * @brief Tests the copy and the move functions.
-     * @return true if the memory is copied correctly. */
+     * @return true if the memory is copied correctly.
+     */
     bool TestCopyAndMove();
 
     /**
      * @brief Tests the set and the search functions.
-     * @return true if the functions work correctly. */
+     * @return true if the functions work correctly.
+     */
     bool TestSetAndSearch();
-};
 
-#endif
+
+    bool TestHeader();
+
+    bool TestDatabase();
+};
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* MEMORYTEST_H_ */
+

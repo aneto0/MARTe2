@@ -34,41 +34,7 @@
 #include "Threads.h"
 
  struct ErrorInformation;
-/** values to be used in ErrorManagementFunction */
-enum ErrorType {
-	/** Debug Information (should never be found in production code) */
-	Debug               =   2,
-	/** Application Information to be used to understand the working of the code */
-	Information         =   1,
-	/** Application warns of suspicious conditions */
-	Warning             =   0,
-	/** Application reports a fatal error */
-	FatalError          =  -1,
-	/** Application reports an error that allows recovery */
-	RecoverableError    =  -2,
-	/** Application reports an error during initialisation */
-	InitialisationError =  -3,
-	/** Error while calling an operating system function */
-	OSError             =  -4,
-	/** Unexpected parameter value that was passed to a function */
-	ParametersError     =  -5,
-	/** The operation was illegal in the run time context */
-	IllegalOperation    =  -6,
-	/** The operation failed because of a sharing problen */
-	ErrorSharing        =  -7,
-	/** The operation failed because of a sharing problen */
-	ErrorAccessDenied   =  -8,
-	/** an exception has occurred */
-	Exception           =  -9,
-	/** a Timeout has occurred */
-	Timeout             = -10,
-	/** error during a communication */
-	CommunicationError  = -11,
-	/** error while parsing */
-	SyntaxError         = -12,
-	/**	something that should be possible but still it is not supported	 */
-	UnsupportedError    = -13
-};
+
 
 /** 
  	 Information associated with the error

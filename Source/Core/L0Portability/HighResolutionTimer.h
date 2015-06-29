@@ -57,7 +57,7 @@ struct TimeValues {
     /** month 0-11 */
     uint32 month;
 
-    /** year since 1990 */
+    /** year since 1900 */
     uint32 year;
 };
 

@@ -1,44 +1,86 @@
-/* Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file MemoryTest.cpp
+ * @brief Source file for class MemoryTest
+ * @date 26/06/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http: //ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id:$
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
 
-#include "GeneralDefinitions.h"
+ * @details This source file contains the definition of all the methods for
+ * the class MemoryTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
 #include "MemoryTest.h"
+#include "GeneralDefinitions.h"
 #include "StringTestHelper.h"
+#include "stdio.h"
 
-void InitializeSharedMemory(MemoryTest myTestMemory) {
-    int32* sharedInt = (int32*) MemorySharedAlloc(1, sizeof(int32));
-    bool* sharedBool = (bool*) MemorySharedAlloc(2, sizeof(bool));
-    *sharedBool = False;
-    (*sharedInt) = 1;
-    myTestMemory.eventSem.Post();
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/** @brief Constructor. */
+MemoryTest::MemoryTest() {
+    eventSem.Create();
+    counter = 0;
+    for (uint32 i = 0; i < MAX_NO_OF_MEMORY_MONITORS; i++) {
+        signals[i] = False;
+    }
 }
 
-void IncrementSharedMemory(MemoryTest myTestMemory) {
+MemoryTest::~MemoryTest() {
+    eventSem.Close();
+}
+
+void InitializeSharedMemory(MemoryTest &myTestMemory) {
     int32* sharedInt = (int32*) MemorySharedAlloc(1, sizeof(int32));
     bool* sharedBool = (bool*) MemorySharedAlloc(2, sizeof(bool));
-    *sharedBool = True;
-    (*sharedInt)++;
+
+    if (sharedBool != NULL) {
+        *sharedBool = False;
+    }
+
+    if (sharedInt != NULL) {
+        (*sharedInt) = 1;
+    }
+
+    myTestMemory.eventSem.Post();
+
+}
+
+void IncrementSharedMemory(MemoryTest &myTestMemory) {
+    int32* sharedInt = (int32*) MemorySharedAlloc(1, sizeof(int32));
+    bool* sharedBool = (bool*) MemorySharedAlloc(2, sizeof(bool));
+    if (sharedBool != NULL) {
+        *sharedBool = True;
+    }
+    if (sharedInt != NULL) {
+        (*sharedInt)++;
+    }
+    myTestMemory.eventSem.Post();
 }
 
 //Test the malloc function.
@@ -59,13 +101,13 @@ bool MemoryTest::TestMallocAndFree(int32 size) {
     //free the allocated memory
     MemoryFree((void*&) allocated);
     uint32 nothing = 0;
-    return allocated == NULL
-            && !MemoryAllocationStatistics(nothing, nothing, (TID)nothing);
+    return allocated == NULL && !MemoryAllocationStatistics(nothing, nothing, (TID) nothing);
 }
 
 //Tests the realloc function.
-bool MemoryTest::TestRealloc(int32 size1, int32 size2) {
-    //allocate size1 integers	
+bool MemoryTest::TestRealloc(int32 size1,
+                             int32 size2) {
+    //allocate size1 integers
     int32* allocated = (int32*) MemoryMalloc(size1 * sizeof(int32));
 
     //check if the pointers to these memory locations are valid
@@ -78,8 +120,7 @@ bool MemoryTest::TestRealloc(int32 size1, int32 size2) {
     }
 
     //reallocate the memory adding size2 integers locations
-    allocated = (int32*) MemoryRealloc((void*&) allocated,
-                                       (size1 + size2) * sizeof(int32));
+    allocated = (int32*) MemoryRealloc((void*&) allocated, (size1 + size2) * sizeof(int32));
 
     //check if pointers of new memory are valid and if the old memory is not corrupted
     for (int32 i = 0; i < size2; i++) {
@@ -97,8 +138,7 @@ bool MemoryTest::TestRealloc(int32 size1, int32 size2) {
     //check if it implemens a malloc in case of null pointer in input.
     allocated = NULL;
 
-    allocated = (int32*) MemoryRealloc((void*&) allocated,
-                                       size1 * sizeof(int32));
+    allocated = (int32*) MemoryRealloc((void*&) allocated, size1 * sizeof(int32));
     for (int32 i = 0; i < size1; i++) {
         if ((allocated + i) == NULL) {
             MemoryFree((void*&) allocated);
@@ -138,23 +178,40 @@ bool MemoryTest::TestSharedMemory() {
     //launch two threads, one initialize the shared int to one and the shared bool to false.
     Threads::BeginThread((ThreadFunctionType) InitializeSharedMemory, this);
     //wait the inizialization of the shared memory
+
     eventSem.Wait();
+    eventSem.Reset();
+
     //this thread increment the shared integer and impose true the shared bool
     Threads::BeginThread((ThreadFunctionType) IncrementSharedMemory, this);
+    eventSem.Wait();
 
     //obtain the pointers to the shared memories
     bool* sharedBool = (bool*) MemorySharedAlloc(2, sizeof(bool));
     int32* sharedInt = (int32*) MemorySharedAlloc(1, sizeof(int32));
+
+    if (sharedInt == NULL) {
+
+        return False;
+    }
+
     int32 j = 0;
 
-    //wait that the second thread increments to two the shared int
+    //wait that the second thread increments the shared int
     while ((*sharedInt) < 2) {
         if (j++ > 100) {
+
             return False;
         }
-        SleepSec(10e-3);
+        SleepSec(20e-3);
     }
-    bool returnValue = *sharedBool;
+    bool returnValue = False;
+    if (sharedBool == NULL) {
+
+        return False;
+    }
+    returnValue = *sharedBool;
+
     //release the shared memory
 
     MemorySharedFree(sharedBool);
@@ -162,6 +219,7 @@ bool MemoryTest::TestSharedMemory() {
 
     //else return false
     return returnValue;
+    return True;
 }
 
 bool MemoryTest::TestCopyAndMove() {
@@ -179,8 +237,7 @@ bool MemoryTest::TestCopyAndMove() {
     }
 
     //Check that bytes are equal indipendently from type.
-    if (MemoryCompare((const void*) myFloatArray, (const void*) myIntArray,
-                      sizeToCopy) != 0) {
+    if (MemoryCompare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
         return False;
     }
 
@@ -265,6 +322,98 @@ bool MemoryTest::TestSetAndSearch() {
     MemoryFree((void*&) buffPointer);
 
     return True;
+
+}
+
+bool MemoryTest::TestHeader() {
+
+    //set the header flag
+    Memory::defaultAllocationFlag = MemoryStandardMemory | MemoryAddHeader;
+
+    //creates an array of 10 integers
+    uint32 *arrayInt = (uint32*) MemoryMalloc(sizeof(uint32) * 10);
+
+    //sets the ninth element
+    arrayInt[9] = 3;
+    uint32 size;
+    TID tid;
+
+    //gets the header informations
+    if (!MemoryGetHeaderInfo(arrayInt, size, tid)) {
+        return False;
+    }
+
+    if (size != (sizeof(uint32) * 10 + sizeof(uint32) + sizeof(TID))) {
+        printf("\nerror 1\n");
+        return False;
+    }
+
+    if (Threads::Id() != tid) {
+        return False;
+    }
+
+    //change the flag
+    Memory::defaultAllocationFlag = MemoryStandardMemory;
+
+    //now the function should return false
+    if (MemoryGetHeaderInfo(arrayInt, size, tid)) {
+        return False;
+    }
+
+    //to free the memory the flag must be the same at the moment of the creation otherwise
+    //the pointer is invalid
+    Memory::defaultAllocationFlag = MemoryStandardMemory | MemoryAddHeader;
+
+    MemoryFree((void*&) arrayInt);
+
+    return True;
+}
+
+void AllocateFunction(MemoryTest &m) {
+
+    //printf("\n%d\n", m.counter);
+    //creates an array of i integers on the heap
+    void* p = Memory::Malloc(sizeof(uint32));
+    while (!(m.signals[m.counter])){
+        SleepSec(1e-3);
+    }
+    Memory::Free(p);
+    m.signals[m.counter] = False;
+}
+
+bool MemoryTest::TestDatabase() {
+
+    Memory::defaultAllocationFlag = MemoryAddHeader | MemoryStatistics;
+    TID tids[MAX_NO_OF_MEMORY_MONITORS];
+    for (counter = 0; counter < MAX_NO_OF_MEMORY_MONITORS; counter++) {
+        Threads::BeginThread((ThreadFunctionType) AllocateFunction, this);
+    }
+
+    bool ret = True;
+
+    for (counter = 0; counter < MAX_NO_OF_MEMORY_MONITORS; counter++) {
+        uint32 size;
+        uint32 chunks;
+
+        if (!(Memory::AllocationStatistics(size, chunks, tids[counter]))) {
+            printf("\nError as\n");
+            ret = False;
+        }
+
+        if (size != (sizeof(uint32)) || chunks != 1) {
+            printf("\nerror infos\n");
+            ret = False;
+        }
+
+        signals[counter] = True;
+
+        while (signals[counter]) {
+            SleepSec(1e-3);
+        }
+
+    }
+
+    return ret;
 
 }
 
