@@ -34,11 +34,7 @@ OBJSX=  Atomic.x \
         ThreadsDatabase.x \
         Sleep.x \
 		BasicConsole.x \
-		LoadableLibrary.x \
-		Timer.x \
-		FastMath.x \
 		StringHelper.x \
-		StringPortable.x \
 		ThreadInformation.x \
 		MutexSem.x \
 		EventSem.x \
@@ -50,8 +46,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 all: $(OBJS)    \
-                $(BUILD_DIR)/L0Portability$(LIBEXT) \
-                $(BUILD_DIR)/Test$(EXEEXT) 
+                $(BUILD_DIR)/L0Portability$(LIBEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

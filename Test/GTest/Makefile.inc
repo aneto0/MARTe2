@@ -25,48 +25,23 @@
 #############################################################
 
 OBJSX=  EndianityGTest.x \
-	FastMathGTest.x \
 	SleepGTest.x \
 	ProcessorGTest.x \
 	AtomicGTest.x \
 	ProcessorTypeGTest.x \
 	EventSemIntegrationGTest.x \
 	EventSemGTest.x \
-	TimerGTest.x \
 	HighResolutionTimerGTest.x \
-	LoadableLibraryGTest.x \
 	MemoryGTest.x \
 	FastPollingMutexIntegrationGTest.x	\
 	FastPollingMutexGTest.x \
-	StringPortableGTest.x \
 	StringHelperGTest.x \
 	ThreadsGTest.x \
 	ThreadsDatabaseIntegrationGTest.x \
 	MutexIntegrationGTest.x \
 	MutexGTest.x \
-	ThreadsIntegrationGTest.x \
+	ThreadsIntegrationGTest.x 
 	#BasicConsoleGTest.x 
-	#LinkedListableGTest.x \
-	#BStringGTest.x \
-	#LinkedListHolderGTest.x \
-	#StaticListHolderGTest.x \
-	#StaticListTemplateGTest.x \
-	#StaticQueueHolderGTest.x \
-	#StaticStackHolderGTest.x \
-	#CStreamGTest.x \
-	#ComplexGTest.x \
-	#StackHolderGTest.x \
-	#QueueHolderGTest.x \
-	#IntegerToStreamGTest.x \
-	#FloatToStreamGTest.x \
-	#BitSetToIntegerGTest.x \
-	#SafeShiftGTest.x \
-	#DoubleIntegerGTest.x \
-	#BufferedStreamGTest.x \
-	#StreamStringGTest.x \
-	#StreamMemoryReferenceGTest.x \
-	#ErrorManagementGTest.x \
-	#StreamableGTest.x 
 
 PACKAGE=
 ROOT_DIR=../..

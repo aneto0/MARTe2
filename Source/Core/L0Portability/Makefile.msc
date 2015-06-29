@@ -27,7 +27,6 @@ TARGET=msc
 
 include Makefile.inc
 
-LIBRARIES += Winmm.lib
 
 
 
