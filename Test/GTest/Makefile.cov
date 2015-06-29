@@ -28,11 +28,7 @@ TARGET=cov
 include Makefile.inc
 
 LIBRARIES   += ../../Source/Core/L0Portability/$(TARGET)/L0Portability$(LIBEXT) 
-LIBRARIES   += ../../Source/Core/L1CLib/$(TARGET)/L1CLib$(LIBEXT) 
-LIBRARIES   += ../../Source/Core/LXTypeDev/$(TARGET)/LXTypeDev$(LIBEXT)
 LIBRARIES   += ../../Test/Core/L0Portability/$(TARGET)/L0PortabilityTest$(LIBEXT) 
-LIBRARIES   += ../../Test/Core/L1CLib/$(TARGET)/L1CLibTest$(LIBEXT) 
-LIBRARIES   += ../../Test/Core/LXTypeDev/$(TARGET)/LXTypeDevTest$(LIBEXT)
 LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
 
 
