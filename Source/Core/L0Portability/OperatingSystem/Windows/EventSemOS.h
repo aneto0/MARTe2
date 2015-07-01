@@ -143,6 +143,13 @@ public:
         Reset(semH);
         return Wait(semH, msecTimeout, error);
     }
+
+    /**
+     * @brief Do nothing
+     */
+    static inline void DuplicateHandle(HANDLE &semH) {
+
+    }
 };
 
 /*---------------------------------------------------------------------------*/

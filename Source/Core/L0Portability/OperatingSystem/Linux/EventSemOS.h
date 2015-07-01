@@ -55,6 +55,7 @@ public:
      */
     PrivateEventSemStruct() {
         stop = True;
+        references = 1;
     }
     /**
      * @brief Destructor.
@@ -183,6 +184,23 @@ public:
         return stop;
     }
 
+    /**
+     * @brief Adds an handle reference.
+     */
+    void AddReference() {
+        references++;
+    }
+
+    /**
+     * @brief Removes an handle reference.
+     * @return true if the nuumber of handle references is equal to zero.
+     */
+    bool RemoveReference() {
+        if (--references < 0)
+            references = 0;
+        return references == 0;
+    }
+
 private:
     /** Mutex Handle */
     pthread_mutex_t mutexHandle;
@@ -195,6 +213,9 @@ private:
 
     /** boolean semaphore */
     bool stop;
+
+    /** The number of handle references. */
+    int references;
 
 };
 
@@ -219,7 +240,9 @@ public:
      */
     static bool Create(HANDLE &semH) {
         if (semH != (HANDLE) NULL) {
-            delete (PrivateEventSemStruct *) semH;
+            if (((PrivateEventSemStruct*) semH)->RemoveReference()) {
+                delete (PrivateEventSemStruct *) semH;
+            }
         }
         semH = (HANDLE) new PrivateEventSemStruct;
         if (semH == (HANDLE) NULL) {
@@ -246,7 +269,9 @@ public:
             return True;
         }
         bool ret = ((PrivateEventSemStruct *) semH)->Close();
-        delete (PrivateEventSemStruct *) semH;
+        if (((PrivateEventSemStruct*) semH)->RemoveReference()) {
+            delete (PrivateEventSemStruct *) semH;
+        }
         semH = (HANDLE) NULL;
         return ret;
     }
@@ -260,8 +285,8 @@ public:
      * @return the result of PrivateEventSemStruct::Wait.
      */
     static inline bool Wait(HANDLE &semH,
-    TimeoutType msecTimeout,
-    Error &error) {
+                            TimeoutType msecTimeout,
+                            Error &error) {
         if (semH == (HANDLE) NULL) {
             return False;
         }
@@ -303,10 +328,17 @@ public:
      * @return the result of PrivateEventSemStruct::Wait.
      */
     static inline bool ResetWait(HANDLE &semH,
-    TimeoutType msecTimeout,
-    Error &error) {
+                                 TimeoutType msecTimeout,
+                                 Error &error) {
         Reset(semH);
         return Wait(semH, msecTimeout, error);
+    }
+
+    /**
+     * @brief Adds an handle reference.
+     */
+    static inline void DuplicateHandle(HANDLE &semH) {
+        ((PrivateEventSemStruct*) semH)->AddReference();
     }
 
 };

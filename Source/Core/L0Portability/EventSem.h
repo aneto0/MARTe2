@@ -66,7 +66,7 @@ public:
      * @brief Constructor by semaphore pointer.
      * @param[in] h is a pointer to the semaphore structure.
      */
-    EventSem(HANDLE h);
+    EventSem(const EventSem &h);
 
     /**
      * @brief Destructor.
@@ -117,8 +117,6 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-
 
 #endif /* EVENTSEM_H_ */
 

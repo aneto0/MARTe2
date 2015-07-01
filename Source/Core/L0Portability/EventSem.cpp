@@ -40,8 +40,10 @@
 EventSem::EventSem() {
 }
 
-EventSem::EventSem(HANDLE h) {
-    Init(h);
+EventSem::EventSem(const EventSem &h) {
+    HANDLE toCopy = h.Handle();
+    EventSemOS::DuplicateHandle(toCopy);
+    Init(toCopy);
 }
 
 EventSem::~EventSem() {
@@ -56,11 +58,13 @@ bool EventSem::Close(void) {
     return EventSemOS::Close(semH);
 }
 
-bool EventSem::Wait(TimeoutType msecTimeout, Error &error) {
+bool EventSem::Wait(TimeoutType msecTimeout,
+                    Error &error) {
     return EventSemOS::Wait(semH, msecTimeout, error);
 }
 
-bool EventSem::ResetWait(TimeoutType msecTimeout, Error &error) {
+bool EventSem::ResetWait(TimeoutType msecTimeout,
+                         Error &error) {
     return EventSemOS::ResetWait(semH, msecTimeout, error);
 }
 
