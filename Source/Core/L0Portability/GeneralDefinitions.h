@@ -32,6 +32,13 @@
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,GeneralDefinitionsA.h)
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,GeneralDefinitionsOS.h)
 
+/**
+ * Uncomment this section to use memory statistics functions
+#ifndef MEMORY_STATISTICS
+#define MEMORY_STATISTICS
+#endif
+*/
+
 /** List of colors */
 typedef enum {
     Black = 0,

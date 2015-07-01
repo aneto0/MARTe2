@@ -39,22 +39,25 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-MutexSem::MutexSem(HANDLE h) {
-    isRecursive=False;
-    Init(h);
+MutexSem::MutexSem(const MutexSem &h) {
+    HANDLE toCopy = h.Handle();
+    MutexSemOS::DuplicateHandle(toCopy);
+    isRecursive = False;
+    Init(toCopy);
 }
 
 MutexSem::MutexSem() {
-    isRecursive=False;
+    isRecursive = False;
 }
 
 MutexSem::~MutexSem() {
-    Close();
+    MutexSemOS::Close(semH);
 }
 
-bool MutexSem::Create(bool locked, bool recursive) {
+bool MutexSem::Create(bool locked,
+                      bool recursive) {
     bool ret = MutexSemOS::Create(semH, locked, recursive);
-    isRecursive=recursive;
+    isRecursive = recursive;
     return ret;
 }
 

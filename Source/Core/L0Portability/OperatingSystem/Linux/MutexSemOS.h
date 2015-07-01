@@ -50,6 +50,7 @@ public:
      * @brief Constructor.
      */
     PrivateMutexSemStruct() {
+        references = 1;
     }
     /**
      * @brief Destructor.
@@ -156,12 +157,33 @@ public:
         return (pthread_mutex_trylock(&mutexHandle) == 0);
     }
 
+    /**
+     * @brief Adds an handle reference.
+     */
+    void AddReference() {
+        references++;
+    }
+
+
+    /**
+     * @brief Removes an handle reference.
+     * @return true if the number of handle references is equal to zero.
+     */
+    bool RemoveReference() {
+        if (--references < 0) {
+            references = 0;
+        }
+        return references == 0;
+    }
+
 private:
     /**  Mutex Handle */
     pthread_mutex_t mutexHandle;
     /** Mutex Attributes */
     pthread_mutexattr_t mutexAttributes;
 
+    /** Number of handle references. */
+    uint32 references;
 };
 
 /*---------------------------------------------------------------------------*/
@@ -187,7 +209,10 @@ public:
                        bool locked,
                        bool &recursive) {
         if (semH != (HANDLE) NULL) {
-            delete (PrivateMutexSemStruct *) semH;
+
+            if (((PrivateMutexSemStruct*) semH)->RemoveReference()) {
+                delete (PrivateMutexSemStruct *) semH;
+            }
         }
         // Create the Structure
         semH = (HANDLE) new PrivateMutexSemStruct();
@@ -220,8 +245,14 @@ public:
         if (semH == (HANDLE) NULL) {
             return True;
         }
+
+        bool ret = ((PrivateMutexSemStruct*) semH)->Close();
+
+        if (((PrivateMutexSemStruct*) semH)->RemoveReference()) {
+            delete (PrivateMutexSemStruct*) semH;
+        }
         semH = (HANDLE) NULL;
-        return True;
+        return ret;
     }
 
     /**
@@ -233,8 +264,8 @@ public:
      * @return the result of PrivateMutexSemStruct::Lock
      */
     static inline bool Lock(HANDLE &semH,
-    TimeoutType msecTimeout,
-    Error &error) {
+                            TimeoutType msecTimeout,
+                            Error &error) {
         if (semH == (HANDLE) NULL) {
             return False;
         }
@@ -259,8 +290,8 @@ public:
      * @see MutexSemOSLock.
      */
     static inline bool FastLock(HANDLE &semH,
-    TimeoutType msecTimeout,
-    Error &error) {
+                                TimeoutType msecTimeout,
+                                Error &error) {
         if (semH == (HANDLE) NULL) {
             return False;
         }
@@ -289,6 +320,13 @@ public:
             return False;
         }
         return ((PrivateMutexSemStruct *) semH)->TryLock();
+    }
+
+    /**
+     * @brief Adds an handle reference.
+     */
+    static inline void DuplicateHandle(HANDLE &semH) {
+        ((PrivateMutexSemStruct*) semH)->AddReference();
     }
 
 };

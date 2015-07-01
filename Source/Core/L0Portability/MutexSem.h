@@ -59,7 +59,7 @@ public:
      * @brief Copy constructor.
      * @param[in] h is the semaphore handle to be copied in this handle.
      */
-    MutexSem(HANDLE h);
+    MutexSem(const MutexSem &h);
 
     /**
      * @brief Default constructor.

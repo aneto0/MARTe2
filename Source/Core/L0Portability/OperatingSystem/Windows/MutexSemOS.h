@@ -154,6 +154,14 @@ public:
         DWORD ret = WaitForSingleObject(semH, 0);
         return ((ret != WAIT_FAILED) && (ret != WAIT_TIMEOUT));
     }
+
+
+    /**
+     * @brief Do nothing.
+     */
+    static inline void DuplicateHandle(HANDLE &semH) {
+
+    }
 };
 
 /*---------------------------------------------------------------------------*/

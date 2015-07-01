@@ -67,12 +67,6 @@ public:
     inline void Init(HANDLE s);
 
     /**
-     * @brief Copy operator.
-     * @param[in] s is another SemCore object and its value will be copied in this.
-     */
-    inline void operator=(const SemCore &s);
-
-    /**
      * @brief return number associated to the semaphore.
      * @return the current value associated to the semaphore.
      */
@@ -101,10 +95,6 @@ void SemCore::Init() {
 
 void SemCore::Init(HANDLE s) {
     semH = s;
-}
-
-void SemCore::operator=(const SemCore &s) {
-    semH = s.semH;
 }
 
 HANDLE SemCore::Handle() const {

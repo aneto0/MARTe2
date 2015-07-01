@@ -44,7 +44,9 @@
 /*---------------------------------------------------------------------------*/
 
 extern "C" {
-/** @brief Threads::BeginThread. */
+/**
+ * @see Threads::BeginThread.
+ */
 TID ThreadsBeginThread(ThreadFunctionType function,
                        void *parameters = NULL,
                        uint32 stacksize = THREADS_DEFAULT_STACKSIZE,
@@ -52,38 +54,60 @@ TID ThreadsBeginThread(ThreadFunctionType function,
                        uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
                        ProcessorType runOnCPUs = PTUndefinedCPUs);
 
-/** @brief Threads::EndThread. */
+/**
+ * @see Threads::EndThread.
+ */
 void ThreadsEndThread();
 
-/** @brief Threads::Id. */
+/**
+ * @see Threads::Id.
+ */
 TID ThreadsId();
 
-/** @brief Threads::Kill. */
+/**
+ * @see Threads::Kill.
+ */
 bool ThreadsKill(TID tid);
 
-/** @brief Threads::IsAlive. */
+/**
+ * @see Threads::IsAlive.
+ */
 bool ThreadsIsAlive(TID tid);
 
-/** @brief Threads::Name. */
+/**
+ * @see Threads::Name.
+ */
 const char *ThreadsName(TID tid);
 
-/** @brief Threads::GetCPUs. */
+/**
+ * @see Threads::GetCPUs.
+ */
 int32 ThreadsGetCPUs(TID tid);
 
-/** @brief Threads::GetState. */
+/**
+ * @see Threads::GetState.
+ */
 ThreadStateType ThreadsGetState(TID tid);
 
-/** @brief Threads::GetPriorityLevel. */
+/**
+ * @see Threads::GetPriorityLevel.
+ */
 ThreadPriorityType ThreadsGetPriorityLevel(TID tid);
 
-/** @brief Threads::GetPriorityClass. */
+/**
+ * @see Threads::GetPriorityClass.
+ */
 PriorityClassType ThreadsGetPriorityClass(TID tid);
 
-/** @brief Threads::SetPriorityLevel. */
+/**
+ * @see Threads::SetPriorityLevel.
+ */
 void ThreadsSetPriorityLevel(TID tid,
                              ThreadPriorityType level);
 
-/** @brief Threads::SetPriorityClass. */
+/**
+ * @see Threads::SetPriorityClass.
+ */
 void ThreadsSetPriorityClass(TID tid,
                              PriorityClassType priotityClass);
 
@@ -91,7 +115,7 @@ void ThreadsSetPriorityClass(TID tid,
  * @brief This function allows to call a subroutine within an exception handler protection.
  * @param[in] userFunction is a pointer to the thread function.
  * @param[in] userData is the argument of the thread function.
- * @param[in] eh is the exception handler.
+ * @param[in] ehi is the exception handler.
  */
 bool ThreadProtectedExecute(ThreadFunctionType userFunction,
                             void *userData,
