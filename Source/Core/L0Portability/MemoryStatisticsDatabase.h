@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 #include "Threads.h"
 #include "FastPollingMutexSem.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -48,22 +47,22 @@ public:
     TID threadId;
 
     /** The memory amount allocated by the thread */
-    uint32 totalMemorySize;
+    int32 totalMemorySize;
 
     /** How many allocations the thread did */
-    uint32 nOfMemoryChunks;
+    int32 nOfMemoryChunks;
 
     /**
      * @brief Checks if this element is zero.
      * @return true if all attributes are equal to zero.
      */
-    inline bool isEmpty() const;
+    inline bool IsEmpty() const;
 
     /**
      * @brief Sets this element to zero.
      * @details Sets all the attributes to zero.
      */
-    inline void setEmpty();
+    inline void SetEmpty();
 
 };
 
@@ -106,6 +105,23 @@ public:
     static inline bool FreeMemoryChunk(TID tid,
                                        uint32 memSize);
 
+    /**
+     * @brief Empties the database.
+     * @details Sets all the elements to zero.
+     */
+    static inline void Clear();
+
+    /**
+     * @brief Returns the sum of the current allocated heap memory.
+     * @return the amount of the current allocated heap memory.
+     */
+    static inline int32 GetTotalUsedHeap();
+
+    /**
+     * @brief Returns the number of elements currently in the database.
+     * @return the number of elements in the database.
+     */
+    static inline uint32 GetNOfElements();
 private:
 
     /** The memory database array. */
@@ -143,11 +159,11 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-bool ThreadAllocationStatistics::isEmpty() const {
+bool ThreadAllocationStatistics::IsEmpty() const {
     return threadId == 0 && totalMemorySize == 0 && nOfMemoryChunks == 0;
 }
 
-void ThreadAllocationStatistics::setEmpty() {
+void ThreadAllocationStatistics::SetEmpty() {
     threadId = 0;
     totalMemorySize = 0;
     nOfMemoryChunks = 0;
@@ -155,8 +171,9 @@ void ThreadAllocationStatistics::setEmpty() {
 
 bool MemoryStatisticsDatabase::Add(TID tid) {
     for (uint32 i = 0; i < MAX_NO_OF_MEMORY_MONITORS; i++) {
+
         //found an empty element
-        if (stackDatabase[i].isEmpty()) {
+        if (stackDatabase[i].IsEmpty()) {
             stackDatabase[i].threadId = tid;
             nOfElements++;
             return True;
@@ -177,7 +194,7 @@ bool MemoryStatisticsDatabase::Remove(TID tid) {
     }
 
     //set the element as empty
-    ret->setEmpty();
+    ret->SetEmpty();
     nOfElements--;
     return True;
 }
@@ -186,8 +203,9 @@ ThreadAllocationStatistics* MemoryStatisticsDatabase::PrivateFind(TID tid) {
 
     for (uint32 i = 0, counter = 0; counter < nOfElements && i < MAX_NO_OF_MEMORY_MONITORS; i++) {
         //skip in case of empty element
-        if (stackDatabase[i].isEmpty())
+        if (stackDatabase[i].IsEmpty()) {
             continue;
+        }
 
         //if found return
         if (tid == stackDatabase[i].threadId) {
@@ -214,43 +232,86 @@ bool MemoryStatisticsDatabase::AddMemoryChunk(TID tid,
 
     //if it is not in the db try to add it
     ThreadAllocationStatistics *ret = PrivateFind(tid);
+
     if (ret == NULL) {
         if (!Add(tid)) {
             internalMutex.FastUnLock();
             return False;
         }
-    }
 
-    ret = PrivateFind(tid);
-
-    //This should never happen
-    if (ret == NULL) {
-        internalMutex.FastUnLock();
-        return False;
+        ret = PrivateFind(tid);
     }
 
     //increment the number of chunks and add the memory size
     ret->nOfMemoryChunks++;
     ret->totalMemorySize += memSize;
+
+    //remove the element if the thread has not allocated memory
+    if (ret->nOfMemoryChunks == 0) {
+        Remove(tid);
+    }
     internalMutex.FastUnLock();
     return True;
 }
 
 bool MemoryStatisticsDatabase::FreeMemoryChunk(TID tid,
                                                uint32 memSize) {
+    internalMutex.FastLock();
+
     ThreadAllocationStatistics *ret = PrivateFind(tid);
     if (ret == NULL) {
-        return False;
+        if (!Add(tid)) {
+            internalMutex.FastUnLock();
+            return False;
+        }
+
+        ret = PrivateFind(tid);
     }
     //decrement the number of chuncks and remove the memory size
     ret->nOfMemoryChunks--;
     ret->totalMemorySize -= memSize;
 
     //remove the element if the thread has not allocated memory
-    if (ret->nOfMemoryChunks <= 0) {
+    if (ret->nOfMemoryChunks == 0) {
         Remove(tid);
     }
+    internalMutex.FastUnLock();
+
     return True;
+}
+
+void MemoryStatisticsDatabase::Clear() {
+    internalMutex.FastLock();
+    for (uint32 i = 0, p = 0; i < MAX_NO_OF_MEMORY_MONITORS && p < nOfElements; i++) {
+        if (stackDatabase[i].IsEmpty()) {
+            continue;
+        }
+        stackDatabase[i].SetEmpty();
+        p++;
+    }
+    nOfElements = 0;
+    internalMutex.FastUnLock();
+}
+
+int32 MemoryStatisticsDatabase::GetTotalUsedHeap() {
+    internalMutex.FastLock();
+    int32 sum = 0;
+    for (uint32 i = 0, p = 0; i < MAX_NO_OF_MEMORY_MONITORS && p < nOfElements; i++) {
+        if (stackDatabase[i].IsEmpty()) {
+            continue;
+        }
+        sum += stackDatabase[i].totalMemorySize;
+        p++;
+    }
+    internalMutex.FastUnLock();
+    return sum;
+}
+
+uint32 MemoryStatisticsDatabase::GetNOfElements() {
+    internalMutex.FastLock();
+    uint32 ret = nOfElements;
+    internalMutex.FastUnLock();
+    return ret;
 }
 
 #endif /* MEMORYSTATISTICS_H_ */

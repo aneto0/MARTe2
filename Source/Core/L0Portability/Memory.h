@@ -56,12 +56,6 @@ enum MemoryAllocationFlags {
     /** above 32Mb */
     MemoryExtraMemory = 0x00000001,
 
-    /** add the header with memory informations */
-    MemoryAddHeader = 0x00000002,
-
-    /** use the database to save memory informations for each thread */
-    MemoryStatistics = 0x00000004
-
 };
 
 /** Set of bits indicating desired access modes */
@@ -124,7 +118,8 @@ extern "C" {
 /**
  * @see Memory::Malloc
  */
-void *MemoryMalloc(uint32 size);
+void *MemoryMalloc(uint32 size,
+                   MemoryAllocationFlags allocFlag = MemoryStandardMemory);
 
 /**
  * @see Memory::Free
@@ -138,23 +133,10 @@ void *MemoryRealloc(void *&data,
                     uint32 newSize);
 
 /**
- * @see Memory::StringDup
- */
-char *MemoryStringDup(const char *s);
-
-#ifdef MEMORY_STATISTICS
-/**
- * @brief Displays the Memory Statistics.
- * @param[out] out The output stream.
- void MemoryDisplayAllocationStatistics(StreamInterface *out);
- */
-#endif
-
-/**
  * @see Memory::AllocationStatistics
  */
-bool MemoryAllocationStatistics(uint32 &size,
-                                uint32 &chunks,
+bool MemoryAllocationStatistics(int32 &size,
+                                int32 &chunks,
                                 TID tid = (TID) 0xFFFFFFFF);
 
 /**
@@ -163,6 +145,21 @@ bool MemoryAllocationStatistics(uint32 &size,
 bool MemoryGetHeaderInfo(void *pointer,
                          uint32 &size,
                          TID &tid);
+
+/**
+ * @see Memory::ClearStatisticsDatabase
+ */
+void MemoryClearStatisticsDatabase();
+
+/**
+ * @see Memory::GetStatisticsDatabaseNElements
+ */
+uint32 MemoryGetStatisticsDatabaseNElements();
+
+/**
+ * @see Memory::GetUsedHeap
+ */
+int32 MemoryGetUsedHeap();
 
 /**
  * @see Memory::Check
@@ -217,6 +214,12 @@ bool MemoryMove(void* destination,
 bool MemorySet(void* mem,
                char c,
                uint32 size);
+
+/**
+ * @see Memory::StringDup
+ */
+char *MemoryStringDup(const char *s);
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -230,9 +233,15 @@ bool MemorySet(void* mem,
  * defined in MemoryAllocationFlags enumeration.\n
  * - MemoryStandardMemory: is the default flag and imposes that the memory to be allocated is minor than 32Mb.\n
  * - MemoryExtraMemory: allows to allocate more than 32Mb.\n
- * - MemoryAddHeader: adds an header containing the size and the id of the thread who creates the memory.\n
- * - MemoryStatistics: if the symbol MEMORY_STATISTIC is defined, the informations related to the heap memory allocated by a fixed number of threads
+ *
+ * If the symbol MEMORY_STATISTIC is defined:
+ *
+ * The informations related to the heap memory allocated by a fixed number of threads
  * are stored in a database (MemoryStatisticsDatabase). The maximum number of elements in the database is defined in GeneralDefinitionsOS.h
+ * The informations about the memory allocated by a certain thread are accessible using Memory::AllocationStatistics function.
+ *
+ * Moreover an header which contains informations about the size and thread id who allocated the memory is created before each memory chunk.\n
+ * These informations are accessible using Memory::GetHeaderInfo function.
  *
  * @details Most of the implementation is OS dependent and it is delegated to MemoryOS class in MemoryOS.h.
  */
@@ -240,15 +249,13 @@ class Memory {
 
 public:
 
-    /** The default memory allocation flag */
-    static MemoryAllocationFlags defaultAllocationFlag;
-
     /**
      * @brief Allocate a portion of memory on the heap.
      * @param[in] size The size in byte of the memory to allocate.
      * @return The pointer to the allocated memory. NULL if allocation failed.
      */
-    static void *Malloc(uint32 size);
+    static void *Malloc(uint32 size,
+                        MemoryAllocationFlags allocFlag = MemoryStandardMemory);
 
     /**
      * @brief Release a memory area and set its pointer to NULL.
@@ -276,33 +283,50 @@ public:
      */
     static char *StringDup(const char *s);
 
-
     /*static void AllocationStatistics(StreamInterface *out){
      MemoryAllocationStatistics(out);
      }*/
 
     /**
-     * @brief Get the memory statistics associated to a thread.
+     * @brief Gets the memory statistics associated to a thread if MEMORY_STATISTICS is defined.
      * @param[out] size The size of the memory associated with the thread.
      * @param[out] chunks The number of chunks of memory.
      * @param[in] tid The Thread id to be investigated.
-     * @return True if successful. False otherwise.
+     * @return false is MEMORY_STATISTICS is not defined, true if it is defined and in case of success.
      */
-    static bool AllocationStatistics(uint32 &size,
-                                     uint32 &chunks,
+    static bool AllocationStatistics(int32 &size,
+                                     int32 &chunks,
                                      TID tid = (TID) 0xFFFFFFFF);
 
     /**
-     * @brief Get the informations from the header of the memory area.
+     * @brief Gets the informations from the header of the memory area if MEMORY_STATISTICS is defined.
      * @param[in] pointer is a pointer to the beginning of the usable memory area.
      * @param[out] size is the size of the memory area allocated.
      * @param[out] tid is the identifier of the thread which allocates the memory.
-     * @return true if the pointer or the header pointer are not NULL.
+     * @return If MEMORY_STATISTICS is defined returns true if the memory pointer is valid.
+     * False if MEMORY_STATISTICS is not defined.
      * @pre The input pointer must point to the beginning of the memory area, otherwise the outputs can be incorrect.
      */
     static bool GetHeaderInfo(void *pointer,
                               uint32 &size,
                               TID &tid);
+
+    /**
+     * @brief If MEMORY_STATISTICS is defined resets the memory database.
+     */
+    static void ClearStatisticsDatabase();
+
+    /**
+     * @brief if MEMORY_STATISTICS is defined returns the number of elements in the memory database.
+     * @return the number of elements in the memory database, 0 if MEMORY_STATISTICS is not defined.
+     */
+    static uint32 GetStatisticsDatabaseNElements();
+
+    /**
+     * @brief if MEMORY_STATISTICS is defined returns the total amount of the current allocated heap memory.
+     * @return the amount of the current allocated heap memory, 0 if MEMORY_STATISTICS is not defined.
+     */
+    static int32 GetUsedHeap();
 
     /**
      * @brief Checks if the process has the access to the specified memory area.

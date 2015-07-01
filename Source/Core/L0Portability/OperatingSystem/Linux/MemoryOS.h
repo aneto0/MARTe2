@@ -149,7 +149,7 @@ public:
             size--;
             addressPtr++;
         }
-        return True;
+        return address != NULL;
     }
 
     /**

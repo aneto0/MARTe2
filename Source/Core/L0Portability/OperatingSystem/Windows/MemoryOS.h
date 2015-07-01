@@ -175,8 +175,10 @@ public:
     static bool Check(void *address,
                       MemoryTestAccessMode accessMode,
                       uint32 size) {
+        uint8 check = 0;
         //determines if the calling process has read access to the specified address (if the process has read and execute permissions).
         if (accessMode & MTAM_Execute) {
+            check++;
             if (IsBadCodePtr((FARPROC) address)) {
                 return False;
             }
@@ -184,6 +186,7 @@ public:
 
         //determines if the calling process has the read access to the specified range of memory (if the process has read permissions).
         if (accessMode & MTAM_Read) {
+            check++;
             if (IsBadReadPtr(address, size)) {
                 return False;
             }
@@ -191,12 +194,13 @@ public:
 
         //determines if the calling process has the write access to the specified range of memory (if the process has write permissions).
         if (accessMode & MTAM_Write) {
+            check++;
             if (IsBadWritePtr(address, size)) {
                 return False;
             }
         }
 
-        return True;
+        return address != NULL && check != 0;
     }
 
     /**
