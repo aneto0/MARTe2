@@ -2,7 +2,7 @@
  * @file MutexTest.cpp
  * @brief Source file for class MutexTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MutexTest.h"
+#include "Sleep.h"
+#include "Atomic.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,95 +42,322 @@
 /*---------------------------------------------------------------------------*/
 
 MutexTest::MutexTest() {
-    mutexSem.Create();
+    testMutex.Create();
+    synchSem.Create();
+
+    sharedVariable = 0;
+    nOfExecutingThreads = 0;
+    testMutexTimeout = TTInfiniteWait;
+    failed = true;
+    stop = false;
 }
 
 MutexTest::~MutexTest() {
-    //mutexSem.Close();
+    testMutex.Close();
 }
 
-bool MutexTest::TestLock(TimeoutType timeout) {
+bool MutexTest::GenericMutexTestCaller(int32 nOfThreads, TimeoutType timeout,
+                                       ThreadFunctionType functionToTest) {
+    failed = false;
+    stop = false;
+    nOfExecutingThreads = 0;
+    testMutexTimeout = timeout;
 
-    //make a copy of the semaphore
-    MutexSem newSem(mutexSem);
-
-
-    Error myErrorReturn = Debug;
-    //lock with infinite timeout.
-    if (!mutexSem.Lock()) {
-        return False;
+    synchSem.Reset();
+    for (int32 i = 0; i < nOfThreads; i++) {
+        Threads::BeginThread(functionToTest, this);
+        nOfExecutingThreads++;
     }
+    synchSem.Post();
 
-    if (!mutexSem.IsRecursive()) {
-        if (mutexSem.FastTryLock()) {
-            return False;
-        }
-
-        //it should return false after the timeout.
-        if (mutexSem.Lock(timeout, myErrorReturn)) {
-            return False;
-        }
-
-        if (myErrorReturn != Timeout) {
-            return False;
-        }
+    Sleep::Sec(1.0f);
+    stop = true;
+    while (nOfExecutingThreads > 0) {
+        Sleep::MSec(10);
     }
-
-    if (!newSem.UnLock()) {
-        return False;
-    }
-
-    return True;
-
+    return !failed;
 }
 
-bool MutexTest::TestUnLock() {
+void TestLockCallback(MutexTest &mt) {
+    mt.synchSem.Wait();
+    while (!mt.stop) {
+        mt.failed |= !mt.testMutex.Lock(mt.testMutexTimeout);
+        int32 state = mt.sharedVariable;
+        mt.sharedVariable++;
+        Sleep::MSec(10);
+        if (mt.sharedVariable != (state + 1)) {
+            mt.failed = true;
+        }
+        mt.testMutex.UnLock();
+        if (mt.failed) {
+            break;
+        }
+    }
+    //Careful that without this, the threads when exiting can overwrite the
+    //assignment operation and the subtraction of the value thus generating
+    //a racing condition at the end of the test (see below while(nOfExecutingThreads > 0)
+    Atomic::Decrement(&mt.nOfExecutingThreads);
+}
 
-    Error myErrorReturn;
+bool MutexTest::TestLock(int32 nOfThreads, TimeoutType timeout) {
+    return GenericMutexTestCaller(nOfThreads, timeout,
+                                  (ThreadFunctionType) TestLockCallback);
+}
 
-    if (!mutexSem.Lock(TTInfiniteWait, myErrorReturn)) {
+void TestUnLockCallback(MutexTest &mt) {
+    mt.synchSem.Wait();
 
-        return False;
+    while (!mt.stop) {
+        mt.testMutex.Lock(mt.testMutexTimeout);
+        int32 state = mt.sharedVariable;
+        mt.sharedVariable++;
+        Sleep::MSec(10);
+        if (mt.sharedVariable != (state + 1)) {
+            mt.failed = true;
+        }
+        mt.failed |= !mt.testMutex.UnLock();
+        if (mt.failed) {
+            break;
+        }
+    }
+    //Careful that without this, the threads when exiting can overwrite the
+    //assignment operation and the subtraction of the value thus generating
+    //a racing condition at the end of the test (see below while(nOfExecutingThreads > 0)
+    Atomic::Decrement(&mt.nOfExecutingThreads);
+}
+
+bool MutexTest::TestUnLock(int32 nOfThreads, TimeoutType timeout) {
+    return GenericMutexTestCaller(nOfThreads, timeout,
+                                  (ThreadFunctionType) TestUnLockCallback);
+}
+
+void TestFastLockCallback(MutexTest &mt) {
+    mt.synchSem.Wait();
+    while (!mt.stop) {
+        mt.failed |= !mt.testMutex.FastLock(mt.testMutexTimeout);
+        int32 state = mt.sharedVariable;
+        mt.sharedVariable++;
+        Sleep::MSec(10);
+        if (mt.sharedVariable != (state + 1)) {
+            mt.failed = true;
+        }
+        mt.testMutex.FastUnLock();
+        if (mt.failed) {
+            break;
+        }
+    }
+    //Careful that without this, the threads when exiting can overwrite the
+    //assignment operation and the subtraction of the value thus generating
+    //a racing condition at the end of the test (see below while(nOfExecutingThreads > 0)
+    Atomic::Decrement(&mt.nOfExecutingThreads);
+}
+
+bool MutexTest::TestFastLock(int32 nOfThreads, TimeoutType timeout) {
+    return GenericMutexTestCaller(nOfThreads, timeout,
+                                  (ThreadFunctionType) TestFastLockCallback);
+}
+
+void TestFastUnLockCallback(MutexTest &mt) {
+    mt.synchSem.Wait();
+
+    while (!mt.stop) {
+        mt.testMutex.FastLock(mt.testMutexTimeout);
+        int32 state = mt.sharedVariable;
+        mt.sharedVariable++;
+        Sleep::MSec(10);
+        if (mt.sharedVariable != (state + 1)) {
+            mt.failed = true;
+        }
+        mt.failed |= !mt.testMutex.FastUnLock();
+        if (mt.failed) {
+            break;
+        }
+    }
+    //Careful that without this, the threads when exiting can overwrite the
+    //assignment operation and the subtraction of the value thus generating
+    //a racing condition at the end of the test (see below while(nOfExecutingThreads > 0)
+    Atomic::Decrement(&mt.nOfExecutingThreads);
+}
+
+bool MutexTest::TestFastUnLock(int32 nOfThreads, TimeoutType timeout) {
+    return GenericMutexTestCaller(nOfThreads, timeout,
+                                  (ThreadFunctionType) TestFastUnLockCallback);
+}
+
+void TestFastTryLockCallback(MutexTest &mt) {
+    mt.synchSem.Wait();
+    while (!mt.stop) {
+        if(mt.testMutex.FastTryLock()){
+            int32 state = mt.sharedVariable;
+            mt.sharedVariable++;
+            Sleep::MSec(10);
+            if (mt.sharedVariable != (state + 1)) {
+                mt.failed = true;
+            }
+            mt.testMutex.FastUnLock();
+        }
+        if (mt.failed) {
+            break;
+        }
+    }
+    //Careful that without this, the threads when exiting can overwrite the
+    //assignment operation and the subtraction of the value thus generating
+    //a racing condition at the end of the test (see below while(nOfExecutingThreads > 0)
+    Atomic::Decrement(&mt.nOfExecutingThreads);
+}
+
+bool MutexTest::TestFastTryLock(int32 nOfThreads) {
+    bool test = GenericMutexTestCaller(nOfThreads, TTInfiniteWait, (ThreadFunctionType) TestFastTryLockCallback);
+    MutexSem sem;
+    test = sem.FastTryLock();
+    test = !sem.FastTryLock();
+    sem.FastUnLock();
+    sem.Close();
+    return test;
+}
+
+void TestLockErrorCodeCallback(MutexTest &mt) {
+    mt.failed = false;
+    Error returnError;
+    //This should fail because it was already locked in the TestLockErrorCode
+    bool ret = mt.testMutex.Lock(mt.testMutexTimeout, returnError);
+    if (!ret) {
+        mt.failed = true;
+    }
+    if (returnError != Timeout) {
+        mt.failed = true;
+    }
+    Atomic::Decrement(&mt.nOfExecutingThreads);
+}
+
+void TestFastLockErrorCodeCallback(MutexTest &mt) {
+    mt.failed = false;
+    Error returnError;
+    //This should fail because it was already locked in the TestFastLockErrorCode
+    bool ret = mt.testMutex.FastLock(mt.testMutexTimeout, returnError);
+    if (!ret) {
+        mt.failed = true;
+    }
+    if (returnError != Timeout) {
+        mt.failed = true;
+    }
+    Atomic::Decrement(&mt.nOfExecutingThreads);
+}
+
+bool MutexTest::TestLockErrorCode() {
+
+    Error returnError;
+    bool test = true;
+
+    test = testMutex.Lock(TTInfiniteWait, returnError);
+    if (returnError != Debug) {
+        test = False;
     }
 
-    if (myErrorReturn != Debug) {
-        return False;
+    if (test) {
+        GenericMutexTestCaller(1, 1,
+                               (ThreadFunctionType) TestLockErrorCodeCallback);
+    }
+    testMutex.UnLock();
+
+    return test;
+}
+
+bool MutexTest::TestFastLockErrorCode() {
+
+    Error returnError;
+    bool test = true;
+
+    test = testMutex.FastLock(TTInfiniteWait, returnError);
+    if (returnError != Debug) {
+        test = False;
     }
 
-    //the unlock should allow a new lock without errors
-    if (!mutexSem.UnLock()) {
+    if (test) {
+        GenericMutexTestCaller(
+                1, 1, (ThreadFunctionType) TestFastLockErrorCodeCallback);
+    }
+    testMutex.FastUnLock();
 
-        return False;
+    return test;
+}
+
+bool MutexTest::TestIsRecursive() {
+    bool test = true;
+
+    testMutex.Close();
+    test = testMutex.Create(false, false);
+    test &= !testMutex.IsRecursive();
+    testMutex.Close();
+
+    test &= testMutex.Create(true, false);
+    test &= !testMutex.IsRecursive();
+    testMutex.Close();
+
+    test = testMutex.Create(false, true);
+    test &= testMutex.IsRecursive();
+    testMutex.Close();
+
+    test &= testMutex.Create(true, true);
+    test &= testMutex.IsRecursive();
+    testMutex.Close();
+
+    return test;
+}
+
+void TestRecursiveCallback(MutexTest &mt) {
+    mt.failed = mt.testMutex.Lock();
+    mt.failed = mt.testMutex.Lock();
+    mt.testMutex.UnLock();
+    mt.testMutex.UnLock();
+    Atomic::Decrement(&mt.nOfExecutingThreads);
+}
+
+bool MutexTest::TestRecursive(bool recursive) {
+    bool test = true;
+    testMutex.Close();
+    test = testMutex.Create(false, recursive);
+    nOfExecutingThreads = 1;
+    int32 counter = 0;
+    TID threadId = Threads::BeginThread(
+            (ThreadFunctionType) TestRecursiveCallback, this);
+    while (nOfExecutingThreads == 1) {
+        SleepMSec(100);
+        if (counter++ > 10) {
+            if (!recursive) {
+                test = true;
+            }
+            else {
+                test = false;
+            }
+            Threads::Kill(threadId);
+            break;
+        }
+    }
+    if (nOfExecutingThreads == 0) {
+        //A non-recursive semaphore should have dead-locked...
+        if (!recursive) {
+            test = false;
+        }
+        else {
+            test = true;
+        }
     }
 
-    if (!mutexSem.Lock(TTInfiniteWait, myErrorReturn)) {
+    return test;
+}
 
-        return False;
+bool MutexTest::TestCopyConstructor() {
+    bool test = true;
+    test = testMutex.Create(false, false);
+    MutexSem copyTestMutex(testMutex);
+
+    if (testMutex.Handle() != copyTestMutex.Handle()) {
+        test = false;
     }
 
-    if (myErrorReturn != Debug) {
+    test &= testMutex.Lock();
+    test &= copyTestMutex.UnLock();
 
-        return False;
-    }
-
-    if (!mutexSem.FastUnLock()) {
-
-        return False;
-    }
-
-    if (!mutexSem.FastLock(TTInfiniteWait, myErrorReturn)) {
-
-        return False;
-    }
-
-    if (myErrorReturn != Debug) {
-
-        return False;
-    }
-
-    if (!mutexSem.FastUnLock()) {
-        return False;
-    }
-
-    return True;
+    return test;
 }
