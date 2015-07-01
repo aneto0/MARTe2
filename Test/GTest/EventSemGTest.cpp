@@ -39,7 +39,42 @@ protected:
     }
 };
 
+TEST_F(EventSemGTest,TestCreate) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.TestCreate());
+}
+
+TEST_F(EventSemGTest,TestClose) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.TestClose());
+}
+
+TEST_F(EventSemGTest,TestCopyConstructor) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.TestCopyConstructor());
+}
+
 TEST_F(EventSemGTest,TestWait) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWait(500));
+}
+
+TEST_F(EventSemGTest,WaitNoTimeoutTest) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.WaitNoTimeoutTest(32));
+}
+
+TEST_F(EventSemGTest,WaitTimeoutTestSuccess) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.WaitTimeoutTestSuccess(32));
+}
+
+TEST_F(EventSemGTest,WaitTimeoutTestFailure) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.WaitTimeoutTestFailure(32));
+}
+
+TEST_F(EventSemGTest,WaitTimeoutTestFailureFollowedBySuccess) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.WaitTimeoutTestFailureFollowedBySuccess(32));
 }

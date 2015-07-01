@@ -30,7 +30,6 @@ OBJSX=  EndianityTest.x \
         ProcessorTest.x \
         AtomicTest.x \
 		ProcessorTypeTest.x \
-		EventSemIntegrationTest.x \
 		EventSemTest.x \
 		MutexTest.x \
 		BasicConsoleTest.x \

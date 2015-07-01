@@ -29,7 +29,6 @@ OBJSX=  EndianityGTest.x \
 	ProcessorGTest.x \
 	AtomicGTest.x \
 	ProcessorTypeGTest.x \
-	EventSemIntegrationGTest.x \
 	EventSemGTest.x \
 	HighResolutionTimerGTest.x \
 	MemoryGTest.x \
