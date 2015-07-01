@@ -41,7 +41,7 @@
 #define THREADS_DEFAULT_STACKSIZE 32768
 
 /** Defines the maximum number of elements in the memory database */
-#define MAX_NO_OF_MEMORY_MONITORS 256
+#define MAX_NO_OF_MEMORY_MONITORS 64
 
 /** In windows the newline is specified with \r\n */
 #define N_CHARS_NEWLINE 2
