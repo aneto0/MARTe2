@@ -39,7 +39,6 @@ OBJSX=  EndianityGTest.x \
 	StringHelperGTest.x \
 	ThreadsGTest.x \
 	ThreadsDatabaseIntegrationGTest.x \
-	MutexIntegrationGTest.x \
 	MutexGTest.x \
 	ThreadsIntegrationGTest.x 
 	#BasicConsoleGTest.x 
