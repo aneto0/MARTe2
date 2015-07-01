@@ -32,7 +32,6 @@ OBJSX=  EndianityTest.x \
 		ProcessorTypeTest.x \
 		EventSemIntegrationTest.x \
 		EventSemTest.x \
-		MutexIntegrationTest.x \
 		MutexTest.x \
 		BasicConsoleTest.x \
 		HighResolutionTimerTest.x \
