@@ -56,7 +56,8 @@ MutexTest::~MutexTest() {
     testMutex.Close();
 }
 
-bool MutexTest::GenericMutexTestCaller(int32 nOfThreads, TimeoutType timeout,
+bool MutexTest::GenericMutexTestCaller(int32 nOfThreads,
+                                       TimeoutType timeout,
                                        ThreadFunctionType functionToTest) {
     failed = false;
     stop = false;
@@ -99,9 +100,9 @@ void TestLockCallback(MutexTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool MutexTest::TestLock(int32 nOfThreads, TimeoutType timeout) {
-    return GenericMutexTestCaller(nOfThreads, timeout,
-                                  (ThreadFunctionType) TestLockCallback);
+bool MutexTest::TestLock(int32 nOfThreads,
+                         TimeoutType timeout) {
+    return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestLockCallback);
 }
 
 void TestUnLockCallback(MutexTest &mt) {
@@ -126,9 +127,9 @@ void TestUnLockCallback(MutexTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool MutexTest::TestUnLock(int32 nOfThreads, TimeoutType timeout) {
-    return GenericMutexTestCaller(nOfThreads, timeout,
-                                  (ThreadFunctionType) TestUnLockCallback);
+bool MutexTest::TestUnLock(int32 nOfThreads,
+                           TimeoutType timeout) {
+    return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestUnLockCallback);
 }
 
 void TestFastLockCallback(MutexTest &mt) {
@@ -152,9 +153,9 @@ void TestFastLockCallback(MutexTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool MutexTest::TestFastLock(int32 nOfThreads, TimeoutType timeout) {
-    return GenericMutexTestCaller(nOfThreads, timeout,
-                                  (ThreadFunctionType) TestFastLockCallback);
+bool MutexTest::TestFastLock(int32 nOfThreads,
+                             TimeoutType timeout) {
+    return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastLockCallback);
 }
 
 void TestFastUnLockCallback(MutexTest &mt) {
@@ -179,15 +180,15 @@ void TestFastUnLockCallback(MutexTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool MutexTest::TestFastUnLock(int32 nOfThreads, TimeoutType timeout) {
-    return GenericMutexTestCaller(nOfThreads, timeout,
-                                  (ThreadFunctionType) TestFastUnLockCallback);
+bool MutexTest::TestFastUnLock(int32 nOfThreads,
+                               TimeoutType timeout) {
+    return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastUnLockCallback);
 }
 
 void TestFastTryLockCallback(MutexTest &mt) {
     mt.synchSem.Wait();
     while (!mt.stop) {
-        if(mt.testMutex.FastTryLock()){
+        if (mt.testMutex.FastTryLock()) {
             int32 state = mt.sharedVariable;
             mt.sharedVariable++;
             Sleep::MSec(10);
@@ -255,8 +256,7 @@ bool MutexTest::TestLockErrorCode() {
     }
 
     if (test) {
-        GenericMutexTestCaller(1, 1,
-                               (ThreadFunctionType) TestLockErrorCodeCallback);
+        GenericMutexTestCaller(1, 1, (ThreadFunctionType) TestLockErrorCodeCallback);
     }
     testMutex.UnLock();
 
@@ -274,8 +274,7 @@ bool MutexTest::TestFastLockErrorCode() {
     }
 
     if (test) {
-        GenericMutexTestCaller(
-                1, 1, (ThreadFunctionType) TestFastLockErrorCodeCallback);
+        GenericMutexTestCaller(1, 1, (ThreadFunctionType) TestFastLockErrorCodeCallback);
     }
     testMutex.FastUnLock();
 
@@ -319,8 +318,7 @@ bool MutexTest::TestRecursive(bool recursive) {
     test = testMutex.Create(false, recursive);
     nOfExecutingThreads = 1;
     int32 counter = 0;
-    TID threadId = Threads::BeginThread(
-            (ThreadFunctionType) TestRecursiveCallback, this);
+    TID threadId = Threads::BeginThread((ThreadFunctionType) TestRecursiveCallback, this);
     while (nOfExecutingThreads == 1) {
         SleepMSec(100);
         if (counter++ > 10) {

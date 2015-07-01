@@ -66,7 +66,8 @@ public:
      * @param[in] timeout the timeout value that will be used to call the lock function.
      * @return true if the calls to MutexSem::Lock returned true and if the shared resource was protected.
      */
-    bool TestLock(int32 nOfThreads, TimeoutType timeout);
+    bool TestLock(int32 nOfThreads,
+                  TimeoutType timeout);
 
     /**
      * @brief Tests the MutexSem::UnLock function.
@@ -80,7 +81,8 @@ public:
      * the UnLock is also working for semaphores which were locked with a finite timeout).
      * @return true if the calls to MutexSem::UnLock returned true and if the shared resource was protected.
      */
-    bool TestUnLock(int32 nOfThreads, TimeoutType timeout);
+    bool TestUnLock(int32 nOfThreads,
+                    TimeoutType timeout);
 
     /**
      * @brief Tests the MutexSem::FastLock function.
@@ -91,7 +93,8 @@ public:
      * @param[in] timeout the timeout value that will be used to call the lock function.
      * @return true if the calls to MutexSem::Lock returned true and if the shared resource was protected.
      */
-    bool TestFastLock(int32 nOfThreads, TimeoutType timeout);
+    bool TestFastLock(int32 nOfThreads,
+                      TimeoutType timeout);
 
     /**
      * @brief Tests the MutexSem::FastUnLock function.
@@ -103,7 +106,8 @@ public:
      * the UnLock is also working for semaphores which were locked with a finite timeout).
      * @return true if the calls to MutexSem::UnLock returned true and if the shared resource was protected.
      */
-    bool TestFastUnLock(int32 nOfThreads, TimeoutType timeout);
+    bool TestFastUnLock(int32 nOfThreads,
+                        TimeoutType timeout);
 
     /**
      * @brief Tests the MutexSem::FastTryLock function.
@@ -206,7 +210,9 @@ private:
      * @param[in] functionToTest the function callback to be called by the threads.
      * @return the value returned by the functionToTest.
      */
-     bool GenericMutexTestCaller(int32 nOfThreads, TimeoutType timeout, ThreadFunctionType functionToTest);
+    bool GenericMutexTestCaller(int32 nOfThreads,
+                                TimeoutType timeout,
+                                ThreadFunctionType functionToTest);
 
     /**
      * Allow the callback functions to access the private methods of the class
@@ -240,8 +246,8 @@ private:
      */
     friend void TestFastLockErrorCodeCallback(MutexTest &mt);
     /**
-      * @see TestRecursive
-      */
+     * @see TestRecursive
+     */
     friend void TestRecursiveCallback(MutexTest &mt);
 };
 
