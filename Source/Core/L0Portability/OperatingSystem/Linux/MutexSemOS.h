@@ -2,7 +2,7 @@
  * @file MutexSemOS.h
  * @brief Header file for class MutexSemOS
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -198,7 +198,7 @@ class MutexSemOS {
 public:
 
     /**
-     * @brief Create a mutex semafore with a given initial state
+     * @brief Create a mutex semaphore with a given initial state
      * @details Called by MutexSem::Create.
      * @param[in,out] semH is the mutex semaphore handle in return.
      * @param[in] locked defines the initial state (true = locked, false = unlocked).
@@ -232,11 +232,11 @@ public:
             ((PrivateMutexSemStruct *) semH)->Lock(TTInfiniteWait, error);
         }
 
-        return error != Debug;
+        return error == Debug;
     }
 
     /**
-     * @brief Close the semafore handle.
+     * @brief Close the semaphore handle.
      * @details Called by MutexSem::Close
      * @param[in,out] semH is the mutex semaphore handle.
      * @return true.
