@@ -2,7 +2,7 @@
  * @file MutexSemOS.h
  * @brief Header file for class MutexSemOS
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef MUTEXSEMOS_H_
-#define 		MUTEXSEMOS_H_
+#define MUTEXSEMOS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -39,152 +39,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-/**
- * @brief Private mutex semaphore class used for Solaris and Linux when using pThread.
- */
-class PrivateMutexSemStruct {
-
-public:
-    /**
-     * @brief Constructor.
-     */
-    PrivateMutexSemStruct() {
-        references = 1;
-    }
-    /**
-     * @brief Destructor.
-     */
-    ~PrivateMutexSemStruct() {
-    }
-
-    /**
-     * @brief Initialize the semaphore with the right attributes.
-     * @return false if something wrong with pthread_mutex initialization.
-     */
-    bool Init(bool &recursive) {
-        if (pthread_mutexattr_init(&mutexAttributes) != 0) {
-            return False;
-        }
-        if (pthread_mutexattr_setprotocol(&mutexAttributes, PTHREAD_PRIO_INHERIT) != 0) {
-            return False;
-        }
-        if (recursive) {
-            //The deadlock condition causes a crash at operating system level.
-            if (pthread_mutexattr_settype(&mutexAttributes, PTHREAD_MUTEX_RECURSIVE) != 0) {
-                return False;
-            }
-        }
-        else {
-            //This was pthread PTHREAD_MUTEX_RECURSIVE but it was crashing when a deadlock was forced on purpose
-            //with PTHREAD_MUTEX_NORMAL the same thread cannot lock the semaphore without unlocking it first.
-            if (pthread_mutexattr_settype(&mutexAttributes, PTHREAD_MUTEX_NORMAL) != 0) {
-                return False;
-            }
-        }
-        if (pthread_mutex_init(&mutexHandle, &mutexAttributes) != 0) {
-            return False;
-        }
-        return True;
-    }
-
-    /**
-     * @brief Destroy the semaphore.
-     * @return false if something wrong in pthread_mutex destruction.
-     */
-    bool Close() {
-        if (!pthread_mutexattr_destroy(&mutexAttributes)) {
-            return False;
-        }
-        if (!pthread_mutex_destroy(&mutexHandle)) {
-            return False;
-        }
-        return True;
-    }
-
-    /**
-     * @brief Lock the semaphore until an unlock or the timeout expire.
-     * @details The thread that locks a semaphore cannot be killed in the critical region.
-     * @param[in] msecTimeout is the desired timeout.
-     * @param[out] error is the error type.
-     * @return false if lock fails also because the expire of the timeout, true otherwise.
-     */
-    bool Lock(TimeoutType msecTimeout,
-              Error &error) {
-        if (msecTimeout == TTInfiniteWait) {
-            if (pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL) != 0) {
-                error = OSError;
-                return False;
-            }
-
-            if (pthread_mutex_lock(&mutexHandle) != 0) {
-                error = OSError;
-                return False;
-            }
-        }
-        else {
-            struct timespec timesValues;
-            timeb tb;
-            ftime(&tb);
-            double sec = ((msecTimeout.msecTimeout + tb.millitm) * 1e-3 + tb.time);
-            double roundValue = floor(sec);
-            timesValues.tv_sec = (int) roundValue;
-            timesValues.tv_nsec = (int) ((sec - roundValue) * 1E9);
-            int err = 0;
-            if ((err = pthread_mutex_timedlock(&mutexHandle, &timesValues)) != 0) {
-                error = Timeout;
-                return False;
-            }
-        }
-        return True;
-    }
-
-    /**
-     * @brief Unlock the semaphore.
-     * @details Enable the possibility to kill the thread after the unlock.
-     * @return true if the unlock has success.
-     */
-    bool UnLock() {
-        bool condition = (pthread_mutex_unlock(&mutexHandle) == 0);
-        return condition && pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL) == 0;
-    }
-
-    /**
-     * @brief Fast return in case of locked semaphore.
-     * @return true if the semaphore was unlocked and locks it, otherwise return false.
-     */
-    bool TryLock() {
-        return (pthread_mutex_trylock(&mutexHandle) == 0);
-    }
-
-    /**
-     * @brief Adds an handle reference.
-     */
-    void AddReference() {
-        references++;
-    }
-
-
-    /**
-     * @brief Removes an handle reference.
-     * @return true if the number of handle references is equal to zero.
-     */
-    bool RemoveReference() {
-        if (--references < 0) {
-            references = 0;
-        }
-        return references == 0;
-    }
-
-private:
-    /**  Mutex Handle */
-    pthread_mutex_t mutexHandle;
-    /** Mutex Attributes */
-    pthread_mutexattr_t mutexAttributes;
-
-    /** Number of handle references. */
-    uint32 references;
-};
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -264,8 +118,8 @@ public:
      * @return the result of PrivateMutexSemStruct::Lock
      */
     static inline bool Lock(HANDLE &semH,
-                            TimeoutType msecTimeout,
-                            Error &error) {
+    TimeoutType msecTimeout,
+    Error &error) {
         if (semH == (HANDLE) NULL) {
             return False;
         }
@@ -290,8 +144,8 @@ public:
      * @see MutexSemOSLock.
      */
     static inline bool FastLock(HANDLE &semH,
-                                TimeoutType msecTimeout,
-                                Error &error) {
+    TimeoutType msecTimeout,
+    Error &error) {
         if (semH == (HANDLE) NULL) {
             return False;
         }
@@ -328,6 +182,153 @@ public:
     static inline void DuplicateHandle(HANDLE &semH) {
         ((PrivateMutexSemStruct*) semH)->AddReference();
     }
+
+private:
+
+    /**
+     * @brief Private mutex semaphore class used for Solaris and Linux when using pThread.
+     */
+    class PrivateMutexSemStruct {
+
+    public:
+        /**
+         * @brief Constructor.
+         */
+        PrivateMutexSemStruct() {
+            references = 1;
+        }
+        /**
+         * @brief Destructor.
+         */
+        ~PrivateMutexSemStruct() {
+        }
+
+        /**
+         * @brief Initialize the semaphore with the right attributes.
+         * @return false if something wrong with pthread_mutex initialization.
+         */
+        bool Init(bool &recursive) {
+            if (pthread_mutexattr_init(&mutexAttributes) != 0) {
+                return False;
+            }
+            if (pthread_mutexattr_setprotocol(&mutexAttributes, PTHREAD_PRIO_INHERIT) != 0) {
+                return False;
+            }
+            if (recursive) {
+                //The deadlock condition causes a crash at operating system level.
+                if (pthread_mutexattr_settype(&mutexAttributes, PTHREAD_MUTEX_RECURSIVE) != 0) {
+                    return False;
+                }
+            }
+            else {
+                //This was pthread PTHREAD_MUTEX_RECURSIVE but it was crashing when a deadlock was forced on purpose
+                //with PTHREAD_MUTEX_NORMAL the same thread cannot lock the semaphore without unlocking it first.
+                if (pthread_mutexattr_settype(&mutexAttributes, PTHREAD_MUTEX_NORMAL) != 0) {
+                    return False;
+                }
+            }
+            if (pthread_mutex_init(&mutexHandle, &mutexAttributes) != 0) {
+                return False;
+            }
+            return True;
+        }
+
+        /**
+         * @brief Destroy the semaphore.
+         * @return false if something wrong in pthread_mutex destruction.
+         */
+        bool Close() {
+            if (!pthread_mutexattr_destroy(&mutexAttributes)) {
+                return False;
+            }
+            if (!pthread_mutex_destroy(&mutexHandle)) {
+                return False;
+            }
+            return True;
+        }
+
+        /**
+         * @brief Lock the semaphore until an unlock or the timeout expire.
+         * @details The thread that locks a semaphore cannot be killed in the critical region.
+         * @param[in] msecTimeout is the desired timeout.
+         * @param[out] error is the error type.
+         * @return false if lock fails also because the expire of the timeout, true otherwise.
+         */
+        bool Lock(TimeoutType msecTimeout,
+        Error &error) {
+            if (msecTimeout == TTInfiniteWait) {
+                if (pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL) != 0) {
+                    error = OSError;
+                    return False;
+                }
+
+                if (pthread_mutex_lock(&mutexHandle) != 0) {
+                    error = OSError;
+                    return False;
+                }
+            }
+            else {
+                struct timespec timesValues;
+                timeb tb;
+                ftime(&tb);
+                double sec = ((msecTimeout.msecTimeout + tb.millitm) * 1e-3 + tb.time);
+                double roundValue = floor(sec);
+                timesValues.tv_sec = (int) roundValue;
+                timesValues.tv_nsec = (int) ((sec - roundValue) * 1E9);
+                int err = 0;
+                if ((err = pthread_mutex_timedlock(&mutexHandle, &timesValues)) != 0) {
+                    error = Timeout;
+                    return False;
+                }
+            }
+            return True;
+        }
+
+        /**
+         * @brief Unlock the semaphore.
+         * @details Enable the possibility to kill the thread after the unlock.
+         * @return true if the unlock has success.
+         */
+        bool UnLock() {
+            bool condition = (pthread_mutex_unlock(&mutexHandle) == 0);
+            return condition && pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL) == 0;
+        }
+
+        /**
+         * @brief Fast return in case of locked semaphore.
+         * @return true if the semaphore was unlocked and locks it, otherwise return false.
+         */
+        bool TryLock() {
+            return (pthread_mutex_trylock(&mutexHandle) == 0);
+        }
+
+        /**
+         * @brief Adds an handle reference.
+         */
+        void AddReference() {
+            references++;
+        }
+
+        /**
+         * @brief Removes an handle reference.
+         * @return true if the number of handle references is equal to zero.
+         */
+        bool RemoveReference() {
+            if (--references < 0) {
+                references = 0;
+            }
+            return references == 0;
+        }
+
+    private:
+        /**  Mutex Handle */
+        pthread_mutex_t mutexHandle;
+        /** Mutex Attributes */
+        pthread_mutexattr_t mutexAttributes;
+
+        /** Number of handle references. */
+        uint32 references;
+    };
 
 };
 
