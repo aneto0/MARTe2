@@ -2,7 +2,7 @@
  * @file MutexSemOS.h
  * @brief Header file for class MutexSemOS
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef MUTEXSEMOS_H_
-#define 		MUTEXSEMOS_H_
+#define MUTEXSEMOS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -88,8 +88,8 @@ public:
      * @return the result of PrivateMutexSemStruct::Lock
      */
     static inline bool Lock(HANDLE &semH,
-                            TimeoutType msecTimeout,
-                            Error &error) {
+    TimeoutType msecTimeout,
+    Error &error) {
         DWORD ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
         if (ret == WAIT_FAILED) {
             error = OSError;
@@ -122,8 +122,8 @@ public:
      * @see MutexSemOS::Lock.
      */
     static inline bool FastLock(HANDLE &semH,
-                                TimeoutType msecTimeout,
-                                Error &error) {
+    TimeoutType msecTimeout,
+    Error &error) {
         DWORD ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
         if (ret == WAIT_FAILED) {
             error = OSError;
@@ -154,7 +154,6 @@ public:
         DWORD ret = WaitForSingleObject(semH, 0);
         return ((ret != WAIT_FAILED) && (ret != WAIT_TIMEOUT));
     }
-
 
     /**
      * @brief Do nothing.
