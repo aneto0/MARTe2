@@ -136,11 +136,6 @@ public:
      */
     bool DeadLock();
 
-    /**
-     * @brief Checks what happen when a thread were killed while it locks a mutex.
-     * @return true if the tread is killed after the unlock, because otherwise we can obtain a program crash.
-     */
-    bool KillWithLock();
 
 };
 /*---------------------------------------------------------------------------*/

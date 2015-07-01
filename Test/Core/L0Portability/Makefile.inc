@@ -38,6 +38,7 @@ OBJSX=  EndianityTest.x \
 		HighResolutionTimerTest.x \
 		ThreadsDatabaseIntegrationTest.x \
 		MemoryTest.x \
+		MemoryIntegrationTest.x \
 		FastPollingMutexIntegrationTest.x \
 		FastPollingMutexTest.x \
 		StringHelperTest.x \
@@ -51,8 +52,7 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../../../Source/Core/L0Portability
 all: $(OBJS) \
-                $(BUILD_DIR)/L0PortabilityTest$(LIBEXT) \
-		#	$(BUILD_DIR)/Test$(EXEEXT) 
+                $(BUILD_DIR)/L0PortabilityTest$(LIBEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

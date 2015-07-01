@@ -87,10 +87,6 @@ TEST_F(MutexIntegrationGTest,DeadLock) {
     ASSERT_TRUE(mutextest.DeadLock());
 }
 
-TEST_F(MutexIntegrationGTest,KillWithLock) {
-    MutexIntegrationTest mutextest;
-    ASSERT_TRUE(mutextest.KillWithLock());
-}
 
 
 

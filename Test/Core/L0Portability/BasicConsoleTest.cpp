@@ -1,36 +1,49 @@
-/* Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file BasicConsoleTest.cpp
+ * @brief Source file for class BasicConsoleTest
+ * @date 30/06/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http: //ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id:$
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This source file contains the definition of all the methods for
+ * the class BasicConsoleTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
 #include "BasicConsoleTest.h"
 #include "StringTestHelper.h"
-#include "stdio.h"
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
 //Open the console with in the mode passed by argument
 bool BasicConsoleTest::TestOpen(ConsoleOpeningMode openingMode) {
 
-    BasicConsole myConsole(openingMode, N_ROWS, N_COLUMNS);
+    BasicConsole myConsole(openingMode, BasicConsoleTest::N_ROWS, BasicConsoleTest::N_COLUMNS);
     return True;
 }
 
@@ -62,10 +75,8 @@ bool BasicConsoleTestWrite(const char* string,
     bool condition1 = BasicConsoleWrite(myConsole, string, size, TTInfiniteWait);
 
     if (!condition1) {
-        printf("\nError 0\n");
     }
 
-    printf("\nsize=%d, stringSize=%d\n", size, stringSize);
     //return true if the size is correct
     return condition1 && (size == (stringSize - padding));
 
@@ -74,7 +85,7 @@ bool BasicConsoleTestWrite(const char* string,
 //write the string passed by argument
 bool BasicConsoleTest::TestWrite(const char* string,
                                  int32 padding) {
-    BasicConsole myConsole(ConsoleDefault, N_ROWS, N_COLUMNS);
+    BasicConsole myConsole(ConsoleDefault, BasicConsoleTest::N_ROWS, BasicConsoleTest::N_COLUMNS);
     return BasicConsoleTestWrite(string, padding, myConsole);
 
 }
@@ -83,8 +94,8 @@ bool BasicConsoleTest::TestWrite(const char* string,
 bool BasicConsoleTestRead(const char* stringArg,
                           BasicConsole &myConsole) {
 
-    char string[N_COLUMNS];
-    char result[N_COLUMNS + 20];
+    char string[BasicConsoleTest::N_COLUMNS];
+    char result[BasicConsoleTest::N_COLUMNS + 20];
     uint32 stringSize;
 
     //calculate the size of the string
@@ -103,17 +114,13 @@ bool BasicConsoleTestRead(const char* stringArg,
     bool condition1 = BasicConsoleRead(myConsole, string, stringSize, TTInfiniteWait);
 
     string[stringSize] = '\0';
-    printf("\nstring=|%s|\n", string);
-    printf("\nstringArg=|%s|\n", stringArg);
 
     if (!condition1) {
-        printf("\nError 1\n");
     }
 
     //compare the read string with the argument
     bool condition2 = StringTestHelper::Compare(string, stringArg);
     if (!condition2) {
-        printf("\nError 2\n");
     }
 
     //return true if the read string is equal to the argument
@@ -128,7 +135,7 @@ bool BasicConsoleTestRead(const char* stringArg,
 
 //compare the read string with the string passed by argument
 bool BasicConsoleTest::TestRead(const char* stringArg) {
-    BasicConsole myConsole(ConsoleDefault, N_ROWS, N_COLUMNS);
+    BasicConsole myConsole(ConsoleDefault, BasicConsoleTest::N_ROWS, BasicConsoleTest::N_COLUMNS);
     return BasicConsoleTestRead(stringArg, myConsole);
 
 }
@@ -179,7 +186,7 @@ bool BasicConsoleTestPaging(int32 overflow,
 bool BasicConsoleTest::TestPaging(int32 overflow,
                                   int32 rows,
                                   int32 columns) {
-    BasicConsole myConsole(EnablePaging, N_ROWS, N_COLUMNS);
+    BasicConsole myConsole(EnablePaging, BasicConsoleTest::N_ROWS, BasicConsoleTest::N_COLUMNS);
     bool ret = BasicConsoleTestPaging(overflow, rows, columns, myConsole);
     //BasicConsoleClose(myConsole);
     return ret;
@@ -199,7 +206,7 @@ bool BasicConsoleTestPerfChar(BasicConsole &myConsole) {
 
 //Test the perform character input feature
 bool BasicConsoleTest::TestPerfChar() {
-    BasicConsole myConsole(PerformCharacterInput, N_ROWS, N_COLUMNS);
+    BasicConsole myConsole(PerformCharacterInput, BasicConsoleTest::N_ROWS, BasicConsoleTest::N_COLUMNS);
     bool ret = BasicConsoleTestPerfChar(myConsole);
     //BasicConsoleClose(myConsole);
     return ret;
@@ -221,9 +228,9 @@ bool BasicConsoleTestNotImplemented(BasicConsole &myConsole) {
         return False;
     }
 
-    Colours black=Black;
-    Colours white=White;
-    Colours red=Red;
+    Colours black = Black;
+    Colours white = White;
+    Colours red = Red;
 
     if (myConsole.SetColour(black, white)) {
         return False;

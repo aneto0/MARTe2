@@ -1,7 +1,7 @@
 /**
  * @file MemoryTest.h
  * @brief Header file for class MemoryTest
- * @date 26/06/2015
+ * @date 29/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -21,11 +21,6 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-
-//Use the memory database.
-#define MEMORY_STATISTICS
-
-
 #ifndef MEMORYTEST_H_
 #define 		MEMORYTEST_H_
 
@@ -38,29 +33,22 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Memory.h"
-#include "Sleep.h"
-#include "Threads.h"
-#include "EventSem.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 
 
-/** @brief Class for testing of Memory functions. */
+/**
+ * @brief A class to testing Memory functions.
+ */
 class MemoryTest {
 
 private:
 
 public:
-    /**
-     * A semaphore used for the shared memory test.
-     */
-    EventSem eventSem;
 
-    bool signals[MAX_NO_OF_MEMORY_MONITORS];
-
-    uint32 counter;
 
     /**
      * @brief Constructor.
@@ -116,8 +104,16 @@ public:
     bool TestSetAndSearch();
 
 
+    /**
+     * @brief Tests the header that contains the allocated memory information.
+     * @return true if the returned informations on the allocated memory are correct.
+     */
     bool TestHeader();
 
+    /**
+     * @brief Tests the memory database.
+     * @return true if the informations of the allocated memory are stored correctly on the database.
+     */
     bool TestDatabase();
 };
 /*---------------------------------------------------------------------------*/

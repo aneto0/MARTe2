@@ -76,10 +76,10 @@ bool HighResolutionTimerTest::TestTimeStamp(uint32 millisecs) {
 
     TimeValues myTimeStamp1;
     TimeValues myTimeStamp2;
-    uint32 conversions[] = { 1000, 6e4, 36e5, 36e5 * 24 };
+    uint32 conversions[] = { 1000, 60000, 3600000, 3600000 * 24 };
 
-    //impose a tolerance of ten milliseconds
-    int32 tolerance = 10;
+    //impose a tolerance of 50 milliseconds
+    int32 tolerance = 50;
 
     HighResolutionTimer::GetTimeStamp(myTimeStamp1);
     SleepMSec(millisecs);

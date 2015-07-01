@@ -1,31 +1,44 @@
-/* Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file StringHelperTest.cpp
+ * @brief Source file for class StringHelperTest
+ * @date 30/06/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http: //ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id:$
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This source file contains the definition of all the methods for
+ * the class StringHelperTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
 #include "StringHelperTest.h"
 #include "StringTestHelper.h"
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
 bool StringHelperTest::TestLength(const char* string) {
     //Calculate the length of the string.
@@ -50,7 +63,7 @@ bool StringHelperTest::TestLength(const char* string) {
 bool StringHelperTest::TestCompare(const char* string,
                                    const char* stringEqual) {
 
-    //Check if strings are equal and if the result is correct.	
+    //Check if strings are equal and if the result is correct.
     bool tryEqual = StringHelper::Compare(string, stringEqual) == 0;
     bool equal = StringTestHelper::Compare(string, stringEqual);
 
@@ -166,7 +179,7 @@ bool StringHelperTest::TestConcatenate() {
 }
 
 bool StringHelperTest::TestSearch() {
-    const char* buffer ="Hello World";
+    const char* buffer = "Hello World";
     const char* retPointer;
 
     //Since u is not in the string this must be return false
@@ -175,7 +188,7 @@ bool StringHelperTest::TestSearch() {
     }
 
     //Test the return pointer (search first occurrence).
-    if ((retPointer =StringHelper::SearchChar(buffer, 'l')) == NULL) {
+    if ((retPointer = StringHelper::SearchChar(buffer, 'l')) == NULL) {
         return False;
     }
 
@@ -200,8 +213,7 @@ bool StringHelperTest::TestSearch() {
         return False;
     }
 
-    if ((retPointer = StringHelper::SearchChars(retPointer + 1, " e"))
-            == NULL) {
+    if ((retPointer = StringHelper::SearchChars(retPointer + 1, " e")) == NULL) {
         return False;
     }
 
@@ -219,8 +231,7 @@ bool StringHelperTest::TestSearch() {
     //Test if the index is the length if chars are not found.
     charsToSearch = "zug";
 
-    if (StringHelper::SearchIndex(buffer, charsToSearch)
-            != StringHelper::Length(buffer)) {
+    if (StringHelper::SearchIndex(buffer, charsToSearch) != StringHelper::Length(buffer)) {
         return False;
     }
 
@@ -244,42 +255,3 @@ bool StringHelperTest::TestSearch() {
 
     return True;
 }
-/*
-bool StringHelperTest::TestToken() {
-
-    char buffer1[32];
-    const char* charDelimiters = ":,";
-    char* retPointer;
-
-    StringHelper::Copy(buffer1, "Hello:World,I am...Giuseppe");
-
-    //Test the tokenize giving chars as delimiters.
-    if ((retPointer = StringHelper::Tokenizer(buffer1, charDelimiters))
-            == NULL) {
-        return False;
-    }
-
-    if (!StringTestHelper::Compare(retPointer, "Hello")) {
-        return False;
-    }
-
-    //If NULL is the source argument it tokenize from the next pointer.
-    if ((retPointer = StringHelper::Tokenizer(NULL, charDelimiters)) == NULL) {
-        return False;
-    }
-
-    if (!StringTestHelper::Compare(retPointer, "World")) {
-        return False;
-    }
-
-    if ((retPointer = StringHelper::Tokenizer(NULL, charDelimiters)) == NULL) {
-        return False;
-    }
-
-    if (!StringTestHelper::Compare(retPointer, "I am...Giuseppe")) {
-        return False;
-    }
-
-    return True;
-
-}*/

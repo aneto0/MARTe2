@@ -51,10 +51,22 @@ bool EventSemTest::TestWait(TimeoutType timeout) {
 
     Error myErrorType = Debug;
 
+
+    EventSem newSem(eventSem);
+
     if (eventSem.Wait(timeout, myErrorType)) {
         return False;
     }
 
+    if (myErrorType != Timeout) {
+        return False;
+    }
+
+    myErrorType = Debug;
+
+    if (newSem.ResetWait(timeout, myErrorType)) {
+        return False;
+    }
     return myErrorType == Timeout;
 
 }

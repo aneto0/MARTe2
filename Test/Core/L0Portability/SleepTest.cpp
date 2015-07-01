@@ -45,7 +45,7 @@ bool SleepTest::TestSleepAtleast(double sec) {
     double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
-    SleepAtLeast(sec);
+    Sleep::AtLeast(sec);
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 
@@ -57,7 +57,7 @@ bool SleepTest::TestSleepNoMore(double sec) {
     double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
-    SleepNoMore(sec);
+    Sleep::NoMore(sec);
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 
@@ -69,7 +69,7 @@ bool SleepTest::TestSleepSec(double sec) {
     double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
-    SleepSec(sec);
+    Sleep::Sec(sec);
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 
@@ -81,7 +81,7 @@ bool SleepTest::TestSleepSec(float sec) {
     float maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
-    SleepSec(sec);
+    Sleep::Sec(sec);
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 
@@ -93,7 +93,7 @@ bool SleepTest::TestSleepMSec(int32 msec) {
     double maxSleepTime = 2 * msec; /* 100% margin */
     int initialTime = clock();
 
-    SleepMSec(msec);
+    Sleep::MSec(msec);
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 
@@ -105,7 +105,7 @@ bool SleepTest::TestSleepBusy(double sec) {
     double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
-    SleepBusy(sec);
+    Sleep::Busy(sec);
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 
@@ -118,7 +118,7 @@ bool SleepTest::TestSemiBusy(double totalSleepSec,
     double maxSleepTime = 2 * 1000 * totalSleepSec; /* 100% margin */
     int initialTime = clock();
 
-    SleepSemiBusy(totalSleepSec, nonBusySleepSec);
+    Sleep::SemiBusy(totalSleepSec, nonBusySleepSec);
 
     testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
 

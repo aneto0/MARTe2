@@ -34,7 +34,7 @@ TEST_F(BasicConsoleGTest,TestWrite) {
 
  TEST_F(BasicConsoleGTest,TestRead) {
  BasicConsoleTest console;
- ASSERT_TRUE(console.TestRead("Hello\r\n"));
+ ASSERT_TRUE(console.TestRead("Hello\n"));
  }
 
  TEST_F(BasicConsoleGTest,TestPaging) {

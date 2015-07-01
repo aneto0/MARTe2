@@ -1,7 +1,7 @@
 /**
  * @file MemoryTest.cpp
  * @brief Source file for class MemoryTest
- * @date 26/06/2015
+ * @date 29/06/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -32,7 +32,6 @@
 #include "MemoryTest.h"
 #include "GeneralDefinitions.h"
 #include "StringTestHelper.h"
-#include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -44,104 +43,79 @@
 
 /** @brief Constructor. */
 MemoryTest::MemoryTest() {
-    eventSem.Create();
-    counter = 0;
-    for (uint32 i = 0; i < MAX_NO_OF_MEMORY_MONITORS; i++) {
-        signals[i] = False;
-    }
+
 }
 
 MemoryTest::~MemoryTest() {
-    eventSem.Close();
-}
-
-void InitializeSharedMemory(MemoryTest &myTestMemory) {
-    int32* sharedInt = (int32*) MemorySharedAlloc(1, sizeof(int32));
-    bool* sharedBool = (bool*) MemorySharedAlloc(2, sizeof(bool));
-
-    if (sharedBool != NULL) {
-        *sharedBool = False;
-    }
-
-    if (sharedInt != NULL) {
-        (*sharedInt) = 1;
-    }
-
-    myTestMemory.eventSem.Post();
-
-}
-
-void IncrementSharedMemory(MemoryTest &myTestMemory) {
-    int32* sharedInt = (int32*) MemorySharedAlloc(1, sizeof(int32));
-    bool* sharedBool = (bool*) MemorySharedAlloc(2, sizeof(bool));
-    if (sharedBool != NULL) {
-        *sharedBool = True;
-    }
-    if (sharedInt != NULL) {
-        (*sharedInt)++;
-    }
-    myTestMemory.eventSem.Post();
 }
 
 //Test the malloc function.
 bool MemoryTest::TestMallocAndFree(int32 size) {
 
     //allocate a space of size integers
-    int32* allocated = (int32*) MemoryMalloc(size * sizeof(int32));
+    int32* allocated = (int32*) Memory::Malloc(size * sizeof(int32));
     int32 i = 0;
 
     //check if the pointers to these memory locations are valid
     while (i < size) {
         if ((allocated + i) == NULL) {
+            Memory::Free((void*&) allocated);
             return False;
         }
         i++;
     }
 
     //free the allocated memory
-    MemoryFree((void*&) allocated);
-    uint32 nothing = 0;
-    return allocated == NULL && !MemoryAllocationStatistics(nothing, nothing, (TID) nothing);
+    Memory::Free((void*&) allocated);
+
+    return allocated == NULL;
 }
 
 //Tests the realloc function.
 bool MemoryTest::TestRealloc(int32 size1,
                              int32 size2) {
     //allocate size1 integers
-    int32* allocated = (int32*) MemoryMalloc(size1 * sizeof(int32));
+    int32* allocated = (int32*) Memory::Malloc(size1 * sizeof(int32));
 
     //check if the pointers to these memory locations are valid
     for (int32 i = 0; i < size1; i++) {
         if ((allocated + i) == NULL) {
-            MemoryFree((void*&) allocated);
+            Memory::Free((void*&) allocated);
             return False;
         }
         allocated[i] = i;
     }
 
     //reallocate the memory adding size2 integers locations
-    allocated = (int32*) MemoryRealloc((void*&) allocated, (size1 + size2) * sizeof(int32));
+    allocated = (int32*) Memory::Realloc((void*&) allocated, (size1 + size2) * sizeof(int32));
 
     //check if pointers of new memory are valid and if the old memory is not corrupted
     for (int32 i = 0; i < size2; i++) {
         if ((allocated + size1 + i) == NULL) {
-            MemoryFree((void*&) allocated);
+            Memory::Free((void*&) allocated);
             return False;
         }
         if (allocated[i] != i) {
-            MemoryFree((void*&) allocated);
+            Memory::Free((void*&) allocated);
             return False;
         }
     }
 
-    MemoryFree((void*&) allocated);
+    Memory::Free((void*&) allocated);
     //check if it implemens a malloc in case of null pointer in input.
     allocated = NULL;
 
     allocated = (int32*) MemoryRealloc((void*&) allocated, size1 * sizeof(int32));
+
+    //checks if the memory is allocated correctly
+    if (!Memory::Check(allocated, (MemoryTestAccessMode) MTAM_Read | MTAM_Write | MTAM_Execute, size1 * sizeof(int32))) {
+        return False;
+    }
+
+    //manual check
     for (int32 i = 0; i < size1; i++) {
         if ((allocated + i) == NULL) {
-            MemoryFree((void*&) allocated);
+            Memory::Free((void*&) allocated);
             return False;
         }
     }
@@ -149,20 +123,20 @@ bool MemoryTest::TestRealloc(int32 size1,
     //check if implements a free if size is 0.
     allocated = (int32*) MemoryRealloc((void*&) allocated, size);
     if (allocated != NULL) {
-        MemoryFree((void*&) allocated);
+        Memory::Free((void*&) allocated);
         return False;
     }
 
     //check if it returns NULL in case of NULL input and size equal to zero.
-    allocated = (int32*) MemoryRealloc((void*&) allocated, size);
+    allocated = (int32*) Memory::Realloc((void*&) allocated, size);
 
     if (allocated != NULL) {
-        MemoryFree((void*&) allocated);
+        Memory::Free((void*&) allocated);
         return False;
     }
 
-    //this function is not implemented in linux and should return true.
-    return MemoryCheck(NULL, (MemoryTestAccessMode) 0, 0);
+    //the check function on a null pointer should return false
+    return !Memory::Check(NULL, (MemoryTestAccessMode) MTAM_Read | MTAM_Write | MTAM_Execute, size);
 }
 
 //Test if the string s is copied without errors.
@@ -172,54 +146,16 @@ bool MemoryTest::TestMemoryStringDup(const char* s) {
 
 //Test the behavior of the shared memory
 bool MemoryTest::TestSharedMemory() {
-    //reset an event sem
-    eventSem.Reset();
 
-    //launch two threads, one initialize the shared int to one and the shared bool to false.
-    Threads::BeginThread((ThreadFunctionType) InitializeSharedMemory, this);
-    //wait the inizialization of the shared memory
-
-    eventSem.Wait();
-    eventSem.Reset();
-
-    //this thread increment the shared integer and impose true the shared bool
-    Threads::BeginThread((ThreadFunctionType) IncrementSharedMemory, this);
-    eventSem.Wait();
-
-    //obtain the pointers to the shared memories
-    bool* sharedBool = (bool*) MemorySharedAlloc(2, sizeof(bool));
-    int32* sharedInt = (int32*) MemorySharedAlloc(1, sizeof(int32));
-
+    int32* sharedInt = (int32*) Memory::SharedAlloc(1, sizeof(int32));
     if (sharedInt == NULL) {
-
         return False;
     }
 
-    int32 j = 0;
+    Memory::SharedFree(sharedInt);
 
-    //wait that the second thread increments the shared int
-    while ((*sharedInt) < 2) {
-        if (j++ > 100) {
-
-            return False;
-        }
-        SleepSec(20e-3);
-    }
-    bool returnValue = False;
-    if (sharedBool == NULL) {
-
-        return False;
-    }
-    returnValue = *sharedBool;
-
-    //release the shared memory
-
-    MemorySharedFree(sharedBool);
-    MemorySharedFree(sharedInt);
-
-    //else return false
-    return returnValue;
     return True;
+
 }
 
 bool MemoryTest::TestCopyAndMove() {
@@ -232,12 +168,12 @@ bool MemoryTest::TestCopyAndMove() {
 
     //Copy the int array in the float array.
     uint32 sizeToCopy = 5 * sizeof(int32);
-    if (!MemoryCopy(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
+    if (!Memory::Copy(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
         return False;
     }
 
     //Check that bytes are equal indipendently from type.
-    if (MemoryCompare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
+    if (Memory::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
         return False;
     }
 
@@ -248,22 +184,22 @@ bool MemoryTest::TestCopyAndMove() {
     sizeToCopy = 11;
 
     //Another way to copy memory.
-    if (!MemoryMove(buffer, source, sizeToCopy)) {
+    if (!Memory::Move(buffer, source, sizeToCopy)) {
         return False;
     }
 
     //Source must be greater than test.
-    if (MemoryCompare(source, test, sizeToCopy) != 2) {
+    if (Memory::Compare(source, test, sizeToCopy) != 2) {
         return False;
     }
 
     //Test must be less than source.
-    if (MemoryCompare(test, source, sizeToCopy) != 1) {
+    if (Memory::Compare(test, source, sizeToCopy) != 1) {
         return False;
     }
 
     //Test the result in case of NULL argument.
-    if (MemoryCompare(NULL, source, sizeToCopy) != -1) {
+    if (Memory::Compare(NULL, source, sizeToCopy) != -1) {
         return False;
     }
 
@@ -274,7 +210,7 @@ bool MemoryTest::TestCopyAndMove() {
 bool MemoryTest::TestSetAndSearch() {
 
     uint32 size = 10;
-    char* buffPointer = (char*) MemoryMalloc(size);
+    char* buffPointer = (char*) Memory::Malloc(size);
 
     if (buffPointer == NULL) {
         return False;
@@ -283,8 +219,8 @@ bool MemoryTest::TestSetAndSearch() {
     //Set first 5 bytes to 'o'.
     char myFavouriteChar = 'o';
     uint32 charSize = 5;
-    if (!MemorySet(buffPointer, myFavouriteChar, size)) {
-        MemoryFree((void*&) buffPointer);
+    if (!Memory::Set(buffPointer, myFavouriteChar, size)) {
+        Memory::Free((void*&) buffPointer);
         return False;
     }
 
@@ -293,33 +229,33 @@ bool MemoryTest::TestSetAndSearch() {
     //Set last 5 bytes to 'u'.
     myFavouriteChar = 'u';
 
-    if (!MemorySet(newBuffPointer, myFavouriteChar, size - charSize)) {
-        MemoryFree((void*&) buffPointer);
+    if (!Memory::Set(newBuffPointer, myFavouriteChar, size - charSize)) {
+        Memory::Free((void*&) buffPointer);
         return False;
     }
 
     char test[] = "ooooouuuuu";
 
     //Check that the Set result is correct.
-    if (MemoryCompare(test, buffPointer, size) != 0) {
-        MemoryFree((void*&) buffPointer);
+    if (Memory::Compare(test, buffPointer, size) != 0) {
+        Memory::Free((void*&) buffPointer);
         return False;
     }
 
     //Test the Search function.
-    if (MemorySearch(buffPointer, myFavouriteChar, size) != newBuffPointer) {
-        MemoryFree((void*&) buffPointer);
+    if (Memory::Search(buffPointer, myFavouriteChar, size) != newBuffPointer) {
+        Memory::Free((void*&) buffPointer);
         return False;
     }
 
     //Test the result of Search when the character is not found.
     char imNotInBuffer = 'a';
-    if (MemorySearch(buffPointer, imNotInBuffer, size) != NULL) {
-        MemoryFree((void*&) buffPointer);
+    if (Memory::Search(buffPointer, imNotInBuffer, size) != NULL) {
+        Memory::Free((void*&) buffPointer);
         return False;
     }
 
-    MemoryFree((void*&) buffPointer);
+    Memory::Free((void*&) buffPointer);
 
     return True;
 
@@ -327,93 +263,99 @@ bool MemoryTest::TestSetAndSearch() {
 
 bool MemoryTest::TestHeader() {
 
-    //set the header flag
-    Memory::defaultAllocationFlag = MemoryStandardMemory | MemoryAddHeader;
-
+    bool ret = True;
+    uint32 size;
+    TID tid;
     //creates an array of 10 integers
-    uint32 *arrayInt = (uint32*) MemoryMalloc(sizeof(uint32) * 10);
+    uint32 *arrayInt = (uint32*) Memory::Malloc(sizeof(uint32) * 10);
+#ifdef MEMORY_STATISTICS
 
     //sets the ninth element
     arrayInt[9] = 3;
-    uint32 size;
-    TID tid;
 
     //gets the header informations
-    if (!MemoryGetHeaderInfo(arrayInt, size, tid)) {
-        return False;
+    if (!Memory::GetHeaderInfo(arrayInt, size, tid)) {
+        ret= False;
     }
 
-    if (size != (sizeof(uint32) * 10 + sizeof(uint32) + sizeof(TID))) {
-        printf("\nerror 1\n");
-        return False;
+    //the size should be greater or equal than the memory size + header fields
+    if (size < (sizeof(uint32) * 10 + sizeof(uint32) + sizeof(TID))) {
+        ret= False;
     }
 
-    if (Threads::Id() != tid) {
-        return False;
+#else
+
+    //now the function should return false in this case
+    if (Memory::GetHeaderInfo(arrayInt, size, tid)) {
+        ret = False;
     }
 
-    //change the flag
-    Memory::defaultAllocationFlag = MemoryStandardMemory;
+#endif
 
-    //now the function should return false
-    if (MemoryGetHeaderInfo(arrayInt, size, tid)) {
-        return False;
-    }
+    Memory::Free((void*&) arrayInt);
 
-    //to free the memory the flag must be the same at the moment of the creation otherwise
-    //the pointer is invalid
-    Memory::defaultAllocationFlag = MemoryStandardMemory | MemoryAddHeader;
-
-    MemoryFree((void*&) arrayInt);
-
-    return True;
-}
-
-void AllocateFunction(MemoryTest &m) {
-
-    //printf("\n%d\n", m.counter);
-    //creates an array of i integers on the heap
-    void* p = Memory::Malloc(sizeof(uint32));
-    while (!(m.signals[m.counter])){
-        SleepSec(1e-3);
-    }
-    Memory::Free(p);
-    m.signals[m.counter] = False;
+    return ret;
 }
 
 bool MemoryTest::TestDatabase() {
 
-    Memory::defaultAllocationFlag = MemoryAddHeader | MemoryStatistics;
-    TID tids[MAX_NO_OF_MEMORY_MONITORS];
-    for (counter = 0; counter < MAX_NO_OF_MEMORY_MONITORS; counter++) {
-        Threads::BeginThread((ThreadFunctionType) AllocateFunction, this);
+    int32 chunks = 0;
+    int32 size = 0;
+
+#ifdef MEMORY_STATISTICS
+
+
+    Memory::ClearStatisticsDatabase();
+
+    if(Memory::GetStatisticsDatabaseNElements()!=0) {
+        return False;
     }
 
-    bool ret = True;
-
-    for (counter = 0; counter < MAX_NO_OF_MEMORY_MONITORS; counter++) {
-        uint32 size;
-        uint32 chunks;
-
-        if (!(Memory::AllocationStatistics(size, chunks, tids[counter]))) {
-            printf("\nError as\n");
-            ret = False;
-        }
-
-        if (size != (sizeof(uint32)) || chunks != 1) {
-            printf("\nerror infos\n");
-            ret = False;
-        }
-
-        signals[counter] = True;
-
-        while (signals[counter]) {
-            SleepSec(1e-3);
-        }
-
+    if(Memory::GetUsedHeap()!=0) {
+        return False;
     }
+
+    void* data1=Memory::Malloc(sizeof(uint32));
+
+    void* data2=Memory::Malloc(sizeof(uint32)*10);
+
+    bool ret=True;
+
+    uint32 minHeaderSize=sizeof(TID)+ sizeof(uint32);
+
+    if (!(Memory::AllocationStatistics(size, chunks))) {
+        ret=False;
+    }
+
+    if(size<(int32)(sizeof(uint32)*11+2*minHeaderSize) || chunks != 2) {
+        ret= False;
+    }
+
+    if(Memory::GetUsedHeap()!=size) {
+        return False;
+    }
+
+    Memory::Free(data2);
+
+    if (!(Memory::AllocationStatistics(size, chunks))) {
+        ret=False;
+    }
+
+    if(size<(int32)(sizeof(uint32)+minHeaderSize) || chunks != 1) {
+        ret = False;
+    }
+
+    Memory::Free(data1);
+
+    ret= ret && !Memory::AllocationStatistics(size, chunks);
 
     return ret;
+
+#else
+
+    return !Memory::AllocationStatistics(size, chunks);
+
+#endif
 
 }
 

@@ -44,10 +44,14 @@ MutexTest::MutexTest() {
 }
 
 MutexTest::~MutexTest() {
-    mutexSem.Close();
+    //mutexSem.Close();
 }
 
 bool MutexTest::TestLock(TimeoutType timeout) {
+
+    //make a copy of the semaphore
+    MutexSem newSem(mutexSem);
+
 
     Error myErrorReturn = Debug;
     //lock with infinite timeout.
@@ -70,7 +74,7 @@ bool MutexTest::TestLock(TimeoutType timeout) {
         }
     }
 
-    if (!mutexSem.UnLock()) {
+    if (!newSem.UnLock()) {
         return False;
     }
 

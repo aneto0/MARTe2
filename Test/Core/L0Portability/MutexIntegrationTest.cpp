@@ -359,47 +359,4 @@ bool MutexIntegrationTest::DeadLock() {
     return (sharedVariable == 0);
 }
 
-//The main process launchs a thread which locks a mutex and, after it launchs another thread which wait on mutex. Then the main process kill the first thread. If the shared variable is 11 it means that the
-//thread murder triggers a fail or an unlock of the mutex allowing operations of the second thread.
-bool MutexIntegrationTest::KillWithLock() {
-
-    sharedVariable = 0;
-    exitCondition = 0;
-    timeout = TTInfiniteWait;
-    usingFast = False;
-    expired = False;
-    free = False;
-    deadlock = False;
-    TID tid1 = Threads::BeginThread((ThreadFunctionType) WaitLoop, this);
-    int32 j = 0;
-    while (exitCondition < 1) {
-        if (j++ > 2000)
-            return False;
-        SleepSec(1e-3);
-    }
-    //Lock Fail
-    if (sharedVariable == 0) {
-        return False;
-    }
-    //Launch the second thread which remains blocked on mutex
-    TID tid2 = Threads::BeginThread((ThreadFunctionType) Increment, this);
-
-    //kill the first thread
-    Threads::Kill(tid1);
-    j = 0;
-    //wait that the second thread finish its job (or about two second max)
-    while (exitCondition < 2) {
-        if (j++ > 2000)
-            break;
-        SleepSec(1e-3);
-    }
-
-    //something wrong...kill second thread too
-    if (exitCondition < 2) {
-        Threads::Kill(tid2);
-    }
-
-    //return true if first thread was killed and second thread did his job correctly
-    return (sharedVariable == 11) && j < 2000 && exitCondition < 3;
-}
 
