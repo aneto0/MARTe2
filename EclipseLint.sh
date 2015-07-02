@@ -1,6 +1,5 @@
 #!/bin/bash
 HOST=flexelint.codac.local
-USER=aneto
 REMOTE_DIR_CODE=MARTe2-dev
 REMOTE_DIR_DOC=MARTe2-doc
 rsync -avz --delete -e ssh . $USER@$HOST:$REMOTE_DIR_CODE
