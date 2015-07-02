@@ -203,9 +203,7 @@ private:
      * @return true if the final value of sharedVariable is equal to nOfThreads
      */
     bool MultiThreadedTestWait(uint32 nOfThreads);
-    /**
-     * Allow the callback functions to access the private methods of the class
-     */
+
     /**
      * @brief Helper callback function that is used by the thread spawned by the MultiThreadedTestWait.
      * @param[in] eventSemTest the class instance under test
