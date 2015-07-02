@@ -2,7 +2,7 @@
  * @file Threads.cpp
  * @brief Source file for class Threads
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -99,6 +99,30 @@ const char *ThreadsName(TID threadId) {
     return ThreadsOS::Name(threadId);
 }
 
+bool ThreadProtectedExecute(ThreadFunctionType userFunction,
+                            void *userData,
+                            ExceptionHandler *ehi){
+    return ThreadsOS::ProtectedExecute(userFunction, userData, ehi);
+}
+
+TID ThreadsFindByIndex(uint32 n) {
+    return ThreadsOS::FindByIndex(n);
+}
+
+uint32 ThreadsNumberOfThreads() {
+    return ThreadsOS::NumberOfThreads();
+}
+
+bool ThreadsGetThreadInfoCopy(ThreadInformation &copy,
+                              int32 n,
+                              TID tid) {
+    return ThreadsOS::GetThreadInfoCopy(copy, n, tid);
+}
+
+TID ThreadsFindByName(const char* name) {
+    return ThreadsOS::FindByName(name);
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -158,7 +182,33 @@ PriorityClassType Threads::GetPriorityClass(TID tid) {
     return ThreadsGetPriorityClass(tid);
 }
 
-int32 Threads::GetCPUs(TID tid){
+int32 Threads::GetCPUs(TID tid) {
     return ThreadsGetCPUs(tid);
+}
+
+bool Threads::ProtectedExecute(ThreadFunctionType userFunction,
+                            void *userData,
+                            ExceptionHandler *ehi){
+
+    return ThreadProtectedExecute(userFunction, userData, ehi);
+
+}
+TID Threads::FindByIndex(uint32 n) {
+    return ThreadsFindByIndex(n);
+}
+
+uint32 Threads::NumberOfThreads() {
+    return ThreadsNumberOfThreads();
+}
+
+bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
+                                int32 n,
+                                TID tid) {
+    return ThreadsGetThreadInfoCopy(copy, n, tid);
+
+}
+
+TID Threads::FindByName(const char* name) {
+    return ThreadsFindByName(name);
 }
 

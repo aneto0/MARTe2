@@ -2,7 +2,7 @@
  * @file ThreadsOS.h
  * @brief Header file for class ThreadsOS
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -34,7 +34,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-
 #define __thread_decl
 /**
  * @brief Callback thread function
@@ -43,7 +42,8 @@ typedef void *(*StandardThreadFunction)(void *args);
 /**
  * @brief The function called by each thread.
  * @details Adds the thread in the database, call the thread function and at last remove the the thread from the database.
- * @param[in] threadData is the thread information structure. */
+ * @param[in] threadData is the thread information structure.
+ */
 void __thread_decl SystemThreadFunction(void *threadData) {
     ThreadInformation *threadInfo = (ThreadInformation *) threadData;
     if (threadInfo == NULL) {
@@ -87,28 +87,6 @@ ThreadInformation * threadInitialisationInterfaceConstructor(ThreadFunctionType 
                                                              uint32 exceptionHandlerBehaviour) {
 
     return new ThreadInformation(userThreadFunction, userData, threadName);
-}
-
-
-/**
- * @brief Executes the function specified.
- * @param[in] userFunction is the function to be called.
- * @param[in] userData is the function argument.
- * @param[in] ehi is the exception handler.
- * @return true.
- * @see ThreadInformation::ExceptionProtectedExecute.
- */
-bool ThreadProtectedExecute(ThreadFunctionType userFunction,
-                            void *userData,
-                            ExceptionHandler *ehi) {
-    TID threadId = Threads::Id();
-    ThreadsDatabase::Lock();
-    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-    ThreadsDatabase::UnLock();
-    if (threadInfo != NULL) {
-        return threadInfo->ExceptionProtectedExecute(userFunction, userData, ehi);
-    }
-    return False;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -379,7 +357,7 @@ public:
         ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name, exceptionHandlerBehaviour);
         if (threadInfo == NULL) {
             //CStaticAssertErrorCondition(InitialisationError,"Threads::ThreadsBeginThread (%s) threadInitialisationInterfaceConstructor returns NULL", name);
-            return (TID) - 1;
+            return (TID) 0;
         }
 
         DWORD threadId = 0;
@@ -406,6 +384,117 @@ public:
             return threadInfo->ThreadName();
         }
         return NULL;
+    }
+
+    /**
+     * @brief Executes the function specified.
+     * @param[in] userFunction is the function to be called.
+     * @param[in] userData is the function argument.
+     * @param[in] ehi is the exception handler.
+     * @return true.
+     * @see ThreadInformation::ExceptionProtectedExecute.
+     */
+    static bool ProtectedExecute(ThreadFunctionType userFunction,
+                                 void *userData,
+                                 ExceptionHandler *ehi) {
+        TID threadId = Threads::Id();
+        ThreadsDatabase::Lock();
+        ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
+        ThreadsDatabase::UnLock();
+        if (threadInfo != NULL) {
+            return threadInfo->ExceptionProtectedExecute(userFunction, userData, ehi);
+        }
+        return False;
+    }
+
+    /**
+     * @brief Returns the id of the n-th thread in the database.
+     * @param[in] n is the thread index.
+     * @return the id of the n-th thread in the database, -1 if the database is empty.
+     */
+    static TID FindByIndex(uint32 n) {
+        return ThreadsDatabase::GetThreadID(n);
+    }
+
+    /**
+     * @brief Returns the number of threads currently in the database.
+     * @return the number of threads currently in the database.
+     */
+    static uint32 NumberOfThreads() {
+        return ThreadsDatabase::NumberOfThreads();
+    }
+
+    /**
+     * @brief Get a copy of the thread information stored in the database.
+     * @param[out] copy is the thread information structure in return.
+     * @param[in] n is the threads index, if it is <0 is ignored.
+     * @param[in] tid is the thread identifier.
+     * @return true if the requested element is in the database, false otherwise.
+     */
+    static bool GetThreadInfoCopy(ThreadInformation &copy,
+                                  int32 n,
+                                  TID tid) {
+        return ThreadsDatabase::GetInfo(copy, n, tid);
+    }
+
+    /**
+     * @brief Search the thread with the specified name.
+     * @param[in] name is the thread name.
+     * @return the id of the first found thread with the specified name.
+     */
+    static TID FindByName(const char* name) {
+        return ThreadsDatabase::Find(name);
+    }
+
+private:
+
+    /**
+     * @brief The function called by each thread.
+     * @details Adds the thread in the database, call the thread function and at last remove the the thread from the database.
+     * @param[in] threadData is the thread information structure. */
+    static void __thread_decl SystemThreadFunction(void *threadData) {
+        ThreadInformation *threadInfo = (ThreadInformation *) threadData;
+        if (threadInfo == NULL) {
+            return;
+        }
+
+        ThreadsDatabase::Lock();
+        threadInfo->threadId = Threads::Id();
+        ThreadsDatabase::NewEntry(threadInfo);
+        ThreadsDatabase::UnLock();
+
+        threadInfo->priorityLevel = PRIORITY_NORMAL;
+        Threads::SetPriorityClass(Threads::Id(), PRIORITY_CLASS_NORMAL);
+        //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
+        threadInfo->ThreadWait();
+        //Start the user thread
+        threadInfo->UserThreadFunction();
+
+        ThreadsDatabase::Lock();
+        ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Threads::Id());
+        ThreadsDatabase::UnLock();
+
+        if (threadInfo != threadInfo2) {
+            //CStaticAssertErrorCondition(FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
+        }
+
+        delete threadInfo;
+    }
+
+    /**
+     * @brief Builds a ThreadInformation structure with the thread informations.
+     * @param[in] userThreadFunction is the thread function.
+     * @param[in] userData is the thread function argument.
+     * @param[in] threadName is the desired name of the thread.
+     * @param[in] exceptionHandlerBehaviour is not used here.
+     * @return the ThreadInformation structure.
+     */
+    static ThreadInformation * threadInitialisationInterfaceConstructor(ThreadFunctionType userThreadFunction,
+                                                                        void *userData,
+                                                                        const char *threadName,
+                                                                        uint32 exceptionHandlerBehaviour) {
+
+        return new ThreadInformation(userThreadFunction, userData, threadName);
     }
 
 };

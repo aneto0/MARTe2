@@ -2,7 +2,7 @@
  * @file GeneralDefinitionsOS.h
  * @brief Header file for class GeneralDefinitionsOS
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -37,6 +37,9 @@ typedef struct termio ConsoleHandle;
 
 /** Defines the console informations structure */
 typedef struct termio ConsoleInfo;
+
+/** Threads database memory granularity */
+#define THREADS_DATABASE_GRANULARITY 64
 
 /** Defines the default stack size for a thread. */
 #define THREADS_DEFAULT_STACKSIZE 32768
