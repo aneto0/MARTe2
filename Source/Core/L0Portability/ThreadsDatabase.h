@@ -2,7 +2,7 @@
  * @file ThreadsDatabase.h
  * @brief Header file for class ThreadsDatabase
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef THREADSDATABASE_H_
-#define 		THREADSDATABASE_H_
+#define THREADSDATABASE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -34,6 +34,7 @@
 
 #include "ThreadInformation.h"
 #include "TimeoutType.h"
+#include "FastPollingMutexSem.h"
 
 extern "C" {
 
@@ -69,20 +70,20 @@ bool ThreadsDatabaseLock(TimeoutType tt);
  * @brief Called by ThreadsDatabase::UnLock.
  * @return true if the unlock success, false otherwise.
  */
-bool ThreadsDatabaseUnLock();
+void ThreadsDatabaseUnLock();
 
 /**
  * @brief Called by ThreadsDatabase::NumberOfThreads.
  * @return the number of elements in the database.
  */
-int32 ThreadsDatabaseNumberOfThreads();
+uint32 ThreadsDatabaseNumberOfThreads();
 
 /**
  * @brief Called by ThreadsDatabase::GetThreadId.
  * @param[in] n is the index of the element in the database.
  * @return the identifier of the n-th thread in the database.
  */
-TID ThreadsDatabaseGetThreadID(int32 n);
+TID ThreadsDatabaseGetThreadID(uint32 n);
 
 /**
  * @brief Called by ThreadsDatabase::GetInfo.
@@ -117,7 +118,8 @@ TID ThreadsDatabaseFind(const char *name);
  * threads. The database allows to threads the access to other threads informations.
  *
  * @details Most of the implementation is delegated to ThreadsDatabaseOS because there are OS which implements most
- * of these functions natively.
+ * of these functions natively. It is possible define the memory granularity (the size allocated in each allocation function)
+ * changing the value of THREADS_DATABASE_GRANULARITY in GeneralDefinitionsOS.h for each operating system.
  */
 class ThreadsDatabase {
 
@@ -126,15 +128,16 @@ public:
     friend ThreadInformation *ThreadsDatabaseRemoveEntry(TID threadId);
     friend ThreadInformation *ThreadsDatabaseGetThreadInformation(TID threadId);
     friend bool ThreadsDatabaseLock(TimeoutType tt);
-    friend bool ThreadsDatabaseUnLock();
-    friend int32 ThreadsDatabaseNumberOfThreads();
-    friend TID ThreadsDatabaseGetThreadID(int32 n);
+    friend void ThreadsDatabaseUnLock();
+    friend uint32 ThreadsDatabaseNumberOfThreads();
+    friend TID ThreadsDatabaseGetThreadID(uint32 n);
     friend TID ThreadsDatabaseFind(const char *name);
     friend bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
                                        int32 n,
                                        TID threadId);
 
-public:
+    friend class ThreadsOS;
+private:
     /**
      * @brief Add a new thread to the database.
      * @details The database memory could be allocated dinamically using malloc and realloc functions.
@@ -168,20 +171,20 @@ public:
      * @brief Unlock the internal mutex.
      * @return true.
      */
-    static bool UnLock();
+    static void UnLock();
 
     /**
      * @brief Return the number of threads registered.
      * @return the number of threads currently saved in database.
      */
-    static int32 NumberOfThreads();
+    static uint32 NumberOfThreads();
 
     /**
      * @brief Get the thread id of the n-th thread saved in database.
      * @param[in] n is the index of the requested thread.
      * @return the tid of the requested thread.
      */
-    static TID GetThreadID(int32 n);
+    static TID GetThreadID(uint32 n);
 
     /**
      * @brief Get the informations searching a thread by index or by id.
@@ -203,23 +206,22 @@ public:
 
 private:
 
-    /** Database memory granularity */
-    static const uint32 GRANULARITY = 64;
 
-    /** Fast semaphore using Atomic TestAndSet*/
-    static int32 atomicSem;
+    /** Fast semaphore */
+    static FastPollingMutexSem internalMutex;
 
     /** Actual number of entries used */
-    static int32 nOfEntries;
+    static uint32 nOfEntries;
 
     /** Max number of entries currently possible */
-    static int maxNOfEntries;
+    static uint32 maxNOfEntries;
 
     /** Vector of thread information pointers */
     static ThreadInformation **entries;
 
     /** Allocate more space in the database*/
     static bool AllocMore();
+
 };
 
 /*---------------------------------------------------------------------------*/

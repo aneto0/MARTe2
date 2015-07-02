@@ -2,7 +2,7 @@
  * @file ThreadsDatabase.cpp
  * @brief Source file for class ThreadsDatabase
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,11 +31,21 @@
 #include "GeneralDefinitions.h"
 #include "ThreadsDatabase.h"
 #include "ThreadInformation.h"
-#include "Atomic.h"
 #include "Memory.h"
 #include "Threads.h"
-#include "Sleep.h"
 #include "StringHelper.h"
+
+
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+uint32 ThreadsDatabase::nOfEntries = 0;
+uint32 ThreadsDatabase::maxNOfEntries = 0;
+ThreadInformation **ThreadsDatabase::entries = NULL;
+FastPollingMutexSem ThreadsDatabase::internalMutex;
+
 
 bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo) {
     if (threadInfo == NULL) {
@@ -54,10 +64,10 @@ bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo) {
     }
 
     // search for empty space staring from guess
-    int32 index = ThreadsDatabase::nOfEntries + 1;
+    uint32 index = ThreadsDatabase::nOfEntries;
     if (index >= ThreadsDatabase::maxNOfEntries)
         index -= ThreadsDatabase::maxNOfEntries;
-    while (index != ThreadsDatabase::nOfEntries) {
+    while (index != ThreadsDatabase::nOfEntries - 1) {
         if (ThreadsDatabase::entries[index] == NULL) {
             ThreadsDatabase::entries[index] = threadInfo;
             ThreadsDatabase::nOfEntries++;
@@ -77,7 +87,7 @@ bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo) {
 
 ThreadInformation *ThreadsDatabaseRemoveEntry(TID threadId) {
     // search for empty space staring from guess
-    int index = 0;
+    uint32 index = 0;
     while (index < ThreadsDatabase::maxNOfEntries) {
         ThreadInformation *threadInfo = ThreadsDatabase::entries[index];
         if (threadInfo != NULL) {
@@ -104,7 +114,7 @@ ThreadInformation *ThreadsDatabaseRemoveEntry(TID threadId) {
 
 ThreadInformation *ThreadsDatabaseGetThreadInformation(TID threadId) {
     // search for empty space staring from guess
-    int32 index = 0;
+    uint32 index = 0;
     while (index < ThreadsDatabase::maxNOfEntries) {
         ThreadInformation *threadInfo = ThreadsDatabase::entries[index];
         if (threadInfo != NULL) {
@@ -120,39 +130,26 @@ ThreadInformation *ThreadsDatabaseGetThreadInformation(TID threadId) {
 }
 
 bool ThreadsDatabaseLock(TimeoutType tt) {
-    int64 ticksStop = tt.HighResolutionTimerTicks();
-    ticksStop += HighResolutionTimer::Counter();
-    while (!Atomic::TestAndSet(&ThreadsDatabase::atomicSem)) {
-        if (tt != TTInfiniteWait) {
-            int64 ticks = HighResolutionTimer::Counter();
-            if (ticks > ticksStop) {
-                return False;
-            }
-        }
-        // yield CPU
-        SleepMSec(1);
-    }
-    return True;
+    return ThreadsDatabase::internalMutex.FastLock(tt);
 }
 
-bool ThreadsDatabaseUnLock() {
-    ThreadsDatabase::atomicSem = 0;
-    return True;
+void ThreadsDatabaseUnLock() {
+    ThreadsDatabase::internalMutex.FastUnLock();
 }
 
-int32 ThreadsDatabaseNumberOfThreads() {
+uint32 ThreadsDatabaseNumberOfThreads() {
     return ThreadsDatabase::nOfEntries;
 }
 
-TID ThreadsDatabaseGetThreadID(int32 n) {
+TID ThreadsDatabaseGetThreadID(uint32 n) {
 
-    if ((n < 0) || (n >= ThreadsDatabase::nOfEntries)) {
+    if (n >= ThreadsDatabase::nOfEntries) {
         //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetThreadID(%i) index out of range",n);
-        return 0;
+        return (TID) 0;
     }
 
     // search for empty space staring from guess
-    int32 index = 0;
+    uint32 index = 0;
     while (index < ThreadsDatabase::maxNOfEntries) {
         if (ThreadsDatabase::entries[index] != NULL) {
             if (n == 0) {
@@ -164,7 +161,7 @@ TID ThreadsDatabaseGetThreadID(int32 n) {
     }
 
     //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetThreadID(%i) mismatch between actual entries and TDB_NOfEntries");
-    return 0;
+    return (TID) 0;
 }
 
 bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
@@ -179,7 +176,7 @@ bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
         threadInfoCopy = *threadInfo;
         return True;
     }
-    else if (threadId != (TID) - 1) {
+    else {
         ThreadInformation *threadInfo = ThreadsDatabaseGetThreadInformation(threadId);
         if (threadInfo == NULL) {
             return False;
@@ -187,20 +184,17 @@ bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
         threadInfoCopy = *threadInfo;
         return True;
     }
-    else {
-        //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetThreadID(%i) mismatch between actual entries and TDB_NOfEntries ");
-    }
-    return False;
+
 }
 
 TID ThreadsDatabaseFind(const char *name) {
 
-    if ((name == NULL) || (name[0] == 0)) {
-        return 0;
+    if (name == NULL) {
+        return (TID) 0;
     }
 
     // search for empty space staring from guess
-    int index = 0;
+    uint32 index = 0;
     while (index < ThreadsDatabase::maxNOfEntries) {
         if (ThreadsDatabase::entries[index] != NULL) {
             if (StringHelper::Compare(ThreadsDatabase::entries[index]->ThreadName(), name) == 0) {
@@ -210,18 +204,9 @@ TID ThreadsDatabaseFind(const char *name) {
         index++;
     }
 
-    return 0;
+    return (TID) 0;
 
 }
-
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
-
-int32 ThreadsDatabase::atomicSem = 0;
-int32 ThreadsDatabase::nOfEntries = 0;
-int32 ThreadsDatabase::maxNOfEntries = 0;
-ThreadInformation **ThreadsDatabase::entries = NULL;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -235,30 +220,30 @@ bool ThreadsDatabase::AllocMore() {
 
     // first time?
     if (entries == NULL) {
-        entries = (ThreadInformation **) MemoryMalloc(sizeof(ThreadInformation *) * GRANULARITY);
+        entries = (ThreadInformation **) MemoryMalloc(sizeof(ThreadInformation *) * THREADS_DATABASE_GRANULARITY);
         if (entries != NULL) {
-            maxNOfEntries = GRANULARITY;
+            maxNOfEntries = THREADS_DATABASE_GRANULARITY;
             nOfEntries = 0;
         }
         else {
-            //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed allocating %i entries",TDB_Granularity);
+            //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed allocating %i entries",TDB_THREADS_DATABASE_GRANULARITY);
             return False;
         }
     }
     else {
-        entries = (ThreadInformation **) MemoryRealloc((void *&) entries, sizeof(ThreadInformation *) * (GRANULARITY + maxNOfEntries));
+        entries = (ThreadInformation **) MemoryRealloc((void *&) entries, sizeof(ThreadInformation *) * (THREADS_DATABASE_GRANULARITY + maxNOfEntries));
         if (entries != NULL) {
-            maxNOfEntries += GRANULARITY;
+            maxNOfEntries += THREADS_DATABASE_GRANULARITY;
         }
         else {
-            //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed re-allocating to %i entries",TDB_Granularity+TDB_MaxNOfEntries);
+            //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed re-allocating to %i entries",TDB_THREADS_DATABASE_GRANULARITY+TDB_MaxNOfEntries);
             return False;
         }
     }
 
     // clean new memory
-    int32 i;
-    for (i = (maxNOfEntries - GRANULARITY); i < maxNOfEntries; i++) {
+    uint32 i;
+    for (i = (maxNOfEntries - THREADS_DATABASE_GRANULARITY); i < maxNOfEntries; i++) {
         entries[i] = NULL;
     }
     return True;
@@ -280,15 +265,15 @@ bool ThreadsDatabase::Lock(TimeoutType tt) {
     return ThreadsDatabaseLock(tt);
 }
 
-bool ThreadsDatabase::UnLock() {
-    return ThreadsDatabaseUnLock();
+void ThreadsDatabase::UnLock() {
+    ThreadsDatabaseUnLock();
 }
 
-int32 ThreadsDatabase::NumberOfThreads() {
+uint32 ThreadsDatabase::NumberOfThreads() {
     return ThreadsDatabaseNumberOfThreads();
 }
 
-TID ThreadsDatabase::GetThreadID(int32 n) {
+TID ThreadsDatabase::GetThreadID(uint32 n) {
     return ThreadsDatabaseGetThreadID(n);
 }
 

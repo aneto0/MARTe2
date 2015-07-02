@@ -2,7 +2,7 @@
  * @file BasicConsole.h
  * @brief Header file for class BasicConsole
  * @date 22/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -90,8 +90,8 @@ extern "C" {
  */
 bool BasicConsoleOpen(BasicConsole &con,
                       ConsoleOpeningMode openingMode,
-                      int numberOfColumns,
-                      int numberOfRows,
+                      int32 numberOfColumns,
+                      int32 numberOfRows,
                       TimeoutType msecTimeout = TTInfiniteWait);
 
 /**
@@ -130,41 +130,41 @@ bool BasicConsoleSetTitleBar(BasicConsole &con,
  * @see BasicConsole::SetSize.
  */
 bool BasicConsoleSetSize(BasicConsole &con,
-                         int numberOfColumns,
-                         int numberOfRows);
+                         int32 numberOfColumns,
+                         int32 numberOfRows);
 
 /**
  * @see BasicConsole::GetSize.
  */
 bool BasicConsoleGetSize(BasicConsole &con,
-                         int &numberOfColumns,
-                         int &numberOfRows);
+                         int32 &numberOfColumns,
+                         int32 &numberOfRows);
 
 /**
  * @see BasicConsole::SetWindowSize().
  */
 bool BasicConsoleSetWindowSize(BasicConsole &con,
-                               int numberOfColumns,
-                               int numberOfRows);
+                               int32 numberOfColumns,
+                               int32 numberOfRows);
 
 /**
  * @see BasicConsole::GetWindowSize().
  */
 bool BasicConsoleGetWindowSize(BasicConsole &con,
-                               int &numberOfColumns,
-                               int &numberOfRows);
+                               int32 &numberOfColumns,
+                               int32 &numberOfRows);
 
 /**
  * @see BasicConsole::SetCursorPosition.
  */
 bool BasicConsoleSetCursorPosition(BasicConsole &con,
-                                   int column,
-                                   int row);
+                                   int32 column,
+                                   int32 row);
 
 /** @see BasicConsole::GetCursorPosition. */
 bool BasicConsoleGetCursorPosition(BasicConsole &con,
-                                   int &column,
-                                   int &row);
+                                   int32 &column,
+                                   int32 &row);
 
 /**
  * @see BasicConsole::Clear.

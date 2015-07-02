@@ -29,18 +29,15 @@ OBJSX=  EndianityTest.x \
         SleepTest.x \
         ProcessorTest.x \
         AtomicTest.x \
-		ProcessorTypeTest.x \
-		EventSemTest.x \
-		MutexTest.x \
-		BasicConsoleTest.x \
-		HighResolutionTimerTest.x \
-		ThreadsDatabaseIntegrationTest.x \
-		MemoryTest.x \
-		MemoryIntegrationTest.x \
-		FastPollingMutexIntegrationTest.x \
-		FastPollingMutexTest.x \
-		StringHelperTest.x \
-		ThreadsIntegrationTest.x
+        ProcessorTypeTest.x \
+	EventSemTest.x \
+	MutexTest.x \
+	BasicConsoleTest.x \
+	HighResolutionTimerTest.x \
+	MemoryTest.x \
+	MemoryIntegrationTest.x \
+	FastPollingMutexTest.x \
+	StringHelperTest.x
 
 PACKAGE=Core
 ROOT_DIR=../../..

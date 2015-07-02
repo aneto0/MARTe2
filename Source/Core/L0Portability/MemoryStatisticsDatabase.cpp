@@ -1,8 +1,8 @@
 /**
  * @file MemoryStatisticsDatabase.cpp
  * @brief Source file for class MemoryStatisticsDatabase
- * @date 23/giu/2015
- * @author Giuseppe Ferrò
+ * @date 02/lug/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -39,4 +39,3 @@ FastPollingMutexSem MemoryStatisticsDatabase::internalMutex;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-

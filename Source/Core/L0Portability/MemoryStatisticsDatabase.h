@@ -1,8 +1,8 @@
 /**
- * @file MemoryStatistics.h
- * @brief Header file for class MemoryStatistics
- * @date 18/06/2015
- * @author Giuseppe Ferrò
+ * @file MemoryStatisticsDatabase.h
+ * @brief Header file for class MemoryStatisticsDatabase
+ * @date 02/07/2015
+ * @author Giuseppe FerrÃ²
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,14 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MemoryStatistics
+ * @details This header file contains the declaration of the class MemoryStatisticsDatabase
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef MEMORYSTATISTICS_H_
-#define 		MEMORYSTATISTICS_H_
+#ifndef MEMORYSTATISTICSDATABASE_H_
+#define MEMORYSTATISTICSDATABASE_H_
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -314,5 +315,5 @@ uint32 MemoryStatisticsDatabase::GetNOfElements() {
     return ret;
 }
 
-#endif /* MEMORYSTATISTICS_H_ */
+#endif /* MEMORYSTATISTICSDATABASE_H_ */
 

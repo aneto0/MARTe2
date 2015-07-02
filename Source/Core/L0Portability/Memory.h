@@ -2,7 +2,7 @@
  * @file Memory.h
  * @brief Header file for class Memory
  * @date 18/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -252,6 +252,7 @@ public:
     /**
      * @brief Allocate a portion of memory on the heap.
      * @param[in] size The size in byte of the memory to allocate.
+     * @param[in] allocFlag specified the desired allocation properties
      * @return The pointer to the allocated memory. NULL if allocation failed.
      */
     static void *Malloc(uint32 size,

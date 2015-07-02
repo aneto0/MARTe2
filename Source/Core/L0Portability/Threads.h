@@ -2,7 +2,7 @@
  * @file Threads.h
  * @brief Header file for class Threads
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -23,8 +23,6 @@
 
 #ifndef THREADS_H_
 #define 		THREADS_H_
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -112,14 +110,34 @@ void ThreadsSetPriorityClass(TID tid,
                              PriorityClassType priotityClass);
 
 /**
- * @brief This function allows to call a subroutine within an exception handler protection.
- * @param[in] userFunction is a pointer to the thread function.
- * @param[in] userData is the argument of the thread function.
- * @param[in] ehi is the exception handler.
+ * @see Threads::ProtectedExecute
  */
 bool ThreadProtectedExecute(ThreadFunctionType userFunction,
                             void *userData,
                             ExceptionHandler *ehi);
+
+/**
+ * @see Threads::FindByIndex
+ */
+TID ThreadsFindByIndex(uint32 n);
+
+/**
+ * @see Threads::NumberOfThreads
+ */
+uint32 ThreadsNumberOfThreads();
+
+/**
+ * @see Threads::GetThreadInfoCopy
+ */
+bool ThreadsGetThreadInfoCopy(ThreadInformation &copy,
+                              int32 n,
+                              TID tid);
+
+/**
+ * @see Threads::FindByName
+ */
+TID ThreadsFindByName(const char* name);
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -273,6 +291,47 @@ public:
      * @return the number if the cpu associated to the specified thread.
      */
     static int32 GetCPUs(TID tid);
+
+    /**
+     * @brief Executes the function specified.
+     * @param[in] userFunction is the function to be called.
+     * @param[in] userData is the function argument.
+     * @param[in] ehi is the exception handler.
+     * @return true.
+     * @see ThreadInformation::ExceptionProtectedExecute.
+     */
+    static bool ProtectedExecute(ThreadFunctionType userFunction,
+                                 void *userData,
+                                 ExceptionHandler *ehi);
+    /**
+     * @brief Returns the id of the n-th thread in the database.
+     * @param[in] n is the thread index.
+     * @return the id of the n-th thread in the database, -1 if the database is empty.
+     */
+    static TID FindByIndex(uint32 n);
+
+    /**
+     * @brief Returns the number of threads currently in the database.
+     * @return the number of threads currently in the database.
+     */
+    static uint32 NumberOfThreads();
+
+    /**
+     * @brief Get a copy of the thread information stored in the database.
+     * @param[out] copy is the thread information structure in return.
+     * @param[in] n is the threads index, if it is <0 is ignored.
+     * @param[in] tid is the thread identifier.
+     * @return true if the requested element is in the database, false otherwise.
+     */
+    static bool GetThreadInfoCopy(ThreadInformation &copy,
+                                  int32 n,
+                                  TID tid);
+    /**
+     * @brief Search the thread with the specified name.
+     * @param[in] name is the thread name.
+     * @return the id of the first found thread with the specified name.
+     */
+    static TID FindByName(const char* name);
 
 };
 
