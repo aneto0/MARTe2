@@ -1,8 +1,8 @@
 /**
  * @file EventSemTest.cpp
  * @brief Source file for class EventSemTest
- * @date 26/giu/2015
- * @author Giuseppe Ferr�
+ * @date 02/07/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -52,6 +52,20 @@ EventSemTest::EventSemTest() {
 EventSemTest::~EventSemTest() {
     eventSem.Close();
     mutexSem.Close();
+}
+
+bool EventSemTest::TestConstructor() {
+    EventSem testSem;
+    return (testSem.Handle() == NULL);
+}
+
+bool EventSemTest::TestDestructor() {
+    EventSem testSem;
+    testSem.Create();
+    bool test = (testSem.Handle() != NULL);
+    testSem.~EventSem();
+    test = (testSem.Handle() == NULL);
+    return test;
 }
 
 bool EventSemTest::TestCreate() {
@@ -109,7 +123,7 @@ bool EventSemTest::TestWait(TimeoutType timeout) {
 
 }
 
-bool EventSemTest::TestPostSimple() {
+bool EventSemTest::TestPost() {
     eventSem.Reset();
     eventSem.Post();
     eventSem.Post();
@@ -119,7 +133,7 @@ bool EventSemTest::TestPostSimple() {
     return test;
 }
 
-bool EventSemTest::TestResetSimple() {
+bool EventSemTest::TestReset() {
     eventSem.Reset();
     eventSem.Post();
     eventSem.Post();
@@ -136,17 +150,19 @@ void PosterThreadCallback(EventSemTest &eventSemTest) {
         SleepMSec(100);
         eventSemTest.sharedVariable = 1;
         eventSemTest.eventSem.Post();
-        if (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tstart) > maxTime) {
+        if (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(),
+                                             tstart) > maxTime) {
             break;
         }
     }
 
 }
 
-bool EventSemTest::TestWaitSimple() {
+bool EventSemTest::TestWait() {
     eventSem.Reset();
     sharedVariable = 0;
-    Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
+    TID tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback,
+                                   this);
     Error returnError = Debug;
     bool test = eventSem.Wait(TTInfiniteWait, returnError);
     test &= (returnError == Debug);
@@ -157,6 +173,42 @@ bool EventSemTest::TestWaitSimple() {
     }
     sharedVariable = 2;
     eventSem.Close();
+    //Wait for the thread to terminate
+    int32 counter = 0;
+    while (Threads::IsAlive(tid)) {
+        SleepSec(0.1);
+        if (counter++ > 10) {
+            Threads::Kill(tid);
+            break;
+        }
+    }
+    return test;
+}
+
+bool EventSemTest::TestResetWait() {
+    sharedVariable = 0;
+    TID tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback,
+                                   this);
+    Error returnError = Debug;
+    bool test = eventSem.ResetWait(TTInfiniteWait, returnError);
+    test &= (returnError == Debug);
+
+    if (sharedVariable == 0) {
+        //Too fast wait has failed for sure...
+        test = false;
+    }
+    sharedVariable = 2;
+    eventSem.Close();
+
+    //Wait for the thread to terminate
+    int32 counter = 0;
+    while (Threads::IsAlive(tid)) {
+        SleepSec(0.1);
+        if (counter++ > 10) {
+            Threads::Kill(tid);
+            break;
+        }
+    }
     return test;
 }
 
@@ -177,10 +229,11 @@ void MultiThreadedTestWaitCallback(EventSemTest &eventSemTest) {
 }
 
 bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
-    //Initialised the value of the sharedVariable to some unexpected value.
+    //Initialise the value of the sharedVariable to some unexpected value.
     sharedVariable = 0xABCD;
     //Reset the semaphore
     eventSem.Reset();
+
     uint32 i = 0;
     for (i = 0; i < nOfThreads; i++) {
         //Each thread will try to increment the value of sharedVariable
@@ -207,7 +260,15 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
         }
     }
 
-    SleepMSec(10);
+    SleepMSec(100);
+    //Check if all the threads have terminated
+    for (i = 0; i < Threads::NumberOfThreads(); i++) {
+        TID tid = Threads::FindByIndex(i);
+        if (Threads::IsAlive(tid)) {
+            Threads::Kill(tid);
+        }
+    }
+
     return True;
 }
 

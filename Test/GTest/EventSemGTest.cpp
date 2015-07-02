@@ -1,95 +1,112 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file MemoryGTest.cpp
+ * @brief Source file for class MemoryGTest
+ * @date 29/06/2015
+ * @author Giuseppe Ferr�
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id: $
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This source file contains the definition of all the methods for
+ * the class MemoryGTest (public, protected, and private). Be aware that some
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
 #include <limits.h>
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
 #include "gtest/gtest.h"
 #include "EventSemTest.h"
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 
-class EventSemGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
+TEST(EventSemGTest,TestConstructor) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.TestConstructor());
+}
 
-TEST_F(EventSemGTest,TestCreate) {
+TEST(EventSemGTest,TestDestructor) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.TestDestructor());
+}
+
+TEST(EventSemGTest,TestCreate) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestCreate());
 }
 
-TEST_F(EventSemGTest,TestClose) {
+TEST(EventSemGTest,TestClose) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestClose());
 }
 
-TEST_F(EventSemGTest,TestCopyConstructor) {
+TEST(EventSemGTest,TestCopyConstructor) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestCopyConstructor());
 }
 
-TEST_F(EventSemGTest,TestWaitSimple) {
+TEST(EventSemGTest,TestWait) {
     EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.TestWaitSimple());
+    ASSERT_TRUE(eventSemTest.TestWait());
 }
 
-TEST_F(EventSemGTest,TestPostSimple) {
+TEST(EventSemGTest,TestResetWait) {
     EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.TestPostSimple());
+    ASSERT_TRUE(eventSemTest.TestResetWait());
 }
 
-TEST_F(EventSemGTest,TestResetSimple) {
+TEST(EventSemGTest,TestPost) {
     EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.TestResetSimple());
+    ASSERT_TRUE(eventSemTest.TestPost());
 }
 
-TEST_F(EventSemGTest,TestWait) {
+TEST(EventSemGTest,TestReset) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.TestReset());
+}
+
+TEST(EventSemGTest,TestWaitTimeout) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWait(500));
 }
 
-TEST_F(EventSemGTest,TestWaitNoTimeout) {
+TEST(EventSemGTest,TestWaitNoTimeout) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWaitNoTimeout(32));
 }
 
-TEST_F(EventSemGTest,TestWaitTimeoutSuccess) {
+TEST(EventSemGTest,TestWaitTimeoutSuccess) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWaitTimeoutSuccess(32));
 }
 
-TEST_F(EventSemGTest,TestWaitTimeoutFailure) {
+TEST(EventSemGTest,TestWaitTimeoutFailure) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWaitTimeoutFailure(32));
 }
 
-TEST_F(EventSemGTest,TestWaitTimeoutFailureFollowedBySuccess) {
+TEST(EventSemGTest,TestWaitTimeoutFailureFollowedBySuccess) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWaitTimeoutFailureFollowedBySuccess(32));
 }

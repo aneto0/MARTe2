@@ -61,6 +61,18 @@ public:
     ~EventSemTest();
 
     /**
+     * @brief Tests the EventSem::EventSem constructor.
+     * @return true if the semaphore is successfully instantiated and that a NULL handle is assigned to it.
+     */
+    bool TestConstructor();
+
+    /**
+     * @brief Tests the EventSem::~EventSem destructor.
+     * @return true if the destructor calls the semaphore close function.
+     */
+    bool TestDestructor();
+
+    /**
      * @brief Tests the EventSem::Create function.
      * @return true if the semaphore is successfully created which also implies that a non NULL handle is created.
      */
@@ -100,7 +112,14 @@ public:
      * post this semaphore.
      * @return true if the function waits until it is posted and if EventSem::Wait returns true.
      */
-    bool TestWaitSimple();
+    bool TestWait();
+
+    /**
+     * @brief Tests the EventSem::ResetWait function.
+     * @details Same strategy as TestWait but using the ResetWait function.
+     * @return true if the function waits until it is posted and if EventSem::WaitReset returns true.
+     */
+    bool TestResetWait();
 
     /**
      * @brief Tests the EventSem::Post .
@@ -108,16 +127,16 @@ public:
      * After the reset the post should have success again.
      * @return true if the semaphore can be successfully posted after being reset, false otherwise.
      */
-    bool TestPostSimple();
+    bool TestPost();
 
     /**
      * @brief Tests the EventSem::Reset function.
-     * @details Same strategy as TestPostSimple but now focusing on the return value of the Reset function.
+     * @details Same strategy as TestPost but now focusing on the return value of the Reset function.
      * The first post should return true, the second should return false because the handle is still signaled.
      * After the reset the post should have success again.
      * @return true if the semaphore can be successfully posted after being reset, false otherwise.
      */
-    bool TestResetSimple();
+    bool TestReset();
 
     /**
      * @brief Test for an infinite timeout
@@ -177,7 +196,7 @@ private:
      * is functioning as expected, the value of the sharedVariable should still be 0xABCD
      * before posting.
      *
-     * @details The value of the sharedVariable is then set to zero and the semaphore is posted.\n
+     * The value of the sharedVariable is then set to zero and the semaphore is posted.\n
      * It is then expected that the sharedVariable is individually incremented by each thread.
      *
      * @param[in] nOfThreads the number of threads for the test
@@ -188,12 +207,12 @@ private:
      * Allow the callback functions to access the private methods of the class
      */
     /**
-     * Helper callback function that is used by the thread spawned by the MultiThreadedTestWait.
+     * @brief Helper callback function that is used by the thread spawned by the MultiThreadedTestWait.
      * @param[in] eventSemTest the class instance under test
      */
     friend void MultiThreadedTestWaitCallback(EventSemTest &eventSemTest);
     /**
-     * Helper callback to post the EventSem so that the Wait and Reset functions can be tested
+     * @brief Helper callback to post the EventSem so that the Wait and Reset functions can be tested
      * @param[in] eventSemTest the class instance under test
      */
     friend void PosterThreadCallback(EventSemTest &eventSemTest);
