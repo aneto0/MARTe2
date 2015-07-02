@@ -1,8 +1,8 @@
 /**
  * @file FastPollingMutexTest.h
  * @brief Header file for class FastPollingMutexTest
- * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @date 02/07/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef FASTPOLLINGMUTEXTEST_H_
-#define 		FASTPOLLINGMUTEXTEST_H_
+#ifndef FAST_POLLING_MUTEXTEST_H_
+#define FAST_POLLING_MUTEXTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,50 +31,177 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
 #include "FastPollingMutexSem.h"
+#include "EventSem.h"
+#include "Threads.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 /**
- * @brief A class to test FastPollingMutexSem functions
+ * @brief A class to test the FastPollingMutexSem functions.
  */
 class FastPollingMutexTest {
-
 public:
-
-    /**
-     * The semaphore object.
-     */
-    FastPollingMutexSem fastSem;
-
     /**
      * @brief Constructor.
+     * @details Creates the mutex handle.
      */
     FastPollingMutexTest();
 
     /**
-     * @brief Tests the FastPollingMutexSem::FastLock function.
-     * @details The second lock should return false after the timeout.
-     * @param[in] timeout is the desired timeout.
-     * @return true if successful, false otherwise.
+     * @brief Destructor.
+     * @details Closes the mutex handle.
      */
-    bool TestLock(TimeoutType timeout);
+    ~FastPollingMutexTest();
 
     /**
-     * @brief Tests the FastPollingMutexSem::FasUnLock function.
-     * @details After the unlock the lock function should have success.
-     * @return true if successful, false otherwise.
+     * @brief Tests the FastPollingMutexSem constructor
+     * @return true if the semaphore is initialized unlocked as expected.
      */
-    bool TestUnLock();
+    bool TestConstructor();
 
+    /**
+     * @brief Tests the FastPollingMutexSem::Create function.
+     * @param[in] locked is the desired initial state: true = locked, false = unlocked.
+     * @return true if the semaphore is successfully created which also implies that a non NULL handle is created.
+     */
+    bool TestCreate(bool locked);
+
+    /**
+     * @brief Tests the FastPollingMutexSem::FastLock function.
+     *
+     * @details This test spawns nOfThreads threads which compete for a shared resource variable.
+     * Each of the threads will try to increment and decrement the shared variable as many times as possible during one second.
+     * Each of the threads will call FastPollingMutexSem::Lock before accessing the shared resource.
+     *
+     * @param[in] nOfThreads is the number of threads to launch.
+     * @param[in] timeout the timeout value that will be used to call the lock function.
+     * @return true if the calls to FastPollingMutexSem::Lock returned true and if the shared resource was protected.
+     */
+    bool TestFastLock(int32 nOfThreads, TimeoutType timeout);
+
+    /**
+     * @brief Tests the FastPollingMutexSem::FastUnLock function.
+     *
+     * @details This test spawns nOfThreads threads which compete for a shared resource variable.
+     * Each of the threads will try to increment and decrement the shared as many times as possible during one second.
+     * Each of the threads will call FastPollingMutexSem::UnLock before releasing the shared resource.
+     *
+     * @param[in] nOfThreads is the number of threads to launch.
+     * @param[in] timeout the timeout value that will be used to call the lock function (this allows to demonstrate that
+     * the UnLock is also working for semaphores which were locked with a finite timeout).
+     * @return true if the calls to FastPollingMutexSem::UnLock returned true and if the shared resource was protected.
+     */
+    bool TestFastUnLock(int32 nOfThreads, TimeoutType timeout);
+
+    /**
+     * @brief Tests the FastPollingMutexSem::FastTryLock function.
+     *
+     * @details This test spawns nOfThreads threads which compete for a shared resource variable.
+     * Each of the threads will try to increment and decrement the shared as many times as possible during one second.
+     * Each of the threads will call FastPollingMutexSem::FastTryLock before accessing the shared resource. If this call returns false
+     * each thread will keep on calling FastPollingMutexSem::FastTryLock until it returns true.
+     *
+     * @return true if the function behaves as expected when protecting a shared resource and if
+     * it is demonstrated that a second consecutive call to FastPollingMutexSem::FastTryLock returns false.
+     */
+    bool TestFastTryLock(int32 nOfThreads);
+
+    /**
+     * @brief Tests the FastPollingMutexSem::Lock function and checks that the error code is correctly set.
+     *
+     * @return true if the error code is set to Debug when the call succeeds and to Timeout when
+     * there is a timeout in the Lock.
+     */
+    bool TestFastLockErrorCode();
+
+    /**
+     * @brief Tests the FastPollingMutexSem::Locked function.
+     *
+     * @return true when the semaphore is locked and FastPollingMutexSem::Locked returns true
+     * and when a semaphore in unlocked and FastPollingMutexSem::Locked returns false
+     */
+    bool TestLocked();
+
+    /**
+     * @brief Verifies if the semaphore dead-locks as expected.
+     *
+     * @details the FastPollingMutexSem is a non-recursive semaphore and does not allow two consecutive locks
+     * (i.e. without unlocking before) from the same thread and will go into dead-lock.
+     *
+     * @return true when the testing thread goes into dead-lock after two consecutive calls to FastLock
+     */
+    bool TestRecursive();
+
+private:
+
+    /** Semaphore which is tested by the unit testing functions */
+    FastPollingMutexSem testMutex;
+
+    /** Timeout to be used for the locking test*/
+    TimeoutType testMutexTimeout;
+
+    /** Shared variable that is protected by the unit testing functions */
+    int32 sharedVariable;
+
+    /** Number of running threads for a given test */
+    int32 nOfExecutingThreads;
+
+    /** This variable is set to true when the callback functions are expected to return  */
+    bool stop;
+
+    /** To be used by the threading callback functions to report an error*/
+    bool failed;
+
+    /** Helper semaphore to synchronize the launching of concurrent threads*/
+    EventSem synchSem;
+
+    /**
+     * @brief Helper function to manage the threads involved in most of the FastPollingMutexSem Tests.
+     *
+     * @details this method creates nOfThreads threads pointing at the functionToTest callback.
+     * It waits one second and then informs the functionToTest callbacks that these should return.
+     * This exchange of information is perform through the class variable stop=true. When all the threads
+     * return, it sets the return value to !failed (which was set by the callback functions).
+     *
+     * @param[in] nOfThreads is the number of threads to launch.
+     * @param[in] timeout the timeout value that will be used to call the lock function.
+     * @param[in] functionToTest the function callback to be called by the threads.
+     * @return the value returned by the functionToTest.
+     */
+    bool GenericMutexTestCaller(int32 nOfThreads,
+                                TimeoutType timeout,
+                                ThreadFunctionType functionToTest);
+
+    /**
+     * Allow the callback functions to access the private methods of the class
+     */
+    /**
+     * @see TestFastLock
+     */
+    friend void TestFastLockCallback(FastPollingMutexTest &mt);
+    /**
+     * @see TestFastUnLock
+     */
+    friend void TestFastUnLockCallback(FastPollingMutexTest &mt);
+    /**
+     * @see TestFastTryLock
+     */
+    friend void TestFastTryLockCallback(FastPollingMutexTest &mt);
+    /**
+     * @see TestFastLockErrorCode
+     */
+    friend void TestFastLockErrorCodeCallback(FastPollingMutexTest &mt);
+    /**
+     * @see TestRecursive
+     */
+    friend void TestRecursiveCallback(FastPollingMutexTest &mt);
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* FASTPOLLINGMUTEXTEST_H_ */
+#endif /* MUTEXTEST_H_ */
 

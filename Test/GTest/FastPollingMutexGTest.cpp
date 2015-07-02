@@ -1,65 +1,75 @@
-/**
- * @file FastPollingMutexGTest.cpp
- * @brief Source file for class FastPollingMutexGTest
- * @date 26/06/2015
- * @author Giuseppe Ferrò
+/*
+ *  MutexGTest.cpp
  *
- * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
- * the Development of Fusion Energy ('Fusion for Energy').
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
- * by the European Commission - subsequent versions of the EUPL (the "Licence")
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- *
- * @warning Unless required by applicable law or agreed to in writing, 
- * software distributed under the Licence is distributed on an "AS IS"
- * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the Licence permissions and limitations under the Licence.
-
- * @details This source file contains the definition of all the methods for
- * the class FastPollingMutexGTest (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ *  Created on: Feb 20, 2015
  */
-
-/*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
-/*---------------------------------------------------------------------------*/
 #include <limits.h>
-
-/*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-
 #include "gtest/gtest.h"
 #include "FastPollingMutexTest.h"
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-
-class FastPollingMutexGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
-
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
-
-TEST_F(FastPollingMutexGTest,TestLock) {
+TEST(FastPollingMutexGTest,TestConstructor) {
     FastPollingMutexTest mutextest;
-    ASSERT_TRUE(mutextest.TestLock(500));
+    ASSERT_TRUE(mutextest.TestConstructor());
 }
 
-TEST_F(FastPollingMutexGTest,TestUnLock) {
+
+TEST(FastPollingMutexGTest,TestCreateNoLock) {
     FastPollingMutexTest mutextest;
-    ASSERT_TRUE(mutextest.TestUnLock());
+    ASSERT_TRUE(mutextest.TestCreate(false));
+}
+
+TEST(FastPollingMutexGTest,TestCreateLock) {
+    FastPollingMutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestCreate(true));
+}
+
+TEST(FastPollingMutexGTest,TestFastLock) {
+    FastPollingMutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestFastLock(50, TTInfiniteWait));
+}
+
+TEST(FastPollingMutexGTest,TestFastLockWithFiniteTimeout) {
+    FastPollingMutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestFastLock(50, 10000000));
+}
+
+TEST(FastPollingMutexGTest,TestFastUnLock) {
+    FastPollingMutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestFastUnLock(50, TTInfiniteWait));
+}
+
+TEST(FastPollingMutexGTest,TestFastUnLockWithFiniteTimeout) {
+    FastPollingMutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestFastUnLock(50, 10000000));
+}
+
+TEST(FastPollingMutexGTest,TestFastLockWithSmallFiniteTimeoutToFail) {
+    FastPollingMutexTest mutextest;
+    ASSERT_FALSE(mutextest.TestFastLock(500, 1));
+}
+
+TEST(FastPollingMutexGTest,TestFastUnLockWithSmallFiniteTimeoutToFail) {
+    FastPollingMutexTest mutextest;
+    ASSERT_FALSE(mutextest.TestFastUnLock(500, 1));
+}
+
+TEST(FastPollingMutexGTest,TestFastLockErrorCode) {
+    FastPollingMutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestFastLockErrorCode());
+}
+
+TEST(FastPollingMutexGTest,TestFastTryLock) {
+    FastPollingMutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestFastTryLock(500));
+}
+
+TEST(FastPollingMutexGTest,TestLocked) {
+    FastPollingMutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestLocked());
+}
+
+TEST(FastPollingMutexGTest,TestRecursive) {
+    FastPollingMutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestRecursive());
 }
 
