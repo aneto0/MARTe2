@@ -2,7 +2,7 @@
  * @file ThreadsGTest.cpp
  * @brief Source file for class ThreadsGTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -41,46 +41,85 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class ThreadsGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
 
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
-
-TEST_F(ThreadsGTest,TestBegin) {
+TEST(ThreadsGTest,TestBeginThread) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestBegin("hello", 64));
+    ASSERT_TRUE(myUnitTest.TestBeginThread("hello", 64,100));
 }
 
-TEST_F(ThreadsGTest,TestEnd) {
+TEST(ThreadsGTest,TestEndThread) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestEnd());
+    ASSERT_TRUE(myUnitTest.TestEndThread(100));
 }
 
-TEST_F(ThreadsGTest,TestPriority) {
+TEST(ThreadsGTest,TestIsAlive) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestPriority());
+    ASSERT_TRUE(myUnitTest.TestIsAlive(100));
 }
 
-TEST_F(ThreadsGTest,TestState) {
+TEST(ThreadsGTest,TestKill) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestState());
+    ASSERT_TRUE(myUnitTest.TestKill(100));
 }
 
-TEST_F(ThreadsGTest,TestId) {
+
+TEST(ThreadsGTest,TestPriorityLevel) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestId());
+    ASSERT_TRUE(myUnitTest.TestPriorityLevel());
 }
 
-TEST_F(ThreadsGTest,TestCPUs) {
+TEST(ThreadsGTest,TestPriorityClass) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestCPUs());
+    ASSERT_TRUE(myUnitTest.TestPriorityClass());
 }
+
+TEST(ThreadsGTest,TestGetState) {
+    ThreadsTest myUnitTest;
+    ASSERT_TRUE(myUnitTest.TestGetState());
+}
+
+TEST(ThreadsGTest,TestId) {
+    ThreadsTest myUnitTest;
+    ASSERT_TRUE(myUnitTest.TestId(100));
+}
+
+TEST(ThreadsGTest,TestGetCPUs) {
+    ThreadsTest myUnitTest;
+    ASSERT_TRUE(myUnitTest.TestGetCPUs());
+}
+
+TEST(ThreadsGTest,TestName) {
+    ThreadsTest myUnitTest;
+    ASSERT_TRUE(myUnitTest.TestName("Hello",100));
+}
+
+TEST(ThreadsGTest,TestNumberOfThreads) {
+    ThreadsTest myUnitTest;
+    ASSERT_TRUE(myUnitTest.TestNumberOfThreads(100));
+}
+
+
+TEST(ThreadsGTest,TestFindByIndex) {
+    ThreadsTest myUnitTest;
+    ASSERT_TRUE(myUnitTest.TestFindByIndex(100));
+}
+
+TEST(ThreadsGTest,TestGetThreadInfoCopy) {
+    ThreadsTest myUnitTest;
+    ASSERT_TRUE(myUnitTest.TestGetThreadInfoCopy(100, "Hello"));
+}
+
+
+TEST(ThreadsGTest,TestFindByName) {
+    ThreadsTest myUnitTest;
+    ASSERT_TRUE(myUnitTest.TestFindByName(100, "Hello", 22));
+}
+
+TEST(ThreadsGTest,TestProtectedExecute) {
+    ThreadsTest myUnitTest;
+    ASSERT_TRUE(myUnitTest.TestProtectedExecute());
+}
+
+
+
 
