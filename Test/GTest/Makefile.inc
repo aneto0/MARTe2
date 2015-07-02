@@ -33,13 +33,10 @@ OBJSX=  EndianityGTest.x \
 	HighResolutionTimerGTest.x \
 	MemoryGTest.x \
 	MemoryIntegrationGTest.x \
-	FastPollingMutexIntegrationGTest.x	\
 	FastPollingMutexGTest.x \
 	StringHelperGTest.x \
 	ThreadsGTest.x \
-	ThreadsDatabaseIntegrationGTest.x \
-	MutexGTest.x \
-	ThreadsIntegrationGTest.x 
+	MutexGTest.x 
 	#BasicConsoleGTest.x 
 
 PACKAGE=
