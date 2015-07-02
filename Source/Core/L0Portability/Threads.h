@@ -130,7 +130,7 @@ uint32 ThreadsNumberOfThreads();
  * @see Threads::GetThreadInfoCopy
  */
 bool ThreadsGetThreadInfoCopy(ThreadInformation &copy,
-                              uint32 n,
+                              int32 n,
                               TID tid);
 
 /**
