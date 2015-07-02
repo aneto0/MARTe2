@@ -73,7 +73,6 @@ bool EventSemTest::TestClose() {
 bool EventSemTest::TestCopyConstructor() {
     EventSem testSem;
     testSem.Create();
-
     EventSem copySem(testSem);
     testSem.Reset();
     testSem.Wait(1);
@@ -83,6 +82,7 @@ bool EventSemTest::TestCopyConstructor() {
 
     testSem.Close();
     copySem.Close();
+
     return test;
 }
 
@@ -133,17 +133,17 @@ void PosterThreadCallback(EventSemTest &eventSemTest) {
     double maxTime = 2.0;
     int64 tstart = HighResolutionTimer::Counter();
     while (eventSemTest.sharedVariable < 2) {
-        eventSemTest.eventSem.Post();
-        eventSemTest.sharedVariable = 1;
         SleepMSec(100);
-        if(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tstart) > maxTime){
+        eventSemTest.sharedVariable = 1;
+        eventSemTest.eventSem.Post();
+        if (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tstart) > maxTime) {
             break;
         }
     }
 
 }
 
-bool EventSemTest::TestWaitSimple(){
+bool EventSemTest::TestWaitSimple() {
     eventSem.Reset();
     sharedVariable = 0;
     Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
@@ -151,8 +151,8 @@ bool EventSemTest::TestWaitSimple(){
     bool test = eventSem.Wait(TTInfiniteWait, returnError);
     test &= (returnError == Debug);
 
-    if(sharedVariable == 0){
-        //Too fast wait has failed...
+    if (sharedVariable == 0) {
+        //Too fast wait has failed for sure...
         test = false;
     }
     sharedVariable = 2;
