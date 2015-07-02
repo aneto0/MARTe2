@@ -88,33 +88,50 @@ public:
 
     /**
      * @brief Tests the EventSem::Wait function.
-     * @details Cheks that the wait function fails after the timeout expire.
+     * @details Checks that the wait function fails gracefully after the timeout expire.
      * @param[in] timeout is the desired timeout.
-     * @return true if successful, false otherwise.
+     * @return true if the wait function correctly expires with the timeout and signals the correct error.
      */
     bool TestWait(TimeoutType timeout);
 
     /**
-     * @brief Tests the EventSem::Post and the EventSem::Reset function.
-     * @details The first post should return true, the second should return false because the handle is still signalled.
-     * After the reset the post should have success again.
-     * @return true if successful, false otherwise.
+     * @brief Tests the EventSem::Wait function.
+     * @details This functions waits on an event semaphore. A thread is spawned and should
+     * post this semaphore.
+     * @return true if the function waits until it is posted and if EventSem::Wait returns true.
      */
-    bool TestPost();
+    bool TestWaitSimple();
+
+    /**
+     * @brief Tests the EventSem::Post .
+     * @details The first post should return true, the second should return false because the handle is still signaled.
+     * After the reset the post should have success again.
+     * @return true if the semaphore can be successfully posted after being reset, false otherwise.
+     */
+    bool TestPostSimple();
+
+    /**
+     * @brief Tests the EventSem::Reset function.
+     * @details Same strategy as TestPostSimple but now focusing on the return value of the Reset function.
+     * The first post should return true, the second should return false because the handle is still signaled.
+     * After the reset the post should have success again.
+     * @return true if the semaphore can be successfully posted after being reset, false otherwise.
+     */
+    bool TestResetSimple();
 
     /**
      * @brief Test for an infinite timeout
      * @param[in] nOfThreads is the number of threads to launch.
-     * @return True if the final value of sharedVariable == nOfThreads
+     * @return true if the final value of sharedVariable == nOfThreads
      */
-    bool WaitNoTimeoutTest(uint32 nOfThreads);
+    bool TestWaitNoTimeout(uint32 nOfThreads);
 
     /**
      * @brief Test for an finite timeout of 2 seconds
      * @param[in] nOfThreads is the number of threads to launch.
-     * @return True if the final value of sharedVariable == nOfThreads
+     * @return true if the final value of sharedVariable == nOfThreads
      */
-    bool WaitTimeoutTestSuccess(uint32 nOfThreads);
+    bool TestWaitTimeoutSuccess(uint32 nOfThreads);
 
     /**
      * @brief Test for a finite timeout of 2 seconds
@@ -124,16 +141,16 @@ public:
      * changed the initial value of the sharedVariable (set to 0xABCD).
      *
      * @param[in] nOfThreads Number of threads that will change the sharedVariable value
-     * @return True if when the semaphore is posted the sharedVariable is different from its initial value
+     * @return true if when the semaphore is posted the sharedVariable is different from its initial value
      */
-    bool WaitTimeoutTestFailure(uint32 nOfThreads);
+    bool TestWaitTimeoutFailure(uint32 nOfThreads);
 
     /**
      * @brief Checks that a semaphore, even after timing out still works.
      * @param[in] nOfThreads is the number of threads to launch.
-     * @return Forces timeout by calling WaitTimeoutTestFailure and WaitNoTimeoutTest returns True afterwards.
+     * @return Forces timeout by calling WaitTimeoutTestFailure and WaitNoTimeoutTest returns true afterwards.
      */
-    bool WaitTimeoutTestFailureFollowedBySuccess(uint32 nOfThreads);
+    bool TestWaitTimeoutFailureFollowedBySuccess(uint32 nOfThreads);
 
 private:
     /**
@@ -164,17 +181,22 @@ private:
      * It is then expected that the sharedVariable is individually incremented by each thread.
      *
      * @param[in] nOfThreads the number of threads for the test
-     * @return True if the final value of sharedVariable is equal to nOfThreads
+     * @return true if the final value of sharedVariable is equal to nOfThreads
      */
     bool MultiThreadedTestWait(uint32 nOfThreads);
     /**
      * Allow the callback functions to access the private methods of the class
      */
     /**
-     * Callback function that is used by the thread spawned by the MultiThreadedTestWait.
-     * @param[in] est the class instance under test
+     * Helper callback function that is used by the thread spawned by the MultiThreadedTestWait.
+     * @param[in] eventSemTest the class instance under test
      */
-    friend void EventSemTestWait(EventSemTest &est);
+    friend void MultiThreadedTestWaitCallback(EventSemTest &eventSemTest);
+    /**
+     * Helper callback to post the EventSem so that the Wait and Reset functions can be tested
+     * @param[in] eventSemTest the class instance under test
+     */
+    friend void PosterThreadCallback(EventSemTest &eventSemTest);
 
 };
 

@@ -54,27 +54,42 @@ TEST_F(EventSemGTest,TestCopyConstructor) {
     ASSERT_TRUE(eventSemTest.TestCopyConstructor());
 }
 
+TEST_F(EventSemGTest,TestWaitSimple) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.TestWaitSimple());
+}
+
+TEST_F(EventSemGTest,TestPostSimple) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.TestPostSimple());
+}
+
+TEST_F(EventSemGTest,TestResetSimple) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.TestResetSimple());
+}
+
 TEST_F(EventSemGTest,TestWait) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWait(500));
 }
 
-TEST_F(EventSemGTest,WaitNoTimeoutTest) {
+TEST_F(EventSemGTest,TestWaitNoTimeout) {
     EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.WaitNoTimeoutTest(32));
+    ASSERT_TRUE(eventSemTest.TestWaitNoTimeout(32));
 }
 
-TEST_F(EventSemGTest,WaitTimeoutTestSuccess) {
+TEST_F(EventSemGTest,TestWaitTimeoutSuccess) {
     EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.WaitTimeoutTestSuccess(32));
+    ASSERT_TRUE(eventSemTest.TestWaitTimeoutSuccess(32));
 }
 
-TEST_F(EventSemGTest,WaitTimeoutTestFailure) {
+TEST_F(EventSemGTest,TestWaitTimeoutFailure) {
     EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.WaitTimeoutTestFailure(32));
+    ASSERT_TRUE(eventSemTest.TestWaitTimeoutFailure(32));
 }
 
-TEST_F(EventSemGTest,WaitTimeoutTestFailureFollowedBySuccess) {
+TEST_F(EventSemGTest,TestWaitTimeoutFailureFollowedBySuccess) {
     EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.WaitTimeoutTestFailureFollowedBySuccess(32));
+    ASSERT_TRUE(eventSemTest.TestWaitTimeoutFailureFollowedBySuccess(32));
 }

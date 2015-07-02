@@ -32,6 +32,7 @@
 #include "EventSemTest.h"
 #include "Threads.h"
 #include "Sleep.h"
+#include "HighResolutionTimer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -53,23 +54,23 @@ EventSemTest::~EventSemTest() {
     mutexSem.Close();
 }
 
-bool EventSemTest::TestCreate(){
+bool EventSemTest::TestCreate() {
     EventSem testSem;
     bool test = testSem.Create();
-    if (test){
+    if (test) {
         test &= (testSem.Handle() != NULL);
     }
     testSem.Close();
     return test;
 }
 
-bool EventSemTest::TestClose(){
+bool EventSemTest::TestClose() {
     EventSem testSem;
     testSem.Create();
     return testSem.Close();
 }
 
-bool EventSemTest::TestCopyConstructor(){
+bool EventSemTest::TestCopyConstructor() {
     EventSem testSem;
     testSem.Create();
 
@@ -87,49 +88,79 @@ bool EventSemTest::TestCopyConstructor(){
 
 bool EventSemTest::TestWait(TimeoutType timeout) {
 
-    Error myErrorType = Debug;
-
+    Error returnError = Debug;
 
     EventSem newSem(eventSem);
 
-    if (eventSem.Wait(timeout, myErrorType)) {
+    if (eventSem.Wait(timeout, returnError)) {
         return False;
     }
 
-    if (myErrorType != Timeout) {
+    if (returnError != Timeout) {
         return False;
     }
 
-    myErrorType = Debug;
+    returnError = Debug;
 
-    if (newSem.ResetWait(timeout, myErrorType)) {
+    if (newSem.ResetWait(timeout, returnError)) {
         return False;
     }
-    return myErrorType == Timeout;
+    return returnError == Timeout;
 
 }
 
-bool EventSemTest::TestPost() {
-    if (!eventSem.Post()) {
-        return False;
-    }
-
-    if (eventSem.Post()) {
-        return False;
-    }
-
-    if (!eventSem.Reset()) {
-        return False;
-    }
-
-    if (!eventSem.Post()) {
-        return False;
-    }
-
-    return True;
+bool EventSemTest::TestPostSimple() {
+    eventSem.Reset();
+    eventSem.Post();
+    eventSem.Post();
+    eventSem.Reset();
+    bool test = eventSem.Post();
+    eventSem.Close();
+    return test;
 }
 
-void EventSemTestWait(EventSemTest &eventSemTest) {
+bool EventSemTest::TestResetSimple() {
+    eventSem.Reset();
+    eventSem.Post();
+    eventSem.Post();
+    bool test = eventSem.Reset();
+    test &= eventSem.Post();
+    eventSem.Close();
+    return test;
+}
+
+void PosterThreadCallback(EventSemTest &eventSemTest) {
+    double maxTime = 2.0;
+    int64 tstart = HighResolutionTimer::Counter();
+    while (eventSemTest.sharedVariable < 2) {
+        eventSemTest.eventSem.Post();
+        eventSemTest.sharedVariable = 1;
+        SleepMSec(100);
+        if(HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tstart) > maxTime){
+            break;
+        }
+    }
+
+}
+
+bool EventSemTest::TestWaitSimple(){
+    eventSem.Reset();
+    sharedVariable = 0;
+    Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
+    Error returnError = Debug;
+    bool test = eventSem.Wait(TTInfiniteWait, returnError);
+    test &= (returnError == Debug);
+
+    if(sharedVariable == 0){
+        //Too fast wait has failed...
+        test = false;
+    }
+    sharedVariable = 2;
+    eventSem.Close();
+    return test;
+}
+
+void MultiThreadedTestWaitCallback(EventSemTest &eventSemTest) {
     //Wait before proceeding...
     if (eventSemTest.timeout == TTInfiniteWait) {
         //Also test if passing no parameter is indeed TTInfiniteWait
@@ -153,7 +184,8 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
     uint32 i = 0;
     for (i = 0; i < nOfThreads; i++) {
         //Each thread will try to increment the value of sharedVariable
-        Threads::BeginThread((ThreadFunctionType) EventSemTestWait, this);
+        Threads::BeginThread((ThreadFunctionType) MultiThreadedTestWaitCallback,
+                             this);
     }
     //Allow threads to start
     SleepMSec(100);
@@ -179,18 +211,18 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
     return True;
 }
 
-bool EventSemTest::WaitNoTimeoutTest(uint32 nOfThreads) {
+bool EventSemTest::TestWaitNoTimeout(uint32 nOfThreads) {
     timeout = TTInfiniteWait;
     return MultiThreadedTestWait(nOfThreads);
 }
 
-bool EventSemTest::WaitTimeoutTestSuccess(uint32 nOfThreads) {
+bool EventSemTest::TestWaitTimeoutSuccess(uint32 nOfThreads) {
     //Set the timeout to two seconds
     timeout = 2000;
     return MultiThreadedTestWait(nOfThreads);
 }
 
-bool EventSemTest::WaitTimeoutTestFailure(uint32 nOfThreads) {
+bool EventSemTest::TestWaitTimeoutFailure(uint32 nOfThreads) {
     //Set the timeout to 1 millisecond
     timeout = 1;
     //This should fail as when the semaphore is posted the value of the shared
@@ -198,7 +230,7 @@ bool EventSemTest::WaitTimeoutTestFailure(uint32 nOfThreads) {
     return !MultiThreadedTestWait(nOfThreads);
 }
 
-bool EventSemTest::WaitTimeoutTestFailureFollowedBySuccess(uint32 nOfThreads) {
-    return WaitTimeoutTestFailure(nOfThreads) && WaitNoTimeoutTest(nOfThreads);
+bool EventSemTest::TestWaitTimeoutFailureFollowedBySuccess(uint32 nOfThreads) {
+    return TestWaitTimeoutFailure(nOfThreads) && TestWaitNoTimeout(nOfThreads);
 }
 
