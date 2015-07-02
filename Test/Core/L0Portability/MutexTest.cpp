@@ -56,6 +56,22 @@ MutexTest::~MutexTest() {
     testMutex.Close();
 }
 
+bool MutexTest::TestCreate(bool locked, bool recursive) {
+    MutexSem testSem;
+    bool test = testSem.Create(locked, recursive);
+    if (test) {
+        test &= (testSem.Handle() != NULL);
+    }
+    testSem.Close();
+    return test;
+}
+
+bool MutexTest::TestClose(bool locked, bool recursive) {
+    MutexSem testSem;
+    testSem.Create(locked, recursive);
+    return testSem.Close();
+}
+
 bool MutexTest::GenericMutexTestCaller(int32 nOfThreads,
                                        TimeoutType timeout,
                                        ThreadFunctionType functionToTest) {

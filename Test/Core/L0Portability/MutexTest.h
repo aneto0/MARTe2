@@ -56,6 +56,23 @@ public:
     ~MutexTest();
 
     /**
+     * @brief Tests the MutexSem::Create function.
+     * @param[in] locked is the desired initial state: true = locked, false = unlocked.
+     * @param[in] recursive specifies if the mutex should be created recursive or not.
+     * @return true if the semaphore is successfully created which also implies that a non NULL handle is created.
+     */
+    bool TestCreate(bool locked, bool recursive);
+
+    /**
+     * @brief Tests the MutexSem::Close function. The semaphore to be closed can be created with any of the
+     * possible parameter combinations.
+     * @param[in] locked is the desired initial state: true = locked, false = unlocked.
+     * @param[in] recursive specifies if the mutex should be created recursive or not.
+     * @return true if the semaphore is successfully closed.
+     */
+    bool TestClose(bool locked, bool recursive);
+
+    /**
      * @brief Tests the MutexSem::Lock function.
      *
      * @details This test spawns nOfThreads threads which compete for a shared resource variable.

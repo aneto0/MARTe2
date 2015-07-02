@@ -20,6 +20,46 @@ protected:
     }
 };
 
+TEST_F(MutexGTest,TestCreateNoLockNoRecursive) {
+    MutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestCreate(false, false));
+}
+
+TEST_F(MutexGTest,TestCreateNoLockRecursive) {
+    MutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestCreate(false, true));
+}
+
+TEST_F(MutexGTest,TestCreateLockNoRecursive) {
+    MutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestCreate(true, false));
+}
+
+TEST_F(MutexGTest,TestCreateLockRecursive) {
+    MutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestCreate(true, true));
+}
+
+TEST_F(MutexGTest,TestCloseNoLockNoRecursive) {
+    MutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestClose(false, false));
+}
+
+TEST_F(MutexGTest,TestCloseNoLockRecursive) {
+    MutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestClose(false, true));
+}
+
+TEST_F(MutexGTest,TestCloseLockNoRecursive) {
+    MutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestClose(true, false));
+}
+
+TEST_F(MutexGTest,TestCloseLockRecursive) {
+    MutexTest mutextest;
+    ASSERT_TRUE(mutextest.TestClose(true, true));
+}
+
 TEST_F(MutexGTest,TestLock) {
     MutexTest mutextest;
     ASSERT_TRUE(mutextest.TestLock(50, TTInfiniteWait));
