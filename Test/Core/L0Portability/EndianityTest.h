@@ -2,7 +2,7 @@
  * @file EndianityTest.h
  * @brief Header file for class EndianityTest
  * @date 22/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -57,68 +57,64 @@ public:
      */
     EndianityTest(T testValue);
     /**
-     * @brief Converts the testValue to little endian and to big endian from the
-     * target architecture endianity.
-     *
-     * @details If the target architecture is little endian:\n
-     *  - the test value and the little endian value must be the same;\n
-     *  - the test value and the big endian value must be different.\n
-     *
-     * @details If the target architecture is big endian:\n
-     *  - the test value and the little endian value must be different;\n
-     *  - the test value and the big endian value must the same.\n
-     *
+     * @brief Converts the testValue to big endian.
+     * @details If the target architecture is little endian the test value and result must be different.
      * @return True if the conditions above are verified.
      */
-    bool ToEndian();
+    bool ToBigEndian();
 
     /**
-     * @brief Converts the testValue from little endian and from big endian to
-     * the target architecture.
-     *
-     * @details If the target architecture is little endian:\n
-     *  - the test value and the little endian value must be the same;\n
-     *  - the test value and the big endian value must be different.\n
-     *
-     * @details If the target architecture is big endian:\n
-     * - the test value and the little endian value must be different;\n
-     * - the test value and the big endian value must the same.\n
-     *
+     * @brief Converts the testValue to little endian.
+     * @details If the target architecture is big endian the test value and the result must be different.
      * @return True if the conditions above are verified.
      */
-    bool FromEndian();
+    bool ToLittleEndian();
 
     /**
-     * @brief Converts the testArray to little endian and to big endian from the target
+     * @brief Converts the testValue from big endian.
+     * @details If the target architecture is little endian the test value and the result value be different.
+     * @return True if the conditions above are verified.
+     */
+    bool FromBigEndian();
+
+    /**
+     * @brief Converts the testValue to little endian.
+     * @details If the target architecture is big endian the test value and the result must be different.
+     * @return True if the conditions above are verified.
+     */
+    bool FromLittleEndian();
+
+    /**
+     * @brief Converts the testArray to big endian from the target
      * architecture endianity.
-     *
-     * @details If the target architecture is little endian:\n
-     *  - each element of the test array and the little endian array must be the same;\n
-     *  - each element of the test array and the big endian array must be different same.\n
-     *
-     * @details If the target architecture is big endian:\n
-     *  - each element of the test array and the little endian array must be different;\n
-     *  - each element of the test array and the big endian array must be the same.\n
-     *
+     * @details If the target architecture is little endian each element of the test array and the big endian array must be different.
      * @return True if the conditions above are verified.
      */
-    bool MemCopyToEndian();
+    bool MemCopyToBigEndian();
 
     /**
-     * @brief Converts the testArray from little endian and from big endian to the
-     * target architecture endianity.
-     *
-     * @details If the target architecture is little endian:\n
-     *  - each element of the test array and the little endian array must be the same;\n
-     *  - each element of the test array and the big endian array must be different.\n
-     *
-     * @details If the target architecture is big endian:
-     *  - each element of the test array and the little endian array must be different;\n
-     *  - each element of the test array and the big endian array must be the same.\n
-     *
+     * @brief Converts the testArray to little endian from the target
+     * architecture endianity.
+     * @details If the target architecture is big endian each element of the test array and the big endian array must be different.
      * @return True if the conditions above are verified.
      */
-    bool MemCopyFromEndian();
+    bool MemCopyToLittleEndian();
+
+    /**
+     * @brief Converts the testArray from big endian to the
+     * target architecture endianity.
+     * @details If the target architecture is little endian each element of the test array and the big endian array must be different.
+     * @return True if the conditions above are verified.
+     */
+    bool MemCopyFromBigEndian();
+
+    /**
+     * @brief Converts the testArray from little endian to the
+     * target architecture endianity.
+     * @details If the target architecture is big endian each element of the test array and the little endian array must be different.
+     * @return True if the conditions above are verified.
+     */
+    bool MemCopyFromLittleEndian();
 
     /**
      * @brief Verifies that going to a different endianity and returning to the
@@ -141,11 +137,7 @@ public:
      */
     bool MemCopyToFromEndian();
 
-    /**
-     * @brief Executes all the tests.
-     * @return True if all the tests are successful.
-     */
-    bool All();
+
 
 private:
     /**
@@ -170,73 +162,88 @@ EndianityTest<T>::EndianityTest(T testValue) {
 }
 
 template<class T>
-bool EndianityTest<T>::ToEndian() {
-    T valueLittleEndian = testValue;
+bool EndianityTest<T>::ToBigEndian() {
     T valueBigEndian = testValue;
-
-    //converts to little endian the value.
-    Endianity::ToLittleEndian(valueLittleEndian);
 
     //converts to big endian the value.
     Endianity::ToBigEndian(valueBigEndian);
 
-    //the system uses little endian if the le conversion returns the same number.
-    bool isLittleEndian = (testValue == valueLittleEndian);
-
     //the system uses big endian if the be conversion returns the same number.
     bool isBigEndian = (testValue == valueBigEndian);
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
-        return isLittleEndian && !isBigEndian;
+        return !isBigEndian;
     }
     else {
-        return !isLittleEndian && isBigEndian;
+        return isBigEndian;
     }
 }
 
 template<class T>
-bool EndianityTest<T>::FromEndian() {
+bool EndianityTest<T>::ToLittleEndian() {
     T valueLittleEndian = testValue;
-    T valueBigEndian = testValue;
 
-    //converts from little endian the value.
-    Endianity::FromLittleEndian(valueLittleEndian);
+    //converts to little endian the value.
+    Endianity::ToLittleEndian(valueLittleEndian);
+
+    //the system uses little endian if the le conversion returns the same number.
+    bool isLittleEndian = (testValue == valueLittleEndian);
+
+    //checks if the type function is consistent with the conversions.
+    if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
+        return isLittleEndian;
+    }
+    else {
+        return !isLittleEndian;
+    }
+}
+
+template<class T>
+bool EndianityTest<T>::FromBigEndian() {
+    T valueBigEndian = testValue;
 
     //converts from big endian the value.
     Endianity::FromBigEndian(valueBigEndian);
 
-    //the system uses little endian if the le conversion returns the same number.
-    bool isLittleEndian = (testValue == valueLittleEndian);
-
     //the system uses big endian if the be conversion returns the same number.
     bool isBigEndian = (testValue == valueBigEndian);
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
-        return isLittleEndian && !isBigEndian;
+        return !isBigEndian;
     }
     else {
-        return !isLittleEndian && isBigEndian;
+        return isBigEndian;
     }
 }
 
 template<class T>
-bool EndianityTest<T>::MemCopyToEndian() {
-    T arrayLittleEndian[3];
-    T arrayBigEndian[3];
+bool EndianityTest<T>::FromLittleEndian() {
+    T valueLittleEndian = testValue;
 
-    //converts to little endian the array
-    Endianity::MemCopyToLittleEndian((T *) arrayLittleEndian, (T *) testArray, 3);
+    //converts from little endian the value.
+    Endianity::FromLittleEndian(valueLittleEndian);
+
+    //the system uses little endian if the le conversion returns the same number.
+    bool isLittleEndian = (testValue == valueLittleEndian);
+
+    //checks if the type function is consistent with the conversions.
+    if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
+        return isLittleEndian;
+    }
+    else {
+        return !isLittleEndian;
+    }
+}
+
+template<class T>
+bool EndianityTest<T>::MemCopyToBigEndian() {
+    T arrayBigEndian[3];
 
     //converts to big endian the array
     Endianity::MemCopyToBigEndian((T *) arrayBigEndian, (T *) testArray, 3);
 
-    //if the system uses little endian each number in the array remains the same.
-    bool isLittleEndian = (testArray[0] == arrayLittleEndian[0]);
-    isLittleEndian = isLittleEndian && (testArray[1] == arrayLittleEndian[1]);
-    isLittleEndian = isLittleEndian && (testArray[2] == arrayLittleEndian[2]);
-
     //if the system uses big endian each number in the array remains the same.
     bool isBigEndian = (testArray[0] == arrayBigEndian[0]);
     isBigEndian = isBigEndian && (testArray[1] == arrayBigEndian[1]);
@@ -244,28 +251,40 @@ bool EndianityTest<T>::MemCopyToEndian() {
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
-        return isLittleEndian && !isBigEndian;
+        return !isBigEndian;
     }
     else {
-        return !isLittleEndian && isBigEndian;
+        return isBigEndian;
     }
 }
 
 template<class T>
-bool EndianityTest<T>::MemCopyFromEndian() {
+bool EndianityTest<T>::MemCopyToLittleEndian() {
     T arrayLittleEndian[3];
-    T arrayBigEndian[3];
 
-    //converts from little endian the array
-    Endianity::MemCopyFromLittleEndian((T *) arrayLittleEndian, (T *) testArray, 3);
-
-    //converts from big endian the array
-    Endianity::MemCopyFromBigEndian((T *) arrayBigEndian, (T *) testArray, 3);
+    //converts to little endian the array
+    Endianity::MemCopyToLittleEndian((T *) arrayLittleEndian, (T *) testArray, 3);
 
     //if the system uses little endian each number in the array remains the same.
     bool isLittleEndian = (testArray[0] == arrayLittleEndian[0]);
     isLittleEndian = isLittleEndian && (testArray[1] == arrayLittleEndian[1]);
     isLittleEndian = isLittleEndian && (testArray[2] == arrayLittleEndian[2]);
+
+    //checks if the type function is consistent with the conversions.
+    if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
+        return isLittleEndian;
+    }
+    else {
+        return !isLittleEndian;
+    }
+}
+
+template<class T>
+bool EndianityTest<T>::MemCopyFromBigEndian() {
+    T arrayBigEndian[3];
+
+    //converts from big endian the array
+    Endianity::MemCopyFromBigEndian((T *) arrayBigEndian, (T *) testArray, 3);
 
     //if the system uses big endian each number in the array remains the same.
     bool isBigEndian = (testArray[0] == arrayBigEndian[0]);
@@ -274,10 +293,31 @@ bool EndianityTest<T>::MemCopyFromEndian() {
 
     //checks if the type function is consistent with the conversions.
     if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
-        return isLittleEndian && !isBigEndian;
+        return !isBigEndian;
     }
     else {
-        return !isLittleEndian && isBigEndian;
+        return isBigEndian;
+    }
+}
+
+template<class T>
+bool EndianityTest<T>::MemCopyFromLittleEndian() {
+    T arrayLittleEndian[3];
+
+    //converts from little endian the array
+    Endianity::MemCopyFromLittleEndian((T *) arrayLittleEndian, (T *) testArray, 3);
+
+    //if the system uses little endian each number in the array remains the same.
+    bool isLittleEndian = (testArray[0] == arrayLittleEndian[0]);
+    isLittleEndian = isLittleEndian && (testArray[1] == arrayLittleEndian[1]);
+    isLittleEndian = isLittleEndian && (testArray[2] == arrayLittleEndian[2]);
+
+    //checks if the type function is consistent with the conversions.
+    if (Endianity::Type() == Endianity::ENDIANITY_LITTLE_ENDIAN) {
+        return isLittleEndian;
+    }
+    else {
+        return !isLittleEndian;
     }
 }
 
@@ -325,17 +365,6 @@ bool EndianityTest<T>::MemCopyToFromEndian() {
     return (okLittleEndian && okBigEndian);
 }
 
-template<class T>
-bool EndianityTest<T>::All() {
-    bool ok = ToEndian();
-    ok = ok && FromEndian();
-    ok = ok && MemCopyToEndian();
-    ok = ok && MemCopyFromEndian();
-    ok = ok && ToFromEndian();
-    ok = ok && MemCopyToFromEndian();
-    return ok;
-}
+
 #endif /* ENDIANITYTEST_H_ */
-
-
 
