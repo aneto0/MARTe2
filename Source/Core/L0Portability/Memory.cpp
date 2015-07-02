@@ -2,7 +2,7 @@
  * @file Memory.cpp
  * @brief Source file for class Memory
  * @date 18/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -161,7 +161,13 @@ char *MemoryStringDup(const char *s) {
     uint32 length = 0;
 
     //calculates the string length
-    while (s[length] != '\0') {
+    while (1) {
+        if((s+length)==NULL){
+            return NULL;
+        }
+        if(s[length] == '\0'){
+            break;
+        }
         length++;
     }
 
@@ -172,7 +178,11 @@ char *MemoryStringDup(const char *s) {
     MemoryMove(sCopy, s, length);
 #else
 
+    if (s == NULL) {
+        return NULL;
+    }
     char* sCopy = MemoryOS::StringDup(s);
+
 
 #endif
 
@@ -269,8 +279,7 @@ void MemoryClearStatisticsDatabase() {
 #endif
 }
 
-
-uint32 MemoryGetStatisticsDatabaseNElements(){
+uint32 MemoryGetStatisticsDatabaseNElements() {
 #ifdef MEMORY_STATISTICS
     return MemoryStatisticsDatabase::GetNOfElements();
 #else
@@ -279,15 +288,13 @@ uint32 MemoryGetStatisticsDatabaseNElements(){
 
 }
 
-
-int32 MemoryGetUsedHeap(){
+int32 MemoryGetUsedHeap() {
 #ifdef MEMORY_STATISTICS
     return MemoryStatisticsDatabase::GetTotalUsedHeap();
 #else
     return 0;
 #endif
 }
-
 
 bool MemoryCheck(void *address,
                  MemoryTestAccessMode accessMode,
@@ -374,20 +381,16 @@ void Memory::ClearStatisticsDatabase() {
 
 }
 
-
-uint32 Memory::GetStatisticsDatabaseNElements(){
+uint32 Memory::GetStatisticsDatabaseNElements() {
 
     return MemoryGetStatisticsDatabaseNElements();
 
 }
 
-
-int32 Memory::GetUsedHeap(){
+int32 Memory::GetUsedHeap() {
 
     return MemoryGetUsedHeap();
 }
-
-
 
 bool Memory::Check(void *address,
                    MemoryTestAccessMode accessMode,
