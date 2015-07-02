@@ -2,7 +2,7 @@
  * @file AtomicGTest.cpp
  * @brief Source file for class AtomicGTest
  * @date 25/giu/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,50 +40,122 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class AtomicGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
 
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
 
-TEST_F(AtomicGTest,Int32Test) {
+TEST(AtomicGTest,Int32TestIncrement) {
     int32 testValue = 32;
     AtomicTest<int32> int32Test(testValue);
-    ASSERT_TRUE(int32Test.All());
+    ASSERT_TRUE(int32Test.TestIncrement());
 }
 
-TEST_F(AtomicGTest,Int16Test) {
-    int16 testValue = 16;
+TEST(AtomicGTest,Int32TestDecrement) {
+    int32 testValue = 32;
+    AtomicTest<int32> int32Test(testValue);
+    ASSERT_TRUE(int32Test.TestDecrement());
+}
+
+
+
+TEST(AtomicGTest,Int32TestTestAndSet) {
+    int32 testValue = 32;
+    AtomicTest<int32> int32Test(testValue);
+    ASSERT_TRUE(int32Test.TestTestAndSet());
+}
+
+TEST(AtomicGTest,Int32TestBoundaryIncrement) {
+    int32 testValue = 32;
+    AtomicTest<int32> int32Test(testValue);
+    ASSERT_TRUE(int32Test.TestBoundaryIncrement());
+}
+
+
+TEST(AtomicGTest,Int32TestBoundaryDecrement) {
+    int32 testValue = 32;
+    AtomicTest<int32> int32Test(testValue);
+    ASSERT_TRUE(int32Test.TestBoundaryDecrement());
+}
+
+
+TEST(AtomicGTest,Int16TestIncrement) {
+    int32 testValue = 16;
     AtomicTest<int16> int16Test(testValue);
-    ASSERT_TRUE(int16Test.All());
+    ASSERT_TRUE(int16Test.TestIncrement());
 }
 
-TEST_F(AtomicGTest,Int8Test) {
-    int8 testValue = 8;
+TEST(AtomicGTest,Int16TestDecrement) {
+    int32 testValue = 16;
+    AtomicTest<int16> int16Test(testValue);
+    ASSERT_TRUE(int16Test.TestDecrement());
+}
+
+
+
+TEST(AtomicGTest,Int16TestTestAndSet) {
+    int32 testValue = 16;
+    AtomicTest<int16> int16Test(testValue);
+    ASSERT_TRUE(int16Test.TestTestAndSet());
+}
+
+TEST(AtomicGTest,Int16TestBoundaryIncrement) {
+    int32 testValue = 16;
+    AtomicTest<int16> int16Test(testValue);
+    ASSERT_TRUE(int16Test.TestBoundaryIncrement());
+}
+
+
+TEST(AtomicGTest,Int16TestBoundaryDecrement) {
+    int32 testValue = 16;
+    AtomicTest<int16> int16Test(testValue);
+    ASSERT_TRUE(int16Test.TestBoundaryDecrement());
+}
+
+TEST(AtomicGTest,Int8TestIncrement) {
+    int32 testValue = 8;
     AtomicTest<int8> int8Test(testValue);
-    ASSERT_TRUE(int8Test.All());
+    ASSERT_TRUE(int8Test.TestIncrement());
 }
 
-TEST_F(AtomicGTest,ExchangeTest) {
+TEST(AtomicGTest,Int8TestDecrement) {
+    int32 testValue = 8;
+    AtomicTest<int8> int8Test(testValue);
+    ASSERT_TRUE(int8Test.TestDecrement());
+}
+
+
+
+TEST(AtomicGTest,Int8TestTestAndSet) {
+    int32 testValue = 8;
+    AtomicTest<int8> int8Test(testValue);
+    ASSERT_TRUE(int8Test.TestTestAndSet());
+}
+
+TEST(AtomicGTest,Int8TestBoundaryIncrement) {
+    int32 testValue = 8;
+    AtomicTest<int8> int8Test(testValue);
+    ASSERT_TRUE(int8Test.TestBoundaryIncrement());
+}
+
+
+TEST(AtomicGTest,Int8TestBoundaryDecrement) {
+    int32 testValue = 8;
+    AtomicTest<int8> int8Test(testValue);
+    ASSERT_TRUE(int8Test.TestBoundaryDecrement());
+}
+
+
+TEST(AtomicGTest,ExchangeTest) {
     int32 testValue = 32;
     AtomicTest<int32> exchangeTest(testValue);
     ASSERT_TRUE(exchangeTest.TestExchange());
 }
 
-TEST_F(AtomicGTest,AddTest) {
+TEST(AtomicGTest,AddTest) {
     int32 testValue = 32;
     AtomicTest<int32> addTest(testValue);
     ASSERT_TRUE(addTest.TestAdd());
 }
 
-TEST_F(AtomicGTest,SubTest) {
+TEST(AtomicGTest,SubTest) {
     int32 testValue = 32;
     AtomicTest<int32> subTest(testValue);
     ASSERT_TRUE(subTest.TestSub());

@@ -2,7 +2,7 @@
  * @file AtomicTest.h
  * @brief Header file for class AtomicTest
  * @date 22/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -54,45 +54,54 @@ public:
 
     /**
      * @brief Tests the increment function.
-     * @return true if the value is incremented.
+     * @return true if the value is incremented by one.
      */
     bool TestIncrement();
 
     /**
      * @brief Tests the decrement function.
-     * @return true if the value is decremented.
+     * @return true if the value is decremented by one.
      */
     bool TestDecrement();
 
     /**
      * @brief Tests the test and set function.
-     * @return true if when the value is 0, is setted to one.
+     * @return true if when the value is 0, it can be successfully set to one.
      */
     bool TestTestAndSet();
 
     /**
      * @brief Tests the exchange function.
-     * @return true if the values are exchanged.
+     * @return true if the testValue can be successfully exchanged with a dummy value (1234)
      */
     bool TestExchange();
 
     /**
      * @brief Tests the addition function.
-     * @return true if the sum works correctly.
+     * @return true if the testValue can be successfully added to a dummy value (10).
      */
     bool TestAdd();
 
     /**
      * @brief Tests the subtraction function.
-     * @return true if the subtraction works correctly.
+     * @return true if the testValue can be successfully subtracted from a dummy value (10).
      */
     bool TestSub();
 
+
     /**
-     * @brief Executes all the tests.
-     * @return true if all tests return true.
+     * @brief Tests the increment function on numbers on the boundary (0xff.. 0x00... 0x80... 0x7f..)
+     * @return true if the number if the number is incremented correctly.
      */
-    bool All();
+    bool TestBoundaryIncrement();
+
+    /**
+     * @brief Tests the increment function on numbers on the boundary (0xff.. 0x00... 0x80... 0x7f..)
+     * @return true if the number if the number is decremented correctly.
+     */
+    bool TestBoundaryDecrement();
+
+
 
 private:
     /** The atomic variable */
@@ -183,11 +192,81 @@ bool AtomicTest<T>::TestSub() {
 }
 
 template<class T>
-bool AtomicTest<T>::All() {
-    bool ok = TestIncrement();
-    ok = ok && TestDecrement();
-    ok = ok && TestTestAndSet();
-    return ok;
+bool AtomicTest<T>::TestBoundaryIncrement() {
+
+    //checks the -1 value which is 0xff...
+    T auxValue=(T)-1;
+    T unsignedMax = auxValue;
+    Atomic::Increment(&auxValue);
+    if(auxValue!= (T)(unsignedMax+1)) {
+        return False;
+    }
+
+    //checks the 0x1000...
+    auxValue=1<<(sizeof(T)*8-1);
+    T signedMin = auxValue;
+    Atomic::Increment(&auxValue);
+    if(auxValue!=(T)(signedMin+1)){
+        return False;
+    }
+
+    auxValue=signedMin-1;
+    T signedMax=auxValue;
+    Atomic::Increment(&auxValue);
+    if(auxValue!=(T)(signedMax+1)){
+        return False;
+    }
+
+    auxValue=0;
+    T zero=auxValue;
+    Atomic::Increment(&auxValue);
+    if(auxValue!=(T)(zero+1)){
+        return False;
+    }
+
+    return True;
+
+
+
 }
+
+
+template<class T>
+bool AtomicTest<T>::TestBoundaryDecrement() {
+
+    //checks the -1 value which is 0xff...
+    T auxValue=(T)-1;
+    T unsignedMax = auxValue;
+    Atomic::Decrement(&auxValue);
+    if(auxValue!= (T)(unsignedMax-1)) {
+        return False;
+    }
+
+    //checks the 0x8000...
+    auxValue=1<<(sizeof(T)*8-1);
+    T signedMin = auxValue;
+    Atomic::Decrement(&auxValue);
+    if(auxValue!=(T)(signedMin-1)){
+        return False;
+    }
+
+    auxValue=signedMin-1;
+    T signedMax=auxValue;
+    Atomic::Decrement(&auxValue);
+    if(auxValue!=(T)(signedMax-1)){
+        return False;
+    }
+
+    auxValue=0;
+    T zero=auxValue;
+    Atomic::Decrement(&auxValue);
+    if(auxValue!=(T)(zero-1)){
+        return False;
+    }
+
+    return True;
+}
+
+
 
 #endif /* ATOMICTEST_H_ */
