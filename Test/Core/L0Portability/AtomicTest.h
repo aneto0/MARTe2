@@ -88,20 +88,17 @@ public:
      */
     bool TestSub();
 
-
     /**
-     * @brief Tests the increment function on numbers on the boundary (0xff.. 0x00... 0x80... 0x7f..)
+     * @brief Tests the increment function on numbers on the boundary conditions (0xff.. 0x00... 0x80... 0x7f..) of the type being tested
      * @return true if the number if the number is incremented correctly.
      */
     bool TestBoundaryIncrement();
 
     /**
-     * @brief Tests the increment function on numbers on the boundary (0xff.. 0x00... 0x80... 0x7f..)
+     * @brief Tests the increment function on numbers on the boundary conditions (0xff.. 0x00... 0x80... 0x7f..) of the type being tested
      * @return true if the number if the number is decremented correctly.
      */
     bool TestBoundaryDecrement();
-
-
 
 private:
     /** The atomic variable */
@@ -195,78 +192,73 @@ template<class T>
 bool AtomicTest<T>::TestBoundaryIncrement() {
 
     //checks the -1 value which is 0xff...
-    T auxValue=(T)-1;
+    T auxValue = (T) -1;
     T unsignedMax = auxValue;
     Atomic::Increment(&auxValue);
-    if(auxValue!= (T)(unsignedMax+1)) {
+    if (auxValue != (T) (unsignedMax + 1)) {
         return False;
     }
 
     //checks the 0x1000...
-    auxValue=1<<(sizeof(T)*8-1);
+    auxValue = 1 << (sizeof(T) * 8 - 1);
     T signedMin = auxValue;
     Atomic::Increment(&auxValue);
-    if(auxValue!=(T)(signedMin+1)){
+    if (auxValue != (T) (signedMin + 1)) {
         return False;
     }
 
-    auxValue=signedMin-1;
-    T signedMax=auxValue;
+    auxValue = signedMin - 1;
+    T signedMax = auxValue;
     Atomic::Increment(&auxValue);
-    if(auxValue!=(T)(signedMax+1)){
+    if (auxValue != (T) (signedMax + 1)) {
         return False;
     }
 
-    auxValue=0;
-    T zero=auxValue;
+    auxValue = 0;
+    T zero = auxValue;
     Atomic::Increment(&auxValue);
-    if(auxValue!=(T)(zero+1)){
+    if (auxValue != (T) (zero + 1)) {
         return False;
     }
 
     return True;
 
-
-
 }
-
 
 template<class T>
 bool AtomicTest<T>::TestBoundaryDecrement() {
 
     //checks the -1 value which is 0xff...
-    T auxValue=(T)-1;
+    T auxValue = (T) -1;
     T unsignedMax = auxValue;
     Atomic::Decrement(&auxValue);
-    if(auxValue!= (T)(unsignedMax-1)) {
+    if (auxValue != (T) (unsignedMax - 1)) {
         return False;
     }
 
     //checks the 0x8000...
-    auxValue=1<<(sizeof(T)*8-1);
+    auxValue = 1 << (sizeof(T) * 8 - 1);
     T signedMin = auxValue;
     Atomic::Decrement(&auxValue);
-    if(auxValue!=(T)(signedMin-1)){
+    if (auxValue != (T) (signedMin - 1)) {
         return False;
     }
 
-    auxValue=signedMin-1;
-    T signedMax=auxValue;
+    auxValue = signedMin - 1;
+    T signedMax = auxValue;
     Atomic::Decrement(&auxValue);
-    if(auxValue!=(T)(signedMax-1)){
+    if (auxValue != (T) (signedMax - 1)) {
         return False;
     }
 
-    auxValue=0;
-    T zero=auxValue;
+    auxValue = 0;
+    T zero = auxValue;
     Atomic::Decrement(&auxValue);
-    if(auxValue!=(T)(zero-1)){
+    if (auxValue != (T) (zero - 1)) {
         return False;
     }
 
     return True;
 }
-
-
 
 #endif /* ATOMICTEST_H_ */
