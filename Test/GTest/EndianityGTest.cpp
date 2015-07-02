@@ -330,7 +330,7 @@ TEST(EndianityGTest,TestToLittleEndian64) {
 
 TEST(EndianityGTest,TestFromBigEndian64) {
     EndianityTest<int64> int64Test(0xAABB);
-    ASSERT_TRUE(int64Test.FromBigEndian());
+    ASSERT_TRUE(int64Test.TestFromBigEndian());
 }
 
 TEST(EndianityGTest,FromLittleEndian64) {
