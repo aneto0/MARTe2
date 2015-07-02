@@ -2,7 +2,7 @@
  * @file ThreadInformation.cpp
  * @brief Source file for class ThreadInformation
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -101,7 +101,7 @@ ThreadInformation::~ThreadInformation() {
 }
 
 /**
- * @brief Equal operator to copy a thread info in this.
+ * @brief Assign operator to copy a thread info in this.
  * @param[in] threadInfo contains informations to initialize this object.
  */
 void ThreadInformation::operator=(const ThreadInformation &threadInfo) {

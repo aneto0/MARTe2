@@ -61,28 +61,28 @@ public:
      * @details If the target architecture is little endian the test value and result must be different.
      * @return True if the conditions above are verified.
      */
-    bool ToBigEndian();
+    bool TestToBigEndian();
 
     /**
      * @brief Converts the testValue to little endian.
      * @details If the target architecture is big endian the test value and the result must be different.
      * @return True if the conditions above are verified.
      */
-    bool ToLittleEndian();
+    bool TestToLittleEndian();
 
     /**
      * @brief Converts the testValue from big endian.
      * @details If the target architecture is little endian the test value and the result value be different.
      * @return True if the conditions above are verified.
      */
-    bool FromBigEndian();
+    bool TestFromBigEndian();
 
     /**
      * @brief Converts the testValue to little endian.
      * @details If the target architecture is big endian the test value and the result must be different.
      * @return True if the conditions above are verified.
      */
-    bool FromLittleEndian();
+    bool TestFromLittleEndian();
 
     /**
      * @brief Converts the testArray to big endian from the target
@@ -90,7 +90,7 @@ public:
      * @details If the target architecture is little endian each element of the test array and the big endian array must be different.
      * @return True if the conditions above are verified.
      */
-    bool MemCopyToBigEndian();
+    bool TestMemCopyToBigEndian();
 
     /**
      * @brief Converts the testArray to little endian from the target
@@ -98,7 +98,7 @@ public:
      * @details If the target architecture is big endian each element of the test array and the big endian array must be different.
      * @return True if the conditions above are verified.
      */
-    bool MemCopyToLittleEndian();
+    bool TestMemCopyToLittleEndian();
 
     /**
      * @brief Converts the testArray from big endian to the
@@ -106,7 +106,7 @@ public:
      * @details If the target architecture is little endian each element of the test array and the big endian array must be different.
      * @return True if the conditions above are verified.
      */
-    bool MemCopyFromBigEndian();
+    bool TestMemCopyFromBigEndian();
 
     /**
      * @brief Converts the testArray from little endian to the
@@ -114,7 +114,7 @@ public:
      * @details If the target architecture is big endian each element of the test array and the little endian array must be different.
      * @return True if the conditions above are verified.
      */
-    bool MemCopyFromLittleEndian();
+    bool TestMemCopyFromLittleEndian();
 
     /**
      * @brief Verifies that going to a different endianity and returning to the
@@ -127,7 +127,7 @@ public:
      * @return True if the test value is not changed after returning to the original
      * endianity.
      */
-    bool ToFromEndian();
+    bool TestToFromEndian();
 
     /**
      * @brief The same logic as ToFromEndian but for arrays.
@@ -135,7 +135,7 @@ public:
      * @details The same EndianityTest::ToFromEndian but using the
      * Endianity::MemCopyToFromEndian and Endianity::MemCopyFromLittleEndian functions.
      */
-    bool MemCopyToFromEndian();
+    bool TestMemCopyToFromEndian();
 
 
 
@@ -162,7 +162,7 @@ EndianityTest<T>::EndianityTest(T testValue) {
 }
 
 template<class T>
-bool EndianityTest<T>::ToBigEndian() {
+bool EndianityTest<T>::TestToBigEndian() {
     T valueBigEndian = testValue;
 
     //converts to big endian the value.
@@ -181,7 +181,7 @@ bool EndianityTest<T>::ToBigEndian() {
 }
 
 template<class T>
-bool EndianityTest<T>::ToLittleEndian() {
+bool EndianityTest<T>::TestToLittleEndian() {
     T valueLittleEndian = testValue;
 
     //converts to little endian the value.
@@ -200,7 +200,7 @@ bool EndianityTest<T>::ToLittleEndian() {
 }
 
 template<class T>
-bool EndianityTest<T>::FromBigEndian() {
+bool EndianityTest<T>::TestFromBigEndian() {
     T valueBigEndian = testValue;
 
     //converts from big endian the value.
@@ -219,7 +219,7 @@ bool EndianityTest<T>::FromBigEndian() {
 }
 
 template<class T>
-bool EndianityTest<T>::FromLittleEndian() {
+bool EndianityTest<T>::TestFromLittleEndian() {
     T valueLittleEndian = testValue;
 
     //converts from little endian the value.
@@ -238,7 +238,7 @@ bool EndianityTest<T>::FromLittleEndian() {
 }
 
 template<class T>
-bool EndianityTest<T>::MemCopyToBigEndian() {
+bool EndianityTest<T>::TestMemCopyToBigEndian() {
     T arrayBigEndian[3];
 
     //converts to big endian the array
@@ -259,7 +259,7 @@ bool EndianityTest<T>::MemCopyToBigEndian() {
 }
 
 template<class T>
-bool EndianityTest<T>::MemCopyToLittleEndian() {
+bool EndianityTest<T>::TestMemCopyToLittleEndian() {
     T arrayLittleEndian[3];
 
     //converts to little endian the array
@@ -280,7 +280,7 @@ bool EndianityTest<T>::MemCopyToLittleEndian() {
 }
 
 template<class T>
-bool EndianityTest<T>::MemCopyFromBigEndian() {
+bool EndianityTest<T>::TestMemCopyFromBigEndian() {
     T arrayBigEndian[3];
 
     //converts from big endian the array
@@ -301,7 +301,7 @@ bool EndianityTest<T>::MemCopyFromBigEndian() {
 }
 
 template<class T>
-bool EndianityTest<T>::MemCopyFromLittleEndian() {
+bool EndianityTest<T>::TestMemCopyFromLittleEndian() {
     T arrayLittleEndian[3];
 
     //converts from little endian the array
@@ -322,7 +322,7 @@ bool EndianityTest<T>::MemCopyFromLittleEndian() {
 }
 
 template<class T>
-bool EndianityTest<T>::ToFromEndian() {
+bool EndianityTest<T>::TestToFromEndian() {
     T valueLittleEndian = testValue;
     T valueBigEndian = testValue;
 
@@ -339,7 +339,7 @@ bool EndianityTest<T>::ToFromEndian() {
 }
 
 template<class T>
-bool EndianityTest<T>::MemCopyToFromEndian() {
+bool EndianityTest<T>::TestMemCopyToFromEndian() {
     T arrayLittleEndian[3];
     T arrayBigEndian[3];
     T arrayToFrom[3];
