@@ -688,6 +688,8 @@ bool ThreadsTest::TestNumberOfThreads(uint32 nOfThreads) {
     uint32 j = 0;
     while ((uint32) exitCondition < (nOfThreads)) {
         if (j++ > 10 * nOfThreads) {
+            exitCondition = -1;
+            SleepSec(1.0);
             return False;
         }
         SleepSec(10e-3);
@@ -723,6 +725,8 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
         uint32 j = 0;
         while ((uint32) exitCondition < (i + 1)) {
             if (j++ > 10 * nOfThreads) {
+                exitCondition = -1;
+                SleepSec(1.0);
                 return False;
             }
             SleepSec(10e-3);
@@ -782,6 +786,8 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
             uint32 j = 0;
             while ((uint32) exitCondition < (i + 1)) {
                 if (j++ > 10 * nOfThreads) {
+                    exitCondition = -1;
+                    SleepSec(1.0);
                     return False;
                 }
                 SleepSec(10e-3);
@@ -805,6 +811,8 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
         j = 0;
         while ((uint32) exitCondition < (i - 1)) {
             if (j++ > 10 * nOfThreads) {
+                exitCondition = -1;
+                SleepSec(1.0);
                 return False;
             }
             SleepSec(10e-3);
@@ -822,6 +830,8 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
         j = 0;
         while ((uint32) exitCondition < i) {
             if (j++ > 10 * nOfThreads) {
+                exitCondition = -1;
+                SleepSec(1.0);
                 return False;
             }
             SleepSec(10e-3);
@@ -862,7 +872,10 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
         //waits that the thread begins
         uint32 j = 0;
         while ((uint32) exitCondition < (i + 1)) {
+
             if (j++ > 10 * nOfThreads) {
+                exitCondition = -1;
+                SleepSec(1.0);
                 return False;
             }
             SleepSec(10e-3);
@@ -1025,6 +1038,8 @@ bool ThreadsTest::TestFindByName(uint32 nOfThreads,
         uint32 j = 0;
         while ((uint32) exitCondition < (i + 1)) {
             if (j++ > 10 * nOfThreads) {
+                exitCondition = -1;
+                SleepSec(1.0);
                 return False;
             }
             SleepSec(10e-3);
