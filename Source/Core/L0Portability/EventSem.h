@@ -2,7 +2,7 @@
  * @file EventSem.h
  * @brief Header file for class EventSem
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef EVENTSEM_H_
-#define 		EVENTSEM_H_
+#define EVENTSEM_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-#include "SemCore.h"
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,EventSemOS.h)
 
 /*---------------------------------------------------------------------------*/
@@ -40,7 +39,7 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief This semaphore is used mostly for thread syncronization.
+ * @brief This semaphore is used mostly for thread synchronization.
  *
  * @details After being reset the semaphore is ready to Wait.
  * Once waiting, until a Post arrives all the threads will wait on
@@ -55,7 +54,7 @@
  * functions to implement this kind of semaphore.
  */
 
-class EventSem: public SemCore {
+class EventSem {
 public:
     /**
      * @brief Constructor.
@@ -64,9 +63,9 @@ public:
 
     /**
      * @brief Constructor by semaphore pointer.
-     * @param[in] h is a pointer to the semaphore structure.
+     * @param[in] source is a pointer to the semaphore structure.
      */
-    EventSem(const EventSem &h);
+    EventSem(const EventSem &source);
 
     /**
      * @brief Destructor.
@@ -91,7 +90,7 @@ public:
      * @param[out] error is the error type in return.
      * @return true if the system level function returns without errors.
      */
-    bool Wait(TimeoutType msecTimeout = TTInfiniteWait, Error &error=Global::errorType);
+    bool Wait(const TimeoutType &msecTimeout = TTInfiniteWait, Error &error=Global::errorType) const;
 
     /**
      * @brief Resets the semaphore and then waits.
@@ -99,20 +98,29 @@ public:
      * @param[out] error is the error type in return.
      * @return true if both system level Reset and Wait functions return true.
      */
-    bool ResetWait(TimeoutType msecTimeout = TTInfiniteWait, Error &error=Global::errorType);
+    bool ResetWait(const TimeoutType &msecTimeout = TTInfiniteWait, Error &error=Global::errorType) const;
 
     /**
      * @brief Unlocks the semaphore.
      * @return true if the system level function returns without errors.
      */
-    bool Post();
+    bool Post() const;
 
     /**
      * @brief Reset the semaphore to its unposted state.
      * @return true if the semaphore state is resetted correctly.
      */
-    bool Reset();
+    bool Reset() const;
 
+    /**
+     * @brief Getter for the semaphore handle.
+     * @return the semaphore internal handle.
+     */
+    const HANDLE GetHandle() const;
+
+private:
+    /** The handle associated to the semaphore. */
+    const HANDLE semH;
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

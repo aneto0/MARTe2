@@ -39,23 +39,29 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-MutexSem::MutexSem(const MutexSem &h) {
-    HANDLE toCopy = h.Handle();
-    MutexSemOS::DuplicateHandle(toCopy);
-    isRecursive = false;
-    Init(toCopy);
+MutexSem::MutexSem(const MutexSem &source) {
+    const HANDLE h = source.GetHandle();
+    MutexSemOS::DuplicateHandle(h);
+    isRecursive = source.IsRecursive();
+    semH = h;
 }
 
 MutexSem::MutexSem() {
+    semH = static_cast<HANDLE>(NULL);
     isRecursive = false;
 }
 
 MutexSem::~MutexSem() {
-    MutexSemOS::Close(semH);
+    try {
+        /*lint -e(534) , ignoring return value of function*/
+        Close();
+    }
+    catch(...){
+    }
+    semH = static_cast<HANDLE>(NULL);
 }
 
-bool MutexSem::Create(bool locked,
-                      bool recursive) {
+bool MutexSem::Create(const bool locked, bool recursive) {
     bool ret = MutexSemOS::Create(semH, locked, recursive);
     isRecursive = recursive;
     return ret;
@@ -65,12 +71,15 @@ bool MutexSem::Close() {
     return MutexSemOS::Close(semH);
 }
 
-bool MutexSem::Lock(TimeoutType msecTimeout,
-                    Error &error) {
+bool MutexSem::Lock(const TimeoutType &msecTimeout, Error &error) const {
     return MutexSemOS::Lock(semH, msecTimeout, error);
 }
 
-bool MutexSem::UnLock() {
+bool MutexSem::UnLock() const {
     return MutexSemOS::UnLock(semH);
+}
+
+const HANDLE MutexSem::GetHandle() const {
+    return semH;
 }
 

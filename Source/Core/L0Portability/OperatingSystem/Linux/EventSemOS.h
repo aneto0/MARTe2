@@ -27,9 +27,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#ifndef LINT
 #include <pthread.h>
 #include <math.h>
 #include <sys/timeb.h>
+#endif
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -149,8 +151,7 @@ private:
             }
             if (stop == true) {
 
-                if (pthread_cond_timedwait(&eventVariable, &mutexHandle,
-                                           &timesValues) != 0) {
+                if (pthread_cond_timedwait(&eventVariable, &mutexHandle, &timesValues) != 0) {
                     pthread_mutex_unlock(&mutexHandle);
                     error = Timeout;
                     return false;
@@ -212,8 +213,9 @@ private:
      * @return true if the nuumber of handle references is equal to zero.
      */
     bool RemoveReference() {
-        if (--references < 0)
+        if (--references < 0) {
             references = 0;
+        }
         return references == 0;
     }
 
@@ -231,7 +233,7 @@ private:
     bool stop;
 
     /** The number of handle references. */
-    int references;
+    int32 references;
 
     /** This flag is set to true when the semaphore is closed.
      * We need this because when we use shared semaphores (created with
@@ -260,7 +262,7 @@ public:
      * @param[in,out] semH is the semaphore handle in return.
      * @return false if the new or the Init functions fail, true otherwise.
      */
-    static bool Create(HANDLE &semH) {
+    static bool Create(const HANDLE &semH) {
         if (semH != (HANDLE) NULL) {
             if (((PrivateEventSemStruct*) semH)->RemoveReference()) {
                 delete (PrivateEventSemStruct *) semH;
@@ -286,7 +288,7 @@ public:
          * @param[in,out] semH is the semaphore handle.
          * @return true if the Close function has success, false otherwise.
          */
-        static bool Close(HANDLE &semH) {
+        static bool Close(const HANDLE &semH) {
             if (semH == (HANDLE) NULL) {
                 return true;
             }
@@ -306,9 +308,7 @@ public:
          * @param[out] error is the error type.
          * @return the result of PrivateEventSemStruct::Wait.
          */
-        static inline bool Wait(HANDLE &semH,
-        TimeoutType msecTimeout,
-        Error &error) {
+        static inline bool Wait(const HANDLE const &semH, TimeoutType msecTimeout, Error &error) {
             if (semH == (HANDLE) NULL) {
                 return false;
             }
@@ -321,7 +321,7 @@ public:
          * @param[in,out] semH is the semaphore handle.
          * @return the result of PrivateEventSemStruct::Post.
          */
-        static inline bool Post(HANDLE &semH) {
+        static inline bool Post(const HANDLE const &semH) {
             if (semH == (HANDLE) NULL) {
                 return false;
             }
@@ -334,7 +334,7 @@ public:
          * @param[in,out] semH is the semaphore handle.
          * @return the result of PrivateEventSemStruct::Reset.
          */
-        static inline bool Reset(HANDLE &semH) {
+        static inline bool Reset(const HANDLE const &semH) {
             if (semH == (HANDLE) NULL) {
                 return false;
             }
@@ -349,9 +349,7 @@ public:
          * @param[out] error is the error type.
          * @return the result of PrivateEventSemStruct::Wait.
          */
-        static inline bool ResetWait(HANDLE &semH,
-        TimeoutType msecTimeout,
-        Error &error) {
+        static inline bool ResetWait(const HANDLE const &semH, TimeoutType msecTimeout, Error &error) {
             Reset(semH);
             return Wait(semH, msecTimeout, error);
         }
@@ -359,7 +357,7 @@ public:
         /**
          * @brief Adds an handle reference.
          */
-        static inline void DuplicateHandle(HANDLE &semH) {
+        static inline void DuplicateHandle(const HANDLE const &semH) {
             ((PrivateEventSemStruct*) semH)->AddReference();
         }
     };
@@ -367,6 +365,5 @@ public:
     /*---------------------------------------------------------------------------*/
     /*                        Inline method definitions                          */
     /*---------------------------------------------------------------------------*/
-
 #endif /* EVENTSEMOS_H_ */
 

@@ -22,7 +22,7 @@
  */
 
 #ifndef MUTEXSEM_H_
-#define 		MUTEXSEM_H_
+#define MUTEXSEM_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,MutexSemOS.h)
-#include "SemCore.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -52,14 +51,14 @@
  * @details Most of the implementation is delegated to MutexSemOS.h which provides system level functions for mutex semaphores.
  *
  */
-class MutexSem : public SemCore {
+class MutexSem {
 
 public:
     /**
      * @brief Copy constructor.
      * @param[in] h is the semaphore handle to be copied in this handle.
      */
-    MutexSem(const MutexSem &h);
+    MutexSem(const MutexSem &source);
 
     /**
      * @brief Default constructor.
@@ -94,13 +93,13 @@ public:
      * @param[out] error specifies the error type in case of errors (timeout fail or other error types).
      * @return false if something in the lock system level function goes wrong.
      */
-    bool Lock(TimeoutType msecTimeout = TTInfiniteWait, Error &error=Global::errorType);
+    bool Lock(const TimeoutType &msecTimeout = TTInfiniteWait, Error &error=Global::errorType) const;
 
     /**
      * @brief Unlock the semaphore.
      * @return true if the unlock system level function return true, false otherwise.
      */
-    bool UnLock();
+    bool UnLock() const;
 
     /**
      * @brief Fast lock.
@@ -108,19 +107,19 @@ public:
      * @param[out] error specifies the error type in case of errors (timeout fail or other error types).
      * @return true if successful, false otherwise.
      */
-    inline bool FastLock(TimeoutType msecTimeout = TTInfiniteWait, Error &error=Global::errorType);
+    inline bool FastLock(const TimeoutType &msecTimeout = TTInfiniteWait, Error &error=Global::errorType) const;
 
     /**
      * @brief Fast unlock.
      * @return true if successful, false otherwise.
      */
-    inline bool FastUnLock();
+    inline bool FastUnLock() const;
 
     /**
      * @brief Tries to lock the semaphore and if it is already locked returns immediately.
      * @return true if the semaphore was unlocked and the function locks it, false if it was already locked.
      */
-    inline bool FastTryLock();
+    inline bool FastTryLock() const;
 
     /**
      * @brief Returns true if the mutex is recursive, false otherwise.
@@ -128,12 +127,21 @@ public:
      * if the same thread locks it twice it triggers a deadlock condition.
      * @return true if the mutex is recursive, false otherwise.
      */
-    inline bool IsRecursive();
+    inline bool IsRecursive() const;
+
+    /**
+     * @brief Getter for the semaphore handle.
+     * @return the semaphore internal handle.
+     */
+    const HANDLE GetHandle() const;
 
 private:
 
     /** true if the mutex is recursive, false otherwise. */
     bool isRecursive;
+
+    /** The handle associated to the semaphore. */
+    const HANDLE semH;
 
 };
 
@@ -141,20 +149,19 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-bool MutexSem::FastLock(TimeoutType msecTimeout,
-                        Error &error) {
+bool MutexSem::FastLock(const TimeoutType &msecTimeout, Error &error) const {
     return MutexSemOS::FastLock(semH, msecTimeout, error);
 }
 
-bool MutexSem::FastUnLock() {
+bool MutexSem::FastUnLock() const {
     return MutexSemOS::FastUnLock(semH);
 }
 
-bool MutexSem::FastTryLock() {
+bool MutexSem::FastTryLock() const {
     return MutexSemOS::FastTryLock(semH);
 }
 
-bool MutexSem::IsRecursive() {
+bool MutexSem::IsRecursive() const {
     return isRecursive;
 }
 /*---------------------------------------------------------------------------*/

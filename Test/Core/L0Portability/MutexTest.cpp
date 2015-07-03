@@ -60,7 +60,7 @@ bool MutexTest::TestCreate(bool locked, bool recursive) {
     MutexSem testSem;
     bool test = testSem.Create(locked, recursive);
     if (test) {
-        test &= (testSem.Handle() != NULL);
+        test &= (testSem.GetHandle() != NULL);
     }
     testSem.Close();
     return test;
@@ -366,7 +366,7 @@ bool MutexTest::TestCopyConstructor() {
     test = testMutex.Create(false, false);
     MutexSem copyTestMutex(testMutex);
 
-    if (testMutex.Handle() != copyTestMutex.Handle()) {
+    if (testMutex.GetHandle() != copyTestMutex.GetHandle()) {
         test = false;
     }
 

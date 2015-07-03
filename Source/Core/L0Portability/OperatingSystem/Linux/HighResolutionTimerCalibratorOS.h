@@ -22,15 +22,18 @@
  */
 
 #ifndef HIGHRESOLUTIONTIMERCALIBRATOROS_H_
-#define 		HIGHRESOLUTIONTIMERCALIBRATOROS_H_
+#define HIGHRESOLUTIONTIMERCALIBRATOROS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
+#ifndef LINT
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -51,7 +54,7 @@ public:
     uint32 HRTmSecTics;
 
     /** Number of cpu ticks in a second */
-    uint64 HRTFrequency;
+    int64 HRTFrequency;
 
     /** Time between a tick and the other in seconds */
     float64 HRTPeriod;

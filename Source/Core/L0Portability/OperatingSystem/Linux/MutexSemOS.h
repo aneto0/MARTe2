@@ -232,7 +232,7 @@ public:
      * @param[in] recursive specifies if the mutex created is recursive or not.
      * @return false if the new or Init fail, true otherwise
      */
-    static bool Create(HANDLE &semH, bool locked, bool &recursive) {
+    static bool Create(const HANDLE &semH, bool locked, bool &recursive) {
         if (semH != (HANDLE) NULL) {
 
             if (((PrivateMutexSemStruct*) semH)->RemoveReference()) {
@@ -266,7 +266,7 @@ public:
          * @param[in,out] semH is the mutex semaphore handle.
          * @return true.
          */
-        static inline bool Close(HANDLE &semH) {
+        static inline bool Close(const HANDLE &semH) {
             if (semH == (HANDLE) NULL) {
                 return true;
             }
@@ -288,7 +288,7 @@ public:
          * @param[out] error is the error type.
          * @return the result of PrivateMutexSemStruct::Lock
          */
-        static inline bool Lock(HANDLE &semH, TimeoutType msecTimeout, Error &error) {
+        static inline bool Lock(const HANDLE const &semH, TimeoutType msecTimeout, Error &error) {
             if (semH == (HANDLE) NULL) {
                 return false;
             }
@@ -301,7 +301,7 @@ public:
          * @param[in,out] semH is the mutex semaphore handle.
          * @return the return of PrivateMutexSemStruct::UnLock.
          */
-        static inline bool UnLock(HANDLE &semH) {
+        static inline bool UnLock(const HANDLE const &semH) {
             if (semH == (HANDLE) NULL) {
                 return false;
             }
@@ -312,7 +312,7 @@ public:
          * @see MutexSem::Lock
          * @see MutexSemOSLock.
          */
-        static inline bool FastLock(HANDLE &semH, TimeoutType msecTimeout, Error &error) {
+        static inline bool FastLock(const HANDLE const &semH, TimeoutType msecTimeout, Error &error) {
             if (semH == (HANDLE) NULL) {
                 return false;
             }
@@ -323,7 +323,7 @@ public:
          * @see MutexSem::UnLock
          * @see MutexSemOS::UnLock.
          */
-        static inline bool FastUnLock(HANDLE &semH) {
+        static inline bool FastUnLock(const HANDLE const &semH) {
 
             if (semH == (HANDLE) NULL) {
                 return false;
@@ -337,7 +337,7 @@ public:
          * @param[in,out] semH is the mutex semaphore handle.
          * @return the result of PrivateMutexSemStruct::FastLock.
          */
-        static inline bool FastTryLock(HANDLE &semH) {
+        static inline bool FastTryLock(const HANDLE const &semH) {
             if (semH == (HANDLE) NULL) {
                 return false;
             }
@@ -347,7 +347,7 @@ public:
         /**
          * @brief Adds an handle reference.
          */
-        static inline void DuplicateHandle(HANDLE &semH) {
+        static inline void DuplicateHandle(const HANDLE const &semH) {
             ((PrivateMutexSemStruct*) semH)->AddReference();
         }
     };

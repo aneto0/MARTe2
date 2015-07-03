@@ -2,7 +2,7 @@
  * @file SemCore.h
  * @brief Header file for class SemCore
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef SEMCORE_H_
-#define 		SEMCORE_H_
+#define SEMCORE_H_
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -48,58 +48,40 @@ public:
      * @brief Copy constructor.
      * @param[in] s is the semaphore handle to be copied in this.
      */
-    inline SemCore(HANDLE s);
+    SemCore(const HANDLE const s);
 
     /**
      * @brief Constructor.
      */
-    inline SemCore();
+    SemCore();
+
+    /**
+     * @brief Destructor that can be overridden by inherited classes
+     */
+    virtual ~SemCore();
 
     /**
      * @brief Set the semaphore handle to 0.
      */
-    inline void Init();
+    void Init();
 
     /**
      * @brief Set the semaphore.
      * @param[in] s is a pointer to the semaphore structure.
      */
-    inline void Init(HANDLE s);
+    void Init(const HANDLE const s);
 
     /**
      * @brief return number associated to the semaphore.
      * @return the current value associated to the semaphore.
      */
-    inline HANDLE Handle() const;
+    const HANDLE Handle() const;
 
-protected:
+private:
     /** The handle associated to the semaphore. */
-    HANDLE semH;
+    const HANDLE semH;
 };
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-SemCore::SemCore(HANDLE s) {
-    Init(s);
-}
-
-SemCore::SemCore() {
-    Init();
-}
-
-void SemCore::Init() {
-    semH = (HANDLE) 0;
-}
-
-void SemCore::Init(HANDLE s) {
-    semH = s;
-}
-
-HANDLE SemCore::Handle() const {
-    return semH;
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

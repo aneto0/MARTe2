@@ -22,17 +22,19 @@
  */
 
 #ifndef BASICCONSOLEOS_H_
-#define 		BASICCONSOLEOS_H_
+#define BASICCONSOLEOS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#ifndef LINT
 #include <sys/ioctl.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <termios.h>
+#endif
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
