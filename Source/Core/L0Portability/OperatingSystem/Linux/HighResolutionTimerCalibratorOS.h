@@ -54,7 +54,7 @@ public:
     uint32 HRTmSecTics;
 
     /** Number of cpu ticks in a second */
-    uint64 HRTFrequency;
+    int64 HRTFrequency;
 
     /** Time between a tick and the other in seconds */
     float64 HRTPeriod;
