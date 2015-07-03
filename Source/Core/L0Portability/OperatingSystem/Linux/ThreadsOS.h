@@ -275,7 +275,8 @@ public:
         pthread_attr_setstacksize(&stackSizeAttribute, stacksize);
         pthread_create(&threadId, &stackSizeAttribute, (StandardThreadFunction) SystemThreadFunction, threadInfo);
         pthread_detach(threadId);
-        pthread_setaffinity_np(threadId, sizeof(runOnCPUs.processorMask), (cpu_set_t *) &runOnCPUs.processorMask);
+        uint32 processorMask = runOnCPUs.GetProcessorMask();
+        pthread_setaffinity_np(threadId, sizeof(processorMask), (cpu_set_t *) &processorMask);
         threadInfo->ThreadPost();
 
         return threadId;
