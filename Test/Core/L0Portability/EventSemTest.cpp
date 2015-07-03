@@ -56,15 +56,15 @@ EventSemTest::~EventSemTest() {
 
 bool EventSemTest::TestConstructor() {
     EventSem testSem;
-    return (testSem.Handle() == NULL);
+    return (testSem.GetHandle() == NULL);
 }
 
 bool EventSemTest::TestDestructor() {
     EventSem testSem;
     testSem.Create();
-    bool test = (testSem.Handle() != NULL);
+    bool test = (testSem.GetHandle() != NULL);
     testSem.~EventSem();
-    test = (testSem.Handle() == NULL);
+    test = (testSem.GetHandle() == NULL);
     return test;
 }
 
@@ -72,7 +72,7 @@ bool EventSemTest::TestCreate() {
     EventSem testSem;
     bool test = testSem.Create();
     if (test) {
-        test &= (testSem.Handle() != NULL);
+        test &= (testSem.GetHandle() != NULL);
     }
     testSem.Close();
     return test;
@@ -92,7 +92,7 @@ bool EventSemTest::TestCopyConstructor() {
     testSem.Wait(1);
 
     bool test = copySem.Post();
-    test &= (testSem.Handle() == copySem.Handle());
+    test &= (testSem.GetHandle() == copySem.GetHandle());
 
     testSem.Close();
     copySem.Close();

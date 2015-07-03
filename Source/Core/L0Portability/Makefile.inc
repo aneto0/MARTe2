@@ -38,7 +38,6 @@ OBJSX=  Atomic.x \
 	ThreadInformation.x \
 	MutexSem.x \
 	EventSem.x \
-	SemCore.x \
 	MemoryStatisticsDatabase.x
 PACKAGE=Core
 ROOT_DIR=../../..
