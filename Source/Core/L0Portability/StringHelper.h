@@ -43,80 +43,66 @@ extern "C" {
 /**
  * @see StringHelper::Concatenate().
  */
-char8* StringHelperConcatenate(char8* destination,
-                               const char8* source);
+char8 *StringHelperConcatenate(char8 *destination, const char8 *source);
 
 /**
  * @see StringHelper::ConcatenateN().
  */
-char8* StringHelperConcatenateN(char8* destination,
-                                const char8* source,
-                                uint32 size);
+char8 *StringHelperConcatenateN(char8 *destination, const char8 *source, uint32 size);
 /**
  * @see StringHelper::SearchChar().
  */
-const char8* StringHelperSearchChar(const char8* string,
-                                    char8 c);
+const char8 *StringHelperSearchChar(const char8 *string, char8 c);
 
 /**
  * @see StringHelper::Compare().
  */
-int32 StringHelperCompare(const char8* string1,
-                          const char8* string2);
+int32 StringHelperCompare(const char8 *string1, const char8 *string2);
 
 /**
  * @see StringHelper::CompareN().
  */
-int32 StringHelperCompareN(const char8* string1,
-                           const char8* string2,
-                           uint32 size);
+int32 StringHelperCompareN(const char8 *string1, const char8 *string2, uint32 size);
 
 /**
  * @see StringHelper::Copy().
  */
-bool StringHelperCopy(char8* destination,
-                      const char8* source);
+bool StringHelperCopy(char8 *destination, const char8 *source);
 
 /**
  * @see StringHelper::CopyN().
  */
-bool StringHelperCopyN(char8* destination,
-                       const char8* source,
-                       uint32 size);
+bool StringHelperCopyN(char8 *destination, const char8 *source, uint32 size);
 
 /**
  * @see StringHelper::SearchIndex().
  */
-int32 StringHelperSearchIndex(const char8* string1,
-                              const char8* string2);
+int32 StringHelperSearchIndex(const char8 *string1, const char8 *string2);
 
 /**
  * @see StringHelper::Length().
  */
-int32 StringHelperLength(const char8* string);
+int32 StringHelperLength(const char8 *string);
 
 /** @see StringHelper::SearchChars(). */
-const char8* StringHelperSearchChars(const char8* string1,
-                                     const char8* string2);
+const char8 *StringHelperSearchChars(const char8 *string1, const char8 *string2);
 
 /**
  *  @see StringHelper::SearchLastChar().
  */
-const char8* StringHelperSearchLastChar(const char8* string,
-                                        char8 c);
+const char8 *StringHelperSearchLastChar(const char8 *string, char8 c);
 
 /**
  * @see StringHelper::SearchString().
  */
-const char8* StringHelperSearchString(const char8* string,
-                                      const char8* substring);
+const char8 *StringHelperSearchString(const char8 *string, const char8 *substring);
 
 }
 
 /**
  * @brief Implementation of functions to manipulate strings.
  *
- * @details These methods allows the most used and basic functions to manipulate char8* strings and
+ * @details These methods allows the most used and basic functions to manipulate char8 *strings and
  * are particularly useful in the implementation of higher levels string and stream implementations.
  *
  * @details Most of the implementation is delegated to StringHelperOS.h.
@@ -132,8 +118,7 @@ public:
      * @param[in] source is the string to append to destination.
      * @return destination.
      */
-    static char8* Concatenate(char8* destination,
-                              const char8* source);
+    static char8 *Concatenate(char8 *destination, const char8 *source);
 
     /**
      * @brief Concatenate two strings until 'size' chars.
@@ -142,9 +127,7 @@ public:
      * @param[in] size is the maximum number of bytes to append.
      * @return destination.
      */
-    static char8* ConcatenateN(char8* destination,
-                               const char8* source,
-                               uint32 size);
+    static char8 *ConcatenateN(char8 *destination, const char8 *source, uint32 size);
 
     /**
      * @brief Search a character in a string.
@@ -152,8 +135,7 @@ public:
      * @param[in] c is the character to find in c.
      * @return a pointer to the first occurrence of c in string, NULL if c is not found.
      */
-    static const char8* SearchChar(const char8* string,
-                                   char8 c);
+    static const char8 *SearchChar(const char8 *string, char8 c);
 
     /**
      * @brief Compare two strings.
@@ -161,8 +143,7 @@ public:
      * @param[in] string2 is the second string.
      * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
      */
-    static int32 Compare(const char8* string1,
-                         const char8* string2);
+    static int32 Compare(const char8 *string1, const char8 *string2);
 
     /**
      * @brief Compare two strings until 'size' characters.
@@ -171,9 +152,7 @@ public:
      * @param[in] size is the maximum number of char8 to compare.
      * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
      */
-    static int32 CompareN(const char8* string1,
-                          const char8* string2,
-                          uint32 size);
+    static int32 CompareN(const char8 *string1, const char8 *string2, uint32 size);
 
     /**
      * @brief Copy source in destination.
@@ -181,8 +160,7 @@ public:
      * @param[in] source is the string to copy in destination.
      * @return destination.
      */
-    static bool Copy(char8* destination,
-                     const char8* source);
+    static bool Copy(char8 *destination, const char8 *source);
 
     /**
      * @brief Copy source in destination until 'size' chars.
@@ -191,9 +169,7 @@ public:
      * @param[in] size is the maximum number of byte to copy.
      * @return destination.
      */
-    static bool CopyN(char8* destination,
-                      const char8* source,
-                      uint32 size);
+    static bool CopyN(char8 *destination, const char8 *source, uint32 size);
 
     /**
      * @brief Return the index position of the first char8 in string2 founded in string1 -> "abcde" "12d" returns 3.
@@ -201,15 +177,14 @@ public:
      * @param[in] string2 contains characters which must be searched in string1.
      * @return the index at the first occurrence of the first character in string2 found in string1.
      */
-    static int32 SearchIndex(const char8* string1,
-                             const char8* string2);
+    static int32 SearchIndex(const char8 *string1, const char8 *string2);
 
     /**
      * @brief Return the length of a string.
      * @param[in] string is the source string.
      * @return the length of the string.
      */
-    static int32 Length(const char8* string);
+    static int32 Length(const char8 *string);
 
     /**
      * @brief Return the pointer of the first char8 in string1 matched with one of chars in string2.
@@ -217,8 +192,7 @@ public:
      * @param[in] string2 contains characters which must be searched in string1.
      * @return a pointer to the first occurrence of a character in string2 contained in string1.
      */
-    static const char8* SearchChars(const char8* string1,
-                                    const char8* string2);
+    static const char8 *SearchChars(const char8 *string1, const char8 *string2);
 
     /**
      * @brief Return a pointer at the last char8 c founded in string.
@@ -226,8 +200,7 @@ public:
      * @param[in] c is the character to search.
      * @return the last occurrence of c in string.
      */
-    static const char8* SearchLastChar(const char8* string,
-                                       char8 c);
+    static const char8 *SearchLastChar(const char8 *string, char8 c);
 
     /**
      * @brief Return a pointer to the first occurrence of substring in string.
@@ -235,8 +208,7 @@ public:
      * @param[in] substring is the string which must be searched in string.
      * @returns a pointer to the first occurrence of substring in string.
      */
-    static const char8* SearchString(const char8* string,
-                                     const char8* substring);
+    static const char8 *SearchString(const char8 *string, const char8 *substring);
 
 };
 /*---------------------------------------------------------------------------*/
