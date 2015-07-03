@@ -22,7 +22,7 @@
  */
 
 #ifndef TIMEOUTTYPE_H_
-#define 		TIMEOUTTYPE_H_
+#define TIMEOUTTYPE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */

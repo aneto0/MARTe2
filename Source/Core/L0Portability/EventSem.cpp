@@ -2,7 +2,7 @@
  * @file EventSem.cpp
  * @brief Source file for class EventSem
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -38,41 +38,54 @@
 /*---------------------------------------------------------------------------*/
 
 EventSem::EventSem() {
+    semH = static_cast<HANDLE>(NULL);
 }
 
-EventSem::EventSem(const EventSem &h) {
-    HANDLE toCopy = h.Handle();
-    EventSemOS::DuplicateHandle(toCopy);
-    Init(toCopy);
+EventSem::EventSem(const EventSem &source) {
+    const HANDLE h = source.GetHandle();
+    EventSemOS::DuplicateHandle(h);
+    semH = h;
 }
 
+/*lint -save -e534*/
 EventSem::~EventSem() {
-    Close();
+    try {
+        Close();
+    }
+    catch(...){
+
+    }
+    semH = static_cast<HANDLE>(NULL);
 }
+/*lint -restore*/
 
 bool EventSem::Create() {
     return EventSemOS::Create(semH);
 }
 
 bool EventSem::Close(void) {
-    return EventSemOS::Close(semH);
+    bool ret = EventSemOS::Close(semH);
+    return ret;
 }
 
-bool EventSem::Wait(TimeoutType msecTimeout,
-                    Error &error) {
+bool EventSem::Wait(const TimeoutType &msecTimeout,
+                    Error &error) const {
     return EventSemOS::Wait(semH, msecTimeout, error);
 }
 
-bool EventSem::ResetWait(TimeoutType msecTimeout,
-                         Error &error) {
+bool EventSem::ResetWait(const TimeoutType &msecTimeout,
+                         Error &error) const {
     return EventSemOS::ResetWait(semH, msecTimeout, error);
 }
 
-bool EventSem::Post() {
+bool EventSem::Post() const {
     return EventSemOS::Post(semH);
 }
 
-bool EventSem::Reset() {
+bool EventSem::Reset() const {
     return EventSemOS::Reset(semH);
 }
 
+const HANDLE EventSem::GetHandle() const {
+    return semH;
+}
