@@ -24,11 +24,14 @@
 #ifndef GENERALDEFINITIONSOS_H_
 #define GENERALDEFINITIONSOS_H_
 
-
+#ifndef LINT
 #include <pthread.h>
 #include <termio.h>
+#endif
 
-
+#ifndef NULL
+#define NULL 0
+#endif
 
 #define TID pthread_t
 

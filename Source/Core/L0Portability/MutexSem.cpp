@@ -40,7 +40,7 @@
 /*---------------------------------------------------------------------------*/
 
 MutexSem::MutexSem(const MutexSem &h) {
-    HANDLE toCopy = h.Handle();
+    const HANDLE toCopy = h.Handle();
     MutexSemOS::DuplicateHandle(toCopy);
     isRecursive = false;
     Init(toCopy);

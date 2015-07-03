@@ -2,7 +2,7 @@
  * @file ProcessorOS.h
  * @brief Header file for class ProcessorOS
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,12 +22,13 @@
  */
 
 #ifndef PROCESSOROS_H_
-#define 		PROCESSOROS_H_
+#define PROCESSOROS_H_
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#ifndef LINT
 #include <unistd.h>
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */

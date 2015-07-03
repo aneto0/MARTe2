@@ -22,15 +22,18 @@
  */
 
 #ifndef HIGHRESOLUTIONTIMERCALIBRATOROS_H_
-#define 		HIGHRESOLUTIONTIMERCALIBRATOROS_H_
+#define HIGHRESOLUTIONTIMERCALIBRATOROS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
+#ifndef LINT
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */

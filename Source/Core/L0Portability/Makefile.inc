@@ -26,19 +26,20 @@
 
 OBJSX=  Atomic.x \
         Endianity.x \
-		HighResolutionTimer.x \
+	HighResolutionTimer.x \
         Memory.x \
         Processor.x \
         ProcessorType.x \
         Threads.x  \
         ThreadsDatabase.x \
         Sleep.x \
-		BasicConsole.x \
-		StringHelper.x \
-		ThreadInformation.x \
-		MutexSem.x \
-		EventSem.x \
-		MemoryStatisticsDatabase.x	
+	BasicConsole.x \
+	StringHelper.x \
+	ThreadInformation.x \
+	MutexSem.x \
+	EventSem.x \
+	SemCore.x \
+	MemoryStatisticsDatabase.x
 PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults

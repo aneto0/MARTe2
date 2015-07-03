@@ -22,12 +22,14 @@
  */
 
 #ifndef STRINGHELPEROS_H_
-#define 		STRINGHELPEROS_H_
+#define STRINGHELPEROS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#ifndef LINT
 #include <string.h>
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
