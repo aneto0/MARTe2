@@ -2,7 +2,7 @@
  * @file ProcessorType.h
  * @brief Header file for class ProcessorType
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -38,7 +38,7 @@ extern "C" {
  * @brief Get the default cpu.
  * @return a mask which defines the default cpu used.
  */
-uint32 ProcessorTypeGetDefaultCPUs();
+uint32 ProcessorTypeGetDefaultCPUs(void);
 
 /**
  * @brief Set the default cpu to use.
@@ -59,32 +59,25 @@ void ProcessorTypeSetDefaultCPUs(uint32 defaultMask);
  */
 class ProcessorType {
 public:
-    /** The processor mask */
-    uint32 processorMask;
-
     /** The default CPU mask. Initialised to zero.*/
     static uint32 defaultCPUs;
 
-public:
     friend uint32 ProcessorTypeGetDefaultCPUs();
     friend void ProcessorTypeSetDefaultCPUs(uint32 defaultMask);
 
-#if !defined (_CINT)
     /**
      * @brief Constructor from integer.
      *
      * @details The default is to run the tasks all CPUs but the first.
      * @param[in] cpuMask is the cpu mask.
      */
-    ProcessorType(const uint32 cpuMask = 0xFE);
+    ProcessorType(const uint32 cpuMask = 0xFEu);
 
     /**
      * @brief Constructor from another ProcessorType object
      * @param[in] pt is the object to be copied in this.
      */
     ProcessorType(const ProcessorType &pt);
-
-#endif
 
     /**
      * @brief Set the processor mask.
@@ -108,7 +101,7 @@ public:
      * @brief Assign operator with another ProcessorType.
      * @param[in] pt is the ProcessorType to copy in this.
      */
-    inline void operator=(const ProcessorType &pt);
+    inline ProcessorType& operator=(const ProcessorType &pt);
 
     /**
      * @brief or operator with integer.
@@ -127,6 +120,7 @@ public:
      * @param[in] pt is the Processor type which will be compared with this.
      * @return true if masks are equal.
      */
+    /*lint -e(1739) , operation int32 == ProcessorType will not be supported*/
     inline bool operator==(const ProcessorType &pt) const;
 
     /**
@@ -141,6 +135,7 @@ public:
      * @param[in] pt is the ProcessorType which will be compared with this.
      * @return true if masks are different.
      */
+    /*lint -e(1739) , operation int32 != ProcessorType will not be supported*/
     inline bool operator!=(const ProcessorType &pt) const;
 
     /**
@@ -149,6 +144,12 @@ public:
      * @return true if masks are different.
      */
     inline bool operator!=(const uint32 mask) const;
+
+    /**
+     * @brief Returns the currently set cpu mask.
+     * @return the cpu mask as an uint32.
+     */
+    inline uint32 GetProcessorMask() const;
 
     /**
      * @brief Get the default cpu mask.
@@ -161,114 +162,76 @@ public:
      * @param[in] mask defines the default cpu.
      */
     static inline void SetDefaultCPUs(const uint32 mask);
+
+private:
+    /** The processor mask */
+    uint32 processorMask;
 };
 
 /**
  * Declares that the number of CPUs is undefined or there is no interest
  * in specifying.
  */
-const ProcessorType PTUndefinedCPUs(0);
+const ProcessorType PTUndefinedCPUs(0u);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief Set the processor mask.
- * @param[in] mask is the cpu mask.
- */
 void ProcessorType::SetMask(const uint32 mask) {
     processorMask = mask;
 }
 
-/**
- * @brief Add a cpu to the mask.
- * @param[in] cpuNumber is the number of the cpu to activate.
- */
 void ProcessorType::AddCPU(const uint32 cpuNumber) {
-    processorMask |= (1 << (cpuNumber - 1));
+    uint32 cpuMask = 1u;
+    cpuMask = cpuMask << (cpuNumber - 1u);
+    processorMask |= cpuMask;
 }
 
-/**
- * @brief Assign operator with integer.
- * @param[in] cpuMask is the desired cpu mask.
- */
 void ProcessorType::operator=(const uint32 cpuMask) {
     processorMask = cpuMask;
 }
 
-/**
- * @brief Assign operator with another ProcessorType.
- * @param[in] pt is the ProcessorType to copy in this.
- */
-void ProcessorType::operator=(const ProcessorType &pt) {
-    processorMask = pt.processorMask;
+ProcessorType& ProcessorType::operator=(const ProcessorType &pt) {
+    if (this != &pt) {
+        processorMask = pt.processorMask;
+    }
+    return *this;
 }
 
-/**
- * @brief or operator with integer.
- * @param[in] cpuMask is the cpu mask which will be in or with this.
- */
 void ProcessorType::operator|=(const uint32 cpuMask) {
     processorMask |= cpuMask;
 }
 
-/**
- * @brief or operator with another ProcessorType object.
- * @param[in] pt is the ProcessorType which will be in or with this.
- */
 void ProcessorType::operator|=(const ProcessorType &pt) {
     processorMask |= pt.processorMask;
 }
 
-/**
- * @brief Compares this object with another ProcessorType.
- * @param[in] pt is the Processor type which will be compared with this.
- * @return true if masks are equal.
- */
 bool ProcessorType::operator==(const ProcessorType &pt) const {
     return processorMask == pt.processorMask;
 }
 
-/**
- * @brief Compares this cpu mask with an input mask.
- * @param[in] mask is the mask which will be compared with this cpu mask.
- * @return true if masks are equal. */
 bool ProcessorType::operator==(const uint32 mask) const {
     return processorMask == mask;
 }
 
-/**
- * @brief Compares this object with another ProcessorType.
- * @param[in] pt is the ProcessorType which will be compared with this.
- * @return true if masks are different.
- */
 bool ProcessorType::operator!=(const ProcessorType &pt) const {
     return processorMask != pt.processorMask;
 }
 
-/**
- * @brief Compares this cpu mask with an input mask.
- * @param[in] mask is the mask which will be compared with this cpu mask.
- * @return true if masks are different.
- */
 bool ProcessorType::operator!=(const uint32 mask) const {
     return processorMask != mask;
 }
 
-/**
- * @brief Get the default cpu mask.
- * @return the default cpu mask.
- */
 uint32 ProcessorType::GetDefaultCPUs() {
     return ProcessorTypeGetDefaultCPUs();
 }
 
-/**
- * @brief Set the default cpu mask.
- * @param[in] mask defines the default cpu.
- */
 void ProcessorType::SetDefaultCPUs(const uint32 mask) {
     ProcessorTypeSetDefaultCPUs(mask);
+}
+
+uint32 ProcessorType::GetProcessorMask() const {
+    return processorMask;
 }
 
 #endif /* PROCESSORTYPE_H_ */
