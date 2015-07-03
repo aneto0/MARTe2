@@ -2,7 +2,7 @@
  * @file ProcessorTypeTest.cpp
  * @brief Source file for class ProcessorTypeTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -49,10 +49,10 @@ bool ProcessorTypeTest::TestAssignmentOperator() {
 
     ProcessorType ptTest;
     ptTest = 0xFD;
-    result &= (ptTest.processorMask == 0xFD);
+    result &= (ptTest.GetProcessorMask() == 0xFD);
 
     ptTest = ptSecond;
-    result &= (ptTest.processorMask == ptSecond.processorMask);
+    result &= (ptTest.GetProcessorMask() == ptSecond.GetProcessorMask());
 
     return result;
 }
@@ -118,9 +118,9 @@ bool ProcessorTypeTest::TestConstructors() {
     ProcessorType ptFromMask(0xFC);      // Mask constructor
     ProcessorType ptFromPT(ptFromMask);  // Constructor from other PT
 
-    bool result = (ptDefault.processorMask == 0xFE);
-    result &= (ptFromMask.processorMask == 0xFC);
-    result &= (ptFromPT.processorMask == 0xFC);
+    bool result = (ptDefault.GetProcessorMask() == 0xFE);
+    result &= (ptFromMask.GetProcessorMask() == 0xFC);
+    result &= (ptFromPT.GetProcessorMask() == 0xFC);
 
     return result;
 }
