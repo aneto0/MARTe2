@@ -24,8 +24,9 @@
 #ifndef GENERALDEFINITIONSOS_H_
 #define GENERALDEFINITIONSOS_H_
 
-#ifndef LINT
+
 #include <pthread.h>
+#ifndef LINT
 #include <termio.h>
 #endif
 

@@ -145,37 +145,37 @@ public:
      * @brief Setter for the Execute flag.
      * @param[in] the Execute flag.
      */
-    inline void SetExecuteFlag (bool flag);
+    inline void SetExecuteFlag (const bool flag);
 
     /**
      * @brief Getter for the Execute flag.
      * @return the Execute flag.
      */
-    inline bool GetExecuteFlag (void);
+    inline bool GetExecuteFlag (void) const;
 
     /**
      * @brief Setter for the Read flag.
      * @param[in] the Read flag.
      */
-    inline void SetReadFlag (bool flag);
+    inline void SetReadFlag (const bool flag);
 
     /**
      * @brief Getter for the Read flag.
      * @return the Read flag.
      */
-    inline bool GetReadFlag (void);
+    inline bool GetReadFlag (void) const;
 
     /**
      * @brief Setter for the Write flag.
      * @param[in] the Write flag.
      */
-    inline void SetWriteFlag (bool flag);
+    inline void SetWriteFlag (const bool flag);
 
     /**
      * @brief Getter for the Write flag.
      * @return the Write flag.
      */
-    inline bool GetWriteFlag (void);
+    inline bool GetWriteFlag (void) const;
 };
 
 
@@ -189,33 +189,33 @@ MemoryTestAccessMode::MemoryTestAccessMode (void) {
     SetWriteFlag(false);
 }
 
-MemoryTestAccessMode::MemoryTestAccessMode (bool execute, bool read, bool write) {
+MemoryTestAccessMode::MemoryTestAccessMode (const bool execute, const bool read, const bool write) {
     SetExecuteFlag(execute);
     SetReadFlag(read);
     SetWriteFlag(write);
 }
 
-void MemoryTestAccessMode::SetExecuteFlag(bool flag) {
+void MemoryTestAccessMode::SetExecuteFlag(const bool flag) {
     executeFlag = flag;
 }
 
-bool MemoryTestAccessMode::GetExecuteFlag(void) {
+bool MemoryTestAccessMode::GetExecuteFlag(void) const {
     return executeFlag;
 }
 
-void MemoryTestAccessMode::SetReadFlag(bool flag) {
+void MemoryTestAccessMode::SetReadFlag(const bool flag) {
     readFlag = flag;
 }
 
-bool MemoryTestAccessMode::GetReadFlag(void) {
+bool MemoryTestAccessMode::GetReadFlag(void) const {
     return readFlag;
 }
 
-void MemoryTestAccessMode::SetWriteFlag(bool flag) {
+void MemoryTestAccessMode::SetWriteFlag(const bool flag) {
     writeFlag = flag;
 }
 
-bool MemoryTestAccessMode::GetWriteFlag(void) {
+bool MemoryTestAccessMode::GetWriteFlag(void) const {
     return writeFlag;
 }
 
@@ -294,7 +294,7 @@ public:
      * @param[in] tid The Thread id to be investigated.
      * @return false is MEMORY_STATISTICS is not defined, true if it is defined and in case of success.
      */
-    static bool AllocationStatistics(int32 &size, int32 &chunks, TID tid = (TID) 0xFFFFFFFF);
+    static bool AllocationStatistics(int32 &size, int32 &chunks, TID tid = (TID) 0xFFFFFFFFU);
 
     /**
      * @brief Gets the informations from the header of the memory area if MEMORY_STATISTICS is defined.

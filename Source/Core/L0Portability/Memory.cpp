@@ -59,7 +59,7 @@ struct MemoryInformation {
      * @details the tid attribute is filled with the id of the thread that calls this function.
      * @param[in] sizeArg is the size of the memory.
      */
-    void Init(uint32 sizeArg) {
+    void Init(const uint32 sizeArg) {
         size = sizeArg;
         tid = Threads::Id();
     }
@@ -67,36 +67,36 @@ struct MemoryInformation {
 };
 
 void *MemoryMalloc(uint32 size, MemoryAllocationFlag allocFlag) {
-    if (size == 0) {
-        return NULL;
-    }
+
     void *data = NULL;
 
+    if (size != 0U) {
+
 #ifdef MEMORY_STATISTICS
 
-    //add the memory information space
-    size += sizeof(MemoryInformation);
+        //add the memory information space
+        size += sizeof(MemoryInformation);
 
 #endif
 
-    data = MemoryOS::Malloc(size, allocFlag);
+        data = MemoryOS::Malloc(size, allocFlag);
 
 #ifdef MEMORY_STATISTICS
-    if (data != NULL) {
+        if (data != NULL) {
 
-        //add the header
-        MemoryInformation *header = (MemoryInformation*) data;
-        header->Init(size);
-        //return the beginning of the memory
-        header++;
-        data = (void *) header;
+            //add the header
+            MemoryInformation *header = static_cast<MemoryInformation*>data;
+            header->Init(size);
+            //return the beginning of the memory
+            header++;
+            data = static_cast<void *>header;
 
-        //add the information to the database
-        MemoryStatisticsDatabase::AddMemoryChunk(Threads::Id(), size);
+            //add the information to the database
+            MemoryStatisticsDatabase::AddMemoryChunk(Threads::Id(), size);
 
+        }
+#endif
     }
-#endif
-
     return data;
 
 }

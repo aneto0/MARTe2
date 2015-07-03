@@ -82,8 +82,7 @@ public:
      * @param[in,out] data is the pointer to the memory which must be reallocated.
      * @param[in] newSize is the desired new size for the memory portion.
      */
-    static void *Realloc(void *&data,
-                         uint32 newSize) {
+    static void *Realloc(void *&data, uint32 newSize) {
         return realloc(data, newSize);
     }
 
@@ -105,9 +104,7 @@ public:
      * @param[in] permMask define the process permissions.
      * @return a pointer to the shared memory created.
      */
-    static void *SharedAlloc(uint32 key,
-                             uint32 size,
-                             uint32 permMask) {
+    static void *SharedAlloc(uint32 key, uint32 size, uint32 permMask) {
         key_t keyid = (key_t) key;
         int32 shmid = shmget(keyid, size, IPC_CREAT | permMask);
         if (shmid == -1) {
@@ -159,9 +156,7 @@ public:
      * @param[in] size is the number of bytes to copy.
      * @return true if source, destination and destination after the copy are not NULL.
      */
-    static bool Copy(void* destination,
-                     const void* source,
-                     uint32 size) {
+    static bool Copy(void* destination, const void* source, uint32 size) {
         if (source == NULL || destination == NULL) {
             return false;
         }
@@ -177,9 +172,7 @@ public:
      * @param[in] size is the size to compare.
      * @return (0 if mem1 == mem2), (1 if mem1 < mem2), (2 if mem1 > mem2), (-1 if one of memory arguments is NULL).
      */
-    static int32 Compare(const void* mem1,
-                         const void* mem2,
-                         uint32 size) {
+    static int32 Compare(const void* mem1, const void* mem2, uint32 size) {
         if (mem1 == NULL || mem2 == NULL) {
             return -1;
         }
@@ -202,9 +195,7 @@ public:
      * @param[in] size is the number of bytes to check.
      * @return a pointer to the first occurence of c in mem, NULL if is not found or in case of mem==NULL.
      */
-    static const void* Search(const void* mem,
-                              int32 c,
-                              uint32 size) {
+    static const void* Search(const void* mem, int32 c, uint32 size) {
         if (mem == NULL) {
             return NULL;
         }
@@ -219,9 +210,7 @@ public:
      * @param[in] size is the number of bytes to copy.
      * @return true if source, destination and destination after the copy are not NULL.
      */
-    static bool Move(void* destination,
-                     const void* source,
-                     uint32 size) {
+    static bool Move(void* destination, const void* source, uint32 size) {
         if (source == NULL || destination == NULL) {
             return false;
         }
@@ -237,9 +226,7 @@ public:
      * @param[in] size is the number of bytes to set to c.
      * @return true if mem before and after the operation id not NULL.
      */
-    static bool Set(void* mem,
-                    int32 c,
-                    uint32 size) {
+    static bool Set(void* mem, int32 c, uint32 size) {
         if (mem == NULL) {
             return false;
         }
