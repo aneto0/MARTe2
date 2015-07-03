@@ -126,7 +126,7 @@ bool ProcessorTypeTest::TestConstructors() {
 bool ProcessorTypeTest::TestSetMask(uint32 mask) {
     ProcessorType test;
     test.SetMask(mask);
-    return test.processorMask == mask;
+    return (test.GetProcessorMask() == mask);
 }
 
 bool ProcessorTypeTest::TestAddCPU(uint32 cpuNumber1,
@@ -136,13 +136,13 @@ bool ProcessorTypeTest::TestAddCPU(uint32 cpuNumber1,
     test.AddCPU(cpuNumber1);
 
     uint32 save = 1 << (cpuNumber1 - 1);
-    if (test.processorMask != save) {
+    if (test.GetProcessorMask() != save) {
         return false;
     }
 
     test.AddCPU(cpuNumber2);
     save |= (1 << (cpuNumber2 - 1));
-    if (test.processorMask != save) {
+    if (test.GetProcessorMask() != save) {
         return false;
     }
 
@@ -152,7 +152,7 @@ bool ProcessorTypeTest::TestAddCPU(uint32 cpuNumber1,
     test.AddCPU(out);
 
     save|=0x1;
-    if (test.processorMask != save) {
+    if (test.GetProcessorMask() != save) {
         return false;
     }
 
@@ -161,7 +161,7 @@ bool ProcessorTypeTest::TestAddCPU(uint32 cpuNumber1,
 
     save|=0x80000000;
 
-    if (test.processorMask != save) {
+    if (test.GetProcessorMask() != save) {
         return false;
     }
 
