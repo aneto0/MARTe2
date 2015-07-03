@@ -47,9 +47,9 @@ EventSem::EventSem(const EventSem &source) {
     semH = h;
 }
 
-/*lint -save -e534*/
 EventSem::~EventSem() {
     try {
+        /*lint -e(534) , ignoring return value of function*/
         Close();
     }
     catch(...){
@@ -57,7 +57,6 @@ EventSem::~EventSem() {
     }
     semH = static_cast<HANDLE>(NULL);
 }
-/*lint -restore*/
 
 bool EventSem::Create() {
     return EventSemOS::Create(semH);
