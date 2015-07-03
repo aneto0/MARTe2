@@ -67,11 +67,25 @@
  */
 class MemoryAllocationFlag {
 private:
+    /* The memory allocation flag */
     uint8 memoryAllocationFlag;
 
 public:
+    /**
+     * @brief Default Constructor. It assumes MemoryStandardMemory.
+     */
+    inline MemoryAllocationFlag(void);
+
+    /**
+     * @brief Constructor from uint8.
+     * @param[in] the value of the flag.
+     */
     inline MemoryAllocationFlag(uint8 flag);
 
+    /**
+     * @brief Getter for memoryAllocationFlag
+     * @return memoryAllocationFlag.
+     */
     inline uint8 GetMemoryAllocationFlag (void);
 
 };
@@ -81,6 +95,10 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+MemoryAllocationFlag::MemoryAllocationFlag (void) {
+    memoryAllocationFlag = 0x00000000U;
+}
+
 MemoryAllocationFlag::MemoryAllocationFlag (uint8 flag) {
     memoryAllocationFlag = flag;
 }
@@ -89,7 +107,9 @@ uint8 MemoryAllocationFlag::GetMemoryAllocationFlag (void) {
     return memoryAllocationFlag;
 }
 
+/* is the default flag and imposes that the memory to be allocated is minor than 32Mb. */
 const MemoryAllocationFlag MAFStandardMemory(0x00000000U);
+/* allows to allocate more than 32Mb */
 const MemoryAllocationFlag MAFExtraMemory(0x00000001U);
 
 
@@ -101,21 +121,60 @@ const MemoryAllocationFlag MAFExtraMemory(0x00000001U);
  */
 class MemoryTestAccessMode {
 private:
+    /* the Execute flag */
     bool executeFlag;
+    /* the Read flag */
     bool readFlag;
+    /* the Write flag */
     bool writeFlag;
 
 public:
+    /**
+     * @brief Default Constructor. It assumes that all flags are false.
+     */
     inline MemoryTestAccessMode (void);
+    /**
+     * @brief Constructor from three booleans, one for flag.
+     * @param[in] the Execute flag.
+     * @param[in] the Read flag.
+     * @param[in] the Write flag.
+     */
     inline MemoryTestAccessMode (bool execute, bool read, bool write);
 
+    /**
+     * @brief Setter for the Execute flag.
+     * @param[in] the Execute flag.
+     */
     inline void SetExecuteFlag (bool flag);
+
+    /**
+     * @brief Getter for the Execute flag.
+     * @return the Execute flag.
+     */
     inline bool GetExecuteFlag (void);
 
+    /**
+     * @brief Setter for the Read flag.
+     * @param[in] the Read flag.
+     */
     inline void SetReadFlag (bool flag);
+
+    /**
+     * @brief Getter for the Read flag.
+     * @return the Read flag.
+     */
     inline bool GetReadFlag (void);
 
+    /**
+     * @brief Setter for the Write flag.
+     * @param[in] the Write flag.
+     */
     inline void SetWriteFlag (bool flag);
+
+    /**
+     * @brief Getter for the Write flag.
+     * @return the Write flag.
+     */
     inline bool GetWriteFlag (void);
 };
 
