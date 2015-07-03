@@ -181,7 +181,7 @@ char8 *MemoryStringDup(const char8 *s) {
     if (s == NULL) {
         return NULL;
     }
-    char8* sCopy = MemoryOS::StringDup(s);
+    char8 *sCopy = MemoryOS::StringDup(s);
 
 #endif
 

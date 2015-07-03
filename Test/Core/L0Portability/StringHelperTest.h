@@ -51,7 +51,7 @@ public:
      * @param[in] string .
      * @return true if the returned length of the string is correct.
      */
-    bool TestLength(const char8* string);
+    bool TestLength(const char8 *string);
 
     /**
      * @brief Tests the StringHelper::Compare function.
@@ -60,8 +60,8 @@ public:
      * @param[in] stringEqual is the second string that should be equal to the first.
      * @return true if successful, false otherwise.
      */
-    bool TestCompare(const char8* string,
-                     const char8* stringEqual);
+    bool TestCompare(const char8 *string,
+                     const char8 *stringEqual);
 
     /**
      * @brief Tests the StringHelper::CompareN function.
@@ -77,7 +77,7 @@ public:
      * @param[in] string is the string to copy.
      * @return true if successful, false otherwise.
      */
-    bool TestCopy(const char8* string);
+    bool TestCopy(const char8 *string);
 
     /**
      * @brief Tests the StringHelper::CopyN function.

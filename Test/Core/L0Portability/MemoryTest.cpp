@@ -176,7 +176,7 @@ bool MemoryTest::TestRealloc(uint32 size1,
 
 }
 
-bool MemoryTest::TestStringDup(const char8* s) {
+bool MemoryTest::TestStringDup(const char8 *s) {
 
     char* p = (char8*) MemoryStringDup(s);
 
@@ -419,8 +419,8 @@ bool MemoryTest::TestMove() {
 }
 
 bool MemoryTest::TestCompare() {
-    const char8* source = "Hello World";
-    const char8* test = "Hello W0000";
+    const char8 *source = "Hello World";
+    const char8 *test = "Hello W0000";
 
     uint32 sizeToCopy = 7;
 
@@ -460,7 +460,7 @@ bool MemoryTest::TestCompare() {
 bool MemoryTest::TestSet() {
 
     uint32 size = 10;
-    char8* buffPointer = (char8*) Memory::Malloc(size);
+    char8 *buffPointer = (char8*) Memory::Malloc(size);
 
     if (buffPointer == NULL) {
         return false;
@@ -474,7 +474,7 @@ bool MemoryTest::TestSet() {
         return false;
     }
 
-    char8* newBuffPointer = buffPointer + charSize;
+    char8 *newBuffPointer = buffPointer + charSize;
 
     //Set last 5 bytes to 'u'.
     myFavouriteChar = 'u';
@@ -513,7 +513,7 @@ bool MemoryTest::TestSet() {
 bool MemoryTest::TestSearch() {
 
     uint32 size = 10;
-    const char8* buffPointer = "Hello World";
+    const char8 *buffPointer = "Hello World";
 
     //Test the Search function.
     char8 myFavouriteChar = 'W';

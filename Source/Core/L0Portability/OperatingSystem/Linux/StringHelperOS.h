@@ -49,8 +49,7 @@ public:
     /**
      * @see StringHelper::Concatenate
      */
-    static char8* Concatenate(char8* destination,
-                              const char8* source) {
+    static char8 *Concatenate(char8 *destination, const char8 *source) {
 
         return strcat(destination, source);
     }
@@ -58,8 +57,8 @@ public:
     /**
      * @see StringHelper::ConcatenateN
      */
-    static char8* ConcatenateN(char8* destination,
-                               const char8* source,
+    static char8 *ConcatenateN(char8 *destination,
+                               const char8 *source,
                                uint32 size) {
 
         return strncat(destination, source, size);
@@ -68,7 +67,7 @@ public:
     /**
      * @see StringHelper::SearchChar
      */
-    static const char8* SearchChar(const char8* string,
+    static const char8 *SearchChar(const char8 *string,
                                    char8 c) {
 
         return strchr(string, c);
@@ -77,8 +76,8 @@ public:
     /**
      * @see StringHelper::Compare
      */
-    static int32 Compare(const char8* string1,
-                         const char8* string2) {
+    static int32 Compare(const char8 *string1,
+                         const char8 *string2) {
 
         int32 ret = strcmp(string1, string2);
         if (ret < 0) {
@@ -93,8 +92,8 @@ public:
     /**
      * @see StringHelper::CompareN
      */
-    static int32 CompareN(const char8* string1,
-                          const char8* string2,
+    static int32 CompareN(const char8 *string1,
+                          const char8 *string2,
                           uint32 size) {
 
         int32 ret = strncmp(string1, string2, size);
@@ -110,8 +109,8 @@ public:
     /**
      * @see StringHelper::Copy
      */
-    static bool Copy(char8* destination,
-                     const char8* source) {
+    static bool Copy(char8 *destination,
+                     const char8 *source) {
 
         return strcpy(destination, source) != NULL;
     }
@@ -119,8 +118,8 @@ public:
     /**
      * @see StringHelper::CopyN
      */
-    static bool CopyN(char8* destination,
-                      const char8* source,
+    static bool CopyN(char8 *destination,
+                      const char8 *source,
                       uint32 size) {
 
         return strncpy(destination, source, size) != NULL;
@@ -129,8 +128,8 @@ public:
     /**
      * @see StringHelper::SearchIndex
      */
-    static int32 SearchIndex(const char8* string1,
-                             const char8* string2) {
+    static int32 SearchIndex(const char8 *string1,
+                             const char8 *string2) {
 
         return (int32) (strcspn(string1, string2));
     }
@@ -138,7 +137,7 @@ public:
     /**
      * @see StringHelper::Length
      */
-    static int32 Length(const char8* string) {
+    static int32 Length(const char8 *string) {
 
         return (int32) (strlen(string));
     }
@@ -146,8 +145,8 @@ public:
     /**
      * @see StringHelper::SearchChars.
      */
-    static const char8* SearchChars(const char8* string1,
-                                    const char8* string2) {
+    static const char8 *SearchChars(const char8 *string1,
+                                    const char8 *string2) {
 
         return strpbrk(string1, string2);
     }
@@ -155,7 +154,7 @@ public:
     /**
      * @see StringHelper::SearchLastChar
      */
-    static const char8* SearchLastChar(const char8* string,
+    static const char8 *SearchLastChar(const char8 *string,
                                        char8 c) {
 
         return strrchr(string, c);
@@ -164,8 +163,8 @@ public:
     /**
      * @see StringHelper::SearchString
      */
-    static const char8* SearchString(const char8* string,
-                                     const char8* substring) {
+    static const char8 *SearchString(const char8 *string,
+                                     const char8 *substring) {
 
         return strstr(string, substring);
     }

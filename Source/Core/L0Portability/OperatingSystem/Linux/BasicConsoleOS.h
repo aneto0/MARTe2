@@ -115,7 +115,7 @@ public:
     static bool Write(BasicConsole &con,
                       const void* buffer,
                       uint32 &size) {
-        char8* buffString = (char8*) buffer;
+        char8 *buffString = (char8*) buffer;
         char8 nextRow = '\n';
         int32 n = 0;
         uint32 index = 0, start = 0;

@@ -143,7 +143,7 @@ public:
                       uint32 size) {
 
         //check if the memory is valid.
-        char8* addressPtr = (char8 *) address;
+        char8 *addressPtr = (char8 *) address;
         while (size > 0) {
             if (addressPtr == NULL) {
                 return false;

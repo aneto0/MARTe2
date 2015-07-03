@@ -119,7 +119,7 @@ bool ThreadsGetThreadInfoCopy(ThreadInformation &copy,
     return ThreadsOS::GetThreadInfoCopy(copy, n, tid);
 }
 
-TID ThreadsFindByName(const char8* name) {
+TID ThreadsFindByName(const char8 *name) {
     return ThreadsOS::FindByName(name);
 }
 
@@ -208,7 +208,7 @@ bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
 
 }
 
-TID Threads::FindByName(const char8* name) {
+TID Threads::FindByName(const char8 *name) {
     return ThreadsFindByName(name);
 }
 

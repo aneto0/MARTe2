@@ -40,7 +40,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool StringHelperTest::TestLength(const char8* string) {
+bool StringHelperTest::TestLength(const char8 *string) {
     //Calculate the length of the string.
     int32 tryLength = StringHelper::Length(string);
     int32 length = StringTestHelper::Size(string);
@@ -57,8 +57,8 @@ bool StringHelperTest::TestLength(const char8* string) {
 
 }
 
-bool StringHelperTest::TestCompare(const char8* string,
-                                   const char8* stringEqual) {
+bool StringHelperTest::TestCompare(const char8 *string,
+                                   const char8 *stringEqual) {
 
     //Check if strings are equal and if the result is correct.
     bool tryEqual = StringHelper::Compare(string, stringEqual) == 0;
@@ -68,8 +68,8 @@ bool StringHelperTest::TestCompare(const char8* string,
         return false;
     }
 
-    const char8* string1 = "HelloWorld";
-    const char8* string2 = "Hello";
+    const char8 *string1 = "HelloWorld";
+    const char8 *string2 = "Hello";
 
     //Check if it returns 1 since string2 is minor than string1.
     if (StringHelper::Compare(string2, string1) != 1) {
@@ -87,8 +87,8 @@ bool StringHelperTest::TestCompare(const char8* string,
 
 bool StringHelperTest::TestCompareN() {
 
-    const char8* string1 = "HelloWorld";
-    const char8* string2 = "HelloD";
+    const char8 *string1 = "HelloWorld";
+    const char8 *string2 = "HelloD";
 
     uint32 size = 5;
 
@@ -118,7 +118,7 @@ bool StringHelperTest::TestCompareN() {
             && StringHelper::CompareN(NULL, string2, size) == -1);
 }
 
-bool StringHelperTest::TestCopy(const char8* string) {
+bool StringHelperTest::TestCopy(const char8 *string) {
 
     //Copy string in the buffer.
     char8 buffer[32];
@@ -141,7 +141,7 @@ bool StringHelperTest::TestCopyN() {
     char8 buffer[32];
 
     //Test the copy function until sizeToCopy chars.
-    const char8* stringPartial = "HelloWorld";
+    const char8 *stringPartial = "HelloWorld";
     uint32 sizeToCopy = 5;
     if (!StringHelper::CopyN(buffer, stringPartial, sizeToCopy)) {
         return false;
@@ -252,7 +252,7 @@ bool StringHelperTest::TestConcatenateN() {
 }
 
 bool StringHelperTest::TestSearchIndex() {
-    const char8* buffer = "Hello World";
+    const char8 *buffer = "Hello World";
 
     const char8 *toSearch = "rdl";
 
@@ -272,8 +272,8 @@ bool StringHelperTest::TestSearchIndex() {
 }
 
 bool StringHelperTest::TestSearchChars() {
-    const char8* buffer = "Hello World";
-    const char8* retPointer;
+    const char8 *buffer = "Hello World";
+    const char8 *retPointer;
 
     const char8 *toSearch = "rdl";
 
@@ -308,8 +308,8 @@ bool StringHelperTest::TestSearchChars() {
 }
 
 bool StringHelperTest::TestSearchChar() {
-    const char8* buffer = "Hello World";
-    const char8* retPointer;
+    const char8 *buffer = "Hello World";
+    const char8 *retPointer;
 
     char8 toSearch = 'l';
 
@@ -342,8 +342,8 @@ bool StringHelperTest::TestSearchChar() {
 }
 
 bool StringHelperTest::TestSearchLastChar() {
-    const char8* buffer = "Hello World";
-    const char8* retPointer;
+    const char8 *buffer = "Hello World";
+    const char8 *retPointer;
 
     char8 toSearch = 'l';
 
@@ -366,8 +366,8 @@ bool StringHelperTest::TestSearchLastChar() {
 }
 
 bool StringHelperTest::TestSearchString() {
-    const char8* buffer = "Hello World";
-    const char8* retPointer;
+    const char8 *buffer = "Hello World";
+    const char8 *retPointer;
 
     const char8 *toSearch = "orl";
 

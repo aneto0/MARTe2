@@ -62,7 +62,7 @@ void DummyFunction(ThreadsTest &tt) {
     tt.exitCondition++;
 }
 
-bool ThreadsTest::TestBeginThread(const char8* name,
+bool ThreadsTest::TestBeginThread(const char8 *name,
                                   uint32 stackSize,
                                   uint32 nOfThreads) {
 
@@ -584,7 +584,7 @@ bool ThreadsTest::TestGetCPUs() {
     return retValue;
 }
 
-bool ThreadsTest::TestName(const char8* name,
+bool ThreadsTest::TestName(const char8 *name,
                            uint32 nOfThreads) {
 
     for (uint32 i = 0; i < nOfThreads; i++) {
@@ -859,7 +859,7 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
 }
 
 bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
-                                        const char8* name) {
+                                        const char8 *name) {
 
     uint32 i = 0;
 

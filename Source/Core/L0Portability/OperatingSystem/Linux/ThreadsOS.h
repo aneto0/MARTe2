@@ -250,7 +250,7 @@ public:
     static TID BeginThread(ThreadFunctionType function,
                            void *parameters,
                            uint32 stacksize,
-                           const char8* name,
+                           const char8 *name,
                            uint32 exceptionHandlerBehaviour,
                            ProcessorType runOnCPUs) {
 
@@ -287,7 +287,7 @@ public:
      * @param[in] threadId is the thread identifier.
      * @return the name of the specified thread.
      */
-    static const char8* Name(TID threadId) {
+    static const char8 *Name(TID threadId) {
         ThreadsDatabase::Lock();
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
         ThreadsDatabase::UnLock();
@@ -352,7 +352,7 @@ public:
      * @param[in] name is the thread name.
      * @return the id of the first found thread with the specified name.
      */
-    static TID FindByName(const char8* name){
+    static TID FindByName(const char8 *name){
         return ThreadsDatabase::Find(name);
     }
 

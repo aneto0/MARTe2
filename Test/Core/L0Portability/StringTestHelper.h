@@ -47,7 +47,7 @@ public:
      * @param[in] string is the string in input.
      * @return the string length
      */
-    inline static uint32 Size(const char8* string) {
+    inline static uint32 Size(const char8 *string) {
         uint32 i = 0;
         if (string == NULL) {
             return -1;
@@ -65,7 +65,7 @@ public:
      * @param[in] string2 is the second string.
      * @return true if the strings are equal, false otherwise.
      */
-    inline static bool Compare(const char8* string1, const char8* string2) {
+    inline static bool Compare(const char8 *string1, const char8 *string2) {
         int32 i = 0;
         while (1) {
             if (string1[i] != string2[i]) {
@@ -88,7 +88,7 @@ public:
      * @param[out] result is the concatenated string.
      * @return true if successful, false otherwise.
      */
-    inline static bool Append(const char8* string1, const char8* string2, char8* result) {
+    inline static bool Append(const char8 *string1, const char8 *string2, char8 *result) {
         int32 i = 0;
         int32 j = 0;
         while (1) {

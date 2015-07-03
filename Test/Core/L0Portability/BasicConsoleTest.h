@@ -76,7 +76,7 @@ public:
      * @param[in] padding is the difference between the size that we want to pass to the write function and the real string size.
      * @return true if the size returned is the real string size.
      */
-    bool TestWrite(const char8* string,
+    bool TestWrite(const char8 *string,
                    int32 padding);
 
     /**
@@ -84,7 +84,7 @@ public:
      * @param[in] stringArg is the string to match with the read string.
      * @return true if the read string is equal to the passed argument.
      */
-    bool TestRead(const char8* stringArg);
+    bool TestRead(const char8 *stringArg);
 
     /**
      * @brief Tests the behavior of the paging property.

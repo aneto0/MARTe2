@@ -48,7 +48,7 @@ bool BasicConsoleTest::TestOpen(ConsoleOpeningMode openingMode) {
 }
 
 //write the string passed by argument
-bool BasicConsoleTestWrite(const char8* string,
+bool BasicConsoleTestWrite(const char8 *string,
                            int32 padding,
                            BasicConsole &myConsole) {
 
@@ -84,7 +84,7 @@ bool BasicConsoleTestWrite(const char8* string,
 }
 
 //write the string passed by argument
-bool BasicConsoleTest::TestWrite(const char8* string,
+bool BasicConsoleTest::TestWrite(const char8 *string,
                                  int32 padding) {
     BasicConsole myConsole(ConsoleDefault, BasicConsoleTest::N_ROWS, BasicConsoleTest::N_COLUMNS);
     return BasicConsoleTestWrite(string, padding, myConsole);
@@ -92,7 +92,7 @@ bool BasicConsoleTest::TestWrite(const char8* string,
 }
 
 //compare the read string with the string passed by argument
-bool BasicConsoleTestRead(const char8* stringArg,
+bool BasicConsoleTestRead(const char8 *stringArg,
                           BasicConsole &myConsole) {
 
     char8 string[BasicConsoleTest::N_COLUMNS];
@@ -103,7 +103,7 @@ bool BasicConsoleTestRead(const char8* stringArg,
     if ((stringSize = StringTestHelper::Size(stringArg)) < 0) {
         return false;
     }
-    const char8* prefix = "\nPut: ";
+    const char8 *prefix = "\nPut: ";
     //define the request to print
     StringTestHelper::Append((char8*) prefix, stringArg, result);
 
@@ -137,7 +137,7 @@ bool BasicConsoleTestRead(const char8* stringArg,
 }
 
 //compare the read string with the string passed by argument
-bool BasicConsoleTest::TestRead(const char8* stringArg) {
+bool BasicConsoleTest::TestRead(const char8 *stringArg) {
     BasicConsole myConsole(ConsoleDefault, BasicConsoleTest::N_ROWS, BasicConsoleTest::N_COLUMNS);
     return BasicConsoleTestRead(stringArg, myConsole);
 
@@ -202,7 +202,7 @@ bool BasicConsoleTestPerfChar(BasicConsole &myConsole) {
      return false;
      }*/
 
-    const char8* request = "press any key\n";
+    const char8 *request = "press any key\n";
     //return true if the size of the read string is one as aspected.
     return BasicConsoleTestRead((char8*) request, myConsole);
 }
