@@ -2,7 +2,7 @@
  * @file HighResolutionTimerA.h
  * @brief Header file for class HighResolutionTimerA
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef HIGHRESOLUTIONTIMERA_H_
-#define 		HIGHRESOLUTIONTIMERA_H_
+#define HIGHRESOLUTIONTIMERA_H_
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -47,15 +46,14 @@ public:
      * @return number of cpu ticks in a 32 bit integer.
      */
     static inline uint32 Read32() {
-        uint64 perf;
+        volatile uint64 perf;
         uint32 *pperf = (uint32 *) &perf;
         asm(
                 "\n"
                 "        rdtsc        \n"
                 : "=a"(pperf[0]) , "=d"(pperf[1])
-                :
-                : "eax","edx"
         );
+
         return (uint32) perf;
     }
 

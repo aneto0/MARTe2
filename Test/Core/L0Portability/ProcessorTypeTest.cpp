@@ -2,7 +2,7 @@
  * @file ProcessorTypeTest.cpp
  * @brief Source file for class ProcessorTypeTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,6 +31,7 @@
 
 #include "ProcessorTypeTest.h"
 #include "GeneralDefinitions.h"
+#include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,9 +40,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-
-
 
 bool ProcessorTypeTest::TestAssignmentOperator() {
 
@@ -123,4 +121,49 @@ bool ProcessorTypeTest::TestConstructors() {
     result &= (ptFromPT.processorMask == 0xFC);
 
     return result;
+}
+
+bool ProcessorTypeTest::TestSetMask(uint32 mask) {
+    ProcessorType test;
+    test.SetMask(mask);
+    return test.processorMask == mask;
+}
+
+bool ProcessorTypeTest::TestAddCPU(uint32 cpuNumber1,
+                                   uint32 cpuNumber2) {
+    ProcessorType test;
+    test.SetMask(0);
+    test.AddCPU(cpuNumber1);
+
+    uint32 save = 1 << (cpuNumber1 - 1);
+    if (test.processorMask != save) {
+        return false;
+    }
+
+    test.AddCPU(cpuNumber2);
+    save |= (1 << (cpuNumber2 - 1));
+    if (test.processorMask != save) {
+        return false;
+    }
+
+    //the maximum supported is 32 cpu.
+    //if there is an overload it considers the rest.
+    uint32 out = 33;
+    test.AddCPU(out);
+
+    save|=0x1;
+    if (test.processorMask != save) {
+        return false;
+    }
+
+    //0 is the same of 32.
+    test.AddCPU(0);
+
+    save|=0x80000000;
+
+    if (test.processorMask != save) {
+        return false;
+    }
+
+    return true;
 }
