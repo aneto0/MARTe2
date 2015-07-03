@@ -48,7 +48,7 @@ extern "C" {
 TID ThreadsBeginThread(ThreadFunctionType function,
                        void *parameters = NULL,
                        uint32 stacksize = THREADS_DEFAULT_STACKSIZE,
-                       const char *name = NULL,
+                       const char8 *name = NULL,
                        uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
                        ProcessorType runOnCPUs = PTUndefinedCPUs);
 
@@ -75,7 +75,7 @@ bool ThreadsIsAlive(TID tid);
 /**
  * @see Threads::Name.
  */
-const char *ThreadsName(TID tid);
+const char8 *ThreadsName(TID tid);
 
 /**
  * @see Threads::GetCPUs.
@@ -136,7 +136,7 @@ bool ThreadsGetThreadInfoCopy(ThreadInformation &copy,
 /**
  * @see Threads::FindByName
  */
-TID ThreadsFindByName(const char* name);
+TID ThreadsFindByName(const char8* name);
 
 }
 
@@ -229,7 +229,7 @@ public:
     static TID BeginThread(ThreadFunctionType function,
                            void *parameters = NULL,
                            uint32 stacksize = THREADS_DEFAULT_STACKSIZE,
-                           const char *name = NULL,
+                           const char8 *name = NULL,
                            uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
                            ProcessorType runOnCPUs = PTUndefinedCPUs);
 
@@ -259,7 +259,7 @@ public:
      * @param[in] tid is the id of the thread,
      * @return the name of the thread with tid as id.
      */
-    static const char *Name(TID tid);
+    static const char8 *Name(TID tid);
 
     /**
      * @brief Returns the task state.
@@ -331,7 +331,7 @@ public:
      * @param[in] name is the thread name.
      * @return the id of the first found thread with the specified name.
      */
-    static TID FindByName(const char* name);
+    static TID FindByName(const char8* name);
 
 };
 

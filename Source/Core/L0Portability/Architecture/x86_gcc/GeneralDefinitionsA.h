@@ -2,7 +2,7 @@
  * @file GeneralDefinitionsA.h
  * @brief Header file for class GeneralDefinitionsA
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef GENERALDEFINITIONSA_H_
-#define 		GENERALDEFINITIONSA_H_
+#define GENERALDEFINITIONSA_H_
 
 /** 64 Bit unsigned integer. */
 typedef unsigned long long uint64;
@@ -42,6 +42,14 @@ typedef signed short int16;
 typedef unsigned char uint8;
 /** 8 Bit signed integer. */
 typedef signed char int8;
+
+/** IEEE 754 single precision float */
+typedef float float32;
+/** IEEE 754 double precision float */
+typedef double float64;
+
+/** 8 Bit character */
+typedef char char8;
 
 /** A tool to find indexes of structures fields.
  1024 has been used to avoid alignment problems. */

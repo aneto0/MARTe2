@@ -2,7 +2,7 @@
  * @file HighResolutionTimerTest.h
  * @brief Header file for class HighResolutionTimerTest
  * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -57,7 +57,7 @@ public:
      * @param[in] sleepTime is the time to sleep.
      * @return true if the measured time is the same of the sleep time less than a tolerance, false otherwise.
      */
-    bool TestCounter(double sleepTime);
+    bool TestCounter(float64 sleepTime);
 
 
     /**

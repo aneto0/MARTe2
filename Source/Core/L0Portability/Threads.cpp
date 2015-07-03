@@ -35,7 +35,7 @@
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,ThreadsOS.h)
 
 TID ThreadsBeginThread(ThreadFunctionType function, void *parameters,
-        uint32 stacksize, const char *name,
+        uint32 stacksize, const char8 *name,
         uint32 exceptionHandlerBehaviour,
         ProcessorType runOnCPUs) {
 
@@ -95,7 +95,7 @@ void ThreadsEndThread() {
     ThreadsOS::EndThread();
 }
 
-const char *ThreadsName(TID threadId) {
+const char8 *ThreadsName(TID threadId) {
     return ThreadsOS::Name(threadId);
 }
 
@@ -119,7 +119,7 @@ bool ThreadsGetThreadInfoCopy(ThreadInformation &copy,
     return ThreadsOS::GetThreadInfoCopy(copy, n, tid);
 }
 
-TID ThreadsFindByName(const char* name) {
+TID ThreadsFindByName(const char8* name) {
     return ThreadsOS::FindByName(name);
 }
 
@@ -148,7 +148,7 @@ void Threads::EndThread() {
 TID Threads::BeginThread(ThreadFunctionType function,
                          void *parameters,
                          uint32 stacksize,
-                         const char *name,
+                         const char8 *name,
                          uint32 exceptionHandlerBehaviour,
                          ProcessorType runOnCPUs) {
     return ThreadsBeginThread(function, parameters, stacksize, name, exceptionHandlerBehaviour, runOnCPUs);
@@ -166,7 +166,7 @@ bool Threads::IsAlive(TID tid) {
     return ThreadsIsAlive(tid);
 }
 
-const char *Threads::Name(TID tid) {
+const char8 *Threads::Name(TID tid) {
     return ThreadsName(tid);
 }
 
@@ -208,7 +208,7 @@ bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
 
 }
 
-TID Threads::FindByName(const char* name) {
+TID Threads::FindByName(const char8* name) {
     return ThreadsFindByName(name);
 }
 

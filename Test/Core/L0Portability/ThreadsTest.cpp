@@ -45,7 +45,7 @@
 ThreadsTest::ThreadsTest() {
     exitCondition = 0;
     tidTest = 0;
-    retValue = True;
+    retValue = true;
 }
 
 void DummyFunction(ThreadsTest &tt) {
@@ -62,7 +62,7 @@ void DummyFunction(ThreadsTest &tt) {
     tt.exitCondition++;
 }
 
-bool ThreadsTest::TestBeginThread(const char* name,
+bool ThreadsTest::TestBeginThread(const char8* name,
                                   uint32 stackSize,
                                   uint32 nOfThreads) {
 
@@ -79,7 +79,7 @@ bool ThreadsTest::TestBeginThread(const char* name,
         while (exitCondition < 1) {
             if (j++ > 100) {
                 Threads::Kill(tid);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
 
@@ -93,7 +93,7 @@ bool ThreadsTest::TestBeginThread(const char* name,
         while (exitCondition < 3) {
             if (j++ > 100) {
                 Threads::Kill(tid);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
 
@@ -113,7 +113,7 @@ bool ThreadsTest::TestBeginThread(const char* name,
     while (exitCondition < 1) {
         if (j++ > 100) {
             Threads::Kill(tid);
-            return False;
+            return false;
         }
         SleepSec(10e-3);
 
@@ -127,7 +127,7 @@ bool ThreadsTest::TestBeginThread(const char* name,
     while (exitCondition < 3) {
         if (j++ > 100) {
             Threads::Kill(tid);
-            return False;
+            return false;
         }
         SleepSec(10e-3);
 
@@ -167,7 +167,7 @@ bool ThreadsTest::TestEndThread(uint32 nOfThreads) {
         while (exitCondition < 1) {
             if (j++ > 100) {
                 Threads::Kill(tid);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
 
@@ -179,7 +179,7 @@ bool ThreadsTest::TestEndThread(uint32 nOfThreads) {
         }
 
         if (exitCondition != 1) {
-            return False;
+            return false;
         }
 
     }
@@ -196,7 +196,7 @@ bool ThreadsTest::TestEndThread(uint32 nOfThreads) {
         while (exitCondition < 0) {
             if (j++ > 100) {
                 Threads::Kill(tid);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
 
@@ -208,12 +208,12 @@ bool ThreadsTest::TestEndThread(uint32 nOfThreads) {
         }
 
         if (exitCondition != 1) {
-            return False;
+            return false;
         }
 
     }
 
-    return True;
+    return true;
 
 }
 
@@ -232,7 +232,7 @@ bool ThreadsTest::TestIsAlive(uint32 nOfThreads) {
         while (exitCondition < 1) {
             if (j++ > 100) {
                 Threads::Kill(tid);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
 
@@ -240,7 +240,7 @@ bool ThreadsTest::TestIsAlive(uint32 nOfThreads) {
 
         //checks if it is alive
         if (!Threads::IsAlive(tid)) {
-            retValue = False;
+            retValue = false;
         }
 
         //allows the thread to exit
@@ -251,13 +251,13 @@ bool ThreadsTest::TestIsAlive(uint32 nOfThreads) {
         while (exitCondition < 3) {
             if (j++ > 100) {
                 Threads::Kill(tid);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
 
         }
         if (!retValue) {
-            return False;
+            return false;
         }
 
     }
@@ -277,7 +277,7 @@ bool ThreadsTest::TestIsAlive(uint32 nOfThreads) {
         while (exitCondition < 1) {
             if (j++ > 100) {
                 Threads::Kill(tid);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
 
@@ -287,7 +287,7 @@ bool ThreadsTest::TestIsAlive(uint32 nOfThreads) {
 
         //checks if it is alive
         if (Threads::IsAlive(tid)) {
-            retValue = False;
+            retValue = false;
         }
 
         //allows the thread to exit if the thread is still alive
@@ -298,14 +298,14 @@ bool ThreadsTest::TestIsAlive(uint32 nOfThreads) {
         while (exitCondition < 3 && !retValue) {
             if (j++ > 100) {
                 Threads::Kill(tid);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
 
         }
 
         if (!retValue) {
-            return False;
+            return false;
         }
 
     }
@@ -317,7 +317,7 @@ bool ThreadsTest::TestKill(uint32 nOfThreads) {
 
     //try to kill an invalid thread
     if (Threads::Kill((TID) 0)) {
-        return False;
+        return false;
     }
 
     for (uint32 i = 0; i < nOfThreads; i++) {
@@ -331,7 +331,7 @@ bool ThreadsTest::TestKill(uint32 nOfThreads) {
         while (exitCondition < 1) {
             if (j++ > 100) {
                 Threads::Kill(tid);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
 
@@ -340,25 +340,25 @@ bool ThreadsTest::TestKill(uint32 nOfThreads) {
         //kills the thread
 
         if (!Threads::Kill(tid)) {
-            return False;
+            return false;
         }
         SleepSec(1e-3);
 
         //try to kill again the same thread
         if (Threads::Kill(tid)) {
-            return False;
+            return false;
         }
 
         //error if the thread is still alive
         if (Threads::IsAlive(tid)) {
             exitCondition++;
             SleepSec(10e-3);
-            return False;
+            return false;
         }
 
     }
 
-    return True;
+    return true;
 }
 
 bool PriorityTestFunction(ThreadsTest &t) {
@@ -370,7 +370,7 @@ bool PriorityTestFunction(ThreadsTest &t) {
     PriorityClassType allPrioClassTypes[] =
             { PRIORITY_CLASS_UNKNOWN, PRIORITY_CLASS_IDLE, PRIORITY_CLASS_NORMAL, PRIORITY_CLASS_HIGH, PRIORITY_CLASS_REAL_TIME };
 
-    bool goOn = True;
+    bool goOn = true;
 
     //Note: The PRIORITY_UNKNOWN cannot be set. It is returned only in case of errors.
 
@@ -388,7 +388,7 @@ bool PriorityTestFunction(ThreadsTest &t) {
 
                 if (n++ > 100) {
                     Threads::Kill(tid);
-                    return False;
+                    return false;
                 }
                 SleepSec(10e-3);
             }
@@ -399,11 +399,11 @@ bool PriorityTestFunction(ThreadsTest &t) {
 
             //gets priority level and class
             if (Threads::GetPriorityClass(tid) != allPrioClassTypes[i]) {
-                goOn = False;
+                goOn = false;
             }
 
             if (Threads::GetPriorityLevel(tid) != allPrioLevelTypes[j]) {
-                goOn = False;
+                goOn = false;
             }
 
             //end the thread
@@ -413,14 +413,14 @@ bool PriorityTestFunction(ThreadsTest &t) {
             while (t.exitCondition < 3) {
                 if (n++ > 100) {
                     Threads::Kill(tid);
-                    return False;
+                    return false;
                 }
                 SleepSec(10e-3);
 
             }
 
             if (!goOn) {
-                return False;
+                return false;
             }
         }
 
@@ -428,17 +428,17 @@ bool PriorityTestFunction(ThreadsTest &t) {
 
     TID fakeTid = (TID) 0;
     if (Threads::GetPriorityClass(fakeTid) != PRIORITY_CLASS_UNKNOWN || Threads::GetPriorityLevel(fakeTid) != PRIORITY_UNKNOWN) {
-        return False;
+        return false;
     }
 
-    return True;
+    return true;
 }
 
 bool ThreadsTest::TestPriorityLevel() {
 
     Threads::SetPriorityLevel((TID) -1, PRIORITY_HIGHEST);
     if (Threads::GetPriorityLevel((TID) -1) != PRIORITY_UNKNOWN) {
-        return False;
+        return false;
     }
 
     return PriorityTestFunction(*this);
@@ -449,7 +449,7 @@ bool ThreadsTest::TestPriorityClass() {
 
     Threads::SetPriorityClass((TID) -1, PRIORITY_CLASS_HIGH);
     if (Threads::GetPriorityClass((TID) -1) != PRIORITY_CLASS_UNKNOWN) {
-        return False;
+        return false;
     }
 
     return PriorityTestFunction(*this);
@@ -464,16 +464,16 @@ bool ThreadsTest::TestGetState() {
 
         if (j++ > 100) {
             Threads::Kill(tid);
-            return False;
+            return false;
         }
         SleepSec(10e-3);
     }
 
-    bool ret = True;
+    bool ret = true;
 
     //in linux and windows the thread state function returns always unknown
     if (Threads::GetState(tid) != STATE_UNKNOWN) {
-        ret = False;
+        ret = false;
     }
 
     //allows the thread to exit
@@ -482,7 +482,7 @@ bool ThreadsTest::TestGetState() {
     while (exitCondition < 3) {
         if (j++ > 100) {
             Threads::Kill(tid);
-            return False;
+            return false;
         }
         SleepSec(10e-3);
 
@@ -493,7 +493,7 @@ bool ThreadsTest::TestGetState() {
 
 void TestIdFunction(ThreadsTest &tt) {
     if (Threads::Id() != tt.tidTest) {
-        tt.retValue = False;
+        tt.retValue = false;
     }
 
     tt.exitCondition++;
@@ -512,17 +512,17 @@ bool ThreadsTest::TestId(uint32 nOfThreads) {
 
             if (j++ > 100) {
                 Threads::Kill(tidTest);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
         }
 
         if (!retValue) {
-            return False;
+            return false;
         }
     }
 
-    return True;
+    return true;
 
 }
 
@@ -536,7 +536,7 @@ bool ThreadsTest::TestGetCPUs() {
 
         if (j++ > 100) {
             Threads::Kill(tidTest);
-            return False;
+            return false;
         }
         SleepSec(10e-3);
     }
@@ -555,13 +555,13 @@ bool ThreadsTest::TestGetCPUs() {
 
             if (j++ > 100) {
                 Threads::Kill(tidTest);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
         }
 
         if (Threads::GetCPUs(tid) != i) {
-            retValue = False;
+            retValue = false;
         }
 
         j = 0;
@@ -570,21 +570,21 @@ bool ThreadsTest::TestGetCPUs() {
         while (exitCondition < 3) {
             if (j++ > 100) {
                 Threads::Kill(tid);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
 
         }
 
-        if (retValue == False) {
-            return False;
+        if (retValue == false) {
+            return false;
         }
     }
 
     return retValue;
 }
 
-bool ThreadsTest::TestName(const char* name,
+bool ThreadsTest::TestName(const char8* name,
                            uint32 nOfThreads) {
 
     for (uint32 i = 0; i < nOfThreads; i++) {
@@ -596,18 +596,18 @@ bool ThreadsTest::TestName(const char* name,
 
             if (j++ > 100) {
                 Threads::Kill(tidTest);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
         }
 
         if (Threads::Name(tid) == NULL) {
-            retValue = False;
+            retValue = false;
         }
         else {
 
             if (StringHelper::Compare(name, Threads::Name(tid)) != 0) {
-                retValue = False;
+                retValue = false;
             }
 
         }
@@ -617,13 +617,13 @@ bool ThreadsTest::TestName(const char* name,
         while (exitCondition < 3) {
             if (j++ > 100) {
                 Threads::Kill(tid);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
 
         }
         if (!retValue) {
-            retValue = True;
+            retValue = true;
         }
 
     }
@@ -637,13 +637,13 @@ bool ThreadsTest::TestName(const char* name,
 
         if (j++ > 100) {
             Threads::Kill(tidTest);
-            return False;
+            return false;
         }
         SleepSec(10e-3);
     }
     if (StringHelper::Compare(Threads::Name(tid), "Unknown") != 0) {
 
-        retValue = False;
+        retValue = false;
     }
 
     exitCondition++;
@@ -652,7 +652,7 @@ bool ThreadsTest::TestName(const char* name,
     while (exitCondition < 3) {
         if (j++ > 100) {
             Threads::Kill(tid);
-            return False;
+            return false;
         }
         SleepSec(10e-3);
 
@@ -676,7 +676,7 @@ void WaitFunction(ThreadsTest &tt) {
 bool ThreadsTest::TestNumberOfThreads(uint32 nOfThreads) {
 
     if (Threads::NumberOfThreads() != 0) {
-        return False;
+        return false;
     }
 
     for (uint32 i = 0; i < nOfThreads; i++) {
@@ -690,14 +690,14 @@ bool ThreadsTest::TestNumberOfThreads(uint32 nOfThreads) {
         if (j++ > 10 * nOfThreads) {
             exitCondition = -1;
             SleepSec(1.0);
-            return False;
+            return false;
         }
         SleepSec(10e-3);
     }
 
     //check
     if (Threads::NumberOfThreads() != nOfThreads) {
-        retValue = False;
+        retValue = false;
     }
     exitCondition = -1;
 
@@ -705,7 +705,7 @@ bool ThreadsTest::TestNumberOfThreads(uint32 nOfThreads) {
     j = 0;
     while ((uint32) exitCondition > (-nOfThreads - 1)) {
         if (j++ > 10 * nOfThreads) {
-            return False;
+            return false;
         }
         SleepSec(10e-3);
     }
@@ -727,14 +727,14 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
             if (j++ > 10 * nOfThreads) {
                 exitCondition = -1;
                 SleepSec(1.0);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
         }
 
         //check
         if (Threads::FindByIndex(i) != tid) {
-            retValue = False;
+            retValue = false;
             i++;
             break;
         }
@@ -747,13 +747,13 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
     uint32 j = 0;
     while ((uint32) exitCondition > (-i - 1)) {
         if (j++ > 10 * nOfThreads) {
-            return False;
+            return false;
         }
         SleepSec(10e-3);
     }
 
     if (!retValue) {
-        return False;
+        return false;
     }
 
 
@@ -788,7 +788,7 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
                 if (j++ > 10 * nOfThreads) {
                     exitCondition = -1;
                     SleepSec(1.0);
-                    return False;
+                    return false;
                 }
                 SleepSec(10e-3);
             }
@@ -813,14 +813,14 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
             if (j++ > 10 * nOfThreads) {
                 exitCondition = -1;
                 SleepSec(1.0);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
         }
 
         //the next position is at the end but there are THREADS_DATABASE_GRANULARITY - 1 threads!
         if (Threads::FindByIndex(THREADS_DATABASE_GRANULARITY - 2) != tid) {
-            retValue = False;
+            retValue = false;
         }
 
         tid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this);
@@ -832,14 +832,14 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
             if (j++ > 10 * nOfThreads) {
                 exitCondition = -1;
                 SleepSec(1.0);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
         }
 
         //the next position is at the beginning!
         if (Threads::FindByIndex(0) != tid) {
-            retValue = False;
+            retValue = false;
         }
 
         exitCondition = -1;
@@ -848,7 +848,7 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
         j = 0;
         while ((uint32) exitCondition > (-i - 1)) {
             if (j++ > 10 * nOfThreads) {
-                return False;
+                return false;
             }
             SleepSec(10e-3);
         }
@@ -859,7 +859,7 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
 }
 
 bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
-                                        const char* name) {
+                                        const char8* name) {
 
     uint32 i = 0;
 
@@ -876,30 +876,30 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
             if (j++ > 10 * nOfThreads) {
                 exitCondition = -1;
                 SleepSec(1.0);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
         }
 
         if (!Threads::GetThreadInfoCopy(ti, -1, tid)) {
-            retValue = False;
+            retValue = false;
         }
 
         if (StringHelper::Compare(name, ti.ThreadName()) != 0) {
-            retValue = False;
+            retValue = false;
         }
 
         if (ti.threadId != tid) {
-            retValue = False;
+            retValue = false;
         }
 
         //by default the priority is normal
         if (ti.priorityClass != PRIORITY_CLASS_NORMAL) {
-            retValue = False;
+            retValue = false;
         }
 
         if (ti.priorityLevel != PRIORITY_NORMAL) {
-            retValue = False;
+            retValue = false;
         }
 
         Threads::SetPriorityLevel(tid, PRIORITY_HIGHEST);
@@ -909,38 +909,38 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
         Threads::GetThreadInfoCopy(ti, -1, tid);
 
         if (ti.priorityClass != PRIORITY_CLASS_HIGH) {
-            retValue = False;
+            retValue = false;
         }
 
         if (ti.priorityLevel != PRIORITY_HIGHEST) {
-            retValue = False;
+            retValue = false;
         }
 
         //if the index is >=0 the function search by index in the database
         ThreadInformation tiCopy;
         ThreadInformation tiCopy2;
         if (!Threads::GetThreadInfoCopy(tiCopy, i, tid)) {
-            retValue = False;
+            retValue = false;
         }
 
         if (!Threads::GetThreadInfoCopy(tiCopy2, i, (TID) 0)) {
-            retValue = False;
+            retValue = false;
         }
 
         if (StringHelper::Compare(name, tiCopy.ThreadName()) != 0 || StringHelper::Compare(name, tiCopy2.ThreadName()) != 0) {
-            retValue = False;
+            retValue = false;
         }
 
         if (tiCopy.threadId != tid || tiCopy2.threadId != tid) {
-            retValue = False;
+            retValue = false;
         }
 
         if (tiCopy.priorityClass != PRIORITY_CLASS_HIGH || tiCopy2.priorityClass != PRIORITY_CLASS_HIGH) {
-            retValue = False;
+            retValue = false;
         }
 
         if (tiCopy.priorityLevel != PRIORITY_HIGHEST || tiCopy2.priorityLevel != PRIORITY_HIGHEST) {
-            retValue = False;
+            retValue = false;
         }
 
         if (!retValue) {
@@ -956,32 +956,32 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
     uint32 j = 0;
     while ((uint32) exitCondition > (-i - 1)) {
         if (j++ > 10 * nOfThreads) {
-            return False;
+            return false;
         }
         SleepSec(10e-3);
     }
 
     if (!retValue) {
-        return False;
+        return false;
     }
 
     //creates a copy
     ThreadInformation tiCopy(ti);
 
     if (StringHelper::Compare(tiCopy.ThreadName(), ti.ThreadName()) != 0) {
-        return False;
+        return false;
     }
 
     if (tiCopy.threadId != ti.threadId) {
-        return False;
+        return false;
     }
 
     if (tiCopy.priorityClass != ti.priorityClass) {
-        return False;
+        return false;
     }
 
     if (tiCopy.priorityLevel != ti.priorityLevel) {
-        return False;
+        return false;
     }
 
     //creates another copy
@@ -990,19 +990,19 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
     tiCopy2 = tiCopy;
 
     if (StringHelper::Compare(tiCopy2.ThreadName(), ti.ThreadName()) != 0) {
-        return False;
+        return false;
     }
 
     if (tiCopy2.threadId != ti.threadId) {
-        return False;
+        return false;
     }
 
     if (tiCopy2.priorityClass != ti.priorityClass) {
-        return False;
+        return false;
     }
 
     if (tiCopy2.priorityLevel != ti.priorityLevel) {
-        return False;
+        return false;
     }
 
     return !Threads::GetThreadInfoCopy(ti, -1, (TID) 0);
@@ -1010,7 +1010,7 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
 }
 
 bool ThreadsTest::TestFindByName(uint32 nOfThreads,
-                                 const char *name,
+                                 const char8 *name,
                                  uint32 position) {
     uint32 i = 0;
     if (position > nOfThreads) {
@@ -1040,7 +1040,7 @@ bool ThreadsTest::TestFindByName(uint32 nOfThreads,
             if (j++ > 10 * nOfThreads) {
                 exitCondition = -1;
                 SleepSec(1.0);
-                return False;
+                return false;
             }
             SleepSec(10e-3);
         }
@@ -1048,11 +1048,11 @@ bool ThreadsTest::TestFindByName(uint32 nOfThreads,
     }
 
     if (tidTest != Threads::FindByName(name)) {
-        retValue = False;
+        retValue = false;
     }
 
     if (tid != Threads::FindByName("Unknown")) {
-        retValue = False;
+        retValue = false;
     }
 
     exitCondition = -1;
@@ -1061,7 +1061,7 @@ bool ThreadsTest::TestFindByName(uint32 nOfThreads,
     uint32 j = 0;
     while ((uint32) exitCondition > (-i - 1)) {
         if (j++ > 10 * nOfThreads) {
-            return False;
+            return false;
         }
         SleepSec(10e-3);
     }
@@ -1088,7 +1088,7 @@ bool ThreadsTest::TestProtectedExecute() {
     while (exitCondition < 2) {
         if (j++ > 100) {
             Threads::Kill(tid);
-            return False;
+            return false;
         }
         SleepSec(10e-3);
     }

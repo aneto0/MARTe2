@@ -80,43 +80,43 @@ bool BasicConsoleWrite(BasicConsole &con,
         int64 t1 = HighResolutionTimer::Counter();
 
         int64 dT = t1 - t0;
-        double dt = dT * HighResolutionTimer::Period();
+        float64 dt = dT * HighResolutionTimer::Period();
         if (dt > 0.05) {
             con.lineCount = 0;
             con.lastPagingTime = t1;
         }
 
-        char *p = (char *) buffer;
+        char8 *p = (char8 *) buffer;
         uint32 index = 0;
         int start = 0;
         uint32 sizeT;
-        bool end = False;
+        bool end = false;
         while (index < size) {
             while ((con.lineCount < (numberOfRows - 1)) && (index < size) && !end) {
                 if (p[index] == '\n')
                     con.lineCount++;
                 if (p[index] == '\0')
-                    end = True;
+                    end = true;
 
                 index++;
             }
             sizeT = index - start;
             BasicConsoleOS::Write(con, p + start, sizeT);
             if (end)
-                return True;
+                return true;
             if (con.lineCount >= (numberOfRows - 1)) {
                 start = index;
                 con.lastPagingTime = t1;
                 con.lineCount = 0;
-                const char *message = "[PAGING] ENTER TO CONTINUE\015";
+                const char8 *message = "[PAGING] ENTER TO CONTINUE\015";
                 sizeT = StringHelper::Length(message);
                 BasicConsoleOS::Write(con, message, sizeT);
-                char buffer[32];
+                char8 buffer[32];
                 sizeT = N_CHARS_NEWLINE;
                 BasicConsoleRead(con, buffer, sizeT, msecTimeout);
             }
         }
-        return True;
+        return true;
     }
     else {
         return BasicConsoleOS::Write(con, buffer, size);
@@ -131,7 +131,7 @@ bool BasicConsoleRead(BasicConsole &con,
 }
 
 bool BasicConsoleSetTitleBar(BasicConsole &con,
-                             const char *title) {
+                             const char8 *title) {
     return BasicConsoleOS::SetTitleBar(con, title);
 }
 
@@ -182,7 +182,7 @@ bool BasicConsoleClear(BasicConsole &con) {
 }
 
 bool BasicConsolePlotChar(BasicConsole &con,
-                          char c,
+                          char8 c,
                           Colours foreGroundColour,
                           Colours backGroundColour,
                           int32 column,

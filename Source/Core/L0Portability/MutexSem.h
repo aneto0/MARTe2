@@ -2,7 +2,7 @@
  * @file MutexSem.h
  * @brief Header file for class MutexSem
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -80,7 +80,7 @@ public:
      * @param[in] recursive specifies if the mutex should be created recursive or not.
      * @return false if something in the system level mutex initialization fails.
      */
-    bool Create(bool locked=False, bool recursive=False);
+    bool Create(bool locked=false, bool recursive=false);
 
     /**
      * @brief Close the semaphore handle.
@@ -132,7 +132,7 @@ public:
 
 private:
 
-    /** True if the mutex is recursive, false otherwise. */
+    /** true if the mutex is recursive, false otherwise. */
     bool isRecursive;
 
 };

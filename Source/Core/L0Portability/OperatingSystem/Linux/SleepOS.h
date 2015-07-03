@@ -2,7 +2,7 @@
  * @file SleepOS.h
  * @brief Header file for class SleepOS
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -57,12 +57,12 @@ public:
      * @brief Sleep more than sec in argument.
      * @param[in] sec defines the minimum number of seconds to sleep.
      */
-    static inline void AtLeast(double sec) {
+    static inline void AtLeast(float64 sec) {
         int64 hrtCounter;
         int32 nsecRemainder;
         struct timespec timesValues;
         struct timespec remTimesValues;
-        double roundValue = floor(sec);
+        float64 roundValue = floor(sec);
         timesValues.tv_sec = (time_t) roundValue;
         timesValues.tv_nsec = (long) ((sec - roundValue) * 1E9);
         hrtCounter = HighResolutionTimer::Counter();
@@ -90,14 +90,14 @@ public:
      * @brief Sleep maximum sec in the argument.
      * @param[in] sec defines the maximum number of seconds to sleep.
      */
-    static inline void NoMore(double sec) {
+    static inline void NoMore(float64 sec) {
         int64 secCounts = (int64) (sec * HighResolutionTimer::Frequency());
         sec -= linuxSleepNoMoreMinUsecTime * 1e-6;
         int64 start = HighResolutionTimer::Counter();
         if (sec > 0) {
             struct timespec timesValues;
             struct timespec remTimesValues;
-            double roundValue = floor(sec);
+            float64 roundValue = floor(sec);
             timesValues.tv_sec = (time_t) roundValue;
             timesValues.tv_nsec = (long) ((sec - roundValue) * 1E9);
             while (nanosleep(&timesValues, &remTimesValues) == -1) {
@@ -118,10 +118,10 @@ public:
      * @brief Sleep sec seconds.
      * @param[in] sec is the number to seconds to sleep.
      */
-    static inline void SecDouble(double sec) {
+    static inline void SecDouble(float64 sec) {
         struct timespec timesValues;
         struct timespec remTimesValues;
-        double roundValue = floor(sec);
+        float64 roundValue = floor(sec);
         timesValues.tv_sec = (time_t) roundValue;
         timesValues.tv_nsec = (long) ((sec - roundValue) * 1E9);
         while (nanosleep(&timesValues, &remTimesValues) == -1) {
@@ -137,7 +137,7 @@ public:
      * @brief Sleep sec seconds.
      * @param[in] sec is the number of seconds to sleep.
      */
-    static inline void SecFloat(float sec) {
+    static inline void SecFloat(float32 sec) {
         SecDouble(sec);
     }
 
@@ -175,14 +175,14 @@ public:
      * @param[in] totalSleepSec is the number of seconds to sleep.
      * @param[in] nonBusySleepSec is the number of seconds to sleep yielding cpu.
      */
-    static inline void SemiBusy(double totalSleepSec,
-                                double nonBusySleepSec) {
+    static inline void SemiBusy(float64 totalSleepSec,
+                                float64 nonBusySleepSec) {
         int64 startCounter = HighResolutionTimer::Counter();
         int64 sleepUntilCounter = startCounter + (int64) (totalSleepSec * HighResolutionTimer::Frequency());
         if ((nonBusySleepSec < totalSleepSec) && (nonBusySleepSec > 0.0)) {
             struct timespec timesValues;
             struct timespec remTimesValues;
-            double roundValue = floor(nonBusySleepSec);
+            float64 roundValue = floor(nonBusySleepSec);
             timesValues.tv_sec = (time_t) roundValue;
             timesValues.tv_nsec = (long) ((nonBusySleepSec - roundValue) * 1E9);
             while (nanosleep(&timesValues, &remTimesValues) == -1) {

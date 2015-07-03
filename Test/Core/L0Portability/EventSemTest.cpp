@@ -107,17 +107,17 @@ bool EventSemTest::TestWait(TimeoutType timeout) {
     EventSem newSem(eventSem);
 
     if (eventSem.Wait(timeout, returnError)) {
-        return False;
+        return false;
     }
 
     if (returnError != Timeout) {
-        return False;
+        return false;
     }
 
     returnError = Debug;
 
     if (newSem.ResetWait(timeout, returnError)) {
-        return False;
+        return false;
     }
     return returnError == Timeout;
 
@@ -144,7 +144,7 @@ bool EventSemTest::TestReset() {
 }
 
 void PosterThreadCallback(EventSemTest &eventSemTest) {
-    double maxTime = 2.0;
+    float64 maxTime = 2.0;
     int64 tstart = HighResolutionTimer::Counter();
     while (eventSemTest.sharedVariable < 2) {
         SleepMSec(100);
@@ -244,7 +244,7 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
     SleepMSec(100);
     //The semaphore was not posted yet, so the value of the sharedVariable should still be 0xABCD
     if (sharedVariable != 0xABCD) {
-        return False;
+        return false;
     }
     //Reset the value of the sharedVariable
     sharedVariable = 0;
@@ -256,7 +256,7 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
         //Waited 20 ms x nOfThreads and the value of the sharedVariable is still
         //not nOfThreads which likely indicates a problem with the posting of the semaphore
         if (i == 0) {
-            return False;
+            return false;
         }
     }
 
@@ -269,7 +269,7 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
         }
     }
 
-    return True;
+    return true;
 }
 
 bool EventSemTest::TestWaitNoTimeout(uint32 nOfThreads) {

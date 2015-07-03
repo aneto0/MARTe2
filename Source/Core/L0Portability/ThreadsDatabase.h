@@ -101,7 +101,7 @@ bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
  * @param[in] name is the name of the thread.
  * @return the identifier of the thread with the name specified, 0 if it is not in the database.
  */
-TID ThreadsDatabaseFind(const char *name);
+TID ThreadsDatabaseFind(const char8 *name);
 
 }
 
@@ -131,7 +131,7 @@ public:
     friend void ThreadsDatabaseUnLock();
     friend uint32 ThreadsDatabaseNumberOfThreads();
     friend TID ThreadsDatabaseGetThreadID(uint32 n);
-    friend TID ThreadsDatabaseFind(const char *name);
+    friend TID ThreadsDatabaseFind(const char8 *name);
     friend bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
                                        int32 n,
                                        TID threadId);
@@ -202,7 +202,7 @@ private:
      * @param[in] name is the name of the thread.
      * @return the id of the first thread found with the name specified or 0 if it is not in the database.
      */
-    static TID Find(const char *name);
+    static TID Find(const char8 *name);
 
 private:
 

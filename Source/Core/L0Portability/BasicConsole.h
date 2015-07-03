@@ -124,7 +124,7 @@ bool BasicConsoleRead(BasicConsole &con,
  * @see BasicConsole::SetTitleBar.
  */
 bool BasicConsoleSetTitleBar(BasicConsole &con,
-                             const char *title);
+                             const char8 *title);
 
 /**
  * @see BasicConsole::SetSize.
@@ -182,7 +182,7 @@ bool BasicConsoleSetColour(BasicConsole &con,
  * @see BasicConsole::PlotChar.
  */
 bool BasicConsolePlotChar(BasicConsole &con,
-                          char c,
+                          char8 c,
                           Colours foreGroundColour,
                           Colours backGroundColour,
                           int column,
@@ -257,7 +257,7 @@ private:
                                  uint32 &size,
                                  TimeoutType msecTimeout);
     friend bool BasicConsoleSetTitleBar(BasicConsole &con,
-                                        const char *title);
+                                        const char8 *title);
     friend bool BasicConsoleSetSize(BasicConsole &con,
                                     int32 numberOfColumns,
                                     int32 numberOfRows);
@@ -282,7 +282,7 @@ private:
                                       Colours backGroundColour);
 
     friend bool BasicConsolePlotChar(BasicConsole &con,
-                                     char c,
+                                     char8 c,
                                      Colours foreGroundColour,
                                      Colours backGroundColour,
                                      int32 column,
@@ -351,7 +351,7 @@ public:
      * @param[in] title is the desired title.
      * @return true if successful, false otherwise.
      */
-    inline bool SetTitleBar(const char *title);
+    inline bool SetTitleBar(const char8 *title);
 
     /**
      * @brief Set the buffer size of this console.
@@ -429,7 +429,7 @@ public:
     inline void SetPaging(bool enable);
 
     /**
-     * @brief Writes a single char on the console at a given position and with given color set.
+     * @brief Writes a single char8 on the console at a given position and with given color set.
      * @param[in] c is the character to be printed.
      * @param[in] foreGroundColour is the desired console foreground color.
      * @param[in] backGroundColour is the desired console background color.
@@ -437,7 +437,7 @@ public:
      * @param[in] row is the desired y-axis position of the character.
      * @return true if successful, false otherwise.
      */
-    inline bool PlotChar(char c,
+    inline bool PlotChar(char8 c,
                          Colours foreGroundColour,
                          Colours backGroundColour,
                          int column,
@@ -467,7 +467,7 @@ bool BasicConsole::Read(void* buffer,
     return BasicConsoleRead(*this, buffer, size, msecTimeout);
 }
 
-bool BasicConsole::SetTitleBar(const char *title) {
+bool BasicConsole::SetTitleBar(const char8 *title) {
     return BasicConsoleSetTitleBar(*this, title);
 }
 
@@ -530,7 +530,7 @@ void BasicConsole::SetPaging(bool enable) {
 }
 
 
-bool BasicConsole::PlotChar(char c,
+bool BasicConsole::PlotChar(char8 c,
                      Colours foreGroundColour,
                      Colours backGroundColour,
                      int column,

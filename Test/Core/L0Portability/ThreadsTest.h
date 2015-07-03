@@ -52,7 +52,7 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @return true if successful, false otherwise.
      */
-    bool TestBeginThread(const char* name,
+    bool TestBeginThread(const char8* name,
                    uint32 stackSize,
                    uint32 nOfThreads);
 
@@ -122,7 +122,7 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @return true if successful, false otherwise.
      */
-    bool TestName(const char* name,
+    bool TestName(const char8* name,
                   uint32 nOfThreads);
 
 
@@ -151,7 +151,7 @@ public:
      * @return true if successful, false otherwise.
      */
     bool TestGetThreadInfoCopy(uint32 nOfThreads,
-                                            const char* name);
+                                            const char8* name);
 
     /**
      * @brief Tests the Threads::FindByName function.
@@ -162,7 +162,7 @@ public:
      * @param[in] position is the index of the thread with the specified name.
      * @return true if successful, false otherwise.
      */
-    bool TestFindByName(uint32 nOfThreads, const char* name, uint32 position);
+    bool TestFindByName(uint32 nOfThreads, const char8* name, uint32 position);
 
     /**
      * @brief Tests the Threads::ProtectedExecute function.

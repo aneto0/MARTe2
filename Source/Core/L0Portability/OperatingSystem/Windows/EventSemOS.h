@@ -68,12 +68,12 @@ public:
      */
     static bool Close(HANDLE &semH) {
         if (semH == (HANDLE) NULL)
-        return True;
+        return true;
         if (CloseHandle(semH) == FALSE) {
-            return False;
+            return false;
         }
         semH = NULL;
-        return True;
+        return true;
     }
 
     /**
@@ -92,13 +92,13 @@ public:
         ret = WaitForSingleObject((HEV) semH, msecTimeout.msecTimeout);
         if (ret == (int) WAIT_FAILED) {
             error = OSError;
-            return False;
+            return false;
         }
         if (ret == (int) WAIT_TIMEOUT) {
             error = Timeout;
-            return False;
+            return false;
         }
-        return True;
+        return true;
     }
 
     /**
@@ -110,9 +110,9 @@ public:
     static inline bool Post(HANDLE &semH) {
 
         if (SetEvent((HEV) semH) == FALSE) {
-            return False;
+            return false;
         }
-        return True;
+        return true;
     }
 
     /**
@@ -124,9 +124,9 @@ public:
     static inline bool Reset(HANDLE &semH) {
 
         if (ResetEvent((HEV) semH) == FALSE) {
-            return False;
+            return false;
         }
-        return True;
+        return true;
     }
 
     /**

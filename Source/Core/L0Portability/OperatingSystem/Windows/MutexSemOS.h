@@ -56,10 +56,10 @@ public:
                               bool locked,
                               bool &recursive) {
 
-        semH = CreateMutex(NULL, (locked == True), NULL);
+        semH = CreateMutex(NULL, (locked == true), NULL);
 
         //only recursive mode is supported.
-        recursive = True;
+        recursive = true;
         return (semH != NULL);
     }
 
@@ -71,12 +71,12 @@ public:
      */
     static inline bool Close(HANDLE &semH) {
         if (semH == (HANDLE) NULL)
-        return True;
+        return true;
         if (CloseHandle(semH) == FALSE) {
-            return False;
+            return false;
         }
         semH = NULL;
-        return True;
+        return true;
     }
 
     /**
@@ -93,13 +93,13 @@ public:
         DWORD ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
         if (ret == WAIT_FAILED) {
             error = OSError;
-            return False;
+            return false;
         }
         if (ret == WAIT_TIMEOUT) {
             error = Timeout;
-            return False;
+            return false;
         }
-        return True;
+        return true;
     }
 
     /**
@@ -111,10 +111,10 @@ public:
     static inline bool UnLock(HANDLE &semH) {
 
         if (ReleaseMutex(semH) == FALSE) {
-            return False;
+            return false;
         }
 
-        return True;
+        return true;
     }
 
     /**
@@ -127,13 +127,13 @@ public:
         DWORD ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
         if (ret == WAIT_FAILED) {
             error = OSError;
-            return False;
+            return false;
         }
         if (ret == WAIT_TIMEOUT) {
             error = Timeout;
-            return False;
+            return false;
         }
-        return True;
+        return true;
     }
 
     /**

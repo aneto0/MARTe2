@@ -60,7 +60,7 @@ ThreadInformation::ThreadInformation() {
  */
 ThreadInformation::ThreadInformation(ThreadFunctionType userThreadFunction,
                                      void *userData,
-                                     const char *name) {
+                                     const char8 *name) {
     this->userThreadFunction = userThreadFunction;
     this->userData = userData;
     if (name != NULL) {
@@ -127,7 +127,7 @@ void ThreadInformation::UserThreadFunction() {
  * @brief Get the name of the thread.
  * @return A reference to the dynamically allocated string representing the name of the thread.
  */
-const char *ThreadInformation::ThreadName() {
+const char8 *ThreadInformation::ThreadName() {
     return name;
 }
 
@@ -141,6 +141,6 @@ bool ThreadInformation::ExceptionProtectedExecute(ThreadFunctionType userFunctio
                                                   void *userData,
                                                   ExceptionHandler *eh) {
     userFunction(userData);
-    return True;
+    return true;
 }
 

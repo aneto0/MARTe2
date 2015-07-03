@@ -137,7 +137,7 @@ private:
     /**
      * @brief Adds a new element in the database.
      * @param[in] tid is the identifier of the thread which has to be monitored.
-     * @return False if the database is already full, true otherwise.
+     * @return false if the database is already full, true otherwise.
      */
     static inline bool Add(TID tid);
 
@@ -177,12 +177,12 @@ bool MemoryStatisticsDatabase::Add(TID tid) {
         if (stackDatabase[i].IsEmpty()) {
             stackDatabase[i].threadId = tid;
             nOfElements++;
-            return True;
+            return true;
         }
     }
 
     //the database is full
-    return False;
+    return false;
 }
 
 bool MemoryStatisticsDatabase::Remove(TID tid) {
@@ -191,13 +191,13 @@ bool MemoryStatisticsDatabase::Remove(TID tid) {
 
     //not found
     if (ret == NULL) {
-        return False;
+        return false;
     }
 
     //set the element as empty
     ret->SetEmpty();
     nOfElements--;
-    return True;
+    return true;
 }
 
 ThreadAllocationStatistics* MemoryStatisticsDatabase::PrivateFind(TID tid) {
@@ -237,7 +237,7 @@ bool MemoryStatisticsDatabase::AddMemoryChunk(TID tid,
     if (ret == NULL) {
         if (!Add(tid)) {
             internalMutex.FastUnLock();
-            return False;
+            return false;
         }
 
         ret = PrivateFind(tid);
@@ -252,7 +252,7 @@ bool MemoryStatisticsDatabase::AddMemoryChunk(TID tid,
         Remove(tid);
     }
     internalMutex.FastUnLock();
-    return True;
+    return true;
 }
 
 bool MemoryStatisticsDatabase::FreeMemoryChunk(TID tid,
@@ -263,7 +263,7 @@ bool MemoryStatisticsDatabase::FreeMemoryChunk(TID tid,
     if (ret == NULL) {
         if (!Add(tid)) {
             internalMutex.FastUnLock();
-            return False;
+            return false;
         }
 
         ret = PrivateFind(tid);
@@ -278,7 +278,7 @@ bool MemoryStatisticsDatabase::FreeMemoryChunk(TID tid,
     }
     internalMutex.FastUnLock();
 
-    return True;
+    return true;
 }
 
 void MemoryStatisticsDatabase::Clear() {

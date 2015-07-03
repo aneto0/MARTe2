@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef GENERALDEFINITIONSOS_H_
-		#define 		GENERALDEFINITIONSOS_H_
+#ifndef GENERALDEFINITIONSOS_H_
+#define GENERALDEFINITIONSOS_H_
 
 
 #include <pthread.h>
@@ -50,5 +50,5 @@ typedef struct termio ConsoleInfo;
 /** In windows the newline is specified with \r\n */
 #define N_CHARS_NEWLINE 1
 
-		#endif /* GENERALDEFINITIONSOS_H_ */
+#endif /* GENERALDEFINITIONSOS_H_ */
 	

@@ -2,7 +2,7 @@
  * @file HighResolutionTimerTest.cpp
  * @brief Source file for class HighResolutionTimerTest
  * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -42,27 +42,27 @@
 /*---------------------------------------------------------------------------*/
 
 //return true if a and b are equal less than a tolerance
-bool Tolerance(double a,
-               double b,
-               double tolerance) {
+bool Tolerance(float64 a,
+               float64 b,
+               float64 tolerance) {
     return (a - b < tolerance) && (b - a < tolerance);
 }
 
 //return true if frequecy and period are mutual
 bool HighResolutionTimerTest::TestFrequency() {
     int64 HRTfrequency = HighResolutionTimer::Frequency();
-    double HRTperiod = HighResolutionTimer::Period();
-    double relativePeriod = 1.0 / HRTfrequency;
+    float64 HRTperiod = HighResolutionTimer::Period();
+    float64 relativePeriod = 1.0 / HRTfrequency;
     int64 relativeFrequency = (int64) (1.0 / HRTperiod);
     return (HRTperiod == relativePeriod) && (HRTfrequency == relativeFrequency) && (HighResolutionTimerMSecTics() == (HRTfrequency / 1000.0));
 }
 
 //return true if the measured time is more or less equal to the sleep time.
-bool HighResolutionTimerTest::TestCounter(double sleepTime) {
+bool HighResolutionTimerTest::TestCounter(float64 sleepTime) {
 
     int64 counter_1 = 0;
     int64 counter = 0;
-    double time;
+    float64 time;
 
     counter_1 = HighResolutionTimer::Counter();
     SleepSec(sleepTime);
@@ -92,28 +92,28 @@ bool HighResolutionTimerTest::TestTimeStamp(uint32 millisecs) {
     int32 diff = (int32) (elapsed - millisecs);
 
     if (diff > tolerance || diff < -tolerance) {
-        return False;
+        return false;
     }
 
     //checks the boundaries
     if (myTimeStamp1.minutes > 59) {
 
-        return False;
+        return false;
     }
     if (myTimeStamp1.hours > 23) {
 
-        return False;
+        return false;
     }
 
     if (myTimeStamp1.days > 31 || myTimeStamp1.days == 0) {
 
-        return False;
+        return false;
     }
     if (myTimeStamp1.month > 11) {
 
-        return False;
+        return false;
     }
 
-    return True;
+    return true;
 
 }

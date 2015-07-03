@@ -2,7 +2,7 @@
  * @file MemoryTest.h
  * @brief Header file for class MemoryTest
  * @date 29/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -81,7 +81,7 @@ public:
      * @param[in] s is the string to duplicate.
      * @return true if the string result of the function is equal to s.
      */
-    bool TestMemoryStringDup(const char *s);
+    bool TestMemoryStringDup(const char8 *s);
 
     /**
      * @brief Tests the shared memory between two different threads and the main process.

@@ -2,7 +2,7 @@
  * @file BasicConsoleTest.cpp
  * @brief Source file for class BasicConsoleTest
  * @date 30/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -44,11 +44,11 @@
 bool BasicConsoleTest::TestOpen(ConsoleOpeningMode openingMode) {
 
     BasicConsole myConsole(openingMode, BasicConsoleTest::N_ROWS, BasicConsoleTest::N_COLUMNS);
-    return True;
+    return true;
 }
 
 //write the string passed by argument
-bool BasicConsoleTestWrite(const char* string,
+bool BasicConsoleTestWrite(const char8* string,
                            int32 padding,
                            BasicConsole &myConsole) {
 
@@ -56,7 +56,7 @@ bool BasicConsoleTestWrite(const char* string,
 
     //calculate the size of the string
     if ((stringSize = StringTestHelper::Size(string)) < 0) {
-        return False;
+        return false;
     }
 
     //add something to the size to pass as argument to test the write function
@@ -64,7 +64,7 @@ bool BasicConsoleTestWrite(const char* string,
 
     //invalid parameters
     if (size < 0) {
-        return False;
+        return false;
     }
 
     //Only to return true in this case
@@ -83,7 +83,7 @@ bool BasicConsoleTestWrite(const char* string,
 }
 
 //write the string passed by argument
-bool BasicConsoleTest::TestWrite(const char* string,
+bool BasicConsoleTest::TestWrite(const char8* string,
                                  int32 padding) {
     BasicConsole myConsole(ConsoleDefault, BasicConsoleTest::N_ROWS, BasicConsoleTest::N_COLUMNS);
     return BasicConsoleTestWrite(string, padding, myConsole);
@@ -91,20 +91,20 @@ bool BasicConsoleTest::TestWrite(const char* string,
 }
 
 //compare the read string with the string passed by argument
-bool BasicConsoleTestRead(const char* stringArg,
+bool BasicConsoleTestRead(const char8* stringArg,
                           BasicConsole &myConsole) {
 
-    char string[BasicConsoleTest::N_COLUMNS];
-    char result[BasicConsoleTest::N_COLUMNS + 20];
+    char8 string[BasicConsoleTest::N_COLUMNS];
+    char8 result[BasicConsoleTest::N_COLUMNS + 20];
     uint32 stringSize;
 
     //calculate the size of the string
     if ((stringSize = StringTestHelper::Size(stringArg)) < 0) {
-        return False;
+        return false;
     }
-    const char* prefix = "\nPut: ";
+    const char8* prefix = "\nPut: ";
     //define the request to print
-    StringTestHelper::Append((char*) prefix, stringArg, result);
+    StringTestHelper::Append((char8*) prefix, stringArg, result);
 
     //print the request: the user must insert the string passed by argument
     BasicConsoleTestWrite(result, 0, myConsole);
@@ -134,7 +134,7 @@ bool BasicConsoleTestRead(const char* stringArg,
 }
 
 //compare the read string with the string passed by argument
-bool BasicConsoleTest::TestRead(const char* stringArg) {
+bool BasicConsoleTest::TestRead(const char8* stringArg) {
     BasicConsole myConsole(ConsoleDefault, BasicConsoleTest::N_ROWS, BasicConsoleTest::N_COLUMNS);
     return BasicConsoleTestRead(stringArg, myConsole);
 
@@ -148,27 +148,27 @@ bool BasicConsoleTestPaging(int32 overflow,
 
     /*  //open the console in enable paging mode
      if (!BasicConsoleTestOpen(EnablePaging, myConsole)) {
-     return False;
+     return false;
      }
      */
     if (!myConsole.SetSize(rows, columns)) {
-        return False;
+        return false;
     }
     int32 retRows = 0;
     int32 retCols = 0;
 
     if (!myConsole.GetSize(retRows, retCols)) {
-        return False;
+        return false;
     }
 
     if (rows != retRows || columns != retCols) {
-        return False;
+        return false;
     }
 
     //define the size of the string to print
     int32 n = 0;
     int32 limit = 2 * (rows + overflow - 1);
-    char string[64];
+    char8 string[64];
 
     //define the string to print
     while (n < limit) {
@@ -196,12 +196,12 @@ bool BasicConsoleTest::TestPaging(int32 overflow,
 bool BasicConsoleTestPerfChar(BasicConsole &myConsole) {
     /* //open the console in perform character input mode
      if (!BasicConsoleTestOpen(PerformCharacterInput, myConsole)) {
-     return False;
+     return false;
      }*/
 
-    const char* request = "press any key\n";
+    const char8* request = "press any key\n";
     //return true if the size of the read string is one as aspected.
-    return BasicConsoleTestRead((char*) request, myConsole);
+    return BasicConsoleTestRead((char8*) request, myConsole);
 }
 
 //Test the perform character input feature
@@ -217,15 +217,15 @@ bool BasicConsoleTestNotImplemented(BasicConsole &myConsole) {
     int32 cols = 0;
 
     if (!myConsole.SetWindowSize(15, 15)) {
-        return False;
+        return false;
     }
 
     if (!myConsole.GetWindowSize(rows, cols)) {
-        return False;
+        return false;
     }
 
     if (rows != 15 || cols != 15) {
-        return False;
+        return false;
     }
 
     Colours black = Black;
@@ -233,34 +233,34 @@ bool BasicConsoleTestNotImplemented(BasicConsole &myConsole) {
     Colours red = Red;
 
     if (myConsole.SetColour(black, white)) {
-        return False;
+        return false;
     }
 
     if (myConsole.SetCursorPosition(rows, cols)) {
-        return False;
+        return false;
     }
 
     if (myConsole.GetCursorPosition(rows, cols)) {
-        return False;
+        return false;
     }
 
     if (myConsole.SetTitleBar("Title")) {
-        return False;
+        return false;
     }
 
     if (!myConsole.Show()) {
-        return False;
+        return false;
     }
 
     if (myConsole.PlotChar('c', black, red, rows, cols)) {
-        return False;
+        return false;
     }
 
     if (!myConsole.Clear()) {
-        return False;
+        return false;
     }
 
-    return True;
+    return true;
 }
 
 bool BasicConsoleTest::TestNotImplemented() {

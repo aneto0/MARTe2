@@ -2,7 +2,7 @@
  * @file TimeoutType.h
  * @brief Header file for class TimeoutType
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -65,10 +65,10 @@ public:
 
 
     /**
-     * @brief Set timeout from float.
+     * @brief Set timeout from float32.
      * @param[in] secs is the time in seconds.
      */
-    inline void SetTimeOutSec(double secs);
+    inline void SetTimeOutSec(float64 secs);
 
     /**
      * @brief Set timeout from HRT ticks.
@@ -135,7 +135,7 @@ TimeoutType::TimeoutType(uint32 msecs) {
     msecTimeout = msecs;
 }
 
-void TimeoutType::SetTimeOutSec(double secs) {
+void TimeoutType::SetTimeOutSec(float64 secs) {
     msecTimeout = (uint32) (secs * 1000.0);
 }
 
@@ -143,14 +143,14 @@ void TimeoutType::SetTimeOutHighResolutionTimerTicks(int64 ticks) {
     if (ticks < 0) {
         ticks = 0;
     }
-    double msDT = 1000.0 * (ticks * HighResolutionTimer::Period());
+    float64 msDT = 1000.0 * (ticks * HighResolutionTimer::Period());
     msecTimeout = (uint32) msDT;
 }
 
 int64 TimeoutType::HighResolutionTimerTicks() const {
-    double dT = msecTimeout;
+    float64 dT = msecTimeout;
     dT = dT * 1e-3;
-    double freq = HighResolutionTimer::Frequency();
+    float64 freq = HighResolutionTimer::Frequency();
     dT = dT * freq;
     int64 ticks = (int64) dT;
     return ticks;

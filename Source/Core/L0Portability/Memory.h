@@ -198,7 +198,7 @@ int32 MemoryCompare(const void *mem1,
  * @see Memory::Search
  */
 const void *MemorySearch(const void *mem,
-                         char c,
+                         char8 c,
                          uint32 size);
 
 /**
@@ -212,13 +212,13 @@ bool MemoryMove(void* destination,
  * @see Memory::Set
  */
 bool MemorySet(void* mem,
-               char c,
+               char8 c,
                uint32 size);
 
 /**
  * @see Memory::StringDup
  */
-char *MemoryStringDup(const char *s);
+char8 *MemoryStringDup(const char8 *s);
 
 }
 
@@ -261,7 +261,7 @@ public:
     /**
      * @brief Release a memory area and set its pointer to NULL.
      * @param[in,out] data The memory area to be freed.
-     * @return True if the memory is freed, false in case of invalid pointer.
+     * @return true if the memory is freed, false in case of invalid pointer.
      * @post data = NULL
      */
     static bool Free(void *&data);
@@ -282,7 +282,7 @@ public:
      * @param[in] s The pointer to the memory to be copied.
      * @return The pointer to the new allocated memory which contains a copy of s.
      */
-    static char *StringDup(const char *s);
+    static char8 *StringDup(const char8 *s);
 
     /*static void AllocationStatistics(StreamInterface *out){
      MemoryAllocationStatistics(out);
@@ -305,7 +305,7 @@ public:
      * @param[out] size is the size of the memory area allocated.
      * @param[out] tid is the identifier of the thread which allocates the memory.
      * @return If MEMORY_STATISTICS is defined returns true if the memory pointer is valid.
-     * False if MEMORY_STATISTICS is not defined.
+     * false if MEMORY_STATISTICS is not defined.
      * @pre The input pointer must point to the beginning of the memory area, otherwise the outputs can be incorrect.
      */
     static bool GetHeaderInfo(void *pointer,
@@ -334,7 +334,7 @@ public:
      * @param[in] address The pointer to the memory block to be checked.
      * @param[in] accessMode The type of memory access to perform.
      * @param[in] size is the number of bytes to check.
-     * @return True if the check was successful. False otherwise.
+     * @return true if the check was successful. false otherwise.
      */
     static bool Check(void *address,
                       MemoryTestAccessMode accessMode,
@@ -396,7 +396,7 @@ public:
      * @return the pointer to the first occurrence of c in the memory. NULL if c is absent.
      */
     static const void *Search(const void *mem,
-                              char c,
+                              char8 c,
                               uint32 size);
 
     /**
@@ -417,7 +417,7 @@ public:
      * @param[in] size is the number of bytes where c will be written.
      */
     static bool Set(void* mem,
-                    char c,
+                    char8 c,
                     uint32 size);
 
 };

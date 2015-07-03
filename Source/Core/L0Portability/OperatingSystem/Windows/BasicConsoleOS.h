@@ -2,7 +2,7 @@
  * @file BasicConsoleOS.h
  * @brief Header file for class BasicConsoleOS
  * @date 22/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -59,7 +59,7 @@ public:
 
         //do nothing in case of negative parameters
         if (numberOfColumns < 0 || numberOfRows < 0) {
-            return False;
+            return false;
         }
 
         //aligns the buffer and window sizes as much as possible to the specified parameters.
@@ -70,7 +70,7 @@ public:
 
         //get the console informations
         if (GetConsoleScreenBufferInfo(con.outputConsoleHandle, &info) == 0) {
-            return False;
+            return false;
         }
 
         COORD stage1BufferSize;
@@ -90,14 +90,14 @@ public:
         //set the buffer size
         if (!SetConsoleScreenBufferSize(con.outputConsoleHandle, stage1BufferSize)) {
             // CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:SetSize:failed SetConsoleScreenBufferSize ");
-            return False;
+            return false;
         }
 
         SHORT windowColumns = info.srWindow.Right - info.srWindow.Left + 1;
         SHORT windowRows = info.srWindow.Bottom - info.srWindow.Top + 1;
 
         if (windowColumns < 0 || windowRows < 0) {
-            return False;
+            return false;
         }
 
         if (windowColumns > numberOfColumns) {
@@ -117,7 +117,7 @@ public:
         //set the new windows size
         if (!SetConsoleWindowInfo(con.outputConsoleHandle, TRUE, &srect)) {
             //  CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:SetSize:failed SetConsoleWindowInfo ");
-            return False;
+            return false;
         }
 
         //now if buffersize is greater than windows size they become aligned.
@@ -150,27 +150,27 @@ public:
             //get the console handles
             con.inputConsoleHandle = GetStdHandle(STD_INPUT_HANDLE);
             if (con.inputConsoleHandle == INVALID_HANDLE_VALUE) {
-                return False;
+                return false;
             }
             con.outputConsoleHandle = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
             if (con.outputConsoleHandle == INVALID_HANDLE_VALUE) {
-                return False;
+                return false;
             }
         }
         else {
             con.inputConsoleHandle = GetStdHandle(STD_INPUT_HANDLE);
             if (con.inputConsoleHandle == INVALID_HANDLE_VALUE) {
-                return False;
+                return false;
             }
             con.outputConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
             if (con.outputConsoleHandle == INVALID_HANDLE_VALUE) {
-                return False;
+                return false;
             }
         }
 
         CONSOLE_SCREEN_BUFFER_INFO info;
         if (GetConsoleScreenBufferInfo(con.outputConsoleHandle, &(con.initialInfo)) == 0) {
-            return False;
+            return false;
         }
 
         stdConsoleColumns = con.initialInfo.dwSize.X;
@@ -208,7 +208,7 @@ public:
 
         FlushConsoleInputBuffer(con.inputConsoleHandle);
 
-        return True;
+        return true;
     }
 
     /**
@@ -255,7 +255,7 @@ public:
             ret = WaitForSingleObject(con.inputConsoleHandle, (DWORD) con.msecTimeout.msecTimeout);
             if (ret != 0) {
                 size = 0;
-                return False;
+                return false;
             }
         }
 
@@ -278,7 +278,7 @@ public:
      * @return true if successful, false otherwise.
      */
     static bool SetTitleBar(BasicConsole &con,
-                            const char *title) {
+                            const char8 *title) {
         return SetConsoleTitle(title);
 
     }
@@ -297,7 +297,7 @@ public:
                               int numberOfRows) {
 
         if (numberOfColumns < 0 || numberOfRows < 0) {
-            return False;
+            return false;
         }
 
         COORD max = GetLargestConsoleWindowSize(con.outputConsoleHandle);
@@ -305,7 +305,7 @@ public:
         GetConsoleScreenBufferInfo(con.outputConsoleHandle, &info);
 
         if (info.dwSize.X < 0 || info.dwSize.Y < 0) {
-            return False;
+            return false;
         }
 
         //saturate values at the max or at the buffer size
@@ -336,10 +336,10 @@ public:
 
         if (!SetConsoleWindowInfo(con.outputConsoleHandle, TRUE, &srect)) {
             //  CStaticPlatformErrorCondition(OSError,"BasicConsole:SetWindowSize:failed SetConsoleWindowInfo ");
-            return False;
+            return false;
         }
 
-        return True;
+        return true;
     }
 
     /**
@@ -358,7 +358,7 @@ public:
 
         numberOfColumns = info.srWindow.Right - info.srWindow.Left + 1;
         numberOfRows = info.srWindow.Bottom - info.srWindow.Top + 1;
-        return True;
+        return true;
 
     }
 
@@ -375,11 +375,11 @@ public:
         CONSOLE_SCREEN_BUFFER_INFO info;
         if (GetConsoleScreenBufferInfo(con.outputConsoleHandle, &info) == FALSE) {
             //  CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:GetSize:failed GetConsoleScreenBufferInfo ");
-            return False;
+            return false;
         }
         numberOfColumns = info.dwSize.X;
         numberOfRows = info.dwSize.Y;
-        return True;
+        return true;
 
     }
 
@@ -410,11 +410,11 @@ public:
                                   int &row) {
         CONSOLE_SCREEN_BUFFER_INFO info;
         if (GetConsoleScreenBufferInfo(con.outputConsoleHandle, &info) == FALSE) {
-            return False;
+            return false;
         }
         column = info.dwCursorPosition.X;
         row = info.dwCursorPosition.Y;
-        return True;
+        return true;
     }
 
     /**
@@ -433,9 +433,9 @@ public:
         attribute |= ((int) backGroundColour & 0xF) << 4;
 
         if (!SetConsoleTextAttribute(con.outputConsoleHandle, attribute))
-            return False;
+            return false;
 
-        return True;
+        return true;
 
     }
 
@@ -469,7 +469,7 @@ public:
      * @return true if successful, false otherwise.
      */
     static bool PlotChar(BasicConsole &con,
-                         char c,
+                         char8 c,
                          Colours foreGroundColour,
                          Colours backGroundColour,
                          int column,
@@ -522,7 +522,7 @@ public:
             SetConsoleTextAttribute(con.outputConsoleHandle, con.initialInfo.wAttributes);
         }
 
-        return True;
+        return true;
     }
 
 };

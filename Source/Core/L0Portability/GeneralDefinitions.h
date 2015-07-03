@@ -2,7 +2,7 @@
  * @file GeneralDefinitions.h
  * @brief Header file for class GeneralDefinitions
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,22 +22,28 @@
  */
 
 #ifndef GENERALDEFINITIONS_H_
-#define 		GENERALDEFINITIONS_H_
+#define GENERALDEFINITIONS_H_
 
+/*lint -save -e9026, function-like macro defined */
 #define QUOTE(x) QUOTE_1(x)
+/*lint -restore */
+/*lint -save -e9026 -e9024, function-like macro defined, '#/##' operators used in macro */
 #define QUOTE_1(x) #x
+/*lint -restore */
+/*lint -save -e9026 -estring(1960, *16-0-6*) , function-like macro defined, unparenthesized macro parameter*/
 #define INCLUDE_FILE_ARCHITECTURE(x,y) QUOTE(Architecture/x/y)
 #define INCLUDE_FILE_OPERATING_SYSTEM(x,y) QUOTE(OperatingSystem/x/y)
+/*lint -restore */
 
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,GeneralDefinitionsA.h)
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,GeneralDefinitionsOS.h)
 
 /**
  * Uncomment this section to use memory statistics functions
-#ifndef MEMORY_STATISTICS
-#define MEMORY_STATISTICS
-#endif
-*/
+ #ifndef MEMORY_STATISTICS
+ #define MEMORY_STATISTICS
+ #endif
+ */
 
 /** List of colors */
 typedef enum {
@@ -117,7 +123,7 @@ public:
      * @brief Copy constructor.
      * @param[in] errorArg is the initial value to be assigned to this.
      */
-    inline Error(ErrorType errorArg) {
+    inline Error(const ErrorType errorArg) {
         errorType = errorArg;
     }
 
@@ -125,8 +131,20 @@ public:
      * @brief Copy operator.
      * @param[in] errorArg is the value to be assigned to this.
      */
-    inline void operator=(ErrorType errorArg) {
+    inline void operator=(const ErrorType errorArg) {
         errorType = errorArg;
+    }
+
+    /**
+     * @brief Copy assignment operator
+     * @param source the Error object to copy from.
+     * @return an Error object with the same errorType as the source object.
+     */
+    Error& operator=(const Error &source) {
+        if( &source != this ){
+            errorType = source.errorType;
+        }
+        return *this;
     }
 
     /**
@@ -134,7 +152,7 @@ public:
      * @param[in] errorArg is the value for the comparison.
      * @return true if errorArg is equal to this.
      */
-    inline bool operator==(ErrorType errorArg) const {
+    inline bool operator==(const ErrorType errorArg) const {
         return errorType == errorArg;
     }
 
@@ -143,7 +161,7 @@ public:
      * @param[in] errorArg is the value for the comparison.
      * @return true if errorArg is different from this.
      */
-    inline bool operator!=(ErrorType errorArg) const {
+    inline bool operator!=(const ErrorType errorArg) const {
         return errorType != errorArg;
     }
 
@@ -180,16 +198,6 @@ typedef unsigned long long intptr;
 #else
 typedef unsigned long intptr;
 #endif
-
-#ifndef True
-/** Portable definition of true. */
-#define True   (1==1)
-/** Portable definition of false. */
-#define False  (1==0)
-#endif
-
-/** Builds a 64 bit field with two 32 bit values. */
-#define load64(x,a,b)  ((uint32 *)&x)[0] = b; ((uint32 *)&x)[1] = a;
 
 #endif /* GENERALDEFINITIONS_H_ */
 

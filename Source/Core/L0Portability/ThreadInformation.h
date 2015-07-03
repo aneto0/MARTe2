@@ -2,7 +2,7 @@
  * @file ThreadInformation.h
  * @brief Header file for class ThreadInformation
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -207,7 +207,7 @@ public:
      */
     ThreadInformation(ThreadFunctionType userThreadFunction,
                       void *userData,
-                      const char *name);
+                      const char8 *name);
 
     /**
      * @brief Copy constructor.
@@ -238,7 +238,7 @@ public:
      * @brief Get the name of the thread.
      * @return A reference to the dynamically allocated string representing the name of the thread.
      */
-    virtual const char *ThreadName();
+    virtual const char8 *ThreadName();
 
     /**
      * @brief Call the thread function with an exception handler protection.
@@ -269,7 +269,7 @@ protected:
     void *userData;
 
     /** The name of the thread. */
-    const char *name;
+    const char8 *name;
 
     /** enables the operating system to perform some housekeeping
      * before releasing the thread to the user code. */
@@ -285,7 +285,7 @@ protected:
  */
 typedef ThreadInformation *(*ThreadInformationConstructorType)(ThreadFunctionType userFunction,
                                                                void *userData,
-                                                               const char *threadName,
+                                                               const char8 *threadName,
                                                                uint32 exceptionHandlerAction);
 
 /*---------------------------------------------------------------------------*/

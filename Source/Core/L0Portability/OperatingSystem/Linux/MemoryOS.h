@@ -2,7 +2,7 @@
  * @file MemoryOS.h
  * @brief Header file for class MemoryOS
  * @date 18/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -92,7 +92,7 @@ public:
      * @param[in] s is the string to duplicate.
      * @return a pointer to the string copied.
      */
-    static char *StringDup(const char *s) {
+    static char8 *StringDup(const char8 *s) {
         return strdup(s);
     }
 
@@ -113,7 +113,7 @@ public:
             return NULL;
         }
         void *shm = shmat(shmid, NULL, 0);
-        if (shm == (char *) -1) {
+        if (shm == (char8 *) -1) {
             return NULL;
         }
         return shm;
@@ -141,10 +141,10 @@ public:
                       uint32 size) {
 
         //check if the memory is valid.
-        char* addressPtr = (char *) address;
+        char8* addressPtr = (char8 *) address;
         while (size > 0) {
             if (addressPtr == NULL) {
-                return False;
+                return false;
             }
             size--;
             addressPtr++;
@@ -164,7 +164,7 @@ public:
                      const void* source,
                      uint32 size) {
         if (source == NULL || destination == NULL) {
-            return False;
+            return false;
         }
 
         return memcpy(destination, source, size) != NULL;
@@ -224,7 +224,7 @@ public:
                      const void* source,
                      uint32 size) {
         if (source == NULL || destination == NULL) {
-            return False;
+            return false;
         }
         return memmove(destination, source, size) != NULL;
 
@@ -242,7 +242,7 @@ public:
                     int32 c,
                     uint32 size) {
         if (mem == NULL) {
-            return False;
+            return false;
         }
         return memset(mem, c, size) != NULL;
     }

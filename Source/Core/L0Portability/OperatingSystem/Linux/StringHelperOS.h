@@ -2,7 +2,7 @@
  * @file StringHelperOS.h
  * @brief Header file for class StringHelperOS
  * @date 30/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -47,8 +47,8 @@ public:
     /**
      * @see StringHelper::Concatenate
      */
-    static char* Concatenate(char* destination,
-                             const char* source) {
+    static char8* Concatenate(char8* destination,
+                             const char8* source) {
         if (source == NULL || destination == NULL) {
             return NULL;
         }
@@ -58,8 +58,8 @@ public:
     /**
      * @see StringHelper::ConcatenateN
      */
-    static char* ConcatenateN(char* destination,
-                              const char* source,
+    static char8* ConcatenateN(char8* destination,
+                              const char8* source,
                               uint32 size) {
         if (destination == NULL || source == NULL) {
             return NULL;
@@ -70,8 +70,8 @@ public:
     /**
      * @see StringHelper::SearchChar
      */
-    static const char* SearchChar(const char* string,
-                                  char c) {
+    static const char8* SearchChar(const char8* string,
+                                  char8 c) {
         if (string == NULL) {
             return NULL;
         }
@@ -81,8 +81,8 @@ public:
     /**
      * @see StringHelper::Compare
      */
-    static int32 Compare(const char* string1,
-                         const char* string2) {
+    static int32 Compare(const char8* string1,
+                         const char8* string2) {
         if (string1 == NULL || string2 == NULL) {
             return -1;
         }
@@ -100,8 +100,8 @@ public:
     /**
      * @see StringHelper::CompareN
      */
-    static int32 CompareN(const char* string1,
-                          const char* string2,
+    static int32 CompareN(const char8* string1,
+                          const char8* string2,
                           uint32 size) {
         if (string1 == NULL || string2 == NULL) {
             return -1;
@@ -120,10 +120,10 @@ public:
     /**
      * @see StringHelper::Copy
      */
-    static bool Copy(char* destination,
-                     const char* source) {
+    static bool Copy(char8* destination,
+                     const char8* source) {
         if (source == NULL || destination == NULL) {
-            return False;
+            return false;
         }
         return strcpy(destination, source) != NULL;
     }
@@ -131,11 +131,11 @@ public:
     /**
      * @see StringHelper::CopyN
      */
-    static bool CopyN(char* destination,
-               const char* source,
+    static bool CopyN(char8* destination,
+               const char8* source,
                uint32 size) {
         if (source == NULL || destination == NULL) {
-            return False;
+            return false;
         }
         return strncpy(destination, source, size) != NULL;
     }
@@ -143,8 +143,8 @@ public:
     /**
      * @see StringHelper::SearchIndex
      */
-    static int32 SearchIndex(const char* string1,
-                             const char* string2) {
+    static int32 SearchIndex(const char8* string1,
+                             const char8* string2) {
         if (string1 == NULL || string2 == NULL) {
             return -1;
         }
@@ -154,7 +154,7 @@ public:
     /**
      * @see StringHelper::Length
      */
-    static int32 Length(const char* string) {
+    static int32 Length(const char8* string) {
         if (string == NULL) {
             return -1;
         }
@@ -164,8 +164,8 @@ public:
     /**
      * @see StringHelper::SearchChars.
      */
-    static const char* SearchChars(const char* string1,
-                                   const char* string2) {
+    static const char8* SearchChars(const char8* string1,
+                                   const char8* string2) {
         if (string1 == NULL || string2 == NULL) {
             return NULL;
         }
@@ -175,8 +175,8 @@ public:
     /**
      * @see StringHelper::SearchLastChar
      */
-    static const char* SearchLastChar(const char* string,
-                                      char c) {
+    static const char8* SearchLastChar(const char8* string,
+                                      char8 c) {
         if (string == NULL) {
             return NULL;
         }
@@ -186,8 +186,8 @@ public:
     /**
      * @see StringHelper::SearchString
      */
-    static const char* SearchString(const char* string,
-                                    const char* substring) {
+    static const char8* SearchString(const char8* string,
+                                    const char8* substring) {
         if (string == NULL || substring == NULL) {
             return NULL;
         }

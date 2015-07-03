@@ -2,7 +2,7 @@
  * @file StringHelper.cpp
  * @brief Source file for class StringHelper
  * @date 30/giu/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -37,64 +37,64 @@
 
 
 
-char* StringHelperConcatenate(char* destination, const char* source) {
+char8* StringHelperConcatenate(char8* destination, const char8* source) {
     return StringOS::Concatenate(destination, source);
 }
 
-char* StringHelperConcatenateN(char* destination,
-                               const char* source,
+char8* StringHelperConcatenateN(char8* destination,
+                               const char8* source,
                                uint32 size) {
     return StringOS::ConcatenateN(destination, source, size);
 }
 
-const char* StringHelperSearchChar(const char* string,
-                                   char c) {
+const char8* StringHelperSearchChar(const char8* string,
+                                   char8 c) {
     return StringOS::SearchChar(string, c);
 }
 
-int32 StringHelperCompare(const char* string1,
-                          const char* string2) {
+int32 StringHelperCompare(const char8* string1,
+                          const char8* string2) {
     return StringOS::Compare(string1, string2);
 }
 
-int32 StringHelperCompareN(const char* string1,
-                           const char* string2,
+int32 StringHelperCompareN(const char8* string1,
+                           const char8* string2,
                            uint32 size) {
     return StringOS::CompareN(string1, string2, size);
 }
 
-bool StringHelperCopy(char* destination,
-                      const char* source) {
+bool StringHelperCopy(char8* destination,
+                      const char8* source) {
     return StringOS::Copy(destination, source);
 }
 
-bool StringHelperCopyN(char* destination,
-                       const char* source,
+bool StringHelperCopyN(char8* destination,
+                       const char8* source,
                        uint32 size) {
     return StringOS::CopyN(destination, source, size);
 }
 
-int32 StringHelperSearchIndex(const char* string1,
-                              const char* string2) {
+int32 StringHelperSearchIndex(const char8* string1,
+                              const char8* string2) {
     return StringOS::SearchIndex(string1, string2);
 }
 
-int32 StringHelperLength(const char* string) {
+int32 StringHelperLength(const char8* string) {
     return StringOS::Length(string);
 }
 
-const char* StringHelperSearchChars(const char* string1,
-                                    const char* string2) {
+const char8* StringHelperSearchChars(const char8* string1,
+                                    const char8* string2) {
     return StringOS::SearchChars(string1, string2);
 }
 
-const char* StringHelperSearchLastChar(const char* string,
-                                       char c) {
+const char8* StringHelperSearchLastChar(const char8* string,
+                                       char8 c) {
     return StringOS::SearchLastChar(string, c);
 }
 
-const char* StringHelperSearchString(const char* string,
-                                     const char* substring) {
+const char8* StringHelperSearchString(const char8* string,
+                                     const char8* substring) {
     return StringOS::SearchString(string, substring);
 }
 
@@ -102,65 +102,65 @@ const char* StringHelperSearchString(const char* string,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-char* StringHelper::Concatenate(char* destination,
-                                const char* source) {
+char8* StringHelper::Concatenate(char8* destination,
+                                const char8* source) {
     return StringHelperConcatenate(destination, source);
 }
 
-char* StringHelper::ConcatenateN(char* destination,
-                                 const char* source,
+char8* StringHelper::ConcatenateN(char8* destination,
+                                 const char8* source,
                                  uint32 size) {
     return StringHelperConcatenateN(destination, source, size);
 }
 
-const char* StringHelper::SearchChar(const char* string,
-                                     char c) {
+const char8* StringHelper::SearchChar(const char8* string,
+                                     char8 c) {
     return StringHelperSearchChar(string, c);
 }
 
-int32 StringHelper::Compare(const char* string1,
-                            const char* string2) {
+int32 StringHelper::Compare(const char8* string1,
+                            const char8* string2) {
     return StringHelperCompare(string1, string2);
 }
 
-int32 StringHelper::CompareN(const char* string1,
-                             const char* string2,
+int32 StringHelper::CompareN(const char8* string1,
+                             const char8* string2,
                              uint32 size) {
     return StringHelperCompareN(string1, string2, size);
 }
 
-bool StringHelper::Copy(char* destination,
-                        const char* source) {
+bool StringHelper::Copy(char8* destination,
+                        const char8* source) {
     return StringHelperCopy(destination, source);
 }
 
-bool StringHelper::CopyN(char* destination,
-                         const char* source,
+bool StringHelper::CopyN(char8* destination,
+                         const char8* source,
                          uint32 size) {
     return StringHelperCopyN(destination, source, size);
 }
 
-int32 StringHelper::SearchIndex(const char* string1,
-                                const char* string2) {
+int32 StringHelper::SearchIndex(const char8* string1,
+                                const char8* string2) {
     return StringHelperSearchIndex(string1, string2);
 }
 
-int32 StringHelper::Length(const char* string) {
+int32 StringHelper::Length(const char8* string) {
     return StringHelperLength(string);
 }
 
-const char* StringHelper::SearchChars(const char* string1,
-                               const char* string2) {
+const char8* StringHelper::SearchChars(const char8* string1,
+                               const char8* string2) {
     return StringHelperSearchChars(string1, string2);
 }
 
-const char* StringHelper::SearchLastChar(const char* string,
-                                  char c) {
+const char8* StringHelper::SearchLastChar(const char8* string,
+                                  char8 c) {
     return StringHelperSearchLastChar(string, c);
 }
 
-const char* StringHelper::SearchString(const char* string,
-                                const char* substring) {
+const char8* StringHelper::SearchString(const char8* string,
+                                const char8* substring) {
     return StringHelperSearchString(string, substring);
 }
 

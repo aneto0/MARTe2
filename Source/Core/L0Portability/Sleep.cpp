@@ -2,7 +2,7 @@
  * @file Sleep.cpp
  * @brief Source file for class Sleep
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,39 +31,40 @@
 
 #include "Sleep.h"
 
-int GetDateSeconds() {
+int32 GetDateSeconds() {
     return SleepOS::GetDateSeconds();
 }
 
-void SleepAtLeast(double sec) {
+void SleepAtLeast(const float64 sec) {
     SleepOS::AtLeast(sec);
 }
 
-void SleepNoMore(double sec) {
+void SleepNoMore(const float64 sec) {
     SleepOS::NoMore(sec);
 }
 
-void SleepSecDouble(double sec) {
+void SleepSecDouble(const float64 sec) {
     SleepOS::SecDouble(sec);
 }
 
-void SleepSec(float sec) {
+void SleepSec(const float32 sec) {
     SleepOS::SecFloat(sec);
 }
 
-void SleepMSec(int32 msec) {
+void SleepMSec(const int32 msec) {
     SleepOS::MSec(msec);
 }
 
-void SleepBusy(double sec) {
+void SleepBusy(const float64 sec) {
     int64 startCounter = HighResolutionTimer::Counter();
-    int64 sleepUntil = startCounter + (int64) (sec * HighResolutionTimer::Frequency());
-    while (HighResolutionTimer::Counter() < sleepUntil) {
+    int64 endCounter = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
+    int64 sleepUntilCounter = startCounter + endCounter;
+    while (HighResolutionTimer::Counter() < sleepUntilCounter) {
     }
 }
 
-void SleepSemiBusy(double totalSleepSec,
-                   double nonBusySleepSec) {
+void SleepSemiBusy(const float64 totalSleepSec,
+                   const float64 nonBusySleepSec) {
     SleepOS::SemiBusy(totalSleepSec, nonBusySleepSec);
 }
 
@@ -75,35 +76,34 @@ void SleepSemiBusy(double totalSleepSec,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-int Sleep::GetDateSeconds() {
+int32 Sleep::GetDateSeconds(void) {
     return ::GetDateSeconds();
 }
 
-void Sleep::AtLeast(double sec) {
+void Sleep::AtLeast(const float64 sec) {
     SleepAtLeast(sec);
 }
 
-void Sleep::NoMore(double sec) {
+void Sleep::NoMore(const float64 sec) {
     SleepNoMore(sec);
 }
 
-void Sleep::Sec(double sec) {
+void Sleep::Sec(const float64 sec) {
     SleepSecDouble(sec);
 }
 
-void Sleep::Sec(float sec) {
+void Sleep::Sec(const float32 sec) {
     SleepSec(sec);
 }
 
-void Sleep::MSec(int32 msec) {
+void Sleep::MSec(const int32 msec) {
     SleepMSec(msec);
 }
 
-void Sleep::Busy(double sec) {
+void Sleep::Busy(const float64 sec) {
     SleepBusy(sec);
 }
 
-void Sleep::SemiBusy(double totalSleepSec,
-                     double nonBusySleepSec) {
+void Sleep::SemiBusy(const float64 totalSleepSec, const float64 nonBusySleepSec) {
     SleepSemiBusy(totalSleepSec, nonBusySleepSec);
 }

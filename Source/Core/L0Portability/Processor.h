@@ -2,7 +2,7 @@
  * @file Processor.h
  * @brief Header file for class Processor
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -36,16 +36,16 @@
 extern "C" {
 
 /** @see Processor::Family(). */
-uint32 ProcessorFamily();
+uint32 ProcessorFamily(void);
 
 /** @see Processor::VendorId(). */
-const char *ProcessorVendorId();
+const char8 *ProcessorVendorId(void);
 
 /** @see Processor::ProcessorsAvaiable(). */
-uint32 ProcessorsAvailable();
+uint32 ProcessorsAvailable(void);
 
 /** @see Processor::Model(). */
-uint32 ProcessorModel();
+uint32 ProcessorModel(void);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -67,7 +67,7 @@ public:
      * @brief Returns the processor type.
      * @return a string which contains the processor type.
      */
-    static inline const char *VendorId();
+    static inline const char8 *VendorId();
 
     /**
      * @brief Returns the processor family.
@@ -92,7 +92,7 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-const char *Processor::VendorId() {
+const char8 *Processor::VendorId() {
     return ProcessorVendorId();
 }
 

@@ -74,7 +74,7 @@ int64 HighResolutionTimerFrequency();
  * @brief the HighResolutionTimer Clock period in seconds.
  * @return the cpu clock period in seconds (it must be the inverse of the frequency).
  */
-double HighResolutionTimerPeriod();
+float64 HighResolutionTimerPeriod();
 
 /**
  * @brief How many ticks in a millisecond for the HRT.
@@ -135,7 +135,7 @@ public:
      * @see HighResolutionTimerPeriod().
      * @return the current period of the cpu.
      */
-    static inline double Period();
+    static inline float64 Period();
 
     /**
      * @brief Converts HRT ticks to time.
@@ -143,7 +143,7 @@ public:
      * @param[in] tStart is the initial ticks number.
      * @return the time elapsed in TStop-TStart ticks in seconds
      */
-    static inline double TicksToTime(int64 tStop,
+    static inline float64 TicksToTime(int64 tStop,
                                      int64 tStart = 0);
 
     /**
@@ -170,11 +170,11 @@ int64 HighResolutionTimer::Frequency() {
     return HighResolutionTimerFrequency();
 }
 
-double HighResolutionTimer::Period() {
+float64 HighResolutionTimer::Period() {
     return HighResolutionTimerPeriod();
 }
 
-double HighResolutionTimer::TicksToTime(int64 tStop,
+float64 HighResolutionTimer::TicksToTime(int64 tStop,
                                         int64 tStart) {
     int64 dT = tStop - tStart;
     return dT * Period();

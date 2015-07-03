@@ -2,7 +2,7 @@
  * @file StringTestHelper.h
  * @brief Header file for class StringTestHelper
  * @date 30/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -47,7 +47,7 @@ public:
      * @param[in] string is the string in input.
      * @return the string length
      */
-    inline static uint32 Size(const char* string) {
+    inline static uint32 Size(const char8* string) {
         uint32 i = 0;
         if (string == NULL) {
             return -1;
@@ -65,17 +65,17 @@ public:
      * @param[in] string2 is the second string.
      * @return true if the strings are equal, false otherwise.
      */
-    inline static bool Compare(const char* string1, const char* string2) {
+    inline static bool Compare(const char8* string1, const char8* string2) {
         int32 i = 0;
         while (1) {
             if (string1[i] != string2[i]) {
-                return False;
+                return false;
             }
             if (string1[i] == '\0' && string2[i] == '\0') {
-                return True;
+                return true;
             }
             if (string1[i] == '\0' || string2[i] == '\0') {
-                return False;
+                return false;
             }
             i++;
         }
@@ -88,7 +88,7 @@ public:
      * @param[out] result is the concatenated string.
      * @return true if successful, false otherwise.
      */
-    inline static bool Append(const char* string1, const char* string2, char* result) {
+    inline static bool Append(const char8* string1, const char8* string2, char8* result) {
         int32 i = 0;
         int32 j = 0;
         while (1) {
@@ -101,7 +101,7 @@ public:
         while (1) {
             result[i] = string2[j];
             if (string2[j] == '\0') {
-                return True;
+                return true;
             }
             i++;
             j++;

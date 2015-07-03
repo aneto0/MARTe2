@@ -2,7 +2,7 @@
  * @file BasicConsoleTest.h
  * @brief Header file for class BasicConsoleTest
  * @date 30/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -72,7 +72,7 @@ public:
      * @param[in] padding is the difference between the size that we want to pass to the write function and the real string size.
      * @return true if the size returned is the real string size.
      */
-    bool TestWrite(const char* string,
+    bool TestWrite(const char8* string,
                    int32 padding);
 
     /**
@@ -81,7 +81,7 @@ public:
      * @param[in] sizeArg is the size to match with the read string size.
      * @return true if the read string is equal to the passed argument.
      */
-    bool TestRead(const char* stringArg);
+    bool TestRead(const char8* stringArg);
 
     /**
      * @brief Tests the behavior of the paging property.
@@ -104,7 +104,7 @@ public:
 
     /**
      * @brief Tests most functions that are not implemented for example in linux.
-     * @return True if all functions return the expected value.
+     * @return true if all functions return the expected value.
      */
     bool TestNotImplemented();
 

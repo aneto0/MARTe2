@@ -154,7 +154,7 @@ void *MemoryRealloc(void *&data,
     return data;
 }
 
-char *MemoryStringDup(const char *s) {
+char8 *MemoryStringDup(const char8 *s) {
 
 #ifdef MEMORY_STATISTICS
 
@@ -171,17 +171,17 @@ char *MemoryStringDup(const char *s) {
         length++;
     }
 
-    //consider the terminator char
+    //consider the terminator char8
     length++;
 
-    char *sCopy = (char*) MemoryMalloc(length * sizeof(char));
+    char8 *sCopy = (char8*) MemoryMalloc(length * sizeof(char8));
     MemoryMove(sCopy, s, length);
 #else
 
     if (s == NULL) {
         return NULL;
     }
-    char* sCopy = MemoryOS::StringDup(s);
+    char8* sCopy = MemoryOS::StringDup(s);
 
 
 #endif
@@ -192,7 +192,7 @@ char *MemoryStringDup(const char *s) {
 
 bool MemoryFree(void *&data) {
     if (data == NULL) {
-        return False;
+        return false;
     }
 #ifdef MEMORY_STATISTICS
     uint32 sizeToFree = 0;
@@ -202,7 +202,7 @@ bool MemoryFree(void *&data) {
 
     //the pointer is invalid
     if (header == NULL) {
-        return False;
+        return false;
     }
     sizeToFree = header->size;
     data = (void*) header;
@@ -214,7 +214,7 @@ bool MemoryFree(void *&data) {
     MemoryOS::Free(data);
 
     data = NULL;
-    return True;
+    return true;
 }
 
 bool MemoryAllocationStatistics(int32 &size,
@@ -237,7 +237,7 @@ bool MemoryAllocationStatistics(int32 &size,
 
 #else
 
-    return False;
+    return false;
 
 #endif
 
@@ -251,24 +251,24 @@ bool MemoryGetHeaderInfo(void *pointer,
 
     //invalid pointer
     if (pointer == NULL) {
-        return False;
+        return false;
     }
 
     MemoryInformation *header = (MemoryInformation*) pointer - 1;
 
     //invalid pointer
     if (header == NULL) {
-        return False;
+        return false;
     }
 
     size = header->size;
     tid = header->tid;
-    return True;
+    return true;
 
 #else
 
     //the header is not supported
-    return False;
+    return false;
 
 #endif
 }
@@ -325,7 +325,7 @@ int32 MemoryCompare(const void* mem1,
 }
 
 const void *MemorySearch(const void* mem,
-                         char c,
+                         char8 c,
                          uint32 size) {
     return MemoryOS::Search(mem, c, size);
 }
@@ -337,7 +337,7 @@ bool MemoryMove(void* destination,
 }
 
 bool MemorySet(void* mem,
-               char c,
+               char8 c,
                uint32 size) {
     return MemoryOS::Set(mem, c, size);
 }
@@ -360,7 +360,7 @@ void *Memory::Realloc(void *&data,
     return MemoryRealloc(data, newSize);
 }
 
-char *Memory::StringDup(const char *s) {
+char8 *Memory::StringDup(const char8 *s) {
     return MemoryStringDup(s);
 }
 
@@ -420,7 +420,7 @@ int32 Memory::Compare(const void *mem1,
     return MemoryCompare(mem1, mem2, size);
 }
 const void *Memory::Search(const void *mem,
-                           char c,
+                           char8 c,
                            uint32 size) {
     return MemorySearch(mem, c, size);
 }
@@ -432,7 +432,7 @@ bool Memory::Move(void* destination,
 }
 
 bool Memory::Set(void* mem,
-                 char c,
+                 char8 c,
                  uint32 size) {
     return MemorySet(mem, c, size);
 }

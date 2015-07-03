@@ -2,7 +2,7 @@
  * @file ProcessorTypeTest.h
  * @brief Header file for class ProcessorTypeTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -55,37 +55,37 @@ public:
 
     /**
      * @brief Tests the overloaded assignment operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if the test is successful, false otherwise.
      */
     bool TestAssignmentOperator();
 
     /**
      * @brief Tests the overloaded OR operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if the test is successful, false otherwise.
      */
     bool TestOROperator();
 
     /**
      * @brief Tests the overloaded equality operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if the test is successful, false otherwise.
      */
     bool TestEqualityOperator();
 
     /**
      * @brief Tests the overloaded inequality operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if the test is successful, false otherwise.
      */
     bool TestInequalityOperator();
 
     /**
      * @brief Tests Get/SetDefaultCPUs in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if the test is successful, false otherwise.
      */
     bool TestGetSetDefaultCPUs();
 
     /**
      * @brief Tests ProcessorType's constructors
-     * @return True if the test is successful, false otherwise.
+     * @return true if the test is successful, false otherwise.
      */
     bool TestConstructors();
 

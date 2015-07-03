@@ -66,17 +66,17 @@ private:
     bool Init(bool &recursive) {
         closed = false;
         if (pthread_mutexattr_init(&mutexAttributes) != 0) {
-            return False;
+            return false;
         }
         if (pthread_mutexattr_setprotocol(&mutexAttributes,
                                           PTHREAD_PRIO_INHERIT) != 0) {
-            return False;
+            return false;
         }
         if (recursive) {
             //The deadlock condition causes a crash at operating system level.
             if (pthread_mutexattr_settype(&mutexAttributes,
                                           PTHREAD_MUTEX_RECURSIVE) != 0) {
-                return False;
+                return false;
             }
         }
         else {
@@ -84,13 +84,13 @@ private:
             //with PTHREAD_MUTEX_NORMAL the same thread cannot lock the semaphore without unlocking it first.
             if (pthread_mutexattr_settype(&mutexAttributes,
                                           PTHREAD_MUTEX_NORMAL) != 0) {
-                return False;
+                return false;
             }
         }
         if (pthread_mutex_init(&mutexHandle, &mutexAttributes) != 0) {
-            return False;
+            return false;
         }
-        return True;
+        return true;
     }
 
     /**
@@ -105,12 +105,12 @@ private:
         UnLock();
         closed = true;
         if (pthread_mutexattr_destroy(&mutexAttributes) != 0) {
-            return False;
+            return false;
         }
         if (pthread_mutex_destroy(&mutexHandle) != 0) {
-            return False;
+            return false;
         }
-        return True;
+        return true;
     }
 
     /**
@@ -127,31 +127,31 @@ private:
         if (msecTimeout == TTInfiniteWait) {
             if (pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL) != 0) {
                 error = OSError;
-                return False;
+                return false;
             }
 
             if (pthread_mutex_lock(&mutexHandle) != 0) {
                 error = OSError;
-                return False;
+                return false;
             }
         }
         else {
             struct timespec timesValues;
             timeb tb;
             ftime(&tb);
-            double sec = ((msecTimeout.msecTimeout + tb.millitm) * 1e-3
+            float64 sec = ((msecTimeout.msecTimeout + tb.millitm) * 1e-3
                     + tb.time);
-            double roundValue = floor(sec);
+            float64 roundValue = floor(sec);
             timesValues.tv_sec = (int) roundValue;
             timesValues.tv_nsec = (int) ((sec - roundValue) * 1E9);
             int err = 0;
             if ((err = pthread_mutex_timedlock(&mutexHandle, &timesValues))
                     != 0) {
                 error = Timeout;
-                return False;
+                return false;
             }
         }
-        return True;
+        return true;
     }
 
     /**
@@ -242,18 +242,18 @@ public:
         // Create the Structure
             semH = (HANDLE) new PrivateMutexSemStruct();
             if (semH == (HANDLE) NULL) {
-                return False;
+                return false;
             }
             // Initialize the Semaphore
             bool ret = ((PrivateMutexSemStruct *) semH)->Init(recursive);
             if (!ret) {
                 delete (PrivateMutexSemStruct *) semH;
                 semH = (HANDLE) NULL;
-                return False;
+                return false;
             }
 
             Error error;
-            if (locked == True) {
+            if (locked == true) {
                 ((PrivateMutexSemStruct *) semH)->Lock(TTInfiniteWait, error);
             }
 
@@ -268,7 +268,7 @@ public:
          */
         static inline bool Close(HANDLE &semH) {
             if (semH == (HANDLE) NULL) {
-                return True;
+                return true;
             }
 
             bool ret = ((PrivateMutexSemStruct*) semH)->Close();
@@ -290,7 +290,7 @@ public:
          */
         static inline bool Lock(HANDLE &semH, TimeoutType msecTimeout, Error &error) {
             if (semH == (HANDLE) NULL) {
-                return False;
+                return false;
             }
             return ((PrivateMutexSemStruct *) semH)->Lock(msecTimeout, error);
         }
@@ -303,7 +303,7 @@ public:
          */
         static inline bool UnLock(HANDLE &semH) {
             if (semH == (HANDLE) NULL) {
-                return False;
+                return false;
             }
             return ((PrivateMutexSemStruct *) semH)->UnLock();
         }
@@ -314,7 +314,7 @@ public:
          */
         static inline bool FastLock(HANDLE &semH, TimeoutType msecTimeout, Error &error) {
             if (semH == (HANDLE) NULL) {
-                return False;
+                return false;
             }
             return ((PrivateMutexSemStruct *) semH)->Lock(msecTimeout, error);
         }
@@ -326,7 +326,7 @@ public:
         static inline bool FastUnLock(HANDLE &semH) {
 
             if (semH == (HANDLE) NULL) {
-                return False;
+                return false;
             }
             return ((PrivateMutexSemStruct *) semH)->UnLock();
         }
@@ -339,7 +339,7 @@ public:
          */
         static inline bool FastTryLock(HANDLE &semH) {
             if (semH == (HANDLE) NULL) {
-                return False;
+                return false;
             }
             return ((PrivateMutexSemStruct *) semH)->TryLock();
         }

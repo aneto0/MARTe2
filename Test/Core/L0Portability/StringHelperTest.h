@@ -2,7 +2,7 @@
  * @file StringHelperTest.h
  * @brief Header file for class StringHelperTest
  * @date 30/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -51,7 +51,7 @@ public:
      * @param[in] string .
      * @return true if the length of the string is correct.
      */
-    bool TestLength(const char* string);
+    bool TestLength(const char8* string);
 
     /**
      * @brief Tests if two strings are equals.
@@ -59,15 +59,15 @@ public:
      * @param[in] stringEqual is the second string.
      * @return true if the results of StringHelper::Equal, StringHelper::EqualN return as expected.
      */
-    bool TestCompare(const char* string,
-                     const char* stringEqual);
+    bool TestCompare(const char8* string,
+                     const char8* stringEqual);
 
     /**
      * @brief Tests the Copy() function.
      * @param[in] string is the string to copy.
      * @return true if the copied string is equal to the original.
      */
-    bool TestCopy(const char* string);
+    bool TestCopy(const char8* string);
 
     /**
      * @brief Tests StringHelper::Append and StringHelper::Cat functions.
@@ -76,7 +76,7 @@ public:
     bool TestConcatenate();
 
     /**
-     * @brief Tests the different search functions (by char, by string).
+     * @brief Tests the different search functions (by char8, by string).
      * @return true if the operations return the expected result.
      */
     bool TestSearch();

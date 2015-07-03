@@ -2,7 +2,7 @@
  * @file SleepOS.h
  * @brief Header file for class SleepOS
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -55,7 +55,7 @@ public:
      * @brief Sleep more than sec in argument.
      * @param[in] sec defines the minimum number of seconds to sleep.
      */
-    static inline void AtLeast(double sec) {
+    static inline void AtLeast(float64 sec) {
         int ticks = (int) (winSleepFreq * sec + 0.9999);
         if (ticks < 0)
             return;
@@ -68,7 +68,7 @@ public:
      * @brief Sleep maximum sec in the argument.
      * @param[in] sec defines the maximum number of seconds to sleep.
      */
-    static inline void NoMore(double sec) {
+    static inline void NoMore(float64 sec) {
         int ticks = (int) (winSleepFreq * sec);
         if (ticks < 0)
             return;
@@ -81,7 +81,7 @@ public:
      * @brief Sleep sec seconds.
      * @param[in] sec is the number to seconds to sleep.
      */
-    static inline void SecDouble(double sec) {
+    static inline void SecDouble(float64 sec) {
         if (sec < 0)
             return;
 
@@ -93,7 +93,7 @@ public:
      * @brief Sleep sec seconds.
      * @param[in] sec is the number of seconds to sleep.
      */
-    static inline void SecFloat(float sec) {
+    static inline void SecFloat(float32 sec) {
         SecDouble(sec);
     }
 
@@ -115,8 +115,8 @@ public:
      * @param[in] totalSleepSec is the number of seconds to sleep.
      * @param[in] nonBusySleepSec is the number of seconds to sleep yielding cpu.
      */
-    static inline void SemiBusy(double totalSleepSec,
-                                double nonBusySleepSec) {
+    static inline void SemiBusy(float64 totalSleepSec,
+                                float64 nonBusySleepSec) {
         NoMore(totalSleepSec);
     }
 

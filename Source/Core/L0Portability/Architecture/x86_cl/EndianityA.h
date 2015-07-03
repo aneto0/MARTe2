@@ -2,7 +2,7 @@
  * @file EndianityA.h
  * @brief Header file for class EndianityA
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -169,14 +169,14 @@ public:
      * @brief Converts a number from big endian to little endian
      * @param[in,out] x the number to convert
      */
-    static inline void FromBigEndianDouble(volatile double &x) {
+    static inline void FromBigEndianDouble(volatile float64 &x) {
         EndianitySwap64(&x);
     }
     /**
      * @brief Converts a number from big endian to little endian
      * @param[in,out] x the number to convert
      */
-    static inline void FromBigEndianFloat(volatile float &x) {
+    static inline void FromBigEndianFloat(volatile float32 &x) {
         EndianitySwap32(&x);
     }
     /**
@@ -225,14 +225,14 @@ public:
      * @brief NOOP since the system is already little endian
      * @param[in,out] x the number to convert
      */
-    static inline void FromLittleEndianDouble(volatile double &x) {
+    static inline void FromLittleEndianDouble(volatile float64 &x) {
         x = x;
     }
     /**
      * @brief NOOP since the system is already little endian
      * @param[in,out] x the number to convert
      */
-    static inline void FromLittleEndianFloat(volatile float &x) {
+    static inline void FromLittleEndianFloat(volatile float32 &x) {
         x = x;
     }
     /**
@@ -281,14 +281,14 @@ public:
      * @brief Converts a number from little endian to big endian
      * @param[in,out] x the number to convert
      */
-    static inline void ToBigEndianDouble(volatile double &x) {
+    static inline void ToBigEndianDouble(volatile float64 &x) {
         EndianitySwap64(&x);
     }
     /**
      * @brief Converts a number from little endian to big endian
      * @param[in,out] x the number to convert
      */
-    static inline void ToBigEndianFloat(volatile float &x) {
+    static inline void ToBigEndianFloat(volatile float32 &x) {
         EndianitySwap32(&x);
     }
     /**
@@ -337,14 +337,14 @@ public:
      * @brief Converts a number from little endian to big endian
      * @param[in,out] x the number to convert
      */
-    static inline void ToLittleEndianDouble(volatile double &x) {
+    static inline void ToLittleEndianDouble(volatile float64 &x) {
         x = x;
     }
     /**
      * @brief Converts a number from little endian to big endian
      * @param[in,out] x the number to convert
      */
-    static inline void ToLittleEndianFloat(volatile float &x) {
+    static inline void ToLittleEndianFloat(volatile float32 &x) {
         x = x;
     }
     /**
@@ -395,8 +395,8 @@ public:
      * @param[in] src the source
      * @param[in] size the number of elements
      */
-    static inline void MemCopyFromBigEndianDouble(double *dest,
-                                                  const double *src,
+    static inline void MemCopyFromBigEndianDouble(float64 *dest,
+                                                  const float64 *src,
                                                   uint32 size) {
         EndianityMemCopySwap64(dest, src, size);
     }
@@ -428,8 +428,8 @@ public:
      * @param[in] src the source
      * @param[in] size the number of elements
      */
-    static inline void MemCopyFromBigEndianFloat(float *dest,
-                                                 const float *src,
+    static inline void MemCopyFromBigEndianFloat(float32 *dest,
+                                                 const float32 *src,
                                                  uint32 size) {
         EndianityMemCopySwap32(dest, src, size);
     }
@@ -483,8 +483,8 @@ public:
      * @param[in] src the source
      * @param[in] size the number of elements
      */
-    static inline void MemCopyFromLittleEndianDouble(double *dest,
-                                                     const double *src,
+    static inline void MemCopyFromLittleEndianDouble(float64 *dest,
+                                                     const float64 *src,
                                                      uint32 size) {
         for (uint32 i = 0; i < size; i++) {
             *dest = *src;
@@ -528,8 +528,8 @@ public:
      * @param[in] src the source
      * @param[in] size the number of elements
      */
-    static inline void MemCopyFromLittleEndianFloat(float *dest,
-                                                    const float *src,
+    static inline void MemCopyFromLittleEndianFloat(float32 *dest,
+                                                    const float32 *src,
                                                     uint32 size) {
         for (uint32 i = 0; i < size; i++) {
             *dest = *src;
@@ -603,8 +603,8 @@ public:
      * @param[in] src the source
      * @param[in] size the number of elements
      */
-    static inline void MemCopyToBigEndianDouble(double *dest,
-                                                const double *src,
+    static inline void MemCopyToBigEndianDouble(float64 *dest,
+                                                const float64 *src,
                                                 uint32 size) {
         EndianityMemCopySwap64(dest, src, size);
     }
@@ -636,8 +636,8 @@ public:
      * @param[in] src the source
      * @param[in] size the number of elements
      */
-    static inline void MemCopyToBigEndianFloat(float *dest,
-                                               const float *src,
+    static inline void MemCopyToBigEndianFloat(float32 *dest,
+                                               const float32 *src,
                                                uint32 size) {
         EndianityMemCopySwap32(dest, src, size);
     }
@@ -691,8 +691,8 @@ public:
      * @param[in] src the source
      * @param[in] size the number of elements
      */
-    static inline void MemCopyToLittleEndianDouble(double *dest,
-                                                   const double *src,
+    static inline void MemCopyToLittleEndianDouble(float64 *dest,
+                                                   const float64 *src,
                                                    uint32 size) {
         for (uint32 i = 0; i < size; i++) {
             *dest = *src;
@@ -736,8 +736,8 @@ public:
      * @param[in] src the source
      * @param[in] size the number of elements
      */
-    static inline void MemCopyToLittleEndianFloat(float *dest,
-                                                  const float *src,
+    static inline void MemCopyToLittleEndianFloat(float32 *dest,
+                                                  const float32 *src,
                                                   uint32 size) {
         for (uint32 i = 0; i < size; i++) {
             *dest = *src;

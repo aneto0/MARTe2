@@ -2,7 +2,7 @@
  * @file ProcessorA.h
  * @brief Header file for class ProcessorA
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -101,7 +101,7 @@ public:
      * @details Called by Processor::VendorId()
      * @return the cpu id.
      */
-    static const char *VendorId() {
+    static const char8 *VendorId() {
 
         uint32 eax = 0;
         CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
@@ -112,11 +112,11 @@ public:
 private:
 
     /** Buffer used to store the processor identifier */
-    static char processorVendorId[13];
+    static char8 processorVendorId[13];
 
 };
 
-char ProcessorA::processorVendorId[13] = { 0 };
+char8 ProcessorA::processorVendorId[13] = { 0 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

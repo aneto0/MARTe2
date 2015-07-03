@@ -49,18 +49,18 @@ FastPollingMutexSem ThreadsDatabase::internalMutex;
 
 bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo) {
     if (threadInfo == NULL) {
-        return False;
+        return false;
     }
 
     if (!ThreadsDatabase::AllocMore()) {
         //CStaticAssertErrorCondition(FatalError,"TDB:TDB_NewEntry failed (re-)allocating memory");
-        return False;
+        return false;
     }
 
     // no space
     if (ThreadsDatabase::maxNOfEntries <= ThreadsDatabase::nOfEntries) {
         //CStaticAssertErrorCondition(FatalError,"TDB:TDB_NewEntry no space for new entry");
-        return False;
+        return false;
     }
 
     // search for empty space staring from guess
@@ -71,7 +71,7 @@ bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo) {
         if (ThreadsDatabase::entries[index] == NULL) {
             ThreadsDatabase::entries[index] = threadInfo;
             ThreadsDatabase::nOfEntries++;
-            return True;
+            return true;
         }
         index++;
         // roll-over
@@ -81,7 +81,7 @@ bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo) {
     }
 
     //CStaticAssertErrorCondition(FatalError,"TDB:TDB_NewEntry could not find empty slot!!");
-    return False;
+    return false;
 
 }
 
@@ -171,23 +171,23 @@ bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
         TID threadId = ThreadsDatabaseGetThreadID(n);
         ThreadInformation *threadInfo = ThreadsDatabaseGetThreadInformation(threadId);
         if (threadInfo == NULL) {
-            return False;
+            return false;
         }
         threadInfoCopy = *threadInfo;
-        return True;
+        return true;
     }
     else {
         ThreadInformation *threadInfo = ThreadsDatabaseGetThreadInformation(threadId);
         if (threadInfo == NULL) {
-            return False;
+            return false;
         }
         threadInfoCopy = *threadInfo;
-        return True;
+        return true;
     }
 
 }
 
-TID ThreadsDatabaseFind(const char *name) {
+TID ThreadsDatabaseFind(const char8 *name) {
 
     if (name == NULL) {
         return (TID) 0;
@@ -215,7 +215,7 @@ TID ThreadsDatabaseFind(const char *name) {
 bool ThreadsDatabase::AllocMore() {
     // no need
     if (maxNOfEntries > nOfEntries) {
-        return True;
+        return true;
     }
 
     // first time?
@@ -227,7 +227,7 @@ bool ThreadsDatabase::AllocMore() {
         }
         else {
             //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed allocating %i entries",TDB_THREADS_DATABASE_GRANULARITY);
-            return False;
+            return false;
         }
     }
     else {
@@ -237,7 +237,7 @@ bool ThreadsDatabase::AllocMore() {
         }
         else {
             //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed re-allocating to %i entries",TDB_THREADS_DATABASE_GRANULARITY+TDB_MaxNOfEntries);
-            return False;
+            return false;
         }
     }
 
@@ -246,7 +246,7 @@ bool ThreadsDatabase::AllocMore() {
     for (i = (maxNOfEntries - THREADS_DATABASE_GRANULARITY); i < maxNOfEntries; i++) {
         entries[i] = NULL;
     }
-    return True;
+    return true;
 }
 
 bool ThreadsDatabase::NewEntry(ThreadInformation *ti) {
@@ -283,7 +283,7 @@ bool ThreadsDatabase::GetInfo(ThreadInformation &tiCopy,
     return ThreadsDatabaseGetInfo(tiCopy, n, tid);
 }
 
-TID ThreadsDatabase::Find(const char *name) {
+TID ThreadsDatabase::Find(const char8 *name) {
     return ThreadsDatabaseFind(name);
 }
 

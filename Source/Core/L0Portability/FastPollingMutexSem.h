@@ -2,7 +2,7 @@
  * @file FastPollingMutexSem.h
  * @brief Header file for class FastPollingMutexSem
  * @date 18/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -60,7 +60,7 @@ public:
      * @brief Initializes the semaphore and reads it.
      * @param[in] locked defines if the semaphore must be initialized locked or unlocked.
      */
-    inline void Create(bool locked = False);
+    inline void Create(bool locked = false);
 
 
     /**
@@ -107,7 +107,7 @@ inline FastPollingMutexSem::FastPollingMutexSem() {
 }
 
 void FastPollingMutexSem::Create(bool locked) {
-    if (locked == True) {
+    if (locked == true) {
         flag = 1;
     }
     else {
@@ -129,13 +129,13 @@ bool FastPollingMutexSem::FastLock(TimeoutType msecTimeout,
             int64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
                 error = Timeout;
-                return False;
+                return false;
             }
         }
         // yield CPU
         SleepMSec(1);
     }
-    return True;
+    return true;
 }
 
 bool FastPollingMutexSem::FastTryLock() {

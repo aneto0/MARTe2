@@ -203,7 +203,7 @@ bool FastPollingMutexTest::TestFastLockErrorCode() {
 
     test = testMutex.FastLock(TTInfiniteWait, returnError);
     if (returnError != Debug) {
-        test = False;
+        test = false;
     }
 
     if (test) {

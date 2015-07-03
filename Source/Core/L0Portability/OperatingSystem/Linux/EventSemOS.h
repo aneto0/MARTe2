@@ -54,8 +54,8 @@ private:
      * @brief Constructor.
      */
     PrivateEventSemStruct() {
-        stop = True;
-        closed = False;
+        stop = true;
+        closed = false;
         references = 1;
     }
     /**
@@ -69,18 +69,18 @@ private:
      * @return false if something wrong with pthread_mutex and pthread_cond initializations.
      */
     bool Init() {
-        stop = True;
-        closed = False;
+        stop = true;
+        closed = false;
         if (pthread_mutexattr_init(&mutexAttributes) != 0) {
-            return False;
+            return false;
         }
         if (pthread_mutex_init(&mutexHandle, &mutexAttributes) != 0) {
-            return False;
+            return false;
         }
         if (pthread_cond_init(&eventVariable, NULL) != 0) {
-            return False;
+            return false;
         }
-        return True;
+        return true;
     }
 
     /**
@@ -92,17 +92,17 @@ private:
             return true;
         }
         Post();
-        closed = True;
+        closed = true;
         if (pthread_mutexattr_destroy(&mutexAttributes) != 0) {
-            return False;
+            return false;
         }
         if (pthread_mutex_destroy(&mutexHandle) != 0) {
-            return False;
+            return false;
         }
         if (pthread_cond_destroy(&eventVariable) != 0) {
-            return False;
+            return false;
         }
-        return True;
+        return true;
     }
 
     /**
@@ -118,18 +118,18 @@ private:
         if (msecTimeout == TTInfiniteWait) {
             if (pthread_mutex_lock(&mutexHandle) != 0) {
                 error = OSError;
-                return False;
+                return false;
             }
-            if (stop == True) {
+            if (stop == true) {
                 if (pthread_cond_wait(&eventVariable, &mutexHandle) != 0) {
                     pthread_mutex_unlock(&mutexHandle);
                     error = OSError;
-                    return False;
+                    return false;
                 }
             }
             if (pthread_mutex_unlock(&mutexHandle) != 0) {
                 error = OSError;
-                return False;
+                return false;
             }
         }
         else {
@@ -137,31 +137,31 @@ private:
             timeb tb;
             ftime(&tb);
 
-            double sec = ((msecTimeout.msecTimeout + tb.millitm) * 1e-3
+            float64 sec = ((msecTimeout.msecTimeout + tb.millitm) * 1e-3
                     + tb.time);
 
-            double roundValue = floor(sec);
+            float64 roundValue = floor(sec);
             timesValues.tv_sec = (int) roundValue;
             timesValues.tv_nsec = (int) ((sec - roundValue) * 1E9);
             if (pthread_mutex_timedlock(&mutexHandle, &timesValues) != 0) {
                 error = Timeout;
-                return False;
+                return false;
             }
-            if (stop == True) {
+            if (stop == true) {
 
                 if (pthread_cond_timedwait(&eventVariable, &mutexHandle,
                                            &timesValues) != 0) {
                     pthread_mutex_unlock(&mutexHandle);
                     error = Timeout;
-                    return False;
+                    return false;
                 }
             }
             if (pthread_mutex_unlock(&mutexHandle) != 0) {
                 error = OSError;
-                return False;
+                return false;
             }
         }
-        return True;
+        return true;
     }
 
     /**
@@ -173,11 +173,11 @@ private:
             return false;
         }
         if (pthread_mutex_lock(&mutexHandle) != 0) {
-            return False;
+            return false;
         }
-        stop = False;
+        stop = false;
         if (pthread_mutex_unlock(&mutexHandle) != 0) {
-            return False;
+            return false;
         }
         return (pthread_cond_broadcast(&eventVariable) == 0);
     }
@@ -191,11 +191,11 @@ private:
             return false;
         }
         if (pthread_mutex_lock(&mutexHandle) != 0) {
-            return False;
+            return false;
         }
-        stop = True;
+        stop = true;
         if (pthread_mutex_unlock(&mutexHandle) != 0) {
-            return False;
+            return false;
         }
         return stop;
     }
@@ -268,16 +268,16 @@ public:
         }
         semH = (HANDLE) new PrivateEventSemStruct;
         if (semH == (HANDLE) NULL) {
-            return False;
+            return false;
         }
         // Initialize the Semaphore
             bool ret = ((PrivateEventSemStruct *) semH)->Init();
             if (!ret) {
                 delete (PrivateEventSemStruct *) semH;
                 semH = (HANDLE) NULL;
-                return False;
+                return false;
             }
-            return True;
+            return true;
         }
 
         /**
@@ -288,7 +288,7 @@ public:
          */
         static bool Close(HANDLE &semH) {
             if (semH == (HANDLE) NULL) {
-                return True;
+                return true;
             }
             bool ret = ((PrivateEventSemStruct *) semH)->Close();
             if (((PrivateEventSemStruct*) semH)->RemoveReference()) {
@@ -310,7 +310,7 @@ public:
         TimeoutType msecTimeout,
         Error &error) {
             if (semH == (HANDLE) NULL) {
-                return False;
+                return false;
             }
             return ((PrivateEventSemStruct *) semH)->Wait(msecTimeout, error);
         }
@@ -323,7 +323,7 @@ public:
          */
         static inline bool Post(HANDLE &semH) {
             if (semH == (HANDLE) NULL) {
-                return False;
+                return false;
             }
             return (((PrivateEventSemStruct *) semH)->Post());
         }
@@ -336,7 +336,7 @@ public:
          */
         static inline bool Reset(HANDLE &semH) {
             if (semH == (HANDLE) NULL) {
-                return False;
+                return false;
             }
             return ((PrivateEventSemStruct *) semH)->Reset();
         }

@@ -2,7 +2,7 @@
  * @file MemoryOS.h
  * @brief Header file for class MemoryOS
  * @date 18/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -92,7 +92,7 @@ public:
      * @param[in] s is the string to duplicate.
      * @return a pointer to the string copied.
      */
-    static char *StringDup(const char *s) {
+    static char8 *StringDup(const char8 *s) {
         return strdup(s);
     }
 
@@ -109,10 +109,10 @@ public:
                              uint32 permMask) {
 
         uint32 lastPermDigit = permMask % 10;
-        char name[32];
+        char8 name[32];
         //transform the key in a string
         uint32 nCompleteChar = key >> 8;
-        char SpecialChar = key | 0xff;
+        char8 SpecialChar = key | 0xff;
 
         uint32 i = 0;
         while (i < nCompleteChar) {
@@ -180,7 +180,7 @@ public:
         if (accessMode & MTAM_Execute) {
             check++;
             if (IsBadCodePtr((FARPROC) address)) {
-                return False;
+                return false;
             }
         }
 
@@ -188,7 +188,7 @@ public:
         if (accessMode & MTAM_Read) {
             check++;
             if (IsBadReadPtr(address, size)) {
-                return False;
+                return false;
             }
         }
 
@@ -196,7 +196,7 @@ public:
         if (accessMode & MTAM_Write) {
             check++;
             if (IsBadWritePtr(address, size)) {
-                return False;
+                return false;
             }
         }
 
@@ -215,7 +215,7 @@ public:
                      const void* source,
                      uint32 size) {
         if (source == NULL || destination == NULL) {
-            return False;
+            return false;
         }
 
         return memcpy(destination, source, size) != NULL;
@@ -275,7 +275,7 @@ public:
                      const void* source,
                      uint32 size) {
         if (source == NULL || destination == NULL) {
-            return False;
+            return false;
         }
         return memmove(destination, source, size) != NULL;
 
@@ -293,7 +293,7 @@ public:
                     int32 c,
                     uint32 size) {
         if (mem == NULL) {
-            return False;
+            return false;
         }
         return memset(mem, c, size) != NULL;
     }

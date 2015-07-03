@@ -2,7 +2,7 @@
  * @file SleepTest.cpp
  * @brief Source file for class SleepTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,9 +40,9 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool SleepTest::TestSleepAtleast(double sec) {
+bool SleepTest::TestSleepAtleast(float64 sec) {
     bool testResult = false;
-    double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
+    float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
     Sleep::AtLeast(sec);
@@ -52,9 +52,9 @@ bool SleepTest::TestSleepAtleast(double sec) {
     return testResult;
 }
 
-bool SleepTest::TestSleepNoMore(double sec) {
+bool SleepTest::TestSleepNoMore(float64 sec) {
     bool testResult = false;
-    double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
+    float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
     Sleep::NoMore(sec);
@@ -64,9 +64,9 @@ bool SleepTest::TestSleepNoMore(double sec) {
     return testResult;
 }
 
-bool SleepTest::TestSleepSec(double sec) {
+bool SleepTest::TestSleepSec(float64 sec) {
     bool testResult = false;
-    double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
+    float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
     Sleep::Sec(sec);
@@ -76,9 +76,9 @@ bool SleepTest::TestSleepSec(double sec) {
     return testResult;
 }
 
-bool SleepTest::TestSleepSec(float sec) {
+bool SleepTest::TestSleepSec(float32 sec) {
     bool testResult = false;
-    float maxSleepTime = 2 * 1000 * sec; /* 100% margin */
+    float32 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
     Sleep::Sec(sec);
@@ -90,7 +90,7 @@ bool SleepTest::TestSleepSec(float sec) {
 
 bool SleepTest::TestSleepMSec(int32 msec) {
     bool testResult = false;
-    double maxSleepTime = 2 * msec; /* 100% margin */
+    float64 maxSleepTime = 2 * msec; /* 100% margin */
     int initialTime = clock();
 
     Sleep::MSec(msec);
@@ -100,9 +100,9 @@ bool SleepTest::TestSleepMSec(int32 msec) {
     return testResult;
 }
 
-bool SleepTest::TestSleepBusy(double sec) {
+bool SleepTest::TestSleepBusy(float64 sec) {
     bool testResult = false;
-    double maxSleepTime = 2 * 1000 * sec; /* 100% margin */
+    float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
     Sleep::Busy(sec);
@@ -112,10 +112,10 @@ bool SleepTest::TestSleepBusy(double sec) {
     return testResult;
 }
 
-bool SleepTest::TestSemiBusy(double totalSleepSec,
-                             double nonBusySleepSec) {
+bool SleepTest::TestSemiBusy(float64 totalSleepSec,
+                             float64 nonBusySleepSec) {
     bool testResult = false;
-    double maxSleepTime = 2 * 1000 * totalSleepSec; /* 100% margin */
+    float64 maxSleepTime = 2 * 1000 * totalSleepSec; /* 100% margin */
     int initialTime = clock();
 
     Sleep::SemiBusy(totalSleepSec, nonBusySleepSec);

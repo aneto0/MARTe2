@@ -2,7 +2,7 @@
  * @file HighResolutionTimerCalibratorOS.h
  * @brief Header file for class HighResolutionTimerCalibratorOS
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -51,7 +51,7 @@ public:
     uint64 HRTFrequency;
 
     /** Time between a tick and the other in seconds. */
-    double HRTPeriod;
+    float64 HRTPeriod;
 
     /** Contains the seconds and microseconds from epoch */
     struct timeval initialTime;
@@ -126,7 +126,7 @@ public:
         //fill the time structure
         struct tm tValues;
         if (localtime_s(&tValues, (const time_t*) &sec) != 0) {
-            return False;
+            return false;
         }
         timeStamp.seconds = tValues.tm_sec;
         timeStamp.minutes = tValues.tm_min;
@@ -134,7 +134,7 @@ public:
         timeStamp.days = tValues.tm_mday;
         timeStamp.month = tValues.tm_mon;
         timeStamp.year = tValues.tm_year;
-        return True;
+        return true;
     }
 
 };

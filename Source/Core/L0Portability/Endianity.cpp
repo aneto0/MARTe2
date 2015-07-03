@@ -2,7 +2,7 @@
  * @file Endianity.cpp
  * @brief Source file for class Endianity
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -35,8 +35,8 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool Endianity::endianityTypeChecked = False;
-uint8 Endianity::endianityType = 3;
+bool Endianity::endianityTypeChecked = false;
+uint8 Endianity::endianityType = 3u;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

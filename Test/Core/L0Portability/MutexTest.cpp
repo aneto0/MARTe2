@@ -268,7 +268,7 @@ bool MutexTest::TestLockErrorCode() {
 
     test = testMutex.Lock(TTInfiniteWait, returnError);
     if (returnError != Debug) {
-        test = False;
+        test = false;
     }
 
     if (test) {
@@ -286,7 +286,7 @@ bool MutexTest::TestFastLockErrorCode() {
 
     test = testMutex.FastLock(TTInfiniteWait, returnError);
     if (returnError != Debug) {
-        test = False;
+        test = false;
     }
 
     if (test) {

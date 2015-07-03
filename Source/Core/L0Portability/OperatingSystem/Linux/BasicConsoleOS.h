@@ -2,7 +2,7 @@
  * @file BasicConsoleOS.h
  * @brief Header file for class BasicConsoleOS
  * @date 22/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -62,7 +62,7 @@ public:
         //In this case read immediately from the console without wait \n.
         if (con.openingMode & PerformCharacterInput) {
             if (ioctl(fileno(stdin), TCGETA, &(con.outputConsoleHandle)) < 0) {
-                return False;
+                return false;
             }
 
             con.initialInfo = con.outputConsoleHandle;
@@ -71,7 +71,7 @@ public:
             ioctl(fileno(stdin), TCSETAW, &(con.outputConsoleHandle));
         }
         fflush (stdin);
-        return True;
+        return true;
     }
 
     /**
@@ -88,7 +88,7 @@ public:
             UnSetImmediateRead(con);
             ioctl(fileno(stdin), TCSETAW, &(con.outputConsoleHandle));
         }
-        return True;
+        return true;
     }
 
     /**
@@ -99,7 +99,7 @@ public:
      * @return true.
      */
     static bool Show(BasicConsole &con) {
-        return True;
+        return true;
     }
 
     /**
@@ -113,8 +113,8 @@ public:
     static bool Write(BasicConsole &con,
                       const void* buffer,
                       uint32 &size) {
-        char* buffString = (char*) buffer;
-        char nextRow = '\n';
+        char8* buffString = (char8*) buffer;
+        char8 nextRow = '\n';
         int32 n = 0;
         uint32 index = 0, start = 0;
         uint32 sizeT = 0;
@@ -169,14 +169,14 @@ public:
                      uint32 &size,
                      TimeoutType msecTimeout) {
         if (con.openingMode & PerformCharacterInput) {
-            ((char *) buffer)[0] = (char) getchar();
+            ((char8 *) buffer)[0] = (char8) getchar();
             size = 1;
         }
         else {
-            size = read(STDIN, (char*) buffer, size);
+            size = read(STDIN, (char8*) buffer, size);
             /*
-             char *temp = NULL;
-             while ((temp = fgets((char *) buffer, n, stdin)) == NULL)
+             char8 *temp = NULL;
+             while ((temp = fgets((char8 *) buffer, n, stdin)) == NULL)
              ;
              if ((n = strlen(temp)) > 0) {
              size = n;
@@ -194,8 +194,8 @@ public:
      * @return false.
      */
     static bool SetTitleBar(BasicConsole &con,
-                            const char *title) {
-        return False;
+                            const char8 *title) {
+        return false;
     }
 
     /**
@@ -211,7 +211,7 @@ public:
                               int numberOfRows) {
         con.numberOfColumns = numberOfColumns;
         con.numberOfRows = numberOfRows;
-        return True;
+        return true;
     }
 
     /**
@@ -227,7 +227,7 @@ public:
                               int &numberOfRows) {
         numberOfColumns = con.numberOfColumns;
         numberOfRows = con.numberOfRows;
-        return True;
+        return true;
     }
 
     /**
@@ -239,7 +239,7 @@ public:
                         int numberOfRows) {
         con.numberOfColumns = numberOfColumns;
         con.numberOfRows = numberOfRows;
-        return True;
+        return true;
     }
 
     /**
@@ -251,7 +251,7 @@ public:
                         int &numberOfRows) {
         numberOfColumns = con.numberOfColumns;
         numberOfRows = con.numberOfRows;
-        return True;
+        return true;
     }
 
     /**
@@ -265,7 +265,7 @@ public:
     static bool SetCursorPosition(BasicConsole &con,
                                   int column,
                                   int row) {
-        return False;
+        return false;
     }
 
     /**
@@ -279,7 +279,7 @@ public:
     static bool GetCursorPosition(BasicConsole &con,
                                   int &column,
                                   int &row) {
-        return False;
+        return false;
     }
 
     /**
@@ -293,7 +293,7 @@ public:
     static bool SetColour(BasicConsole &con,
                           Colours foreGroundColour,
                           Colours backGroundColour) {
-        return False;
+        return false;
     }
 
     /**
@@ -306,14 +306,14 @@ public:
         for (uint32 i = 0; i < BASIC_CONSOLE_LINUX_CLEAR_ROWS; i++) {
             write(STDOUT, "\n", 1);
         }
-        return True;
+        return true;
     }
 
     /**
      * @warning Not implemented.
      * @brief Prints a character with specified colors and position.
      * @param[in,out] con is the console.
-     * @param[in] c is the char to write.
+     * @param[in] c is the char8 to write.
      * @param[in] foreGroundColour is the desired foreground color.
      * @param[in] backGroundColour is the desired background color.
      * @param[in] column is the desired x position.
@@ -321,12 +321,12 @@ public:
      * @return false.
      */
     static bool PlotChar(BasicConsole &con,
-                         char c,
+                         char8 c,
                          Colours foreGroundColour,
                          Colours backGroundColour,
                          int column,
                          int row) {
-        return False;
+        return false;
 
     }
 private:
@@ -347,7 +347,7 @@ private:
     /**
      * @brief Read immediately.
      * @details Sets equal to 1 the characters in the read buffer and equal to zero the time to wait between read operations.\n
-     * It does not wait the newline char to read.
+     * It does not wait the newline char8 to read.
      * @param[in,out] con is the console.
      */
     static void SetImmediateRead(BasicConsole &con) {

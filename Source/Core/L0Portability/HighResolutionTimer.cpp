@@ -2,7 +2,7 @@
  * @file HighResolutionTimer.cpp
  * @brief Source file for class HighResolutionTimer
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -43,7 +43,7 @@ int64 HighResolutionTimerFrequency() {
     return HighResolutionTimer::highResolutionTimerCalibratorOS.HRTFrequency;
 }
 
-double HighResolutionTimerPeriod() {
+float64 HighResolutionTimerPeriod() {
     return HighResolutionTimer::highResolutionTimerCalibratorOS.HRTPeriod;
 }
 

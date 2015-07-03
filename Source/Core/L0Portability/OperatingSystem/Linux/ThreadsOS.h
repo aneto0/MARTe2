@@ -206,12 +206,12 @@ public:
         if (condition) {
 
             if (threadId == 0) {
-                return False;
+                return false;
             }
             return (pthread_kill(threadId, 0) == 0);
         }
         else {
-            return False;
+            return false;
         }
     }
 
@@ -223,7 +223,7 @@ public:
     static bool Kill(TID threadId) {
 
         if (!IsAlive(threadId)) {
-            return False;
+            return false;
         }
 
         ThreadsDatabase::Lock();
@@ -233,9 +233,9 @@ public:
         int32 ret = pthread_cancel(threadId);
         if (ret == 0) {
             pthread_join(threadId, NULL);
-            return True;
+            return true;
         }
-        return False;
+        return false;
     }
 
     /**
@@ -250,7 +250,7 @@ public:
     static TID BeginThread(ThreadFunctionType function,
                            void *parameters,
                            uint32 stacksize,
-                           const char* name,
+                           const char8* name,
                            uint32 exceptionHandlerBehaviour,
                            ProcessorType runOnCPUs) {
 
@@ -286,7 +286,7 @@ public:
      * @param[in] threadId is the thread identifier.
      * @return the name of the specified thread.
      */
-    static const char* Name(TID threadId) {
+    static const char8* Name(TID threadId) {
         ThreadsDatabase::Lock();
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
         ThreadsDatabase::UnLock();
@@ -315,7 +315,7 @@ public:
         if (threadInfo != NULL) {
             return threadInfo->ExceptionProtectedExecute(userFunction, userData, ehi);
         }
-        return False;
+        return false;
     }
 
     /**
@@ -351,7 +351,7 @@ public:
      * @param[in] name is the thread name.
      * @return the id of the first found thread with the specified name.
      */
-    static TID FindByName(const char* name){
+    static TID FindByName(const char8* name){
         return ThreadsDatabase::Find(name);
     }
 
@@ -400,7 +400,7 @@ private:
      */
     static ThreadInformation * threadInitialisationInterfaceConstructor(ThreadFunctionType userThreadFunction,
                                                                  void *userData,
-                                                                 const char *threadName,
+                                                                 const char8 *threadName,
                                                                  uint32 exceptionHandlerBehaviour) {
 
         return new ThreadInformation(userThreadFunction, userData, threadName);
