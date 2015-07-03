@@ -66,8 +66,7 @@ struct MemoryInformation {
 
 };
 
-void *MemoryMalloc(uint32 size,
-                   MemoryAllocationFlags allocFlag) {
+void *MemoryMalloc(uint32 size, MemoryAllocationFlag allocFlag) {
     if (size == 0) {
         return NULL;
     }
@@ -102,8 +101,7 @@ void *MemoryMalloc(uint32 size,
 
 }
 
-void *MemoryRealloc(void *&data,
-                    uint32 newSize) {
+void *MemoryRealloc(void *&data, uint32 newSize) {
     if (newSize == 0) {
         if (data == NULL) {
             return NULL;
@@ -217,9 +215,7 @@ bool MemoryFree(void *&data) {
     return true;
 }
 
-bool MemoryAllocationStatistics(int32 &size,
-                                int32 &chunks,
-                                TID tid) {
+bool MemoryAllocationStatistics(int32 &size, int32 &chunks, TID tid) {
 #ifdef MEMORY_STATISTICS
 
     if (tid == 0xFFFFFFFF) {
@@ -243,9 +239,7 @@ bool MemoryAllocationStatistics(int32 &size,
 
 }
 
-bool MemoryGetHeaderInfo(void *pointer,
-                         uint32 &size,
-                         TID &tid) {
+bool MemoryGetHeaderInfo(void *pointer, uint32 &size, TID &tid) {
 
 #ifdef MEMORY_STATISTICS
 
@@ -296,15 +290,11 @@ int32 MemoryGetUsedHeap() {
 #endif
 }
 
-bool MemoryCheck(void *address,
-                 MemoryTestAccessMode accessMode,
-                 uint32 size) {
+bool MemoryCheck(void *address, MemoryTestAccessMode accessMode, uint32 size) {
     return MemoryOS::Check(address, accessMode, size);
 }
 
-void *MemorySharedAlloc(uint32 key,
-                        uint32 size,
-                        uint32 permMask) {
+void *MemorySharedAlloc(uint32 key, uint32 size, uint32 permMask) {
     return MemoryOS::SharedAlloc(key, size, permMask);
 }
 
@@ -312,33 +302,23 @@ void MemorySharedFree(void *address) {
     MemoryOS::SharedFree(address);
 }
 
-bool MemoryCopy(void* destination,
-                const void* source,
-                uint32 size) {
+bool MemoryCopy(void* destination, const void* source, uint32 size) {
     return MemoryOS::Copy(destination, source, size);
 }
 
-int32 MemoryCompare(const void* mem1,
-                    const void* mem2,
-                    uint32 size) {
+int32 MemoryCompare(const void* mem1, const void* mem2, uint32 size) {
     return MemoryOS::Compare(mem1, mem2, size);
 }
 
-const void *MemorySearch(const void* mem,
-                         char8 c,
-                         uint32 size) {
+const void *MemorySearch(const void* mem, char8 c, uint32 size) {
     return MemoryOS::Search(mem, c, size);
 }
 
-bool MemoryMove(void* destination,
-                const void* source,
-                uint32 size) {
+bool MemoryMove(void* destination, const void* source, uint32 size) {
     return MemoryOS::Move(destination, source, size);
 }
 
-bool MemorySet(void* mem,
-               char8 c,
-               uint32 size) {
+bool MemorySet(void* mem, char8 c, uint32 size) {
     return MemoryOS::Set(mem, c, size);
 }
 
@@ -346,8 +326,7 @@ bool MemorySet(void* mem,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void *Memory::Malloc(uint32 size,
-                     MemoryAllocationFlags allocFlag) {
+void *Memory::Malloc(uint32 size, MemoryAllocationFlag allocFlag) {
     return MemoryMalloc(size, allocFlag);
 }
 
@@ -355,8 +334,7 @@ bool Memory::Free(void *&data) {
     return MemoryFree(data);
 }
 
-void *Memory::Realloc(void *&data,
-                      uint32 newSize) {
+void *Memory::Realloc(void *&data, uint32 newSize) {
     return MemoryRealloc(data, newSize);
 }
 
@@ -364,15 +342,11 @@ char8 *Memory::StringDup(const char8 *s) {
     return MemoryStringDup(s);
 }
 
-bool Memory::AllocationStatistics(int32 &size,
-                                  int32 &chunks,
-                                  TID tid) {
+bool Memory::AllocationStatistics(int32 &size, int32 &chunks, TID tid) {
     return MemoryAllocationStatistics(size, chunks, tid);
 }
 
-bool Memory::GetHeaderInfo(void *pointer,
-                           uint32 &size,
-                           TID &tid) {
+bool Memory::GetHeaderInfo(void *pointer, uint32 &size, TID &tid) {
     return MemoryGetHeaderInfo(pointer, size, tid);
 }
 
@@ -392,15 +366,11 @@ int32 Memory::GetUsedHeap() {
     return MemoryGetUsedHeap();
 }
 
-bool Memory::Check(void *address,
-                   MemoryTestAccessMode accessMode,
-                   uint32 size) {
+bool Memory::Check(void *address, MemoryTestAccessMode accessMode, uint32 size) {
     return MemoryCheck(address, accessMode, size);
 }
 
-void *Memory::SharedAlloc(uint32 key,
-                          uint32 size,
-                          uint32 permMask) {
+void *Memory::SharedAlloc(uint32 key, uint32 size, uint32 permMask) {
     return MemorySharedAlloc(key, size, permMask);
 }
 
@@ -408,31 +378,21 @@ void Memory::SharedFree(void *address) {
     MemorySharedFree(address);
 }
 
-bool Memory::Copy(void *destination,
-                  const void *source,
-                  uint32 size) {
+bool Memory::Copy(void *destination, const void *source, uint32 size) {
     return MemoryCopy(destination, source, size);
 }
 
-int32 Memory::Compare(const void *mem1,
-                      const void *mem2,
-                      uint32 size) {
+int32 Memory::Compare(const void *mem1, const void *mem2, uint32 size) {
     return MemoryCompare(mem1, mem2, size);
 }
-const void *Memory::Search(const void *mem,
-                           char8 c,
-                           uint32 size) {
+const void *Memory::Search(const void *mem, char8 c, uint32 size) {
     return MemorySearch(mem, c, size);
 }
 
-bool Memory::Move(void* destination,
-                  const void* source,
-                  uint32 size) {
+bool Memory::Move(void* destination, const void* source, uint32 size) {
     return MemoryMove(destination, source, size);
 }
 
-bool Memory::Set(void* mem,
-                 char8 c,
-                 uint32 size) {
+bool Memory::Set(void* mem, char8 c, uint32 size) {
     return MemorySet(mem, c, size);
 }

@@ -108,7 +108,8 @@ bool MemoryTest::TestRealloc(int32 size1,
     allocated = (int32*) MemoryRealloc((void*&) allocated, size1 * sizeof(int32));
 
     //checks if the memory is allocated correctly
-    if (!Memory::Check(allocated, (MemoryTestAccessMode) MTAM_Read | MTAM_Write | MTAM_Execute, size1 * sizeof(int32))) {
+    MemoryTestAccessMode mtam(true,true,true);
+    if (!Memory::Check(allocated, mtam, size1 * sizeof(int32))) {
         return false;
     }
 
@@ -136,7 +137,7 @@ bool MemoryTest::TestRealloc(int32 size1,
     }
 
     //the check function on a null pointer should return false
-    return !Memory::Check(NULL, (MemoryTestAccessMode) MTAM_Read | MTAM_Write | MTAM_Execute, size);
+    return !Memory::Check(NULL, mtam, size);
 }
 
 //Test if the string s is copied without errors.

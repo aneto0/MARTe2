@@ -55,8 +55,7 @@ public:
      * @param[in] allocFlags
      * @return a pointer to the allocated memory.
      */
-    static void *Malloc(uint32 size,
-                        MemoryAllocationFlags allocFlags) {
+    static void *Malloc(uint32 size, MemoryAllocationFlag allocFlags) {
         if (size <= 0) {
             return NULL;
         }
@@ -138,9 +137,7 @@ public:
      * @param[in] size is the number of bytes to check.
      * @return true if the memory area specified is valid.
      */
-    static bool Check(void *address,
-                      MemoryTestAccessMode accessMode,
-                      uint32 size) {
+    static bool Check(void *address, MemoryTestAccessMode accessMode, uint32 size) {
 
         //check if the memory is valid.
         char8* addressPtr = (char8 *) address;
