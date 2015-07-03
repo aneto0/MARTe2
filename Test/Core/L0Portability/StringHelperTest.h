@@ -22,7 +22,7 @@
  */
 
 #ifndef STRINGHELPERTEST_H_
-#define 		STRINGHELPERTEST_H_
+#define STRINGHELPERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -47,41 +47,93 @@ private:
 public:
 
     /**
-     * @brief Tests the Length() function.
+     * @brief Tests the StringHelper::Length function.
      * @param[in] string .
-     * @return true if the length of the string is correct.
+     * @return true if the returned length of the string is correct.
      */
     bool TestLength(const char8* string);
 
     /**
-     * @brief Tests if two strings are equals.
+     * @brief Tests the StringHelper::Compare function.
+     * @details Compares two equal strings and then checks the return value giving different strings.
      * @param[in] string is the first string.
-     * @param[in] stringEqual is the second string.
-     * @return true if the results of StringHelper::Equal, StringHelper::EqualN return as expected.
+     * @param[in] stringEqual is the second string that should be equal to the first.
+     * @return true if successful, false otherwise.
      */
     bool TestCompare(const char8* string,
                      const char8* stringEqual);
 
     /**
-     * @brief Tests the Copy() function.
+     * @brief Tests the StringHelper::CompareN function.
+     * @details Compares two strings equal at the beginning before with a size such that the return value of the function should assert that they are equal.
+     * Then calling the function with a greater size such that the strings are different, checks if the return value of the function is correct.
+     * @return true if successful, false otherwise.
+     */
+    bool TestCompareN();
+
+    /**
+     * @brief Tests the StringHelper::Copy function.
+     * @details Checks if the copied string is equal to the original, then checks the return value of the function with NULL arguments.
      * @param[in] string is the string to copy.
-     * @return true if the copied string is equal to the original.
+     * @return true if successful, false otherwise.
      */
     bool TestCopy(const char8* string);
 
     /**
-     * @brief Tests StringHelper::Append and StringHelper::Cat functions.
-     * @return true if the concatenate string is correct.
+     * @brief Tests the StringHelper::CopyN function.
+     * @details Checks the return value of the function also using size equal to zero or greater than the length of the string to be copied.
+     * @return true if successful, false otherwise.
+     */
+    bool TestCopyN();
+
+    /**
+     * @brief Tests the StringHelper::Concatenate function.
+     * @details Checks if the result of the concatenation is correct, then checks the return value passing NULL arguments.
+     * @return true if successful, false otherwise.
      */
     bool TestConcatenate();
 
     /**
-     * @brief Tests the different search functions (by char8, by string).
-     * @return true if the operations return the expected result.
+     * @brief Tests the StringHelper::ConcatenateN function.
+     * @details Checks the result of the concatenation also using size equal to zero or greater than the string to be appended.
+     * @return true if successful, false otherwise.
      */
-    bool TestSearch();
+    bool TestConcatenateN();
 
+    /**
+     * @brief Tests the StringHelper::SearchChar function
+     * @details Checks the return value passing also characters that are not in the string.
+     * @return true if successful, false otherwise.
+     */
+    bool TestSearchChar();
 
+    /**
+     * @brief Tests the StringHelper::SearchChars function
+     * @details Checks the return value passing also characters that are not in the string.
+     * @return true if successful, false otherwise.
+     */
+    bool TestSearchChars();
+
+    /**
+     * @brief Tests the StringHelper::SearchLastChar function
+     * @details Checks the return value passing also characters that are not in the string.
+     * @return true if successful, false otherwise.
+     */
+    bool TestSearchLastChar();
+
+    /**
+     * @brief Tests the StringHelper::SearchString function
+     * @details Checks the return value passing also strings that are not in the string.
+     * @return true if successful, false otherwise.
+     */
+    bool TestSearchString();
+
+    /**
+     * @brief Tests the StringHelper::SearchIndex function
+     * @details Checks the return value passing also characters that are not in the string.
+     * @return true if successful, false otherwise.
+     */
+    bool TestSearchIndex();
 
 };
 

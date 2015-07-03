@@ -178,7 +178,7 @@ void *MemorySharedAlloc(uint32 key,
 /**
  * @see Memory::SharedFree
  */
-void MemorySharedFree(void *address);
+void MemorySharedFree(void *&address);
 
 /**
  * @see Memory::Copy
@@ -363,7 +363,7 @@ public:
      * @brief Frees an area of shared memory which was previously created with MemorySharedAlloc.
      * @param[in] address the address for the shared memory.
      */
-    static void SharedFree(void *address);
+    static void SharedFree(void *&address);
 
     /**
      * @brief Copy source to destination.

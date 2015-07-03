@@ -162,10 +162,10 @@ char8 *MemoryStringDup(const char8 *s) {
 
     //calculates the string length
     while (1) {
-        if((s+length)==NULL){
+        if((s+length)==NULL) {
             return NULL;
         }
-        if(s[length] == '\0'){
+        if(s[length] == '\0') {
             break;
         }
         length++;
@@ -182,7 +182,6 @@ char8 *MemoryStringDup(const char8 *s) {
         return NULL;
     }
     char8* sCopy = MemoryOS::StringDup(s);
-
 
 #endif
 
@@ -308,37 +307,58 @@ void *MemorySharedAlloc(uint32 key,
     return MemoryOS::SharedAlloc(key, size, permMask);
 }
 
-void MemorySharedFree(void *address) {
+void MemorySharedFree(void *&address) {
+    if (address == NULL) {
+        return;
+    }
     MemoryOS::SharedFree(address);
+
+    address = NULL;
 }
 
 bool MemoryCopy(void* destination,
                 const void* source,
                 uint32 size) {
+
+    if (source == NULL || destination == NULL) {
+        return false;
+    }
     return MemoryOS::Copy(destination, source, size);
 }
 
 int32 MemoryCompare(const void* mem1,
                     const void* mem2,
                     uint32 size) {
+    if (mem1 == NULL || mem2 == NULL) {
+        return -1;
+    }
     return MemoryOS::Compare(mem1, mem2, size);
 }
 
 const void *MemorySearch(const void* mem,
                          char8 c,
                          uint32 size) {
+    if (mem == NULL) {
+        return NULL;
+    }
     return MemoryOS::Search(mem, c, size);
 }
 
 bool MemoryMove(void* destination,
                 const void* source,
                 uint32 size) {
+    if (source == NULL || destination == NULL) {
+        return false;
+    }
     return MemoryOS::Move(destination, source, size);
 }
 
 bool MemorySet(void* mem,
                char8 c,
                uint32 size) {
+    if (mem == NULL) {
+        return false;
+    }
     return MemoryOS::Set(mem, c, size);
 }
 
@@ -401,10 +421,13 @@ bool Memory::Check(void *address,
 void *Memory::SharedAlloc(uint32 key,
                           uint32 size,
                           uint32 permMask) {
+    if (size == 0) {
+        return NULL;
+    }
     return MemorySharedAlloc(key, size, permMask);
 }
 
-void Memory::SharedFree(void *address) {
+void Memory::SharedFree(void *&address) {
     MemorySharedFree(address);
 }
 

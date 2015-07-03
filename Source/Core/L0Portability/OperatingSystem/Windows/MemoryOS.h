@@ -214,9 +214,7 @@ public:
     static bool Copy(void* destination,
                      const void* source,
                      uint32 size) {
-        if (source == NULL || destination == NULL) {
-            return false;
-        }
+
 
         return memcpy(destination, source, size) != NULL;
     }
@@ -232,9 +230,7 @@ public:
     static int32 Compare(const void* mem1,
                          const void* mem2,
                          uint32 size) {
-        if (mem1 == NULL || mem2 == NULL) {
-            return -1;
-        }
+
         int32 ret = memcmp(mem1, mem2, size);
         if (ret < 0) {
             return 1; // 1 if mem1<mem2
@@ -257,9 +253,7 @@ public:
     static const void* Search(const void* mem,
                               int32 c,
                               uint32 size) {
-        if (mem == NULL) {
-            return NULL;
-        }
+
         return memchr(mem, c, size);
     }
 
@@ -274,9 +268,7 @@ public:
     static bool Move(void* destination,
                      const void* source,
                      uint32 size) {
-        if (source == NULL || destination == NULL) {
-            return false;
-        }
+
         return memmove(destination, source, size) != NULL;
 
     }
@@ -292,9 +284,7 @@ public:
     static bool Set(void* mem,
                     int32 c,
                     uint32 size) {
-        if (mem == NULL) {
-            return false;
-        }
+
         return memset(mem, c, size) != NULL;
     }
 };

@@ -53,11 +53,8 @@ bool StringHelperTest::TestLength(const char8* string) {
     //Check if the function returns a negative number (-1) in case of NULL argument.
     tryLength = StringHelper::Length(NULL);
 
-    if (tryLength > 0) {
-        return false;
-    }
+    return (tryLength < 0);
 
-    return true;
 }
 
 bool StringHelperTest::TestCompare(const char8* string,
@@ -74,15 +71,29 @@ bool StringHelperTest::TestCompare(const char8* string,
     const char8* string1 = "HelloWorld";
     const char8* string2 = "Hello";
 
+    //Check if it returns 1 since string2 is minor than string1.
+    if (StringHelper::Compare(string2, string1) != 1) {
+        return false;
+    }
+
+    //Check if it returns 2 since string1 is minor than string2.
+    if (StringHelper::Compare(string1, string2) != 2) {
+        return false;
+    }
+
+    //Check the return value in case of NULL arguments.
+    return (StringHelper::Compare(NULL, NULL) == -1 && StringHelper::Compare(string1, NULL) == -1 && StringHelper::Compare(NULL, string2) == -1);
+}
+
+bool StringHelperTest::TestCompareN() {
+
+    const char8* string1 = "HelloWorld";
+    const char8* string2 = "HelloD";
+
     uint32 size = 5;
 
     //Check the equality until size chars.
     if (StringHelper::CompareN(string1, string2, size) != 0) {
-        return false;
-    }
-
-    //Check if it returns 1 since string2 is minor than string1.
-    if (StringHelper::Compare(string2, string1) != 1) {
         return false;
     }
 
@@ -91,18 +102,27 @@ bool StringHelperTest::TestCompare(const char8* string,
         return false;
     }
 
-    //Check the return value in case of NULL arguments.
-    if (StringHelper::Compare(NULL, NULL) != -1) {
+    //Check if it returns 1 since string2 is greater than string1.
+    if (StringHelper::CompareN(string2, string1, size + 1) != 1) {
         return false;
     }
 
-    return true;
+    size = 0;
+    if (StringHelper::CompareN(string1, string2, size)) {
+        return false;
+    }
+
+    //Check the return value in case of NULL arguments.
+    size = 1;
+    return (StringHelper::CompareN(NULL, NULL, size) == -1 && StringHelper::CompareN(string1, NULL, size) == -1
+            && StringHelper::CompareN(NULL, string2, size) == -1);
 }
 
 bool StringHelperTest::TestCopy(const char8* string) {
 
     //Copy string in the buffer.
     char8 buffer[32];
+
     if (!StringHelper::Copy(buffer, string)) {
         return false;
     }
@@ -111,6 +131,14 @@ bool StringHelperTest::TestCopy(const char8* string) {
     if (!StringTestHelper::Compare(buffer, string)) {
         return false;
     }
+
+    //checks the null return.
+    return (!StringHelper::Copy(NULL, string) && !StringHelper::Copy(buffer, NULL) && !StringHelper::Copy(NULL, NULL));
+}
+
+bool StringHelperTest::TestCopyN() {
+    //Copy string in the buffer.
+    char8 buffer[32];
 
     //Test the copy function until sizeToCopy chars.
     const char8* stringPartial = "HelloWorld";
@@ -134,16 +162,30 @@ bool StringHelperTest::TestCopy(const char8* string) {
         return false;
     }
 
-    return true;
+    //copy 0 chars
+    sizeToCopy = 0;
+    if (!StringHelper::CopyN(buffer, stringPartial, sizeToCopy)) {
+        return false;
+    }
+
+    //nothing should be happen
+    if (!StringTestHelper::Compare(buffer, "HelloWorld")) {
+        return false;
+    }
+
+    sizeToCopy = 1;
+
+    //checks the null return.
+    return (!StringHelper::CopyN(NULL, stringPartial, sizeToCopy) && !StringHelper::CopyN(buffer, NULL, sizeToCopy)
+            && !StringHelper::CopyN(NULL, NULL, sizeToCopy));
 }
 
 bool StringHelperTest::TestConcatenate() {
 
     char8 bufferTry[32];
-    char8 buffer[32];
 
     StringHelper::Copy(bufferTry, "Hello");
-    StringHelper::Copy(buffer, "World");
+    const char8 *buffer = "World";
 
     if (!StringHelper::Concatenate(bufferTry, buffer)) {
         return false;
@@ -153,6 +195,24 @@ bool StringHelperTest::TestConcatenate() {
         return false;
     }
 
+    if (!StringHelper::Concatenate(bufferTry, "")) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(bufferTry, "HelloWorld")) {
+        return false;
+    }
+
+    return (!StringHelper::Concatenate(bufferTry, NULL) && !StringHelper::Concatenate(NULL, "HelloWorld") && !StringHelper::Concatenate(NULL, NULL));
+}
+
+bool StringHelperTest::TestConcatenateN() {
+
+    char8 bufferTry[32];
+
+    StringHelper::Copy(bufferTry, "Hello");
+    const char8 *buffer = "World";
+
     //Test the concatenate function with a max number of chars to append.
     uint32 sizeToAppend = 3;
 
@@ -160,7 +220,7 @@ bool StringHelperTest::TestConcatenate() {
         return false;
     }
 
-    if (!StringTestHelper::Compare(bufferTry, "HelloWorldWor")) {
+    if (!StringTestHelper::Compare(bufferTry, "HelloWor")) {
         return false;
     }
 
@@ -171,24 +231,53 @@ bool StringHelperTest::TestConcatenate() {
         return false;
     }
 
-    if (!StringTestHelper::Compare(bufferTry, "HelloWorldWorWorld")) {
+    if (!StringTestHelper::Compare(bufferTry, "HelloWorWorld")) {
         return false;
     }
 
-    return true;
+    //size=0
+    sizeToAppend = 0;
+
+    if (!StringHelper::ConcatenateN(bufferTry, buffer, sizeToAppend)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(bufferTry, "HelloWorWorld")) {
+        return false;
+    }
+
+    sizeToAppend = 1;
+    return (!StringHelper::ConcatenateN(bufferTry, NULL, sizeToAppend) && !StringHelper::ConcatenateN(NULL, buffer, sizeToAppend)
+            && !StringHelper::ConcatenateN(NULL, NULL, sizeToAppend));
 }
 
-bool StringHelperTest::TestSearch() {
+bool StringHelperTest::TestSearchIndex() {
+    const char8* buffer = "Hello World";
+
+    const char8 *toSearch = "rdl";
+
+    if (StringHelper::SearchIndex(buffer, toSearch) != 2 || !StringTestHelper::Compare(buffer + 2, "llo World")) {
+        return false;
+    }
+
+    //these chars are not in the string
+    const char8 *invalid = "xpqg";
+
+    if (StringHelper::SearchIndex(buffer, invalid) != StringHelper::Length(buffer)) {
+        return false;
+    }
+
+    //NULL pointer arguments
+    return (StringHelper::SearchIndex(NULL, NULL) == -1 && StringHelper::SearchIndex(buffer, NULL) == -1 && StringHelper::SearchIndex(NULL, toSearch) == -1);
+}
+
+bool StringHelperTest::TestSearchChars() {
     const char8* buffer = "Hello World";
     const char8* retPointer;
 
-    //Since u is not in the string this must be return false
-    if (StringHelper::SearchChar(buffer, 'u') != NULL) {
-        return false;
-    }
+    const char8 *toSearch = "rdl";
 
-    //Test the return pointer (search first occurrence).
-    if ((retPointer = StringHelper::SearchChar(buffer, 'l')) == NULL) {
+    if ((retPointer = StringHelper::SearchChars(buffer, toSearch)) == NULL) {
         return false;
     }
 
@@ -196,62 +285,106 @@ bool StringHelperTest::TestSearch() {
         return false;
     }
 
-    //Test the return pointer (search last occurrence).
-    if ((retPointer = StringHelper::SearchLastChar(buffer, 'l')) == NULL) {
+    //search again on the remained
+    if ((retPointer = StringHelper::SearchChars(retPointer + 1, toSearch)) == NULL) {
         return false;
     }
 
+    if (!StringTestHelper::Compare(retPointer, "lo World")) {
+        return false;
+    }
+
+    //these chars are not in the string
+    const char8 *invalid = "xpqg";
+
+    //returns null if the character is not found
+    if ((retPointer = StringHelper::SearchChars(buffer, invalid)) != NULL) {
+        return false;
+    }
+
+    //NULL pointer arguments
+    return (StringHelper::SearchChars(NULL, NULL) == NULL && StringHelper::SearchChars(buffer, NULL) == NULL
+            && StringHelper::SearchChars(NULL, toSearch) == NULL);
+}
+
+bool StringHelperTest::TestSearchChar() {
+    const char8* buffer = "Hello World";
+    const char8* retPointer;
+
+    char8 toSearch = 'l';
+
+    if ((retPointer = StringHelper::SearchChar(buffer, toSearch)) == NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(retPointer, "llo World")) {
+        return false;
+    }
+
+    //search again on the remained
+    if ((retPointer = StringHelper::SearchChar(retPointer + 1, toSearch)) == NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(retPointer, "lo World")) {
+        return false;
+    }
+
+    //these chars are not in the string
+    char8 invalid = 'x';
+
+    if ((retPointer = StringHelper::SearchChar(buffer, invalid)) != NULL) {
+        return false;
+    }
+
+    //NULL pointer arguments
+    return (StringHelper::SearchChar(NULL, toSearch) == NULL);
+}
+
+bool StringHelperTest::TestSearchLastChar() {
+    const char8* buffer = "Hello World";
+    const char8* retPointer;
+
+    char8 toSearch = 'l';
+
+    if ((retPointer = StringHelper::SearchLastChar(buffer, toSearch)) == NULL) {
+        return false;
+    }
     if (!StringTestHelper::Compare(retPointer, "ld")) {
         return false;
     }
 
-    if ((retPointer = StringHelper::SearchChars(buffer, " e")) == NULL) {
+    char8 invalid = 'x';
+
+    if ((retPointer = StringHelper::SearchLastChar(buffer, invalid)) != NULL) {
         return false;
     }
 
-    if (!StringTestHelper::Compare(retPointer, "ello World")) {
+    //NULL pointer arguments
+    return (StringHelper::SearchLastChar(NULL, toSearch) == NULL);
+
+}
+
+bool StringHelperTest::TestSearchString() {
+    const char8* buffer = "Hello World";
+    const char8* retPointer;
+
+    const char8 *toSearch = "orl";
+
+    if ((retPointer = StringHelper::SearchString(buffer, toSearch)) == NULL) {
+        return false;
+    }
+    if (!StringTestHelper::Compare(retPointer, "orld")) {
         return false;
     }
 
-    if ((retPointer = StringHelper::SearchChars(retPointer + 1, " e")) == NULL) {
+    const char8 *invalid = "Worfd";
+
+    if ((retPointer = StringHelper::SearchString(buffer, invalid)) != NULL) {
         return false;
     }
 
-    if (!StringTestHelper::Compare(retPointer, " World")) {
-        return false;
-    }
-
-    //Test the search with a list of chars as argument and index as return (return index to the first occurrence).
-    const char8* charsToSearch = "dow";
-
-    if (StringHelper::SearchIndex(buffer, charsToSearch) != 4) {
-        return false;
-    }
-
-    //Test if the index is the length if chars are not found.
-    charsToSearch = "zug";
-
-    if (StringHelper::SearchIndex(buffer, charsToSearch) != StringHelper::Length(buffer)) {
-        return false;
-    }
-
-    //This substring is not in the buffer.
-    const char8* substring = "lloW";
-
-    if (StringHelper::SearchString(buffer, substring) != NULL) {
-        return false;
-    }
-
-    //Test if the return pointer is correct.
-    substring = "llo W";
-
-    if ((retPointer = StringHelper::SearchString(buffer, substring)) == NULL) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(retPointer, "llo World")) {
-        return false;
-    }
-
-    return true;
+    //NULL pointer arguments
+    return (StringHelper::SearchString(NULL, NULL) == NULL && StringHelper::SearchString(buffer, NULL) == NULL
+            && StringHelper::SearchString(NULL, toSearch) == NULL);
 }

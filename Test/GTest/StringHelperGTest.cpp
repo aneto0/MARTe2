@@ -2,7 +2,7 @@
  * @file StringHelperGTest.cpp
  * @brief Source file for class StringHelperGTest
  * @date 30/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -53,6 +53,8 @@ protected:
     }
 };
 
+
+
 TEST_F(StringHelperGTest,TestLength) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestLength("Hello"));
@@ -63,18 +65,50 @@ TEST_F(StringHelperGTest,TestCompare) {
     ASSERT_TRUE(mystringhelper.TestCompare("Hello", "Hello"));
 }
 
+TEST_F(StringHelperGTest,TestCompareN) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestCompareN());
+}
+
 TEST_F(StringHelperGTest,TestCopy) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCopy("Hello"));
+}
+
+TEST_F(StringHelperGTest,TestCopyN) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestCopyN());
 }
 
 TEST_F(StringHelperGTest,TestConcatenate) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestConcatenate());
 }
-
-TEST_F(StringHelperGTest,TestSearch) {
+TEST_F(StringHelperGTest,TestConcatenateN) {
     StringHelperTest mystringhelper;
-    ASSERT_TRUE(mystringhelper.TestSearch());
+    ASSERT_TRUE(mystringhelper.TestConcatenateN());
 }
 
+TEST_F(StringHelperGTest,TestSearchChars) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestSearchChars());
+}
+
+TEST_F(StringHelperGTest,TestSearchChar) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestSearchChar());
+}
+
+TEST_F(StringHelperGTest,TestSearchLastChar) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestSearchLastChar());
+}
+TEST_F(StringHelperGTest,TestSearchString) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestSearchString());
+}
+
+TEST_F(StringHelperGTest,TestSearchIndex) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestSearchIndex());
+}

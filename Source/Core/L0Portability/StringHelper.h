@@ -44,19 +44,19 @@ extern "C" {
  * @see StringHelper::Concatenate().
  */
 char8* StringHelperConcatenate(char8* destination,
-                              const char8* source);
+                               const char8* source);
 
 /**
  * @see StringHelper::ConcatenateN().
  */
 char8* StringHelperConcatenateN(char8* destination,
-                               const char8* source,
-                               uint32 size);
+                                const char8* source,
+                                uint32 size);
 /**
  * @see StringHelper::SearchChar().
  */
 const char8* StringHelperSearchChar(const char8* string,
-                                   char8 c);
+                                    char8 c);
 
 /**
  * @see StringHelper::Compare().
@@ -97,19 +97,19 @@ int32 StringHelperLength(const char8* string);
 
 /** @see StringHelper::SearchChars(). */
 const char8* StringHelperSearchChars(const char8* string1,
-                                    const char8* string2);
+                                     const char8* string2);
 
 /**
  *  @see StringHelper::SearchLastChar().
  */
 const char8* StringHelperSearchLastChar(const char8* string,
-                                       char8 c);
+                                        char8 c);
 
 /**
  * @see StringHelper::SearchString().
  */
 const char8* StringHelperSearchString(const char8* string,
-                                     const char8* substring);
+                                      const char8* substring);
 
 }
 
@@ -133,7 +133,7 @@ public:
      * @return destination.
      */
     static char8* Concatenate(char8* destination,
-                             const char8* source);
+                              const char8* source);
 
     /**
      * @brief Concatenate two strings until 'size' chars.
@@ -143,8 +143,8 @@ public:
      * @return destination.
      */
     static char8* ConcatenateN(char8* destination,
-                              const char8* source,
-                              uint32 size);
+                               const char8* source,
+                               uint32 size);
 
     /**
      * @brief Search a character in a string.
@@ -153,7 +153,7 @@ public:
      * @return a pointer to the first occurrence of c in string, NULL if c is not found.
      */
     static const char8* SearchChar(const char8* string,
-                                  char8 c);
+                                   char8 c);
 
     /**
      * @brief Compare two strings.
@@ -218,7 +218,7 @@ public:
      * @return a pointer to the first occurrence of a character in string2 contained in string1.
      */
     static const char8* SearchChars(const char8* string1,
-                                   const char8* string2);
+                                    const char8* string2);
 
     /**
      * @brief Return a pointer at the last char8 c founded in string.
@@ -227,7 +227,7 @@ public:
      * @return the last occurrence of c in string.
      */
     static const char8* SearchLastChar(const char8* string,
-                                      char8 c);
+                                       char8 c);
 
     /**
      * @brief Return a pointer to the first occurrence of substring in string.
@@ -236,7 +236,7 @@ public:
      * @returns a pointer to the first occurrence of substring in string.
      */
     static const char8* SearchString(const char8* string,
-                                    const char8* substring);
+                                     const char8* substring);
 
 };
 /*---------------------------------------------------------------------------*/

@@ -40,7 +40,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool SleepTest::TestSleepAtleast(float64 sec) {
+bool SleepTest::TestSleepAtLeast(float64 sec) {
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
@@ -112,8 +112,8 @@ bool SleepTest::TestSleepBusy(float64 sec) {
     return testResult;
 }
 
-bool SleepTest::TestSemiBusy(float64 totalSleepSec,
-                             float64 nonBusySleepSec) {
+bool SleepTest::TestSleepSemiBusy(float64 totalSleepSec,
+                                  float64 nonBusySleepSec) {
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * totalSleepSec; /* 100% margin */
     int initialTime = clock();
@@ -125,14 +125,7 @@ bool SleepTest::TestSemiBusy(float64 totalSleepSec,
     return testResult;
 }
 
-bool SleepTest::All() {
-    bool ok = TestSleepAtleast(1.2);
-    ok = ok && TestSleepNoMore(0.8);
-    ok = ok && TestSleepSec(0.3);
-    ok = ok && TestSleepSec(0.2);
-    ok = ok && TestSleepMSec(120);
-    ok = ok && TestSleepBusy(0.4);
-    ok = ok && TestSemiBusy(0.5, 0.2);
-    GetDateSeconds();
-    return ok;
+bool SleepTest::TestGetDateSeconds() {
+    return Sleep::GetDateSeconds() == time(NULL);
 }
+

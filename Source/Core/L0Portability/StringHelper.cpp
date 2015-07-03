@@ -35,66 +35,100 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-
 char8* StringHelperConcatenate(char8* destination, const char8* source) {
+    if (source == NULL || destination == NULL) {
+        return NULL;
+    }
     return StringOS::Concatenate(destination, source);
 }
 
 char8* StringHelperConcatenateN(char8* destination,
-                               const char8* source,
-                               uint32 size) {
+                                const char8* source,
+                                uint32 size) {
+    if (destination == NULL || source == NULL) {
+        return NULL;
+    }
     return StringOS::ConcatenateN(destination, source, size);
 }
 
 const char8* StringHelperSearchChar(const char8* string,
-                                   char8 c) {
+                                    char8 c) {
+    if (string == NULL) {
+        return NULL;
+    }
     return StringOS::SearchChar(string, c);
 }
 
 int32 StringHelperCompare(const char8* string1,
                           const char8* string2) {
+    if (string1 == NULL || string2 == NULL) {
+        return -1;
+    }
     return StringOS::Compare(string1, string2);
 }
 
 int32 StringHelperCompareN(const char8* string1,
                            const char8* string2,
                            uint32 size) {
+    if (string1 == NULL || string2 == NULL) {
+        return -1;
+    }
     return StringOS::CompareN(string1, string2, size);
 }
 
 bool StringHelperCopy(char8* destination,
                       const char8* source) {
+    if (source == NULL || destination == NULL) {
+        return false;
+    }
     return StringOS::Copy(destination, source);
 }
 
 bool StringHelperCopyN(char8* destination,
                        const char8* source,
                        uint32 size) {
+    if (source == NULL || destination == NULL) {
+        return false;
+    }
     return StringOS::CopyN(destination, source, size);
 }
 
 int32 StringHelperSearchIndex(const char8* string1,
                               const char8* string2) {
+    if (string1 == NULL || string2 == NULL) {
+        return -1;
+    }
     return StringOS::SearchIndex(string1, string2);
 }
 
 int32 StringHelperLength(const char8* string) {
+    if (string == NULL) {
+        return -1;
+    }
     return StringOS::Length(string);
 }
 
 const char8* StringHelperSearchChars(const char8* string1,
-                                    const char8* string2) {
+                                     const char8* string2) {
+    if (string1 == NULL || string2 == NULL) {
+        return NULL;
+    }
     return StringOS::SearchChars(string1, string2);
 }
 
 const char8* StringHelperSearchLastChar(const char8* string,
-                                       char8 c) {
+                                        char8 c) {
+    if (string == NULL) {
+        return NULL;
+    }
     return StringOS::SearchLastChar(string, c);
 }
 
 const char8* StringHelperSearchString(const char8* string,
-                                     const char8* substring) {
+                                      const char8* substring) {
+    if (string == NULL || substring == NULL) {
+        return NULL;
+    }
     return StringOS::SearchString(string, substring);
 }
 
@@ -103,18 +137,18 @@ const char8* StringHelperSearchString(const char8* string,
 /*---------------------------------------------------------------------------*/
 
 char8* StringHelper::Concatenate(char8* destination,
-                                const char8* source) {
+                                 const char8* source) {
     return StringHelperConcatenate(destination, source);
 }
 
 char8* StringHelper::ConcatenateN(char8* destination,
-                                 const char8* source,
-                                 uint32 size) {
+                                  const char8* source,
+                                  uint32 size) {
     return StringHelperConcatenateN(destination, source, size);
 }
 
 const char8* StringHelper::SearchChar(const char8* string,
-                                     char8 c) {
+                                      char8 c) {
     return StringHelperSearchChar(string, c);
 }
 
@@ -150,17 +184,17 @@ int32 StringHelper::Length(const char8* string) {
 }
 
 const char8* StringHelper::SearchChars(const char8* string1,
-                               const char8* string2) {
+                                       const char8* string2) {
     return StringHelperSearchChars(string1, string2);
 }
 
 const char8* StringHelper::SearchLastChar(const char8* string,
-                                  char8 c) {
+                                          char8 c) {
     return StringHelperSearchLastChar(string, c);
 }
 
 const char8* StringHelper::SearchString(const char8* string,
-                                const char8* substring) {
+                                        const char8* substring) {
     return StringHelperSearchString(string, substring);
 }
 

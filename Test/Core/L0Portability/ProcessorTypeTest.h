@@ -22,7 +22,7 @@
  */
 
 #ifndef PROCESSORTYPETEST_H_
-#define 		PROCESSORTYPETEST_H_
+#define PROCESSORTYPETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,7 +37,9 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/** @brief A class to test the ProcessorType functions. */
+/**
+ * @brief A class to test the ProcessorType functions.
+ */
 class ProcessorTypeTest {
 
 public:
@@ -55,39 +57,55 @@ public:
 
     /**
      * @brief Tests the overloaded assignment operator in ProcessorType
-     * @return true if the test is successful, false otherwise.
+     * @return True if the test is successful, false otherwise.
      */
     bool TestAssignmentOperator();
 
     /**
      * @brief Tests the overloaded OR operator in ProcessorType
-     * @return true if the test is successful, false otherwise.
+     * @return True if the test is successful, false otherwise.
      */
     bool TestOROperator();
 
     /**
      * @brief Tests the overloaded equality operator in ProcessorType
-     * @return true if the test is successful, false otherwise.
+     * @return True if the test is successful, false otherwise.
      */
     bool TestEqualityOperator();
 
     /**
      * @brief Tests the overloaded inequality operator in ProcessorType
-     * @return true if the test is successful, false otherwise.
+     * @return True if the test is successful, false otherwise.
      */
     bool TestInequalityOperator();
 
     /**
-     * @brief Tests Get/SetDefaultCPUs in ProcessorType
-     * @return true if the test is successful, false otherwise.
+     * @brief Tests ProcessorType::GetDefaultCPUs and ProcessorType::SetDefaultCPUs.
+     * @return True if the test is successful, false otherwise.
      */
     bool TestGetSetDefaultCPUs();
 
     /**
      * @brief Tests ProcessorType's constructors
-     * @return true if the test is successful, false otherwise.
+     * @return True if the test is successful, false otherwise.
      */
     bool TestConstructors();
+
+
+    /**
+     * @brief Tests the ProcessorType::SetMask function.
+     * @param[in] mask is the desired cpu mask.
+     * @return true if the mask is assigned correctly.
+     */
+    bool TestSetMask(uint32 mask);
+
+    /**
+     * @brief Tests the ProcessorType::AddCPU function.
+     * @param[in] cpuNumber1 is the first cpu to be added.
+     * @param[in] cpuNumber2 is the second cpu to be added.
+     * @return true if in the cpu mask is set 1 to the bits related to the desired cpu numbers.
+     */
+    bool TestAddCPU(uint32 cpuNumber1, uint32 cpuNumber2);
 
 private:
 

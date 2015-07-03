@@ -48,10 +48,8 @@ public:
      * @see StringHelper::Concatenate
      */
     static char8* Concatenate(char8* destination,
-                             const char8* source) {
-        if (source == NULL || destination == NULL) {
-            return NULL;
-        }
+                              const char8* source) {
+
         return strcat(destination, source);
     }
 
@@ -59,11 +57,9 @@ public:
      * @see StringHelper::ConcatenateN
      */
     static char8* ConcatenateN(char8* destination,
-                              const char8* source,
-                              uint32 size) {
-        if (destination == NULL || source == NULL) {
-            return NULL;
-        }
+                               const char8* source,
+                               uint32 size) {
+
         return strncat(destination, source, size);
     }
 
@@ -71,10 +67,8 @@ public:
      * @see StringHelper::SearchChar
      */
     static const char8* SearchChar(const char8* string,
-                                  char8 c) {
-        if (string == NULL) {
-            return NULL;
-        }
+                                   char8 c) {
+
         return strchr(string, c);
     }
 
@@ -83,9 +77,6 @@ public:
      */
     static int32 Compare(const char8* string1,
                          const char8* string2) {
-        if (string1 == NULL || string2 == NULL) {
-            return -1;
-        }
 
         int32 ret = strcmp(string1, string2);
         if (ret < 0) {
@@ -103,9 +94,6 @@ public:
     static int32 CompareN(const char8* string1,
                           const char8* string2,
                           uint32 size) {
-        if (string1 == NULL || string2 == NULL) {
-            return -1;
-        }
 
         int32 ret = strncmp(string1, string2, size);
         if (ret < 0) {
@@ -122,9 +110,7 @@ public:
      */
     static bool Copy(char8* destination,
                      const char8* source) {
-        if (source == NULL || destination == NULL) {
-            return false;
-        }
+
         return strcpy(destination, source) != NULL;
     }
 
@@ -132,11 +118,9 @@ public:
      * @see StringHelper::CopyN
      */
     static bool CopyN(char8* destination,
-               const char8* source,
-               uint32 size) {
-        if (source == NULL || destination == NULL) {
-            return false;
-        }
+                      const char8* source,
+                      uint32 size) {
+
         return strncpy(destination, source, size) != NULL;
     }
 
@@ -145,9 +129,6 @@ public:
      */
     static int32 SearchIndex(const char8* string1,
                              const char8* string2) {
-        if (string1 == NULL || string2 == NULL) {
-            return -1;
-        }
         return (int32) (strcspn(string1, string2));
     }
 
@@ -155,9 +136,7 @@ public:
      * @see StringHelper::Length
      */
     static int32 Length(const char8* string) {
-        if (string == NULL) {
-            return -1;
-        }
+
         return (int32) (strlen(string));
     }
 
@@ -165,10 +144,8 @@ public:
      * @see StringHelper::SearchChars.
      */
     static const char8* SearchChars(const char8* string1,
-                                   const char8* string2) {
-        if (string1 == NULL || string2 == NULL) {
-            return NULL;
-        }
+                                    const char8* string2) {
+
         return strpbrk(string1, string2);
     }
 
@@ -176,10 +153,8 @@ public:
      * @see StringHelper::SearchLastChar
      */
     static const char8* SearchLastChar(const char8* string,
-                                      char8 c) {
-        if (string == NULL) {
-            return NULL;
-        }
+                                       char8 c) {
+
         return strrchr(string, c);
     }
 
@@ -187,10 +162,8 @@ public:
      * @see StringHelper::SearchString
      */
     static const char8* SearchString(const char8* string,
-                                    const char8* substring) {
-        if (string == NULL || substring == NULL) {
-            return NULL;
-        }
+                                     const char8* substring) {
+
         return strstr(string, substring);
     }
 

@@ -72,13 +72,14 @@ bool BasicConsoleTestWrite(const char8* string,
         stringSize += padding;
     }
 
-    bool condition1 = BasicConsoleWrite(myConsole, string, size, TTInfiniteWait);
+    bool condition1 = myConsole.Write(string, size, TTInfiniteWait);
 
     if (!condition1) {
     }
 
     //return true if the size is correct
-    return condition1 && (size == (stringSize - padding));
+    uint32 dummySize = 1;
+    return condition1 && (size == (stringSize - padding)) && !myConsole.Write(NULL, dummySize);
 
 }
 
@@ -111,7 +112,7 @@ bool BasicConsoleTestRead(const char8* stringArg,
 
     uint32 sizeTest = stringSize;
     //read the string
-    bool condition1 = BasicConsoleRead(myConsole, string, stringSize, TTInfiniteWait);
+    bool condition1 = myConsole.Read(string, stringSize, TTInfiniteWait);
 
     string[stringSize] = '\0';
 
@@ -125,10 +126,12 @@ bool BasicConsoleTestRead(const char8* stringArg,
 
     //return true if the read string is equal to the argument
     if (stringSize > 1) {
-        return condition1 && condition2 && (stringSize == sizeTest);
+        uint32 dummySize = 1;
+        return condition1 && condition2 && (stringSize == sizeTest) && !myConsole.Read(NULL, dummySize);
     }
     else {
-        return (stringSize == 1); //&& TestWrite(string, 0);
+        uint32 dummySize = 1;
+        return (stringSize == 1) && !myConsole.Read(NULL, dummySize); //&& TestWrite(string, 0);
     }
 
 }
@@ -212,60 +215,106 @@ bool BasicConsoleTest::TestPerfChar() {
     return ret;
 }
 
-bool BasicConsoleTestNotImplemented(BasicConsole &myConsole) {
-    int32 rows = 0;
-    int32 cols = 0;
+bool BasicConsoleTest::TestShow() {
+    BasicConsole myConsole;
+    return myConsole.Show();
+}
 
-    if (!myConsole.SetWindowSize(15, 15)) {
+bool BasicConsoleTest::TestSetTitleBar(const char8 *title) {
+    BasicConsole myConsole;
+    return myConsole.SetTitleBar(title) && !myConsole.SetTitleBar(NULL);
+}
+
+bool BasicConsoleTest::TestSetGetSize(int32 numberOfColumns,
+                                      int32 numberOfRows) {
+
+    BasicConsole myConsole;
+    myConsole.SetSize(numberOfColumns, numberOfRows);
+    int32 nRows = 0;
+    int32 nCols = 0;
+
+    myConsole.GetSize(nCols, nRows);
+
+    return (nRows == numberOfRows && nCols == numberOfColumns);
+
+}
+
+bool BasicConsoleTest::TestSetGetWindowSize(int32 numberOfColumns,
+                                            int32 numberOfRows) {
+    BasicConsole myConsole;
+    myConsole.SetWindowSize(numberOfColumns, numberOfRows);
+    int32 nRows = 0;
+    int32 nCols = 0;
+
+    myConsole.GetWindowSize(nCols, nRows);
+
+    int32 nRowsBuff = 0;
+    int32 nColsBuff = 0;
+
+    myConsole.GetSize(nColsBuff, nRowsBuff);
+
+    if (nCols < numberOfColumns) {
+        return nCols == nColsBuff;
+    }
+    if (nRows < numberOfRows) {
+        return nRows == nRowsBuff;
+    }
+
+    return (nRows == numberOfRows && nCols == numberOfColumns);
+
+}
+
+bool BasicConsoleTest::TestSetGetCursorPosition(int32 column,
+                                                int32 row) {
+
+    BasicConsole myConsole;
+
+    if (!myConsole.SetCursorPosition(column, row)) {
         return false;
     }
 
-    if (!myConsole.GetWindowSize(rows, cols)) {
+    int32 colRet = 0;
+    int32 rowRet = 0;
+
+    if (!myConsole.GetCursorPosition(colRet, rowRet)) {
         return false;
     }
 
-    if (rows != 15 || cols != 15) {
-        return false;
-    }
+    return colRet == column && rowRet == row;
 
-    Colours black = Black;
-    Colours white = White;
-    Colours red = Red;
+}
 
-    if (myConsole.SetColour(black, white)) {
-        return false;
-    }
+bool BasicConsoleTest::TestSetColour(Colours foreGroundColour,
+                                     Colours backGroundColour) {
 
-    if (myConsole.SetCursorPosition(rows, cols)) {
-        return false;
-    }
+    BasicConsole myConsole;
+    return myConsole.SetColour(foreGroundColour, backGroundColour);
 
-    if (myConsole.GetCursorPosition(rows, cols)) {
-        return false;
-    }
+}
 
-    if (myConsole.SetTitleBar("Title")) {
-        return false;
-    }
+bool BasicConsoleTest::TestClear() {
 
-    if (!myConsole.Show()) {
-        return false;
-    }
+    BasicConsole myConsole;
+    return myConsole.Clear();
+}
 
-    if (myConsole.PlotChar('c', black, red, rows, cols)) {
-        return false;
-    }
+bool BasicConsoleTest::TestSetPaging() {
 
-    if (!myConsole.Clear()) {
-        return false;
-    }
+    BasicConsole myConsole;
+    myConsole.SetPaging(true);
+    myConsole.SetPaging(false);
 
     return true;
+
 }
 
-bool BasicConsoleTest::TestNotImplemented() {
+bool BasicConsoleTest::TestPlotChar(char8 c,
+                                    Colours foreGroundColour,
+                                    Colours backGroundColour,
+                                    int column,
+                                    int row) {
+
     BasicConsole myConsole;
-    bool ret = BasicConsoleTestNotImplemented(myConsole);
-    BasicConsoleClose(myConsole);
-    return ret;
+    return myConsole.PlotChar(c, foreGroundColour, backGroundColour, column, row);
 }
+

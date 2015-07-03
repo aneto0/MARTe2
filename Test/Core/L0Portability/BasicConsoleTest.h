@@ -49,6 +49,10 @@ public:
      * Definitions of the of the console number of rows.
      */
     static const uint32 N_ROWS = 40;
+
+    /**
+     * Definitions of the of the console number of columns.
+     */
     static const uint32 N_COLUMNS = 170;
 
     /**
@@ -59,10 +63,10 @@ public:
 
     /**
      * @brief Tests the correct opening of the console with different options.
-     * @param[in] ConsoleOpeningMode is a flag with define the properties of the console.
+     * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the console is open correctly.
      */
-    bool TestOpen(ConsoleOpeningMode = ConsoleDefault);
+    bool TestOpen(ConsoleOpeningMode openingMode = ConsoleDefault);
 
     /**
      * @brief Tests the correct behavior of the write operations.
@@ -78,7 +82,6 @@ public:
     /**
      * @brief Tests if the string read by console is the same of the string passed by argument (the user must write in console the same word) with the same size.
      * @param[in] stringArg is the string to match with the read string.
-     * @param[in] sizeArg is the size to match with the read string size.
      * @return true if the read string is equal to the passed argument.
      */
     bool TestRead(const char8* stringArg);
@@ -101,12 +104,81 @@ public:
      */
     bool TestPerfChar();
 
+    /**
+     * @brief Tests the BasicConsole::Show function.
+     * @return the return value of the function tested.
+     */
+    bool TestShow();
 
     /**
-     * @brief Tests most functions that are not implemented for example in linux.
-     * @return true if all functions return the expected value.
+     * @brief Tests the BasicConsole::SetTitleBar function
+     * @param[in] title is the desired title.
+     * @return the return value of the function tested.
      */
-    bool TestNotImplemented();
+    bool TestSetTitleBar(const char8 *title);
+
+    /**
+     * @brief Tests the BasicConsole::SetSize and BasicConsole::GetSize functions
+     * @param[in] numberOfColumns is the desired number of columns.
+     * @param[in] numberOfRows is the desired number of rows
+     * @return true if the get function returns the values set by the set function.
+     */
+    bool TestSetGetSize(int32 numberOfColumns,
+                        int32 numberOfRows);
+
+    /**
+     * @brief Tests the BasicConsole::GetWindowSize and BasicConsole::SetWindowSize functions
+     * @param[in] numberOfColumns is the desired x-axis window size.
+     * @param[in] numberOfRows is the desired y-axis window size.
+     * @return true if the get function returns a value minor or equal to the value passed to the set function.
+     */
+    bool TestSetGetWindowSize(int32 numberOfColumns,
+                              int32 numberOfRows);
+
+    /**
+     * @brief Tests the BasicConsole::SetCursorPosition and BAsicConsole::SetCursorPositon functions.
+     * @param[in] column is the desired cursor x position.
+     * @param[in] row is the desired cursor y position.
+     * @return the return value of the tested function.
+     */
+    bool TestSetGetCursorPosition(int32 column,
+                                  int32 row);
+
+    /**
+     * @brief Tests the BasicConsole::SetColour and BasicConsole::GetColourù
+     * @param[in] foreGroundColour is the desired foreground color.
+     * @param[in] backGroundColour is the desired background color.
+     * @return the return value of the tested function.
+     */
+    bool TestSetColour(Colours foreGroundColour,
+                       Colours backGroundColour);
+
+    /**
+     * @brief Tests the BasicConsole::Clear function
+     * @return the return value of the tested function.
+     */
+    bool TestClear();
+
+    /**
+     * @brief Calls the BasicConsole::SetPaging.
+     * @return true.
+     */
+    bool TestSetPaging();
+
+    /**
+     * @brief Tests the BasicConsole::PlotChar function.
+     * @param[in] c is the character to be plotted.
+     * @param[in] foreGroundColour is the desired foreground color.
+     * @param[in] backGroundColour is the desired background color.
+     * @param[in] columns is the desired character x position.
+     * @param[in] row is the desired character y position.
+     * @return the return value of the tested function
+     */
+    bool TestPlotChar(char8 c,
+                      Colours foreGroundColour,
+                      Colours backGroundColour,
+                      int column,
+                      int row);
 
 };
 

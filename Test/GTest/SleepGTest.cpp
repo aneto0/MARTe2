@@ -2,7 +2,7 @@
  * @file SleepGTest.cpp
  * @brief Source file for class SleepGTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,21 +40,43 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class SleepGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-
-    }
-
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
-
-TEST_F(SleepGTest,SleepTest) {
+TEST(SleepGTest,TestSleepAtLeast) {
     SleepTest sleepTest;
-    ASSERT_TRUE(sleepTest.All());
+    ASSERT_TRUE(sleepTest.TestSleepAtLeast(1.2));
 }
+
+TEST(SleepGTest,TestSleepNoMore) {
+    SleepTest sleepTest;
+    ASSERT_TRUE(sleepTest.TestSleepNoMore(0.8));
+}
+
+TEST(SleepGTest,TestSleepSecF) {
+    SleepTest sleepTest;
+    ASSERT_TRUE(sleepTest.TestSleepSec(0.3F));
+}
+
+TEST(SleepGTest,TestSleepSecD) {
+    SleepTest sleepTest;
+    ASSERT_TRUE(sleepTest.TestSleepSec(0.2));
+}
+
+TEST(SleepGTest,TestSleepMSec) {
+    SleepTest sleepTest;
+    ASSERT_TRUE(sleepTest.TestSleepMSec(120));
+}
+
+TEST(SleepGTest,TestSleepBusy) {
+    SleepTest sleepTest;
+    ASSERT_TRUE(sleepTest.TestSleepBusy(0.4));
+}
+
+TEST(SleepGTest,TestSleepSemiBusy) {
+    SleepTest sleepTest;
+    ASSERT_TRUE(sleepTest.TestSleepSemiBusy(0.5, 0.2));
+}
+
+TEST(SleepGTest,TestGetDateSeconds) {
+    SleepTest sleepTest;
+    ASSERT_TRUE(sleepTest.TestGetDateSeconds());
+}
+
