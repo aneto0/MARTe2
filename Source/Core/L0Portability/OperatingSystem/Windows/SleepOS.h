@@ -77,7 +77,7 @@ public:
     }
 
     /**
-     * @see Sleep.h SleepSec
+     * @see Sleep.h Sleep::Sec
      * @brief Sleep sec seconds.
      * @param[in] sec is the number to seconds to sleep.
      */
@@ -89,7 +89,7 @@ public:
     }
 
     /**
-     * @see Sleep.h SleepSec
+     * @see Sleep.h Sleep::Sec
      * @brief Sleep sec seconds.
      * @param[in] sec is the number of seconds to sleep.
      */

@@ -22,7 +22,7 @@
  */
 
 #ifndef STRINGHELPER_H_
-#define 		STRINGHELPER_H_
+#define STRINGHELPER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,67 +37,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-
-extern "C" {
-
-/**
- * @see StringHelper::Concatenate().
- */
-char8 *StringHelperConcatenate(char8 *destination, const char8 *source);
-
-/**
- * @see StringHelper::ConcatenateN().
- */
-char8 *StringHelperConcatenateN(char8 *destination, const char8 *source, uint32 size);
-/**
- * @see StringHelper::SearchChar().
- */
-const char8 *StringHelperSearchChar(const char8 *string, char8 c);
-
-/**
- * @see StringHelper::Compare().
- */
-int32 StringHelperCompare(const char8 *string1, const char8 *string2);
-
-/**
- * @see StringHelper::CompareN().
- */
-int32 StringHelperCompareN(const char8 *string1, const char8 *string2, uint32 size);
-
-/**
- * @see StringHelper::Copy().
- */
-bool StringHelperCopy(char8 *destination, const char8 *source);
-
-/**
- * @see StringHelper::CopyN().
- */
-bool StringHelperCopyN(char8 *destination, const char8 *source, uint32 size);
-
-/**
- * @see StringHelper::SearchIndex().
- */
-int32 StringHelperSearchIndex(const char8 *string1, const char8 *string2);
-
-/**
- * @see StringHelper::Length().
- */
-int32 StringHelperLength(const char8 *string);
-
-/** @see StringHelper::SearchChars(). */
-const char8 *StringHelperSearchChars(const char8 *string1, const char8 *string2);
-
-/**
- *  @see StringHelper::SearchLastChar().
- */
-const char8 *StringHelperSearchLastChar(const char8 *string, char8 c);
-
-/**
- * @see StringHelper::SearchString().
- */
-const char8 *StringHelperSearchString(const char8 *string, const char8 *substring);
-
-}
 
 /**
  * @brief Implementation of functions to manipulate strings.
@@ -209,6 +148,15 @@ public:
      * @returns a pointer to the first occurrence of substring in string.
      */
     static const char8 *SearchString(const char8 *string, const char8 *substring);
+
+    /**
+     * @brief Fills the string with a constant char.
+     * @param[in,out] string to be filled with the char.
+     * @param[in] size length of the string in bytes.
+     * @param[in] c the char to fill the string.
+     * @returns true if the string is not null and the size > 0 and the operation succeeds.
+     */
+    static bool SetChar(char8 *string, const uint32 &size, const char8 &c);
 
 };
 /*---------------------------------------------------------------------------*/

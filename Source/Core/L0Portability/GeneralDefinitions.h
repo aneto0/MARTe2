@@ -103,6 +103,66 @@ typedef enum {
 } ErrorType;
 
 /**
+ * TODO
+ */
+
+class Flags {
+public:
+    Flags() {
+        mask = 0u;
+    }
+
+    explicit Flags(const uint32 m) :
+            mask(m) {
+    }
+
+    inline uint32 GetMask() const {
+        return mask;
+    }
+
+    inline operator uint32() const {
+        return mask;
+    }
+
+    inline Flags &operator=(const Flags &f) {
+        if (this != &f) {
+            mask = f.GetMask();
+        }
+        return *this;
+    }
+
+private:
+    uint32 mask;
+};
+
+/**
+ * @brief A structure containing the time stamp informations.
+ */
+struct TimeValues {
+
+    /** nanoseconds 0-999999 */
+    uint32 microseconds;
+
+    /** seconds 0-59 */
+    uint32 seconds;
+
+    /** minutes 0-59 */
+    uint32 minutes;
+
+    /** hours 0-23 */
+    uint32 hours;
+
+    /** days 1-31 */
+    uint32 days;
+
+    /** month 0-11 */
+    uint32 month;
+
+    /** year since 1900 */
+    uint32 year;
+};
+
+/**
  * @brief A class that could be used to return the error type in the functions.
  * @details In many functions the user can pass by reference this type of object to know
  * which type of error causes the eventual function's failure. By Default in many functions
@@ -141,7 +201,7 @@ public:
      * @return an Error object with the same errorType as the source object.
      */
     Error& operator=(const Error &source) {
-        if( &source != this ){
+        if (&source != this) {
             errorType = source.errorType;
         }
         return *this;

@@ -334,7 +334,7 @@ bool MemoryTest::TestSharedMemory() {
             Memory::SharedFree((void*&) sharedInt);
             return false;
         }
-        SleepSec(20e-3);
+        Sleep::Sec(20e-3);
     }
     bool returnValue = false;
 
@@ -709,7 +709,7 @@ bool MemoryTest::TestGetUsedHeap(uint32 nOfThreads) {
     //the total used heap should be greater than zero.
     if (Memory::GetUsedHeap() <= 0) {
         eventSem.Post();
-        SleepSec(1.0);
+        Sleep::Sec(1.0);
         return false;
     }
 
@@ -723,7 +723,7 @@ bool MemoryTest::TestGetUsedHeap(uint32 nOfThreads) {
 
             return false;
         }
-        SleepSec(10e-3);
+        Sleep::Sec(10e-3);
     }
 
     //be sure that all threads are removed from database
@@ -732,7 +732,7 @@ bool MemoryTest::TestGetUsedHeap(uint32 nOfThreads) {
         if (j++ > 1000) {
             return false;
         }
-        SleepSec(10e-3);
+        Sleep::Sec(10e-3);
     }
 
     return true;
@@ -819,7 +819,7 @@ void AllocateFunction(MemoryTest &m) {
     m.signals[myIndex] = true;
 
     while (m.signals[myIndex]) {
-        SleepSec(1e-3);
+        Sleep::Sec(1e-3);
     }
 
     while (i >= 0) {
@@ -843,7 +843,7 @@ bool MemoryTest::TestDatabase() {
     for (counter = 0; counter < MAX_NO_OF_MEMORY_MONITORS - 1; counter++) {
         tids[counter] = Threads::BeginThread((ThreadFunctionType) AllocateFunction, this);
         while (!(signals[counter])) {
-            SleepSec(1e-3);
+            Sleep::Sec(1e-3);
         }
     }
 
@@ -879,7 +879,7 @@ bool MemoryTest::TestDatabase() {
         signals[counter] = false;
 
         while (!(signals[counter])) {
-            SleepSec(1e-3);
+            Sleep::Sec(1e-3);
         }
 
     }

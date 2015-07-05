@@ -53,5 +53,10 @@ typedef struct termio ConsoleInfo;
 /** In windows the newline is specified with \r\n */
 #define N_CHARS_NEWLINE 1
 
+/** This is just to avoid an exception to Rule 3-9-2 of MISRA, given that many Linux operating system calls require a long as an input
+ * and the framework does not define such type*/
+typedef long oslong;
+typedef unsigned long osulong;
+
 #endif /* GENERALDEFINITIONSOS_H_ */
 	

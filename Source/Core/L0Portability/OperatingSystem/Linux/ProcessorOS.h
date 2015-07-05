@@ -29,35 +29,24 @@
 #ifndef LINT
 #include <unistd.h>
 #endif
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "../../Processor.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-/**
- * @brief System dependent functions to get informations about the processors.
- */
-class ProcessorOS {
-
-public:
-
-    /**
-     * @brief Called by ProcessorType::Available
-     * @return a mask of the available processors.
-     */
-    static uint32 Available() {
-        return (uint32) sysconf(_SC_NPROCESSORS_ONLN);
-    }
-
-};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * @brief Called by ProcessorType::Available
+ * @return a mask of the available processors.
+ */
+inline uint32 Processor::Available() {
+    return (uint32) sysconf(_SC_NPROCESSORS_ONLN);
+}
 #endif /* PROCESSOROS_H_ */
 

@@ -241,7 +241,7 @@ bool FastPollingMutexTest::TestRecursive() {
     int32 counter = 0;
     TID threadId = Threads::BeginThread((ThreadFunctionType) TestRecursiveCallback, this);
     while (nOfExecutingThreads == 1) {
-        SleepMSec(100);
+        Sleep::MSec(100);
         if (counter++ > 10) {
             test = true;
             Threads::Kill(threadId);

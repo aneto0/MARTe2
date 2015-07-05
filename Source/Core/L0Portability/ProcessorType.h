@@ -22,7 +22,7 @@
  */
 
 #ifndef PROCESSORTYPE_H_
-#define 		PROCESSORTYPE_H_
+#define PROCESSORTYPE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */

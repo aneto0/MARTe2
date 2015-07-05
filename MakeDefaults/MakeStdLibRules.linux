@@ -38,7 +38,7 @@ $(BUILD_DIR)/%.o : %.c
 $(BUILD_DIR)/%.a : $(OBJS)
 	touch $@
 	rm $(BUILD_DIR)/$*.a
-	ld -r $(OBJS) -o $@
+	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $@
 
 $(BUILD_DIR)/%.so : $(BUILD_DIR)/%.o $(OBJS)
 #	$(COMPILER) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@

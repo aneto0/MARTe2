@@ -22,7 +22,7 @@
  */
 
 #ifndef BASICCONSOLETEST_H_
-#define 		BASICCONSOLETEST_H_
+#define BASICCONSOLETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -53,7 +53,7 @@ public:
     /**
      * Definitions of the of the console number of columns.
      */
-    static const uint32 N_COLUMNS = 170;
+    static const uint32 N_COLUMNS = 5;
 
     /**
      * @brief Empty constructor.
@@ -66,7 +66,7 @@ public:
      * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the console is open correctly.
      */
-    bool TestOpen(ConsoleOpeningMode openingMode = ConsoleDefault);
+    bool TestOpen(Flags openingMode = IBasicConsole::Mode::Default);
 
     /**
      * @brief Tests the correct behavior of the write operations.
@@ -77,7 +77,7 @@ public:
      * @return true if the size returned is the real string size.
      */
     bool TestWrite(const char8 *string,
-                   int32 padding);
+                   uint32 padding);
 
     /**
      * @brief Tests if the string read by console is the same of the string passed by argument (the user must write in console the same word) with the same size.
@@ -94,9 +94,9 @@ public:
      * @param[in] columns is the desired column dimension of the console.
      * @return true is the write does not fail.
      */
-    bool TestPaging(int32 overflow,
-                    int32 rows,
-                    int32 columns);
+    bool TestPaging(uint32 overflow,
+                    uint32 rows,
+                    uint32 columns);
 
     /**
      * @brief Tests the behavior of the PerfChar property, namely an immediate return after the first character read.
@@ -123,8 +123,8 @@ public:
      * @param[in] numberOfRows is the desired number of rows
      * @return true if the get function returns the values set by the set function.
      */
-    bool TestSetGetSize(int32 numberOfColumns,
-                        int32 numberOfRows);
+    bool TestSetGetSize(uint32 numberOfColumns,
+                        uint32 numberOfRows);
 
     /**
      * @brief Tests the BasicConsole::GetWindowSize and BasicConsole::SetWindowSize functions
@@ -132,8 +132,8 @@ public:
      * @param[in] numberOfRows is the desired y-axis window size.
      * @return true if the get function returns a value minor or equal to the value passed to the set function.
      */
-    bool TestSetGetWindowSize(int32 numberOfColumns,
-                              int32 numberOfRows);
+    bool TestSetGetWindowSize(uint32 numberOfColumns,
+                              uint32 numberOfRows);
 
     /**
      * @brief Tests the BasicConsole::SetCursorPosition and BAsicConsole::SetCursorPositon functions.
@@ -141,17 +141,17 @@ public:
      * @param[in] row is the desired cursor y position.
      * @return the return value of the tested function.
      */
-    bool TestSetGetCursorPosition(int32 column,
-                                  int32 row);
+    bool TestSetGetCursorPosition(uint32 column,
+                                  uint32 row);
 
     /**
      * @brief Tests the BasicConsole::SetColour and BasicConsole::GetColourù
-     * @param[in] foreGroundColour is the desired foreground color.
-     * @param[in] backGroundColour is the desired background color.
+     * @param[in] foregroundColour is the desired foreground color.
+     * @param[in] backgroundColour is the desired background color.
      * @return the return value of the tested function.
      */
-    bool TestSetColour(Colours foreGroundColour,
-                       Colours backGroundColour);
+    bool TestSetColour(Colours foregroundColour,
+                       Colours backgroundColour);
 
     /**
      * @brief Tests the BasicConsole::Clear function
@@ -160,23 +160,22 @@ public:
     bool TestClear();
 
     /**
-     * @brief Calls the BasicConsole::SetPaging.
-     * @return true.
+     * TODO
      */
-    bool TestSetPaging();
+    bool TestSetMode();
 
     /**
      * @brief Tests the BasicConsole::PlotChar function.
      * @param[in] c is the character to be plotted.
-     * @param[in] foreGroundColour is the desired foreground color.
-     * @param[in] backGroundColour is the desired background color.
+     * @param[in] foregroundColour is the desired foreground color.
+     * @param[in] backgroundColour is the desired background color.
      * @param[in] columns is the desired character x position.
      * @param[in] row is the desired character y position.
      * @return the return value of the tested function
      */
     bool TestPlotChar(char8 c,
-                      Colours foreGroundColour,
-                      Colours backGroundColour,
+                      Colours foregroundColour,
+                      Colours backgroundColour,
                       int column,
                       int row);
 

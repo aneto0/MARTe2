@@ -63,7 +63,7 @@ bool HighResolutionTimerTest::TestPeriodFrequency() {
     float64 HRTperiod = HighResolutionTimer::Period();
     float64 relativePeriod = 1.0 / HRTfrequency;
     int64 relativeFrequency = (int64) (1.0 / HRTperiod);
-    return (HRTperiod == relativePeriod) && (HRTfrequency == relativeFrequency) && (HighResolutionTimerMSecTics() == (HRTfrequency / 1000.0));
+    return (HRTperiod == relativePeriod) && (HRTfrequency == relativeFrequency);
 }
 
 //return true if the measured time is more or less equal to the sleep time.
@@ -74,7 +74,7 @@ bool HighResolutionTimerTest::TestCounter(float64 sleepTime) {
     float64 time;
 
     counter_1 = HighResolutionTimer::Counter();
-    SleepSec(sleepTime);
+    Sleep::Sec(sleepTime);
     counter = HighResolutionTimer::Counter();
     time = HighResolutionTimer::TicksToTime(counter, counter_1);
     return Tolerance(time, sleepTime, 0.05);
@@ -89,7 +89,7 @@ bool HighResolutionTimerTest::TestCounter32(float64 sleepTime) {
     float64 time;
 
     counter_1 = HighResolutionTimer::Counter32();
-    SleepSec(sleepTime);
+    Sleep::Sec(sleepTime);
     counter = HighResolutionTimer::Counter32();
     time = (counter-counter_1)*HighResolutionTimer::Period();
     return Tolerance(time, sleepTime, 0.05);
@@ -113,7 +113,7 @@ bool HighResolutionTimerTest::TestTimeStamp(uint32 millisecs) {
     int32 tolerance = 50;
 
     HighResolutionTimer::GetTimeStamp(myTimeStamp1);
-    SleepMSec(millisecs);
+    Sleep::MSec(millisecs);
     HighResolutionTimer::GetTimeStamp(myTimeStamp2);
 
     //it could fail if you are unlucky and launch the test across one month and the other at least!

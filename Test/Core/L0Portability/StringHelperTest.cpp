@@ -139,6 +139,7 @@ bool StringHelperTest::TestCopy(const char8 *string) {
 bool StringHelperTest::TestCopyN() {
     //Copy string in the buffer.
     char8 buffer[32];
+    StringHelper::SetChar(buffer, 32, 0);
 
     //Test the copy function until sizeToCopy chars.
     const char8 *stringPartial = "HelloWorld";

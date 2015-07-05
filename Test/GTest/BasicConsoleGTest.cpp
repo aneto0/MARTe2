@@ -16,7 +16,12 @@ TEST(BasicConsoleGTest,TestOpen) {
 
 TEST(BasicConsoleGTest,TestWrite) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestWrite("Hello\nWorld\n", 3));
+    ASSERT_TRUE(console.TestWrite("Hello bye bye world\nWorld with spaces\n\n\nand new lines\nand\nsingle\nwords.", 0));
+}
+
+TEST(BasicConsoleGTest,TestWrite2) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestWrite("Hello bye bye world\nWorld with spaces\n\n\nand new lines\nand\nsingle\nwords.", 0));
 }
 
 //This tests need user intervent. Do not uncomment for automatic tests.
@@ -72,7 +77,7 @@ TEST(BasicConsoleGTest,TestClear) {
 }
 TEST(BasicConsoleGTest,TestSetPaging) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestSetPaging());
+    ASSERT_TRUE(console.TestSetMode());
 }
 
 TEST(BasicConsoleGTest,TestPlotChar) {

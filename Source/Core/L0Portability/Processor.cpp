@@ -28,11 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
 #include "Processor.h"
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,ProcessorOS.h)
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,ProcessorA.h)
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,18 +36,3 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-uint32 ProcessorFamily() {
-    return ProcessorA::Family();
-}
-
-const char8 *ProcessorVendorId() {
-    return ProcessorA::VendorId();
-}
-
-uint32 ProcessorModel() {
-    return ProcessorA::Model();
-}
-
-uint32 ProcessorsAvailable() {
-    return ProcessorOS::Available();
-}

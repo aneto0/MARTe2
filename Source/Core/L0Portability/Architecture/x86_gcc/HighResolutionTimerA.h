@@ -35,44 +35,35 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Implementation of platform dependent functions to get the number of cpu ticks.
+ * @brief Reads the High Resolution Timer as 32 bit. Fast inline assembler.
+ * @return number of cpu ticks in a 32 bit integer.
  */
-class HighResolutionTimerA {
+inline uint32 HighResolutionTimer::Counter32(){
+    volatile uint64 perf;
+    uint32 *pperf = (uint32 *) &perf;
+    asm(
+            "\n"
+            "        rdtsc        \n"
+            : "=a"(pperf[0]) , "=d"(pperf[1])
+    );
 
-public:
+    return (uint32) perf;
+}
 
-    /**
-     * @brief Reads the High Resolution Timer as 32 bit. Fast inline assembler.
-     * @return number of cpu ticks in a 32 bit integer.
-     */
-    static inline uint32 Read32() {
-        volatile uint64 perf;
-        uint32 *pperf = (uint32 *) &perf;
-        asm(
-                "\n"
-                "        rdtsc        \n"
-                : "=a"(pperf[0]) , "=d"(pperf[1])
-        );
-
-        return (uint32) perf;
-    }
-
-    /**
-     * @brief Reads the High Resolution Timer as 64 bit int. Fast inline assembler.
-     * @return number of cpu ticks in a 64 bit integer.
-     */
-    static inline int64 Read64() {
-        volatile int64 perf;
-        uint32 *pperf = (uint32 *) &perf;
-        asm volatile(
-                "\n"
-                "        rdtsc        \n"
-                : "=a"(pperf[0]) , "=d"(pperf[1])
-        );
-        return perf;
-    }
-
-};
+/**
+ * @brief Reads the High Resolution Timer as 64 bit int. Fast inline assembler.
+ * @return number of cpu ticks in a 64 bit integer.
+ */
+inline int64 HighResolutionTimer::Counter(){
+    volatile int64 perf;
+    uint32 *pperf = (uint32 *) &perf;
+    asm volatile(
+            "\n"
+            "        rdtsc        \n"
+            : "=a"(pperf[0]) , "=d"(pperf[1])
+    );
+    return perf;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
