@@ -297,7 +297,7 @@ public:
                            uint32 exceptionHandlerBehaviour,
                            ProcessorType runOnCPUs) {
 
-        if (runOnCPUs == PTUndefinedCPUs) {
+        if (runOnCPUs == UndefinedCPUs) {
             if (ProcessorType::GetDefaultCPUs() != 0) {
                 runOnCPUs = ProcessorType::GetDefaultCPUs();
             }

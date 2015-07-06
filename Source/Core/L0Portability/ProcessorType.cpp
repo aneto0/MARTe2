@@ -32,17 +32,23 @@
 #include "ProcessorType.h"
 
 #if ProcessorTypeDefaultCPUs
+/*lint -e{9141} required to allow the setting the default CPUs at compilation time*/
 uint32 ProcessorType::defaultCPUs = ProcessorTypeDefaultCPUs;
 #else
 uint32 ProcessorType::defaultCPUs = 0;
 #endif
 
-uint32 ProcessorTypeGetDefaultCPUs() {
+/*lint -e{9141} constant that can be reused by other classes*/
+const ProcessorType ProcessorType::UndefinedCPUs(0u);
+
+/*lint -e{9141} required to allow the setting the default CPUs at compilation time*/
+uint32 ProcessorType::GetDefaultCPUs() {
     return ProcessorType::defaultCPUs;
 }
 
-void ProcessorTypeSetDefaultCPUs(const uint32 defaultMask) {
-    ProcessorType::defaultCPUs = defaultMask;
+/*lint -e{9141} required to allow the setting the default CPUs at compilation time*/
+void ProcessorType::SetDefaultCPUs(const uint32 &mask) {
+    ProcessorType::defaultCPUs = mask;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -52,6 +58,55 @@ void ProcessorTypeSetDefaultCPUs(const uint32 defaultMask) {
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+void ProcessorType::SetMask(const uint32 mask) {
+    processorMask = mask;
+}
+
+void ProcessorType::AddCPU(const uint32 cpuNumber) {
+    uint32 cpuMask = 1u;
+    cpuMask = cpuMask << (cpuNumber - 1u);
+    processorMask |= cpuMask;
+}
+
+void ProcessorType::operator=(const uint32 cpuMask) {
+    processorMask = cpuMask;
+}
+
+ProcessorType& ProcessorType::operator=(const ProcessorType &pt) {
+    if (this != &pt) {
+        processorMask = pt.processorMask;
+    }
+    return *this;
+}
+
+void ProcessorType::operator|=(const uint32 cpuMask) {
+    processorMask |= cpuMask;
+}
+
+void ProcessorType::operator|=(const ProcessorType &pt) {
+    processorMask |= pt.processorMask;
+}
+
+bool ProcessorType::operator==(const ProcessorType &pt) const {
+    return processorMask == pt.processorMask;
+}
+
+bool ProcessorType::operator==(const uint32 mask) const {
+    return processorMask == mask;
+}
+
+bool ProcessorType::operator!=(const ProcessorType &pt) const {
+    return processorMask != pt.processorMask;
+}
+
+bool ProcessorType::operator!=(const uint32 mask) const {
+    return processorMask != mask;
+}
+
+uint32 ProcessorType::GetProcessorMask() const {
+    return processorMask;
+}
 
 ProcessorType::ProcessorType(const uint32 cpuMask) {
     processorMask = cpuMask;
