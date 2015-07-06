@@ -178,7 +178,7 @@ private:
     uint32 sharedVariable;
 
     /**
-     * Timeout for the tests with timeout
+     * timeout for the tests with timeout
      */
     TimeoutType timeout;
 

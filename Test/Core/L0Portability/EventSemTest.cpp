@@ -100,13 +100,13 @@ bool EventSemTest::TestCopyConstructor() {
     return test;
 }
 
-bool EventSemTest::TestWait(TimeoutType timeout) {
+bool EventSemTest::TestWait(TimeoutType timeoutTime) {
 
     Error returnError = Debug;
 
     EventSem newSem(eventSem);
 
-    if (eventSem.Wait(timeout, returnError)) {
+    if (eventSem.Wait(timeoutTime, returnError)) {
         return false;
     }
 
@@ -116,7 +116,7 @@ bool EventSemTest::TestWait(TimeoutType timeout) {
 
     returnError = Debug;
 
-    if (newSem.ResetWait(timeout, returnError)) {
+    if (newSem.ResetWait(timeoutTime, returnError)) {
         return false;
     }
     return returnError == Timeout;

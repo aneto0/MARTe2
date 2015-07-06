@@ -92,7 +92,7 @@ typedef enum {
     ErrorAccessDenied = -8,
     /** an exception has occurred */
     Exception = -9,
-    /** a Timeout has occurred */
+    /** a timeout has occurred */
     Timeout = -10,
     /** error during a communication */
     CommunicationError = -11,

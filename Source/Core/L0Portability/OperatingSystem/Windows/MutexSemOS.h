@@ -95,8 +95,8 @@ public:
             error = OSError;
             return false;
         }
-        if (ret == WAIT_TIMEOUT) {
-            error = Timeout;
+        if (ret == WAIT_Timeout) {
+            error = timeout;
             return false;
         }
         return true;
@@ -129,8 +129,8 @@ public:
             error = OSError;
             return false;
         }
-        if (ret == WAIT_TIMEOUT) {
-            error = Timeout;
+        if (ret == WAIT_Timeout) {
+            error = timeout;
             return false;
         }
         return true;
@@ -152,7 +152,7 @@ public:
      */
     static inline bool FastTryLock(HANDLE &semH) {
         DWORD ret = WaitForSingleObject(semH, 0);
-        return ((ret != WAIT_FAILED) && (ret != WAIT_TIMEOUT));
+        return ((ret != WAIT_FAILED) && (ret != WAIT_Timeout));
     }
 
     /**

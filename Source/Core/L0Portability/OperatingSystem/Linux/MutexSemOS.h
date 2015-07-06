@@ -139,7 +139,7 @@ private:
             struct timespec timesValues;
             timeb tb;
             ftime(&tb);
-            float64 sec = ((msecTimeout.msecTimeout + tb.millitm) * 1e-3
+            float64 sec = ((msecTimeout.GetTimeoutMSec() + tb.millitm) * 1e-3
                     + tb.time);
             float64 roundValue = floor(sec);
             timesValues.tv_sec = (int) roundValue;

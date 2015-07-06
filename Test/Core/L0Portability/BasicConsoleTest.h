@@ -46,19 +46,20 @@ class BasicConsoleTest {
 public:
 
     /**
-     * Definitions of the of the console number of rows.
-     */
-    static const uint32 N_ROWS = 40;
-
-    /**
-     * Definitions of the of the console number of columns.
-     */
-    static const uint32 N_COLUMNS = 5;
-
-    /**
-     * @brief Empty constructor.
+     * @brief TODO
      */
     BasicConsoleTest() {
+        numberOfRows = 40;
+        numberOfColumns = 60;
+    }
+
+    /**
+     *
+     * @brief TODO
+     */
+    BasicConsoleTest(uint32 nRows, uint32 nColumns) {
+        numberOfRows = nRows;
+        numberOfColumns = nColumns;
     }
 
     /**
@@ -178,6 +179,35 @@ public:
                       Colours backgroundColour,
                       int column,
                       int row);
+
+    uint32 GetNumberOfColumns() const {
+        return numberOfColumns;
+    }
+
+    uint32 GetNumberOfRows() const {
+        return numberOfRows;
+    }
+
+    /**
+     * TODO
+     */
+    bool TestRead(const char8 *stringArg, BasicConsole &myConsole);
+
+    /**
+     * TODO
+     */
+    bool TestPerfChar(BasicConsole &myConsole);
+
+private:
+    /**
+     * Definitions of the of the console number of rows.
+     */
+    uint32 numberOfRows;
+
+    /**
+     * Definitions of the of the console number of columns.
+    */
+    uint32 numberOfColumns;
 
 };
 

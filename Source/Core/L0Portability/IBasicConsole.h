@@ -119,7 +119,7 @@ public:
      * @param [in] timeout maximum time to wait for writing to the console.
      * @return true if a number of bytes greater than 0 is successfully written and if a timeout has not occurred.
      */
-    virtual bool Write(const void* buffer, uint32 & size, const TimeoutType &timeout) = 0;
+    virtual bool Write(const char8* buffer, uint32 & size, const TimeoutType &timeout) = 0;
 
     /**
      * @brief Reads from the console.
@@ -130,7 +130,7 @@ public:
      * @param[in] timeout maximum time to wait for the operation to be successfully completed.
      * @return true if at least one byte is read.
      */
-    virtual bool Read(void* buffer, uint32 & size, const TimeoutType &timeout) = 0;
+    virtual bool Read(char8 *buffer, uint32 & size, const TimeoutType &timeout) = 0;
 
     /**
      * @brief Update the console size.
@@ -218,7 +218,7 @@ public:
      * @param[in] backgroundColour the desired background colour.
      * @return true if the colours can be successfully set or if ColourSupported is false.
      */
-    virtual bool SetColour(Colours foregroundColour, Colours backgroundColour) = 0;
+    virtual bool SetColour(const Colours &foregroundColour, const Colours &backgroundColour) = 0;
 
     /**
      * @brief Checks if colour changing is supported by the operating system implementation.

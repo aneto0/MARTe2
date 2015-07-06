@@ -94,8 +94,8 @@ public:
             error = OSError;
             return false;
         }
-        if (ret == (int) WAIT_TIMEOUT) {
-            error = Timeout;
+        if (ret == (int) WAIT_Timeout) {
+            error = timeout;
             return false;
         }
         return true;

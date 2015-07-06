@@ -39,10 +39,9 @@
 /*---------------------------------------------------------------------------*/
 
 BasicConsoleOS::BasicConsoleOS() {
-    this->openingMode = IBasicConsole::Mode::Default;
-    this->columnCount = 0u;
-    this->nOfColumns = 0u;
-    this->nOfRows = 0u;
+    columnCount = 0u;
+    nOfColumns = 0u;
+    nOfRows = 0u;
 }
 
 BasicConsoleOS::~BasicConsoleOS() {
@@ -94,8 +93,9 @@ bool BasicConsoleOS::Close() {
     return ok;
 }
 
-bool BasicConsoleOS::Write(const void *buffer, uint32 & size, const TimeoutType &timeout) {
-    const char8 *bufferString = static_cast<const char8 *>(buffer);
+/*lint -e{715} timeout is not used...*/
+bool BasicConsoleOS::Write(const char8 *buffer, uint32 &size, const TimeoutType &timeout) {
+    const char8 *bufferString = buffer;
     const char8 newLine = '\n';
 
     ssize_t writtenBytes = 0;
@@ -139,11 +139,12 @@ bool BasicConsoleOS::Write(const void *buffer, uint32 & size, const TimeoutType 
     return (size > 0u);
 }
 
-bool BasicConsoleOS::Read(void *buffer, uint32 & size, const TimeoutType &timeout) {
+/*lint -e{715} timeout is not used...*/
+bool BasicConsoleOS::Read(char8 *buffer, uint32 & size, const TimeoutType &timeout) {
     bool ok = false;
     if ((buffer != NULL) && (size > 0u)) {
         if ((openingMode & IBasicConsole::Mode::PerformCharacterInput) != 0u) {
-            char8 *readChar = static_cast<char8 *>(buffer);
+            char8 *readChar = buffer;
             *readChar = static_cast<char8>(getchar());
             size = 1u;
         }
@@ -202,7 +203,7 @@ bool BasicConsoleOS::Show() {
     return true;
 }
 
-bool BasicConsoleOS::SetColour(Colours foregroundColour, Colours backgroundColour) {
+bool BasicConsoleOS::SetColour(const Colours &foregroundColour, const Colours &backgroundColour) {
     return true;
 }
 

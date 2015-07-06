@@ -87,13 +87,13 @@ public:
      * @brief Writes to the STDOUT.
      * @copydetails BasicConsole::Write
      */
-    virtual bool Write(const void *buffer, uint32 & size, const TimeoutType &timeout = TTInfiniteWait);
+    virtual bool Write(const char8 *buffer, uint32 & size, const TimeoutType &timeout);
 
     /**
      * @brief Reads from the STDIN.
      * @copydetails IBasicConsole::Read
      */
-    virtual bool Read(void *buffer, uint32 & size, const TimeoutType &timeout = TTInfiniteWait);
+    virtual bool Read(char8 *buffer, uint32 & size, const TimeoutType &timeout);
 
     /**
      * @copydetails IBasicConsole::SetSize.
@@ -154,7 +154,7 @@ public:
      * @warning Not Implemented.
      * @return true.
      */
-    virtual bool SetColour(Colours foregroundColour, Colours backgroundColour);
+    virtual bool SetColour(const Colours &foregroundColour, const Colours &backgroundColour);
 
     /**
      * @copydetails IBasicConsole::SetTitleBar.
@@ -218,7 +218,7 @@ private:
     /**
      * Number of rows that will be cleared when BasicConsoleOSClear is called
      */
-    static const uint32 BASIC_CONSOLE_LINUX_CLEAR_ROWS = 40;
+    static const uint32 BASIC_CONSOLE_LINUX_CLEAR_ROWS = 40u;
 
     /**
      * @brief Read immediately.

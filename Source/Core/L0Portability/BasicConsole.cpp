@@ -34,33 +34,29 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-/*const Flags IBasicConsole::Mode::Default(0u);
+const Flags IBasicConsole::Mode::Default(0u);
 const Flags IBasicConsole::Mode::CreateNewBuffer(1u);
 const Flags IBasicConsole::Mode::PerformCharacterInput(2u);
 const Flags IBasicConsole::Mode::DisableControlBreak(4u);
-const Flags IBasicConsole::Mode::EnablePaging(8u);*/
+const Flags IBasicConsole::Mode::EnablePaging(8u);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-BasicConsole::BasicConsole(Flags openingMode, uint32 numberOfColumns, uint32 numberOfRows) {
+BasicConsole::BasicConsole() :
+        BasicConsoleOS::BasicConsoleOS() {
     lastPagingCounter = 0;
     lineCount = 0u;
-    SetSize(numberOfColumns, numberOfRows);
-    Open(openingMode);
 }
 
 BasicConsole::~BasicConsole() {
-    Close();
 }
 
-bool BasicConsole::PagedWrite(const void *buffer, uint32 &size, const TimeoutType &timeout) {
+bool BasicConsole::PagedWrite(const char8 *buffer, uint32 &size, const TimeoutType &timeout) {
 
-    uint32 numberOfColumnsTmp = 0;
-    uint32 numberOfRowsTmp = 0;
-    bool ok = false;
-
-    ok = GetSize(numberOfColumnsTmp, numberOfRowsTmp);
+    uint32 numberOfColumnsTmp = 0u;
+    uint32 numberOfRowsTmp = 0u;
+    bool ok = GetSize(numberOfColumnsTmp, numberOfRowsTmp);
     if (ok) {
 
         //-1 means the maximum size.
@@ -69,66 +65,69 @@ bool BasicConsole::PagedWrite(const void *buffer, uint32 &size, const TimeoutTyp
         int64 t0 = lastPagingCounter;
         int64 t1 = HighResolutionTimer::Counter();
 
-        int64 dT = t1 - t0;
-        float64 dt = dT * HighResolutionTimer::Period();
-        if (dt > 0.05) {
-            lineCount = 0;
+        int64 dTicks = t1 - t0;
+        float64 dTime = static_cast<float64>(dTicks) * HighResolutionTimer::Period();
+        if (dTime > 0.05) {
+            lineCount = 0u;
             lastPagingCounter = t1;
         }
 
-        char8 *p = (char8 *) buffer;
-        uint32 index = 0;
-        uint32 start = 0;
+        const char8 *p = buffer;
+        uint32 index = 0u;
+        uint32 start = 0u;
         uint32 sizeT;
         bool end = false;
-        while (index < size) {
-            while ((lineCount < (numberOfRows - 1)) && (index < size) && !end) {
-                if (p[index] == '\n')
+        while ((index < size) && !end) {
+            while ((lineCount < (numberOfRows - 1u)) && (index < size) && !end) {
+                if (p[index] == '\n') {
                     lineCount++;
-                if (p[index] == '\0')
+                }
+                if (p[index] == '\0') {
                     end = true;
-
+                }
                 index++;
             }
             sizeT = index - start;
-            BasicConsoleOS::Write(p + start, sizeT);
-            if (end) {
-                ok = true;
-                break;
+            ok = !BasicConsoleOS::Write(&p[start], sizeT, TTInfiniteWait);
+            if (!ok) {
+                end = true;
             }
-            if (lineCount >= (numberOfRows - 1)) {
+            if (ok && (lineCount >= (numberOfRows - 1u))) {
                 start = index;
                 lastPagingCounter = t1;
-                lineCount = 0;
+                lineCount = 0u;
                 const char8 *message = "[PAGING] ENTER TO CONTINUE\015";
                 sizeT = StringHelper::Length(message);
-                BasicConsoleOS::Write(message, sizeT);
+                BasicConsoleOS::Write(message, sizeT, TTInfiniteWait);
                 char8 buffer[32];
                 sizeT = N_CHARS_NEWLINE;
-                Read(buffer, sizeT, timeout);
+                ok = Read(buffer, sizeT, timeout);
             }
         }
-        ok = true;
     }
 
     return ok;
 }
 
-bool BasicConsole::Write(const void* buffer, uint32& size, const TimeoutType &timeout) {
-    uint32 numberOfRows = 0;
-    uint32 numberOfColumns = 0;
+bool BasicConsole::Write(const char * buffer, uint32& size, const TimeoutType &timeout) {
+    uint32 numberOfRows = 0u;
+    uint32 numberOfColumns = 0u;
     bool ok = GetSize(numberOfColumns, numberOfRows);
-    if ((size > 0) && (buffer != NULL) && (numberOfColumns > 0) && (numberOfRows > 0)) {
+    if ((size > 0u) && (buffer != NULL) && (numberOfColumns > 0u) && (numberOfRows > 0u)) {
         Flags mode = GetOpeningMode();
-        if (mode & BasicConsolePaging) {
+        if ((mode & IBasicConsole::Mode::EnablePaging) != 0u) {
             ok = PagedWrite(buffer, size, timeout);
         }
         else {
-            ok = BasicConsoleOS::Write(buffer, size);
+            ok = BasicConsoleOS::Write(buffer, size, timeout);
         }
     }
     else {
         ok = false;
     }
     return ok;
+}
+
+bool BasicConsole::Read(char8 *buffer, uint32 &size, const TimeoutType &timeout) {
+    return BasicConsoleOS::Read(buffer, size, timeout);
 }
