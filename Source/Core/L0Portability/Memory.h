@@ -80,13 +80,13 @@ public:
      * @brief Constructor from uint8.
      * @param[in] the value of the flag.
      */
-    inline MemoryAllocationFlag(uint8 flag);
+    inline MemoryAllocationFlag(const uint8 flag);
 
     /**
      * @brief Getter for memoryAllocationFlag
      * @return memoryAllocationFlag.
      */
-    inline uint8 GetMemoryAllocationFlag (void);
+    inline uint8 GetMemoryAllocationFlag (void) const;
 
 };
 
@@ -99,11 +99,11 @@ MemoryAllocationFlag::MemoryAllocationFlag (void) {
     memoryAllocationFlag = 0x00000000U;
 }
 
-MemoryAllocationFlag::MemoryAllocationFlag (uint8 flag) {
+MemoryAllocationFlag::MemoryAllocationFlag (const uint8 flag) {
     memoryAllocationFlag = flag;
 }
 
-uint8 MemoryAllocationFlag::GetMemoryAllocationFlag (void) {
+uint8 MemoryAllocationFlag::GetMemoryAllocationFlag (void) const {
     return memoryAllocationFlag;
 }
 
@@ -184,15 +184,15 @@ public:
 /*---------------------------------------------------------------------------*/
 
 MemoryTestAccessMode::MemoryTestAccessMode (void) {
-    SetExecuteFlag(false);
-    SetReadFlag(false);
-    SetWriteFlag(false);
+    executeFlag = false;
+    readFlag = false;
+    writeFlag = false;
 }
 
 MemoryTestAccessMode::MemoryTestAccessMode (const bool execute, const bool read, const bool write) {
-    SetExecuteFlag(execute);
-    SetReadFlag(read);
-    SetWriteFlag(write);
+    executeFlag = execute;
+    readFlag = read;
+    writeFlag = write;
 }
 
 void MemoryTestAccessMode::SetExecuteFlag(const bool flag) {
@@ -419,7 +419,7 @@ extern "C" {
 /**
  * @see Memory::Malloc
  */
-void *MemoryMalloc(uint32 size, MemoryAllocationFlag allocFlag = MAFStandardMemory);
+void *MemoryMalloc(const uint32 size, const MemoryAllocationFlag &allocFlag = MAFStandardMemory);
 
 /**
  * @see Memory::Free
@@ -429,12 +429,12 @@ bool MemoryFree(void *&data);
 /**
  * @see Memory::Realloc
  */
-void *MemoryRealloc(void *&data, uint32 newSize);
+void *MemoryRealloc(void *&data, const uint32 newSize);
 
 /**
  * @see Memory::AllocationStatistics
  */
-bool MemoryAllocationStatistics(int32 &size, int32 &chunks, TID tid = (TID) 0xFFFFFFFF);
+bool MemoryAllocationStatistics(int32 &size, int32 &chunks, TID tid = 0xFFFFFFFFU);
 
 /**
  * @see Memory::GetHeaderInfo
@@ -444,27 +444,27 @@ bool MemoryGetHeaderInfo(void *pointer, uint32 &size, TID &tid);
 /**
  * @see Memory::ClearStatisticsDatabase
  */
-void MemoryClearStatisticsDatabase();
+void MemoryClearStatisticsDatabase(void);
 
 /**
  * @see Memory::GetStatisticsDatabaseNElements
  */
-uint32 MemoryGetStatisticsDatabaseNElements();
+uint32 MemoryGetStatisticsDatabaseNElements(void);
 
 /**
  * @see Memory::GetUsedHeap
  */
-int32 MemoryGetUsedHeap();
+int32 MemoryGetUsedHeap(void);
 
 /**
  * @see Memory::Check
  */
-bool MemoryCheck(void *address, MemoryTestAccessMode accessMode, uint32 size = 4);
+bool MemoryCheck(const void *address, const MemoryTestAccessMode &accessMode, const uint32 size = 4U);
 
 /**
  * @see Memory::SharedAlloc
  */
-void *MemorySharedAlloc(uint32 key, uint32 size, uint32 permMask = 0666);
+void *MemorySharedAlloc(const uint32 key, const uint32 size, const uint32 permMask = 0666U);
 
 /**
  * @see Memory::SharedFree

@@ -104,7 +104,7 @@ public:
      * @param[in] permMask define the process permissions.
      * @return a pointer to the shared memory created.
      */
-    static void *SharedAlloc(uint32 key, uint32 size, uint32 permMask) {
+    static void *SharedAlloc(const uint32 key, const uint32 size, const uint32 permMask) {
         key_t keyid = (key_t) key;
         int32 shmid = shmget(keyid, size, IPC_CREAT | permMask);
         if (shmid == -1) {
@@ -134,7 +134,7 @@ public:
      * @param[in] size is the number of bytes to check.
      * @return true if the memory area specified is valid.
      */
-    static bool Check(void *address, MemoryTestAccessMode accessMode, uint32 size) {
+    static bool Check(const void *address, const MemoryTestAccessMode &accessMode, const uint32 size) {
 
         //check if the memory is valid.
         char8 *addressPtr = (char8 *) address;

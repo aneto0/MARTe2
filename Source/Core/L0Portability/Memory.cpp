@@ -66,9 +66,9 @@ struct MemoryInformation {
 
 };
 
-void *MemoryMalloc(uint32 size, MemoryAllocationFlag allocFlag) {
+void *MemoryMalloc(const uint32 size, const MemoryAllocationFlag &allocFlag) {
 
-    void *data = NULL;
+    void *data = static_cast<void*>(NULL);
 
     if (size != 0U) {
 
@@ -101,38 +101,38 @@ void *MemoryMalloc(uint32 size, MemoryAllocationFlag allocFlag) {
 
 }
 
-void *MemoryRealloc(void *&data, uint32 newSize) {
-    if (newSize == 0) {
-        if (data == NULL) {
-            return NULL;
+void *MemoryRealloc(void *&data, const uint32 newSize) {
+    if ( (newSize == 0U) && (data != NULL) ){
+        // newSize == 0 and data not null -> we are asking for a free()
+        // MemoryFree already changes data to null
+        if (!MemoryFree(data)) {
+            data = static_cast<void*>(NULL);
         }
-        MemoryFree(data);
-        return NULL;
-    }
-    if (data == NULL) {
+    } else if ( (newSize != 0U) && (data == NULL) ) {
+        // newSize != 0 and data null -> we are asking for a malloc()
         data = MemoryMalloc(newSize);
-        return data;
-    }
+    } else {
+        // newSize != 0 and data not null -> we are really asking for a realloc()
 
 #ifdef MEMORY_STATISTICS
-    uint32 sizeToFree = 0;
+        uint32 sizeToFree = 0;
 
-    //add the memory information space
-    newSize += sizeof(MemoryInformation);
-    MemoryInformation *header = (MemoryInformation*) data - 1;
+        //add the memory information space
+        newSize += sizeof(MemoryInformation);
+        MemoryInformation *header = (MemoryInformation*) data - 1;
 
-    //if the header is null return
-    if (header == NULL) {
-        return NULL;
-    }
-    data = (void*) header;
-    sizeToFree = header->size;
-
+        //if the header is null return
+        if (header == NULL) {
+            return NULL;
+        }
+        data = (void*) header;
+        sizeToFree = header->size;
 #endif
 
-    data = MemoryOS::Realloc(data, newSize);
+        data = MemoryOS::Realloc(data, newSize);
+    }
 
-    //if data is null return directly because the realloc fails.
+
 #ifdef MEMORY_STATISTICS
 
     if (data != NULL) {
@@ -217,7 +217,7 @@ bool MemoryFree(void *&data) {
 bool MemoryAllocationStatistics(int32 &size, int32 &chunks, TID tid) {
 #ifdef MEMORY_STATISTICS
 
-    if (tid == 0xFFFFFFFF) {
+    if (tid == 0xFFFFFFFFU) {
         tid = Threads::Id();
     }
 
@@ -276,7 +276,7 @@ uint32 MemoryGetStatisticsDatabaseNElements() {
 #ifdef MEMORY_STATISTICS
     return MemoryStatisticsDatabase::GetNOfElements();
 #else
-    return 0;
+    return 0U;
 #endif
 
 }
@@ -289,57 +289,66 @@ int32 MemoryGetUsedHeap() {
 #endif
 }
 
-bool MemoryCheck(void *address, MemoryTestAccessMode accessMode, uint32 size) {
+bool MemoryCheck(const void *address, const MemoryTestAccessMode &accessMode, const uint32 size) {
     return MemoryOS::Check(address, accessMode, size);
 }
 
-void *MemorySharedAlloc(uint32 key, uint32 size, uint32 permMask) {
+void *MemorySharedAlloc(const uint32 key, const uint32 size, const uint32 permMask) {
     return MemoryOS::SharedAlloc(key, size, permMask);
 }
 
 void MemorySharedFree(void *&address) {
-    if (address == NULL) {
-        return;
+    if (address != NULL) {
+        MemoryOS::SharedFree(address);
     }
-    MemoryOS::SharedFree(address);
 
-    address = NULL;
+    return;
 }
 
 bool MemoryCopy(void* destination, const void* source, uint32 size) {
+    bool ret = false;
 
-    if (source == NULL || destination == NULL) {
-        return false;
+    if ( (source != NULL) && (destination != NULL) ) {
+        ret = MemoryOS::Copy(destination, source, size);
     }
-    return MemoryOS::Copy(destination, source, size);
+
+    return ret;
 }
 
 int32 MemoryCompare(const void* mem1, const void* mem2, uint32 size) {
-    if (mem1 == NULL || mem2 == NULL) {
-        return -1;
+    bool ret = -1;
+
+    if ( (mem1 != NULL) && (mem2 != NULL) ) {
+        ret = MemoryOS::Compare(mem1, mem2, size);
     }
-    return MemoryOS::Compare(mem1, mem2, size);
+    return ret;
 }
 
 const void *MemorySearch(const void* mem, char8 c, uint32 size) {
-    if (mem == NULL) {
-        return NULL;
+    void* ret = NULL;
+
+    if (mem != NULL) {
+        ret = MemoryOS::Search(mem, c, size);
     }
-    return MemoryOS::Search(mem, c, size);
+    return ret;
 }
 
 bool MemoryMove(void* destination, const void* source, uint32 size) {
-    if (source == NULL || destination == NULL) {
-        return false;
+    bool ret = false;
+
+    if (source != NULL && destination != NULL) {
+        ret = MemoryOS::Move(destination, source, size);
     }
-    return MemoryOS::Move(destination, source, size);
+    return ret;
 }
 
 bool MemorySet(void* mem, char8 c, uint32 size) {
-    if (mem == NULL) {
-        return false;
+    bool ret = false;
+
+    if (mem != NULL) {
+        ret = MemoryOS::Set(mem, c, size);
     }
-    return MemoryOS::Set(mem, c, size);
+    return ret;
 }
 
 /*---------------------------------------------------------------------------*/
