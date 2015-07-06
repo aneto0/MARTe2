@@ -38,9 +38,6 @@
 /** Defines the console handle. */
 typedef struct termio ConsoleHandle;
 
-/** Defines the console informations structure */
-typedef struct termio ConsoleInfo;
-
 /** Threads database memory granularity */
 #define THREADS_DATABASE_GRANULARITY 64
 
@@ -51,7 +48,7 @@ typedef struct termio ConsoleInfo;
 #define MAX_NO_OF_MEMORY_MONITORS 64
 
 /** In windows the newline is specified with \r\n */
-#define N_CHARS_NEWLINE 1
+#define N_CHARS_NEWLINE 1u
 
 /** This is just to avoid an exception to Rule 3-9-2 of MISRA, given that many Linux operating system calls require a long as an input
  * and the framework does not define such type*/

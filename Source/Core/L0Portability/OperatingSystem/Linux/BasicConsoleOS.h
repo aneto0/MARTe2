@@ -87,13 +87,13 @@ public:
      * @brief Writes to the STDOUT.
      * @copydetails BasicConsole::Write
      */
-    virtual bool Write(const char8 *buffer, uint32 & size, const TimeoutType &timeout);
+    virtual bool Write(const char8 * const buffer, uint32 & size, const TimeoutType &timeout);
 
     /**
      * @brief Reads from the STDIN.
      * @copydetails IBasicConsole::Read
      */
-    virtual bool Read(char8 *buffer, uint32 & size, const TimeoutType &timeout);
+    virtual bool Read(char8 * const  buffer, uint32 & size, const TimeoutType &timeout);
 
     /**
      * @copydetails IBasicConsole::SetSize.
@@ -161,14 +161,14 @@ public:
      * @warning Not implemented.
      * @return true.
      */
-    virtual bool SetTitleBar(const char8 *title);
+    virtual bool SetTitleBar(const char8 * const title);
 
     /**
      * @copydetails IBasicConsole::GetTitleBar.
      * @warning Not implemented.
      * @return true.
      */
-    virtual bool GetTitleBar(char8 *title) const;
+    virtual bool GetTitleBar(char8 * const title) const;
 
     /**
      * @copydetails IBasicConsole::SetCursorPosition.
@@ -245,7 +245,7 @@ private:
     /**
      * Initial settings of the console. The destructor will restores this initial configurations.
      */
-    ConsoleInfo initialInfo;
+    ConsoleHandle initialInfo;
 
     /**
      * The column counter keeps track of the column where the character was written to.

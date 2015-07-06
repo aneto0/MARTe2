@@ -52,7 +52,7 @@ BasicConsole::BasicConsole() :
 BasicConsole::~BasicConsole() {
 }
 
-bool BasicConsole::PagedWrite(const char8 *buffer, uint32 &size, const TimeoutType &timeout) {
+bool BasicConsole::PagedWrite(const char8 * const buffer, const uint32 &size, const TimeoutType &timeout) {
 
     uint32 numberOfColumnsTmp = 0u;
     uint32 numberOfRowsTmp = 0u;
@@ -77,7 +77,7 @@ bool BasicConsole::PagedWrite(const char8 *buffer, uint32 &size, const TimeoutTy
         uint32 start = 0u;
         uint32 sizeT;
         bool end = false;
-        while ((index < size) && !end) {
+        while ((index < size) && (!end)) {
             while ((lineCount < (numberOfRows - 1u)) && (index < size) && !end) {
                 if (p[index] == '\n') {
                     lineCount++;
@@ -96,12 +96,14 @@ bool BasicConsole::PagedWrite(const char8 *buffer, uint32 &size, const TimeoutTy
                 start = index;
                 lastPagingCounter = t1;
                 lineCount = 0u;
-                const char8 *message = "[PAGING] ENTER TO CONTINUE\015";
-                sizeT = StringHelper::Length(message);
-                BasicConsoleOS::Write(message, sizeT, TTInfiniteWait);
-                char8 buffer[32];
-                sizeT = N_CHARS_NEWLINE;
-                ok = Read(buffer, sizeT, timeout);
+                const char8 *message = "[PAGING] ENTER TO CONTINUE\r";
+                sizeT = static_cast<uint32>(StringHelper::Length(message));
+                ok = BasicConsoleOS::Write(message, sizeT, TTInfiniteWait);
+                if (ok) {
+                    char8 readBuffer[32];
+                    sizeT = N_CHARS_NEWLINE;
+                    ok = Read(&readBuffer[0], sizeT, timeout);
+                }
             }
         }
     }
@@ -109,7 +111,7 @@ bool BasicConsole::PagedWrite(const char8 *buffer, uint32 &size, const TimeoutTy
     return ok;
 }
 
-bool BasicConsole::Write(const char * buffer, uint32& size, const TimeoutType &timeout) {
+bool BasicConsole::Write(const char8 * const buffer, uint32& size, const TimeoutType &timeout) {
     uint32 numberOfRows = 0u;
     uint32 numberOfColumns = 0u;
     bool ok = GetSize(numberOfColumns, numberOfRows);
@@ -128,6 +130,6 @@ bool BasicConsole::Write(const char * buffer, uint32& size, const TimeoutType &t
     return ok;
 }
 
-bool BasicConsole::Read(char8 *buffer, uint32 &size, const TimeoutType &timeout) {
+bool BasicConsole::Read(char8 * const buffer, uint32 &size, const TimeoutType &timeout) {
     return BasicConsoleOS::Read(buffer, size, timeout);
 }

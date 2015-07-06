@@ -38,10 +38,13 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-BasicConsoleOS::BasicConsoleOS() {
+BasicConsoleOS::BasicConsoleOS() : IBasicConsole::IBasicConsole() {
     columnCount = 0u;
     nOfColumns = 0u;
     nOfRows = 0u;
+    memset(&inputConsoleHandle, 0, sizeof(ConsoleHandle));
+    memset(&outputConsoleHandle, 0, sizeof(ConsoleHandle));
+    memset(&initialInfo, 0, sizeof(ConsoleHandle));
 }
 
 BasicConsoleOS::~BasicConsoleOS() {
@@ -83,18 +86,14 @@ bool BasicConsoleOS::Close() {
     bool ok = true;
     if (charactedInputSelected) {
         //reset the original console modes
-        // struct termio modifiedConsoleModes;
-        ok = (ioctl(fileno(stdin), static_cast<osulong>(TCGETA), &outputConsoleHandle) >= 0);
-        if (ok) {
-            UnSetImmediateRead();
-            ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &outputConsoleHandle) >= 0);
-        }
+        UnSetImmediateRead();
+        ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &initialInfo) >= 0);
     }
     return ok;
 }
 
 /*lint -e{715} timeout is not used...*/
-bool BasicConsoleOS::Write(const char8 *buffer, uint32 &size, const TimeoutType &timeout) {
+bool BasicConsoleOS::Write(const char8* const buffer, uint32 &size, const TimeoutType &timeout) {
     const char8 *bufferString = buffer;
     const char8 newLine = '\n';
 
@@ -140,7 +139,7 @@ bool BasicConsoleOS::Write(const char8 *buffer, uint32 &size, const TimeoutType 
 }
 
 /*lint -e{715} timeout is not used...*/
-bool BasicConsoleOS::Read(char8 *buffer, uint32 & size, const TimeoutType &timeout) {
+bool BasicConsoleOS::Read(char8 * const buffer, uint32 & size, const TimeoutType &timeout) {
     bool ok = false;
     if ((buffer != NULL) && (size > 0u)) {
         if ((openingMode & IBasicConsole::Mode::PerformCharacterInput) != 0u) {
@@ -207,11 +206,11 @@ bool BasicConsoleOS::SetColour(const Colours &foregroundColour, const Colours &b
     return true;
 }
 
-bool BasicConsoleOS::SetTitleBar(const char8 *title) {
+bool BasicConsoleOS::SetTitleBar(const char8 * const title) {
     return true;
 }
 
-bool BasicConsoleOS::GetTitleBar(char8 *title) const {
+bool BasicConsoleOS::GetTitleBar(char8 * const title) const {
     return true;
 }
 

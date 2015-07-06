@@ -75,12 +75,14 @@ public:
      * @return true if all the BasicConsoleOS::Write calls are successful.
      * @pre the console was successfully opened and GetSize > 0 for both the rows and columns.
      */
-    bool Write(const char8* buffer, uint32& size, const TimeoutType &timeout = TTInfiniteWait);
+    /*lint -e{1735} the default parameter is only specified at this level. BasicConsole is not expected to be sub-classed.*/
+    virtual bool Write(const char8* const buffer, uint32& size, const TimeoutType &timeout = TTInfiniteWait);
 
     /**
      * @copydetails IBasicConsole::Read
      */
-    bool Read(char8 *buffer, uint32 & size, const TimeoutType &timeout = TTInfiniteWait);
+    /*lint -e{1735} the default parameter is only specified at this level. BasicConsole is not expected to be sub-classed.*/
+    virtual bool Read(char8 * const buffer, uint32 & size, const TimeoutType &timeout = TTInfiniteWait);
 private:
     /**
      * @brief Portable paged write implementation.
@@ -93,7 +95,7 @@ private:
      * size become the number of bytes written.
      * @param[in] msecTimeout is the timeout.
      */
-    bool PagedWrite(const char8* buffer, uint32 &size, const TimeoutType &timeout);
+    bool PagedWrite(const char8* const buffer, const uint32 &size, const TimeoutType &timeout);
 
     /** How long since last paging. */
     int64 lastPagingCounter;
