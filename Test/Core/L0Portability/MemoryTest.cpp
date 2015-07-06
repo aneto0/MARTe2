@@ -205,19 +205,21 @@ bool MemoryTest::TestCheck(uint32 size) {
     //allocate a space of size integers
     int32* allocated = (int32*) Memory::Malloc(size * sizeof(int32));
 
+    MemoryTestAccessMode mtam(true,true,true);
+
     //checks if all the memory is allocated correctly
-    if (!Memory::Check(allocated, (MemoryTestAccessMode) MTAM_Read | MTAM_Write | MTAM_Execute, size * sizeof(int32))) {
+    if (!Memory::Check(allocated, mtam, size * sizeof(int32))) {
         return false;
     }
 
     //checks if a part the memory is allocated correctly
-    if (!Memory::Check(allocated, (MemoryTestAccessMode) MTAM_Read | MTAM_Write | MTAM_Execute, (size / 2) * sizeof(int32))) {
+    if (!Memory::Check(allocated, mtam, (size / 2) * sizeof(int32))) {
         return false;
     }
 
     //0 as size
     uint32 testSize = 0;
-    if (!Memory::Check(allocated, (MemoryTestAccessMode) MTAM_Read | MTAM_Write | MTAM_Execute, testSize)) {
+    if (!Memory::Check(allocated, mtam, testSize)) {
         return false;
     }
 

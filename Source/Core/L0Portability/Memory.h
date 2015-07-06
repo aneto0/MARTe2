@@ -469,7 +469,7 @@ void *MemorySharedAlloc(uint32 key, uint32 size, uint32 permMask = 0666);
 /**
  * @see Memory::SharedFree
  */
-void MemorySharedFree(void *address);
+void MemorySharedFree(void *&address);
 
 /**
  * @see Memory::Copy
