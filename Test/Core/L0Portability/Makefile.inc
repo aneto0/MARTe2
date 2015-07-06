@@ -35,7 +35,6 @@ OBJSX=  EndianityTest.x \
 	BasicConsoleTest.x \
 	HighResolutionTimerTest.x \
 	MemoryTest.x \
-	MemoryIntegrationTest.x \
 	FastPollingMutexTest.x \
 	StringHelperTest.x
 

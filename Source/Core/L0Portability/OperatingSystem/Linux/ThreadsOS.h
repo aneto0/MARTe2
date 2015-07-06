@@ -250,7 +250,7 @@ public:
     static TID BeginThread(ThreadFunctionType function,
                            void *parameters,
                            uint32 stacksize,
-                           const char8* name,
+                           const char8 *name,
                            uint32 exceptionHandlerBehaviour,
                            ProcessorType runOnCPUs) {
 
@@ -275,7 +275,8 @@ public:
         pthread_attr_setstacksize(&stackSizeAttribute, stacksize);
         pthread_create(&threadId, &stackSizeAttribute, (StandardThreadFunction) SystemThreadFunction, threadInfo);
         pthread_detach(threadId);
-        pthread_setaffinity_np(threadId, sizeof(runOnCPUs.processorMask), (cpu_set_t *) &runOnCPUs.processorMask);
+        uint32 processorMask = runOnCPUs.GetProcessorMask();
+        pthread_setaffinity_np(threadId, sizeof(processorMask), (cpu_set_t *) &processorMask);
         threadInfo->ThreadPost();
 
         return threadId;
@@ -286,7 +287,7 @@ public:
      * @param[in] threadId is the thread identifier.
      * @return the name of the specified thread.
      */
-    static const char8* Name(TID threadId) {
+    static const char8 *Name(TID threadId) {
         ThreadsDatabase::Lock();
         ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
         ThreadsDatabase::UnLock();
@@ -351,7 +352,7 @@ public:
      * @param[in] name is the thread name.
      * @return the id of the first found thread with the specified name.
      */
-    static TID FindByName(const char8* name){
+    static TID FindByName(const char8 *name){
         return ThreadsDatabase::Find(name);
     }
 

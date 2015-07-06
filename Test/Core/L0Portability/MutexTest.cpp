@@ -336,7 +336,7 @@ bool MutexTest::TestRecursive(bool recursive) {
     int32 counter = 0;
     TID threadId = Threads::BeginThread((ThreadFunctionType) TestRecursiveCallback, this);
     while (nOfExecutingThreads == 1) {
-        SleepMSec(100);
+        Sleep::MSec(100);
         if (counter++ > 10) {
             if (!recursive) {
                 test = true;

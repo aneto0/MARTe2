@@ -2,7 +2,7 @@
  * @file HighResolutionTimerGTest.cpp
  * @brief Source file for class HighResolutionTimerGTest
  * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,30 +40,38 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class HighResolutionTimerGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
 
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
-
-TEST_F(HighResolutionTimerGTest,TestFrequency) {
+TEST(HighResolutionTimerGTest,TestFrequency) {
     HighResolutionTimerTest hrtTest;
     ASSERT_TRUE(hrtTest.TestFrequency());
 }
 
-TEST_F(HighResolutionTimerGTest,TestCounter) {
+TEST(HighResolutionTimerGTest,TestPeriod) {
     HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestCounter(5.0));
+    ASSERT_TRUE(hrtTest.TestPeriod());
 }
 
-TEST_F(HighResolutionTimerGTest,TestTimeStamp) {
+TEST(HighResolutionTimerGTest,TestPeriodFrequency) {
+    HighResolutionTimerTest hrtTest;
+    ASSERT_TRUE(hrtTest.TestPeriodFrequency());
+}
+
+TEST(HighResolutionTimerGTest,TestCounter) {
+    HighResolutionTimerTest hrtTest;
+    ASSERT_TRUE(hrtTest.TestCounter(2.0));
+}
+
+TEST(HighResolutionTimerGTest,TestCounter32) {
+    HighResolutionTimerTest hrtTest;
+    ASSERT_TRUE(hrtTest.TestCounter32(2.0));
+}
+
+TEST(HighResolutionTimerGTest,TestTicksToTime) {
+    HighResolutionTimerTest hrtTest;
+    ASSERT_TRUE(hrtTest.TestTicksToTime(2.0));
+}
+
+TEST(HighResolutionTimerGTest,TestTimeStamp) {
     HighResolutionTimerTest hrtTest;
     ASSERT_TRUE(hrtTest.TestTimeStamp(100));
 }

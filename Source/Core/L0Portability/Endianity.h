@@ -22,7 +22,7 @@
  */
 
 #ifndef ENDIANITY_H_
-#define 		ENDIANITY_H_
+#define ENDIANITY_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */

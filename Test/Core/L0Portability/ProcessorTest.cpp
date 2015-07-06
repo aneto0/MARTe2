@@ -45,7 +45,7 @@ ProcessorTest::ProcessorTest() {
 
 bool ProcessorTest::TestVendorId() {
     bool testResult = false;
-    const char8 * vendorId = NULL;
+    const char * vendorId = NULL;
 
     vendorId = Processor::VendorId();
     testResult = (vendorId != NULL);
@@ -53,10 +53,6 @@ bool ProcessorTest::TestVendorId() {
     return testResult;
 }
 
-/**
- * @brief Tests the family function.
- * @return true.
- */
 bool ProcessorTest::TestFamily() {
     bool testResult = false;
     uint32 family = -1;
@@ -68,10 +64,6 @@ bool ProcessorTest::TestFamily() {
     return testResult;
 }
 
-/**
- * @brief Tests the model function.
- * @return true.
- */
 bool ProcessorTest::TestModel() {
     bool testResult = false;
     uint32 model = -1;
@@ -83,10 +75,6 @@ bool ProcessorTest::TestModel() {
     return testResult;
 }
 
-/**
- * @brief Tests the available function.
- * @return true.
- */
 bool ProcessorTest::TestAvailable() {
     bool testResult = false;
     uint32 available = -1;

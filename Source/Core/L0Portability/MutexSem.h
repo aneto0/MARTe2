@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,MutexSemOS.h)
-#include "SemCore.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -59,7 +58,7 @@ public:
      * @brief Copy constructor.
      * @param[in] h is the semaphore handle to be copied in this handle.
      */
-    MutexSem(const MutexSem &h);
+    MutexSem(const MutexSem &source);
 
     /**
      * @brief Default constructor.
@@ -94,7 +93,7 @@ public:
      * @param[out] error specifies the error type in case of errors (timeout fail or other error types).
      * @return false if something in the lock system level function goes wrong.
      */
-    bool Lock(TimeoutType msecTimeout = TTInfiniteWait, Error &error=Global::errorType) const;
+    bool Lock(const TimeoutType &msecTimeout = TTInfiniteWait, Error &error=Global::errorType) const;
 
     /**
      * @brief Unlock the semaphore.
@@ -108,7 +107,7 @@ public:
      * @param[out] error specifies the error type in case of errors (timeout fail or other error types).
      * @return true if successful, false otherwise.
      */
-    inline bool FastLock(TimeoutType msecTimeout = TTInfiniteWait, Error &error=Global::errorType) const;
+    inline bool FastLock(const TimeoutType &msecTimeout = TTInfiniteWait, Error &error=Global::errorType) const;
 
     /**
      * @brief Fast unlock.
@@ -150,7 +149,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-bool MutexSem::FastLock(TimeoutType msecTimeout, Error &error) const {
+bool MutexSem::FastLock(const TimeoutType &msecTimeout, Error &error) const {
     return MutexSemOS::FastLock(semH, msecTimeout, error);
 }
 

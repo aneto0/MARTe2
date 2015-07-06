@@ -32,64 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
-
-/**
- * @brief A structure containing the time stamp informations.
- */
-struct TimeValues {
-
-    /** nanoseconds 0-999999 */
-    uint32 microseconds;
-
-    /** seconds 0-59 */
-    uint32 seconds;
-
-    /** minutes 0-59 */
-    uint32 minutes;
-
-    /** hours 0-23 */
-    uint32 hours;
-
-    /** days 1-31 */
-    uint32 days;
-
-    /** month 0-11 */
-    uint32 month;
-
-    /** year since 1900 */
-    uint32 year;
-};
-
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,HighResolutionTimerCalibratorOS.h)
-
-extern "C" {
-/**
- * @brief The frequency of the HighResolutionTimer Clock.
- * @return the clock frequency of the cpu.
- */
-int64 HighResolutionTimerFrequency();
-
-/**
- * @brief the HighResolutionTimer Clock period in seconds.
- * @return the cpu clock period in seconds (it must be the inverse of the frequency).
- */
-float64 HighResolutionTimerPeriod();
-
-/**
- * @brief How many ticks in a millisecond for the HRT.
- * @return the number of the cpu ticks during a millisecond.
- */
-uint32 HighResolutionTimerMSecTics();
-
-/**
- * @brief Get the current time stamp [microseconds, seconds, minutes, hour, day, month, year].
- * @see TimeValues.
- * @param[out] date is a TimeValues structure which must be filled by this method.
- */
-bool HighResolutionTimerGetTimeStamp(TimeValues &date);
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -108,11 +50,6 @@ class HighResolutionTimer {
 public:
 
     /**
-     * Used to get cpu frequency and period at the beginning.
-     */
-    static HighResolutionTimerCalibratorOS highResolutionTimerCalibratorOS;
-
-    /**
      * @brief An high resolution time counter. Only valid on pentiums CPUs and above.
      * @details Reads the cpu ticks on an 64 bits integer.
      */
@@ -125,17 +62,16 @@ public:
     static inline uint32 Counter32();
 
     /**
-     * @brief To interpret the value returned by HRTCounter.
-     * @see HighResolutionTimerFrequency().
-     * @return the current frequency of the cpu.
-     */
-    static inline int64 Frequency();
-    /**
      * @brief The length of a clock period in seconds.
-     * @see HighResolutionTimerPeriod().
      * @return the current period of the cpu.
      */
     static inline float64 Period();
+
+    /**
+     * @brief To interpret the value returned by HRTCounter.
+     * @return the current frequency of the cpu.
+     */
+    static inline int64 Frequency();
 
     /**
      * @brief Converts HRT ticks to time.
@@ -157,32 +93,7 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-int64 HighResolutionTimer::Counter() {
-    return HighResolutionTimerA::Read64();
-}
-
-uint32 HighResolutionTimer::Counter32() {
-    return HighResolutionTimerA::Read32();
-}
-
-int64 HighResolutionTimer::Frequency() {
-    return HighResolutionTimerFrequency();
-}
-
-float64 HighResolutionTimer::Period() {
-    return HighResolutionTimerPeriod();
-}
-
-float64 HighResolutionTimer::TicksToTime(int64 tStop,
-                                        int64 tStart) {
-    int64 dT = tStop - tStart;
-    return dT * Period();
-}
-
-bool HighResolutionTimer::GetTimeStamp(TimeValues &date) {
-    return HighResolutionTimerGetTimeStamp(date);
-}
+#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,HighResolutionTimerOS.h)
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
 
 #endif /* HIGHRESOLUTIONTIME_H_ */
-

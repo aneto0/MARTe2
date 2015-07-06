@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Memory.h"
-
+#include "EventSem.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -49,7 +49,30 @@ private:
 
 public:
 
+    /**
+     * Event semaphore used for threads synchronization
+     */
+    EventSem eventSem;
 
+    /**
+     * Used to communicate with threads
+     */
+    bool signals[MAX_NO_OF_MEMORY_MONITORS - 1];
+
+    /**
+     * Internal counter
+     */
+    uint32 counter;
+
+    /**
+     * The memory amount allocated by each thread.
+     */
+    int32 sizeStore[MAX_NO_OF_MEMORY_MONITORS - 1];
+
+    /**
+     * The number of memory chuncks allocated by each thread.
+     */
+    int32 chunksStore[MAX_NO_OF_MEMORY_MONITORS - 1];
     /**
      * @brief Constructor.
      */
@@ -62,26 +85,63 @@ public:
 
 
     /**
-     * @brief Tests the correct behavior of the malloc function.
+     * @brief Tests the Memory::Malloc function.
      * @param[in] size is the number of integers to allocate.
      * @return true if the pointers to the allocated memory are valid.
      */
-    bool TestMallocAndFree(int32 size);
+    bool TestMalloc(uint32 size);
+
 
     /**
-     * @brief Tests the correct behavior of the realloc function.
+     * @brief Tests the Memory::Free function.
+     * @details Allocates the size passed by argument then frees the memory and see if the pointer is NULL.
+     * @param[in] size is the size to be allocated.
+     * @return true if successful, false otherwise.
+     */
+    bool TestFree(uint32 size);
+
+
+    /**
+     * @brief Tests the Memory::Realloc function.
+     * @details Checks the function passing also size = 0 (Memory::Free behavior) or pointer = NULL (Memory::Malloc) behavior.
      * @param[in] size1 is the number of integers to allocate with initial malloc.
      * @param[in] size2 is the additional memory which must be allocated.
-     * @return true if the pointers are valid and the realloc does not corrupt the initial memory.
+     * @return true if successful, false otherwise.
      */
-    bool TestRealloc(int32 size1, int32 size2);
+    bool TestRealloc(uint32 size1, uint32 size2);
 
     /**
-     * @brief Tests the correct behavior of the string duplicate.
+     * @brief Tests the Memory::StringDup function.
+     * @details Checks if the string is duplicated correctly and if the function returns NULL in case of NULL input.
      * @param[in] s is the string to duplicate.
-     * @return true if the string result of the function is equal to s.
+     * @return true if successful, false otherwise.
      */
-    bool TestMemoryStringDup(const char8 *s);
+    bool TestStringDup(const char8 *s);
+
+    /**
+     * @brief Tests the Memory::Check function.
+     * @details Allocates a chunk of memory and check if the function return true on the memory allocated. Then checks if the function returns fale in case of null pointer input.
+     * @param[in] size is the size which must be allocated.
+     * @return true if successful, false otherwise.
+     */
+    bool TestCheck(uint32 size);
+
+
+
+    /**
+     * @brief Tests the Memory::SharedAlloc function.
+     * @details Allocates a shared memory and checks that the returned pointer is not null.
+     * @return true if successful, false otherwise.
+     */
+    bool TestSharedAlloc();
+
+
+    /**
+     * @brief Tests the Memory::SharedFree function.
+     * @details Allocates a shared memory and checks that the returned pointer is not null, then frees the shared memory and checks that the pointer is null.
+     * @return true if successful, false otherwise.
+     */
+    bool TestSharedFree();
 
     /**
      * @brief Tests the shared memory between two different threads and the main process.
@@ -92,26 +152,84 @@ public:
     bool TestSharedMemory();
 
     /**
-     * @brief Tests the copy and the move functions.
-     * @return true if the memory is copied correctly.
+     * @brief Tests the Memory::Copy function.
+     * @details Copies a memory area with different size parameters and checks if the function returns false on case of null inputs.
+     * @return true if successful, false otherwise.
      */
-    bool TestCopyAndMove();
-
-    /**
-     * @brief Tests the set and the search functions.
-     * @return true if the functions work correctly.
-     */
-    bool TestSetAndSearch();
+    bool TestCopy();
 
 
     /**
-     * @brief Tests the header that contains the allocated memory information.
+     * @brief Tests the Memory::Copy function.
+     * @details Copies a memory area with different size parameters and checks if the function returns false on case of null inputs.
+     * @return true if successful, false otherwise.
+     */
+    bool TestMove();
+
+
+    /**
+     * @brief Tests the Memory::Compare function.
+     * @details Compares two memory areas checking if the result is correct.
+     * @return true if successful, false otherwise.
+     */
+    bool TestCompare();
+
+    /**
+     * @brief Tests the Memory::Set function.
+     * @details Sets a character in the beginning of a memory area and another character at its end. Then checks if the memory is set as expected.
+     * @return true if successful, false otherwise.
+     */
+    bool TestSet();
+
+
+    /**
+     * @brief Tests the Memory::Search function.
+     * @details Search characters on a memory area trying also if the function returns false in case of null input or not found characters
+     * @return true if successful, false otherwise.
+     */
+    bool TestSearch();
+
+
+    /**
+     * @brief Tests the Memory::GetHeaderInfo function
+     * @details Tests the header that contains the allocated memory information. To test correctly the function the macro MEMORY_STATICS must be defined.
      * @return true if the returned informations on the allocated memory are correct.
      */
-    bool TestHeader();
+    bool TestGetHeaderInfo();
+
 
     /**
-     * @brief Tests the memory database.
+     * @brief Tests the Memory::AllocationStatistics function.
+     * @details Allocates memory and checks if the the database saves the informations correctly.
+     * @return true if successful, false otherwise.
+     */
+    bool TestAllocationStatistics();
+
+    /**
+     * @brief Tests the Memory::GetUsedHeap function.
+     * @details Launches a number of threads and checks that during their execution the heap memory is not empty. Then after the threads termination
+     * checks that the heap memory is empty.
+     * @return true if successful, false otherwise.
+     */
+    bool TestGetUsedHeap(uint32 nOfThreads);
+
+    /**
+     * @brief Tests the Memory::ClearStatisticsDatabase.
+     * @details Allocates memory and checks that the number of elements in the database and the heap memory amount is not zero. Then calls the function and checks
+     * that the memory database is empty.
+     * @return true if successful, false otherwise.
+     */
+    bool TestClearStatisticsDatabase();
+
+    /**
+     * @brief Tests the Memory::GetStatisticsDatabaseNElements.
+     * @details Allocates memory and checks that there is only one element in the database. Then frees the memories and checks that the number of elements is zero again.
+     * @return true if successful, false otherwise.
+     */
+    bool TestGetStatisticsDatabaseNElements();
+
+    /**
+     * @brief Tests the memory database functions together.
      * @return true if the informations of the allocated memory are stored correctly on the database.
      */
     bool TestDatabase();

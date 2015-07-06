@@ -2,7 +2,7 @@
  * @file ProcessorTest.h
  * @brief Header file for class ProcessorTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef PROCESSORTEST_H_
-#define 		PROCESSORTEST_H_
+#define PROCESSORTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,7 +37,9 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/** @brief A class to test the Processor functions. */
+/**
+ * @brief A class to test the Processor functions.
+ */
 class ProcessorTest {
 
 public:
@@ -49,25 +51,25 @@ public:
 
     /**
      * @brief Tests the vendor identifier function.
-     * @return true if the function returns the vendor id.
+     * @return true if Processor::VendorId() returns a vendor id which is not NULL.
      */
     bool TestVendorId();
 
     /**
      * @brief Tests the family function.
-     * @return true.
+     * @return true if Processor::Family() returns a value which is not -1.
      */
     bool TestFamily();
 
     /**
      * @brief Tests the model function.
-     * @return true.
+     * @return true if Processor::Model() returns a value which is not -1.
      */
     bool TestModel();
 
     /**
      * @brief Tests the available function.
-     * @return true.
+     * @return true if Processor::Available() returns a value which is not -1.
      */
     bool TestAvailable();
 

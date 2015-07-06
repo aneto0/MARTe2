@@ -24,36 +24,20 @@
 #
 #############################################################
 
-PACKAGE=Core
-ROOT_DIR=../../..
+PACKAGE=Core/L0Portability
+ROOT_DIR=../../../../../
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-SPB=OperatingSystem/Linux.x
-
-OBJSX=  Atomic.x \
-        Endianity.x \
-        Memory.x \
-        Processor.x \
-        ProcessorType.x \
-        Threads.x  \
-        ThreadsDatabase.x \
-        BasicConsole.x \
-        ThreadInformation.x \
-        MutexSem.x \
-        EventSem.x \
-        MemoryStatisticsDatabase.x
-
-LIBRARIES_STATIC+=$(BUILD_DIR)/Linux/L0PortabilityOS$(LIBEXT)
+OBJSX=  BasicConsoleOS.x \
+        SleepOS.x \
+        HighResolutionTimerCalibratorOS.x \
+        StringHelperOS.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-OSCOMPONENTS = $(BUILD_DIR)/Linux/L0PortabilityOS$(LIBEXT)
-
-all: $(OBJS) $(SUBPROJ)   \
-                $(BUILD_DIR)/L0Portability$(LIBEXT)
+all: $(OBJS)    \
+                $(BUILD_DIR)/L0PortabilityOS$(LIBEXT)
 	echo  $(OBJS)
-
-$(BUILD_DIR)/L0Portability$(LIBEXT) : $(OSCOMPONENTS)
 
 include depends.$(TARGET)
 

@@ -133,7 +133,7 @@ bool FastPollingMutexSem::FastLock(TimeoutType msecTimeout,
             }
         }
         // yield CPU
-        SleepMSec(1);
+        Sleep::MSec(1);
     }
     return true;
 }

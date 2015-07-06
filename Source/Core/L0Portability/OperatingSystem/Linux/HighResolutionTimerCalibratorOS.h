@@ -29,16 +29,18 @@
 /*---------------------------------------------------------------------------*/
 
 #ifndef LINT
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include <sys/time.h>
+#else
+#include "lint-linux.h"
 #endif
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "../../GeneralDefinitions.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -50,95 +52,67 @@
 class HighResolutionTimerCalibratorOS {
 
 public:
-    /** Number of cpu ticks in a millisecond */
-    uint32 HRTmSecTics;
-
-    /** Number of cpu ticks in a second */
-    uint64 HRTFrequency;
-
-    /** Time between a tick and the other in seconds */
-    float64 HRTPeriod;
-
-    /** Contains the seconds and microseconds from epoch */
-    struct timeval initialTime;
-
-    /** Used to save the number of ticks at the calibration moment. */
-    uint64 initialTicks;
-
-    /** @brief Calculate the period and the frequency of the cpu clock. */
-    HighResolutionTimerCalibratorOS() {
-
-        gettimeofday(&initialTime, NULL);
-        initialTicks = HighResolutionTimerA::Read64();
-
-        HRTFrequency = 0;
-        HRTPeriod = 0;
-
-        char8 buffer[LINUX_CPUINFO_BUFFER_SIZE + 1];
-
-        FILE *f;
-        f = fopen("/proc/cpuinfo", "r");
-        uint32 size = LINUX_CPUINFO_BUFFER_SIZE;
-        size = fread(buffer, size, 1, f);
-        fclose(f);
-
-        const char8 *pattern = "MHz";
-        char8 *p = strstr(buffer, pattern);
-        if (p != NULL) {
-            p = strstr(p, ":");
-            p++;
-            float64 f = atof(p);
-            if (f != 0) {
-                f *= 1.0e6;
-                HRTFrequency = (int64) f;
-                HRTPeriod = 1.0 / f;
-            }
-        }
-        HRTmSecTics = HRTFrequency / 1000;
-    }
+    /**
+     * @brief Estimates the period and the frequency of the cpu clock.
+     * @details The period and frequency of the CPU clock are estimated upon
+     * construction.
+     * In the Linux implementation these values are read from the /proc/cpuinfo file.
+     * The number of elapsed cpu ticks is also stored at this moment.
+     */
+    HighResolutionTimerCalibratorOS();
 
     /**
      * @brief Get the current time stamp.
      * @param[in] timeStamp is a structure which contains the time stamp fields.
-     * @return true if successful, false otherwise.
+     * @return true if the time can be successfully retrieved from the operating system.
      */
-    bool GetTimeStamp(TimeValues &timeStamp) {
+    bool GetTimeStamp(TimeValues &timeStamp) const ;
 
-        uint64 ticks = HighResolutionTimerA::Read64() - initialTicks;
+    /**
+     * @brief Returns the calibrated CPU frequency.
+     * @return the calibrated CPU frequency.
+     */
+    int64 GetFrequency() const;
 
-        //Use HRT
-        uint32 secHRT = (uint32) (ticks * HRTPeriod);
-        uint32 nSecHRT = (uint32) ((ticks * HRTPeriod - secHRT) * 1e6);
+    /**
+     * @brief Returns the number of elapsed ticks at the time the program was started.
+     * @return the number of elapsed ticks when the program was started.
+     */
+    int64 GetInitialTicks() const;
 
-        //Add HRT to the the initial time saved in the calibration.
-        time_t sec = (time_t)(initialTime.tv_sec + secHRT);
-        timeStamp.microseconds = initialTime.tv_usec + nSecHRT;
+    /**
+     * @brief Returns the time (from the epoch) when the program was started.
+     * @return the time at which the program was started.
+     */
+    const struct timeval& GetInitialTime() const;
 
-        //Check the overflow
-        if (timeStamp.microseconds >= 1e6) {
-            timeStamp.microseconds -= 1e6;
-            sec++;
-        }
-
-        //fill the time structure
-        struct tm *tValues;
-        tValues = localtime((const time_t*) &sec);
-        if (tValues == NULL) {
-            return false;
-        }
-        timeStamp.seconds = tValues->tm_sec;
-        timeStamp.minutes = tValues->tm_min;
-        timeStamp.hours = tValues->tm_hour;
-        timeStamp.days = tValues->tm_mday;
-        timeStamp.month = tValues->tm_mon;
-        timeStamp.year = tValues->tm_year;
-        return true;
-    }
+    /**
+     * @brief Returns the calibrated CPU period.
+     * @return the calibrated CPU period.
+     */
+    float64 GetPeriod() const;
 
 private:
 
-    /** The size of the buffer to retrieve the cpu informations by the system. */
-    static const uint32 LINUX_CPUINFO_BUFFER_SIZE = 1023;
+    /**
+     * Number of cpu ticks in a second
+     */
+    int64 frequency;
+
+    /**
+     * Time between two ticks in seconds
+     */
+    float64 period;
+
+    /**
+     * Stores the time (counting from the epoch) at which a framework instance was executed.
+     */
+    struct timeval initialTime;
+
+    /**
+     * Number of elapsed ticks at the time at which a framework instance was executed.
+     */
+    int64 initialTicks;
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

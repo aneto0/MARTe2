@@ -137,7 +137,7 @@ public:
     static bool Check(void *address, MemoryTestAccessMode accessMode, uint32 size) {
 
         //check if the memory is valid.
-        char8* addressPtr = (char8 *) address;
+        char8 *addressPtr = (char8 *) address;
         while (size > 0) {
             if (addressPtr == NULL) {
                 return false;
@@ -157,9 +157,7 @@ public:
      * @return true if source, destination and destination after the copy are not NULL.
      */
     static bool Copy(void* destination, const void* source, uint32 size) {
-        if (source == NULL || destination == NULL) {
-            return false;
-        }
+
 
         return memcpy(destination, source, size) != NULL;
     }
@@ -173,9 +171,7 @@ public:
      * @return (0 if mem1 == mem2), (1 if mem1 < mem2), (2 if mem1 > mem2), (-1 if one of memory arguments is NULL).
      */
     static int32 Compare(const void* mem1, const void* mem2, uint32 size) {
-        if (mem1 == NULL || mem2 == NULL) {
-            return -1;
-        }
+
         int32 ret = memcmp(mem1, mem2, size);
         if (ret < 0) {
             return 1; // 1 if mem1<mem2
@@ -196,9 +192,7 @@ public:
      * @return a pointer to the first occurence of c in mem, NULL if is not found or in case of mem==NULL.
      */
     static const void* Search(const void* mem, int32 c, uint32 size) {
-        if (mem == NULL) {
-            return NULL;
-        }
+
         return memchr(mem, c, size);
     }
 
@@ -211,9 +205,7 @@ public:
      * @return true if source, destination and destination after the copy are not NULL.
      */
     static bool Move(void* destination, const void* source, uint32 size) {
-        if (source == NULL || destination == NULL) {
-            return false;
-        }
+
         return memmove(destination, source, size) != NULL;
 
     }
@@ -227,9 +219,7 @@ public:
      * @return true if mem before and after the operation id not NULL.
      */
     static bool Set(void* mem, int32 c, uint32 size) {
-        if (mem == NULL) {
-            return false;
-        }
+
         return memset(mem, c, size) != NULL;
     }
 };

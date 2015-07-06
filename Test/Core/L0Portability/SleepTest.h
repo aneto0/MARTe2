@@ -36,7 +36,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 #include "Sleep.h"
 
 /** @brief A class to test all the Sleep functions. */
@@ -47,60 +46,61 @@ public:
     }
 
     /**
-     * @brief Tests the SleepAtLeast function.
+     * @brief Tests the Sleep::AtLeast function.
      * @param[in] sec is the minimum time to sleep.
-     * @return true if it sleeps less than the float64 of sec.
+     * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepAtleast(float64 sec);
+    bool TestSleepAtLeast(float64 sec);
 
     /**
-     * @brief Tests the SleepNoMore function
+     * @brief Tests the Sleep::NoMore function
      * @param[in] sec is the maximum time to sleep.
-     * @return true if it sleeps less than the float64 of sec.
+     * @return true if it sleeps less than the double of sec.
      */
     bool TestSleepNoMore(float64 sec);
 
     /**
-     * @brief Tests the SleepSec function
+     * @brief Tests the Sleep::Sec function
      * @param[in] sec is the time to sleep.
-     * @return true if it sleeps less than the float64 of sec.
+     * @return true if it sleeps less than the double of sec.
      */
     bool TestSleepSec(float64 sec);
 
     /**
-     * @brief Tests the SleepSec function
+     * @brief Tests the Sleep::Sec function
      * @param[in] sec is the time to sleep.
-     * @return true if it sleeps less than the float64 of sec.
+     * @return true if it sleeps less than the double of sec.
      */
     bool TestSleepSec(float32 sec);
 
     /**
-     * @brief Tests the SleepMSec function
+     * @brief Tests the Sleep::MSec function
      * @param[in] msec is the time to sleep in milliseconds.
-     * @return true if it sleeps less than the float64 of sec.
+     * @return true if it sleeps less than the double of sec.
      */
     bool TestSleepMSec(int32 msec);
 
     /**
-     * @brief Tests the SleepBusy function.
+     * @brief Tests the Sleep::Busy function.
      * @param[in] sec is the time to sleep.
-     * @return true if it sleeps less than the float64 of sec.
+     * @return true if it sleeps less than the double of sec.
      */
     bool TestSleepBusy(float64 sec);
 
     /**
-     * @brief Tests the SleepSemiBusy function.
+     * @brief Tests the Sleep::SemiBusy function.
      * @param[in] totalSleepSec is the time to sleep using cpu.
      * @param[in] nonBusySleepSec is the time to sleep without using cpu.
-     * @return true if it sleeps less than the float64 of sec.
+     * @return true if it sleeps less than the double of sec.
      */
-    bool TestSemiBusy(float64 totalSleepSec, float64 nonBusySleepSec);
+    bool TestSleepSemiBusy(float64 totalSleepSec,
+                           float64 nonBusySleepSec);
 
     /**
-     * @brief Executes all the tests
-     * @return true if all tests return true.
+     * @brief Tests the Sleep::GetDateSeconds function.
+     * @return true if the returned value is equal to the seconds elapsed since epoch.
      */
-    bool All();
+    bool TestGetDateSeconds();
 };
 
 /*---------------------------------------------------------------------------*/

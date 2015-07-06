@@ -47,18 +47,46 @@ private:
 public:
 
     /**
-     * @brief Checks The functions Period() and Frequency() comparing the returned frequency with the mutual of the period
-     * @return true if period and frequency are mutual, false otherwise.
+     * @brief Tests The HighResolutionTimer::Period function.
+     * @return true if the returned value is greater than zero.
+     */
+    bool TestPeriod();
+
+    /**
+     * @brief Tests The HighResolutionTimer::Frequency function.
+     * @return true if the returned value is greater than zero.
      */
     bool TestFrequency();
 
+
     /**
-     * @brief Sleep for sleepTime time and check if the time measured with Counter() is more or less the same.
+     * @brief Checks if period and frequency are mutual.
+     * @return true if frequency=1/period.
+     */
+    bool TestPeriodFrequency();
+
+    /**
+     * @brief Sleep for sleepTime time and check if the time measured with HighResolutionTimer::Counter is more or less the same.
      * @param[in] sleepTime is the time to sleep.
      * @return true if the measured time is the same of the sleep time less than a tolerance, false otherwise.
      */
     bool TestCounter(float64 sleepTime);
 
+
+    /**
+     * @brief Sleep for sleepTime time and check if the time measured with HighResolutionTimer::Counter32 is more or less the same.
+     * @param[in] sleepTime is the time to sleep.
+     * @return true if the measured time is the same of the sleep time less than a tolerance, false otherwise.
+     */
+    bool TestCounter32(float64 sleepTime);
+
+    /**
+     * @brief Tests the HighResolutionTimer::TicksToTime function.
+     * @details converts the time passed by argument in ticks and checks if HighResolutionTimer::TicksToTime returns the same time.
+     * @param[in] sleepTime is the time argument.
+     * @return true if the conversion from ticks to time is correct.
+     */
+    bool TestTicksToTime(float64 sleepTime);
 
     /**
      * @brief Test the time stamp returned by HighResolutionTimer::GetTimeStamp.

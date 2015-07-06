@@ -118,7 +118,7 @@ bool MemoryIntegrationTest::TestSharedMemory() {
 
             return false;
         }
-        SleepSec(20e-3);
+        Sleep::Sec(20e-3);
     }
     bool returnValue = false;
     if (sharedBool == NULL) {
@@ -201,7 +201,7 @@ void AllocateFunction(MemoryIntegrationTest &m) {
     m.signals[myIndex] = true;
 
     while (m.signals[myIndex]) {
-        SleepSec(1e-3);
+        Sleep::Sec(1e-3);
     }
 
     while (i >= 0) {
@@ -225,7 +225,7 @@ bool MemoryIntegrationTest::TestDatabase() {
     for (counter = 0; counter < MAX_NO_OF_MEMORY_MONITORS - 1; counter++) {
         tids[counter] = Threads::BeginThread((ThreadFunctionType) AllocateFunction, this);
         while (!(signals[counter])) {
-            SleepSec(1e-3);
+            Sleep::Sec(1e-3);
         }
     }
 
@@ -262,7 +262,7 @@ bool MemoryIntegrationTest::TestDatabase() {
         signals[counter] = false;
 
         while (!(signals[counter])) {
-            SleepSec(1e-3);
+            Sleep::Sec(1e-3);
         }
 
     }

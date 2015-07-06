@@ -42,19 +42,28 @@
 /*---------------------------------------------------------------------------*/
 
 //return true if a and b are equal less than a tolerance
-bool Tolerance(float64 a,
-               float64 b,
-               float64 tolerance) {
+static bool Tolerance(float64 a,
+                      float64 b,
+                      float64 tolerance) {
     return (a - b < tolerance) && (b - a < tolerance);
 }
 
-//return true if frequecy and period are mutual
 bool HighResolutionTimerTest::TestFrequency() {
+
+    return HighResolutionTimer::Frequency() >= 0;
+
+}
+
+bool HighResolutionTimerTest::TestPeriod() {
+    return HighResolutionTimer::Period() > 0;
+}
+
+bool HighResolutionTimerTest::TestPeriodFrequency() {
     int64 HRTfrequency = HighResolutionTimer::Frequency();
     float64 HRTperiod = HighResolutionTimer::Period();
     float64 relativePeriod = 1.0 / HRTfrequency;
     int64 relativeFrequency = (int64) (1.0 / HRTperiod);
-    return (HRTperiod == relativePeriod) && (HRTfrequency == relativeFrequency) && (HighResolutionTimerMSecTics() == (HRTfrequency / 1000.0));
+    return (HRTperiod == relativePeriod) && (HRTfrequency == relativeFrequency);
 }
 
 //return true if the measured time is more or less equal to the sleep time.
@@ -65,11 +74,33 @@ bool HighResolutionTimerTest::TestCounter(float64 sleepTime) {
     float64 time;
 
     counter_1 = HighResolutionTimer::Counter();
-    SleepSec(sleepTime);
+    Sleep::Sec(sleepTime);
     counter = HighResolutionTimer::Counter();
     time = HighResolutionTimer::TicksToTime(counter, counter_1);
     return Tolerance(time, sleepTime, 0.05);
 
+}
+
+//return true if the measured time is more or less equal to the sleep time.
+bool HighResolutionTimerTest::TestCounter32(float64 sleepTime) {
+
+    int32 counter_1 = 0;
+    int32 counter = 0;
+    float64 time;
+
+    counter_1 = HighResolutionTimer::Counter32();
+    Sleep::Sec(sleepTime);
+    counter = HighResolutionTimer::Counter32();
+    time = (counter-counter_1)*HighResolutionTimer::Period();
+    return Tolerance(time, sleepTime, 0.05);
+
+}
+
+bool HighResolutionTimerTest::TestTicksToTime(float64 sleepTime) {
+
+    int64 ticks = sleepTime*HighResolutionTimer::Frequency();
+
+    return Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.05);
 }
 
 bool HighResolutionTimerTest::TestTimeStamp(uint32 millisecs) {
@@ -82,7 +113,7 @@ bool HighResolutionTimerTest::TestTimeStamp(uint32 millisecs) {
     int32 tolerance = 50;
 
     HighResolutionTimer::GetTimeStamp(myTimeStamp1);
-    SleepMSec(millisecs);
+    Sleep::MSec(millisecs);
     HighResolutionTimer::GetTimeStamp(myTimeStamp2);
 
     //it could fail if you are unlucky and launch the test across one month and the other at least!

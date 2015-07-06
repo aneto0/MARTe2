@@ -22,7 +22,7 @@
  */
 
 #ifndef BASICCONSOLEOS_H_
-#define 		BASICCONSOLEOS_H_
+#define BASICCONSOLEOS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -136,9 +136,7 @@ public:
      * @param[in] numberOfRows is the desired y axis size for the buffer.
      * return true if successful, false otherwise.
      */
-    static bool Open(BasicConsole &con,
-                     int numberOfColumns,
-                     int numberOfRows) {
+    static bool Open(BasicConsole &con) {
 
 //    con.selectedStream      = NormalStreamMode;
         int32 shortMask = 0xffff;
@@ -231,8 +229,11 @@ public:
     static bool Write(BasicConsole &con,
                       const void* buffer,
                       uint32 &size) {
-
-        return WriteConsole(con.outputConsoleHandle, buffer, size, (unsigned long *) &size, NULL);
+        bool ok = false;
+        if((size > 0) && (buffer != NULL)){
+            ok = WriteConsole(con.outputConsoleHandle, buffer, size, (unsigned long *) &size, NULL);
+        }
+        return ok;
 
     }
 
@@ -420,17 +421,17 @@ public:
     /**
      * @brief Sets the foreground and background colors.
      * @param[in,out] con is the console.
-     * @param[in] foreGroundColour is the desired foreground color.
-     * @param[in] backGroundColour is the desired background color.
+     * @param[in] foregroundColour is the desired foreground color.
+     * @param[in] backgroundColour is the desired background color.
      * @return true if successful, false otherwise.
      */
     static bool SetColour(BasicConsole &con,
-                          Colours foreGroundColour,
-                          Colours backGroundColour) {
+                          Colours foregroundColour,
+                          Colours backgroundColour) {
 
         WORD attribute;
-        attribute = (int) foreGroundColour & 0xF;
-        attribute |= ((int) backGroundColour & 0xF) << 4;
+        attribute = (int) foregroundColour & 0xF;
+        attribute |= ((int) backgroundColour & 0xF) << 4;
 
         if (!SetConsoleTextAttribute(con.outputConsoleHandle, attribute))
             return false;
@@ -462,16 +463,16 @@ public:
      * @brief Prints a character with specified colors and position.
      * @param[in,out] con is the console.
      * @param[in] c is the character to be printed.
-     * @param[in] foreGroundColour is the desired foreground color.
-     * @param[in] backGroundColour is the desired background color.
+     * @param[in] foregroundColour is the desired foreground color.
+     * @param[in] backgroundColour is the desired background color.
      * @param[in] column is the x axis desired position.
      * @param[in] row is the y axis desired position.
      * @return true if successful, false otherwise.
      */
     static bool PlotChar(BasicConsole &con,
                          char8 c,
-                         Colours foreGroundColour,
-                         Colours backGroundColour,
+                         Colours foregroundColour,
+                         Colours backgroundColour,
                          int column,
                          int row) {
 
@@ -484,8 +485,8 @@ public:
         bufferSize.Y = 1;
 
         WORD attribute;
-        attribute = (int) foreGroundColour & 0xF;
-        attribute |= ((int) backGroundColour & 0xF) << 4;
+        attribute = (int) foregroundColour & 0xF;
+        attribute |= ((int) backgroundColour & 0xF) << 4;
 
         CHAR_INFO cInfo;
         cInfo.Char.AsciiChar = c;

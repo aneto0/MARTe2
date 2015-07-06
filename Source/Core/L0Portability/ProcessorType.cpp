@@ -2,7 +2,7 @@
  * @file ProcessorType.cpp
  * @brief Source file for class ProcessorType
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -41,7 +41,7 @@ uint32 ProcessorTypeGetDefaultCPUs() {
     return ProcessorType::defaultCPUs;
 }
 
-void ProcessorTypeSetDefaultCPUs(uint32 defaultMask) {
+void ProcessorTypeSetDefaultCPUs(const uint32 defaultMask) {
     ProcessorType::defaultCPUs = defaultMask;
 }
 

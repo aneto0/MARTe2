@@ -136,7 +136,7 @@ bool ThreadsGetThreadInfoCopy(ThreadInformation &copy,
 /**
  * @see Threads::FindByName
  */
-TID ThreadsFindByName(const char8* name);
+TID ThreadsFindByName(const char8 *name);
 
 }
 
@@ -331,7 +331,7 @@ public:
      * @param[in] name is the thread name.
      * @return the id of the first found thread with the specified name.
      */
-    static TID FindByName(const char8* name);
+    static TID FindByName(const char8 *name);
 
 };
 

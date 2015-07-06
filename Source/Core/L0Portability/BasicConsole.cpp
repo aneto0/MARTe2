@@ -4,7 +4,7 @@
  * @date 22/06/2015
  * @author Giuseppe Ferr�
  *
- * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * @copyright Copyright 2015 F4E | European Joint32 Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence")
@@ -30,178 +30,105 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BasicConsole.h"
-#include "HighResolutionTimer.h"
 #include "StringHelper.h"
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,BasicConsoleOS.h)
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+/*const Flags IBasicConsole::Mode::Default(0u);
+const Flags IBasicConsole::Mode::CreateNewBuffer(1u);
+const Flags IBasicConsole::Mode::PerformCharacterInput(2u);
+const Flags IBasicConsole::Mode::DisableControlBreak(4u);
+const Flags IBasicConsole::Mode::EnablePaging(8u);*/
 
-bool BasicConsoleOpen(BasicConsole &con, ConsoleOpeningMode openingMode,
-        int32 numberOfColumns, int32 numberOfRows,
-        TimeoutType msecTimeout)
-{
-
-    con.msecTimeout = msecTimeout;
-    con.lineCount = 0;
-    con.colCount = 0;
-    con.lastPagingTime = 0;
-    con.openingMode = openingMode;
-    con.numberOfColumns=numberOfColumns;
-    con.numberOfRows=numberOfRows;
-
-    return BasicConsoleOS::Open(con, numberOfColumns, numberOfRows);
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+BasicConsole::BasicConsole(Flags openingMode, uint32 numberOfColumns, uint32 numberOfRows) {
+    lastPagingCounter = 0;
+    lineCount = 0u;
+    SetSize(numberOfColumns, numberOfRows);
+    Open(openingMode);
 }
 
-bool BasicConsoleClose(BasicConsole &con) {
-    return BasicConsoleOS::Close(con);
+BasicConsole::~BasicConsole() {
+    Close();
 }
 
-bool BasicConsoleShow(BasicConsole &con) {
-    return BasicConsoleOS::Show(con);
-}
+bool BasicConsole::PagedWrite(const void *buffer, uint32 &size, const TimeoutType &timeout) {
 
-bool BasicConsoleWrite(BasicConsole &con,
-                       const void* buffer,
-                       uint32 &size,
-                       TimeoutType msecTimeout) {
+    uint32 numberOfColumnsTmp = 0;
+    uint32 numberOfRowsTmp = 0;
+    bool ok = false;
 
-    int32 numberOfColumnsTmp;
-    int32 numberOfRowsTmp;
-
-    //The paging mechanism is portable. Just write a number of lines and then
-    //read a character to continue.
-    if ((con.openingMode & EnablePaging) && (BasicConsoleGetWindowSize(con, numberOfColumnsTmp, numberOfRowsTmp))) {
+    ok = GetSize(numberOfColumnsTmp, numberOfRowsTmp);
+    if (ok) {
 
         //-1 means the maximum size.
-        uint32 numberOfRows = (uint32) numberOfRowsTmp;
+        uint32 numberOfRows = numberOfRowsTmp;
 
-        int64 t0 = con.lastPagingTime;
+        int64 t0 = lastPagingCounter;
         int64 t1 = HighResolutionTimer::Counter();
 
         int64 dT = t1 - t0;
         float64 dt = dT * HighResolutionTimer::Period();
         if (dt > 0.05) {
-            con.lineCount = 0;
-            con.lastPagingTime = t1;
+            lineCount = 0;
+            lastPagingCounter = t1;
         }
 
         char8 *p = (char8 *) buffer;
         uint32 index = 0;
-        int start = 0;
+        uint32 start = 0;
         uint32 sizeT;
         bool end = false;
         while (index < size) {
-            while ((con.lineCount < (numberOfRows - 1)) && (index < size) && !end) {
+            while ((lineCount < (numberOfRows - 1)) && (index < size) && !end) {
                 if (p[index] == '\n')
-                    con.lineCount++;
+                    lineCount++;
                 if (p[index] == '\0')
                     end = true;
 
                 index++;
             }
             sizeT = index - start;
-            BasicConsoleOS::Write(con, p + start, sizeT);
-            if (end)
-                return true;
-            if (con.lineCount >= (numberOfRows - 1)) {
+            BasicConsoleOS::Write(p + start, sizeT);
+            if (end) {
+                ok = true;
+                break;
+            }
+            if (lineCount >= (numberOfRows - 1)) {
                 start = index;
-                con.lastPagingTime = t1;
-                con.lineCount = 0;
+                lastPagingCounter = t1;
+                lineCount = 0;
                 const char8 *message = "[PAGING] ENTER TO CONTINUE\015";
                 sizeT = StringHelper::Length(message);
-                BasicConsoleOS::Write(con, message, sizeT);
+                BasicConsoleOS::Write(message, sizeT);
                 char8 buffer[32];
                 sizeT = N_CHARS_NEWLINE;
-                BasicConsoleRead(con, buffer, sizeT, msecTimeout);
+                Read(buffer, sizeT, timeout);
             }
         }
-        return true;
+        ok = true;
+    }
+
+    return ok;
+}
+
+bool BasicConsole::Write(const void* buffer, uint32& size, const TimeoutType &timeout) {
+    uint32 numberOfRows = 0;
+    uint32 numberOfColumns = 0;
+    bool ok = GetSize(numberOfColumns, numberOfRows);
+    if ((size > 0) && (buffer != NULL) && (numberOfColumns > 0) && (numberOfRows > 0)) {
+        Flags mode = GetOpeningMode();
+        if (mode & BasicConsolePaging) {
+            ok = PagedWrite(buffer, size, timeout);
+        }
+        else {
+            ok = BasicConsoleOS::Write(buffer, size);
+        }
     }
     else {
-        return BasicConsoleOS::Write(con, buffer, size);
+        ok = false;
     }
-}
-
-bool BasicConsoleRead(BasicConsole &con,
-                      void* buffer,
-                      uint32 &size,
-                      TimeoutType msecTimeout) {
-    return BasicConsoleOS::Read(con, buffer, size, msecTimeout);
-}
-
-bool BasicConsoleSetTitleBar(BasicConsole &con,
-                             const char8 *title) {
-    return BasicConsoleOS::SetTitleBar(con, title);
-}
-
-bool BasicConsoleSetWindowSize(BasicConsole &con,
-                               int32 numberOfColumns,
-                               int32 numberOfRows) {
-    return BasicConsoleOS::SetWindowSize(con, numberOfColumns, numberOfRows);
-}
-
-bool BasicConsoleGetWindowSize(BasicConsole &con,
-                               int32 &numberOfColumns,
-                               int32 &numberOfRows) {
-    return BasicConsoleOS::GetWindowSize(con, numberOfColumns, numberOfRows);
-}
-
-bool BasicConsoleSetSize(BasicConsole &con,
-                         int32 numberOfColumns,
-                         int32 numberOfRows) {
-    return BasicConsoleOS::SetSize(con, numberOfColumns, numberOfRows);
-}
-
-bool BasicConsoleGetSize(BasicConsole &con,
-                         int32 &numberOfColumns,
-                         int32 &numberOfRows) {
-    return BasicConsoleOS::GetSize(con, numberOfColumns, numberOfRows);
-}
-
-bool BasicConsoleSetCursorPosition(BasicConsole &con,
-                                   int32 column,
-                                   int32 row) {
-    return BasicConsoleOS::SetCursorPosition(con, column, row);
-}
-
-bool BasicConsoleGetCursorPosition(BasicConsole &con,
-                                   int32 &column,
-                                   int32 &row) {
-    return BasicConsoleOS::GetCursorPosition(con, column, row);
-}
-
-bool BasicConsoleSetColour(BasicConsole &con,
-                           Colours foreGroundColour,
-                           Colours backGroundColour) {
-    return BasicConsoleOS::SetColour(con, foreGroundColour, backGroundColour);
-}
-
-bool BasicConsoleClear(BasicConsole &con) {
-    return BasicConsoleOS::Clear(con);
-}
-
-bool BasicConsolePlotChar(BasicConsole &con,
-                          char8 c,
-                          Colours foreGroundColour,
-                          Colours backGroundColour,
-                          int32 column,
-                          int32 row) {
-    return BasicConsoleOS::PlotChar(con, c, foreGroundColour, backGroundColour, column, row);
-}
-
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-
-BasicConsole::BasicConsole(ConsoleOpeningMode openingMode,
-                           int32 numberOfColumns,
-                           int32 numberOfRows,
-                           TimeoutType msecTimeout) {
-    BasicConsoleOpen(*this, openingMode, numberOfColumns, numberOfRows, msecTimeout);
-}
-
-
-BasicConsole::~BasicConsole() {
-    BasicConsoleClose(*this);
+    return ok;
 }

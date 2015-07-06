@@ -52,10 +52,16 @@ MutexSem::MutexSem() {
 }
 
 MutexSem::~MutexSem() {
-    MutexSemOS::Close(semH);
+    try {
+        /*lint -e(534) , ignoring return value of function*/
+        Close();
+    }
+    catch(...){
+    }
+    semH = static_cast<HANDLE>(NULL);
 }
 
-bool MutexSem::Create(bool locked, bool recursive) {
+bool MutexSem::Create(const bool locked, bool recursive) {
     bool ret = MutexSemOS::Create(semH, locked, recursive);
     isRecursive = recursive;
     return ret;
@@ -65,7 +71,7 @@ bool MutexSem::Close() {
     return MutexSemOS::Close(semH);
 }
 
-bool MutexSem::Lock(TimeoutType msecTimeout, Error &error) const {
+bool MutexSem::Lock(const TimeoutType &msecTimeout, Error &error) const {
     return MutexSemOS::Lock(semH, msecTimeout, error);
 }
 

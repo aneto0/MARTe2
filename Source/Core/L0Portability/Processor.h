@@ -22,7 +22,7 @@
  */
 
 #ifndef PROCESSOR_H_
-#define 		PROCESSOR_H_
+#define PROCESSOR_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,22 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-
-extern "C" {
-
-/** @see Processor::Family(). */
-uint32 ProcessorFamily(void);
-
-/** @see Processor::VendorId(). */
-const char8 *ProcessorVendorId(void);
-
-/** @see Processor::ProcessorsAvaiable(). */
-uint32 ProcessorsAvailable(void);
-
-/** @see Processor::Model(). */
-uint32 ProcessorModel(void);
-}
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -87,26 +71,7 @@ public:
      */
     static inline uint32 Available();
 };
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-const char8 *Processor::VendorId() {
-    return ProcessorVendorId();
-}
-
-uint32 Processor::Family() {
-    return ProcessorFamily();
-}
-
-uint32 Processor::Model() {
-    return ProcessorModel();
-}
-
-uint32 Processor::Available() {
-    return ProcessorsAvailable();
-}
-
+#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,ProcessorOS.h)
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,ProcessorA.h)
 #endif /* PROCESSOR_H_ */
 

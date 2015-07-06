@@ -147,7 +147,7 @@ void PosterThreadCallback(EventSemTest &eventSemTest) {
     float64 maxTime = 2.0;
     int64 tstart = HighResolutionTimer::Counter();
     while (eventSemTest.sharedVariable < 2) {
-        SleepMSec(100);
+        Sleep::MSec(100);
         eventSemTest.sharedVariable = 1;
         eventSemTest.eventSem.Post();
         if (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(),
@@ -176,7 +176,7 @@ bool EventSemTest::TestWait() {
     //Wait for the thread to terminate
     int32 counter = 0;
     while (Threads::IsAlive(tid)) {
-        SleepSec(0.1);
+        Sleep::Sec(0.1);
         if (counter++ > 10) {
             Threads::Kill(tid);
             break;
@@ -203,7 +203,7 @@ bool EventSemTest::TestResetWait() {
     //Wait for the thread to terminate
     int32 counter = 0;
     while (Threads::IsAlive(tid)) {
-        SleepSec(0.1);
+        Sleep::Sec(0.1);
         if (counter++ > 10) {
             Threads::Kill(tid);
             break;
@@ -241,7 +241,7 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
                              this);
     }
     //Allow threads to start
-    SleepMSec(100);
+    Sleep::MSec(100);
     //The semaphore was not posted yet, so the value of the sharedVariable should still be 0xABCD
     if (sharedVariable != 0xABCD) {
         return false;
@@ -251,7 +251,7 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
     eventSem.Post();
     //Wait some time for the test to succeed...
     while (sharedVariable != nOfThreads) {
-        SleepMSec(100);
+        Sleep::MSec(100);
         i--;
         //Waited 20 ms x nOfThreads and the value of the sharedVariable is still
         //not nOfThreads which likely indicates a problem with the posting of the semaphore
@@ -260,7 +260,7 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
         }
     }
 
-    SleepMSec(100);
+    Sleep::MSec(100);
     //Check if all the threads have terminated
     for (i = 0; i < Threads::NumberOfThreads(); i++) {
         TID tid = Threads::FindByIndex(i);

@@ -78,7 +78,7 @@ $(BUILD_DIR)/%.pp :  %.cpp
 $(BUILD_DIR)/%.lib : $(OBJS) $(OBJSRTTI)
 	@touch $@
 	@rm $(BUILD_DIR)/$*.lib
-	lib -OUT:$@  $(OBJS) -NODEFAULTLIB
+	lib -OUT:$@  $(OBJS) $(LIBRARIES_STATIC) -NODEFAULTLIB
 
 $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.obj $(OBJS) $(LIBRARIES)
 	$(COMPILER)  $(LFLAGS)  $(DEBUG) $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) -o $@ $(LOPTS)

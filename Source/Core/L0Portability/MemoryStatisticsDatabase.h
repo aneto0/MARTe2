@@ -248,7 +248,7 @@ bool MemoryStatisticsDatabase::AddMemoryChunk(TID tid,
     ret->totalMemorySize += memSize;
 
     //remove the element if the thread has not allocated memory
-    if (ret->nOfMemoryChunks == 0) {
+    if (ret->totalMemorySize == 0) {
         Remove(tid);
     }
     internalMutex.FastUnLock();
@@ -273,7 +273,7 @@ bool MemoryStatisticsDatabase::FreeMemoryChunk(TID tid,
     ret->totalMemorySize -= memSize;
 
     //remove the element if the thread has not allocated memory
-    if (ret->nOfMemoryChunks == 0) {
+    if (ret->totalMemorySize == 0) {
         Remove(tid);
     }
     internalMutex.FastUnLock();

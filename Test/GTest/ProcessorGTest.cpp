@@ -2,7 +2,7 @@
  * @file ProcessorGTest.cpp
  * @brief Source file for class ProcessorGTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -41,40 +41,22 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-
-
-
-class ProcessorGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-
-    }
-
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
-
-TEST_F(ProcessorGTest,VendorIdTest) {
+TEST(ProcessorGTest,VendorIdTest) {
     ProcessorTest processorTest;
     ASSERT_TRUE(processorTest.TestVendorId());
 }
 
-TEST_F(ProcessorGTest,FamilyTest) {
+TEST(ProcessorGTest,FamilyTest) {
     ProcessorTest processorTest;
     ASSERT_TRUE(processorTest.TestFamily());
 }
 
-TEST_F(ProcessorGTest,ModelTest) {
+TEST(ProcessorGTest,ModelTest) {
     ProcessorTest processorTest;
     ASSERT_TRUE(processorTest.TestModel());
 }
 
-TEST_F(ProcessorGTest,AvailableTest) {
+TEST(ProcessorGTest,AvailableTest) {
     ProcessorTest processorTest;
     ASSERT_TRUE(processorTest.TestAvailable());
 }

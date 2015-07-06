@@ -151,8 +151,7 @@ private:
             }
             if (stop == true) {
 
-                if (pthread_cond_timedwait(&eventVariable, &mutexHandle,
-                                           &timesValues) != 0) {
+                if (pthread_cond_timedwait(&eventVariable, &mutexHandle, &timesValues) != 0) {
                     pthread_mutex_unlock(&mutexHandle);
                     error = Timeout;
                     return false;
@@ -214,8 +213,9 @@ private:
      * @return true if the nuumber of handle references is equal to zero.
      */
     bool RemoveReference() {
-        if (--references < 0)
+        if (--references < 0) {
             references = 0;
+        }
         return references == 0;
     }
 
@@ -233,7 +233,7 @@ private:
     bool stop;
 
     /** The number of handle references. */
-    int references;
+    int32 references;
 
     /** This flag is set to true when the semaphore is closed.
      * We need this because when we use shared semaphores (created with
@@ -308,8 +308,7 @@ public:
          * @param[out] error is the error type.
          * @return the result of PrivateEventSemStruct::Wait.
          */
-        static inline bool Wait(const HANDLE const &semH, TimeoutType msecTimeout,
-        Error &error) {
+        static inline bool Wait(const HANDLE const &semH, TimeoutType msecTimeout, Error &error) {
             if (semH == (HANDLE) NULL) {
                 return false;
             }
@@ -350,8 +349,7 @@ public:
          * @param[out] error is the error type.
          * @return the result of PrivateEventSemStruct::Wait.
          */
-        static inline bool ResetWait(const HANDLE const &semH, TimeoutType msecTimeout,
-        Error &error) {
+        static inline bool ResetWait(const HANDLE const &semH, TimeoutType msecTimeout, Error &error) {
             Reset(semH);
             return Wait(semH, msecTimeout, error);
         }
