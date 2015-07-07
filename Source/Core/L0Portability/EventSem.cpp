@@ -36,55 +36,20 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+EventSem::EventSem() :
+        EventSemOS::EventSemOS() {
 
-EventSem::EventSem() {
-    semH = static_cast<HANDLE>(NULL);
-}
-
-EventSem::EventSem(const EventSem &source) {
-    const HANDLE h = source.GetHandle();
-    EventSemOS::DuplicateHandle(h);
-    semH = h;
 }
 
 EventSem::~EventSem() {
-    try {
-        /*lint -e(534) , ignoring return value of function*/
-        Close();
-    }
-    catch(...){
 
-    }
-    semH = static_cast<HANDLE>(NULL);
 }
 
-bool EventSem::Create() {
-    return EventSemOS::Create(semH);
+bool EventSem::Wait(FlagsType &error, const TimeoutType &timeout) {
+    return EventSemOS::Wait(error, timeout);
 }
 
-bool EventSem::Close(void) {
-    bool ret = EventSemOS::Close(semH);
-    return ret;
+bool EventSem::ResetWait(FlagsType &error,const TimeoutType &timeout) {
+    return EventSemOS::ResetWait(error, timeout);
 }
 
-bool EventSem::Wait(const TimeoutType &msecTimeout,
-                    Error &error) const {
-    return EventSemOS::Wait(semH, msecTimeout, error);
-}
-
-bool EventSem::ResetWait(const TimeoutType &msecTimeout,
-                         Error &error) const {
-    return EventSemOS::ResetWait(semH, msecTimeout, error);
-}
-
-bool EventSem::Post() const {
-    return EventSemOS::Post(semH);
-}
-
-bool EventSem::Reset() const {
-    return EventSemOS::Reset(semH);
-}
-
-const HANDLE EventSem::GetHandle() const {
-    return semH;
-}
