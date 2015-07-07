@@ -57,7 +57,7 @@ public:
 
     /**
      * @brief Tests the overloaded assignment operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if a local test ProcessorType variable can be successfully assigned to two different ProcessorType values.
      */
     bool TestAssignmentOperator();
 
