@@ -41,7 +41,7 @@
 /*---------------------------------------------------------------------------*/
 
 //Open the console with in the mode passed by argument
-bool BasicConsoleTest::TestOpen(Flags openingMode) {
+bool BasicConsoleTest::TestOpen(FlagsType openingMode) {
 
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
@@ -332,7 +332,7 @@ bool BasicConsoleTest::TestSetMode() {
     myConsole.Open(IBasicConsole::Mode::Default);
     bool ok = true;
 
-    Flags mode = myConsole.GetOpeningMode();
+    FlagsType mode = myConsole.GetOpeningMode();
 
     ok = (mode == IBasicConsole::Mode::PerformCharacterInput);
     myConsole.Close();

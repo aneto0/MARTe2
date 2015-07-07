@@ -71,7 +71,7 @@ bool MutexSem::Close() {
     return MutexSemOS::Close(semH);
 }
 
-bool MutexSem::Lock(const TimeoutType &msecTimeout, Error &error) const {
+bool MutexSem::Lock(FlagsType &error, const TimeoutType &msecTimeout) const {
     return MutexSemOS::Lock(semH, msecTimeout, error);
 }
 

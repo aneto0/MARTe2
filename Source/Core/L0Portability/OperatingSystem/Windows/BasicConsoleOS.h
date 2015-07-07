@@ -89,7 +89,7 @@ public:
 
         //set the buffer size
         if (!SetConsoleScreenBufferSize(con.outputConsoleHandle, stage1BufferSize)) {
-            // CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:SetSize:failed SetConsoleScreenBufferSize ");
+            // CStaticAssertPlatformErrorCondition(Errors::OSError,"BasicConsole:SetSize:failed SetConsoleScreenBufferSize ");
             return false;
         }
 
@@ -116,7 +116,7 @@ public:
 
         //set the new windows size
         if (!SetConsoleWindowInfo(con.outputConsoleHandle, TRUE, &srect)) {
-            //  CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:SetSize:failed SetConsoleWindowInfo ");
+            //  CStaticAssertPlatformErrorCondition(Errors::OSError,"BasicConsole:SetSize:failed SetConsoleWindowInfo ");
             return false;
         }
 
@@ -336,7 +336,7 @@ public:
         srect.Bottom = srect.Top + numberOfRows - 1;
 
         if (!SetConsoleWindowInfo(con.outputConsoleHandle, TRUE, &srect)) {
-            //  CStaticPlatformErrorCondition(OSError,"BasicConsole:SetWindowSize:failed SetConsoleWindowInfo ");
+            //  CStaticPlatformErrorCondition(Errors::OSError,"BasicConsole:SetWindowSize:failed SetConsoleWindowInfo ");
             return false;
         }
 
@@ -375,7 +375,7 @@ public:
                         int &numberOfRows) {
         CONSOLE_SCREEN_BUFFER_INFO info;
         if (GetConsoleScreenBufferInfo(con.outputConsoleHandle, &info) == FALSE) {
-            //  CStaticAssertPlatformErrorCondition(OSError,"BasicConsole:GetSize:failed GetConsoleScreenBufferInfo ");
+            //  CStaticAssertPlatformErrorCondition(Errors::OSError,"BasicConsole:GetSize:failed GetConsoleScreenBufferInfo ");
             return false;
         }
         numberOfColumns = info.dwSize.X;

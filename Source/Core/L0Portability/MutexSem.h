@@ -93,7 +93,7 @@ public:
      * @param[out] error specifies the error type in case of errors (timeout fail or other error types).
      * @return false if something in the lock system level function goes wrong.
      */
-    bool Lock(const TimeoutType &msecTimeout = TTInfiniteWait, Error &error=Global::errorType) const;
+    bool Lock(FlagsType &error, const TimeoutType &msecTimeout = TTInfiniteWait) const;
 
     /**
      * @brief Unlock the semaphore.
@@ -107,7 +107,7 @@ public:
      * @param[out] error specifies the error type in case of errors (timeout fail or other error types).
      * @return true if successful, false otherwise.
      */
-    inline bool FastLock(const TimeoutType &msecTimeout = TTInfiniteWait, Error &error=Global::errorType) const;
+    inline bool FastLock(FlagsType &error, const TimeoutType &msecTimeout = TTInfiniteWait) const;
 
     /**
      * @brief Fast unlock.
@@ -149,7 +149,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-bool MutexSem::FastLock(const TimeoutType &msecTimeout, Error &error) const {
+bool MutexSem::FastLock(FlagsType &error,const TimeoutType &msecTimeout) const {
     return MutexSemOS::FastLock(semH, msecTimeout, error);
 }
 

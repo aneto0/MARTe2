@@ -31,6 +31,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 OBJSX=  BasicConsoleOS.x \
         SleepOS.x \
         HighResolutionTimerCalibratorOS.x \
+        EventSemOS.x \
         StringHelperOS.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

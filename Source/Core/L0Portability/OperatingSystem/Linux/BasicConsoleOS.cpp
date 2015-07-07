@@ -57,7 +57,7 @@ BasicConsoleOS::~BasicConsoleOS() {
     }
 }
 
-bool BasicConsoleOS::Open(const Flags &mode) {
+bool BasicConsoleOS::Open(const FlagsType &mode) {
     bool ok = true;
     this->openingMode = mode;
     //In this case read immediately from the console without wait.
@@ -77,7 +77,7 @@ bool BasicConsoleOS::Open(const Flags &mode) {
     return ok;
 }
 
-Flags BasicConsoleOS::GetOpeningMode() const {
+FlagsType BasicConsoleOS::GetOpeningMode() const {
     return openingMode;
 }
 

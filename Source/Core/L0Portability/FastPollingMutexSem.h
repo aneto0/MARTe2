@@ -22,7 +22,7 @@
  */
 
 #ifndef FASTPOLLINGMUTEXSEM_H_
-#define 		FASTPOLLINGMUTEXSEM_H_
+#define FASTPOLLINGMUTEXSEM_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,6 +37,8 @@
 #include "HighResolutionTimer.h"
 #include "TimeoutType.h"
 #include "Sleep.h"
+#include "FlagsType.h"
+#include "Errors.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -71,13 +73,12 @@ public:
 
     /**
      * @brief If the semaphore is locked tries to lock until the timeout is expired.
-     * @param[in] msecTimeout is the desired timeout.
      * @param[out] error is the error type in return.
+     * @param[in] msecTimeout is the desired timeout.
      * @return true if the thread locks the semaphore before the timeout expired,
      * false otherwise.
      */
-    inline bool FastLock(TimeoutType msecTimeout = TTInfiniteWait,
-                         Error &error = Global::errorType);
+    inline bool FastLock(FlagsType &error, const TimeoutType &msecTimeout = TTInfiniteWait);
 
     /**
      * @brief Tries to lock and in case of failure returns immediately.
@@ -120,15 +121,14 @@ bool FastPollingMutexSem::Locked() const{
     return flag == 1;
 }
 
-bool FastPollingMutexSem::FastLock(TimeoutType msecTimeout,
-                                   Error &error) {
+bool FastPollingMutexSem::FastLock(FlagsType &error, const TimeoutType &msecTimeout) {
     int64 ticksStop = msecTimeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
     while (!Atomic::TestAndSet((int32 *) &flag)) {
         if (msecTimeout != TTInfiniteWait) {
             int64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
-                error = Timeout;
+                error = Errors::Timeout;
                 return false;
             }
         }

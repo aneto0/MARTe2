@@ -142,7 +142,7 @@ public:
     /**
      * @brief Tests the MutexSem::Lock function and checks that the error code is correctly set.
      *
-     * @return true if the error code is set to Debug when the call succeeds and to timeout when
+     * @return true if the error code is set to Errors::Information when the call succeeds and to timeout when
      * there is a timeout in the Lock.
      */
     bool TestLockErrorCode();
@@ -150,7 +150,7 @@ public:
     /**
      * @brief Tests the MutexSem::FastLock function and checks that the error code is correctly set.
      *
-     * @return true if the error code is set to Debug when the call succeeds and to timeout when
+     * @return true if the error code is set to Errors::Information when the call succeeds and to timeout when
      * there is a timeout in the Lock.
      */
     bool TestFastLockErrorCode();

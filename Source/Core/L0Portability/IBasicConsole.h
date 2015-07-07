@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "TimeoutType.h"
+#include "FlagsType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -59,30 +60,30 @@ public:
     }
 
     /**
-     * Flags determining the console operating modes.\n
+     * FlagsType determining the console operating modes.\n
      * These are usually set when the console is constructed.
      */
     struct Mode {
         /**
          * Default mode.
          */
-        static const Flags Default;
+        static const FlagsType Default;
         /**
          * WIN32 only: operates on a display buffer different from the current one.
          */
-        static const Flags CreateNewBuffer;
+        static const FlagsType CreateNewBuffer;
         /**
          * Does not wait for a newline when the user enters input.
          */
-        static const Flags PerformCharacterInput;
+        static const FlagsType PerformCharacterInput;
         /**
          * CTRL-C does not raise an exception.
          */
-        static const Flags DisableControlBreak;
+        static const FlagsType DisableControlBreak;
         /**
          * Enables paging.
          */
-        static const Flags EnablePaging;
+        static const FlagsType EnablePaging;
     };
 
     /**
@@ -93,7 +94,7 @@ public:
      * @pre Even if the behaviour will be operating system dependent, it is advisable to call
      * SetSize(numberOfColumns, numberOfRows) before opening the console.
      */
-    virtual bool Open(const Flags &mode) = 0;
+    virtual bool Open(const FlagsType &mode) = 0;
 
     /**
      * @brief Retrieves the mode that was used to open the console
@@ -101,7 +102,7 @@ public:
      * @pre the behaviour will be unspecified and operating system dependent if this method
      * is called on a console that was never open.
      */
-    virtual Flags GetOpeningMode() const = 0;
+    virtual FlagsType GetOpeningMode() const = 0;
 
     /**
      * @brief Closes the console.

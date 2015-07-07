@@ -34,11 +34,11 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-const Flags IBasicConsole::Mode::Default(0u);
-const Flags IBasicConsole::Mode::CreateNewBuffer(1u);
-const Flags IBasicConsole::Mode::PerformCharacterInput(2u);
-const Flags IBasicConsole::Mode::DisableControlBreak(4u);
-const Flags IBasicConsole::Mode::EnablePaging(8u);
+const FlagsType IBasicConsole::Mode::Default(0u);
+const FlagsType IBasicConsole::Mode::CreateNewBuffer(1u);
+const FlagsType IBasicConsole::Mode::PerformCharacterInput(2u);
+const FlagsType IBasicConsole::Mode::DisableControlBreak(4u);
+const FlagsType IBasicConsole::Mode::EnablePaging(8u);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -116,7 +116,7 @@ bool BasicConsole::Write(const char8 * const buffer, uint32& size, const Timeout
     uint32 numberOfColumns = 0u;
     bool ok = GetSize(numberOfColumns, numberOfRows);
     if ((size > 0u) && (buffer != NULL) && (numberOfColumns > 0u) && (numberOfRows > 0u)) {
-        Flags mode = GetOpeningMode();
+        FlagsType mode = GetOpeningMode();
         if ((mode & IBasicConsole::Mode::EnablePaging) != 0u) {
             ok = PagedWrite(buffer, size, timeout);
         }

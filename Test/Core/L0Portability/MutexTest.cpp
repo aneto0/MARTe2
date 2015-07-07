@@ -96,9 +96,10 @@ bool MutexTest::GenericMutexTestCaller(int32 nOfThreads,
 }
 
 void TestLockCallback(MutexTest &mt) {
-    mt.synchSem.Wait();
+    FlagsType error;
+    mt.synchSem.Wait(error);
     while (!mt.stop) {
-        mt.failed |= !mt.testMutex.Lock(mt.testMutexTimeout);
+        mt.failed |= !mt.testMutex.Lock(error, mt.testMutexTimeout);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -122,10 +123,11 @@ bool MutexTest::TestLock(int32 nOfThreads,
 }
 
 void TestUnLockCallback(MutexTest &mt) {
-    mt.synchSem.Wait();
+    FlagsType error;
+    mt.synchSem.Wait(error);
 
     while (!mt.stop) {
-        mt.testMutex.Lock(mt.testMutexTimeout);
+        mt.testMutex.Lock(error, mt.testMutexTimeout);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -149,9 +151,10 @@ bool MutexTest::TestUnLock(int32 nOfThreads,
 }
 
 void TestFastLockCallback(MutexTest &mt) {
-    mt.synchSem.Wait();
+    FlagsType error;
+    mt.synchSem.Wait(error);
     while (!mt.stop) {
-        mt.failed |= !mt.testMutex.FastLock(mt.testMutexTimeout);
+        mt.failed |= !mt.testMutex.FastLock(error, mt.testMutexTimeout);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -175,10 +178,11 @@ bool MutexTest::TestFastLock(int32 nOfThreads,
 }
 
 void TestFastUnLockCallback(MutexTest &mt) {
-    mt.synchSem.Wait();
+    FlagsType error;
+    mt.synchSem.Wait(error);
 
     while (!mt.stop) {
-        mt.testMutex.FastLock(mt.testMutexTimeout);
+        mt.testMutex.FastLock(error, mt.testMutexTimeout);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -202,7 +206,8 @@ bool MutexTest::TestFastUnLock(int32 nOfThreads,
 }
 
 void TestFastTryLockCallback(MutexTest &mt) {
-    mt.synchSem.Wait();
+    FlagsType error;
+    mt.synchSem.Wait(error);
     while (!mt.stop) {
         if (mt.testMutex.FastTryLock()) {
             int32 state = mt.sharedVariable;
@@ -235,39 +240,38 @@ bool MutexTest::TestFastTryLock(int32 nOfThreads) {
 
 void TestLockErrorCodeCallback(MutexTest &mt) {
     mt.failed = false;
-    Error returnError;
+    FlagsType returnError;
     //This should fail because it was already locked in the TestLockErrorCode
-    bool ret = mt.testMutex.Lock(mt.testMutexTimeout, returnError);
+    bool ret = mt.testMutex.Lock(returnError, mt.testMutexTimeout);
     if (!ret) {
         mt.failed = true;
     }
-    if (returnError != Timeout) {
+    if (returnError != Errors::Timeout) {
         mt.failed = true;
     }
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
 void TestFastLockErrorCodeCallback(MutexTest &mt) {
+    FlagsType returnError;
     mt.failed = false;
-    Error returnError;
     //This should fail because it was already locked in the TestFastLockErrorCode
-    bool ret = mt.testMutex.FastLock(mt.testMutexTimeout, returnError);
+    bool ret = mt.testMutex.FastLock(returnError, mt.testMutexTimeout);
     if (!ret) {
         mt.failed = true;
     }
-    if (returnError != Timeout) {
+    if (returnError != Errors::Timeout) {
         mt.failed = true;
     }
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
 bool MutexTest::TestLockErrorCode() {
-
-    Error returnError;
+    FlagsType returnError;
     bool test = true;
 
-    test = testMutex.Lock(TTInfiniteWait, returnError);
-    if (returnError != Debug) {
+    test = testMutex.Lock(returnError,TTInfiniteWait);
+    if (returnError != Errors::Information) {
         test = false;
     }
 
@@ -280,12 +284,11 @@ bool MutexTest::TestLockErrorCode() {
 }
 
 bool MutexTest::TestFastLockErrorCode() {
-
-    Error returnError;
+    FlagsType returnError;
     bool test = true;
 
-    test = testMutex.FastLock(TTInfiniteWait, returnError);
-    if (returnError != Debug) {
+    test = testMutex.FastLock(returnError, TTInfiniteWait);
+    if (returnError != Errors::Information) {
         test = false;
     }
 
@@ -321,8 +324,9 @@ bool MutexTest::TestIsRecursive() {
 }
 
 void TestRecursiveCallback(MutexTest &mt) {
-    mt.failed = mt.testMutex.Lock();
-    mt.failed = mt.testMutex.Lock();
+    FlagsType error;
+    mt.failed = mt.testMutex.Lock(error);
+    mt.failed = mt.testMutex.Lock(error);
     mt.testMutex.UnLock();
     mt.testMutex.UnLock();
     Atomic::Decrement(&mt.nOfExecutingThreads);
@@ -362,6 +366,7 @@ bool MutexTest::TestRecursive(bool recursive) {
 }
 
 bool MutexTest::TestCopyConstructor() {
+    FlagsType error;
     bool test = true;
     test = testMutex.Create(false, false);
     MutexSem copyTestMutex(testMutex);
@@ -370,7 +375,7 @@ bool MutexTest::TestCopyConstructor() {
         test = false;
     }
 
-    test &= testMutex.Lock();
+    test &= testMutex.Lock(error);
     test &= copyTestMutex.UnLock();
 
     return test;

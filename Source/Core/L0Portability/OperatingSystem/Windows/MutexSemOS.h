@@ -89,10 +89,10 @@ public:
      */
     static inline bool Lock(HANDLE &semH,
     TimeoutType msecTimeout,
-    Error &error) {
+    FlagsType &error) {
         DWORD ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
         if (ret == WAIT_FAILED) {
-            error = OSError;
+            error = Errors::OSError;
             return false;
         }
         if (ret == WAIT_Timeout) {
@@ -123,10 +123,10 @@ public:
      */
     static inline bool FastLock(HANDLE &semH,
     TimeoutType msecTimeout,
-    Error &error) {
+    FlagsType &error) {
         DWORD ret = WaitForSingleObject(semH, msecTimeout.msecTimeout);
         if (ret == WAIT_FAILED) {
-            error = OSError;
+            error = Errors::OSError;
             return false;
         }
         if (ret == WAIT_Timeout) {

@@ -71,12 +71,12 @@ public:
      * @copydetails IBasicConsole::Open
      * @pre In Linux setting the size before opening the console is required.
      */
-    virtual bool Open(const Flags &mode);
+    virtual bool Open(const FlagsType &mode);
 
     /**
      * @copydetails IBasicConsole::GetOpeningMode
      */
-    virtual Flags GetOpeningMode() const;
+    virtual FlagsType GetOpeningMode() const;
 
     /**
      * @copydetails IBasicConsole::Close
@@ -255,7 +255,7 @@ private:
     /**
      * Flag which describes the console status.
      */
-    Flags openingMode;
+    FlagsType openingMode;
 
     /**
      * The number of columns currently set.
