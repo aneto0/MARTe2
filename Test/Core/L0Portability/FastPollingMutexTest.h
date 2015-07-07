@@ -111,7 +111,7 @@ public:
     /**
      * @brief Tests the FastPollingMutexSem::Lock function and checks that the error code is correctly set.
      *
-     * @return true if the error code is set to Debug when the call succeeds and to Timeout when
+     * @return true if the error code is set to Errors::Information when the call succeeds and to timeout when
      * there is a timeout in the Lock.
      */
     bool TestFastLockErrorCode();
@@ -139,7 +139,7 @@ private:
     /** Semaphore which is tested by the unit testing functions */
     FastPollingMutexSem testMutex;
 
-    /** Timeout to be used for the locking test*/
+    /** timeout to be used for the locking test*/
     TimeoutType testMutexTimeout;
 
     /** Shared variable that is protected by the unit testing functions */

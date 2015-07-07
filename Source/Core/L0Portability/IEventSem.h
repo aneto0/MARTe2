@@ -1,8 +1,8 @@
 /**
- * @file EventSem.h
+ * @file IEventSem.h
  * @brief Header file for class EventSem
- * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @date 06/07/2015
+ * @author André Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class EventSem
+ * @details This header file contains the declaration of the class IEventSem
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef EVENTSEM_H_
-#define EVENTSEM_H_
+#ifndef IEVENTSEM_H_
+#define IEVENTSEM_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,10 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
-#include "Errors.h"
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,EventSemOS.h)
-
+#include "TimeoutType.h"
+#include "FlagsType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -55,30 +53,67 @@
  * functions to implement this kind of semaphore.
  */
 
-class EventSem : public EventSemOS {
+class IEventSem {
 public:
     /**
-     * No operation.
+     * @brief Constructor.
      */
-    EventSem();
+    IEventSem() {
+    }
 
     /**
-     * No operation.
+     * @brief Two semaphores that share the same low-level semaphore
+     * (i.e. that share the same handle).
+     * @param source the semaphore with the original and valid handle.
      */
-    virtual ~EventSem();
+    IEventSem(const IEventSem &source) {
+    }
 
     /**
-     * @copydetails IEventSem::Wait
-     * @details Provides default parameter to wait with an infinite timeout.
+     * @brief Destructor.
      */
-    bool Wait(FlagsType &error, const TimeoutType &timeout = TTInfiniteWait);
+    virtual ~IEventSem(){
+    }
 
     /**
-     * @copydetails IEventSem::ResetWait
-     * @details Provides default parameter to reset and wait with an infinite timeout.
+     *  @brief Creates the semaphore.
+     *  @return true if the semaphore was successfully created and is ready to be used.
      */
-    bool ResetWait(FlagsType &error, const TimeoutType &timeout = TTInfiniteWait);
+    virtual bool Create() = 0;
 
+    /**
+     * @brief Closes the semaphore.
+     * @return true if the system level function returns without errors.
+     */
+    virtual bool Close() = 0;
+
+    /**
+     * @brief Wait for an event until the timeout expire or a post condition.
+     * @param[out] error is the error type in return.
+     * @param[in] msecTimeout is the desired timeout.
+     * @return true if the system level function returns without errors.
+     */
+    virtual bool Wait(FlagsType &error, const TimeoutType &msecTimeout) = 0;
+
+    /**
+     * @brief Resets the semaphore and then waits.
+     * @param[out] error is the error type in return.
+     * @param[in] msecTimeout is the desired timeout.
+     * @return true if both system level Reset and Wait functions return true.
+     */
+    virtual bool ResetWait(FlagsType &error, const TimeoutType &msecTimeout) = 0;
+
+    /**
+     * @brief Unlocks the semaphore.
+     * @return true if the system level function returns without errors.
+     */
+    virtual bool Post() = 0;
+
+    /**
+     * @brief Reset the semaphore to its unposted state.
+     * @return true if the semaphore state is resetted correctly.
+     */
+    virtual bool Reset() = 0;
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

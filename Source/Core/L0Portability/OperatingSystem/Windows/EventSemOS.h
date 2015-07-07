@@ -86,16 +86,16 @@ public:
      */
     static inline bool Wait(HANDLE &semH,
     TimeoutType msecTimeout,
-    Error &error) {
+    FlagsType &error) {
         int ret;
 
         ret = WaitForSingleObject((HEV) semH, msecTimeout.msecTimeout);
         if (ret == (int) WAIT_FAILED) {
-            error = OSError;
+            error = Errors::OSError;
             return false;
         }
-        if (ret == (int) WAIT_TIMEOUT) {
-            error = Timeout;
+        if (ret == (int) WAIT_Timeout) {
+            error = timeout;
             return false;
         }
         return true;
@@ -139,7 +139,7 @@ public:
      */
     static inline bool ResetWait(HANDLE &semH,
     TimeoutType msecTimeout,
-    Error &error) {
+    FlagsType &error) {
         Reset(semH);
         return Wait(semH, msecTimeout, error);
     }

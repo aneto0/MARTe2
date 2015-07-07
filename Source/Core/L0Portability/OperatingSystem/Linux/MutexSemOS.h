@@ -35,6 +35,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "../../TimeoutType.h"
+#include "../../Errors.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -120,18 +121,18 @@ private:
      * @param[out] error is the error type.
      * @return false if lock fails also because the expire of the timeout, true otherwise.
      */
-    bool Lock(TimeoutType msecTimeout, Error &error) {
+    bool Lock(TimeoutType msecTimeout, FlagsType &error) {
         if (closed) {
             return false;
         }
         if (msecTimeout == TTInfiniteWait) {
             if (pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL) != 0) {
-                error = OSError;
+                error = Errors::OSError;
                 return false;
             }
 
             if (pthread_mutex_lock(&mutexHandle) != 0) {
-                error = OSError;
+                error = Errors::OSError;
                 return false;
             }
         }
@@ -139,7 +140,7 @@ private:
             struct timespec timesValues;
             timeb tb;
             ftime(&tb);
-            float64 sec = ((msecTimeout.msecTimeout + tb.millitm) * 1e-3
+            float64 sec = ((msecTimeout.GetTimeoutMSec() + tb.millitm) * 1e-3
                     + tb.time);
             float64 roundValue = floor(sec);
             timesValues.tv_sec = (int) roundValue;
@@ -147,7 +148,7 @@ private:
             int err = 0;
             if ((err = pthread_mutex_timedlock(&mutexHandle, &timesValues))
                     != 0) {
-                error = Timeout;
+                error = Errors::Timeout;
                 return false;
             }
         }
@@ -252,12 +253,12 @@ public:
                 return false;
             }
 
-            Error error;
+            FlagsType error;
             if (locked == true) {
                 ((PrivateMutexSemStruct *) semH)->Lock(TTInfiniteWait, error);
             }
 
-            return error == Debug;
+            return error == Errors::Information;
         }
 
         /**
@@ -288,7 +289,7 @@ public:
          * @param[out] error is the error type.
          * @return the result of PrivateMutexSemStruct::Lock
          */
-        static inline bool Lock(const HANDLE const &semH, TimeoutType msecTimeout, Error &error) {
+        static inline bool Lock(const HANDLE const &semH, TimeoutType msecTimeout, FlagsType &error) {
             if (semH == (HANDLE) NULL) {
                 return false;
             }
@@ -312,7 +313,7 @@ public:
          * @see MutexSem::Lock
          * @see MutexSemOSLock.
          */
-        static inline bool FastLock(const HANDLE const &semH, TimeoutType msecTimeout, Error &error) {
+        static inline bool FastLock(const HANDLE const &semH, TimeoutType msecTimeout, FlagsType &error) {
             if (semH == (HANDLE) NULL) {
                 return false;
             }

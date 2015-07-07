@@ -54,14 +54,9 @@ class BasicConsole: public BasicConsoleOS {
 
 public:
     /**
-     * @brief Sets the size and calls the open method.
-     * @details Sets the console size with the appropriate number of rows and columns.
-     * If this operation is successful it call the Open method.
-     * @param[in] openingMode the mode
-     * @param[in] numberOfColumns is the number of columns for the new console.
-     * @param[in] numberOfRows is the number of rows for the new console.
+     * @brief Default constructor.
      */
-    BasicConsole(Flags openingMode, uint32 numberOfColumns = 0, uint32 numberOfRows = 0);
+    BasicConsole();
 
     /**
      * @brief Default destructor.
@@ -80,7 +75,14 @@ public:
      * @return true if all the BasicConsoleOS::Write calls are successful.
      * @pre the console was successfully opened and GetSize > 0 for both the rows and columns.
      */
-    bool Write(const void* buffer, uint32& size, const TimeoutType &timeout = TTInfiniteWait);
+    /*lint -e{1735} the default parameter is only specified at this level. BasicConsole is not expected to be sub-classed.*/
+    virtual bool Write(const char8* const buffer, uint32& size, const TimeoutType &timeout = TTInfiniteWait);
+
+    /**
+     * @copydetails IBasicConsole::Read
+     */
+    /*lint -e{1735} the default parameter is only specified at this level. BasicConsole is not expected to be sub-classed.*/
+    virtual bool Read(char8 * const buffer, uint32 & size, const TimeoutType &timeout = TTInfiniteWait);
 private:
     /**
      * @brief Portable paged write implementation.
@@ -93,7 +95,7 @@ private:
      * size become the number of bytes written.
      * @param[in] msecTimeout is the timeout.
      */
-    bool PagedWrite(const void* buffer, uint32 &size, const TimeoutType &timeout);
+    bool PagedWrite(const char8* const buffer, const uint32 &size, const TimeoutType &timeout);
 
     /** How long since last paging. */
     int64 lastPagingCounter;

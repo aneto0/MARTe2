@@ -40,7 +40,7 @@
 /**
  * @brief This class implements useful functions for high resolution timing using the cpu clock.
  *
- * @details These functions are used a lot in each functions that need timeouts implementation like for examples semaphores.\n
+ * @details These functions are used a lot in each functions that need Timeouts implementation like for examples semaphores.\n
  * Most of the implementation is delegated to HighResolutionTimerA.h which use very low level code (assembly)
  * for the Counter functions, while the Frequency and Period functions are delegated to HighResolutionTimerCalibratorOs.h
  * reading on a system file that returns the current cpu frequency.

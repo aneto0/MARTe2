@@ -50,7 +50,7 @@ TID ThreadsBeginThread(ThreadFunctionType function,
                        uint32 stacksize = THREADS_DEFAULT_STACKSIZE,
                        const char8 *name = NULL,
                        uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
-                       ProcessorType runOnCPUs = PTUndefinedCPUs);
+                       ProcessorType runOnCPUs = ProcessorType::UndefinedCPUs);
 
 /**
  * @see Threads::EndThread.
@@ -231,7 +231,7 @@ public:
                            uint32 stacksize = THREADS_DEFAULT_STACKSIZE,
                            const char8 *name = NULL,
                            uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
-                           ProcessorType runOnCPUs = PTUndefinedCPUs);
+                           ProcessorType runOnCPUs = ProcessorType::UndefinedCPUs);
 
     /**
      * @brief Gets the current thread id;

@@ -38,11 +38,13 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-BasicConsoleOS::BasicConsoleOS() {
-    this->openingMode = IBasicConsole::Mode::Default;
-    this->columnCount = 0u;
-    this->nOfColumns = 0u;
-    this->nOfRows = 0u;
+BasicConsoleOS::BasicConsoleOS() : IBasicConsole::IBasicConsole() {
+    columnCount = 0u;
+    nOfColumns = 0u;
+    nOfRows = 0u;
+    memset(&inputConsoleHandle, 0, sizeof(ConsoleHandle));
+    memset(&outputConsoleHandle, 0, sizeof(ConsoleHandle));
+    memset(&initialInfo, 0, sizeof(ConsoleHandle));
 }
 
 BasicConsoleOS::~BasicConsoleOS() {
@@ -55,7 +57,7 @@ BasicConsoleOS::~BasicConsoleOS() {
     }
 }
 
-bool BasicConsoleOS::Open(const Flags &mode) {
+bool BasicConsoleOS::Open(const FlagsType &mode) {
     bool ok = true;
     this->openingMode = mode;
     //In this case read immediately from the console without wait.
@@ -75,7 +77,7 @@ bool BasicConsoleOS::Open(const Flags &mode) {
     return ok;
 }
 
-Flags BasicConsoleOS::GetOpeningMode() const {
+FlagsType BasicConsoleOS::GetOpeningMode() const {
     return openingMode;
 }
 
@@ -84,18 +86,15 @@ bool BasicConsoleOS::Close() {
     bool ok = true;
     if (charactedInputSelected) {
         //reset the original console modes
-        // struct termio modifiedConsoleModes;
-        ok = (ioctl(fileno(stdin), static_cast<osulong>(TCGETA), &outputConsoleHandle) >= 0);
-        if (ok) {
-            UnSetImmediateRead();
-            ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &outputConsoleHandle) >= 0);
-        }
+        UnSetImmediateRead();
+        ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &initialInfo) >= 0);
     }
     return ok;
 }
 
-bool BasicConsoleOS::Write(const void *buffer, uint32 & size, const TimeoutType &timeout) {
-    const char8 *bufferString = static_cast<const char8 *>(buffer);
+/*lint -e{715} timeout is not used...*/
+bool BasicConsoleOS::Write(const char8* const buffer, uint32 &size, const TimeoutType &timeout) {
+    const char8 *bufferString = buffer;
     const char8 newLine = '\n';
 
     ssize_t writtenBytes = 0;
@@ -139,11 +138,12 @@ bool BasicConsoleOS::Write(const void *buffer, uint32 & size, const TimeoutType 
     return (size > 0u);
 }
 
-bool BasicConsoleOS::Read(void *buffer, uint32 & size, const TimeoutType &timeout) {
+/*lint -e{715} timeout is not used...*/
+bool BasicConsoleOS::Read(char8 * const buffer, uint32 & size, const TimeoutType &timeout) {
     bool ok = false;
     if ((buffer != NULL) && (size > 0u)) {
         if ((openingMode & IBasicConsole::Mode::PerformCharacterInput) != 0u) {
-            char8 *readChar = static_cast<char8 *>(buffer);
+            char8 *readChar = buffer;
             *readChar = static_cast<char8>(getchar());
             size = 1u;
         }
@@ -202,15 +202,15 @@ bool BasicConsoleOS::Show() {
     return true;
 }
 
-bool BasicConsoleOS::SetColour(Colours foregroundColour, Colours backgroundColour) {
+bool BasicConsoleOS::SetColour(const Colours &foregroundColour, const Colours &backgroundColour) {
     return true;
 }
 
-bool BasicConsoleOS::SetTitleBar(const char8 *title) {
+bool BasicConsoleOS::SetTitleBar(const char8 * const title) {
     return true;
 }
 
-bool BasicConsoleOS::GetTitleBar(char8 *title) const {
+bool BasicConsoleOS::GetTitleBar(char8 * const title) const {
     return true;
 }
 

@@ -220,7 +220,8 @@ ThreadAllocationStatistics* MemoryStatisticsDatabase::PrivateFind(TID tid) {
 }
 
 ThreadAllocationStatistics* MemoryStatisticsDatabase::Find(TID tid) {
-    internalMutex.FastLock();
+    FlagsType error;
+    internalMutex.FastLock(error);
     ThreadAllocationStatistics *ret = PrivateFind(tid);
     internalMutex.FastUnLock();
     return ret;
@@ -228,8 +229,8 @@ ThreadAllocationStatistics* MemoryStatisticsDatabase::Find(TID tid) {
 
 bool MemoryStatisticsDatabase::AddMemoryChunk(TID tid,
                                               uint32 memSize) {
-
-    internalMutex.FastLock();
+    FlagsType error;
+    internalMutex.FastLock(error);
 
     //if it is not in the db try to add it
     ThreadAllocationStatistics *ret = PrivateFind(tid);
@@ -257,7 +258,8 @@ bool MemoryStatisticsDatabase::AddMemoryChunk(TID tid,
 
 bool MemoryStatisticsDatabase::FreeMemoryChunk(TID tid,
                                                uint32 memSize) {
-    internalMutex.FastLock();
+    FlagsType error;
+    internalMutex.FastLock(error);
 
     ThreadAllocationStatistics *ret = PrivateFind(tid);
     if (ret == NULL) {
@@ -282,7 +284,8 @@ bool MemoryStatisticsDatabase::FreeMemoryChunk(TID tid,
 }
 
 void MemoryStatisticsDatabase::Clear() {
-    internalMutex.FastLock();
+    FlagsType error;
+    internalMutex.FastLock(error);
     for (uint32 i = 0, p = 0; i < MAX_NO_OF_MEMORY_MONITORS && p < nOfElements; i++) {
         if (stackDatabase[i].IsEmpty()) {
             continue;
@@ -295,7 +298,8 @@ void MemoryStatisticsDatabase::Clear() {
 }
 
 int32 MemoryStatisticsDatabase::GetTotalUsedHeap() {
-    internalMutex.FastLock();
+    FlagsType error;
+    internalMutex.FastLock(error);
     int32 sum = 0;
     for (uint32 i = 0, p = 0; i < MAX_NO_OF_MEMORY_MONITORS && p < nOfElements; i++) {
         if (stackDatabase[i].IsEmpty()) {
@@ -309,7 +313,8 @@ int32 MemoryStatisticsDatabase::GetTotalUsedHeap() {
 }
 
 uint32 MemoryStatisticsDatabase::GetNOfElements() {
-    internalMutex.FastLock();
+    FlagsType error;
+    internalMutex.FastLock(error);
     uint32 ret = nOfElements;
     internalMutex.FastUnLock();
     return ret;

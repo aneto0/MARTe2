@@ -61,10 +61,10 @@ TEST(EventSemGTest,TestClose) {
     ASSERT_TRUE(eventSemTest.TestClose());
 }
 
-TEST(EventSemGTest,TestCopyConstructor) {
+/*TEST(EventSemGTest,TestCopyConstructor) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestCopyConstructor());
-}
+}*/
 
 TEST(EventSemGTest,TestWait) {
     EventSemTest eventSemTest;

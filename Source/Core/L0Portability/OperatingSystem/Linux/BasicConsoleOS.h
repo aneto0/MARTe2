@@ -71,12 +71,12 @@ public:
      * @copydetails IBasicConsole::Open
      * @pre In Linux setting the size before opening the console is required.
      */
-    virtual bool Open(const Flags &mode);
+    virtual bool Open(const FlagsType &mode);
 
     /**
      * @copydetails IBasicConsole::GetOpeningMode
      */
-    virtual Flags GetOpeningMode() const;
+    virtual FlagsType GetOpeningMode() const;
 
     /**
      * @copydetails IBasicConsole::Close
@@ -87,13 +87,13 @@ public:
      * @brief Writes to the STDOUT.
      * @copydetails BasicConsole::Write
      */
-    virtual bool Write(const void *buffer, uint32 & size, const TimeoutType &timeout = TTInfiniteWait);
+    virtual bool Write(const char8 * const buffer, uint32 & size, const TimeoutType &timeout);
 
     /**
      * @brief Reads from the STDIN.
      * @copydetails IBasicConsole::Read
      */
-    virtual bool Read(void *buffer, uint32 & size, const TimeoutType &timeout = TTInfiniteWait);
+    virtual bool Read(char8 * const  buffer, uint32 & size, const TimeoutType &timeout);
 
     /**
      * @copydetails IBasicConsole::SetSize.
@@ -154,21 +154,21 @@ public:
      * @warning Not Implemented.
      * @return true.
      */
-    virtual bool SetColour(Colours foregroundColour, Colours backgroundColour);
+    virtual bool SetColour(const Colours &foregroundColour, const Colours &backgroundColour);
 
     /**
      * @copydetails IBasicConsole::SetTitleBar.
      * @warning Not implemented.
      * @return true.
      */
-    virtual bool SetTitleBar(const char8 *title);
+    virtual bool SetTitleBar(const char8 * const title);
 
     /**
      * @copydetails IBasicConsole::GetTitleBar.
      * @warning Not implemented.
      * @return true.
      */
-    virtual bool GetTitleBar(char8 *title) const;
+    virtual bool GetTitleBar(char8 * const title) const;
 
     /**
      * @copydetails IBasicConsole::SetCursorPosition.
@@ -218,7 +218,7 @@ private:
     /**
      * Number of rows that will be cleared when BasicConsoleOSClear is called
      */
-    static const uint32 BASIC_CONSOLE_LINUX_CLEAR_ROWS = 40;
+    static const uint32 BASIC_CONSOLE_LINUX_CLEAR_ROWS = 40u;
 
     /**
      * @brief Read immediately.
@@ -245,7 +245,7 @@ private:
     /**
      * Initial settings of the console. The destructor will restores this initial configurations.
      */
-    ConsoleInfo initialInfo;
+    ConsoleHandle initialInfo;
 
     /**
      * The column counter keeps track of the column where the character was written to.
@@ -255,7 +255,7 @@ private:
     /**
      * Flag which describes the console status.
      */
-    Flags openingMode;
+    FlagsType openingMode;
 
     /**
      * The number of columns currently set.

@@ -74,9 +74,7 @@ bool FastPollingMutexTest::TestCreate(bool locked) {
     return test;
 }
 
-bool FastPollingMutexTest::GenericMutexTestCaller(
-        int32 nOfThreads, TimeoutType timeout,
-        ThreadFunctionType functionToTest) {
+bool FastPollingMutexTest::GenericMutexTestCaller(int32 nOfThreads, TimeoutType timeout, ThreadFunctionType functionToTest) {
     failed = false;
     stop = false;
     nOfExecutingThreads = 0;
@@ -98,9 +96,10 @@ bool FastPollingMutexTest::GenericMutexTestCaller(
 }
 
 void TestFastLockCallback(FastPollingMutexTest &mt) {
-    mt.synchSem.Wait();
+    FlagsType error;
+    mt.synchSem.Wait(error);
     while (!mt.stop) {
-        mt.failed |= !mt.testMutex.FastLock(mt.testMutexTimeout);
+        mt.failed |= !mt.testMutex.FastLock(error, mt.testMutexTimeout);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -119,15 +118,15 @@ void TestFastLockCallback(FastPollingMutexTest &mt) {
 }
 
 bool FastPollingMutexTest::TestFastLock(int32 nOfThreads, TimeoutType timeout) {
-    return GenericMutexTestCaller(nOfThreads, timeout,
-                                  (ThreadFunctionType) TestFastLockCallback);
+    return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastLockCallback);
 }
 
 void TestFastUnLockCallback(FastPollingMutexTest &mt) {
-    mt.synchSem.Wait();
+    FlagsType error;
+    mt.synchSem.Wait(error);
 
     while (!mt.stop) {
-        mt.testMutex.FastLock(mt.testMutexTimeout);
+        mt.testMutex.FastLock(error, mt.testMutexTimeout);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -143,14 +142,13 @@ void TestFastUnLockCallback(FastPollingMutexTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool FastPollingMutexTest::TestFastUnLock(int32 nOfThreads,
-                                                  TimeoutType timeout) {
-    return GenericMutexTestCaller(nOfThreads, timeout,
-                                  (ThreadFunctionType) TestFastUnLockCallback);
+bool FastPollingMutexTest::TestFastUnLock(int32 nOfThreads, TimeoutType timeout) {
+    return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastUnLockCallback);
 }
 
 void TestFastTryLockCallback(FastPollingMutexTest &mt) {
-    mt.synchSem.Wait();
+    FlagsType error;
+    mt.synchSem.Wait(error);
     while (!mt.stop) {
         if (mt.testMutex.FastTryLock()) {
             int32 state = mt.sharedVariable;
@@ -172,9 +170,7 @@ void TestFastTryLockCallback(FastPollingMutexTest &mt) {
 }
 
 bool FastPollingMutexTest::TestFastTryLock(int32 nOfThreads) {
-    bool test = GenericMutexTestCaller(
-            nOfThreads, TTInfiniteWait,
-            (ThreadFunctionType) TestFastTryLockCallback);
+    bool test = GenericMutexTestCaller(nOfThreads, TTInfiniteWait, (ThreadFunctionType) TestFastTryLockCallback);
     FastPollingMutexSem sem;
     test = sem.FastTryLock();
     test = !sem.FastTryLock();
@@ -184,25 +180,24 @@ bool FastPollingMutexTest::TestFastTryLock(int32 nOfThreads) {
 
 void TestFastLockErrorCodeCallback(FastPollingMutexTest &mt) {
     mt.failed = false;
-    Error returnError;
+    FlagsType returnError;
     //This should fail because it was already locked in the TestFastLockErrorCode
-    bool ret = mt.testMutex.FastLock(mt.testMutexTimeout, returnError);
+    bool ret = mt.testMutex.FastLock(returnError, mt.testMutexTimeout);
     if (!ret) {
         mt.failed = true;
     }
-    if (returnError != Timeout) {
+    if (returnError != Errors::Timeout) {
         mt.failed = true;
     }
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
 bool FastPollingMutexTest::TestFastLockErrorCode() {
-
-    Error returnError;
+    FlagsType returnError;
     bool test = true;
 
-    test = testMutex.FastLock(TTInfiniteWait, returnError);
-    if (returnError != Debug) {
+    test = testMutex.FastLock(returnError, TTInfiniteWait);
+    if (returnError != Errors::Information) {
         test = false;
     }
 
@@ -227,8 +222,9 @@ bool FastPollingMutexTest::TestLocked() {
 }
 
 void TestRecursiveCallback(FastPollingMutexTest &mt) {
-    mt.failed = mt.testMutex.FastLock();
-    mt.failed = mt.testMutex.FastLock();
+    FlagsType error;
+    mt.failed = mt.testMutex.FastLock(error);
+    mt.failed = mt.testMutex.FastLock(error);
     mt.testMutex.FastUnLock();
     mt.testMutex.FastUnLock();
     Atomic::Decrement(&mt.nOfExecutingThreads);

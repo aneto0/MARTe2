@@ -41,6 +41,7 @@ OBJSX=  Atomic.x \
         ThreadInformation.x \
         MutexSem.x \
         EventSem.x \
+        Errors.x \
         MemoryStatisticsDatabase.x
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/Linux/L0PortabilityOS$(LIBEXT)
