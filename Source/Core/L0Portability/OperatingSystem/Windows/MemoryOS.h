@@ -53,7 +53,7 @@ public:
      * @param[in] allocFlags
      * @return a pointer to the allocated memory.
      */
-    static void *Malloc(uint32 size, MemoryAllocationFlag allocFlags) {
+    static void *Malloc(const uint32 size, const MemoryAllocationFlag &allocFlags) {
         if (size <= 0) {
             return NULL;
         }
@@ -90,7 +90,7 @@ public:
      * @param[in] s is the string to duplicate.
      * @return a pointer to the string copied.
      */
-    static char8 *StringDup(const char8 *s) {
+    static char8 *StringDup(char8 const * const s) {
         return strdup(s);
     }
 
@@ -168,7 +168,7 @@ public:
      * @param[in] size is the number of bytes to check.
      * @return true if the memory area specified is valid.
      */
-    static bool Check(const void *address, const MemoryTestAccessMode &accessMode, const uint32 size) {
+    static bool Check(const void* const address, const MemoryTestAccessMode &accessMode, const uint32 size) {
         uint8 check = 0;
         static uint8 MODE_EXECUTE = 0x00000001U;
         static uint8 MODE_READ    = 0x00000002U;
@@ -209,7 +209,7 @@ public:
      * @param[in] size is the number of bytes to copy.
      * @return true if source, destination and destination after the copy are not NULL.
      */
-    static bool Copy(void* destination, const void* source, uint32 size) {
+    static bool Copy(void* const destination, const void* const source, const uint32 size) {
         if (source == NULL || destination == NULL) {
             return false;
         }
@@ -225,7 +225,7 @@ public:
      * @param[in] size is the size to compare.
      * @return (0 if mem1 == mem2), (1 if mem1 < mem2), (2 if mem1 > mem2), (-1 if one of memory arguments is NULL).
      */
-    static int32 Compare(const void* mem1,  const void* mem2, uint32 size) {
+    static int32 Compare(const void* const mem1,  const void* const mem2, const uint32 size) {
         if (mem1 == NULL || mem2 == NULL) {
             return -1;
         }
@@ -248,7 +248,7 @@ public:
      * @param[in] size is the number of bytes to check.
      * @return a pointer to the first occurence of c in mem, NULL if is not found or in case of mem==NULL.
      */
-    static const void* Search(const void* mem, int32 c, uint32 size) {
+    static const void* Search(void const * const mem, const int32 c, const uint32 size) {
         if (mem == NULL) {
             return NULL;
         }
@@ -263,7 +263,7 @@ public:
      * @param[in] size is the number of bytes to copy.
      * @return true if source, destination and destination after the copy are not NULL.
      */
-    static bool Move(void* destination, const void* source, uint32 size) {
+    static bool Move(void * const destination, void const * const source, const uint32 size) {
         if (source == NULL || destination == NULL) {
             return false;
         }
@@ -279,7 +279,7 @@ public:
      * @param[in] size is the number of bytes to set to c.
      * @return true if mem before and after the operation id not NULL.
      */
-    static bool Set(void* mem, int32 c, uint32 size) {
+    static bool Set(const void* mem, const int32 c, const uint32 size) {
         if (mem == NULL) {
             return false;
         }

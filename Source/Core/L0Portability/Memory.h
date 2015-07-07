@@ -256,7 +256,7 @@ public:
      * @param[in] allocFlag specified the desired allocation properties
      * @return The pointer to the allocated memory. NULL if allocation failed.
      */
-    static void *Malloc(uint32 size, MemoryAllocationFlag allocFlag = MAFStandardMemory);
+    static void *Malloc(const uint32 size, const MemoryAllocationFlag &allocFlag = MAFStandardMemory);
 
     /**
      * @brief Release a memory area and set its pointer to NULL.
@@ -281,7 +281,7 @@ public:
      * @param[in] s The pointer to the memory to be copied.
      * @return The pointer to the new allocated memory which contains a copy of s.
      */
-    static char8 *StringDup(const char8 *s);
+    static char8 *StringDup(char8 const * const s);
 
     /*static void AllocationStatistics(StreamInterface *out){
      MemoryAllocationStatistics(out);
@@ -294,7 +294,7 @@ public:
      * @param[in] tid The Thread id to be investigated.
      * @return false is MEMORY_STATISTICS is not defined, true if it is defined and in case of success.
      */
-    static bool AllocationStatistics(int32 &size, int32 &chunks, TID tid = (TID) 0xFFFFFFFFU);
+    static bool AllocationStatistics(int32 &size, int32 &chunks, TID tid = 0xFFFFFFFFU);
 
     /**
      * @brief Gets the informations from the header of the memory area if MEMORY_STATISTICS is defined.
@@ -331,7 +331,7 @@ public:
      * @param[in] size is the number of bytes to check.
      * @return true if the check was successful. false otherwise.
      */
-    static bool Check(void *address, MemoryTestAccessMode accessMode, uint32 size = 4);
+    static bool Check(const void* const address, const MemoryTestAccessMode &accessMode, const uint32 size = 4U);
 
     /**
      * @brief Creates or accesses an area of shared memory which can be used to communicate between different processes.
@@ -348,7 +348,7 @@ public:
      * @param[in] permMask the process permissions.Usually you will set this as 0666.
      * @return the address or NULL if it fails to allocate the memory.
      */
-    static void *SharedAlloc(uint32 key, uint32 size, uint32 permMask = 0666);
+    static void *SharedAlloc(const uint32 key, const uint32 size, const uint32 permMask = 0666U);
 
     /**
      * @brief Frees an area of shared memory which was previously created with MemorySharedAlloc.
@@ -364,7 +364,7 @@ public:
      * @param[in] size is the size of the memory to be copied.
      * @return true if source, destination and destination after copy are != NULL.
      */
-    static bool Copy(void *destination, const void *source, uint32 size);
+    static bool Copy(void* const destination, const void* const source, const uint32 size);
 
     /**
      * @brief Compare the first specified bytes of mem1 and mem2.
@@ -373,7 +373,7 @@ public:
      * @param[in] size is the number of byte to compare.
      * @return (0 if mem1 == mem2), (1 if mem1 < mem2), (2 if mem1 > mem2).
      */
-    static int32 Compare(const void *mem1, const void *mem2, uint32 size);
+    static int32 Compare(const void* const mem1, const void* const mem2, const uint32 size);
 
     /**
      * @brief Search a character in the specified memory area.
@@ -382,7 +382,7 @@ public:
      * @param[in] size is the size of the memory area.
      * @return the pointer to the first occurrence of c in the memory. NULL if c is absent.
      */
-    static const void *Search(const void *mem, char8 c, uint32 size);
+    static const void *Search(void const * const mem, const char8 c, const uint32 size);
 
     /**
      * @brief Copy source to destination.
@@ -391,7 +391,7 @@ public:
      * @param[in] size is the number of bytes to be copied.
      * @return true if source, destination, and destination after the copy are != NULL.
      */
-    static bool Move(void* destination, const void* source, uint32 size);
+    static bool Move(void * const destination, void const * const source, const uint32 size);
 
     /**
      * @brief Set a defined number bytes of the specified memory area equal to a specified character.
@@ -399,7 +399,7 @@ public:
      * @param[in] c is the character to store.
      * @param[in] size is the number of bytes where c will be written.
      */
-    static bool Set(void* mem, char8 c, uint32 size);
+    static bool Set(void* const mem, const char8 c, const uint32 size);
 
 };
 /*---------------------------------------------------------------------------*/
@@ -459,7 +459,7 @@ int32 MemoryGetUsedHeap(void);
 /**
  * @see Memory::Check
  */
-bool MemoryCheck(const void *address, const MemoryTestAccessMode &accessMode, const uint32 size = 4U);
+bool MemoryCheck(const void* const address, const MemoryTestAccessMode &accessMode, const uint32 size = 4U);
 
 /**
  * @see Memory::SharedAlloc
@@ -474,7 +474,7 @@ void MemorySharedFree(void *&address);
 /**
  * @see Memory::Copy
  */
-bool MemoryCopy(void *destination, const void *source, uint32 size);
+bool MemoryCopy(void* const destination, const void* const source, const uint32 size);
 
 /**
  * @see Memory::Compare
@@ -484,22 +484,22 @@ int32 MemoryCompare(const void *mem1, const void *mem2, uint32 size);
 /**
  * @see Memory::Search
  */
-const void *MemorySearch(const void *mem, char8 c, uint32 size);
+const void *MemorySearch(void const * const mem, const char8 c, const uint32 size);
 
 /**
  * @see Memory::Move
  */
-bool MemoryMove(void* destination, const void* source, uint32 size);
+bool MemoryMove(void * const destination, void const * const source, const uint32 size);
 
 /**
  * @see Memory::Set
  */
-bool MemorySet(void* mem, char8 c, uint32 size);
+bool MemorySet(void* const mem, const char8 c, const uint32 size);
 
 /**
  * @see Memory::StringDup
  */
-char8 *MemoryStringDup(const char8 *s);
+char8 *MemoryStringDup(char8 const * const s);
 
 }
 
