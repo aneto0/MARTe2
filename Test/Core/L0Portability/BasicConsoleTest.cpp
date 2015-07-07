@@ -45,14 +45,12 @@ bool BasicConsoleTest::TestOpen(FlagsType openingMode) {
 
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     return true;
 }
 
 //write the string passed by argument
-bool BasicConsoleTestWrite(const char8 *string,
-                           uint32 padding,
-                           BasicConsole &myConsole) {
+bool BasicConsoleTestWrite(const char8 *string, uint32 padding, BasicConsole &myConsole) {
 
     uint32 stringSize;
 
@@ -82,24 +80,22 @@ bool BasicConsoleTestWrite(const char8 *string,
     printf("\n2. size = %d\n", size);
 
     //return true if the size is correct
-    uint32 dummySize = 1;
-    return condition1 && (size == (stringSize - padding)) && !myConsole.Write(NULL, dummySize);
+    uint32 dummySize = 0;
+    return condition1 && (size == (stringSize - padding)) && !myConsole.Write("", dummySize, TTInfiniteWait);
 
 }
 
 //write the string passed by argument
-bool BasicConsoleTest::TestWrite(const char8 *string,
-                                 uint32 padding) {
+bool BasicConsoleTest::TestWrite(const char8 *string, uint32 padding) {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     return BasicConsoleTestWrite(string, padding, myConsole);
 
 }
 
 //compare the read string with the string passed by argument
-bool BasicConsoleTest::TestRead(const char8 *stringArg,
-                          BasicConsole &myConsole) {
+bool BasicConsoleTest::TestRead(const char8 *stringArg, BasicConsole &myConsole) {
 
     char8 string[numberOfColumns];
     char8 result[numberOfColumns + 20];
@@ -133,11 +129,11 @@ bool BasicConsoleTest::TestRead(const char8 *stringArg,
     //return true if the read string is equal to the argument
     if (stringSize > 1) {
         uint32 dummySize = 1;
-        return condition1 && condition2 && (stringSize == sizeTest) && !myConsole.Read(NULL, dummySize);
+        return condition1 && condition2 && (stringSize == sizeTest) && !myConsole.Read(NULL, dummySize, TTInfiniteWait);
     }
     else {
         uint32 dummySize = 1;
-        return (stringSize == 1) && !myConsole.Read(NULL, dummySize); //&& TestWrite(string, 0);
+        return (stringSize == 1) && !myConsole.Read(NULL, dummySize, TTInfiniteWait); //&& TestWrite(string, 0);
     }
 
 }
@@ -146,17 +142,14 @@ bool BasicConsoleTest::TestRead(const char8 *stringArg,
 bool BasicConsoleTest::TestRead(const char8 *stringArg) {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
 
     return TestRead(stringArg, myConsole);
 
 }
 
 //Test the paging feature
-bool BasicConsoleTestPaging(uint32 overflow,
-                            uint32 rows,
-                            uint32 columns,
-                            BasicConsole &myConsole) {
+bool BasicConsoleTestPaging(uint32 overflow, uint32 rows, uint32 columns, BasicConsole &myConsole) {
 
     /*  //open the console in enable paging mode
      if (!BasicConsoleTestOpen(EnablePaging, myConsole)) {
@@ -195,12 +188,10 @@ bool BasicConsoleTestPaging(uint32 overflow,
 }
 
 //Test the paging feature
-bool BasicConsoleTest::TestPaging(uint32 overflow,
-                                  uint32 rows,
-                                  uint32 columns) {
+bool BasicConsoleTest::TestPaging(uint32 overflow, uint32 rows, uint32 columns) {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     bool ret = BasicConsoleTestPaging(overflow, rows, columns, myConsole);
     //BasicConsoleClose(myConsole);
     return ret;
@@ -222,7 +213,7 @@ bool BasicConsoleTest::TestPerfChar(BasicConsole &myConsole) {
 bool BasicConsoleTest::TestPerfChar() {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     bool ret = TestPerfChar(myConsole);
     //BasicConsoleClose(myConsole);
     return ret;
@@ -231,25 +222,24 @@ bool BasicConsoleTest::TestPerfChar() {
 bool BasicConsoleTest::TestShow() {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     return myConsole.Show();
 }
 
 bool BasicConsoleTest::TestSetTitleBar(const char8 *title) {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     bool ok = !myConsole.TitleBarSupported() || (myConsole.SetTitleBar(title) && !myConsole.SetTitleBar(NULL));
 
     return ok;
 }
 
-bool BasicConsoleTest::TestSetGetSize(uint32 numberOfColumns,
-                                      uint32 numberOfRows) {
+bool BasicConsoleTest::TestSetGetSize(uint32 numberOfColumns, uint32 numberOfRows) {
 
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     bool ok = myConsole.SetSize(numberOfColumns, numberOfRows);
     uint32 nRows = 0;
     uint32 nCols = 0;
@@ -259,11 +249,10 @@ bool BasicConsoleTest::TestSetGetSize(uint32 numberOfColumns,
     return ok;
 }
 
-bool BasicConsoleTest::TestSetGetWindowSize(uint32 numberOfColumns,
-                                            uint32 numberOfRows) {
+bool BasicConsoleTest::TestSetGetWindowSize(uint32 numberOfColumns, uint32 numberOfRows) {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     myConsole.SetWindowSize(numberOfColumns, numberOfRows);
     uint32 nRows = 0;
     uint32 nCols = 0;
@@ -286,12 +275,11 @@ bool BasicConsoleTest::TestSetGetWindowSize(uint32 numberOfColumns,
 
 }
 
-bool BasicConsoleTest::TestSetGetCursorPosition(uint32 column,
-                                                uint32 row) {
+bool BasicConsoleTest::TestSetGetCursorPosition(uint32 column, uint32 row) {
 
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     bool ok = true;
 
     ok = myConsole.SetCursorPosition(column, row);
@@ -307,12 +295,11 @@ bool BasicConsoleTest::TestSetGetCursorPosition(uint32 column,
 
 }
 
-bool BasicConsoleTest::TestSetColour(Colours foregroundColour,
-                                     Colours backgroundColour) {
+bool BasicConsoleTest::TestSetColour(Colours foregroundColour, Colours backgroundColour) {
 
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     bool ok = !myConsole.ColourSupported() || myConsole.SetColour(foregroundColour, backgroundColour);
     return ok;
 
@@ -322,38 +309,34 @@ bool BasicConsoleTest::TestClear() {
 
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     return myConsole.Clear();
 }
 
 bool BasicConsoleTest::TestSetMode() {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     bool ok = true;
 
     FlagsType mode = myConsole.GetOpeningMode();
 
-    ok = (mode == IBasicConsole::Mode::PerformCharacterInput);
+    ok = (mode == BasicConsole::Mode::PerformCharacterInput);
     myConsole.Close();
-    myConsole.Open(IBasicConsole::Mode::DisableControlBreak);
+    myConsole.Open(BasicConsole::Mode::DisableControlBreak);
     mode = myConsole.GetOpeningMode();
-    ok &= (mode != IBasicConsole::Mode::PerformCharacterInput);
-    ok &= (mode == IBasicConsole::Mode::DisableControlBreak);
+    ok &= (mode != BasicConsole::Mode::PerformCharacterInput);
+    ok &= (mode == BasicConsole::Mode::DisableControlBreak);
 
     return ok;
 
 }
 
-bool BasicConsoleTest::TestPlotChar(char8 c,
-                                    Colours foregroundColour,
-                                    Colours backgroundColour,
-                                    int column,
-                                    int row) {
+bool BasicConsoleTest::TestPlotChar(char8 c, Colours foregroundColour, Colours backgroundColour, int column, int row) {
 
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(IBasicConsole::Mode::Default);
+    myConsole.Open(BasicConsole::Mode::Default);
     return myConsole.PlotChar(c, foregroundColour, backgroundColour, column, row);
 }
 

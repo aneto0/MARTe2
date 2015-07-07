@@ -35,7 +35,7 @@ OBJSX=  EndianityGTest.x \
 	FastPollingMutexGTest.x \
 	StringHelperGTest.x \
 	ThreadsGTest.x \
-        #BasicConsoleGTest.x \
+        BasicConsoleGTest.x \
 	MutexGTest.x
 
 PACKAGE=

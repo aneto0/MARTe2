@@ -36,6 +36,8 @@ OBJSX=  BasicConsoleOS.x \
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
+INCLUDES+=-I../../
+
 all: $(OBJS)    \
                 $(BUILD_DIR)/L0PortabilityOS$(LIBEXT)
 	echo  $(OBJS)

@@ -28,7 +28,7 @@ PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-SPB=OperatingSystem/Linux.x
+SPB=OperatingSystem/$(OPERATING_SYSTEM).x
 
 OBJSX=  Atomic.x \
         Endianity.x \
@@ -37,18 +37,17 @@ OBJSX=  Atomic.x \
         ProcessorType.x \
         Threads.x  \
         ThreadsDatabase.x \
-        BasicConsole.x \
         ThreadInformation.x \
         MutexSem.x \
         EventSem.x \
         Errors.x \
         MemoryStatisticsDatabase.x
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/Linux/L0PortabilityOS$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-OSCOMPONENTS = $(BUILD_DIR)/Linux/L0PortabilityOS$(LIBEXT)
+OSCOMPONENTS = $(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ)   \
                 $(BUILD_DIR)/L0Portability$(LIBEXT)
