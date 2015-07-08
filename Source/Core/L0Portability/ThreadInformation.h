@@ -293,8 +293,7 @@ typedef ThreadInformation *(*ThreadInformationConstructorType)(ThreadFunctionTyp
 /*---------------------------------------------------------------------------*/
 
 void ThreadInformation::ThreadWait() {
-    FlagsType error;
-    startThreadSynchSem.Wait(error);
+    startThreadSynchSem.Wait();
 }
 
 /**

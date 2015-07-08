@@ -38,11 +38,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "BasicConsole.h"
+#include "ErrorType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-struct OperatingSystemProperties {
+struct BasicConsoleOSProperties {
     /**
      * Standard output file descriptor.
      */
@@ -102,8 +103,8 @@ const FlagsType BasicConsole::Mode::EnablePaging(8u);
 /*---------------------------------------------------------------------------*/
 
 BasicConsole::BasicConsole() {
-    osProperties = new OperatingSystemProperties();
-    if (osProperties != static_cast<OperatingSystemProperties *>(NULL)) {
+    osProperties = new BasicConsoleOSProperties();
+    if (osProperties != static_cast<BasicConsoleOSProperties *>(NULL)) {
         osProperties->columnCount = 0u;
         osProperties->nOfColumns = 0u;
         osProperties->nOfRows = 0u;
@@ -111,25 +112,26 @@ BasicConsole::BasicConsole() {
         memset(&osProperties->outputConsoleHandle, 0, sizeof(ConsoleHandle));
         memset(&osProperties->initialInfo, 0, sizeof(ConsoleHandle));
     }
-    lastPagingCounter =  0;
+    lastPagingCounter = 0;
     lineCount = 0;
 }
 
 BasicConsole::~BasicConsole() {
-    if (osProperties != static_cast<OperatingSystemProperties *>(NULL)) {
+    if (osProperties != static_cast<BasicConsoleOSProperties *>(NULL)) {
+        /*lint -e{534} closure failure of a console is not handled*/
+        Close();
         delete osProperties;
     }
-    /*lint -e{534} closure failure of a console is not handled*/
-    Close();
 }
 
-bool BasicConsole::Open(const FlagsType &mode) {
-    bool ok = true;
+ErrorType BasicConsole::Open(const FlagsType &mode) {
+    ErrorType err = NoError;
+
     osProperties->openingMode = mode;
     //In this case read immediately from the console without wait.
     bool charactedInputSelected = (osProperties->openingMode & BasicConsole::Mode::PerformCharacterInput) != 0u;
     if (charactedInputSelected) {
-        ok = ioctl(fileno(stdin), static_cast<osulong>(TCGETA), &osProperties->outputConsoleHandle) >= 0;
+        bool ok = ioctl(fileno(stdin), static_cast<osulong>(TCGETA), &osProperties->outputConsoleHandle) >= 0;
         if (ok) {
             osProperties->initialInfo = osProperties->outputConsoleHandle;
             struct termio &consoleMode = osProperties->outputConsoleHandle;
@@ -145,21 +147,30 @@ bool BasicConsole::Open(const FlagsType &mode) {
             consoleMode.c_cc[VTIME] = 0u;
 
             ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &(osProperties->outputConsoleHandle)) >= 0);
+            if (!ok) {
+                err = OSError;
+            }
+        }
+        else {
+            err = OSError;
         }
     }
-    if (ok) {
-        ok = (fflush(stdin) == 0);
+    if (err == NoError) {
+        bool ok = (fflush(stdin) == 0);
+        if (!ok) {
+            err = OSError;
+        }
     }
-    return ok;
+    return err;
 }
 
 FlagsType BasicConsole::GetOpeningMode() const {
     return osProperties->openingMode;
 }
 
-bool BasicConsole::Close() {
+ErrorType BasicConsole::Close() {
     bool charactedInputSelected = (osProperties->openingMode & BasicConsole::Mode::PerformCharacterInput) != 0u;
-    bool ok = true;
+    ErrorType err = NoError;
     if (charactedInputSelected) {
         //reset the original console modes
         struct termio &consoleMode = osProperties->outputConsoleHandle;
@@ -169,13 +180,28 @@ bool BasicConsole::Close() {
         consoleMode.c_lflag = flag;
         consoleMode.c_cc[VMIN] = saveMode.c_cc[VMIN];
         consoleMode.c_cc[VTIME] = saveMode.c_cc[VTIME];
-        ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &osProperties->initialInfo) >= 0);
+        bool ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &osProperties->initialInfo) >= 0);
+        if (!ok) {
+            err = OSError;
+        }
     }
-    return ok;
+    return err;
 }
 
-/*lint -e{715} timeout is not used...*/
-bool BasicConsole::Write(const char8* const buffer, uint32 &size, const TimeoutType &timeout) {
+/*lint -e{715} timeout is not used in Linux*/
+ErrorType BasicConsole::Write(const char8 * const buffer, uint32 & size, const TimeoutType &timeout){
+    ErrorType err = NoError;
+    if((osProperties->openingMode & BasicConsole::Mode::EnablePaging) == BasicConsole::Mode::EnablePaging){
+        err = PagedWrite(buffer, size, timeout);
+    }
+    else{
+        err = OSWrite(buffer, size, timeout);
+    }
+    return err;
+}
+
+/*lint -e{715} timeout is not used in Linux*/
+ErrorType BasicConsole::OSWrite(const char8* const buffer, uint32 &size, const TimeoutType &timeout) {
     const char8 *bufferString = buffer;
     const char8 newLine = '\n';
 
@@ -189,7 +215,8 @@ bool BasicConsole::Write(const char8* const buffer, uint32 &size, const TimeoutT
 
     bool sink = false;
 
-    while (index < size) {
+    ErrorType err = NoError;
+    while ((err == NoError) && (index < size)) {
         currentChar = bufferString[index];
         if ((currentChar == '\0') || (currentChar == '\n') || (index == (size - 1))) {
             sink = true;
@@ -202,13 +229,20 @@ bool BasicConsole::Write(const char8* const buffer, uint32 &size, const TimeoutT
         if (sink) {
             sizeToWrite = index - start + 1;
             if (sizeToWrite > 0u) {
-                writtenBytes += write(osProperties->STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
+                ssize_t wbytes = write(osProperties->STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
+                if (wbytes == -1) {
+                    err = OSError;
+                }
+                writtenBytes += wbytes;
             }
             start = index + 1;
             sink = false;
         }
         if (currentColumn == osProperties->nOfColumns) {
-            write(osProperties->STDOUT, &newLine, static_cast<osulong>(1));
+            ssize_t wbytes = write(osProperties->STDOUT, &newLine, static_cast<osulong>(1));
+            if (wbytes == -1) {
+                err = OSError;
+            }
             currentColumn = 0u;
         }
 
@@ -218,47 +252,66 @@ bool BasicConsole::Write(const char8* const buffer, uint32 &size, const TimeoutT
     osProperties->columnCount = currentColumn;
 
     size = static_cast<uint32>(writtenBytes);
-    return (size > 0u);
+    if (size == 0) {
+        err = Warning;
+    }
+    return err;
 }
 
 /*lint -e{715} timeout is not used...*/
-bool BasicConsole::Read(char8 * const buffer, uint32 & size, const TimeoutType &timeout) {
-    bool ok = false;
+ErrorType BasicConsole::Read(char8 * const buffer, uint32 & size, const TimeoutType &timeout) {
+    ErrorType err = NoError;
     if ((buffer != NULL) && (size > 0u)) {
         if ((osProperties->openingMode & BasicConsole::Mode::PerformCharacterInput) != 0u) {
             char8 *readChar = buffer;
             *readChar = static_cast<char8>(getchar());
-            size = 1u;
+            if (*readChar == EOF) {
+                err = OSError;
+            }
+            else {
+                size = 1u;
+            }
         }
         else {
             ssize_t readBytes = read(osProperties->STDIN, buffer, static_cast<osulong>(size));
-            size = static_cast<uint32>(readBytes);
+            if (readBytes == -1) {
+                err = OSError;
+            }
+            else if(readBytes == 0){
+                err = Warning;
+            }
+            else {
+                size = static_cast<uint32>(readBytes);
+            }
         }
-        ok = (size > 0u);
     }
     else {
-        ok = false;
+        err = Warning;
     }
-    return ok;
+    return err;
 }
 
-bool BasicConsole::SetSize(const uint32 &numberOfColumns, const uint32 &numberOfRows) {
+ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns, const uint32 &numberOfRows) {
     osProperties->nOfColumns = numberOfColumns;
     osProperties->nOfRows = numberOfRows;
-    return true;
+    return NoError;
 }
 
-bool BasicConsole::GetSize(uint32 &numberOfColumns, uint32 &numberOfRows) const {
+ErrorType BasicConsole::GetSize(uint32 &numberOfColumns, uint32 &numberOfRows) const {
     numberOfColumns = osProperties->nOfColumns;
     numberOfRows = osProperties->nOfRows;
-    return true;
+    return NoError;
 }
 
-bool BasicConsole::Clear() {
+ErrorType BasicConsole::Clear() {
+    ErrorType err = NoError;
     for (uint32 i = 0u; i < osProperties->BASIC_CONSOLE_LINUX_CLEAR_ROWS; i++) {
-        write(osProperties->STDOUT, "\n", static_cast<osulong>(1u));
+        ssize_t writtenBytes = write(osProperties->STDOUT, "\n", static_cast<osulong>(1u));
+        if (writtenBytes == -1) {
+            err = OSError;
+        }
     }
-    return true;
+    return err;
 }
 
 bool BasicConsole::CursorPositionSupported() const {
@@ -281,39 +334,42 @@ bool BasicConsole::ConsoleBufferSupported() const {
     return false;
 }
 
-bool BasicConsole::Show() {
-    return true;
+bool BasicConsole::TimeoutSupported() const{
+    return false;
 }
 
-bool BasicConsole::SetColour(const Colours &foregroundColour, const Colours &backgroundColour) {
-    return true;
+ErrorType BasicConsole::ShowBuffer() {
+    return UnsupportedFeature;
 }
 
-bool BasicConsole::SetTitleBar(const char8 * const title) {
-    return true;
+ErrorType BasicConsole::SetColour(const Colours &foregroundColour, const Colours &backgroundColour) {
+    return UnsupportedFeature;
 }
 
-bool BasicConsole::GetTitleBar(char8 * const title) const {
-    return true;
+ErrorType BasicConsole::SetTitleBar(const char8 * const title) {
+    return UnsupportedFeature;
 }
 
-bool BasicConsole::SetCursorPosition(const uint32 &column, const uint32 &row) {
-    return true;
+ErrorType BasicConsole::GetTitleBar(char8 * const title) const {
+    return UnsupportedFeature;
 }
 
-bool BasicConsole::GetCursorPosition(uint32 &column, uint32 &row) const {
-    return true;
+ErrorType BasicConsole::SetCursorPosition(const uint32 &column, const uint32 &row) {
+    return UnsupportedFeature;
 }
 
-bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns, const uint32 &numberOfRows) {
-    return true;
+ErrorType BasicConsole::GetCursorPosition(uint32 &column, uint32 &row) const {
+    return UnsupportedFeature;
 }
 
-bool BasicConsole::GetWindowSize(uint32 &numberOfColumns, uint32 &numberOfRows) const {
-    return true;
+ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns, const uint32 &numberOfRows) {
+    return UnsupportedFeature;
 }
 
-bool BasicConsole::PlotChar(const char8 &c, const Colours &foregroundColour, const Colours &backgroundColour, const uint32 &column, const uint32 &row) {
-    return true;
+ErrorType BasicConsole::GetWindowSize(uint32 &numberOfColumns, uint32 &numberOfRows) const {
+    return UnsupportedFeature;
 }
 
+ErrorType BasicConsole::PlotChar(const char8 &c, const Colours &foregroundColour, const Colours &backgroundColour, const uint32 &column, const uint32 &row) {
+    return UnsupportedFeature;
+}

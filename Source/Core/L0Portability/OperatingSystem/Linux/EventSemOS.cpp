@@ -24,169 +24,237 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <pthread.h>
+#include <math.h>
+#include <sys/timeb.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "../../TimeoutType.h"
-#include "../../Errors.h"
-#include "EventSemOS.h"
-
+#include <ErrorType.h>
+#include "EventSem.h"
+#include "Atomic.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+struct EventSemOSProperties {
+    /**
+     * Mutex Handle
+     */
+    pthread_mutex_t mutexHandle;
+
+    /**
+     * Mutex Attributes
+     */
+    pthread_mutexattr_t mutexAttributes;
+
+    /**
+     * Conditional Variable
+     */
+    pthread_cond_t eventVariable;
+
+    /**
+     * The number of handle references pointing at this structure.
+     */
+    uint32 references;
+
+    /**
+     * To protect the reference handling
+     */
+    int32 referencesMux;
+
+    /**
+     * Implementation of the barrier in Linux. When true the EventSem will stop.
+     */
+    bool stop;
+
+    /**
+     * Is the semaphore closed?
+     */
+    bool closed;
+
+};
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-EventSemOS::EventSemOS() :
-        IEventSem::IEventSem() {
-    closed = true;
-    pthreadSem = new PThreadSem();
-    if ((pthreadSem != static_cast<PThreadSem *>(NULL))) {
-        pthreadSem->references = 1;
-        pthreadSem->mux = 0;
-        pthreadSem->stop = true;
+EventSem::EventSem() {
+    osProperties = new EventSemOSProperties();
+    if (osProperties != static_cast<EventSemOSProperties *>(NULL)) {
+        osProperties->closed = true;
+        osProperties->references = 1;
+        osProperties->referencesMux = 0;
+        osProperties->stop = true;
     }
 }
 
-EventSemOS::EventSemOS(const EventSemOS &source) :
-        IEventSem::IEventSem() {
-    closed = source.IsClosed();
-    pthreadSem = source.GetHandle();
-    if ((pthreadSem != static_cast<PThreadSem *>(NULL))) {
-        FlagsType error;
-        while (!Atomic::TestAndSet(&pthreadSem->mux))
-            ;
-        pthreadSem->references++;
-        pthreadSem->mux = 0;
+EventSem::EventSem(const EventSem &source) {
+    osProperties = source.GetOSProperties();
+    while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
+    }
+    //Capture the case that it got the osProperties while the source semaphore
+    //was already being destructed...
+    if (osProperties == static_cast<EventSemOSProperties *>(NULL)) {
+        EventSem();
+    }
+    else {
+        osProperties->references++;
+        osProperties->referencesMux = 0;
     }
 }
 
-EventSemOS::~EventSemOS() {
-    FlagsType error;
-    if ((pthreadSem != static_cast<PThreadSem *>(NULL))) {
-        while (!Atomic::TestAndSet(&pthreadSem->mux))
-            ;
-
-        if (pthreadSem->references == 1) {
-            if (!closed) {
+EventSem::~EventSem() {
+    if (osProperties != static_cast<EventSemOSProperties *>(NULL)) {
+        while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
+        }
+        if (osProperties->references == 1) {
+            if (!osProperties->closed) {
                 Close();
             }
-            delete pthreadSem;
-            pthreadSem = NULL;
-        }
-        if ((pthreadSem != static_cast<PThreadSem *>(NULL))) {
-            pthreadSem->mux = 0;
-        }
-    }
-}
-
-bool EventSemOS::Create() {
-    closed = false;
-    bool ok = (pthreadSem != static_cast<PThreadSem *>(NULL));
-    if (ok) {
-        pthreadSem->stop = true;
-        ok = (pthread_mutexattr_init(&pthreadSem->mutexAttributes) == 0);
-        if (ok) {
-            ok = (pthread_mutex_init(&pthreadSem->mutexHandle, &pthreadSem->mutexAttributes) == 0);
-            if (ok) {
-                ok = (pthread_cond_init(&pthreadSem->eventVariable, NULL) == 0);
-            }
-        }
-    }
-    return ok;
-}
-
-bool EventSemOS::Close() {
-    bool ok = !closed;
-    ok &= (pthreadSem != static_cast<PThreadSem *>(NULL));
-    if (ok) {
-        ok = Post();
-        if (ok && (!closed)) {
-            ok = (pthread_mutexattr_destroy(&pthreadSem->mutexAttributes) == 0);
-            if (ok) {
-                ok = (pthread_mutex_destroy(&pthreadSem->mutexHandle) == 0);
-            }
-            if (ok) {
-                ok = (pthread_cond_destroy(&pthreadSem->eventVariable) == 0);
-            }
-        }
-    }
-    closed = ok;
-    return ok;
-}
-
-bool EventSemOS::Wait(FlagsType &error, const TimeoutType &msecTimeout) {
-    bool ok = !closed;
-    ok &= (pthreadSem != static_cast<PThreadSem *>(NULL));
-    if (ok) {
-        if (msecTimeout == TTInfiniteWait) {
-            ok = (pthread_mutex_lock(&pthreadSem->mutexHandle) == 0);
-
-            if (ok && pthreadSem->stop) {
-                ok = (pthread_cond_wait(&pthreadSem->eventVariable, &pthreadSem->mutexHandle) == 0);
-                pthread_mutex_unlock(&pthreadSem->mutexHandle);
-            }
-            if (ok) {
-                ok = (pthread_mutex_unlock(&pthreadSem->mutexHandle) == 0);
-            }
-            if (!ok) {
-                error = Errors::OSError;
-            }
+            delete osProperties;
+            osProperties = NULL;
         }
         else {
-            struct timespec timesValues;
-            timeb tb;
-            ftime(&tb);
-
-            float64 sec = ((msecTimeout.GetTimeoutMSec() + tb.millitm) * 1e-3 + tb.time);
-
-            float64 roundValue = floor(sec);
-            timesValues.tv_sec = (int) roundValue;
-            timesValues.tv_nsec = (int) ((sec - roundValue) * 1E9);
-            ok = (pthread_mutex_timedlock(&pthreadSem->mutexHandle, &timesValues) == 0);
-            if (ok && pthreadSem->stop) {
-                ok = (pthread_cond_timedwait(&pthreadSem->eventVariable, &pthreadSem->mutexHandle, &timesValues) == 0);
-            }
-            if (!ok) {
-                error = Errors::Timeout;
-            }
-            bool okOs = (pthread_mutex_unlock(&pthreadSem->mutexHandle) == 0);
-            if (!okOs) {
-                error = Errors::OSError;
-            }
-            ok &= okOs;
+            osProperties->references--;
+            osProperties->referencesMux = 0;
         }
     }
-    return ok;
 }
 
-bool EventSemOS::Post() {
-    bool ok = !closed;
-    ok &= (pthreadSem != static_cast<PThreadSem *>(NULL));
-    if (ok) {
-        ok = (pthread_mutex_lock(&pthreadSem->mutexHandle) == 0);
+bool EventSem::Create() {
+    while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
     }
-    pthreadSem->stop = false;
+    osProperties->closed = false;
+    osProperties->stop = true;
+    bool ok = (pthread_mutexattr_init(&osProperties->mutexAttributes) == 0);
     if (ok) {
-        ok = (pthread_mutex_unlock(&pthreadSem->mutexHandle) == 0);
-    }
-    if (ok) {
-        ok = (pthread_cond_broadcast(&pthreadSem->eventVariable) == 0);
-    }
-    return ok;
-}
-
-bool EventSemOS::Reset() {
-    bool ok = !closed;
-    ok &= (pthreadSem != static_cast<PThreadSem *>(NULL));
-    if (ok) {
-        ok = (pthread_mutex_lock(&pthreadSem->mutexHandle) == 0);
+        ok = (pthread_mutex_init(&osProperties->mutexHandle, &osProperties->mutexAttributes) == 0);
         if (ok) {
-            ok = (pthread_mutex_unlock(&pthreadSem->mutexHandle) == 0);
-            pthreadSem->stop = true;
+            ok = (pthread_cond_init(&osProperties->eventVariable, NULL) == 0);
         }
+    }
+    osProperties->referencesMux = 0;
+    return ok;
+}
+
+bool EventSem::Close() {
+    bool ok = true;
+    if (!osProperties->closed) {
+        osProperties->closed = true;
+        Post();
+        if (ok) {
+            ok = (pthread_mutexattr_destroy(&osProperties->mutexAttributes) == 0);
+            if (ok) {
+                ok = (pthread_mutex_destroy(&osProperties->mutexHandle) == 0);
+            }
+            if (ok) {
+                ok = (pthread_cond_destroy(&osProperties->eventVariable) == 0);
+            }
+        }
+    }
+    return ok;
+}
+
+ErrorType EventSem::Wait() {
+    bool ok = !osProperties->closed;
+    ErrorType err = NoError;
+    if (ok) {
+        ok = (pthread_mutex_lock(&osProperties->mutexHandle) == 0);
+
+        if (ok && osProperties->stop) {
+            ok = (pthread_cond_wait(&osProperties->eventVariable, &osProperties->mutexHandle) == 0);
+            pthread_mutex_unlock(&osProperties->mutexHandle);
+        }
+        if (ok) {
+            ok = (pthread_mutex_unlock(&osProperties->mutexHandle) == 0);
+        }
+        if (!ok) {
+            err = OSError;
+        }
+    }
+    else {
+        err = OSError;
+    }
+    return err;
+}
+
+ErrorType EventSem::Wait(const TimeoutType &timeout) {
+    bool ok = !osProperties->closed;
+    ErrorType err = NoError;
+    if (timeout == TTInfiniteWait) {
+        err = Wait();
+    }
+    if (ok) {
+        struct timespec timesValues;
+        timeb tb;
+        ftime(&tb);
+
+        float64 sec = ((timeout.GetTimeoutMSec() + tb.millitm) * 1e-3 + tb.time);
+
+        float64 roundValue = floor(sec);
+        timesValues.tv_sec = (int) roundValue;
+        timesValues.tv_nsec = (int) ((sec - roundValue) * 1E9);
+        ok = (pthread_mutex_timedlock(&osProperties->mutexHandle, &timesValues) == 0);
+        if (ok && osProperties->stop) {
+            ok = (pthread_cond_timedwait(&osProperties->eventVariable, &osProperties->mutexHandle, &timesValues) == 0);
+        }
+        if (!ok) {
+            err = Timeout;
+        }
+        bool okOs = (pthread_mutex_unlock(&osProperties->mutexHandle) == 0);
+        if (!okOs) {
+            err = OSError;
+        }
+    }
+    else {
+        err = OSError;
+    }
+    return err;
+}
+
+bool EventSem::Post() {
+    bool ok = !osProperties->closed;
+    if (ok) {
+        ok = (pthread_mutex_lock(&osProperties->mutexHandle) == 0);
+    }
+    osProperties->stop = false;
+    if (ok) {
+        ok = (pthread_mutex_unlock(&osProperties->mutexHandle) == 0);
+    }
+    if (ok) {
+        ok = (pthread_cond_broadcast(&osProperties->eventVariable) == 0);
+    }
+    return ok;
+}
+
+bool EventSem::Reset() {
+    bool ok = !osProperties->closed;
+    if (ok) {
+        ok = (pthread_mutex_lock(&osProperties->mutexHandle) == 0);
+    }
+    if (ok) {
+        ok = (pthread_mutex_unlock(&osProperties->mutexHandle) == 0);
+        osProperties->stop = true;
+    }
+    return ok;
+}
+
+ErrorType EventSem::ResetWait(const TimeoutType &timeout) {
+    bool ok = Reset();
+    ErrorType err = OSError;
+    if (ok) {
+        err = Wait(timeout);
+    }
+    return err;
+}
+
+EventSemOSProperties *EventSem::GetOSProperties() const {
+    return osProperties;
+}
+
+bool EventSem::IsClosed() const {
+    bool ok = true;
+    if (osProperties != static_cast<EventSemOSProperties *>(NULL)) {
+        ok = osProperties->closed;
     }
     return ok;
 }

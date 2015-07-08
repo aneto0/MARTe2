@@ -1,5 +1,5 @@
 /**
- * @file Errors.h
+ * @file ErrorType.h
  * @brief Header file for class Errors
  * @date 06/07/2015
  * @author Andre' Neto
@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "FlagsType.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -42,72 +42,75 @@
 /**
  * @brief Defines all the framework possible error types.
  */
-struct Errors {
+enum ErrorType {
+    /**
+     * No error to report
+     */
+    NoError = 0,
     /**
      * Debug Information (should never be found in production code)
      */
-    static const FlagsType Debug;
+    Debug,
     /**
      * Application standard information 
      */
-    static const FlagsType Information;
+    Information,
     /**
      * Application warns of suspicious conditions
      */
-    static const FlagsType Warning;
+    Warning,
     /**
      * Application reports a fatal error
      */
-    static const FlagsType FatalError;
+    FatalError,
     /**
      * Application reports an error that allows recovery
      */
-    static const FlagsType RecoverableError;
+    RecoverableError,
     /**
      * Application reports an error during initialization
      */
-    static const FlagsType InitialisationError;
+    InitialisationError,
     /**
      * Error while calling an operating system function
      */
-    static const FlagsType OSError;
+    OSError,
     /**
      * Unexpected parameter value that was passed to a function
      */
-    static const FlagsType ParametersError;
+    ParametersError,
     /**
      * The operation was illegal in the run time context
      */
-    static const FlagsType IllegalOperation;
+    IllegalOperation,
     /**
      * The operation failed because of a sharing problem
      */
-    static const FlagsType ErrorSharing;
+    ErrorSharing,
     /**
      * The operation failed because of a sharing problem
      */
-    static const FlagsType ErrorAccessDenied;
+    ErrorAccessDenied,
     /**
      * An exception has occurred
      */
-    static const FlagsType Exception;
+    Exception,
     /**
      * A timeout has occurred
      */
-    static const FlagsType Timeout;
+    Timeout,
     /**
      * Error during a communication
      */
-    static const FlagsType CommunicationError;
+    CommunicationError,
     /**
      * Error while parsing
      */
-    static const FlagsType SyntaxError;
+    SyntaxError,
     /**
      * Something that should be possible but still it is not supported
      */
-    static const FlagsType UnsupportedError;
+    UnsupportedFeature
 };
 
 #endif /* ERRORS_H_ */
-

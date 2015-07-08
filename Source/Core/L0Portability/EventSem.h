@@ -31,54 +31,119 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "ErrorType.h"
+#include "TimeoutType.h"
 #include "GeneralDefinitions.h"
-#include "Errors.h"
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,EventSemOS.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 /**
- * @brief This semaphore is used mostly for thread synchronization.
+ * Forward declaration of the operating system specific properties (defined in the operating system
+ * specific unit file).
+ */
+struct EventSemOSProperties;
+/**
+ * @brief Event semaphore implementation.
  *
- * @details After being reset the semaphore is ready to Wait.
- * Once waiting, until a Post arrives all the threads will wait on
- * the semaphore. After the post all tasks are allowed to proceed.
- * A Reset is then required to use the semaphore again.
- *
- * The Lock functions uses an ErrorType object defined in GeneralDefinition.h that could be used by the user to
- * know if an eventual lock error happened because of the timeout or for other reasons.
- *
- * Most of the implementation is delegated to the EventSemOS.h file
- * which is different for each operating system and provides non-portable
- * functions to implement this kind of semaphore.
+ * @details The EventSem offer the possibility to block any number of threads in
+ * a barrier. This barrier is lowered by calling the Reset method and raised
+ * by the Post method. Threads are blocked in the barrier by calling one of the Wait methods.
+ * Once the barrier is raised all the threads are allowed to concurrently proceed.
  */
 
-class EventSem : public EventSemOS {
+class EventSem {
 public:
     /**
-     * No operation.
+     * @brief Initialises the semaphore operating system specific properties.
      */
     EventSem();
 
     /**
-     * No operation.
+     * @brief This semaphore instance will share the same low-level semaphore
+     * (i.e. that share the same handle) with the source semaphore.
+     * @param source the semaphore providing the access to the low-level semaphore.
+     */
+    EventSem(const EventSem &source);
+
+    /**
+     * @brief If it was not already closed, the destructor closes the semaphore.
      */
     virtual ~EventSem();
 
     /**
-     * @copydetails IEventSem::Wait
-     * @details Provides default parameter to wait with an infinite timeout.
+     * @brief Creates the semaphore.
+     * @return true if the operating system call returns with no errors.
      */
-    bool Wait(FlagsType &error, const TimeoutType &timeout = TTInfiniteWait);
+    bool Create();
 
     /**
-     * @copydetails IEventSem::ResetWait
-     * @details Provides default parameter to reset and wait with an infinite timeout.
+     * @brief Closes the semaphore.
+     * @return true if the operating system call returns with no errors.
      */
-    bool ResetWait(FlagsType &error, const TimeoutType &timeout = TTInfiniteWait);
+    bool Close();
 
+    /**
+     * @brief Waits for a post event without timeout (i.e. possibly forever).
+     * @details Calling this function on a semaphore that was not reset will
+     * not block the calling thread.
+     * @return NoError if the operating system call returns with no errors.
+     * @pre the semaphore was successfully created.
+     */
+    ErrorType Wait();
+
+    /**
+     * @brief Waits for a post event, limited by the timeout time.
+     * @details Calling this function on a semaphore that was not reset will
+     * not block the calling thread.
+     * @param[in] timeout the maximum time that the barrier will be set.
+     * @return NoError if the operating system call returns with no errors or
+     * Timeout if the time waiting in the barrier (from when the function was called)
+     * was greater than the specified timeout.
+     * @pre the semaphore was successfully created.
+     */
+    ErrorType Wait(const TimeoutType &timeout);
+
+    /**
+     * @brief Resets the semaphore (raises the barrier).
+     * @return true if the operating system call returns with no errors.
+     * @pre the semaphore was successfully created.
+     */
+    bool Reset();
+
+    /**
+     * @brief Posts the semaphore (lowers the barrier).
+     * @return true if the operating system call returns with no errors.
+     * @pre the semaphore was successfully created.
+     */
+    bool Post();
+
+    /**
+     * @brief Resets the semaphore (raises the barrier) and waits.
+     * @param[in] timeout is the desired timeout.
+     * @return true if both system level Reset returns true and
+     * the Wait function returns NoError.
+     * @pre the semaphore was successfully created.
+     */
+    ErrorType ResetWait(const TimeoutType &timeout);
+
+    /**
+     * @brief Return the operating system low level properties.
+     * @return the operating system low level semaphore properties structure.
+     */
+    EventSemOSProperties *GetOSProperties() const;
+
+    /**
+     * @brief Checks if the semaphore is closed.
+     * @return true if the semaphore is closed.
+     */
+    bool IsClosed() const;
+
+private:
+    /**
+     * Operating system specific properties to be used by the operating system specific implementation
+     */
+    EventSemOSProperties *osProperties;
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

@@ -66,7 +66,7 @@ int32 StringHelper::Compare(const char8 *string1, const char8 *string2) {
         if (ret < 0) {
             ret = 1; //1 if string1 < string2
         }
-        if (ret > 0) {
+        else if (ret > 0) {
             ret = 2; //2 if string1 > string2
         }
         //ret = 0 if string1=string2
@@ -81,7 +81,7 @@ int32 StringHelper::CompareN(const char8 *string1, const char8 *string2, const u
         if (ret < 0) {
             ret = 1; //1 if string1 < string2
         }
-        if (ret > 0) {
+        else if (ret > 0) {
             ret = 2; //2 if string1 > string2
         }
     }

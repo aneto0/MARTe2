@@ -32,6 +32,7 @@ OBJSX=  BasicConsoleOS.x \
         SleepOS.x \
         HighResolutionTimerCalibratorOS.x \
         EventSemOS.x \
+        MutexSemOS.x \
         StringHelperOS.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
