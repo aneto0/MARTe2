@@ -42,37 +42,37 @@
 
 TEST(SleepGTest,TestSleepAtLeast) {
     SleepTest sleepTest;
-    ASSERT_TRUE(sleepTest.TestSleepAtLeast(1.2));
+    ASSERT_TRUE(sleepTest.TestAtLeast(1.2));
 }
 
 TEST(SleepGTest,TestSleepNoMore) {
     SleepTest sleepTest;
-    ASSERT_TRUE(sleepTest.TestSleepNoMore(0.8));
+    ASSERT_TRUE(sleepTest.TestNoMore(0.8));
 }
 
 TEST(SleepGTest,TestSleepSecF) {
     SleepTest sleepTest;
-    ASSERT_TRUE(sleepTest.TestSleepSec(0.3F));
+    ASSERT_TRUE(sleepTest.TestSec(0.3F));
 }
 
 TEST(SleepGTest,TestSleepSecD) {
     SleepTest sleepTest;
-    ASSERT_TRUE(sleepTest.TestSleepSec(0.2));
+    ASSERT_TRUE(sleepTest.TestSec(0.2));
 }
 
 TEST(SleepGTest,TestSleepMSec) {
     SleepTest sleepTest;
-    ASSERT_TRUE(sleepTest.TestSleepMSec(120));
+    ASSERT_TRUE(sleepTest.TestMSec(120));
 }
 
 TEST(SleepGTest,TestSleepBusy) {
     SleepTest sleepTest;
-    ASSERT_TRUE(sleepTest.TestSleepBusy(0.4));
+    ASSERT_TRUE(sleepTest.TestBusy(0.4));
 }
 
 TEST(SleepGTest,TestSleepSemiBusy) {
     SleepTest sleepTest;
-    ASSERT_TRUE(sleepTest.TestSleepSemiBusy(0.5, 0.2));
+    ASSERT_TRUE(sleepTest.TestSemiBusy(0.5, 0.2));
 }
 
 TEST(SleepGTest,TestGetDateSeconds) {

@@ -40,7 +40,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool SleepTest::TestSleepAtLeast(float64 sec) {
+bool SleepTest::TestAtLeast(float64 sec) {
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
@@ -52,7 +52,7 @@ bool SleepTest::TestSleepAtLeast(float64 sec) {
     return testResult;
 }
 
-bool SleepTest::TestSleepNoMore(float64 sec) {
+bool SleepTest::TestNoMore(float64 sec) {
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
@@ -64,7 +64,7 @@ bool SleepTest::TestSleepNoMore(float64 sec) {
     return testResult;
 }
 
-bool SleepTest::TestSleepSec(float64 sec) {
+bool SleepTest::TestSec(float64 sec) {
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
@@ -76,7 +76,7 @@ bool SleepTest::TestSleepSec(float64 sec) {
     return testResult;
 }
 
-bool SleepTest::TestSleepSec(float32 sec) {
+bool SleepTest::TestSec(float32 sec) {
     bool testResult = false;
     float32 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
@@ -88,7 +88,7 @@ bool SleepTest::TestSleepSec(float32 sec) {
     return testResult;
 }
 
-bool SleepTest::TestSleepMSec(int32 msec) {
+bool SleepTest::TestMSec(int32 msec) {
     bool testResult = false;
     float64 maxSleepTime = 2 * msec; /* 100% margin */
     int initialTime = clock();
@@ -100,7 +100,7 @@ bool SleepTest::TestSleepMSec(int32 msec) {
     return testResult;
 }
 
-bool SleepTest::TestSleepBusy(float64 sec) {
+bool SleepTest::TestBusy(float64 sec) {
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
@@ -112,8 +112,8 @@ bool SleepTest::TestSleepBusy(float64 sec) {
     return testResult;
 }
 
-bool SleepTest::TestSleepSemiBusy(float64 totalSleepSec,
-                                  float64 nonBusySleepSec) {
+bool SleepTest::TestSemiBusy(float64 totalSleepSec,
+                             float64 nonBusySleepSec) {
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * totalSleepSec; /* 100% margin */
     int initialTime = clock();

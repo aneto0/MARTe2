@@ -70,14 +70,14 @@ bool HighResolutionTimerTest::TestPeriodFrequency() {
 //return true if the measured time is more or less equal to the sleep time.
 bool HighResolutionTimerTest::TestCounter(float64 sleepTime) {
 
-    int64 counter_1 = 0;
-    int64 counter = 0;
+    uint64 counter_1 = 0;
+    uint64 counter = 0;
     float64 time;
 
     counter_1 = HighResolutionTimer::Counter();
     Sleep::Sec(sleepTime);
     counter = HighResolutionTimer::Counter();
-    time = HighResolutionTimer::TicksToTime(counter, counter_1);
+    time = HighResolutionTimer::TicksToTime(int64(counter), int64(counter_1));
     return Tolerance(time, sleepTime, sleepTime * .1);
 
 }
@@ -85,8 +85,8 @@ bool HighResolutionTimerTest::TestCounter(float64 sleepTime) {
 //return true if the measured time is more or less equal to the sleep time.
 bool HighResolutionTimerTest::TestCounter32(float64 sleepTime) {
 
-    int32 counter_1 = 0;
-    int32 counter = 0;
+    uint32 counter_1 = 0;
+    uint32 counter = 0;
     float64 time;
 
     counter_1 = HighResolutionTimer::Counter32();
@@ -104,7 +104,7 @@ bool HighResolutionTimerTest::TestTicksToTime(float64 sleepTime) {
     return Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.05);
 }
 
-bool HighResolutionTimerTest::TestTimeStamp(uint32 millisecs) {
+bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
 
     TimeValues myTimeStamp1;
     TimeValues myTimeStamp2;

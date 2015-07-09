@@ -50,42 +50,42 @@ public:
      * @param[in] sec is the minimum time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepAtLeast(float64 sec);
+    bool TestAtLeast(float64 sec);
 
     /**
      * @brief Tests the Sleep::NoMore function
      * @param[in] sec is the maximum time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepNoMore(float64 sec);
+    bool TestNoMore(float64 sec);
 
     /**
      * @brief Tests the Sleep::Sec function
      * @param[in] sec is the time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepSec(float64 sec);
+    bool TestSec(float64 sec);
 
     /**
      * @brief Tests the Sleep::Sec function
      * @param[in] sec is the time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepSec(float32 sec);
+    bool TestSec(float32 sec);
 
     /**
      * @brief Tests the Sleep::MSec function
      * @param[in] msec is the time to sleep in milliseconds.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepMSec(int32 msec);
+    bool TestMSec(int32 msec);
 
     /**
      * @brief Tests the Sleep::Busy function.
      * @param[in] sec is the time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepBusy(float64 sec);
+    bool TestBusy(float64 sec);
 
     /**
      * @brief Tests the Sleep::SemiBusy function.
@@ -93,8 +93,8 @@ public:
      * @param[in] nonBusySleepSec is the time to sleep without using cpu.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepSemiBusy(float64 totalSleepSec,
-                           float64 nonBusySleepSec);
+    bool TestSemiBusy(float64 totalSleepSec,
+                      float64 nonBusySleepSec);
 
     /**
      * @brief Tests the Sleep::GetDateSeconds function.
