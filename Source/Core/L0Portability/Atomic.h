@@ -2,7 +2,7 @@
  * @file Atomic.h
  * @brief Header file for class Atomic
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -46,98 +46,97 @@
  * Most of the implementation is therefore delegated to the AtomicA.h implementation,
  * which will be specific for each type of supported architecture.
  *
- * @details These methods are particularly useful in the implementation of functionality that requires
- * protected basic operations between multiple asynchronous accesses like in a multithread system.
- * These methods are also used to implement thread's synchronization constructors like for example
- * fast polling mutex semaphores.
+ * These methods are particularly useful in the implementation of functionality that requires
+ * protected basic operations between multiple asynchronous accesses like in a multi-thread system.
+ * These methods are also used to implement fast threading synchronisation constructors (@see FastPollingMutexSem)
  */
 class Atomic {
 public:
     /**
-     * @brief Atomically increment a 32 bit integer in memory.
-     * @param[in,out] p is the pointer to the 32 bit variable to increment.
+     * @brief Atomically increments a 32 bit integer in memory.
+     * @param[in,out] p the pointer to the 32 bit variable to increment.
      * @pre p != NULL.
      */
     static inline void Increment (volatile int32 *p );
 
     /**
-     * @brief Atomically increment a 16 bit integer in memory.
-     * @param[in,out] p is the pointer to the 16 bit variable to increment.
+     * @brief Atomically increments a 16 bit integer in memory.
+     * @param[in,out] p the pointer to the 16 bit variable to increment.
      * @pre p != NULL.
      */
     static inline void Increment (volatile int16 *p);
 
     /**
-     * @brief Atomically increment a 8 bit integer in memory.
-     * @param[in,out] p is the pointer to the 8 bit variable to increment.
+     * @brief Atomically increments a 8 bit integer in memory.
+     * @param[in,out] p the pointer to the 8 bit variable to increment.
      * @pre p != NULL.
      */
     static inline void Increment (volatile int8 *p);
 
     /**
-     * @brief Atomically decrement a 32 bit integer in memory.
-     * @param[in,out] p is the pointer to the 32 bit variable to decrement.
+     * @brief Atomically decrements a 32 bit integer in memory.
+     * @param[in,out] p the pointer to the 32 bit variable to decrement.
      * @pre p != NULL.
      */
     static inline void Decrement (volatile int32 *p);
 
     /**
-     * @brief Atomically decrement a 16 bit integer in memory.
-     * @param[in,out] p is the pointer to the 16 bit variable to decrement.
+     * @brief Atomically decrements a 16 bit integer in memory.
+     * @param[in,out] p the pointer to the 16 bit variable to decrement.
      * @pre p != NULL.
      */
     static inline void Decrement (volatile int16 *p);
 
     /**
-     * @brief Atomically decrement a 8 bit integer in memory.
-     * @param[in,out] p is the pointer to the 8 bit variable to decrement.
+     * @brief Atomically decrements a 8 bit integer in memory.
+     * @param[in,out] p the pointer to the 8 bit variable to decrement.
      * @pre p != NULL.
      */
     static inline void Decrement (volatile int8 *p);
 
     /**
-     * @brief Atomically exchange the contents of a variable with the specified memory location.
-     * @param[out] p is the pointer to the 32 bit variable where will be stored the value of v atomically.
-     * @param[in] v is the value to store in the variable pointed by p.
+     * @brief Atomically exchanges the contents of a variable with the specified memory location.
+     * @param[out] p the pointer to the 32 bit variable where will be stored the value of v atomically.
+     * @param[in] v the value to store in the variable pointed by p.
      */
     static inline int32 Exchange (volatile int32 *p, int32 v);
 
     /**
-     * @brief Test and set a 32 bit memory location in a thread safe way.
-     * @param[in,out] p is the pointer to the 32 bit variable which must be tested.
+     * @brief Tests and sets a 32 bit memory location in a thread safe way.
+     * @param[in,out] p the pointer to the 32 bit variable which must be tested.
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
     static inline bool TestAndSet(volatile int32 *p);
 
     /**
-     * @brief Test and set a 16 bit memory location in a thread safe way.
-     * @param[in,out] p is the pointer to the 16 bit variable which must be tested.
+     * @brief Tests and sets a 16 bit memory location in a thread safe way.
+     * @param[in,out] p the pointer to the 16 bit variable which must be tested.
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
     static inline bool TestAndSet(volatile int16 *p);
 
     /**
-     * @brief Test and set a 8 bit memory location in a thread safe way.
-     * @param[in,out] p is the pointer to the 8 bit variable which must be tested.
+     * @brief Tests and sets a 8 bit memory location in a thread safe way.
+     * @param[in,out] p the pointer to the 8 bit variable which must be tested.
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
     static inline bool TestAndSet(volatile int8 *p);
 
     /**
-     * @brief Atomic addition.
-     * @param[in,out] p is the pointer to the variable which must be incremented.
-     * @param[in] value is the value to add to *p.
+     * @brief Atomically adds two 32 bit integers.
+     * @param[in,out] p the pointer to the variable which must be incremented.
+     * @param[in] value the value to add to *p.
      * @pre p != NULL.
      */
     static inline void Add (volatile int32 *p, int32 value);
 
     /**
-     * @brief Atomic subtraction.
-     * @param[in,out] p is the pointer to the variable which must be decremented.
-     * @param[in] value is the value to subtract to *p.
+     * @brief Atomically subtracts two 32 bit integers..
+     * @param[in,out] p the pointer to the variable which must be decremented.
+     * @param[in] value the value to subtract to *p.
      * @pre p != NULL.
      */
     static inline void Sub (volatile int32 *p, int32 value);
