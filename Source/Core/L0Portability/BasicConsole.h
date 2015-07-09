@@ -63,6 +63,9 @@ public:
 
     /**
      * @brief If it was not already closed, the destructor closes the console.
+     * @details Even if the destructor closes the console it should be noticed
+     * that in such case a failure is not handled and any exception arising
+     * from such action is not caught.
      */
     virtual ~BasicConsole();
 
@@ -121,7 +124,7 @@ public:
      * @return NoError if the console is opened correctly or OSError if there is any operating
      * system related problem while performing the operation.
      */
-    virtual ErrorType Close();
+    ErrorType Close();
 
     /**
      * @brief Writes to the console.

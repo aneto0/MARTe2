@@ -43,6 +43,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+/*lint -e{9109} forward declaration in BasicConsole.h is required to define the class*/
+/*lint -esym(9150, BasicConsoleOSProperties::*) */
 struct BasicConsoleOSProperties {
     /**
      * Standard output file descriptor.
@@ -91,6 +93,7 @@ struct BasicConsoleOSProperties {
      * The number of rows currently set.
      */
     uint32 nOfRows;
+
 };
 
 const FlagsType BasicConsole::Mode::Default(0u);
@@ -103,22 +106,23 @@ const FlagsType BasicConsole::Mode::EnablePaging(8u);
 /*---------------------------------------------------------------------------*/
 
 BasicConsole::BasicConsole() {
+    /*lint -e{1732} -e{1733} no default assignment and no default copy constructor.
+     *This is safe since none of the struct members point to dynamically allocated memory*/
     osProperties = new BasicConsoleOSProperties();
-    if (osProperties != static_cast<BasicConsoleOSProperties *>(NULL)) {
-        osProperties->columnCount = 0u;
-        osProperties->nOfColumns = 0u;
-        osProperties->nOfRows = 0u;
-        memset(&osProperties->inputConsoleHandle, 0, sizeof(ConsoleHandle));
-        memset(&osProperties->outputConsoleHandle, 0, sizeof(ConsoleHandle));
-        memset(&osProperties->initialInfo, 0, sizeof(ConsoleHandle));
-    }
+    osProperties->columnCount = 0u;
+    osProperties->nOfColumns = 0u;
+    osProperties->nOfRows = 0u;
+    memset(&osProperties->inputConsoleHandle, 0, sizeof(ConsoleHandle));
+    memset(&osProperties->outputConsoleHandle, 0, sizeof(ConsoleHandle));
+    memset(&osProperties->initialInfo, 0, sizeof(ConsoleHandle));
     lastPagingCounter = 0;
-    lineCount = 0;
+    lineCount = 0u;
 }
 
 BasicConsole::~BasicConsole() {
     if (osProperties != static_cast<BasicConsoleOSProperties *>(NULL)) {
-        /*lint -e{534} closure failure of a console is not handled*/
+        /*lint -e{534} possible closure failure is not handled in the destructor.*/
+        /*lint -e{1551} exception not caught.*/
         Close();
         delete osProperties;
     }
@@ -189,12 +193,12 @@ ErrorType BasicConsole::Close() {
 }
 
 /*lint -e{715} timeout is not used in Linux*/
-ErrorType BasicConsole::Write(const char8 * const buffer, uint32 & size, const TimeoutType &timeout){
+ErrorType BasicConsole::Write(const char8 * const buffer, uint32 & size, const TimeoutType &timeout) {
     ErrorType err = NoError;
-    if((osProperties->openingMode & BasicConsole::Mode::EnablePaging) == BasicConsole::Mode::EnablePaging){
+    if ((osProperties->openingMode & BasicConsole::Mode::EnablePaging) == BasicConsole::Mode::EnablePaging) {
         err = PagedWrite(buffer, size, timeout);
     }
-    else{
+    else {
         err = OSWrite(buffer, size, timeout);
     }
     return err;
@@ -218,7 +222,7 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer, uint32 &size, const T
     ErrorType err = NoError;
     while ((err == NoError) && (index < size)) {
         currentChar = bufferString[index];
-        if ((currentChar == '\0') || (currentChar == '\n') || (index == (size - 1))) {
+        if ((currentChar == '\0') || (currentChar == '\n') || (index == (size - 1u))) {
             sink = true;
         }
 
@@ -227,19 +231,19 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer, uint32 &size, const T
         }
 
         if (sink) {
-            sizeToWrite = index - start + 1;
+            sizeToWrite = (index - start) + 1u;
             if (sizeToWrite > 0u) {
-                ssize_t wbytes = write(osProperties->STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
+                ssize_t wbytes = write(BasicConsoleOSProperties::STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
                 if (wbytes == -1) {
                     err = OSError;
                 }
                 writtenBytes += wbytes;
             }
-            start = index + 1;
+            start = index + 1u;
             sink = false;
         }
         if (currentColumn == osProperties->nOfColumns) {
-            ssize_t wbytes = write(osProperties->STDOUT, &newLine, static_cast<osulong>(1));
+            ssize_t wbytes = write(BasicConsoleOSProperties::STDOUT, &newLine, static_cast<osulong>(1));
             if (wbytes == -1) {
                 err = OSError;
             }
@@ -252,7 +256,7 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer, uint32 &size, const T
     osProperties->columnCount = currentColumn;
 
     size = static_cast<uint32>(writtenBytes);
-    if (size == 0) {
+    if (size == 0u) {
         err = Warning;
     }
     return err;
@@ -265,7 +269,8 @@ ErrorType BasicConsole::Read(char8 * const buffer, uint32 & size, const TimeoutT
         if ((osProperties->openingMode & BasicConsole::Mode::PerformCharacterInput) != 0u) {
             char8 *readChar = buffer;
             *readChar = static_cast<char8>(getchar());
-            if (*readChar == EOF) {
+            int32 eofCheck = static_cast<int32>(*readChar);
+            if (eofCheck == EOF) {
                 err = OSError;
             }
             else {
@@ -273,11 +278,11 @@ ErrorType BasicConsole::Read(char8 * const buffer, uint32 & size, const TimeoutT
             }
         }
         else {
-            ssize_t readBytes = read(osProperties->STDIN, buffer, static_cast<osulong>(size));
+            ssize_t readBytes = read(BasicConsoleOSProperties::STDIN, buffer, static_cast<osulong>(size));
             if (readBytes == -1) {
                 err = OSError;
             }
-            else if(readBytes == 0){
+            else if (readBytes == 0) {
                 err = Warning;
             }
             else {
@@ -305,8 +310,8 @@ ErrorType BasicConsole::GetSize(uint32 &numberOfColumns, uint32 &numberOfRows) c
 
 ErrorType BasicConsole::Clear() {
     ErrorType err = NoError;
-    for (uint32 i = 0u; i < osProperties->BASIC_CONSOLE_LINUX_CLEAR_ROWS; i++) {
-        ssize_t writtenBytes = write(osProperties->STDOUT, "\n", static_cast<osulong>(1u));
+    for (uint32 i = 0u; i < BasicConsoleOSProperties::BASIC_CONSOLE_LINUX_CLEAR_ROWS; i++) {
+        ssize_t writtenBytes = write(BasicConsoleOSProperties::STDOUT, "\n", static_cast<osulong>(1u));
         if (writtenBytes == -1) {
             err = OSError;
         }
@@ -334,7 +339,7 @@ bool BasicConsole::ConsoleBufferSupported() const {
     return false;
 }
 
-bool BasicConsole::TimeoutSupported() const{
+bool BasicConsole::TimeoutSupported() const {
     return false;
 }
 
@@ -342,34 +347,42 @@ ErrorType BasicConsole::ShowBuffer() {
     return UnsupportedFeature;
 }
 
+/*lint -e{715} function not implemented in Linux*/
 ErrorType BasicConsole::SetColour(const Colours &foregroundColour, const Colours &backgroundColour) {
     return UnsupportedFeature;
 }
 
+/*lint -e{715} function not implemented in Linux*/
 ErrorType BasicConsole::SetTitleBar(const char8 * const title) {
     return UnsupportedFeature;
 }
 
+/*lint -e{715} function not implemented in Linux*/
 ErrorType BasicConsole::GetTitleBar(char8 * const title) const {
     return UnsupportedFeature;
 }
 
+/*lint -e{715} function not implemented in Linux*/
 ErrorType BasicConsole::SetCursorPosition(const uint32 &column, const uint32 &row) {
     return UnsupportedFeature;
 }
 
+/*lint -e{715} function not implemented in Linux*/
 ErrorType BasicConsole::GetCursorPosition(uint32 &column, uint32 &row) const {
     return UnsupportedFeature;
 }
 
+/*lint -e{715} function not implemented in Linux*/
 ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns, const uint32 &numberOfRows) {
     return UnsupportedFeature;
 }
 
+/*lint -e{715} function not implemented in Linux*/
 ErrorType BasicConsole::GetWindowSize(uint32 &numberOfColumns, uint32 &numberOfRows) const {
     return UnsupportedFeature;
 }
 
+/*lint -e{715} function not implemented in Linux*/
 ErrorType BasicConsole::PlotChar(const char8 &c, const Colours &foregroundColour, const Colours &backgroundColour, const uint32 &column, const uint32 &row) {
     return UnsupportedFeature;
 }
