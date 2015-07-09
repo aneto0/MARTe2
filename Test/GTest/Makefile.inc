@@ -35,8 +35,8 @@ OBJSX=  EndianityGTest.x \
 	FastPollingMutexGTest.x \
 	StringHelperGTest.x \
 	ThreadsGTest.x \
-        #BasicConsoleGTest.x \
 	MutexSemGTest.x
+        #BasicConsoleGTest.x \
 
 PACKAGE=
 ROOT_DIR=../..
