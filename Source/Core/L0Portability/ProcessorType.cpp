@@ -57,7 +57,6 @@ ProcessorType::ProcessorType(const uint32 cpuMask) {
     processorMask = cpuMask;
 }
 
-
 ProcessorType::ProcessorType(const ProcessorType &pt) {
     processorMask = pt.processorMask;
 }

@@ -63,7 +63,7 @@ TEST(HighResolutionTimerGTest,TestCounter) {
 
 TEST(HighResolutionTimerGTest,TestCounter32) {
     HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestCounter32(2.0));
+    ASSERT_TRUE(hrtTest.TestCounter32(1.0));
 }
 
 TEST(HighResolutionTimerGTest,TestTicksToTime) {
@@ -73,6 +73,6 @@ TEST(HighResolutionTimerGTest,TestTicksToTime) {
 
 TEST(HighResolutionTimerGTest,TestTimeStamp) {
     HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestTimeStamp(100));
+    ASSERT_TRUE(hrtTest.TestGetTimeStamp(100));
 }
 

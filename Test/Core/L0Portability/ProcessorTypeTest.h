@@ -63,34 +63,33 @@ public:
 
     /**
      * @brief Tests the overloaded OR operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if the OR operation between several combinations of a ProcessorType local variable and some ProcessorType dummy test variables are valid.
      */
     bool TestOROperator();
 
     /**
      * @brief Tests the overloaded equality operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if the equality operation between a ProcessorType local variable and a ProcessorType dummy test variables is valid.
      */
     bool TestEqualityOperator();
 
     /**
      * @brief Tests the overloaded inequality operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if the inequality operation between a ProcessorType local variable and a ProcessorType dummy test variables is valid.
      */
     bool TestInequalityOperator();
 
     /**
      * @brief Tests ProcessorType::GetDefaultCPUs and ProcessorType::SetDefaultCPUs.
-     * @return True if the test is successful, false otherwise.
+     * @return true if the ProcessorType default CPUs can be successfully set and retrieved.
      */
     bool TestGetSetDefaultCPUs();
 
     /**
      * @brief Tests ProcessorType's constructors
-     * @return True if the test is successful, false otherwise.
+     * @return true if all the ProcessorType constructors can be successfully assigned to the expected initial CPU mask.
      */
     bool TestConstructors();
-
 
     /**
      * @brief Tests the ProcessorType::SetMask function.
@@ -105,7 +104,8 @@ public:
      * @param[in] cpuNumber2 is the second cpu to be added.
      * @return true if in the cpu mask is set 1 to the bits related to the desired cpu numbers.
      */
-    bool TestAddCPU(uint32 cpuNumber1, uint32 cpuNumber2);
+    bool TestAddCPU(uint32 cpuNumber1,
+                    uint32 cpuNumber2);
 
 private:
 
