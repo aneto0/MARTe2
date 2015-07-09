@@ -45,7 +45,8 @@
 static bool Tolerance(float64 a,
                       float64 b,
                       float64 tolerance) {
-    return (a - b < tolerance) && (b - a < tolerance);
+    float64 diff = a - b;
+    return (diff < tolerance) && (diff > -tolerance);
 }
 
 bool HighResolutionTimerTest::TestFrequency() {
@@ -77,7 +78,7 @@ bool HighResolutionTimerTest::TestCounter(float64 sleepTime) {
     Sleep::Sec(sleepTime);
     counter = HighResolutionTimer::Counter();
     time = HighResolutionTimer::TicksToTime(counter, counter_1);
-    return Tolerance(time, sleepTime, 0.05);
+    return Tolerance(time, sleepTime, sleepTime * .1);
 
 }
 
@@ -92,7 +93,7 @@ bool HighResolutionTimerTest::TestCounter32(float64 sleepTime) {
     Sleep::Sec(sleepTime);
     counter = HighResolutionTimer::Counter32();
     time = (counter-counter_1)*HighResolutionTimer::Period();
-    return Tolerance(time, sleepTime, 0.05);
+    return Tolerance(time, sleepTime, sleepTime * .1);
 
 }
 
