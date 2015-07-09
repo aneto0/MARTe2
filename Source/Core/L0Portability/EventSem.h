@@ -64,7 +64,7 @@ public:
      * (i.e. that share the same handle) with the source semaphore.
      * @param source the semaphore providing the access to the low-level semaphore.
      */
-    EventSem(const EventSem &source);
+    EventSem(EventSem &source);
 
     /**
      * @brief If it was not already closed, the destructor closes the semaphore.
@@ -131,7 +131,7 @@ public:
      * @brief Return the operating system low level properties.
      * @return the operating system low level semaphore properties structure.
      */
-    EventSemOSProperties *GetOSProperties() const;
+    EventSemOSProperties *GetOSProperties();
 
     /**
      * @brief Checks if the semaphore is closed.
