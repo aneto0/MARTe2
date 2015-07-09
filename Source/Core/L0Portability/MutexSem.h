@@ -59,7 +59,7 @@ public:
      * (i.e. that share the same handle) with the source semaphore.
      * @param source the semaphore providing the access to the low-level semaphore.
      */
-    MutexSem(const MutexSem &source);
+    MutexSem(MutexSem &source);
 
     /**
      * @brief If it was not already closed, the destructor closes the semaphore.
@@ -73,7 +73,7 @@ public:
      * same thread.
      * @return true if the operating system call returns with no errors.
      */
-    bool Create(bool recursive = false);
+    bool Create(const bool &recursive = false);
 
     /**
      * @brief Closes the semaphore handle.
@@ -121,7 +121,7 @@ public:
      * @brief Return the operating system low level properties.
      * @return the operating system low level semaphore properties structure.
      */
-    MutexSemOSProperties *GetOSProperties() const;
+    MutexSemOSProperties *GetOSProperties();
 
 private:
     /**
