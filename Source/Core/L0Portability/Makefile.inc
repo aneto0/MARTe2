@@ -44,13 +44,9 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-OSCOMPONENTS = $(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
-
 all: $(OBJS) $(SUBPROJ)   \
-                $(BUILD_DIR)/L0Portability$(LIBEXT)
+		$(BUILD_DIR)/L0Portability$(LIBEXT)
 	echo  $(OBJS)
-
-$(BUILD_DIR)/L0Portability$(LIBEXT) : $(OSCOMPONENTS)
 
 include depends.$(TARGET)
 
