@@ -129,6 +129,7 @@ ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout) {
             int64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
                 err = Timeout;
+                break;
             }
         }
         // yield CPU
