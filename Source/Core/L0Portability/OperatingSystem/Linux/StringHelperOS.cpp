@@ -43,7 +43,8 @@ char8 *StringHelper::Concatenate(char8 *destination, const char8 *source) {
     return ret;
 }
 
-char8 *StringHelper::ConcatenateN(char8 *destination, const char8 *source, const uint32 size) {
+char8 *StringHelper::ConcatenateN(char8 *destination, const char8 *source,
+                                  const uint32 size) {
     char8 *ret = static_cast<char8 *>(NULL);
     if ((source != NULL) && (destination != NULL)) {
         ret = strncat(destination, source, static_cast<osulong>(size));
@@ -66,23 +67,29 @@ int32 StringHelper::Compare(const char8 *string1, const char8 *string2) {
         if (ret < 0) {
             ret = 1; //1 if string1 < string2
         }
-        if (ret > 0) {
+        else if (ret > 0) {
             ret = 2; //2 if string1 > string2
         }
-        //ret = 0 if string1=string2
+        else {
+            ret = 0; //ret = 0 if string1=string2
+        }
     }
     return ret;
 }
 
-int32 StringHelper::CompareN(const char8 *string1, const char8 *string2, const uint32 size) {
+int32 StringHelper::CompareN(const char8 *string1, const char8 *string2,
+                             const uint32 size) {
     int32 ret = -1;
     if ((string1 != NULL) && (string2 != NULL)) {
         ret = strncmp(string1, string2, static_cast<osulong>(size));
         if (ret < 0) {
             ret = 1; //1 if string1 < string2
         }
-        if (ret > 0) {
+        else if (ret > 0) {
             ret = 2; //2 if string1 > string2
+        }
+        else {
+            ret = 0;
         }
     }
     return ret;
@@ -96,10 +103,13 @@ bool StringHelper::Copy(char8 *destination, const char8 *source) {
     return ret;
 }
 
-bool StringHelper::CopyN(char8 *destination, const char8 *source, const uint32 size) {
+bool StringHelper::CopyN(char8 *destination, const char8 *source,
+                         const uint32 size) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
-        ret = (strncpy(destination, source, static_cast<osulong>(size)) != NULL);
+        ret =
+                (strncpy(destination, source, static_cast<osulong>(size))
+                        != NULL);
     }
     return ret;
 }
@@ -120,7 +130,8 @@ int32 StringHelper::Length(const char8 *string) {
     return ret;
 }
 
-const char8 *StringHelper::SearchChars(const char8 *string1, const char8 *string2) {
+const char8 *StringHelper::SearchChars(const char8 *string1,
+                                       const char8 *string2) {
     const char8 *ret = static_cast<const char8 *>(NULL);
     if ((string1 != NULL) && (string2 != NULL)) {
         ret = strpbrk(string1, string2);
@@ -136,7 +147,8 @@ const char8 *StringHelper::SearchLastChar(const char8 *string, char8 c) {
     return ret;
 }
 
-const char8 *StringHelper::SearchString(const char8 *string, const char8 *substring) {
+const char8 *StringHelper::SearchString(const char8 *string,
+                                        const char8 *substring) {
     const char8 *ret = static_cast<const char8 *>(NULL);
     if ((string != NULL) && (substring != NULL)) {
         ret = strstr(string, substring);
@@ -144,11 +156,11 @@ const char8 *StringHelper::SearchString(const char8 *string, const char8 *substr
     return ret;
 }
 
-bool StringHelper::SetChar(char8 *string, const uint32 &size, const char8 &c){
+bool StringHelper::SetChar(char8 *string, const uint32 &size, const char8 &c) {
     bool ret = false;
     if ((string != NULL) && (size > 0u)) {
         void *resetString = memset(string, c, static_cast<osulong>(size));
-        if(resetString == string){
+        if (resetString == string) {
             ret = true;
         }
     }

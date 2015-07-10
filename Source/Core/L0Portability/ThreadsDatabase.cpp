@@ -130,10 +130,8 @@ ThreadInformation *ThreadsDatabaseGetThreadInformation(TID threadId) {
 }
 
 bool ThreadsDatabaseLock(TimeoutType tt) {
-    FlagsType error;
-    bool ok = ThreadsDatabase::internalMutex.FastLock(error);
-    ok &= (error == Errors::Information);
-    return ok;
+    ErrorType err = ThreadsDatabase::internalMutex.FastLock();
+    return (err == NoError);
 }
 
 void ThreadsDatabaseUnLock() {

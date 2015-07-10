@@ -76,7 +76,7 @@ public:
      * @brief Subtract mSecs to the timeout.
      * @param[in] mSecs is the value which will be subtracted to the timeout (milliseconds).
      */
-    inline void operator-=(const uint32 &mSecs);
+    inline TimeoutType &operator-=(const uint32 &mSecs);
 
     /**
      * @brief Compare two timeout times.
@@ -160,13 +160,14 @@ int64 TimeoutType::HighResolutionTimerTicks() const {
     return ticks;
 }
 
-void TimeoutType::operator-=(const uint32 &mSecs) {
+TimeoutType &TimeoutType::operator-=(const uint32 &mSecs) {
     if (msecTimeout > mSecs) {
         msecTimeout -= mSecs;
     }
     else {
         msecTimeout = 0u;
     }
+    return *this;
 }
 
 bool TimeoutType::operator==(const TimeoutType &tt) const {
@@ -188,7 +189,7 @@ bool TimeoutType::IsFinite() const {
     return (msecTimeout < 0xFFFFFFFEu);
 }
 
-inline uint32 TimeoutType::GetTimeoutMSec() const{
+inline uint32 TimeoutType::GetTimeoutMSec() const {
     return msecTimeout;
 }
 

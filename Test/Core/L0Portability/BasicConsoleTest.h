@@ -67,7 +67,7 @@ public:
      * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the console is open correctly.
      */
-    bool TestOpen(FlagsType openingMode = IBasicConsole::Mode::Default);
+    bool TestOpen(FlagsType openingMode = BasicConsole::Mode::Default);
 
     /**
      * @brief Tests the correct behavior of the write operations.

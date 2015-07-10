@@ -36,7 +36,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 /**
  * @brief A Class to test the HighResolutionTimer functions.
  */
@@ -58,7 +57,6 @@ public:
      */
     bool TestFrequency();
 
-
     /**
      * @brief Checks if period and frequency are mutual.
      * @return true if frequency=1/period.
@@ -72,7 +70,6 @@ public:
      */
     bool TestCounter(float64 sleepTime);
 
-
     /**
      * @brief Sleep for sleepTime time and check if the time measured with HighResolutionTimer::Counter32 is more or less the same.
      * @param[in] sleepTime is the time to sleep.
@@ -81,7 +78,7 @@ public:
     bool TestCounter32(float64 sleepTime);
 
     /**
-     * @brief Tests the HighResolutionTimer::TicksToTime function.
+     * @brief Test the HighResolutionTimer::TicksToTime function.
      * @details converts the time passed by argument in ticks and checks if HighResolutionTimer::TicksToTime returns the same time.
      * @param[in] sleepTime is the time argument.
      * @return true if the conversion from ticks to time is correct.
@@ -93,9 +90,9 @@ public:
      * @details Gets first a time stamp, then sleeps for the specified milliseconds and gets again another timestamp. Checks if the difference in time between the time stamps is
      * consistent with the time interval elapsed. At last checks the boundaries of the time stamp structure fields.
      * @param[in] millisecs is the interval between two timestamp get functions.
-     * @return true if successful, false otherwise.
+     * @return true if the elapsed time between both time stamps are consistent with the slept time and the minutes, hours, days and months are in the expected limits.
      */
-    bool TestTimeStamp(uint32 millisecs);
+    bool TestGetTimeStamp(uint32 millisecs);
 };
 
 /*---------------------------------------------------------------------------*/

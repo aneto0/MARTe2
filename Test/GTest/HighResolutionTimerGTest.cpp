@@ -58,12 +58,13 @@ TEST(HighResolutionTimerGTest,TestPeriodFrequency) {
 
 TEST(HighResolutionTimerGTest,TestCounter) {
     HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestCounter(2.0));
+    ASSERT_TRUE(hrtTest.TestCounter(0.5));
 }
 
 TEST(HighResolutionTimerGTest,TestCounter32) {
     HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestCounter32(2.0));
+    //This has to be a short time otherwise it will overflow in 32 bits...
+    ASSERT_TRUE(hrtTest.TestCounter32(0.05));
 }
 
 TEST(HighResolutionTimerGTest,TestTicksToTime) {
@@ -71,8 +72,8 @@ TEST(HighResolutionTimerGTest,TestTicksToTime) {
     ASSERT_TRUE(hrtTest.TestTicksToTime(2.0));
 }
 
-TEST(HighResolutionTimerGTest,TestTimeStamp) {
+TEST(HighResolutionTimerGTest,TestGetTimeStamp) {
     HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestTimeStamp(100));
+    ASSERT_TRUE(hrtTest.TestGetTimeStamp(100));
 }
 

@@ -310,7 +310,7 @@ void IncrementSharedMemory(MemoryTest &myTestMemory) {
 }
 
 bool MemoryTest::TestSharedMemory() {
-    FlagsType error;
+    ErrorType err;
     //reset an event sem
     eventSem.Reset();
 
@@ -318,12 +318,12 @@ bool MemoryTest::TestSharedMemory() {
     Threads::BeginThread((ThreadFunctionType) InitializeSharedMemory, this);
     //wait the inizialization of the shared memory
 
-    eventSem.Wait(error);
+    err = eventSem.Wait();
     eventSem.Reset();
 
     //this thread increment the shared integer and impose true the shared bool
     Threads::BeginThread((ThreadFunctionType) IncrementSharedMemory, this);
-    eventSem.Wait(error);
+    err = eventSem.Wait();
 
     //obtain the pointers to the shared memories
     bool* sharedBool = (bool*) Memory::SharedAlloc(2, sizeof(bool));
@@ -671,10 +671,10 @@ bool MemoryTest::TestAllocationStatistics() {
 }
 
 void UsedHeapFunction(MemoryTest &m) {
-    FlagsType error;
+    ErrorType err;
     uint32 size = 1;
     void* p = Memory::Malloc(size);
-    m.eventSem.Wait(error);
+    err = m.eventSem.Wait();
 
     Memory::Free(p);
 

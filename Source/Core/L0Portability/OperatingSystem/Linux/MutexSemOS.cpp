@@ -1,8 +1,8 @@
 /**
- * @file EventSemOS.cpp
- * @brief Source file for class EventSemOS
- * @date 06/07/2015
- * @author André Neto
+ * @file MutexSemOS.cpp
+ * @brief Source file for class MutexSemOS
+ * @date 08/07/2015
+ * @author aneto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class EventSemOS (public, protected, and private). Be aware that some 
+ * the class MutexSemOS (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -30,14 +30,14 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include <ErrorType.h>
-#include "EventSem.h"
+#include "MutexSem.h"
 #include "Atomic.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-/*lint -e{9109} forward declaration in EventSem.h is required to define the class*/
-struct EventSemOSProperties {
+/*lint -e{9109} forward declaration in MutexSem.h is required to define the class*/
+struct MutexSemOSProperties {
     /**
      * Mutex Handle
      */
@@ -47,11 +47,6 @@ struct EventSemOSProperties {
      * Mutex Attributes
      */
     pthread_mutexattr_t mutexAttributes;
-
-    /**
-     * Conditional Variable
-     */
-    pthread_cond_t eventVariable;
 
     /**
      * The number of handle references pointing at this structure.
@@ -64,39 +59,39 @@ struct EventSemOSProperties {
     int32 referencesMux;
 
     /**
-     * Implementation of the barrier in Linux. When true the EventSem will stop.
-     */
-    bool stop;
-
-    /**
      * Is the semaphore closed?
      */
     bool closed;
+
+    /**
+     * Is the semaphore recursive
+     */
+    bool recursive;
 
 };
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-EventSem::EventSem() {
+MutexSem::MutexSem() {
     /*lint -e{1732} -e{1733} no default assignment and no default copy constructor.
      *This is safe since none of the struct members point to dynamically allocated memory*/
     /*lint -e{1713} with the meaning of the () to initialise a struct is clear*/
-    osProperties = new EventSemOSProperties();
+    osProperties = new MutexSemOSProperties();
     osProperties->closed = true;
+    osProperties->recursive = false;
     osProperties->references = 1u;
     osProperties->referencesMux = 0;
-    osProperties->stop = true;
 }
 
-EventSem::EventSem(EventSem &source) {
+MutexSem::MutexSem(MutexSem &source) {
     osProperties = source.GetOSProperties();
     while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
     }
-    //Capture the case that it got the osProperties reference while the source semaphore
+    //Capture the case that it got the osProperties while the source semaphore
     //was already being destructed...
-    if (osProperties == static_cast<EventSemOSProperties *>(NULL)) {
-        EventSem();
+    if (osProperties == static_cast<MutexSemOSProperties *>(NULL)) {
+        MutexSem();
     }
     else {
         osProperties->references++;
@@ -105,8 +100,8 @@ EventSem::EventSem(EventSem &source) {
 }
 
 /*lint -e{1551} only C calls are performed. No exception can be raised*/
-EventSem::~EventSem() {
-    if (osProperties != static_cast<EventSemOSProperties *>(NULL)) {
+MutexSem::~MutexSem() {
+    if (osProperties != static_cast<MutexSemOSProperties *>(NULL)) {
         while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
         }
         if (osProperties->references == 1u) {
@@ -114,9 +109,9 @@ EventSem::~EventSem() {
                 /*lint -e{534} possible closure failure is not handled in the destructor.*/
                 Close();
             }
-            /*lint -esym(1578, EventSem::osProperties) the variable is correctly freed here when this is the last reference alive.*/
+            /*lint -esym(1578, MutexSem::osProperties) the variable is correctly freed here when this is the last reference alive.*/
             delete osProperties;
-            osProperties = static_cast<EventSemOSProperties *>(NULL);
+            osProperties = static_cast<MutexSemOSProperties *>(NULL);
         }
         else {
             osProperties->references--;
@@ -127,16 +122,27 @@ EventSem::~EventSem() {
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to osProperties*/
-bool EventSem::Create() {
+bool MutexSem::Create(const bool &recursive) {
     while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
     }
     osProperties->closed = false;
-    osProperties->stop = true;
     bool ok = (pthread_mutexattr_init(&osProperties->mutexAttributes) == 0);
     if (ok) {
-        ok = (pthread_mutex_init(&osProperties->mutexHandle, &osProperties->mutexAttributes) == 0);
+        ok = (pthread_mutexattr_setprotocol(&osProperties->mutexAttributes, PTHREAD_PRIO_INHERIT) == 0);
+
         if (ok) {
-            ok = (pthread_cond_init(&osProperties->eventVariable, static_cast<const pthread_condattr_t *>(NULL)) == 0);
+            if (recursive) {
+                //The deadlock condition causes a crash at operating system level.
+                ok = (pthread_mutexattr_settype(&osProperties->mutexAttributes, PTHREAD_MUTEX_RECURSIVE) == 0);
+            }
+            else {
+                //This was pthread PTHREAD_MUTEX_RECURSIVE but it was crashing when a deadlock was forced on purpose
+                //with PTHREAD_MUTEX_NORMAL the same thread cannot lock the semaphore without unlocking it first.
+                ok = (pthread_mutexattr_settype(&osProperties->mutexAttributes, PTHREAD_MUTEX_NORMAL) == 0);
+            }
+        }
+        if (ok) {
+            ok = (pthread_mutex_init(&osProperties->mutexHandle, &osProperties->mutexAttributes) == 0);
         }
     }
     osProperties->referencesMux = 0;
@@ -145,19 +151,16 @@ bool EventSem::Create() {
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to osProperties*/
-bool EventSem::Close() {
+bool MutexSem::Close() {
     bool ok = true;
     if (!osProperties->closed) {
         osProperties->closed = true;
-        /*lint -e{534} the post is allowed to fail (and it will if the semaphore was never used).
+        /*lint -e{534} the UnLock is allowed to fail (and it will if the semaphore was never used).
          *The semaphore has to be closed whatever the result.*/
-        Post();
+        UnLock();
         ok = (pthread_mutexattr_destroy(&osProperties->mutexAttributes) == 0);
         if (ok) {
             ok = (pthread_mutex_destroy(&osProperties->mutexHandle) == 0);
-        }
-        if (ok) {
-            ok = (pthread_cond_destroy(&osProperties->eventVariable) == 0);
         }
     }
     return ok;
@@ -165,34 +168,32 @@ bool EventSem::Close() {
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to osProperties*/
-ErrorType EventSem::Wait() {
-    bool ok = false;
+/*lint -e{454} -e{456} false positive, the semaphore will be unlocked by the UnLock function*/
+ErrorType MutexSem::Lock() {
     ErrorType err = NoError;
     if (!osProperties->closed) {
+        bool okCancel = (pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, static_cast<int32 *>(NULL)) == 0);
         bool okLock = (pthread_mutex_lock(&osProperties->mutexHandle) == 0);
-
-        bool okWait = false;
-        if (osProperties->stop) {
-            okWait = (pthread_cond_wait(&osProperties->eventVariable, &osProperties->mutexHandle) == 0);
+        if ((!okCancel) || (!okLock)) {
+            err = OSError;
         }
-        bool okUnLock = (pthread_mutex_unlock(&osProperties->mutexHandle) == 0);
-        ok = (okLock && okWait && okUnLock);
     }
-    if (!ok) {
+    else {
         err = OSError;
     }
+
     return err;
 }
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to osProperties*/
-ErrorType EventSem::Wait(const TimeoutType &timeout) {
+ErrorType MutexSem::Lock(const TimeoutType &timeout) {
     bool ok = !osProperties->closed;
-    ErrorType err = NoError;
+    ErrorType err = OSError;
     if (timeout == TTInfiniteWait) {
-        err = Wait();
+        err = Lock();
     }
-    if (ok) {
+    else if (ok) {
         struct timespec timesValues;
         timeb tb;
         ok = (ftime(&tb) == 0);
@@ -208,21 +209,14 @@ ErrorType EventSem::Wait(const TimeoutType &timeout) {
             float64 nSec = (sec - roundValue);
             nSec *= 1e9;
             timesValues.tv_nsec = static_cast<int32>(nSec);
+
             ok = (pthread_mutex_timedlock(&osProperties->mutexHandle, &timesValues) == 0);
-            if (ok && osProperties->stop) {
-                ok = (pthread_cond_timedwait(&osProperties->eventVariable, &osProperties->mutexHandle, &timesValues) == 0);
-            }
             if (!ok) {
                 err = Timeout;
             }
-            /*lint -e{455} false positive from that does not understand that pthread_mutex_timedlock locks the semaphore*/
-            bool okOs = (pthread_mutex_unlock(&osProperties->mutexHandle) == 0);
-            if (!okOs) {
-                err = OSError;
+            else {
+                err = NoError;
             }
-        }
-        else {
-            err = OSError;
         }
     }
     else {
@@ -233,49 +227,32 @@ ErrorType EventSem::Wait(const TimeoutType &timeout) {
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to osProperties*/
-bool EventSem::Post() {
+bool MutexSem::UnLock() {
     bool ok = false;
     if (!osProperties->closed) {
-        bool okLock = (pthread_mutex_lock(&osProperties->mutexHandle) == 0);
-        osProperties->stop = false;
-        bool okUnLock = (pthread_mutex_unlock(&osProperties->mutexHandle) == 0);
-        bool okBroadcast = (pthread_cond_broadcast(&osProperties->eventVariable) == 0);
-        ok = (okLock && okUnLock && okBroadcast);
+        /*lint -e{455} false positive, locked by the Lock function*/
+        ok = (pthread_mutex_unlock(&osProperties->mutexHandle) == 0);
+        if (ok) {
+            ok = (pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, static_cast<int32 *>(NULL)) == 0);
+        }
     }
     return ok;
 }
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to osProperties*/
-bool EventSem::Reset() {
-    bool ok = false;
-    if (!osProperties->closed) {
-        bool okLock = (pthread_mutex_lock(&osProperties->mutexHandle) == 0);
-        bool okUnLock = (pthread_mutex_unlock(&osProperties->mutexHandle) == 0);
-        ok = (okLock && okUnLock);
-        osProperties->stop = true;
-    }
-    return ok;
+bool MutexSem::IsRecursive() const {
+    return osProperties->recursive;
 }
 
-ErrorType EventSem::ResetWait(const TimeoutType &timeout) {
-    bool ok = Reset();
-    ErrorType err = OSError;
-    if (ok) {
-        err = Wait(timeout);
-    }
-    return err;
-}
-
-EventSemOSProperties *EventSem::GetOSProperties() {
+MutexSemOSProperties * MutexSem::GetOSProperties() {
     return osProperties;
 }
 
-bool EventSem::IsClosed() const {
+bool MutexSem::IsClosed() const {
     bool ok = true;
-    if (osProperties != static_cast<EventSemOSProperties *>(NULL)) {
+    if (osProperties != static_cast<MutexSemOSProperties *>(NULL)) {
         ok = osProperties->closed;
     }
     return ok;
 }
-

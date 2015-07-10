@@ -16,7 +16,7 @@ TEST(BasicConsoleGTest,TestOpen) {
 
 TEST(BasicConsoleGTest,TestWrite) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestWrite("Hello bye bye world\nWorld with spaces\n\n\nand new lines\nand\nsingle\nwords.", 0));
+    ASSERT_TRUE(console.TestWrite("ABC\nDE", 0));
 }
 
 TEST(BasicConsoleGTest,TestWrite2) {

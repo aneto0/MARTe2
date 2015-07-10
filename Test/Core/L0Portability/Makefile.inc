@@ -31,7 +31,7 @@ OBJSX=  EndianityTest.x \
         AtomicTest.x \
         ProcessorTypeTest.x \
 	EventSemTest.x \
-	MutexTest.x \
+	MutexSemTest.x \
 	BasicConsoleTest.x \
 	HighResolutionTimerTest.x \
 	MemoryTest.x \

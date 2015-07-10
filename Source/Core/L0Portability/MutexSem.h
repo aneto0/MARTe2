@@ -32,138 +32,104 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,MutexSemOS.h)
+#include "TimeoutType.h"
+#include "ErrorType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 /**
- * @brief Mutual exclusive semaphore functions to allow creation, destruction and lock-unlock of the semaphore.
- *
- * @details This type of semaphore is very useful for thread synchronization due to protect critical sections of code
- * like for example multiple accesses to the same shared memory location avoiding race conditions or not consistent datas.\n
- * Mutex semaphores are generally used in multi-threading applications to guarantee exclusive access in critical code sections
- * shared by different threads.
- *
- * @details The Lock functions uses an ErrorType object defined in GeneralDefinition.h that could be used by the user to
- * know if an eventual lock error happened because of the timeout or for other reasons.
- *
- * @details Most of the implementation is delegated to MutexSemOS.h which provides system level functions for mutex semaphores.
- *
+ * Forward declaration of the operating system specific properties (defined in the operating system
+ * specific unit file).
+ */
+struct MutexSemOSProperties;
+/**
+ * @brief Mutual exclusion semaphore.
  */
 class MutexSem {
 
 public:
-    /**
-     * @brief Copy constructor.
-     * @param[in] h is the semaphore handle to be copied in this handle.
-     */
-    MutexSem(const MutexSem &source);
 
     /**
-     * @brief Default constructor.
+     * @brief Initialises the semaphore operating system specific properties.
      */
     MutexSem();
 
     /**
-     * @brief Destructor.
+     * @brief This semaphore instance will share the same low-level semaphore
+     * (i.e. that share the same handle) with the source semaphore.
+     * @param source the semaphore providing the access to the low-level semaphore.
+     */
+    MutexSem(MutexSem &source);
+
+    /**
+     * @brief If it was not already closed, the destructor closes the semaphore.
      */
     ~MutexSem();
 
     /**
-     * @brief Open the semaphore with a given initial state.
-     * @details We can specify using the "recursive" parameter if we want to create a recursive or notmal mutex.
-     * Anyway not all the operating systems supports both this modes, then the
-     * function could ignore the "recursive" argument. Use MutexSem::IsRecursive to know if the created mutex is recursive or not.
-     * @param[in] locked is the desired initial state: true = locked, false = unlocked.
-     * @param[in] recursive specifies if the mutex should be created recursive or not.
-     * @return false if something in the system level mutex initialization fails.
+     * @brief Opens the semaphore with a given initial state.
+     * @param[in] recursive specifies if the mutex is to be set recursive.
+     * A recursive semaphore does not dead-lock if two consecutive locks are issued by the
+     * same thread.
+     * @return true if the operating system call returns with no errors.
      */
-    bool Create(bool locked=false, bool recursive=false);
+    bool Create(const bool &recursive = false);
 
     /**
-     * @brief Close the semaphore handle.
-     * @return true if successful, false otherwise.
+     * @brief Closes the semaphore handle.
+     * @return true if the operating system call returns with no errors.
      */
     bool Close();
 
     /**
-     * @brief Lock the semaphore until the desired timeout.
-     * @param[in] msecTimeout is the desired timeout.
-     * @param[out] error specifies the error type in case of errors (timeout fail or other error types).
-     * @return false if something in the lock system level function goes wrong.
+     * @brief Locks the semaphore without timeout (i.e. possibly forever).
+     * @return NoError if the operating system call returns with no errors.
+     * @pre the semaphore was successfully created.
      */
-    bool Lock(FlagsType &error, const TimeoutType &msecTimeout = TTInfiniteWait) const;
+    ErrorType Lock();
 
     /**
-     * @brief Unlock the semaphore.
-     * @return true if the unlock system level function return true, false otherwise.
+     * @brief Locks the semaphore up to a maximum period defined by the timeout.
+     * @param[in] timeout the maximum time up until when the semaphore will be locked.
+     * @return NoError if the operating system call returns with no errors or
+     * Timeout if the time waiting in the Lock (from when the function was called)
+     * was greater than the specified timeout.
+     * @pre the semaphore was successfully created.
      */
-    bool UnLock() const;
+    ErrorType Lock(const TimeoutType &timeout);
 
     /**
-     * @brief Fast lock.
-     * @param[in] msecTimeout is the desired timeout.
-     * @param[out] error specifies the error type in case of errors (timeout fail or other error types).
-     * @return true if successful, false otherwise.
+     * @brief Unlocks the semaphore.
+     * @return true if the operating system call returns with no errors.
+     * @pre the semaphore was successfully created.
      */
-    inline bool FastLock(FlagsType &error, const TimeoutType &msecTimeout = TTInfiniteWait) const;
+    bool UnLock();
 
     /**
-     * @brief Fast unlock.
-     * @return true if successful, false otherwise.
-     */
-    inline bool FastUnLock() const;
-
-    /**
-     * @brief Tries to lock the semaphore and if it is already locked returns immediately.
-     * @return true if the semaphore was unlocked and the function locks it, false if it was already locked.
-     */
-    inline bool FastTryLock() const;
-
-    /**
-     * @brief Returns true if the mutex is recursive, false otherwise.
-     * @details The mutex implementation could be different for each operating system. If the created mutex is not recursive, this means that
-     * if the same thread locks it twice it triggers a deadlock condition.
+     * @brief Checks if the semaphore is recursive.
      * @return true if the mutex is recursive, false otherwise.
      */
-    inline bool IsRecursive() const;
+    bool IsRecursive() const;
 
     /**
-     * @brief Getter for the semaphore handle.
-     * @return the semaphore internal handle.
+     * @brief Checks if the semaphore is closed.
+     * @return true if the semaphore is closed.
      */
-    const HANDLE GetHandle() const;
+    bool IsClosed() const;
+
+    /**
+     * @brief Return the operating system low level properties.
+     * @return the operating system low level semaphore properties structure.
+     */
+    MutexSemOSProperties *GetOSProperties();
 
 private:
-
-    /** true if the mutex is recursive, false otherwise. */
-    bool isRecursive;
-
-    /** The handle associated to the semaphore. */
-    const HANDLE semH;
-
+    /**
+     * Operating system specific properties to be used by the operating system specific implementation
+     */
+    MutexSemOSProperties *osProperties;
 };
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-bool MutexSem::FastLock(FlagsType &error,const TimeoutType &msecTimeout) const {
-    return MutexSemOS::FastLock(semH, msecTimeout, error);
-}
-
-bool MutexSem::FastUnLock() const {
-    return MutexSemOS::FastUnLock(semH);
-}
-
-bool MutexSem::FastTryLock() const {
-    return MutexSemOS::FastTryLock(semH);
-}
-
-bool MutexSem::IsRecursive() const {
-    return isRecursive;
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

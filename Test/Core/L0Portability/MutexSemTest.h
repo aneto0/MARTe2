@@ -1,6 +1,6 @@
 /**
- * @file MutexTest.h
- * @brief Header file for class MutexTest
+ * @file MutexSemTest.h
+ * @brief Header file for class MutexSemTest
  * @date 25/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MutexTest
+ * @details This header file contains the declaration of the class MutexSemTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -41,36 +41,34 @@
 /**
  * @brief A class to test the MutexSem functions.
  */
-class MutexTest {
+class MutexSemTest {
 public:
     /**
      * @brief Constructor.
      * @details Creates the mutex handle.
      */
-    MutexTest();
+    MutexSemTest();
 
     /**
      * @brief Destructor.
      * @details Closes the mutex handle.
      */
-    ~MutexTest();
+    ~MutexSemTest();
 
     /**
      * @brief Tests the MutexSem::Create function.
-     * @param[in] locked is the desired initial state: true = locked, false = unlocked.
      * @param[in] recursive specifies if the mutex should be created recursive or not.
      * @return true if the semaphore is successfully created which also implies that a non NULL handle is created.
      */
-    bool TestCreate(bool locked, bool recursive);
+    bool TestCreate(bool recursive);
 
     /**
      * @brief Tests the MutexSem::Close function. The semaphore to be closed can be created with any of the
      * possible parameter combinations.
-     * @param[in] locked is the desired initial state: true = locked, false = unlocked.
      * @param[in] recursive specifies if the mutex should be created recursive or not.
      * @return true if the semaphore is successfully closed.
      */
-    bool TestClose(bool locked, bool recursive);
+    bool TestClose(bool recursive);
 
     /**
      * @brief Tests the MutexSem::Lock function.
@@ -227,7 +225,7 @@ private:
      * @param[in] functionToTest the function callback to be called by the threads.
      * @return the value returned by the functionToTest.
      */
-    bool GenericMutexTestCaller(int32 nOfThreads,
+    bool GenericMutexSemTestCaller(int32 nOfThreads,
                                 TimeoutType timeout,
                                 ThreadFunctionType functionToTest);
 
@@ -237,35 +235,35 @@ private:
     /**
      * @see TestLock
      */
-    friend void TestLockCallback(MutexTest &mt);
+    friend void TestLockCallback(MutexSemTest &mt);
     /**
      * @see TestUnLock
      */
-    friend void TestUnLockCallback(MutexTest &mt);
+    friend void TestUnLockCallback(MutexSemTest &mt);
     /**
      * @see TestFastLock
      */
-    friend void TestFastLockCallback(MutexTest &mt);
+    friend void TestFastLockCallback(MutexSemTest &mt);
     /**
      * @see TestFastTryLock
      */
-    friend void TestFastTryLockCallback(MutexTest &mt);
+    friend void TestFastTryLockCallback(MutexSemTest &mt);
     /**
      * @see TestFastUnLock
      */
-    friend void TestFastUnLockCallback(MutexTest &mt);
+    friend void TestFastUnLockCallback(MutexSemTest &mt);
     /**
      * @see TestLockErrorCode
      */
-    friend void TestLockErrorCodeCallback(MutexTest &mt);
+    friend void TestLockErrorCodeCallback(MutexSemTest &mt);
     /**
      * @see TestFastLockErrorCode
      */
-    friend void TestFastLockErrorCodeCallback(MutexTest &mt);
+    friend void TestFastLockErrorCodeCallback(MutexSemTest &mt);
     /**
      * @see TestRecursive
      */
-    friend void TestRecursiveCallback(MutexTest &mt);
+    friend void TestRecursiveCallback(MutexSemTest &mt);
 };
 
 /*---------------------------------------------------------------------------*/

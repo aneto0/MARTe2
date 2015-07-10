@@ -25,6 +25,7 @@
 
 BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
 
+OPERATING_SYSTEM=Linux
 EXEEXT=.ex
 DLLEXT=.so
 LIBEXT=.a
