@@ -61,9 +61,9 @@ TEST(ProcessorTypeGTest,TestInequalityOperator) {
     ASSERT_TRUE(processorTypeTest.TestInequalityOperator());
 }
 
-TEST(ProcessorTypeGTest,TestGetSetDefaultCPUs) {
+TEST(ProcessorTypeGTest,TestDefaultCPUs) {
     ProcessorTypeTest processorTypeTest;
-    ASSERT_TRUE(processorTypeTest.TestGetSetDefaultCPUs());
+    ASSERT_TRUE(processorTypeTest.TestDefaultCPUs());
 }
 
 TEST(ProcessorTypeGTest,TestConstructors) {

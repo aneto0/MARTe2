@@ -45,7 +45,7 @@ ProcessorTest::ProcessorTest() {
 
 bool ProcessorTest::TestVendorId() {
     bool testResult = false;
-    const char * vendorId = NULL;
+    const char8 * vendorId = NULL;
 
     vendorId = Processor::VendorId();
     testResult = (vendorId != NULL);

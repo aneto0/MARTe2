@@ -47,13 +47,7 @@ public:
     /**
      * @brief Constructor.
      */
-    ProcessorTypeTest() :
-            ptFirst(0xFE),
-            ptSecond(0xFD),
-            ptAny(0xFF),
-            ptNone(0x0) {
-
-    }
+    ProcessorTypeTest();
 
     /**
      * @brief Tests the overloaded assignment operator in ProcessorType
@@ -83,7 +77,7 @@ public:
      * @brief Tests ProcessorType::GetDefaultCPUs and ProcessorType::SetDefaultCPUs.
      * @return true if the ProcessorType default CPUs can be successfully set and retrieved.
      */
-    bool TestGetSetDefaultCPUs();
+    bool TestDefaultCPUs();
 
     /**
      * @brief Tests ProcessorType's constructors

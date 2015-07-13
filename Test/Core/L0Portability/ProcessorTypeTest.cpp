@@ -40,6 +40,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+ProcessorTypeTest::ProcessorTypeTest() :
+    ptFirst(0xFE),
+    ptSecond(0xFD),
+    ptAny(0xFF),
+    ptNone(0x0) {
+}
 
 bool ProcessorTypeTest::TestAssignmentOperator() {
 
@@ -106,7 +112,7 @@ bool ProcessorTypeTest::TestInequalityOperator() {
 
 }
 
-bool ProcessorTypeTest::TestGetSetDefaultCPUs() {
+bool ProcessorTypeTest::TestDefaultCPUs() {
     ProcessorType ptTest(ptSecond);
 
     ptTest.SetDefaultCPUs(0xAA);
