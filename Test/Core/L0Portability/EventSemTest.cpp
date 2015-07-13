@@ -50,6 +50,7 @@ EventSemTest::EventSemTest() {
     eventSem.Create();
     mutexSem.Create();
     sharedVariable = 0;
+    sharedVariable1 = 0;
     timeout = TTInfiniteWait;
 }
 
@@ -85,7 +86,9 @@ bool EventSemTest::TestCreate() {
 bool EventSemTest::TestClose() {
     EventSem testSem;
     testSem.Create();
-    return testSem.Close();
+    bool test = testSem.Close();
+    test &= testSem.IsClosed();
+    return test;
 }
 
 bool EventSemTest::TestCopyConstructor() {
@@ -104,6 +107,35 @@ bool EventSemTest::TestCopyConstructor() {
     copySem.Close();
 
     return test;
+}
+
+void ThreadLocked(EventSemTest &tt) {
+    TimeoutType time(500);
+    tt.sharedVariable1++;
+    tt.eventSem.Wait(time);
+    tt.sharedVariable1--;
+}
+
+bool EventSemTest::TestCopyConstructor2Sem() {
+    bool test = false;
+    uint32 counter1;
+    uint32 counter2;
+    float64 elapsetTime;
+    eventSem.Create();
+    EventSem copySem(eventSem);
+    eventSem.Reset();
+    counter1 = HighResolutionTimer::Counter32();
+    Threads::BeginThread((ThreadFunctionType) ThreadLocked, this);
+    while (sharedVariable1 == 0) {
+        Sleep::MSec(10);
+    }
+    test = copySem.Post();
+    while (sharedVariable1 == 1) {
+        Sleep::MSec(10);
+    }
+    counter2 = HighResolutionTimer::Counter32();
+    elapsetTime = HighResolutionTimer::TicksToTime(int64(counter2), int64(counter1));
+    return (test && (elapsetTime < float64(5)));
 }
 
 bool EventSemTest::TestWait(TimeoutType timeoutTime) {
