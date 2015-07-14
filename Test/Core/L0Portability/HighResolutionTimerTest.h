@@ -83,7 +83,7 @@ public:
      * @param[in] sleepTime is the time argument.
      * @return true if the conversion from ticks to time is correct.
      */
-    bool TestTicksToTime(float64 sleepTime);
+    bool TestTicksToTime();
 
     /**
      * @brief Test the time stamp returned by HighResolutionTimer::GetTimeStamp.
@@ -91,6 +91,7 @@ public:
      * consistent with the time interval elapsed. At last checks the boundaries of the time stamp structure fields.
      * @param[in] millisecs is the interval between two timestamp get functions.
      * @return true if the elapsed time between both time stamps are consistent with the slept time and the minutes, hours, days and months are in the expected limits.
+     * Notice that a fail in this test could be driven by an interruption of the test by another task.
      */
     bool TestGetTimeStamp(uint32 millisecs);
 };

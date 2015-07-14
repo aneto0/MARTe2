@@ -64,7 +64,7 @@ bool HighResolutionTimerTest::TestPeriodFrequency() {
     float64 HRTperiod = HighResolutionTimer::Period();
     float64 relativePeriod = 1.0 / HRTfrequency;
     int64 relativeFrequency = (int64) (1.0 / HRTperiod);
-    return (HRTperiod == relativePeriod) && (HRTfrequency == relativeFrequency);
+    return (Tolerance(HRTperiod, relativePeriod, 1e-9) && Tolerance(float64(HRTfrequency), float64(relativeFrequency), 1e-9));
 }
 
 //return true if the measured time is more or less equal to the sleep time.
@@ -92,16 +92,27 @@ bool HighResolutionTimerTest::TestCounter32(float64 sleepTime) {
     counter_1 = HighResolutionTimer::Counter32();
     Sleep::Sec(sleepTime);
     counter = HighResolutionTimer::Counter32();
-    time = (counter-counter_1)*HighResolutionTimer::Period();
+    time = (counter - counter_1) * HighResolutionTimer::Period();
     return Tolerance(time, sleepTime, sleepTime * .1);
 
 }
 
-bool HighResolutionTimerTest::TestTicksToTime(float64 sleepTime) {
-
-    int64 ticks = sleepTime*HighResolutionTimer::Frequency();
-
-    return Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.05);
+bool HighResolutionTimerTest::TestTicksToTime() {
+    bool retValue;
+    float64 sleepTime;
+    //minimum time
+    sleepTime = 0;
+    int64 ticks = sleepTime * HighResolutionTimer::Frequency();
+    retValue = Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
+    //Arbitrary time
+    sleepTime = 5;
+    ticks = sleepTime * HighResolutionTimer::Frequency();
+    retValue &= Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
+    //large time
+    sleepTime = 123456789;
+    ticks = sleepTime * HighResolutionTimer::Frequency();
+    retValue &= Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
+    return retValue;
 }
 
 bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
@@ -110,8 +121,13 @@ bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
     TimeValues myTimeStamp2;
     uint32 conversions[] = { 1000, 60000, 3600000, 3600000 * 24 };
 
-    //impose a tolerance of 50 milliseconds
-    int32 tolerance = 50;
+    //Arbitrary tolerance
+    int32 tolerance = int32(0.01 * millisecs);
+
+    //tolerance has to greater than 0
+    if (tolerance == 0) {
+        tolerance = 1;
+    }
 
     HighResolutionTimer::GetTimeStamp(myTimeStamp1);
     Sleep::MSec(millisecs);
