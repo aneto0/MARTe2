@@ -83,7 +83,7 @@ public:
      * @param[in] sleepTime is the time argument.
      * @return true if the conversion from ticks to time is correct.
      */
-    bool TestTicksToTime(float64 sleepTime);
+    bool TestTicksToTime();
 
     /**
      * @brief Test the time stamp returned by HighResolutionTimer::GetTimeStamp.

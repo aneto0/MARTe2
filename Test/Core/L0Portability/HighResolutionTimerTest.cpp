@@ -97,11 +97,22 @@ bool HighResolutionTimerTest::TestCounter32(float64 sleepTime) {
 
 }
 
-bool HighResolutionTimerTest::TestTicksToTime(float64 sleepTime) {
-
+bool HighResolutionTimerTest::TestTicksToTime() {
+    bool retValue;
+    float64 sleepTime;
+    //minimum time
+    sleepTime = 0;
     int64 ticks = sleepTime * HighResolutionTimer::Frequency();
-
-    return Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.05);
+    retValue = Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
+    //Arbitrary time
+    sleepTime = 5;
+    ticks = sleepTime * HighResolutionTimer::Frequency();
+    retValue &= Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
+    //large time
+    sleepTime = 123456789;
+    ticks = sleepTime * HighResolutionTimer::Frequency();
+    retValue &= Tolerance(HighResolutionTimer::TicksToTime(ticks, 0), sleepTime, 0.01);
+    return retValue;
 }
 
 bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
