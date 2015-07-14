@@ -32,7 +32,7 @@ OBJSX=  EndianityGTest.x \
 	EventSemGTest.x \
 	HighResolutionTimerGTest.x \
 	MemoryGTest.x \
-	FastPollingMutexGTest.x \
+	FastPollingMutexSemGTest.x \
 	StringHelperGTest.x \
 	ThreadsGTest.x \
 	MutexSemGTest.x

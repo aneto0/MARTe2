@@ -1,6 +1,6 @@
 /**
- * @file FastPollingMutexTest.h
- * @brief Header file for class FastPollingMutexTest
+ * @file FastPollingMutexSemTest.h
+ * @brief Header file for class FastPollingMutexSemTest
  * @date 02/07/2015
  * @author Andre' Neto
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class FastPollingMutexTest
+ * @details This header file contains the declaration of the class FastPollingMutexSemTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -41,19 +41,19 @@
 /**
  * @brief A class to test the FastPollingMutexSem functions.
  */
-class FastPollingMutexTest {
+class FastPollingMutexSemTest {
 public:
     /**
      * @brief Constructor.
      * @details Creates the mutex handle.
      */
-    FastPollingMutexTest();
+    FastPollingMutexSemTest();
 
     /**
      * @brief Destructor.
      * @details Closes the mutex handle.
      */
-    ~FastPollingMutexTest();
+    ~FastPollingMutexSemTest();
 
     /**
      * @brief Tests the FastPollingMutexSem constructor
@@ -180,23 +180,23 @@ private:
     /**
      * @see TestFastLock
      */
-    friend void TestFastLockCallback(FastPollingMutexTest &mt);
+    friend void TestFastLockCallback(FastPollingMutexSemTest &mt);
     /**
      * @see TestFastUnLock
      */
-    friend void TestFastUnLockCallback(FastPollingMutexTest &mt);
+    friend void TestFastUnLockCallback(FastPollingMutexSemTest &mt);
     /**
      * @see TestFastTryLock
      */
-    friend void TestFastTryLockCallback(FastPollingMutexTest &mt);
+    friend void TestFastTryLockCallback(FastPollingMutexSemTest &mt);
     /**
      * @see TestFastLockErrorCode
      */
-    friend void TestFastLockErrorCodeCallback(FastPollingMutexTest &mt);
+    friend void TestFastLockErrorCodeCallback(FastPollingMutexSemTest &mt);
     /**
      * @see TestRecursive
      */
-    friend void TestRecursiveCallback(FastPollingMutexTest &mt);
+    friend void TestRecursiveCallback(FastPollingMutexSemTest &mt);
 };
 
 /*---------------------------------------------------------------------------*/

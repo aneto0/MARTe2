@@ -1,7 +1,7 @@
 /**
  * @file EventSemTest.h
  * @brief Header file for class EventSemTest
- * @date 26/giu/2015
+ * @date 26/07/2015
  * @author Giuseppe Ferr�
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -97,6 +97,12 @@ public:
      * handle is the same) and is capable of correctly acting on this handle.
      */
     bool TestCopyConstructor();
+
+    /**
+     * @brief Tests the EventSem::IsClosed function
+     * @return true if the semaphore can report effectively if it is closed or not
+     */
+    bool TestIsClosed();
 
     /**
      * @brief Tests the EventSem::Wait function.

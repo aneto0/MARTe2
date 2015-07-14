@@ -35,7 +35,7 @@ OBJSX=  EndianityTest.x \
 	BasicConsoleTest.x \
 	HighResolutionTimerTest.x \
 	MemoryTest.x \
-	FastPollingMutexTest.x \
+	FastPollingMutexSemTest.x \
 	StringHelperTest.x
 
 PACKAGE=Core

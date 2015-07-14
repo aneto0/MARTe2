@@ -106,6 +106,16 @@ bool EventSemTest::TestCopyConstructor() {
     return test;
 }
 
+bool EventSemTest::TestIsClosed() {
+    bool result = true;
+    EventSem target;
+    target.Create();
+    result = result && !target.IsClosed();
+    target.Close();
+    result = result && target.IsClosed();
+    return result;
+}
+
 bool EventSemTest::TestWait(TimeoutType timeoutTime) {
 
     EventSem newSem(eventSem);

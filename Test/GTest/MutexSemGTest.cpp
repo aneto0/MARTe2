@@ -20,6 +20,11 @@ protected:
     }
 };
 
+TEST_F(MutexSemGTest,TestDefaultConstructor) {
+    MutexSemTest mutextest;
+    ASSERT_TRUE(mutextest.TestDefaultConstructor());
+}
+
 TEST_F(MutexSemGTest,TestCreateNoRecursive) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestCreate( false));
@@ -73,6 +78,11 @@ TEST_F(MutexSemGTest,TestUnLockWithSmallFiniteTimeoutToFail) {
 TEST_F(MutexSemGTest,TestLockErrorCode) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestLockErrorCode());
+}
+
+TEST_F(MutexSemGTest,TestIsClosed) {
+    MutexSemTest mutextest;
+    ASSERT_TRUE(mutextest.TestIsClosed());
 }
 
 TEST_F(MutexSemGTest,TestIsRecursive) {

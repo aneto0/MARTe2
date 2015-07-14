@@ -57,6 +57,11 @@ MutexSemTest::~MutexSemTest() {
     testMutex.Close();
 }
 
+bool MutexSemTest::TestDefaultConstructor() {
+    MutexSem target;
+    return target.IsClosed() && !target.IsRecursive();
+}
+
 bool MutexSemTest::TestCreate(bool recursive) {
     MutexSem testSem;
     bool test = testSem.Create(recursive);
@@ -170,6 +175,16 @@ bool MutexSemTest::TestLockErrorCode() {
     testMutex.UnLock();
 
     return ok;
+}
+
+bool MutexSemTest::TestIsClosed() {
+    bool result = true;
+    MutexSem target;
+    target.Create();
+    result = result && !target.IsClosed();
+    target.Close();
+    result = result && target.IsClosed();
+    return result;
 }
 
 bool MutexSemTest::TestIsRecursive() {
