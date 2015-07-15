@@ -71,6 +71,11 @@ TEST(EventSemGTest,TestIsClosed) {
     ASSERT_TRUE(eventSemTest.TestIsClosed());
 }
 
+TEST(EventSemGTest,TestCopyConstructor2Sem) {
+    EventSemTest eventSemTest;
+    ASSERT_TRUE(eventSemTest.TestCopyConstructor2Sem());
+}
+
 TEST(EventSemGTest,TestWait) {
     EventSemTest eventSemTest;
     ASSERT_TRUE(eventSemTest.TestWait());
