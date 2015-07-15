@@ -64,16 +64,19 @@ public:
     bool TestPeriodFrequency();
 
     /**
-     * @brief Sleep for sleepTime time and check if the time measured with HighResolutionTimer::Counter is more or less the same.
+     * @brief Test the HighResolutionTimer::Counter function.
+     * @detail Sleep for sleepTime time and check if the time measured with HighResolutionTimer::Counter is more or less the same.
      * @param[in] sleepTime is the time to sleep.
-     * @return true if the measured time is the same of the sleep time less than a tolerance, false otherwise.
+     * @return true if the measured time is more or less the sleep time, false otherwise.
      */
     bool TestCounter(float64 sleepTime);
 
     /**
-     * @brief Sleep for sleepTime time and check if the time measured with HighResolutionTimer::Counter32 is more or less the same.
+     * @brief Test the HighResolutionTimer::Counter32 function.
+     * @detailSleep for sleepTime time and check if the time measured with HighResolutionTimer::Counter32
+     * is more or less the same.
      * @param[in] sleepTime is the time to sleep.
-     * @return true if the measured time is the same of the sleep time less than a tolerance, false otherwise.
+     * @return true if the measured time is more or less the sleep time,
      */
     bool TestCounter32(float64 sleepTime);
 
