@@ -25,12 +25,13 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <time.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "SleepTest.h"
-#include <time.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,6 +40,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+bool SleepTest::TestGetDateSeconds() {
+    return Sleep::GetDateSeconds() == time(NULL);
+}
 
 bool SleepTest::TestAtLeast(float64 sec) {
     bool testResult = false;
@@ -67,18 +72,6 @@ bool SleepTest::TestNoMore(float64 sec) {
 bool SleepTest::TestSec(float64 sec) {
     bool testResult = false;
     float64 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
-    int initialTime = clock();
-
-    Sleep::Sec(sec);
-
-    testResult = (((clock() - initialTime) / (CLOCKS_PER_SEC / 1000)) <= maxSleepTime);
-
-    return testResult;
-}
-
-bool SleepTest::TestSec(float32 sec) {
-    bool testResult = false;
-    float32 maxSleepTime = 2 * 1000 * sec; /* 100% margin */
     int initialTime = clock();
 
     Sleep::Sec(sec);
@@ -125,7 +118,4 @@ bool SleepTest::TestSemiBusy(float64 totalSleepSec,
     return testResult;
 }
 
-bool SleepTest::TestGetDateSeconds() {
-    return Sleep::GetDateSeconds() == time(NULL);
-}
 

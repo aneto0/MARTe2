@@ -29,8 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "HighResolutionTimerTest.h"
-
-//Sleep.h includes HighResolutionTimer.h
+#include "HighResolutionTimer.h"
 #include "Sleep.h"
 
 /*---------------------------------------------------------------------------*/
@@ -57,15 +56,6 @@ bool HighResolutionTimerTest::TestPeriod() {
     return HighResolutionTimer::Period() > 0;
 }
 
-bool HighResolutionTimerTest::TestPeriodFrequency() {
-    int64 HRTfrequency = HighResolutionTimer::Frequency();
-    float64 HRTperiod = HighResolutionTimer::Period();
-    float64 relativePeriod = 1.0 / HRTfrequency;
-    int64 relativeFrequency = (int64) (1.0 / HRTperiod);
-    return (Tolerance(HRTperiod, relativePeriod, 1e-9) && Tolerance(float64(HRTfrequency), float64(relativeFrequency), 1e-9));
-}
-
-//return true if the measured time is more or less equal to the sleep time.
 bool HighResolutionTimerTest::TestCounter(float64 sleepTime) {
     uint64 counter_1 = 0;
     uint64 counter = 0;
@@ -77,7 +67,6 @@ bool HighResolutionTimerTest::TestCounter(float64 sleepTime) {
     return Tolerance(time, sleepTime, sleepTime * .1);
 }
 
-//return true if the measured time is more or less equal to the sleep time.
 bool HighResolutionTimerTest::TestCounter32(float64 sleepTime) {
     uint32 counter_1 = 0;
     uint32 counter = 0;
@@ -142,4 +131,12 @@ bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
         return false;
     }
     return true;
+}
+
+bool HighResolutionTimerTest::TestPeriodFrequency() {
+    int64 HRTfrequency = HighResolutionTimer::Frequency();
+    float64 HRTperiod = HighResolutionTimer::Period();
+    float64 relativePeriod = 1.0 / HRTfrequency;
+    int64 relativeFrequency = (int64) (1.0 / HRTperiod);
+    return (Tolerance(HRTperiod, relativePeriod, 1e-9) && Tolerance(float64(HRTfrequency), float64(relativeFrequency), 1e-9));
 }

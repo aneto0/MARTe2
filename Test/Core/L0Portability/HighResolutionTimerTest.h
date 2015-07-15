@@ -22,7 +22,7 @@
  */
 
 #ifndef HIGHRESOLUTIONTIMERTEST_H_
-#define 		HIGHRESOLUTIONTIMERTEST_H_
+#define HIGHRESOLUTIONTIMERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,7 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -56,12 +58,6 @@ public:
      * @return true if the returned value is greater than zero.
      */
     bool TestFrequency();
-
-    /**
-     * @brief Checks if period and frequency are mutual.
-     * @return true if frequency=1/period.
-     */
-    bool TestPeriodFrequency();
 
     /**
      * @brief Test the HighResolutionTimer::Counter function.
@@ -97,6 +93,14 @@ public:
      * Notice that a fail in this test could be driven by an interruption of the test by another task.
      */
     bool TestGetTimeStamp(uint32 millisecs);
+
+public: //Other tests
+
+    /**
+     * @brief Checks if period and frequency are mutual.
+     * @return true if frequency=1/period.
+     */
+    bool TestPeriodFrequency();
 };
 
 /*---------------------------------------------------------------------------*/
