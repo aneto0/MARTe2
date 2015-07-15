@@ -131,19 +131,9 @@ TEST(ThreadsGTest,TestGetThreadInfoCopy) {
     ASSERT_TRUE(myUnitTest.TestGetThreadInfoCopy(100, "Hello"));
 }
 
-TEST(ThreadsGTest,TestCopyThreadInfoByInitialization) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestCopyThreadInfoByInitialization("Hello"));
-}
-
 TEST(ThreadsGTest,TestGetThreadInfoCopyInvalidID) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestGetThreadInfoCopyInvalidID());
-}
-
-TEST(ThreadsGTest,TestCopyThreadInfoEqualOperator) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestCopyThreadInfoEqualOperator("Hello"));
 }
 
 TEST(ThreadsGTest,TestFindByName) {
