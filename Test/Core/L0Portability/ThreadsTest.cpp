@@ -48,7 +48,7 @@ ThreadsTest::ThreadsTest() {
     retValue = true;
 }
 
-void DummyFunction(ThreadsTest &tt) {
+static void DummyFunction(ThreadsTest &tt) {
 
     //tells to the main process that the thread begins
     tt.exitCondition++;
@@ -385,7 +385,7 @@ bool ThreadsTest::TestGetState() {
     return ret;
 }
 
-void TestIdFunction(ThreadsTest &tt) {
+static void TestIdFunction(ThreadsTest &tt) {
     if (Threads::Id() != tt.tidTest) {
         tt.retValue = false;
     }
@@ -524,7 +524,7 @@ bool ThreadsTest::TestNameNull() {
     return retValue;
 }
 
-void WaitFunction(ThreadsTest &tt) {
+static void WaitFunction(ThreadsTest &tt) {
     Atomic::Increment(&(tt.exitCondition));
     while (tt.exitCondition > -1) {
         Sleep::Sec(1e-3);
@@ -761,91 +761,6 @@ bool ThreadsTest::TestGetThreadInfoCopyInvalidID() {
     return !Threads::GetThreadInfoCopy(ti, -1, (TID) 0);
 }
 
-bool ThreadsTest::TestCopyThreadInfoByInitialization(const char8 *name) {
-    ThreadInformation ti;
-    TID tid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this, THREADS_DEFAULT_STACKSIZE, name);
-    //waits that the thread begins
-    uint32 j = 0;
-    while ((uint32) exitCondition < 1) {
-        if (j++ > 100) {
-            exitCondition = -1;
-            Sleep::Sec(1.0);
-            return false;
-        }
-        Sleep::Sec(10e-3);
-    }
-    if (!Threads::GetThreadInfoCopy(ti, -1, tid)) {
-        retValue = false;
-    }
-    //creates a copy
-    ThreadInformation tiCopy(ti);
-    if (StringHelper::Compare(tiCopy.ThreadName(), ti.ThreadName()) != 0) {
-        return false;
-    }
-    if (tiCopy.threadId != ti.threadId) {
-        return false;
-    }
-    if (tiCopy.priorityClass != ti.priorityClass) {
-        return false;
-    }
-    if (tiCopy.priorityLevel != ti.priorityLevel) {
-        return false;
-    }
-    //let exit the threads
-    exitCondition = -1;
-    j = 0;
-    while (exitCondition > -2) {
-        if (j++ > 100) {
-            return false;
-        }
-        Sleep::Sec(10e-3);
-    }
-    return retValue;
-}
-
-bool ThreadsTest::TestCopyThreadInfoEqualOperator(const char8 *name) {
-    ThreadInformation ti;
-    TID tid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this, THREADS_DEFAULT_STACKSIZE, name);
-    //waits that the thread begins
-    uint32 j = 0;
-    while ((uint32) exitCondition < 1) {
-        if (j++ > 100) {
-            exitCondition = -1;
-            Sleep::Sec(1.0);
-            return false;
-        }
-        Sleep::Sec(10e-3);
-    }
-    if (!Threads::GetThreadInfoCopy(ti, -1, tid)) {
-        retValue = false;
-    }
-    //creates another copy
-    ThreadInformation tiCopy2;
-    tiCopy2 = ti;
-    if (StringHelper::Compare(tiCopy2.ThreadName(), ti.ThreadName()) != 0) {
-        return false;
-    }
-    if (tiCopy2.threadId != ti.threadId) {
-        return false;
-    }
-    if (tiCopy2.priorityClass != ti.priorityClass) {
-        return false;
-    }
-    if (tiCopy2.priorityLevel != ti.priorityLevel) {
-        return false;
-    }
-    //let exit the threads
-    exitCondition = -1;
-    j = 0;
-    while (exitCondition > (-2)) {
-        if (j++ > 100) {
-            return false;
-        }
-        Sleep::Sec(10e-3);
-    }
-    return retValue;
-}
-
 bool ThreadsTest::TestFindByName(uint32 nOfThreads,
                                  const char8 *name,
                                  uint32 position) {
@@ -898,13 +813,13 @@ bool ThreadsTest::TestFindByName(uint32 nOfThreads,
 
 }
 
-void DoNothing(void *t) {
+static void DoNothing(void *t) {
     ((ThreadsTest*) t)->exitCondition++;
     ((ThreadsTest*) t)->exitCondition++;
     ((ThreadsTest*) t)->exitCondition++;
 }
 
-void DoNothingProtected(ThreadsTest &t) {
+static void DoNothingProtected(ThreadsTest &t) {
     t.exitCondition++;
     ExceptionHandler ehi;
     Threads::ProtectedExecute(DoNothing, (void*) &t, &ehi);

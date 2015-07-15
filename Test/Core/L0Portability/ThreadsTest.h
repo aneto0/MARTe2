@@ -208,25 +208,6 @@ public:
     bool TestGetThreadInfoCopyInvalidID();
 
     /**
-     * @brief Tests the ThreadInformation::ThreadInformation constructor.
-     * @details Create a variable of ThreadInformation using the constructor.
-     * @param[in] name is the desired threads name.
-     * @return true if the properties of the threads (name, priorityClass, priorityLevel, threadId), are
-     *  as expected, false otherwise.
-     */
-    bool TestCopyThreadInfoByInitialization(const char8 *name);
-
-    /**
-     * @brief Tests the Threads::GetThreadInfoCopy using = operator.
-     * @details Copy the threads information using the = operator checking if the copy is correctly done.
-     * @param[in] nOfThreads is the number of threads to launch.
-     * @param[in] name is the desired threads name.
-     * @return true if the properties of the threads copied (name, priorityClass, priorityLevel, threadId),
-     * are as expected, false otherwise.
-     */
-    bool TestCopyThreadInfoEqualOperator(const char8 *name);
-
-    /**
      * @brief Tests the Threads::FindByName function.
      * @details Launches thread with the specified name and the others without name, then checks if the returned
      * tid of the FindByName function is correct.
