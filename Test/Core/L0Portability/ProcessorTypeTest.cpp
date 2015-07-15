@@ -41,10 +41,10 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 ProcessorTypeTest::ProcessorTypeTest() :
-    ptFirst(0xFE),
-    ptSecond(0xFD),
-    ptAny(0xFF),
-    ptNone(0x0) {
+        ptFirst(0xFE),
+        ptSecond(0xFD),
+        ptAny(0xFF),
+        ptNone(0x0) {
 }
 
 bool ProcessorTypeTest::TestAssignmentOperator() {
@@ -55,8 +55,8 @@ bool ProcessorTypeTest::TestAssignmentOperator() {
     ptTest = 0xFD;
     result &= (ptTest.GetProcessorMask() == 0xFD);
 
-    ptTest = ptSecond;
-    result &= (ptTest.GetProcessorMask() == ptSecond.GetProcessorMask());
+    ptTest = ptFirst;
+    result &= (ptTest.GetProcessorMask() == ptFirst.GetProcessorMask());
 
     return result;
 }

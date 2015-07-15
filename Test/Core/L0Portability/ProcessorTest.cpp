@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ProcessorTest.h"
+#include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -48,6 +49,7 @@ bool ProcessorTest::TestVendorId() {
     const char8 * vendorId = NULL;
 
     vendorId = Processor::VendorId();
+    printf("the TestVendorIs is: %s\n", vendorId);
     testResult = (vendorId != NULL);
 
     return testResult;
@@ -59,6 +61,7 @@ bool ProcessorTest::TestFamily() {
     uint32 familyAux = family;
 
     family = Processor::Family();
+    printf("family is : %u\n", family);
     testResult = (family != familyAux);
 
     return testResult;
@@ -70,6 +73,7 @@ bool ProcessorTest::TestModel() {
     uint32 modelAux = model;
 
     model = Processor::Model();
+    printf("model is : %u\n", model);
     testResult = (model != modelAux);
 
     return testResult;
@@ -82,6 +86,6 @@ bool ProcessorTest::TestAvailable() {
 
     available = Processor::Available();
     testResult = (available != availableAux);
-
+    printf("available cpus is : %u\n", available);
     return testResult;
 }
