@@ -55,7 +55,7 @@ struct EventSemOSProperties;
 class EventSem {
 public:
     /**
-     * @brief Initialises the semaphore operating system specific properties.
+     * @brief Initializes the semaphore operating system specific properties.
      */
     EventSem();
 

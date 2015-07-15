@@ -34,6 +34,7 @@
 #include "MutexSem.h"
 #include "EventSem.h"
 #include "Threads.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -63,7 +64,7 @@ public:
 
     /**
      * @brief Tests the MutexSem::Create function.
-     * @param[in] recursive specifies if the mutex should be created recursive or not.
+     * @param[in] recursive specifies if the mutex should be created recursively or not.
      * @return true if the semaphore is successfully created which also implies that a non NULL handle is created.
      */
     bool TestCreate(bool recursive);
@@ -71,7 +72,7 @@ public:
     /**
      * @brief Tests the MutexSem::Close function. The semaphore to be closed can be created with any of the
      * possible parameter combinations.
-     * @param[in] recursive specifies if the mutex should be created recursive or not.
+     * @param[in] recursive specifies if the mutex should be created recursively or not.
      * @return true if the semaphore is successfully closed.
      */
     bool TestClose(bool recursive);
@@ -192,8 +193,8 @@ private:
      * @return the value returned by the functionToTest.
      */
     bool GenericMutexSemTestCaller(int32 nOfThreads,
-                                TimeoutType timeout,
-                                ThreadFunctionType functionToTest);
+                                   TimeoutType timeout,
+                                   ThreadFunctionType functionToTest);
 
     /**
      * Allow the callback functions to access the private methods of the class

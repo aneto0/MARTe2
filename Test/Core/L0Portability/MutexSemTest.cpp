@@ -79,8 +79,8 @@ bool MutexSemTest::TestClose(bool recursive) {
 }
 
 bool MutexSemTest::GenericMutexSemTestCaller(int32 nOfThreads,
-                                       TimeoutType timeout,
-                                       ThreadFunctionType functionToTest) {
+                                             TimeoutType timeout,
+                                             ThreadFunctionType functionToTest) {
     failed = false;
     stop = false;
     nOfExecutingThreads = 0;
@@ -124,7 +124,7 @@ void TestLockCallback(MutexSemTest &mt) {
 }
 
 bool MutexSemTest::TestLock(int32 nOfThreads,
-                         TimeoutType timeout) {
+                            TimeoutType timeout) {
     return GenericMutexSemTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestLockCallback);
 }
 
@@ -152,7 +152,7 @@ void TestUnLockCallback(MutexSemTest &mt) {
 }
 
 bool MutexSemTest::TestUnLock(int32 nOfThreads,
-                           TimeoutType timeout) {
+                              TimeoutType timeout) {
     return GenericMutexSemTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestUnLockCallback);
 }
 
@@ -198,7 +198,6 @@ bool MutexSemTest::TestIsRecursive() {
     test &= testMutex.Create(true);
     test &= !testMutex.IsRecursive();
     testMutex.Close();
-
 
     return test;
 }
