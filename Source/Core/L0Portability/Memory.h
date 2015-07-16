@@ -280,47 +280,6 @@ public:
      */
     static char8 *StringDup(char8 const * const s);
 
-    /*static void AllocationStatistics(StreamInterface *out){
-     MemoryAllocationStatistics(out);
-     }*/
-
-    /**
-     * @brief Gets the memory statistics associated to a thread if MEMORY_STATISTICS is defined.
-     * @param[out] size The size of the memory associated with the thread.
-     * @param[out] chunks The number of chunks of memory.
-     * @param[in] tid The Thread id to be investigated.
-     * @return false is MEMORY_STATISTICS is not defined, true if it is defined and in case of success.
-     */
-    static bool AllocationStatistics(int32 &size, int32 &chunks, TID tid = 0xFFFFFFFFU);
-
-    /**
-     * @brief Gets the informations from the header of the memory area if MEMORY_STATISTICS is defined.
-     * @param[in] pointer is a pointer to the beginning of the usable memory area.
-     * @param[out] size is the size of the memory area allocated.
-     * @param[out] tid is the identifier of the thread which allocates the memory.
-     * @return If MEMORY_STATISTICS is defined returns true if the memory pointer is valid.
-     * false if MEMORY_STATISTICS is not defined.
-     * @pre The input pointer must point to the beginning of the memory area, otherwise the outputs can be incorrect.
-     */
-    static bool GetHeaderInfo(void *pointer, uint32 &size, TID &tid);
-
-    /**
-     * @brief If MEMORY_STATISTICS is defined resets the memory database.
-     */
-    static void ClearStatisticsDatabase();
-
-    /**
-     * @brief if MEMORY_STATISTICS is defined returns the number of elements in the memory database.
-     * @return the number of elements in the memory database, 0 if MEMORY_STATISTICS is not defined.
-     */
-    static uint32 GetStatisticsDatabaseNElements();
-
-    /**
-     * @brief if MEMORY_STATISTICS is defined returns the total amount of the current allocated heap memory.
-     * @return the amount of the current allocated heap memory, 0 if MEMORY_STATISTICS is not defined.
-     */
-    static int32 GetUsedHeap();
-
     /**
      * @brief Checks if the process has the access to the specified memory area.
      * @param[in] address The pointer to the memory block to be checked.
@@ -351,7 +310,7 @@ public:
      * @brief Frees an area of shared memory which was previously created with MemorySharedAlloc.
      * @param[in] address the address for the shared memory.
      */
-    static void SharedFree(void *address);
+    static void SharedFree(void const *const address);
 
     /**
      * @brief Copy source to destination.
@@ -429,31 +388,6 @@ bool MemoryFree(void *&data);
 void *MemoryRealloc(void *&data, const uint32 newSize);
 
 /**
- * @see Memory::AllocationStatistics
- */
-bool MemoryAllocationStatistics(int32 &size, int32 &chunks, TID tid = 0xFFFFFFFFU);
-
-/**
- * @see Memory::GetHeaderInfo
- */
-bool MemoryGetHeaderInfo(void *pointer, uint32 &size, TID &tid);
-
-/**
- * @see Memory::ClearStatisticsDatabase
- */
-void MemoryClearStatisticsDatabase(void);
-
-/**
- * @see Memory::GetStatisticsDatabaseNElements
- */
-uint32 MemoryGetStatisticsDatabaseNElements(void);
-
-/**
- * @see Memory::GetUsedHeap
- */
-int32 MemoryGetUsedHeap(void);
-
-/**
  * @see Memory::Check
  */
 bool MemoryCheck(const void* const address, const MemoryTestAccessMode &accessMode, const uint32 size = 4U);
@@ -466,7 +400,7 @@ void *MemorySharedAlloc(const uint32 key, const uint32 size, const uint32 permMa
 /**
  * @see Memory::SharedFree
  */
-void MemorySharedFree(void *&address);
+void MemorySharedFree(void const *const address);
 
 /**
  * @see Memory::Copy

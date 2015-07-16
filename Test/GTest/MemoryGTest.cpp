@@ -106,35 +106,5 @@ TEST(MemoryGTest,TestSearch) {
     ASSERT_TRUE(memorytest.TestSearch());
 }
 
-TEST(MemoryGTest,TestGetHeaderInfo) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestGetHeaderInfo());
-}
 
-TEST(MemoryGTest,TestAllocationStatistics) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestAllocationStatistics());
-}
-
-TEST(MemoryGTest,TestGetUsedHeap) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestGetUsedHeap(32));
-}
-
-
-TEST(MemoryGTest,TestClearStatisticsDatabase) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestClearStatisticsDatabase());
-}
-
-TEST(MemoryGTest,TestGetStatisticsDatabaseNElements) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestGetStatisticsDatabaseNElements());
-}
-
-
-TEST(MemoryGTest,TestDatabase) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestDatabase());
-}
 
