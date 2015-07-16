@@ -36,8 +36,6 @@
 #include "Sleep.h"
 #include "Atomic.h"
 
-#include <stdio.h>
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -111,8 +109,6 @@ bool MemoryTest::TestRealloc(uint32 size1,
     //allocate size1 integers
     int32* allocated = (int32*) Memory::Malloc(size1 * sizeof(int32));
 
-    printf("H1\n");
-
     //check if the pointers to these memory locations are valid
     for (uint32 i = 0; i < size1; i++) {
         if ((allocated + i) == NULL) {
@@ -121,8 +117,6 @@ bool MemoryTest::TestRealloc(uint32 size1,
         }
         allocated[i] = i;
     }
-
-    printf("H2\n");
 
     //reallocate the memory adding size2 integers locations
     allocated = (int32*) Memory::Realloc((void*&) allocated, (size1 + size2) * sizeof(int32));
@@ -136,15 +130,12 @@ bool MemoryTest::TestRealloc(uint32 size1,
 
     }
 
-    printf("H3\n");
-
     for (uint32 i = 0; i < size1; i++) {
         if (allocated + i == NULL) {
             Memory::Free((void*&) allocated);
             return false;
         }
 
-        printf("H4\n");
 
         if (allocated[i] != (int32) i) {
             Memory::Free((void*&) allocated);
@@ -164,8 +155,6 @@ bool MemoryTest::TestRealloc(uint32 size1,
         return false;
     }
 
-    printf("H5\n");
-
     //manual check
     for (uint32 i = 0; i < size1; i++) {
         if ((allocated + i) == NULL) {
@@ -173,8 +162,6 @@ bool MemoryTest::TestRealloc(uint32 size1,
             return false;
         }
     }
-
-    printf("H6\n");
 
     uint32 size = 0;
     //check if implements a free if size is 0.
@@ -184,8 +171,6 @@ bool MemoryTest::TestRealloc(uint32 size1,
         return false;
     }
 
-    printf("H7\n");
-
     //check if it returns NULL in case of NULL input and size equal to zero.
     allocated = (int32*) Memory::Realloc((void*&) allocated, size);
 
@@ -193,8 +178,6 @@ bool MemoryTest::TestRealloc(uint32 size1,
         Memory::Free((void*&) allocated);
         return false;
     }
-
-    printf("H8\n");
 
     return true;
 
