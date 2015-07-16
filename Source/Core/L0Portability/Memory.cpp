@@ -64,6 +64,9 @@ void *MemoryRealloc(void *&data, const uint32 newSize) {
     } else if ( (newSize != 0U) && (data == NULL) ) {
         // newSize != 0 and data null -> we are asking for a malloc()
         data = MemoryMalloc(newSize);
+    } else if ( (newSize == 0U) && (data == NULL) ) {
+        // newSize == 0 and data null -> no sense, just return NULL
+        data = static_cast<void*>(NULL);
     } else {
         // newSize != 0 and data not null -> we are really asking for a realloc()
 
@@ -90,6 +93,7 @@ bool MemoryFree(void *&data) {
     if (data != NULL) {
         //free the memory
         MemoryOS::Free(data);
+        ret = true;
     }
     data = static_cast<void*>(NULL);
     return ret;
@@ -104,9 +108,10 @@ void *MemorySharedAlloc(const uint32 key, const uint32 size, const uint32 permMa
     return MemoryOS::SharedAlloc(key, size, permMask);
 }
 
-void MemorySharedFree(void const *const address) {
+void MemorySharedFree(void const *&address) {
     if (address != NULL) {
         MemoryOS::SharedFree(address);
+        address = static_cast<void*>(NULL);
     }
 
     return;
@@ -192,7 +197,7 @@ void *Memory::SharedAlloc(const uint32 key, const uint32 size, const uint32 perm
     return ret;
 }
 
-void Memory::SharedFree(void const *const address) {
+void Memory::SharedFree(void const *&address) {
     MemorySharedFree(address);
 }
 

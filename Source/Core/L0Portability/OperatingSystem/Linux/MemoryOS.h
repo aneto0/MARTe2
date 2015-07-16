@@ -122,7 +122,7 @@ public:
      * @see MemorySharedFree.
      * @param[in] address is a pointer to the shared memory.
      */
-    static void SharedFree(void const *address) {
+    static void SharedFree(void const *&address) {
         shmdt(address);
     }
 

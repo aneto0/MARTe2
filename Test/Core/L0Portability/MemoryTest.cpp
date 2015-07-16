@@ -36,6 +36,8 @@
 #include "Sleep.h"
 #include "Atomic.h"
 
+#include <stdio.h>
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -109,6 +111,8 @@ bool MemoryTest::TestRealloc(uint32 size1,
     //allocate size1 integers
     int32* allocated = (int32*) Memory::Malloc(size1 * sizeof(int32));
 
+    printf("H1\n");
+
     //check if the pointers to these memory locations are valid
     for (uint32 i = 0; i < size1; i++) {
         if ((allocated + i) == NULL) {
@@ -117,6 +121,8 @@ bool MemoryTest::TestRealloc(uint32 size1,
         }
         allocated[i] = i;
     }
+
+    printf("H2\n");
 
     //reallocate the memory adding size2 integers locations
     allocated = (int32*) Memory::Realloc((void*&) allocated, (size1 + size2) * sizeof(int32));
@@ -130,11 +136,15 @@ bool MemoryTest::TestRealloc(uint32 size1,
 
     }
 
+    printf("H3\n");
+
     for (uint32 i = 0; i < size1; i++) {
         if (allocated + i == NULL) {
             Memory::Free((void*&) allocated);
             return false;
         }
+
+        printf("H4\n");
 
         if (allocated[i] != (int32) i) {
             Memory::Free((void*&) allocated);
@@ -154,6 +164,8 @@ bool MemoryTest::TestRealloc(uint32 size1,
         return false;
     }
 
+    printf("H5\n");
+
     //manual check
     for (uint32 i = 0; i < size1; i++) {
         if ((allocated + i) == NULL) {
@@ -162,13 +174,17 @@ bool MemoryTest::TestRealloc(uint32 size1,
         }
     }
 
+    printf("H6\n");
+
     uint32 size = 0;
     //check if implements a free if size is 0.
-    allocated = (int32*) MemoryRealloc((void*&) allocated, size);
+    allocated = (int32*) Memory::Realloc((void*&) allocated, size);
     if (allocated != NULL) {
         Memory::Free((void*&) allocated);
         return false;
     }
+
+    printf("H7\n");
 
     //check if it returns NULL in case of NULL input and size equal to zero.
     allocated = (int32*) Memory::Realloc((void*&) allocated, size);
@@ -177,6 +193,8 @@ bool MemoryTest::TestRealloc(uint32 size1,
         Memory::Free((void*&) allocated);
         return false;
     }
+
+    printf("H8\n");
 
     return true;
 
@@ -239,7 +257,7 @@ bool MemoryTest::TestSharedAlloc() {
         return false;
     }
 
-    Memory::SharedFree((void*&) sharedInt);
+    Memory::SharedFree((void const *&) sharedInt);
 
     //key=0
     sharedInt = (int32*) Memory::SharedAlloc(0, sizeof(int32));
@@ -247,12 +265,12 @@ bool MemoryTest::TestSharedAlloc() {
         return false;
     }
 
-    Memory::SharedFree((void*&) sharedInt);
+    Memory::SharedFree((void const *&) sharedInt);
 
     //size=0
     sharedInt = (int32*) Memory::SharedAlloc(1, 0);
     if (sharedInt != NULL) {
-        Memory::SharedFree((void*&) sharedInt);
+        Memory::SharedFree((void const *&) sharedInt);
 
         return false;
     }
@@ -262,19 +280,18 @@ bool MemoryTest::TestSharedAlloc() {
 }
 
 bool MemoryTest::TestSharedFree() {
-
     int32* sharedInt = (int32*) Memory::SharedAlloc(1, sizeof(int32));
     if (sharedInt == NULL) {
         return false;
     }
 
-    Memory::SharedFree((void*&) sharedInt);
+    Memory::SharedFree((void const *&) sharedInt);
 
     if (sharedInt != NULL) {
         return false;
     }
 
-    void* p = NULL;
+    void const * p = NULL;
     Memory::SharedFree(p);
 
     return p == NULL;
@@ -339,8 +356,8 @@ bool MemoryTest::TestSharedMemory() {
     //wait that the second thread increments the shared int
     while ((*sharedInt) < 2) {
         if (j++ > 100) {
-            Memory::SharedFree((void*&) sharedBool);
-            Memory::SharedFree((void*&) sharedInt);
+            Memory::SharedFree((void const *&) sharedBool);
+            Memory::SharedFree((void const *&) sharedInt);
             return false;
         }
         Sleep::Sec(20e-3);
@@ -351,8 +368,8 @@ bool MemoryTest::TestSharedMemory() {
 
     //release the shared memory
 
-    Memory::SharedFree((void*&) sharedBool);
-    Memory::SharedFree((void*&) sharedInt);
+    Memory::SharedFree((void const *&) sharedBool);
+    Memory::SharedFree((void const *&) sharedInt);
 
     //else return false
     return returnValue;
