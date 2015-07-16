@@ -37,16 +37,11 @@
 /**
  * @brief Memory management.
  *
- * @details Here are defined functions to allocate, reallocate and deallocate memory dynamically,
- * other functions for the shared memory management which allows allocation of a memory
- * accessible by more tasks and at last functions which allows copy, search, set and compare
- * memory areas.
+ * @details Here are defined functions to allocate, reallocate and deallocate memory dynamically;
+ * to copy, search, set and compare memory areas; and to manage shared memory.
  *
  * @details Most of the implementation is delegated to MemoryOS.h which provides system calls for the
  * memory management that are different for each operating system.
- *
- * @details These methods are particularly useful in the implementation of functionality that requires
- * a dynamic management of the memory, like for example databases, static lists, streams ecc.
  */
 
 
@@ -64,6 +59,8 @@
  * @details This class manages the Memory Allocation flag.\n
  * - MemoryStandardMemory: is the default flag and imposes that the memory to be allocated is minor than 32Mb.\n
  * - MemoryExtraMemory: allows to allocate more than 32Mb.\n
+ *
+ * @details
  */
 class MemoryAllocationFlag {
 private:
