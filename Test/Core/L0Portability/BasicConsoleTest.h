@@ -57,31 +57,122 @@ public:
      *
      * @brief TODO
      */
-    BasicConsoleTest(uint32 nRows, uint32 nColumns) {
+    BasicConsoleTest(uint32 nRows,
+                     uint32 nColumns) {
         numberOfRows = nRows;
         numberOfColumns = nColumns;
     }
 
     /**
-     * @brief Tests the correct opening of the console with different options.
+     * @brief Tests the correct opening of the console with default mode.
      * @param[in] openingMode is a flag with define the properties of the console.
-     * @return true if the console is open correctly.
+     * @return true if the returned value of BasicConsole.Open() is true.
      */
-    bool TestOpen(FlagsType openingMode = BasicConsole::Mode::Default);
+    bool TestOpenModeDefault(FlagsType openingMode = BasicConsole::Mode::Default);
 
     /**
-     * @brief Tests the correct behavior of the write operations.
-     * @details If we give in input a size of the string greater than the size of the string passed, the write function must write only the string passed (until
-     * the character '\0') and size must be reduced at the real string size.
+     * @brief Tests the correct opening of the console with CreateNewBuffer mode.
+     * @param[in] openingMode is a flag with define the properties of the console.
+     * @return true if the returned value of BasicConsole.Open() is true.
+     */
+    bool TestOpenModeCreateNewBuffer();
+
+    /**
+     * @brief Tests the correct opening of the console with PerformCharacterInput mode.
+     * @param[in] openingMode is a flag with define the properties of the console.
+     * @return true if the returned value of BasicConsole.Open() is true.
+     */
+    bool TestOpenModePerformCharacterInput();
+
+    /**
+     * @brief Tests the correct opening of the console with DisableControlBreak mode.
+     * @param[in] openingMode is a flag with define the properties of the console.
+     * @return true if the returned value of BasicConsole.Open() is true.
+     */
+    bool TestOpenModeDisableControlBreak();
+
+    /**
+     * @brief Tests the correct opening of the console with EnablePaging mode.
+     * @param[in] openingMode is a flag with define the properties of the console.
+     * @return true if the returned value of BasicConsole.Open() is true.
+     */
+    bool TestOpenModeEnablePaging();
+
+    /**
+     * @brief Test BasicConsole::GetOpeningMode function.
+     * @detail Open consoles with different Modes Then checks if the returned value of GetOpeningMode
+     * is consistent with the mode specified.
+     * @return true if the returned value of the GetOpeningMode is the expected value.
+     */
+    bool TestGetOpeningMode();
+
+    /**
+     * @brief Test BasicConsole::Close() function.
+     * @detail Open consoles and then close. Moreover the test tries to close a closed console.
+     * @return true if the returned value of the BasicConsole::Close() is true when the console is open and false when the console is closed.
+     */
+    bool TestClose();
+
+    /**
+     * @brief Tests BasicConsole::Write() function.
+     * @details Checks for all modes the returned value of the BasicConsole::Write() function when tries
+     * to write a string on the console
      * @param[in] string is the string to write.
-     * @param[in] padding is the difference between the size that we want to pass to the write function and the real string size.
-     * @return true if the size returned is the real string size.
+     * @param[in] padding is the difference between the size that we want to pass to the write function
+     * and the real string size. In this test when padding is negative automatically it is set to 0.
+     * @return true if the BasicConsol::write() returns NoError for all modes.
      */
-    bool TestWrite(const char8 *string,
-                   uint32 padding);
+    bool TestWriteCheckReturn(const char8 *string,
+                              uint32 padding);
+    /**
+     * @brief Tests BasicConsole::Write() function.
+     * @details Checks for the mode Default, the returned value of the BasicConsole::Write() function when
+     * tries to write a NULL string on the console
+     * @return true if the BasicConsol::write() returns Warning.
+     */
+    bool TestWriteNullString();
 
     /**
-     * @brief Tests if the string read by console is the same of the string passed by argument (the user must write in console the same word) with the same size.
+     * @brief Tests BasicConsole::Write() function.
+     * @details Checks that the written bytes == "the size of the string" when the size input is in fact
+     * the real size of the string.
+     * @param[in] string is the string to write.
+     * @return true if the sizes of the written string is the same than the real size of the string.
+     */
+    bool TestWriteExactSize(const char8 *string);
+
+    /**
+     * @brief Tests BasicConsole::Write() function.
+     * @details Checks that the written bytes is = size when size is less than the RealStringSize.
+     * BasicConsole::Write() only writes the first size character of the string.
+     * @param[in] string is the string to write.
+     * @return true if the sizes of the written string = realStringSize+padding (where padding is negative)
+     */
+    bool TestWriteSmallSize(const char8 *string);
+
+    /**
+     * @brief Tests BasicConsole::Write() function.
+     * @details If we give in input a size of the string greater than the size of the string passed,
+     * the write function must write only the string passed (until the character '\0') and size must
+     * be reduced at the real string size. This test checks that the written bytes = realStringSize.
+     * @param[in] string is the string to write.
+     * @return true if the sizes of the written string is the same than the real size of the string.
+     */
+    bool TestWriteLargeSize(const char8 *string);
+
+    /**
+     * @brief Tests BasicConsole::Write() function.
+     * @details If the string is larger than the screen columns, the BasicConsole::Write() should
+     * continue writing in the next line.
+     * @return true if the sizes of the written string is the same than the real size of the string.
+     * Moreover a visual check can be done in the console. Should appear "abcd" in one line and
+     * "efgh" in the next line.
+     */
+    bool TestWriteEndColumn();
+
+    /**
+     * @brief Test BasicConsole::Read() function
+     * @detail Test if the string read by console is the same of the string passed by argument (the user must write in console the same word) with the same size.
      * @param[in] stringArg is the string to match with the read string.
      * @return true if the read string is equal to the passed argument.
      */
@@ -191,7 +282,8 @@ public:
     /**
      * TODO
      */
-    bool TestRead(const char8 *stringArg, BasicConsole &myConsole);
+    bool TestRead(const char8 *stringArg,
+                  BasicConsole &myConsole);
 
     /**
      * TODO
@@ -206,7 +298,7 @@ private:
 
     /**
      * Definitions of the of the console number of columns.
-    */
+     */
     uint32 numberOfColumns;
 
 };

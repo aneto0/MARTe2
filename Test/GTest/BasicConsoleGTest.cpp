@@ -7,21 +7,74 @@
 #include "gtest/gtest.h"
 #include "BasicConsoleTest.h"
 
-
-
-TEST(BasicConsoleGTest,TestOpen) {
+TEST(BasicConsoleGTest,TestOpenModeDefault) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestOpen());
+    ASSERT_TRUE(console.TestOpenModeDefault());
 }
 
-TEST(BasicConsoleGTest,TestWrite) {
+TEST(BasicConsoleGTest,TestOpenModeCreateNewBuffer) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestWrite("ABC\nDE", 0));
+    ASSERT_TRUE(console.TestOpenModeCreateNewBuffer());
+}
+
+TEST(BasicConsoleGTest,TestOpenModePerformCharacterInput) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestOpenModePerformCharacterInput());
+}
+
+TEST(BasicConsoleGTest,TestOpenModeDisableControlBreak) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestOpenModeDisableControlBreak());
+}
+
+TEST(BasicConsoleGTest,TestOpenModeEnablePaging) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestOpenModeEnablePaging());
+}
+
+TEST(BasicConsoleGTest,TestGetOpeningMode) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestGetOpeningMode());
+}
+
+TEST(BasicConsoleGTest,TestClose) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestClose());
+}
+
+TEST(BasicConsoleGTest,TestWriteCheckReturn) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestWriteCheckReturn("ABC\nDE\n", 1));
+}
+
+TEST(BasicConsoleGTest,TestWriteNullString) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestWriteNullString());
+}
+
+TEST(BasicConsoleGTest,TestWriteExactSize) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestWriteExactSize("abcd"));
+}
+
+TEST(BasicConsoleGTest,TestWriteSmallSize) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestWriteSmallSize("abcd"));
+}
+
+TEST(BasicConsoleGTest,TestWriteLargeSize) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestWriteLargeSize("abcd"));
+}
+
+TEST(BasicConsoleGTest,TestWriteEndColumn) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestWriteEndColumn());
 }
 
 TEST(BasicConsoleGTest,TestWrite2) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestWrite("Hello bye bye world\nWorld with spaces\n\n\nand new lines\nand\nsingle\nwords.", 0));
+    ASSERT_TRUE(console.TestWriteCheckReturn("Hello bye bye world\nWorld with spaces\n\n\nand new lines\nand\nsingle\nwords.", 0));
 }
 
 //This tests need user intervent. Do not uncomment for automatic tests.
