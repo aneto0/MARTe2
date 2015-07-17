@@ -25,7 +25,17 @@
 #include "LoadableLibrary.h"
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,LoadableLibraryOS.h)
 
-bool LoadableLibraryOpen(LoadableLibrary &ll, const char *dllName) {
+HANDLE LoadableLibrary::GetModule( void ) {
+    return module;
+}
+
+void LoadableLibrary::SetModule( HANDLE &m ) {
+    module = m;
+}
+
+
+
+bool LoadableLibraryOpen(LoadableLibrary &ll, char8 const * const dllName) {
     return LoadableLibraryOSOpen(ll, dllName);
 }
 
@@ -33,6 +43,6 @@ void LoadableLibraryClose(LoadableLibrary &ll) {
     LoadableLibraryOSClose(ll);
 }
 
-void *LoadableLibraryFunction(LoadableLibrary &ll, const char *name) {
+void *LoadableLibraryFunction(LoadableLibrary &ll, char8 const * const name) {
     return LoadableLibraryOSFunction(ll, name);
 }

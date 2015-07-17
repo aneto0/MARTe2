@@ -37,8 +37,9 @@
  * @param ll is the library to close.
  */
 void LoadableLibraryOSClose(LoadableLibrary &ll) {
-    if (ll.module != 0) {
-        dlclose(ll.module);
+    HANDLE m = ll.GetModule();
+    if (m != 0) {
+        dlclose(m);
     }
 }
 
@@ -49,15 +50,17 @@ void LoadableLibraryOSClose(LoadableLibrary &ll) {
  * @param dllName is the name of the library.
  * @return true if the requested library is found and opened.
  */
-bool LoadableLibraryOSOpen(LoadableLibrary &ll, const char *dllName) {
-    if (ll.module != 0) {
+bool LoadableLibraryOSOpen(LoadableLibrary &ll, char8 const * const dllName) {
+    HANDLE m = ll.GetModule();
+    if (m != 0) {
         LoadableLibraryOSClose(ll);
     }
 
-    ll.module = dlopen(dllName, RTLD_NOW | RTLD_GLOBAL);
-    if (ll.module == NULL) {
+    m = dlopen(dllName, RTLD_NOW | RTLD_GLOBAL);
+    if (m == NULL) {
         return false;
     }
+    ll.SetModule(m);
     return true;
 }
 
@@ -68,11 +71,12 @@ bool LoadableLibraryOSOpen(LoadableLibrary &ll, const char *dllName) {
  * @param name is the name of the function.
  * @return a pointer to the requested function.
  */
-void *LoadableLibraryOSFunction(LoadableLibrary &ll, const char *name) {
-    if ((ll.module == NULL) || (name == NULL)) {
+void *LoadableLibraryOSFunction(LoadableLibrary &ll, char8 const * const name) {
+    HANDLE m = ll.GetModule();
+    if ((m == NULL) || (name == NULL)) {
         return NULL;
     }
-    return dlsym(ll.module, name);
+    return dlsym(m, name);
 }
 
 #endif
