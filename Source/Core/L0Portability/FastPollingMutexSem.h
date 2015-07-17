@@ -92,7 +92,7 @@ public:
      */
     inline void FastUnLock();
 
-protected:
+private:
 
     /** Atomic variable */
     volatile int32 flag;
@@ -106,7 +106,7 @@ inline FastPollingMutexSem::FastPollingMutexSem() {
     flag = 0;
 }
 
-void FastPollingMutexSem::Create(bool locked) {
+void FastPollingMutexSem::Create(const bool locked) {
     if (locked == true) {
         flag = 1;
     }
@@ -124,7 +124,7 @@ ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout) {
     int64 ticksStop = msecTimeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
     ErrorType err = NoError;
-    while (!Atomic::TestAndSet((int32 *) &flag)) {
+    while (!Atomic::TestAndSet(&flag)) {
         if (msecTimeout != TTInfiniteWait) {
             int64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
@@ -139,7 +139,7 @@ ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout) {
 }
 
 bool FastPollingMutexSem::FastTryLock() {
-    return (Atomic::TestAndSet((int32 *) &flag));
+    return (Atomic::TestAndSet( &flag));
 }
 
 void FastPollingMutexSem::FastUnLock() {
