@@ -77,6 +77,10 @@ TEST(BasicConsoleGTest,TestWrite2) {
     ASSERT_TRUE(console.TestWriteCheckReturn("Hello bye bye world\nWorld with spaces\n\n\nand new lines\nand\nsingle\nwords.", 0));
 }
 
+TEST(BasicConsoleGTest,TestPaging) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestPaging(14, 15, 15));
+}
 //This tests need user intervent. Do not uncomment for automatic tests.
 
 TEST(BasicConsoleGTest,TestRead) {
@@ -84,9 +88,20 @@ TEST(BasicConsoleGTest,TestRead) {
     ASSERT_TRUE(console.TestRead("Hello\n"));
 }
 
-TEST(BasicConsoleGTest,TestPaging) {
+TEST(BasicConsoleGTest,TestSetGetSize) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestPaging(14, 15, 15));
+    ASSERT_TRUE(console.TestSetGetSize(10, 13));
+}
+/*
+TEST(BasicConsoleGTest,TestSetGetWindowsSize) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestSetGetWindowSize(100, 70));
+}
+*/
+
+TEST(BasicConsoleGTest,TestClear) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestClear());
 }
 
 TEST(BasicConsoleGTest,TestPerfChar) {
@@ -104,16 +119,6 @@ TEST(BasicConsoleGTest,TestSetTitleBar) {
     ASSERT_TRUE(console.TestSetTitleBar("title"));
 }
 
-TEST(BasicConsoleGTest,TestSetGetSize) {
-    BasicConsoleTest console;
-    ASSERT_TRUE(console.TestSetGetSize(100, 70));
-}
-
-TEST(BasicConsoleGTest,TestSetGetWindowsSize) {
-    BasicConsoleTest console;
-    ASSERT_TRUE(console.TestSetGetWindowSize(100, 70));
-}
-
 TEST(BasicConsoleGTest,TestSetGetCursorPosition) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSetGetCursorPosition(20, 10));
@@ -124,10 +129,6 @@ TEST(BasicConsoleGTest,TestSetColour) {
     ASSERT_TRUE(console.TestSetColour(White, Black));
 }
 
-TEST(BasicConsoleGTest,TestClear) {
-    BasicConsoleTest console;
-    ASSERT_TRUE(console.TestClear());
-}
 TEST(BasicConsoleGTest,TestSetPaging) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSetMode());

@@ -143,7 +143,7 @@ public:
 
     /**
      * @brief Tests BasicConsole::Write() function.
-     * @details Checks that the written bytes is = size when size is less than the RealStringSize.
+     * @details Checks that the written bytes is = size when size input is less than the RealStringSize.
      * BasicConsole::Write() only writes the first size character of the string.
      * @param[in] string is the string to write.
      * @return true if the sizes of the written string = realStringSize+padding (where padding is negative)
@@ -171,6 +171,19 @@ public:
     bool TestWriteEndColumn();
 
     /**
+     * @brief Tests the behavior of the paging property.
+     * @details If the rows of string to write exceeds the row dimension of the console, you must press enter to begin a new page.
+     * @param[in] overflow is the difference between the rows of the string to write and the row dimension of the console.
+     * @param[in] rows is the desired row dimension of the console.
+     * @param[in] columns is the desired column dimension of the console.
+     * @return true if BasicConsol::Write() returns NoError. Also can be visually check that is written
+     * in the right place
+     */
+    bool TestPaging(uint32 overflow,
+                    uint32 rows,
+                    uint32 columns);
+
+    /**
      * @brief Test BasicConsole::Read() function
      * @detail Test if the string read by console is the same of the string passed by argument (the user must write in console the same word) with the same size.
      * @param[in] stringArg is the string to match with the read string.
@@ -179,19 +192,32 @@ public:
     bool TestRead(const char8 *stringArg);
 
     /**
-     * @brief Tests the behavior of the paging property.
-     * @details If the rows of string to write exceeds the row dimension of the console, you must press enter to begin a new page.
-     * @param[in] overflow is the difference between the rows of the string to write and the row dimension of the console.
-     * @param[in] rows is the desired row dimension of the console.
-     * @param[in] columns is the desired column dimension of the console.
-     * @return true is the write does not fail.
+     * @brief Tests the BasicConsole::SetSize and BasicConsole::GetSize functions
+     * @param[in] numberOfColumns is the desired number of columns.
+     * @param[in] numberOfRows is the desired number of rows
+     * @return true if the get function returns the values set by the set function.
      */
-    bool TestPaging(uint32 overflow,
-                    uint32 rows,
-                    uint32 columns);
+    bool TestSetGetSize(uint32 numberOfRows,
+                        uint32 numberOfColumns);
 
     /**
-     * @brief Tests the behavior of the PerfChar property, namely an immediate return after the first character read.
+     * @brief Tests the BasicConsole::GetWindowSize and BasicConsole::SetWindowSize functions
+     * @param[in] numberOfColumns is the desired x-axis window size.
+     * @param[in] numberOfRows is the desired y-axis window size.
+     * @return true if the get function returns a value minor or equal to the value passed to the set function.
+     */
+    bool TestSetGetWindowSize(uint32 numberOfColumns,
+                              uint32 numberOfRows);
+
+    /**
+     * @brief Tests the BasicConsole::Clear function
+     * @return the return value of the tested function.
+     */
+    bool TestClear();
+
+    /**
+     * @brief Tests the behavior of the PerfChar property, namely an immediate return after the first
+     * character read.
      * @return true if the size of the read string is equal to one.
      */
     bool TestPerfChar();
@@ -210,24 +236,6 @@ public:
     bool TestSetTitleBar(const char8 *title);
 
     /**
-     * @brief Tests the BasicConsole::SetSize and BasicConsole::GetSize functions
-     * @param[in] numberOfColumns is the desired number of columns.
-     * @param[in] numberOfRows is the desired number of rows
-     * @return true if the get function returns the values set by the set function.
-     */
-    bool TestSetGetSize(uint32 numberOfColumns,
-                        uint32 numberOfRows);
-
-    /**
-     * @brief Tests the BasicConsole::GetWindowSize and BasicConsole::SetWindowSize functions
-     * @param[in] numberOfColumns is the desired x-axis window size.
-     * @param[in] numberOfRows is the desired y-axis window size.
-     * @return true if the get function returns a value minor or equal to the value passed to the set function.
-     */
-    bool TestSetGetWindowSize(uint32 numberOfColumns,
-                              uint32 numberOfRows);
-
-    /**
      * @brief Tests the BasicConsole::SetCursorPosition and BAsicConsole::SetCursorPositon functions.
      * @param[in] column is the desired cursor x position.
      * @param[in] row is the desired cursor y position.
@@ -244,12 +252,6 @@ public:
      */
     bool TestSetColour(Colours foregroundColour,
                        Colours backgroundColour);
-
-    /**
-     * @brief Tests the BasicConsole::Clear function
-     * @return the return value of the tested function.
-     */
-    bool TestClear();
 
     /**
      * TODO

@@ -228,6 +228,9 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer,
         currentChar = bufferString[index];
         if (currentChar == '\0') {
             endFlag = 1u;
+        }else if (currentChar == '\n'){
+            //reset the currentColumn
+            currentColumn = 0;
         }
         if ((currentChar == '\0') || (currentChar == '\n') || (index == (size - 1u))) {
             sink = true;
