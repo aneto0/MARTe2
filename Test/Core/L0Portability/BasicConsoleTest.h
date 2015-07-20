@@ -46,7 +46,9 @@ class BasicConsoleTest {
 public:
 
     /**
-     * @brief TODO
+     * @brief Default constructor
+     * @detail When the BasicConsoleTest is created, automatically is set numberOfRows = 40
+     * numberOfColumns = 60.
      */
     BasicConsoleTest() {
         numberOfRows = 40;
@@ -54,38 +56,112 @@ public:
     }
 
     /**
-     *
-     * @brief TODO
-     */
-    BasicConsoleTest(uint32 nRows, uint32 nColumns) {
-        numberOfRows = nRows;
-        numberOfColumns = nColumns;
-    }
-
-    /**
-     * @brief Tests the correct opening of the console with different options.
+     * @brief Tests the correct opening of the console with default mode.
      * @param[in] openingMode is a flag with define the properties of the console.
-     * @return true if the console is open correctly.
+     * @return true if the returned value of BasicConsole.Open() is true.
      */
-    bool TestOpen(FlagsType openingMode = BasicConsole::Mode::Default);
+    bool TestOpenModeDefault(FlagsType openingMode = BasicConsole::Mode::Default);
 
     /**
-     * @brief Tests the correct behavior of the write operations.
-     * @details If we give in input a size of the string greater than the size of the string passed, the write function must write only the string passed (until
-     * the character '\0') and size must be reduced at the real string size.
+     * @brief Tests the correct opening of the console with CreateNewBuffer mode.
+     * @param[in] openingMode is a flag with define the properties of the console.
+     * @return true if the returned value of BasicConsole.Open() is true.
+     */
+    bool TestOpenModeCreateNewBuffer();
+
+    /**
+     * @brief Tests the correct opening of the console with PerformCharacterInput mode.
+     * @param[in] openingMode is a flag with define the properties of the console.
+     * @return true if the returned value of BasicConsole.Open() is true.
+     */
+    bool TestOpenModePerformCharacterInput();
+
+    /**
+     * @brief Tests the correct opening of the console with DisableControlBreak mode.
+     * @param[in] openingMode is a flag with define the properties of the console.
+     * @return true if the returned value of BasicConsole.Open() is true.
+     */
+    bool TestOpenModeDisableControlBreak();
+
+    /**
+     * @brief Tests the correct opening of the console with EnablePaging mode.
+     * @param[in] openingMode is a flag with define the properties of the console.
+     * @return true if the returned value of BasicConsole.Open() is true.
+     */
+    bool TestOpenModeEnablePaging();
+
+    /**
+     * @brief Test BasicConsole::GetOpeningMode function.
+     * @detail Open consoles with different Modes Then checks if the returned value of GetOpeningMode
+     * is consistent with the mode specified.
+     * @return true if the returned value of the GetOpeningMode is the expected value.
+     */
+    bool TestGetOpeningMode();
+
+    /**
+     * @brief Test BasicConsole::Close() function.
+     * @detail Open consoles and then close. Moreover the test tries to close a closed console.
+     * @return true if the returned value of the BasicConsole::Close() is true when the console can close the
+     * console and false when the console cannot close the console (because is closed).
+     */
+    bool TestClose();
+
+    /**
+     * @brief Tests BasicConsole::Write() function.
+     * @details Checks for all modes the returned value of the BasicConsole::Write() function when tries
+     * to write a string on the console
      * @param[in] string is the string to write.
-     * @param[in] padding is the difference between the size that we want to pass to the write function and the real string size.
-     * @return true if the size returned is the real string size.
+     * @param[in] padding is the difference between the size that we want to pass to the write function
+     * and the real string size. In this test when padding is negative automatically it is set to 0.
+     * @return true if the BasicConsol::write() returns NoError for all open modes.
      */
-    bool TestWrite(const char8 *string,
-                   uint32 padding);
+    bool TestWriteCheckReturn(const char8 *string,
+                              uint32 padding);
+    /**
+     * @brief Tests BasicConsole::Write() function.
+     * @details Checks for the mode Default, the returned value of the BasicConsole::Write() function when
+     * tries to write a NULL string on the console
+     * @return true if the BasicConsol::write() returns Warning.
+     */
+    bool TestWriteNullString();
 
     /**
-     * @brief Tests if the string read by console is the same of the string passed by argument (the user must write in console the same word) with the same size.
-     * @param[in] stringArg is the string to match with the read string.
-     * @return true if the read string is equal to the passed argument.
+     * @brief Tests BasicConsole::Write() function.
+     * @details Checks that the written bytes == "the size of the string" when the size input is in fact
+     * the real size of the string.
+     * @param[in] string is the string to write.
+     * @return true if the sizes of the written string is the same than the real size of the string.
      */
-    bool TestRead(const char8 *stringArg);
+    bool TestWriteExactSize(const char8 *string);
+
+    /**
+     * @brief Tests BasicConsole::Write() function.
+     * @details Checks that the written bytes is = size when size input is less than the RealStringSize.
+     * BasicConsole::Write() only writes the first size character of the string.
+     * @param[in] string is the string to write.
+     * @return true if the sizes of the written string = realStringSize+padding (where padding is negative)
+     */
+    bool TestWriteSmallSize(const char8 *string);
+
+    /**
+     * @brief Tests BasicConsole::Write() function.
+     * @details If we give in input a size of the string greater than the size of the string passed,
+     * the write function must write only the string passed (until the character '\0') and size must
+     * be reduced at the real string size. This test checks that the written bytes = realStringSize.
+     * @param[in] string is the string to write.
+     * @return true if the sizes of the written string is the same than the real size of the string.
+     */
+    bool TestWriteLargeSize(const char8 *string);
+
+    /**
+     * @brief Tests BasicConsole::Write() function.
+     * @details If the string is larger than the screen columns, the BasicConsole::Write() should
+     * continue writing in the next line.
+     * @return true if the sizes of the written string is the same than the real size of the string.
+     * Moreover a visual check can be done in the console. Should appear "abcd" in one line and
+     * "efgh" in the next line.
+     */
+    bool TestWriteEndColumn();
 
     /**
      * @brief Tests the behavior of the paging property.
@@ -93,14 +169,48 @@ public:
      * @param[in] overflow is the difference between the rows of the string to write and the row dimension of the console.
      * @param[in] rows is the desired row dimension of the console.
      * @param[in] columns is the desired column dimension of the console.
-     * @return true is the write does not fail.
+     * @return true if BasicConsol::Write() returns NoError. Also can be visually check that is written
+     * in the right place
      */
     bool TestPaging(uint32 overflow,
                     uint32 rows,
                     uint32 columns);
 
     /**
-     * @brief Tests the behavior of the PerfChar property, namely an immediate return after the first character read.
+     * @brief Test BasicConsole::Read() function
+     * @detail Test if the string read by console is the same of the string passed by argument (the user must write in console the same word) with the same size.
+     * @param[in] stringArg is the string to match with the read string.
+     * @return true if the read string is equal to the passed argument.
+     */
+    bool TestRead(const char8 *stringArg);
+
+    /**
+     * @brief Tests the BasicConsole::SetSize and BasicConsole::GetSize functions
+     * @param[in] numberOfColumns is the desired number of columns.
+     * @param[in] numberOfRows is the desired number of rows
+     * @return true if the get function returns the values set by the set function.
+     */
+    bool TestSetGetSize(uint32 numberOfRows,
+                        uint32 numberOfColumns);
+
+    /**
+     * @brief Tests the BasicConsole::GetWindowSize and BasicConsole::SetWindowSize functions
+     * @param[in] numberOfColumns is the desired x-axis window size.
+     * @param[in] numberOfRows is the desired y-axis window size.
+     * @return true if the get function returns a value minor or equal to the value passed to the set function.
+     */
+    bool TestSetGetWindowSize(uint32 numberOfColumns,
+                              uint32 numberOfRows);
+
+    /**
+     * @brief Tests the BasicConsole::Clear function
+     * @return true if the BasicConsol::Clear() returns true, false otherwise.
+     */
+    bool TestClear();
+
+    /**
+     * @brief Tests the behavior of the PerfChar property, namely an immediate return after the first
+     * character read.
      * @return true if the size of the read string is equal to one.
      */
     bool TestPerfChar();
@@ -117,24 +227,6 @@ public:
      * @return the return value of the function tested.
      */
     bool TestSetTitleBar(const char8 *title);
-
-    /**
-     * @brief Tests the BasicConsole::SetSize and BasicConsole::GetSize functions
-     * @param[in] numberOfColumns is the desired number of columns.
-     * @param[in] numberOfRows is the desired number of rows
-     * @return true if the get function returns the values set by the set function.
-     */
-    bool TestSetGetSize(uint32 numberOfColumns,
-                        uint32 numberOfRows);
-
-    /**
-     * @brief Tests the BasicConsole::GetWindowSize and BasicConsole::SetWindowSize functions
-     * @param[in] numberOfColumns is the desired x-axis window size.
-     * @param[in] numberOfRows is the desired y-axis window size.
-     * @return true if the get function returns a value minor or equal to the value passed to the set function.
-     */
-    bool TestSetGetWindowSize(uint32 numberOfColumns,
-                              uint32 numberOfRows);
 
     /**
      * @brief Tests the BasicConsole::SetCursorPosition and BAsicConsole::SetCursorPositon functions.
@@ -155,17 +247,6 @@ public:
                        Colours backgroundColour);
 
     /**
-     * @brief Tests the BasicConsole::Clear function
-     * @return the return value of the tested function.
-     */
-    bool TestClear();
-
-    /**
-     * TODO
-     */
-    bool TestSetMode();
-
-    /**
      * @brief Tests the BasicConsole::PlotChar function.
      * @param[in] c is the character to be plotted.
      * @param[in] foregroundColour is the desired foreground color.
@@ -179,24 +260,20 @@ public:
                       Colours backgroundColour,
                       int column,
                       int row);
-
+    /**
+     * @brief Auxiliar function to get the numberOfColumns
+     * @return the numberOfColumns
+     */
     uint32 GetNumberOfColumns() const {
         return numberOfColumns;
     }
-
+    /**
+     * @brief Auxiliar function to get the numberOfRows
+     * @return the numberOfRows
+     */
     uint32 GetNumberOfRows() const {
         return numberOfRows;
     }
-
-    /**
-     * TODO
-     */
-    bool TestRead(const char8 *stringArg, BasicConsole &myConsole);
-
-    /**
-     * TODO
-     */
-    bool TestPerfChar(BasicConsole &myConsole);
 
 private:
     /**
@@ -206,7 +283,7 @@ private:
 
     /**
      * Definitions of the of the console number of columns.
-    */
+     */
     uint32 numberOfColumns;
 
 };

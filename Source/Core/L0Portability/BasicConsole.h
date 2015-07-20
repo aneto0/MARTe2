@@ -138,7 +138,9 @@ public:
      * - Warning if zero bytes are written and no OSError is flagged;
      * - or OSError if there is any operating system related problem while performing the operation.
      */
-    virtual ErrorType Write(const char8 * const buffer, uint32 & size, const TimeoutType &timeout);
+    virtual ErrorType Write(const char8 * const buffer,
+                            uint32 & size,
+                            const TimeoutType &timeout);
 
     /**
      * @brief Reads from the console.
@@ -152,7 +154,9 @@ public:
      * - Warning if zero bytes are read and no OSError is flagged;
      * - or OSError if there is any operating system related problem while performing the operation.
      */
-    virtual ErrorType Read(char8 * const buffer, uint32 & size, const TimeoutType &timeout);
+    virtual ErrorType Read(char8 * const buffer,
+                           uint32 & size,
+                           const TimeoutType &timeout);
 
     /**
      * @brief Update the console size.
@@ -161,7 +165,8 @@ public:
      * @return NoError if the new size can be set or OSError if there is any operating
      * system related problem while performing the operation.
      */
-    virtual ErrorType SetSize(const uint32 &numberOfColumns, const uint32 &numberOfRows);
+    virtual ErrorType SetSize(const uint32 &numberOfColumns,
+                              const uint32 &numberOfRows);
 
     /**
      * @brief Returns the current console size.
@@ -170,7 +175,8 @@ public:
      * @return NoError if the size can be retrieved or OSError if there is any operating
      * system related problem while performing the operation.
      */
-    virtual ErrorType GetSize(uint32 & numberOfColumns, uint32 & numberOfRows) const;
+    virtual ErrorType GetSize(uint32 & numberOfColumns,
+                              uint32 & numberOfRows) const;
 
     /**
      * @brief Sets the console window size (@see WindowSizeSupported).
@@ -183,7 +189,8 @@ public:
      * system related problem while performing the operation or UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
-    virtual ErrorType SetWindowSize(const uint32 &numberOfColumns, const uint32 &numberOfRows);
+    virtual ErrorType SetWindowSize(const uint32 &numberOfColumns,
+                                    const uint32 &numberOfRows);
 
     /**
      * @brief Returns the window size.
@@ -193,7 +200,8 @@ public:
      * system related problem while performing the operation or UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
-    virtual ErrorType GetWindowSize(uint32 &numberOfColumns, uint32 &numberOfRows) const;
+    virtual ErrorType GetWindowSize(uint32 &numberOfColumns,
+                                    uint32 &numberOfRows) const;
 
     /**
      * @brief Checks if it possible to change the window size.
@@ -210,7 +218,8 @@ public:
      * system related problem while performing the operation or UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
-    virtual ErrorType SetCursorPosition(const uint32 &column, const uint32 &row);
+    virtual ErrorType SetCursorPosition(const uint32 &column,
+                                        const uint32 &row);
 
     /**
      * @brief Retrieves the cursor position.
@@ -220,7 +229,8 @@ public:
      * system related problem while performing the operation or UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
-    virtual ErrorType GetCursorPosition(uint32 & column, uint32 & row) const;
+    virtual ErrorType GetCursorPosition(uint32 & column,
+                                        uint32 & row) const;
 
     /**
      * @brief Checks if it possible to interact with the console cursor position.
@@ -253,7 +263,8 @@ public:
      * system related problem while performing the operation or UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
-    virtual ErrorType SetColour(const Colours &foregroundColour, const Colours &backgroundColour);
+    virtual ErrorType SetColour(const Colours &foregroundColour,
+                                const Colours &backgroundColour);
 
     /**
      * @brief Checks if colour changing is supported by the operating system implementation.
@@ -280,7 +291,11 @@ public:
      * system related problem while performing the operation or UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
-    virtual ErrorType PlotChar(const char8 &c, const Colours &foregroundColour, const Colours &backgroundColour, const uint32 &column, const uint32 &row);
+    virtual ErrorType PlotChar(const char8 &c,
+                               const Colours &foregroundColour,
+                               const Colours &backgroundColour,
+                               const uint32 &column,
+                               const uint32 &row);
 
     /**
      * @brief Update the console title (@see TitleBarSupported).
@@ -326,14 +341,18 @@ private:
      * if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported) or OSError
      * if there is any operating system related problem while performing the operation.
      */
-    inline ErrorType PagedWrite(const char8* const buffer, const uint32 &size, const TimeoutType &timeout);
+    inline ErrorType PagedWrite(const char8* const buffer,
+                                const uint32 &size,
+                                const TimeoutType &timeout);
 
     /**
      * @copydetails BasicConsole::Write
      * @details The BasicConsole::Write will call based on the opening mode either the Write or the
      * OSWrite function. This is where the actual operating system call is implemented.
      */
-    ErrorType OSWrite(const char8 * const buffer, uint32 & size, const TimeoutType &timeout);
+    ErrorType OSWrite(const char8 * const buffer,
+                      uint32 & size,
+                      const TimeoutType &timeout);
 
     /**
      * Operating system specific properties to be used by the operating system specific implementation
@@ -354,7 +373,9 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-ErrorType BasicConsole::PagedWrite(const char8 * const buffer, const uint32 &size, const TimeoutType &timeout) {
+ErrorType BasicConsole::PagedWrite(const char8 * const buffer,
+                                   const uint32 &size,
+                                   const TimeoutType &timeout) {
 
     uint32 numberOfColumnsTmp = 0u;
     uint32 numberOfRowsTmp = 0u;
