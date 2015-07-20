@@ -46,21 +46,13 @@ class BasicConsoleTest {
 public:
 
     /**
-     * @brief TODO
+     * @brief Default constructor
+     * @detail When the BasicConsoleTest is created, automatically is set numberOfRows = 40
+     * numberOfColumns = 60.
      */
     BasicConsoleTest() {
         numberOfRows = 40;
         numberOfColumns = 60;
-    }
-
-    /**
-     *
-     * @brief TODO
-     */
-    BasicConsoleTest(uint32 nRows,
-                     uint32 nColumns) {
-        numberOfRows = nRows;
-        numberOfColumns = nColumns;
     }
 
     /**
@@ -109,7 +101,8 @@ public:
     /**
      * @brief Test BasicConsole::Close() function.
      * @detail Open consoles and then close. Moreover the test tries to close a closed console.
-     * @return true if the returned value of the BasicConsole::Close() is true when the console is open and false when the console is closed.
+     * @return true if the returned value of the BasicConsole::Close() is true when the console can close the
+     * console and false when the console cannot close the console (because is closed).
      */
     bool TestClose();
 
@@ -120,7 +113,7 @@ public:
      * @param[in] string is the string to write.
      * @param[in] padding is the difference between the size that we want to pass to the write function
      * and the real string size. In this test when padding is negative automatically it is set to 0.
-     * @return true if the BasicConsol::write() returns NoError for all modes.
+     * @return true if the BasicConsol::write() returns NoError for all open modes.
      */
     bool TestWriteCheckReturn(const char8 *string,
                               uint32 padding);
@@ -211,7 +204,7 @@ public:
 
     /**
      * @brief Tests the BasicConsole::Clear function
-     * @return the return value of the tested function.
+     * @return true if the BasicConsol::Clear() returns true, false otherwise.
      */
     bool TestClear();
 
@@ -254,11 +247,6 @@ public:
                        Colours backgroundColour);
 
     /**
-     * TODO
-     */
-    bool TestSetMode();
-
-    /**
      * @brief Tests the BasicConsole::PlotChar function.
      * @param[in] c is the character to be plotted.
      * @param[in] foregroundColour is the desired foreground color.
@@ -272,25 +260,20 @@ public:
                       Colours backgroundColour,
                       int column,
                       int row);
-
+    /**
+     * @brief Auxiliar function to get the numberOfColumns
+     * @return the numberOfColumns
+     */
     uint32 GetNumberOfColumns() const {
         return numberOfColumns;
     }
-
+    /**
+     * @brief Auxiliar function to get the numberOfRows
+     * @return the numberOfRows
+     */
     uint32 GetNumberOfRows() const {
         return numberOfRows;
     }
-
-    /**
-     * TODO
-     */
-    bool TestRead(const char8 *stringArg,
-                  BasicConsole &myConsole);
-
-    /**
-     * TODO
-     */
-    bool TestPerfChar(BasicConsole &myConsole);
 
 private:
     /**

@@ -87,17 +87,17 @@ TEST(BasicConsoleGTest,TestRead) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestRead("Hello\n"));
 }
-
-TEST(BasicConsoleGTest,TestSetGetSize) {
-    BasicConsoleTest console;
-    ASSERT_TRUE(console.TestSetGetSize(10, 13));
-}
 /*
-TEST(BasicConsoleGTest,TestSetGetWindowsSize) {
-    BasicConsoleTest console;
-    ASSERT_TRUE(console.TestSetGetWindowSize(100, 70));
-}
-*/
+ TEST(BasicConsoleGTest,TestSetGetSize) {
+ BasicConsoleTest console;
+ ASSERT_TRUE(console.TestSetGetSize(10, 13));
+ }
+
+ TEST(BasicConsoleGTest,TestSetGetWindowsSize) {
+ BasicConsoleTest console;
+ ASSERT_TRUE(console.TestSetGetWindowSize(100, 70));
+ }
+ */
 
 TEST(BasicConsoleGTest,TestClear) {
     BasicConsoleTest console;
@@ -108,31 +108,29 @@ TEST(BasicConsoleGTest,TestPerfChar) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestPerfChar());
 }
-
-TEST(BasicConsoleGTest,TestShow) {
-    BasicConsoleTest console;
-    ASSERT_TRUE(console.TestShow());
-}
-
+/*
+ //Not supported
+ TEST(BasicConsoleGTest,TestShow) {
+ BasicConsoleTest console;
+ ASSERT_TRUE(console.TestShow());
+ }
+ */
 TEST(BasicConsoleGTest,TestSetTitleBar) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSetTitleBar("title"));
 }
-
-TEST(BasicConsoleGTest,TestSetGetCursorPosition) {
-    BasicConsoleTest console;
-    ASSERT_TRUE(console.TestSetGetCursorPosition(20, 10));
-}
-
-TEST(BasicConsoleGTest,TestSetColour) {
-    BasicConsoleTest console;
-    ASSERT_TRUE(console.TestSetColour(White, Black));
-}
-
-TEST(BasicConsoleGTest,TestSetPaging) {
-    BasicConsoleTest console;
-    ASSERT_TRUE(console.TestSetMode());
-}
+/*
+ //Not supported
+ TEST(BasicConsoleGTest,TestSetGetCursorPosition) {
+ BasicConsoleTest console;
+ ASSERT_TRUE(console.TestSetGetCursorPosition(20, 10));
+ }
+ //Not supported
+ TEST(BasicConsoleGTest,TestSetColour) {
+ BasicConsoleTest console;
+ ASSERT_TRUE(console.TestSetColour(White, Black));
+ }
+ */
 
 TEST(BasicConsoleGTest,TestPlotChar) {
     BasicConsoleTest console;

@@ -285,12 +285,14 @@ bool BasicConsoleTest::TestPaging(uint32 overflow,
 }
 
 //compare the read string with the string passed by argument
-bool BasicConsoleTest::TestRead(const char8 *stringArg,
-                                BasicConsole &myConsole) {
+bool BasicConsoleTest::TestRead(const char8 *stringArg) {
+    BasicConsole myConsole;
     char8 string[numberOfColumns];
     char8 result[numberOfColumns + 20];
-    uint32 stringSize;
+    myConsole.SetSize(numberOfColumns, numberOfRows);
+    myConsole.Open(BasicConsole::Mode::Default);
 
+    uint32 stringSize;
     //calculate the size of the string
     if ((stringSize = StringTestHelper::Size(stringArg)) < 0) {
         return false;
@@ -305,15 +307,8 @@ bool BasicConsoleTest::TestRead(const char8 *stringArg,
     string[stringSize] = '\0';
     //compare the read string with the argument
     bool stringLengthOK = StringTestHelper::Compare(string, stringArg);
-    return (err == NoError) && stringLengthOK;
-}
 
-//compare the read string with the string passed by argument
-bool BasicConsoleTest::TestRead(const char8 *stringArg) {
-    BasicConsole myConsole;
-    myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(BasicConsole::Mode::Default);
-    return TestRead(stringArg, myConsole);
+    return (err == NoError) && stringLengthOK;
 }
 
 bool BasicConsoleTest::TestSetGetSize(uint32 rowIn,
@@ -347,15 +342,9 @@ bool BasicConsoleTest::TestSetGetWindowSize(uint32 numberOfColumns,
 
 bool BasicConsoleTest::TestClear() {
     BasicConsole myConsole;
-    uint32 size;
-    const char8 *myString = "Does not appear after test ends\n";
-    printf("Start TestClear\n");
     myConsole.SetSize(numberOfColumns, 5);
     myConsole.Open(BasicConsole::Mode::Default);
-    size = StringTestHelper::Size(myString);
-    myConsole.Write(myString, size, TTInfiniteWait);
     ErrorType err = myConsole.Clear();
-    printf("End TestClear\n");
     return (err == NoError);
 }
 
@@ -367,13 +356,10 @@ bool BasicConsoleTest::TestPerfChar() {
     myConsole.SetSize(numberOfColumns, numberOfRows);
     myConsole.Open(BasicConsole::Mode::PerformCharacterInput);
     sizeMyMessage = StringTestHelper::Size(myMessage);
-    printf("Mode is %d\n", myConsole.GetOpeningMode() == BasicConsole::Mode::PerformCharacterInput);
     myConsole.Write(myMessage, sizeMyMessage, TTInfiniteWait);
     char8 read[1];
     uint32 size = 5;
     bool ok = (NoError == myConsole.Read(read, size, TTInfiniteWait));
-    printf("console read %d\n", ok);
-    printf("size %d\n", size);
     return ok && (size == 1);
 }
 
@@ -416,32 +402,11 @@ bool BasicConsoleTest::TestSetGetCursorPosition(uint32 column,
 
 bool BasicConsoleTest::TestSetColour(Colours foregroundColour,
                                      Colours backgroundColour) {
-
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
     myConsole.Open(BasicConsole::Mode::Default);
     bool ok = !myConsole.ColourSupported() || myConsole.SetColour(foregroundColour, backgroundColour);
     return ok;
-
-}
-
-bool BasicConsoleTest::TestSetMode() {
-    BasicConsole myConsole;
-    myConsole.SetSize(numberOfColumns, numberOfRows);
-    myConsole.Open(BasicConsole::Mode::PerformCharacterInput);
-    bool ok = true;
-
-    FlagsType mode = myConsole.GetOpeningMode();
-
-    ok = (mode == BasicConsole::Mode::PerformCharacterInput);
-    myConsole.Close();
-    myConsole.Open(BasicConsole::Mode::DisableControlBreak);
-    mode = myConsole.GetOpeningMode();
-    ok &= (mode != BasicConsole::Mode::PerformCharacterInput);
-    ok &= (mode == BasicConsole::Mode::DisableControlBreak);
-
-    return ok;
-
 }
 
 bool BasicConsoleTest::TestPlotChar(char8 c,
@@ -449,7 +414,6 @@ bool BasicConsoleTest::TestPlotChar(char8 c,
                                     Colours backgroundColour,
                                     int column,
                                     int row) {
-
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
     myConsole.Open(BasicConsole::Mode::Default);
