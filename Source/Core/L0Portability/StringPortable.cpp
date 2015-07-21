@@ -48,17 +48,17 @@ bool StringPortableEqual(const char* string1, const char* string2) {
     while (1) {
 
         if ((string1 + i) == NULL || (string2 + i) == NULL) {
-            return False;
+            return false;
         }
 
         if (string1[i] != string2[i]) {
-            return False;
+            return false;
         }
         if (string1[i] == '\0' && string2[i] == '\0') {
-            return True;
+            return true;
         }
         if (string1[i] == '\0' || string2[i] == '\0') {
-            return False;
+            return false;
         }
         i++;
     }
@@ -72,21 +72,21 @@ bool StringPortableEqualN(const char* string1, const char* string2,
     while (i < size) {
 
         if ((string1 + i) == NULL || (string2 + i) == NULL) {
-            return False;
+            return false;
         }
 
         if (string1[i] != string2[i]) {
-            return False;
+            return false;
         }
         if (string1[i] == '\0' && string2[i] == '\0') {
-            return True;
+            return true;
         }
         if (string1[i] == '\0' || string2[i] == '\0') {
-            return False;
+            return false;
         }
         i++;
     }
-    return True;
+    return true;
 }
 
 //Concatenate two strings giving result in another string
@@ -100,7 +100,7 @@ bool StringPortableAppend(char* string1, const char* string2, char* result) {
     int32 j = 0;
     while (1) {
         if ((string1 + i) == NULL || (result + i) == NULL) {
-            return False;
+            return false;
         }
         result[i] = string1[i];
         if (string1[i] == '\0') {
@@ -110,12 +110,12 @@ bool StringPortableAppend(char* string1, const char* string2, char* result) {
     }
     while (1) {
         if ((string2 + j) == NULL || (result + i) == NULL) {
-            return False;
+            return false;
         }
 
         result[i] = string2[j];
         if (string2[j] == '\0') {
-            return True;
+            return true;
         }
         i++;
         j++;
@@ -134,7 +134,7 @@ bool StringPortableAppendN(char* string1, const char* string2, char* result,
     uint32 j = 0;
     while (1) {
         if ((string1 + i) == NULL || (result + i) == NULL) {
-            return False;
+            return false;
         }
         result[i] = string1[i];
         if (string1[i] == '\0') {
@@ -144,36 +144,36 @@ bool StringPortableAppendN(char* string1, const char* string2, char* result,
     }
     while (j < size) {
         if ((string2 + j) == NULL || (result + i) == NULL) {
-            return False;
+            return false;
         }
         result[i] = string2[j];
         if (string2[j] == '\0') {
             size = j;
-            return True;
+            return true;
         }
         i++;
         j++;
     }
-    return True;
+    return true;
 }
 
 //Concatenate the second string to the first
 bool StringPortableCat(char* string1, const char* string2) {
 
     if (string1 == NULL || string2 == NULL) {
-        return False;
+        return false;
     }
 
     int32 j = 0;
     int32 beginIndex = StringPortableLength(string1);
     if (beginIndex < 0) {
-        return False;
+        return false;
     }
 
     while (1) {
         string1[beginIndex + j] = string2[j];
         if (string2[j] == '\0') {
-            return True;
+            return true;
         }
         j++;
     }
@@ -184,25 +184,25 @@ bool StringPortableCatN(char* string1, const char* string2, uint32 &size) {
     uint32 j = 0;
 
     if (string1 == NULL || string2 == NULL || size < 0) {
-        return False;
+        return false;
     }
 
     int32 beginIndex = StringPortableLength(string1);
 
     if (beginIndex < 0) {
-        return False;
+        return false;
     }
 
     while (j < size) {
         string1[beginIndex + j] = string2[j];
         if (string2[j] == '\0') {
             size = j;
-            return True;
+            return true;
         }
         j++;
     }
     string1[beginIndex + j] = '\0';
-    return True;
+    return true;
 }
 
 const char* StringPortableSearchChar(const char* string, char c) {
@@ -230,16 +230,16 @@ bool StringPortableCopy(char* destination, const char* source) {
     while (1) {
 
         if ((destination + i) == NULL || (source + i) == NULL) {
-            return False;
+            return false;
         }
 
         destination[i] = source[i];
         if (source[i] == '\0') {
-            return True;
+            return true;
         }
         i++;
     }
-    return False;
+    return false;
 }
 
 bool StringPortableCopyN(char* destination, const char* source, uint32 &size) {
@@ -247,17 +247,17 @@ bool StringPortableCopyN(char* destination, const char* source, uint32 &size) {
     uint32 i = 0;
     while (i < size) {
         if ((destination + i) == NULL || (source + i) == NULL) {
-            return False;
+            return false;
         }
         destination[i] = source[i];
         if (source[i] == '\0') {
             size = i;
-            return True;
+            return true;
         }
         i++;
     }
     destination[i] = '\0';
-    return True;
+    return true;
 }
 
 //return the index of the first occurrence in string1 of a char in string2
@@ -437,17 +437,17 @@ bool StringPortableSubstr(int32 begin, int32 end, const char* string,
 
     while (i < (end - begin + 1)) {
         if ((string + begin + i) == NULL || (result + i) == NULL) {
-            return False;
+            return false;
         }
         result[i] = string[begin + i];
         if (string[begin + i] == '\0') {
-            return False;
+            return false;
         }
         i++;
     }
 
     result[i] = '\0';
-    return True;
+    return true;
 
 }
 

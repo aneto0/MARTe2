@@ -35,10 +35,12 @@ OBJSX=  Atomic.x \
         Memory.x \
         Processor.x \
         ProcessorType.x \
+        StringPortable.x \
         Threads.x  \
         ThreadsDatabase.x \
         ThreadInformation.x \
         MemoryStatisticsDatabase.x
+
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 
