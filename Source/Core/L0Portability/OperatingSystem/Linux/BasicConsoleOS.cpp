@@ -379,7 +379,7 @@ ErrorType BasicConsole::SetTitleBar(const char8 * const title) {
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorType BasicConsole::GetTitleBar(char8 * const title) const {
+ErrorType BasicConsole::GetTitleBar(char8 * const title, const uint32 &size) const {
     return UnsupportedFeature;
 }
 

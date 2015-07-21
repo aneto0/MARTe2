@@ -196,7 +196,7 @@ bool MutexSemTest::TestIsRecursive() {
     testMutex.Close();
 
     test &= testMutex.Create(true);
-    test &= !testMutex.IsRecursive();
+    test &= testMutex.IsRecursive();
     testMutex.Close();
 
     return test;

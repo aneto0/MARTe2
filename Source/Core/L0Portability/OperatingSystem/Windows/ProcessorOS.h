@@ -37,23 +37,14 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief System dependent functions to get informations about the processors.
+ * @brief Called by ProcessorType::Available
+ * @return a mask which defines the available cpus.
  */
-class ProcessorOS {
-
-public:
-
-    /**
-     * @brief Called by ProcessorType::Available
-     * @return a mask which defines the available cpus.
-     */
-    static uint32 Available() {
-        SYSTEM_INFO si;
-        GetSystemInfo(&si);
-        return si.dwNumberOfProcessors;
-    }
-
-};
+inline uint32 Processor::Available() {
+    SYSTEM_INFO si;
+    GetSystemInfo(&si);
+    return si.dwNumberOfProcessors;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

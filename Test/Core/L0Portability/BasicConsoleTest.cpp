@@ -287,8 +287,8 @@ bool BasicConsoleTest::TestPaging(uint32 overflow,
 //compare the read string with the string passed by argument
 bool BasicConsoleTest::TestRead(const char8 *stringArg) {
     BasicConsole myConsole;
-    char8 string[numberOfColumns];
-    char8 result[numberOfColumns + 20];
+    char8 string[40];
+    char8 result[60 + 20];
     myConsole.SetSize(numberOfColumns, numberOfRows);
     myConsole.Open(BasicConsole::Mode::Default);
 
@@ -392,7 +392,7 @@ bool BasicConsoleTest::TestSetGetCursorPosition(uint32 column,
     uint32 colRet = 0;
     uint32 rowRet = 0;
 
-    ok &= myConsole.GetCursorPosition(colRet, rowRet);
+    ok &= myConsole.GetCursorPosition(colRet, rowRet)==NoError;
 
 //Not implemented in Linux. Avoid false positives...
     ok &= !myConsole.CursorPositionSupported() || ((colRet == column) && (rowRet == row));

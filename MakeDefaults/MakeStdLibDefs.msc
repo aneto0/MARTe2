@@ -25,8 +25,10 @@
 
 #BUILD_DIR=..\..\..\Build\$(TARGET)\$(lastword $(subst \\,\ ,$(CURDIR)))
 #BUILD_DIR=..\..\..\Build\$(TARGET)\$(lastword $(CURDIR))
-BUILD_DIR=$(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\$(PACKAGE)\$(lastword $(subst /,\\ ,$(CURDIR)))
+BUILD_DIR=$(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\$(subst /,\,$(PACKAGE))\$(lastword $(subst /,\\ ,$(CURDIR)))
+#BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
 
+OPERATING_SYSTEM=Windows
 EXEEXT=.exe
 DLLEXT=.dll
 LIBEXT=.lib

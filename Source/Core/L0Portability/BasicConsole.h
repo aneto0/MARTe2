@@ -313,7 +313,7 @@ public:
      * system related problem while performing the operation or UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
-    virtual ErrorType GetTitleBar(char8 *title) const;
+    virtual ErrorType GetTitleBar(char8 *title, const uint32 &size) const;
 
     /**
      * @brief Checks if changing or reading the console title is supported

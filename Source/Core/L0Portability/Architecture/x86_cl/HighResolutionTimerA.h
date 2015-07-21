@@ -38,33 +38,24 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Implementation of platform dependent functions to get the number of cpu ticks.
+ * @brief Reads the High Resolution Timer as 32 bit. Fast inline assembler.
+ * @return number of cpu ticks in a 32 bit integer.
  */
-class HighResolutionTimerA {
+inline uint32 HighResolutionTimer::Counter32() {
 
-public:
+    return (uint32) __rdtsc();
 
-    /**
-     * @brief Reads the High Resolution Timer as 32 bit. Fast inline assembler.
-     * @return number of cpu ticks in a 32 bit integer.
-     */
-    static inline uint32 Read32() {
+}
 
-        return (uint32) __rdtsc();
+/**
+ * @brief Reads the High Resolution Timer as 64 bit int. Fast inline assembler.
+ * @return number of cpu ticks in a 64 bit integer.
+ */
+inline int64 HighResolutionTimer::Counter() {
 
-    }
+    return (int64) __rdtsc();
 
-    /**
-     * @brief Reads the High Resolution Timer as 64 bit int. Fast inline assembler.
-     * @return number of cpu ticks in a 64 bit integer.
-     */
-    static inline int64 Read64() {
-
-        return (int64) __rdtsc();
-
-    }
-
-};
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
