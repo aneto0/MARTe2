@@ -33,9 +33,8 @@ void LoadableLibrary::SetModule( HANDLE &m ) {
     module = m;
 }
 
-
-
-bool LoadableLibraryOpen(LoadableLibrary &ll, char8 const * const dllName) {
+bool LoadableLibraryOpen(LoadableLibrary &ll,
+                         char8 const * const dllName) {
     return LoadableLibraryOSOpen(ll, dllName);
 }
 
@@ -43,6 +42,7 @@ void LoadableLibraryClose(LoadableLibrary &ll) {
     LoadableLibraryOSClose(ll);
 }
 
-void *LoadableLibraryFunction(LoadableLibrary &ll, char8 const * const name) {
+void *LoadableLibraryFunction(LoadableLibrary &ll,
+                              char8 const * const name) {
     return LoadableLibraryOSFunction(ll, name);
 }

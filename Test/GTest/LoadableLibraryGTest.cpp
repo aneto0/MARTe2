@@ -24,12 +24,32 @@ protected:
 
 TEST_F(LoadableLibraryGTest,TestOpenCloseLibrary) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestOpenCloseLibrary("libm.so"));
+    ASSERT_TRUE(loadablelibrarytest.TestOpenLibrary("libm.so"));
+}
+
+TEST_F(LoadableLibraryGTest,TestCloseLibrary) {
+    LoadableLibraryTest loadablelibrarytest;
+    ASSERT_TRUE(loadablelibrarytest.TestCloseLibrary("libm.so"));
 }
 
 TEST_F(LoadableLibraryGTest,TestLoadFunction) {
     LoadableLibraryTest loadablelibrarytest;
-    ASSERT_TRUE(loadablelibrarytest.TestLoadFunction("libm.so", "cos"));
+    ASSERT_TRUE(loadablelibrarytest.TestLoadFunction());
+}
+
+TEST_F(LoadableLibraryGTest,TestLoadFunctionSquareBracketsOperator) {
+    LoadableLibraryTest loadablelibrarytest;
+    ASSERT_TRUE(loadablelibrarytest.TestLoadFunctionSquareBracketsOperator());
+}
+
+TEST_F(LoadableLibraryGTest,TestGetModule) {
+    LoadableLibraryTest loadablelibrarytest;
+    ASSERT_TRUE(loadablelibrarytest.TestGetModule());
+}
+
+TEST_F(LoadableLibraryGTest,TestSetModule) {
+    LoadableLibraryTest loadablelibrarytest;
+    ASSERT_TRUE(loadablelibrarytest.TestSetModule());
 }
 
 

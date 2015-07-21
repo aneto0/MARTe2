@@ -31,7 +31,6 @@
 
 #include "GeneralDefinitions.h"
 
-
 class LoadableLibrary;
 extern "C" {
 /**
@@ -39,7 +38,8 @@ extern "C" {
  * @param ll is the opened library in return.
  * @param dllName is the name of the library to open.
  * @return true if the library is opened correctly, false otherwise. */
-bool LoadableLibraryOpen(LoadableLibrary &ll, const char8 *dllName);
+bool LoadableLibraryOpen(LoadableLibrary &ll,
+                         const char8 *dllName);
 
 /**
  * @brief Close the library passed by argument.
@@ -51,17 +51,16 @@ void LoadableLibraryClose(LoadableLibrary &ll);
  * @param ll is the library in which to extract the function.
  * @param name is the name of the requested function.
  * @return the pointer to the requested function in ll library, NULL otherwise. */
-void *LoadableLibraryFunction(LoadableLibrary &ll, const char8 *name);
+void *LoadableLibraryFunction(LoadableLibrary &ll,
+                              const char8 *name);
 }
-
 
 /** 
  * @brief This functions allows to load dinamically a library and its functions.
  *
  * Most of the implementation is delegated to LoadableLibraryOS.h which is different
  * for each operating systems and contains the non portable system calls to load libraries.
- */ 
-
+ */
 
 class LoadableLibrary {
 private:
@@ -98,7 +97,7 @@ public:
      * The function uses OS functions to unload a dynamic loadable library.
      * @see LoadableLibraryClose(). */
     void Close() {
-        return LoadableLibraryClose(*this);
+        LoadableLibraryClose(*this);
     }
 
     /**
@@ -121,7 +120,6 @@ public:
     void *operator[](char8 const * const name) {
         return Function(name);
     }
-
 
     /**
      * @brief Getter for module.
