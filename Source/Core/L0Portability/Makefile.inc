@@ -33,6 +33,7 @@ SPB=OperatingSystem/$(OPERATING_SYSTEM).x
 OBJSX=  Atomic.x \
         Endianity.x \
         Memory.x \
+        FastMath.x \
         Processor.x \
         ProcessorType.x \
         Threads.x  \
