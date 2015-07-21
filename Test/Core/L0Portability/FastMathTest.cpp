@@ -2,7 +2,7 @@
  * @file FastMathTest.cpp
  * @brief Source file for class FastMathTest
  * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -55,9 +55,7 @@ FastMathTest::FastMathTest() {
 bool FastMathTest::TestFloatToInt32(float testFloat,
                                     int32 expectedValue) {
     int32 testInt32 = 0;
-
     testInt32 = FastMath::FloatToInt(testFloat);
-
     return (testInt32 == expectedValue);
 }
 
@@ -65,12 +63,9 @@ bool FastMathTest::TestSin(float angle,
                            float expectedValue) {
     float result = 0.0;
     bool testResult = false;
-
     result = FastMath::Sin(angle);
-
     if ((result >= expectedValue - EPSILON) && (result <= expectedValue + EPSILON))
         testResult = true;
-
     return testResult;
 }
 
@@ -78,12 +73,9 @@ bool FastMathTest::TestCos(float angle,
                            float expectedValue) {
     float result = 0.0;
     bool testResult = false;
-
     result = FastMath::Cos(angle);
-
     if ((result >= expectedValue - EPSILON) && (result <= expectedValue + EPSILON))
         testResult = true;
-
     return testResult;
 }
 

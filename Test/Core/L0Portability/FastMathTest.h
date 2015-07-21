@@ -2,7 +2,7 @@
  * @file FastMathTest.h
  * @brief Header file for class FastMathTest
  * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -77,12 +77,13 @@ public:
 
     /**
      * @brief Tests for each angle that sin^2(a)+cos^2(a)=1.
-     * @return true if the circle tests works.
+     * @return true if sin^2(a)+cos^2(a)=1.
      */
     bool CircleTest();
 
     /**
      * @brief Executes all the tests.
+     * @detail Run TestFloatToInt32, TestSin and TestCos tests with different input values.
      * @return true if all tests return true.
      */
     bool All();

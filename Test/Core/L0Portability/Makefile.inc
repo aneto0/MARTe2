@@ -36,7 +36,8 @@ OBJSX=  EndianityTest.x \
 	HighResolutionTimerTest.x \
 	MemoryTest.x \
 	FastPollingMutexSemTest.x \
-	StringHelperTest.x
+	StringHelperTest.x \
+	FastMathTest.x
 
 PACKAGE=Core
 ROOT_DIR=../../..

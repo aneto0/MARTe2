@@ -2,7 +2,7 @@
  * @file FastMathGTest.cpp
  * @brief Source file for class FastMathGTest
  * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,27 +40,28 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class FastMathGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-
-    }
-
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
-
-TEST_F(FastMathGTest,FastMathTest) {
-    FastMathTest fastMathTest;
-    ASSERT_TRUE(fastMathTest.All());
+TEST(FastMathGTest,TestFloatToInt32) {
+    FastMathTest MathTest;
+    ASSERT_TRUE(MathTest.TestFloatToInt32(2.0, 2));
 }
 
-TEST_F(FastMathGTest,CircleTest) {
-    FastMathTest fastMathTest;
-    ASSERT_TRUE(fastMathTest.CircleTest());
+TEST(FastMathGTest,TestSin) {
+    FastMathTest MathTest;
+    ASSERT_TRUE(MathTest.TestSin(0, 0));
+}
+
+TEST(FastMathGTest,TestCos) {
+    FastMathTest MathTest;
+    ASSERT_TRUE(MathTest.TestCos(0, 1));
+}
+
+TEST(FastMathGTest,All) {
+    FastMathTest MathTest;
+    ASSERT_TRUE(MathTest.All());
+}
+
+TEST(FastMathGTest,CircleTest) {
+    FastMathTest MathTest;
+    ASSERT_TRUE(MathTest.CircleTest());
 }
 
