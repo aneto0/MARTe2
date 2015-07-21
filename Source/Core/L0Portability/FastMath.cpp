@@ -2,7 +2,7 @@
  * @file FastMath.cpp
  * @brief Source file for class FastMath
  * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -35,12 +35,6 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-
-
-// Math constants
 const double FastMath::E = 2.7182818284590452354;
 const double FastMath::LOG2E = 1.4426950408889634074;
 const double FastMath::LOG10E = 0.43429448190325182765;
@@ -55,3 +49,6 @@ const double FastMath::_2_SQRTPI = 1.12837916709551257390;
 const double FastMath::SQRT2 = 1.41421356237309504880;
 const double FastMath::SQRT1_2 = 0.70710678118654752440;
 
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/

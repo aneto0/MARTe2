@@ -2,7 +2,7 @@
  * @file FastMathA.h
  * @brief Header file for class FastMathA
  * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef FASTMATHA_H_
-#define 		FASTMATHA_H_
+#define FASTMATHA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */

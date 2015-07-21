@@ -2,7 +2,7 @@
  * @file FastMath.h
  * @brief Header file for class FastMath
  * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef FASTMATH_H_
-#define 		FASTMATH_H_
+#define FASTMATH_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,44 +32,83 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "GeneralDefinitions.h"
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,FastMathA.h)
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-#include "GeneralDefinitions.h"
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,FastMathA.h)
 
 /**
  * @brief Performs mathematical operations using fast processor instructions.
  */
 class FastMath {
+
 public:
 
-    /** e */
+    /**
+     * The constant for e
+     */
     static const double E;
-    /** log2(e) */
+
+    /**
+     * The constant for log2(e)
+     */
     static const double LOG2E;
-    /** log10(e) */
+
+    /**
+     * The constant for log10(e)
+     */
     static const double LOG10E;
-    /** log(2) */
+
+    /**
+     * The constant for log(2)
+     */
     static const double LN2;
-    /** log(10) */
+
+    /**
+     * The constant for log(10)
+     */
     static const double LN10;
-    /** pi */
+
+    /**
+     * The constant for pi
+     */
     static const double PI;
-    /** pi/2 */
+
+    /**
+     * The constant for pi/2
+     */
     static const double PI_2;
-    /** pi/4 */
+
+    /**
+     * The constant for pi/4
+     */
     static const double PI_4;
-    /** 1/pi */
+
+    /**
+     * The constant for 1/pi
+     */
     static const double _1_PI;
-    /** 2/pi */
+
+    /**
+     * The constant for 2/pi
+     */
     static const double _2_PI;
-    /** 2/sqrt(pi)*/
+
+    /**
+     * The constant for 2/sqrt(pi)
+     */
     static const double _2_SQRTPI;
-    /** sqrt(2) */
+
+    /**
+     * The constant for sqrt(2)
+     */
     static const double SQRT2;
-    /** sqrt(1/2) */
+
+    /**
+     * The constant for sqrt(1/2)
+     */
     static const double SQRT1_2;
 
     /**
@@ -82,14 +121,14 @@ public:
     /**
      * @brief Computes the cosine of an angle using a processor instruction.
      * @param[in] angle the angle to compute
-     * @return the cos(angle)
+     * @return the cosine of angle
      */
     static inline float Cos(float angle);
 
     /**
      * @brief Computes the sine of an angle using a processor instruction.
      * @param[in] angle the angle to compute
-     * @return the sin(angle)
+     * @return the sine of angle
      */
     static inline float Sin(float angle);
 };
@@ -102,7 +141,6 @@ int32 FastMath::FloatToInt(float input) {
     return FastMathA::FloatToInt(input);
 }
 
-
 float FastMath::Cos(float angle) {
     return FastMathA::Cos(angle);
 }
@@ -110,7 +148,6 @@ float FastMath::Cos(float angle) {
 float FastMath::Sin(float angle) {
     return FastMathA::Sin(angle);
 }
-
 
 #endif /* FASTMATH_H_ */
 
