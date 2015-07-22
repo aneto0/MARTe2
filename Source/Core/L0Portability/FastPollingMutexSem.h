@@ -46,8 +46,8 @@
 /**
  * @brief Implementation of semaphore based on spin locks.
  *
- * @details This type of semaphore uses the spinlock instruction: Atomic::TestAndSet. The timeout is calculated using the HighResolutionTimer class.\n
- * Using this implementation a thread can unlocks a semaphore locked by another thread.
+ * @details This semaphore is not recursive i.e is the same thread locks two times sequentially causes a deadlock.
+ * Moreover a thread can unlock the semaphore locked by another thread.
  */
 class FastPollingMutexSem {
 
@@ -111,7 +111,7 @@ FastPollingMutexSem::FastPollingMutexSem() {
 }
 
 void FastPollingMutexSem::Create(const bool locked) {
-    if (locked == true) {
+    if (locked) {
         flag = 1;
     }
     else {
