@@ -29,20 +29,24 @@ HANDLE LoadableLibrary::GetModule( void ) {
     return module;
 }
 
-void LoadableLibrary::SetModule( HANDLE &m ) {
+void LoadableLibrary::SetModule( HANDLE const m ) {
     module = m;
 }
 
-bool LoadableLibraryOpen(LoadableLibrary &ll,
+bool LoadableLibrary::Open(
                          char8 const * const dllName) {
-    return LoadableLibraryOSOpen(ll, dllName);
+    return LoadableLibraryOSOpen(*this, dllName);
 }
 
-void LoadableLibraryClose(LoadableLibrary &ll) {
-    LoadableLibraryOSClose(ll);
+void LoadableLibrary::Close(void) {
+    LoadableLibraryOSClose(*this);
 }
 
-void *LoadableLibraryFunction(LoadableLibrary &ll,
+void *LoadableLibrary::Function(
                               char8 const * const name) {
-    return LoadableLibraryOSFunction(ll, name);
-}
+    void* ret = static_cast<void*>(NULL);
+
+    if (name != NULL) {
+        ret = LoadableLibraryOSFunction(*this, name);
+    }
+    return ret;}

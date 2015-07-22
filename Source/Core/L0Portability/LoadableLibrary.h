@@ -31,29 +31,6 @@
 
 #include "GeneralDefinitions.h"
 
-class LoadableLibrary;
-extern "C" {
-/**
- * @brief Open dinamically a library passing its name.
- * @param ll is the opened library in return.
- * @param dllName is the name of the library to open.
- * @return true if the library is opened correctly, false otherwise. */
-bool LoadableLibraryOpen(LoadableLibrary &ll,
-                         const char8 *dllName);
-
-/**
- * @brief Close the library passed by argument.
- * @param ll is the library to close. */
-void LoadableLibraryClose(LoadableLibrary &ll);
-
-/**
- * @brief Return the pointer of the requested function of ll library.
- * @param ll is the library in which to extract the function.
- * @param name is the name of the requested function.
- * @return the pointer to the requested function in ll library, NULL otherwise. */
-void *LoadableLibraryFunction(LoadableLibrary &ll,
-                              const char8 *name);
-}
 
 /** 
  * @brief This functions allows to load dinamically a library and its functions.
@@ -67,10 +44,6 @@ private:
     HANDLE module;
 
 public:
-
-    friend bool LoadableLibraryOpen(LoadableLibrary &ll, const char8 *dllName);
-    friend void LoadableLibraryClose(LoadableLibrary &ll);
-    friend void *LoadableLibraryFunction(LoadableLibrary &ll, const char8 *name);
 
     /** @brief Constructor.*/
     LoadableLibrary() {
@@ -88,30 +61,19 @@ public:
      * The VxWorks implementation however, does not provide a reliable method
      * to unload a module so this function is implemented in a different way.
      * @see LoadableLibraryOpen(). */
-    bool Open(char8 const * const dllName) {
-        return LoadableLibraryOpen(*this, dllName);
-    }
+    bool Open(char8 const * const dllName);
 
     /**
      * @brief Close a library previously opened dinamically.
      * The function uses OS functions to unload a dynamic loadable library.
      * @see LoadableLibraryClose(). */
-    void Close() {
-        LoadableLibraryClose(*this);
-    }
+    void Close();
 
     /**
      * @brief Returns the requested function. 
      * Returns the entry point of the module function specified by name.
      * @see LoadableLibraryFunction(). */
-    void *Function(char8 const * const name) {
-        void* ret = static_cast<void*>(NULL);
-
-        if (name != NULL) {
-            ret = LoadableLibraryFunction(*this, name);
-        }
-        return ret;
-    }
+    void *Function(char8 const * const name);
 
     /** 
      * @brief Operator to make easier the function calls.
@@ -129,7 +91,7 @@ public:
     /**
      * @brief Getter for module.
      * @return a copy of the module variable. */
-    void SetModule( HANDLE &m );
+    void SetModule( HANDLE const m );
 };
 
 #endif
