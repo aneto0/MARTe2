@@ -38,7 +38,6 @@
 #include "HighResolutionTimer.h"
 #include "TimeoutType.h"
 #include "Sleep.h"
-#include "FlagsType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -54,25 +53,27 @@ class FastPollingMutexSem {
 
 public:
     /**
-     * @brief Constructor.
+     * @brief Initialized the semaphore as unlocked.
+     * @details The atomic variable is set to zero.
      */
     inline FastPollingMutexSem();
 
     /**
-     * @brief Initializes the semaphore and reads it.
-     * @param[in] locked defines if the semaphore must be initialized locked or unlocked.
+     * @brief Initializes the semaphore as locked or unlocked.
+     * @param[in] locked defines if the semaphore must be initialized locked or unlocked (default locked=false)
      */
-    inline void Create(bool locked = false);
-
+    inline void Create(const bool locked = false);
 
     /**
      * @brief Returns the status of the semaphore.
-     * @return true if the semaphore is locked.
+     * @return true if the semaphore is locked, false if it is unlocked.
      */
     inline bool Locked() const;
 
     /**
-     * @brief If the semaphore is locked tries to lock until the timeout is expired.
+     * @brief Locks the semaphore.
+     * @details If the semaphore is locked tries to lock until the timeout expire. A double consecutive lock
+     * by the same thread causes a deadlock.
      * @param[in] msecTimeout is the desired timeout.
      * @return Timeout if the semaphore is locked for a period which is greater than the
      * specified timeout. Otherwise NoError is returned.
@@ -88,13 +89,16 @@ public:
 
     /**
      * @brief Unlocks the semaphore.
+     * @details A thread could unlock the semaphore locked by another thread.
      * @details If a thread locks this type of semaphore, another threads can unlock it.
      */
     inline void FastUnLock();
 
 private:
 
-    /** Atomic variable */
+    /**
+     * Atomic variable
+     */
     volatile int32 flag;
 
 };
@@ -102,7 +106,7 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-inline FastPollingMutexSem::FastPollingMutexSem() {
+FastPollingMutexSem::FastPollingMutexSem() {
     flag = 0;
 }
 
@@ -115,8 +119,7 @@ void FastPollingMutexSem::Create(const bool locked) {
     }
 }
 
-
-bool FastPollingMutexSem::Locked() const{
+bool FastPollingMutexSem::Locked() const {
     return flag == 1;
 }
 
@@ -139,7 +142,7 @@ ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout) {
 }
 
 bool FastPollingMutexSem::FastTryLock() {
-    return (Atomic::TestAndSet( &flag));
+    return (Atomic::TestAndSet(&flag));
 }
 
 void FastPollingMutexSem::FastUnLock() {

@@ -32,7 +32,7 @@
 #include "Sleep.h"
 #include "Atomic.h"
 #include "FastPollingMutexSemTest.h"
-
+#include "FlagsType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
