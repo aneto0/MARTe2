@@ -37,6 +37,14 @@
 #include "../../HighResolutionTimer.h"
 #include "../../Sleep.h"
 
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
 void Sleep::AtLeast(float64 sec) {
     int32 nsecRemainder = -1;
     struct timespec timesValues;
@@ -129,7 +137,8 @@ void Sleep::MSec(int32 msec) {
     }
 }
 
-void Sleep::SemiBusy(float64 totalSleepSec, float64 nonBusySleepSec) {
+void Sleep::SemiBusy(float64 totalSleepSec,
+                     float64 nonBusySleepSec) {
     int64 startCounter = HighResolutionTimer::Counter();
     float64 endCounterF = totalSleepSec * static_cast<float64>(HighResolutionTimer::Frequency());
     int64 sleepUntilCounter = startCounter + static_cast<int64>(endCounterF);
@@ -155,10 +164,3 @@ void Sleep::SemiBusy(float64 totalSleepSec, float64 nonBusySleepSec) {
 int32 Sleep::GetDateSeconds() {
     return static_cast<int32>(time(static_cast<time_t *>(NULL)));
 }
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/

@@ -57,7 +57,6 @@ public:
 
     /**
      * @brief Sleeps for the time requested or more.
-     *
      * @details This function uses HighResolutionTimer functions.
      * @param[in] sec is the time in seconds to sleep (at least).
      */
@@ -65,7 +64,6 @@ public:
 
     /**
      * @brief Sleeps no more than the requested time.
-     *
      * @details This function uses HighResolutionTimer functions.
      * @param[in] sec is the time in seconds to sleep (no more).
      */
@@ -83,12 +81,12 @@ public:
      */
     static void MSec(int32 msec);
 
-    /** @brief Sleep without yield cpu.
-     *
+    /**
+     * @brief Sleep without yield cpu.
      * @details This function uses HighResolutionTimer functions.
      * @param[in] sec is the seconds to sleep.
      */
-    static void Busy(float64 sec){
+    static void Busy(float64 sec) {
         int64 startCounter = HighResolutionTimer::Counter();
         int64 endCounter = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
         int64 sleepUntilCounter = startCounter + endCounter;
@@ -98,6 +96,7 @@ public:
 
     /**
      * @brief Sleep yielding cpu for nonBusySleepSec.
+     * @details This function uses HighResolutionTimer functions.
      * @param[in] totalSleepSec is the total time in seconds to sleep.
      * @param[in] nonBusySleepSec is the time to sleep without use cpu.
      */
