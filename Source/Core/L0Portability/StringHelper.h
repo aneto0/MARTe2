@@ -153,7 +153,7 @@ public:
      * @brief Returns a pointer to the first occurrence of substring in string.
      * @param[in] string the source string.
      * @param[in] substring the string which must be searched in string.
-     * @returns a pointer to the first occurrence of substring in string.
+     * @return a pointer to the first occurrence of substring in string.
      */
     static const char8 *SearchString(const char8 *string,
                                      const char8 *substring);
@@ -163,7 +163,7 @@ public:
      * @param[in,out] string to be filled with the char.
      * @param[in] size length of the string in bytes.
      * @param[in] c the char to fill the string.
-     * @returns true if the string is not null and the size > 0 and the operation succeeds.
+     * @return true if the string is not null and the size > 0 and the operation succeeds.
      */
     static bool SetChar(char8 *string,
                         const uint32 &size,
