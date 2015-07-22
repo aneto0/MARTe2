@@ -1,32 +1,46 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for 
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file StringPortable.cpp
+ * @brief Source file for class StringPortable
+ * @date 21/07/2015
+ * @author Ivan Herrero
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they 
- will be approved by the European Commission - subsequent  
- versions of the EUPL (the "Licence"); 
- * You may not use this work except in compliance with the 
- Licence. 
- * You may obtain a copy of the Licence at: 
- *  
- * http://ec.europa.eu/idabc/eupl
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in 
- writing, software distributed under the Licence is 
- distributed on an "AS IS" basis, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
- express or implied. 
- * See the Licence  
- permissions and limitations under the Licence. 
- *
- * $Id:  $
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This source file contains the definition of all the methods for
+ * the class StringPortable (public, protected, and private). Be aware that some
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
 
 #include "StringPortable.h"
 
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
 //Returns the size of the string.
-int32 StringPortableLength(const char* string) {
+int32 StringPortable::Length(const char* string) {
     int32 i = 0;
 
     while (1) {
@@ -42,7 +56,8 @@ int32 StringPortableLength(const char* string) {
 }
 
 //Returns true if the strings are equal, false otherwise
-bool StringPortableEqual(const char* string1, const char* string2) {
+bool StringPortable::Equal(const char* string1,
+                         const char* string2) {
     int32 i = 0;
 
     while (1) {
@@ -65,8 +80,9 @@ bool StringPortableEqual(const char* string1, const char* string2) {
 }
 
 //Returns true if the strings are equal, false otherwise
-bool StringPortableEqualN(const char* string1, const char* string2,
-                          uint32 size) {
+bool StringPortable::EqualN(const char* string1,
+                          const char* string2,
+                          const uint32 size) {
 
     uint32 i = 0;
     while (i < size) {
@@ -90,44 +106,48 @@ bool StringPortableEqualN(const char* string1, const char* string2,
 }
 
 //Concatenate two strings giving result in another string
-bool StringPortableAppend(char* string1, const char* string2, char* result) {
+bool StringPortable::Append(const char* string1,
+                          const char* string2,
+                          char* result) {
 
     if (result == NULL) {
-        result = string1;
+        return false;
     }
 
     int32 i = 0;
-    int32 j = 0;
-    while (1) {
-        if ((string1 + i) == NULL || (result + i) == NULL) {
-            return false;
+        int32 j = 0;
+        while (1) {
+            if ((string1 + i) == NULL || (result + i) == NULL) {
+                return false;
+            }
+            result[i] = string1[i];
+            if (string1[i] == '\0') {
+                break;
+            }
+            i++;
         }
-        result[i] = string1[i];
-        if (string1[i] == '\0') {
-            break;
-        }
-        i++;
-    }
-    while (1) {
-        if ((string2 + j) == NULL || (result + i) == NULL) {
-            return false;
-        }
+        while (1) {
+            if ((string2 + j) == NULL || (result + i) == NULL) {
+                return false;
+            }
 
-        result[i] = string2[j];
-        if (string2[j] == '\0') {
-            return true;
+            result[i] = string2[j];
+            if (string2[j] == '\0') {
+                return true;
+            }
+            i++;
+            j++;
         }
-        i++;
-        j++;
-    }
 }
 
 //Concatenate two strings giving result in another string
-bool StringPortableAppendN(char* string1, const char* string2, char* result,
+bool StringPortable::AppendN(const char* string1,
+                           const char* string2,
+                           char* result,
                            uint32 &size) {
 
     if (result == NULL) {
-        result = string1;
+        return false;
     }
 
     uint32 i = 0;
@@ -158,14 +178,15 @@ bool StringPortableAppendN(char* string1, const char* string2, char* result,
 }
 
 //Concatenate the second string to the first
-bool StringPortableCat(char* string1, const char* string2) {
+bool StringPortable::Cat(char* string1,
+                       const char* string2) {
 
     if (string1 == NULL || string2 == NULL) {
         return false;
     }
 
     int32 j = 0;
-    int32 beginIndex = StringPortableLength(string1);
+    int32 beginIndex = StringPortable::Length(string1);
     if (beginIndex < 0) {
         return false;
     }
@@ -180,14 +201,16 @@ bool StringPortableCat(char* string1, const char* string2) {
 }
 
 //Concatenate the second string to the first
-bool StringPortableCatN(char* string1, const char* string2, uint32 &size) {
+bool StringPortable::CatN(char* string1,
+                        const char* string2,
+                        uint32 &size) {
     uint32 j = 0;
 
     if (string1 == NULL || string2 == NULL || size < 0) {
         return false;
     }
 
-    int32 beginIndex = StringPortableLength(string1);
+    int32 beginIndex = StringPortable::Length(string1);
 
     if (beginIndex < 0) {
         return false;
@@ -205,7 +228,8 @@ bool StringPortableCatN(char* string1, const char* string2, uint32 &size) {
     return true;
 }
 
-const char* StringPortableSearchChar(const char* string, char c) {
+const char* StringPortable::SearchChar(const char* string,
+                                     const char c) {
 
     int32 i = 0;
     while (1) {
@@ -224,7 +248,8 @@ const char* StringPortableSearchChar(const char* string, char c) {
     return NULL;
 }
 
-bool StringPortableCopy(char* destination, const char* source) {
+bool StringPortable::Copy(char* destination,
+                        const char* source) {
 
     int32 i = 0;
     while (1) {
@@ -242,7 +267,9 @@ bool StringPortableCopy(char* destination, const char* source) {
     return false;
 }
 
-bool StringPortableCopyN(char* destination, const char* source, uint32 &size) {
+bool StringPortable::CopyN(char* destination,
+                         const char* source,
+                         uint32 &size) {
 
     uint32 i = 0;
     while (i < size) {
@@ -261,7 +288,8 @@ bool StringPortableCopyN(char* destination, const char* source, uint32 &size) {
 }
 
 //return the index of the first occurrence in string1 of a char in string2
-int32 StringPortableSearchIndex(const char* string1, const char* string2) {
+int32 StringPortable::SearchIndex(const char* string1,
+                                const char* string2) {
 
     int32 i = 0;
     int32 j = 0;
@@ -290,7 +318,7 @@ int32 StringPortableSearchIndex(const char* string1, const char* string2) {
 }
 
 //return the pointer of the first occurrence in string1 of a char in string2
-const char* StringPortableSearchChars(const char* string1,
+const char* StringPortable::SearchChars(const char* string1,
                                       const char* string2) {
 
     int32 i = 0;
@@ -318,14 +346,15 @@ const char* StringPortableSearchChars(const char* string1,
 }
 
 //Return a pointer at the last char c founded in string
-const char* StringPortableSearchLastChar(const char* string, char c) {
+const char* StringPortable::SearchLastChar(const char* string,
+                                         char c) {
 
     if (string == NULL) {
         return NULL;
     }
 
     int32 index;
-    if ((index = (StringPortableLength(string) - 1)) < 0) {
+    if ((index = (StringPortable::Length(string) - 1)) < 0) {
         return NULL;
     }
     while (index >= 0) {
@@ -338,15 +367,15 @@ const char* StringPortableSearchLastChar(const char* string, char c) {
 }
 
 //Return a pointer to the first occurrence of substring in string.
-const char* StringPortableSearchSubstr(const char* string,
+const char* StringPortable::SearchSubstr(const char* string,
                                        const char* substring) {
 
     if (string == NULL || substring == NULL) {
         return NULL;
     }
 
-    int32 size1 = StringPortableLength(string);
-    int32 size2 = StringPortableLength(substring);
+    int32 size1 = StringPortable::Length(string);
+    int32 size2 = StringPortable::Length(substring);
 
     if (size1 < 0 || size2 < 0) {
         return NULL;
@@ -355,7 +384,7 @@ const char* StringPortableSearchSubstr(const char* string,
     int32 i = 0;
 
     while ((size1 - i) >= size2) {
-        if (StringPortableEqualN(string + i, substring, size2)) {
+        if (StringPortable::EqualN(string + i, substring, size2)) {
             return string + i;
         }
         i++;
@@ -364,13 +393,14 @@ const char* StringPortableSearchSubstr(const char* string,
     return NULL;
 }
 
-char* StringPortableTokenizeByChars(char* string, const char* delimiter,
+char* StringPortable::TokenizeByChars(char* string,
+                                    const char* delimiter,
                                     char* result) {
 
     int32 i = 0;
     int32 j = 0;
     if (result == NULL) {
-        result = string;
+        return false;
     }
     while (1) {
         j = 0;
@@ -402,12 +432,12 @@ char* StringPortableTokenizeByChars(char* string, const char* delimiter,
     return NULL;
 }
 
-const char* StringPortableTokenizeByString(const char* string,
+const char* StringPortable::TokenizeByString(const char* string,
                                            const char* terminator,
                                            char* result) {
 
-    int32 size1 = StringPortableLength(string);
-    int32 size2 = StringPortableLength(terminator);
+    int32 size1 = StringPortable::Length(string);
+    int32 size2 = StringPortable::Length(terminator);
 
     if (size1 < 0 || size2 < 0) {
         return NULL;
@@ -415,7 +445,7 @@ const char* StringPortableTokenizeByString(const char* string,
 
     int32 i = 0;
     while ((size1 - i) >= size2) {
-        if (StringPortableEqualN(string + i, terminator, size2)) {
+        if (StringPortable::EqualN(string + i, terminator, size2)) {
             result[i] = '\0';
             return string + i + size2;
         }
@@ -426,11 +456,13 @@ const char* StringPortableTokenizeByString(const char* string,
         i++;
     }
 
-    StringPortableCopy(result + i, string + i);
+    StringPortable::Copy(result + i, string + i);
     return NULL;
 }
 
-bool StringPortableSubstr(int32 begin, int32 end, const char* string,
+bool StringPortable::Substr(int32 begin,
+                          int32 end,
+                          const char* string,
                           char* result) {
 
     int32 i = 0;
@@ -450,4 +482,3 @@ bool StringPortableSubstr(int32 begin, int32 end, const char* string,
     return true;
 
 }
-
