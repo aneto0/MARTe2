@@ -38,7 +38,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 /**
  * @brief A class to test all the Sleep functions.
  */

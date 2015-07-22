@@ -117,5 +117,3 @@ bool SleepTest::TestSemiBusy(float64 totalSleepSec,
 
     return testResult;
 }
-
-
