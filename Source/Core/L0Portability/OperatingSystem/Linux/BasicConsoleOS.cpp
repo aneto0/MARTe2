@@ -1,5 +1,5 @@
 /**
- * @file BasicConsole.cpp
+ * @file BasicConsoleOS.cpp
  * @brief Source file for class BasicConsole
  * @date 05/07/2015
  * @author Andre' Neto
@@ -45,6 +45,7 @@
 /*---------------------------------------------------------------------------*/
 /*lint -e{9109} forward declaration in BasicConsole.h is required to define the class*/
 /*lint -esym(9150, BasicConsoleOSProperties::*) */
+
 struct BasicConsoleOSProperties {
     /**
      * Standard output file descriptor.
@@ -231,7 +232,11 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer,
         }
         else if (currentChar == '\n') {
             //reset the currentColumn
-            currentColumn = 0;
+            currentColumn = 0u;
+        }
+        else {
+            //if currentChar is not the end of the string ('\0') and not next line is demanded ('\n')
+            //nothing has to be done
         }
         if ((currentChar == '\0') || (currentChar == '\n') || (index == (size - 1u))) {
             sink = true;
@@ -242,7 +247,7 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer,
         }
 
         if (sink) {
-            if (endFlag == 1) {
+            if (endFlag == 1u) {
                 sizeToWrite = (index - start);
             }
             else {
@@ -379,7 +384,8 @@ ErrorType BasicConsole::SetTitleBar(const char8 * const title) {
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorType BasicConsole::GetTitleBar(char8 * const title, const uint32 &size) const {
+ErrorType BasicConsole::GetTitleBar(char8 * const title,
+                                    const uint32 &size) const {
     return UnsupportedFeature;
 }
 

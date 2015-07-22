@@ -309,13 +309,15 @@ public:
     /**
      * @brief Returns the console title (@see TitleBarSupported).
      * @param[out] title is a destination buffer.
+     * @param[out] size is the size of the title.
      * @return NoError if the title can be successfully retrieved, OSError if there is any operating
      * system related problem while performing the operation or UnsupportedFeature if the feature is not available
      * in the operating system specific implementation.
      */
-    virtual ErrorType GetTitleBar(char8 *title, const uint32 &size) const;
+    virtual ErrorType GetTitleBar(char8 *title,
+                                  const uint32 &size) const;
 
-    /**
+    /**F
      * @brief Checks if changing or reading the console title is supported
      * @return true if the operating system implementation enables the reading and updating
      * of the console title.
@@ -346,9 +348,17 @@ private:
                                 const TimeoutType &timeout);
 
     /**
-     * @copydetails BasicConsole::Write
+     * @copybrief BasicConsole::Write
      * @details The BasicConsole::Write will call based on the opening mode either the Write or the
      * OSWrite function. This is where the actual operating system call is implemented.
+     * @param[in] buffer memory data to be written on the console.
+     * @param[in,out] size maximum size in bytes to write on the console. If a minor number of bytes is written,
+     * size will contain the number of bytes actually written.
+     * @param [in] timeout maximum time to wait for writing to the console.
+     * @return - NoError if a number of bytes greater than 0 is successfully written;
+     * - Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
+     * - Warning if zero bytes are written and no OSError is flagged;
+     * - or OSError if there is any operating system related problem while performing the operation.
      */
     ErrorType OSWrite(const char8 * const buffer,
                       uint32 & size,
