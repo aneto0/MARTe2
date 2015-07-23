@@ -31,8 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "HighResolutionTimer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -48,7 +50,9 @@
  * @details Most of the implementation is delegated to SleepOS.h which provides system calls to allows sleep functions.
  */
 class Sleep {
+
 public:
+
     /**
      * @brief Retrieve the time as seconds from the start of time.
      * @return the seconds elapsed from 00:00 of Jan 1, 1970.
@@ -103,6 +107,7 @@ public:
     static void SemiBusy(float64 totalSleepSec,
                          float64 nonBusySleepSec);
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

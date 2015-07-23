@@ -1,8 +1,8 @@
 /**
  * @file SleepOS.cpp
  * @brief Source file for class SleepOS
- * @date 20/lug/2015
- * @author Giuseppe Ferrò
+ * @date 20/06/2015
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -24,6 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <time.h>
 
 /*---------------------------------------------------------------------------*/
@@ -35,6 +36,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 static const uint32 winSleepFreq = 1000;
 
 /*---------------------------------------------------------------------------*/
