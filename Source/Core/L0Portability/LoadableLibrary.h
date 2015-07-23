@@ -101,6 +101,10 @@ public:
     void SetModule(HANDLE const m);
 
 private:
+
+    /**
+     * Module's handle for the dynamic library
+     */
     HANDLE module;
 
 };

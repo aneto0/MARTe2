@@ -24,12 +24,16 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <limits.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include <LoadableLibraryTest.h>
 #include "gtest/gtest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -72,4 +76,3 @@ TEST(LoadableLibraryGTest,TestSetModule) {
     LoadableLibraryTest loadablelibrarytest;
     ASSERT_TRUE(loadablelibrarytest.TestSetModule());
 }
-

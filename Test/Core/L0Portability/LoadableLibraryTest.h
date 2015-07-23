@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_CORE_L0PORTABILITY_LOADABLELIBRARYTEST_H_
-#define 		TEST_CORE_L0PORTABILITY_LOADABLELIBRARYTEST_H_
+#ifndef LOADABLELIBRARYTEST_H_
+#define LOADABLELIBRARYTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,12 +31,15 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "LoadableLibrary.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 class LoadableLibraryTest {
+
 public:
 
     /**
@@ -97,14 +100,17 @@ public:
 
     /**
      * @brief Tests LoadableLibrary::SetModule function.
-     * @detail Open library and change its HANDEL several times checking the set value using
+     * @detail Open library and change its HANDLE several times checking the set value using
      * LoadableLibrary::GetModule().
      * @return true if LoadableLibrary::GetModule() returns the Set HANDLE.
      */
     bool TestSetModule();
 
 private:
-    /** LoadableLibrary object */
+
+    /**
+     * LoadableLibrary object
+     */
     LoadableLibrary myLoadableLibrary;
 };
 
@@ -112,5 +118,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_CORE_L0PORTABILITY_LOADABLELIBRARYTEST_H_ */
+#endif /* LOADABLELIBRARYTEST_H_ */
 

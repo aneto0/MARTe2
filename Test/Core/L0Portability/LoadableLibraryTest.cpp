@@ -28,8 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "LoadableLibraryTest.h"
 #include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -120,4 +122,3 @@ bool LoadableLibraryTest::TestSetModule() {
     myLoadableLibrary.Close();
     return retValue;
 }
-
