@@ -65,7 +65,7 @@ public:
      * @return true if the requested library is found and opened.
      */
     static bool Open(LoadableLibrary &ll,
-                               char8 const * const dllName) {
+                     char8 const * const dllName) {
         HANDLE m = ll.GetModule();
         if (m != 0) {
             Close(ll);
@@ -87,7 +87,7 @@ public:
      * @return a pointer to the requested function.
      */
     static void *Function(LoadableLibrary &ll,
-                                    char8 const * const name) {
+                          char8 const * const name) {
         HANDLE m = ll.GetModule();
         if ((m == NULL) || (name == NULL)) {
             return NULL;
