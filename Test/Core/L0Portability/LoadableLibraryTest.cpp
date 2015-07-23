@@ -39,13 +39,9 @@
 /*---------------------------------------------------------------------------*/
 
 LoadableLibraryTest::LoadableLibraryTest() {
-    // Auto-generated constructor stub for LoadableLibraryTest2
-    // TODO Verify if manual additions are needed
 }
 
 LoadableLibraryTest::~LoadableLibraryTest() {
-    // Auto-generated destructor stub for LoadableLibraryTest2
-    // TODO Verify if manual additions are needed
 }
 
 bool LoadableLibraryTest::TestConstructor() {

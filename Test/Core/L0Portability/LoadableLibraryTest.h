@@ -38,7 +38,15 @@
 
 class LoadableLibraryTest {
 public:
+
+    /**
+     * @brief Default constructor.
+     **/
     LoadableLibraryTest();
+
+    /**
+     * @brief Destructor.
+     **/
     virtual ~LoadableLibraryTest();
 
     /**
