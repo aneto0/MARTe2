@@ -1,8 +1,8 @@
 /**
- * @file MutexSemGTest1.cpp
- * @brief Source file for class MutexSemGTest1
- * @date Jul 10, 2015
- * @author llcapella
+ * @file MutexSemGTest.cpp
+ * @brief Source file for class MutexSemGTest
+ * @date 10/07/2015
+ * @author Llorenç Capellà
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MutexSemGTest1 (public, protected, and private). Be aware that some
+ * the class MutexSemGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -31,7 +31,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <MutexSemTest.h>
+#include "MutexSemTest.h"
 #include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -126,4 +126,3 @@ TEST(MutexSemGTest,TestCopyConstructor) {
     MutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestCopyConstructor());
 }
-

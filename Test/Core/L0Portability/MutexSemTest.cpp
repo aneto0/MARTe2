@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MutexSemTest.h"
-
 #include "Sleep.h"
 #include "Atomic.h"
 

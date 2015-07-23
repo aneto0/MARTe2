@@ -31,9 +31,11 @@
 #include <pthread.h>
 #include <math.h>
 #include <sys/timeb.h>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ErrorType.h"
 #include "TimeoutType.h"
 
@@ -47,6 +49,7 @@
 class PrivateMutexSemStruct {
 
 private:
+
     /**
      * @brief Constructor.
      */
@@ -199,15 +202,18 @@ private:
     }
 
 private:
-    /**  Mutex Handle */
+
+    /**Mutex Handle */
     pthread_mutex_t mutexHandle;
+
     /** Mutex Attributes */
     pthread_mutexattr_t mutexAttributes;
 
     /** Number of handle references. */
     uint32 references;
 
-    /** This flag is set to true when the semaphore is closed.
+    /**
+     * This flag is set to true when the semaphore is closed.
      * We need this because when we use shared semaphores (created with
      * the copy constructor) once the semaphore has been closed by the
      * operating system, calling a second close (for the copy constructed
@@ -353,9 +359,8 @@ public:
         }
     };
 
-    /*---------------------------------------------------------------------------*/
-    /*                        Inline method definitions                          */
-    /*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
 #endif /* MUTEXSEMOS_H_ */
-

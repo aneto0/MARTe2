@@ -31,17 +31,21 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "TimeoutType.h"
 #include "ErrorType.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
  * Forward declaration of the operating system specific properties (defined in the operating system
  * specific unit file).
  */
 struct MutexSemOSProperties;
+
 /**
  * @brief Mutual exclusion semaphore.
  */
@@ -124,6 +128,7 @@ public:
     MutexSemOSProperties *GetOSProperties();
 
 private:
+
     /**
      * Operating system specific properties to be used by the operating system specific implementation
      */

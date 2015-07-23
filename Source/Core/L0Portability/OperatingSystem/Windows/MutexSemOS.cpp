@@ -2,7 +2,7 @@
  * @file MutexSemOS.cpp
  * @brief Source file for class MutexSemOS
  * @date 20/lug/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,11 +31,13 @@
 
 #include "MutexSem.h"
 #include "Atomic.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 struct MutexSemOSProperties {
+
     /**
      * Mutex Handle
      */

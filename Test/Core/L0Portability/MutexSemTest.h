@@ -43,7 +43,9 @@
  * @brief A class to test the MutexSem functions.
  */
 class MutexSemTest {
+
 public:
+
     /**
      * @brief Constructor.
      * @details Creates the mutex handle.
