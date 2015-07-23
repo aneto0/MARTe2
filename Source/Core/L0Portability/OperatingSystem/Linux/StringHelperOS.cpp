@@ -1,7 +1,7 @@
 /**
  * @file StringHelper.cpp
  * @brief Source file for class StringHelper
- * @date 30/giu/2015
+ * @date 30/06/2015
  * @author Giuseppe Ferr�
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -24,15 +24,23 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #ifndef LINT
 #include <string.h>
 #endif
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "../../StringHelper.h"
+
 /*---------------------------------------------------------------------------*/
-/*                           definitions                              */
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 char8 *StringHelper::Concatenate(char8 *destination, const char8 *source) {

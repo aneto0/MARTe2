@@ -32,6 +32,7 @@
 #include "GeneralDefinitions.h"
 #include "StringHelperTest.h"
 #include "StringTestHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -252,24 +253,38 @@ bool StringHelperTest::TestConcatenateN() {
             && !StringHelper::ConcatenateN(NULL, NULL, sizeToAppend));
 }
 
-bool StringHelperTest::TestSearchIndex() {
+bool StringHelperTest::TestSearchChar() {
     const char8 *buffer = "Hello World";
+    const char8 *retPointer;
 
-    const char8 *toSearch = "rdl";
+    char8 toSearch = 'l';
 
-    if (StringHelper::SearchIndex(buffer, toSearch) != 2 || !StringTestHelper::Compare(buffer + 2, "llo World")) {
+    if ((retPointer = StringHelper::SearchChar(buffer, toSearch)) == NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(retPointer, "llo World")) {
+        return false;
+    }
+
+    //search again on the remained
+    if ((retPointer = StringHelper::SearchChar(retPointer + 1, toSearch)) == NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(retPointer, "lo World")) {
         return false;
     }
 
     //these chars are not in the string
-    const char8 *invalid = "xpqg";
+    char8 invalid = 'x';
 
-    if (StringHelper::SearchIndex(buffer, invalid) != StringHelper::Length(buffer)) {
+    if ((retPointer = StringHelper::SearchChar(buffer, invalid)) != NULL) {
         return false;
     }
 
     //NULL pointer arguments
-    return (StringHelper::SearchIndex(NULL, NULL) == -1 && StringHelper::SearchIndex(buffer, NULL) == -1 && StringHelper::SearchIndex(NULL, toSearch) == -1);
+    return (StringHelper::SearchChar(NULL, toSearch) == NULL);
 }
 
 bool StringHelperTest::TestSearchChars() {
@@ -306,40 +321,6 @@ bool StringHelperTest::TestSearchChars() {
     //NULL pointer arguments
     return (StringHelper::SearchChars(NULL, NULL) == NULL && StringHelper::SearchChars(buffer, NULL) == NULL
             && StringHelper::SearchChars(NULL, toSearch) == NULL);
-}
-
-bool StringHelperTest::TestSearchChar() {
-    const char8 *buffer = "Hello World";
-    const char8 *retPointer;
-
-    char8 toSearch = 'l';
-
-    if ((retPointer = StringHelper::SearchChar(buffer, toSearch)) == NULL) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(retPointer, "llo World")) {
-        return false;
-    }
-
-    //search again on the remained
-    if ((retPointer = StringHelper::SearchChar(retPointer + 1, toSearch)) == NULL) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(retPointer, "lo World")) {
-        return false;
-    }
-
-    //these chars are not in the string
-    char8 invalid = 'x';
-
-    if ((retPointer = StringHelper::SearchChar(buffer, invalid)) != NULL) {
-        return false;
-    }
-
-    //NULL pointer arguments
-    return (StringHelper::SearchChar(NULL, toSearch) == NULL);
 }
 
 bool StringHelperTest::TestSearchLastChar() {
@@ -388,4 +369,66 @@ bool StringHelperTest::TestSearchString() {
     //NULL pointer arguments
     return (StringHelper::SearchString(NULL, NULL) == NULL && StringHelper::SearchString(buffer, NULL) == NULL
             && StringHelper::SearchString(NULL, toSearch) == NULL);
+}
+
+bool StringHelperTest::TestSearchIndex() {
+    const char8 *buffer = "Hello World";
+
+    const char8 *toSearch = "ll";
+
+    if (StringHelper::SearchIndex(buffer, toSearch) != 2 && !StringTestHelper::Compare(buffer + 2, "llo World")) {
+        return false;
+    }
+
+    //these chars are not in the string
+    const char8 *invalid = "xpqg";
+
+    if (StringHelper::SearchIndex(buffer, invalid) != StringHelper::Length(buffer)) {
+        return false;
+    }
+
+    //NULL pointer arguments
+    return (StringHelper::SearchIndex(NULL, NULL) == -1 && StringHelper::SearchIndex(buffer, NULL) == -1 && StringHelper::SearchIndex(NULL, toSearch) == -1);
+}
+
+bool StringHelperTest::TestSetChar() {
+    bool retValue;
+    uint32 i = 0u;
+    char8 buffer[30] = "length7";
+    const uint32 size = 3u;
+    retValue = StringHelper::SetChar(buffer, size, 'a');
+    while (i < size) {
+        retValue &= (*(buffer + i) == 'a');
+        i++;
+    }
+    retValue &= (*(buffer + 3) == 'g');
+    retValue &= (*(buffer + 4) == 't');
+    retValue &= (*(buffer + 5) == 'h');
+    retValue &= (*(buffer + 6) == '7');
+
+    return retValue;
+}
+
+bool StringHelperTest::TestSetChar0Size() {
+    bool retValue;
+
+    char8 buffer[30] = "length7";
+    const uint32 size = 0u;
+    retValue = !StringHelper::SetChar(buffer, size, 'a');
+    retValue &= (*(buffer + 0) == 'l');
+    retValue &= (*(buffer + 1) == 'e');
+    retValue &= (*(buffer + 2) == 'n');
+    retValue &= (*(buffer + 3) == 'g');
+    retValue &= (*(buffer + 4) == 't');
+    retValue &= (*(buffer + 5) == 'h');
+    retValue &= (*(buffer + 6) == '7');
+    return retValue;
+}
+
+bool StringHelperTest::TestSetCharNull() {
+    bool retValue;
+    char8 *buffer = NULL;
+    const uint32 size = 3u;
+    retValue = !StringHelper::SetChar(buffer, size, 'a');
+    return retValue;
 }

@@ -1,7 +1,7 @@
 /**
  * @file StringHelper.h
  * @brief Header file for class StringHelper
- * @date 30/giu/2015
+ * @date 30/06/2015
  * @author Giuseppe Ferr�
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -31,7 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -41,7 +43,6 @@
  * @details These methods allows the most used and basic functions to manipulate char8 *strings and
  * are particularly useful in the implementation of higher levels string and stream implementations.
  */
-
 class StringHelper {
 
 public:
@@ -120,6 +121,8 @@ public:
      * @param[in] string1 is the source string.
      * @param[in] string2 contains the characters which must be searched in string1.
      * @return the index at the first occurrence of the first character from string2 found in string1.
+     * If the string1 or string2 is NULL returns -1.
+     * If the string2 is not found in the string1 returns the length of the string1 (the last Index + 1).
      */
     static int32 SearchIndex(const char8 *string1,
                              const char8 *string2);
@@ -170,6 +173,7 @@ public:
                         const char8 &c);
 
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
