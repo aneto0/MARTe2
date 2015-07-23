@@ -24,12 +24,15 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #ifndef LINT
 #include <math.h>
 #endif
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "HighResolutionTimerCalibratorOS.h"
 #include "../../HighResolutionTimer.h"
 #include "../../StringHelper.h"
@@ -41,6 +44,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
     const size_t LINUX_CPUINFO_BUFFER_SIZE = 1023u;
     initialTicks = HighResolutionTimer::Counter();

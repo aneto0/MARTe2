@@ -22,19 +22,21 @@
  */
 
 #ifndef HIGHRESOLUTIONTIMERCALIBRATOROS_H_
-#define 		HIGHRESOLUTIONTIMERCALIBRATOROS_H_
+#define HIGHRESOLUTIONTIMERCALIBRATOROS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include <Windows.h>
 #include <time.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "../../GeneralDefinitions.h"
-//#include "HighResolutionTimer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
