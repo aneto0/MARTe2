@@ -32,6 +32,7 @@
 #include "GeneralDefinitions.h"
 #include "StringHelperTest.h"
 #include "StringTestHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
