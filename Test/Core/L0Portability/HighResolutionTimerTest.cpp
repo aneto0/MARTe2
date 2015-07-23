@@ -75,7 +75,7 @@ bool HighResolutionTimerTest::TestCounter32(float64 sleepTime) {
     Sleep::Sec(sleepTime);
     counter = HighResolutionTimer::Counter32();
     time = (counter - counter_1) * HighResolutionTimer::Period();
-    return Tolerance(time, sleepTime, sleepTime * .1);
+    return Tolerance(time, sleepTime, sleepTime * .5);
 }
 
 bool HighResolutionTimerTest::TestTicksToTime() {
@@ -101,7 +101,7 @@ bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
     TimeValues myTimeStamp2;
     uint32 conversions[] = { 1000, 60000, 3600000, 3600000 * 24 };
     //Arbitrary tolerance
-    int32 tolerance = int32(0.01 * millisecs);
+    int32 tolerance = int32(0.1 * millisecs);
     //tolerance has to greater than 0
     if (tolerance == 0) {
         tolerance = 1;

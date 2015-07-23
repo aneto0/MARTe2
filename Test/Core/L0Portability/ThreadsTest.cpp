@@ -33,7 +33,6 @@
 #include "Atomic.h"
 #include "Sleep.h"
 #include "StringHelper.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -341,16 +340,16 @@ bool PriorityTestFunction(ThreadsTest &t) {
 }
 
 bool ThreadsTest::TestPriorityLevel() {
-    Threads::SetPriorityLevel((TID) -1, PRIORITY_HIGHEST);
-    if (Threads::GetPriorityLevel((TID) -1) != PRIORITY_UNKNOWN) {
+    Threads::SetPriorityLevel((TID) - 1, PRIORITY_HIGHEST);
+    if (Threads::GetPriorityLevel((TID) - 1) != PRIORITY_UNKNOWN) {
         return false;
     }
     return PriorityTestFunction(*this);
 }
 
 bool ThreadsTest::TestPriorityClass() {
-    Threads::SetPriorityClass((TID) -1, PRIORITY_CLASS_HIGH);
-    if (Threads::GetPriorityClass((TID) -1) != PRIORITY_CLASS_UNKNOWN) {
+    Threads::SetPriorityClass((TID) - 1, PRIORITY_CLASS_HIGH);
+    if (Threads::GetPriorityClass((TID) - 1) != PRIORITY_CLASS_UNKNOWN) {
         return false;
     }
     return PriorityTestFunction(*this);
@@ -551,6 +550,7 @@ bool ThreadsTest::TestNumberOfThreads(uint32 nOfThreads) {
     }
     //check
     if (Threads::NumberOfThreads() != nOfThreads) {
+
         retValue = false;
     }
     exitCondition = -1;
@@ -562,6 +562,8 @@ bool ThreadsTest::TestNumberOfThreads(uint32 nOfThreads) {
         }
         Sleep::Sec(10e-3);
     }
+
+    Sleep::Sec(10e-3);
     return retValue && Threads::NumberOfThreads() == 0;
 }
 
@@ -569,6 +571,7 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
     uint32 i = 0;
     for (i = 0; i < nOfThreads; i++) {
         TID tid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this);
+
         //waits that threads begin
         uint32 j = 0;
         while ((uint32) exitCondition < (i + 1)) {
@@ -629,12 +632,17 @@ bool ThreadsTest::TestFindByIndex(uint32 nOfThreads) {
         }
         //removes the first thread
         Threads::Kill(firstTid);
+        Sleep::Sec(10e-3);
+
         Atomic::Decrement(&exitCondition);
         //removes the last thread
         Threads::Kill(lastTid);
+        Sleep::Sec(10e-3);
+
         Atomic::Decrement(&exitCondition);
         //adds another thread
         TID tid = Threads::BeginThread((ThreadFunctionType) WaitFunction, this);
+
         //waits that the thread begins
         j = 0;
         while ((uint32) exitCondition < (i - 1)) {

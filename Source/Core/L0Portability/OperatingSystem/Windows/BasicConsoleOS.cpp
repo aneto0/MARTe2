@@ -29,7 +29,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "../../BasicConsole.h"
+#include "BasicConsole.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -114,6 +114,7 @@ ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
     //get the console informations
     if (GetConsoleScreenBufferInfo(osProperties->outputConsoleHandle, &info) == 0) {
         error = OSError;
+
     }
 
     if (error == NoError) {
@@ -136,6 +137,7 @@ ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
         if (!SetConsoleScreenBufferSize(osProperties->outputConsoleHandle, stage1BufferSize)) {
             // CStaticAssertPlatformErrorCondition(Errors::OSError,"BasicConsole:SetSize:failed SetConsoleScreenBufferSize ");
             error = OSError;
+
         }
 
     }
@@ -146,6 +148,7 @@ ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
 
         if (windowColumns < 0 || windowRows < 0) {
             error = OSError;
+
         }
 
     }
@@ -169,6 +172,7 @@ ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
         if (!SetConsoleWindowInfo(osProperties->outputConsoleHandle, TRUE, &srect)) {
             //  CStaticAssertPlatformErrorCondition(Errors::OSError,"BasicConsole:SetSize:failed SetConsoleWindowInfo ");
             error = OSError;
+
         }
 
     }
@@ -179,8 +183,9 @@ ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
         stage2BufferSize.X = numberOfColumns;
         stage2BufferSize.Y = numberOfRows;
 
-        if (SetConsoleScreenBufferSize(osProperties->outputConsoleHandle, stage2BufferSize) == FALSE) {
+        if (!SetConsoleScreenBufferSize(osProperties->outputConsoleHandle, stage2BufferSize)) {
             error = OSError;
+
         }
 
     }
@@ -285,10 +290,32 @@ ErrorType BasicConsole::Write(const char8* buffer,
 
     ErrorType error = NoError;
 
+    if (osProperties->openingMode & BasicConsole::Mode::EnablePaging) {
+        error = PagedWrite(buffer, size, timeout);
+    }
+    else {
+        error = OSWrite(buffer, size, timeout);
+    }
+
+    return error;
+
+}
+
+ErrorType BasicConsole::OSWrite(const char8* const buffer,
+                                uint32 &size,
+                                const TimeoutType &timeout) {
+    ErrorType error = NoError;
+
     if ((size > 0) && (buffer != NULL)) {
+
         if (!WriteConsole(osProperties->outputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
+
             error = OSError;
         }
+
+    }
+    else {
+        error = Warning;
     }
 
     return error;
@@ -343,6 +370,10 @@ ErrorType BasicConsole::SetTitleBar(const char8 *title) {
 ErrorType BasicConsole::GetTitleBar(char8 *title,
                                     const uint32 &size) const {
 
+    if (title == NULL) {
+        return Warning;
+    }
+
     GetConsoleTitle(title, size);
 
     return NoError;
@@ -356,8 +387,8 @@ ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
 
     COORD max = GetLargestConsoleWindowSize(osProperties->outputConsoleHandle);
 
-    uint32 numberOfColumnsUsed = 0;
-    uint32 numberOfRowsUsed = 0;
+    uint32 numberOfColumnsUsed = numberOfColumns;
+    uint32 numberOfRowsUsed = numberOfRows;
 
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(osProperties->outputConsoleHandle, &info);
@@ -368,33 +399,34 @@ ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
 
     if (error == NoError) {
         //saturate values at the max or at the buffer size
-        if (numberOfColumns > max.X) {
+        if (numberOfColumnsUsed > max.X) {
             numberOfColumnsUsed = max.X;
         }
-        if (numberOfColumns > info.dwSize.X) {
+        if (numberOfColumnsUsed > info.dwSize.X) {
             numberOfColumnsUsed = info.dwSize.X;
         }
-        if (numberOfRows > max.Y) {
+        if (numberOfRowsUsed > max.Y) {
             numberOfRowsUsed = max.Y;
         }
-        if (numberOfRows > info.dwSize.Y) {
+        if (numberOfRowsUsed > info.dwSize.Y) {
             numberOfRowsUsed = info.dwSize.Y;
         }
-        if (numberOfColumns < 1) {
+        if (numberOfColumnsUsed < 1) {
             numberOfColumnsUsed = 1;
         }
-        if (numberOfRows < 1) {
+        if (numberOfRowsUsed < 1) {
             numberOfRowsUsed = 1;
         }
 
         SMALL_RECT srect;
         srect.Left = info.srWindow.Left;
         srect.Top = info.srWindow.Top;
-        srect.Right = srect.Left + numberOfColumns - 1;
-        srect.Bottom = srect.Top + numberOfRows - 1;
+        srect.Right = srect.Left + numberOfColumnsUsed - 1;
+        srect.Bottom = srect.Top + numberOfRowsUsed - 1;
 
         if (!SetConsoleWindowInfo(osProperties->outputConsoleHandle, TRUE, &srect)) {
             //  CStaticPlatformErrorCondition(Errors::OSError,"BasicConsole:SetWindowSize:failed SetConsoleWindowInfo ");
+
             error = OSError;
         }
     }
@@ -466,7 +498,7 @@ ErrorType BasicConsole::SetColour(const Colours &foregroundColour,
 
     WORD attribute;
     attribute = (int) foregroundColour & 0xF;
-    attribute |= ((int) backgroundColour & 0xF) << 4;
+    attribute |= (((int) backgroundColour & 0xF) << 4);
 
     if (!SetConsoleTextAttribute(osProperties->outputConsoleHandle, attribute)) {
         error = OSError;
@@ -487,9 +519,9 @@ ErrorType BasicConsole::Clear() {
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(osProperties->outputConsoleHandle, &info);
     int nOfChars = info.dwSize.Y * info.dwSize.X;
-
-    FillConsoleOutputAttribute(osProperties->outputConsoleHandle, info.wAttributes, nOfChars, c, NULL);
-    if (!FillConsoleOutputCharacter(osProperties->outputConsoleHandle, ' ', nOfChars, c, NULL)) {
+    DWORD NumberOfCharsWritten;
+    FillConsoleOutputAttribute(osProperties->outputConsoleHandle, info.wAttributes, nOfChars, c, &NumberOfCharsWritten);
+    if (!FillConsoleOutputCharacter(osProperties->outputConsoleHandle, ' ', nOfChars, c, &NumberOfCharsWritten)) {
         error = OSError;
     }
 

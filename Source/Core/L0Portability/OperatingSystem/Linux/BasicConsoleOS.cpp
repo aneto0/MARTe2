@@ -221,24 +221,17 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer,
     uint32 index = 0u;
     uint32 start = 0u;
     uint32 sizeToWrite = 0u;
-    uint32 endFlag = 0u;
 
     bool sink = false;
     ErrorType err = NoError;
-    while ((err == NoError) && (index < size) && (endFlag == 0u)) {
+    while ((err == NoError) && (index < size)) {
         currentChar = bufferString[index];
-        if (currentChar == '\0') {
-            endFlag = 1u;
-        }
-        else if (currentChar == '\n') {
+        if (currentChar == '\n') {
             //reset the currentColumn
             currentColumn = 0u;
         }
-        else {
-            //if currentChar is not the end of the string ('\0') and not next line is demanded ('\n')
-            //nothing has to be done
-        }
-        if ((currentChar == '\0') || (currentChar == '\n') || (index == (size - 1u))) {
+
+        if ((currentChar == '\n') || (index == (size - 1u))) {
             sink = true;
         }
 
@@ -247,12 +240,8 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer,
         }
 
         if (sink) {
-            if (endFlag == 1u) {
-                sizeToWrite = (index - start);
-            }
-            else {
-                sizeToWrite = (index - start) + 1u;
-            }
+            sizeToWrite = (index - start) + 1u;
+
             if (sizeToWrite > 0u) {
                 ssize_t wbytes = write(BasicConsoleOSProperties::STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
                 if (wbytes == -1) {
