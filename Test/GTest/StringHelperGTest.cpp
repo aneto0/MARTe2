@@ -40,75 +40,76 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class StringHelperGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
-
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
-
-
-
-TEST_F(StringHelperGTest,TestLength) {
+TEST(StringHelperGTest,TestLength) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestLength("Hello"));
 }
 
-TEST_F(StringHelperGTest,TestCompare) {
+TEST(StringHelperGTest,TestCompare) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCompare("Hello", "Hello"));
 }
 
-TEST_F(StringHelperGTest,TestCompareN) {
+TEST(StringHelperGTest,TestCompareN) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCompareN());
 }
 
-TEST_F(StringHelperGTest,TestCopy) {
+TEST(StringHelperGTest,TestCopy) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCopy("Hello"));
 }
 
-TEST_F(StringHelperGTest,TestCopyN) {
+TEST(StringHelperGTest,TestCopyN) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestCopyN());
 }
 
-TEST_F(StringHelperGTest,TestConcatenate) {
+TEST(StringHelperGTest,TestConcatenate) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestConcatenate());
 }
-TEST_F(StringHelperGTest,TestConcatenateN) {
+
+TEST(StringHelperGTest,TestConcatenateN) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestConcatenateN());
 }
 
-TEST_F(StringHelperGTest,TestSearchChars) {
+TEST(StringHelperGTest,TestSearchChars) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSearchChars());
 }
 
-TEST_F(StringHelperGTest,TestSearchChar) {
+TEST(StringHelperGTest,TestSearchChar) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSearchChar());
 }
 
-TEST_F(StringHelperGTest,TestSearchLastChar) {
+TEST(StringHelperGTest,TestSearchLastChar) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSearchLastChar());
 }
-TEST_F(StringHelperGTest,TestSearchString) {
+TEST(StringHelperGTest,TestSearchString) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSearchString());
 }
 
-TEST_F(StringHelperGTest,TestSearchIndex) {
+TEST(StringHelperGTest,TestSearchIndex) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSearchIndex());
+}
+
+TEST(StringHelperGTest,TestSetChar) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestSetChar());
+}
+
+TEST(StringHelperGTest,TestSetChar0Size) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestSetChar0Size());
+}
+
+TEST(StringHelperGTest,TestSetCharNull) {
+    StringHelperTest mystringhelper;
+    ASSERT_TRUE(mystringhelper.TestSetCharNull());
 }

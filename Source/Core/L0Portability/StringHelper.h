@@ -120,6 +120,8 @@ public:
      * @param[in] string1 is the source string.
      * @param[in] string2 contains the characters which must be searched in string1.
      * @return the index at the first occurrence of the first character from string2 found in string1.
+     * If the string1 or string2 is NULL returns -1.
+     * If the string2 is not found in the string1 returns the length of the string1 (the last Index + 1).
      */
     static int32 SearchIndex(const char8 *string1,
                              const char8 *string2);
