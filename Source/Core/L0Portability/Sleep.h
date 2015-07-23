@@ -90,13 +90,7 @@ public:
      * @details This function uses HighResolutionTimer functions.
      * @param[in] sec is the seconds to sleep.
      */
-    static void Busy(float64 sec) {
-        int64 startCounter = HighResolutionTimer::Counter();
-        int64 endCounter = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
-        int64 sleepUntilCounter = startCounter + endCounter;
-        while (HighResolutionTimer::Counter() < sleepUntilCounter) {
-        }
-    }
+    inline static void Busy(float64 sec);
 
     /**
      * @brief Sleep yielding cpu for nonBusySleepSec.
@@ -111,5 +105,13 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+void Sleep::Busy(float64 sec) {
+    int64 startCounter = HighResolutionTimer::Counter();
+    int64 endCounter = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
+    int64 sleepUntilCounter = startCounter + endCounter;
+    while (HighResolutionTimer::Counter() < sleepUntilCounter) {
+    }
+}
 
 #endif /* SLEEP_H_ */
