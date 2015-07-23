@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "HighResolutionTimer.h"
 
@@ -48,6 +49,7 @@
 class TimeoutType {
 
 public:
+
     /**
      * @brief Constructor from integer.
      * @param[in] msecs is the time in milliseconds.
@@ -97,7 +99,7 @@ public:
 
     /**
      * @brief Copy operator.
-     * @param[in] tt is the timoeut to copy in this.
+     * @param[in] tt is the timeout to copy in this.
      * @return this object.
      */
     inline TimeoutType &operator=(const TimeoutType &tt);
@@ -115,7 +117,10 @@ public:
     inline uint32 GetTimeoutMSec() const;
 
 private:
-    /** timeout in milliseconds  */
+
+    /**
+     * Timeout in milliseconds
+     */
     uint32 msecTimeout;
 
 };
@@ -135,6 +140,7 @@ const TimeoutType TTDefault(0xFFFFFFFEu);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 TimeoutType::TimeoutType(const uint32 &msecs) {
     msecTimeout = msecs;
 }

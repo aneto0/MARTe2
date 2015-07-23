@@ -2,7 +2,7 @@
  * @file TimeoutTypeTest.h
  * @brief Header file for class TimeoutTypeTest
  * @date 23/07/2015
- * @author llcapella
+ * @author Llorenç Capellà
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_CORE_L0PORTABILITY_TIMEOUTTYPETEST_H_
-#define 		TEST_CORE_L0PORTABILITY_TIMEOUTTYPETEST_H_
+#ifndef TIMEOUTTYPETEST_H_
+#define TIMEOUTTYPETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,16 +31,28 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "TimeoutType.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
  * @brief A class to test all the TimeoutType functions.
  */
 class TimeoutTypeTest {
+
 public:
+
+    /**
+     * @brief Default constructor
+     */
     TimeoutTypeTest();
+
+    /**
+     * @brief Destructor
+     */
     virtual ~TimeoutTypeTest();
 
     /**
@@ -90,7 +102,7 @@ public:
      * msecTimeout = 0)
      * @return true if the result of the -= operation is as expected.
      */
-    bool TestAutoSubstractOPerator();
+    bool TestSubstractAssignOperator();
 
     /**
      * @brief Test == operator.
@@ -113,7 +125,7 @@ public:
      * @detail copy timeout1 to timeout2 using = operator.
      * @return true if timeout1 = timeout2.
      */
-    bool TestAssingOperator();
+    bool TestAssignOperator();
 
     /**
      * @brief Test TimeoutType::TestIsFinite() function.
@@ -131,6 +143,11 @@ public:
      */
     bool TestGetTimeoutMSec();
 
+private:
+
+    /**
+     * Value used for performing checks
+     */
     bool retValue;
 };
 
@@ -138,5 +155,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_CORE_L0PORTABILITY_TIMEOUTTYPETEST_H_ */
+#endif /* TIMEOUTTYPETEST_H_ */
 

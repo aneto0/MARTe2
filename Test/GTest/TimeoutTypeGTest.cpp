@@ -2,7 +2,7 @@
  * @file TimeoutTypeGTest.cpp
  * @brief Source file for class TimeoutGTest
  * @date 23/07/2015
- * @author llcapella
+ * @author Llorenç Capellà
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -24,12 +24,16 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <limits.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "gtest/gtest.h"
 #include "TimeoutTypeTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -65,7 +69,7 @@ TEST(TimeoutTypeGTest,TestHighResolutionTimerTicks) {
 
 TEST(TimeoutTypeGTest,TestAutoSubstractOPerator) {
     TimeoutTypeTest timeoutTypeTest;
-    ASSERT_TRUE(timeoutTypeTest.TestAutoSubstractOPerator());
+    ASSERT_TRUE(timeoutTypeTest.TestSubstractAssignOperator());
 }
 
 TEST(TimeoutTypeGTest,TestEqualComparison) {
@@ -80,7 +84,7 @@ TEST(TimeoutTypeGTest,TestDiffComparison) {
 
 TEST(TimeoutTypeGTest,TestAssingOperator) {
     TimeoutTypeTest timeoutTypeTest;
-    ASSERT_TRUE(timeoutTypeTest.TestAssingOperator());
+    ASSERT_TRUE(timeoutTypeTest.TestAssignOperator());
 }
 
 TEST(TimeoutTypeGTest,TestIsFinite) {
@@ -92,4 +96,3 @@ TEST(TimeoutTypeGTest,TestGetTimeoutMSec) {
     TimeoutTypeTest timeoutTypeTest;
     ASSERT_TRUE(timeoutTypeTest.TestGetTimeoutMSec());
 }
-

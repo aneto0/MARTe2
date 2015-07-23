@@ -1,8 +1,8 @@
 /**
  * @file TimeoutTypeTest.cpp
  * @brief Source file for class TimeoutTypeTest
- * @date Jul 23, 2015
- * @author llcapella
+ * @date 23/07/2015
+ * @author Llorenç Capellà
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -45,8 +45,6 @@ TimeoutTypeTest::TimeoutTypeTest() {
 }
 
 TimeoutTypeTest::~TimeoutTypeTest() {
-    // Auto-generated destructor stub for TimeoutTypeTest
-    // TODO Verify if manual additions are needed
 }
 
 bool TimeoutTypeTest::TestConstructorDefault() {
@@ -87,7 +85,7 @@ bool TimeoutTypeTest::TestHighResolutionTimerTicks() {
     return (expectedTicks == timeout.HighResolutionTimerTicks());
 }
 
-bool TimeoutTypeTest::TestAutoSubstractOPerator() {
+bool TimeoutTypeTest::TestSubstractAssignOperator() {
     int32 intialTimeout = 100;
     TimeoutType timeout(intialTimeout);
     int32 substractValue = 60;
@@ -117,7 +115,7 @@ bool TimeoutTypeTest::TestDiffComparison() {
     return retValue;
 }
 
-bool TimeoutTypeTest::TestAssingOperator() {
+bool TimeoutTypeTest::TestAssignOperator() {
     TimeoutType timeout1(100);
     TimeoutType timeout2;
     timeout2 = timeout1;
