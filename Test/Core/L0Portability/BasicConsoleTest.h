@@ -58,35 +58,35 @@ public:
     /**
      * @brief Tests the correct opening of the console with default mode.
      * @param[in] openingMode is a flag with define the properties of the console.
-     * @return true if the returned value of BasicConsole.Open() is true.
+     * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModeDefault(FlagsType openingMode = BasicConsole::Mode::Default);
 
     /**
      * @brief Tests the correct opening of the console with CreateNewBuffer mode.
      * @param[in] openingMode is a flag with define the properties of the console.
-     * @return true if the returned value of BasicConsole.Open() is true.
+     * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModeCreateNewBuffer();
 
     /**
      * @brief Tests the correct opening of the console with PerformCharacterInput mode.
      * @param[in] openingMode is a flag with define the properties of the console.
-     * @return true if the returned value of BasicConsole.Open() is true.
+     * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModePerformCharacterInput();
 
     /**
      * @brief Tests the correct opening of the console with DisableControlBreak mode.
      * @param[in] openingMode is a flag with define the properties of the console.
-     * @return true if the returned value of BasicConsole.Open() is true.
+     * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModeDisableControlBreak();
 
     /**
      * @brief Tests the correct opening of the console with EnablePaging mode.
      * @param[in] openingMode is a flag with define the properties of the console.
-     * @return true if the returned value of BasicConsole.Open() is true.
+     * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModeEnablePaging();
 
@@ -217,16 +217,16 @@ public:
 
     /**
      * @brief Tests the BasicConsole::Show function.
-     * @return the return value of the function tested.
+     * @return the return value of the tested function.
      */
     bool TestShow();
 
     /**
      * @brief Tests the BasicConsole::SetTitleBar function
      * @param[in] title is the desired title.
-     * @return the return value of the function tested.
+     * @return the return value of the tested function.
      */
-    bool TestSetTitleBar(const char8 *title);
+    bool TestSetGetTitleBar(const char8 *title);
 
     /**
      * @brief Tests the BasicConsole::SetCursorPosition and BAsicConsole::SetCursorPositon functions.

@@ -81,23 +81,25 @@ TEST(BasicConsoleGTest,TestPaging) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestPaging(14, 15, 15));
 }
+
+
+
 //This tests need user intervent. Do not uncomment for automatic tests.
 
 TEST(BasicConsoleGTest,TestRead) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestRead("Hello\n"));
+    ASSERT_TRUE(console.TestRead("Hello"));
 }
-/*
- TEST(BasicConsoleGTest,TestSetGetSize) {
- BasicConsoleTest console;
- ASSERT_TRUE(console.TestSetGetSize(10, 13));
- }
 
- TEST(BasicConsoleGTest,TestSetGetWindowsSize) {
- BasicConsoleTest console;
- ASSERT_TRUE(console.TestSetGetWindowSize(100, 70));
- }
- */
+TEST(BasicConsoleGTest,TestSetGetSize) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestSetGetSize(100, 70));
+}
+
+TEST(BasicConsoleGTest,TestSetGetWindowsSize) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestSetGetWindowSize(50, 20));
+}
 
 TEST(BasicConsoleGTest,TestClear) {
     BasicConsoleTest console;
@@ -108,32 +110,33 @@ TEST(BasicConsoleGTest,TestPerfChar) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestPerfChar());
 }
-/*
- //Not supported
- TEST(BasicConsoleGTest,TestShow) {
- BasicConsoleTest console;
- ASSERT_TRUE(console.TestShow());
- }
- */
-TEST(BasicConsoleGTest,TestSetTitleBar) {
+
+TEST(BasicConsoleGTest,TestShow) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestSetTitleBar("title"));
+    ASSERT_TRUE(console.TestShow());
 }
-/*
- //Not supported
- TEST(BasicConsoleGTest,TestSetGetCursorPosition) {
- BasicConsoleTest console;
- ASSERT_TRUE(console.TestSetGetCursorPosition(20, 10));
- }
- //Not supported
- TEST(BasicConsoleGTest,TestSetColour) {
- BasicConsoleTest console;
- ASSERT_TRUE(console.TestSetColour(White, Black));
- }
- */
+TEST(BasicConsoleGTest,TestSetGetTitleBar) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestSetGetTitleBar("title"));
+}
+
+
+//Not supported
+TEST(BasicConsoleGTest,TestSetGetCursorPosition) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestSetGetCursorPosition(20, 10));
+}
+
+
+//Not supported
+TEST(BasicConsoleGTest,TestSetColour) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestSetColour(Blue, Red));
+}
 
 TEST(BasicConsoleGTest,TestPlotChar) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestPlotChar('c', White, Black, 20, 10));
+    ASSERT_TRUE(console.TestPlotChar('c', Blue, Yellow, 20, 10));
 }
+
 
