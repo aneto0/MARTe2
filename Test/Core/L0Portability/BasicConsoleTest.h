@@ -49,13 +49,20 @@ public:
 
     /**
      * @brief Default constructor
-     * @detail When the BasicConsoleTest is created, automatically is set numberOfRows = 40
+     * @details When the BasicConsoleTest is created, automatically is set numberOfRows = 40
      * numberOfColumns = 60.
      */
     BasicConsoleTest() {
         numberOfRows = 40;
         numberOfColumns = 60;
     }
+
+
+    /**
+     * @brief Tests the BasicConsole constructor.
+     * @return true if the initial size of the console is set to zero.
+     */
+    bool TestConstructor();
 
     /**
      * @brief Tests the correct opening of the console with default mode.
@@ -90,7 +97,7 @@ public:
 
     /**
      * @brief Test BasicConsole::GetOpeningMode function.
-     * @detail Open consoles with different Modes Then checks if the returned value of GetOpeningMode
+     * @details Open consoles with different Modes Then checks if the returned value of GetOpeningMode
      * is consistent with the mode specified.
      * @return true if the returned value of the GetOpeningMode is the expected value.
      */
@@ -98,7 +105,7 @@ public:
 
     /**
      * @brief Test BasicConsole::Close() function.
-     * @detail Open consoles and then close. Moreover the test tries to close a closed console.
+     * @details Open consoles and then close. Moreover the test tries to close a closed console.
      * @return true if the returned value of the BasicConsole::Close() is true when the console can close the
      * console and false when the console cannot close the console (because is closed).
      */
@@ -165,12 +172,21 @@ public:
                     uint32 columns);
 
     /**
-     * @brief Test BasicConsole::Read() function
-     * @detail Test if the string read by console is the same of the string passed by argument (the user must write in console the same word) with the same size.
+     * @brief Tests BasicConsole::Read() function
+     * @details Test if the string read by console is the same of the string passed by argument (the user must write in console the same word) with the same size.
      * @param[in] stringArg is the string to match with the read string.
      * @return true if the read string is equal to the passed argument.
      */
     bool TestRead(const char8 *stringArg);
+
+
+    /**
+     * @brief Tests BasicConsole::Read passing a finite timeout.
+     * @param[in] timeout is the desired timeout.
+     * @return true if the read function returns after the timeout expire, false otherwise.
+     */
+    bool TestTimeoutRead(uint32 timeout);
+
 
     /**
      * @brief Tests the BasicConsole::SetSize and BasicConsole::GetSize functions

@@ -30,11 +30,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "EventSemTest.h"
-
-#include <ErrorType.h>
+#include "ErrorType.h"
 #include "Threads.h"
 #include "Sleep.h"
-#include "ErrorType.h"
 #include "HighResolutionTimer.h"
 #include "MutexSem.h"
 

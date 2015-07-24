@@ -243,7 +243,6 @@ bool MutexSemTest::TestRecursive(bool recursive) {
 }
 
 bool MutexSemTest::TestCopyConstructor() {
-    ErrorType error;
     bool test = true;
     test = testMutex.Create(false);
     MutexSem copyTestMutex(testMutex);
