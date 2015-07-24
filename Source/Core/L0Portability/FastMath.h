@@ -49,103 +49,103 @@ public:
     /**
      * The constant for e
      */
-    static const double E;
+    static const float64 E;
 
     /**
      * The constant for log2(e)
      */
-    static const double LOG2E;
+    static const float64 LOG2E;
 
     /**
      * The constant for log10(e)
      */
-    static const double LOG10E;
+    static const float64 LOG10E;
 
     /**
      * The constant for log(2)
      */
-    static const double LN2;
+    static const float64 LN2;
 
     /**
      * The constant for log(10)
      */
-    static const double LN10;
+    static const float64 LN10;
 
     /**
      * The constant for pi
      */
-    static const double PI;
+    static const float64 PI;
 
     /**
      * The constant for pi/2
      */
-    static const double PI_2;
+    static const float64 PI_2;
 
     /**
      * The constant for pi/4
      */
-    static const double PI_4;
+    static const float64 PI_4;
 
     /**
      * The constant for 1/pi
      */
-    static const double _1_PI;
+    static const float64 ONE_PI;
 
     /**
      * The constant for 2/pi
      */
-    static const double _2_PI;
+    static const float64 TWO_PI;
 
     /**
      * The constant for 2/sqrt(pi)
      */
-    static const double _2_SQRTPI;
+    static const float64 TWO_SQRTPI;
 
     /**
      * The constant for sqrt(2)
      */
-    static const double SQRT2;
+    static const float64 SQRT2;
 
     /**
      * The constant for sqrt(1/2)
      */
-    static const double SQRT1_2;
+    static const float64 SQRT1_2;
 
     /**
      * @brief Converts a float to an integer using a processor instruction.
      * @param[in] input the value to convert
      * @return the input as an integer
      */
-    static inline int32 FloatToInt(float input);
+    static inline int32 FloatToInt(const float32 input);
 
     /**
      * @brief Computes the cosine of an angle using a processor instruction.
      * @param[in] angle the angle to compute
      * @return the cosine of angle
      */
-    static inline float Cos(float angle);
+    static inline float32 Cos(const float32 angle);
 
     /**
      * @brief Computes the sine of an angle using a processor instruction.
      * @param[in] angle the angle to compute
      * @return the sine of angle
      */
-    static inline float Sin(float angle);
+    static inline float32 Sin(const float32 angle);
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-int32 FastMath::FloatToInt(float input) {
+int32 FastMath::FloatToInt(const float32 input) {
     return FastMathA::FloatToInt(input);
 }
 
-float FastMath::Cos(float angle) {
+float32 FastMath::Cos(const float32 angle) {
     return FastMathA::Cos(angle);
 }
 
-float FastMath::Sin(float angle) {
+float32 FastMath::Sin(const float32 angle) {
     return FastMathA::Sin(angle);
 }
 
