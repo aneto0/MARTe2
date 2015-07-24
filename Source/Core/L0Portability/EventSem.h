@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ErrorType.h"
 #include "TimeoutType.h"
 #include "GeneralDefinitions.h"
@@ -38,22 +39,25 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
  * Forward declaration of the operating system specific properties (defined in the operating system
  * specific unit file).
  */
 struct EventSemOSProperties;
+
 /**
- * @brief Event semaphore implementation.
+ * @brief Event semaphore.
  *
  * @details The EventSem offer the possibility to block any number of threads in
  * a barrier. This barrier is lowered by calling the Reset method and raised
  * by the Post method. Threads are blocked in the barrier by calling one of the Wait methods.
  * Once the barrier is raised all the threads are allowed to concurrently proceed.
  */
-
 class EventSem {
+
 public:
+
     /**
      * @brief Initializes the semaphore operating system specific properties.
      */
@@ -62,7 +66,7 @@ public:
     /**
      * @brief This semaphore instance will share the same low-level semaphore
      * (i.e. that share the same handle) with the source semaphore.
-     * @param source the semaphore providing the access to the low-level semaphore.
+     * @param[in] source the semaphore providing the access to the low-level semaphore.
      */
     EventSem(EventSem &source);
 
@@ -140,11 +144,13 @@ public:
     bool IsClosed() const;
 
 private:
+
     /**
      * Operating system specific properties to be used by the operating system specific implementation
      */
     EventSemOSProperties *osProperties;
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

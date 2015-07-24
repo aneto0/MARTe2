@@ -1,7 +1,7 @@
 /**
  * @file MutexSemOS.cpp
  * @brief Source file for class MutexSemOS
- * @date 20/lug/2015
+ * @date 20/06/2015
  * @author Giuseppe Ferr�
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
