@@ -32,6 +32,7 @@
 
 #include "gtest/gtest.h"
 #include "FastMathTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -64,4 +65,3 @@ TEST(FastMathGTest,CircleTest) {
     FastMathTest MathTest;
     ASSERT_TRUE(MathTest.CircleTest());
 }
-

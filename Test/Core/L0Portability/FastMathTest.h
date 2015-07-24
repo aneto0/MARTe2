@@ -22,7 +22,7 @@
  */
 
 #ifndef FASTMATHTEST_H_
-#define 		FASTMATHTEST_H_
+#define FASTMATHTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "FastMath.h"
 
 /*---------------------------------------------------------------------------*/
@@ -43,6 +44,7 @@
 class FastMathTest {
 
 public:
+
     /**
      * @brief Constructor
      */
@@ -89,6 +91,8 @@ public:
     bool All();
 
 private:
+
+    // Math constants
 
     static const float SIN_1;
     static const float SIN_PI_2;

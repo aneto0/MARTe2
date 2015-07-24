@@ -31,10 +31,11 @@
 
 #include "GeneralDefinitions.h"
 #include "FastMathTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-// Math constants
+
 const float FastMathTest::SIN_1 = 0.841470984807;
 const float FastMathTest::SIN_PI_2 = 1.0;
 const float FastMathTest::SIN_PI_4 = 0.707106781186;
