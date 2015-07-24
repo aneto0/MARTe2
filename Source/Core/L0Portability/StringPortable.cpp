@@ -128,9 +128,9 @@ int32 StringPortable::CompareN(const char8* const string1,
 }
 
 //Concatenate two strings giving result in another string
-bool StringPortable::Append(const char8* const string1,
-                            const char8* const string2,
-                            char8* const result) {
+bool StringPortable::Concatenate(const char8* const string1,
+                                 const char8* const string2,
+                                 char8* const result) {
 
     bool ret = false;
 
@@ -168,10 +168,10 @@ bool StringPortable::Append(const char8* const string1,
 }
 
 //Concatenate two strings giving result in another string
-bool StringPortable::AppendN(const char8* const string1,
-                             const char8* const string2,
-                             char8* const result,
-                             uint32 &size) {
+bool StringPortable::ConcatenateN(const char8* const string1,
+                                  const char8* const string2,
+                                  char8* const result,
+                                  uint32 &size) {
 
     bool ret = false;
 
@@ -211,8 +211,8 @@ bool StringPortable::AppendN(const char8* const string1,
 }
 
 //Concatenate the second string to the first
-bool StringPortable::Cat(char8* const string1,
-                         const char8* const string2) {
+bool StringPortable::Concatenate(char8* const string1,
+                                 const char8* const string2) {
 
     bool ret = false;
 
@@ -240,9 +240,9 @@ bool StringPortable::Cat(char8* const string1,
 }
 
 //Concatenate the second string to the first
-bool StringPortable::CatN(char8* const string1,
-                          const char8* const string2,
-                          uint32 &size) {
+bool StringPortable::ConcatenateN(char8* const string1,
+                                  const char8* const string2,
+                                  uint32 &size) {
 
     bool ret = false;
     if ((string1 != NULL) && (string2 != NULL)) {
@@ -414,7 +414,7 @@ const char8* StringPortable::SearchChars(const char8* const string1,
                 }
                 j++;
             }
-            if ((string1[i] == '\0') && (!end1)) {
+            if (string1[i] == '\0') {
                 end1 = true;
                 ret = static_cast<const char8*>(NULL);
             }
@@ -446,7 +446,7 @@ const char8* StringPortable::SearchLastChar(const char8* const string,
 }
 
 //Return a pointer to the first occurrence of substring in string.
-const char8* StringPortable::SearchSubstr(const char8* const string,
+const char8* StringPortable::SearchString(const char8* const string,
                                           const char8* const substring) {
 
     const char8* ret = static_cast<const char8*>(NULL);
@@ -471,17 +471,13 @@ const char8* StringPortable::SearchSubstr(const char8* const string,
     return ret;
 }
 
-char8* StringPortable::TokenizeByChars(char8* const string,
-                                       const char8* const delimiter,
-                                       char8* result) {
+const char8* StringPortable::TokenizeByChars(const char8* const string,
+                                             const char8* const delimiter,
+                                             char8* const result) {
 
-    char8 *ret = static_cast<char8*>(NULL);
+    const char8 *ret = static_cast<const char8*>(NULL);
 
-    if ((string != NULL) && (delimiter != NULL)) {
-        if (result == NULL) {
-            result = string;
-        }
-
+    if ((string != NULL) && (delimiter != NULL) && (result != NULL)) {
         bool end = false;
 
         int32 i = 0;
@@ -555,20 +551,20 @@ const char8* StringPortable::TokenizeByString(const char8* const string,
     return ret;
 }
 
-bool StringPortable::Substr(const int32 begin,
-                            const int32 end,
+bool StringPortable::Substr(const uint32 begin,
+                            const uint32 end,
                             const char8* const string,
                             char8* const result) {
 
     bool ret = true;
-    if ((string == NULL) || (result == NULL)) {
+    if ((string == NULL) || (result == NULL) || (end < begin)) {
         ret = false;
     }
     else {
-        int32 i = 0;
+        uint32 i = 0u;
 
-        while ((i < ((end - begin) + 1)) && (ret)) {
-            int32 index = begin + i;
+        while ((i < ((end - begin) + 1u)) && (ret)) {
+            uint32 index = begin + i;
             result[i] = string[index];
             if (string[index] == '\0') {
                 ret = false;
@@ -584,3 +580,20 @@ bool StringPortable::Substr(const int32 begin,
     return ret;
 
 }
+
+bool StringPortable::SetChar(char8* const string,
+                             const uint32 size,
+                             const char8 c) {
+    bool ret = false;
+
+    if (string != NULL) {
+        uint32 i;
+        for (i = 0u; i < size; i++) {
+            string[i] = c;
+        }
+
+        ret = true;
+    }
+    return ret;
+}
+

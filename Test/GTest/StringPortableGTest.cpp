@@ -7,54 +7,95 @@
 #include "gtest/gtest.h"
 #include "StringPortableTest.h"
 
-class StringPortableGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
 
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
-
-TEST_F(StringPortableGTest,TestLength) {
+TEST(StringPortableGTest,TestLength) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestLength("Hello"));
 }
 
-
-TEST_F(StringPortableGTest,TestEqual) {
+TEST(StringPortableGTest,TestCompare) {
     StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestEqual("Hello", "Hello"));
+    ASSERT_TRUE(mystringportable.TestCompare("Hello", "Hello"));
 }
 
+TEST(StringPortableGTest,TestCompareN) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestCompareN());
+}
 
-TEST_F(StringPortableGTest,TestCopy) {
+TEST(StringPortableGTest,TestCopy) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestCopy("Hello"));
 }
 
-
-TEST_F(StringPortableGTest,TestAppend) {
+TEST(StringPortableGTest,TestCopyN) {
     StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestAppend("Hello", "World"));
+    ASSERT_TRUE(mystringportable.TestCopyN());
 }
 
-TEST_F(StringPortableGTest,TestSearch) {
+TEST(StringPortableGTest,TestConcatenateNoResult) {
     StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestSearch());
+    ASSERT_TRUE(mystringportable.TestConcatenateNoResult());
+}
+TEST(StringPortableGTest,TestConcatenateNNoResult) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestConcatenateNNoResult());
 }
 
-TEST_F(StringPortableGTest,TestToken) {
+
+TEST(StringPortableGTest,TestConcatenateWithResult) {
     StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestToken());
+    ASSERT_TRUE(mystringportable.TestConcatenateWithResult());
+}
+TEST(StringPortableGTest,TestConcatenateNWithResult) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestConcatenateNWithResult());
 }
 
 
-TEST_F(StringPortableGTest,TestNull) {
+
+
+TEST(StringPortableGTest,TestSearchChars) {
     StringPortableTest mystringportable;
-    ASSERT_TRUE(mystringportable.TestNull());
+    ASSERT_TRUE(mystringportable.TestSearchChars());
+}
+
+TEST(StringPortableGTest,TestSearchChar) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestSearchChar());
+}
+
+TEST(StringPortableGTest,TestSearchLastChar) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestSearchLastChar());
+}
+TEST(StringPortableGTest,TestSearchString) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestSearchString());
+}
+
+TEST(StringPortableGTest,TestSearchIndex) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestSearchIndex());
+}
+
+
+TEST(StringPortableGTest,TestTokenByChars) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestTokenizeByChars());
+}
+
+TEST(StringPortableGTest,TestTokenByString) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestTokenizeByString());
+}
+
+TEST(StringPortableGTest,TestSubstr) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestSubstr());
+}
+
+TEST(StringPortableGTest,TestSetChar) {
+    StringPortableTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestSetChar());
 }

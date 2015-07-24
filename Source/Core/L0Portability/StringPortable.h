@@ -89,9 +89,9 @@ public:
      * @param[out] result is the concatenated string.
      * @return true if strings are not NULL.
      */
-    static bool Append(const char8* const string1,
-                       const char8* const string2,
-                       char8* const result);
+    static bool Concatenate(const char8* const string1,
+                            const char8* const string2,
+                            char8* const result);
 
     /**
      * @brief Appends max 'size' characters of string2 to string1.
@@ -101,10 +101,10 @@ public:
      * @param[in,out] size is the maximum number of characters to append.
      * @return true if strings are not NULL.
      */
-    static bool AppendN(const char8* const string1,
-                        const char8* const string2,
-                        char8* const result,
-                        uint32 &size);
+    static bool ConcatenateN(const char8* const string1,
+                             const char8* const string2,
+                             char8* const result,
+                             uint32 &size);
 
     /**
      * @brief Concatenates the second string to the first.
@@ -112,8 +112,8 @@ public:
      * @param[in] string2 is the string to append.
      * @return true if strings are not NULL.
      */
-    static bool Cat(char8* const string1,
-                    const char8* const string2);
+    static bool Concatenate(char8* const string1,
+                            const char8* const string2);
 
     /**
      * @brief Concatenates a specified number of characters from the second string to the first.
@@ -122,9 +122,9 @@ public:
      * @param[in,out] size is the maximum number of characters to append.
      * @return true if strings are not NULL.
      */
-    static bool CatN(char8* const string1,
-                     const char8* const string2,
-                     uint32 &size);
+    static bool ConcatenateN(char8* const string1,
+                             const char8* const string2,
+                             uint32 &size);
 
     /**
      * @brief Gets the pointer to the first occurrence of c in string.
@@ -188,7 +188,7 @@ public:
      * @param[in] substring is the string which must be searched in string.
      * @return a pointer to the first occurrence of substring in string, NULL if substring is not found.
      */
-    static const char8* SearchSubstr(const char8* const string,
+    static const char8* SearchString(const char8* const string,
                                      const char8* const substring);
 
     /**
@@ -200,9 +200,9 @@ public:
      * @param[out] result is the substring between delimiters.
      * @return a pointer to the next position after the delimiter for a successive tokenize operation or NULL if terminator is not found.
      */
-    static char8* TokenizeByChars(char8* const string,
-                                  const char8* const delimiter,
-                                  char8* result);
+    static const char8* TokenizeByChars(const char8* const string,
+                                        const char8* const delimiter,
+                                        char8* const result);
 
     /**
      * @brief Get the token using a string as delimiter.
@@ -216,17 +216,29 @@ public:
                                          char8* const result);
 
     /**
-     * @brief Get the substring between two indexes.
+     * @brief Gets the substring between two indexes.
      * @param[in] begin is the first index.
      * @param[in] end is the second index.
      * @param[in] string is the string where to search the indexes
      * @param[out] result is the substring.
      * @return true if indexes are valid and the strings are not NULL.
      */
-    static bool Substr(const int32 begin,
-                       const int32 end,
+    static bool Substr(const uint32 begin,
+                       const uint32 end,
                        const char8* const string,
                        char8* const result);
+
+    /**
+     * @brief Sets the first specified characters of a string.
+     * @param[in,out] string to be filled with the char.
+     * @param[in] size length of the string in bytes.
+     * @param[in] c the char to fill the string.
+     * @returns true if the string is not null.
+     * @pre The size of the string in input must be greater than the number of characters to set specified in the argument.
+     */
+    static bool SetChar(char8* const string,
+                        const uint32 size,
+                        const char8 c);
 
 };
 
