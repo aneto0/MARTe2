@@ -40,11 +40,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void WaitRead(BasicConsole &myConsole) {
-    char buffer[2];
-    uint32 size = 1;
-    myConsole.Read(buffer, size, TTInfiniteWait);
-}
 
 //Open the console with in the mode passed by argument
 bool BasicConsoleTest::TestOpenModeDefault(FlagsType openingMode) {
@@ -93,8 +88,8 @@ bool BasicConsoleTest::TestOpenModeEnablePaging() {
 bool BasicConsoleTest::TestGetOpeningMode() {
     bool retValue;
     BasicConsole myConsole;
-    myConsole.SetSize(numberOfColumns, numberOfRows);
     myConsole.Open(BasicConsole::Mode::Default);
+    myConsole.SetSize(numberOfColumns, numberOfRows);
     retValue = (BasicConsole::Mode::Default == myConsole.GetOpeningMode());
     myConsole.Close();
     myConsole.Open(BasicConsole::Mode::CreateNewBuffer);
@@ -150,6 +145,7 @@ bool BasicConsoleTest::TestWriteCheckReturn(const char8 *string,
         padding = 0;
     }
     myConsole.Open(BasicConsole::Mode::Default);
+    myConsole.SetSize(numberOfColumns, numberOfRows);
     retValue = BasicConsoleTestWrite(string, padding, myConsole);
     myConsole.Close();
     myConsole.Open(BasicConsole::Mode::CreateNewBuffer);
@@ -163,8 +159,6 @@ bool BasicConsoleTest::TestWriteCheckReturn(const char8 *string,
     myConsole.Close();
     myConsole.Open(BasicConsole::Mode::PerformCharacterInput);
     retValue &= BasicConsoleTestWrite(string, padding, myConsole);
-    myConsole.SetSize(numberOfColumns, numberOfRows);
-
     return retValue;
 }
 
@@ -225,26 +219,6 @@ bool BasicConsoleTest::TestWriteSmallSize(const char8 *string) {
         return false;
     }
     //Enter a smaller size than the real size of the string (-2 is arbitrary number).
-    size = realStringSize + padding;
-    myConsole.Write(string, size, TTInfiniteWait);
-    retValue = (realStringSize + padding == size);
-    return retValue;
-}
-
-bool BasicConsoleTest::TestWriteLargeSize(const char8 *string) {
-    BasicConsole myConsole;
-    uint32 realStringSize;
-    bool retValue;
-    uint32 size;
-    int32 padding = 2;
-    myConsole.Open(BasicConsole::Mode::Default);
-    myConsole.SetSize(numberOfColumns, numberOfRows);
-
-    //calculate the size of the string
-    if ((realStringSize = StringTestHelper::Size(string)) < 0) {
-        return false;
-    }
-    //Enter a bigger size than the real size of the string (+2 is arbitrary number).
     size = realStringSize + padding;
     myConsole.Write(string, size, TTInfiniteWait);
     retValue = (realStringSize + padding == size);

@@ -137,6 +137,7 @@ public:
      * - Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
      * - Warning if zero bytes are written and no OSError is flagged;
      * - or OSError if there is any operating system related problem while performing the operation.
+     * @pre Size has not to be larger than the buffer size.
      */
     virtual ErrorType Write(const char8 * const buffer,
                             uint32 & size,
@@ -160,6 +161,7 @@ public:
 
     /**
      * @brief Update the console size.
+     * @details Be aware of calling this function after the open the console.
      * @param[in] numberOfColumns number of columns to set in the console.
      * @param[in] numberOfRows number of rows to set in the console.
      * @return NoError if the new size can be set or OSError if there is any operating

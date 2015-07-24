@@ -145,16 +145,6 @@ public:
 
     /**
      * @brief Tests BasicConsole::Write() function.
-     * @details If we give in input a size of the string greater than the size of the string passed,
-     * the write function must write only the string passed (until the character '\0') and size must
-     * be reduced at the real string size. This test checks that the written bytes = realStringSize.
-     * @param[in] string is the string to write.
-     * @return true if the sizes of the written string is the same than the real size of the string.
-     */
-    bool TestWriteLargeSize(const char8 *string);
-
-    /**
-     * @brief Tests BasicConsole::Write() function.
      * @details If the string is larger than the screen columns, the BasicConsole::Write() should
      * continue writing in the next line.
      * @return true if the sizes of the written string is the same than the real size of the string.
