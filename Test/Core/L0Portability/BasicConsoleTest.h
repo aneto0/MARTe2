@@ -31,9 +31,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "BasicConsole.h"
 #include "Threads.h"
 #include "Sleep.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -71,28 +73,24 @@ public:
 
     /**
      * @brief Tests the correct opening of the console with CreateNewBuffer mode.
-     * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModeCreateNewBuffer();
 
     /**
      * @brief Tests the correct opening of the console with PerformCharacterInput mode.
-     * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModePerformCharacterInput();
 
     /**
      * @brief Tests the correct opening of the console with DisableControlBreak mode.
-     * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModeDisableControlBreak();
 
     /**
      * @brief Tests the correct opening of the console with EnablePaging mode.
-     * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModeEnablePaging();
@@ -222,10 +220,10 @@ public:
     bool TestPerfChar();
 
     /**
-     * @brief Tests the BasicConsole::Show function.
+     * @brief Tests the BasicConsole::ShowBuffer function.
      * @return the return value of the tested function.
      */
-    bool TestShow();
+    bool TestShowBuffer();
 
     /**
      * @brief Tests the BasicConsole::SetTitleBar function
@@ -257,7 +255,7 @@ public:
      * @param[in] c is the character to be plotted.
      * @param[in] foregroundColour is the desired foreground color.
      * @param[in] backgroundColour is the desired background color.
-     * @param[in] columns is the desired character x position.
+     * @param[in] column is the desired character x position.
      * @param[in] row is the desired character y position.
      * @return the return value of the tested function
      */
@@ -282,6 +280,7 @@ public:
     }
 
 private:
+
     /**
      * Definitions of the of the console number of rows.
      */

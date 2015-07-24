@@ -56,8 +56,6 @@ bool BasicConsoleTest::TestConstructor() {
     return true;
 
 }
-
-//Open the console with in the mode passed by argument
 bool BasicConsoleTest::TestOpenModeDefault(FlagsType openingMode) {
 
     BasicConsole myConsole;
@@ -67,7 +65,6 @@ bool BasicConsoleTest::TestOpenModeDefault(FlagsType openingMode) {
 
 }
 
-//Open the console with in the mode passed by argument
 bool BasicConsoleTest::TestOpenModeCreateNewBuffer() {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
@@ -76,7 +73,6 @@ bool BasicConsoleTest::TestOpenModeCreateNewBuffer() {
     return error == NoError;
 }
 
-//Open the console with in the mode passed by argument
 bool BasicConsoleTest::TestOpenModePerformCharacterInput() {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
@@ -85,7 +81,6 @@ bool BasicConsoleTest::TestOpenModePerformCharacterInput() {
 
 }
 
-//Open the console with in the mode passed by argument
 bool BasicConsoleTest::TestOpenModeDisableControlBreak() {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
@@ -93,7 +88,6 @@ bool BasicConsoleTest::TestOpenModeDisableControlBreak() {
     return error == NoError;
 }
 
-//Open the console with in the mode passed by argument
 bool BasicConsoleTest::TestOpenModeEnablePaging() {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
@@ -133,7 +127,6 @@ bool BasicConsoleTest::TestClose() {
     return retValue;
 }
 
-//write the string passed by argument
 bool BasicConsoleTestWrite(const char8 *string,
                            uint32 padding,
                            BasicConsole &myConsole) {
@@ -152,7 +145,6 @@ bool BasicConsoleTestWrite(const char8 *string,
     return (ret == NoError);
 }
 
-//write the string passed by argument
 bool BasicConsoleTest::TestWriteCheckReturn(const char8 *string,
                                             uint32 padding) {
     BasicConsole myConsole;
@@ -260,7 +252,6 @@ bool BasicConsoleTest::TestWriteEndColumn() {
     return retValue;
 }
 
-//Test the paging feature
 static bool BasicConsoleTestPaging(uint32 overflow,
                                    uint32 rows,
                                    uint32 columns,
@@ -283,7 +274,6 @@ static bool BasicConsoleTestPaging(uint32 overflow,
     return BasicConsoleTestWrite(string, 0, myConsole);
 }
 
-//Test the paging feature
 bool BasicConsoleTest::TestPaging(uint32 overflow,
                                   uint32 rows,
                                   uint32 columns) {
@@ -295,7 +285,6 @@ bool BasicConsoleTest::TestPaging(uint32 overflow,
     return ret;
 }
 
-//compare the read string with the string passed by argument
 bool BasicConsoleTest::TestRead(const char8 *stringArg) {
     BasicConsole myConsole;
     char8 string[64];
@@ -404,7 +393,6 @@ bool BasicConsoleTest::TestClear() {
     return (err == NoError);
 }
 
-//Test the perform character input feature
 bool BasicConsoleTest::TestPerfChar() {
     BasicConsole myConsole;
     const char8 *myMessage = "press any key\n";
@@ -420,7 +408,7 @@ bool BasicConsoleTest::TestPerfChar() {
     return ok && (size == 1);
 }
 
-bool BasicConsoleTest::TestShow() {
+bool BasicConsoleTest::TestShowBuffer() {
     BasicConsole myConsole;
     if (!myConsole.ConsoleBufferSupported()) {
         return true;
@@ -485,7 +473,7 @@ bool BasicConsoleTest::TestSetGetCursorPosition(uint32 column,
     Sleep::Sec(1.5);
 
     myConsole.Clear();
-//Not implemented in Linux. Avoid false positives...
+    //Not implemented in Linux. Avoid false positives...
     return (colRet == column) && (rowRet == row);
 
 }
@@ -523,4 +511,3 @@ bool BasicConsoleTest::TestPlotChar(char8 c,
     Sleep::Sec(1.5);
     return ok;
 }
-
