@@ -30,98 +30,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Threads.h"
+#include "ThreadInformation.h"
 #include "ThreadsDatabase.h"
 
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,ThreadsOS.h)
 
-TID ThreadsBeginThread(ThreadFunctionType function, void *parameters,
-        uint32 stacksize, const char8 *name,
-        uint32 exceptionHandlerBehaviour,
-        ProcessorType runOnCPUs) {
-
-    return ThreadsOS::BeginThread(
-            function, parameters,
-            stacksize, name, exceptionHandlerBehaviour, runOnCPUs);
-
-}
-
-TID ThreadsId() {
-    return ThreadsOS::Id();
-}
-
-bool ThreadsIsAlive(TID threadId) {
-
-    return ThreadsOS::IsAlive(threadId);
-
-}
-
-bool ThreadsKill(TID threadId) {
-
-    return ThreadsOS::Kill(threadId);
-}
-
-void ThreadsSetPriorityLevel(TID threadId,
-                             ThreadPriorityType priorityLevel) {
-
-    ThreadsOS::SetPriorityLevel(threadId, PRIORITY_CLASS_UNKNOWN, priorityLevel);
-
-}
-
-void ThreadsSetPriorityClass(TID threadId,
-                             PriorityClassType priorityClass) {
-
-    ThreadsOS::SetPriorityLevel(threadId, priorityClass, PRIORITY_UNKNOWN);
-
-}
-
-int32 ThreadsGetCPUs(TID threadId) {
-    return ThreadsOS::GetCPUs(threadId);
-}
-
-ThreadPriorityType ThreadsGetPriorityLevel(TID threadId) {
-    return ThreadsOS::GetPriorityLevel(threadId);
-}
-
-PriorityClassType ThreadsGetPriorityClass(TID threadId) {
-    return ThreadsOS::GetPriorityClass(threadId);
-}
-
-ThreadStateType ThreadsGetState(TID threadId) {
-    return ThreadsOS::GetState(threadId);
-}
-
-void ThreadsEndThread() {
-
-    ThreadsOS::EndThread();
-}
-
-const char8 *ThreadsName(TID threadId) {
-    return ThreadsOS::Name(threadId);
-}
-
-bool ThreadProtectedExecute(ThreadFunctionType userFunction,
-                            void *userData,
-                            ExceptionHandler *ehi){
-    return ThreadsOS::ProtectedExecute(userFunction, userData, ehi);
-}
-
-TID ThreadsFindByIndex(uint32 n) {
-    return ThreadsOS::FindByIndex(n);
-}
-
-uint32 ThreadsNumberOfThreads() {
-    return ThreadsOS::NumberOfThreads();
-}
-
-bool ThreadsGetThreadInfoCopy(ThreadInformation &copy,
-                              int32 n,
-                              TID tid) {
-    return ThreadsOS::GetThreadInfoCopy(copy, n, tid);
-}
-
-TID ThreadsFindByName(const char8 *name) {
-    return ThreadsOS::FindByName(name);
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -131,84 +44,80 @@ TID ThreadsFindByName(const char8 *name) {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void Threads::SetPriorityLevel(TID tid,
-                               ThreadPriorityType level) {
-    ThreadsSetPriorityLevel(tid, level);
-}
 
-void Threads::SetPriorityClass(TID tid,
-                               PriorityClassType priorityClass) {
-    ThreadsSetPriorityClass(tid, priorityClass);
-}
 
-void Threads::EndThread() {
-    ThreadsEndThread();
-}
-
+//void Threads::EndThread() {
+//    ThreadsOS::EndThread();
+//}
+/*
 TID Threads::BeginThread(ThreadFunctionType function,
                          void *parameters,
                          uint32 stacksize,
                          const char8 *name,
                          uint32 exceptionHandlerBehaviour,
                          ProcessorType runOnCPUs) {
-    return ThreadsBeginThread(function, parameters, stacksize, name, exceptionHandlerBehaviour, runOnCPUs);
-}
 
-TID Threads::Id() {
-    return ThreadsId();
-}
+    return ThreadsOS::BeginThread(
+            function, parameters,
+            stacksize, name, exceptionHandlerBehaviour, runOnCPUs);
 
+}
+*/
+//TID Threads::Id() {
+//    return ThreadsOS::Id();
+//}
+/*
 bool Threads::Kill(TID tid) {
-    return ThreadsKill(tid);
+    return ThreadsOS::Kill(tid);
 }
 
 bool Threads::IsAlive(TID tid) {
-    return ThreadsIsAlive(tid);
+    return ThreadsOS::IsAlive(tid);
 }
 
 const char8 *Threads::Name(TID tid) {
-    return ThreadsName(tid);
+    return ThreadsOS::Name(tid);
 }
-
-ThreadStateType Threads::GetState(TID tid) {
-    return ThreadsGetState(tid);
-}
-
+*/
+//dStateType Threads::GetState(TID tid) {
+//    return ThreadsOS::GetState(tid);
+//}
+/*
 ThreadPriorityType Threads::GetPriorityLevel(TID tid) {
-    return ThreadsGetPriorityLevel(tid);
+    return ThreadsOS::GetPriorityLevel(tid);
 }
 
 PriorityClassType Threads::GetPriorityClass(TID tid) {
-    return ThreadsGetPriorityClass(tid);
+    return ThreadsOS::GetPriorityClass(tid);
 }
-
-int32 Threads::GetCPUs(TID tid) {
-    return ThreadsGetCPUs(tid);
-}
-
+*/
+//int32 Threads::GetCPUs(TID tid) {
+//    return ThreadsOS::GetCPUs(tid);
+//}
+/*
 bool Threads::ProtectedExecute(ThreadFunctionType userFunction,
                             void *userData,
                             ExceptionHandler *ehi){
 
-    return ThreadProtectedExecute(userFunction, userData, ehi);
+    return ThreadsOS::ProtectedExecute(userFunction, userData, ehi);
 
 }
 TID Threads::FindByIndex(uint32 n) {
-    return ThreadsFindByIndex(n);
+    return ThreadsOS::FindByIndex(n);
 }
 
 uint32 Threads::NumberOfThreads() {
-    return ThreadsNumberOfThreads();
+    return ThreadsOS::NumberOfThreads();
 }
 
 bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
                                 int32 n,
                                 TID tid) {
-    return ThreadsGetThreadInfoCopy(copy, n, tid);
+    return ThreadsOS::GetThreadInfoCopy(copy, n, tid);
 
 }
 
 TID Threads::FindByName(const char8 *name) {
-    return ThreadsFindByName(name);
+    return ThreadsOS::FindByName(name);
 }
-
+*/

@@ -46,8 +46,11 @@ uint32 ThreadsDatabase::maxNOfEntries = 0;
 ThreadInformation **ThreadsDatabase::entries = NULL;
 FastPollingMutexSem ThreadsDatabase::internalMutex;
 
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
-bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo) {
+bool ThreadsDatabase::NewEntry(ThreadInformation *threadInfo) {
     if (threadInfo == NULL) {
         return false;
     }
@@ -85,7 +88,7 @@ bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo) {
 
 }
 
-ThreadInformation *ThreadsDatabaseRemoveEntry(TID threadId) {
+ThreadInformation *ThreadsDatabase::RemoveEntry(ThreadIdentifier threadId) {
     // search for empty space staring from guess
     uint32 index = 0;
     while (index < ThreadsDatabase::maxNOfEntries) {
@@ -107,12 +110,12 @@ ThreadInformation *ThreadsDatabaseRemoveEntry(TID threadId) {
         index++;
     }
 
-    //CStaticAssertErrorCondition(FatalError,"TDB:TDB_RemoveEntry could not find/remove entry TID=%08x ",threadId);
+    //CStaticAssertErrorCondition(FatalError,"TDB:TDB_RemoveEntry could not find/remove entry ThreadIdentifier=%08x ",threadId);
     return NULL;
 
 }
 
-ThreadInformation *ThreadsDatabaseGetThreadInformation(TID threadId) {
+ThreadInformation *ThreadsDatabase::GetThreadInformation(ThreadIdentifier threadId) {
     // search for empty space staring from guess
     uint32 index = 0;
     while (index < ThreadsDatabase::maxNOfEntries) {
@@ -125,28 +128,28 @@ ThreadInformation *ThreadsDatabaseGetThreadInformation(TID threadId) {
         index++;
     }
 
-    //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetTII could not find entry TID=%08x ",threadId);
+    //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetTII could not find entry ThreadIdentifier=%08x ",threadId);
     return NULL;
 }
 
-bool ThreadsDatabaseLock(TimeoutType tt) {
+bool ThreadsDatabase::Lock(TimeoutType tt) {
     ErrorType err = ThreadsDatabase::internalMutex.FastLock();
     return (err == NoError);
 }
 
-void ThreadsDatabaseUnLock() {
+void ThreadsDatabase::UnLock() {
     ThreadsDatabase::internalMutex.FastUnLock();
 }
 
-uint32 ThreadsDatabaseNumberOfThreads() {
+uint32 ThreadsDatabase::NumberOfThreads() {
     return ThreadsDatabase::nOfEntries;
 }
 
-TID ThreadsDatabaseGetThreadID(uint32 n) {
+ThreadIdentifier ThreadsDatabase::GetThreadID(uint32 n) {
 
     if (n >= ThreadsDatabase::nOfEntries) {
         //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetThreadID(%i) index out of range",n);
-        return (TID) 0;
+        return (ThreadIdentifier) 0;
     }
 
     // search for empty space staring from guess
@@ -162,15 +165,15 @@ TID ThreadsDatabaseGetThreadID(uint32 n) {
     }
 
     //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetThreadID(%i) mismatch between actual entries and TDB_NOfEntries");
-    return (TID) 0;
+    return (ThreadIdentifier) 0;
 }
 
-bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
+bool ThreadsDatabase::GetInfo(ThreadInformation &threadInfoCopy,
                             int32 n,
-                            TID threadId) {
+                            ThreadIdentifier threadId) {
     if (n >= 0) {
-        TID threadId = ThreadsDatabaseGetThreadID(n);
-        ThreadInformation *threadInfo = ThreadsDatabaseGetThreadInformation(threadId);
+        ThreadIdentifier threadId = GetThreadID(n);
+        ThreadInformation *threadInfo = GetThreadInformation(threadId);
         if (threadInfo == NULL) {
             return false;
         }
@@ -178,7 +181,7 @@ bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
         return true;
     }
     else {
-        ThreadInformation *threadInfo = ThreadsDatabaseGetThreadInformation(threadId);
+        ThreadInformation *threadInfo = GetThreadInformation(threadId);
         if (threadInfo == NULL) {
             return false;
         }
@@ -188,10 +191,10 @@ bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
 
 }
 
-TID ThreadsDatabaseFind(const char8 *name) {
+ThreadIdentifier ThreadsDatabase::Find(const char8 *name) {
 
     if (name == NULL) {
-        return (TID) 0;
+        return (ThreadIdentifier) 0;
     }
 
     // search for empty space staring from guess
@@ -205,13 +208,10 @@ TID ThreadsDatabaseFind(const char8 *name) {
         index++;
     }
 
-    return (TID) 0;
+    return (ThreadIdentifier) 0;
 
 }
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
 
 bool ThreadsDatabase::AllocMore() {
     // no need
@@ -249,17 +249,17 @@ bool ThreadsDatabase::AllocMore() {
     }
     return true;
 }
-
+/*
 bool ThreadsDatabase::NewEntry(ThreadInformation *ti) {
     return ThreadsDatabaseNewEntry(ti);
 }
 
-ThreadInformation *ThreadsDatabase::RemoveEntry(TID tid) {
-    return ThreadsDatabaseRemoveEntry(tid);
+ThreadInformation *ThreadsDatabase::RemoveEntry(ThreadIdentifier threadId) {
+    return ThreadsDatabaseRemoveEntry(ThreadIdentifier);
 }
 
-ThreadInformation *ThreadsDatabase::GetThreadInformation(TID tid) {
-    return ThreadsDatabaseGetThreadInformation(tid);
+ThreadInformation *ThreadsDatabase::GetThreadInformation(ThreadIdentifier threadId) {
+    return ThreadsDatabaseGetThreadInformation(ThreadIdentifier);
 }
 
 bool ThreadsDatabase::Lock(TimeoutType tt) {
@@ -274,17 +274,17 @@ uint32 ThreadsDatabase::NumberOfThreads() {
     return ThreadsDatabaseNumberOfThreads();
 }
 
-TID ThreadsDatabase::GetThreadID(uint32 n) {
+ThreadIdentifier ThreadsDatabase::GetThreadID(uint32 n) {
     return ThreadsDatabaseGetThreadID(n);
 }
 
 bool ThreadsDatabase::GetInfo(ThreadInformation &tiCopy,
                               int32 n,
-                              TID tid) {
-    return ThreadsDatabaseGetInfo(tiCopy, n, tid);
+                              ThreadIdentifier threadId) {
+    return ThreadsDatabaseGetInfo(tiCopy, n, ThreadIdentifier);
 }
 
-TID ThreadsDatabase::Find(const char8 *name) {
+ThreadIdentifier ThreadsDatabase::Find(const char8 *name) {
     return ThreadsDatabaseFind(name);
 }
-
+*/

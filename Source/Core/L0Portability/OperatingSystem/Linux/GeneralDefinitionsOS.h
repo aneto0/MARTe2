@@ -27,13 +27,17 @@
 #ifndef LINT
 #include <pthread.h>
 #include <termio.h>
+#else
+typedef unsigned long int pthread_t;
 #endif
 
 #ifndef NULL
 #define NULL 0
 #endif
 
-#define TID pthread_t
+
+typedef pthread_t ThreadIdentifier;
+static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdentifier>(0);
 
 /** Defines the console handle. */
 typedef struct termio ConsoleHandle;

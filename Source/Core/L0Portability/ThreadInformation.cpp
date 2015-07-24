@@ -45,9 +45,9 @@ ThreadInformation::ThreadInformation() {
     userThreadFunction = NULL;
     userData = NULL;
     name = NULL;
-    threadId = (TID) 0;
-    priorityClass = PRIORITY_CLASS_UNKNOWN;
-    priorityLevel = PRIORITY_UNKNOWN;
+    threadId = InvalidThreadIdentifier;
+    priorityClass = Threads::PRIORITY_CLASS_UNKNOWN;
+    priorityLevel = Threads::PRIORITY_UNKNOWN;
     startThreadSynchSem.Create();
     startThreadSynchSem.Reset();
 }
@@ -69,9 +69,9 @@ ThreadInformation::ThreadInformation(ThreadFunctionType userThreadFunction,
     else {
         this->name = MemoryStringDup("Unknown");
     }
-    threadId = (TID) 0;
-    priorityClass = PRIORITY_CLASS_UNKNOWN;
-    priorityLevel = PRIORITY_UNKNOWN;
+    threadId = InvalidThreadIdentifier;
+    priorityClass = Threads::PRIORITY_CLASS_UNKNOWN;
+    priorityLevel = Threads::PRIORITY_UNKNOWN;
     startThreadSynchSem.Create();
     startThreadSynchSem.Reset();
 }
@@ -104,7 +104,7 @@ ThreadInformation::~ThreadInformation() {
  * @brief Assign operator to copy a thread info in this.
  * @param[in] threadInfo contains informations to initialize this object.
  */
-void ThreadInformation::operator=(const ThreadInformation &threadInfo) {
+void ThreadInformation::Copy(const ThreadInformation &threadInfo) {
     userThreadFunction = threadInfo.userThreadFunction;
     userData = threadInfo.userData;
     name = MemoryStringDup(threadInfo.name);

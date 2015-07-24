@@ -22,7 +22,7 @@
  */
 
 #ifndef THREADS_H_
-#define 		THREADS_H_
+#define           THREADS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include "ThreadInformation.h"
+//#include "ThreadInformation.h"
 #include "ExceptionHandler.h"
 #include "ProcessorType.h"
 
@@ -41,108 +41,18 @@
 /*                        Friend method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-extern "C" {
-/**
- * @see Threads::BeginThread.
- */
-TID ThreadsBeginThread(ThreadFunctionType function,
-                       void *parameters = NULL,
-                       uint32 stacksize = THREADS_DEFAULT_STACKSIZE,
-                       const char8 *name = NULL,
-                       uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
-                       ProcessorType runOnCPUs = ProcessorType::UndefinedCPUs);
-
-/**
- * @see Threads::EndThread.
- */
-void ThreadsEndThread();
-
-/**
- * @see Threads::Id.
- */
-TID ThreadsId();
-
-/**
- * @see Threads::Kill.
- */
-bool ThreadsKill(TID tid);
-
-/**
- * @see Threads::IsAlive.
- */
-bool ThreadsIsAlive(TID tid);
-
-/**
- * @see Threads::Name.
- */
-const char8 *ThreadsName(TID tid);
-
-/**
- * @see Threads::GetCPUs.
- */
-int32 ThreadsGetCPUs(TID tid);
-
-/**
- * @see Threads::GetState.
- */
-ThreadStateType ThreadsGetState(TID tid);
-
-/**
- * @see Threads::GetPriorityLevel.
- */
-ThreadPriorityType ThreadsGetPriorityLevel(TID tid);
-
-/**
- * @see Threads::GetPriorityClass.
- */
-PriorityClassType ThreadsGetPriorityClass(TID tid);
-
-/**
- * @see Threads::SetPriorityLevel.
- */
-void ThreadsSetPriorityLevel(TID tid,
-                             ThreadPriorityType level);
-
-/**
- * @see Threads::SetPriorityClass.
- */
-void ThreadsSetPriorityClass(TID tid,
-                             PriorityClassType priotityClass);
-
-/**
- * @see Threads::ProtectedExecute
- */
-bool ThreadProtectedExecute(ThreadFunctionType userFunction,
-                            void *userData,
-                            ExceptionHandler *ehi);
-
-/**
- * @see Threads::FindByIndex
- */
-TID ThreadsFindByIndex(uint32 n);
-
-/**
- * @see Threads::NumberOfThreads
- */
-uint32 ThreadsNumberOfThreads();
-
-/**
- * @see Threads::GetThreadInfoCopy
- */
-bool ThreadsGetThreadInfoCopy(ThreadInformation &copy,
-                              int32 n,
-                              TID tid);
-
-/**
- * @see Threads::FindByName
- */
-TID ThreadsFindByName(const char8 *name);
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+
+/** a database of info related to a thread */
+class ThreadInformation;
+
+/** The type of a function that can be used for a thread. */
+typedef void (*ThreadFunctionType)(void *parameters);
+
 
 /**
  * @brief Functions for threads management.
@@ -188,21 +98,173 @@ TID ThreadsFindByName(const char8 *name);
 class Threads {
 
 public:
+    /** Possible thread states. This is the type returned by Threads::GetThreadState */
+    enum ThreadStateType {
+        /**
+         * Unknown state.
+         */
+        STATE_UNKNOWN = -1,
+
+        /**
+         * Ready state.
+         */
+        STATE_READY = 1024,
+
+        /**
+         * Pendent state.
+         */
+        STATE_PEND = 512,
+
+        /**
+         * Suspended state.
+         */
+        STATE_SUSP = 256,
+
+        /**
+         * Blocked state.
+         */
+        STATE_BLOCKED = 2,
+
+        /**
+         * Semaphore waiting state.
+         */
+        STATE_SEM = 4,
+
+        /**
+         * Delay state.
+         */
+        STATE_DELAY = 8,
+
+        /**
+         * Tout state.
+         */
+        STATE_TOUT = 16,
+
+        /**
+         * Run state.
+         */
+        STATE_RUN = 32,
+
+        /**
+         * Dead state.
+         */
+        STATE_DEAD = 64
+
+    } ;
+
+    /** Possible priority classes. This is the type returned by Threads::GetPriorityClass and it is used to set the priority class in Threads::SetPriorityClass */
+    enum PriorityClassType{
+
+        /**
+         * Unknown Class Priority 0.
+         */
+        PRIORITY_CLASS_UNKNOWN = 0,
+
+        /**
+         * Idle Class Priority 1.
+         */
+        PRIORITY_CLASS_IDLE = 1,
+
+        /**
+         * Normal Class Priority 2.
+         */
+        PRIORITY_CLASS_NORMAL = 2,
+
+        /**
+         * High Class Priority 3.
+         */
+        PRIORITY_CLASS_HIGH = 3,
+
+        /**
+         * Real Time Class Priority 4.
+         */
+        PRIORITY_CLASS_REAL_TIME = 4
+    } ;
+
+    /** Possible thread priority levels. This is the type returned by Threads::GetPriorityLevel and it is used to set the thread priority in Threads::SetPriorityLevel */
+    enum ThreadPriorityType{
+        /**
+         * Unknown Thread Priority 0.
+         */
+        PRIORITY_UNKNOWN = 0,
+
+        /**
+         * Idle Thread Priority 1.
+         */
+        PRIORITY_IDLE = 1,
+
+        /**
+         * Lowest Thread Priority 2.
+         */
+        PRIORITY_LOWEST = 2,
+
+        /**
+         * Below Normal Thread Priority 3.
+         */
+        PRIORITY_BELOW_NORMAL = 3,
+
+        /**
+         * Normal Thread Priority 4.
+         */
+        PRIORITY_NORMAL = 4,
+        /**
+         * Above Normal Thread Priority 5.
+         */
+        PRIORITY_ABOVE_NORMAL = 5,
+
+        /**
+         * Highest Thread Priority 6.
+         */
+        PRIORITY_HIGHEST = 6,
+
+        /**
+         * Time Critical Thread Priority.
+         */
+        PRIORITY_TIME_CRITICAL = 7
+
+    } ;
+
+private:
+
+    /**
+     * @brief Called by Threads::SetPriorityLevel & SetPriorityClass
+     *
+     * @details In linux the priority will vary between 33, i.e. priorityClass = IDLE_PRIORITY_CLASS
+     * and priorityLevel = PRIORITY_IDLE and 99, i.e. priorityClass = REAL_TIME_PRIORITY_CLASS
+     * and priorityLevel = PRIORITY_TIME_CRITICAL
+     *
+     * @param[in] threadId is the thread identifier.
+     * @param[in] priorityClass is the desired class priority to assign to the thread.
+     * @param[in] priorityLevel is the desired thread priority to assign to the thread.
+     */
+    static void SetPriorityLevelAndClass(
+                        const ThreadIdentifier    threadId,
+                        const PriorityClassType   priorityClass,
+                        const ThreadPriorityType  priorityLevel);
+
+public:
 
     /**
      * @brief Change thread priority.
      * @param[in] tid is the thread identifier.
      * @param[in] level is the level to assign to the thread.
      */
-    static void SetPriorityLevel(TID tid,
-                                 ThreadPriorityType level);
+    static void SetPriorityLevel(
+                        const ThreadIdentifier    &threadId,
+                        const ThreadPriorityType   priorityLevel)
+    {
+        SetPriorityLevelAndClass(threadId, PRIORITY_CLASS_UNKNOWN, priorityLevel);
+    }
     /**
      * @brief Change thread priority class.
      * @param[in] tid is the thread identifier.
      * @param[in] priorityClass is the class to assign to the thread.
      */
-    static void SetPriorityClass(TID tid,
-                                 PriorityClassType priorityClass);
+    static void SetPriorityClass(
+                        const ThreadIdentifier    &threadId,
+                        const PriorityClassType    priorityClass){
+        SetPriorityLevelAndClass(threadId, priorityClass, PRIORITY_UNKNOWN);
+    }
 
     /**
      * @brief Called implicitly at the end of the main thread function.
@@ -226,18 +288,19 @@ public:
      * @param[in] runOnCPUs The cpu mask where the thread can be executed.
      * @return The thread identification number.
      */
-    static TID BeginThread(ThreadFunctionType function,
-                           void *parameters = NULL,
-                           uint32 stacksize = THREADS_DEFAULT_STACKSIZE,
-                           const char8 *name = NULL,
-                           uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
-                           ProcessorType runOnCPUs = ProcessorType::UndefinedCPUs);
+    static ThreadIdentifier BeginThread(
+                           ThreadFunctionType    function,
+                           void *                parameters                  = static_cast<void *>(NULL),
+                           uint32                stacksize                   = static_cast<uint32>(THREADS_DEFAULT_STACKSIZE),
+                           const char8 *         name                        = static_cast<char8* >(NULL),
+                           uint32                exceptionHandlerBehaviour   = ExceptionHandler::NotHandled,
+                           ProcessorType         runOnCPUs                   = ProcessorType::UndefinedCPUs);
 
     /**
      * @brief Gets the current thread id;
      * @return the current thread id.
      */
-    static TID Id();
+    static ThreadIdentifier Id(void);
 
     /** @brief Asynchronous thread kill.
      *
@@ -245,21 +308,21 @@ public:
      * @param[in] tid is the id of the thread to kill.
      * @return true if system level kill function returns without errors.
      */
-    static bool Kill(TID tid);
+    static bool Kill(ThreadIdentifier threadId);
 
     /**
      * @brief Check if thread is still alive.
      * @param[in] tid is the id of the thread which must be checked.
      * @return true if thread is alive (checking before that it is in the database), false otherwise.
      */
-    static bool IsAlive(TID tid);
+    static bool IsAlive(ThreadIdentifier threadId);
 
     /**
      * @brief Get thread name.
      * @param[in] tid is the id of the thread,
      * @return the name of the thread with tid as id.
      */
-    static const char8 *Name(TID tid);
+    static const char8 *Name(ThreadIdentifier threadId);
 
     /**
      * @brief Returns the task state.
@@ -269,28 +332,28 @@ public:
      * @param[in] tid is the id of the requested thread.
      * @return the thread state(s).
      */
-    static ThreadStateType GetState(TID tid);
+    static ThreadStateType GetState(ThreadIdentifier threadId);
 
     /**
      * @brief Get the priority level of a thread.
      * @param[in] tid is the id of the requested thread.
      * @return the thread priority level.
      */
-    static ThreadPriorityType GetPriorityLevel(TID tid);
+    static ThreadPriorityType GetPriorityLevel(ThreadIdentifier threadId);
 
     /**
      * @brief Get the priority class of a thread.
      * @param[in] tid is the id of the requested thread.
      * @return the thread priority class.
      */
-    static PriorityClassType GetPriorityClass(TID tid);
+    static PriorityClassType GetPriorityClass(ThreadIdentifier threadId);
 
     /**
      * @brief Get the cpu related to a specified thread.
      * @param[in] tid is the thread identifier.
      * @return the number if the cpu associated to the specified thread.
      */
-    static int32 GetCPUs(TID tid);
+    static int32 GetCPUs(ThreadIdentifier threadId);
 
     /**
      * @brief Executes the function specified.
@@ -300,15 +363,16 @@ public:
      * @return true.
      * @see ThreadInformation::ExceptionProtectedExecute.
      */
-    static bool ProtectedExecute(ThreadFunctionType userFunction,
-                                 void *userData,
-                                 ExceptionHandler *ehi);
+    static bool ProtectedExecute(
+            ThreadFunctionType                 userFunction,
+            void *                             userData,
+            ExceptionHandler *                 ehi);
     /**
      * @brief Returns the id of the n-th thread in the database.
      * @param[in] n is the thread index.
      * @return the id of the n-th thread in the database, -1 if the database is empty.
      */
-    static TID FindByIndex(uint32 n);
+    static ThreadIdentifier FindByIndex(uint32 n);
 
     /**
      * @brief Returns the number of threads currently in the database.
@@ -323,21 +387,22 @@ public:
      * @param[in] tid is the thread identifier.
      * @return true if the requested element is in the database, false otherwise.
      */
-    static bool GetThreadInfoCopy(ThreadInformation &copy,
-                                  int32 n,
-                                  TID tid);
+    static bool GetThreadInfoCopy(ThreadInformation &   copy,
+                                  int32                 n,
+                                  ThreadIdentifier      threadId);
     /**
      * @brief Search the thread with the specified name.
      * @param[in] name is the thread name.
      * @return the id of the first found thread with the specified name.
      */
-    static TID FindByName(const char8 *name);
+    static ThreadIdentifier FindByName(const char8 *name);
 
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 
 #endif /* THREADS_H_ */
 

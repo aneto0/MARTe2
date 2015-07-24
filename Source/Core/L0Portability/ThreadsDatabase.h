@@ -36,74 +36,6 @@
 #include "TimeoutType.h"
 #include "FastPollingMutexSem.h"
 
-extern "C" {
-
-/**
- * @brief Called by ThreadsDatabase::DatabaseNewEntry.
- * @param[in] threadInfo contains the thread informations.
- * @return true if the informations are correctly added to the database.
- */
-bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo);
-
-/**
- *  @brief Called by ThreadsDatabase::RemoveEntry
- *  @param[in] threadId is the id of the thread to remove from database.
- *  @return a pointer to the ThreadInformation structure of the thread removed.
- */
-ThreadInformation *ThreadsDatabaseRemoveEntry(TID threadId);
-
-/**
- * @brief Called by ThreadsDatabase::GetThreadInformation.
- * @param[in] threadId is the thread identifier.
- * @return a pointer to the thread informations structure.
- */
-ThreadInformation *ThreadsDatabaseGetThreadInformation(TID threadId);
-
-/**
- * @brief Called by ThreadsDatabase::Lock.
- * @param[in] tt is the desired timeout.
- * @return true if the lock success, false otherwise.
- */
-bool ThreadsDatabaseLock(TimeoutType tt);
-
-/**
- * @brief Called by ThreadsDatabase::UnLock.
- * @return true if the unlock success, false otherwise.
- */
-void ThreadsDatabaseUnLock();
-
-/**
- * @brief Called by ThreadsDatabase::NumberOfThreads.
- * @return the number of elements in the database.
- */
-uint32 ThreadsDatabaseNumberOfThreads();
-
-/**
- * @brief Called by ThreadsDatabase::GetThreadId.
- * @param[in] n is the index of the element in the database.
- * @return the identifier of the n-th thread in the database.
- */
-TID ThreadsDatabaseGetThreadID(uint32 n);
-
-/**
- * @brief Called by ThreadsDatabase::GetInfo.
- * @param[out] threadInfoCopy is a copy of the thread information structure in return.
- * @param[in] n is the index of the element in the database.
- * @param[in] threadId is the identifier of the thread.
- * @return true if the requested thread is in the database.
- */
-bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
-                            int32 n,
-                            TID threadId);
-
-/**
- * @brief Called by ThreadsDatabase::Find.
- * @param[in] name is the name of the thread.
- * @return the identifier of the thread with the name specified, 0 if it is not in the database.
- */
-TID ThreadsDatabaseFind(const char8 *name);
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -123,21 +55,11 @@ TID ThreadsDatabaseFind(const char8 *name);
  */
 class ThreadsDatabase {
 
-public:
-    friend bool ThreadsDatabaseNewEntry(ThreadInformation *threadInfo);
-    friend ThreadInformation *ThreadsDatabaseRemoveEntry(TID threadId);
-    friend ThreadInformation *ThreadsDatabaseGetThreadInformation(TID threadId);
-    friend bool ThreadsDatabaseLock(TimeoutType tt);
-    friend void ThreadsDatabaseUnLock();
-    friend uint32 ThreadsDatabaseNumberOfThreads();
-    friend TID ThreadsDatabaseGetThreadID(uint32 n);
-    friend TID ThreadsDatabaseFind(const char8 *name);
-    friend bool ThreadsDatabaseGetInfo(ThreadInformation &threadInfoCopy,
-                                       int32 n,
-                                       TID threadId);
 
     friend class ThreadsOS;
-private:
+    friend class Threads;
+
+public:
     /**
      * @brief Add a new thread to the database.
      * @details The database memory could be allocated dinamically using malloc and realloc functions.
@@ -146,18 +68,18 @@ private:
      */
     static bool NewEntry(ThreadInformation *ti);
     /**
-     * @brief Remove the entry from database searching by tid.
-     * @param[in] tid is the id of the threads which must be removed from database.
-     * @return true if the thread with tid as id is in the database and if it is removed without errors.
+     * @brief Remove the entry from database searching by ThreadIdentifier.
+     * @param[in] ThreadIdentifier is the id of the threads which must be removed from database.
+     * @return true if the thread with ThreadIdentifier as id is in the database and if it is removed without errors.
      */
-    static ThreadInformation *RemoveEntry(TID tid);
+    static ThreadInformation *RemoveEntry(ThreadIdentifier threadId);
 
     /**
      * @brief Get thread informations.
-     * @param[in] tid is the id of the requested thread.
-     * @return the ThreadInformation object related to the thread with tid as id.
+     * @param[in] ThreadIdentifier is the id of the requested thread.
+     * @return the ThreadInformation object related to the thread with ThreadIdentifier as id.
      */
-    static ThreadInformation *GetThreadInformation(TID tid);
+    static ThreadInformation *GetThreadInformation(ThreadIdentifier threadId);
 
     /**
      * @brief Lock a spinlock mutex to allow exclusive access to the database.
@@ -182,27 +104,27 @@ private:
     /**
      * @brief Get the thread id of the n-th thread saved in database.
      * @param[in] n is the index of the requested thread.
-     * @return the tid of the requested thread.
+     * @return the ThreadIdentifier of the requested thread.
      */
-    static TID GetThreadID(uint32 n);
+    static ThreadIdentifier GetThreadID(uint32 n);
 
     /**
      * @brief Get the informations searching a thread by index or by id.
      * @param[out] tiCopy contains the thread informations in return.
      * @param[in] n is the index of the requested thread.
-     * @param[in] tid is the tid of the requested thread.
+     * @param[in] ThreadIdentifier is the ThreadIdentifier of the requested thread.
      * @return true if the requested thread is in the database.
      */
     static bool GetInfo(ThreadInformation &tiCopy,
                         int32 n = -1,
-                        TID tid = (TID) - 1);
+                        ThreadIdentifier threadId = (ThreadIdentifier) - 1);
 
     /**
      * @brief Returns the id searching by name.
      * @param[in] name is the name of the thread.
      * @return the id of the first thread found with the name specified or 0 if it is not in the database.
      */
-    static TID Find(const char8 *name);
+    static ThreadIdentifier Find(const char8 *name);
 
 private:
 
@@ -211,16 +133,16 @@ private:
     static FastPollingMutexSem internalMutex;
 
     /** Actual number of entries used */
-    static uint32 nOfEntries;
+    static uint32              nOfEntries;
 
     /** Max number of entries currently possible */
-    static uint32 maxNOfEntries;
+    static uint32              maxNOfEntries;
 
     /** Vector of thread information pointers */
     static ThreadInformation **entries;
 
     /** Allocate more space in the database*/
-    static bool AllocMore();
+    static bool AllocMore(void);
 
 };
 
