@@ -40,6 +40,22 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+bool BasicConsoleTest::TestConstructor() {
+    BasicConsole myConsole;
+
+    uint32 nRowsOut;
+    uint32 nColsOut;
+    //in some os you need to open the console first.
+    if (myConsole.GetSize(nColsOut, nRowsOut) == NoError) {
+
+        if (nColsOut != 0 || nRowsOut != 0) {
+            return false;
+        }
+    }
+
+    return true;
+
+}
 
 //Open the console with in the mode passed by argument
 bool BasicConsoleTest::TestOpenModeDefault(FlagsType openingMode) {
@@ -305,6 +321,21 @@ bool BasicConsoleTest::TestRead(const char8 *stringArg) {
     bool stringLengthOK = StringTestHelper::Compare(string, stringArg);
 
     return (err == NoError) && stringLengthOK;
+}
+
+bool BasicConsoleTest::TestTimeoutRead(uint32 timeout) {
+
+    BasicConsole myConsole;
+    if (!myConsole.TimeoutSupported()) {
+        return true;
+    }
+
+    myConsole.Open(BasicConsole::Mode::Default);
+
+    char buffer[32];
+    uint32 size = 32;
+    return myConsole.Read(buffer, size, timeout) == Timeout;
+
 }
 
 bool BasicConsoleTest::TestSetGetSize(uint32 columnIn,

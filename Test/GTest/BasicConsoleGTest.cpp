@@ -7,6 +7,12 @@
 #include "gtest/gtest.h"
 #include "BasicConsoleTest.h"
 
+TEST(BasicConsoleGTest,TestConstructor) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestConstructor());
+}
+
+
 TEST(BasicConsoleGTest,TestOpenModeDefault) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestOpenModeDefault());
@@ -83,6 +89,12 @@ TEST(BasicConsoleGTest,TestRead) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestRead("Hello"));
 }
+
+TEST(BasicConsoleGTest,TestTimeoutRead) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestTimeoutRead(100));
+}
+
 
 TEST(BasicConsoleGTest,TestSetGetSize) {
     BasicConsoleTest console;
