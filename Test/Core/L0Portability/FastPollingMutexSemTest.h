@@ -31,9 +31,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "FastPollingMutexSem.h"
 #include "EventSem.h"
 #include "Threads.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -42,9 +44,11 @@
  * @brief A class to test the FastPollingMutexSem functions.
  */
 class FastPollingMutexSemTest {
+
 public:
+
     /**
-     * @brief Constructor.
+     * @brief Default constructor.
      * @details Creates the mutex handle.
      */
     FastPollingMutexSemTest();
@@ -128,25 +132,39 @@ public:
 
 private:
 
-    /** Semaphore which is tested by the unit testing functions */
+    /**
+     * Semaphore which is tested by the unit testing functions
+     */
     FastPollingMutexSem testMutex;
 
-    /** timeout to be used for the locking test*/
+    /**
+     * timeout to be used for the locking test
+     */
     TimeoutType testMutexTimeout;
 
-    /** Shared variable that is protected by the unit testing functions */
+    /**
+     * Shared variable that is protected by the unit testing functions
+     */
     int32 sharedVariable;
 
-    /** Number of running threads for a given test */
+    /**
+     * Number of running threads for a given test
+     */
     int32 nOfExecutingThreads;
 
-    /** This variable is set to true when the callback functions are expected to return  */
+    /**
+     * This variable is set to true when the callback functions are expected to return
+     */
     bool stop;
 
-    /** To be used by the threading callback functions to report an error*/
+    /**
+     * To be used by the threading callback functions to report an error
+     */
     bool failed;
 
-    /** Helper semaphore to synchronize the launching of concurrent threads*/
+    /**
+     * Helper semaphore to synchronize the launching of concurrent threads
+     */
     EventSem synchSem;
 
     /**
@@ -196,4 +214,3 @@ private:
 /*---------------------------------------------------------------------------*/
 
 #endif /* MUTEXTEST_H_ */
-

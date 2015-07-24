@@ -53,7 +53,7 @@ class FastPollingMutexSem {
 
 public:
     /**
-     * @brief Initialized the semaphore as unlocked.
+     * @brief Initializes the semaphore as unlocked.
      * @details The atomic variable is set to zero.
      */
     inline FastPollingMutexSem();
@@ -150,4 +150,3 @@ void FastPollingMutexSem::FastUnLock() {
 }
 
 #endif /* FASTPOLLINGMUTEXSEM_H_ */
-

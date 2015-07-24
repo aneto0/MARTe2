@@ -24,12 +24,16 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <limits.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "gtest/gtest.h"
-#include <FastPollingMutexSemTest.h>
+#include "FastPollingMutexSemTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -102,4 +106,3 @@ TEST(FastPollingMutexSemGTest,TestRecursive) {
     FastPollingMutexSemTest mutextest;
     ASSERT_TRUE(mutextest.TestRecursive());
 }
-
