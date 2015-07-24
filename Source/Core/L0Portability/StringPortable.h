@@ -40,7 +40,7 @@
 
 /**
  * @brief This class provides a collection of static functions for the handling
- *  of C-style strings (i.e. arrays of chars terminated with a '0' char8).
+ *  of C-style strings (i.e. arrays of chars terminated with a '0' character).
  *
  * @details All these functions are portable, that is, it is assured that
  * any of them use external library functions, so they can be used on all
@@ -119,7 +119,7 @@ public:
      * @brief Concatenates a specified number of characters from the second string to the first.
      * @param[in,out] string1 is the string at the beginning (and the result).
      * @param[in] string2 is the string to append.
-     * @param[in,out] size is the maximum number of char8acters to append.
+     * @param[in,out] size is the maximum number of characters to append.
      * @return true if strings are not NULL.
      */
     static bool CatN(char8* const string1,
@@ -176,7 +176,7 @@ public:
     /**
      * @brief Returns a pointer at the last character c founded in string.
      * @param[in] string is the string where to search c.
-     * @param[in] c is the char8acter which must be searched in string.
+     * @param[in] c is the character which must be searched in string.
      * @return the pointer to the last occurrence of c in string, NULL if c is not found.
      */
     static const char8* SearchLastChar(const char8* const string,
