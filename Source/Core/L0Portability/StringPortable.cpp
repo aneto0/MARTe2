@@ -39,7 +39,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-//Returns the size of the string.
 int32 StringPortable::Length(const char8* const string) {
     int32 ret = -1;
 
@@ -61,7 +60,6 @@ int32 StringPortable::Length(const char8* const string) {
     return ret;
 }
 
-//Returns true if the strings are equal, false otherwise
 int32 StringPortable::Compare(const char8* const string1,
                               const char8* const string2) {
 
@@ -92,7 +90,6 @@ int32 StringPortable::Compare(const char8* const string1,
     return ret;
 }
 
-//Returns true if the strings are equal, false otherwise
 int32 StringPortable::CompareN(const char8* const string1,
                                const char8* const string2,
                                const uint32 size) {
@@ -127,7 +124,6 @@ int32 StringPortable::CompareN(const char8* const string1,
     return ret;
 }
 
-//Concatenate two strings giving result in another string
 bool StringPortable::Concatenate(const char8* const string1,
                                  const char8* const string2,
                                  char8* const result) {
@@ -167,7 +163,6 @@ bool StringPortable::Concatenate(const char8* const string1,
     return ret;
 }
 
-//Concatenate two strings giving result in another string
 bool StringPortable::ConcatenateN(const char8* const string1,
                                   const char8* const string2,
                                   char8* const result,
@@ -210,7 +205,6 @@ bool StringPortable::ConcatenateN(const char8* const string1,
     return ret;
 }
 
-//Concatenate the second string to the first
 bool StringPortable::Concatenate(char8* const string1,
                                  const char8* const string2) {
 
@@ -239,7 +233,6 @@ bool StringPortable::Concatenate(char8* const string1,
     return ret;
 }
 
-//Concatenate the second string to the first
 bool StringPortable::ConcatenateN(char8* const string1,
                                   const char8* const string2,
                                   uint32 &size) {
@@ -350,7 +343,6 @@ bool StringPortable::CopyN(char8* const destination,
     return ret;
 }
 
-//return the index of the first occurrence in string1 of a char8 in string2
 int32 StringPortable::SearchIndex(const char8* const string1,
                                   const char8* const string2) {
 
@@ -388,7 +380,6 @@ int32 StringPortable::SearchIndex(const char8* const string1,
     return ret;
 }
 
-//return the pointer of the first occurrence in string1 of a char8 in string2
 const char8* StringPortable::SearchChars(const char8* const string1,
                                          const char8* const string2) {
 
@@ -425,7 +416,6 @@ const char8* StringPortable::SearchChars(const char8* const string1,
     return ret;
 }
 
-//Return a pointer at the last char8 c founded in string
 const char8* StringPortable::SearchLastChar(const char8* const string,
                                             const char8 c) {
 
@@ -445,7 +435,6 @@ const char8* StringPortable::SearchLastChar(const char8* const string,
     return ret;
 }
 
-//Return a pointer to the first occurrence of substring in string.
 const char8* StringPortable::SearchString(const char8* const string,
                                           const char8* const substring) {
 
