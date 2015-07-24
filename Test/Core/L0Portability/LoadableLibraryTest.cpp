@@ -57,8 +57,6 @@ bool LoadableLibraryTest::TestOpenLibrary(const char *dllName) {
 
 bool LoadableLibraryTest::TestCloseLibrary(const char *dllName) {
     bool retValue;
-    float (*pf)(float);
-    pf = NULL;
     retValue = myLoadableLibrary.Open(dllName);
     myLoadableLibrary.Close();
     return retValue;
