@@ -40,7 +40,7 @@
 
 /**
  * @brief This class provides a collection of static functions for the handling
- *  of C-style strings (i.e. arrays of chars terminated with a '0' char).
+ *  of C-style strings (i.e. arrays of chars terminated with a '0' char8).
  *
  * @details All these functions are portable, that is, it is assured that
  * any of them use external library functions, so they can be used on all
@@ -57,130 +57,130 @@ public:
 
     /**
      * @brief Returns the length of a string.
-     * @param[in] string is the string argument.
+     * @param[in] string is the source string.
      * @return the size of the string in the argument.
      */
-    static int32 Length(const char* string);
+    static int32 Length(const char8* const string);
 
     /**
-     * @brief Returns true if the strings are equal, false otherwise.
+     * @brief Compares two strings.
      * @param[in] string1 is the first string.
      * @param[in] string2 is the second string.
-     * @return true if the two strings are equals.
+     * @return (0 if string1==string2) (1 if string1<string2) (2 if string1>string2).
      */
-    static bool Equal(const char* string1,
-                      const char* string2);
+    static int32 Compare(const char8* const string1,
+                         const char8* const string2);
 
     /**
-     * @brief Compare two strings until 'size' characters.
+     * @brief Compares two strings until a specified number characters.
      * @param[in] string1 is the first string.
      * @param[in] string2 is the second string.
      * @param[in] size is the max number of bytes to compare.
-     * @return true if strings are equal for 'size' characters.
+     * @return (0 if string1==string2) (1 if string1<string2) (2 if string1>string2).
      */
-    static bool EqualN(const char* string1,
-                       const char* string2,
-                       const uint32 size);
+    static int32 CompareN(const char8* const string1,
+                          const char8* const string2,
+                          const uint32 size);
 
     /**
-     * @brief Concatenate two strings giving result in another string.
+     * @brief Concatenates two strings giving result in another string.
      * @param[in] string1 is the string at the beginning.
      * @param[in] string2 is the string to append.
-     * @param[out] result is the concatenate string.
+     * @param[out] result is the concatenated string.
      * @return true if strings are not NULL.
      */
-    static bool Append(const char* string1,
-                       const char* string2,
-                       char* result);
+    static bool Append(const char8* const string1,
+                       const char8* const string2,
+                       char8* const result);
 
     /**
-     * @brief Append max 'size' characters of string2 to string1.
+     * @brief Appends max 'size' characters of string2 to string1.
      * @param[in] string1 is the string at the beginning.
      * @param[in] string2 is the string to append.
-     * @param[out] result is the concatenate string.
+     * @param[out] result is the concatenated string.
      * @param[in,out] size is the maximum number of characters to append.
      * @return true if strings are not NULL.
      */
-    static bool AppendN(const char* string1,
-                        const char* string2,
-                        char* result,
+    static bool AppendN(const char8* const string1,
+                        const char8* const string2,
+                        char8* const result,
                         uint32 &size);
 
     /**
-     * @brief Concatenate the second string to the first.
-     * @param[out] string1 is the string at the beginning (and the result).
+     * @brief Concatenates the second string to the first.
+     * @param[in,out] string1 is the string at the beginning (and the result).
      * @param[in] string2 is the string to append.
      * @return true if strings are not NULL.
      */
-    static bool Cat(char* string1,
-                    const char* string2);
+    static bool Cat(char8* const string1,
+                    const char8* const string2);
 
     /**
-     * @brief Concatenate the second string to the first untile size characters.
-     * @param[out] string1 is the string at the beginning (and the result).
+     * @brief Concatenates a specified number of characters from the second string to the first.
+     * @param[in,out] string1 is the string at the beginning (and the result).
      * @param[in] string2 is the string to append.
-     * @param[in,out] size is the maximum number of characters to append.
+     * @param[in,out] size is the maximum number of char8acters to append.
      * @return true if strings are not NULL.
      */
-    static bool CatN(char* string1,
-                     const char* string2,
+    static bool CatN(char8* const string1,
+                     const char8* const string2,
                      uint32 &size);
 
     /**
-     * @brief Get the pointer to the first occurrence of c in string.
+     * @brief Gets the pointer to the first occurrence of c in string.
      * @param[in] string is the string.
      * @param[in] c is the character which must be searched in string.
      * @return the pointer to the first occurrence of c in string, NULL if c is not found.
      */
-    static const char* SearchChar(const char* string,
-                                  const char c);
+    static const char8* SearchChar(const char8* const string,
+                                   const char8 c);
 
     /**
-     * @brief Copy operation.
+     * @brief Copies a string into a buffer.
      * @param[out] destination is the destination string.
      * @param[in] source is the source string.
      * @return true of strings are not NULL.
      */
-    static bool Copy(char* destination,
-                     const char* source);
+    static bool Copy(char8* const destination,
+                     const char8* const source);
 
     /**
-     * @brief Copy operation with 'size' as the max number of characters to copy.
+     * @brief Copies a specified number of characters from the string into a buffer.
      * @param[out] destination is the destination string,
      * @param[in] source is the source string.
      * @param[in,out] size is the max number of bytes to copy.
      * @return true if strings are not NULL.
      */
-    static bool CopyN(char* destination,
-                      const char* source,
+    static bool CopyN(char8* const destination,
+                      const char8* const source,
                       uint32 &size);
 
     /**
-     * @brief Return the index of the first occurrence in string1 of a char in string2.
+     * @brief Returns the index of the first occurrence in string1 of a character in string2.
      * @param[in] string1 is the string where to search.
      * @param[in] string2 contains characters which must be searched in string1.
-     * @return the index of the first occurrence in string1 of a char in string2, length of string1 if c is not found.
+     * @return the index of the first occurrence in string1 of a character of string2 or the length of string1 if c is not found.
      */
-    static int32 SearchIndex(const char* string1,
-                             const char* string2);
+    static int32 SearchIndex(const char8* const string1,
+                             const char8* const string2);
 
     /**
-     * @brief Get the pointer of the first occurrence in string1 of a char in string2.
+     * @brief Gets the pointer of the first occurrence in string1 of a character in string2.
      * @param[in] string1 is the string where to search.
      * @param[in] string2 contains characters which must be searched in string1.
-     * @return the pointer to the first occurrence in string1 of a char in string2, NULL if c is not found.
+     * @return the pointer to the first occurrence in string1 of a character of string2, NULL if c is not found.
      */
-    static const char* SearchChars(const char* string1,
-                                   const char* string2);
+    static const char8* SearchChars(const char8* const string1,
+                                    const char8* const string2);
 
     /**
-     * @brief Return a pointer at the last char c founded in string.
+     * @brief Returns a pointer at the last character c founded in string.
      * @param[in] string is the string where to search c.
-     * @param[in] c is the character which must be searched in string.
+     * @param[in] c is the char8acter which must be searched in string.
      * @return the pointer to the last occurrence of c in string, NULL if c is not found.
      */
-    static const char* SearchLastChar(const char* string,
-                                      const char c);
+    static const char8* SearchLastChar(const char8* const string,
+                                       const char8 c);
 
     /**
      * @brief Search a substring.
@@ -188,30 +188,32 @@ public:
      * @param[in] substring is the string which must be searched in string.
      * @return a pointer to the first occurrence of substring in string, NULL if substring is not found.
      */
-    static const char* SearchSubstr(const char* string,
-                                    const char* substring);
+    static const char8* SearchSubstr(const char8* const string,
+                                     const char8* const substring);
 
     /**
-     * @brief Get the token using chars as delimiters.
-     * @details If result is NULL this function put a terminated char in string at the delimiter.
-     * @param[in] string is the string to tokenize.
-     * @param[in] delimiter contains char delimiters.
+     * @brief Get the token using characters as delimiters.
+     * @details If result is NULL this function put a terminated character in string when the delimiter is found i.e
+     * the first parameter string could be also the result.
+     * @param[in,out] string is the string to tokenize.
+     * @param[in] delimiter contains character delimiters.
      * @param[out] result is the substring between delimiters.
-     * @return a pointer to the next position after the delimiter for a successive tokenize operation.
+     * @return a pointer to the next position after the delimiter for a successive tokenize operation or NULL if terminator is not found.
      */
-    static char* TokenizeByChars(char* string,
-                                 const char* delimiter,
-                                 char* result);
+    static char8* TokenizeByChars(char8* const string,
+                                  const char8* const delimiter,
+                                  char8* result);
 
     /**
      * @brief Get the token using a string as delimiter.
      * @param[in] string is the string to tokenize.
      * @param[in] terminator is the string delimiter.
-     * @param[out] result is the next position for a successive operation (NULL if terminator is not found or in case of errors).
+     * @param[out] result is the next position for a successive operation (NULL if terminator is not found).
+     * @return a pointer to the next position after the substring for a successive tokenize operation or NULL if the substring is not found.
      */
-    static const char* TokenizeByString(const char* string,
-                                        const char* terminator,
-                                        char* result);
+    static const char8* TokenizeByString(const char8* const string,
+                                         const char8* const terminator,
+                                         char8* const result);
 
     /**
      * @brief Get the substring between two indexes.
@@ -219,12 +221,12 @@ public:
      * @param[in] end is the second index.
      * @param[in] string is the string where to search the indexes
      * @param[out] result is the substring.
-     * @return true if indexes are correct and the strings are not NULL.
+     * @return true if indexes are valid and the strings are not NULL.
      */
     static bool Substr(const int32 begin,
                        const int32 end,
-                       const char* string,
-                       char* result);
+                       const char8* const string,
+                       char8* const result);
 
 };
 

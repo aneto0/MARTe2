@@ -34,6 +34,7 @@ OBJSX=  EndianityGTest.x \
 	MemoryGTest.x \
 	FastPollingMutexSemGTest.x \
 	StringHelperGTest.x \
+	StringPortableGTest.x \
 	ThreadsGTest.x \
 	MutexSemGTest.x \
         BasicConsoleGTest.x

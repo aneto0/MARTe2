@@ -40,445 +40,547 @@
 /*---------------------------------------------------------------------------*/
 
 //Returns the size of the string.
-int32 StringPortable::Length(const char* string) {
-    int32 i = 0;
-
-    while (1) {
-        if ((string + i) == NULL) {
-            return -1;
-        }
-        if (string[i] == '\0') {
-            return i;
-        }
-        i++;
-    }
-    return i;
-}
-
-//Returns true if the strings are equal, false otherwise
-bool StringPortable::Equal(const char* string1,
-                         const char* string2) {
-    int32 i = 0;
-
-    while (1) {
-
-        if ((string1 + i) == NULL || (string2 + i) == NULL) {
-            return false;
-        }
-
-        if (string1[i] != string2[i]) {
-            return false;
-        }
-        if (string1[i] == '\0' && string2[i] == '\0') {
-            return true;
-        }
-        if (string1[i] == '\0' || string2[i] == '\0') {
-            return false;
-        }
-        i++;
-    }
-}
-
-//Returns true if the strings are equal, false otherwise
-bool StringPortable::EqualN(const char* string1,
-                          const char* string2,
-                          const uint32 size) {
-
-    uint32 i = 0;
-    while (i < size) {
-
-        if ((string1 + i) == NULL || (string2 + i) == NULL) {
-            return false;
-        }
-
-        if (string1[i] != string2[i]) {
-            return false;
-        }
-        if (string1[i] == '\0' && string2[i] == '\0') {
-            return true;
-        }
-        if (string1[i] == '\0' || string2[i] == '\0') {
-            return false;
-        }
-        i++;
-    }
-    return true;
-}
-
-//Concatenate two strings giving result in another string
-bool StringPortable::Append(const char* string1,
-                          const char* string2,
-                          char* result) {
-
-    if (result == NULL) {
-        return false;
-    }
+int32 StringPortable::Length(const char8* const string) {
+    int32 ret = -1;
 
     int32 i = 0;
-        int32 j = 0;
-        while (1) {
-            if ((string1 + i) == NULL || (result + i) == NULL) {
-                return false;
-            }
-            result[i] = string1[i];
-            if (string1[i] == '\0') {
-                break;
+
+    if (string == NULL) {
+        ret = -1;
+    }
+    else {
+
+        while (ret == -1) {
+            if (string[i] == '\0') {
+                ret = i;
             }
             i++;
         }
-        while (1) {
-            if ((string2 + j) == NULL || (result + i) == NULL) {
-                return false;
+    }
+
+    return ret;
+}
+
+//Returns true if the strings are equal, false otherwise
+int32 StringPortable::Compare(const char8* const string1,
+                              const char8* const string2) {
+
+    int32 ret = -1;
+
+    if ((string1 != NULL) && (string2 != NULL)) {
+        bool end = false;
+        int32 i = 0;
+        while (!end) {
+
+            if (static_cast<int32>(string1[i]) > static_cast<int32>(string2[i])) {
+                end = true;
+                ret = 2;
             }
+            if (static_cast<int32>(string1[i]) < static_cast<int32>(string2[i])) {
+                end = true;
+                ret = 1;
+            }
+            if ((string1[i] == '\0') && (string2[i] == '\0')) {
+                end = true;
+                ret = 0;
+            }
+
+            i++;
+        }
+
+    }
+    return ret;
+}
+
+//Returns true if the strings are equal, false otherwise
+int32 StringPortable::CompareN(const char8* const string1,
+                               const char8* const string2,
+                               const uint32 size) {
+
+    int32 ret = -1;
+
+    if ((string1 != NULL) && (string2 != NULL)) {
+        bool end = false;
+        ret = 0;
+
+        uint32 i = 0u;
+        while ((!end) && (i < size)) {
+
+            if (static_cast<int32>(string1[i]) > static_cast<int32>(string2[i])) {
+                ret = 2;
+                end = true;
+            }
+            if (static_cast<int32>(string1[i]) < static_cast<int32>(string2[i])) {
+                ret = 1;
+                end = true;
+            }
+            if ((string1[i] == '\0') && (string2[i] == '\0')) {
+                end = true;
+
+            }
+
+            i++;
+        }
+
+    }
+
+    return ret;
+}
+
+//Concatenate two strings giving result in another string
+bool StringPortable::Append(const char8* const string1,
+                            const char8* const string2,
+                            char8* const result) {
+
+    bool ret = false;
+
+    if ((result != NULL) && (string1 != NULL) && (string2 != NULL)) {
+        bool end = false;
+
+        int32 i = 0;
+        while (!end) {
+
+            result[i] = string1[i];
+            if (string1[i] == '\0') {
+                end = true;
+            }
+            else {
+                i++;
+            }
+        }
+
+        end = false;
+        int32 j = 0;
+
+        while (!end) {
 
             result[i] = string2[j];
             if (string2[j] == '\0') {
-                return true;
+                ret = true;
+                end = true;
             }
             i++;
             j++;
         }
+    }
+
+    return ret;
 }
 
 //Concatenate two strings giving result in another string
-bool StringPortable::AppendN(const char* string1,
-                           const char* string2,
-                           char* result,
+bool StringPortable::AppendN(const char8* const string1,
+                             const char8* const string2,
+                             char8* const result,
+                             uint32 &size) {
+
+    bool ret = false;
+
+    if ((string1 != NULL) && (string2 != NULL) && (result != NULL)) {
+        bool end = false;
+        uint32 i = 0u;
+        while (!end) {
+
+            result[i] = string1[i];
+            if (string1[i] == '\0') {
+                end = true;
+            }
+            else {
+                i++;
+            }
+        }
+        uint32 j = 0u;
+
+        while (j < size) {
+
+            result[i] = string2[j];
+            if (string2[j] == '\0') {
+                size = j;
+                ret = true;
+            }
+            i++;
+            j++;
+        }
+
+        if (!ret) {
+            result[i] = '\0';
+            ret = true;
+        }
+    }
+
+    return ret;
+}
+
+//Concatenate the second string to the first
+bool StringPortable::Cat(char8* const string1,
+                         const char8* const string2) {
+
+    bool ret = false;
+
+    if ((string1 != NULL) && (string2 != NULL)) {
+        bool end = false;
+
+        int32 j = 0;
+        int32 beginIndex = StringPortable::Length(string1);
+        if (beginIndex < 0) {
+            end = true;
+        }
+
+        while (!end) {
+            int32 index = beginIndex + j;
+            string1[index] = string2[j];
+            if (string2[j] == '\0') {
+                ret = true;
+                end = true;
+            }
+            j++;
+        }
+    }
+
+    return ret;
+}
+
+//Concatenate the second string to the first
+bool StringPortable::CatN(char8* const string1,
+                          const char8* const string2,
+                          uint32 &size) {
+
+    bool ret = false;
+    if ((string1 != NULL) && (string2 != NULL)) {
+
+        uint32 j = 0u;
+
+        int32 beginIndex = StringPortable::Length(string1);
+
+        if (beginIndex < 0) {
+            //do not enter in the loop
+            j = size;
+        }
+
+        while (j < size) {
+            uint32 index = (static_cast<uint32>(beginIndex)) + j;
+            string1[index] = string2[j];
+            if (string2[j] == '\0') {
+                size = j;
+                ret = true;
+            }
+            else {
+                j++;
+            }
+        }
+
+        if (!ret) {
+            uint32 index = (static_cast<uint32>(beginIndex)) + j;
+            string1[index] = '\0';
+            ret = true;
+        }
+
+    }
+    return ret;
+}
+
+const char8* StringPortable::SearchChar(const char8* const string,
+                                        const char8 c) {
+
+    const char8* ret = static_cast<const char8*>(NULL);
+
+    if (string != NULL) {
+        bool end = false;
+
+        uint32 i = 0u;
+
+        while (!end) {
+
+            if (string[i] == '\0') {
+                end = true;
+
+            }
+            if (string[i] == c) {
+                end = true;
+                ret = &string[i];
+            }
+            i++;
+        }
+    }
+
+    return ret;
+
+}
+
+bool StringPortable::Copy(char8* const destination,
+                          const char8* const source) {
+
+    bool ret = false;
+    if ((destination != NULL) && (source != NULL)) {
+
+        int32 i = 0;
+        while (!ret) {
+            destination[i] = source[i];
+            if (source[i] == '\0') {
+                ret = true;
+            }
+            i++;
+        }
+    }
+    return ret;
+}
+
+bool StringPortable::CopyN(char8* const destination,
+                           const char8* const source,
                            uint32 &size) {
 
-    if (result == NULL) {
-        return false;
-    }
+    bool ret = false;
+    if ((destination != NULL) && (source != NULL)) {
 
-    uint32 i = 0;
-    uint32 j = 0;
-    while (1) {
-        if ((string1 + i) == NULL || (result + i) == NULL) {
-            return false;
+        uint32 i = 0u;
+        while (i < size) {
+
+            destination[i] = source[i];
+            if (source[i] == '\0') {
+                size = i;
+                ret = true;
+            }
+            i++;
         }
-        result[i] = string1[i];
-        if (string1[i] == '\0') {
-            break;
+
+        if (!ret) {
+            destination[i] = '\0';
+            ret = true;
         }
-        i++;
     }
-    while (j < size) {
-        if ((string2 + j) == NULL || (result + i) == NULL) {
-            return false;
-        }
-        result[i] = string2[j];
-        if (string2[j] == '\0') {
-            size = j;
-            return true;
-        }
-        i++;
-        j++;
-    }
-    return true;
+    return ret;
 }
 
-//Concatenate the second string to the first
-bool StringPortable::Cat(char* string1,
-                       const char* string2) {
+//return the index of the first occurrence in string1 of a char8 in string2
+int32 StringPortable::SearchIndex(const char8* const string1,
+                                  const char8* const string2) {
 
-    if (string1 == NULL || string2 == NULL) {
-        return false;
-    }
+    int32 ret = -1;
 
-    int32 j = 0;
-    int32 beginIndex = StringPortable::Length(string1);
-    if (beginIndex < 0) {
-        return false;
-    }
+    if ((string1 != NULL) && (string2 != NULL)) {
+        bool end1 = false;
+        bool end2 = false;
+        int32 i = 0;
+        while (!end1) {
+            int32 j = 0;
+            end2 = false;
+            while (!end2) {
 
-    while (1) {
-        string1[beginIndex + j] = string2[j];
-        if (string2[j] == '\0') {
-            return true;
-        }
-        j++;
-    }
-}
+                if (string1[i] == string2[j]) {
+                    end1 = true;
+                    end2 = true;
+                    ret = i;
+                }
+                if (string2[j] == '\0') {
+                    end2 = true;
 
-//Concatenate the second string to the first
-bool StringPortable::CatN(char* string1,
-                        const char* string2,
-                        uint32 &size) {
-    uint32 j = 0;
-
-    if (string1 == NULL || string2 == NULL || size < 0) {
-        return false;
-    }
-
-    int32 beginIndex = StringPortable::Length(string1);
-
-    if (beginIndex < 0) {
-        return false;
-    }
-
-    while (j < size) {
-        string1[beginIndex + j] = string2[j];
-        if (string2[j] == '\0') {
-            size = j;
-            return true;
-        }
-        j++;
-    }
-    string1[beginIndex + j] = '\0';
-    return true;
-}
-
-const char* StringPortable::SearchChar(const char* string,
-                                     const char c) {
-
-    int32 i = 0;
-    while (1) {
-        if ((string + i) == NULL) {
-            return NULL;
-        }
-
-        if (string[i] == '\0') {
-            return NULL;
-        }
-        if (string[i] == c) {
-            return string + i;
-        }
-        i++;
-    }
-    return NULL;
-}
-
-bool StringPortable::Copy(char* destination,
-                        const char* source) {
-
-    int32 i = 0;
-    while (1) {
-
-        if ((destination + i) == NULL || (source + i) == NULL) {
-            return false;
-        }
-
-        destination[i] = source[i];
-        if (source[i] == '\0') {
-            return true;
-        }
-        i++;
-    }
-    return false;
-}
-
-bool StringPortable::CopyN(char* destination,
-                         const char* source,
-                         uint32 &size) {
-
-    uint32 i = 0;
-    while (i < size) {
-        if ((destination + i) == NULL || (source + i) == NULL) {
-            return false;
-        }
-        destination[i] = source[i];
-        if (source[i] == '\0') {
-            size = i;
-            return true;
-        }
-        i++;
-    }
-    destination[i] = '\0';
-    return true;
-}
-
-//return the index of the first occurrence in string1 of a char in string2
-int32 StringPortable::SearchIndex(const char* string1,
-                                const char* string2) {
-
-    int32 i = 0;
-    int32 j = 0;
-    while (1) {
-        j = 0;
-        while (1) {
-
-            if ((string1 + i) == NULL || (string2 + j) == NULL) {
-                return -1;
+                }
+                j++;
             }
 
-            if (string1[i] == string2[j]) {
-                return i;
+            if ((string1[i] == '\0') && (!end1)) {
+                ret = i;
+                end1 = true;
+
             }
-            if (string2[j] == '\0') {
-                break;
-            }
-            j++;
+            i++;
         }
-        if (string1[i] == '\0') {
-            return i;
-        }
-        i++;
     }
-    return -1;
+    return ret;
 }
 
-//return the pointer of the first occurrence in string1 of a char in string2
-const char* StringPortable::SearchChars(const char* string1,
-                                      const char* string2) {
+//return the pointer of the first occurrence in string1 of a char8 in string2
+const char8* StringPortable::SearchChars(const char8* const string1,
+                                         const char8* const string2) {
 
-    int32 i = 0;
-    int32 j = 0;
-    while (1) {
-        j = 0;
-        while (1) {
-            if ((string1 + i) == NULL || (string2 + j) == NULL) {
-                return NULL;
+    const char8* ret = static_cast<const char8*>(NULL);
+
+    if ((string1 != NULL) && (string2 != NULL)) {
+        bool end1 = false;
+        bool end2 = false;
+
+        int32 i = 0;
+        while (!end1) {
+            int32 j = 0;
+            end2 = false;
+            while (!end2) {
+
+                if (string1[i] == string2[j]) {
+                    end1 = true;
+                    end2 = true;
+                    ret = &string1[i];
+                }
+                if (string2[j] == '\0') {
+                    end2 = true;
+                }
+                j++;
             }
-            if (string1[i] == string2[j]) {
-                return string1 + i;
+            if ((string1[i] == '\0') && (!end1)) {
+                end1 = true;
+                ret = static_cast<const char8*>(NULL);
             }
-            if (string2[j] == '\0') {
-                break;
-            }
-            j++;
+            i++;
         }
-        if (string1[i] == '\0') {
-            return NULL;
-        }
-        i++;
     }
-    return NULL;
+
+    return ret;
 }
 
-//Return a pointer at the last char c founded in string
-const char* StringPortable::SearchLastChar(const char* string,
-                                         char c) {
+//Return a pointer at the last char8 c founded in string
+const char8* StringPortable::SearchLastChar(const char8* const string,
+                                            const char8 c) {
 
-    if (string == NULL) {
-        return NULL;
-    }
+    const char8 *ret = static_cast<const char8*>(NULL);
+    int32 index = (StringPortable::Length(string) - 1);
 
-    int32 index;
-    if ((index = (StringPortable::Length(string) - 1)) < 0) {
-        return NULL;
-    }
     while (index >= 0) {
+
         if (string[index] == c) {
-            return string + index;
+            ret = &string[index];
+            //exit from the loop
+            index = 0;
         }
         index--;
     }
-    return NULL;
+
+    return ret;
 }
 
 //Return a pointer to the first occurrence of substring in string.
-const char* StringPortable::SearchSubstr(const char* string,
-                                       const char* substring) {
+const char8* StringPortable::SearchSubstr(const char8* const string,
+                                          const char8* const substring) {
 
-    if (string == NULL || substring == NULL) {
-        return NULL;
-    }
-
+    const char8* ret = static_cast<const char8*>(NULL);
     int32 size1 = StringPortable::Length(string);
     int32 size2 = StringPortable::Length(substring);
 
-    if (size1 < 0 || size2 < 0) {
-        return NULL;
-    }
+    if ((size1 >= 0) && (size2 >= 0)) {
 
-    int32 i = 0;
+        int32 i = 0;
 
-    while ((size1 - i) >= size2) {
-        if (StringPortable::EqualN(string + i, substring, size2)) {
-            return string + i;
+        while ((size1 - i) >= size2) {
+            uint32 sizeArg = static_cast<uint32>(size2);
+            if (StringPortable::CompareN(&string[i], substring, sizeArg) == 0) {
+                ret = &string[i];
+                //exit from the loop
+                i = size1 - size2;
+            }
+            i++;
         }
-        i++;
     }
 
-    return NULL;
+    return ret;
 }
 
-char* StringPortable::TokenizeByChars(char* string,
-                                    const char* delimiter,
-                                    char* result) {
+char8* StringPortable::TokenizeByChars(char8* const string,
+                                       const char8* const delimiter,
+                                       char8* result) {
 
-    int32 i = 0;
-    int32 j = 0;
-    if (result == NULL) {
-        return false;
+    char8 *ret = static_cast<char8*>(NULL);
+
+    if ((string != NULL) && (delimiter != NULL)) {
+        if (result == NULL) {
+            result = string;
+        }
+
+        bool end = false;
+
+        int32 i = 0;
+
+        while (ret == NULL) {
+            int32 j = 0;
+            end = false;
+            while (!end) {
+
+                if (string[i] == delimiter[j]) {
+                    result[i] = '\0';
+                    int32 index = i + 1;
+                    ret = &string[index];
+                    end = true;
+
+                }
+
+                if (delimiter[j] == '\0') {
+                    end = true;
+                }
+                j++;
+            }
+
+            //copy in result if terminator not found yet
+            if (ret == NULL) {
+                result[i] = string[i];
+
+                if (string[i] == '\0') {
+                    ret = string;
+                }
+            }
+            i++;
+        }
     }
-    while (1) {
-        j = 0;
-        while (1) {
-            if ((string + i) == NULL || (delimiter + j) == NULL) {
-                return NULL;
-            }
-
-            if (string[i] == delimiter[j]) {
-                result[i] = '\0';
-                return string + i + 1;
-            }
-
-            if (delimiter[j] == '\0') {
-                break;
-            }
-            j++;
-        }
-        if ((result + i) == NULL) {
-            return NULL;
-        }
-
-        result[i] = string[i];
-        if (string[i] == '\0') {
-            return result;
-        }
-        i++;
-    }
-    return NULL;
+    return ret;
 }
 
-const char* StringPortable::TokenizeByString(const char* string,
-                                           const char* terminator,
-                                           char* result) {
+const char8* StringPortable::TokenizeByString(const char8* const string,
+                                              const char8* const terminator,
+                                              char8* const result) {
 
+    const char8 *ret = static_cast<const char8*>(NULL);
     int32 size1 = StringPortable::Length(string);
     int32 size2 = StringPortable::Length(terminator);
 
-    if (size1 < 0 || size2 < 0) {
-        return NULL;
-    }
+    if ((size1 >= 0) && (size2 >= 0) && (result != NULL)) {
 
-    int32 i = 0;
-    while ((size1 - i) >= size2) {
-        if (StringPortable::EqualN(string + i, terminator, size2)) {
-            result[i] = '\0';
-            return string + i + size2;
-        }
-        if ((result + i) == NULL || (string + i) == NULL) {
-            return NULL;
-        }
-        result[i] = string[i];
-        i++;
-    }
+        int32 i = 0;
+        while ((size1 - i) >= size2) {
+            uint32 sizeArg = static_cast<uint32>(size2);
 
-    StringPortable::Copy(result + i, string + i);
-    return NULL;
+            if (StringPortable::CompareN(&string[i], terminator, sizeArg) == 0) {
+                result[i] = '\0';
+                int32 indexRet = i + size2;
+                ret = &string[indexRet];
+
+                //exit from the loop
+                i = size1 - size2;
+
+            }
+            else {
+                result[i] = string[i];
+            }
+            i++;
+        }
+
+        if (ret == NULL) {
+            (void) StringPortable::Copy(&result[i], &string[i]);
+        }
+    }
+    return ret;
 }
 
-bool StringPortable::Substr(int32 begin,
-                          int32 end,
-                          const char* string,
-                          char* result) {
+bool StringPortable::Substr(const int32 begin,
+                            const int32 end,
+                            const char8* const string,
+                            char8* const result) {
 
-    int32 i = 0;
+    bool ret = true;
+    if ((string == NULL) || (result == NULL)) {
+        ret = false;
+    }
+    else {
+        int32 i = 0;
 
-    while (i < (end - begin + 1)) {
-        if ((string + begin + i) == NULL || (result + i) == NULL) {
-            return false;
+        while ((i < ((end - begin) + 1)) && (ret)) {
+            int32 index = begin + i;
+            result[i] = string[index];
+            if (string[index] == '\0') {
+                ret = false;
+            }
+            i++;
         }
-        result[i] = string[begin + i];
-        if (string[begin + i] == '\0') {
-            return false;
+
+        if (ret) {
+            result[i] = '\0';
         }
-        i++;
     }
 
-    result[i] = '\0';
-    return true;
+    return ret;
 
 }
