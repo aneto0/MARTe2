@@ -38,7 +38,6 @@
 #include "HighResolutionTimer.h"
 #include "TimeoutType.h"
 #include "Sleep.h"
-#include "FlagsType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -47,32 +46,34 @@
 /**
  * @brief Implementation of semaphore based on spin locks.
  *
- * @details This type of semaphore uses the spinlock instruction: Atomic::TestAndSet. The timeout is calculated using the HighResolutionTimer class.\n
- * Using this implementation a thread can unlocks a semaphore locked by another thread.
+ * @details This semaphore is not recursive i.e is the same thread locks two times sequentially causes a deadlock.
+ * Moreover a thread can unlock the semaphore locked by another thread.
  */
 class FastPollingMutexSem {
 
 public:
     /**
-     * @brief Constructor.
+     * @brief Initializes the semaphore as unlocked.
+     * @details The atomic variable is set to zero.
      */
     inline FastPollingMutexSem();
 
     /**
-     * @brief Initializes the semaphore and reads it.
-     * @param[in] locked defines if the semaphore must be initialized locked or unlocked.
+     * @brief Initializes the semaphore as locked or unlocked.
+     * @param[in] locked defines if the semaphore must be initialized locked or unlocked (default locked=false)
      */
-    inline void Create(bool locked = false);
-
+    inline void Create(const bool locked = false);
 
     /**
      * @brief Returns the status of the semaphore.
-     * @return true if the semaphore is locked.
+     * @return true if the semaphore is locked, false if it is unlocked.
      */
     inline bool Locked() const;
 
     /**
-     * @brief If the semaphore is locked tries to lock until the timeout is expired.
+     * @brief Locks the semaphore.
+     * @details If the semaphore is locked tries to lock until the timeout expire. A double consecutive lock
+     * by the same thread causes a deadlock.
      * @param[in] msecTimeout is the desired timeout.
      * @return Timeout if the semaphore is locked for a period which is greater than the
      * specified timeout. Otherwise NoError is returned.
@@ -88,13 +89,16 @@ public:
 
     /**
      * @brief Unlocks the semaphore.
+     * @details A thread could unlock the semaphore locked by another thread.
      * @details If a thread locks this type of semaphore, another threads can unlock it.
      */
     inline void FastUnLock();
 
-protected:
+private:
 
-    /** Atomic variable */
+    /**
+     * Atomic variable
+     */
     volatile int32 flag;
 
 };
@@ -102,12 +106,12 @@ protected:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-inline FastPollingMutexSem::FastPollingMutexSem() {
+FastPollingMutexSem::FastPollingMutexSem() {
     flag = 0;
 }
 
-void FastPollingMutexSem::Create(bool locked) {
-    if (locked == true) {
+void FastPollingMutexSem::Create(const bool locked) {
+    if (locked) {
         flag = 1;
     }
     else {
@@ -115,8 +119,7 @@ void FastPollingMutexSem::Create(bool locked) {
     }
 }
 
-
-bool FastPollingMutexSem::Locked() const{
+bool FastPollingMutexSem::Locked() const {
     return flag == 1;
 }
 
@@ -124,7 +127,7 @@ ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout) {
     int64 ticksStop = msecTimeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
     ErrorType err = NoError;
-    while (!Atomic::TestAndSet((int32 *) &flag)) {
+    while (!Atomic::TestAndSet(&flag)) {
         if (msecTimeout != TTInfiniteWait) {
             int64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
@@ -139,7 +142,7 @@ ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout) {
 }
 
 bool FastPollingMutexSem::FastTryLock() {
-    return (Atomic::TestAndSet((int32 *) &flag));
+    return (Atomic::TestAndSet(&flag));
 }
 
 void FastPollingMutexSem::FastUnLock() {
@@ -147,4 +150,3 @@ void FastPollingMutexSem::FastUnLock() {
 }
 
 #endif /* FASTPOLLINGMUTEXSEM_H_ */
-

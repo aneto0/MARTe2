@@ -32,6 +32,7 @@
 #include "Sleep.h"
 #include "Atomic.h"
 #include "FastPollingMutexSemTest.h"
+#include "FlagsType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -185,7 +186,6 @@ void TestFastLockErrorCodeCallback(FastPollingMutexSemTest &mt) {
     if (err != Timeout) {
         mt.failed = true;
     }
-
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
@@ -238,6 +238,5 @@ bool FastPollingMutexSemTest::TestRecursive() {
         //A fast polling mutex semaphore should have dead-locked...
         test = false;
     }
-
     return test;
 }
