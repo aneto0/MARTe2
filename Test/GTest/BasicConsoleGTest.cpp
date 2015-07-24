@@ -62,11 +62,6 @@ TEST(BasicConsoleGTest,TestWriteSmallSize) {
     ASSERT_TRUE(console.TestWriteSmallSize("abcd"));
 }
 
-TEST(BasicConsoleGTest,TestWriteLargeSize) {
-    BasicConsoleTest console;
-    ASSERT_TRUE(console.TestWriteLargeSize("abcd"));
-}
-
 TEST(BasicConsoleGTest,TestWriteEndColumn) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestWriteEndColumn());
@@ -81,8 +76,6 @@ TEST(BasicConsoleGTest,TestPaging) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestPaging(14, 15, 15));
 }
-
-
 
 //This tests need user intervent. Do not uncomment for automatic tests.
 
@@ -120,13 +113,11 @@ TEST(BasicConsoleGTest,TestSetGetTitleBar) {
     ASSERT_TRUE(console.TestSetGetTitleBar("title"));
 }
 
-
 //Not supported
 TEST(BasicConsoleGTest,TestSetGetCursorPosition) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSetGetCursorPosition(20, 10));
 }
-
 
 //Not supported
 TEST(BasicConsoleGTest,TestSetColour) {
@@ -138,5 +129,4 @@ TEST(BasicConsoleGTest,TestPlotChar) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestPlotChar('c', Blue, Yellow, 20, 10));
 }
-
 
