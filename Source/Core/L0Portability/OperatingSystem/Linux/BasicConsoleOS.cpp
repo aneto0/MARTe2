@@ -2,7 +2,7 @@
  * @file BasicConsoleOS.cpp
  * @brief Source file for class BasicConsole
  * @date 05/07/2015
- * @author Andre' Neto
+ * @author André Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -24,6 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #ifndef LINT
 #include <sys/ioctl.h>
 #include <stdio.h>
@@ -43,6 +44,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 /*lint -e{9109} forward declaration in BasicConsole.h is required to define the class*/
 /*lint -esym(9150, BasicConsoleOSProperties::*) */
 
@@ -102,6 +104,7 @@ const FlagsType BasicConsole::Mode::CreateNewBuffer(1u);
 const FlagsType BasicConsole::Mode::PerformCharacterInput(2u);
 const FlagsType BasicConsole::Mode::DisableControlBreak(4u);
 const FlagsType BasicConsole::Mode::EnablePaging(8u);
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -357,6 +360,7 @@ bool BasicConsole::TimeoutSupported() const {
     return false;
 }
 
+/*lint -e{715} function not implemented in Linux*/
 ErrorType BasicConsole::ShowBuffer() {
     return UnsupportedFeature;
 }

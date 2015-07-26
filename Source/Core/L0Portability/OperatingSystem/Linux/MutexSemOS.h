@@ -51,12 +51,13 @@ class PrivateMutexSemStruct {
 private:
 
     /**
-     * @brief Constructor.
+     * @brief Default constructor.
      */
     PrivateMutexSemStruct() {
         references = 1;
         closed = false;
     }
+
     /**
      * @brief Destructor.
      */
@@ -65,6 +66,7 @@ private:
 
     /**
      * @brief Initialize the semaphore with the right attributes.
+     * @param[in] recursive specifies if the mutex created is recursive or not
      * @return false if something wrong with pthread_mutex initialization.
      */
     bool Init(bool &recursive) {
@@ -101,7 +103,6 @@ private:
      * @brief Destroy the semaphore.
      * @return false if something wrong in pthread_mutex destruction.
      */
-
     bool Close() {
         if (closed) {
             return true;
@@ -203,13 +204,19 @@ private:
 
 private:
 
-    /**Mutex Handle */
+    /**
+     * Mutex Handle
+     */
     pthread_mutex_t mutexHandle;
 
-    /** Mutex Attributes */
+    /**
+     * Mutex Attributes
+     */
     pthread_mutexattr_t mutexAttributes;
 
-    /** Number of handle references. */
+    /**
+     * Number of handle references
+     */
     uint32 references;
 
     /**

@@ -2,7 +2,7 @@
  * @file BasicConsoleOS.cpp
  * @brief Source file for class BasicConsoleOS
  * @date 20/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -24,11 +24,13 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <Windows.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "BasicConsole.h"
 
 /*---------------------------------------------------------------------------*/
@@ -74,6 +76,7 @@ const FlagsType BasicConsole::Mode::CreateNewBuffer(1u);
 const FlagsType BasicConsole::Mode::PerformCharacterInput(2u);
 const FlagsType BasicConsole::Mode::DisableControlBreak(4u);
 const FlagsType BasicConsole::Mode::EnablePaging(8u);
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -609,4 +612,3 @@ bool BasicConsole::ConsoleBufferSupported() const {
 bool BasicConsole::TimeoutSupported() const {
     return true;
 }
-

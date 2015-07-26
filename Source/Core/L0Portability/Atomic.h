@@ -48,7 +48,7 @@
  *
  * These methods are particularly useful in the implementation of functionality that requires
  * protected basic operations between multiple asynchronous accesses like in a multi-thread system.
- * These methods are also used to implement fast threading synchronisation constructors (@see FastPollingMutexSem)
+ * These methods are also used to implement fast threading synchronization constructors (@see FastPollingMutexSem)
  */
 class Atomic {
 public:
@@ -134,7 +134,7 @@ public:
     static inline void Add (volatile int32 *p, int32 value);
 
     /**
-     * @brief Atomically subtracts two 32 bit integers..
+     * @brief Atomically subtracts two 32 bit integers.
      * @param[in,out] p the pointer to the variable which must be decremented.
      * @param[in] value the value to subtract to *p.
      * @pre p != NULL.

@@ -31,9 +31,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "FastPollingMutexSem.h"
 #include "EventSem.h"
 #include "Threads.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -42,9 +44,11 @@
  * @brief A class to test the FastPollingMutexSem functions.
  */
 class FastPollingMutexSemTest {
+
 public:
+
     /**
-     * @brief Constructor.
+     * @brief Default constructor.
      * @details Creates the mutex handle.
      */
     FastPollingMutexSemTest();
@@ -70,39 +74,35 @@ public:
 
     /**
      * @brief Tests the FastPollingMutexSem::FastLock function.
-     *
      * @details This test spawns nOfThreads threads which compete for a shared resource variable.
      * Each of the threads will try to increment and decrement the shared variable as many times as possible during one second.
      * Each of the threads will call FastPollingMutexSem::Lock before accessing the shared resource.
-     *
      * @param[in] nOfThreads is the number of threads to launch.
      * @param[in] timeout the timeout value that will be used to call the lock function.
      * @return true if the calls to FastPollingMutexSem::Lock returned true and if the shared resource was protected.
      */
-    bool TestFastLock(int32 nOfThreads, TimeoutType timeout);
+    bool TestFastLock(int32 nOfThreads,
+                      TimeoutType timeout);
 
     /**
      * @brief Tests the FastPollingMutexSem::FastUnLock function.
-     *
      * @details This test spawns nOfThreads threads which compete for a shared resource variable.
      * Each of the threads will try to increment and decrement the shared as many times as possible during one second.
      * Each of the threads will call FastPollingMutexSem::UnLock before releasing the shared resource.
-     *
      * @param[in] nOfThreads is the number of threads to launch.
      * @param[in] timeout the timeout value that will be used to call the lock function (this allows to demonstrate that
      * the UnLock is also working for semaphores which were locked with a finite timeout).
      * @return true if the calls to FastPollingMutexSem::UnLock returned true and if the shared resource was protected.
      */
-    bool TestFastUnLock(int32 nOfThreads, TimeoutType timeout);
+    bool TestFastUnLock(int32 nOfThreads,
+                        TimeoutType timeout);
 
     /**
      * @brief Tests the FastPollingMutexSem::FastTryLock function.
-     *
      * @details This test spawns nOfThreads threads which compete for a shared resource variable.
      * Each of the threads will try to increment and decrement the shared as many times as possible during one second.
      * Each of the threads will call FastPollingMutexSem::FastTryLock before accessing the shared resource. If this call returns false
      * each thread will keep on calling FastPollingMutexSem::FastTryLock until it returns true.
-     *
      * @return true if the function behaves as expected when protecting a shared resource and if
      * it is demonstrated that a second consecutive call to FastPollingMutexSem::FastTryLock returns false.
      */
@@ -110,7 +110,6 @@ public:
 
     /**
      * @brief Tests the FastPollingMutexSem::Lock function and checks that the error code is correctly set.
-     *
      * @return true if the error code is set to Errors::Information when the call succeeds and to timeout when
      * there is a timeout in the Lock.
      */
@@ -118,7 +117,6 @@ public:
 
     /**
      * @brief Tests the FastPollingMutexSem::Locked function.
-     *
      * @return true when the semaphore is locked and FastPollingMutexSem::Locked returns true
      * and when a semaphore in unlocked and FastPollingMutexSem::Locked returns false
      */
@@ -126,35 +124,47 @@ public:
 
     /**
      * @brief Verifies if the semaphore dead-locks as expected.
-     *
      * @details the FastPollingMutexSem is a non-recursive semaphore and does not allow two consecutive locks
      * (i.e. without unlocking before) from the same thread and will go into dead-lock.
-     *
      * @return true when the testing thread goes into dead-lock after two consecutive calls to FastLock
      */
     bool TestRecursive();
 
 private:
 
-    /** Semaphore which is tested by the unit testing functions */
+    /**
+     * Semaphore which is tested by the unit testing functions
+     */
     FastPollingMutexSem testMutex;
 
-    /** timeout to be used for the locking test*/
+    /**
+     * timeout to be used for the locking test
+     */
     TimeoutType testMutexTimeout;
 
-    /** Shared variable that is protected by the unit testing functions */
+    /**
+     * Shared variable that is protected by the unit testing functions
+     */
     int32 sharedVariable;
 
-    /** Number of running threads for a given test */
+    /**
+     * Number of running threads for a given test
+     */
     int32 nOfExecutingThreads;
 
-    /** This variable is set to true when the callback functions are expected to return  */
+    /**
+     * This variable is set to true when the callback functions are expected to return
+     */
     bool stop;
 
-    /** To be used by the threading callback functions to report an error*/
+    /**
+     * To be used by the threading callback functions to report an error
+     */
     bool failed;
 
-    /** Helper semaphore to synchronize the launching of concurrent threads*/
+    /**
+     * Helper semaphore to synchronize the launching of concurrent threads
+     */
     EventSem synchSem;
 
     /**
@@ -204,4 +214,3 @@ private:
 /*---------------------------------------------------------------------------*/
 
 #endif /* MUTEXTEST_H_ */
-

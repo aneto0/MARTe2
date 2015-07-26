@@ -140,13 +140,13 @@ bool MutexSem::Create(const bool &recursive) {
             if (recursive) {
                 //The deadlock condition causes a crash at operating system level.
                 ok = (pthread_mutexattr_settype(&osProperties->mutexAttributes, PTHREAD_MUTEX_RECURSIVE) == 0);
-		osProperties->recursive = true;
+                osProperties->recursive = true;
             }
             else {
                 //This was pthread PTHREAD_MUTEX_RECURSIVE but it was crashing when a deadlock was forced on purpose
                 //with PTHREAD_MUTEX_NORMAL the same thread cannot lock the semaphore without unlocking it first.
                 ok = (pthread_mutexattr_settype(&osProperties->mutexAttributes, PTHREAD_MUTEX_NORMAL) == 0);
-		osProperties->recursive = false;
+                osProperties->recursive = false;
             }
         }
         if (ok) {

@@ -112,7 +112,7 @@ bool ProcessorTypeTest::TestInequalityOperator() {
 
 }
 
-bool ProcessorTypeTest::TestDefaultCPUs() {
+bool ProcessorTypeTest::TestSetGetDefaultCPUs() {
     ProcessorType ptTest(ptSecond);
 
     ptTest.SetDefaultCPUs(0xAA);
@@ -121,16 +121,23 @@ bool ProcessorTypeTest::TestDefaultCPUs() {
     return (test == 0xAA);
 }
 
-bool ProcessorTypeTest::TestConstructors() {
+bool ProcessorTypeTest::TestDefaultConstructor() {
     ProcessorType ptDefault;             // Std contructor
+    return (ptDefault.GetProcessorMask() == 0xFE);
+}
+
+bool ProcessorTypeTest::TestConstructorFromMask() {
     ProcessorType ptFromMask(0xFC);      // Mask constructor
-    ProcessorType ptFromPT(ptFromMask);  // Constructor from other PT
 
-    bool result = (ptDefault.GetProcessorMask() == 0xFE);
-    result &= (ptFromMask.GetProcessorMask() == 0xFC);
-    result &= (ptFromPT.GetProcessorMask() == 0xFC);
+    return (ptFromMask.GetProcessorMask() == 0xFC);
 
-    return result;
+}
+
+bool ProcessorTypeTest::TestConstructorFromProcessorType() {
+    ProcessorType toCopy(0xFC);
+    ProcessorType ptFromPT(toCopy);  // Constructor from other PT
+    return (ptFromPT.GetProcessorMask() == 0xFC);
+
 }
 
 bool ProcessorTypeTest::TestSetMask(uint32 mask) {

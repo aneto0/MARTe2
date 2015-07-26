@@ -24,20 +24,26 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <pthread.h>
 #include <math.h>
 #include <sys/timeb.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include <ErrorType.h>
 #include "EventSem.h"
 #include "Atomic.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 /*lint -e{9109} forward declaration in EventSem.h is required to define the class*/
 struct EventSemOSProperties {
+
     /**
      * Mutex Handle
      */
@@ -78,6 +84,7 @@ struct EventSemOSProperties {
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 EventSem::EventSem() {
     /*lint -e{1732} -e{1733} no default assignment and no default copy constructor.
      *This is safe since none of the struct members point to dynamically allocated memory*/
@@ -278,4 +285,3 @@ bool EventSem::IsClosed() const {
     }
     return ok;
 }
-

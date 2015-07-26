@@ -2,7 +2,7 @@
  * @file BasicConsole.h
  * @brief Header file for class BasicConsole
  * @date 04/07/2015
- * @author Andre' Neto
+ * @author André Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,11 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "TimeoutType.h"
 #include "FlagsType.h"
 #include "StringHelper.h"
 #include "ErrorType.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -45,9 +47,9 @@
  * specific unit file).
  */
 struct BasicConsoleOSProperties;
+
 /**
  * @brief Multi-platform basic console support.
- *
  * @details The framework offers a portable basic console. This console enables framework
  * developers to offer a classic I/O interface to the framework users.
  * The specificities of the behaviour are delegated to the underlying operating system.
@@ -56,6 +58,7 @@ struct BasicConsoleOSProperties;
 class BasicConsole {
 
 public:
+
     /**
      * @brief Initialises the console operating system specific properties.
      */
@@ -137,6 +140,7 @@ public:
      * - Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
      * - Warning if zero bytes are written and no OSError is flagged;
      * - or OSError if there is any operating system related problem while performing the operation.
+     * @pre Size has not to be larger than the buffer size.
      */
     virtual ErrorType Write(const char8 * const buffer,
                             uint32 & size,
@@ -160,6 +164,7 @@ public:
 
     /**
      * @brief Update the console size.
+     * @details Be aware of calling this function after the open the console.
      * @param[in] numberOfColumns number of columns to set in the console.
      * @param[in] numberOfRows number of rows to set in the console.
      * @return NoError if the new size can be set or OSError if there is any operating
@@ -331,12 +336,13 @@ public:
     virtual bool TimeoutSupported() const;
 
 private:
+
     /**
      * @brief Portable paged write implementation.
      * @details If the mode is paging, it divides the text to write in chunks (pages) that fit the console size.
      * The user is asked to press a key in order to change to the next the page.
      * @param[in] buffer is the data to write on the console.
-     * @param[in,out] size is maximum size in byte to write on the console. If a minor number of bytes is written,
+     * @param[in] size is maximum size in byte to write on the console. If a minor number of bytes is written,
      * size become the number of bytes written.
      * @param[in] msecTimeout is the timeout.
      * @return NoError if a number of bytes greater than 0 is successfully written. Otherwise, it will return Timeout
@@ -383,6 +389,7 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 ErrorType BasicConsole::PagedWrite(const char8 * const buffer,
                                    const uint32 &size,
                                    const TimeoutType &timeout) {

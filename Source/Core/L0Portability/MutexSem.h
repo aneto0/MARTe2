@@ -61,7 +61,7 @@ public:
     /**
      * @brief This semaphore instance will share the same low-level semaphore
      * (i.e. that share the same handle) with the source semaphore.
-     * @param source the semaphore providing the access to the low-level semaphore.
+     * @param[in] source the semaphore providing the access to the low-level semaphore.
      */
     MutexSem(MutexSem &source);
 

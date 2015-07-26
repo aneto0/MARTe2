@@ -33,12 +33,15 @@ SPB=OperatingSystem/$(OPERATING_SYSTEM).x
 OBJSX=  Atomic.x \
         Endianity.x \
         Memory.x \
+        FastMath.x \
         Processor.x \
         ProcessorType.x \
         Threads.x  \
         ThreadsDatabase.x \
         ThreadInformation.x \
-        MemoryStatisticsDatabase.x
+        MemoryStatisticsDatabase.x \
+        LoadableLibrary.x \
+        FastPollingMutexSem.x
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 

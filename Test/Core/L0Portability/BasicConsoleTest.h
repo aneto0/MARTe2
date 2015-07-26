@@ -31,9 +31,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "BasicConsole.h"
 #include "Threads.h"
 #include "Sleep.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -47,13 +49,20 @@ public:
 
     /**
      * @brief Default constructor
-     * @detail When the BasicConsoleTest is created, automatically is set numberOfRows = 40
+     * @details When the BasicConsoleTest is created, automatically is set numberOfRows = 40
      * numberOfColumns = 60.
      */
     BasicConsoleTest() {
         numberOfRows = 40;
         numberOfColumns = 60;
     }
+
+
+    /**
+     * @brief Tests the BasicConsole constructor.
+     * @return true if the initial size of the console is set to zero.
+     */
+    bool TestConstructor();
 
     /**
      * @brief Tests the correct opening of the console with default mode.
@@ -64,35 +73,31 @@ public:
 
     /**
      * @brief Tests the correct opening of the console with CreateNewBuffer mode.
-     * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModeCreateNewBuffer();
 
     /**
      * @brief Tests the correct opening of the console with PerformCharacterInput mode.
-     * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModePerformCharacterInput();
 
     /**
      * @brief Tests the correct opening of the console with DisableControlBreak mode.
-     * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModeDisableControlBreak();
 
     /**
      * @brief Tests the correct opening of the console with EnablePaging mode.
-     * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the returned value of BasicConsole.Open() is NoError.
      */
     bool TestOpenModeEnablePaging();
 
     /**
      * @brief Test BasicConsole::GetOpeningMode function.
-     * @detail Open consoles with different Modes Then checks if the returned value of GetOpeningMode
+     * @details Open consoles with different Modes Then checks if the returned value of GetOpeningMode
      * is consistent with the mode specified.
      * @return true if the returned value of the GetOpeningMode is the expected value.
      */
@@ -100,7 +105,7 @@ public:
 
     /**
      * @brief Test BasicConsole::Close() function.
-     * @detail Open consoles and then close. Moreover the test tries to close a closed console.
+     * @details Open consoles and then close. Moreover the test tries to close a closed console.
      * @return true if the returned value of the BasicConsole::Close() is true when the console can close the
      * console and false when the console cannot close the console (because is closed).
      */
@@ -145,16 +150,6 @@ public:
 
     /**
      * @brief Tests BasicConsole::Write() function.
-     * @details If we give in input a size of the string greater than the size of the string passed,
-     * the write function must write only the string passed (until the character '\0') and size must
-     * be reduced at the real string size. This test checks that the written bytes = realStringSize.
-     * @param[in] string is the string to write.
-     * @return true if the sizes of the written string is the same than the real size of the string.
-     */
-    bool TestWriteLargeSize(const char8 *string);
-
-    /**
-     * @brief Tests BasicConsole::Write() function.
      * @details If the string is larger than the screen columns, the BasicConsole::Write() should
      * continue writing in the next line.
      * @return true if the sizes of the written string is the same than the real size of the string.
@@ -177,12 +172,21 @@ public:
                     uint32 columns);
 
     /**
-     * @brief Test BasicConsole::Read() function
-     * @detail Test if the string read by console is the same of the string passed by argument (the user must write in console the same word) with the same size.
+     * @brief Tests BasicConsole::Read() function
+     * @details Test if the string read by console is the same of the string passed by argument (the user must write in console the same word) with the same size.
      * @param[in] stringArg is the string to match with the read string.
      * @return true if the read string is equal to the passed argument.
      */
     bool TestRead(const char8 *stringArg);
+
+
+    /**
+     * @brief Tests BasicConsole::Read passing a finite timeout.
+     * @param[in] timeout is the desired timeout.
+     * @return true if the read function returns after the timeout expire, false otherwise.
+     */
+    bool TestTimeoutRead(uint32 timeout);
+
 
     /**
      * @brief Tests the BasicConsole::SetSize and BasicConsole::GetSize functions
@@ -216,10 +220,10 @@ public:
     bool TestPerfChar();
 
     /**
-     * @brief Tests the BasicConsole::Show function.
+     * @brief Tests the BasicConsole::ShowBuffer function.
      * @return the return value of the tested function.
      */
-    bool TestShow();
+    bool TestShowBuffer();
 
     /**
      * @brief Tests the BasicConsole::SetTitleBar function
@@ -251,7 +255,7 @@ public:
      * @param[in] c is the character to be plotted.
      * @param[in] foregroundColour is the desired foreground color.
      * @param[in] backgroundColour is the desired background color.
-     * @param[in] columns is the desired character x position.
+     * @param[in] column is the desired character x position.
      * @param[in] row is the desired character y position.
      * @return the return value of the tested function
      */
@@ -276,6 +280,7 @@ public:
     }
 
 private:
+
     /**
      * Definitions of the of the console number of rows.
      */
