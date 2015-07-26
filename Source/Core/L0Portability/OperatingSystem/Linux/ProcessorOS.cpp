@@ -1,8 +1,8 @@
 /**
- * @file Processor.cpp
+ * @file ProcessorOS.cpp
  * @brief Source file for class Processor
- * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @date 26/07/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -24,7 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <unistd.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -32,7 +32,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
+uint32 Processor::Available() {
+    return static_cast<uint32>(sysconf(_SC_NPROCESSORS_ONLN));
+}
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/

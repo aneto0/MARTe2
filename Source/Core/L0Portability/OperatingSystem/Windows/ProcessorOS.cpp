@@ -1,8 +1,8 @@
 /**
- * @file ProcessorOS.h
- * @brief Header file for class ProcessorOS
- * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @file ProcessorOS.cpp
+ * @brief Source file for class Processor
+ * @date 26/07/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,39 +16,29 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ProcessorOS
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class Processor (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef PROCESSOROS_H_
-#define 		PROCESSOROS_H_
-
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#ifndef LINT
+#include <unistd.h>
+#endif
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "Processor.h"
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
-/**
- * @brief Called by ProcessorType::Available
- * @return a mask which defines the available cpus.
- */
-inline uint32 Processor::Available() {
+uint32 Processor::Available() {
     SYSTEM_INFO si;
     GetSystemInfo(&si);
     return si.dwNumberOfProcessors;
 }
-
 /*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
+/*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-#endif /* PROCESSOROS_H_ */
-

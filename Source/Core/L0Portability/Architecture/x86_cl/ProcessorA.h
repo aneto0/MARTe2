@@ -94,7 +94,13 @@ uint32 Processor::Model() {
     uint32 ecx = 0;
     uint32 edx = 0;
     CPUID(1, eax, ebx, ecx, edx);
-    return (eax >> 4) & 0xf;
+    uint32 model = (eax >> 4) & 0xf;
+    uint32 family = Processor::Family();
+    if ((family == 6) || (family == 15)) {
+        uint32 extendedModel = (eax >> 16) & 0xf;
+        model += (extendedModel << 4);
+    }
+    return model;
 }
 
 /**

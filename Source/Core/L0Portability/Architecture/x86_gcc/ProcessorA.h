@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "../../Processor.h"
+#include "Processor.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -48,7 +48,11 @@ static char8 processorVendorId[13] = { 0 };
  * @param[out] ecx the CPU ECX register
  * @param[out] edx the CPU EDX register
  */
-static inline void CPUID(uint32 info, uint32 &eax, uint32 &ebx, uint32 &ecx, uint32 &edx) {
+static inline void CPUID(uint32 info,
+                         uint32 &eax,
+                         uint32 &ebx,
+                         uint32 &ecx,
+                         uint32 &edx) {
     __asm__(
             "cpuid;" /* assembly code */
             :"=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx) /* outputs */
@@ -86,7 +90,13 @@ inline uint32 Processor::Model() {
     uint32 ecx = 0;
     uint32 edx = 0;
     CPUID(1, eax, ebx, ecx, edx);
-    return (eax >> 4) & 0xf;
+    uint32 model = (eax >> 4) & 0xf;
+    uint32 family = Processor::Family();
+    if ((family == 6) || (family == 15)) {
+        uint32 extendedModel = (eax >> 16) & 0xf;
+        model += (extendedModel << 4);
+    }
+    return model;
 }
 
 /**
