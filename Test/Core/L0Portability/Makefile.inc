@@ -39,7 +39,9 @@ OBJSX=  EndianityTest.x \
 	StringHelperTest.x \
 	TimeoutTypeTest.x \
 	LoadableLibraryTest.x \
-	FastMathTest.x
+	FastMathTest.x \
+	StringHelperTest.x \
+	StringPortableTest.x
 
 PACKAGE=Core
 ROOT_DIR=../../..
