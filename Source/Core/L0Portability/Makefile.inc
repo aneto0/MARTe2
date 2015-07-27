@@ -39,7 +39,6 @@ OBJSX=  Atomic.x \
         Threads.x  \
         ThreadsDatabase.x \
         ThreadInformation.x \
-        MemoryStatisticsDatabase.x \
         LoadableLibrary.x \
         FastPollingMutexSem.x
 
