@@ -36,209 +36,143 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "Memory.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief System dependent implementation of functions for memory Management.
- */
-class MemoryOS {
+void *Memory::Malloc(uint32 size,
+                     MemoryAllocationFlags allocFlags) {
 
-public:
+    void* data = NULL;
 
-    /**
-     * @brief Allocate dynamically a portion of memory.
-     * @see MemoryMalloc
-     * @param[in] size is the number of bytes to allocate.
-     * @param[in] allocFlags
-     * @return a pointer to the allocated memory.
-     */
-    static void *Malloc(uint32 size,
-                        MemoryAllocationFlags allocFlags) {
-        if (size <= 0) {
-            return NULL;
-        }
+    if (size != 0) {
         return malloc(size);
     }
 
-    /**
-     * @brief Free a portion of memory previously dynamically allocated.
-     * @see MemoryFree
-     * @param[in,out] data is the pointer to the memory to be freed.
-     * @post data=NULL.
-     */
-    static void Free(void *&data) {
-        if (data != NULL) {
-            free(data);
-        }
+    return data;
+}
+
+void Memory::Free(void *&data) {
+
+    if (data != NULL) {
+        free(data);
         data = NULL;
     }
 
-    /**
-     * @brief Reallocate the memory.
-     * @see MemoryRealloc.
-     * @details The memory pointer could change if there is no space new size.
-     * @param[in,out] data is the pointer to the memory which must be reallocated.
-     * @param[in] newSize is the desired new size for the memory portion.
-     */
-    static void *Realloc(void *&data,
-                         uint32 newSize) {
-        return realloc(data, newSize);
-    }
+}
 
-    /**
-     * @brief Duplicate a string.
-     * @see MemoryStringDup
-     * @param[in] s is the string to duplicate.
-     * @return a pointer to the string copied.
-     */
-    static char8 *StringDup(const char8 *s) {
-        return strdup(s);
-    }
+void *Memory::Realloc(void *&data,
+                      uint32 newSize) {
+    bool ok = true;
 
-    /**
-     * @brief Allocate a shared memory.
-     * @see MemorySharedAlloc.
-     * @param[in] key is the identifier of the shared memory.
-     * @param[in] size is the desired size of the shared memory.
-     * @param[in] permMask define the process permissions.
-     * @return a pointer to the shared memory created.
-     */
-    static void *SharedAlloc(uint32 key,
-                             uint32 size,
-                             uint32 permMask) {
-        key_t keyid = (key_t) key;
-        int32 shmid = shmget(keyid, size, IPC_CREAT | permMask);
-        if (shmid == -1) {
-            return NULL;
+    if (data == NULL) {
+        data = Malloc(newSize);
+    }
+    else {
+        if (newSize == 0) {
+            Free(data);
         }
-        void *shm = shmat(shmid, NULL, 0);
-        if (shm == (char8 *) -1) {
-            return NULL;
+        else {
+            data = realloc(data, newSize);
         }
-        return shm;
+    }
+    return data;
+
+}
+
+char8 *Memory::StringDup(const char8 *s) {
+
+    char8 *sCopy = NULL;
+
+    if (s != NULL) {
+        sCopy = strdup(s);
+    }
+    return sCopy;
+}
+
+bool Memory::Check(void *address,
+                   MemoryTestAccessMode accessMode,
+                   uint32 size) {
+
+    return address != NULL;
+}
+
+bool Memory::Copy(void* destination,
+                  const void* source,
+                  uint32 size) {
+
+    bool ret = false;
+    if (source != NULL && destination != NULL) {
+        ret = memcpy(destination, source, size) != NULL;
     }
 
-    /**
-     * @brief Free a shared memory portion.
-     * @see MemorySharedFree.
-     * @param[in] address is a pointer to the shared memory.
-     */
-    static void SharedFree(void *address) {
-        shmdt(address);
-    }
+    return ret;
 
-    /**
-     * @brief Checks if the memory area is valid.
-     * @see MemoryCheck.
-     * @param[in] address is a pointer to the memory area target.
-     * @param[in] accessMode defines the process permissions.
-     * @param[in] size is the number of bytes to check.
-     * @return true if the memory area specified is valid.
-     */
-    static bool Check(void *address,
-                      MemoryTestAccessMode accessMode,
+}
+
+int32 Memory::Compare(const void* mem1,
+                      const void* mem2,
                       uint32 size) {
 
-        //check if the memory is valid.
-        char8 *addressPtr = (char8 *) address;
-        while (size > 0) {
-            if (addressPtr == NULL) {
-                return false;
-            }
-            size--;
-            addressPtr++;
+    int32 ret = -1;
+
+    if (mem1 != NULL && mem2 != NULL) {
+        int32 temp = memcmp(mem1, mem2, size);
+        if (temp < 0) {
+            ret = 1; // 1 if mem1<mem2
         }
-        return address != NULL;
-    }
-
-    /**
-     * @brief Copy source to destination.
-     * @see MemoryCopy.
-     * @param[in] destination is a pointer to the destination memory.
-     * @param[in] source is a pointer to the source memory.
-     * @param[in] size is the number of bytes to copy.
-     * @return true if source, destination and destination after the copy are not NULL.
-     */
-    static bool Copy(void* destination,
-                     const void* source,
-                     uint32 size) {
-
-
-        return memcpy(destination, source, size) != NULL;
-    }
-
-    /**
-     * @brief Compare two memory portions.
-     * @see MemoryCompare.
-     * @param[in] mem1 is a pointer to the first memory.
-     * @param[in] mem2 is a pointer to the second memory.
-     * @param[in] size is the size to compare.
-     * @return (0 if mem1 == mem2), (1 if mem1 < mem2), (2 if mem1 > mem2), (-1 if one of memory arguments is NULL).
-     */
-    static int32 Compare(const void* mem1,
-                         const void* mem2,
-                         uint32 size) {
-
-        int32 ret = memcmp(mem1, mem2, size);
-        if (ret < 0) {
-            return 1; // 1 if mem1<mem2
+        if (temp > 0) {
+            ret = 2; // 2 if mem1>mem2
         }
-        if (ret > 0) {
-            return 2; // 2 if mem1>mem2
+        if (temp == 0) {
+            ret = 0; // 0 if mem1==mem2
         }
-        return ret; //0 if mem1=mem2
+    }
+
+    return ret;
+
+}
+
+const void* Memory::Search(const void* mem,
+                           char8 c,
+                           uint32 size) {
+    const void* ret = NULL;
+    if (mem != NULL) {
+
+        ret = memchr(mem, c, size);
 
     }
 
-    /**
-     * @brief Search a byte in the memory.
-     * @see MemorySearch.
-     * @param[in] mem is the memory target.
-     * @param[in] c is the element to search.
-     * @param[in] size is the number of bytes to check.
-     * @return a pointer to the first occurence of c in mem, NULL if is not found or in case of mem==NULL.
-     */
-    static const void* Search(const void* mem,
-                              int32 c,
-                              uint32 size) {
+    return ret;
+}
 
-        return memchr(mem, c, size);
+bool Memory::Move(void* destination,
+                  const void* source,
+                  uint32 size) {
+
+    bool ret = false;
+
+    if (source != NULL && destination != NULL) {
+
+        ret = memmove(destination, source, size) != NULL;
     }
+    return ret;
 
-    /**
-     * @brief Copy size bytes from source to destination.
-     * @see MemoryMove.
-     * @param[in] destination is a pointer to the destination memory.
-     * @param[in] source is a pointer to source memory.
-     * @param[in] size is the number of bytes to copy.
-     * @return true if source, destination and destination after the copy are not NULL.
-     */
-    static bool Move(void* destination,
-                     const void* source,
-                     uint32 size) {
+}
 
-        return memmove(destination, source, size) != NULL;
-
-    }
-
-    /**
-     * @brief Copy c in the first bytes of a memory.
-     * @see MemorySet.
-     * @param[in] mem is a pointer to the memory.
-     * @param[in] c is the byte to copy.
-     * @param[in] size is the number of bytes to set to c.
-     * @return true if mem before and after the operation id not NULL.
-     */
-    static bool Set(void* mem,
-                    int32 c,
-                    uint32 size) {
+bool Memory::Set(void* mem,
+                 char8 c,
+                 uint32 size) {
+    bool ret = false;
+    if (mem != NULL) {
 
         return memset(mem, c, size) != NULL;
     }
-};
+
+    return ret;
+
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

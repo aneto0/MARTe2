@@ -1,8 +1,8 @@
 /**
- * @file Memory.cpp
- * @brief Source file for class Memory
- * @date 18/06/2015
- * @author Giuseppe Ferr�
+ * @file MemoryOS.cpp
+ * @brief Source file for class MemoryOS
+ * @date 27/lug/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,20 +17,24 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class Memory (public, protected, and private). Be aware that some 
+ * the class MemoryOS (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#ifndef LINT
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <stdlib.h>
+#include <string.h>
+#endif
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
 #include "Memory.h"
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,MemoryOS.h)
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,38 +43,47 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-void *Memory::Malloc(uint32 size,
-        MemoryAllocationFlags allocFlag) {
 
-    void* data=NULL;
+
+
+void *Memory::Malloc(uint32 size,
+                     MemoryAllocationFlags allocFlags) {
+
+    void* data = NULL;
 
     if (size != 0) {
-
-        data = MemoryOS::Malloc(size, allocFlag);
-
+        return malloc(size);
     }
 
     return data;
+}
+
+void Memory::Free(void *&data) {
+
+    if (data != NULL) {
+        free(data);
+        data = NULL;
+    }
 
 }
 
 void *Memory::Realloc(void *&data,
                       uint32 newSize) {
-
     bool ok = true;
 
     if (data == NULL) {
-        data = MemoryMalloc(newSize);
+        data = Malloc(newSize);
     }
     else {
         if (newSize == 0) {
-            MemoryFree(data);
+            Free(data);
         }
         else {
-            data = MemoryOS::Realloc(data, newSize);
+            data = realloc(data, newSize);
         }
     }
     return data;
+
 }
 
 char8 *Memory::StringDup(const char8 *s) {
@@ -78,29 +91,16 @@ char8 *Memory::StringDup(const char8 *s) {
     char8 *sCopy = NULL;
 
     if (s != NULL) {
-
-        sCopy = MemoryOS::StringDup(s);
-
+        sCopy = strdup(s);
     }
-
     return sCopy;
-
 }
-
-void Memory::Free(void *&data) {
-
-    if (data != NULL) {
-        MemoryOS::Free(data);
-        data = NULL;
-    }
-
-}
-
 
 bool Memory::Check(void *address,
-                 MemoryTestAccessMode accessMode,
-                 uint32 size) {
-    return MemoryOS::Check(address, accessMode, size);
+                   MemoryTestAccessMode accessMode,
+                   uint32 size) {
+
+    return address != NULL;
 }
 
 bool Memory::Copy(void* destination,
@@ -109,33 +109,43 @@ bool Memory::Copy(void* destination,
 
     bool ret = false;
     if (source != NULL && destination != NULL) {
-        ret = MemoryOS::Copy(destination, source, size);
+        ret = memcpy(destination, source, size) != NULL;
     }
 
     return ret;
+
 }
 
 int32 Memory::Compare(const void* mem1,
                       const void* mem2,
                       uint32 size) {
+
     int32 ret = -1;
 
     if (mem1 != NULL && mem2 != NULL) {
-
-        ret = MemoryOS::Compare(mem1, mem2, size);
+        int32 temp = memcmp(mem1, mem2, size);
+        if (temp < 0) {
+            ret = 1; // 1 if mem1<mem2
+        }
+        if (temp > 0) {
+            ret = 2; // 2 if mem1>mem2
+        }
+        if (temp == 0) {
+            ret = 0; // 0 if mem1==mem2
+        }
     }
 
     return ret;
+
 }
 
-const void *Memory::Search(const void* mem,
+const void* Memory::Search(const void* mem,
                            char8 c,
                            uint32 size) {
-
     const void* ret = NULL;
     if (mem != NULL) {
 
-        ret = MemoryOS::Search(mem, c, size);
+        ret = memchr(mem, c, size);
 
     }
 
@@ -150,21 +160,23 @@ bool Memory::Move(void* destination,
 
     if (source != NULL && destination != NULL) {
 
-        ret = MemoryOS::Move(destination, source, size);
+        ret = memmove(destination, source, size) != NULL;
     }
     return ret;
+
 }
 
 bool Memory::Set(void* mem,
                  char8 c,
                  uint32 size) {
-
     bool ret = false;
     if (mem != NULL) {
 
-        return MemoryOS::Set(mem, c, size);
+        return memset(mem, c, size) != NULL;
     }
 
     return ret;
+
 }
 
+	

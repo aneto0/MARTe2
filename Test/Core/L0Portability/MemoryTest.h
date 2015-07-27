@@ -49,30 +49,7 @@ private:
 
 public:
 
-    /**
-     * Event semaphore used for threads synchronization
-     */
-    EventSem eventSem;
 
-    /**
-     * Used to communicate with threads
-     */
-    bool signals[MAX_NO_OF_MEMORY_MONITORS - 1];
-
-    /**
-     * Internal counter
-     */
-    uint32 counter;
-
-    /**
-     * The memory amount allocated by each thread.
-     */
-    int32 sizeStore[MAX_NO_OF_MEMORY_MONITORS - 1];
-
-    /**
-     * The number of memory chuncks allocated by each thread.
-     */
-    int32 chunksStore[MAX_NO_OF_MEMORY_MONITORS - 1];
     /**
      * @brief Constructor.
      */
@@ -127,30 +104,6 @@ public:
     bool TestCheck(uint32 size);
 
 
-
-    /**
-     * @brief Tests the Memory::SharedAlloc function.
-     * @details Allocates a shared memory and checks that the returned pointer is not null.
-     * @return true if successful, false otherwise.
-     */
-    bool TestSharedAlloc();
-
-
-    /**
-     * @brief Tests the Memory::SharedFree function.
-     * @details Allocates a shared memory and checks that the returned pointer is not null, then frees the shared memory and checks that the pointer is null.
-     * @return true if successful, false otherwise.
-     */
-    bool TestSharedFree();
-
-    /**
-     * @brief Tests the shared memory between two different threads and the main process.
-     * @details creates a shared memory for a boolean value and an integer value  by threads and
-     * checks if the values are effectively shared changing and accessing and checking them with different threads.
-     * @return true if the shared integer and the shared boolean remain consistent with the operations done by threads.
-     */
-    bool TestSharedMemory();
-
     /**
      * @brief Tests the Memory::Copy function.
      * @details Copies a memory area with different size parameters and checks if the function returns false on case of null inputs.
@@ -190,49 +143,6 @@ public:
     bool TestSearch();
 
 
-    /**
-     * @brief Tests the Memory::GetHeaderInfo function
-     * @details Tests the header that contains the allocated memory information. To test correctly the function the macro MEMORY_STATICS must be defined.
-     * @return true if the returned informations on the allocated memory are correct.
-     */
-    bool TestGetHeaderInfo();
-
-
-    /**
-     * @brief Tests the Memory::AllocationStatistics function.
-     * @details Allocates memory and checks if the the database saves the informations correctly.
-     * @return true if successful, false otherwise.
-     */
-    bool TestAllocationStatistics();
-
-    /**
-     * @brief Tests the Memory::GetUsedHeap function.
-     * @details Launches a number of threads and checks that during their execution the heap memory is not empty. Then after the threads termination
-     * checks that the heap memory is empty.
-     * @return true if successful, false otherwise.
-     */
-    bool TestGetUsedHeap(uint32 nOfThreads);
-
-    /**
-     * @brief Tests the Memory::ClearStatisticsDatabase.
-     * @details Allocates memory and checks that the number of elements in the database and the heap memory amount is not zero. Then calls the function and checks
-     * that the memory database is empty.
-     * @return true if successful, false otherwise.
-     */
-    bool TestClearStatisticsDatabase();
-
-    /**
-     * @brief Tests the Memory::GetStatisticsDatabaseNElements.
-     * @details Allocates memory and checks that there is only one element in the database. Then frees the memories and checks that the number of elements is zero again.
-     * @return true if successful, false otherwise.
-     */
-    bool TestGetStatisticsDatabaseNElements();
-
-    /**
-     * @brief Tests the memory database functions together.
-     * @return true if the informations of the allocated memory are stored correctly on the database.
-     */
-    bool TestDatabase();
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

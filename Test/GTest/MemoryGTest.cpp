@@ -66,21 +66,6 @@ TEST(MemoryGTest,TestCheck) {
     ASSERT_TRUE(memorytest.TestCheck(100));
 }
 
-TEST(MemoryGTest,TestSharedAlloc) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSharedAlloc());
-}
-
-TEST(MemoryGTest,TestSharedFree) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSharedFree());
-}
-
-TEST(MemoryGTest,TestSharedMemory) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSharedMemory());
-}
-
 TEST(MemoryGTest,TestCopy) {
     MemoryTest memorytest;
     ASSERT_TRUE(memorytest.TestCopy());
@@ -104,37 +89,5 @@ TEST(MemoryGTest,TestSet) {
 TEST(MemoryGTest,TestSearch) {
     MemoryTest memorytest;
     ASSERT_TRUE(memorytest.TestSearch());
-}
-
-TEST(MemoryGTest,TestGetHeaderInfo) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestGetHeaderInfo());
-}
-
-TEST(MemoryGTest,TestAllocationStatistics) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestAllocationStatistics());
-}
-
-TEST(MemoryGTest,TestGetUsedHeap) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestGetUsedHeap(32));
-}
-
-
-TEST(MemoryGTest,TestClearStatisticsDatabase) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestClearStatisticsDatabase());
-}
-
-TEST(MemoryGTest,TestGetStatisticsDatabaseNElements) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestGetStatisticsDatabaseNElements());
-}
-
-
-TEST(MemoryGTest,TestDatabase) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestDatabase());
 }
 
