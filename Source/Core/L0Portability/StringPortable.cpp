@@ -357,7 +357,7 @@ int32 StringPortable::SearchIndex(const char8* const string1,
             end2 = false;
             while (!end2) {
 
-                if (string1[i] == string2[j] && string1[i] != '\0') {
+                if ((string1[i] == string2[j]) && (string1[i] != '\0')) {
                     end1 = true;
                     end2 = true;
                     ret = i;

@@ -39,7 +39,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 TEST(StringPortableGTest,TestLength) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestLength("Hello"));
@@ -74,7 +73,6 @@ TEST(StringPortableGTest,TestConcatenateNNoResult) {
     ASSERT_TRUE(mystringportable.TestConcatenateNNoResult());
 }
 
-
 TEST(StringPortableGTest,TestConcatenateWithResult) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestConcatenateWithResult());
@@ -83,9 +81,6 @@ TEST(StringPortableGTest,TestConcatenateNWithResult) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestConcatenateNWithResult());
 }
-
-
-
 
 TEST(StringPortableGTest,TestSearchChars) {
     StringPortableTest mystringportable;
@@ -110,7 +105,6 @@ TEST(StringPortableGTest,TestSearchIndex) {
     StringPortableTest mystringportable;
     ASSERT_TRUE(mystringportable.TestSearchIndex());
 }
-
 
 TEST(StringPortableGTest,TestTokenByChars) {
     StringPortableTest mystringportable;

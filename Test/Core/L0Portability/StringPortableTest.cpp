@@ -49,7 +49,6 @@ StringPortableTest::~StringPortableTest() {
     // Auto-generated destructor stub for StringPortableTest1
 }
 
-
 bool StringPortableTest::TestLength(const char8* string) {
     //Calculate the length of the string.
     int32 tryLength = StringPortable::Length(string);
@@ -222,7 +221,6 @@ bool StringPortableTest::TestConcatenateNWithResult() {
 
 }
 
-
 bool StringPortableTest::TestConcatenateNoResult() {
 
     char8 bufferTry[32];
@@ -248,7 +246,6 @@ bool StringPortableTest::TestConcatenateNoResult() {
 
     return (!StringPortable::Concatenate(bufferTry, NULL) && !StringPortable::Concatenate(NULL, "HelloWorld") && !StringPortable::Concatenate(NULL, NULL));
 }
-
 
 bool StringPortableTest::TestConcatenateNNoResult() {
 
@@ -510,7 +507,7 @@ bool StringPortableTest::TestTokenizeByChars() {
         return false;
     }
 
-    if (!StringTestHelper::Compare(retPointer, "World,I am...Giuseppe")){
+    if (!StringTestHelper::Compare(retPointer, "World,I am...Giuseppe")) {
         return false;
     }
 
@@ -523,7 +520,7 @@ bool StringPortableTest::TestTokenizeByChars() {
         return false;
     }
 
-    if (!StringTestHelper::Compare(retPointer, "I am...Giuseppe")){
+    if (!StringTestHelper::Compare(retPointer, "I am...Giuseppe")) {
         return false;
     }
 
@@ -535,7 +532,7 @@ bool StringPortableTest::TestTokenizeByChars() {
         return false;
     }
 
-    if (!StringTestHelper::Compare(retPointer, "\0")){
+    if (!StringTestHelper::Compare(retPointer, "\0")) {
         return false;
     }
 
