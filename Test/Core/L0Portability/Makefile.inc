@@ -40,7 +40,6 @@ OBJSX=  EndianityTest.x \
 	TimeoutTypeTest.x \
 	LoadableLibraryTest.x \
 	FastMathTest.x \
-	StringHelperTest.x \
 	StringPortableTest.x
 
 PACKAGE=Core
