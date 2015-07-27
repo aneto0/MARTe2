@@ -66,7 +66,8 @@ public:
      * @brief Compares two strings.
      * @param[in] string1 is the first string.
      * @param[in] string2 is the second string.
-     * @return (0 if string1==string2) (1 if string1<string2) (2 if string1>string2).
+     * @return (0 if string1==string2) (1 if string1<string2) (2 if string1>string2)
+     * (-1 if the string1 = NULL || string2 = NULL)..
      */
     static int32 Compare(const char8* const string1,
                          const char8* const string2);
@@ -76,7 +77,8 @@ public:
      * @param[in] string1 is the first string.
      * @param[in] string2 is the second string.
      * @param[in] size is the max number of bytes to compare.
-     * @return (0 if string1==string2) (1 if string1<string2) (2 if string1>string2).
+     * @return (0 if string1==string2 || size = 0) (1 if string1<string2) (2 if string1>string2)
+     * (-1 if the string1 = NULL || string2 = NULL).
      */
     static int32 CompareN(const char8* const string1,
                           const char8* const string2,
@@ -193,12 +195,12 @@ public:
 
     /**
      * @brief Get the token using characters as delimiters.
-     * @details If result is NULL this function put a terminated character in string when the delimiter is found i.e
-     * the first parameter string could be also the result.
-     * @param[in,out] string is the string to tokenize.
+     * @param[in] string is the string to tokenize.
      * @param[in] delimiter contains character delimiters.
      * @param[out] result is the substring between delimiters.
-     * @return a pointer to the next position after the delimiter for a successive tokenize operation or NULL if terminator is not found.
+     * @return a pointer to the next position after the delimiter for a successive tokenize operation or
+     * the end of the string if terminator is not found. It returns NULL if at least one of the
+     * arguments is NULL.
      */
     static const char8* TokenizeByChars(const char8* const string,
                                         const char8* const delimiter,

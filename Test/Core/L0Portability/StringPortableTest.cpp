@@ -1,30 +1,54 @@
-/* Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file StringPortableTest1.cpp
+ * @brief Source file for class StringPortableTest1
+ * @date 27/07/2015
+ * @author Llorenç Capellà
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http: //ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id:$
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
 
-#include "GeneralDefinitions.h"
+ * @details This source file contains the definition of all the methods for
+ * the class StringPortableTest1 (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
 #include "StringPortableTest.h"
+#include "GeneralDefinitions.h"
 #include "StringTestHelper.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+StringPortableTest::StringPortableTest() {
+    // Auto-generated constructor stub for StringPortableTest1
+}
+
+StringPortableTest::~StringPortableTest() {
+    // Auto-generated destructor stub for StringPortableTest1
+}
+
 
 bool StringPortableTest::TestLength(const char8* string) {
     //Calculate the length of the string.
@@ -39,7 +63,7 @@ bool StringPortableTest::TestLength(const char8* string) {
     //Check if the function returns a negative number (-1) in case of NULL argument.
     tryLength = StringPortable::Length(NULL);
 
-    if (tryLength > 0) {
+    if (tryLength != -1) {
         return false;
     }
 
@@ -50,7 +74,7 @@ bool StringPortableTest::TestCompare(const char8* string,
                                      const char8* stringCompare) {
 
     //Check if strings are Compare and if the result is correct.
-    bool tryCompare = StringPortable::Compare(string, stringCompare) == 0;
+    bool tryCompare = (StringPortable::Compare(string, stringCompare) == 0);
     bool Compare = StringTestHelper::Compare(string, stringCompare);
 
     if (tryCompare != Compare) {
@@ -78,20 +102,21 @@ bool StringPortableTest::TestCompareN() {
 
     const char8 *string1 = "HelloWorld";
     const char8 *string2 = "HelloD";
+    const char8 *string3 = "HelloWorld";
 
     uint32 size = 5;
 
-//Check the equality until size chars.
+    //Check the equality until size chars.
     if (StringPortable::CompareN(string1, string2, size) != 0) {
         return false;
     }
 
-//Check if it returns 2 since string1 is greater than string2.
+    //Check if it returns 2 since string1 is greater than string2.
     if (StringPortable::CompareN(string1, string2, size + 1) != 2) {
         return false;
     }
 
-//Check if it returns 1 since string2 is greater than string1.
+    //Check if it returns 1 since string2 is greater than string1.
     if (StringPortable::CompareN(string2, string1, size + 1) != 1) {
         return false;
     }
@@ -100,13 +125,210 @@ bool StringPortableTest::TestCompareN() {
     if (StringPortable::CompareN(string1, string2, size) != 0) {
         return false;
     }
-
-//Check the return value in case of NULL arguments.
+    size = 10 + 1;
+    if (StringPortable::CompareN(string1, string3, size) != 0) {
+        return false;
+    }
+    //Check the return value in case of NULL arguments.
     size = 1;
     return (StringPortable::CompareN(NULL, NULL, size) == -1 && StringPortable::CompareN(string1, NULL, size) == -1
             && StringPortable::CompareN(NULL, string2, size) == -1);
 
 }
+
+bool StringPortableTest::TestConcatenateWithResult() {
+
+    const char8 *string1 = "Hello ";
+    const char8 *string2 = "World";
+
+    char8 buffer[32];
+
+    //Concatenate string2 to string1. In this case since the result parameter (bufferTry) is not a NULL pointer, the first argument
+    //can be a const char8*.
+    if (!StringPortable::Concatenate(string1, string2, buffer)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(buffer, "Hello World")) {
+        return false;
+    }
+
+    //Copy string1 to buffer which is a char8* pointer.
+    if (!StringPortable::Copy(buffer, string1)) {
+        return false;
+    }
+    //Check if buffer is equal to string1.
+    if (!StringTestHelper::Compare(buffer, "Hello ")) {
+        return false;
+    }
+
+    //Use the same buffer as output
+    if (!StringPortable::Concatenate(buffer, string2, buffer)) {
+        return false;
+    }
+
+    //Check if buffer is the conConcatenateenate string.
+    if (!StringTestHelper::Compare(buffer, "Hello World")) {
+        return false;
+    }
+
+    return (!StringPortable::Concatenate(NULL, string2, buffer) && !StringPortable::Concatenate(string1, NULL, buffer)
+            && !StringPortable::Concatenate(string1, string2, NULL));
+}
+
+bool StringPortableTest::TestConcatenateNWithResult() {
+    const char8 *string1 = "Hello";
+    const char8 *string2 = "World";
+
+    char8 result[32];
+
+    uint32 sizeToConcatenate = 2;
+
+    if (!StringPortable::ConcatenateN(string1, string2, result, sizeToConcatenate)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(result, "HelloWo")) {
+        return false;
+    }
+
+    //If the number of chars to Concatenate is too much, all second string is Concatenated and size is
+    //modified.
+    sizeToConcatenate = 20;
+
+    if (!StringPortable::ConcatenateN(string1, string2, result, sizeToConcatenate)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(result, "HelloWorld") || sizeToConcatenate != 5) {
+        return false;
+    }
+
+    //Test with size = 0
+
+    sizeToConcatenate = 0;
+
+    if (!StringPortable::ConcatenateN(string1, string2, result, sizeToConcatenate)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(result, "Hello")) {
+        return false;
+    }
+
+    sizeToConcatenate = 1;
+    return (!StringPortable::ConcatenateN(NULL, string2, result, sizeToConcatenate) && !StringPortable::ConcatenateN(string1, NULL, result, sizeToConcatenate)
+            && !StringPortable::ConcatenateN(string1, string2, NULL, sizeToConcatenate));
+
+}
+
+
+bool StringPortableTest::TestConcatenateNoResult() {
+
+    char8 bufferTry[32];
+
+    StringPortable::Copy(bufferTry, "Hello");
+    const char8 *buffer = "World";
+
+    if (!StringPortable::Concatenate(bufferTry, buffer)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(bufferTry, "HelloWorld")) {
+        return false;
+    }
+
+    if (!StringPortable::Concatenate(bufferTry, "")) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(bufferTry, "HelloWorld")) {
+        return false;
+    }
+
+    return (!StringPortable::Concatenate(bufferTry, NULL) && !StringPortable::Concatenate(NULL, "HelloWorld") && !StringPortable::Concatenate(NULL, NULL));
+}
+
+
+bool StringPortableTest::TestConcatenateNNoResult() {
+
+    char8 bufferTry[32];
+
+    StringPortable::Copy(bufferTry, "Hello");
+    const char8 *buffer = "World";
+
+    //Test the conConcatenateenate function with a max number of chars to Concatenate.
+    uint32 sizeToConcatenate = 3;
+
+    if (!StringPortable::ConcatenateN(bufferTry, buffer, sizeToConcatenate)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(bufferTry, "HelloWor")) {
+        return false;
+    }
+
+    //If the number of chars to Concatenate is too much, all second string is Concatenated and size is modified.
+    sizeToConcatenate = 10;
+
+    if (!StringPortable::ConcatenateN(bufferTry, buffer, sizeToConcatenate)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(bufferTry, "HelloWorWorld")) {
+        return false;
+    }
+
+    //size=0
+    sizeToConcatenate = 0;
+
+    if (!StringPortable::ConcatenateN(bufferTry, buffer, sizeToConcatenate)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(bufferTry, "HelloWorWorld")) {
+        return false;
+    }
+
+    sizeToConcatenate = 1;
+    return (!StringPortable::ConcatenateN(bufferTry, NULL, sizeToConcatenate) && !StringPortable::ConcatenateN(NULL, buffer, sizeToConcatenate)
+            && !StringPortable::ConcatenateN(NULL, NULL, sizeToConcatenate));
+}
+
+bool StringPortableTest::TestSearchChar() {
+    const char8 *buffer = "Hello World";
+    const char8 *retPointer;
+
+    char8 toSearch = 'l';
+
+    if ((retPointer = StringPortable::SearchChar(buffer, toSearch)) == NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(retPointer, "llo World")) {
+        return false;
+    }
+
+    //search again on the remained
+    if ((retPointer = StringPortable::SearchChar(retPointer + 1, toSearch)) == NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(retPointer, "lo World")) {
+        return false;
+    }
+
+    //these chars are not in the string
+    char8 invalid = 'x';
+
+    if ((retPointer = StringPortable::SearchChar(buffer, invalid)) != NULL) {
+        return false;
+    }
+
+    //NULL pointer arguments
+    return (StringPortable::SearchChar(NULL, toSearch) == NULL);
+}
+
 bool StringPortableTest::TestCopy(const char8* string) {
 
     //Copy string in the buffer.
@@ -170,193 +392,25 @@ bool StringPortableTest::TestCopyN() {
             && !StringPortable::CopyN(NULL, NULL, sizeToCopy));
 }
 
-bool StringPortableTest::TestConcatenateNoResult() {
-
-    char8 bufferTry[32];
-
-    StringPortable::Copy(bufferTry, "Hello");
-    const char8 *buffer = "World";
-
-    if (!StringPortable::Concatenate(bufferTry, buffer)) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(bufferTry, "HelloWorld")) {
-        return false;
-    }
-
-    if (!StringPortable::Concatenate(bufferTry, "")) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(bufferTry, "HelloWorld")) {
-        return false;
-    }
-
-    return (!StringPortable::Concatenate(bufferTry, NULL) && !StringPortable::Concatenate(NULL, "HelloWorld") && !StringPortable::Concatenate(NULL, NULL));
-}
-
-bool StringPortableTest::TestConcatenateNNoResult() {
-
-    char8 bufferTry[32];
-
-    StringPortable::Copy(bufferTry, "Hello");
-    const char8 *buffer = "World";
-
-    //Test the conConcatenateenate function with a max number of chars to Concatenate.
-    uint32 sizeToConcatenate = 3;
-
-    if (!StringPortable::ConcatenateN(bufferTry, buffer, sizeToConcatenate)) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(bufferTry, "HelloWor")) {
-        return false;
-    }
-
-    //If the number of chars to Concatenate is too much, all second string is Concatenateed and size is modified.
-    sizeToConcatenate = 10;
-
-    if (!StringPortable::ConcatenateN(bufferTry, buffer, sizeToConcatenate)) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(bufferTry, "HelloWorWorld")) {
-        return false;
-    }
-
-    //size=0
-    sizeToConcatenate = 0;
-
-    if (!StringPortable::ConcatenateN(bufferTry, buffer, sizeToConcatenate)) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(bufferTry, "HelloWorWorld")) {
-        return false;
-    }
-
-    sizeToConcatenate = 1;
-    return (!StringPortable::ConcatenateN(bufferTry, NULL, sizeToConcatenate) && !StringPortable::ConcatenateN(NULL, buffer, sizeToConcatenate)
-            && !StringPortable::ConcatenateN(NULL, NULL, sizeToConcatenate));
-}
-
-bool StringPortableTest::TestConcatenateWithResult() {
-
-    const char8 *string1 = "Hello ";
-    const char8 *string2 = "World";
-
-    char8 buffer[32];
-
-    //Concatenate string2 to string1. In this case since the result parameter (bufferTry) is not a NULL pointer, the first argument
-    //can be a const char8*.
-    if (!StringPortable::Concatenate(string1, string2, buffer)) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(buffer, "Hello World")) {
-        return false;
-    }
-
-    //Copy string1 to buffer which is a char8* pointer.
-    if (!StringPortable::Copy(buffer, string1)) {
-        return false;
-    }
-    //Check if buffer is equal to string1.
-    if (!StringTestHelper::Compare(buffer, "Hello ")) {
-        return false;
-    }
-
-    //Use the same buffer as output
-    if (!StringPortable::Concatenate(buffer, string2, buffer)) {
-        return false;
-    }
-
-    //Check if buffer is the conConcatenateenate string.
-    if (!StringTestHelper::Compare(buffer, "Hello World")) {
-        return false;
-    }
-
-    return (!StringPortable::Concatenate(NULL, string2, buffer) && !StringPortable::Concatenate(string1, NULL, buffer) && !StringPortable::Concatenate(string1, string2, NULL));
-}
-
-bool StringPortableTest::TestConcatenateNWithResult() {
-    const char8 *string1 = "Hello";
-    const char8 *string2 = "World";
-
-    char8 result[32];
-
-    uint32 sizeToConcatenate = 2;
-
-    if (!StringPortable::ConcatenateN(string1, string2, result, sizeToConcatenate)) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(result, "HelloWo")) {
-        return false;
-    }
-
-//If the number of chars to Concatenate is too much, all second string is Concatenateed and size is modified.
-    sizeToConcatenate = 20;
-
-    if (!StringPortable::ConcatenateN(string1, string2, result, sizeToConcatenate)) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(result, "HelloWorld") || sizeToConcatenate != 5) {
-        return false;
-    }
-
-    //Test with size = 0
-
-    sizeToConcatenate = 0;
-
-    if (!StringPortable::ConcatenateN(string1, string2, result, sizeToConcatenate)) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(result, "Hello")) {
-        return false;
-    }
-
-    sizeToConcatenate = 1;
-    return (!StringPortable::ConcatenateN(NULL, string2, result, sizeToConcatenate) && !StringPortable::ConcatenateN(string1, NULL, result, sizeToConcatenate)
-            && !StringPortable::ConcatenateN(string1, string2, NULL, sizeToConcatenate));
-
-}
-
-bool StringPortableTest::TestSearchChar() {
+bool StringPortableTest::TestSearchIndex() {
     const char8 *buffer = "Hello World";
-    const char8 *retPointer;
 
-    char8 toSearch = 'l';
+    const char8 *toSearch = "ll";
 
-    if ((retPointer = StringPortable::SearchChar(buffer, toSearch)) == NULL) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(retPointer, "llo World")) {
-        return false;
-    }
-
-    //search again on the remained
-    if ((retPointer = StringPortable::SearchChar(retPointer + 1, toSearch)) == NULL) {
-        return false;
-    }
-
-    if (!StringTestHelper::Compare(retPointer, "lo World")) {
+    if (StringPortable::SearchIndex(buffer, toSearch) != 2 && !StringTestHelper::Compare(buffer + 2, "llo World")) {
         return false;
     }
 
     //these chars are not in the string
-    char8 invalid = 'x';
+    const char8 *invalid = "xpqg";
 
-    if ((retPointer = StringPortable::SearchChar(buffer, invalid)) != NULL) {
+    if (StringPortable::SearchIndex(buffer, invalid) != StringPortable::Length(buffer)) {
         return false;
     }
 
     //NULL pointer arguments
-    return (StringPortable::SearchChar(NULL, toSearch) == NULL);
+    return (StringPortable::SearchIndex(NULL, NULL) == -1 && StringPortable::SearchIndex(buffer, NULL) == -1
+            && StringPortable::SearchIndex(NULL, toSearch) == -1);
 }
 
 bool StringPortableTest::TestSearchChars() {
@@ -443,27 +497,6 @@ bool StringPortableTest::TestSearchString() {
             && StringPortable::SearchString(NULL, toSearch) == NULL);
 }
 
-bool StringPortableTest::TestSearchIndex() {
-    const char8 *buffer = "Hello World";
-
-    const char8 *toSearch = "ll";
-
-    if (StringPortable::SearchIndex(buffer, toSearch) != 2 && !StringTestHelper::Compare(buffer + 2, "llo World")) {
-        return false;
-    }
-
-    //these chars are not in the string
-    const char8 *invalid = "xpqg";
-
-    if (StringPortable::SearchIndex(buffer, invalid) != StringPortable::Length(buffer)) {
-        return false;
-    }
-
-    //NULL pointer arguments
-    return (StringPortable::SearchIndex(NULL, NULL) == -1 && StringPortable::SearchIndex(buffer, NULL) == -1
-            && StringPortable::SearchIndex(NULL, toSearch) == -1);
-}
-
 bool StringPortableTest::TestTokenizeByChars() {
 
     const char8* string = "Hello:World,I am...Giuseppe";
@@ -477,6 +510,10 @@ bool StringPortableTest::TestTokenizeByChars() {
         return false;
     }
 
+    if (!StringTestHelper::Compare(retPointer, "World,I am...Giuseppe")){
+        return false;
+    }
+
     if (!StringTestHelper::Compare(result, "Hello")) {
         return false;
     }
@@ -486,11 +523,19 @@ bool StringPortableTest::TestTokenizeByChars() {
         return false;
     }
 
+    if (!StringTestHelper::Compare(retPointer, "I am...Giuseppe")){
+        return false;
+    }
+
     if (!StringTestHelper::Compare(result, "World")) {
         return false;
     }
 
     if ((retPointer = StringPortable::TokenizeByChars(retPointer, charDelimiters, result)) == NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(retPointer, "\0")){
         return false;
     }
 
@@ -519,6 +564,10 @@ bool StringPortableTest::TestTokenizeByString() {
 
     //Check if the result is correct.
     if ((retPointerConst = StringPortable::TokenizeByString(string, stringDelimiter, result)) == NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(retPointerConst, "Giuseppe")) {
         return false;
     }
 
@@ -593,9 +642,8 @@ bool StringPortableTest::TestSetChar() {
 
     StringPortable::SetChar(buffer, 0, 'b');
 
-    retValue&=buffer[0]=='a';
+    retValue &= buffer[0] == 'a';
 
     return retValue && !StringPortable::SetChar(NULL, size, 'a');
 
 }
-
