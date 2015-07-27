@@ -40,7 +40,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
 uint32 ThreadsDatabase::nOfEntries = 0;
 uint32 ThreadsDatabase::maxNOfEntries = 0;
 ThreadInformation **ThreadsDatabase::entries = NULL;
@@ -94,7 +93,7 @@ ThreadInformation *ThreadsDatabase::RemoveEntry(ThreadIdentifier threadId) {
     while (index < ThreadsDatabase::maxNOfEntries) {
         ThreadInformation *threadInfo = ThreadsDatabase::entries[index];
         if (threadInfo != NULL) {
-            if (threadInfo->threadId == threadId) {
+            if (threadInfo->GetThreadIdentifier() == threadId) {
                 ThreadsDatabase::entries[index] = NULL;
                 ThreadsDatabase::nOfEntries--;
 
@@ -121,7 +120,7 @@ ThreadInformation *ThreadsDatabase::GetThreadInformation(ThreadIdentifier thread
     while (index < ThreadsDatabase::maxNOfEntries) {
         ThreadInformation *threadInfo = ThreadsDatabase::entries[index];
         if (threadInfo != NULL) {
-            if (threadInfo->threadId == threadId) {
+            if (threadInfo->GetThreadIdentifier() == threadId) {
                 return threadInfo;
             }
         }
@@ -157,7 +156,7 @@ ThreadIdentifier ThreadsDatabase::GetThreadID(uint32 n) {
     while (index < ThreadsDatabase::maxNOfEntries) {
         if (ThreadsDatabase::entries[index] != NULL) {
             if (n == 0) {
-                return ThreadsDatabase::entries[index]->threadId;
+                return ThreadsDatabase::entries[index]->GetThreadIdentifier();
             }
             n--;
         }
@@ -202,7 +201,7 @@ ThreadIdentifier ThreadsDatabase::Find(const char8 *name) {
     while (index < ThreadsDatabase::maxNOfEntries) {
         if (ThreadsDatabase::entries[index] != NULL) {
             if (StringHelper::Compare(ThreadsDatabase::entries[index]->ThreadName(), name) == 0) {
-                return ThreadsDatabase::entries[index]->threadId;
+                return ThreadsDatabase::entries[index]->GetThreadIdentifier();
             }
         }
         index++;

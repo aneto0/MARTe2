@@ -53,8 +53,7 @@ public:
      * @param[in] allocFlags
      * @return a pointer to the allocated memory.
      */
-    static void *Malloc(uint32 size,
-                        MemoryAllocationFlags allocFlags) {
+    static void *Malloc(const uint32 size, const MemoryAllocationFlag &allocFlags) {
         if (size <= 0) {
             return NULL;
         }
@@ -81,8 +80,7 @@ public:
      * @param[in,out] data is the pointer to the memory which must be reallocated.
      * @param[in] newSize is the desired new size for the memory portion.
      */
-    static void *Realloc(void *&data,
-                         uint32 newSize) {
+    static void *Realloc(void *&data, uint32 newSize) {
         return realloc(data, newSize);
     }
 
@@ -92,7 +90,7 @@ public:
      * @param[in] s is the string to duplicate.
      * @return a pointer to the string copied.
      */
-    static char8 *StringDup(const char8 *s) {
+    static char8 *StringDup(char8 const * const s) {
         return strdup(s);
     }
 
@@ -104,9 +102,7 @@ public:
      * @param[in] permMask define the process permissions.
      * @return a pointer to the shared memory created.
      */
-    static void *SharedAlloc(uint32 key,
-                             uint32 size,
-                             uint32 permMask) {
+    static void *SharedAlloc(const uint32 key, const uint32 size, const uint32 permMask) {
 
         uint32 lastPermDigit = permMask % 10;
         char8 name[32];
@@ -172,12 +168,14 @@ public:
      * @param[in] size is the number of bytes to check.
      * @return true if the memory area specified is valid.
      */
-    static bool Check(void *address,
-                      MemoryTestAccessMode accessMode,
-                      uint32 size) {
+    static bool Check(const void* const address, const MemoryTestAccessMode &accessMode, const uint32 size) {
         uint8 check = 0;
+        static uint8 MODE_EXECUTE = 0x00000001U;
+        static uint8 MODE_READ    = 0x00000002U;
+        static uint8 MODE_WRITE   = 0x00000004U;
+
         //determines if the calling process has read access to the specified address (if the process has read and execute permissions).
-        if (accessMode & MTAM_Execute) {
+        if (accessMode.GetExecuteFlag()) {
             check++;
             if (IsBadCodePtr((FARPROC) address)) {
                 return false;
@@ -185,7 +183,7 @@ public:
         }
 
         //determines if the calling process has the read access to the specified range of memory (if the process has read permissions).
-        if (accessMode & MTAM_Read) {
+        if (accessMode.GetReadFlag()) {
             check++;
             if (IsBadReadPtr(address, size)) {
                 return false;
@@ -193,7 +191,7 @@ public:
         }
 
         //determines if the calling process has the write access to the specified range of memory (if the process has write permissions).
-        if (accessMode & MTAM_Write) {
+        if (accessMode.GetWriteFlag()) {
             check++;
             if (IsBadWritePtr(address, size)) {
                 return false;
@@ -211,10 +209,10 @@ public:
      * @param[in] size is the number of bytes to copy.
      * @return true if source, destination and destination after the copy are not NULL.
      */
-    static bool Copy(void* destination,
-                     const void* source,
-                     uint32 size) {
-
+    static bool Copy(void* const destination, const void* const source, const uint32 size) {
+        if (source == NULL || destination == NULL) {
+            return false;
+        }
 
         return memcpy(destination, source, size) != NULL;
     }
@@ -227,10 +225,10 @@ public:
      * @param[in] size is the size to compare.
      * @return (0 if mem1 == mem2), (1 if mem1 < mem2), (2 if mem1 > mem2), (-1 if one of memory arguments is NULL).
      */
-    static int32 Compare(const void* mem1,
-                         const void* mem2,
-                         uint32 size) {
-
+    static int32 Compare(const void* const mem1,  const void* const mem2, const uint32 size) {
+        if (mem1 == NULL || mem2 == NULL) {
+            return -1;
+        }
         int32 ret = memcmp(mem1, mem2, size);
         if (ret < 0) {
             return 1; // 1 if mem1<mem2
@@ -250,10 +248,10 @@ public:
      * @param[in] size is the number of bytes to check.
      * @return a pointer to the first occurence of c in mem, NULL if is not found or in case of mem==NULL.
      */
-    static const void* Search(const void* mem,
-                              int32 c,
-                              uint32 size) {
-
+    static const void* Search(void const * const mem, const int32 c, const uint32 size) {
+        if (mem == NULL) {
+            return NULL;
+        }
         return memchr(mem, c, size);
     }
 
@@ -265,10 +263,10 @@ public:
      * @param[in] size is the number of bytes to copy.
      * @return true if source, destination and destination after the copy are not NULL.
      */
-    static bool Move(void* destination,
-                     const void* source,
-                     uint32 size) {
-
+    static bool Move(void * const destination, void const * const source, const uint32 size) {
+        if (source == NULL || destination == NULL) {
+            return false;
+        }
         return memmove(destination, source, size) != NULL;
 
     }
@@ -281,10 +279,10 @@ public:
      * @param[in] size is the number of bytes to set to c.
      * @return true if mem before and after the operation id not NULL.
      */
-    static bool Set(void* mem,
-                    int32 c,
-                    uint32 size) {
-
+    static bool Set(const void* mem, const int32 c, const uint32 size) {
+        if (mem == NULL) {
+            return false;
+        }
         return memset(mem, c, size) != NULL;
     }
 };

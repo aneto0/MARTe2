@@ -144,3 +144,26 @@ bool ThreadInformation::ExceptionProtectedExecute(ThreadFunctionType userFunctio
     return true;
 }
 
+Threads::PriorityClassType ThreadInformation::GetPriorityClass() const {
+    return priorityClass;
+}
+
+void ThreadInformation::SetPriorityClass(Threads::PriorityClassType priorityClass) {
+    this->priorityClass = priorityClass;
+}
+
+Threads::ThreadPriorityType ThreadInformation::GetPriorityLevel() const {
+    return priorityLevel;
+}
+
+void ThreadInformation::SetPriorityLevel(Threads::ThreadPriorityType priorityLevel) {
+    this->priorityLevel = priorityLevel;
+}
+
+ThreadIdentifier ThreadInformation::GetThreadIdentifier() const {
+    return threadId;
+}
+
+void ThreadInformation::SetThreadIdentifier(ThreadIdentifier threadId) {
+    this->threadId = threadId;
+}

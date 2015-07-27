@@ -37,7 +37,6 @@
 #include "ExceptionHandler.h"
 #include "Threads.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -101,7 +100,6 @@ public:
      */
     virtual ~ThreadInformation();
 
-
     /**
      * @brief Launch the function of the thread.
      * The function representing the thread. This is the most basic implementation.
@@ -134,32 +132,66 @@ public:
      */
     inline bool ThreadPost();
 
+    /**
+     * @brief Returns the thread identifier.
+     * @return the thread identifier.
+     */
+    ThreadIdentifier GetThreadIdentifier() const;
+
+    /**
+     * @brief Updates the thread identifier value.
+     * @param threadId the thread identifier to be set.
+     */
+    void SetThreadIdentifier(ThreadIdentifier threadId);
+
+    /**
+     * @brief Returns the thread priority class.
+     * @return the thread priority class.
+     */
+    Threads::PriorityClassType GetPriorityClass() const;
+
+    /**
+     * @brief Updates the thread priority class value.
+     * @param priorityClass the new priority class.
+     */
+    void SetPriorityClass(Threads::PriorityClassType priorityClass);
+
+    /**
+     * @brief Returns the thread priority level.
+     * @return the thread priority level.
+     */
+    Threads::ThreadPriorityType GetPriorityLevel() const;
+
+    /**
+     * @brief Updates the thread priority level value.
+     * @param priorityLevel the new priority level.
+     */
+    void SetPriorityLevel(Threads::ThreadPriorityType priorityLevel);
+
 private:
 
     /** The thread identifier */
-    ThreadIdentifier             threadId;
+    ThreadIdentifier threadId;
 
     /** The thread priority class */
-    Threads::PriorityClassType   priorityClass;
+    Threads::PriorityClassType priorityClass;
 
     /** The thread priority level */
-    Threads::ThreadPriorityType  priorityLevel;
+    Threads::ThreadPriorityType priorityLevel;
 
     /** The user thread entry point. */
-    ThreadFunctionType           userThreadFunction;
+    ThreadFunctionType userThreadFunction;
 
     /** A pointer to a structure containing thread data. */
-    void *                       userData;
+    void * userData;
 
     /** The name of the thread. */
-    const char8 *                name;
+    const char8 * name;
 
     /** enables the operating system to perform some housekeeping
      * before releasing the thread to the user code. */
-    EventSem                     startThreadSynchSem;
+    EventSem startThreadSynchSem;
 };
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

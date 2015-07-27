@@ -31,6 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "Threads.h"
+#include "ThreadsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -60,11 +62,11 @@ public:
         }
 
         ThreadsDatabase::Lock();
-        threadInfo->threadId = Threads::Id();
+        threadInfo->SetThreadIdentifier(Threads::Id());
         ThreadsDatabase::NewEntry(threadInfo);
         ThreadsDatabase::UnLock();
 
-        threadInfo->priorityLevel = Threads::PRIORITY_NORMAL;
+        threadInfo->SetPriorityLevel(Threads::PRIORITY_NORMAL);
         Threads::SetPriorityClass(Threads::Id(), Threads::PRIORITY_CLASS_NORMAL);
         //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
         threadInfo->ThreadWait();
@@ -175,13 +177,13 @@ void Threads::SetPriorityLevelAndClass(ThreadIdentifier threadId,
     }
 
     if (priorityClass == 0) {
-        threadInfo->priorityLevel = priorityLevel;
-        priorityClass = threadInfo->priorityClass;
+        threadInfo->SetPriorityLevel(priorityLevel);
+        priorityClass = threadInfo->GetPriorityClass();
     }
 
     if (priorityLevel == 0) {
-        threadInfo->priorityClass = priorityClass;
-        priorityLevel = threadInfo->priorityLevel;
+        threadInfo->SetPriorityClass(priorityClass);
+        priorityLevel = threadInfo->GetPriorityLevel();
     }
 
     uint32 priorityLevelToAssign = 20 * (uint32) priorityClass + (uint32) priorityLevel + 12;
@@ -208,7 +210,7 @@ Threads::ThreadPriorityType Threads::GetPriorityLevel(ThreadIdentifier threadId)
     ThreadsDatabase::Lock();
     ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
     if (threadInfo != NULL) {
-        priorityLevel = threadInfo->priorityLevel;
+        priorityLevel = threadInfo->GetPriorityLevel();
     }
     ThreadsDatabase::UnLock();
     return priorityLevel;
@@ -226,7 +228,7 @@ Threads::PriorityClassType Threads::GetPriorityClass(ThreadIdentifier threadId) 
     ThreadsDatabase::Lock();
     ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
     if (threadInfo != NULL) {
-        priorityClass = threadInfo->priorityClass;
+        priorityClass = threadInfo->GetPriorityClass();
     }
     ThreadsDatabase::UnLock();
     return priorityClass;

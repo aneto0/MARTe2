@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright 2015 F4E | European Joint Undertaking for 
  * ITER and the Development of Fusion Energy ('Fusion for Energy')
  *
@@ -47,7 +47,7 @@ public:
     static const uint32 TryAgain = 0x5u;
     /** Pass handling back to other handlers in stack. */
     static const uint32 TryOther = 0x6u;
-    /** do not report error information (ored). */
+    /** do not report error information (ORed). */
     static const uint32 NoReport = 0x10000u;
 
 public:

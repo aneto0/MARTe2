@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Endianity.h"
 
 /*---------------------------------------------------------------------------*/
@@ -50,11 +51,13 @@ template<class T>
 class EndianityTest {
 
 public:
+
     /**
      * @brief Constructor.
      * @param[in] testValue the value to be tested by the all
      * the test functions.
      */
+
     EndianityTest(T testValue);
     /**
      * @brief Converts the testValue to big endian.
@@ -137,18 +140,19 @@ public:
      */
     bool TestMemCopyToFromEndian();
 
-
-
 private:
+
     /**
      * The test class is designed to support any basic type
      */
     T testValue;
+
     /**
      * A static array to test operations that include arrays
      */
     T testArray[3];
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Template method definitions                        */
 /*---------------------------------------------------------------------------*/
@@ -365,6 +369,4 @@ bool EndianityTest<T>::TestMemCopyToFromEndian() {
     return (okLittleEndian && okBigEndian);
 }
 
-
 #endif /* ENDIANITYTEST_H_ */
-

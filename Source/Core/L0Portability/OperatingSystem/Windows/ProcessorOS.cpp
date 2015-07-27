@@ -1,8 +1,8 @@
 /**
- * @file MemoryGTest.cpp
- * @brief Source file for class MemoryGTest
- * @date 29/06/2015
- * @author Giuseppe Ferr�
+ * @file ProcessorOS.cpp
+ * @brief Source file for class Processor
+ * @date 26/07/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,94 +17,28 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryGTest (public, protected, and private). Be aware that some 
+ * the class Processor (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
-#include <limits.h>
-
+#ifndef LINT
+//#include <unistd.h>
+#endif
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "gtest/gtest.h"
-#include "MemoryTest.h"
+#include "Processor.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
+uint32 Processor::Available() {
+    SYSTEM_INFO si;
+    GetSystemInfo(&si);
+    return si.dwNumberOfProcessors;
+}
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-TEST(MemoryGTest,TestMalloc) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestMalloc(100));
-}
-
-TEST(MemoryGTest,TestFree) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestFree(100));
-}
-
-TEST(MemoryGTest,TestRealloc) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestRealloc(100, 10));
-}
-
-TEST(MemoryGTest,TestStringDup) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestStringDup("Hello"));
-}
-
-TEST(MemoryGTest,TestCheck) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestCheck(100));
-}
-
-TEST(MemoryGTest,TestSharedAlloc) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSharedAlloc());
-}
-
-TEST(MemoryGTest,TestSharedFree) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSharedFree());
-}
-
-TEST(MemoryGTest,TestSharedMemory) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSharedMemory());
-}
-
-TEST(MemoryGTest,TestCopy) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestCopy());
-}
-
-TEST(MemoryGTest,TestMove) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestMove());
-}
-
-TEST(MemoryGTest,TestCompare) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestCompare());
-}
-
-TEST(MemoryGTest,TestSet) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSet());
-}
-
-TEST(MemoryGTest,TestSearch) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSearch());
-}
-
-
-

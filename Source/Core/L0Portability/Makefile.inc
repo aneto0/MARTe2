@@ -36,10 +36,8 @@ OBJSX=  Atomic.x \
         FastMath.x \
         Processor.x \
         ProcessorType.x \
-        Threads.x  \
         ThreadsDatabase.x \
         ThreadInformation.x \
-        MemoryStatisticsDatabase.x \
         LoadableLibrary.x \
         FastPollingMutexSem.x
 

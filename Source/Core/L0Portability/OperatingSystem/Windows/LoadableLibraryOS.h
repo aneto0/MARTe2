@@ -31,48 +31,59 @@
 
 #include <Winbase.h>
 
-/**
- * @see LoadableLibrary::Close
- * @brief Close a library previously opened dinamically.
- * @param ll is the library to close.
- */
-void LoadableLibraryOSClose(LoadableLibrary &ll) {
-    if (ll.module != 0) {
-        FreeLibrary((HMODULE)ll.module);
-    }
-}
+class LoadableLibraryOS {
 
-/**
- * @see LoadableLibrary::Open
- * @brief Open a library dinamically.
- * @param ll is the library in return.
- * @param dllName is the name of the library.
- * @return true if the requested library is found and opened.
- */
-bool LoadableLibraryOSOpen(LoadableLibrary &ll, const char *dllName) {
-    if (ll.module != 0) {
-        LoadableLibraryOSClose(ll);
+public:
+
+    /**
+     * @see LoadableLibrary::Close
+     * @brief Close a library previously opened dinamically.
+     * @param ll is the library to close.
+     */
+    static void Close(LoadableLibrary &ll) {
+        if (ll.GetModule() != 0) {
+            FreeLibrary((HMODULE) ll.GetModule());
+        }
     }
 
-    ll.module = LoadLibrary(dllName);
-    if (ll.module == NULL) {
-        return False;
-    }
-    return True;
-}
+    /**
+     * @see LoadableLibrary::Open
+     * @brief Open a library dinamically.
+     * @param ll is the library in return.
+     * @param dllName is the name of the library.
+     * @return true if the requested library is found and opened.
+     */
+    static bool Open(LoadableLibrary &ll,
+                     char8 const * const dllName) {
 
-/**
- * @see LoadableLibrary::Function.
- * @brief Load a function of a library dinamically.
- * @param ll is the library where the requested function is.
- * @param name is the name of the function.
- * @return a pointer to the requested function.
- */
-void *LoadableLibraryOSFunction(LoadableLibrary &ll, const char *name) {
-    if ((ll.module == NULL) || (name == NULL)) {
-        return NULL;
+        if (ll.GetModule() != 0) {
+            Close(ll);
+        }
+
+        ll.SetModule(LoadLibrary(dllName));
+        return ll.GetModule() != NULL;
+
     }
-    return GetProcAddress((HMODULE)ll.module, name);
-}
+
+    /**
+     * @see LoadableLibrary::Function.
+     * @brief Load a function of a library dinamically.
+     * @param ll is the library where the requested function is.
+     * @param name is the name of the function.
+     * @return a pointer to the requested function.
+     */
+    static void *Function(LoadableLibrary &ll,
+                          char8 const * const name) {
+
+        void* ret = NULL;
+        if ((ll.GetModule() != NULL) && (name != NULL)) {
+
+            ret = GetProcAddress((HMODULE) ll.GetModule(), name);
+        }
+
+        return ret;
+    }
+
+};
 
 #endif

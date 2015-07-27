@@ -22,7 +22,7 @@
  */
 
 #ifndef MEMORY_H_
-#define 		MEMORY_H_
+#define MEMORY_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,190 +37,188 @@
 /**
  * @brief Memory management.
  *
- * @details Here are defined functions to allocate, reallocate and deallocate memory dinamically,
- * other functions for the shared memory management which allows allocation of a memory
- * accessible by more tasks and at last functions which allows copy, search, set and compare
- * memory areas.
+ * @details Here are defined functions to allocate, reallocate and deallocate memory dynamically;
+ * to copy, search, set and compare memory areas; and to manage shared memory.
  *
  * @details Most of the implementation is delegated to MemoryOS.h which provides system calls for the
  * memory management that are different for each operating system.
+ */
+
+
+
+
+
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+/**
+ * @brief Management of Memory Allocation flags.
  *
- * @details These methods are particularly useful in the implementation of functionality that requires
- * a dynamic management of the memory, like for example databases, static lists, streams ecc.
+ * @details This class manages the Memory Allocation flag.\n
+ * - MemoryStandardMemory: is the default flag and imposes that the memory to be allocated is minor than 32Mb.\n
+ * - MemoryExtraMemory: allows to allocate more than 32Mb.\n
+ *
+ * @details
  */
+class MemoryAllocationFlag {
+private:
+    /* The memory allocation flag */
+    uint8 memoryAllocationFlag;
 
-enum MemoryAllocationFlags {
-    /** within 32Mb */
-    MemoryStandardMemory = 0x00000000,
+public:
+    /**
+     * @brief Default Constructor. It assumes MemoryStandardMemory.
+     */
+    inline MemoryAllocationFlag(void);
 
-    /** above 32Mb */
-    MemoryExtraMemory = 0x00000001,
+    /**
+     * @brief Constructor from uint8.
+     * @param[in] the value of the flag.
+     */
+    inline MemoryAllocationFlag(const uint8 flag);
+
+    /**
+     * @brief Getter for memoryAllocationFlag
+     * @return memoryAllocationFlag.
+     */
+    inline uint8 GetMemoryAllocationFlag (void) const;
 
 };
 
-/** Set of bits indicating desired access modes */
-enum MemoryTestAccessMode {
-    /** read and execute */
-    MTAM_Execute = 0x00000001,
 
-    /** read  */
-    MTAM_Read = 0x00000002,
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
-    /** read  */
-    MTAM_Write = 0x00000004
+MemoryAllocationFlag::MemoryAllocationFlag (void) {
+    memoryAllocationFlag = 0x00000000U;
+}
 
+MemoryAllocationFlag::MemoryAllocationFlag (const uint8 flag) {
+    memoryAllocationFlag = flag;
+}
+
+uint8 MemoryAllocationFlag::GetMemoryAllocationFlag (void) const {
+    return memoryAllocationFlag;
+}
+
+/* is the default flag and imposes that the memory to be allocated is minor than 32Mb. */
+const MemoryAllocationFlag MAFStandardMemory(0x00000000U);
+/* allows to allocate more than 32Mb */
+const MemoryAllocationFlag MAFExtraMemory(0x00000001U);
+
+
+
+/**
+ * @brief Management of Memory Test Access modes.
+ *
+ * @details This class manages the Memory Test Access modes.\n
+ */
+class MemoryTestAccessMode {
+private:
+    /* the Execute flag */
+    bool executeFlag;
+    /* the Read flag */
+    bool readFlag;
+    /* the Write flag */
+    bool writeFlag;
+
+public:
+    /**
+     * @brief Default Constructor. It assumes that all flags are false.
+     */
+    inline MemoryTestAccessMode (void);
+    /**
+     * @brief Constructor from three booleans, one for flag.
+     * @param[in] the Execute flag.
+     * @param[in] the Read flag.
+     * @param[in] the Write flag.
+     */
+    inline MemoryTestAccessMode (bool execute, bool read, bool write);
+
+    /**
+     * @brief Setter for the Execute flag.
+     * @param[in] the Execute flag.
+     */
+    inline void SetExecuteFlag (const bool flag);
+
+    /**
+     * @brief Getter for the Execute flag.
+     * @return the Execute flag.
+     */
+    inline bool GetExecuteFlag (void) const;
+
+    /**
+     * @brief Setter for the Read flag.
+     * @param[in] the Read flag.
+     */
+    inline void SetReadFlag (const bool flag);
+
+    /**
+     * @brief Getter for the Read flag.
+     * @return the Read flag.
+     */
+    inline bool GetReadFlag (void) const;
+
+    /**
+     * @brief Setter for the Write flag.
+     * @param[in] the Write flag.
+     */
+    inline void SetWriteFlag (const bool flag);
+
+    /**
+     * @brief Getter for the Write flag.
+     * @return the Write flag.
+     */
+    inline bool GetWriteFlag (void) const;
 };
 
-/**
- * @brief MemoryTestAccessMode and operator.
- * @param[in] a is the first MemoryTestAccessMode.
- * @param[in] b is the second MemoryTestAccessMode.
- * @return a & b.
- */
-static inline MemoryTestAccessMode operator &(MemoryTestAccessMode a,
-                                              MemoryTestAccessMode b) {
-    return (MemoryTestAccessMode) ((int) a & (int) b);
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+MemoryTestAccessMode::MemoryTestAccessMode (void) {
+    executeFlag = false;
+    readFlag = false;
+    writeFlag = false;
 }
 
-/**
- * @brief MemoryTestAccessMode or operator.
- * @param[in] a is the first MemoryTestAccessMode.
- * @param[in] b is the second MemoryTestAccessMode.
- * @return a | b.
- */
-static inline MemoryTestAccessMode operator |(MemoryTestAccessMode a,
-                                              MemoryTestAccessMode b) {
-    return (MemoryTestAccessMode) ((int) a | (int) b);
+MemoryTestAccessMode::MemoryTestAccessMode (const bool execute, const bool read, const bool write) {
+    executeFlag = execute;
+    readFlag = read;
+    writeFlag = write;
 }
 
-/**
- * @brief MemoryAllocationFlags and operator.
- * @param[in] a is the first MemoryAllocationFlags.
- * @param[in] b is the second MemoryAllocationFlags.
- * @return a & b.
- */static inline MemoryAllocationFlags operator &(MemoryAllocationFlags a,
-                                                MemoryAllocationFlags b) {
-    return (MemoryAllocationFlags) ((int) a & (int) b);
+void MemoryTestAccessMode::SetExecuteFlag(const bool flag) {
+    executeFlag = flag;
 }
 
-/**
- * @brief MemoryAllocationFlags or operator.
- * @param[in] a is the first MemoryAllocationFlags.
- * @param[in] b is the second MemoryAllocationFlags.
- * @return a | b.
- */static inline MemoryAllocationFlags operator |(MemoryAllocationFlags a,
-                                                MemoryAllocationFlags b) {
-    return (MemoryAllocationFlags) ((int) a | (int) b);
+bool MemoryTestAccessMode::GetExecuteFlag(void) const {
+    return executeFlag;
 }
 
-extern "C" {
-
-/**
- * @see Memory::Malloc
- */
-void *MemoryMalloc(uint32 size,
-                   MemoryAllocationFlags allocFlag = MemoryStandardMemory);
-
-/**
- * @see Memory::Free
- */
-bool MemoryFree(void *&data);
-
-/**
- * @see Memory::Realloc
- */
-void *MemoryRealloc(void *&data,
-                    uint32 newSize);
-
-/**
- * @see Memory::AllocationStatistics
- */
-bool MemoryAllocationStatistics(int32 &size,
-                                int32 &chunks,
-                                TID tid = (TID) 0xFFFFFFFF);
-
-/**
- * @see Memory::GetHeaderInfo
- */
-bool MemoryGetHeaderInfo(void *pointer,
-                         uint32 &size,
-                         TID &tid);
-
-/**
- * @see Memory::ClearStatisticsDatabase
- */
-void MemoryClearStatisticsDatabase();
-
-/**
- * @see Memory::GetStatisticsDatabaseNElements
- */
-uint32 MemoryGetStatisticsDatabaseNElements();
-
-/**
- * @see Memory::GetUsedHeap
- */
-int32 MemoryGetUsedHeap();
-
-/**
- * @see Memory::Check
- */
-bool MemoryCheck(void *address,
-                 MemoryTestAccessMode accessMode,
-                 uint32 size = 4);
-
-/**
- * @see Memory::SharedAlloc
- */
-void *MemorySharedAlloc(uint32 key,
-                        uint32 size,
-                        uint32 permMask = 0666);
-
-/**
- * @see Memory::SharedFree
- */
-void MemorySharedFree(void *&address);
-
-/**
- * @see Memory::Copy
- */
-bool MemoryCopy(void *destination,
-                const void *source,
-                uint32 size);
-
-/**
- * @see Memory::Compare
- */
-int32 MemoryCompare(const void *mem1,
-                    const void *mem2,
-                    uint32 size);
-
-/**
- * @see Memory::Search
- */
-const void *MemorySearch(const void *mem,
-                         char8 c,
-                         uint32 size);
-
-/**
- * @see Memory::Move
- */
-bool MemoryMove(void* destination,
-                const void* source,
-                uint32 size);
-
-/**
- * @see Memory::Set
- */
-bool MemorySet(void* mem,
-               char8 c,
-               uint32 size);
-
-/**
- * @see Memory::StringDup
- */
-char8 *MemoryStringDup(const char8 *s);
-
+void MemoryTestAccessMode::SetReadFlag(const bool flag) {
+    readFlag = flag;
 }
+
+bool MemoryTestAccessMode::GetReadFlag(void) const {
+    return readFlag;
+}
+
+void MemoryTestAccessMode::SetWriteFlag(const bool flag) {
+    writeFlag = flag;
+}
+
+bool MemoryTestAccessMode::GetWriteFlag(void) const {
+    return writeFlag;
+}
+
+
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -255,8 +253,7 @@ public:
      * @param[in] allocFlag specified the desired allocation properties
      * @return The pointer to the allocated memory. NULL if allocation failed.
      */
-    static void *Malloc(uint32 size,
-                        MemoryAllocationFlags allocFlag = MemoryStandardMemory);
+    static void *Malloc(const uint32 size, const MemoryAllocationFlag &allocFlag = MAFStandardMemory);
 
     /**
      * @brief Release a memory area and set its pointer to NULL.
@@ -274,60 +271,14 @@ public:
      * @details If there is no space available for the new size specified, the system could allocate the new portion
      * in a different location and in this case the pointer changes its value.
      */
-    static void *Realloc(void *&data,
-                         uint32 newSize);
+    static void *Realloc(void *&data, uint32 newSize);
 
     /**
      * @brief Wrap the strdup standard C function.
      * @param[in] s The pointer to the memory to be copied.
      * @return The pointer to the new allocated memory which contains a copy of s.
      */
-    static char8 *StringDup(const char8 *s);
-
-    /*static void AllocationStatistics(StreamInterface *out){
-     MemoryAllocationStatistics(out);
-     }*/
-
-    /**
-     * @brief Gets the memory statistics associated to a thread if MEMORY_STATISTICS is defined.
-     * @param[out] size The size of the memory associated with the thread.
-     * @param[out] chunks The number of chunks of memory.
-     * @param[in] tid The Thread id to be investigated.
-     * @return false is MEMORY_STATISTICS is not defined, true if it is defined and in case of success.
-     */
-    static bool AllocationStatistics(int32 &size,
-                                     int32 &chunks,
-                                     TID tid = (TID) 0xFFFFFFFF);
-
-    /**
-     * @brief Gets the informations from the header of the memory area if MEMORY_STATISTICS is defined.
-     * @param[in] pointer is a pointer to the beginning of the usable memory area.
-     * @param[out] size is the size of the memory area allocated.
-     * @param[out] tid is the identifier of the thread which allocates the memory.
-     * @return If MEMORY_STATISTICS is defined returns true if the memory pointer is valid.
-     * false if MEMORY_STATISTICS is not defined.
-     * @pre The input pointer must point to the beginning of the memory area, otherwise the outputs can be incorrect.
-     */
-    static bool GetHeaderInfo(void *pointer,
-                              uint32 &size,
-                              TID &tid);
-
-    /**
-     * @brief If MEMORY_STATISTICS is defined resets the memory database.
-     */
-    static void ClearStatisticsDatabase();
-
-    /**
-     * @brief if MEMORY_STATISTICS is defined returns the number of elements in the memory database.
-     * @return the number of elements in the memory database, 0 if MEMORY_STATISTICS is not defined.
-     */
-    static uint32 GetStatisticsDatabaseNElements();
-
-    /**
-     * @brief if MEMORY_STATISTICS is defined returns the total amount of the current allocated heap memory.
-     * @return the amount of the current allocated heap memory, 0 if MEMORY_STATISTICS is not defined.
-     */
-    static int32 GetUsedHeap();
+    static char8 *StringDup(char8 const * const s);
 
     /**
      * @brief Checks if the process has the access to the specified memory area.
@@ -336,9 +287,7 @@ public:
      * @param[in] size is the number of bytes to check.
      * @return true if the check was successful. false otherwise.
      */
-    static bool Check(void *address,
-                      MemoryTestAccessMode accessMode,
-                      uint32 size = 4);
+    static bool Check(const void* const address, const MemoryTestAccessMode &accessMode, const uint32 size = 4U);
 
     /**
      * @brief Creates or accesses an area of shared memory which can be used to communicate between different processes.
@@ -355,15 +304,13 @@ public:
      * @param[in] permMask the process permissions.Usually you will set this as 0666.
      * @return the address or NULL if it fails to allocate the memory.
      */
-    static void *SharedAlloc(uint32 key,
-                             uint32 size,
-                             uint32 permMask = 0666);
+    static void *SharedAlloc(const uint32 key, const uint32 size, const uint32 permMask = 0666U);
 
     /**
      * @brief Frees an area of shared memory which was previously created with MemorySharedAlloc.
      * @param[in] address the address for the shared memory.
      */
-    static void SharedFree(void *&address);
+    static void SharedFree(void const *&address);
 
     /**
      * @brief Copy source to destination.
@@ -373,9 +320,7 @@ public:
      * @param[in] size is the size of the memory to be copied.
      * @return true if source, destination and destination after copy are != NULL.
      */
-    static bool Copy(void *destination,
-                     const void *source,
-                     uint32 size);
+    static bool Copy(void* const destination, const void* const source, const uint32 size);
 
     /**
      * @brief Compare the first specified bytes of mem1 and mem2.
@@ -384,9 +329,7 @@ public:
      * @param[in] size is the number of byte to compare.
      * @return (0 if mem1 == mem2), (1 if mem1 < mem2), (2 if mem1 > mem2).
      */
-    static int32 Compare(const void *mem1,
-                         const void *mem2,
-                         uint32 size);
+    static int32 Compare(const void* const mem1, const void* const mem2, const uint32 size);
 
     /**
      * @brief Search a character in the specified memory area.
@@ -395,9 +338,7 @@ public:
      * @param[in] size is the size of the memory area.
      * @return the pointer to the first occurrence of c in the memory. NULL if c is absent.
      */
-    static const void *Search(const void *mem,
-                              char8 c,
-                              uint32 size);
+    static const void *Search(void const * const mem, const char8 c, const uint32 size);
 
     /**
      * @brief Copy source to destination.
@@ -406,9 +347,7 @@ public:
      * @param[in] size is the number of bytes to be copied.
      * @return true if source, destination, and destination after the copy are != NULL.
      */
-    static bool Move(void* destination,
-                     const void* source,
-                     uint32 size);
+    static bool Move(void * const destination, void const * const source, const uint32 size);
 
     /**
      * @brief Set a defined number bytes of the specified memory area equal to a specified character.
@@ -416,14 +355,85 @@ public:
      * @param[in] c is the character to store.
      * @param[in] size is the number of bytes where c will be written.
      */
-    static bool Set(void* mem,
-                    char8 c,
-                    uint32 size);
+    static bool Set(void* const mem, const char8 c, const uint32 size);
 
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+
+
+extern "C" {
+
+/**
+ * @see Memory::Malloc
+ */
+void *MemoryMalloc(const uint32 size, const MemoryAllocationFlag &allocFlag = MAFStandardMemory);
+
+/**
+ * @see Memory::Free
+ */
+bool MemoryFree(void *&data);
+
+/**
+ * @see Memory::Realloc
+ */
+void *MemoryRealloc(void *&data, const uint32 newSize);
+
+/**
+ * @see Memory::Check
+ */
+bool MemoryCheck(const void* const address, const MemoryTestAccessMode &accessMode, const uint32 size = 4U);
+
+/**
+ * @see Memory::SharedAlloc
+ */
+void *MemorySharedAlloc(const uint32 key, const uint32 size, const uint32 permMask = 0666U);
+
+/**
+ * @see Memory::SharedFree
+ */
+void MemorySharedFree(void const *&address);
+
+/**
+ * @see Memory::Copy
+ */
+bool MemoryCopy(void* const destination, const void* const source, const uint32 size);
+
+/**
+ * @see Memory::Compare
+ */
+int32 MemoryCompare(const void *mem1, const void *mem2, uint32 size);
+
+/**
+ * @see Memory::Search
+ */
+const void *MemorySearch(void const * const mem, const char8 c, const uint32 size);
+
+/**
+ * @see Memory::Move
+ */
+bool MemoryMove(void * const destination, void const * const source, const uint32 size);
+
+/**
+ * @see Memory::Set
+ */
+bool MemorySet(void* const mem, const char8 c, const uint32 size);
+
+/**
+ * @see Memory::StringDup
+ */
+char8 *MemoryStringDup(char8 const * const s);
+
+}
+
 
 #endif /* MEMORY_H_ */
 
