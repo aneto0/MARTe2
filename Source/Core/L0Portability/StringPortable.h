@@ -50,7 +50,6 @@
  * as arguments be terminated with a '0' char. If they are not, then some
  * functions can loop out of bounds, so the user must be careful.
  */
-
 class StringPortable {
 
 public:

@@ -1,6 +1,6 @@
 /**
- * @file StringPortableTest1.cpp
- * @brief Source file for class StringPortableTest1
+ * @file StringPortableTest.cpp
+ * @brief Source file for class StringPortableTest
  * @date 27/07/2015
  * @author Llorenç Capellà
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StringPortableTest1 (public, protected, and private). Be aware that some 
+ * the class StringPortableTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -42,11 +42,9 @@
 /*---------------------------------------------------------------------------*/
 
 StringPortableTest::StringPortableTest() {
-    // Auto-generated constructor stub for StringPortableTest1
 }
 
 StringPortableTest::~StringPortableTest() {
-    // Auto-generated destructor stub for StringPortableTest1
 }
 
 bool StringPortableTest::TestLength(const char8* string) {

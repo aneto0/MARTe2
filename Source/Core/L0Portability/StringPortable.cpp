@@ -583,4 +583,3 @@ bool StringPortable::SetChar(char8* const string,
     }
     return ret;
 }
-

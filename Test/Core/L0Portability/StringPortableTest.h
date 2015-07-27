@@ -1,6 +1,6 @@
 /**
  * @file StringPortableTest.h
- * @brief Header file for class StringPortableTest1
+ * @brief Header file for class StringPortableTest
  * @date 27/07/2015
  * @author Llorenç Capellà
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StringPortableTest1
+ * @details This header file contains the declaration of the class StringPortableTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_CORE_L0PORTABILITY_STRINGPORTABLETEST_H_
-#define 		TEST_CORE_L0PORTABILITY_STRINGPORTABLETEST_H_
+#ifndef STRINGPORTABLETEST_H_
+#define STRINGPORTABLETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,17 +31,20 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "StringPortable.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/** @brief A class for testing of StringPortable functions. */
+/**
+ * @brief A class for testing of StringPortable functions
+ */
 class StringPortableTest {
 
-private:
-
 public:
+
     /**
      * @brief Default constructor
      */
@@ -74,7 +77,7 @@ public:
                      const char8 *stringEqual);
 
     /**
-     * @brief Tests the StringPortable::CompareN function.
+     * @brief Tests the StringPortable::CompareN() function.
      * @details Compares strings up to certain size in the following cases: string1 = string2,
      *  string1 > string2, string1 < string2, string1 = NULL and string2 = NULL.
      * @return true if the result of the comparison is as expected and if a comparison with a NULL returns
@@ -83,7 +86,7 @@ public:
     bool TestCompareN();
 
     /**
-     * @brief Tests the StringPortable::Concatenate function passing also the result parameter.
+     * @brief Tests the StringPortable::Concatenate() function passing also the result parameter.
      * @details Checks if the result of the concatenation is correct, then checks the return value
      * passing NULL arguments.
      * @return true if the returned value of the concatenation is true and result is the correct
@@ -92,7 +95,7 @@ public:
     bool TestConcatenateWithResult();
 
     /**
-     * @brief Tests the StringPortable::ConcatenateN function passing also the result parameter.
+     * @brief Tests the StringPortable::ConcatenateN() function passing also the result parameter.
      * @details Checks the result of the concatenation also using size equal to zero or greater than
      * the string to be appended.
      * @return true if the returned value of the concatenations is true (for No NULL strings) and result
@@ -101,7 +104,7 @@ public:
     bool TestConcatenateNWithResult();
 
     /**
-     * @brief Tests the StringPortable::Concatenate function.
+     * @brief Tests the StringPortable::Concatenate() function.
      * @details Checks if the result of the concatenation is correct, then checks the return value
      * passing NULL arguments.
      * @return true if the returned value of the concatenations is true (for No NULL strings) and
@@ -110,7 +113,7 @@ public:
     bool TestConcatenateNoResult();
 
     /**
-     * @brief Tests the StringPortable::ConcatenateN function.
+     * @brief Tests the StringPortable::ConcatenateN() function.
      * @details Checks the result of the concatenation also using size equal to zero or greater than the string to be appended.
      * @return true if the returned value of the concatenations is true (for No NULL strings) and
      * the first string is the correct concatenations of the first and second input strings.
@@ -118,7 +121,7 @@ public:
     bool TestConcatenateNNoResult();
 
     /**
-     * @brief Tests the StringPortable::SearchChar function
+     * @brief Tests the StringPortable::SearchChar() function
      * @details Checks the return value passing also characters that are not in the string.
      * @return true if the returned pointer points the searched character which is in the string
      * and returns a NULL pointer if the character is not in the string.
@@ -126,7 +129,7 @@ public:
     bool TestSearchChar();
 
     /**
-     * @brief Tests the StringPortable::Copy function.
+     * @brief Tests the StringPortable::Copy() function.
      * @details Checks if the copied string is equal to the original, then checks the return value of
      * the function with NULL arguments.
      * @param[in] string is the string to copy.
@@ -136,7 +139,7 @@ public:
     bool TestCopy(const char8 *string);
 
     /**
-     * @brief Tests the StringPortable::CopyN function.
+     * @brief Tests the StringPortable::CopyN() function.
      * @details Checks the return value of the function also using size equal to zero or greater than the length of the string to be copied.
      * @return true if the returned value of the copy, for a non NULL string, is true and the  copy is
      * equal to the original string and the copy for a NULL string returns false.
@@ -144,7 +147,7 @@ public:
     bool TestCopyN();
 
     /**
-     * @brief Tests the StringPortable::SearchIndex function
+     * @brief Tests the StringPortable::SearchIndex() function
      * @details Checks the return value passing also characters that are not in the string.
      * @return true if the returned position is as expected and the string is not overwrite and the
      * returned value for a NULL string is -1.
@@ -152,7 +155,7 @@ public:
     bool TestSearchIndex();
 
     /**
-     * @brief Tests the StringPortable::SearchChars function
+     * @brief Tests the StringPortable::SearchChars() function
      * @details Checks the return value passing also characters that are not in the string.
      * @return true if the returned pointer points to the first character search in the case that
      * the substring is contained in the string and returns a NULL pointer in the case that the substring
@@ -161,7 +164,7 @@ public:
     bool TestSearchChars();
 
     /**
-     * @brief Tests the StringPortable::SearchLastChar function
+     * @brief Tests the StringPortable::SearchLastChar() function
      * @details Checks the return value passing also characters that are not in the string.
      * @return true if the returned pointer points to the last character searched and returns a NULL
      * pointer when the search character is not contained in the string.
@@ -169,7 +172,7 @@ public:
     bool TestSearchLastChar();
 
     /**
-     * @brief Tests the StringPortable::SearchString function
+     * @brief Tests the StringPortable::SearchString() function
      * @details Checks the return value passing also strings that are not in the string.
      * @return true if the returned pointer points to the first character search in the case that
      * the substring is contained in the string and returns a NULL pointer in the case that the substring
@@ -179,7 +182,7 @@ public:
 
     /**
      * @brief Test StringPortable::TokenizeByChars() function.
-     * @details Given a long string tokenize it using different delimiters. The test check the retuned
+     * @details Given a long string tokenize it using different delimiters. The test check the returned
      * pointer, the result where the token is buffered and checks the behaviour using a NULL string.
      * @return true if the string is tokenized and the returned pointer points to the next part of
      * the string to be tokenized.
@@ -188,7 +191,7 @@ public:
 
     /**
      * @brief Test StringPortable::TokenizeByString() function.
-     * @details Given a long string tokenize it using string delimiter. The test check the retuned
+     * @details Given a long string tokenize it using string delimiter. The test check the returned
      * pointer, the result where the token is buffered and checks the behaviour using a NULL string.
      * @return true if the string is tokenized and the returned pointer points to the next part of
      * the string to be tokenized.
@@ -205,7 +208,7 @@ public:
     bool TestSubstr();
 
     /**
-     * @brief Test StringPortable::SetCha() function
+     * @brief Test StringPortable::SetChar() function
      * @details Initialize a string then replace some of the characters using SetChar checking the result
      * of the operation. Also checks the behaviour using a NULL string.
      * @return true if SetCha() returns true and the only n-first characters are replaced and return
@@ -219,5 +222,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_CORE_L0PORTABILITY_STRINGPORTABLETEST1_H_ */
+#endif /* STRINGPORTABLETEST_H_ */
 

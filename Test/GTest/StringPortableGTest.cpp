@@ -1,6 +1,6 @@
 /**
- * @file StringPortableGTest1.cpp
- * @brief Source file for class StringPortableGTest1
+ * @file StringPortableGTest.cpp
+ * @brief Source file for class StringPortableGTest
  * @date 27/07/2015
  * @author Llorenç Capellà
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StringPortableGTest1 (public, protected, and private). Be aware that some
+ * the class StringPortableGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,12 +25,15 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
-#include <StringPortableTest.h>
+
+#include "StringPortableTest.h"
 #include "gtest/gtest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
