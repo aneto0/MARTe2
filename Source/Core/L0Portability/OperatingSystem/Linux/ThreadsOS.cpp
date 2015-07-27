@@ -1,8 +1,8 @@
 /**
- * @file ThreadsOS.h
- * @brief Header file for class ThreadsOS
- * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @file ThreadsOS.cpp
+ * @brief Source file for class ThreadsOS
+ * @date 27/07/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,37 +16,30 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ThreadsOS
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class ThreadsOS (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef THREADSOS_H_
-#define THREADSOS_H_
-
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #ifndef LINT
 #include <pthread.h>
 #include <signal.h>
 #endif
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 #define __thread_decl
 /**
  * @brief Callback thread function as defined in Linux
  */
 typedef void *(*StandardThreadFunction)(void *args);
-
-
-
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
-/*---------------------------------------------------------------------------*/
-
 /**
  * @brief Platform dependent implementations of threads.
  * @details These functions calls system APIs for threads. It is possible use the thread database
@@ -98,23 +91,17 @@ public:
      * @return the ThreadInformation structure.
      */
     static ThreadInformation * threadInitialisationInterfaceConstructor(ThreadFunctionType userThreadFunction,
-                                                                 void *userData,
-                                                                 const char8 *threadName,
-                                                                 uint32 exceptionHandlerBehaviour) {
+                                                                        void *userData,
+                                                                        const char8 *threadName,
+                                                                        uint32 exceptionHandlerBehaviour) {
 
         return new ThreadInformation(userThreadFunction, userData, threadName);
     }
 };
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-
-/**
- * @brief Called by Threads::EndThread
- */
- void Threads::EndThread() {
+void Threads::EndThread() {
     ThreadsDatabase::Lock();
     ThreadsDatabase::RemoveEntry(Threads::Id());
     ThreadsDatabase::UnLock();
@@ -126,39 +113,39 @@ public:
  * @param[in] threadId is the thread identifier.
  * @return the thread state.
  */
- Threads::ThreadStateType Threads::GetState(ThreadIdentifier      threadId) {
+Threads::ThreadStateType Threads::GetState(ThreadIdentifier threadId) {
     return STATE_UNKNOWN;
 }
 
- /**
-  * @brief Called by Threads::GetCPUs
-  * @param[in] threadId is the thread identifier.
-  * @return the cpu where the thread is executing.
-  */
-int32 Threads::GetCPUs(ThreadIdentifier      threadId) {
-     int32 cpus = -1;
-     cpu_set_t cpuset;
-     CPU_ZERO(&cpuset);
-     if (pthread_getaffinity_np(threadId, sizeof(cpuset), &cpuset) != 0) {
-         return cpus;
-     }
-     cpus = 0;
-     int32 j = 0;
-     for (j = 0; j < CPU_SETSIZE; j++) {
-         if (CPU_ISSET(j, &cpuset)) {
-             cpus |= (1 << j);
-         }
-     }
-     return cpus;
- }
+/**
+ * @brief Called by Threads::GetCPUs
+ * @param[in] threadId is the thread identifier.
+ * @return the cpu where the thread is executing.
+ */
+int32 Threads::GetCPUs(ThreadIdentifier threadId) {
+    int32 cpus = -1;
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    if (pthread_getaffinity_np(threadId, sizeof(cpuset), &cpuset) != 0) {
+        return cpus;
+    }
+    cpus = 0;
+    int32 j = 0;
+    for (j = 0; j < CPU_SETSIZE; j++) {
+        if (CPU_ISSET(j, &cpuset)) {
+            cpus |= (1 << j);
+        }
+    }
+    return cpus;
+}
 
- /**
-  * @brief Called by Threads::Id.
-  * @return the thread identifier.
-  */
-ThreadIdentifier  Threads::Id() {
-     return pthread_self();
- }
+/**
+ * @brief Called by Threads::Id.
+ * @return the thread identifier.
+ */
+ThreadIdentifier Threads::Id() {
+    return pthread_self();
+}
 
 /**
  * @brief Called by Threads::SetPriorityLevel.
@@ -171,10 +158,9 @@ ThreadIdentifier  Threads::Id() {
  * @param[in] priorityClass is the desired class priority to assign to the thread.
  * @param[in] priorityLevel is the desired thread priority to assign to the thread.
  */
-void Threads::SetPriorityLevelAndClass(
-                            ThreadIdentifier      threadId,
-                            Threads::PriorityClassType  priorityClass,
-                            Threads::ThreadPriorityType priorityLevel) {
+void Threads::SetPriorityLevelAndClass(ThreadIdentifier threadId,
+                                       Threads::PriorityClassType priorityClass,
+                                       Threads::ThreadPriorityType priorityLevel) {
 
     //Cannot set an unknown priority
     if (priorityLevel == 0 && priorityClass == 0) {
@@ -216,7 +202,7 @@ void Threads::SetPriorityLevelAndClass(
  * @param[in] threadId is the thread identifier.
  * @return the priority of the specified thread.
  */
-Threads::ThreadPriorityType Threads::GetPriorityLevel(ThreadIdentifier      threadId) {
+Threads::ThreadPriorityType Threads::GetPriorityLevel(ThreadIdentifier threadId) {
     ThreadPriorityType priorityLevel = PRIORITY_UNKNOWN;
 
     ThreadsDatabase::Lock();
@@ -234,7 +220,7 @@ Threads::ThreadPriorityType Threads::GetPriorityLevel(ThreadIdentifier      thre
  * @param[in] threadId is the thread identifier.
  * @return the priority class of the specified thread.
  */
-Threads::PriorityClassType Threads::GetPriorityClass(ThreadIdentifier      threadId) {
+Threads::PriorityClassType Threads::GetPriorityClass(ThreadIdentifier threadId) {
 
     PriorityClassType priorityClass = PRIORITY_CLASS_UNKNOWN;
     ThreadsDatabase::Lock();
@@ -254,7 +240,7 @@ Threads::PriorityClassType Threads::GetPriorityClass(ThreadIdentifier      threa
  *
  * @param[in] threadId is the thread identifier.
  */
-bool Threads::IsAlive(ThreadIdentifier      threadId) {
+bool Threads::IsAlive(ThreadIdentifier threadId) {
 
     ThreadsDatabase::Lock();
     bool condition = (ThreadsDatabase::GetThreadInformation(threadId) != NULL);
@@ -276,7 +262,7 @@ bool Threads::IsAlive(ThreadIdentifier      threadId) {
  * @param[in] threadId is the thread identifier.
  * @details A thread cannot be deleted if it locks a mutex semaphore.
  */
-bool Threads::Kill(ThreadIdentifier      threadId) {
+bool Threads::Kill(ThreadIdentifier threadId) {
 
     if (!IsAlive(threadId)) {
         return false;
@@ -303,12 +289,12 @@ bool Threads::Kill(ThreadIdentifier      threadId) {
  * @param[in] exceptionHandlerBehaviour is not used here.
  * @param[in] runOnCPUs is used to set an affinity with a desired cpu.
  */
-ThreadIdentifier  Threads::BeginThread(ThreadFunctionType function,
-                       void *parameters,
-                       uint32 stacksize,
-                       const char8 *name,
-                       uint32 exceptionHandlerBehaviour,
-                       ProcessorType runOnCPUs) {
+ThreadIdentifier Threads::BeginThread(ThreadFunctionType function,
+                                      void *parameters,
+                                      uint32 stacksize,
+                                      const char8 *name,
+                                      uint32 exceptionHandlerBehaviour,
+                                      ProcessorType runOnCPUs) {
 
     if (runOnCPUs == ProcessorType::UndefinedCPUs) {
         if (ProcessorType::GetDefaultCPUs() != 0) {
@@ -343,7 +329,7 @@ ThreadIdentifier  Threads::BeginThread(ThreadFunctionType function,
  * @param[in] threadId is the thread identifier.
  * @return the name of the specified thread.
  */
-const char8 *Threads::Name(ThreadIdentifier      threadId) {
+const char8 *Threads::Name(ThreadIdentifier threadId) {
     ThreadsDatabase::Lock();
     ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
     ThreadsDatabase::UnLock();
@@ -363,8 +349,8 @@ const char8 *Threads::Name(ThreadIdentifier      threadId) {
  * @see ThreadInformation::ExceptionProtectedExecute.
  */
 bool Threads::ProtectedExecute(ThreadFunctionType userFunction,
-                            void *userData,
-                            ExceptionHandler *ehi) {
+                               void *userData,
+                               ExceptionHandler *ehi) {
     ThreadIdentifier threadId = Threads::Id();
     ThreadsDatabase::Lock();
     ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
@@ -380,7 +366,7 @@ bool Threads::ProtectedExecute(ThreadFunctionType userFunction,
  * @param[in] n is the thread index.
  * @return the id of the n-th thread in the database, -1 if the database is empty.
  */
-ThreadIdentifier  Threads::FindByIndex(uint32 n){
+ThreadIdentifier Threads::FindByIndex(uint32 n) {
     return ThreadsDatabase::GetThreadID(n);
 }
 
@@ -388,7 +374,7 @@ ThreadIdentifier  Threads::FindByIndex(uint32 n){
  * @brief Returns the number of threads currently in the database.
  * @return the number of threads currently in the database.
  */
-uint32 Threads::NumberOfThreads(){
+uint32 Threads::NumberOfThreads() {
     return ThreadsDatabase::NumberOfThreads();
 }
 
@@ -399,7 +385,9 @@ uint32 Threads::NumberOfThreads(){
  * @param[in] tid is the thread identifier.
  * @return true if the requested element is in the database, false otherwise.
  */
-bool Threads::GetThreadInfoCopy(ThreadInformation &copy, int32 n, ThreadIdentifier      threadId){
+bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
+                                int32 n,
+                                ThreadIdentifier threadId) {
     return ThreadsDatabase::GetInfo(copy, n, threadId);
 }
 
@@ -408,14 +396,7 @@ bool Threads::GetThreadInfoCopy(ThreadInformation &copy, int32 n, ThreadIdentifi
  * @param[in] name is the thread name.
  * @return the id of the first found thread with the specified name.
  */
-ThreadIdentifier Threads::FindByName(const char8 *name){
+ThreadIdentifier Threads::FindByName(const char8 *name) {
     return ThreadsDatabase::Find(name);
 }
-
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-#endif /* THREADSOS_H_ */
 
