@@ -22,7 +22,7 @@
  */
 
 #ifndef SLEEPTEST_H_
-#define 		SLEEPTEST_H_
+#define SLEEPTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,18 +32,24 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "Sleep.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-#include "Sleep.h"
-
-/** @brief A class to test all the Sleep functions. */
+/**
+ * @brief A class to test all the Sleep functions.
+ */
 class SleepTest {
 
 public:
-    SleepTest() {
-    }
+
+    /**
+     * @brief Tests the Sleep::GetDateSeconds function.
+     * @return true if the returned value is equal to the seconds elapsed since epoch.
+     */
+    bool TestGetDateSeconds();
 
     /**
      * @brief Tests the Sleep::AtLeast function.
@@ -67,16 +73,9 @@ public:
     bool TestSec(float64 sec);
 
     /**
-     * @brief Tests the Sleep::Sec function
-     * @param[in] sec is the time to sleep.
-     * @return true if it sleeps less than the double of sec.
-     */
-    bool TestSec(float32 sec);
-
-    /**
      * @brief Tests the Sleep::MSec function
      * @param[in] msec is the time to sleep in milliseconds.
-     * @return true if it sleeps less than the double of sec.
+     * @return true if it sleeps less than the double of msec.
      */
     bool TestMSec(int32 msec);
 
@@ -96,11 +95,6 @@ public:
     bool TestSemiBusy(float64 totalSleepSec,
                       float64 nonBusySleepSec);
 
-    /**
-     * @brief Tests the Sleep::GetDateSeconds function.
-     * @return true if the returned value is equal to the seconds elapsed since epoch.
-     */
-    bool TestGetDateSeconds();
 };
 
 /*---------------------------------------------------------------------------*/

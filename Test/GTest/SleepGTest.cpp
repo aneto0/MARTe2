@@ -50,11 +50,6 @@ TEST(SleepGTest,TestSleepNoMore) {
     ASSERT_TRUE(sleepTest.TestNoMore(0.8));
 }
 
-TEST(SleepGTest,TestSleepSecF) {
-    SleepTest sleepTest;
-    ASSERT_TRUE(sleepTest.TestSec(0.3F));
-}
-
 TEST(SleepGTest,TestSleepSecD) {
     SleepTest sleepTest;
     ASSERT_TRUE(sleepTest.TestSec(0.2));

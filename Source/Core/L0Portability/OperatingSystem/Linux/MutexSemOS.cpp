@@ -2,7 +2,7 @@
  * @file MutexSemOS.cpp
  * @brief Source file for class MutexSemOS
  * @date 08/07/2015
- * @author aneto
+ * @author André Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -24,20 +24,25 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <pthread.h>
 #include <math.h>
 #include <sys/timeb.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "MutexSem.h"
 #include "Atomic.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 /*lint -e{9109} forward declaration in MutexSem.h is required to define the class*/
 struct MutexSemOSProperties {
+
     /**
      * Mutex Handle
      */
@@ -73,6 +78,7 @@ struct MutexSemOSProperties {
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 MutexSem::MutexSem() {
     /*lint -e{1732} -e{1733} no default assignment and no default copy constructor.
      *This is safe since none of the struct members point to dynamically allocated memory*/
@@ -134,11 +140,13 @@ bool MutexSem::Create(const bool &recursive) {
             if (recursive) {
                 //The deadlock condition causes a crash at operating system level.
                 ok = (pthread_mutexattr_settype(&osProperties->mutexAttributes, PTHREAD_MUTEX_RECURSIVE) == 0);
+                osProperties->recursive = true;
             }
             else {
                 //This was pthread PTHREAD_MUTEX_RECURSIVE but it was crashing when a deadlock was forced on purpose
                 //with PTHREAD_MUTEX_NORMAL the same thread cannot lock the semaphore without unlocking it first.
                 ok = (pthread_mutexattr_settype(&osProperties->mutexAttributes, PTHREAD_MUTEX_NORMAL) == 0);
+                osProperties->recursive = false;
             }
         }
         if (ok) {

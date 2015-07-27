@@ -2,7 +2,7 @@
  * @file HighResolutionTimerA.h
  * @brief Header file for class HighResolutionTimerA
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -27,6 +27,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include <intrin.h>
 
 /*---------------------------------------------------------------------------*/
@@ -37,38 +38,28 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief Implementation of platform dependent functions to get the number of cpu ticks.
- */
-class HighResolutionTimerA {
-
-public:
-
-    /**
-     * @brief Reads the High Resolution Timer as 32 bit. Fast inline assembler.
-     * @return number of cpu ticks in a 32 bit integer.
-     */
-    static inline uint32 Read32() {
-
-        return (uint32) __rdtsc();
-
-    }
-
-    /**
-     * @brief Reads the High Resolution Timer as 64 bit int. Fast inline assembler.
-     * @return number of cpu ticks in a 64 bit integer.
-     */
-    static inline int64 Read64() {
-
-        return (int64) __rdtsc();
-
-    }
-
-};
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* HIGHRESOLUTIONTIMERA_H_ */
+/**
+ * @brief Reads the High Resolution Timer as 32 bit. Fast inline assembler.
+ * @return number of cpu ticks in a 32 bit integer.
+ */
+inline uint32 HighResolutionTimer::Counter32() {
 
+    return (uint32) __rdtsc();
+
+}
+
+/**
+ * @brief Reads the High Resolution Timer as 64 bit int. Fast inline assembler.
+ * @return number of cpu ticks in a 64 bit integer.
+ */
+inline int64 HighResolutionTimer::Counter() {
+
+    return (int64) __rdtsc();
+
+}
+
+#endif /* HIGHRESOLUTIONTIMERA_H_ */

@@ -34,6 +34,7 @@
 #include "MutexSem.h"
 #include "EventSem.h"
 #include "Threads.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -42,7 +43,9 @@
  * @brief A class to test the MutexSem functions.
  */
 class MutexSemTest {
+
 public:
+
     /**
      * @brief Constructor.
      * @details Creates the mutex handle.
@@ -56,8 +59,14 @@ public:
     ~MutexSemTest();
 
     /**
+     * @brief Tests the MutexSem default constructor
+     * @return true if the MutexSem default constructor constructs the object in the default state (closed and not recursive).
+     */
+    bool TestDefaultConstructor();
+
+    /**
      * @brief Tests the MutexSem::Create function.
-     * @param[in] recursive specifies if the mutex should be created recursive or not.
+     * @param[in] recursive specifies if the mutex should be created recursively or not.
      * @return true if the semaphore is successfully created which also implies that a non NULL handle is created.
      */
     bool TestCreate(bool recursive);
@@ -65,7 +74,7 @@ public:
     /**
      * @brief Tests the MutexSem::Close function. The semaphore to be closed can be created with any of the
      * possible parameter combinations.
-     * @param[in] recursive specifies if the mutex should be created recursive or not.
+     * @param[in] recursive specifies if the mutex should be created recursively or not.
      * @return true if the semaphore is successfully closed.
      */
     bool TestClose(bool recursive);
@@ -100,44 +109,6 @@ public:
                     TimeoutType timeout);
 
     /**
-     * @brief Tests the MutexSem::FastLock function.
-     *
-     * @details The same strategy as in @see TestLock
-     *
-     * @param[in] nOfThreads is the number of threads to launch.
-     * @param[in] timeout the timeout value that will be used to call the lock function.
-     * @return true if the calls to MutexSem::Lock returned true and if the shared resource was protected.
-     */
-    bool TestFastLock(int32 nOfThreads,
-                      TimeoutType timeout);
-
-    /**
-     * @brief Tests the MutexSem::FastUnLock function.
-     *
-     * @details The same strategy as in @see TestUnLock
-     *
-     * @param[in] nOfThreads is the number of threads to launch.
-     * @param[in] timeout the timeout value that will be used to call the lock function (this allows to demonstrate that
-     * the UnLock is also working for semaphores which were locked with a finite timeout).
-     * @return true if the calls to MutexSem::UnLock returned true and if the shared resource was protected.
-     */
-    bool TestFastUnLock(int32 nOfThreads,
-                        TimeoutType timeout);
-
-    /**
-     * @brief Tests the MutexSem::FastTryLock function.
-     *
-     * @details This test spawns nOfThreads threads which compete for a shared resource variable.
-     * Each of the threads will try to increment and decrement the shared as many times as possible during one second.
-     * Each of the threads will call MutexSem::FastTryLock before accessing the shared resource. If this call returns false
-     * each thread will keep on calling MutexSem::FastTryLock until it returns true.
-     *
-     * @return true if the function behaves as expected when protecting a shared resource and if
-     * it is demonstrated that a second consecutive call to MutexSem::FastTryLock returns false.
-     */
-    bool TestFastTryLock(int32 nOfThreads);
-
-    /**
      * @brief Tests the MutexSem::Lock function and checks that the error code is correctly set.
      *
      * @return true if the error code is set to Errors::Information when the call succeeds and to timeout when
@@ -146,12 +117,10 @@ public:
     bool TestLockErrorCode();
 
     /**
-     * @brief Tests the MutexSem::FastLock function and checks that the error code is correctly set.
-     *
-     * @return true if the error code is set to Errors::Information when the call succeeds and to timeout when
-     * there is a timeout in the Lock.
+     * @brief Tests the MutexSem::IsClosed function
+     * @return true if the semaphore can report effectively if it is closed or not
      */
-    bool TestFastLockErrorCode();
+    bool TestIsClosed();
 
     /**
      * @brief Tests the MutexSem::IsRecursive function.
@@ -226,8 +195,8 @@ private:
      * @return the value returned by the functionToTest.
      */
     bool GenericMutexSemTestCaller(int32 nOfThreads,
-                                TimeoutType timeout,
-                                ThreadFunctionType functionToTest);
+                                   TimeoutType timeout,
+                                   ThreadFunctionType functionToTest);
 
     /**
      * Allow the callback functions to access the private methods of the class

@@ -40,52 +40,53 @@
 /**
  * @brief This class implements useful functions for high resolution timing using the cpu clock.
  *
- * @details These functions are used a lot in each functions that need Timeouts implementation like for examples semaphores.\n
+ * @details These functions are used when a timeout implementation is required like for examples for semaphores.\n
  * Most of the implementation is delegated to HighResolutionTimerA.h which use very low level code (assembly)
  * for the Counter functions, while the Frequency and Period functions are delegated to HighResolutionTimerCalibratorOs.h
- * reading on a system file that returns the current cpu frequency.
+ * which returns the current cpu frequency.
  */
 class HighResolutionTimer {
 
 public:
 
     /**
-     * @brief An high resolution time counter. Only valid on pentiums CPUs and above.
+     * @brief An high resolution 64-bit time counter.
      * @details Reads the cpu ticks on an 64 bits integer.
      */
     static inline int64 Counter();
 
     /**
-     * @brief An high resolution time counter.
+     * @brief An high resolution 32-bit time counter.
      * @details Reads the cpu ticks on an 32 bits integer.
      */
     static inline uint32 Counter32();
 
     /**
-     * @brief The length of a clock period in seconds.
+     * @brief Gets the cpu clock period in seconds.
      * @return the current period of the cpu.
      */
     static inline float64 Period();
 
     /**
-     * @brief To interpret the value returned by HRTCounter.
+     * @brief Gets the cpu clock frequency.
      * @return the current frequency of the cpu.
      */
     static inline int64 Frequency();
 
     /**
-     * @brief Converts HRT ticks to time.
+     * @brief Converts HighResolutionTimer ticks to time in seconds.
      * @param[in] tStop is the final ticks number.
      * @param[in] tStart is the initial ticks number.
-     * @return the time elapsed in TStop-TStart ticks in seconds
+     * @return the time elapsed in seconds
      */
     static inline float64 TicksToTime(int64 tStop,
-                                     int64 tStart = 0);
+                                      int64 tStart = 0);
 
     /**
-     * @brief Get the current time stamp [microseconds, seconds, minutes, hour, day, month, year].
+     * @brief Gets the current time stamp [microseconds, seconds, minutes, hour, day, month, year].
      * @see TimeValues.
      * @param[out] date is a TimeValues structure which must be filled by this method.
+     * @return true if the operating system calls returns with no errors.
      */
     static inline bool GetTimeStamp(TimeValues &date);
 };
@@ -93,7 +94,7 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,HighResolutionTimerOS.h)
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
+#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,HighResolutionTimerOS.h)
 
 #endif /* HIGHRESOLUTIONTIME_H_ */

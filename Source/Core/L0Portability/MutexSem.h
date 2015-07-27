@@ -31,17 +31,21 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "TimeoutType.h"
 #include "ErrorType.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
  * Forward declaration of the operating system specific properties (defined in the operating system
  * specific unit file).
  */
 struct MutexSemOSProperties;
+
 /**
  * @brief Mutual exclusion semaphore.
  */
@@ -57,7 +61,7 @@ public:
     /**
      * @brief This semaphore instance will share the same low-level semaphore
      * (i.e. that share the same handle) with the source semaphore.
-     * @param source the semaphore providing the access to the low-level semaphore.
+     * @param[in] source the semaphore providing the access to the low-level semaphore.
      */
     MutexSem(MutexSem &source);
 
@@ -124,6 +128,7 @@ public:
     MutexSemOSProperties *GetOSProperties();
 
 private:
+
     /**
      * Operating system specific properties to be used by the operating system specific implementation
      */

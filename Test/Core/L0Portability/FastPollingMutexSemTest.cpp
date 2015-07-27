@@ -1,6 +1,6 @@
 /**
- * @file MutexTest.cpp
- * @brief Source file for class MutexTest
+ * @file FastPollingMutexSemTest.cpp
+ * @brief Source file for class FastPollingMutexSemTest
  * @date 25/06/2015
  * @author Giuseppe Ferr�
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MutexTest (public, protected, and private). Be aware that some 
+ * the class FastPollingMutexSemTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,9 +29,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "FastPollingMutexTest.h"
 #include "Sleep.h"
 #include "Atomic.h"
+#include "FastPollingMutexSemTest.h"
+#include "FlagsType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,7 +42,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-FastPollingMutexTest::FastPollingMutexTest() {
+FastPollingMutexSemTest::FastPollingMutexSemTest() {
     testMutex.Create();
     synchSem.Create();
 
@@ -52,15 +53,15 @@ FastPollingMutexTest::FastPollingMutexTest() {
     stop = false;
 }
 
-FastPollingMutexTest::~FastPollingMutexTest() {
+FastPollingMutexSemTest::~FastPollingMutexSemTest() {
 }
 
-bool FastPollingMutexTest::TestConstructor() {
+bool FastPollingMutexSemTest::TestConstructor() {
     FastPollingMutexSem mutexSem;
     return !mutexSem.Locked();
 }
 
-bool FastPollingMutexTest::TestCreate(bool locked) {
+bool FastPollingMutexSemTest::TestCreate(bool locked) {
     FastPollingMutexSem testSem;
     testSem.Create(locked);
 
@@ -74,7 +75,7 @@ bool FastPollingMutexTest::TestCreate(bool locked) {
     return test;
 }
 
-bool FastPollingMutexTest::GenericMutexTestCaller(int32 nOfThreads, TimeoutType timeout, ThreadFunctionType functionToTest) {
+bool FastPollingMutexSemTest::GenericMutexTestCaller(int32 nOfThreads, TimeoutType timeout, ThreadFunctionType functionToTest) {
     failed = false;
     stop = false;
     nOfExecutingThreads = 0;
@@ -95,7 +96,7 @@ bool FastPollingMutexTest::GenericMutexTestCaller(int32 nOfThreads, TimeoutType 
     return !failed;
 }
 
-void TestFastLockCallback(FastPollingMutexTest &mt) {
+void TestFastLockCallback(FastPollingMutexSemTest &mt) {
     FlagsType error;
     mt.synchSem.Wait();
     while (!mt.stop) {
@@ -117,11 +118,11 @@ void TestFastLockCallback(FastPollingMutexTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool FastPollingMutexTest::TestFastLock(int32 nOfThreads, TimeoutType timeout) {
+bool FastPollingMutexSemTest::TestFastLock(int32 nOfThreads, TimeoutType timeout) {
     return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastLockCallback);
 }
 
-void TestFastUnLockCallback(FastPollingMutexTest &mt) {
+void TestFastUnLockCallback(FastPollingMutexSemTest &mt) {
     mt.synchSem.Wait();
 
     while (!mt.stop) {
@@ -141,11 +142,11 @@ void TestFastUnLockCallback(FastPollingMutexTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool FastPollingMutexTest::TestFastUnLock(int32 nOfThreads, TimeoutType timeout) {
+bool FastPollingMutexSemTest::TestFastUnLock(int32 nOfThreads, TimeoutType timeout) {
     return GenericMutexTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestFastUnLockCallback);
 }
 
-void TestFastTryLockCallback(FastPollingMutexTest &mt) {
+void TestFastTryLockCallback(FastPollingMutexSemTest &mt) {
     FlagsType error;
     mt.synchSem.Wait();
     while (!mt.stop) {
@@ -168,7 +169,7 @@ void TestFastTryLockCallback(FastPollingMutexTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool FastPollingMutexTest::TestFastTryLock(int32 nOfThreads) {
+bool FastPollingMutexSemTest::TestFastTryLock(int32 nOfThreads) {
     bool test = GenericMutexTestCaller(nOfThreads, TTInfiniteWait, (ThreadFunctionType) TestFastTryLockCallback);
     FastPollingMutexSem sem;
     test = sem.FastTryLock();
@@ -177,7 +178,7 @@ bool FastPollingMutexTest::TestFastTryLock(int32 nOfThreads) {
     return test;
 }
 
-void TestFastLockErrorCodeCallback(FastPollingMutexTest &mt) {
+void TestFastLockErrorCodeCallback(FastPollingMutexSemTest &mt) {
     mt.failed = false;
     FlagsType returnError;
     //This should fail because it was already locked in the TestFastLockErrorCode
@@ -185,11 +186,10 @@ void TestFastLockErrorCodeCallback(FastPollingMutexTest &mt) {
     if (err != Timeout) {
         mt.failed = true;
     }
-
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool FastPollingMutexTest::TestFastLockErrorCode() {
+bool FastPollingMutexSemTest::TestFastLockErrorCode() {
     ErrorType err = testMutex.FastLock(TTInfiniteWait);
     bool ok = false;
     if (err == NoError) {
@@ -200,7 +200,7 @@ bool FastPollingMutexTest::TestFastLockErrorCode() {
     return ok;
 }
 
-bool FastPollingMutexTest::TestLocked() {
+bool FastPollingMutexSemTest::TestLocked() {
     bool test = true;
 
     testMutex.Create(false);
@@ -212,7 +212,7 @@ bool FastPollingMutexTest::TestLocked() {
     return test;
 }
 
-void TestRecursiveCallback(FastPollingMutexTest &mt) {
+void TestRecursiveCallback(FastPollingMutexSemTest &mt) {
     mt.testMutex.FastLock();
     mt.testMutex.FastLock();
     mt.testMutex.FastUnLock();
@@ -220,7 +220,7 @@ void TestRecursiveCallback(FastPollingMutexTest &mt) {
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
-bool FastPollingMutexTest::TestRecursive() {
+bool FastPollingMutexSemTest::TestRecursive() {
     bool test = false;
     testMutex.Create(false);
     nOfExecutingThreads = 1;
@@ -238,6 +238,5 @@ bool FastPollingMutexTest::TestRecursive() {
         //A fast polling mutex semaphore should have dead-locked...
         test = false;
     }
-
     return test;
 }

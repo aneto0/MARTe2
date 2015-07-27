@@ -23,6 +23,7 @@
 
 #ifndef SEMCORE_H_
 #define SEMCORE_H_
+
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -78,7 +79,10 @@ public:
     const HANDLE Handle() const;
 
 private:
-    /** The handle associated to the semaphore. */
+
+    /**
+     * The handle associated to the semaphore
+     */
     const HANDLE semH;
 };
 

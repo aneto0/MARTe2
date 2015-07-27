@@ -61,15 +61,27 @@ TEST(ProcessorTypeGTest,TestInequalityOperator) {
     ASSERT_TRUE(processorTypeTest.TestInequalityOperator());
 }
 
-TEST(ProcessorTypeGTest,TestGetSetDefaultCPUs) {
+TEST(ProcessorTypeGTest,TestSetGetDefaultCPUs) {
     ProcessorTypeTest processorTypeTest;
-    ASSERT_TRUE(processorTypeTest.TestGetSetDefaultCPUs());
+    ASSERT_TRUE(processorTypeTest.TestSetGetDefaultCPUs());
 }
 
-TEST(ProcessorTypeGTest,TestConstructors) {
+
+TEST(ProcessorTypeGTest,TestDefaultConstructor) {
     ProcessorTypeTest processorTypeTest;
-    ASSERT_TRUE(processorTypeTest.TestConstructors());
+    ASSERT_TRUE(processorTypeTest.TestDefaultConstructor());
 }
+
+TEST(ProcessorTypeGTest,TestConstructorFromMask) {
+    ProcessorTypeTest processorTypeTest;
+    ASSERT_TRUE(processorTypeTest.TestConstructorFromMask());
+}
+
+TEST(ProcessorTypeGTest,TestConstructorFromProcessorType) {
+    ProcessorTypeTest processorTypeTest;
+    ASSERT_TRUE(processorTypeTest.TestConstructorFromProcessorType());
+}
+
 
 TEST(ProcessorTypeGTest,TestSetMask) {
     ProcessorTypeTest processorTypeTest;

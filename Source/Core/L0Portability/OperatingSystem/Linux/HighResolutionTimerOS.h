@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "../../HighResolutionTimer.h"
 #include "HighResolutionTimerCalibratorOS.h"
 
@@ -38,12 +39,10 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
-
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 static HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
 
 inline int64 HighResolutionTimer::Frequency(){
@@ -64,4 +63,3 @@ inline bool HighResolutionTimer::GetTimeStamp(TimeValues &date){
 }
 
 #endif /* HIGHRESOLUTIONTIMEROS_H_ */
-	

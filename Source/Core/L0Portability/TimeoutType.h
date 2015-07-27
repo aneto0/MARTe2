@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TimeoutTYPE_H_
-#define TimeoutTYPE_H_
+#ifndef TIMEOUTTYPE_H_
+#define TIMEOUTTYPE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "HighResolutionTimer.h"
 
@@ -42,12 +43,13 @@
  *
  * @details These methods define the timeout object which is simply an integer which represent a time in milliseconds.
  * Furthermore here are defined flags for different types of timeout.
- * This class is used to implement semaphores based on spin-locks with timed locks and in applications which needs
+ * This class is used to implement semaphores with timed locks and in applications which needs
  * Timeouts.
  */
 class TimeoutType {
 
 public:
+
     /**
      * @brief Constructor from integer.
      * @param[in] msecs is the time in milliseconds.
@@ -55,35 +57,37 @@ public:
     inline TimeoutType(const uint32 &msecs = 0xFFFFFFFFu);
 
     /**
-     * @brief Set timeout from float32.
+     * @brief Sets the timeout from float32.
      * @param[in] secs is the time in seconds.
      */
+    /*lint -e(1960) , functions should have external effects*/
     inline void SetTimeoutSec(float64 secs);
 
     /**
-     * @brief Set timeout from HRT ticks.
+     * @brief Sets the timeout from HighResolutionTimer ticks.
      * @param[in] ticks are the number of cpu ticks.
      */
+    /*lint -e(1960) , functions should have external effects*/
     inline void SetTimeoutHighResolutionTimerTicks(int64 ticks);
 
     /**
-     * @brief Get the timeout in HighResolutionTimer Ticks
+     * @brief Gets the timeout in HighResolutionTimer Ticks
      * @return the number of ticks related to the timeout.
      */
     inline int64 HighResolutionTimerTicks() const;
 
     /**
-     * @brief Subtract mSecs to the timeout.
+     * @brief Subtracts a number of milliseconds from the timeout.
      * @param[in] mSecs is the value which will be subtracted to the timeout (milliseconds).
+     * @return this object.
      */
     inline TimeoutType &operator-=(const uint32 &mSecs);
 
     /**
-     * @brief Compare two timeout times.
+     * @brief Compares two timeout times.
      * @param[in] tt is the timeout object to be compared with this.
      * @return true of msecTimeout attributes of both timeout object are equal.
      */
-    /*lint -e(1739) , operation uint32 == ProcessorType will not be supported*/
     inline bool operator==(const TimeoutType &tt) const;
 
     /**
@@ -91,12 +95,12 @@ public:
      * @param[in] tt is another timeout.
      * @return true if msecTimeout attributes of both timeout object are different.
      */
-    /*lint -e(1739) , operation uint32 == TimeoutType will not be supported*/
     inline bool operator!=(const TimeoutType &tt) const;
 
     /**
      * @brief Copy operator.
-     * @param[in] tt is the timout to copy in this.
+     * @param[in] tt is the timeout to copy in this.
+     * @return this object.
      */
     inline TimeoutType &operator=(const TimeoutType &tt);
 
@@ -113,7 +117,10 @@ public:
     inline uint32 GetTimeoutMSec() const;
 
 private:
-    /** timeout in milliseconds  */
+
+    /**
+     * Timeout in milliseconds
+     */
     uint32 msecTimeout;
 
 };
@@ -133,6 +140,7 @@ const TimeoutType TTDefault(0xFFFFFFFEu);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 TimeoutType::TimeoutType(const uint32 &msecs) {
     msecTimeout = msecs;
 }
@@ -193,5 +201,5 @@ inline uint32 TimeoutType::GetTimeoutMSec() const {
     return msecTimeout;
 }
 
-#endif /* TimeoutTYPE_H_ */
+#endif /* TIMEOUTTYPE_H_ */
 

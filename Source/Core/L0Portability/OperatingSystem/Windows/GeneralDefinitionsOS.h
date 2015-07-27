@@ -48,4 +48,7 @@
 /** In windows the newline is specified with \r\n */
 #define N_CHARS_NEWLINE 2
 
+typedef long oslong;
+typedef unsigned long osulong;
+
 #endif /* GENERALDEFINITIONSOS_H_ */

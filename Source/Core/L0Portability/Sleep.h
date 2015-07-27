@@ -31,8 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "HighResolutionTimer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -48,7 +50,9 @@
  * @details Most of the implementation is delegated to SleepOS.h which provides system calls to allows sleep functions.
  */
 class Sleep {
+
 public:
+
     /**
      * @brief Retrieve the time as seconds from the start of time.
      * @return the seconds elapsed from 00:00 of Jan 1, 1970.
@@ -57,7 +61,6 @@ public:
 
     /**
      * @brief Sleeps for the time requested or more.
-     *
      * @details This function uses HighResolutionTimer functions.
      * @param[in] sec is the time in seconds to sleep (at least).
      */
@@ -65,7 +68,6 @@ public:
 
     /**
      * @brief Sleeps no more than the requested time.
-     *
      * @details This function uses HighResolutionTimer functions.
      * @param[in] sec is the time in seconds to sleep (no more).
      */
@@ -83,29 +85,33 @@ public:
      */
     static void MSec(int32 msec);
 
-    /** @brief Sleep without yield cpu.
-     *
+    /**
+     * @brief Sleep without yield cpu.
      * @details This function uses HighResolutionTimer functions.
      * @param[in] sec is the seconds to sleep.
      */
-    static void Busy(float64 sec){
-        int64 startCounter = HighResolutionTimer::Counter();
-        int64 endCounter = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
-        int64 sleepUntilCounter = startCounter + endCounter;
-        while (HighResolutionTimer::Counter() < sleepUntilCounter) {
-        }
-    }
+    inline static void Busy(float64 sec);
 
     /**
      * @brief Sleep yielding cpu for nonBusySleepSec.
+     * @details This function uses HighResolutionTimer functions.
      * @param[in] totalSleepSec is the total time in seconds to sleep.
      * @param[in] nonBusySleepSec is the time to sleep without use cpu.
      */
     static void SemiBusy(float64 totalSleepSec,
                          float64 nonBusySleepSec);
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+void Sleep::Busy(float64 sec) {
+    int64 startCounter = HighResolutionTimer::Counter();
+    int64 endCounter = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
+    int64 sleepUntilCounter = startCounter + endCounter;
+    while (HighResolutionTimer::Counter() < sleepUntilCounter) {
+    }
+}
 
 #endif /* SLEEP_H_ */

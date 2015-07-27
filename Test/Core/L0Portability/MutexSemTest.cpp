@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MutexSemTest.h"
-
 #include "Sleep.h"
 #include "Atomic.h"
 
@@ -57,6 +56,11 @@ MutexSemTest::~MutexSemTest() {
     testMutex.Close();
 }
 
+bool MutexSemTest::TestDefaultConstructor() {
+    MutexSem target;
+    return target.IsClosed() && !target.IsRecursive();
+}
+
 bool MutexSemTest::TestCreate(bool recursive) {
     MutexSem testSem;
     bool test = testSem.Create(recursive);
@@ -74,8 +78,8 @@ bool MutexSemTest::TestClose(bool recursive) {
 }
 
 bool MutexSemTest::GenericMutexSemTestCaller(int32 nOfThreads,
-                                       TimeoutType timeout,
-                                       ThreadFunctionType functionToTest) {
+                                             TimeoutType timeout,
+                                             ThreadFunctionType functionToTest) {
     failed = false;
     stop = false;
     nOfExecutingThreads = 0;
@@ -119,7 +123,7 @@ void TestLockCallback(MutexSemTest &mt) {
 }
 
 bool MutexSemTest::TestLock(int32 nOfThreads,
-                         TimeoutType timeout) {
+                            TimeoutType timeout) {
     return GenericMutexSemTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestLockCallback);
 }
 
@@ -147,7 +151,7 @@ void TestUnLockCallback(MutexSemTest &mt) {
 }
 
 bool MutexSemTest::TestUnLock(int32 nOfThreads,
-                           TimeoutType timeout) {
+                              TimeoutType timeout) {
     return GenericMutexSemTestCaller(nOfThreads, timeout, (ThreadFunctionType) TestUnLockCallback);
 }
 
@@ -172,6 +176,16 @@ bool MutexSemTest::TestLockErrorCode() {
     return ok;
 }
 
+bool MutexSemTest::TestIsClosed() {
+    bool result = true;
+    MutexSem target;
+    target.Create();
+    result = result && !target.IsClosed();
+    target.Close();
+    result = result && target.IsClosed();
+    return result;
+}
+
 bool MutexSemTest::TestIsRecursive() {
     bool test = true;
 
@@ -181,9 +195,8 @@ bool MutexSemTest::TestIsRecursive() {
     testMutex.Close();
 
     test &= testMutex.Create(true);
-    test &= !testMutex.IsRecursive();
+    test &= testMutex.IsRecursive();
     testMutex.Close();
-
 
     return test;
 }
@@ -230,7 +243,6 @@ bool MutexSemTest::TestRecursive(bool recursive) {
 }
 
 bool MutexSemTest::TestCopyConstructor() {
-    ErrorType error;
     bool test = true;
     test = testMutex.Create(false);
     MutexSem copyTestMutex(testMutex);

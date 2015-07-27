@@ -40,7 +40,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "../../GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -48,10 +50,10 @@
 /**
  * @brief A class to get the period and the frequency of the cpu clock depending on the operating system.
  */
-
 class HighResolutionTimerCalibratorOS {
 
 public:
+
     /**
      * @brief Estimates the period and the frequency of the cpu clock.
      * @details The period and frequency of the CPU clock are estimated upon
@@ -114,9 +116,9 @@ private:
      */
     int64 initialTicks;
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* HIGHRESOLUTIONTIMERCALIBRATOROS_H_ */
-

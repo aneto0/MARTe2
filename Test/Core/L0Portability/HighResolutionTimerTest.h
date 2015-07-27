@@ -22,7 +22,7 @@
  */
 
 #ifndef HIGHRESOLUTIONTIMERTEST_H_
-#define 		HIGHRESOLUTIONTIMERTEST_H_
+#define HIGHRESOLUTIONTIMERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,7 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -58,22 +60,19 @@ public:
     bool TestFrequency();
 
     /**
-     * @brief Checks if period and frequency are mutual.
-     * @return true if frequency=1/period.
-     */
-    bool TestPeriodFrequency();
-
-    /**
-     * @brief Sleep for sleepTime time and check if the time measured with HighResolutionTimer::Counter is more or less the same.
+     * @brief Test the HighResolutionTimer::Counter function.
+     * @detail Sleep for sleepTime time and check if the time measured with HighResolutionTimer::Counter is more or less the same.
      * @param[in] sleepTime is the time to sleep.
-     * @return true if the measured time is the same of the sleep time less than a tolerance, false otherwise.
+     * @return true if the measured time is more or less the sleep time, false otherwise.
      */
     bool TestCounter(float64 sleepTime);
 
     /**
-     * @brief Sleep for sleepTime time and check if the time measured with HighResolutionTimer::Counter32 is more or less the same.
+     * @brief Test the HighResolutionTimer::Counter32 function.
+     * @detailSleep for sleepTime time and check if the time measured with HighResolutionTimer::Counter32
+     * is more or less the same.
      * @param[in] sleepTime is the time to sleep.
-     * @return true if the measured time is the same of the sleep time less than a tolerance, false otherwise.
+     * @return true if the measured time is more or less the sleep time,
      */
     bool TestCounter32(float64 sleepTime);
 
@@ -83,7 +82,7 @@ public:
      * @param[in] sleepTime is the time argument.
      * @return true if the conversion from ticks to time is correct.
      */
-    bool TestTicksToTime(float64 sleepTime);
+    bool TestTicksToTime();
 
     /**
      * @brief Test the time stamp returned by HighResolutionTimer::GetTimeStamp.
@@ -91,8 +90,17 @@ public:
      * consistent with the time interval elapsed. At last checks the boundaries of the time stamp structure fields.
      * @param[in] millisecs is the interval between two timestamp get functions.
      * @return true if the elapsed time between both time stamps are consistent with the slept time and the minutes, hours, days and months are in the expected limits.
+     * Notice that a fail in this test could be driven by an interruption of the test by another task.
      */
     bool TestGetTimeStamp(uint32 millisecs);
+
+public: //Other tests
+
+    /**
+     * @brief Checks if period and frequency are mutual.
+     * @return true if frequency=1/period.
+     */
+    bool TestPeriodFrequency();
 };
 
 /*---------------------------------------------------------------------------*/

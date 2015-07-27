@@ -31,9 +31,11 @@
 #include <pthread.h>
 #include <math.h>
 #include <sys/timeb.h>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ErrorType.h"
 #include "TimeoutType.h"
 
@@ -47,13 +49,15 @@
 class PrivateMutexSemStruct {
 
 private:
+
     /**
-     * @brief Constructor.
+     * @brief Default constructor.
      */
     PrivateMutexSemStruct() {
         references = 1;
         closed = false;
     }
+
     /**
      * @brief Destructor.
      */
@@ -62,6 +66,7 @@ private:
 
     /**
      * @brief Initialize the semaphore with the right attributes.
+     * @param[in] recursive specifies if the mutex created is recursive or not
      * @return false if something wrong with pthread_mutex initialization.
      */
     bool Init(bool &recursive) {
@@ -98,7 +103,6 @@ private:
      * @brief Destroy the semaphore.
      * @return false if something wrong in pthread_mutex destruction.
      */
-
     bool Close() {
         if (closed) {
             return true;
@@ -199,15 +203,24 @@ private:
     }
 
 private:
-    /**  Mutex Handle */
+
+    /**
+     * Mutex Handle
+     */
     pthread_mutex_t mutexHandle;
-    /** Mutex Attributes */
+
+    /**
+     * Mutex Attributes
+     */
     pthread_mutexattr_t mutexAttributes;
 
-    /** Number of handle references. */
+    /**
+     * Number of handle references
+     */
     uint32 references;
 
-    /** This flag is set to true when the semaphore is closed.
+    /**
+     * This flag is set to true when the semaphore is closed.
      * We need this because when we use shared semaphores (created with
      * the copy constructor) once the semaphore has been closed by the
      * operating system, calling a second close (for the copy constructed
@@ -353,9 +366,8 @@ public:
         }
     };
 
-    /*---------------------------------------------------------------------------*/
-    /*                        Inline method definitions                          */
-    /*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
 #endif /* MUTEXSEMOS_H_ */
-

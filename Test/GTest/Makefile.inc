@@ -32,11 +32,14 @@ OBJSX=  EndianityGTest.x \
 	EventSemGTest.x \
 	HighResolutionTimerGTest.x \
 	MemoryGTest.x \
-	FastPollingMutexGTest.x \
+	FastPollingMutexSemGTest.x \
 	StringHelperGTest.x \
 	ThreadsGTest.x \
-	MutexSemGTest.x
-        #BasicConsoleGTest.x \
+	MutexSemGTest.x \
+    BasicConsoleGTest.x \
+    TimeoutTypeGTest.x \
+    LoadableLibraryGTest.x \
+    FastMathGTest.x
 
 PACKAGE=
 ROOT_DIR=../..

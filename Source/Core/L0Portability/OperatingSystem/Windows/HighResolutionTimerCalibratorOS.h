@@ -22,17 +22,20 @@
  */
 
 #ifndef HIGHRESOLUTIONTIMERCALIBRATOROS_H_
-#define 		HIGHRESOLUTIONTIMERCALIBRATOROS_H_
+#define HIGHRESOLUTIONTIMERCALIBRATOROS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include <Windows.h>
 #include <time.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
+#include "../../GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -44,99 +47,68 @@
 class HighResolutionTimerCalibratorOS {
 
 public:
-    /** Number of cpu ticks in a milliseconds. */
-    uint32 HRTmSecTics;
-
-    /** Number of cpu ticks in a second. */
-    int64 HRTFrequency;
-
-    /** Time between a tick and the other in seconds. */
-    float64 HRTPeriod;
-
-    /** Contains the seconds and microseconds from epoch */
-    struct timeval initialTime;
-
-    /** Used to save the number of ticks at the calibration moment. */
-    uint64 initialTicks;
 
     /**
-     * @brief Get the frequency and the period of the cpu clock.
+     * @brief Estimates the period and the frequency of the cpu clock.
+     * @details The period and frequency of the CPU clock are estimated upon
+     * construction.
+     * In the Linux implementation these values are read from the /proc/cpuinfo file.
+     * The number of elapsed cpu ticks is also stored at this moment.
      */
-    HighResolutionTimerCalibratorOS() {
-
-        time((time_t *) &initialTime.tv_sec);
-
-        //The precision is at the millisecond!
-        SYSTEMTIME forMs;
-        GetSystemTime(&forMs);
-        initialTime.tv_usec = forMs.wMilliseconds * 1000;
-
-        initialTicks = HighResolutionTimerA::Read64();
-
-        uint64 tt0, tt1, tt2, tt3, tt4, tt5, dTa, dTb;
-        dTa = 0;
-        dTb = 0;
-        for (int i = 0; i < 50; i++) {
-            tt2 = HighResolutionTimerA::Read64();
-            QueryPerformanceCounter((LARGE_INTEGER *) &tt0);
-            tt3 = HighResolutionTimerA::Read64();
-            tt4 = tt3;
-            while ((tt4 - tt3) < 100000)
-                tt4 = HighResolutionTimerA::Read64(); // .5 ms at 200 Mhz
-            QueryPerformanceCounter((LARGE_INTEGER *) &tt1);
-            tt5 = HighResolutionTimerA::Read64();
-            dTa += (tt1 - tt0);
-            dTb += ((tt5 + tt4) - (tt3 + tt2)) / 2;
-        }
-        QueryPerformanceFrequency((LARGE_INTEGER *) &HRTFrequency);
-        HRTFrequency *= dTb;
-        HRTFrequency /= dTa;
-
-        HRTFrequency += 999999;
-        HRTFrequency /= 2000000;
-        HRTFrequency *= 2000000;
-
-        HRTPeriod = 1.0 / (int64) HRTFrequency;
-        HRTmSecTics = HRTFrequency / 1000;
-    }
+    HighResolutionTimerCalibratorOS();
 
     /**
      * @brief Get the current time stamp.
      * @param[in] timeStamp is a structure which contains the time stamp fields.
-     * @return true if successful, false otherwise.
+     * @return true if the time can be successfully retrieved from the operating system.
      */
-    bool GetTimeStamp(TimeValues &timeStamp) {
+    bool GetTimeStamp(TimeValues &timeStamp);
 
-        uint64 ticks = HighResolutionTimerA::Read64() - initialTicks;
+    /**
+     * @brief Returns the calibrated CPU frequency.
+     * @return the calibrated CPU frequency.
+     */
+    int64 GetFrequency() const;
 
-        //Use HRT
-        uint32 secHRT = (uint32) (ticks * HRTPeriod);
-        uint32 uSecHRT = (uint32) ((ticks * HRTPeriod - secHRT) * 1e6);
+    /**
+     * @brief Returns the number of elapsed ticks at the time the program was started.
+     * @return the number of elapsed ticks when the program was started.
+     */
+    int64 GetInitialTicks() const;
 
-        //Add HRT to the the initial time saved in the calibration.
-        time_t sec = (time_t)(initialTime.tv_sec + secHRT);
-        timeStamp.microseconds = initialTime.tv_usec + uSecHRT;
+    /**
+     * @brief Returns the time (from the epoch) when the program was started.
+     * @return the time at which the program was started.
+     */
+    const struct timeval& GetInitialTime() const;
 
-        //Check the overflow
-        if (timeStamp.microseconds >= 1e6) {
-            timeStamp.microseconds -= 1e6;
-            sec++;
-        }
+    /**
+     * @brief Returns the calibrated CPU period.
+     * @return the calibrated CPU period.
+     */
+    float64 GetPeriod() const;
 
-        //fill the time structure
-        struct tm tValues;
-        if (localtime_s(&tValues, (const time_t*) &sec) != 0) {
-            return false;
-        }
-        timeStamp.seconds = tValues.tm_sec;
-        timeStamp.minutes = tValues.tm_min;
-        timeStamp.hours = tValues.tm_hour;
-        timeStamp.days = tValues.tm_mday;
-        timeStamp.month = tValues.tm_mon;
-        timeStamp.year = tValues.tm_year;
-        return true;
-    }
+private:
 
+    /**
+     * Number of cpu ticks in a second.
+     */
+    int64 frequency;
+
+    /**
+     * Time between a tick and the other in seconds.
+     */
+    float64 period;
+
+    /**
+     * Stores the time (counting from the epoch) at which a framework instance was executed.
+     */
+    struct timeval initialTime;
+
+    /**
+     * Number of elapsed ticks at the time at which a framework instance was executed.
+     */
+    uint64 initialTicks;
 };
 
 /*---------------------------------------------------------------------------*/

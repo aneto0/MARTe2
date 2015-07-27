@@ -1,8 +1,8 @@
 /**
- * @file BasicConsole.cpp
+ * @file BasicConsoleOS.cpp
  * @brief Source file for class BasicConsole
  * @date 05/07/2015
- * @author Andre' Neto
+ * @author André Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -24,6 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #ifndef LINT
 #include <sys/ioctl.h>
 #include <stdio.h>
@@ -43,8 +44,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 /*lint -e{9109} forward declaration in BasicConsole.h is required to define the class*/
 /*lint -esym(9150, BasicConsoleOSProperties::*) */
+
 struct BasicConsoleOSProperties {
     /**
      * Standard output file descriptor.
@@ -101,6 +104,7 @@ const FlagsType BasicConsole::Mode::CreateNewBuffer(1u);
 const FlagsType BasicConsole::Mode::PerformCharacterInput(2u);
 const FlagsType BasicConsole::Mode::DisableControlBreak(4u);
 const FlagsType BasicConsole::Mode::EnablePaging(8u);
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -193,7 +197,9 @@ ErrorType BasicConsole::Close() {
 }
 
 /*lint -e{715} timeout is not used in Linux*/
-ErrorType BasicConsole::Write(const char8 * const buffer, uint32 & size, const TimeoutType &timeout) {
+ErrorType BasicConsole::Write(const char8 * const buffer,
+                              uint32 & size,
+                              const TimeoutType &timeout) {
     ErrorType err = NoError;
     if ((osProperties->openingMode & BasicConsole::Mode::EnablePaging) == BasicConsole::Mode::EnablePaging) {
         err = PagedWrite(buffer, size, timeout);
@@ -205,7 +211,9 @@ ErrorType BasicConsole::Write(const char8 * const buffer, uint32 & size, const T
 }
 
 /*lint -e{715} timeout is not used in Linux*/
-ErrorType BasicConsole::OSWrite(const char8* const buffer, uint32 &size, const TimeoutType &timeout) {
+ErrorType BasicConsole::OSWrite(const char8* const buffer,
+                                uint32 &size,
+                                const TimeoutType &timeout) {
     const char8 *bufferString = buffer;
     const char8 newLine = '\n';
 
@@ -218,11 +226,15 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer, uint32 &size, const T
     uint32 sizeToWrite = 0u;
 
     bool sink = false;
-
     ErrorType err = NoError;
     while ((err == NoError) && (index < size)) {
         currentChar = bufferString[index];
-        if ((currentChar == '\0') || (currentChar == '\n') || (index == (size - 1u))) {
+        if (currentChar == '\n') {
+            //reset the currentColumn
+            currentColumn = 0u;
+        }
+
+        if ((currentChar == '\n') || (index == (size - 1u))) {
             sink = true;
         }
 
@@ -232,6 +244,7 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer, uint32 &size, const T
 
         if (sink) {
             sizeToWrite = (index - start) + 1u;
+
             if (sizeToWrite > 0u) {
                 ssize_t wbytes = write(BasicConsoleOSProperties::STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
                 if (wbytes == -1) {
@@ -263,7 +276,9 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer, uint32 &size, const T
 }
 
 /*lint -e{715} timeout is not used...*/
-ErrorType BasicConsole::Read(char8 * const buffer, uint32 & size, const TimeoutType &timeout) {
+ErrorType BasicConsole::Read(char8 * const buffer,
+                             uint32 & size,
+                             const TimeoutType &timeout) {
     ErrorType err = NoError;
     if ((buffer != NULL) && (size > 0u)) {
         if ((osProperties->openingMode & BasicConsole::Mode::PerformCharacterInput) != 0u) {
@@ -296,13 +311,15 @@ ErrorType BasicConsole::Read(char8 * const buffer, uint32 & size, const TimeoutT
     return err;
 }
 
-ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns, const uint32 &numberOfRows) {
+ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
+                                const uint32 &numberOfRows) {
     osProperties->nOfColumns = numberOfColumns;
     osProperties->nOfRows = numberOfRows;
     return NoError;
 }
 
-ErrorType BasicConsole::GetSize(uint32 &numberOfColumns, uint32 &numberOfRows) const {
+ErrorType BasicConsole::GetSize(uint32 &numberOfColumns,
+                                uint32 &numberOfRows) const {
     numberOfColumns = osProperties->nOfColumns;
     numberOfRows = osProperties->nOfRows;
     return NoError;
@@ -343,12 +360,14 @@ bool BasicConsole::TimeoutSupported() const {
     return false;
 }
 
+/*lint -e{715} function not implemented in Linux*/
 ErrorType BasicConsole::ShowBuffer() {
     return UnsupportedFeature;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorType BasicConsole::SetColour(const Colours &foregroundColour, const Colours &backgroundColour) {
+ErrorType BasicConsole::SetColour(const Colours &foregroundColour,
+                                  const Colours &backgroundColour) {
     return UnsupportedFeature;
 }
 
@@ -358,31 +377,40 @@ ErrorType BasicConsole::SetTitleBar(const char8 * const title) {
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorType BasicConsole::GetTitleBar(char8 * const title) const {
+ErrorType BasicConsole::GetTitleBar(char8 * const title,
+                                    const uint32 &size) const {
     return UnsupportedFeature;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorType BasicConsole::SetCursorPosition(const uint32 &column, const uint32 &row) {
+ErrorType BasicConsole::SetCursorPosition(const uint32 &column,
+                                          const uint32 &row) {
     return UnsupportedFeature;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorType BasicConsole::GetCursorPosition(uint32 &column, uint32 &row) const {
+ErrorType BasicConsole::GetCursorPosition(uint32 &column,
+                                          uint32 &row) const {
     return UnsupportedFeature;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns, const uint32 &numberOfRows) {
+ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
+                                      const uint32 &numberOfRows) {
     return UnsupportedFeature;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorType BasicConsole::GetWindowSize(uint32 &numberOfColumns, uint32 &numberOfRows) const {
+ErrorType BasicConsole::GetWindowSize(uint32 &numberOfColumns,
+                                      uint32 &numberOfRows) const {
     return UnsupportedFeature;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorType BasicConsole::PlotChar(const char8 &c, const Colours &foregroundColour, const Colours &backgroundColour, const uint32 &column, const uint32 &row) {
+ErrorType BasicConsole::PlotChar(const char8 &c,
+                                 const Colours &foregroundColour,
+                                 const Colours &backgroundColour,
+                                 const uint32 &column,
+                                 const uint32 &row) {
     return UnsupportedFeature;
 }

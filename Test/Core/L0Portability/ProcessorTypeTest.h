@@ -47,13 +47,7 @@ public:
     /**
      * @brief Constructor.
      */
-    ProcessorTypeTest() :
-            ptFirst(0xFE),
-            ptSecond(0xFD),
-            ptAny(0xFF),
-            ptNone(0x0) {
-
-    }
+    ProcessorTypeTest();
 
     /**
      * @brief Tests the overloaded assignment operator in ProcessorType
@@ -83,13 +77,25 @@ public:
      * @brief Tests ProcessorType::GetDefaultCPUs and ProcessorType::SetDefaultCPUs.
      * @return true if the ProcessorType default CPUs can be successfully set and retrieved.
      */
-    bool TestGetSetDefaultCPUs();
+    bool TestSetGetDefaultCPUs();
 
     /**
-     * @brief Tests ProcessorType's constructors
+     * @brief Tests ProcessorType's default constructor
      * @return true if all the ProcessorType constructors can be successfully assigned to the expected initial CPU mask.
      */
-    bool TestConstructors();
+    bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the Processor type constructor with a mask as input.
+     * @return true if the mask is equal to the input passed by argument.
+     */
+    bool TestConstructorFromMask();
+
+    /**
+     * @brief Tests the Processor type constructor with another ProcessorType as input.
+     * @return true if the mask is equal to the mask of the ProcessorType object passed by argument.
+     */
+    bool TestConstructorFromProcessorType();
 
     /**
      * @brief Tests the ProcessorType::SetMask function.
