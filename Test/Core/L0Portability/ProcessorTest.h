@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Processor.h"
 
 /*---------------------------------------------------------------------------*/
@@ -82,6 +83,7 @@ public:
      * if testEqual is true returns true if Processor::Available() returns a value equal to availableCPUTest.
      */
     bool TestAvailable(uint32 availableCPUTest);
+
 private:
 
     /**
@@ -89,10 +91,11 @@ private:
      * or different (false).
      */
     bool testEqual;
+
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* PROCESSORTEST_H_ */
-

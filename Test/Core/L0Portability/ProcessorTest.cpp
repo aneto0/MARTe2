@@ -31,6 +31,7 @@
 
 #include "ProcessorTest.h"
 #include "StringTestHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,7 +41,6 @@
 /*---------------------------------------------------------------------------*/
 
 ProcessorTest::ProcessorTest(bool testEqual) {
-
     this->testEqual=testEqual;
 }
 
@@ -49,8 +49,7 @@ bool ProcessorTest::TestVendorId(const char8* vendorIdTest) {
 
     vendorId = Processor::VendorId();
 
-
-    //return true if testEqual & vendorId=vedorIdTest || !testEqual & !vendorIdTest
+    //return true if testEqual & vendorId==vendorIdTest || !testEqual & !vendorIdTest
     return !(testEqual^(StringTestHelper::Compare(vendorId,vendorIdTest)));
 }
 
@@ -60,7 +59,6 @@ bool ProcessorTest::TestFamily(uint32 familyTest) {
     family = Processor::Family();
 
     return !(testEqual^(family == familyTest));
-
 }
 
 bool ProcessorTest::TestModel(uint32 modelTest) {
@@ -68,7 +66,6 @@ bool ProcessorTest::TestModel(uint32 modelTest) {
 
     model = Processor::Model();
     return !(testEqual^(model == modelTest));
-
 }
 
 bool ProcessorTest::TestAvailable(uint32 availableCPUTest) {
@@ -76,5 +73,4 @@ bool ProcessorTest::TestAvailable(uint32 availableCPUTest) {
 
     available = Processor::Available();
     return !(testEqual^(available == availableCPUTest));
-
 }

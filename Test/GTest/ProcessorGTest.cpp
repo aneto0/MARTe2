@@ -24,6 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <limits.h>
 
 /*---------------------------------------------------------------------------*/
@@ -60,5 +61,3 @@ TEST(ProcessorGTest,AvailableTest) {
     ProcessorTest processorTest;
     ASSERT_TRUE(processorTest.TestAvailable(-1));
 }
-
-

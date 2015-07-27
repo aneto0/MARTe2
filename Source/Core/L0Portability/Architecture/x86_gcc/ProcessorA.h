@@ -31,7 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Processor.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -39,7 +41,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+/**
+ * Buffer used to store the processor identifier
+ */
 static char8 processorVendorId[13] = { 0 };
+
 /**
  * @brief Implementation of the cpuid function for x86 and gcc
  * @param[in] info drives the type of request being asked, e.g. 0 for Vendor, 1 for Family and Model, ...
@@ -112,4 +119,3 @@ inline const char8 *Processor::VendorId() {
 }
 
 #endif /* PROCESSORA_H_ */
-
