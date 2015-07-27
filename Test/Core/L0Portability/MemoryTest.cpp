@@ -543,7 +543,7 @@ bool MemoryTest::TestSearch() {
 bool MemoryTest::TestGetHeaderInfo() {
 
     uint32 size;
-    TID tid;
+    ThreadIdentifier tid;
     bool ret = true;
     //creates an array of 10 integers
     uint32 *arrayInt = (uint32*) Memory::Malloc(sizeof(uint32) * 10);
@@ -557,7 +557,7 @@ bool MemoryTest::TestGetHeaderInfo() {
         ret = false;
     }
 
-    if (size < (sizeof(uint32) * 10 + sizeof(uint32) + sizeof(TID))) {
+    if (size < (sizeof(uint32) * 10 + sizeof(uint32) + sizeof(ThreadIdentifier))) {
         ret = false;
     }
 
@@ -589,7 +589,7 @@ bool MemoryTest::TestAllocationStatistics() {
     Memory::ClearStatisticsDatabase();
 
     int32 sizeAvailable = 10;
-    int32 minHeaderSize = sizeof(TID) + sizeof(uint32);
+    int32 minHeaderSize = sizeof(ThreadIdentifier) + sizeof(uint32);
     void* p = Memory::Malloc(sizeAvailable);
 
     //get the informations about this thread
@@ -683,7 +683,7 @@ bool MemoryTest::TestGetUsedHeap(uint32 nOfThreads) {
 
         return false;
     }
-    int32 minHeaderSize = sizeof(TID) + sizeof(uint32);
+    int32 minHeaderSize = sizeof(ThreadIdentifier) + sizeof(uint32);
 
     void* p = Memory::Malloc(1);
 
@@ -837,10 +837,10 @@ bool MemoryTest::TestDatabase() {
 
 #ifdef MEMORY_STATISTICS
 
-    int32 minHeaderSize = sizeof(uint32) + sizeof(TID);
+    int32 minHeaderSize = sizeof(uint32) + sizeof(ThreadIdentifier);
 
     Memory::ClearStatisticsDatabase();
-    TID tids[MAX_NO_OF_MEMORY_MONITORS - 1];
+    ThreadIdentifier tids[MAX_NO_OF_MEMORY_MONITORS - 1];
     for (counter = 0; counter < MAX_NO_OF_MEMORY_MONITORS - 1; counter++) {
         tids[counter] = Threads::BeginThread((ThreadFunctionType) AllocateFunction, this);
         while (!(signals[counter])) {

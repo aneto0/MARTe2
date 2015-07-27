@@ -148,8 +148,8 @@ public:
 
     /**
      * @brief Tests the Threads::GetCPUs function.
-     * @details Lunch consecutively threads with cpu mask which indicates in which CPU the threat can be
-     * running. Then t is check if the assign CPU is as expected.
+     * @details Launches consecutively threads with cpu mask which indicates in which CPU the threat can be
+     * running. Then is checked if the assigned CPU is as expected.
      * @return true if GetCPUs returns the expected CPU mask, false otherwise.
      */
     bool TestGetCPUs();
@@ -159,17 +159,17 @@ public:
      * @details The return value should be the threads name if the thread is launched with specified name.
      * @param[in] name is the desired thread name.
      * @param[in] nOfThreads is the number of threads to launch.
-     * @return true if Threads::Name(tid) returns the expected name of the thread, false otherwise.
+     * @return true if Threads::Name() returns the expected name of the thread, false otherwise.
      */
     bool TestName(const char8 *name,
                   uint32 nOfThreads);
 
     /**
      * @brief Tests the Threads::Name function.
-     * @details The return value of Threads::Name(tid) should be "Unknown" if the thread is launched without providing a name (namely NULL name).
+     * @details The return value of Threads::Name() should be "Unknown" if the thread is launched without providing a name (namely NULL name).
      * @param[in] name is the desired thread name.
      * @param[in] nOfThreads is the number of threads to launch.
-     * @return true if Threads::Name(tid) returns "Unknown", false otherwise.
+     * @return true if Threads::Name() returns "Unknown", false otherwise.
      */
     bool TestNameNull();
 
@@ -195,7 +195,7 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @param[in] name is the desired threads name.
      * @return true if the properties of the threads (name, priorityClass, priorityLevel and threadId), are
-     *  as expected, false otherwise.
+     *  equal to the expected values, false otherwise.
      */
     bool TestGetThreadInfoCopy(uint32 nOfThreads,
                                const char8 *name);
@@ -222,7 +222,7 @@ public:
 
     /**
      * @brief Tests the Threads::ProtectedExecute function.
-     * @details A thread increment a variable unprotected and lunch
+     * @details A thread increment a variable unprotected and launch
      * thread::ProtectedExecute which increments the same variable
      * @return true if the incremented value is as expected, false otherwise.
      */
@@ -236,7 +236,7 @@ public:
     /**
      * A variable used to save a thread identifier.
      */
-    TID tidTest;
+    ThreadIdentifier tidTest;
 
     /**
      * A boolean to store the return value.

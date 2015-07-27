@@ -193,7 +193,7 @@ void PosterThreadCallback(EventSemTest &eventSemTest) {
 bool EventSemTest::TestWait() {
     eventSem.Reset();
     sharedVariable = 0;
-    TID tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
     ErrorType err = eventSem.Wait();
 
     if (sharedVariable == 0) {
@@ -216,7 +216,7 @@ bool EventSemTest::TestWait() {
 
 bool EventSemTest::TestResetWait() {
     sharedVariable = 0;
-    TID tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
     ErrorType err = eventSem.ResetWait(TTInfiniteWait);
 
     if (sharedVariable == 0) {
@@ -288,7 +288,7 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
     Sleep::MSec(100);
     //Check if all the threads have terminated
     for (i = 0; i < Threads::NumberOfThreads(); i++) {
-        TID tid = Threads::FindByIndex(i);
+        ThreadIdentifier tid = Threads::FindByIndex(i);
         if (Threads::IsAlive(tid)) {
             Threads::Kill(tid);
         }
