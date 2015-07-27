@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef STRINGTESTHELPER_H_
-		#define 		STRINGTESTHELPER_H_
+#ifndef STRINGTESTHELPER_H_
+#define STRINGTESTHELPER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,7 +31,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -65,8 +64,12 @@ public:
      * @param[in] string2 is the second string.
      * @return true if the strings are equal, false otherwise.
      */
-    inline static bool Compare(const char8 *string1, const char8 *string2) {
+    inline static bool Compare(const char8 *string1,
+                               const char8 *string2) {
         int32 i = 0;
+        if (string1 == NULL || string2 == NULL) {
+            return false;
+        }
         while (1) {
             if (string1[i] != string2[i]) {
                 return false;
@@ -88,9 +91,15 @@ public:
      * @param[out] result is the concatenated string.
      * @return true if successful, false otherwise.
      */
-    inline static bool Append(const char8 *string1, const char8 *string2, char8 *result) {
+    inline static bool Append(const char8 *string1,
+                              const char8 *string2,
+                              char8 *result) {
         int32 i = 0;
         int32 j = 0;
+
+        if (string1 == NULL || string2 == NULL || result == NULL) {
+            return false;
+        }
         while (1) {
             result[i] = string1[i];
             if (string1[i] == '\0') {
@@ -109,10 +118,9 @@ public:
     }
 };
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-		#endif /* STRINGTESTHELPER_H_ */
-	
+#endif /* STRINGTESTHELPER_H_ */
+

@@ -27,11 +27,15 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include <intrin.h>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Processor.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -40,8 +44,11 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/** Buffer used to store the processor identifier */
+/**
+ * Buffer used to store the processor identifier
+ */
 static char8 processorVendorId[13] = { 0 };
+
 /**
  * @brief Implementation of the cpuid function for x86 and cl
  * @param[in] code drives the type of request being asked, e.g. 0 for Vendor, 1 for Family and Model, ...
@@ -94,7 +101,13 @@ uint32 Processor::Model() {
     uint32 ecx = 0;
     uint32 edx = 0;
     CPUID(1, eax, ebx, ecx, edx);
-    return (eax >> 4) & 0xf;
+    uint32 model = (eax >> 4) & 0xf;
+    uint32 family = Processor::Family();
+    if ((family == 6) || (family == 15)) {
+        uint32 extendedModel = (eax >> 16) & 0xf;
+        model += (extendedModel << 4);
+    }
+    return model;
 }
 
 /**
@@ -111,4 +124,3 @@ const char8 *Processor::VendorId() {
 }
 
 #endif /* PROCESSORA_H_ */
-

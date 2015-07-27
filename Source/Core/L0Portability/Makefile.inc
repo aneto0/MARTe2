@@ -34,7 +34,6 @@ OBJSX=  Atomic.x \
         Endianity.x \
         Memory.x \
         FastMath.x \
-        Processor.x \
         ProcessorType.x \
         Threads.x  \
         ThreadsDatabase.x \

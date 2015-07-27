@@ -24,6 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <limits.h>
 
 /*---------------------------------------------------------------------------*/
@@ -43,20 +44,20 @@
 
 TEST(ProcessorGTest,VendorIdTest) {
     ProcessorTest processorTest;
-    ASSERT_TRUE(processorTest.TestVendorId());
+    ASSERT_TRUE(processorTest.TestVendorId(NULL));
 }
 
 TEST(ProcessorGTest,FamilyTest) {
     ProcessorTest processorTest;
-    ASSERT_TRUE(processorTest.TestFamily());
+    ASSERT_TRUE(processorTest.TestFamily(-1));
 }
 
 TEST(ProcessorGTest,ModelTest) {
     ProcessorTest processorTest;
-    ASSERT_TRUE(processorTest.TestModel());
+    ASSERT_TRUE(processorTest.TestModel(-1));
 }
 
 TEST(ProcessorGTest,AvailableTest) {
     ProcessorTest processorTest;
-    ASSERT_TRUE(processorTest.TestAvailable());
+    ASSERT_TRUE(processorTest.TestAvailable(-1));
 }

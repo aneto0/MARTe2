@@ -31,25 +31,27 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Functions to get the processor's informations.
+ * @brief General information about the processor executing the framework code.
  *
- * @details These functions allow to get cpu informations like family,
- * id, model and number of available processors.
- *
- * @details Most of the implementation is delegated to ProcessorA.h and ProcessorOS.h.
+ * @details This class enables the retrieval of runtime information about the
+ * processor executing the framework code.
+ * Based on this information framework users are allowed to take runtime decisions
+ * against specific processor characteristics.
  */
 class Processor {
 public:
 
     /**
-     * @brief Returns the processor type.
-     * @return a string which contains the processor type.
+     * @brief Returns the processor vendor identifier.
+     * @return a string which contains the processor vendor identifier.
      */
     static inline const char8 *VendorId();
 
@@ -66,12 +68,17 @@ public:
     static inline uint32 Model();
 
     /**
-     * @brief Returns the number of available cpus.
-     * @returns the number of available cpus.
+     * @brief Returns the number of available CPU cores.
+     * @returns the number of available CPU cores.
      */
-    static inline uint32 Available();
+    static uint32 Available();
 };
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,ProcessorOS.h)
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,ProcessorA.h)
+
 #endif /* PROCESSOR_H_ */
 
