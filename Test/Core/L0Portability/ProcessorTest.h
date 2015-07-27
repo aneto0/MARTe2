@@ -46,33 +46,49 @@ public:
 
     /**
      * @brief Constructor
+     * @param[in] testEqual is used to test if processor functions return values equal or different
+     * to the test input arguments.
      */
-    ProcessorTest();
+    ProcessorTest(bool testEqual=false);
 
     /**
-     * @brief Tests the vendor identifier function.
-     * @return true if Processor::VendorId() returns a vendor id which is not NULL.
+     * @brief Tests the Processor::VendorId() function.
+     * @param[in] vendorIdTest is the value which will be compared with the value returned by Processor::VendorId() function.
+     * @return If testEqual is false returns true if Processor::VendorId() returns a vendor id different from vendorIdTest, otherwise
+     * if testEqual is true returns true if Processor::VendorId() returns a vendor id equal to vendorIdTest.
      */
-    bool TestVendorId();
+    bool TestVendorId(const char8 * vendorIdTest);
 
     /**
-     * @brief Tests the family function.
-     * @return true if Processor::Family() returns a value which is not -1.
+     * @brief Tests the Processor::Family() function.
+     * @param[in] familyTest is the value which will be compared with the value returned by Processor::Family() function.
+     * @return If testEqual is false returns true if Processor::Family() returns a value different from familyTest, otherwise
+     * if testEqual is true returns true if Processor::Family() returns a value equal to familyTest.
      */
-    bool TestFamily();
+    bool TestFamily(uint32 familyTest);
 
     /**
      * @brief Tests the model function.
-     * @return true if Processor::Model() returns a value which is not -1.
+     * @param[in] modelTest is the value which will be compared with the value returned by Processor::Model() function.
+     * @return If testEqual is false returns true if Processor::Model() returns a value different from modelTest, otherwise
+     * if testEqual is true returns true if Processor::Model() returns a value equal to modelTest.
      */
-    bool TestModel();
+    bool TestModel(uint32 modelTest);
 
     /**
      * @brief Tests the available function.
-     * @return true if Processor::Available() returns a value which is not -1.
+     * @param[in] availableCPUTest is the value which will be compared with the value returned by Processor::Available() function.
+     * @return If testEqual is false returns true if Processor::Available() returns a value different from availableCPUTest, otherwise
+     * if testEqual is true returns true if Processor::Available() returns a value equal to availableCPUTest.
      */
-    bool TestAvailable();
+    bool TestAvailable(uint32 availableCPUTest);
+private:
 
+    /**
+     * Specifies if the tests must return true if the values compared are equal (true)
+     * or different (false).
+     */
+    bool testEqual;
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

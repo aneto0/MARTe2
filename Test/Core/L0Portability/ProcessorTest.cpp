@@ -30,8 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ProcessorTest.h"
-#include "stdio.h"
-
+#include "StringTestHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,52 +39,42 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ProcessorTest::ProcessorTest() {
+ProcessorTest::ProcessorTest(bool testEqual) {
 
+    this->testEqual=testEqual;
 }
 
-bool ProcessorTest::TestVendorId() {
-    bool testResult = false;
+bool ProcessorTest::TestVendorId(const char8* vendorIdTest) {
     const char8 * vendorId = NULL;
 
     vendorId = Processor::VendorId();
-    printf("the TestVendorIs is: %s\n", vendorId);
-    testResult = (vendorId != NULL);
 
-    return testResult;
+
+    //return true if testEqual & vendorId=vedorIdTest || !testEqual & !vendorIdTest
+    return !(testEqual^(StringTestHelper::Compare(vendorId,vendorIdTest)));
 }
 
-bool ProcessorTest::TestFamily() {
-    bool testResult = false;
-    uint32 family = -1;
-    uint32 familyAux = family;
+bool ProcessorTest::TestFamily(uint32 familyTest) {
+    uint32 family;
 
     family = Processor::Family();
-    printf("family is : %u\n", family);
-    testResult = (family != familyAux);
 
-    return testResult;
+    return !(testEqual^(family == familyTest));
+
 }
 
-bool ProcessorTest::TestModel() {
-    bool testResult = false;
-    uint32 model = -1;
-    uint32 modelAux = model;
+bool ProcessorTest::TestModel(uint32 modelTest) {
+    uint32 model;
 
     model = Processor::Model();
-    printf("model is : %u\n", model);
-    testResult = (model != modelAux);
+    return !(testEqual^(model == modelTest));
 
-    return testResult;
 }
 
-bool ProcessorTest::TestAvailable() {
-    bool testResult = false;
-    uint32 available = -1;
-    uint32 availableAux = available;
+bool ProcessorTest::TestAvailable(uint32 availableCPUTest) {
+    uint32 available;
 
     available = Processor::Available();
-    testResult = (available != availableAux);
-    printf("available cpus is : %u\n", available);
-    return testResult;
+    return !(testEqual^(available == availableCPUTest));
+
 }
