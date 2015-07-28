@@ -29,7 +29,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "../../GeneralDefinitions.h"
+#include "GeneralDefinitions.h"
 #include <time.h>
 #include <sys/time.h>
 #include <errno.h>

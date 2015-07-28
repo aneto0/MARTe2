@@ -24,10 +24,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#ifndef LINT
 #include <pthread.h>
 #include <signal.h>
-#endif
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -37,198 +35,164 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-#define __thread_decl
 /**
- * @brief Callback thread function as defined in Linux
+ * @brief The function called when a thread is created.
+ * @details Adds the thread in the database and calls the thread callback function.
+ * When the callback finishes its execution this function removes the thread from the database.
+ * @param[in] threadData the thread information structure.
  */
-typedef void *(*StandardThreadFunction)(void *args);
+/*lint -e{9141} namespaces are not currently used.*/
+static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
+    if (threadInfo != NULL) {
+        bool ok = ThreadsDatabase::Lock();
+        if (ok) {
+            threadInfo->SetThreadIdentifier(Threads::Id());
+
+            ok = ThreadsDatabase::NewEntry(threadInfo);
+            ThreadsDatabase::UnLock();
+        }
+        if (ok) {
+            threadInfo->SetPriorityLevel(0u);
+            Threads::SetPriorityClass(Threads::Id(), Threads::NormalPriorityClass);
+            //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
+            ErrorType err = threadInfo->ThreadWait();
+            //Start the user thread
+            if (err == NoError) {
+                threadInfo->UserThreadFunction();
+
+                ok = ThreadsDatabase::Lock();
+                if (ok) {
+                    ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Threads::Id());
+                    if (threadInfo != threadInfo2) {
+                        //CStaticAssertErrorCondition(FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
+                    }
+                }
+                ThreadsDatabase::UnLock();
+            }
+            delete threadInfo;
+        }
+    }
+    return static_cast<void *>(NULL);
+}
+
 /**
- * @brief Platform dependent implementations of threads.
- * @details These functions calls system APIs for threads. It is possible use the thread database
- * which provides a smart way to obtain informations of all alive threads.
+ * @brief Builds a ThreadInformation structure with the thread informations.
+ * @param[in] userThreadFunction is the thread function.
+ * @param[in] userData is the thread function argument.
+ * @param[in] threadName is the desired name of the thread.
+ * @param[in] exceptionHandlerBehaviour is not used here.
+ * @return the ThreadInformation structure.
  */
-class ThreadsOS {
+/*lint -e{9141} namespaces are not currently used.*/
+static ThreadInformation * threadInitialisationInterfaceConstructor(const ThreadFunctionType userThreadFunction,
+                                                                    const void * const userData,
+                                                                    const char8 * const threadName,
+                                                                    const uint32 &exceptionHandlerBehaviour) {
 
-public:
-
-    /**
-     * @brief The function called by each thread.
-     * @details Adds the thread in the database, call the thread function and at last remove the the thread from the database.
-     * @param[in] threadData is the thread information structure. */
-    static void __thread_decl SystemThreadFunction(void *threadData) {
-        ThreadInformation *threadInfo = (ThreadInformation *) threadData;
-        if (threadInfo == NULL) {
-            return;
-        }
-
-        ThreadsDatabase::Lock();
-        threadInfo->SetThreadIdentifier(Threads::Id());
-        ThreadsDatabase::NewEntry(threadInfo);
-        ThreadsDatabase::UnLock();
-
-        threadInfo->SetPriorityLevel(Threads::PRIORITY_NORMAL);
-        Threads::SetPriorityClass(Threads::Id(), Threads::PRIORITY_CLASS_NORMAL);
-        //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
-        threadInfo->ThreadWait();
-        //Start the user thread
-        threadInfo->UserThreadFunction();
-
-        ThreadsDatabase::Lock();
-        ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Threads::Id());
-        ThreadsDatabase::UnLock();
-
-        if (threadInfo != threadInfo2) {
-            //CStaticAssertErrorCondition(FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
-        }
-
-        delete threadInfo;
-    }
-
-    /**
-     * @brief Builds a ThreadInformation structure with the thread informations.
-     * @param[in] userThreadFunction is the thread function.
-     * @param[in] userData is the thread function argument.
-     * @param[in] threadName is the desired name of the thread.
-     * @param[in] exceptionHandlerBehaviour is not used here.
-     * @return the ThreadInformation structure.
-     */
-    static ThreadInformation * threadInitialisationInterfaceConstructor(ThreadFunctionType userThreadFunction,
-                                                                        void *userData,
-                                                                        const char8 *threadName,
-                                                                        uint32 exceptionHandlerBehaviour) {
-
-        return new ThreadInformation(userThreadFunction, userData, threadName);
-    }
-};
+    return new ThreadInformation(userThreadFunction, userData, threadName, exceptionHandlerBehaviour);
+}
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 void Threads::EndThread() {
-    ThreadsDatabase::Lock();
-    ThreadsDatabase::RemoveEntry(Threads::Id());
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        /*lint -e{534} possible failure is not handled nor propagated.*/
+        ThreadsDatabase::RemoveEntry(Threads::Id());
+    }
     ThreadsDatabase::UnLock();
-    pthread_exit(0);
+    pthread_exit(static_cast<void *>(NULL));
 }
 
-/**
- * @brief Not implemented in Linux
- * @param[in] threadId is the thread identifier.
- * @return the thread state.
- */
-Threads::ThreadStateType Threads::GetState(ThreadIdentifier threadId) {
-    return STATE_UNKNOWN;
+/*lint -e{715} Not implemented in Linux.*/
+Threads::ThreadStateType Threads::GetState(const ThreadIdentifier &threadId) {
+    return UnknownThreadStateType;
 }
 
-/**
- * @brief Called by Threads::GetCPUs
- * @param[in] threadId is the thread identifier.
- * @return the cpu where the thread is executing.
- */
-int32 Threads::GetCPUs(ThreadIdentifier threadId) {
-    int32 cpus = -1;
+uint32 Threads::GetCPUs(const ThreadIdentifier &threadId) {
+    uint32 cpus = 0u;
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
-    if (pthread_getaffinity_np(threadId, sizeof(cpuset), &cpuset) != 0) {
-        return cpus;
-    }
-    cpus = 0;
-    int32 j = 0;
-    for (j = 0; j < CPU_SETSIZE; j++) {
-        if (CPU_ISSET(j, &cpuset)) {
-            cpus |= (1 << j);
+    if (pthread_getaffinity_np(threadId, sizeof(cpuset), &cpuset) == 0) {
+        int32 j;
+        for (j = 0; j < CPU_SETSIZE; j++) {
+            if (CPU_ISSET(j, &cpuset) > 0) {
+                uint32 cpuBit = 1u;
+                cpus |= (cpuBit << j);
+            }
         }
     }
     return cpus;
 }
 
-/**
- * @brief Called by Threads::Id.
- * @return the thread identifier.
- */
 ThreadIdentifier Threads::Id() {
     return pthread_self();
 }
 
 /**
- * @brief Called by Threads::SetPriorityLevel.
- *
- * @details In linux the priority will vary between 33, i.e. priorityClass = IDLE_PRIORITY_CLASS
- * and priorityLevel = PRIORITY_IDLE and 99, i.e. priorityClass = REAL_TIME_PRIORITY_CLASS
- * and priorityLevel = PRIORITY_TIME_CRITICAL
- *
- * @param[in] threadId is the thread identifier.
- * @param[in] priorityClass is the desired class priority to assign to the thread.
- * @param[in] priorityLevel is the desired thread priority to assign to the thread.
+ * In linux the priority will vary between 33, i.e. priorityClass = Idle
+ * and priorityLevel = 0 and 99, i.e. priorityClass = RealTime
+ * and priorityLevel = 7
  */
-void Threads::SetPriorityLevelAndClass(ThreadIdentifier threadId,
-                                       Threads::PriorityClassType priorityClass,
-                                       Threads::ThreadPriorityType priorityLevel) {
+void Threads::SetPriorityLevelAndClass(const ThreadIdentifier &threadId,
+                                       const Threads::PriorityClassType &priorityClass,
+                                       const uint8 &priorityLevel) {
 
-    //Cannot set an unknown priority
-    if (priorityLevel == 0 && priorityClass == 0) {
-        return;
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
+        if (threadInfo != static_cast<ThreadInformation *>(NULL)) {
+            uint8 prioLevel = priorityLevel;
+            if (prioLevel > 7u) {
+                prioLevel = 7u;
+            }
+            uint8 oldPriorityLevel = GetPriorityLevel(threadId);
+            Threads::PriorityClassType oldPriorityClass = GetPriorityClass(threadId);
+            threadInfo->SetPriorityLevel(prioLevel);
+            threadInfo->SetPriorityClass(priorityClass);
+
+            uint32 priorityLevelToAssign = 20u * static_cast<uint32>(priorityClass);
+            priorityLevelToAssign += (static_cast<uint32>(prioLevel) + 12u);
+
+            int32 policy = 0;
+            sched_param param;
+            ok = (pthread_getschedparam(threadId, &policy, &param) == 0);
+            if (ok) {
+                policy = SCHED_FIFO;
+                param.sched_priority = static_cast<int32>(priorityLevelToAssign);
+                if (pthread_setschedparam(Id(), policy, &param) != 0) {
+                    threadInfo->SetPriorityLevel(oldPriorityLevel);
+                    threadInfo->SetPriorityClass(oldPriorityClass);
+                }
+            }
+        }
     }
-
-    ThreadsDatabase::Lock();
-    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-    if (threadInfo == NULL) {
-        ThreadsDatabase::UnLock();
-        return;
-    }
-
-    if (priorityClass == 0) {
-        threadInfo->SetPriorityLevel(priorityLevel);
-        priorityClass = threadInfo->GetPriorityClass();
-    }
-
-    if (priorityLevel == 0) {
-        threadInfo->SetPriorityClass(priorityClass);
-        priorityLevel = threadInfo->GetPriorityLevel();
-    }
-
-    uint32 priorityLevelToAssign = 20 * (uint32) priorityClass + (uint32) priorityLevel + 12;
-
-    int32 policy = 0;
-    sched_param param;
-    pthread_getschedparam(threadId, &policy, &param);
-    policy = SCHED_RR;
-    param.sched_priority = priorityLevelToAssign;
-    pthread_setschedparam(Id(), policy, &param);
-
     ThreadsDatabase::UnLock();
 }
 
-/**
- * @brief Called by Threads::GetPriorityLevel.
- * @details Returns the priority of a thread.
- * @param[in] threadId is the thread identifier.
- * @return the priority of the specified thread.
- */
-Threads::ThreadPriorityType Threads::GetPriorityLevel(ThreadIdentifier threadId) {
-    ThreadPriorityType priorityLevel = PRIORITY_UNKNOWN;
+uint8 Threads::GetPriorityLevel(const ThreadIdentifier &threadId) {
+    uint8 priorityLevel = 0u;
 
-    ThreadsDatabase::Lock();
-    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-    if (threadInfo != NULL) {
-        priorityLevel = threadInfo->GetPriorityLevel();
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
+        if (threadInfo != NULL) {
+            priorityLevel = threadInfo->GetPriorityLevel();
+        }
     }
     ThreadsDatabase::UnLock();
     return priorityLevel;
 }
 
-/**
- * @brief Called by Threads::GetPriorityClass.
- * @details Returns the priority class of a thread.
- * @param[in] threadId is the thread identifier.
- * @return the priority class of the specified thread.
- */
-Threads::PriorityClassType Threads::GetPriorityClass(ThreadIdentifier threadId) {
+Threads::PriorityClassType Threads::GetPriorityClass(const ThreadIdentifier &threadId) {
 
-    PriorityClassType priorityClass = PRIORITY_CLASS_UNKNOWN;
-    ThreadsDatabase::Lock();
-    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-    if (threadInfo != NULL) {
-        priorityClass = threadInfo->GetPriorityClass();
+    PriorityClassType priorityClass = UnknownPriorityClass;
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
+        if (threadInfo != NULL) {
+            priorityClass = threadInfo->GetPriorityClass();
+        }
     }
     ThreadsDatabase::UnLock();
     return priorityClass;
@@ -236,169 +200,157 @@ Threads::PriorityClassType Threads::GetPriorityClass(ThreadIdentifier threadId) 
 }
 
 /**
- * @brief Called by Threads::IsAlive
- *
- * @details A signal is used to know if the other thread is alive.
- *
- * @param[in] threadId is the thread identifier.
+ * A signal is used to know if the other thread is alive.
  */
-bool Threads::IsAlive(ThreadIdentifier threadId) {
-
-    ThreadsDatabase::Lock();
-    bool condition = (ThreadsDatabase::GetThreadInformation(threadId) != NULL);
-    ThreadsDatabase::UnLock();
-    if (condition) {
-
-        if (threadId == 0) {
-            return false;
+bool Threads::IsAlive(const ThreadIdentifier &threadId) {
+    bool alive = false;
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        ok = (ThreadsDatabase::GetThreadInformation(threadId) != NULL);
+        ThreadsDatabase::UnLock();
+        if (ok) {
+            alive = (pthread_kill(threadId, 0) == 0);
         }
-        return (pthread_kill(threadId, 0) == 0);
     }
     else {
-        return false;
+        ThreadsDatabase::UnLock();
     }
+    return alive;
 }
 
 /**
- * @brief Called by Threads::Kill
- * @param[in] threadId is the thread identifier.
- * @details A thread cannot be deleted if it locks a mutex semaphore.
+ * Note that a thread cannot be deleted if it locks a mutex semaphore.
  */
-bool Threads::Kill(ThreadIdentifier threadId) {
+bool Threads::Kill(const ThreadIdentifier &threadId) {
+    bool ok = false;
+    if (IsAlive(threadId)) {
+        ok = ThreadsDatabase::Lock();
+        if (ok) {
+            ThreadInformation *threadInfo = ThreadsDatabase::RemoveEntry(threadId);
+            if (threadInfo == NULL) {
+                ok = false;
+            }
+        }
+        ThreadsDatabase::UnLock();
 
-    if (!IsAlive(threadId)) {
-        return false;
+        if (ok) {
+            ok = (pthread_cancel(threadId) == 0);
+        }
+        if (ok) {
+            ok = (pthread_join(threadId, static_cast<void **>(NULL)) == 0);
+        }
     }
-
-    ThreadsDatabase::Lock();
-    ThreadsDatabase::RemoveEntry(threadId);
-    ThreadsDatabase::UnLock();
-
-    int32 ret = pthread_cancel(threadId);
-    if (ret == 0) {
-        pthread_join(threadId, NULL);
-        return true;
-    }
-    return false;
+    return ok;
 }
 
-/**
- * @brief Called by Threads::BeginThread.
- * @param[in] function is the thread function.
- * @param[in] parameters is the thread function parameters structure.
- * @param[in] name is the desired name for the thread.
- * @param[in] stacksize is the desired stack size to assign to the thread.
- * @param[in] exceptionHandlerBehaviour is not used here.
- * @param[in] runOnCPUs is used to set an affinity with a desired cpu.
- */
-ThreadIdentifier Threads::BeginThread(ThreadFunctionType function,
-                                      void *parameters,
-                                      uint32 stacksize,
-                                      const char8 *name,
-                                      uint32 exceptionHandlerBehaviour,
+ThreadIdentifier Threads::BeginThread(const ThreadFunctionType function,
+                                      const void * const parameters,
+                                      const uint32 &stacksize,
+                                      const char8 * const name,
+                                      const uint32 exceptionHandlerBehaviour,
                                       ProcessorType runOnCPUs) {
 
+    ThreadIdentifier threadId = InvalidThreadIdentifier;
     if (runOnCPUs == ProcessorType::UndefinedCPUs) {
-        if (ProcessorType::GetDefaultCPUs() != 0) {
+        if (ProcessorType::GetDefaultCPUs() != 0u) {
             runOnCPUs = ProcessorType::GetDefaultCPUs();
         }
         else {
-            runOnCPUs = 0xff;
+            runOnCPUs = 0xffu;
         }
     }
 
-    ThreadInformation *threadInfo = ThreadsOS::threadInitialisationInterfaceConstructor(function, parameters, name, exceptionHandlerBehaviour);
-    if (threadInfo == NULL) {
+    ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name, exceptionHandlerBehaviour);
+    if (threadInfo != static_cast<ThreadInformation *>(NULL)) {
         //CStaticAssertErrorCondition(InitialisationError,"Threads::ThreadsBeginThread (%s) threadInitialisationInterfaceConstructor returns NULL", name);
-        return InvalidThreadIdentifier;
+        pthread_attr_t stackSizeAttribute;
+        bool ok = (pthread_attr_init(&stackSizeAttribute) == 0);
+        if (ok) {
+            ok = (pthread_attr_setstacksize(&stackSizeAttribute, static_cast<osulong>(stacksize)) == 0);
+        }
+        if (ok) {
+            /*lint -e{929} cast from pointer to pointer required in order to cast into the pthread callback required function type.*/
+            ok = (pthread_create(&threadId, &stackSizeAttribute, reinterpret_cast<void *(*) (void *)>(&SystemThreadFunction), threadInfo) == 0);
+        }
+        if (ok) {
+            ok = (pthread_detach(threadId) == 0);
+        }
+        if (ok) {
+            cpu_set_t processorCpuSet;
+            uint32 processorMask = runOnCPUs.GetProcessorMask();
+            CPU_ZERO(&processorCpuSet);
+            uint32 j;
+            for (j = 0u; j < static_cast<uint32>(CPU_SETSIZE); j++) {
+                if (((processorMask >> j) & 0x1u) == 0x1u) {
+                    CPU_SET(static_cast<int32>(j), &processorCpuSet);
+                }
+            }
+
+            ok = (pthread_setaffinity_np(threadId, sizeof(processorCpuSet), &processorCpuSet) == 0);
+            if (ok) {
+                ok = threadInfo->ThreadPost();
+            }
+        }
+        if (!ok) {
+            threadId = InvalidThreadIdentifier;
+        }
     }
-
-    ThreadIdentifier threadId = 0;
-    pthread_attr_t stackSizeAttribute;
-    pthread_attr_init(&stackSizeAttribute);
-    pthread_attr_setstacksize(&stackSizeAttribute, stacksize);
-    pthread_create(&threadId, &stackSizeAttribute, (StandardThreadFunction) ThreadsOS::SystemThreadFunction, threadInfo);
-    pthread_detach(threadId);
-    uint32 processorMask = runOnCPUs.GetProcessorMask();
-    pthread_setaffinity_np(threadId, sizeof(processorMask), (cpu_set_t *) &processorMask);
-    threadInfo->ThreadPost();
-
     return threadId;
 }
 
-/**
- * @brief Called by Threads::Name
- * @param[in] threadId is the thread identifier.
- * @return the name of the specified thread.
- */
-const char8 *Threads::Name(ThreadIdentifier threadId) {
-    ThreadsDatabase::Lock();
-    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-    ThreadsDatabase::UnLock();
-
-    if (threadInfo != NULL) {
-        return threadInfo->ThreadName();
+const char8 *Threads::Name(const ThreadIdentifier &threadId) {
+    const char8 *name = static_cast<const char8 *>(NULL);
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
+        ThreadsDatabase::UnLock();
+        if (threadInfo != NULL) {
+            name = threadInfo->ThreadName();
+        }
     }
-    return NULL;
+    else {
+        ThreadsDatabase::UnLock();
+    }
+    return name;
 }
 
-/**
- * @brief Executes the function specified.
- * @param[in] userFunction is the function to be called.
- * @param[in] userData is the function argument.
- * @param[in] ehi is the exception handler.
- * @return true.
- * @see ThreadInformation::ExceptionProtectedExecute.
- */
-bool Threads::ProtectedExecute(ThreadFunctionType userFunction,
-                               void *userData,
-                               ExceptionHandler *ehi) {
+bool Threads::ProtectedExecute(const ThreadFunctionType userFunction,
+                               const void * const userData) {
     ThreadIdentifier threadId = Threads::Id();
-    ThreadsDatabase::Lock();
-    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-    ThreadsDatabase::UnLock();
-    if (threadInfo != NULL) {
-        return threadInfo->ExceptionProtectedExecute(userFunction, userData, ehi);
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
+        ThreadsDatabase::UnLock();
+        if (threadInfo != NULL) {
+            ok = threadInfo->ExceptionProtectedExecute(userFunction, userData);
+        }
     }
-    return false;
+    else {
+        ThreadsDatabase::UnLock();
+        ok = false;
+    }
+    return ok;
 }
 
-/**
- * @brief Returns the id of the n-th thread in the database.
- * @param[in] n is the thread index.
- * @return the id of the n-th thread in the database, -1 if the database is empty.
- */
-ThreadIdentifier Threads::FindByIndex(uint32 n) {
+ThreadIdentifier Threads::FindByIndex(const uint32 &n) {
     return ThreadsDatabase::GetThreadID(n);
 }
 
-/**
- * @brief Returns the number of threads currently in the database.
- * @return the number of threads currently in the database.
- */
 uint32 Threads::NumberOfThreads() {
     return ThreadsDatabase::NumberOfThreads();
 }
 
-/**
- * @brief Get a copy of the thread information stored in the database.
- * @param[out] copy is the thread information structure in return.
- * @param[in] n is the threads index, if it is <0 is ignored.
- * @param[in] tid is the thread identifier.
- * @return true if the requested element is in the database, false otherwise.
- */
 bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
-                                int32 n,
-                                ThreadIdentifier threadId) {
-    return ThreadsDatabase::GetInfo(copy, n, threadId);
+                                const uint32 &n) {
+    return ThreadsDatabase::GetInfoIndex(copy, n);
 }
 
-/**
- * @brief Search the thread with the specified name.
- * @param[in] name is the thread name.
- * @return the id of the first found thread with the specified name.
- */
-ThreadIdentifier Threads::FindByName(const char8 *name) {
+bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
+                                const ThreadIdentifier &threadId) {
+    return ThreadsDatabase::GetInfo(copy, threadId);
+}
+
+ThreadIdentifier Threads::FindByName(const char8 * const name) {
     return ThreadsDatabase::Find(name);
 }
 

@@ -50,10 +50,9 @@ public:
     /** do not report error information (ORed). */
     static const uint32 NoReport = 0x10000u;
 
-public:
     /** @brief Default handler. */
-    ExceptionHandler(uint32 action = NotHandled) {
-        this->action = action;
+    ExceptionHandler(const uint32 &defaultAction) {
+        this->action = defaultAction;
     }
 
     /** This is the action to be performed. */

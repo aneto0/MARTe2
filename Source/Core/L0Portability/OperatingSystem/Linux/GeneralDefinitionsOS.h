@@ -44,7 +44,7 @@ static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdenti
 typedef struct termio ConsoleHandle;
 
 /** Threads database memory granularity */
-#define THREADS_DATABASE_GRANULARITY 64
+#define THREADS_DATABASE_GRANULARITY 64u
 
 /** Defines the default stack size for a thread. */
 #define THREADS_DEFAULT_STACKSIZE 32768

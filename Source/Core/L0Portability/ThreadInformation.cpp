@@ -37,42 +37,39 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-/**
- * @brief Default constructor.
- */
 ThreadInformation::ThreadInformation() {
-    userThreadFunction = NULL;
-    userData = NULL;
-    name = NULL;
+    userThreadFunction = static_cast<ThreadFunctionType>(NULL);
+    userData = static_cast<void *>(NULL);
+    name = static_cast<char8 *>(NULL);
+    exceptionHandlerAction = 0u;
     threadId = InvalidThreadIdentifier;
-    priorityClass = Threads::PRIORITY_CLASS_UNKNOWN;
-    priorityLevel = Threads::PRIORITY_UNKNOWN;
+    priorityClass = Threads::UnknownPriorityClass;
+    priorityLevel = 0u;
+    /*lint -e{534} possible failure is not handled nor propagated.*/
     startThreadSynchSem.Create();
+    /*lint -e{534} possible failure is not handled nor propagated.*/
     startThreadSynchSem.Reset();
 }
 
-/**
- * @brief Constructor.
- * @param[in] userThreadFunction Actually the thread that has to be executed.
- * @param[in] userData A pointer to a structure containing thread's data.
- * @param[in] name The name of the thread.
- */
-ThreadInformation::ThreadInformation(ThreadFunctionType userThreadFunction,
-                                     void *userData,
-                                     const char8 *name) {
-    this->userThreadFunction = userThreadFunction;
-    this->userData = userData;
-    if (name != NULL) {
-        this->name = MemoryStringDup(name);
+ThreadInformation::ThreadInformation(const ThreadFunctionType threadFunction,
+                                     const void * const threadData,
+                                     const char8 * const threadName,
+                                     const uint32 &threadExceptionHandler) {
+    this->userThreadFunction = threadFunction;
+    this->userData = threadData;
+    this->exceptionHandlerAction = threadExceptionHandler;
+    if (threadName != NULL) {
+        this->name = MemoryStringDup(threadName);
     }
     else {
         this->name = MemoryStringDup("Unknown");
     }
     threadId = InvalidThreadIdentifier;
-    priorityClass = Threads::PRIORITY_CLASS_UNKNOWN;
-    priorityLevel = Threads::PRIORITY_UNKNOWN;
+    priorityClass = Threads::UnknownPriorityClass;
+    priorityLevel = 0u;
+    /*lint -e{534} possible failure is not handled nor propagated.*/
     startThreadSynchSem.Create();
+    /*lint -e{534} possible failure is not handled nor propagated.*/
     startThreadSynchSem.Reset();
 }
 
@@ -81,13 +78,18 @@ ThreadInformation::ThreadInformation(ThreadFunctionType userThreadFunction,
  * @param[in] threadInfo contains informations to initialize this object.
  */
 ThreadInformation::ThreadInformation(const ThreadInformation &threadInfo) {
+    /*lint -e{1554} pointer to a function.*/
     userThreadFunction = threadInfo.userThreadFunction;
+    /*lint -e{1554} the userData is externally constructed managed.*/
     userData = threadInfo.userData;
     name = MemoryStringDup(threadInfo.name);
+    exceptionHandlerAction = threadInfo.exceptionHandlerAction;
     threadId = threadInfo.threadId;
     priorityClass = threadInfo.priorityClass;
     priorityLevel = threadInfo.priorityLevel;
+    /*lint -e{534} possible failure is not handled nor propagated.*/
     startThreadSynchSem.Create();
+    /*lint -e{534} possible failure is not handled nor propagated.*/
     startThreadSynchSem.Reset();
 }
 
@@ -95,9 +97,14 @@ ThreadInformation::ThreadInformation(const ThreadInformation &threadInfo) {
  * @brief Destructor.
  * @details It just frees the memory allocated for the name string.
  */
+/*lint -e{1551} only C calls are performed. No exception can be raised*/
 ThreadInformation::~ThreadInformation() {
-    MemoryFree((void *&) name);
+    /*lint -e{534} possible failure is not handled nor propagated.*/
+    MemoryFree(reinterpret_cast<void *&>(name));
+    /*lint -e{534} possible failure is not handled nor propagated.*/
     startThreadSynchSem.Close();
+    userData = static_cast<void *>(NULL);
+    name = static_cast<char8 *>(NULL);
 }
 
 /**
@@ -137,10 +144,9 @@ const char8 *ThreadInformation::ThreadName() {
  * @param[in] userData is the function argument.
  * @param[in] eh is the exception handler.
  */
-bool ThreadInformation::ExceptionProtectedExecute(ThreadFunctionType userFunction,
-                                                  void *userData,
-                                                  ExceptionHandler *eh) {
-    userFunction(userData);
+bool ThreadInformation::ExceptionProtectedExecute(const ThreadFunctionType userFunction,
+                                                  const void * const threadUserData) const {
+    userFunction(threadUserData);
     return true;
 }
 
@@ -148,22 +154,22 @@ Threads::PriorityClassType ThreadInformation::GetPriorityClass() const {
     return priorityClass;
 }
 
-void ThreadInformation::SetPriorityClass(Threads::PriorityClassType priorityClass) {
-    this->priorityClass = priorityClass;
+void ThreadInformation::SetPriorityClass(const Threads::PriorityClassType &newPriorityClass) {
+    this->priorityClass = newPriorityClass;
 }
 
-Threads::ThreadPriorityType ThreadInformation::GetPriorityLevel() const {
+uint8 ThreadInformation::GetPriorityLevel() const {
     return priorityLevel;
 }
 
-void ThreadInformation::SetPriorityLevel(Threads::ThreadPriorityType priorityLevel) {
-    this->priorityLevel = priorityLevel;
+void ThreadInformation::SetPriorityLevel(const uint8 &newPriorityLevel) {
+    this->priorityLevel = newPriorityLevel;
 }
 
 ThreadIdentifier ThreadInformation::GetThreadIdentifier() const {
     return threadId;
 }
 
-void ThreadInformation::SetThreadIdentifier(ThreadIdentifier threadId) {
-    this->threadId = threadId;
+void ThreadInformation::SetThreadIdentifier(const ThreadIdentifier &newThreadId) {
+    this->threadId = newThreadId;
 }

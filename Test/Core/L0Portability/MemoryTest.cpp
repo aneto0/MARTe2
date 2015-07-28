@@ -136,7 +136,6 @@ bool MemoryTest::TestRealloc(uint32 size1,
             return false;
         }
 
-
         if (allocated[i] != (int32) i) {
             Memory::Free((void*&) allocated);
             return false;

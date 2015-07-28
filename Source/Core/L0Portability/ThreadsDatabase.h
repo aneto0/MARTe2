@@ -61,33 +61,32 @@ class ThreadsDatabase {
 
 public:
     /**
-     * @brief Add a new thread to the database.
-     * @details The database memory could be allocated dinamically using malloc and realloc functions.
-     * @param[in] ti is a pointer to the thread information.
-     * @return true if ti is added to the database, false in case of failure.
+     * @brief Adds a new thread to the database.
+     * @param[in] threadInformation is a pointer to the thread information.
+     * @return true if threadInformation is successfully added to the database, false otherwise.
+     * @pre threadInformation != NULL
      */
-    static bool NewEntry(ThreadInformation *ti);
+    static bool NewEntry(ThreadInformation *threadInformation);
     /**
      * @brief Remove the entry from database searching by ThreadIdentifier.
      * @param[in] ThreadIdentifier is the id of the threads which must be removed from database.
      * @return true if the thread with ThreadIdentifier as id is in the database and if it is removed without errors.
      */
-    static ThreadInformation *RemoveEntry(ThreadIdentifier threadId);
+    static ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId);
 
     /**
      * @brief Get thread informations.
      * @param[in] ThreadIdentifier is the id of the requested thread.
      * @return the ThreadInformation object related to the thread with ThreadIdentifier as id.
      */
-    static ThreadInformation *GetThreadInformation(ThreadIdentifier threadId);
+    static ThreadInformation *GetThreadInformation(const ThreadIdentifier &threadId);
 
     /**
      * @brief Lock a spinlock mutex to allow exclusive access to the database.
      * @details With timeout it wait until it's expired, then return false.
-     * @param[in] tt is the timeout.
-     * @return false if the lock fails because the timeout.
+     * @return false if the internal mutex lock fails.
      */
-    static bool Lock(TimeoutType tt = TTInfiniteWait);
+    static bool Lock();
 
     /**
      * @brief Unlock the internal mutex.
@@ -106,25 +105,32 @@ public:
      * @param[in] n is the index of the requested thread.
      * @return the ThreadIdentifier of the requested thread.
      */
-    static ThreadIdentifier GetThreadID(uint32 n);
+    static ThreadIdentifier GetThreadID(const uint32 &n);
+
+    /**
+     * @brief Get the informations searching a thread by index.
+     * @param[out] threadInfoCopy contains the thread informations in return.
+     * @param[in] n is the index of the requested thread.
+     * @return true if the requested thread is in the database.
+     */
+    static bool GetInfoIndex(ThreadInformation &threadInfoCopy, const uint32 &n);
 
     /**
      * @brief Get the informations searching a thread by index or by id.
-     * @param[out] tiCopy contains the thread informations in return.
+     * @param[out] threadInfoCopy contains the thread informations in return.
      * @param[in] n is the index of the requested thread.
      * @param[in] ThreadIdentifier is the ThreadIdentifier of the requested thread.
      * @return true if the requested thread is in the database.
      */
-    static bool GetInfo(ThreadInformation &tiCopy,
-                        int32 n = -1,
-                        ThreadIdentifier threadId = (ThreadIdentifier) - 1);
+    static bool GetInfo(ThreadInformation &threadInfoCopy, const ThreadIdentifier &threadId);
 
     /**
      * @brief Returns the id searching by name.
      * @param[in] name is the name of the thread.
      * @return the id of the first thread found with the name specified or 0 if it is not in the database.
+     * @pre name != NULL
      */
-    static ThreadIdentifier Find(const char8 *name);
+    static ThreadIdentifier Find(const char8 * const name);
 
 private:
 

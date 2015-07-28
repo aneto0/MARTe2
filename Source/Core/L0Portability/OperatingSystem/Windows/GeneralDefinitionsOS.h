@@ -24,17 +24,21 @@
 #ifndef GENERALDEFINITIONSOS_H_
 #define 		GENERALDEFINITIONSOS_H_
 
+
+
 /** Defines the event handle */
-#define HEV   HANDLE
+typedef HANDLE HEV;
 
 /** Defines the console handle. */
-#define ConsoleHandle HANDLE
+typedef HANDLE ConsoleHandle;
 
 /** Defines the console informations structure. */
-#define ConsoleInfo CONSOLE_SCREEN_BUFFER_INFO
+typedef CONSOLE_SCREEN_BUFFER_INFO ConsoleInfo;
 
 /** Defines the TID type */
-#define TID DWORD
+typedef DWORD ThreadIdentifier;
+static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdentifier>(0);
+
 
 /** Defines the default stack size for a thread. */
 #define THREADS_DEFAULT_STACKSIZE 32768

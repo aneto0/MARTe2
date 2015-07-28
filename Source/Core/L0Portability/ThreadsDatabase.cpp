@@ -35,103 +35,96 @@
 #include "Threads.h"
 #include "StringHelper.h"
 
-
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-uint32 ThreadsDatabase::nOfEntries = 0;
-uint32 ThreadsDatabase::maxNOfEntries = 0;
-ThreadInformation **ThreadsDatabase::entries = NULL;
+uint32 ThreadsDatabase::nOfEntries = 0u;
+uint32 ThreadsDatabase::maxNOfEntries = 0u;
+ThreadInformation **ThreadsDatabase::entries = static_cast<ThreadInformation **>(NULL);
 FastPollingMutexSem ThreadsDatabase::internalMutex;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-bool ThreadsDatabase::NewEntry(ThreadInformation *threadInfo) {
-    if (threadInfo == NULL) {
-        return false;
-    }
-
-    if (!ThreadsDatabase::AllocMore()) {
-        //CStaticAssertErrorCondition(FatalError,"TDB:TDB_NewEntry failed (re-)allocating memory");
-        return false;
-    }
-
-    // no space
-    if (ThreadsDatabase::maxNOfEntries <= ThreadsDatabase::nOfEntries) {
-        //CStaticAssertErrorCondition(FatalError,"TDB:TDB_NewEntry no space for new entry");
-        return false;
-    }
-
-    // search for empty space staring from guess
-    uint32 index = ThreadsDatabase::nOfEntries;
-    if (index >= ThreadsDatabase::maxNOfEntries)
-        index -= ThreadsDatabase::maxNOfEntries;
-    while (index != ThreadsDatabase::nOfEntries - 1) {
-        if (ThreadsDatabase::entries[index] == NULL) {
-            ThreadsDatabase::entries[index] = threadInfo;
-            ThreadsDatabase::nOfEntries++;
-            return true;
+bool ThreadsDatabase::NewEntry(ThreadInformation * const threadInformation) {
+    bool ok = ThreadsDatabase::AllocMore();
+    if (ok) {
+        ok = (ThreadsDatabase::maxNOfEntries <= ThreadsDatabase::nOfEntries);
+        // no space
+        if (ok) {
+            ok = false;
+            // search for empty space staring from guess
+            uint32 index = ThreadsDatabase::nOfEntries;
+            if (index >= ThreadsDatabase::maxNOfEntries) {
+                index -= ThreadsDatabase::maxNOfEntries;
+            }
+            while (index != (ThreadsDatabase::nOfEntries - 1u)) {
+                if (ThreadsDatabase::entries[index] == NULL) {
+                    ThreadsDatabase::entries[index] = threadInformation;
+                    ThreadsDatabase::nOfEntries++;
+                    ok = true;
+                    break;
+                }
+                index++;
+                // roll-over
+                if (index >= ThreadsDatabase::maxNOfEntries) {
+                    index -= ThreadsDatabase::maxNOfEntries;
+                }
+            }
         }
-        index++;
-        // roll-over
-        if (index >= ThreadsDatabase::maxNOfEntries) {
-            index -= ThreadsDatabase::maxNOfEntries;
-        }
+        //CStaticAssertErrorCondition(FatalError,"TDB:TDB_NewEntry could not find empty slot!!");
     }
-
-    //CStaticAssertErrorCondition(FatalError,"TDB:TDB_NewEntry could not find empty slot!!");
-    return false;
-
+    return ok;
 }
 
-ThreadInformation *ThreadsDatabase::RemoveEntry(ThreadIdentifier threadId) {
+ThreadInformation *ThreadsDatabase::RemoveEntry(const ThreadIdentifier &threadId) {
+    ThreadInformation *threadInfo = static_cast<ThreadInformation *>(NULL);
     // search for empty space staring from guess
-    uint32 index = 0;
+    uint32 index = 0u;
     while (index < ThreadsDatabase::maxNOfEntries) {
-        ThreadInformation *threadInfo = ThreadsDatabase::entries[index];
-        if (threadInfo != NULL) {
-            if (threadInfo->GetThreadIdentifier() == threadId) {
-                ThreadsDatabase::entries[index] = NULL;
+        ThreadInformation *threadInfoIdx = ThreadsDatabase::entries[index];
+        if (threadInfoIdx != NULL) {
+            if (threadInfoIdx->GetThreadIdentifier() == threadId) {
+                ThreadsDatabase::entries[index] = static_cast<ThreadInformation *>(NULL);
                 ThreadsDatabase::nOfEntries--;
 
                 // free at the end
-                if (ThreadsDatabase::nOfEntries == 0) {
-                    MemoryFree((void *&) ThreadsDatabase::entries);
+                if (ThreadsDatabase::nOfEntries == 0u) {
+                    MemoryFree(reinterpret_cast<void *&>(ThreadsDatabase::entries));
                     //For AllocMore to reallocate again!
-                    ThreadsDatabase::maxNOfEntries = 0;
+                    ThreadsDatabase::maxNOfEntries = 0u;
                 }
-                return threadInfo;
+                threadInfo = threadInfoIdx;
+                break;
             }
         }
         index++;
     }
 
     //CStaticAssertErrorCondition(FatalError,"TDB:TDB_RemoveEntry could not find/remove entry ThreadIdentifier=%08x ",threadId);
-    return NULL;
+    return threadInfo;
 
 }
 
-ThreadInformation *ThreadsDatabase::GetThreadInformation(ThreadIdentifier threadId) {
+ThreadInformation *ThreadsDatabase::GetThreadInformation(const ThreadIdentifier &threadId) {
+    ThreadInformation *threadInfo = static_cast<ThreadInformation *>(NULL);
     // search for empty space staring from guess
-    uint32 index = 0;
+    uint32 index = 0u;
     while (index < ThreadsDatabase::maxNOfEntries) {
-        ThreadInformation *threadInfo = ThreadsDatabase::entries[index];
+        ThreadInformation *threadInfoIdx = ThreadsDatabase::entries[index];
         if (threadInfo != NULL) {
-            if (threadInfo->GetThreadIdentifier() == threadId) {
-                return threadInfo;
+            if (threadInfoIdx->GetThreadIdentifier() == threadId) {
+                threadInfo = threadInfoIdx;
             }
         }
         index++;
     }
 
     //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetTII could not find entry ThreadIdentifier=%08x ",threadId);
-    return NULL;
+    return threadInfo;
 }
 
-bool ThreadsDatabase::Lock(TimeoutType tt) {
+bool ThreadsDatabase::Lock() {
     ErrorType err = ThreadsDatabase::internalMutex.FastLock();
     return (err == NoError);
 }
@@ -144,146 +137,90 @@ uint32 ThreadsDatabase::NumberOfThreads() {
     return ThreadsDatabase::nOfEntries;
 }
 
-ThreadIdentifier ThreadsDatabase::GetThreadID(uint32 n) {
-
-    if (n >= ThreadsDatabase::nOfEntries) {
-        //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetThreadID(%i) index out of range",n);
-        return (ThreadIdentifier) 0;
-    }
-
-    // search for empty space staring from guess
-    uint32 index = 0;
-    while (index < ThreadsDatabase::maxNOfEntries) {
-        if (ThreadsDatabase::entries[index] != NULL) {
-            if (n == 0) {
-                return ThreadsDatabase::entries[index]->GetThreadIdentifier();
-            }
-            n--;
+ThreadIdentifier ThreadsDatabase::GetThreadID(const uint32 &n) {
+    ThreadIdentifier tid = 0u;
+    if (n < ThreadsDatabase::nOfEntries) {
+        if (ThreadsDatabase::entries[n] != NULL) {
+            tid = ThreadsDatabase::entries[n]->GetThreadIdentifier();
         }
-        index++;
     }
 
     //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetThreadID(%i) mismatch between actual entries and TDB_NOfEntries");
-    return (ThreadIdentifier) 0;
+    return tid;
+}
+
+bool ThreadsDatabase::GetInfoIndex(ThreadInformation &threadInfoCopy,
+                                   const uint32 &n) {
+    ThreadIdentifier threadId = GetThreadID(n);
+    ThreadInformation *threadInfo = GetThreadInformation(threadId);
+    if (threadInfo != NULL) {
+        threadInfoCopy = *threadInfo;
+    }
+    return (threadInfo != NULL);
 }
 
 bool ThreadsDatabase::GetInfo(ThreadInformation &threadInfoCopy,
-                            int32 n,
-                            ThreadIdentifier threadId) {
-    if (n >= 0) {
-        ThreadIdentifier threadId = GetThreadID(n);
-        ThreadInformation *threadInfo = GetThreadInformation(threadId);
-        if (threadInfo == NULL) {
-            return false;
-        }
+                              const ThreadIdentifier &threadId) {
+    ThreadInformation *threadInfo = GetThreadInformation(threadId);
+    if (threadInfo != NULL) {
         threadInfoCopy = *threadInfo;
-        return true;
     }
-    else {
-        ThreadInformation *threadInfo = GetThreadInformation(threadId);
-        if (threadInfo == NULL) {
-            return false;
-        }
-        threadInfoCopy = *threadInfo;
-        return true;
-    }
-
+    return (threadInfo != NULL);
 }
 
-ThreadIdentifier ThreadsDatabase::Find(const char8 *name) {
-
-    if (name == NULL) {
-        return (ThreadIdentifier) 0;
-    }
-
+ThreadIdentifier ThreadsDatabase::Find(const char8 * const name) {
+    ThreadIdentifier tid = 0u;
     // search for empty space staring from guess
-    uint32 index = 0;
+    uint32 index = 0u;
     while (index < ThreadsDatabase::maxNOfEntries) {
         if (ThreadsDatabase::entries[index] != NULL) {
             if (StringHelper::Compare(ThreadsDatabase::entries[index]->ThreadName(), name) == 0) {
-                return ThreadsDatabase::entries[index]->GetThreadIdentifier();
+                tid = ThreadsDatabase::entries[index]->GetThreadIdentifier();
+                break;
             }
         }
         index++;
     }
 
-    return (ThreadIdentifier) 0;
-
+    return tid;
 }
-
 
 bool ThreadsDatabase::AllocMore() {
+    bool ok = true;
     // no need
-    if (maxNOfEntries > nOfEntries) {
-        return true;
-    }
-
-    // first time?
-    if (entries == NULL) {
-        entries = (ThreadInformation **) MemoryMalloc(sizeof(ThreadInformation *) * THREADS_DATABASE_GRANULARITY);
-        if (entries != NULL) {
-            maxNOfEntries = THREADS_DATABASE_GRANULARITY;
-            nOfEntries = 0;
+    if (maxNOfEntries <= nOfEntries) {
+        // first time?
+        if (entries == NULL) {
+            uint32 size = static_cast<uint32>(sizeof(ThreadInformation *)) * THREADS_DATABASE_GRANULARITY;
+            entries = reinterpret_cast<ThreadInformation **>(MemoryMalloc(size));
+            if (entries != NULL) {
+                maxNOfEntries = THREADS_DATABASE_GRANULARITY;
+                nOfEntries = 0u;
+            }
+            else {
+                //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed allocating %i entries",TDB_THREADS_DATABASE_GRANULARITY);
+                ok = false;
+            }
         }
         else {
-            //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed allocating %i entries",TDB_THREADS_DATABASE_GRANULARITY);
-            return false;
+            uint32 newSize = static_cast<uint32>(sizeof(ThreadInformation *)) * (THREADS_DATABASE_GRANULARITY + maxNOfEntries);
+            entries = reinterpret_cast<ThreadInformation **>(MemoryRealloc(reinterpret_cast<void *&>(entries), newSize));
+            if (entries != NULL) {
+                maxNOfEntries += THREADS_DATABASE_GRANULARITY;
+            }
+            else {
+                //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed re-allocating to %i entries",TDB_THREADS_DATABASE_GRANULARITY+TDB_MaxNOfEntries);
+                ok = false;
+            }
+        }
+
+        // clean new memory
+        uint32 i;
+        if (ok) {
+            for (i = (maxNOfEntries - THREADS_DATABASE_GRANULARITY); i < maxNOfEntries; i++) {
+                entries[i] = static_cast<ThreadInformation *>(NULL);
+            }
         }
     }
-    else {
-        entries = (ThreadInformation **) MemoryRealloc((void *&) entries, sizeof(ThreadInformation *) * (THREADS_DATABASE_GRANULARITY + maxNOfEntries));
-        if (entries != NULL) {
-            maxNOfEntries += THREADS_DATABASE_GRANULARITY;
-        }
-        else {
-            //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed re-allocating to %i entries",TDB_THREADS_DATABASE_GRANULARITY+TDB_MaxNOfEntries);
-            return false;
-        }
-    }
-
-    // clean new memory
-    uint32 i;
-    for (i = (maxNOfEntries - THREADS_DATABASE_GRANULARITY); i < maxNOfEntries; i++) {
-        entries[i] = NULL;
-    }
-    return true;
+    return ok;
 }
-/*
-bool ThreadsDatabase::NewEntry(ThreadInformation *ti) {
-    return ThreadsDatabaseNewEntry(ti);
-}
-
-ThreadInformation *ThreadsDatabase::RemoveEntry(ThreadIdentifier threadId) {
-    return ThreadsDatabaseRemoveEntry(ThreadIdentifier);
-}
-
-ThreadInformation *ThreadsDatabase::GetThreadInformation(ThreadIdentifier threadId) {
-    return ThreadsDatabaseGetThreadInformation(ThreadIdentifier);
-}
-
-bool ThreadsDatabase::Lock(TimeoutType tt) {
-    return ThreadsDatabaseLock(tt);
-}
-
-void ThreadsDatabase::UnLock() {
-    ThreadsDatabaseUnLock();
-}
-
-uint32 ThreadsDatabase::NumberOfThreads() {
-    return ThreadsDatabaseNumberOfThreads();
-}
-
-ThreadIdentifier ThreadsDatabase::GetThreadID(uint32 n) {
-    return ThreadsDatabaseGetThreadID(n);
-}
-
-bool ThreadsDatabase::GetInfo(ThreadInformation &tiCopy,
-                              int32 n,
-                              ThreadIdentifier threadId) {
-    return ThreadsDatabaseGetInfo(tiCopy, n, ThreadIdentifier);
-}
-
-ThreadIdentifier ThreadsDatabase::Find(const char8 *name) {
-    return ThreadsDatabaseFind(name);
-}
-*/

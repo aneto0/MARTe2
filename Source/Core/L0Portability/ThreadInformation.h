@@ -47,26 +47,12 @@
  * @details This class is useful to the ThreadsDatabase implementation and allow the access
  * to the main thread information.
  *
- * @details Generally these methods and attributes are used for the communication and synchronization between threads,
+ * Generally these methods and attributes are used for the communication and synchronization between threads,
  * allowing for example to a thread to understand if another thread is still alive or also to kill and terminate
  * other threads.
  */
-
 class ThreadInformation {
 public:
-
-    /**
-     * @brief The type of function that can be used to instantiate a thread initialization interface object.
-     * @param[in] userFunction The thread entry point.
-     * @param[in] userData A pointer to data that can be passed to the thread.
-     * @param[in] threadName The thread name.
-     * @param[in] exceptionHandlerAction Describes the behavior of threads when an exception occurs.
-     */
-    typedef ThreadInformation *(*ThreadInformationConstructorType)(ThreadFunctionType userFunction,
-                                                                   void *userData,
-                                                                   const char8 *threadName,
-                                                                   uint32 exceptionHandlerAction);
-
     /**
      * @brief Default constructor.
      */
@@ -74,13 +60,15 @@ public:
 
     /**
      * @brief Constructor.
-     * @param[in] userThreadFunction Actually the thread that has to be executed.
-     * @param[in] userData A pointer to a structure containing thread's data.
-     * @param[in] name The name of the thread.
+     * @param[in] threadFunction Actually the thread that has to be executed.
+     * @param[in] threadData A pointer to a structure containing thread's data.
+     * @param[in] threadName The name of the thread.
+     * @param[in] threadExceptionHandler Describes the behavior of threads when an exception occurs.
      */
-    ThreadInformation(ThreadFunctionType userThreadFunction,
-                      void *userData,
-                      const char8 *name);
+    ThreadInformation(const ThreadFunctionType threadFunction,
+                      const void * const threadData,
+                      const char8 * const threadName,
+                      const uint32 &threadExceptionHandler);
 
     /**
      * @brief Copy constructor.
@@ -98,29 +86,27 @@ public:
      * @brief Destructor.
      * @details It just frees the memory allocated for the name string.
      */
-    virtual ~ThreadInformation();
+    ~ThreadInformation();
 
     /**
      * @brief Launch the function of the thread.
      * The function representing the thread. This is the most basic implementation.
      */
-    virtual void UserThreadFunction();
+    void UserThreadFunction();
 
     /**
      * @brief Get the name of the thread.
      * @return A reference to the dynamically allocated string representing the name of the thread.
      */
-    virtual const char8 *ThreadName();
+    const char8 *ThreadName();
 
     /**
      * @brief Call the thread function with an exception handler protection.
      * @param[in] userFunction is the thread function.
-     * @param[in] userData is the function argument.
-     * @param[in] eh is the exception handler.
+     * @param[in] threadUserData is the function argument.
      */
-    bool ExceptionProtectedExecute(ThreadFunctionType userFunction,
-                                   void *userData,
-                                   ExceptionHandler *eh);
+    bool ExceptionProtectedExecute(const ThreadFunctionType userFunction,
+                                   const void * const threadUserData) const ;
 
     /**
      *  @brief The thread waits a post condition.
@@ -140,9 +126,9 @@ public:
 
     /**
      * @brief Updates the thread identifier value.
-     * @param threadId the thread identifier to be set.
+     * @param newThreadId the thread identifier to be set.
      */
-    void SetThreadIdentifier(ThreadIdentifier threadId);
+    void SetThreadIdentifier(const ThreadIdentifier &newThreadId);
 
     /**
      * @brief Returns the thread priority class.
@@ -152,21 +138,21 @@ public:
 
     /**
      * @brief Updates the thread priority class value.
-     * @param priorityClass the new priority class.
+     * @param newPriorityClass the new priority class.
      */
-    void SetPriorityClass(Threads::PriorityClassType priorityClass);
+    void SetPriorityClass(const Threads::PriorityClassType &newPriorityClass);
 
     /**
      * @brief Returns the thread priority level.
      * @return the thread priority level.
      */
-    Threads::ThreadPriorityType GetPriorityLevel() const;
+    uint8 GetPriorityLevel() const;
 
     /**
      * @brief Updates the thread priority level value.
-     * @param priorityLevel the new priority level.
+     * @param newPriorityLevel the new priority level.
      */
-    void SetPriorityLevel(Threads::ThreadPriorityType priorityLevel);
+    void SetPriorityLevel(const uint8 &newPriorityLevel);
 
 private:
 
@@ -177,16 +163,20 @@ private:
     Threads::PriorityClassType priorityClass;
 
     /** The thread priority level */
-    Threads::ThreadPriorityType priorityLevel;
+    uint8 priorityLevel;
 
     /** The user thread entry point. */
     ThreadFunctionType userThreadFunction;
 
-    /** A pointer to a structure containing thread data. */
-    void * userData;
+    /** A pointer to a structure containing thread data.
+     * The life-cycle of this structure is externally constructed and managed.*/
+    const void * userData;
 
     /** The name of the thread. */
-    const char8 * name;
+    char8 * name;
+
+    /** Behavior of the thread when an exception occurs. */
+    uint32 exceptionHandlerAction;
 
     /** enables the operating system to perform some housekeeping
      * before releasing the thread to the user code. */
