@@ -33,115 +33,96 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Memory.h"
-#include "EventSem.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-
 
 /**
  * @brief A class to testing Memory functions.
  */
 class MemoryTest {
 
-private:
-
 public:
-
-
-    /**
-     * @brief Constructor.
-     */
-    MemoryTest();
-
-    /**
-     * @brief Destructor.
-     */
-    ~MemoryTest();
-
 
     /**
      * @brief Tests the Memory::Malloc function.
+     * @details Allocates blocks of memory with different sizes and checks that the return pointer is different than zero.
      * @param[in] size is the number of integers to allocate.
-     * @return true if the pointers to the allocated memory are valid.
+     * @return true if all the tests returns as expected, false otherwise.
      */
     bool TestMalloc(uint32 size);
 
-
     /**
      * @brief Tests the Memory::Free function.
-     * @details Allocates the size passed by argument then frees the memory and see if the pointer is NULL.
+     * @details Allocates the size passed by argument then frees the memory and checks that the pointer is NULL.
      * @param[in] size is the size to be allocated.
-     * @return true if successful, false otherwise.
+     * @return true if the pointer to the memory block is NULL after the free operation.
      */
     bool TestFree(uint32 size);
-
 
     /**
      * @brief Tests the Memory::Realloc function.
      * @details Checks the function passing also size = 0 (Memory::Free behavior) or pointer = NULL (Memory::Malloc) behavior.
      * @param[in] size1 is the number of integers to allocate with initial malloc.
      * @param[in] size2 is the additional memory which must be allocated.
-     * @return true if successful, false otherwise.
+     * @return true if all tests return as expected, false otherwise.
      */
-    bool TestRealloc(uint32 size1, uint32 size2);
+    bool TestRealloc(uint32 size1,
+                     uint32 size2);
 
     /**
      * @brief Tests the Memory::StringDup function.
      * @details Checks if the string is duplicated correctly and if the function returns NULL in case of NULL input.
      * @param[in] s is the string to duplicate.
-     * @return true if successful, false otherwise.
+     * @return true if the tests return as expected, false otherwise.
      */
     bool TestStringDup(const char8 *s);
 
     /**
      * @brief Tests the Memory::Check function.
-     * @details Allocates a chunk of memory and check if the function return true on the memory allocated. Then checks if the function returns fale in case of null pointer input.
+     * @details Allocates a chunk of memory and check if the function return true on the memory allocated.
+     * Then checks if the function returns false in case of null pointer input.
      * @param[in] size is the size which must be allocated.
-     * @return true if successful, false otherwise.
+     * @return true if all tests return as expected, false otherwise.
      */
     bool TestCheck(uint32 size);
 
-
     /**
      * @brief Tests the Memory::Copy function.
      * @details Copies a memory area with different size parameters and checks if the function returns false on case of null inputs.
-     * @return true if successful, false otherwise.
+     * @return true if the tests return as expected, false otherwise.
      */
     bool TestCopy();
 
-
     /**
      * @brief Tests the Memory::Copy function.
-     * @details Copies a memory area with different size parameters and checks if the function returns false on case of null inputs.
-     * @return true if successful, false otherwise.
+     * @details Copies a memory area with different size parameters checking if the two memory blocks after the operation are equal.
+     * Then checks if the function returns false on case of null inputs.
+     * @return true if the tests return as expected, false otherwise.
      */
     bool TestMove();
-
 
     /**
      * @brief Tests the Memory::Compare function.
      * @details Compares two memory areas checking if the result is correct.
-     * @return true if successful, false otherwise.
+     * @return true if the tests return as expected, false otherwise.
      */
     bool TestCompare();
 
     /**
      * @brief Tests the Memory::Set function.
      * @details Sets a character in the beginning of a memory area and another character at its end. Then checks if the memory is set as expected.
-     * @return true if successful, false otherwise.
+     * @return true if the tests return as expected, false otherwise.
      */
     bool TestSet();
 
-
     /**
      * @brief Tests the Memory::Search function.
-     * @details Search characters on a memory area trying also if the function returns false in case of null input or not found characters
-     * @return true if successful, false otherwise.
+     * @details Searches characters on a memory area checking the result in case of the character is in the buffer and in case of the
+     * character not in the buffer. Then checks also if the function returns false in case of null input or not found characters
+     * @return true if the tests return as expected, false otherwise.
      */
     bool TestSearch();
-
 
 };
 /*---------------------------------------------------------------------------*/

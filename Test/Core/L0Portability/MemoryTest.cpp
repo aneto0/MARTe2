@@ -32,9 +32,6 @@
 #include "MemoryTest.h"
 #include "GeneralDefinitions.h"
 #include "StringTestHelper.h"
-#include "Threads.h"
-#include "Sleep.h"
-#include "Atomic.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -44,13 +41,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-MemoryTest::MemoryTest() {
-
-
-}
-
-MemoryTest::~MemoryTest() {
-}
 
 bool MemoryTest::TestMalloc(uint32 size) {
 
@@ -173,25 +163,25 @@ bool MemoryTest::TestCheck(uint32 size) {
     int32* allocated = (int32*) Memory::Malloc(size * sizeof(int32));
 
     //checks if all the memory is allocated correctly
-    if (!Memory::Check(allocated, (Memory::MemoryTestAccessMode)(Memory::Read | Memory::Write | Memory::Execute), size * sizeof(int32))) {
+    if (!Memory::Check(allocated, (Memory::MemoryTestAccessMode) (Memory::Read | Memory::Write | Memory::Execute), size * sizeof(int32))) {
         return false;
     }
 
     //checks if a part the memory is allocated correctly
-    if (!Memory::Check(allocated, (Memory::MemoryTestAccessMode)(Memory::Read | Memory::Write | Memory::Execute), (size / 2) * sizeof(int32))) {
+    if (!Memory::Check(allocated, (Memory::MemoryTestAccessMode) (Memory::Read | Memory::Write | Memory::Execute), (size / 2) * sizeof(int32))) {
         return false;
     }
 
     //0 as size
     uint32 testSize = 0;
-    if (!Memory::Check(allocated, (Memory::MemoryTestAccessMode)(Memory::Read | Memory::Write | Memory::Execute), testSize)) {
+    if (!Memory::Check(allocated, (Memory::MemoryTestAccessMode) (Memory::Read | Memory::Write | Memory::Execute), testSize)) {
         return false;
     }
 
     Memory::Free((void*&) allocated);
 
     //the check function on a null pointer should return false
-    return !Memory::Check(NULL, (Memory::MemoryTestAccessMode)(Memory::Read | Memory::Write | Memory::Execute), size);
+    return !Memory::Check(NULL, (Memory::MemoryTestAccessMode) (Memory::Read | Memory::Write | Memory::Execute), size);
 
 }
 
