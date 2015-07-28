@@ -357,7 +357,7 @@ int32 StringPortable::SearchIndex(const char8* const string1,
             end2 = false;
             while (!end2) {
 
-                if ((string1[i] == string2[j]) && (string1[i] != '\0')) {
+                if ((string1[i] == string2[j]) || (string1[i] == '\0')) {
                     end1 = true;
                     end2 = true;
                     ret = i;
@@ -367,12 +367,6 @@ int32 StringPortable::SearchIndex(const char8* const string1,
 
                 }
                 j++;
-            }
-
-            if ((string1[i] == '\0') && (!end1)) {
-                ret = i;
-                end1 = true;
-
             }
             i++;
         }
@@ -395,20 +389,25 @@ const char8* StringPortable::SearchChars(const char8* const string1,
             end2 = false;
             while (!end2) {
 
-                if (string1[i] == string2[j]) {
+                if (string1[i] == '\0') {
                     end1 = true;
                     end2 = true;
-                    ret = &string1[i];
+                    ret = static_cast<const char8*>(NULL);
                 }
+                else {
+                    if (string1[i] == string2[j]) {
+                        end1 = true;
+                        end2 = true;
+                        ret = &string1[i];
+                    }
+                }
+
                 if (string2[j] == '\0') {
                     end2 = true;
                 }
                 j++;
             }
-            if (string1[i] == '\0') {
-                end1 = true;
-                ret = static_cast<const char8*>(NULL);
-            }
+
             i++;
         }
     }
@@ -475,11 +474,17 @@ const char8* StringPortable::TokenizeByChars(const char8* const string,
             end = false;
             while (!end) {
 
-                if ((string[i] == delimiter[j]) && (string[i] != '\0')) {
-                    result[i] = '\0';
-                    int32 index = i + 1;
-                    ret = &string[index];
+                if (string[i] == '\0') {
+                    ret = &string[i];
                     end = true;
+                }
+                else {
+                    if (string[i] == delimiter[j]) {
+                        result[i] = '\0';
+                        int32 index = i + 1;
+                        ret = &string[index];
+                        end = true;
+                    }
                 }
 
                 if (delimiter[j] == '\0') {
@@ -491,10 +496,6 @@ const char8* StringPortable::TokenizeByChars(const char8* const string,
             //copy in result if terminator not found yet
             if (ret == NULL) {
                 result[i] = string[i];
-
-                if (string[i] == '\0') {
-                    ret = &string[i];
-                }
             }
             i++;
         }
