@@ -42,14 +42,7 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief A class which contains all threads informations (name, function, argument, id, priority info).
- *
- * @details This class is useful to the ThreadsDatabase implementation and allow the access
- * to the main thread information.
- *
- * Generally these methods and attributes are used for the communication and synchronization between threads,
- * allowing for example to a thread to understand if another thread is still alive or also to kill and terminate
- * other threads.
+ * @brief A class which stores information about a thread: name, function, argument, identifier and priority related information.
  */
 class ThreadInformation {
 public:
@@ -60,63 +53,58 @@ public:
 
     /**
      * @brief Constructor.
-     * @param[in] threadFunction Actually the thread that has to be executed.
-     * @param[in] threadData A pointer to a structure containing thread's data.
-     * @param[in] threadName The name of the thread.
-     * @param[in] threadExceptionHandler Describes the behavior of threads when an exception occurs.
+     * @param[in] threadFunction the user callback function.
+     * @param[in] threadData a pointer to a structure containing user thread data.
+     * @param[in] threadName the name of the thread.
      */
     ThreadInformation(const ThreadFunctionType threadFunction,
                       const void * const threadData,
-                      const char8 * const threadName,
-                      const uint32 &threadExceptionHandler);
+                      const char8 * const threadName);
 
     /**
      * @brief Copy constructor.
-     * @param[in] threadInfo contains informations to initialize this object.
+     * @param[in] threadInfo source ThreadInformation object.
      */
     ThreadInformation(const ThreadInformation &threadInfo);
 
     /**
-     * @brief copy a thread info in this.
-     * @param[in] threadInfo contains informations to initialize this object.
+     * @brief Copy a thread information into this.
+     * @param[in] threadInfo source ThreadInformation object.
      */
     void Copy(const ThreadInformation &threadInfo);
 
     /**
      * @brief Destructor.
-     * @details It just frees the memory allocated for the name string.
+     * @details It frees the memory allocated for the name string.
      */
     ~ThreadInformation();
 
     /**
-     * @brief Launch the function of the thread.
-     * The function representing the thread. This is the most basic implementation.
+     * @brief Executes the user callback function.
      */
-    void UserThreadFunction();
+    void UserThreadFunction() const;
 
     /**
-     * @brief Get the name of the thread.
-     * @return A reference to the dynamically allocated string representing the name of the thread.
+     * @brief Returns the name of the thread.
+     * @return A reference to the dynamically allocated string containing the name of the thread.
      */
-    const char8 *ThreadName();
+    const char8 *ThreadName () const;
 
     /**
-     * @brief Call the thread function with an exception handler protection.
-     * @param[in] userFunction is the thread function.
-     * @param[in] threadUserData is the function argument.
+     *  @brief Locks an internal EventSem.
+     *  @details An internal EventSem is used by the Threads implementation to guarantee
+     *  that all the necessary housekeeping is performed before calling the user callback function.
+     *  @return the value returned by EventSem::Wait
      */
-    bool ExceptionProtectedExecute(const ThreadFunctionType userFunction,
-                                   const void * const threadUserData) const ;
+    ErrorType ThreadWait();
 
     /**
-     *  @brief The thread waits a post condition.
+     *  @brief Post an internal EventSem.
+     *  @details An internal EventSem is used by the Threads implementation to guarantee
+     *  that all the necessary housekeeping is performed before calling the user callback function.
+     *  @return the value returned by EventSem::Post
      */
-    inline ErrorType ThreadWait();
-
-    /**
-     * @brief Stop waiting condition.
-     */
-    inline bool ThreadPost();
+    bool ThreadPost();
 
     /**
      * @brief Returns the thread identifier.
@@ -156,47 +144,46 @@ public:
 
 private:
 
-    /** The thread identifier */
+    /**
+     * The thread identifier
+     */
     ThreadIdentifier threadId;
 
-    /** The thread priority class */
+    /**
+     * The thread priority class
+     */
     Threads::PriorityClassType priorityClass;
 
-    /** The thread priority level */
+    /**
+     * The thread priority level
+     */
     uint8 priorityLevel;
 
-    /** The user thread entry point. */
+    /**
+     * The user thread callback function.
+     */
     ThreadFunctionType userThreadFunction;
 
-    /** A pointer to a structure containing thread data.
-     * The life-cycle of this structure is externally constructed and managed.*/
+    /**
+     * A pointer to a structure containing thread data.
+     * The life-cycle of this structure is externally constructed and managed.
+     */
     const void * userData;
 
-    /** The name of the thread. */
+    /**
+     * The name of the thread.
+     */
     char8 * name;
 
-    /** Behavior of the thread when an exception occurs. */
-    uint32 exceptionHandlerAction;
-
-    /** enables the operating system to perform some housekeeping
-     * before releasing the thread to the user code. */
+    /**
+     * Enables the operating system to perform some housekeeping
+     * before releasing the thread to the user callback function.
+     */
     EventSem startThreadSynchSem;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-ErrorType ThreadInformation::ThreadWait() {
-    return startThreadSynchSem.Wait();
-}
-
-/**
- * @brief Stop waiting condition.
- */
-bool ThreadInformation::ThreadPost() {
-    return startThreadSynchSem.Post();
-}
-
 #endif /* THREADINFORMATION_H_ */
 

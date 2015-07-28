@@ -51,6 +51,11 @@ public:
     static const uint32 NoReport = 0x10000u;
 
     /** @brief Default handler. */
+    ExceptionHandler() {
+        this->action = 0x1u;
+    }
+
+    /** @brief Default handler. */
     ExceptionHandler(const uint32 &defaultAction) {
         this->action = defaultAction;
     }

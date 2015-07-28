@@ -66,21 +66,6 @@ TEST(MemoryGTest,TestCheck) {
     ASSERT_TRUE(memorytest.TestCheck(100));
 }
 
-TEST(MemoryGTest,TestSharedAlloc) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSharedAlloc());
-}
-
-TEST(MemoryGTest,TestSharedFree) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSharedFree());
-}
-
-TEST(MemoryGTest,TestSharedMemory) {
-    MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSharedMemory());
-}
-
 TEST(MemoryGTest,TestCopy) {
     MemoryTest memorytest;
     ASSERT_TRUE(memorytest.TestCopy());
@@ -105,6 +90,4 @@ TEST(MemoryGTest,TestSearch) {
     MemoryTest memorytest;
     ASSERT_TRUE(memorytest.TestSearch());
 }
-
-
 

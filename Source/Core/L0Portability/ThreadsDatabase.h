@@ -42,16 +42,7 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief A database of pointers to threadInformation objects.
- *
- * @details These methods allows to store and remove pointers to threadInformation objects. A new entry is automatically
- * add to the database when a thread begin its execution and it's removed from database automatically when the
- * thread terminate. An internal mutex could be implemented here to make consistent all operations on database between
- * threads. The database allows to threads the access to other threads informations.
- *
- * @details Most of the implementation is delegated to ThreadsDatabaseOS because there are OS which implements most
- * of these functions natively. It is possible define the memory granularity (the size allocated in each allocation function)
- * changing the value of THREADS_DATABASE_GRANULARITY in GeneralDefinitionsOS.h for each operating system.
+ * @brief A database of ThreadInformation objects.
  */
 class ThreadsDatabase {
 
@@ -62,72 +53,71 @@ class ThreadsDatabase {
 public:
     /**
      * @brief Adds a new thread to the database.
-     * @param[in] threadInformation is a pointer to the thread information.
+     * @param[in] threadInformation a pointer to the thread information that is to be added.
      * @return true if threadInformation is successfully added to the database, false otherwise.
      * @pre threadInformation != NULL
      */
     static bool NewEntry(ThreadInformation *threadInformation);
+
     /**
-     * @brief Remove the entry from database searching by ThreadIdentifier.
-     * @param[in] ThreadIdentifier is the id of the threads which must be removed from database.
-     * @return true if the thread with ThreadIdentifier as id is in the database and if it is removed without errors.
+     * @brief Removes the entry from database searching by a given ThreadIdentifier.
+     * @param[in] threadId the identifier of the thread which is to be removed from database.
+     * @return true if the thread identifier exists in the database and if it is removed without errors.
      */
     static ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId);
 
     /**
-     * @brief Get thread informations.
-     * @param[in] ThreadIdentifier is the id of the requested thread.
-     * @return the ThreadInformation object related to the thread with ThreadIdentifier as id.
+     * @brief Returns the ThreadInformation associated to a given identifier.
+     * @param[in] threadId the identifier of the requested thread.
+     * @return the ThreadInformation object related to the to the requested identifier or NULL if the
+     * identifier does not exist in the database.
      */
     static ThreadInformation *GetThreadInformation(const ThreadIdentifier &threadId);
 
     /**
-     * @brief Lock a spinlock mutex to allow exclusive access to the database.
-     * @details With timeout it wait until it's expired, then return false.
-     * @return false if the internal mutex lock fails.
+     * @brief Locks a spinlock mutex to allow exclusive access to the database.
+     * @return false if the mutex lock fails.
      */
     static bool Lock();
 
     /**
-     * @brief Unlock the internal mutex.
-     * @return true.
+     * @brief Unlocks the internal mutex.
      */
     static void UnLock();
 
     /**
-     * @brief Return the number of threads registered.
+     * @brief Returns the number of threads registered.
      * @return the number of threads currently saved in database.
      */
     static uint32 NumberOfThreads();
 
     /**
-     * @brief Get the thread id of the n-th thread saved in database.
-     * @param[in] n is the index of the requested thread.
+     * @brief Returns the thread id of the n-th thread saved in database.
+     * @param[in] n is index of the requested thread.
      * @return the ThreadIdentifier of the requested thread.
      */
     static ThreadIdentifier GetThreadID(const uint32 &n);
 
     /**
-     * @brief Get the informations searching a thread by index.
-     * @param[out] threadInfoCopy contains the thread informations in return.
+     * @brief Searches for a ThreadInformation object by index and copies into a destination.
+     * @param[out] threadInfoCopy the destination TheadInformation object.
      * @param[in] n is the index of the requested thread.
-     * @return true if the requested thread is in the database.
+     * @return true if the requested thread exists in the database.
      */
     static bool GetInfoIndex(ThreadInformation &threadInfoCopy, const uint32 &n);
 
     /**
-     * @brief Get the informations searching a thread by index or by id.
-     * @param[out] threadInfoCopy contains the thread informations in return.
-     * @param[in] n is the index of the requested thread.
-     * @param[in] ThreadIdentifier is the ThreadIdentifier of the requested thread.
-     * @return true if the requested thread is in the database.
+     * @brief Searches for a ThreadInformation object by its thread identifier and copies into a destination.
+     * @param[out] threadInfoCopy the destination TheadInformation object.
+     * @param[in] threadId the ThreadIdentifier of the requested thread.
+     * @return true if the requested thread exists in the database.
      */
     static bool GetInfo(ThreadInformation &threadInfoCopy, const ThreadIdentifier &threadId);
 
     /**
-     * @brief Returns the id searching by name.
-     * @param[in] name is the name of the thread.
-     * @return the id of the first thread found with the name specified or 0 if it is not in the database.
+     * @brief Searches for a thread identifier by name.
+     * @param[in] name the name of the thread to be searched.
+     * @return the id of the first thread found with the specified name or 0 if it does not exist in the database.
      * @pre name != NULL
      */
     static ThreadIdentifier Find(const char8 * const name);
@@ -135,26 +125,32 @@ public:
 private:
 
 
-    /** Fast semaphore */
+    /**
+     * Fast semaphore for exclusive access to the database.
+     */
     static FastPollingMutexSem internalMutex;
 
-    /** Actual number of entries used */
+    /**
+     * Actual number of entries stored in the database.
+     */
     static uint32              nOfEntries;
 
-    /** Max number of entries currently possible */
+    /**
+     * Maximum number of entries that can be stored in the database.
+     */
     static uint32              maxNOfEntries;
 
-    /** Vector of thread information pointers */
+    /**
+     * Vector of thread information pointers.
+     */
     static ThreadInformation **entries;
 
-    /** Allocate more space in the database*/
+    /**
+     * @brief Allocate more space in the database.
+     * @return true if more space can be successfully allocated.
+     */
     static bool AllocMore(void);
 
 };
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
 #endif /* THREADSDATABASE_H_ */
-

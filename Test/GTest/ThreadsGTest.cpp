@@ -43,7 +43,7 @@
 
 TEST(ThreadsGTest,TestBeginThread) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestBeginThread("hello", 64, 100));
+    ASSERT_TRUE(myUnitTest.TestBeginThread("hello", 16384, 100));
 }
 
 TEST(ThreadsGTest,TestBeginThreadStacksize0) {
@@ -54,11 +54,6 @@ TEST(ThreadsGTest,TestBeginThreadStacksize0) {
 TEST(ThreadsGTest,TestBeginThreadNullFunction) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestBeginThreadNullFunction("hello"));
-}
-
-TEST(ThreadsGTest,TestEndThread) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestEndThread(100));
 }
 
 TEST(ThreadsGTest,TestIsAlive) {
@@ -140,9 +135,3 @@ TEST(ThreadsGTest,TestFindByName) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestFindByName(100, "Hello", 22));
 }
-
-TEST(ThreadsGTest,TestProtectedExecute) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestProtectedExecute());
-}
-

@@ -49,15 +49,12 @@ FastPollingMutexSem ThreadsDatabase::internalMutex;
 bool ThreadsDatabase::NewEntry(ThreadInformation * const threadInformation) {
     bool ok = ThreadsDatabase::AllocMore();
     if (ok) {
-        ok = (ThreadsDatabase::maxNOfEntries <= ThreadsDatabase::nOfEntries);
+        ok = (ThreadsDatabase::nOfEntries < ThreadsDatabase::maxNOfEntries);
         // no space
         if (ok) {
             ok = false;
             // search for empty space staring from guess
             uint32 index = ThreadsDatabase::nOfEntries;
-            if (index >= ThreadsDatabase::maxNOfEntries) {
-                index -= ThreadsDatabase::maxNOfEntries;
-            }
             while (index != (ThreadsDatabase::nOfEntries - 1u)) {
                 if (ThreadsDatabase::entries[index] == NULL) {
                     ThreadsDatabase::entries[index] = threadInformation;
@@ -90,7 +87,7 @@ ThreadInformation *ThreadsDatabase::RemoveEntry(const ThreadIdentifier &threadId
 
                 // free at the end
                 if (ThreadsDatabase::nOfEntries == 0u) {
-                    MemoryFree(reinterpret_cast<void *&>(ThreadsDatabase::entries));
+                    Memory::Free(reinterpret_cast<void *&>(ThreadsDatabase::entries));
                     //For AllocMore to reallocate again!
                     ThreadsDatabase::maxNOfEntries = 0u;
                 }
@@ -112,9 +109,10 @@ ThreadInformation *ThreadsDatabase::GetThreadInformation(const ThreadIdentifier 
     uint32 index = 0u;
     while (index < ThreadsDatabase::maxNOfEntries) {
         ThreadInformation *threadInfoIdx = ThreadsDatabase::entries[index];
-        if (threadInfo != NULL) {
+        if (threadInfoIdx != NULL) {
             if (threadInfoIdx->GetThreadIdentifier() == threadId) {
                 threadInfo = threadInfoIdx;
+                break;
             }
         }
         index++;
@@ -139,7 +137,7 @@ uint32 ThreadsDatabase::NumberOfThreads() {
 
 ThreadIdentifier ThreadsDatabase::GetThreadID(const uint32 &n) {
     ThreadIdentifier tid = 0u;
-    if (n < ThreadsDatabase::nOfEntries) {
+    if (n < ThreadsDatabase::maxNOfEntries) {
         if (ThreadsDatabase::entries[n] != NULL) {
             tid = ThreadsDatabase::entries[n]->GetThreadIdentifier();
         }
@@ -154,7 +152,7 @@ bool ThreadsDatabase::GetInfoIndex(ThreadInformation &threadInfoCopy,
     ThreadIdentifier threadId = GetThreadID(n);
     ThreadInformation *threadInfo = GetThreadInformation(threadId);
     if (threadInfo != NULL) {
-        threadInfoCopy = *threadInfo;
+        threadInfoCopy.Copy(*threadInfo);
     }
     return (threadInfo != NULL);
 }
@@ -163,7 +161,7 @@ bool ThreadsDatabase::GetInfo(ThreadInformation &threadInfoCopy,
                               const ThreadIdentifier &threadId) {
     ThreadInformation *threadInfo = GetThreadInformation(threadId);
     if (threadInfo != NULL) {
-        threadInfoCopy = *threadInfo;
+        threadInfoCopy.Copy(*threadInfo);
     }
     return (threadInfo != NULL);
 }
@@ -192,7 +190,7 @@ bool ThreadsDatabase::AllocMore() {
         // first time?
         if (entries == NULL) {
             uint32 size = static_cast<uint32>(sizeof(ThreadInformation *)) * THREADS_DATABASE_GRANULARITY;
-            entries = reinterpret_cast<ThreadInformation **>(MemoryMalloc(size));
+            entries = static_cast<ThreadInformation **>(Memory::Malloc(size));
             if (entries != NULL) {
                 maxNOfEntries = THREADS_DATABASE_GRANULARITY;
                 nOfEntries = 0u;
@@ -204,7 +202,7 @@ bool ThreadsDatabase::AllocMore() {
         }
         else {
             uint32 newSize = static_cast<uint32>(sizeof(ThreadInformation *)) * (THREADS_DATABASE_GRANULARITY + maxNOfEntries);
-            entries = reinterpret_cast<ThreadInformation **>(MemoryRealloc(reinterpret_cast<void *&>(entries), newSize));
+            entries = static_cast<ThreadInformation **>(Memory::Realloc(reinterpret_cast<void *&>(entries), newSize));
             if (entries != NULL) {
                 maxNOfEntries += THREADS_DATABASE_GRANULARITY;
             }

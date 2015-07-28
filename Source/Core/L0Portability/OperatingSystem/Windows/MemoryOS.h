@@ -34,258 +34,167 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "Memory.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief System dependent implementation of functions for memory Management.
- */
-class MemoryOS {
+void *Memory::Malloc(uint32 size,
+                     MemoryAllocationFlags allocFlags) {
 
-public:
+    void* data = NULL;
 
-    /**
-     * @brief Allocate dynamically a portion of memory.
-     * @see MemoryMalloc
-     * @param[in] size is the number of bytes to allocate.
-     * @param[in] allocFlags
-     * @return a pointer to the allocated memory.
-     */
-    static void *Malloc(const uint32 size, const MemoryAllocationFlag &allocFlags) {
-        if (size <= 0) {
-            return NULL;
-        }
+    if (size != 0) {
         return malloc(size);
     }
 
-    /**
-     * @brief Free a portion of memory previously dynamically allocated.
-     * @see MemoryFree
-     * @param[in,out] data is the pointer to the memory to be freed.
-     * @post data=NULL.
-     */
-    static void Free(void *&data) {
-        if (data != NULL) {
-            free(data);
-        }
+    return data;
+}
+
+void Memory::Free(void *&data) {
+
+    if (data != NULL) {
+        free(data);
         data = NULL;
     }
 
-    /**
-     * @brief Reallocate the memory.
-     * @see MemoryRealloc.
-     * @details The memory pointer could change if there is no space new size.
-     * @param[in,out] data is the pointer to the memory which must be reallocated.
-     * @param[in] newSize is the desired new size for the memory portion.
-     */
-    static void *Realloc(void *&data, uint32 newSize) {
-        return realloc(data, newSize);
+}
+
+void *Memory::Realloc(void *&data,
+                      uint32 newSize) {
+    bool ok = true;
+
+    if (data == NULL) {
+        data = Malloc(newSize);
     }
-
-    /**
-     * @brief Duplicate a string.
-     * @see MemoryStringDup
-     * @param[in] s is the string to duplicate.
-     * @return a pointer to the string copied.
-     */
-    static char8 *StringDup(char8 const * const s) {
-        return strdup(s);
+    else {
+        if (newSize == 0) {
+            Free(data);
+        }
+        else {
+            data = realloc(data, newSize);
+        }
     }
+    return data;
 
-    /**
-     * @brief Allocate a shared memory.
-     * @see MemorySharedAlloc.
-     * @param[in] key is the identifier of the shared memory.
-     * @param[in] size is the desired size of the shared memory.
-     * @param[in] permMask define the process permissions.
-     * @return a pointer to the shared memory created.
-     */
-    static void *SharedAlloc(const uint32 key, const uint32 size, const uint32 permMask) {
+}
 
-        uint32 lastPermDigit = permMask % 10;
-        char8 name[32];
-        //transform the key in a string
-        uint32 nCompleteChar = key >> 8;
-        char8 SpecialChar = key | 0xff;
+char8 *Memory::StringDup(const char8 *s) {
 
-        uint32 i = 0;
-        while (i < nCompleteChar) {
-            name[i] = 255;
-            i++;
-        }
+    char8 *sCopy = NULL;
 
-        name[i] = SpecialChar;
-        name[i + 1] = 0;
-
-        //if the handle is valid someone else already allocated the shared memory.
-        void* shMemoryHandle = (void*) OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, name);
-        if (shMemoryHandle == NULL) {
-            switch (lastPermDigit) {
-            case 4:
-                shMemoryHandle = (void*) CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READONLY, 0, size, name);
-                break;
-            case 5:
-                shMemoryHandle = (void*) CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_EXECUTE_READ, 0, size, name);
-                break;
-            case 6:
-                shMemoryHandle = (void*) CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, size, name);
-                break;
-            case 7:
-                shMemoryHandle = (void*) CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_EXECUTE_READWRITE, 0, size, name);
-                break;
-            default:
-                shMemoryHandle = (void*) CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, size, name);
-            }
-
-        }
-
-        //The allocation fails
-        if (shMemoryHandle == NULL) {
-            return NULL;
-        }
-
-        //Return the pointer to the memory
-        return (void *) MapViewOfFile(shMemoryHandle, FILE_MAP_ALL_ACCESS, 0, 0, size);
-
+    if (s != NULL) {
+        sCopy = strdup(s);
     }
+    return sCopy;
+}
 
-    /**
-     * @brief Free a shared memory portion.
-     * @see MemorySharedFree.
-     * @param[in] address is a pointer to the shared memory.
-     */
-    static void SharedFree(void *address) {
-        UnmapViewOfFile(address);
-    }
-
-    /**
-     * @brief Checks if the memory area is valid.
-     * @see MemoryCheck.
-     * @param[in] address is a pointer to the memory area target.
-     * @param[in] accessMode defines the process permissions.
-     * @param[in] size is the number of bytes to check.
-     * @return true if the memory area specified is valid.
-     */
-    static bool Check(const void* const address, const MemoryTestAccessMode &accessMode, const uint32 size) {
-        uint8 check = 0;
-        static uint8 MODE_EXECUTE = 0x00000001U;
-        static uint8 MODE_READ    = 0x00000002U;
-        static uint8 MODE_WRITE   = 0x00000004U;
-
-        //determines if the calling process has read access to the specified address (if the process has read and execute permissions).
-        if (accessMode.GetExecuteFlag()) {
-            check++;
-            if (IsBadCodePtr((FARPROC) address)) {
-                return false;
-            }
-        }
-
-        //determines if the calling process has the read access to the specified range of memory (if the process has read permissions).
-        if (accessMode.GetReadFlag()) {
-            check++;
-            if (IsBadReadPtr(address, size)) {
-                return false;
-            }
-        }
-
-        //determines if the calling process has the write access to the specified range of memory (if the process has write permissions).
-        if (accessMode.GetWriteFlag()) {
-            check++;
-            if (IsBadWritePtr(address, size)) {
-                return false;
-            }
-        }
-
-        return address != NULL && check != 0;
-    }
-
-    /**
-     * @brief Copy source to destination.
-     * @see MemoryCopy.
-     * @param[in] destination is a pointer to the destination memory.
-     * @param[in] source is a pointer to the source memory.
-     * @param[in] size is the number of bytes to copy.
-     * @return true if source, destination and destination after the copy are not NULL.
-     */
-    static bool Copy(void* const destination, const void* const source, const uint32 size) {
-        if (source == NULL || destination == NULL) {
+bool Memory::Check(void *address,
+                   MemoryTestAccessMode accessMode,
+                   uint32 size) {
+    uint8 check = 0;
+    //determines if the calling process has read access to the specified address (if the process has read and execute permissions).
+    if (accessMode & MTAM_Execute) {
+        check++;
+        if (IsBadCodePtr((FARPROC) address)) {
             return false;
         }
-
-        return memcpy(destination, source, size) != NULL;
     }
 
-    /**
-     * @brief Compare two memory portions.
-     * @see MemoryCompare.
-     * @param[in] mem1 is a pointer to the first memory.
-     * @param[in] mem2 is a pointer to the second memory.
-     * @param[in] size is the size to compare.
-     * @return (0 if mem1 == mem2), (1 if mem1 < mem2), (2 if mem1 > mem2), (-1 if one of memory arguments is NULL).
-     */
-    static int32 Compare(const void* const mem1,  const void* const mem2, const uint32 size) {
-        if (mem1 == NULL || mem2 == NULL) {
-            return -1;
-        }
-        int32 ret = memcmp(mem1, mem2, size);
-        if (ret < 0) {
-            return 1; // 1 if mem1<mem2
-        }
-        if (ret > 0) {
-            return 2; // 2 if mem1>mem2
-        }
-        return ret; //0 if mem1=mem2
-
-    }
-
-    /**
-     * @brief Search a byte in the memory.
-     * @see MemorySearch.
-     * @param[in] mem is the memory target.
-     * @param[in] c is the element to search.
-     * @param[in] size is the number of bytes to check.
-     * @return a pointer to the first occurence of c in mem, NULL if is not found or in case of mem==NULL.
-     */
-    static const void* Search(void const * const mem, const int32 c, const uint32 size) {
-        if (mem == NULL) {
-            return NULL;
-        }
-        return memchr(mem, c, size);
-    }
-
-    /**
-     * @brief Copy size bytes from source to destination.
-     * @see MemoryMove.
-     * @param[in] destination is a pointer to the destination memory.
-     * @param[in] source is a pointer to source memory.
-     * @param[in] size is the number of bytes to copy.
-     * @return true if source, destination and destination after the copy are not NULL.
-     */
-    static bool Move(void * const destination, void const * const source, const uint32 size) {
-        if (source == NULL || destination == NULL) {
+    //determines if the calling process has the read access to the specified range of memory (if the process has read permissions).
+    if (accessMode & MTAM_Read) {
+        check++;
+        if (IsBadReadPtr(address, size)) {
             return false;
         }
-        return memmove(destination, source, size) != NULL;
+    }
+
+    //determines if the calling process has the write access to the specified range of memory (if the process has write permissions).
+    if (accessMode & MTAM_Write) {
+        check++;
+        if (IsBadWritePtr(address, size)) {
+            return false;
+        }
+    }
+
+    return address != NULL && check != 0;
+}
+
+bool Memory::Copy(void* destination,
+                  const void* source,
+                  uint32 size) {
+
+    bool ret = false;
+    if (source != NULL && destination != NULL) {
+        ret = memcpy(destination, source, size) != NULL;
+    }
+
+    return ret;
+
+}
+
+int32 Memory::Compare(const void* mem1,
+                      const void* mem2,
+                      uint32 size) {
+
+    int32 ret = -1;
+
+    if (mem1 != NULL && mem2 != NULL) {
+        int32 temp = memcmp(mem1, mem2, size);
+        if (temp < 0) {
+            ret = 1; // 1 if mem1<mem2
+        }
+        if (temp > 0) {
+            ret = 2; // 2 if mem1>mem2
+        }
+        if (temp == 0) {
+            ret = 0; // 0 if mem1==mem2
+        }
+    }
+
+    return ret;
+
+}
+
+const void* Memory::Search(const void* mem,
+                           int32 c,
+                           uint32 size) {
+    const void* ret = NULL;
+    if (mem != NULL) {
+
+        ret = memchr(mem, c, size);
 
     }
 
-    /**
-     * @brief Copy c in the first bytes of a memory.
-     * @see MemorySet.
-     * @param[in] mem is a pointer to the memory.
-     * @param[in] c is the byte to copy.
-     * @param[in] size is the number of bytes to set to c.
-     * @return true if mem before and after the operation id not NULL.
-     */
-    static bool Set(const void* mem, const int32 c, const uint32 size) {
-        if (mem == NULL) {
-            return false;
-        }
+    return ret;
+}
+
+bool Memory::Move(void* destination,
+                  const void* source,
+                  uint32 size) {
+
+    bool ret = false;
+
+    if (source != NULL && destination != NULL) {
+
+        ret = memmove(destination, source, size) != NULL;
+    }
+    return ret;
+
+}
+
+bool Memory::Set(void* mem,
+                 int32 c,
+                 uint32 size) {
+    bool ret = false;
+    if (mem != NULL) {
+
         return memset(mem, c, size) != NULL;
     }
-};
+
+    return ret;
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

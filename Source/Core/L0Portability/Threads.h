@@ -123,11 +123,6 @@ public:
         NormalPriorityClass,
 
         /**
-         * High priority class. Higher than Normal.
-         */
-        HighPriorityClass,
-
-        /**
          * Real-time priority class. This is the highest possible priority/
          */
         RealTimePriorityClass
@@ -141,7 +136,7 @@ private:
      * @param[in] threadId is the thread identifier.
      * @param[in] priorityClass the desired class priority to assign to the thread.
      * @param[in] priorityLevel the desired thread priority to assign to the thread. This must be a
-     * value between 0 and 7.
+     * value between 0 and 15.
      */
     static void SetPriorityLevelAndClass(const ThreadIdentifier &threadId,
                                          const PriorityClassType &priorityClass,
@@ -164,7 +159,7 @@ public:
      * @details The currently set priority class (GetPriorityClass()) will not be changed.
      * @param[in] threadId the thread identifier.
      * @param[in] level the priority level to be set. This must be a
-     * value between 0 and 7.
+     * value between 0 and 15.
      */
     static void SetPriorityLevel(const ThreadIdentifier &threadId,
                                  const uint8 &priorityLevel) {
@@ -262,15 +257,6 @@ public:
      */
     static uint32 GetCPUs(const ThreadIdentifier &threadId);
 
-    /**
-     * @brief Executes the function specified.
-     * @param[in] userFunction is the function to be called.
-     * @param[in] userData is the function argument.
-     * @return true.
-     * @see ThreadInformation::ExceptionProtectedExecute.
-     */
-    static bool ProtectedExecute(const ThreadFunctionType userFunction,
-                                 const void * const userData);
     /**
      * @brief Returns the id of the n-th thread in the database.
      * @param[in] n the thread index.
