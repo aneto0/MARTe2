@@ -96,10 +96,9 @@ void Memory::Free(void *&data) {
 
 }
 
-
 bool Memory::Check(void *address,
-                 MemoryTestAccessMode accessMode,
-                 uint32 size) {
+                   MemoryTestAccessMode accessMode,
+                   uint32 size) {
     return MemoryOS::Check(address, accessMode, size);
 }
 

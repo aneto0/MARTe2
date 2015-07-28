@@ -22,7 +22,7 @@
  */
 
 #ifndef MEMORY_H_
-#define 		MEMORY_H_
+#define MEMORY_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,8 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -86,10 +84,6 @@ public:
 
     };
 
-
-
-
-
     /**
      * @brief Allocates a portion of memory on the heap.
      * @param[in] size The size in byte of the memory to allocate.
@@ -125,8 +119,6 @@ public:
      */
     static char8 *StringDup(const char8 * const s);
 
-
-
     /**
      * @brief Checks if the process has the access to the specified memory area.
      * @param[in] address The pointer to the memory block to be checked.
@@ -137,7 +129,6 @@ public:
     static bool Check(const void * const address,
                       const MemoryTestAccessMode accessMode,
                       const uint32 size = 4);
-
 
     /**
      * @brief Copies a block of memory into another.

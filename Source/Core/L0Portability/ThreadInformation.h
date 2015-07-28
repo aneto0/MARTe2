@@ -134,7 +134,7 @@ public:
      */
     inline bool ThreadPost();
 
-private:
+//private:
 
     /** The thread identifier */
     ThreadIdentifier             threadId;

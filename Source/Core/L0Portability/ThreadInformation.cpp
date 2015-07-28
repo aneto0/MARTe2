@@ -64,10 +64,10 @@ ThreadInformation::ThreadInformation(ThreadFunctionType userThreadFunction,
     this->userThreadFunction = userThreadFunction;
     this->userData = userData;
     if (name != NULL) {
-        this->name = MemoryStringDup(name);
+        this->name = Memory::StringDup(name);
     }
     else {
-        this->name = MemoryStringDup("Unknown");
+        this->name = Memory::StringDup("Unknown");
     }
     threadId = InvalidThreadIdentifier;
     priorityClass = Threads::PRIORITY_CLASS_UNKNOWN;
@@ -83,7 +83,7 @@ ThreadInformation::ThreadInformation(ThreadFunctionType userThreadFunction,
 ThreadInformation::ThreadInformation(const ThreadInformation &threadInfo) {
     userThreadFunction = threadInfo.userThreadFunction;
     userData = threadInfo.userData;
-    name = MemoryStringDup(threadInfo.name);
+    name = Memory::StringDup(threadInfo.name);
     threadId = threadInfo.threadId;
     priorityClass = threadInfo.priorityClass;
     priorityLevel = threadInfo.priorityLevel;
@@ -96,7 +96,7 @@ ThreadInformation::ThreadInformation(const ThreadInformation &threadInfo) {
  * @details It just frees the memory allocated for the name string.
  */
 ThreadInformation::~ThreadInformation() {
-    MemoryFree((void *&) name);
+    Memory::Free((void *&) name);
     startThreadSynchSem.Close();
 }
 
@@ -107,7 +107,7 @@ ThreadInformation::~ThreadInformation() {
 void ThreadInformation::Copy(const ThreadInformation &threadInfo) {
     userThreadFunction = threadInfo.userThreadFunction;
     userData = threadInfo.userData;
-    name = MemoryStringDup(threadInfo.name);
+    name = Memory::StringDup(threadInfo.name);
     threadId = threadInfo.threadId;
     priorityClass = threadInfo.priorityClass;
     priorityLevel = threadInfo.priorityLevel;
