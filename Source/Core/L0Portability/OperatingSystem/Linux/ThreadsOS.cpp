@@ -93,16 +93,6 @@ static ThreadInformation * threadInitialisationInterfaceConstructor(const Thread
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-void Threads::EndThread() {
-    bool ok = ThreadsDatabase::Lock();
-    if (ok) {
-        /*lint -e{534} possible failure is not handled nor propagated.*/
-        ThreadsDatabase::RemoveEntry(Threads::Id());
-    }
-    ThreadsDatabase::UnLock();
-    pthread_exit(static_cast<void *>(NULL));
-}
-
 /*lint -e{715} Not implemented in Linux.*/
 Threads::ThreadStateType Threads::GetState(const ThreadIdentifier &threadId) {
     return UnknownThreadStateType;
@@ -164,9 +154,6 @@ void Threads::SetPriorityLevelAndClass(const ThreadIdentifier &threadId,
                 break;
             case RealTimePriorityClass:
                 priorityClassNumber = 3u;
-                break;
-            default:
-                priorityClassNumber = 0u;
                 break;
             }
             uint32 priorityLevelToAssign = 28u * priorityClassNumber;

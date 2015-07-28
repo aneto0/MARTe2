@@ -48,7 +48,7 @@ TEST(ThreadsGTest,TestBeginThread) {
 
 TEST(ThreadsGTest,TestBeginThreadStacksize0) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestBeginThreadStackSize0("hello"));
+    ASSERT_FALSE(myUnitTest.TestBeginThread("hello", 0, 1));
 }
 
 TEST(ThreadsGTest,TestBeginThreadNullFunction) {

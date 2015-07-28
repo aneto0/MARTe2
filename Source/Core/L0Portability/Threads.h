@@ -142,15 +142,6 @@ private:
                                          const PriorityClassType &priorityClass,
                                          const uint8 &priorityLevel);
 
-    /**
-     * @brief Perform housekeeping when a thread terminates execution.
-     *
-     * @details This function is called implicitly when a thread terminates its execution, i.e.
-     * when the callback function returns. The intention is to allow the operating system implementations
-     * to perform all the necessary housekeeping.
-     */
-    static void EndThread();
-
 public:
 
     /**
