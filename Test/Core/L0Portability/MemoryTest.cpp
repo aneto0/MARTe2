@@ -364,6 +364,13 @@ bool MemoryTest::TestSearch() {
         return false;
     }
 
+    //Test the result of Search when the character is over the size passed by argument.
+    char8 outOfRanges = 'd';
+
+    if (Memory::Search(buffPointer, outOfRanges, size) != NULL) {
+        return false;
+    }
+
     size = 0;
 
     if (Memory::Search(buffPointer, myFavouriteChar, size) != NULL) {
