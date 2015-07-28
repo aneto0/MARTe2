@@ -29,12 +29,14 @@
 #include <sys/shm.h>
 #include <stdlib.h>
 #include <string.h>
+#else
+#include "lint-linux.h"
 #endif
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "Memory.h"
-
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -44,15 +46,13 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+void *Memory::Malloc(const uint32 size,
+                     const MemoryAllocationFlags allocFlag) {
 
+    void* data = static_cast<void*>(NULL);
 
-void *Memory::Malloc(uint32 size,
-                     MemoryAllocationFlags allocFlags) {
-
-    void* data = NULL;
-
-    if (size != 0) {
-        return malloc(size);
+    if (size != 0u) {
+        data = malloc(static_cast<osulong>(size));
     }
 
     return data;
@@ -62,33 +62,32 @@ void Memory::Free(void *&data) {
 
     if (data != NULL) {
         free(data);
-        data = NULL;
+        data = static_cast<void*>(NULL);
     }
 
 }
 
 void *Memory::Realloc(void *&data,
-                      uint32 newSize) {
-    bool ok = true;
+                      const uint32 newSize) {
 
     if (data == NULL) {
         data = Malloc(newSize);
     }
     else {
-        if (newSize == 0) {
+        if (newSize == 0u) {
             Free(data);
         }
         else {
-            data = realloc(data, newSize);
+            data = realloc(data, static_cast<osulong>(newSize));
         }
     }
     return data;
 
 }
 
-char8 *Memory::StringDup(const char8 *s) {
+char8 *Memory::StringDup(const char8 * const s) {
 
-    char8 *sCopy = NULL;
+    char8 *sCopy = static_cast<char8*>(NULL);
 
     if (s != NULL) {
         sCopy = strdup(s);
@@ -96,34 +95,34 @@ char8 *Memory::StringDup(const char8 *s) {
     return sCopy;
 }
 
-bool Memory::Check(void *address,
-                   MemoryTestAccessMode accessMode,
-                   uint32 size) {
+bool Memory::Check(const void * const address,
+                   const MemoryTestAccessMode accessMode,
+                   const uint32 size) {
 
     return address != NULL;
 }
 
-bool Memory::Copy(void* destination,
-                  const void* source,
-                  uint32 size) {
+bool Memory::Copy(void* const destination,
+                  const void * const source,
+                  const uint32 size) {
 
     bool ret = false;
-    if (source != NULL && destination != NULL) {
-        ret = memcpy(destination, source, size) != NULL;
+    if ((source != NULL) && (destination != NULL)) {
+        ret = memcpy(destination, source, static_cast<osulong>(size)) != NULL;
     }
 
     return ret;
 
 }
 
-int32 Memory::Compare(const void* mem1,
-                      const void* mem2,
-                      uint32 size) {
+int32 Memory::Compare(const void * const mem1,
+                      const void * const mem2,
+                      const uint32 size) {
 
     int32 ret = -1;
 
-    if (mem1 != NULL && mem2 != NULL) {
-        int32 temp = memcmp(mem1, mem2, size);
+    if ((mem1 != NULL) && (mem2 != NULL)) {
+        int32 temp = memcmp(mem1, mem2, static_cast<osulong>(size));
         if (temp < 0) {
             ret = 1; // 1 if mem1<mem2
         }
@@ -139,44 +138,43 @@ int32 Memory::Compare(const void* mem1,
 
 }
 
-const void* Memory::Search(const void* mem,
-                           char8 c,
-                           uint32 size) {
-    const void* ret = NULL;
+const void* Memory::Search(const void * const mem,
+                           const char8 c,
+                           const uint32 size) {
+    const void* ret = static_cast<const void*>(NULL);
     if (mem != NULL) {
 
-        ret = memchr(mem, c, size);
+        ret = memchr(mem, c, static_cast<osulong>(size));
 
     }
 
     return ret;
 }
 
-bool Memory::Move(void* destination,
-                  const void* source,
-                  uint32 size) {
+bool Memory::Move(void * const destination,
+                  const void * const source,
+                  const uint32 size) {
 
     bool ret = false;
 
-    if (source != NULL && destination != NULL) {
+    if ((source != NULL) && (destination != NULL)) {
 
-        ret = memmove(destination, source, size) != NULL;
+        ret = memmove(destination, source, static_cast<osulong>(size)) != NULL;
     }
     return ret;
 
 }
 
-bool Memory::Set(void* mem,
-                 char8 c,
-                 uint32 size) {
+bool Memory::Set(void * const mem,
+                 const char8 c,
+                 const uint32 size) {
     bool ret = false;
     if (mem != NULL) {
 
-        return memset(mem, c, size) != NULL;
+        ret = memset(mem, c, static_cast<osulong>(size)) != NULL;
     }
 
     return ret;
 
 }
 
-	

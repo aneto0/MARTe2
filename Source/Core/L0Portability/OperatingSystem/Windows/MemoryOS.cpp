@@ -44,8 +44,8 @@
 /*---------------------------------------------------------------------------*/
 
 
-void *Memory::Malloc(uint32 size,
-                     MemoryAllocationFlags allocFlags) {
+void *Memory::Malloc(const uint32 size,
+                     const MemoryAllocationFlags allocFlags) {
 
     void* data = NULL;
 
@@ -66,7 +66,7 @@ void Memory::Free(void *&data) {
 }
 
 void *Memory::Realloc(void *&data,
-                      uint32 newSize) {
+                      const uint32 newSize) {
     bool ok = true;
 
     if (data == NULL) {
@@ -84,7 +84,7 @@ void *Memory::Realloc(void *&data,
 
 }
 
-char8 *Memory::StringDup(const char8 *s) {
+char8 *Memory::StringDup(const char8 * const s) {
 
     char8 *sCopy = NULL;
 
@@ -94,12 +94,12 @@ char8 *Memory::StringDup(const char8 *s) {
     return sCopy;
 }
 
-bool Memory::Check(void *address,
-                   MemoryTestAccessMode accessMode,
-                   uint32 size) {
+bool Memory::Check(const void * const address,
+                   const MemoryTestAccessMode accessMode,
+                   const uint32 size) {
     uint8 check = 0;
     //determines if the calling process has read access to the specified address (if the process has read and execute permissions).
-    if (accessMode & MTAM_Execute) {
+    if (accessMode & Execute) {
         check++;
         if (IsBadCodePtr((FARPROC) address)) {
             return false;
@@ -107,7 +107,7 @@ bool Memory::Check(void *address,
     }
 
     //determines if the calling process has the read access to the specified range of memory (if the process has read permissions).
-    if (accessMode & MTAM_Read) {
+    if (accessMode & Read) {
         check++;
         if (IsBadReadPtr(address, size)) {
             return false;
@@ -115,7 +115,7 @@ bool Memory::Check(void *address,
     }
 
     //determines if the calling process has the write access to the specified range of memory (if the process has write permissions).
-    if (accessMode & MTAM_Write) {
+    if (accessMode & Write) {
         check++;
         if (IsBadWritePtr(address, size)) {
             return false;
@@ -125,9 +125,9 @@ bool Memory::Check(void *address,
     return address != NULL && check != 0;
 }
 
-bool Memory::Copy(void* destination,
-                  const void* source,
-                  uint32 size) {
+bool Memory::Copy(void * const destination,
+                  const void * const source,
+                  const uint32 size) {
 
     bool ret = false;
     if (source != NULL && destination != NULL) {
@@ -138,9 +138,9 @@ bool Memory::Copy(void* destination,
 
 }
 
-int32 Memory::Compare(const void* mem1,
-                      const void* mem2,
-                      uint32 size) {
+int32 Memory::Compare(const void * const mem1,
+                      const void * const mem2,
+                      const uint32 size) {
 
     int32 ret = -1;
 
@@ -161,9 +161,9 @@ int32 Memory::Compare(const void* mem1,
 
 }
 
-const void* Memory::Search(const void* mem,
-                           int32 c,
-                           uint32 size) {
+const void* Memory::Search(const void * const mem,
+                           const char8 c,
+                           const uint32 size) {
     const void* ret = NULL;
     if (mem != NULL) {
 
@@ -174,9 +174,9 @@ const void* Memory::Search(const void* mem,
     return ret;
 }
 
-bool Memory::Move(void* destination,
-                  const void* source,
-                  uint32 size) {
+bool Memory::Move(void * const destination,
+                  const void * const source,
+                  const uint32 size) {
 
     bool ret = false;
 
@@ -188,9 +188,9 @@ bool Memory::Move(void* destination,
 
 }
 
-bool Memory::Set(void* mem,
-                 int32 c,
-                 uint32 size) {
+bool Memory::Set(void * const mem,
+                 const char8 c,
+                 const uint32 size) {
     bool ret = false;
     if (mem != NULL) {
 
