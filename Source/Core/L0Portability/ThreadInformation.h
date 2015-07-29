@@ -64,12 +64,6 @@ public:
                       const char8 * const threadName);
 
     /**
-     * @brief Copy constructor.
-     * @param[in] threadInfo source ThreadInformation object.
-     */
-    ThreadInformation(const ThreadInformation &threadInfo);
-
-    /**
      * @brief Copy a thread information into this.
      * @param[in] threadInfo source ThreadInformation object.
      */

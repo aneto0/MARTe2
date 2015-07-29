@@ -72,21 +72,6 @@ ThreadInformation::ThreadInformation(const ThreadFunctionType threadFunction,
     startThreadSynchSem.Reset();
 }
 
-ThreadInformation::ThreadInformation(const ThreadInformation &threadInfo) {
-    /*lint -e{1554} pointer to a function.*/
-    userThreadFunction = threadInfo.userThreadFunction;
-    /*lint -e{1554} the userData is externally constructed managed.*/
-    userData = threadInfo.userData;
-    name = Memory::StringDup(threadInfo.name);
-    threadId = threadInfo.threadId;
-    priorityClass = threadInfo.priorityClass;
-    priorityLevel = threadInfo.priorityLevel;
-    /*lint -e{534} possible failure is not handled nor propagated.*/
-    startThreadSynchSem.Create();
-    /*lint -e{534} possible failure is not handled nor propagated.*/
-    startThreadSynchSem.Reset();
-}
-
 /*lint -e{1551} only C calls are performed. No exception can be raised*/
 ThreadInformation::~ThreadInformation() {
     /*lint -e{534} possible failure is not handled nor propagated.*/
