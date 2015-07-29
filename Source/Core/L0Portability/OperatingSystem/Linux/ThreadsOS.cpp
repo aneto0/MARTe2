@@ -34,7 +34,6 @@
 
 #include "Threads.h"
 #include "ThreadsDatabase.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -293,13 +292,14 @@ ThreadIdentifier Threads::BeginThread(const ThreadFunctionType function,
             uint32 processorMask = runOnCPUs.GetProcessorMask();
             CPU_ZERO(&processorCpuSet);
             uint32 j;
-            for (j = 0u; j < static_cast<uint32>(CPU_SETSIZE); j++) {
+
+            for (j = 0u; (j < (sizeof(processorMask) * 8u)) && (j < static_cast<uint32>(CPU_SETSIZE)); j++) {
                 if (((processorMask >> j) & 0x1u) == 0x1u) {
                     CPU_SET(static_cast<int32>(j), &processorCpuSet);
                 }
             }
-
             ok = (pthread_setaffinity_np(threadId, sizeof(processorCpuSet), &processorCpuSet) == 0);
+
             if (ok) {
                 ok = threadInfo->ThreadPost();
             }
