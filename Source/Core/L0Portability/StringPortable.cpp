@@ -475,6 +475,7 @@ const char8* StringPortable::TokenizeByChars(const char8* const string,
             while (!end) {
 
                 if (string[i] == '\0') {
+                    result[i] = '\0';
                     ret = &string[i];
                     end = true;
                 }

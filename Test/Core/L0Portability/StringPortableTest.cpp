@@ -530,7 +530,7 @@ bool StringPortableTest::TestTokenizeByChars() {
         return false;
     }
 
-    if (!StringTestHelper::Compare(retPointer, "\0")) {
+    if ((retPointer[0] != '\0') || *(retPointer - 1) != 'e') {
         return false;
     }
 
