@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ThreadInformation.h"
-#include "TimeoutType.h"
 #include "FastPollingMutexSem.h"
 
 
@@ -46,14 +45,13 @@
  */
 class ThreadsDatabase {
 
-
     friend class ThreadsOS;
     friend class Threads;
 
 public:
     /**
      * @brief Adds a new thread to the database.
-     * @param[in] threadInformation a pointer to the thread information that is to be added.
+     * @param[in] threadInformation a pointer to the ThreadInformation that is to be added.
      * @return true if threadInformation is successfully added to the database, false otherwise.
      * @pre threadInformation != NULL
      */
@@ -61,16 +59,16 @@ public:
 
     /**
      * @brief Removes the entry from database searching by a given ThreadIdentifier.
-     * @param[in] threadId the identifier of the thread which is to be removed from database.
-     * @return true if the thread identifier exists in the database and if it is removed without errors.
+     * @param[in] threadId the ThreadIdentifier of the thread which is to be removed from database.
+     * @return true if the ThreadIdentifier exists in the database and if it is removed without errors.
      */
     static ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId);
 
     /**
-     * @brief Returns the ThreadInformation associated to a given identifier.
-     * @param[in] threadId the identifier of the requested thread.
-     * @return the ThreadInformation object related to the to the requested identifier or NULL if the
-     * identifier does not exist in the database.
+     * @brief Returns the ThreadInformation associated to a given ThreadIidentifier.
+     * @param[in] threadId the ThreadIdentifier of the requested thread.
+     * @return the ThreadInformation object related to the to the requested ThreadIdentifier, or NULL if the
+     * ThreadIdentifier does not exist in the database.
      */
     static ThreadInformation *GetThreadInformation(const ThreadIdentifier &threadId);
 
@@ -92,7 +90,7 @@ public:
     static uint32 NumberOfThreads();
 
     /**
-     * @brief Returns the thread id of the n-th thread saved in database.
+     * @brief Returns the ThreadIdentifier of the n-th thread saved in database.
      * @param[in] n is index of the requested thread.
      * @return the ThreadIdentifier of the requested thread.
      */
@@ -107,7 +105,7 @@ public:
     static bool GetInfoIndex(ThreadInformation &threadInfoCopy, const uint32 &n);
 
     /**
-     * @brief Searches for a ThreadInformation object by its thread identifier and copies into a destination.
+     * @brief Searches for a ThreadInformation object by its ThreadIdentifier and copies into a destination.
      * @param[out] threadInfoCopy the destination TheadInformation object.
      * @param[in] threadId the ThreadIdentifier of the requested thread.
      * @return true if the requested thread exists in the database.
@@ -115,15 +113,14 @@ public:
     static bool GetInfo(ThreadInformation &threadInfoCopy, const ThreadIdentifier &threadId);
 
     /**
-     * @brief Searches for a thread identifier by name.
+     * @brief Searches for a ThreadIdentifier by name.
      * @param[in] name the name of the thread to be searched.
-     * @return the id of the first thread found with the specified name or 0 if it does not exist in the database.
+     * @return the id of the first thread found with the specified name, or 0 if it does not exist in the database.
      * @pre name != NULL
      */
     static ThreadIdentifier Find(const char8 * const name);
 
 private:
-
 
     /**
      * Fast semaphore for exclusive access to the database.
@@ -141,7 +138,7 @@ private:
     static uint32              maxNOfEntries;
 
     /**
-     * Vector of thread information pointers.
+     * Vector of ThreadInformation pointers.
      */
     static ThreadInformation **entries;
 

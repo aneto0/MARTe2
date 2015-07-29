@@ -28,24 +28,26 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "ThreadsDatabase.h"
-#include "ThreadInformation.h"
 #include "Memory.h"
-#include "Threads.h"
 #include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 uint32 ThreadsDatabase::nOfEntries = 0u;
 uint32 ThreadsDatabase::maxNOfEntries = 0u;
 ThreadInformation **ThreadsDatabase::entries = static_cast<ThreadInformation **>(NULL);
 FastPollingMutexSem ThreadsDatabase::internalMutex;
 
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 bool ThreadsDatabase::NewEntry(ThreadInformation * const threadInformation) {
     bool ok = ThreadsDatabase::AllocMore();
     if (ok) {
