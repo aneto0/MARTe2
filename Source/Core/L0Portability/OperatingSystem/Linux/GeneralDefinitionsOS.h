@@ -24,22 +24,27 @@
 #ifndef GENERALDEFINITIONSOS_H_
 #define GENERALDEFINITIONSOS_H_
 
-#ifndef LINT
+
 #include <pthread.h>
+#ifndef LINT
 #include <termio.h>
+#else
+typedef unsigned long int pthread_t;
 #endif
 
 #ifndef NULL
 #define NULL 0
 #endif
 
-#define TID pthread_t
+
+typedef pthread_t ThreadIdentifier;
+static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdentifier>(0);
 
 /** Defines the console handle. */
 typedef struct termio ConsoleHandle;
 
 /** Threads database memory granularity */
-#define THREADS_DATABASE_GRANULARITY 64
+#define THREADS_DATABASE_GRANULARITY 64u
 
 /** Defines the default stack size for a thread. */
 #define THREADS_DEFAULT_STACKSIZE 32768

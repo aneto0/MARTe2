@@ -35,7 +35,6 @@ OBJSX=  Atomic.x \
         FastMath.x \
         ProcessorType.x \
         StringPortable.x \
-        Threads.x  \
         ThreadsDatabase.x \
         ThreadInformation.x \
         LoadableLibrary.x \

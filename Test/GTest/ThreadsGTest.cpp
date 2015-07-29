@@ -43,22 +43,17 @@
 
 TEST(ThreadsGTest,TestBeginThread) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestBeginThread("hello", 64, 100));
+    ASSERT_TRUE(myUnitTest.TestBeginThread("hello", 16384, 100));
 }
 
 TEST(ThreadsGTest,TestBeginThreadStacksize0) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestBeginThreadStackSize0("hello"));
+    ASSERT_FALSE(myUnitTest.TestBeginThread("hello", 0, 1));
 }
 
 TEST(ThreadsGTest,TestBeginThreadNullFunction) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestBeginThreadNullFunction("hello"));
-}
-
-TEST(ThreadsGTest,TestEndThread) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestEndThread(100));
 }
 
 TEST(ThreadsGTest,TestIsAlive) {
@@ -79,16 +74,6 @@ TEST(ThreadsGTest,TestKillInvalidID) {
 TEST(ThreadsGTest,TestKill) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestKill(100));
-}
-
-TEST(ThreadsGTest,TestPriorityLevel) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestPriorityLevel());
-}
-
-TEST(ThreadsGTest,TestPriorityClass) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestPriorityClass());
 }
 
 TEST(ThreadsGTest,TestGetState) {
@@ -141,8 +126,7 @@ TEST(ThreadsGTest,TestFindByName) {
     ASSERT_TRUE(myUnitTest.TestFindByName(100, "Hello", 22));
 }
 
-TEST(ThreadsGTest,TestProtectedExecute) {
+TEST(ThreadsGTest,TestPriority) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestProtectedExecute());
+    ASSERT_TRUE(myUnitTest.TestPriority());
 }
-

@@ -34,8 +34,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HighResolutionTimerCalibratorOS.h"
-#include "../../HighResolutionTimer.h"
-#include "../../StringHelper.h"
+#include "HighResolutionTimer.h"
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

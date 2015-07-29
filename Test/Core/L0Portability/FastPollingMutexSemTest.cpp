@@ -225,7 +225,7 @@ bool FastPollingMutexSemTest::TestRecursive() {
     testMutex.Create(false);
     nOfExecutingThreads = 1;
     int32 counter = 0;
-    TID threadId = Threads::BeginThread((ThreadFunctionType) TestRecursiveCallback, this);
+    ThreadIdentifier threadId = Threads::BeginThread((ThreadFunctionType) TestRecursiveCallback, this);
     while (nOfExecutingThreads == 1) {
         Sleep::MSec(100);
         if (counter++ > 10) {

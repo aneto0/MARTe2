@@ -178,7 +178,7 @@ ErrorType EventSem::Wait() {
     if (!osProperties->closed) {
         bool okLock = (pthread_mutex_lock(&osProperties->mutexHandle) == 0);
 
-        bool okWait = false;
+        bool okWait = true;
         if (osProperties->stop) {
             okWait = (pthread_cond_wait(&osProperties->eventVariable, &osProperties->mutexHandle) == 0);
         }

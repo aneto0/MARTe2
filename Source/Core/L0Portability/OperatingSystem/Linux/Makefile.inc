@@ -34,6 +34,7 @@ OBJSX=  BasicConsoleOS.x \
         EventSemOS.x \
         MutexSemOS.x \
         ProcessorOS.x \
+        ThreadsOS.x \
         MemoryOS.x \
         StringHelperOS.x
 
