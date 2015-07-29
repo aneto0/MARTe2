@@ -2,7 +2,7 @@
  * @file ThreadsOS.cpp
  * @brief Source file for class ThreadsOS
  * @date 27/lug/2015
- * @author Giuseppe Ferrï¿½
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -37,39 +37,43 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-static void SystemThreadFunction(void *threadData) {
-    ThreadInformation *threadInfo = (ThreadInformation *) threadData;
-    if (threadInfo == NULL) {
-        return;
+bool isRealtimeClass = false;
+
+static void SystemThreadFunction(ThreadInformation * const threadInfo) {
+    if (threadInfo != NULL) {
+        bool ok = ThreadsDatabase::Lock();
+        if (ok) {
+            threadInfo->SetThreadIdentifier(Threads::Id());
+
+            ok = ThreadsDatabase::NewEntry(threadInfo);
+            ThreadsDatabase::UnLock();
+        }
+        if (ok) {
+            threadInfo->SetPriorityLevel(0u);
+            Threads::SetPriority(Threads::Id(), Threads::NormalPriorityClass, 0u);
+            //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
+            ErrorType err = threadInfo->ThreadWait();
+            //Start the user thread
+            if (err == NoError) {
+                threadInfo->UserThreadFunction();
+
+                ok = ThreadsDatabase::Lock();
+                if (ok) {
+                    ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Threads::Id());
+                    if (threadInfo != threadInfo2) {
+                        //CStaticAssertErrorCondition(FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
+                    }
+                }
+                ThreadsDatabase::UnLock();
+            }
+            delete threadInfo;
+        }
     }
-
-    ThreadsDatabase::Lock();
-    threadInfo->threadId = Threads::Id();
-    ThreadsDatabase::NewEntry(threadInfo);
-    ThreadsDatabase::UnLock();
-
-    threadInfo->priorityLevel = Threads::PRIORITY_NORMAL;
-    Threads::SetPriorityClass(Threads::Id(), Threads::PRIORITY_CLASS_NORMAL);
-    //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
-    threadInfo->ThreadWait();
-    //Start the user thread
-    threadInfo->UserThreadFunction();
-
-    ThreadsDatabase::Lock();
-    ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Threads::Id());
-    ThreadsDatabase::UnLock();
-
-    if (threadInfo != threadInfo2) {
-        //CStaticAssertErrorCondition(FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
-    }
-
-    delete threadInfo;
 }
 
-static ThreadInformation * threadInitialisationInterfaceConstructor(ThreadFunctionType userThreadFunction,
-                                                                    void *userData,
-                                                                    const char8 *threadName,
-                                                                    uint32 exceptionHandlerBehaviour) {
+static ThreadInformation * threadInitialisationInterfaceConstructor(const ThreadFunctionType userThreadFunction,
+                                                                    const void * const userData,
+                                                                    const char8 * const threadName) {
 
     return new ThreadInformation(userThreadFunction, userData, threadName);
 }
@@ -78,29 +82,21 @@ static ThreadInformation * threadInitialisationInterfaceConstructor(ThreadFuncti
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void Threads::EndThread() {
-    ThreadsDatabase::Lock();
-    ThreadsDatabase::RemoveEntry(Threads::Id());
-    ThreadsDatabase::UnLock();
-    ExitThread(0);
-    //_endthread();
+Threads::ThreadStateType Threads::GetState(const ThreadIdentifier &threadId) {
+    return UnknownThreadStateType;
 }
 
-Threads::ThreadStateType Threads::GetState(ThreadIdentifier threadId) {
-    return STATE_UNKNOWN;
-}
-
-int32 Threads::GetCPUs(ThreadIdentifier threadId) {
-    return -1;
+uint32 Threads::GetCPUs(const ThreadIdentifier &threadId) {
+    return 0;
 }
 
 ThreadIdentifier Threads::Id() {
     return GetCurrentThreadId();
 }
 
-void Threads::SetPriorityLevelAndClass(ThreadIdentifier threadId,
-                                       PriorityClassType priorityClass,
-                                       ThreadPriorityType priorityLevel) {
+void Threads::SetPriority(const ThreadIdentifier &threadId,
+                          const Threads::PriorityClassType &priorityClass,
+                          const uint8 &priorityLevel) {
 
     //Cannot set an unknown priority
     if (priorityLevel == 0 && priorityClass == 0) {
@@ -116,55 +112,82 @@ void Threads::SetPriorityLevelAndClass(ThreadIdentifier threadId,
 
     HANDLE threadHandle = OpenThread(THREAD_ALL_ACCESS, TRUE, threadId);
 
-    //change the priority level
-    if (priorityLevel > 0) {
-
-        threadInfo->priorityLevel = priorityLevel;
-
-        switch (priorityLevel) {
-        case 1:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_IDLE);
-            break;
-        case 2:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_LOWEST);
-            break;
-        case 3:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_BELOW_NORMAL);
-            break;
-        case 4:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_NORMAL);
-            break;
-        case 5:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_ABOVE_NORMAL);
-            break;
-        case 6:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_HIGHEST);
-            break;
-        case 7:
-            SetThreadPriority(threadHandle, THREAD_PRIORITY_TIME_CRITICAL);
-            break;
-        }
-
-    }
-
     //Change the priority class: this is applied to the current process.
-    if (priorityClass > 0) {
-
-        threadInfo->priorityClass = priorityClass;
+    if ((priorityClass != UnknownPriorityClass) && !(isRealtimeClass)) {
 
         switch (priorityClass) {
-        case 1:
-            ::SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);
+        case IdlePriorityClass:
+            if (::SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS) != 0) {
+                threadInfo->SetPriorityClass(priorityClass);
+            }
             break;
-        case 2:
-            ::SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
+        case NormalPriorityClass:
+            if (::SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS)) {
+                threadInfo->SetPriorityClass(priorityClass);
+            }
             break;
-        case 3:
-            ::SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+        case RealTimePriorityClass:
+            if (::SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS)) {
+                threadInfo->SetPriorityClass(priorityClass);
+                isRealtimeClass = true;
+            }
             break;
-        case 4:
-            ::SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
-            break;
+        }
+    }
+
+    //change the priority level
+    if (priorityLevel > 0) {
+        uint8 prioLevel = priorityLevel;
+
+        if (prioLevel > 15) {
+            prioLevel = 15;
+        }
+
+        for (uint32 i = 0; i < 1; i++) {
+
+            //In case of Idle Priority class put always the idle priority level
+            if ((prioLevel <= 1) || (priorityClass == IdlePriorityClass)) {
+                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_IDLE) != 0) {
+                    threadInfo->SetPriorityLevel(prioLevel);
+                }
+                break;
+            }
+            if (prioLevel <= 3) {
+                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_LOWEST) != 0) {
+                    threadInfo->SetPriorityLevel(prioLevel);
+                }
+                break;
+            }
+            if (prioLevel <= 5) {
+                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_BELOW_NORMAL) != 0) {
+                    threadInfo->SetPriorityLevel(prioLevel);
+                }
+                break;
+            }
+            if (prioLevel <= 9) {
+                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_NORMAL) != 0) {
+                    threadInfo->SetPriorityLevel(prioLevel);
+                }
+                break;
+            }
+            if (prioLevel <= 11) {
+                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_ABOVE_NORMAL) != 0) {
+                    threadInfo->SetPriorityLevel(prioLevel);
+                }
+                break;
+            }
+            if (prioLevel <= 13) {
+                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_HIGHEST) != 0) {
+                    threadInfo->SetPriorityLevel(prioLevel);
+                }
+                break;
+            }
+            if (prioLevel <= 15) {
+                if (SetThreadPriority(threadHandle, THREAD_PRIORITY_TIME_CRITICAL) != 0) {
+                    threadInfo->SetPriorityLevel(prioLevel);
+                }
+                break;
+            }
         }
 
     }
@@ -173,32 +196,37 @@ void Threads::SetPriorityLevelAndClass(ThreadIdentifier threadId,
 
 }
 
-Threads::ThreadPriorityType Threads::GetPriorityLevel(ThreadIdentifier threadId) {
-    ThreadPriorityType priorityLevel = PRIORITY_UNKNOWN;
+uint8 Threads::GetPriorityLevel(const ThreadIdentifier &threadId) {
+    uint8 priorityLevel = 0u;
 
     ThreadsDatabase::Lock();
     ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
     if (threadInfo != NULL) {
-        priorityLevel = threadInfo->priorityLevel;
+        priorityLevel = threadInfo->GetPriorityLevel();
     }
     ThreadsDatabase::UnLock();
     return priorityLevel;
 }
 
-Threads::PriorityClassType Threads::GetPriorityClass(ThreadIdentifier threadId) {
+Threads::PriorityClassType Threads::GetPriorityClass(const ThreadIdentifier &threadId) {
 
-    PriorityClassType priorityClass = PRIORITY_CLASS_UNKNOWN;
-    ThreadsDatabase::Lock();
-    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-    if (threadInfo != NULL) {
-        priorityClass = threadInfo->priorityClass;
+    PriorityClassType priorityClass = UnknownPriorityClass;
+    if (isRealtimeClass) {
+        priorityClass = RealTimePriorityClass;
     }
-    ThreadsDatabase::UnLock();
+    else {
+        ThreadsDatabase::Lock();
+        ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
+        if (threadInfo != NULL) {
+            priorityClass = threadInfo->GetPriorityClass();
+        }
+        ThreadsDatabase::UnLock();
+    }
     return priorityClass;
 
 }
 
-bool Threads::IsAlive(ThreadIdentifier threadId) {
+bool Threads::IsAlive(const ThreadIdentifier &threadId) {
     ThreadsDatabase::Lock();
     bool condition = (ThreadsDatabase::GetThreadInformation(threadId) != NULL);
     ThreadsDatabase::UnLock();
@@ -216,7 +244,7 @@ bool Threads::IsAlive(ThreadIdentifier threadId) {
 
 }
 
-bool Threads::Kill(ThreadIdentifier threadId) {
+bool Threads::Kill(const ThreadIdentifier &threadId) {
     //return GetThreadPriority((HANDLE)threadId) != THREAD_PRIORITY_ERROR_RETURN;
     HANDLE tid = OpenThread(PROCESS_ALL_ACCESS, TRUE, threadId);
     if (tid == NULL) {
@@ -243,27 +271,16 @@ bool Threads::Kill(ThreadIdentifier threadId) {
     }
 
     if (TerminateThread((HANDLE) tid, 0) == FALSE) {
-        /*LPTSTR pTemp=NULL;
-         DWORD retSize=FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER|
-         FORMAT_MESSAGE_FROM_SYSTEM|
-         FORMAT_MESSAGE_ARGUMENT_ARRAY,
-         NULL,
-         GetLastError(),
-         LANG_NEUTRAL,
-         (LPTSTR)&pTemp,
-         0,
-         NULL );
-         printf("\n%s\n",pTemp);*/
         return false;
     }
     return true;
 }
 
-ThreadIdentifier Threads::BeginThread(ThreadFunctionType function,
-                                      void *parameters,
-                                      uint32 stacksize,
-                                      const char8 *name,
-                                      uint32 exceptionHandlerBehaviour,
+ThreadIdentifier Threads::BeginThread(const ThreadFunctionType function,
+                                      const void * const parameters,
+                                      const uint32 &stacksize,
+                                      const char8 * const name,
+                                      const uint32 exceptionHandlerBehaviour,
                                       ProcessorType runOnCPUs) {
 
     if (runOnCPUs == ProcessorType::UndefinedCPUs) {
@@ -275,7 +292,7 @@ ThreadIdentifier Threads::BeginThread(ThreadFunctionType function,
         }
     }
 
-    ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name, exceptionHandlerBehaviour);
+    ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name);
     if (threadInfo == NULL) {
         //CStaticAssertErrorCondition(InitialisationError,"Threads::ThreadsBeginThread (%s) threadInitialisationInterfaceConstructor returns NULL", name);
         return (ThreadIdentifier) 0;
@@ -291,7 +308,7 @@ ThreadIdentifier Threads::BeginThread(ThreadFunctionType function,
     return (ThreadIdentifier) threadId;
 }
 
-const char8 *Threads::Name(ThreadIdentifier threadId) {
+const char8 *Threads::Name(const ThreadIdentifier &threadId) {
     ThreadsDatabase::Lock();
     ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
     ThreadsDatabase::UnLock();
@@ -302,19 +319,7 @@ const char8 *Threads::Name(ThreadIdentifier threadId) {
     return NULL;
 }
 
-bool Threads::ProtectedExecute(ThreadFunctionType userFunction,
-                               void *userData) {
-    ThreadIdentifier threadId = Threads::Id();
-    ThreadsDatabase::Lock();
-    ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
-    ThreadsDatabase::UnLock();
-    if (threadInfo != NULL) {
-        return threadInfo->ExceptionProtectedExecute(userFunction, userData);
-    }
-    return false;
-}
-
-ThreadIdentifier Threads::FindByIndex(uint32 n) {
+ThreadIdentifier Threads::FindByIndex(const uint32 &n) {
     return ThreadsDatabase::GetThreadID(n);
 }
 
@@ -323,11 +328,15 @@ uint32 Threads::NumberOfThreads() {
 }
 
 bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
-                                int32 n,
-                                ThreadIdentifier tid) {
-    return ThreadsDatabase::GetInfo(copy, n, tid);
+                                const uint32 &n) {
+    return ThreadsDatabase::GetInfoIndex(copy, n);
 }
 
-ThreadIdentifier Threads::FindByName(const char8 *name) {
+bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
+                                const ThreadIdentifier &threadId) {
+    return ThreadsDatabase::GetInfo(copy, threadId);
+}
+
+ThreadIdentifier Threads::FindByName(const char8 * const name) {
     return ThreadsDatabase::Find(name);
 }

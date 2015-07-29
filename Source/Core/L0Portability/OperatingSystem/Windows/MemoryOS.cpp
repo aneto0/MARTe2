@@ -95,7 +95,13 @@ char8 *Memory::StringDup(const char8 * const s) {
 bool Memory::Check(const void * const address,
                    const MemoryTestAccessMode accessMode,
                    const uint32 size) {
+
+    if (address == NULL) {
+        return false;
+    }
+
     uint8 check = 0;
+
     //determines if the calling process has read access to the specified address (if the process has read and execute permissions).
     if (accessMode & Execute) {
         check++;
@@ -107,7 +113,7 @@ bool Memory::Check(const void * const address,
     //determines if the calling process has the read access to the specified range of memory (if the process has read permissions).
     if (accessMode & Read) {
         check++;
-        if (IsBadReadPtr(address, size)) {
+        if (IsBadReadPtr((void*) address, size)) {
             return false;
         }
     }
@@ -115,12 +121,12 @@ bool Memory::Check(const void * const address,
     //determines if the calling process has the write access to the specified range of memory (if the process has write permissions).
     if (accessMode & Write) {
         check++;
-        if (IsBadWritePtr(address, size)) {
+        if (IsBadWritePtr((void*) address, size)) {
             return false;
         }
     }
 
-    return address != NULL && check != 0;
+    return check != 0;
 }
 
 bool Memory::Copy(void * const destination,

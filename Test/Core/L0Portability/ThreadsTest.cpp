@@ -34,6 +34,7 @@
 #include "Sleep.h"
 #include "StringHelper.h"
 #include "ThreadInformation.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -50,12 +51,12 @@ ThreadsTest::ThreadsTest() {
 
 static void DummyFunction(ThreadsTest &tt) {
     //tells to the main process that the thread begins
-    tt.exitCondition++;
+    Atomic::Increment(&tt.exitCondition);
     //waits the permission of the main process to exit
     while (tt.exitCondition < 2) {
         Sleep::Sec(1e-3);
     }
-    tt.exitCondition++;
+    Atomic::Increment(&tt.exitCondition);
 }
 
 bool ThreadsTest::TestBeginThread(const char8 *name,
@@ -214,6 +215,12 @@ bool ThreadsTest::TestKill(uint32 nOfThreads) {
 }
 
 bool PriorityTestFunction(ThreadsTest &t) {
+
+    ThreadIdentifier fakeTid = (ThreadIdentifier) 0;
+    if (Threads::GetPriorityClass(fakeTid) != Threads::UnknownPriorityClass || Threads::GetPriorityLevel(fakeTid) != 0) {
+        return false;
+    }
+
     //Available priority classes
     Threads::PriorityClassType allPrioClassTypes[] = { Threads::UnknownPriorityClass, Threads::IdlePriorityClass, Threads::NormalPriorityClass,
             Threads::RealTimePriorityClass };
@@ -221,7 +228,7 @@ bool PriorityTestFunction(ThreadsTest &t) {
     //Creates all the necessary thread combinations with different priority classes and levels and checks
     //that each of them has the correct priority class and level
     for (uint32 i = 1; i < 4; i++) {
-        for (uint32 prio = 0; prio < 15; prio++) {
+        for (uint32 prio = 0; prio < 16; prio++) {
             t.exitCondition = 0;
             ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, &t);
             int32 n = 0;
@@ -235,15 +242,17 @@ bool PriorityTestFunction(ThreadsTest &t) {
             }
             //set priority level and class
             Threads::SetPriority(tid, allPrioClassTypes[i], prio);
+
             //gets priority level and class
             if (Threads::GetPriorityClass(tid) != allPrioClassTypes[i]) {
                 goOn = false;
             }
+
             if (Threads::GetPriorityLevel(tid) != prio) {
                 goOn = false;
             }
             //end the thread
-            t.exitCondition++;
+            Atomic::Increment(&t.exitCondition);
             n = 0;
             //waits that the thread ends
             while (t.exitCondition < 3) {
@@ -258,10 +267,7 @@ bool PriorityTestFunction(ThreadsTest &t) {
             }
         }
     }
-    ThreadIdentifier fakeTid = (ThreadIdentifier) 0;
-    if (Threads::GetPriorityClass(fakeTid) != Threads::UnknownPriorityClass || Threads::GetPriorityLevel(fakeTid) != 0) {
-        return false;
-    }
+
     return true;
 }
 
@@ -342,6 +348,7 @@ bool ThreadsTest::TestGetCPUs() {
     exitCondition++;
     Sleep::Sec(1e-3);
     //note: in windows the get cpus function returns always -1
+
     for (uint32 i = 1; i < nCPUs; i++) {
         exitCondition = 0;
         tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, THREADS_DEFAULT_STACKSIZE, NULL, ExceptionHandler::NotHandled, i);
@@ -634,9 +641,9 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
             retValue = false;
         }
 
-        Threads::SetPriority(tid, Threads::RealTimePriorityClass, 15);
+        Threads::SetPriority(tid, Threads::IdlePriorityClass, 15);
         Threads::GetThreadInfoCopy(ti, tid);
-        if (ti.GetPriorityClass() != Threads::RealTimePriorityClass) {
+        if (ti.GetPriorityClass() != Threads::IdlePriorityClass) {
             retValue = false;
         }
         if (ti.GetPriorityLevel() != 15) {
@@ -644,7 +651,7 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
         }
 
         //A priority greater than 16 should be set to 15
-        Threads::SetPriority(tid, Threads::RealTimePriorityClass, 16);
+        Threads::SetPriority(tid, Threads::NormalPriorityClass, 16);
         Threads::GetThreadInfoCopy(ti, tid);
         if (ti.GetPriorityLevel() != 15) {
             retValue = false;
@@ -669,7 +676,7 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
             retValue = false;
         }
 
-        if ((tiCopy.GetPriorityClass() != Threads::RealTimePriorityClass) || (tiCopy2.GetPriorityClass() != Threads::RealTimePriorityClass)) {
+        if ((tiCopy.GetPriorityClass() != Threads::NormalPriorityClass) || (tiCopy2.GetPriorityClass() != Threads::NormalPriorityClass)) {
             retValue = false;
         }
 

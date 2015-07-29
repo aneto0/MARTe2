@@ -76,11 +76,6 @@ TEST(ThreadsGTest,TestKill) {
     ASSERT_TRUE(myUnitTest.TestKill(100));
 }
 
-TEST(ThreadsGTest,TestPriority) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestPriority());
-}
-
 TEST(ThreadsGTest,TestGetState) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestGetState());
@@ -129,4 +124,9 @@ TEST(ThreadsGTest,TestGetThreadInfoCopyInvalidID) {
 TEST(ThreadsGTest,TestFindByName) {
     ThreadsTest myUnitTest;
     ASSERT_TRUE(myUnitTest.TestFindByName(100, "Hello", 22));
+}
+
+TEST(ThreadsGTest,TestPriority) {
+    ThreadsTest myUnitTest;
+    ASSERT_TRUE(myUnitTest.TestPriority());
 }
