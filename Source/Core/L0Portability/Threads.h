@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "ExceptionHandler.h"
 #include "ProcessorType.h"
@@ -63,6 +64,7 @@ typedef void (*ThreadFunctionType)(const void * const parameters);
 class Threads {
 
 public:
+
     /**
      * @brief Possible thread states. This is the type returned by Threads::GetThreadState
      */
@@ -130,11 +132,10 @@ public:
 
     /**
      * @brief Changes the thread priority level for the already set priority class.
-     *
      * @details The currently set priority class (GetPriorityClass()) will not be changed.
      * @param[in] threadId the thread identifier.
      * @param[in] priorityClass the class to assign to the thread.
-     * @param[in] level the priority level to be set. This must be a
+     * @param[in] priorityLevel the priority level to be set. This must be a
      * value between 0 and 15.
      */
     static void SetPriority(const ThreadIdentifier &threadId,
@@ -143,12 +144,10 @@ public:
 
     /**
      * @brief Start a new thread.
-     *
      * @details This function will dynamically allocate an object of type
      * ThreadInformation using the function hook ThreadInformationConstructor.
      * This allows the programmer to choose which constructor has to be used in the case
      * a ThreadInformation derived class has been used.
-     *
      * @param[in] function the callback function for the thread.
      * @param[in] parameters a pointer passed to the thread callback function.
      * @param[in] stacksize size of the stack.
@@ -170,8 +169,8 @@ public:
      */
     static ThreadIdentifier Id(void);
 
-    /** @brief Asynchronously kill a thread.
-     *
+    /**
+     * @brief Asynchronously kill a thread.
      * @details Allows to force the termination of a thread.
      * @param[in] threadId the id of the thread to kill.
      * @return true if system level kill function returns without errors.
@@ -194,7 +193,6 @@ public:
 
     /**
      * @brief Returns the task state.
-     *
      * @param[in] threadId the id of the requested thread.
      * @return the thread state(s).
      */
@@ -238,7 +236,6 @@ public:
      * @brief Get a copy of the thread information stored in the database.
      * @param[out] copy is the thread information structure in return.
      * @param[in] n is the threads index, if it is <0 is ignored.
-     * @param[in] threadId is the thread identifier.
      * @return true if the requested element is in the database, false otherwise.
      */
     static bool GetThreadInfoCopy(ThreadInformation & copy,
@@ -247,7 +244,6 @@ public:
     /**
      * @brief Get a copy of the thread information stored in the database.
      * @param[out] copy is the thread information structure in return.
-     * @param[in] n is the threads index, if it is <0 is ignored.
      * @param[in] threadId is the thread identifier.
      * @return true if the requested element is in the database, false otherwise.
      */
@@ -268,4 +264,3 @@ public:
 /*---------------------------------------------------------------------------*/
 
 #endif /* THREADS_H_ */
-

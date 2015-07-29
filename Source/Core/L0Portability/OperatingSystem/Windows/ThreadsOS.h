@@ -30,6 +30,7 @@
 
 #include <process.h>
 #include <signal.h>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -54,7 +55,9 @@ class ThreadsOS {
 
 public:
 
-    /** @brief Called by Threads::EndThread */
+    /**
+     * @brief Called by Threads::EndThread
+     */
     static void EndThread() {
         ThreadsDatabase::Lock();
         ThreadsDatabase::RemoveEntry(Threads::Id());
@@ -209,9 +212,7 @@ public:
 
     /**
      * @brief Called by Threads::IsAlive
-     *
      * @details A signal is used to know if the other thread is alive.
-     *
      * @param[in] threadId is the thread identifier.
      */
     static bool IsAlive(TID threadId) {

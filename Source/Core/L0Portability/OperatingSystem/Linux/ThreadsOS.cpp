@@ -2,7 +2,7 @@
  * @file ThreadsOS.cpp
  * @brief Source file for class ThreadsOS
  * @date 27/07/2015
- * @author Andre' Neto
+ * @author André Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -24,22 +24,26 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <pthread.h>
 #include <signal.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "Threads.h"
 #include "ThreadsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 /**
  * @brief The function called when a thread is created.
  * @details Adds the thread in the database and calls the thread callback function.
  * When the callback finishes its execution this function removes the thread from the database.
- * @param[in] threadData the thread information structure.
+ * @param[in,out] threadInfo the thread information structure.
  */
 /*lint -e{9141} namespaces are not currently used.*/
 static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
@@ -80,7 +84,6 @@ static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
  * @param[in] userThreadFunction is the thread function.
  * @param[in] userData is the thread function argument.
  * @param[in] threadName is the desired name of the thread.
- * @param[in] exceptionHandlerBehaviour is not used here.
  * @return the ThreadInformation structure.
  */
 /*lint -e{9141} namespaces are not currently used.*/
@@ -90,9 +93,11 @@ static ThreadInformation * threadInitialisationInterfaceConstructor(const Thread
 
     return new ThreadInformation(userThreadFunction, userData, threadName);
 }
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 /*lint -e{715} Not implemented in Linux.*/
 Threads::ThreadStateType Threads::GetState(const ThreadIdentifier &threadId) {
     return UnknownThreadStateType;
@@ -343,4 +348,3 @@ bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
 ThreadIdentifier Threads::FindByName(const char8 * const name) {
     return ThreadsDatabase::Find(name);
 }
-

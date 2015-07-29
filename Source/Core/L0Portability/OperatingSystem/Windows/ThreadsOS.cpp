@@ -28,9 +28,11 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "Threads.h"
 #include "ThreadInformation.h"
 #include "ThreadsDatabase.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -71,6 +73,7 @@ static ThreadInformation * threadInitialisationInterfaceConstructor(ThreadFuncti
 
     return new ThreadInformation(userThreadFunction, userData, threadName);
 }
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -297,7 +300,6 @@ const char8 *Threads::Name(ThreadIdentifier threadId) {
         return threadInfo->ThreadName();
     }
     return NULL;
-
 }
 
 bool Threads::ProtectedExecute(ThreadFunctionType userFunction,
