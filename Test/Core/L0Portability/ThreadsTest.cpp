@@ -102,7 +102,6 @@ bool ThreadsTest::TestBeginThreadNullFunction(const char8 *name) {
     return tid != (ThreadIdentifier) 0;
 }
 
-
 bool ThreadsTest::TestIsAlive(uint32 nOfThreads) {
     for (uint32 i = 0; i < nOfThreads; i++) {
         exitCondition = 0;
@@ -235,8 +234,7 @@ bool PriorityTestFunction(ThreadsTest &t) {
                 Sleep::Sec(10e-3);
             }
             //set priority level and class
-            Threads::SetPriorityClass(tid, allPrioClassTypes[i]);
-            Threads::SetPriorityLevel(tid, prio);
+            Threads::SetPriority(tid, allPrioClassTypes[i], prio);
             //gets priority level and class
             if (Threads::GetPriorityClass(tid) != allPrioClassTypes[i]) {
                 goOn = false;
@@ -267,11 +265,7 @@ bool PriorityTestFunction(ThreadsTest &t) {
     return true;
 }
 
-bool ThreadsTest::TestPriorityLevel() {
-    return PriorityTestFunction(*this);
-}
-
-bool ThreadsTest::TestPriorityClass() {
+bool ThreadsTest::TestPriority() {
     return PriorityTestFunction(*this);
 }
 
@@ -621,7 +615,6 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
             Sleep::Sec(10e-3);
         }
 
-
         if (!Threads::GetThreadInfoCopy(ti, tid)) {
             retValue = false;
         }
@@ -641,13 +634,18 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
             retValue = false;
         }
 
-
-        Threads::SetPriorityLevel(tid, 15);
-        Threads::SetPriorityClass(tid, Threads::RealTimePriorityClass);
+        Threads::SetPriority(tid, Threads::RealTimePriorityClass, 15);
         Threads::GetThreadInfoCopy(ti, tid);
         if (ti.GetPriorityClass() != Threads::RealTimePriorityClass) {
             retValue = false;
         }
+        if (ti.GetPriorityLevel() != 15) {
+            retValue = false;
+        }
+
+        //A priority greater than 16 should be set to 15
+        Threads::SetPriority(tid, Threads::RealTimePriorityClass, 16);
+        Threads::GetThreadInfoCopy(ti, tid);
         if (ti.GetPriorityLevel() != 15) {
             retValue = false;
         }
@@ -686,7 +684,6 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
 
     }
 
-
     exitCondition = -1;
     //let exit the threads
     uint32 j = 0;
@@ -696,7 +693,6 @@ bool ThreadsTest::TestGetThreadInfoCopy(uint32 nOfThreads,
         }
         Sleep::Sec(10e-3);
     }
-
 
     return retValue;
 }

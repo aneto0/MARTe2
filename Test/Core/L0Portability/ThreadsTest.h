@@ -104,18 +104,11 @@ public:
     bool TestKill(uint32 nOfThreads);
 
     /**
-     * @brief Tests the Threads::SetPriorityLevel and Threads::GetPriorityLevel (for all priority levels) functions.
+     * @brief Tests the Threads::SetPriority() for all priority levels and classes.
      * @details Launches a thread for each priority class and level and checks if the priority class and level returned are correct.
      * @return true if the priority level and  priority class are as expected, false otherwise.
      */
-    bool TestPriorityLevel();
-
-    /**
-     * @brief Tests the Threads::SetPriorityClass and Threads::GetPriorityClass functions.
-     * @details Launches a thread for each priority class and level and checks if the priority class and level returned is correct.
-     * @return true if the priority level and  priority class are as expected, false otherwise.
-     */
-    bool TestPriorityClass();
+    bool TestPriority();
 
     /**
      * @brief Tests the Threads::GetState function

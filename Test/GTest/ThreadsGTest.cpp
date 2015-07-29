@@ -76,14 +76,9 @@ TEST(ThreadsGTest,TestKill) {
     ASSERT_TRUE(myUnitTest.TestKill(100));
 }
 
-TEST(ThreadsGTest,TestPriorityLevel) {
+TEST(ThreadsGTest,TestPriority) {
     ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestPriorityLevel());
-}
-
-TEST(ThreadsGTest,TestPriorityClass) {
-    ThreadsTest myUnitTest;
-    ASSERT_TRUE(myUnitTest.TestPriorityClass());
+    ASSERT_TRUE(myUnitTest.TestPriority());
 }
 
 TEST(ThreadsGTest,TestGetState) {

@@ -128,45 +128,18 @@ public:
         RealTimePriorityClass
     };
 
-private:
-
-    /**
-     * @brief Called by Threads::SetPriorityLevel & SetPriorityClass
-     *
-     * @param[in] threadId is the thread identifier.
-     * @param[in] priorityClass the desired class priority to assign to the thread.
-     * @param[in] priorityLevel the desired thread priority to assign to the thread. This must be a
-     * value between 0 and 15.
-     */
-    static void SetPriorityLevelAndClass(const ThreadIdentifier &threadId,
-                                         const PriorityClassType &priorityClass,
-                                         const uint8 &priorityLevel);
-
-public:
-
     /**
      * @brief Changes the thread priority level for the already set priority class.
      *
      * @details The currently set priority class (GetPriorityClass()) will not be changed.
      * @param[in] threadId the thread identifier.
+     * @param[in] priorityClass the class to assign to the thread.
      * @param[in] level the priority level to be set. This must be a
      * value between 0 and 15.
      */
-    static void SetPriorityLevel(const ThreadIdentifier &threadId,
-                                 const uint8 &priorityLevel) {
-        SetPriorityLevelAndClass(threadId, GetPriorityClass(threadId), priorityLevel);
-    }
-    /**
-     * @brief Changes the thread priority class.
-     *
-     * @details The currently set priority level (GetPriorityLevel()) will not be changed.
-     * @param[in] threadId the thread identifier.
-     * @param[in] priorityClass the class to assign to the thread.
-     */
-    static void SetPriorityClass(const ThreadIdentifier &threadId,
-                                 const PriorityClassType priorityClass) {
-        SetPriorityLevelAndClass(threadId, priorityClass, GetPriorityLevel(threadId));
-    }
+    static void SetPriority(const ThreadIdentifier &threadId,
+                            const PriorityClassType &priorityClass,
+                            const uint8 &priorityLevel);
 
     /**
      * @brief Start a new thread.

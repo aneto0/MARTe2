@@ -53,7 +53,7 @@ static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
         }
         if (ok) {
             threadInfo->SetPriorityLevel(0u);
-            Threads::SetPriorityClass(Threads::Id(), Threads::NormalPriorityClass);
+            Threads::SetPriority(Threads::Id(), Threads::NormalPriorityClass, 0u);
             //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
             ErrorType err = threadInfo->ThreadWait();
             //Start the user thread
@@ -123,9 +123,9 @@ ThreadIdentifier Threads::Id() {
  * and priorityLevel = 0 and 99, i.e. priorityClass = RealTime
  * and priorityLevel = 15
  */
-void Threads::SetPriorityLevelAndClass(const ThreadIdentifier &threadId,
-                                       const Threads::PriorityClassType &priorityClass,
-                                       const uint8 &priorityLevel) {
+void Threads::SetPriority(const ThreadIdentifier &threadId,
+                          const Threads::PriorityClassType &priorityClass,
+                          const uint8 &priorityLevel) {
 
     bool ok = ThreadsDatabase::Lock();
     if (ok) {
