@@ -45,7 +45,9 @@
  * @brief A class which stores information about a thread: name, function, argument, identifier and priority related information.
  */
 class ThreadInformation {
+
 public:
+
     /**
      * @brief Default constructor.
      */
@@ -185,5 +187,6 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 #endif /* THREADINFORMATION_H_ */
 
