@@ -2,7 +2,7 @@
  * @file ProcessorA.h
  * @brief Header file for class ProcessorA
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -27,102 +27,100 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include <intrin.h>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
+#include "Processor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief Platform dependent functions to get the processor's informations.
- */
-class ProcessorA {
-
-public:
-
-    /**
-     * @brief Implementation of the cpuid function for x86 and cl
-     * @param[in] code drives the type of request being asked, e.g. 0 for Vendor, 1 for Family and Model, ...
-     * @param[out] A the CPU A register
-     * @param[out] B the CPU B register
-     * @param[out] C the CPU C register
-     * @param[out] D the CPU D register
-     */
-    static inline void CPUID(uint32 code,
-                             uint32 &A,
-                             uint32 &B,
-                             uint32 &C,
-                             uint32 &D) {
-
-        int32 cpuInfo[4];
-        __cpuid(cpuInfo, code);
-
-        A = cpuInfo[0];
-        B = cpuInfo[1];
-        C = cpuInfo[2];
-        D = cpuInfo[3];
-    }
-
-    /**
-     * @brief Get the cpu family.
-     * @details Called by Processor::Family
-     * @return the cpu family.
-     */
-    static uint32 Family() {
-        uint32 eax = 0;
-        uint32 ebx = 0;
-        uint32 ecx = 0;
-        uint32 edx = 0;
-        CPUID(1, eax, ebx, ecx, edx);
-        uint32 family = (eax >> 8) & 0xf;
-        if (family == 0xf) {
-            family += (eax >> 20) & 0xf;
-        }
-        return family;
-    }
-
-    /**
-     * @brief Get the cpu model.
-     * @details Called by Processor::Model()
-     * @return the cpu model.
-     */
-    static uint32 Model() {
-        uint32 eax = 0;
-        uint32 ebx = 0;
-        uint32 ecx = 0;
-        uint32 edx = 0;
-        CPUID(1, eax, ebx, ecx, edx);
-        return (eax >> 4) & 0xf;
-    }
-
-    /**
-     * @brief Get the identifier of the cpu.
-     * @details Called by Processor::VendorId()
-     * @return the cpu id.
-     */
-    static const char *VendorId() {
-
-        uint32 eax = 0;
-        CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
-        processorVendorId[12] = 0;
-        return &(processorVendorId[0]);
-    }
-
-private:
-
-    /** Buffer used to store the processor identifier */
-    static char processorVendorId[13];
-
-};
-
-char ProcessorA::processorVendorId[13] = { 0 };
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* PROCESSORA_H_ */
+/**
+ * Buffer used to store the processor identifier
+ */
+static char8 processorVendorId[13] = { 0 };
 
+/**
+ * @brief Implementation of the cpuid function for x86 and cl
+ * @param[in] code drives the type of request being asked, e.g. 0 for Vendor, 1 for Family and Model, ...
+ * @param[out] A the CPU A register
+ * @param[out] B the CPU B register
+ * @param[out] C the CPU C register
+ * @param[out] D the CPU D register
+ */
+static inline void CPUID(uint32 code,
+                         uint32 &A,
+                         uint32 &B,
+                         uint32 &C,
+                         uint32 &D) {
+
+    int32 cpuInfo[4];
+    __cpuid(cpuInfo, code);
+
+    A = cpuInfo[0];
+    B = cpuInfo[1];
+    C = cpuInfo[2];
+    D = cpuInfo[3];
+}
+
+/**
+ * @brief Get the cpu family.
+ * @details Called by Processor::Family
+ * @return the cpu family.
+ */
+uint32 Processor::Family() {
+    uint32 eax = 0;
+    uint32 ebx = 0;
+    uint32 ecx = 0;
+    uint32 edx = 0;
+    CPUID(1, eax, ebx, ecx, edx);
+    uint32 family = (eax >> 8) & 0xf;
+    if (family == 0xf) {
+        family += (eax >> 20) & 0xf;
+    }
+    return family;
+}
+
+/**
+ * @brief Get the cpu model.
+ * @details Called by Processor::Model()
+ * @return the cpu model.
+ */
+uint32 Processor::Model() {
+    uint32 eax = 0;
+    uint32 ebx = 0;
+    uint32 ecx = 0;
+    uint32 edx = 0;
+    CPUID(1, eax, ebx, ecx, edx);
+    uint32 model = (eax >> 4) & 0xf;
+    uint32 family = Processor::Family();
+    if ((family == 6) || (family == 15)) {
+        uint32 extendedModel = (eax >> 16) & 0xf;
+        model += (extendedModel << 4);
+    }
+    return model;
+}
+
+/**
+ * @brief Get the identifier of the cpu.
+ * @details Called by Processor::VendorId()
+ * @return the cpu id.
+ */
+const char8 *Processor::VendorId() {
+
+    uint32 eax = 0;
+    CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
+    processorVendorId[12] = 0;
+    return &(processorVendorId[0]);
+}
+
+#endif /* PROCESSORA_H_ */

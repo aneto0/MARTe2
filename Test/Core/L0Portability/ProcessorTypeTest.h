@@ -2,7 +2,7 @@
  * @file ProcessorTypeTest.h
  * @brief Header file for class ProcessorTypeTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef PROCESSORTYPETEST_H_
-#define 		PROCESSORTYPETEST_H_
+#define PROCESSORTYPETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,7 +37,9 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/** @brief A class to test the ProcessorType functions. */
+/**
+ * @brief A class to test the ProcessorType functions.
+ */
 class ProcessorTypeTest {
 
 public:
@@ -45,49 +47,71 @@ public:
     /**
      * @brief Constructor.
      */
-    ProcessorTypeTest() :
-            ptFirst(0xFE),
-            ptSecond(0xFD),
-            ptAny(0xFF),
-            ptNone(0x0) {
-
-    }
+    ProcessorTypeTest();
 
     /**
      * @brief Tests the overloaded assignment operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if a local test ProcessorType variable can be successfully assigned to two different ProcessorType values.
      */
     bool TestAssignmentOperator();
 
     /**
      * @brief Tests the overloaded OR operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if the OR operation between several combinations of a ProcessorType local variable and some ProcessorType dummy test variables are valid.
      */
     bool TestOROperator();
 
     /**
      * @brief Tests the overloaded equality operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if the equality operation between a ProcessorType local variable and a ProcessorType dummy test variables is valid.
      */
     bool TestEqualityOperator();
 
     /**
      * @brief Tests the overloaded inequality operator in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @return true if the inequality operation between a ProcessorType local variable and a ProcessorType dummy test variables is valid.
      */
     bool TestInequalityOperator();
 
     /**
-     * @brief Tests Get/SetDefaultCPUs in ProcessorType
-     * @return True if the test is successful, false otherwise.
+     * @brief Tests ProcessorType::GetDefaultCPUs and ProcessorType::SetDefaultCPUs.
+     * @return true if the ProcessorType default CPUs can be successfully set and retrieved.
      */
-    bool TestGetSetDefaultCPUs();
+    bool TestSetGetDefaultCPUs();
 
     /**
-     * @brief Tests ProcessorType's constructors
-     * @return True if the test is successful, false otherwise.
+     * @brief Tests ProcessorType's default constructor
+     * @return true if all the ProcessorType constructors can be successfully assigned to the expected initial CPU mask.
      */
-    bool TestConstructors();
+    bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests the Processor type constructor with a mask as input.
+     * @return true if the mask is equal to the input passed by argument.
+     */
+    bool TestConstructorFromMask();
+
+    /**
+     * @brief Tests the Processor type constructor with another ProcessorType as input.
+     * @return true if the mask is equal to the mask of the ProcessorType object passed by argument.
+     */
+    bool TestConstructorFromProcessorType();
+
+    /**
+     * @brief Tests the ProcessorType::SetMask function.
+     * @param[in] mask is the desired cpu mask.
+     * @return true if the mask is assigned correctly.
+     */
+    bool TestSetMask(uint32 mask);
+
+    /**
+     * @brief Tests the ProcessorType::AddCPU function.
+     * @param[in] cpuNumber1 is the first cpu to be added.
+     * @param[in] cpuNumber2 is the second cpu to be added.
+     * @return true if in the cpu mask is set 1 to the bits related to the desired cpu numbers.
+     */
+    bool TestAddCPU(uint32 cpuNumber1,
+                    uint32 cpuNumber2);
 
 private:
 

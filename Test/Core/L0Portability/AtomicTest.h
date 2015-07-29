@@ -196,7 +196,7 @@ bool AtomicTest<T>::TestBoundaryIncrement() {
     T unsignedMax = auxValue;
     Atomic::Increment(&auxValue);
     if (auxValue != (T) (unsignedMax + 1)) {
-        return False;
+        return false;
     }
 
     //checks the 0x1000...
@@ -204,24 +204,24 @@ bool AtomicTest<T>::TestBoundaryIncrement() {
     T signedMin = auxValue;
     Atomic::Increment(&auxValue);
     if (auxValue != (T) (signedMin + 1)) {
-        return False;
+        return false;
     }
 
     auxValue = signedMin - 1;
     T signedMax = auxValue;
     Atomic::Increment(&auxValue);
     if (auxValue != (T) (signedMax + 1)) {
-        return False;
+        return false;
     }
 
     auxValue = 0;
     T zero = auxValue;
     Atomic::Increment(&auxValue);
     if (auxValue != (T) (zero + 1)) {
-        return False;
+        return false;
     }
 
-    return True;
+    return true;
 
 }
 
@@ -233,7 +233,7 @@ bool AtomicTest<T>::TestBoundaryDecrement() {
     T unsignedMax = auxValue;
     Atomic::Decrement(&auxValue);
     if (auxValue != (T) (unsignedMax - 1)) {
-        return False;
+        return false;
     }
 
     //checks the 0x8000...
@@ -241,24 +241,24 @@ bool AtomicTest<T>::TestBoundaryDecrement() {
     T signedMin = auxValue;
     Atomic::Decrement(&auxValue);
     if (auxValue != (T) (signedMin - 1)) {
-        return False;
+        return false;
     }
 
     auxValue = signedMin - 1;
     T signedMax = auxValue;
     Atomic::Decrement(&auxValue);
     if (auxValue != (T) (signedMax - 1)) {
-        return False;
+        return false;
     }
 
     auxValue = 0;
     T zero = auxValue;
     Atomic::Decrement(&auxValue);
     if (auxValue != (T) (zero - 1)) {
-        return False;
+        return false;
     }
 
-    return True;
+    return true;
 }
 
 #endif /* ATOMICTEST_H_ */

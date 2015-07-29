@@ -2,7 +2,7 @@
  * @file ProcessorTest.h
  * @brief Header file for class ProcessorTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef PROCESSORTEST_H_
-#define 		PROCESSORTEST_H_
+#define PROCESSORTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,50 +31,71 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Processor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/** @brief A class to test the Processor functions. */
+/**
+ * @brief A class to test the Processor functions.
+ */
 class ProcessorTest {
 
 public:
 
     /**
      * @brief Constructor
+     * @param[in] testEqual is used to test if processor functions return values equal or different
+     * to the test input arguments.
      */
-    ProcessorTest();
+    ProcessorTest(bool testEqual=false);
 
     /**
-     * @brief Tests the vendor identifier function.
-     * @return true if the function returns the vendor id.
+     * @brief Tests the Processor::VendorId() function.
+     * @param[in] vendorIdTest is the value which will be compared with the value returned by Processor::VendorId() function.
+     * @return If testEqual is false returns true if Processor::VendorId() returns a vendor id different from vendorIdTest, otherwise
+     * if testEqual is true returns true if Processor::VendorId() returns a vendor id equal to vendorIdTest.
      */
-    bool TestVendorId();
+    bool TestVendorId(const char8 * vendorIdTest);
 
     /**
-     * @brief Tests the family function.
-     * @return true.
+     * @brief Tests the Processor::Family() function.
+     * @param[in] familyTest is the value which will be compared with the value returned by Processor::Family() function.
+     * @return If testEqual is false returns true if Processor::Family() returns a value different from familyTest, otherwise
+     * if testEqual is true returns true if Processor::Family() returns a value equal to familyTest.
      */
-    bool TestFamily();
+    bool TestFamily(uint32 familyTest);
 
     /**
      * @brief Tests the model function.
-     * @return true.
+     * @param[in] modelTest is the value which will be compared with the value returned by Processor::Model() function.
+     * @return If testEqual is false returns true if Processor::Model() returns a value different from modelTest, otherwise
+     * if testEqual is true returns true if Processor::Model() returns a value equal to modelTest.
      */
-    bool TestModel();
+    bool TestModel(uint32 modelTest);
 
     /**
      * @brief Tests the available function.
-     * @return true.
+     * @param[in] availableCPUTest is the value which will be compared with the value returned by Processor::Available() function.
+     * @return If testEqual is false returns true if Processor::Available() returns a value different from availableCPUTest, otherwise
+     * if testEqual is true returns true if Processor::Available() returns a value equal to availableCPUTest.
      */
-    bool TestAvailable();
+    bool TestAvailable(uint32 availableCPUTest);
+
+private:
+
+    /**
+     * Specifies if the tests must return true if the values compared are equal (true)
+     * or different (false).
+     */
+    bool testEqual;
 
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* PROCESSORTEST_H_ */
-

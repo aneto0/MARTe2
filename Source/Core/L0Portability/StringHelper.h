@@ -1,8 +1,8 @@
 /**
  * @file StringHelper.h
  * @brief Header file for class StringHelper
- * @date 30/giu/2015
- * @author Giuseppe Ferrò
+ * @date 30/06/2015
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef STRINGHELPER_H_
-#define 		STRINGHELPER_H_
+#define STRINGHELPER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,213 +32,148 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
-
-extern "C" {
-
-/**
- * @see StringHelper::Concatenate().
- */
-char* StringHelperConcatenate(char* destination,
-                              const char* source);
-
-/**
- * @see StringHelper::ConcatenateN().
- */
-char* StringHelperConcatenateN(char* destination,
-                               const char* source,
-                               uint32 size);
-/**
- * @see StringHelper::SearchChar().
- */
-const char* StringHelperSearchChar(const char* string,
-                                   char c);
-
-/**
- * @see StringHelper::Compare().
- */
-int32 StringHelperCompare(const char* string1,
-                          const char* string2);
-
-/**
- * @see StringHelper::CompareN().
- */
-int32 StringHelperCompareN(const char* string1,
-                           const char* string2,
-                           uint32 size);
-
-/**
- * @see StringHelper::Copy().
- */
-bool StringHelperCopy(char* destination,
-                      const char* source);
-
-/**
- * @see StringHelper::CopyN().
- */
-bool StringHelperCopyN(char* destination,
-                       const char* source,
-                       uint32 size);
-
-/**
- * @see StringHelper::SearchIndex().
- */
-int32 StringHelperSearchIndex(const char* string1,
-                              const char* string2);
-
-/**
- * @see StringHelper::Length().
- */
-int32 StringHelperLength(const char* string);
-
-/** @see StringHelper::SearchChars(). */
-const char* StringHelperSearchChars(const char* string1,
-                                    const char* string2);
-
-/**
- *  @see StringHelper::SearchLastChar().
- */
-const char* StringHelperSearchLastChar(const char* string,
-                                       char c);
-
-/**
- * @see StringHelper::SearchString().
- */
-const char* StringHelperSearchString(const char* string,
-                                     const char* substring);
-
-}
-
 /**
  * @brief Implementation of functions to manipulate strings.
- *
- * @details These methods allows the most used and basic functions to manipulate char* strings and
+ * @details These methods allows the most used and basic functions to manipulate char8 *strings and
  * are particularly useful in the implementation of higher levels string and stream implementations.
- *
- * @details Most of the implementation is delegated to StringHelperOS.h.
  */
-
 class StringHelper {
 
 public:
 
     /**
-     * @brief Concatenate two strings.
-     * @param[in,out] destination is the string where source must be appended.
-     * @param[in] source is the string to append to destination.
+     * @brief Concatenates two strings.
+     * @param[in,out] destination the string where the source will be appended.
+     * @param[in] source the string to be appended to the destination.
      * @return destination.
      */
-    static char* Concatenate(char* destination,
-                             const char* source);
+    static char8 *Concatenate(char8 *destination,
+                              const char8 *source);
 
     /**
-     * @brief Concatenate two strings until 'size' chars.
-     * @param[in,out] destination is the string where source must be appended.
-     * @param[in] source is the string to append to destination.
+     * @brief Concatenates two strings until 'size' chars.
+     * @param[in,out] destination the string where the source will be appended.
+     * @param[in] source the string to be appended to the destination.
      * @param[in] size is the maximum number of bytes to append.
      * @return destination.
      */
-    static char* ConcatenateN(char* destination,
-                              const char* source,
-                              uint32 size);
+    static char8 *ConcatenateN(char8 *destination,
+                               const char8 *source,
+                               uint32 size);
 
     /**
-     * @brief Search a character in a string.
+     * @brief Searches for a character in a string.
      * @param[in] string is the source string.
-     * @param[in] c is the character to find in c.
-     * @return a pointer to the first occurrence of c in string, NULL if c is not found.
+     * @param[in] c is the character to find in string.
+     * @return a pointer to the first occurrence of c in the string, NULL if c is not found.
      */
-    static const char* SearchChar(const char* string,
-                                  char c);
+    static const char8 *SearchChar(const char8 *string,
+                                   char8 c);
 
     /**
-     * @brief Compare two strings.
-     * @param[in] string1 is the first string.
-     * @param[in] string2 is the second string.
+     * @brief Compares two strings.
+     * @param[in] string1 the first string.
+     * @param[in] string2 the second string.
      * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
      */
-    static int32 Compare(const char* string1,
-                         const char* string2);
+    static int32 Compare(const char8 *string1,
+                         const char8 *string2);
 
     /**
-     * @brief Compare two strings until 'size' characters.
+     * @brief Compares two strings for a maximum of 'size' characters.
      * @param[in] string1 is the first string.
      * @param[in] string2 is the second string.
-     * @param[in] size is the maximum number of char to compare.
+     * @param[in] size is the maximum number of characters to compare.
      * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
      */
-    static int32 CompareN(const char* string1,
-                          const char* string2,
+    static int32 CompareN(const char8 *string1,
+                          const char8 *string2,
                           uint32 size);
 
     /**
-     * @brief Copy source in destination.
-     * @param[out] destination is the destination string.
-     * @param[in] source is the string to copy in destination.
-     * @return destination.
+     * @brief Copies the source into the destination.
+     * @param[out] destination the destination string.
+     * @param[in] source the string to copy into the destination.
+     * @return true if the source is copied to the destination.
      */
-    static bool Copy(char* destination,
-                     const char* source);
+    static bool Copy(char8 *destination,
+                     const char8 *source);
 
     /**
-     * @brief Copy source in destination until 'size' chars.
-     * @param[in,out] destination is the destination string.
-     * @param[in] source is the string to copy in destination.
-     * @param[in] size is the maximum number of byte to copy.
-     * @return destination.
+     * @brief Copies the source into the destination for a maximum of 'size' chars.
+     * @param[in,out] destination the destination string.
+     * @param[in] source the string to copy into the destination.
+     * @param[in] size the maximum number of bytes to copy.
+     * @return true if the source is copied to the destination.
      */
-    static bool CopyN(char* destination,
-                      const char* source,
+    static bool CopyN(char8 *destination,
+                      const char8 *source,
                       uint32 size);
 
     /**
-     * @brief Return the index position of the first char in string2 founded in string1 -> "abcde" "12d" returns 3.
+     * @brief Returns the index position of the first character in string2 founded in string1 (e.g. "abcde" "12d" returns 3).
      * @param[in] string1 is the source string.
-     * @param[in] string2 contains characters which must be searched in string1.
-     * @return the index at the first occurrence of the first character in string2 found in string1.
+     * @param[in] string2 contains the characters which must be searched in string1.
+     * @return the index at the first occurrence of the first character from string2 found in string1.
+     * If the string1 or string2 is NULL returns -1.
+     * If the string2 is not found in the string1 returns the length of the string1 (the last Index + 1).
      */
-    static int32 SearchIndex(const char* string1,
-                             const char* string2);
+    static int32 SearchIndex(const char8 *string1,
+                             const char8 *string2);
 
     /**
-     * @brief Return the length of a string.
-     * @param[in] string is the source string.
+     * @brief Returns the length of a string.
+     * @param[in] string the source string.
      * @return the length of the string.
      */
-    static int32 Length(const char* string);
+    static int32 Length(const char8 *string);
 
     /**
-     * @brief Return the pointer of the first char in string1 matched with one of chars in string2.
+     * @brief Returns the pointer of the first character in string1 matched with one of chars in string2.
      * @param[in] string1 is the source string.
-     * @param[in] string2 contains characters which must be searched in string1.
-     * @return a pointer to the first occurrence of a character in string2 contained in string1.
+     * @param[in] string2 contains the characters which must be searched in string1.
+     * @return a pointer to the first occurrence of the first character from string2 contained in string1.
      */
-    static const char* SearchChars(const char* string1,
-                                   const char* string2);
+    static const char8 *SearchChars(const char8 *string1,
+                                    const char8 *string2);
 
     /**
-     * @brief Return a pointer at the last char c founded in string.
-     * @param[in] string is the source string.
-     * @param[in] c is the character to search.
-     * @return the last occurrence of c in string.
+     * @brief Returns a pointer to the last occurrence of the character c in the string.
+     * @param[in] string the source string.
+     * @param[in] c the character to search.
+     * @return a pointer to the last occurrence of c in string.
      */
-    static const char* SearchLastChar(const char* string,
-                                      char c);
+    static const char8 *SearchLastChar(const char8 *string,
+                                       char8 c);
 
     /**
-     * @brief Return a pointer to the first occurrence of substring in string.
-     * @param[in] string is the source string.
-     * @param[in] substring is the string which must be searched in string.
-     * @returns a pointer to the first occurrence of substring in string.
+     * @brief Returns a pointer to the first occurrence of substring in string.
+     * @param[in] string the source string.
+     * @param[in] substring the string which must be searched in string.
+     * @return a pointer to the first occurrence of substring in string.
      */
-    static const char* SearchString(const char* string,
-                                    const char* substring);
+    static const char8 *SearchString(const char8 *string,
+                                     const char8 *substring);
+
+    /**
+     * @brief Fills the string with a constant char.
+     * @param[in,out] string to be filled with the char.
+     * @param[in] size length of the string in bytes.
+     * @param[in] c the char to fill the string.
+     * @return true if the string is not null and the size > 0 and the operation succeeds.
+     */
+    static bool SetChar(char8 *string,
+                        const uint32 &size,
+                        const char8 &c);
 
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

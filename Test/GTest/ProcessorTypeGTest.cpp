@@ -2,7 +2,7 @@
  * @file ProcessorTypeGTest.cpp
  * @brief Source file for class ProcessorTypeGTest
  * @date 25/giu/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -41,47 +41,54 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class ProcessorTypeGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-
-    }
-
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
-
-TEST_F(ProcessorTypeGTest,TestAssignmentOperator) {
+TEST(ProcessorTypeGTest,TestAssignmentOperator) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestAssignmentOperator());
 }
 
-TEST_F(ProcessorTypeGTest,TestOROperator) {
+TEST(ProcessorTypeGTest,TestOROperator) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestOROperator());
 }
 
-TEST_F(ProcessorTypeGTest,TestEqualityOperator) {
+TEST(ProcessorTypeGTest,TestEqualityOperator) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestEqualityOperator());
 }
 
-TEST_F(ProcessorTypeGTest,TestInequalityOperator) {
+TEST(ProcessorTypeGTest,TestInequalityOperator) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestInequalityOperator());
 }
 
-TEST_F(ProcessorTypeGTest,TestGetSetDefaultCPUs) {
+TEST(ProcessorTypeGTest,TestSetGetDefaultCPUs) {
     ProcessorTypeTest processorTypeTest;
-    ASSERT_TRUE(processorTypeTest.TestGetSetDefaultCPUs());
+    ASSERT_TRUE(processorTypeTest.TestSetGetDefaultCPUs());
 }
 
-TEST_F(ProcessorTypeGTest,TestConstructors) {
+
+TEST(ProcessorTypeGTest,TestDefaultConstructor) {
     ProcessorTypeTest processorTypeTest;
-    ASSERT_TRUE(processorTypeTest.TestConstructors());
+    ASSERT_TRUE(processorTypeTest.TestDefaultConstructor());
 }
 
+TEST(ProcessorTypeGTest,TestConstructorFromMask) {
+    ProcessorTypeTest processorTypeTest;
+    ASSERT_TRUE(processorTypeTest.TestConstructorFromMask());
+}
+
+TEST(ProcessorTypeGTest,TestConstructorFromProcessorType) {
+    ProcessorTypeTest processorTypeTest;
+    ASSERT_TRUE(processorTypeTest.TestConstructorFromProcessorType());
+}
+
+
+TEST(ProcessorTypeGTest,TestSetMask) {
+    ProcessorTypeTest processorTypeTest;
+    ASSERT_TRUE(processorTypeTest.TestSetMask(0xff));
+}
+
+TEST(ProcessorTypeGTest,TestAddCPU) {
+    ProcessorTypeTest processorTypeTest;
+    ASSERT_TRUE(processorTypeTest.TestAddCPU(3,9));
+}

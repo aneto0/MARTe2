@@ -26,6 +26,8 @@ TARGET=cov
 
 include Makefile.inc
 
+LIBRARIES_STATIC=OperatingSystem/Linux/cov/L0PortabilityOS$(LIBEXT)
+
 OPTIM = -finline-functions
 
 LIBRARIES += -lm

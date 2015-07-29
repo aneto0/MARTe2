@@ -30,9 +30,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "EventSemTest.h"
+#include "ErrorType.h"
 #include "Threads.h"
 #include "Sleep.h"
 #include "HighResolutionTimer.h"
+#include "MutexSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -46,6 +48,7 @@ EventSemTest::EventSemTest() {
     eventSem.Create();
     mutexSem.Create();
     sharedVariable = 0;
+    sharedVariable1 = 0;
     timeout = TTInfiniteWait;
 }
 
@@ -56,15 +59,15 @@ EventSemTest::~EventSemTest() {
 
 bool EventSemTest::TestConstructor() {
     EventSem testSem;
-    return (testSem.Handle() == NULL);
+    return testSem.IsClosed();
 }
 
 bool EventSemTest::TestDestructor() {
     EventSem testSem;
     testSem.Create();
-    bool test = (testSem.Handle() != NULL);
+    bool test = !testSem.IsClosed();
     testSem.~EventSem();
-    test = (testSem.Handle() == NULL);
+    test = testSem.IsClosed();
     return test;
 }
 
@@ -72,7 +75,7 @@ bool EventSemTest::TestCreate() {
     EventSem testSem;
     bool test = testSem.Create();
     if (test) {
-        test &= (testSem.Handle() != NULL);
+        test &= (testSem.GetOSProperties() != NULL);
     }
     testSem.Close();
     return test;
@@ -89,10 +92,12 @@ bool EventSemTest::TestCopyConstructor() {
     testSem.Create();
     EventSem copySem(testSem);
     testSem.Reset();
-    testSem.Wait(1);
+
+    TimeoutType tt(1);
+    testSem.Wait(tt);
 
     bool test = copySem.Post();
-    test &= (testSem.Handle() == copySem.Handle());
+    test &= (testSem.GetOSProperties() == copySem.GetOSProperties());
 
     testSem.Close();
     copySem.Close();
@@ -100,27 +105,53 @@ bool EventSemTest::TestCopyConstructor() {
     return test;
 }
 
-bool EventSemTest::TestWait(TimeoutType timeout) {
+bool EventSemTest::TestIsClosed() {
+    bool result = true;
+    EventSem target;
+    target.Create();
+    result = result && !target.IsClosed();
+    target.Close();
+    result = result && target.IsClosed();
+    return result;
+}
 
-    Error returnError = Debug;
+void ThreadLocked(EventSemTest &tt) {
+    TimeoutType time(500);
+    tt.sharedVariable1++;
+    tt.eventSem.Wait(time);
+    tt.sharedVariable1--;
+}
+
+bool EventSemTest::TestCopyConstructor2Sem() {
+    bool test = false;
+    uint32 counter1;
+    uint32 counter2;
+    float64 elapsetTime;
+    eventSem.Create();
+    EventSem copySem(eventSem);
+    eventSem.Reset();
+    counter1 = HighResolutionTimer::Counter32();
+    Threads::BeginThread((ThreadFunctionType) ThreadLocked, this);
+    while (sharedVariable1 == 0) {
+        Sleep::MSec(10);
+    }
+    test = copySem.Post();
+    while (sharedVariable1 == 1) {
+        Sleep::MSec(10);
+    }
+    counter2 = HighResolutionTimer::Counter32();
+    elapsetTime = HighResolutionTimer::TicksToTime(int64(counter2), int64(counter1));
+    return (test && (elapsetTime < float64(5)));
+}
+
+bool EventSemTest::TestWait(TimeoutType timeoutTime) {
 
     EventSem newSem(eventSem);
-
-    if (eventSem.Wait(timeout, returnError)) {
-        return False;
+    ErrorType err = eventSem.Wait(timeoutTime);
+    if (err == Timeout) {
+        err = newSem.ResetWait(timeoutTime);
     }
-
-    if (returnError != Timeout) {
-        return False;
-    }
-
-    returnError = Debug;
-
-    if (newSem.ResetWait(timeout, returnError)) {
-        return False;
-    }
-    return returnError == Timeout;
-
+    return (err == Timeout);
 }
 
 bool EventSemTest::TestPost() {
@@ -144,14 +175,13 @@ bool EventSemTest::TestReset() {
 }
 
 void PosterThreadCallback(EventSemTest &eventSemTest) {
-    double maxTime = 2.0;
+    float64 maxTime = 2.0;
     int64 tstart = HighResolutionTimer::Counter();
     while (eventSemTest.sharedVariable < 2) {
-        SleepMSec(100);
+        Sleep::MSec(100);
         eventSemTest.sharedVariable = 1;
         eventSemTest.eventSem.Post();
-        if (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(),
-                                             tstart) > maxTime) {
+        if (HighResolutionTimer::TicksToTime(HighResolutionTimer::Counter(), tstart) > maxTime) {
             break;
         }
     }
@@ -161,41 +191,35 @@ void PosterThreadCallback(EventSemTest &eventSemTest) {
 bool EventSemTest::TestWait() {
     eventSem.Reset();
     sharedVariable = 0;
-    TID tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback,
-                                   this);
-    Error returnError = Debug;
-    bool test = eventSem.Wait(TTInfiniteWait, returnError);
-    test &= (returnError == Debug);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
+    ErrorType err = eventSem.Wait();
 
     if (sharedVariable == 0) {
         //Too fast wait has failed for sure...
-        test = false;
+        err = FatalError;
     }
     sharedVariable = 2;
     eventSem.Close();
     //Wait for the thread to terminate
     int32 counter = 0;
     while (Threads::IsAlive(tid)) {
-        SleepSec(0.1);
+        Sleep::Sec(0.1);
         if (counter++ > 10) {
             Threads::Kill(tid);
             break;
         }
     }
-    return test;
+    return (err == NoError);
 }
 
 bool EventSemTest::TestResetWait() {
     sharedVariable = 0;
-    TID tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback,
-                                   this);
-    Error returnError = Debug;
-    bool test = eventSem.ResetWait(TTInfiniteWait, returnError);
-    test &= (returnError == Debug);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
+    ErrorType err = eventSem.ResetWait(TTInfiniteWait);
 
     if (sharedVariable == 0) {
         //Too fast wait has failed for sure...
-        test = false;
+        err = FatalError;
     }
     sharedVariable = 2;
     eventSem.Close();
@@ -203,13 +227,13 @@ bool EventSemTest::TestResetWait() {
     //Wait for the thread to terminate
     int32 counter = 0;
     while (Threads::IsAlive(tid)) {
-        SleepSec(0.1);
+        Sleep::Sec(0.1);
         if (counter++ > 10) {
             Threads::Kill(tid);
             break;
         }
     }
-    return test;
+    return (err == NoError);
 }
 
 void MultiThreadedTestWaitCallback(EventSemTest &eventSemTest) {
@@ -237,39 +261,38 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
     uint32 i = 0;
     for (i = 0; i < nOfThreads; i++) {
         //Each thread will try to increment the value of sharedVariable
-        Threads::BeginThread((ThreadFunctionType) MultiThreadedTestWaitCallback,
-                             this);
+        Threads::BeginThread((ThreadFunctionType) MultiThreadedTestWaitCallback, this);
     }
     //Allow threads to start
-    SleepMSec(100);
+    Sleep::MSec(100);
     //The semaphore was not posted yet, so the value of the sharedVariable should still be 0xABCD
     if (sharedVariable != 0xABCD) {
-        return False;
+        return false;
     }
     //Reset the value of the sharedVariable
     sharedVariable = 0;
     eventSem.Post();
     //Wait some time for the test to succeed...
     while (sharedVariable != nOfThreads) {
-        SleepMSec(100);
+        Sleep::MSec(100);
         i--;
         //Waited 20 ms x nOfThreads and the value of the sharedVariable is still
         //not nOfThreads which likely indicates a problem with the posting of the semaphore
         if (i == 0) {
-            return False;
+            return false;
         }
     }
 
-    SleepMSec(100);
+    Sleep::MSec(100);
     //Check if all the threads have terminated
     for (i = 0; i < Threads::NumberOfThreads(); i++) {
-        TID tid = Threads::FindByIndex(i);
+        ThreadIdentifier tid = Threads::FindByIndex(i);
         if (Threads::IsAlive(tid)) {
             Threads::Kill(tid);
         }
     }
 
-    return True;
+    return true;
 }
 
 bool EventSemTest::TestWaitNoTimeout(uint32 nOfThreads) {

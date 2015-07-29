@@ -1,7 +1,7 @@
 /**
  * @file EndianityGTest.cpp
  * @brief Source file for class EndianityGTest
- * @date 25/giu/2015
+ * @date 25/06/2015
  * @author Giuseppe Ferr�
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -24,6 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <limits.h>
 
 /*---------------------------------------------------------------------------*/
@@ -32,6 +33,7 @@
 
 #include "gtest/gtest.h"
 #include "EndianityTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,10 +41,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-
-
-
 
 TEST(EndianityGTest,TestToBigEndianU16) {
     EndianityTest<uint16> uint16Test(0xAABB);
@@ -64,7 +62,6 @@ TEST(EndianityGTest,TestFromLittleEndianU16) {
     ASSERT_TRUE(uint16Test.TestFromLittleEndian());
 }
 
-
 TEST(EndianityGTest,TestMemCopyToBigEndianU16) {
     EndianityTest<uint16> uint16Test(0xAABB);
     ASSERT_TRUE(uint16Test.TestMemCopyToBigEndian());
@@ -85,19 +82,15 @@ TEST(EndianityGTest,TestMemCopyFromLittleEndianU16) {
     ASSERT_TRUE(uint16Test.TestMemCopyFromLittleEndian());
 }
 
-
-
 TEST(EndianityGTest,TestToFromEndianU16) {
     EndianityTest<uint16> uint16Test(0xAABB);
     ASSERT_TRUE(uint16Test.TestToFromEndian());
 }
 
-
 TEST(EndianityGTest,TestMemCopyToFromEndianU16) {
     EndianityTest<uint16> uint16Test(0xAABB);
     ASSERT_TRUE(uint16Test.TestMemCopyToFromEndian());
 }
-/////////////////////////////////////////////////////////////////
 
 TEST(EndianityGTest,TestToBigEndian16) {
     EndianityTest<int16> int16Test(0xAABB);
@@ -139,8 +132,6 @@ TEST(EndianityGTest,TestMemCopyFromLittleEndian16) {
     ASSERT_TRUE(int16Test.TestMemCopyFromLittleEndian());
 }
 
-
-
 TEST(EndianityGTest,TestToFromEndian16) {
     EndianityTest<int16> int16Test(0xAABB);
     ASSERT_TRUE(int16Test.TestToFromEndian());
@@ -151,8 +142,6 @@ TEST(EndianityGTest,TestMemCopyToFromEndian16) {
     EndianityTest<int16> int16Test(0xAABB);
     ASSERT_TRUE(int16Test.TestMemCopyToFromEndian());
 }
-
-/////////////////////////////////////////////////////////////////
 
 TEST(EndianityGTest,TestToBigEndianU32) {
     EndianityTest<uint32> uint32Test(0xAABB);
@@ -194,19 +183,16 @@ TEST(EndianityGTest,TestMemCopyFromLittleEndianU32) {
     ASSERT_TRUE(uint32Test.TestMemCopyFromLittleEndian());
 }
 
-
 TEST(EndianityGTest,TestToFromEndianU32) {
     EndianityTest<uint32> uint32Test(0xAABB);
     ASSERT_TRUE(uint32Test.TestToFromEndian());
 }
-
 
 TEST(EndianityGTest,TestMemCopyToFromEndianU32) {
     EndianityTest<uint32> uint32Test(0xAABB);
     ASSERT_TRUE(uint32Test.TestMemCopyToFromEndian());
 }
 
-//////////////////////////////////////////////////////////////
 TEST(EndianityGTest,TestToBigEndian32) {
     EndianityTest<int32> int32Test(0xAABB);
     ASSERT_TRUE(int32Test.TestToBigEndian());
@@ -252,14 +238,10 @@ TEST(EndianityGTest,TestToFromEndian32) {
     ASSERT_TRUE(int32Test.TestToFromEndian());
 }
 
-
 TEST(EndianityGTest,TestMemCopyToFromEndian32) {
     EndianityTest<int32> int32Test(0xAABB);
     ASSERT_TRUE(int32Test.TestMemCopyToFromEndian());
 }
-
-/////////////////////////////////////////////////////////////////////////
-
 
 TEST(EndianityGTest,TestToBigEndianU64) {
     EndianityTest<uint64> uint64Test(0xAABB);
@@ -271,18 +253,15 @@ TEST(EndianityGTest,TestToLittleEndianU64) {
     ASSERT_TRUE(uint64Test.TestToLittleEndian());
 }
 
-
 TEST(EndianityGTest,TestFromBigEndianU64) {
     EndianityTest<uint64> uint64Test(0xAABB);
     ASSERT_TRUE(uint64Test.TestFromBigEndian());
 }
 
-
 TEST(EndianityGTest,TestFromLittleEndianU64) {
     EndianityTest<uint64> uint64Test(0xAABB);
     ASSERT_TRUE(uint64Test.TestFromLittleEndian());
 }
-
 
 TEST(EndianityGTest,TestMemCopyToBigEndianU64) {
     EndianityTest<uint64> uint64Test(0xAABB);
@@ -304,19 +283,16 @@ TEST(EndianityGTest,TestMemCopyFromLittleEndianU64) {
     ASSERT_TRUE(uint64Test.TestMemCopyFromLittleEndian());
 }
 
-
 TEST(EndianityGTest,TestToFromEndianU64) {
     EndianityTest<uint64> uint64Test(0xAABB);
     ASSERT_TRUE(uint64Test.TestToFromEndian());
 }
-
 
 TEST(EndianityGTest,TestMemCopyToFromEndianU64) {
     EndianityTest<uint64> uint64Test(0xAABB);
     ASSERT_TRUE(uint64Test.TestMemCopyToFromEndian());
 }
 
-//////////////////////////////////////////////////////////////
 TEST(EndianityGTest,TestToBigEndian64) {
     EndianityTest<int64> int64Test(0xAABB);
     ASSERT_TRUE(int64Test.TestToBigEndian());
@@ -326,7 +302,6 @@ TEST(EndianityGTest,TestToLittleEndian64) {
     EndianityTest<int64> int64Test(0xAABB);
     ASSERT_TRUE(int64Test.TestToLittleEndian());
 }
-
 
 TEST(EndianityGTest,TestFromBigEndian64) {
     EndianityTest<int64> int64Test(0xAABB);
@@ -358,132 +333,112 @@ TEST(EndianityGTest,TestMemCopyFromLittleEndian64) {
     ASSERT_TRUE(int64Test.TestMemCopyFromLittleEndian());
 }
 
-
 TEST(EndianityGTest,TestToFromEndian64) {
     EndianityTest<int64> int64Test(0xAABB);
     ASSERT_TRUE(int64Test.TestToFromEndian());
 }
-
 
 TEST(EndianityGTest,TestMemCopyToFromEndian64) {
     EndianityTest<int64> int64Test(0xAABB);
     ASSERT_TRUE(int64Test.TestMemCopyToFromEndian());
 }
 
-
-////////////////////////////////////////////////////////
-
-
-
 TEST(EndianityGTest,TestToBigEndianFloat) {
-    EndianityTest<float> floatTest(0.12345f);
-    ASSERT_TRUE(floatTest.TestToBigEndian());
+    EndianityTest<float32> float32Test(0.12345f);
+    ASSERT_TRUE(float32Test.TestToBigEndian());
 }
 
 TEST(EndianityGTest,TestToLittleEndianFloat) {
-    EndianityTest<float> floatTest(0.12345f);
-    ASSERT_TRUE(floatTest.TestToLittleEndian());
+    EndianityTest<float32> float32Test(0.12345f);
+    ASSERT_TRUE(float32Test.TestToLittleEndian());
 }
 
-
 TEST(EndianityGTest,TestFromBigEndianFloat) {
-    EndianityTest<float> floatTest(0.12345f);
-    ASSERT_TRUE(floatTest.TestFromBigEndian());
+    EndianityTest<float32> float32Test(0.12345f);
+    ASSERT_TRUE(float32Test.TestFromBigEndian());
 }
 
 TEST(EndianityGTest,TestFromLittleEndianFloat) {
-    EndianityTest<float> floatTest(0.12345f);
-    ASSERT_TRUE(floatTest.TestFromLittleEndian());
+    EndianityTest<float32> float32Test(0.12345f);
+    ASSERT_TRUE(float32Test.TestFromLittleEndian());
 }
 
 TEST(EndianityGTest,TestMemCopyToBigEndianFloat) {
-    EndianityTest<float> floatTest(0.12345f);
-    ASSERT_TRUE(floatTest.TestMemCopyToBigEndian());
+    EndianityTest<float32> float32Test(0.12345f);
+    ASSERT_TRUE(float32Test.TestMemCopyToBigEndian());
 }
 
 TEST(EndianityGTest,TestMemCopyToLittleEndianFloat) {
-    EndianityTest<float> floatTest(0.12345f);
-    ASSERT_TRUE(floatTest.TestMemCopyToLittleEndian());
+    EndianityTest<float32> float32Test(0.12345f);
+    ASSERT_TRUE(float32Test.TestMemCopyToLittleEndian());
 }
 
 TEST(EndianityGTest,TestMemCopyFromBigEndianFloat) {
-    EndianityTest<float> floatTest(0.12345f);
-    ASSERT_TRUE(floatTest.TestMemCopyFromBigEndian());
+    EndianityTest<float32> float32Test(0.12345f);
+    ASSERT_TRUE(float32Test.TestMemCopyFromBigEndian());
 }
 
 TEST(EndianityGTest,TestMemCopyFromLittleEndianFloat) {
-    EndianityTest<float> floatTest(0.12345f);
-    ASSERT_TRUE(floatTest.TestMemCopyFromLittleEndian());
+    EndianityTest<float32> float32Test(0.12345f);
+    ASSERT_TRUE(float32Test.TestMemCopyFromLittleEndian());
 }
-
 
 TEST(EndianityGTest,TestToFromEndianFloat) {
-    EndianityTest<float> floatTest(0.12345f);
-    ASSERT_TRUE(floatTest.TestToFromEndian());
+    EndianityTest<float32> float32Test(0.12345f);
+    ASSERT_TRUE(float32Test.TestToFromEndian());
 }
-
 
 TEST(EndianityGTest,TestMemCopyToFromEndianFloat) {
-    EndianityTest<float> floatTest(0.12345f);
-    ASSERT_TRUE(floatTest.TestMemCopyToFromEndian());
+    EndianityTest<float32> float32Test(0.12345f);
+    ASSERT_TRUE(float32Test.TestMemCopyToFromEndian());
 }
 
-
-/////////////////////////////////////////////////////////////////////////
-
-
-
-
 TEST(EndianityGTest,TestToBigEndianDouble) {
-    EndianityTest<double> doubleTest(0.123456789);
-    ASSERT_TRUE(doubleTest.TestToBigEndian());
+    EndianityTest<float64> float64Test(0.123456789);
+    ASSERT_TRUE(float64Test.TestToBigEndian());
 }
 
 TEST(EndianityGTest,TestToLittleEndianDouble) {
-    EndianityTest<double> doubleTest(0.123456789);
-    ASSERT_TRUE(doubleTest.TestToLittleEndian());
+    EndianityTest<float64> float64Test(0.123456789);
+    ASSERT_TRUE(float64Test.TestToLittleEndian());
 }
 
-
 TEST(EndianityGTest,TestFromBigEndianDouble) {
-    EndianityTest<double> doubleTest(0.123456789);
-    ASSERT_TRUE(doubleTest.TestFromBigEndian());
+    EndianityTest<float64> float64Test(0.123456789);
+    ASSERT_TRUE(float64Test.TestFromBigEndian());
 }
 
 TEST(EndianityGTest,TestFromLittleEndianDouble) {
-    EndianityTest<double> doubleTest(0.123456789);
-    ASSERT_TRUE(doubleTest.TestFromLittleEndian());
+    EndianityTest<float64> float64Test(0.123456789);
+    ASSERT_TRUE(float64Test.TestFromLittleEndian());
 }
 
 TEST(EndianityGTest,TestMemCopyToBigEndianDouble) {
-    EndianityTest<double> doubleTest(0.123456789);
-    ASSERT_TRUE(doubleTest.TestMemCopyToBigEndian());
+    EndianityTest<float64> float64Test(0.123456789);
+    ASSERT_TRUE(float64Test.TestMemCopyToBigEndian());
 }
 
 TEST(EndianityGTest,TestMemCopyToLittleEndianDouble) {
-    EndianityTest<double> doubleTest(0.123456789);
-    ASSERT_TRUE(doubleTest.TestMemCopyToLittleEndian());
+    EndianityTest<float64> float64Test(0.123456789);
+    ASSERT_TRUE(float64Test.TestMemCopyToLittleEndian());
 }
 
 TEST(EndianityGTest,TestMemCopyFromBigEndianDouble) {
-    EndianityTest<double> doubleTest(0.123456789);
-    ASSERT_TRUE(doubleTest.TestMemCopyFromBigEndian());
+    EndianityTest<float64> float64Test(0.123456789);
+    ASSERT_TRUE(float64Test.TestMemCopyFromBigEndian());
 }
 
 TEST(EndianityGTest,TestMemCopyFromLittleEndianDouble) {
-    EndianityTest<double> doubleTest(0.123456789);
-    ASSERT_TRUE(doubleTest.TestMemCopyFromLittleEndian());
+    EndianityTest<float64> float64Test(0.123456789);
+    ASSERT_TRUE(float64Test.TestMemCopyFromLittleEndian());
 }
-
 
 TEST(EndianityGTest,TestToFromEndianDouble) {
-    EndianityTest<double> doubleTest(0.123456789);
-    ASSERT_TRUE(doubleTest.TestToFromEndian());
+    EndianityTest<float64> float64Test(0.123456789);
+    ASSERT_TRUE(float64Test.TestToFromEndian());
 }
-
 
 TEST(EndianityGTest,MemCopyToFromEndianDouble) {
-    EndianityTest<double> floatTest(0.123456789);
-    ASSERT_TRUE(floatTest.TestMemCopyToFromEndian());
+    EndianityTest<float64> float32Test(0.123456789);
+    ASSERT_TRUE(float32Test.TestMemCopyToFromEndian());
 }
-

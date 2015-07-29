@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright 2015 F4E | European Joint Undertaking for 
  * ITER and the Development of Fusion Energy ('Fusion for Energy')
  *
@@ -36,24 +36,28 @@ private:
     uint32 action;
 public:
     /** Pass handling back to OS. */
-    static const uint32 NotHandled = 0x1;
+    static const uint32 NotHandled = 0x1u;
     /** Handled: program can continue. */
-    static const uint32 ContinueExec = 0x2;
+    static const uint32 ContinueExec = 0x2u;
     /** Handled: jump to thread start and proceed to termination. */
-    static const uint32 KillThread = 0x3;
+    static const uint32 KillThread = 0x3u;
     /** Handled: jump to thread start and terminate task. */
-    static const uint32 KillTask = 0x4;
+    static const uint32 KillTask = 0x4u;
     /** Handled: jump to thread start and retry. */
-    static const uint32 TryAgain = 0x5;
+    static const uint32 TryAgain = 0x5u;
     /** Pass handling back to other handlers in stack. */
-    static const uint32 TryOther = 0x6;
-    /** do not report error information (ored). */
-    static const uint32 NoReport = 0x10000;
+    static const uint32 TryOther = 0x6u;
+    /** do not report error information (ORed). */
+    static const uint32 NoReport = 0x10000u;
 
-public:
     /** @brief Default handler. */
-    ExceptionHandler(uint32 action = NotHandled) {
-        this->action = action;
+    ExceptionHandler() {
+        this->action = 0x1u;
+    }
+
+    /** @brief Default handler. */
+    ExceptionHandler(const uint32 &defaultAction) {
+        this->action = defaultAction;
     }
 
     /** This is the action to be performed. */

@@ -2,7 +2,7 @@
  * @file MemoryGTest.cpp
  * @brief Source file for class MemoryGTest
  * @date 29/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -41,58 +41,53 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-
-class MemoryGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
-
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
-
-TEST_F(MemoryGTest,TestMallocAndFree) {
+TEST(MemoryGTest,TestMalloc) {
     MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestMallocAndFree(100));
+    ASSERT_TRUE(memorytest.TestMalloc(100));
 }
 
-TEST_F(MemoryGTest,TestRealloc) {
+TEST(MemoryGTest,TestFree) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestFree(100));
+}
+
+TEST(MemoryGTest,TestRealloc) {
     MemoryTest memorytest;
     ASSERT_TRUE(memorytest.TestRealloc(100, 10));
 }
 
-TEST_F(MemoryGTest,TestMemoryStringDup) {
+TEST(MemoryGTest,TestStringDup) {
     MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestMemoryStringDup("Hello"));
+    ASSERT_TRUE(memorytest.TestStringDup("Hello"));
 }
 
-TEST_F(MemoryGTest,TestSharedMemory) {
+TEST(MemoryGTest,TestCheck) {
     MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSharedMemory());
+    ASSERT_TRUE(memorytest.TestCheck(100));
 }
 
-TEST_F(MemoryGTest,TestCopyAndMove) {
+TEST(MemoryGTest,TestCopy) {
     MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestCopyAndMove());
+    ASSERT_TRUE(memorytest.TestCopy());
 }
 
-TEST_F(MemoryGTest,TestSetAndSearch) {
+TEST(MemoryGTest,TestMove) {
     MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestSetAndSearch());
+    ASSERT_TRUE(memorytest.TestMove());
 }
 
-TEST_F(MemoryGTest,TestHeader) {
+TEST(MemoryGTest,TestCompare) {
     MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestHeader());
+    ASSERT_TRUE(memorytest.TestCompare());
 }
 
-TEST_F(MemoryGTest,TestDatabase) {
+TEST(MemoryGTest,TestSet) {
     MemoryTest memorytest;
-    ASSERT_TRUE(memorytest.TestDatabase());
+    ASSERT_TRUE(memorytest.TestSet());
 }
-	
+
+TEST(MemoryGTest,TestSearch) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestSearch());
+}
+

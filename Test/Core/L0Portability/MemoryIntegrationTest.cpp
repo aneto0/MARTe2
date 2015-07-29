@@ -2,7 +2,7 @@
  * @file MemoryIntegrationTest.cpp
  * @brief Source file for class MemoryIntegrationTest
  * @date 29/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -47,7 +47,7 @@ MemoryIntegrationTest::MemoryIntegrationTest() {
     eventSem.Create();
     counter = 0;
     for (uint32 i = 0; i < MAX_NO_OF_MEMORY_MONITORS - 1; i++) {
-        signals[i] = False;
+        signals[i] = false;
         sizeStore[i] = 0;
         chunksStore[i] = 0;
     }
@@ -62,7 +62,7 @@ void InitializeSharedMemory(MemoryIntegrationTest &myTestMemory) {
     bool* sharedBool = (bool*) Memory::SharedAlloc(2, sizeof(bool));
 
     if (sharedBool != NULL) {
-        *sharedBool = False;
+        *sharedBool = false;
     }
 
     if (sharedInt != NULL) {
@@ -77,7 +77,7 @@ void IncrementSharedMemory(MemoryIntegrationTest &myTestMemory) {
     int32* sharedInt = (int32*) Memory::SharedAlloc(1, sizeof(int32));
     bool* sharedBool = (bool*) Memory::SharedAlloc(2, sizeof(bool));
     if (sharedBool != NULL) {
-        *sharedBool = True;
+        *sharedBool = true;
     }
     if (sharedInt != NULL) {
         (*sharedInt)++;
@@ -107,7 +107,7 @@ bool MemoryIntegrationTest::TestSharedMemory() {
 
     if (sharedInt == NULL) {
 
-        return False;
+        return false;
     }
 
     int32 j = 0;
@@ -116,14 +116,14 @@ bool MemoryIntegrationTest::TestSharedMemory() {
     while ((*sharedInt) < 2) {
         if (j++ > 100) {
 
-            return False;
+            return false;
         }
-        SleepSec(20e-3);
+        Sleep::Sec(20e-3);
     }
-    bool returnValue = False;
+    bool returnValue = false;
     if (sharedBool == NULL) {
 
-        return False;
+        return false;
     }
     returnValue = *sharedBool;
 
@@ -140,7 +140,7 @@ bool MemoryIntegrationTest::TestHeader() {
 
     uint32 size;
     TID tid;
-    bool ret = True;
+    bool ret = true;
     //creates an array of 10 integers
     uint32 *arrayInt = (uint32*) Memory::Malloc(sizeof(uint32) * 10);
 
@@ -150,15 +150,15 @@ bool MemoryIntegrationTest::TestHeader() {
 
     //gets the header informations
     if (!Memory::GetHeaderInfo(arrayInt, size, tid)) {
-        ret = False;
+        ret = false;
     }
 
     if (size < (sizeof(uint32) * 10 + sizeof(uint32) + sizeof(TID))) {
-        ret = False;
+        ret = false;
     }
 
     if (Threads::Id() != tid) {
-        ret = False;
+        ret = false;
     }
 
 #else
@@ -185,30 +185,30 @@ void AllocateFunction(MemoryIntegrationTest &m) {
     int32 i = 0;
     uint32 amount = myIndex;
     while (amount >= 32) {
-        p[i] = Memory::Malloc(sizeof(char) * 32);
+        p[i] = Memory::Malloc(sizeof(char8) * 32);
         amount -= 32;
         i++;
     }
 
     if (amount > 0) {
 
-        p[i] = Memory::Malloc(sizeof(char) * amount);
+        p[i] = Memory::Malloc(sizeof(char8) * amount);
     }
     else {
         i--;
     }
 
-    m.signals[myIndex] = True;
+    m.signals[myIndex] = true;
 
     while (m.signals[myIndex]) {
-        SleepSec(1e-3);
+        Sleep::Sec(1e-3);
     }
 
     while (i >= 0) {
         Memory::Free(p[i]);
         i--;
     }
-    m.signals[myIndex] = True;
+    m.signals[myIndex] = true;
 }
 
 bool MemoryIntegrationTest::TestDatabase() {
@@ -225,16 +225,16 @@ bool MemoryIntegrationTest::TestDatabase() {
     for (counter = 0; counter < MAX_NO_OF_MEMORY_MONITORS - 1; counter++) {
         tids[counter] = Threads::BeginThread((ThreadFunctionType) AllocateFunction, this);
         while (!(signals[counter])) {
-            SleepSec(1e-3);
+            Sleep::Sec(1e-3);
         }
     }
 
-    bool ret = True;
+    bool ret = true;
 
     for (counter = 0; counter < MAX_NO_OF_MEMORY_MONITORS - 1; counter++) {
 
         if (!(Memory::AllocationStatistics(size, chunks, tids[counter]))) {
-            ret = False;
+            ret = false;
         }
 
         //the first thread allocates space on the threads database, while the last
@@ -249,20 +249,20 @@ bool MemoryIntegrationTest::TestDatabase() {
         }
 
         //the minimum size
-        int32 testSize = sizeof(char) * counter + sizeStore[counter] + testChunks * minHeaderSize;
+        int32 testSize = sizeof(char8) * counter + sizeStore[counter] + testChunks * minHeaderSize;
 
         //add the previous already allocated chunks
         testChunks += chunksStore[counter];
 
 
         if (size < testSize || chunks != testChunks) {
-            ret = False;
+            ret = false;
         }
 
-        signals[counter] = False;
+        signals[counter] = false;
 
         while (!(signals[counter])) {
-            SleepSec(1e-3);
+            Sleep::Sec(1e-3);
         }
 
     }

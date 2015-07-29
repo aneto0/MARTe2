@@ -2,7 +2,7 @@
  * @file TimeoutType.h
  * @brief Header file for class TimeoutType
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef TIMEOUTTYPE_H_
-#define 		TIMEOUTTYPE_H_
+#define TIMEOUTTYPE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,65 +31,60 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "HighResolutionTimer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-/** max value for the delay that is treated  */
-const uint32 TTMaxDelay = 0xFFFF0000;
-
-
 /**
- * @brief Functions for timeout definition.
+ * @brief timeout type definition.
  *
  * @details These methods define the timeout object which is simply an integer which represent a time in milliseconds.
  * Furthermore here are defined flags for different types of timeout.
- *
- * @details This class is used to implement semaphores based on spinlocks with timed locks and in applications which needs
- * timeouts.
+ * This class is used to implement semaphores with timed locks and in applications which needs
+ * Timeouts.
  */
 class TimeoutType {
 
 public:
-    /** how many milliseconds to wait */
-    uint32 msecTimeout;
 
     /**
      * @brief Constructor from integer.
      * @param[in] msecs is the time in milliseconds.
      */
-    inline TimeoutType(uint32 msecs = (uint32) 0xFFFFFFFF);
-
+    inline TimeoutType(const uint32 &msecs = 0xFFFFFFFFu);
 
     /**
-     * @brief Set timeout from float.
+     * @brief Sets the timeout from float32.
      * @param[in] secs is the time in seconds.
      */
-    inline void SetTimeOutSec(double secs);
+    /*lint -e(1960) , functions should have external effects*/
+    inline void SetTimeoutSec(float64 secs);
 
     /**
-     * @brief Set timeout from HRT ticks.
+     * @brief Sets the timeout from HighResolutionTimer ticks.
      * @param[in] ticks are the number of cpu ticks.
      */
-    inline void SetTimeOutHighResolutionTimerTicks(int64 ticks);
+    /*lint -e(1960) , functions should have external effects*/
+    inline void SetTimeoutHighResolutionTimerTicks(int64 ticks);
 
     /**
-     * @brief Get the timeout in HighResolutionTimer Ticks
+     * @brief Gets the timeout in HighResolutionTimer Ticks
      * @return the number of ticks related to the timeout.
      */
     inline int64 HighResolutionTimerTicks() const;
 
     /**
-     * @brief Subtract n to the timeout.
-     * @param[in] n is the value which must be subtracted to the timeout (milliseconds).
+     * @brief Subtracts a number of milliseconds from the timeout.
+     * @param[in] mSecs is the value which will be subtracted to the timeout (milliseconds).
+     * @return this object.
      */
-    inline void operator-=(uint32 n);
+    inline TimeoutType &operator-=(const uint32 &mSecs);
 
     /**
-     * @brief Compare two timeout times.
+     * @brief Compares two timeout times.
      * @param[in] tt is the timeout object to be compared with this.
      * @return true of msecTimeout attributes of both timeout object are equal.
      */
@@ -104,9 +99,10 @@ public:
 
     /**
      * @brief Copy operator.
-     * @param[in] tt is the timout to copy in this.
+     * @param[in] tt is the timeout to copy in this.
+     * @return this object.
      */
-    inline void operator=(const TimeoutType &tt);
+    inline TimeoutType &operator=(const TimeoutType &tt);
 
     /**
      * @brief Check if the timeout is finite.
@@ -114,53 +110,72 @@ public:
      */
     inline bool IsFinite() const;
 
+    /**
+     * @brief Returns the timeout value in milliseconds.
+     * @return the timeout value in milliseconds.
+     */
+    inline uint32 GetTimeoutMSec() const;
+
+private:
+
+    /**
+     * Timeout in milliseconds
+     */
+    uint32 msecTimeout;
+
 };
 
 /** Do not wait (or wait indefinitely if blocking is set */
-const TimeoutType TTNoWait((uint32) 0x00000000);
+const TimeoutType TTNoWait(0x00000000u);
 
-/** Infinite wait Timeout */
-const TimeoutType TTInfiniteWait((uint32) 0xFFFFFFFF);
-
-/** Used in semaphore protected codes to specify to bypass the check! */
-const TimeoutType TTUnProtected((uint32) 0xFFFFFFFD);
+/** Infinite wait timeout */
+const TimeoutType TTInfiniteWait(0xFFFFFFFFu);
 
 /** Used in semaphore protected codes to specify to bypass the check! */
-const TimeoutType TTDefault((uint32) 0xFFFFFFFE);
+const TimeoutType TTUnProtected(0xFFFFFFFDu);
+
+/** Used in semaphore protected codes to specify to bypass the check! */
+const TimeoutType TTDefault(0xFFFFFFFEu);
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-TimeoutType::TimeoutType(uint32 msecs) {
+
+TimeoutType::TimeoutType(const uint32 &msecs) {
     msecTimeout = msecs;
 }
 
-void TimeoutType::SetTimeOutSec(double secs) {
-    msecTimeout = (uint32) (secs * 1000.0);
+void TimeoutType::SetTimeoutSec(float64 secs) {
+    secs *= 1000.0;
+    msecTimeout = static_cast<uint32>(secs);
 }
 
-void TimeoutType::SetTimeOutHighResolutionTimerTicks(int64 ticks) {
+void TimeoutType::SetTimeoutHighResolutionTimerTicks(int64 ticks) {
     if (ticks < 0) {
         ticks = 0;
     }
-    double msDT = 1000.0 * (ticks * HighResolutionTimer::Period());
-    msecTimeout = (uint32) msDT;
+    float64 TimeoutSecFromTicks = (static_cast<float64>(ticks) * HighResolutionTimer::Period());
+    float64 TimeoutMSecFromTicks = 1000.0 * TimeoutSecFromTicks;
+    msecTimeout = static_cast<uint32>(TimeoutMSecFromTicks);
 }
 
 int64 TimeoutType::HighResolutionTimerTicks() const {
-    double dT = msecTimeout;
-    dT = dT * 1e-3;
-    double freq = HighResolutionTimer::Frequency();
-    dT = dT * freq;
-    int64 ticks = (int64) dT;
+    float64 deltaT = static_cast<float64>(msecTimeout);
+    deltaT = deltaT * 1e-3;
+    float64 frequency = static_cast<float64>(HighResolutionTimer::Frequency());
+    deltaT = deltaT * frequency;
+    int64 ticks = static_cast<int64>(deltaT);
     return ticks;
 }
 
-void TimeoutType::operator-=(uint32 n) {
-    if (msecTimeout > n)
-        msecTimeout -= n;
-    else
-        msecTimeout = 0;
+TimeoutType &TimeoutType::operator-=(const uint32 &mSecs) {
+    if (msecTimeout > mSecs) {
+        msecTimeout -= mSecs;
+    }
+    else {
+        msecTimeout = 0u;
+    }
+    return *this;
 }
 
 bool TimeoutType::operator==(const TimeoutType &tt) const {
@@ -171,12 +186,19 @@ bool TimeoutType::operator!=(const TimeoutType &tt) const {
     return msecTimeout != tt.msecTimeout;
 }
 
-void TimeoutType::operator=(const TimeoutType &tt) {
-    msecTimeout = tt.msecTimeout;
+TimeoutType &TimeoutType::operator=(const TimeoutType &tt) {
+    if (this != &tt) {
+        msecTimeout = tt.msecTimeout;
+    }
+    return *this;
 }
 
 bool TimeoutType::IsFinite() const {
-    return (msecTimeout < (uint32) 0xFFFFFFFE);
+    return (msecTimeout < 0xFFFFFFFEu);
+}
+
+inline uint32 TimeoutType::GetTimeoutMSec() const {
+    return msecTimeout;
 }
 
 #endif /* TIMEOUTTYPE_H_ */

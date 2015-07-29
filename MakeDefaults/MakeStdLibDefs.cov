@@ -25,6 +25,7 @@
 
 BUILD_DIR=cov
 
+OPERATING_SYSTEM=Linux
 EXEEXT=.ex
 DLLEXT=.so
 LIBEXT=.a

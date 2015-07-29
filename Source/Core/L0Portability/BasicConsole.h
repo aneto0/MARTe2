@@ -1,8 +1,8 @@
 /**
  * @file BasicConsole.h
  * @brief Header file for class BasicConsole
- * @date 22/06/2015
- * @author Giuseppe Ferr�
+ * @date 04/07/2015
+ * @author André Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef BASICCONSOLE_H_
-#define 		BASICCONSOLE_H_
+#define BASICCONSOLE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -34,510 +34,421 @@
 
 #include "GeneralDefinitions.h"
 #include "TimeoutType.h"
-
-class BasicConsole;
-
-/** Flags determining the console operating modes */
-enum ConsoleOpeningMode {
-    /** Default mode */
-    ConsoleDefault = 0,
-
-    /** WIN32 only: operates on a display buffer different from the current one */
-    CreateNewBuffer = 1,
-
-    /** Does not wait for newline */
-    PerformCharacterInput = 2,
-
-    /** CTRL-C does not create an exception */
-    DisableControlBreak = 4,
-
-    /** Enable paging */
-    EnablePaging = 8
-};
-
-/**
- * @brief Allows combining ConsoleOpeningMode data doing a logical or between ConsoleOpeningMode flags.
- * @param[in] a is the first flag.
- * @param[in] b is the second flag.
- * */
-static inline ConsoleOpeningMode operator|(ConsoleOpeningMode a,
-                                           ConsoleOpeningMode b) {
-    return (ConsoleOpeningMode) ((int) a | (int) b);
-}
-
-/**
- * @brief Allows combining ConsoleOpeningMode data doing a logical and between ConsoleOpeningMode flags.
- * @param[in] a is the first flag.
- * @param[in] b is the second flag.
- */
-static inline ConsoleOpeningMode operator&(ConsoleOpeningMode a,
-                                           ConsoleOpeningMode b) {
-    return (ConsoleOpeningMode) ((int) a & (int) b);
-}
-
-/**
- * @brief Allows combining ConsoleOpeningMode data doing a not operator on a ConsoleOpeningMode flags.
- * @param[in] a is the flag which must be inverted.
- */
-static inline ConsoleOpeningMode Not(ConsoleOpeningMode a) {
-    return (ConsoleOpeningMode) (~(int) a);
-}
-
-extern "C" {
-
-/**
- * @see BasicConsole::Open.
- */
-bool BasicConsoleOpen(BasicConsole &con,
-                      ConsoleOpeningMode openingMode,
-                      int32 numberOfColumns,
-                      int32 numberOfRows,
-                      TimeoutType msecTimeout = TTInfiniteWait);
-
-/**
- * @see BasicConsole::Show.
- */
-bool BasicConsoleShow(BasicConsole &con);
-
-/**
- * @see BasicConsole::Close.
- */
-bool BasicConsoleClose(BasicConsole &con);
-
-/**
- * @see BasicConsole::Write.
- */
-bool BasicConsoleWrite(BasicConsole &con,
-                       const void* buffer,
-                       uint32 &size,
-                       TimeoutType msecTimeout);
-
-/**
- * @see BasicConsole::Read.
- */
-bool BasicConsoleRead(BasicConsole &con,
-                      void* buffer,
-                      uint32 &size,
-                      TimeoutType msecTimeout);
-
-/**
- * @see BasicConsole::SetTitleBar.
- */
-bool BasicConsoleSetTitleBar(BasicConsole &con,
-                             const char *title);
-
-/**
- * @see BasicConsole::SetSize.
- */
-bool BasicConsoleSetSize(BasicConsole &con,
-                         int32 numberOfColumns,
-                         int32 numberOfRows);
-
-/**
- * @see BasicConsole::GetSize.
- */
-bool BasicConsoleGetSize(BasicConsole &con,
-                         int32 &numberOfColumns,
-                         int32 &numberOfRows);
-
-/**
- * @see BasicConsole::SetWindowSize().
- */
-bool BasicConsoleSetWindowSize(BasicConsole &con,
-                               int32 numberOfColumns,
-                               int32 numberOfRows);
-
-/**
- * @see BasicConsole::GetWindowSize().
- */
-bool BasicConsoleGetWindowSize(BasicConsole &con,
-                               int32 &numberOfColumns,
-                               int32 &numberOfRows);
-
-/**
- * @see BasicConsole::SetCursorPosition.
- */
-bool BasicConsoleSetCursorPosition(BasicConsole &con,
-                                   int32 column,
-                                   int32 row);
-
-/** @see BasicConsole::GetCursorPosition. */
-bool BasicConsoleGetCursorPosition(BasicConsole &con,
-                                   int32 &column,
-                                   int32 &row);
-
-/**
- * @see BasicConsole::Clear.
- */
-bool BasicConsoleClear(BasicConsole &con);
-
-/**
- * @see BasicConsole::SetColour.
- */
-bool BasicConsoleSetColour(BasicConsole &con,
-                           Colours foreGroundColour,
-                           Colours backGroundColour);
-
-/**
- * @see BasicConsole::PlotChar.
- */
-bool BasicConsolePlotChar(BasicConsole &con,
-                          char c,
-                          Colours foreGroundColour,
-                          Colours backGroundColour,
-                          int column,
-                          int row);
-
-}
+#include "FlagsType.h"
+#include "StringHelper.h"
+#include "ErrorType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Development of basic console operations.
- *
- * @details Most of the implementation is therefore delegated in BasicConsoleOS.h implementation
- * which is different for each operating system.
- *
- * @details These methods are particularly useful to obtain a first basic portable human interface,
- * where the user can interact with the system truth read and write operations allowing
- * for example commands, debugging ecc.
+ * Forward declaration of the operating system specific properties (defined in the operating system
+ * specific unit file).
+ */
+struct BasicConsoleOSProperties;
+
+/**
+ * @brief Multi-platform basic console support.
+ * @details The framework offers a portable basic console. This console enables framework
+ * developers to offer a classic I/O interface to the framework users.
+ * The specificities of the behaviour are delegated to the underlying operating system.
+ * Not all of the features are necessarily implemented in all the operating systems.
  */
 class BasicConsole {
 
 public:
 
-    /** How long since last paging. */
-    int64 lastPagingTime;
-
-    /** How long to wait when reading. */
-    TimeoutType msecTimeout;
-
-    /** How many lines since last paging. */
-    uint32 lineCount;
-
-    /** The column counter. */
-    uint32 colCount;
-
-    /** Flag which describes the console status. */
-    ConsoleOpeningMode openingMode;
-
-    /** The number of columns. */
-    int32 numberOfColumns;
-
-    /** The number of rows */
-    int32 numberOfRows;
-
-    /** The input console handle */
-    ConsoleHandle inputConsoleHandle;
-
-    /** The output console handle */
-    ConsoleHandle outputConsoleHandle;
-
-    /** Initial settings of the console. The destructor will restores this initial configurations. */
-    ConsoleInfo initialInfo;
-
-private:
-
-    friend bool BasicConsoleOpen(BasicConsole &con,
-                                 ConsoleOpeningMode openingMode,
-                                 int32 numberOfColumns,
-                                 int32 numberOfRows,
-                                 TimeoutType msecTimeout);
-
-    friend bool BasicConsoleClose(BasicConsole &con);
-    friend bool BasicConsoleShow(BasicConsole &con);
-    friend bool BasicConsoleWrite(BasicConsole &con,
-                                  const void* buffer,
-                                  uint32 &size,
-                                  TimeoutType msecTimeout);
-    friend bool BasicConsoleRead(BasicConsole &con,
-                                 void* buffer,
-                                 uint32 &size,
-                                 TimeoutType msecTimeout);
-    friend bool BasicConsoleSetTitleBar(BasicConsole &con,
-                                        const char *title);
-    friend bool BasicConsoleSetSize(BasicConsole &con,
-                                    int32 numberOfColumns,
-                                    int32 numberOfRows);
-    friend bool BasicConsoleGetSize(BasicConsole &con,
-                                    int32 &numberOfColumns,
-                                    int32 &numberOfRows);
-    friend bool BasicConsoleSetCursorPosition(BasicConsole &con,
-                                              int32 column,
-                                              int32 row);
-    friend bool BasicConsoleSetWindowSize(BasicConsole &con,
-                                          int32 numberOfColumns,
-                                          int32 numberOfRows);
-    friend bool BasicConsoleGetWindowSize(BasicConsole &con,
-                                          int32 &numberOfColumns,
-                                          int32 &numberOfRows);
-    friend bool BasicConsoleGetCursorPosition(BasicConsole &con,
-                                              int32 &column,
-                                              int32 &row);
-    friend bool BasicConsoleClear(BasicConsole &con);
-    friend bool BasicConsoleSetColour(BasicConsole &con,
-                                      Colours foreGroundColour,
-                                      Colours backGroundColour);
-
-    friend bool BasicConsolePlotChar(BasicConsole &con,
-                                     char c,
-                                     Colours foreGroundColour,
-                                     Colours backGroundColour,
-                                     int32 column,
-                                     int32 row);
-
-public:
-
     /**
-     * @brief Constructor.
-     * @details Sets the console opening mode, the number of rows and columns, and the timeout for read and write operations.
-     * @param[in] openingMode is a combination of the ConsoleOpeningMode flags.
-     * @param[in] numberOfColumns is the number of columns for the new console.
-     * @param[in] numberOfRows is the number of rows for the new console.
-     * @param[in] msecTimeout is the timeout.
-     * @return true if the initialization (at system level) of the console goes fine.
+     * @brief Initialises the console operating system specific properties.
      */
-     BasicConsole(ConsoleOpeningMode openingMode = ConsoleDefault,
-                 int32 numberOfColumns = -1,
-                 int32 numberOfRows = -1,
-                 TimeoutType msecTimeout = TTInfiniteWait);
+    BasicConsole();
 
     /**
-     * @brief Destructor.
-     * @details Closes the console after restored its previous configuration.
+     * @brief If it was not already closed, the destructor closes the console.
+     * @details Even if the destructor closes the console it should be noticed
+     * that in such case a failure is not handled and any exception arising
+     * from such action is not caught.
      */
     virtual ~BasicConsole();
 
     /**
-     * @brief Switches to display this console buffer.
-     * @details It is possible to write to an inactive screen buffer and then use this function to display the buffer's contents.
-     * @return true if successful, false otherwise.
+     * FlagsType determining the console operating modes.\n
+     * These are usually set when the console is constructed.
      */
-    inline bool Show();
+    struct Mode {
+        /**
+         * Default operation mode. In this mode users have to explicitly feed
+         * a new line to write to the console output, CTRL-C will raise an exception
+         * and kill the underlying program and paging will not be enabled.
+         */
+        static const FlagsType Default;
+        /**
+         * WIN32 only: operates on a display buffer different from the current one.
+         */
+        static const FlagsType CreateNewBuffer;
+        /**
+         * Does not wait for a newline when the user enters input.
+         */
+        static const FlagsType PerformCharacterInput;
+        /**
+         * CTRL-C does not raise an exception.
+         */
+        static const FlagsType DisableControlBreak;
+        /**
+         * Text is divided in pages that fit into the console dimension. Users are
+         * requested to input a new line in order to change page.
+         */
+        static const FlagsType EnablePaging;
+    };
 
     /**
-     * @brief Write operation on this console.
-     * @details A specified number of bytes of the buffer passed by argument is written on the console .
-     * If the mode is paging, it writes until the number of rows of the console then advises the user to press enter for the pagination.\n
-     * It writes characters on the same row until they are less than the number of columns of the buffer size, then it
-     * writes automatically on the next row.
-     * @param[in] buffer is the data to write on the console.
-     * @param[in,out] size is maximum size in byte to write on the console. If a minor number of bytes is written,
-     * size become the number of bytes written.
-     * @param[in] msecTimeout is the timeout.
-     * @return true if a number greater than 0 of bytes is written.
+     * @brief Opens and display the console.
+     * @details Opens and displays the console.
+     * @param[in] mode the desired opening mode, which changes some behaviours of the console.
+     * @return NoError if the console is opened correctly or OSError if there is any operating
+     * system related problem while performing the operation.
+     * @pre Even if the behaviour will be operating system dependent, it is advisable to call
+     * SetSize(numberOfColumns, numberOfRows) before opening the console.
      */
-    inline bool Write(const void* buffer,
-                      uint32 & size,
-                      TimeoutType msecTimeout=TTInfiniteWait);
+    virtual ErrorType Open(const FlagsType &mode);
 
     /**
-     * @brief Read operation on this console.
-     * @details Reads size bytes from the console and puts them on the buffer passed by argument.
-     * If PerformCharacterInput mode is enabled, returns immediately.
-     * @param[in] buffer is the buffer where the read bytes are written.
-     * @param[in,out] size is the number of bytes to read.
-     * @param[in] msecTimeout is the desired timeout.
-     * @return true if at least one byte it is read.
+     * @brief Retrieves the mode that was used to open the console.
+     * @return the openingMode used to open the console.
+     * @pre the behaviour will be unspecified and operating system dependent if this method
+     * is called on a console that was never open.
      */
-    inline bool Read(void* buffer,
-                     uint32 & size,
-                     TimeoutType msecTimeout=TTInfiniteWait);
+    virtual FlagsType GetOpeningMode() const;
 
     /**
-     * @brief Set Title Bar text.
-     * @param[in] title is the desired title.
-     * @return true if successful, false otherwise.
+     * @brief Closes the console.
+     * @details Closes the console and leaves it in a state where it can be opened again.
+     * @return NoError if the console is opened correctly or OSError if there is any operating
+     * system related problem while performing the operation.
      */
-    inline bool SetTitleBar(const char *title);
+    ErrorType Close();
 
     /**
-     * @brief Set the buffer size of this console.
-     * @param[in] numberOfColumns is the number of columns to set in the console.
-     * @param[in] numberOfRows is the number of rows to set in the console.
-     * @return true if successful, false otherwise.
+     * @brief Writes to the console.
+     * @details A specified number of bytes of the buffer are written to the console output.
+     * @param[in] buffer memory data to be written on the console.
+     * @param[in,out] size maximum size in bytes to write on the console. If a minor number of bytes is written,
+     * size will contain the number of bytes actually written.
+     * @param [in] timeout maximum time to wait for writing to the console.
+     * @return - NoError if a number of bytes greater than 0 is successfully written;
+     * - Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
+     * - Warning if zero bytes are written and no OSError is flagged;
+     * - or OSError if there is any operating system related problem while performing the operation.
+     * @pre Size has not to be larger than the buffer size.
      */
-    inline bool SetSize(int32 numberOfColumns,
-                        int32 numberOfRows);
+    virtual ErrorType Write(const char8 * const buffer,
+                            uint32 & size,
+                            const TimeoutType &timeout);
 
     /**
-     * @brief Get the buffer size of this console.
-     * @param[out] numberOfColumns is the width of the buffer.
-     * @param[out] numberOfRows is the height of the buffer.
-     * @return true if successful, false otherwise.
+     * @brief Reads from the console.
+     * @details Reads from the console input into the buffer.
+     * If PerformCharacterInput mode is enabled, it will return without waiting for LF.
+     * @param[in] buffer memory space where the read bytes are written into.
+     * @param[in,out] size number of bytes to read.
+     * @param[in] timeout maximum time to wait for the operation to be successfully completed.
+     * @return - NoError if at lest one byte is read;
+     * - Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
+     * - Warning if zero bytes are read and no OSError is flagged;
+     * - or OSError if there is any operating system related problem while performing the operation.
      */
-    inline bool GetSize(int32 & numberOfColumns,
-                        int32 & numberOfRows);
+    virtual ErrorType Read(char8 * const buffer,
+                           uint32 & size,
+                           const TimeoutType &timeout);
 
     /**
-     * @brief Sets the window size.
-     * @param[in] numberOfColumns is the desired window width.
-     * @param[in] numberOfRows is the desired window height.
-     * @return true if successful, false otherwise.
+     * @brief Update the console size.
+     * @details Be aware of calling this function after the open the console.
+     * @param[in] numberOfColumns number of columns to set in the console.
+     * @param[in] numberOfRows number of rows to set in the console.
+     * @return NoError if the new size can be set or OSError if there is any operating
+     * system related problem while performing the operation.
      */
-    inline bool SetWindowSize(int32 numberOfColumns,
-                              int32 numberOfRows);
+    virtual ErrorType SetSize(const uint32 &numberOfColumns,
+                              const uint32 &numberOfRows);
 
     /**
-     * @brief Returns the size of the window.
-     * @param[out] numberOfColumns is the window width.
-     * @param[out] numberOfRows is the window height.
-     * @return true if successful, false otherwise.
+     * @brief Returns the current console size.
+     * @param[out] numberOfColumns currently number of columns being displayed.
+     * @param[out] numberOfRows currently number of rows being displayed.
+     * @return NoError if the size can be retrieved or OSError if there is any operating
+     * system related problem while performing the operation.
      */
-    inline bool GetWindowSize(int32 & numberOfColumns,
-                              int32 & numberOfRows);
+    virtual ErrorType GetSize(uint32 & numberOfColumns,
+                              uint32 & numberOfRows) const;
 
     /**
-     * @brief Sets the cursor position.
+     * @brief Sets the console window size (@see WindowSizeSupported).
+     * @details The console window size must be smaller than the console size (@see GetSize and @see SetSize).\n
+     * The actual implementation details depend on the operating system but it is expected that a window
+     * will enable scroll bars if its size is smaller than the underlying console size.
+     * @param[in] numberOfColumns desired x axis size.
+     * @param[in] numberOfRows desired y axis size.
+     * @return NoError if the size can be set, OSError if there is any operating
+     * system related problem while performing the operation or UnsupportedFeature if the feature is not available
+     * in the operating system specific implementation.
+     */
+    virtual ErrorType SetWindowSize(const uint32 &numberOfColumns,
+                                    const uint32 &numberOfRows);
+
+    /**
+     * @brief Returns the window size.
+     * @param[out] numberOfColumns is the x axis window size in return.
+     * @param[out] numberOfRows is the y axis window size in return.
+     * @return NoError if the size can be retrieved, OSError if there is any operating
+     * system related problem while performing the operation or UnsupportedFeature if the feature is not available
+     * in the operating system specific implementation.
+     */
+    virtual ErrorType GetWindowSize(uint32 &numberOfColumns,
+                                    uint32 &numberOfRows) const;
+
+    /**
+     * @brief Checks if it possible to change the window size.
+     * @return true if the operating system implementation supports reading and
+     * modifying the window size.
+     */
+    virtual bool WindowSizeSupported() const;
+
+    /**
+     * @brief Sets the cursor position (@see CursorPositionSupported).
      * @param[in] column is the desired cursor x coordinate.
      * @param[in] row is the desired cursor y coordinate.
-     * @return true if successful, false otherwise.
+     * @return NoError if the cursor can be set in the required position, OSError if there is any operating
+     * system related problem while performing the operation or UnsupportedFeature if the feature is not available
+     * in the operating system specific implementation.
      */
-    inline bool SetCursorPosition(int32 column,
-                                  int32 row);
+    virtual ErrorType SetCursorPosition(const uint32 &column,
+                                        const uint32 &row);
 
     /**
-     * @brief Gets the cursor position.
-     * @param[out] column is the x coordinate of the cursor in return.
-     * @param[out] row is the y coordinate of the cursor in return.
-     * @return true if successful, false otherwise.
+     * @brief Retrieves the cursor position.
+     * @param[out] column is the current x coordinate of the cursor.
+     * @param[out] row is the current y coordinate of the cursor.
+     * @return NoError if the cursor coordinates be retrieved, OSError if there is any operating
+     * system related problem while performing the operation or UnsupportedFeature if the feature is not available
+     * in the operating system specific implementation.
      */
-    inline bool GetCursorPosition(int32 & column,
-                                  int32 & row);
+    virtual ErrorType GetCursorPosition(uint32 & column,
+                                        uint32 & row) const;
 
     /**
-     * @brief Sets the font foreground and background colors.
-     * @param[in] foreGroundColour is the desired foreground color.
-     * @param[in] backGroundColour is the desired background color.
-     * @return true if successful, false otherwise.
+     * @brief Checks if it possible to interact with the console cursor position.
+     * @return true if the operating system implementation supports reading and
+     * modifying the cursor position.
      */
-    inline bool SetColour(Colours foreGroundColour,
-                          Colours backGroundColour);
+    virtual bool CursorPositionSupported() const;
 
     /**
-     * @brief Clears the screen.
-     * @return true if successful, false otherwise.
+     * @brief Switches to display this console buffer (@see ConsoleBufferSupported).
+     * @details It is possible to write to an inactive screen buffer and then use
+     * this function to display the buffer's contents.
+     * @return NoError if the buffer is successfully displayed, OSError if there is any operating
+     * system related problem while performing the operation or UnsupportedFeature if the feature is not available
+     * in the operating system specific implementation.
      */
-    inline bool Clear();
+    virtual ErrorType ShowBuffer();
 
     /**
-     * @brief Enables or disables the paging mode using the operators.
-     * @param[in] enable is true to activate paging mode, false otherwise.
+     * @brief Checks if it possible to use an inactive console buffer for writing.
+     * @return true if the operating system implementation supports double buffering.
      */
-    inline void SetPaging(bool enable);
+    virtual bool ConsoleBufferSupported() const;
 
     /**
-     * @brief Writes a single char on the console at a given position and with given color set.
+     * @brief Sets the font foreground and background colours.
+     * @param[in] foregroundColour the desired foreground colour.
+     * @param[in] backgroundColour the desired background colour.
+     * @return NoError if the new colours can be successfully set, OSError if there is any operating
+     * system related problem while performing the operation or UnsupportedFeature if the feature is not available
+     * in the operating system specific implementation.
+     */
+    virtual ErrorType SetColour(const Colours &foregroundColour,
+                                const Colours &backgroundColour);
+
+    /**
+     * @brief Checks if colour changing is supported by the operating system implementation.
+     * @return true if the operating system implementation allows to change the console background
+     * and foreground colours.
+     */
+    virtual bool ColourSupported() const;
+
+    /**
+     * @brief Clears the console output.
+     * @return NoError if the console is cleared correctly or OSError if there is any operating
+     * system related problem while performing the operation.
+     */
+    virtual ErrorType Clear();
+
+    /**
+     * @brief Writes a single char on the console at a given position and with the given colour set.
      * @param[in] c is the character to be printed.
-     * @param[in] foreGroundColour is the desired console foreground color.
-     * @param[in] backGroundColour is the desired console background color.
+     * @param[in] foregroundColour is the desired console foreground colour.
+     * @param[in] backgroundColour is the desired console background colour.
      * @param[in] column is the desired x-axis position of the character.
      * @param[in] row is the desired y-axis position of the character.
-     * @return true if successful, false otherwise.
+     * @return NoError if the char is successfully plotted with the correct attributes, OSError if there is any operating
+     * system related problem while performing the operation or UnsupportedFeature if the feature is not available
+     * in the operating system specific implementation.
      */
-    inline bool PlotChar(char c,
-                         Colours foreGroundColour,
-                         Colours backGroundColour,
-                         int column,
-                         int row);
+    virtual ErrorType PlotChar(const char8 &c,
+                               const Colours &foregroundColour,
+                               const Colours &backgroundColour,
+                               const uint32 &column,
+                               const uint32 &row);
 
+    /**
+     * @brief Update the console title (@see TitleBarSupported).
+     * @param[in] title is the desired title.
+     * @return NoError if the title can be successfully set, OSError if there is any operating
+     * system related problem while performing the operation or UnsupportedFeature if the feature is not available
+     * in the operating system specific implementation.
+     */
+    virtual ErrorType SetTitleBar(const char8 *title);
+
+    /**
+     * @brief Returns the console title (@see TitleBarSupported).
+     * @param[out] title is a destination buffer.
+     * @param[out] size is the size of the title.
+     * @return NoError if the title can be successfully retrieved, OSError if there is any operating
+     * system related problem while performing the operation or UnsupportedFeature if the feature is not available
+     * in the operating system specific implementation.
+     */
+    virtual ErrorType GetTitleBar(char8 *title,
+                                  const uint32 &size) const;
+
+    /**F
+     * @brief Checks if changing or reading the console title is supported
+     * @return true if the operating system implementation enables the reading and updating
+     * of the console title.
+     */
+    virtual bool TitleBarSupported() const;
+
+    /**
+     * @brief Checks if the console supports timeout in the Read/Write operation.
+     * @return true if the operating system implementation enables to timeout in the Read/Write operations.
+     */
+    virtual bool TimeoutSupported() const;
+
+private:
+
+    /**
+     * @brief Portable paged write implementation.
+     * @details If the mode is paging, it divides the text to write in chunks (pages) that fit the console size.
+     * The user is asked to press a key in order to change to the next the page.
+     * @param[in] buffer is the data to write on the console.
+     * @param[in] size is maximum size in byte to write on the console. If a minor number of bytes is written,
+     * size become the number of bytes written.
+     * @param[in] msecTimeout is the timeout.
+     * @return NoError if a number of bytes greater than 0 is successfully written. Otherwise, it will return Timeout
+     * if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported) or OSError
+     * if there is any operating system related problem while performing the operation.
+     */
+    inline ErrorType PagedWrite(const char8* const buffer,
+                                const uint32 &size,
+                                const TimeoutType &timeout);
+
+    /**
+     * @copybrief BasicConsole::Write
+     * @details The BasicConsole::Write will call based on the opening mode either the Write or the
+     * OSWrite function. This is where the actual operating system call is implemented.
+     * @param[in] buffer memory data to be written on the console.
+     * @param[in,out] size maximum size in bytes to write on the console. If a minor number of bytes is written,
+     * size will contain the number of bytes actually written.
+     * @param [in] timeout maximum time to wait for writing to the console.
+     * @return - NoError if a number of bytes greater than 0 is successfully written;
+     * - Timeout if the time to complete the operation is greater than the specified timeout (@see TimeoutSupported);
+     * - Warning if zero bytes are written and no OSError is flagged;
+     * - or OSError if there is any operating system related problem while performing the operation.
+     */
+    ErrorType OSWrite(const char8 * const buffer,
+                      uint32 & size,
+                      const TimeoutType &timeout);
+
+    /**
+     * Operating system specific properties to be used by the operating system specific implementation
+     */
+    BasicConsoleOSProperties *osProperties;
+
+    /**
+     * How long since the last paging.
+     */
+    int64 lastPagingCounter;
+
+    /**
+     * How many lines since the last paging.
+     */
+    uint32 lineCount;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-bool BasicConsole::Show() {
-    return BasicConsoleShow(*this);
-}
+ErrorType BasicConsole::PagedWrite(const char8 * const buffer,
+                                   const uint32 &size,
+                                   const TimeoutType &timeout) {
 
+    uint32 numberOfColumnsTmp = 0u;
+    uint32 numberOfRowsTmp = 0u;
+    ErrorType err = GetSize(numberOfColumnsTmp, numberOfRowsTmp);
+    if (err == NoError) {
 
-bool BasicConsole::Write(const void* buffer,
-                  uint32 & size,
-                  TimeoutType msecTimeout) {
-    return BasicConsoleWrite(*this, buffer, size, msecTimeout);
-}
+        //-1 means the maximum size.
+        uint32 numberOfRows = numberOfRowsTmp;
 
+        int64 t0 = lastPagingCounter;
+        int64 t1 = HighResolutionTimer::Counter();
 
-bool BasicConsole::Read(void* buffer,
-                 uint32 & size,
-                 TimeoutType msecTimeout) {
-    return BasicConsoleRead(*this, buffer, size, msecTimeout);
-}
+        int64 dTicks = t1 - t0;
+        float64 dTime = static_cast<float64>(dTicks) * HighResolutionTimer::Period();
+        if (dTime > 0.05) {
+            lineCount = 0u;
+            lastPagingCounter = t1;
+        }
 
-bool BasicConsole::SetTitleBar(const char *title) {
-    return BasicConsoleSetTitleBar(*this, title);
-}
-
-bool BasicConsole::SetSize(int32 numberOfColumns,
-                    int32 numberOfRows) {
-    return BasicConsoleSetSize(*this, numberOfColumns, numberOfRows);
-}
-
-
-bool BasicConsole::GetSize(int32 & numberOfColumns,
-                    int32 & numberOfRows) {
-    return BasicConsoleGetSize(*this, numberOfColumns, numberOfRows);
-}
-
-
-bool BasicConsole::SetWindowSize(int32 numberOfColumns,
-                          int32 numberOfRows) {
-    return BasicConsoleSetWindowSize(*this, numberOfColumns, numberOfRows);
-}
-
-
-bool BasicConsole::GetWindowSize(int32 & numberOfColumns,
-                          int32 & numberOfRows) {
-    return BasicConsoleGetWindowSize(*this, numberOfColumns, numberOfRows);
-}
-
-
-bool BasicConsole::SetCursorPosition(int32 column,
-                              int32 row) {
-    return BasicConsoleSetCursorPosition(*this, column, row);
-}
-
-
-bool BasicConsole::GetCursorPosition(int32 & column,
-                              int32 & row) {
-    return BasicConsoleGetCursorPosition(*this, column, row);
-}
-
-
-bool BasicConsole::SetColour(Colours foreGroundColour,
-                      Colours backGroundColour) {
-    return BasicConsoleSetColour(*this, foreGroundColour, backGroundColour);
-}
-
-
-bool BasicConsole::Clear() {
-    lineCount = 0;
-    return BasicConsoleClear(*this);
-}
-
-
-void BasicConsole::SetPaging(bool enable) {
-    lineCount = 0;
-    if (enable) {
-        openingMode = openingMode | EnablePaging;
+        const char8 *p = buffer;
+        uint32 index = 0u;
+        uint32 start = 0u;
+        uint32 sizeT;
+        bool end = false;
+        while ((index < size) && (!end)) {
+            while ((lineCount < (numberOfRows - 1u)) && (index < size) && !end) {
+                if (p[index] == '\n') {
+                    lineCount++;
+                }
+                if (p[index] == '\0') {
+                    end = true;
+                }
+                index++;
+            }
+            sizeT = index - start;
+            err = OSWrite(&p[start], sizeT, timeout);
+            if (err != NoError) {
+                end = true;
+            }
+            else if (lineCount >= (numberOfRows - 1u)) {
+                start = index;
+                lastPagingCounter = t1;
+                lineCount = 0u;
+                const char8 *message = "[PAGING] ENTER TO CONTINUE\r";
+                sizeT = static_cast<uint32>(StringHelper::Length(message));
+                err = OSWrite(message, sizeT, timeout);
+                if (err == NoError) {
+                    char8 readBuffer[32];
+                    sizeT = N_CHARS_NEWLINE;
+                    err = Read(&readBuffer[0], sizeT, timeout);
+                }
+            }
+        }
     }
-    else {
-        openingMode = openingMode & Not(EnablePaging);
-    }
+
+    return err;
 }
 
-
-bool BasicConsole::PlotChar(char c,
-                     Colours foreGroundColour,
-                     Colours backGroundColour,
-                     int column,
-                     int row) {
-    return BasicConsolePlotChar(*this, c, foreGroundColour, backGroundColour, column, row);
-}
-
-
-#endif /* BASICCONSOLE_H_ */
-
+#endif /*BASICCONSOLE_H_ */

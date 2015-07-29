@@ -2,7 +2,7 @@
  * @file SleepTest.h
  * @brief Header file for class SleepTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef SLEEPTEST_H_
-#define 		SLEEPTEST_H_
+#define SLEEPTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,75 +32,69 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "Sleep.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
-#include "Sleep.h"
-
-/** @brief A class to test all the Sleep functions. */
+/**
+ * @brief A class to test all the Sleep functions.
+ */
 class SleepTest {
 
 public:
-    SleepTest() {
-    }
 
     /**
-     * @brief Tests the SleepAtLeast function.
+     * @brief Tests the Sleep::GetDateSeconds function.
+     * @return true if the returned value is equal to the seconds elapsed since epoch.
+     */
+    bool TestGetDateSeconds();
+
+    /**
+     * @brief Tests the Sleep::AtLeast function.
      * @param[in] sec is the minimum time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepAtleast(double sec);
+    bool TestAtLeast(float64 sec);
 
     /**
-     * @brief Tests the SleepNoMore function
+     * @brief Tests the Sleep::NoMore function
      * @param[in] sec is the maximum time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepNoMore(double sec);
+    bool TestNoMore(float64 sec);
 
     /**
-     * @brief Tests the SleepSec function
+     * @brief Tests the Sleep::Sec function
      * @param[in] sec is the time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepSec(double sec);
+    bool TestSec(float64 sec);
 
     /**
-     * @brief Tests the SleepSec function
-     * @param[in] sec is the time to sleep.
-     * @return true if it sleeps less than the double of sec.
-     */
-    bool TestSleepSec(float sec);
-
-    /**
-     * @brief Tests the SleepMSec function
+     * @brief Tests the Sleep::MSec function
      * @param[in] msec is the time to sleep in milliseconds.
-     * @return true if it sleeps less than the double of sec.
+     * @return true if it sleeps less than the double of msec.
      */
-    bool TestSleepMSec(int32 msec);
+    bool TestMSec(int32 msec);
 
     /**
-     * @brief Tests the SleepBusy function.
+     * @brief Tests the Sleep::Busy function.
      * @param[in] sec is the time to sleep.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSleepBusy(double sec);
+    bool TestBusy(float64 sec);
 
     /**
-     * @brief Tests the SleepSemiBusy function.
+     * @brief Tests the Sleep::SemiBusy function.
      * @param[in] totalSleepSec is the time to sleep using cpu.
      * @param[in] nonBusySleepSec is the time to sleep without using cpu.
      * @return true if it sleeps less than the double of sec.
      */
-    bool TestSemiBusy(double totalSleepSec, double nonBusySleepSec);
+    bool TestSemiBusy(float64 totalSleepSec,
+                      float64 nonBusySleepSec);
 
-    /**
-     * @brief Executes all the tests
-     * @return true if all tests return true.
-     */
-    bool All();
 };
 
 /*---------------------------------------------------------------------------*/

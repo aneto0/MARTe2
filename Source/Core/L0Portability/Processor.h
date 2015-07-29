@@ -2,7 +2,7 @@
  * @file Processor.h
  * @brief Header file for class Processor
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef PROCESSOR_H_
-#define 		PROCESSOR_H_
+#define PROCESSOR_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,43 +31,29 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
-
-extern "C" {
-
-/** @see Processor::Family(). */
-uint32 ProcessorFamily();
-
-/** @see Processor::VendorId(). */
-const char *ProcessorVendorId();
-
-/** @see Processor::ProcessorsAvaiable(). */
-uint32 ProcessorsAvailable();
-
-/** @see Processor::Model(). */
-uint32 ProcessorModel();
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Functions to get the processor's informations.
+ * @brief General information about the processor executing the framework code.
  *
- * @details These functions allow to get cpu informations like family,
- * id, model and number of available processors.
- *
- * @details Most of the implementation is delegated to ProcessorA.h and ProcessorOS.h.
+ * @details This class enables the retrieval of runtime information about the
+ * processor executing the framework code.
+ * Based on this information framework users are allowed to take runtime decisions
+ * against specific processor characteristics.
  */
 class Processor {
 public:
 
     /**
-     * @brief Returns the processor type.
-     * @return a string which contains the processor type.
+     * @brief Returns the processor vendor identifier.
+     * @return a string which contains the processor vendor identifier.
      */
-    static inline const char *VendorId();
+    static inline const char8 *VendorId();
 
     /**
      * @brief Returns the processor family.
@@ -82,31 +68,17 @@ public:
     static inline uint32 Model();
 
     /**
-     * @brief Returns the number of available cpus.
-     * @returns the number of available cpus.
+     * @brief Returns the number of available CPU cores.
+     * @returns the number of available CPU cores.
      */
-    static inline uint32 Available();
+    static uint32 Available();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-const char *Processor::VendorId() {
-    return ProcessorVendorId();
-}
-
-uint32 Processor::Family() {
-    return ProcessorFamily();
-}
-
-uint32 Processor::Model() {
-    return ProcessorModel();
-}
-
-uint32 Processor::Available() {
-    return ProcessorsAvailable();
-}
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,ProcessorA.h)
 
 #endif /* PROCESSOR_H_ */
 

@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Endianity.h"
 
 /*---------------------------------------------------------------------------*/
@@ -50,37 +51,39 @@ template<class T>
 class EndianityTest {
 
 public:
+
     /**
      * @brief Constructor.
      * @param[in] testValue the value to be tested by the all
      * the test functions.
      */
+
     EndianityTest(T testValue);
     /**
      * @brief Converts the testValue to big endian.
      * @details If the target architecture is little endian the test value and result must be different.
-     * @return True if the conditions above are verified.
+     * @return true if the conditions above are verified.
      */
     bool TestToBigEndian();
 
     /**
      * @brief Converts the testValue to little endian.
      * @details If the target architecture is big endian the test value and the result must be different.
-     * @return True if the conditions above are verified.
+     * @return true if the conditions above are verified.
      */
     bool TestToLittleEndian();
 
     /**
      * @brief Converts the testValue from big endian.
      * @details If the target architecture is little endian the test value and the result value be different.
-     * @return True if the conditions above are verified.
+     * @return true if the conditions above are verified.
      */
     bool TestFromBigEndian();
 
     /**
      * @brief Converts the testValue to little endian.
      * @details If the target architecture is big endian the test value and the result must be different.
-     * @return True if the conditions above are verified.
+     * @return true if the conditions above are verified.
      */
     bool TestFromLittleEndian();
 
@@ -88,7 +91,7 @@ public:
      * @brief Converts the testArray to big endian from the target
      * architecture endianity.
      * @details If the target architecture is little endian each element of the test array and the big endian array must be different.
-     * @return True if the conditions above are verified.
+     * @return true if the conditions above are verified.
      */
     bool TestMemCopyToBigEndian();
 
@@ -96,7 +99,7 @@ public:
      * @brief Converts the testArray to little endian from the target
      * architecture endianity.
      * @details If the target architecture is big endian each element of the test array and the big endian array must be different.
-     * @return True if the conditions above are verified.
+     * @return true if the conditions above are verified.
      */
     bool TestMemCopyToLittleEndian();
 
@@ -104,7 +107,7 @@ public:
      * @brief Converts the testArray from big endian to the
      * target architecture endianity.
      * @details If the target architecture is little endian each element of the test array and the big endian array must be different.
-     * @return True if the conditions above are verified.
+     * @return true if the conditions above are verified.
      */
     bool TestMemCopyFromBigEndian();
 
@@ -112,7 +115,7 @@ public:
      * @brief Converts the testArray from little endian to the
      * target architecture endianity.
      * @details If the target architecture is big endian each element of the test array and the little endian array must be different.
-     * @return True if the conditions above are verified.
+     * @return true if the conditions above are verified.
      */
     bool TestMemCopyFromLittleEndian();
 
@@ -124,7 +127,7 @@ public:
      * from little and from big endian. The values should return to the original test
      * value.
      *
-     * @return True if the test value is not changed after returning to the original
+     * @return true if the test value is not changed after returning to the original
      * endianity.
      */
     bool TestToFromEndian();
@@ -137,18 +140,19 @@ public:
      */
     bool TestMemCopyToFromEndian();
 
-
-
 private:
+
     /**
      * The test class is designed to support any basic type
      */
     T testValue;
+
     /**
      * A static array to test operations that include arrays
      */
     T testArray[3];
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Template method definitions                        */
 /*---------------------------------------------------------------------------*/
@@ -365,6 +369,4 @@ bool EndianityTest<T>::TestMemCopyToFromEndian() {
     return (okLittleEndian && okBigEndian);
 }
 
-
 #endif /* ENDIANITYTEST_H_ */
-

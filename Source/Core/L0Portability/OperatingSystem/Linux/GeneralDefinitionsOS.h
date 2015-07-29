@@ -21,25 +21,30 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef GENERALDEFINITIONSOS_H_
-		#define 		GENERALDEFINITIONSOS_H_
+#ifndef GENERALDEFINITIONSOS_H_
+#define GENERALDEFINITIONSOS_H_
 
 
 #include <pthread.h>
+#ifndef LINT
 #include <termio.h>
+#else
+typedef unsigned long int pthread_t;
+#endif
+
+#ifndef NULL
+#define NULL 0
+#endif
 
 
-
-#define TID pthread_t
+typedef pthread_t ThreadIdentifier;
+static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdentifier>(0);
 
 /** Defines the console handle. */
 typedef struct termio ConsoleHandle;
 
-/** Defines the console informations structure */
-typedef struct termio ConsoleInfo;
-
 /** Threads database memory granularity */
-#define THREADS_DATABASE_GRANULARITY 64
+#define THREADS_DATABASE_GRANULARITY 64u
 
 /** Defines the default stack size for a thread. */
 #define THREADS_DEFAULT_STACKSIZE 32768
@@ -48,7 +53,12 @@ typedef struct termio ConsoleInfo;
 #define MAX_NO_OF_MEMORY_MONITORS 64
 
 /** In windows the newline is specified with \r\n */
-#define N_CHARS_NEWLINE 1
+#define N_CHARS_NEWLINE 1u
 
-		#endif /* GENERALDEFINITIONSOS_H_ */
+/** This is just to avoid an exception to Rule 3-9-2 of MISRA, given that many Linux operating system calls require a long as an input
+ * and the framework does not define such type*/
+typedef long oslong;
+typedef unsigned long osulong;
+
+#endif /* GENERALDEFINITIONSOS_H_ */
 	

@@ -24,29 +24,29 @@
 #
 #############################################################
 
-OBJSX=  Atomic.x \
-        Endianity.x \
-		HighResolutionTimer.x \
-        Memory.x \
-        Processor.x \
-        ProcessorType.x \
-        Threads.x  \
-        ThreadsDatabase.x \
-        Sleep.x \
-		BasicConsole.x \
-		StringHelper.x \
-		ThreadInformation.x \
-		MutexSem.x \
-		EventSem.x \
-		MemoryStatisticsDatabase.x	
 PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
+SPB=OperatingSystem/$(OPERATING_SYSTEM).x
+
+OBJSX=  Atomic.x \
+        Endianity.x \
+        FastMath.x \
+        ProcessorType.x \
+        StringPortable.x \
+        ThreadsDatabase.x \
+        ThreadInformation.x \
+        LoadableLibrary.x \
+        FastPollingMutexSem.x
+
+
+LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS)    \
-                $(BUILD_DIR)/L0Portability$(LIBEXT)
+all: $(OBJS) $(SUBPROJ)   \
+		$(BUILD_DIR)/L0Portability$(LIBEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

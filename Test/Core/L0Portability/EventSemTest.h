@@ -1,7 +1,7 @@
 /**
  * @file EventSemTest.h
  * @brief Header file for class EventSemTest
- * @date 26/giu/2015
+ * @date 26/07/2015
  * @author Giuseppe Ferr�
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -47,6 +47,7 @@ public:
      * The event semaphore object
      */
     EventSem eventSem;
+    int32    sharedVariable1;
 
     /**
      * @brief Constructor.
@@ -62,7 +63,7 @@ public:
 
     /**
      * @brief Tests the EventSem::EventSem constructor.
-     * @return true if the semaphore is successfully instantiated and that a NULL handle is assigned to it.
+     * @return true if the semaphore is successfully instantiated. To check this is used the function IsClosed() which returns true if it is closed
      */
     bool TestConstructor();
 
@@ -97,6 +98,20 @@ public:
      * handle is the same) and is capable of correctly acting on this handle.
      */
     bool TestCopyConstructor();
+
+    /**
+     * @brief Test the EventSem copy constructor using different semaphores.
+     *
+     * @details Create two semaphores using copying constructor. Then Lock a thread with one semaphore and unLuck with the other.
+     * @return true if the threat is unLocked before the timeout.
+     */
+    bool TestCopyConstructor2Sem();
+
+    /**
+     * @brief Tests the EventSem::IsClosed function
+     * @return true if the semaphore can report effectively if it is closed or not
+     */
+    bool TestIsClosed();
 
     /**
      * @brief Tests the EventSem::Wait function.
@@ -160,7 +175,7 @@ public:
      * changed the initial value of the sharedVariable (set to 0xABCD).
      *
      * @param[in] nOfThreads Number of threads that will change the sharedVariable value
-     * @return true if when the semaphore is posted the sharedVariable is different from its initial value
+     * @return true when the semaphore is posted and the sharedVariable is different from its initial value
      */
     bool TestWaitTimeoutFailure(uint32 nOfThreads);
 
@@ -178,7 +193,7 @@ private:
     uint32 sharedVariable;
 
     /**
-     * Timeout for the tests with timeout
+     * timeout for the tests with timeout
      */
     TimeoutType timeout;
 

@@ -2,7 +2,7 @@
  * @file AtomicA.h
  * @brief Header file for class AtomicA
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -68,7 +68,7 @@ public:
      */
     static inline void Increment8(volatile int8 *p) {
         //There is not _InterlockedIncrement8 function.
-        volatile char* pp = (volatile char*) p;
+        volatile char8 *pp = (volatile char8*) p;
         _InterlockedExchangeAdd8(pp, 1);
     }
 
@@ -95,7 +95,7 @@ public:
      * @param[in,out] p is the 8 bits variable to decrement.
      */
     static inline void Decrement8(volatile int8 *p) {
-        volatile char* pp = (volatile char *) p;
+        volatile char8 *pp = (volatile char8 *) p;
         _InterlockedExchangeAdd8(pp, -1);
     }
 
@@ -139,7 +139,7 @@ public:
      * @return return true if p=0 and it sets p to one, else return false.
      */
     static inline bool TestAndSet8(volatile int8 *p) {
-        volatile char* pp = (volatile char*) p;
+        volatile char8 *pp = (volatile char8*) p;
 
         //returns the initial value of *pp
         return _InterlockedCompareExchange8(pp, 1, 0) == 0;

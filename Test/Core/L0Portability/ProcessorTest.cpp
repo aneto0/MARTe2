@@ -2,7 +2,7 @@
  * @file ProcessorTest.cpp
  * @brief Source file for class ProcessorTest
  * @date 25/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ProcessorTest.h"
+#include "StringTestHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,61 +40,37 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ProcessorTest::ProcessorTest() {
-
+ProcessorTest::ProcessorTest(bool testEqual) {
+    this->testEqual=testEqual;
 }
 
-bool ProcessorTest::TestVendorId() {
-    bool testResult = false;
-    const char * vendorId = NULL;
+bool ProcessorTest::TestVendorId(const char8* vendorIdTest) {
+    const char8 * vendorId = NULL;
 
     vendorId = Processor::VendorId();
-    testResult = (vendorId != NULL);
 
-    return testResult;
+    //return true if testEqual & vendorId==vendorIdTest || !testEqual & !vendorIdTest
+    return !(testEqual^(StringTestHelper::Compare(vendorId,vendorIdTest)));
 }
 
-/**
- * @brief Tests the family function.
- * @return true.
- */
-bool ProcessorTest::TestFamily() {
-    bool testResult = false;
-    uint32 family = -1;
-    uint32 familyAux = family;
+bool ProcessorTest::TestFamily(uint32 familyTest) {
+    uint32 family;
 
     family = Processor::Family();
-    testResult = (family != familyAux);
 
-    return testResult;
+    return !(testEqual^(family == familyTest));
 }
 
-/**
- * @brief Tests the model function.
- * @return true.
- */
-bool ProcessorTest::TestModel() {
-    bool testResult = false;
-    uint32 model = -1;
-    uint32 modelAux = model;
+bool ProcessorTest::TestModel(uint32 modelTest) {
+    uint32 model;
 
     model = Processor::Model();
-    testResult = (model != modelAux);
-
-    return testResult;
+    return !(testEqual^(model == modelTest));
 }
 
-/**
- * @brief Tests the available function.
- * @return true.
- */
-bool ProcessorTest::TestAvailable() {
-    bool testResult = false;
-    uint32 available = -1;
-    uint32 availableAux = available;
+bool ProcessorTest::TestAvailable(uint32 availableCPUTest) {
+    uint32 available;
 
     available = Processor::Available();
-    testResult = (available != availableAux);
-
-    return testResult;
+    return !(testEqual^(available == availableCPUTest));
 }

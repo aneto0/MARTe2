@@ -2,7 +2,7 @@
  * @file HighResolutionTimerGTest.cpp
  * @brief Source file for class HighResolutionTimerGTest
  * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,31 +40,40 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-class HighResolutionTimerGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
 
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
-
-TEST_F(HighResolutionTimerGTest,TestFrequency) {
+TEST(HighResolutionTimerGTest,TestFrequency) {
     HighResolutionTimerTest hrtTest;
     ASSERT_TRUE(hrtTest.TestFrequency());
 }
 
-TEST_F(HighResolutionTimerGTest,TestCounter) {
+TEST(HighResolutionTimerGTest,TestPeriod) {
     HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestCounter(5.0));
+    ASSERT_TRUE(hrtTest.TestPeriod());
 }
 
-TEST_F(HighResolutionTimerGTest,TestTimeStamp) {
+TEST(HighResolutionTimerGTest,TestPeriodFrequency) {
     HighResolutionTimerTest hrtTest;
-    ASSERT_TRUE(hrtTest.TestTimeStamp(100));
+    ASSERT_TRUE(hrtTest.TestPeriodFrequency());
+}
+
+TEST(HighResolutionTimerGTest,TestCounter) {
+    HighResolutionTimerTest hrtTest;
+    ASSERT_TRUE(hrtTest.TestCounter(0.5));
+}
+
+TEST(HighResolutionTimerGTest,TestCounter32) {
+    HighResolutionTimerTest hrtTest;
+    //This has to be a short time otherwise it will overflow in 32 bits...
+    ASSERT_TRUE(hrtTest.TestCounter32(0.05));
+}
+
+TEST(HighResolutionTimerGTest,TestTicksToTime) {
+    HighResolutionTimerTest hrtTest;
+    ASSERT_TRUE(hrtTest.TestTicksToTime());
+}
+
+TEST(HighResolutionTimerGTest,TestGetTimeStamp) {
+    HighResolutionTimerTest hrtTest;
+    ASSERT_TRUE(hrtTest.TestGetTimeStamp(100));
 }
 

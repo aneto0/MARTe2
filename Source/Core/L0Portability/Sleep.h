@@ -2,7 +2,7 @@
  * @file Sleep.h
  * @brief Header file for class Sleep
  * @date 17/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -22,7 +22,7 @@
  */
 
 #ifndef SLEEP_H_
-#define 		SLEEP_H_
+#define SLEEP_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,64 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,SleepOS.h)
+#include "HighResolutionTimer.h"
 
-extern "C" {
-    /**
-     * @brief Retrieve the time as seconds from the start of time.
-     * @return the seconds elapsed from 00:00 of Jan 1, 1970.
-     */
-    int GetDateSeconds();
-
-    /**
-     * @brief Sleeps for the time requested or more.
-     *
-     * @details This function uses HighResolutionTimer functions.
-     * @param[in] sec is the time in seconds to sleep (at least).
-     */
-    void SleepAtLeast(double sec);
-    /**
-     * @brief Sleeps no more than the requested time.
-     *
-     * @details This function uses HighResolutionTimer functions.
-     * @param[in] sec is the time in seconds to sleep (no more).
-     */
-    void SleepNoMore(double sec);
-
-    /**
-     * @brief Sleeps for sec seconds (double value).
-     * @param[in] sec is the time to sleep.
-     */
-    void SleepSecDouble(double sec);
-
-    /**
-     * @brief Sleeps for sec seconds (float value).
-     * @param[in] sec is the time to sleep.
-     */
-    void SleepSec(float sec);
-
-    /**
-     * @brief Sleeps for msec milliseconds.
-     * @param[in] msec is the number of milliseconds to sleep.
-     */
-    void SleepMSec(int32 msec);
-
-    /** @brief Sleep without yield cpu.
-     *
-     * @details This function uses HighResolutionTimer functions.
-     * @param[in] sec is the seconds to sleep.
-     */
-    void SleepBusy(double sec);
-
-    /**
-     * @brief Sleep yielding cpu for nonBusySleepSec.
-     * @param[in] totalSleepSec is the total time in seconds to sleep.
-     * @param[in] nonBusySleepSec is the time to sleep without use cpu.
-     */
-    void SleepSemiBusy(double totalSleepSec,
-            double nonBusySleepSec);
-
-};
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -106,64 +50,68 @@ extern "C" {
  * @details Most of the implementation is delegated to SleepOS.h which provides system calls to allows sleep functions.
  */
 class Sleep {
+
 public:
+
     /**
      * @brief Retrieve the time as seconds from the start of time.
      * @return the seconds elapsed from 00:00 of Jan 1, 1970.
      */
-    static int GetDateSeconds();
+    static int32 GetDateSeconds(void);
 
     /**
      * @brief Sleeps for the time requested or more.
-     *
      * @details This function uses HighResolutionTimer functions.
      * @param[in] sec is the time in seconds to sleep (at least).
      */
-    static void AtLeast(double sec);
+    static void AtLeast(float64 sec);
 
     /**
      * @brief Sleeps no more than the requested time.
-     *
      * @details This function uses HighResolutionTimer functions.
      * @param[in] sec is the time in seconds to sleep (no more).
      */
-    static void NoMore(double sec);
+    static void NoMore(float64 sec);
 
     /**
-     * @brief Sleeps for sec seconds (double value).
+     * @brief Sleeps for sec seconds (float64 value).
      * @param[in] sec is the time to sleep.
      */
-    static void Sec(double sec);
+    static void Sec(float64 sec);
 
-    /**
-     * @brief Sleeps for sec seconds (float value).
-     * @param[in] sec is the time to sleep.
-     */
-    static void Sec(float sec);
     /**
      * @brief Sleeps for msec milliseconds.
      * @param[in] msec is the number of milliseconds to sleep.
      */
     static void MSec(int32 msec);
 
-    /** @brief Sleep without yield cpu.
-     *
+    /**
+     * @brief Sleep without yield cpu.
      * @details This function uses HighResolutionTimer functions.
      * @param[in] sec is the seconds to sleep.
      */
-    static void Busy(double sec);
+    inline static void Busy(float64 sec);
 
     /**
      * @brief Sleep yielding cpu for nonBusySleepSec.
+     * @details This function uses HighResolutionTimer functions.
      * @param[in] totalSleepSec is the total time in seconds to sleep.
      * @param[in] nonBusySleepSec is the time to sleep without use cpu.
      */
-    static void SemiBusy(double totalSleepSec,
-                         double nonBusySleepSec);
+    static void SemiBusy(float64 totalSleepSec,
+                         float64 nonBusySleepSec);
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SLEEP_H_ */
+void Sleep::Busy(float64 sec) {
+    int64 startCounter = HighResolutionTimer::Counter();
+    int64 endCounter = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
+    int64 sleepUntilCounter = startCounter + endCounter;
+    while (HighResolutionTimer::Counter() < sleepUntilCounter) {
+    }
+}
 
+#endif /* SLEEP_H_ */
