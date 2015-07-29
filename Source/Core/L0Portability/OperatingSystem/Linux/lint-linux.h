@@ -29,7 +29,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "../../GeneralDefinitions.h"
+#include "GeneralDefinitions.h"
 #include <time.h>
 #include <sys/time.h>
 #include <errno.h>
@@ -54,9 +54,27 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+extern void *malloc(size_t size);
+
+extern void free(void* ptr);
+
+extern void *realloc(void* ptr, size_t size);
+
+extern char *strdup(const char *s);
+
 extern void *memset(void *s, int c, size_t n);
 
 extern void *memcpy(void *dest, const void *src, size_t n);
+
+extern int memcmp(const void *ptr1, const void *ptr2, size_t n);
+
+extern const void * memchr ( const void * ptr, int value, size_t num );
+
+extern void * memmove ( void * destination, const void * source, size_t num );
+
+extern void * memset ( void * ptr, int value, size_t num );
+
+extern void free();
 
 extern char *strcpy(char *dest, const char *src);
 

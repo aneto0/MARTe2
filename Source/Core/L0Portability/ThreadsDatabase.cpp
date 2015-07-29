@@ -97,7 +97,7 @@ ThreadInformation *ThreadsDatabaseRemoveEntry(TID threadId) {
 
                 // free at the end
                 if (ThreadsDatabase::nOfEntries == 0) {
-                    MemoryFree((void *&) ThreadsDatabase::entries);
+                    Memory::Free((void *&) ThreadsDatabase::entries);
                     //For AllocMore to reallocate again!
                     ThreadsDatabase::maxNOfEntries = 0;
                 }
@@ -221,7 +221,7 @@ bool ThreadsDatabase::AllocMore() {
 
     // first time?
     if (entries == NULL) {
-        entries = (ThreadInformation **) MemoryMalloc(sizeof(ThreadInformation *) * THREADS_DATABASE_GRANULARITY);
+        entries = (ThreadInformation **) Memory::Malloc(sizeof(ThreadInformation *) * THREADS_DATABASE_GRANULARITY);
         if (entries != NULL) {
             maxNOfEntries = THREADS_DATABASE_GRANULARITY;
             nOfEntries = 0;
@@ -232,7 +232,7 @@ bool ThreadsDatabase::AllocMore() {
         }
     }
     else {
-        entries = (ThreadInformation **) MemoryRealloc((void *&) entries, sizeof(ThreadInformation *) * (THREADS_DATABASE_GRANULARITY + maxNOfEntries));
+        entries = (ThreadInformation **) Memory::Realloc((void *&) entries, sizeof(ThreadInformation *) * (THREADS_DATABASE_GRANULARITY + maxNOfEntries));
         if (entries != NULL) {
             maxNOfEntries += THREADS_DATABASE_GRANULARITY;
         }

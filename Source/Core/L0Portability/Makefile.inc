@@ -32,14 +32,12 @@ SPB=OperatingSystem/$(OPERATING_SYSTEM).x
 
 OBJSX=  Atomic.x \
         Endianity.x \
-        Memory.x \
         FastMath.x \
         ProcessorType.x \
         StringPortable.x \
         Threads.x  \
         ThreadsDatabase.x \
         ThreadInformation.x \
-        MemoryStatisticsDatabase.x \
         LoadableLibrary.x \
         FastPollingMutexSem.x
 
