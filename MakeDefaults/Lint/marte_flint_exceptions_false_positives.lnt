@@ -1,0 +1,71 @@
+/*
+ * These are not real deviation to rules. This file is used
+ * to ignore false positives driven by limitation os flexelint (e.g.
+ * usage of symbols in assembly) 
+ * Syntax is:
+ * Rule X-Y-Z
+ * Justification: reason why the rule does not apply
+ */
+
+/* 
+ * Rule 7-1-1  (req) 
+ * Justification: FlexeLint does not understand that the parameter may be 
+ * later changed in the architecture (using assembly) implementation 
+ * and consequently cannot be constant. Another case where lint gets
+ * lost is when it cannot open the operating system header file for the 
+ * implementation and consequently cannot understand that the final function
+ * call cannot use a const.
+ */
+-efunc(952,Atomic::*)
+-efunc(952,StringHelper::*)
+-efunc(952,Endianity::*)
+-efunc(952,Sleep::*)
+
+/*
+ * Rule 843
+ * Justification: see Rule 7-1-1
+ */
+ -esym(843,processorVendorId)
+
+/*
+ * Rules flexelint 1055, 64, 746, 526, 628, 948, 40, 26, 10, 63, 516, 1080, 565, 1013, 115, 84, 9115, 438
+ * Justification: Given that flexelint is not being allowed to open the operating system headers (since it has problems parsing
+ * some of these files, putting itself into a state where brackets are not matched and leading to all sort of problems). 
+ * As a consequence it assumes that:
+ * The expected return value of the operating system function call is int (Rule 1055). 
+ * A return mismatch between what the functiona actually returns and the assumed int (Rule 64). 
+ * That the functions are being called without the presence of a prototype (Rule 746).
+ * That no arguments are being provided to the functions (Rule 628). 
+ * That the operating system symbol is not defined (Rule 526).
+ * That the comparison between the operating system return value and the test value always returns true (Rule 948)
+ * Variables are not identified and a consequence lint complains about not assigned lvalues and missing ; (Rules, 40, 26, 10, 63)
+ * Parameters are not correctly passed to operating system functions (Rule 516) 
+ * Definition not in scope (Rule 1080)
+ * Symbol not previously seen (Rule 565)
+ * That a given variable is not a member of a struct (Rule 1013)
+ * That a given struct is not defined (Rule 115)
+ * That the size of object is zero (Rule 84)
+ * There are invalid conversions between types (Rule 9115)
+ * There are unused variables (Rules 550 and 438)
+ */
+-efunc(1055,StringHelper::*)
+-efunc(64,StringHelper::*)
+-efunc(746,StringHelper::*)
+-esym(18,strstr,strcspn,strcpy,strcmp,strchr,strcat,strrchr,strpbrk,strncpy,strncmp,strncat,strlen,memset,floor,memcpy,nanosleep,time)
+-efunc(948,StringHelper::*)
+
+/*
+ * Ignore all the errors related to the CPU_ZERO, CPU_SET and CPU_ISSET macros
+ */
+ --emacro( (*), CPU_ZERO )
+ --emacro( {*}, CPU_ZERO )
+ --emacro( (*), CPU_SET )
+ --emacro( {*}, CPU_SET )
+ --emacro( (*), CPU_ISSET )
+ --emacro( {*}, CPU_ISSET )
+ /*
+  * False positives related to sched.h
+  */
+ -esym(9018,stackSizeAttribute)
+ -esym(526,__builtin_memset)
+ -esym(628,__builtin_memset)

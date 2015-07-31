@@ -1,0 +1,27 @@
+/* 
+ * Enable all warnings 
+ */
+-w3
+
+/* 
+ * MARTe required compilation macros
+ */ 
+-#dARCHITECTURE=x86_gcc
+-#dOPERATING_SYSTEM=Linux
+-dMEMORY_STATISTICS
+-dProcessorTypeDefaultCPUs=1u
++cpp(.h)
+
+/*
+ * Consider all the .h as c++
+ */
++cpp(h)
+ 
+/*
+ * This is required to disallow flint from 
+ * opening the operating system includes, where it fails to parse
+ * files (e.g. stdio.h) and gets confused with the brackets matching
+ * for the linux externs and propagates this into our .cpp
+ */
+-dLINT
+
