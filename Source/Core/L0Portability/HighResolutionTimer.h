@@ -65,13 +65,13 @@ public:
      * @brief Gets the cpu clock period in seconds.
      * @return the current period of the cpu.
      */
-    static inline float64 Period();
+    static float64 Period();
 
     /**
      * @brief Gets the cpu clock frequency.
      * @return the current frequency of the cpu.
      */
-    static inline int64 Frequency();
+    static int64 Frequency();
 
     /**
      * @brief Converts HighResolutionTimer ticks to time in seconds.
@@ -79,7 +79,7 @@ public:
      * @param[in] tStart is the initial ticks number.
      * @return the time elapsed in seconds
      */
-    static inline float64 TicksToTime(int64 tStop,
+    static float64 TicksToTime(int64 tStop,
                                       int64 tStart = 0);
 
     /**
@@ -88,13 +88,12 @@ public:
      * @param[out] date is a TimeValues structure which must be filled by this method.
      * @return true if the operating system calls returns with no errors.
      */
-    static inline bool GetTimeStamp(TimeValues &date);
+    static bool GetTimeStamp(TimeValues &date);
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,HighResolutionTimerOS.h)
 
 #endif /* HIGHRESOLUTIONTIME_H_ */
