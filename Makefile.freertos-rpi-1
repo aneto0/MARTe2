@@ -24,7 +24,7 @@
 #
 #############################################################
 
-TARGET=freertos-armv6z
+TARGET=freertos-rpi-1
 
 include Makefile.inc
 

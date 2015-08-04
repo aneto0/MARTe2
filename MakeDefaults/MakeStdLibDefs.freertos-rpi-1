@@ -46,7 +46,7 @@ SUBPROJC = $(SPB:%.x=%.spc)
 SUBPROJ2 = $(SPB2:%.x=%.spb)
 SUBPROJC += $(SPB2:%.x=%.spc)
 
-COMPILER = arm-none-eabi-gcc
+COMPILER = arm-none-eabi-g++
 CCOMPILER = arm-none-eabi-gcc
 MAKE     = make
 
@@ -57,8 +57,8 @@ OPTIM =
 INCLUDES=-I $(FREE_RTOS_DIRECTORY)/Source/include -I $(PORT_MACRO_H_DIRECTORY)
 LINKER = arm-none-eabi-ld
 LFLAGS = -Wl,--no-as-needed  
-CFLAGS = -MD -MP -march=armv6z -g -Wall -finline-functions -fno-use-cxa-atexit
-CPPFLAGS = -MD -MP -march=armv6z -g -Wall -finline-functions -fno-use-cxa-atexit 
+CFLAGS = -MD -MP -march=armv6z -g -Wall -finline-functions -fno-use-cxa-atexit -fno-exceptions -fno-stack-protector
+CPPFLAGS = -MD -MP -march=armv6z -g -Wall -finline-functions -fno-use-cxa-atexit -fno-exceptions -fno-stack-protector
 CFLAGSPEC= -DARCHITECTURE=armv6z_gcc -DOPERATING_SYSTEM=FreeRTOS
 LIBRARIES =  -lm -lnsl -lrt -lncurses -ldl -lgcc -lc
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
