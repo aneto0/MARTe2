@@ -28,7 +28,9 @@ PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  ClassRegistryItem.x
+OBJSX=  ClassRegistryItem.x \
+    Object.x \
+    ClassRegistryDatabase.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

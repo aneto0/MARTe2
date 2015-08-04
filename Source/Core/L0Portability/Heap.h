@@ -1,8 +1,8 @@
 /**
- * @file ClassRegistryDatabase.cpp
- * @brief Source file for class ClassRegistryDatabase
- * @date Aug 4, 2015
- * @author aneto
+ * @file Heap.h
+ * @brief Header file for class Heap
+ * @date 4 Aug 2015
+ * @author andre
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,31 +16,47 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class ClassRegistryDatabase (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class Heap
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
+#ifndef SOURCE_CORE_L0PORTABILITY_HEAP_H_
+#define SOURCE_CORE_L0PORTABILITY_HEAP_H_
+
 /*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
+/*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Object.h"
-#include "ClassRegistryItem.h"
+#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+/**
+ * @brief TODO
+ */
+class Heap {
+public:
+    /**
+     * @brief allocates size bytes of data in the heap.
+     * @return a pointer to the allocated memory or NULL if the allocation fails.
+     */
+    virtual void *Malloc(const uint32 &size);
 
-class ObjectTemp: public Object {
-    virtual bool Initialise(const StructuredData &data){return true;}
+    /**
+     * @brief free the pointer data and its associated memory.
+     * @param data the data to be freed.
+     */
+    virtual void Free(void *&data);
 };
 
-CLASS_REGISTER(ObjectTemp, "1.0")
 /*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+#endif /* SOURCE_CORE_L0PORTABILITY_HEAP_H_ */
 

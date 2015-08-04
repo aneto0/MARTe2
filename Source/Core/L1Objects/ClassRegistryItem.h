@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
+#include "Heap.h"
 #include "LinkedListable.h"
 
 /*---------------------------------------------------------------------------*/
@@ -41,9 +42,9 @@
  * @brief TODO
  * @details TODO
  */
-typedef Object *(ObjectBuildFn)();
+typedef Object *(ObjectBuildFn)(Heap &);
 
-class ClassRegistryItem : public LinkedListable {
+class ClassRegistryItem: public LinkedListable {
 public:
     /**
      * @brief Assigns the input variables to the class members.
@@ -51,9 +52,7 @@ public:
      * @param clVersion the class version to register.
      * @param objBuildFn the object build function to register.
      */
-    ClassRegistryItem(const char8* clName,
-                      const char8* clVersion,
-                      ObjectBuildFn *objBuildFn);
+    ClassRegistryItem(const char8* clName, const char8* clVersion, ObjectBuildFn *objBuildFn);
     /**
      * @brief Returns the class name associated to this item.
      * @return the class name associated to this item.
@@ -71,7 +70,35 @@ public:
      * @brief Returns a pointer to function that allows to instantiate a new object from this class.
      * @return a pointer to function that allows to instantiate a new object from this class.
      */
-    ObjectBuildFn *GetObjectBuildFn() const;
+    ObjectBuildFn *GetObjectBuildFunction() const;
+
+    /**
+     * @brief Increments the number of instantiated objects belonging to the class type represented by this registry item.
+     */
+    void IncrementNumberOfInstances();
+
+    /**
+     * @brief Decrements the number of instantiated objects belonging to the class type represented by this registry item.
+     */
+    void DecrementNumberOfInstances();
+
+    /**
+     * @brief Returns the number of instantiated objects belonging to the class type represented by this registry item.
+     * @return the number of instantiated objects belonging to the class type represented by this registry item.
+     */
+    uint32 GetNumberOfInstances();
+
+    /**
+     * @brief Returns the heap that was selected to allocate objects belonging to the class type represented by this registry item.
+     * @return the heap that was selected to allocate objects belonging to the class type represented by this registry item.
+     */
+    const Heap &GetHeap() const;
+
+    /**
+     * @brief Sets the heap to allocate objects belonging to the class type represented by this registry item.
+     * @param h the heap to allocate objects belonging to the class type represented by this registry item.
+     */
+    void SetHeap(const Heap& h);
 
 private:
     /**
@@ -88,6 +115,16 @@ private:
      * The object instantiation function.
      */
     ObjectBuildFn *objectBuildFn;
+
+    /**
+     * The number of instantiated objects belonging to the class type represented by this registry item.
+     */
+    uint32 numberOfInstances;
+
+    /**
+     * The heap that is being used to instantiate objects of the class type represented by this registry item.
+     */
+    Heap heap;
 };
 
 /*---------------------------------------------------------------------------*/

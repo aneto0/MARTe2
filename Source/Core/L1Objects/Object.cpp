@@ -1,8 +1,8 @@
 /**
- * @file ClassRegistryItem.cpp
- * @brief Source file for class ClassRegistryItem
- * @date Aug 4, 2015
- * @author aneto
+ * @file Object.cpp
+ * @brief Source file for class Object
+ * @date 04/08/2015
+ * @author André Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ClassRegistryItem (public, protected, and private). Be aware that some 
+ * the class Object (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,56 +28,33 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ClassRegistryItem.h"
-#include "FastPollingMutexSem.h"
+#include "Object.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-static FastPollingMutexSem classRegistryItemMuxSem;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ClassRegistryItem::ClassRegistryItem(const char8* clName, const char8* clVersion, ObjectBuildFn *objBuildFn) {
-    className = clName;
-    classVersion = clVersion;
-    objectBuildFn = objBuildFn;
+Object::~Object() {
+
 }
 
-const char8* ClassRegistryItem::GetClassName() const {
-    return className;
+const char8* Object::ClassName() const {
+    return NULL;
 }
 
-const char8* ClassRegistryItem::GetClassVersion() const {
-    return classVersion;
+const char8* Object::ClassVersion() const {
+    return NULL;
 }
 
-ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
-    return objectBuildFn;
+void *Object::operator new(size_t size) {
+    return NULL;
 }
 
-void ClassRegistryItem::IncrementNumberOfInstances() {
-    classRegistryItemMuxSem.FastLock();
-    numberOfInstances++;
-    classRegistryItemMuxSem.FastUnLock();
-}
-
-void ClassRegistryItem::DecrementNumberOfInstances() {
-    classRegistryItemMuxSem.FastLock();
-    numberOfInstances--;
-    classRegistryItemMuxSem.FastUnLock();
-}
-
-uint32 ClassRegistryItem::GetNumberOfInstances() {
-    return numberOfInstances;
-}
-
-const Heap &ClassRegistryItem::GetHeap() const {
-    return heap;
-}
-
-void ClassRegistryItem::SetHeap(const Heap& h){
-    heap = h;
+void *Object::operator new(size_t size, Heap &heap) {
+    void *obj = heap.Malloc(size);
+    return obj;
 }

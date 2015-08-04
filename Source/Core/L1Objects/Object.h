@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "StructuredData.h"
+#include "Heap.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -50,11 +51,9 @@
 class Object {
 public:
     /**
-     * Virtual destructor. NOOP.
+     * @brief Virtual destructor. No operation.
      */
-    virtual ~Object() {
-
-    }
+    virtual ~Object();
 
     /**
      * @brief Returns the name of the class.
@@ -79,12 +78,43 @@ public:
      * to the member variables.
      */
     virtual bool Initialise(const StructuredData &data) = 0;
+
+    /**
+     * @brief Placement new to allocate the object in the heap
+     * @param size of the object
+     * @param heap target heap containing the memory to hold the object
+     * @return a pointer to the heap.
+     */
+    void *operator new(size_t size, Heap &heap);
+private:
+
+    /**
+     * Disallow the usage of new
+     */
+    void *operator new(size_t size);
 };
+
+/*---------------------------------------------------------------------------*/
+/*                        Macro definitions                                  */
+/*---------------------------------------------------------------------------*/
+#define CLASS_REGISTER(name,ver)                                                          \
+    Object * name ## BuildFn__ (Heap &heap);                                              \
+    static ClassRegistryItem _private_ ## name ## Info( #name ,ver, & name ## BuildFn__); \
+    Object * name ## BuildFn__ (Heap &heap){                                              \
+        name *p = new (heap) name () ;                                                    \
+        _private_ ## name ## Info.IncrementNumberOfInstances();                           \
+        _private_ ## name ## Info.SetHeap(heap);                                          \
+        return p;                                                                         \
+    }                                                                                     \
+    void operator delete(void *p){                                                        \
+        _private_ ## name ## Info.GetHeap().Free(p);                                      \
+        _private_ ## name ## Info.DecrementNumberOfInstances();                           \
+    }
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 
 #endif /* SOURCE_CORE_L1OBJECTS_OBJECT_H_ */
 
