@@ -39,6 +39,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
+
 
 HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
     time((time_t *) &initialTime.tv_sec);

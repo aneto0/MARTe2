@@ -45,6 +45,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
+
 HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
     const size_t LINUX_CPUINFO_BUFFER_SIZE = 1023u;
     initialTicks = HighResolutionTimer::Counter();

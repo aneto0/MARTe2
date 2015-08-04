@@ -69,7 +69,7 @@ public:
      * @param[in] openingMode is a flag with define the properties of the console.
      * @return true if the returned value of BasicConsole.Open() is NoError.
      */
-    bool TestOpenModeDefault(FlagsType openingMode = BasicConsole::Mode::Default);
+    bool TestOpenModeDefault(FlagsType openingMode = BasicConsoleMode::Default);
 
     /**
      * @brief Tests the correct opening of the console with CreateNewBuffer mode.

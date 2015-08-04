@@ -38,6 +38,38 @@
 #include "StringHelper.h"
 #include "ErrorType.h"
 
+/**
+ * FlagsType determining the console operating modes.\n
+ * These are usually set when the console is constructed.
+ */
+namespace BasicConsoleMode {
+
+/**
+ * Default operation mode. In this mode users have to explicitly feed
+ * a new line to write to the console output, CTRL-C will raise an exception
+ * and kill the underlying program and paging will not be enabled.
+ */
+static const FlagsType Default(0u);
+/**
+ * WIN32 only: operates on a display buffer different from the current one.
+ */
+static const FlagsType CreateNewBuffer(1u);
+/**
+ * Does not wait for a newline when the user enters input.
+ */
+static const FlagsType PerformCharacterInput(2u);
+/**
+ * CTRL-C does not raise an exception.
+ */
+static const FlagsType DisableControlBreak(4u);
+/**
+ * Text is divided in pages that fit into the console dimension. Users are
+ * requested to input a new line in order to change page.
+ */
+static const FlagsType EnablePaging(8u);
+
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -71,36 +103,6 @@ public:
      * from such action is not caught.
      */
     virtual ~BasicConsole();
-
-    /**
-     * FlagsType determining the console operating modes.\n
-     * These are usually set when the console is constructed.
-     */
-    struct Mode {
-        /**
-         * Default operation mode. In this mode users have to explicitly feed
-         * a new line to write to the console output, CTRL-C will raise an exception
-         * and kill the underlying program and paging will not be enabled.
-         */
-        static const FlagsType Default;
-        /**
-         * WIN32 only: operates on a display buffer different from the current one.
-         */
-        static const FlagsType CreateNewBuffer;
-        /**
-         * Does not wait for a newline when the user enters input.
-         */
-        static const FlagsType PerformCharacterInput;
-        /**
-         * CTRL-C does not raise an exception.
-         */
-        static const FlagsType DisableControlBreak;
-        /**
-         * Text is divided in pages that fit into the console dimension. Users are
-         * requested to input a new line in order to change page.
-         */
-        static const FlagsType EnablePaging;
-    };
 
     /**
      * @brief Opens and display the console.

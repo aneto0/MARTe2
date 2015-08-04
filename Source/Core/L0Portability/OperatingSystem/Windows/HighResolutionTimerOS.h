@@ -43,7 +43,7 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-static HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
+extern HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
 
 inline int64 HighResolutionTimer::Frequency() {
     return calibratedHighResolutionTimer.GetFrequency();
