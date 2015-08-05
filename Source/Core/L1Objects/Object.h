@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "StructuredData.h"
+#include "Introspection.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -79,6 +80,18 @@ public:
      * to the member variables.
      */
     virtual bool Initialise(const StructuredData &data) = 0;
+
+    /**
+     * @brief Returns a copy to this object instance introspection properties.
+     * @destination copies this object instance introspection properties to destination.
+     */
+    void GetIntrospectionCopy(Introspection &destination);
+
+private:
+    /**
+     * Object introspection properties.
+     */
+    Instrospection introspection;
 };
 
 /*---------------------------------------------------------------------------*/
