@@ -32,6 +32,7 @@ OBJSX=  ClassRegistryItem.x \
     Object.x \
     ClassProperties.x \
     LinkedListable.x \
+    Reference.x \
     ClassRegistryDatabase.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

@@ -39,8 +39,39 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+Object::Object() {
+    referenceCounter = 0;
+}
+
 Object::~Object() {
 }
+
+static FastPollingMutexSem lock;
+
+uint32 Object::DecrementReferences(){
+    int32 ret;
+    lock.FastLock();
+    ret = --referenceCounter;
+    lock.FastUnLock();
+    return ret;
+}
+
+uint32 Object::IncrementReferences(){
+    int32 ret;
+    lock.FastLock();
+    ret = ++referenceCounter;
+    lock.FastUnLock();
+    return ret;
+}
+
+virtual Object *Object::Clone() const {
+    return NULL;
+}
+
+uint32 Object::NumberOfReferences() const{
+    return referenceCounter;
+}
+
 
 void *Object::operator new(size_t size) throw () {
     return NULL;

@@ -104,6 +104,10 @@
  *  - The allocation heap can be selected by the end-user.
  */
 class Object {
+    /**
+     * This allows the Reference class to be the only interface to manage the number of instances pointing to this object.
+     */
+    friend class Reference;
 public:
     CLASS_REGISTER_DECLARATION(Object)
 
@@ -151,7 +155,35 @@ public:
      */
     void operator delete(void *p);
 
+    /**
+     * @brief Returns the number of references.
+     * @return the number of references pointing to this object.
+     */
+    uint32 NumberOfReferences() const;
+
 private:
+
+    /**
+     * @brief Decrements the number of references to this object.
+     * @details Only accessible to the Reference class.
+     * @return the new number of references.
+     */
+    uint32 DecrementReferences();
+
+    /**
+     * @brief Increments the number of references to this object.
+     * @details Only accessible to the Reference class.
+     * @return the new number of references.
+     */
+    uint32 IncrementReferences();
+
+    /**
+     * @brief Clones the object.
+     * @details To enable cloning of objects using references the final class must implement clone.
+     * Only accessible to the Reference class.
+     * @return a clone of this object.
+     */
+    virtual Object* Clone() const;
 
     /**
      * Disallow the usage of new.
@@ -163,6 +195,10 @@ private:
      */
     Introspection introspection;
 
+    /**
+     * The number of references to this object.
+     */
+    volatile int32 referenceCounter;
 };
 
 /*---------------------------------------------------------------------------*/
