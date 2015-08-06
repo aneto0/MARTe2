@@ -31,6 +31,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 OBJSX=  ClassRegistryItem.x \
     Object.x \
     ClassProperties.x \
+    LinkedListable.x \
     ClassRegistryDatabase.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

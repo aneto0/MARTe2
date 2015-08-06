@@ -24,24 +24,8 @@
 #
 #############################################################
 
-OBJSX=  EndianityTest.x \
-        ThreadsTest.x \
-        SleepTest.x \
-        ProcessorTest.x \
-        AtomicTest.x \
-        ProcessorTypeTest.x \
-	EventSemTest.x \
-	MutexSemTest.x \
-	BasicConsoleTest.x \
-	HighResolutionTimerTest.x \
-	MemoryTest.x \
-	FastPollingMutexSemTest.x \
-	StringHelperTest.x \
-	TimeoutTypeTest.x \
-	LoadableLibraryTest.x \
-	FastMathTest.x \
-	StringPortableTest.x
-
+OBJSX=  LinkedListableTest.x     	
+		
 PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
@@ -50,8 +34,10 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../../../Source/Core/L0Portability
 INCLUDES += -I../../../Source/Core/L1Objects
+INCLUDES += -I../L0Portability
+
 all: $(OBJS) \
-                $(BUILD_DIR)/L1ObjectsTest$(LIBEXT)
+                $(BUILD_DIR)/L1ObjectsTest$(LIBEXT)                 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

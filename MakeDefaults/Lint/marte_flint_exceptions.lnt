@@ -63,12 +63,14 @@
 -esym(756,intptr,Colours)
 /* global struct/union/enum not referenced */
 -etype(758,Flags)
+-esym(758,SFTestType)
 /* global struct not referenced */
 -esym(768,TimeValues::*)
 -esym(768,IBasicConsole::*)
 -esym(768,ExceptionHandler::*)
 -esym(768,ExceptionHandler::*)
 /* global constant enumeration not referenced */ 
+-esym(769,SFTestType::*)
 -esym(769,Colours::*) 
 -esym(769,ErrorType::*)
 -esym(769,Threads::ThreadStateType::*)
@@ -110,6 +112,8 @@
 -esym(1714,ExceptionHandler::*)
 -esym(1714,ThreadInformation::*)
 -esym(1714,Memory::*)
+-esym(1714,LinkedListable::*)
+
 
 /* virtual member function not referenced */
 -esym(1716,IBasicConsole::*)
@@ -213,11 +217,37 @@
 -esym(9141,ExceptionHandler)
 -esym(9141,Memory)
 -esym(9141,Memory::*)
+-esym(9141,Iterator)
+-esym(9141,SearchFilter)
+-esym(9141,SortFilter)
+-esym(9141,LinkedListable)
+-esym(9141,LinkedListable::*)
+-esym(9141,IteratorFn)
+-esym(9141,SearchFilterFn)
+-esym(9141,SortFilterFn)
+-esym(9141,SFTestType)
+
+/* 
+ * Info flexelint 1711
+ * virtual functions not inherited
+ */
+ -esym(1711,Iterator)
+ -esym(1711,SearchFilter)
+ -esym(1711,SortFilter)
+ -esym(1711,LinkedListable)
+ 
+ /*
+ * Rule flexelint 1795 
+ * Rule MISRA 14-7-1
+ * Template defined but not instanciated
+ */
+
+
 /*
  * Rule flexelint 1960 
  * Rule MISRA 0-1-8
  * Void functions must have an external effect.
- * Justification: They changed an class attribute.
+ * Justification: They changed a class attribute.
  */
 -esym(1960, TimeoutType::SetTimeoutSec*)
 -esym(1960, TimeoutType::SetTimeoutHighResolutionTimerTicks*)
