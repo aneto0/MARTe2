@@ -33,7 +33,62 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "StructuredData.h"
+#include "Heap.h"
 #include "Introspection.h"
+#include "ClassProperties.h"
+#include "ClassRegistryItem.h"
+
+
+/*---------------------------------------------------------------------------*/
+/*                        Macro definitions                                  */
+/*---------------------------------------------------------------------------*/
+/**
+ * These macros are required to automatically register in the ClassRegistryDatabase
+ * the information about all the classes that inherit from object.
+ * These have to be defined as macros so that the new and delete functions are implemented
+ * in the final class inhering from Object (i.e. they are specific to each implementation).
+ */
+/**
+ * The function GetHiddenClassRegistryItem has to be virtual in order to guarantee that
+ * there will be a virtual member in all inherited classes.
+ * This macro has to be inserted in every class that inherits from Object.
+ */
+#define CLASS_REGISTER_DECLARATION(name)                                                      \
+    virtual ClassRegistryItem *GetHiddenClassRegistryItem() const;
+
+/**
+ * This macro has to be inserted in every unit file.
+ * The definition of the  _## name ## ClassRegistryItem variable will
+ * instantiate a new ClassRegistryItem for every unit file compiled in the application.
+ * Upon instantiation each ClassRegistryItem will automatically add itself to the ClassRegistryDatabase.
+ * When required the ClassRegistryItem will instantiate new objects by asking the ClassRegistryItem
+ * for the build function related to the class it is representing.
+ * Note that new and delete are static functions and as a consequence they cannot call member
+ * functions in the class (or its derived classes). Because their implementation is specific to the final
+ * class they had to be written as part of macro as well.
+ */
+#define CLASS_REGISTER(name,ver)                                                              \
+    Object * _ ## name ## BuildFn (Heap &heap);                                               \
+    static ClassProperties _## name ## ClassProperties( #name ,ver, & _ ##  name ## BuildFn); \
+    static ClassRegistryItem _ ## name ## ClassRegistryItem( _ ## name ## ClassProperties );  \
+    Object * _ ## name ## BuildFn (Heap &heap){                                               \
+        _ ## name ## ClassRegistryItem.SetHeap(heap);                                         \
+        name *p = new (heap) name () ;                                                        \
+        return p;                                                                             \
+    }                                                                                         \
+    ClassRegistryItem * name::GetHiddenClassRegistryItem() const {                            \
+        return &_## name ## ClassRegistryItem;                                                \
+    }                                                                                         \
+    void * name::operator new(size_t size, Heap &heap) {                                      \
+        void *obj = heap.Malloc(size);                                                        \
+        _ ## name ## ClassRegistryItem.IncrementNumberOfInstances();                          \
+        return obj;                                                                           \
+    }                                                                                         \
+    void name::operator delete(void *p) {                                                     \
+        _ ## name ## ClassRegistryItem.GetHeap()->Free(p);                                    \
+        _ ## name ## ClassRegistryItem.DecrementNumberOfInstances();                          \
+    }
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -50,24 +105,12 @@
  */
 class Object {
 public:
-    /**
-     * Virtual destructor. NOOP.
-     */
-    virtual ~Object() {
-
-    }
+    CLASS_REGISTER_DECLARATION(Object)
 
     /**
-     * @brief Returns the name of the class.
-     * @return the name of the class.
+     * Virtual destructor. No operation.
      */
-    const char8* ClassName() const;
-
-    /**
-     * @brief Returns the version of the class against which the code was compiled.
-     * @return the version of the class against which the code was compiled.
-     */
-    const char8* ClassVersion() const;
+    virtual ~Object();
 
     /**
      * @brief Initialises the object against a structured list of elements.
@@ -79,25 +122,52 @@ public:
      * @return true if all the input data is valid and can be successfully assigned
      * to the member variables.
      */
-    virtual bool Initialise(const StructuredData &data) = 0;
+    virtual bool Initialise(const StructuredData &data);
 
     /**
      * @brief Returns a copy to this object instance introspection properties.
      * @destination copies this object instance introspection properties to destination.
      */
-    void GetIntrospectionCopy(Introspection &destination);
+    void GetIntrospectionCopy(Introspection &destination) const;
+
+    /**
+     * @brief Returns a copy to the class parameters of this object type.
+     * @param destination the class properties where.
+     */
+    void GetClassPropertiesCopy(ClassProperties &destination) const;
+
+    /**
+     * @brief Placement new to allocate the object in the heap.
+     * @param size of the object.
+     * @param heap target heap containing the memory to hold the object.
+     * @return a pointer to the heap.
+     */
+    void *operator new(size_t size, Heap &heap);
+
+    /**
+     * @brief The delete operator will delegate the freeing of the memory to the heap.
+     * @details The actual definition is expanded in the macro CLASS_REGISTER.
+     * @param p the object being deleted.
+     */
+    void operator delete(void *p);
 
 private:
+
+    /**
+     * Disallow the usage of new.
+     */
+    void *operator new(size_t size) throw ();
+
     /**
      * Object introspection properties.
      */
-    Instrospection introspection;
+    Introspection introspection;
+
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 
 #endif /* SOURCE_CORE_L1OBJECTS_OBJECT_H_ */
 

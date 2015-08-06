@@ -1,8 +1,8 @@
 /**
- * @file ClassRegistryItem.cpp
- * @brief Source file for class ClassRegistryItem
- * @date Aug 4, 2015
- * @author aneto
+ * @file Object.cpp
+ * @brief Source file for class Object
+ * @date 04/08/2015
+ * @author André Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ClassRegistryItem (public, protected, and private). Be aware that some 
+ * the class Object (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,75 +28,30 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ClassRegistryDatabase.h"
+#include "Object.h"
+#include "Memory.h"
 #include "ClassRegistryItem.h"
-#include "FastPollingMutexSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-static FastPollingMutexSem classRegistryItemMuxSem;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties) {
-    numberOfInstances = 0;
-    classProperties = clProperties;
-    loadableLibrary = NULL;
-    ClassRegistryDatabase::Instance().Add(this);
+Object::~Object() {
 }
 
-ClassRegistryItem::~ClassRegistryItem() {
-    const LoadableLibrary *loader = loadableLibrary;
-    ClassRegistryDatabase::Instance().Delete(this);
-    if (loader != NULL) {
-        delete loader;
-    }
-    loadableLibrary = NULL;
+void *Object::operator new(size_t size) throw () {
+    return NULL;
 }
 
-void ClassRegistryItem::GetClassPropertiesCopy(ClassProperties &destination) const {
-    destination = classProperties;
+void Object::GetIntrospectionCopy(Introspection &destination) const {
+    destination = introspection;
 }
 
-const ClassProperties *ClassRegistryItem::GetClassProperties() const {
-    return &classProperties;
+void Object::GetClassPropertiesCopy(ClassProperties &destination) const {
+    destination = *GetHiddenClassRegistryItem()->GetClassProperties();
 }
 
-void ClassRegistryItem::IncrementNumberOfInstances() {
-    classRegistryItemMuxSem.FastLock();
-    numberOfInstances++;
-    classRegistryItemMuxSem.FastUnLock();
-}
-
-void ClassRegistryItem::DecrementNumberOfInstances() {
-    classRegistryItemMuxSem.FastLock();
-    numberOfInstances--;
-    classRegistryItemMuxSem.FastUnLock();
-}
-
-uint32 ClassRegistryItem::GetNumberOfInstances() {
-    return numberOfInstances;
-}
-
-Heap *ClassRegistryItem::GetHeap() {
-    return &heap;
-}
-
-void ClassRegistryItem::SetHeap(const Heap& h) {
-    heap = h;
-}
-
-const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {
-    return loadableLibrary;
-}
-
-void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary *lLibrary) {
-    this->loadableLibrary = lLibrary;
-}
-
-ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
-    return objectBuildFn;
-}
-
+CLASS_REGISTER(Object, "1.0")

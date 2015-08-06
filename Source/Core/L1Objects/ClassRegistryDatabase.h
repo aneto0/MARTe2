@@ -31,18 +31,78 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "ClassRegistryItem.h"
+#include "LinkedListHolder.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+/**
+ * @brief Database of framework base classes.
+ * @details Most of the framework user classes inherit from Object. As a consequence,
+ * they have the property of being automatically instantiated and managed by the framework.
+ * Every class that inherits from Object will be described by a ClassRegistryItem and
+ * automatically added to a ClassRegistryDatabase. This database can then be used to query
+ * information about the registered classes.
+ */
+class ClassRegistryDatabase: public LinkedListHolder {
+public:
+    /**
+     * @brief Singleton access to the database.
+     * @return reference to the database.
+     */
+    static ClassRegistryDatabase &Instance();
 
+    /**
+     * @brief Destructor. Clears all the elements hold by the database.
+     */
+    ~ClassRegistryDatabase();
 
+    /**
+     * @brief Removes an element from the database.
+     * @details In principle this method should only be called by the
+     * ClassRegistryItem destructor.
+     * @param[in] p the element to be removed.
+     */
+    void Delete(ClassRegistryItem *p);
 
+    /**
+     * @brief Adds an element from the database.
+     * @details In principle this method should only be called by the
+     * ClassRegistryItem constructor.
+     * @param[in] p the element to be added.
+     */
+    void Add(ClassRegistryItem *p);
+
+    /**
+     * @brief Returns the ClassRegistryItem describing the class with name className.
+     * @details The returned pointer will be valid as long as it exists in the database.
+     * @param[in] className the name of the class to be searched.
+     * @return a pointer to the ClassRegisteredItem or NULL if the className could not be found.
+     */
+    ClassRegistryItem *Find(const char8 *className);
+
+    /**
+     * @brief Instantiates of the class with name className in the specified heap.
+     * @param[in] className the name of the class.
+     * @param[in] heap the heap where the object is to be allocated.
+     * @return a new object of the specified class or NULL if the className does not exist.
+     */
+    Object *CreateByName(const char8 *className, Heap &heap);
+
+    /**
+     * @brief Returns an access point to the database root.
+     * @return Pointer to the database root which can be used to scan the database.
+     */
+    const ClassRegistryItem *List() const;
+private:
+    /**
+     * @brief Private Constructor.
+     */
+    ClassRegistryDatabase();
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 #endif /* SOURCE_CORE_L1OBJECTS_CLASSREGISTRYDATABASE_H_ */
-	
