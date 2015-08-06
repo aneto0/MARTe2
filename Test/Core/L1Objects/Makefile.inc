@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=  LinkedListableTest.x     	
+OBJSX=  LinkedListableTest.x \
+	LinkedListHolderTest.x     	
 		
 PACKAGE=Core
 ROOT_DIR=../../..

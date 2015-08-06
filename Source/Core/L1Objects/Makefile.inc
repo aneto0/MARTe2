@@ -28,7 +28,8 @@ PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  LinkedListable.x 
+OBJSX=  LinkedListable.x \
+	LinkedListHolder.x
     
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

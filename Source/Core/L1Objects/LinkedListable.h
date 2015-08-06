@@ -53,6 +53,7 @@ class LinkedListable;
  */
 class LinkedListable {
 
+
 public:
 
     /**
@@ -226,7 +227,7 @@ public:
      */
     void Iterate(IteratorFn * const it);
 
-private:
+protected:
 
     /**
      * Pointer to the next element in the list.
