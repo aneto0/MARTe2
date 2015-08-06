@@ -143,7 +143,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     return registryItem;
 }
 
-const ClassRegistryItem * ClassRegistryDatabase::List() const{
+const ClassRegistryItem * ClassRegistryDatabase::List(){
     return static_cast<const ClassRegistryItem *>(LinkedListHolder::List());
 }
 

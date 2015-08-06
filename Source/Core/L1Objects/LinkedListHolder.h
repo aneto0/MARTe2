@@ -1,294 +1,265 @@
-/*
- * Copyright 2011 EFDA | European Fusion Development Agreement
- *
- * Licensed under the EUPL, Version 1.1 or - as soon they 
-   will be approved by the European Commission - subsequent  
-   versions of the EUPL (the "Licence"); 
- * You may not use this work except in compliance with the 
-   Licence. 
- * You may obtain a copy of the Licence at: 
- *  
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in 
-   writing, software distributed under the Licence is 
-   distributed on an "AS IS" basis, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-   express or implied. 
- * See the Licence for the specific language governing 
-   permissions and limitations under the Licence. 
- *
- * $Id: LinkedListHolder.h 3 2012-01-15 16:26:07Z aneto $
- *
-**/
-
 /**
- * @file
- * A class that can handle one or more linked list
+ * @file LinkedListHolder.h
+ * @brief Header file for class LinkedListHolder
+ * @date 06/06/2015
+ * @author Giuseppe Ferrò
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This header file contains the declaration of the class LinkedListHolder
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef LINKEDLISTHOLDER_H
-#define LINKEDLISTHOLDER_H
+#ifndef LINKEDLISTHOLDER_H_
+#define LINKEDLISTHOLDER_H_
 
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 #include "LinkedListable.h"
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+/**
+ * @brief Implementation of a dynamic single linked list.
+ *
+ * Adding the memory of the root and using functions defined for LinkedListable objects,
+ * this class performs all the basic methods to manipulate a list.
+ *
+ * To implement specific object lists this class must be derived.
+ */
 
 class LinkedListHolder {
-protected:
-    /** */
-    LinkedListable  llhRoot;
-
-    /** */
-    uint32          llhSize;
 
 public:
 
-    /** will deallocate all the contents */
-    void CleanUp(){
-        LinkedListable *p = llhRoot.next;
-        llhRoot.next = NULL;
-        while(p != NULL){
-            LinkedListable *q = p;
-            p = p->Next();
-            delete q;
-        }
-        llhSize = 0;
-    }
+    /**
+     * @brief Deallocates all the contents.
+     */
+    void CleanUp();
 
+    /**
+     * @brief Sets 0 to llhSize and NULL to llhRoot->next.
+     */
+    void Reset();
 
-    /** does the equivalent of initialization: sets 0 to llhSize and NULL
-        to llhRoot->next */
-    void Reset(){
-        llhRoot.next = NULL;
-        llhSize = 0;
-    }
+    /**
+     * @brief Constructor.
+     */
+    LinkedListHolder();
 
-    /** */
-    LinkedListHolder(){
-        llhSize = 0;
-        llhRoot.next = NULL;
-    }
+    /**
+     * @brief Destructor.
+     */
+    virtual ~LinkedListHolder();
 
-    /**  will deallocate all the
-         contents providing all the members have virtual destructors */
-    virtual ~LinkedListHolder(){
-        CleanUp();
-    }
+    /**
+     * @brief Returns the first element.
+     * @return a pointer to the first element of the list.
+     */
+    LinkedListable *List();
 
-    /**  return the first element */
-    LinkedListable *List() const{
-        return llhRoot.Next();
-    };
+    /**
+     * @brief Returns the number of elements in the list.
+     * @return the number of the elements in the list.
+     */
+    uint32 ListSize() const;
 
-    /**  return the first element */
-    uint32 ListSize()const {
-        return llhSize;
-    };
+    /**
+     * @brief Inserts in the first location the element in input.
+     * @param[in] p is the LinkedListable object to insert.
+     */
+    inline void FastListInsertSingle(LinkedListable &p);
 
-    /**  insert in the first location the element p */
-    inline void FastListInsertSingle(LinkedListable &p){
-        llhSize++;
-        p.next = llhRoot.next;
-        llhRoot.next = &p;
-    }
+    /**
+     * @brief Inserts in the first location the input list.
+     * @param[in] p is a pointer to the LinkedListable to insert.
+     */
+    void ListInsert(LinkedListable * const p);
 
-    /**  insert in the first location the list p */
-    void ListInsert(LinkedListable *p){
-        llhSize += p->Size();
-        llhRoot.Insert(p);
-    }
+    /**
+     * @brief Inserts the input list using a SortFilter.
+     * @param[in] p is the pointer to the LinkedListable to insert.
+     * @param[in] sorter defines the comparison criteria.
+     */
+    void ListInsert(LinkedListable * const p,
+                    SortFilter * const sorter);
 
-    /**  insert in the right location the list p using sorting sorter */
-    void ListInsert(LinkedListable *p,SortFilter *sorter){
-        llhSize += p->Size();
-        llhRoot.Insert(p,sorter);
-    }
+    /**
+     * @brief Inserts the list p using a SortFilterFn function.
+     * @param[in] p is the pointer to the LinkedListable to insert.
+     * @param[in] sorter defines the comparison criteria.
+     */
+    void ListInsert(LinkedListable * const p,
+                    SortFilterFn * const sorter);
 
-    /**  insert in the right location the list p using sorting sorter */
-    void ListInsert(LinkedListable *p,SortFilterFn *sorter){
-        llhSize += p->Size();
-        llhRoot.Insert(p,sorter);
-    }
+    /**
+     * @brief Inserts a list in the specified position of the list.
+     * @details if the specified position is greater the the list size, the list input is inserted on the queue.
+     * @param[in] q is the pointer to the LinkedListable to insert.
+     * @param[in] index is the position in the list where p must be inserted.
+     */
+    void ListInsert(LinkedListable * const q,
+                    const uint32 index);
 
-    /**  inserts as the n-th element of list (if possible otherwise as bottom) */
-    void ListInsert(LinkedListable *q,uint32 index){
-        if (q == NULL) return;
-        LinkedListable *p = &llhRoot;
-        while ((p->next != NULL) && (index > 0)){ p = p->next; index--; }
-        llhSize += q->Size();
-        p->Insert(q);
-    }
+    /**
+     * @brief Adds an element at the end of this list.
+     * @param[in] p is a pointer to the LinkedListable element to be appended.
+     */
+    void ListAdd(LinkedListable * const p);
 
-    /**  insert in the first location the list p */
-    void ListInsertL(LinkedListHolder *p){
-        if (p == NULL) return;
-        llhSize += p->ListSize();
-        llhRoot.Insert(p->List());
-        p->llhRoot.next = NULL;
-        p->llhSize = 0;
-    }
+    /**
+     * @brief Adds a LinkedListable list at the end of the list.
+     * @param[in] p is the pointer to the LinkedListable list to added.
+     */
+    void ListAddL(LinkedListable * const p);
 
-    /**  insert in the right location the list p using sorting sorter */
-    void ListInsertL(LinkedListHolder *p,SortFilter *sorter){
-        if (p == NULL) return;
-        llhSize += p->ListSize();
-        llhRoot.Insert(p->List(),sorter);
-        p->llhRoot.next = NULL;
-        p->llhSize = 0;
-    }
+    /**
+     * @brief Searches a specified element in this list.
+     * @param[in] p is a pointer to the element to search.
+     * @return true if p is in the list, false otherwise.
+     */
+    bool ListSearch(const LinkedListable * const p);
 
-    /**  insert in the right location the list p using sorting sorter */
-    void ListInsertL(LinkedListHolder *p,SortFilterFn *sorter){
-        if (p == NULL) return;
-        llhSize += p->ListSize();
-        llhRoot.Insert(p->List(),sorter);
-        p->llhRoot.next = NULL;
-        p->llhSize = 0;
-    }
+    /**
+     * @brief Searches an element using a SearchFilter.
+     * @param[in] filter defines the search criteria.
+     * @return a pointer to the element if it is found in the list, NULL otherwise.
+     */
+    LinkedListable *ListSearch(SearchFilter * const filter);
 
-    /**  inserts as the n-th element of list (if possible otherwise as bottom) */
-    void ListInsertL(LinkedListHolder *p,uint32 index){
-        if (p == NULL) return;
-        ListInsert(p->llhRoot.next,index);
-        p->llhRoot.next = NULL;
-        p->llhSize = 0;
-    }
+    /**
+     * @brief Searches an element using a SearchFn function.
+     * @param[in] filter defines the search criteria.
+     * @return a pointer to the element if it is found in the list, NULL otherwise.
+     */
+    LinkedListable *ListSearch(SearchFilterFn * const filter);
 
-    /**  add an element at the end of the list */
-    void ListAdd(LinkedListable *p){
-        llhSize ++;
-        llhRoot.Add(p);
-    }
+    /**
+     * @brief Removes the requested element from the list.
+     * @param[in] p is the element to be removed.
+     * @return true if p was in the list, false otherwise.
+     */
+    bool ListExtract(LinkedListable * const p);
 
-    /**  add an element at the end of the list */
-    void ListAddL(LinkedListable *p){
-        llhSize += p->Size();
-        llhRoot.AddL(p);
-    }
+    /**
+     * @brief Finds and removes one element from list using a SearchFilter.
+     * @param[in] filter defines the search criteria.
+     * @return the extracted element, NULL if it is not found in the list.
+     */
+    LinkedListable *ListExtract(SearchFilter * const filter);
 
-    /**  search if p is a member */
-    bool ListSearch(LinkedListable *p){
-        if (llhRoot.Next() == NULL) return false;
-        return llhRoot.Next()->Search(p);
-    }
+    /**
+     * @brief Finds and removes one element from list using a SearchFn function.
+     * @param[in] filter defines the search criteria.
+     * @return the extracted element, NULL if it is not found in the list.
+     */
+    LinkedListable *ListExtract(SearchFilterFn * const filter);
 
-    /**  search an element using a specific criteria */
-    LinkedListable *ListSearch(SearchFilter *filter){
-        if (llhRoot.Next() == NULL) return NULL;
-        return llhRoot.Next()->Search(filter);
-    }
+    /**
+     * @brief Deletes the requested element.
+     * @param[in] p is the element which must be deleted.
+     * @return true if p is in the list, false otherwise.
+     */
+    bool ListDelete(LinkedListable * const p);
 
-    /**  search an element using a specific criteria */
-    LinkedListable *ListSearch(SearchFilterFn *filter){
-        if (llhRoot.Next() == NULL) return NULL;
-        return llhRoot.Next()->Search(filter);
-    }
+    /**
+     * @brief Deletes elements using a SearchFilter.
+     * @param[in] filter defines the search criteria.
+     * @return true if at least one element is deleted, false otherwise.
+     */
+    bool ListDelete(SearchFilter * const filter);
 
-    /**  remove the requested element from the list.
-         start searching from next element */
-    bool ListExtract(LinkedListable *p){
-        if (llhRoot.Extract(p) == true){
-            llhSize --;
-            return true;
-        } else return false;
-    }
+    /**
+     * @brief Deletes a elements using a SearchFilter in safe mode.
+     * @details Safe from reentrance from destructor of object (complex graph destruction)
+     * @param[in] filter defines the search criteria.
+     * @return true if at least one object it is deleted, false otherwise.
+     */
+    bool ListSafeDelete(SearchFilter * const filter);
 
-    /**  find and remove one element from list using filter as criteria */
-    LinkedListable *ListExtract(SearchFilter *filter){
-        LinkedListable *p = llhRoot.Extract(filter);
-        if (p != NULL) llhSize --;
-        return p;
-    }
+    /**
+     * @brief Deletes elements using a SearchFn function.
+     * @param[in] filter defines the search criteria.
+     * @return true if at least one element it is deleted, false otherwise.
+     */
+    bool ListDelete(SearchFilterFn * const filter);
 
-    /**  find and remove one element from list using filter */
-    LinkedListable *ListExtract(SearchFilterFn *filter){
-        LinkedListable *p = llhRoot.Extract(filter);
-        if (p != NULL) llhSize --;
-        return p;
-    }
+    /**
+     * @brief Sorts the elements in the list using a SortFilter.
+     * @param[in] sorter defines the comparison criteria.
+     */
+    void ListBSort(SortFilter * const sorter);
 
-    /**  delete the requested element. start searching from next element */
-    bool ListDelete(LinkedListable *p){
-        if (llhRoot.Delete(p) == true){
-            llhSize --;
-            return true;
-        } else return false;
-    }
+    /**
+     * @brief Sorts the elements in the list.
+     * @param[in] sorter defines the comparison criteria.
+     */
+    void ListBSort(SortFilterFn * const sorter);
 
-    /**  delete an element using a specific criteria */
-    bool ListDelete(SearchFilter *filter){
-        uint32 deleted = llhRoot.Delete(filter);
-        llhSize -= deleted;
-        return (deleted !=0);
-    }
+    /**
+     * @brief Browses the list.
+     * @param[in] index is the position of the requested element (0 means the first element).
+     * @return a pointer to the element at index position.
+     */
+    LinkedListable *ListPeek(const uint32 index);
 
-    /** delete an element using a specific criteria.
-        Safe from reentrance from destructor of object
-       (complex graph destruction) */
-    bool ListSafeDelete(SearchFilter *filter){
-        if (filter == NULL) return false;
-        int deleted = 0;
-        LinkedListable *p = List();
-        while(p != NULL){
-            if (filter->Test(p)){
-                if (ListExtract(p))  {
-                    delete p;
-                    // p->next may not be a safe pointer so assume the worst and start over again
-                    p = List();
-                    deleted++;
-                } else p = p->next;
-            } else p = p->next;
-        }
-        return (deleted != 0);
-    }
+    /**
+     * @brief Removes and gets the element of the list in a specified position.
+     * @param[in] index is the position of the requested element.
+     * @return a pointer to the element at index position.
+     */
+    LinkedListable *ListExtract(uint32 index = 0u);
 
-    /**  delete an element using a specific criteria */
-    bool ListDelete(SearchFilterFn *filter){
-        uint32 deleted = llhRoot.Delete(filter);
-        llhSize -= deleted;
-        return (deleted !=0);
-    }
+    /**
+     * @brief For each item in the list do something.
+     * @param[in] it defines what to do.
+     */
+    void ListIterate(Iterator * const it);
 
+    /**
+     * @brief For each item in the list do something.
+     * @param[in] it defines what to do.
+     */
+    void ListIterate(IteratorFn * const it);
 
-    /**  Bubble Sort the sub-list to the right of this element */
-    void ListBSort(SortFilter *sorter){
-        llhRoot.BSort(sorter);
-    }
+protected:
 
-    /**  Bubble Sort the sub-list to the right of this element */
-    void ListBSort(SortFilterFn *sorter){
-        llhRoot.BSort(sorter);
-    }
+    /**
+     * List root
+     */
+    LinkedListable llhRoot;
 
-    /**  looks into the list in an ordered fashion: index = 0 is the top */
-    LinkedListable *ListPeek(uint32 index){
-        return llhRoot.Next()->Peek(index);
-    }
-
-    /**  removes and Gets the n-th element of the list */
-    LinkedListable *ListExtract(uint32 index=0){
-        LinkedListable *p = &llhRoot;
-        while ((p != NULL) && (index > 0)){ p = p->next; index--; }
-        LinkedListable *q = p->next;
-        if (q != NULL){
-            llhSize--;
-            p->next = q->next;
-        }
-        if (q != NULL) q->next = NULL;
-        return q;
-    }
-
-    /**  for each item in the list do <it> */
-    void ListIterate(Iterator *it){
-        if (llhRoot.Next() != NULL) llhRoot.Next()->Iterate(it);
-    }
-
-    /**  for each item in the list do <it> */
-    void ListIterate(IteratorFn *it){
-        if (llhRoot.Next() != NULL) llhRoot.Next()->Iterate(it);
-    }
-
+    /**
+     * List size
+     */
+    uint32 llhSize;
 };
 
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
+void LinkedListHolder::FastListInsertSingle(LinkedListable &p) {
+    llhSize++;
+    p.SetNext(llhRoot.Next());
+    llhRoot.SetNext(&p);
+}
+#endif /* LINKEDLISTHOLDER_H_ */
 
-#endif

@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
+#include "StructuredData.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -58,16 +59,13 @@ public:
      * @brief Creates a new object of type @param typeName and builds a reference to it.
      * @param the class type.
      */
-    Reference(const char* typeName);
+    Reference(const char8* typeName);
 
     /**
      * @brief Creates a new reference from an object pointer.
      * @param pointer the source pointer to be referenced.
      */
-    Reference(Reference * pointer) {
-        objectPointer = NULL;
-        *this = pointer;
-    }
+    Reference(Object * pointer);
 
     /**
      * @brief Create an object from a structured list of elements.
@@ -127,7 +125,7 @@ public:
      * @param[in] reference reference to be compared.
      * @return true if the reference do not point to the same object.
      */
-    inline bool operator!=(const GCReference& reference) const;
+    inline bool operator!=(const Reference& reference) const;
 
     /**
      * @brief Provides access to the underlying object pointed by this reference.
@@ -161,9 +159,6 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-bool Reference::IsValid() const {
-    return (objectPointer != NULL);
-}
 
 uint32 Reference::NumberOfReferences() const {
     if (!IsValid()) {

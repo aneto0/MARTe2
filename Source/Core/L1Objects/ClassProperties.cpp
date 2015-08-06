@@ -41,15 +41,12 @@
 ClassProperties::ClassProperties() {
     className = NULL;
     classVersion = NULL;
-    objectBuildFn = NULL;
 }
 
 ClassProperties::ClassProperties(const char8 *cName,
-                                 const char8 *cVersion,
-                                 ObjectBuildFn *objBuildFn) {
+                                 const char8 *cVersion) {
     className = cName;
     classVersion = cVersion;
-    objectBuildFn = objBuildFn;
 }
 
 const char8* ClassProperties::GetName() const {

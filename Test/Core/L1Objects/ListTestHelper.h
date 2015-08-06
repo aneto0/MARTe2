@@ -1,8 +1,8 @@
 /**
- * @file ClassProperties.h
- * @brief Header file for class ClassProperties
- * @date Aug 5, 2015
- * @author aneto
+ * @file ListTestHelper.h
+ * @brief Header file for class ListTestHelper
+ * @date 06/ago/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ClassProperties
+ * @details This header file contains the declaration of the class ListTestHelper
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
-#define SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
+#ifndef LISTTESTHELPER_H_
+#define LISTTESTHELPER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,60 +31,93 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Heap.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-/**
- * @brief Properties of a framework base class (i.e. one that inherits from Object).
- * @details Provides introspection information about any framework base class. This
- * information is automatically computed by the framework at initialisation time.
- */
-class Object;
-typedef Object *(ObjectBuildFn)(Heap &);
 
-class ClassProperties {
+extern uint32 nToSearch;
+
+class IntegerList: public LinkedListable {
+public:
+    uint32 intNumber;
+public:
+    IntegerList() {
+        intNumber = 0;
+    }
+
+    IntegerList(uint32 number) {
+        intNumber = number;
+    }
+
+    ~IntegerList() {
+
+    }
+};
+
+class SortDecrescent: public SortFilter {
+public:
+    SortDecrescent() {
+    }
+    int32 Compare(LinkedListable* element1,
+                  LinkedListable* element2) {
+        if (((IntegerList*) element1)->intNumber < ((IntegerList*) element2)->intNumber)
+            return 1;
+        else
+            return -1;
+    }
+};
+
+class SearchInteger: public SearchFilter {
+private:
+    uint32 searchIntNumber;
+
 public:
 
-    /**
-     * Default constructor. Initialises all members to NULL.
-     */
-    ClassProperties();
+    SearchInteger(uint32 intNum) {
+        searchIntNumber = intNum;
+    }
 
-    /**
-     * @brief Constructor. Initialises all members as per input variables.
-     * @param[in] cName the name of the class.
-     * @param[in] cVersion the version of the class.
-     */
-    ClassProperties(const char8 *cName, const char8 *cVersion);
+    void ChangeSearchNumber(uint32 intNum) {
+        searchIntNumber = intNum;
+    }
 
-    /**
-     * @brief Returns the name of the class.
-     * @return the name of the class.
-     */
-    const char8 *GetName() const;
-
-    /**
-     * @brief Returns the version of the class against which the code was compiled.
-     * @return the version of the class against which the code was compiled.
-     */
-    const char8 *GetVersion() const;
-
-private:
-    /**
-     * The name of the class.
-     */
-    const char8 *className;
-
-    /**
-     * The version of the class.
-     */
-    const char8 *classVersion;
+    bool Test(LinkedListable *data) {
+        return ((IntegerList*) (data))->intNumber == searchIntNumber;
+    }
 };
+
+class IncrementIterator: public Iterator {
+private:
+
+public:
+
+    void Do(LinkedListable *data) {
+        ((IntegerList*) data)->intNumber++;
+    }
+
+};
+
+static int32 DecrescentSortFn(LinkedListable *data1,
+                              LinkedListable *data2) {
+    if ((((IntegerList *) data1)->intNumber) < (((IntegerList *) data2)->intNumber))
+        return 1;
+    else
+        return -1;
+}
+
+static bool SearchIntFn(LinkedListable* data) {
+    return ((IntegerList*) (data))->intNumber == nToSearch;
+
+}
+
+static void IncrementNumFn(LinkedListable *data) {
+    ((IntegerList *) data)->intNumber++;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_ */
+#endif /* LISTTESTHELPER_H_ */
 

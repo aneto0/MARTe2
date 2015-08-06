@@ -43,7 +43,7 @@ Reference::Reference() {
 }
 
 Reference::Reference(const Reference& object) {
-    objectPointer = nullReference;
+    objectPointer = NULL;
     (*this) = object;
 }
 
@@ -52,13 +52,13 @@ Reference::Reference(Object * pointer) {
     *this = pointer;
 }
 
-void Reference::Reference(const char* typeName) {
+Reference::Reference(const char8* typeName) {
     objectPointer = NULL;
     //TODO, CHANGE THIS!
     Heap h;
     Object *objPtr = ClassRegistryDatabase::Instance().CreateByName(typeName, h);
     if (objPtr != NULL) {
-        objectPointer = dynamic_cast<GarbageCollectable*>(objPtr);
+        objectPointer = dynamic_cast<Object *>(objPtr);
     }
 
     if (objectPointer == NULL) {
@@ -71,7 +71,7 @@ void Reference::Reference(const char* typeName) {
     }
 }
 
-Reference& Reference::operator=(Reference * pointer) {
+Reference& Reference::operator=(Object * pointer) {
     RemoveReference();
     objectPointer = pointer;
     if (objectPointer != NULL) {
@@ -80,12 +80,11 @@ Reference& Reference::operator=(Reference * pointer) {
     return *this;
 }
 
-virtual ~Reference::Reference() {
+Reference::~Reference() {
     RemoveReference();
 }
 
-bool Reference::Initialise(const StructuredData &data,
-                           bool createOnly = false) {
+bool Reference::Initialise(const StructuredData &data, bool createOnly) {
 //TODO
     return true;
 }
@@ -101,7 +100,7 @@ void Reference::RemoveReference() {
     objectPointer = NULL;
 }
 
-bool IsValid() const {
+bool Reference::IsValid() const {
     return (objectPointer != NULL);
 }
 

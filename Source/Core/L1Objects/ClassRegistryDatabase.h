@@ -94,7 +94,7 @@ public:
      * @brief Returns an access point to the database root.
      * @return Pointer to the database root which can be used to scan the database.
      */
-    const ClassRegistryItem *List() const;
+    const ClassRegistryItem *List();
 private:
     /**
      * @brief Private Constructor.

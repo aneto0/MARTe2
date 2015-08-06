@@ -29,6 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "LinkedListableTest.h"
+#include "ListTestHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -37,80 +39,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-uint32 nToSearch;
-
-class IntegerList: public LinkedListable {
-public:
-    uint32 intNumber;
-public:
-    IntegerList() {
-        intNumber = 0;
-    }
-
-    ~IntegerList() {
-
-    }
-};
-
-class SortDecrescent: public SortFilter {
-public:
-    SortDecrescent() {
-    }
-    int32 Compare(LinkedListable* element1,
-                  LinkedListable* element2) {
-        if (((IntegerList*) element1)->intNumber < ((IntegerList*) element2)->intNumber)
-            return 1;
-        else
-            return -1;
-    }
-};
-
-class SearchInteger: public SearchFilter {
-private:
-    uint32 searchIntNumber;
-
-public:
-
-    SearchInteger(uint32 intNum) {
-        searchIntNumber = intNum;
-    }
-
-    void ChangeSearchNumber(uint32 intNum) {
-        searchIntNumber = intNum;
-    }
-
-    bool Test(LinkedListable *data) {
-        return ((IntegerList*) (data))->intNumber == searchIntNumber;
-    }
-};
-
-class IncrementIterator: public Iterator {
-private:
-
-public:
-
-    void Do(LinkedListable *data) {
-        ((IntegerList*) data)->intNumber++;
-    }
-
-};
-
-int32 DecrescentSortFn(LinkedListable *data1,
-                       LinkedListable *data2) {
-    if ((((IntegerList *) data1)->intNumber) < (((IntegerList *) data2)->intNumber))
-        return 1;
-    else
-        return -1;
-}
-
-bool SearchIntFn(LinkedListable* data) {
-    return ((IntegerList*) (data))->intNumber == nToSearch;
-
-}
-
-void IncrementNumFn(LinkedListable *data) {
-    ((IntegerList *) data)->intNumber++;
-}
+uint32 nToSearch=0;
 
 bool LinkedListableTest::TestConstructor() {
 
@@ -319,6 +248,10 @@ bool LinkedListableTest::TestBSortFn() {
     return true;
 }
 
+
+
+
+
 void BuildLists(IntegerList* list1Element,
                 IntegerList *list2Element,
                 uint32 size) {
@@ -326,7 +259,7 @@ void BuildLists(IntegerList* list1Element,
     list1Element[0].intNumber = 0;
     list2Element[0].intNumber = size;
 
-    for (uint32 i = 1; i < 32; i++) {
+    for (uint32 i = 1; i < size; i++) {
         list1Element[i].intNumber = i;
         list2Element[i].intNumber = size + i;
 

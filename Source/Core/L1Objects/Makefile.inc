@@ -32,6 +32,7 @@ OBJSX=  ClassRegistryItem.x \
     Object.x \
     ClassProperties.x \
     LinkedListable.x \
+    LinkedListHolder.x \
     Reference.x \
     ClassRegistryDatabase.x
 

@@ -50,9 +50,12 @@ class ClassRegistryItem: public LinkedListable {
 public:
     /**
      * @brief Assigns the input variables to the class members.
-     * @param clProperties the class properties associated with the class that is being registered.
+     * @param[in] clProperties the class properties associated with the class that is being registered.
+     * @param[in] objBuildFn the function that allows to instantiate a new object from the class
+     * represented by this ClassRegistryItem instance.
      */
-    ClassRegistryItem(const ClassProperties &clProperties);
+    ClassRegistryItem(const ClassProperties &clProperties,
+                      ObjectBuildFn *objBuildFn);
 
     /**
      * Destructor.

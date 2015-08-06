@@ -31,6 +31,7 @@
 #include "Object.h"
 #include "Memory.h"
 #include "ClassRegistryItem.h"
+#include "FastPollingMutexSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -46,32 +47,35 @@ Object::Object() {
 Object::~Object() {
 }
 
-static FastPollingMutexSem lock;
+static FastPollingMutexSem refMux;
 
-uint32 Object::DecrementReferences(){
+uint32 Object::DecrementReferences() {
     int32 ret;
-    lock.FastLock();
+    refMux.FastLock();
     ret = --referenceCounter;
-    lock.FastUnLock();
+    refMux.FastUnLock();
     return ret;
 }
 
-uint32 Object::IncrementReferences(){
+uint32 Object::IncrementReferences() {
     int32 ret;
-    lock.FastLock();
+    refMux.FastLock();
     ret = ++referenceCounter;
-    lock.FastUnLock();
+    refMux.FastUnLock();
     return ret;
 }
 
-virtual Object *Object::Clone() const {
+Object *Object::Clone() const {
     return NULL;
 }
 
-uint32 Object::NumberOfReferences() const{
+uint32 Object::NumberOfReferences() const {
     return referenceCounter;
 }
 
+bool Object::Initialise(const StructuredData &data) {
+    return false;
+}
 
 void *Object::operator new(size_t size) throw () {
     return NULL;
@@ -79,10 +83,6 @@ void *Object::operator new(size_t size) throw () {
 
 void Object::GetIntrospectionCopy(Introspection &destination) const {
     destination = introspection;
-}
-
-void Object::GetClassPropertiesCopy(ClassProperties &destination) const {
-    destination = *GetHiddenClassRegistryItem()->GetClassProperties();
 }
 
 CLASS_REGISTER(Object, "1.0")

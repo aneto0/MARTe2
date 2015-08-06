@@ -40,10 +40,12 @@ static FastPollingMutexSem classRegistryItemMuxSem;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties) {
+ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
+                                     ObjectBuildFn *objBuildFn) {
     numberOfInstances = 0;
     classProperties = clProperties;
     loadableLibrary = NULL;
+    objectBuildFn = objBuildFn;
     ClassRegistryDatabase::Instance().Add(this);
 }
 

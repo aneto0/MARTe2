@@ -1,8 +1,8 @@
 /**
- * @file ClassProperties.h
- * @brief Header file for class ClassProperties
- * @date Aug 5, 2015
- * @author aneto
+ * @file LinkedListHolderTest.h
+ * @brief Header file for class LinkedListHolderTest
+ * @date 06/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,14 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ClassProperties
+ * @details This header file contains the declaration of the class LinkedListHolderTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
-#define SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
-
+#ifndef LINKEDLISTHOLDERTEST_H_
+#define LINKEDLISTHOLDERTEST_H_
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -31,60 +30,80 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Heap.h"
+#include "LinkedListHolder.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-/**
- * @brief Properties of a framework base class (i.e. one that inherits from Object).
- * @details Provides introspection information about any framework base class. This
- * information is automatically computed by the framework at initialisation time.
- */
-class Object;
-typedef Object *(ObjectBuildFn)(Heap &);
+class LinkedListHolderTest {
 
-class ClassProperties {
 public:
+    bool TestConstructor();
 
-    /**
-     * Default constructor. Initialises all members to NULL.
-     */
-    ClassProperties();
+    bool TestDestructor();
 
-    /**
-     * @brief Constructor. Initialises all members as per input variables.
-     * @param[in] cName the name of the class.
-     * @param[in] cVersion the version of the class.
-     */
-    ClassProperties(const char8 *cName, const char8 *cVersion);
+    bool TestReset(uint32 nElements);
 
-    /**
-     * @brief Returns the name of the class.
-     * @return the name of the class.
-     */
-    const char8 *GetName() const;
+    bool TestCleanup(uint32 nElements);
 
-    /**
-     * @brief Returns the version of the class against which the code was compiled.
-     * @return the version of the class against which the code was compiled.
-     */
-    const char8 *GetVersion() const;
+    bool TestList(uint32 nElements);
 
-private:
-    /**
-     * The name of the class.
-     */
-    const char8 *className;
+    bool TestListSize(uint32 nElements);
 
-    /**
-     * The version of the class.
+    bool TestFastListInsertSingle(uint32 nElements);
+
+    bool TestListInsert();
+
+    bool TestListInsertSortedSorter();
+
+    bool TestListInsertSortedFn();
+
+    bool TestListInsertNullSorter();
+
+    bool TestListInsertIndex(uint32 index, uint32 size);
+
+
+/*
+     bool TestListAdd();
+
+     bool TestListAddL();
+
+     bool TestListSearch();
+
+     bool TestListSearch();
+
+     bool TestListSearch();
+
+     bool TestListExtract();
+
+     bool TestListExtract();
+
+     bool TestListExtract();
+
+     bool TestListDelete();
+
+     bool TestListDelete();
+
+     bool TestListSafeDelete();
+
+     bool TestListDelete();
+
+     bool TestListBSort();
+
+     bool TestListBSort();
+
+     bool TestListPeek();
+
+     bool TestListExtract();
+
+     bool TestListIterate();
+
+     bool TestListIterate();
      */
-    const char8 *classVersion;
+
 };
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_ */
+#endif /* LINKEDLISTHOLDERTEST_H_ */
 

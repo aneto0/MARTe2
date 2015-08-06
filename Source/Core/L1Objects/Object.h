@@ -54,7 +54,10 @@
  * This macro has to be inserted in every class that inherits from Object.
  */
 #define CLASS_REGISTER_DECLARATION(name)                                                      \
-    virtual ClassRegistryItem *GetHiddenClassRegistryItem() const;
+    virtual ClassRegistryItem *GetHiddenClassRegistryItem() const;                            \
+    void GetClassPropertiesCopy(ClassProperties &destination) const;                          \
+    void * operator new(size_t size, Heap &heap);                                             \
+    void operator delete(void *p);
 
 /**
  * This macro has to be inserted in every unit file.
@@ -69,8 +72,8 @@
  */
 #define CLASS_REGISTER(name,ver)                                                              \
     Object * _ ## name ## BuildFn (Heap &heap);                                               \
-    static ClassProperties _## name ## ClassProperties( #name ,ver, & _ ##  name ## BuildFn); \
-    static ClassRegistryItem _ ## name ## ClassRegistryItem( _ ## name ## ClassProperties );  \
+    static ClassProperties _## name ## ClassProperties( #name ,ver);                          \
+    static ClassRegistryItem _ ## name ## ClassRegistryItem( _ ## name ## ClassProperties, & _ ##  name ## BuildFn );  \
     Object * _ ## name ## BuildFn (Heap &heap){                                               \
         _ ## name ## ClassRegistryItem.SetHeap(heap);                                         \
         name *p = new (heap) name () ;                                                        \
@@ -78,6 +81,9 @@
     }                                                                                         \
     ClassRegistryItem * name::GetHiddenClassRegistryItem() const {                            \
         return &_## name ## ClassRegistryItem;                                                \
+    }                                                                                         \
+    void name::GetClassPropertiesCopy(ClassProperties &destination) const {                   \
+        destination = *GetHiddenClassRegistryItem()->GetClassProperties();                    \
     }                                                                                         \
     void * name::operator new(size_t size, Heap &heap) {                                      \
         void *obj = heap.Malloc(size);                                                        \
@@ -112,7 +118,12 @@ public:
     CLASS_REGISTER_DECLARATION(Object)
 
     /**
-     * Virtual destructor. No operation.
+     * @brief Default constructor. Sets the number of references to zero.
+     */
+    Object();
+
+    /**
+     * @brief Virtual destructor. No operation.
      */
     virtual ~Object();
 
@@ -133,13 +144,7 @@ public:
      * @destination copies this object instance introspection properties to destination.
      */
     void GetIntrospectionCopy(Introspection &destination) const;
-
-    /**
-     * @brief Returns a copy to the class parameters of this object type.
-     * @param destination the class properties where.
-     */
-    void GetClassPropertiesCopy(ClassProperties &destination) const;
-
+#if 0
     /**
      * @brief Placement new to allocate the object in the heap.
      * @param size of the object.
@@ -154,7 +159,7 @@ public:
      * @param p the object being deleted.
      */
     void operator delete(void *p);
-
+#endif
     /**
      * @brief Returns the number of references.
      * @return the number of references pointing to this object.
