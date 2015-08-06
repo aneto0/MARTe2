@@ -24,10 +24,9 @@
 #
 #############################################################
 
-TARGET=freertos-atmega328p
+TARGET=freertos-arduino-uno
 
-#include Makefile.inc
-clean:
+include Makefile.inc
 
 OPTIM=-finline-functions
 

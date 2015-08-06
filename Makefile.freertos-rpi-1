@@ -24,7 +24,7 @@
 #
 #############################################################
 
-TARGET=freertos-atmega328p
+TARGET=freertos-rpi-1
 
 include Makefile.inc
 
