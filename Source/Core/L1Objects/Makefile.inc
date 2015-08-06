@@ -28,10 +28,8 @@ PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  ClassRegistryItem.x \
-    Object.x \
-    ClassRegistryDatabase.x
-
+OBJSX=  LinkedListable.x 
+    
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../L0Portability

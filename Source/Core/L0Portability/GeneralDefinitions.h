@@ -94,6 +94,39 @@ struct TimeValues {
     uint32 year;
 };
 
+
+
+/**
+ * The return codes when a Test2 function is called in a SearchFilterT or
+ * when Do2 function is called in IteratorT
+ */
+enum SFTestType {
+
+    /** No meaning associated */
+    SFTTNull = 0x0000,
+
+    /** This is exactly what I was looking for! */
+    SFTTFound = 0x1001,
+
+    /** This is not what I was looking for */
+    SFTTNotFound = 0x1000,
+
+    /** When recursive search where a path has
+     been specified is used This is not the right path */
+    SFTTWrongPath = 0x1002,
+
+    /** When recursing this is to notify of a node beginning of
+     recursion (used only for Do2) */
+    SFTTRecurse = 0x2000,
+
+    /** When recursing this is to notify of the return
+     to the previous level used also for Do2 */
+    SFTTBack = 0x2001
+};
+
+
+
+
 /** Large enough to store a pointer*/
 #ifdef __LP64__
 typedef unsigned long intptr;
