@@ -38,110 +38,128 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief TODO
+ * @brief Shared pointer implementation.
+ * @details The Reference class is a smart pointer implementation where shared the
+ * ownership of an underlying object is enabled. This guarantees that the life-cycle
+ * of this object is safely managed and in particular that the object is destructed when
+ * it is no longer referenced.
+ *
+ * The Reference might also own no object, in which case the function IsValid will return false.
+ *
  */
 class Reference {
 
 public:
 
     /**
-     * @brief Creates an empty reference.
+     * @brief Creates an empty Reference (referenced object is set to NULL).
      */
     Reference();
 
     /**
-     * @brief Creates a new reference from an existing one.
-     * @param object the source reference.
+     * @brief Creates a Reference from an existing Reference.
+     * @details This Reference will own the same object referenced by sourceReference.
+     * @param[in] sourceReference the Reference to the object to be shared.
      */
-    Reference(const Reference& object);
+    Reference(const Reference& sourceReference);
 
     /**
-     * @brief Creates a new object of type @param typeName and builds a reference to it.
-     * @param the class type.
+     * @brief Creates a new object of type typeName and links a reference to it.
+     * @param[in] typeName the name of the class type.
+     * @param[in] heap the heap responsible for allocating the object.
      */
-    Reference(const char8* typeName);
+    Reference(const char8* typeName, Heap &heap);
 
     /**
-     * @brief Creates a new reference from an object pointer.
-     * @param pointer the source pointer to be referenced.
+     * @brief Creates a new Reference from an object pointer.
+     * @param[in] pointer the source pointer to be referenced.
      */
     Reference(Object * pointer);
 
     /**
      * @brief Create an object from a structured list of elements.
-     * @param createOnly if true the object Initialise method is not called.
+     * @param[in] data the data to initialise the underlying object.
+     * @param[in] createOnly if true the object Initialise method is not called.
      * @return true if the object was successfully created and initialised.
      */
     virtual bool Initialise(const StructuredData &data,
                             bool createOnly = false);
 
     /**
-     * @brief Removes a reference to the underlying object.
+     * @brief Removes the reference to the underlying object.
+     * @details If the number of references to the underlying object is zero, the object is deleted.
+     * IsValid will return false after this operation.
      */
     virtual void RemoveReference();
 
     /**
      * @brief Assignment operator.
-     * @param reference source reference to assign. It will increment the number of references pointing to the
-     * underlying object.
-     * @return a reference to the underlying object.
+     * @param[in] sourceReference the source reference to be assigned to this reference.
+     * @details This reference will be referencing the same object as the sourceReference.
+     * @return a reference to the object referenced by sourceReference.
      */
-    Reference& operator=(const Reference& reference);
+    Reference& operator=(const Reference& sourceReference);
 
     /**
      * @brief Assignment operator.
-     * @param pointer source object to assign. It will increment the number of references pointing to the
-     * underlying object.
+     * @param[in] pointer source object to assign.
+     * @details It will increment the number of references referencing the underlying object.
      * @return a reference to the underlying object.
      */
     Reference& operator=(Object * pointer);
 
     /**
-     * Destructor. Removes the reference to the underlying object.
+     * @brief Removes the reference to the underlying object. @see RemoveReference.
      */
     virtual ~Reference();
 
     /**
-     * @brief Verifies if the reference is pointing to a valid object.
-     * @return true if the reference is pointing to a valid object.
+     * @brief Verifies if the reference to the underlying object is valid.
+     * @details A valid reference is one where the referenced object is not NULL.
+     * @return true if the referenced object is not NULL.
      */
     virtual bool IsValid() const;
 
     /**
-     * @brief Returns the number of references pointing to the underlying object.
-     * @return the number of references pointing to the underlying object.
+     * @brief Returns the number of references that are linked to the underlying object.
+     * @return the number of references that are linked to the underlying object.
      */
-    inline uint32 NumberOfReferences() const;
+    uint32 NumberOfReferences() const;
 
     /**
-     * @brief Verifies if the reference points to the same object.
-     * @param[in] reference reference to be compared.
-     * @return true if the reference point to the same object.
+     * @brief Verifies if this Reference links to the same object of sourceReference.
+     * @param[in] sourceReference reference to be compared.
+     * @return true if the sourceReference links to the same object as this Reference.
      */
-    inline bool operator==(const Reference& reference) const;
+    bool operator==(const Reference& reference) const;
 
     /**
-     * @brief Verifies if the reference does not point to the same object.
-     * @param[in] reference reference to be compared.
-     * @return true if the reference do not point to the same object.
+     * @brief Verifies if this Reference owns the same object of sourceReference.
+     * @param[in] sourceReference reference to be compared.
+     * @return true if the sourceReference does not own the same object as this Reference.
      */
-    inline bool operator!=(const Reference& reference) const;
+    bool operator!=(const Reference& sourceReference) const;
 
     /**
-     * @brief Provides access to the underlying object pointed by this reference.
-     * @return a pointer to the underlying object pointed by this reference.
+     * @brief Provides access to the underlying object linked by this Reference.
+     * @return a pointer to the underlying object linked by this Reference.
      */
-    inline Object* operator->() const;
+    Object* operator->() const;
 
     /**
-     * @brief Creates a reference to a different object.
-     * @param[in] reference the reference holding the source object.
-     * @return true if the source reference and source object are valid.
+     * @brief Creates a Reference to a different object.
+     * @param[in] sourceReference the Reference holding the source object.
+     * @return true if the source Reference and source object are valid.
      */
-    inline bool Clone(const Reference &reference);
+    bool Clone(const Reference &sourceReference);
+
+protected:
+    /**
+     * The pointer to the referenced object.
+     */
+    Object* objectPointer;
 
 private:
-
     /**
      * @brief Prevents the copying of a reference by taking its address.
      * @return a copy of this reference.
@@ -149,53 +167,11 @@ private:
     Reference* operator&() {
         return this;
     }
-
-    /**
-     * The pointer to the referenced object.
-     */
-    Object* objectPointer;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-uint32 Reference::NumberOfReferences() const {
-    if (!IsValid()) {
-        return 0;
-    }
-    return objectPointer->NumberOfReferences();
-}
-
-bool Reference::operator==(const Reference& reference) const {
-    return (objectPointer == reference.objectPointer);
-}
-
-bool Reference::operator!=(const Reference& reference) const {
-    return (objectPointer != reference.objectPointer);
-}
-
-Object* Reference::operator->() const {
-    return objectPointer;
-}
-
-bool Reference::Clone(const Reference &reference) {
-    if (reference.IsValid()) {
-        Object * tmp = reference->Clone();
-        if (tmp != NULL) {
-            RemoveReference();
-            objectPointer = tmp;
-            objectPointer->IncrementReferences();
-        }
-        // This is necessary, otherwise when
-        // GCReference::Clone is called by
-        // GCRTemplate, at this point the IsValid
-        // function of GCRTemplate would be called,
-        // returning false as the setup of GCRTemplate
-        // Tobject is not yet done.
-        return Reference::IsValid();
-    }
-}
 
 #endif /* SOURCE_CORE_L1OBJECTS_REFERENCE_H_ */
 

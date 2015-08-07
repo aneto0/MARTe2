@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_CORE_L1OBJECTS_TESTOBJECTHELPER1_H_
-#define TEST_CORE_L1OBJECTS_TESTOBJECTHELPER1_H_
+#ifndef TEST_CORE_L2OBJECTS_TESTOBJECTHELPER1_H_
+#define TEST_CORE_L2OBJECTS_TESTOBJECTHELPER1_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -39,18 +39,18 @@
 /**
  * @brief Helper class to support the testing of references.
  */
-class TestObjectHelper1 : public Object {
+class TestObjectHelper2 : public Object {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
      * Default constructor
      */
-    TestObjectHelper1(){
+    TestObjectHelper2(){
         dummyVariable = 0;
     }
 
-    virtual ~TestObjectHelper1(){
+    virtual ~TestObjectHelper2(){
     }
 
     /**
@@ -77,5 +77,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_CORE_L1OBJECTS_TESTOBJECTHELPER1_H_ */
+#endif /* TEST_CORE_L1OBJECTS_TESTOBJECTHELPER2_H_ */
 	

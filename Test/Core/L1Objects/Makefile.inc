@@ -27,7 +27,8 @@
 OBJSX=  LinkedListableTest.x \
 	LinkedListHolderTest.x \
 	ClassRegistryDatabaseTest.x \
-	TestObjectHelper1.x
+	TestObjectHelper1.x \
+	TestObjectHelper2.x
 		
 PACKAGE=Core
 ROOT_DIR=../../..

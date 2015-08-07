@@ -52,11 +52,9 @@ Reference::Reference(Object * pointer) {
     *this = pointer;
 }
 
-Reference::Reference(const char8* typeName) {
+Reference::Reference(const char8* typeName, Heap &heap) {
     objectPointer = NULL;
-    //TODO, CHANGE THIS!
-    Heap h;
-    Object *objPtr = ClassRegistryDatabase::Instance().CreateByName(typeName, h);
+    Object *objPtr = ClassRegistryDatabase::Instance().CreateByName(typeName, heap);
     if (objPtr != NULL) {
         objectPointer = dynamic_cast<Object *>(objPtr);
     }
@@ -111,4 +109,41 @@ Reference& Reference::operator=(const Reference& reference) {
         objectPointer = reference.objectPointer;
     }
     return *this;
+}
+
+uint32 Reference::NumberOfReferences() const {
+    if (!IsValid()) {
+        return 0;
+    }
+    return objectPointer->NumberOfReferences();
+}
+
+bool Reference::operator==(const Reference& reference) const {
+    return (objectPointer == reference.objectPointer);
+}
+
+bool Reference::operator!=(const Reference& reference) const {
+    return (objectPointer != reference.objectPointer);
+}
+
+Object* Reference::operator->() const {
+    return objectPointer;
+}
+
+bool Reference::Clone(const Reference &reference) {
+    if (reference.IsValid()) {
+        Object * tmp = reference->Clone();
+        if (tmp != NULL) {
+            RemoveReference();
+            objectPointer = tmp;
+            objectPointer->IncrementReferences();
+        }
+        // This is necessary, otherwise when
+        // GCReference::Clone is called by
+        // GCRTemplate, at this point the IsValid
+        // function of GCRTemplate would be called,
+        // returning false as the setup of GCRTemplate
+        // Tobject is not yet done.
+        return Reference::IsValid();
+    }
 }

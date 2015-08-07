@@ -53,7 +53,7 @@
  * there will be a virtual member in all inherited classes.
  * This macro has to be inserted in every class that inherits from Object.
  */
-#define CLASS_REGISTER_DECLARATION(name)                                                      \
+#define CLASS_REGISTER_DECLARATION()                                                          \
     virtual ClassRegistryItem *GetHiddenClassRegistryItem() const;                            \
     void GetClassPropertiesCopy(ClassProperties &destination) const;                          \
     void * operator new(size_t size, Heap &heap);                                             \
@@ -115,7 +115,7 @@ class Object {
      */
     friend class Reference;
 public:
-    CLASS_REGISTER_DECLARATION(Object)
+    CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Default constructor. Sets the number of references to zero.
@@ -144,22 +144,7 @@ public:
      * @destination copies this object instance introspection properties to destination.
      */
     void GetIntrospectionCopy(Introspection &destination) const;
-#if 0
-    /**
-     * @brief Placement new to allocate the object in the heap.
-     * @param size of the object.
-     * @param heap target heap containing the memory to hold the object.
-     * @return a pointer to the heap.
-     */
-    void *operator new(size_t size, Heap &heap);
 
-    /**
-     * @brief The delete operator will delegate the freeing of the memory to the heap.
-     * @details The actual definition is expanded in the macro CLASS_REGISTER.
-     * @param p the object being deleted.
-     */
-    void operator delete(void *p);
-#endif
     /**
      * @brief Returns the number of references.
      * @return the number of references pointing to this object.

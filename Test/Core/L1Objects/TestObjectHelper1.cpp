@@ -45,4 +45,4 @@ void TestObjectHelper1::SetDummyVariable(uint32 dummyVariable) {
     this->dummyVariable = dummyVariable;
 }
 
-CLASS_REGISTER(TestObjectHelper1, "1-0")
+CLASS_REGISTER(TestObjectHelper1, "1.0")

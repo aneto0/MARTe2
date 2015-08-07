@@ -1,6 +1,6 @@
 /**
- * @file ClassRegistryDatabaseTest.cpp
- * @brief Source file for class ClassRegistryDatabaseTest
+ * @file TestObjectHelper1.cpp
+ * @brief Source file for class TestObjectHelper1
  * @date 06/08/2015
  * @author Andre' Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ClassRegistryDatabaseTest (public, protected, and private). Be aware that some 
+ * the class TestObjectHelper1 (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,8 +28,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ClassRegistryDatabaseTest.h"
-#include "ReferenceT.h"
 #include "TestObjectHelper2.h"
 
 /*---------------------------------------------------------------------------*/
@@ -39,39 +37,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-#include <stdio.h>
-#include "Reference.h"
-#include "TestObjectHelper1.h"
-bool ClassRegistryDatabaseTest::TestConstructor() {
-    ClassRegistryDatabase db = ClassRegistryDatabase::Instance();
-    printf("ClassRegistryDatabase size = %d\n", db.ListSize());
-    uint32 i = 0u;
-    for (i = 0; i < db.ListSize(); i++) {
-        ClassRegistryItem *item = (ClassRegistryItem *) db.ListPeek(i);
-        printf("[%d] %s %d\n", i, item->GetClassProperties()->GetName(), item->GetNumberOfInstances());
-    }
-    Heap h;
-    TestObjectHelper1 *obj1 = dynamic_cast<TestObjectHelper1 *>(ClassRegistryDatabase::Instance().CreateByName("TestObjectHelper1", h));
-    TestObjectHelper2 *obj2 = dynamic_cast<TestObjectHelper2 *>(ClassRegistryDatabase::Instance().CreateByName("TestObjectHelper2", h));
-
-    Reference ref1 = obj1;
-    printf("ref1 = %d\n", ref1.NumberOfReferences());
-    if (obj1 != NULL) {
-        Reference ref2 = obj1;
-        printf("ref2 = %d\n", ref2.NumberOfReferences());
-    }
-    printf("ref1 = %d\n", ref1.NumberOfReferences());
-    for (i = 0; i < db.ListSize(); i++) {
-        ClassRegistryItem *item = (ClassRegistryItem *) db.ListPeek(i);
-        printf("[%d] %s %d\n", i, item->GetClassProperties()->GetName(), item->GetNumberOfInstances());
-    }
-
-
-    ReferenceT<TestObjectHelper1> refo1 = obj1;
-    printf("refo1 Is valid? %d\n", refo1.IsValid());
-    ReferenceT<TestObjectHelper2> refo2 = obj2;
-    printf("Is valid? %d\n", refo2.IsValid());
-
-    return true;
+uint32 TestObjectHelper2::GetDummyVariable() const {
+    return dummyVariable;
 }
 
+void TestObjectHelper2::SetDummyVariable(uint32 dummyVariable) {
+    this->dummyVariable = dummyVariable;
+}
+
+CLASS_REGISTER(TestObjectHelper2, "1.0")
