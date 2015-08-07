@@ -66,4 +66,4 @@ typedef unsigned long osulong;
 static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
 
 #endif /* GENERALDEFINITIONSOS_H_ */
-	
+
