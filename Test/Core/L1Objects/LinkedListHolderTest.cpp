@@ -652,7 +652,7 @@ bool LinkedListHolderTest::TestListExtractIndex() {
             return false;
         }
 
-        if (list.ListSize() != i) {
+        if (list.ListSize() != (uint32) i) {
             return false;
         }
     }
@@ -713,7 +713,7 @@ bool LinkedListHolderTest::TestListDeleteSearchFilter() {
     if (list.ListDelete(&searchNotIn)) {
         return false;
     }
-    if (list.ListDelete((LinkedListable*) NULL)) {
+    if (list.ListDelete((SearchFilter*) NULL)) {
         return false;
     }
 
@@ -791,18 +791,54 @@ void DeleteList(LinkedListHolderTest &t) {
 
 bool LinkedListHolderTest::TestListSafeDelete() {
 
+    LinkedListHolder list;
+
+    LinkedListable *stored[32];
+
     for (uint32 i = 0; i < 32; i++) {
 
-        IntegerList *element = new IntegerList(i);
-        internalList.ListAdd(element);
+        stored[i] = new IntegerList(i % 16);
+        list.ListAdd(stored[i]);
+
     }
 
-    Threads::BeginThread((ThreadFunctionType) DeleteList, this);
-    Threads::BeginThread((ThreadFunctionType) DeleteList, this);
+    SearchInteger searchNotIn(33);
 
-    while (Threads::NumberOfThreads() != 0)
-        ;
-    return true;
+    if (list.ListSafeDelete(&searchNotIn)) {
+        return false;
+    }
+    if (list.ListSafeDelete((SearchFilter*) NULL)) {
+        return false;
+    }
+
+    for (uint32 i = 0; i < 16; i++) {
+        SearchInteger searchNumber(i % 16);
+        if (!list.ListSafeDelete(&searchNumber)) {
+            return false;
+        }
+
+        if (list.ListSafeDelete(&searchNumber)) {
+            return false;
+        }
+
+        if (list.ListSize() != (32 - 2 * (i + 1))) {
+            return false;
+        }
+    }
+
+    return list.ListSize() == 0;/*
+     for (uint32 i = 0; i < 32; i++) {
+
+     IntegerList *element = new IntegerList(i);
+     internalList.ListAdd(element);
+     }
+
+     Threads::BeginThread((ThreadFunctionType) DeleteList, this);
+     Threads::BeginThread((ThreadFunctionType) DeleteList, this);
+
+     while (Threads::NumberOfThreads() != 0)
+     ;
+     return true;*/
 }
 
 bool LinkedListHolderTest::TestListBSortSorter(uint32 nElements) {

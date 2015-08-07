@@ -39,7 +39,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-uint32 nToSearch=0;
+uint32 nToSearch = 0;
 
 bool LinkedListableTest::TestConstructor() {
 
@@ -247,10 +247,6 @@ bool LinkedListableTest::TestBSortFn() {
 
     return true;
 }
-
-
-
-
 
 void BuildLists(IntegerList* list1Element,
                 IntegerList *list2Element,
@@ -675,7 +671,10 @@ bool LinkedListableTest::TestExtract() {
         return false;
     }
 
-    uint32 nElements = rootList1.Size();
+    if (rootList1.Extract(&list1Element[31])) {
+        return false;
+    }
+
     for (uint32 i = 0; i < 31; i++) {
         if (!rootList1.Extract(&list1Element[i])) {
             return false;
@@ -690,7 +689,7 @@ bool LinkedListableTest::TestExtract() {
         }
     }
 
-    return (!rootList1.Extract(&list1Element[31]));
+    return true;
 }
 
 bool LinkedListableTest::TestExtractSearchFilter() {
@@ -709,7 +708,14 @@ bool LinkedListableTest::TestExtractSearchFilter() {
         list1Element[i - 1].SetNext(&list1Element[i]);
     }
 
-    uint32 nElements = rootList1.Size();
+    SearchInteger searchNotIn(33);
+    if (rootList1.Extract(&searchNotIn) != NULL) {
+        return false;
+    }
+
+    if (rootList1.Extract((SearchFilter*) NULL) != NULL) {
+        return false;
+    }
 
     for (uint32 i = 0; i < 32; i++) {
         SearchInteger searchNumber(i);
@@ -725,13 +731,12 @@ bool LinkedListableTest::TestExtractSearchFilter() {
             return false;
         }
 
-        if (rootList1.Size() != (nElements - i - 1)) {
+        if (rootList1.Size() != (32 - i)) {
             return false;
         }
     }
 
-    SearchInteger searchNotIn(33);
-    return (rootList1.Extract(&searchNotIn) == NULL) && (rootList1.Extract((SearchFilter*) NULL) == NULL);
+    return true;
 
 }
 
@@ -751,7 +756,14 @@ bool LinkedListableTest::TestExtractSearchFn() {
         list1Element[i - 1].SetNext(&list1Element[i]);
     }
 
-    uint32 nElements = rootList1.Size();
+    nToSearch = 33;
+    if (rootList1.Extract(SearchIntFn) != NULL) {
+        return false;
+    }
+
+    if (rootList1.Extract((SearchFilterFn*) NULL) != NULL) {
+        return false;
+    }
 
     for (uint32 i = 0; i < 32; i++) {
         nToSearch = i;
@@ -767,13 +779,12 @@ bool LinkedListableTest::TestExtractSearchFn() {
             return false;
         }
 
-        if (rootList1.Size() != (nElements - i - 1)) {
+        if (rootList1.Size() != (32 - i)) {
             return false;
         }
     }
 
-    nToSearch = 33;
-    return (rootList1.Extract(SearchIntFn) == NULL) && (rootList1.Extract((SearchFilterFn*) NULL) == NULL);
+    return true;
 
 }
 
@@ -788,20 +799,24 @@ bool LinkedListableTest::TestDelete() {
         cursor = cursor->Next();
     }
 
-    uint32 nElements = root->Size();
+    LinkedListable* notIn = new LinkedListable;
+    if (root->Delete(notIn)) {
+        return false;
+    }
+
     cursor = root->Next();
     for (uint32 i = 0; i < 32; i++) {
         if (!root->Delete(cursor)) {
             return false;
         }
-        if (root->Size() != (nElements - i - 1)) {
+        if (root->Size() != (32 - i)) {
             return false;
         }
         cursor = root->Next();
     }
 
-    LinkedListable* notIn = new LinkedListable;
-    return (!root->Delete(notIn));
+    return true;
+
 }
 
 bool LinkedListableTest::TestDeleteSearchFilter() {
@@ -817,7 +832,14 @@ bool LinkedListableTest::TestDeleteSearchFilter() {
         cursor = (IntegerList*) cursor->Next();
     }
 
-    uint32 nElements = root->Size();
+    SearchInteger searchNotIn(33);
+    if (root->Delete(&searchNotIn) != 0) {
+        return false;
+    }
+
+    if (root->Delete((SearchFilter*) NULL) != 0) {
+        return false;
+    }
 
     for (uint32 i = 0; i < 16; i++) {
         SearchInteger searchNumber(i % 16);
@@ -829,13 +851,12 @@ bool LinkedListableTest::TestDeleteSearchFilter() {
             return false;
         }
 
-        if (root->Size() != (nElements - 2 * (i + 1))) {
+        if (root->Size() != (33 - 2 * (i + 1))) {
             return false;
         }
     }
 
-    SearchInteger searchNotIn(33);
-    return (root->Delete(&searchNotIn) == 0) && (root->Delete((SearchFilter*) NULL) == 0);
+    return true;
 
 }
 
@@ -852,7 +873,15 @@ bool LinkedListableTest::TestDeleteSearchFn() {
         cursor = (IntegerList*) cursor->Next();
     }
 
-    uint32 nElements = root->Size();
+    nToSearch = 33;
+
+    if (root->Delete(SearchIntFn) != 0) {
+        return false;
+    }
+
+    if (root->Delete((SearchFilterFn*) NULL) != 0) {
+        return false;
+    }
 
     for (uint32 i = 0; i < 16; i++) {
         nToSearch = i % 16;
@@ -864,13 +893,12 @@ bool LinkedListableTest::TestDeleteSearchFn() {
             return false;
         }
 
-        if (root->Size() != (nElements - 2 * (i + 1))) {
+        if (root->Size() != (33 - 2 * (i + 1))) {
             return false;
         }
     }
 
-    nToSearch = 33;
-    return (root->Delete(SearchIntFn) == 0) && (root->Delete((SearchFilterFn*) NULL) == 0);
+    return true;
 
 }
 
@@ -906,11 +934,24 @@ bool LinkedListableTest::TestIterateIterator() {
         element[i].intNumber = i;
         element[i - 1].SetNext(&element[i]);
     }
+
+    root.Iterate((Iterator*) NULL);
+
+    LinkedListable *cursor = root.Next();
+
+    for (uint32 i = 0; i < 32; i++) {
+        if (((IntegerList*) cursor)->intNumber != i) {
+            return false;
+        }
+
+        cursor = cursor->Next();
+    }
+
     IncrementIterator addOne;
 
     root.Iterate(&addOne);
 
-    LinkedListable *cursor = root.Next();
+    cursor = root.Next();
     for (uint32 i = 0; i < 32; i++) {
         if (((IntegerList*) cursor)->intNumber != (i + 1)) {
             return false;
@@ -936,9 +977,23 @@ bool LinkedListableTest::TestIterateFn() {
         element[i - 1].SetNext(&element[i]);
     }
 
-    root.Iterate(IncrementNumFn);
+    root.Iterate((IteratorFn*)NULL);
+
 
     LinkedListable *cursor = root.Next();
+
+    for (uint32 i = 0; i < 32; i++) {
+        if (((IntegerList*) cursor)->intNumber != i) {
+            return false;
+        }
+
+        cursor = cursor->Next();
+    }
+
+
+    root.Iterate(IncrementNumFn);
+
+    cursor = root.Next();
     for (uint32 i = 0; i < 32; i++) {
         if (((IntegerList*) cursor)->intNumber != (i + 1)) {
             return false;
