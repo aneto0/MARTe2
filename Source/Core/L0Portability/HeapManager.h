@@ -1,8 +1,8 @@
 /**
- * @file Heap.h
- * @brief Header file for class Heap
- * @date 4 Aug 2015
- * @author andre
+ * @file HeapManager.h
+ * @brief Header file for class HeapManager
+ * @date Aug 6, 2015
+ * @author fsartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Heap
+ * @details This header file contains the declaration of the class HeapManager
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L0PORTABILITY_HEAP_H_
-#define SOURCE_CORE_L0PORTABILITY_HEAP_H_
+#ifndef HEAPMANAGER_H_
+#define HEAPMANAGER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,38 +31,57 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
+
+#include "Heap.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
  * @brief TODO
  */
-class Heap {
-public:
+static const int MaximumNumberOfHeaps = 16;
+
+
+/**
+ * @brief TODO
+ */
+namespace HeapManager{
+
     /**
-     * @brief allocates size bytes of data in the heap.
-     * @return a pointer to the allocated memory or NULL if the allocation fails.
+     * @brief Finds the Heap that manages the specified memory location
+     * returns NULL if not found
      */
-    virtual void *Malloc(const uint32 &size);
+    Heap *FindHeap(void * address);
 
     /**
      * @brief free the pointer data and its associated memory.
      * @param data the data to be freed.
+     * returns false if no heap is found that can handle this data
      */
-    virtual void Free(void *&data);
+    bool Free(void *&data);
+
+    /**
+     * @brief
+     * @param
+     * returns
+     */
+    bool AddHeap(Heap &heap);
+
+    /**
+     * @brief
+     * @param
+     * returns
+     */
+    bool RemoveHeap(Heap &heap);
 
 
-    virtual void* FirstAddress() const;
-
-    virtual void* LastAddress() const;
-
-};
+} ;
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L0PORTABILITY_HEAP_H_ */
-
+#endif /* SOURCE_CORE_L0PORTABILITY_HEAPMANAGER_H_ */
+	
