@@ -25,7 +25,8 @@
 #############################################################
 
 OBJSX= LinkedListableGTest.x \
-	LinkedListHolderGTest.x
+	LinkedListHolderGTest.x \
+	ClassRegistryDatabaseGTest.x
 
 
 

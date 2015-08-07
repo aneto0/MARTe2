@@ -34,6 +34,67 @@
 #include "GeneralDefinitions.h"
 #include "StructuredData.h"
 #include "Heap.h"
+#include "Introspection.h"
+#include "ClassProperties.h"
+#include "ClassRegistryItem.h"
+
+
+/*---------------------------------------------------------------------------*/
+/*                        Macro definitions                                  */
+/*---------------------------------------------------------------------------*/
+/**
+ * These macros are required to automatically register in the ClassRegistryDatabase
+ * the information about all the classes that inherit from object.
+ * These have to be defined as macros so that the new and delete functions are implemented
+ * in the final class inhering from Object (i.e. they are specific to each implementation).
+ */
+/**
+ * The function GetHiddenClassRegistryItem has to be virtual in order to guarantee that
+ * there will be a virtual member in all inherited classes.
+ * This macro has to be inserted in every class that inherits from Object.
+ */
+#define CLASS_REGISTER_DECLARATION(name)                                                      \
+    virtual ClassRegistryItem *GetHiddenClassRegistryItem() const;                            \
+    void GetClassPropertiesCopy(ClassProperties &destination) const;                          \
+    void * operator new(size_t size, Heap &heap);                                             \
+    void operator delete(void *p);
+
+/**
+ * This macro has to be inserted in every unit file.
+ * The definition of the  _## name ## ClassRegistryItem variable will
+ * instantiate a new ClassRegistryItem for every unit file compiled in the application.
+ * Upon instantiation each ClassRegistryItem will automatically add itself to the ClassRegistryDatabase.
+ * When required the ClassRegistryItem will instantiate new objects by asking the ClassRegistryItem
+ * for the build function related to the class it is representing.
+ * Note that new and delete are static functions and as a consequence they cannot call member
+ * functions in the class (or its derived classes). Because their implementation is specific to the final
+ * class they had to be written as part of macro as well.
+ */
+#define CLASS_REGISTER(name,ver)                                                              \
+    Object * _ ## name ## BuildFn (Heap &heap);                                               \
+    static ClassProperties _## name ## ClassProperties( #name ,ver);                          \
+    static ClassRegistryItem _ ## name ## ClassRegistryItem( _ ## name ## ClassProperties, & _ ##  name ## BuildFn );  \
+    Object * _ ## name ## BuildFn (Heap &heap){                                               \
+        _ ## name ## ClassRegistryItem.SetHeap(heap);                                         \
+        name *p = new (heap) name () ;                                                        \
+        return p;                                                                             \
+    }                                                                                         \
+    ClassRegistryItem * name::GetHiddenClassRegistryItem() const {                            \
+        return &_## name ## ClassRegistryItem;                                                \
+    }                                                                                         \
+    void name::GetClassPropertiesCopy(ClassProperties &destination) const {                   \
+        destination = *GetHiddenClassRegistryItem()->GetClassProperties();                    \
+    }                                                                                         \
+    void * name::operator new(size_t size, Heap &heap) {                                      \
+        void *obj = heap.Malloc(size);                                                        \
+        _ ## name ## ClassRegistryItem.IncrementNumberOfInstances();                          \
+        return obj;                                                                           \
+    }                                                                                         \
+    void name::operator delete(void *p) {                                                     \
+        _ ## name ## ClassRegistryItem.GetHeap()->Free(p);                                    \
+        _ ## name ## ClassRegistryItem.DecrementNumberOfInstances();                          \
+    }
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -49,23 +110,22 @@
  *  - The allocation heap can be selected by the end-user.
  */
 class Object {
+    /**
+     * This allows the Reference class to be the only interface to manage the number of instances pointing to this object.
+     */
+    friend class Reference;
 public:
+    CLASS_REGISTER_DECLARATION(Object)
+
+    /**
+     * @brief Default constructor. Sets the number of references to zero.
+     */
+    Object();
+
     /**
      * @brief Virtual destructor. No operation.
      */
     virtual ~Object();
-
-    /**
-     * @brief Returns the name of the class.
-     * @return the name of the class.
-     */
-    const char8* ClassName() const;
-
-    /**
-     * @brief Returns the version of the class against which the code was compiled.
-     * @return the version of the class against which the code was compiled.
-     */
-    const char8* ClassVersion() const;
 
     /**
      * @brief Initialises the object against a structured list of elements.
@@ -77,40 +137,74 @@ public:
      * @return true if all the input data is valid and can be successfully assigned
      * to the member variables.
      */
-    virtual bool Initialise(const StructuredData &data) = 0;
+    virtual bool Initialise(const StructuredData &data);
 
     /**
-     * @brief Placement new to allocate the object in the heap
-     * @param size of the object
-     * @param heap target heap containing the memory to hold the object
+     * @brief Returns a copy to this object instance introspection properties.
+     * @destination copies this object instance introspection properties to destination.
+     */
+    void GetIntrospectionCopy(Introspection &destination) const;
+#if 0
+    /**
+     * @brief Placement new to allocate the object in the heap.
+     * @param size of the object.
+     * @param heap target heap containing the memory to hold the object.
      * @return a pointer to the heap.
      */
     void *operator new(size_t size, Heap &heap);
+
+    /**
+     * @brief The delete operator will delegate the freeing of the memory to the heap.
+     * @details The actual definition is expanded in the macro CLASS_REGISTER.
+     * @param p the object being deleted.
+     */
+    void operator delete(void *p);
+#endif
+    /**
+     * @brief Returns the number of references.
+     * @return the number of references pointing to this object.
+     */
+    uint32 NumberOfReferences() const;
+
 private:
 
     /**
-     * Disallow the usage of new
+     * @brief Decrements the number of references to this object.
+     * @details Only accessible to the Reference class.
+     * @return the new number of references.
      */
-    void *operator new(size_t size);
+    uint32 DecrementReferences();
+
+    /**
+     * @brief Increments the number of references to this object.
+     * @details Only accessible to the Reference class.
+     * @return the new number of references.
+     */
+    uint32 IncrementReferences();
+
+    /**
+     * @brief Clones the object.
+     * @details To enable cloning of objects using references the final class must implement clone.
+     * Only accessible to the Reference class.
+     * @return a clone of this object.
+     */
+    virtual Object* Clone() const;
+
+    /**
+     * Disallow the usage of new.
+     */
+    void *operator new(size_t size) throw ();
+
+    /**
+     * Object introspection properties.
+     */
+    Introspection introspection;
+
+    /**
+     * The number of references to this object.
+     */
+    volatile int32 referenceCounter;
 };
-
-/*---------------------------------------------------------------------------*/
-/*                        Macro definitions                                  */
-/*---------------------------------------------------------------------------*/
-#define CLASS_REGISTER(name,ver)                                                          \
-    Object * name ## BuildFn__ (Heap &heap);                                              \
-    static ClassRegistryItem _private_ ## name ## Info( #name ,ver, & name ## BuildFn__); \
-    Object * name ## BuildFn__ (Heap &heap){                                              \
-        name *p = new (heap) name () ;                                                    \
-        _private_ ## name ## Info.IncrementNumberOfInstances();                           \
-        _private_ ## name ## Info.SetHeap(heap);                                          \
-        return p;                                                                         \
-    }                                                                                     \
-    void operator delete(void *p){                                                        \
-        _private_ ## name ## Info.GetHeap().Free(p);                                      \
-        _private_ ## name ## Info.DecrementNumberOfInstances();                           \
-    }
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

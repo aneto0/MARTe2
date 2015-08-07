@@ -37,10 +37,19 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief TODO
+ * @brief Heap interface and standard implementation.
+ * @details Framework objects can be allocated in different types of heap memory.
+ * This class provides the interface method definition and a basic implementation
+ * which calls the Memory::Malloc and Memory::Free functions.
  */
 class Heap {
 public:
+
+    /**
+     * @brief No operation.
+     */
+    virtual ~Heap();
+
     /**
      * @brief allocates size bytes of data in the heap.
      * @return a pointer to the allocated memory or NULL if the allocation fails.

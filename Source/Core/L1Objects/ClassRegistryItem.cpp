@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "ClassRegistryDatabase.h"
 #include "ClassRegistryItem.h"
 #include "FastPollingMutexSem.h"
 
@@ -39,23 +40,30 @@ static FastPollingMutexSem classRegistryItemMuxSem;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-ClassRegistryItem::ClassRegistryItem(const char8* clName, const char8* clVersion, ObjectBuildFn *objBuildFn) {
-    className = clName;
-    classVersion = clVersion;
+ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
+                                     ObjectBuildFn *objBuildFn) {
+    numberOfInstances = 0;
+    classProperties = clProperties;
+    loadableLibrary = NULL;
     objectBuildFn = objBuildFn;
+    ClassRegistryDatabase::Instance().Add(this);
 }
 
-const char8* ClassRegistryItem::GetClassName() const {
-    return className;
+ClassRegistryItem::~ClassRegistryItem() {
+    const LoadableLibrary *loader = loadableLibrary;
+    ClassRegistryDatabase::Instance().Delete(this);
+    if (loader != NULL) {
+        delete loader;
+    }
+    loadableLibrary = NULL;
 }
 
-const char8* ClassRegistryItem::GetClassVersion() const {
-    return classVersion;
+void ClassRegistryItem::GetClassPropertiesCopy(ClassProperties &destination) const {
+    destination = classProperties;
 }
 
-ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
-    return objectBuildFn;
+const ClassProperties *ClassRegistryItem::GetClassProperties() const {
+    return &classProperties;
 }
 
 void ClassRegistryItem::IncrementNumberOfInstances() {
@@ -74,10 +82,23 @@ uint32 ClassRegistryItem::GetNumberOfInstances() {
     return numberOfInstances;
 }
 
-const Heap &ClassRegistryItem::GetHeap() const {
-    return heap;
+Heap *ClassRegistryItem::GetHeap() {
+    return &heap;
 }
 
-void ClassRegistryItem::SetHeap(const Heap& h){
+void ClassRegistryItem::SetHeap(const Heap& h) {
     heap = h;
 }
+
+const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {
+    return loadableLibrary;
+}
+
+void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary *lLibrary) {
+    this->loadableLibrary = lLibrary;
+}
+
+ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
+    return objectBuildFn;
+}
+

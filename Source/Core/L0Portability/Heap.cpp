@@ -38,6 +38,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+Heap::~Heap() {
+
+}
+
 void *Heap::Malloc(const uint32 &size) {
     return Memory::Malloc(size, Memory::StandardMemory);
 }

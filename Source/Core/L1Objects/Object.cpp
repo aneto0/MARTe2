@@ -29,6 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
+#include "Memory.h"
+#include "ClassRegistryItem.h"
+#include "FastPollingMutexSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -37,24 +40,49 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+Object::Object() {
+    referenceCounter = 0;
+}
 
 Object::~Object() {
-
 }
 
-const char8* Object::ClassName() const {
+static FastPollingMutexSem refMux;
+
+uint32 Object::DecrementReferences() {
+    int32 ret;
+    refMux.FastLock();
+    ret = --referenceCounter;
+    refMux.FastUnLock();
+    return ret;
+}
+
+uint32 Object::IncrementReferences() {
+    int32 ret;
+    refMux.FastLock();
+    ret = ++referenceCounter;
+    refMux.FastUnLock();
+    return ret;
+}
+
+Object *Object::Clone() const {
     return NULL;
 }
 
-const char8* Object::ClassVersion() const {
+uint32 Object::NumberOfReferences() const {
+    return referenceCounter;
+}
+
+bool Object::Initialise(const StructuredData &data) {
+    return false;
+}
+
+void *Object::operator new(size_t size) throw () {
     return NULL;
 }
 
-void *Object::operator new(size_t size) {
-    return NULL;
+void Object::GetIntrospectionCopy(Introspection &destination) const {
+    destination = introspection;
 }
 
-void *Object::operator new(size_t size, Heap &heap) {
-    void *obj = heap.Malloc(size);
-    return obj;
-}
+CLASS_REGISTER(Object, "1.0")
