@@ -1,8 +1,8 @@
 /**
- * @file Heap.h
- * @brief Header file for class Heap
- * @date 4 Aug 2015
- * @author andre
+ * @file ClassProperties.h
+ * @brief Header file for class ClassProperties
+ * @date Aug 5, 2015
+ * @author aneto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Heap
+ * @details This header file contains the declaration of the class ClassProperties
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L0PORTABILITY_HEAP_H_
-#define SOURCE_CORE_L0PORTABILITY_HEAP_H_
+#ifndef SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
+#define SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,47 +31,60 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
-
+#include "Heap.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief Heap interface and standard implementation.
- * @details Framework objects can be allocated in different types of heap memory.
- * This class provides the interface method definition and a basic implementation
- * which calls the Memory::Malloc and Memory::Free functions.
+ * @brief Properties of a framework base class (i.e. one that inherits from Object).
+ * @details Provides introspection information about any framework base class. This
+ * information is automatically computed by the framework at initialisation time.
  */
-class Heap {
+class Object;
+typedef Object *(ObjectBuildFn)(Heap &);
+
+class ClassProperties {
 public:
 
     /**
-     * @brief No operation.
+     * Default constructor. Initialises all members to NULL.
      */
-    virtual ~Heap();
+    ClassProperties();
 
     /**
-     * @brief allocates size bytes of data in the heap.
-     * @return a pointer to the allocated memory or NULL if the allocation fails.
+     * @brief Constructor. Initialises all members as per input variables.
+     * @param[in] cName the name of the class.
+     * @param[in] cVersion the version of the class.
      */
-    virtual void *Malloc(const uint32 &size);
+    ClassProperties(const char8 *cName, const char8 *cVersion);
 
     /**
-     * @brief free the pointer data and its associated memory.
-     * @param data the data to be freed.
+     * @brief Returns the name of the class.
+     * @return the name of the class.
      */
-    virtual void Free(void *&data);
+    const char8 *GetName() const;
 
+    /**
+     * @brief Returns the version of the class against which the code was compiled.
+     * @return the version of the class against which the code was compiled.
+     */
+    const char8 *GetVersion() const;
 
-    virtual void* FirstAddress() const;
+private:
+    /**
+     * The name of the class.
+     */
+    const char8 *className;
 
-    virtual void* LastAddress() const;
-
+    /**
+     * The version of the class.
+     */
+    const char8 *classVersion;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L0PORTABILITY_HEAP_H_ */
+#endif /* SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_ */
 

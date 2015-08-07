@@ -1,8 +1,8 @@
 /**
- * @file Heap.cpp
- * @brief Source file for class Heap
- * @date 4 Aug 2015
- * @author andre
+ * @file TestObjectHelper1.cpp
+ * @brief Source file for class TestObjectHelper1
+ * @date 06/08/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class Heap (public, protected, and private). Be aware that some 
+ * the class TestObjectHelper1 (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,8 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "Heap.h"
-#include "Memory.h"
+#include "TestObjectHelper1.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,15 +37,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-Heap::~Heap() {
-
+uint32 TestObjectHelper1::GetDummyVariable() const {
+    return dummyVariable;
 }
 
-void *Heap::Malloc(const uint32 &size) {
-    return Memory::Malloc(size, Memory::StandardMemory);
+void TestObjectHelper1::SetDummyVariable(uint32 dummyVariable) {
+    this->dummyVariable = dummyVariable;
 }
 
-void Heap::Free(void *&data) {
-    Memory::Free(data);
-}
-
+CLASS_REGISTER(TestObjectHelper1, "1.0")

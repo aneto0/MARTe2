@@ -31,93 +31,108 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Object.h"
 #include "Heap.h"
 #include "LinkedListable.h"
+#include "LoadableLibrary.h"
+#include "ClassProperties.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief TODO
- * @details TODO
+ * @brief Represents a framework base class (i.e. one that inherits from Object).
+ * @details Most of the framework user classes inherit from Object. As a consequence,
+ * they have the property of being automatically instantiated and managed by the framework.
+ * Every class that inherits from Object will be described by a ClassRegistryItem and
+ * automatically added to a ClassRegistryDatabase.
  */
-typedef Object *(ObjectBuildFn)(Heap &);
-
 class ClassRegistryItem: public LinkedListable {
 public:
     /**
      * @brief Assigns the input variables to the class members.
-     * @param clName the class name to register.
-     * @param clVersion the class version to register.
-     * @param objBuildFn the object build function to register.
+     * @param[in] clProperties the class properties associated with the class that is being registered.
+     * @param[in] objBuildFn the function that allows to instantiate a new object from the class
+     * represented by this ClassRegistryItem instance.
      */
-    ClassRegistryItem(const char8* clName, const char8* clVersion, ObjectBuildFn *objBuildFn);
-    /**
-     * @brief Returns the class name associated to this item.
-     * @return the class name associated to this item.
-     */
-    const char8* GetClassName() const;
+    ClassRegistryItem(const ClassProperties &clProperties,
+                      ObjectBuildFn *objBuildFn);
 
     /**
-     * @brief Returns the class version associated to this item.
-     * @details The version of the class is the version against which the code was compiled.
-     * @return the class version associated to this item.
+     * Destructor.
+     * Responsible for destroying the assigned loadable library.
      */
-    const char8* GetClassVersion() const;
+    ~ClassRegistryItem();
 
     /**
-     * @brief Returns a pointer to function that allows to instantiate a new object from this class.
-     * @return a pointer to function that allows to instantiate a new object from this class.
-     */
-    ObjectBuildFn *GetObjectBuildFunction() const;
-
-    /**
-     * @brief Increments the number of instantiated objects belonging to the class type represented by this registry item.
+     * @brief Increments the number of instantiated objects of the class type represented by this registry item.
      */
     void IncrementNumberOfInstances();
 
     /**
-     * @brief Decrements the number of instantiated objects belonging to the class type represented by this registry item.
+     * @brief Decrements the number of instantiated objects of the class type represented by this registry item.
      */
     void DecrementNumberOfInstances();
 
     /**
-     * @brief Returns the number of instantiated objects belonging to the class type represented by this registry item.
-     * @return the number of instantiated objects belonging to the class type represented by this registry item.
+     * @brief Returns the number of instantiated objects.
+     * @return the number of instantiated objects belonging of the class type represented by this registry item.
      */
     uint32 GetNumberOfInstances();
 
     /**
-     * @brief Returns the heap that was selected to allocate objects belonging to the class type represented by this registry item.
-     * @return the heap that was selected to allocate objects belonging to the class type represented by this registry item.
+     * @brief Returns a copy to the class parameters.
+     * @param[in, out] destination the class properties will be copied to this variable.
      */
-    const Heap &GetHeap() const;
+    void GetClassPropertiesCopy(ClassProperties &destination) const;
 
     /**
-     * @brief Sets the heap to allocate objects belonging to the class type represented by this registry item.
-     * @param h the heap to allocate objects belonging to the class type represented by this registry item.
+     * @brief Returns a pointer to the class parameters.
+     * @details The method GetClassPropertiesCopy should be used when possible. This pointer
+     * will live as long as this instance of ClassRegistryItem exists.
+     * @return a pointer to the class parameters represented by this registry item.
+     */
+    const ClassProperties *GetClassProperties() const;
+
+    /**
+     * @brief Returns a reference to the object allocation heap.
+     * @return the heap that was selected to allocate objects of the class type represented by this registry item.
+     */
+    Heap *GetHeap();
+
+    /**
+     * @brief Sets the heap for object allocation.
+     * @param[in] h the heap to allocate objects of the class type represented by this registry item.
      */
     void SetHeap(const Heap& h);
 
+    /**
+     * @brief Returns a pointer to the library (dll).
+     * @return a pointer to the library (dll) of the class type represented by this registry item.
+     */
+    const LoadableLibrary *GetLoadableLibrary() const ;
+
+    /**
+     * @brief Updates the pointer to the loadable library (dll).
+     * @param[in] lLibrary the library (dll) holding the class type represented by this registry item.
+     */
+    void SetLoadableLibrary(const LoadableLibrary *lLibrary);
+
+    /**
+     * @brief Returns a pointer to object build function.
+     * @details Returns a pointer to a function that allows to instantiate a new object from
+     * the class represented by this ClassProperties.
+     * @return a pointer to function that allows to instantiate a new object.
+     */
+    ObjectBuildFn *GetObjectBuildFunction() const;
+
 private:
     /**
-     * The name of the class
+     * The properties of the class represented by this registry item.
      */
-    const char8 *className;
+    ClassProperties classProperties;
 
     /**
-     * The version of the class against which the code was compiled.
-     */
-    const char8 *classVersion;
-
-    /**
-     * The object instantiation function.
-     */
-    ObjectBuildFn *objectBuildFn;
-
-    /**
-     * The number of instantiated objects belonging to the class type represented by this registry item.
+     * The number of instantiated objects of the class type represented by this registry item.
      */
     uint32 numberOfInstances;
 
@@ -125,6 +140,17 @@ private:
      * The heap that is being used to instantiate objects of the class type represented by this registry item.
      */
     Heap heap;
+
+    /**
+     * Library (dll) holding the class type represented by this registry item.
+     * This class is responsible for destroying the pointer at the end of its life-cycle.
+     */
+    const LoadableLibrary *loadableLibrary;
+
+    /**
+     * The object instantiation function.
+     */
+    ObjectBuildFn *objectBuildFn;
 };
 
 /*---------------------------------------------------------------------------*/

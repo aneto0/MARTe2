@@ -416,17 +416,21 @@ LinkedListable *LinkedListable::Peek(uint32 index) {
 
 void LinkedListable::Iterate(Iterator * const it) {
     LinkedListable *p = this;
-    while (p != NULL) {
-        it->Do(p);
-        p = p->next;
+    if (it != NULL) {
+        while (p != NULL) {
+            it->Do(p);
+            p = p->next;
+        }
     }
 }
 
 void LinkedListable::Iterate(IteratorFn * const it) {
     LinkedListable *p = this;
-    while (p != NULL) {
-        it(p);
-        p = p->next;
+    if (it != NULL) {
+        while (p != NULL) {
+            it(p);
+            p = p->next;
+        }
     }
 }
 

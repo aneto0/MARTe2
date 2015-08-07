@@ -1,8 +1,8 @@
 /**
- * @file Heap.h
- * @brief Header file for class Heap
- * @date 4 Aug 2015
- * @author andre
+ * @file ListTestHelper.h
+ * @brief Header file for class ListTestHelper
+ * @date 06/ago/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Heap
+ * @details This header file contains the declaration of the class ListTestHelper
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L0PORTABILITY_HEAP_H_
-#define SOURCE_CORE_L0PORTABILITY_HEAP_H_
+#ifndef LISTTESTHELPER_H_
+#define LISTTESTHELPER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,47 +31,93 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-/**
- * @brief Heap interface and standard implementation.
- * @details Framework objects can be allocated in different types of heap memory.
- * This class provides the interface method definition and a basic implementation
- * which calls the Memory::Malloc and Memory::Free functions.
- */
-class Heap {
+
+extern uint32 nToSearch;
+
+class IntegerList: public LinkedListable {
+public:
+    uint32 intNumber;
+public:
+    IntegerList() {
+        intNumber = 0;
+    }
+
+    IntegerList(uint32 number) {
+        intNumber = number;
+    }
+
+    ~IntegerList() {
+
+    }
+};
+
+class SortDecrescent: public SortFilter {
+public:
+    SortDecrescent() {
+    }
+    int32 Compare(LinkedListable* element1,
+                  LinkedListable* element2) {
+        if (((IntegerList*) element1)->intNumber < ((IntegerList*) element2)->intNumber)
+            return 1;
+        else
+            return -1;
+    }
+};
+
+class SearchInteger: public SearchFilter {
+private:
+    uint32 searchIntNumber;
+
 public:
 
-    /**
-     * @brief No operation.
-     */
-    virtual ~Heap();
+    SearchInteger(uint32 intNum) {
+        searchIntNumber = intNum;
+    }
 
-    /**
-     * @brief allocates size bytes of data in the heap.
-     * @return a pointer to the allocated memory or NULL if the allocation fails.
-     */
-    virtual void *Malloc(const uint32 &size);
+    void ChangeSearchNumber(uint32 intNum) {
+        searchIntNumber = intNum;
+    }
 
-    /**
-     * @brief free the pointer data and its associated memory.
-     * @param data the data to be freed.
-     */
-    virtual void Free(void *&data);
+    bool Test(LinkedListable *data) {
+        return ((IntegerList*) (data))->intNumber == searchIntNumber;
+    }
+};
 
+class IncrementIterator: public Iterator {
+private:
 
-    virtual void* FirstAddress() const;
+public:
 
-    virtual void* LastAddress() const;
+    void Do(LinkedListable *data) {
+        ((IntegerList*) data)->intNumber++;
+    }
 
 };
+
+static int32 DecrescentSortFn(LinkedListable *data1,
+                              LinkedListable *data2) {
+    if ((((IntegerList *) data1)->intNumber) < (((IntegerList *) data2)->intNumber))
+        return 1;
+    else
+        return -1;
+}
+
+static bool SearchIntFn(LinkedListable* data) {
+    return ((IntegerList*) (data))->intNumber == nToSearch;
+
+}
+
+static void IncrementNumFn(LinkedListable *data) {
+    ((IntegerList *) data)->intNumber++;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L0PORTABILITY_HEAP_H_ */
+#endif /* LISTTESTHELPER_H_ */
 

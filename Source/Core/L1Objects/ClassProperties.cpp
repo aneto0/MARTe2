@@ -1,8 +1,8 @@
 /**
- * @file Heap.cpp
- * @brief Source file for class Heap
- * @date 4 Aug 2015
- * @author andre
+ * @file ClassProperties.cpp
+ * @brief Source file for class ClassProperties
+ * @date Aug 5, 2015
+ * @author aneto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class Heap (public, protected, and private). Be aware that some 
+ * the class ClassProperties (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,8 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "Heap.h"
-#include "Memory.h"
+#include "ClassProperties.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,15 +37,23 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-Heap::~Heap() {
 
+ClassProperties::ClassProperties() {
+    className = NULL;
+    classVersion = NULL;
 }
 
-void *Heap::Malloc(const uint32 &size) {
-    return Memory::Malloc(size, Memory::StandardMemory);
+ClassProperties::ClassProperties(const char8 *cName,
+                                 const char8 *cVersion) {
+    className = cName;
+    classVersion = cVersion;
 }
 
-void Heap::Free(void *&data) {
-    Memory::Free(data);
+const char8* ClassProperties::GetName() const {
+    return className;
+}
+
+const char8* ClassProperties::GetVersion() const {
+    return classVersion;
 }
 

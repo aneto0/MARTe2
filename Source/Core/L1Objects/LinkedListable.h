@@ -53,6 +53,7 @@ class LinkedListable;
  */
 class LinkedListable {
 
+
 public:
 
     /**
@@ -240,4 +241,3 @@ private:
 /*---------------------------------------------------------------------------*/
 
 #endif /* LINKEDLISTABLE_H_ */
-

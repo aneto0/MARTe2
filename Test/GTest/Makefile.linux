@@ -36,4 +36,3 @@ LIBRARIES   += ../../Build/$(TARGET)/Core/L1Objects/L1ObjectsTest$(LIBEXT)
 LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
 
 OPTIM=-finline-functions
-
