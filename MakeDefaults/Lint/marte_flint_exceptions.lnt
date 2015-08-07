@@ -113,6 +113,8 @@
 -esym(1714,ThreadInformation::*)
 -esym(1714,Memory::*)
 -esym(1714,LinkedListable::*)
+-esym(1714,LinkedListHolder::*)
+
 
 
 /* virtual member function not referenced */
@@ -125,6 +127,7 @@
 -esym(1914,LoadableLibrary::*)  
 -esym(1914,ExceptionHandler::*)
 -esym(1914,ThreadInformation::*)
+-esym(1914,LinkedListHolder::*)
 
 /*
  * Rule 0-1-11
@@ -235,6 +238,8 @@
  -esym(1711,SearchFilter)
  -esym(1711,SortFilter)
  -esym(1711,LinkedListable)
+ -esym(1711,LinkedListHolder)
+ 
  
  /*
  * Rule flexelint 1795 

@@ -227,7 +227,7 @@ public:
      */
     void Iterate(IteratorFn * const it);
 
-protected:
+private:
 
     /**
      * Pointer to the next element in the list.

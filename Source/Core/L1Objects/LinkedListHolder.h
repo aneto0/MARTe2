@@ -95,6 +95,8 @@ public:
 
     /**
      * @brief Inserts the input list using a SortFilter.
+     * @details if the SortFilter pointer is null, the function performs the normal behavior inserting at the
+     * input list at the beginning.
      * @param[in] p is the pointer to the LinkedListable to insert.
      * @param[in] sorter defines the comparison criteria.
      */
@@ -103,6 +105,8 @@ public:
 
     /**
      * @brief Inserts the list p using a SortFilterFn function.
+     * @details if the SortFilterFn pointer is null, the function performs the normal behavior inserting at the
+     * input list at the beginning.
      * @param[in] p is the pointer to the LinkedListable to insert.
      * @param[in] sorter defines the comparison criteria.
      */
@@ -239,7 +243,7 @@ public:
      */
     void ListIterate(IteratorFn * const it);
 
-protected:
+private:
 
     /**
      * List root

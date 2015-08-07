@@ -205,7 +205,7 @@ bool LinkedListableTest::TestBSortFn() {
     }
 
     //nothing should happen
-    root.BSort((SortFilter*) NULL);
+    root.BSort((SortFilterFn*) NULL);
     LinkedListable *cursor = root.Next();
     for (uint32 i = 0; i < 32; i++) {
         if (((IntegerList*) (cursor))->intNumber != i) {
@@ -685,7 +685,7 @@ bool LinkedListableTest::TestExtract() {
             return false;
         }
 
-        if (rootList1.Size() != (nElements - i - 1)) {
+        if (rootList1.Size() != (31 - i)) {
             return false;
         }
     }

@@ -82,27 +82,27 @@ TEST(LinkedListHolderTest,TestFastListInsertSingle) {
 
 TEST(LinkedListHolderTest,TestListInsert) {
     LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListInsert());
+    ASSERT_TRUE(myLinkedListHolderTest.TestListInsert(32));
 }
 
 
 
 TEST(LinkedListHolderTest,TestListInsertSortedSorter) {
     LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListInsertSortedSorter());
+    ASSERT_TRUE(myLinkedListHolderTest.TestListInsertSortedSorter(32));
 }
 
 
 TEST(LinkedListHolderTest,TestListInsertSortedFn) {
     LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListInsertSortedFn());
+    ASSERT_TRUE(myLinkedListHolderTest.TestListInsertSortedFn(32));
 }
 
 
 
 TEST(LinkedListHolderTest,TestListInsertNullSorter) {
     LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListInsertNullSorter());
+    ASSERT_TRUE(myLinkedListHolderTest.TestListInsertNullSorter(32));
 }
 
 
@@ -115,4 +115,100 @@ TEST(LinkedListHolderTest,TestListInsertIndex) {
 TEST(LinkedListHolderTest,TestListInsertIndexOutOfBounds) {
     LinkedListHolderTest myLinkedListHolderTest;
     ASSERT_TRUE(myLinkedListHolderTest.TestListInsertIndex(35,32));
+}
+
+
+TEST(LinkedListHolderTest,TestListAdd) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListAdd(32));
+}
+
+TEST(LinkedListHolderTest,TestListAddL) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListAddL(32));
+}
+
+TEST(LinkedListHolderTest,TestListSearch) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListSearch());
+}
+
+TEST(LinkedListHolderTest,TestListSearchFilter) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListSearchFilter());
+}
+
+
+
+TEST(LinkedListHolderTest,TestListSearchFn) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListSearchFn());
+}
+
+
+TEST(LinkedListHolderTest,TestListExtract) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListExtract());
+}
+
+TEST(LinkedListHolderTest,TestListExtractSearchFilter) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListExtract());
+}
+
+
+TEST(LinkedListHolderTest,TestListExtractSearchFn) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListExtractSearchFn());
+}
+
+TEST(LinkedListHolderTest,TestListExtractIndex) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListExtractIndex());
+}
+
+TEST(LinkedListHolderTest,TestListDelete) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListDelete());
+}
+
+TEST(LinkedListHolderTest,TestListDeleteSearchFilter) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListDeleteSearchFilter());
+}
+
+TEST(LinkedListHolderTest,TestListDeleteSearchFn) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListDeleteSearchFn());
+}
+
+
+TEST(LinkedListHolderTest,TestListBSortSorter) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListBSortSorter(32));
+}
+
+TEST(LinkedListHolderTest,TestListBSortFn) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListBSortFn(32));
+}
+
+TEST(LinkedListHolderTest,TestListPeek) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListPeek(32));
+}
+
+TEST(LinkedListHolderTest,TestListIterateIterator) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListIterateIterator());
+}
+
+TEST(LinkedListHolderTest,TestListIterateFn) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListIterateFn());
+}
+
+TEST(LinkedListHolderTest,TestListSafeDelete) {
+    LinkedListHolderTest myLinkedListHolderTest;
+    ASSERT_TRUE(myLinkedListHolderTest.TestListSafeDelete());
 }

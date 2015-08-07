@@ -242,8 +242,6 @@ LinkedListable *LinkedListHolder::ListExtract(uint32 index) {
         if (q != NULL) {
             llhSize--;
             p->SetNext(q->Next());
-        }
-        if (q != NULL) {
             q->SetNext(static_cast<LinkedListable *>(NULL));
         }
         ret = q;
