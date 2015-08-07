@@ -36,6 +36,10 @@
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
 
+/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
+class Object;
+/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
+typedef Object *(ObjectBuildFn)(Heap &);
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -46,6 +50,9 @@
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
+/*lint -e{1790} for performance reasons it was decided to implement the usage of LinkedListable this way.
+ * This guarantees that the movements in the list are always performed with the correct pointer (i.e. pointing to the base class).
+ * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.*/
 class ClassRegistryItem: public LinkedListable {
 public:
     /**
@@ -54,14 +61,13 @@ public:
      * @param[in] objBuildFn the function that allows to instantiate a new object from the class
      * represented by this ClassRegistryItem instance.
      */
-    ClassRegistryItem(const ClassProperties &clProperties,
-                      ObjectBuildFn *objBuildFn);
+    ClassRegistryItem(const ClassProperties &clProperties, ObjectBuildFn *objBuildFn);
 
     /**
      * Destructor.
      * Responsible for destroying the assigned loadable library.
      */
-    ~ClassRegistryItem();
+    virtual ~ClassRegistryItem();
 
     /**
      * @brief Increments the number of instantiated objects of the class type represented by this registry item.
@@ -77,7 +83,7 @@ public:
      * @brief Returns the number of instantiated objects.
      * @return the number of instantiated objects belonging of the class type represented by this registry item.
      */
-    uint32 GetNumberOfInstances();
+    uint32 GetNumberOfInstances() const;
 
     /**
      * @brief Returns a copy to the class parameters.

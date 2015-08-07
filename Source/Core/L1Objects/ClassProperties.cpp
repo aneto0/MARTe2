@@ -39,12 +39,12 @@
 /*---------------------------------------------------------------------------*/
 
 ClassProperties::ClassProperties() {
-    className = NULL;
-    classVersion = NULL;
+    className = static_cast<const char8 *>(NULL);
+    classVersion = static_cast<const char8 *>(NULL);
 }
 
-ClassProperties::ClassProperties(const char8 *cName,
-                                 const char8 *cVersion) {
+ClassProperties::ClassProperties(const char8 * const cName,
+                                 const char8 * const cVersion) {
     className = cName;
     classVersion = cVersion;
 }

@@ -40,9 +40,6 @@
  * @details Provides introspection information about any framework base class. This
  * information is automatically computed by the framework at initialisation time.
  */
-class Object;
-typedef Object *(ObjectBuildFn)(Heap &);
-
 class ClassProperties {
 public:
 
@@ -56,7 +53,7 @@ public:
      * @param[in] cName the name of the class.
      * @param[in] cVersion the version of the class.
      */
-    ClassProperties(const char8 *cName, const char8 *cVersion);
+    ClassProperties(const char8 * const cName, const char8 * const cVersion);
 
     /**
      * @brief Returns the name of the class.

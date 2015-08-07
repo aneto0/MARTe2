@@ -15,3 +15,4 @@ destructed
 copydetails
 struct
 introspectable
+constness

@@ -69,6 +69,7 @@
 -esym(768,IBasicConsole::*)
 -esym(768,ExceptionHandler::*)
 -esym(768,ExceptionHandler::*)
+-esym(768,ClassRegistryDatabase::*)
 /* global constant enumeration not referenced */ 
 -esym(769,SFTestType::*)
 -esym(769,Colours::*) 
@@ -114,6 +115,8 @@
 -esym(1714,Memory::*)
 -esym(1714,LinkedListable::*)
 -esym(1714,LinkedListHolder::*)
+-esym(1714,ClassProperties::*)
+-esym(1714,ClassRegistryItem::*)
 
 
 
@@ -128,6 +131,7 @@
 -esym(1914,ExceptionHandler::*)
 -esym(1914,ThreadInformation::*)
 -esym(1914,LinkedListHolder::*)
+-esym(1914,ClassProperties::*)
 
 /*
  * Rule 0-1-11
@@ -229,6 +233,11 @@
 -esym(9141,SearchFilterFn)
 -esym(9141,SortFilterFn)
 -esym(9141,SFTestType)
+-esym(9141,LinkedListHolder)
+-esym(9141,ClassProperties)
+-esym(9141,ClassRegistryItem)
+-esym(9141,ClassRegistryDatabase)
+-esym(9141,ClassRegistryDatabase::*)
 
 /* 
  * Info flexelint 1711
