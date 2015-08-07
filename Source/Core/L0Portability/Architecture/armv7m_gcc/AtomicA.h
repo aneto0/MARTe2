@@ -24,7 +24,79 @@
 #ifndef ATOMICA_H_
 #define ATOMICA_H_
 
-#define __thumb__
+inline void ATOMIC_INCREMENT(volatile int32 *value) {
+
+    register int32 readValue;
+    register int32 ret;
+    do {
+        asm volatile(
+                "ldrex %0, [%1]\n"
+                "add %0, %0, #1\n"
+                "strex %2, %0, [%1]\n"
+                "cmp %2, #0\n"
+                : : "r" (readValue), "r" (value), "r" (ret)
+        );
+    }
+    while (ret != 0);
+}
+
+inline void ATOMIC_DECREMENT(volatile int32 *value) {
+
+    register int32 readValue;
+    register int32 ret;
+    do {
+        asm volatile(
+                "ldrex %0, [%1]\n"
+                "sub %0, %0, #1\n"
+                "strex %2, %0, [%1]\n"
+                "cmp %2, #0\n"
+                : : "r" (readValue), "r" (value), "r" (ret)
+        );
+    }
+    while (ret != 0);
+}
+
+inline void EXCHANGE(volatile int32 *oldValue,
+                     int32 newValue) {
+
+    register int32 readValue;
+    register int32 ret;
+    do {
+        asm volatile(
+                "ldrex %0, [%1]\n"
+                "strex %2, %3, [%1]\n"
+                : : "r" (readValue), "r" (oldValue), "r" (ret), "r" (newValue)
+        );
+    }
+    while (ret != 0);
+}
+
+inline bool TEST_AND_SET(volatile int32 *value) {
+
+    register int32 readValue;
+    register int32 ret;
+
+    do {
+        asm volatile(
+                "ldrex %0, [%1]"
+                : : "r" (readValue), "r" (value)
+        );
+
+        if (readValue != 0) {
+            break;
+        }
+        asm volatile(
+                "add %0, %0, #1\n"
+                "strex %2, %0, [%1]\n"
+                "mov %0, %2"
+                : : "r" (readValue), "r" (value), "r" (ret)
+        );
+
+    }
+    while (ret != 0);
+
+    return readValue == 0;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -47,53 +119,7 @@ public:
      */
     static inline void Increment32(volatile int32 *p) {
 
-        int __tmp, __tmp2, __tmp3; //registers
-
-#ifdef __thumb__
-        /* Since this function is inlined, we can't be sure of the alignment.  */
-        __asm__ __volatile__ (
-                "ldr     %0, 4f \n\t"
-                "bx      %0 \n\t"
-                ".align 0\n"         //word alignment
-                "4:\t"
-                ".word   0f \n\t"
-                ".code 16 \n"
-                "0:\t"//loop label
-                "ldr     %0, [%3] \n\t"//load the variable in tmp
-                "add     %1, %0, #1 \n\t"//add 1 to tmp and put it in tmp2
-                "ldr    %2, [%3] \n\t"
-                "str    %1, [%3,#0]\n\t"
-//        "swp     %2, %1, [%3] \n\t"     //put temp3=variable and then variable=tmp2
-                "cmp     %0, %2 \n\t"//if tmp and tmp3 are not equal this is not atomic
-                "ldr    %1, [%3] \n\t"
-                "str    %2, [%3,#0]\n\t"
-//       "swpne   %1, %2,[%3] \n\t"      //reput variable=tmp3 and tmp2=variable in this case
-                "bne     0b \n\t"//re try to increment in this case.
-                "ldr     %1, 1f \n\t"//finish.
-                "bx      %1 \n"
-                "1:\t"
-                ".word   2f \n\t"
-                ".code 16 \n"
-                "2:\n"
-                : "+r"(__tmp), "+r"(__tmp2), "+r"(__tmp3)
-                : "r" (p)
-                : "cc", "memory");
-#else
-        __asm__ __volatile__ (
-                "\n"
-                "0:\t"
-                "ldr     %0, [%3] \n\t"
-                "add     %1, %0, #1 \n\t"
-                "swp     %2, %1, [%3] \n\t"
-                "cmp     %0, %2 \n\t"
-                "swpne   %1, %2, [%3] \n\t"
-                "bne     0b \n\t"
-                ""
-                : "+r"(__tmp), "+r"(__tmp2), "+r"(__tmp3)
-                : "r" (p)
-                : "cc", "memory");
-#endif
-
+        ATOMIC_INCREMENT(p);
     }
 
     /**
@@ -118,54 +144,7 @@ public:
      * @param p is the 32 bits variable to decrement. */
     static inline void Decrement32(volatile int32 *p) {
 
-        int __tmp, __tmp2, __tmp3;            //registers
-
-#ifdef __thumb__
-        /* Since this function is inlined, we can't be sure of the alignment.  */
-        __asm__ __volatile__ (
-                ".thumb    \n\t"
-                "ldr     %0, 4f \n\t"
-                "bx      %0 \n\t"
-                ".align 0\n"         //word alignment
-                "4:\t"
-                ".word   0f \n\t"
-                ".code 16 \n"
-                "0:\t"//loop label
-                "ldr    %0, [%3] \n\t"//load the variable in tmp
-                "sub     %1, %0, #1 \n\t"//sub 1 to tmp and put it in tmp2
-                "ldr    %2, [%3] \n\t"
-                "str    %1, [%3,#0]\n\t"
-//    "swp     %2, %1, [%3] \n\t"     //put temp3=variable and then variable=tmp2
-                "cmp     %0, %2 \n\t"//if tmp and tmp3 are not equal this is not atomic
-                "ldr    %1, [%3] \n\t"
-                "str    %2, [%3,#0]\n\t"
-//         "swpne   %1, %2,[%3] \n\t"      //reput variable=tmp3 and tmp2=variable in this case
-                "bne     0b \n\t"//re try to increment in this case.
-                "ldr     %1, 1f \n\t"//finish.
-                "bx      %1 \n"
-                "1:\t"
-                ".word   2f \n\t"
-                ".code 16 \n"
-                "2:\n"
-                : "+r"(__tmp), "+r"(__tmp2), "+r"(__tmp3)
-                : "r" (p)
-                : "cc", "memory");
-#else
-        __asm__ __volatile__ (
-                "\n"
-                "0:\t"
-                "ldr     %0, [%3] \n\t"
-                "sub     %1, %0, #1 \n\t"
-                "swp     %2, %1, [%3] \n\t"
-                "cmp     %0, %2 \n\t"
-                "swpne   %1, %2, [%3] \n\t"
-                "bne     0b \n\t"
-                ""
-                : "+r"(__tmp), "+r"(__tmp2), "+r"(__tmp3)
-                : "r" (p)
-                : "cc", "memory");
-#endif
-
+        ATOMIC_DECREMENT(p);
     }
 
     /** @brief Atomically decrement a 16 bit integer in memory.
@@ -189,100 +168,17 @@ public:
      * @param v is the variable to store. */
     static inline int32 Exchange32(volatile int32 *p,
                                    int32 v) {
-        int32 __result;
-#ifdef __thumb__
-        long __tmp;
-        /* Since this function is inlined, we can't be sure of the alignment.  */
-        __asm__ __volatile__ (
-                ".thumb    \n\t"
-                "ldr     %0, 4f \n\t"
-                "bx      %0 \n\t"
-                ".align 0 \n"
-                "4:\t"
-                ".word   0f \n\t"
-                ".code 16\n"
-                "0:\t"
-                "ldr    %0, [%0] \n\t"
-                "str    %3, [%2,#0]\n\t"
-// "swp     %0, %3, [%2] \n\t"  //put p in result and v in p
-                "ldr     %1, 1f \n\t"//finish
-                "bx      %1 \n"
-                "1:\t"
-                ".word   2f \n\t"
-                ".code 16 \n"
-                "2:\n"
-                : "+r"(__result), "+r"(__tmp)
-                : "r"(p), "r"(v)
-                : "memory");
-#else
-        __asm__ __volatile__ (
-                "\n\t"
-                "swp     %0, %2, [%1] \n\t"
-                ""
-                : "+r"(__result)
-                : "r"(p), "r"(v)
-                : "memory");
-#endif
-        return __result;
+        EXCHANGE(p, v);
+        return v;
+
     }
 
     /** @brief Test and set a 32 bit memory location in a thread safe way.
      * @param p is the 32 bit variable to test and set.
      * @return return true if p=0 and it sets p to one, else return false. */
     static inline bool TestAndSet32(int32 volatile *p) {
-        int __result;
-        long __tmp;
-        volatile int __newval = 1;
-#ifdef __thumb__
-        /* Since this function is inlined, we can't be sure of the alignment.  */
-        __asm__ __volatile__ (
-                ".thumb   \n\t"
-                "ldr     %0, 4f \n\t"
-                "bx      %0 \n\t"
-                ".align 0 \n"            //alignment
-                "4:\t"
-                ".word   0f \n\t"
-                ".code 16 \n"
-                "0:\t"
-                "ldr     %0, [%2] \n\t"//load p in result
-                "cmp     %0, #0 \n\t"//compare it with 0
-                "bne     1f \n\t"//if it's different exit
-                "ldr    %1, [%2] \n\t"
-                "str    %3, [%2,#0]\n\t"
-                //     "swp     %1, %3, [%2] \n\t"      //it it's 0 set it.
-                "cmp     %0, %1 \n\t"
-                "ldr    %0, [%2] \n\t"
-                "str    %1, [%2,#0]\n\t"
-//        "swpne   %0, %1, [%2]\n\t"
-                "bne     0b \n"
-                "1:\t"
-                "ldr     %1, 2f \n\t"
-                "bx      %1 \n"
-                "2:\t"
-                ".word   3f \n\t"
-                ".code 16 \n"
-                "3:"
-                : "+r"(__result), "+r" (__tmp)
-                : "r"(p), "r"(__newval)
-                : "cc", "memory");
-#else
-        __asm__ __volatile__ (
-                "\n"
-                "0:\t"
-                "ldr     %0, [%2] \n\t"
-                "cmp     %0, #0 \n\t"
-                "bne     1f \n\t"
-                "swp     %1, %3, [%2] \n\t"
-                "cmp     %0, %1 \n\t"
-                "swpne   %0, %1, [%2] \n\t"
-                "bne     0b \n"
-                "1:\n\t"
-                ""
-                : "+r"(__result), "+r" (__tmp)
-                : "r"(p), "r"(__newval)
-                : "cc", "memory");
-#endif
-        return true;
+
+        return TEST_AND_SET(p);
     }
 
     /** @brief Test and set a 16 bit memory location in a thread safe way.
@@ -309,52 +205,7 @@ public:
      * @param value is the value to sum to p. */
     static inline void Add32(volatile int32 *p,
                              int32 value) {
-        int __tmp, __tmp2, __tmp3;
-#ifdef __thumb__
-        /* Since this function is inlined, we can't be sure of the alignment.  */
-        __asm__ __volatile__ (
-                ".thumb    \n\t"
-                "ldr     %0, 4f \n\t"
-                "bx      %0 \n\t"
-                ".align 0\n"
-                "4:\t"
-                ".word   0f \n\t"
-                ".code 16 \n"
-                "0:\t"
-                "ldr     %0, [%3] \n\t"
-                "add     %1, %0, %4 \n\t"
-                "ldr    %2, [%3] \n\t"
-                "str    %1, [%3,#0]\n\t"
-                //   "swp     %2, %1, [%3] \n\t"
-                "cmp     %0, %2 \n\t"
-                "ldr    %1, [%3] \n\t"
-                "str    %2, [%3,#0]\n\t"
-                //  "swpne   %1, %2,[%3] \n\t"
-                "bne     0b \n\t"
-                "ldr     %1, 1f \n\t"
-                "bx      %1 \n"
-                "1:\t"
-                ".word   2f \n\t"
-                ".code 16 \n"
-                "2:\n"
-                : "+r"(__tmp), "+r"(__tmp2), "+r"(__tmp3)
-                : "r" (p), "r"(value)
-                : "cc", "memory");
-#else
-        __asm__ __volatile__ (
-                "\n"
-                "0:\t"
-                "ldr     %0, [%3] \n\t"
-                "add     %1, %0, %4 \n\t"
-                "swp     %2, %1, [%3] \n\t"
-                "cmp     %0, %2 \n\t"
-                "swpne   %1, %2, [%3] \n\t"
-                "bne     0b \n\t"
-                ""
-                : "+r"(__tmp), "+r"(__tmp2), "+r"(__tmp3)
-                : "r" (p), "r"(value)
-                : "cc", "memory");
-#endif
+
     }
 
     /**
@@ -364,53 +215,6 @@ public:
      */
     static inline void Sub32(volatile int32 *p,
                              int32 value) {
-        int __tmp, __tmp2, __tmp3;
-#ifdef __thumb__
-        /* Since this function is inlined, we can't be sure of the alignment.  */
-        __asm__ __volatile__ (
-                ".thumb     \n\t"
-                "ldr     %0, 4f \n\t"
-                "bx      %0 \n\t"
-                ".align 0\n"
-                "4:\t"
-                ".word   0f \n\t"
-                ".code 16 \n"
-                "0:\t"
-                "ldr     %0, [%3] \n\t"
-                "sub     %1, %0, %4 \n\t"
-                "ldr    %2, [%3] \n\t"
-                "str    %1, [%3,#0]\n\t"
-//         "swp     %2, %1, [%3] \n\t"
-                "cmp     %0, %2 \n\t"
-                "ldr    %1, [%3] \n\t"
-                "str    %2, [%3,#0]\n\t"
-                //"swpne   %1, %2,[%3] \n\t"
-                "bne     0b \n\t"
-                "ldr     %1, 1f \n\t"
-                "bx      %1 \n"
-                "1:\t"
-                ".word   2f \n\t"
-                ".code 16 \n"
-                "2:\n"
-                : "+r"(__tmp), "+r"(__tmp2), "+r"(__tmp3)
-                : "r" (p), "r"(value)
-                : "cc", "memory");
-#else
-        __asm__ __volatile__ (
-                "\n"
-                "0:\t"
-                "ldr     %0, [%3] \n\t"
-                "sub     %1, %0, %4 \n\t"
-                "swp     %2, %1, [%3] \n\t"
-                "cmp     %0, %2 \n\t"
-                "swpne   %1, %2, [%3] \n\t"
-                "bne     0b \n\t"
-                ""
-                : "+r"(__tmp), "+r"(__tmp2), "+r"(__tmp3)
-                : "r" (p), "r"(value)
-                : "cc", "memory");
-
-#endif
     }
 
 };
