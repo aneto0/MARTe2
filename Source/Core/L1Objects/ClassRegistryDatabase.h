@@ -45,7 +45,7 @@
  * automatically added to a ClassRegistryDatabase. This database can then be used to query
  * information about the registered classes.
  */
-class ClassRegistryDatabase: public LinkedListHolder {
+class ClassRegistryDatabase {
 public:
     /**
      * @brief Singleton access to the database.
@@ -63,8 +63,9 @@ public:
      * @details In principle this method should only be called by the
      * ClassRegistryItem destructor.
      * @param[in] p the element to be removed.
+     * @return true if the element was successfully removed from the database.
      */
-    void Delete(ClassRegistryItem *p);
+    bool Delete(ClassRegistryItem *p);
 
     /**
      * @brief Adds an element from the database.
@@ -95,11 +96,29 @@ public:
      * @return Pointer to the database root which can be used to scan the database.
      */
     const ClassRegistryItem *List();
+
+    /**
+     * @brief Returns the number of classes registered in the database.
+     * @return the number of classes registered in the database.
+     */
+    uint32 Size();
+
+    /**
+     * @brief Returns the element at position idx.
+     * @param idx the index of the ClassRegistryItem to be retrieved.
+     * @return the ClassRegistryItem at position idx or NULL if there is no element at that position.
+     */
+    const ClassRegistryItem *ElementAt(uint32 idx);
 private:
     /**
      * @brief Private Constructor.
      */
     ClassRegistryDatabase();
+
+    /**
+     * The database is implemented as a LinkedListHolder
+     */
+    LinkedListHolder classDatabase;
 };
 
 /*---------------------------------------------------------------------------*/

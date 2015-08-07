@@ -78,7 +78,7 @@ void ClassRegistryItem::DecrementNumberOfInstances() {
     classRegistryItemMuxSem.FastUnLock();
 }
 
-uint32 ClassRegistryItem::GetNumberOfInstances() {
+uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return numberOfInstances;
 }
 

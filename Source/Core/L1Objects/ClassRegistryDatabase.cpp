@@ -51,39 +51,42 @@ ClassRegistryDatabase::ClassRegistryDatabase() {
 }
 
 ClassRegistryDatabase::~ClassRegistryDatabase() {
-    Reset();
+    /*lint -e{1551} no exception can be thrown by this method.*/
+    classDatabase.Reset();
 }
 
-void ClassRegistryDatabase::Delete(ClassRegistryItem *p) {
-    ListExtract(p);
+bool ClassRegistryDatabase::Delete(ClassRegistryItem *p) {
+    return classDatabase.ListExtract(p);
 }
 
+/*lint -e{929} pointer to pointer conversion required to dynamic_cast to the correct type*/
 void ClassRegistryDatabase::Add(ClassRegistryItem *p) {
-    const ClassRegistryItem *q = static_cast<const ClassRegistryItem *>(List());
+    ClassRegistryItem *q = dynamic_cast<ClassRegistryItem *>(classDatabase.List());
     while (q != NULL) {
         if (StringHelper::Compare(q->GetClassProperties()->GetName(), p->GetClassProperties()->GetName()) == 0) {
-            ListExtract(const_cast<ClassRegistryItem *>(q));
-            q = NULL;
+            if(classDatabase.ListExtract(q)){
+                q = static_cast<ClassRegistryItem *>(NULL);
+            }
         }
         else {
-            q = static_cast<ClassRegistryItem *>(p->Next());
+            q = dynamic_cast<ClassRegistryItem *>(p->Next());
         }
     }
 
-    ListAdd(p);
+    classDatabase.ListAdd(p);
 }
 
 ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     ClassRegistryItem *registryItem = NULL;
 
     const char8 *dllPartName = StringHelper::SearchString(className, "::");
-    const int32 maxSize = 128 + 1;
+    const uint32 maxSize = 128u + 1u;
     char8 dllName[maxSize];
-    dllName[0] = 0;
+    dllName[0] = '\0';
 
-    //Check for the string dllName::className pattern
+    //Check for the string pattern dllName::className
     if (dllPartName != NULL) {
-        int size = dllPartName - className;
+        uint32 size = dllPartName - className;
         if (size > maxSize) {
             size = maxSize;
         }
@@ -143,11 +146,20 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     return registryItem;
 }
 
-const ClassRegistryItem * ClassRegistryDatabase::List(){
-    return static_cast<const ClassRegistryItem *>(LinkedListHolder::List());
+const ClassRegistryItem * ClassRegistryDatabase::List() {
+    return static_cast<const ClassRegistryItem *>(classDatabase.List());
 }
 
-Object *ClassRegistryDatabase::CreateByName(const char8 *className, Heap &heap) {
+uint32 ClassRegistryDatabase::Size() {
+    return classDatabase.ListSize();
+}
+
+const ClassRegistryItem *ClassRegistryDatabase::ElementAt(uint32 idx) {
+    return static_cast<ClassRegistryItem *>(classDatabase.ListPeek(idx));
+}
+
+Object *ClassRegistryDatabase::CreateByName(const char8 *className,
+                                            Heap &heap) {
     Object *obj = NULL;
 
     ClassRegistryItem *classRegistryItem = Find(className);
