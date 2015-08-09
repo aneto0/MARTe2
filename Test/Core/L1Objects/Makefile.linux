@@ -1,7 +1,6 @@
 #############################################################
 #
-# Copyright 2015 F4E | European Joint Undertaking for ITER 
-#  and the Development of Fusion Energy ('Fusion for Energy')
+# Copyright 2011 EFDA | European Fusion Development Agreement
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -20,21 +19,15 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX=
-SPB    = Source/Core/L0Portability.x Source/Core/L1Objects.x \
-    Test/Core/L0Portability.x Test/Core/L1Objects.x Test/GTest.x
 
- 
-MAKEDEFAULTDIR=MakeDefaults
+TARGET=linux
 
-ROOT_DIR=.
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include Makefile.inc
 
-all: $(OBJS) $(SUBPROJ)
-	echo  $(OBJS)
+LIBRARIES   += ../../../Build/$(TARGET)/Core/L0Portability/L0Portability$(LIBEXT)
+LIBRARIES   += ../../../Build/$(TARGET)/Core/L1CLib/L1Objects$(LIBEXT)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
-
+OPTIM=-finline-functions

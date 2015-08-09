@@ -1,0 +1,177 @@
+/**
+ * @file Reference.h
+ * @brief Header file for class Reference
+ * @date 06/08/2015
+ * @author Andre' Neto
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This header file contains the declaration of the class Reference
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+ */
+
+#ifndef SOURCE_CORE_L1OBJECTS_REFERENCE_H_
+#define SOURCE_CORE_L1OBJECTS_REFERENCE_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+#include "Object.h"
+#include "StructuredData.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+/**
+ * @brief Shared pointer implementation.
+ * @details The Reference class is a smart pointer implementation where shared the
+ * ownership of an underlying object is enabled. This guarantees that the life-cycle
+ * of this object is safely managed and in particular that the object is destructed when
+ * it is no longer referenced.
+ *
+ * The Reference might also own no object, in which case the function IsValid will return false.
+ *
+ */
+class Reference {
+
+public:
+
+    /**
+     * @brief Creates an empty Reference (referenced object is set to NULL).
+     */
+    Reference();
+
+    /**
+     * @brief Creates a Reference from an existing Reference.
+     * @details This Reference will own the same object referenced by sourceReference.
+     * @param[in] sourceReference the Reference to the object to be shared.
+     */
+    Reference(const Reference& sourceReference);
+
+    /**
+     * @brief Creates a new object of type typeName and links a reference to it.
+     * @param[in] typeName the name of the class type.
+     * @param[in] heap the heap responsible for allocating the object.
+     */
+    Reference(const char8* typeName, Heap &heap);
+
+    /**
+     * @brief Creates a new Reference from an object pointer.
+     * @param[in] pointer the source pointer to be referenced.
+     */
+    Reference(Object * pointer);
+
+    /**
+     * @brief Create an object from a structured list of elements.
+     * @param[in] data the data to initialise the underlying object.
+     * @param[in] createOnly if true the object Initialise method is not called.
+     * @return true if the object was successfully created and initialised.
+     */
+    virtual bool Initialise(const StructuredData &data,
+                            bool createOnly = false);
+
+    /**
+     * @brief Removes the reference to the underlying object.
+     * @details If the number of references to the underlying object is zero, the object is deleted.
+     * IsValid will return false after this operation.
+     */
+    virtual void RemoveReference();
+
+    /**
+     * @brief Assignment operator.
+     * @param[in] sourceReference the source reference to be assigned to this reference.
+     * @details This reference will be referencing the same object as the sourceReference.
+     * @return a reference to the object referenced by sourceReference.
+     */
+    Reference& operator=(const Reference& sourceReference);
+
+    /**
+     * @brief Assignment operator.
+     * @param[in] pointer source object to assign.
+     * @details It will increment the number of references referencing the underlying object.
+     * @return a reference to the underlying object.
+     */
+    Reference& operator=(Object * pointer);
+
+    /**
+     * @brief Removes the reference to the underlying object. @see RemoveReference.
+     */
+    virtual ~Reference();
+
+    /**
+     * @brief Verifies if the reference to the underlying object is valid.
+     * @details A valid reference is one where the referenced object is not NULL.
+     * @return true if the referenced object is not NULL.
+     */
+    virtual bool IsValid() const;
+
+    /**
+     * @brief Returns the number of references that are linked to the underlying object.
+     * @return the number of references that are linked to the underlying object.
+     */
+    uint32 NumberOfReferences() const;
+
+    /**
+     * @brief Verifies if this Reference links to the same object of sourceReference.
+     * @param[in] sourceReference reference to be compared.
+     * @return true if the sourceReference links to the same object as this Reference.
+     */
+    bool operator==(const Reference& reference) const;
+
+    /**
+     * @brief Verifies if this Reference owns the same object of sourceReference.
+     * @param[in] sourceReference reference to be compared.
+     * @return true if the sourceReference does not own the same object as this Reference.
+     */
+    bool operator!=(const Reference& sourceReference) const;
+
+    /**
+     * @brief Provides access to the underlying object linked by this Reference.
+     * @return a pointer to the underlying object linked by this Reference.
+     */
+    Object* operator->() const;
+
+    /**
+     * @brief Creates a Reference to a different object.
+     * @param[in] sourceReference the Reference holding the source object.
+     * @return true if the source Reference and source object are valid.
+     */
+    bool Clone(const Reference &sourceReference);
+
+protected:
+    /**
+     * The pointer to the referenced object.
+     */
+    Object* objectPointer;
+
+private:
+    /**
+     * @brief Prevents the copying of a reference by taking its address.
+     * @return a copy of this reference.
+     */
+    Reference* operator&() {
+        return this;
+    }
+};
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* SOURCE_CORE_L1OBJECTS_REFERENCE_H_ */
+

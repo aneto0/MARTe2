@@ -16,3 +16,9 @@ MemoryOS.cpp
 LoadableLibrary.cpp
 FastPollingMutexSem.cpp   
 StringPortable.cpp
+LinkedListable.cpp
+LinkedListHolder.cpp
+ClassProperties.cpp
+ClassRegistryItem.cpp
+ClassRegistryDatabase.cpp
+Object.cpp
