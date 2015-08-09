@@ -78,7 +78,7 @@ int32 StringHelper::SearchIndex(const char8 *string1, const char8 *string2) {
     return StringPortable::SearchIndex(string1, string2);
 }
 
-int32 StringHelper::Length(const char8 *string) {
+uint32 StringHelper::Length(const char8 *string) {
     return StringPortable::Length(string);
 }
 
