@@ -70,6 +70,8 @@
 -esym(768,ExceptionHandler::*)
 -esym(768,ExceptionHandler::*)
 -esym(768,ClassRegistryDatabase::*)
+-esym(768,Introspection::*)
+-esym(768,Object::*)
 /* global constant enumeration not referenced */ 
 -esym(769,SFTestType::*)
 -esym(769,Colours::*) 
@@ -117,11 +119,12 @@
 -esym(1714,LinkedListHolder::*)
 -esym(1714,ClassProperties::*)
 -esym(1714,ClassRegistryItem::*)
-
-
+-esym(1714,ClassRegistryDatabase::*)
+-esym(1714,Object::*)
 
 /* virtual member function not referenced */
 -esym(1716,IBasicConsole::*)
+-esym(1716,Object::*)
 
 /* default constructor not referenced */
 -esym(1914,Flags::*) 
@@ -132,6 +135,8 @@
 -esym(1914,ThreadInformation::*)
 -esym(1914,LinkedListHolder::*)
 -esym(1914,ClassProperties::*)
+-esym(1914,ClassRegistryItem::*)
+-esym(1914,Object::*)
 
 /*
  * Rule 0-1-11
@@ -238,7 +243,24 @@
 -esym(9141,ClassRegistryItem)
 -esym(9141,ClassRegistryDatabase)
 -esym(9141,ClassRegistryDatabase::*)
+-esym(9141,Object)
+-esym(9141,Object::*)
+-esym(9141,Introspection)
+-esym(9141,Introspection::*)
+-esym(9141,StructuredData)
+-esym(9141,StructuredData::*)
+-esym(9141,*Heap_)
+-esym(9141,*BuildFn_*)
+-esym(9141,*ClassProperties_)
+-esym(9141,*ClassRegistryItem_)
 
+/*
+ * MISRA 3-3-1
+ * Defining the Build functions in the header file would require another macro for no good reason (notice
+ * that CLASS_REGISTER_DECLARATION would declare member variables and not global members)
+ */
+ -esym(765, *BuildFn_)
+ 
 /* 
  * Info flexelint 1711
  * virtual functions not inherited
@@ -248,20 +270,14 @@
  -esym(1711,SortFilter)
  -esym(1711,LinkedListable)
  -esym(1711,LinkedListHolder)
+ // Lint does not see this because of the macros.  
+ -esym(1711,Object)
  
- 
- /*
- * Rule flexelint 1795 
- * Rule MISRA 14-7-1
- * Template defined but not instanciated
- */
-
-
 /*
  * Rule flexelint 1960 
  * Rule MISRA 0-1-8
  * Void functions must have an external effect.
- * Justification: They changed a class attribute.
+ * Justification: They change a class attribute.
  */
 -esym(1960, TimeoutType::SetTimeoutSec*)
 -esym(1960, TimeoutType::SetTimeoutHighResolutionTimerTicks*)
@@ -279,3 +295,10 @@
   */
  -efunc(586,StringHelper::*)
  -efunc(586,Memory::Malloc,Memory::Free,Memory::Realloc)
+ 
+ /*
+  * Rule flexelint 459.
+  * Justification: The build function is indeed supposed to have access to the private members of Object.
+  * It is as if it was a member function of the class.
+  */
+ -esym(459, *BuildFn_*)

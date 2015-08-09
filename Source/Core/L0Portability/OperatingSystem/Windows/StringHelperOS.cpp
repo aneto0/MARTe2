@@ -136,10 +136,10 @@ int32 StringHelper::SearchIndex(const char8 *string1,
     return ret;
 }
 
-int32 StringHelper::Length(const char8 *string) {
-    int32 ret = -1;
+uint32 StringHelper::Length(const char8 *string) {
+    uint32 ret = 0u;
     if (string != NULL) {
-        ret = static_cast<int32>(strlen(string));
+        ret = static_cast<uint32>(strlen(string));
     }
     return ret;
 }

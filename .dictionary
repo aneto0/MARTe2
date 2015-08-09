@@ -16,3 +16,5 @@ copydetails
 struct
 introspectable
 constness
+loadable
+downcasting
