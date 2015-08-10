@@ -1,8 +1,8 @@
 /**
- * @file ClassProperties.cpp
- * @brief Source file for class ClassProperties
- * @date Aug 5, 2015
- * @author aneto
+ * @file ObjectGTest.cpp
+ * @brief Source file for class ObjectGTest
+ * @date 07/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ClassProperties (public, protected, and private). Be aware that some 
+ * the class ObjectGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,10 +25,14 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ClassProperties.h"
+
+#include "ObjectTest.h"
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,22 +42,27 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ClassProperties::ClassProperties() {
-    className = static_cast<const char8 *>(NULL);
-    classVersion = static_cast<const char8 *>(NULL);
+TEST(ObjectGTest,TestConstructor) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestConstructor());
 }
 
-ClassProperties::ClassProperties(const char8 * const cName,
-                                 const char8 * const cVersion) {
-    className = cName;
-    classVersion = cVersion;
+TEST(ObjectGTest,TestDestructor) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestDestructor());
 }
 
-const char8* ClassProperties::GetName() const {
-    return className;
+TEST(ObjectGTest,TestGetIntrospectionCopy) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestGetIntrospectionCopy());
 }
 
-const char8* ClassProperties::GetVersion() const {
-    return classVersion;
+TEST(ObjectGTest,TestInitialise) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestInitialise());
 }
 
+TEST(ObjectGTest,TestNumberOfReferences) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestNumberOfReferences());
+}

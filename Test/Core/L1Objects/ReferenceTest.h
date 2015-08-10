@@ -1,8 +1,8 @@
 /**
- * @file ReferenceT.cpp
- * @brief Source file for class ReferenceT
+ * @file ReferenceTest.h
+ * @brief Header file for class ReferenceTest
  * @date 07/08/2015
- * @author Andre Neto
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,27 +16,54 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class ReferenceT (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class ReferenceTest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
+#ifndef REFERENCETEST_H_
+#define REFERENCETEST_H_
+
 /*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
+/*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ClassRegistryItem.h"
-#include "ReferenceT.h"
+#include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+class ReferenceTest {
+public:
+
+
+    bool TestDefaultConstructor();
+
+    bool TestCopyConstructor();
+
+    bool TestCopyConstructorNullPtr();
+
+    bool TestBuildObjectConstructor();
+
+    bool TestBuildFakeObjectConstructor();
+
+    bool TestCopyFromObjPtrConstructor();
+
+    bool TestCopyFromObjPtrConstructorNullPtr();
+
+    //TODO
+    bool TestInitialise();
+
+    bool TestRemoveReference();
+};
+
 /*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+#endif /* REFERENCETEST_H_ */
 

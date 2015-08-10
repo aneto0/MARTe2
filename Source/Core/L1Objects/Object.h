@@ -38,7 +38,6 @@
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Macro definitions                                  */
 /*---------------------------------------------------------------------------*/
@@ -49,15 +48,39 @@
  * in the final class inhering from Object (i.e. they are specific to each implementation).
  */
 /**
- * The function GetHiddenClassRegistryItem has to be virtual in order to guarantee that
+ * The function GetClassPropertiesCopy has to be virtual in order to guarantee that
  * there will be a virtual member in all inherited classes.
  * This macro has to be inserted in every class that inherits from Object.
  */
-#define CLASS_REGISTER_DECLARATION()                                                          \
-    virtual ClassRegistryItem *GetHiddenClassRegistryItem() const;                            \
-    void GetClassPropertiesCopy(ClassProperties &destination) const;                          \
-    void * operator new(size_t size, Heap &heap);                                             \
-    void operator delete(void *p);
+/*lint -save -e9026 -e9024 -e9023 -e9141 -estring(1960,"*6-2-1*")
+ * 9026: function-like macro defined.
+ * 9024: '#/##' operators used in macro.
+ * 9023: (Multiple use of '#/##' operators in definition of macro) an exception to this rule.
+ * is only applied in the definition of the ClassRegistryItem_.
+ * 9141: Disable global declaration of symbols.
+ * 1960: lint is confused with the placement new and reporting a false alarm.
+ */
+#define CLASS_REGISTER_DECLARATION()                                                                                   \
+    /*                                                                                                                 \
+     * @brief Returns a copy of the class properties associated with this class type.                                  \
+     * @param[in, out] destination the destination where to copy the class properties to.                              \
+     */                                                                                                                \
+    virtual void GetClassPropertiesCopy(ClassProperties &destination) const;                                           \
+    /*                                                                                                                 \
+     * @brief Allocates a new instance of the class type in the provided heap. Note that this                          \
+     * is automatically called by the compiler (given that we use placement new).                                      \
+     * Note that the selected heap might be different for each type of class.                                          \
+     * @param[in, out] destination the destination where to copy the class properties to.                              \
+     */                                                                                                                \
+    static void * operator new(const size_t size, Heap &heap);                                                         \
+    /*                                                                                                                 \
+     * @brief Delete the object.                                                                                       \
+     * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \
+     * cannot call non-static members and as a consequence the heap variable must have global                          \
+     * scope in the unit file (but is not exported) (see CLASS_REGISTER).                                              \
+     * @param p the pointer to the object to be deleted.                                                               \
+     */                                                                                                                \
+    static void operator delete(void *p);
 
 /**
  * This macro has to be inserted in every unit file.
@@ -68,33 +91,70 @@
  * for the build function related to the class it is representing.
  * Note that new and delete are static functions and as a consequence they cannot call member
  * functions in the class (or its derived classes). Because their implementation is specific to the final
- * class they had to be written as part of macro as well.
+ * class they had to be written as part of the macro as well.
  */
-#define CLASS_REGISTER(name,ver)                                                              \
-    Object * _ ## name ## BuildFn (Heap &heap);                                               \
-    static ClassProperties _## name ## ClassProperties( #name ,ver);                          \
-    static ClassRegistryItem _ ## name ## ClassRegistryItem( _ ## name ## ClassProperties, & _ ##  name ## BuildFn );  \
-    Object * _ ## name ## BuildFn (Heap &heap){                                               \
-        _ ## name ## ClassRegistryItem.SetHeap(heap);                                         \
-        name *p = new (heap) name () ;                                                        \
-        return p;                                                                             \
-    }                                                                                         \
-    ClassRegistryItem * name::GetHiddenClassRegistryItem() const {                            \
-        return &_## name ## ClassRegistryItem;                                                \
-    }                                                                                         \
-    void name::GetClassPropertiesCopy(ClassProperties &destination) const {                   \
-        destination = *GetHiddenClassRegistryItem()->GetClassProperties();                    \
-    }                                                                                         \
-    void * name::operator new(size_t size, Heap &heap) {                                      \
-        void *obj = heap.Malloc(size);                                                        \
-        _ ## name ## ClassRegistryItem.IncrementNumberOfInstances();                          \
-        return obj;                                                                           \
-    }                                                                                         \
-    void name::operator delete(void *p) {                                                     \
-        _ ## name ## ClassRegistryItem.GetHeap()->Free(p);                                    \
-        _ ## name ## ClassRegistryItem.DecrementNumberOfInstances();                          \
+#define CLASS_REGISTER(name,ver)                                                                                       \
+    /*                                                                                                                 \
+     * The heap which is used to instantiate objects from this class type. Only one heap can be set                    \
+     * pre class type                                                                                                  \
+     */                                                                                                                \
+    static Heap name ## Heap_;                                                                                         \
+    /*                                                                                                                 \
+     * Forward declaration of function which allows to build a new instance of the object                              \
+     * e.g. Object *MyClassTypeBuildFn_(const Heap &h);                                                                \
+     */                                                                                                                \
+    Object * name ## BuildFn_(const Heap &h);                                                                          \
+    /*                                                                                                                 \
+     * Class properties of this class type. One instance per class type automatically instantiated at the start        \
+     * of an application or loading of a loadable library.                                                             \
+     * e.g. static ClassProperties MyClassTypeClassProperties_( "MyClassType" , "1.0");                                \
+     */                                                                                                                \
+    static ClassProperties name ## ClassProperties_( #name , ver);                                                     \
+    /*                                                                                                                 \
+     * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
+     * of an application or loading of a loadable library. It will automatically add the class type to the             \
+     * ClassRegistryDatabase.                                                                                          \
+     * e.g. static ClassRegistryItem MyClassTypeClassRegistryItem_( MyClassTypeClassProperties_, &MyClassTypeBuildFn_);\
+     */                                                                                                                \
+    static ClassRegistryItem name ## ClassRegistryItem_( name ## ClassProperties_, & name ## BuildFn_);                \
+    /*                                                                                                                 \
+     * @brief Function called when a new instance of this class type is to be instantiated in the provided heap.       \
+     * @param[in] h the heap where the object will be instantiated.                                                    \
+     * @return a new instance of the object from the class type.                                                       \
+     * e.g. Object *MyClassTypeBuildFn_( const Heap &h);                                                               \
+     */                                                                                                                \
+    Object * name ## BuildFn_(const Heap &h){                                                                          \
+        static bool heapAlreadySet = false;                                                                            \
+        if (!heapAlreadySet) {                                                                                         \
+            name ## Heap_= h;                                                                                          \
+            heapAlreadySet = true;                                                                                     \
+        }                                                                                                              \
+        name *p = new (name ## Heap_) name ();                                                                         \
+        return p;                                                                                                      \
+    }                                                                                                                  \
+    /*                                                                                                                 \
+     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
+     */                                                                                                                \
+    void name::GetClassPropertiesCopy(ClassProperties &destination) const {                                            \
+        const ClassProperties *properties = name ## ClassRegistryItem_.GetClassProperties();                           \
+        destination = *properties;                                                                                     \
+    }                                                                                                                  \
+    /*                                                                                                                 \
+     * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
+     */                                                                                                                \
+    void * name::operator new(const size_t size, Heap &heap) {                                                         \
+        void *obj = heap.Malloc(static_cast<uint32>(size));                                                            \
+        name ## ClassRegistryItem_.IncrementNumberOfInstances();                                                       \
+        return obj;                                                                                                    \
+    }                                                                                                                  \
+    /*                                                                                                                 \
+     * e.g. void *MyClassType::operator delete(void *p);                                                               \
+     */                                                                                                                \
+    void name::operator delete(void *p) {                                                                              \
+        name ## Heap_.Free(p);                                                                                         \
+        name ## ClassRegistryItem_.DecrementNumberOfInstances();                                                       \
     }
-
+/*lint -restore */
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -109,6 +169,8 @@
  *  - Is introspectable and enables reflection of derived classes;
  *  - The allocation heap can be selected by the end-user.
  */
+/*lint -e{9109} Object is forward declared in ClassRegistryItem (in order to be able to have access the function pointer to
+ * create new instances.*/
 class Object {
     /**
      * This allows the Reference class to be the only interface to manage the number of instances pointing to this object.
@@ -178,7 +240,7 @@ private:
     /**
      * Disallow the usage of new.
      */
-    void *operator new(size_t size) throw ();
+    static void *operator new(size_t size) throw ();
 
     /**
      * Object introspection properties.
@@ -188,7 +250,7 @@ private:
     /**
      * The number of references to this object.
      */
-    volatile int32 referenceCounter;
+    volatile uint32 referenceCounter;
 };
 
 /*---------------------------------------------------------------------------*/

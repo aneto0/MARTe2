@@ -42,36 +42,27 @@
 #include <stdio.h>
 #include "Reference.h"
 #include "TestObjectHelper1.h"
+#include "StringHelper.h"
 bool ClassRegistryDatabaseTest::TestConstructor() {
-    ClassRegistryDatabase db = ClassRegistryDatabase::Instance();
-    printf("ClassRegistryDatabase size = %d\n", db.ListSize());
-    uint32 i = 0u;
-    for (i = 0; i < db.ListSize(); i++) {
-        ClassRegistryItem *item = (ClassRegistryItem *) db.ListPeek(i);
-        printf("[%d] %s %d\n", i, item->GetClassProperties()->GetName(), item->GetNumberOfInstances());
-    }
-    Heap h;
-    TestObjectHelper1 *obj1 = dynamic_cast<TestObjectHelper1 *>(ClassRegistryDatabase::Instance().CreateByName("TestObjectHelper1", h));
-    TestObjectHelper2 *obj2 = dynamic_cast<TestObjectHelper2 *>(ClassRegistryDatabase::Instance().CreateByName("TestObjectHelper2", h));
+    const char8 *className = "MyDll::MyClass";
+    const uint32 maxSize = 129u;
+    char8 dllName[maxSize];
+    dllName[0] = '\0';
 
-    Reference ref1 = obj1;
-    printf("ref1 = %d\n", ref1.NumberOfReferences());
-    if (obj1 != NULL) {
-        Reference ref2 = obj1;
-        printf("ref2 = %d\n", ref2.NumberOfReferences());
-    }
-    printf("ref1 = %d\n", ref1.NumberOfReferences());
-    for (i = 0; i < db.ListSize(); i++) {
-        ClassRegistryItem *item = (ClassRegistryItem *) db.ListPeek(i);
-        printf("[%d] %s %d\n", i, item->GetClassProperties()->GetName(), item->GetNumberOfInstances());
+    //Check for the string pattern dllName::className
+    const char8 *classOnlyPartName = StringHelper::SearchString(className, "::");
+    if (classOnlyPartName != NULL) {
+        uint32 size = StringHelper::SearchIndex(className, "::");
+        if (size > (maxSize - 1)) {
+            size = (maxSize - 1);
+        }
+        StringHelper::CopyN(dllName, className, size);
+        dllName[size] = '\0';
+        className = &classOnlyPartName[2];
     }
 
-
-    ReferenceT<TestObjectHelper1> refo1 = obj1;
-    printf("refo1 Is valid? %d\n", refo1.IsValid());
-    ReferenceT<TestObjectHelper2> refo2 = obj2;
-    printf("Is valid? %d\n", refo2.IsValid());
-
+    printf("DLL=%s\n", dllName);
+    printf("ClassName=%s\n", className);
     return true;
 }
 

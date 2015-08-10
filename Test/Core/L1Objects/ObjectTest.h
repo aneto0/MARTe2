@@ -1,8 +1,8 @@
 /**
- * @file ClassProperties.h
- * @brief Header file for class ClassProperties
- * @date Aug 5, 2015
- * @author aneto
+ * @file ObjectTest.h
+ * @brief Header file for class ObjectTest
+ * @date 07/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ClassProperties
+ * @details This header file contains the declaration of the class ObjectTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
-#define SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
+#ifndef OBJECTTEST_H_
+#define OBJECTTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,57 +31,56 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Heap.h"
+
+#include "Object.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
- * @brief Properties of a framework base class (i.e. one that inherits from Object).
- * @details Provides introspection information about any framework base class. This
- * information is automatically computed by the framework at initialisation time.
+ * Tests the Object public methods.
  */
-class ClassProperties {
+class ObjectTest {
 public:
 
     /**
-     * Default constructor. Initialises all members to NULL.
+     * @brief Tests the constructor.
+     * @return true if the attribute numberOfReference is initialized to zero.
      */
-    ClassProperties();
+    bool TestConstructor();
 
     /**
-     * @brief Constructor. Initialises all members as per input variables.
-     * @param[in] cName the name of the class.
-     * @param[in] cVersion the version of the class.
+     * @brief Tests the destructor.
+     * @return true because this function does nothing.
      */
-    ClassProperties(const char8 * const cName, const char8 * const cVersion);
+    bool TestDestructor();
 
     /**
-     * @brief Returns the name of the class.
-     * @return the name of the class.
+     * @brief Tests the Object::GetIntrospectionCopy.
+     * //TODO
      */
-    const char8 *GetName() const;
+    bool TestGetIntrospectionCopy();
 
     /**
-     * @brief Returns the version of the class against which the code was compiled.
-     * @return the version of the class against which the code was compiled.
+     * @brief Tests the Object::Initialise function.
+     * @return the opposite of the tested function (always it returns false).
      */
-    const char8 *GetVersion() const;
-
-private:
-    /**
-     * The name of the class.
-     */
-    const char8 *className;
+    bool TestInitialise();
 
     /**
-     * The version of the class.
+     * @brief Tests the Object::NumberOfReferences function.
+     * @details Creates an object and assigns different references to it checking if the function returns the correct
+     * number of references to the object.
+     * returns the correct number of references.
+     * @return true if successful, false otherwise.
      */
-    const char8 *classVersion;
+    bool TestNumberOfReferences();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_ */
+#endif /* OBJECTTEST_H_ */
 

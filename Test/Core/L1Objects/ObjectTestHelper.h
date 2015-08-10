@@ -1,8 +1,8 @@
 /**
- * @file ClassProperties.h
- * @brief Header file for class ClassProperties
- * @date Aug 5, 2015
- * @author aneto
+ * @file ObjectTestHelper.h
+ * @brief Header file for class ObjectTestHelper
+ * @date 07/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ClassProperties
+ * @details This header file contains the declaration of the class ObjectTestHelper
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
-#define SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
+#ifndef OBJECTTESTHELPER_H_
+#define OBJECTTESTHELPER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,57 +31,57 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Heap.h"
+#include "Object.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief Properties of a framework base class (i.e. one that inherits from Object).
- * @details Provides introspection information about any framework base class. This
- * information is automatically computed by the framework at initialisation time.
+ * @brief Helper class to support the testing of references.
  */
-class ClassProperties {
+class IntegerObject: public Object {
 public:
+    CLASS_REGISTER_DECLARATION()
 
     /**
-     * Default constructor. Initialises all members to NULL.
+     * Default constructor
      */
-    ClassProperties();
+    IntegerObject() {
+        dummyVariable = 0;
+        deleted = false;
+    }
+
+    virtual ~IntegerObject() {
+        deleted = true;
+    }
 
     /**
-     * @brief Constructor. Initialises all members as per input variables.
-     * @param[in] cName the name of the class.
-     * @param[in] cVersion the version of the class.
+     * @return the value of the dummy variable.
      */
-    ClassProperties(const char8 * const cName, const char8 * const cVersion);
+    uint32 GetVariable() const {
+        return dummyVariable;
+    }
 
     /**
-     * @brief Returns the name of the class.
-     * @return the name of the class.
+     * @brief Updates the value of the dummy variable.
+     * @param dummyVariable the new value to set.
      */
-    const char8 *GetName() const;
+    void SetVariable(int32 dummyVariable) {
+        this->dummyVariable = dummyVariable;
+    }
 
-    /**
-     * @brief Returns the version of the class against which the code was compiled.
-     * @return the version of the class against which the code was compiled.
-     */
-    const char8 *GetVersion() const;
+    bool Deleted(){
+        return deleted;
+    }
 
 private:
     /**
-     * The name of the class.
+     * Dummy variable
      */
-    const char8 *className;
+    int32 dummyVariable;
 
-    /**
-     * The version of the class.
-     */
-    const char8 *classVersion;
+    bool deleted;
 };
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-#endif /* SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_ */
+#endif /* OBJECTTESTHELPER_H_ */
 

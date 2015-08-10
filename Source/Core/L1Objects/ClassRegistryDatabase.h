@@ -45,7 +45,7 @@
  * automatically added to a ClassRegistryDatabase. This database can then be used to query
  * information about the registered classes.
  */
-class ClassRegistryDatabase: public LinkedListHolder {
+class ClassRegistryDatabase {
 public:
     /**
      * @brief Singleton access to the database.
@@ -63,8 +63,9 @@ public:
      * @details In principle this method should only be called by the
      * ClassRegistryItem destructor.
      * @param[in] p the element to be removed.
+     * @return true if the element was successfully removed from the database.
      */
-    void Delete(ClassRegistryItem *p);
+    bool Delete(ClassRegistryItem * const p);
 
     /**
      * @brief Adds an element from the database.
@@ -72,7 +73,7 @@ public:
      * ClassRegistryItem constructor.
      * @param[in] p the element to be added.
      */
-    void Add(ClassRegistryItem *p);
+    void Add(ClassRegistryItem * const p);
 
     /**
      * @brief Returns the ClassRegistryItem describing the class with name className.
@@ -88,18 +89,37 @@ public:
      * @param[in] heap the heap where the object is to be allocated.
      * @return a new object of the specified class or NULL if the className does not exist.
      */
-    Object *CreateByName(const char8 *className, Heap &heap);
+    Object *CreateByName(const char8 * const className, const Heap &heap);
 
     /**
      * @brief Returns an access point to the database root.
      * @return Pointer to the database root which can be used to scan the database.
      */
-    const ClassRegistryItem *List();
+    ClassRegistryItem *List();
+
+    /**
+     * @brief Returns the number of classes registered in the database.
+     * @return the number of classes registered in the database.
+     */
+    uint32 Size() const;
+
+    /**
+     * @brief Returns the element at position idx.
+     * @param idx the index of the ClassRegistryItem to be retrieved.
+     * @return the ClassRegistryItem at position idx or NULL if there is no element at that position.
+     */
+    const ClassRegistryItem *ElementAt(const uint32 &idx);
 private:
     /**
      * @brief Private Constructor.
      */
+    /*lint -e{1704} private constructor for singleton implementation*/
     ClassRegistryDatabase();
+
+    /**
+     * The database is implemented as a LinkedListHolder
+     */
+    LinkedListHolder classDatabase;
 };
 
 /*---------------------------------------------------------------------------*/

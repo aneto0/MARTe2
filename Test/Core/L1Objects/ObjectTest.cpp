@@ -1,8 +1,8 @@
 /**
- * @file ClassProperties.cpp
- * @brief Source file for class ClassProperties
- * @date Aug 5, 2015
- * @author aneto
+ * @file ObjectTest.cpp
+ * @brief Source file for class ObjectTest
+ * @date 07/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ClassProperties (public, protected, and private). Be aware that some 
+ * the class ObjectTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ClassProperties.h"
+
+#include "ObjectTest.h"
+#include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,22 +40,47 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ClassProperties::ClassProperties() {
-    className = static_cast<const char8 *>(NULL);
-    classVersion = static_cast<const char8 *>(NULL);
+bool ObjectTest::TestConstructor() {
+    Object myObject;
+    return myObject.NumberOfReferences() == 0;
 }
 
-ClassProperties::ClassProperties(const char8 * const cName,
-                                 const char8 * const cVersion) {
-    className = cName;
-    classVersion = cVersion;
+bool ObjectTest::TestDestructor() {
+    Object myObject;
+    //nothing happen.
+    myObject.~Object();
+    return myObject.NumberOfReferences() == 0;
 }
 
-const char8* ClassProperties::GetName() const {
-    return className;
+bool ObjectTest::TestGetIntrospectionCopy() {
+    //TODO
+    return true;
 }
 
-const char8* ClassProperties::GetVersion() const {
-    return classVersion;
+bool ObjectTest::TestInitialise() {
+    Object myObject;
+    StructuredData data;
+    //returns false
+    return !myObject.Initialise(data);
+}
+
+bool ObjectTest::TestNumberOfReferences() {
+    Heap myHeap;
+    Reference objRef("Object", myHeap);
+
+    if (objRef->NumberOfReferences() != 1) {
+        return false;
+    }
+
+    Reference secondObjRef = objRef;
+
+    if (objRef->NumberOfReferences() != 2) {
+        return false;
+    }
+
+    secondObjRef.RemoveReference();
+
+    return (objRef->NumberOfReferences() == 1);
+
 }
 

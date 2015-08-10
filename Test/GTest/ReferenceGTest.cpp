@@ -1,8 +1,8 @@
 /**
- * @file ClassProperties.cpp
- * @brief Source file for class ClassProperties
- * @date Aug 5, 2015
- * @author aneto
+ * @file ReferenceTest.cpp
+ * @brief Source file for class ReferenceTest
+ * @date 07/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ClassProperties (public, protected, and private). Be aware that some 
+ * the class ReferenceTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,10 +25,14 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ClassProperties.h"
+
+#include "ReferenceTest.h"
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,22 +42,48 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ClassProperties::ClassProperties() {
-    className = static_cast<const char8 *>(NULL);
-    classVersion = static_cast<const char8 *>(NULL);
+TEST(ReferenceGTest,TestDefaultConstructor) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestDefaultConstructor());
 }
 
-ClassProperties::ClassProperties(const char8 * const cName,
-                                 const char8 * const cVersion) {
-    className = cName;
-    classVersion = cVersion;
+TEST(ReferenceGTest,TestCopyConstructor) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyConstructor());
 }
 
-const char8* ClassProperties::GetName() const {
-    return className;
+TEST(ReferenceGTest,TestCopyConstructorNullPtr) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyConstructorNullPtr());
 }
 
-const char8* ClassProperties::GetVersion() const {
-    return classVersion;
+TEST(ReferenceGTest,TestBuildObjectConstructor) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestBuildObjectConstructor());
 }
 
+TEST(ReferenceGTest,TestBuildFakeObjectConstructor) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestBuildFakeObjectConstructor());
+}
+
+
+TEST(ReferenceGTest,TestCopyFromObjPtrConstructor) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyFromObjPtrConstructor());
+}
+
+TEST(ReferenceGTest,TestCopyFromObjPtrConstructorNullPtr) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyFromObjPtrConstructorNullPtr());
+}
+
+TEST(ReferenceGTest,TestInitialise) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestInitialise());
+}
+
+TEST(ReferenceGTest,TestRemoveReference) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestRemoveReference());
+}

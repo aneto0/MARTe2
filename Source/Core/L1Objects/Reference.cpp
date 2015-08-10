@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "ClassRegistryItem.h"
 #include "Reference.h"
 #include "ClassRegistryDatabase.h"
 
@@ -131,7 +132,8 @@ Object* Reference::operator->() const {
 }
 
 bool Reference::Clone(const Reference &reference) {
-    if (reference.IsValid()) {
+    bool ok = reference.IsValid();
+    if (ok) {
         Object * tmp = reference->Clone();
         if (tmp != NULL) {
             RemoveReference();
@@ -144,6 +146,7 @@ bool Reference::Clone(const Reference &reference) {
         // function of GCRTemplate would be called,
         // returning false as the setup of GCRTemplate
         // Tobject is not yet done.
-        return Reference::IsValid();
+        ok = Reference::IsValid();
     }
+    return ok;
 }

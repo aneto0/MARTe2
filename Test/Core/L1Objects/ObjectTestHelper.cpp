@@ -1,8 +1,8 @@
 /**
- * @file ClassProperties.cpp
- * @brief Source file for class ClassProperties
- * @date Aug 5, 2015
- * @author aneto
+ * @file ObjectTestHelper.cpp
+ * @brief Source file for class ObjectTestHelper
+ * @date 07/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ClassProperties (public, protected, and private). Be aware that some 
+ * the class ObjectTestHelper (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ClassProperties.h"
+#include "ObjectTestHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,22 +38,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ClassProperties::ClassProperties() {
-    className = static_cast<const char8 *>(NULL);
-    classVersion = static_cast<const char8 *>(NULL);
-}
+CLASS_REGISTER(IntegerObject, "1.0")
 
-ClassProperties::ClassProperties(const char8 * const cName,
-                                 const char8 * const cVersion) {
-    className = cName;
-    classVersion = cVersion;
-}
 
-const char8* ClassProperties::GetName() const {
-    return className;
-}
-
-const char8* ClassProperties::GetVersion() const {
-    return classVersion;
-}
-
+	

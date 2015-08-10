@@ -231,6 +231,10 @@ public:
      */
     bool TestListDeleteSearchFn();
 
+
+    /**
+     * @see TestListDeleteSearchFilter.
+     */
     bool TestListSafeDelete();
 
     /**

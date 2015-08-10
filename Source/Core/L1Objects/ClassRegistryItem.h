@@ -36,6 +36,10 @@
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
 
+/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
+class Object;
+/*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
+typedef Object *(ObjectBuildFn)(const Heap &);
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -46,6 +50,9 @@
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
+/*lint -e{1790} for performance reasons it was decided to implement the usage of LinkedListable this way.
+ * This guarantees that the movements in the list are always performed with the correct pointer (i.e. pointing to the base class).
+ * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.*/
 class ClassRegistryItem: public LinkedListable {
 public:
     /**
@@ -54,14 +61,13 @@ public:
      * @param[in] objBuildFn the function that allows to instantiate a new object from the class
      * represented by this ClassRegistryItem instance.
      */
-    ClassRegistryItem(const ClassProperties &clProperties,
-                      ObjectBuildFn *objBuildFn);
+    ClassRegistryItem(const ClassProperties &clProperties, const ObjectBuildFn * const objBuildFn);
 
     /**
      * Destructor.
      * Responsible for destroying the assigned loadable library.
      */
-    ~ClassRegistryItem();
+    virtual ~ClassRegistryItem();
 
     /**
      * @brief Increments the number of instantiated objects of the class type represented by this registry item.
@@ -77,7 +83,7 @@ public:
      * @brief Returns the number of instantiated objects.
      * @return the number of instantiated objects belonging of the class type represented by this registry item.
      */
-    uint32 GetNumberOfInstances();
+    uint32 GetNumberOfInstances() const;
 
     /**
      * @brief Returns a copy to the class parameters.
@@ -92,12 +98,6 @@ public:
      * @return a pointer to the class parameters represented by this registry item.
      */
     const ClassProperties *GetClassProperties() const;
-
-    /**
-     * @brief Returns a reference to the object allocation heap.
-     * @return the heap that was selected to allocate objects of the class type represented by this registry item.
-     */
-    Heap *GetHeap();
 
     /**
      * @brief Sets the heap for object allocation.
@@ -115,7 +115,7 @@ public:
      * @brief Updates the pointer to the loadable library (dll).
      * @param[in] lLibrary the library (dll) holding the class type represented by this registry item.
      */
-    void SetLoadableLibrary(const LoadableLibrary *lLibrary);
+    void SetLoadableLibrary(const LoadableLibrary * const lLibrary);
 
     /**
      * @brief Returns a pointer to object build function.
@@ -123,7 +123,14 @@ public:
      * the class represented by this ClassProperties.
      * @return a pointer to function that allows to instantiate a new object.
      */
-    ObjectBuildFn *GetObjectBuildFunction() const;
+    const ObjectBuildFn *GetObjectBuildFunction() const;
+
+    /**
+     * @brief Delegates the deleting of the object to the correct heap.
+     * @details It is expected that this function is only called by the Object macros upon deletion.
+     * @param obj the object to be deleted.
+     */
+    void FreeObject(void *&obj);
 
 private:
     /**
@@ -150,7 +157,14 @@ private:
     /**
      * The object instantiation function.
      */
-    ObjectBuildFn *objectBuildFn;
+    const ObjectBuildFn *objectBuildFn;
+
+    /**
+     * @brief The default constructor is not supposed to be used
+     */
+    /*lint -e{1704} private constructor not to be called*/
+    ClassRegistryItem();
+
 };
 
 /*---------------------------------------------------------------------------*/

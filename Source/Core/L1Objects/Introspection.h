@@ -39,6 +39,9 @@
  * @brief TODO
  */
 class Introspection {
+public:
+    //TODO
+    Introspection(){}
 };
 
 /*---------------------------------------------------------------------------*/
