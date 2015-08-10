@@ -113,7 +113,7 @@ public:
 
     /**
      * @brief Assignment operator.
-     * @param sourceReference the source reference to be assigned to this reference.
+     * @param[in] sourceReference the source reference to be assigned to this reference.
      * @details This reference will be referencing the same object as the sourceReference.
      * @return a reference to the object referenced by sourceReference.
      */
@@ -124,14 +124,14 @@ public:
      * @param[in] sourceReference the Reference holding the source object.
      * @return true if the source Reference and source object are valid.
      */
-    virtual bool Clone(const Reference& sourceReference);
+    virtual bool Clone(Reference& sourceReference);
 
     /**
      * @brief Creates a Reference to a different object.
      * @param[in] sourceReference the Reference holding the source object.
      * @return true if the source Reference and source object are valid.
      */
-    virtual bool Clone(const ReferenceT<T>& sourceReference);
+    virtual bool Clone(ReferenceT<T>& sourceReference);
 
     /**
      * @brief Verifies if this Reference links to the same object of sourceReference.
@@ -292,7 +292,7 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
 }
 
 template<typename T>
-bool ReferenceT<T>::Clone(const Reference& sourceReference) {
+bool ReferenceT<T>::Clone(Reference& sourceReference) {
     RemoveReference();
     bool ok = true;
     if (!Reference::Clone(sourceReference)) {
@@ -312,7 +312,7 @@ bool ReferenceT<T>::Clone(const Reference& sourceReference) {
 }
 
 template<typename T>
-bool ReferenceT<T>::Clone(const ReferenceT<T>& sourceReference) {
+bool ReferenceT<T>::Clone(ReferenceT<T>& sourceReference) {
     RemoveReference();
     bool ok = true;
     if (!Reference::Clone(sourceReference)) {

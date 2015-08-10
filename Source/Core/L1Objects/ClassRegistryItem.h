@@ -44,7 +44,7 @@ typedef Object *(ObjectBuildFn)(const Heap &);
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief Represents a framework base class (i.e. one that inherits from Object).
+ * @brief Descriptor of framework base classes.
  * @details Most of the framework user classes inherit from Object. As a consequence,
  * they have the property of being automatically instantiated and managed by the framework.
  * Every class that inherits from Object will be described by a ClassRegistryItem and
@@ -81,7 +81,7 @@ public:
 
     /**
      * @brief Returns the number of instantiated objects.
-     * @return the number of instantiated objects belonging of the class type represented by this registry item.
+     * @return the number of instantiated objects of the class type represented by this registry item.
      */
     uint32 GetNumberOfInstances() const;
 
@@ -92,18 +92,12 @@ public:
     void GetClassPropertiesCopy(ClassProperties &destination) const;
 
     /**
-     * @brief Returns a pointer to the class parameters.
-     * @details The method GetClassPropertiesCopy should be used when possible. This pointer
+     * @brief Returns a pointer of the class parameters.
+     * @details The method GetClassPropertiesCopy() should be used when possible. This pointer
      * will live as long as this instance of ClassRegistryItem exists.
      * @return a pointer to the class parameters represented by this registry item.
      */
     const ClassProperties *GetClassProperties() const;
-
-    /**
-     * @brief Sets the heap for object allocation.
-     * @param[in] h the heap to allocate objects of the class type represented by this registry item.
-     */
-    void SetHeap(const Heap& h);
 
     /**
      * @brief Returns a pointer to the library (dll).
@@ -113,24 +107,17 @@ public:
 
     /**
      * @brief Updates the pointer to the loadable library (dll).
-     * @param[in] lLibrary the library (dll) holding the class type represented by this registry item.
+     * @param[in] loadLibrary the library (dll) holding the class type represented by this registry item.
      */
-    void SetLoadableLibrary(const LoadableLibrary * const lLibrary);
+    void SetLoadableLibrary(const LoadableLibrary * const loadLibrary);
 
     /**
      * @brief Returns a pointer to object build function.
      * @details Returns a pointer to a function that allows to instantiate a new object from
-     * the class represented by this ClassProperties.
-     * @return a pointer to function that allows to instantiate a new object.
+     * the class represented by this registry item.
+     * @return a pointer to the function that allows to instantiate a new object.
      */
     const ObjectBuildFn *GetObjectBuildFunction() const;
-
-    /**
-     * @brief Delegates the deleting of the object to the correct heap.
-     * @details It is expected that this function is only called by the Object macros upon deletion.
-     * @param obj the object to be deleted.
-     */
-    void FreeObject(void *&obj);
 
 private:
     /**
@@ -142,11 +129,6 @@ private:
      * The number of instantiated objects of the class type represented by this registry item.
      */
     uint32 numberOfInstances;
-
-    /**
-     * The heap that is being used to instantiate objects of the class type represented by this registry item.
-     */
-    Heap heap;
 
     /**
      * Library (dll) holding the class type represented by this registry item.

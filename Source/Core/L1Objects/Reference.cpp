@@ -65,11 +65,19 @@ Reference::Reference(const char8* const typeName, const Heap &heap) {
 }
 
 Reference::Reference(Object * const pointer) {
-    Reference::RemoveReference();
     objectPointer = pointer;
     if (objectPointer != NULL_PTR(Object*)) {
         objectPointer->IncrementReferences();
     }
+}
+
+Reference& Reference::operator=(Object * pointer) {
+    RemoveReference();
+    objectPointer = pointer;
+    if (objectPointer != NULL) {
+        objectPointer->IncrementReferences();
+    }
+    return *this;
 }
 
 /*lint -e{1551} the only risk of throwing an exception would be for

@@ -192,38 +192,6 @@ void LinkedListable::Insert(LinkedListable * p,
     }
 }
 
-void LinkedListable::Insert(LinkedListable * p,
-                            SortFilterFn * const sorter) {
-    if (p != NULL) {
-        if (sorter == NULL) {
-            Insert(p);
-        }
-        else {
-            if (p->next != NULL) {
-                LinkedListable root;
-                root.next = p;
-                root.BSort(sorter);
-                p = root.next;
-            }
-            LinkedListable *list = this;
-            while ((p != NULL) && (list->next != NULL)) {
-                if (sorter(list->next, p) > 0) {
-                    LinkedListable *item = p;
-                    p = p->next;
-                    item->next = list->next;
-                    list->next = item;
-                }
-                else {
-                    list = list->next;
-                }
-            }
-            if (p != NULL) {
-                list->next = p;
-            }
-        }
-    }
-}
-
 void LinkedListable::Add(LinkedListable * const p) {
     if (p != NULL) {
         LinkedListable *q = this;
@@ -266,23 +234,6 @@ LinkedListable *LinkedListable::Search(SearchFilter * const filter) {
         LinkedListable *q = this;
         while (q != NULL) {
             if (filter->Test(q)) {
-                ret = q;
-                break;
-            }
-            q = q->next;
-        }
-    }
-    return ret;
-}
-
-LinkedListable *LinkedListable::Search(SearchFilterFn * const filter) {
-
-    LinkedListable *ret = static_cast<LinkedListable *>(NULL);
-    if (filter != NULL) {
-
-        LinkedListable *q = this;
-        while (q != NULL) {
-            if (filter(q)) {
                 ret = q;
                 break;
             }
@@ -336,27 +287,6 @@ LinkedListable *LinkedListable::Extract(SearchFilter * const filter) {
     return ret;
 }
 
-LinkedListable *LinkedListable::Extract(SearchFilterFn * const filter) {
-    LinkedListable *ret = static_cast<LinkedListable *>(NULL);
-    if (filter != NULL) {
-
-        LinkedListable *q = this;
-        while (q->next != NULL) {
-            if (filter(q->next)) {
-                LinkedListable *p = q->next;
-                q->next = q->next->next;
-                p->next = static_cast<LinkedListable *>(NULL);
-                ret = p;
-                break;
-            }
-            else {
-                q = q->next;
-            }
-        }
-    }
-    return ret;
-}
-
 bool LinkedListable::Delete(LinkedListable * const p) {
     bool ret = Extract(p);
     if (ret) {
@@ -372,26 +302,6 @@ uint32 LinkedListable::Delete(SearchFilter * const filter) {
         LinkedListable *q = this;
         while (q->next != NULL) {
             if (filter->Test(q->next)) {
-                LinkedListable *p = q->next;
-                q->next = q->next->next;
-                delete p;
-                deleted++;
-            }
-            else {
-                q = q->next;
-            }
-        }
-    }
-    return deleted;
-}
-
-uint32 LinkedListable::Delete(SearchFilterFn * const filter) {
-    uint32 deleted = 0u;
-    if (filter != NULL) {
-
-        LinkedListable *q = this;
-        while (q->next != NULL) {
-            if (filter(q->next)) {
                 LinkedListable *p = q->next;
                 q->next = q->next->next;
                 delete p;
@@ -423,14 +333,3 @@ void LinkedListable::Iterate(Iterator * const it) {
         }
     }
 }
-
-void LinkedListable::Iterate(IteratorFn * const it) {
-    LinkedListable *p = this;
-    if (it != NULL) {
-        while (p != NULL) {
-            it(p);
-            p = p->next;
-        }
-    }
-}
-

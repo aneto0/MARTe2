@@ -37,12 +37,11 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Implementation of a dynamic single linked list.
+ * @brief Implementation of a singly linked list with a well defined root .
  *
- * Adding the memory of the root and using functions defined for LinkedListable objects,
- * this class performs all the basic methods to manipulate a list.
- *
- * To implement specific object lists this class must be derived.
+ * @details This list complements the LinkedListable implementation by adding
+ * the concept of a root. In this way it is always possible to link to a well
+ * defined item (e.g. to perform a search on the full list).
  */
 
 class LinkedListHolder {
@@ -82,62 +81,52 @@ public:
     uint32 ListSize() const;
 
     /**
-     * @brief Inserts in the first location the element in input.
-     * @param[in] p is the LinkedListable object to insert.
+     * @brief Inserts in the first location the element \a p.
+     * @param[in] p the LinkedListable object to insert.
      */
     inline void FastListInsertSingle(LinkedListable &p);
 
     /**
-     * @brief Inserts in the first location the input list.
-     * @param[in] p is a pointer to the LinkedListable to insert.
+     * @brief Inserts in the first location the input list \a p.
+     * @param[in] p a pointer to the LinkedListable to insert.
      */
     void ListInsert(LinkedListable * const p);
 
     /**
      * @brief Inserts the input list using a SortFilter.
-     * @details if the SortFilter pointer is null, the function performs the normal behavior inserting at the
-     * input list at the beginning.
-     * @param[in] p is the pointer to the LinkedListable to insert.
-     * @param[in] sorter defines the comparison criteria.
+     * @details If sorter is NULL, the unsorted ListInsert(LinkedListable *) function is called,
+     * inserting the input list at the beginning.
+     * @param[in] p the pointer to the LinkedListable to insert.
+     * @param[in] sorter implements the comparison criteria for the sorting.
      */
     void ListInsert(LinkedListable * const p,
                     SortFilter * const sorter);
 
     /**
-     * @brief Inserts the list p using a SortFilterFn function.
-     * @details if the SortFilterFn pointer is null, the function performs the normal behavior inserting at the
-     * input list at the beginning.
-     * @param[in] p is the pointer to the LinkedListable to insert.
-     * @param[in] sorter defines the comparison criteria.
-     */
-    void ListInsert(LinkedListable * const p,
-                    SortFilterFn * const sorter);
-
-    /**
      * @brief Inserts a list in the specified position of the list.
-     * @details if the specified position is greater the the list size, the list input is inserted on the queue.
-     * @param[in] q is the pointer to the LinkedListable to insert.
-     * @param[in] index is the position in the list where p must be inserted.
+     * @details If the specified position is greater the the list size, the list input is inserted at the end.
+     * @param[in] q the pointer to the LinkedListable to be inserted.
+     * @param[in] index is the position in the list where \a p must be inserted.
      */
     void ListInsert(LinkedListable * const q,
                     const uint32 index);
 
     /**
      * @brief Adds an element at the end of this list.
-     * @param[in] p is a pointer to the LinkedListable element to be appended.
+     * @param[in] p the pointer to the LinkedListable element to be appended.
      */
     void ListAdd(LinkedListable * const p);
 
     /**
      * @brief Adds a LinkedListable list at the end of the list.
-     * @param[in] p is the pointer to the LinkedListable list to added.
+     * @param[in] p the pointer to the LinkedListable list to added.
      */
     void ListAddL(LinkedListable * const p);
 
     /**
      * @brief Searches a specified element in this list.
-     * @param[in] p is a pointer to the element to search.
-     * @return true if p is in the list, false otherwise.
+     * @param[in] p a pointer to the element to search.
+     * @return true if \a p is in the list, false otherwise.
      */
     bool ListSearch(const LinkedListable * const p);
 
@@ -149,16 +138,9 @@ public:
     LinkedListable *ListSearch(SearchFilter * const filter);
 
     /**
-     * @brief Searches an element using a SearchFn function.
-     * @param[in] filter defines the search criteria.
-     * @return a pointer to the element if it is found in the list, NULL otherwise.
-     */
-    LinkedListable *ListSearch(SearchFilterFn * const filter);
-
-    /**
      * @brief Removes the requested element from the list.
-     * @param[in] p is the element to be removed.
-     * @return true if p was in the list, false otherwise.
+     * @param[in] p the element to be removed.
+     * @return true if \a p was in the list, false otherwise.
      */
     bool ListExtract(LinkedListable * const p);
 
@@ -168,13 +150,6 @@ public:
      * @return the extracted element, NULL if it is not found in the list.
      */
     LinkedListable *ListExtract(SearchFilter * const filter);
-
-    /**
-     * @brief Finds and removes one element from list using a SearchFn function.
-     * @param[in] filter defines the search criteria.
-     * @return the extracted element, NULL if it is not found in the list.
-     */
-    LinkedListable *ListExtract(SearchFilterFn * const filter);
 
     /**
      * @brief Deletes the requested element.
@@ -192,7 +167,7 @@ public:
 
     /**
      * @brief Deletes a elements using a SearchFilter in safe mode.
-     * @details Safe from reentrance from destructor of object (complex graph destruction)
+     * @details Safe from being reentrant from the destructor of the object (complex graph destruction)
      * @param[in] filter defines the search criteria.
      * @return true if at least one object it is deleted, false otherwise.
      */
@@ -212,36 +187,24 @@ public:
     void ListBSort(SortFilter * const sorter);
 
     /**
-     * @brief Sorts the elements in the list.
-     * @param[in] sorter defines the comparison criteria.
-     */
-    void ListBSort(SortFilterFn * const sorter);
-
-    /**
      * @brief Browses the list.
-     * @param[in] index is the position of the requested element (0 means the first element).
+     * @param[in] index the position of the requested element (0 means the first element).
      * @return a pointer to the element at index position.
      */
     LinkedListable *ListPeek(const uint32 index);
 
     /**
      * @brief Removes and gets the element of the list in a specified position.
-     * @param[in] index is the position of the requested element.
+     * @param[in] index the position of the requested element.
      * @return a pointer to the element at index position.
      */
     LinkedListable *ListExtract(uint32 index = 0u);
 
     /**
-     * @brief For each item in the list do something.
-     * @param[in] it defines what to do.
+     * @brief For each item in the list perform the action defined by the Iterator.
+     * @param[in] defines the action to be performed on each element.
      */
     void ListIterate(Iterator * const it);
-
-    /**
-     * @brief For each item in the list do something.
-     * @param[in] it defines what to do.
-     */
-    void ListIterate(IteratorFn * const it);
 
 private:
 

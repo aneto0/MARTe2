@@ -132,6 +132,13 @@ public:
      */
     virtual Reference& operator=(const Reference& sourceReference);
 
+    /**
+     * @brief Assignment operator.
+     * @param[in] pointer source object to assign.
+     * @details It will increment the number of references referencing the underlying object.
+     * @return a reference to the underlying object.
+     */
+    virtual Reference& operator=(Object * pointer);
 
     /**
      * @brief Provides access to the underlying object linked by this Reference.

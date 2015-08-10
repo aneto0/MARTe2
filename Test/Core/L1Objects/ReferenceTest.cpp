@@ -39,9 +39,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
+#include "ReferenceT.h"
 bool ReferenceTest::TestDefaultConstructor() {
-
+    ReferenceT<IntegerObject> io;
     Reference ref;
     return !ref.IsValid();
 

@@ -51,7 +51,7 @@ class ClassRegistryDatabase {
 public:
     /**
      * @brief Singleton access to the database.
-     * @return reference to the database.
+     * @return a reference to the database.
      */
     static ClassRegistryDatabase &Instance();
 

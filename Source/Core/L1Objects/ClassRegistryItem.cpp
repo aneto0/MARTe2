@@ -44,14 +44,14 @@ static FastPollingMutexSem classRegistryItemMuxSem;
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 ClassRegistryItem::ClassRegistryItem() :
-        LinkedListable(), classProperties(), heap() {
+        LinkedListable(), classProperties() {
     numberOfInstances = 0u;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
 }
 
 ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties, const ObjectBuildFn * const objBuildFn) :
-        LinkedListable(), heap() {
+        LinkedListable() {
     numberOfInstances = 0u;
     classProperties = clProperties;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
@@ -98,22 +98,14 @@ uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return numberOfInstances;
 }
 
-void ClassRegistryItem::SetHeap(const Heap& h) {
-    heap = h;
-}
-
 const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {
     return loadableLibrary;
 }
 
-void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const lLibrary) {
-    this->loadableLibrary = lLibrary;
+void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLibrary) {
+    this->loadableLibrary = loadLibrary;
 }
 
 const ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
     return objectBuildFn;
-}
-
-void ClassRegistryItem::FreeObject(void *&obj) {
-    heap.Free(obj);
 }
