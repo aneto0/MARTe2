@@ -35,76 +35,74 @@
 
 #include "StringPortable.h"
 
+#include "FastPollingMutexSem.h"
+
 /*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                           Local Class declaration                         */
 /*---------------------------------------------------------------------------*/
 
-static class HeapDataBase {
+
+/**
+ * @brief TODO
+ */
+class HeapDataBase {
     /**
      * @brief Lists all heaps
      * all unused heaps have a NULL pointer
      */
-    HeapInterface *heaps[MaximumNumberOfHeaps];
+    HeapInterface *     heaps[MaximumNumberOfHeaps];
 
+    /**
+     * @brief TODO
+     */
+    FastPollingMutexSem mux;
 
 public:
 
     /**
-     * true --> Pointer is inside current address range
+     * @brief gets the HeapInterface contained in a given slot of the database
+     * @param index indicates the slots of the database
+     * @return NULL index out of range or if empty slot
      * */
-    HeapInterface *GetHeap(int index)const{
-        HeapInterface *returnValue = NULL;
-        if ((index >= 0) && (index < MaximumNumberOfHeaps)){
-            returnValue = heaps[index];
-        }
-        return returnValue;
-    }
+    HeapInterface *GetHeap(int index)const;
 
     /**
-     * true --> Pointer is inside current address range; slot is free and heap is not NULL
-     * sets slot to heap
+     * @brief sets the HeapInterface in a given slot of the database
+     * @param index indicates the slots of the database
+     * @param heap  is the desired heap to store
+     * @return true if index is within range; specified slot is free; and heap is not NULL
      * */
-    bool SetHeap(int index, const HeapInterface *heap){
-        bool ok = false;
-        if ((index >= 0) && (index < MaximumNumberOfHeaps)){
-            if ((heaps[index] == NULL) && (heap != NULL)){
-                heaps[index] = heap;
-                ok = true;
-            }
-        }
-        return ok;
-    }
+    bool SetHeap(int index, const HeapInterface *heap);
 
     /**
-     * true --> Pointer is inside current address range; slot is same as heap
-     * sets slot to NULL
+     * @brief sets to NULL a given slot of the database
+     * @param index indicates the slots of the database
+     * @param heap must contain the same value as in the database
+     * @return true if index is within range; specified slot contains heapl heap is not NULL
      * */
-    bool UnsetHeap(int index, const HeapInterface *heap){
-        bool ok = false;
-        if ((index >= 0) && (index < MaximumNumberOfHeaps)){
-            if (heaps[index] = heap ){
-                heaps[index] = NULL;
-                ok = true;
-            }
-        }
-        return ok;
-    }
+    bool UnsetHeap(int index, const HeapInterface *heap);
+    /**
+     * @brief constructor
+     * */
+    HeapDataBase();
+    /**
+     * @brief locks access to database
+     * @return true if locking successful
+     * */
+    bool Lock();
 
     /**
-     * true --> Pointer is inside current address range
+     * @brief unlocks access to database
      * */
-    HeapDataBase(){
+    void UnLock();
 
-        int i=0;
-        for(i=0;i<MaximumNumberOfHeaps;i++){
-            heaps[i] = NULL;
-        }
-    }
-
-} heapDataBase;
+};
 
 
-static class StandardHeap: public HeapInterface {
+/**
+ * @brief TBD
+ */
+class StandardHeap: public HeapInterface {
 
     /**
      * @brief minimum of address returned by malloc.
@@ -117,85 +115,200 @@ static class StandardHeap: public HeapInterface {
 public:
 
     /**
-     * @brief No operation.
+     * @brief constructor
      */
-    StandardHeap(){
+    StandardHeap();    /**
+     * @brief constructor
+     */
 
-        /** initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
-        firstAddress = static_cast<uint8 *>  (malloc(1));
-        lastAddress  = firstAddress+1;
-    }
-    /**
-     * @brief No operation.
-     */
-    virtual ~StandardHeap(){
-        free (static_cast<void *>  (firstAddress));
-        firstAddress = static_cast<uint8 *>  (NULL);
-        lastAddress  = static_cast<uint8 *>  (NULL);
-    };
+    virtual ~StandardHeap();
 
     /**
      * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
      * @return a pointer to the allocated memory or NULL if the allocation fails.
      */
-    virtual void *Malloc(const uint32 &size){
-        return malloc(size);
-    }
+    virtual void *Malloc(const uint32 &size);
 
     /**
      * @brief free the pointer data and its associated memory.
      * @param data the data to be freed.
      */
-    virtual void Free(void *&data){
-        free(data);
-    }
+    virtual void Free(void *&data);
 
     /**
      * @brief start of range of memory addresses served by this heap.
      * @return first memory address
      */
-    virtual uint8* FirstAddress()const {
-        return firstAddress;
-    }
+    virtual uint8* FirstAddress()const;
 
     /**
      * @brief end (inclusive) of range of memory addresses served by this heap.
      * @return last memory address
      */
-    virtual uint8* LastAddress()const {
-        return lastAddress;
-    }
+    virtual uint8* LastAddress()const;
 
     /**
      * @brief Returns the name of the heap
      * @return name of the heap
      */
-    virtual const char *Name()const {
-        return "StandardHeap";
-    }
+    virtual const char *Name()const;
 
-} standardHeap;
+} ;
+
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+static HeapDataBase  heapDataBase;
+
+static StandardHeap standardHeap;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-HeapInterface *HeapManager::GetStandardHeap(){
 
-    return &standardHeap;
+/**
+ * @brief gets the HeapInterface contained in a given slot of the database
+ * @param index indicates the slots of the database
+ * @return NULL index out of range or if empty slot
+ * */
+HeapInterface *HeapDataBase::GetHeap(int index)const{
+    HeapInterface *returnValue = NULL;
+    if ((index >= 0) && (index < MaximumNumberOfHeaps)){
+        returnValue = heaps[index];
+    }
+    return returnValue;
+}
+
+/**
+ * @brief sets the HeapInterface in a given slot of the database
+ * @param index indicates the slots of the database
+ * @param heap  is the desired heap to store
+ * @return true if index is within range; specified slot is free; and heap is not NULL
+ * */
+bool HeapDataBase::SetHeap(int index, const HeapInterface *heap){
+    bool ok = false;
+    if ((index >= 0) && (index < MaximumNumberOfHeaps)){
+        if ((heaps[index] == NULL) && (heap != NULL)){
+            heaps[index] = heap;
+            ok = true;
+        }
+    }
+    return ok;
+}
+
+/**
+ * @brief sets to NULL a given slot of the database
+ * @param index indicates the slots of the database
+ * @param heap must contain the same value as in the database
+ * @return true if index is within range; specified slot contains heapl heap is not NULL
+ * */
+bool HeapDataBase::UnsetHeap(int index, const HeapInterface *heap){
+    bool ok = false;
+    if ((index >= 0) && (index < MaximumNumberOfHeaps)){
+        if (heaps[index] == heap ){
+            heaps[index] = NULL;
+            ok = true;
+        }
+    }
+    return ok;
+}
+
+/**
+ * @brief constructor
+ * */
+HeapDataBase::HeapDataBase(){
+
+    int i=0;
+    for(i=0;i<MaximumNumberOfHeaps;i++){
+        heaps[i] = NULL;
+    }
+}
+
+/**
+ * @brief locks access to database
+ * @return true if locking successful
+ * */
+bool HeapDataBase::Lock(){
+    return (mux. FastLock()==NoError);
+}
+
+/**
+ * @brief unlocks access to database
+ * */
+void HeapDataBase::UnLock(){
+    mux.FastUnLock();
 }
 
 
+/**
+ * @brief constructor
+ */
+StandardHeap::StandardHeap(){
+
+    /** initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
+    firstAddress = static_cast<uint8 *>  (malloc(1));
+    lastAddress  = firstAddress+1;
+}
+/**
+ * @brief constructor
+ */
+virtual StandardHeap::~StandardHeap(){
+    free (static_cast<void *>  (firstAddress));
+    firstAddress = static_cast<uint8 *>  (NULL);
+    lastAddress  = static_cast<uint8 *>  (NULL);
+};
+
+/**
+ * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
+ * @return a pointer to the allocated memory or NULL if the allocation fails.
+ */
+virtual void *StandardHeap::Malloc(const uint32 &size){
+    return malloc(size);
+}
+
+/**
+ * @brief free the pointer data and its associated memory.
+ * @param data the data to be freed.
+ */
+virtual void StandardHeap::Free(void *&data){
+    free(data);
+}
+
+/**
+ * @brief start of range of memory addresses served by this heap.
+ * @return first memory address
+ */
+virtual uint8* StandardHeap::FirstAddress()const {
+    return firstAddress;
+}
+
+/**
+ * @brief end (inclusive) of range of memory addresses served by this heap.
+ * @return last memory address
+ */
+virtual uint8* StandardHeap::LastAddress()const {
+    return lastAddress;
+}
+
+/**
+ * @brief Returns the name of the heap
+ * @return name of the heap
+ */
+virtual const char *StandardHeap::Name()const {
+    return "StandardHeap";
+}
+
+
+/**
+ * @brief Finds the Heap that manages the specified memory location
+ * @param address is a memory address that the target heap should manage
+ * returns NULL if not found
+ */
 HeapInterface *HeapManager::FindHeap(const void * address){
 
-    /**
-     * used to mark that the heap was not found
-     */
-    const int notFound = -1;
-    /**
-     * where the heap was found
-     * */
-    int foundIndex = notFound;
     /**
      address range of currently found heap
      */
@@ -210,72 +323,80 @@ HeapInterface *HeapManager::FindHeap(const void * address){
      * the search will set this pointer to point to the heap found
      * by default return the standard heap
      */
-    HeapInterface *heap = NULL;
+    HeapInterface *foundHeap = NULL;
 
-    int i=0;
-    for(i=0;(i<MaximumNumberOfHeaps) && ok ;i++){
+    /* controls access to database */
+    if (heapDataBase.Lock()){
+        // TODO add error message here
 
-        /** retrieve heap information in current slot */
-        heap = heapDataBase.GetHeap(i);
+        int i=0;
+        for(i=0;(i<MaximumNumberOfHeaps) && ok ;i++){
 
-        /** if slot used */
-        if (heap != NULL){
+            /** retrieve heap information in current slot */
+            HeapInterface *heap = heapDataBase.GetHeap(i);
 
-            /* check address compatibility */
-            if ( heap->Owns(address)){
+            /** if slot used */
+            if (heap != NULL){
 
-                /** check if first occurrence or */
-                if (foundIndex == notFound){
+                /* check address compatibility */
+                if ( heap->Owns(address)){
 
-                    /* save position of found heap */
-                    foundIndex = i;
+                    /** check if first occurrence or */
+                    if (foundHeap == NULL){
 
-                    /* size of memory space */
-                    foundSpan = ((char *)heap->LastAddress()-(char *)heap->FirstAddress());
+                        /* size of memory space */
+                        foundSpan = ((char *)heap->LastAddress()-(char *)heap->FirstAddress());
 
-                } else { /* further occurrences */
+                        /* save heap */
+                        foundHeap = heap;
 
-                    /* size of memory space */
-                    int newFoundSpan = ((char *)heap->LastAddress()-(char *)heap->FirstAddress());
+                    } else { /* further occurrences */
 
-                    /**
-                     * smaller memory span and intersecting memory address space
-                     * it can only mean that this heap is a sub-heap of the previously found heap
-                     */
-                    if (newFoundSpan < foundSpan){
+                        /* size of memory space */
+                        int newFoundSpan = ((char *)heap->LastAddress()-(char *)heap->FirstAddress());
 
-                        /* save size of memory space */
-                        foundSpan = newFoundSpan;
+                        /**
+                         * smaller memory span and intersecting memory address space
+                         * it can only mean that this heap is a sub-heap of the previously found heap
+                         */
+                        if (newFoundSpan < foundSpan){
 
-                        /* save position of found heap */
-                        foundIndex = i;
+                            /* save size of memory space */
+                            foundSpan = newFoundSpan;
 
-                    } // end if (newFoundSpan < foundSpan)
+                            /* save heap */
+                            foundHeap = heap;
+                        } // end if (newFoundSpan < foundSpan)
 
-                } /* end of check first occurrence */
+                    } /* end of check first occurrence */
 
-            } /* end check address compatibility */
+                } /* end check address compatibility */
 
-        } /* end if heap != NULL */
+            } /* end if heap != NULL */
 
-    } /* end i loop */
+        } /* end i loop */
 
-    /* assign to heap the found heap or the default one */
-    if (foundIndex == notFound) {
 
-        /** try default heap */
-        heap = GetStandardHeap();
-
-        /* check ownership of default heap */
-        if (! heap->Owns(address) ){
-            heap = NULL;
-        }
-
+        heapDataBase.UnLock();
     } else {
-        heap = heapDataBase.GetHeap(foundIndex);
+        ok = false;
+        // TODO add error message here
     }
 
-    return heap;
+    /* assign to heap the found heap or the default one */
+    if (foundHeap == NULL) {
+
+        /** try default heap */
+        foundHeap = &standardHeap;
+
+        /* check ownership of default heap */
+        if (! foundHeap->Owns(address) ){
+            foundHeap = NULL;
+        }
+
+    }
+
+    return foundHeap;
 }
 
 HeapInterface *HeapManager::FindHeap(const char *name){
@@ -293,28 +414,34 @@ HeapInterface *HeapManager::FindHeap(const char *name){
     HeapInterface *foundHeap = NULL;
 
     if (ok){
-        int i=0;
-        for(i=0;(i<MaximumNumberOfHeaps) && !found ;i++){
 
-            /** retrieve heap information in current slot */
-            HeapInterface *heap = heapDataBase.GetHeap(i);
+        /* controls access to database */
+        if (heapDataBase.Lock()){
+            // TODO add error message here
+            int i=0;
+            for(i=0;(i<MaximumNumberOfHeaps) && !found ;i++){
 
-            /** if slot used */
-            if (heap != NULL){
+                /** retrieve heap information in current slot */
+                HeapInterface *heap = heapDataBase.GetHeap(i);
 
-                /* check address compatibility */
-                if( StringPortable::Compare (heap->Name(),name) == 0 ){
+                /** if slot used */
+                if (heap != NULL){
 
-                    found = true;
+                    /* check address compatibility */
+                    if( StringPortable::Compare (heap->Name(),name) == 0 ){
 
-                    foundHeap = heap;
+                        found = true;
+
+                        foundHeap = heap;
 
 
-                } /* end check name */
+                    } /* end check name */
 
-            } /* end if heap != NULL */
+                } /* end if heap != NULL */
 
-        } /* end i loop */
+            } /* end i loop */
+            heapDataBase.UnLock();
+        }
     }
 
     return foundHeap;
@@ -336,7 +463,7 @@ bool HeapManager::Free(void *&data){
     } else {
 
 
-        // error message here
+        // TODO error message here
 
     }
 
@@ -350,11 +477,14 @@ void *HeapManager::Malloc(uint32 size, const char *name){
     if (name == NULL){
         address = standardHeap.Malloc(size);
     } else {
+        // TODO comment
+        HeapInterface *heap = FindHeap(name);
 
-        // find by name !
+        if (heap != NULL){
+            return heap->Malloc(size);
+        }
 
     }
-
 
     return address;
 }
@@ -369,36 +499,44 @@ bool HeapManager::AddHeap(HeapInterface *newHeap){
     }
 
 
-    int i = 0;
-    /* check if not registered already */
-    for(i=0;(i<MaximumNumberOfHeaps) && ok ;i++){
-        /** retrieve heap information in current slot */
-        HeapInterface *heap = heapDataBase.GetHeap(i);
+    /* controls access to database */
+    if (heapDataBase.Lock()){
+        int i = 0;
+        /* check if not registered already */
+        for(i=0;(i<MaximumNumberOfHeaps) && ok ;i++){
+            /** retrieve heap information in current slot */
+            HeapInterface *heap = heapDataBase.GetHeap(i);
 
-        /** already found */
-        if (heap == newHeap) {
-            ok = false;
+            /** already found */
+            if (heap == newHeap) {
+                ok = false;
 
-            /* error message here */
-        }
-    }
-
-    /* check if space available and if so register it  */
-    if (ok) {
-
-        bool found = false;
-        /* for each slot  */
-        for(i=0;(i<MaximumNumberOfHeaps) && !found ;i++){
-            /** try to set each slot */
-            found = heapDataBase.SetHeap(i, newHeap);
+                /* TODO error message here */
+            }
         }
 
-        /** no more space */
-        if (!found){
-            ok = false;
-            // error message here
-        }
+        /* check if space available and if so register it  */
+        if (ok) {
 
+            bool found = false;
+            /* for each slot  */
+            for(i=0;(i<MaximumNumberOfHeaps) && !found ;i++){
+                /** try to set each slot */
+                found = heapDataBase.SetHeap(i, newHeap);
+            }
+
+            /** no more space */
+            if (!found){
+                ok = false;
+                // TODO error message here
+            }
+
+        }
+        /* controls access to database */
+        heapDataBase.UnLock();
+    } else {
+        // TODO error message
+        ok = false;
     }
 
     return ok;
@@ -408,11 +546,16 @@ bool HeapManager::RemoveHeap(HeapInterface *heap){
 
     bool found = false;
 
-    int i = 0;
-    /* check if not registered already */
-    for(i=0;(i<MaximumNumberOfHeaps) && !found ;i++){
-        /** retrieve heap information in current slot */
-        found = heapDataBase.UnsetHeap(i,heap);
+    /* controls access to database */
+    if (heapDataBase.Lock()){
+        int i = 0;
+        /* check if not registered already */
+        for(i=0;(i<MaximumNumberOfHeaps) && !found ;i++){
+            /** retrieve heap information in current slot */
+            found = heapDataBase.UnsetHeap(i,heap);
+        }
+        /* controls access to database */
+        heapDataBase.UnLock();
     }
 
     return found;

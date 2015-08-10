@@ -38,7 +38,7 @@ OBJSX=  Atomic.x \
         ThreadsDatabase.x \
         ThreadInformation.x \
         LoadableLibrary.x \
-        Heap.x \
+        HeapManager.x \
         FastPollingMutexSem.x\
         HeapManager.x
 

@@ -50,15 +50,9 @@ static const int MaximumNumberOfHeaps = 16;
 namespace HeapManager{
 
 /**
- * @brief
- * @param
- * returns
- */
-HeapInterface *GetStandardHeap();
-
-/**
  * @brief Finds the Heap that manages the specified memory location
- * returns GetStandardHeap() if not found
+ * @param address is a memory address that the target heap should manage
+ * returns NULL if not found
  */
 HeapInterface *FindHeap(const void * address);
 
