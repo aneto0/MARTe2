@@ -78,6 +78,11 @@ TEST(ReferenceGTest,TestCopyFromObjPtrConstructorNullPtr) {
     ASSERT_TRUE(referenceTest.TestCopyFromObjPtrConstructorNullPtr());
 }
 
+TEST(ReferenceGTest,TestDestructor) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestDestructor());
+}
+
 TEST(ReferenceGTest,TestInitialise) {
     ReferenceTest referenceTest;
     ASSERT_TRUE(referenceTest.TestInitialise());
@@ -86,4 +91,52 @@ TEST(ReferenceGTest,TestInitialise) {
 TEST(ReferenceGTest,TestRemoveReference) {
     ReferenceTest referenceTest;
     ASSERT_TRUE(referenceTest.TestRemoveReference());
+}
+
+TEST(ReferenceGTest,TestCopyOperatorReference) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyOperatorReference());
+}
+
+
+TEST(ReferenceGTest,TestCopyOperatorReferenceNull) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyOperatorReferenceNull());
+}
+
+TEST(ReferenceGTest,TestEqualOperatorObject) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyOperatorObject());
+}
+
+
+TEST(ReferenceGTest,TestEqualOperatorObjectNull) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyOperatorObjectNull());
+}
+
+TEST(ReferenceGTest,TestIsValid) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestIsValid());
+}
+
+TEST(ReferenceGTest,TestEqualOperator) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestEqualOperator());
+}
+
+TEST(ReferenceGTest,TestDifferentOperator) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestDifferentOperator());
+}
+
+
+TEST(ReferenceGTest,TestNumberOfReferences) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestNumberOfReferences());
+}
+
+TEST(ReferenceGTest,TestClone) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestClone());
 }

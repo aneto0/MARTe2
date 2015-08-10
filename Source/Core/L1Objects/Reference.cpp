@@ -53,7 +53,8 @@ Reference::Reference(Object * pointer) {
     *this = pointer;
 }
 
-Reference::Reference(const char8* typeName, Heap &heap) {
+Reference::Reference(const char8* typeName,
+                     Heap &heap) {
     objectPointer = NULL;
     Object *objPtr = ClassRegistryDatabase::Instance().CreateByName(typeName, heap);
     if (objPtr != NULL) {
@@ -83,7 +84,8 @@ Reference::~Reference() {
     RemoveReference();
 }
 
-bool Reference::Initialise(const StructuredData &data, bool createOnly) {
+bool Reference::Initialise(const StructuredData &data,
+                           bool createOnly) {
 //TODO
     return true;
 }
@@ -132,21 +134,15 @@ Object* Reference::operator->() const {
 }
 
 bool Reference::Clone(const Reference &reference) {
-    bool ok = reference.IsValid();
-    if (ok) {
+    bool ok = false;
+    if (reference.IsValid()) {
         Object * tmp = reference->Clone();
         if (tmp != NULL) {
             RemoveReference();
             objectPointer = tmp;
             objectPointer->IncrementReferences();
+            ok = true;
         }
-        // This is necessary, otherwise when
-        // GCReference::Clone is called by
-        // GCRTemplate, at this point the IsValid
-        // function of GCRTemplate would be called,
-        // returning false as the setup of GCRTemplate
-        // Tobject is not yet done.
-        ok = Reference::IsValid();
     }
     return ok;
 }
