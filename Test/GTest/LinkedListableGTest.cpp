@@ -85,11 +85,6 @@ TEST(LinkedListableGTest,TestInsertSortedSorter) {
     ASSERT_TRUE(myLinkedListableTest.TestInsertSortedSorter(10));
 }
 
-TEST(LinkedListableGTest,TestInsertSortedFn) {
-    LinkedListableTest myLinkedListableTest;
-    ASSERT_TRUE(myLinkedListableTest.TestInsertSortedFn(10));
-}
-
 TEST(LinkedListableGTest,TestInsertNullListInput) {
     LinkedListableTest myLinkedListableTest;
     ASSERT_TRUE(myLinkedListableTest.TestInsertNullListInput());
@@ -120,12 +115,6 @@ TEST(LinkedListableGTest,TestSearchFilter) {
     ASSERT_TRUE(myLinkedListableTest.TestSearchFilter());
 }
 
-
-TEST(LinkedListableGTest,TestSearchFn) {
-    LinkedListableTest myLinkedListableTest;
-    ASSERT_TRUE(myLinkedListableTest.TestSearchFn());
-}
-
 TEST(LinkedListableGTest,TestSearchFilterPreviousElement) {
     LinkedListableTest myLinkedListableTest;
     ASSERT_TRUE(myLinkedListableTest.TestSearchFilterPreviousElement());
@@ -151,11 +140,6 @@ TEST(LinkedListableGTest,TestDeleteSearchFilter) {
     ASSERT_TRUE(myLinkedListableTest.TestDeleteSearchFilter());
 }
 
-
-TEST(LinkedListableGTest,TestDeleteSearchFn) {
-    LinkedListableTest myLinkedListableTest;
-    ASSERT_TRUE(myLinkedListableTest.TestDeleteSearchFn());
-}
 TEST(LinkedListableGTest,TestPeek) {
     LinkedListableTest myLinkedListableTest;
     ASSERT_TRUE(myLinkedListableTest.TestPeek());
@@ -164,10 +148,4 @@ TEST(LinkedListableGTest,TestPeek) {
 TEST(LinkedListableGTest,TestIterateIterator) {
     LinkedListableTest myLinkedListableTest;
     ASSERT_TRUE(myLinkedListableTest.TestIterateIterator());
-}
-
-
-TEST(LinkedListableGTest,TestIterateFn) {
-    LinkedListableTest myLinkedListableTest;
-    ASSERT_TRUE(myLinkedListableTest.TestIterateFn());
 }

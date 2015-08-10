@@ -191,12 +191,6 @@ bool LinkedListHolder::ListSafeDelete(SearchFilter * const filter) {
     return (deleted > 0u);
 }
 
-bool LinkedListHolder::ListDelete(SearchFilterFn * const filter) {
-    uint32 deleted = llhRoot.Delete(filter);
-    llhSize -= deleted;
-    return (deleted > 0u);
-}
-
 void LinkedListHolder::ListBSort(SortFilter * const sorter) {
     llhRoot.BSort(sorter);
 }

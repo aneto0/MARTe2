@@ -269,30 +269,6 @@ bool LinkedListHolderTest::TestListInsertSortedSorter(uint32 nElements) {
 
 }
 
-bool LinkedListHolderTest::TestListInsertSortedFn(uint32 nElements) {
-
-    LinkedListHolder list;
-
-    IntegerList *first1 = new IntegerList(0);
-    IntegerList *first2 = new IntegerList(nElements);
-
-    BuildLists(first1, first2, nElements, false);
-
-    list.ListInsert(first2, DecrescentSortFn);
-
-    list.ListInsert(first1, DecrescentSortFn);
-
-    for (uint32 i = 0; i < (2 * nElements - 1); i++) {
-        if ((((IntegerList*) list.ListPeek(i + 1))->intNumber) > (((IntegerList*) list.ListPeek(i))->intNumber)) {
-            return false;
-        }
-
-    }
-
-    return list.ListSize() == (2 * nElements);
-
-}
-
 bool LinkedListHolderTest::TestListInsertNullSorter(uint32 nElements) {
 
     LinkedListHolder list;
@@ -303,8 +279,6 @@ bool LinkedListHolderTest::TestListInsertNullSorter(uint32 nElements) {
     BuildLists(first1, first2, nElements, false);
 
     list.ListInsert(first2, (SortFilter*) NULL);
-
-    list.ListInsert(first1, (SortFilterFn*) NULL);
 
     //insert without sorting
     for (uint32 i = 0; i < (2 * nElements); i++) {
@@ -477,29 +451,6 @@ bool LinkedListHolderTest::TestListSearchFilter() {
     return (list.ListSearch(&searchNotIn) == NULL) && (list.ListSearch((SearchFilter*) NULL) == NULL);
 }
 
-bool LinkedListHolderTest::TestListSearchFn() {
-    LinkedListHolder list;
-
-    LinkedListable *stored[32];
-
-    for (uint32 i = 0; i < 32; i++) {
-
-        stored[i] = new IntegerList(i);
-        list.ListAdd(stored[i]);
-
-    }
-
-    for (uint32 i = 0; i < 32; i++) {
-        nToSearch = i;
-        if (list.ListSearch(SearchIntFn) != stored[i]) {
-            return false;
-        }
-    }
-
-    nToSearch = 33;
-    return (list.ListSearch(SearchIntFn) == NULL) && (list.ListSearch((SearchFilterFn*) NULL) == NULL);
-}
-
 bool LinkedListHolderTest::TestListExtract() {
     LinkedListHolder list;
 
@@ -535,7 +486,7 @@ bool LinkedListHolderTest::TestListExtract() {
     return list.ListSize() == 0;
 }
 
-bool LinkedListHolderTest::TestListExtractSearchFn() {
+bool LinkedListHolderTest::TestListExtractSearchFilter() {
 
     LinkedListHolder list;
 
@@ -569,52 +520,6 @@ bool LinkedListHolderTest::TestListExtractSearchFn() {
         }
 
         if (list.ListExtract(&searchNumber) != NULL) {
-            return false;
-        }
-
-        if (list.ListSize() != (31 - i)) {
-            return false;
-        }
-    }
-
-    return list.ListSize() == 0;
-
-}
-
-bool LinkedListHolderTest::TestListExtractSearchFilter() {
-
-    LinkedListHolder list;
-
-    LinkedListable *stored[32];
-
-    for (uint32 i = 0; i < 32; i++) {
-
-        stored[i] = new IntegerList(i);
-        list.ListAdd(stored[i]);
-
-    }
-
-    nToSearch = 33;
-
-    if (list.ListExtract(SearchIntFn) != NULL) {
-        return false;
-    }
-
-    if (list.ListExtract((SearchFilterFn*) NULL) != NULL) {
-        return false;
-    }
-
-    for (uint32 i = 0; i < 32; i++) {
-        nToSearch = i;
-        if (list.ListExtract(SearchIntFn) != stored[i]) {
-            return false;
-        }
-
-        if (stored[i]->Next() != NULL) {
-            return false;
-        }
-
-        if (list.ListExtract(SearchIntFn) != NULL) {
             return false;
         }
 
@@ -736,49 +641,6 @@ bool LinkedListHolderTest::TestListDeleteSearchFilter() {
 
 }
 
-bool LinkedListHolderTest::TestListDeleteSearchFn() {
-
-    LinkedListHolder list;
-
-    LinkedListable *stored[32];
-
-    for (uint32 i = 0; i < 32; i++) {
-
-        stored[i] = new IntegerList(i % 16);
-        list.ListAdd(stored[i]);
-
-    }
-
-    nToSearch = 33;
-
-    if (list.ListDelete(SearchIntFn)) {
-        return false;
-    }
-
-    if (list.ListDelete((SearchFilterFn*) NULL)) {
-        return false;
-    }
-
-    for (uint32 i = 0; i < 16; i++) {
-
-        nToSearch = i % 16;
-        if (!list.ListDelete(SearchIntFn)) {
-            return false;
-        }
-
-        if (list.ListDelete(SearchIntFn)) {
-            return false;
-        }
-
-        if (list.ListSize() != (32 - 2 * (i + 1))) {
-            return false;
-        }
-    }
-
-    return list.ListSize() == 0;
-
-}
-
 void DeleteList(LinkedListHolderTest &t) {
 
     for (uint32 i = 0; i < 32; i++) {
@@ -876,38 +738,6 @@ bool LinkedListHolderTest::TestListBSortSorter(uint32 nElements) {
     return true;
 }
 
-bool LinkedListHolderTest::TestListBSortFn(uint32 nElements) {
-
-    LinkedListHolder list;
-
-    IntegerList *first1 = new IntegerList(0);
-    IntegerList *first2 = new IntegerList(nElements);
-
-    BuildLists(first1, first2, nElements, true);
-
-    list.ListAddL(first2);
-    list.ListAddL(first1);
-
-    list.ListBSort((SortFilterFn*) NULL);
-
-    //still in crescent order, nothing should happen
-    for (uint32 i = 0; i < (nElements - 1); i++) {
-        if ((((IntegerList*) list.ListPeek(i))->intNumber + 1) != ((IntegerList*) list.ListPeek(i + 1))->intNumber) {
-            return false;
-        }
-    }
-
-    list.ListBSort(DecrescentSortFn);
-    //still in crescent order, nothing should happen
-    for (uint32 i = 0; i < (2 * nElements - 1); i++) {
-        if (((IntegerList*) list.ListPeek(i))->intNumber != (((IntegerList*) list.ListPeek(i + 1))->intNumber + 1)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 bool LinkedListHolderTest::TestListPeek(uint32 nElements) {
 
     LinkedListHolder list;
@@ -955,39 +785,6 @@ bool LinkedListHolderTest::TestListIterateIterator() {
     IncrementIterator addOne;
 
     list.ListIterate(&addOne);
-
-    for (uint32 i = 0; i < 32; i++) {
-        if (stored[i]->intNumber != (i + 1)) {
-            return false;
-        }
-    }
-
-    return list.ListSize() == 32;
-
-}
-
-bool LinkedListHolderTest::TestListIterateFn() {
-
-    LinkedListHolder list;
-
-    IntegerList *stored[32];
-
-    for (uint32 i = 0; i < 32; i++) {
-
-        stored[i] = new IntegerList(i);
-        list.ListAdd(stored[i]);
-
-    }
-
-    list.ListIterate((IteratorFn*) NULL);
-
-    for (uint32 i = 0; i < 32; i++) {
-        if (stored[i]->intNumber != i) {
-            return false;
-        }
-    }
-
-    list.ListIterate(IncrementNumFn);
 
     for (uint32 i = 0; i < 32; i++) {
         if (stored[i]->intNumber != (i + 1)) {

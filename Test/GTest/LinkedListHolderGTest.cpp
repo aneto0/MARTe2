@@ -92,20 +92,10 @@ TEST(LinkedListHolderTest,TestListInsertSortedSorter) {
     ASSERT_TRUE(myLinkedListHolderTest.TestListInsertSortedSorter(32));
 }
 
-
-TEST(LinkedListHolderTest,TestListInsertSortedFn) {
-    LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListInsertSortedFn(32));
-}
-
-
-
 TEST(LinkedListHolderTest,TestListInsertNullSorter) {
     LinkedListHolderTest myLinkedListHolderTest;
     ASSERT_TRUE(myLinkedListHolderTest.TestListInsertNullSorter(32));
 }
-
-
 
 TEST(LinkedListHolderTest,TestListInsertIndex) {
     LinkedListHolderTest myLinkedListHolderTest;
@@ -138,14 +128,6 @@ TEST(LinkedListHolderTest,TestListSearchFilter) {
     ASSERT_TRUE(myLinkedListHolderTest.TestListSearchFilter());
 }
 
-
-
-TEST(LinkedListHolderTest,TestListSearchFn) {
-    LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListSearchFn());
-}
-
-
 TEST(LinkedListHolderTest,TestListExtract) {
     LinkedListHolderTest myLinkedListHolderTest;
     ASSERT_TRUE(myLinkedListHolderTest.TestListExtract());
@@ -154,12 +136,6 @@ TEST(LinkedListHolderTest,TestListExtract) {
 TEST(LinkedListHolderTest,TestListExtractSearchFilter) {
     LinkedListHolderTest myLinkedListHolderTest;
     ASSERT_TRUE(myLinkedListHolderTest.TestListExtract());
-}
-
-
-TEST(LinkedListHolderTest,TestListExtractSearchFn) {
-    LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListExtractSearchFn());
 }
 
 TEST(LinkedListHolderTest,TestListExtractIndex) {
@@ -177,21 +153,11 @@ TEST(LinkedListHolderTest,TestListDeleteSearchFilter) {
     ASSERT_TRUE(myLinkedListHolderTest.TestListDeleteSearchFilter());
 }
 
-TEST(LinkedListHolderTest,TestListDeleteSearchFn) {
-    LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListDeleteSearchFn());
-}
-
-
 TEST(LinkedListHolderTest,TestListBSortSorter) {
     LinkedListHolderTest myLinkedListHolderTest;
     ASSERT_TRUE(myLinkedListHolderTest.TestListBSortSorter(32));
 }
 
-TEST(LinkedListHolderTest,TestListBSortFn) {
-    LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListBSortFn(32));
-}
 
 TEST(LinkedListHolderTest,TestListPeek) {
     LinkedListHolderTest myLinkedListHolderTest;
@@ -201,11 +167,6 @@ TEST(LinkedListHolderTest,TestListPeek) {
 TEST(LinkedListHolderTest,TestListIterateIterator) {
     LinkedListHolderTest myLinkedListHolderTest;
     ASSERT_TRUE(myLinkedListHolderTest.TestListIterateIterator());
-}
-
-TEST(LinkedListHolderTest,TestListIterateFn) {
-    LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListIterateFn());
 }
 
 TEST(LinkedListHolderTest,TestListSafeDelete) {
