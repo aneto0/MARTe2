@@ -1,8 +1,8 @@
 /**
  * @file ReferenceTest.cpp
  * @brief Source file for class ReferenceTest
- * @date 07/ago/2015
- * @author pc
+ * @date 07/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -125,6 +125,20 @@ bool ReferenceTest::TestCopyFromObjPtrConstructorNullPtr() {
     return !ret.IsValid();
 }
 
+bool ReferenceTest::TestDestructor() {
+    Heap mem;
+
+    //an object with this name is not registered!
+    Reference buildObj("IntegerObject", mem);
+
+    if ((buildObj.NumberOfReferences() != 1) && (buildObj.IsValid())) {
+        return false;
+    }
+
+    buildObj.~Reference();
+    return (buildObj.NumberOfReferences() == 0) && (!buildObj.IsValid());
+}
+
 //TODO
 bool ReferenceTest::TestInitialise() {
     return true;
@@ -170,3 +184,208 @@ bool ReferenceTest::TestRemoveReference() {
     return !intObjRef.IsValid();
 
 }
+
+bool ReferenceTest::TestCopyOperatorReference() {
+    ClassRegistryDatabase db = ClassRegistryDatabase::Instance();
+
+    Heap mem;
+    IntegerObject *myIntObj = dynamic_cast<IntegerObject*>(db.CreateByName("IntegerObject", mem));
+
+    myIntObj->SetVariable(2);
+
+    Reference intObjRef(myIntObj);
+
+    Reference copyObj = intObjRef;
+
+    if (dynamic_cast<IntegerObject*>(intObjRef.operator->()) != dynamic_cast<IntegerObject*>(copyObj.operator->())) {
+        return false;
+    }
+
+    return (myIntObj->NumberOfReferences() == 2) && ((dynamic_cast<IntegerObject*>(copyObj.operator->()))->GetVariable() == 2);
+}
+
+bool ReferenceTest::TestCopyOperatorReferenceNull() {
+    Reference copyObj = (Reference) NULL;
+    if (dynamic_cast<IntegerObject*>(copyObj.operator->()) != NULL) {
+        return false;
+    }
+
+    return copyObj.NumberOfReferences() == 0;
+}
+
+bool ReferenceTest::TestCopyOperatorObject() {
+    ClassRegistryDatabase db = ClassRegistryDatabase::Instance();
+
+    Heap mem;
+    IntegerObject *myIntObj = dynamic_cast<IntegerObject*>(db.CreateByName("IntegerObject", mem));
+
+    myIntObj->SetVariable(2);
+
+    Reference copyObj = myIntObj;
+    if (myIntObj != dynamic_cast<IntegerObject*>(copyObj.operator->())) {
+        return false;
+    }
+
+    return myIntObj->NumberOfReferences() == 1 && ((dynamic_cast<IntegerObject*>(copyObj.operator->()))->GetVariable() == 2);
+
+}
+
+bool ReferenceTest::TestCopyOperatorObjectNull() {
+    Reference copyObj = (Object*) NULL;
+    if (dynamic_cast<IntegerObject*>(copyObj.operator->()) != NULL) {
+        return false;
+    }
+
+    return copyObj.NumberOfReferences() == 0;
+}
+
+bool ReferenceTest::TestIsValid() {
+
+    Heap mem;
+
+    //an object with this name is not registered!
+    Reference fakeObj("FakeObject", mem);
+
+    //the reference should be invalid!
+    if (fakeObj.IsValid()) {
+        return false;
+    }
+
+    Reference copyNull((Reference) NULL);
+    //the reference should be invalid!
+    if (copyNull.IsValid()) {
+        return false;
+    }
+
+    Reference buildObj("IntegerObject", mem);
+    //the reference should be valid!
+    if (!buildObj.IsValid()) {
+        return false;
+    }
+
+    buildObj.RemoveReference();
+
+    return !buildObj.IsValid();
+
+}
+
+bool ReferenceTest::TestNumberOfReferences() {
+
+    Heap mem;
+
+    Reference buildObj("IntegerObject", mem);
+
+    Reference builtFromRef(buildObj);
+    Reference builtFromObj(dynamic_cast<IntegerObject*>(buildObj.operator->()));
+
+    Reference refs[4];
+    refs[0] = buildObj;
+    refs[1] = builtFromRef;
+    refs[2] = (dynamic_cast<IntegerObject*>(buildObj.operator->()));
+    refs[3] = builtFromObj;
+
+    builtFromObj.RemoveReference();
+    builtFromRef.RemoveReference();
+
+    for (uint32 i = 0; i < 4; i++) {
+        if (refs[i].NumberOfReferences() != 5) {
+            return false;
+        }
+    }
+
+    for (uint32 i = 4; i > 0; i--) {
+        refs[i - 1].RemoveReference();
+        if (refs[i - 1].NumberOfReferences() != 0) {
+            return false;
+        }
+
+        //checks if the others see the correct number of refs
+        for (uint32 j = 0; j < (i - 1); j++) {
+            if (refs[j].NumberOfReferences() != i) {
+                return false;
+            }
+        }
+    }
+
+    return buildObj.NumberOfReferences() == 1;
+
+}
+
+bool ReferenceTest::TestEqualOperator() {
+
+    Heap mem;
+
+    Reference buildObj("IntegerObject", mem);
+
+    Reference copy(buildObj);
+
+    if (!(buildObj == copy)) {
+        return false;
+    }
+
+    //another instance of the same class
+    Reference test("IntegerObject", mem);
+
+    if (buildObj == test) {
+        return false;
+    }
+
+    copy = (Reference) NULL;
+
+    if (buildObj == copy) {
+        return false;
+    }
+
+    copy = buildObj;
+    if (!(buildObj == copy)) {
+        return false;
+    }
+
+    copy = (Object*) NULL;
+    buildObj = (Reference) NULL;
+
+    return (buildObj == copy);
+
+}
+
+bool ReferenceTest::TestDifferentOperator() {
+
+    Heap mem;
+
+    Reference buildObj("IntegerObject", mem);
+
+    Reference copy(buildObj);
+
+    if (buildObj != copy) {
+        return false;
+    }
+
+    copy = (Reference) NULL;
+
+    if (!(buildObj != copy)) {
+        return false;
+    }
+
+    copy = buildObj;
+    if (buildObj != copy) {
+        return false;
+    }
+
+    copy = (Object*) NULL;
+    buildObj = (Reference) NULL;
+
+    return !(buildObj != copy);
+
+}
+
+bool ReferenceTest::TestClone() {
+
+    Heap mem;
+
+    Reference buildObj("IntegerObject", mem);
+
+    Reference fakeObj("FakeObject", mem);
+
+    return !(buildObj.Clone(fakeObj)) && !(fakeObj.Clone(buildObj));
+}
+
