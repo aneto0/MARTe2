@@ -1,8 +1,8 @@
 /**
  * @file ReferenceTest.cpp
  * @brief Source file for class ReferenceTest
- * @date 07/ago/2015
- * @author pc
+ * @date 07/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -191,6 +191,8 @@ bool ReferenceTest::TestCopyOperatorReference() {
     Heap mem;
     IntegerObject *myIntObj = dynamic_cast<IntegerObject*>(db.CreateByName("IntegerObject", mem));
 
+    myIntObj->SetVariable(2);
+
     Reference intObjRef(myIntObj);
 
     Reference copyObj = intObjRef;
@@ -199,7 +201,7 @@ bool ReferenceTest::TestCopyOperatorReference() {
         return false;
     }
 
-    return myIntObj->NumberOfReferences() == 2;
+    return (myIntObj->NumberOfReferences() == 2) && ((dynamic_cast<IntegerObject*>(copyObj.operator->()))->GetVariable() == 2);
 }
 
 bool ReferenceTest::TestCopyOperatorReferenceNull() {
@@ -217,12 +219,14 @@ bool ReferenceTest::TestCopyOperatorObject() {
     Heap mem;
     IntegerObject *myIntObj = dynamic_cast<IntegerObject*>(db.CreateByName("IntegerObject", mem));
 
+    myIntObj->SetVariable(2);
+
     Reference copyObj = myIntObj;
     if (myIntObj != dynamic_cast<IntegerObject*>(copyObj.operator->())) {
         return false;
     }
 
-    return myIntObj->NumberOfReferences() == 1;
+    return myIntObj->NumberOfReferences() == 1 && ((dynamic_cast<IntegerObject*>(copyObj.operator->()))->GetVariable() == 2);
 
 }
 
@@ -319,6 +323,13 @@ bool ReferenceTest::TestEqualOperator() {
         return false;
     }
 
+    //another instance of the same class
+    Reference test("IntegerObject", mem);
+
+    if (buildObj == test) {
+        return false;
+    }
+
     copy = (Reference) NULL;
 
     if (buildObj == copy) {
@@ -375,6 +386,6 @@ bool ReferenceTest::TestClone() {
 
     Reference fakeObj("FakeObject", mem);
 
-    return !(buildObj.Clone(fakeObj));
+    return !(buildObj.Clone(fakeObj)) && !(fakeObj.Clone(buildObj));
 }
 
