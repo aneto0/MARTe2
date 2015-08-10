@@ -49,6 +49,11 @@
  -sem(MutexSem::~MutexSem, cleanup)
 
 /*
+ * Destructor calls the cleanup function 
+ */
+-sem(Reference::RemoveReference,cleanup)
+
+/*
  * Linux is not certifiable. Disable all operating system headers related warnings.
  */
 -e829
@@ -57,8 +62,6 @@
  * Rule GLOBAL
  * Justification: Not applicable to a framework
  */
-//-e755 /* global macro not referenced */
-//-e756 
 /* global typedef not referenced */
 -esym(756,intptr,Colours)
 /* global struct/union/enum not referenced */
@@ -90,10 +93,6 @@
  * Rule 0-1-10 
  * Justfication: Not applicable to a framework
  */
-/* symbol not referenced */
-//-e528  
-/* symbol not referenced */
-//-e714  
 /* member function not referenced */
 -esym(1714,Sleep::*)
 -esym(1714,HighResolutionTimer::*)
@@ -121,10 +120,12 @@
 -esym(1714,ClassRegistryItem::*)
 -esym(1714,ClassRegistryDatabase::*)
 -esym(1714,Object::*)
+-esym(1714,Reference::*)
 
 /* virtual member function not referenced */
 -esym(1716,IBasicConsole::*)
 -esym(1716,Object::*)
+-esym(1716,Reference::*)
 
 /* default constructor not referenced */
 -esym(1914,Flags::*) 
@@ -137,6 +138,7 @@
 -esym(1914,ClassProperties::*)
 -esym(1914,ClassRegistryItem::*)
 -esym(1914,Object::*)
+-esym(1914,Reference::*)
 
 /*
  * Rule 0-1-11
@@ -253,6 +255,11 @@
 -esym(9141,*BuildFn_*)
 -esym(9141,*ClassProperties_)
 -esym(9141,*ClassRegistryItem_)
+-esym(9141,Reference)
+-esym(9141,Reference::*)
+-esym(9141,ReferenceT)
+-esym(9141,ReferenceT::*)
+-esym(9141,ReferenceT*)
 
 /*
  * MISRA 3-3-1
@@ -277,11 +284,12 @@
  * Rule flexelint 1960 
  * Rule MISRA 0-1-8
  * Void functions must have an external effect.
- * Justification: They change a class attribute.
+ * Justification: They do change a class attribute.
  */
 -esym(1960, TimeoutType::SetTimeoutSec*)
 -esym(1960, TimeoutType::SetTimeoutHighResolutionTimerTicks*)
-
+-esym(1960, ReferenceT<<1>>::Init*)
+-esym(1960, ReferenceT<<1>>::RemoveReference*)
 
 /*
  * Rule flexelint 1784. 
@@ -302,3 +310,9 @@
   * It is as if it was a member function of the class.
   */
  -esym(459, *BuildFn_*)
+ 
+ /*
+  * Rule 14-7-1
+  * Justification: Not applicable to a framework.
+  */
+-esym(1795, ReferenceT*)

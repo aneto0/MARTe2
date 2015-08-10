@@ -59,7 +59,7 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties, const 
     ClassRegistryDatabase::Instance().Add(this);
 }
 
-/*lint -e{1551} no exception should be thrown. Only reason is the pointer are messed-up
+/*lint -e{1551} no exception should be thrown. Only reason is if the pointers are messed-up
  * by some racing condition or similar. Should not happen as the only user of this class
  * is the ClassRegistryDatabase.*/
 ClassRegistryItem::~ClassRegistryItem() {

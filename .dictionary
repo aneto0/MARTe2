@@ -18,3 +18,4 @@ introspectable
 constness
 loadable
 downcasting
+namespace

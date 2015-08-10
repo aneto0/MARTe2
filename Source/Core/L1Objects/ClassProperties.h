@@ -36,9 +36,10 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief Properties of a framework base class (i.e. one that inherits from Object).
- * @details Provides introspection information about any framework base class. This
- * information is automatically computed by the framework at initialisation time.
+ * @brief Properties of a framework base class.
+ * @details Provides introspection information about any framework base class (i.e. one that inherits from Object).
+ *
+ * This information is automatically computed by the framework at initialisation time (see ClassRegistryDatabase).
  */
 class ClassProperties {
 public:

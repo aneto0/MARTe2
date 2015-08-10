@@ -1,8 +1,5 @@
 #!/bin/bash
-HOST=192.168.130.72
+HOST=flexelint.codac.local
 REMOTE_DIR_CODE=MARTe2-dev
-REMOTE_DIR_DOC=MARTe2-doc
-LOCAL_DIR_DOC=../MARTe2-doc/.
-rsync -avz --delete -e ssh . gferro@$HOST:$REMOTE_DIR_CODE
-rsync -avz --delete -e ssh $LOCAL_DIR_DOC gferro@$HOST:$REMOTE_DIR_DOC
-ssh gferro@$HOST "/opt/FlexeLint/flint -i $REMOTE_DIR_CODE/Source/Core/L0Portability/ -i $REMOTE_DIR_CODE/Source/Core/L0Portability/OperatingSystem/Linux -i /opt/FlexeLint/supp/lnt -i $REMOTE_DIR_DOC/Assets/Configuration/ -v marte_flint_eclipse.lnt | grep -v lint-linux.h"
+rsync -avz --delete -e ssh . $USER@$HOST:$REMOTE_DIR_CODE
+ssh $USER@$HOST "/opt/FlexeLint/flint -i $REMOTE_DIR_CODE/Source/Core/L0Portability/ -i $REMOTE_DIR_CODE/Source/Core/L0Portability/OperatingSystem/Linux -i $REMOTE_DIR_CODE/Source/Core/L1Objects/ -i /opt/FlexeLint/supp/lnt -i $REMOTE_DIR_CODE/MakeDefaults/Lint/ -v marte_flint_eclipse.lnt | grep -v lint-linux.h"

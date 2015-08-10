@@ -108,7 +108,7 @@ bool ReferenceTest::TestCopyFromObjPtrConstructor() {
         return false;
     }
 
-    Reference ret(myIntObj);
+    Reference ret = myIntObj;
 
     //checks if it has zero references
     if (myIntObj->NumberOfReferences() != 1) {

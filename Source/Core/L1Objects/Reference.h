@@ -68,13 +68,19 @@ public:
      * @param[in] typeName the name of the class type.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    Reference(const char8* typeName, Heap &heap);
+    Reference(const char8* const typeName, const Heap &heap);
 
     /**
-     * @brief Creates a new Reference from an object pointer.
-     * @param[in] pointer the source pointer to be referenced.
+     * @brief Creates a reference to an existing pointer.
+     * @param[in] pointer source object to assign.
+     * @details It will increment the number of references referencing the underlying object.
      */
-    Reference(Object * pointer);
+    Reference (Object * const pointer);
+
+    /**
+     * @brief Removes the reference to the underlying object. @see RemoveReference.
+     */
+    virtual ~Reference();
 
     /**
      * @brief Create an object from a structured list of elements.
@@ -82,8 +88,7 @@ public:
      * @param[in] createOnly if true the object Initialise method is not called.
      * @return true if the object was successfully created and initialised.
      */
-    virtual bool Initialise(const StructuredData &data,
-                            bool createOnly = false);
+    virtual bool Initialise(const StructuredData &data, const bool &createOnly);
 
     /**
      * @brief Removes the reference to the underlying object.
@@ -91,27 +96,6 @@ public:
      * IsValid will return false after this operation.
      */
     virtual void RemoveReference();
-
-    /**
-     * @brief Assignment operator.
-     * @param[in] sourceReference the source reference to be assigned to this reference.
-     * @details This reference will be referencing the same object as the sourceReference.
-     * @return a reference to the object referenced by sourceReference.
-     */
-    Reference& operator=(const Reference& sourceReference);
-
-    /**
-     * @brief Assignment operator.
-     * @param[in] pointer source object to assign.
-     * @details It will increment the number of references referencing the underlying object.
-     * @return a reference to the underlying object.
-     */
-    Reference& operator=(Object * pointer);
-
-    /**
-     * @brief Removes the reference to the underlying object. @see RemoveReference.
-     */
-    virtual ~Reference();
 
     /**
      * @brief Verifies if the reference to the underlying object is valid.
@@ -131,32 +115,42 @@ public:
      * @param[in] sourceReference reference to be compared.
      * @return true if the sourceReference links to the same object as this Reference.
      */
-    bool operator==(const Reference& reference) const;
+    virtual bool operator==(const Reference& sourceReference) const;
 
     /**
      * @brief Verifies if this Reference owns the same object of sourceReference.
      * @param[in] sourceReference reference to be compared.
      * @return true if the sourceReference does not own the same object as this Reference.
      */
-    bool operator!=(const Reference& sourceReference) const;
+    virtual bool operator!=(const Reference& sourceReference) const;
+
+    /**
+     * @brief Assignment operator.
+     * @param[in] sourceReference the source reference to be assigned to this reference.
+     * @details This reference will be referencing the same object as the sourceReference.
+     * @return a reference to the object referenced by sourceReference.
+     */
+    virtual Reference& operator=(const Reference& sourceReference);
+
 
     /**
      * @brief Provides access to the underlying object linked by this Reference.
      * @return a pointer to the underlying object linked by this Reference.
      */
-    Object* operator->() const;
+    virtual Object* operator->();
 
     /**
      * @brief Creates a Reference to a different object.
      * @param[in] sourceReference the Reference holding the source object.
      * @return true if the source Reference and source object are valid.
      */
-    bool Clone(const Reference &sourceReference);
+    virtual bool Clone(Reference &sourceReference);
 
 protected:
     /**
      * The pointer to the referenced object.
      */
+    /*lint -e9150 the member is not private so that ReferenceT can access it.*/
     Object* objectPointer;
 
 private:
@@ -164,7 +158,8 @@ private:
      * @brief Prevents the copying of a reference by taking its address.
      * @return a copy of this reference.
      */
-    Reference* operator&() {
+    /*lint -e9135 unity operator overloaded in order to implement access to the shared object.*/
+    virtual Reference* operator&() {
         return this;
     }
 };

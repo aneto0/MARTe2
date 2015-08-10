@@ -58,6 +58,9 @@ LinkedListHolder::LinkedListHolder() {
     llhRoot.SetNext(static_cast<LinkedListable *>(NULL));
 }
 
+/*lint -e{1551} the only reason why this could throw an exception is if
+ * due to some racing condition, while destroying the list, the pointer
+ * to the next element was to be destructed by some other thread. */
 LinkedListHolder::~LinkedListHolder() {
     CleanUp();
 }

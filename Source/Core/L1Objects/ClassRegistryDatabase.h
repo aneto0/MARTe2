@@ -39,11 +39,13 @@
 /*---------------------------------------------------------------------------*/
 /**
  * @brief Database of framework base classes.
- * @details Most of the framework user classes inherit from Object. As a consequence,
- * they have the property of being automatically instantiated and managed by the framework.
- * Every class that inherits from Object will be described by a ClassRegistryItem and
- * automatically added to a ClassRegistryDatabase. This database can then be used to query
- * information about the registered classes.
+ * @details Most of the framework user classes inherit from Object. As a
+ * consequence, they have the property of being automatically instantiated
+ * and managed by the framework.
+ *
+ * Every class that inherits from Object will be described by a
+ * ClassRegistryItem and automatically added to a ClassRegistryDatabase. This
+ * database can then be used to retrieve information about the registered classes.
  */
 class ClassRegistryDatabase {
 public:
@@ -54,13 +56,13 @@ public:
     static ClassRegistryDatabase &Instance();
 
     /**
-     * @brief Destructor. Clears all the elements hold by the database.
+     * @brief Destructor. Removes all the elements hold by the database.
      */
     ~ClassRegistryDatabase();
 
     /**
      * @brief Removes an element from the database.
-     * @details In principle this method should only be called by the
+     * @details This method should only be called by the
      * ClassRegistryItem destructor.
      * @param[in] p the element to be removed.
      * @return true if the element was successfully removed from the database.
@@ -68,32 +70,32 @@ public:
     bool Delete(ClassRegistryItem * const p);
 
     /**
-     * @brief Adds an element from the database.
-     * @details In principle this method should only be called by the
+     * @brief Adds an element to the database.
+     * @details This method should only be called by the
      * ClassRegistryItem constructor.
      * @param[in] p the element to be added.
      */
     void Add(ClassRegistryItem * const p);
 
     /**
-     * @brief Returns the ClassRegistryItem describing the class with name className.
+     * @brief Returns the ClassRegistryItem associated to the class with name \a className.
      * @details The returned pointer will be valid as long as it exists in the database.
      * @param[in] className the name of the class to be searched.
-     * @return a pointer to the ClassRegisteredItem or NULL if the className could not be found.
+     * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
     ClassRegistryItem *Find(const char8 *className);
 
     /**
-     * @brief Instantiates of the class with name className in the specified heap.
+     * @brief Instantiates a new object of type className in the specified heap.
      * @param[in] className the name of the class.
      * @param[in] heap the heap where the object is to be allocated.
-     * @return a new object of the specified class or NULL if the className does not exist.
+     * @return a new object of the specified class or NULL if the \a className does not exist.
      */
     Object *CreateByName(const char8 * const className, const Heap &heap);
 
     /**
      * @brief Returns an access point to the database root.
-     * @return Pointer to the database root which can be used to scan the database.
+     * @return a pointer to the database root which can be used to scan the database.
      */
     ClassRegistryItem *List();
 

@@ -218,16 +218,14 @@ private:
     /**
      * @brief Decrements the number of references to this object.
      * @details Only accessible to the Reference class.
-     * @return the new number of references.
      */
     uint32 DecrementReferences();
 
     /**
      * @brief Increments the number of references to this object.
      * @details Only accessible to the Reference class.
-     * @return the new number of references.
      */
-    uint32 IncrementReferences();
+    void IncrementReferences();
 
     /**
      * @brief Clones the object.
