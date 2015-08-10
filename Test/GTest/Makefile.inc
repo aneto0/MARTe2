@@ -24,23 +24,13 @@
 #
 #############################################################
 
-OBJSX=  EndianityGTest.x \
-	SleepGTest.x \
-	ProcessorGTest.x \
-	AtomicGTest.x \
-	ProcessorTypeGTest.x \
-	EventSemGTest.x \
-	HighResolutionTimerGTest.x \
-	MemoryGTest.x \
-	FastPollingMutexSemGTest.x \
-	StringHelperGTest.x \
-	StringPortableGTest.x \
-	ThreadsGTest.x \
-	MutexSemGTest.x \
-    BasicConsoleGTest.x \
-    TimeoutTypeGTest.x \
-    LoadableLibraryGTest.x \
-    FastMathGTest.x
+OBJSX= LinkedListableGTest.x \
+	LinkedListHolderGTest.x \
+	ClassRegistryDatabaseGTest.x \
+	ObjectGTest.x \
+	ReferenceGTest.x
+
+
 
 PACKAGE=
 ROOT_DIR=../..
@@ -50,10 +40,10 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../ 
 INCLUDES += -I../Core/L0Portability
-INCLUDES += -I../Core/L1CLib
+INCLUDES += -I../Core/L1Objects
 INCLUDES += -I../Core/LXTypeDev
 INCLUDES += -I../../Source/Core/L0Portability
-INCLUDES += -I../../Source/Core/L1CLib
+INCLUDES += -I../../Source/Core/L1Objects
 INCLUDES += -I../../Source/Core/LXTypeDev
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 

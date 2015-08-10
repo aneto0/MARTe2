@@ -38,6 +38,11 @@
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,GeneralDefinitionsA.h)
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,GeneralDefinitionsOS.h)
 
+/*lint -save -e9026, function-like macro defined. The aim is to reduce the clutter in the code
+ * This avoids replacing ptr = static<MyObject *>(NULL) with ptr = NULL_PTR(MyObject *)*/
+#define NULL_PTR(ptr) static_cast<ptr>(NULL)
+/*lint -restore */
+
 /**
  * Uncomment this section to use memory statistics functions
  #ifndef MEMORY_STATISTICS
@@ -93,6 +98,39 @@ struct TimeValues {
     /** year since 1900 */
     uint32 year;
 };
+
+
+
+/**
+ * The return codes when a Test2 function is called in a SearchFilterT or
+ * when Do2 function is called in IteratorT
+ */
+enum SFTestType {
+
+    /** No meaning associated */
+    SFTTNull = 0x0000,
+
+    /** This is exactly what I was looking for! */
+    SFTTFound = 0x1001,
+
+    /** This is not what I was looking for */
+    SFTTNotFound = 0x1000,
+
+    /** When recursive search where a path has
+     been specified is used This is not the right path */
+    SFTTWrongPath = 0x1002,
+
+    /** When recursing this is to notify of a node beginning of
+     recursion (used only for Do2) */
+    SFTTRecurse = 0x2000,
+
+    /** When recursing this is to notify of the return
+     to the previous level used also for Do2 */
+    SFTTBack = 0x2001
+};
+
+
+
 
 /** Large enough to store a pointer*/
 #ifdef __LP64__

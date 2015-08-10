@@ -29,8 +29,6 @@
 /*---------------------------------------------------------------------------*/
 #include "FreeRTOS.h"
 #include "task.h"
-#include "semphr.h"
-
 
 #ifndef NULL
 #define NULL 0
@@ -39,8 +37,6 @@
 #ifndef USE_THREADS_DATABASE
 #define USE_THREADS_DATABASE 0
 #endif
-
-typedef SemaphoreHandle_t mutexHandle;
 
 /**
  * Thread identifier in FreeRTOS
@@ -62,12 +58,14 @@ static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdenti
 /** In windows the newline is specified with \r\n */
 #define N_CHARS_NEWLINE 1u
 
-inline void* operator new(uint32 x) {
+static const char8 * const operatingSystemDLLExtensions[] = { 0 };
+
+/*inline void* operator new(uint32 x) {
     return pvPortMalloc(x);
 }
 
 inline void operator delete(void *ptr) {
     vPortFree(ptr);
-}
+}*/
 #endif /* GENERALDEFINITIONSOS_H_ */
 
