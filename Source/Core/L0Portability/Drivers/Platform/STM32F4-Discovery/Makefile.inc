@@ -20,33 +20,21 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
-PACKAGE=Core
-ROOT_DIR=../../..
+PACKAGE=Core/L0Portability/Drivers
+ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-SPB=OperatingSystem/$(OPERATING_SYSTEM).x
-SPB2+= Drivers/Platform/$(PLATFORM).x
-
-OBJSX= Atomic.x \
-        Endianity.x \
-        FastMath.x \
-        ProcessorType.x \
-        StringPortable.x \
-        ThreadsDatabase.x \
-        ThreadInformation.x \
-        LoadableLibrary.x \
-        FastPollingMutexSem.x
-
-LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
-
+OBJSX=ClockP.x 
+       
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L0Portability$(LIBEXT)
+INCLUDES+=-I../../
+INCLUDES+=-I../../../
+
+all: $(OBJS)    \
+                $(BUILD_DIR)/L0PortabilityP$(LIBEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

@@ -29,6 +29,8 @@
 /*---------------------------------------------------------------------------*/
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
+
 
 #ifndef NULL
 #define NULL 0
@@ -37,6 +39,8 @@
 #ifndef USE_THREADS_DATABASE
 #define USE_THREADS_DATABASE 0
 #endif
+
+typedef SemaphoreHandle_t mutexHandle;
 
 /**
  * Thread identifier in FreeRTOS

@@ -26,6 +26,7 @@
 BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
 
 OPERATING_SYSTEM=FreeRTOS
+PLATFORM=STM32F4-Discovery
 EXEEXT=.ex
 DLLEXT=.so
 LIBEXT=.a
@@ -50,18 +51,30 @@ COMPILER = arm-none-eabi-gcc
 CCOMPILER = arm-none-eabi-gcc
 MAKE     = make
 
-FREE_RTOS_DIRECTORY=$(FREE_RTOS_STM)
-PORT_MACRO_H_DIRECTORY=$(FREE_RTOS_STM)/Source/portable/GCC/ARM_CM4F
 DEBUG = -g 
 OPTIM = -Os
-INCLUDES=-I$(FREE_RTOS_DIRECTORY)/Source/include -I$(PORT_MACRO_H_DIRECTORY)
+INCLUDES=-I$(STM_PACKAGE)/Middlewares/Third_Party/FreeRTOS/Source/include 
+INCLUDES+= -I$(STM_PACKAGE)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+INCLUDES+= -I$(STM_PACKAGE)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/
+INCLUDES+= -I$(STM_PACKAGE)/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/
+INCLUDES+= -I$(STM_PACKAGE)/Middlewares/Third_Party/FreeRTOS/Source/include/
+INCLUDES+= -I$(STM_PACKAGE)/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+INCLUDES+= -I$(STM_PACKAGE)/Drivers/STM32F4xx_HAL_Driver/Inc/
+INCLUDES+= -I$(STM_PACKAGE)/Drivers/BSP/STM32F4-Discovery/
+INCLUDES+= -I$(STM_PACKAGE)/Drivers/CMSIS/Include/
+#INCLUDES+= -I$(STM_PACKAGE)/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/
+#INCLUDES+= -I$(STM_PACKAGE)/Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc/
+#INCLUDES+= -I$(STM_PACKAGE)/Drivers/BSP/Components/lis3dsh/
+#INCLUDES+= -I$(STM_PACKAGE)/Drivers/BSP/Components/lis302dl/
+
+
 LINKER = arm-none-eabi-ld
 LFLAGS = -Wl,--no-as-needed  
 
 
-CFLAGS = -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -flto -g -Wall
+CFLAGS = -MD -MP -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -flto -g -Wall
 CPPFLAGS = $(CFLAGS) 
-CFLAGSPEC= -DARCHITECTURE=armv7m_gcc -DOPERATING_SYSTEM=FreeRTOS
+CFLAGSPEC= -DARCHITECTURE=armv7m_gcc -DOPERATING_SYSTEM=FreeRTOS -DPLATFORM=STM32F4_Discovery -DSTM32F407xx
 LIBRARIES =  -lm -lnsl -lrt -lncurses -ldl -lgcc -lc
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

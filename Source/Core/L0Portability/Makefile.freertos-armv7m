@@ -30,3 +30,4 @@ include Makefile.inc
 
 OPTIM=-finline-functions
 
+LIBRARIES_STATIC += $(BUILD_DIR)/Drivers/$(PLATFORM)/L0PortabilityP$(LIBEXT) 

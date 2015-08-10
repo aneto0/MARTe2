@@ -34,7 +34,8 @@ OBJSX=ProcessorOS.x \
         MemoryOS.x \
         StringHelperOS.x \
         MutexSemOS.x \
-        EventSemOS.x
+        EventSemOS.x \
+        dummyOS.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

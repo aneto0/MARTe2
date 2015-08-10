@@ -24,80 +24,6 @@
 #ifndef ATOMICA_H_
 #define ATOMICA_H_
 
-inline void ATOMIC_INCREMENT(volatile int32 *value) {
-
-    register int32 readValue;
-    register int32 ret;
-    do {
-        asm volatile(
-                "ldrex %0, [%1]\n"
-                "add %0, %0, #1\n"
-                "strex %2, %0, [%1]\n"
-                "cmp %2, #0\n"
-                : : "r" (readValue), "r" (value), "r" (ret)
-        );
-    }
-    while (ret != 0);
-}
-
-inline void ATOMIC_DECREMENT(volatile int32 *value) {
-
-    register int32 readValue;
-    register int32 ret;
-    do {
-        asm volatile(
-                "ldrex %0, [%1]\n"
-                "sub %0, %0, #1\n"
-                "strex %2, %0, [%1]\n"
-                "cmp %2, #0\n"
-                : : "r" (readValue), "r" (value), "r" (ret)
-        );
-    }
-    while (ret != 0);
-}
-
-inline void EXCHANGE(volatile int32 *oldValue,
-                     int32 newValue) {
-
-    register int32 readValue;
-    register int32 ret;
-    do {
-        asm volatile(
-                "ldrex %0, [%1]\n"
-                "strex %2, %3, [%1]\n"
-                : : "r" (readValue), "r" (oldValue), "r" (ret), "r" (newValue)
-        );
-    }
-    while (ret != 0);
-}
-
-inline bool TEST_AND_SET(volatile int32 *value) {
-
-    register int32 readValue;
-    register int32 ret;
-
-    do {
-        asm volatile(
-                "ldrex %0, [%1]"
-                : : "r" (readValue), "r" (value)
-        );
-
-        if (readValue != 0) {
-            break;
-        }
-        asm volatile(
-                "add %0, %0, #1\n"
-                "strex %2, %0, [%1]\n"
-                "mov %0, %2"
-                : : "r" (readValue), "r" (value), "r" (ret)
-        );
-
-    }
-    while (ret != 0);
-
-    return readValue == 0;
-}
-
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -119,7 +45,18 @@ public:
      */
     static inline void Increment32(volatile int32 *p) {
 
-        ATOMIC_INCREMENT(p);
+        register int32 readValue;
+        register int32 ret;
+        do {
+            asm volatile(
+                    "ldrex %0, [%1]\n"
+                    "add %0, %0, #1\n"
+                    "strex %2, %0, [%1]\n"
+                    "cmp %2, #0\n"
+                    : : "r" (readValue), "r" (value), "r" (ret)
+            );
+        }
+        while (ret != 0);
     }
 
     /**
@@ -144,7 +81,18 @@ public:
      * @param p is the 32 bits variable to decrement. */
     static inline void Decrement32(volatile int32 *p) {
 
-        ATOMIC_DECREMENT(p);
+        register int32 readValue;
+        register int32 ret;
+        do {
+            asm volatile(
+                    "ldrex %0, [%1]\n"
+                    "sub %0, %0, #1\n"
+                    "strex %2, %0, [%1]\n"
+                    "cmp %2, #0\n"
+                    : : "r" (readValue), "r" (value), "r" (ret)
+            );
+        }
+        while (ret != 0);
     }
 
     /** @brief Atomically decrement a 16 bit integer in memory.
@@ -168,7 +116,16 @@ public:
      * @param v is the variable to store. */
     static inline int32 Exchange32(volatile int32 *p,
                                    int32 v) {
-        EXCHANGE(p, v);
+        register int32 readValue;
+        register int32 ret;
+        do {
+            asm volatile(
+                    "ldrex %0, [%1]\n"
+                    "strex %2, %3, [%1]\n"
+                    : : "r" (readValue), "r" (oldValue), "r" (ret), "r" (newValue)
+            );
+        }
+        while (ret != 0);
         return v;
 
     }
@@ -178,7 +135,29 @@ public:
      * @return return true if p=0 and it sets p to one, else return false. */
     static inline bool TestAndSet32(int32 volatile *p) {
 
-        return TEST_AND_SET(p);
+        register int32 readValue;
+        register int32 ret;
+
+        do {
+            asm volatile(
+                    "ldrex %0, [%1]"
+                    : : "r" (readValue), "r" (value)
+            );
+
+            if (readValue != 0) {
+                break;
+            }
+            asm volatile(
+                    "add %0, %0, #1\n"
+                    "strex %2, %0, [%1]\n"
+                    "mov %0, %2"
+                    : : "r" (readValue), "r" (value), "r" (ret)
+            );
+
+        }
+        while (ret != 0);
+
+        return readValue == 0;
     }
 
     /** @brief Test and set a 16 bit memory location in a thread safe way.
