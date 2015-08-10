@@ -41,12 +41,29 @@ class ReferenceTest {
 public:
 
 
+    /**
+     * @brief Tests the default constructor
+     * @return true if the internal object pointer is null after the reference constructor call.
+     */
     bool TestDefaultConstructor();
 
+    /**
+     * @brief Tests the copy constructor.
+     * @return true if the object pointer is equal to the input object pointer passed in the contructor.
+     */
     bool TestCopyConstructor();
 
+    /**
+     * @brief Tests the copy constructor passing a null input.
+     * @return true if the object pointer is initializet to null.
+     */
     bool TestCopyConstructorNullPtr();
 
+
+    /**
+     * @brief Tests the constructor which instantiate a new object.
+     * @return true if
+     */
     bool TestBuildObjectConstructor();
 
     bool TestBuildFakeObjectConstructor();
@@ -55,10 +72,31 @@ public:
 
     bool TestCopyFromObjPtrConstructorNullPtr();
 
+    bool TestDestructor();
+
     //TODO
     bool TestInitialise();
 
     bool TestRemoveReference();
+
+    bool TestCopyOperatorReference();
+
+    bool TestCopyOperatorReferenceNull();
+
+    bool TestCopyOperatorObject();
+
+    bool TestCopyOperatorObjectNull();
+
+    bool TestIsValid();
+
+    bool TestNumberOfReferences();
+
+    bool TestEqualOperator();
+
+    bool TestDifferentOperator();
+
+    bool TestClone();
+
 };
 
 /*---------------------------------------------------------------------------*/
