@@ -132,7 +132,7 @@ public:
      * @param[in] string the source string.
      * @return the length of the string.
      */
-    static int32 Length(const char8 *string);
+    static uint32 Length(const char8 *string);
 
     /**
      * @brief Returns the pointer of the first character in string1 matched with one of chars in string2.

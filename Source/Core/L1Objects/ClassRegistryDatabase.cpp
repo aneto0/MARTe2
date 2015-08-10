@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "ClassRegistryItem.h"
 #include "Object.h"
 #include "Memory.h"
 #include "StringHelper.h"
@@ -55,16 +56,16 @@ ClassRegistryDatabase::~ClassRegistryDatabase() {
     classDatabase.Reset();
 }
 
-bool ClassRegistryDatabase::Delete(ClassRegistryItem *p) {
+bool ClassRegistryDatabase::Delete(ClassRegistryItem * const p) {
     return classDatabase.ListExtract(p);
 }
 
 /*lint -e{929} pointer to pointer conversion required to dynamic_cast to the correct type*/
-void ClassRegistryDatabase::Add(ClassRegistryItem *p) {
+void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     ClassRegistryItem *q = dynamic_cast<ClassRegistryItem *>(classDatabase.List());
     while (q != NULL) {
         if (StringHelper::Compare(q->GetClassProperties()->GetName(), p->GetClassProperties()->GetName()) == 0) {
-            if(classDatabase.ListExtract(q)){
+            if (classDatabase.ListExtract(q)) {
                 q = static_cast<ClassRegistryItem *>(NULL);
             }
         }
@@ -76,66 +77,74 @@ void ClassRegistryDatabase::Add(ClassRegistryItem *p) {
     classDatabase.ListAdd(p);
 }
 
+/*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
+ * i.e. downcasting is necessary.*/
 ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
-    ClassRegistryItem *registryItem = NULL;
+    ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
 
-    const char8 *dllPartName = StringHelper::SearchString(className, "::");
-    const uint32 maxSize = 128u + 1u;
+    const uint32 maxSize = 129u;
     char8 dllName[maxSize];
     dllName[0] = '\0';
 
     //Check for the string pattern dllName::className
-    if (dllPartName != NULL) {
-        uint32 size = dllPartName - className;
-        if (size > maxSize) {
-            size = maxSize;
+    const char8 *classOnlyPartName = StringHelper::SearchString(className, "::");
+    if (classOnlyPartName != NULL) {
+        uint32 size = static_cast<uint32>(StringHelper::SearchIndex(className, "::"));
+        if (size > (maxSize - 1u)) {
+            size = (maxSize - 1u);
         }
-        StringHelper::CopyN(dllName, dllPartName, size);
-        className = dllPartName + 2;
+        if (StringHelper::CopyN(&(dllName[0]), className, size)) {
+            dllName[size] = '\0';
+            className = &classOnlyPartName[2];
+        }
     }
 
     if (className != NULL) {
-        ClassRegistryItem *p = (ClassRegistryItem *) List();
+        ClassRegistryItem *p = List();
         while (p != NULL) {
             if (StringHelper::Compare(p->GetClassProperties()->GetName(), className) == 0) {
                 registryItem = p;
                 break;
             }
-            p = static_cast<ClassRegistryItem *>(p->Next());
+            p = dynamic_cast<ClassRegistryItem *>(p->Next());
         }
     }
 
     //registryItem still not found. Try to look inside the dll (if it exists)
-    if ((registryItem == NULL) && (dllName[0] != 0)) {
-        uint32 fullSize = StringHelper::Length(dllName) + 5u;
-        char *fullName = static_cast<char *>(Memory::Malloc(fullSize));
+    /*lint -e{593} this pointer is freed by the registry item when it is destructed*/
+    if ((registryItem == NULL_PTR(ClassRegistryItem *)) && (dllName[0] != '\0')) {
+        uint32 fullSize = StringHelper::Length(&(dllName[0])) + 5u;
+        char8 *fullName = static_cast<char8 *>(Memory::Malloc(fullSize));
 
         LoadableLibrary *loader = new LoadableLibrary();
 
-        uint32 i;
+        uint32 i = 0u;
         bool dllOpened = false;
         //Check for all known operating system extensions.
         while (operatingSystemDLLExtensions[i] != 0) {
-            Memory::Set(fullName, 0, fullSize);
-            StringHelper::ConcatenateN(fullName, operatingSystemDLLExtensions[i], 4);
-            dllOpened = loader->Open(fullName);
-            if (dllOpened) {
-                break;
+            if (Memory::Set(fullName, '\0', fullSize)) {
+                const char8 *extension = operatingSystemDLLExtensions[i];
+                if (StringHelper::ConcatenateN(fullName, extension, 4u) != NULL_PTR(char8 *)) {
+                    dllOpened = loader->Open(fullName);
+                    if (dllOpened) {
+                        break;
+                    }
+                    i++;
+                }
             }
-            i++;
         }
 
         //If the dll was successfully opened than it is likely that more classes were registered
         //in the database. Search again.
         if (dllOpened) {
-            ClassRegistryItem *p = (ClassRegistryItem *) List();
+            ClassRegistryItem *p = dynamic_cast<ClassRegistryItem *>(List());
             while (p != NULL) {
                 if (StringHelper::Compare(p->GetClassProperties()->GetName(), className) == 0) {
                     registryItem = p;
                     registryItem->SetLoadableLibrary(loader);
                     break;
                 }
-                p = static_cast<ClassRegistryItem *>(p->Next());
+                p = dynamic_cast<ClassRegistryItem *>(p->Next());
             }
         }
         //Not found...
@@ -146,21 +155,22 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     return registryItem;
 }
 
-const ClassRegistryItem * ClassRegistryDatabase::List() {
-    return static_cast<const ClassRegistryItem *>(classDatabase.List());
+/*lint -e{929} the current implementation of the LinkedListable requires downcasting.*/
+ClassRegistryItem * ClassRegistryDatabase::List() {
+    return dynamic_cast<ClassRegistryItem *>(classDatabase.List());
 }
 
-uint32 ClassRegistryDatabase::Size() {
+uint32 ClassRegistryDatabase::Size() const {
     return classDatabase.ListSize();
 }
 
-const ClassRegistryItem *ClassRegistryDatabase::ElementAt(uint32 idx) {
-    return static_cast<ClassRegistryItem *>(classDatabase.ListPeek(idx));
+/*lint -e{929} the current implementation of the LinkedListable requires downcasting.*/
+const ClassRegistryItem *ClassRegistryDatabase::ElementAt(const uint32 &idx) {
+    return dynamic_cast<ClassRegistryItem *>(classDatabase.ListPeek(idx));
 }
 
-Object *ClassRegistryDatabase::CreateByName(const char8 *className,
-                                            Heap &heap) {
-    Object *obj = NULL;
+Object *ClassRegistryDatabase::CreateByName(const char8 * const className, const Heap &heap) {
+    Object *obj = NULL_PTR(Object *);
 
     ClassRegistryItem *classRegistryItem = Find(className);
     if (classRegistryItem != NULL) {

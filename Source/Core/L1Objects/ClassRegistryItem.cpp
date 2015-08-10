@@ -35,27 +35,41 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+/*lint -e{9141} global declaration but only used to support the class implementation.
+ * The symbol is not exported (static). This could also be replaced by an anonymous namespace.
+ */
 static FastPollingMutexSem classRegistryItemMuxSem;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
-                                     ObjectBuildFn *objBuildFn) {
-    numberOfInstances = 0;
+ClassRegistryItem::ClassRegistryItem() :
+        LinkedListable(), classProperties(), heap() {
+    numberOfInstances = 0u;
+    loadableLibrary = NULL_PTR(LoadableLibrary *);
+    objectBuildFn = NULL_PTR(ObjectBuildFn *);
+}
+
+ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties, const ObjectBuildFn * const objBuildFn) :
+        LinkedListable(), heap() {
+    numberOfInstances = 0u;
     classProperties = clProperties;
-    loadableLibrary = NULL;
+    loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
     ClassRegistryDatabase::Instance().Add(this);
 }
 
+/*lint -e{1551} no exception should be thrown. Only reason is the pointer are messed-up
+ * by some racing condition or similar. Should not happen as the only user of this class
+ * is the ClassRegistryDatabase.*/
 ClassRegistryItem::~ClassRegistryItem() {
     const LoadableLibrary *loader = loadableLibrary;
+    /*lint -e{534} if is missing. This will have to be sent to the logger. TODO*/
     ClassRegistryDatabase::Instance().Delete(this);
     if (loader != NULL) {
         delete loader;
     }
-    loadableLibrary = NULL;
+    loadableLibrary = NULL_PTR(LoadableLibrary *);
 }
 
 void ClassRegistryItem::GetClassPropertiesCopy(ClassProperties &destination) const {
@@ -67,23 +81,21 @@ const ClassProperties *ClassRegistryItem::GetClassProperties() const {
 }
 
 void ClassRegistryItem::IncrementNumberOfInstances() {
-    classRegistryItemMuxSem.FastLock();
-    numberOfInstances++;
+    if (classRegistryItemMuxSem.FastLock() == NoError) {
+        numberOfInstances++;
+    }
     classRegistryItemMuxSem.FastUnLock();
 }
 
 void ClassRegistryItem::DecrementNumberOfInstances() {
-    classRegistryItemMuxSem.FastLock();
-    numberOfInstances--;
+    if (classRegistryItemMuxSem.FastLock() == NoError) {
+        numberOfInstances--;
+    }
     classRegistryItemMuxSem.FastUnLock();
 }
 
 uint32 ClassRegistryItem::GetNumberOfInstances() const {
     return numberOfInstances;
-}
-
-Heap *ClassRegistryItem::GetHeap() {
-    return &heap;
 }
 
 void ClassRegistryItem::SetHeap(const Heap& h) {
@@ -94,11 +106,14 @@ const LoadableLibrary *ClassRegistryItem::GetLoadableLibrary() const {
     return loadableLibrary;
 }
 
-void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary *lLibrary) {
+void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const lLibrary) {
     this->loadableLibrary = lLibrary;
 }
 
-ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
+const ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
     return objectBuildFn;
 }
 
+void ClassRegistryItem::FreeObject(void *&obj) {
+    heap.Free(obj);
+}

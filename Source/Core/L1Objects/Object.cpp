@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "ClassRegistryItem.h"
 #include "Object.h"
 #include "Memory.h"
 #include "ClassRegistryItem.h"
@@ -41,44 +42,53 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 Object::Object() {
-    referenceCounter = 0;
+    referenceCounter = 0u;
 }
 
 Object::~Object() {
 }
 
+/*lint -e{9141} global declaration but only used to support the class implementation.
+ * The symbol is not exported (static). This could also be replaced by an anonymous namespace.
+ */
 static FastPollingMutexSem refMux;
 
 uint32 Object::DecrementReferences() {
-    int32 ret;
-    refMux.FastLock();
-    ret = --referenceCounter;
+    uint32 ret = 0u;
+    if(refMux.FastLock() == NoError){
+        --referenceCounter;
+        ret = referenceCounter;
+    }
     refMux.FastUnLock();
     return ret;
 }
 
 uint32 Object::IncrementReferences() {
-    int32 ret;
-    refMux.FastLock();
-    ret = ++referenceCounter;
+    uint32 ret = 0u;
+    if(refMux.FastLock() == NoError){
+        ++referenceCounter;
+        ret = referenceCounter;
+    }
     refMux.FastUnLock();
     return ret;
 }
 
 Object *Object::Clone() const {
-    return NULL;
+    return NULL_PTR(Object *);
 }
 
 uint32 Object::NumberOfReferences() const {
     return referenceCounter;
 }
 
+/*lint -e{715} data is not used as this is not implemented on purpose*/
 bool Object::Initialise(const StructuredData &data) {
     return false;
 }
 
-void *Object::operator new(size_t size) throw () {
-    return NULL;
+/*lint -e{715} size is not used as this is not implemented on purpose*/
+void *Object::operator new(const size_t size) throw () {
+    return NULL_PTR(Object *);
 }
 
 void Object::GetIntrospectionCopy(Introspection &destination) const {

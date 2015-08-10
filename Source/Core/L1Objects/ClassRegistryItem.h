@@ -39,7 +39,7 @@
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
 class Object;
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
-typedef Object *(ObjectBuildFn)(Heap &);
+typedef Object *(ObjectBuildFn)(const Heap &);
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -61,7 +61,7 @@ public:
      * @param[in] objBuildFn the function that allows to instantiate a new object from the class
      * represented by this ClassRegistryItem instance.
      */
-    ClassRegistryItem(const ClassProperties &clProperties, ObjectBuildFn *objBuildFn);
+    ClassRegistryItem(const ClassProperties &clProperties, const ObjectBuildFn * const objBuildFn);
 
     /**
      * Destructor.
@@ -100,12 +100,6 @@ public:
     const ClassProperties *GetClassProperties() const;
 
     /**
-     * @brief Returns a reference to the object allocation heap.
-     * @return the heap that was selected to allocate objects of the class type represented by this registry item.
-     */
-    Heap *GetHeap();
-
-    /**
      * @brief Sets the heap for object allocation.
      * @param[in] h the heap to allocate objects of the class type represented by this registry item.
      */
@@ -121,7 +115,7 @@ public:
      * @brief Updates the pointer to the loadable library (dll).
      * @param[in] lLibrary the library (dll) holding the class type represented by this registry item.
      */
-    void SetLoadableLibrary(const LoadableLibrary *lLibrary);
+    void SetLoadableLibrary(const LoadableLibrary * const lLibrary);
 
     /**
      * @brief Returns a pointer to object build function.
@@ -129,7 +123,14 @@ public:
      * the class represented by this ClassProperties.
      * @return a pointer to function that allows to instantiate a new object.
      */
-    ObjectBuildFn *GetObjectBuildFunction() const;
+    const ObjectBuildFn *GetObjectBuildFunction() const;
+
+    /**
+     * @brief Delegates the deleting of the object to the correct heap.
+     * @details It is expected that this function is only called by the Object macros upon deletion.
+     * @param obj the object to be deleted.
+     */
+    void FreeObject(void *&obj);
 
 private:
     /**
@@ -156,7 +157,14 @@ private:
     /**
      * The object instantiation function.
      */
-    ObjectBuildFn *objectBuildFn;
+    const ObjectBuildFn *objectBuildFn;
+
+    /**
+     * @brief The default constructor is not supposed to be used
+     */
+    /*lint -e{1704} private constructor not to be called*/
+    ClassRegistryItem();
+
 };
 
 /*---------------------------------------------------------------------------*/

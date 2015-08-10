@@ -21,3 +21,4 @@ LinkedListHolder.cpp
 ClassProperties.cpp
 ClassRegistryItem.cpp
 ClassRegistryDatabase.cpp
+Object.cpp
