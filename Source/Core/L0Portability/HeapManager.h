@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "Heap.h"
+#include "HeapInterface.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -49,32 +49,53 @@ static const int MaximumNumberOfHeaps = 16;
  */
 namespace HeapManager{
 
-    /**
-     * @brief Finds the Heap that manages the specified memory location
-     * returns NULL if not found
-     */
-    Heap *FindHeap(void * address);
+/**
+ * @brief
+ * @param
+ * returns
+ */
+HeapInterface *GetStandardHeap();
 
-    /**
-     * @brief free the pointer data and its associated memory.
-     * @param data the data to be freed.
-     * returns false if no heap is found that can handle this data
-     */
-    bool Free(void *&data);
+/**
+ * @brief Finds the Heap that manages the specified memory location
+ * returns GetStandardHeap() if not found
+ */
+HeapInterface *FindHeap(const void * address);
 
-    /**
-     * @brief
-     * @param
-     * returns
-     */
-    bool AddHeap(Heap &heap);
+/**
+ * @brief Finds the Heap that has the specified name
+ * returns GetStandardHeap() if not found
+ */
+HeapInterface *FindHeap(const char *name);
 
-    /**
-     * @brief
-     * @param
-     * returns
-     */
-    bool RemoveHeap(Heap &heap);
+/**
+ * @brief free the pointer data and its associated memory.
+ * @param data the data to be freed.
+ * returns false if no heap is found that can handle this data
+ */
+bool Free(void *&data);
+
+/**
+ * @brief allocates memory from heap (by default standard heap)
+ * @param size size of memory to allocate.
+ * @param name name of heap to use
+ * returns false if no heap is found that can handle this data
+ */
+void *Malloc(uint32 size, const char *name = NULL);
+
+/**
+ * @brief
+ * @param
+ * returns
+ */
+bool AddHeap(HeapInterface *newHeap);
+
+/**
+ * @brief
+ * @param
+ * returns
+ */
+bool RemoveHeap(HeapInterface *heap);
 
 
 } ;

@@ -31,9 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "../L0Portability/HeapInterface.h"
 #include "GeneralDefinitions.h"
 #include "StructuredData.h"
-#include "Heap.h"
 #include "Introspection.h"
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
@@ -72,7 +72,7 @@
      * Note that the selected heap might be different for each type of class.                                          \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
-    static void * operator new(const size_t size, Heap &heap);                                                         \
+    static void * operator new(const size_t size, HeapInterface *heap);                                                         \
     /*                                                                                                                 \
      * @brief Delete the object.                                                                                       \
      * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \

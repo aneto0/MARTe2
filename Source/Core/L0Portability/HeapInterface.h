@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L0PORTABILITY_HEAP_H_
-#define SOURCE_CORE_L0PORTABILITY_HEAP_H_
+#ifndef SOURCE_CORE_L0PORTABILITY_HEAPINTERFACE_H_
+#define SOURCE_CORE_L0PORTABILITY_HEAPINTERFACE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -42,36 +42,61 @@
  * This class provides the interface method definition and a basic implementation
  * which calls the Memory::Malloc and Memory::Free functions.
  */
-class Heap {
+class HeapInterface {
 public:
 
     /**
      * @brief No operation.
      */
-    virtual ~Heap();
+    virtual ~HeapInterface()=0;
 
     /**
-     * @brief allocates size bytes of data in the heap.
+     * @brief allocates size bytes of data in the heap. Maximu allocated size is 4Gbytes
      * @return a pointer to the allocated memory or NULL if the allocation fails.
      */
-    virtual void *Malloc(const uint32 &size);
+    virtual void *Malloc(const uint32 &size)=0;
 
     /**
      * @brief free the pointer data and its associated memory.
      * @param data the data to be freed.
      */
-    virtual void Free(void *&data);
+    virtual void Free(void *&data)= 0;
 
+    /**
+     * @brief start of range of memory addresses served by this heap.
+     * @return first memory address
+     */
+    virtual uint8* FirstAddress() const = 0;
 
-    virtual void* FirstAddress() const;
+    /**
+     * @brief end (inclusive) of range of memory addresses served by this heap.
+     * @return last memory address
+     */
+    virtual uint8* LastAddress() const = 0;
 
-    virtual void* LastAddress() const;
+    /**
+     * @brief Checks if memory is part of the heap managed area
+     * @return last memory address
+     */
+    virtual bool Owns(const void *data)const{
+        uint8 * address = static_cast<uint8 *>(data);
+
+        return (address >= FirstAddress())  &&
+                (address <= LastAddress());
+    }
+
+    /**
+     * @brief Returns the name of the heap
+     * @return name of the heap
+     */
+    virtual const char *Name()const =0;
 
 };
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L0PORTABILITY_HEAP_H_ */
+#endif /* SOURCE_CORE_L0PORTABILITY_HEAPINTERFACE_H_ */
 

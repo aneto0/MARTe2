@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Heap.h"
+#include "../L0Portability/HeapInterface.h"
 #include "LinkedListable.h"
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
@@ -39,7 +39,7 @@
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
 class Object;
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
-typedef Object *(ObjectBuildFn)(const Heap &);
+typedef Object *(ObjectBuildFn)(const HeapInterface &);
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -103,7 +103,7 @@ public:
      * @brief Sets the heap for object allocation.
      * @param[in] h the heap to allocate objects of the class type represented by this registry item.
      */
-    void SetHeap(const Heap& h);
+    void SetHeap(const HeapInterface& h);
 
     /**
      * @brief Returns a pointer to the library (dll).
@@ -146,7 +146,7 @@ private:
     /**
      * The heap that is being used to instantiate objects of the class type represented by this registry item.
      */
-    Heap heap;
+    HeapInterface *heap;
 
     /**
      * Library (dll) holding the class type represented by this registry item.
