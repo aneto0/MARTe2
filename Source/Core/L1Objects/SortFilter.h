@@ -36,15 +36,17 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * The type of a function to be used to sort a set.
- * @param data1[in] is the first LinkedListable object pointer.
- * @param data2[in] is the second LinkedListable object pointer.
- * @return a positive value if data1 is not ordered with data2, negative otherwise.
+ * @brief LinkedListable comparator callback function.
+ * @param data1[in] the first LinkedListable object pointer.
+ * @param data2[in] the second LinkedListable object pointer.
+ * @return a positive value if data1 is not ordered with respect to data2, negative otherwise.
  */
 typedef int32 (SortFilterFn)(LinkedListable *data1,
                              LinkedListable *data2);
 /**
- * @brief Sort filter object interface.
+ * @brief LinkedListable sorting interface.
+ * @details Sort LinkedListable list by calling the function Compare(LinkedListable *, LinkedListable *).
+ * The inherited implementation is responsible for deciding how to LinkedListable compare to each other.
  */
 class SortFilter {
 public:
@@ -56,11 +58,10 @@ public:
 
     }
     /**
-     * @brief A function that can be used to compare two object.
-     * @details The correct implementation should be to return a positive value if data1 is not ordered with data2, negative otherwise.
-     * @param[in] data1 is the first LinkedListable object.
-     * @param[in] data2 is the second LinkedListable object.
-     * @return a positive value if data1 is not ordered with data2, negative otherwise.
+     * @brief LinkedListable comparator callback function.
+     * @param data1[in] the first LinkedListable object pointer.
+     * @param data2[in] the second LinkedListable object pointer.
+     * @return a positive value if data1 is not ordered with respect to data2, negative otherwise.
      */
     virtual int32 Compare(LinkedListable *data1,
                           LinkedListable *data2)=0;

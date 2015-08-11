@@ -37,7 +37,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief Templated version of the shared pointer implementation. @see Reference.
+ * @brief Template version of the shared pointer implementation (see Reference).
  */
 template<typename T>
 class ReferenceT: public Reference {
@@ -77,7 +77,7 @@ public:
     ReferenceT(const ReferenceT<T>& sourceReference);
 
     /**
-     * @brief Instantiates a new object of type typeName and links a reference to it.
+     * @brief Instantiates a new object of type \a typeName and links a reference to it.
      * @details If the operation succeeds a reference to the new object is created,
      * otherwise an empty reference is created and a subsequent call to IsValid will return false.
      * @param[in] typeName the type (i.e. class name) of the object to be instantiated.
@@ -107,38 +107,38 @@ public:
      * @brief Assignment operator.
      * @param sourceReference the source reference to be assigned to this reference.
      * @details This reference will be referencing the same object as the sourceReference.
-     * @return a reference to the object referenced by sourceReference.
+     * @return a reference to the object referenced by \a sourceReference.
      */
     ReferenceT<T>& operator=(const ReferenceT<T>& sourceReference);
 
     /**
      * @brief Assignment operator.
      * @param[in] sourceReference the source reference to be assigned to this reference.
-     * @details This reference will be referencing the same object as the sourceReference.
-     * @return a reference to the object referenced by sourceReference.
+     * @details This reference will be referencing the same object as the \a sourceReference.
+     * @return a reference to the object referenced by \a sourceReference.
      */
     virtual ReferenceT<T>& operator=(const Reference& sourceReference);
 
     /**
      * @brief Creates a Reference to a different object.
      * @param[in] sourceReference the Reference holding the source object.
-     * @return true if the source Reference and source object are valid.
+     * @return true if the \a sourceReference and its source object are valid.
      */
     virtual bool Clone(Reference& sourceReference);
 
     /**
      * @brief Creates a Reference to a different object.
      * @param[in] sourceReference the Reference holding the source object.
-     * @return true if the source Reference and source object are valid.
+     * @return true if the \a sourceReference and its source object are valid.
      */
     virtual bool Clone(ReferenceT<T>& sourceReference);
 
     /**
-     * @brief Verifies if this Reference links to the same object of sourceReference.
+     * @brief Verifies if this Reference links to the same object of \a sourceReference.
      * @param[in] sourceReference reference to be compared.
-     * @return true if the sourceReference links to the same object as this Reference.
+     * @return true if the \a sourceReference links to the same object as this Reference.
      */
-    bool operator==(const ReferenceT<T>& sourceReference);
+    bool operator==(const ReferenceT<T>& sourceReference) const;
 
     /**
      * @brief Provides access to the object referenced by this Reference.
@@ -289,6 +289,11 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
     }
 
     return *this;
+}
+
+template<typename T>
+bool ReferenceT<T>::operator==(const ReferenceT<T>& sourceReference) const {
+    return (typeTObjectPointer == sourceReference.typeTObjectPointer);
 }
 
 template<typename T>

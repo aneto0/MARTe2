@@ -1,7 +1,7 @@
 /**
  * @file StructuredData.h
  * @brief Header file for class StructuredData
- * @date Aug 4, 2015
+ * @date 04/08/2015
  * @author aneto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

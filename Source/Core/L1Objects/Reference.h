@@ -39,7 +39,7 @@
 /*---------------------------------------------------------------------------*/
 /**
  * @brief Shared pointer implementation.
- * @details The Reference class is a smart pointer implementation where shared the
+ * @details The Reference class is a smart pointer implementation where the shared
  * ownership of an underlying object is enabled. This guarantees that the life-cycle
  * of this object is safely managed and in particular that the object is destructed when
  * it is no longer referenced.
@@ -58,22 +58,22 @@ public:
 
     /**
      * @brief Creates a Reference from an existing Reference.
-     * @details This Reference will own the same object referenced by sourceReference.
+     * @details This Reference will own the same object referenced by \a sourceReference.
      * @param[in] sourceReference the Reference to the object to be shared.
      */
     Reference(const Reference& sourceReference);
 
     /**
-     * @brief Creates a new object of type typeName and links a reference to it.
+     * @brief Creates a new object of type \a typeName and links a reference to it.
      * @param[in] typeName the name of the class type.
      * @param[in] heap the heap responsible for allocating the object.
      */
     Reference(const char8* const typeName, const Heap &heap);
 
     /**
-     * @brief Creates a reference to an existing pointer.
+     * @brief Creates a reference to an existing \a pointer.
      * @param[in] pointer source object to assign.
-     * @details It will increment the number of references referencing the underlying object.
+     * @details Increments the number of references referencing the underlying object.
      */
     Reference (Object * const pointer);
 
@@ -111,24 +111,24 @@ public:
     uint32 NumberOfReferences() const;
 
     /**
-     * @brief Verifies if this Reference links to the same object of sourceReference.
+     * @brief Verifies if this Reference links to the same object of \a sourceReference.
      * @param[in] sourceReference reference to be compared.
-     * @return true if the sourceReference links to the same object as this Reference.
+     * @return true if the \a sourceReference links to the same object as this Reference.
      */
     virtual bool operator==(const Reference& sourceReference) const;
 
     /**
-     * @brief Verifies if this Reference owns the same object of sourceReference.
+     * @brief Verifies if this Reference owns the same object of \a sourceReference.
      * @param[in] sourceReference reference to be compared.
-     * @return true if the sourceReference does not own the same object as this Reference.
+     * @return true if the \a sourceReference does not own the same object as this Reference.
      */
     virtual bool operator!=(const Reference& sourceReference) const;
 
     /**
      * @brief Assignment operator.
      * @param[in] sourceReference the source reference to be assigned to this reference.
-     * @details This reference will be referencing the same object as the sourceReference.
-     * @return a reference to the object referenced by sourceReference.
+     * @details This reference will be referencing the same object as the \a  sourceReference.
+     * @return a reference to the object referenced by \a sourceReference.
      */
     virtual Reference& operator=(const Reference& sourceReference);
 
@@ -149,7 +149,7 @@ public:
     /**
      * @brief Creates a Reference to a different object.
      * @param[in] sourceReference the Reference holding the source object.
-     * @return true if the source Reference and source object are valid.
+     * @return true if the \a sourceReference and its source object are valid.
      */
     virtual bool Clone(Reference &sourceReference);
 

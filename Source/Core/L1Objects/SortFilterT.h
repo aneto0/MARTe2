@@ -37,7 +37,7 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Template sort filter object interface.
+ * @brief Template implementation of the the SortFilter interface.
  */
 template<typename T>
 class SortFilterT {
@@ -50,11 +50,10 @@ public:
 
     }
     /**
-     * @brief A function that can be used to compare two object.
-     * @details The correct implementation should be to return a positive value if data1 is not ordered with data2, negative otherwise.
-     * @param[in] data1 is the first object.
-     * @param[in] data2 is the second object.
-     * @return a positive value if data1 is not ordered with data2, negative otherwise.
+     * @brief LinkedListable comparator callback function.
+     * @param data1[in] the first LinkedListable object pointer.
+     * @param data2[in] the second LinkedListable object pointer.
+     * @return a positive value if data1 is not ordered with respect to data2, negative otherwise.
      */
     virtual int32 Compare(T data1,
                           T data2)=0;
