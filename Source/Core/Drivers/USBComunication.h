@@ -34,12 +34,13 @@
 #include "GeneralDefinitions.h"
 
 //Ovviamente non va incluso così!
-#include "DriversDefinitions.h"
+#include "Platform/STM32F4-Discovery/DriversDefinitionsP.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 class USBComunication {
+public:
 
     USBComunication();
 
@@ -49,15 +50,11 @@ class USBComunication {
 
     bool Stop();
 
-    bool SetTxBuffer(const char8* const txBuffer, uint32 size);
+    int32 Send(const char8* const txBuffer, int32 size);
 
-    bool SetRxBuffer(const char8* const rxBuffer);
+    int32 Receive(char8* const rxBuffer, int32 size);
 
-    bool Send();
-
-    bool Receive();
-
-    USBHandle handle;
+    static USBHandle handle;
 
 };
 /*---------------------------------------------------------------------------*/

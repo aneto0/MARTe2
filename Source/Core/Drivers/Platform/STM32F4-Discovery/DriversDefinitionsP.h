@@ -1,8 +1,8 @@
 /**
- * @file USBComunicationP.cpp
- * @brief Source file for class USBComunicationP
- * @date 09/08/2015
- * @author Giuseppe Ferrò
+ * @file DriversDefinitionP.h
+ * @brief Header file for class DriversDefinitionP
+ * @date 11/ago/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,52 +16,35 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class USBComunicationP (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class DriversDefinitionP
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
-/*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
-/*---------------------------------------------------------------------------*/
+#ifndef DRIVERSDEFINITIONP_H_
+#define DISCOVERY_DRIVERSDEFINITIONP_H_
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+#include "usbd_def.h"
+#include "usbd_desc.h"
+#include "usbd_cdc_interface.h"
+#include "usbd_conf.h"
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-USBComunication::USBComunication() {
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+typedef USBD_HandleTypeDef USBHandle;
 
 
-
-}
-
-
-bool USBComunication::Init(){
-    USBD_CDC_RegisterInterface(handle, NULL);
-    return true;
-}
-
-bool USBComunication::Start(){}
-
-
-bool Stop();
-
-bool SetTxBuffer(const char8* const txBuffer,
-                 uint32 size);
-
-bool SetRxBuffer(const char8* const rxBuffer);
-
-bool Send();
-
-bool Receive();
-
-USBHandle handle;
+#endif /* DRIVERSDEFINITIONP_H_ */
 

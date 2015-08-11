@@ -29,7 +29,6 @@ ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 SPB=OperatingSystem/$(OPERATING_SYSTEM).x
-SPB2+= Drivers/Platform/$(PLATFORM).x
 
 OBJSX= Atomic.x \
         Endianity.x \

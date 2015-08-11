@@ -53,7 +53,7 @@ public:
                     "add %0, %0, #1\n"
                     "strex %2, %0, [%1]\n"
                     "cmp %2, #0\n"
-                    : : "r" (readValue), "r" (value), "r" (ret)
+                    : : "r" (readValue), "r" (p), "r" (ret)
             );
         }
         while (ret != 0);
@@ -89,7 +89,7 @@ public:
                     "sub %0, %0, #1\n"
                     "strex %2, %0, [%1]\n"
                     "cmp %2, #0\n"
-                    : : "r" (readValue), "r" (value), "r" (ret)
+                    : : "r" (readValue), "r" (p), "r" (ret)
             );
         }
         while (ret != 0);
@@ -122,7 +122,7 @@ public:
             asm volatile(
                     "ldrex %0, [%1]\n"
                     "strex %2, %3, [%1]\n"
-                    : : "r" (readValue), "r" (oldValue), "r" (ret), "r" (newValue)
+                    : : "r" (readValue), "r" (p), "r" (ret), "r" (v)
             );
         }
         while (ret != 0);
@@ -141,7 +141,7 @@ public:
         do {
             asm volatile(
                     "ldrex %0, [%1]"
-                    : : "r" (readValue), "r" (value)
+                    : : "r" (readValue), "r" (p)
             );
 
             if (readValue != 0) {
@@ -151,7 +151,7 @@ public:
                     "add %0, %0, #1\n"
                     "strex %2, %0, [%1]\n"
                     "mov %0, %2"
-                    : : "r" (readValue), "r" (value), "r" (ret)
+                    : : "r" (readValue), "r" (p), "r" (ret)
             );
 
         }

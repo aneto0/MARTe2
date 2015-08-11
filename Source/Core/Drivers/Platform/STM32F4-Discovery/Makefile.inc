@@ -2,7 +2,7 @@
 #
 # Copyright 2015 F4E | European Joint Undertaking for ITER 
 #  and the Development of Fusion Energy ('Fusion for Energy')
-#
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -20,13 +20,27 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
-TARGET=freertos-armv7m
+PACKAGE=Core/Drivers
+ROOT_DIR=../../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-include Makefile.inc
+OBJSX=ClockP.x \
+	USBComunicationP.x \
+	VCPDescription.x 
+       
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-OPTIM=-finline-functions
+INCLUDES+= -I../../../L0Portability
+INCLUDES+= -I../../../L1Objects
+INCLUDES+= -I../..
+INCLUDES+= -I.
+all: $(OBJS)    \
+                $(BUILD_DIR)/DriversP$(LIBEXT)
+	echo  $(OBJS)
+
+include depends.$(TARGET)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

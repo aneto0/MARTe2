@@ -24,8 +24,8 @@
 #
 #############################################################
 OBJSX=
-SPB    = Source/Core/L0Portability.x Source/Core/L1Objects.x \
-    Test/Core/L0Portability.x Test/Core/L1Objects.x Test/GTest.x
+SPB    = Source/Core/L0Portability.x Source/Core/L1Objects.x Source/Core/Drivers.x\
+#    Test/Core/L0Portability.x Test/Core/L1Objects.x Test/GTest.x
 
  
 MAKEDEFAULTDIR=MakeDefaults
