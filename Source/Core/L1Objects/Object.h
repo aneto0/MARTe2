@@ -221,11 +221,14 @@ public:
 
     /**
      * @brief Returns an object name which is guaranteed to be unique.
-     * @details The object unique name is composed by the object memory address and by the object name as
-     * returned by GetName(). If GetName() returns NULL the unique name will be object memory address.
-     * The format of the unique name is MemoryAddress::Name.
-     * @param[in, out] destination the destination where to write the unique object to. If enough space is available the
-     * string will be zero terminated.
+     * @details The object unique name is composed by the object memory
+     *  address and by the object name as returned by GetName().
+     *
+     * If GetName() returns NULL the unique name will be the object memory address.
+     * The format of the unique name is xMemoryAddress::Name. The leading zeros of the
+     * memory address are discarded.
+     * @param[in, out] destination the destination where to write the unique object to.
+     * If enough space is available the string will be zero terminated.
      * @param[in] the size of the \a destination input string.
      */
     void GetUniqueName(char8 * const destination, const uint32 &size) const;

@@ -112,11 +112,30 @@ void Object::GetUniqueName(char8 * const destination, const uint32 &size) const 
     //Each byte in the hexadecimal representation of the pointer is described by two chars, (e.g. 1 byte = 0xFF)
     uint32 nOfPtrChars = static_cast<uint32>(sizeof(void *) * 2u);
     uint32 shiftBits = 0u;
+
+    //Count the number of leading zeros
+    uint32 nLeadingOfZeros = 0u;
     uint32 i;
-    for (i = 0u; (i < size) && (i < nOfPtrChars); i++) {
+    for (i = 0u; i < nOfPtrChars; i++) {
         //First character in destination is the MSB
         shiftBits = nOfPtrChars * 8u;
         shiftBits -= 4u * (i + 1u);
+        uint32 hexValue = static_cast<uint32>(ptrHex >> shiftBits);
+        hexValue &= 0xFu;
+        if (hexValue == 0u) {
+            nLeadingOfZeros++;
+        }
+        else {
+            break;
+        }
+    }
+    if (size != 0u) {
+        destination[0] = 'x';
+    }
+    for (i = 1u; (i < size) && (i < ((nOfPtrChars - nLeadingOfZeros) + 1u)); i++) {
+        //First character in destination is the MSB
+        shiftBits = nOfPtrChars * 8u;
+        shiftBits -= 4u * (i + nLeadingOfZeros); //Notice that i already starts at 1
         uint32 hexValue = static_cast<uint32>(ptrHex >> shiftBits);
         hexValue &= 0xFu;
         if (hexValue < 0xAu) {
