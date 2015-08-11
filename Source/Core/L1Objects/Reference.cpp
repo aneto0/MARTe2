@@ -50,7 +50,7 @@ Reference::Reference(const Reference& sourceReference) {
 
 Reference::Reference(const char8* const typeName, const Heap &heap) {
     objectPointer = NULL_PTR(Object*);
-    Object *objPtr = ClassRegistryDatabase::Instance().CreateByName(typeName, heap);
+    Object *objPtr = CreateByName(typeName, heap);
     if (objPtr != NULL_PTR(Object*)) {
         objectPointer = objPtr;
     }
@@ -165,4 +165,17 @@ bool Reference::Clone(Reference &sourceReference) {
         }
     }
     return ok;
+}
+
+Object *Reference::CreateByName(const char8 * const className, const Heap &heap) {
+    Object *obj = NULL_PTR(Object *);
+
+    ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance().Find(className);
+    if (classRegistryItem != NULL) {
+        if (classRegistryItem->GetObjectBuildFunction() != NULL) {
+            obj = classRegistryItem->GetObjectBuildFunction()(heap);
+        }
+    }
+
+    return obj;
 }

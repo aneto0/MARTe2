@@ -50,10 +50,9 @@ public:
 
     /**
      * @brief Creates an empty reference or a reference to base type T.
-     * @param[in] create if true a new instance of T will be created and referenced by this ReferenceT.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(bool create, Heap &heap);
+    ReferenceT(Heap &heap);
 
     /**
      * @brief Creates a reference to an object that inherits from base type T.
@@ -192,17 +191,15 @@ ReferenceT<T>::ReferenceT() {
 }
 
 template<typename T>
-ReferenceT<T>::ReferenceT(bool create, Heap &heap) {
+ReferenceT<T>::ReferenceT(Heap &heap) {
     Init();
-    if (create) {
-        T *p = new (heap) T;
-        if (p != NULL) {
-            Object *obj;
-            obj = dynamic_cast<Object *>(p);
-            if (obj != NULL) {
-                Reference::operator= (obj);
-                typeTObjectPointer = p;
-            }
+    T *p = new (heap) T;
+    if (p != NULL) {
+        Object *obj;
+        obj = dynamic_cast<Object *>(p);
+        if (obj != NULL) {
+            Reference::operator= (obj);
+            typeTObjectPointer = p;
         }
     }
 }

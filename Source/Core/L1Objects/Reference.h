@@ -48,7 +48,6 @@
  *
  */
 class Reference {
-
 public:
 
     /**
@@ -169,6 +168,15 @@ private:
     virtual Reference* operator&() {
         return this;
     }
+
+    /**
+     * @brief Instantiates a new object of type className in the specified heap.
+     * @param[in] className the name of the class.
+     * @param[in] heap the heap where the object is to be allocated.
+     * @return a new object of the specified class or NULL if the \a className does not exist.
+     */
+    Object *CreateByName(const char8 * const className, const Heap &heap);
+
 };
 
 /*---------------------------------------------------------------------------*/

@@ -48,6 +48,7 @@
  * database can then be used to retrieve information about the registered classes.
  */
 class ClassRegistryDatabase {
+
 public:
     /**
      * @brief Singleton access to the database.
@@ -84,14 +85,6 @@ public:
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
     ClassRegistryItem *Find(const char8 *className);
-
-    /**
-     * @brief Instantiates a new object of type className in the specified heap.
-     * @param[in] className the name of the class.
-     * @param[in] heap the heap where the object is to be allocated.
-     * @return a new object of the specified class or NULL if the \a className does not exist.
-     */
-    Object *CreateByName(const char8 * const className, const Heap &heap);
 
     /**
      * @brief Returns an access point to the database root.
