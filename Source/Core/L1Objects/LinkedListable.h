@@ -93,13 +93,6 @@ public:
     void BSort(SortFilter * const sorter);
 
     /**
-     * @brief Bubble Sort the sub-list to the right of this element.
-     * @details The algorithm assumes that two elements are ordered if the SortFilter returns a value < 0.
-     * @param[in] sorter implements the comparison criteria for the sorting.
-     */
-    void BSort(SortFilterFn * const sorter);
-
-    /**
      * @brief Inserts the entire list as in input to the next location.
      * @param[in] p the pointer to the LinkedListable to be inserted.
      */

@@ -36,14 +36,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief LinkedListable comparator callback function.
- * @param data1[in] the first LinkedListable object pointer.
- * @param data2[in] the second LinkedListable object pointer.
- * @return a positive value if data1 is not ordered with respect to data2, negative otherwise.
- */
-typedef int32 (SortFilterFn)(LinkedListable *data1,
-                             LinkedListable *data2);
-/**
  * @brief LinkedListable sorting interface.
  * @details Sort LinkedListable list by calling the function Compare(LinkedListable *, LinkedListable *).
  * The inherited implementation is responsible for deciding how to LinkedListable compare to each other.
