@@ -174,13 +174,6 @@ public:
     bool ListSafeDelete(SearchFilter * const filter);
 
     /**
-     * @brief Deletes elements using a SearchFn function.
-     * @param[in] filter defines the search criteria.
-     * @return true if at least one element it is deleted, false otherwise.
-     */
-    bool ListDelete(SearchFilterFn * const filter);
-
-    /**
      * @brief Sorts the elements in the list using a SortFilter.
      * @param[in] sorter defines the comparison criteria.
      */
@@ -202,7 +195,7 @@ public:
 
     /**
      * @brief For each item in the list perform the action defined by the Iterator.
-     * @param[in] defines the action to be performed on each element.
+     * @param[in] it defines the action to be performed on each element.
      */
     void ListIterate(Iterator * const it);
 

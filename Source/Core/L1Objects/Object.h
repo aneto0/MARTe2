@@ -213,6 +213,31 @@ public:
      */
     uint32 NumberOfReferences() const;
 
+    /**
+     * @brief Returns the object name.
+     * @return the object name (which might be NULL).
+     */
+    const char8 * const GetName() const;
+
+    /**
+     * @brief Returns an object name which is guaranteed to be unique.
+     * @details The object unique name is composed by the object memory address and by the object name as
+     * returned by GetName(). If GetName() returns NULL the unique name will be object memory address.
+     * The format of the unique name is MemoryAddress::Name.
+     * @param[in, out] destination the destination where to write the unique object to. If enough space is available the
+     * string will be zero terminated.
+     * @param[in] the size of the \a destination input string.
+     */
+    void GetUniqueName(char8 * const destination, const uint32 &size) const;
+
+    /**
+     * @brief Sets the object name.
+     * @details If a name had already been set the object name will be updated to this name.
+     * @param newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
+     * @pre newName != NULL
+     */
+    void SetName(const char8 * const newName);
+
 private:
 
     /**
@@ -249,6 +274,11 @@ private:
      * The number of references to this object.
      */
     volatile uint32 referenceCounter;
+
+    /**
+     * The name of this object.
+     */
+    char8 *name;
 };
 
 /*---------------------------------------------------------------------------*/
