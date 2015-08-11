@@ -28,7 +28,8 @@ OBJSX= LinkedListableGTest.x \
 	LinkedListHolderGTest.x \
 	ClassRegistryDatabaseGTest.x \
 	ObjectGTest.x \
-	ReferenceGTest.x
+	ReferenceGTest.x \
+	ReferenceTGTest.x
 
 
 

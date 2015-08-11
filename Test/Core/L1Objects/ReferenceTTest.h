@@ -1,7 +1,7 @@
 /**
- * @file ReferenceTest.h
- * @brief Header file for class ReferenceTest
- * @date 07/08/2015
+ * @file ReferenceTTest.h
+ * @brief Header file for class ReferenceTTest
+ * @date 10/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ReferenceTest
+ * @details This header file contains the declaration of the class ReferenceTTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef REFERENCETEST_H_
-#define REFERENCETEST_H_
+#ifndef REFERENCETTEST_H_
+#define REFERENCETTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,19 +31,16 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Reference.h"
+#include "ReferenceT.h"
 #include "EventSem.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-/**
- * Tests the Reference public methods.
- */
-class ReferenceTest {
+
+class ReferenceTTest {
 public:
 
-    ReferenceTest();
+    ReferenceTTest();
 
     /**
      * @brief Tests the default constructor
@@ -52,16 +49,52 @@ public:
     bool TestDefaultConstructor();
 
     /**
-     * @brief Tests the copy constructor.
-     * @return true if the object pointer is equal to the input object pointer passed in the contructor.
+     * @brief Tests the copy constructor by Reference.
+     * @return true if the object pointer is equal to the input object pointer passed in the constructor.
      */
-    bool TestCopyConstructor();
+    bool TestCopyConstructorReference();
+
+    /**
+     * @brief Tests the copy constructor by Reference passing a class parent of the template.
+     * @return true if the copy fails and the reference is invalid.
+     */
+    bool TestCopyConstructorReferenceParentToChild();
+
+    /**
+     * @brief Tests the copy constructor by Reference passing a class child of the template.
+     * @return true if the copy successes.
+     */
+    bool TestCopyConstructorReferenceChildToParent();
+
+    /**
+     * @brief Test the copy constructor by ReferenceT.
+     * @return true if the object pointer is equal to the input object pointer passed in the constructor.
+     */
+    bool TestCopyConstructorReferenceT();
+
+    /**
+     * @brief Tests the copy constructor by ReferenceT passing a class parent of the template.
+     * @return true if the copy fails and the reference is invalid.
+     */
+    bool TestCopyConstructorReferenceTParentToChild();
+
+    /**
+     * @brief Tests the copy constructor by ReferenceT passing a class child of the template.
+     * @return true if the copy successes.
+     */
+    bool TestCopyConstructorReferenceTChildToParent();
 
     /**
      * @brief Tests the copy constructor passing a null input.
      * @return true if the object pointer is initialized to null.
      */
     bool TestCopyConstructorNullPtr();
+
+    /**
+     * @brief Tests the create constructor.
+     * @return true if an object is created on the specified heap.
+     */
+    bool TestCreateConstructor();
 
     /**
      * @brief Tests the constructor which instantiates a new object.
@@ -117,10 +150,24 @@ public:
     bool TestCopyOperatorReference();
 
     /**
+     * @brief Tests the = operator with an invalid Reference.
+     * @return true if the copied reference is also invalid.
+     */
+    bool TestCopyOperatorReferenceNull();
+
+    /**
+     * @brief Tests the = operator with another ReferenceT object.
+     * @details Creates a reference to an object and then a second reference using the = operator. Then checks if the second reference points
+     * effectively to the created object and if the number of references is correct.
+     * @return true if successful, false otherwise.
+     */
+    bool TestCopyOperatorReferenceT();
+
+    /**
      * @brief Tests the = operator with a Reference with a NULL pointer.
      * @return true if the Reference object copied is invalid.
      */
-    bool TestCopyOperatorReferenceNull();
+    bool TestCopyOperatorReferenceTNull();
 
     /**
      * @brief Tests the = operator with an object pointer.
@@ -137,14 +184,14 @@ public:
     bool TestCopyOperatorObjectNull();
 
     /**
-     * @brief Tests the Reference::IsValid function.
+     * @brief Tests the ReferenceT::IsValid function.
      * @details Checks if the function returns false in case of null initializations and true in case of right inizializations.
      * @return true if successful, false otherwise.
      */
     bool TestIsValid();
 
     /**
-     * @brief Tests the Reference::NumberOfReference function.
+     * @brief Tests the ReferenceT::NumberOfReference function.
      * @details Creates an object and assigns to it a number of references in different ways checking if the number of reference is correct. Then removes
      * the references and checks if the number of references returned decreases.
      * @return true if successful, false otherwise.
@@ -167,12 +214,17 @@ public:
      */
     bool TestDifferentOperator();
 
-
     /**
-     * @brief Tests the Reference::Clone function.
+     * @brief Tests the ReferenceT::Clone function with a Reference as input.
      * @return true if the clone returns false for objects which does not implement their own Clone() function.
      */
-    bool TestClone();
+    bool TestCloneReference();
+
+    /**
+     * @brief Tests the ReferenceT::Clone function with a ReferenceT as input.
+     * @return true if the clone returns false for objects which does not implement their own Clone() function.
+     */
+    bool TestCloneReferenceT();
 
     /**
      * @brief Tests if the references created in a function are destroyed when the function terminates.
@@ -192,19 +244,18 @@ public:
      */
     bool TestInFunctionOnHeap(uint32 nRefs);
 
-
     /**
      * @brief Tests if it is possible assign a reference to another for objects on the same inherit branch.
      * @details Creates a parent object and a child object. Assigns the reference to the parent and then assigns it to the child and vice versa.
-     * Since are all Object children the reference assignment should not be a problem.
+     * In case of assignment from parent to child the result is an invalid reference.
      * @return true if successful, false otherwise.
      */
     bool TestRightInherithance();
 
     /**
-     * @brief Tests if it is possible assign a reference to another for objects on a different inherit branch.
-     * @details Creates two separate children of Object. Assigns the reference to the first and then assigns it to the second and vice versa.
-     * Since are all Object children the reference assignment should not be a problem.
+     * @brief Tests if it is possible assign a reference to another for objects on the same inherit branch.
+     * @details Creates a parent object and a child object. Assigns the reference to the parent and then assigns it to the child and vice versa.
+     * In this case since the objects are unrelated the assignment result is always an invalid reference.
      * @return true if successful, false otherwise.
      */
     bool TestWrongInherithance();
@@ -217,7 +268,7 @@ public:
     /**
      * The reference to be passed to the thread callback
      */
-    Reference storedRef;
+    ReferenceT<Object> storedRef;
 
     /**
      * The number of references to be assigned in the thread callback function
@@ -227,13 +278,12 @@ public:
     /**
      * An array of references pointers to allocate references on the heap.
      */
-    Reference **arrayRefs;
-
+    ReferenceT<Object> **arrayRefs;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* REFERENCETEST_H_ */
+#endif /* REFERENCETTEST_H_ */
 

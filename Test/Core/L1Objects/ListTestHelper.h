@@ -36,7 +36,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-extern uint32 nToSearch;
 
 class IntegerList: public LinkedListable {
 public:
@@ -98,22 +97,6 @@ public:
 
 };
 
-static int32 DecrescentSortFn(LinkedListable *data1,
-                              LinkedListable *data2) {
-    if ((((IntegerList *) data1)->intNumber) < (((IntegerList *) data2)->intNumber))
-        return 1;
-    else
-        return -1;
-}
-
-static bool SearchIntFn(LinkedListable* data) {
-    return ((IntegerList*) (data))->intNumber == nToSearch;
-
-}
-
-static void IncrementNumFn(LinkedListable *data) {
-    ((IntegerList *) data)->intNumber++;
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
