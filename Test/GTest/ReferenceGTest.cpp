@@ -104,13 +104,13 @@ TEST(ReferenceGTest,TestCopyOperatorReferenceNull) {
     ASSERT_TRUE(referenceTest.TestCopyOperatorReferenceNull());
 }
 
-TEST(ReferenceGTest,TestEqualOperatorObject) {
+TEST(ReferenceGTest,TestCopyOperatorObject) {
     ReferenceTest referenceTest;
     ASSERT_TRUE(referenceTest.TestCopyOperatorObject());
 }
 
 
-TEST(ReferenceGTest,TestEqualOperatorObjectNull) {
+TEST(ReferenceGTest,TestCopyOperatorObjectNull) {
     ReferenceTest referenceTest;
     ASSERT_TRUE(referenceTest.TestCopyOperatorObjectNull());
 }
@@ -140,3 +140,25 @@ TEST(ReferenceGTest,TestClone) {
     ReferenceTest referenceTest;
     ASSERT_TRUE(referenceTest.TestClone());
 }
+
+TEST(ReferenceGTest,TestInFunctionOnStack) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestInFunctionOnStack());
+}
+
+TEST(ReferenceGTest,TestInFunctionOnHeap) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestInFunctionOnHeap(32));
+}
+
+
+TEST(ReferenceGTest,TestRightInherithance) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestRightInherithance());
+}
+
+TEST(ReferenceGTest,TestWrongInherithance) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestWrongInherithance());
+}
+

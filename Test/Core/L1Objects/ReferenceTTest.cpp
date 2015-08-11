@@ -1,8 +1,8 @@
 /**
- * @file ReferenceTest.cpp
- * @brief Source file for class ReferenceTest
- * @date 07/08/2015
- * @author Giuseppe Ferrò
+ * @file ReferenceTTTest.cpp
+ * @brief Source file for class ReferenceTTTest
+ * @date 10/ago/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ReferenceTest (public, protected, and private). Be aware that some 
+ * the class ReferenceTTTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ReferenceTest.h"
+#include "ReferenceTTest.h"
 #include "ObjectTestHelper.h"
 #include "ClassRegistryDatabase.h"
 #include "Threads.h"
@@ -42,150 +42,195 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-ReferenceTest::ReferenceTest() {
+ReferenceTTest::ReferenceTTest() {
     eventSem.Create();
     nRefs = 0;
 }
 
-bool ReferenceTest::TestDefaultConstructor() {
+bool ReferenceTTest::TestDefaultConstructor() {
 
-    Reference ref;
+    ReferenceT<Object> ref;
     return !ref.IsValid();
 
 }
 
-bool ReferenceTest::TestCopyConstructor() {
+bool ReferenceTTest::TestCopyConstructorReference() {
 
     Heap mem;
     Reference toCopy("IntegerObject", mem);
 
     (dynamic_cast<IntegerObject*>(toCopy.operator->()))->SetVariable(1);
 
-    Reference ret(toCopy);
+    ReferenceT<IntegerObject> ret(toCopy);
 
-    return (dynamic_cast<IntegerObject*>(ret.operator->()))->GetVariable() == 1;
+    return ret->GetVariable() == 1;
 
 }
 
-bool ReferenceTest::TestCopyConstructorNullPtr() {
+bool ReferenceTTest::TestCopyConstructorReferenceParentToChild() {
+
+    Heap mem;
+    Reference integer("IntegerObject", mem);
+    ReferenceT<SpecialIntegerObject> specialInteger(integer);
+
+    return !specialInteger.IsValid();
+}
+
+bool ReferenceTTest::TestCopyConstructorReferenceChildToParent() {
+
+    Heap mem;
+    Reference specialInteger("SpecialIntegerObject", mem);
+    ReferenceT<IntegerObject> integer(specialInteger);
+
+    return integer->NumberOfReferences() == 2;
+}
+
+bool ReferenceTTest::TestCopyConstructorReferenceT() {
+
+    Heap mem;
+    ReferenceT<IntegerObject> toCopy("IntegerObject", mem);
+
+    (dynamic_cast<IntegerObject*>(toCopy.operator->()))->SetVariable(1);
+
+    ReferenceT<IntegerObject> ret(toCopy);
+
+    return ret->GetVariable() == 1;
+
+}
+
+bool ReferenceTTest::TestCopyConstructorReferenceTParentToChild() {
+
+    Heap mem;
+    ReferenceT<IntegerObject> integer("IntegerObject", mem);
+    ReferenceT<SpecialIntegerObject> specialInteger(integer);
+
+    return !specialInteger.IsValid();
+}
+
+bool ReferenceTTest::TestCopyConstructorReferenceTChildToParent() {
+
+    Heap mem;
+    ReferenceT<SpecialIntegerObject> specialInteger("SpecialIntegerObject", mem);
+    ReferenceT<IntegerObject> integer(specialInteger);
+
+    return integer->NumberOfReferences() == 2;
+}
+
+bool ReferenceTTest::TestCopyConstructorNullPtr() {
     //invalid reference
-    Reference toCopy;
-    Reference ret(toCopy);
+    ReferenceT<Object> toCopy;
+    ReferenceT<Object> ret(toCopy);
 
     return !toCopy.IsValid();
 }
 
-bool ReferenceTest::TestBuildObjectConstructor() {
+bool ReferenceTTest::TestCreateConstructor() {
 
     Heap mem;
-    Reference buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> ref(mem);
+
+    if (!ref.IsValid()) {
+        return false;
+    }
+    ref->SetVariable(2);
+
+    return ref->GetVariable() == 2;
+}
+
+bool ReferenceTTest::TestBuildObjectConstructor() {
+
+    Heap mem;
+    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
 
     if (buildObj->NumberOfReferences() != 1) {
         return false;
     }
 
     //check if the object really exists
-    (dynamic_cast<IntegerObject*>(buildObj.operator->()))->SetVariable(1);
+    buildObj->SetVariable(1);
 
-    return (dynamic_cast<IntegerObject*>(buildObj.operator->()))->GetVariable() == 1;
+    return buildObj->GetVariable() == 1;
 }
 
-bool ReferenceTest::TestBuildFakeObjectConstructor() {
+bool ReferenceTTest::TestBuildFakeObjectConstructor() {
 
     Heap mem;
 
     //an object with this name is not registered!
-    Reference buildObj("FakeObject", mem);
+    ReferenceT<Object> buildObj("FakeObject", mem);
 
     //the reference should be invalid!
     return !buildObj.IsValid();
 }
 
-bool ReferenceTest::TestCopyFromObjPtrConstructor() {
+bool ReferenceTTest::TestCopyFromObjPtrConstructor() {
 
     Heap mem;
-    Reference myIntObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> myIntObj = ReferenceT<IntegerObject>("IntegerObject", mem);
 
-    (dynamic_cast<IntegerObject*>(myIntObj.operator->()))->SetVariable(2);
+    myIntObj->SetVariable(2);
 
-    if ((dynamic_cast<IntegerObject*>(myIntObj.operator->()))->NumberOfReferences() != 1) {
+    //checks if it has zero references
+    if (myIntObj->NumberOfReferences() != 1) {
         return false;
     }
 
-    Reference ref1 = (dynamic_cast<IntegerObject*>(myIntObj.operator->()));
+    ReferenceT<IntegerObject> ret(myIntObj);
 
+    //checks if it has zero references
     if (myIntObj->NumberOfReferences() != 2) {
         return false;
     }
 
-    Reference ref2;
-    ref2 = (dynamic_cast<IntegerObject*>(myIntObj.operator->()));
-
-    //checks if it has zero references
-    if (myIntObj->NumberOfReferences() != 3) {
-        return false;
-    }
-
-    Reference ref3("IntegerObject", mem);
-
-    ref3 = (dynamic_cast<IntegerObject*>(myIntObj.operator->()));
-
-    //checks if it has zero references
-    if (myIntObj->NumberOfReferences() != 4) {
-        return false;
-    }
-
-    return ((dynamic_cast<IntegerObject*>(ref1.operator->()))->GetVariable() == 2) && ((dynamic_cast<IntegerObject*>(ref2.operator->()))->GetVariable() == 2)
-            && ((dynamic_cast<IntegerObject*>(ref3.operator->()))->GetVariable() == 2);
+    return ret->GetVariable() == 2;
 }
 
-bool ReferenceTest::TestCopyFromObjPtrConstructorNullPtr() {
+bool ReferenceTTest::TestCopyFromObjPtrConstructorNullPtr() {
 
-    Reference ret((Object*) NULL);
+    ReferenceT<Object> ret((Object*) NULL);
 
     return !ret.IsValid();
 }
 
-bool ReferenceTest::TestDestructor() {
+bool ReferenceTTest::TestDestructor() {
     Heap mem;
 
     //an object with this name is not registered!
-    Reference buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
 
     if ((buildObj.NumberOfReferences() != 1) && (buildObj.IsValid())) {
         return false;
     }
 
-    buildObj.~Reference();
+    buildObj.~ReferenceT();
     return (buildObj.NumberOfReferences() == 0) && (!buildObj.IsValid());
 }
 
 //TODO
-bool ReferenceTest::TestInitialise() {
+bool ReferenceTTest::TestInitialise() {
     return true;
 }
 
-bool ReferenceTest::TestRemoveReference() {
+bool ReferenceTTest::TestRemoveReference() {
 
     Heap mem;
 
-    Reference intObjRef = Reference("IntegerObject", mem);
+    ReferenceT<IntegerObject> intObjRef("IntegerObject", mem);
 
     //creates an array of references to the object
-    Reference refs[32];
+    ReferenceT<IntegerObject> refs[32];
 
     for (uint32 i = 0; i < 32; i++) {
         refs[i] = intObjRef;
     }
 
-    if ((dynamic_cast<IntegerObject*>(intObjRef.operator->()))->NumberOfReferences() != 33) {
+    if ((intObjRef.operator->())->NumberOfReferences() != 33) {
         return false;
     }
 
     for (uint32 i = 0; i < 32; i++) {
         refs[i].RemoveReference();
-        if ((dynamic_cast<IntegerObject*>(intObjRef.operator->()))->NumberOfReferences() != (32 - i)) {
+        if ((intObjRef.operator->())->NumberOfReferences() != (32 - i)) {
             return false;
         }
         if (refs[i].IsValid()) {
@@ -195,29 +240,27 @@ bool ReferenceTest::TestRemoveReference() {
 
     intObjRef.RemoveReference();
 
-
     return !intObjRef.IsValid();
 
 }
-
-bool ReferenceTest::TestCopyOperatorReference() {
+bool ReferenceTTest::TestCopyOperatorReference() {
 
     Heap mem;
 
     Reference intObjRef = Reference("IntegerObject", mem);
+
     (dynamic_cast<IntegerObject*>(intObjRef.operator->()))->SetVariable(2);
 
-    Reference copyObj = intObjRef;
+    ReferenceT<IntegerObject> copyObj = intObjRef;
 
-    if (dynamic_cast<IntegerObject*>(intObjRef.operator->()) != dynamic_cast<IntegerObject*>(copyObj.operator->())) {
+    if (intObjRef.operator->() != copyObj.operator->()) {
         return false;
     }
 
-    return ((dynamic_cast<IntegerObject*>(intObjRef.operator->()))->NumberOfReferences() == 2)
-            && ((dynamic_cast<IntegerObject*>(copyObj.operator->()))->GetVariable() == 2);
+    return ((dynamic_cast<IntegerObject*>(intObjRef.operator->()))->NumberOfReferences() == 2) && (copyObj->GetVariable() == 2);
 }
 
-bool ReferenceTest::TestCopyOperatorReferenceNull() {
+bool ReferenceTTest::TestCopyOperatorReferenceNull() {
     Reference nullRef;
     Reference copyObj = nullRef;
     if (copyObj.IsValid()) {
@@ -227,26 +270,25 @@ bool ReferenceTest::TestCopyOperatorReferenceNull() {
     return copyObj.NumberOfReferences() == 0;
 }
 
-bool ReferenceTest::TestCopyOperatorObject() {
-    ClassRegistryDatabase db = ClassRegistryDatabase::Instance();
+bool ReferenceTTest::TestCopyOperatorReferenceT() {
 
     Heap mem;
 
-    Reference intObjRef = Reference("IntegerObject", mem);
-    (dynamic_cast<IntegerObject*>(intObjRef.operator->()))->SetVariable(2);
+    ReferenceT<IntegerObject> intObjRef("IntegerObject", mem);
+    intObjRef->SetVariable(2);
 
-    Reference copyObj = (dynamic_cast<IntegerObject*>(intObjRef.operator->()));
-    if ((dynamic_cast<IntegerObject*>(intObjRef.operator->())) != dynamic_cast<IntegerObject*>(copyObj.operator->())) {
+    ReferenceT<IntegerObject> copyObj = intObjRef;
+
+    if (intObjRef.operator->() != copyObj.operator->()) {
         return false;
     }
 
-    return ((dynamic_cast<IntegerObject*>(intObjRef.operator->()))->NumberOfReferences() == 2)
-            && ((dynamic_cast<IntegerObject*>(copyObj.operator->()))->GetVariable() == 2);
-
+    return ((intObjRef.operator->())->NumberOfReferences() == 2) && (copyObj->GetVariable() == 2);
 }
 
-bool ReferenceTest::TestCopyOperatorObjectNull() {
-    Reference copyObj = (Object*) NULL;
+bool ReferenceTTest::TestCopyOperatorReferenceTNull() {
+    ReferenceT<Object> nullRef;
+    ReferenceT<Object> copyObj = nullRef;
     if (copyObj.IsValid()) {
         return false;
     }
@@ -254,25 +296,51 @@ bool ReferenceTest::TestCopyOperatorObjectNull() {
     return copyObj.NumberOfReferences() == 0;
 }
 
-bool ReferenceTest::TestIsValid() {
+bool ReferenceTTest::TestCopyOperatorObject() {
+
+    Heap mem;
+
+    ReferenceT<IntegerObject> source("IntegerObject", mem);
+
+    source->SetVariable(2);
+
+    ReferenceT<IntegerObject> copyObj = source.operator->();
+    if (source.operator->() != copyObj.operator->()) {
+        return false;
+    }
+
+    return (source.operator->()->NumberOfReferences() == 2) && (copyObj->GetVariable() == 2);
+
+}
+
+bool ReferenceTTest::TestCopyOperatorObjectNull() {
+    ReferenceT<Object> copyObj = (Object*) NULL;
+    if (copyObj.IsValid()) {
+        return false;
+    }
+
+    return copyObj.NumberOfReferences() == 0;
+}
+
+bool ReferenceTTest::TestIsValid() {
 
     Heap mem;
 
     //an object with this name is not registered!
-    Reference fakeObj("FakeObject", mem);
+    ReferenceT<IntegerObject> fakeObj("FakeObject", mem);
 
     //the reference should be invalid!
     if (fakeObj.IsValid()) {
         return false;
     }
 
-    Reference copyNull((Object*) NULL);
+    ReferenceT<IntegerObject> copyNull((IntegerObject*) NULL);
     //the reference should be invalid!
     if (copyNull.IsValid()) {
         return false;
     }
 
-    Reference buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
     //the reference should be valid!
     if (!buildObj.IsValid()) {
         return false;
@@ -284,19 +352,19 @@ bool ReferenceTest::TestIsValid() {
 
 }
 
-bool ReferenceTest::TestNumberOfReferences() {
+bool ReferenceTTest::TestNumberOfReferences() {
 
     Heap mem;
 
-    Reference buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
 
-    Reference builtFromRef(buildObj);
-    Reference builtFromObj(dynamic_cast<IntegerObject*>(buildObj.operator->()));
+    ReferenceT<IntegerObject> builtFromRef(buildObj);
+    ReferenceT<IntegerObject> builtFromObj(buildObj.operator->());
 
-    Reference refs[4];
+    ReferenceT<IntegerObject> refs[4];
     refs[0] = buildObj;
     refs[1] = builtFromRef;
-    refs[2] = (dynamic_cast<IntegerObject*>(buildObj.operator->()));
+    refs[2] = (Object*) (buildObj.operator->());
     refs[3] = builtFromObj;
 
     builtFromObj.RemoveReference();
@@ -326,20 +394,20 @@ bool ReferenceTest::TestNumberOfReferences() {
 
 }
 
-bool ReferenceTest::TestEqualOperator() {
+bool ReferenceTTest::TestEqualOperator() {
 
     Heap mem;
 
-    Reference buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
 
-    Reference copy(buildObj);
+    ReferenceT<IntegerObject> copy(buildObj);
 
     if (!(buildObj == copy)) {
         return false;
     }
 
     //another instance of the same class
-    Reference test("IntegerObject", mem);
+    ReferenceT<IntegerObject> test("IntegerObject", mem);
 
     if (buildObj == test) {
         return false;
@@ -363,13 +431,13 @@ bool ReferenceTest::TestEqualOperator() {
 
 }
 
-bool ReferenceTest::TestDifferentOperator() {
+bool ReferenceTTest::TestDifferentOperator() {
 
     Heap mem;
 
-    Reference buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
 
-    Reference copy(buildObj);
+    ReferenceT<IntegerObject> copy(buildObj);
 
     if (buildObj != copy) {
         return false;
@@ -393,20 +461,31 @@ bool ReferenceTest::TestDifferentOperator() {
 
 }
 
-bool ReferenceTest::TestClone() {
+bool ReferenceTTest::TestCloneReference() {
 
     Heap mem;
 
-    Reference buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
 
     Reference fakeObj("FakeObject", mem);
+
+    return !(buildObj.Clone(fakeObj));
+}
+
+bool ReferenceTTest::TestCloneReferenceT() {
+
+    Heap mem;
+
+    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
+
+    ReferenceT<IntegerObject> fakeObj("FakeObject", mem);
 
     return !(buildObj.Clone(fakeObj)) && !(fakeObj.Clone(buildObj));
 }
 
-void CreateRefsOnStack(ReferenceTest &rt) {
+void CreateRefsOnStack(ReferenceTTest &rt) {
 
-    Reference newRef[32];
+    ReferenceT<Object> newRef[32];
     for (uint32 i = 0; i < 32; i++) {
         newRef[i] = rt.storedRef;
     }
@@ -414,10 +493,10 @@ void CreateRefsOnStack(ReferenceTest &rt) {
     rt.eventSem.Wait();
 }
 
-bool ReferenceTest::TestInFunctionOnStack() {
+bool ReferenceTTest::TestInFunctionOnStack() {
 
     Heap mem;
-    storedRef = Reference("Object", mem);
+    storedRef = ReferenceT<Object>("Object", mem);
 
     Threads::BeginThread((ThreadFunctionType) CreateRefsOnStack, this);
 
@@ -443,24 +522,22 @@ bool ReferenceTest::TestInFunctionOnStack() {
 
 }
 
-void CreateRefsOnHeap(ReferenceTest &rt) {
+void CreateRefsOnHeap(ReferenceTTest &rt) {
 
-    rt.arrayRefs = (Reference **) Memory::Malloc(sizeof(Reference*) * rt.nRefs);
+    rt.arrayRefs = (ReferenceT<Object> **) Memory::Malloc(sizeof(ReferenceT<Object>*) * rt.nRefs);
 
     for (uint32 i = 0; i < rt.nRefs; i++) {
-        rt.arrayRefs[i] = new Reference;
+        rt.arrayRefs[i] = new ReferenceT<Object>;
         *(rt.arrayRefs[i]) = rt.storedRef;
     }
 
     rt.eventSem.Wait();
 }
 
-bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
-
-    ClassRegistryDatabase db = ClassRegistryDatabase::Instance();
+bool ReferenceTTest::TestInFunctionOnHeap(uint32 nRefs) {
 
     Heap mem;
-    storedRef = Reference("Object", mem);
+    storedRef = ReferenceT<Object>("Object", mem);
 
     Threads::BeginThread((ThreadFunctionType) CreateRefsOnHeap, this);
 
@@ -499,45 +576,50 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
 
 }
 
-bool ReferenceTest::TestRightInherithance() {
+bool ReferenceTTest::TestRightInherithance() {
 
     Heap mem;
 
-    Reference integer = Reference("IntegerObject", mem);
+    ReferenceT<IntegerObject> integer = ReferenceT<IntegerObject>("IntegerObject", mem);
 
-    Reference specialInteger = Reference("SpecialIntegerObject", mem);
-
-    specialInteger = integer;
-    if ((specialInteger->NumberOfReferences() != 2)) {
-        return false;
-    }
-
-    specialInteger = Reference("SpecialIntegerObject", mem);
+    ReferenceT<SpecialIntegerObject> specialInteger = ReferenceT<SpecialIntegerObject>("SpecialIntegerObject", mem);
 
     integer = specialInteger;
 
-    return (integer->NumberOfReferences() == 2);
+    if (!integer.IsValid()) {
+        return false;
+    }
 
+    if ((integer->NumberOfReferences() != 2)) {
+        return false;
+    }
+
+    integer = ReferenceT<IntegerObject>("IntegerObject", mem);
+
+    //not possible the assignment from top-down
+    specialInteger = integer;
+
+    return !specialInteger.IsValid();
 }
 
-bool ReferenceTest::TestWrongInherithance() {
+bool ReferenceTTest::TestWrongInherithance() {
 
     Heap mem;
 
-    Reference integer = Reference("IntegerObject", mem);
+    ReferenceT<IntegerObject> integer = ReferenceT<IntegerObject>("IntegerObject", mem);
 
-    Reference floatn = Reference("FloatObject", mem);
-
+    ReferenceT<FloatObject> floatn = ReferenceT<FloatObject>("FloatObject", mem);
 
     floatn = integer;
-    if (floatn->NumberOfReferences() != 2) {
+
+    if (floatn.IsValid()) {
         return false;
     }
-    floatn = Reference("FloatObject", mem);
+
+    floatn = ReferenceT<FloatObject>("FloatObject", mem);
 
     integer = floatn;
 
-    return (integer->NumberOfReferences() == 2);
-
+    return !integer.IsValid();
 }
 

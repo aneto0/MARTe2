@@ -269,6 +269,8 @@ bool LinkedListHolderTest::TestListInsertSortedSorter(uint32 nElements) {
 
 }
 
+
+
 bool LinkedListHolderTest::TestListInsertNullSorter(uint32 nElements) {
 
     LinkedListHolder list;
@@ -279,6 +281,9 @@ bool LinkedListHolderTest::TestListInsertNullSorter(uint32 nElements) {
     BuildLists(first1, first2, nElements, false);
 
     list.ListInsert(first2, (SortFilter*) NULL);
+
+    list.ListInsert(first1, (SortFilter*) NULL);
+
 
     //insert without sorting
     for (uint32 i = 0; i < (2 * nElements); i++) {
@@ -488,6 +493,7 @@ bool LinkedListHolderTest::TestListExtract() {
 
 bool LinkedListHolderTest::TestListExtractSearchFilter() {
 
+
     LinkedListHolder list;
 
     LinkedListable *stored[32];
@@ -529,6 +535,7 @@ bool LinkedListHolderTest::TestListExtractSearchFilter() {
     }
 
     return list.ListSize() == 0;
+
 
 }
 
@@ -640,6 +647,7 @@ bool LinkedListHolderTest::TestListDeleteSearchFilter() {
     return list.ListSize() == 0;
 
 }
+
 
 void DeleteList(LinkedListHolderTest &t) {
 

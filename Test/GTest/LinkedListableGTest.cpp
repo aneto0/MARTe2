@@ -65,11 +65,6 @@ TEST(LinkedListableGTest,TestBSortSorter) {
     ASSERT_TRUE(myLinkedListableTest.TestBSortSorter());
 }
 
-TEST(LinkedListableGTest,TestBSortFn) {
-    LinkedListableTest myLinkedListableTest;
-    ASSERT_TRUE(myLinkedListableTest.TestBSortFn());
-}
-
 TEST(LinkedListableGTest,TestInsert) {
     LinkedListableTest myLinkedListableTest;
     ASSERT_TRUE(myLinkedListableTest.TestInsert(10, 10));
@@ -149,3 +144,4 @@ TEST(LinkedListableGTest,TestIterateIterator) {
     LinkedListableTest myLinkedListableTest;
     ASSERT_TRUE(myLinkedListableTest.TestIterateIterator());
 }
+

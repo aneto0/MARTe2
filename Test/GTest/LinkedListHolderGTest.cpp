@@ -72,20 +72,15 @@ TEST(LinkedListHolderTest,TestListSize) {
     ASSERT_TRUE(myLinkedListHolderTest.TestListSize(32));
 }
 
-
-
 TEST(LinkedListHolderTest,TestFastListInsertSingle) {
     LinkedListHolderTest myLinkedListHolderTest;
     ASSERT_TRUE(myLinkedListHolderTest.TestFastListInsertSingle(32));
 }
 
-
 TEST(LinkedListHolderTest,TestListInsert) {
     LinkedListHolderTest myLinkedListHolderTest;
     ASSERT_TRUE(myLinkedListHolderTest.TestListInsert(32));
 }
-
-
 
 TEST(LinkedListHolderTest,TestListInsertSortedSorter) {
     LinkedListHolderTest myLinkedListHolderTest;
@@ -99,14 +94,13 @@ TEST(LinkedListHolderTest,TestListInsertNullSorter) {
 
 TEST(LinkedListHolderTest,TestListInsertIndex) {
     LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListInsertIndex(10,32));
+    ASSERT_TRUE(myLinkedListHolderTest.TestListInsertIndex(10, 32));
 }
 
 TEST(LinkedListHolderTest,TestListInsertIndexOutOfBounds) {
     LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListInsertIndex(35,32));
+    ASSERT_TRUE(myLinkedListHolderTest.TestListInsertIndex(35, 32));
 }
-
 
 TEST(LinkedListHolderTest,TestListAdd) {
     LinkedListHolderTest myLinkedListHolderTest;
@@ -157,7 +151,6 @@ TEST(LinkedListHolderTest,TestListBSortSorter) {
     LinkedListHolderTest myLinkedListHolderTest;
     ASSERT_TRUE(myLinkedListHolderTest.TestListBSortSorter(32));
 }
-
 
 TEST(LinkedListHolderTest,TestListPeek) {
     LinkedListHolderTest myLinkedListHolderTest;
