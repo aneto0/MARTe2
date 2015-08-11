@@ -39,7 +39,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-uint32 nToSearch = 0;
 
 bool LinkedListableTest::TestConstructor() {
 
@@ -178,63 +177,6 @@ bool LinkedListableTest::TestBSortSorter() {
     }
 
     root.BSort(&decrescentSorter);
-
-    //checks if the order is decrescent in all list
-    cursor = root.Next();
-    for (uint32 i = 0; i < 32; i++) {
-        if (((IntegerList*) (cursor))->intNumber != (31 - i)) {
-            return false;
-        }
-        cursor = cursor->Next();
-    }
-
-    return true;
-}
-
-bool LinkedListableTest::TestBSortFn() {
-    IntegerList root;
-    IntegerList number[32];
-
-    number[0].intNumber = 0;
-    root.SetNext(&number[0]);
-
-    //fills the list in crescent order
-    for (uint32 i = 1; i < 32; i++) {
-        number[i].intNumber = i;
-        number[i - 1].SetNext(&number[i]);
-    }
-
-    //nothing should happen
-    root.BSort((SortFilterFn*) NULL);
-    LinkedListable *cursor = root.Next();
-    for (uint32 i = 0; i < 32; i++) {
-        if (((IntegerList*) (cursor))->intNumber != i) {
-            return false;
-        }
-        cursor = cursor->Next();
-    }
-
-    //sort only the last half part of the list
-    number[14].BSort(DecrescentSortFn);
-
-    //checks if the order is crescent in the first half list
-    cursor = root.Next();
-    for (uint32 i = 0; i <= 14; i++) {
-        if (((IntegerList*) (cursor))->intNumber != i) {
-            return false;
-        }
-        cursor = cursor->Next();
-    }
-
-    //checks if the order is decrescent in the second half list
-    for (uint32 i = 31; i >= 15; i--) {
-        if (((IntegerList*) (cursor))->intNumber != i) {
-            return false;
-        }
-        cursor = cursor->Next();
-    }
-
-    root.BSort(DecrescentSortFn);
 
     //checks if the order is decrescent in all list
     cursor = root.Next();
@@ -585,6 +527,7 @@ bool LinkedListableTest::TestSearchFilterPreviousElement() {
     return (rootList1.Search(&searchNumber) == &list1Element[0]) && (list1Element[1].Search(&searchNumber) == NULL);
 }
 
+
 bool LinkedListableTest::TestExtract() {
     //build the two lists
     LinkedListable rootList1;
@@ -670,6 +613,8 @@ bool LinkedListableTest::TestExtractSearchFilter() {
 
 }
 
+
+
 bool LinkedListableTest::TestDelete() {
 
     LinkedListable *root = new LinkedListable;
@@ -741,6 +686,7 @@ bool LinkedListableTest::TestDeleteSearchFilter() {
     return true;
 
 }
+
 
 bool LinkedListableTest::TestPeek() {
 
