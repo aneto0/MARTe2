@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_CORE_L1OBJECTS_CLASSREGISTRYDATABASETEST_H_
-#define TEST_CORE_L1OBJECTS_CLASSREGISTRYDATABASETEST_H_
+#ifndef CLASSREGISTRYDATABASETEST_H_
+#define CLASSREGISTRYDATABASETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -45,12 +45,33 @@ public:
      * @brief Tests the constructor.
      * @return TODO
      */
-    bool TestConstructor();
+    bool TestInstance();
+
+    bool TestDeleteTrue();
+
+    bool TestDeleteFalse();
+
+    bool TestAdd();
+
+    bool TestAddTheSameName();
+
+    bool TestFind(const char8*);
+
+    bool TestFindDLL(const char8* dllname);
+
+    bool TestList();
+
+    bool TestSize(uint32 nElements);
+
+    bool TestElementAt();
+
+    bool TestInstances();
+
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_CORE_L1OBJECTS_CLASSREGISTRYDATABASETEST_H_ */
+#endif /* CLASSREGISTRYDATABASETEST_H_ */
 

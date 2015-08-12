@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
+#include "ReferenceT.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -43,12 +44,7 @@ class IntegerObject: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
 
-    /**
-     * Default constructor
-     */
-    IntegerObject() {
-        dummyVariable = 0;
-    }
+
 
     virtual ~IntegerObject() {
     }
@@ -70,6 +66,13 @@ public:
 
 protected:
     /**
+     * Default constructor
+     */
+    IntegerObject() {
+        dummyVariable = 0;
+    }
+
+    /**
      * Dummy variable
      */
     int32 dummyVariable;
@@ -80,11 +83,6 @@ class SpecialIntegerObject: public IntegerObject {
 public:
     CLASS_REGISTER_DECLARATION()
 
-    /**
-     * Default constructor
-     */
-    SpecialIntegerObject() {
-    }
 
     virtual ~SpecialIntegerObject() {
     }
@@ -95,6 +93,12 @@ public:
     }
 
 private:
+    /**
+     * Default constructor
+     */
+    SpecialIntegerObject() {
+    }
+
 
 };
 
@@ -180,8 +184,9 @@ public:
     CLASS_REGISTER_DECLARATION()
 
     CollectInts() {
-        oneInteger.SetVariable(0);
-        oneSpecialInteger.SetVariable(0);
+        Heap h;
+        oneInteger=*(ReferenceT<IntegerObject>("IntegerObject",h).operator->());
+        oneSpecialInteger=*(ReferenceT<SpecialIntegerObject>("SpecialIntegerObject",h).operator->());
     }
 
     void SetInteger(int32 inumber){
@@ -209,7 +214,7 @@ public:
 
     CLASS_REGISTER_DECLARATION()
 
-    CollectFloats() {
+    CollectFloats():oneFloat(),oneDouble() {
         oneFloat.SetVariable(0);
         oneDouble.SetVariable(0);
 

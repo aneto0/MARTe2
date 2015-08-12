@@ -40,10 +40,67 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassRegistryDatabaseGTest,TestConstructor) {
+
+
+
+TEST(ClassRegistryDatabaseGTest,TestInstance) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestConstructor());
+    ASSERT_TRUE(classRegistryDatabaseTest.TestInstance());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestDeleteTrue) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestDeleteTrue());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestDeleteFalse) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestDeleteFalse());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestAdd) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestAdd());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestAddTheSameName) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestAddTheSameName());
 }
 
 
-	
+TEST(ClassRegistryDatabaseGTest,TestFind) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFind("abcdefg"));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindNull) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFind(NULL));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindDLL) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFindDLL("abcdefg"));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestList) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestList());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestSize) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestSize(32));
+}
+
+
+TEST(ClassRegistryDatabaseGTest,TestElementAt) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestElementAt());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestInstances) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestInstances());
+}
