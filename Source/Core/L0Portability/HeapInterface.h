@@ -78,7 +78,7 @@ public:
      * @brief Checks if memory is part of the heap managed area
      * @return last memory address
      */
-    virtual bool Owns(const void * data ) const {
+    virtual bool Owns(void const * const data ) const {
         /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
          * in order to be able to compare the address with a range of addresses
          * uintp is an integer type that has by design the same span as a pointer in all systems*/

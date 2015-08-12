@@ -57,7 +57,8 @@ HeapInterface *FindHeap(const void * address);
  * @brief Finds the Heap that has the specified name
  * returns GetStandardHeap() if not found
  */
-HeapInterface *FindHeap(const char8 *name);
+HeapInterface *FindHeap(const char8 * const name);
+
 
 /**
  * @brief free the pointer data and its associated memory.
@@ -72,7 +73,7 @@ bool Free(void *&data);
  * @param name name of heap to use
  * returns false if no heap is found that can handle this data
  */
-void *Malloc(uint32 size, const char8 *name = NULL);
+void *Malloc(uint32 size, const char8 *name = NULL_PTR(char8 *));
 
 /**
  * @brief
