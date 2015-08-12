@@ -77,6 +77,150 @@ bool ReferenceContainer::Insert(Reference ref,
     return ok;
 }
 
+
+class ReferenceFilter {
+
+public:
+
+}
+
+class searchMode{
+    int status;
+    bool withPath;
+    bool recursive;
+
+public:
+    SetSingle(int position, bool withPath,bool recursive){
+        status = position;
+        this->withPath = withPath;
+    }
+    SetLast(bool recursive){
+        status = -1;
+        this->withPath = false;
+    }
+    SetMultiple(bool recursive){
+        status = -2;
+        this->withPath = false;
+    }
+
+    bool ShallStore(){
+        if ((status == -2) || (status == -1) || (status == -0)) return true;
+        return false;
+    }
+
+    void OneInstanceFound(){
+        if (status <= 0) return ;
+
+        status--;
+
+    }
+
+    bool ShallContinue(){
+        if ((status == -2) || (status == -1)) return true;
+        if (status <= 0) return false;
+        return (status >= 1);
+    }
+
+    bool ShallRecurse();
+};
+
+
+bool ReferenceContainer::Find (ReferenceContainer &result, ReferenceFilter &rf, searchMode &sm ){
+
+    do {
+
+    LinkedListable *ll = list.Peek(index);
+    if (ll == NULL) ok = false;
+
+    ReferenceContainerItem *rci;
+
+    if (ok){
+        rci = dynamic_cast<Reference *> (ll);
+
+        if (rci == NUL) ok = false;
+    }
+
+    if (ok) {
+        bool found = rf.Check(rci->GetReference());
+
+
+        if (found){
+            sm.OneInstanceFound();
+            if (!sm.ShallDelete()){  // update last
+                result.Remove(all);
+            }
+
+            if (!sm.ShallStore()){
+                result.Add(rci->GetReference());
+            }
+
+        } else {
+            if ((isContainer(rci)) && sm.ShallRecurse()){
+                if (sm.ShallStorePath()){
+                    result.Add(rci->GetReference());
+                 }
+                 rf.StartRecurse(container(rci))
+                 container(rci).Find(result,rf,sm);
+                 rf.EndRecurse(container(rci))
+
+                 if (sm.ShallStorePath()){
+                    // not found - prune store path
+                    if (sm.ShallContinue()){
+                        result.Remove(rci->GetReference());
+                    }
+                 }
+            }
+
+         }
+
+
+
+        }
+
+
+
+
+
+
+    } while(ok && sm.ShallContinue());
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 bool GCRCFind(GCReference &reference,
               uint32 index,
               bool remove,
