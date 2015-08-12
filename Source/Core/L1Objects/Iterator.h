@@ -2,7 +2,7 @@
  * @file Iterator.h
  * @brief Header file for class Iterator
  * @date 06/08/2015
- * @author Giuseppe Ferro
+ * @author Giuseppe Ferro'
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ITERATOR_H_
-#define ITERATOR_H_
+#ifndef SOURCE_CORE_L1OBJECTS_ITERATOR_H_
+#define SOURCE_CORE_L1OBJECTS_ITERATOR_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -60,5 +60,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* ITERATOR_H_ */
+#endif /* SOURCE_CORE_L1OBJECTS_ITERATOR_H_ */
 

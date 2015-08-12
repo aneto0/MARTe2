@@ -1,8 +1,8 @@
 /**
  * @file ClassProperties.cpp
  * @brief Source file for class ClassProperties
- * @date Aug 5, 2015
- * @author aneto
+ * @date 05/08/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

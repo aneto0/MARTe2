@@ -1,8 +1,8 @@
 /**
  * @file Reference.cpp
  * @brief Source file for class Reference
- * @date Aug 6, 2015
- * @author aneto
+ * @date 06/08/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -142,29 +142,6 @@ bool Reference::operator!=(const Reference& sourceReference) const {
 
 Object* Reference::operator->() {
     return objectPointer;
-}
-
-bool Reference::Clone(Reference &sourceReference) {
-    bool ok = sourceReference.IsValid();
-    if (ok) {
-        Object * tmp = sourceReference->Clone();
-        if (tmp != NULL) {
-            RemoveReference();
-            objectPointer = tmp;
-            objectPointer->IncrementReferences();
-            // This is necessary, otherwise when
-            // GCReference::Clone is called by
-            // GCRTemplate, at this point the IsValid
-            // function of GCRTemplate would be called,
-            // returning false as the setup of GCRTemplate
-            // Tobject is not yet done.
-            ok = Reference::IsValid();
-        }
-        else {
-            ok = false;
-        }
-    }
-    return ok;
 }
 
 Object *Reference::CreateByName(const char8 * const className, const Heap &heap) const {

@@ -2,7 +2,7 @@
  * @file LinkedListHolder.h
  * @brief Header file for class LinkedListHolder
  * @date 06/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferro'
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef LINKEDLISTHOLDER_H_
-#define LINKEDLISTHOLDER_H_
+#ifndef SOURCE_CORE_L1OBJECTS_LINKEDLISTHOLDER_H_
+#define SOURCE_CORE_L1OBJECTS_LINKEDLISTHOLDER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -49,12 +49,15 @@ class LinkedListHolder {
 public:
 
     /**
-     * @brief Deallocates all the contents.
+     * @brief Deallocates all the contents of the list.
+     * @details This functions deletes all the elements of the list, sets its size to 0 and the root element to NULL.
      */
     void CleanUp();
 
     /**
-     * @brief Sets 0 to llhSize and NULL to llhRoot->next.
+     * @brief Resets the list without deleting the objects.
+     * @details This functions sets the size of the list to 0 and the root element to NULL.
+     * Note that the element of the list are not destroyed. This could lead to memory leaks.
      */
     void Reset();
 
@@ -69,7 +72,7 @@ public:
     virtual ~LinkedListHolder();
 
     /**
-     * @brief Returns the first element.
+     * @brief Returns the first element of the list.
      * @return a pointer to the first element of the list.
      */
     LinkedListable *List();
@@ -81,13 +84,16 @@ public:
     uint32 ListSize() const;
 
     /**
-     * @brief Inserts in the first location the element \a p.
+     * @brief Inserts \p at the beginning of the list.
      * @param[in] p the LinkedListable object to insert.
+     * @pre \a p must be a single LinkedListable element, as his next pointer will be set
+     *      to the previous first element of the list after the execution of the function.
+     *      If instead \a p is a list, this could lead to memory leaks.
      */
     inline void FastListInsertSingle(LinkedListable &p);
 
     /**
-     * @brief Inserts in the first location the input list \a p.
+     * @brief Inserts at the beginning of the list \a p. \a p can be a single element or an entire list.
      * @param[in] p a pointer to the LinkedListable to insert.
      */
     void ListInsert(LinkedListable * const p);
@@ -114,6 +120,9 @@ public:
     /**
      * @brief Adds an element at the end of this list.
      * @param[in] p the pointer to the LinkedListable element to be appended.
+     * @pre \a p must be a single LinkedListable element, as his next pointer will be set
+     *      to NULL after the execution of the function. If instead \a p is a list, Add
+     *      could lead to memory leaks.
      */
     void ListAdd(LinkedListable * const p);
 
@@ -221,5 +230,5 @@ void LinkedListHolder::FastListInsertSingle(LinkedListable &p) {
     p.SetNext(llhRoot.Next());
     llhRoot.SetNext(&p);
 }
-#endif /* LINKEDLISTHOLDER_H_ */
+#endif /* SOURCE_CORE_L1OBJECTS_LINKEDLISTHOLDER_H_ */
 
