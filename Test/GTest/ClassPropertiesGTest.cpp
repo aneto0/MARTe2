@@ -1,7 +1,7 @@
 /**
- * @file ObjectTestHelper.cpp
- * @brief Source file for class ObjectTestHelper
- * @date 07/08/2015
+ * @file ClassPropertiesGTest.cpp
+ * @brief Source file for class ClassPropertiesGTest
+ * @date 11/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,19 +17,20 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ObjectTestHelper (public, protected, and private). Be aware that some 
+ * the class ClassPropertiesGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ObjectTestHelper.h"
-
+#include "ClassPropertiesTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -38,19 +39,23 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-CLASS_REGISTER(IntegerObject, "1.0")
+TEST(ClassPropertiesGTest,TestDefaultConstructor) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestDefaultConstructor());
+}
 
+TEST(ClassPropertiesGTest,TestFullConstructor) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestFullConstructor("Hello","World"));
+}
 
-CLASS_REGISTER(SpecialIntegerObject, "1.0")
+TEST(ClassPropertiesGTest,TestGetName) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestGetName("Hello"));
+}
 
+TEST(ClassPropertiesGTest,TestGetVersion) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestGetVersion("World"));
+}
 
-CLASS_REGISTER(FloatObject, "1.0")
-
-
-CLASS_REGISTER(DoubleObject, "1.0")
-
-
-CLASS_REGISTER(CollectInts, "1.0")
-
-
-CLASS_REGISTER(CollectFloats, "1.0")
