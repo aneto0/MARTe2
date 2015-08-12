@@ -75,7 +75,7 @@ public:
      * @param heap  is the desired heap to store
      * @return true if index is within range; specified slot is free; and heap is not NULL
      * */
-    bool SetHeap(int index, const HeapInterface *heap);
+    bool SetHeap(int index, HeapInterface *heap);
 
     /**
      * @brief sets to NULL a given slot of the database
@@ -198,7 +198,7 @@ HeapInterface *HeapDataBase::GetHeap(int index)const{
  * @param heap  is the desired heap to store
  * @return true if index is within range; specified slot is free; and heap is not NULL
  * */
-bool HeapDataBase::SetHeap(int index, const HeapInterface *heap){
+bool HeapDataBase::SetHeap(int index, HeapInterface *heap){
     bool ok = false;
     if ((index >= 0) && (index < MaximumNumberOfHeaps)){
         if ((heaps[index] == NULL) && (heap != NULL)){
@@ -265,7 +265,7 @@ StandardHeap::StandardHeap(){
 /**
  * @brief constructor
  */
-virtual StandardHeap::~StandardHeap(){
+StandardHeap::~StandardHeap(){
     free (static_cast<void *>  (firstAddress));
     firstAddress = static_cast<uint8 *>  (NULL);
     lastAddress  = static_cast<uint8 *>  (NULL);
@@ -275,7 +275,7 @@ virtual StandardHeap::~StandardHeap(){
  * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
  * @return a pointer to the allocated memory or NULL if the allocation fails.
  */
-virtual void *StandardHeap::Malloc(const uint32 &size){
+void *StandardHeap::Malloc(const uint32 &size){
     void *address = malloc(size);
     uint8 *address8Bit = static_cast <uint8 *>(address);
     if (firstAddress > address8Bit  )  firstAddress = address8Bit;
@@ -289,7 +289,7 @@ virtual void *StandardHeap::Malloc(const uint32 &size){
  * @brief free the pointer data and its associated memory.
  * @param data the data to be freed.
  */
-virtual void StandardHeap::Free(void *&data){
+void StandardHeap::Free(void *&data){
     free(data);
 }
 
@@ -297,7 +297,7 @@ virtual void StandardHeap::Free(void *&data){
  * @brief start of range of memory addresses served by this heap.
  * @return first memory address
  */
-virtual uint8* StandardHeap::FirstAddress()const {
+uint8* StandardHeap::FirstAddress()const {
     return firstAddress;
 }
 
@@ -305,7 +305,7 @@ virtual uint8* StandardHeap::FirstAddress()const {
  * @brief end (inclusive) of range of memory addresses served by this heap.
  * @return last memory address
  */
-virtual uint8* StandardHeap::LastAddress()const {
+uint8* StandardHeap::LastAddress()const {
     return lastAddress;
 }
 
@@ -313,7 +313,7 @@ virtual uint8* StandardHeap::LastAddress()const {
  * @brief Returns the name of the heap
  * @return name of the heap
  */
-virtual const char *StandardHeap::Name()const {
+const char *StandardHeap::Name()const {
     return "StandardHeap";
 }
 

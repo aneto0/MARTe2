@@ -79,7 +79,7 @@ public:
      * @return last memory address
      */
     virtual bool Owns(const void *data)const{
-        uint8 * address = static_cast<uint8 *>(data);
+        const uint8 * address = static_cast<const uint8 *>(data);
 
         return (address >= FirstAddress())  &&
                 (address <= LastAddress());
