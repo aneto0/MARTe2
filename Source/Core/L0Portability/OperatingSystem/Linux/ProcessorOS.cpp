@@ -36,7 +36,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
+/*lint -e{9141} constant that can be reused by other classes*/
 char8 processorVendorId[13] = { '\0' };
 
 uint32 Processor::Available() {

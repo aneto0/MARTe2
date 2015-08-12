@@ -263,7 +263,7 @@ ThreadIdentifier Threads::BeginThread(const ThreadFunctionType function,
                                       ProcessorType runOnCPUs) {
 
     ThreadIdentifier threadId = InvalidThreadIdentifier;
-    if (runOnCPUs == ProcessorType::UndefinedCPUs) {
+    if (runOnCPUs == UndefinedCPUs) {
         if (ProcessorType::GetDefaultCPUs() != 0u) {
             runOnCPUs = ProcessorType::GetDefaultCPUs();
         }
