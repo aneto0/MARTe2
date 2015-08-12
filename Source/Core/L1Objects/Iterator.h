@@ -36,13 +36,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief Iterator callback function.
- * @details This function is called for every element in the list being traversed.
- * @param[in] data the current LinkedListable element on which this function is supposed to actuate.
- */
-typedef void (IteratorFn)(LinkedListable *data);
-
-/**
  * @brief LinkedListable iterator interface.
  * @details For each element on a LinkedListable list the function Do(LinkedListable *) is called.
  */

@@ -137,7 +137,7 @@ public:
      * @details It will increment the number of references referencing the underlying object.
      * @return a reference to the underlying object.
      */
-    virtual Reference& operator=(Object * pointer);
+    virtual Reference& operator=(Object * const pointer);
 
     /**
      * @brief Provides access to the underlying object linked by this Reference.
@@ -175,7 +175,7 @@ private:
      * @param[in] heap the heap where the object is to be allocated.
      * @return a new object of the specified class or NULL if the \a className does not exist.
      */
-    Object *CreateByName(const char8 * const className, const Heap &heap);
+    Object *CreateByName(const char8 * const className, const Heap &heap) const;
 
 };
 
