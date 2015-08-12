@@ -1,8 +1,8 @@
 /**
- * @file ReferenceContainerItem.cpp
- * @brief Source file for class ReferenceContainerItem
- * @date Aug 12, 2015
- * @author aneto
+ * @file ReferenceContainerTempTests.cpp
+ * @brief Source file for class ReferenceContainerTempTests
+ * @date 12 Aug 2015
+ * @author andre
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ReferenceContainerItem (public, protected, and private). Be aware that some 
+ * the class ReferenceContainerTempTests (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainerItem.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -37,19 +37,61 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+#include <stdio.h>
+#include <stdlib.h>
+#include "ReferenceContainer.h"
+#include "ReferenceT.h"
 
+int main(int argc, char **argv){
+    printf("STARTING!!!\n");
+    Heap h;
+    ReferenceT<ReferenceContainer> A("ReferenceContainer", h);
+    ReferenceT<Object> B("Object", h);
+    ReferenceT<ReferenceContainer> C("ReferenceContainer", h);
+    ReferenceT<ReferenceContainer> D("ReferenceContainer", h);
+    ReferenceT<Object> E("Object", h);
+    ReferenceT<ReferenceContainer> F("ReferenceContainer", h);
+    ReferenceT<ReferenceContainer> G("ReferenceContainer", h);
+    ReferenceT<Object> H("Object", h);
+    ReferenceT<Object> I("Object", h);
+    ReferenceT<Object> J("Object", h);
 
-ReferenceContainerItem::ReferenceContainerItem() : LinkedListable() {
+    F->Insert(G);
+    F->Insert(H);
+    F->Insert(I);
+
+    D->Insert(F);
+    D->Insert(E);
+
+    C->Insert(E);
+
+    A->Insert(B);
+    A->Insert(C);
+    A->Insert(D);
+
+    printf("A @ %p\n", A.operator -> ());
+    printf("B @ %p\n", B.operator -> ());
+    printf("C @ %p\n", C.operator -> ());
+    printf("D @ %p\n", D.operator -> ());
+    printf("E @ %p\n", E.operator -> ());
+    printf("F @ %p\n", F.operator -> ());
+    printf("G @ %p\n", G.operator -> ());
+    printf("H @ %p\n", H.operator -> ());
+    printf("I @ %p\n", I.operator -> ());
+
+    ReferenceContainer results;
+    ReferenceContainerFilters::References referencesFilter(E);
+    SearchMode mode(1, true, true, false);
+    A->Find(results, referencesFilter, mode);
+    printf("results.Size = %d\n", results.Size());
+    uint32 i=0;
+    char uniqueName[128];
+    for(i=0; i<results.Size(); i++){
+        printf("Found : %p\n", results.Get(i).operator -> ());
+    }
+
+    return 0;
 }
 
-ReferenceContainerItem::~ReferenceContainerItem() {
-}
 
-Reference ReferenceContainerItem::GetReference() const {
-    return reference;
-}
-
-bool ReferenceContainerItem::Load(Reference newReference) {
-    reference = newReference;
-    return reference.IsValid();
-}
+	

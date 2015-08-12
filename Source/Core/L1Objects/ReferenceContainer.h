@@ -37,10 +37,102 @@
 #include "Object.h"
 #include "Reference.h"
 #include "LinkedListable.h"
+#include "ReferenceContainerItem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+class ReferenceContainer;
+
+namespace ReferenceContainerFilters {
+class Interface {
+public:
+    virtual ~Interface() {
+
+    }
+    virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest) = 0;
+};
+
+class References: public ReferenceContainerFilters::Interface {
+public:
+    References(Reference refToSearch) {
+        referenceToSearch = refToSearch;
+    }
+
+    virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest) {
+        return (referenceToSearch == referenceToTest);
+    }
+
+private:
+    Reference referenceToSearch;
+};
+}
+
+namespace SearchModeType {
+const int32 Last = -2;
+const int32 Multiple = -1;
+}
+
+class SearchMode {
+public:
+    SearchMode(int32 idx, bool path, bool recurseNodes, bool deleteFound) {
+        index = idx;
+        deleteFoundNodes = deleteFound;
+        recursive = recurseNodes;
+        lastFoundIndex = -1;
+        storePath = path;
+    }
+
+    void IncrementFound() {
+        if (index > 0) {
+            index--;
+        }
+    }
+
+    bool IsDelete() const {
+        return deleteFoundNodes;
+    }
+
+    bool IsFinished() const {
+        return (index == 0);
+    }
+
+    bool IsRecursive() const {
+        return recursive;
+    }
+
+    bool IsSingle() const {
+        return index > -1;
+    }
+
+    bool IsMultiple() const {
+        return (index == SearchModeType::Multiple);
+    }
+
+    bool IsStorePath() const {
+        return storePath;
+    }
+
+    bool IsSearchLast() const {
+        return (index == SearchModeType::Last);
+    }
+
+    uint32 GetLastFoundIndex() const {
+        return lastFoundIndex;
+    }
+
+    void SetLastFoundIndex(const uint32 &idx) {
+        lastFoundIndex = idx;
+    }
+private:
+    int32 index;
+    int32 lastFoundIndex;
+    bool recursive;
+    bool deleteFoundNodes;
+    bool storePath;
+};
+
 class ReferenceContainer: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -59,6 +151,32 @@ public:
      * TODO
      */
     bool Insert(Reference ref, const int32 &position = -1);
+
+    /**
+     * TODO
+     */
+    bool Delete(Reference ref);
+
+    /**
+     *
+     * @param result
+     * @param filter
+     * @param mode
+     * @return
+     */
+    bool Find(ReferenceContainer &result, ReferenceContainerFilters::Interface &filter, SearchMode &mode);
+
+    bool IsContainer(const Reference &ref);
+
+    uint32 Size() const;
+
+    Reference Get(uint32 idx) {
+        Reference ref;
+        if(idx < list.ListSize()){
+            ref = ((ReferenceContainerItem *)list.ListPeek(0))->GetReference();
+        }
+        return ref;
+    }
 
 private:
     /**
