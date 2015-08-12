@@ -1,8 +1,8 @@
 /**
  * @file ClassRegistryItem.cpp
  * @brief Source file for class ClassRegistryItem
- * @date Aug 4, 2015
- * @author aneto
+ * @date 04/08/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
