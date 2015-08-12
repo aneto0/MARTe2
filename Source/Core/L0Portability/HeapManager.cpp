@@ -41,10 +41,13 @@
 /*                           Local Class declaration                         */
 /*---------------------------------------------------------------------------*/
 
+namespace HeapManagerInternals{
+
 /**
  * @brief TODO
  */
-static const int MaximumNumberOfHeaps = 16;
+static const int32 MaximumNumberOfHeaps = 16;
+
 /**
  * @brief TODO
  */
@@ -67,7 +70,7 @@ public:
      * @param index indicates the slots of the database
      * @return NULL index out of range or if empty slot
      * */
-    HeapInterface *GetHeap(int index)const;
+    HeapInterface *GetHeap(int32 index)const;
 
     /**
      * @brief sets the HeapInterface in a given slot of the database
@@ -75,7 +78,7 @@ public:
      * @param heap  is the desired heap to store
      * @return true if index is within range; specified slot is free; and heap is not NULL
      * */
-    bool SetHeap(int index, HeapInterface *heap);
+    bool SetHeap(int32 index, HeapInterface *const heap);
 
     /**
      * @brief sets to NULL a given slot of the database
@@ -83,7 +86,7 @@ public:
      * @param heap must contain the same value as in the database
      * @return true if index is within range; specified slot contains heapl heap is not NULL
      * */
-    bool UnsetHeap(int index, const HeapInterface *heap);
+    bool UnsetHeap(int32 index, const HeapInterface *heap);
     /**
      * @brief constructor
      * */
@@ -110,11 +113,11 @@ class StandardHeap: public HeapInterface {
     /**
      * @brief minimum of address returned by malloc.
      */
-    uint8 *firstAddress;
+    uintp firstAddress;
     /**
      * @brief maximum of address of last byte of memory returned by malloc
      */
-    uint8 *lastAddress;
+    uintp lastAddress;
 public:
 
     /**
@@ -142,19 +145,19 @@ public:
      * @brief start of range of memory addresses served by this heap.
      * @return first memory address
      */
-    virtual uint8* FirstAddress()const;
+    virtual uintp FirstAddress()const;
 
     /**
      * @brief end (inclusive) of range of memory addresses served by this heap.
      * @return last memory address
      */
-    virtual uint8* LastAddress()const;
+    virtual uintp LastAddress()const;
 
     /**
      * @brief Returns the name of the heap
      * @return name of the heap
      */
-    virtual const char *Name()const;
+    virtual const char8 *Name()const;
 
 } ;
 
@@ -167,12 +170,14 @@ public:
 /**
  * @brief TODO
  */
-static HeapDataBase  heapDataBase;
+static HeapDataBase heapDataBase;
 
 /**
  * @brief TODO
  */
 static StandardHeap standardHeap;
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -184,8 +189,8 @@ static StandardHeap standardHeap;
  * @param index indicates the slots of the database
  * @return NULL index out of range or if empty slot
  * */
-HeapInterface *HeapDataBase::GetHeap(int index)const{
-    HeapInterface *returnValue = NULL;
+HeapInterface *HeapDataBase::GetHeap(const int32 index)const{
+    HeapInterface *returnValue = NULL_PTR(HeapInterface *);
     if ((index >= 0) && (index < MaximumNumberOfHeaps)){
         returnValue = heaps[index];
     }
@@ -198,7 +203,7 @@ HeapInterface *HeapDataBase::GetHeap(int index)const{
  * @param heap  is the desired heap to store
  * @return true if index is within range; specified slot is free; and heap is not NULL
  * */
-bool HeapDataBase::SetHeap(int index, HeapInterface *heap){
+bool HeapDataBase::SetHeap(const int32 index,  HeapInterface * const heap  ){
     bool ok = false;
     if ((index >= 0) && (index < MaximumNumberOfHeaps)){
         if ((heaps[index] == NULL) && (heap != NULL)){
@@ -215,7 +220,7 @@ bool HeapDataBase::SetHeap(int index, HeapInterface *heap){
  * @param heap must contain the same value as in the database
  * @return true if index is within range; specified slot contains heapl heap is not NULL
  * */
-bool HeapDataBase::UnsetHeap(int index, const HeapInterface *heap){
+bool HeapDataBase::UnsetHeap(const int32 index, const HeapInterface *heap){
     bool ok = false;
     if ((index >= 0) && (index < MaximumNumberOfHeaps)){
         if (heaps[index] == heap ){
@@ -231,7 +236,7 @@ bool HeapDataBase::UnsetHeap(int index, const HeapInterface *heap){
  * */
 HeapDataBase::HeapDataBase(){
 
-    int i=0;
+    int32 i=0;
     for(i=0;i<MaximumNumberOfHeaps;i++){
         heaps[i] = NULL;
     }
@@ -259,16 +264,15 @@ void HeapDataBase::UnLock(){
 StandardHeap::StandardHeap(){
 
     /** initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
-    firstAddress = static_cast<uint8 *>  (malloc(1));
-    lastAddress  = firstAddress+1;
+    firstAddress = 0U;
+    lastAddress  = 0U;
 }
 /**
- * @brief constructor
+ * @brief destructor
  */
 StandardHeap::~StandardHeap(){
-    free (static_cast<void *>  (firstAddress));
-    firstAddress = static_cast<uint8 *>  (NULL);
-    lastAddress  = static_cast<uint8 *>  (NULL);
+    lastAddress  = 0U;
+    firstAddress = 0U;
 };
 
 /**
@@ -276,12 +280,22 @@ StandardHeap::~StandardHeap(){
  * @return a pointer to the allocated memory or NULL if the allocation fails.
  */
 void *StandardHeap::Malloc(const uint32 &size){
-    void *address = malloc(size);
-    uint8 *address8Bit = static_cast <uint8 *>(address);
-    if (firstAddress > address8Bit  )  firstAddress = address8Bit;
-    address8Bit+= size;
-    if (lastAddress < address8Bit  )  lastAddress = address8Bit;
-    return address;
+    //void *pointer = malloc(size);
+    void *pointer = new char8[size];
+
+    /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
+     * in order to be able to update the range of addresses provided by this heap
+     * uintp is an integer type that has by design the same span as a pointer in all systems*/
+    uintp address = reinterpret_cast<uintp>(pointer);
+    if ((firstAddress > address ) || (firstAddress == 0U)){
+        firstAddress = address;
+    }
+    address += size;
+    if ((lastAddress  < address ) || (lastAddress  == 0U)) {
+        lastAddress = address;
+    }
+
+    return pointer;
 
 }
 
@@ -297,7 +311,7 @@ void StandardHeap::Free(void *&data){
  * @brief start of range of memory addresses served by this heap.
  * @return first memory address
  */
-uint8* StandardHeap::FirstAddress()const {
+uintp StandardHeap::FirstAddress()const {
     return firstAddress;
 }
 
@@ -305,7 +319,7 @@ uint8* StandardHeap::FirstAddress()const {
  * @brief end (inclusive) of range of memory addresses served by this heap.
  * @return last memory address
  */
-uint8* StandardHeap::LastAddress()const {
+uintp StandardHeap::LastAddress()const {
     return lastAddress;
 }
 
@@ -317,7 +331,7 @@ const char *StandardHeap::Name()const {
     return "StandardHeap";
 }
 
-
+}
 /**
  * @brief Finds the Heap that manages the specified memory location
  * @param address is a memory address that the target heap should manage
@@ -342,14 +356,14 @@ HeapInterface *HeapManager::FindHeap(const void * address){
     HeapInterface *foundHeap = NULL;
 
     /* controls access to database */
-    if (heapDataBase.Lock()){
+    if (HeapManagerInternals::heapDataBase.Lock()){
         // TODO add error message here
 
         int i=0;
-        for(i=0;(i<MaximumNumberOfHeaps) && ok ;i++){
+        for(i=0;(i<HeapManagerInternals::MaximumNumberOfHeaps) && ok ;i++){
 
             /** retrieve heap information in current slot */
-            HeapInterface *heap = heapDataBase.GetHeap(i);
+            HeapInterface *heap = HeapManagerInternals::heapDataBase.GetHeap(i);
 
             /** if slot used */
             if (heap != NULL){
@@ -393,7 +407,7 @@ HeapInterface *HeapManager::FindHeap(const void * address){
         } /* end i loop */
 
 
-        heapDataBase.UnLock();
+        HeapManagerInternals::heapDataBase.UnLock();
     } else {
         ok = false;
         // TODO add error message here
@@ -403,7 +417,7 @@ HeapInterface *HeapManager::FindHeap(const void * address){
     if (foundHeap == NULL) {
 
         /** try default heap */
-        foundHeap = &standardHeap;
+        foundHeap = &HeapManagerInternals::standardHeap;
 
         /* check ownership of default heap */
         if (! foundHeap->Owns(address) ){
@@ -432,13 +446,13 @@ HeapInterface *HeapManager::FindHeap(const char *name){
     if (ok){
 
         /* controls access to database */
-        if (heapDataBase.Lock()){
+        if (HeapManagerInternals::heapDataBase.Lock()){
             // TODO add error message here
             int i=0;
-            for(i=0;(i<MaximumNumberOfHeaps) && !found ;i++){
+            for(i=0;(i<HeapManagerInternals::MaximumNumberOfHeaps) && !found ;i++){
 
                 /** retrieve heap information in current slot */
-                HeapInterface *heap = heapDataBase.GetHeap(i);
+                HeapInterface *heap = HeapManagerInternals::heapDataBase.GetHeap(i);
 
                 /** if slot used */
                 if (heap != NULL){
@@ -456,7 +470,7 @@ HeapInterface *HeapManager::FindHeap(const char *name){
                 } /* end if heap != NULL */
 
             } /* end i loop */
-            heapDataBase.UnLock();
+            HeapManagerInternals::heapDataBase.UnLock();
         }
     }
 
@@ -491,7 +505,7 @@ void *HeapManager::Malloc(uint32 size, const char *name){
     void *address = NULL;
 
     if (name == NULL){
-        address = standardHeap.Malloc(size);
+        address = HeapManagerInternals::standardHeap.Malloc(size);
     } else {
         // TODO comment
         HeapInterface *heap = FindHeap(name);
@@ -516,12 +530,12 @@ bool HeapManager::AddHeap(HeapInterface *newHeap){
 
 
     /* controls access to database */
-    if (heapDataBase.Lock()){
+    if (HeapManagerInternals::heapDataBase.Lock()){
         int i = 0;
         /* check if not registered already */
-        for(i=0;(i<MaximumNumberOfHeaps) && ok ;i++){
+        for(i=0;(i<HeapManagerInternals::MaximumNumberOfHeaps) && ok ;i++){
             /** retrieve heap information in current slot */
-            HeapInterface *heap = heapDataBase.GetHeap(i);
+            HeapInterface *heap = HeapManagerInternals::heapDataBase.GetHeap(i);
 
             /** already found */
             if (heap == newHeap) {
@@ -536,9 +550,9 @@ bool HeapManager::AddHeap(HeapInterface *newHeap){
 
             bool found = false;
             /* for each slot  */
-            for(i=0;(i<MaximumNumberOfHeaps) && !found ;i++){
+            for(i=0;(i<HeapManagerInternals::MaximumNumberOfHeaps) && !found ;i++){
                 /** try to set each slot */
-                found = heapDataBase.SetHeap(i, newHeap);
+                found = HeapManagerInternals::heapDataBase.SetHeap(i, newHeap);
             }
 
             /** no more space */
@@ -549,7 +563,7 @@ bool HeapManager::AddHeap(HeapInterface *newHeap){
 
         }
         /* controls access to database */
-        heapDataBase.UnLock();
+        HeapManagerInternals::heapDataBase.UnLock();
     } else {
         // TODO error message
         ok = false;
@@ -563,17 +577,18 @@ bool HeapManager::RemoveHeap(HeapInterface *heap){
     bool found = false;
 
     /* controls access to database */
-    if (heapDataBase.Lock()){
+    if (HeapManagerInternals::heapDataBase.Lock()){
         int i = 0;
         /* check if not registered already */
-        for(i=0;(i<MaximumNumberOfHeaps) && !found ;i++){
+        for(i=0;(i<HeapManagerInternals::MaximumNumberOfHeaps) && !found ;i++){
             /** retrieve heap information in current slot */
-            found = heapDataBase.UnsetHeap(i,heap);
+            found = HeapManagerInternals::heapDataBase.UnsetHeap(i,heap);
         }
         /* controls access to database */
-        heapDataBase.UnLock();
+        HeapManagerInternals::heapDataBase.UnLock();
     }
 
     return found;
 }
+
 

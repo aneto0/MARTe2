@@ -51,7 +51,7 @@ public:
     virtual ~HeapInterface()=0;
 
     /**
-     * @brief allocates size bytes of data in the heap. Maximu allocated size is 4Gbytes
+     * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
      * @return a pointer to the allocated memory or NULL if the allocation fails.
      */
     virtual void *Malloc(const uint32 &size)=0;
@@ -66,30 +66,35 @@ public:
      * @brief start of range of memory addresses served by this heap.
      * @return first memory address
      */
-    virtual uint8* FirstAddress() const = 0;
+    virtual uintp FirstAddress() const = 0;
 
     /**
      * @brief end (inclusive) of range of memory addresses served by this heap.
      * @return last memory address
      */
-    virtual uint8* LastAddress() const = 0;
+    virtual uintp LastAddress() const = 0;
 
     /**
      * @brief Checks if memory is part of the heap managed area
      * @return last memory address
      */
-    virtual bool Owns(const void *data)const{
-        const uint8 * address = static_cast<const uint8 *>(data);
+    virtual bool Owns(const void * data ) const {
+        /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
+         * in order to be able to compare the address with a range of addresses
+         * uintp is an integer type that has by design the same span as a pointer in all systems*/
+        uintp address = reinterpret_cast<uintp>(data);
 
-        return (address >= FirstAddress())  &&
-                (address <= LastAddress());
+        bool check1 = (address >= FirstAddress());
+        bool check2 = (address <= LastAddress());
+
+        return check1 && check2;
     }
 
     /**
      * @brief Returns the name of the heap
      * @return name of the heap
      */
-    virtual const char *Name()const =0;
+    virtual const char8 *Name()const =0;
 
 };
 

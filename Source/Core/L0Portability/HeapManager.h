@@ -45,6 +45,7 @@
  */
 namespace HeapManager{
 
+
 /**
  * @brief Finds the Heap that manages the specified memory location
  * @param address is a memory address that the target heap should manage
@@ -56,7 +57,7 @@ HeapInterface *FindHeap(const void * address);
  * @brief Finds the Heap that has the specified name
  * returns GetStandardHeap() if not found
  */
-HeapInterface *FindHeap(const char *name);
+HeapInterface *FindHeap(const char8 *name);
 
 /**
  * @brief free the pointer data and its associated memory.
@@ -71,7 +72,7 @@ bool Free(void *&data);
  * @param name name of heap to use
  * returns false if no heap is found that can handle this data
  */
-void *Malloc(uint32 size, const char *name = NULL);
+void *Malloc(uint32 size, const char8 *name = NULL);
 
 /**
  * @brief
@@ -88,7 +89,7 @@ bool AddHeap(HeapInterface *newHeap);
 bool RemoveHeap(HeapInterface *heap);
 
 
-} ;
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
