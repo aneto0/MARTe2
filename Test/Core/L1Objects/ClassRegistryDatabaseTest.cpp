@@ -42,27 +42,18 @@
 #include <stdio.h>
 #include "Reference.h"
 #include "TestObjectHelper1.h"
-#include "StringHelper.h"
+#include "Reference.h"
 bool ClassRegistryDatabaseTest::TestConstructor() {
-    const char8 *className = "MyDll::MyClass";
-    const uint32 maxSize = 129u;
-    char8 dllName[maxSize];
-    dllName[0] = '\0';
-
-    //Check for the string pattern dllName::className
-    const char8 *classOnlyPartName = StringHelper::SearchString(className, "::");
-    if (classOnlyPartName != NULL) {
-        uint32 size = StringHelper::SearchIndex(className, "::");
-        if (size > (maxSize - 1)) {
-            size = (maxSize - 1);
-        }
-        StringHelper::CopyN(dllName, className, size);
-        dllName[size] = '\0';
-        className = &classOnlyPartName[2];
-    }
-
-    printf("DLL=%s\n", dllName);
-    printf("ClassName=%s\n", className);
+    Heap h;
+    Reference ref("IntegerObject", h);
+    char uniqueName[128];
+    ref->GetUniqueName(uniqueName, 128);
+    printf("->%p\n", ref.operator->());
+    printf("Unique name %s\n", uniqueName);
+    ref->SetName("MyObject");
+    ref->GetUniqueName(uniqueName, 128);
+    printf("%s\n", ref->GetName());
+    printf("%s\n", uniqueName);
     return true;
 }
 
