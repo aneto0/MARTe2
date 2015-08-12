@@ -36,14 +36,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief LinkedListable searching callback function.
- * @details This function is called for every element in the list being searched (i.e. traversed).
- * @param[in] data the current LinkedListable element to be tested.
- * @return true if \a data meets the search criteria.
- */
-typedef bool (SearchFilterFn)(LinkedListable *data);
-
-/**
  * @brief LinkedListable search interface.
  * @details For each element on a LinkedListable list the function Test(LinkedListable *) is called.
  * The inherited implementation is responsible for verifying if the current element being tested meets the

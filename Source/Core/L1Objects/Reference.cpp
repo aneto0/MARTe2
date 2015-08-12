@@ -71,7 +71,7 @@ Reference::Reference(Object * const pointer) {
     }
 }
 
-Reference& Reference::operator=(Object * pointer) {
+Reference& Reference::operator=(Object * const pointer) {
     RemoveReference();
     objectPointer = pointer;
     if (objectPointer != NULL) {
@@ -167,7 +167,7 @@ bool Reference::Clone(Reference &sourceReference) {
     return ok;
 }
 
-Object *Reference::CreateByName(const char8 * const className, const Heap &heap) {
+Object *Reference::CreateByName(const char8 * const className, const Heap &heap) const {
     Object *obj = NULL_PTR(Object *);
 
     ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance().Find(className);

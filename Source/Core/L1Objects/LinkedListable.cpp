@@ -106,47 +106,6 @@ void LinkedListable::BSort(SortFilter * const sorter) {
     }
 }
 
-void LinkedListable::BSort(SortFilterFn * const sorter) {
-
-    if ((sorter != NULL) && (next != NULL)) {
-        uint32 count = 1u;
-        LinkedListable *p = this;
-        while (p->next->next != NULL) {
-            count++;
-            LinkedListable *a1 = p->next;
-            LinkedListable *a2 = p->next->next;
-            if (sorter(a1, a2) > 0) {
-                a1->next = a2->next;
-                a2->next = a1;
-                p->next = a2;
-                p = a2;
-            }
-            else {
-                p = a1;
-            }
-        }
-        while (count > 2u) {
-            p = this;
-            uint32 index = count;
-            while (index > 2u) {
-                index--;
-                LinkedListable *a1 = p->next;
-                LinkedListable *a2 = p->next->next;
-                if (sorter(a1, a2) > 0) {
-                    a1->next = a2->next;
-                    a2->next = a1;
-                    p->next = a2;
-                    p = a2;
-                }
-                else {
-                    p = a1;
-                }
-            }
-            count--;
-        }
-    }
-}
-
 void LinkedListable::Insert(LinkedListable * p) {
 
     if (p != NULL) {
