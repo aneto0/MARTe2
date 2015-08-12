@@ -50,9 +50,6 @@ typedef Object *(ObjectBuildFn)(const Heap &);
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
-/*lint -e{1790} for performance reasons it was decided to implement the usage of LinkedListable this way.
- * This guarantees that the movements in the list are always performed with the correct pointer (i.e. pointing to the base class).
- * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.*/
 class ClassRegistryItem: public LinkedListable {
 public:
     /**

@@ -139,7 +139,7 @@
         const ClassProperties *properties = name ## ClassRegistryItem_.GetClassProperties();                           \
         destination = *properties;                                                                                     \
     }                                                                                                                  \
-    /*                                                                                                                 \
+    /*lint -e{1531}                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
     void * name::operator new(const size_t size, Heap &heap) {                                                         \

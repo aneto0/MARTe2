@@ -35,6 +35,8 @@ OBJSX=  ClassRegistryItem.x \
     LinkedListHolder.x \
     Reference.x \
     ReferenceT.x \
+    ReferenceContainer.x \
+    ReferenceContainerItem.x \
     ClassRegistryDatabase.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

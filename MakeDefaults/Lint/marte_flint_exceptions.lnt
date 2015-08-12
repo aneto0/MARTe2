@@ -121,11 +121,15 @@
 -esym(1714,ClassRegistryDatabase::*)
 -esym(1714,Object::*)
 -esym(1714,Reference::*)
+-esym(1714,ReferenceContainer::*)
+-esym(1714,ReferenceContainerItem::*)
 
 /* virtual member function not referenced */
 -esym(1716,IBasicConsole::*)
 -esym(1716,Object::*)
 -esym(1716,Reference::*)
+//From Object.h macro
+-esym(1716,*::GetClassPropertiesCopy*)
 
 /* default constructor not referenced */
 -esym(1914,Flags::*) 
@@ -139,6 +143,8 @@
 -esym(1914,ClassRegistryItem::*)
 -esym(1914,Object::*)
 -esym(1914,Reference::*)
+-esym(1914,ReferenceContainer::*)
+-esym(1914,ReferenceContainerItem::*)
 
 /*
  * Rule 0-1-11
@@ -260,6 +266,10 @@
 -esym(9141,ReferenceT)
 -esym(9141,ReferenceT::*)
 -esym(9141,ReferenceT*)
+-esym(9141,ReferenceContainer)
+-esym(9141,ReferenceContainer::*)
+-esym(9141,ReferenceContainerItem)
+-esym(9141,ReferenceContainerItem::*)
 
 /*
  * MISRA 3-3-1
@@ -316,3 +326,29 @@
   * Justification: Not applicable to a framework.
   */
 -esym(1795, ReferenceT*)
+
+/*
+ * Rule flexelint 1531. 
+ * Justification: The object macros guarantee that the new and delete are always implemented in the final object.
+ */
+ -esym(1531, *Object::operator*)
+ 
+/*
+ * Rule flexelint 1511. 
+ * Justification: The operator new and delete of the final classes that inherit from Object, hide on purpose the ones from Object.
+ */
+ -esym(1511, *Object::operator*)
+ 
+ /*
+ * Rule flexelint 1737. 
+ * Justification: The operator new and delete of the final classes that inherit from Object, hide on purpose the ones from Object.
+ */
+ -esym(1737, *::operator new*)
+ 
+ /*
+ * Rule flexelint 1790. 
+ * Justification: For performance reasons it was decided to implement the usage of LinkedListable this way.
+ * This guarantees that the movements in the list are always performed with the correct pointer (i.e. pointing to the base class).
+ * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.
+ */
+ -estring(1790, *LinkedListable*)
