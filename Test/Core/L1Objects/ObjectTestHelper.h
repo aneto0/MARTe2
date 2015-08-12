@@ -68,7 +68,6 @@ public:
         this->dummyVariable = dummyVariable;
     }
 
-
 protected:
     /**
      * Dummy variable
@@ -90,7 +89,6 @@ public:
     virtual ~SpecialIntegerObject() {
     }
 
-
     int32 saturate(int32 threshold) {
 
         return dummyVariable > threshold ? threshold : dummyVariable;
@@ -100,28 +98,24 @@ private:
 
 };
 
-
 class FloatObject: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
-
 
     /**
      * Default constructor
      */
     FloatObject() {
         dummyFVariable = 0;
-        deleted = false;
     }
 
     virtual ~FloatObject() {
-        deleted = true;
     }
 
     /**
      * @return the value of the dummy variable.
      */
-    uint32 GetVariable() const {
+    float32 GetVariable() const {
         return dummyFVariable;
     }
 
@@ -129,20 +123,113 @@ public:
      * @brief Updates the value of the dummy variable.
      * @param dummyVariable the new value to set.
      */
-    void SetVariable(int32 dummyVariable) {
+    void SetVariable(float32 dummyVariable) {
         this->dummyFVariable = dummyVariable;
     }
 
-    bool Deleted() {
-        return deleted;
-    }
 private:
     /**
      * Dummy variable
      */
-    int32 dummyFVariable;
+    float32 dummyFVariable;
 
-    bool deleted;
+};
+
+class DoubleObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * Default constructor
+     */
+    DoubleObject() {
+        dummyDVariable = 0;
+    }
+
+    virtual ~DoubleObject() {
+    }
+
+    /**
+     * @return the value of the dummy variable.
+     */
+    float64 GetVariable() const {
+        return dummyDVariable;
+    }
+
+    /**
+     * @brief Updates the value of the dummy variable.
+     * @param dummyVariable the new value to set.
+     */
+    void SetVariable(float64 dummyVariable) {
+        this->dummyDVariable = dummyVariable;
+    }
+
+private:
+    /**
+     * Dummy variable
+     */
+    float64 dummyDVariable;
+
+};
+
+class CollectInts: public Object {
+    IntegerObject oneInteger;
+    SpecialIntegerObject oneSpecialInteger;
+
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    CollectInts() {
+        oneInteger.SetVariable(0);
+        oneSpecialInteger.SetVariable(0);
+    }
+
+    void SetInteger(int32 inumber){
+        oneInteger.SetVariable(inumber);
+    }
+
+    void SetSpecialInteger(int32 inumber){
+        oneSpecialInteger.SetVariable(inumber);
+    }
+
+    int32 GetInteger() {
+        return oneInteger.GetVariable();
+    }
+
+    int32 GetSpecialInteger() {
+        return oneSpecialInteger.GetVariable();
+    }
+};
+
+class CollectFloats: public Object {
+    FloatObject oneFloat;
+    DoubleObject oneDouble;
+
+public:
+
+    CLASS_REGISTER_DECLARATION()
+
+    CollectFloats() {
+        oneFloat.SetVariable(0);
+        oneDouble.SetVariable(0);
+
+    }
+
+    void SetFloat(float32 fnumber) {
+        oneFloat.SetVariable(fnumber);
+    }
+
+    void SetDouble(float64 dnumber) {
+        oneDouble.SetVariable(dnumber);
+    }
+
+    float32 GetFloat() {
+        return oneFloat.GetVariable();
+    }
+
+    float64 GetDouble() {
+        return oneDouble.GetVariable();
+    }
 };
 
 #endif /* OBJECTTESTHELPER_H_ */

@@ -188,6 +188,7 @@ public:
      * @details A thread calls a function which assigns a certain number of references to an object on the heap and waits on
      * an EventSem. The main thread checks that if the number of references is correct, then posts the semaphore and when the thread
      * terminates checks that the number of references is still the same.
+     * @param[in] nRefs is the desired number of reference to create.
      * @return true if successful, false otherwise.
      */
     bool TestInFunctionOnHeap(uint32 nRefs);
