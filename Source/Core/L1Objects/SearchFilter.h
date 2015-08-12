@@ -36,13 +36,18 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief The type of a function to be used to search on a set.
- * @param[in] data is a LinkedListable object pointer.
+ * @brief LinkedListable searching callback function.
+ * @details This function is called for every element in the list being searched (i.e. traversed).
+ * @param[in] data the current LinkedListable element to be tested.
+ * @return true if \a data meets the search criteria.
  */
 typedef bool (SearchFilterFn)(LinkedListable *data);
 
 /**
- * @brief Search filter object interface.
+ * @brief LinkedListable search interface.
+ * @details For each element on a LinkedListable list the function Test(LinkedListable *) is called.
+ * The inherited implementation is responsible for verifying if the current element being tested meets the
+ * defined search criteria.
  */
 class SearchFilter {
 public:
@@ -54,8 +59,10 @@ public:
     }
 
     /**
-     * @brief The function that performs the search on a set of data.
-     * @param[in] data is a LinkedListable object pointer.
+     * @brief LinkedListable searching callback function.
+     * @details This function is called for every element in the list being searched (i.e. traversed).
+     * @param[in] data the current LinkedListable element to be tested.
+     * @return true if \a data meets the search criteria.
      */
     virtual bool Test(LinkedListable *data)=0;
 };

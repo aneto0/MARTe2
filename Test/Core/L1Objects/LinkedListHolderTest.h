@@ -108,14 +108,6 @@ public:
     bool TestListInsertSortedSorter(uint32 nElements);
 
     /**
-     * @brief Tests the LinkedListHolder::ListInsert with a SortFilterFn function as input.
-     * @details Creates two lists of integers and merges them specifying a decrescent order. Then checks that the elements are ordered correctly.
-     * @param[in] nElements is the desired number of elements in the two lists.
-     * @return true if successful, false otherwise.
-     */
-    bool TestListInsertSortedFn(uint32 nElements);
-
-    /**
      * @brief Tests the insert function passing a null SortFilter as input.
      * @details Checks if the insert function, inserts the second list at the beginning of the first (normal insert behavior).
      * @param[in] nElements is the desired number of elements in the two lists.
@@ -166,14 +158,6 @@ public:
     bool TestListSearchFilter();
 
     /**
-     * @brief Tests the LinkedListHolder::ListSearch function with a SearchFilterFn function in input.
-     * @details Creates a list of integers and checks if the function returns true for elements in the list and false for elements not in the list
-     * using a SearchFilterFn function.
-     * @return true if successful, false otherwise.
-     */
-    bool TestListSearchFn();
-
-    /**
      * @brief Tests the LinkedListHolder::ListExtract function.
      * @details Creates a list and extracts all elements in it checking that the size decreases. Checks also that
      * the function returns true for elements in the list and false otherwise.
@@ -188,14 +172,6 @@ public:
      * @return true if successful, false otherwise.
      */
     bool TestListExtractSearchFilter();
-
-    /**
-     * @brief Tests the extract function with a SearchFilterFn function in input.
-     * @details Creates a list of integers and extracts all elements using a SearchFilterFn function and checking that the size decreases.
-     * Checks also that the function returns the correct elements extracted.
-     * @return true if successful, false otherwise.
-     */
-    bool TestListExtractSearchFn();
 
     /**
      * @brief Tests the extract function with the element position in input.
@@ -223,16 +199,6 @@ public:
     bool TestListDeleteSearchFilter();
 
     /**
-     * @brief Tests the delete function passing a SearchFilterFn function in input.
-     * @details Creates a list of integer and checks if the delete function removes from the list all the elements in the list which
-     * satisfies the specified search criteria. Checks also if the function returns true if at least one element is removed, false if the requested
-     * element is not in the list.
-     * @return true if successful, false otherwise.
-     */
-    bool TestListDeleteSearchFn();
-
-
-    /**
      * @see TestListDeleteSearchFilter.
      */
     bool TestListSafeDelete();
@@ -244,15 +210,6 @@ public:
      * @return true if successful, false otherwise.
      */
     bool TestListBSortSorter(uint32 nElements);
-
-
-    /**
-     * @brief Tests the LinkedListHolder::ListBSort function with a SortFilterFn function in input.
-     * @details Creates a list of integers and sorts them in a decrescent order. Then checks if the elements are sorted correctly in the list.
-     * @param[in] nElements is the desired number of elements in the list.
-     * @return true if successful, false otherwise.
-     */
-    bool TestListBSortFn(uint32 nElements);
 
     /**
      * @brief Tests the LinkedListHolder::Peek function.
@@ -270,14 +227,6 @@ public:
      * @return true if successful, false otherwise.
      */
     bool TestListIterateIterator();
-
-    /**
-     * @brief Tests the LinkedListHolder::Iterate with an IteratorFn function in input.
-     * @details Creates a list of integers and increments each element using an iterator function. Then checks if all elements were incremented
-     * as expected.
-     * @return true if successful, false otherwise.
-     */
-    bool TestListIterateFn();
 
     LinkedListHolder internalList;
 

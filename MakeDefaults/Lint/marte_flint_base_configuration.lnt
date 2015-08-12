@@ -11,7 +11,7 @@
 -dMEMORY_STATISTICS
 -dProcessorTypeDefaultCPUs=1u
 +cpp(.h)
-
+//+stack(&file=/tmp/stack.txt)
 /*
  * Consider all the .h as c++
  */

@@ -48,11 +48,9 @@ public:
      */
     IntegerObject() {
         dummyVariable = 0;
-        deleted = false;
     }
 
     virtual ~IntegerObject() {
-        deleted = true;
     }
 
     /**
@@ -70,15 +68,79 @@ public:
         this->dummyVariable = dummyVariable;
     }
 
-    bool Deleted(){
-        return deleted;
-    }
 
-private:
+protected:
     /**
      * Dummy variable
      */
     int32 dummyVariable;
+
+};
+
+class SpecialIntegerObject: public IntegerObject {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * Default constructor
+     */
+    SpecialIntegerObject() {
+    }
+
+    virtual ~SpecialIntegerObject() {
+    }
+
+
+    int32 saturate(int32 threshold) {
+
+        return dummyVariable > threshold ? threshold : dummyVariable;
+    }
+
+private:
+
+};
+
+
+class FloatObject: public Object {
+public:
+    CLASS_REGISTER_DECLARATION()
+
+
+    /**
+     * Default constructor
+     */
+    FloatObject() {
+        dummyFVariable = 0;
+        deleted = false;
+    }
+
+    virtual ~FloatObject() {
+        deleted = true;
+    }
+
+    /**
+     * @return the value of the dummy variable.
+     */
+    uint32 GetVariable() const {
+        return dummyFVariable;
+    }
+
+    /**
+     * @brief Updates the value of the dummy variable.
+     * @param dummyVariable the new value to set.
+     */
+    void SetVariable(int32 dummyVariable) {
+        this->dummyFVariable = dummyVariable;
+    }
+
+    bool Deleted() {
+        return deleted;
+    }
+private:
+    /**
+     * Dummy variable
+     */
+    int32 dummyFVariable;
 
     bool deleted;
 };

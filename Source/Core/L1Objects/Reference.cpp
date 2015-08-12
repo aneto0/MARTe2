@@ -40,33 +40,33 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 Reference::Reference() {
-    objectPointer = NULL;
+    objectPointer = NULL_PTR(Object*);
 }
 
-Reference::Reference(const Reference& object) {
-    objectPointer = NULL;
-    (*this) = object;
+Reference::Reference(const Reference& sourceReference) {
+    objectPointer = NULL_PTR(Object*);
+    (*this) = sourceReference;
 }
 
-Reference::Reference(Object * pointer) {
-    objectPointer = NULL;
-    *this = pointer;
-}
-
-Reference::Reference(const char8* typeName,
-                     Heap &heap) {
-    objectPointer = NULL;
-    Object *objPtr = ClassRegistryDatabase::Instance().CreateByName(typeName, heap);
-    if (objPtr != NULL) {
-        objectPointer = dynamic_cast<Object *>(objPtr);
+Reference::Reference(const char8* const typeName, const Heap &heap) {
+    objectPointer = NULL_PTR(Object*);
+    Object *objPtr = CreateByName(typeName, heap);
+    if (objPtr != NULL_PTR(Object*)) {
+        objectPointer = objPtr;
     }
 
-    if (objectPointer == NULL) {
+    if (objectPointer == NULL_PTR(Object*)) {
         delete objPtr;
-        objectPointer = NULL;
-        return;
+        objectPointer = NULL_PTR(Object*);
     }
     else {
+        objectPointer->IncrementReferences();
+    }
+}
+
+Reference::Reference(Object * const pointer) {
+    objectPointer = pointer;
+    if (objectPointer != NULL_PTR(Object*)) {
         objectPointer->IncrementReferences();
     }
 }
@@ -80,12 +80,17 @@ Reference& Reference::operator=(Object * pointer) {
     return *this;
 }
 
+/*lint -e{1551} the only risk of throwing an exception would be for
+ * RemoveReference() to decrement references in a NULL objectPointer
+ * which is properly protected. The delete of objectPointer at least
+ * for versions < C++11 do not through an exception. */
+/*lint -sem(Reference::RemoveReference,cleanup)*/
 Reference::~Reference() {
-    RemoveReference();
+    Reference::RemoveReference();
 }
 
-bool Reference::Initialise(const StructuredData &data,
-                           bool createOnly) {
+/*lint -e{715} data and createOnly not referenced to be removed when the method is implemented in the future*/
+bool Reference::Initialise(const StructuredData &data, const bool &createOnly) {
 //TODO
     return true;
 }
@@ -94,55 +99,83 @@ void Reference::RemoveReference() {
     if (objectPointer != NULL) {
         uint32 numberOfReferences = objectPointer->DecrementReferences();
 
-        if (numberOfReferences == 0) {
+        if (numberOfReferences == 0u) {
             delete objectPointer;  //Polimorphism used here it need to destroy derived object.
         }
     }
-    objectPointer = NULL;
+    objectPointer = NULL_PTR(Object*);
 }
 
 bool Reference::IsValid() const {
     return (objectPointer != NULL);
 }
 
-Reference& Reference::operator=(const Reference& reference) {
-    RemoveReference();
-    if (reference.IsValid()) {
-        reference.objectPointer->IncrementReferences();
-        objectPointer = reference.objectPointer;
+Reference& Reference::operator=(const Reference& sourceReference) {
+    if (this != &sourceReference) {
+        RemoveReference();
+        if (sourceReference.IsValid()) {
+            sourceReference.objectPointer->IncrementReferences();
+            /*lint -e1555 direct copy of member in copy assignment is required given that this is member
+             * that is to be shared by all the references owning the pointer*/
+            objectPointer = sourceReference.objectPointer;
+        }
     }
     return *this;
 }
 
 uint32 Reference::NumberOfReferences() const {
-    if (!IsValid()) {
-        return 0;
+    uint32 nOfReferences = 0u;
+    if (IsValid()) {
+        /*lint -e613 IsValid() guarantees that objectPointer != NULL*/
+        nOfReferences = objectPointer->NumberOfReferences();
     }
-    return objectPointer->NumberOfReferences();
+    return nOfReferences;
 }
 
-bool Reference::operator==(const Reference& reference) const {
-    return (objectPointer == reference.objectPointer);
+bool Reference::operator==(const Reference& sourceReference) const {
+    return (objectPointer == sourceReference.objectPointer);
 }
 
-bool Reference::operator!=(const Reference& reference) const {
-    return (objectPointer != reference.objectPointer);
+bool Reference::operator!=(const Reference& sourceReference) const {
+    return (objectPointer != sourceReference.objectPointer);
 }
 
-Object* Reference::operator->() const {
+Object* Reference::operator->() {
     return objectPointer;
 }
 
-bool Reference::Clone(const Reference &reference) {
-    bool ok = false;
-    if (reference.IsValid()) {
-        Object * tmp = reference->Clone();
+bool Reference::Clone(Reference &sourceReference) {
+    bool ok = sourceReference.IsValid();
+    if (ok) {
+        Object * tmp = sourceReference->Clone();
         if (tmp != NULL) {
             RemoveReference();
             objectPointer = tmp;
             objectPointer->IncrementReferences();
-            ok = true;
+            // This is necessary, otherwise when
+            // GCReference::Clone is called by
+            // GCRTemplate, at this point the IsValid
+            // function of GCRTemplate would be called,
+            // returning false as the setup of GCRTemplate
+            // Tobject is not yet done.
+            ok = Reference::IsValid();
+        }
+        else {
+            ok = false;
         }
     }
     return ok;
+}
+
+Object *Reference::CreateByName(const char8 * const className, const Heap &heap) {
+    Object *obj = NULL_PTR(Object *);
+
+    ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance().Find(className);
+    if (classRegistryItem != NULL) {
+        if (classRegistryItem->GetObjectBuildFunction() != NULL) {
+            obj = classRegistryItem->GetObjectBuildFunction()(heap);
+        }
+    }
+
+    return obj;
 }

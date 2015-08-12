@@ -35,8 +35,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
- * @brief Template search filter interface.
+ * @brief Template version of the SearchFilter interface.
  */
 template<typename T>
 class SearchFilterT {
@@ -50,24 +51,12 @@ public:
     }
 
     /**
-     * @brief The function that performs the search on the specified input parameter.
-     * @param[in] data is a generic template type.
+     * @brief LinkedListable searching callback function.
+     * @details This function is called for every element in the list being searched (i.e. traversed).
+     * @param[in] data the current LinkedListable element to be tested.
+     * @return true if \a data meets the search criteria.
      */
     virtual bool Test(T data)=0;
-
-    /**
-     * @brief A more specialized form of the SearchFilterT::Test function to be used on certain applications.
-     * @param[in] data is a generic template type.
-     * @param[in] mode is a flag used to specify special operations.
-     * @return a SFTestType code.
-     */
-    virtual SFTestType Test2(T data,
-                             SFTestType mode = SFTTNull) {
-        if (Test(data)) {
-            return SFTTFound;
-        }
-        return SFTTNotFound;
-    }
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

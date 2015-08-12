@@ -38,10 +38,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief TODO
- */
-static const int MaximumNumberOfHeaps = 16;
 
 
 /**

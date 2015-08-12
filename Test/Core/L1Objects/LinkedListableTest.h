@@ -79,14 +79,6 @@ public:
     bool TestBSortSorter();
 
     /**
-     * @brief Tests The LinkedListable::BSort function using a SortFilterFn function.
-     * @details Creates a list of numbers in crescent order, then sorts them in decrescent order and checks that the list after the function
-     * call is ordered correctly.
-     * @return true if successful, false otherwise.
-     */
-    bool TestBSortFn();
-
-    /**
      * @brief Tests the LinkedListable::Insert function.
      * @details Creates two lists and inserts a sublist of the second list after a specified point of the first list. Then checks that the
      * list elements order is as expected.
@@ -111,14 +103,6 @@ public:
      * @return true if successful, false otherwise.
      */
     bool TestInsertSortedSorter(uint32 secondListPosition);
-
-    /**
-     * @brief Inserts elements holding a specific order using a SortFilterFn sunction.
-     * @details Creates the first list of number in decrescent order and inserts a second lists passing a function to hold the
-     * decrescent order. Then checks that the final list is sorded in decrescent order.
-     * @return true if successful, false otherwise.
-     */
-    bool TestInsertSortedFn(uint32 secondListPosition);
 
     /**
      * @brief Tests the insert function passing a null input.
@@ -172,13 +156,6 @@ public:
     bool TestSearchFilterPreviousElement();
 
     /**
-     * @brief Tests the search function passing a SearchFn function.
-     * @details Creates a list of integers and searches them in the list by number.
-     * @return true if successful, false otherwise.
-     */
-    bool TestSearchFn();
-
-    /**
      * @brief Tests the LinkedListable::Extract function.
      * @details Creates a list and extracts element checking that the size of the list decreases.
      * @return true if successful, false otherwise.
@@ -191,15 +168,6 @@ public:
      * @return true if successful, false otherwise.
      */
     bool TestExtractSearchFilter();
-
-
-    /**
-     * @brief Tests the extract function using a SearchFn.
-     * @details Creates a list of integer and extracts elements searching them by number. Checks if the size of the list decreases after each extract operation.
-     * @return true if successful, false otherwise.
-     */
-    bool TestExtractSearchFn();
-
 
     /**
      * @brief Tests the LinkedListable::Delete function.
@@ -217,14 +185,6 @@ public:
     bool TestDeleteSearchFilter();
 
     /**
-     * @brief Tests the delete function using a SearchFn.
-     * @details Creates a list of integers and delete elements searching them by number. Then checks if the number of deleted objects returned by the
-     * function equal to the elements with the same value in the list.
-     * @return true if successful, false otherwise.
-     */
-    bool TestDeleteSearchFn();
-
-    /**
      * @brief Tests the LinkedListable::Peek function.
      * @details Creates a list and browses it checking that the elements in the list are in the correct positions.
      * @return true if successful, false otherwise.
@@ -238,16 +198,6 @@ public:
      * @return true if successful, false otherwise.
      */
     bool TestIterateIterator();
-
-
-    /**
-     * @brief Tests the LinkedListable::Iterate function passing an IteratorFn function.
-     * @details Creates a list of integers and calls the function passing an iterator that increment all element value. Then checks if
-     * all elements are incremented.
-     * @return true if successful, false otherwise.
-     */
-    bool TestIterateFn();
-
 
 };
 

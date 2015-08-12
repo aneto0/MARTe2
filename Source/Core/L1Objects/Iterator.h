@@ -1,8 +1,8 @@
 /**
  * @file Iterator.h
  * @brief Header file for class Iterator
- * @date 06/ago/2015
- * @author pc
+ * @date 06/08/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -36,13 +36,15 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief The type of a function which performs an action on each element of the input list.
- * @param[in] data is a LinkedListable object pointer.
+ * @brief Iterator callback function.
+ * @details This function is called for every element in the list being traversed.
+ * @param[in] data the current LinkedListable element on which this function is supposed to actuate.
  */
 typedef void (IteratorFn)(LinkedListable *data);
 
 /**
- * @brief Iterator interface.
+ * @brief LinkedListable iterator interface.
+ * @details For each element on a LinkedListable list the function Do(LinkedListable *) is called.
  */
 class Iterator {
 public:
@@ -54,8 +56,9 @@ public:
 
     }
     /**
-     * @brief The function performing the desired specific action on each element of the input list.
-     * @param[in] data is a pointer to a LinkedListable object.
+     * @brief Iterator callback function.
+     * @details This function is called for every element in the list being traversed.
+     * @param[in] data the current LinkedListable element of the list being traversed.
      */
     virtual void Do(LinkedListable *data)=0;
 };

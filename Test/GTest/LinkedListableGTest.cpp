@@ -65,11 +65,6 @@ TEST(LinkedListableGTest,TestBSortSorter) {
     ASSERT_TRUE(myLinkedListableTest.TestBSortSorter());
 }
 
-TEST(LinkedListableGTest,TestBSortFn) {
-    LinkedListableTest myLinkedListableTest;
-    ASSERT_TRUE(myLinkedListableTest.TestBSortFn());
-}
-
 TEST(LinkedListableGTest,TestInsert) {
     LinkedListableTest myLinkedListableTest;
     ASSERT_TRUE(myLinkedListableTest.TestInsert(10, 10));
@@ -83,11 +78,6 @@ TEST(LinkedListableGTest,TestInsertEntireList) {
 TEST(LinkedListableGTest,TestInsertSortedSorter) {
     LinkedListableTest myLinkedListableTest;
     ASSERT_TRUE(myLinkedListableTest.TestInsertSortedSorter(10));
-}
-
-TEST(LinkedListableGTest,TestInsertSortedFn) {
-    LinkedListableTest myLinkedListableTest;
-    ASSERT_TRUE(myLinkedListableTest.TestInsertSortedFn(10));
 }
 
 TEST(LinkedListableGTest,TestInsertNullListInput) {
@@ -120,12 +110,6 @@ TEST(LinkedListableGTest,TestSearchFilter) {
     ASSERT_TRUE(myLinkedListableTest.TestSearchFilter());
 }
 
-
-TEST(LinkedListableGTest,TestSearchFn) {
-    LinkedListableTest myLinkedListableTest;
-    ASSERT_TRUE(myLinkedListableTest.TestSearchFn());
-}
-
 TEST(LinkedListableGTest,TestSearchFilterPreviousElement) {
     LinkedListableTest myLinkedListableTest;
     ASSERT_TRUE(myLinkedListableTest.TestSearchFilterPreviousElement());
@@ -151,11 +135,6 @@ TEST(LinkedListableGTest,TestDeleteSearchFilter) {
     ASSERT_TRUE(myLinkedListableTest.TestDeleteSearchFilter());
 }
 
-
-TEST(LinkedListableGTest,TestDeleteSearchFn) {
-    LinkedListableTest myLinkedListableTest;
-    ASSERT_TRUE(myLinkedListableTest.TestDeleteSearchFn());
-}
 TEST(LinkedListableGTest,TestPeek) {
     LinkedListableTest myLinkedListableTest;
     ASSERT_TRUE(myLinkedListableTest.TestPeek());
@@ -166,8 +145,3 @@ TEST(LinkedListableGTest,TestIterateIterator) {
     ASSERT_TRUE(myLinkedListableTest.TestIterateIterator());
 }
 
-
-TEST(LinkedListableGTest,TestIterateFn) {
-    LinkedListableTest myLinkedListableTest;
-    ASSERT_TRUE(myLinkedListableTest.TestIterateFn());
-}

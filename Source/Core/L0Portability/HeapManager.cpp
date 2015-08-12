@@ -41,7 +41,10 @@
 /*                           Local Class declaration                         */
 /*---------------------------------------------------------------------------*/
 
-
+/**
+ * @brief TODO
+ */
+static const int MaximumNumberOfHeaps = 16;
 /**
  * @brief TODO
  */
@@ -160,8 +163,15 @@ public:
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+
+/**
+ * @brief TODO
+ */
 static HeapDataBase  heapDataBase;
 
+/**
+ * @brief TODO
+ */
 static StandardHeap standardHeap;
 
 /*---------------------------------------------------------------------------*/
@@ -266,7 +276,13 @@ virtual StandardHeap::~StandardHeap(){
  * @return a pointer to the allocated memory or NULL if the allocation fails.
  */
 virtual void *StandardHeap::Malloc(const uint32 &size){
-    return malloc(size);
+    void *address = malloc(size);
+    uint8 *address8Bit = static_cast <uint8 *>(address);
+    if (firstAddress > address8Bit  )  firstAddress = address8Bit;
+    address8Bit+= size;
+    if (lastAddress < address8Bit  )  lastAddress = address8Bit;
+    return address;
+
 }
 
 /**

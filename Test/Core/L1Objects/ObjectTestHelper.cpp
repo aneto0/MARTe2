@@ -41,4 +41,7 @@
 CLASS_REGISTER(IntegerObject, "1.0")
 
 
-	
+CLASS_REGISTER(SpecialIntegerObject, "1.0")
+
+
+CLASS_REGISTER(FloatObject, "1.0")

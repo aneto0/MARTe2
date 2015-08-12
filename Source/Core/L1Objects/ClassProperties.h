@@ -1,8 +1,8 @@
 /**
  * @file ClassProperties.h
  * @brief Header file for class ClassProperties
- * @date Aug 5, 2015
- * @author aneto
+ * @date 05/08/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -36,9 +36,10 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief Properties of a framework base class (i.e. one that inherits from Object).
- * @details Provides introspection information about any framework base class. This
- * information is automatically computed by the framework at initialisation time.
+ * @brief Properties of a framework base class.
+ * @details Provides introspection information about any framework base class (i.e. one that inherits from Object).
+ *
+ * This information is automatically computed by the framework at initialisation time (see ClassRegistryDatabase).
  */
 class ClassProperties {
 public:

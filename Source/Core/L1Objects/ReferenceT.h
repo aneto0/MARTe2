@@ -37,7 +37,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief Templated version of the shared pointer implementation. @see Reference.
+ * @brief Template version of the shared pointer implementation (see Reference).
  */
 template<typename T>
 class ReferenceT: public Reference {
@@ -50,10 +50,9 @@ public:
 
     /**
      * @brief Creates an empty reference or a reference to base type T.
-     * @param[in] create if true a new instance of T will be created and referenced by this ReferenceT.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(bool create, Heap &heap);
+    ReferenceT(Heap &heap);
 
     /**
      * @brief Creates a reference to an object that inherits from base type T.
@@ -77,12 +76,13 @@ public:
     ReferenceT(const ReferenceT<T>& sourceReference);
 
     /**
-     * @brief Instantiates a new object of type typeName and links a reference to it.
+     * @brief Instantiates a new object of type \a typeName and links a reference to it.
      * @details If the operation succeeds a reference to the new object is created,
      * otherwise an empty reference is created and a subsequent call to IsValid will return false.
-     * @param typeName the type (i.e. class name) of the object to be instantiated.
+     * @param[in] typeName the type (i.e. class name) of the object to be instantiated.
+     * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(const char* typeName);
+    ReferenceT(const char8* typeName, Heap &heap);
 
     /**
      * @brief Removes the reference to the underlying object. @see RemoveReference.
@@ -106,44 +106,44 @@ public:
      * @brief Assignment operator.
      * @param sourceReference the source reference to be assigned to this reference.
      * @details This reference will be referencing the same object as the sourceReference.
-     * @return a reference to the object referenced by sourceReference.
+     * @return a reference to the object referenced by \a sourceReference.
      */
     ReferenceT<T>& operator=(const ReferenceT<T>& sourceReference);
 
     /**
      * @brief Assignment operator.
-     * @param sourceReference the source reference to be assigned to this reference.
-     * @details This reference will be referencing the same object as the sourceReference.
-     * @return a reference to the object referenced by sourceReference.
+     * @param[in] sourceReference the source reference to be assigned to this reference.
+     * @details This reference will be referencing the same object as the \a sourceReference.
+     * @return a reference to the object referenced by \a sourceReference.
      */
-    ReferenceT<T>& operator=(const Reference& sourceReference);
+    virtual ReferenceT<T>& operator=(const Reference& sourceReference);
 
     /**
      * @brief Creates a Reference to a different object.
      * @param[in] sourceReference the Reference holding the source object.
-     * @return true if the source Reference and source object are valid.
+     * @return true if the \a sourceReference and its source object are valid.
      */
-    bool Clone(const Reference& sourceReference);
+    virtual bool Clone(Reference& sourceReference);
 
     /**
      * @brief Creates a Reference to a different object.
      * @param[in] sourceReference the Reference holding the source object.
-     * @return true if the source Reference and source object are valid.
+     * @return true if the \a sourceReference and its source object are valid.
      */
-    bool Clone(const ReferenceT<T>& sourceReference);
+    virtual bool Clone(ReferenceT<T>& sourceReference);
 
     /**
-     * @brief Verifies if this Reference links to the same object of sourceReference.
+     * @brief Verifies if this Reference links to the same object of \a sourceReference.
      * @param[in] sourceReference reference to be compared.
-     * @return true if the sourceReference links to the same object as this Reference.
+     * @return true if the \a sourceReference links to the same object as this Reference.
      */
-    bool operator==(const ReferenceT<T>& sourceReference);
+    bool operator==(const ReferenceT<T>& sourceReference) const;
 
     /**
      * @brief Provides access to the object referenced by this Reference.
      * @return a pointer to the object referenced by this Reference.
      */
-    T* operator->() const {
+    virtual T* operator->() const {
         return typeTObjectPointer;
     }
 
@@ -153,7 +153,7 @@ public:
      * @param[in] createOnly if true the object Initialise method is not called.
      * @return true if the object was successfully created and initialised.
      */
-    virtual bool Initialise(const StructuredData &data, bool createOnly = false);
+    virtual bool Initialise(const StructuredData &data, bool createOnly);
 
 private:
 
@@ -161,7 +161,7 @@ private:
      * @brief Prevents the copying of a reference by taking its address.
      * @return a copy of this reference.
      */
-    ReferenceT<T>* operator&();
+    virtual ReferenceT<T>* operator&();
 
     /**
      * The pointer to the referenced object.
@@ -191,17 +191,15 @@ ReferenceT<T>::ReferenceT() {
 }
 
 template<typename T>
-ReferenceT<T>::ReferenceT(bool create, Heap &heap) {
+ReferenceT<T>::ReferenceT(Heap &heap) {
     Init();
-    if (create) {
-        T *p = new (heap) T;
-        if (p != NULL) {
-            Object *obj;
-            obj = dynamic_cast<Object *>(p);
-            if (obj != NULL) {
-                Reference::operator= (obj);
-                typeTObjectPointer = p;
-            }
+    T *p = new (heap) T;
+    if (p != NULL) {
+        Object *obj;
+        obj = dynamic_cast<Object *>(p);
+        if (obj != NULL) {
+            Reference::operator= (obj);
+            typeTObjectPointer = p;
         }
     }
 }
@@ -219,21 +217,21 @@ ReferenceT<T>::ReferenceT(T *p) {
 }
 
 template<typename T>
-ReferenceT<T>::ReferenceT(const Reference& object) {
+ReferenceT<T>::ReferenceT(const Reference& sourceReference) {
     Init();
     //use operator =
-    (*this) = object;
+    (*this) = sourceReference;
 }
 
 template<typename T>
-ReferenceT<T>::ReferenceT(const ReferenceT<T>& object) {
+ReferenceT<T>::ReferenceT(const ReferenceT<T>& sourceReference) {
     Init();
     //use operator =
-    (*this) = object;
+    (*this) = sourceReference;
 }
 
 template<typename T>
-ReferenceT<T>::ReferenceT(const char* typeName) : Reference(typeName) {
+ReferenceT<T>::ReferenceT(const char8* typeName, Heap &heap) : Reference(typeName, heap) {
     typeTObjectPointer = NULL;
     if (Reference::IsValid()) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);
@@ -264,23 +262,23 @@ bool ReferenceT<T>::IsValid() const {
 }
 
 template<typename T>
-ReferenceT<T>& ReferenceT<T>::operator=(const ReferenceT<T>& reference) {
+ReferenceT<T>& ReferenceT<T>::operator=(const ReferenceT<T>& sourceReference) {
     RemoveReference();
-    if (reference.IsValid()) {
-        Reference::operator=(reference);
-        typeTObjectPointer = reference.typeTObjectPointer;
+    if (sourceReference.IsValid()) {
+        Reference::operator=(sourceReference);
+        typeTObjectPointer = sourceReference.typeTObjectPointer;
     }
 
     return *this;
 }
 
 template<typename T>
-ReferenceT<T>& ReferenceT<T>::operator=(const Reference& reference) {
+ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
     RemoveReference();
 
-    if (reference.IsValid()) {
+    if (sourceReference.IsValid()) {
         // do this first to allow access to objectPointer
-        Reference::operator=(reference);
+        Reference::operator=(sourceReference);
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);
         if (typeTObjectPointer == NULL) {
             RemoveReference();
@@ -291,10 +289,15 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& reference) {
 }
 
 template<typename T>
-bool ReferenceT<T>::Clone(const Reference& reference) {
+bool ReferenceT<T>::operator==(const ReferenceT<T>& sourceReference) const {
+    return (typeTObjectPointer == sourceReference.typeTObjectPointer);
+}
+
+template<typename T>
+bool ReferenceT<T>::Clone(Reference& sourceReference) {
     RemoveReference();
     bool ok = true;
-    if (!Reference::Clone(reference)) {
+    if (!Reference::Clone(sourceReference)) {
         ok = false;
     }
     if (ok) {
@@ -311,10 +314,10 @@ bool ReferenceT<T>::Clone(const Reference& reference) {
 }
 
 template<typename T>
-bool ReferenceT<T>::Clone(const ReferenceT<T>& reference) {
+bool ReferenceT<T>::Clone(ReferenceT<T>& sourceReference) {
     RemoveReference();
     bool ok = true;
-    if (!Reference::Clone(reference)) {
+    if (!Reference::Clone(sourceReference)) {
         ok = false;
     }
     if (ok) {

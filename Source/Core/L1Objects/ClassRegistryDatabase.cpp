@@ -168,16 +168,3 @@ uint32 ClassRegistryDatabase::Size() const {
 const ClassRegistryItem *ClassRegistryDatabase::ElementAt(const uint32 &idx) {
     return dynamic_cast<ClassRegistryItem *>(classDatabase.ListPeek(idx));
 }
-
-Object *ClassRegistryDatabase::CreateByName(const char8 * const className, const Heap &heap) {
-    Object *obj = NULL_PTR(Object *);
-
-    ClassRegistryItem *classRegistryItem = Find(className);
-    if (classRegistryItem != NULL) {
-        if (classRegistryItem->GetObjectBuildFunction() != NULL) {
-            obj = classRegistryItem->GetObjectBuildFunction()(heap);
-        }
-    }
-
-    return obj;
-}

@@ -1,7 +1,7 @@
 /**
  * @file Introspection.h
  * @brief Header file for class Introspection
- * @date Aug 5, 2015
+ * @date 05/08/2015
  * @author aneto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

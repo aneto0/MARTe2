@@ -42,10 +42,10 @@
 /*                        Macro definitions                                  */
 /*---------------------------------------------------------------------------*/
 /**
- * These macros are required to automatically register in the ClassRegistryDatabase
- * the information about all the classes that inherit from object.
- * These have to be defined as macros so that the new and delete functions are implemented
- * in the final class inhering from Object (i.e. they are specific to each implementation).
+ * These macros are required for the application to automatically register in the ClassRegistryDatabase
+ * the information associated to every class that inherits from Object.
+ * These have to be defined as macros given that the new and delete functions are specific for each
+ * final class that inherits from Object (new and delete are static and thus cannot be virtual).
  */
 /**
  * The function GetClassPropertiesCopy has to be virtual in order to guarantee that
@@ -163,11 +163,11 @@
  * @brief The root object of the framework.
  *
  * @details The MARTe Object is a class which offers the following functionality:
- *  - Its life cycle is managed by a smart pointer mechanism (@see Reference);
+ *  - Its life cycle is managed by a smart pointer mechanism (see Reference);
  *  - Can be automatically constructed in runtime by the class name of its derived class;
  *  - Provides a standard initialisation/construction interface;
  *  - Is introspectable and enables reflection of derived classes;
- *  - The allocation heap can be selected by the end-user.
+ *  - The allocation heap for the object can be selected by the end-user.
  */
 /*lint -e{9109} Object is forward declared in ClassRegistryItem (in order to be able to have access the function pointer to
  * create new instances.*/
@@ -196,14 +196,14 @@ public:
      * retrieving the initialisation data from the input data and of assigning
      * these value to its internal variables.
      * @param data the input initialisation data.
-     * @return true if all the input data is valid and can be successfully assigned
-     * to the member variables.
+     * @return true if all the input \a data is valid and can be successfully assigned
+     * to the Object member variables.
      */
     virtual bool Initialise(const StructuredData &data);
 
     /**
-     * @brief Returns a copy to this object instance introspection properties.
-     * @destination copies this object instance introspection properties to destination.
+     * @brief Returns a copy to the object introspection properties.
+     * @destination Copies the object introspection properties to the \a destination.
      */
     void GetIntrospectionCopy(Introspection &destination) const;
 
@@ -218,16 +218,14 @@ private:
     /**
      * @brief Decrements the number of references to this object.
      * @details Only accessible to the Reference class.
-     * @return the new number of references.
      */
     uint32 DecrementReferences();
 
     /**
      * @brief Increments the number of references to this object.
      * @details Only accessible to the Reference class.
-     * @return the new number of references.
      */
-    uint32 IncrementReferences();
+    void IncrementReferences();
 
     /**
      * @brief Clones the object.

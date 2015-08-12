@@ -58,6 +58,9 @@ LinkedListHolder::LinkedListHolder() {
     llhRoot.SetNext(static_cast<LinkedListable *>(NULL));
 }
 
+/*lint -e{1551} the only reason why this could throw an exception is if
+ * due to some racing condition, while destroying the list, the pointer
+ * to the next element was to be destructed by some other thread. */
 LinkedListHolder::~LinkedListHolder() {
     CleanUp();
 }
@@ -80,15 +83,6 @@ void LinkedListHolder::ListInsert(LinkedListable * const p) {
 
 void LinkedListHolder::ListInsert(LinkedListable * const p,
                                   SortFilter * const sorter) {
-    if (p != NULL) {
-
-        llhSize += p->Size();
-        llhRoot.Insert(p, sorter);
-    }
-}
-
-void LinkedListHolder::ListInsert(LinkedListable * const p,
-                                  SortFilterFn * const sorter) {
     if (p != NULL) {
 
         llhSize += p->Size();
@@ -136,10 +130,6 @@ LinkedListable *LinkedListHolder::ListSearch(SearchFilter * const filter) {
     return (llhRoot.Next() == NULL) ? static_cast<LinkedListable*>(NULL) : llhRoot.Next()->Search(filter);
 }
 
-LinkedListable *LinkedListHolder::ListSearch(SearchFilterFn * const filter) {
-    return (llhRoot.Next() == NULL) ? static_cast<LinkedListable*>(NULL) : llhRoot.Next()->Search(filter);
-}
-
 bool LinkedListHolder::ListExtract(LinkedListable * const p) {
 
     bool ret = false;
@@ -153,14 +143,6 @@ bool LinkedListHolder::ListExtract(LinkedListable * const p) {
 }
 
 LinkedListable *LinkedListHolder::ListExtract(SearchFilter * const filter) {
-    LinkedListable *p = llhRoot.Extract(filter);
-    if (p != NULL) {
-        llhSize--;
-    }
-    return p;
-}
-
-LinkedListable *LinkedListHolder::ListExtract(SearchFilterFn * const filter) {
     LinkedListable *p = llhRoot.Extract(filter);
     if (p != NULL) {
         llhSize--;
@@ -209,17 +191,7 @@ bool LinkedListHolder::ListSafeDelete(SearchFilter * const filter) {
     return (deleted > 0u);
 }
 
-bool LinkedListHolder::ListDelete(SearchFilterFn * const filter) {
-    uint32 deleted = llhRoot.Delete(filter);
-    llhSize -= deleted;
-    return (deleted > 0u);
-}
-
 void LinkedListHolder::ListBSort(SortFilter * const sorter) {
-    llhRoot.BSort(sorter);
-}
-
-void LinkedListHolder::ListBSort(SortFilterFn * const sorter) {
     llhRoot.BSort(sorter);
 }
 
@@ -256,10 +228,3 @@ void LinkedListHolder::ListIterate(Iterator * const it) {
         llhRoot.Next()->Iterate(it);
     }
 }
-
-void LinkedListHolder::ListIterate(IteratorFn * const it) {
-    if (llhRoot.Next() != NULL) {
-        llhRoot.Next()->Iterate(it);
-    }
-}
-

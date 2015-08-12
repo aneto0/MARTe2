@@ -63,14 +63,11 @@ uint32 Object::DecrementReferences() {
     return ret;
 }
 
-uint32 Object::IncrementReferences() {
-    uint32 ret = 0u;
+void Object::IncrementReferences() {
     if(refMux.FastLock() == NoError){
         ++referenceCounter;
-        ret = referenceCounter;
     }
     refMux.FastUnLock();
-    return ret;
 }
 
 Object *Object::Clone() const {
