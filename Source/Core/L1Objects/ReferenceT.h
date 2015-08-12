@@ -119,20 +119,6 @@ public:
     virtual ReferenceT<T>& operator=(const Reference& sourceReference);
 
     /**
-     * @brief Creates a Reference to a different object.
-     * @param[in] sourceReference the Reference holding the source object.
-     * @return true if the \a sourceReference and its source object are valid.
-     */
-    virtual bool Clone(Reference& sourceReference);
-
-    /**
-     * @brief Creates a Reference to a different object.
-     * @param[in] sourceReference the Reference holding the source object.
-     * @return true if the \a sourceReference and its source object are valid.
-     */
-    virtual bool Clone(ReferenceT<T>& sourceReference);
-
-    /**
      * @brief Verifies if this Reference links to the same object of \a sourceReference.
      * @param[in] sourceReference reference to be compared.
      * @return true if the \a sourceReference links to the same object as this Reference.
@@ -293,46 +279,6 @@ bool ReferenceT<T>::operator==(const ReferenceT<T>& sourceReference) const {
     return (typeTObjectPointer == sourceReference.typeTObjectPointer);
 }
 
-template<typename T>
-bool ReferenceT<T>::Clone(Reference& sourceReference) {
-    RemoveReference();
-    bool ok = true;
-    if (!Reference::Clone(sourceReference)) {
-        ok = false;
-    }
-    if (ok) {
-        typeTObjectPointer = dynamic_cast<T*>(objectPointer);
-        if (typeTObjectPointer == NULL) {
-            RemoveReference();
-            ok = false;
-        }
-        if (ok) {
-            ok = IsValid();
-        }
-    }
-    return ok;
-}
-
-template<typename T>
-bool ReferenceT<T>::Clone(ReferenceT<T>& sourceReference) {
-    RemoveReference();
-    bool ok = true;
-    if (!Reference::Clone(sourceReference)) {
-        ok = false;
-    }
-    if (ok) {
-        typeTObjectPointer = dynamic_cast<T*>(objectPointer);
-        if (typeTObjectPointer == NULL) {
-            RemoveReference();
-            ok = false;
-        }
-        if (ok) {
-            ok = IsValid();
-        }
-    }
-
-    return ok;
-}
 
 template<typename T>
 bool ReferenceT<T>::Initialise(const StructuredData &data, bool createOnly) {

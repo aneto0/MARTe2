@@ -172,16 +172,6 @@ TEST(ReferenceTGTest,TestNumberOfReferences) {
     ASSERT_TRUE(referenceTTest.TestNumberOfReferences());
 }
 
-TEST(ReferenceTGTest,TestCloneReferenceT) {
-    ReferenceTTest referenceTTest;
-    ASSERT_TRUE(referenceTTest.TestCloneReferenceT());
-}
-
-TEST(ReferenceTGTest,TestCloneReference) {
-    ReferenceTTest referenceTTest;
-    ASSERT_TRUE(referenceTTest.TestCloneReference());
-}
-
 TEST(ReferenceTGTest,TestInFunctionOnStack) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestInFunctionOnStack());
