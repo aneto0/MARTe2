@@ -145,13 +145,6 @@ public:
      */
     virtual Object* operator->();
 
-    /**
-     * @brief Creates a Reference to a different object.
-     * @param[in] sourceReference the Reference holding the source object.
-     * @return true if the \a sourceReference and its source object are valid.
-     */
-    virtual bool Clone(Reference &sourceReference);
-
 protected:
     /**
      * The pointer to the referenced object.

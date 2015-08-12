@@ -2,7 +2,7 @@
  * @file IteratorT.h
  * @brief Header file for class IteratorT
  * @date 06/08/2015
- * @author Giuseppe Ferro
+ * @author Giuseppe Ferro'
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ITERATORT_H_
-#define ITERATORT_H_
+#ifndef SOURCE_CORE_L1OBJECTS_ITERATORT_H_
+#define SOURCE_CORE_L1OBJECTS_ITERATORT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -49,24 +49,13 @@ public:
     }
     /**
      * @brief The function performing the desired specific action on the input parameter.
-     * @param[in] data is a generic template type type.
+     * @param[in] data is a generic template type.
      */
     virtual void Do(T data)=0;
-
-    /**
-     * @brief A more specialized form of the IteratorT::Do function to be used on certain applications.
-     * @param[in] data is a generic template type.
-     * @param[in] mode is a flag used to specify special operations.
-     * @return a SFTestType code.
-     */
-    virtual void Do2(T data,
-                     SFTestType mode = SFTTNull) {
-        Do(data);
-    }
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* ITERATORT_H_ */
+#endif /* SOURCE_CORE_L1OBJECTS_ITERATORT_H_ */
 

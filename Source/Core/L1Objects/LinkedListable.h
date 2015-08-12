@@ -2,7 +2,7 @@
  * @file LinkedListable.h
  * @brief Header file for class LinkedListable
  * @date 05/08/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferro'
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef LINKEDLISTABLE_H_
-#define LINKEDLISTABLE_H_
+#ifndef SOURCE_CORE_L1OBJECTS_LINKEDLISTABLE_H_
+#define SOURCE_CORE_L1OBJECTS_LINKEDLISTABLE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -111,13 +111,15 @@ public:
      * @brief Appends the first element of the input list \a p to the end of this list.
      * @param[in] p a pointer to the LinkedListable element to be appended.
      * @post After executing the function \a p will point to the last element of the list.
+     * @pre \a p must be a single LinkedListable element, as his next pointer will be set
+     *      to NULL after the execution of the function. If instead \a p is a list, Add
+     *      could lead to memory leaks.
      */
     void Add(LinkedListable * const p);
 
     /**
      * @brief Appends the input list \a p to the end of this list.
      * @param[in] p a pointer to the LinkedListable to be appended.
-     * @post After executing the function \a p will point to the last element of the list.
      */
     void AddL(LinkedListable * const p);
 
@@ -193,4 +195,4 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* LINKEDLISTABLE_H_ */
+#endif /* SOURCE_CORE_L1OBJECTS_LINKEDLISTABLE_H_ */

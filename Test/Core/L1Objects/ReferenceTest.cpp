@@ -393,17 +393,6 @@ bool ReferenceTest::TestDifferentOperator() {
 
 }
 
-bool ReferenceTest::TestClone() {
-
-    Heap mem;
-
-    Reference buildObj("IntegerObject", mem);
-
-    Reference fakeObj("FakeObject", mem);
-
-    return !(buildObj.Clone(fakeObj)) && !(fakeObj.Clone(buildObj));
-}
-
 void CreateRefsOnStack(ReferenceTest &rt) {
 
     Reference newRef[32];

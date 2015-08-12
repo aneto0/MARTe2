@@ -2,7 +2,7 @@
  * @file SortFilter.h
  * @brief Header file for class SortFilter
  * @date 06/08/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferro'
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SORTFILTER_H_
-#define SORTFILTER_H_
+#ifndef SOURCE_CORE_L1OBJECTS_SORTFILTER_H_
+#define SOURCE_CORE_L1OBJECTS_SORTFILTER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -38,7 +38,7 @@
 /**
  * @brief LinkedListable sorting interface.
  * @details Sort LinkedListable list by calling the function Compare(LinkedListable *, LinkedListable *).
- * The inherited implementation is responsible for deciding how to LinkedListable compare to each other.
+ * The inherited implementation is responsible for deciding how two LinkedListable objects compare to each other.
  */
 class SortFilter {
 public:
@@ -51,8 +51,8 @@ public:
     }
     /**
      * @brief LinkedListable comparator callback function.
-     * @param data1[in] the first LinkedListable object pointer.
-     * @param data2[in] the second LinkedListable object pointer.
+     * @param[in] data1 the first LinkedListable object pointer.
+     * @param[in] data2 the second LinkedListable object pointer.
      * @return a positive value if data1 is not ordered with respect to data2, negative otherwise.
      */
     virtual int32 Compare(LinkedListable *data1,
@@ -64,5 +64,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /*SORTFILTER_H_ */
+#endif /* SOURCE_CORE_L1OBJECTS_SORTFILTER_H_ */
 
