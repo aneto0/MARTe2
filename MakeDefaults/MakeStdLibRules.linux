@@ -25,6 +25,10 @@
 ctags : %.cpp %.c %.h
 	ctags -R
 
+
+%.cpp : ../Generic/%_Generic.cpp
+	cp ../Generic/$*_Generic.cpp $*.cpp
+
 $(BUILD_DIR)/%.o : %.cpp
 	mkdir -p $(BUILD_DIR)
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
