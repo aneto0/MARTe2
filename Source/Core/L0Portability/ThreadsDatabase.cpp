@@ -31,7 +31,7 @@
 
 #include "GeneralDefinitions.h"
 #include "ThreadsDatabase.h"
-#include "Memory.h"
+#include "HeapManager.h"
 #include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
@@ -89,7 +89,7 @@ ThreadInformation *ThreadsDatabase::RemoveEntry(const ThreadIdentifier &threadId
 
                 // free at the end
                 if (ThreadsDatabase::nOfEntries == 0u) {
-                    Memory::Free(reinterpret_cast<void *&>(ThreadsDatabase::entries));
+                    HeapManager::Free(reinterpret_cast<void *&>(ThreadsDatabase::entries));
                     //For AllocMore to reallocate again!
                     ThreadsDatabase::maxNOfEntries = 0u;
                 }
@@ -192,7 +192,7 @@ bool ThreadsDatabase::AllocMore() {
         // first time?
         if (entries == NULL) {
             uint32 size = static_cast<uint32>(sizeof(ThreadInformation *)) * THREADS_DATABASE_GRANULARITY;
-            entries = static_cast<ThreadInformation **>(Memory::Malloc(size));
+            entries = static_cast<ThreadInformation **>(HeapManager::Malloc(size));
             if (entries != NULL) {
                 maxNOfEntries = THREADS_DATABASE_GRANULARITY;
                 nOfEntries = 0u;
@@ -204,7 +204,7 @@ bool ThreadsDatabase::AllocMore() {
         }
         else {
             uint32 newSize = static_cast<uint32>(sizeof(ThreadInformation *)) * (THREADS_DATABASE_GRANULARITY + maxNOfEntries);
-            entries = static_cast<ThreadInformation **>(Memory::Realloc(reinterpret_cast<void *&>(entries), newSize));
+            entries = static_cast<ThreadInformation **>(HeapManager::Realloc(reinterpret_cast<void *&>(entries), newSize));
             if (entries != NULL) {
                 maxNOfEntries += THREADS_DATABASE_GRANULARITY;
             }

@@ -45,7 +45,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
+#if 0
 void *Memory::Malloc(const uint32 size,
                      const MemoryAllocationFlags allocFlag) {
 
@@ -84,7 +84,6 @@ void *Memory::Realloc(void *&data,
     return data;
 
 }
-
 char8 *Memory::StringDup(const char8 * const s) {
 
     char8 *sCopy = static_cast<char8*>(NULL);
@@ -94,6 +93,7 @@ char8 *Memory::StringDup(const char8 * const s) {
     }
     return sCopy;
 }
+#endif
 
 bool Memory::Check(const void * const address,
                    const MemoryTestAccessMode accessMode,

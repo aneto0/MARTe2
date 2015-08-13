@@ -52,6 +52,7 @@ class Memory {
 
 public:
 
+#if 0
     /**
      * Memory allocation flags used to specify allocation properties.
      */
@@ -67,6 +68,7 @@ public:
         ExtraMemory = 0x00000001
 
     };
+#endif
 
     /**
      * Set of flags indicating desired access modes to the
@@ -84,6 +86,7 @@ public:
 
     };
 
+#if 0
     /**
      * @brief Allocates a portion of memory on the heap.
      * @param[in] size The size in byte of the memory to allocate.
@@ -118,6 +121,9 @@ public:
      * @return The pointer to the new allocated memory which contains a copy of s.
      */
     static char8 *StringDup(const char8 * const s);
+#endif
+
+
 
     /**
      * @brief Checks if the process has the access to the specified memory area.

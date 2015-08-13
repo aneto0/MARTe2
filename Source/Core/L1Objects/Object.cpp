@@ -31,6 +31,8 @@
 #include "Object.h"
 #include "FastPollingMutexSem.h"
 #include "StringHelper.h"
+#include "HeapManager.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -170,7 +172,7 @@ void Object::SetName(const char8 * const newName) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
         HeapManager::Free(reinterpret_cast<void *&>(name));
     }
-    name = Memory::StringDup(newName);
+    name = StringHelper::StringDup(newName);
 }
 
 CLASS_REGISTER(Object, "1.0")

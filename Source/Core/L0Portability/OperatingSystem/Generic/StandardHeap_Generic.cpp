@@ -57,13 +57,21 @@ StandardHeap::~StandardHeap(){
     firstAddress = 0U;
 };
 
+
 /**
  * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
  * @return a pointer to the allocated memory or NULL if the allocation fails.
  */
-void *StandardHeap::Malloc(const uint32 &size){
+void *StandardHeap::Malloc(const uint32 size){
     //void *pointer = malloc(size);
-    void *pointer = new char8[size];
+    //void *pointer = new char8[size];
+
+    void* pointer = NULL_PTR(void*);
+
+    if (size != 0u) {
+        pointer = malloc(static_cast<osulong>(size));
+    }
+
 
     /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
      * in order to be able to update the range of addresses provided by this heap
@@ -86,11 +94,57 @@ void *StandardHeap::Malloc(const uint32 &size){
  * @param data the data to be freed.
  */
 void StandardHeap::Free(void *&data){
-
-    delete[] (reinterpret_cast<char8 *>(data));
+    if (data != NULL) {
+        free(data);
+    }
+//    delete[] (reinterpret_cast<char8 *>(data));
     data = NULL_PTR(void *);
 //    free(data);
 }
+
+void *StandardHeap::Realloc(void *&data,const uint32 newSize) {
+
+    if (data == NULL) {
+        data = StandardHeap::Malloc(newSize);
+    }
+    else {
+        if (newSize == 0u) {
+            StandardHeap::Free(data);
+        }
+        else {
+            data = realloc(data, static_cast<osulong>(newSize));
+        }
+    }
+    return data;
+
+}
+
+void *StandardHeap::Duplicate(const void * const data, uint32 size){
+
+    void *duplicate = NULL_PTR(void *);
+
+    // check if 0 zerminated copy to be done
+    if (size == 0U ){
+        if (data != NULL) {
+            duplicate = strdup(static_cast<const char *>(data));
+        }
+    } else { // strdup style
+        duplicate = StandardHeap::Malloc(size);
+        if (duplicate != NULL){
+            const char8 *source      = static_cast<const char *>(data);
+                  char8 *destination = static_cast<char *>(duplicate);
+            uint32 i;
+            for (i=0;i<size;i++){
+                *destination = *source;
+                destination++;
+                source++;
+            } //copy loop
+        } //check Malloc success
+    } // copy bound by size
+
+    return duplicate;
+}
+
 
 /**
  * @brief start of range of memory addresses served by this heap.
@@ -111,6 +165,7 @@ uintp StandardHeap::LastAddress()const {
 /**
  * @brief Returns the name of the heap
  * @return name of the heap
+ *
  */
 const char8 *StandardHeap::Name()const {
     return "StandardHeap";

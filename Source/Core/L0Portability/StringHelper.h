@@ -33,6 +33,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
+#include "HeapManager.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -46,6 +48,13 @@
 class StringHelper {
 
 public:
+
+    /**
+     * @brief Duplicates a string in the heap memory.
+     * @param[in] s The pointer to the string which must be copied.
+     * @return The pointer to the new allocated memory which contains a copy of s.
+     */
+    static char8 *StringDup(const char8 * const s);
 
     /**
      * @brief Concatenates two strings.
@@ -177,6 +186,7 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 
 #endif /* STRINGHELPER_H_ */
 

@@ -50,17 +50,39 @@ public:
      */
     virtual ~HeapI()=0;
 
-    /**
-     * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
-     * @return a pointer to the allocated memory or NULL if the allocation fails.
-     */
-    virtual void *Malloc(const uint32 &size)=0;
 
     /**
-     * @brief free the pointer data and its associated memory.
-     * @param data the data to be freed.
+     * @brief Allocates a portion of memory on the heap.
+     * @param[in] size The size in byte of the memory to allocate.
+     * @return The pointer to the allocated memory. NULL if allocation failed.
      */
-    virtual void Free(void *&data)= 0;
+    virtual void *Malloc(const uint32 size) = 0;
+
+    /**
+     * @brief Releases a memory area and sets its pointer to NULL.
+     * @param[in,out] data The memory area to be freed.
+     * @return true if the memory is freed, false in case of invalid pointer.
+     * @post data = NULL
+     */
+    virtual void Free(void *&data) = 0;
+
+    /**
+     * @brief Reallocates a memory portion possibly contiguously with the specified already existent memory area.
+     * @details If there is no space available for the new size specified, the system could allocate the new portion
+     * in a different location and in this case the pointer changes its value.
+     * @param[in,out] data The pointer to the new memory block.
+     * @param[in] newSize The size of the new memory block.
+     * @return The pointer to the new data block. NULL if reallocation failed.
+     */
+    virtual void *Realloc(void *&data,const uint32 newSize) = 0;
+
+    /**
+     * @brief Duplicates a memory section into a new area from the specified heap.
+     * @param[in] data The pointer to the memory which must be copied.
+     * @param[in] size size of memory to allocate. if size = 0 then memory is copied until a zero is found
+     * @return The pointer to the new allocated memory which contains a copy of s.
+     */
+    virtual void *Duplicate(const void * const data, uint32 size=0U) = 0;
 
     /**
      * @brief start of range of memory addresses served by this heap.
@@ -96,12 +118,16 @@ public:
      */
     virtual const char8 *Name()const =0;
 
+
 };
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+
+
 
 #endif /* SOURCE_CORE_L0PORTABILITY_HeapI_H_ */
 

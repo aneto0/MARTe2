@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "EventSem.h"
-#include "Memory.h"
 #include "ExceptionHandler.h"
 #include "Threads.h"
 

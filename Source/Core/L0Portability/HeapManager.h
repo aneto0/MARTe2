@@ -61,33 +61,54 @@ HeapI *FindHeap(const char8 * const name);
 
 
 /**
- * @brief free the pointer data and its associated memory.
- * @param data the data to be freed.
- * returns false if no heap is found that can handle this data
- */
-bool Free(void *&data);
-
-/**
- * @brief allocates memory from heap (by default standard heap)
- * @param size size of memory to allocate.
- * @param name name of heap to use
- * returns false if no heap is found that can handle this data
- */
-void *Malloc(uint32 size, const char8 *name = NULL_PTR(char8 *));
-
-/**
- * @brief
+ * @brief TODO
  * @param
  * returns
  */
 bool AddHeap(HeapI *newHeap);
 
 /**
- * @brief
+ * @brief TODO
  * @param
  * returns
  */
 bool RemoveHeap(HeapI *heap);
+
+
+
+/**
+ * @brief Releases a memory area and sets its pointer to NULL.
+ * @param[in,out] data The memory area to be freed.
+ * @return true if the memory is freed, false in case of belonging to no heap.
+ * @post data = NULL
+ */
+bool Free(void *&data);
+
+/**
+ * @brief Allocates a portion of memory on the heap.
+ * @param[in] size The size in byte of the memory to allocate.
+ * @param[in] heapName name of heap to use. default = use default heap
+ * @return The pointer to the allocated memory. NULL if allocation failed.
+ */
+void *Malloc(uint32 size, const char8 *heapName = NULL_PTR(char8 *));
+
+/**
+ * @brief Reallocates a memory portion possibly contiguously with the specified already existent memory area. Operates on the same heap as that of data
+ * @details If there is no space available for the new size specified, the system could allocate the new portion
+ * in a different location and in this case the pointer changes its value.
+ * @param[in,out] data The pointer to the new memory block.
+ * @param[in] newSize The size of the new memory block.
+ * @return The pointer to the new data block. NULL if reallocation failed.
+ */
+void *Realloc(void *&data,const uint32 newSize);
+/**
+ * @brief Duplicates a memory section into a new area from the specified heap.
+ * @param[in] data The pointer to the memory which must be copied.
+ * @param[in] size size of memory to allocate. if size = 0 then memory is copied until a zero is found
+ * @param[in] heapName name of heap to use. default= copy on the same heap as data
+ * @return The pointer to the new allocated memory which contains a copy of s.
+ */
+void *Duplicate(const void * const data, uint32 size=0U, const char8 *heapName = NULL_PTR(char8 *));
 
 
 };
@@ -97,4 +118,4 @@ bool RemoveHeap(HeapI *heap);
 /*---------------------------------------------------------------------------*/
 
 #endif /* SOURCE_CORE_L0PORTABILITY_HEAPMANAGER_H_ */
-	
+

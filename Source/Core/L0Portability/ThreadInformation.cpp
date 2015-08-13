@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ThreadInformation.h"
+#include "HeapManager.h"
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -58,10 +60,10 @@ ThreadInformation::ThreadInformation(const ThreadFunctionType threadFunction,
     this->userThreadFunction = threadFunction;
     this->userData = threadData;
     if (threadName != NULL) {
-        this->name = Memory::StringDup(threadName);
+        this->name = StringHelper::StringDup(threadName);
     }
     else {
-        this->name = Memory::StringDup("Unknown");
+        this->name = StringHelper::StringDup("Unknown");
     }
     threadId = InvalidThreadIdentifier;
     priorityClass = Threads::UnknownPriorityClass;
@@ -75,7 +77,7 @@ ThreadInformation::ThreadInformation(const ThreadFunctionType threadFunction,
 /*lint -e{1551} only C calls are performed. No exception can be raised*/
 ThreadInformation::~ThreadInformation() {
     /*lint -e{534} possible failure is not handled nor propagated.*/
-    Memory::Free(reinterpret_cast<void *&>(name));
+    HeapManager::Free(reinterpret_cast<void *&>(name));
     /*lint -e{534} possible failure is not handled nor propagated.*/
     startThreadSynchSem.Close();
     userData = static_cast<void *>(NULL);
@@ -85,7 +87,7 @@ ThreadInformation::~ThreadInformation() {
 void ThreadInformation::Copy(const ThreadInformation &threadInfo) {
     userThreadFunction = threadInfo.userThreadFunction;
     userData = threadInfo.userData;
-    name = Memory::StringDup(threadInfo.name);
+    name = StringHelper::StringDup(threadInfo.name);
     threadId = threadInfo.threadId;
     priorityClass = threadInfo.priorityClass;
     priorityLevel = threadInfo.priorityLevel;
