@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L0PORTABILITY_HEAPINTERFACE_H_
-#define SOURCE_CORE_L0PORTABILITY_HEAPINTERFACE_H_
+#ifndef SOURCE_CORE_L0PORTABILITY_HEAP_INTERFACE_H_
+#define SOURCE_CORE_L0PORTABILITY_HEAP_INTERFACE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -42,13 +42,13 @@
  * This class provides the interface method definition and a basic implementation
  * which calls the Memory::Malloc and Memory::Free functions.
  */
-class HeapInterface {
+class HeapI {
 public:
 
     /**
      * @brief No operation.
      */
-    virtual ~HeapInterface()=0;
+    virtual ~HeapI()=0;
 
     /**
      * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
@@ -103,5 +103,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L0PORTABILITY_HEAPINTERFACE_H_ */
+#endif /* SOURCE_CORE_L0PORTABILITY_HeapI_H_ */
 

@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "HeapInterface.h"
+#include "HeapI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -51,13 +51,13 @@ namespace HeapManager{
  * @param address is a memory address that the target heap should manage
  * returns NULL if not found
  */
-HeapInterface *FindHeap(const void * address);
+HeapI *FindHeap(const void * address);
 
 /**
  * @brief Finds the Heap that has the specified name
  * returns GetStandardHeap() if not found
  */
-HeapInterface *FindHeap(const char8 * const name);
+HeapI *FindHeap(const char8 * const name);
 
 
 /**
@@ -80,14 +80,14 @@ void *Malloc(uint32 size, const char8 *name = NULL_PTR(char8 *));
  * @param
  * returns
  */
-bool AddHeap(HeapInterface *newHeap);
+bool AddHeap(HeapI *newHeap);
 
 /**
  * @brief
  * @param
  * returns
  */
-bool RemoveHeap(HeapInterface *heap);
+bool RemoveHeap(HeapI *heap);
 
 
 };
