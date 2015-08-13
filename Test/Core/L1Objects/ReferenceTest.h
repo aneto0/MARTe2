@@ -167,13 +167,6 @@ public:
      */
     bool TestDifferentOperator();
 
-
-    /**
-     * @brief Tests the Reference::Clone function.
-     * @return true if the clone returns false for objects which does not implement their own Clone() function.
-     */
-    bool TestClone();
-
     /**
      * @brief Tests if the references created in a function are destroyed when the function terminates.
      * @details A thread calls a function which assigns a certain number of references to an object and waits on
@@ -192,7 +185,6 @@ public:
      * @return true if successful, false otherwise.
      */
     bool TestInFunctionOnHeap(uint32 nRefs);
-
 
     /**
      * @brief Tests if it is possible assign a reference to another for objects on the same inherit branch.

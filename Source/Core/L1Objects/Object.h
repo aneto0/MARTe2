@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "../L0Portability/HeapInterface.h"
+#include "../L0Portability/HeapI.h"
 #include "GeneralDefinitions.h"
 #include "StructuredData.h"
 #include "Introspection.h"
@@ -72,7 +72,7 @@
      * Note that the selected heap might be different for each type of class.                                          \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
-    static void * operator new(const size_t size, HeapInterface *heap);                                                         \
+    static void * operator new(const size_t size, HeapI *heap);                                                         \
     /*                                                                                                                 \
      * @brief Delete the object.                                                                                       \
      * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \
@@ -94,8 +94,8 @@
  * class they had to be written as part of the macro as well.
  */
 #define CLASS_REGISTER(name,ver)                                                                                       \
-    /*                                                                                                                 \
-     * The heap which is used to instantiate objects from this class type. Only one heap can be set                    \
+    /*                                                                                                               *\\
+     * The heap which is used to instantiate objects from this class type. Only one heap can be set                  *\\
      * pre class type                                                                                                  \
      */                                                                                                                \
     static Heap name ## Heap_;                                                                                         \

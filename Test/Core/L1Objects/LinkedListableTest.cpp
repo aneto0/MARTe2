@@ -39,7 +39,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 bool LinkedListableTest::TestConstructor() {
 
     LinkedListable root;
@@ -101,8 +100,10 @@ bool LinkedListableTest::TestSetGetNext() {
 
 bool LinkedListableTest::TestSize() {
 
+    const uint32 size = 32;
+
     LinkedListable root;
-    LinkedListable element[32];
+    LinkedListable element[size];
 
     //size should be zero at the beginning
     if (root.Size() != 1) {
@@ -112,18 +113,18 @@ bool LinkedListableTest::TestSize() {
     root.SetNext(&element[0]);
 
     //fills the list
-    for (uint32 i = 1; i < 32; i++) {
+    for (uint32 i = 1; i < size; i++) {
         element[i - 1].SetNext(&element[i]);
     }
 
     //checks if the size is equal to the current number of elements
-    if (root.Size() != 33) {
+    if (root.Size() != (size + 1)) {
         return false;
     }
 
     //checks if all element see only the sublist on its right
-    for (uint32 i = 0; i < 32; i++) {
-        if (element[i].Size() != (32 - i)) {
+    for (uint32 i = 0; i < size; i++) {
+        if (element[i].Size() != (size - i)) {
             return false;
         }
     }
@@ -131,14 +132,16 @@ bool LinkedListableTest::TestSize() {
 }
 
 bool LinkedListableTest::TestBSortSorter() {
+    const uint32 size = 32;
+
     IntegerList root;
-    IntegerList number[32];
+    IntegerList number[size];
 
     number[0].intNumber = 0;
     root.SetNext(&number[0]);
 
     //fills the list in crescent order
-    for (uint32 i = 1; i < 32; i++) {
+    for (uint32 i = 1; i < size; i++) {
         number[i].intNumber = i;
         number[i - 1].SetNext(&number[i]);
     }
@@ -146,7 +149,7 @@ bool LinkedListableTest::TestBSortSorter() {
     //nothing should happen
     root.BSort((SortFilter*) NULL);
     LinkedListable *cursor = root.Next();
-    for (uint32 i = 0; i < 32; i++) {
+    for (uint32 i = 0; i < size; i++) {
         if (((IntegerList*) (cursor))->intNumber != i) {
             return false;
         }
@@ -157,11 +160,13 @@ bool LinkedListableTest::TestBSortSorter() {
     SortDecrescent decrescentSorter;
 
     //sort only the last half part of the list
-    number[14].BSort(&decrescentSorter);
+    number[size / 2].BSort(&decrescentSorter);
+
+    uint32 stoPoint = size / 2;
 
     //checks if the order is crescent in the first half list
     cursor = root.Next();
-    for (uint32 i = 0; i <= 14; i++) {
+    for (uint32 i = 0; i <= stoPoint; i++) {
         if (((IntegerList*) (cursor))->intNumber != i) {
             return false;
         }
@@ -169,7 +174,7 @@ bool LinkedListableTest::TestBSortSorter() {
     }
 
     //checks if the order is decrescent in the second half list
-    for (uint32 i = 31; i >= 15; i--) {
+    for (uint32 i = (size - 1); i >= (stoPoint + 1); i--) {
         if (((IntegerList*) (cursor))->intNumber != i) {
             return false;
         }
@@ -180,8 +185,8 @@ bool LinkedListableTest::TestBSortSorter() {
 
     //checks if the order is decrescent in all list
     cursor = root.Next();
-    for (uint32 i = 0; i < 32; i++) {
-        if (((IntegerList*) (cursor))->intNumber != (31 - i)) {
+    for (uint32 i = 0; i < size; i++) {
+        if (((IntegerList*) (cursor))->intNumber != (size - 1 - i)) {
             return false;
         }
         cursor = cursor->Next();
@@ -209,25 +214,26 @@ void BuildLists(IntegerList* list1Element,
 bool LinkedListableTest::TestInsert(uint32 firstListInsertPoint,
                                     uint32 secondListBeginPoint) {
 
+    const uint32 size = 32;
     //saturates because lists contains 32 elements
-    if (firstListInsertPoint > 31) {
-        firstListInsertPoint = 31;
+    if (firstListInsertPoint > (size - 1)) {
+        firstListInsertPoint = (size - 1);
     }
-    if (secondListBeginPoint > 31) {
-        secondListBeginPoint = 31;
+    if (secondListBeginPoint > (size - 1)) {
+        secondListBeginPoint = (size - 1);
     }
 
     //build the two lists
     IntegerList rootList1;
     IntegerList rootList2;
 
-    IntegerList list1Element[32];
-    IntegerList list2Element[32];
+    IntegerList list1Element[size];
+    IntegerList list2Element[size];
 
     rootList1.SetNext(&list1Element[0]);
     rootList2.SetNext(&list2Element[0]);
 
-    BuildLists(list1Element, list2Element, 32);
+    BuildLists(list1Element, list2Element, size);
     //insert the second (sub)list on the first at the specified point
     list1Element[firstListInsertPoint].Insert(&list2Element[secondListBeginPoint]);
 
@@ -240,87 +246,90 @@ bool LinkedListableTest::TestInsert(uint32 firstListInsertPoint,
     }
 
     //the point when the second list end and the second continue
-    uint32 point = (32 - secondListBeginPoint);
+    uint32 point = (size - secondListBeginPoint);
 
     for (uint32 i = 0; i < point; i++) {
-        if (((IntegerList*) (cursor))->intNumber != (i + 32 + secondListBeginPoint)) {
+        if (((IntegerList*) (cursor))->intNumber != (i + size + secondListBeginPoint)) {
             return false;
         }
         cursor = cursor->Next();
     }
 
     //checks until the end if the elements are of the first list
-    for (uint32 i = 0; i < (32 - firstListInsertPoint - 1); i++) {
+    for (uint32 i = 0; i < (size - firstListInsertPoint - 1); i++) {
         if (((IntegerList*) (cursor))->intNumber != (i + firstListInsertPoint + 1)) {
             return false;
         }
         cursor = cursor->Next();
     }
 
-    return rootList1.Size() == (64 - secondListBeginPoint + 1);
+    return rootList1.Size() == (2 * size - secondListBeginPoint + 1);
 
 }
 
 bool LinkedListableTest::TestInsertEntireList() {
 
+    const uint32 size = 32;
     //build the two lists
     IntegerList rootList1;
     IntegerList rootList2;
 
-    IntegerList list1Element[32];
-    IntegerList list2Element[32];
+    IntegerList list1Element[size];
+    IntegerList list2Element[size];
 
     rootList1.SetNext(&list1Element[0]);
     rootList2.SetNext(&list2Element[0]);
 
-    BuildLists(list1Element, list2Element, 32);
+    BuildLists(list1Element, list2Element, size);
 
     rootList1.Insert(&list2Element[0]);
 
     LinkedListable *cursor = rootList1.Next();
-    for (uint32 i = 0; i < 32; i++) {
-        if (((IntegerList*) (cursor))->intNumber != (i + 32)) {
+    for (uint32 i = 0; i < size; i++) {
+        if (((IntegerList*) (cursor))->intNumber != (i + size)) {
             return false;
         }
         cursor = cursor->Next();
     }
 
-    for (uint32 i = 0; i < 32; i++) {
+    for (uint32 i = 0; i < size; i++) {
         if (((IntegerList*) (cursor))->intNumber != (i)) {
             return false;
         }
         cursor = cursor->Next();
     }
 
-    return rootList1.Size() == 65;
+    return rootList1.Size() == (2 * size + 1);
 
 }
 
 bool LinkedListableTest::TestInsertSortedSorter(uint32 secondListPosition) {
 
-    if (secondListPosition > 31) {
-        secondListPosition = 31;
+    const uint32 size = 32;
+
+    if (secondListPosition > (size - 1)) {
+        secondListPosition = (size - 1);
     }
 
     //build the two lists
     IntegerList rootList1;
     IntegerList rootList2;
 
-    IntegerList list1Element[32];
-    IntegerList list2Element[32];
+    IntegerList list1Element[size];
+    IntegerList list2Element[size];
 
     rootList1.SetNext(&list1Element[0]);
     rootList2.SetNext(&list2Element[0]);
 
-    list1Element[0].intNumber = 31;
-    list2Element[0].intNumber = 32;
+    list1Element[0].intNumber = (size - 1);
+    list2Element[0].intNumber = size;
 
-    for (uint32 i = 1; i < 32; i++) {
+    for (uint32 i = 1; i < size; i++) {
         //decrescent 31-->0
-        list1Element[i].intNumber = 31 - i;
+        list1Element[i].intNumber = size - 1 - i;
 
         //crescent 32-->63
-        list2Element[i].intNumber = 32 + i;
+        list2Element[i].intNumber = size + i;
 
         list1Element[i - 1].SetNext(&list1Element[i]);
         list2Element[i - 1].SetNext(&list2Element[i]);
@@ -330,7 +339,7 @@ bool LinkedListableTest::TestInsertSortedSorter(uint32 secondListPosition) {
 
     rootList1.Insert(&list2Element[secondListPosition], &decrescentSorter);
 
-    uint32 nElements = 64 - secondListPosition;
+    uint32 nElements = 2 * size - secondListPosition;
     LinkedListable *cursor = rootList1.Next();
     for (uint32 i = 0; i < (nElements - 1); i++) {
         if ((((IntegerList*) (cursor->Next()))->intNumber) > (((IntegerList*) (cursor))->intNumber)) {
@@ -344,15 +353,17 @@ bool LinkedListableTest::TestInsertSortedSorter(uint32 secondListPosition) {
 
 bool LinkedListableTest::TestInsertNullListInput() {
     //build the two lists
+    const uint32 size = 32;
+
     IntegerList rootList1;
 
-    IntegerList list1Element[32];
+    IntegerList list1Element[size];
 
     rootList1.SetNext(&list1Element[0]);
 
     list1Element[0].intNumber = 0;
 
-    for (uint32 i = 1; i < 32; i++) {
+    for (uint32 i = 1; i < size; i++) {
         list1Element[i].intNumber = i;
 
         list1Element[i - 1].SetNext(&list1Element[i]);
@@ -361,71 +372,74 @@ bool LinkedListableTest::TestInsertNullListInput() {
     rootList1.Insert((LinkedListable*) NULL);
 
     LinkedListable *cursor = rootList1.Next();
-    for (uint32 i = 0; i < 32; i++) {
+    for (uint32 i = 0; i < size; i++) {
         if (((IntegerList*) (cursor))->intNumber != i) {
             return false;
         }
         cursor = cursor->Next();
     }
 
-    return rootList1.Size() == 33;
+    return rootList1.Size() == (size + 1);
 }
 
 bool LinkedListableTest::TestInsertNullSorterInput() {
+    const uint32 size = 32;
+
     //build the two lists
     IntegerList rootList1;
     IntegerList rootList2;
 
-    IntegerList list1Element[32];
-    IntegerList list2Element[32];
+    IntegerList list1Element[size];
+    IntegerList list2Element[size];
 
     rootList1.SetNext(&list1Element[0]);
     rootList2.SetNext(&list2Element[0]);
 
-    BuildLists(list1Element, list2Element, 32);
+    BuildLists(list1Element, list2Element, size);
 
     //in this case it calls the default insert
     rootList1.Insert(&list2Element[0], (SortFilter*) NULL);
 
     LinkedListable *cursor = &rootList1;
-    for (uint32 i = 0; i < 32; i++) {
-        if (((IntegerList*) (cursor->Next()))->intNumber != (i + 32)) {
+    for (uint32 i = 0; i < size; i++) {
+        if (((IntegerList*) (cursor->Next()))->intNumber != (i + size)) {
             return false;
         }
         cursor = cursor->Next();
     }
 
-    for (uint32 i = 0; i < 32; i++) {
+    for (uint32 i = 0; i < size; i++) {
         if (((IntegerList*) (cursor->Next()))->intNumber != (i)) {
             return false;
         }
         cursor = cursor->Next();
     }
 
-    return rootList1.Size() == 65;
+    return rootList1.Size() == 2 * size + 1;
 }
 
 bool LinkedListableTest::TestAdd(uint32 secondListPosition) {
 
-    if (secondListPosition > 31) {
-        secondListPosition = 31;
+    const uint32 size = 32;
+    if (secondListPosition > (size - 1)) {
+        secondListPosition = (size - 1);
     }
     //build the two lists
     IntegerList rootList1;
     IntegerList rootList2;
 
-    IntegerList list1Element[32];
-    IntegerList list2Element[32];
+    IntegerList list1Element[size];
+    IntegerList list2Element[size];
 
     rootList1.SetNext(&list1Element[0]);
     rootList2.SetNext(&list2Element[0]);
 
-    BuildLists(list1Element, list2Element, 32);
+    BuildLists(list1Element, list2Element, size);
 
     rootList1.Add(&list2Element[secondListPosition]);
 
-    IntegerList* lastElement = ((IntegerList*) list1Element[31].Next());
-    if (lastElement->intNumber != (32 + secondListPosition)) {
+    IntegerList* lastElement = ((IntegerList*) list1Element[size - 1].Next());
+    if (lastElement->intNumber != (size + secondListPosition)) {
         return false;
     }
 
@@ -434,27 +448,29 @@ bool LinkedListableTest::TestAdd(uint32 secondListPosition) {
 }
 
 bool LinkedListableTest::TestAddL(uint32 secondListPosition) {
-    if (secondListPosition > 31) {
-        secondListPosition = 31;
+    const uint32 size = 32;
+
+    if (secondListPosition > (size - 1)) {
+        secondListPosition = (size - 1);
     }
     //build the two lists
     IntegerList rootList1;
     IntegerList rootList2;
 
-    IntegerList list1Element[32];
-    IntegerList list2Element[32];
+    IntegerList list1Element[size];
+    IntegerList list2Element[size];
 
     rootList1.SetNext(&list1Element[0]);
     rootList2.SetNext(&list2Element[0]);
 
-    BuildLists(list1Element, list2Element, 32);
+    BuildLists(list1Element, list2Element, size);
 
     rootList1.AddL(&list2Element[secondListPosition]);
 
-    IntegerList* lastElement = ((IntegerList*) list1Element[31].Next());
+    IntegerList* lastElement = ((IntegerList*) list1Element[size - 1].Next());
 
-    for (uint32 i = 0; i < (32 - secondListPosition); i++) {
-        if (lastElement->intNumber != (32 + secondListPosition + i)) {
+    for (uint32 i = 0; i < (size - secondListPosition); i++) {
+        if (lastElement->intNumber != (size + secondListPosition + i)) {
             return false;
         }
         lastElement = (IntegerList*) (lastElement->Next());
@@ -465,49 +481,54 @@ bool LinkedListableTest::TestAddL(uint32 secondListPosition) {
 }
 
 bool LinkedListableTest::TestSearch() {
+
+    const uint32 size = 32;
+
     //build the two lists
     LinkedListable rootList1;
 
-    LinkedListable list1Element[32];
+    LinkedListable list1Element[size];
 
     rootList1.SetNext(&list1Element[0]);
 
-    for (uint32 i = 1; i < 31; i++) {
+    for (uint32 i = 1; i < (size - 1); i++) {
         list1Element[i - 1].SetNext(&list1Element[i]);
     }
 
-    for (uint32 i = 0; i < 31; i++) {
+    for (uint32 i = 0; i < (size - 1); i++) {
         if (!rootList1.Search(&list1Element[i])) {
             return false;
         }
     }
 
-    return (!rootList1.Search(&list1Element[31])) && (!list1Element[2].Search(&list1Element[1]));
+    return (!rootList1.Search(&list1Element[size - 1])) && (!list1Element[2].Search(&list1Element[1]));
 }
 
 bool LinkedListableTest::TestSearchFilter() {
     //build the two lists
+    const uint32 size = 32;
+
     IntegerList rootList1;
     rootList1.intNumber = 255;
 
-    IntegerList list1Element[32];
+    IntegerList list1Element[size];
 
     list1Element[0].intNumber = 0;
     rootList1.SetNext(&list1Element[0]);
 
-    for (uint32 i = 1; i < 32; i++) {
+    for (uint32 i = 1; i < size; i++) {
         list1Element[i].intNumber = i;
         list1Element[i - 1].SetNext(&list1Element[i]);
     }
 
-    for (uint32 i = 0; i < 32; i++) {
+    for (uint32 i = 0; i < size; i++) {
         SearchInteger searchNumber(i);
         if (rootList1.Search(&searchNumber) != &list1Element[i]) {
             return false;
         }
     }
 
-    SearchInteger searchNotIn(33);
+    SearchInteger searchNotIn(size + 1);
     return (rootList1.Search(&searchNotIn) == NULL) && (rootList1.Search((SearchFilter*) NULL) == NULL);
 }
 
@@ -527,16 +548,18 @@ bool LinkedListableTest::TestSearchFilterPreviousElement() {
     return (rootList1.Search(&searchNumber) == &list1Element[0]) && (list1Element[1].Search(&searchNumber) == NULL);
 }
 
-
 bool LinkedListableTest::TestExtract() {
+
+    const uint32 size = 32;
+
     //build the two lists
     LinkedListable rootList1;
 
-    LinkedListable list1Element[32];
+    LinkedListable list1Element[size];
 
     rootList1.SetNext(&list1Element[0]);
 
-    for (uint32 i = 1; i < 31; i++) {
+    for (uint32 i = 1; i < (size - 1); i++) {
         list1Element[i - 1].SetNext(&list1Element[i]);
     }
 
@@ -544,11 +567,11 @@ bool LinkedListableTest::TestExtract() {
         return false;
     }
 
-    if (rootList1.Extract(&list1Element[31])) {
+    if (rootList1.Extract(&list1Element[size - 1])) {
         return false;
     }
 
-    for (uint32 i = 0; i < 31; i++) {
+    for (uint32 i = 0; i < (size - 1); i++) {
         if (!rootList1.Extract(&list1Element[i])) {
             return false;
         }
@@ -557,7 +580,7 @@ bool LinkedListableTest::TestExtract() {
             return false;
         }
 
-        if (rootList1.Size() != (31 - i)) {
+        if (rootList1.Size() != (size - 1 - i)) {
             return false;
         }
     }
@@ -567,21 +590,23 @@ bool LinkedListableTest::TestExtract() {
 
 bool LinkedListableTest::TestExtractSearchFilter() {
 
+    const uint32 size = 32;
+
     //build the two lists
     IntegerList rootList1;
     rootList1.intNumber = 255;
 
-    IntegerList list1Element[32];
+    IntegerList list1Element[size];
 
     list1Element[0].intNumber = 0;
     rootList1.SetNext(&list1Element[0]);
 
-    for (uint32 i = 1; i < 32; i++) {
+    for (uint32 i = 1; i < size; i++) {
         list1Element[i].intNumber = i;
         list1Element[i - 1].SetNext(&list1Element[i]);
     }
 
-    SearchInteger searchNotIn(33);
+    SearchInteger searchNotIn(size + 1);
     if (rootList1.Extract(&searchNotIn) != NULL) {
         return false;
     }
@@ -590,7 +615,7 @@ bool LinkedListableTest::TestExtractSearchFilter() {
         return false;
     }
 
-    for (uint32 i = 0; i < 32; i++) {
+    for (uint32 i = 0; i < size; i++) {
         SearchInteger searchNumber(i);
         if (rootList1.Extract(&searchNumber) != &list1Element[i]) {
             return false;
@@ -604,7 +629,7 @@ bool LinkedListableTest::TestExtractSearchFilter() {
             return false;
         }
 
-        if (rootList1.Size() != (32 - i)) {
+        if (rootList1.Size() != (size - i)) {
             return false;
         }
     }
@@ -613,14 +638,14 @@ bool LinkedListableTest::TestExtractSearchFilter() {
 
 }
 
-
-
 bool LinkedListableTest::TestDelete() {
+
+    const uint32 size = 32;
 
     LinkedListable *root = new LinkedListable;
     LinkedListable *cursor = root;
 
-    for (uint32 i = 0; i < 32; i++) {
+    for (uint32 i = 0; i < size; i++) {
         LinkedListable *list1Element = new LinkedListable;
         cursor->SetNext(list1Element);
         cursor = cursor->Next();
@@ -632,11 +657,11 @@ bool LinkedListableTest::TestDelete() {
     }
 
     cursor = root->Next();
-    for (uint32 i = 0; i < 32; i++) {
+    for (uint32 i = 0; i < size; i++) {
         if (!root->Delete(cursor)) {
             return false;
         }
-        if (root->Size() != (32 - i)) {
+        if (root->Size() != (size - i)) {
             return false;
         }
         cursor = root->Next();
@@ -648,18 +673,20 @@ bool LinkedListableTest::TestDelete() {
 
 bool LinkedListableTest::TestDeleteSearchFilter() {
 
+    const uint32 size = 32;
+
     IntegerList *root = new IntegerList;
 
     IntegerList *cursor = root;
 
-    for (uint32 i = 0; i < 32; i++) {
+    for (uint32 i = 0; i < size; i++) {
         IntegerList *listElement = new IntegerList;
-        listElement->intNumber = (i % 16);
+        listElement->intNumber = (i % (size / 2));
         cursor->SetNext(listElement);
         cursor = (IntegerList*) cursor->Next();
     }
 
-    SearchInteger searchNotIn(33);
+    SearchInteger searchNotIn(size + 1);
     if (root->Delete(&searchNotIn) != 0) {
         return false;
     }
@@ -668,8 +695,8 @@ bool LinkedListableTest::TestDeleteSearchFilter() {
         return false;
     }
 
-    for (uint32 i = 0; i < 16; i++) {
-        SearchInteger searchNumber(i % 16);
+    for (uint32 i = 0; i < (size / 2); i++) {
+        SearchInteger searchNumber(i % (size / 2));
         if (root->Delete(&searchNumber) != 2) {
             return false;
         }
@@ -678,7 +705,7 @@ bool LinkedListableTest::TestDeleteSearchFilter() {
             return false;
         }
 
-        if (root->Size() != (33 - 2 * (i + 1))) {
+        if (root->Size() != (size - 1 - (2 * i))) {
             return false;
         }
     }
@@ -687,36 +714,40 @@ bool LinkedListableTest::TestDeleteSearchFilter() {
 
 }
 
-
 bool LinkedListableTest::TestPeek() {
 
+    const uint32 size = 32;
+
     LinkedListable root;
-    LinkedListable element[32];
+    LinkedListable element[size];
 
     root.SetNext(&element[0]);
 
-    for (uint32 i = 1; i < 32; i++) {
+    for (uint32 i = 1; i < size; i++) {
         element[i - 1].SetNext(&element[i]);
     }
 
-    for (uint32 i = 1; i <= 32; i++) {
+    for (uint32 i = 1; i <= size; i++) {
         if (root.Peek(i) != &element[i - 1]) {
             return false;
         }
     }
 
-    return (root.Size() == 33) && (root.Peek(0) == &root) && (root.Peek(33) == NULL);
+    return (root.Size() == (size + 1)) && (root.Peek(0) == &root) && (root.Peek(size + 1) == NULL);
 }
 
 bool LinkedListableTest::TestIterateIterator() {
+
+    const uint32 size = 32;
+
     IntegerList root;
-    IntegerList element[32];
+    IntegerList element[size];
 
     element[0].intNumber = 0;
 
     root.SetNext(&element[0]);
 
-    for (uint32 i = 1; i < 32; i++) {
+    for (uint32 i = 1; i < size; i++) {
         element[i].intNumber = i;
         element[i - 1].SetNext(&element[i]);
     }
@@ -725,7 +756,7 @@ bool LinkedListableTest::TestIterateIterator() {
 
     LinkedListable *cursor = root.Next();
 
-    for (uint32 i = 0; i < 32; i++) {
+    for (uint32 i = 0; i < size; i++) {
         if (((IntegerList*) cursor)->intNumber != i) {
             return false;
         }
@@ -738,7 +769,7 @@ bool LinkedListableTest::TestIterateIterator() {
     root.Iterate(&addOne);
 
     cursor = root.Next();
-    for (uint32 i = 0; i < 32; i++) {
+    for (uint32 i = 0; i < size; i++) {
         if (((IntegerList*) cursor)->intNumber != (i + 1)) {
             return false;
         }
@@ -746,6 +777,6 @@ bool LinkedListableTest::TestIterateIterator() {
         cursor = cursor->Next();
     }
 
-    return root.Size() == 33;
+    return root.Size() == (size + 1);
 
 }

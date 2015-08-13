@@ -50,7 +50,7 @@ Object::Object() {
 Object::~Object() {
     if (name != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        Memory::Free(reinterpret_cast<void *&>(name));
+        HeapManager::Free(reinterpret_cast<void *&>(name));
     }
 }
 
@@ -168,7 +168,7 @@ void Object::GetUniqueName(char8 * const destination, const uint32 &size) const 
 void Object::SetName(const char8 * const newName) {
     if (name != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        Memory::Free(reinterpret_cast<void *&>(name));
+        HeapManager::Free(reinterpret_cast<void *&>(name));
     }
     name = Memory::StringDup(newName);
 }

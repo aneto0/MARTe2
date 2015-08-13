@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Heap.h"
+#include "HeapI.h"
 #include "LinkedListable.h"
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
@@ -39,7 +39,7 @@
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
 class Object;
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
-typedef Object *(ObjectBuildFn)(const Heap &);
+typedef Object *(ObjectBuildFn)(const HeapI &);
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/

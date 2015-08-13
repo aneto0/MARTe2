@@ -40,10 +40,77 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassRegistryDatabaseGTest,TestConstructor) {
+TEST(ClassRegistryDatabaseGTest,TestInstance) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestConstructor());
+    ASSERT_TRUE(classRegistryDatabaseTest.TestInstance());
 }
 
+TEST(ClassRegistryDatabaseGTest,TestDeleteTrue) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestDeleteTrue());
+}
 
-	
+TEST(ClassRegistryDatabaseGTest,TestDeleteFalse) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestDeleteFalse());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestAdd) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestAdd());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestAddTheSameName) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestAddTheSameName());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindTrue) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFind("abcdefg", true));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindFalse) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFind("abcd", false));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameTrue) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFindDLL("boh","IntegerObject",true));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameFalse) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFindDLL("boh","boh",false));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestList) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestList());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestSize) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestSize());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestElementAt) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestElementAt());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestCreateInstances) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestCreateInstances());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestPolimorphismChild2Father) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestPolimorphismChild2Father());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestPolimorphismFather2Child) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestPolimorphismFather2Child());
+}
