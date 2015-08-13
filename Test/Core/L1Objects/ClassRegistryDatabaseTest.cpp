@@ -31,6 +31,7 @@
 #include "ClassRegistryDatabaseTest.h"
 #include "ReferenceT.h"
 #include "ObjectTestHelper.h"
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,10 +40,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-#include <stdio.h>
-#include "Reference.h"
-#include "TestObjectHelper1.h"
-#include "StringHelper.h"
 
 bool ClassRegistryDatabaseTest::TestInstance() {
 
@@ -107,15 +104,12 @@ bool ClassRegistryDatabaseTest::TestDeleteTrue() {
 
 bool ClassRegistryDatabaseTest::TestDeleteFalse() {
 
-    ClassRegistryItem *fakePtr;
+    ClassRegistryItem *fakePtr = NULL;
     //checks if the class is in the database
     ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
 
-    if (db->Delete(fakePtr)) {
-        return false;
-    }
+    return (!db->Delete(fakePtr));
 
-    return !db->Delete(NULL);
 }
 
 bool ClassRegistryDatabaseTest::TestAdd() {
@@ -163,7 +157,6 @@ bool ClassRegistryDatabaseTest::TestAddTheSameName() {
     }
 
     ClassRegistryItem *ret = db->Find("Hello");
-///////////////////////////////////////////////////// BUG
     bool retVal = (StringHelper::Compare(ret->GetClassProperties()->GetName(), "Hello") == 0)
             && (StringHelper::Compare(ret->GetClassProperties()->GetVersion(), "Mondo") == 0);
 
@@ -171,26 +164,34 @@ bool ClassRegistryDatabaseTest::TestAddTheSameName() {
 
 }
 
-bool ClassRegistryDatabaseTest::TestFindDLL(const char8* dllname) {
+bool ClassRegistryDatabaseTest::TestFindDLL(const char8* dllName,
+                                            const char8* className,
+                                            bool validName) {
 
-    char8 fullName[32];
-    StringHelper::Copy(fullName, dllname);
+    char8 fullName[64];
+    StringHelper::Copy(fullName, dllName);
     ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
 
-    StringHelper::Concatenate(fullName, "::NoClassName");
+    StringHelper::Concatenate(fullName, "::");
+    StringHelper::Concatenate(fullName, className);
 
-    return !(db->Find(fullName));
+    return !(validName ^ (db->Find(fullName) != NULL));
 }
 
-bool ClassRegistryDatabaseTest::TestFind(const char8 *name) {
+bool ClassRegistryDatabaseTest::TestFind(const char8 *name,
+                                         bool create) {
 
-    ClassProperties testClassProperties(name, "V");
-
-    //the add function is called directly by the constructor
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
     ClassRegistryDatabase* db = &(ClassRegistryDatabase::Instance());
 
-    return (db->Find(name)) && (db->Delete(&myItem));
+    if (create) {
+        ClassProperties testClassProperties(name, "V");
+
+        //the add function is called directly by the constructor
+        ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
+        return (db->Find(name) != NULL) && (db->Delete(&myItem));
+    }
+
+    return (db->Find(name) == NULL);
 
 }
 
@@ -203,7 +204,7 @@ bool ClassRegistryDatabaseTest::TestList() {
     }
     ClassProperties testClassProperties("TestList", "V");
 
-    //the add function is called directly by the constructor
+//the add function is called directly by the constructor
     ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
 
     uint32 size = db->Size();
@@ -224,32 +225,38 @@ bool ClassRegistryDatabaseTest::TestList() {
     return retVal && (db->Delete(&myItem));
 }
 
-bool ClassRegistryDatabaseTest::TestSize(uint32 nElements) {
+bool ClassRegistryDatabaseTest::TestSize() {
+
+    const char* names[] = { "1", "2", "3", "4", NULL };
 
     ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
 
     uint32 prevSize = db->Size();
 
     ClassRegistryItem *root;
-    ClassProperties testClassProperties("TestList", "V");
 
-    char s[2];
-    //add the elements to the database.
-    for (uint32 i = 0; i < nElements; i++) {
-        s[0] = (char) i + '0';
-        s[1] = '\0';
-        ClassProperties *testClassProperties = new ClassProperties(s, "V");
+    uint32 i = 0;
+//add the elements to the database.
+    while (names[i] != NULL) {
+        ClassProperties *testClassProperties = new ClassProperties(names[i], "V");
         ClassRegistryItem *element = new ClassRegistryItem(*testClassProperties, NULL);
         delete testClassProperties;
         if (i == 0) {
             root = element;
         }
+        i++;
     }
 
-    for (uint32 i = 0; i < nElements; i++) {
+    if ((db->Size() - prevSize) != 4) {
+        return false;
+    }
+
+    i = 0;
+    while (names[i] != NULL) {
         ClassRegistryItem *newRoot = (ClassRegistryItem *) root->Next();
         db->Delete(root);
         root = newRoot;
+        i++;
     }
 
     return db->Size() == prevSize;
@@ -260,52 +267,98 @@ bool ClassRegistryDatabaseTest::TestElementAt() {
     ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
     ClassProperties testClassProperties("TestElementAt", "V");
 
-    //the add function is called directly by the constructor
+//the add function is called directly by the constructor
     ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
 
     return (db->List() == db->ElementAt(0)) && (db->ElementAt(db->Size() - 1) == &myItem) && (db->ElementAt(db->Size()) == NULL);
 
 }
 
-bool ClassRegistryDatabaseTest::TestInstances() {
+bool ClassRegistryDatabaseTest::TestCreateInstances() {
     ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
 
     ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
     ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
-    ClassRegistryItem *floatObjProp = db->Find("FloatObject");
-    ClassRegistryItem *doubleObjProp = db->Find("DoubleObject");
 
-    if ((integerObjProp == NULL) || (specialIntegerObjProp == NULL) || (floatObjProp == NULL) || (doubleObjProp == NULL)) {
+    if ((integerObjProp == NULL) || (specialIntegerObjProp == NULL)) {
         return false;
     }
 
-    if ((integerObjProp->GetNumberOfInstances() != 0) || (specialIntegerObjProp->GetNumberOfInstances() != 0) || (floatObjProp->GetNumberOfInstances() != 0)
-            || (doubleObjProp->GetNumberOfInstances() != 0)) {
+    if ((integerObjProp->GetNumberOfInstances() != 0) || (specialIntegerObjProp->GetNumberOfInstances() != 0)) {
         return false;
+    }
+
+    const int32 instances = 32;
+    ReferenceT<IntegerObject> refInts[instances];
+
+    for (uint32 i = 0; i < instances; i++) {
+        Heap h;
+        refInts[i] = ReferenceT<IntegerObject>("IntegerObject", h);
+    }
+
+    if (integerObjProp->GetNumberOfInstances() != instances) {
+        return false;
+    }
+
+    for (uint32 i = 0; i < instances; i++) {
+        refInts[i].RemoveReference();
+
+        if (integerObjProp->GetNumberOfInstances() != (instances - 1 - i)) {
+            return false;
+        }
     }
 
     Heap h;
+
+//the internal objects are not counted as instances.
     ReferenceT<CollectInts> refCollectInts = ReferenceT<CollectInts>("CollectInts", h);
 
-    if ((integerObjProp->GetNumberOfInstances() != 1) || (specialIntegerObjProp->GetNumberOfInstances() != 1)) {
+    if ((integerObjProp->GetNumberOfInstances() != 0) || (specialIntegerObjProp->GetNumberOfInstances() != 0)) {
         return false;
     }
 
-    if (db->Find("CollectInts")->GetNumberOfInstances() != 1) {
+    return (db->Find("CollectInts")->GetNumberOfInstances() == 1);
+}
+
+bool ClassRegistryDatabaseTest::TestPolimorphismChild2Father() {
+
+    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
+
+    ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
+    ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
+
+    Heap h;
+    ReferenceT<IntegerObject> child2father = ReferenceT<IntegerObject>("SpecialIntegerObject", h);
+
+    //only the named class #instances must be incremented
+    if ((specialIntegerObjProp->GetNumberOfInstances() != 1) || (integerObjProp->GetNumberOfInstances() != 0)) {
         return false;
     }
 
-    ReferenceT<CollectInts> refCollectFloats = ReferenceT<CollectInts>("CollectFloats", h);
-
-    if ((floatObjProp->GetNumberOfInstances() != 1) || (doubleObjProp->GetNumberOfInstances() != 1)) {
+    if (child2father.NumberOfReferences() != 1) {
         return false;
     }
 
-    if (db->Find("CollectFloats")->GetNumberOfInstances() != 1) {
-        return false;
-    }
-    return true;
-
+    child2father.RemoveReference();
+    return (specialIntegerObjProp->GetNumberOfInstances() == 0) && (integerObjProp->GetNumberOfInstances() == 0);
 
 }
 
+bool ClassRegistryDatabaseTest::TestPolimorphismFather2Child() {
+    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
+
+    ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
+    ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
+
+    Heap h;
+    ReferenceT<SpecialIntegerObject> father2child = ReferenceT<SpecialIntegerObject>("IntegerObject", h);
+
+    //the dynamic cast fails, the object is created but destroyed immediately.
+    if (integerObjProp->GetNumberOfInstances() != 0) {
+        return false;
+    }
+
+    //the reference should be invalid!
+    return (!father2child.IsValid()) && (specialIntegerObjProp->GetNumberOfInstances() == 0);
+
+}
