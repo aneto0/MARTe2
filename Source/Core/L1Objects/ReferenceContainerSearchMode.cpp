@@ -37,32 +37,31 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-ReferenceContainerSearchMode::ReferenceContainerSearchMode(int32 occurrenceNumber,
-                                                           bool path,
-                                                           bool recurseNodes,
-                                                           bool reverseSearch,
-                                                           bool deleteFound) {
+ReferenceContainerSearchMode::ReferenceContainerSearchMode(const int32 &occurrenceNumber, const uint32 &mode) {
     occurrence = occurrenceNumber;
+    storePath = false;
+    recursive = false;
+    deleteFoundNodes = false;
+    reverse = false;
+
+    if ((mode & PATH) == PATH) {
+        storePath = true;
+    }
+    if ((mode & RECURSIVE) == RECURSIVE) {
+        recursive = true;
+    }
+    if ((mode & REVERSE) == REVERSE) {
+        reverse = true;
+    }
+    if ((mode & DELETE) == DELETE) {
+        deleteFoundNodes = true;
+    }
     if (occurrence == -1) {
         storePath = false;
     }
-    else {
-        storePath = path;
-    }
-
     if (storePath) {
         recursive = true;
     }
-    else {
-        recursive = recurseNodes;
-    }
-
-    if (deleteFound) {
-        storePath = false;
-    }
-
-    reverse = reverseSearch;
-    deleteFoundNodes = deleteFound;
 }
 
 void ReferenceContainerSearchMode::IncrementFound() {

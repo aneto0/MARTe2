@@ -37,31 +37,16 @@
 #include "Object.h"
 #include "Reference.h"
 #include "LinkedListable.h"
+#include "ReferenceContainerFilter.h"
 #include "ReferenceContainerNode.h"
 #include "ReferenceContainerSearchMode.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-class ReferenceContainer;
-
-class References: public ReferenceContainerFilters::Interface {
-public:
-    References(Reference refToSearch) {
-        referenceToSearch = refToSearch;
-    }
-
-    virtual bool Test(ReferenceContainer &previouslyFound,
-                      Reference &referenceToTest) {
-        return (referenceToSearch == referenceToTest);
-    }
-
-private:
-    Reference referenceToSearch;
-};
-}
-
+/**
+ * @brief
+ */
 class ReferenceContainer: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -94,7 +79,7 @@ public:
      * @param mode
      */
     void Find(ReferenceContainer &result,
-              ReferenceContainerFilters::Interface &filter,
+              ReferenceContainerFilter &filter,
               ReferenceContainerSearchMode &mode);
 
     bool IsContainer(const Reference &ref);

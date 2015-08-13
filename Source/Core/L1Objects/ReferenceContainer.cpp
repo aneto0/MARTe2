@@ -85,7 +85,7 @@ bool ReferenceContainer::IsContainer(const Reference &ref) {
 }
 
 void ReferenceContainer::Find(ReferenceContainer &result,
-                              ReferenceContainerFilters::Interface &filter,
+                              ReferenceContainerFilter &filter,
                               ReferenceContainerSearchMode &mode) {
     int32 index = 0;
     if (mode.IsReverse()) {

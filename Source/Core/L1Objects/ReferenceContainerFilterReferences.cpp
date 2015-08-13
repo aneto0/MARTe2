@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "ReferenceContainerFilterReferences.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -37,7 +37,11 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+ReferenceContainerFilterReferences::ReferenceContainerFilterReferences(Reference refToSearch) {
+    referenceToSearch = refToSearch;
+}
 
+bool ReferenceContainerFilterReferences::Test(ReferenceContainer &previouslyFound, Reference &referenceToTest) {
+    return (referenceToSearch == referenceToTest);
+}
 
-
-	

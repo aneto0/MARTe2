@@ -32,6 +32,7 @@ OBJSX=  LinkedListableTest.x \
 	ObjectTest.x \
 	ObjectTestHelper.x \
 	ReferenceTest.x \
+	ReferenceContainerTest.x \
 	ReferenceTTest.x
 		
 PACKAGE=Core

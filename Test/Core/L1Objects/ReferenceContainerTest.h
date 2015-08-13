@@ -1,6 +1,6 @@
 /**
- * @file ReferenceContainerFilterReferences.h
- * @brief Header file for class ReferenceContainerFilterReferences
+ * @file ReferenceContainerTest.h
+ * @brief Header file for class ReferenceContainerTest
  * @date 13/08/2015
  * @author Andre Neto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ReferenceContainerFilterReferences
+ * @details This header file contains the declaration of the class ReferenceContainerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTERREFERENCES_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTERREFERENCES_H_
+#ifndef TEST_CORE_L1OBJECTS_REFERENCECONTAINERTEST_H_
+#define TEST_CORE_L1OBJECTS_REFERENCECONTAINERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,8 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainerFilter.h"
+#include "Object.h"
+#include "ReferenceT.h"
 #include "ReferenceContainer.h"
+#include "ReferenceContainerSearchMode.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -40,28 +42,88 @@
 /**
  * @brief TODO
  */
-class ReferenceContainerFilterReferences: public ReferenceContainerFilter {
+class ReferenceContainerTest {
 public:
+    ReferenceContainerTest();
+
     /**
-     * @brief TODO
+     * @brief Tests the constructor.
+     * @return @TODO.
      */
-    ReferenceContainerFilterReferences(Reference refToSearch);
+    bool TestConstructor();
 
     /**
      * @brief TODO
      */
-    virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest);
+    bool TestFindFirstOccurrenceAlways(uint32 modeFlags);
+
+    /**
+     * @brief TODO
+     */
+    bool TestFindFirstOccurrence(uint32 modeFlags);
+
+    /**
+     * @brief TODO
+     */
+    bool TestFindSecondOccurrence(uint32 mode);
+
+    /**
+     * @brief TODO
+     */
+    bool TestFindThirdOccurrence(uint32 mode);
+
+    /**
+     * @brief TODO
+     */
+    bool TestFindAll(uint32 mode);
+
+    /**
+     * @brief TODO
+     */
+    bool TestFindOutOfBoundsOccurrence(uint32 mode);
+
+    /**
+     * @brief TODO
+     */
+    bool TestFindNonExistant(uint32 mode);
 
 private:
     /**
-     * TODO
+     * Heap used for the tests
      */
-    Reference referenceToSearch;
+    Heap h;
+
+    /**
+     * List of nodes for the tree described in the GenerateTestTree function
+     */
+    ReferenceT<Object> leafB;
+    ReferenceT<ReferenceContainer> containerC;
+    ReferenceT<ReferenceContainer> containerD;
+    ReferenceT<ReferenceContainer> containerE;
+    ReferenceT<ReferenceContainer> containerF;
+    ReferenceT<Object> leafG;
+    ReferenceT<Object> leafH;
+
+    /**
+     * @brief Generates a testing tree which is used by the other test methods.
+     * @details The tree has the following structure
+     *           A
+     *          /|\ \
+     *         B C D H
+     *           | |\
+     *           E F C
+     *           | |  \
+     *           H G   E
+     *                  \
+     *                   H
+     * @param container The container where the tree is going to be inserted, i.e. the node A
+     */
+    void GenerateTestTree(ReferenceT<ReferenceContainer> container);
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTERREFERENCES_H_ */
+#endif /* TEST_CORE_L1OBJECTS_REFERENCECONTAINERTEST_H_ */
 

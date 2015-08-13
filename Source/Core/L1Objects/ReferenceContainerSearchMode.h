@@ -41,23 +41,34 @@
 class ReferenceContainerSearchMode {
 public:
     /**
+     * @brief Store all the nodes leading to a given occurrence.
+     * @details Only valid if \a occurrence != -1 in the constructor of ReferenceContainerSearchMode.
+     */
+    static const uint32 PATH = 0x1;
+    /**
+     * @brief Search recursively in all the tree nodes.
+     */
+    static const uint32 RECURSIVE = 0x2;
+    /**
+     * @brief If set, the search is performed from left to right, otherwise from right to left.
+     * @details Note that to search he last occurrence of a given node it is sufficient to set
+     * ReferenceContainerSearchMode(1, RECURSIVE | REVERSE)
+     */
+    static const uint32 REVERSE = 0x4;
+    /**
+     * @brief If set the nodes that are found are deleted.
+     * @details To destroy all occurrences \a occurrence must be set to -1 in in the constructor of ReferenceContainerSearchMode-
+     * If DELETE is set, PATH will be automatically unset.
+     */
+    static const uint32 DELETE = 0x8;
+    /**
      * @brief Set the searching mode parameters.
      * @param occurenceNumber Ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
      * a node which meets a given criteria or -1 to look for all occurrences. This parameter is indexed to 1.
-     * @param path Store all the nodes leading to a given occurrence (only valid if \a occurrence != -1).
-     * @param recursive Search recursively in all the tree nodes.
-     * @param reverse If true the search is performed from left to right, otherwise from right to left. Note that to search
-     * the last occurrence of a given node it is sufficient to set \a occurrence = 1 and \a reverse = true
-     * @param storePath If true all the nodes leading to a given occurrence are stored (only valid if \a occurrence != -1).
-     * If \a storePath = true the recursive setting will be automatically set to true.
-     * @param deleteFound If true the nodes that are found are deleted (notice that to destroy all occurrences \a occurrence must be set to -1).
-     * If \a deleteFound = true the \a storePath setting will be automatically set to false.
+     * @param mode any ored combination of PATH, RECURSIVE, REVERSE and DELETE.
      */
-    ReferenceContainerSearchMode(int32 occurrenceNumber,
-                                 bool path,
-                                 bool recurseNodes,
-                                 bool reverseSearch,
-                                 bool deleteFound);
+    ReferenceContainerSearchMode(const int32 &occurrenceNumber,
+                                 const uint32 &mode);
 
     /**
      * @brief Informs that a new occurrence has been found.

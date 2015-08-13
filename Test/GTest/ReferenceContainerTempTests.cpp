@@ -38,6 +38,7 @@
 /*---------------------------------------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
+#include "ReferenceContainerFilterReferences.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 
@@ -101,12 +102,11 @@ int main(int argc,
 
     PrintTree(A, 0);
     ReferenceContainer results;
-    ReferenceContainerFilters::References referencesFilter(D);
-    SearchMode mode(-1, true, true, true, true);
+    ReferenceContainerFilterReferences referencesFilter(E);
+    ReferenceContainerSearchMode mode(2, ReferenceContainerSearchMode::PATH | ReferenceContainerSearchMode::RECURSIVE);
     A->Find(results, referencesFilter, mode);
     printf("results.Size = %d\n", results.Size());
     uint32 i = 0;
-    char uniqueName[128];
 
     for (i = 0; i < results.Size(); i++) {
         printf("Found : %p\n", results.Get(i).operator ->());
