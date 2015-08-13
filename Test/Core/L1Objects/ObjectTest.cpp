@@ -159,19 +159,39 @@ bool ObjectTest::TestGetUniqueName(const char8* name,
     }
 
     //the remained size id the minimum between buffSize-n and the nameSize (+2 because of "::"
-    uint32 remainedSize=(stringSize+2);
-    if(remainedSize>(buffSize-n)){
-        remainedSize=(buffSize-n);
+    uint32 remainedSize = (stringSize + 2);
+    if (remainedSize > (buffSize - n)) {
+        remainedSize = (buffSize - n);
     }
-
 
     char onlyName[size] = { 0 };
     StringHelper::Concatenate(onlyName, "::");
     StringHelper::Concatenate(onlyName, name);
 
-
-
     return StringHelper::CompareN(buffer + n, onlyName, remainedSize) == 0;
 
+}
+
+bool ObjectTest::TestGetUniqueName2() {
+
+    Object object1;
+    Object object2;
+
+    const char8 *sameName = "Hello";
+
+    object1.SetName(sameName);
+    object2.SetName(sameName);
+
+    if (StringHelper::Compare(object1.GetName(), object2.GetName()) != 0) {
+        return false;
+    }
+
+    char uniqueName1[32];
+    object1.GetUniqueName(uniqueName1, 32);
+
+    char uniqueName2[32];
+    object2.GetUniqueName(uniqueName2, 32);
+
+    return StringHelper::Compare(uniqueName1, uniqueName2) != 0;
 }
 

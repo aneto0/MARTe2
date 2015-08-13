@@ -101,6 +101,13 @@ public:
      */
     bool TestGetUniqueName(const char8* name,uint32 buffSize);
 
+
+
+    /**
+     * @brief Checks if the name returned by GetUniqueName is different for two objects with the same name.
+     * @return true if the name returned by GetUniqueName is different for two objects with the same name, false otherwise.
+     */
+    bool TestGetUniqueName2();
 };
 
 /*---------------------------------------------------------------------------*/
