@@ -99,19 +99,20 @@ int main(int argc,
     printf("H @ %p\n", H.operator ->());
     printf("I @ %p\n", I.operator ->());
 
+    PrintTree(A, 0);
     ReferenceContainer results;
-    ReferenceContainerFilters::References referencesFilter(E);
-    SearchMode mode(SearchModeType::Last, true, true, false);
+    ReferenceContainerFilters::References referencesFilter(D);
+    SearchMode mode(-1, true, true, true, true);
     A->Find(results, referencesFilter, mode);
     printf("results.Size = %d\n", results.Size());
     uint32 i = 0;
     char uniqueName[128];
 
-    PrintTree(A, 0);
-
     for (i = 0; i < results.Size(); i++) {
         printf("Found : %p\n", results.Get(i).operator ->());
     }
+
+    PrintTree(A, 0);
 
     return 0;
 }

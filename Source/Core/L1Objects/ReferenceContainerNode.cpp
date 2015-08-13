@@ -1,8 +1,8 @@
 /**
  * @file ReferenceContainerItem.cpp
  * @brief Source file for class ReferenceContainerItem
- * @date Aug 12, 2015
- * @author aneto
+ * @date 12/082015
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainerItem.h"
+#include "ReferenceContainerNode.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,17 +39,17 @@
 /*---------------------------------------------------------------------------*/
 
 
-ReferenceContainerItem::ReferenceContainerItem() : LinkedListable() {
+ReferenceContainerNode::ReferenceContainerNode() : LinkedListable() {
 }
 
-ReferenceContainerItem::~ReferenceContainerItem() {
+ReferenceContainerNode::~ReferenceContainerNode() {
 }
 
-Reference ReferenceContainerItem::GetReference() const {
+Reference ReferenceContainerNode::GetReference() const {
     return reference;
 }
 
-bool ReferenceContainerItem::Load(Reference newReference) {
+bool ReferenceContainerNode::SetReference(Reference newReference) {
     reference = newReference;
     return reference.IsValid();
 }

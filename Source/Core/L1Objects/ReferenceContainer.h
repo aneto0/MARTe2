@@ -37,23 +37,14 @@
 #include "Object.h"
 #include "Reference.h"
 #include "LinkedListable.h"
-#include "ReferenceContainerItem.h"
+#include "ReferenceContainerNode.h"
+#include "ReferenceContainerSearchMode.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 class ReferenceContainer;
-
-namespace ReferenceContainerFilters {
-class Interface {
-public:
-    virtual ~Interface() {
-
-    }
-    virtual bool Test(ReferenceContainer &previouslyFound,
-                      Reference &referenceToTest) = 0;
-};
 
 class References: public ReferenceContainerFilters::Interface {
 public:
@@ -70,84 +61,6 @@ private:
     Reference referenceToSearch;
 };
 }
-
-namespace SearchModeType {
-const int32 Last = -2;
-const int32 Multiple = -1;
-}
-
-class SearchMode {
-public:
-    SearchMode(int32 idx,
-               bool path,
-               bool recurseNodes,
-               bool deleteFound) {
-        index = idx;
-        if (idx == SearchModeType::Multiple) {
-            storePath = false;
-        }
-        else {
-            storePath = path;
-        }
-        if (storePath) {
-            recursive = true;
-        }
-        else {
-            recursive = recurseNodes;
-        }
-
-        deleteFoundNodes = deleteFound;
-        lastFoundIndex = -1;
-    }
-
-    void IncrementFound() {
-        if (index > 0) {
-            index--;
-        }
-    }
-
-    bool IsDelete() const {
-        return deleteFoundNodes;
-    }
-
-    bool IsFinished() const {
-        return (index == 0);
-    }
-
-    bool IsRecursive() const {
-        return recursive;
-    }
-
-    bool IsSearchIndex() const {
-        return index > -1;
-    }
-
-    bool IsSearchAll() const {
-        return (index == SearchModeType::Multiple);
-    }
-
-    bool IsStorePath() const {
-        return storePath;
-    }
-
-    bool IsSearchLast() const {
-        return (index == SearchModeType::Last);
-    }
-
-    uint32 GetLastFoundIndex() const {
-        return lastFoundIndex;
-    }
-
-    void SetLastFoundIndex(const uint32 &idx) {
-        lastFoundIndex = idx;
-    }
-private:
-    int32 index;
-    int32 lastFoundIndex;
-    bool recursive;
-    bool deleteFoundNodes;
-    bool storePath;
-};
 
 class ReferenceContainer: public Object {
 public:
@@ -179,11 +92,10 @@ public:
      * @param result
      * @param filter
      * @param mode
-     * @return
      */
-    bool Find(ReferenceContainer &result,
+    void Find(ReferenceContainer &result,
               ReferenceContainerFilters::Interface &filter,
-              SearchMode &mode);
+              ReferenceContainerSearchMode &mode);
 
     bool IsContainer(const Reference &ref);
 
@@ -192,7 +104,10 @@ public:
     Reference Get(uint32 idx) {
         Reference ref;
         if (idx < list.ListSize()) {
-            ref = ((ReferenceContainerItem *) list.ListPeek(idx))->GetReference();
+            ReferenceContainerNode *node = static_cast<ReferenceContainerNode *>(list.ListPeek(idx));
+            if(node != NULL) {
+                ref = node->GetReference();
+            }
         }
         return ref;
     }

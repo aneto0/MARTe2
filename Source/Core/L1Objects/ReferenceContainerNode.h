@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERITEM_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERITEM_H_
+#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERNODE_H_
+#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERNODE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -38,32 +38,35 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief TODO
+ * @brief Wraps a Reference around a LinkedListable so that it can be added to a container.
  */
-class ReferenceContainerItem: public LinkedListable {
+class ReferenceContainerNode: public LinkedListable {
 public:
     /**
-     * TODO
+     * @brief Constructor. NOOP.
      */
-    ReferenceContainerItem();
+    ReferenceContainerNode();
     /**
-     * TODO
+     * @brief Destructor. NOOP.
      */
-    ~ReferenceContainerItem();
+    ~ReferenceContainerNode();
 
     /**
-     * TODO
+     * @brief Returns the Reference hold by this node.
+     * @return the Reference hold by this node.
      */
     Reference GetReference() const;
 
     /**
-     * TODO
+     * @brief Sets the to Reference hold by this node.
+     * @param newReference the reference to be set.
+     * @return true if \a newReference is valid.
      */
-    bool Load(Reference newReference);
+    bool SetReference(Reference newReference);
 
 private:
     /**
-     * TODO
+     * Reference hold by node.
      */
     Reference reference;
 };
@@ -72,5 +75,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERITEM_H_ */
+#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERNODE_H_ */
 
