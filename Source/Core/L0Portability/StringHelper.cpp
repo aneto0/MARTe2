@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StringHelper.h"
+#include "HeapManager.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,13 +41,13 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
+namespace StringHelper {
 /**
  * @brief Duplicates a string in the heap memory.
  * @param[in] s The pointer to the string which must be copied.
  * @return The pointer to the new allocated memory which contains a copy of s.
  */
-char8 *StringHelper::StringDup(const char8 * const s){
+char8 *StringDup(const char8 * const s){
 
     char8 *duplicate = NULL_PTR(char8 *);
     if (s != NULL){
@@ -58,5 +60,6 @@ char8 *StringHelper::StringDup(const char8 * const s){
     return duplicate;
 }
 
+}
 
 	

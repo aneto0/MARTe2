@@ -43,24 +43,29 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-char8 *StringHelper::Concatenate(char8 *destination, const char8 *source) {
-    char8 *ret = static_cast<char8 *>(NULL);
+namespace StringHelper {
+
+bool Concatenate(char8 *destination, const char8 *source) {
+    bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
-        ret = strcat(destination, source);
+        if (strcat(destination, source) != NULL){
+            ret = true;
+        }
     }
     return ret;
 }
 
-char8 *StringHelper::ConcatenateN(char8 *destination, const char8 *source,
-                                  const uint32 size) {
-    char8 *ret = static_cast<char8 *>(NULL);
+bool ConcatenateN(char8 *destination, const char8 *source,const uint32 size) {
+    bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
-        ret = strncat(destination, source, static_cast<osulong>(size));
+        if (strncat(destination, source, static_cast<osulong>(size)) != NULL){
+            ret = true;
+        }
     }
     return ret;
 }
 
-const char8 *StringHelper::SearchChar(const char8 *string, const char8 c) {
+const char8 *SearchChar(const char8 *string, const char8 c) {
     const char8 *ret = static_cast<const char8 *>(NULL);
     if (string != NULL) {
         ret = strchr(string, c);
@@ -68,7 +73,7 @@ const char8 *StringHelper::SearchChar(const char8 *string, const char8 c) {
     return ret;
 }
 
-int32 StringHelper::Compare(const char8 *string1, const char8 *string2) {
+int32 Compare(const char8 *string1, const char8 *string2) {
     int32 ret = -1;
     if ((string1 != NULL) && (string2 != NULL)) {
         ret = strcmp(string1, string2);
@@ -85,7 +90,7 @@ int32 StringHelper::Compare(const char8 *string1, const char8 *string2) {
     return ret;
 }
 
-int32 StringHelper::CompareN(const char8 *string1, const char8 *string2,
+int32 CompareN(const char8 *string1, const char8 *string2,
                              const uint32 size) {
     int32 ret = -1;
     if ((string1 != NULL) && (string2 != NULL)) {
@@ -103,7 +108,7 @@ int32 StringHelper::CompareN(const char8 *string1, const char8 *string2,
     return ret;
 }
 
-bool StringHelper::Copy(char8 *destination, const char8 *source) {
+bool Copy(char8 *destination, const char8 *source) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
         ret = (strcpy(destination, source) != NULL);
@@ -111,7 +116,7 @@ bool StringHelper::Copy(char8 *destination, const char8 *source) {
     return ret;
 }
 
-bool StringHelper::CopyN(char8 *destination, const char8 *source,
+bool CopyN(char8 *destination, const char8 *source,
                          const uint32 size) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
@@ -122,7 +127,7 @@ bool StringHelper::CopyN(char8 *destination, const char8 *source,
     return ret;
 }
 
-int32 StringHelper::SearchIndex(const char8 *string1, const char8 *string2) {
+int32 SearchIndex(const char8 *string1, const char8 *string2) {
     int32 ret = -1;
     if ((string1 != NULL) && (string2 != NULL)) {
         ret = static_cast<int32>(strcspn(string1, string2));
@@ -130,7 +135,7 @@ int32 StringHelper::SearchIndex(const char8 *string1, const char8 *string2) {
     return ret;
 }
 
-uint32 StringHelper::Length(const char8 *string) {
+uint32 Length(const char8 *string) {
     uint32 ret = 0u;
     if (string != NULL) {
         ret = static_cast<uint32>(strlen(string));
@@ -138,7 +143,7 @@ uint32 StringHelper::Length(const char8 *string) {
     return ret;
 }
 
-const char8 *StringHelper::SearchChars(const char8 *string1,
+const char8 *SearchChars(const char8 *string1,
                                        const char8 *string2) {
     const char8 *ret = static_cast<const char8 *>(NULL);
     if ((string1 != NULL) && (string2 != NULL)) {
@@ -147,7 +152,7 @@ const char8 *StringHelper::SearchChars(const char8 *string1,
     return ret;
 }
 
-const char8 *StringHelper::SearchLastChar(const char8 *string, char8 c) {
+const char8 *SearchLastChar(const char8 *string, char8 c) {
     const char8 *ret = static_cast<const char8 *>(NULL);
     if (string != NULL) {
         ret = strrchr(string, c);
@@ -155,7 +160,7 @@ const char8 *StringHelper::SearchLastChar(const char8 *string, char8 c) {
     return ret;
 }
 
-const char8 *StringHelper::SearchString(const char8 *string,
+const char8 *SearchString(const char8 *string,
                                         const char8 *substring) {
     const char8 *ret = static_cast<const char8 *>(NULL);
     if ((string != NULL) && (substring != NULL)) {
@@ -164,7 +169,7 @@ const char8 *StringHelper::SearchString(const char8 *string,
     return ret;
 }
 
-bool StringHelper::SetChar(char8 *string, const uint32 &size, const char8 &c) {
+bool SetChar(char8 *const string,const uint32 size, const char8 c) {
     bool ret = false;
     if ((string != NULL) && (size > 0u)) {
         void *resetString = memset(string, c, static_cast<osulong>(size));
@@ -173,4 +178,6 @@ bool StringHelper::SetChar(char8 *string, const uint32 &size, const char8 &c) {
         }
     }
     return ret;
+}
+
 }

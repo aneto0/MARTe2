@@ -35,7 +35,7 @@
 
 #include "HeapI.h"
 
-#include "StringPortable.h"
+#include "StringHelper.h"
 
 #include "FastPollingMutexSem.h"
 
@@ -332,7 +332,7 @@ HeapI *FindHeap(const char8 * const name){
                 if (heap != NULL_PTR(HeapI *)){
 
                     /* check address compatibility */
-                    if( StringPortable::Compare (heap->Name(),name) == 0 ){
+                    if( StringHelper::Compare (heap->Name(),name) == 0 ){
 
                         found = true;
 

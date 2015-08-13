@@ -98,7 +98,7 @@
      * The heap which is used to instantiate objects from this class type. Only one heap can be set                  *\\
      * pre class type                                                                                                  \
      */                                                                                                                \
-    static Heap name ## Heap_;                                                                                         \
+    static HeapI name ## Heap_;                                                                                         \
     /*                                                                                                                 \
      * Forward declaration of function which allows to build a new instance of the object                              \
      * e.g. Object *MyClassTypeBuildFn_(const Heap &h);                                                                \
