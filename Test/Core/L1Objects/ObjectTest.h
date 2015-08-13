@@ -72,10 +72,35 @@ public:
      * @brief Tests the Object::NumberOfReferences function.
      * @details Creates an object and assigns different references to it checking if the function returns the correct
      * number of references to the object.
-     * returns the correct number of references.
-     * @return true if successful, false otherwise.
+     * @return true if the test explained in the details section has success, false otherwise.
      */
     bool TestNumberOfReferences();
+
+
+    /**
+     * @brief Tests the Object::SetName and Object::GetName functions.
+     * @details name is the desired object name.
+     * @return true if the get function returns the name set using the set function.
+     */
+    bool TestSetGetName(const char8* name);
+
+    /**
+     * @brief Tests if the string set is copied in the memory.
+     * @return true if the string assigned to the object is copied in the memory and it is not only a pointer assignment.
+     */
+    bool TestDuplicateName();
+
+
+    /**
+     * @brief Tests the Object::GetUniqueName function.
+     * @details Checks that the initial part of the returned string is the object pointer. It is possible
+     * set the buffer size to pass to the GetUniqueName function and check if the string returned until that size.
+     * @param[in] name is the desired object name.
+     * @param[in] size is the size of the buffer to pass to the GetUniqueName function.
+     * @return true if the tests explained in the details section have success, false otherwise.
+     */
+    bool TestGetUniqueName(const char8* name,uint32 buffSize);
+
 };
 
 /*---------------------------------------------------------------------------*/

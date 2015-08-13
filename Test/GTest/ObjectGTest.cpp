@@ -66,3 +66,33 @@ TEST(ObjectGTest,TestNumberOfReferences) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestNumberOfReferences());
 }
+
+TEST(ObjectGTest,TestSetGetName) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestSetGetName("Hello"));
+}
+
+TEST(ObjectGTest,TestSetGetNameNull) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestSetGetName(NULL));
+}
+
+TEST(ObjectGTest,TestDuplicateName) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestDuplicateName());
+}
+
+TEST(ObjectGTest,TestGetUniqueName) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestGetUniqueName("Hello", 128));
+}
+
+TEST(ObjectGTest,TestGetUniqueNameClipPointer) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestGetUniqueName("Hello", 2));
+}
+
+TEST(ObjectGTest,TestGetUniqueNameClipName) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestGetUniqueName("Hello0000000000000000000000000000000000", 20));
+}
