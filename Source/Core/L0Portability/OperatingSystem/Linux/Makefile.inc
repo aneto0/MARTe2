@@ -36,7 +36,8 @@ OBJSX=  BasicConsoleOS.x \
         ProcessorOS.x \
         ThreadsOS.x \
         MemoryOS.x \
-        StringHelperOS.x
+        StringHelperOS.x \
+        StandardHeap.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

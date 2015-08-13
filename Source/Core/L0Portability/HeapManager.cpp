@@ -29,6 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "GeneralDefinitions.h"
+
 #include "HeapManager.h"
 
 #include "HeapI.h"
@@ -36,6 +38,10 @@
 #include "StringPortable.h"
 
 #include "FastPollingMutexSem.h"
+
+
+#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,StandardHeap.h)
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Local Class declaration                         */
@@ -108,6 +114,7 @@ public:
 /**
  * @brief TBD
  */
+#if 0
 class StandardHeap: public HeapI {
 
     /**
@@ -160,7 +167,7 @@ public:
     virtual const char8 *Name()const;
 
 } ;
-
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -257,7 +264,7 @@ void HeapDataBase::UnLock(){
     mux.FastUnLock();
 }
 
-
+#if 0
 /**
  * @brief constructor
  */
@@ -334,9 +341,7 @@ const char8 *StandardHeap::Name()const {
     return "StandardHeap";
 }
 
-}
-
-namespace HeapManager {
+#endif
 
 /**
  * @brief Finds the Heap that manages the specified memory location
