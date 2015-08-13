@@ -33,6 +33,8 @@
 /*lint -save -e9026 -estring(1960, *16-0-6*) , function-like macro defined, unparenthesized macro parameter*/
 #define INCLUDE_FILE_ARCHITECTURE(x,y) QUOTE(Architecture/x/y)
 #define INCLUDE_FILE_OPERATING_SYSTEM(x,y) QUOTE(OperatingSystem/x/y)
+#define INCLUDE_FILE_PLATFORM(x,y) QUOTE(Platform/x/y)
+
 /*lint -restore */
 
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,GeneralDefinitionsA.h)

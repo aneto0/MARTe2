@@ -33,8 +33,9 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 
-//Ovviamente non va incluso così!
-#include "Platform/STM32F4-Discovery/DriversDefinitionsP.h"
+#include INCLUDE_FILE_PLATFORM(PLATFORM,DriversDefinitionsP.h)
+
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/

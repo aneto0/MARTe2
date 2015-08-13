@@ -27,8 +27,10 @@ ROOT_DIR=../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=ClockP.x \
+	ExceptionDefs.x \
 	USBComunicationP.x \
-	VCPDescription.x 
+	VCPDescription.x \
+	USBConfig.x 
        
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
@@ -36,6 +38,7 @@ INCLUDES+= -I../../../L0Portability
 INCLUDES+= -I../../../L1Objects
 INCLUDES+= -I../..
 INCLUDES+= -I.
+
 all: $(OBJS)    \
                 $(BUILD_DIR)/DriversP$(LIBEXT)
 	echo  $(OBJS)

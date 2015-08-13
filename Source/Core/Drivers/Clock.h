@@ -1,7 +1,7 @@
 /**
- * @file DriversDefinitionP.h
- * @brief Header file for class DriversDefinitionP
- * @date 11/ago/2015
+ * @file Clock.h
+ * @brief Header file for class Clock
+ * @date 08/ago/2015
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,37 +16,50 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DriversDefinitionP
+ * @details This header file contains the declaration of the class Clock
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DRIVERSDEFINITIONP_H_
-#define DRIVERSDEFINITIONP_H_
+#ifndef CLOCK_H_
+#define CLOCK_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "GeneralDefinitions.h"
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "usbd_def.h"
-#include "usbd_desc.h"
-#include "usbd_cdc_interface.h"
-#include "usbd_conf.h"
-#include "stm32f4_discovery.h"
-#include "stm32f4xx_hal.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+class Clock {
 
+public:
+
+    /**
+     * Initializes the rcc and other registers.
+     */
+    static void Reset(bool extRAMInit=false);
+
+    /**
+     * To change the sys clock configuration
+     */
+    static bool SysClockSet(uint32 clockType=1u);
+
+    /**
+     * To be called after a clock change.
+     */
+    static bool SysClockUpdate();
+
+private:
+    static bool initialized;
+};
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-typedef USBD_HandleTypeDef USBHandle;
-
-
-#endif /* DRIVERSDEFINITIONP_H_ */
+#endif /* CLOCK_H_ */
 
