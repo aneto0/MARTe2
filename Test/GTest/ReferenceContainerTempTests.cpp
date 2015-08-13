@@ -29,7 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,7 +41,28 @@
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 
-int main(int argc, char **argv){
+void PrintTree(ReferenceT<ReferenceContainer> rc, uint32 m){
+    uint32 i=0;
+    //printf("[%p]    ", rc.operator ->());
+    printf("\n");
+    for(i=0; i<rc->Size(); i++){
+        uint32 j;
+        for(j=0; j<m; j++){
+            printf("               ");
+        }
+        printf("[%p]    ", rc->Get(i).operator ->());
+    }
+    for(i=0; i<rc->Size(); i++){
+        ReferenceT<ReferenceContainer> rcc = rc->Get(i);
+        if(rcc.IsValid()){
+            PrintTree(rcc, i);
+        }
+    }
+
+}
+
+int main(int argc,
+         char **argv) {
     printf("STARTING!!!\n");
     Heap h;
     ReferenceT<ReferenceContainer> A("ReferenceContainer", h);
@@ -69,29 +89,30 @@ int main(int argc, char **argv){
     A->Insert(C);
     A->Insert(D);
 
-    printf("A @ %p\n", A.operator -> ());
-    printf("B @ %p\n", B.operator -> ());
-    printf("C @ %p\n", C.operator -> ());
-    printf("D @ %p\n", D.operator -> ());
-    printf("E @ %p\n", E.operator -> ());
-    printf("F @ %p\n", F.operator -> ());
-    printf("G @ %p\n", G.operator -> ());
-    printf("H @ %p\n", H.operator -> ());
-    printf("I @ %p\n", I.operator -> ());
+    printf("A @ %p\n", A.operator ->());
+    printf("B @ %p\n", B.operator ->());
+    printf("C @ %p\n", C.operator ->());
+    printf("D @ %p\n", D.operator ->());
+    printf("E @ %p\n", E.operator ->());
+    printf("F @ %p\n", F.operator ->());
+    printf("G @ %p\n", G.operator ->());
+    printf("H @ %p\n", H.operator ->());
+    printf("I @ %p\n", I.operator ->());
 
     ReferenceContainer results;
     ReferenceContainerFilters::References referencesFilter(E);
-    SearchMode mode(1, true, true, false);
+    SearchMode mode(SearchModeType::Last, true, true, false);
     A->Find(results, referencesFilter, mode);
     printf("results.Size = %d\n", results.Size());
-    uint32 i=0;
+    uint32 i = 0;
     char uniqueName[128];
-    for(i=0; i<results.Size(); i++){
-        printf("Found : %p\n", results.Get(i).operator -> ());
+
+    PrintTree(A, 0);
+
+    for (i = 0; i < results.Size(); i++) {
+        printf("Found : %p\n", results.Get(i).operator ->());
     }
 
     return 0;
 }
 
-
-	

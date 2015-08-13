@@ -58,7 +58,8 @@ ReferenceContainer::~ReferenceContainer() {
     }
 }
 
-bool ReferenceContainer::Insert(Reference ref, const int32 &position) {
+bool ReferenceContainer::Insert(Reference ref,
+                                const int32 &position) {
     bool ok = true;
     ReferenceContainerItem *newItem = new ReferenceContainerItem();
     if (newItem->Load(ref)) {
@@ -82,7 +83,9 @@ bool ReferenceContainer::IsContainer(const Reference &ref) {
     return test.IsValid();
 }
 
-bool ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilters::Interface &filter, SearchMode &mode) {
+bool ReferenceContainer::Find(ReferenceContainer &result,
+                              ReferenceContainerFilters::Interface &filter,
+                              SearchMode &mode) {
     uint32 index = 0;
     while (!mode.IsFinished() && index < list.ListSize()) {
         ReferenceContainerItem *currentNode = static_cast<ReferenceContainerItem *>(list.ListPeek(index));
@@ -90,21 +93,30 @@ bool ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
         bool found = filter.Test(result, currentNodeReference);
 
         if (found) {
-            if (mode.IsSearchLast()) {
+            mode.IncrementFound();
+
+            if (mode.IsSearchIndex()) {
+                if (mode.IsFinished()) {
+                    result.Insert(currentNodeReference);
+                }
+            }
+            else if (mode.IsSearchLast()) {
                 int32 lastFoundIndex = mode.GetLastFoundIndex();
                 //Found a new instance. Remove the old one
                 if (lastFoundIndex > 0) {
                     int32 idx = 0;
                     while (idx < lastFoundIndex) {
-                        LinkedListable *node = result.list.ListPeek(0);
-                        result.list.ListDelete(node);
+                        LinkedListable *node = result.list.ListExtract(0u);
                         idx++;
                     }
                 }
+                result.Insert(currentNodeReference);
+                mode.SetLastFoundIndex(result.Size());
             }
-            result.Insert(currentNodeReference);
-            mode.SetLastFoundIndex(index);
-            mode.IncrementFound();
+            else if (mode.IsSearchAll()) {
+                result.Insert(currentNodeReference);
+            }
+
             if (mode.IsDelete()) {
                 list.ListDelete(currentNode);
                 index--;
@@ -112,7 +124,8 @@ bool ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
         }
         else if ((IsContainer(currentNodeReference)) && mode.IsRecursive()) {
             if (mode.IsStorePath()) {
-                result.list.ListAdd(currentNode);
+                //result.list.ListAdd(currentNode);
+                result.Insert(currentNodeReference);
             }
 
             ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
@@ -122,13 +135,13 @@ bool ReferenceContainer::Find(ReferenceContainer &result, ReferenceContainerFilt
             if (sizeBeforeBranching == result.list.ListSize()) {
                 //Nothing found. Remove the stored path (which led to nowhere).
                 if (mode.IsStorePath()) {
-                    result.list.ListDelete(currentNode);
+                    //result.list.ListDelete(currentNode);
+                    result.list.ListExtract(result.list.ListSize() - 1);
                 }
             }
         }
         index++;
     }
-
     return true; //TODO
 }
 

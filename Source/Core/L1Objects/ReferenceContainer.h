@@ -51,7 +51,8 @@ public:
     virtual ~Interface() {
 
     }
-    virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest) = 0;
+    virtual bool Test(ReferenceContainer &previouslyFound,
+                      Reference &referenceToTest) = 0;
 };
 
 class References: public ReferenceContainerFilters::Interface {
@@ -60,7 +61,8 @@ public:
         referenceToSearch = refToSearch;
     }
 
-    virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest) {
+    virtual bool Test(ReferenceContainer &previouslyFound,
+                      Reference &referenceToTest) {
         return (referenceToSearch == referenceToTest);
     }
 
@@ -76,12 +78,26 @@ const int32 Multiple = -1;
 
 class SearchMode {
 public:
-    SearchMode(int32 idx, bool path, bool recurseNodes, bool deleteFound) {
+    SearchMode(int32 idx,
+               bool path,
+               bool recurseNodes,
+               bool deleteFound) {
         index = idx;
+        if (idx == SearchModeType::Multiple) {
+            storePath = false;
+        }
+        else {
+            storePath = path;
+        }
+        if (storePath) {
+            recursive = true;
+        }
+        else {
+            recursive = recurseNodes;
+        }
+
         deleteFoundNodes = deleteFound;
-        recursive = recurseNodes;
         lastFoundIndex = -1;
-        storePath = path;
     }
 
     void IncrementFound() {
@@ -102,11 +118,11 @@ public:
         return recursive;
     }
 
-    bool IsSingle() const {
+    bool IsSearchIndex() const {
         return index > -1;
     }
 
-    bool IsMultiple() const {
+    bool IsSearchAll() const {
         return (index == SearchModeType::Multiple);
     }
 
@@ -150,7 +166,8 @@ public:
     /**
      * TODO
      */
-    bool Insert(Reference ref, const int32 &position = -1);
+    bool Insert(Reference ref,
+                const int32 &position = -1);
 
     /**
      * TODO
@@ -164,7 +181,9 @@ public:
      * @param mode
      * @return
      */
-    bool Find(ReferenceContainer &result, ReferenceContainerFilters::Interface &filter, SearchMode &mode);
+    bool Find(ReferenceContainer &result,
+              ReferenceContainerFilters::Interface &filter,
+              SearchMode &mode);
 
     bool IsContainer(const Reference &ref);
 
@@ -172,8 +191,8 @@ public:
 
     Reference Get(uint32 idx) {
         Reference ref;
-        if(idx < list.ListSize()){
-            ref = ((ReferenceContainerItem *)list.ListPeek(0))->GetReference();
+        if (idx < list.ListSize()) {
+            ref = ((ReferenceContainerItem *) list.ListPeek(idx))->GetReference();
         }
         return ref;
     }
