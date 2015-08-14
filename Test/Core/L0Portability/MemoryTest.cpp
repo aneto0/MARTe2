@@ -1,6 +1,6 @@
 /**
- * @file MemoryTest.cpp
- * @brief Source file for class MemoryTest
+ * @file HeapManagerTest.cpp
+ * @brief Source file for class HeapManagerTest
  * @date 29/06/2015
  * @author Giuseppe Ferr�
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryTest (public, protected, and private). Be aware that some 
+ * the class HeapManagerTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -45,18 +45,18 @@
 bool MemoryTest::TestMalloc(uint32 size) {
 
     //allocate a space of size integers
-    int32* allocated = (int32*) Memory::Malloc(size * sizeof(int32));
+    int32* allocated = (int32*) HeapManager::Malloc(size * sizeof(int32));
 
-    //check if the pointers to these memory locations are valid
+    //check if the pointers to these HeapManager locations are valid
     if ((allocated) == NULL) {
-        Memory::Free((void*&) allocated);
+        HeapManager::Free((void*&) allocated);
     }
 
-    //free the allocated memory
-    Memory::Free((void*&) allocated);
+    //free the allocated HeapManager
+    HeapManager::Free((void*&) allocated);
 
     //allocates nothing
-    return Memory::Malloc(0) == NULL;
+    return HeapManager::Malloc(0) == NULL;
 
 }
 
@@ -64,13 +64,13 @@ bool MemoryTest::TestFree(uint32 size) {
 
     void *p = NULL;
     //frees a null pointer
-    Memory::Free(p);
+    HeapManager::Free(p);
 
     //allocate a space of size integers
-    int32* allocated = (int32*) Memory::Malloc(size * sizeof(int32));
+    int32* allocated = (int32*) HeapManager::Malloc(size * sizeof(int32));
 
-    //free the allocated memory
-    Memory::Free((void*&) allocated);
+    //free the allocated HeapManager
+    HeapManager::Free((void*&) allocated);
 
     //allocated should be null
     return allocated == NULL;
@@ -79,11 +79,11 @@ bool MemoryTest::TestFree(uint32 size) {
 bool MemoryTest::TestRealloc(uint32 size1,
                              uint32 size2) {
     //allocate size1 integers
-    int32* allocated = (int32*) Memory::Malloc(size1 * sizeof(int32));
+    int32* allocated = (int32*) HeapManager::Malloc(size1 * sizeof(int32));
 
-    //check if the pointers to these memory locations are valid
+    //check if the pointers to these HeapManager locations are valid
     if (allocated == NULL) {
-        Memory::Free((void*&) allocated);
+        HeapManager::Free((void*&) allocated);
         return false;
     }
 
@@ -91,49 +91,49 @@ bool MemoryTest::TestRealloc(uint32 size1,
         allocated[i] = i;
     }
 
-    //reallocate the memory adding size2 integers locations
-    allocated = (int32*) Memory::Realloc((void*&) allocated, (size1 + size2) * sizeof(int32));
+    //reallocate the HeapManager adding size2 integers locations
+    allocated = (int32*) HeapManager::Realloc((void*&) allocated, (size1 + size2) * sizeof(int32));
 
-    //check if pointers of new memory are valid and if the old memory is not corrupted
+    //check if pointers of new HeapManager are valid and if the old HeapManager is not corrupted
     if (allocated == NULL) {
-        Memory::Free((void*&) allocated);
+        HeapManager::Free((void*&) allocated);
         return false;
     }
 
     for (uint32 i = 0; i < size1; i++) {
 
         if (allocated[i] != (int32) i) {
-            Memory::Free((void*&) allocated);
+            HeapManager::Free((void*&) allocated);
             return false;
         }
     }
 
-    Memory::Free((void*&) allocated);
+    HeapManager::Free((void*&) allocated);
     //check if it implements a malloc in case of null pointer in input.
     allocated = NULL;
 
-    allocated = (int32*) Memory::Realloc((void*&) allocated, size1 * sizeof(int32));
+    allocated = (int32*) HeapManager::Realloc((void*&) allocated, size1 * sizeof(int32));
 
     //manual check
     if (allocated == NULL) {
-        Memory::Free((void*&) allocated);
+        HeapManager::Free((void*&) allocated);
         return false;
     }
 
     uint32 size = 0;
     //check if implements a free if size is 0.
-    allocated = (int32*) Memory::Realloc((void*&) allocated, size);
+    allocated = (int32*) HeapManager::Realloc((void*&) allocated, size);
 
     if (allocated != NULL) {
-        Memory::Free((void*&) allocated);
+        HeapManager::Free((void*&) allocated);
         return false;
     }
 
     //check if it returns NULL in case of NULL input and size equal to zero.
-    allocated = (int32*) Memory::Realloc((void*&) allocated, size);
+    allocated = (int32*) HeapManager::Realloc((void*&) allocated, size);
 
     if (allocated != NULL) {
-        Memory::Free((void*&) allocated);
+        HeapManager::Free((void*&) allocated);
         return false;
     }
 
@@ -143,16 +143,16 @@ bool MemoryTest::TestRealloc(uint32 size1,
 
 bool MemoryTest::TestStringDup(const char8 *s) {
 
-    char* p = (char8*) Memory::StringDup(s);
+    char* p = (char8*) StringHelper::StringDup(s);
 
     if (!StringTestHelper::Compare(p, s)) {
         return false;
     }
 
-    Memory::Free((void*&) p);
+    HeapManager::Free((void*&) p);
 
     //should return null in case of null input.
-    p = Memory::StringDup(NULL);
+    p = StringHelper::StringDup(NULL);
 
     return p == NULL;
 }
@@ -160,28 +160,28 @@ bool MemoryTest::TestStringDup(const char8 *s) {
 bool MemoryTest::TestCheck(uint32 size) {
 
     //allocate a space of size integers
-    int32* allocated = (int32*) Memory::Malloc(size * sizeof(int32));
+    int32* allocated = (int32*) HeapManager::Malloc(size * sizeof(int32));
 
-    //checks if all the memory is allocated correctly
-    if (!Memory::Check(allocated, (Memory::MemoryTestAccessMode) (Memory::Read | Memory::Write | Memory::Execute), size * sizeof(int32))) {
+    //checks if all the HeapManager is allocated correctly
+    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), size * sizeof(int32))) {
         return false;
     }
 
-    //checks if a part the memory is allocated correctly
-    if (!Memory::Check(allocated, (Memory::MemoryTestAccessMode) (Memory::Read | Memory::Write | Memory::Execute), (size / 2) * sizeof(int32))) {
+    //checks if a part the HeapManager is allocated correctly
+    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), (size / 2) * sizeof(int32))) {
         return false;
     }
 
     //0 as size
     uint32 testSize = 0;
-    if (!Memory::Check(allocated, (Memory::MemoryTestAccessMode) (Memory::Read | Memory::Write | Memory::Execute), testSize)) {
+    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), testSize)) {
         return false;
     }
 
-    Memory::Free((void*&) allocated);
+    HeapManager::Free((void*&) allocated);
 
     //the check function on a null pointer should return false
-    return !Memory::Check(NULL, (Memory::MemoryTestAccessMode) (Memory::Read | Memory::Write | Memory::Execute), size);
+    return !MemoryCheck::Check(NULL, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), size);
 
 }
 
@@ -195,27 +195,27 @@ bool MemoryTest::TestCopy() {
 
     //Copy the int array in the float32 array.
     uint32 sizeToCopy = 5 * sizeof(int32);
-    if (!Memory::Copy(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
+    if (!MemoryOperationsHelper::Copy(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
         return false;
     }
 
     //Check that bytes are equal independently from type.
-    if (Memory::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
+    if (MemoryOperationsHelper::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
         return false;
     }
 
     //size=0
     sizeToCopy = 0;
-    if (!Memory::Copy(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
+    if (!MemoryOperationsHelper::Copy(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
         return false;
     }
     //nothing should change
-    if (Memory::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
+    if (MemoryOperationsHelper::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
         return false;
     }
 
     sizeToCopy = 1;
-    return (!Memory::Copy(NULL, NULL, sizeToCopy) && !Memory::Copy(NULL, (const void*) myIntArray, sizeToCopy) && !Memory::Copy(myFloatArray, NULL, sizeToCopy));
+    return (!MemoryOperationsHelper::Copy(NULL, NULL, sizeToCopy) && !MemoryOperationsHelper::Copy(NULL, (const void*) myIntArray, sizeToCopy) && !MemoryOperationsHelper::Copy(myFloatArray, NULL, sizeToCopy));
 
 }
 
@@ -230,27 +230,27 @@ bool MemoryTest::TestMove() {
 
     //Copy the int array in the float32 array.
     uint32 sizeToCopy = 5 * sizeof(int32);
-    if (!Memory::Move(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
+    if (!MemoryOperationsHelper::Move(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
         return false;
     }
 
     //Check that bytes are equal independently from type.
-    if (Memory::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
+    if (MemoryOperationsHelper::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
         return false;
     }
 
     //size=0
     sizeToCopy = 0;
-    if (!Memory::Move(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
+    if (!MemoryOperationsHelper::Move(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
         return false;
     }
     //nothing should change
-    if (Memory::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
+    if (MemoryOperationsHelper::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
         return false;
     }
 
     sizeToCopy = 1;
-    return (!Memory::Move(NULL, NULL, sizeToCopy) && !Memory::Move(NULL, (const void*) myIntArray, sizeToCopy) && !Memory::Move(myFloatArray, NULL, sizeToCopy));
+    return (!MemoryOperationsHelper::Move(NULL, NULL, sizeToCopy) && !MemoryOperationsHelper::Move(NULL, (const void*) myIntArray, sizeToCopy) && !MemoryOperationsHelper::Move(myFloatArray, NULL, sizeToCopy));
 
 }
 
@@ -261,42 +261,42 @@ bool MemoryTest::TestCompare() {
     uint32 sizeToCopy = 7;
 
     //Source must be equal to test until 6.
-    if (Memory::Compare(source, test, sizeToCopy) != 0) {
+    if (MemoryOperationsHelper::Compare(source, test, sizeToCopy) != 0) {
         return false;
     }
 
     sizeToCopy = 11;
 
     //Source must be greater than test.
-    if (Memory::Compare(source, test, sizeToCopy) != 2) {
+    if (MemoryOperationsHelper::Compare(source, test, sizeToCopy) != 2) {
         return false;
     }
 
     //Test must be less than source.
-    if (Memory::Compare(test, source, sizeToCopy) != 1) {
+    if (MemoryOperationsHelper::Compare(test, source, sizeToCopy) != 1) {
         return false;
     }
 
     //Test the result in case of NULL argument.
-    if (Memory::Compare(NULL, source, sizeToCopy) != -1) {
+    if (MemoryOperationsHelper::Compare(NULL, source, sizeToCopy) != -1) {
         return false;
     }
 
     //Test with size=0.
     sizeToCopy = 0;
-    if (Memory::Compare(test, source, sizeToCopy) != 0) {
+    if (MemoryOperationsHelper::Compare(test, source, sizeToCopy) != 0) {
         return false;
     }
 
     sizeToCopy = 1;
-    return (Memory::Compare(NULL, NULL, sizeToCopy) == -1 && Memory::Compare(source, NULL, sizeToCopy) == -1 && Memory::Compare(NULL, test, sizeToCopy) == -1);
+    return (MemoryOperationsHelper::Compare(NULL, NULL, sizeToCopy) == -1 && MemoryOperationsHelper::Compare(source, NULL, sizeToCopy) == -1 && MemoryOperationsHelper::Compare(NULL, test, sizeToCopy) == -1);
 
 }
 
 bool MemoryTest::TestSet() {
 
     uint32 size = 10;
-    char8 *buffPointer = (char8*) Memory::Malloc(size);
+    char8 *buffPointer = (char8*) HeapManager::Malloc(size);
 
     if (buffPointer == NULL) {
         return false;
@@ -305,8 +305,8 @@ bool MemoryTest::TestSet() {
     //Set first 5 bytes to 'o'.
     char8 myFavouriteChar = 'o';
     uint32 charSize = 5;
-    if (!Memory::Set(buffPointer, myFavouriteChar, size)) {
-        Memory::Free((void*&) buffPointer);
+    if (!MemoryOperationsHelper::Set(buffPointer, myFavouriteChar, size)) {
+        HeapManager::Free((void*&) buffPointer);
         return false;
     }
 
@@ -315,34 +315,34 @@ bool MemoryTest::TestSet() {
     //Set last 5 bytes to 'u'.
     myFavouriteChar = 'u';
 
-    if (!Memory::Set(newBuffPointer, myFavouriteChar, size - charSize)) {
-        Memory::Free((void*&) buffPointer);
+    if (!MemoryOperationsHelper::Set(newBuffPointer, myFavouriteChar, size - charSize)) {
+        HeapManager::Free((void*&) buffPointer);
         return false;
     }
 
     char8 test[] = "ooooouuuuu";
 
     //Check that the Set result is correct.
-    if (Memory::Compare(test, buffPointer, size) != 0) {
-        Memory::Free((void*&) buffPointer);
+    if (MemoryOperationsHelper::Compare(test, buffPointer, size) != 0) {
+        HeapManager::Free((void*&) buffPointer);
         return false;
     }
 
     //use size=0
     size = 0;
-    if (!Memory::Set(newBuffPointer, myFavouriteChar, size)) {
-        Memory::Free((void*&) buffPointer);
+    if (!MemoryOperationsHelper::Set(newBuffPointer, myFavouriteChar, size)) {
+        HeapManager::Free((void*&) buffPointer);
         return false;
     }
 
     //nothing should change
-    if (Memory::Compare(test, buffPointer, size) != 0) {
-        Memory::Free((void*&) buffPointer);
+    if (MemoryOperationsHelper::Compare(test, buffPointer, size) != 0) {
+        HeapManager::Free((void*&) buffPointer);
         return false;
     }
 
     size = 1;
-    return !Memory::Set(NULL, myFavouriteChar, size);
+    return !MemoryOperationsHelper::Set(NULL, myFavouriteChar, size);
 
 }
 
@@ -354,30 +354,30 @@ bool MemoryTest::TestSearch() {
     //Test the Search function.
     char8 myFavouriteChar = 'W';
 
-    if (Memory::Search(buffPointer, myFavouriteChar, size) != (buffPointer + 6)) {
+    if (MemoryOperationsHelper::Search(buffPointer, myFavouriteChar, size) != (buffPointer + 6)) {
         return false;
     }
 
     //Test the result of Search when the character is not found.
     char8 imNotInBuffer = 'a';
-    if (Memory::Search(buffPointer, imNotInBuffer, size) != NULL) {
+    if (MemoryOperationsHelper::Search(buffPointer, imNotInBuffer, size) != NULL) {
         return false;
     }
 
     //Test the result of Search when the character is over the size passed by argument.
     char8 outOfRanges = 'd';
 
-    if (Memory::Search(buffPointer, outOfRanges, size) != NULL) {
+    if (MemoryOperationsHelper::Search(buffPointer, outOfRanges, size) != NULL) {
         return false;
     }
 
     size = 0;
 
-    if (Memory::Search(buffPointer, myFavouriteChar, size) != NULL) {
+    if (MemoryOperationsHelper::Search(buffPointer, myFavouriteChar, size) != NULL) {
         return false;
     }
 
     size = 1;
-    return Memory::Search(NULL, myFavouriteChar, size) == NULL;
+    return MemoryOperationsHelper::Search(NULL, myFavouriteChar, size) == NULL;
 
 }
