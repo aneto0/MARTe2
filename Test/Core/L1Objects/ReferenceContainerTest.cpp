@@ -393,7 +393,7 @@ void ReferenceContainerTest::GenerateTestTree(ReferenceT<ReferenceContainer> con
 bool ReferenceContainerTest::VerifyExpectedResult(ReferenceContainer &source,
                                                   ReferenceContainer &test) {
     bool ok = (source.Size() == test.Size());
-    if (!ok) {
+    if (!ok) {////////////////// ??????? se ok è falso continua ad essere falso!!!!
         uint32 i;
         for (i = 0; i < source.Size(); i++) {
             ok &= (source.Get(i) == test.Get(i));

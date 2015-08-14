@@ -135,13 +135,15 @@ bool ReferenceContainerFilterObjects::Test(ReferenceContainer &previouslyFound,
     uint32 idx = 0;
     if (referenceToTest.IsValid()) {
         if (referenceToTest->GetName() != NULL) {
-            //Looking for an absolute path
-            if (addressNumberNodes > 1) {
-                idx = previouslyFound.Size();
+            if (addressNumberNodes > 0) {/////////////////////////////  BUG HERE!!!
+                //Looking for an absolute path
+                if (addressNumberNodes > 1) {
+                    idx = previouslyFound.Size();
+                }
+                //printf("[%s] vs [%s]\n", referenceToTest->GetName(), addressToSearch[idx]);
+                found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[idx]) == 0);
+                //printf("FOUND = %d\n", found);
             }
-            //printf("[%s] vs [%s]\n", referenceToTest->GetName(), addressToSearch[idx]);
-            found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[idx]) == 0);
-            //printf("FOUND = %d\n", found);
         }
     }
     if (found) {

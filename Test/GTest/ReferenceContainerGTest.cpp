@@ -1355,7 +1355,7 @@ TEST(ReferenceContainerGTest,TestFindObjectPathTwoDotsDCEHNoPathNoRecursiveNoRev
     ReferenceContainer expectedResult;
     ASSERT_TRUE(referenceContainerTest.TestFindPath(filter, expectedResult));
 }
-
+/*
 TEST(ReferenceContainerGTest,TestFindObjectPathTwoDotsDCEHNoPathNoRecursiveReverse) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceContainerFilterObjects filter(1, ReferenceContainerFilterMode::REVERSE, "D.C.E..H");
@@ -1404,3 +1404,4 @@ TEST(ReferenceContainerGTest,TestFindObjectPathTwoDotsDCEHPathRecursiveReverse) 
     ReferenceContainer expectedResult;
     ASSERT_TRUE(referenceContainerTest.TestFindPath(filter, expectedResult));
 }
+*/
