@@ -29,8 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 #include "ThreadsDatabase.h"
+
+#include "GeneralDefinitions.h"
 #include "HeapManager.h"
 #include "StringHelper.h"
 
@@ -38,36 +39,53 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-uint32 ThreadsDatabase::nOfEntries = 0u;
-uint32 ThreadsDatabase::maxNOfEntries = 0u;
-ThreadInformation **ThreadsDatabase::entries = static_cast<ThreadInformation **>(NULL);
-FastPollingMutexSem ThreadsDatabase::internalMutex;
+namespace ThreadsDatabase {
+
+/**
+ * Fast semaphore for exclusive access to the database.
+ */
+static FastPollingMutexSem internalMutex;
+
+/**
+ * Actual number of entries stored in the database.
+ */
+static uint32              nOfEntries = 0u;
+
+/**
+ * Maximum number of entries that can be stored in the database.
+ */
+static uint32              maxNOfEntries = 0u;
+
+/**
+ * Vector of ThreadInformation pointers.
+ */
+static ThreadInformation **entries = static_cast<ThreadInformation **>(NULL);;
 
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool ThreadsDatabase::NewEntry(ThreadInformation * const threadInformation) {
-    bool ok = ThreadsDatabase::AllocMore();
+bool NewEntry(ThreadInformation * const threadInformation) {
+    bool ok = AllocMore();
     if (ok) {
-        ok = (ThreadsDatabase::nOfEntries < ThreadsDatabase::maxNOfEntries);
+        ok = (nOfEntries < maxNOfEntries);
         // no space
         if (ok) {
             ok = false;
             // search for empty space staring from guess
-            uint32 index = ThreadsDatabase::nOfEntries;
-            while (index != (ThreadsDatabase::nOfEntries - 1u)) {
-                if (ThreadsDatabase::entries[index] == NULL) {
-                    ThreadsDatabase::entries[index] = threadInformation;
-                    ThreadsDatabase::nOfEntries++;
+            uint32 index = nOfEntries;
+            while (index != (nOfEntries - 1u)) {
+                if (entries[index] == NULL) {
+                    entries[index] = threadInformation;
+                    nOfEntries++;
                     ok = true;
                     break;
                 }
                 index++;
                 // roll-over
-                if (index >= ThreadsDatabase::maxNOfEntries) {
-                    index -= ThreadsDatabase::maxNOfEntries;
+                if (index >= maxNOfEntries) {
+                    index -= maxNOfEntries;
                 }
             }
         }
@@ -76,22 +94,22 @@ bool ThreadsDatabase::NewEntry(ThreadInformation * const threadInformation) {
     return ok;
 }
 
-ThreadInformation *ThreadsDatabase::RemoveEntry(const ThreadIdentifier &threadId) {
+ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId) {
     ThreadInformation *threadInfo = static_cast<ThreadInformation *>(NULL);
     // search for empty space staring from guess
     uint32 index = 0u;
-    while (index < ThreadsDatabase::maxNOfEntries) {
-        ThreadInformation *threadInfoIdx = ThreadsDatabase::entries[index];
+    while (index < maxNOfEntries) {
+        ThreadInformation *threadInfoIdx = entries[index];
         if (threadInfoIdx != NULL) {
             if (threadInfoIdx->GetThreadIdentifier() == threadId) {
-                ThreadsDatabase::entries[index] = static_cast<ThreadInformation *>(NULL);
-                ThreadsDatabase::nOfEntries--;
+                entries[index] = static_cast<ThreadInformation *>(NULL);
+                nOfEntries--;
 
                 // free at the end
-                if (ThreadsDatabase::nOfEntries == 0u) {
-                    HeapManager::Free(reinterpret_cast<void *&>(ThreadsDatabase::entries));
+                if (nOfEntries == 0u) {
+                    HeapManager::Free(reinterpret_cast<void *&>(entries));
                     //For AllocMore to reallocate again!
-                    ThreadsDatabase::maxNOfEntries = 0u;
+                    maxNOfEntries = 0u;
                 }
                 threadInfo = threadInfoIdx;
                 break;
@@ -105,12 +123,12 @@ ThreadInformation *ThreadsDatabase::RemoveEntry(const ThreadIdentifier &threadId
 
 }
 
-ThreadInformation *ThreadsDatabase::GetThreadInformation(const ThreadIdentifier &threadId) {
+ThreadInformation *GetThreadInformation(const ThreadIdentifier &threadId) {
     ThreadInformation *threadInfo = static_cast<ThreadInformation *>(NULL);
     // search for empty space staring from guess
     uint32 index = 0u;
-    while (index < ThreadsDatabase::maxNOfEntries) {
-        ThreadInformation *threadInfoIdx = ThreadsDatabase::entries[index];
+    while (index < maxNOfEntries) {
+        ThreadInformation *threadInfoIdx = entries[index];
         if (threadInfoIdx != NULL) {
             if (threadInfoIdx->GetThreadIdentifier() == threadId) {
                 threadInfo = threadInfoIdx;
@@ -124,24 +142,24 @@ ThreadInformation *ThreadsDatabase::GetThreadInformation(const ThreadIdentifier 
     return threadInfo;
 }
 
-bool ThreadsDatabase::Lock() {
-    ErrorType err = ThreadsDatabase::internalMutex.FastLock();
+bool Lock() {
+    ErrorType err = internalMutex.FastLock();
     return (err == NoError);
 }
 
-void ThreadsDatabase::UnLock() {
-    ThreadsDatabase::internalMutex.FastUnLock();
+void UnLock() {
+    internalMutex.FastUnLock();
 }
 
-uint32 ThreadsDatabase::NumberOfThreads() {
-    return ThreadsDatabase::nOfEntries;
+uint32 NumberOfThreads() {
+    return nOfEntries;
 }
 
-ThreadIdentifier ThreadsDatabase::GetThreadID(const uint32 &n) {
+ThreadIdentifier GetThreadID(const uint32 &n) {
     ThreadIdentifier tid = 0u;
-    if (n < ThreadsDatabase::maxNOfEntries) {
-        if (ThreadsDatabase::entries[n] != NULL) {
-            tid = ThreadsDatabase::entries[n]->GetThreadIdentifier();
+    if (n < maxNOfEntries) {
+        if (entries[n] != NULL) {
+            tid = entries[n]->GetThreadIdentifier();
         }
     }
 
@@ -149,7 +167,7 @@ ThreadIdentifier ThreadsDatabase::GetThreadID(const uint32 &n) {
     return tid;
 }
 
-bool ThreadsDatabase::GetInfoIndex(ThreadInformation &threadInfoCopy,
+bool GetInfoIndex(ThreadInformation &threadInfoCopy,
                                    const uint32 &n) {
     ThreadIdentifier threadId = GetThreadID(n);
     ThreadInformation *threadInfo = GetThreadInformation(threadId);
@@ -159,7 +177,7 @@ bool ThreadsDatabase::GetInfoIndex(ThreadInformation &threadInfoCopy,
     return (threadInfo != NULL);
 }
 
-bool ThreadsDatabase::GetInfo(ThreadInformation &threadInfoCopy,
+bool GetInfo(ThreadInformation &threadInfoCopy,
                               const ThreadIdentifier &threadId) {
     ThreadInformation *threadInfo = GetThreadInformation(threadId);
     if (threadInfo != NULL) {
@@ -168,14 +186,14 @@ bool ThreadsDatabase::GetInfo(ThreadInformation &threadInfoCopy,
     return (threadInfo != NULL);
 }
 
-ThreadIdentifier ThreadsDatabase::Find(const char8 * const name) {
+ThreadIdentifier Find(const char8 * const name) {
     ThreadIdentifier tid = 0u;
     // search for empty space staring from guess
     uint32 index = 0u;
-    while (index < ThreadsDatabase::maxNOfEntries) {
-        if (ThreadsDatabase::entries[index] != NULL) {
-            if (StringHelper::Compare(ThreadsDatabase::entries[index]->ThreadName(), name) == 0) {
-                tid = ThreadsDatabase::entries[index]->GetThreadIdentifier();
+    while (index < maxNOfEntries) {
+        if (entries[index] != NULL) {
+            if (StringHelper::Compare(entries[index]->ThreadName(), name) == 0) {
+                tid = entries[index]->GetThreadIdentifier();
                 break;
             }
         }
@@ -185,7 +203,7 @@ ThreadIdentifier ThreadsDatabase::Find(const char8 * const name) {
     return tid;
 }
 
-bool ThreadsDatabase::AllocMore() {
+bool AllocMore() {
     bool ok = true;
     // no need
     if (maxNOfEntries <= nOfEntries) {
@@ -223,4 +241,6 @@ bool ThreadsDatabase::AllocMore() {
         }
     }
     return ok;
+}
+
 }

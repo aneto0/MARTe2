@@ -74,7 +74,7 @@ namespace MemoryCheck {
      * @param[in] size is the number of bytes to check.
      * @return true if the process has the access to the memory with the specified permissions, false otherwise.
      */
-    static bool Check(const void * const address,
+    bool Check(const void * const address,
                       const MemoryTestAccessMode accessMode,
                       const uint32 size = 4u);
 

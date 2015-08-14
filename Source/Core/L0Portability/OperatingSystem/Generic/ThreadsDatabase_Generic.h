@@ -43,26 +43,22 @@
 /**
  * @brief A database of ThreadInformation objects.
  */
-class ThreadsDatabase {
+namespace ThreadsDatabase {
 
-    friend class ThreadsOS;
-    friend class Threads;
-
-public:
     /**
      * @brief Adds a new thread to the database.
      * @param[in] threadInformation a pointer to the ThreadInformation that is to be added.
      * @return true if threadInformation is successfully added to the database, false otherwise.
      * @pre threadInformation != NULL
      */
-    static bool NewEntry(ThreadInformation *threadInformation);
+    bool NewEntry(ThreadInformation *threadInformation);
 
     /**
      * @brief Removes the entry from database searching by a given ThreadIdentifier.
      * @param[in] threadId the ThreadIdentifier of the thread which is to be removed from database.
      * @return true if the ThreadIdentifier exists in the database and if it is removed without errors.
      */
-    static ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId);
+    ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId);
 
     /**
      * @brief Returns the ThreadInformation associated to a given ThreadIidentifier.
@@ -70,31 +66,31 @@ public:
      * @return the ThreadInformation object related to the to the requested ThreadIdentifier, or NULL if the
      * ThreadIdentifier does not exist in the database.
      */
-    static ThreadInformation *GetThreadInformation(const ThreadIdentifier &threadId);
+    ThreadInformation *GetThreadInformation(const ThreadIdentifier &threadId);
 
     /**
      * @brief Locks a spinlock mutex to allow exclusive access to the database.
      * @return false if the mutex lock fails.
      */
-    static bool Lock();
+    bool Lock();
 
     /**
      * @brief Unlocks the internal mutex.
      */
-    static void UnLock();
+    void UnLock();
 
     /**
      * @brief Returns the number of threads registered.
      * @return the number of threads currently saved in database.
      */
-    static uint32 NumberOfThreads();
+    uint32 NumberOfThreads();
 
     /**
      * @brief Returns the ThreadIdentifier of the n-th thread saved in database.
      * @param[in] n is index of the requested thread.
      * @return the ThreadIdentifier of the requested thread.
      */
-    static ThreadIdentifier GetThreadID(const uint32 &n);
+    ThreadIdentifier GetThreadID(const uint32 &n);
 
     /**
      * @brief Searches for a ThreadInformation object by index and copies into a destination.
@@ -102,7 +98,7 @@ public:
      * @param[in] n is the index of the requested thread.
      * @return true if the requested thread exists in the database.
      */
-    static bool GetInfoIndex(ThreadInformation &threadInfoCopy, const uint32 &n);
+    bool GetInfoIndex(ThreadInformation &threadInfoCopy, const uint32 &n);
 
     /**
      * @brief Searches for a ThreadInformation object by its ThreadIdentifier and copies into a destination.
@@ -110,7 +106,7 @@ public:
      * @param[in] threadId the ThreadIdentifier of the requested thread.
      * @return true if the requested thread exists in the database.
      */
-    static bool GetInfo(ThreadInformation &threadInfoCopy, const ThreadIdentifier &threadId);
+    bool GetInfo(ThreadInformation &threadInfoCopy, const ThreadIdentifier &threadId);
 
     /**
      * @brief Searches for a ThreadIdentifier by name.
@@ -118,35 +114,13 @@ public:
      * @return the id of the first thread found with the specified name, or 0 if it does not exist in the database.
      * @pre name != NULL
      */
-    static ThreadIdentifier Find(const char8 * const name);
-
-private:
-
-    /**
-     * Fast semaphore for exclusive access to the database.
-     */
-    static FastPollingMutexSem internalMutex;
-
-    /**
-     * Actual number of entries stored in the database.
-     */
-    static uint32              nOfEntries;
-
-    /**
-     * Maximum number of entries that can be stored in the database.
-     */
-    static uint32              maxNOfEntries;
-
-    /**
-     * Vector of ThreadInformation pointers.
-     */
-    static ThreadInformation **entries;
+    ThreadIdentifier Find(const char8 * const name);
 
     /**
      * @brief Allocate more space in the database.
      * @return true if more space can be successfully allocated.
      */
-    static bool AllocMore(void);
+    bool AllocMore(void);
 
 };
 

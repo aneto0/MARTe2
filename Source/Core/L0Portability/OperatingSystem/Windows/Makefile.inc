@@ -33,6 +33,7 @@ OBJSX=  BasicConsoleOS.x \
         HighResolutionTimerCalibratorOS.x \
         EventSemOS.x \
         MutexSemOS.x \
+        ThreadsDatabase.x \
         ThreadsOS.x \
         ProcessorOS.x \
         MemoryCheckOS.x \

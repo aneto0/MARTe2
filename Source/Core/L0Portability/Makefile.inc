@@ -33,7 +33,6 @@ SPB=OperatingSystem/$(OPERATING_SYSTEM).x
 OBJSX=  Endianity.x \
         FastMath.x \
         ProcessorType.x \
-        ThreadsDatabase.x \
         ThreadInformation.x \
         LoadableLibrary.x \
         HeapManager.x \
