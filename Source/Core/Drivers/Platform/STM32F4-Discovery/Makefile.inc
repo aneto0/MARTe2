@@ -28,9 +28,10 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=ClockP.x \
 	ExceptionDefs.x \
-	USBComunicationP.x \
+	USBConsoleP.x \
 	VCPDescription.x \
-	USBConfig.x 
+	USBConfig.x \
+	UARTConsoleP.x
        
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

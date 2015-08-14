@@ -1,6 +1,6 @@
 /**
- * @file USBComunicationP.cpp
- * @brief Source file for class USBComunicationP
+ * @file USBConsoleP.cpp
+ * @brief Source file for class USBConosoleP
  * @date 09/08/2015
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class USBComunicationP (public, protected, and private). Be aware that some 
+ * the class USBConsoleP (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "USBComunication.h"
+#include "USBConsole.h"
 #include "usbd_desc.h"
 #include "usbd_cdc_interface.h"
 #include "stm32f4xx_hal.h"
@@ -38,11 +38,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-USBHandle USBComunication::handle = { 0 };
+USBHandle USBConsole::handle = { 0 };
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-#include "usbd_cdc_interface.h"
 
 static int8_t TEMPLATE_Init(void);
 static int8_t TEMPLATE_DeInit(void);
@@ -80,7 +79,7 @@ char g_VCPInitialized;
  * @retval Result of the opeartion: USBD_OK if all operations are OK else USBD_FAIL
  */
 static int8_t TEMPLATE_Init(void) {
-    USBD_CDC_SetRxBuffer(&(USBComunication::handle), s_RxBuffer.Buffer);
+    USBD_CDC_SetRxBuffer(&(USBConsole::handle), s_RxBuffer.Buffer);
     g_VCPInitialized = 1;
     return (0);
 }
@@ -131,7 +130,7 @@ static int8_t TEMPLATE_Control(uint8_t cmd,
         break;
 
     case CDC_SET_LINE_CODING:
-        linecoding.bitrate = (uint32_t) (pbuf[0] | (pbuf[1] << 8) |\
+        linecoding.bitrate = (uint32_t)(pbuf[0] | (pbuf[1] << 8) |\
  (pbuf[2] << 16) | (pbuf[3] << 24));
         linecoding.format = pbuf[4];
         linecoding.paritytype = pbuf[5];
@@ -141,10 +140,10 @@ static int8_t TEMPLATE_Control(uint8_t cmd,
         break;
 
     case CDC_GET_LINE_CODING:
-        pbuf[0] = (uint8_t) (linecoding.bitrate);
-        pbuf[1] = (uint8_t) (linecoding.bitrate >> 8);
-        pbuf[2] = (uint8_t) (linecoding.bitrate >> 16);
-        pbuf[3] = (uint8_t) (linecoding.bitrate >> 24);
+        pbuf[0] = (uint8_t)(linecoding.bitrate);
+        pbuf[1] = (uint8_t)(linecoding.bitrate >> 8);
+        pbuf[2] = (uint8_t)(linecoding.bitrate >> 16);
+        pbuf[3] = (uint8_t)(linecoding.bitrate >> 24);
         pbuf[4] = linecoding.format;
         pbuf[5] = linecoding.paritytype;
         pbuf[6] = linecoding.datatype;
@@ -190,46 +189,42 @@ static int8_t TEMPLATE_Receive(uint8_t* Buf,
     return (0);
 }
 
-
-
-USBComunication::USBComunication() {
+USBConsole::USBConsole() {
 
 }
 
-bool USBComunication::Init() {
+ErrorType USBConsole::Open(const FlagsType &mode) {
     // USB CDC initialization
     USBD_Init(&handle, &VCP_Desc, 0);
 
     USBD_RegisterClass(&handle, &USBD_CDC);
     USBD_CDC_RegisterInterface(&handle, &USBD_CDC_Template_fops);
-    return true;
-
-}
-
-bool USBComunication::Start() {
     USBD_Start(&handle);
 
-    return true;
+    return NoError;
 }
 
-bool USBComunication::Stop() {
+ErrorType USBConsole::Close() {
     USBD_Stop(&handle);
-    return true;
+    return NoError;
 
 }
 
-int32 USBComunication::Send(const char8* const txBuffer,
-                            int32 size) {
+ErrorType USBConsole::Write(const char8* const txBuffer,
+                            uint32 &size,
+                            const TimeoutType &timeout) {
     if (size > CDC_DATA_HS_OUT_PACKET_SIZE) {
-        int offset;
-        for (offset = 0; offset < size; offset++) {
-            int todo = MIN(CDC_DATA_HS_OUT_PACKET_SIZE, size - offset);
-            int done = Send(((char *) txBuffer) + offset, todo);
-            if (done != todo)
-                return offset + done;
+        uint32 offset;
+        for (offset = 0; offset < size; offset += CDC_DATA_HS_OUT_PACKET_SIZE) {
+            uint32 todo = (uint32)(MIN(CDC_DATA_HS_OUT_PACKET_SIZE, (int32) (size - offset)));
+            ErrorType ret = Write(((char *) txBuffer) + offset, todo, timeout);
+            if (ret != NoError) {
+                size = offset + todo;
+                return FatalError;
+            }
         }
 
-        return size;
+        return NoError;
     }
 
     USBD_CDC_HandleTypeDef *pCDC = (USBD_CDC_HandleTypeDef *) handle.pClassData;
@@ -237,24 +232,30 @@ int32 USBComunication::Send(const char8* const txBuffer,
     } //Wait for previous transfer
 
     USBD_CDC_SetTxBuffer(&handle, (uint8_t *) txBuffer, size);
-    if (USBD_CDC_TransmitPacket(&handle) != USBD_OK)
-        return 0;
+    if (USBD_CDC_TransmitPacket(&handle) != USBD_OK) {
+        return FatalError;
+    }
 
     while (pCDC->TxState) {
     } //Wait until transfer is done
-    return size;
+    return NoError;
 
 }
 
-int32 USBComunication::Receive(char8* const rxBuffer,
-                               int32 size) {
-    if (!s_RxBuffer.ReadDone)
-        return 0;
+ErrorType USBConsole::Read(char8* const rxBuffer,
+                           uint32 &size,
+                           const TimeoutType &timeout) {
+    if (!s_RxBuffer.ReadDone) {
+        size = 0;
+        return FatalError;
+    }
 
     int remaining = s_RxBuffer.Size - s_RxBuffer.Position;
     int todo = MIN(remaining, size);
-    if (todo <= 0)
-        return 0;
+    if (todo <= 0) {
+        size = 0;
+        return FatalError;
+    }
 
     memcpy(rxBuffer, s_RxBuffer.Buffer + s_RxBuffer.Position, todo);
     s_RxBuffer.Position += todo;
@@ -263,8 +264,8 @@ int32 USBComunication::Receive(char8* const rxBuffer,
         USBD_CDC_ReceivePacket(&handle);
     }
 
-    return todo;
-}
+    size = todo;
 
-USBHandle handle;
+    return NoError;
+}
 

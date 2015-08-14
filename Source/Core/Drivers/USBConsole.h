@@ -1,6 +1,6 @@
 /**
- * @file USBComunication.h
- * @brief Header file for class USBComunication
+ * @file USBConsole.h
+ * @brief Header file for class USBConsole
  * @date 09/08/2015
  * @author Giuseppe Ferrò
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class USBComunication
+ * @details This header file contains the declaration of the class USBConsole
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef USBCOMUNICATION_H_
-#define USBCOMUNICATION_H_
+#ifndef USBCONSOLE_H_
+#define USBCONSOLE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,29 +31,27 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
-
 #include INCLUDE_FILE_PLATFORM(PLATFORM,DriversDefinitionsP.h)
-
+#include "BasicConsole.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class USBComunication {
+class USBConsole: public BasicConsole {
 public:
 
-    USBComunication();
+    USBConsole();
 
-    bool Init();
+    ErrorType Open(const FlagsType &mode);
 
-    bool Start();
+    ErrorType Close();
 
-    bool Stop();
+    ErrorType Write(const char8* const txBuffer, uint32 &size,const TimeoutType &timeout);
 
-    int32 Send(const char8* const txBuffer, int32 size);
-
-    int32 Receive(char8* const rxBuffer, int32 size);
+    ErrorType Read(char8* const rxBuffer, uint32 &size,const TimeoutType &timeout);
 
     static USBHandle handle;
 
@@ -62,5 +60,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* USBCOMUNICATION_H_ */
+#endif /* USBCONSOLE_H_ */
 

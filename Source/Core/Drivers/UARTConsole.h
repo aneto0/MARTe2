@@ -1,8 +1,8 @@
 /**
- * @file DriversDefinitionP.h
- * @brief Header file for class DriversDefinitionP
- * @date 11/ago/2015
- * @author pc
+ * @file UARTConsole.h
+ * @brief Header file for class UARTConsole
+ * @date 13/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DriversDefinitionP
+ * @details This header file contains the declaration of the class UARTConsole
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DRIVERSDEFINITIONP_H_
-#define DRIVERSDEFINITIONP_H_
+#ifndef UARTCONSOLE_H_
+#define UARTCONSOLE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,22 +31,37 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "usbd_def.h"
-#include "usbd_desc.h"
-#include "usbd_cdc_interface.h"
-#include "usbd_conf.h"
-#include "stm32f4_discovery.h"
-#include "stm32f4xx_hal.h"
-/*---------------------------------------------------------------------------*/
+#include "GeneralDefinitions.h"
+#include INCLUDE_FILE_PLATFORM(PLATFORM,DriversDefinitionsP.h)
+#include "BasicConsole.h"/*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+class UARTConsole: public BasicConsole {
+
+public:
+    UARTConsole();
+
+    ErrorType Write(const char8 * const buffer,
+                    uint32 &size,
+                    const TimeoutType &timeout);
+
+    ErrorType Read(char8* const buffer,
+                               uint32 &size,
+                               const TimeoutType &timeout);
+
+    ErrorType Open(const FlagsType &mode);
+
+    ErrorType Close();
+
+private:
+    UARTHandle handle;
+
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-typedef USBD_HandleTypeDef USBHandle;
-
-typedef UART_HandleTypeDef UARTHandle;
-#endif /* DRIVERSDEFINITIONP_H_ */
+#endif /* UARTCONSOLE_H_ */
 
