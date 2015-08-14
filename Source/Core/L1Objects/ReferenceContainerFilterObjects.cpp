@@ -98,11 +98,12 @@ ReferenceContainerFilterObjects::ReferenceContainerFilterObjects(const int32 &oc
             addressToSearch[i][length] = '\0';
             lastOccurrence = StringHelper::SearchChar(&lastOccurrence[1], '.');
         }
+    }
 
-        uint32 temp;
-        for (temp = 0; temp < addressNumberNodes; temp++) {
-            printf("addressToSearch[%d] = %s \n", temp, addressToSearch[temp]);
-        }
+    //Only one thing is possible. Either look for the absolute path or for multiple occurrences.
+    if ((occurrence == -1) && (addressNumberNodes > 1)) {
+        //Look for the first occurrence of the path
+        occurrence = 1;
     }
 }
 
@@ -116,6 +117,10 @@ ReferenceContainerFilterObjects::~ReferenceContainerFilterObjects() {
     }
 }
 
+bool ReferenceContainerFilterObjects::IsStorePath() const {
+    return (ReferenceContainerFilter::IsStorePath() || (addressNumberNodes > 1));
+}
+
 bool ReferenceContainerFilterObjects::IsRecursive() const {
     return (ReferenceContainerFilter::IsRecursive() || (addressNumberNodes > 1));
 }
@@ -127,18 +132,26 @@ bool ReferenceContainerFilterObjects::IsSearchAll() const {
 bool ReferenceContainerFilterObjects::Test(ReferenceContainer &previouslyFound,
                                            Reference &referenceToTest) {
     bool found = false;
-    uint32 i = 0;
+    uint32 idx = 0;
     if (referenceToTest.IsValid()) {
-        if(referenceToTest->)
+        if (referenceToTest->GetName() != NULL) {
+            //Looking for an absolute path
+            if (addressNumberNodes > 1) {
+                idx = previouslyFound.Size();
+            }
+            //printf("[%s] vs [%s]\n", referenceToTest->GetName(), addressToSearch[idx]);
+            found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[idx]) == 0);
+            //printf("FOUND = %d\n", found);
+        }
     }
-    for (i = 0; i < addressNumberNodes; i++) {
-
+    if (found) {
+        if (addressNumberNodes == 1) {
+            IncrementFound();
+        }
+        else if (addressNumberNodes == (previouslyFound.Size() + 1)) {
+            IncrementFound();
+        }
     }
-    /*if (referenceToSearch.Is)
-     ;
-     if (found) {
-     IncrementFound();
-     }*/
     return found;
 }
 

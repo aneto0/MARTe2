@@ -34,6 +34,7 @@
 #include "Object.h"
 #include "ReferenceT.h"
 #include "ReferenceContainer.h"
+#include "ReferenceContainerFilterObjects.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -54,43 +55,62 @@ public:
     /**
      * @brief TODO
      */
-    bool TestFindFirstOccurrenceAlways(uint32 modeFlags);
+    bool TestGetTimeout(TimeoutType timeout);
 
     /**
      * @brief TODO
      */
-    bool TestFindFirstOccurrence(uint32 modeFlags);
+    bool TestSetTimeout(TimeoutType timeout);
 
     /**
      * @brief TODO
      */
-    bool TestFindSecondOccurrence(uint32 mode);
+    bool TestFindFirstOccurrenceAlways(ReferenceContainerFilter &filter);
 
     /**
      * @brief TODO
      */
-    bool TestFindThirdOccurrence(uint32 mode);
+    bool TestFindFirstOccurrenceBranchAlways(ReferenceContainerFilter &filter);
 
     /**
      * @brief TODO
      */
-    bool TestFindAll(uint32 mode);
+    bool TestFindFirstOccurrence(ReferenceContainerFilter &filter);
 
     /**
      * @brief TODO
      */
-    bool TestFindOutOfBoundsOccurrence(uint32 mode);
+    bool TestFindSecondOccurrence(ReferenceContainerFilter &filter);
 
     /**
      * @brief TODO
      */
-    bool TestFindNonExistant(uint32 mode);
+    bool TestFindThirdOccurrence(ReferenceContainerFilter &filter);
 
-private:
     /**
-     * Heap used for the tests
+     * @brief TODO
      */
-    Heap h;
+    bool TestFindAllOfASingleInstance(ReferenceContainerFilter &filter);
+
+    /**
+     * @brief TODO
+     */
+    bool TestFindAllOfMultipleInstance(ReferenceContainerFilter &filter);
+
+    /**
+     * @brief TODO
+     */
+    bool TestFindOutOfBoundsOccurrence(ReferenceContainerFilter &filter);
+
+    /**
+     * @brief TODO
+     */
+    bool TestFindNonExistent(ReferenceContainerFilter &filter);
+
+    /**
+     * @brief TODO
+     */
+    bool TestFindPath(ReferenceContainerFilterObjects &filter, ReferenceContainer &expectedResult);
 
     /**
      * List of nodes for the tree described in the GenerateTestTree function
@@ -102,6 +122,13 @@ private:
     ReferenceT<ReferenceContainer> containerF;
     ReferenceT<Object> leafG;
     ReferenceT<Object> leafH;
+    ReferenceT<Object> leafNoExist;
+
+private:
+    /**
+     * Heap used for the tests
+     */
+    Heap h;
 
     /**
      * @brief Generates a testing tree which is used by the other test methods.
@@ -118,6 +145,11 @@ private:
      * @param container The container where the tree is going to be inserted, i.e. the node A
      */
     void GenerateTestTree(ReferenceT<ReferenceContainer> container);
+
+    /**
+     * TODO
+     */
+    bool VerifyExpectedResult(ReferenceContainer &source, ReferenceContainer &test);
 };
 
 /*---------------------------------------------------------------------------*/

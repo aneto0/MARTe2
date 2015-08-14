@@ -43,8 +43,16 @@
 ReferenceContainer::ReferenceContainer() :
         Object() {
     if (mux.Create()) {
-        msecTimeout = TTInfiniteWait;
+        muxTimeout = TTInfiniteWait;
     }
+}
+
+TimeoutType ReferenceContainer::GetTimeout() const {
+    return muxTimeout;
+}
+
+void ReferenceContainer::SetTimeout(const TimeoutType &timeout){
+    muxTimeout = timeout;
 }
 
 /*lint -e{1551} no exception should be thrown given that ReferenceContainer is
@@ -110,7 +118,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                 }
             }
         }
-        else if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
+        if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
             if (filter.IsStorePath()) {
                 result.Insert(currentNodeReference);
             }

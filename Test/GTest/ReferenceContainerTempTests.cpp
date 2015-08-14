@@ -65,7 +65,7 @@ void PrintTree(ReferenceT<ReferenceContainer> rc, uint32 m){
 int main(int argc,
          char **argv) {
     printf("STARTING!!!\n");
-    Heap h;
+    /*Heap h;
     ReferenceT<ReferenceContainer> A("ReferenceContainer", h);
     ReferenceT<Object> B("Object", h);
     ReferenceT<ReferenceContainer> C("ReferenceContainer", h);
@@ -111,7 +111,7 @@ int main(int argc,
         printf("Found : %p\n", results.Get(i).operator ->());
     }
 
-    PrintTree(A, 0);
+    PrintTree(A, 0);*/
 
     return 0;
 }

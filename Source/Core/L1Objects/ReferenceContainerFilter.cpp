@@ -44,16 +44,16 @@ ReferenceContainerFilter::ReferenceContainerFilter(const int32 &occurrenceNumber
     deleteFoundNodes = false;
     reverse = false;
 
-    if ((mode & PATH) == PATH) {
+    if ((mode & ReferenceContainerFilterMode::PATH) == ReferenceContainerFilterMode::PATH) {
         storePath = true;
     }
-    if ((mode & RECURSIVE) == RECURSIVE) {
+    if ((mode & ReferenceContainerFilterMode::RECURSIVE) == ReferenceContainerFilterMode::RECURSIVE) {
         recursive = true;
     }
-    if ((mode & REVERSE) == REVERSE) {
+    if ((mode & ReferenceContainerFilterMode::REVERSE) == ReferenceContainerFilterMode::REVERSE) {
         reverse = true;
     }
-    if ((mode & DELETE) == DELETE) {
+    if ((mode & ReferenceContainerFilterMode::DELETE) == ReferenceContainerFilterMode::DELETE) {
         deleteFoundNodes = true;
     }
     if (occurrence == -1) {

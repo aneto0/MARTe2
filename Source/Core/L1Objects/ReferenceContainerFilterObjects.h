@@ -61,6 +61,8 @@ public:
 
     virtual bool IsSearchAll() const;
 
+    virtual bool IsStorePath() const;
+
 private:
     /**
      * TODO

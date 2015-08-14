@@ -95,6 +95,10 @@ public:
         return ref;
     }
 
+    TimeoutType GetTimeout() const;
+
+    void SetTimeout(const TimeoutType &timeout);
+
 private:
     /**
      * The list of references
@@ -109,7 +113,7 @@ private:
     /**
      * Timeout
      */
-    TimeoutType msecTimeout;
+    TimeoutType muxTimeout;
 };
 
 /*---------------------------------------------------------------------------*/
