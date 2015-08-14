@@ -85,14 +85,13 @@ bool ReferenceContainer::IsContainer(const Reference &ref) {
 }
 
 void ReferenceContainer::Find(ReferenceContainer &result,
-                              ReferenceContainerFilter &filter,
-                              ReferenceContainerSearchMode &mode) {
+                              ReferenceContainerFilter &filter) {
     int32 index = 0;
-    if (mode.IsReverse()) {
+    if (filter.IsReverse()) {
         index = list.ListSize() - 1;
     }
-    //The mode will be finished when the correct occurrence has been found (otherwise it will walk all the list)
-    while (!mode.IsFinished() && ((mode.IsReverse() && (index > -1)) || (!mode.IsReverse() && (index < static_cast<int32>(list.ListSize()))))) {
+    //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
+    while (!filter.IsFinished() && ((filter.IsReverse() && (index > -1)) || (!filter.IsReverse() && (index < static_cast<int32>(list.ListSize()))))) {
 
         ReferenceContainerNode *currentNode = static_cast<ReferenceContainerNode *>(list.ListPeek(index));
         Reference currentNodeReference = currentNode->GetReference();
@@ -100,36 +99,35 @@ void ReferenceContainer::Find(ReferenceContainer &result,
         //Check if the current node meets the filter criteria
         bool found = filter.Test(result, currentNodeReference);
         if (found) {
-            mode.IncrementFound();
-            if (mode.IsSearchAll() || mode.IsFinished()) {
+            if (filter.IsSearchAll() || filter.IsFinished()) {
                 result.Insert(currentNodeReference);
-                if (mode.IsDelete()) {
+                if (filter.IsDelete()) {
                     //Only delete the exact node index
                     list.ListDelete(currentNode);
-                    if (!mode.IsReverse()) {
+                    if (!filter.IsReverse()) {
                         index--;
                     }
                 }
             }
         }
-        else if ((IsContainer(currentNodeReference)) && mode.IsRecursive()) {
-            if (mode.IsStorePath()) {
+        else if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
+            if (filter.IsStorePath()) {
                 result.Insert(currentNodeReference);
             }
 
             ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
             uint32 sizeBeforeBranching = result.list.ListSize();
-            currentNodeContainer->Find(result, filter, mode);
+            currentNodeContainer->Find(result, filter);
             //Something was found if the result size has changed
             if (sizeBeforeBranching == result.list.ListSize()) {
                 //Nothing found. Remove the stored path (which led to nowhere).
-                if (mode.IsStorePath()) {
+                if (filter.IsStorePath()) {
                     LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1);
                     result.list.ListDelete(node);
                 }
             }
         }
-        if (!mode.IsReverse()) {
+        if (!filter.IsReverse()) {
             index++;
         }
         else {
@@ -140,29 +138,29 @@ void ReferenceContainer::Find(ReferenceContainer &result,
 
 /*bool ReferenceContainer::Find(ReferenceContainer &result,
  ReferenceContainerFilters::Interface &filter,
- SearchMode &mode) {
+ SearchMode &filter) {
  //Need to who is the main called in order to be able to support the deletion of the Last
- mode.SetMainCaller();
+ filter.SetMainCaller();
  uint32 index = 0;
- //The mode will be finished when the correct index has been found (for the other modes it will walk all the list)
- while (!mode.IsFinished() && index < list.ListSize()) {
+ //The filter will be finished when the correct index has been found (for the other filters it will walk all the list)
+ while (!filter.IsFinished() && index < list.ListSize()) {
  ReferenceContainerNode *currentNode = static_cast<ReferenceContainerNode *>(list.ListPeek(index));
  Reference currentNodeReference = currentNode->GetReference();
 
  //Check if the current node meets the filter criteria
  bool found = filter.Test(result, currentNodeReference);
  if (found) {
- mode.IncrementFound();
+ filter.IncrementFound();
 
  //If searching for a specific index and this exact index was found, terminate
- if (mode.IsSearchIndex()) {
- if (mode.IsFinished()) {
+ if (filter.IsSearchIndex()) {
+ if (filter.IsFinished()) {
  result.Insert(currentNodeReference);
  }
  }
- else if (mode.IsSearchLast()) {
+ else if (filter.IsSearchLast()) {
  //Found a new instance. Remove the old one since we only want to return the last
- int32 lastFoundIndex = mode.GetLastFoundIndex();
+ int32 lastFoundIndex = filter.GetLastFoundIndex();
  if (lastFoundIndex > 0) {
  int32 idx = 0;
  while (idx < lastFoundIndex) {
@@ -173,31 +171,31 @@ void ReferenceContainer::Find(ReferenceContainer &result,
  }
  result.Insert(currentNodeReference);
  //Set the current path for the last node found. This will be removed if a new instance is found later
- mode.SetLastFoundIndex(result.Size());
+ filter.SetLastFoundIndex(result.Size());
  }
- else if (mode.IsSearchAll()) {
+ else if (filter.IsSearchAll()) {
  result.Insert(currentNodeReference);
  }
- if (mode.IsDelete()) {
+ if (filter.IsDelete()) {
  //Only delete the exact node index
- if ((mode.IsSearchIndex() && mode.IsFinished()) || (mode.IsSearchAll())) {
+ if ((filter.IsSearchIndex() && filter.IsFinished()) || (filter.IsSearchAll())) {
  list.ListDelete(currentNode);
  index--;
  }
  }
  }
- else if ((IsContainer(currentNodeReference)) && mode.IsRecursive()) {
- if (mode.IsStorePath()) {
+ else if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
+ if (filter.IsStorePath()) {
  result.Insert(currentNodeReference);
  }
 
  ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
  uint32 sizeBeforeBranching = result.list.ListSize();
- currentNodeContainer->Find(result, filter, mode);
+ currentNodeContainer->Find(result, filter, filter);
  //Something was found if the result size has changed
  if (sizeBeforeBranching == result.list.ListSize()) {
  //Nothing found. Remove the stored path (which led to nowhere).
- if (mode.IsStorePath()) {
+ if (filter.IsStorePath()) {
  LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1);
  result.list.ListDelete(node);
  }
@@ -205,8 +203,8 @@ void ReferenceContainer::Find(ReferenceContainer &result,
  }
  index++;
  }
- if (mode.IsMainCaller()) {
- if (mode.IsSearchLast() && mode.IsDelete() && (result.list.ListSize() > 0)) {
+ if (filter.IsMainCaller()) {
+ if (filter.IsSearchLast() && filter.IsDelete() && (result.list.ListSize() > 0)) {
  list.ListDelete(result.list.ListPeek(0u));
  }
  }

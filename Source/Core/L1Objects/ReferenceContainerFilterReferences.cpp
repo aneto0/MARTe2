@@ -37,11 +37,19 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-ReferenceContainerFilterReferences::ReferenceContainerFilterReferences(Reference refToSearch) {
+ReferenceContainerFilterReferences::ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
+                                                                       const uint32 &mode,
+                                                                       Reference refToSearch) :
+        ReferenceContainerFilter(occurrenceNumber, mode) {
     referenceToSearch = refToSearch;
 }
 
-bool ReferenceContainerFilterReferences::Test(ReferenceContainer &previouslyFound, Reference &referenceToTest) {
-    return (referenceToSearch == referenceToTest);
+bool ReferenceContainerFilterReferences::Test(ReferenceContainer &previouslyFound,
+                                              Reference &referenceToTest) {
+    bool found = (referenceToSearch == referenceToTest);
+    if (found) {
+        IncrementFound();
+    }
+    return found;
 }
 

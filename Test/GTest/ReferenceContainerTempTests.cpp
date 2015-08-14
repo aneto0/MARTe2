@@ -102,9 +102,8 @@ int main(int argc,
 
     PrintTree(A, 0);
     ReferenceContainer results;
-    ReferenceContainerFilterReferences referencesFilter(E);
-    ReferenceContainerSearchMode mode(2, ReferenceContainerSearchMode::PATH | ReferenceContainerSearchMode::RECURSIVE);
-    A->Find(results, referencesFilter, mode);
+    ReferenceContainerFilterReferences referencesFilter(2, ReferenceContainerSearchMode::PATH | ReferenceContainerSearchMode::RECURSIVE, E);
+    A->Find(results, referencesFilter);
     printf("results.Size = %d\n", results.Size());
     uint32 i = 0;
 

@@ -34,7 +34,6 @@
 #include "Object.h"
 #include "ReferenceT.h"
 #include "ReferenceContainer.h"
-#include "ReferenceContainerSearchMode.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

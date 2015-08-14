@@ -37,8 +37,48 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 class ReferenceContainer;
+/**
+ * @brief Defines the filtering criteria for the ReferenceContainer searches.
+ * @details This class needs to be specialised to implement different search criteria.
+ * The find function of the ReferenceContainer will walk the list and query, by calling Test,
+ * if a given node has been found.
+ *
+ * The different types of searching modes are also stored by this class.
+ *
+ * Every time the Test function is to return it should call
+ * IncrementFound so that the number of occurrences found is correctly tracked.
+ */
 class ReferenceContainerFilter {
 public:
+    /**
+     * @brief Store all the nodes leading to a given occurrence.
+     * @details Only valid if \a occurrence != -1 in the constructor of ReferenceContainerSearchMode.
+     */
+    static const uint32 PATH = 0x1;
+    /**
+     * @brief Search recursively in all the tree nodes.
+     */
+    static const uint32 RECURSIVE = 0x2;
+    /**
+     * @brief If set, the search is performed from left to right, otherwise from right to left.
+     * @details Note that to search he last occurrence of a given node it is sufficient to set
+     * ReferenceContainerSearchMode(1, RECURSIVE | REVERSE)
+     */
+    static const uint32 REVERSE = 0x4;
+    /**
+     * @brief If set the nodes that are found are deleted.
+     * @details To destroy all occurrences \a occurrence must be set to -1 in in the constructor of ReferenceContainerSearchMode-
+     * If DELETE is set, PATH will be automatically unset.
+     */
+    static const uint32 DELETE = 0x8;
+    /**
+     * @brief Set the searching mode parameters.
+     * @param occurenceNumber Ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
+     * a node which meets a given criteria or -1 to look for all occurrences. This parameter is indexed to 1.
+     * @param mode any ored combination of PATH, RECURSIVE, REVERSE and DELETE.
+     */
+    ReferenceContainerFilter(const int32 &occurrenceNumber,
+                                 const uint32 &mode);
     /**
      * @brief Destructor. NOOP
      */
@@ -54,10 +94,71 @@ public:
      * @return if the \a referenceToTest meets the searching criteria.
      */
     virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest) = 0;
+
+    /**
+     * @brief Informs that a new occurrence has been found.
+     */
+    void IncrementFound();
+
+    /**
+     * @brief Return true if the found nodes are to be deleted.
+     * @return true if the found nodes are to be deleted, false otherwise.
+     */
+    bool IsDelete() const;
+
+    /**
+     * @brief Return true if the occurrence of the node being searched was found.
+     * @return true if the occurrence of the node being searched was found, false otherwise.
+     */
+    bool IsFinished() const;
+
+    /**
+     * @brief Return true if the search is recursive in all the tree nodes.
+     * @return true if the search is recursive in all the tree nodes, false otherwise.
+     */
+    virtual bool IsRecursive() const;
+
+    /**
+     * @brief Return true if all occurrences of a given pattern are to be searched.
+     * @return true if all occurrences of a given pattern are to searched, false otherwise.
+     */
+    virtual bool IsSearchAll() const;
+
+    /**
+     * @brief Return true if all the nodes leading to a given occurrence are to be stored.
+     * @return true true if all the nodes leading to a given occurrence are to be stored, false otherwise.
+     */
+    bool IsStorePath() const;
+
+    /**
+     * @brief Return true if the tree should be searched from right to left.
+     * @return true if the tree should be searched from right to left, false otherwise.
+     */
+    bool IsReverse() const;
+
+
+private:
+    /**
+     * Ordinal occurrence number of the finding (i.e. the first, second, ...) or -1 to look for all occurrences.
+     */
+    int32 occurrence;
+    /**
+     * Recursive into all the nodes children.
+     */
+    bool recursive;
+    /**
+     * Search for left to right, or from right to left.
+     */
+    bool reverse;
+    /**
+     * Store all the nodes leading to a given occurrence (only valid if \a occurrence != -1).
+     */
+    bool storePath;
+    /**
+     * Delete the nodes that are found (all or the exact matching node depending on how occurrence is set).
+     */
+    bool deleteFoundNodes;
 };
-
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

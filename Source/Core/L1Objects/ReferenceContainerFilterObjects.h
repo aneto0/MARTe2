@@ -1,8 +1,8 @@
 /**
- * @file ReferenceContainer.h
- * @brief Header file for class ReferenceContainer
- * @date 13/08/2015
- * @author Andre Neto
+ * @file ReferenceContainerFilterObjects.h
+ * @brief Header file for class ReferenceContainerFilterObjects
+ * @date 14/08/2015
+ * @author aneto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ReferenceContainer
+ * @details This header file contains the declaration of the class ReferenceContainerFilterObjects
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINER_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINER_H_
+#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTS_H_
+#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,90 +31,51 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "LinkedListHolder.h"
-#include "MutexSem.h"
-#include "TimeoutType.h"
-#include "Object.h"
-#include "Reference.h"
-#include "LinkedListable.h"
 #include "ReferenceContainerFilter.h"
-#include "ReferenceContainerNode.h"
+#include "ReferenceContainer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-/**
- * @brief
- */
-class ReferenceContainer: public Object {
+class ReferenceContainerFilterObjects: public ReferenceContainerFilter {
 public:
-    CLASS_REGISTER_DECLARATION()
+    /**
+     * @brief TODO
+     */
+    ReferenceContainerFilterObjects(const int32 &occurrenceNumber,
+                                    const uint32 &mode,
+                                    const char8 * const address);
 
     /**
-     * TODO
+     * @brief TODO
      */
-    ReferenceContainer();
+    virtual ~ReferenceContainerFilterObjects();
 
     /**
-     * TODO
+     * @brief TODO
      */
-    virtual ~ReferenceContainer();
+    virtual bool Test(ReferenceContainer &previouslyFound,
+                      Reference &referenceToTest);
 
-    /**
-     * TODO
-     */
-    bool Insert(Reference ref,
-                const int32 &position = -1);
+    virtual bool IsRecursive() const;
 
-    /**
-     * TODO
-     */
-    bool Delete(Reference ref);
-
-    /**
-     *
-     * @param result
-     * @param filter
-     * @param mode
-     */
-    void Find(ReferenceContainer &result,
-              ReferenceContainerFilter &filter);
-
-    bool IsContainer(const Reference &ref);
-
-    uint32 Size() const;
-
-    Reference Get(uint32 idx) {
-        Reference ref;
-        if (idx < list.ListSize()) {
-            ReferenceContainerNode *node = static_cast<ReferenceContainerNode *>(list.ListPeek(idx));
-            if(node != NULL) {
-                ref = node->GetReference();
-            }
-        }
-        return ref;
-    }
+    virtual bool IsSearchAll() const;
 
 private:
     /**
-     * The list of references
+     * TODO
      */
-    LinkedListHolder list;
+    char8 **addressToSearch;
 
     /**
-     * Protects multiple access to the internal resources
+     * TODO
      */
-    MutexSem mux;
-
-    /**
-     * Timeout
-     */
-    TimeoutType msecTimeout;
+    uint32 addressNumberNodes;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINER_H_ */
+#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTS_H_ */
 

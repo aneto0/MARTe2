@@ -45,12 +45,15 @@ public:
     /**
      * @brief TODO
      */
-    ReferenceContainerFilterReferences(Reference refToSearch);
+    ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
+                                       const uint32 &mode,
+                                       Reference refToSearch);
 
     /**
      * @brief TODO
      */
-    virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest);
+    virtual bool Test(ReferenceContainer &previouslyFound,
+                      Reference &referenceToTest);
 
 private:
     /**

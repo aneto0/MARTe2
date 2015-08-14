@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainerTest.h"
 #include "ReferenceContainerFilterReferences.h"
+#include "ReferenceContainerFilterObjects.h"
 
 ReferenceContainerTest::ReferenceContainerTest() :
         leafB("Object", h),
@@ -39,6 +40,12 @@ ReferenceContainerTest::ReferenceContainerTest() :
         containerF("ReferenceContainer", h),
         leafH("Object", h) {
 
+    ReferenceContainerFilterObjects test(1, 0, "F");
+    ReferenceContainerFilterObjects test1(1, 0, "F.A");
+    ReferenceContainerFilterObjects test2(1, 0, "F.A.B");
+    ReferenceContainerFilterObjects test3(1, 0, "F.A.B.");
+    ReferenceContainerFilterObjects test4(1, 0, ".F.A.B.");
+    ReferenceContainerFilterObjects test5(1, 0, ".");
 }
 
 bool ReferenceContainerTest::TestConstructor() {
@@ -52,9 +59,8 @@ bool ReferenceContainerTest::TestFindFirstOccurrenceAlways(uint32 modeFlags) {
     GenerateTestTree(container);
 
     ReferenceContainer result;
-    ReferenceContainerFilterReferences filter(leafB);
-    ReferenceContainerSearchMode mode(1, modeFlags);
-    container->Find(result, filter, mode);
+    ReferenceContainerFilterReferences filter(1, modeFlags, leafB);
+    container->Find(result, filter);
 
     bool ok = true;
     //leafB should be found no matter what
@@ -65,20 +71,19 @@ bool ReferenceContainerTest::TestFindFirstOccurrenceAlways(uint32 modeFlags) {
         ok = false;
     }
 
-    ReferenceContainerFilterReferences filter1(leafH);
-    ReferenceContainerSearchMode mode1(1, modeFlags);
+    ReferenceContainerFilterReferences filter1(1, modeFlags, leafH);
     ReferenceContainer result1;
-    container->Find(result1, filter1, mode1);
+    container->Find(result1, filter1);
     //leafH should be found no matter what
     if (result1.Size() > 0) {
-        if (!mode1.IsStorePath()) {
+        if (!filter1.IsStorePath()) {
             ok &= (result1.Get(0) == leafH);
         }
-        else if(!mode1.IsRecursive()){
+        else if(!filter1.IsRecursive()){
             ok &= (result1.Get(0) == leafH);
         }
         else {
-            if (!mode1.IsReverse()) {
+            if (!filter1.IsReverse()) {
                 if (result1.Size() == 3) {
                     ok &= (result1.Get(0) == containerC);
                     ok &= (result1.Get(1) == containerE);
@@ -113,16 +118,15 @@ bool ReferenceContainerTest::TestFindFirstOccurrence(uint32 modeFlags) {
     bool ok = true;
     //Look for containerE
     ReferenceContainer result;
-    ReferenceContainerFilterReferences filter2(containerE);
-    ReferenceContainerSearchMode mode2(1, modeFlags);
-    container->Find(result, filter2, mode2);
+    ReferenceContainerFilterReferences filter2(1, modeFlags, containerE);
+    container->Find(result, filter2);
     //containerE should only be found if recursive is set to true
-    if (mode2.IsRecursive()) {
-        if (!mode2.IsStorePath()) {
+    if (filter2.IsRecursive()) {
+        if (!filter2.IsStorePath()) {
             ok &= (result.Get(0) == containerE);
         }
         else {
-            if (!mode2.IsReverse()) {
+            if (!filter2.IsReverse()) {
                 if (result.Size() == 2) {
                     ok &= (result.Get(0) == containerC);
                     ok &= (result.Get(1) == containerE);
@@ -159,13 +163,12 @@ bool ReferenceContainerTest::TestFindSecondOccurrence(uint32 modeFlags) {
 
     //Look for the second instance of leafH
     ReferenceContainer result;
-    ReferenceContainerFilterReferences filter(leafH);
-    ReferenceContainerSearchMode mode(2, modeFlags);
-    container->Find(result, filter, mode);
+    ReferenceContainerFilterReferences filter(2, modeFlags, leafH);
+    container->Find(result, filter);
     bool ok = true;
     //The second instance of leafH should only be found if recursive is set to true.
-    if (mode.IsRecursive()) {
-        if (!mode.IsStorePath()) {
+    if (filter.IsRecursive()) {
+        if (!filter.IsStorePath()) {
             ok &= (result.Get(0) == leafH);
         }
         else {
@@ -197,17 +200,16 @@ bool ReferenceContainerTest::TestFindThirdOccurrence(uint32 modeFlags) {
 
     //Look for the third instance of leafH
     ReferenceContainer result;
-    ReferenceContainerFilterReferences filter(leafH);
-    ReferenceContainerSearchMode mode(3, modeFlags);
-    container->Find(result, filter, mode);
+    ReferenceContainerFilterReferences filter(3, modeFlags, leafH);
+    container->Find(result, filter);
     //The third instance of leafH should only be found if recursive is set to true.
-    if (mode.IsRecursive()) {
-        if (!mode.IsStorePath()) {
+    if (filter.IsRecursive()) {
+        if (!filter.IsStorePath()) {
             ok &= (result.Get(0) == leafH);
         }
         else {
             //From LR it is the last
-            if (!mode.IsReverse()) {
+            if (!filter.IsReverse()) {
                 if (result.Size() == 1) {
                     ok &= (result.Get(0) == leafH);
                 }

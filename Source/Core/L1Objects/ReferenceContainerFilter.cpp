@@ -1,7 +1,7 @@
 /**
- * @file ReferenceContainerSearchMode.cpp
- * @brief Source file for class ReferenceContainerSearchMode
- * @date 13/08/2015
+ * @file ReferenceContainerFilter.cpp
+ * @brief Source file for class ReferenceContainerFilter
+ * @date 14/08/2015
  * @author aneto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ReferenceContainerSearchMode (public, protected, and private). Be aware that some 
+ * the class ReferenceContainerFilter (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainer.h"
+#include "ReferenceContainerFilter.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -37,7 +37,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-ReferenceContainerSearchMode::ReferenceContainerSearchMode(const int32 &occurrenceNumber, const uint32 &mode) {
+ReferenceContainerFilter::ReferenceContainerFilter(const int32 &occurrenceNumber, const uint32 &mode) {
     occurrence = occurrenceNumber;
     storePath = false;
     recursive = false;
@@ -64,33 +64,35 @@ ReferenceContainerSearchMode::ReferenceContainerSearchMode(const int32 &occurren
     }
 }
 
-void ReferenceContainerSearchMode::IncrementFound() {
+void ReferenceContainerFilter::IncrementFound() {
     if (occurrence > 0) {
         occurrence--;
     }
 }
 
-bool ReferenceContainerSearchMode::IsDelete() const {
+bool ReferenceContainerFilter::IsDelete() const {
     return deleteFoundNodes;
 }
 
-bool ReferenceContainerSearchMode::IsFinished() const {
+bool ReferenceContainerFilter::IsFinished() const {
     return (occurrence == 0);
 }
 
-bool ReferenceContainerSearchMode::IsRecursive() const {
+bool ReferenceContainerFilter::IsRecursive() const {
     return recursive;
 }
 
-bool ReferenceContainerSearchMode::IsSearchAll() const {
+bool ReferenceContainerFilter::IsSearchAll() const {
     return (occurrence == -1);
 }
 
-bool ReferenceContainerSearchMode::IsStorePath() const {
+bool ReferenceContainerFilter::IsStorePath() const {
     return storePath;
 }
 
-bool ReferenceContainerSearchMode::IsReverse() const {
+bool ReferenceContainerFilter::IsReverse() const {
     return reverse;
 }
 
+
+	
