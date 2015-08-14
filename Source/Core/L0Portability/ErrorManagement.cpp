@@ -43,14 +43,111 @@
 
 
 
+namespace ErrorManagement {
 
 
-
-static inline void NULLErrorMessageProcessFunction(ErrorInformation &errorInfo,
-                                                   const char8 * errorDescription) {
+static inline void NULLErrorMessageProcessFunction(const ErrorInformation &errorInfo,
+                                                   const char8 * const errorDescription) {
 }
 
 
 ErrorMessageProcessFunctionType errorMessageProcessFunction = &NULLErrorMessageProcessFunction;
 
 
+/**
+ * @brief A structure pairing an error code with its explanation.
+ */
+const
+        struct {
+    const char8 *name;
+    ErrorType error;
+} errorNames[] = {
+        {"NoError",               NoError  },
+        {"Debug Information",     Debug},
+        {"Information",           Information },
+        {"Warning",               Warning },
+        {"FatalError",            FatalError },
+        {"RecoverableError",      RecoverableError },
+        {"InitialisationError",   InitialisationError },
+        {"OSError",               OSError },
+        {"ParametersError",       ParametersError },
+        {"IllegalOperation",      IllegalOperation },
+        {"ErrorSharing",          ErrorSharing },
+        {"ErrorAccessDenied",     ErrorAccessDenied},
+        {"Exception",             Exception},
+        {"Timeout",               Timeout},
+        {"CommunicationError",    CommunicationError},
+        {"SyntaxError",           SyntaxError},
+        {"UnsupportedError",      UnsupportedFeature},
+        {static_cast<const char8 *>(NULL),  SyntaxError},
+};
+
+const char8 *ErrorName(const ErrorType errorCode) {
+    uint32 i = 0u;
+    const char8* retString="Unrecognized Error";
+
+    while (errorNames[i].name != NULL) {
+        if (errorNames[i].error == errorCode){
+            retString =errorNames[i].name;
+            break;
+        }
+        i++;
+    }
+    return retString;
+}
+
+
+void ReportError(const ErrorType code,
+                 const char8 * const errorDescription,
+                 const char8 * const fileName,
+                 const uint16 lineNumber,
+                 const char8 * const functionName) {
+    ErrorInformation errorInfo;
+    errorInfo.threadId = InvalidThreadIdentifier;
+    errorInfo.objectPointer = static_cast<void*>(NULL);
+    errorInfo.className       = static_cast<const char8 *>(NULL);
+    /*lint -e{9119} Code is guaranteed to be always less than 8 bit */
+    errorInfo.header.errorType = code;
+    errorInfo.header.lineNumber = lineNumber;
+    errorInfo.fileName = fileName;
+    errorInfo.functionName = functionName;
+    errorInfo.hrtTime = HighResolutionTimer::Counter();
+#ifndef INTERRUPT_SUPPORTED
+    errorInfo.threadId = Threads::Id();
+#endif
+    errorMessageProcessFunction(errorInfo, errorDescription);
+}
+
+
+void ReportErrorFullContext(const ErrorType code,
+                            const char8 * const errorDescription,
+                            const char8 * const fileName,
+                            const uint16 lineNumber,
+                            const char8 * const functionName) {
+    ErrorInformation errorInfo;
+    errorInfo.threadId = InvalidThreadIdentifier;
+    errorInfo.objectPointer = static_cast<void*>(NULL);
+    errorInfo.className       = static_cast<const char8 *>(NULL);
+    /*lint -e{9119} Code is guaranteed to be always less than 8 bit */
+    errorInfo.header.errorType = code;
+    errorInfo.header.lineNumber = lineNumber;
+    errorInfo.fileName = fileName;
+    errorInfo.functionName = functionName;
+    errorInfo.hrtTime = HighResolutionTimer::Counter();
+    errorInfo.threadId = Threads::Id();
+    errorMessageProcessFunction(errorInfo, errorDescription);
+}
+
+
+
+
+
+void SetErrorMessageProcessFunction(const ErrorMessageProcessFunctionType userFun) {
+    if (userFun != NULL){
+        errorMessageProcessFunction = userFun;
+    }
+}
+
+
+
+}

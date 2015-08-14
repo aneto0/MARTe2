@@ -193,7 +193,7 @@ public:
      * @param[in] errorInfo is the structure which contains the error informations.
      * @param[in] description is the error description.
      */
-    void CheckParameters(ErrorInformation& errorInfo,
+    void CheckParameters(const ErrorManagement::ErrorInformation& errorInfo,
                          const char* description);
 
 };

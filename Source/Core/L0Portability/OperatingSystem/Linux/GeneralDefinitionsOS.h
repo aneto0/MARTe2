@@ -60,5 +60,8 @@ typedef struct termio ConsoleHandle;
 typedef long oslong;
 typedef unsigned long osulong;
 
+
+#define __DECORATED_FUNCTION_NAME__   __PRETTY_FUNCTION__
+
 #endif /* GENERALDEFINITIONSOS_H_ */
 	

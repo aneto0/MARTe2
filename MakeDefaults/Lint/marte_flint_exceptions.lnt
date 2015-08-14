@@ -58,7 +58,7 @@
  * Justification: Not applicable to a framework
  */
 //-e755 /* global macro not referenced */
--esym(755,REPORT_ERROR,REPORT_ERROR_FULL,__ERROR_FUNCTION_NAME__)
+-esym(755,REPORT_ERROR,REPORT_ERROR_FULL)
 
 //-e756 
 /* global typedef not referenced */
@@ -93,6 +93,7 @@
 //-e528  
 /* symbol not referenced */
 //-e714  
+-esym(714,ErrorManagement::*)
 /* member function not referenced */
 -esym(1714,Sleep::*)
 -esym(1714,HighResolutionTimer::*)
@@ -229,10 +230,11 @@
  * Rule flexelint 1960 
  * Rule MISRA 0-1-8
  * Void functions must have an external effect.
- * Justification: They changed an class attribute.
+ * Justification: They changed a class attribute.
  */
 -esym(1960, TimeoutType::SetTimeoutSec*)
 -esym(1960, TimeoutType::SetTimeoutHighResolutionTimerTicks*)
+-esym(1960, ErrorManagement::NULLErrorMessageProcessFunction*)
 
 
 /*

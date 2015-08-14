@@ -35,120 +35,10 @@
 #include "ErrorType.h"
 #include "Threads.h"
 #include "HighResolutionTimer.h"
+#include "ErrorInformation.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-struct ErrorInformation;
-
-/**
- * The type of an user provided ErrorProcessing function
- */
-typedef void (*ErrorMessageProcessFunctionType)(ErrorInformation &errorInfo,
-                                                const char8 *errorDescription);
-
-
-/**
- @brief Information structure associated to the error.
- */
-struct ErrorInformation {
-
-    /**
-     * Definition of the header.
-     */
-    struct {
-
-        /**
-         * The error code.
-         */
-        ErrorType errorType :8;
-
-        /**
-         * The error line number.
-         */
-        uint16 lineNumber;
-
-        /**
-         * Specified is the error is triggered within an object.
-         */
-        bool isObject :1;
-
-    } header;
-
-    /**
-     *  High resolution timer ticks.
-     */
-    int64 hrtTime;
-
-    /**
-     * The error file name.
-     */
-    const char8 * fileName;
-
-    /**
-     * The error function name
-     */
-    const char8 * functionName;
-
-
-
-    /**
-     * thread ID of the threads who generate the error.
-     */
-    ThreadIdentifier threadId;
-
-    /**
-     * The Address of the object that produced the error.
-     * Object may be temporary in memory because the
-     * objectPointer will only be printed, not used
-     */
-    void * objectPointer;
-
-    /**
-     * A pointer to a const char * which is persistent
-     * so a real constant, not a char * relabeled as const char *
-     * scope. It should be global to the application and persistent
-     */
-    const char8 * className;
-
-};
-
-/**
- * @brief A structure pairing an error code with its explanation.
- */
-static const
-struct {
-    const char8 *name;
-    ErrorType error;
-} errorNames[] = {
-    {"NoError",               NoError  },
-    {"Debug Information",     Debug},
-    {"Information",           Information },
-    {"Warning",               Warning },
-    {"FatalError",            FatalError },
-    {"RecoverableError",      RecoverableError },
-    {"InitialisationError",   InitialisationError },
-    {"OSError",               OSError },
-    {"ParametersError",       ParametersError },
-    {"IllegalOperation",      IllegalOperation },
-    {"ErrorSharing",          ErrorSharing },
-    {"ErrorAccessDenied",     ErrorAccessDenied},
-    {"Exception",             Exception},
-    {"Timeout",               Timeout},
-    {"CommunicationError",    CommunicationError},
-    {"SyntaxError",           SyntaxError},
-    {"UnsupportedError",      UnsupportedFeature},
-    {static_cast<const char8 *>(NULL),  SyntaxError},
-};
-
-
-
-
-
-/**
- * @brief A pointer to the function that will process the errors.
- */
-extern ErrorMessageProcessFunctionType errorMessageProcessFunction;
 
 /**
  * @brief Collection of functions and  types to manage error reporting.
@@ -157,14 +47,26 @@ extern ErrorMessageProcessFunctionType errorMessageProcessFunction;
  * are stored in the ErrorInformation structure. The user can implement a routine that will be called
  * by the report error function to manage errors in specific ways.
  */
-class ErrorManagement {
+namespace ErrorManagement {
 
-public:
+/**
+ * @brief The type of an user provided ErrorProcessing function
+ */
+typedef void (*ErrorMessageProcessFunctionType)(const ErrorInformation &errorInfo,
+                                                const char8 * const errorDescription);
+
+/**
+ * @brief A pointer to the function that will process the errors.
+ */
+extern ErrorMessageProcessFunctionType errorMessageProcessFunction;
+
+
+
     /**
      * @brief Returns the name string associated to the error code.
      * @param[in] errorCode is the error code.
      */
-    static inline const char8 *ErrorName(const ErrorType errorCode);
+     const char8 *ErrorName(const ErrorType errorCode);
 
     /**
      * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
@@ -176,7 +78,7 @@ public:
      * @param[in] lineNumber is the line number where the error was triggered.
      * @param[in] functionName is the name of the function where the error is triggered.
      */
-    static inline void ReportError(const ErrorType code,
+     void ReportError(const ErrorType code,
                                    const char8 * const errorDescription,
                                    const char8 * const fileName = static_cast<const char8 *>(NULL),
                                    const uint16 lineNumber = static_cast<uint16>(0u),
@@ -192,7 +94,7 @@ public:
      * @param[in] lineNumber is the line number where the error was triggered.
      * @param[in] functionName is the name of the function where the error is triggered.
      */
-    static inline void ReportErrorFullContext(const ErrorType code,
+     void ReportErrorFullContext(const ErrorType code,
                                    const char8 * const errorDescription,
                                    const char8 * const fileName = static_cast<const char8 *>(NULL),
                                    const uint16 lineNumber = static_cast<uint16>(0u),
@@ -202,110 +104,34 @@ public:
      * @brief Sets the routine for error managing.
      * @param[in] ErrorMessageProcessFunctionType is a pointer to the function called by ReportError.
      */
-    static inline void SetErrorMessageProcessFunction(const ErrorMessageProcessFunctionType userFun = static_cast<ErrorMessageProcessFunctionType>(NULL));
-};
+     void SetErrorMessageProcessFunction(const ErrorMessageProcessFunctionType userFun = static_cast<ErrorMessageProcessFunctionType>(NULL));
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-const char8 *ErrorManagement::ErrorName(const ErrorType errorCode) {
-    uint32 i = 0u;
-    const char8* retString="Unrecognized Error";
-
-    while (errorNames[i].name != NULL) {
-        if (errorNames[i].error == errorCode){
-            retString =errorNames[i].name;
-            break;
-        }
-        i++;
-    }
-    return retString;
 }
 
 
-void ErrorManagement::ReportError(const ErrorType code,
-                               const char8 * const errorDescription,
-                               const char8 * const fileName,
-                               const uint16 lineNumber,
-                               const char8 * const functionName) {
-    ErrorInformation errorInfo;
-    errorInfo.threadId = InvalidThreadIdentifier;
-    errorInfo.objectPointer = static_cast<void*>(NULL);
-    errorInfo.className       = static_cast<const char8 *>(NULL);
-    /*lint -e{9119} Code is guaranteed to be always less than 8 bit */
-    errorInfo.header.errorType = code;
-    errorInfo.header.lineNumber = lineNumber;
-    errorInfo.fileName = fileName;
-    errorInfo.functionName = functionName;
-    errorInfo.hrtTime = HighResolutionTimer::Counter();
-#ifndef INTERRUPT_SUPPORTED
-    errorInfo.threadId = Threads::Id();
-#endif
-    errorMessageProcessFunction(errorInfo, errorDescription);
-}
-
-
-void ErrorManagement::ReportErrorFullContext(const ErrorType code,
-                               const char8 * const errorDescription,
-                               const char8 * const fileName,
-                               const uint16 lineNumber,
-                               const char8 * const functionName) {
-    ErrorInformation errorInfo;
-    errorInfo.threadId = InvalidThreadIdentifier;
-    errorInfo.objectPointer = static_cast<void*>(NULL);
-    errorInfo.className       = static_cast<const char8 *>(NULL);
-    /*lint -e{9119} Code is guaranteed to be always less than 8 bit */
-    errorInfo.header.errorType = code;
-    errorInfo.header.lineNumber = lineNumber;
-    errorInfo.fileName = fileName;
-    errorInfo.functionName = functionName;
-    errorInfo.hrtTime = HighResolutionTimer::Counter();
-    errorInfo.threadId = Threads::Id();
-    errorMessageProcessFunction(errorInfo, errorDescription);
-}
-
-
-
-
-
-void ErrorManagement::SetErrorMessageProcessFunction(const ErrorMessageProcessFunctionType userFun) {
-    if (userFun != NULL){
-        errorMessageProcessFunction = userFun;
-    }
-}
-
-
-
-
-
-
-#ifndef __FUNCTION_NAME__
-    #if  defined __FUNCTION__
-        // Undeclared
-        #define __FUNCTION_NAME__   __FUNCTION__
-    #elif defined __PRETTY_FUNCTION__
-        // Undeclared
-        #define __FUNCTION_NAME__   __PRETTY_FUNCTION__
-    #else
-        // Declared
-        #define __FUNCTION_NAME__   __func__
-    #endif // __func__
-
-#endif // __FUNCTION_NAME__
 
 /**
  * @brief The function to call in case of errors.
  * @details Calls ErrorManagement::ReportError with the file name, the function and the line number of the error as inputs.
  */
+/*lint -save -e9026
+ * 9026: function-like macro defined.
+ */
 #define REPORT_ERROR(code,message)\
-ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__FUNCTION_NAME__);
+ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__);
  /**
   * @brief The function to call in case of errors.
   * @details Calls ErrorManagement::ReportErrorFullContext with the file name, the function and the line number of the error as inputs.
   */
  #define REPORT_ERROR_FULL(code,message)\
-ErrorManagement::ReportErrorFullContext(code,message,__FILE__,__LINE__,__FUNCTION_NAME__);
+ErrorManagement::ReportErrorFullContext(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__);
+
+
 
 #endif /* ERRORMANAGEMENT_H_ */
 

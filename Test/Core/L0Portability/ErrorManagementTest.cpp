@@ -47,16 +47,16 @@ const char8* ErrorManagementTest::expectedErrorName;
 bool ErrorManagementTest::fullContext = false;
 bool ErrorManagementTest::retVal = false;
 
-void DummyErrorFunction(ErrorInformation& errorInfo,
-                        const char* description) {
+void DummyErrorFunction(const ErrorManagement::ErrorInformation& errorInfo,
+                        const char * const description) {
 
     ErrorManagementTest newEM;
     newEM.retVal = true;
 
 }
 
-void ReportTestFunction(ErrorInformation& errorInfo,
-                        const char* description) {
+void ReportTestFunction(const ErrorManagement::ErrorInformation& errorInfo,
+                        const char * const description) {
 
     //shared static attributes
     ErrorManagementTest newEM;
@@ -77,15 +77,15 @@ void ThreadErrorTestFunction(ErrorManagementTest& t) {
     t.syncFlag = true;
 }
 
-void ThreadErrorTestFunctionMacro(ErrorManagementTest& t) {
+void ThreadErrorTestFunctionMacro(ErrorManagementTest &t) {
     //launches error report functions.
     t.fullContext = false;
-    t.expectedErrorFunction = __FUNCTION_NAME__;
+    t.expectedErrorFunction = __DECORATED_FUNCTION_NAME__;
     t.expectedErrorLine = __LINE__ + 1;
-    ErrorManagement::REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
+    REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
     t.fullContext = true;
     t.expectedErrorLine = __LINE__ + 1;
-    ErrorManagement::REPORT_ERROR_FULL(t.expectedErrorCode, t.expectedErrorDescription);
+    REPORT_ERROR_FULL(t.expectedErrorCode, t.expectedErrorDescription);
 
     t.syncFlag = true;
 }
@@ -109,9 +109,13 @@ bool ErrorManagementTest::TestErrorName() {
     ErrorType all[] = { NoError, Debug, Information, Warning, FatalError, RecoverableError, InitialisationError, OSError, ParametersError, IllegalOperation,
             ErrorSharing, ErrorAccessDenied, Exception, Timeout, CommunicationError, SyntaxError, UnsupportedFeature };
 
+    const char8 *names[] = { "NoError", "Debug Information", "Information", "Warning", "FatalError", "RecoverableError", "InitialisationError", "OSError",
+            "ParametersError", "IllegalOperation", "ErrorSharing", "ErrorAccessDenied", "Exception", "Timeout", "CommunicationError", "SyntaxError",
+            "UnsupportedError" };
+
     uint32 i = 0;
     while (all[i] != UnsupportedFeature) {
-        if (StringHelper::Compare(ErrorManagement::ErrorName(all[i]), errorNames[i].name) != 0) {
+        if (StringHelper::Compare(ErrorManagement::ErrorName(all[i]), names[i]) != 0) {
             return false;
         }
         i++;
@@ -196,7 +200,7 @@ bool ErrorManagementTest::TestReportErrorMacro(ErrorType code,
     expectedErrorCode = code;
     expectedErrorDescription = errorDescription;
     expectedErrorFilename = __FILE__;
-    expectedErrorFunction = __FUNCTION_NAME__;
+    expectedErrorFunction = __DECORATED_FUNCTION_NAME__;
     expectedErrorName = errorName;
     ErrorManagement::SetErrorMessageProcessFunction(ReportTestFunction);
 
@@ -218,7 +222,7 @@ bool ErrorManagementTest::TestReportErrorMacroFullContext(ErrorType code,
     expectedErrorFilename = __FILE__;
     expectedErrorName = errorName;
     ErrorManagement::SetErrorMessageProcessFunction(ReportTestFunction);
-    nThreads=numThreads;
+    nThreads = numThreads;
 
     for (uint32 i = 0; i < nThreads; i++) {
         retVal = false;
@@ -251,7 +255,7 @@ bool ErrorManagementTest::TestReportErrorMacroFullContext(ErrorType code,
 
 }
 
-void ErrorManagementTest::CheckParameters(ErrorInformation& errorInfo,
+void ErrorManagementTest::CheckParameters(const ErrorManagement::ErrorInformation& errorInfo,
                                           const char* description) {
 
     //Checks the error code

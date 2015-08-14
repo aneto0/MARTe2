@@ -55,4 +55,7 @@ static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdenti
 typedef long oslong;
 typedef unsigned long osulong;
 
+#define __DECORATED_FUNCTION_NAME__   __FUNCDNAME__  windows
+
+
 #endif /* GENERALDEFINITIONSOS_H_ */
