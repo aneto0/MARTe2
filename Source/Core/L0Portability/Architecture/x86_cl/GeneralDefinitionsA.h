@@ -53,6 +53,17 @@ typedef double float64;
 /** 8 Bit character */
 typedef char char8;
 
+/** Sufficiently large to hold a pointer address in the target architecture*/
+#ifdef __LP64__
+typedef unsigned long      uintp;
+#elif defined __ILP64__
+typedef unsigned long      uintp;
+#elif defined __LLP64__
+typedef unsigned long long uintp;
+#else
+typedef unsigned long      uintp;
+#endif
+
 /** A tool to find indexes of structures fields. */
 #define indexof(type,field) ((intptr)&(((type *)0)->field))
 /** A tool to find the size of structures fields. */

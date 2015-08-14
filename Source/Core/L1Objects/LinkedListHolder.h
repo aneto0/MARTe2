@@ -195,7 +195,7 @@ public:
 
     /**
      * @brief For each item in the list perform the action defined by the Iterator.
-     * @param[in] defines the action to be performed on each element.
+     * @param[in] it defines the action to be performed on each element.
      */
     void ListIterate(Iterator * const it);
 
