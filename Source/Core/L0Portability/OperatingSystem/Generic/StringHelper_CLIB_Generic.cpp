@@ -1,5 +1,5 @@
 /**
- * @file StringHelper.cpp
+ * @file StringHelper_CLIB_Generic.cpp
  * @brief Source file for class StringHelper
  * @date 30/06/2015
  * @author Giuseppe Ferr�

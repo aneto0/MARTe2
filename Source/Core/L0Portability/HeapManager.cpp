@@ -210,7 +210,9 @@ void HeapDataBase::UnLock(){
     mux.FastUnLock();
 }
 
-
+HeapI *GetStandardHeap(){
+    return  &standardHeap;
+}
 
 /**
  * @brief Finds the Heap that manages the specified memory location

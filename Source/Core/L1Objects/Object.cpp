@@ -157,7 +157,8 @@ void Object::GetUniqueName(char8 * const destination, const uint32 &size) const 
     //If there is no space to even write \0 don't even try
     if (i < size) {
         if (GetName() != NULL) {
-            if (StringHelper::ConcatenateN(destination, GetName(), size - i) == NULL) {
+            // TODO check memory allocation
+            if (!StringHelper::ConcatenateN(destination, GetName(), size - i) ) {
                 destination[i] = '\0';
             }
         }

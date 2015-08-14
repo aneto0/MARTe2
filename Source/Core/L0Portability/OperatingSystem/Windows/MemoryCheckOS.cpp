@@ -32,7 +32,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "Memory.h"
+
+#include "../../MemoryCheck.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,61 +43,10 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-#if 0
-
-void *Memory::Malloc(const uint32 size,
-                     const MemoryAllocationFlags allocFlags) {
-
-    void* data = NULL;
-
-    if (size != 0) {
-        return malloc(size);
-    }
-
-    return data;
-}
-
-void Memory::Free(void *&data) {
-
-    if (data != NULL) {
-        free(data);
-        data = NULL;
-    }
-
-}
-
-void *Memory::Realloc(void *&data,
-                      const uint32 newSize) {
-    bool ok = true;
-
-    if (data == NULL) {
-        data = Malloc(newSize);
-    }
-    else {
-        if (newSize == 0) {
-            Free(data);
-        }
-        else {
-            data = realloc(data, newSize);
-        }
-    }
-    return data;
-
-}
-
-char8 *Memory::StringDup(const char8 * const s) {
-
-    char8 *sCopy = NULL;
-
-    if (s != NULL) {
-        sCopy = strdup(s);
-    }
-    return sCopy;
-}
-#endif
+nameaspace MemoryCheck {
 
 
-bool Memory::Check(const void * const address,
+bool Check(const void * const address,
                    const MemoryTestAccessMode accessMode,
                    const uint32 size) {
 
@@ -133,79 +83,5 @@ bool Memory::Check(const void * const address,
     return check != 0;
 }
 
-bool Memory::Copy(void * const destination,
-                  const void * const source,
-                  const uint32 size) {
-
-    bool ret = false;
-    if (source != NULL && destination != NULL) {
-        ret = memcpy(destination, source, size) != NULL;
-    }
-
-    return ret;
 
 }
-
-int32 Memory::Compare(const void * const mem1,
-                      const void * const mem2,
-                      const uint32 size) {
-
-    int32 ret = -1;
-
-    if (mem1 != NULL && mem2 != NULL) {
-        int32 temp = memcmp(mem1, mem2, size);
-        if (temp < 0) {
-            ret = 1; // 1 if mem1<mem2
-        }
-        if (temp > 0) {
-            ret = 2; // 2 if mem1>mem2
-        }
-        if (temp == 0) {
-            ret = 0; // 0 if mem1==mem2
-        }
-    }
-
-    return ret;
-
-}
-
-const void* Memory::Search(const void * const mem,
-                           const char8 c,
-                           const uint32 size) {
-    const void* ret = NULL;
-    if (mem != NULL) {
-
-        ret = memchr(mem, c, size);
-
-    }
-
-    return ret;
-}
-
-bool Memory::Move(void * const destination,
-                  const void * const source,
-                  const uint32 size) {
-
-    bool ret = false;
-
-    if (source != NULL && destination != NULL) {
-
-        ret = memmove(destination, source, size) != NULL;
-    }
-    return ret;
-
-}
-
-bool Memory::Set(void * const mem,
-                 const char8 c,
-                 const uint32 size) {
-    bool ret = false;
-    if (mem != NULL) {
-
-        return memset(mem, c, size) != NULL;
-    }
-
-    return ret;
-
-}
-

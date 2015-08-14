@@ -30,11 +30,12 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ReferenceTest.h"
+
+#include "../../../Source/Core/L0Portability/MemoryCheck.h"
 #include "ObjectTestHelper.h"
 #include "ClassRegistryDatabase.h"
 #include "Threads.h"
 #include "Sleep.h"
-#include "Memory.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

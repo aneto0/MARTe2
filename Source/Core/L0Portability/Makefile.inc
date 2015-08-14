@@ -30,8 +30,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 SPB=OperatingSystem/$(OPERATING_SYSTEM).x
 
-OBJSX=  Atomic.x \
-        Endianity.x \
+OBJSX=  Endianity.x \
         FastMath.x \
         ProcessorType.x \
         ThreadsDatabase.x \

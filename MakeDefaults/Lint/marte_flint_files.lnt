@@ -1,5 +1,5 @@
-/*
-Atomic.cpp       
+
+Atomic.h       
 Endianity.cpp
 ProcessorOS.cpp  
 SleepOS.cpp
@@ -25,5 +25,4 @@ ClassRegistryDatabase.cpp
 Object.cpp
 Reference.cpp
 ReferenceT.cpp
-*/
 HeapManager.cpp

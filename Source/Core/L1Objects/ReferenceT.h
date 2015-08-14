@@ -52,7 +52,7 @@ public:
      * @brief Creates an empty reference or a reference to base type T.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(Heap &heap);
+    ReferenceT(HeapI* const heap);
 
     /**
      * @brief Creates a reference to an object that inherits from base type T.
@@ -82,7 +82,7 @@ public:
      * @param[in] typeName the type (i.e. class name) of the object to be instantiated.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(const char8* typeName, Heap &heap);
+    ReferenceT(const char8* typeName, HeapI* const heap);
 
     /**
      * @brief Removes the reference to the underlying object. @see RemoveReference.
@@ -177,7 +177,7 @@ ReferenceT<T>::ReferenceT() {
 }
 
 template<typename T>
-ReferenceT<T>::ReferenceT(Heap &heap) {
+ReferenceT<T>::ReferenceT(HeapI* const heap) {
     Init();
     T *p = new (heap) T;
     if (p != NULL) {
@@ -217,7 +217,7 @@ ReferenceT<T>::ReferenceT(const ReferenceT<T>& sourceReference) {
 }
 
 template<typename T>
-ReferenceT<T>::ReferenceT(const char8* typeName, Heap &heap) : Reference(typeName, heap) {
+ReferenceT<T>::ReferenceT(const char8* typeName, HeapI* const heap) : Reference(typeName, heap) {
     typeTObjectPointer = NULL;
     if (Reference::IsValid()) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);

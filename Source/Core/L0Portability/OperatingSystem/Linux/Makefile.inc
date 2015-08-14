@@ -35,8 +35,9 @@ OBJSX=  BasicConsoleOS.x \
         MutexSemOS.x \
         ProcessorOS.x \
         ThreadsOS.x \
-        MemoryOS.x \
-        StringHelper_CLIBBased.x \
+        MemoryCheckOS.x \
+        MemoryOperationsHelper_CLIB.x \
+        StringHelper_CLIB.x \
         StringHelperExtras.x \
         StandardHeap.x
 

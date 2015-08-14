@@ -61,6 +61,13 @@ HeapI *FindHeap(const char8 * const name);
 
 
 /**
+ * @brief returns standard heap
+ * returns GetStandardHeap() if not found
+ */
+HeapI *GetStandardHeap();
+
+
+/**
  * @brief TODO
  * @param
  * returns

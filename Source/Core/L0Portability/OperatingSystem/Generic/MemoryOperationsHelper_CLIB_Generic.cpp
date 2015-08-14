@@ -1,5 +1,5 @@
 /**
- * @file MemoryOS.cpp
+ * @file MemoryOperationsHelper_CLIB_Generic.cpp
  * @brief Source file for class MemoryOS
  * @date 27/07/2015
  * @author Giuseppe Ferrò
@@ -36,7 +36,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "Memory.h"
+#include "../../MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -45,64 +45,11 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-#if 0
-void *Memory::Malloc(const uint32 size,
-                     const MemoryAllocationFlags allocFlag) {
 
-    void* data = static_cast<void*>(NULL);
+namespace MemoryOperationsHelper {
 
-    if (size != 0u) {
-        data = malloc(static_cast<osulong>(size));
-    }
 
-    return data;
-}
-
-void Memory::Free(void *&data) {
-
-    if (data != NULL) {
-        free(data);
-        data = static_cast<void*>(NULL);
-    }
-
-}
-
-void *Memory::Realloc(void *&data,
-                      const uint32 newSize) {
-
-    if (data == NULL) {
-        data = Malloc(newSize);
-    }
-    else {
-        if (newSize == 0u) {
-            Free(data);
-        }
-        else {
-            data = realloc(data, static_cast<osulong>(newSize));
-        }
-    }
-    return data;
-
-}
-char8 *Memory::StringDup(const char8 * const s) {
-
-    char8 *sCopy = static_cast<char8*>(NULL);
-
-    if (s != NULL) {
-        sCopy = strdup(s);
-    }
-    return sCopy;
-}
-#endif
-
-bool Memory::Check(const void * const address,
-                   const MemoryTestAccessMode accessMode,
-                   const uint32 size) {
-
-    return address != NULL;
-}
-
-bool Memory::Copy(void* const destination,
+bool Copy(void* const destination,
                   const void * const source,
                   const uint32 size) {
 
@@ -115,7 +62,7 @@ bool Memory::Copy(void* const destination,
 
 }
 
-int32 Memory::Compare(const void * const mem1,
+int32 Compare(const void * const mem1,
                       const void * const mem2,
                       const uint32 size) {
 
@@ -138,7 +85,7 @@ int32 Memory::Compare(const void * const mem1,
 
 }
 
-const void* Memory::Search(const void * const mem,
+const void* Search(const void * const mem,
                            const char8 c,
                            const uint32 size) {
     const void* ret = static_cast<const void*>(NULL);
@@ -151,7 +98,7 @@ const void* Memory::Search(const void * const mem,
     return ret;
 }
 
-bool Memory::Move(void * const destination,
+bool Move(void * const destination,
                   const void * const source,
                   const uint32 size) {
 
@@ -165,7 +112,7 @@ bool Memory::Move(void * const destination,
 
 }
 
-bool Memory::Set(void * const mem,
+bool Set(void * const mem,
                  const char8 c,
                  const uint32 size) {
     bool ret = false;
@@ -178,3 +125,4 @@ bool Memory::Set(void * const mem,
 
 }
 
+}

@@ -22,7 +22,7 @@
  */
 
 #ifndef ATOMIC_H_
-#define 		ATOMIC_H_
+#define ATOMIC_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,AtomicA.h)
 
 /*---------------------------------------------------------------------------*/
@@ -50,56 +49,55 @@
  * protected basic operations between multiple asynchronous accesses like in a multi-thread system.
  * These methods are also used to implement fast threading synchronization constructors (@see FastPollingMutexSem)
  */
-class Atomic {
-public:
+namespace  Atomic {
     /**
      * @brief Atomically increments a 32 bit integer in memory.
      * @param[in,out] p the pointer to the 32 bit variable to increment.
      * @pre p != NULL.
      */
-    static inline void Increment (volatile int32 *p );
+    inline void Increment (volatile int32 *p );
 
     /**
      * @brief Atomically increments a 16 bit integer in memory.
      * @param[in,out] p the pointer to the 16 bit variable to increment.
      * @pre p != NULL.
      */
-    static inline void Increment (volatile int16 *p);
+    inline void Increment (volatile int16 *p);
 
     /**
      * @brief Atomically increments a 8 bit integer in memory.
      * @param[in,out] p the pointer to the 8 bit variable to increment.
      * @pre p != NULL.
      */
-    static inline void Increment (volatile int8 *p);
+    inline void Increment (volatile int8 *p);
 
     /**
      * @brief Atomically decrements a 32 bit integer in memory.
      * @param[in,out] p the pointer to the 32 bit variable to decrement.
      * @pre p != NULL.
      */
-    static inline void Decrement (volatile int32 *p);
+    inline void Decrement (volatile int32 *p);
 
     /**
      * @brief Atomically decrements a 16 bit integer in memory.
      * @param[in,out] p the pointer to the 16 bit variable to decrement.
      * @pre p != NULL.
      */
-    static inline void Decrement (volatile int16 *p);
+    inline void Decrement (volatile int16 *p);
 
     /**
      * @brief Atomically decrements a 8 bit integer in memory.
      * @param[in,out] p the pointer to the 8 bit variable to decrement.
      * @pre p != NULL.
      */
-    static inline void Decrement (volatile int8 *p);
+    inline void Decrement (volatile int8 *p);
 
     /**
      * @brief Atomically exchanges the contents of a variable with the specified memory location.
      * @param[out] p the pointer to the 32 bit variable where will be stored the value of v atomically.
      * @param[in] v the value to store in the variable pointed by p.
      */
-    static inline int32 Exchange (volatile int32 *p, int32 v);
+    inline int32 Exchange (volatile int32 *p, int32 v);
 
     /**
      * @brief Tests and sets a 32 bit memory location in a thread safe way.
@@ -107,7 +105,7 @@ public:
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
-    static inline bool TestAndSet(volatile int32 *p);
+    inline bool TestAndSet(volatile int32 *p);
 
     /**
      * @brief Tests and sets a 16 bit memory location in a thread safe way.
@@ -115,7 +113,7 @@ public:
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
-    static inline bool TestAndSet(volatile int16 *p);
+    inline bool TestAndSet(volatile int16 *p);
 
     /**
      * @brief Tests and sets a 8 bit memory location in a thread safe way.
@@ -123,7 +121,7 @@ public:
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
-    static inline bool TestAndSet(volatile int8 *p);
+    inline bool TestAndSet(volatile int8 *p);
 
     /**
      * @brief Atomically adds two 32 bit integers.
@@ -131,7 +129,7 @@ public:
      * @param[in] value the value to add to *p.
      * @pre p != NULL.
      */
-    static inline void Add (volatile int32 *p, int32 value);
+    inline void Add (volatile int32 *p, int32 value);
 
     /**
      * @brief Atomically subtracts two 32 bit integers.
@@ -139,63 +137,69 @@ public:
      * @param[in] value the value to subtract to *p.
      * @pre p != NULL.
      */
-    static inline void Sub (volatile int32 *p, int32 value);
+    inline void Sub (volatile int32 *p, int32 value);
 
-};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-void Atomic::Increment(volatile int32 *p) {
-    AtomicA::Increment32(p);
+
+
+#if 0
+void Increment(volatile int32 *p) {
+    Increment32(p);
 }
 
-void Atomic::Increment(volatile int16 *p) {
-    AtomicA::Increment16(p);
+void Increment(volatile int16 *p) {
+    Increment16(p);
 }
 
-void Atomic::Increment(volatile int8 *p) {
-    AtomicA::Increment8(p);
+void Increment(volatile int8 *p) {
+    Increment8(p);
 }
 
-void Atomic::Decrement(volatile int32 *p) {
-    AtomicA::Decrement32(p);
+void Decrement(volatile int32 *p) {
+    Decrement32(p);
 }
 
-void Atomic::Decrement(volatile int16 *p) {
-    AtomicA::Decrement16(p);
+void Decrement(volatile int16 *p) {
+    Decrement16(p);
 }
 
-void Atomic::Decrement(volatile int8 *p) {
-    AtomicA::Decrement8(p);
+void Decrement(volatile int8 *p) {
+    Decrement8(p);
 }
 
-int32 Atomic::Exchange(volatile int32 *p,
+int32 Exchange(volatile int32 *p,
                        int32 v) {
-    return AtomicA::Exchange32(p, v);
+    return Exchange32(p, v);
 }
 
-bool Atomic::TestAndSet(volatile int32 *p) {
-    return AtomicA::TestAndSet32(p);
+bool TestAndSet(volatile int32 *p) {
+    return TestAndSet32(p);
 }
 
-bool Atomic::TestAndSet(volatile int16 *p) {
-    return AtomicA::TestAndSet16(p);
+bool TestAndSet(volatile int16 *p) {
+    return TestAndSet16(p);
 }
 
-bool Atomic::TestAndSet(volatile int8 *p) {
-    return AtomicA::TestAndSet8(p);
+bool TestAndSet(volatile int8 *p) {
+    return TestAndSet8(p);
 }
 
-void Atomic::Add(volatile int32 *p,
+void Add(volatile int32 *p,
                  int32 value) {
-    AtomicA::Add32(p, value);
+    Add32(p, value);
 }
 
-void Atomic::Sub(volatile int32 *p,
+void Sub(volatile int32 *p,
                  int32 value) {
-    AtomicA::Sub32(p, value);
+    Sub32(p, value);
 }
+
+#endif
+
+};
 
 #endif /* ATOMIC_H_ */
 

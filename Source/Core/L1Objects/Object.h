@@ -94,16 +94,11 @@
  * class they had to be written as part of the macro as well.
  */
 #define CLASS_REGISTER(name,ver)                                                                                       \
-    /*                                                                                                               *\\
-     * The heap which is used to instantiate objects from this class type. Only one heap can be set                  *\\
-     * pre class type                                                                                                  \
-     */                                                                                                                \
-    static HeapI name ## Heap_;                                                                                         \
     /*                                                                                                                 \
      * Forward declaration of function which allows to build a new instance of the object                              \
      * e.g. Object *MyClassTypeBuildFn_(const Heap &h);                                                                \
      */                                                                                                                \
-    Object * name ## BuildFn_(const Heap &h);                                                                          \
+    Object * name ## BuildFn_(HeapI* const heap);                                                                          \
     /*                                                                                                                 \
      * Class properties of this class type. One instance per class type automatically instantiated at the start        \
      * of an application or loading of a loadable library.                                                             \
@@ -123,13 +118,8 @@
      * @return a new instance of the object from the class type.                                                       \
      * e.g. Object *MyClassTypeBuildFn_( const Heap &h);                                                               \
      */                                                                                                                \
-    Object * name ## BuildFn_(const Heap &h){                                                                          \
-        static bool heapAlreadySet = false;                                                                            \
-        if (!heapAlreadySet) {                                                                                         \
-            name ## Heap_= h;                                                                                          \
-            heapAlreadySet = true;                                                                                     \
-        }                                                                                                              \
-        name *p = new (name ## Heap_) name ();                                                                         \
+    Object * name ## BuildFn_(HeapI* const heap){                                                                      \
+        name *p = new (heap) name ();                                                                                  \
         return p;                                                                                                      \
     }                                                                                                                  \
     /*                                                                                                                 \
@@ -142,8 +132,13 @@
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
-    void * name::operator new(const size_t size, Heap &heap) {                                                         \
-        void *obj = heap.Malloc(static_cast<uint32>(size));                                                            \
+    void * name::operator new(const size_t size, HeapI* const heap) {                                                  \
+        void *obj = NULL_PTR(void *);                                                                                  \
+        if (heap != NULL) {                                                                                            \
+            obj = heap->Malloc(static_cast<uint32>(size));                                                             \
+        } else {                                                                                                       \
+            obj = HeapManager::Malloc(static_cast<uint32>(size));                                                      \
+        }                                                                                                              \
         name ## ClassRegistryItem_.IncrementNumberOfInstances();                                                       \
         return obj;                                                                                                    \
     }                                                                                                                  \
@@ -151,7 +146,7 @@
      * e.g. void *MyClassType::operator delete(void *p);                                                               \
      */                                                                                                                \
     void name::operator delete(void *p) {                                                                              \
-        name ## Heap_.Free(p);                                                                                         \
+        HeapManager::Free(p);                                                                                          \
         name ## ClassRegistryItem_.DecrementNumberOfInstances();                                                       \
     }
 /*lint -restore */

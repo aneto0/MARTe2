@@ -48,7 +48,7 @@ Reference::Reference(const Reference& sourceReference) {
     (*this) = sourceReference;
 }
 
-Reference::Reference(const char8* const typeName, const Heap &heap) {
+Reference::Reference(const char8* const typeName, HeapI* const heap) {
     objectPointer = NULL_PTR(Object*);
     Object *objPtr = CreateByName(typeName, heap);
     if (objPtr != NULL_PTR(Object*)) {
@@ -144,7 +144,7 @@ Object* Reference::operator->() {
     return objectPointer;
 }
 
-Object *Reference::CreateByName(const char8 * const className, const Heap &heap) const {
+Object *Reference::CreateByName(const char8 * const className, HeapI* const heap) const {
     Object *obj = NULL_PTR(Object *);
 
     ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance().Find(className);

@@ -33,9 +33,10 @@ OBJSX=  BasicConsoleOS.x \
         HighResolutionTimerCalibratorOS.x \
         EventSemOS.x \
         MutexSemOS.x \
-        MemoryOS.x \
         ThreadsOS.x \
         ProcessorOS.x \
+        MemoryCheckOS.x \
+        MemoryOperationsHelper_CLIB.x \
         StringHelper_Portable.x\
         StringHelperExtras.x\
         StandardHeap.x

@@ -30,7 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ClassRegistryItemTest.h"
-#include "Memory.h"
+
+#include "../../../Source/Core/L0Portability/MemoryCheck.h"
 #include "StringHelper.h"
 #include "ClassRegistryDatabase.h"
 
