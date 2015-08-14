@@ -58,6 +58,8 @@
  * Justification: Not applicable to a framework
  */
 //-e755 /* global macro not referenced */
+-esym(755,REPORT_ERROR,REPORT_ERROR_FULL,__ERROR_FUNCTION_NAME__)
+
 //-e756 
 /* global typedef not referenced */
 -esym(756,intptr,Colours)
@@ -65,6 +67,8 @@
 -etype(758,Flags)
 /* global struct not referenced */
 -esym(768,TimeValues::*)
+-esym(768,ErrorInformation::*)
+-esym(768,isObject)
 -esym(768,IBasicConsole::*)
 -esym(768,ExceptionHandler::*)
 -esym(768,ExceptionHandler::*)
@@ -110,6 +114,7 @@
 -esym(1714,ExceptionHandler::*)
 -esym(1714,ThreadInformation::*)
 -esym(1714,Memory::*)
+-esym(1714,ErrorManagement::*)
 
 /* virtual member function not referenced */
 -esym(1716,IBasicConsole::*)
@@ -130,6 +135,7 @@
  */
 -efunc(715,BasicConsoleOS::SetColour,BasicConsoleOS::SetTitleBar,BasicConsoleOS::GetTitleBar,BasicConsoleOS::SetCursorPosition,BasicConsoleOS::GetCursorPosition,BasicConsoleOS::SetWindowSize,BasicConsoleOS::GetWindowSize,BasicConsoleOS::PlotChar)
 -efunc(715,Memory::Malloc,Memory::Check)
+-esym(715,errorDescription,errorInfo)
 
 /*
  * Rule 0-1-12
@@ -167,7 +173,11 @@
 -esym(9141,Colours)
 -esym(9141,Endianity)
 -esym(9141,Endianity::*)
--esym(9141,Error)
+-esym(9141,ErrorInformation)
+-esym(9141,ErrorMessageProcessFunctionType)
+-esym(9141,errorMessageProcessFunction)
+-esym(9141,NULLErrorMessageProcessFunction)
+-esym(9141,errorNames)
 -esym(9141,ErrorType)
 -esym(9141,EventSem::*)
 -esym(9141,EventSemOSProperties)
@@ -213,6 +223,8 @@
 -esym(9141,ExceptionHandler)
 -esym(9141,Memory)
 -esym(9141,Memory::*)
+-esym(9141,ErrorManagement)
+-esym(9141,ErrorManagement::*)
 /*
  * Rule flexelint 1960 
  * Rule MISRA 0-1-8

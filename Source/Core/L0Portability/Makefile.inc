@@ -38,7 +38,8 @@ OBJSX=  Atomic.x \
         ThreadsDatabase.x \
         ThreadInformation.x \
         LoadableLibrary.x \
-        FastPollingMutexSem.x
+        FastPollingMutexSem.x \
+        ErrorManagement.x
 
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)

@@ -40,7 +40,8 @@ OBJSX=  EndianityGTest.x \
     BasicConsoleGTest.x \
     TimeoutTypeGTest.x \
     LoadableLibraryGTest.x \
-    FastMathGTest.x
+    FastMathGTest.x \
+    ErrorManagementGTest.x
 
 PACKAGE=
 ROOT_DIR=../..
