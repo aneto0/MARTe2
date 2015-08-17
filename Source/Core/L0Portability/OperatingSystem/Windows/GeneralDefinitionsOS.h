@@ -55,4 +55,9 @@ static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdenti
 typedef long oslong;
 typedef unsigned long osulong;
 
+/**
+ * Know shared library extensions
+ */
+static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
+
 #endif /* GENERALDEFINITIONSOS_H_ */
