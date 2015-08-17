@@ -47,10 +47,6 @@ CLASS_REGISTER(SpecialIntegerObject, "1.0")
 CLASS_REGISTER(FloatObject, "1.0")
 
 
-CLASS_REGISTER(DoubleObject, "1.0")
-
-
 CLASS_REGISTER(CollectInts, "1.0")
 
 
-CLASS_REGISTER(CollectFloats, "1.0")

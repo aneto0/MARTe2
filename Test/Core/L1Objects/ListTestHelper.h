@@ -36,28 +36,52 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
+/**
+ * @brief An list of integers used in tests
+ */
 class IntegerList: public LinkedListable {
 public:
+    /**
+     * The element of the list
+     */
     uint32 intNumber;
 public:
+    /**
+     * @brief Default constructor.
+     */
     IntegerList() {
         intNumber = 0;
     }
 
+    /**
+     * @brief Initializes the list element.
+     */
     IntegerList(uint32 number) {
         intNumber = number;
     }
 
+    /**
+     * @brief Destructor
+     */
     ~IntegerList() {
 
     }
 };
 
+/**
+ * @brief A sort filter which sorts integers in decrescent order.
+ */
 class SortDecrescent: public SortFilter {
 public:
     SortDecrescent() {
     }
+
+    /**
+     * @brief The compare function.
+     * @param[in] is the first list element to be compared.
+     * @param[in] is the second list element to be compared.
+     * @return 1 if the first element is minor than the second, -1 otherwise.
+     */
     int32 Compare(LinkedListable* element1,
                   LinkedListable* element2) {
         if (((IntegerList*) element1)->intNumber < ((IntegerList*) element2)->intNumber)
@@ -67,30 +91,57 @@ public:
     }
 };
 
+
+/**
+ * @brief A search filter of a specified integer element.
+ */
 class SearchInteger: public SearchFilter {
 private:
+
+    /**
+     * The number to be searched in the list
+     */
     uint32 searchIntNumber;
 
 public:
 
+    /**
+     * @brief Constructor by element to be searched.
+     */
     SearchInteger(uint32 intNum) {
         searchIntNumber = intNum;
     }
 
+    /**
+     * @brief A function used to change the number to be searched.
+     */
     void ChangeSearchNumber(uint32 intNum) {
         searchIntNumber = intNum;
     }
 
+    /**
+     * @brief Test function.
+     * @param[in] data is the element to be tested.
+     * @return true if data is equal to the number to be searched, false otherwise.
+     */
     bool Test(LinkedListable *data) {
         return ((IntegerList*) (data))->intNumber == searchIntNumber;
     }
 };
 
+
+/**
+ * @brief An Iterator which increment each integer number by one.
+ */
 class IncrementIterator: public Iterator {
 private:
 
 public:
 
+    /**
+     * @brief Do function.
+     * @param[in] data is the element to be incremented.
+     */
     void Do(LinkedListable *data) {
         ((IntegerList*) data)->intNumber++;
     }

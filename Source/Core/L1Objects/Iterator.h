@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_ITERATOR_H_
-#define SOURCE_CORE_L1OBJECTS_ITERATOR_H_
+#ifndef ITERATOR_H_
+#define ITERATOR_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -60,5 +60,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_ITERATOR_H_ */
+#endif /* ITERATOR_H_ */
 

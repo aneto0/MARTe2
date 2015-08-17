@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_ITERATORT_H_
-#define SOURCE_CORE_L1OBJECTS_ITERATORT_H_
+#ifndef ITERATORT_H_
+#define ITERATORT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -57,5 +57,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_ITERATORT_H_ */
+#endif /* ITERATORT_H_ */
 

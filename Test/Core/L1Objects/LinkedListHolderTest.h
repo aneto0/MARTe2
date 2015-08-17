@@ -228,7 +228,8 @@ public:
      */
     bool TestListIterateIterator();
 
-    LinkedListHolder internalList;
+
+
 
 };
 /*---------------------------------------------------------------------------*/

@@ -100,7 +100,7 @@ public:
     bool TestSetGetLoadableLibrary(const char8 *llname);
 
     /**
-     * @Tests the ClassRegistryItem::GetObjectBuildFcn.
+     * @brief Tests the ClassRegistryItem::GetObjectBuildFcn.
      * @details Set a build function in the ClassProperties passed by parameter to the constructor and checks that the
      * returned value is precisely the pointer to this function. Then calls the function and checks that it does what expected.
      * @return true if the test explained in details section has success, false otherwise.
