@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L2CONFIGURATION_STRUCTUREDDATA_H_
-#define SOURCE_CORE_L2CONFIGURATION_STRUCTUREDDATA_H_
+#ifndef STRUCTUREDDATA_H_
+#define STRUCTUREDDATA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -47,5 +47,5 @@ class StructuredData {
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L2CONFIGURATION_STRUCTUREDDATA_H_ */
+#endif /* STRUCTUREDDATA_H_ */
 

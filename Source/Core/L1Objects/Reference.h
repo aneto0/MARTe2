@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCE_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCE_H_
+#ifndef REFERENCE_H_
+#define REFERENCE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -71,35 +71,36 @@ public:
 
     /**
      * @brief Creates a reference to an existing \a pointer.
-     * @param[in] pointer source object to assign.
      * @details Increments the number of references referencing the underlying object.
+     * @param[in] pointer source object to assign.
      */
     Reference (Object * const pointer);
 
     /**
-     * @brief Removes the reference to the underlying object. @see RemoveReference.
+     * @brief Removes the reference to the underlying object.
+     * @see RemoveReference.
      */
     virtual ~Reference();
 
     /**
-     * @brief Create an object from a structured list of elements.
+     * @brief Creates an object from a structured list of elements.
      * @param[in] data the data to initialise the underlying object.
      * @param[in] createOnly if true the object Initialise method is not called.
-     * @return true if the object was successfully created and initialised.
+     * @return true if the object was successfully created and initialized, false otherwise.
      */
     virtual bool Initialise(const StructuredData &data, const bool &createOnly);
 
     /**
      * @brief Removes the reference to the underlying object.
      * @details If the number of references to the underlying object is zero, the object is deleted.
-     * IsValid will return false after this operation.
+     * IsValid function will return false after this operation.
      */
     virtual void RemoveReference();
 
     /**
      * @brief Verifies if the reference to the underlying object is valid.
      * @details A valid reference is one where the referenced object is not NULL.
-     * @return true if the referenced object is not NULL.
+     * @return true if the referenced object is not NULL, false otherwise.
      */
     virtual bool IsValid() const;
 
@@ -125,16 +126,16 @@ public:
 
     /**
      * @brief Assignment operator.
-     * @param[in] sourceReference the source reference to be assigned to this reference.
      * @details This reference will be referencing the same object as the \a  sourceReference.
+     * @param[in] sourceReference the source reference to be assigned to this reference.
      * @return a reference to the object referenced by \a sourceReference.
      */
     virtual Reference& operator=(const Reference& sourceReference);
 
     /**
      * @brief Assignment operator.
-     * @param[in] pointer source object to assign.
      * @details It will increment the number of references referencing the underlying object.
+     * @param[in] pointer source object to assign.
      * @return a reference to the underlying object.
      */
     virtual Reference& operator=(Object * const pointer);
@@ -176,5 +177,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCE_H_ */
+#endif /* REFERENCE_H_ */
 

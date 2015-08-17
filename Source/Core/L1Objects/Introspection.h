@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_INTROSPECTION_H_
-#define SOURCE_CORE_L1OBJECTS_INTROSPECTION_H_
+#ifndef INTROSPECTION_H_
+#define INTROSPECTION_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -48,5 +48,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_INTROSPECTION_H_ */
+#endif /* INTROSPECTION_H_ */
 
