@@ -112,6 +112,8 @@ void SetErrorMessageProcessFunction(const ErrorMessageProcessFunctionType userFu
 /**
  * @brief The function to call in case of errors.
  * @details Calls ErrorManagement::ReportError with the file name, the function and the line number of the error as inputs.
+ * @param[in] code is the ErrorType code error.
+ * @param[in] message is the description associated to the error.
  */
 /*lint -save -e9026
  * 9026: function-like macro defined.
@@ -121,6 +123,8 @@ ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION
 /**
  * @brief The function to call in case of errors.
  * @details Calls ErrorManagement::ReportErrorFullContext with the file name, the function and the line number of the error as inputs.
+ * @param[in] code is the ErrorType code error.
+ * @param[in] message is the description associated to the error.
  */
 #define REPORT_ERROR_FULL(code,message)\
 ErrorManagement::ReportErrorFullContext(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__);

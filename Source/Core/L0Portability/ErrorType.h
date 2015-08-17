@@ -45,25 +45,75 @@
  */
 typedef int8 ErrorType;
 
+
+
 /**
  * No error to report
  */
 static const ErrorType NoError(0);
+/**
+ * Debug information
+ */
 static const ErrorType Debug(3);
+/**
+ * General information
+ */
 static const ErrorType Information(2);
+/**
+ * Warning
+ */
 static const ErrorType Warning(1);
+/**
+ * Fatal Error
+ */
 static const ErrorType FatalError(-1);
+/**
+ * Recoverable error
+ */
 static const ErrorType RecoverableError(-2);
+/**
+ * Initialization error
+ */
 static const ErrorType InitialisationError(-3);
+/**
+ * Operating system error
+ */
 static const ErrorType OSError(-4);
+/**
+ * Parameters error
+ */
 static const ErrorType ParametersError(-5);
+/**
+ * Illegal operation
+ */
 static const ErrorType IllegalOperation(-6);
+/**
+ * Sharing error
+ */
 static const ErrorType ErrorSharing(-7);
+/**
+ * Access denied
+ */
 static const ErrorType ErrorAccessDenied(-8);
+/**
+ * Exception
+ */
 static const ErrorType Exception(-9);
+/**
+ * Timeout occurred
+ */
 static const ErrorType Timeout(-10);
+/**
+ * Error during comunication
+ */
 static const ErrorType CommunicationError(-11);
+/**
+ * Syntax error
+ */
 static const ErrorType SyntaxError(-12);
+/**
+ * Unsupported feature
+ */
 static const ErrorType UnsupportedFeature(-13);
 
 #endif /* ERRORS_H_ */

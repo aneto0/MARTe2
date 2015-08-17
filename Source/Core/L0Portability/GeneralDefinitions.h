@@ -45,6 +45,10 @@
  #endif
  */
 
+#ifndef __DECORATED_FUNCTION_NAME__
+#define __DECORATED_FUNCTION_NAME__ __func__
+#endif
+
 /** List of colors */
 typedef enum {
     Black = 0,
@@ -65,7 +69,6 @@ typedef enum {
     DarkGrey = 15
 
 }Colours;
-
 
 /**
  * @brief A structure containing the time stamp informations.
