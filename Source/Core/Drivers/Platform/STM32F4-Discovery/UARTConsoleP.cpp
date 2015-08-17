@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "UARTConsole.h"
+#include "UARTConfig.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -39,37 +40,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-/* Definition for USARTx clock resources */
-#define USARTx                           USART1
-#define USARTx_CLK_ENABLE()              __HAL_RCC_USART1_CLK_ENABLE();
-#define USARTx_RX_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
-#define USARTx_TX_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
-
-#define USARTx_FORCE_RESET()             __HAL_RCC_USART2_FORCE_RESET()
-#define USARTx_RELEASE_RESET()           __HAL_RCC_USART2_RELEASE_RESET()
-
-/* Definition for USARTx Pins */
-#define USARTx_TX_PIN                    GPIO_PIN_9
-#define USARTx_TX_GPIO_PORT              GPIOA
-#define USARTx_TX_AF                     GPIO_AF7_USART1
-#define USARTx_RX_PIN                    GPIO_PIN_10
-#define USARTx_RX_GPIO_PORT              GPIOA
-#define USARTx_RX_AF                     GPIO_AF7_USART1
-
-/* Size of Transmission buffer */
-#define TXBUFFERSIZE                     (COUNTOF(aTxBuffer) - 1)
-/* Size of Reception buffer */
-#define RXBUFFERSIZE                     TXBUFFERSIZE
-
-/* Exported macro ------------------------------------------------------------*/
-#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
-
 UARTConsole::UARTConsole() {
 
 }
 
 ErrorType UARTConsole::Open(const FlagsType &mode) {
-    HAL_UART_MspInit (&handle);
+    //HAL_UART_MspInit(&handle);
     /*##-1- Configure the UART peripheral ######################################*/
     /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
     /* UART1 configured as follow:
@@ -100,23 +76,25 @@ ErrorType UARTConsole::Write(const char8 * const buffer,
 
     HAL_StatusTypeDef retVal;
 
-    if (timeout.IsFinite()) {
+    if (timeout != TTInfiniteWait) {
         if ((retVal = HAL_UART_Transmit(&handle, (uint8_t*) buffer, size, timeout.GetTimeoutMSec())) != HAL_OK) {
             return (retVal == HAL_TIMEOUT) ? Timeout : FatalError;
         }
     }
     else {
+
         if (HAL_UART_Transmit(&handle, (uint8_t*) buffer, size, HAL_MAX_DELAY) != HAL_OK) {
             return FatalError;
         }
     }
+
     return NoError;
 
 }
 
 ErrorType UARTConsole::Read(char8* const buffer,
-                           uint32 &size,
-                           const TimeoutType &timeout) {
+                            uint32 &size,
+                            const TimeoutType &timeout) {
 
     HAL_StatusTypeDef retVal;
 
@@ -134,3 +112,7 @@ ErrorType UARTConsole::Read(char8* const buffer,
 
 }
 
+ErrorType UARTConsole::Close() {
+    HAL_UART_MspDeInit(&handle);
+    return NoError;
+}

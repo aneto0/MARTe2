@@ -1,7 +1,7 @@
 /**
- * @file UARTConsole.h
- * @brief Header file for class UARTConsole
- * @date 13/08/2015
+ * @file UARTConfig.h
+ * @brief Header file for class UARTConfig
+ * @date 16/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,54 +16,53 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class UARTConsole
+ * @details This header file contains the declaration of the class UARTConfig
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef UARTCONSOLE_H_
-#define UARTCONSOLE_H_
+#ifndef UARTCONFIG_H_
+#define UARTCONFIG_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "DriversDefinitionsP.h"
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
-#include INCLUDE_FILE_PLATFORM(PLATFORM,DriversDefinitionsP.h)
-#include "BasicConsole.h"
+#define USARTx                           USART2
+#define USARTx_CLK_ENABLE()              __HAL_RCC_USART2_CLK_ENABLE();
+#define USARTx_RX_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
+#define USARTx_TX_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
 
+#define USARTx_FORCE_RESET()             __HAL_RCC_USART2_FORCE_RESET()
+#define USARTx_RELEASE_RESET()           __HAL_RCC_USART2_RELEASE_RESET()
+
+/* Definition for USARTx Pins */
+#define USARTx_TX_PIN                    GPIO_PIN_2
+#define USARTx_TX_GPIO_PORT              GPIOA
+#define USARTx_TX_AF                     GPIO_AF7_USART2
+#define USARTx_RX_PIN                    GPIO_PIN_3
+#define USARTx_RX_GPIO_PORT              GPIOA
+#define USARTx_RX_AF                     GPIO_AF7_USART2
+
+/* Size of Transmission buffer */
+#define TXBUFFERSIZE                      (COUNTOF(aTxBuffer) - 1)
+/* Size of Reception buffer */
+#define RXBUFFERSIZE                      TXBUFFERSIZE
+
+/* Exported macro ------------------------------------------------------------*/
+#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-class UARTConsole: public BasicConsole {
-
-public:
-    UARTConsole();
-
-    ErrorType Write(const char8 * const buffer,
-                    uint32 &size,
-                    const TimeoutType &timeout);
-
-    ErrorType Read(char8* const buffer,
-                               uint32 &size,
-                               const TimeoutType &timeout);
-
-    ErrorType Open(const FlagsType &mode);
-
-    ErrorType Close();
-
-private:
-    UARTHandle handle;
-
-};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* UARTCONSOLE_H_ */
+#endif /* UARTCONFIG_H_ */
 

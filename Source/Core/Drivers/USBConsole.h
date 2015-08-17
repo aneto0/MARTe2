@@ -53,7 +53,14 @@ public:
 
     ErrorType Read(char8* const rxBuffer, uint32 &size,const TimeoutType &timeout);
 
+    int32 size();
+
+    int32 position();
+
     static USBHandle handle;
+
+private:
+    uint32 privateRead(char8* const rxBuffer, uint32 size);
 
 };
 /*---------------------------------------------------------------------------*/

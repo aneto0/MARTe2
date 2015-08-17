@@ -79,6 +79,9 @@ char g_VCPInitialized;
  * @retval Result of the opeartion: USBD_OK if all operations are OK else USBD_FAIL
  */
 static int8_t TEMPLATE_Init(void) {
+    for(uint32 i=0; i<CDC_DATA_FS_OUT_PACKET_SIZE; i++){
+        s_RxBuffer.Buffer[i]=0;
+    }
     USBD_CDC_SetRxBuffer(&(USBConsole::handle), s_RxBuffer.Buffer);
     g_VCPInitialized = 1;
     return (0);
@@ -216,7 +219,7 @@ ErrorType USBConsole::Write(const char8* const txBuffer,
     if (size > CDC_DATA_HS_OUT_PACKET_SIZE) {
         uint32 offset;
         for (offset = 0; offset < size; offset += CDC_DATA_HS_OUT_PACKET_SIZE) {
-            uint32 todo = (uint32)(MIN(CDC_DATA_HS_OUT_PACKET_SIZE, (int32) (size - offset)));
+            uint32 todo = (uint32) (MIN(CDC_DATA_HS_OUT_PACKET_SIZE, (int32) (size - offset)));
             ErrorType ret = Write(((char *) txBuffer) + offset, todo, timeout);
             if (ret != NoError) {
                 size = offset + todo;
@@ -242,19 +245,17 @@ ErrorType USBConsole::Write(const char8* const txBuffer,
 
 }
 
-ErrorType USBConsole::Read(char8* const rxBuffer,
-                           uint32 &size,
-                           const TimeoutType &timeout) {
+uint32 USBConsole::privateRead(char8* const rxBuffer,
+                               uint32 size) {
+
     if (!s_RxBuffer.ReadDone) {
-        size = 0;
-        return FatalError;
+        return 0;
     }
 
     int remaining = s_RxBuffer.Size - s_RxBuffer.Position;
-    int todo = MIN(remaining, size);
+    int todo = MIN(remaining, (int) size);
     if (todo <= 0) {
-        size = 0;
-        return FatalError;
+        return 0;
     }
 
     memcpy(rxBuffer, s_RxBuffer.Buffer + s_RxBuffer.Position, todo);
@@ -264,8 +265,27 @@ ErrorType USBConsole::Read(char8* const rxBuffer,
         USBD_CDC_ReceivePacket(&handle);
     }
 
-    size = todo;
+    return todo;
+}
+
+ErrorType USBConsole::Read(char8* const rxBuffer,
+                           uint32 &size,
+                           const TimeoutType &timeout) {
+
+    uint32 cont = 0;
+    while (cont < size) {
+        cont += privateRead(rxBuffer + cont, size - cont);
+    }
 
     return NoError;
+
+}
+
+int32 USBConsole::size() {
+    return s_RxBuffer.Size;
+}
+
+int32 USBConsole::position() {
+    return s_RxBuffer.Position;
 }
 

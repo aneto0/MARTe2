@@ -31,6 +31,7 @@ OBJSX=ClockP.x \
 	USBConsoleP.x \
 	VCPDescription.x \
 	USBConfig.x \
+	UARTConfig.x \
 	UARTConsoleP.x
        
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

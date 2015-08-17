@@ -48,5 +48,7 @@
 typedef USBD_HandleTypeDef USBHandle;
 
 typedef UART_HandleTypeDef UARTHandle;
+
+typedef TIM_HandleTypeDef PWMHandle;
 #endif /* DRIVERSDEFINITIONP_H_ */
 

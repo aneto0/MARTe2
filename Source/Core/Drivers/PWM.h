@@ -1,7 +1,7 @@
 /**
- * @file UARTConsole.h
- * @brief Header file for class UARTConsole
- * @date 13/08/2015
+ * @file PWM.h
+ * @brief Header file for class PWM
+ * @date 17/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class UARTConsole
+ * @details This header file contains the declaration of the class PWM
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef UARTCONSOLE_H_
-#define UARTCONSOLE_H_
+#ifndef PWM_H_
+#define PWM_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,37 +33,24 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include INCLUDE_FILE_PLATFORM(PLATFORM,DriversDefinitionsP.h)
-#include "BasicConsole.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class UARTConsole: public BasicConsole {
-
+class PWM{
 public:
-    UARTConsole();
 
-    ErrorType Write(const char8 * const buffer,
-                    uint32 &size,
-                    const TimeoutType &timeout);
-
-    ErrorType Read(char8* const buffer,
-                               uint32 &size,
-                               const TimeoutType &timeout);
-
-    ErrorType Open(const FlagsType &mode);
-
-    ErrorType Close();
+    bool Init();
 
 private:
-    UARTHandle handle;
+
+    PWMHandle handle;
+
 
 };
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* UARTCONSOLE_H_ */
+#endif /* PWM_H_ */
 
