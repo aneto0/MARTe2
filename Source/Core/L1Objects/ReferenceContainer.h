@@ -80,14 +80,14 @@ public:
     void Find(ReferenceContainer &result,
               ReferenceContainerFilter &filter);
 
-    bool IsContainer(const Reference &ref);
+    bool IsContainer(const Reference &ref) const;
 
     uint32 Size() const;
 
-    Reference Get(uint32 idx) {
+    Reference Get(const uint32 idx) {
         Reference ref;
         if (idx < list.ListSize()) {
-            ReferenceContainerNode *node = static_cast<ReferenceContainerNode *>(list.ListPeek(idx));
+            ReferenceContainerNode *node = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(idx));
             if(node != NULL) {
                 ref = node->GetReference();
             }

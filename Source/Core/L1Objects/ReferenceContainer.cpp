@@ -51,7 +51,7 @@ TimeoutType ReferenceContainer::GetTimeout() const {
     return muxTimeout;
 }
 
-void ReferenceContainer::SetTimeout(const TimeoutType &timeout){
+void ReferenceContainer::SetTimeout(const TimeoutType &timeout) {
     muxTimeout = timeout;
 }
 
@@ -87,51 +87,69 @@ bool ReferenceContainer::Insert(Reference ref,
     return ok;
 }
 
-bool ReferenceContainer::IsContainer(const Reference &ref) {
+bool ReferenceContainer::IsContainer(const Reference &ref) const {
     ReferenceT<ReferenceContainer> test = ref;
     return test.IsValid();
 }
 
 void ReferenceContainer::Find(ReferenceContainer &result,
                               ReferenceContainerFilter &filter) {
-    int32 index = 0;
+    uint32 index = 0u;
     if (filter.IsReverse()) {
-        index = list.ListSize() - 1;
+        index = list.ListSize() - 1u;
     }
     //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
-    while (!filter.IsFinished() && ((filter.IsReverse() && (index > -1)) || (!filter.IsReverse() && (index < static_cast<int32>(list.ListSize()))))) {
+    while ((!filter.IsFinished()) && (index < list.ListSize())) {
 
-        ReferenceContainerNode *currentNode = static_cast<ReferenceContainerNode *>(list.ListPeek(index));
+        ReferenceContainerNode *currentNode = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(index));
         Reference currentNodeReference = currentNode->GetReference();
 
         //Check if the current node meets the filter criteria
         bool found = filter.Test(result, currentNodeReference);
         if (found) {
-            if (filter.IsSearchAll() || filter.IsFinished()) {
-                result.Insert(currentNodeReference);
+
+            //if IsSearchAll, all found nodes should be inserted in the output list
+            //if IsFinished means that you found your desired occurrence of this object, then add it to the output list
+            if ((filter.IsSearchAll()) || (filter.IsFinished())) {
+
+                //if the reference is invalid just not add it to the output list
+                (void)result.Insert(currentNodeReference);
+                //if IsDelete delete the found node
                 if (filter.IsDelete()) {
                     //Only delete the exact node index
-                    list.ListDelete(currentNode);
+                    //ignore the return value since the node is surely in the list
+                    (void)list.ListDelete(currentNode);
+
+                    //since after the index is incremented if you don't decrement here
+                    //you will lose an element
                     if (!filter.IsReverse()) {
                         index--;
                     }
                 }
             }
         }
-        if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
+
+
+        if ((IsContainer(currentNodeReference)) && (filter.IsRecursive())) {
+
+            //add the current node to the ouput list if IsStorePath
             if (filter.IsStorePath()) {
-                result.Insert(currentNodeReference);
+                (void)result.Insert(currentNodeReference);
             }
 
             ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
             uint32 sizeBeforeBranching = result.list.ListSize();
+
+            //find on the sub-container
             currentNodeContainer->Find(result, filter);
             //Something was found if the result size has changed
             if (sizeBeforeBranching == result.list.ListSize()) {
                 //Nothing found. Remove the stored path (which led to nowhere).
                 if (filter.IsStorePath()) {
-                    LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1);
-                    result.list.ListDelete(node);
+                    LinkedListable *node = result.list.ListPeek(result.list.ListSize() - 1u);/// Peek instead of extract
+
+                    //ignore the return value since node is surely in the list
+                    (void)result.list.ListDelete(node); //////////?????????????????
                 }
             }
         }
@@ -139,6 +157,11 @@ void ReferenceContainer::Find(ReferenceContainer &result,
             index++;
         }
         else {
+            // break if index is equal to zero but before decrementing
+            // such that index=0 is valid
+            if (index == 0u) {
+                break;
+            }
             index--;
         }
     }

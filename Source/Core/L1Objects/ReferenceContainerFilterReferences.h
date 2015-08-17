@@ -42,6 +42,10 @@
  */
 class ReferenceContainerFilterReferences: public ReferenceContainerFilter {
 public:
+
+
+    ReferenceContainerFilterReferences();
+
     /**
      * @brief TODO
      */

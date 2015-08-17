@@ -39,6 +39,9 @@
 /*---------------------------------------------------------------------------*/
 class ReferenceContainerFilterObjects: public ReferenceContainerFilter {
 public:
+
+    ReferenceContainerFilterObjects();
+
     /**
      * @brief TODO
      */
