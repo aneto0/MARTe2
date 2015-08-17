@@ -156,7 +156,6 @@ private:
      */
     void Init();
 
-
     /**
      * The pointer to the referenced object.
      */

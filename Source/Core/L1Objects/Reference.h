@@ -67,14 +67,15 @@ public:
      * @param[in] typeName the name of the class type.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    Reference(const char8* const typeName, const Heap &heap);
+    Reference(const char8* const typeName,
+              const Heap &heap);
 
     /**
      * @brief Creates a reference to an existing \a pointer.
      * @details Increments the number of references referencing the underlying object.
      * @param[in] pointer source object to assign.
      */
-    Reference (Object * const pointer);
+    Reference(Object * const pointer);
 
     /**
      * @brief Removes the reference to the underlying object.
@@ -88,7 +89,8 @@ public:
      * @param[in] createOnly if true the object Initialise method is not called.
      * @return true if the object was successfully created and initialized, false otherwise.
      */
-    virtual bool Initialise(const StructuredData &data, const bool &createOnly);
+    virtual bool Initialise(const StructuredData &data,
+                            const bool &createOnly);
 
     /**
      * @brief Removes the reference to the underlying object.
@@ -169,7 +171,8 @@ private:
      * @param[in] heap the heap where the object is to be allocated.
      * @return a new object of the specified class or NULL if the \a className does not exist.
      */
-    Object *CreateByName(const char8 * const className, const Heap &heap) const;
+    Object *CreateByName(const char8 * const className,
+                         const Heap &heap) const;
 
 };
 
