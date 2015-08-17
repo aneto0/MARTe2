@@ -106,7 +106,6 @@ void ReportError(const ErrorType code,
     errorInfo.threadId = InvalidThreadIdentifier;
     errorInfo.objectPointer = static_cast<void*>(NULL);
     errorInfo.className       = static_cast<const char8 *>(NULL);
-    /*lint -e{9119} Code is guaranteed to be always less than 8 bit */
     errorInfo.header.errorType = code;
     errorInfo.header.lineNumber = lineNumber;
     errorInfo.fileName = fileName;

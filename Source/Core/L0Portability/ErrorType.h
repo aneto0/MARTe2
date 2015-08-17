@@ -43,7 +43,7 @@
 /**
  * @brief Defines all the framework possible error types.
  */
-typedef signed char ErrorType;
+typedef int8 ErrorType;
 
 /**
  * No error to report
@@ -65,6 +65,5 @@ static const ErrorType Timeout(-10);
 static const ErrorType CommunicationError(-11);
 static const ErrorType SyntaxError(-12);
 static const ErrorType UnsupportedFeature(-13);
-
 
 #endif /* ERRORS_H_ */
