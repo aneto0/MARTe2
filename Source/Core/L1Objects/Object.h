@@ -72,13 +72,13 @@
      * Note that the selected heap might be different for each type of class.                                          \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
-    static void * operator new(const size_t size, Heap &heap);                                                         \
+    static void * operator new(const osulong size, Heap &heap);                                                         \
     /*                                                                                                                 \
      * @brief Delete the object.                                                                                       \
      * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \
      * cannot call non-static members and as a consequence the heap variable must have global                          \
      * scope in the unit file (but is not exported) (see CLASS_REGISTER).                                              \
-     * @param p the pointer to the object to be deleted.                                                               \
+     * @param[in] p the pointer to the object to be deleted.                                                               \
      */                                                                                                                \
     static void operator delete(void *p);
 
@@ -142,7 +142,7 @@
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
-    void * name::operator new(const size_t size, Heap &heap) {                                                         \
+    void * name::operator new(const osulong size, Heap &heap) {                                                         \
         void *obj = heap.Malloc(static_cast<uint32>(size));                                                            \
         name ## ClassRegistryItem_.IncrementNumberOfInstances();                                                       \
         return obj;                                                                                                    \
@@ -165,7 +165,7 @@
  * @details The MARTe Object is a class which offers the following functionality:
  *  - Its life cycle is managed by a smart pointer mechanism (see Reference);
  *  - Can be automatically constructed in runtime by the class name of its derived class;
- *  - Provides a standard initialisation/construction interface;
+ *  - Provides a standard initialization/construction interface;
  *  - Is introspectable and enables reflection of derived classes;
  *  - The allocation heap for the object can be selected by the end-user.
  */
@@ -190,12 +190,12 @@ public:
     virtual ~Object();
 
     /**
-     * @brief Initialises the object against a structured list of elements.
+     * @brief Initializes the object against a structured list of elements.
      * @details Upon a successful instantiation of the Object the framework will
      * call the Initialise method. The Object instance is then responsible for
-     * retrieving the initialisation data from the input data and of assigning
+     * retrieving the initialization data from the input data and of assigning
      * these value to its internal variables.
-     * @param data the input initialisation data.
+     * @param[in] data is the input initialization data.
      * @return true if all the input \a data is valid and can be successfully assigned
      * to the Object member variables.
      */
@@ -203,7 +203,7 @@ public:
 
     /**
      * @brief Returns a copy to the object introspection properties.
-     * @destination Copies the object introspection properties to the \a destination.
+     * @param[out] destination is the output Introspection object where data must be copied.
      */
     void GetIntrospectionCopy(Introspection &destination) const;
 
@@ -222,21 +222,21 @@ public:
     /**
      * @brief Returns an object name which is guaranteed to be unique.
      * @details The object unique name is composed by the object memory
-     *  address and by the object name as returned by GetName().
+     * address and by the object name as returned by GetName().
      *
      * If GetName() returns NULL the unique name will be the object memory address.
      * The format of the unique name is xMemoryAddress::Name. The leading zeros of the
      * memory address are discarded.
      * @param[in, out] destination the destination where to write the unique object to.
      * If enough space is available the string will be zero terminated.
-     * @param[in] the size of the \a destination input string.
+     * @param[in] size the size of the \a destination input string.
      */
     void GetUniqueName(char8 * const destination, const uint32 &size) const;
 
     /**
      * @brief Sets the object name.
      * @details If a name had already been set the object name will be updated to this name.
-     * @param newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
+     * @param[in] newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
      * @pre newName != NULL
      */
     void SetName(const char8 * const newName);
@@ -246,6 +246,7 @@ private:
     /**
      * @brief Decrements the number of references to this object.
      * @details Only accessible to the Reference class.
+     * @return the number of references after the operation.
      */
     uint32 DecrementReferences();
 
@@ -257,7 +258,7 @@ private:
 
     /**
      * @brief Clones the object.
-     * @details To enable cloning of objects using references the final class must implement clone.
+     * @details To enable cloning of objects using references the final class must implement clone.\n
      * Only accessible to the Reference class.
      * @return a clone of this object.
      */
@@ -266,7 +267,7 @@ private:
     /**
      * Disallow the usage of new.
      */
-    static void *operator new(size_t size) throw ();
+    static void *operator new(osulong size) throw ();
 
     /**
      * Object introspection properties.

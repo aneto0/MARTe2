@@ -93,7 +93,7 @@ bool Object::Initialise(const StructuredData &data) {
 }
 
 /*lint -e{715} size is not used as this is not implemented on purpose*/
-void *Object::operator new(const size_t size) throw () {
+void *Object::operator new(const osulong size) throw () {
     return NULL_PTR(Object *);
 }
 
