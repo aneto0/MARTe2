@@ -122,6 +122,9 @@ bool ObjectTest::TestGetUniqueName(const char8* name,
     Object myObj;
     uintp ptr = (uintp) &myObj;
     char buffer[size];
+    for (uint32 i = 0; i < size; i++) {
+        buffer[i] = 0;
+    }
 
     myObj.SetName(name);
 
@@ -164,8 +167,11 @@ bool ObjectTest::TestGetUniqueName(const char8* name,
         remainedSize = (buffSize - n);
     }
 
-    char onlyName[size] = { 0 };
-    StringHelper::Concatenate(onlyName, "::");
+    char onlyName[size];
+    for (uint32 i = 0; i < size; i++) {
+        onlyName[i] = 0;
+    }
+    StringHelper::Copy(onlyName, "::");
     StringHelper::Concatenate(onlyName, name);
 
     return StringHelper::CompareN(buffer + n, onlyName, remainedSize) == 0;
