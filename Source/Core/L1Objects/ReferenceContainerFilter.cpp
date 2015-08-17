@@ -37,31 +37,11 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-ReferenceContainerFilter::ReferenceContainerFilter(const int32 &occurrenceNumber, const uint32 &mode) {
+ReferenceContainerFilter::ReferenceContainerFilter(const int32 &occurrenceNumber,
+                                                   const uint32 &modeToSet) {
     occurrence = occurrenceNumber;
-    storePath = false;
-    recursive = false;
-    deleteFoundNodes = false;
-    reverse = false;
-
-    if ((mode & ReferenceContainerFilterMode::PATH) == ReferenceContainerFilterMode::PATH) {
-        storePath = true;
-    }
-    if ((mode & ReferenceContainerFilterMode::RECURSIVE) == ReferenceContainerFilterMode::RECURSIVE) {
-        recursive = true;
-    }
-    if ((mode & ReferenceContainerFilterMode::REVERSE) == ReferenceContainerFilterMode::REVERSE) {
-        reverse = true;
-    }
-    if ((mode & ReferenceContainerFilterMode::DELETE) == ReferenceContainerFilterMode::DELETE) {
-        deleteFoundNodes = true;
-    }
-    if (occurrence == -1) {
-        storePath = false;
-    }
-    if (storePath) {
-        recursive = true;
-    }
+    originallySetOccurrence = occurrenceNumber;
+    SetMode(modeToSet);
 }
 
 void ReferenceContainerFilter::IncrementFound() {
@@ -94,5 +74,37 @@ bool ReferenceContainerFilter::IsReverse() const {
     return reverse;
 }
 
+bool ReferenceContainerFilter::GetMode() const {
+    return mode;
+}
 
-	
+void ReferenceContainerFilter::Reset() {
+    occurrence = originallySetOccurrence;
+}
+
+bool ReferenceContainerFilter::SetMode(const uint32& modeToSet) {
+    mode = modeToSet;
+    storePath = false;
+    recursive = false;
+    deleteFoundNodes = false;
+    reverse = false;
+
+    if ((mode & ReferenceContainerFilterMode::PATH) == ReferenceContainerFilterMode::PATH) {
+        storePath = true;
+    }
+    if ((mode & ReferenceContainerFilterMode::RECURSIVE) == ReferenceContainerFilterMode::RECURSIVE) {
+        recursive = true;
+    }
+    if ((mode & ReferenceContainerFilterMode::REVERSE) == ReferenceContainerFilterMode::REVERSE) {
+        reverse = true;
+    }
+    if ((mode & ReferenceContainerFilterMode::REMOVE) == ReferenceContainerFilterMode::REMOVE) {
+        deleteFoundNodes = true;
+    }
+    if (occurrence == -1) {
+        storePath = false;
+    }
+    if (storePath) {
+        recursive = true;
+    }
+}

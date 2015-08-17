@@ -58,9 +58,9 @@ static const uint32 REVERSE = 0x4;
 /**
  * @brief If set the nodes that are found are deleted.
  * @details To destroy all occurrences \a occurrence must be set to -1 in in the constructor of ReferenceContainerSearchMode-
- * If DELETE is set, PATH will be automatically unset.
+ * If REMOVE is set, PATH will be automatically unset.
  */
-static const uint32 DELETE = 0x8;
+static const uint32 REMOVE = 0x8;
 }
 
 class ReferenceContainer;
@@ -81,11 +81,11 @@ public:
      * @brief Set the searching mode parameters.
      * @param occurenceNumber Ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
      * a node which meets a given criteria or -1 to look for all occurrences. This parameter is indexed to 1.
-     * @param mode any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
-     * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::DELETE.
+     * @param modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
+     * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
      */
     ReferenceContainerFilter(const int32 &occurrenceNumber,
-                             const uint32 &mode);
+                             const uint32 &modeToSet);
     /**
      * @brief Destructor. NOOP
      */
@@ -144,11 +144,34 @@ public:
      */
     bool IsReverse() const;
 
+    /**
+     * @brief Return the search mode as a binary keyword.
+     * @return the search mode as a binary keyword.
+     */
+    bool GetMode() const;
+
+    /**
+     * @brief Updates the search mode to a new binary keyword.
+     * @param modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
+     * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
+     */
+    bool SetMode(const uint32 &modeToSet);
+
+    /**
+     * @brief Resets the number of occurrences to the value that was set when the filter was created.
+     */
+    void Reset();
+
 protected:
     /**
      * Ordinal occurrence number of the finding (i.e. the first, second, ...) or -1 to look for all occurrences.
      */
     int32 occurrence;
+
+    /**
+     * The originally set number of occurrences
+     */
+    int32 originallySetOccurrence;
 
 private:
     /**
@@ -167,6 +190,10 @@ private:
      * Delete the nodes that are found (all or the exact matching node depending on how occurrence is set).
      */
     bool deleteFoundNodes;
+    /**
+     * The mode encoded in binary
+     */
+    uint32 mode;
 };
 
 /*---------------------------------------------------------------------------*/

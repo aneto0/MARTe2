@@ -32,25 +32,11 @@
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceContainerFilterObjects.h"
 #include "ReferenceContainerFilter.h"
+#include "StringHelper.h"
+#include "Memory.h"
 
-ReferenceContainerTest::ReferenceContainerTest() :
-        leafB("Object", h),
-        containerC("ReferenceContainer", h),
-        containerD("ReferenceContainer", h),
-        containerE("ReferenceContainer", h),
-        containerF("ReferenceContainer", h),
-        leafG("Object", h),
-        leafH("Object", h),
-        leafNoExist("Object", h) {
-
-    leafB->SetName("B");
-    containerC->SetName("C");
-    containerD->SetName("D");
-    containerE->SetName("E");
-    containerF->SetName("F");
-    leafG->SetName("G");
-    leafH->SetName("H");
-    leafNoExist->SetName("NoExist");
+ReferenceContainerTest::ReferenceContainerTest() {
+    tree = GenerateTestTree();
 }
 
 bool ReferenceContainerTest::TestConstructor() {
@@ -88,318 +74,432 @@ bool ReferenceContainerTest::TestSetTimeout(TimeoutType timeout) {
 }
 
 bool ReferenceContainerTest::TestFindFirstOccurrenceAlways(ReferenceContainerFilter &filter) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
-    GenerateTestTree(container);
-
-    ReferenceContainer result;
-    container->Find(result, filter);
-
     bool ok = true;
-    //leafB should be found no matter what
-    if (result.Size() > 0) {
-        ok = (result.Get(0) == leafB);
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        filter.SetMode(i);
+        filter.Reset();
+        ok &= TestFindFilter(tree, filter, "B");
     }
-    else {
-        ok = false;
-    }
+
     return ok;
 }
 
 bool ReferenceContainerTest::TestFindFirstOccurrenceBranchAlways(ReferenceContainerFilter &filter) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
-    GenerateTestTree(container);
-
-    ReferenceContainer result;
-    container->Find(result, filter);
     bool ok = true;
-    //leafH should be found no matter what
-    if (result.Size() > 0) {
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        filter.SetMode(i);
+        filter.Reset();
         if (!filter.IsStorePath()) {
-            ok &= (result.Get(0) == leafH);
+            ok &= TestFindFilter(tree, filter, "H");
         }
         else if (!filter.IsRecursive()) {
-            ok &= (result.Get(0) == leafH);
+            ok &= TestFindFilter(tree, filter, "H");
         }
         else {
             if (!filter.IsReverse()) {
-                if (result.Size() == 3) {
-                    ok &= (result.Get(0) == containerC);
-                    ok &= (result.Get(1) == containerE);
-                    ok &= (result.Get(2) == leafH);
-                }
-                else {
-                    ok = false;
-                }
+                ok &= TestFindFilter(tree, filter, "C.E.H");
             }
             else {
-                if (result.Size() == 1) {
-                    ok &= (result.Get(0) == leafH);
-                }
-                else {
-                    ok = false;
-                }
+                ok &= TestFindFilter(tree, filter, "H");
             }
         }
+
     }
-    else {
-        ok = false;
-    }
+
     return ok;
 }
 
 bool ReferenceContainerTest::TestFindFirstOccurrence(ReferenceContainerFilter &filter) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
-    GenerateTestTree(container);
-
     bool ok = true;
-    //Look for containerE
-    ReferenceContainer result;
-    container->Find(result, filter);
-    //containerE should only be found if recursive is set to true
-    if (filter.IsRecursive()) {
-        if (!filter.IsStorePath()) {
-            ok &= (result.Get(0) == containerE);
-        }
-        else {
-            if (!filter.IsReverse()) {
-                if (result.Size() == 2) {
-                    ok &= (result.Get(0) == containerC);
-                    ok &= (result.Get(1) == containerE);
-                    ok &= (containerE->Get(0) == leafH);
-                }
-                else {
-                    ok = false;
-                }
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        filter.SetMode(i);
+        filter.Reset();
+        if (filter.IsRecursive()) {
+            if (!filter.IsStorePath()) {
+                ok &= TestFindFilter(tree, filter, "E");
             }
             else {
-                if (result.Size() == 3) {
-                    ok &= (result.Get(0) == containerD);
-                    ok &= (result.Get(1) == containerC);
-                    ok &= (result.Get(2) == containerE);
-                    ok &= (containerE->Get(0) == leafH);
+                if (!filter.IsReverse()) {
+                    ok &= TestFindFilter(tree, filter, "C.E");
                 }
                 else {
-                    ok = false;
+                    ok &= TestFindFilter(tree, filter, "D.C.E");
                 }
             }
         }
+        else {
+            ok &= TestFindFilter(tree, filter, "");
+        }
     }
-    else if (result.Size() > 0) {
-        ok = false;
-    }
-
     return ok;
 }
 
 bool ReferenceContainerTest::TestFindSecondOccurrence(ReferenceContainerFilter &filter) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
-    GenerateTestTree(container);
-
-    //Look for the second instance of leafH
-    ReferenceContainer result;
-    container->Find(result, filter);
     bool ok = true;
-    //The second instance of leafH should only be found if recursive is set to true.
-    if (filter.IsRecursive()) {
-        if (!filter.IsStorePath()) {
-            ok &= (result.Get(0) == leafH);
-        }
-        else {
-            //Reverse or not reverse the second leafH is always in the middle
-            if (result.Size() == 4) {
-                ok &= (result.Get(0) == containerD);
-                ok &= (result.Get(1) == containerC);
-                ok &= (result.Get(2) == containerE);
-                ok &= (result.Get(3) == leafH);
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        filter.SetMode(i);
+        filter.Reset();
+        if (filter.IsRecursive()) {
+            if (!filter.IsStorePath()) {
+                ok &= TestFindFilter(tree, filter, "H");
             }
             else {
-                ok = false;
+                //Reverse or not reverse the second leafH is always in the middle
+                ok &= TestFindFilter(tree, filter, "D.C.E.H");
             }
-
+        }
+        else {
+            ok &= TestFindFilter(tree, filter, "");
         }
     }
-    else if (result.Size() > 0) {
-        ok = false;
-    }
-
     return ok;
 }
 
 bool ReferenceContainerTest::TestFindThirdOccurrence(ReferenceContainerFilter &filter) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
-    GenerateTestTree(container);
     bool ok = true;
-
-    //Look for the third instance of leafH
-    ReferenceContainer result;
-    container->Find(result, filter);
-    //The third instance of leafH should only be found if recursive is set to true.
-    if (filter.IsRecursive()) {
-        if (!filter.IsStorePath()) {
-            ok &= (result.Get(0) == leafH);
-        }
-        else {
-            //From LR it is the last
-            if (!filter.IsReverse()) {
-                if (result.Size() == 1) {
-                    ok &= (result.Get(0) == leafH);
-                }
-                else {
-                    ok = false;
-                }
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        filter.SetMode(i);
+        filter.Reset();
+        if (filter.IsRecursive()) {
+            if (!filter.IsStorePath()) {
+                ok &= TestFindFilter(tree, filter, "H");
             }
             else {
-                if (result.Size() == 3) {
-                    ok &= (result.Get(0) == containerC);
-                    ok &= (result.Get(1) == containerE);
-                    ok &= (result.Get(2) == leafH);
+                //From LR it is the last
+                if (!filter.IsReverse()) {
+                    ok &= TestFindFilter(tree, filter, "H");
                 }
                 else {
-                    ok = false;
+                    ok &= TestFindFilter(tree, filter, "C.E.H");
                 }
             }
         }
-    }
-    else if (result.Size() > 0) {
-        ok = false;
+        else {
+            ok &= TestFindFilter(tree, filter, "");
+        }
     }
 
     return ok;
 }
 
 bool ReferenceContainerTest::TestFindAllOfASingleInstance(ReferenceContainerFilter &filter) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
-    GenerateTestTree(container);
     bool ok = true;
-
-    //Look for the only instance of leafG
-    ReferenceContainer result;
-    container->Find(result, filter);
-    //It should only be found if recursive is set to true.
-    if (filter.IsRecursive()) {
-        if (!filter.IsStorePath()) {
-            ok &= (result.Get(0) == leafG);
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        filter.SetMode(i);
+        filter.Reset();
+        if (filter.IsRecursive()) {
+            if (!filter.IsStorePath()) {
+                ok &= TestFindFilter(tree, filter, "G");
+            }
+            //It should never get here given that find all => !StorePath
+            else {
+                ok &= TestFindFilter(tree, filter, "");
+            }
         }
         else {
-            if (result.Size() == 3) {
-                ok &= (result.Get(0) == containerC);
-                ok &= (result.Get(1) == containerF);
-                ok &= (result.Get(2) == leafG);
-            }
-            else {
-                ok = false;
-            }
+            ok &= TestFindFilter(tree, filter, "");
         }
-    }
-    else if (result.Size() > 0) {
-        ok = false;
     }
 
     return ok;
 }
 
 bool ReferenceContainerTest::TestFindAllOfMultipleInstance(ReferenceContainerFilter &filter) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
-    GenerateTestTree(container);
     bool ok = true;
-
-    //Look for all the instances of leafH
-    ReferenceContainer result;
-    container->Find(result, filter);
-    //It not recursive only one should be found
-    if (!filter.IsRecursive()) {
-        ok &= (result.Get(0) == leafH);
-    }
-    else {
-        //Store path should not be enabled for this type of search
-        if (!filter.IsStorePath()) {
-            if (result.Size() == 3) {
-                ok &= (result.Get(0) == leafH);
-                ok &= (result.Get(1) == leafH);
-                ok &= (result.Get(2) == leafH);
-            }
-            else {
-                ok = false;
-            }
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        filter.SetMode(i);
+        filter.Reset();
+        if (!filter.IsRecursive()) {
+            ok &= TestFindFilter(tree, filter, "H");
         }
         else {
-            ok = false;
+            if (!filter.IsStorePath()) {
+                ok &= TestFindFilter(tree, filter, "H.H.H");
+            }
+            //It should never get here given that find all => !StorePath
+            else {
+                ok &= TestFindFilter(tree, filter, "");
+            }
         }
     }
+
     return ok;
 }
 
 bool ReferenceContainerTest::TestFindOutOfBoundsOccurrence(ReferenceContainerFilter &filter) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
-    GenerateTestTree(container);
+    bool ok = true;
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        filter.SetMode(i);
+        filter.Reset();
+        ok &= TestFindFilter(tree, filter, "");
+    }
 
-    //The occurrence of leafH provided by the filter (> 3 || <-1) will not exist
-    ReferenceContainer result;
-    container->Find(result, filter);
-    return (result.Size() == 0);
+    return ok;
 }
 
 bool ReferenceContainerTest::TestFindNonExistent(ReferenceContainerFilter &filter) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
-    GenerateTestTree(container);
-
+    bool ok = true;
+    uint32 i = 0;
     //Look for a node that does not exist.
-    ReferenceContainer result;
-    container->Find(result, filter);
-    return (result.Size() == 0);
+    for (i = 0; i < 8; i++) {
+        filter.SetMode(i);
+        filter.Reset();
+        ok &= TestFindFilter(tree, filter, "");
+    }
+    return ok;
 }
 
-bool ReferenceContainerTest::TestFindPath(ReferenceContainerFilterObjects &filter,
-                                          ReferenceContainer &expectedResult) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
-    GenerateTestTree(container);
+bool ReferenceContainerTest::TestFindEmptyTree(ReferenceContainerFilter &filter) {
     bool ok = true;
+    uint32 i = 0;
+    ReferenceT<ReferenceContainer> emptyTree("ReferenceContainer", h);
+    //Look for a node that does not exist.
+    for (i = 0; i < 8; i++) {
+        filter.SetMode(i);
+        filter.Reset();
+        ok &= TestFindFilter(emptyTree, filter, "");
+    }
+    return ok;
+}
 
-    //Look for all the instances of leafH
-    ReferenceContainer result;
-    container->Find(result, filter);
-    ok = VerifyExpectedResult(result, expectedResult);
+bool ReferenceContainerTest::TestFindPathLegalObjectFilter() {
+    bool ok = true;
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        ReferenceContainerFilterObjects filter(1, i, "D.C.E.H");
+        ok &= TestFindFilter(tree, filter, "D.C.E.H");
+    }
 
     return ok;
-
 }
 
-void ReferenceContainerTest::GenerateTestTree(ReferenceT<ReferenceContainer> container) {
+bool ReferenceContainerTest::TestFindPathLegalObjectFilterStartDot() {
+    bool ok = true;
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        ReferenceContainerFilterObjects filter(1, i, ".D.C.E.H");
+        ok &= TestFindFilter(tree, filter, "D.C.E.H");
+    }
+
+    return ok;
+}
+
+bool ReferenceContainerTest::TestFindPathLegalObjectFilterEndDot() {
+    bool ok = true;
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        ReferenceContainerFilterObjects filter(1, i, "D.C.E.H.");
+        ok &= TestFindFilter(tree, filter, "D.C.E.H");
+    }
+
+    return ok;
+}
+
+bool ReferenceContainerTest::TestFindPathIllegalObjectFilterTwoDots() {
+    bool ok = true;
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        ReferenceContainerFilterObjects filter(1, i, "D.C.E..H");
+        ok &= TestFindFilter(tree, filter, "");
+    }
+
+    return ok;
+}
+
+bool ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer> largeTree, ReferenceContainerFilter &filter) {
+    return TestFindFilter(tree, filter, "U3");
+}
+
+bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree,
+                                            ReferenceContainerFilter &filter,
+                                            const char8 * const expectedResult) {
+    ReferenceContainer expectedResultContainer;
+    ReferenceContainer result;
+    bool ok = false;
+    bool filterByObjectName = (dynamic_cast<ReferenceContainerFilterObjects *>(&filter) != NULL);
+
+    if (filterByObjectName) {
+        ok = GenerateExpectedResultFromString(expectedResultContainer, expectedResult);
+    }
+    else {
+        ok = GenerateExpectedResultFromStringUsingExistingReferences(tree, expectedResultContainer, expectedResult);
+    }
+
+    if (ok) {
+        tree->Find(result, filter);
+        if (filterByObjectName) {
+            ok = VerifyExpectedResultByObjectName(result, expectedResultContainer);
+        }
+        else {
+            ok = VerifyExpectedResult(result, expectedResultContainer);
+        }
+    }
+    return ok;
+}
+
+ReferenceT<ReferenceContainer> ReferenceContainerTest::GenerateTestTree() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    leafH = ReferenceT<Object>("Object", h);
+    leafB = ReferenceT<Object>("Object", h);
+    containerC = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+    containerD = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+    containerE = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+    containerF = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+    leafG = ReferenceT<Object>("Object", h);
+    leafH = ReferenceT<Object>("Object", h);
+    leafNoExist = ReferenceT<Object>("Object", h);
+
+    leafB->SetName("B");
+    containerC->SetName("C");
+    containerD->SetName("D");
+    containerE->SetName("E");
+    containerF->SetName("F");
+    leafG->SetName("G");
+    leafH->SetName("H");
+    leafNoExist->SetName("NoExist");
+
     containerE->Insert(leafH);
     containerC->Insert(containerE);
-
     containerD->Insert(containerF);
     containerD->Insert(containerC);
-
     containerF->Insert(leafG);
+    containerRoot->Insert(leafB);
+    containerRoot->Insert(containerC);
+    containerRoot->Insert(containerD);
+    containerRoot->Insert(leafH);
+    return containerRoot;
+}
 
-    container->Insert(leafB);
-    container->Insert(containerC);
-    container->Insert(containerD);
-    container->Insert(leafH);
+ReferenceT<ReferenceContainer> ReferenceContainerTest::GenerateTestTreeLarge(uint32 depth) {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    leafU3 = ReferenceT<Object>("Object", h);
+    containerU1 = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+    containerU2 = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
 
+    leafU3->SetName("U3");
+    containerU1->SetName("U1");
+    containerU2->SetName("U2");
+
+    uint32 i=0u;
+    for(i=0; i<depth; i++){
+        containerU1->Insert(containerU1);
+        containerU2->Insert(containerU2);
+    }
+
+    containerU1->Insert(leafU3);
+    containerU2->Insert(leafU3);
+
+    containerRoot->Insert(leafU3);
+    containerRoot->Insert(containerU2);
+    containerRoot->Insert(containerU1);
+    return containerRoot;
 }
 
 bool ReferenceContainerTest::VerifyExpectedResult(ReferenceContainer &source,
                                                   ReferenceContainer &test) {
     bool ok = (source.Size() == test.Size());
-    if (!ok) {
+    if (ok) {
         uint32 i;
         for (i = 0; i < source.Size(); i++) {
             ok &= (source.Get(i) == test.Get(i));
         }
     }
 
+    return ok;
+}
+
+bool ReferenceContainerTest::VerifyExpectedResultByObjectName(ReferenceContainer &source,
+                                                              ReferenceContainer &test) {
+    bool ok = (source.Size() == test.Size());
+    if (ok) {
+        uint32 i;
+        for (i = 0; i < source.Size(); i++) {
+            ok &= (StringHelper::Compare(source.Get(i)->GetName(), test.Get(i)->GetName()) == 0);
+        }
+    }
+
+    return ok;
+}
+
+bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source,
+                                                                                     ReferenceContainer &result,
+                                                                                     const char8 * const str) {
+    bool ok = true;
+    Heap h;
+    uint32 len = StringHelper::Length(str) + 1;
+    char8 *name = new char[len];
+    Memory::Set(name, '\0', len);
+
+    uint32 i;
+    uint32 j = 0;
+    for (i = 0; i < (len - 1); i++) {
+        if (str[i] == '.') {
+            ReferenceContainerFilterObjects filter(1, ReferenceContainerFilterMode::RECURSIVE, name);
+            ReferenceContainer resultSingle;
+            //Cannot pass result directly into the Find because the filter uses the result as an history buffer!
+            source->Find(resultSingle, filter);
+            if (resultSingle.Size() > 0) {
+                result.Insert(resultSingle.Get(0));
+            }
+            j = 0;
+            Memory::Set(name, '\0', len);
+        }
+        else {
+            name[j++] = str[i];
+        }
+    }
+    //Last node must be a leaf
+    //If nothing was found => first node is also a leaf
+    ReferenceContainerFilterObjects filter(1, ReferenceContainerFilterMode::RECURSIVE, name);
+    ReferenceContainer resultSingle;
+    //Cannot pass result directly into the Find because the filter uses the result as an history buffer!
+    source->Find(resultSingle, filter);
+    if (resultSingle.Size() > 0) {
+        result.Insert(resultSingle.Get(0));
+    }
+
+    delete[] name;
+    return ok;
+}
+
+bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer &result,
+                                                              const char8 * const str) {
+    bool ok = true;
+    Heap h;
+    uint32 len = StringHelper::Length(str) + 1;
+    char8 *name = new char[len];
+    Memory::Set(name, '\0', len);
+
+    uint32 i;
+    uint32 j = 0;
+    for (i = 0; i < (len - 1); i++) {
+        if (str[i] == '.') {
+            ReferenceT<ReferenceContainer> node("ReferenceContainer", h);
+            node->SetName(name);
+            result.Insert(node);
+            j = 0;
+            Memory::Set(name, '\0', len);
+        }
+        else {
+            name[j++] = str[i];
+        }
+    }
+    //Last node must be a leaf
+    //If nothing was found => first node is also a leaf
+    if (len > 1) {
+        ReferenceT<Object> leaf("Object", h);
+        leaf->SetName(name);
+        result.Insert(leaf);
+    }
+    delete[] name;
     return ok;
 }
 

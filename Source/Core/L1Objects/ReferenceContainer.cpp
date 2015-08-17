@@ -51,7 +51,7 @@ TimeoutType ReferenceContainer::GetTimeout() const {
     return muxTimeout;
 }
 
-void ReferenceContainer::SetTimeout(const TimeoutType &timeout){
+void ReferenceContainer::SetTimeout(const TimeoutType &timeout) {
     muxTimeout = timeout;
 }
 
@@ -95,51 +95,53 @@ bool ReferenceContainer::IsContainer(const Reference &ref) {
 void ReferenceContainer::Find(ReferenceContainer &result,
                               ReferenceContainerFilter &filter) {
     int32 index = 0;
-    if (filter.IsReverse()) {
-        index = list.ListSize() - 1;
-    }
-    //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
-    while (!filter.IsFinished() && ((filter.IsReverse() && (index > -1)) || (!filter.IsReverse() && (index < static_cast<int32>(list.ListSize()))))) {
+    if (list.ListSize() > 0) {
+        if (filter.IsReverse()) {
+            index = list.ListSize() - 1;
+        }
+        //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
+        while (!filter.IsFinished() && ((filter.IsReverse() && (index > -1)) || (!filter.IsReverse() && (index < static_cast<int32>(list.ListSize()))))) {
 
-        ReferenceContainerNode *currentNode = static_cast<ReferenceContainerNode *>(list.ListPeek(index));
-        Reference currentNodeReference = currentNode->GetReference();
+            ReferenceContainerNode *currentNode = static_cast<ReferenceContainerNode *>(list.ListPeek(index));
+            Reference currentNodeReference = currentNode->GetReference();
 
-        //Check if the current node meets the filter criteria
-        bool found = filter.Test(result, currentNodeReference);
-        if (found) {
-            if (filter.IsSearchAll() || filter.IsFinished()) {
-                result.Insert(currentNodeReference);
-                if (filter.IsDelete()) {
-                    //Only delete the exact node index
-                    list.ListDelete(currentNode);
-                    if (!filter.IsReverse()) {
-                        index--;
+            //Check if the current node meets the filter criteria
+            bool found = filter.Test(result, currentNodeReference);
+            if (found) {
+                if (filter.IsSearchAll() || filter.IsFinished()) {
+                    result.Insert(currentNodeReference);
+                    if (filter.IsDelete()) {
+                        //Only delete the exact node index
+                        list.ListDelete(currentNode);
+                        if (!filter.IsReverse()) {
+                            index--;
+                        }
                     }
                 }
             }
-        }
-        if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
-            if (filter.IsStorePath()) {
-                result.Insert(currentNodeReference);
-            }
-
-            ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
-            uint32 sizeBeforeBranching = result.list.ListSize();
-            currentNodeContainer->Find(result, filter);
-            //Something was found if the result size has changed
-            if (sizeBeforeBranching == result.list.ListSize()) {
-                //Nothing found. Remove the stored path (which led to nowhere).
+            if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
                 if (filter.IsStorePath()) {
-                    LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1);
-                    result.list.ListDelete(node);
+                    result.Insert(currentNodeReference);
+                }
+
+                ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
+                uint32 sizeBeforeBranching = result.list.ListSize();
+                currentNodeContainer->Find(result, filter);
+                //Something was found if the result size has changed
+                if (sizeBeforeBranching == result.list.ListSize()) {
+                    //Nothing found. Remove the stored path (which led to nowhere).
+                    if (filter.IsStorePath()) {
+                        LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1);
+                        delete node;
+                    }
                 }
             }
-        }
-        if (!filter.IsReverse()) {
-            index++;
-        }
-        else {
-            index--;
+            if (!filter.IsReverse()) {
+                index++;
+            }
+            else {
+                index--;
+            }
         }
     }
 }
