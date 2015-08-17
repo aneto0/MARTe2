@@ -1,6 +1,7 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -26,13 +27,12 @@ TARGET=msc
 
 include Makefile.inc
 
-CPPFLAGS+= -fprofile-arcs -ftest-coverage -coverage
 
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0Portability/L0Portability$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0Portability/L0PortabilityTest$(LIBEXT) 
-LIBRARIES   += ..\..\Build\$(TARGET)\Core\L1Objects\L1Objects$(LIBEXT)
-LIBRARIES   += ..\..\Build\$(TARGET)\Core\L1Objects\L1ObjectsTest$(LIBEXT)
-#LIBRARIES   += ..\..\Build\$(TARGET)\Core\LXTypeDev\LXTypeDev$(LIBEXT)
-#LIBRARIES   += ..\..\Build\$(TARGET)\Core\LXTypeDev\LXTypeDevTest$(LIBEXT)
-LIBRARIES   += ..\..\Lib\gtest-1.7.0\gtest_main-md.lib ..\..\Lib\gtest-1.7.0\gtest-md.lib 
-LIBRARIES   += Winmm.lib
+
+
+
+
+
+
+
+
