@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_OBJECT_H_
-#define SOURCE_CORE_L1OBJECTS_OBJECT_H_
+#ifndef OBJECT_H_
+#define OBJECT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -289,5 +289,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_OBJECT_H_ */
+#endif /* OBJECT_H_ */
 
