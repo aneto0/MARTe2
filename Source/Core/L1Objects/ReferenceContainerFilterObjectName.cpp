@@ -46,9 +46,7 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName() :
 }
 
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
-ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
-                                                                       const uint32 &mode,
-                                                                       const char8 * const address) :
+ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int32 &occurrenceNumber, const uint32 &mode, const char8 * const address) :
         ReferenceContainerFilter(occurrenceNumber, mode) {
 
     addressNumberNodes = 0u;
@@ -120,7 +118,7 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
     }
 
     //Only one thing is possible. Either look for the absolute path or for multiple occurrences.
-    if ((occurrence == -1) && (addressNumberNodes > 1u)) {
+    if (addressNumberNodes > 1u) {
         //Look for the first occurrence of the path
         occurrence = 1;
     }
@@ -191,28 +189,29 @@ bool ReferenceContainerFilterObjectName::IsSearchAll() const {
     return (ReferenceContainerFilter::IsSearchAll() && (addressNumberNodes == 1u));
 }
 
-bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound,
-                                              Reference &referenceToTest) {
+bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound, Reference &referenceToTest) {
     bool found = false;
-    uint32 idx = 0;
     if (addressNumberNodes > 0u) {
-        if (referenceToTest.IsValid()) {
-            if (referenceToTest->GetName() != NULL) {
-                //Looking for an absolute path
-                if (addressNumberNodes > 1u) {
-                    idx = previouslyFound.Size();
+        uint32 i = 0;
+        found = true;
+        //Check if what was already found is consistent with the path stored in addressToSearch
+        for (i = 0; (i < addressNumberNodes - 1) && found; i++) {
+            found = false;
+            if (previouslyFound.Get(i).IsValid()) {
+                if (previouslyFound.Get(i)->GetName() != NULL) {
+                    found = (StringHelper::Compare(previouslyFound.Get(i)->GetName(), addressToSearch[i]) == 0);
                 }
-                found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[idx]) == 0);
             }
         }
-        if (found) {
-            if (addressNumberNodes == 1u) {
-                IncrementFound();
-            }
-            else if (addressNumberNodes == (previouslyFound.Size() + 1)) {
-                IncrementFound();
+        //Check if this is the last node and if it matches the last part of the addressToSearch
+        if (found && referenceToTest.IsValid()) {
+            if (referenceToTest->GetName() != NULL) {
+                found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[addressNumberNodes - 1]) == 0);
             }
         }
+    }
+    if (found) {
+        IncrementFound();
     }
     return found;
 }

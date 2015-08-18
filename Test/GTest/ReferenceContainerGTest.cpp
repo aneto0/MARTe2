@@ -258,6 +258,16 @@ TEST(ReferenceContainerGTest,TestFindPathIllegalObjectNameFilterTwoDots) {
     ASSERT_TRUE(referenceContainerTest.TestFindPathIllegalObjectNameFilterTwoDots());
 }
 
+TEST(ReferenceContainerGTest,TestFindWrongPathObjectNameFilter) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestFindWrongPathObjectNameFilter());
+}
+
+TEST(ReferenceContainerGTest,TestFindRelativePathObjectNameFilter) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestFindRelativePathObjectNameFilter());
+}
+
 /***********************
  * TestFindPerformance *
  ***********************/

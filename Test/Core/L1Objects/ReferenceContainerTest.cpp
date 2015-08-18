@@ -315,6 +315,28 @@ bool ReferenceContainerTest::TestFindPathIllegalObjectNameFilterTwoDots() {
     return ok;
 }
 
+bool ReferenceContainerTest::TestFindWrongPathObjectNameFilter() {
+    bool ok = true;
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        ReferenceContainerFilterObjectName filter(1, i, "D.C.F.H");
+        ok &= !TestFindFilter(tree, filter, "D.C.E.H");
+    }
+
+    return ok;
+}
+
+bool ReferenceContainerTest::TestFindRelativePathObjectNameFilter() {
+    bool ok = true;
+    uint32 i = 0;
+    for (i = 0; i < 8; i++) {
+        ReferenceContainerFilterObjectName filter(1, i, "F.G");
+        ok &= !TestFindFilter(tree, filter, "F.G");
+    }
+
+    return ok;
+}
+
 float ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
                                                   ReferenceContainerFilter &filter) {
     uint64 start = HighResolutionTimer::Counter();

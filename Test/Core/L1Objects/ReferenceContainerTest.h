@@ -189,6 +189,20 @@ public:
     bool TestFindPathIllegalObjectNameFilterTwoDots();
 
     /**
+     * Tests the ReferenceContainer::Find function with a use-case that searches for an absolute path with a typo "D.C.F.H".
+     * @details Note that when looking for an absolute path RECURSIVE and PATH are automatically enforced.
+     * @return true if the path cannot be found given that the full absolute path must be matched.
+     */
+    bool TestFindWrongPathObjectNameFilter();
+
+    /**
+     * Tests the ReferenceContainer::Find function with a use-case that searches for a relative path "F.G".
+     * @details Note that when looking for an absolute path RECURSIVE and PATH are automatically enforced.
+     * @return true if the path cannot be found given that only absolute paths are supported.
+     */
+    bool TestFindRelativePathObjectNameFilter();
+
+    /**
      * @brief Tests the ReferenceContainer::Find function with a use-case that looks for the container "C" and deletes it.
      * @details When moving forward this will delete the second main branch of the tree. The third branch, where "C" also
      * exists, should not be deleted.
