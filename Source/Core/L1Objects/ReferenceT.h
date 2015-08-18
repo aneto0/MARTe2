@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCET_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCET_H_
+#ifndef REFERENCET_H_
+#define REFERENCET_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -36,6 +36,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
  * @brief Template version of the shared pointer implementation (see Reference).
  */
@@ -82,7 +83,8 @@ public:
      * @param[in] typeName the type (i.e. class name) of the object to be instantiated.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(const char8* typeName, Heap &heap);
+    ReferenceT(const char8* typeName,
+               Heap &heap);
 
     /**
      * @brief Removes the reference to the underlying object. @see RemoveReference.
@@ -91,7 +93,7 @@ public:
 
     /**
      * @brief Removes the reference to the underlying object.
-     * @detail If the number of references to the underlying object is zero, the object is deleted.
+     * @details If the number of references to the underlying object is zero, the object is deleted.
      */
     virtual void RemoveReference();
 
@@ -104,33 +106,19 @@ public:
 
     /**
      * @brief Assignment operator.
-     * @param sourceReference the source reference to be assigned to this reference.
      * @details This reference will be referencing the same object as the sourceReference.
+     * @param[in] sourceReference the source reference to be assigned to this reference.
      * @return a reference to the object referenced by \a sourceReference.
      */
     ReferenceT<T>& operator=(const ReferenceT<T>& sourceReference);
 
     /**
      * @brief Assignment operator.
-     * @param[in] sourceReference the source reference to be assigned to this reference.
      * @details This reference will be referencing the same object as the \a sourceReference.
+     * @param[in] sourceReference the source reference to be assigned to this reference.
      * @return a reference to the object referenced by \a sourceReference.
      */
     virtual ReferenceT<T>& operator=(const Reference& sourceReference);
-
-    /**
-     * @brief Creates a Reference to a different object.
-     * @param[in] sourceReference the Reference holding the source object.
-     * @return true if the \a sourceReference and its source object are valid.
-     */
-    virtual bool Clone(Reference& sourceReference);
-
-    /**
-     * @brief Creates a Reference to a different object.
-     * @param[in] sourceReference the Reference holding the source object.
-     * @return true if the \a sourceReference and its source object are valid.
-     */
-    virtual bool Clone(ReferenceT<T>& sourceReference);
 
     /**
      * @brief Verifies if this Reference links to the same object of \a sourceReference.
@@ -143,17 +131,16 @@ public:
      * @brief Provides access to the object referenced by this Reference.
      * @return a pointer to the object referenced by this Reference.
      */
-    virtual T* operator->() const {
-        return typeTObjectPointer;
-    }
+    virtual T* operator->();
 
     /**
-     * @brief Create an object from a structured list of elements.
+     * @brief Creates an object from a structured list of elements.
      * @param[in] data the data to initialise the underlying object.
      * @param[in] createOnly if true the object Initialise method is not called.
-     * @return true if the object was successfully created and initialised.
+     * @return true if the object was successfully created and initialized.
      */
-    virtual bool Initialise(const StructuredData &data, bool createOnly);
+    virtual bool Initialise(const StructuredData &data,
+                            bool createOnly);
 
 private:
 
@@ -164,14 +151,14 @@ private:
     virtual ReferenceT<T>* operator&();
 
     /**
+     * @brief Set thes internal pointers to NULL.
+     */
+    void Init();
+
+    /**
      * The pointer to the referenced object.
      */
     T* typeTObjectPointer;
-
-    /**
-     * @brief Set the internal pointers to NULL.
-     */
-    void Init();
 
 };
 
@@ -198,7 +185,7 @@ ReferenceT<T>::ReferenceT(Heap &heap) {
         Object *obj;
         obj = dynamic_cast<Object *>(p);
         if (obj != NULL) {
-            Reference::operator= (obj);
+            Reference::operator=(obj);
             typeTObjectPointer = p;
         }
     }
@@ -231,7 +218,9 @@ ReferenceT<T>::ReferenceT(const ReferenceT<T>& sourceReference) {
 }
 
 template<typename T>
-ReferenceT<T>::ReferenceT(const char8* typeName, Heap &heap) : Reference(typeName, heap) {
+ReferenceT<T>::ReferenceT(const char8* typeName,
+                          Heap &heap) :
+        Reference(typeName, heap) {
     typeTObjectPointer = NULL;
     if (Reference::IsValid()) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);
@@ -244,7 +233,8 @@ ReferenceT<T>::ReferenceT(const char8* typeName, Heap &heap) : Reference(typeNam
 
 template<typename T>
 ReferenceT<T>::~ReferenceT() {
-    RemoveReference();
+    /*lint -e{1551} The delete could cause a segmentation fault.*/
+    ReferenceT<T>::RemoveReference();
 }
 
 template<typename T>
@@ -256,9 +246,8 @@ void ReferenceT<T>::RemoveReference() {
 
 template<typename T>
 bool ReferenceT<T>::IsValid() const {
-    if (!Reference::IsValid())
-        return false;
-    return (typeTObjectPointer != NULL);
+
+    return (typeTObjectPointer != NULL) && (Reference::IsValid());
 }
 
 template<typename T>
@@ -294,48 +283,13 @@ bool ReferenceT<T>::operator==(const ReferenceT<T>& sourceReference) const {
 }
 
 template<typename T>
-bool ReferenceT<T>::Clone(Reference& sourceReference) {
-    RemoveReference();
-    bool ok = true;
-    if (!Reference::Clone(sourceReference)) {
-        ok = false;
-    }
-    if (ok) {
-        typeTObjectPointer = dynamic_cast<T*>(objectPointer);
-        if (typeTObjectPointer == NULL) {
-            RemoveReference();
-            ok = false;
-        }
-        if (ok) {
-            ok = IsValid();
-        }
-    }
-    return ok;
+T* ReferenceT<T>::operator->() {
+    return typeTObjectPointer;
 }
 
 template<typename T>
-bool ReferenceT<T>::Clone(ReferenceT<T>& sourceReference) {
-    RemoveReference();
-    bool ok = true;
-    if (!Reference::Clone(sourceReference)) {
-        ok = false;
-    }
-    if (ok) {
-        typeTObjectPointer = dynamic_cast<T*>(objectPointer);
-        if (typeTObjectPointer == NULL) {
-            RemoveReference();
-            ok = false;
-        }
-        if (ok) {
-            ok = IsValid();
-        }
-    }
-
-    return ok;
-}
-
-template<typename T>
-bool ReferenceT<T>::Initialise(const StructuredData &data, bool createOnly) {
+bool ReferenceT<T>::Initialise(const StructuredData &data,
+                               bool createOnly) {
     Reference ref;
     bool ok = true;
     if (ref.Initialise(data, createOnly)) {
@@ -352,4 +306,4 @@ template<typename T>
 ReferenceT<T>* ReferenceT<T>::operator&() {
     return this;
 }
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCET_H_ */
+#endif /* REFERENCET_H_ */

@@ -1,8 +1,8 @@
 /**
- * @file ReferenceContainer.h
- * @brief Header file for class ReferenceContainer
- * @date 13/08/2015
- * @author Andre Neto
+ * @file ErrorInformation.h
+ * @brief Header file for class ErrorInformation
+ * @date 14/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ReferenceContainer
+ * @details This header file contains the declaration of the class ErrorInformation
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINER_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINER_H_
+#ifndef ERRORINFORMATION_H_
+#define ERRORINFORMATION_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,87 +32,79 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "LinkedListHolder.h"
-#include "MutexSem.h"
-#include "TimeoutType.h"
-#include "Object.h"
-#include "Reference.h"
-#include "LinkedListable.h"
-#include "ReferenceContainerFilter.h"
-#include "ReferenceContainerNode.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace ErrorManagement {
 /**
- * @brief
+ @brief Information structure associated to the error.
  */
-/*lint -e{9109} forward declaration in ReferenceContainerFilter.h is required to define the class*/
-class ReferenceContainer: public Object {
-public:
-    CLASS_REGISTER_DECLARATION()
+struct ErrorInformation {
 
     /**
-     * TODO
+     * Definition of the header.
      */
-    ReferenceContainer();
+    struct {
+
+        /**
+         * The error code.
+         */
+        ErrorType errorType;
+
+        /**
+         * The error line number.
+         */
+        uint16 lineNumber;
+
+        /**
+         * Specified is the error is triggered within an object.
+         */
+        bool isObject :1;
+
+    } header;
 
     /**
-     * TODO
+     *  High resolution timer ticks.
      */
-    virtual ~ReferenceContainer();
+    int64 hrtTime;
 
     /**
-     * TODO
+     * The error file name.
      */
-    bool Insert(Reference ref,
-                const int32 &position = -1);
+    const char8 * fileName;
 
     /**
-     * TODO
+     * The error function name
      */
-    bool Delete(Reference ref);
+    const char8 * functionName;
 
     /**
-     *
-     * @param result
-     * @param filter
-     * @param mode
+     * thread ID of the threads who generate the error.
      */
-    void Find(ReferenceContainer &result,
-              ReferenceContainerFilter &filter);
-
-    bool IsContainer(const Reference &ref) const;
-
-    uint32 Size() const;
-
-
-    Reference Get(const uint32 idx);
-
-    TimeoutType GetTimeout() const;
-
-    void SetTimeout(const TimeoutType &timeout);
-
-private:
-    /**
-     * The list of references
-     */
-    LinkedListHolder list;
+    ThreadIdentifier threadId;
 
     /**
-     * Protects multiple access to the internal resources
+     * The Address of the object that produced the error.
+     * Object may be temporary in memory because the
+     * objectPointer will only be printed, not used
      */
-    MutexSem mux;
+    void * objectPointer;
 
     /**
-     * Timeout
+     * A pointer to a const char * which is persistent
+     * so a real constant, not a char * relabeled as const char *
+     * scope. It should be global to the application and persistent
      */
-    TimeoutType muxTimeout;
+    const char8 * className;
+
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINER_H_ */
+#endif /* ERRORINFORMATION_H_ */
 

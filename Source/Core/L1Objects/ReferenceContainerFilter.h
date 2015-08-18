@@ -63,7 +63,9 @@ static const uint32 REVERSE = 0x4u;
 static const uint32 DELETE = 0x8u;
 }
 
+
 class ReferenceContainer;
+
 /**
  * @brief Defines the filtering criteria for the ReferenceContainer searches.
  * @details This class needs to be specialised to implement different search criteria.

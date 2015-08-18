@@ -29,7 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainer.h"
-
 #include "ReferenceContainerNode.h"
 #include "ReferenceT.h"
 
@@ -45,6 +44,18 @@ ReferenceContainer::ReferenceContainer() :
     if (mux.Create()) {
         muxTimeout = TTInfiniteWait;
     }
+}
+
+/*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
+Reference ReferenceContainer::Get(const uint32 idx) {
+    Reference ref;
+    if (idx < list.ListSize()) {
+        ReferenceContainerNode *node = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(idx));
+        if (node != NULL) {
+            ref = node->GetReference();
+        }
+    }
+    return ref;
 }
 
 TimeoutType ReferenceContainer::GetTimeout() const {
@@ -92,6 +103,7 @@ bool ReferenceContainer::IsContainer(const Reference &ref) const {
     return test.IsValid();
 }
 
+/*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
 void ReferenceContainer::Find(ReferenceContainer &result,
                               ReferenceContainerFilter &filter) {
     uint32 index = 0u;
@@ -110,15 +122,16 @@ void ReferenceContainer::Find(ReferenceContainer &result,
 
             //if IsSearchAll, all found nodes should be inserted in the output list
             //if IsFinished means that you found your desired occurrence of this object, then add it to the output list
-            if ((filter.IsSearchAll()) || (filter.IsFinished())) {
+            /*lint -e{9007} filter.IsSearchAll() has no side effects*/
+            if ((filter.IsFinished()) || (filter.IsSearchAll())) {
 
                 //if the reference is invalid just not add it to the output list
-                (void)result.Insert(currentNodeReference);
+                (void) result.Insert(currentNodeReference);
                 //if IsDelete delete the found node
                 if (filter.IsDelete()) {
                     //Only delete the exact node index
                     //ignore the return value since the node is surely in the list
-                    (void)list.ListDelete(currentNode);
+                    (void) list.ListDelete(currentNode);
 
                     //since after the index is incremented if you don't decrement here
                     //you will lose an element
@@ -129,12 +142,12 @@ void ReferenceContainer::Find(ReferenceContainer &result,
             }
         }
 
-
+        /*lint -e{9007} filter.IsRecursive() has no side effects*/
         if ((IsContainer(currentNodeReference)) && (filter.IsRecursive())) {
 
             //add the current node to the ouput list if IsStorePath
             if (filter.IsStorePath()) {
-                (void)result.Insert(currentNodeReference);
+                (void) result.Insert(currentNodeReference);
             }
 
             ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
@@ -146,10 +159,10 @@ void ReferenceContainer::Find(ReferenceContainer &result,
             if (sizeBeforeBranching == result.list.ListSize()) {
                 //Nothing found. Remove the stored path (which led to nowhere).
                 if (filter.IsStorePath()) {
-                    LinkedListable *node = result.list.ListPeek(result.list.ListSize() - 1u);/// Peek instead of extract
+                    LinkedListable *node = result.list.ListPeek(result.list.ListSize() - 1u);                    /// Peek instead of extract
 
                     //ignore the return value since node is surely in the list
-                    (void)result.list.ListDelete(node); //////////?????????????????
+                    (void) result.list.ListDelete(node); //////////?????????????????
                 }
             }
         }

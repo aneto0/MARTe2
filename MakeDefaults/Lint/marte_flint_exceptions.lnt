@@ -304,6 +304,8 @@
  -esym(1711,LinkedListHolder)
  // Lint does not see this because of the macros.  
  -esym(1711,Object)
+ -esym(1711,ReferenceContainer)
+ -esym(1711,ReferenceT*)
  
 /*
  * Rule flexelint 1960 
@@ -367,3 +369,9 @@
  * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.
  */
  -estring(1790, *LinkedListable*)
+
+ /*
+  * Rule 3-1-1
+  * Justification: Required for template implementation.
+  */
+-esym(9107, ReferenceT*)

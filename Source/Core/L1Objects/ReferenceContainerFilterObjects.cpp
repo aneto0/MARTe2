@@ -94,8 +94,7 @@ ReferenceContainerFilterObjects::ReferenceContainerFilterObjects(const int32 &oc
 
     if (addressNumberNodes > 0u) {
         //create an array of strings for nodes
-        addressToSearch = static_cast<char8 **>(Memory::Malloc(addressNumberNodes * static_cast<uint32>(sizeof(char8 *))));
-        //addressToSearch = new char8*[addressNumberNodes];
+        addressToSearch = new char8*[addressNumberNodes];
         lastOccurrence = address;
 
         for (uint32 i = 0u; i < addressNumberNodes; i++) {
@@ -128,15 +127,15 @@ ReferenceContainerFilterObjects::ReferenceContainerFilterObjects(const int32 &oc
     }
 }
 
+/*lint -e{1551} The free could cause a segmentation fault.*/
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
-/*lint -e{9025} the free of char ** addressToSearch requires a char*** to pass the argument by reference to the free function. */
 ReferenceContainerFilterObjects::~ReferenceContainerFilterObjects() {
     if (addressNumberNodes > 0u) {
         uint32 i;
         for (i = 0u; i < addressNumberNodes; i++) {
             Memory::Free(reinterpret_cast<void *&>(addressToSearch[i]));
         }
-        Memory::Free(static_cast<void *&>(addressToSearch));
+        delete [] addressToSearch;
     }
 }
 
