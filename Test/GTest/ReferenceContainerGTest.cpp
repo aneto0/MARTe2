@@ -265,14 +265,18 @@ TEST(ReferenceContainerGTest,TestFindPerformanceReferenceFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceT<ReferenceContainer> largeTree = referenceContainerTest.GenerateTestTreeLarge(5000);
     ReferenceContainerFilterReferences filter(3, ReferenceContainerFilterMode::RECURSIVE, referenceContainerTest.leafU3);
-    ASSERT_TRUE(referenceContainerTest.TestFindPerformance(largeTree, filter));
+    float totalTime = referenceContainerTest.TestFindPerformance(largeTree, filter);
+    printf("Total time for TestFindPerformanceReferenceFilter = %e\n", totalTime);
+    ASSERT_TRUE(totalTime < 1.0);
 }
 
 TEST(ReferenceContainerGTest,TestFindPerformanceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceT<ReferenceContainer> largeTree = referenceContainerTest.GenerateTestTreeLarge(5000);
     ReferenceContainerFilterObjectName filter(3, ReferenceContainerFilterMode::RECURSIVE, "U3");
-    ASSERT_TRUE(referenceContainerTest.TestFindPerformance(largeTree, filter));
+    float totalTime = referenceContainerTest.TestFindPerformance(largeTree, filter);
+    printf("Total time for TestFindPerformanceReferenceFilter = %e\n", totalTime);
+    ASSERT_TRUE(totalTime < 1.0);
 }
 
 /*********************************
@@ -335,3 +339,93 @@ TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReverseObjectNameFilt
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveSecondOccurrenceReverse(filter));
 }
 
+/****************************************
+ * TestFindRemoveSecondOccurrenceReverse *
+ ****************************************/
+TEST(ReferenceContainerGTest,TestFindRemoveFromSubcontainerReferenceFilter) {
+    ReferenceContainerTest referenceContainerTest;
+    ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE, referenceContainerTest.containerE);
+    ASSERT_TRUE(referenceContainerTest.TestFindRemoveFromSubcontainer(filter));
+}
+
+TEST(ReferenceContainerGTest,TestFindRemoveFromSubcontainerObjectNameFilter) {
+    ReferenceContainerTest referenceContainerTest;
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, "E");
+    ASSERT_TRUE(referenceContainerTest.TestFindRemoveFromSubcontainer(filter));
+}
+
+/****************************************
+ * TestFindRemoveAllOfMultipleInstance  *
+ ****************************************/
+TEST(ReferenceContainerGTest,TestFindRemoveAllOfMultipleInstanceReferenceFilter) {
+    ReferenceContainerTest referenceContainerTest;
+    ReferenceContainerFilterReferences filter(-1, ReferenceContainerFilterMode::RECURSIVE, referenceContainerTest.leafH);
+    ASSERT_TRUE(referenceContainerTest.TestFindRemoveAllOfMultipleInstance(filter));
+}
+
+TEST(ReferenceContainerGTest,TestFindRemoveAllOfMultipleInstanceObjectNameFilter) {
+    ReferenceContainerTest referenceContainerTest;
+    ReferenceContainerFilterObjectName filter(-1, ReferenceContainerFilterMode::RECURSIVE, "H");
+    ASSERT_TRUE(referenceContainerTest.TestFindRemoveAllOfMultipleInstance(filter));
+}
+
+
+/***************
+ * TestInsert  *
+ ***************/
+TEST(ReferenceContainerGTest,TestInsertAtEnd) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestInsertAtEnd());
+}
+
+TEST(ReferenceContainerGTest,TestInsertAtBeginning) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestInsertAtBeginning());
+}
+
+TEST(ReferenceContainerGTest,TestInsertAtMiddle) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestInsertAtMiddle());
+}
+
+/*************
+ * TestSize  *
+ *************/
+TEST(ReferenceContainerGTest,TestSize) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestSize());
+}
+
+TEST(ReferenceContainerGTest,TestSizeZero) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestSizeZero());
+}
+
+/*************
+ * TestGet   *
+ *************/
+TEST(ReferenceContainerGTest,TestGet) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestGet());
+}
+
+TEST(ReferenceContainerGTest,TestGetInvalid) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestGetInvalid());
+}
+
+/*******************
+ * TestIsContainer *
+ *******************/
+TEST(ReferenceContainerGTest,TestIsContainer) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestIsContainer());
+}
+
+/*******************
+ * TestDelete *
+ *******************/
+TEST(ReferenceContainerGTest,TestDelete) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestDelete());
+}

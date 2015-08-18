@@ -2,7 +2,7 @@
  * @file TestObject1.h
  * @brief Header file for class TestObject1
  * @date 06/08/2015
- * @author aneto
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

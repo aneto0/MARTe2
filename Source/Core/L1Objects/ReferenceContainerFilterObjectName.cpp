@@ -202,9 +202,7 @@ bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFoun
                 if (addressNumberNodes > 1u) {
                     idx = previouslyFound.Size();
                 }
-                //printf("[%s] vs [%s]\n", referenceToTest->GetName(), addressToSearch[idx]);
                 found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[idx]) == 0);
-                //printf("FOUND = %d\n", found);
             }
         }
         if (found) {

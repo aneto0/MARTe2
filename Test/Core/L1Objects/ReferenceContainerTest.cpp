@@ -315,9 +315,11 @@ bool ReferenceContainerTest::TestFindPathIllegalObjectNameFilterTwoDots() {
     return ok;
 }
 
-bool ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
-                                                 ReferenceContainerFilter &filter) {
-    return TestFindFilter(largeTree, filter, "U3");
+float ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
+                                                  ReferenceContainerFilter &filter) {
+    uint64 start = HighResolutionTimer::Counter();
+    TestFindFilter(largeTree, filter, "U3");
+    return (HighResolutionTimer::Counter() - start) * HighResolutionTimer::Period();
 }
 
 bool ReferenceContainerTest::TestFindRemoveFirstOccurrence(ReferenceContainerFilter &filter) {
@@ -338,7 +340,9 @@ bool ReferenceContainerTest::TestFindRemoveFirstOccurrence(ReferenceContainerFil
 
 bool ReferenceContainerTest::TestFindRemoveFirstOccurrenceReverse(ReferenceContainerFilter &filter) {
     filter.Reset();
-    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE);
+    filter.SetMode(
+            ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH
+                    | ReferenceContainerFilterMode::REMOVE);
     //Remove node "D.C"
     bool ok = TestFindFilter(tree, filter, "D.C");
     filter.Reset();
@@ -386,6 +390,47 @@ bool ReferenceContainerTest::TestFindRemoveSecondOccurrenceReverse(ReferenceCont
     return ok;
 }
 
+void PrintTree(ReferenceT<ReferenceContainer> tree) {
+    uint32 i = 0;
+    for (i = 0; i < tree->Size(); i++) {
+        printf("%s|", tree->Get(i)->GetName());
+        ReferenceT<ReferenceContainer> node = tree->Get(i);
+        if (node.IsValid()) {
+            //PrintTree(node);
+        }
+    }
+}
+
+bool ReferenceContainerTest::TestFindRemoveFromSubcontainer(ReferenceContainerFilter &filter) {
+    filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REMOVE);
+    //Remove node "E"
+    bool ok = TestFindFilter(tree, filter, "E");
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::RECURSIVE);
+    //Should no longer find any reference of E
+    filter.SetOriginalSetOccurrence(-1);
+    //Cannot call TestFindFilter as GenerateExpectedResultFromStringUsingExistingReferences needs E to be in the tree.
+    ReferenceContainer result;
+    tree->Find(result, filter);
+    ok &= (result.Size() == 0);
+    return ok;
+}
+
+bool ReferenceContainerTest::TestFindRemoveAllOfMultipleInstance(ReferenceContainerFilter &filter) {
+    filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REMOVE);
+    //Remove node "H" (notice that when removing from the E container two occurrences will be removed)
+    bool ok = TestFindFilter(tree, filter, "H.H");
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::RECURSIVE);
+    //Should no longer find any reference of H
+    filter.SetOriginalSetOccurrence(-1);
+    //Cannot call TestFindFilter as GenerateExpectedResultFromStringUsingExistingReferences needs H to be in the tree.
+    ReferenceContainer result;
+    tree->Find(result, filter);
+    ok &= (result.Size() == 0);
+    return ok;
+}
+
 bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree,
                                             ReferenceContainerFilter &filter,
                                             const char8 * const expectedResult) {
@@ -410,6 +455,118 @@ bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree,
             ok = VerifyExpectedResult(result, expectedResultContainer);
         }
     }
+    return ok;
+}
+
+bool ReferenceContainerTest::TestInsertAtEnd() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    containerRoot->Insert(leafB);
+    containerRoot->Insert(containerC);
+    containerRoot->Insert(containerD);
+    containerRoot->Insert(leafH);
+    bool ok = (containerRoot->Get(0) == leafB);
+    ok &= (containerRoot->Get(1) == containerC);
+    ok &= (containerRoot->Get(2) == containerD);
+    ok &= (containerRoot->Get(3) == leafH);
+
+    ok &= (containerRoot->Size() == 4);
+
+    return ok;
+}
+
+bool ReferenceContainerTest::TestInsertAtBeginning() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+
+    containerRoot->Insert(leafB, 0);
+    containerRoot->Insert(containerC, 0);
+    containerRoot->Insert(containerD, 0);
+    containerRoot->Insert(leafH, 0);
+    bool ok = (containerRoot->Get(3) == leafB);
+    ok &= (containerRoot->Get(2) == containerC);
+    ok &= (containerRoot->Get(1) == containerD);
+    ok &= (containerRoot->Get(0) == leafH);
+
+    ok &= (containerRoot->Size() == 4);
+
+    return ok;
+}
+
+bool ReferenceContainerTest::TestInsertAtMiddle() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+
+    containerRoot->Insert(leafB, 0);
+    containerRoot->Insert(containerD, 0);
+    containerRoot->Insert(leafH, 0);
+
+    containerRoot->Insert(containerC, 2);
+
+    bool ok = (containerRoot->Get(3) == leafB);
+    ok &= (containerRoot->Get(2) == containerC);
+    ok &= (containerRoot->Get(1) == containerD);
+    ok &= (containerRoot->Get(0) == leafH);
+
+    ok &= (containerRoot->Size() == 4);
+    return ok;
+}
+
+bool ReferenceContainerTest::TestSize() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+
+    containerRoot->Insert(leafB, 0);
+    containerRoot->Insert(containerD, 0);
+    containerRoot->Insert(leafH, 0);
+
+    containerRoot->Insert(containerC, 2);
+
+    return (containerRoot->Size() == 4);
+}
+
+bool ReferenceContainerTest::TestSizeZero() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+
+    return (containerRoot->Size() == 0);
+}
+
+bool ReferenceContainerTest::TestGet() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    containerRoot->Insert(leafB);
+    containerRoot->Insert(containerC);
+    containerRoot->Insert(containerD);
+    containerRoot->Insert(leafH);
+    bool ok = (containerRoot->Get(0) == leafB);
+    ok &= (containerRoot->Get(1) == containerC);
+    ok &= (containerRoot->Get(2) == containerD);
+    ok &= (containerRoot->Get(3) == leafH);
+
+    return ok;
+}
+
+bool ReferenceContainerTest::TestGetInvalid() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    containerRoot->Insert(leafB);
+    containerRoot->Insert(containerC);
+    containerRoot->Insert(containerD);
+    containerRoot->Insert(leafH);
+
+    Reference invalid1 = containerRoot->Get(4);
+    Reference invalid2 = containerRoot->Get(-1);
+
+    return (!invalid1.IsValid() && !invalid2.IsValid());
+}
+
+bool ReferenceContainerTest::TestIsContainer() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    return (containerRoot->IsContainer(containerC) && !containerRoot->IsContainer(leafB));
+}
+
+bool ReferenceContainerTest::TestDelete() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    containerRoot->Insert(leafB);
+    containerRoot->Insert(containerC);
+    containerRoot->Insert(containerD);
+    containerRoot->Insert(leafH);
+    bool ok = (containerRoot->Delete(containerC));
+    ok &= (containerRoot->Size() == 3);
     return ok;
 }
 
@@ -576,97 +733,6 @@ bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer
     delete[] name;
     return ok;
 }
-
-void PrintTree(ReferenceT<ReferenceContainer> tree) {
-    uint32 i = 0;
-    for (i = 0; i < tree->Size(); i++) {
-        printf("%s|", tree->Get(i)->GetName());
-        ReferenceT<ReferenceContainer> node = tree->Get(i);
-        if (node.IsValid()) {
-            PrintTree(node);
-        }
-    }
-}
-
-#if 0
-bool ReferenceContainerTest::TestFindRemoveFirstOccurrence(ReferenceT<ReferenceContainer> removeTree, ReferenceContainerFilter &filter) {
-
-    bool ok = true;
-    if (ok) {
-        ReferenceT<ReferenceContainer> removeTree = GenerateTestTree();
-        filter = ReferenceContainerFilterReferences(1, ReferenceContainerFilterMode::RECURSIVE, containerC);
-        PrintTree(removeTree);
-        printf("\n");
-        filter.Reset();
-        filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE);
-        ok &= TestFindFilter(removeTree, filter, "C");
-        PrintTree(removeTree);
-        printf("\n");
-        filter.Reset();
-        filter.SetMode(0u);
-        //Should no longer find C.E.H. but still find D.C.E.H
-        ok &= !TestFindFilter(removeTree, filter, "C");
-        filter.Reset();
-        filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
-        ok &= TestFindFilter(removeTree, filter, "D.C");
-
-        removeTree = GenerateTestTree();
-        filter = ReferenceContainerFilterReferences(1, ReferenceContainerFilterMode::RECURSIVE, containerC);
-        PrintTree(removeTree);
-        printf("\n");
-        filter.Reset();
-        filter.SetMode(
-                ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REVERSE
-                | ReferenceContainerFilterMode::REMOVE);
-        ok &= TestFindFilter(removeTree, filter, "D.C");
-        PrintTree(removeTree);
-        printf("\n");
-        filter.Reset();
-        filter.SetMode(ReferenceContainerFilterMode::REVERSE);
-        ok &= !TestFindFilter(removeTree, filter, "D.C");
-        filter.Reset();
-        ok &= TestFindFilter(removeTree, filter, "C");
-    }
-    return ok;
-}
-
-bool ReferenceContainerTest::TestFindRemoveFirstOccurrence() {
-    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, "E");
-    bool ok = TestFindFirstOccurrence(filter);
-    if (ok) {
-        ReferenceT<ReferenceContainer> removeTree = GenerateTestTreeUniqueReference();
-        filter = ReferenceContainerFilterObjectName(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE, "E");
-        PrintTree(removeTree);
-        printf("\n");
-        //Find and remove
-        ok &= TestFindFilter(removeTree, filter, "C.E");
-        PrintTree(removeTree);
-        printf("\n");
-        filter.Reset();
-        filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
-        //Should no longer find C.E but still find D.C.E
-        ok &= !TestFindFilter(removeTree, filter, "C.E");
-        filter.Reset();
-        ok &= TestFindFilter(removeTree, filter, "D.C.E");
-        removeTree = GenerateTestTreeUniqueReference();
-        filter.Reset();
-        PrintTree(removeTree);
-        printf("\n");
-        filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::REMOVE);
-        //Find and remove
-        ok &= TestFindFilter(removeTree, filter, "D.C.E");
-        PrintTree(removeTree);
-        printf("\n");
-        filter.Reset();
-        filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REVERSE);
-        //Should no longer find D.C.E but still find C.E
-        ok &= TestFindFilter(removeTree, filter, "C.E");
-        filter.Reset();
-        ok &= !TestFindFilter(removeTree, filter, "D.C.E");
-    }
-    return ok;
-}
-#endif
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
