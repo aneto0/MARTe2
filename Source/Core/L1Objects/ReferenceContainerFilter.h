@@ -82,6 +82,14 @@ public:
      */
     ReferenceContainerFilter();
 
+
+
+    /**
+     * @brief Copy constructor
+     */
+    ReferenceContainerFilter(const ReferenceContainerFilter &filterCopy);
+
+
     /**
      * @brief Set the searching mode parameters.
      * @param occurenceNumber Ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
@@ -153,14 +161,14 @@ public:
      * @brief Return the search mode as a binary keyword.
      * @return the search mode as a binary keyword.
      */
-    bool GetMode() const;
+    uint32 GetMode() const;
 
     /**
      * @brief Updates the search mode to a new binary keyword.
      * @param modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
      */
-    bool SetMode(const uint32 &modeToSet);
+    void SetMode(const uint32 &modeToSet);
 
     /**
      * @brief Resets the number of occurrences to the value that was set when the filter was created.
@@ -177,7 +185,7 @@ public:
      * @brief Updates the occurrence value. This will trigger a Reset().
      * @param occurrence the new occurrence value that should be set when a Reset() is triggered.
      */
-    void SetOriginalSetOccurrence(int32 occurrence);
+    void SetOriginalSetOccurrence(const int32 occurrenceToSet);
 
 protected:
     /**

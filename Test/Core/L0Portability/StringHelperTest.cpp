@@ -391,6 +391,134 @@ bool StringHelperTest::TestSearchIndex() {
     return (StringHelper::SearchIndex(NULL, NULL) == -1 && StringHelper::SearchIndex(buffer, NULL) == -1 && StringHelper::SearchIndex(NULL, toSearch) == -1);
 }
 
+
+bool StringHelperTest::TestTokenizeByChars() {
+
+    const char8* string = "Hello:World,I am...Giuseppe";
+    char8 result[32];
+    const char8* charDelimiters = ":,";
+
+    const char8* retPointer;
+
+    //Test the tokenize giving char8s as delimiters.
+    if ((retPointer = StringHelper::TokenizeByChars(string, charDelimiters, result)) == NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(retPointer, "World,I am...Giuseppe")) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(result, "Hello")) {
+        return false;
+    }
+
+    //Thanks to retPointer is simple tokenize again.
+    if ((retPointer = StringHelper::TokenizeByChars(retPointer, charDelimiters, result)) == NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(retPointer, "I am...Giuseppe")) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(result, "World")) {
+        return false;
+    }
+
+    if ((retPointer = StringHelper::TokenizeByChars(retPointer, charDelimiters, result)) == NULL) {
+        return false;
+    }
+
+    if ((retPointer[0] != '\0') || *(retPointer - 1) != 'e') {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(result, "I am...Giuseppe")) {
+        return false;
+    }
+
+    return (StringHelper::TokenizeByChars(retPointer, charDelimiters, NULL) == NULL) && (StringHelper::TokenizeByChars(retPointer, NULL, result) == NULL)
+            && StringHelper::TokenizeByChars(NULL, charDelimiters, result) == NULL;
+
+}
+
+bool StringHelperTest::TestTokenizeByString() {
+
+    //Test the tokenize function with string as delimiter.
+    const char8 *string = "Hello:World,I am...Giuseppe";
+    const char8* stringDelimiter = "...";
+    const char8* retPointerConst;
+
+    char8 result[32];
+
+    //This substring is not in the buffer.
+    if ((retPointerConst = StringHelper::TokenizeByString(string, "....", result)) != NULL) {
+        return false;
+    }
+
+    //Check if the result is correct.
+    if ((retPointerConst = StringHelper::TokenizeByString(string, stringDelimiter, result)) == NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(retPointerConst, "Giuseppe")) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(result, "Hello:World,I am")) {
+        return false;
+    }
+
+    //Thanks to retPointer we can tokenize again. Since the string is finished new retPointer become null.
+    if ((retPointerConst = StringHelper::TokenizeByString(retPointerConst, stringDelimiter, result)) != NULL) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(result, "Giuseppe")) {
+        return false;
+    }
+
+    return (StringHelper::TokenizeByString(string, stringDelimiter, NULL) == NULL) && (StringHelper::TokenizeByString(string, NULL, result) == NULL)
+            && StringHelper::TokenizeByString(NULL, stringDelimiter, result) == NULL;
+
+}
+
+bool StringHelperTest::TestSubstr() {
+    const char8* string = "Hello:World,I am...Giuseppe";
+    char8 result[32];
+
+    //Test the substr function.
+    if (!StringHelper::Substr(3, 6u, string, result)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(result, "lo:W")) {
+        return false;
+    }
+
+    //Check if it works at the end of the string.
+    if (!StringHelper::Substr(25, 26, string, result)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(result, "pe")) {
+        return false;
+    }
+
+    //If the end index is out of bounds returns false but copies in result the end of the string.
+    if (StringHelper::Substr(23, 30, string, result)) {
+        return false;
+    }
+
+    if (!StringTestHelper::Compare(result, "eppe")) {
+        return false;
+    }
+
+    return !StringHelper::Substr(1, 0, string, result) && !StringHelper::Substr(1, 1, NULL, result) && !StringHelper::Substr(1, 1, string, NULL);
+
+}
+
 bool StringHelperTest::TestSetChar() {
     bool retValue;
     uint32 i = 0u;

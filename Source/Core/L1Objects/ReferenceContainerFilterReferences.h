@@ -50,7 +50,7 @@ public:
      * @brief TODO
      */
     ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
-                                       const uint32 &mode,
+                                       const uint32 &modeToSet,
                                        Reference refToSearch);
 
     /**

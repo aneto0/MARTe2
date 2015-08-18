@@ -106,61 +106,78 @@ bool ReferenceContainer::IsContainer(const Reference &ref) const {
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
 void ReferenceContainer::Find(ReferenceContainer &result,
                               ReferenceContainerFilter &filter) {
-    int32 index = 0;
-    if (list.ListSize() > 0) {
-        if (filter.IsReverse()) {
-            index = list.ListSize() - 1;
+
+    uint32 index = 0u;
+    if (filter.IsReverse()) {
+        index = list.ListSize() - 1u;
+    }
+    //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
+    while ((!filter.IsFinished()) && (index < list.ListSize())) {
+
+        ReferenceContainerNode *currentNode = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(index));
+        Reference currentNodeReference = currentNode->GetReference();
+
+        //Check if the current node meets the filter criteria
+        bool found = filter.Test(result, currentNodeReference);
+        if (found) {
+
+            //if IsSearchAll, all found nodes should be inserted in the output list
+            //if IsFinished means that you found your desired occurrence of this object, then add it to the output list
+            /*lint -e{9007} filter.IsSearchAll() has no side effects*/
+            if ((filter.IsFinished()) || (filter.IsSearchAll())) {
+
+                //if the reference is invalid just not add it to the output list
+                /*lint -e{534} possible failure is not handled nor propagated.*/
+                result.Insert(currentNodeReference);
+                //if IsDelete delete the found node
+                if (filter.IsRemove()) {
+                    //Only delete the exact node index
+                    //ignore the return value since the node is surely in the list
+                    /*lint -e{534} possible failure is not handled nor propagated.*/
+                    list.ListDelete(currentNode);
+
+                    //since after the index is incremented if you don't decrement here
+                    //you will lose an element
+                    if (!filter.IsReverse()) {
+                        index--;
+                    }
+                }
+            }
         }
-        //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
-        while (!filter.IsFinished() && ((filter.IsReverse() && (index > -1)) || (!filter.IsReverse() && (index < static_cast<int32>(list.ListSize()))))) {
 
-            ReferenceContainerNode *currentNode = static_cast<ReferenceContainerNode *>(list.ListPeek(index));
-            Reference currentNodeReference = currentNode->GetReference();
+        /*lint -e{9007} filter.IsRecursive() has no side effects*/
+        if ((IsContainer(currentNodeReference)) && (filter.IsRecursive())) {
 
-            //Check if the current node meets the filter criteria
-            bool found = filter.Test(result, currentNodeReference);
-            if (found) {
-                //If IsSearchAll, all found nodes should be inserted in the output list
-	        //When IsFinished => that the desired occurrence of this object was found => add it to the output list
-        	/*lint -e{9007} filter.IsSearchAll() has no side effects*/
-                if (filter.IsSearchAll() || filter.IsFinished()) {
-                    result.Insert(currentNodeReference);
-                    if (filter.IsRemove()) {
-                        //Only delete the exact node index
-                        list.ListDelete(currentNode);
-                        //since after the index is incremented if you don't decrement here
-	                //you will lose an element
-                        if (!filter.IsReverse()) {
-                            index--;
-                        }
-                    }
-                }
+            //add the current node to the output list if IsStorePath
+            if (filter.IsStorePath()) {
+                /*lint -e{534} possible failure is not handled nor propagated.*/
+                result.Insert(currentNodeReference);
             }
 
-            /*lint -e{9007} filter.IsRecursive() has no side effects*/            
-            if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
+            ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
+            uint32 sizeBeforeBranching = result.list.ListSize();
+
+            //find on the sub-container
+            currentNodeContainer->Find(result, filter);
+            //Something was found if the result size has changed
+            if (sizeBeforeBranching == result.list.ListSize()) {
+                //Nothing found. Remove the stored path (which led to nowhere).
                 if (filter.IsStorePath()) {
-                    result.Insert(currentNodeReference);
-                }
-
-                ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
-                uint32 sizeBeforeBranching = result.list.ListSize();
-                currentNodeContainer->Find(result, filter);
-                //Something was found if the result size has changed
-                if (sizeBeforeBranching == result.list.ListSize()) {
-                    //Nothing found. Remove the stored path (which led to nowhere).
-                    if (filter.IsStorePath()) {
-                        LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1);
-                        delete node;
-                    }
+                    LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1u);
+                    delete node;
                 }
             }
-            if (!filter.IsReverse()) {
-                index++;
+        }
+        if (!filter.IsReverse()) {
+            index++;
+        }
+        else {
+            // break if index is equal to zero but before decrementing
+            // such that index=0 is valid
+            if (index == 0u) {
+                break;
             }
-            else {
-                index--;
-            }
+            index--;
         }
     }
 }

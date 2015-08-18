@@ -155,6 +155,33 @@ public:
     bool TestSearchIndex();
 
     /**
+       * @brief Test StringHelper::TokenizeByChars() function.
+       * @details Given a long string tokenize it using different delimiters. The test check the returned
+       * pointer, the result where the token is buffered and checks the behaviour using a NULL string.
+       * @return true if the string is tokenized and the returned pointer points to the next part of
+       * the string to be tokenized.
+       */
+      bool TestTokenizeByChars();
+
+      /**
+       * @brief Test StringHelper::TokenizeByString() function.
+       * @details Given a long string tokenize it using string delimiter. The test check the returned
+       * pointer, the result where the token is buffered and checks the behaviour using a NULL string.
+       * @return true if the string is tokenized and the returned pointer points to the next part of
+       * the string to be tokenized.
+       */
+      bool TestTokenizeByString();
+
+      /**
+       * @brief Test StringHelper::Substr() function.
+       * @details Given a string subtract part of it in different positions. Also checks the behaviour
+       * for a NULL string.
+       * @return true if the function returns true, and the result contains part of the string and returns
+       * false when a NULL string or invalid indexes are used.
+       */
+      bool TestSubstr();
+
+    /**
      * @brief Test the StringHelper::SetChar() function.
      * @detail Try to overwrite the first three characters of a string, and then checks if only the
      * specified number of characters are overwrite.

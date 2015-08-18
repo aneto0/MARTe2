@@ -103,6 +103,20 @@ TEST(StringHelperGTest,TestSetChar) {
     StringHelperTest mystringhelper;
     ASSERT_TRUE(mystringhelper.TestSetChar());
 }
+TEST(StringHelperGTest,TestTokenByChars) {
+    StringHelperTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestTokenizeByChars());
+}
+
+TEST(StringHelperGTest,TestTokenByString) {
+    StringHelperTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestTokenizeByString());
+}
+
+TEST(StringHelperGTest,TestSubstr) {
+    StringHelperTest mystringportable;
+    ASSERT_TRUE(mystringportable.TestSubstr());
+}
 
 TEST(StringHelperGTest,TestSetChar0Size) {
     StringHelperTest mystringhelper;

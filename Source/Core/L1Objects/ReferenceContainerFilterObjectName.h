@@ -41,13 +41,12 @@ class ReferenceContainerFilterObjectName: public ReferenceContainerFilter {
 public:
     ReferenceContainerFilterObjectName();
 
-
     /**
      * @brief TODO
      */
     ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
-                                    const uint32 &mode,
-                                    const char8 * const address);
+                                       const uint32 &modeToSet,
+                                       const char8 * const address);
 
     ReferenceContainerFilterObjectName(const ReferenceContainerFilterObjectName &other);
     ReferenceContainerFilterObjectName &operator =(const ReferenceContainerFilterObjectName &other);

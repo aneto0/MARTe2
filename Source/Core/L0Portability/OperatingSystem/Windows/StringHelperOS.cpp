@@ -171,6 +171,117 @@ const char8 *StringHelper::SearchString(const char8 *string,
     return ret;
 }
 
+const char8* StringHelper::TokenizeByChars(const char8* const string,
+                                           const char8* const delimiter,
+                                           char8* const result) {
+
+    const char8 *ret = static_cast<const char8*>(NULL);
+
+    if ((string != NULL) && (delimiter != NULL) && (result != NULL)) {
+        bool end = false;
+        int32 i = 0;
+
+        while (ret == NULL) {
+            int32 j = 0;
+            end = false;
+            while (!end) {
+
+                if (string[i] == '\0') {
+                    result[i] = '\0';
+                    ret = &string[i];
+                    end = true;
+                }
+                else {
+                    if (string[i] == delimiter[j]) {
+                        result[i] = '\0';
+                        int32 index = i + 1;
+                        ret = &string[index];
+                        end = true;
+                    }
+                }
+
+                if (delimiter[j] == '\0') {
+                    end = true;
+                }
+                j++;
+            }
+
+            //copy in result if terminator not found yet
+            if (ret == NULL) {
+                result[i] = string[i];
+            }
+            i++;
+        }
+    }
+    return ret;
+}
+
+const char8* StringHelper::TokenizeByString(const char8* const string,
+                                            const char8* const terminator,
+                                            char8* const result) {
+
+    const char8 *ret = static_cast<const char8*>(NULL);
+    int32 size1 = StringHelper::Length(string);
+    int32 size2 = StringHelper::Length(terminator);
+
+    if ((size1 >= 0) && (size2 >= 0) && (result != NULL)) {
+
+        int32 i = 0;
+        while ((size1 - i) >= size2) {
+            uint32 sizeArg = static_cast<uint32>(size2);
+
+            if (StringHelper::CompareN(&string[i], terminator, sizeArg) == 0) {
+                result[i] = '\0';
+                int32 indexRet = i + size2;
+                ret = &string[indexRet];
+
+                //exit from the loop
+                i = size1 - size2;
+
+            }
+            else {
+                result[i] = string[i];
+            }
+            i++;
+        }
+
+        if (ret == NULL) {
+            (void) StringHelper::Copy(&result[i], &string[i]);
+        }
+    }
+    return ret;
+}
+
+bool StringHelper::Substr(const uint32 begin,
+                          const uint32 end,
+                          const char8* const string,
+                          char8* const result) {
+
+    bool ret = true;
+    if ((string == NULL) || (result == NULL) || (end < begin)) {
+        ret = false;
+    }
+    else {
+        uint32 i = 0u;
+
+        while ((i < ((end - begin) + 1u)) && (ret)) {
+            uint32 index = begin + i;
+            result[i] = string[index];
+            if (string[index] == '\0') {
+                ret = false;
+            }
+            i++;
+        }
+
+        if (ret) {
+            result[i] = '\0';
+        }
+    }
+
+    return ret;
+
+}
+
 bool StringHelper::SetChar(char8 *string,
                            const uint32 &size,
                            const char8 &c) {
