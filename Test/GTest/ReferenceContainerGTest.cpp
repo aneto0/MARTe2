@@ -83,7 +83,7 @@ TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceFilt
 
 TEST(ReferenceContainerGTest,TestFindReferenceFirstOccurrenceAlwaysReferenceObject) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(1, 0u, "B");
+    ReferenceContainerFilterObjectName filter(1, 0u, "B");
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceAlways(filter));
 }
 
@@ -98,7 +98,7 @@ TEST(ReferenceContainerGTest,TestFindFirstOccurrenceBranchAlwaysReferenceFilter)
 
 TEST(ReferenceContainerGTest,TestFindFirstOccurrenceBranchAlwaysReferenceObject) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(1, 0u, "H");
+    ReferenceContainerFilterObjectName filter(1, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrenceBranchAlways(filter));
 }
 
@@ -113,7 +113,7 @@ TEST(ReferenceContainerGTest,TestFindFirstOccurrenceReferenceFilter) {
 
 TEST(ReferenceContainerGTest,TestFindFirstOccurrenceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(1, 0u, "E");
+    ReferenceContainerFilterObjectName filter(1, 0u, "E");
     ASSERT_TRUE(referenceContainerTest.TestFindFirstOccurrence(filter));
 }
 
@@ -128,7 +128,7 @@ TEST(ReferenceContainerGTest,TestFindSecondOccurrenceReferenceFilter) {
 
 TEST(ReferenceContainerGTest,TestFindSecondOccurrenceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(2, 0u, "H");
+    ReferenceContainerFilterObjectName filter(2, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindSecondOccurrence(filter));
 }
 
@@ -143,7 +143,7 @@ TEST(ReferenceContainerGTest,TestFindThirdOccurrenceReferenceFilter) {
 
 TEST(ReferenceContainerGTest,TestFindThirdOccurrenceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(3, 0u, "H");
+    ReferenceContainerFilterObjectName filter(3, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindThirdOccurrence(filter));
 }
 
@@ -158,7 +158,7 @@ TEST(ReferenceContainerGTest,TestFindAllOfASingleInstanceReferenceFilter) {
 
 TEST(ReferenceContainerGTest,TestFindAllOfASingleInstanceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(-1, 0u, "G");
+    ReferenceContainerFilterObjectName filter(-1, 0u, "G");
     ASSERT_TRUE(referenceContainerTest.TestFindAllOfASingleInstance(filter));
 }
 
@@ -173,7 +173,7 @@ TEST(ReferenceContainerGTest,TestFindAllOfMultipleInstanceReferenceFilter) {
 
 TEST(ReferenceContainerGTest,TestFindAllOfMultipleInstanceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(-1, 0u, "H");
+    ReferenceContainerFilterObjectName filter(-1, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindAllOfMultipleInstance(filter));
 }
 
@@ -188,7 +188,7 @@ TEST(ReferenceContainerGTest,TestFindNonExistentReferenceFilter) {
 
 TEST(ReferenceContainerGTest,TestFindNonExistentObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(-1, 0u, "NoExist");
+    ReferenceContainerFilterObjectName filter(-1, 0u, "NoExist");
     ASSERT_TRUE(referenceContainerTest.TestFindNonExistent(filter));
 }
 
@@ -209,13 +209,13 @@ TEST(ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceReferenceFilterPositiv
 
 TEST(ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceObjectNameFilterNegative) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(-2, 0u, "H");
+    ReferenceContainerFilterObjectName filter(-2, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindOutOfBoundsOccurrence(filter));
 }
 
 TEST(ReferenceContainerGTest,TestFindOutOfBoundsOccurrenceObjectNameFilterPositive) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(4, 0u, "H");
+    ReferenceContainerFilterObjectName filter(4, 0u, "H");
     ASSERT_TRUE(referenceContainerTest.TestFindOutOfBoundsOccurrence(filter));
 }
 
@@ -230,7 +230,7 @@ TEST(ReferenceContainerGTest,TestFindEmptyTreeReferenceFilter) {
 
 TEST(ReferenceContainerGTest,TestFindEmptyTreeObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(1, 0u, "B");
+    ReferenceContainerFilterObjectName filter(1, 0u, "B");
     ASSERT_TRUE(referenceContainerTest.TestFindEmptyTree(filter));
 }
 
@@ -271,7 +271,7 @@ TEST(ReferenceContainerGTest,TestFindPerformanceReferenceFilter) {
 TEST(ReferenceContainerGTest,TestFindPerformanceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
     ReferenceT<ReferenceContainer> largeTree = referenceContainerTest.GenerateTestTreeLarge(5000);
-    ReferenceContainerFilterObjects filter(3, ReferenceContainerFilterMode::RECURSIVE, "U3");
+    ReferenceContainerFilterObjectName filter(3, ReferenceContainerFilterMode::RECURSIVE, "U3");
     ASSERT_TRUE(referenceContainerTest.TestFindPerformance(largeTree, filter));
 }
 
@@ -286,7 +286,7 @@ TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceReferenceFilter) {
 
 TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(1, ReferenceContainerFilterMode::RECURSIVE, "C");
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, "C");
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveFirstOccurrence(filter));
 }
 
@@ -301,7 +301,7 @@ TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceReverseReferenceFilter
 
 TEST(ReferenceContainerGTest,TestFindRemoveFirstOccurrenceReverseObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE, "C");
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE, "C");
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveFirstOccurrence(filter));
 }
 
@@ -316,7 +316,7 @@ TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReferenceFilter) {
 
 TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(2, ReferenceContainerFilterMode::RECURSIVE, "C");
+    ReferenceContainerFilterObjectName filter(2, ReferenceContainerFilterMode::RECURSIVE, "C");
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveSecondOccurrence(filter));
 }
 
@@ -331,7 +331,7 @@ TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReverseReferenceFilte
 
 TEST(ReferenceContainerGTest,TestFindRemoveSecondOccurrenceReverseObjectNameFilter) {
     ReferenceContainerTest referenceContainerTest;
-    ReferenceContainerFilterObjects filter(2, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE, "C");
+    ReferenceContainerFilterObjectName filter(2, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REVERSE, "C");
     ASSERT_TRUE(referenceContainerTest.TestFindRemoveSecondOccurrenceReverse(filter));
 }
 

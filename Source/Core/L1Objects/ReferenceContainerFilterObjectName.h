@@ -37,22 +37,25 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-class ReferenceContainerFilterObjects: public ReferenceContainerFilter {
+class ReferenceContainerFilterObjectName: public ReferenceContainerFilter {
 public:
+    ReferenceContainerFilterObjectName();
+
+
     /**
      * @brief TODO
      */
-    ReferenceContainerFilterObjects(const int32 &occurrenceNumber,
+    ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
                                     const uint32 &mode,
                                     const char8 * const address);
 
-    ReferenceContainerFilterObjects(const ReferenceContainerFilterObjects &other);
-    ReferenceContainerFilterObjects &operator =(const ReferenceContainerFilterObjects &other);
+    ReferenceContainerFilterObjectName(const ReferenceContainerFilterObjectName &other);
+    ReferenceContainerFilterObjectName &operator =(const ReferenceContainerFilterObjectName &other);
 
     /**
      * @brief TODO
      */
-    virtual ~ReferenceContainerFilterObjects();
+    virtual ~ReferenceContainerFilterObjectName();
 
     /**
      * @brief TODO

@@ -275,7 +275,7 @@ bool ReferenceContainerTest::TestFindPathLegalObjectNameFilter() {
     bool ok = true;
     uint32 i = 0;
     for (i = 0; i < 8; i++) {
-        ReferenceContainerFilterObjects filter(1, i, "D.C.E.H");
+        ReferenceContainerFilterObjectName filter(1, i, "D.C.E.H");
         ok &= TestFindFilter(tree, filter, "D.C.E.H");
     }
 
@@ -286,7 +286,7 @@ bool ReferenceContainerTest::TestFindPathLegalObjectNameFilterStartDot() {
     bool ok = true;
     uint32 i = 0;
     for (i = 0; i < 8; i++) {
-        ReferenceContainerFilterObjects filter(1, i, ".D.C.E.H");
+        ReferenceContainerFilterObjectName filter(1, i, ".D.C.E.H");
         ok &= TestFindFilter(tree, filter, "D.C.E.H");
     }
 
@@ -297,7 +297,7 @@ bool ReferenceContainerTest::TestFindPathLegalObjectNameFilterEndDot() {
     bool ok = true;
     uint32 i = 0;
     for (i = 0; i < 8; i++) {
-        ReferenceContainerFilterObjects filter(1, i, "D.C.E.H.");
+        ReferenceContainerFilterObjectName filter(1, i, "D.C.E.H.");
         ok &= TestFindFilter(tree, filter, "D.C.E.H");
     }
 
@@ -308,7 +308,7 @@ bool ReferenceContainerTest::TestFindPathIllegalObjectNameFilterTwoDots() {
     bool ok = true;
     uint32 i = 0;
     for (i = 0; i < 8; i++) {
-        ReferenceContainerFilterObjects filter(1, i, "D.C.E..H");
+        ReferenceContainerFilterObjectName filter(1, i, "D.C.E..H");
         ok &= TestFindFilter(tree, filter, "");
     }
 
@@ -392,7 +392,7 @@ bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree,
     ReferenceContainer expectedResultContainer;
     ReferenceContainer result;
     bool ok = false;
-    bool filterByObjectName = (dynamic_cast<ReferenceContainerFilterObjects *>(&filter) != NULL);
+    bool filterByObjectName = (dynamic_cast<ReferenceContainerFilterObjectName *>(&filter) != NULL);
 
     if (filterByObjectName) {
         ok = GenerateExpectedResultFromString(expectedResultContainer, expectedResult);
@@ -516,7 +516,7 @@ bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingRefere
     uint32 j = 0;
     for (i = 0; i < (len - 1); i++) {
         if (str[i] == '.') {
-            ReferenceContainerFilterObjects filter(1, ReferenceContainerFilterMode::RECURSIVE, name);
+            ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, name);
             ReferenceContainer resultSingle;
             //Cannot pass result directly into the Find because the filter uses the result as an history buffer!
             source->Find(resultSingle, filter);
@@ -532,7 +532,7 @@ bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingRefere
     }
     //Last node must be a leaf
     //If nothing was found => first node is also a leaf
-    ReferenceContainerFilterObjects filter(1, ReferenceContainerFilterMode::RECURSIVE, name);
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, name);
     ReferenceContainer resultSingle;
     //Cannot pass result directly into the Find because the filter uses the result as an history buffer!
     source->Find(resultSingle, filter);
@@ -631,11 +631,11 @@ bool ReferenceContainerTest::TestFindRemoveFirstOccurrence(ReferenceT<ReferenceC
 }
 
 bool ReferenceContainerTest::TestFindRemoveFirstOccurrence() {
-    ReferenceContainerFilterObjects filter(1, ReferenceContainerFilterMode::RECURSIVE, "E");
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, "E");
     bool ok = TestFindFirstOccurrence(filter);
     if (ok) {
         ReferenceT<ReferenceContainer> removeTree = GenerateTestTreeUniqueReference();
-        filter = ReferenceContainerFilterObjects(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE, "E");
+        filter = ReferenceContainerFilterObjectName(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE, "E");
         PrintTree(removeTree);
         printf("\n");
         //Find and remove
