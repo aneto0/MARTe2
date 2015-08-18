@@ -123,6 +123,8 @@
 -esym(1714,Reference::*)
 -esym(1714,ReferenceContainer::*)
 -esym(1714,ReferenceContainerItem::*)
+-esym(1714,ReferenceContainerFilterObjects::*)
+-esym(1714,ReferenceContainerFilterReferences::*)
 
 /* virtual member function not referenced */
 -esym(1716,IBasicConsole::*)
@@ -144,7 +146,10 @@
 -esym(1914,Object::*)
 -esym(1914,Reference::*)
 -esym(1914,ReferenceContainer::*)
+-esym(1914,ReferenceContainerNode::*)
 -esym(1914,ReferenceContainerItem::*)
+-esym(1914,ReferenceContainerFilterObjects::*)
+-esym(1914,ReferenceContainerFilterReferences::*)
 
 /*
  * Rule 0-1-11
@@ -154,6 +159,7 @@
  */
 -efunc(715,BasicConsoleOS::SetColour,BasicConsoleOS::SetTitleBar,BasicConsoleOS::GetTitleBar,BasicConsoleOS::SetCursorPosition,BasicConsoleOS::GetCursorPosition,BasicConsoleOS::SetWindowSize,BasicConsoleOS::GetWindowSize,BasicConsoleOS::PlotChar)
 -efunc(715,Memory::Malloc,Memory::Check)
+-efunc(715,previouslyFound)
 
 /*
  * Rule 0-1-12
@@ -268,8 +274,17 @@
 -esym(9141,ReferenceT*)
 -esym(9141,ReferenceContainer)
 -esym(9141,ReferenceContainer::*)
+-esym(9141,ReferenceContainerNode)
+-esym(9141,ReferenceContainerNode::*)
 -esym(9141,ReferenceContainerItem)
 -esym(9141,ReferenceContainerItem::*)
+-esym(9141,ReferenceContainerFilter)
+-esym(9141,ReferenceContainerFilter::*)
+-esym(9141,ReferenceContainerFilterReferences)
+-esym(9141,ReferenceContainerFilterReferences::*)
+-esym(9141,ReferenceContainerFilterObjects)
+-esym(9141,ReferenceContainerFilterObjects::*)
+
 
 /*
  * MISRA 3-3-1
@@ -289,6 +304,8 @@
  -esym(1711,LinkedListHolder)
  // Lint does not see this because of the macros.  
  -esym(1711,Object)
+ -esym(1711,ReferenceContainer)
+ -esym(1711,ReferenceT*)
  
 /*
  * Rule flexelint 1960 
@@ -352,3 +369,9 @@
  * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.
  */
  -estring(1790, *LinkedListable*)
+
+ /*
+  * Rule 3-1-1
+  * Justification: Required for template implementation.
+  */
+-esym(9107, ReferenceT*)

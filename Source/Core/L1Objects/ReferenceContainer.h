@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "LinkedListHolder.h"
 #include "MutexSem.h"
 #include "TimeoutType.h"
@@ -46,6 +47,7 @@
 /**
  * @brief
  */
+/*lint -e{9109} forward declaration in ReferenceContainerFilter.h is required to define the class*/
 class ReferenceContainer: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -80,20 +82,12 @@ public:
     void Find(ReferenceContainer &result,
               ReferenceContainerFilter &filter);
 
-    bool IsContainer(const Reference &ref);
+    bool IsContainer(const Reference &ref) const;
 
     uint32 Size() const;
 
-    Reference Get(uint32 idx) {
-        Reference ref;
-        if (idx < list.ListSize()) {
-            ReferenceContainerNode *node = static_cast<ReferenceContainerNode *>(list.ListPeek(idx));
-            if(node != NULL) {
-                ref = node->GetReference();
-            }
-        }
-        return ref;
-    }
+
+    Reference Get(const uint32 idx);
 
     TimeoutType GetTimeout() const;
 

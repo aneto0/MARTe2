@@ -37,6 +37,14 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+ReferenceContainerFilter::ReferenceContainerFilter(){
+    occurrence = 0;
+    storePath = false;
+    recursive = false;
+    removeFoundNodes = false;
+    reverse = false;
+}
+
 ReferenceContainerFilter::ReferenceContainerFilter(const int32 &occurrenceNumber,
                                                    const uint32 &modeToSet) {
     occurrence = occurrenceNumber;

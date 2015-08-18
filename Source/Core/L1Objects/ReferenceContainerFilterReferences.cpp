@@ -37,6 +37,13 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+ReferenceContainerFilterReferences::ReferenceContainerFilterReferences():ReferenceContainerFilter(){
+
+}
+
+
+
 ReferenceContainerFilterReferences::ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
                                                                        const uint32 &mode,
                                                                        Reference refToSearch) :
@@ -44,6 +51,8 @@ ReferenceContainerFilterReferences::ReferenceContainerFilterReferences(const int
     referenceToSearch = refToSearch;
 }
 
+
+/*lint -e{715} previously found not referenced because this function is an interface.*/
 bool ReferenceContainerFilterReferences::Test(ReferenceContainer &previouslyFound,
                                               Reference &referenceToTest) {
     bool found = (referenceToSearch == referenceToTest);

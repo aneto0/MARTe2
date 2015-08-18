@@ -1,8 +1,8 @@
 /**
- * @file ReferenceContainerFilterReferences.h
- * @brief Header file for class ReferenceContainerFilterReferences
- * @date 13/08/2015
- * @author Andre Neto
+ * @file ErrorInformation.h
+ * @brief Header file for class ErrorInformation
+ * @date 14/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ReferenceContainerFilterReferences
+ * @details This header file contains the declaration of the class ErrorInformation
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTERREFERENCES_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTERREFERENCES_H_
+#ifndef ERRORINFORMATION_H_
+#define ERRORINFORMATION_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,44 +31,80 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainerFilter.h"
-#include "ReferenceContainer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace ErrorManagement {
 /**
- * @brief TODO
+ @brief Information structure associated to the error.
  */
-class ReferenceContainerFilterReferences: public ReferenceContainerFilter {
-public:
-
-
-    ReferenceContainerFilterReferences();
+struct ErrorInformation {
 
     /**
-     * @brief TODO
+     * Definition of the header.
      */
-    ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
-                                       const uint32 &mode,
-                                       Reference refToSearch);
+    struct {
+
+        /**
+         * The error code.
+         */
+        ErrorType errorType;
+
+        /**
+         * The error line number.
+         */
+        uint16 lineNumber;
+
+        /**
+         * Specified is the error is triggered within an object.
+         */
+        bool isObject :1;
+
+    } header;
 
     /**
-     * @brief TODO
+     *  High resolution timer ticks.
      */
-    virtual bool Test(ReferenceContainer &previouslyFound,
-                      Reference &referenceToTest);
+    int64 hrtTime;
 
-private:
     /**
-     * TODO
+     * The error file name.
      */
-    Reference referenceToSearch;
+    const char8 * fileName;
+
+    /**
+     * The error function name
+     */
+    const char8 * functionName;
+
+    /**
+     * thread ID of the threads who generate the error.
+     */
+    ThreadIdentifier threadId;
+
+    /**
+     * The Address of the object that produced the error.
+     * Object may be temporary in memory because the
+     * objectPointer will only be printed, not used
+     */
+    void * objectPointer;
+
+    /**
+     * A pointer to a const char * which is persistent
+     * so a real constant, not a char * relabeled as const char *
+     * scope. It should be global to the application and persistent
+     */
+    const char8 * className;
+
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTERREFERENCES_H_ */
+#endif /* ERRORINFORMATION_H_ */
 

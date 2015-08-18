@@ -25,4 +25,7 @@ Object.cpp
 Reference.cpp
 ReferenceT.cpp
 ReferenceContainer.cpp
-ReferenceContainerItem.cpp
+ReferenceContainerNode.cpp
+ReferenceContainerFilterObjects.cpp
+ReferenceContainerFilterReferences.cpp
+ReferenceContainerFilter.cpp

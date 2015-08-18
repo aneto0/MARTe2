@@ -1,8 +1,8 @@
 /**
- * @file ReferenceContainerFilterReferences.h
- * @brief Header file for class ReferenceContainerFilterReferences
- * @date 13/08/2015
- * @author Andre Neto
+ * @file ReferenceContainerFilterObjects.h
+ * @brief Header file for class ReferenceContainerFilterObjects
+ * @date 14/08/2015
+ * @author aneto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ReferenceContainerFilterReferences
+ * @details This header file contains the declaration of the class ReferenceContainerFilterObjects
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTERREFERENCES_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTERREFERENCES_H_
+#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTS_H_
+#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,21 +37,22 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-/**
- * @brief TODO
- */
-class ReferenceContainerFilterReferences: public ReferenceContainerFilter {
+class ReferenceContainerFilterObjects: public ReferenceContainerFilter {
 public:
 
-
-    ReferenceContainerFilterReferences();
+    ReferenceContainerFilterObjects();
 
     /**
      * @brief TODO
      */
-    ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
-                                       const uint32 &mode,
-                                       Reference refToSearch);
+    ReferenceContainerFilterObjects(const int32 &occurrenceNumber,
+                                    const uint32 &mode,
+                                    const char8 * const address);
+
+    /**
+     * @brief TODO
+     */
+    virtual ~ReferenceContainerFilterObjects();
 
     /**
      * @brief TODO
@@ -59,16 +60,27 @@ public:
     virtual bool Test(ReferenceContainer &previouslyFound,
                       Reference &referenceToTest);
 
+    virtual bool IsRecursive() const;
+
+    virtual bool IsSearchAll() const;
+
+    virtual bool IsStorePath() const;
+
 private:
     /**
      * TODO
      */
-    Reference referenceToSearch;
+    char8 **addressToSearch;
+
+    /**
+     * TODO
+     */
+    uint32 addressNumberNodes;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTERREFERENCES_H_ */
+#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTS_H_ */
 
