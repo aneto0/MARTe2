@@ -50,8 +50,8 @@ void ReferenceContainerFilter::IncrementFound() {
     }
 }
 
-bool ReferenceContainerFilter::IsDelete() const {
-    return deleteFoundNodes;
+bool ReferenceContainerFilter::IsRemove() const {
+    return removeFoundNodes;
 }
 
 bool ReferenceContainerFilter::IsFinished() const {
@@ -82,11 +82,21 @@ void ReferenceContainerFilter::Reset() {
     occurrence = originallySetOccurrence;
 }
 
+int32 ReferenceContainerFilter::GetOriginalSetOccurrence() const {
+    return originallySetOccurrence;
+}
+
+void ReferenceContainerFilter::SetOriginalSetOccurrence(int32 occurrence) {
+    originallySetOccurrence = occurrence;
+    SetMode(GetMode());
+    Reset();
+}
+
 bool ReferenceContainerFilter::SetMode(const uint32& modeToSet) {
     mode = modeToSet;
     storePath = false;
     recursive = false;
-    deleteFoundNodes = false;
+    removeFoundNodes = false;
     reverse = false;
 
     if ((mode & ReferenceContainerFilterMode::PATH) == ReferenceContainerFilterMode::PATH) {
@@ -99,7 +109,7 @@ bool ReferenceContainerFilter::SetMode(const uint32& modeToSet) {
         reverse = true;
     }
     if ((mode & ReferenceContainerFilterMode::REMOVE) == ReferenceContainerFilterMode::REMOVE) {
-        deleteFoundNodes = true;
+        removeFoundNodes = true;
     }
     if (occurrence == -1) {
         storePath = false;

@@ -28,9 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainerFilterObjects.h"
 #include "Memory.h"
 #include "StringHelper.h"
+#include "ReferenceContainerFilterObjectName.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -105,6 +105,47 @@ ReferenceContainerFilterObjects::ReferenceContainerFilterObjects(const int32 &oc
         //Look for the first occurrence of the path
         occurrence = 1;
     }
+}
+
+ReferenceContainerFilterObjects::ReferenceContainerFilterObjects(const ReferenceContainerFilterObjects& other) :
+        ReferenceContainerFilter(other.GetOriginalSetOccurrence(), other.GetMode()) {
+    addressNumberNodes = other.addressNumberNodes;
+    if (addressNumberNodes > 0) {
+        addressToSearch = new char8*[addressNumberNodes];
+        uint32 i = 0;
+        for (i = 0u; i < addressNumberNodes; i++) {
+            uint32 length = StringHelper::Length(other.addressToSearch[i]) + 1;
+            addressToSearch[i] = static_cast<char8 *>(Memory::Malloc(length));
+            Memory::Copy(addressToSearch[i], other.addressToSearch[i], length);
+        }
+    }
+    Reset();
+}
+
+ReferenceContainerFilterObjects &ReferenceContainerFilterObjects::operator =(const ReferenceContainerFilterObjects& other) {
+    if (this != &other) {
+        if (addressNumberNodes > 0) {
+            uint32 i;
+            for (i = 0; i < addressNumberNodes; i++) {
+                Memory::Free(reinterpret_cast<void *&>(addressToSearch[i]));
+            }
+            delete[] addressToSearch;
+        }
+        originallySetOccurrence = other.GetOriginalSetOccurrence();
+        SetMode(other.GetMode());
+        addressNumberNodes = other.addressNumberNodes;
+        if (addressNumberNodes > 0) {
+            addressToSearch = new char8*[addressNumberNodes];
+            uint32 i = 0;
+            for (i = 0u; i < addressNumberNodes; i++) {
+                uint32 length = StringHelper::Length(other.addressToSearch[i]) + 1;
+                addressToSearch[i] = static_cast<char8 *>(Memory::Malloc(length));
+                Memory::Copy(addressToSearch[i], other.addressToSearch[i], length);
+            }
+        }
+    }
+    Reset();
+    return *this;
 }
 
 ReferenceContainerFilterObjects::~ReferenceContainerFilterObjects() {

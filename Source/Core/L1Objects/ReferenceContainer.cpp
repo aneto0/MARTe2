@@ -110,7 +110,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
             if (found) {
                 if (filter.IsSearchAll() || filter.IsFinished()) {
                     result.Insert(currentNodeReference);
-                    if (filter.IsDelete()) {
+                    if (filter.IsRemove()) {
                         //Only delete the exact node index
                         list.ListDelete(currentNode);
                         if (!filter.IsReverse()) {

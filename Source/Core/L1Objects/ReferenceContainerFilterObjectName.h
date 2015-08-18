@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTS_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTS_H_
+#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTNAME_H_
+#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTNAME_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -45,6 +45,9 @@ public:
     ReferenceContainerFilterObjects(const int32 &occurrenceNumber,
                                     const uint32 &mode,
                                     const char8 * const address);
+
+    ReferenceContainerFilterObjects(const ReferenceContainerFilterObjects &other);
+    ReferenceContainerFilterObjects &operator =(const ReferenceContainerFilterObjects &other);
 
     /**
      * @brief TODO
@@ -79,5 +82,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTS_H_ */
+#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTNAME_H_ */
 

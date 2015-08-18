@@ -34,7 +34,8 @@
 #include "Object.h"
 #include "ReferenceT.h"
 #include "ReferenceContainer.h"
-#include "ReferenceContainerFilterObjects.h"
+
+#include "../../../Source/Core/L1Objects/ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
 
 /*---------------------------------------------------------------------------*/
@@ -164,28 +165,110 @@ public:
      * @details Note that when looking for an absolute path RECURSIVE and PATH are automatically enforced.
      * @return true if the path can be successfully retrieved from the tree.
      */
-    bool TestFindPathLegalObjectFilter();
+    bool TestFindPathLegalObjectNameFilter();
 
     /**
      * @brief Tests the ReferenceContainer.Find function with a use-case that searches for an absolute path with a small typo ".D.C.E.H".
      * @details Note that when looking for an absolute path RECURSIVE and PATH are automatically enforced.
      * @return true if the path can be successfully retrieved from the tree.
      */
-    bool TestFindPathLegalObjectFilterStartDot();
+    bool TestFindPathLegalObjectNameFilterStartDot();
 
     /**
      * @brief Tests the ReferenceContainer.Find function with a use-case that searches for an absolute path with a small typo "D.C.E.H.".
      * @details Note that when looking for an absolute path RECURSIVE and PATH are automatically enforced.
      * @return true if the path can be successfully retrieved from the tree.
      */
-    bool TestFindPathLegalObjectFilterEndDot();
+    bool TestFindPathLegalObjectNameFilterEndDot();
 
     /**
      * @brief Tests the ReferenceContainer.Find function with a use-case that searches for an absolute path with a typo "D.C.E..H.".
      * @details Note that when looking for an absolute path RECURSIVE and PATH are automatically enforced.
      * @return true if the path cannot be successfully retrieved from the tree.
      */
-    bool TestFindPathIllegalObjectFilterTwoDots();
+    bool TestFindPathIllegalObjectNameFilterTwoDots();
+
+    /**
+     * @brief Tests the ReferenceContainer.Find function with a use-case that looks for the container "C" and deletes it.
+     * @details When moving forward this will delete the second main branch of the tree. The third branch, where "C" also
+     * exists, should not be deleted.
+     *
+     * Note that the tree will be modified and calling subsequent tests without generating a new instance of ReferenceContainterTests
+     * will lead to undefined behaviour.
+     *
+     * @param filter The filter must be setup to look for the first occurrence of the container "C".
+     * @return true if moving forward the branch "C" is deleted and the branch "D.C" is not removed.
+     */
+    bool TestFindRemoveFirstOccurrence(ReferenceContainerFilter &filter);
+
+    /**
+     * @brief Tests the ReferenceContainer.Find function with a use-case that looks for the container "C" in reverse and removes it.
+     * @details When moving in reverse this will remove the branch under the "D" container, but should not delete the main "C" branch.
+     *
+     * Note that the tree will be modified and calling subsequent tests without generating a new instance of ReferenceContainterTests
+     * will lead to undefined behaviour.
+     *
+     * @param filter The filter must be setup to look for the first occurrence of the container "C" in REVERSE.
+     * @return true if moving in reverse the branch "C" under "D" is removed and the main branch "C" is not removed.
+     */
+    bool TestFindRemoveFirstOccurrenceReverse(ReferenceContainerFilter &filter);
+
+    /**
+     * @brief Tests the ReferenceContainer.Find function with a use-case that looks for the second occurrence of the container "C" and deletes it.
+     * @details When moving forward this will remove the branch under the "D" container, but should not delete the main "C" branch.
+     *
+     * Note that the tree will be modified and calling subsequent tests without generating a new instance of ReferenceContainterTests
+     * will lead to undefined behaviour.
+     *
+     * @param filter The filter must be setup to look for the second occurrence of the container "C".
+     * @return true if moving forward the branch "C" under "D" is removed and the main branch "C" is not removed.
+     */
+    bool TestFindRemoveSecondOccurrence(ReferenceContainerFilter &filter);
+
+    /**
+     * @brief Tests the ReferenceContainer.Find function with a use-case that looks for the second occurrence of the container "C" in reverse and removes it.
+     * @details When moving in reverse this will delete the second main branch of the tree. The third branch, where "C" also
+     * exists, should not be deleted.
+     *
+     * Note that the tree will be modified and calling subsequent tests without generating a new instance of ReferenceContainterTests
+     * will lead to undefined behaviour.
+     *
+     * @param filter The filter must be setup to look for the second occurrence of the container "C" in REVERSE.
+     * @return true if moving in reverse the branch "C" is deleted and the branch "D.C" is not removed.
+     */
+    bool TestFindRemoveSecondOccurrenceReverse(ReferenceContainerFilter &filter);
+
+
+    /**
+     * TODO
+     * @brief Tests the ReferenceContainer.Find function with a use-case that looks for third occurrence of the leaf "H".
+     * @details For all the ReferenceContainerFilterMode combinations this test will only find the leaf "H" when
+     * ReferenceContainerFilterMode::RECURSIVE is set to true. If ReferenceContainerFilterMode::PATH is set, the test verifies that the correct branching history is stored.
+     * @param filter The filter must be setup to look for the third occurrence of the leaf "H".
+     * @return true if the third instance of the leaf "H" can be only found for ReferenceContainerFilterMode::RECURSIVE mode and
+     * the branch "C.E.H" is returned only when moving forward and the ReferenceContainerFilterMode::PATH is stored.
+     */
+    bool TestFindDeleteThirdOccurrence(ReferenceContainerFilter &filter);
+
+    /**
+     * TODO
+     * @brief Tests the ReferenceContainer.Find function with a use-case that looks for all instances of the leaf "G" (only a single instance exists).
+     * @details For all the ReferenceContainerFilterMode combinations this test will only find the leaf "G" when
+     * ReferenceContainerFilterMode::RECURSIVE is set to true. If ReferenceContainerFilterMode::PATH is set, the test verifies that no branches are stored (in multiple instance search no history can be retrieved).
+     * @param filter The filter must be setup to look for the all occurrences (i.e. with -1) of the leaf "G".
+     * @return true if one and only one instance of "G" can be found and that when ReferenceContainerFilterMode::PATH is set no path is returned.
+     */
+    bool TestFindDeleteAllOfASingleInstance(ReferenceContainerFilter &filter);
+
+    /**
+     * TODO
+     * @brief Tests the ReferenceContainer.Find function with a use-case that looks for all instances of the leaf "H" (multiple instances exist).
+     * @details For all the ReferenceContainerFilterMode combinations this test will always find the leaf "H" .
+     * If ReferenceContainerFilterMode::PATH is set, the test verifies that no branches are stored (in multiple instance search no history can be retrieved).
+     * @param filter The filter must be setup to look for the all occurrences (i.e. with -1) of the leaf "H".
+     * @return true if one instance of "H" can be found when RECURSIVE is not set and three instances of "H" can be found when ReferenceContainerFilterMode::RECURSIVE is set..
+     */
+    bool TestFindDeleteAllOfMultipleInstance(ReferenceContainerFilter &filter);
 
     /**
      * TODO

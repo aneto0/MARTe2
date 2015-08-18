@@ -112,7 +112,7 @@ public:
      * @brief Return true if the found nodes are to be deleted.
      * @return true if the found nodes are to be deleted, false otherwise.
      */
-    bool IsDelete() const;
+    bool IsRemove() const;
 
     /**
      * @brief Return true if the occurrence of the node being searched was found.
@@ -162,6 +162,18 @@ public:
      */
     void Reset();
 
+    /**
+     * @brief Return the number of occurrences that were set when the filter was created.
+     * @return the number of occurrences that were set when the filter was created.
+     */
+    int32 GetOriginalSetOccurrence() const;
+
+    /**
+     * @brief Updates the occurrence value. This will trigger a Reset().
+     * @param occurrence the new occurrence value that should be set when a Reset() is triggered.
+     */
+    void SetOriginalSetOccurrence(int32 occurrence);
+
 protected:
     /**
      * Ordinal occurrence number of the finding (i.e. the first, second, ...) or -1 to look for all occurrences.
@@ -189,7 +201,7 @@ private:
     /**
      * Delete the nodes that are found (all or the exact matching node depending on how occurrence is set).
      */
-    bool deleteFoundNodes;
+    bool removeFoundNodes;
     /**
      * The mode encoded in binary
      */

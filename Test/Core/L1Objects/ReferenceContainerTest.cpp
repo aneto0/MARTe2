@@ -29,8 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "ReferenceContainerTest.h"
+
+#include <ReferenceContainerFilterObjectName.h>
 #include "ReferenceContainerFilterReferences.h"
-#include "ReferenceContainerFilterObjects.h"
 #include "ReferenceContainerFilter.h"
 #include "StringHelper.h"
 #include "Memory.h"
@@ -270,7 +271,7 @@ bool ReferenceContainerTest::TestFindEmptyTree(ReferenceContainerFilter &filter)
     return ok;
 }
 
-bool ReferenceContainerTest::TestFindPathLegalObjectFilter() {
+bool ReferenceContainerTest::TestFindPathLegalObjectNameFilter() {
     bool ok = true;
     uint32 i = 0;
     for (i = 0; i < 8; i++) {
@@ -281,7 +282,7 @@ bool ReferenceContainerTest::TestFindPathLegalObjectFilter() {
     return ok;
 }
 
-bool ReferenceContainerTest::TestFindPathLegalObjectFilterStartDot() {
+bool ReferenceContainerTest::TestFindPathLegalObjectNameFilterStartDot() {
     bool ok = true;
     uint32 i = 0;
     for (i = 0; i < 8; i++) {
@@ -292,7 +293,7 @@ bool ReferenceContainerTest::TestFindPathLegalObjectFilterStartDot() {
     return ok;
 }
 
-bool ReferenceContainerTest::TestFindPathLegalObjectFilterEndDot() {
+bool ReferenceContainerTest::TestFindPathLegalObjectNameFilterEndDot() {
     bool ok = true;
     uint32 i = 0;
     for (i = 0; i < 8; i++) {
@@ -303,7 +304,7 @@ bool ReferenceContainerTest::TestFindPathLegalObjectFilterEndDot() {
     return ok;
 }
 
-bool ReferenceContainerTest::TestFindPathIllegalObjectFilterTwoDots() {
+bool ReferenceContainerTest::TestFindPathIllegalObjectNameFilterTwoDots() {
     bool ok = true;
     uint32 i = 0;
     for (i = 0; i < 8; i++) {
@@ -314,8 +315,75 @@ bool ReferenceContainerTest::TestFindPathIllegalObjectFilterTwoDots() {
     return ok;
 }
 
-bool ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer> largeTree, ReferenceContainerFilter &filter) {
-    return TestFindFilter(tree, filter, "U3");
+bool ReferenceContainerTest::TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
+                                                 ReferenceContainerFilter &filter) {
+    return TestFindFilter(largeTree, filter, "U3");
+}
+
+bool ReferenceContainerTest::TestFindRemoveFirstOccurrence(ReferenceContainerFilter &filter) {
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE);
+    //Remove node "C"
+    bool ok = TestFindFilter(tree, filter, "C");
+    filter.Reset();
+    filter.SetMode(0u);
+    //Should no longer find C but still find D.C
+    ok &= !TestFindFilter(tree, filter, "C");
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
+    ok &= TestFindFilter(tree, filter, "D.C");
+
+    return ok;
+}
+
+bool ReferenceContainerTest::TestFindRemoveFirstOccurrenceReverse(ReferenceContainerFilter &filter) {
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE);
+    //Remove node "D.C"
+    bool ok = TestFindFilter(tree, filter, "D.C");
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE);
+    //Should no longer find D.C but still find C
+    ok &= !TestFindFilter(tree, filter, "D.C");
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
+    ok &= TestFindFilter(tree, filter, "C");
+
+    return ok;
+}
+
+bool ReferenceContainerTest::TestFindRemoveSecondOccurrence(ReferenceContainerFilter &filter) {
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REMOVE);
+    //Remove node "C"
+    bool ok = TestFindFilter(tree, filter, "C");
+    filter.SetOriginalSetOccurrence(1);
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::RECURSIVE);
+    //Should no longer find D.C but still find C
+    ok &= TestFindFilter(tree, filter, "C");
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
+    ok &= !TestFindFilter(tree, filter, "D.C");
+
+    return ok;
+}
+
+bool ReferenceContainerTest::TestFindRemoveSecondOccurrenceReverse(ReferenceContainerFilter &filter) {
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::REMOVE);
+    //Remove node "C"
+    bool ok = TestFindFilter(tree, filter, "C");
+    filter.SetOriginalSetOccurrence(1);
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
+    //Should no longer find C but still find D.C
+    ok &= TestFindFilter(tree, filter, "D.C");
+    filter.Reset();
+    filter.SetMode(ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
+    ok &= !TestFindFilter(tree, filter, "C");
+
+    return ok;
 }
 
 bool ReferenceContainerTest::TestFindFilter(ReferenceT<ReferenceContainer> tree,
@@ -388,14 +456,20 @@ ReferenceT<ReferenceContainer> ReferenceContainerTest::GenerateTestTreeLarge(uin
     containerU1->SetName("U1");
     containerU2->SetName("U2");
 
-    uint32 i=0u;
-    for(i=0; i<depth; i++){
-        containerU1->Insert(containerU1);
-        containerU2->Insert(containerU2);
-    }
+    uint32 i = 0u;
+    ReferenceT<ReferenceContainer> nodeU1;
+    ReferenceT<ReferenceContainer> nodeU2;
 
-    containerU1->Insert(leafU3);
-    containerU2->Insert(leafU3);
+    for (i = 0; i < depth; i++) {
+        nodeU1 = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+        nodeU2 = ReferenceT<ReferenceContainer>("ReferenceContainer", h);
+        nodeU1->SetName("");
+        nodeU2->SetName("");
+        containerU1->Insert(nodeU1);
+        containerU2->Insert(nodeU2);
+    }
+    nodeU1->Insert(leafU3);
+    nodeU2->Insert(leafU3);
 
     containerRoot->Insert(leafU3);
     containerRoot->Insert(containerU2);
@@ -502,6 +576,97 @@ bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer
     delete[] name;
     return ok;
 }
+
+void PrintTree(ReferenceT<ReferenceContainer> tree) {
+    uint32 i = 0;
+    for (i = 0; i < tree->Size(); i++) {
+        printf("%s|", tree->Get(i)->GetName());
+        ReferenceT<ReferenceContainer> node = tree->Get(i);
+        if (node.IsValid()) {
+            PrintTree(node);
+        }
+    }
+}
+
+#if 0
+bool ReferenceContainerTest::TestFindRemoveFirstOccurrence(ReferenceT<ReferenceContainer> removeTree, ReferenceContainerFilter &filter) {
+
+    bool ok = true;
+    if (ok) {
+        ReferenceT<ReferenceContainer> removeTree = GenerateTestTree();
+        filter = ReferenceContainerFilterReferences(1, ReferenceContainerFilterMode::RECURSIVE, containerC);
+        PrintTree(removeTree);
+        printf("\n");
+        filter.Reset();
+        filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE);
+        ok &= TestFindFilter(removeTree, filter, "C");
+        PrintTree(removeTree);
+        printf("\n");
+        filter.Reset();
+        filter.SetMode(0u);
+        //Should no longer find C.E.H. but still find D.C.E.H
+        ok &= !TestFindFilter(removeTree, filter, "C");
+        filter.Reset();
+        filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
+        ok &= TestFindFilter(removeTree, filter, "D.C");
+
+        removeTree = GenerateTestTree();
+        filter = ReferenceContainerFilterReferences(1, ReferenceContainerFilterMode::RECURSIVE, containerC);
+        PrintTree(removeTree);
+        printf("\n");
+        filter.Reset();
+        filter.SetMode(
+                ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REVERSE
+                | ReferenceContainerFilterMode::REMOVE);
+        ok &= TestFindFilter(removeTree, filter, "D.C");
+        PrintTree(removeTree);
+        printf("\n");
+        filter.Reset();
+        filter.SetMode(ReferenceContainerFilterMode::REVERSE);
+        ok &= !TestFindFilter(removeTree, filter, "D.C");
+        filter.Reset();
+        ok &= TestFindFilter(removeTree, filter, "C");
+    }
+    return ok;
+}
+
+bool ReferenceContainerTest::TestFindRemoveFirstOccurrence() {
+    ReferenceContainerFilterObjects filter(1, ReferenceContainerFilterMode::RECURSIVE, "E");
+    bool ok = TestFindFirstOccurrence(filter);
+    if (ok) {
+        ReferenceT<ReferenceContainer> removeTree = GenerateTestTreeUniqueReference();
+        filter = ReferenceContainerFilterObjects(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REMOVE, "E");
+        PrintTree(removeTree);
+        printf("\n");
+        //Find and remove
+        ok &= TestFindFilter(removeTree, filter, "C.E");
+        PrintTree(removeTree);
+        printf("\n");
+        filter.Reset();
+        filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH);
+        //Should no longer find C.E but still find D.C.E
+        ok &= !TestFindFilter(removeTree, filter, "C.E");
+        filter.Reset();
+        ok &= TestFindFilter(removeTree, filter, "D.C.E");
+        removeTree = GenerateTestTreeUniqueReference();
+        filter.Reset();
+        PrintTree(removeTree);
+        printf("\n");
+        filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REVERSE | ReferenceContainerFilterMode::REMOVE);
+        //Find and remove
+        ok &= TestFindFilter(removeTree, filter, "D.C.E");
+        PrintTree(removeTree);
+        printf("\n");
+        filter.Reset();
+        filter.SetMode(ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH | ReferenceContainerFilterMode::REVERSE);
+        //Should no longer find D.C.E but still find C.E
+        ok &= TestFindFilter(removeTree, filter, "C.E");
+        filter.Reset();
+        ok &= !TestFindFilter(removeTree, filter, "D.C.E");
+    }
+    return ok;
+}
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
