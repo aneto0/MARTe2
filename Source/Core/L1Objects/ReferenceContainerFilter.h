@@ -92,7 +92,7 @@ public:
 
     /**
      * @brief Set the searching mode parameters.
-     * @param occurenceNumber Ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
+     * @param occurenceNumber the ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
      * a node which meets a given criteria or -1 to look for all occurrences. This parameter is indexed to 1.
      * @param modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.

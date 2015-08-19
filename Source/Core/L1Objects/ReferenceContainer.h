@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "LinkedListHolder.h"
-#include "MutexSem.h"
+#include "FastPollingMutexSem.h"
 #include "TimeoutType.h"
 #include "Object.h"
 #include "Reference.h"
@@ -45,7 +45,10 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief
+ * @brief Container of references.
+ * @detail One of the basilar classes of the framework. Linear container of references which may also
+ * include other containers of references (generating a tree). The access to the container is protected
+ * by an internal FastPollingMutexSem whose timeout can be specified.
  */
 /*lint -e{9109} forward declaration in ReferenceContainerFilter.h is required to define the class*/
 class ReferenceContainer: public Object {
@@ -53,44 +56,73 @@ public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * TODO
+     * @brief Default constructor.
+     * @details Initialises the semaphore and set the default timeout to infinite.
      */
     ReferenceContainer();
 
     /**
-     * TODO
+     * @brief Destructor. Deletes all the elements hold by the container.
      */
     virtual ~ReferenceContainer();
 
     /**
-     * TODO
+     * @brief Inserts a new reference to the container.
+     * @param ref the reference to be inserted.
+     * @param position the position in the container where the reference is to be inserted.
+     * If \a position = -1 the reference is added to the end of the container.
+     * @return true if \a ref is valid and it can be successfully added to the container.
      */
     bool Insert(Reference ref,
                 const int32 &position = -1);
 
     /**
-     * TODO
+     * @brief Removes the references from the container.
+     * @detail This call is not recursive, i.e. if the container contains other containers, the \a ref
+     * will not be recursively searched (this can be achieved with the Find method and ReferenceContainerFilterReferences filter).
+     * @return true if the reference can be successfully removed (i.e. if the Size() of the list is decreased by 1).
      */
     bool Delete(Reference ref);
 
     /**
-     *
-     * @param result
-     * @param filter
-     * @param mode
+     * @brief Finds on or more elements in the container.
+     * @details The container is walked and its elements are tested against a \a filter. Valid results are
+     * stored in the \a result container.
+     * @param result container where to store the elements found (which may include a path to a given container).
+     * @param filter the searching criteria to be applied.
      */
     void Find(ReferenceContainer &result,
               ReferenceContainerFilter &filter);
 
+    /**
+     * @brief Checks if \a ref holds a container.
+     * @param ref the reference to check.
+     * @return true if \a ref holds ReferenceContainer.
+     */
     bool IsContainer(const Reference &ref) const;
 
-    uint32 Size() const;
+    /**
+     * @brief Returns the number of elements in the container.
+     * @return the number of elements in the container.
+     */
+    uint32 Size();
 
-
+    /**
+     * @brief Returns the reference at position \a idx.
+     * @return the Reference at position \a idx or an empty Reference if \a idx < 0 or \a idx >  Size().
+     */
     Reference Get(const uint32 idx);
 
+    /**
+     * @brief Returns the semaphore timeout time.
+     * @return the semaphore timeout time.
+     */
     TimeoutType GetTimeout() const;
 
+    /**
+     * @brief Updates the semaphore timeout time.
+     * @param timeout the timeout to be set.
+     */
     void SetTimeout(const TimeoutType &timeout);
 
 private:
@@ -102,7 +134,7 @@ private:
     /**
      * Protects multiple access to the internal resources
      */
-    MutexSem mux;
+    FastPollingMutexSem mux;
 
     /**
      * Timeout

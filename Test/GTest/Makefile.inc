@@ -24,7 +24,24 @@
 #
 #############################################################
 
-OBJSX= LinkedListableGTest.x \
+OBJSX= EndianityGTest.x \
+	SleepGTest.x \
+	ProcessorGTest.x \
+	AtomicGTest.x \
+	ProcessorTypeGTest.x \
+	EventSemGTest.x \
+	HighResolutionTimerGTest.x \
+	MemoryGTest.x \
+	FastPollingMutexSemGTest.x \
+	StringHelperGTest.x \
+	StringPortableGTest.x \
+	ThreadsGTest.x \
+	MutexSemGTest.x \
+	BasicConsoleGTest.x \
+	TimeoutTypeGTest.x \
+	LoadableLibraryGTest.x \
+	FastMathGTest.x \
+	LinkedListableGTest.x \
 	LinkedListHolderGTest.x \
 	ClassRegistryDatabaseGTest.x \
 	ObjectGTest.x \

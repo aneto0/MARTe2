@@ -38,30 +38,41 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief TODO
+ * @brief ReferenceContainerFilter for reference searching.
  */
 class ReferenceContainerFilterReferences: public ReferenceContainerFilter {
 public:
 
-
+    /**
+     * @brief Default constructor. NOOP.
+     */
     ReferenceContainerFilterReferences();
 
     /**
-     * @brief TODO
+     * @brief Set the searching mode parameters.
+     * @param occurenceNumber the ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
+     * a node which meets a given criteria or -1 to look for all occurrences. This parameter is indexed to 1.
+     * @param modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
+     * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
+     * @param refToSearch the reference to be searched.
      */
     ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
                                        const uint32 &modeToSet,
                                        Reference refToSearch);
 
     /**
-     * @brief TODO
+     * @brief Tests if the \a referenceToTest is equal to the \a referenceToSearch specified in the constructor.
+     * @detail Each time this method finds a matching reference the number of occurrences will be incremented.
+     * @param previouslyFound the history of the path found so far. Not used.
+     * @param referenceToTest the reference to test.
+     * @return true if \a referenceToTest == \a referenceToSearch.
      */
     virtual bool Test(ReferenceContainer &previouslyFound,
                       Reference &referenceToTest);
 
 private:
     /**
-     * TODO
+     * The reference to be found.
      */
     Reference referenceToSearch;
 };
