@@ -53,13 +53,13 @@ public:
 
     /**
      * @brief Tests the copy constructor.
-     * @return true if the object pointer is equal to the input object pointer passed in the contructor.
+     * @return true if the object pointer is equal to the input object pointer passed in the constructor.
      */
     bool TestCopyConstructor();
 
     /**
      * @brief Tests the copy constructor passing a null input.
-     * @return true if the object pointer is initialized to null.
+     * @return true if the object pointer is initialised to NULL.
      */
     bool TestCopyConstructorNullPtr();
 
