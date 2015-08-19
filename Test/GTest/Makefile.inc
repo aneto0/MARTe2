@@ -30,7 +30,8 @@ OBJSX= LinkedListableGTest.x \
 	ObjectGTest.x \
 	ReferenceGTest.x \
 	ReferenceContainerGTest.x \
-	ReferenceTGTest.x
+	ReferenceTGTest.x \
+	ReferenceContainerNodeGTest.x
 
 
 
