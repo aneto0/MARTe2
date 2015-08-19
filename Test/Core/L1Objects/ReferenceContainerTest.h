@@ -60,6 +60,12 @@ public:
     bool TestConstructor();
 
     /**
+     * @brief Tests the TestGetClassPropertiesCopy function.
+     * @return true if ClassProperties::GetName == "ReferenceContainer".
+     */
+    bool TestGetClassPropertiesCopy();
+
+    /**
      * @brief Tests the ReferenceContainer::GetTimeout function.
      * @return true if the timeout is changed to a new value and correctly read-back.
      */
@@ -304,6 +310,12 @@ public:
      * @return true if the elements are inserted in the order: leafH, containerD, containerC, leafB and the size of the container is 4.
      */
     bool TestInsertAtMiddle();
+
+    /**
+     * @brief Tests the ReferenceContainer::Insert function with an invalid reference.
+     * @return true if calling ReferenceContainer::Insert with an invalid reference returns false and the size of the container is not incremented.
+     */
+    bool TestInsertInvalid();
 
     /**
      * @brief Tests the ReferenceContainer::Size function.

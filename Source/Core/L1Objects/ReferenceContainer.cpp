@@ -49,11 +49,12 @@ ReferenceContainer::ReferenceContainer() :
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
 Reference ReferenceContainer::Get(const uint32 idx) {
     Reference ref;
-    mux.FastLock(muxTimeout);
-    if (idx < list.ListSize()) {
-        ReferenceContainerNode *node = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(idx));
-        if (node != NULL) {
-            ref = node->GetReference();
+    if (mux.FastLock(muxTimeout) == NoError) {
+        if (idx < list.ListSize()) {
+            ReferenceContainerNode *node = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(idx));
+            if (node != NULL) {
+                ref = node->GetReference();
+            }
         }
     }
     mux.FastUnLock();
@@ -80,21 +81,23 @@ ReferenceContainer::~ReferenceContainer() {
     }
 }
 
-bool ReferenceContainer::Insert(Reference ref, const int32 &position) {
-    bool ok = true;
-    mux.FastLock(muxTimeout);
-    ReferenceContainerNode *newItem = new ReferenceContainerNode();
-    if (newItem->SetReference(ref)) {
-        if (position == -1) {
-            list.ListAdd(newItem);
+bool ReferenceContainer::Insert(Reference ref,
+                                const int32 &position) {
+    bool ok = (mux.FastLock(muxTimeout) == NoError);
+    if (ok) {
+        ReferenceContainerNode *newItem = new ReferenceContainerNode();
+        if (newItem->SetReference(ref)) {
+            if (position == -1) {
+                list.ListAdd(newItem);
+            }
+            else {
+                list.ListInsert(newItem, static_cast<uint32>(position));
+            }
         }
         else {
-            list.ListInsert(newItem, static_cast<uint32>(position));
+            delete newItem;
+            ok = false;
         }
-    }
-    else {
-        delete newItem;
-        ok = false;
     }
     mux.FastUnLock();
     return ok;
@@ -105,7 +108,7 @@ bool ReferenceContainer::Delete(Reference ref) {
     ReferenceContainer result;
     //Locking is already done inside the Find
     Find(result, filter);
-    return (result.Size() > 0);
+    return (result.Size() > 0u);
 }
 
 bool ReferenceContainer::IsContainer(const Reference &ref) const {
@@ -117,15 +120,16 @@ bool ReferenceContainer::IsContainer(const Reference &ref) const {
 void ReferenceContainer::Find(ReferenceContainer &result,
                               ReferenceContainerFilter &filter) {
     int32 index = 0;
-    mux.FastLock(muxTimeout);
-    if (list.ListSize() > 0) {
+    bool ok = (mux.FastLock(muxTimeout) == NoError);
+    if (ok && (list.ListSize() > 0u)) {
         if (filter.IsReverse()) {
-            index = list.ListSize() - 1;
+            index = static_cast<int32>(list.ListSize()) - 1;
         }
         //The filter will be finished when the correct occurrence has been found (otherwise it will walk all the list)
-        while (!filter.IsFinished() && ((filter.IsReverse() && (index > -1)) || (!filter.IsReverse() && (index < static_cast<int32>(list.ListSize()))))) {
+        //lint -e{9007} no side-effects on the right of the && operator
+        while ((!filter.IsFinished()) && ((filter.IsReverse() && (index > -1)) || ((!filter.IsReverse()) && (index < static_cast<int32>(list.ListSize()))))) {
 
-            ReferenceContainerNode *currentNode = static_cast<ReferenceContainerNode *>(list.ListPeek(index));
+            ReferenceContainerNode *currentNode = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(static_cast<uint32>(index)));
             Reference currentNodeReference = currentNode->GetReference();
 
             //Check if the current node meets the filter criteria
@@ -135,13 +139,15 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                 //IsFinished() => that the desired occurrence of this object was found => add it to the output list
                 /*lint -e{9007} filter.IsSearchAll() has no side effects*/
                 if (filter.IsSearchAll() || filter.IsFinished()) {
-                    result.Insert(currentNodeReference);
-                    if (filter.IsRemove()) {
-                        //Only delete the exact node index
-                        list.ListDelete(currentNode);
-                        //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
-                        if (!filter.IsReverse()) {
-                            index--;
+                    if (result.Insert(currentNodeReference)) {
+                        if (filter.IsRemove()) {
+                            //Only delete the exact node index
+                            if (list.ListDelete(currentNode)) {
+                                //Given that the index will be incremented, but we have removed an element, the index should stay in the same position
+                                if (!filter.IsReverse()) {
+                                    index--;
+                                }
+                            }
                         }
                     }
                 }
@@ -149,21 +155,25 @@ void ReferenceContainer::Find(ReferenceContainer &result,
 
             /*lint -e{9007} filter.IsRecursive() has no side effects*/
             if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
+                ok = true;
                 if (filter.IsStorePath()) {
-                    result.Insert(currentNodeReference);
+                    ok = result.Insert(currentNodeReference);
                 }
 
-                ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
-                uint32 sizeBeforeBranching = result.list.ListSize();
-                mux.FastUnLock();
-                currentNodeContainer->Find(result, filter);
-                mux.FastLock(muxTimeout);
-                //Something was found if the result size has changed
-                if (sizeBeforeBranching == result.list.ListSize()) {
-                    //Nothing found. Remove the stored path (which led to nowhere).
-                    if (filter.IsStorePath()) {
-                        LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1);
-                        delete node;
+                if (ok) {
+                    ReferenceT<ReferenceContainer> currentNodeContainer = currentNodeReference;
+                    uint32 sizeBeforeBranching = result.list.ListSize();
+                    mux.FastUnLock();
+                    currentNodeContainer->Find(result, filter);
+                    if (mux.FastLock(muxTimeout) == NoError) {
+                        //Something was found if the result size has changed
+                        if (sizeBeforeBranching == result.list.ListSize()) {
+                            //Nothing found. Remove the stored path (which led to nowhere).
+                            if (filter.IsStorePath()) {
+                                LinkedListable *node = result.list.ListExtract(result.list.ListSize() - 1u);
+                                delete node;
+                            }
+                        }
                     }
                 }
             }
@@ -180,8 +190,9 @@ void ReferenceContainer::Find(ReferenceContainer &result,
 
 uint32 ReferenceContainer::Size() {
     uint32 size = 0u;
-    mux.FastLock(muxTimeout);
-    size = list.ListSize();
+    if (mux.FastLock(muxTimeout) == NoError) {
+        size = list.ListSize();
+    }
     mux.FastUnLock();
     return size;
 }

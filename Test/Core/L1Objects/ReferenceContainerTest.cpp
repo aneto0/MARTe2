@@ -52,6 +52,13 @@ bool ReferenceContainerTest::TestConstructor() {
     return ok;
 }
 
+bool ReferenceContainerTest::TestGetClassPropertiesCopy() {
+    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
+    ClassProperties cp;
+    container->GetClassPropertiesCopy(cp);
+    return (StringHelper::Compare(cp.GetName(), "ReferenceContainer") == 0);
+}
+
 bool ReferenceContainerTest::TestGetTimeout(TimeoutType timeout) {
     Heap h;
     ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
@@ -528,6 +535,14 @@ bool ReferenceContainerTest::TestInsertAtMiddle() {
     ok &= (containerRoot->Get(0) == leafH);
 
     ok &= (containerRoot->Size() == 4);
+    return ok;
+}
+
+bool ReferenceContainerTest::TestInsertInvalid() {
+    ReferenceT<ReferenceContainer> containerRoot("ReferenceContainer", h);
+    Reference invalidRef;
+    bool ok = !containerRoot->Insert(invalidRef);
+    ok &= (containerRoot->Size() == 0);
     return ok;
 }
 

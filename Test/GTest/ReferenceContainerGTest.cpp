@@ -52,6 +52,11 @@ TEST(ReferenceContainerGTest,TestConstructor) {
     ASSERT_TRUE(referenceContainerTest.TestConstructor());
 }
 
+TEST(ReferenceContainerGTest,TestGetClassPropertiesCopy) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestGetClassPropertiesCopy());
+}
+
 TEST(ReferenceContainerGTest,TestGetTimeoutInfinite) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestGetTimeout(TTInfiniteWait));
@@ -396,6 +401,11 @@ TEST(ReferenceContainerGTest,TestInsertAtBeginning) {
 TEST(ReferenceContainerGTest,TestInsertAtMiddle) {
     ReferenceContainerTest referenceContainerTest;
     ASSERT_TRUE(referenceContainerTest.TestInsertAtMiddle());
+}
+
+TEST(ReferenceContainerGTest,TestInsertInvalid) {
+    ReferenceContainerTest referenceContainerTest;
+    ASSERT_TRUE(referenceContainerTest.TestInsertInvalid());
 }
 
 /*************
