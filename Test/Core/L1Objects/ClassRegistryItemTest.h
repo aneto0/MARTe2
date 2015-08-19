@@ -45,7 +45,7 @@ public:
 
     /**
      * @brief Tests the default constructor.
-     * @return true if all the class attributes are initialized correctly.
+     * @return true if all the class attributes are initialised correctly.
      */
     bool TestConstructor();
 
@@ -72,7 +72,7 @@ public:
      * @details Increments and decrements the number of instances by the specified number, then checks that the
      * number of the instances returned is correct.
      * @param[in] nInstances specified how many increments of the number of instance to do.
-     * @return true if the test explained in details section has success, false otherwise.
+     * @return true if the number of instances is incremented and decremented \a nInstances times.
      */
     bool TestGetNumberOfInstances(uint32 nInstances);
 
