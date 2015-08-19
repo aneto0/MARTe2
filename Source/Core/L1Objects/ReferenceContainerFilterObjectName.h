@@ -58,8 +58,8 @@ public:
      * occurrence can be searched and the \a mode will be set to ReferenceContainerFilterMode::RECURSIVE and ReferenceContainerFilterMode::PATH.
      */
     ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
-                                    const uint32 &mode,
-                                    const char8 * const address);
+                                       const uint32 &modeToSet,
+                                       const char8 * const address);
 
     /**
      * @brief Deep copy constructor.

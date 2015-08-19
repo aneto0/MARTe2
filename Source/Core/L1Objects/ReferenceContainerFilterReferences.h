@@ -57,7 +57,7 @@ public:
      * @param refToSearch the reference to be searched.
      */
     ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
-                                       const uint32 &mode,
+                                       const uint32 &modeToSet,
                                        Reference refToSearch);
 
     /**

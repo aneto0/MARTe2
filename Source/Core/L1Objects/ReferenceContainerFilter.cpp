@@ -37,18 +37,29 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-ReferenceContainerFilter::ReferenceContainerFilter(){
+ReferenceContainerFilter::ReferenceContainerFilter() {
     occurrence = 0;
     storePath = false;
     recursive = false;
     removeFoundNodes = false;
     reverse = false;
+    originallySetOccurrence = 0;
+    mode = 0u;
+}
+
+ReferenceContainerFilter::ReferenceContainerFilter(const ReferenceContainerFilter &filterCopy) {
+    (*this) = filterCopy;
 }
 
 ReferenceContainerFilter::ReferenceContainerFilter(const int32 &occurrenceNumber,
                                                    const uint32 &modeToSet) {
     occurrence = occurrenceNumber;
     originallySetOccurrence = occurrenceNumber;
+    storePath = false;
+    recursive = false;
+    removeFoundNodes = false;
+    reverse = false;
+    mode = 0u;
     SetMode(modeToSet);
 }
 
@@ -82,7 +93,7 @@ bool ReferenceContainerFilter::IsReverse() const {
     return reverse;
 }
 
-bool ReferenceContainerFilter::GetMode() const {
+uint32 ReferenceContainerFilter::GetMode() const {
     return mode;
 }
 
@@ -94,29 +105,29 @@ int32 ReferenceContainerFilter::GetOriginalSetOccurrence() const {
     return originallySetOccurrence;
 }
 
-void ReferenceContainerFilter::SetOriginalSetOccurrence(int32 occurrence) {
-    originallySetOccurrence = occurrence;
+void ReferenceContainerFilter::SetOriginalSetOccurrence(const int32 occurrenceToSet) {
+    originallySetOccurrence = occurrenceToSet;
     SetMode(GetMode());
     Reset();
 }
 
-bool ReferenceContainerFilter::SetMode(const uint32& modeToSet) {
+void ReferenceContainerFilter::SetMode(const uint32& modeToSet) {
     mode = modeToSet;
     storePath = false;
     recursive = false;
     removeFoundNodes = false;
     reverse = false;
 
-    if ((mode & ReferenceContainerFilterMode::PATH) == ReferenceContainerFilterMode::PATH) {
+    if ((modeToSet & ReferenceContainerFilterMode::PATH) == ReferenceContainerFilterMode::PATH) {
         storePath = true;
     }
-    if ((mode & ReferenceContainerFilterMode::RECURSIVE) == ReferenceContainerFilterMode::RECURSIVE) {
+    if ((modeToSet & ReferenceContainerFilterMode::RECURSIVE) == ReferenceContainerFilterMode::RECURSIVE) {
         recursive = true;
     }
-    if ((mode & ReferenceContainerFilterMode::REVERSE) == ReferenceContainerFilterMode::REVERSE) {
+    if ((modeToSet & ReferenceContainerFilterMode::REVERSE) == ReferenceContainerFilterMode::REVERSE) {
         reverse = true;
     }
-    if ((mode & ReferenceContainerFilterMode::REMOVE) == ReferenceContainerFilterMode::REMOVE) {
+    if ((modeToSet & ReferenceContainerFilterMode::REMOVE) == ReferenceContainerFilterMode::REMOVE) {
         removeFoundNodes = true;
     }
     if (occurrence == -1) {

@@ -123,8 +123,13 @@
 -esym(1714,Reference::*)
 -esym(1714,ReferenceContainer::*)
 -esym(1714,ReferenceContainerItem::*)
+-esym(1714,ReferenceContainerFilter::*)
 -esym(1714,ReferenceContainerFilterObjectName::*)
 -esym(1714,ReferenceContainerFilterReferences::*)
+-esym(1714,ReferenceContainerFilterObjectName::*)
+
+
+
 
 /* virtual member function not referenced */
 -esym(1716,IBasicConsole::*)
@@ -283,8 +288,7 @@
 -esym(9141,ReferenceContainerFilterReferences)
 -esym(9141,ReferenceContainerFilterReferences::*)
 -esym(9141,ReferenceContainerFilterObjectName)
--esym(9141,ReferenceContainerFilterObjectName
-::*)
+-esym(9141,ReferenceContainerFilterObjectName::*)
 
 
 /*
@@ -376,3 +380,10 @@
   * Justification: Required for template implementation.
   */
 -esym(9107, ReferenceT*)
+
+/*
+ * Rule flexelint 1793
+ * Justification: Legitimate way of binding a non-const reference to an rvalue so that a direct access to the underlying
+ * object hold by the reference can be retrieved.
+ */
+-estring(1793,"*Reference::operator->*")

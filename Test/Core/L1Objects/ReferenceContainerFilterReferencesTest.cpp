@@ -1,8 +1,8 @@
 /**
- * @file ReferenceContainerFilterReferences.cpp
- * @brief Source file for class ReferenceContainerFilterReferences
- * @date 13/08/2015
- * @author Andre Neto
+ * @file ReferenceContainerFilterReferencesTest.cpp
+ * @brief Source file for class ReferenceContainerFilterReferencesTest
+ * @date 18/ago/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ReferenceContainerFilterReferences (public, protected, and private). Be aware that some 
+ * the class ReferenceContainerFilterReferencesTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ReferenceContainerFilterReferences.h"
+
+#include "ReferenceContainerFilterReferencesTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,25 +39,21 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ReferenceContainerFilterReferences::ReferenceContainerFilterReferences() :
-        ReferenceContainerFilter() {
+bool ReferenceContainerFilterReferencesTest::TestDefaultConstructor() {
+
+    //checks if the default values are set in the father class.
+    ReferenceContainerFilterReferences myRefFilter;
+
+    //checks if the mode is zero 8all flags false and if the number of occurrences is zero.
+    return (myRefFilter.GetMode() == 0) && (myRefFilter.IsFinished());
 
 }
 
-ReferenceContainerFilterReferences::ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
-                                                                       const uint32 &modeToSet,
-                                                                       Reference refToSearch) :
-        ReferenceContainerFilter(occurrenceNumber, modeToSet) {
-    referenceToSearch = refToSearch;
+bool ReferenceContainerFilterReferencesTest::TestFullConstructor() {
+
+    return true;
 }
 
-/*lint -e{715} previously found not referenced because this function is an interface.*/
-bool ReferenceContainerFilterReferences::Test(ReferenceContainer &previouslyFound,
-                                              Reference &referenceToTest) {
-    bool found = (referenceToSearch == referenceToTest);
-    if (found) {
-        IncrementFound();
-    }
-    return found;
+bool ReferenceContainerFilterReferencesTest::TestTest() {
+    return true;
 }
-
