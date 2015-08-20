@@ -37,6 +37,9 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/**
+ * Tests all the ReferenceT functions.
+ */
 class ReferenceTTest {
 public:
 
