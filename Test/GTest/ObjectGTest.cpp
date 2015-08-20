@@ -66,3 +66,8 @@ TEST(ObjectGTest,TestNumberOfReferences) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestNumberOfReferences());
 }
+
+TEST(ObjectGTest,TestGetProperties) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestGetProperties());
+}

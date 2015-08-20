@@ -76,6 +76,12 @@ public:
      * @return true if Object::NumberOfReferences always returns a value consistent with the number of references holding the object.
      */
     bool TestNumberOfReferences();
+
+    /**
+     * @brief Tests the Object::TestGetProperties function.
+     * @return true if the ClassProperties object returned is the equal to the object created at class registration time.
+     */
+    bool TestGetProperties();
 };
 
 /*---------------------------------------------------------------------------*/
