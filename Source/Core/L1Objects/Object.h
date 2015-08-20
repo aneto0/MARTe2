@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_OBJECT_H_
-#define SOURCE_CORE_L1OBJECTS_OBJECT_H_
+#ifndef OBJECT_H_
+#define OBJECT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -195,7 +195,7 @@ public:
      * call the Initialise method. The Object instance is then responsible for
      * retrieving the initialisation data from the input data and of assigning
      * these value to its internal variables.
-     * @param data the input initialisation data.
+     * @param[in] data the input initialisation data.
      * @return true if all the input \a data is valid and can be successfully assigned
      * to the Object member variables.
      */
@@ -203,7 +203,7 @@ public:
 
     /**
      * @brief Returns a copy to the object introspection properties.
-     * @destination Copies the object introspection properties to the \a destination.
+     * @param[in,out] destination Copies the object introspection properties to the \a destination.
      */
     void GetIntrospectionCopy(Introspection &destination) const;
 
@@ -236,9 +236,10 @@ private:
     virtual Object* Clone() const;
 
     /**
-     * Disallow the usage of new.
+     * @brief Disallow the usage of new.
+     * @param[in] size the size of the object.
      */
-    static void *operator new(size_t size) throw ();
+    static void *operator new(osulong size) throw ();
 
     /**
      * Object introspection properties.
@@ -255,5 +256,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_OBJECT_H_ */
+#endif /* OBJECT_H_ */
 
