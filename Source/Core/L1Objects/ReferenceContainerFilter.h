@@ -199,22 +199,7 @@ protected:
     int32 originallySetOccurrence;
 
 private:
-    /**
-     * Recursive into all the nodes children.
-     */
-    bool recursive;
-    /**
-     * Search for left to right, or from right to left.
-     */
-    bool reverse;
-    /**
-     * Store all the nodes leading to a given occurrence (only valid if \a occurrence != -1).
-     */
-    bool storePath;
-    /**
-     * Delete the nodes that are found (all or the exact matching node depending on how occurrence is set).
-     */
-    bool removeFoundNodes;
+
     /**
      * The mode encoded in binary
      */

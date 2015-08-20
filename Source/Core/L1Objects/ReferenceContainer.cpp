@@ -153,6 +153,11 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                 }
             }
 
+            // no other stack waste!!
+            if(filter.IsFinished()){
+                break;
+            }
+
             /*lint -e{9007} filter.IsRecursive() has no side effects*/
             if ((IsContainer(currentNodeReference)) && filter.IsRecursive()) {
                 ok = true;

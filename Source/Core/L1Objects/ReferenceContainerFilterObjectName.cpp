@@ -104,10 +104,16 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
         }
     }
 
-    //Only one thing is possible. Either look for the absolute path or for multiple occurrences.
-    if ((occurrence == -1) && (addressNumberNodes > 1u)) {
+    // If the number of nodes is greater than one, then the number of occurrence must be =1
+    // and the path mode must be enabled (and it automatically enables the recursive mode)
+    // So, if you want to search a path you have to be in path mode and you cannot search more than one path.
+    if (addressNumberNodes > 1u) {
         //Look for the first occurrence of the path
         occurrence = 1;
+        //Note: in this case IsSearchAll returns false
+        // IsRecursive returns true
+        // IsStorePath returns true
+        SetMode(GetMode() | ReferenceContainerFilterMode::PATH);
     }
 }
 
@@ -168,23 +174,24 @@ ReferenceContainerFilterObjectName::~ReferenceContainerFilterObjectName() {
         }
         delete[] addressToSearch;
     }
+    addressNumberNodes = 0u;
 }
+/*
+ bool ReferenceContainerFilterObjectName::IsStorePath() const {
+ return (ReferenceContainerFilter::IsStorePath() || (addressNumberNodes > 1u));
+ }
 
-bool ReferenceContainerFilterObjectName::IsStorePath() const {
-    return (ReferenceContainerFilter::IsStorePath() || (addressNumberNodes > 1u));
-}
+ bool ReferenceContainerFilterObjectName::IsRecursive() const {
+ return (ReferenceContainerFilter::IsRecursive() || (addressNumberNodes > 1u));
+ }
 
-bool ReferenceContainerFilterObjectName::IsRecursive() const {
-    return (ReferenceContainerFilter::IsRecursive() || (addressNumberNodes > 1u));
-}
-
-bool ReferenceContainerFilterObjectName::IsSearchAll() const {
-    return (ReferenceContainerFilter::IsSearchAll() && (addressNumberNodes == 1u));
-}
-
+ bool ReferenceContainerFilterObjectName::IsSearchAll() const {
+ return (ReferenceContainerFilter::IsSearchAll() && (addressNumberNodes == 1u));
+ }
+ */
 bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound,
                                               Reference &referenceToTest) {
-     bool found = false;
+    bool found = false;
     if (addressNumberNodes > 0u) {
         uint32 i = 0;
         found = true;

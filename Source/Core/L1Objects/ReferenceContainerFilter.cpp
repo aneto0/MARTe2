@@ -39,27 +39,20 @@
 /*---------------------------------------------------------------------------*/
 ReferenceContainerFilter::ReferenceContainerFilter() {
     occurrence = 0;
-    storePath = false;
-    recursive = false;
-    removeFoundNodes = false;
-    reverse = false;
     originallySetOccurrence = 0;
     mode = 0u;
 }
 
 ReferenceContainerFilter::ReferenceContainerFilter(const ReferenceContainerFilter &filterCopy) {
-    (*this) = filterCopy;
+    occurrence = filterCopy.occurrence;
+    originallySetOccurrence = filterCopy.originallySetOccurrence;
+    SetMode(filterCopy.GetMode());
 }
 
 ReferenceContainerFilter::ReferenceContainerFilter(const int32 &occurrenceNumber,
                                                    const uint32 &modeToSet) {
     occurrence = occurrenceNumber;
     originallySetOccurrence = occurrenceNumber;
-    storePath = false;
-    recursive = false;
-    removeFoundNodes = false;
-    reverse = false;
-    mode = 0u;
     SetMode(modeToSet);
 }
 
@@ -70,7 +63,7 @@ void ReferenceContainerFilter::IncrementFound() {
 }
 
 bool ReferenceContainerFilter::IsRemove() const {
-    return removeFoundNodes;
+    return ((mode & ReferenceContainerFilterMode::REMOVE) == ReferenceContainerFilterMode::REMOVE);
 }
 
 bool ReferenceContainerFilter::IsFinished() const {
@@ -78,7 +71,7 @@ bool ReferenceContainerFilter::IsFinished() const {
 }
 
 bool ReferenceContainerFilter::IsRecursive() const {
-    return recursive;
+    return ((mode & ReferenceContainerFilterMode::RECURSIVE) == ReferenceContainerFilterMode::RECURSIVE);
 }
 
 bool ReferenceContainerFilter::IsSearchAll() const {
@@ -86,11 +79,11 @@ bool ReferenceContainerFilter::IsSearchAll() const {
 }
 
 bool ReferenceContainerFilter::IsStorePath() const {
-    return storePath;
+    return ((mode & ReferenceContainerFilterMode::PATH) == ReferenceContainerFilterMode::PATH);
 }
 
 bool ReferenceContainerFilter::IsReverse() const {
-    return reverse;
+    return ((mode & ReferenceContainerFilterMode::REVERSE) == ReferenceContainerFilterMode::REVERSE);
 }
 
 uint32 ReferenceContainerFilter::GetMode() const {
@@ -107,33 +100,20 @@ int32 ReferenceContainerFilter::GetOriginalSetOccurrence() const {
 
 void ReferenceContainerFilter::SetOriginalSetOccurrence(const int32 occurrenceToSet) {
     originallySetOccurrence = occurrenceToSet;
-    SetMode(GetMode());
     Reset();
+    SetMode(GetMode());
 }
 
 void ReferenceContainerFilter::SetMode(const uint32& modeToSet) {
     mode = modeToSet;
-    storePath = false;
-    recursive = false;
-    removeFoundNodes = false;
-    reverse = false;
 
-    if ((modeToSet & ReferenceContainerFilterMode::PATH) == ReferenceContainerFilterMode::PATH) {
-        storePath = true;
+    // unset the path bit
+    if (IsSearchAll()) {
+        mode &= ~(ReferenceContainerFilterMode::PATH);
     }
-    if ((modeToSet & ReferenceContainerFilterMode::RECURSIVE) == ReferenceContainerFilterMode::RECURSIVE) {
-        recursive = true;
-    }
-    if ((modeToSet & ReferenceContainerFilterMode::REVERSE) == ReferenceContainerFilterMode::REVERSE) {
-        reverse = true;
-    }
-    if ((modeToSet & ReferenceContainerFilterMode::REMOVE) == ReferenceContainerFilterMode::REMOVE) {
-        removeFoundNodes = true;
-    }
-    if (occurrence == -1) {
-        storePath = false;
-    }
-    if (storePath) {
-        recursive = true;
+
+    //set the recursive bit
+    if (IsStorePath()) {
+        mode |= ReferenceContainerFilterMode::RECURSIVE;
     }
 }

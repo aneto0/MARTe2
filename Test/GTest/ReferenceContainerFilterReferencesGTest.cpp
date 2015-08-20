@@ -28,14 +28,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include <limits.h>
-#include <ReferenceContainerFilterObjectName.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "ReferenceContainerFilterReferencesTest.h"
-#include "ReferenceContainerFilterReferences.h"
 #include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -53,10 +51,87 @@ TEST(ReferenceContainerFilterReferencesGTest,TestDefaultConstructor) {
 
 TEST(ReferenceContainerFilterReferencesGTest,TestFullConstructor) {
     ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
-    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestFullConstructor());
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestFullConstructor(5, ReferenceContainerFilterMode::REMOVE));
 }
 
 TEST(ReferenceContainerFilterReferencesGTest,TestTest) {
     ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
-    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestTest());
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestTest(10, 5));
 }
+
+TEST(ReferenceContainerFilterReferencesGTest,TestTestMoreOccurrences) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestTest(10, 50));
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestTestFailure) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestTestFailure());
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestIncrementFound) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestIncrementFound());
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestIsRemove) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestIsRemove());
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestIsSearchAll) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestIsSearchAll());
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestIsStorePath) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestIsStorePath());
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestIsReverse) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestIsReverse());
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestSetGetModeNoSearchAll) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestSetGetMode(1));
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestSetGetModeSearchAll) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestSetGetMode(-1));
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestReset) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestReset(20));
+}
+
+
+TEST(ReferenceContainerFilterReferencesGTest,TestSetGetOriginalSetOccurrenceNoChange) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestSetGetOriginalSetOccurrence(10, 20));
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestSetGetOriginalSetOccurrence) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestSetGetOriginalSetOccurrence(10, 20));
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestSetGetOriginalSetOccurrenceToSearchAll) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestSetGetOriginalSetOccurrence(10, -1));
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestSetGetOriginalSetOccurrenceFromSearchAll) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestSetGetOriginalSetOccurrence(-1, 10));
+}
+
+TEST(ReferenceContainerFilterReferencesGTest,TestSetGetOriginalSetOccurrenceFromToSearchAll) {
+    ReferenceContainerFilterReferencesTest referenceContainerFilterReferencesTest;
+    ASSERT_TRUE(referenceContainerFilterReferencesTest.TestSetGetOriginalSetOccurrence(-1, -1));
+}
+

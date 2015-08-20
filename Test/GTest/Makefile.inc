@@ -48,7 +48,9 @@ OBJSX= EndianityGTest.x \
 	ReferenceGTest.x \
 	ReferenceContainerGTest.x \
 	ReferenceTGTest.x \
-	ReferenceContainerNodeGTest.x
+	ReferenceContainerNodeGTest.x \
+	ReferenceContainerFilterReferencesGTest.x \
+	ReferenceContainerFilterObjectNameGTest.x
 
 
 

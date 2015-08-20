@@ -64,21 +64,24 @@ bool ReferenceContainerNodeTest::TestDestructor() {
 
 bool ReferenceContainerNodeTest::TestSetGetReference() {
 
-    ReferenceContainerNode myNode;
     Heap h;
     Reference testRef("Object", h);
 
+    ReferenceContainerNode myNode;
     myNode.SetReference(testRef);
 
-    if ((myNode.GetReference() != testRef) || (testRef.NumberOfReferences() != 2)) {
+    bool test1 = (myNode.GetReference() != testRef);
+    bool test2 = (testRef.NumberOfReferences() != 2);
+    if (test1 || test2) {
         return false;
     }
 
     Reference ref;
     myNode.SetReference(ref);
 
-
-    return ((myNode.GetReference() == ref) && (testRef.NumberOfReferences() == 1));
+    test1 = (myNode.GetReference() == ref);
+    test2 = (testRef.NumberOfReferences() == 1);
+    return (test1 && test2);
 
 }
 

@@ -97,19 +97,19 @@ public:
      * @brief Return true if the search is recursive in all the tree nodes or if a full path address was specified in the constructor.
      * @return true if the search is recursive in all the tree nodes or if a full path address was specified in the constructor.
      */
-    virtual bool IsRecursive() const;
+  //  virtual bool IsRecursive() const;
 
     /**
      * @brief Return true if all occurrences of a given pattern are to be searched and if a full path address was not specified in the constructor.
      * @return true if all occurrences of a given pattern are to searched and if a full path address was not specified in the constructor.
      */
-    virtual bool IsSearchAll() const;
+ //   virtual bool IsSearchAll() const;
 
     /**
      * @brief Return true if all the nodes leading to a given occurrence are to be stored or if a full path address was specified in the constructor.
      * @return true true if all the nodes leading to a given occurrence are to be stored or if a full path address was specified in the constructor.
      */
-    virtual bool IsStorePath() const;
+ //   virtual bool IsStorePath() const;
 
 private:
     /**
