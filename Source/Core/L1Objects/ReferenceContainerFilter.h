@@ -57,7 +57,7 @@ static const uint32 RECURSIVE = 0x2u;
 static const uint32 REVERSE = 0x4u;
 /**
  * @brief If set the nodes that are found are deleted.
- * @details To destroy all occurrences \a occurrence must be set to -1 in in the constructor of ReferenceContainerSearchMode-
+ * @details To destroy all occurrences \a occurrence must be set to -1 in the constructor of ReferenceContainerSearchMode.
  * If REMOVE is set, PATH will be automatically unset.
  */
 static const uint32 REMOVE = 0x8u;
@@ -81,8 +81,6 @@ public:
      * @brief Default constructor
      */
     ReferenceContainerFilter();
-
-
 
     /**
      * @brief Copy constructor.
@@ -110,8 +108,8 @@ public:
     /**
      * @brief Tests if a given reference meets the searching criteria.
      * @details This function is to be implemented by the filter subclasses.
-     * @param[in,out] previouslyFound a container with the history of all the nodes that were previously found.
-     * @param[in,out] referenceToTest the Reference to be tested.
+     * @param[in] previouslyFound a container with the history of all the nodes that were previously found.
+     * @param[in] referenceToTest the Reference to be tested.
      * @return if the \a referenceToTest meets the searching criteria.
      */
     virtual bool Test(ReferenceContainer &previouslyFound,

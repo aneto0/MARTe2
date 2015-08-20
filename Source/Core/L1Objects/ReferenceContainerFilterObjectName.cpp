@@ -176,43 +176,39 @@ ReferenceContainerFilterObjectName::~ReferenceContainerFilterObjectName() {
     }
     addressNumberNodes = 0u;
 }
-/*
- bool ReferenceContainerFilterObjectName::IsStorePath() const {
- return (ReferenceContainerFilter::IsStorePath() || (addressNumberNodes > 1u));
- }
 
- bool ReferenceContainerFilterObjectName::IsRecursive() const {
- return (ReferenceContainerFilter::IsRecursive() || (addressNumberNodes > 1u));
- }
-
- bool ReferenceContainerFilterObjectName::IsSearchAll() const {
- return (ReferenceContainerFilter::IsSearchAll() && (addressNumberNodes == 1u));
- }
- */
-bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound,
-                                              Reference &referenceToTest) {
-    bool found = false;
-    if (addressNumberNodes > 0u) {
-        uint32 i;
-        found = true;
-        //Check if what was already found is consistent with the path stored in addressToSearch
-        for (i = 0u; (i < (addressNumberNodes - 1u)) && found; i++) {
-            found = false;
-            if (previouslyFound.Get(i).IsValid()) {
-                if (previouslyFound.Get(i)->GetName() != NULL) {
-                    found = (StringHelper::Compare(previouslyFound.Get(i)->GetName(), addressToSearch[i]) == 0);
-                }
-            }
-        }
-        //Check if this is the last node and if it matches the last part of the addressToSearch
-        if (found && referenceToTest.IsValid()) {
-            if (referenceToTest->GetName() != NULL) {
-                /*lint -e{661} -e{662} safe given that addressToSearch is always created with the size of addressNumberNodes
-                 * and its size cannot be modified in runtime*/
-                found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[addressNumberNodes - 1u]) == 0);
+bool ReferenceContainerFilterObjectName::TestPath(ReferenceContainer &previouslyFound) const {
+    bool found = (previouslyFound.Size() == (addressNumberNodes - 1u));
+    int32 i;
+    for (i= (static_cast<int32>(previouslyFound.Size()) - 1); (found) && (i >= 0); i--) {
+        found = false;
+        if (previouslyFound.Get(static_cast<uint32>(i)).IsValid()) {
+            if (previouslyFound.Get(static_cast<uint32>(i))->GetName() != NULL) {
+                found = (StringHelper::Compare(previouslyFound.Get(static_cast<uint32>(i))->GetName(), addressToSearch[i]) == 0);
             }
         }
     }
+    return found;
+}
+
+bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFound,
+                                              Reference &referenceToTest) {
+    bool found = (addressNumberNodes > 0u);
+
+    if (addressNumberNodes > 1u) {
+        /*lint -e{9007} no side-effects on TestPath*/
+        found = (found && TestPath(previouslyFound));
+    }
+
+    //Check if this is the last node and if it matches the last part of the addressToSearch
+    if (found && referenceToTest.IsValid()) {
+        if (referenceToTest->GetName() != NULL) {
+            /*lint -e{661} -e{662} safe given that addressToSearch is always created with the size of addressNumberNodes
+             * and its size cannot be modified in runtime*/
+            found = (StringHelper::Compare(referenceToTest->GetName(), addressToSearch[addressNumberNodes - 1u]) == 0);
+        }
+    }
+
     if (found) {
         IncrementFound();
     }

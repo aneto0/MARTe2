@@ -45,7 +45,7 @@ public:
 
     /**
      * @brief Tests the default constructor.
-     * @return true if the number of occurrence and the mode are initialized to zero.
+     * @return true if the number of occurrence and the mode are initialised to zero.
      */
     bool TestDefaultConstructor();
 
@@ -53,7 +53,7 @@ public:
      * @brief Tests the full constructor,
      * @param[in] occurrenceNumber is the desired pattern occurrence.
      * @param[in] mode is the desired search mode.
-     * @return true if the number of occurrence and the mode are initialized as expected. If
+     * @return true if the number of occurrence and the mode are initialised as expected. If
      * the occurrence is -1, the path mode should be automatically disabled.
      */
     bool TestFullConstructor(int32 occurrenceNumber,
@@ -89,7 +89,7 @@ public:
 
     /**
      * @brief Tests the IsSearchAll function.
-     * @return true if with the filter initialized with occurrence=-1 the function returns true and
+     * @return true if with the filter initialised with occurrence=-1 the function returns true and
      * if the search all mode removes automatically the path mode if specified.
      */
     bool TestIsSearchAll();
@@ -134,7 +134,7 @@ public:
     /**
      * @brief Tests the TestSetGetOriginalSetOccurrence.
      * @details Checks if the number of occurrence is set properly by this function and if
-     * passing to the search all mode, also mode is automatically refreshed disabling the path mode.
+     * passing to the search all mode (i.e. -1), also mode is automatically refreshed disabling the path mode.
      * @param[in] InitialOccurrence is the initial desired pattern occurrence.
      * @param[in] finalOccurrence is the final desired pattern occurrence.
      * @return true if the test explained in the details section passes, false otherwise.

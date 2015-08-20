@@ -64,7 +64,7 @@ public:
     /**
      * @brief Deep copy constructor.
      * @details Copies all the parameters from another filter. This instance of the filter will be Reset().
-     * @param other the source ReferenceContainerFilterObjectName where to copy the information from.
+     * @param[in] other the source ReferenceContainerFilterObjectName where to copy the information from.
      */
     ReferenceContainerFilterObjectName(const ReferenceContainerFilterObjectName &other);
 
@@ -86,31 +86,13 @@ public:
      * @details This method will return true when the name of object hold by \a referenceToTest is the same
      * of the last node in the address specified in the constructor. If a full path was specified as the address,
      * this method will return true if, and only if, all the elements in \a previouslyFound where found in the
-     * exact same order before finding the element specified in \a referenceToTest.
+     * exact same order set in the constructor \a address.
      * Each time this method finds a matching reference the number of occurrences will be incremented.
-     * @param[in,out] previouslyFound the history of the path found so far.
-     * @param[in,out] referenceToTest the reference to test (where the name of object will be extracted from).
+     * @param[in] previouslyFound the history of the path found so far.
+     * @param[in] referenceToTest the reference to test (where the name of object will be extracted from).
      * @return true if the name of the object hold by \a referenceToTest is compatible with the address.
      */
     virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest);
-
-    /**
-     * @brief Return true if the search is recursive in all the tree nodes or if a full path address was specified in the constructor.
-     * @return true if the search is recursive in all the tree nodes or if a full path address was specified in the constructor.
-     */
-  //  virtual bool IsRecursive() const;
-
-    /**
-     * @brief Return true if all occurrences of a given pattern are to be searched and if a full path address was not specified in the constructor.
-     * @return true if all occurrences of a given pattern are to searched and if a full path address was not specified in the constructor.
-     */
- //   virtual bool IsSearchAll() const;
-
-    /**
-     * @brief Return true if all the nodes leading to a given occurrence are to be stored or if a full path address was specified in the constructor.
-     * @return true true if all the nodes leading to a given occurrence are to be stored or if a full path address was specified in the constructor.
-     */
- //   virtual bool IsStorePath() const;
 
 private:
     /**
@@ -122,6 +104,15 @@ private:
      * Number of nodes in the address.
      */
     uint32 addressNumberNodes;
+
+    /**
+     * @brief Verifies if the \a previouslyFound path is consistent with the originally set address.
+     * @param[in] previouslyFound a container with all the nodes that make the path leading to the node to be tested.
+     * @return true if all all the elements in \a previouslyFound are in the exact same order specified in
+     * the \a address parameter of the constructor.
+     */
+    bool TestPath(ReferenceContainer &previouslyFound) const;
+
 };
 
 /*---------------------------------------------------------------------------*/

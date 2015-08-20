@@ -46,6 +46,7 @@ ReferenceContainerFilter::ReferenceContainerFilter() {
 ReferenceContainerFilter::ReferenceContainerFilter(const ReferenceContainerFilter &filterCopy) {
     occurrence = filterCopy.occurrence;
     originallySetOccurrence = filterCopy.originallySetOccurrence;
+    mode = 0u;
     SetMode(filterCopy.GetMode());
 }
 
@@ -53,6 +54,7 @@ ReferenceContainerFilter::ReferenceContainerFilter(const int32 &occurrenceNumber
                                                    const uint32 &modeToSet) {
     occurrence = occurrenceNumber;
     originallySetOccurrence = occurrenceNumber;
+    mode = 0u;
     SetMode(modeToSet);
 }
 

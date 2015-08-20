@@ -170,30 +170,24 @@ bool ReferenceContainerFilterObjectNameTest::TestDestructor() {
 
 }
 
-bool ReferenceContainerFilterObjectNameTest::TestTest(const char8 *toSearch,
+bool ReferenceContainerFilterObjectNameTest::TestTest(ReferenceContainer &previouslyFound,
+                                                      const char8 *toSearch,
                                                       bool expected) {
 
     Heap h;
-    Reference element1("Object", h);
-    element1->SetName("A");
 
-    Reference element2("Object", h);
-    element2->SetName("B");
-
-    Reference element3("Object", h);
-    element3->SetName("C");
-
-    ReferenceContainer myTree;
-
-    myTree.Insert(element1);
-    myTree.Insert(element2);
-    myTree.Insert(element3);
-    const char8* begin = toSearch;
     if (toSearch[0] == '.') {
-        begin++;
+        toSearch++;
     }
 
-    Reference toBeSearched("Object", h);
+    uint32 length = StringHelper::Length(toSearch);
+    uint32 addressNumberNodes = 1;
+    for (uint32 i = 0; i < length; i++) {
+        if (toSearch[i] == '.') {
+            //increment the number of nodes where a '.' is found
+            addressNumberNodes++;
+        }
+    }
 
     const char8 *lastNode = StringHelper::SearchLastChar(toSearch, '.');
     if (lastNode == NULL) {
@@ -208,13 +202,14 @@ bool ReferenceContainerFilterObjectNameTest::TestTest(const char8 *toSearch,
         }
     }
 
+    Reference toBeSearched("Object", h);
     toBeSearched->SetName(lastNode);
 
     for (uint32 mode = 0u; mode < 8u; mode++) {
 
         ReferenceContainerFilterObjectName filter(1, mode, toSearch);
 
-        if (filter.Test(myTree, toBeSearched) != expected) {
+        if (filter.Test(previouslyFound, toBeSearched) != expected) {
             return false;
         }
     }
