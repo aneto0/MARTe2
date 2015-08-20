@@ -183,6 +183,7 @@
 -esym(9141,Processor)
 -esym(9141,Processor::*)
 -esym(9141,ProcessorType)
+-esym(9141,ProcessorType::*)
 -esym(9141,Sleep)
 -esym(9141,Sleep::*)
 -esym(9141,StringHelper)
