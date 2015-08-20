@@ -1,6 +1,6 @@
 /**
- * @file ReferenceContainerItem.h
- * @brief Header file for class ReferenceContainerItem
+ * @file ReferenceContainerNode.h
+ * @brief Header file for class ReferenceContainerNode
  * @date 12/08/2015
  * @author Andre Neto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ReferenceContainerItem
+ * @details This header file contains the declaration of the class ReferenceContainerNode
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERNODE_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERNODE_H_
+#ifndef REFERENCECONTAINERNODE_H_
+#define REFERENCECONTAINERNODE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -59,7 +59,7 @@ public:
 
     /**
      * @brief Sets the to Reference hold by this node.
-     * @param newReference the reference to be set.
+     * @param[in] newReference the reference to be set.
      * @return true if \a newReference is valid.
      */
     bool SetReference(Reference newReference);
@@ -75,5 +75,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERNODE_H_ */
+#endif /* REFERENCECONTAINERNODE_H_ */
 

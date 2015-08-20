@@ -1,6 +1,6 @@
 /**
- * @file ReferenceContainerItem.cpp
- * @brief Source file for class ReferenceContainerItem
+ * @file ReferenceContainerNode.cpp
+ * @brief Source file for class ReferenceContainerNode
  * @date 12/082015
  * @author Andre Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ReferenceContainerItem (public, protected, and private). Be aware that some 
+ * the class ReferenceContainerNode (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 

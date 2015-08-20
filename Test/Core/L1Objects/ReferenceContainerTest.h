@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_CORE_L1OBJECTS_REFERENCECONTAINERTEST_H_
-#define TEST_CORE_L1OBJECTS_REFERENCECONTAINERTEST_H_
+#ifndef REFERENCECONTAINERTEST_H_
+#define REFERENCECONTAINERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -80,7 +80,7 @@ public:
     /**
      * @brief Tests the ReferenceContainer::Find function with a use-case that always finds an occurrence.
      * @details For all the ReferenceContainerFilterMode combinations this test will always find the leaf "B".
-     * @param filter The filter must be setup to look for the first occurrence of the leaf "B".
+     * @param[in] filter The filter must be setup to look for the first occurrence of the leaf "B".
      * @return true if the leaf "B" can be found for any combination of ReferenceContainerFilterMode (excluding ReferenceContainerFilterMode::REMOVE).
      */
     bool TestFindFirstOccurrenceAlways(ReferenceContainerFilter &filter);
@@ -90,7 +90,7 @@ public:
      * @details For all the ReferenceContainerFilterMode combinations this test will always find the leaf "H". In reverse mode
      * the leaf will be the first and will have no parents, while in forward (and recursive) mode the leaf will be found
      * inside the branch C.E.H..
-     * @param filter The filter must be setup to look for the first occurrence of the leaf "H".
+     * @param[in] filter The filter must be setup to look for the first occurrence of the leaf "H".
      * @return true if the leaf "H" can be found for any combination of ReferenceContainerFilterMode (excluding ReferenceContainerFilterMode::REMOVE).
      */
     bool TestFindFirstOccurrenceBranchAlways(ReferenceContainerFilter &filter);
@@ -99,7 +99,7 @@ public:
      * @brief Tests the ReferenceContainer::Find function with a use-case that looks for the container "E".
      * @details For all the ReferenceContainerFilterMode combinations this test will only find the container "E" when
      * RECURSIVE is set to true. If PATH is set, the test verifies that the correct branching history is stored.
-     * @param filter The filter must be setup to look for the first occurrence of the container "E".
+     * @param[in] filter The filter must be setup to look for the first occurrence of the container "E".
      * @return true if the container "E" can only be found for RECURSIVE mode and the branch "C.E" is returned when moving forward
      * and the branch "D.C.E. is returned when moving in REVERSE.
      */
@@ -109,7 +109,7 @@ public:
      * @brief Tests the ReferenceContainer::Find function with a use-case that looks for second occurrence of the leaf "H".
      * @details For all the ReferenceContainerFilterMode combinations this test will only find the leaf "H" when
      * ReferenceContainerFilterMode::RECURSIVE is set to true. If PATH is set, the test verifies that the correct branching history is stored.
-     * @param filter The filter must be setup to look for the second occurrence of the leaf "H".
+     * @param[in] filter The filter must be setup to look for the second occurrence of the leaf "H".
      * @return true if the second instance of the leaf "H" can be only found for ReferenceContainerFilterMode::RECURSIVE mode and
      * the branch "D.C.E.H" is returned when moving the ReferenceContainerFilterMode::PATH is stored.
      */
@@ -119,7 +119,7 @@ public:
      * @brief Tests the ReferenceContainer::Find function with a use-case that looks for third occurrence of the leaf "H".
      * @details For all the ReferenceContainerFilterMode combinations this test will only find the leaf "H" when
      * ReferenceContainerFilterMode::RECURSIVE is set to true. If ReferenceContainerFilterMode::PATH is set, the test verifies that the correct branching history is stored.
-     * @param filter The filter must be setup to look for the third occurrence of the leaf "H".
+     * @param[in] filter The filter must be setup to look for the third occurrence of the leaf "H".
      * @return true if the third instance of the leaf "H" can be only found for ReferenceContainerFilterMode::RECURSIVE mode and
      * the branch "C.E.H" is returned only when moving forward and the ReferenceContainerFilterMode::PATH is stored.
      */
@@ -129,7 +129,7 @@ public:
      * @brief Tests the ReferenceContainer::Find function with a use-case that looks for all instances of the leaf "G" (only a single instance exists).
      * @details For all the ReferenceContainerFilterMode combinations this test will only find the leaf "G" when
      * ReferenceContainerFilterMode::RECURSIVE is set to true. If ReferenceContainerFilterMode::PATH is set, the test verifies that no branches are stored (in multiple instance search no history can be retrieved).
-     * @param filter The filter must be setup to look for the all occurrences (i.e. with -1) of the leaf "G".
+     * @param[in] filter The filter must be setup to look for the all occurrences (i.e. with -1) of the leaf "G".
      * @return true if one and only one instance of "G" can be found and that when ReferenceContainerFilterMode::PATH is set no path is returned.
      */
     bool TestFindAllOfASingleInstance(ReferenceContainerFilter &filter);
@@ -138,7 +138,7 @@ public:
      * @brief Tests the ReferenceContainer::Find function with a use-case that looks for all instances of the leaf "H" (multiple instances exist).
      * @details For all the ReferenceContainerFilterMode combinations this test will always find the leaf "H" .
      * If ReferenceContainerFilterMode::PATH is set, the test verifies that no branches are stored (in multiple instance search no history can be retrieved).
-     * @param filter The filter must be setup to look for the all occurrences (i.e. with -1) of the leaf "H".
+     * @param[in] filter The filter must be setup to look for the all occurrences (i.e. with -1) of the leaf "H".
      * @return true if one instance of "H" can be found when RECURSIVE is not set and three instances of "H" can be found when ReferenceContainerFilterMode::RECURSIVE is set..
      */
     bool TestFindAllOfMultipleInstance(ReferenceContainerFilter &filter);
@@ -146,7 +146,7 @@ public:
     /**
      * @brief Tests the ReferenceContainer::Find function with a use-case that looks for an occurrence number that does not exist in the tree.
      * @details For all the ReferenceContainerFilterMode combinations this test will always never find the searched node/leaf .
-     * @param filter The filter must be setup to look for the an occurrence number of any of the nodes that does not exist.
+     * @param[in] filter The filter must be setup to look for the an occurrence number of any of the nodes that does not exist.
      * @return true if the occurrence number does not exist.
      */
     bool TestFindOutOfBoundsOccurrence(ReferenceContainerFilter &filter);
@@ -154,14 +154,14 @@ public:
     /**
      * @brief Tests the ReferenceContainer::Find function with a use-case that looks for a reference that does not exist in the tree.
      * @details For all the ReferenceContainerFilterMode combinations this test will always never find the searched node/leaf.
-     * @param filter The filter must be setup to look for a reference that does not exist in the tree.
+     * @param[in] filter The filter must be setup to look for a reference that does not exist in the tree.
      * @return true if the reference does not exist in the tree.
      */
     bool TestFindNonExistent(ReferenceContainerFilter &filter);
 
     /**
      * @brief Tests the ReferenceContainer::Find function with a use-case that looks for a reference that on an empty tree.
-     * @param filter The filter must be setup to look for any reference.
+     * @param[in] filter The filter must be setup to look for any reference.
      * @return true if no reference is found.
      */
     bool TestFindEmptyTree(ReferenceContainerFilter &filter);
@@ -216,7 +216,7 @@ public:
      * Note that the tree will be modified and calling subsequent tests without generating a new instance of ReferenceContainterTests
      * will lead to undefined behaviour.
      *
-     * @param filter The filter must be setup to look for the first occurrence of the container "C".
+     * @param[in] filter The filter must be setup to look for the first occurrence of the container "C".
      * @return true if moving forward the branch "C" is deleted and the branch "D.C" is not removed.
      */
     bool TestFindRemoveFirstOccurrence(ReferenceContainerFilter &filter);
@@ -228,7 +228,7 @@ public:
      * Note that the tree will be modified and calling subsequent tests without generating a new instance of ReferenceContainterTests
      * will lead to undefined behaviour.
      *
-     * @param filter The filter must be setup to look for the first occurrence of the container "C" in REVERSE.
+     * @param[in] filter The filter must be setup to look for the first occurrence of the container "C" in REVERSE.
      * @return true if moving in reverse the branch "C" under "D" is removed and the main branch "C" is not removed.
      */
     bool TestFindRemoveFirstOccurrenceReverse(ReferenceContainerFilter &filter);
@@ -240,7 +240,7 @@ public:
      * Note that the tree will be modified and calling subsequent tests without generating a new instance of ReferenceContainterTests
      * will lead to undefined behaviour.
      *
-     * @param filter The filter must be setup to look for the second occurrence of the container "C".
+     * @param[in] filter The filter must be setup to look for the second occurrence of the container "C".
      * @return true if moving forward the branch "C" under "D" is removed and the main branch "C" is not removed.
      */
     bool TestFindRemoveSecondOccurrence(ReferenceContainerFilter &filter);
@@ -253,7 +253,7 @@ public:
      * Note that the tree will be modified and calling subsequent tests without generating a new instance of ReferenceContainterTests
      * will lead to undefined behaviour.
      *
-     * @param filter The filter must be setup to look for the second occurrence of the container "C" in REVERSE.
+     * @param[in] filter The filter must be setup to look for the second occurrence of the container "C" in REVERSE.
      * @return true if moving in reverse the branch "C" is deleted and the branch "D.C" is not removed.
      */
     bool TestFindRemoveSecondOccurrenceReverse(ReferenceContainerFilter &filter);
@@ -266,7 +266,7 @@ public:
      * Note that the tree will be modified and calling subsequent tests without generating a new instance of ReferenceContainterTests
      * will lead to undefined behaviour.
      *
-     * @param filter The filter must be setup to look for the first occurrence of the container "E".
+     * @param[in] filter The filter must be setup to look for the first occurrence of the container "E".
      * @return true if removing the first occurrence of the container "E" removes all occurrences of the container "E" in the tree.
      */
     bool TestFindRemoveFromSubcontainer(ReferenceContainerFilter &filter);
@@ -275,15 +275,15 @@ public:
      * @brief Tests the ReferenceContainer::Find function with a use-case that looks for all instances of the leaf "H" (multiple instances exist) and removes all.
      * @details Note that the tree will be modified and calling subsequent tests without generating a new instance of ReferenceContainterTests
      * will lead to undefined behaviour.
-     * @param filter must be setup to look for the all occurrences (i.e. with -1) of the leaf "H".
+     * @param[in] filter must be setup to look for the all occurrences (i.e. with -1) of the leaf "H".
      * @return true if after searching and removing all instances of "H" no references remain in the tree.
      */
     bool TestFindRemoveAllOfMultipleInstance(ReferenceContainerFilter &filter);
 
     /**
      * @brief Tests the ReferenceContainer::Find on a large tree.
-     * @param largeTree a reference to a tree created with GenerateTestTreeLarge
-     * @param filter must be setup to look for the third occurrence of U3.
+     * @param[in] largeTree a reference to a tree created with GenerateTestTreeLarge
+     * @param[in] filter must be setup to look for the third occurrence of U3.
      * @return the time in seconds that it took to execute the function.
      */
     float TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
@@ -420,8 +420,8 @@ private:
 
     /**
      * @brief Verifies if the \a source and \a test containers contain the same information.
-     * @param source first container to be compared.
-     * @param test second container to be compared.
+     * @param[in] source first container to be compared.
+     * @param[in] test second container to be compared.
      * @return true if the \a source and \a test containers hold the same object and if the containers are equally ordered.
      */
     bool VerifyExpectedResult(ReferenceContainer &source,
@@ -429,8 +429,8 @@ private:
 
     /**
      * @brief Verifies if the \a source and \a test containers contain the same information.
-     * @param source first container to be compared.
-     * @param test second container to be compared.
+     * @param[in] source first container to be compared.
+     * @param[in] test second container to be compared.
      * @return true if the references hold by \a source and \a test hold objects that have the same name  and if the containers are equally ordered.
      */
     bool VerifyExpectedResultByObjectName(ReferenceContainer &source,
@@ -438,9 +438,9 @@ private:
 
     /**
      * @brief Generic utility function to test the ReferenceContainer::Find.
-     * @param tree The ReferenceT<ReferenceContainer> to be searched.
-     * @param filter The filter to be applied.
-     * @param expectedResult The expected resulted expressed as a string (dots separate nodes, e.g. D.C.E.H).
+     * @param[in] tree The ReferenceT<ReferenceContainer> to be searched.
+     * @param[in] filter The filter to be applied.
+     * @param[in] expectedResult The expected resulted expressed as a string (dots separate nodes, e.g. D.C.E.H).
      * @return true if the expectedResult is equal to the result retrieved by tree->Find
      */
     bool TestFindFilter(ReferenceT<ReferenceContainer> tree,
@@ -449,8 +449,8 @@ private:
 
     /**
      * @brief Generate a container of references from a string representation.
-     * @param result destination container.
-     * @param str source string presentation.
+     * @param[in] result destination container.
+     * @param[in] str source string presentation.
      * @return true if the string can be translated into a container of references.
      */
     bool GenerateExpectedResultFromString(ReferenceContainer &result,
@@ -458,9 +458,9 @@ private:
 
     /**
      * @brief Generate a container of references, linking to existing references, from a string representation.
-     * @param source tree with existing references.
-     * @param result destination container.
-     * @param str source string presentation.
+     * @param[in] source tree with existing references.
+     * @param[in] result destination container.
+     * @param[in] str source string presentation.
      * @return true if the string can be translated into a container of references.
      */
     bool GenerateExpectedResultFromStringUsingExistingReferences(ReferenceT<ReferenceContainer> source,
@@ -472,5 +472,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_CORE_L1OBJECTS_REFERENCECONTAINERTEST_H_ */
+#endif /* REFERENCECONTAINERTEST_H_ */
 

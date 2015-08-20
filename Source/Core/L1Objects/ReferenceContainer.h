@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINER_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINER_H_
+#ifndef REFERENCECONTAINER_H_
+#define REFERENCECONTAINER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -46,7 +46,7 @@
 /*---------------------------------------------------------------------------*/
 /**
  * @brief Container of references.
- * @detail One of the basilar classes of the framework. Linear container of references which may also
+ * @details One of the basilar classes of the framework. Linear container of references which may also
  * include other containers of references (generating a tree). The access to the container is protected
  * by an internal FastPollingMutexSem whose timeout can be specified.
  */
@@ -68,9 +68,9 @@ public:
 
     /**
      * @brief Inserts a new reference to the container.
-     * @param ref the reference to be inserted.
-     * @param position the position in the container where the reference is to be inserted.
-     * If \a position = -1 the reference is added to the end of the container.
+     * @details If \a position = -1 the reference is added to the end of the container.
+     * @param[in] ref the reference to be inserted.
+     * @param[in] position the position in the container where the reference is to be inserted.
      * @return true if \a ref is valid and it can be successfully added to the container.
      */
     bool Insert(Reference ref,
@@ -78,8 +78,9 @@ public:
 
     /**
      * @brief Removes the references from the container.
-     * @detail This call is not recursive, i.e. if the container contains other containers, the \a ref
+     * @details This call is not recursive, i.e. if the container contains other containers, the \a ref
      * will not be recursively searched (this can be achieved with the Find method and ReferenceContainerFilterReferences filter).
+     * @param[in] ref the reference to be deleted.
      * @return true if the reference can be successfully removed (i.e. if the Size() of the list is decreased by 1).
      */
     bool Delete(Reference ref);
@@ -88,15 +89,15 @@ public:
      * @brief Finds on or more elements in the container.
      * @details The container is walked and its elements are tested against a \a filter. Valid results are
      * stored in the \a result container.
-     * @param result container where to store the elements found (which may include a path to a given container).
-     * @param filter the searching criteria to be applied.
+     * @param[in,out] result container where to store the elements found (which may include a path to a given container).
+     * @param[in,out] filter the searching criteria to be applied.
      */
     void Find(ReferenceContainer &result,
               ReferenceContainerFilter &filter);
 
     /**
      * @brief Checks if \a ref holds a container.
-     * @param ref the reference to check.
+     * @param[in] ref the reference to check.
      * @return true if \a ref holds ReferenceContainer.
      */
     bool IsContainer(const Reference &ref) const;
@@ -109,6 +110,7 @@ public:
 
     /**
      * @brief Returns the reference at position \a idx.
+     * @param[in] idx the desired reference position.
      * @return the Reference at position \a idx or an empty Reference if \a idx < 0 or \a idx >  Size().
      */
     Reference Get(const uint32 idx);
@@ -121,7 +123,7 @@ public:
 
     /**
      * @brief Updates the semaphore timeout time.
-     * @param timeout the timeout to be set.
+     * @param[in] timeout the timeout to be set.
      */
     void SetTimeout(const TimeoutType &timeout);
 
@@ -146,5 +148,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINER_H_ */
+#endif /* REFERENCECONTAINER_H_ */
 

@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCE_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCE_H_
+#ifndef REFERENCE_H_
+#define REFERENCE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -183,5 +183,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCE_H_ */
+#endif /* REFERENCE_H_ */
 

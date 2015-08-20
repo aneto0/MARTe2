@@ -1,6 +1,6 @@
 /**
- * @file ReferenceContainerSearchFilter.h
- * @brief Header file for class ReferenceContainerSearchFilter
+ * @file ReferenceContainerFilter.h
+ * @brief Header file for class ReferenceContainerFilter
  * @date 13/08/2015
  * @author Andre' Neto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ReferenceContainerSearchFilter
+ * @details This header file contains the declaration of the class ReferenceContainerFilter
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTER_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTER_H_
+#ifndef REFERENCECONTAINERFILTER_H_
+#define REFERENCECONTAINERFILTER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -85,16 +85,17 @@ public:
 
 
     /**
-     * @brief Copy constructor
+     * @brief Copy constructor.
+     * @param[in] filterCopy is the filter to be copied.
      */
     ReferenceContainerFilter(const ReferenceContainerFilter &filterCopy);
 
 
     /**
      * @brief Set the searching mode parameters.
-     * @param occurenceNumber the ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
+     * @param[in] occurrenceNumber the ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
      * a node which meets a given criteria or -1 to look for all occurrences. This parameter is indexed to 1.
-     * @param modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
+     * @param[in] modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
      */
     ReferenceContainerFilter(const int32 &occurrenceNumber,
@@ -109,8 +110,8 @@ public:
     /**
      * @brief Tests if a given reference meets the searching criteria.
      * @details This function is to be implemented by the filter subclasses.
-     * @param previouslyFound a container with the history of all the nodes that were previously found.
-     * @param referenceToTest the Reference to be tested.
+     * @param[in,out] previouslyFound a container with the history of all the nodes that were previously found.
+     * @param[in,out] referenceToTest the Reference to be tested.
      * @return if the \a referenceToTest meets the searching criteria.
      */
     virtual bool Test(ReferenceContainer &previouslyFound,
@@ -135,18 +136,22 @@ public:
 
     /**
      * @brief Return true if the search is recursive in all the tree nodes.
+     * @details This mode will be automatically enabled setting the PATH mode.
      * @return true if the search is recursive in all the tree nodes, false otherwise.
      */
     virtual bool IsRecursive() const;
 
     /**
      * @brief Return true if all occurrences of a given pattern are to be searched.
+     * @details This mode disables automatically the PATH mode.
      * @return true if all occurrences of a given pattern are to searched, false otherwise.
      */
     virtual bool IsSearchAll() const;
 
     /**
      * @brief Return true if all the nodes leading to a given occurrence are to be stored.
+     * @details If IsSearchAll, PATH mode will be automatically disable. The PATH mode enables automatically also the
+     * RECURSIVE mode.
      * @return true true if all the nodes leading to a given occurrence are to be stored, false otherwise.
      */
     virtual bool IsStorePath() const;
@@ -165,7 +170,7 @@ public:
 
     /**
      * @brief Updates the search mode to a new binary keyword.
-     * @param modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
+     * @param[in] modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
      */
     void SetMode(const uint32 &modeToSet);
@@ -183,7 +188,7 @@ public:
 
     /**
      * @brief Updates the occurrence value. This will trigger a Reset().
-     * @param occurrence the new occurrence value that should be set when a Reset() is triggered.
+     * @param[in] occurrenceToSet the new occurrence value that should be set when a Reset() is triggered.
      */
     void SetOriginalSetOccurrence(const int32 occurrenceToSet);
 
@@ -210,5 +215,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTER_H_ */
+#endif /* REFERENCECONTAINERFILTER_H_ */
 

@@ -1,6 +1,6 @@
 /**
- * @file ReferenceContainerFilterObjects.cpp
- * @brief Source file for class ReferenceContainerFilterObjects
+ * @file ReferenceContainerFilterObjectName.cpp
+ * @brief Source file for class ReferenceContainerFilterObjectName
  * @date 14/08/2015
  * @author Andre Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ReferenceContainerFilterObjects (public, protected, and private). Be aware that some 
+ * the class ReferenceContainerFilterObjectName (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 

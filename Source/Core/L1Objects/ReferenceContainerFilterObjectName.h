@@ -1,6 +1,6 @@
 /**
- * @file ReferenceContainerFilterObjects.h
- * @brief Header file for class ReferenceContainerFilterObjects
+ * @file ReferenceContainerFilterObjectName.h
+ * @brief Header file for class ReferenceContainerFilterObjectName
  * @date 14/08/2015
  * @author Andre Neto
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ReferenceContainerFilterObjects
+ * @details This header file contains the declaration of the class ReferenceContainerFilterObjectName
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -49,11 +49,11 @@ public:
 
     /**
      * @brief Sets the filter to look for the \a address.
-     * @param occurrenceNumber the ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
+     * @param[in] occurrenceNumber the ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
      * a node which meets a given criteria or -1 to look for all occurrences. This parameter is indexed to 1.
-     * @param modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
+     * @param[in] modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
-     * @param address a string with the name of the object to find or with the full path (from the root) to the object.
+     * @param[in] address a string with the name of the object to find or with the full path (from the root) to the object.
      * A full path is specified by separating with dots the path (e.g. A.B.C). If a full path is specified only the first
      * occurrence can be searched and the \a mode will be set to ReferenceContainerFilterMode::RECURSIVE and ReferenceContainerFilterMode::PATH.
      */
@@ -71,12 +71,13 @@ public:
     /**
      * @brief Assignment operator.
      * @details Copies all the parameters from another filter. This instance of the filter will be Reset().
-     * @param other the source ReferenceContainerFilterObjectName where to copy the information from.
+     * @param[in] other the source ReferenceContainerFilterObjectName where to copy the information from.
+     * @return this object.
      */
     ReferenceContainerFilterObjectName &operator =(const ReferenceContainerFilterObjectName &other);
 
     /**
-     * @brief Destructor. Free all the allocated memory.
+     * @brief Destructor. Frees all the allocated memory.
      */
     virtual ~ReferenceContainerFilterObjectName();
 
@@ -87,9 +88,9 @@ public:
      * this method will return true if, and only if, all the elements in \a previouslyFound where found in the
      * exact same order before finding the element specified in \a referenceToTest.
      * Each time this method finds a matching reference the number of occurrences will be incremented.
-     * @param previouslyFound the history of the path found so far.
-     * @param referenceToTest the reference to test (where the name of object will be extracted from).
-     * @return true if the name of the object hold by \a referenceToTest is compatible with the \address.
+     * @param[in,out] previouslyFound the history of the path found so far.
+     * @param[in,out] referenceToTest the reference to test (where the name of object will be extracted from).
+     * @return true if the name of the object hold by \a referenceToTest is compatible with the address.
      */
     virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest);
 
@@ -127,5 +128,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCECONTAINERFILTEROBJECTNAME_H_ */
+#endif /* REFERENCECONTAINERFILTEROBJECTNAME_H_ */
 
