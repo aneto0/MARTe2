@@ -46,13 +46,13 @@ public:
 
     /**
      * @brief Tests the constructor.
-     * @return true if the attribute numberOfReference is initialized to zero.
+     * @return true if the attribute numberOfReferences is initialised to zero.
      */
     bool TestConstructor();
 
     /**
      * @brief Tests the destructor.
-     * @return true because this function does nothing.
+     * @return true if the attribute numberOfReferences is zero after calling the destructor.
      */
     bool TestDestructor();
 
@@ -63,16 +63,17 @@ public:
     bool TestGetIntrospectionCopy();
 
     /**
-     * @brief Tests the Object::Initialise function.
-     * @return the opposite of the tested function (always it returns false).
+     * @brief Tests the Object::Initialise function which should not be implemented in the base Object
+     * and should return false.
+     * @return true if Object::Initialise returns false.
      */
     bool TestInitialise();
 
     /**
      * @brief Tests the Object::NumberOfReferences function.
-     * @details Creates an object and assigns different references to it checking if the function returns the correct
-     * number of references to the object.
-     * @return true if the test explained in the details section has success, false otherwise.
+     * @details Creates an object and and assigns different references to it, checking that Object::NumberOfReferences
+     * returns a value consistent with the number of references holding the object.
+     * @return true if Object::NumberOfReferences always returns a value consistent with the number of references holding the object.
      */
     bool TestNumberOfReferences();
 
