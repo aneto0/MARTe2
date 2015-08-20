@@ -380,3 +380,10 @@
   * Justification: Required for template implementation.
   */
 -esym(9107, ReferenceT*)
+
+/*
+ * Rule flexelint 1793
+ * Justification: Legitimate way of binding a non-const reference to an rvalue so that a direct access to the underlying
+ * object hold by the reference can be retrieved.
+ */
+-estring(1793,"*Reference::operator->*")
