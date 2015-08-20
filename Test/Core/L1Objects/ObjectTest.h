@@ -109,6 +109,13 @@ public:
      * @return true if the name returned by GetUniqueName is different for two objects with the same name, false otherwise.
      */
     bool TestGetUniqueName2();
+    
+    
+    /**
+     * @brief Tests the Object::TestGetProperties function.
+     * @return true if the ClassProperties object returned is the equal to the object created at class registration time.
+     */
+    bool TestGetProperties();
 };
 
 /*---------------------------------------------------------------------------*/
