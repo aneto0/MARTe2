@@ -54,7 +54,7 @@ struct ErrorInformation {
         /**
          * The error code.
          */
-        ErrorType errorType;
+        ErrorType errorType : 8;
 
         /**
          * The error line number.
