@@ -1,7 +1,7 @@
 /**
- * @file USBConsole.h
- * @brief Header file for class USBConsole
- * @date 09/08/2015
+ * @file GeneralPurposeIO.h
+ * @brief Header file for class GeneralPurposeIO
+ * @date 17/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class USBConsole
+ * @details This header file contains the declaration of the class GeneralPurposeIO
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef USBCONSOLE_H_
-#define USBCONSOLE_H_
+#ifndef GENERALPURPOSEIO_H_
+#define GENERALPURPOSEIO_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -34,45 +34,38 @@
 
 #include "GeneralDefinitions.h"
 #include INCLUDE_FILE_PLATFORM(PLATFORM,DriversDefinitionsP.h)
-#include "BasicConsole.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class USBConsole: public BasicConsole {
+class GeneralPurposeIO {
 public:
-
-    USBConsole();
-
-    ErrorType Open(const FlagsType &mode);
-
-    ErrorType Close();
-
-    ErrorType Write(const char8* const txBuffer, uint32 &size,const TimeoutType &timeout);
-
-    ErrorType Read(char8* const rxBuffer, uint32 &size,const TimeoutType &timeout);
-
-    int32 size();
-
-    int32 position();
+    // initializes a group of pins of a specified port
+    void Init(uint16 pinMask,
+              uint8 modeNumber,
+              uint32 pullMask,
+              uint32 speed,
+              uint8 alternateFunction,
+              uint8 portNumber);
 
 
-    static USBHandle *GetHandle();
+    void DeInit(uint16 pinMask);
 
-    bool Inizialized() const;
+
+    bool ReadPin(uint16 pinMask);
+
+    void WritePin(uint16 pinMask, bool value);
+
+    void TogglePin(uint16 pinMask);
+
 
 private:
-    static USBHandle handle;
-
-    static bool initialized;
-
-    uint32 privateRead(char8* const rxBuffer, uint32 size);
-
+    GPIOHandle handle;
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* USBCONSOLE_H_ */
+#endif /* GENERALPURPOSEIO_H_ */
 

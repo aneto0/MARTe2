@@ -29,16 +29,13 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "USBConsole.h"
-#include "usbd_desc.h"
-#include "usbd_cdc_interface.h"
-#include "stm32f4xx_hal.h"
-#include "usbd_core.h"
-#include "stm32f4_discovery.h"
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 USBHandle USBConsole::handle = { 0 };
+bool USBConsole::initialized = false;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -79,10 +76,10 @@ char g_VCPInitialized;
  * @retval Result of the opeartion: USBD_OK if all operations are OK else USBD_FAIL
  */
 static int8_t TEMPLATE_Init(void) {
-    for(uint32 i=0; i<CDC_DATA_FS_OUT_PACKET_SIZE; i++){
-        s_RxBuffer.Buffer[i]=0;
+    for (uint32 i = 0; i < CDC_DATA_FS_OUT_PACKET_SIZE; i++) {
+        s_RxBuffer.Buffer[i] = 0;
     }
-    USBD_CDC_SetRxBuffer(&(USBConsole::handle), s_RxBuffer.Buffer);
+    USBD_CDC_SetRxBuffer(USBConsole::GetHandle(), s_RxBuffer.Buffer);
     g_VCPInitialized = 1;
     return (0);
 }
@@ -196,6 +193,14 @@ USBConsole::USBConsole() {
 
 }
 
+bool USBConsole::Inizialized() const {
+    return initialized;
+}
+
+USBHandle *USBConsole::GetHandle() {
+    return &handle;
+}
+
 ErrorType USBConsole::Open(const FlagsType &mode) {
     // USB CDC initialization
     USBD_Init(&handle, &VCP_Desc, 0);
@@ -204,6 +209,7 @@ ErrorType USBConsole::Open(const FlagsType &mode) {
     USBD_CDC_RegisterInterface(&handle, &USBD_CDC_Template_fops);
     USBD_Start(&handle);
 
+    initialized = true;
     return NoError;
 }
 
