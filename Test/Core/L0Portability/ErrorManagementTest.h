@@ -145,7 +145,7 @@ public:
      * @details The error function checks if the ErrorInfo structure passed by the ReportError function is filled correctly with the
      * right error informations. Launches a certain number of threads checking if also the thread id field is correct.
      * @param[in] code is the desired error code.
-     * @param[in] errorName is the expected error code string.
+     * @param[in] expected is the expected error code string.
      * @param[in] errorDescription is the desired error description.
      * @param[in] errorFileName is the desired error file name.
      * @param[in] errorLineNumber is the desired error line number.
@@ -157,9 +157,9 @@ public:
     bool TestReportErrorFullContext(ErrorType code,
                                     const char8* expected,
                                     const char8* errorDescription,
-                                    const char8* filename = "",
-                                    uint16 lineNumber = 0,
-                                    const char8* functionName = "",
+                                    const char8* errorFileName = "",
+                                    uint16 errorLineNumber = 0,
+                                    const char8* errorFunctionName = "",
                                     uint32 numThreads = 0);
 
 

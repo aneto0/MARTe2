@@ -99,7 +99,7 @@ void ReportErrorFullContext(const ErrorType code,
 
 /**
  * @brief Sets the routine for error managing.
- * @param[in] ErrorMessageProcessFunctionType is a pointer to the function called by ReportError.
+ * @param[in] userFun is a pointer to the function called by ReportError.
  */
 void SetErrorMessageProcessFunction(const ErrorMessageProcessFunctionType userFun = static_cast<ErrorMessageProcessFunctionType>(NULL));
 
