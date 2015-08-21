@@ -1,8 +1,8 @@
 /**
  * @file ListTestHelper.h
  * @brief Header file for class ListTestHelper
- * @date 06/ago/2015
- * @author pc
+ * @date 06/06/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -55,6 +55,7 @@ public:
 
     /**
      * @brief Initializes the list element.
+     * @param[in] number is the number attribute.
      */
     IntegerList(uint32 number) {
         intNumber = number;
@@ -73,13 +74,17 @@ public:
  */
 class SortDecrescent: public SortFilter {
 public:
+
+    /**
+     * @brief Constructor
+     */
     SortDecrescent() {
     }
 
     /**
      * @brief The compare function.
-     * @param[in] is the first list element to be compared.
-     * @param[in] is the second list element to be compared.
+     * @param[in] element1 is the first list element to be compared.
+     * @param[in] element2 is the second list element to be compared.
      * @return 1 if the first element is minor than the second, -1 otherwise.
      */
     int32 Compare(LinkedListable* element1,
