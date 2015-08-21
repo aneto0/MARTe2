@@ -63,8 +63,8 @@ public:
     /**
      * @brief Tests if the \a referenceToTest is equal to the \a referenceToSearch specified in the constructor.
      * @details Each time this method finds a matching reference the number of occurrences will be incremented.
-     * @param[in,out] previouslyFound the history of the path found so far. Not used.
-     * @param[in,out] referenceToTest the reference to test.
+     * @param[in] previouslyFound the history of the path found so far. Not used.
+     * @param[in] referenceToTest the reference to test.
      * @return true if \a referenceToTest == \a referenceToSearch.
      */
     virtual bool Test(ReferenceContainer &previouslyFound,

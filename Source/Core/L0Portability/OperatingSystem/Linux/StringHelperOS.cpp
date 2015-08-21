@@ -215,8 +215,8 @@ const char8* StringHelper::TokenizeByString(const char8* const string,
                                               char8* const result) {
 
     const char8 *ret = static_cast<const char8*>(NULL);
-    int32 size1 = StringHelper::Length(string);
-    int32 size2 = StringHelper::Length(terminator);
+    int32 size1 = static_cast<int32>(StringHelper::Length(string));
+    int32 size2 = static_cast<int32>(StringHelper::Length(terminator));
 
     if ((size1 >= 0) && (size2 >= 0) && (result != NULL)) {
 

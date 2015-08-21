@@ -46,14 +46,14 @@ public:
 
     /**
      * @brief Tests the default constructor.
-     * @return true if the filter is initialized with mode=0 and number of occurrence=0
+     * @return true if the filter is initialised with mode=0 and the number of occurrences=0
      */
     bool TestDefaultConstructor();
 
     /**
      * @brief Tests the full constructor.
-     * @details Checks if this constructor initializes properly the number of the occurrences and the number
-     * of node to search. In case of more than one node, the mode should be initialized to path and recursive.
+     * @details Checks if this constructor initialises properly the number of the occurrences and the number
+     * of node to search. In case of more than one node, the mode should be initialised to path and recursive.
      * @param[in] occurrence is the desired pattern occurrence.
      * @param[in] toSearch is the pattern to be searched.
      * @return true if the test explained in the details section passes, false otherwise.
@@ -81,11 +81,13 @@ public:
     /**
      * @brief Tests the filter test function.
      * @details Tests the function with different parameters (one and more than one nodes) comparing the result with the \a expected.
-     * @param[in] to Search is the pattern to be searched.
+     * @param[in] previouslyFound simulate the number of previously found nodes.
+     * @param[in] toSearch is the pattern to be searched.
      * @param[in] expected is the expected test result.
      * @return true if the result of the test returns the expected value, false otherwise.
      */
-    bool TestTest(const char8 *toSearch,
+    bool TestTest(ReferenceContainer &previouslyFound,
+                  const char8 *toSearch,
                   bool expected);
 
     /**
