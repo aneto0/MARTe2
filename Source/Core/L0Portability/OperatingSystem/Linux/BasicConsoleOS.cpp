@@ -164,7 +164,7 @@ ErrorType BasicConsole::Open(const FlagsType &mode) {
         }
     }
     if (err == NoError) {
-        bool ok = (fflush(stdin) == 0);
+        bool ok = (fflush(stdout) == 0);
         if (!ok) {
             err = OSError;
         }
