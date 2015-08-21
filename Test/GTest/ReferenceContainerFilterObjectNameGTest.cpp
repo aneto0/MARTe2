@@ -114,18 +114,20 @@ TEST(ReferenceContainerFilterObjectNameGTest,TestTestWrongPath) {
     element2->SetName("B");
     previouslyFound.Insert(element1);
     previouslyFound.Insert(element2);
-
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTest(previouslyFound, "A.C", false));
 }
 
-TEST(ReferenceContainerFilterObjectNameGTest,TestTestNotFullPath) {
+TEST(ReferenceContainerFilterObjectNameGTest,TestTestPathNoRoot) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ReferenceContainer previouslyFound;
     Heap h;
     Reference element1("Object", h);
     element1->SetName("A");
+    Reference element2("Object", h);
+    element2->SetName("B");
     previouslyFound.Insert(element1);
-    ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTest(previouslyFound, "A.B", true));
+    previouslyFound.Insert(element2);
+    ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTest(previouslyFound, "B.C", false));
 }
 
 TEST(ReferenceContainerFilterObjectNameGTest,TestTestNoPath) {
