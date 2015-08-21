@@ -35,7 +35,7 @@
 #include "ReferenceT.h"
 #include "ReferenceContainer.h"
 
-#include "../../../Source/Core/L1Objects/ReferenceContainerFilterObjectName.h"
+#include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
 
 /*---------------------------------------------------------------------------*/
@@ -448,7 +448,7 @@ private:
                         const char8 * const expectedResult);
 
     /**
-     * @brief Generate a container of references from a string representation.
+     * @brief Generates a container of references from a string representation.
      * @param[in] result destination container.
      * @param[in] str source string presentation.
      * @return true if the string can be translated into a container of references.
@@ -457,7 +457,7 @@ private:
                                           const char8 * const str);
 
     /**
-     * @brief Generate a container of references, linking to existing references, from a string representation.
+     * @brief Generates a container of references, linking to existing references, from a string representation.
      * @param[in] source tree with existing references.
      * @param[in] result destination container.
      * @param[in] str source string presentation.

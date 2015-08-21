@@ -1,8 +1,8 @@
 /**
  * @file ReferenceContainerFilterReferencesTest.cpp
  * @brief Source file for class ReferenceContainerFilterReferencesTest
- * @date 18/ago/2015
- * @author pc
+ * @date 18/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -32,7 +32,6 @@
 #include "ReferenceContainerFilterReferencesTest.h"
 #include "ReferenceContainer.h"
 #include "Memory.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -442,7 +441,6 @@ bool ReferenceContainerFilterReferencesTest::TestSetGetOriginalSetOccurrence(int
 
         // the mode must be refreshed.
         if (myRefFilter.IsStorePath()) {
-            printf("\nerror here\n");
             return false;
         }
         cnt = finalOccurrence;

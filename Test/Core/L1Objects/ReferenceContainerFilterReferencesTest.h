@@ -135,7 +135,7 @@ public:
      * @brief Tests the TestSetGetOriginalSetOccurrence.
      * @details Checks if the number of occurrence is set properly by this function and if
      * passing to the search all mode (i.e. -1), also mode is automatically refreshed disabling the path mode.
-     * @param[in] InitialOccurrence is the initial desired pattern occurrence.
+     * @param[in] initialOccurrence is the initial desired pattern occurrence.
      * @param[in] finalOccurrence is the final desired pattern occurrence.
      * @return true if the test explained in the details section passes, false otherwise.
      */
