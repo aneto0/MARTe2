@@ -195,7 +195,6 @@ bool ReferenceTest::TestRemoveReference() {
 
     intObjRef.RemoveReference();
 
-
     return !intObjRef.IsValid();
 
 }
@@ -457,10 +456,12 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
 
     uint32 totalNRefs = (nRefs + 1);
 
+    bool ret = true;
     uint32 j = 0;
     while (storedRef.NumberOfReferences() != totalNRefs) {
         if (j++ > 100) {
-            return false;
+            ret = false;
+            break;
         }
 
         Sleep::MSec(10);
@@ -474,7 +475,7 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
     Sleep::MSec(10);
 
     if (storedRef.NumberOfReferences() != totalNRefs) {
-        return false;
+        ret = false;
     }
 
     // free the references on the heap
@@ -484,7 +485,7 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
 
     // free the pointers array
     Memory::Free((void*&) arrayRefs);
-    return true;
+    return ret;
 
 }
 
@@ -517,7 +518,6 @@ bool ReferenceTest::TestWrongInherithance() {
 
     Reference floatn = Reference("FloatObject", mem);
 
-
     floatn = integer;
     if (floatn->NumberOfReferences() != 2) {
         return false;
@@ -528,5 +528,98 @@ bool ReferenceTest::TestWrongInherithance() {
 
     return (integer->NumberOfReferences() == 2);
 
+}
+
+void ActsOnRefs1(ReferenceTest &rt) {
+
+    //add a certain number of references to the first object
+    for (uint32 i = 0; i < (rt.nRefs); i++) {
+        rt.arrayRefs[i] = new Reference;
+        *(rt.arrayRefs[i]) = (rt.storedRef);
+    }
+
+    //add a certain number of references to the second object
+    for (uint32 i = (rt.nRefs); i < (2 * rt.nRefs); i++) {
+        rt.arrayRefs[i] = new Reference;
+        *(rt.arrayRefs[i]) = (rt.storedRef2);
+    }
+
+    rt.eventSem.Wait();
+
+    for (uint32 i = (2 * rt.nRefs); i < (3 * rt.nRefs); i++) {
+        rt.arrayRefs[i]->RemoveReference();
+    }
+
+    for (uint32 i = (3 * rt.nRefs); i < (4 * rt.nRefs); i++) {
+        rt.arrayRefs[i]->RemoveReference();
+    }
+
+}
+
+void ActsOnRefs2(ReferenceTest &rt) {
+
+    //add a certain number of references to the first object
+    for (uint32 i = (2 * rt.nRefs); i < (3 * rt.nRefs); i++) {
+        rt.arrayRefs[i] = new Reference;
+        *(rt.arrayRefs[i]) = (rt.storedRef);
+    }
+
+    //add a certain number of references to the second object
+    for (uint32 i = (3 * rt.nRefs); i < (4 * rt.nRefs); i++) {
+        rt.arrayRefs[i] = new Reference;
+        *(rt.arrayRefs[i]) = (rt.storedRef2);
+    }
+
+    rt.eventSem.Wait();
+
+    for (uint32 i = 0; i < rt.nRefs; i++) {
+        rt.arrayRefs[i]->RemoveReference();
+    }
+
+    for (uint32 i = rt.nRefs; i < (2 * rt.nRefs); i++) {
+        rt.arrayRefs[i]->RemoveReference();
+    }
+}
+
+bool ReferenceTest::HugeTest(uint32 nRefs) {
+
+    this->nRefs = nRefs;
+    arrayRefs = (Reference**) Memory::Malloc(4 * sizeof(Reference*) * nRefs);
+
+    Heap h;
+
+    storedRef = Reference("Object", h);
+    storedRef2 = Reference("Object", h);
+
+    Threads::BeginThread((ThreadFunctionType) ActsOnRefs1, this);
+    Threads::BeginThread((ThreadFunctionType) ActsOnRefs2, this);
+
+    uint32 k = 0;
+    bool ret = true;
+    while (((storedRef.operator->())->NumberOfReferences() < (2 * nRefs + 1)) && ((storedRef2.operator->())->NumberOfReferences() < (2 * nRefs + 1))) {
+        if (k++ > 100) {
+            ret = false;
+            break;
+        }
+        Sleep::MSec(100);
+    }
+
+    eventSem.Post();
+
+    k = 0;
+    while ((storedRef.NumberOfReferences() != 1) && (storedRef2.NumberOfReferences() != 1)) {
+        if (k++ > 100) {
+            ret = false;
+            break;
+        }
+        Sleep::MSec(100);
+    }
+
+    for (uint32 i = 0; i < (4 * nRefs); i++) {
+        delete arrayRefs[i];
+    }
+
+    Memory::Free((void*&) arrayRefs);
+    return ret;
 }
 

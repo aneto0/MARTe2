@@ -157,3 +157,8 @@ TEST(ReferenceGTest,TestWrongInherithance) {
     ASSERT_TRUE(referenceTest.TestWrongInherithance());
 }
 
+TEST(ReferenceGTest,HugeTest) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.HugeTest(64));
+}
+
