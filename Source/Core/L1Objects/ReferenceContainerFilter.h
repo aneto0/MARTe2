@@ -37,7 +37,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * Namespace to define the possible modes of search.
+ * @brief Namespace to define the possible modes of search.
  */
 namespace ReferenceContainerFilterMode {
 /**
@@ -90,7 +90,7 @@ public:
 
 
     /**
-     * @brief Set the searching mode parameters.
+     * @brief Sets the searching mode parameters.
      * @param[in] occurrenceNumber the ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
      * a node which meets a given criteria or -1 to look for all occurrences. This parameter is indexed to 1.
      * @param[in] modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
