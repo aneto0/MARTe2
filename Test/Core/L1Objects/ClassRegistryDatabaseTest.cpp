@@ -288,7 +288,7 @@ bool ClassRegistryDatabaseTest::TestCreateInstances() {
         return false;
     }
 
-    const int32 instances = 32;
+    const uint32 instances = 32;
     ReferenceT<IntegerObject> refInts[instances];
 
     for (uint32 i = 0; i < instances; i++) {
