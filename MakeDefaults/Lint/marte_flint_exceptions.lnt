@@ -316,3 +316,11 @@
   * Justification: Not applicable to a framework.
   */
 -esym(1795, ReferenceT*)
+
+
+
+ /*
+  * Rule 3-1-1
+  * Justification: Required for template implementation.
+  */
+-esym(9107, ReferenceT*)
