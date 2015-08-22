@@ -50,8 +50,6 @@ OBJSX= EndianityGTest.x \
 	ClassPropertiesGTest.x \
 	ClassRegistryItemGTest.x
 
-
-
 PACKAGE=
 ROOT_DIR=../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults

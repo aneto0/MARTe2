@@ -204,15 +204,31 @@ public:
      */
     bool TestWrongInherithance();
 
+
+
+
+    /**
+     * @brief Tests the atomicity of the IncrementReferences and DecrementReferences functions.
+     * @details Calls two threads which increments and decrements the references associated to two different objects.
+     * @param[in] nRefs is the desired number of references for the objects.
+     * @return true if the number of references is always consistent with the expected value, false otherwise.
+     */
+    bool HugeTest(uint32 nRefs);
+
     /**
      * An event semaphore used for threads synchronisation
      */
     EventSem eventSem;
 
     /**
-     * The reference to be passed to the thread callback
+     * A reference passed to the thread callback
      */
     Reference storedRef;
+
+    /**
+     * A reference passed to the thread callback
+     */
+    Reference storedRef2;
 
     /**
      * The number of references to be assigned in the thread callback function

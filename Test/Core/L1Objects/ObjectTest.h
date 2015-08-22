@@ -82,6 +82,35 @@ public:
      * @return true if the ClassProperties object returned is the equal to the object created at class registration time.
      */
     bool TestGetProperties();
+
+    /**
+     * @brief Tests the Object::SetName and Object::GetName functions.
+     * @details name is the desired object name.
+     * @return true if the get function returns the name set using the set function.
+     */
+    bool TestSetGetName(const char8* name);
+
+    /**
+     * @brief Tests if the string set is copied in the memory.
+     * @return true if the string assigned to the object is copied in the memory and it is not only a pointer assignment.
+     */
+    bool TestDuplicateName();
+
+    /**
+     * @brief Tests the Object::GetUniqueName function.
+     * @details Checks that the initial part of the returned string is the object pointer. It is possible
+     * set the buffer size to pass to the GetUniqueName function and check if the string returned until that size.
+     * @param[in] name is the desired object name.
+     * @param[in] size is the size of the buffer to pass to the GetUniqueName function.
+     * @return true if the tests explained in the details section succeed, false otherwise.
+     */
+    bool TestGetUniqueName(const char8* name,uint32 buffSize);
+
+    /**
+     * @brief Checks if the name returned by GetUniqueName is different for two objects with the same name.
+     * @return true if the name returned by GetUniqueName is different for two objects with the same name, false otherwise.
+     */
+    bool TestGetUniqueName2();
 };
 
 /*---------------------------------------------------------------------------*/

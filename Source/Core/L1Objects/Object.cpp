@@ -28,8 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "Memory.h"
 #include "Object.h"
 #include "FastPollingMutexSem.h"
+#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,9 +42,17 @@
 /*---------------------------------------------------------------------------*/
 Object::Object() {
     referenceCounter = 0u;
+    name = NULL_PTR(char8 *);
 }
 
+/*lint -e{1551} the destructor must guarantee that the named is freed. No exception should be
+ * thrown given that name always points to a valid memory address and thus Memory::Free
+ * should not raise exceptions.*/
 Object::~Object() {
+    if (name != NULL_PTR(char8 *)) {
+        /*lint -e{929} cast required to be able to use Memory::Free interface.*/
+        Memory::Free(reinterpret_cast<void *&>(name));
+    }
 }
 
 /*lint -e{9141} global declaration but only used to support the class implementation.
@@ -52,7 +62,7 @@ static FastPollingMutexSem refMux;
 
 uint32 Object::DecrementReferences() {
     uint32 ret = 0u;
-    if(refMux.FastLock() == NoError){
+    if (refMux.FastLock() == NoError) {
         --referenceCounter;
         ret = referenceCounter;
     }
@@ -61,7 +71,7 @@ uint32 Object::DecrementReferences() {
 }
 
 void Object::IncrementReferences() {
-    if(refMux.FastLock() == NoError){
+    if (refMux.FastLock() == NoError) {
         ++referenceCounter;
     }
     refMux.FastUnLock();
@@ -81,12 +91,87 @@ bool Object::Initialise(const StructuredData &data) {
 }
 
 /*lint -e{715} size is not used as this is not implemented on purpose*/
-void *Object::operator new(const size_t size) throw () {
+void *Object::operator new(const osulong size) throw () {
     return NULL_PTR(Object *);
 }
 
 void Object::GetIntrospectionCopy(Introspection &destination) const {
     destination = introspection;
+}
+
+const char8 * const Object::GetName() const {
+    return name;
+}
+
+void Object::GetUniqueName(char8 * const destination, const uint32 &size) const {
+    /*lint -e{9091} -e{923} the casting from pointer type to integer type is required in order to be able to get a
+     * numeric address of the pointer.*/
+    uintp ptrHex = reinterpret_cast<uintp>(this);
+    //Each byte in the hexadecimal representation of the pointer is described by two chars, (e.g. 1 byte = 0xFF)
+    uint32 nOfPtrChars = static_cast<uint32>(sizeof(void *) * 2u);
+    uint32 shiftBits = 0u;
+
+    //Count the number of leading zeros
+    uint32 nLeadingOfZeros = 0u;
+    uint32 i;
+    for (i = 0u; i < nOfPtrChars; i++) {
+        //First character in destination is the MSB
+        shiftBits = nOfPtrChars * 8u;
+        shiftBits -= 4u * (i + 1u);
+        uint32 hexValue = static_cast<uint32>(ptrHex >> shiftBits);
+        hexValue &= 0xFu;
+        if (hexValue == 0u) {
+            nLeadingOfZeros++;
+        }
+        else {
+            break;
+        }
+    }
+    if (size != 0u) {
+        destination[0] = 'x';
+    }
+    for (i = 1u; (i < size) && (i < ((nOfPtrChars - nLeadingOfZeros) + 1u)); i++) {
+        //First character in destination is the MSB
+        shiftBits = nOfPtrChars * 8u;
+        shiftBits -= 4u * (i + nLeadingOfZeros); //Notice that i already starts at 1
+        uint32 hexValue = static_cast<uint32>(ptrHex >> shiftBits);
+        hexValue &= 0xFu;
+        if (hexValue < 0xAu) {
+            hexValue += 48u;
+            destination[i] = static_cast<char8>(hexValue);
+        }
+        else {
+            hexValue += 55u;
+            destination[i] = static_cast<char8>(hexValue);
+        }
+    }
+    if (i < size) {
+        destination[i] = ':';
+        i++;
+    }
+    if (i < size) {
+        destination[i] = ':';
+        i++;
+    }
+    //If there is no space to even write \0 don't even try
+    if (i < size) {
+        if (GetName() != NULL) {
+            if (StringHelper::ConcatenateN(destination, GetName(), size - i) == NULL) {
+                destination[i] = '\0';
+            }
+        }
+        else {
+            destination[i] = '\0';
+        }
+    }
+}
+
+void Object::SetName(const char8 * const newName) {
+    if (name != NULL_PTR(char8 *)) {
+        /*lint -e{929} cast required to be able to use Memory::Free interface.*/
+        Memory::Free(reinterpret_cast<void *&>(name));
+    }
+    name = Memory::StringDup(newName);
 }
 
 CLASS_REGISTER(Object, "1.0")
