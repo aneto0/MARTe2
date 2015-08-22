@@ -128,7 +128,7 @@ namespace FastMath {
      * @return the sine of angle
      */
     static inline float32 Sin(const float32 angle);
-};
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

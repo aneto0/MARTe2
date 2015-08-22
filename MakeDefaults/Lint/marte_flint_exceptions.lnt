@@ -246,6 +246,7 @@
 -esym(9141,LoadableLibraryFunction)
 -esym(9141,FastMath)
 -esym(9141,FastMath::*)
+-esym(9141,FloatToInt)
 -esym(9141,ExceptionHandler)
 -esym(9141,Memory)
 -esym(9141,Memory::*)
