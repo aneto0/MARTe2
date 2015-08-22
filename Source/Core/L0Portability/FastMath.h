@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,FastMathA.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -134,18 +133,7 @@ namespace FastMath {
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-int32 FastMath::FloatToInt(const float32 input) {
-    return FastMathA::FloatToInt(input);
-}
-
-float32 FastMath::Cos(const float32 angle) {
-    return FastMathA::Cos(angle);
-}
-
-float32 FastMath::Sin(const float32 angle) {
-    return FastMathA::Sin(angle);
-}
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,FastMathA.h)
 
 #endif /* FASTMATH_H_ */
 
