@@ -2,7 +2,7 @@
  * @file Object.cpp
  * @brief Source file for class Object
  * @date 04/08/2015
- * @author André Neto
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -28,10 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ClassRegistryItem.h"
-#include "Object.h"
 #include "Memory.h"
-#include "ClassRegistryItem.h"
+#include "Object.h"
 #include "FastPollingMutexSem.h"
 #include "StringHelper.h"
 
@@ -93,7 +91,7 @@ bool Object::Initialise(const StructuredData &data) {
 }
 
 /*lint -e{715} size is not used as this is not implemented on purpose*/
-void *Object::operator new(const size_t size) throw () {
+void *Object::operator new(const osulong size) throw () {
     return NULL_PTR(Object *);
 }
 

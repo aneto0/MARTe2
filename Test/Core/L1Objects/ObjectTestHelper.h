@@ -44,12 +44,15 @@ public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * Default constructor
+     * @brief Default constructor
      */
     IntegerObject() {
         dummyVariable = 0;
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual ~IntegerObject() {
     }
 
@@ -68,7 +71,6 @@ public:
         this->dummyVariable = dummyVariable;
     }
 
-
 protected:
     /**
      * Dummy variable
@@ -77,20 +79,31 @@ protected:
 
 };
 
+
+/**
+ * @brief An object which inherits from integer object.
+ */
 class SpecialIntegerObject: public IntegerObject {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * Default constructor
+     * @brief Default constructor
      */
     SpecialIntegerObject() {
     }
 
+    /**
+     * @brief Destructor.
+     */
     virtual ~SpecialIntegerObject() {
     }
 
-
+    /**
+     * @brief Saturates the integer value whithin the specified thereshold.
+     * @param[in] threshold is the maximum value allowed.
+     * @return the number saturated.
+     */
     int32 saturate(int32 threshold) {
 
         return dummyVariable > threshold ? threshold : dummyVariable;
@@ -101,27 +114,31 @@ private:
 };
 
 
+/**
+ * @brief An object which inherits from Object.
+ */
 class FloatObject: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
 
-
     /**
-     * Default constructor
+     * @brief Default constructor
      */
     FloatObject() {
         dummyFVariable = 0;
-        deleted = false;
-    }
-
-    virtual ~FloatObject() {
-        deleted = true;
     }
 
     /**
+     * @brief Destructor
+     */
+    virtual ~FloatObject() {
+    }
+
+    /**
+     * @brief Return the float number.
      * @return the value of the dummy variable.
      */
-    uint32 GetVariable() const {
+    float32 GetVariable() const {
         return dummyFVariable;
     }
 
@@ -129,21 +146,79 @@ public:
      * @brief Updates the value of the dummy variable.
      * @param dummyVariable the new value to set.
      */
-    void SetVariable(int32 dummyVariable) {
+    void SetVariable(float32 dummyVariable) {
         this->dummyFVariable = dummyVariable;
     }
 
-    bool Deleted() {
-        return deleted;
-    }
 private:
     /**
      * Dummy variable
      */
-    int32 dummyFVariable;
+    float32 dummyFVariable;
 
-    bool deleted;
 };
+
+
+/**
+ * @brief A class which contains two different Object types.
+ */
+class CollectInts: public Object {
+
+    /**
+     * First object.
+     */
+    IntegerObject oneInteger;
+
+    /**
+     * Second object
+     */
+    SpecialIntegerObject oneSpecialInteger;
+
+public:
+    CLASS_REGISTER_DECLARATION()
+
+    /**
+     * @brief Constructor.
+     */
+    CollectInts() {
+        oneInteger.SetVariable(0);
+        oneSpecialInteger.SetVariable(0);
+    }
+
+    /**
+     * @brief Sets the value of the first object.
+     * @param[in] inumber is the desired value associated to the first object.
+     */
+    void SetInteger(int32 inumber){
+        oneInteger.SetVariable(inumber);
+    }
+
+    /**
+     * @brief Sets the value of the second object.
+     * @param[in] inumber is the desired value associated to the second object.
+     */
+    void SetSpecialInteger(int32 inumber){
+        oneSpecialInteger.SetVariable(inumber);
+    }
+
+    /**
+     * @brief Returns the value of the first object.
+     * @return the value of the first object.
+     */
+    int32 GetInteger() {
+        return oneInteger.GetVariable();
+    }
+
+
+    /**
+     * @brief Returns the value of the second object.
+     * @return the value of the second object.
+     */
+    int32 GetSpecialInteger() {
+        return oneSpecialInteger.GetVariable();
+    }
+};
+
 
 #endif /* OBJECTTESTHELPER_H_ */
 

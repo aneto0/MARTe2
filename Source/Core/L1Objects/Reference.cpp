@@ -144,29 +144,6 @@ Object* Reference::operator->() {
     return objectPointer;
 }
 
-bool Reference::Clone(Reference &sourceReference) {
-    bool ok = sourceReference.IsValid();
-    if (ok) {
-        Object * tmp = sourceReference->Clone();
-        if (tmp != NULL) {
-            RemoveReference();
-            objectPointer = tmp;
-            objectPointer->IncrementReferences();
-            // This is necessary, otherwise when
-            // GCReference::Clone is called by
-            // GCRTemplate, at this point the IsValid
-            // function of GCRTemplate would be called,
-            // returning false as the setup of GCRTemplate
-            // Tobject is not yet done.
-            ok = Reference::IsValid();
-        }
-        else {
-            ok = false;
-        }
-    }
-    return ok;
-}
-
 Object *Reference::CreateByName(const char8 * const className, const Heap &heap) const {
     Object *obj = NULL_PTR(Object *);
 

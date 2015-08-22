@@ -1,8 +1,8 @@
 /**
  * @file Heap.h
  * @brief Header file for class Heap
- * @date 4 Aug 2015
- * @author andre
+ * @date 04/08/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

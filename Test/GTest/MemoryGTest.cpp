@@ -56,6 +56,16 @@ TEST(MemoryGTest,TestRealloc) {
     ASSERT_TRUE(memorytest.TestRealloc(100, 10));
 }
 
+TEST(MemoryGTest,TestReallocZeroSize) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestReallocZeroSize());
+}
+
+TEST(MemoryGTest,TestReallocNullPointer) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestReallocNullPointer(100));
+}
+
 TEST(MemoryGTest,TestStringDup) {
     MemoryTest memorytest;
     ASSERT_TRUE(memorytest.TestStringDup("Hello"));
@@ -71,9 +81,29 @@ TEST(MemoryGTest,TestCopy) {
     ASSERT_TRUE(memorytest.TestCopy());
 }
 
+TEST(MemoryGTest,TestCopyZeroSize) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestCopyZeroSize());
+}
+
+TEST(MemoryGTest,TestCopyNullPointer) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestCopyNullPointer());
+}
+
 TEST(MemoryGTest,TestMove) {
     MemoryTest memorytest;
     ASSERT_TRUE(memorytest.TestMove());
+}
+
+TEST(MemoryGTest,TestMoveZeroSize) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestMoveZeroSize());
+}
+
+TEST(MemoryGTest,TestMoveNullPointer) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestMoveNullPointer());
 }
 
 TEST(MemoryGTest,TestCompare) {
@@ -86,8 +116,28 @@ TEST(MemoryGTest,TestSet) {
     ASSERT_TRUE(memorytest.TestSet());
 }
 
+TEST(MemoryGTest,TestSetZeroSize) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestSetZeroSize());
+}
+
 TEST(MemoryGTest,TestSearch) {
     MemoryTest memorytest;
     ASSERT_TRUE(memorytest.TestSearch());
+}
+
+TEST(MemoryGTest,TestSearchNotInBuffer) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestSearchNotInBuffer());
+}
+
+TEST(MemoryGTest,TestSearchOutOfRanges) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestSearchOutOfRanges());
+}
+
+TEST(MemoryGTest,TestSearchZeroSize) {
+    MemoryTest memorytest;
+    ASSERT_TRUE(memorytest.TestSearchZeroSize());
 }
 

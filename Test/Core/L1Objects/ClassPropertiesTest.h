@@ -1,8 +1,8 @@
 /**
- * @file SearchFilterT.h
- * @brief Header file for class SearchFilterT
- * @date 06/08/2015
- * @author Giuseppe Ferro'
+ * @file ClassPropertiesTest.h
+ * @brief Header file for class ClassPropertiesTest
+ * @date 11/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SearchFilterT
+ * @details This header file contains the declaration of the class ClassPropertiesTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SEARCHFILTERT_H_
-#define SEARCHFILTERT_H_
+#ifndef CLASSPROPERTIESTEST_H_
+#define CLASSPROPERTIESTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,36 +31,53 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
+/**
+ * @brief Tests all the ClassProperties functions.
+ */
+#include "ClassProperties.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
 /**
- * @brief Template version of the SearchFilter interface.
+ * @brief Tests all the ClassProperties functions.
  */
-template<typename T>
-class SearchFilterT {
+class ClassPropertiesTest {
 public:
 
     /**
-     * @brief Destructor.
+     * @brief Tests the default constructor.
+     * @return true if the name and version fields are initialised to NULL.
      */
-    virtual ~SearchFilterT() {
-
-    }
+    bool TestDefaultConstructor();
 
     /**
-     * @brief LinkedListable searching callback function.
-     * @details This function is called for every element in the list being searched (i.e. traversed).
-     * @param[in] data the current LinkedListable element to be tested.
-     * @return true if \a data meets the search criteria.
+     * @brief Tests the full constructor.
+     * @param[in] the desired name.
+     * @param[in] the desired version.
+     * @return true if the attributes are set equal to inputs.
      */
-    virtual bool Test(T data)=0;
+    bool TestFullConstructor(const char8* name,
+                             const char8* version);
+
+    /**
+     * @brief Tests the ClassProperties::GetName function.
+     * @param[in] the desired name.
+     * @return true if the name returned is correct.
+     */
+    bool TestGetName(const char8*name);
+
+    /**
+     * @brief Tests the ClassProperties::GetVersion function.
+     * @param[in] the desired version.
+     * @return true if the version returned is correct.
+     */
+    bool TestGetVersion(const char8*version);
+
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SEARCHFILTERT_H_ */
+#endif /* CLASSPROPERTIESTEST_H_ */
 

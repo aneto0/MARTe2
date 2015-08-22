@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_CLASSREGISTRYDATABASE_H_
-#define SOURCE_CORE_L1OBJECTS_CLASSREGISTRYDATABASE_H_
+#ifndef CLASSREGISTRYDATABASE_H_
+#define CLASSREGISTRYDATABASE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -120,4 +120,4 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-#endif /* SOURCE_CORE_L1OBJECTS_CLASSREGISTRYDATABASE_H_ */
+#endif /* CLASSREGISTRYDATABASE_H_ */

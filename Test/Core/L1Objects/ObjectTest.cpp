@@ -32,6 +32,7 @@
 #include "ObjectTest.h"
 #include "Reference.h"
 #include "StringHelper.h"
+#include "ObjectTestHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -107,8 +108,12 @@ bool ObjectTest::TestDuplicateName() {
 
     //if the name string is duplicated in memory and it isn't only a pointer copy
     //the object should have the original name.
+    bool ok = (StringHelper::Compare(name, myObj.GetName()) != 0);
 
-    return StringHelper::Compare(name, myObj.GetName());
+    //The name should now be updated.
+    myObj.SetName(name);
+    ok = (StringHelper::Compare(name, myObj.GetName()) == 0);
+    return ok;
 }
 
 bool ObjectTest::TestGetUniqueName(const char8* name,
@@ -201,3 +206,11 @@ bool ObjectTest::TestGetUniqueName2() {
     return StringHelper::Compare(uniqueName1, uniqueName2) != 0;
 }
 
+bool ObjectTest::TestGetProperties() {
+    Object obj;
+    ClassProperties properties;
+    obj.GetClassPropertiesCopy(properties);
+    const char8 *name = properties.GetName();
+    const char8 *version = properties.GetVersion();
+    return (StringHelper::Compare("Object", name) == 0) && (StringHelper::Compare("1.0", version) == 0);
+}

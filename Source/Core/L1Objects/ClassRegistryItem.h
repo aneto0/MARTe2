@@ -2,7 +2,7 @@
  * @file ClassRegistryItem.h
  * @brief Header file for class ClassRegistryItem
  * @date 04/08/2015
- * @author Andre Neto
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_CLASSREGISTRYITEM_H_
-#define SOURCE_CORE_L1OBJECTS_CLASSREGISTRYITEM_H_
+#ifndef CLASSREGISTRYITEM_H_
+#define CLASSREGISTRYITEM_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -39,6 +39,11 @@
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
 class Object;
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
+/**
+ * @brief Definition of the ObjectBuildFn function type.
+ * @param[in] heap the desired heap memory area where the object will be created.
+ * @return a pointer to the created object.
+ */
 typedef Object *(ObjectBuildFn)(const Heap &);
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -150,5 +155,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_CLASSREGISTRYITEM_H_ */
+#endif /* CLASSREGISTRYITEM_H_ */
 

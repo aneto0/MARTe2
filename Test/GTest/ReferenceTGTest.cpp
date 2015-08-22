@@ -1,8 +1,8 @@
 /**
  * @file ReferenceTGTest.cpp
  * @brief Source file for class ReferenceTGTest
- * @date 10/ago/2015
- * @author pc
+ * @date 10/08/2015
+ * @author Giusepper Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -170,16 +170,6 @@ TEST(ReferenceTGTest,TestDifferentOperator) {
 TEST(ReferenceTGTest,TestNumberOfReferences) {
     ReferenceTTest referenceTTest;
     ASSERT_TRUE(referenceTTest.TestNumberOfReferences());
-}
-
-TEST(ReferenceTGTest,TestCloneReferenceT) {
-    ReferenceTTest referenceTTest;
-    ASSERT_TRUE(referenceTTest.TestCloneReferenceT());
-}
-
-TEST(ReferenceTGTest,TestCloneReference) {
-    ReferenceTTest referenceTTest;
-    ASSERT_TRUE(referenceTTest.TestCloneReference());
 }
 
 TEST(ReferenceTGTest,TestInFunctionOnStack) {

@@ -67,6 +67,11 @@ TEST(ObjectGTest,TestNumberOfReferences) {
     ASSERT_TRUE(objectTest.TestNumberOfReferences());
 }
 
+TEST(ObjectGTest,TestGetProperties) {
+    ObjectTest objectTest;
+    ASSERT_TRUE(objectTest.TestGetProperties());
+}
+
 TEST(ObjectGTest,TestSetGetName) {
     ObjectTest objectTest;
     ASSERT_TRUE(objectTest.TestSetGetName("Hello"));

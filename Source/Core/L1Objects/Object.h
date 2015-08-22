@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_OBJECT_H_
-#define SOURCE_CORE_L1OBJECTS_OBJECT_H_
+#ifndef OBJECT_H_
+#define OBJECT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -72,13 +72,13 @@
      * Note that the selected heap might be different for each type of class.                                          \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
-    static void * operator new(const size_t size, Heap &heap);                                                         \
+    static void * operator new(const osulong size, Heap &heap);                                                         \
     /*                                                                                                                 \
      * @brief Delete the object.                                                                                       \
      * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \
      * cannot call non-static members and as a consequence the heap variable must have global                          \
      * scope in the unit file (but is not exported) (see CLASS_REGISTER).                                              \
-     * @param p the pointer to the object to be deleted.                                                               \
+     * @param[in] p the pointer to the object to be deleted.                                                               \
      */                                                                                                                \
     static void operator delete(void *p);
 
@@ -142,7 +142,7 @@
     /*lint -e{1531}                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
-    void * name::operator new(const size_t size, Heap &heap) {                                                         \
+    void * name::operator new(const osulong size, Heap &heap) {                                                         \
         void *obj = heap.Malloc(static_cast<uint32>(size));                                                            \
         name ## ClassRegistryItem_.IncrementNumberOfInstances();                                                       \
         return obj;                                                                                                    \
@@ -195,7 +195,7 @@ public:
      * call the Initialise method. The Object instance is then responsible for
      * retrieving the initialisation data from the input data and of assigning
      * these value to its internal variables.
-     * @param data the input initialisation data.
+     * @param[in] data the input initialisation data.
      * @return true if all the input \a data is valid and can be successfully assigned
      * to the Object member variables.
      */
@@ -203,7 +203,7 @@ public:
 
     /**
      * @brief Returns a copy to the object introspection properties.
-     * @destination Copies the object introspection properties to the \a destination.
+     * @param[out] destination Copies the object introspection properties to the \a destination.
      */
     void GetIntrospectionCopy(Introspection &destination) const;
 
@@ -222,21 +222,21 @@ public:
     /**
      * @brief Returns an object name which is guaranteed to be unique.
      * @details The object unique name is composed by the object memory
-     *  address and by the object name as returned by GetName().
+     * address and by the object name as returned by GetName().
      *
      * If GetName() returns NULL the unique name will be the object memory address.
      * The format of the unique name is xMemoryAddress::Name. The leading zeros of the
      * memory address are discarded.
      * @param[in, out] destination the destination where to write the unique object to.
      * If enough space is available the string will be zero terminated.
-     * @param[in] the size of the \a destination input string.
+     * @param[in] size the size of the \a destination input string.
      */
     void GetUniqueName(char8 * const destination, const uint32 &size) const;
 
     /**
      * @brief Sets the object name.
      * @details If a name had already been set the object name will be updated to this name.
-     * @param newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
+     * @param[in] newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
      * @pre newName != NULL
      */
     void SetName(const char8 * const newName);
@@ -246,6 +246,7 @@ private:
     /**
      * @brief Decrements the number of references to this object.
      * @details Only accessible to the Reference class.
+     * @return the number of references after the operation.
      */
     uint32 DecrementReferences();
 
@@ -264,9 +265,10 @@ private:
     virtual Object* Clone() const;
 
     /**
-     * Disallow the usage of new.
+     * @brief Disallow the usage of new.
+     * @param[in] size the size of the object.
      */
-    static void *operator new(size_t size) throw ();
+    static void *operator new(osulong size) throw ();
 
     /**
      * Object introspection properties.
@@ -288,5 +290,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_OBJECT_H_ */
+#endif /* OBJECT_H_ */
 

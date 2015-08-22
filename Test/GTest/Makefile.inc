@@ -44,6 +44,8 @@ OBJSX= EndianityGTest.x \
 	LinkedListableGTest.x \
 	LinkedListHolderGTest.x \
 	ClassRegistryDatabaseGTest.x \
+	ClassPropertiesGTest.x \
+	ClassRegistryItemGTest.x \
 	ObjectGTest.x \
 	ReferenceGTest.x \
 	ReferenceContainerGTest.x \
@@ -70,9 +72,7 @@ INCLUDES += -I../../Source/Core/LXTypeDev
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 all: $(OBJS)    \
-                $(BUILD_DIR)/MainGTest$(EXEEXT) \
-                $(BUILD_DIR)/ReferenceContainerTempTests$(EXEEXT)
-	echo  $(OBJS)
+                $(BUILD_DIR)/MainGTest$(EXEEXT) 	echo  $(OBJS)
 
 include depends.$(TARGET)
 

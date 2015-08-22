@@ -1,8 +1,8 @@
 /**
- * @file ClassProperties.cpp
- * @brief Source file for class ClassProperties
- * @date 05/08/2015
- * @author Andre' Neto
+ * @file ClassPropertiesGTest.cpp
+ * @brief Source file for class ClassPropertiesGTest
+ * @date 11/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,19 +17,20 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ClassProperties (public, protected, and private). Be aware that some 
+ * the class ClassPropertiesGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+#include <limits.h>
+#include "gtest/gtest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "ClassProperties.h"
-
+#include "ClassPropertiesTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -38,22 +39,23 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-ClassProperties::ClassProperties() {
-    className = static_cast<const char8 *>(NULL);
-    classVersion = static_cast<const char8 *>(NULL);
+TEST(ClassPropertiesGTest,TestDefaultConstructor) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestDefaultConstructor());
 }
 
-ClassProperties::ClassProperties(const char8 * const cName,
-                                 const char8 * const cVersion) {
-    className = cName;
-    classVersion = cVersion;
+TEST(ClassPropertiesGTest,TestFullConstructor) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestFullConstructor("Hello","World"));
 }
 
-const char8* ClassProperties::GetName() const {
-    return className;
+TEST(ClassPropertiesGTest,TestGetName) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestGetName("Hello"));
 }
 
-const char8* ClassProperties::GetVersion() const {
-    return classVersion;
+TEST(ClassPropertiesGTest,TestGetVersion) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestGetVersion("World"));
 }
 

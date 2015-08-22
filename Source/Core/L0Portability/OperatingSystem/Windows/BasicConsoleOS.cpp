@@ -201,8 +201,7 @@ ErrorType BasicConsole::Open(const FlagsType &mode) {
 //    con.selectedStream      = NormalStreamMode;
     int32 shortMask = 0xffff;
 
-    int stdConsoleColumns;
-    int stdConsoleRows;
+
 
     ErrorType error = NoError;
     osProperties->openingMode = mode;
@@ -238,6 +237,8 @@ ErrorType BasicConsole::Open(const FlagsType &mode) {
     }
 
     if (error == NoError) {
+        int stdConsoleColumns;
+        int stdConsoleRows;
         stdConsoleColumns = osProperties->initialInfo.dwSize.X;
 
         stdConsoleRows = osProperties->initialInfo.dwSize.Y;

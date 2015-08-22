@@ -27,6 +27,8 @@
 OBJSX=  LinkedListableTest.x \
 	LinkedListHolderTest.x \
 	ClassRegistryDatabaseTest.x \
+	ClassPropertiesTest.x \
+	ClassRegistryItemTest.x \
 	TestObjectHelper1.x \
 	TestObjectHelper2.x \
 	ObjectTest.x \

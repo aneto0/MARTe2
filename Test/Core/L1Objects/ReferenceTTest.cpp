@@ -1,8 +1,8 @@
 /**
  * @file ReferenceTTTest.cpp
  * @brief Source file for class ReferenceTTTest
- * @date 10/ago/2015
- * @author pc
+ * @date 10/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -461,27 +461,6 @@ bool ReferenceTTest::TestDifferentOperator() {
 
 }
 
-bool ReferenceTTest::TestCloneReference() {
-
-    Heap mem;
-
-    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
-
-    Reference fakeObj("FakeObject", mem);
-
-    return !(buildObj.Clone(fakeObj));
-}
-
-bool ReferenceTTest::TestCloneReferenceT() {
-
-    Heap mem;
-
-    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
-
-    ReferenceT<IntegerObject> fakeObj("FakeObject", mem);
-
-    return !(buildObj.Clone(fakeObj)) && !(fakeObj.Clone(buildObj));
-}
 
 void CreateRefsOnStack(ReferenceTTest &rt) {
 

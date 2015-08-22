@@ -70,7 +70,7 @@ void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
             }
         }
         else {
-            q = dynamic_cast<ClassRegistryItem *>(p->Next());
+            q = dynamic_cast<ClassRegistryItem *>(q->Next());
         }
     }
 

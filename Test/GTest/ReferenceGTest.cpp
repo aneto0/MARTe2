@@ -136,11 +136,6 @@ TEST(ReferenceGTest,TestNumberOfReferences) {
     ASSERT_TRUE(referenceTest.TestNumberOfReferences());
 }
 
-TEST(ReferenceGTest,TestClone) {
-    ReferenceTest referenceTest;
-    ASSERT_TRUE(referenceTest.TestClone());
-}
-
 TEST(ReferenceGTest,TestInFunctionOnStack) {
     ReferenceTest referenceTest;
     ASSERT_TRUE(referenceTest.TestInFunctionOnStack());
@@ -160,5 +155,10 @@ TEST(ReferenceGTest,TestRightInherithance) {
 TEST(ReferenceGTest,TestWrongInherithance) {
     ReferenceTest referenceTest;
     ASSERT_TRUE(referenceTest.TestWrongInherithance());
+}
+
+TEST(ReferenceGTest,HugeTest) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.HugeTest(64));
 }
 

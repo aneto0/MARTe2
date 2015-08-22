@@ -2,7 +2,7 @@
  * @file LinkedListable.cpp
  * @brief Source file for class LinkedListable
  * @date 05/08/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferro'
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
