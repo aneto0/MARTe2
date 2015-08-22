@@ -24,3 +24,4 @@ ClassRegistryDatabase.cpp
 Object.cpp
 Reference.cpp
 ReferenceT.cpp
+ReferenceTTest.cpp
