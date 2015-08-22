@@ -117,7 +117,7 @@ public:
      * @param[in] sourceReference reference to be compared.
      * @return true if the \a sourceReference links to the same object as this Reference.
      */
-    virtual bool operator==(const Reference& sourceReference) const;
+    bool operator==(const Reference& sourceReference) const;
 
     /**
      * @brief Verifies if this Reference owns the same object of \a sourceReference.

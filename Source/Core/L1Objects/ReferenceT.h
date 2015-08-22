@@ -124,6 +124,7 @@ public:
      * @param[in] sourceReference reference to be compared.
      * @return true if the \a sourceReference links to the same object as this Reference.
      */
+    /*lint -e{1511} Reference::operator== hidden on purpose.*/
     bool operator==(const ReferenceT<T>& sourceReference) const;
 
     /**
