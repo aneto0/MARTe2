@@ -20,8 +20,6 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
 OBJSX= EndianityGTest.x \
@@ -72,7 +70,8 @@ INCLUDES += -I../../Source/Core/LXTypeDev
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 all: $(OBJS)    \
-                $(BUILD_DIR)/MainGTest$(EXEEXT) 	echo  $(OBJS)
+        $(BUILD_DIR)/MainGTest$(EXEEXT)
+	echo  $(OBJS)
 
 include depends.$(TARGET)
 
