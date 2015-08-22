@@ -68,25 +68,13 @@ public:
      * @param[in] timeStamp is a structure which contains the time stamp fields.
      * @return true if the time can be successfully retrieved from the operating system.
      */
-    bool GetTimeStamp(TimeValues &timeStamp) const ;
+    bool GetTimeStamp(TimeValues &timeStamp) const;
 
     /**
      * @brief Returns the calibrated CPU frequency.
      * @return the calibrated CPU frequency.
      */
     int64 GetFrequency() const;
-
-    /**
-     * @brief Returns the number of elapsed ticks at the time the program was started.
-     * @return the number of elapsed ticks when the program was started.
-     */
-    int64 GetInitialTicks() const;
-
-    /**
-     * @brief Returns the time (from the epoch) when the program was started.
-     * @return the time at which the program was started.
-     */
-    const struct timeval& GetInitialTime() const;
 
     /**
      * @brief Returns the calibrated CPU period.

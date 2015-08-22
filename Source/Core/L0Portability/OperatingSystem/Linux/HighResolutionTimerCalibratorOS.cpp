@@ -44,6 +44,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+/*lint -e{9141} constant that can be reused by other classes*/
+HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
 
 HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
     const size_t LINUX_CPUINFO_BUFFER_SIZE = 1023u;
@@ -116,14 +118,6 @@ bool HighResolutionTimerCalibratorOS::GetTimeStamp(TimeValues &timeStamp) const 
 
 int64 HighResolutionTimerCalibratorOS::GetFrequency() const {
     return frequency;
-}
-
-int64 HighResolutionTimerCalibratorOS::GetInitialTicks() const {
-    return initialTicks;
-}
-
-const struct timeval& HighResolutionTimerCalibratorOS::GetInitialTime() const {
-    return initialTime;
 }
 
 float64 HighResolutionTimerCalibratorOS::GetPeriod() const {

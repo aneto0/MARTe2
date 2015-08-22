@@ -45,7 +45,7 @@
 /**
  * Buffer used to store the processor identifier
  */
-static char8 processorVendorId[13] = { 0 };
+extern char8 processorVendorId[13];
 
 /**
  * @brief Implementation of the cpuid function for x86 and gcc

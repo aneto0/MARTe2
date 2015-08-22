@@ -40,6 +40,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
+
 HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
     time((time_t *) &initialTime.tv_sec);
 
@@ -113,14 +115,6 @@ bool HighResolutionTimerCalibratorOS::GetTimeStamp(TimeValues &timeStamp) {
 
 int64 HighResolutionTimerCalibratorOS::GetFrequency() const {
     return frequency;
-}
-
-int64 HighResolutionTimerCalibratorOS::GetInitialTicks() const {
-    return initialTicks;
-}
-
-const struct timeval& HighResolutionTimerCalibratorOS::GetInitialTime() const {
-    return initialTime;
 }
 
 float64 HighResolutionTimerCalibratorOS::GetPeriod() const {

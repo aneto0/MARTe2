@@ -161,7 +161,7 @@ public:
                                         const uint32 &stacksize = static_cast<uint32>(THREADS_DEFAULT_STACKSIZE),
                                         const char8 * name = static_cast<char8*>(NULL),
                                         uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
-                                        ProcessorType runOnCPUs = ProcessorType::UndefinedCPUs);
+                                        ProcessorType runOnCPUs = UndefinedCPUs);
 
     /**
      * @brief Gets the current thread id;
