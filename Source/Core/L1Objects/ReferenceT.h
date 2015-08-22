@@ -137,7 +137,7 @@ public:
      * @brief Creates an object from a structured list of elements.
      * @param[in] data the data to initialise the underlying object.
      * @param[in] createOnly if true the object Initialise method is not called.
-     * @return true if the object was successfully created and initialized.
+     * @return true if the object was successfully created and initialised.
      */
     virtual bool Initialise(const StructuredData &data,
                             bool createOnly);
@@ -151,7 +151,7 @@ private:
     virtual ReferenceT<T>* operator&();
 
     /**
-     * @brief Set thes internal pointers to NULL.
+     * @brief Set the internal pointers to NULL.
      */
     void Init();
 
