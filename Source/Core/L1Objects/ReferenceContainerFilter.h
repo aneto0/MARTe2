@@ -101,9 +101,7 @@ public:
     /**
      * @brief Destructor. NOOP
      */
-    virtual ~ReferenceContainerFilter() {
-
-    }
+    virtual ~ReferenceContainerFilter();
 
     /**
      * @brief Tests if a given reference meets the searching criteria.

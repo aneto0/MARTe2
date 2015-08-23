@@ -43,12 +43,14 @@ static FastPollingMutexSem classRegistryItemMuxSem;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+//LCOV_EXCL_START
 ClassRegistryItem::ClassRegistryItem() :
         LinkedListable(), classProperties() {
     numberOfInstances = 0u;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
 }
+//LCOV_EXCL_STOP
 
 ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties, const ObjectBuildFn * const objBuildFn) :
         LinkedListable() {

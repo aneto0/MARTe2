@@ -58,6 +58,9 @@ ReferenceContainerFilter::ReferenceContainerFilter(const int32 &occurrenceNumber
     SetMode(modeToSet);
 }
 
+ReferenceContainerFilter::~ReferenceContainerFilter() {
+}
+
 void ReferenceContainerFilter::IncrementFound() {
     if (occurrence > 0) {
         occurrence--;

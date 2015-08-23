@@ -160,11 +160,12 @@ private:
      * @brief Prevents the copying of a reference by taking its address.
      * @return a copy of this reference.
      */
+    //LCOV_EXCL_START
     /*lint -e9135 unity operator overloaded in order to implement access to the shared object.*/
     virtual Reference* operator&() {
         return this;
     }
-
+    //LCOV_EXCL_STOP
     /**
      * @brief Instantiates a new object of type className in the specified heap.
      * @param[in] className the name of the class.
