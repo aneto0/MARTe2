@@ -51,10 +51,10 @@ bool StringHelperTest::TestLength(const char8 *string) {
         return false;
     }
 
-    //Check if the function returns a negative number (-1) in case of NULL argument.
+    //Check if the function returns 0 in case of NULL argument.
     tryLength = StringHelper::Length(NULL);
 
-    return (tryLength < 0);
+    return (tryLength == 0);
 
 }
 
