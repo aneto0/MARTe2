@@ -38,6 +38,11 @@
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,GeneralDefinitionsA.h)
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,GeneralDefinitionsOS.h)
 
+/*lint -save -e9026, function-like macro defined. The aim is to reduce the clutter in the code
+ * This avoids replacing ptr = static<MyObject *>(NULL) with ptr = NULL_PTR(MyObject *)*/
+#define NULL_PTR(ptr) static_cast<ptr>(NULL)
+/*lint -restore */
+
 /**
  * Uncomment this section to use memory statistics functions
  #ifndef MEMORY_STATISTICS

@@ -2,7 +2,7 @@
  * @file ThreadsOS.cpp
  * @brief Source file for class ThreadsOS
  * @date 27/lug/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -283,7 +283,7 @@ ThreadIdentifier Threads::BeginThread(const ThreadFunctionType function,
                                       const uint32 exceptionHandlerBehaviour,
                                       ProcessorType runOnCPUs) {
 
-    if (runOnCPUs == ProcessorType::UndefinedCPUs) {
+    if (runOnCPUs == UndefinedCPUs) {
         if (ProcessorType::GetDefaultCPUs() != 0) {
             runOnCPUs = ProcessorType::GetDefaultCPUs();
         }

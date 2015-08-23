@@ -118,7 +118,13 @@ bool ProcessorTypeTest::TestSetGetDefaultCPUs() {
     ptTest.SetDefaultCPUs(0xAA);
     uint32 test = ptTest.GetDefaultCPUs();
 
-    return (test == 0xAA);
+    if (test != 0xAA){
+        ptTest.SetDefaultCPUs(0u);
+        return false;
+    }
+    ptTest.SetDefaultCPUs(0u);
+    return true;
+
 }
 
 bool ProcessorTypeTest::TestDefaultConstructor() {

@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -46,10 +45,6 @@
  */
 class ProcessorType {
 public:
-    /**
-     * Declares that the number of CPUs is undefined
-     */
-    static const ProcessorType UndefinedCPUs;
 
     /**
      * @brief Constructor from integer.
@@ -161,6 +156,11 @@ private:
     static uint32 defaultCPUs;
 };
 
+/**
+ * Declares that the number of CPUs is undefined
+ */
+/*lint -e{9141} constant that can be reused by other classes*/
+static const ProcessorType UndefinedCPUs(0u);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

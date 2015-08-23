@@ -184,6 +184,7 @@ public:
      * @param[in,out] mem is the pointer to the memory location.
      * @param[in] c is the character to store.
      * @param[in] size is the number of bytes where c will be written.
+     * @return true if the memory could be set to desired value.
      * @pre the size parameter must be minor than the memory block size.
      */
     static bool Set(void * const mem,

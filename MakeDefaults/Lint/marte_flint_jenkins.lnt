@@ -1,0 +1,22 @@
+co-gcc.lnt
+au-misra-cpp-alt.lnt
+
+marte_flint_base_configuration.lnt
+marte_flint_exceptions.lnt
+marte_flint_exceptions_false_positives.lnt
+
+/* 
+ * Enable all warnings 
+ */
+-w3
+
+/*
+ * Set jenkins output format
+ */
+-ffn // force full path names
+-width(0) // don't insert line breaks (unlimited output width).
+-hf1 // message height one
+-"format=%f(%l): %t %n: %m (%t <a href=\qhttps://vcis-jenkins.f4e.europa.eu/userContent/LintMsgRef.html#%n\q>%n</a>)"
+
+marte_flint_files.lnt
+

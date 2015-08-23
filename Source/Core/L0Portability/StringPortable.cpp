@@ -350,11 +350,10 @@ int32 StringPortable::SearchIndex(const char8* const string1,
 
     if ((string1 != NULL) && (string2 != NULL)) {
         bool end1 = false;
-        bool end2 = false;
         int32 i = 0;
         while (!end1) {
             int32 j = 0;
-            end2 = false;
+            bool end2 = false;
             while (!end2) {
 
                 if ((string1[i] == string2[j]) || (string1[i] == '\0')) {
@@ -381,12 +380,11 @@ const char8* StringPortable::SearchChars(const char8* const string1,
 
     if ((string1 != NULL) && (string2 != NULL)) {
         bool end1 = false;
-        bool end2 = false;
 
         int32 i = 0;
         while (!end1) {
             int32 j = 0;
-            end2 = false;
+            bool end2 = false;
             while (!end2) {
 
                 if (string1[i] == '\0') {
@@ -466,15 +464,15 @@ const char8* StringPortable::TokenizeByChars(const char8* const string,
     const char8 *ret = static_cast<const char8*>(NULL);
 
     if ((string != NULL) && (delimiter != NULL) && (result != NULL)) {
-        bool end = false;
         int32 i = 0;
 
         while (ret == NULL) {
             int32 j = 0;
-            end = false;
+            bool end = false;
             while (!end) {
 
                 if (string[i] == '\0') {
+                    result[i] = '\0';
                     ret = &string[i];
                     end = true;
                 }

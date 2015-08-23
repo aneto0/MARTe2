@@ -1,0 +1,18 @@
+co-gcc.lnt
+au-misra-cpp-alt.lnt
+
+marte_flint_base_configuration.lnt
+marte_flint_exceptions.lnt
+marte_flint_exceptions_false_positives.lnt
+
+/*
+ * Set eclipse output format
+ */
+-hF1
+-ffn
+-"format=%(%f:%l:%C:%) %t %n: %m"
+-frl
+-width(0) 
++flm
+
+marte_flint_files.lnt

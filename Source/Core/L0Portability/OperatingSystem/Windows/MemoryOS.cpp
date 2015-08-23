@@ -65,7 +65,6 @@ void Memory::Free(void *&data) {
 
 void *Memory::Realloc(void *&data,
                       const uint32 newSize) {
-    bool ok = true;
 
     if (data == NULL) {
         data = Malloc(newSize);
