@@ -14,3 +14,9 @@ initialise
 destructed
 copydetails
 struct
+introspectable
+constness
+loadable
+downcasting
+namespace
+basilar

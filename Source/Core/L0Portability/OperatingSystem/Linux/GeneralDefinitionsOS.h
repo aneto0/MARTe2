@@ -63,5 +63,10 @@ typedef unsigned long osulong;
 
 #define __DECORATED_FUNCTION_NAME__   __PRETTY_FUNCTION__
 
+/**
+ * Know shared library extensions
+ */
+static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
+
 #endif /* GENERALDEFINITIONSOS_H_ */
-	
+

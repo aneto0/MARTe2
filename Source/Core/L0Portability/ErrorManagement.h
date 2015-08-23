@@ -41,16 +41,18 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Collection of functions and  types to manage error reporting.
- * @details These functions allows an error reporting mechanism. The user should only pass the code of the error
- * and a description but automatically the name of the file, the line number and the function
- * are stored in the ErrorInformation structure. The user can implement a routine that will be called
- * by the report error function to manage errors in specific ways.
+ * @brief Collection of functions and types to manage error reporting.
+ * @details These functions enable an error reporting mechanism. The user should only pass the code of the error
+ * and a description. The name of the file, the line number and the function
+ * are stored automatically in the ErrorInformation structure. The user implements a callback routine that will be called
+ * by the report error function to delegate the management and sinking of the errors.
  */
 namespace ErrorManagement {
 
 /**
- * @brief The type of an user provided ErrorProcessing function
+ * @brief Error processing callback function.
+ * @param[in] errorInfo information about the error to be sinked by the call-back function.
+ * @param[in] errorDescription verbose information about the error being triggered (which should explain why the error was triggered).
  */
 typedef void (*ErrorMessageProcessFunctionType)(const ErrorInformation &errorInfo,
                                                 const char8 * const errorDescription);
@@ -61,20 +63,21 @@ typedef void (*ErrorMessageProcessFunctionType)(const ErrorInformation &errorInf
 extern ErrorMessageProcessFunctionType errorMessageProcessFunction;
 
 /**
- * @brief Returns the name string associated to the error code.
- * @param[in] errorCode is the error code.
+ * @brief Returns a string that describes the error code.
+ * @param[in] errorCode the error code.
+ * @return a string that describes the error code.
  */
 const char8 *ErrorName(const ErrorType errorCode);
 
 /**
- * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
+ * @brief Stores the error information in an ErrorInformation structure, then calls the ErrorMessageProcessFunctionType callback routine.
  * @details The thread identifier is stored in the ErrorInformation structure only if interrupts are disabled, because
  * it is not possible get the thread id in an interrupt routine.
- * @param[in] code is the error code.
- * @param[in] errorDescription is the error description.
- * @param[in] fileName is the file name where the error was triggered.
- * @param[in] lineNumber is the line number where the error was triggered.
- * @param[in] functionName is the name of the function where the error is triggered.
+ * @param[in] code the error code.
+ * @param[in] errorDescription verbose description of the error.
+ * @param[in] fileName the file name where the error was triggered.
+ * @param[in] lineNumber the line number where the error was triggered.
+ * @param[in] functionName the name of the function where the error is triggered.
  */
 void ReportError(const ErrorType code,
                  const char8 * const errorDescription,
@@ -83,13 +86,13 @@ void ReportError(const ErrorType code,
                  const char8 * const functionName = static_cast<const char8 *>(NULL));
 
 /**
- * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
+ * @brief Stores the error information in an ErrorInformation structure, then calls the ErrorMessageProcessFunctionType callback routine.
  * @details The thread identifier is always stored in the ErrorInformation structure.
- * @param[in] code is the error code.
- * @param[in] errorDescription is the error description.
- * @param[in] fileName is the file name where the error was triggered.
- * @param[in] lineNumber is the line number where the error was triggered.
- * @param[in] functionName is the name of the function where the error is triggered.
+ * @param[in] code the error code.
+ * @param[in] errorDescription verbose description of the error.
+ * @param[in] fileName the file name where the error was triggered.
+ * @param[in] lineNumber the line number where the error was triggered.
+ * @param[in] functionName the name of the function where the error is triggered.
  */
 void ReportErrorFullContext(const ErrorType code,
                             const char8 * const errorDescription,
@@ -98,8 +101,8 @@ void ReportErrorFullContext(const ErrorType code,
                             const char8 * const functionName = static_cast<const char8 *>(NULL));
 
 /**
- * @brief Sets the routine for error managing.
- * @param[in] userFun is a pointer to the function called by ReportError.
+ * @brief Sets the callback function for the error management.
+ * @param[in] userFun pointer to the function called by ReportError.
  */
 void SetErrorMessageProcessFunction(const ErrorMessageProcessFunctionType userFun = static_cast<ErrorMessageProcessFunctionType>(NULL));
 
@@ -112,8 +115,8 @@ void SetErrorMessageProcessFunction(const ErrorMessageProcessFunctionType userFu
 /**
  * @brief The function to call in case of errors.
  * @details Calls ErrorManagement::ReportError with the file name, the function and the line number of the error as inputs.
- * @param[in] code is the ErrorType code error.
- * @param[in] message is the description associated to the error.
+ * @param[in] code the ErrorType code error.
+ * @param[in] message verbose description associated to the error.
  */
 /*lint -save -e9026
  * 9026: function-like macro defined.
@@ -123,8 +126,8 @@ ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION
 /**
  * @brief The function to call in case of errors.
  * @details Calls ErrorManagement::ReportErrorFullContext with the file name, the function and the line number of the error as inputs.
- * @param[in] code is the ErrorType code error.
- * @param[in] message is the description associated to the error.
+ * @param[in] code the ErrorType code error.
+ * @param[in] message verbose description associated to the error.
  */
 #define REPORT_ERROR_FULL(code,message)\
 ErrorManagement::ReportErrorFullContext(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__);

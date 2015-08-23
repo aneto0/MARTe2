@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,EndianityA.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -270,7 +269,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromBigEndian(float64 *dest, const float64 *src, uint32 size);
+    static inline void MemCopyFromBigEndian(float64 *dest,
+                                            const float64 *src,
+                                            uint32 size);
 
     /**
      * @brief Copies a block of memory (uint64) and converts from big endian to the target operating system endianity
@@ -279,7 +280,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromBigEndian(uint64 *dest, const uint64 *src, uint32 size);
+    static inline void MemCopyFromBigEndian(uint64 *dest,
+                                            const uint64 *src,
+                                            uint32 size);
 
     /**
      * @brief Copies a block of memory (int64) and converts from big endian to the target operating system endianity
@@ -288,7 +291,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromBigEndian(int64 *dest, const int64 *src, uint32 size);
+    static inline void MemCopyFromBigEndian(int64 *dest,
+                                            const int64 *src,
+                                            uint32 size);
 
     /**
      * @brief Copies a block of memory (float32) and converts from big endian to the target operating system endianity
@@ -297,7 +302,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromBigEndian(float32 *dest, const float32 *src, uint32 size);
+    static inline void MemCopyFromBigEndian(float32 *dest,
+                                            const float32 *src,
+                                            uint32 size);
 
     /**
      * @brief Copies a block of memory (uint32) and converts from big endian to the target operating system endianity
@@ -306,7 +313,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromBigEndian(uint32 *dest, const uint32 *src, uint32 size);
+    static inline void MemCopyFromBigEndian(uint32 *dest,
+                                            const uint32 *src,
+                                            uint32 size);
 
     /**
      * @brief Copies a block of memory (uint16) and converts from big endian to the target operating system endianity
@@ -316,7 +325,9 @@ public:
      * @pre src != NULL && size >= 0.
      *
      */
-    static inline void MemCopyFromBigEndian(uint16 *dest, const uint16 *src, uint32 size);
+    static inline void MemCopyFromBigEndian(uint16 *dest,
+                                            const uint16 *src,
+                                            uint32 size);
 
     /**
      * @brief Copies a block of memory (int32) and converts from big endian to the target operating system endianity
@@ -326,7 +337,9 @@ public:
      * @pre src != NULL && size >= 0.
      *
      */
-    static inline void MemCopyFromBigEndian(int32 *dest, const int32 *src, uint32 size);
+    static inline void MemCopyFromBigEndian(int32 *dest,
+                                            const int32 *src,
+                                            uint32 size);
 
     /**
      * @brief Copies a block of memory (int16) and converts from big endian to the target operating system endianity
@@ -335,7 +348,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromBigEndian(int16 *dest, const int16 *src, uint32 size);
+    static inline void MemCopyFromBigEndian(int16 *dest,
+                                            const int16 *src,
+                                            uint32 size);
 
     /**
      * @brief Copies a block of memory (float64) and converts from little endian to the target operating system endianity
@@ -344,7 +359,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromLittleEndian(float64 *dest, const float64 *src, uint32 size);
+    static inline void MemCopyFromLittleEndian(float64 *dest,
+                                               const float64 *src,
+                                               uint32 size);
 
     /**
      * @brief Copies a block of memory (uint64) and converts from little endian to the target operating system endianity
@@ -353,7 +370,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromLittleEndian(uint64 *dest, const uint64 *src, uint32 size);
+    static inline void MemCopyFromLittleEndian(uint64 *dest,
+                                               const uint64 *src,
+                                               uint32 size);
 
     /**
      * @brief Copies a block of memory (int64) and converts from little endian to the target operating system endianity
@@ -362,7 +381,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromLittleEndian(int64 *dest, const int64 *src, uint32 size);
+    static inline void MemCopyFromLittleEndian(int64 *dest,
+                                               const int64 *src,
+                                               uint32 size);
 
     /**
      * @brief Copies a block of memory (float32) and converts from little endian to the target operating system endianity
@@ -371,7 +392,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromLittleEndian(float32 *dest, const float32 *src, uint32 size);
+    static inline void MemCopyFromLittleEndian(float32 *dest,
+                                               const float32 *src,
+                                               uint32 size);
 
     /**
      * @brief Copies a block of memory (uint32) and converts from little endian to the target operating system endianity
@@ -380,7 +403,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromLittleEndian(uint32 *dest, const uint32 *src, uint32 size);
+    static inline void MemCopyFromLittleEndian(uint32 *dest,
+                                               const uint32 *src,
+                                               uint32 size);
 
     /**
      * @brief Copies a block of memory (uint16) and converts from little endian to the target operating system endianity
@@ -389,7 +414,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromLittleEndian(uint16 *dest, const uint16 *src, uint32 size);
+    static inline void MemCopyFromLittleEndian(uint16 *dest,
+                                               const uint16 *src,
+                                               uint32 size);
 
     /**
      * @brief Copies a block of memory (int32) and converts from little endian to the target operating system endianity
@@ -398,7 +425,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromLittleEndian(int32 *dest, const int32 *src, uint32 size);
+    static inline void MemCopyFromLittleEndian(int32 *dest,
+                                               const int32 *src,
+                                               uint32 size);
 
     /**
      * @brief Copies a block of memory (int16) and converts from little endian to the target operating system endianity
@@ -407,7 +436,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyFromLittleEndian(int16 *dest, const int16 *src, uint32 size);
+    static inline void MemCopyFromLittleEndian(int16 *dest,
+                                               const int16 *src,
+                                               uint32 size);
 
     /**
      * @brief Copies a block of memory (float64) and converts from the target operating system endianity to big endian
@@ -416,7 +447,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToBigEndian(float64 *dest, const float64 *src, uint32 size);
+    static inline void MemCopyToBigEndian(float64 *dest,
+                                          const float64 *src,
+                                          uint32 size);
 
     /**
      * @brief Copies a block of memory (uint64) and converts from the target operating system endianity to big endian
@@ -425,7 +458,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToBigEndian(uint64 *dest, const uint64 *src, uint32 size);
+    static inline void MemCopyToBigEndian(uint64 *dest,
+                                          const uint64 *src,
+                                          uint32 size);
 
     /**
      * @brief Copies a block of memory (int64) and converts from the target operating system endianity to big endian
@@ -434,7 +469,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToBigEndian(int64 *dest, const int64 *src, uint32 size);
+    static inline void MemCopyToBigEndian(int64 *dest,
+                                          const int64 *src,
+                                          uint32 size);
 
     /**
      * @brief Copies a block of memory (float32) and converts from the target operating system endianity to big endian
@@ -443,7 +480,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToBigEndian(float32 *dest, const float32 *src, uint32 size);
+    static inline void MemCopyToBigEndian(float32 *dest,
+                                          const float32 *src,
+                                          uint32 size);
 
     /**
      * @brief Copies a block of memory (uint32) and converts from the target operating system endianity to big endian
@@ -452,7 +491,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToBigEndian(uint32 *dest, const uint32 *src, uint32 size);
+    static inline void MemCopyToBigEndian(uint32 *dest,
+                                          const uint32 *src,
+                                          uint32 size);
 
     /**
      * @brief Copies a block of memory (uint16) and converts from the target operating system endianity to big endian
@@ -461,7 +502,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToBigEndian(uint16 *dest, const uint16 *src, uint32 size);
+    static inline void MemCopyToBigEndian(uint16 *dest,
+                                          const uint16 *src,
+                                          uint32 size);
 
     /**
      * @brief Copies a block of memory (int32) and converts from the target operating system endianity to big endian
@@ -470,7 +513,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToBigEndian(int32 *dest, const int32 *src, uint32 size);
+    static inline void MemCopyToBigEndian(int32 *dest,
+                                          const int32 *src,
+                                          uint32 size);
 
     /**
      * @brief Copies a block of memory (int16) and converts from the target operating system endianity to big endian
@@ -479,7 +524,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToBigEndian(int16 *dest, const int16 *src, uint32 size);
+    static inline void MemCopyToBigEndian(int16 *dest,
+                                          const int16 *src,
+                                          uint32 size);
 
     /**
      * @brief Copies a block of memory (float64) and converts from the target operating system endianity to little endian
@@ -488,7 +535,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToLittleEndian(float64 *dest, const float64 *src, uint32 size);
+    static inline void MemCopyToLittleEndian(float64 *dest,
+                                             const float64 *src,
+                                             uint32 size);
 
     /**
      * @brief Copies a block of memory (uint64) and converts from the target operating system endianity to little endian
@@ -497,7 +546,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToLittleEndian(uint64 *dest, const uint64 *src, uint32 size);
+    static inline void MemCopyToLittleEndian(uint64 *dest,
+                                             const uint64 *src,
+                                             uint32 size);
 
     /**
      * @brief Copies a block of memory (int64) and converts from the target operating system endianity to little endian
@@ -506,7 +557,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToLittleEndian(int64 *dest, const int64 *src, uint32 size);
+    static inline void MemCopyToLittleEndian(int64 *dest,
+                                             const int64 *src,
+                                             uint32 size);
 
     /**
      * @brief Copies a block of memory (float32) and converts from the target operating system endianity to little endian
@@ -515,7 +568,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToLittleEndian(float32 *dest, const float32 *src, uint32 size);
+    static inline void MemCopyToLittleEndian(float32 *dest,
+                                             const float32 *src,
+                                             uint32 size);
 
     /**
      * @brief Copies a block of memory (uint32) and converts from the target operating system endianity to little endian
@@ -524,7 +579,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToLittleEndian(uint32 *dest, const uint32 *src, uint32 size);
+    static inline void MemCopyToLittleEndian(uint32 *dest,
+                                             const uint32 *src,
+                                             uint32 size);
 
     /**
      * @brief Copies a block of memory (uint16) and converts from the target operating system endianity to little endian
@@ -533,7 +590,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToLittleEndian(uint16 *dest, const uint16 *src, uint32 size);
+    static inline void MemCopyToLittleEndian(uint16 *dest,
+                                             const uint16 *src,
+                                             uint32 size);
 
     /**
      * @brief Copies a block of memory (int32) and converts from the target operating system endianity to little endian
@@ -542,7 +601,9 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToLittleEndian(int32 *dest, const int32 *src, uint32 size);
+    static inline void MemCopyToLittleEndian(int32 *dest,
+                                             const int32 *src,
+                                             uint32 size);
 
     /**
      * @brief Copies a block of memory (int16) and converts from the target operating system endianity to little endian
@@ -551,9 +612,77 @@ public:
      * @param[in] size the number of elements
      * @pre src != NULL && size >= 0.
      */
-    static inline void MemCopyToLittleEndian(int16 *dest, const int16 *src, uint32 size);
+    static inline void MemCopyToLittleEndian(int16 *dest,
+                                             const int16 *src,
+                                             uint32 size);
 
 private:
+
+    /**
+     * @brief EndianitySwaps the 4 bytes in a 32 bit number.
+     * @param[in,out] x the number to be swapped
+     */
+    static inline void Swap32(volatile void *x);
+
+    /**
+     * @brief EndianitySwaps the 4 bytes in a 32 bit number for all the elements
+     * of a vector
+     * @param[in,out]  x the number to be swapped
+     * @param[in] sizer the number of elements in the vector
+     */
+    static inline void Swap32(volatile void *x,
+                              uint32 sizer);
+
+    /**
+     * @brief EndianitySwaps the 4 bytes while copying a vector of 32 bit numbers
+     * @param[out] dest the destination vector (must be allocated in memory)
+     * @param[in] src the source vector
+     * @param[in] sizer the number of elements in the vector
+     */
+    static inline void MemCopySwap32(volatile void *dest,
+                                     volatile const void *src,
+                                     uint32 sizer);
+
+    /**
+     * @brief EndianitySwaps the 2 bytes in a 16 bit number.
+     * @param[in,out] x the number to be swapped
+     */
+    static inline void Swap16(volatile void *x);
+
+    /**
+     * @brief Swaps the 2 bytes in a 16 bit number for all the elements
+     * of a vector
+     * @param[in,out] x the number to be swapped
+     * @param[in] sizer the number of elements in the vector
+     */
+    static inline void Swap16(volatile void *x,
+                              uint32 sizer);
+
+    /**
+     * @brief Swaps the 2 bytes while copying a vector of 16 bit numbers
+     * @param[out] dest the destination vector (must be allocated in memory)
+     * @param[in] src the source vector
+     * @param[in] sizer the number of elements in the vector
+     */
+    static inline void MemCopySwap16(volatile void *dest,
+                                     volatile const void *src,
+                                     uint32 sizer);
+
+    /**
+     * @brief Swaps the 8 bytes in a 64 bit number.
+     * @param[in,out] x the number to be swapped
+     */
+    static inline void Swap64(volatile void *x);
+
+    /**
+     * @brief Swaps the 8 bytes while copying a vector of 64 bit numbers
+     * @param[out] dest the destination vector (must be allocated in memory)
+     * @param[in] src the source vector
+     * @param[in] sizer the number of elements in the vector
+     */
+    static inline void MemCopySwap64(volatile void *dest,
+                                     volatile const void *src,
+                                     uint32 sizer);
 
     /**
      * Set to true when the Endianity::Type() is called for the first time
@@ -571,7 +700,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-uint8 Endianity::Type() {
+inline uint8 Endianity::Type() {
     if (!endianityTypeChecked) {
         uint16 value = 0xAABBu;
         uint16 test = value;
@@ -587,326 +716,7 @@ uint8 Endianity::Type() {
     return endianityType;
 }
 
-void Endianity::FromBigEndian(volatile float64 &x) {
-    EndianityA::FromBigEndianDouble(x);
-}
-
-void Endianity::FromBigEndian(volatile float32 &x) {
-    EndianityA::FromBigEndianFloat(x);
-}
-
-void Endianity::FromBigEndian(volatile uint64 &x) {
-    EndianityA::FromBigEndianUInt64(x);
-}
-
-void Endianity::FromBigEndian(volatile uint32 &x) {
-    EndianityA::FromBigEndianUInt32(x);
-}
-
-void Endianity::FromBigEndian(volatile uint16 &x) {
-    EndianityA::FromBigEndianUInt16(x);
-}
-
-void Endianity::FromBigEndian(volatile int64 &x) {
-    EndianityA::FromBigEndianInt64(x);
-}
-
-void Endianity::FromBigEndian(volatile int32 &x) {
-    EndianityA::FromBigEndianInt32(x);
-}
-
-void Endianity::FromBigEndian(volatile int16 &x) {
-    EndianityA::FromBigEndianInt16(x);
-}
-
-void Endianity::FromLittleEndian(volatile float64 &x) {
-    EndianityA::FromLittleEndianDouble(x);
-}
-
-void Endianity::FromLittleEndian(volatile float32 &x) {
-    EndianityA::FromLittleEndianFloat(x);
-}
-
-void Endianity::FromLittleEndian(volatile uint64 &x) {
-    EndianityA::FromLittleEndianUInt64(x);
-}
-
-void Endianity::FromLittleEndian(volatile uint32 &x) {
-    EndianityA::FromLittleEndianUInt32(x);
-}
-
-void Endianity::FromLittleEndian(volatile uint16 &x) {
-    EndianityA::FromLittleEndianUInt16(x);
-}
-
-void Endianity::FromLittleEndian(volatile int64 &x) {
-    EndianityA::FromLittleEndianInt64(x);
-}
-
-void Endianity::FromLittleEndian(volatile int32 &x) {
-    EndianityA::FromLittleEndianInt32(x);
-}
-
-void Endianity::FromLittleEndian(volatile int16 &x) {
-    EndianityA::FromLittleEndianInt16(x);
-}
-
-void Endianity::ToBigEndian(volatile float64 &x) {
-    EndianityA::ToBigEndianDouble(x);
-}
-
-void Endianity::ToBigEndian(volatile float32 &x) {
-    EndianityA::ToBigEndianFloat(x);
-}
-
-void Endianity::ToBigEndian(volatile uint64 &x) {
-    EndianityA::ToBigEndianUInt64(x);
-}
-
-void Endianity::ToBigEndian(volatile uint32 &x) {
-    EndianityA::ToBigEndianUInt32(x);
-}
-
-void Endianity::ToBigEndian(volatile uint16 &x) {
-    EndianityA::ToBigEndianUInt16(x);
-}
-
-void Endianity::ToBigEndian(volatile int64 &x) {
-    EndianityA::ToBigEndianInt64(x);
-}
-
-void Endianity::ToBigEndian(volatile int32 &x) {
-    EndianityA::ToBigEndianInt32(x);
-}
-
-void Endianity::ToBigEndian(volatile int16 &x) {
-    EndianityA::ToBigEndianInt16(x);
-}
-
-void Endianity::ToLittleEndian(volatile float64 &x) {
-    EndianityA::ToLittleEndianDouble(x);
-}
-
-void Endianity::ToLittleEndian(volatile float32 &x) {
-    EndianityA::ToLittleEndianFloat(x);
-}
-
-void Endianity::ToLittleEndian(volatile uint64 &x) {
-    EndianityA::ToLittleEndianUInt64(x);
-}
-
-void Endianity::ToLittleEndian(volatile uint32 &x) {
-    EndianityA::ToLittleEndianUInt32(x);
-}
-
-void Endianity::ToLittleEndian(volatile uint16 &x) {
-    EndianityA::ToLittleEndianUInt16(x);
-}
-
-void Endianity::ToLittleEndian(volatile int64 &x) {
-    EndianityA::ToLittleEndianInt64(x);
-}
-
-void Endianity::ToLittleEndian(volatile int32 &x) {
-    EndianityA::ToLittleEndianInt32(x);
-}
-
-void Endianity::ToLittleEndian(volatile int16 &x) {
-    EndianityA::ToLittleEndianInt16(x);
-}
-
-void Endianity::MemCopyFromBigEndian(float64 *dest,
-                                     const float64 *src,
-                                     uint32 size) {
-    EndianityA::MemCopyFromBigEndianDouble(dest, src, size);
-}
-
-void Endianity::MemCopyFromBigEndian(uint64 *dest,
-                                     const uint64 *src,
-                                     uint32 size) {
-    EndianityA::MemCopyFromBigEndianUInt64(dest, src, size);
-}
-
-void Endianity::MemCopyFromBigEndian(int64 *dest,
-                                     const int64 *src,
-                                     uint32 size) {
-    EndianityA::MemCopyFromBigEndianInt64(dest, src, size);
-}
-
-void Endianity::MemCopyFromBigEndian(float32 *dest,
-                                     const float32 *src,
-                                     uint32 size) {
-    EndianityA::MemCopyFromBigEndianFloat(dest, src, size);
-}
-
-void Endianity::MemCopyFromBigEndian(uint32 *dest,
-                                     const uint32 *src,
-                                     uint32 size) {
-    EndianityA::MemCopyFromBigEndianUInt32(dest, src, size);
-}
-
-void Endianity::MemCopyFromBigEndian(uint16 *dest,
-                                     const uint16 *src,
-                                     uint32 size) {
-    EndianityA::MemCopyFromBigEndianUInt16(dest, src, size);
-}
-
-void Endianity::MemCopyFromBigEndian(int32 *dest,
-                                     const int32 *src,
-                                     uint32 size) {
-    EndianityA::MemCopyFromBigEndianInt32(dest, src, size);
-}
-
-void Endianity::MemCopyFromBigEndian(int16 *dest,
-                                     const int16 *src,
-                                     uint32 size) {
-    EndianityA::MemCopyFromBigEndianInt16(dest, src, size);
-}
-
-void Endianity::MemCopyFromLittleEndian(float64 *dest,
-                                        const float64 *src,
-                                        uint32 size) {
-    EndianityA::MemCopyFromLittleEndianDouble(dest, src, size);
-}
-
-void Endianity::MemCopyFromLittleEndian(uint64 *dest,
-                                        const uint64 *src,
-                                        uint32 size) {
-    EndianityA::MemCopyFromLittleEndianUInt64(dest, src, size);
-}
-
-void Endianity::MemCopyFromLittleEndian(int64 *dest,
-                                        const int64 *src,
-                                        uint32 size) {
-    EndianityA::MemCopyFromLittleEndianInt64(dest, src, size);
-}
-
-void Endianity::MemCopyFromLittleEndian(float32 *dest,
-                                        const float32 *src,
-                                        uint32 size) {
-    EndianityA::MemCopyFromLittleEndianFloat(dest, src, size);
-}
-
-void Endianity::MemCopyFromLittleEndian(uint32 *dest,
-                                        const uint32 *src,
-                                        uint32 size) {
-    EndianityA::MemCopyFromLittleEndianUInt32(dest, src, size);
-}
-
-void Endianity::MemCopyFromLittleEndian(uint16 *dest,
-                                        const uint16 *src,
-                                        uint32 size) {
-    EndianityA::MemCopyFromLittleEndianUInt16(dest, src, size);
-}
-
-void Endianity::MemCopyFromLittleEndian(int32 *dest,
-                                        const int32 *src,
-                                        uint32 size) {
-    EndianityA::MemCopyFromLittleEndianInt32(dest, src, size);
-}
-
-void Endianity::MemCopyFromLittleEndian(int16 *dest,
-                                        const int16 *src,
-                                        uint32 size) {
-    EndianityA::MemCopyFromLittleEndianInt16(dest, src, size);
-}
-
-void Endianity::MemCopyToBigEndian(float64 *dest,
-                                   const float64 *src,
-                                   uint32 size) {
-    EndianityA::MemCopyToBigEndianDouble(dest, src, size);
-}
-
-void Endianity::MemCopyToBigEndian(uint64 *dest,
-                                   const uint64 *src,
-                                   uint32 size) {
-    EndianityA::MemCopyToBigEndianUInt64(dest, src, size);
-}
-
-void Endianity::MemCopyToBigEndian(int64 *dest,
-                                   const int64 *src,
-                                   uint32 size) {
-    EndianityA::MemCopyToBigEndianInt64(dest, src, size);
-}
-
-void Endianity::MemCopyToBigEndian(float32 *dest,
-                                   const float32 *src,
-                                   uint32 size) {
-    EndianityA::MemCopyToBigEndianFloat(dest, src, size);
-}
-
-void Endianity::MemCopyToBigEndian(uint32 *dest,
-                                   const uint32 *src,
-                                   uint32 size) {
-    EndianityA::MemCopyToBigEndianUInt32(dest, src, size);
-}
-
-void Endianity::MemCopyToBigEndian(uint16 *dest,
-                                   const uint16 *src,
-                                   uint32 size) {
-    EndianityA::MemCopyToBigEndianUInt16(dest, src, size);
-}
-
-void Endianity::MemCopyToBigEndian(int32 *dest,
-                                   const int32 *src,
-                                   uint32 size) {
-    EndianityA::MemCopyToBigEndianInt32(dest, src, size);
-}
-
-void Endianity::MemCopyToBigEndian(int16 *dest,
-                                   const int16 *src,
-                                   uint32 size) {
-    EndianityA::MemCopyToBigEndianInt16(dest, src, size);
-}
-
-void Endianity::MemCopyToLittleEndian(float64 *dest,
-                                      const float64 *src,
-                                      uint32 size) {
-    EndianityA::MemCopyToLittleEndianDouble(dest, src, size);
-}
-
-void Endianity::MemCopyToLittleEndian(uint64 *dest,
-                                      const uint64 *src,
-                                      uint32 size) {
-    EndianityA::MemCopyToLittleEndianUInt64(dest, src, size);
-}
-
-void Endianity::MemCopyToLittleEndian(int64 *dest,
-                                      const int64 *src,
-                                      uint32 size) {
-    EndianityA::MemCopyToLittleEndianInt64(dest, src, size);
-}
-
-void Endianity::MemCopyToLittleEndian(float32 *dest,
-                                      const float32 *src,
-                                      uint32 size) {
-    EndianityA::MemCopyToLittleEndianFloat(dest, src, size);
-}
-
-void Endianity::MemCopyToLittleEndian(uint32 *dest,
-                                      const uint32 *src,
-                                      uint32 size) {
-    EndianityA::MemCopyToLittleEndianUInt32(dest, src, size);
-}
-
-void Endianity::MemCopyToLittleEndian(uint16 *dest,
-                                      const uint16 *src,
-                                      uint32 size) {
-    EndianityA::MemCopyToLittleEndianUInt16(dest, src, size);
-}
-
-void Endianity::MemCopyToLittleEndian(int32 *dest,
-                                      const int32 *src,
-                                      uint32 size) {
-    EndianityA::MemCopyToLittleEndianInt32(dest, src, size);
-}
-
-void Endianity::MemCopyToLittleEndian(int16 *dest,
-                                      const int16 *src,
-                                      uint32 size) {
-    EndianityA::MemCopyToLittleEndianInt16(dest, src, size);
-
-}
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,EndianityA.h)
 
 #endif /* ENDIANITY_H_ */
 

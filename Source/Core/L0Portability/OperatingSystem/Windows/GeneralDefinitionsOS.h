@@ -22,7 +22,7 @@
  */
 
 #ifndef GENERALDEFINITIONSOS_H_
-#define 		GENERALDEFINITIONSOS_H_
+#define GENERALDEFINITIONSOS_H_
 
 
 
@@ -57,5 +57,9 @@ typedef unsigned long osulong;
 
 #define __DECORATED_FUNCTION_NAME__   __FUNCDNAME__  windows
 
+/**
+ * Know shared library extensions
+ */
+static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
 
 #endif /* GENERALDEFINITIONSOS_H_ */

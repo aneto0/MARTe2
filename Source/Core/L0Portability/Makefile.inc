@@ -20,8 +20,6 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
 PACKAGE=Core
@@ -38,6 +36,7 @@ OBJSX=  Atomic.x \
         ThreadsDatabase.x \
         ThreadInformation.x \
         LoadableLibrary.x \
+        Heap.x \
         FastPollingMutexSem.x \
         ErrorManagement.x
 
