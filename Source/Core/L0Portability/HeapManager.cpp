@@ -112,7 +112,7 @@ public:
 
 
 /**
- * @brief TBD
+ * @brief TODO
  */
 
 /*---------------------------------------------------------------------------*/
@@ -286,7 +286,7 @@ HeapI *FindHeap(const void * const address){
 
         heapDataBase.UnLock();
     } else {
-         // TODO add error message here
+        // TODO add error message here
     }
 
     /* assign to heap the found heap or the default one */
@@ -501,3 +501,4 @@ bool RemoveHeap(const HeapI *const heap){
 }
 
 }
+
