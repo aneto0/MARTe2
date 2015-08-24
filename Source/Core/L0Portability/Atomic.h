@@ -33,8 +33,6 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,AtomicA.h)
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -146,56 +144,8 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-void Atomic::Increment(volatile int32 *p) {
-    AtomicA::Increment32(p);
-}
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,AtomicA.h)
 
-void Atomic::Increment(volatile int16 *p) {
-    AtomicA::Increment16(p);
-}
-
-void Atomic::Increment(volatile int8 *p) {
-    AtomicA::Increment8(p);
-}
-
-void Atomic::Decrement(volatile int32 *p) {
-    AtomicA::Decrement32(p);
-}
-
-void Atomic::Decrement(volatile int16 *p) {
-    AtomicA::Decrement16(p);
-}
-
-void Atomic::Decrement(volatile int8 *p) {
-    AtomicA::Decrement8(p);
-}
-
-int32 Atomic::Exchange(volatile int32 *p,
-                       int32 v) {
-    return AtomicA::Exchange32(p, v);
-}
-
-bool Atomic::TestAndSet(volatile int32 *p) {
-    return AtomicA::TestAndSet32(p);
-}
-
-bool Atomic::TestAndSet(volatile int16 *p) {
-    return AtomicA::TestAndSet16(p);
-}
-
-bool Atomic::TestAndSet(volatile int8 *p) {
-    return AtomicA::TestAndSet8(p);
-}
-
-void Atomic::Add(volatile int32 *p,
-                 int32 value) {
-    AtomicA::Add32(p, value);
-}
-
-void Atomic::Sub(volatile int32 *p,
-                 int32 value) {
-    AtomicA::Sub32(p, value);
-}
 
 #endif /* ATOMIC_H_ */
 

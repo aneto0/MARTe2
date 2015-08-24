@@ -2,7 +2,7 @@
  * @file FastMathA.h
  * @brief Header file for class FastMathA
  * @date 26/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -41,40 +41,35 @@
  *
  * @details Most of the implementation is delegated to the math.h library.
  */
-class FastMathA {
 
-public:
+/**
+ * @see FastMath::Sin
+ * @brief Calculate the sine of an angle.
+ * @param[in] angle is the angle parameter in radiants.
+ * @return the value of the sine of angle. */
+float32 FastMath::Sin(float angle) {
+    return sin(angle);
+}
 
-    /**
-     * @see FastMath::Sin
-     * @brief Calculate the sine of an angle.
-     * @param[in] angle is the angle parameter in radiants.
-     * @return the value of the sine of angle. */
-    static inline float Sin(float angle) {
-        return sin(angle);
-    }
+/**
+ * @see FastMath::Cos
+ * @brief Calculate the cosine of an angle.
+ * @param[in] angle is the angle parameter in radiants.
+ * @return the value of the cosine of angle.
+ */
+float32 FastMath::Cos(float angle) {
+    return cos(angle);
+}
 
-    /**
-     * @see FastMath::Cos
-     * @brief Calculate the cosine of an angle.
-     * @param[in] angle is the angle parameter in radiants.
-     * @return the value of the cosine of angle.
-     */
-    static inline float Cos(float angle) {
-        return cos(angle);
-    }
-
-    /**
-     * @see FastMath::FloatToInt
-     * @brief Fast conversion to int by float.
-     * @param[in] input is the float number to convert.
-     * @return the floor of input (32 bits integer).
-     */
-    static inline int32 FloatToInt(float input) {
-        return input > 0 ? floor(input) : -floor(-input);
-    }
-
-};
+/**
+ * @see FastMath::FloatToInt
+ * @brief Fast conversion to int by float.
+ * @param[in] input is the float number to convert.
+ * @return the floor of input (32 bits integer).
+ */
+int32 FastMath::FloatToInt(float input) {
+    return input > 0 ? floor(input) : -floor(-input);
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

@@ -45,8 +45,6 @@
  */
 typedef int8 ErrorType;
 
-
-
 /**
  * No error to report
  */

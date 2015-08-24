@@ -29,11 +29,10 @@ include Makefile.inc
 
 LIBRARIES   += ../../Build/$(TARGET)/Core/L0Portability/L0Portability$(LIBEXT) 
 LIBRARIES   += ../../Build/$(TARGET)/Core/L0Portability/L0PortabilityTest$(LIBEXT) 
-#LIBRARIES   += ../../Build/$(TARGET)/Core/L1CLib/L1CLib$(LIBEXT)
-#LIBRARIES   += ../../Build/$(TARGET)/Core/L1CLib/L1CLibTest$(LIBEXT)
+LIBRARIES   += ../../Build/$(TARGET)/Core/L1Objects/L1Objects$(LIBEXT)
+LIBRARIES   += ../../Build/$(TARGET)/Core/L1Objects/L1ObjectsTest$(LIBEXT)
 #LIBRARIES   += ../../Build/$(TARGET)/Core/LXTypeDev/LXTypeDev$(LIBEXT)
 #LIBRARIES   += ../../Build/$(TARGET)/Core/LXTypeDev/LXTypeDevTest$(LIBEXT)
 LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
 
 OPTIM=-finline-functions
-

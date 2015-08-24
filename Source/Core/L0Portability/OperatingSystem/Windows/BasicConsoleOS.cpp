@@ -71,11 +71,6 @@ struct BasicConsoleOSProperties {
 
 };
 
-const FlagsType BasicConsole::Mode::Default(0u);
-const FlagsType BasicConsole::Mode::CreateNewBuffer(1u);
-const FlagsType BasicConsole::Mode::PerformCharacterInput(2u);
-const FlagsType BasicConsole::Mode::DisableControlBreak(4u);
-const FlagsType BasicConsole::Mode::EnablePaging(8u);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -206,7 +201,7 @@ ErrorType BasicConsole::Open(const FlagsType &mode) {
     ErrorType error = NoError;
     osProperties->openingMode = mode;
 
-    if (osProperties->openingMode & BasicConsole::Mode::CreateNewBuffer) {
+    if (osProperties->openingMode & BasicConsoleMode::CreateNewBuffer) {
         //get the console handles
         osProperties->inputConsoleHandle = GetStdHandle(STD_INPUT_HANDLE);
         if (osProperties->inputConsoleHandle == INVALID_HANDLE_VALUE) {
@@ -249,7 +244,7 @@ ErrorType BasicConsole::Open(const FlagsType &mode) {
 
         //set the console mode
         DWORD consoleMode = 0;
-        if (osProperties->openingMode & BasicConsole::Mode::PerformCharacterInput) {
+        if (osProperties->openingMode & BasicConsoleMode::PerformCharacterInput) {
             consoleMode |= 0;
         }
         else {
@@ -257,7 +252,7 @@ ErrorType BasicConsole::Open(const FlagsType &mode) {
             consoleMode |= ENABLE_LINE_INPUT;
         }
 
-        if (osProperties->openingMode & BasicConsole::Mode::DisableControlBreak) {
+        if (osProperties->openingMode & BasicConsoleMode::DisableControlBreak) {
             consoleMode |= 0;
         }
         else {
@@ -294,7 +289,7 @@ ErrorType BasicConsole::Write(const char8* buffer,
 
     ErrorType error = NoError;
 
-    if (osProperties->openingMode & BasicConsole::Mode::EnablePaging) {
+    if (osProperties->openingMode & BasicConsoleMode::EnablePaging) {
         error = PagedWrite(buffer, size, timeout);
     }
     else {
@@ -343,7 +338,7 @@ ErrorType BasicConsole::Read(char8* const buffer,
     }
 
     if (error == NoError) {
-        if (osProperties->openingMode & BasicConsole::Mode::PerformCharacterInput) {
+        if (osProperties->openingMode & BasicConsoleMode::PerformCharacterInput) {
             size = 1;
             if (!ReadConsole(osProperties->inputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
                 error = OSError;
@@ -574,7 +569,7 @@ ErrorType BasicConsole::Close() {
 
     ErrorType error = NoError;
     DWORD consoleMode = ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT;
-    if (osProperties->openingMode & BasicConsole::Mode::CreateNewBuffer) {
+    if (osProperties->openingMode & BasicConsoleMode::CreateNewBuffer) {
         CloseHandle(osProperties->outputConsoleHandle);
     }
     else {

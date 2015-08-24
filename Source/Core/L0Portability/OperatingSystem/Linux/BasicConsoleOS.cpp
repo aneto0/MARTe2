@@ -99,11 +99,6 @@ struct BasicConsoleOSProperties {
 
 };
 
-const FlagsType BasicConsole::Mode::Default(0u);
-const FlagsType BasicConsole::Mode::CreateNewBuffer(1u);
-const FlagsType BasicConsole::Mode::PerformCharacterInput(2u);
-const FlagsType BasicConsole::Mode::DisableControlBreak(4u);
-const FlagsType BasicConsole::Mode::EnablePaging(8u);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -137,7 +132,7 @@ ErrorType BasicConsole::Open(const FlagsType &mode) {
 
     osProperties->openingMode = mode;
     //In this case read immediately from the console without wait.
-    bool charactedInputSelected = (osProperties->openingMode & BasicConsole::Mode::PerformCharacterInput) != 0u;
+    bool charactedInputSelected = (osProperties->openingMode & BasicConsoleMode::PerformCharacterInput) != 0u;
     if (charactedInputSelected) {
         bool ok = ioctl(fileno(stdin), static_cast<osulong>(TCGETA), &osProperties->outputConsoleHandle) >= 0;
         if (ok) {
@@ -177,7 +172,7 @@ FlagsType BasicConsole::GetOpeningMode() const {
 }
 
 ErrorType BasicConsole::Close() {
-    bool charactedInputSelected = (osProperties->openingMode & BasicConsole::Mode::PerformCharacterInput) != 0u;
+    bool charactedInputSelected = (osProperties->openingMode & BasicConsoleMode::PerformCharacterInput) != 0u;
     ErrorType err = NoError;
     if (charactedInputSelected) {
         //reset the original console modes
@@ -201,7 +196,7 @@ ErrorType BasicConsole::Write(const char8 * const buffer,
                               uint32 & size,
                               const TimeoutType &timeout) {
     ErrorType err = NoError;
-    if ((osProperties->openingMode & BasicConsole::Mode::EnablePaging) == BasicConsole::Mode::EnablePaging) {
+    if ((osProperties->openingMode & BasicConsoleMode::EnablePaging) == BasicConsoleMode::EnablePaging) {
         err = PagedWrite(buffer, size, timeout);
     }
     else {
@@ -281,7 +276,7 @@ ErrorType BasicConsole::Read(char8 * const buffer,
                              const TimeoutType &timeout) {
     ErrorType err = NoError;
     if ((buffer != NULL) && (size > 0u)) {
-        if ((osProperties->openingMode & BasicConsole::Mode::PerformCharacterInput) != 0u) {
+        if ((osProperties->openingMode & BasicConsoleMode::PerformCharacterInput) != 0u) {
             char8 *readChar = buffer;
             *readChar = static_cast<char8>(getchar());
             int32 eofCheck = static_cast<int32>(*readChar);

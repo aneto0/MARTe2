@@ -43,7 +43,7 @@
  *
  * @details This class is designed to test all the Endianity functions,
  * for all the supported MARTe types. It forces the conversion
- * from (to) the tartet architecture endianity (i.e. the endianity of
+ * from (to) the target architecture endianity (i.e. the endianity of
  * machine where the code is being executed), to (from) the
  * complementary endianity.
  */

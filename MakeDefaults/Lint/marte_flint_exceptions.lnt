@@ -49,6 +49,16 @@
  -sem(MutexSem::~MutexSem, cleanup)
 
 /*
+ * Destructor calls the cleanup function 
+ */
+-sem(Reference::RemoveReference,cleanup)
+
+/*
+ * Destructor calls the cleanup function 
+ */
+-sem(Reference::RemoveReference,cleanup)
+
+/*
  * Linux is not certifiable. Disable all operating system headers related warnings.
  */
 -e829
@@ -57,14 +67,14 @@
  * Rule GLOBAL
  * Justification: Not applicable to a framework
  */
-//-e755 /* global macro not referenced */
+/* global macro not referenced */
 -esym(755,REPORT_ERROR,REPORT_ERROR_FULL)
 
-//-e756 
 /* global typedef not referenced */
 -esym(756,intptr,Colours)
 /* global struct/union/enum not referenced */
 -etype(758,Flags)
+-esym(758,SFTestType)
 /* global struct not referenced */
 -esym(768,TimeValues::*)
 -esym(768,ErrorInformation::*)
@@ -72,7 +82,11 @@
 -esym(768,IBasicConsole::*)
 -esym(768,ExceptionHandler::*)
 -esym(768,ExceptionHandler::*)
+-esym(768,ClassRegistryDatabase::*)
+-esym(768,Introspection::*)
+-esym(768,Object::*)
 /* global constant enumeration not referenced */ 
+-esym(769,SFTestType::*)
 -esym(769,Colours::*) 
 -esym(769,ErrorType::*)
 -esym(769,Threads::ThreadStateType::*)
@@ -89,10 +103,6 @@
  * Rule 0-1-10 
  * Justfication: Not applicable to a framework
  */
-/* symbol not referenced */
-//-e528  
-/* symbol not referenced */
-//-e714  
 -esym(714,ErrorManagement::*)
 /* member function not referenced */
 -esym(1714,Sleep::*)
@@ -116,9 +126,29 @@
 -esym(1714,ThreadInformation::*)
 -esym(1714,Memory::*)
 -esym(1714,ErrorManagement::*)
+-esym(1714,LinkedListable::*)
+-esym(1714,LinkedListHolder::*)
+-esym(1714,ClassProperties::*)
+-esym(1714,ClassRegistryItem::*)
+-esym(1714,ClassRegistryDatabase::*)
+-esym(1714,Object::*)
+-esym(1714,Reference::*)
+-esym(1714,ReferenceContainer::*)
+-esym(1714,ReferenceContainerItem::*)
+-esym(1714,ReferenceContainerFilter::*)
+-esym(1714,ReferenceContainerFilterObjectName::*)
+-esym(1714,ReferenceContainerFilterReferences::*)
+-esym(1714,ReferenceContainerFilterObjectName::*)
+
+
+
 
 /* virtual member function not referenced */
 -esym(1716,IBasicConsole::*)
+-esym(1716,Object::*)
+-esym(1716,Reference::*)
+//From Object.h macro
+-esym(1716,*::GetClassPropertiesCopy*)
 
 /* default constructor not referenced */
 -esym(1914,Flags::*) 
@@ -127,6 +157,16 @@
 -esym(1914,LoadableLibrary::*)  
 -esym(1914,ExceptionHandler::*)
 -esym(1914,ThreadInformation::*)
+-esym(1914,LinkedListHolder::*)
+-esym(1914,ClassProperties::*)
+-esym(1914,ClassRegistryItem::*)
+-esym(1914,Object::*)
+-esym(1914,Reference::*)
+-esym(1914,ReferenceContainer::*)
+-esym(1914,ReferenceContainerNode::*)
+-esym(1914,ReferenceContainerItem::*)
+-esym(1914,ReferenceContainerFilterObjectName::*)
+-esym(1914,ReferenceContainerFilterReferences::*)
 
 /*
  * Rule 0-1-11
@@ -137,6 +177,7 @@
 -efunc(715,BasicConsoleOS::SetColour,BasicConsoleOS::SetTitleBar,BasicConsoleOS::GetTitleBar,BasicConsoleOS::SetCursorPosition,BasicConsoleOS::GetCursorPosition,BasicConsoleOS::SetWindowSize,BasicConsoleOS::GetWindowSize,BasicConsoleOS::PlotChar)
 -efunc(715,Memory::Malloc,Memory::Check)
 -esym(715,errorDescription,errorInfo)
+-efunc(715,previouslyFound)
 
 /*
  * Rule 0-1-12
@@ -174,11 +215,7 @@
 -esym(9141,Colours)
 -esym(9141,Endianity)
 -esym(9141,Endianity::*)
--esym(9141,ErrorInformation)
--esym(9141,ErrorMessageProcessFunctionType)
--esym(9141,errorMessageProcessFunction)
--esym(9141,NULLErrorMessageProcessFunction)
--esym(9141,errorNames)
+-esym(9141,Error)
 -esym(9141,ErrorType)
 -esym(9141,EventSem::*)
 -esym(9141,EventSemOSProperties)
@@ -194,6 +231,7 @@
 -esym(9141,Processor)
 -esym(9141,Processor::*)
 -esym(9141,ProcessorType)
+-esym(9141,ProcessorType::*)
 -esym(9141,Sleep)
 -esym(9141,Sleep::*)
 -esym(9141,StringHelper)
@@ -221,11 +259,76 @@
 -esym(9141,LoadableLibraryFunction)
 -esym(9141,FastMath)
 -esym(9141,FastMath::*)
+-esym(9141,FloatToInt)
 -esym(9141,ExceptionHandler)
 -esym(9141,Memory)
 -esym(9141,Memory::*)
 -esym(9141,ErrorManagement)
 -esym(9141,ErrorManagement::*)
+-esym(9141,Iterator)
+-esym(9141,SearchFilter)
+-esym(9141,SortFilter)
+-esym(9141,LinkedListable)
+-esym(9141,LinkedListable::*)
+-esym(9141,IteratorFn)
+-esym(9141,SearchFilterFn)
+-esym(9141,SortFilterFn)
+-esym(9141,SFTestType)
+-esym(9141,LinkedListHolder)
+-esym(9141,ClassProperties)
+-esym(9141,ClassRegistryItem)
+-esym(9141,ClassRegistryDatabase)
+-esym(9141,ClassRegistryDatabase::*)
+-esym(9141,Object)
+-esym(9141,Object::*)
+-esym(9141,Introspection)
+-esym(9141,Introspection::*)
+-esym(9141,StructuredData)
+-esym(9141,StructuredData::*)
+-esym(9141,*Heap_)
+-esym(9141,*BuildFn_*)
+-esym(9141,*ClassProperties_)
+-esym(9141,*ClassRegistryItem_)
+-esym(9141,Reference)
+-esym(9141,Reference::*)
+-esym(9141,ReferenceT)
+-esym(9141,ReferenceT::*)
+-esym(9141,ReferenceT*)
+-esym(9141,ReferenceContainer)
+-esym(9141,ReferenceContainer::*)
+-esym(9141,ReferenceContainerNode)
+-esym(9141,ReferenceContainerNode::*)
+-esym(9141,ReferenceContainerItem)
+-esym(9141,ReferenceContainerItem::*)
+-esym(9141,ReferenceContainerFilter)
+-esym(9141,ReferenceContainerFilter::*)
+-esym(9141,ReferenceContainerFilterReferences)
+-esym(9141,ReferenceContainerFilterReferences::*)
+-esym(9141,ReferenceContainerFilterObjectName)
+-esym(9141,ReferenceContainerFilterObjectName::*)
+
+
+/*
+ * MISRA 3-3-1
+ * Defining the Build functions in the header file would require another macro for no good reason (notice
+ * that CLASS_REGISTER_DECLARATION would declare member variables and not global members)
+ */
+ -esym(765, *BuildFn_)
+ 
+/* 
+ * Info flexelint 1711
+ * virtual functions not inherited
+ */
+ -esym(1711,Iterator)
+ -esym(1711,SearchFilter)
+ -esym(1711,SortFilter)
+ -esym(1711,LinkedListable)
+ -esym(1711,LinkedListHolder)
+ // Lint does not see this because of the macros.  
+ -esym(1711,Object)
+ -esym(1711,ReferenceContainer)
+ -esym(1711,ReferenceT*)
+ 
 /*
  * Rule flexelint 1960 
  * Rule MISRA 0-1-8
@@ -235,7 +338,8 @@
 -esym(1960, TimeoutType::SetTimeoutSec*)
 -esym(1960, TimeoutType::SetTimeoutHighResolutionTimerTicks*)
 -esym(1960, ErrorManagement::NULLErrorMessageProcessFunction*)
-
+-esym(1960, ReferenceT<<1>>::Init*)
+-esym(1960, ReferenceT<<1>>::RemoveReference*)
 
 /*
  * Rule flexelint 1784. 
@@ -249,3 +353,55 @@
   */
  -efunc(586,StringHelper::*)
  -efunc(586,Memory::Malloc,Memory::Free,Memory::Realloc)
+ 
+ /*
+  * Rule flexelint 459.
+  * Justification: The build function is indeed supposed to have access to the private members of Object.
+  * It is as if it was a member function of the class.
+  */
+ -esym(459, *BuildFn_*)
+ 
+ /*
+  * Rule 14-7-1
+  * Justification: Not applicable to a framework.
+  */
+-esym(1795, ReferenceT*)
+
+/*
+ * Rule flexelint 1531. 
+ * Justification: The object macros guarantee that the new and delete are always implemented in the final object.
+ */
+ -esym(1531, *Object::operator*)
+ 
+/*
+ * Rule flexelint 1511. 
+ * Justification: The operator new and delete of the final classes that inherit from Object, hide on purpose the ones from Object.
+ */
+ -esym(1511, *Object::operator*)
+ 
+ /*
+ * Rule flexelint 1737. 
+ * Justification: The operator new and delete of the final classes that inherit from Object, hide on purpose the ones from Object.
+ */
+ -esym(1737, *::operator new*)
+ 
+ /*
+ * Rule flexelint 1790. 
+ * Justification: For performance reasons it was decided to implement the usage of LinkedListable this way.
+ * This guarantees that the movements in the list are always performed with the correct pointer (i.e. pointing to the base class).
+ * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.
+ */
+ -estring(1790, *LinkedListable*)
+
+ /*
+  * Rule 3-1-1
+  * Justification: Required for template implementation.
+  */
+-esym(9107, ReferenceT*)
+
+/*
+ * Rule flexelint 1793
+ * Justification: Legitimate way of binding a non-const reference to an rvalue so that a direct access to the underlying
+ * object hold by the reference can be retrieved.
+ */
+-estring(1793,"*Reference::operator->*")

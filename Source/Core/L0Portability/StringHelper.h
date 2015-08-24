@@ -132,7 +132,7 @@ public:
      * @param[in] string the source string.
      * @return the length of the string.
      */
-    static int32 Length(const char8 *string);
+    static uint32 Length(const char8 *string);
 
     /**
      * @brief Returns the pointer of the first character in string1 matched with one of chars in string2.
@@ -160,6 +160,44 @@ public:
      */
     static const char8 *SearchString(const char8 *string,
                                      const char8 *substring);
+
+
+    /**
+     * @brief Get the token using characters as delimiters.
+     * @param[in] string is the string to tokenize.
+     * @param[in] delimiter contains character delimiters.
+     * @param[out] result is the substring between delimiters.
+     * @return a pointer to the next position after the delimiter for a successive tokenize operation or
+     * the end of the string if terminator is not found. It returns NULL if at least one of the
+     * arguments is NULL.
+     */
+    static const char8* TokenizeByChars(const char8* const string,
+                                        const char8* const delimiter,
+                                        char8* const result);
+
+    /**
+     * @brief Get the token using a string as delimiter.
+     * @param[in] string is the string to tokenize.
+     * @param[in] terminator is the string delimiter.
+     * @param[out] result is the next position for a successive operation (NULL if terminator is not found).
+     * @return a pointer to the next position after the substring for a successive tokenize operation or NULL if the substring is not found.
+     */
+    static const char8* TokenizeByString(const char8* const string,
+                                         const char8* const terminator,
+                                         char8* const result);
+
+    /**
+     * @brief Gets the substring between two indexes.
+     * @param[in] begin is the first index.
+     * @param[in] end is the second index.
+     * @param[in] string is the string where to search the indexes
+     * @param[out] result is the substring.
+     * @return true if indexes are valid and the strings are not NULL.
+     */
+    static bool Substr(const uint32 begin,
+                       const uint32 end,
+                       const char8* const string,
+                       char8* const result);
 
     /**
      * @brief Fills the string with a constant char.
