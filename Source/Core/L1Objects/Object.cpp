@@ -28,7 +28,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "Memory.h"
 #include "Object.h"
 #include "FastPollingMutexSem.h"
 #include "StringHelper.h"

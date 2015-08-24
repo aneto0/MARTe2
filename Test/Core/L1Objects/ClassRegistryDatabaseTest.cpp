@@ -59,8 +59,7 @@ bool ClassRegistryDatabaseTest::TestInstance() {
     }
 
     //creates an instance
-    Heap h;
-    ReferenceT<IntegerObject> integerRef = ReferenceT<IntegerObject>("IntegerObject", h);
+    ReferenceT<IntegerObject> integerRef = ReferenceT<IntegerObject>("IntegerObject");
 
     //none has still instantiated it
     if (integerItem->GetNumberOfInstances() != 1) {
@@ -292,8 +291,7 @@ bool ClassRegistryDatabaseTest::TestCreateInstances() {
     ReferenceT<IntegerObject> refInts[instances];
 
     for (uint32 i = 0; i < instances; i++) {
-        Heap h;
-        refInts[i] = ReferenceT<IntegerObject>("IntegerObject", h);
+        refInts[i] = ReferenceT<IntegerObject>("IntegerObject");
     }
 
     if (integerObjProp->GetNumberOfInstances() != instances) {
@@ -308,10 +306,9 @@ bool ClassRegistryDatabaseTest::TestCreateInstances() {
         }
     }
 
-    Heap h;
 
 //the internal objects are not counted as instances.
-    ReferenceT<CollectInts> refCollectInts = ReferenceT<CollectInts>("CollectInts", h);
+    ReferenceT<CollectInts> refCollectInts = ReferenceT<CollectInts>("CollectInts");
 
     if ((integerObjProp->GetNumberOfInstances() != 0) || (specialIntegerObjProp->GetNumberOfInstances() != 0)) {
         return false;
@@ -327,8 +324,7 @@ bool ClassRegistryDatabaseTest::TestPolimorphismChild2Father() {
     ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
     ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
 
-    Heap h;
-    ReferenceT<IntegerObject> child2father = ReferenceT<IntegerObject>("SpecialIntegerObject", h);
+    ReferenceT<IntegerObject> child2father = ReferenceT<IntegerObject>("SpecialIntegerObject");
 
     //only the named class #instances must be incremented
     if ((specialIntegerObjProp->GetNumberOfInstances() != 1) || (integerObjProp->GetNumberOfInstances() != 0)) {
@@ -350,8 +346,7 @@ bool ClassRegistryDatabaseTest::TestPolimorphismFather2Child() {
     ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
     ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
 
-    Heap h;
-    ReferenceT<SpecialIntegerObject> father2child = ReferenceT<SpecialIntegerObject>("IntegerObject", h);
+    ReferenceT<SpecialIntegerObject> father2child = ReferenceT<SpecialIntegerObject>("IntegerObject");
 
     //the dynamic cast fails, the object is created but destroyed immediately.
     if (integerObjProp->GetNumberOfInstances() != 0) {

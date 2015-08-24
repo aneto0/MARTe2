@@ -48,8 +48,7 @@ bool ReferenceContainerNodeTest::TestDestructor() {
 
     ReferenceContainerNode myNode;
 
-    Heap h;
-    Reference ref("Object", h);
+    Reference ref("Object");
 
     myNode.SetReference(ref);
 
@@ -64,8 +63,7 @@ bool ReferenceContainerNodeTest::TestDestructor() {
 
 bool ReferenceContainerNodeTest::TestSetGetReference() {
 
-    Heap h;
-    Reference testRef("Object", h);
+    Reference testRef("Object");
 
     ReferenceContainerNode myNode;
     myNode.SetReference(testRef);

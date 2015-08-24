@@ -171,7 +171,7 @@ namespace StringHelper {
      * the end of the string if terminator is not found. It returns NULL if at least one of the
      * arguments is NULL.
      */
-    static const char8* TokenizeByChars(const char8* const string,
+    const char8* TokenizeByChars(const char8* const string,
                                         const char8* const delimiter,
                                         char8* const result);
 
@@ -182,7 +182,7 @@ namespace StringHelper {
      * @param[out] result is the next position for a successive operation (NULL if terminator is not found).
      * @return a pointer to the next position after the substring for a successive tokenize operation or NULL if the substring is not found.
      */
-    static const char8* TokenizeByString(const char8* const string,
+    const char8* TokenizeByString(const char8* const string,
                                          const char8* const terminator,
                                          char8* const result);
 
@@ -194,7 +194,7 @@ namespace StringHelper {
      * @param[out] result is the substring.
      * @return true if indexes are valid and the strings are not NULL.
      */
-    static bool Substr(const uint32 begin,
+     bool Substr(const uint32 begin,
                        const uint32 end,
                        const char8* const string,
                        char8* const result);

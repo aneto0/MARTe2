@@ -82,7 +82,8 @@ public:
      * @param[in] typeName the type (i.e. class name) of the object to be instantiated.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(const char8* const typeName,HeapI* const heap);
+    ReferenceT(const char8* const typeName,
+               HeapI* const heap = static_cast<HeapI *>(NULL));
 
     /**
      * @brief Removes the reference to the underlying object. @see RemoveReference.
@@ -230,7 +231,8 @@ ReferenceT<T>::ReferenceT(const ReferenceT<T>& sourceReference) :
 /*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
  * i.e. downcasting is necessary.*/
 template<typename T>
-ReferenceT<T>::ReferenceT(const char8* const typeName,HeapI* const heap) :
+ReferenceT<T>::ReferenceT(const char8* const typeName,
+                          HeapI* const heap) :
         Reference(typeName, heap) {
     typeTObjectPointer = static_cast<T *>(NULL);
     if (Reference::IsValid()) {

@@ -48,7 +48,7 @@ public:
     /**
      * @brief No operation.
      */
-    virtual ~HeapI()=0;
+  //  virtual ~HeapI()=0;
 
 
     /**
