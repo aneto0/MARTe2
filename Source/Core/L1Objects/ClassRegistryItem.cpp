@@ -2,7 +2,7 @@
  * @file ClassRegistryItem.cpp
  * @brief Source file for class ClassRegistryItem
  * @date 04/08/2015
- * @author Andre' Neto
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -43,12 +43,14 @@ static FastPollingMutexSem classRegistryItemMuxSem;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+//LCOV_EXCL_START
 ClassRegistryItem::ClassRegistryItem() :
         LinkedListable(), classProperties() {
     numberOfInstances = 0u;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
 }
+//LCOV_EXCL_STOP
 
 ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties, const ObjectBuildFn * const objBuildFn) :
         LinkedListable() {

@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_CLASSREGISTRYITEM_H_
-#define SOURCE_CORE_L1OBJECTS_CLASSREGISTRYITEM_H_
+#ifndef CLASSREGISTRYITEM_H_
+#define CLASSREGISTRYITEM_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -39,6 +39,11 @@
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
 class Object;
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
+/**
+ * @brief Definition of the ObjectBuildFn function type.
+ * @param[in] heap the desired heap memory area where the object will be created.
+ * @return a pointer to the created object.
+ */
 typedef Object *(ObjectBuildFn)(HeapI* const);
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -50,6 +55,7 @@ typedef Object *(ObjectBuildFn)(HeapI* const);
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
+/* TODO CHECK for remove this lint comment section */
 /*lint -e{1790} for performance reasons it was decided to implement the usage of LinkedListable this way.
  * This guarantees that the movements in the list are always performed with the correct pointer (i.e. pointing to the base class).
  * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.*/
@@ -153,5 +159,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_CLASSREGISTRYITEM_H_ */
+#endif /* CLASSREGISTRYITEM_H_ */
 

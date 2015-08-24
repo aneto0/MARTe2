@@ -2,7 +2,7 @@
  * @file Reference.cpp
  * @brief Source file for class Reference
  * @date 06/08/2015
- * @author Andre' Neto
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

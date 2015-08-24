@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
-#define SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_
+#ifndef CLASSPROPERTIES_H_
+#define CLASSPROPERTIES_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -84,5 +84,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_CLASSPROPERTIES_H_ */
+#endif /* CLASSPROPERTIES_H_ */
 

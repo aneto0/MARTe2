@@ -20,18 +20,37 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
-OBJSX= LinkedListableGTest.x \
+OBJSX= EndianityGTest.x \
+	SleepGTest.x \
+	ProcessorGTest.x \
+	AtomicGTest.x \
+	ProcessorTypeGTest.x \
+	EventSemGTest.x \
+	HighResolutionTimerGTest.x \
+	MemoryGTest.x \
+	FastPollingMutexSemGTest.x \
+	StringHelperGTest.x \
+	StringPortableGTest.x \
+	ThreadsGTest.x \
+	MutexSemGTest.x \
+	BasicConsoleGTest.x \
+	TimeoutTypeGTest.x \
+	LoadableLibraryGTest.x \
+	FastMathGTest.x \
+	LinkedListableGTest.x \
 	LinkedListHolderGTest.x \
 	ClassRegistryDatabaseGTest.x \
+	ClassPropertiesGTest.x \
+	ClassRegistryItemGTest.x \
 	ObjectGTest.x \
 	ReferenceGTest.x \
+	ReferenceContainerGTest.x \
 	ReferenceTGTest.x \
-	ClassPropertiesGTest.x \
-	ClassRegistryItemGTest.x
+	ReferenceContainerNodeGTest.x \
+	ReferenceContainerFilterReferencesGTest.x \
+	ReferenceContainerFilterObjectNameGTest.x
 
 
 
@@ -51,7 +70,7 @@ INCLUDES += -I../../Source/Core/LXTypeDev
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 all: $(OBJS)    \
-                $(BUILD_DIR)/MainGTest$(EXEEXT)
+        $(BUILD_DIR)/MainGTest$(EXEEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

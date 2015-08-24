@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCE_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCE_H_
+#ifndef REFERENCE_H_
+#define REFERENCE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -67,39 +67,41 @@ public:
      * @param[in] typeName the name of the class type.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    Reference(const char8* const typeName, HeapI* const heap);
+    Reference(const char8* const typeName,HeapI* const &heap);
 
     /**
      * @brief Creates a reference to an existing \a pointer.
-     * @param[in] pointer source object to assign.
      * @details Increments the number of references referencing the underlying object.
+     * @param[in] pointer source object to assign.
      */
-    Reference (Object * const pointer);
+    Reference(Object * const pointer);
 
     /**
-     * @brief Removes the reference to the underlying object. @see RemoveReference.
+     * @brief Removes the reference to the underlying object.
+     * @see RemoveReference.
      */
     virtual ~Reference();
 
     /**
-     * @brief Create an object from a structured list of elements.
+     * @brief Creates an object from a structured list of elements.
      * @param[in] data the data to initialise the underlying object.
      * @param[in] createOnly if true the object Initialise method is not called.
-     * @return true if the object was successfully created and initialised.
+     * @return true if the object was successfully created and initialized, false otherwise.
      */
-    virtual bool Initialise(const StructuredData &data, const bool &createOnly);
+    virtual bool Initialise(const StructuredData &data,
+                            const bool &createOnly);
 
     /**
      * @brief Removes the reference to the underlying object.
      * @details If the number of references to the underlying object is zero, the object is deleted.
-     * IsValid will return false after this operation.
+     * IsValid function will return false after this operation.
      */
     virtual void RemoveReference();
 
     /**
      * @brief Verifies if the reference to the underlying object is valid.
      * @details A valid reference is one where the referenced object is not NULL.
-     * @return true if the referenced object is not NULL.
+     * @return true if the referenced object is not NULL, false otherwise.
      */
     virtual bool IsValid() const;
 
@@ -114,7 +116,7 @@ public:
      * @param[in] sourceReference reference to be compared.
      * @return true if the \a sourceReference links to the same object as this Reference.
      */
-    virtual bool operator==(const Reference& sourceReference) const;
+    bool operator==(const Reference& sourceReference) const;
 
     /**
      * @brief Verifies if this Reference owns the same object of \a sourceReference.
@@ -125,16 +127,16 @@ public:
 
     /**
      * @brief Assignment operator.
-     * @param[in] sourceReference the source reference to be assigned to this reference.
      * @details This reference will be referencing the same object as the \a  sourceReference.
+     * @param[in] sourceReference the source reference to be assigned to this reference.
      * @return a reference to the object referenced by \a sourceReference.
      */
     virtual Reference& operator=(const Reference& sourceReference);
 
     /**
      * @brief Assignment operator.
-     * @param[in] pointer source object to assign.
      * @details It will increment the number of references referencing the underlying object.
+     * @param[in] pointer source object to assign.
      * @return a reference to the underlying object.
      */
     virtual Reference& operator=(Object * const pointer);
@@ -157,18 +159,19 @@ private:
      * @brief Prevents the copying of a reference by taking its address.
      * @return a copy of this reference.
      */
+    //LCOV_EXCL_START
     /*lint -e9135 unity operator overloaded in order to implement access to the shared object.*/
     virtual Reference* operator&() {
         return this;
     }
-
+    //LCOV_EXCL_STOP
     /**
      * @brief Instantiates a new object of type className in the specified heap.
      * @param[in] className the name of the class.
      * @param[in] heap the heap where the object is to be allocated.
      * @return a new object of the specified class or NULL if the \a className does not exist.
      */
-    Object *CreateByName(const char8 * const className, HeapI* const heap) const;
+    Object *CreateByName(const char8 * const className,HeapI* const heap) const;
 
 };
 
@@ -176,5 +179,5 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCE_H_ */
+#endif /* REFERENCE_H_ */
 

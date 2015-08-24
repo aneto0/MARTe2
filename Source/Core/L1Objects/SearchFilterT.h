@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_SEARCHFILTERT_H_
-#define SOURCE_CORE_L1OBJECTS_SEARCHFILTERT_H_
+#ifndef SEARCHFILTERT_H_
+#define SEARCHFILTERT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -62,5 +62,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_SEARCHFILTERT_H_ */
+#endif /* SEARCHFILTERT_H_ */
 

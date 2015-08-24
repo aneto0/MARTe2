@@ -101,7 +101,7 @@ public:
 
     /**
      * @brief Tests the LinkedListHolder::ListInsert with a SortFilter as input.
-     * @details Creates two lists of integers and merges them specifying a decrescent order. Then checks that the elements are ordered correctly.
+     * @details Creates two lists of integers and merges them specifying a descending order. Then checks that the elements are ordered correctly.
      * @param[in] nElements is the desired number of elements in the two lists.
      * @return true if successful, false otherwise.
      */
@@ -109,7 +109,7 @@ public:
 
     /**
      * @brief Tests the insert function passing a null SortFilter as input.
-     * @details Checks if the insert function, inserts the second list at the beginning of the first (normal insert behavior).
+     * @details Checks if the insert function, inserts the second list at the beginning of the first (normal insert behaviour).
      * @param[in] nElements is the desired number of elements in the two lists.
      * @return true if successful, false otherwise.
      */
@@ -205,7 +205,7 @@ public:
 
     /**
      * @brief Tests the LinkedListHolder::ListBSort function with a SortFilter object in input.
-     * @details Creates a list of integers and sorts them in a decrescent order. Then checks if the elements are sorted correctly in the list.
+     * @details Creates a list of integers and sorts them in a descending order. Then checks if the elements are sorted correctly in the list.
      * @param[in] nElements is the desired number of elements in the list.
      * @return true if successful, false otherwise.
      */
@@ -227,8 +227,6 @@ public:
      * @return true if successful, false otherwise.
      */
     bool TestListIterateIterator();
-
-    LinkedListHolder internalList;
 
 };
 /*---------------------------------------------------------------------------*/

@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_LINKEDLISTHOLDER_H_
-#define SOURCE_CORE_L1OBJECTS_LINKEDLISTHOLDER_H_
+#ifndef LINKEDLISTHOLDER_H_
+#define LINKEDLISTHOLDER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -230,5 +230,5 @@ void LinkedListHolder::FastListInsertSingle(LinkedListable &p) {
     p.SetNext(llhRoot.Next());
     llhRoot.SetNext(&p);
 }
-#endif /* SOURCE_CORE_L1OBJECTS_LINKEDLISTHOLDER_H_ */
+#endif /* LINKEDLISTHOLDER_H_ */
 

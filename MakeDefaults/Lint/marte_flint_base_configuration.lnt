@@ -1,3 +1,11 @@
+/*
+ * Include directories
+ */
+-i./Source/Core/L0Portability/ 
+-i./Source/Core/L0Portability/OperatingSystem/Linux 
+-i./Source/Core/L0Portability/Architecture/x86_gcc 
+-i./Source/Core/L1Objects/ 
+
 /* 
  * Enable all warnings 
  */

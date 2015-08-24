@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_REFERENCET_H_
-#define SOURCE_CORE_L1OBJECTS_REFERENCET_H_
+#ifndef REFERENCET_H_
+#define REFERENCET_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -52,7 +52,7 @@ public:
      * @brief Creates an empty reference or a reference to base type T.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(HeapI* const heap);
+    ReferenceT(HeapI * const heap);
 
     /**
      * @brief Creates a reference to an object that inherits from base type T.
@@ -60,7 +60,7 @@ public:
      * does not inherit from Object) in which case an empty reference is created and IsValid will return false.
      * @param[in] p pointer to the object to be referenced.
      */
-    ReferenceT(T *p);
+    ReferenceT(T * const p);
 
     /**
      * @brief Creates a ReferenceT from an existing ReferenceT.
@@ -82,7 +82,7 @@ public:
      * @param[in] typeName the type (i.e. class name) of the object to be instantiated.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(const char8* typeName, HeapI* const heap);
+    ReferenceT(const char8* const typeName,HeapI* const heap);
 
     /**
      * @brief Removes the reference to the underlying object. @see RemoveReference.
@@ -91,7 +91,7 @@ public:
 
     /**
      * @brief Removes the reference to the underlying object.
-     * @detail If the number of references to the underlying object is zero, the object is deleted.
+     * @details If the number of references to the underlying object is zero, the object is deleted.
      */
     virtual void RemoveReference();
 
@@ -104,16 +104,16 @@ public:
 
     /**
      * @brief Assignment operator.
-     * @param sourceReference the source reference to be assigned to this reference.
      * @details This reference will be referencing the same object as the sourceReference.
+     * @param[in] sourceReference the source reference to be assigned to this reference.
      * @return a reference to the object referenced by \a sourceReference.
      */
     ReferenceT<T>& operator=(const ReferenceT<T>& sourceReference);
 
     /**
      * @brief Assignment operator.
-     * @param[in] sourceReference the source reference to be assigned to this reference.
      * @details This reference will be referencing the same object as the \a sourceReference.
+     * @param[in] sourceReference the source reference to be assigned to this reference.
      * @return a reference to the object referenced by \a sourceReference.
      */
     virtual ReferenceT<T>& operator=(const Reference& sourceReference);
@@ -123,23 +123,23 @@ public:
      * @param[in] sourceReference reference to be compared.
      * @return true if the \a sourceReference links to the same object as this Reference.
      */
+    /*lint -e{1511} Reference::operator== hidden on purpose.*/
     bool operator==(const ReferenceT<T>& sourceReference) const;
 
     /**
      * @brief Provides access to the object referenced by this Reference.
      * @return a pointer to the object referenced by this Reference.
      */
-    virtual T* operator->() const {
-        return typeTObjectPointer;
-    }
+    virtual T* operator->();
 
     /**
-     * @brief Create an object from a structured list of elements.
+     * @brief Creates an object from a structured list of elements.
      * @param[in] data the data to initialise the underlying object.
      * @param[in] createOnly if true the object Initialise method is not called.
-     * @return true if the object was successfully created and initialised.
+     * @return true if the object was successfully created and initialized.
      */
-    virtual bool Initialise(const StructuredData &data, bool createOnly);
+    virtual bool Initialise(const StructuredData &data,
+                            const bool &createOnly);
 
 private:
 
@@ -150,14 +150,14 @@ private:
     virtual ReferenceT<T>* operator&();
 
     /**
+     * @brief Set thes internal pointers to NULL.
+     */
+    void Init();
+
+    /**
      * The pointer to the referenced object.
      */
     T* typeTObjectPointer;
-
-    /**
-     * @brief Set the internal pointers to NULL.
-     */
-    void Init();
 
 };
 
@@ -167,31 +167,41 @@ private:
 
 template<typename T>
 void ReferenceT<T>::Init() {
-    objectPointer = NULL;
-    typeTObjectPointer = NULL;
+    objectPointer = static_cast<Object *>(NULL);
+    typeTObjectPointer = static_cast<T *>(NULL);
 }
 
+/*lint -e{1566} Init function initializes members */
 template<typename T>
-ReferenceT<T>::ReferenceT() {
+ReferenceT<T>::ReferenceT() :
+        Reference() {
     Init();
 }
 
+/*lint -e{1566} Init function initializes members */
+/*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
+ * i.e. downcasting is necessary.*/
 template<typename T>
-ReferenceT<T>::ReferenceT(HeapI* const heap) {
+ReferenceT<T>::ReferenceT(HeapI* const heap) :
+        Reference() {
     Init();
     T *p = new (heap) T;
     if (p != NULL) {
         Object *obj;
         obj = dynamic_cast<Object *>(p);
         if (obj != NULL) {
-            Reference::operator= (obj);
+            Reference::operator=(obj);
             typeTObjectPointer = p;
         }
     }
 }
 
+/*lint -e{1566} Init function initializes members */
+/*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
+ * i.e. downcasting is necessary.*/
 template<typename T>
-ReferenceT<T>::ReferenceT(T *p) {
+ReferenceT<T>::ReferenceT(T * const p) :
+        Reference() {
     Init();
     if (p != NULL) {
         Object *obj = dynamic_cast<Object *>(p);
@@ -202,62 +212,67 @@ ReferenceT<T>::ReferenceT(T *p) {
     }
 }
 
+/*lint -e{1566} Init function initializes members */
 template<typename T>
-ReferenceT<T>::ReferenceT(const Reference& sourceReference) {
-    Init();
+ReferenceT<T>::ReferenceT(const Reference& sourceReference) :
+        Reference(sourceReference) {
     //use operator =
     (*this) = sourceReference;
 }
 
 template<typename T>
-ReferenceT<T>::ReferenceT(const ReferenceT<T>& sourceReference) {
-    Init();
+ReferenceT<T>::ReferenceT(const ReferenceT<T>& sourceReference) :
+        Reference(sourceReference) {
     //use operator =
     (*this) = sourceReference;
 }
 
+/*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
+ * i.e. downcasting is necessary.*/
 template<typename T>
-ReferenceT<T>::ReferenceT(const char8* typeName, HeapI* const heap) : Reference(typeName, heap) {
-    typeTObjectPointer = NULL;
+ReferenceT<T>::ReferenceT(const char8* const typeName,HeapI* const heap) :
+        Reference(typeName, heap) {
+    typeTObjectPointer = static_cast<T *>(NULL);
     if (Reference::IsValid()) {
         typeTObjectPointer = dynamic_cast<T*>(objectPointer);
         if (typeTObjectPointer == NULL) {
             Reference::RemoveReference();
-            typeTObjectPointer = NULL;
+            typeTObjectPointer = static_cast<T *>(NULL);
         }
     }
 }
 
 template<typename T>
 ReferenceT<T>::~ReferenceT() {
-    RemoveReference();
+    typeTObjectPointer = static_cast<T *>(NULL);
 }
 
 template<typename T>
 void ReferenceT<T>::RemoveReference() {
-    typeTObjectPointer = NULL;
+    typeTObjectPointer = static_cast<T *>(NULL);
 
     Reference::RemoveReference();
 }
 
 template<typename T>
 bool ReferenceT<T>::IsValid() const {
-    if (!Reference::IsValid())
-        return false;
-    return (typeTObjectPointer != NULL);
+
+    return (Reference::IsValid()) ? (typeTObjectPointer != NULL) : false;
 }
 
 template<typename T>
 ReferenceT<T>& ReferenceT<T>::operator=(const ReferenceT<T>& sourceReference) {
-    RemoveReference();
-    if (sourceReference.IsValid()) {
-        Reference::operator=(sourceReference);
-        typeTObjectPointer = sourceReference.typeTObjectPointer;
+    if (this != &sourceReference) {
+        RemoveReference();
+        if (sourceReference.IsValid()) {
+            Reference::operator=(sourceReference);
+            typeTObjectPointer = sourceReference.typeTObjectPointer;
+        }
     }
-
     return *this;
 }
 
+/*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting*/
 template<typename T>
 ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
     RemoveReference();
@@ -279,9 +294,14 @@ bool ReferenceT<T>::operator==(const ReferenceT<T>& sourceReference) const {
     return (typeTObjectPointer == sourceReference.typeTObjectPointer);
 }
 
+template<typename T>
+T* ReferenceT<T>::operator->() {
+    return typeTObjectPointer;
+}
 
 template<typename T>
-bool ReferenceT<T>::Initialise(const StructuredData &data, bool createOnly) {
+bool ReferenceT<T>::Initialise(const StructuredData &data,
+                               const bool &createOnly) {
     Reference ref;
     bool ok = true;
     if (ref.Initialise(data, createOnly)) {
@@ -298,4 +318,4 @@ template<typename T>
 ReferenceT<T>* ReferenceT<T>::operator&() {
     return this;
 }
-#endif /* SOURCE_CORE_L1OBJECTS_REFERENCET_H_ */
+#endif /* REFERENCET_H_ */

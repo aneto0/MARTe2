@@ -46,7 +46,7 @@ public:
 
     /**
      * @brief Tests the default constructor.
-     * @return true if the name and version fields are initialized to NULL.
+     * @return true if the name and version fields are initialised to NULL.
      */
     bool TestDefaultConstructor();
 

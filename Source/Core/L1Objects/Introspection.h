@@ -2,7 +2,7 @@
  * @file Introspection.h
  * @brief Header file for class Introspection
  * @date 05/08/2015
- * @author Andre' Neto
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L1OBJECTS_INTROSPECTION_H_
-#define SOURCE_CORE_L1OBJECTS_INTROSPECTION_H_
+#ifndef INTROSPECTION_H_
+#define INTROSPECTION_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -48,5 +48,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L1OBJECTS_INTROSPECTION_H_ */
+#endif /* INTROSPECTION_H_ */
 

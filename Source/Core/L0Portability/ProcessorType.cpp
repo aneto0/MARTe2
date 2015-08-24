@@ -32,21 +32,16 @@
 #include "ProcessorType.h"
 
 #if ProcessorTypeDefaultCPUs
-/*lint -e{9141} required to allow the setting the default CPUs at compilation time*/
 uint32 ProcessorType::defaultCPUs = ProcessorTypeDefaultCPUs;
 #else
 uint32 ProcessorType::defaultCPUs = 0;
 #endif
 
-/*lint -e{9141} constant that can be reused by other classes*/
-const ProcessorType ProcessorType::UndefinedCPUs(0u);
 
-/*lint -e{9141} required to allow the setting the default CPUs at compilation time*/
 uint32 ProcessorType::GetDefaultCPUs() {
     return ProcessorType::defaultCPUs;
 }
 
-/*lint -e{9141} required to allow the setting the default CPUs at compilation time*/
 void ProcessorType::SetDefaultCPUs(const uint32 &mask) {
     ProcessorType::defaultCPUs = mask;
 }

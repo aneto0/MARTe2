@@ -27,14 +27,18 @@
 OBJSX=  LinkedListableTest.x \
 	LinkedListHolderTest.x \
 	ClassRegistryDatabaseTest.x \
+	ClassPropertiesTest.x \
+	ClassRegistryItemTest.x \
 	TestObjectHelper1.x \
 	TestObjectHelper2.x \
 	ObjectTest.x \
 	ObjectTestHelper.x \
 	ReferenceTest.x \
+	ReferenceContainerTest.x \
 	ReferenceTTest.x \
-	ClassPropertiesTest.x \
-	ClassRegistryItemTest.x
+	ReferenceContainerNodeTest.x \
+	ReferenceContainerFilterReferencesTest.x \
+	ReferenceContainerFilterObjectNameTest.x
 		
 PACKAGE=Core
 ROOT_DIR=../../..

@@ -129,7 +129,7 @@ TEST(LinkedListHolderTest,TestListExtract) {
 
 TEST(LinkedListHolderTest,TestListExtractSearchFilter) {
     LinkedListHolderTest myLinkedListHolderTest;
-    ASSERT_TRUE(myLinkedListHolderTest.TestListExtract());
+    ASSERT_TRUE(myLinkedListHolderTest.TestListExtractSearchFilter());
 }
 
 TEST(LinkedListHolderTest,TestListExtractIndex) {

@@ -41,7 +41,7 @@
 /**
  * @brief A collector of functions that are executed atomically even on multiprocessor machines.
  *
- * @details The target architecture is the one of the machine where the code is being executed.
+ * @details The target   inline void Increment (volatile int32 *p ); architecture is the one of the machine where the code is being executed.
  * Most of the implementation is therefore delegated to the AtomicA.h implementation,
  * which will be specific for each type of supported architecture.
  *
@@ -143,61 +143,6 @@ namespace  Atomic {
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-
-#if 0
-void Increment(volatile int32 *p) {
-    Increment32(p);
-}
-
-void Increment(volatile int16 *p) {
-    Increment16(p);
-}
-
-void Increment(volatile int8 *p) {
-    Increment8(p);
-}
-
-void Decrement(volatile int32 *p) {
-    Decrement32(p);
-}
-
-void Decrement(volatile int16 *p) {
-    Decrement16(p);
-}
-
-void Decrement(volatile int8 *p) {
-    Decrement8(p);
-}
-
-int32 Exchange(volatile int32 *p,
-                       int32 v) {
-    return Exchange32(p, v);
-}
-
-bool TestAndSet(volatile int32 *p) {
-    return TestAndSet32(p);
-}
-
-bool TestAndSet(volatile int16 *p) {
-    return TestAndSet16(p);
-}
-
-bool TestAndSet(volatile int8 *p) {
-    return TestAndSet8(p);
-}
-
-void Add(volatile int32 *p,
-                 int32 value) {
-    Add32(p, value);
-}
-
-void Sub(volatile int32 *p,
-                 int32 value) {
-    Sub32(p, value);
-}
-
-#endif
 
 };
 

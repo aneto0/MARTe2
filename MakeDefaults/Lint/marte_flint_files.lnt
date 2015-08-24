@@ -26,3 +26,8 @@ Object.cpp
 Reference.cpp
 ReferenceT.cpp
 HeapManager.cpp
+ReferenceContainer.cpp
+ReferenceContainerNode.cpp
+ReferenceContainerFilterObjectName.cpp
+ReferenceContainerFilterReferences.cpp
+ReferenceContainerFilter.cpp

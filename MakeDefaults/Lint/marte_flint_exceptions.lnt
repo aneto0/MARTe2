@@ -121,11 +121,22 @@
 -esym(1714,ClassRegistryDatabase::*)
 -esym(1714,Object::*)
 -esym(1714,Reference::*)
+-esym(1714,ReferenceContainer::*)
+-esym(1714,ReferenceContainerItem::*)
+-esym(1714,ReferenceContainerFilter::*)
+-esym(1714,ReferenceContainerFilterObjectName::*)
+-esym(1714,ReferenceContainerFilterReferences::*)
+-esym(1714,ReferenceContainerFilterObjectName::*)
+
+
+
 
 /* virtual member function not referenced */
 -esym(1716,IBasicConsole::*)
 -esym(1716,Object::*)
 -esym(1716,Reference::*)
+//From Object.h macro
+-esym(1716,*::GetClassPropertiesCopy*)
 
 /* default constructor not referenced */
 -esym(1914,Flags::*) 
@@ -139,6 +150,11 @@
 -esym(1914,ClassRegistryItem::*)
 -esym(1914,Object::*)
 -esym(1914,Reference::*)
+-esym(1914,ReferenceContainer::*)
+-esym(1914,ReferenceContainerNode::*)
+-esym(1914,ReferenceContainerItem::*)
+-esym(1914,ReferenceContainerFilterObjectName::*)
+-esym(1914,ReferenceContainerFilterReferences::*)
 
 /*
  * Rule 0-1-11
@@ -148,6 +164,7 @@
  */
 -efunc(715,BasicConsoleOS::SetColour,BasicConsoleOS::SetTitleBar,BasicConsoleOS::GetTitleBar,BasicConsoleOS::SetCursorPosition,BasicConsoleOS::GetCursorPosition,BasicConsoleOS::SetWindowSize,BasicConsoleOS::GetWindowSize,BasicConsoleOS::PlotChar)
 -efunc(715,Memory::Malloc,Memory::Check)
+-efunc(715,previouslyFound)
 
 /*
  * Rule 0-1-12
@@ -201,6 +218,7 @@
 -esym(9141,Processor)
 -esym(9141,Processor::*)
 -esym(9141,ProcessorType)
+-esym(9141,ProcessorType::*)
 -esym(9141,Sleep)
 -esym(9141,Sleep::*)
 -esym(9141,StringHelper)
@@ -228,6 +246,7 @@
 -esym(9141,LoadableLibraryFunction)
 -esym(9141,FastMath)
 -esym(9141,FastMath::*)
+-esym(9141,FloatToInt)
 -esym(9141,ExceptionHandler)
 -esym(9141,Memory)
 -esym(9141,Memory::*)
@@ -260,6 +279,19 @@
 -esym(9141,ReferenceT)
 -esym(9141,ReferenceT::*)
 -esym(9141,ReferenceT*)
+-esym(9141,ReferenceContainer)
+-esym(9141,ReferenceContainer::*)
+-esym(9141,ReferenceContainerNode)
+-esym(9141,ReferenceContainerNode::*)
+-esym(9141,ReferenceContainerItem)
+-esym(9141,ReferenceContainerItem::*)
+-esym(9141,ReferenceContainerFilter)
+-esym(9141,ReferenceContainerFilter::*)
+-esym(9141,ReferenceContainerFilterReferences)
+-esym(9141,ReferenceContainerFilterReferences::*)
+-esym(9141,ReferenceContainerFilterObjectName)
+-esym(9141,ReferenceContainerFilterObjectName::*)
+
 
 /*
  * MISRA 3-3-1
@@ -279,6 +311,8 @@
  -esym(1711,LinkedListHolder)
  // Lint does not see this because of the macros.  
  -esym(1711,Object)
+ -esym(1711,ReferenceContainer)
+ -esym(1711,ReferenceT*)
  
 /*
  * Rule flexelint 1960 
@@ -316,3 +350,42 @@
   * Justification: Not applicable to a framework.
   */
 -esym(1795, ReferenceT*)
+
+/*
+ * Rule flexelint 1531. 
+ * Justification: The object macros guarantee that the new and delete are always implemented in the final object.
+ */
+ -esym(1531, *Object::operator*)
+ 
+/*
+ * Rule flexelint 1511. 
+ * Justification: The operator new and delete of the final classes that inherit from Object, hide on purpose the ones from Object.
+ */
+ -esym(1511, *Object::operator*)
+ 
+ /*
+ * Rule flexelint 1737. 
+ * Justification: The operator new and delete of the final classes that inherit from Object, hide on purpose the ones from Object.
+ */
+ -esym(1737, *::operator new*)
+ 
+ /*
+ * Rule flexelint 1790. 
+ * Justification: For performance reasons it was decided to implement the usage of LinkedListable this way.
+ * This guarantees that the movements in the list are always performed with the correct pointer (i.e. pointing to the base class).
+ * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.
+ */
+ -estring(1790, *LinkedListable*)
+
+ /*
+  * Rule 3-1-1
+  * Justification: Required for template implementation.
+  */
+-esym(9107, ReferenceT*)
+
+/*
+ * Rule flexelint 1793
+ * Justification: Legitimate way of binding a non-const reference to an rvalue so that a direct access to the underlying
+ * object hold by the reference can be retrieved.
+ */
+-estring(1793,"*Reference::operator->*")

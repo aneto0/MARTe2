@@ -658,16 +658,7 @@ bool LinkedListHolderTest::TestListDeleteSearchFilter() {
 
 }
 
-void DeleteList(LinkedListHolderTest &t) {
 
-    uint32 size=32;
-    for (uint32 i = 0; i < size; i++) {
-        SearchInteger searchNumber(i);
-        t.internalList.ListSafeDelete(&searchNumber);
-        Sleep::MSec(1);
-    }
-
-}
 
 bool LinkedListHolderTest::TestListSafeDelete() {
 

@@ -44,12 +44,15 @@ public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * Default constructor
+     * @brief Default constructor
      */
     IntegerObject() {
         dummyVariable = 0;
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual ~IntegerObject() {
     }
 
@@ -76,19 +79,31 @@ protected:
 
 };
 
+
+/**
+ * @brief An object which inherits from integer object.
+ */
 class SpecialIntegerObject: public IntegerObject {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * Default constructor
+     * @brief Default constructor
      */
     SpecialIntegerObject() {
     }
 
+    /**
+     * @brief Destructor.
+     */
     virtual ~SpecialIntegerObject() {
     }
 
+    /**
+     * @brief Saturates the integer value whithin the specified thereshold.
+     * @param[in] threshold is the maximum value allowed.
+     * @return the number saturated.
+     */
     int32 saturate(int32 threshold) {
 
         return dummyVariable > threshold ? threshold : dummyVariable;
@@ -98,21 +113,29 @@ private:
 
 };
 
+
+/**
+ * @brief An object which inherits from Object.
+ */
 class FloatObject: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
-     * Default constructor
+     * @brief Default constructor
      */
     FloatObject() {
         dummyFVariable = 0;
     }
 
+    /**
+     * @brief Destructor
+     */
     virtual ~FloatObject() {
     }
 
     /**
+     * @brief Return the float number.
      * @return the value of the dummy variable.
      */
     float32 GetVariable() const {
@@ -135,102 +158,67 @@ private:
 
 };
 
-class DoubleObject: public Object {
-public:
-    CLASS_REGISTER_DECLARATION()
 
-    /**
-     * Default constructor
-     */
-    DoubleObject() {
-        dummyDVariable = 0;
-    }
-
-    virtual ~DoubleObject() {
-    }
-
-    /**
-     * @return the value of the dummy variable.
-     */
-    float64 GetVariable() const {
-        return dummyDVariable;
-    }
-
-    /**
-     * @brief Updates the value of the dummy variable.
-     * @param dummyVariable the new value to set.
-     */
-    void SetVariable(float64 dummyVariable) {
-        this->dummyDVariable = dummyVariable;
-    }
-
-private:
-    /**
-     * Dummy variable
-     */
-    float64 dummyDVariable;
-
-};
-
+/**
+ * @brief A class which contains two different Object types.
+ */
 class CollectInts: public Object {
+
+    /**
+     * First object.
+     */
     IntegerObject oneInteger;
+
+    /**
+     * Second object
+     */
     SpecialIntegerObject oneSpecialInteger;
 
 public:
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Constructor.
+     */
     CollectInts() {
         oneInteger.SetVariable(0);
         oneSpecialInteger.SetVariable(0);
     }
 
+    /**
+     * @brief Sets the value of the first object.
+     * @param[in] inumber is the desired value associated to the first object.
+     */
     void SetInteger(int32 inumber){
         oneInteger.SetVariable(inumber);
     }
 
+    /**
+     * @brief Sets the value of the second object.
+     * @param[in] inumber is the desired value associated to the second object.
+     */
     void SetSpecialInteger(int32 inumber){
         oneSpecialInteger.SetVariable(inumber);
     }
 
+    /**
+     * @brief Returns the value of the first object.
+     * @return the value of the first object.
+     */
     int32 GetInteger() {
         return oneInteger.GetVariable();
     }
 
+
+    /**
+     * @brief Returns the value of the second object.
+     * @return the value of the second object.
+     */
     int32 GetSpecialInteger() {
         return oneSpecialInteger.GetVariable();
     }
 };
 
-class CollectFloats: public Object {
-    FloatObject oneFloat;
-    DoubleObject oneDouble;
-
-public:
-
-    CLASS_REGISTER_DECLARATION()
-
-    CollectFloats() {
-        oneFloat.SetVariable(0);
-        oneDouble.SetVariable(0);
-
-    }
-
-    void SetFloat(float32 fnumber) {
-        oneFloat.SetVariable(fnumber);
-    }
-
-    void SetDouble(float64 dnumber) {
-        oneDouble.SetVariable(dnumber);
-    }
-
-    float32 GetFloat() {
-        return oneFloat.GetVariable();
-    }
-
-    float64 GetDouble() {
-        return oneDouble.GetVariable();
-    }
-};
 
 #endif /* OBJECTTESTHELPER_H_ */
 

@@ -20,8 +20,6 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
 PACKAGE=Core
@@ -35,6 +33,11 @@ OBJSX=  ClassRegistryItem.x \
     LinkedListHolder.x \
     Reference.x \
     ReferenceT.x \
+    ReferenceContainer.x \
+    ReferenceContainerNode.x \
+    ReferenceContainerFilter.x \
+    ReferenceContainerFilterReferences.x\
+    ReferenceContainerFilterObjectName.x\
     ClassRegistryDatabase.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

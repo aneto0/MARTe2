@@ -73,7 +73,7 @@ public:
 
     /**
      * @brief Tests The LinkedListable::BSort function using a SortFilter.
-     * @details Creates a list of numbers in crescent order, then sorts them in decrescent order and checks that the list after the function
+     * @details Creates a list of numbers in crescent order, then sorts them in descending order and checks that the list after the function
      * call is ordered correctly.
      * @return true if successful, false otherwise.
      */
@@ -99,8 +99,8 @@ public:
 
     /**
      * @brief Inserts elements holding a specific order using a SortFilter.
-     * @details Creates the first list of number in decrescent order and inserts a second lists passing a SortFilter to hold the
-     * decrescent order. Then checks that the final list is sorded in decrescent order.
+     * @details Creates the first list of number in descending order and inserts a second lists passing a SortFilter to hold the
+     * descending order. Then checks that the final list is sorted in descending order.
      * @return true if successful, false otherwise.
      */
     bool TestInsertSortedSorter(uint32 secondListPosition);
@@ -193,7 +193,7 @@ public:
     bool TestPeek();
 
     /**
-     * @brief Tests the LinkedListable::Iterate function passing an Iterato.
+     * @brief Tests the LinkedListable::Iterate function passing an Iterator.
      * @details Creates a list of integers and calls the function passing an iterator that increment all element value. Then checks if
      * all elements are incremented.
      * @return true if successful, false otherwise.
