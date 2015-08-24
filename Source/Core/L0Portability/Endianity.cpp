@@ -35,8 +35,6 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool Endianity::endianityTypeChecked = false;
-uint8 Endianity::endianityType = 3u;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

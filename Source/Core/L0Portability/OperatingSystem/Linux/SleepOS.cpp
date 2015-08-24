@@ -48,7 +48,10 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void Sleep::AtLeast(float64 sec) {
+
+namespace Sleep{
+
+void AtLeast(float64 sec) {
     int32 nsecRemainder = -1;
     struct timespec timesValues;
     struct timespec remTimesValues;
@@ -75,7 +78,7 @@ void Sleep::AtLeast(float64 sec) {
     }
 }
 
-void Sleep::NoMore(float64 sec) {
+void NoMore(float64 sec) {
     uint32 linuxSleepNoMoreMinUsecTime = 5000u;
     int64 secCounts = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
 
@@ -101,7 +104,7 @@ void Sleep::NoMore(float64 sec) {
 
 }
 
-void Sleep::Sec(float64 sec) {
+void Sec(float64 sec) {
     struct timespec timesValues;
     struct timespec remTimesValues;
     float64 roundValue = floor(sec);
@@ -117,7 +120,7 @@ void Sleep::Sec(float64 sec) {
     }
 }
 
-void Sleep::MSec(int32 msec) {
+void MSec(int32 msec) {
     int32 sec = 0;
     int32 nsecSleep = 0;
     if (msec >= 1000) {
@@ -140,7 +143,7 @@ void Sleep::MSec(int32 msec) {
     }
 }
 
-void Sleep::SemiBusy(float64 totalSleepSec,
+void SemiBusy(float64 totalSleepSec,
                      float64 nonBusySleepSec) {
     int64 startCounter = HighResolutionTimer::Counter();
     float64 endCounterF = totalSleepSec * static_cast<float64>(HighResolutionTimer::Frequency());
@@ -164,6 +167,8 @@ void Sleep::SemiBusy(float64 totalSleepSec,
     }
 }
 
-int32 Sleep::GetDateSeconds() {
+int32 GetDateSeconds() {
     return static_cast<int32>(time(static_cast<time_t *>(NULL)));
+}
+
 }

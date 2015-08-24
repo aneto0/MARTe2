@@ -42,11 +42,13 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+namespace HighResolutionTimer{
+
 /**
  * @brief Reads the High Resolution Timer as 32 bit. Fast inline assembler.
  * @return number of cpu ticks in a 32 bit integer.
  */
-inline uint32 HighResolutionTimer::Counter32() {
+inline uint32 Counter32() {
 
     return (uint32) __rdtsc();
 
@@ -56,9 +58,11 @@ inline uint32 HighResolutionTimer::Counter32() {
  * @brief Reads the High Resolution Timer as 64 bit int. Fast inline assembler.
  * @return number of cpu ticks in a 64 bit integer.
  */
-inline int64 HighResolutionTimer::Counter() {
+inline int64 Counter() {
 
     return (int64) __rdtsc();
+
+}
 
 }
 

@@ -45,22 +45,28 @@
 
 extern HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
 
-inline int64 HighResolutionTimer::Frequency() {
+
+namespace HighResolutionTimer {
+
+
+inline int64 Frequency() {
     return calibratedHighResolutionTimer.GetFrequency();
 }
 
-inline float64 HighResolutionTimer::Period() {
+inline float64 Period() {
     return calibratedHighResolutionTimer.GetPeriod();
 }
 
-inline float64 HighResolutionTimer::TicksToTime(int64 tStop,
-                                                int64 tStart) {
+inline float64 TicksToTime(int64 tStop,
+                           int64 tStart) {
     int64 dT = tStop - tStart;
     return dT * Period();
 }
 
-inline bool HighResolutionTimer::GetTimeStamp(TimeValues &date) {
+inline bool GetTimeStamp(TimeValues &date) {
     return calibratedHighResolutionTimer.GetTimeStamp(date);
+}
+
 }
 
 #endif /* HIGHRESOLUTIONTIMEROS_H_ */

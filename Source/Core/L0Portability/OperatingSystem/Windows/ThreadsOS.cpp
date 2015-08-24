@@ -37,20 +37,22 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace Threads {
+
 bool isRealtimeClass = false;
 
 static void SystemThreadFunction(ThreadInformation * const threadInfo) {
     if (threadInfo != NULL) {
         bool ok = ThreadsDatabase::Lock();
         if (ok) {
-            threadInfo->SetThreadIdentifier(Threads::Id());
+            threadInfo->SetThreadIdentifier(Id());
 
             ok = ThreadsDatabase::NewEntry(threadInfo);
             ThreadsDatabase::UnLock();
         }
         if (ok) {
             threadInfo->SetPriorityLevel(0u);
-            Threads::SetPriority(Threads::Id(), Threads::NormalPriorityClass, 0u);
+            SetPriority(Id(), NormalPriorityClass, 0u);
             //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
             ErrorType err = threadInfo->ThreadWait();
             //Start the user thread
@@ -59,7 +61,7 @@ static void SystemThreadFunction(ThreadInformation * const threadInfo) {
 
                 ok = ThreadsDatabase::Lock();
                 if (ok) {
-                    ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Threads::Id());
+                    ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Id());
                     if (threadInfo != threadInfo2) {
                         //CStaticAssertErrorCondition(FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
                     }
@@ -82,21 +84,21 @@ static ThreadInformation * threadInitialisationInterfaceConstructor(const Thread
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-Threads::ThreadStateType Threads::GetState(const ThreadIdentifier &threadId) {
+ThreadStateType GetState(const ThreadIdentifier &threadId) {
     return UnknownThreadStateType;
 }
 
-uint32 Threads::GetCPUs(const ThreadIdentifier &threadId) {
+uint32 GetCPUs(const ThreadIdentifier &threadId) {
     return 0;
 }
 
-ThreadIdentifier Threads::Id() {
+ThreadIdentifier Id() {
     return GetCurrentThreadId();
 }
 
-void Threads::SetPriority(const ThreadIdentifier &threadId,
-                          const Threads::PriorityClassType &priorityClass,
-                          const uint8 &priorityLevel) {
+void SetPriority(const ThreadIdentifier &threadId,
+                 const PriorityClassType &priorityClass,
+                 const uint8 &priorityLevel) {
 
     //Cannot set an unknown priority
     if (priorityLevel == 0 && priorityClass == 0) {
@@ -196,7 +198,7 @@ void Threads::SetPriority(const ThreadIdentifier &threadId,
 
 }
 
-uint8 Threads::GetPriorityLevel(const ThreadIdentifier &threadId) {
+uint8 GetPriorityLevel(const ThreadIdentifier &threadId) {
     uint8 priorityLevel = 0u;
 
     ThreadsDatabase::Lock();
@@ -208,7 +210,7 @@ uint8 Threads::GetPriorityLevel(const ThreadIdentifier &threadId) {
     return priorityLevel;
 }
 
-Threads::PriorityClassType Threads::GetPriorityClass(const ThreadIdentifier &threadId) {
+PriorityClassType GetPriorityClass(const ThreadIdentifier &threadId) {
 
     PriorityClassType priorityClass = UnknownPriorityClass;
     if (isRealtimeClass) {
@@ -226,7 +228,7 @@ Threads::PriorityClassType Threads::GetPriorityClass(const ThreadIdentifier &thr
 
 }
 
-bool Threads::IsAlive(const ThreadIdentifier &threadId) {
+bool IsAlive(const ThreadIdentifier &threadId) {
     ThreadsDatabase::Lock();
     bool condition = (ThreadsDatabase::GetThreadInformation(threadId) != NULL);
     ThreadsDatabase::UnLock();
@@ -244,7 +246,7 @@ bool Threads::IsAlive(const ThreadIdentifier &threadId) {
 
 }
 
-bool Threads::Kill(const ThreadIdentifier &threadId) {
+bool Kill(const ThreadIdentifier &threadId) {
     //return GetThreadPriority((HANDLE)threadId) != THREAD_PRIORITY_ERROR_RETURN;
     HANDLE tid = OpenThread(PROCESS_ALL_ACCESS, TRUE, threadId);
     if (tid == NULL) {
@@ -276,12 +278,12 @@ bool Threads::Kill(const ThreadIdentifier &threadId) {
     return true;
 }
 
-ThreadIdentifier Threads::BeginThread(const ThreadFunctionType function,
-                                      const void * const parameters,
-                                      const uint32 &stacksize,
-                                      const char8 * const name,
-                                      const uint32 exceptionHandlerBehaviour,
-                                      ProcessorType runOnCPUs) {
+ThreadIdentifier BeginThread(const ThreadFunctionType function,
+                             const void * const parameters,
+                             const uint32 &stacksize,
+                             const char8 * const name,
+                             const uint32 exceptionHandlerBehaviour,
+                             ProcessorType runOnCPUs) {
 
     if (runOnCPUs == UndefinedCPUs) {
         if (ProcessorType::GetDefaultCPUs() != 0) {
@@ -294,7 +296,7 @@ ThreadIdentifier Threads::BeginThread(const ThreadFunctionType function,
 
     ThreadInformation *threadInfo = threadInitialisationInterfaceConstructor(function, parameters, name);
     if (threadInfo == NULL) {
-        //CStaticAssertErrorCondition(InitialisationError,"Threads::ThreadsBeginThread (%s) threadInitialisationInterfaceConstructor returns NULL", name);
+        //CStaticAssertErrorCondition(InitialisationError,"ThreadsBeginThread (%s) threadInitialisationInterfaceConstructor returns NULL", name);
         return (ThreadIdentifier) 0;
     }
 
@@ -308,7 +310,7 @@ ThreadIdentifier Threads::BeginThread(const ThreadFunctionType function,
     return (ThreadIdentifier) threadId;
 }
 
-const char8 *Threads::Name(const ThreadIdentifier &threadId) {
+const char8 *Name(const ThreadIdentifier &threadId) {
     ThreadsDatabase::Lock();
     ThreadInformation *threadInfo = ThreadsDatabase::GetThreadInformation(threadId);
     ThreadsDatabase::UnLock();
@@ -319,24 +321,26 @@ const char8 *Threads::Name(const ThreadIdentifier &threadId) {
     return NULL;
 }
 
-ThreadIdentifier Threads::FindByIndex(const uint32 &n) {
+ThreadIdentifier FindByIndex(const uint32 &n) {
     return ThreadsDatabase::GetThreadID(n);
 }
 
-uint32 Threads::NumberOfThreads() {
+uint32 NumberOfThreads() {
     return ThreadsDatabase::NumberOfThreads();
 }
 
-bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
-                                const uint32 &n) {
+bool GetThreadInfoCopy(ThreadInformation &copy,
+                       const uint32 &n) {
     return ThreadsDatabase::GetInfoIndex(copy, n);
 }
 
-bool Threads::GetThreadInfoCopy(ThreadInformation &copy,
-                                const ThreadIdentifier &threadId) {
+bool GetThreadInfoCopy(ThreadInformation &copy,
+                       const ThreadIdentifier &threadId) {
     return ThreadsDatabase::GetInfo(copy, threadId);
 }
 
-ThreadIdentifier Threads::FindByName(const char8 * const name) {
+ThreadIdentifier FindByName(const char8 * const name) {
     return ThreadsDatabase::Find(name);
+}
+
 }

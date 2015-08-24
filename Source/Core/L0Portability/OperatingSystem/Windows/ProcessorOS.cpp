@@ -34,12 +34,16 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace Processor{
+
 char8 processorVendorId[13] = { '\0' };
 
-uint32 Processor::Available() {
+uint32 Available() {
     SYSTEM_INFO si;
     GetSystemInfo(&si);
     return si.dwNumberOfProcessors;
+}
 }
 
 /*---------------------------------------------------------------------------*/

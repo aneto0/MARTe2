@@ -42,6 +42,9 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+
+namespace Processor{
+
 /**
  * Buffer used to store the processor identifier
  */
@@ -73,7 +76,7 @@ static inline void CPUID(uint32 info,
  * @details Called by Processor::Family()
  * @return the cpu family.
  */
-inline uint32 Processor::Family() {
+inline uint32 Family() {
     uint32 eax = 0;
     uint32 ebx = 0;
     uint32 ecx = 0;
@@ -91,7 +94,7 @@ inline uint32 Processor::Family() {
  * @details Called by Processor::Model()
  * @return the cpu model.
  */
-inline uint32 Processor::Model() {
+inline uint32 Model() {
     uint32 eax = 0;
     uint32 ebx = 0;
     uint32 ecx = 0;
@@ -111,11 +114,13 @@ inline uint32 Processor::Model() {
  * @details Called by Processor::VendorId()
  * @return the cpu id.
  */
-inline const char8 *Processor::VendorId() {
+inline const char8 *VendorId() {
     uint32 eax = 0;
     CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
     processorVendorId[12] = 0;
     return &(processorVendorId[0]);
+}
+
 }
 
 #endif /* PROCESSORA_H_ */

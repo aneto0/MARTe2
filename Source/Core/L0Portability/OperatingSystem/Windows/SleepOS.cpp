@@ -42,8 +42,8 @@ static const uint32 winSleepFreq = 1000;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-void Sleep::AtLeast(float64 sec) {
+namespace Sleep {
+void AtLeast(float64 sec) {
     int32 ticks = (int32) (winSleepFreq * sec + 0.9999);
     if (ticks < 0) {
         return;
@@ -52,7 +52,7 @@ void Sleep::AtLeast(float64 sec) {
     ::Sleep(ticks);
 }
 
-void Sleep::NoMore(float64 sec) {
+void NoMore(float64 sec) {
     int ticks = (int) (winSleepFreq * sec);
     if (ticks < 0)
         return;
@@ -60,25 +60,26 @@ void Sleep::NoMore(float64 sec) {
     ::Sleep(ticks);
 }
 
-void Sleep::Sec(float64 sec) {
+void Sec(float64 sec) {
     if (sec < 0)
         return;
 
     ::Sleep((unsigned long) (sec * 1000.0 + 0.5));
 }
 
-void Sleep::MSec(int32 msec) {
+void MSec(int32 msec) {
     if (msec < 0)
         return;
 
     ::Sleep(msec);
 }
 
-void Sleep::SemiBusy(float64 totalSleepSec,
-                     float64 nonBusySleepSec) {
+void SemiBusy(float64 totalSleepSec,
+              float64 nonBusySleepSec) {
     NoMore(totalSleepSec);
 }
 
-int32 Sleep::GetDateSeconds() {
+int32 GetDateSeconds() {
     return (int32) time((time_t *) NULL);
+}
 }

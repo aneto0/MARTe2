@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,ProcessorA.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -46,39 +47,38 @@
  * Based on this information framework users are allowed to take runtime decisions
  * against specific processor characteristics.
  */
-class Processor {
-public:
+namespace Processor {
+
 
     /**
      * @brief Returns the processor vendor identifier.
      * @return a string which contains the processor vendor identifier.
      */
-    static inline const char8 *VendorId();
+    inline const char8 *VendorId();
 
     /**
      * @brief Returns the processor family.
      * @return processor family.
      */
-    static inline uint32 Family();
+    inline uint32 Family();
 
     /**
      * @brief Returns the processor model.
      * @return processor model.
      */
-    static inline uint32 Model();
+    inline uint32 Model();
 
     /**
      * @brief Returns the number of available CPU cores.
      * @returns the number of available CPU cores.
      */
-    static uint32 Available();
-};
+    uint32 Available();
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,ProcessorA.h)
 
 #endif /* PROCESSOR_H_ */
 

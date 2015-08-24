@@ -403,6 +403,10 @@ void *Realloc(void *&data,const uint32 newSize){
     if (chosenHeap != NULL){
         newAddress = chosenHeap->Realloc(data,newSize);
     }
+    //if the heap is not found (the data is null) allocates it on the standard heap.
+    else{
+        standardHeap.Realloc(data,newSize);
+    }
 
     return newAddress;
 }
@@ -414,6 +418,7 @@ void *Duplicate(const void * const data, uint32 size, const char8 *heapName){
 
     if (heapName != NULL){
         chosenHeap = FindHeap(heapName);
+
     }
 
     if (chosenHeap == NULL){
@@ -422,6 +427,10 @@ void *Duplicate(const void * const data, uint32 size, const char8 *heapName){
 
     if (chosenHeap != NULL){
         newAddress = chosenHeap->Duplicate(data,size);
+    }
+    // to duplicate static memory!
+    else{
+        newAddress = standardHeap.Duplicate(data,size);
     }
     return newAddress;
 

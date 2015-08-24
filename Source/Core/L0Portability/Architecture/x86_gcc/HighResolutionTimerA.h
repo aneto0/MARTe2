@@ -40,11 +40,13 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+namespace HighResolutionTimer {
+
 /**
  * @brief Reads the High Resolution Timer as 32 bit. Fast inline assembler.
  * @return number of cpu ticks in a 32 bit integer.
  */
-inline uint32 HighResolutionTimer::Counter32(){
+inline uint32 Counter32() {
     volatile uint64 perf;
     uint32 *pperf = (uint32 *) &perf;
     asm(
@@ -60,7 +62,7 @@ inline uint32 HighResolutionTimer::Counter32(){
  * @brief Reads the High Resolution Timer as 64 bit int. Fast inline assembler.
  * @return number of cpu ticks in a 64 bit integer.
  */
-inline int64 HighResolutionTimer::Counter(){
+inline int64 Counter() {
     volatile int64 perf;
     uint32 *pperf = (uint32 *) &perf;
     asm volatile(
@@ -71,4 +73,5 @@ inline int64 HighResolutionTimer::Counter(){
     return perf;
 }
 
+}
 #endif /* HIGHRESOLUTIONTIMERA_H_ */

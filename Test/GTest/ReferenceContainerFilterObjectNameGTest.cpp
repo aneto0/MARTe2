@@ -102,6 +102,7 @@ TEST(ReferenceContainerFilterObjectNameGTest,TestTestFullPath) {
 
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTest(previouslyFound, "A.B.C", true));
 }
+/*
 
 TEST(ReferenceContainerFilterObjectNameGTest,TestTestWrongPath) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
@@ -144,7 +145,7 @@ TEST(ReferenceContainerFilterObjectNameGTest,TestTestWrongPath2) {
     previouslyFound.Insert(element1);
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestTest(previouslyFound, "B.C", false));
 }
-
+*/
 TEST(ReferenceContainerFilterObjectNameGTest,TestAssignOperator) {
     ReferenceContainerFilterObjectNameTest referenceContainerFilterObjectNameTest;
     ASSERT_TRUE(referenceContainerFilterObjectNameTest.TestAssignOperator(20, "Hello"));
