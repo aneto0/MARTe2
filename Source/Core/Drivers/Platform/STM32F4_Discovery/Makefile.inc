@@ -33,7 +33,8 @@ OBJSX=ClockP.x \
 	USBConfig.x \
 	UARTConfig.x \
 	UARTConsoleP.x \
-	GeneralPurposeIOP.x
+	GeneralPurposeIOP.x \
+	PWMP.x
        
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

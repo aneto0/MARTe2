@@ -40,13 +40,34 @@
 class PWM{
 public:
 
-    bool Init();
+    bool Init(uint8 instance,
+              uint16 frequency,
+              uint8 dutyCycle,
+              uint8 mode,
+              uint8 channelMask);
+
+    bool Start(uint8 channelMask);
+
+    bool Stop(uint8 channelMask);
+
+    void SetFrequency(uint16 frequency);
+
+    bool SetDutyCycle(uint8 dutyCycle, uint8 channelMask);
+
+
 
 private:
 
     PWMHandle handle;
 
 
+    TIM_OC_InitTypeDef sConfigTim4;
+
+    uint16 tickPeriod;
+
+    uint8 configChannelMask;
+
+    uint16 prescalerValue;
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

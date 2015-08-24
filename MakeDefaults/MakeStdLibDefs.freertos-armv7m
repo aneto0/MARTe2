@@ -26,7 +26,7 @@
 BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
 
 OPERATING_SYSTEM=FreeRTOS
-PLATFORM=STM32F4-Discovery
+PLATFORM=STM32F4_Discovery
 EXEEXT=.ex
 DLLEXT=.so
 LIBEXT=.a
@@ -75,7 +75,7 @@ LFLAGS = -Wl,--no-as-needed -g
 
 CFLAGS = -MD -MP -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -flto -g -Wall
 CPPFLAGS = $(CFLAGS) 
-CFLAGSPEC=-DUSE_FREERTOS -DUSE_USB_FS -DARCHITECTURE=armv7m_gcc -DOPERATING_SYSTEM=FreeRTOS -DPLATFORM=STM32F4-Discovery -DSTM32F407xx
+CFLAGSPEC=-DUSE_FREERTOS -DUSE_USB_FS -DARCHITECTURE=armv7m_gcc -DOPERATING_SYSTEM=FreeRTOS -DPLATFORM=STM32F4_Discovery -DSTM32F407xx
 LIBRARIES =  -lm -lnsl -lrt -lncurses -ldl -lgcc -lc
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

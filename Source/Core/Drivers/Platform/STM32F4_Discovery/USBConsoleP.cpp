@@ -215,6 +215,7 @@ ErrorType USBConsole::Open(const FlagsType &mode) {
 
 ErrorType USBConsole::Close() {
     USBD_Stop(&handle);
+    USBD_DeInit(&handle);
     return NoError;
 
 }

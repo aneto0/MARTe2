@@ -201,6 +201,13 @@ bool Clock::SysClockUpdate() {
     tmp = AHBPrescTable[((RCC->CFGR & RCC_CFGR_HPRE) >> 4)];
     /* HCLK frequency */
     SystemCoreClock >>= tmp;
+
+    HAL_Init();
     return true;
 }
 
+
+uint32 Clock::GetClockFrequency() {
+
+    return HAL_RCC_GetHCLKFreq();
+}

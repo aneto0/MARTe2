@@ -26,7 +26,10 @@
 
 TARGET=freertos-armv7m
 
+
 include Makefile.inc
 
 OPTIM=-finline-functions
 INCLUDES+= -I../L0Portability
+INCLUDES+= -IPlatform/$(PLATFORM)
+

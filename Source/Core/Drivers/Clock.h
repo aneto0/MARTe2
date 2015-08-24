@@ -27,7 +27,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
+#include INCLUDE_FILE_PLATFORM(PLATFORM,DriversDefinitionsP.h)
+
+//#include "Platform/STM32F4-Discovery/DriversDefinitionsP.h"
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
@@ -53,6 +57,8 @@ public:
      * To be called after a clock change.
      */
     static bool SysClockUpdate();
+
+    static uint32 GetClockFrequency();
 
 private:
     static bool initialized;
