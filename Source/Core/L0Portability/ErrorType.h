@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "GeneralDefinitions.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -39,78 +39,79 @@
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 /**
  * @brief Defines all the framework possible error types.
  */
-enum ErrorType {
-    /**
-     * No error to report
-     */
-    NoError = 0,
-    /**
-     * Debug Information (should never be found in production code)
-     */
-    Debug,
-    /**
-     * Application standard information 
-     */
-    Information,
-    /**
-     * Application warns of suspicious conditions
-     */
-    Warning,
-    /**
-     * Application reports a fatal error
-     */
-    FatalError,
-    /**
-     * Application reports an error that allows recovery
-     */
-    RecoverableError,
-    /**
-     * Application reports an error during initialization
-     */
-    InitialisationError,
-    /**
-     * Error while calling an operating system function
-     */
-    OSError,
-    /**
-     * Unexpected parameter value that was passed to a function
-     */
-    ParametersError,
-    /**
-     * The operation was illegal in the run time context
-     */
-    IllegalOperation,
-    /**
-     * The operation failed because of a sharing problem
-     */
-    ErrorSharing,
-    /**
-     * The operation failed because of a sharing problem
-     */
-    ErrorAccessDenied,
-    /**
-     * An exception has occurred
-     */
-    Exception,
-    /**
-     * A timeout has occurred
-     */
-    Timeout,
-    /**
-     * Error during a communication
-     */
-    CommunicationError,
-    /**
-     * Error while parsing
-     */
-    SyntaxError,
-    /**
-     * Something that should be possible but still it is not supported
-     */
-    UnsupportedFeature
-};
+typedef int8 ErrorType;
+
+/**
+ * No error to report
+ */
+static const ErrorType NoError(0);
+/**
+ * Debug information
+ */
+static const ErrorType Debug(3);
+/**
+ * General information
+ */
+static const ErrorType Information(2);
+/**
+ * Warning
+ */
+static const ErrorType Warning(1);
+/**
+ * Fatal Error
+ */
+static const ErrorType FatalError(-1);
+/**
+ * Recoverable error
+ */
+static const ErrorType RecoverableError(-2);
+/**
+ * Initialization error
+ */
+static const ErrorType InitialisationError(-3);
+/**
+ * Operating system error
+ */
+static const ErrorType OSError(-4);
+/**
+ * Parameters error
+ */
+static const ErrorType ParametersError(-5);
+/**
+ * Illegal operation
+ */
+static const ErrorType IllegalOperation(-6);
+/**
+ * Sharing error
+ */
+static const ErrorType ErrorSharing(-7);
+/**
+ * Access denied
+ */
+static const ErrorType ErrorAccessDenied(-8);
+/**
+ * Exception
+ */
+static const ErrorType Exception(-9);
+/**
+ * Timeout occurred
+ */
+static const ErrorType Timeout(-10);
+/**
+ * Error during comunication
+ */
+static const ErrorType CommunicationError(-11);
+/**
+ * Syntax error
+ */
+static const ErrorType SyntaxError(-12);
+/**
+ * Unsupported feature
+ */
+static const ErrorType UnsupportedFeature(-13);
 
 #endif /* ERRORS_H_ */

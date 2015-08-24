@@ -31,3 +31,5 @@ ReferenceContainerNode.cpp
 ReferenceContainerFilterObjectName.cpp
 ReferenceContainerFilterReferences.cpp
 ReferenceContainerFilter.cpp
+ErrorManagement.cpp
+
