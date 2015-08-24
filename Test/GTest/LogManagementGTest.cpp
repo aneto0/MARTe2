@@ -1,7 +1,7 @@
 /**
- * @file ErrorManagementGTest.cpp
- * @brief Source file for class ErrorManagementGTest
- * @date 14/08/2015
+ * @file LogManagementGTest.cpp
+ * @brief Source file for class LogManagementGTest
+ * @date 24/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ErrorManagementGTest (public, protected, and private). Be aware that some 
+ * the class LogManagementGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -32,7 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "gtest/gtest.h"
-#include "ErrorManagementTest.h"
+#include "LogManagementTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -44,33 +44,33 @@
 
 
 
-TEST(ErrorManagementGTest,TestErrorName) {
-    ErrorManagementTest errorManTest;
-    ASSERT_TRUE(errorManTest.TestErrorName());
+TEST(LogManagementGTest,TestToName) {
+    LogManagementTest errorManTest;
+    ASSERT_TRUE(errorManTest.TestToName());
 }
 
-TEST(ErrorManagementGTest,TestReportError) {
-    ErrorManagementTest errorManTest;
-    ASSERT_TRUE(errorManTest.TestReportError(Information,"Information","This is an error","FileError", 1, "TestReportError"));
+TEST(LogManagementGTest,TestReportLogMessage) {
+    LogManagementTest errorManTest;
+    ASSERT_TRUE(errorManTest.TestReportLogMessage(Information,"Information","This is an error","FileError", 1, "TestReportError"));
 }
 
-TEST(ErrorManagementGTest,TestReportErrorFullContext) {
-    ErrorManagementTest errorManTest;
-    ASSERT_TRUE(errorManTest.TestReportErrorFullContext(Information,"Information","Error!!","FileError2", 1, "TestReportErrorFullContext",32));
+TEST(LogManagementGTest,TestReportLogMessageFullContext) {
+    LogManagementTest errorManTest;
+    ASSERT_TRUE(errorManTest.TestReportLogMessageFullContext(Information,"Information","Error!!","FileError2", 1, "TestReportErrorFullContext",32));
 }
 
 
-TEST(ErrorManagementGTest,TestReportErrorMacro) {
-    ErrorManagementTest errorManTest;
-    ASSERT_TRUE(errorManTest.TestReportErrorMacro(Information,"This is an error","Information"));
+TEST(LogManagementGTest,TestReportLogMessageMacro) {
+    LogManagementTest errorManTest;
+    ASSERT_TRUE(errorManTest.TestReportLogMessageMacro(Information,"This is an error","Information"));
 }
 
-TEST(ErrorManagementGTest,TestReportErrorMacroFullContext) {
-    ErrorManagementTest errorManTest;
-    ASSERT_TRUE(errorManTest.TestReportErrorMacroFullContext(Information,"Error!!","Information",32));
+TEST(LogManagementGTest,TestReportLogMessageMacroFullContext) {
+    LogManagementTest errorManTest;
+    ASSERT_TRUE(errorManTest.TestReportLogMessageMacroFullContext(Information,"Error!!","Information",32));
 }
 
-TEST(ErrorManagementGTest,TestSetErrorMessageProcessFunction) {
-    ErrorManagementTest errorManTest;
-    ASSERT_TRUE(errorManTest.TestSetErrorMessageProcessFunction());
+TEST(LogManagementGTest,TestSetLogMessageProcessFunction) {
+    LogManagementTest errorManTest;
+    ASSERT_TRUE(errorManTest.TestSetLogMessageProcessFunction());
 }

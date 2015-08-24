@@ -1,8 +1,8 @@
 /**
- * @file ErrorManagementTest.cpp
- * @brief Source file for class ErrorManagementTest
- * @date 14/08/2015
- * @author Giuseppe Ferrò
+ * @file LogManagementTest.cpp
+ * @brief Source file for class LogManagementTest
+ * @date 24/ago/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ErrorManagementTest (public, protected, and private). Be aware that some 
+ * the class LogManagementTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ErrorManagementTest.h"
+#include "LogManagementTest.h"
 #include "StringHelper.h"
 #include "Sleep.h"
 #include "Threads.h"
@@ -38,54 +38,54 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 //define static members
-ErrorType ErrorManagementTest::expectedErrorCode;
-const char8* ErrorManagementTest::expectedErrorDescription;
-const char8* ErrorManagementTest::expectedErrorFilename;
-uint16 ErrorManagementTest::expectedErrorLine;
-const char8* ErrorManagementTest::expectedErrorFunction;
-const char8* ErrorManagementTest::expectedErrorName;
-bool ErrorManagementTest::fullContext = false;
-bool ErrorManagementTest::retVal = false;
+ErrorType LogManagementTest::expectedErrorCode;
+const char8* LogManagementTest::expectedErrorDescription;
+const char8* LogManagementTest::expectedErrorFilename;
+uint16 LogManagementTest::expectedErrorLine;
+const char8* LogManagementTest::expectedErrorFunction;
+const char8* LogManagementTest::expectedErrorName;
+bool LogManagementTest::fullContext = false;
+bool LogManagementTest::retVal = false;
 
-void DummyErrorFunction(const ErrorManagement::ErrorInformation& errorInfo,
+void DummyErrorFunction(const LogManagement::LogInformation& errorInfo,
                         const char * const description) {
 
-    ErrorManagementTest newEM;
+    LogManagementTest newEM;
     newEM.retVal = true;
 
 }
 
-void ReportTestFunction(const ErrorManagement::ErrorInformation& errorInfo,
+void ReportTestFunction(const LogManagement::LogInformation& errorInfo,
                         const char * const description) {
 
     //shared static attributes
-    ErrorManagementTest newEM;
+    LogManagementTest newEM;
     //checks if the structure is filled correctly
     newEM.CheckParameters(errorInfo, description);
 
 }
 
-void ThreadErrorTestFunction(ErrorManagementTest& t) {
+void ThreadErrorTestFunction(LogManagementTest& t) {
     //launches error report functions.
     t.fullContext = false;
 
-    ErrorManagement::ReportError(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
+    LogManagement::ReportLogMessage(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
     t.fullContext = true;
-    ErrorManagement::ReportErrorFullContext(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine,
+    LogManagement::ReportLogMessageFullContext(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine,
                                             t.expectedErrorFunction);
 
     t.syncFlag = true;
 }
 
-void ThreadErrorTestFunctionMacro(ErrorManagementTest &t) {
+void ThreadErrorTestFunctionMacro(LogManagementTest &t) {
     //launches error report functions.
     t.fullContext = false;
     t.expectedErrorFunction = __DECORATED_FUNCTION_NAME__;
     t.expectedErrorLine = __LINE__ + 1;
-    REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
+    REPORT_LOG_MESSAGE(t.expectedErrorCode, t.expectedErrorDescription);
     t.fullContext = true;
     t.expectedErrorLine = __LINE__ + 1;
-    REPORT_ERROR_FULL(t.expectedErrorCode, t.expectedErrorDescription);
+    REPORT_LOG_MESSAGE_FULL(t.expectedErrorCode, t.expectedErrorDescription);
 
     t.syncFlag = true;
 }
@@ -93,18 +93,18 @@ void ThreadErrorTestFunctionMacro(ErrorManagementTest &t) {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool ErrorManagementTest::TestSetErrorMessageProcessFunction() {
+bool LogManagementTest::TestSetLogMessageProcessFunction() {
     retVal = false;
 
-    ErrorManagement::SetErrorMessageProcessFunction(DummyErrorFunction);
+    LogManagement::SetLogMessageProcessFunction(DummyErrorFunction);
 
-    ErrorManagement::ReportError(Information, "");
+    LogManagement::ReportLogMessage(Information, "");
 
     return retVal;
 
 }
 
-bool ErrorManagementTest::TestErrorName() {
+bool LogManagementTest::TestToName() {
 
     ErrorType all[] = { NoError, Debug, Information, Warning, FatalError, RecoverableError, InitialisationError, OSError, ParametersError, IllegalOperation,
             ErrorSharing, ErrorAccessDenied, Exception, Timeout, CommunicationError, SyntaxError, UnsupportedFeature };
@@ -115,21 +115,21 @@ bool ErrorManagementTest::TestErrorName() {
 
     uint32 i = 0;
     while (all[i] != UnsupportedFeature) {
-        if (StringHelper::Compare(ErrorManagement::ErrorName(all[i]), names[i]) != 0) {
+        if (StringHelper::Compare(LogManagement::ToName(all[i]), names[i]) != 0) {
             return false;
         }
         i++;
     }
 
-    return StringHelper::Compare(ErrorManagement::ErrorName(UnsupportedFeature), "UnsupportedError") == 0;
+    return StringHelper::Compare(LogManagement::ToName(UnsupportedFeature), "UnsupportedError") == 0;
 }
 
-bool ErrorManagementTest::TestReportError(ErrorType code,
-                                          const char8* errorName,
-                                          const char8* errorDescription,
-                                          const char8* errorFileName,
-                                          uint16 errorLineNumber,
-                                          const char8* errorFunctionName) {
+bool LogManagementTest::TestReportLogMessage(ErrorType code,
+                                             const char8* errorName,
+                                             const char8* errorDescription,
+                                             const char8* errorFileName,
+                                             uint16 errorLineNumber,
+                                             const char8* errorFunctionName) {
 
     expectedErrorCode = code;
     expectedErrorDescription = errorDescription;
@@ -138,19 +138,19 @@ bool ErrorManagementTest::TestReportError(ErrorType code,
     expectedErrorFunction = errorFunctionName;
     expectedErrorName = errorName;
 
-    ErrorManagement::SetErrorMessageProcessFunction(ReportTestFunction);
-    ErrorManagement::ReportError(code, errorDescription, errorFileName, errorLineNumber, errorFunctionName);
+    LogManagement::SetLogMessageProcessFunction(ReportTestFunction);
+    LogManagement::ReportLogMessage(code, errorDescription, errorFileName, errorLineNumber, errorFunctionName);
 
     return retVal;
 }
 
-bool ErrorManagementTest::TestReportErrorFullContext(ErrorType code,
-                                                     const char8* errorName,
-                                                     const char8* errorDescription,
-                                                     const char8* errorFileName,
-                                                     uint16 errorLineNumber,
-                                                     const char8* errorFunctionName,
-                                                     uint32 numThreads) {
+bool LogManagementTest::TestReportLogMessageFullContext(ErrorType code,
+                                                        const char8* errorName,
+                                                        const char8* errorDescription,
+                                                        const char8* errorFileName,
+                                                        uint16 errorLineNumber,
+                                                        const char8* errorFunctionName,
+                                                        uint32 numThreads) {
 
     //Fill the class attributes
     expectedErrorCode = code;
@@ -161,7 +161,7 @@ bool ErrorManagementTest::TestReportErrorFullContext(ErrorType code,
     expectedErrorName = errorName;
     nThreads = numThreads;
 
-    ErrorManagement::SetErrorMessageProcessFunction(ReportTestFunction);
+    LogManagement::SetLogMessageProcessFunction(ReportTestFunction);
 
     for (uint32 i = 0; i < nThreads; i++) {
         retVal = false;
@@ -193,35 +193,35 @@ bool ErrorManagementTest::TestReportErrorFullContext(ErrorType code,
     return retVal;
 }
 
-bool ErrorManagementTest::TestReportErrorMacro(ErrorType code,
-                                               const char8 *errorDescription,
-                                               const char8 *errorName) {
+bool LogManagementTest::TestReportLogMessageMacro(ErrorType code,
+                                                  const char8 *errorDescription,
+                                                  const char8 *errorName) {
 
     expectedErrorCode = code;
     expectedErrorDescription = errorDescription;
     expectedErrorFilename = __FILE__;
     expectedErrorFunction = __DECORATED_FUNCTION_NAME__;
     expectedErrorName = errorName;
-    ErrorManagement::SetErrorMessageProcessFunction(ReportTestFunction);
+    LogManagement::SetLogMessageProcessFunction(ReportTestFunction);
 
     //put always the report error at the next line otherwise the test will fail!
     expectedErrorLine = __LINE__ + 1;
-    REPORT_ERROR(code, errorDescription);
+    REPORT_LOG_MESSAGE(code, errorDescription);
 
     return retVal;
 
 }
 
-bool ErrorManagementTest::TestReportErrorMacroFullContext(ErrorType code,
-                                                          const char8 *errorDescription,
-                                                          const char8 *errorName,
-                                                          uint32 numThreads) {
+bool LogManagementTest::TestReportLogMessageMacroFullContext(ErrorType code,
+                                                             const char8 *errorDescription,
+                                                             const char8 *errorName,
+                                                             uint32 numThreads) {
 
     expectedErrorCode = code;
     expectedErrorDescription = errorDescription;
     expectedErrorFilename = __FILE__;
     expectedErrorName = errorName;
-    ErrorManagement::SetErrorMessageProcessFunction(ReportTestFunction);
+    LogManagement::SetLogMessageProcessFunction(ReportTestFunction);
     nThreads = numThreads;
 
     for (uint32 i = 0; i < nThreads; i++) {
@@ -255,8 +255,8 @@ bool ErrorManagementTest::TestReportErrorMacroFullContext(ErrorType code,
 
 }
 
-void ErrorManagementTest::CheckParameters(const ErrorManagement::ErrorInformation& errorInfo,
-                                          const char* description) {
+void LogManagementTest::CheckParameters(const LogManagement::LogInformation& errorInfo,
+                                        const char* description) {
 
     //Checks the error code
     if (errorInfo.header.errorType != expectedErrorCode) {
@@ -297,7 +297,7 @@ void ErrorManagementTest::CheckParameters(const ErrorManagement::ErrorInformatio
 
     }
     //Tests the errorName function.
-    if (StringHelper::Compare(ErrorManagement::ErrorName(expectedErrorCode), expectedErrorName) != 0) {
+    if (StringHelper::Compare(LogManagement::ToName(expectedErrorCode), expectedErrorName) != 0) {
         retVal = false;
         return;
     }

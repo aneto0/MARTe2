@@ -1,7 +1,7 @@
 /**
- * @file ErrorInformation.h
- * @brief Header file for class ErrorInformation
- * @date 20/08/2015
+ * @file LogInformation.h
+ * @brief Header file for class LogInformation
+ * @date 24/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ErrorInformation
+ * @details This header file contains the declaration of the class LogInformation
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ERRORINFORMATION_H_
-#define ERRORINFORMATION_H_
+#ifndef LOGINFORMATION_H_
+#define LOGINFORMATION_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,20 +31,17 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
-#include "ErrorType.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
-
-namespace ErrorManagement {
+namespace LogManagement {
 
 /**
  @brief Information structure associated to the error.
  */
-struct ErrorInformation {
+struct LogInformation {
 
     /**
      * Definition of the header.
@@ -54,7 +51,7 @@ struct ErrorInformation {
         /**
          * The error code.
          */
-        ErrorType errorType : 8;
+        ErrorType errorType :8;
 
         /**
          * The error line number.
@@ -104,9 +101,10 @@ struct ErrorInformation {
 
 };
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* ERRORINFORMATION_H_ */
+#endif /* LOGINFORMATION_H_ */
 

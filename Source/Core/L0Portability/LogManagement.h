@@ -1,7 +1,7 @@
 /**
- * @file ErrorManagement.h
- * @brief Header file for class ErrorManagement
- * @date 13/08/2015
+ * @file LogManagement.h
+ * @brief Header file for class LogManagement
+ * @date 24/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ErrorManagement
+ * @details This header file contains the declaration of the class LogManagement
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ERRORMANAGEMENT_H_
-#define ERRORMANAGEMENT_H_
+#ifndef LOGMANAGEMENT_H_
+#define LOGMANAGEMENT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -35,10 +35,11 @@
 #include "ErrorType.h"
 #include "Threads.h"
 #include "HighResolutionTimer.h"
-#include "ErrorInformation.h"
+#include "LogInformation.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 
 /**
  * @brief Collection of functions and  types to manage error reporting.
@@ -47,24 +48,24 @@
  * are stored in the ErrorInformation structure. The user can implement a routine that will be called
  * by the report error function to manage errors in specific ways.
  */
-namespace ErrorManagement {
+namespace LogManagement {
 
 /**
  * @brief The type of an user provided ErrorProcessing function
  */
-typedef void (*ErrorMessageProcessFunctionType)(const ErrorInformation &errorInfo,
+typedef void (*LogMessageProcessFunctionType)(const LogInformation &errorInfo,
                                                 const char8 * const errorDescription);
 
 /**
  * @brief A pointer to the function that will process the errors.
  */
-extern ErrorMessageProcessFunctionType errorMessageProcessFunction;
+extern LogMessageProcessFunctionType logMessageProcessFunction;
 
 /**
  * @brief Returns the name string associated to the error code.
  * @param[in] errorCode is the error code.
  */
-const char8 *ErrorName(const ErrorType errorCode);
+const char8 *ToName(const ErrorType errorCode);
 
 /**
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
@@ -76,7 +77,7 @@ const char8 *ErrorName(const ErrorType errorCode);
  * @param[in] lineNumber is the line number where the error was triggered.
  * @param[in] functionName is the name of the function where the error is triggered.
  */
-void ReportError(const ErrorType code,
+void ReportLogMessage(const ErrorType code,
                  const char8 * const errorDescription,
                  const char8 * const fileName = static_cast<const char8 *>(NULL),
                  const uint16 lineNumber = static_cast<uint16>(0u),
@@ -91,7 +92,7 @@ void ReportError(const ErrorType code,
  * @param[in] lineNumber is the line number where the error was triggered.
  * @param[in] functionName is the name of the function where the error is triggered.
  */
-void ReportErrorFullContext(const ErrorType code,
+void ReportLogMessageFullContext(const ErrorType code,
                             const char8 * const errorDescription,
                             const char8 * const fileName = static_cast<const char8 *>(NULL),
                             const uint16 lineNumber = static_cast<uint16>(0u),
@@ -101,7 +102,7 @@ void ReportErrorFullContext(const ErrorType code,
  * @brief Sets the routine for error managing.
  * @param[in] userFun is a pointer to the function called by ReportError.
  */
-void SetErrorMessageProcessFunction(const ErrorMessageProcessFunctionType userFun = static_cast<ErrorMessageProcessFunctionType>(NULL));
+void SetLogMessageProcessFunction(const LogMessageProcessFunctionType userFun = static_cast<LogMessageProcessFunctionType>(NULL));
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
@@ -118,16 +119,20 @@ void SetErrorMessageProcessFunction(const ErrorMessageProcessFunctionType userFu
 /*lint -save -e9026
  * 9026: function-like macro defined.
  */
-#define REPORT_ERROR(code,message)\
-ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__);
+#define REPORT_LOG_MESSAGE(code,message)\
+LogManagement::ReportLogMessage(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__);
 /**
  * @brief The function to call in case of errors.
  * @details Calls ErrorManagement::ReportErrorFullContext with the file name, the function and the line number of the error as inputs.
  * @param[in] code is the ErrorType code error.
  * @param[in] message is the description associated to the error.
  */
-#define REPORT_ERROR_FULL(code,message)\
-ErrorManagement::ReportErrorFullContext(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__);
+#define REPORT_LOG_MESSAGE_FULL(code,message)\
+LogManagement::ReportLogMessageFullContext(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__);
 
-#endif /* ERRORMANAGEMENT_H_ */
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* LOGMANAGEMENT_H_ */
 

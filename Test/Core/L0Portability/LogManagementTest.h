@@ -1,7 +1,7 @@
 /**
- * @file ErrorManagementTest.h
- * @brief Header file for class ErrorManagementTest
- * @date 14/08/2015
+ * @file LogManagementTest.h
+ * @brief Header file for class LogManagementTest
+ * @date 24/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,15 +16,14 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ErrorManagementTest
+ * @details This header file contains the declaration of the class LogManagementTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ERRORMANAGEMENTTEST_H_
-#define ERRORMANAGEMENTTEST_H_
+#ifndef LOGMANAGEMENTTEST_H_
+#define LOGMANAGEMENTTEST_H_
 
-#define INTERRUPT_SUPPORTED
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -34,16 +33,12 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "ErrorType.h"
-#include "ErrorManagement.h"
-
+#include "LogManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief Tests all the ErrorManagement functions.
- */
-class ErrorManagementTest {
+class LogManagementTest {
 
 public:
 
@@ -102,7 +97,7 @@ public:
     /**
      * @brief Constructor: initialize the return value to false.
      */
-    ErrorManagementTest() {
+    LogManagementTest() {
         retVal = false;
         fullContext = false;
     }
@@ -112,13 +107,13 @@ public:
      * @details Set a function and checks if the report error function calls it.
      * @return true if the function specified is called by the report error function, false otherwise.
      */
-    bool TestSetErrorMessageProcessFunction();
+    bool TestSetLogMessageProcessFunction();
 
     /**
      * @brief Tests the ErrorName function.
      * @return true if for all the ErrorType codes is returned the related error name, false otherwise.
      */
-    bool TestErrorName();
+    bool TestToName();
 
     /**
      * @brief Tests the ReportError function.
@@ -133,12 +128,12 @@ public:
      * @return true if the ErrorInfo structure passed by the ReportError function is filled correctly with the
      * right error informations, false otherwise.
      */
-    bool TestReportError(ErrorType code,
-                         const char8* errorName,
-                         const char8* errorDescription,
-                         const char8* errorFileName = "",
-                         uint16 errorLineNumber = 0,
-                         const char8* errorFunctionName = "");
+    bool TestReportLogMessage(ErrorType code,
+                              const char8* errorName,
+                              const char8* errorDescription,
+                              const char8* errorFileName = "",
+                              uint16 errorLineNumber = 0,
+                              const char8* errorFunctionName = "");
 
     /**
      * @brief Tests the ReportError function.
@@ -154,14 +149,13 @@ public:
      * @return true if the ErrorInfo structure passed by the ReportError function is filled correctly with the
      * right error informations, false otherwise.
      */
-    bool TestReportErrorFullContext(ErrorType code,
-                                    const char8* expected,
-                                    const char8* errorDescription,
-                                    const char8* errorFileName = "",
-                                    uint16 errorLineNumber = 0,
-                                    const char8* errorFunctionName = "",
-                                    uint32 numThreads = 0);
-
+    bool TestReportLogMessageFullContext(ErrorType code,
+                                         const char8* expected,
+                                         const char8* errorDescription,
+                                         const char8* errorFileName = "",
+                                         uint16 errorLineNumber = 0,
+                                         const char8* errorFunctionName = "",
+                                         uint32 numThreads = 0);
 
     /**
      * @brief Tests the REPORT_ERROR macro.
@@ -170,9 +164,9 @@ public:
      * @param[in] errorName is the expected error code string.
      * @return true if the ErrorInfo Structure is filled with the file name, the line number and the function name where the error is triggered.
      */
-    bool TestReportErrorMacro(ErrorType code,
-                              const char8* errorDescription,
-                              const char8 *errorName);
+    bool TestReportLogMessageMacro(ErrorType code,
+                                   const char8* errorDescription,
+                                   const char8 *errorName);
 
     /**
      * @brief Tests the REPORT_ERROR_FULL macro.
@@ -183,17 +177,17 @@ public:
      * @return true if the ErrorInfo Structure is filled with the file name, the line number and the function name where the error is triggered.
      * Launches also a certain number of threads and returns true if the thread is field is equal to the id of the thread which calls the macro.
      */
-    bool TestReportErrorMacroFullContext(ErrorType code,
-                                         const char8 *errorDescription,
-                                         const char8 *errorName,
-                                         uint32 numThreads);
+    bool TestReportLogMessageMacroFullContext(ErrorType code,
+                                              const char8 *errorDescription,
+                                              const char8 *errorName,
+                                              uint32 numThreads);
 
     /**
      * @brief Checks if the errorInfo fields contains correct data.
      * @param[in] errorInfo is the structure which contains the error informations.
      * @param[in] description is the error description.
      */
-    void CheckParameters(const ErrorManagement::ErrorInformation& errorInfo,
+    void CheckParameters(const LogManagement::LogInformation& errorInfo,
                          const char* description);
 
 };
@@ -202,5 +196,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* ERRORMANAGEMENTTEST_H_ */
+#endif /* LOGMANAGEMENTTEST_H_ */
 
