@@ -7,6 +7,18 @@
  * Justification: reason why the rule does not apply
  */
 
+
+/*
+ * Info 762 Reduntancy in declarations.
+ * Justifiaction: Using namespaces in some cases the underlying 
+ * functions are called directly. The redundant declaration is
+ * used for documentation.
+ */
+ -esym(762,Atomic::*)
+ -esym(762,Endianity::*)
+
+
+
 /* 
  * Disable all errors from misra which are related to external libraries not under our control
  */
