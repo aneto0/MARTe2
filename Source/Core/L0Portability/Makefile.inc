@@ -28,18 +28,14 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 SPB=OperatingSystem/$(OPERATING_SYSTEM).x
 
-OBJSX=  Atomic.x \
-        Endianity.x \
-        FastMath.x \
+OBJSX=  FastMath.x \
         ProcessorType.x \
-        StringPortable.x \
-        ThreadsDatabase.x \
         ThreadInformation.x \
         LoadableLibrary.x \
-        Heap.x \
+        HeapManager.x \
         FastPollingMutexSem.x \
+        StringHelper.x \
         LogManagement.x
-
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 
