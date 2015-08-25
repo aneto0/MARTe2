@@ -1,8 +1,8 @@
 /**
- * @file StringPortable.cpp
+ * @file StringHelper_Portable_Generic.cpp
  * @brief Source file for class StringPortable
  * @date 21/07/2015
- * @author Ivan Herrero
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').

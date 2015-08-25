@@ -1,8 +1,8 @@
 /**
  * @file StandardHeap_Generic.cpp
  * @brief Source file for class StandardHeap_Generic
- * @date Aug 13, 2015
- * @author fsartori
+ * @date 13/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -170,7 +170,6 @@ uintp StandardHeap::LastAddress() const {
 /**
  * @brief Returns the name of the heap
  * @return name of the heap
- *
  */
 const char8 *StandardHeap::Name() const {
     return "StandardHeap";

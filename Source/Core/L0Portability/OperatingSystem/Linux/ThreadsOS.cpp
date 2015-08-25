@@ -46,7 +46,6 @@ namespace Threads {
  * When the callback finishes its execution this function removes the thread from the database.
  * @param[in,out] threadInfo the thread information structure.
  */
-/*lint -e{9141} namespaces are not currently used.*/
 static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
     if (threadInfo != NULL) {
         bool ok = ThreadsDatabase::Lock();
@@ -87,7 +86,6 @@ static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
  * @param[in] threadName is the desired name of the thread.
  * @return the ThreadInformation structure.
  */
-/*lint -e{9141} namespaces are not currently used.*/
 static ThreadInformation * threadInitialisationInterfaceConstructor(const ThreadFunctionType userThreadFunction,
                                                                     const void * const userData,
                                                                     const char8 * const threadName) {

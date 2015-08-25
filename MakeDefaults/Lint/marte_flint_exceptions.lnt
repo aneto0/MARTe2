@@ -154,6 +154,8 @@
  */
 -esym(714,Logger::*)
 -esym(714,HeapManager::*)
+-esym(714,Sleep::*)
+-esym(714,Threads::*)
 
 
 

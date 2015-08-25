@@ -1,6 +1,6 @@
 /**
- * @file Memory.h
- * @brief Header file for class Memory
+ * @file MemoryCheck.h
+ * @brief Header file for class MemoryCheck
  * @date 18/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Memory
+ * @details This header file contains the declaration of the class MemoryCheck
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -39,14 +39,7 @@
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief Implementation of functions for heap memory management.
- *
- * @details These functions allows to allocate and free memory portions dynamically on the heap. It is possible use different functionalities using the flags
- * defined in MemoryAllocationFlags enumeration.\n
- * - MemoryStandardMemory: is the default flag and imposes that the memory to be allocated is minor than 32Mb.\n
- * - MemoryExtraMemory: allows to allocate more than 32Mb.\n
- *
- * @details Most of the implementation is OS dependent and it is delegated to MemoryOS class in MemoryOS.h.
+ * @brief Implementation of functions for the memory checking.
  */
 namespace MemoryCheck {
 

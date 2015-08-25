@@ -1,8 +1,8 @@
 /**
  * @file StringHelperExtras_Generic.cpp
- * @brief Source file for class StringHelperExtras_Generic
- * @date Aug 13, 2015
- * @author fsartori
+ * @brief Source file for class StringHelperExtras
+ * @date 13/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StringHelperExtras_Generic (public, protected, and private). Be aware that some 
+ * the class StringHelper (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 

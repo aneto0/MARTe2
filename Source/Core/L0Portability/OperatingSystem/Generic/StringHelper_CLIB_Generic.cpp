@@ -27,6 +27,8 @@
 
 #ifndef LINT
 #include <string.h>
+#else
+#include "../Linux/lint-linux.h"
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -48,9 +50,7 @@ namespace StringHelper {
 bool Concatenate(char8 *destination, const char8 *source) {
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
-        if (strcat(destination, source) != NULL){
-            ret = true;
-        }
+        ret=strcat(destination, source) != NULL;
     }
     return ret;
 }
@@ -58,9 +58,7 @@ bool Concatenate(char8 *destination, const char8 *source) {
 bool ConcatenateN(char8 *destination, const char8 *source,const uint32 size) {
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
-        if (strncat(destination, source, static_cast<osulong>(size)) != NULL){
-            ret = true;
-        }
+        ret= strncat(destination, source, static_cast<osulong>(size)) != NULL;
     }
     return ret;
 }

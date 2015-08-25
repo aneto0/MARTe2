@@ -126,7 +126,6 @@ void ReportLogMessageFullContext(const ErrorType code,
     logInfo.threadId = InvalidThreadIdentifier;
     logInfo.objectPointer = static_cast<void*>(NULL);
     logInfo.className       = static_cast<const char8 *>(NULL);
-    /*lint -e{9119} Code is guaranteed to be always less than 8 bit */
     logInfo.header.errorType = code;
     logInfo.header.lineNumber = lineNumber;
     logInfo.fileName = fileName;

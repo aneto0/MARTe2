@@ -1,5 +1,5 @@
 /**
- * @file ThreadsDatabase.cpp
+ * @file ThreadsDatabase_Generic.cpp
  * @brief Source file for class ThreadsDatabase
  * @date 17/06/2015
  * @author Giuseppe Ferr�
@@ -60,7 +60,7 @@ static uint32 maxNOfEntries = 0u;
  * Vector of ThreadInformation pointers.
  */
 static ThreadInformation **entries = static_cast<ThreadInformation **>(NULL);
-;
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

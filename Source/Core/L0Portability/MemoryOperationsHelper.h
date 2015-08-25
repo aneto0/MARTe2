@@ -1,8 +1,8 @@
 /**
  * @file MemoryOperationsHelper.h
  * @brief Header file for class MemoryOperationsHelper
- * @date Aug 14, 2015
- * @author fsartori
+ * @date 14/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L0PORTABILITY_MEMORYOPERATIONSHELPER_H_
-#define SOURCE_CORE_L0PORTABILITY_MEMORYOPERATIONSHELPER_H_
+#ifndef MEMORYOPERATIONSHELPER_H_
+#define MEMORYOPERATIONSHELPER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -109,5 +109,5 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L0PORTABILITY_MEMORYOPERATIONSHELPER_H_ */
+#endif /* MEMORYOPERATIONSHELPER_H_ */
 	

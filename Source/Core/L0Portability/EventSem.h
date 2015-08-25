@@ -148,7 +148,7 @@ private:
     /**
      * Operating system specific properties to be used by the operating system specific implementation
      */
-    EventSemOSProperties *osProperties;
+    EventSemHandle handle;
 };
 
 /*---------------------------------------------------------------------------*/
