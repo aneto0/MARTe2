@@ -33,7 +33,6 @@
 #include "StringHelper.h"
 #include "HeapManager.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -52,7 +51,10 @@ Object::Object() {
 Object::~Object() {
     if (name != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        HeapManager::Free(reinterpret_cast<void *&>(name));
+        bool ok = HeapManager::Free(reinterpret_cast<void *&>(name));
+        if (!ok) {
+            //TODO Error message here
+        }
     }
 }
 
@@ -106,7 +108,8 @@ const char8 * const Object::GetName() const {
     return name;
 }
 
-void Object::GetUniqueName(char8 * const destination, const uint32 &size) const {
+void Object::GetUniqueName(char8 * const destination,
+                           const uint32 &size) const {
     /*lint -e{9091} -e{923} the casting from pointer type to integer type is required in order to be able to get a
      * numeric address of the pointer.*/
     uintp ptrHex = reinterpret_cast<uintp>(this);
@@ -160,7 +163,7 @@ void Object::GetUniqueName(char8 * const destination, const uint32 &size) const 
     if (i < size) {
         if (GetName() != NULL) {
             // TODO check memory allocation
-            if (!StringHelper::ConcatenateN(destination, GetName(), size - i) ) {
+            if (!StringHelper::ConcatenateN(destination, GetName(), size - i)) {
                 destination[i] = '\0';
             }
         }
@@ -173,7 +176,10 @@ void Object::GetUniqueName(char8 * const destination, const uint32 &size) const 
 void Object::SetName(const char8 * const newName) {
     if (name != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        HeapManager::Free(reinterpret_cast<void *&>(name));
+        bool ok = HeapManager::Free(reinterpret_cast<void *&>(name));
+        if (!ok) {
+            //TODO error here.
+        }
     }
     name = StringHelper::StringDup(newName);
 }

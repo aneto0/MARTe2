@@ -37,6 +37,7 @@
 #include "MemoryOperationsHelper.h"
 
 ReferenceContainerTest::ReferenceContainerTest() {
+    h = NULL;
     tree = GenerateTestTree();
 }
 

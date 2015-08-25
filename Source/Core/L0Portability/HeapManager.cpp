@@ -368,16 +368,16 @@ namespace HeapManager /*Internals*/{
         return ok;
     }
 
-    void *Malloc(uint32 const size, const char8 * const name) {
+    void *Malloc(uint32 const size, const char8 * const heapName) {
 
         void *address = NULL_PTR(void *);
 
-        if (name == NULL) {
+        if (heapName == NULL) {
             address = standardHeap.Malloc(size);
         }
         else {
             // TODO comment
-            HeapI *heap = FindHeap(name);
+            HeapI *heap = FindHeap(heapName);
 
             if (heap != NULL) {
                 address = heap->Malloc(size);
@@ -404,7 +404,7 @@ namespace HeapManager /*Internals*/{
         return newAddress;
     }
 
-    void *Duplicate(const void * const data, uint32 size, const char8 *heapName) {
+    void *Duplicate(const void * const data, const uint32 size, const char8 * const heapName) {
         void *newAddress = NULL_PTR(void *);
 
         HeapI *chosenHeap = NULL_PTR(HeapI *);

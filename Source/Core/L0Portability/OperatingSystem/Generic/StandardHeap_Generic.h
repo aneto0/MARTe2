@@ -93,7 +93,8 @@ public:
      * @param[in] size size of memory to allocate. if size = 0 then memory is copied until a zero is found
      * @return The pointer to the new allocated memory which contains a copy of s.
      */
-    virtual void *Duplicate(const void * const data, uint32 size=0U);
+    /*lint -e(1735) the derived classes shall use this default parameter or no default parameter at all*/
+    virtual void *Duplicate(const void * const data, const uint32 size=0U);
 
     /**
      * @brief start of range of memory addresses served by this heap.

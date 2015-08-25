@@ -416,7 +416,7 @@ private:
     /**
      * Heap used for the tests
      */
-    HeapI* h = NULL;
+    HeapManager::HeapI* h;
 
     /**
      * @brief Verifies if the \a source and \a test containers contain the same information.

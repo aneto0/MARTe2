@@ -79,7 +79,7 @@ bool AddHeap(HeapI *newHeap);
  * @param
  * returns
  */
-bool RemoveHeap(HeapI *heap);
+bool RemoveHeap(const HeapI * const heap);
 
 
 
@@ -97,7 +97,7 @@ bool Free(void *&data);
  * @param[in] heapName name of heap to use. default = use default heap
  * @return The pointer to the allocated memory. NULL if allocation failed.
  */
-void *Malloc(uint32 size, const char8 *heapName = NULL_PTR(char8 *));
+void *Malloc(uint32 size, const char8 * const heapName = NULL_PTR(char8 *));
 
 /**
  * @brief Reallocates a memory portion possibly contiguously with the specified already existent memory area. Operates on the same heap as that of data
@@ -115,10 +115,10 @@ void *Realloc(void *&data,const uint32 newSize);
  * @param[in] heapName name of heap to use. default= copy on the same heap as data
  * @return The pointer to the new allocated memory which contains a copy of s.
  */
-void *Duplicate(const void * const data, uint32 size=0U, const char8 *heapName = NULL_PTR(char8 *));
+void *Duplicate(const void * const data, const uint32 size=0U, const char8 * const heapName = NULL_PTR(char8 *));
 
 
-};
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

@@ -42,11 +42,8 @@
 /*---------------------------------------------------------------------------*/
 
 namespace StringHelper {
-/**
- * @brief Duplicates a string in the heap memory.
- * @param[in] s The pointer to the string which must be copied.
- * @return The pointer to the new allocated memory which contains a copy of s.
- */
+
+/*lint -e{925} cast pointer to pointer required */
 char8 *StringDup(const char8 * const s){
 
     char8 *duplicate = NULL_PTR(char8 *);

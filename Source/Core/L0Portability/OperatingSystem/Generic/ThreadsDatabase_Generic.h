@@ -122,6 +122,6 @@ namespace ThreadsDatabase {
      */
     bool AllocMore(void);
 
-};
+}
 
 #endif /* THREADSDATABASE_H_ */

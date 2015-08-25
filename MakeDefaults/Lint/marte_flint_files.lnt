@@ -27,5 +27,13 @@ ReferenceContainerNode.cpp
 ReferenceContainerFilterObjectName.cpp
 ReferenceContainerFilterReferences.cpp
 ReferenceContainerFilter.cpp
-LogManagement.cpp
+Logger.cpp
+MemoryOperationsHelper_CLIB_Generic.cpp
+StandardHeap_Generic.cpp
+StringHelper_CLIB_Generic.cpp
+//StringHelper_Portable_Generic.cpp
+StringHelper.cpp
+StringHelperExtras_Generic.cpp
+ThreadsDatabase_Generic.cpp
+ThreadsDatabase_Generic.h
 

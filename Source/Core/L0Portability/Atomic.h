@@ -49,6 +49,8 @@
  * protected basic operations between multiple asynchronous accesses like in a multi-thread system.
  * These methods are also used to implement fast threading synchronization constructors (@see FastPollingMutexSem)
  */
+/*lint -e(766) the header file AtomicA.h is not used here. This file is just for declaration and documentation. */
+/*lint -e(762) these declarations are redundant. */
 namespace  Atomic {
     /**
      * @brief Atomically increments a 32 bit integer in memory.
@@ -140,11 +142,11 @@ namespace  Atomic {
     inline void Sub (volatile int32 *p, int32 value);
 
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-};
 
 #endif /* ATOMIC_H_ */
 

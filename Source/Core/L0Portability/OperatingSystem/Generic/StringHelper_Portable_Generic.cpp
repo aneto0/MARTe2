@@ -28,8 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include "../StringHelper.h"
+#include "../../StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -55,7 +54,7 @@ uint32 Length(const char8* const string) {
 }
 
 int32 Compare(const char8* const string1,
-                              const char8* const string2) {
+              const char8* const string2) {
 
     int32 ret = -1;
 
@@ -85,8 +84,8 @@ int32 Compare(const char8* const string1,
 }
 
 int32 CompareN(const char8* const string1,
-                               const char8* const string2,
-                               const uint32 size) {
+               const char8* const string2,
+               const uint32 size) {
 
     int32 ret = -1;
 
@@ -118,17 +117,15 @@ int32 CompareN(const char8* const string1,
     return ret;
 }
 
-
-
-
-bool Concatenate(char8* const string1,const char8* const string2) {
+bool Concatenate(char8* const destination,
+                 const char8* const source) {
 
     bool ret = false;
-    if ((string1 != NULL) && (string2 != NULL)) {
-        uint32 indexString1 = Length(string1);
+    if ((source != NULL) && (destination != NULL)) {
+        uint32 indexString1 = Length(destination);
         uint32 indexString2 = 0U;
-        while (string2[indexString2] != '\0') {
-            string1[indexString1] = string2[indexString2];
+        while (source[indexString2] != '\0') {
+            destination[indexString1] = source[indexString2];
             indexString2++;
             indexString1++;
         }
@@ -138,14 +135,16 @@ bool Concatenate(char8* const string1,const char8* const string2) {
     return ret;
 }
 
-bool ConcatenateN(char8* const string1,const char8* const string2,const uint32 size) {
+bool ConcatenateN(char8* const destination,
+                  const char8* const source,
+                  const uint32 size) {
 
     bool ret = false;
-    if ((string1 != NULL) && (string2 != NULL)) {
-        uint32 indexString1 = Length(string1);
+    if ((source != NULL) && (destination != NULL)) {
+        uint32 indexString1 = Length(destination);
         uint32 indexString2 = 0U;
-        while ((string2[indexString2] != '\0') && (indexString2 < size)) {
-            string1[indexString1] = string2[indexString2];
+        while ((source[indexString2] != '\0') && (indexString2 < size)) {
+            destination[indexString1] = source[indexString2];
             indexString2++;
             indexString1++;
         }
@@ -158,7 +157,7 @@ bool ConcatenateN(char8* const string1,const char8* const string2,const uint32 s
 }
 
 const char8* SearchChar(const char8* const string,
-                                        const char8 c) {
+                        const char8 c) {
 
     const char8* ret = static_cast<const char8*>(NULL);
 
@@ -185,26 +184,29 @@ const char8* SearchChar(const char8* const string,
 
 }
 
-bool Copy(char8* const destination,const char8* const source) {
+bool Copy(char8* const destination,
+          const char8* const source) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
         destination[0] = '\0';
-        ret = Concatenate(destination,source);
+        ret = Concatenate(destination, source);
     }
     return ret;
 }
 
-bool CopyN(char8* const destination,const char8* const source,uint32 size) {
+bool CopyN(char8* const destination,
+           const char8* const source,
+           uint32 size) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
         destination[0] = '\0';
-        ret = ConcatenateN(destination,source,size);
+        ret = ConcatenateN(destination, source, size);
     }
     return ret;
 }
 
 int32 SearchIndex(const char8* const string1,
-                                  const char8* const string2) {
+                  const char8* const string2) {
 
     int32 ret = -1;
 
@@ -235,7 +237,7 @@ int32 SearchIndex(const char8* const string1,
 }
 
 const char8* SearchChars(const char8* const string1,
-                                         const char8* const string2) {
+                         const char8* const string2) {
 
     const char8* ret = static_cast<const char8*>(NULL);
 
@@ -276,17 +278,17 @@ const char8* SearchChars(const char8* const string1,
 }
 
 const char8* SearchLastChar(const char8* const string,
-                                            const char8 c) {
+                            const char8 c) {
 
     const char8 *ret = static_cast<const char8*>(NULL);
-    int32 index = (Length(string) - 1);
+    uint32 index = Length(string);
 
-    while (index >= 0) {
+    while (index > 0u) {
 
-        if (string[index] == c) {
-            ret = &string[index];
+        if (string[index - 1u] == c) {
+            ret = &string[index - 1u];
             //exit from the loop
-            index = 0;
+            index = 1u;
         }
         index--;
     }
@@ -294,15 +296,14 @@ const char8* SearchLastChar(const char8* const string,
     return ret;
 }
 
-
-const char8* SearchString(const char8* const string, const char8* const substring) {
+const char8* SearchString(const char8* const string,
+                          const char8* const substring) {
 
     const char8* ret = static_cast<const char8*>(NULL);
-    int32 size1 = Length(string);
-    int32 size2 = Length(substring);
+    int32 size1 = static_cast<int32>(Length(string));
+    int32 size2 = static_cast<int32>(Length(substring));
 
     if ((size1 >= 0) && (size2 >= 0)) {
-
         int32 i = 0;
 
         while ((size1 - i) >= size2) {
@@ -319,11 +320,9 @@ const char8* SearchString(const char8* const string, const char8* const substrin
     return ret;
 }
 
-
-
 bool SetChar(char8* const string,
-                             const uint32 size,
-                             const char8 c) {
+             const uint32 size,
+             const char8 c) {
     bool ret = false;
 
     if (string != NULL) {

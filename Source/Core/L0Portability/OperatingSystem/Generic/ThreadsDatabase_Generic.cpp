@@ -49,18 +49,18 @@ static FastPollingMutexSem internalMutex;
 /**
  * Actual number of entries stored in the database.
  */
-static uint32              nOfEntries = 0u;
+static uint32 nOfEntries = 0u;
 
 /**
  * Maximum number of entries that can be stored in the database.
  */
-static uint32              maxNOfEntries = 0u;
+static uint32 maxNOfEntries = 0u;
 
 /**
  * Vector of ThreadInformation pointers.
  */
-static ThreadInformation **entries = static_cast<ThreadInformation **>(NULL);;
-
+static ThreadInformation **entries = static_cast<ThreadInformation **>(NULL);
+;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -107,7 +107,10 @@ ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId) {
 
                 // free at the end
                 if (nOfEntries == 0u) {
-                    HeapManager::Free(reinterpret_cast<void *&>(entries));
+                    bool ok = HeapManager::Free(reinterpret_cast<void *&>(entries));
+                    if (!ok) {
+                        //TODO error here
+                    }
                     //For AllocMore to reallocate again!
                     maxNOfEntries = 0u;
                 }
@@ -168,7 +171,7 @@ ThreadIdentifier GetThreadID(const uint32 &n) {
 }
 
 bool GetInfoIndex(ThreadInformation &threadInfoCopy,
-                                   const uint32 &n) {
+                  const uint32 &n) {
     ThreadIdentifier threadId = GetThreadID(n);
     ThreadInformation *threadInfo = GetThreadInformation(threadId);
     if (threadInfo != NULL) {
@@ -178,7 +181,7 @@ bool GetInfoIndex(ThreadInformation &threadInfoCopy,
 }
 
 bool GetInfo(ThreadInformation &threadInfoCopy,
-                              const ThreadIdentifier &threadId) {
+             const ThreadIdentifier &threadId) {
     ThreadInformation *threadInfo = GetThreadInformation(threadId);
     if (threadInfo != NULL) {
         threadInfoCopy.Copy(*threadInfo);

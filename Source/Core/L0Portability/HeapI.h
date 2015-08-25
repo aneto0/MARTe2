@@ -36,6 +36,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace HeapManager {
+
 /**
  * @brief Heap interface and standard implementation.
  * @details Framework objects can be allocated in different types of heap memory.
@@ -48,8 +51,7 @@ public:
     /**
      * @brief No operation.
      */
-  //  virtual ~HeapI()=0;
-
+    //  virtual ~HeapI()=0;
 
     /**
      * @brief Allocates a portion of memory on the heap.
@@ -74,7 +76,8 @@ public:
      * @param[in] newSize The size of the new memory block.
      * @return The pointer to the new data block. NULL if reallocation failed.
      */
-    virtual void *Realloc(void *&data,const uint32 newSize) = 0;
+    virtual void *Realloc(void *&data,
+                          const uint32 newSize) = 0;
 
     /**
      * @brief Duplicates a memory section into a new area from the specified heap.
@@ -82,7 +85,9 @@ public:
      * @param[in] size size of memory to allocate. if size = 0 then memory is copied until a zero is found
      * @return The pointer to the new allocated memory which contains a copy of s.
      */
-    virtual void *Duplicate(const void * const data, uint32 size=0U) = 0;
+    /*lint -e(1735) the derived classes shall use this default parameter or no default parameter at all*/
+    virtual void *Duplicate(const void * const data,
+                            uint32 size = 0U) = 0;
 
     /**
      * @brief start of range of memory addresses served by this heap.
@@ -100,7 +105,7 @@ public:
      * @brief Checks if memory is part of the heap managed area
      * @return last memory address
      */
-    virtual bool Owns(void const * const data ) const {
+    virtual bool Owns(void const * const data) const {
         /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
          * in order to be able to compare the address with a range of addresses
          * uintp is an integer type that has by design the same span as a pointer in all systems*/
@@ -116,18 +121,14 @@ public:
      * @brief Returns the name of the heap
      * @return name of the heap
      */
-    virtual const char8 *Name()const =0;
-
+    virtual const char8 *Name() const =0;
 
 };
 
-
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-
-
 
 #endif /* SOURCE_CORE_L0PORTABILITY_HeapI_H_ */
 

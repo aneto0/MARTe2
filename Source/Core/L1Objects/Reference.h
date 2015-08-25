@@ -68,7 +68,7 @@ public:
      * @param[in] heap the heap responsible for allocating the object.
      */
     Reference(const char8* const typeName,
-              HeapI* const heap = static_cast<HeapI *>(NULL));
+              HeapManager::HeapI* const heap = static_cast<HeapManager::HeapI *>(NULL));
 
     /**
      * @brief Creates a reference to an existing \a pointer.
@@ -173,7 +173,7 @@ private:
      * @return a new object of the specified class or NULL if the \a className does not exist.
      */
     Object *CreateByName(const char8 * const className,
-                         HeapI* const heap) const;
+                         HeapManager::HeapI* const heap) const;
 
 };
 
