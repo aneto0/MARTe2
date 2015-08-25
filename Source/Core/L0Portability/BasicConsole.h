@@ -359,7 +359,7 @@ private:
     /**
      * Operating system specific properties to be used by the operating system specific implementation
      */
-    BasicConsoleOSProperties *osProperties;
+    BasicConsoleHandle handle;
 
     /**
      * How long since the last paging.

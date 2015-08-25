@@ -74,6 +74,9 @@ struct MutexSemOSProperties;
 struct EventSemOSProperties;
 #define EventSemHandle EventSemOSProperties*
 
+struct BasicConsoleOSProperties;
+#define BasicConsoleHandle BasicConsoleOSProperties*
+
 
 #endif /* GENERALDEFINITIONSOS_H_ */
 
