@@ -36,7 +36,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace LogManagement {
+namespace Logger {
 
 /**
  @brief Information structure associated to the error.

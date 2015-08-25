@@ -51,7 +51,7 @@ OBJSX= EndianityGTest.x \
 	ReferenceContainerNodeGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
-    	LogManagementGTest.x
+    	LoggerGTest.x
 
 PACKAGE=
 ROOT_DIR=../..

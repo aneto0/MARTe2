@@ -1,7 +1,7 @@
 /**
- * @file LogManagementTest.h
- * @brief Header file for class LogManagementTest
- * @date 24/08/2015
+ * @file LoggerTest.h
+ * @brief Header file for class LoggerTest
+ * @date 25/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class LogManagementTest
+ * @details This header file contains the declaration of the class LoggerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef LOGMANAGEMENTTEST_H_
-#define LOGMANAGEMENTTEST_H_
+#ifndef LOGGERTEST_H_
+#define LOGGERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,12 +33,12 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "ErrorType.h"
-#include "LogManagement.h"
+#include "Logger.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class LogManagementTest {
+class LoggerTest {
 
 public:
 
@@ -97,7 +97,7 @@ public:
     /**
      * @brief Constructor: initialize the return value to false.
      */
-    LogManagementTest() {
+    LoggerTest() {
         retVal = false;
         fullContext = false;
     }
@@ -187,14 +187,15 @@ public:
      * @param[in] errorInfo is the structure which contains the error informations.
      * @param[in] description is the error description.
      */
-    void CheckParameters(const LogManagement::LogInformation& errorInfo,
+    void CheckParameters(const Logger::LogInformation& errorInfo,
                          const char* description);
 
 };
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* LOGMANAGEMENTTEST_H_ */
+#endif /* LOGGERTEST_H_ */
 
