@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BITFIELD_H_
-#define BITFIELD_H_
+#ifndef BIT_FIELD_H_
+#define BIT_FIELD_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -40,55 +40,91 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace TypeDefinition {
+
 template <typename T, uint8 bitSize,uint8 bitShift>
-class BitField{
+class UnsignedBitRange{
 
     T value;
 
 public:
 
-    static const uint8 Mask  = (0xFF >> (8-bitSize)) << bitShift ;
-    static const uint8 Shift = bitShift;
-    static const uint8 Bitsize = bitSize;
+    static const uint8 mask  = (0xFF >> (8-bitSize)) << bitShift ;
 
     /**
      *
      */
-    BitField(T x){
-       value = (x << Shift) & Mask;
+    UnsignedBitRange(T x){
+       value = (x << bitSize) & mask;
     }
 
     operator T() const {
-        return (value >> Shift);
+        return (value >> bitSize);
     }
 
     operator AnyType() const {
-        TypeDescriptor td;
-        td.isStructuredData = false;
-        td.isConstant = false;
-
-        AnyType at();
-
+        const TypeDescriptor td = { false, false, { { UnsignedInteger, bitSize } } };
+        return AnyType (td, bitShift, this);
     }
 };
 
-typedef BitField<uint8  ,1,0>  uint1;
-typedef BitField<uint8  ,2,0>  uint2;
-typedef BitField<uint8  ,3,0>  uint3;
-typedef BitField<uint8  ,4,0>  uint4;
-typedef BitField<uint8  ,5,0>  uint5;
-typedef BitField<uint8  ,6,0>  uint6;
-typedef BitField<uint8  ,7,0>  uint7;
-typedef BitField<uint16, 9,0>  uint9;
-typedef BitField<uint16,10,0>  uint10;
-typedef BitField<uint16,11,0>  uint11;
-typedef BitField<uint16,12,0>  uint12;
-typedef BitField<uint16,13,0>  uint13;
-typedef BitField<uint16,14,0>  uint14;
-typedef BitField<uint16,15,0>  uint15;
-typedef BitField<uint32,17,0>  uint17;
-typedef BitField<uint32,18,0>  uint18;
-typedef BitField<uint32,19,0>  uint19;
+template <typename T, uint8 bitSize,uint8 bitShift>
+class SignedBitRange{
+
+    T value;
+
+public:
+
+    static const uint8 mask  = (0xFF >> (8-bitSize)) << bitShift ;
+
+    /**
+     *
+     */
+    SignedBitRange(T x){
+       value = (x << bitSize) & mask;
+    }
+
+    operator T() const {
+        return (value >> bitSize);
+    }
+
+    operator AnyType() const {
+        const TypeDescriptor td = { false, false, { { SignedInteger, bitSize } } };
+        return AnyType (td, bitShift, this);
+    }
+};
+
+}
+
+typedef TypeDefinition::UnsignedBitRange<uint8  ,1,0>  uint1;
+typedef TypeDefinition::UnsignedBitRange<uint8  ,2,0>  uint2;
+typedef TypeDefinition::UnsignedBitRange<uint8  ,3,0>  uint3;
+typedef TypeDefinition::UnsignedBitRange<uint8  ,4,0>  uint4;
+typedef TypeDefinition::UnsignedBitRange<uint8  ,5,0>  uint5;
+typedef TypeDefinition::UnsignedBitRange<uint8  ,6,0>  uint6;
+typedef TypeDefinition::UnsignedBitRange<uint8  ,7,0>  uint7;
+typedef TypeDefinition::UnsignedBitRange<uint16, 9,0>  uint9;
+typedef TypeDefinition::UnsignedBitRange<uint16,10,0>  uint10;
+typedef TypeDefinition::UnsignedBitRange<uint16,11,0>  uint11;
+typedef TypeDefinition::UnsignedBitRange<uint16,12,0>  uint12;
+typedef TypeDefinition::UnsignedBitRange<uint16,13,0>  uint13;
+typedef TypeDefinition::UnsignedBitRange<uint16,14,0>  uint14;
+typedef TypeDefinition::UnsignedBitRange<uint16,15,0>  uint15;
+typedef TypeDefinition::UnsignedBitRange<uint32,17,0>  uint17;
+typedef TypeDefinition::UnsignedBitRange<uint32,18,0>  uint18;
+typedef TypeDefinition::UnsignedBitRange<uint32,19,0>  uint19;
+typedef TypeDefinition::UnsignedBitRange<uint32,20,0>  uint20;
+typedef TypeDefinition::UnsignedBitRange<uint32,21,0>  uint21;
+typedef TypeDefinition::UnsignedBitRange<uint32,22,0>  uint22;
+typedef TypeDefinition::UnsignedBitRange<uint32,23,0>  uint23;
+typedef TypeDefinition::UnsignedBitRange<uint32,24,0>  uint24;
+typedef TypeDefinition::UnsignedBitRange<uint32,25,0>  uint25;
+typedef TypeDefinition::UnsignedBitRange<uint32,26,0>  uint26;
+typedef TypeDefinition::UnsignedBitRange<uint32,27,0>  uint27;
+typedef TypeDefinition::UnsignedBitRange<uint32,28,0>  uint28;
+typedef TypeDefinition::UnsignedBitRange<uint32,29,0>  uint29;
+typedef TypeDefinition::UnsignedBitRange<uint32,30,0>  uint30;
+typedef TypeDefinition::UnsignedBitRange<uint32,31,0>  uint31;
 
 
 
