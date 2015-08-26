@@ -26,23 +26,16 @@ PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-SPB=OperatingSystem/$(OPERATING_SYSTEM).x
+OBJSX=  FormatDescriptor.x
 
-OBJSX=  FastMath.x \
-        ProcessorType.x \
-        ThreadInformation.x \
-        LoadableLibrary.x \
-        HeapManager.x \
-        FastPollingMutexSem.x \
-        StringHelper.x \
-        Logger.x
+#LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
+INCLUDES+=-I../L0Portability
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L0Portability$(LIBEXT)
+		$(BUILD_DIR)/L0TypeDev$(LIBEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

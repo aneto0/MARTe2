@@ -1,40 +1,49 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for 
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
- *
- * Licensed under the EUPL, Version 1.1 or - as soon they 
- will be approved by the European Commission - subsequent  
- versions of the EUPL (the "Licence"); 
- * You may not use this work except in compliance with the 
- Licence. 
- * You may obtain a copy of the Licence at: 
- *  
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in 
- writing, software distributed under the Licence is 
- distributed on an "AS IS" basis, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
- express or implied. 
- * See the Licence  
- permissions and limitations under the Licence. 
- *
- * $Id: $
- *
- **/
 /**
  * @file FormatDescriptor.h
+ * @brief Header file for class FormatDescriptor
+ * @date 26/08/2015
+ * @author Giuseppe Ferrò
  *
- * A structure which contains all the necessary informations for an element print.
- */
-#ifndef FORMAT_DESCRIPTOR_H
-#define FORMAT_DESCRIPTOR_H
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
 
+ * @details This header file contains the declaration of the class FormatDescriptor
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+ */
+
+#ifndef FORMATDESCRIPTOR_H_
+#define FORMATDESCRIPTOR_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-/** 
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+
+
+static const uint32 defaultPrecision = 0xffu;
+
+/**
  * A struct used to choose the float and binary representation modes
  */
-
 namespace Notation {
 
 typedef uint32 Float;
@@ -107,7 +116,7 @@ const Binary OctalNotation = 3u;
 
 /**
  * @brief FormatDescriptor class.
- * 
+ *
  * @details This class contains a structure to store the informations the print of each type.\n
  * It defines also functions due to fill the structure getting the information from
  * a printf like constant char8* string which specifies the desired print format.\n
@@ -135,11 +144,11 @@ public:
      * [flags]: // slightly different from standard printf notation
      * ' ' Activates padding:
      * fills up to width using spaces
-     * -  	Left-align : put padding spaces after printing the object
+     * -  Left-align : put padding spaces after printing the object
      * #   Activate fullNotation:
      * + in front of integers
      * 0x/0b/0o in front of Hex/octal/binary
-     * 0  	Prepends zeros for Hex Octal and Binary notations (binaryPadded activated)
+     * 0  Prepends zeros for Hex Octal and Binary notations (binaryPadded activated)
      * Number of zeros depends on number precision and chosen notation (64 bit int and binary notation = up to 64 zeros)
 
      * [width].[precision]  two numbers
@@ -177,33 +186,20 @@ public:
      * @param[in] x contains the bits for the FormatDescriptor structure.
      *
      * Just copy bit by bit. */
- //   inline FormatDescriptor(const uint32 x);
+    inline FormatDescriptor(const uint32 x);
 
     /**
      * @brief Copy operator.
      * @param[in] src is the format descriptor to be copied in this.
      */
- //   inline FormatDescriptor& operator=(const FormatDescriptor &src);
+    inline FormatDescriptor& operator=(const FormatDescriptor &src);
 
     /**
      * @brief Bitwise or operator
      * @param[in] src is format descriptor argument.
      */
- //   inline void operator |=(const FormatDescriptor &src);
+    inline void operator |=(const FormatDescriptor &src);
 
-    /**
-     * @brief Is equal operator.
-     * @param[in] src is the other format descriptor to be compared with this.
-     * @return true if every field is equal.
-     */
- //   inline bool operator ==(const FormatDescriptor &src);
-
-    /**
-     * @brief Is different operator.
-     * @param[in] src is the other format descriptor to be compared with this.
-     * @return true if one field is different.
-     */
-//    inline bool operator !=(const FormatDescriptor &src);
 
     /**
      * @brief Constructor field by field.
@@ -216,155 +212,148 @@ public:
      * @param[in] isBinaryPadded specifies if the trailing zeros must be added for integer prints.
      * @param[in] isFullNotation specifies if the header (0x, 0o, 0b) must be added for integer prints.
      */
-    inline FormatDescriptor(uint8 sizeToSet,
-                            int8 precisionToSet,
-                            bool isPadded,
-                            bool isLeftAligned,
+    inline FormatDescriptor(const uint8 sizeToSet,
+                            const uint8 precisionToSet,
+                            const bool isPadded,
+                            const bool isLeftAligned,
                             const Notation::Float floatNotationToSet,
                             const Notation::Binary binaryNotationToSet,
-                            bool isBinaryPadded,
-                            bool isFullNotation);
+                            const bool isBinaryPadded,
+                            const bool isFullNotation);
 
 private:
 
-    //*** MAYBE REPLACE with finite set of options ( *' ' *0  *' '0x *' ', ....)
+    /*lint -e{9018} Use of union allows to use this memory to describe or objects or basic types in an exclusive way.*/
+    union {
 
-    /**
-     * The maximum size of representation.
-     * 0 = unlimited
-     * maximum size = 255.
-     */
-    uint32 size :8;
+        uint32 uInt32Field;
+        struct {
+            //*** MAYBE REPLACE with finite set of options ( *' ' *0  *' '0x *' ', ....)
 
-    /**
-     * The minimum (whenever applicable) number of meaningful digits (unless overridden by width)  max 64
-     * differently from printf this includes characters before comma
-     * excludes characters used for the exponents or for the sign and the .
-     * 0.34 has precision 2        -> (precision =8)  0.3400000
-     * 234 has precision 3         -> (precision =8)  234.00000
-     * 2345678000 has precision 10 -> (precision =8) unchanged still precision 10
-     * 2.345678E9 has precision 7  -> (precision =8) 2.3456780E9
-     * 234 (int) has precision 3   -> (precision =8) unchanged  still precision 3
-     * 0x4ABCD has precision 5     -> (precision =8) unchanged  still precision 5
-     */
-    int32 precision :8;
+            /**
+             * The maximum size of representation.
+             * 0 = unlimited
+             * maximum size = 255.
+             */
+            uint32 size :8;
 
-    /**
-     * True means produce a number of characters equal to width
-     * fill up using spaces.
-     */
-    bool padded :1;
+            /**
+             * The minimum (whenever applicable) number of meaningful digits (unless overridden by width)  max 64
+             * differently from printf this includes characters before comma
+             * excludes characters used for the exponents or for the sign and the .
+             * 0.34 has precision 2        -> (precision =8)  0.3400000
+             * 234 has precision 3         -> (precision =8)  234.00000
+             * 2345678000 has precision 10 -> (precision =8) unchanged still precision 10
+             * 2.345678E9 has precision 7  -> (precision =8) 2.3456780E9
+             * 234 (int) has precision 3   -> (precision =8) unchanged  still precision 3
+             * 0x4ABCD has precision 5     -> (precision =8) unchanged  still precision 5
+             */
+            uint32 precision :8;
 
-    /**
-     * True means to produce pad spaces after printing the object representation.
-     */
-    bool leftAligned :1;
+            /**
+             * True means produce a number of characters equal to width
+             * fill up using spaces.
+             */
+            bool padded :1;
 
-    /**
-     * In case of a float, this field is used to determine how to print it.
-     */
-    Notation::Float floatNotation :3;
+            /**
+             * True means to produce pad spaces after printing the object representation.
+             */
+            bool leftAligned :1;
 
-    /**
-     * The notation used for binary representation.
-     */
-    Notation::Binary binaryNotation :2;
+            /**
+             * In case of a float, this field is used to determine how to print it.
+             */
+            Notation::Float floatNotation :3;
 
-    /**
-     * Fills the number on the left with 0s up to the full representation.\n
-     * Number of zeros depends on the size of the number (hex 64 bit ==> numbers+trailing zero = 16).\n
-     */
-    bool binaryPadded :1;
+            /**
+             * The notation used for binary representation.
+             */
+            Notation::Binary binaryNotation :2;
 
-    /**
-     * Only meaningful for numbers.
-     * Add the missing + or 0x 0B or 0o as header.
-     */
-    bool fullNotation :1;
+            /**
+             * Fills the number on the left with 0s up to the full representation.\n
+             * Number of zeros depends on the size of the number (hex 64 bit ==> numbers+trailing zero = 16).\n
+             */
+            bool binaryPadded :1;
 
-    /**
-     * Remained bits to fill up a 32 bit space.
-     */
-    uint32 spareBits :7;
+            /**
+             * Only meaningful for numbers.
+             * Add the missing + or 0x 0B or 0o as header.
+             */
+            bool fullNotation :1;
+
+            /**
+             * Remained bits to fill up a 32 bit space.
+             */
+            uint32 spareBits :7;
+        } StandardField;
+
+    };
 
 };
 
 /**
  * Default Format Descriptor.
  */
-static const FormatDescriptor standardFormatDescriptor(0u, 0, false, false, Notation::FixedPointNotation, Notation::DecimalNotation, false, false);
+static const FormatDescriptor standardFormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::DecimalNotation, false, false);
 
 /**********************************************
  * INLINE FUNCTIONS
  * *********************************************/
 
-/*lint -e{9119} assignment of integer to 3-bit floatNotation and 2-bit binaryNotation justified*/
+/*lint -e{9119} assignment of integer to 3-bit floatNotation and 2-bit binaryNotation justified because only
+ * the defined Notation flags shall be used.*/
 FormatDescriptor::FormatDescriptor() {
-    this->size = 0u;
-    this->precision = -1;
-    this->padded = false;
-    this->leftAligned = false;
-    this->floatNotation = Notation::FixedPointNotation;
-    this->binaryNotation = Notation::DecimalNotation;
-    this->binaryPadded = false;
-    this->fullNotation = false;
-    this->spareBits = 0u;
+    StandardField.size = 0u;
+    StandardField.precision = defaultPrecision;
+    StandardField.padded = false;
+    StandardField.leftAligned = false;
+    StandardField.floatNotation = Notation::FixedPointNotation;
+    StandardField.binaryNotation = Notation::DecimalNotation;
+    StandardField.binaryPadded = false;
+    StandardField.fullNotation = false;
+    StandardField.spareBits = 0u;
 }
 
-
-/////// SERVONO QUESTE FUNZIONI E QUESTI OPERATORI??
-/////// DOVREBBE ESSERE GIA' IL COMPORTAMENTO STANDARD
-/*
- * FormatDescriptor::FormatDescriptor(const uint32 x) {
-    uint32 *p = static_cast<uint32 *>(this);
-    *p = x;
+FormatDescriptor::FormatDescriptor(const uint32 x) {
+    uInt32Field = x;
 }
 
 FormatDescriptor& FormatDescriptor::operator=(const FormatDescriptor &src) {
-    uint32 *d = static_cast<uint32 *>(this);
-    const uint32 *s = static_cast<const uint32 *>(&src);
-    *d = *s;
+    if (this != &src) {
+        uInt32Field = src.uInt32Field;
+    }
+    return *this;
 }
 
 void FormatDescriptor::operator |=(const FormatDescriptor &src) {
-    uint32 *d = static_cast<uint32 *>(this);
-    const uint32 *s = static_cast<const uint32 *>(&src);
-    *d |= *s;
+    uInt32Field |= src.uInt32Field;
 }
-
-bool FormatDescriptor::operator ==(const FormatDescriptor &src) {
-    uint32 *p = static_cast<uint32 *>(this);
-    uint32 *s = static_cast<uint32 *>(&src);
-    return *p == *s;
-}
-
-bool FormatDescriptor::operator !=(const FormatDescriptor &src) {
-    uint32 *p = static_cast<uint32 *>(this);
-    uint32 *s = static_cast<uint32 *>(&src);
-    return *p != *s;
-}
-*/
 
 /*lint -e{9119} assignment of integer to 3-bit floatNotation and 2-bit binaryNotation justified*/
-FormatDescriptor::FormatDescriptor(uint8 sizeToSet,
-                                   int8 precisionToSet,
-                                   bool isPadded,
-                                   bool isLeftAligned,
+FormatDescriptor::FormatDescriptor(const uint8 sizeToSet,
+                                   const uint8 precisionToSet,
+                                   const bool isPadded,
+                                   const bool isLeftAligned,
                                    const Notation::Float floatNotationToSet,
                                    const Notation::Binary binaryNotationToSet,
-                                   bool isBinaryPadded,
-                                   bool isFullNotation) {
+                                   const bool isBinaryPadded,
+                                   const bool isFullNotation) {
 
-    this->size = sizeToSet;
-    this->precision = precisionToSet;
-    this->padded = isPadded;
-    this->leftAligned = isLeftAligned;
-    this->floatNotation = floatNotationToSet;
-    this->binaryNotation = binaryNotationToSet;
-    this->binaryPadded = isBinaryPadded;
-    this->fullNotation = isFullNotation;
-    this->spareBits = 0u;
+    StandardField.size = sizeToSet;
+    StandardField.precision = precisionToSet;
+    StandardField.padded = isPadded;
+    StandardField.leftAligned = isLeftAligned;
+    StandardField.floatNotation = floatNotationToSet;
+    StandardField.binaryNotation = binaryNotationToSet;
+    StandardField.binaryPadded = isBinaryPadded;
+    StandardField.fullNotation = isFullNotation;
+    StandardField.spareBits = 0u;
 }
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
-#endif
+#endif /* FORMATDESCRIPTOR_H_ */
 

@@ -31,9 +31,9 @@
 
 #include "GeneralDefinitions.h"
 #include "IOBufferIntegerPrint.h"
-#include "FormatDescriptor.h"
 #include "IOBuffer.h"
 #include <math.h>
+#include "FormatDescriptor-old.h"
 
 #define CHECK_AND_REDUCE(number,step,exponent)\
 if (number >= 1E ## step){ \

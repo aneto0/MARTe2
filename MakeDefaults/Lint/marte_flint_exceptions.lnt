@@ -77,6 +77,20 @@
  */
 -esym(750,ATOMIC_H_)
 -esym(750,ENDIANITY_H_)
+-esym(750,TYPEDESCRIPTOR_H_)
+-esym(750,FORMATDESCRIPTOR_H_)
+-esym(750,ANYTYPE_H_)
+
+/*
+ * Local declarator not referenced 
+ */
+-esym(752,TypeDefinition::*)
+-esym(752,Notation::*)
+
+/*
+ * Local class member not referenced
+ */
+-esym(754,FormatDescriptor::*)
 
 
 
@@ -145,7 +159,8 @@
 -esym(1714,ReferenceContainerFilterObjectName::*)
 -esym(1714,ReferenceContainerFilterReferences::*)
 -esym(1714,ReferenceContainerFilterObjectName::*)
--esym(1714,BasicType::AnyType::*)
+-esym(1714,TypeDefinition::AnyType::*)
+-esym(1714,FormatDescriptor::*)
 
 
 /*
