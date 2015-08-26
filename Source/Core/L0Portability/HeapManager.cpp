@@ -156,7 +156,7 @@ HeapI *HeapDataBase::GetHeap(const int32 index)const{
  * @param heap  is the desired heap to store
  * @return true if index is within range; specified slot is free; and heap is not NULL
  * */
-bool HeapDataBase::SetHeap(const int32 index,  HeapI * const heap  ){
+bool HeapDataBase::SetHeap(const int32 index, HeapI * const heap  ){
     bool ok = false;
     if ((index >= 0) && (index < MaximumNumberOfHeaps)){
         if ((heaps[index] == NULL) && (heap != NULL)){
@@ -440,7 +440,6 @@ void *Duplicate(const void * const data, uint32 size, const char8 *heapName){
 bool AddHeap(HeapI *const newHeap){
 
     bool ok = true;
-
     /* check value of heap not to be NULL */
     if (newHeap == NULL_PTR(HeapI *)){
         ok = false;

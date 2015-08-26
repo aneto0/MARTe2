@@ -22,7 +22,9 @@
 #
 #############################################################
 
-OBJSX= EndianityGTest.x \
+OBJSX=  StandardHeap_GenericGTest.x \
+        HeapManagerGTest.x \
+        EndianityGTest.x \
 	SleepGTest.x \
 	ProcessorGTest.x \
 	AtomicGTest.x \
@@ -52,6 +54,7 @@ OBJSX= EndianityGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
     	LogManagementGTest.x
+
 
 PACKAGE=
 ROOT_DIR=../..

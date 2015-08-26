@@ -72,16 +72,14 @@ HeapI *GetStandardHeap();
  * @param
  * returns
  */
-bool AddHeap(HeapI *newHeap);
+bool AddHeap( HeapI *const newHeap);
 
 /**
  * @brief TODO
  * @param
  * returns
  */
-bool RemoveHeap(HeapI *heap);
-
-
+bool RemoveHeap(const HeapI *const heap);
 
 /**
  * @brief Releases a memory area and sets its pointer to NULL.
