@@ -31,14 +31,30 @@
 
 #include "GeneralDefinitions.h"
 
-
-
 namespace BasicType {
 
 /**
- *  The basic types that can be used.
+ * guarantees that only 4 bits are used
  */
-typedef uint32 BasicType;
+class BasicType{
+
+    uint8 value;
+
+public:
+
+    /**
+     *
+     */
+    BasicType(uint8 x){
+       value = x & 0xF;
+    }
+
+    operator uint8() const {
+        return value ;
+    }
+};
+
+
 
 /**
  * The type is signed.
