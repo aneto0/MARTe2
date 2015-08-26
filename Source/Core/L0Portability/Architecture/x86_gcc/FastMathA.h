@@ -38,12 +38,13 @@
 /*
  * @brief Implementation of math operations.
  */
+namespace FastMath {
 /**
- * @see FastMath::Sin
+ * @see Sin
  * @brief Calculate the sine of an angle.
  * @param[in] angle is the angle parameter in radiants.
  * @return the value of the sine of angle. */
-float FastMath::Sin(float angle) {
+float Sin(float angle) {
     volatile float output;
     __asm__ __volatile__(
             "fsin"
@@ -53,12 +54,12 @@ float FastMath::Sin(float angle) {
 }
 
 /**
- * @see FastMath::Cos
+ * @see Cos
  * @brief Calculate the cosine of an angle.
  * @param[in] angle is the angle parameter in radiants.
  * @return the value of the cosine of angle.
  */
-float FastMath::Cos(float angle) {
+float Cos(float angle) {
     volatile float output;
     __asm__ __volatile__(
             "fcos;"
@@ -68,11 +69,11 @@ float FastMath::Cos(float angle) {
 }
 
 /**
- * @see FastMath::FloatToInt
+ * @see FloatToInt
  * @brief Fast conversion to int by float.
  * @param[in] input is the float number to convert.
  * @return the floor of input (32 bits integer). */
-int32 FastMath::FloatToInt(float input) {
+int32 FloatToInt(float input) {
     volatile int32 output;
     __asm__ __volatile__(
             "fld   %1;\n"
@@ -80,6 +81,7 @@ int32 FastMath::FloatToInt(float input) {
             : "=m" (output) : "m" (input)
     );
     return output;
+}
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

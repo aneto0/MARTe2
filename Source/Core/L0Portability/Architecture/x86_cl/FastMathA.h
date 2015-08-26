@@ -41,36 +41,37 @@
  *
  * @details Most of the implementation is delegated to the math.h library.
  */
-
+namespace FastMath {
 /**
- * @see FastMath::Sin
+ * @see Sin
  * @brief Calculate the sine of an angle.
  * @param[in] angle is the angle parameter in radiants.
  * @return the value of the sine of angle. */
-float32 FastMath::Sin(float angle) {
+float32 Sin(float angle) {
     return sin(angle);
 }
 
 /**
- * @see FastMath::Cos
+ * @see Cos
  * @brief Calculate the cosine of an angle.
  * @param[in] angle is the angle parameter in radiants.
  * @return the value of the cosine of angle.
  */
-float32 FastMath::Cos(float angle) {
+float32 Cos(float angle) {
     return cos(angle);
 }
 
 /**
- * @see FastMath::FloatToInt
+ * @see FloatToInt
  * @brief Fast conversion to int by float.
  * @param[in] input is the float number to convert.
  * @return the floor of input (32 bits integer).
  */
-int32 FastMath::FloatToInt(float input) {
+int32 FloatToInt(float input) {
     return input > 0 ? floor(input) : -floor(-input);
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
