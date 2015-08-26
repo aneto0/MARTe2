@@ -42,56 +42,66 @@
 
 namespace TypeDefinition {
 
-template <typename T, uint8 bitSize,uint8 bitShift>
+template <typename T, uint8 bitSize,uint8 bitOffset>
 class UnsignedBitRange{
 
     T value;
 
 public:
 
-    static const uint8 mask  = (0xFF >> (8-bitSize)) << bitShift ;
+    static const T mask  = (0xFF >> (8-bitSize)) << bitOffset ;
 
     /**
      *
      */
-    UnsignedBitRange(T x){
-       value = (x << bitSize) & mask;
+    inline UnsignedBitRange(T x){
+       value = (x << bitOffset) & mask;
     }
 
-    operator T() const {
-        return (value >> bitSize);
+    inline operator T() const {
+        return (value >> bitOffset);
     }
 
-    operator AnyType() const {
+    inline operator AnyType() const {
         const TypeDescriptor td = { false, false, { { UnsignedInteger, bitSize } } };
-        return AnyType (td, bitShift, this);
+        return AnyType (td, bitOffset, this);
     }
+
+    static inline T BitSize(){ return bitSize; }
+
+    static inline T BitOffset(){ return bitOffset; }
+
 };
 
-template <typename T, uint8 bitSize,uint8 bitShift>
+template <typename T, uint8 bitSize,uint8 bitOffset>
 class SignedBitRange{
 
     T value;
 
 public:
 
-    static const uint8 mask  = (0xFF >> (8-bitSize)) << bitShift ;
+    static const T mask  = (0xFF >> (8-bitSize)) << bitOffset ;
 
     /**
      *
      */
-    SignedBitRange(T x){
-       value = (x << bitSize) & mask;
+    inline SignedBitRange(T x){
+       value = (x << bitOffset) & mask;
     }
 
-    operator T() const {
-        return (value >> bitSize);
+    inline operator T() const {
+        return (value >> bitOffset);
     }
 
-    operator AnyType() const {
+    inline operator AnyType() const {
         const TypeDescriptor td = { false, false, { { SignedInteger, bitSize } } };
-        return AnyType (td, bitShift, this);
+        return AnyType (td, bitOffset, this);
     }
+
+    static inline T BitSize(){ return bitSize; }
+
+    static inline T BitOffset(){ return bitOffset; }
+
 };
 
 }
@@ -128,12 +138,22 @@ typedef TypeDefinition::UnsignedBitRange<uint32,31,0>  uint31;
 
 
 
+typedef union {
+    TypeDefinition::UnsignedBitRange<uint32,4,0>  a;
+    TypeDefinition::UnsignedBitRange<uint32,4,4>  b;
+    TypeDefinition::UnsignedBitRange<uint32,10,8>  c;
+    TypeDefinition::UnsignedBitRange<uint32,14,12>  d;
 
+}
+myBitStruct;
+
+
+const myBitStruct *p;
 
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L0TYPEDEV_BITFIELD_H_ */
+#endif /* BITFIELD_H_ */
 	
