@@ -34,7 +34,9 @@ OBJSX=ClockP.x \
 	UARTConfig.x \
 	UARTConsoleP.x \
 	GeneralPurposeIOP.x \
-	PWMP.x
+	PWMP.x \
+	InterruptP.x \
+	TimerP.x
        
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

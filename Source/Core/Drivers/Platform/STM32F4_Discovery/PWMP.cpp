@@ -66,6 +66,12 @@ bool PWM::Init(uint8 instance,
 
     TIM_TypeDef* TIMInstance[] = { TIM1, TIM2, TIM3, TIM4, TIM5, TIM6, TIM7, TIM8, TIM9, TIM10, TIM11, TIM12, TIM13, TIM14 };
 
+    // instance 1 --> TIM1
+    instance--;
+    if (instance > 13) {
+        instance = 13;
+    }
+
     switch (instance) {
     case 0:
         ENABLE_TIM_CLOCK(1);
@@ -118,12 +124,11 @@ bool PWM::Init(uint8 instance,
     /* Time base configuration */
     // prescaler=(sysclock/2)/(tick_frequency)-1
     //Cannot have a frequency > clock_frequency/10000
-
     //choose a standard tick period
     tickPeriod = 1999;
 
     //tickFrequency=(tickPeriod+1)*frequency
-    prescalerValue = (uint16)(((Clock::GetClockFrequency()) / (2*(2000*frequency))) - 1);
+    prescalerValue = (uint16) (((Clock::GetClockFrequency()) / (2 * ((tickPeriod + 1) * frequency))) - 1);
     // period=tick_frequency/pwm_frequency -1
 
     /* Compute the prescaler value */
@@ -347,6 +352,10 @@ void PWM::SetFrequency(uint16 frequency) {
     /*to set another period*/
     __HAL_TIM_SET_AUTORELOAD(&handle, tickPeriod);
 
+}
+
+void PWM::DeInit() {
+    HAL_TIM_PWM_DeInit(&handle);
 }
 
 //to set a new value in the rim register at runtime.

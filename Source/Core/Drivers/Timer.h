@@ -1,7 +1,7 @@
 /**
- * @file PWM.h
- * @brief Header file for class PWM
- * @date 17/08/2015
+ * @file Timer.h
+ * @brief Header file for class Timer
+ * @date 25/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class PWM
+ * @details This header file contains the declaration of the class Timer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef PWM_H_
-#define PWM_H_
+#ifndef TIMER_H_
+#define TIMER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,38 +37,35 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class PWM{
+// Define your callback function, then use this macro in your code which
+// automatically wraps your function with the default callback.
+#define SET_TIMER_CALLBACK_FUNCTION(n, function, timHandlePtr) \
+    extern "C"{\
+        void TIM##n##_IRQHandler(void) {\
+            __HAL_TIM_CLEAR_IT(timHandlePtr, TIM_IT_UPDATE); \
+            function(); \
+        }\
+    }
+
+class Timer {
+
 public:
 
-    bool Init(uint8 instance,
-              uint16 frequency,
-              uint8 dutyCycle,
-              uint8 mode,
-              uint8 channelMask);
+    bool Init(uint8 instance, uint16 frequency);
 
-    bool Start(uint8 channelMask);
+    bool Start();
 
-    bool Stop(uint8 channelMask);
+    void Stop();
 
-    void SetFrequency(uint16 frequency);
-
-    bool SetDutyCycle(uint8 dutyCycle, uint8 channelMask);
-
-    void DeInit();
-
+    TimerHandle* GetHandlePtr();
 private:
+    TimerHandle handle;
 
-    PWMHandle handle;
-
-    uint16 tickPeriod;
-
-    uint8 configChannelMask;
-
-    uint16 prescalerValue;
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* PWM_H_ */
+#endif /* TIMER_H_ */
 

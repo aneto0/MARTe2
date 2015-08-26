@@ -45,11 +45,16 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+#define CallbackFcn *(void) (void);
+
+
 typedef USBD_HandleTypeDef USBHandle;
 
 typedef UART_HandleTypeDef UARTHandle;
 
 typedef TIM_HandleTypeDef PWMHandle;
+
+typedef TIM_HandleTypeDef TimerHandle;
 
 typedef GPIO_TypeDef* GPIOHandle;
 

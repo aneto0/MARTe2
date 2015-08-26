@@ -1,7 +1,7 @@
 /**
- * @file PWM.h
- * @brief Header file for class PWM
- * @date 17/08/2015
+ * @file Interrupts.h
+ * @brief Header file for class Interrupts
+ * @date 24/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class PWM
+ * @details This header file contains the declaration of the class Interrupts
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef PWM_H_
-#define PWM_H_
+#ifndef INTERRUPTS_H_
+#define INTERRUPTS_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,44 +31,33 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include INCLUDE_FILE_PLATFORM(PLATFORM,DriversDefinitionsP.h)
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+class Interrupt {
 
-class PWM{
 public:
 
-    bool Init(uint8 instance,
-              uint16 frequency,
-              uint8 dutyCycle,
-              uint8 mode,
-              uint8 channelMask);
+    uint8 GetInterruptSource();
 
-    bool Start(uint8 channelMask);
+    void AttachInterrupt(uint8 source,
+                         uint8 preemptPriority,
+                         uint8 subPriority);
 
-    bool Stop(uint8 channelMask);
+    void EnableInterrupt();
 
-    void SetFrequency(uint16 frequency);
-
-    bool SetDutyCycle(uint8 dutyCycle, uint8 channelMask);
-
-    void DeInit();
+    void DisableInterrupt();
 
 private:
-
-    PWMHandle handle;
-
-    uint16 tickPeriod;
-
-    uint8 configChannelMask;
-
-    uint16 prescalerValue;
+    uint8 interruptSource;
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* PWM_H_ */
+#endif /*INTERRUPTS_H_ */
 
