@@ -113,21 +113,21 @@ namespace FastMath {
      * @param[in] input the value to convert
      * @return the input as an integer
      */
-    static inline int32 FloatToInt(const float32 input);
+    inline int32 FloatToInt(const float32 input);
 
     /**
      * @brief Computes the cosine of an angle using a processor instruction.
      * @param[in] angle the angle to compute
      * @return the cosine of angle
      */
-    static inline float32 Cos(const float32 angle);
+    inline float32 Cos(const float32 angle);
 
     /**
      * @brief Computes the sine of an angle using a processor instruction.
      * @param[in] angle the angle to compute
      * @return the sine of angle
      */
-    static inline float32 Sin(const float32 angle);
+    inline float32 Sin(const float32 angle);
 }
 
 /*---------------------------------------------------------------------------*/
