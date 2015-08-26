@@ -48,14 +48,19 @@
 
 namespace MemoryOperationsHelper {
 
-
 bool Copy(void* const destination,
-                  const void * const source,
-                  const uint32 size) {
+          const void * const source,
+          const uint32 size) {
 
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
         ret = memcpy(destination, source, static_cast<osulong>(size)) != NULL;
+        if (!ret) {
+            REPORT_LOG_MESSAGE(OSError, "Error: memcpy()")
+        }
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
     }
 
     return ret;
@@ -63,8 +68,8 @@ bool Copy(void* const destination,
 }
 
 int32 Compare(const void * const mem1,
-                      const void * const mem2,
-                      const uint32 size) {
+              const void * const mem2,
+              const uint32 size) {
 
     int32 ret = -1;
 
@@ -80,45 +85,63 @@ int32 Compare(const void * const mem1,
             ret = 0; // 0 if mem1==mem2
         }
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+    }
 
     return ret;
 
 }
 
 const void* Search(const void * const mem,
-                           const char8 c,
-                           const uint32 size) {
+                   const char8 c,
+                   const uint32 size) {
     const void* ret = static_cast<const void*>(NULL);
     if (mem != NULL) {
 
         ret = memchr(mem, c, static_cast<osulong>(size));
 
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+    }
 
     return ret;
 }
 
 bool Move(void * const destination,
-                  const void * const source,
-                  const uint32 size) {
+          const void * const source,
+          const uint32 size) {
 
     bool ret = false;
 
     if ((source != NULL) && (destination != NULL)) {
 
         ret = memmove(destination, source, static_cast<osulong>(size)) != NULL;
+        if (!ret) {
+            REPORT_LOG_MESSAGE(OSError, "Error: memmove()")
+        }
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
     }
     return ret;
 
 }
 
 bool Set(void * const mem,
-                 const char8 c,
-                 const uint32 size) {
+         const char8 c,
+         const uint32 size) {
     bool ret = false;
     if (mem != NULL) {
 
         ret = memset(mem, c, static_cast<osulong>(size)) != NULL;
+        if (!ret) {
+            REPORT_LOG_MESSAGE(OSError, "Error: memset()")
+        }
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
     }
 
     return ret;

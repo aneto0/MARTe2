@@ -35,6 +35,7 @@
 #include "ErrorType.h"
 #include "TimeoutType.h"
 #include "GeneralDefinitions.h"
+#include "Logger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

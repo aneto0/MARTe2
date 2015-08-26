@@ -37,6 +37,7 @@
 #include "FlagsType.h"
 #include "StringHelper.h"
 #include "ErrorType.h"
+#include "Logger.h"
 
 /**
  * FlagsType determining the console operating modes.\n

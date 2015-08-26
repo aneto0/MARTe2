@@ -34,7 +34,7 @@
 
 #include "ThreadInformation.h"
 #include "FastPollingMutexSem.h"
-
+#include "Logger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

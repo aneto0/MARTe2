@@ -31,7 +31,6 @@ SPB=OperatingSystem/$(OPERATING_SYSTEM).x
 OBJSX=  FastMath.x \
         ProcessorType.x \
         ThreadInformation.x \
-        LoadableLibrary.x \
         HeapManager.x \
         FastPollingMutexSem.x \
         StringHelper.x \

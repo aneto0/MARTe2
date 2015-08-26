@@ -45,7 +45,7 @@
 namespace Logger {
 
 
-static inline void NullLogMessageProcessFunction(const LogInformation &errorInfo,
+void NullLogMessageProcessFunction(const LogInformation &errorInfo,
                                                  const char8 * const errorDescription) {
 }
 
@@ -99,7 +99,7 @@ const char8 *ToName(const ErrorType errorCode) {
 void ReportLogMessage(const ErrorType code,
                  const char8 * const errorDescription,
                  const char8 * const fileName,
-                 const uint16 lineNumber,
+                 const int16 lineNumber,
                  const char8 * const functionName) {
     LogInformation logInfo;
     logInfo.threadId = InvalidThreadIdentifier;
@@ -120,7 +120,7 @@ void ReportLogMessage(const ErrorType code,
 void ReportLogMessageFullContext(const ErrorType code,
                             const char8 * const errorDescription,
                             const char8 * const fileName,
-                            const uint16 lineNumber,
+                            const int16 lineNumber,
                             const char8 * const functionName) {
     LogInformation logInfo;
     logInfo.threadId = InvalidThreadIdentifier;

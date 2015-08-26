@@ -1,8 +1,8 @@
 /**
- * @file LoadableLibrary.cpp
- * @brief Source file for class LoadableLibrary
- * @date 22/07/2015
- * @author Ivan Herrero
+ * @file LoadableLibraryOS.cpp
+ * @brief Source file for class LoadableLibraryOS
+ * @date 26/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -11,13 +11,13 @@
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * @warning Unless required by applicable law or agreed to in writing,
+ * @warning Unless required by applicable law or agreed to in writing, 
  * software distributed under the Licence is distributed on an "AS IS"
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class LoadableLibrary (public, protected, and private). Be aware that some
+ * the class LoadableLibraryOS (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,9 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include <dlfcn.h>
 #include "LoadableLibrary.h"
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,LoadableLibraryOS.h)
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,7 +39,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-HANDLE LoadableLibrary::GetModule( void ) {
+HANDLE LoadableLibrary::GetModule() {
     return module;
 }
 
@@ -48,19 +47,49 @@ void LoadableLibrary::SetModule(HANDLE const m) {
     module = m;
 }
 
-bool LoadableLibrary::Open(char8 const * const dllName) {
-    return LoadableLibraryOS::Open(*this, dllName);
+void LoadableLibrary::Close() {
+    HANDLE m = GetModule();
+    if (m != 0) {
+        (void)dlclose(m);
+    }
+
 }
 
-void LoadableLibrary::Close(void) {
-    LoadableLibraryOS::Close(*this);
+bool LoadableLibrary::Open(char8 const * const dllName) {
+    bool ret = true;
+
+    HANDLE m = GetModule();
+    if (m != 0) {
+        Close ();
+    }
+
+    /*lint -e{9130} (bitwise operator '|' applied to signed underlying type) the operands are defined
+     * in operating system api*/
+    m = dlopen(dllName, RTLD_NOW | RTLD_GLOBAL);
+    if (m == NULL) {
+        REPORT_LOG_MESSAGE(OSError, "Error: dlopen() L0")
+        ret = false;
+    }
+    SetModule(m);
+    return ret;
 }
 
 void *LoadableLibrary::Function(char8 const * const name) {
     void* ret = static_cast<void*>(NULL);
 
     if (name != NULL) {
-        ret = LoadableLibraryOS::Function(*this, name);
+        HANDLE m = GetModule();
+        if (m != NULL) {
+            ret = dlsym(m, name);
+        }
+        else {
+            REPORT_LOG_MESSAGE(OSError, "Error: GetModule() L0")
+        }
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments L0")
+
+    }
+
     return ret;
 }

@@ -48,22 +48,22 @@
 namespace HeapManager /*Internals*/{
 
     /**
-     * @brief TODO
+     * @brief The heap database size.
      */
     static const int32 MaximumNumberOfHeaps = 16;
 
     /**
-     * @brief TODO
+     * @brief Hidden class to store HeapI pointers.
      */
     class HeapDataBase {
         /**
          * @brief Lists all heaps
-         * all unused heaps have a NULL pointer
+         * all unused heaps have a NULL pointer.
          */
         HeapI * heaps[MaximumNumberOfHeaps];
 
         /**
-         * @brief TODO
+         * @brief Internal mutex semaphore.
          */
         FastPollingMutexSem mux;
 
@@ -71,23 +71,23 @@ namespace HeapManager /*Internals*/{
 
         /**
          * @brief gets the HeapI contained in a given slot of the database
-         * @param index indicates the slots of the database
+         * @param[in] index indicates the slots of the database
          * @return NULL index out of range or if empty slot
          * */
         HeapI *GetHeap(int32 index)const;
 
         /**
          * @brief sets the HeapI in a given slot of the database
-         * @param index indicates the slots of the database
-         * @param heap  is the desired heap to store
+         * @param[in] index indicates the slots of the database
+         * @param[in] heap  is the desired heap to store
          * @return true if index is within range; specified slot is free; and heap is not NULL
          * */
         bool SetHeap(int32 index, HeapI *const heap);
 
         /**
          * @brief sets to NULL a given slot of the database
-         * @param index indicates the slots of the database
-         * @param heap must contain the same value as in the database
+         * @param[in] index indicates the slots of the database
+         * @param[in] heap must contain the same value as in the database
          * @return true if index is within range; specified slot contains heapl heap is not NULL
          * */
         bool UnsetHeap(int32 index, const HeapI *heap);
@@ -108,64 +108,40 @@ namespace HeapManager /*Internals*/{
 
     };
 
-    /**
-     * @brief TODO
-     */
-
     /*---------------------------------------------------------------------------*/
     /*                           Static definitions                              */
     /*---------------------------------------------------------------------------*/
 
-    /**
-     * @brief TODO
-     */
     static HeapDataBase heapDataBase;
 
-    /**
-     * @brief TODO
-     */
     static StandardHeap standardHeap;
 
     /*---------------------------------------------------------------------------*/
     /*                           Method definitions                              */
     /*---------------------------------------------------------------------------*/
 
-    /**
-     * @brief gets the HeapI contained in a given slot of the database
-     * @param index indicates the slots of the database
-     * @return NULL index out of range or if empty slot
-     * */
     HeapI *HeapDataBase::GetHeap(const int32 index)const {
         HeapI *returnValue = NULL_PTR(HeapI *);
         if ((index >= 0) && (index < MaximumNumberOfHeaps)) {
             returnValue = heaps[index];
         }
+
         return returnValue;
     }
 
-    /**
-     * @brief sets the HeapI in a given slot of the database
-     * @param index indicates the slots of the database
-     * @param heap  is the desired heap to store
-     * @return true if index is within range; specified slot is free; and heap is not NULL
-     * */
     bool HeapDataBase::SetHeap(const int32 index, HeapI * const heap ) {
         bool ok = false;
         if ((index >= 0) && (index < MaximumNumberOfHeaps)) {
+
             if ((heaps[index] == NULL) && (heap != NULL)) {
                 heaps[index] = heap;
                 ok = true;
             }
+
         }
         return ok;
     }
 
-    /**
-     * @brief sets to NULL a given slot of the database
-     * @param index indicates the slots of the database
-     * @param heap must contain the same value as in the database
-     * @return true if index is within range; specified slot contains heapl heap is not NULL
-     * */
     bool HeapDataBase::UnsetHeap(const int32 index, const HeapI * const heap) {
         bool ok = false;
         if ((index >= 0) && (index < MaximumNumberOfHeaps)) {
@@ -174,31 +150,21 @@ namespace HeapManager /*Internals*/{
                 ok = true;
             }
         }
+
         return ok;
     }
 
-    /**
-     * @brief constructor
-     * */
     HeapDataBase::HeapDataBase() {
-
         int32 i;
         for(i=0;i<MaximumNumberOfHeaps;i++) {
             heaps[i] = NULL_PTR(HeapI *);
         }
     }
 
-    /**
-     * @brief locks access to database
-     * @return true if locking successful
-     * */
     bool HeapDataBase::Lock() {
-        return (mux. FastLock()==NoError);
+        return (mux.FastLock()==NoError);
     }
 
-    /**
-     * @brief unlocks access to database
-     * */
     void HeapDataBase::UnLock() {
         mux.FastUnLock();
     }
@@ -207,11 +173,6 @@ namespace HeapManager /*Internals*/{
         return &standardHeap;
     }
 
-    /**
-     * @brief Finds the Heap that manages the specified memory location
-     * @param address is a memory address that the target heap should manage
-     * returns NULL if not found
-     */
     HeapI *FindHeap(const void * const address) {
 
         /**
@@ -227,7 +188,6 @@ namespace HeapManager /*Internals*/{
 
         /* controls access to database */
         if (heapDataBase.Lock()) {
-            // TODO add error message here
 
             int32 i;
             for(i=0;(i<MaximumNumberOfHeaps);i++) {
@@ -279,9 +239,6 @@ namespace HeapManager /*Internals*/{
 
             heapDataBase.UnLock();
         }
-        else {
-            // TODO add error message here
-        }
 
         /* assign to heap the found heap or the default one */
         if (foundHeap == NULL_PTR(HeapI *)) {
@@ -317,7 +274,6 @@ namespace HeapManager /*Internals*/{
 
             /* controls access to database */
             if (heapDataBase.Lock()) {
-                // TODO add error message here
                 int32 i;
                 for(i=0;(i<MaximumNumberOfHeaps) && (!found);i++) {
 
@@ -361,7 +317,7 @@ namespace HeapManager /*Internals*/{
         }
         else {
 
-            // TODO error message here
+            REPORT_LOG_MESSAGE(FatalError, "Error: the pointer in input does not belong to any heap")
 
         }
 
@@ -372,15 +328,19 @@ namespace HeapManager /*Internals*/{
 
         void *address = NULL_PTR(void *);
 
+        /** Standard behavior */
         if (heapName == NULL) {
             address = standardHeap.Malloc(size);
         }
         else {
-            // TODO comment
+
             HeapI *heap = FindHeap(heapName);
 
             if (heap != NULL) {
                 address = heap->Malloc(size);
+            }
+            else {
+                REPORT_LOG_MESSAGE(FatalError, "Error: no heaps with the specified name found")
             }
 
         }
@@ -396,7 +356,7 @@ namespace HeapManager /*Internals*/{
         if (chosenHeap != NULL) {
             newAddress = chosenHeap->Realloc(data,newSize);
         }
-        //if the heap is not found (the data is null) allocates it on the standard heap.
+        //if the heap is not found (the data is null) allocates it on the standard heap (C malloc).
         else {
             newAddress=standardHeap.Realloc(data,newSize);
         }
@@ -409,20 +369,23 @@ namespace HeapManager /*Internals*/{
 
         HeapI *chosenHeap = NULL_PTR(HeapI *);
 
+        //if the heapName is not null searches the heap by name
         if (heapName != NULL) {
             chosenHeap = FindHeap(heapName);
-
         }
 
+        //if the heap with that name is not found calls the find by address
         if (chosenHeap == NULL) {
             chosenHeap = FindHeap(data);
         }
 
+        // if found calls the correct heap duplicate
         if (chosenHeap != NULL) {
             newAddress = chosenHeap->Duplicate(data,size);
         }
-        // to duplicate static memory!
+        // if the address is not found considers the memory as a static
         else {
+            //REPORT_LOG_MESSAGE(Warning, "Warning: the input address does not belong to any heap. It will be considered as a static memory address")
             newAddress = standardHeap.Duplicate(data,size);
         }
         return newAddress;
@@ -450,7 +413,8 @@ namespace HeapManager /*Internals*/{
                 if (heap == newHeap) {
                     ok = false;
 
-                    /* TODO error message here */
+                    REPORT_LOG_MESSAGE(FatalError, "Error: heap already registered in the database")
+
                 }
             }
 
@@ -467,18 +431,14 @@ namespace HeapManager /*Internals*/{
                 /** no more space */
                 if (!found) {
                     ok = false;
-                    // TODO error message here
+                    REPORT_LOG_MESSAGE(FatalError, "Error: not enough space in the database for new records")
+
                 }
 
             }
             /* controls access to database */
             heapDataBase.UnLock();
         }
-        else {
-            // TODO error message
-            ok = false;
-        }
-
         return ok;
     }
 
@@ -497,6 +457,7 @@ namespace HeapManager /*Internals*/{
             /* controls access to database */
             heapDataBase.UnLock();
         }
+
 
         return found;
     }

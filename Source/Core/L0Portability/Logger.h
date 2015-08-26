@@ -40,7 +40,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 /**
  * @brief Collection of functions and  types to manage error reporting.
  * @details These functions allows an error reporting mechanism. The user should only pass the code of the error
@@ -54,13 +53,15 @@ namespace Logger {
  * @brief The type of an user provided ErrorProcessing function
  */
 typedef void (*LogMessageProcessFunctionType)(const LogInformation &errorInfo,
-                                                const char8 * const errorDescription);
+                                              const char8 * const errorDescription);
 
 /**
  * @brief A pointer to the function that will process the errors.
  */
 extern LogMessageProcessFunctionType logMessageProcessFunction;
 
+void NullLogMessageProcessFunction(const LogInformation &errorInfo,
+                                   const char8 * const errorDescription);
 /**
  * @brief Returns the name string associated to the error code.
  * @param[in] errorCode is the error code.
@@ -78,10 +79,10 @@ const char8 *ToName(const ErrorType errorCode);
  * @param[in] functionName is the name of the function where the error is triggered.
  */
 void ReportLogMessage(const ErrorType code,
-                 const char8 * const errorDescription,
-                 const char8 * const fileName = static_cast<const char8 *>(NULL),
-                 const uint16 lineNumber = static_cast<uint16>(0u),
-                 const char8 * const functionName = static_cast<const char8 *>(NULL));
+                      const char8 * const errorDescription,
+                      const char8 * const fileName = static_cast<const char8 *>(NULL),
+                      const int16 lineNumber = static_cast<int16>(0),
+                      const char8 * const functionName = static_cast<const char8 *>(NULL));
 
 /**
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
@@ -93,18 +94,16 @@ void ReportLogMessage(const ErrorType code,
  * @param[in] functionName is the name of the function where the error is triggered.
  */
 void ReportLogMessageFullContext(const ErrorType code,
-                            const char8 * const errorDescription,
-                            const char8 * const fileName = static_cast<const char8 *>(NULL),
-                            const uint16 lineNumber = static_cast<uint16>(0u),
-                            const char8 * const functionName = static_cast<const char8 *>(NULL));
+                                 const char8 * const errorDescription,
+                                 const char8 * const fileName = static_cast<const char8 *>(NULL),
+                                 const int16 lineNumber = static_cast<int16>(0),
+                                 const char8 * const functionName = static_cast<const char8 *>(NULL));
 
 /**
  * @brief Sets the routine for error managing.
  * @param[in] userFun is a pointer to the function called by ReportError.
  */
 void SetLogMessageProcessFunction(const LogMessageProcessFunctionType userFun = static_cast<LogMessageProcessFunctionType>(NULL));
-
-
 
 }
 

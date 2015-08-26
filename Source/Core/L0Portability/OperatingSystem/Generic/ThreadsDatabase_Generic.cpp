@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ThreadsDatabase.h"
-
 #include "GeneralDefinitions.h"
 #include "HeapManager.h"
 #include "StringHelper.h"
@@ -61,7 +60,6 @@ static uint32 maxNOfEntries = 0u;
  */
 static ThreadInformation **entries = static_cast<ThreadInformation **>(NULL);
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -89,7 +87,9 @@ bool NewEntry(ThreadInformation * const threadInformation) {
                 }
             }
         }
-        //CStaticAssertErrorCondition(FatalError,"TDB:TDB_NewEntry could not find empty slot!!");
+        else {
+            REPORT_LOG_MESSAGE(FatalError, "Error: cannot find an empty slot")
+        }
     }
     return ok;
 }
@@ -109,7 +109,7 @@ ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId) {
                 if (nOfEntries == 0u) {
                     bool ok = HeapManager::Free(reinterpret_cast<void *&>(entries));
                     if (!ok) {
-                        //TODO error here
+                        REPORT_LOG_MESSAGE(FatalError, "Error: database memory cleanup failed")
                     }
                     //For AllocMore to reallocate again!
                     maxNOfEntries = 0u;
@@ -121,7 +121,6 @@ ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId) {
         index++;
     }
 
-    //CStaticAssertErrorCondition(FatalError,"TDB:TDB_RemoveEntry could not find/remove entry ThreadIdentifier=%08x ",threadId);
     return threadInfo;
 
 }
@@ -140,8 +139,6 @@ ThreadInformation *GetThreadInformation(const ThreadIdentifier &threadId) {
         }
         index++;
     }
-
-    //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetTII could not find entry ThreadIdentifier=%08x ",threadId);
     return threadInfo;
 }
 
@@ -165,8 +162,10 @@ ThreadIdentifier GetThreadID(const uint32 &n) {
             tid = entries[n]->GetThreadIdentifier();
         }
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: the index in input is greater than the number of deatabase records")
+    }
 
-    //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetThreadID(%i) mismatch between actual entries and TDB_NOfEntries");
     return tid;
 }
 
@@ -219,7 +218,7 @@ bool AllocMore() {
                 nOfEntries = 0u;
             }
             else {
-                //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed allocating %i entries",TDB_THREADS_DATABASE_GRANULARITY);
+                REPORT_LOG_MESSAGE(FatalError, "Error: memory allocation for the database failed")
                 ok = false;
             }
         }
@@ -230,7 +229,7 @@ bool AllocMore() {
                 maxNOfEntries += THREADS_DATABASE_GRANULARITY;
             }
             else {
-                //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed re-allocating to %i entries",TDB_THREADS_DATABASE_GRANULARITY+TDB_MaxNOfEntries);
+                REPORT_LOG_MESSAGE(FatalError, "Error: memory reallocation for the database failed")
                 ok = false;
             }
         }

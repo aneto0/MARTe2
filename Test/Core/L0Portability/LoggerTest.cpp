@@ -33,7 +33,6 @@
 #include "StringHelper.h"
 #include "Sleep.h"
 #include "Threads.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -71,8 +70,7 @@ void ThreadErrorTestFunction(LoggerTest& t) {
 
     Logger::ReportLogMessage(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
     t.fullContext = true;
-    Logger::ReportLogMessageFullContext(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine,
-                                            t.expectedErrorFunction);
+    Logger::ReportLogMessageFullContext(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
 
     t.syncFlag = true;
 }
@@ -125,11 +123,11 @@ bool LoggerTest::TestToName() {
 }
 
 bool LoggerTest::TestReportLogMessage(ErrorType code,
-                                             const char8* errorName,
-                                             const char8* errorDescription,
-                                             const char8* errorFileName,
-                                             uint16 errorLineNumber,
-                                             const char8* errorFunctionName) {
+                                      const char8* errorName,
+                                      const char8* errorDescription,
+                                      const char8* errorFileName,
+                                      uint16 errorLineNumber,
+                                      const char8* errorFunctionName) {
 
     expectedErrorCode = code;
     expectedErrorDescription = errorDescription;
@@ -145,12 +143,12 @@ bool LoggerTest::TestReportLogMessage(ErrorType code,
 }
 
 bool LoggerTest::TestReportLogMessageFullContext(ErrorType code,
-                                                        const char8* errorName,
-                                                        const char8* errorDescription,
-                                                        const char8* errorFileName,
-                                                        uint16 errorLineNumber,
-                                                        const char8* errorFunctionName,
-                                                        uint32 numThreads) {
+                                                 const char8* errorName,
+                                                 const char8* errorDescription,
+                                                 const char8* errorFileName,
+                                                 uint16 errorLineNumber,
+                                                 const char8* errorFunctionName,
+                                                 uint32 numThreads) {
 
     //Fill the class attributes
     expectedErrorCode = code;
@@ -194,8 +192,8 @@ bool LoggerTest::TestReportLogMessageFullContext(ErrorType code,
 }
 
 bool LoggerTest::TestReportLogMessageMacro(ErrorType code,
-                                                  const char8 *errorDescription,
-                                                  const char8 *errorName) {
+                                           const char8 *errorDescription,
+                                           const char8 *errorName) {
 
     expectedErrorCode = code;
     expectedErrorDescription = errorDescription;
@@ -213,9 +211,9 @@ bool LoggerTest::TestReportLogMessageMacro(ErrorType code,
 }
 
 bool LoggerTest::TestReportLogMessageMacroFullContext(ErrorType code,
-                                                             const char8 *errorDescription,
-                                                             const char8 *errorName,
-                                                             uint32 numThreads) {
+                                                      const char8 *errorDescription,
+                                                      const char8 *errorName,
+                                                      uint32 numThreads) {
 
     expectedErrorCode = code;
     expectedErrorDescription = errorDescription;
@@ -256,7 +254,7 @@ bool LoggerTest::TestReportLogMessageMacroFullContext(ErrorType code,
 }
 
 void LoggerTest::CheckParameters(const Logger::LogInformation& errorInfo,
-                                        const char* description) {
+                                 const char* description) {
 
     //Checks the error code
     if (errorInfo.header.errorType != expectedErrorCode) {

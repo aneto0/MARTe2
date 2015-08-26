@@ -56,7 +56,7 @@ StandardHeap::~StandardHeap() {
     lastAddress = 0U;
     firstAddress = 0U;
 }
-;
+
 
 /**
  * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
@@ -73,18 +73,24 @@ void *StandardHeap::Malloc(const uint32 size) {
         pointer = malloc(static_cast<osulong>(size));
     }
 
-    /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-     * in order to be able to update the range of addresses provided by this heap
-     * uintp is an integer type that has by design the same span as a pointer in all systems*/
-    uintp address = reinterpret_cast<uintp>(pointer);
-    if ((firstAddress > address) || (firstAddress == 0U)) {
-        firstAddress = address;
-    }
-    address += size;
-    if ((lastAddress < address) || (lastAddress == 0U)) {
-        lastAddress = address;
-    }
+    if (pointer != NULL) {
 
+        /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
+         * in order to be able to update the range of addresses provided by this heap
+         * uintp is an integer type that has by design the same span as a pointer in all systems*/
+        uintp address = reinterpret_cast<uintp>(pointer);
+        if ((firstAddress > address) || (firstAddress == 0U)) {
+            firstAddress = address;
+        }
+        address += size;
+        if ((lastAddress < address) || (lastAddress == 0U)) {
+            lastAddress = address;
+        }
+
+    }
+    else {
+        REPORT_LOG_MESSAGE(OSError, "Error: malloc()")
+    }
     return pointer;
 
 }
@@ -116,6 +122,22 @@ void *StandardHeap::Realloc(void *&data,
         }
         else {
             data = realloc(data, static_cast<osulong>(newSize));
+            if (data != NULL) {
+                /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
+                 * in order to be able to update the range of addresses provided by this heap
+                 * uintp is an integer type that has by design the same span as a pointer in all systems*/
+                uintp address = reinterpret_cast<uintp>(data);
+                if ((firstAddress > address) || (firstAddress == 0U)) {
+                    firstAddress = address;
+                }
+                address += newSize;
+                if ((lastAddress < address) || (lastAddress == 0U)) {
+                    lastAddress = address;
+                }
+            }
+            else {
+                REPORT_LOG_MESSAGE(OSError, "Error: realloc()")
+            }
         }
     }
     return data;
@@ -124,14 +146,19 @@ void *StandardHeap::Realloc(void *&data,
 
 /*lint -e{925} cast pointer to pointer required */
 void *StandardHeap::Duplicate(const void * const data,
-                              const uint32 size) {
+                              uint32 size) {
 
     void *duplicate = NULL_PTR(void *);
 
     // check if 0 zerminated copy to be done
     if (size == 0U) {
+        const char8* inputData = static_cast<const char8 *>(data);
+        size = strlen(inputData);
         if (data != NULL) {
-            duplicate = strdup(static_cast<const char8 *>(data));
+            duplicate = strdup(inputData);
+        }
+        if (duplicate == NULL) {
+            REPORT_LOG_MESSAGE(OSError, "Error: strdup()")
         }
     }
     else { // strdup style
@@ -146,7 +173,24 @@ void *StandardHeap::Duplicate(const void * const data,
                 source++;
             } //copy loop
         } //check Malloc success
+        else {
+            REPORT_LOG_MESSAGE(OSError, "Error: malloc()")
+        }
     } // copy bound by size
+
+    if (duplicate != NULL) {
+        /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
+         * in order to be able to update the range of addresses provided by this heap
+         * uintp is an integer type that has by design the same span as a pointer in all systems*/
+        uintp address = reinterpret_cast<uintp>(duplicate);
+        if ((firstAddress > address) || (firstAddress == 0U)) {
+            firstAddress = address;
+        }
+        address += size;
+        if ((lastAddress < address) || (lastAddress == 0U)) {
+            lastAddress = address;
+        }
+    }
 
     return duplicate;
 }

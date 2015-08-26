@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-#include <ErrorType.h>
 #include "EventSem.h"
 #include "Atomic.h"
 
@@ -144,7 +142,16 @@ bool EventSem::Create() {
         ok = (pthread_mutex_init(&handle->mutexHandle, &handle->mutexAttributes) == 0);
         if (ok) {
             ok = (pthread_cond_init(&handle->eventVariable, static_cast<const pthread_condattr_t *>(NULL)) == 0);
+            if (!ok) {
+                REPORT_LOG_MESSAGE(OSError, "Error: pthread_cond_init()")
+            }
         }
+        else {
+            REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutex_init()")
+        }
+    }
+    else {
+        REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutexattr_init()")
     }
     handle->referencesMux = 0;
     return ok;
@@ -162,9 +169,18 @@ bool EventSem::Close() {
         ok = (pthread_mutexattr_destroy(&handle->mutexAttributes) == 0);
         if (ok) {
             ok = (pthread_mutex_destroy(&handle->mutexHandle) == 0);
+            if (!ok) {
+                REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutex_destroy()")
+            }
+        }
+        else {
+            REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutexattr_destroy()")
         }
         if (ok) {
             ok = (pthread_cond_destroy(&handle->eventVariable) == 0);
+            if (!ok) {
+                REPORT_LOG_MESSAGE(OSError, "Error: pthread_cond_destroy()")
+            }
         }
     }
     return ok;
@@ -177,17 +193,32 @@ ErrorType EventSem::Wait() {
     ErrorType err = NoError;
     if (!handle->closed) {
         bool okLock = (pthread_mutex_lock(&handle->mutexHandle) == 0);
+        if (!okLock) {
+            REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutex_lock()")
+        }
 
         bool okWait = true;
         if (handle->stop) {
             okWait = (pthread_cond_wait(&handle->eventVariable, &handle->mutexHandle) == 0);
         }
+        if (!okWait) {
+            REPORT_LOG_MESSAGE(OSError, "Error: pthread_cond_wait()")
+        }
+
         bool okUnLock = (pthread_mutex_unlock(&handle->mutexHandle) == 0);
+        if (!okUnLock) {
+            REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutex_unlock()")
+        }
         ok = (okLock && okWait && okUnLock);
+        if (!ok) {
+            err = OSError;
+        }
     }
-    if (!ok) {
-        err = OSError;
+    else {
+        err = FatalError;
+        REPORT_LOG_MESSAGE(err, "Error: the semaphore handle is closed")
     }
+
     return err;
 }
 
@@ -199,41 +230,50 @@ ErrorType EventSem::Wait(const TimeoutType &timeout) {
     if (timeout == TTInfiniteWait) {
         err = Wait();
     }
-    if (ok) {
-        struct timespec timesValues;
-        timeb tb;
-        ok = (ftime(&tb) == 0);
-
+    else {
         if (ok) {
-            float64 sec = static_cast<float64>(timeout.GetTimeoutMSec());
-            sec += static_cast<float64>(tb.millitm);
-            sec *= 1e-3;
-            sec += static_cast<float64>(tb.time);
+            struct timespec timesValues;
+            timeb tb;
+            ok = (ftime(&tb) == 0);
 
-            float64 roundValue = floor(sec);
-            timesValues.tv_sec = static_cast<int32>(roundValue);
-            float64 nSec = (sec - roundValue);
-            nSec *= 1e9;
-            timesValues.tv_nsec = static_cast<int32>(nSec);
-            ok = (pthread_mutex_timedlock(&handle->mutexHandle, &timesValues) == 0);
-            if (ok && handle->stop) {
-                ok = (pthread_cond_timedwait(&handle->eventVariable, &handle->mutexHandle, &timesValues) == 0);
+            if (ok) {
+                float64 sec = static_cast<float64>(timeout.GetTimeoutMSec());
+                sec += static_cast<float64>(tb.millitm);
+                sec *= 1e-3;
+                sec += static_cast<float64>(tb.time);
+
+                float64 roundValue = floor(sec);
+                timesValues.tv_sec = static_cast<int32>(roundValue);
+                float64 nSec = (sec - roundValue);
+                nSec *= 1e9;
+                timesValues.tv_nsec = static_cast<int32>(nSec);
+                ok = (pthread_mutex_timedlock(&handle->mutexHandle, &timesValues) == 0);
+                if (ok) {
+                    if (handle->stop) {
+                        ok = (pthread_cond_timedwait(&handle->eventVariable, &handle->mutexHandle, &timesValues) == 0);
+                        if (!ok) {
+                            err = Timeout;
+                            REPORT_LOG_MESSAGE(err, "Information: timeout occurred")
+                        }
+                    }
+                }
+
+                /*lint -e{455} false positive from that does not understand that pthread_mutex_timedlock locks the semaphore*/
+                bool okOs = (pthread_mutex_unlock(&handle->mutexHandle) == 0);
+                if (!okOs) {
+                    err = OSError;
+                    REPORT_LOG_MESSAGE(err, "Error: pthread_mutex_unlock()")
+                }
             }
-            if (!ok) {
-                err = Timeout;
-            }
-            /*lint -e{455} false positive from that does not understand that pthread_mutex_timedlock locks the semaphore*/
-            bool okOs = (pthread_mutex_unlock(&handle->mutexHandle) == 0);
-            if (!okOs) {
+            else {
                 err = OSError;
+                REPORT_LOG_MESSAGE(err, "Error: ftime()");
             }
         }
         else {
-            err = OSError;
+            err = FatalError;
+            REPORT_LOG_MESSAGE(err, "Error: the semaphore handle is closed")
         }
-    }
-    else {
-        err = OSError;
     }
     return err;
 }
@@ -249,6 +289,7 @@ bool EventSem::Post() {
         bool okBroadcast = (pthread_cond_broadcast(&handle->eventVariable) == 0);
         ok = (okLock && okUnLock && okBroadcast);
     }
+
     return ok;
 }
 

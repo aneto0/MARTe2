@@ -38,6 +38,7 @@
 #include "HighResolutionTimer.h"
 #include "TimeoutType.h"
 #include "Sleep.h"
+#include "Logger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -134,6 +135,7 @@ ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout) {
             int64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
                 err = Timeout;
+                REPORT_LOG_MESSAGE(Timeout,"Information: timeout occurred")
                 break;
             }
         }
