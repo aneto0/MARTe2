@@ -53,7 +53,7 @@ OBJSX=  StandardHeap_GenericGTest.x \
 	ReferenceContainerNodeGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
-    	LogManagementGTest.x
+    	LoggerGTest.x
 
 
 PACKAGE=
