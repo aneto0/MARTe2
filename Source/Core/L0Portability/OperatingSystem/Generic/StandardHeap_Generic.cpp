@@ -30,7 +30,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StandardHeap.h"
-
+#ifndef LINT
+#include <string.h>
+#else
+#include "../Linux/lint-linux.h"
+#endif
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -153,7 +157,7 @@ void *StandardHeap::Duplicate(const void * const data,
     // check if 0 zerminated copy to be done
     if (size == 0U) {
         const char8* inputData = static_cast<const char8 *>(data);
-        size = strlen(inputData);
+        size = static_cast<int32>(strlen(inputData));
         if (data != NULL) {
             duplicate = strdup(inputData);
         }

@@ -56,7 +56,7 @@ struct LogInformation {
         /**
          * The error line number.
          */
-        uint16 lineNumber;
+        int16 lineNumber;
 
         /**
          * Specified is the error is triggered within an object.

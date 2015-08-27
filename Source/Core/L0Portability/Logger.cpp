@@ -106,6 +106,7 @@ void ReportLogMessage(const ErrorType code,
     logInfo.objectPointer = static_cast<void*>(NULL);
     logInfo.className       = static_cast<const char8 *>(NULL);
     logInfo.header.errorType = code;
+
     logInfo.header.lineNumber = lineNumber;
     logInfo.fileName = fileName;
     logInfo.functionName = functionName;
