@@ -42,6 +42,109 @@
 
 namespace TypeDefinition {
 
+template <typename T>
+class TypeCharacteristics{
+public:
+
+static inline bool IsSigned(){
+    return ((static_cast<T>(-1))<0);
+}
+
+static inline const T MaxValue() {
+    if (IsSigned()){
+        T temp = 1 << (sizeof (T)*8-1);
+        return ~temp;
+    } else {
+        T temp = 0;
+        return ~temp;
+    }
+}
+
+static inline const T MinValue() {
+    if (IsSigned()){
+        T temp = 1 << (sizeof (T)*8-1);
+        return temp;
+    } else {
+        T temp = 0;
+        return temp;
+    }
+}
+};
+
+
+template <typename baseType, uint8 bitSize>
+class UnsignedFractionalInteger{
+    baseType value;
+
+public:
+
+    static const baseType mask  = (~0u >> ((sizeof(baseType)*8)-bitSize)) ;
+    static const baseType notMask  = ~(~0u >> ((sizeof(baseType)*8)-bitSize))  ;
+
+    static const baseType maxValue = (0x1 << bitSize)-1;
+    static const baseType minValue = 0;
+
+    static inline const baseType MaxValue() {
+        baseType temp;
+        if (TypeCharacteristics<baseType>::IsSigned()){
+            temp = (0x1 << (bitSize-1))-1;
+
+        } else {
+            temp = static_cast<baseType>(-1) >> ((sizeof(baseType)*8)-bitSize);
+        }
+        return temp;
+    }
+    static inline const baseType MinValue() {
+        baseType temp;
+        if (TypeCharacteristics<baseType>::IsSigned()){
+            temp = (-1 << (bitSize-1));
+        } else {
+            temp = 0;
+        }
+
+        return temp;
+    }
+
+    static inline baseType BitSize(){ return bitSize; }
+
+    /**
+     *  NON overlapping
+     *  Saturating fractional unsigned integer
+     */
+    template <typename inputType>UnsignedFractionalInteger(inputType input){
+        baseType temporaryValue = 0;
+        if (input >= maxValue) {
+            value = maxValue;
+            // ERROR LOGGING
+        }
+        else {
+            if (input <= minValue) {
+                value = minValue;
+                // ERROR LOGGING
+            } else {
+                value = input;
+            }
+        }
+    }
+
+    inline operator baseType() const {
+        return value;
+    }
+
+    inline operator AnyType() const {
+        BasicType bt = UnsignedInteger;
+        if (TypeCharacteristics<baseType>::IsSigned()){
+            bt = SignedInteger;
+        }
+        const TypeDescriptor td = { false, false, { { bt, bitSize } } };
+        return AnyType (td, 0, this);
+    }
+
+
+};
+
+
+
 template <typename T, uint8 bitSize,uint8 bitOffset>
 class UnsignedBitRange{
     T value;
