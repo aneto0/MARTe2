@@ -45,12 +45,12 @@
 namespace ErrorManagement {
 
 
-void NullErrorMessageProcessFunction(const ErrorInformation &errorInfo,
+void NullErrorProcessFunction(const ErrorInformation &errorInfo,
                                                  const char8 * const errorDescription) {
 }
 
 
-ErrorProcessFunctionType errorMessageProcessFunction = &NullErrorMessageProcessFunction;
+ErrorProcessFunctionType errorMessageProcessFunction = &NullErrorProcessFunction;
 
 
 /**

@@ -102,6 +102,7 @@ public:
         fullContext = false;
     }
 
+
     /**
      * @brief Tests the SetErrorMessageProcessFunction.
      * @details Set a function and checks if the report error function calls it.
@@ -129,11 +130,11 @@ public:
      * right error informations, false otherwise.
      */
     bool TestReportError(ErrorManagement::ErrorType code,
-                              const char8* errorName,
-                              const char8* errorDescription,
-                              const char8* errorFileName = "",
-                              uint16 errorLineNumber = 0,
-                              const char8* errorFunctionName = "");
+                         const char8* errorName,
+                         const char8* errorDescription,
+                         const char8* errorFileName = "",
+                         uint16 errorLineNumber = 0,
+                         const char8* errorFunctionName = "");
 
     /**
      * @brief Tests the ReportError function.
@@ -150,12 +151,12 @@ public:
      * right error informations, false otherwise.
      */
     bool TestReportErrorFullContext(ErrorManagement::ErrorType code,
-                                         const char8* expected,
-                                         const char8* errorDescription,
-                                         const char8* errorFileName = "",
-                                         uint16 errorLineNumber = 0,
-                                         const char8* errorFunctionName = "",
-                                         uint32 numThreads = 0);
+                                    const char8* expected,
+                                    const char8* errorDescription,
+                                    const char8* errorFileName = "",
+                                    uint16 errorLineNumber = 0,
+                                    const char8* errorFunctionName = "",
+                                    uint32 numThreads = 0);
 
     /**
      * @brief Tests the REPORT_ERROR macro.
@@ -165,8 +166,8 @@ public:
      * @return true if the ErrorInfo Structure is filled with the file name, the line number and the function name where the error is triggered.
      */
     bool TestReportErrorMacro(ErrorManagement::ErrorType code,
-                                   const char8* errorDescription,
-                                   const char8 *errorName);
+                              const char8* errorDescription,
+                              const char8 *errorName);
 
     /**
      * @brief Tests the REPORT_ERROR_FULL macro.
@@ -178,9 +179,9 @@ public:
      * Launches also a certain number of threads and returns true if the thread is field is equal to the id of the thread which calls the macro.
      */
     bool TestReportErrorMacroFullContext(ErrorManagement::ErrorType code,
-                                              const char8 *errorDescription,
-                                              const char8 *errorName,
-                                              uint32 numThreads);
+                                         const char8 *errorDescription,
+                                         const char8 *errorName,
+                                         uint32 numThreads);
 
     /**
      * @brief Checks if the errorInfo fields contains correct data.

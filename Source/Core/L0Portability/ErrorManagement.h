@@ -22,7 +22,7 @@
  */
 
 #ifndef ERRORMANAGEMENT_H_
-#define ERRORMANAGEMENTH_
+#define ERRORMANAGEMENT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -60,7 +60,7 @@ typedef void (*ErrorProcessFunctionType)(const ErrorInformation &errorInfo,
  */
 extern ErrorProcessFunctionType errorMessageProcessFunction;
 
-void NullLogMessageProcessFunction(const ErrorInformation &errorInfo,
+void NullErrorProcessFunction(const ErrorInformation &errorInfo,
                                    const char8 * const errorDescription);
 /**
  * @brief Returns the name string associated to the error code.
@@ -80,9 +80,9 @@ const char8 *ToName(const ErrorType errorCode);
  */
 void ReportError(const ErrorType code,
                  const char8 * const errorDescription,
-                 const char8 * const fileName ,
-                 const int16 lineNumber ,
-                 const char8 * const functionName );
+                 const char8 * const fileName = static_cast<const char8 *>(NULL),
+                 const int16 lineNumber = 0,
+                 const char8 * const functionName = static_cast<const char8 *>(NULL));
 
 /**
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
@@ -95,9 +95,9 @@ void ReportError(const ErrorType code,
  */
 void ReportErrorFullContext(const ErrorType code,
                             const char8 * const errorDescription,
-                            const char8 * const fileName ,
-                            const int16 lineNumber ,
-                            const char8 * const functionName);
+                            const char8 * const fileName = static_cast<const char8 *>(NULL),
+                            const int16 lineNumber = 0,
+                            const char8 * const functionName = static_cast<const char8 *>(NULL));
 
 /**
  * @brief Sets the routine for error managing.
