@@ -54,7 +54,10 @@ OBJSX=  StandardHeap_GenericGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
     	LoggerGTest.x
+<<<<<<< HEAD
 
+=======
+>>>>>>> branch 'Mayor_l0_refactor' of https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git
 
 PACKAGE=
 ROOT_DIR=../..

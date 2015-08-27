@@ -20,36 +20,22 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
-PACKAGE=Core/L0Portability
-ROOT_DIR=../../../../../
+PACKAGE=Core
+ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  BasicConsoleOS.x \
-        SleepOS.x \
-        HighResolutionTimerCalibratorOS.x \
-        EventSemOS.x \
-        MutexSemOS.x \
-        ProcessorOS.x \
-        ThreadsOS.x \
-        MemoryCheckOS.x \
-        MemoryOperationsHelper_CLIB.x \
-        StringHelper_CLIB.x \
-        StringHelperExtras.x \
-        StandardHeap.x \
-        ThreadsDatabase.x \
-        LoadableLibraryOS.x
+OBJSX=  FormatDescriptor.x
+
+#LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
+INCLUDES+=-I../L0Portability
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES+=-I../../
-
-all: $(OBJS)    \
-                $(BUILD_DIR)/L0PortabilityOS$(LIBEXT)
+all: $(OBJS) $(SUBPROJ)   \
+		$(BUILD_DIR)/L0TypeDev$(LIBEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

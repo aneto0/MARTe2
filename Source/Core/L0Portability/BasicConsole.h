@@ -37,6 +37,7 @@
 #include "FlagsType.h"
 #include "StringHelper.h"
 #include "ErrorType.h"
+#include "Logger.h"
 
 /**
  * FlagsType determining the console operating modes.\n
@@ -359,7 +360,7 @@ private:
     /**
      * Operating system specific properties to be used by the operating system specific implementation
      */
-    BasicConsoleOSProperties *osProperties;
+    BasicConsoleHandle handle;
 
     /**
      * How long since the last paging.

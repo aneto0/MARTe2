@@ -1,8 +1,8 @@
 /**
  * @file StringHelperExtras_Generic.cpp
- * @brief Source file for class StringHelperExtras_Generic
- * @date Aug 13, 2015
- * @author fsartori
+ * @brief Source file for class StringHelperExtras
+ * @date 13/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StringHelperExtras_Generic (public, protected, and private). Be aware that some 
+ * the class StringHelper (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -31,7 +31,6 @@
 
 #include "../../StringHelper.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -43,8 +42,8 @@
 namespace StringHelper {
 
 bool Concatenate(const char8* const string1,
-                                 const char8* const string2,
-                                 char8* const result) {
+                 const char8* const string2,
+                 char8* const result) {
 
     bool ret = false;
 
@@ -77,14 +76,17 @@ bool Concatenate(const char8* const string1,
             j++;
         }
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+    }
 
     return ret;
 }
 
 bool ConcatenateN(const char8* const string1,
-                                  const char8* const string2,
-                                  char8* const result,
-                                  const uint32 size) {
+                  const char8* const string2,
+                  char8* const result,
+                  const uint32 size) {
 
     bool ret = false;
     uint32 sizeCopy = size;
@@ -120,14 +122,15 @@ bool ConcatenateN(const char8* const string1,
             ret = true;
         }
     }
-
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+    }
     return ret;
 }
 
-
 const char8* TokenizeByChars(const char8* const string,
-                                             const char8* const delimiter,
-                                             char8* const result) {
+                             const char8* const delimiter,
+                             char8* const result) {
 
     const char8 *ret = static_cast<const char8*>(NULL);
 
@@ -167,16 +170,19 @@ const char8* TokenizeByChars(const char8* const string,
             i++;
         }
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+    }
     return ret;
 }
 
 const char8* TokenizeByString(const char8* const string,
-                                              const char8* const terminator,
-                                              char8* const result) {
+                              const char8* const terminator,
+                              char8* const result) {
 
     const char8 *ret = static_cast<const char8*>(NULL);
-    int32 size1 = Length(string);
-    int32 size2 = Length(terminator);
+    int32 size1 = static_cast<int32>(Length(string));
+    int32 size2 = static_cast<int32>(Length(terminator));
 
     if ((size1 >= 0) && (size2 >= 0) && (result != NULL)) {
 
@@ -203,17 +209,22 @@ const char8* TokenizeByString(const char8* const string,
             (void) Copy(&result[i], &string[i]);
         }
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+    }
     return ret;
 }
 
 bool Substr(const uint32 begin,
-                            const uint32 end,
-                            const char8* const string,
-                            char8* const result) {
+            const uint32 end,
+            const char8* const string,
+            char8* const result) {
 
     bool ret = true;
     if ((string == NULL) || (result == NULL) || (end < begin)) {
         ret = false;
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+
     }
     else {
         uint32 i = 0u;

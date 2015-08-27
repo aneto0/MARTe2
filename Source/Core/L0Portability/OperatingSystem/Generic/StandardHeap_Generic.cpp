@@ -1,8 +1,8 @@
 /**
  * @file StandardHeap_Generic.cpp
  * @brief Source file for class StandardHeap_Generic
- * @date Aug 13, 2015
- * @author fsartori
+ * @date 13/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -43,26 +43,27 @@ namespace HeapManager {
 /**
  * @brief constructor
  */
-StandardHeap::StandardHeap(){
+StandardHeap::StandardHeap() {
 
     /** initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
     firstAddress = 0U;
-    lastAddress  = 0U;
+    lastAddress = 0U;
 }
 /**
  * @brief destructor
  */
-StandardHeap::~StandardHeap(){
-    lastAddress  = 0U;
+StandardHeap::~StandardHeap() {
+    lastAddress = 0U;
     firstAddress = 0U;
-};
+}
 
 
 /**
  * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
  * @return a pointer to the allocated memory or NULL if the allocation fails.
  */
-void *StandardHeap::Malloc(const uint32 size){
+/*lint -e{586} use of malloc function (deprecated) */
+void *StandardHeap::Malloc(const uint32 size) {
     //void *pointer = malloc(size);
     //void *pointer = new char8[size];
 
@@ -72,19 +73,24 @@ void *StandardHeap::Malloc(const uint32 size){
         pointer = malloc(static_cast<osulong>(size));
     }
 
+    if (pointer != NULL) {
 
-    /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-     * in order to be able to update the range of addresses provided by this heap
-     * uintp is an integer type that has by design the same span as a pointer in all systems*/
-    uintp address = reinterpret_cast<uintp>(pointer);
-    if ((firstAddress > address ) || (firstAddress == 0U)){
-        firstAddress = address;
-    }
-    address += size;
-    if ((lastAddress  < address ) || (lastAddress  == 0U)) {
-        lastAddress = address;
-    }
+        /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
+         * in order to be able to update the range of addresses provided by this heap
+         * uintp is an integer type that has by design the same span as a pointer in all systems*/
+        uintp address = reinterpret_cast<uintp>(pointer);
+        if ((firstAddress > address) || (firstAddress == 0U)) {
+            firstAddress = address;
+        }
+        address += size;
+        if ((lastAddress < address) || (lastAddress == 0U)) {
+            lastAddress = address;
+        }
 
+    }
+    else {
+        REPORT_LOG_MESSAGE(OSError, "Error: malloc()")
+    }
     return pointer;
 
 }
@@ -93,7 +99,8 @@ void *StandardHeap::Malloc(const uint32 size){
  * @brief free the pointer data and its associated memory.
  * @param data the data to be freed.
  */
-void StandardHeap::Free(void *&data){
+/*lint -e{586} use of free function (deprecated) */
+void StandardHeap::Free(void *&data) {
     if (data != NULL) {
         free(data);
     }
@@ -102,7 +109,9 @@ void StandardHeap::Free(void *&data){
 //    free(data);
 }
 
-void *StandardHeap::Realloc(void *&data,const uint32 newSize) {
+/*lint -e{586} use of realloc function (deprecated) */
+void *StandardHeap::Realloc(void *&data,
+                            const uint32 newSize) {
 
     if (data == NULL) {
         data = StandardHeap::Malloc(newSize);
@@ -113,44 +122,84 @@ void *StandardHeap::Realloc(void *&data,const uint32 newSize) {
         }
         else {
             data = realloc(data, static_cast<osulong>(newSize));
+            if (data != NULL) {
+                /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
+                 * in order to be able to update the range of addresses provided by this heap
+                 * uintp is an integer type that has by design the same span as a pointer in all systems*/
+                uintp address = reinterpret_cast<uintp>(data);
+                if ((firstAddress > address) || (firstAddress == 0U)) {
+                    firstAddress = address;
+                }
+                address += newSize;
+                if ((lastAddress < address) || (lastAddress == 0U)) {
+                    lastAddress = address;
+                }
+            }
+            else {
+                REPORT_LOG_MESSAGE(OSError, "Error: realloc()")
+            }
         }
     }
     return data;
 
 }
 
-void *StandardHeap::Duplicate(const void * const data, uint32 size){
+/*lint -e{925} cast pointer to pointer required */
+void *StandardHeap::Duplicate(const void * const data,
+                              uint32 size) {
 
     void *duplicate = NULL_PTR(void *);
 
     // check if 0 zerminated copy to be done
-    if (size == 0U ){
+    if (size == 0U) {
+        const char8* inputData = static_cast<const char8 *>(data);
+        size = strlen(inputData);
         if (data != NULL) {
-            duplicate = strdup(static_cast<const char *>(data));
+            duplicate = strdup(inputData);
         }
-    } else { // strdup style
+        if (duplicate == NULL) {
+            REPORT_LOG_MESSAGE(OSError, "Error: strdup()")
+        }
+    }
+    else { // strdup style
         duplicate = StandardHeap::Malloc(size);
-        if (duplicate != NULL){
-            const char8 *source      = static_cast<const char *>(data);
-                  char8 *destination = static_cast<char *>(duplicate);
+        if (duplicate != NULL) {
+            const char8 *source = static_cast<const char8 *>(data);
+            char8 *destination = static_cast<char8 *>(duplicate);
             uint32 i;
-            for (i=0;i<size;i++){
+            for (i = 0u; i < size; i++) {
                 *destination = *source;
                 destination++;
                 source++;
             } //copy loop
         } //check Malloc success
+        else {
+            REPORT_LOG_MESSAGE(OSError, "Error: malloc()")
+        }
     } // copy bound by size
+
+    if (duplicate != NULL) {
+        /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
+         * in order to be able to update the range of addresses provided by this heap
+         * uintp is an integer type that has by design the same span as a pointer in all systems*/
+        uintp address = reinterpret_cast<uintp>(duplicate);
+        if ((firstAddress > address) || (firstAddress == 0U)) {
+            firstAddress = address;
+        }
+        address += size;
+        if ((lastAddress < address) || (lastAddress == 0U)) {
+            lastAddress = address;
+        }
+    }
 
     return duplicate;
 }
-
 
 /**
  * @brief start of range of memory addresses served by this heap.
  * @return first memory address
  */
-uintp StandardHeap::FirstAddress()const {
+uintp StandardHeap::FirstAddress() const {
     return firstAddress;
 }
 
@@ -158,19 +207,17 @@ uintp StandardHeap::FirstAddress()const {
  * @brief end (inclusive) of range of memory addresses served by this heap.
  * @return last memory address
  */
-uintp StandardHeap::LastAddress()const {
+uintp StandardHeap::LastAddress() const {
     return lastAddress;
 }
 
 /**
  * @brief Returns the name of the heap
  * @return name of the heap
- *
  */
-const char8 *StandardHeap::Name()const {
+const char8 *StandardHeap::Name() const {
     return "StandardHeap";
 }
 
 }
 
-	

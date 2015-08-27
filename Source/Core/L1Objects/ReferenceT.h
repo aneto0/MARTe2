@@ -52,7 +52,7 @@ public:
      * @brief Creates an empty reference or a reference to base type T.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    ReferenceT(HeapI * const heap);
+    ReferenceT(HeapManager::HeapI * const heap);
 
     /**
      * @brief Creates a reference to an object that inherits from base type T.
@@ -83,7 +83,7 @@ public:
      * @param[in] heap the heap responsible for allocating the object.
      */
     ReferenceT(const char8* const typeName,
-               HeapI* const heap = static_cast<HeapI *>(NULL));
+               HeapManager::HeapI* const heap = static_cast<HeapManager::HeapI *>(NULL));
 
     /**
      * @brief Removes the reference to the underlying object. @see RemoveReference.
@@ -183,7 +183,7 @@ ReferenceT<T>::ReferenceT() :
 /*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
  * i.e. downcasting is necessary.*/
 template<typename T>
-ReferenceT<T>::ReferenceT(HeapI* const heap) :
+ReferenceT<T>::ReferenceT(HeapManager::HeapI* const heap) :
         Reference() {
     Init();
     T *p = new (heap) T;
@@ -232,7 +232,7 @@ ReferenceT<T>::ReferenceT(const ReferenceT<T>& sourceReference) :
  * i.e. downcasting is necessary.*/
 template<typename T>
 ReferenceT<T>::ReferenceT(const char8* const typeName,
-                          HeapI* const heap) :
+                          HeapManager::HeapI* const heap) :
         Reference(typeName, heap) {
     typeTObjectPointer = static_cast<T *>(NULL);
     if (Reference::IsValid()) {

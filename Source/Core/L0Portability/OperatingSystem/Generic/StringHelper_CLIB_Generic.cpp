@@ -27,6 +27,8 @@
 
 #ifndef LINT
 #include <string.h>
+#else
+#include "../Linux/lint-linux.h"
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -45,35 +47,51 @@
 
 namespace StringHelper {
 
-bool Concatenate(char8 *destination, const char8 *source) {
+bool Concatenate(char8 *destination,
+                 const char8 *source) {
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
-        if (strcat(destination, source) != NULL){
-            ret = true;
+        ret = strcat(destination, source) != NULL;
+        if (!ret) {
+            REPORT_LOG_MESSAGE(OSError, "Error: strcat()")
         }
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
 
-bool ConcatenateN(char8 *destination, const char8 *source,const uint32 size) {
+bool ConcatenateN(char8 *destination,
+                  const char8 *source,
+                  const uint32 size) {
     bool ret = false;
     if ((source != NULL) && (destination != NULL)) {
-        if (strncat(destination, source, static_cast<osulong>(size)) != NULL){
-            ret = true;
+        ret = strncat(destination, source, static_cast<osulong>(size)) != NULL;
+        if (!ret) {
+            REPORT_LOG_MESSAGE(OSError, "Error: strncat()")
         }
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
 
-const char8 *SearchChar(const char8 *string, const char8 c) {
+const char8 *SearchChar(const char8 *string,
+                        const char8 c) {
     const char8 *ret = static_cast<const char8 *>(NULL);
     if (string != NULL) {
         ret = strchr(string, c);
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+    }
     return ret;
 }
 
-int32 Compare(const char8 *string1, const char8 *string2) {
+int32 Compare(const char8 *string1,
+              const char8 *string2) {
     int32 ret = -1;
     if ((string1 != NULL) && (string2 != NULL)) {
         ret = strcmp(string1, string2);
@@ -87,11 +105,15 @@ int32 Compare(const char8 *string1, const char8 *string2) {
             ret = 0; //ret = 0 if string1=string2
         }
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+    }
     return ret;
 }
 
-int32 CompareN(const char8 *string1, const char8 *string2,
-                             const uint32 size) {
+int32 CompareN(const char8 *string1,
+               const char8 *string2,
+               const uint32 size) {
     int32 ret = -1;
     if ((string1 != NULL) && (string2 != NULL)) {
         ret = strncmp(string1, string2, static_cast<osulong>(size));
@@ -105,32 +127,51 @@ int32 CompareN(const char8 *string1, const char8 *string2,
             ret = 0;
         }
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+    }
     return ret;
 }
 
-bool Copy(char8 *destination, const char8 *source) {
+bool Copy(char8 *destination,
+          const char8 *source) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
         ret = (strcpy(destination, source) != NULL);
+        if (!ret) {
+            REPORT_LOG_MESSAGE(OSError, "Error: strcpy()");
+        }
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
 
-bool CopyN(char8 *destination, const char8 *source,
-                         const uint32 size) {
+bool CopyN(char8 *destination,
+           const char8 *source,
+           const uint32 size) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
-        ret =
-                (strncpy(destination, source, static_cast<osulong>(size))
-                        != NULL);
+        ret = (strncpy(destination, source, static_cast<osulong>(size)) != NULL);
+        if (!ret) {
+            REPORT_LOG_MESSAGE(OSError, "Error: strncpy()");
+        }
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
 
-int32 SearchIndex(const char8 *string1, const char8 *string2) {
+int32 SearchIndex(const char8 *string1,
+                  const char8 *string2) {
     int32 ret = -1;
     if ((string1 != NULL) && (string2 != NULL)) {
         ret = static_cast<int32>(strcspn(string1, string2));
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
@@ -140,42 +181,60 @@ uint32 Length(const char8 *string) {
     if (string != NULL) {
         ret = static_cast<uint32>(strlen(string));
     }
-    return ret;
-}
-
-const char8 *SearchChars(const char8 *string1,
-                                       const char8 *string2) {
-    const char8 *ret = static_cast<const char8 *>(NULL);
-    if ((string1 != NULL) && (string2 != NULL)) {
-        ret = strpbrk(string1, string2);
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
 
-const char8 *SearchLastChar(const char8 *string, char8 c) {
+const char8 *SearchChars(const char8 *string1,
+                         const char8 *string2) {
+    const char8 *ret = static_cast<const char8 *>(NULL);
+    if ((string1 != NULL) && (string2 != NULL)) {
+        ret = strpbrk(string1, string2);
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+    }
+    return ret;
+}
+
+const char8 *SearchLastChar(const char8 *string,
+                            char8 c) {
     const char8 *ret = static_cast<const char8 *>(NULL);
     if (string != NULL) {
         ret = strrchr(string, c);
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
 
 const char8 *SearchString(const char8 *string,
-                                        const char8 *substring) {
+                          const char8 *substring) {
     const char8 *ret = static_cast<const char8 *>(NULL);
     if ((string != NULL) && (substring != NULL)) {
         ret = strstr(string, substring);
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+    }
     return ret;
 }
 
-bool SetChar(char8 *const string,const uint32 size, const char8 c) {
+bool SetChar(char8 * const string,
+             const uint32 size,
+             const char8 c) {
     bool ret = false;
     if ((string != NULL) && (size > 0u)) {
         void *resetString = memset(string, c, static_cast<osulong>(size));
         if (resetString == string) {
             ret = true;
         }
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
     }
     return ret;
 }

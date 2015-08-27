@@ -7,6 +7,8 @@
  * Justification: reason why the rule does not apply
  */
 
+
+
 /* 
  * Disable all errors from misra which are related to external libraries not under our control
  */
@@ -68,7 +70,29 @@
  * Justification: Not applicable to a framework
  */
 /* global macro not referenced */
--esym(755,REPORT_ERROR,REPORT_ERROR_FULL)
+-esym(755,REPORT_LOG_MESSAGE,REPORT_LOG_MESSAGE_FULL)
+
+/*
+ * Local macro not referenced
+ */
+-esym(750,ATOMIC_H_)
+-esym(750,ENDIANITY_H_)
+-esym(750,TYPEDESCRIPTOR_H_)
+-esym(750,FORMATDESCRIPTOR_H_)
+-esym(750,ANYTYPE_H_)
+
+/*
+ * Local declarator not referenced 
+ */
+-esym(752,TypeDefinition::*)
+-esym(752,Notation::*)
+
+/*
+ * Local class member not referenced
+ */
+-esym(754,FormatDescriptor::*)
+
+
 
 /* global typedef not referenced */
 -esym(756,intptr,Colours)
@@ -77,7 +101,7 @@
 -esym(758,SFTestType)
 /* global struct not referenced */
 -esym(768,TimeValues::*)
--esym(768,ErrorInformation::*)
+-esym(768,LogInformation::*)
 -esym(768,isObject)
 -esym(768,IBasicConsole::*)
 -esym(768,ExceptionHandler::*)
@@ -99,11 +123,7 @@
 -esym(1715,FastMath::*)
 -esym(1715,ExceptionHandler::*)
 
-/*
- * Rule 0-1-10 
- * Justfication: Not applicable to a framework
- */
--esym(714,ErrorManagement::*)
+
 /* member function not referenced */
 -esym(1714,Sleep::*)
 -esym(1714,HighResolutionTimer::*)
@@ -112,7 +132,7 @@
 -esym(1714,Endianity::*)
 -esym(1714,Atomic::*)
 -esym(1714,Flags::*) 
--esym(1714,Error::*)
+-esym(1714,Logger::*)
 -esym(1714,Processor::*)
 -esym(1714,TimeoutType::*)
 -esym(1714,ProcessorType::*)
@@ -125,7 +145,7 @@
 -esym(1714,ExceptionHandler::*)
 -esym(1714,ThreadInformation::*)
 -esym(1714,Memory::*)
--esym(1714,ErrorManagement::*)
+-esym(1714,Logger::*)
 -esym(1714,LinkedListable::*)
 -esym(1714,LinkedListHolder::*)
 -esym(1714,ClassProperties::*)
@@ -139,6 +159,19 @@
 -esym(1714,ReferenceContainerFilterObjectName::*)
 -esym(1714,ReferenceContainerFilterReferences::*)
 -esym(1714,ReferenceContainerFilterObjectName::*)
+-esym(1714,TypeDefinition::AnyType::*)
+-esym(1714,FormatDescriptor::*)
+
+
+/*
+ * Rule 0-1-10 
+ * Symbol not referenced
+ * Justfication: Not applicable to a framework
+ */
+-esym(714,Logger::*)
+-esym(714,HeapManager::*)
+-esym(714,Sleep::*)
+-esym(714,Threads::*)
 
 
 
@@ -215,7 +248,6 @@
 -esym(9141,Colours)
 -esym(9141,Endianity)
 -esym(9141,Endianity::*)
--esym(9141,Error)
 -esym(9141,ErrorType)
 -esym(9141,EventSem::*)
 -esym(9141,EventSemOSProperties)
@@ -263,8 +295,8 @@
 -esym(9141,ExceptionHandler)
 -esym(9141,Memory)
 -esym(9141,Memory::*)
--esym(9141,ErrorManagement)
--esym(9141,ErrorManagement::*)
+-esym(9141,Logger)
+-esym(9141,Logger::*)
 -esym(9141,Iterator)
 -esym(9141,SearchFilter)
 -esym(9141,SortFilter)
@@ -337,7 +369,7 @@
  */
 -esym(1960, TimeoutType::SetTimeoutSec*)
 -esym(1960, TimeoutType::SetTimeoutHighResolutionTimerTicks*)
--esym(1960, ErrorManagement::NULLErrorMessageProcessFunction*)
+-esym(1960, Logger::NullLogMessageProcessFunction*)
 -esym(1960, ReferenceT<<1>>::Init*)
 -esym(1960, ReferenceT<<1>>::RemoveReference*)
 

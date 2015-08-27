@@ -44,7 +44,7 @@ class Object;
  * @param[in] heap the desired heap memory area where the object will be created.
  * @return a pointer to the created object.
  */
-typedef Object *(ObjectBuildFn)(HeapI* const);
+typedef Object *(ObjectBuildFn)(HeapManager::HeapI* const);
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/

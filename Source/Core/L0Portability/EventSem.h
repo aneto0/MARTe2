@@ -35,6 +35,7 @@
 #include "ErrorType.h"
 #include "TimeoutType.h"
 #include "GeneralDefinitions.h"
+#include "Logger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -148,7 +149,7 @@ private:
     /**
      * Operating system specific properties to be used by the operating system specific implementation
      */
-    EventSemOSProperties *osProperties;
+    EventSemHandle handle;
 };
 
 /*---------------------------------------------------------------------------*/

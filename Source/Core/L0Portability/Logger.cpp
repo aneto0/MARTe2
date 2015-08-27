@@ -1,8 +1,8 @@
 /**
- * @file LogManagement.cpp
- * @brief Source file for class LogManagement
- * @date 24/08/2015
- * @author Giuseppe Ferrò
+ * @file Logger.cpp
+ * @brief Source file for class Logger
+ * @date 25/ago/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class LogManagement (public, protected, and private). Be aware that some 
+ * the class Logger (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "LogManagement.h"
+#include "Logger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,10 +42,10 @@
 
 
 
-namespace LogManagement {
+namespace Logger {
 
 
-static inline void NullLogMessageProcessFunction(const LogInformation &errorInfo,
+void NullLogMessageProcessFunction(const LogInformation &errorInfo,
                                                  const char8 * const errorDescription) {
 }
 
@@ -99,7 +99,7 @@ const char8 *ToName(const ErrorType errorCode) {
 void ReportLogMessage(const ErrorType code,
                  const char8 * const errorDescription,
                  const char8 * const fileName,
-                 const uint16 lineNumber,
+                 const int16 lineNumber,
                  const char8 * const functionName) {
     LogInformation logInfo;
     logInfo.threadId = InvalidThreadIdentifier;
@@ -120,13 +120,12 @@ void ReportLogMessage(const ErrorType code,
 void ReportLogMessageFullContext(const ErrorType code,
                             const char8 * const errorDescription,
                             const char8 * const fileName,
-                            const uint16 lineNumber,
+                            const int16 lineNumber,
                             const char8 * const functionName) {
     LogInformation logInfo;
     logInfo.threadId = InvalidThreadIdentifier;
     logInfo.objectPointer = static_cast<void*>(NULL);
     logInfo.className       = static_cast<const char8 *>(NULL);
-    /*lint -e{9119} Code is guaranteed to be always less than 8 bit */
     logInfo.header.errorType = code;
     logInfo.header.lineNumber = lineNumber;
     logInfo.fileName = fileName;

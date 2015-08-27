@@ -83,184 +83,228 @@ MutexSem::MutexSem() {
     /*lint -e{1732} -e{1733} no default assignment and no default copy constructor.
      *This is safe since none of the struct members point to dynamically allocated memory*/
     /*lint -e{1713} with the meaning of the () to initialise a struct is clear*/
-    osProperties = new MutexSemOSProperties();
-    osProperties->closed = true;
-    osProperties->recursive = false;
-    osProperties->references = 1u;
-    osProperties->referencesMux = 0;
+    handle = new MutexSemOSProperties();
+    handle->closed = true;
+    handle->recursive = false;
+    handle->references = 1u;
+    handle->referencesMux = 0;
 }
 
 MutexSem::MutexSem(MutexSem &source) {
-    osProperties = source.GetOSProperties();
-    while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
+    handle = source.GetOSProperties();
+    while (!Atomic::TestAndSet(&handle->referencesMux)) {
     }
-    //Capture the case that it got the osProperties while the source semaphore
+    //Capture the case that it got the handle while the source semaphore
     //was already being destructed...
-    if (osProperties == static_cast<MutexSemOSProperties *>(NULL)) {
+    if (handle == static_cast<MutexSemOSProperties *>(NULL)) {
         MutexSem();
     }
     else {
-        osProperties->references++;
-        osProperties->referencesMux = 0;
+        handle->references++;
+        handle->referencesMux = 0;
     }
 }
 
 /*lint -e{1551} only C calls are performed. No exception can be raised*/
 MutexSem::~MutexSem() {
-    if (osProperties != static_cast<MutexSemOSProperties *>(NULL)) {
-        while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
+    if (handle != static_cast<MutexSemOSProperties *>(NULL)) {
+        while (!Atomic::TestAndSet(&handle->referencesMux)) {
         }
-        if (osProperties->references == 1u) {
-            if (!osProperties->closed) {
+        if (handle->references == 1u) {
+            if (!handle->closed) {
                 /*lint -e{534} possible closure failure is not handled in the destructor.*/
                 Close();
             }
-            /*lint -esym(1578, MutexSem::osProperties) the variable is correctly freed here when this is the last reference alive.*/
-            delete osProperties;
-            osProperties = static_cast<MutexSemOSProperties *>(NULL);
+            /*lint -esym(1578, MutexSem::handle) the variable is correctly freed here when this is the last reference alive.*/
+            delete handle;
+            handle = static_cast<MutexSemOSProperties *>(NULL);
         }
         else {
-            osProperties->references--;
-            osProperties->referencesMux = 0;
+            handle->references--;
+            handle->referencesMux = 0;
         }
     }
 }
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
- * reference to osProperties*/
+ * reference to handle*/
 bool MutexSem::Create(const bool &recursive) {
-    while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
+    while (!Atomic::TestAndSet(&handle->referencesMux)) {
     }
-    osProperties->closed = false;
-    bool ok = (pthread_mutexattr_init(&osProperties->mutexAttributes) == 0);
+    handle->closed = false;
+    bool ok = (pthread_mutexattr_init(&handle->mutexAttributes) == 0);
     if (ok) {
-        ok = (pthread_mutexattr_setprotocol(&osProperties->mutexAttributes, PTHREAD_PRIO_INHERIT) == 0);
+        ok = (pthread_mutexattr_setprotocol(&handle->mutexAttributes, PTHREAD_PRIO_INHERIT) == 0);
 
         if (ok) {
             if (recursive) {
                 //The deadlock condition causes a crash at operating system level.
-                ok = (pthread_mutexattr_settype(&osProperties->mutexAttributes, PTHREAD_MUTEX_RECURSIVE) == 0);
-                osProperties->recursive = true;
+                ok = (pthread_mutexattr_settype(&handle->mutexAttributes, PTHREAD_MUTEX_RECURSIVE) == 0);
+                handle->recursive = true;
             }
             else {
                 //This was pthread PTHREAD_MUTEX_RECURSIVE but it was crashing when a deadlock was forced on purpose
                 //with PTHREAD_MUTEX_NORMAL the same thread cannot lock the semaphore without unlocking it first.
-                ok = (pthread_mutexattr_settype(&osProperties->mutexAttributes, PTHREAD_MUTEX_NORMAL) == 0);
-                osProperties->recursive = false;
+                ok = (pthread_mutexattr_settype(&handle->mutexAttributes, PTHREAD_MUTEX_NORMAL) == 0);
+                if (!ok) {
+                    REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutexattr_settype()")
+                }
+                handle->recursive = false;
             }
         }
-        if (ok) {
-            ok = (pthread_mutex_init(&osProperties->mutexHandle, &osProperties->mutexAttributes) == 0);
+        else {
+            REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutexattr_setprotocol()")
         }
+
+
+        if (ok) {
+            ok = (pthread_mutex_init(&handle->mutexHandle, &handle->mutexAttributes) == 0);
+            if (!ok) {
+                REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutex_init()")
+            }
+        }
+
     }
-    osProperties->referencesMux = 0;
+    else {
+        REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutexattr_init()")
+    }
+    handle->referencesMux = 0;
     return ok;
 }
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
- * reference to osProperties*/
+ * reference to handle*/
 bool MutexSem::Close() {
     bool ok = true;
-    if (!osProperties->closed) {
-        osProperties->closed = true;
+    if (!handle->closed) {
+        handle->closed = true;
         /*lint -e{534} the UnLock is allowed to fail (and it will if the semaphore was never used).
          *The semaphore has to be closed whatever the result.*/
         UnLock();
-        ok = (pthread_mutexattr_destroy(&osProperties->mutexAttributes) == 0);
+        ok = (pthread_mutexattr_destroy(&handle->mutexAttributes) == 0);
         if (ok) {
-            ok = (pthread_mutex_destroy(&osProperties->mutexHandle) == 0);
+            ok = (pthread_mutex_destroy(&handle->mutexHandle) == 0);
+            if (!ok) {
+                REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutex_destroy()")
+            }
+        }
+        else {
+            REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutexattr_destroy()")
         }
     }
     return ok;
 }
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
- * reference to osProperties*/
+ * reference to handle*/
 /*lint -e{454} -e{456} false positive, the semaphore will be unlocked by the UnLock function*/
 ErrorType MutexSem::Lock() {
     ErrorType err = NoError;
-    if (!osProperties->closed) {
+    if (!handle->closed) {
         bool okCancel = (pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, static_cast<int32 *>(NULL)) == 0);
-        bool okLock = (pthread_mutex_lock(&osProperties->mutexHandle) == 0);
-        if ((!okCancel) || (!okLock)) {
+        bool okLock = (pthread_mutex_lock(&handle->mutexHandle) == 0);
+
+        if (!okCancel) {
             err = OSError;
+            REPORT_LOG_MESSAGE(err, "Error: pthread_setcancelstate()")
+        }
+        if (!okLock) {
+            err = OSError;
+            REPORT_LOG_MESSAGE(err, "Error: pthread_mutex_lock()")
         }
     }
     else {
-        err = OSError;
+        err = FatalError;
+        REPORT_LOG_MESSAGE(err, "Error: the semaphore handle is closed")
     }
 
     return err;
 }
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
- * reference to osProperties*/
+ * reference to handle*/
 ErrorType MutexSem::Lock(const TimeoutType &timeout) {
-    bool ok = !osProperties->closed;
+    bool ok = !handle->closed;
     ErrorType err = OSError;
     if (timeout == TTInfiniteWait) {
         err = Lock();
     }
-    else if (ok) {
-        struct timespec timesValues;
-        timeb tb;
-        ok = (ftime(&tb) == 0);
-
+    else {
         if (ok) {
-            float64 sec = static_cast<float64>(timeout.GetTimeoutMSec());
-            sec += static_cast<float64>(tb.millitm);
-            sec *= 1e-3;
-            sec += static_cast<float64>(tb.time);
+            struct timespec timesValues;
+            timeb tb;
+            ok = (ftime(&tb) == 0);
 
-            float64 roundValue = floor(sec);
-            timesValues.tv_sec = static_cast<int32>(roundValue);
-            float64 nSec = (sec - roundValue);
-            nSec *= 1e9;
-            timesValues.tv_nsec = static_cast<int32>(nSec);
+            if (ok) {
+                float64 sec = static_cast<float64>(timeout.GetTimeoutMSec());
+                sec += static_cast<float64>(tb.millitm);
+                sec *= 1e-3;
+                sec += static_cast<float64>(tb.time);
 
-            ok = (pthread_mutex_timedlock(&osProperties->mutexHandle, &timesValues) == 0);
-            if (!ok) {
-                err = Timeout;
+                float64 roundValue = floor(sec);
+                timesValues.tv_sec = static_cast<int32>(roundValue);
+                float64 nSec = (sec - roundValue);
+                nSec *= 1e9;
+                timesValues.tv_nsec = static_cast<int32>(nSec);
+
+                ok = (pthread_mutex_timedlock(&handle->mutexHandle, &timesValues) == 0);
+                if (!ok) {
+                    err = Timeout;
+                    REPORT_LOG_MESSAGE(err, "Information: timeout occurred")
+                }
+                else {
+                    err = NoError;
+                }
             }
             else {
-                err = NoError;
+                REPORT_LOG_MESSAGE(OSError, "Error: ftime()")
             }
         }
-    }
-    else {
-        err = OSError;
+        else {
+            err = FatalError;
+            REPORT_LOG_MESSAGE(err, "Information: the semaphore handle is closed")
+        }
     }
     return err;
 }
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
- * reference to osProperties*/
+ * reference to handle*/
 bool MutexSem::UnLock() {
     bool ok = false;
-    if (!osProperties->closed) {
+    if (!handle->closed) {
         /*lint -e{455} false positive, locked by the Lock function*/
-        ok = (pthread_mutex_unlock(&osProperties->mutexHandle) == 0);
+        ok = (pthread_mutex_unlock(&handle->mutexHandle) == 0);
         if (ok) {
             ok = (pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, static_cast<int32 *>(NULL)) == 0);
+            if (!ok) {
+                REPORT_LOG_MESSAGE(OSError, "Error: pthread_setcancelstate()")
+            }
         }
+        else {
+            REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutex_unlock()")
+        }
+    }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: the semaphore handle is closed")
     }
     return ok;
 }
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
- * reference to osProperties*/
+ * reference to handle*/
 bool MutexSem::IsRecursive() const {
-    return osProperties->recursive;
+    return handle->recursive;
 }
 
 MutexSemOSProperties * MutexSem::GetOSProperties() {
-    return osProperties;
+    return handle;
 }
 
 bool MutexSem::IsClosed() const {
     bool ok = true;
-    if (osProperties != static_cast<MutexSemOSProperties *>(NULL)) {
-        ok = osProperties->closed;
+    if (handle != static_cast<MutexSemOSProperties *>(NULL)) {
+        ok = handle->closed;
     }
     return ok;
 }

@@ -41,9 +41,13 @@ OBJSX=  EndianityTest.x \
 	LoadableLibraryTest.x \
 	FastMathTest.x \
 	StringPortableTest.x \
+<<<<<<< HEAD
 	LoggerTest.x \
 	StandardHeap_GenericTest.x \
 	HeapManagerTest.x
+=======
+	LoggerTest.x
+>>>>>>> branch 'Mayor_l0_refactor' of https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git
 
 PACKAGE=Core
 ROOT_DIR=../../..

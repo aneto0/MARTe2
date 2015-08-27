@@ -68,5 +68,15 @@ typedef unsigned long osulong;
  */
 static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
 
+struct MutexSemOSProperties;
+#define MutexSemHandle MutexSemOSProperties*
+
+struct EventSemOSProperties;
+#define EventSemHandle EventSemOSProperties*
+
+struct BasicConsoleOSProperties;
+#define BasicConsoleHandle BasicConsoleOSProperties*
+
+
 #endif /* GENERALDEFINITIONSOS_H_ */
 

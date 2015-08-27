@@ -1,5 +1,5 @@
 /**
- * @file ThreadsDatabase.h
+ * @file ThreadsDatabase_Generic.h
  * @brief Header file for class ThreadsDatabase
  * @date 17/06/2015
  * @author Giuseppe Ferr�
@@ -34,7 +34,7 @@
 
 #include "ThreadInformation.h"
 #include "FastPollingMutexSem.h"
-
+#include "Logger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -122,6 +122,6 @@ namespace ThreadsDatabase {
      */
     bool AllocMore(void);
 
-};
+}
 
 #endif /* THREADSDATABASE_H_ */

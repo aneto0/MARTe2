@@ -31,12 +31,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "ErrorType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace LogManagement {
+namespace Logger {
 
 /**
  @brief Information structure associated to the error.
@@ -51,7 +51,7 @@ struct LogInformation {
         /**
          * The error code.
          */
-        ErrorType errorType :8;
+        ErrorType errorType;
 
         /**
          * The error line number.

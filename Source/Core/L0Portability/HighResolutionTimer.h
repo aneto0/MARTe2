@@ -32,7 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-
+#include "Logger.h"
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
+#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,HighResolutionTimerOS.h)
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -88,12 +90,11 @@ namespace HighResolutionTimer {
      * @return true if the operating system calls returns with no errors.
      */
     inline bool GetTimeStamp(TimeValues &date);
-};
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,HighResolutionTimerOS.h)
+
 
 #endif /* HIGHRESOLUTIONTIME_H_ */

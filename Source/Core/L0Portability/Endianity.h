@@ -51,6 +51,7 @@
  * the exchange of data with external producers that might have a different endianity. Examples
  * are drivers and network interfaces.
  */
+
 namespace Endianity {
 
 /**
@@ -73,6 +74,8 @@ inline uint8 Type();
  * @brief Converts a number (float64) from big endian to the target operating system endianity
  * @param[in,out] x the number to convert
  */
+/*lint -e(766) the header file EndianityA.h is not used here. This file is just for declaration and documentation. */
+/*lint -e(762) these declarations are redundant. */
 inline void FromBigEndian(volatile float64 &x);
 
 /**
@@ -616,7 +619,7 @@ inline void MemCopyToLittleEndian(int16 *dest,
                                   uint32 size);
 
 }
-;
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

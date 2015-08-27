@@ -61,9 +61,15 @@ ThreadInformation::ThreadInformation(const ThreadFunctionType threadFunction,
     this->userData = threadData;
     if (threadName != NULL) {
         this->name = StringHelper::StringDup(threadName);
+        if (this->name == NULL) {
+            REPORT_LOG_MESSAGE(FatalError, "Error: duplication of thread name failed")
+        }
     }
     else {
         this->name = StringHelper::StringDup("Unknown");
+        if (this->name == NULL) {
+            REPORT_LOG_MESSAGE(FatalError, "Error: duplication of thread name (Unknown) failed")
+        }
     }
     threadId = InvalidThreadIdentifier;
     priorityClass = Threads::UnknownPriorityClass;
@@ -99,7 +105,7 @@ void ThreadInformation::UserThreadFunction() const {
     }
 }
 
-const char8 *ThreadInformation::ThreadName() const{
+const char8 *ThreadInformation::ThreadName() const {
     return name;
 }
 

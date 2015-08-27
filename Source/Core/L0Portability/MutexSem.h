@@ -35,6 +35,7 @@
 #include "GeneralDefinitions.h"
 #include "TimeoutType.h"
 #include "ErrorType.h"
+#include "Logger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -132,7 +133,7 @@ private:
     /**
      * Operating system specific properties to be used by the operating system specific implementation
      */
-    MutexSemOSProperties *osProperties;
+    MutexSemHandle handle;
 };
 
 /*---------------------------------------------------------------------------*/

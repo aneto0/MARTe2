@@ -1,8 +1,8 @@
 /**
  * @file StandardHeap_Generic.h
  * @brief Header file for class StandardHeap_Generic
- * @date Aug 13, 2015
- * @author fsartori
+ * @date 13/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L0PORTABILITY_OPERATINGSYSTEM_GENERIC_STANDARDHEAP_GENERIC_H_
-#define SOURCE_CORE_L0PORTABILITY_OPERATINGSYSTEM_GENERIC_STANDARDHEAP_GENERIC_H_
+#ifndef STANDARDHEAP_GENERIC_H_
+#define STANDARDHEAP_GENERIC_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -38,34 +38,38 @@
 /*---------------------------------------------------------------------------*/
 namespace HeapManager{
 /**
- * @brief TBD
+ * @brief Implementation of standard heap memory management functions.
+ * @details These functions allows to allocate, reallocate and free portion of
+ * memory dynamically in the heap memory area using the standard C functions
+ * (malloc, realloc, free, ...).
  */
 class StandardHeap: public HeapI {
 
     /**
-     * @brief minimum of address returned by malloc.
+     * @brief The minor address returned by a Malloc function.
      */
     uintp firstAddress;
     /**
-     * @brief maximum of address of last byte of memory returned by malloc
+     * @brief The greater address returned by a Malloc function
      */
     uintp lastAddress;
 public:
 
     /**
-     * @brief constructor
+     * @brief Default constructor.
      */
-    StandardHeap();    /**
-     * @brief constructor
-     */
+    StandardHeap();
 
+    /**
+     * @brief Destructor.
+     */
     virtual ~StandardHeap();
 
 
     /**
      * @brief Allocates a portion of memory on the heap.
      * @param[in] size The size in byte of the memory to allocate.
-     * @return The pointer to the allocated memory. NULL if allocation failed.
+     * @return The pointer to the allocated memory. NULL if allocation fails.
      */
     virtual void *Malloc(const uint32 size);
 
@@ -93,28 +97,29 @@ public:
      * @param[in] size size of memory to allocate. if size = 0 then memory is copied until a zero is found
      * @return The pointer to the new allocated memory which contains a copy of s.
      */
+    /*lint -e(1735) the derived classes shall use this default parameter or no default parameter at all*/
     virtual void *Duplicate(const void * const data, uint32 size=0U);
 
     /**
-     * @brief start of range of memory addresses served by this heap.
-     * @return first memory address
+     * @brief Returns the start of range of memory addresses served by this heap.
+     * @return The start of range of memory addresses served by this heap.
      */
     virtual uintp FirstAddress()const;
 
     /**
-     * @brief end (inclusive) of range of memory addresses served by this heap.
-     * @return last memory address
+     * @brief Returns the end (inclusive) of range of memory addresses served by this heap.
+     * @return The end (inclusive) of range of memory addresses served by this heap.
      */
     virtual uintp LastAddress()const;
 
     /**
      * @brief Returns the name of the heap
-     * @return name of the heap
+     * @return The name of the heap
      */
     virtual const char8 *Name()const;
 
 } ;
 
 }
-#endif
+#endif /*STANDARDHEAP_GENERIC_H_ */
 

@@ -1,5 +1,5 @@
 /**
- * @file ThreadsDatabase.cpp
+ * @file ThreadsDatabase_Generic.cpp
  * @brief Source file for class ThreadsDatabase
  * @date 17/06/2015
  * @author Giuseppe Ferr�
@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ThreadsDatabase.h"
-
 #include "GeneralDefinitions.h"
 #include "HeapManager.h"
 #include "StringHelper.h"
@@ -49,18 +48,17 @@ static FastPollingMutexSem internalMutex;
 /**
  * Actual number of entries stored in the database.
  */
-static uint32              nOfEntries = 0u;
+static uint32 nOfEntries = 0u;
 
 /**
  * Maximum number of entries that can be stored in the database.
  */
-static uint32              maxNOfEntries = 0u;
+static uint32 maxNOfEntries = 0u;
 
 /**
  * Vector of ThreadInformation pointers.
  */
-static ThreadInformation **entries = static_cast<ThreadInformation **>(NULL);;
-
+static ThreadInformation **entries = static_cast<ThreadInformation **>(NULL);
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -89,7 +87,9 @@ bool NewEntry(ThreadInformation * const threadInformation) {
                 }
             }
         }
-        //CStaticAssertErrorCondition(FatalError,"TDB:TDB_NewEntry could not find empty slot!!");
+        else {
+            REPORT_LOG_MESSAGE(FatalError, "Error: cannot find an empty slot")
+        }
     }
     return ok;
 }
@@ -107,7 +107,10 @@ ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId) {
 
                 // free at the end
                 if (nOfEntries == 0u) {
-                    HeapManager::Free(reinterpret_cast<void *&>(entries));
+                    bool ok = HeapManager::Free(reinterpret_cast<void *&>(entries));
+                    if (!ok) {
+                        REPORT_LOG_MESSAGE(FatalError, "Error: database memory cleanup failed")
+                    }
                     //For AllocMore to reallocate again!
                     maxNOfEntries = 0u;
                 }
@@ -118,7 +121,6 @@ ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId) {
         index++;
     }
 
-    //CStaticAssertErrorCondition(FatalError,"TDB:TDB_RemoveEntry could not find/remove entry ThreadIdentifier=%08x ",threadId);
     return threadInfo;
 
 }
@@ -137,8 +139,6 @@ ThreadInformation *GetThreadInformation(const ThreadIdentifier &threadId) {
         }
         index++;
     }
-
-    //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetTII could not find entry ThreadIdentifier=%08x ",threadId);
     return threadInfo;
 }
 
@@ -162,13 +162,15 @@ ThreadIdentifier GetThreadID(const uint32 &n) {
             tid = entries[n]->GetThreadIdentifier();
         }
     }
+    else {
+        REPORT_LOG_MESSAGE(FatalError, "Error: the index in input is greater than the number of deatabase records")
+    }
 
-    //CStaticAssertErrorCondition(FatalError,"TDB:TDB_GetThreadID(%i) mismatch between actual entries and TDB_NOfEntries");
     return tid;
 }
 
 bool GetInfoIndex(ThreadInformation &threadInfoCopy,
-                                   const uint32 &n) {
+                  const uint32 &n) {
     ThreadIdentifier threadId = GetThreadID(n);
     ThreadInformation *threadInfo = GetThreadInformation(threadId);
     if (threadInfo != NULL) {
@@ -178,7 +180,7 @@ bool GetInfoIndex(ThreadInformation &threadInfoCopy,
 }
 
 bool GetInfo(ThreadInformation &threadInfoCopy,
-                              const ThreadIdentifier &threadId) {
+             const ThreadIdentifier &threadId) {
     ThreadInformation *threadInfo = GetThreadInformation(threadId);
     if (threadInfo != NULL) {
         threadInfoCopy.Copy(*threadInfo);
@@ -216,7 +218,7 @@ bool AllocMore() {
                 nOfEntries = 0u;
             }
             else {
-                //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed allocating %i entries",TDB_THREADS_DATABASE_GRANULARITY);
+                REPORT_LOG_MESSAGE(FatalError, "Error: memory allocation for the database failed")
                 ok = false;
             }
         }
@@ -227,7 +229,7 @@ bool AllocMore() {
                 maxNOfEntries += THREADS_DATABASE_GRANULARITY;
             }
             else {
-                //CStaticAssertErrorCondition(FatalError,"TDB:TDB_AllocMore failed re-allocating to %i entries",TDB_THREADS_DATABASE_GRANULARITY+TDB_MaxNOfEntries);
+                REPORT_LOG_MESSAGE(FatalError, "Error: memory reallocation for the database failed")
                 ok = false;
             }
         }

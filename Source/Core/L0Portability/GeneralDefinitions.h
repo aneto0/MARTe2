@@ -102,6 +102,7 @@ struct TimeValues {
     uint32 year;
 };
 
+
 /** Large enough to store a pointer*/
 #ifdef __LP64__
 typedef unsigned long intptr;
@@ -112,6 +113,8 @@ typedef unsigned long long intptr;
 #else
 typedef unsigned long intptr;
 #endif
+
+
 
 #endif /* GENERALDEFINITIONS_H_ */
 
