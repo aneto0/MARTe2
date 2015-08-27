@@ -23,3 +23,5 @@ lcov --remove $OUTPUT_DIR/MARTe2.coverage.info.2 "*gtest*" --output-file $OUTPUT
 
 #Generate the html
 genhtml $OUTPUT_DIR/MARTe2.coverage.info --output-directory $OUTPUT_DIR/cov_html
+
+make -f Makefile.cov clean_gen
