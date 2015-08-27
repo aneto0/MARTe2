@@ -41,6 +41,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+
 namespace TypeDefinition {
 
 template <typename T>
