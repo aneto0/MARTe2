@@ -73,6 +73,15 @@ public:
     inline AnyType(const AnyType &x);
 
     /**
+     * @brief Most General constructor.
+     *
+     * @details It is used as the terminated element in a Printf list.
+     * The data descriptor is void, the pointer null.
+     */
+    inline AnyType(const TypeDescriptor &dataDescriptor, uint8 bitAddress, const void* const dataPointer);
+    inline AnyType(const TypeDescriptor &dataDescriptor, uint8 bitAddress, void* const dataPointer);
+
+    /**
      * @brief Checks if the AnyType is empty.
      * @return true if the data descriptor is VoidType.
      */
@@ -229,6 +238,19 @@ AnyType::AnyType(const AnyType &x) {
     dataDescriptor = x.dataDescriptor;
 }
 
+AnyType::AnyType(const TypeDescriptor &dataDescriptor, uint8 bitAddress, const void* const dataPointer){
+    this->dataDescriptor = dataDescriptor;
+    this->dataDescriptor.isConstant = true;
+    this->dataPointer =  dataPointer;
+    this->bitAddress =  bitAddress;
+}
+
+AnyType::AnyType(const TypeDescriptor &dataDescriptor, uint8 bitAddress, void* const dataPointer){
+    this->dataDescriptor = dataDescriptor;
+    this->dataPointer =  dataPointer;
+    this->bitAddress =  bitAddress;
+}
+
 bool AnyType::IsVoid() const {
     return (dataDescriptor == VoidType);
 }
@@ -358,6 +380,8 @@ AnyType::AnyType(const char8 * const p) {
  * Definition of the void AnyType (empty contructor).
  */
 static const AnyType voidAnyType;
+
+
 
 }
 

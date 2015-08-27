@@ -39,10 +39,29 @@
 
 namespace TypeDefinition {
 
+
 /**
- *  The basic types that can be used.
+ * guarantees that only 4 bits are used
  */
-typedef uint32 BasicType;
+class BasicType{
+
+    uint8 value;
+
+public:
+
+    /**
+     *
+     */
+    BasicType(uint8 x){
+       value = x & 0xF;
+    }
+
+    operator uint8() const {
+        return value ;
+    }
+};
+
+
 
 /**
  * The type is signed.
@@ -104,7 +123,7 @@ struct TypeDescriptor {
      if true then the data is a structure or class and its definition
      has to be found in the ObjectRegistryDatabase
      */
-    bool isStructuredData :1;
+    bool isStructuredData :1;spareBits
 
     /**
      the data is constant - cannot be written to
