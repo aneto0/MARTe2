@@ -123,7 +123,7 @@ struct TypeDescriptor {
      if true then the data is a structure or class and its definition
      has to be found in the ObjectRegistryDatabase
      */
-    bool isStructuredData :1;spareBits
+    bool isStructuredData :1;
 
     /**
      the data is constant - cannot be written to
