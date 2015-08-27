@@ -25,9 +25,8 @@
 ctags : %.cpp %.c %.h
 	ctags -R
 
-
-%.cpp : ../Generic/%_Generic.cpp
-	cp ../Generic/$*_Generic.cpp $*.cpp
+%_Gen.cpp : ../Generic/%_Generic.cpp
+	cp ../Generic/$*_Generic.cpp $*_Gen.cpp
 
 $(BUILD_DIR)/%.o : %.cpp
 	mkdir -p $(BUILD_DIR)
@@ -99,4 +98,6 @@ clean:  $(SUBPROJC)
 	@rm -f $(BUILD_DIR)/*$(ASMEXT)
 	@rm -f $(BUILD_DIR)/*$(GCNOEXT)
 	@rm -f $(BUILD_DIR)/*$(GCDAEXT)
+	@rm -f *_Gen.cpp
+	@rm -f *_Gen.c
 
