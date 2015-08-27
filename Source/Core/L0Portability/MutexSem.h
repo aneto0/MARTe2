@@ -35,7 +35,7 @@
 #include "GeneralDefinitions.h"
 #include "TimeoutType.h"
 #include "ErrorType.h"
-#include "Logger.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -88,20 +88,20 @@ public:
 
     /**
      * @brief Locks the semaphore without timeout (i.e. possibly forever).
-     * @return NoError if the operating system call returns with no errors.
+     * @return ErrorManagement::NoError if the operating system call returns with no errors.
      * @pre the semaphore was successfully created.
      */
-    ErrorType Lock();
+    ErrorManagement::ErrorType Lock();
 
     /**
      * @brief Locks the semaphore up to a maximum period defined by the timeout.
      * @param[in] timeout the maximum time up until when the semaphore will be locked.
-     * @return NoError if the operating system call returns with no errors or
+     * @return ErrorManagement::NoError if the operating system call returns with no errors or
      * Timeout if the time waiting in the Lock (from when the function was called)
      * was greater than the specified timeout.
      * @pre the semaphore was successfully created.
      */
-    ErrorType Lock(const TimeoutType &timeout);
+    ErrorManagement::ErrorType Lock(const TimeoutType &timeout);
 
     /**
      * @brief Unlocks the semaphore.

@@ -41,7 +41,7 @@ OBJSX=  EndianityTest.x \
 	LoadableLibraryTest.x \
 	FastMathTest.x \
 	StringPortableTest.x \
-	LoggerTest.x \
+	ErrorManagementTest.x \
 	StandardHeap_GenericTest.x \
 	HeapManagerTest.x
 

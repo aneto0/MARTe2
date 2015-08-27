@@ -59,16 +59,16 @@ static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
             threadInfo->SetPriorityLevel(0u);
             Threads::SetPriority(Threads::Id(), Threads::NormalPriorityClass, 0u);
             //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
-            ErrorType err = threadInfo->ThreadWait();
+            ErrorManagement::ErrorType err = threadInfo->ThreadWait();
             //Start the user thread
-            if (err == NoError) {
+            if (err == ErrorManagement::NoError) {
                 threadInfo->UserThreadFunction();
 
                 ok = ThreadsDatabase::Lock();
                 if (ok) {
                     ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Threads::Id());
                     if (threadInfo != threadInfo2) {
-                        //CStaticAssertErrorCondition(FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
+                        //CStaticAssertErrorCondition(ErrorManagement::FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
                     }
                 }
                 ThreadsDatabase::UnLock();
@@ -116,7 +116,7 @@ uint32 GetCPUs(const ThreadIdentifier &threadId) {
         }
     }
     else {
-        REPORT_LOG_MESSAGE(OSError, "Error: pthread_getaffinity_np()")
+        REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_getaffinity_np()")
     }
     return cpus;
 }
@@ -175,11 +175,11 @@ void SetPriority(const ThreadIdentifier &threadId,
                 if (pthread_setschedparam(threadId, policy, &param) != 0) {
                     threadInfo->SetPriorityLevel(oldPriorityLevel);
                     threadInfo->SetPriorityClass(oldPriorityClass);
-                    REPORT_LOG_MESSAGE(OSError, "Error: pthread_setschedparam()")
+                    REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_setschedparam()")
                 }
             }
             else {
-                REPORT_LOG_MESSAGE(OSError, "Error: pthread_getschedparam()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_getschedparam()")
             }
         }
     }
@@ -254,13 +254,13 @@ bool Kill(const ThreadIdentifier &threadId) {
         if (ok) {
             ok = (pthread_cancel(threadId) == 0);
             if (!ok) {
-                REPORT_LOG_MESSAGE(OSError, "Error: pthread_cancel()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_cancel()")
             }
         }
         if (ok) {
             ok = (pthread_join(threadId, static_cast<void **>(NULL)) != 0);
             if (!ok) {
-                REPORT_LOG_MESSAGE(OSError, "Error: pthread_join()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_join()")
             }
         }
 
@@ -294,20 +294,20 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         if (ok) {
             ok = (pthread_attr_setstacksize(&stackSizeAttribute, static_cast<osulong>(stacksize)) == 0);
             if (!ok) {
-                REPORT_LOG_MESSAGE(OSError, "Error: pthread_attr_init()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_attr_init()")
             }
         }
         if (ok) {
             /*lint -e{929} cast from pointer to pointer required in order to cast into the pthread callback required function type.*/
             ok = (pthread_create(&threadId, &stackSizeAttribute, reinterpret_cast<void *(*)(void *)>(&SystemThreadFunction), threadInfo) == 0);
             if (!ok) {
-                REPORT_LOG_MESSAGE(OSError, "Error: pthread_create()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_create()")
             }
         }
         if (ok) {
             ok = (pthread_detach(threadId) == 0);
             if (!ok) {
-                REPORT_LOG_MESSAGE(OSError, "Error: pthread_detach()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_detach()")
             }
         }
         if (ok) {
@@ -327,7 +327,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
                 ok = threadInfo->ThreadPost();
             }
             else{
-                REPORT_LOG_MESSAGE(OSError, "Error: pthread_setaffinity_np()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_setaffinity_np()")
             }
         }
         if (!ok) {

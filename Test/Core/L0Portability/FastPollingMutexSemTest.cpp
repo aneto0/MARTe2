@@ -100,7 +100,7 @@ void TestFastLockCallback(FastPollingMutexSemTest &mt) {
     FlagsType error;
     mt.synchSem.Wait();
     while (!mt.stop) {
-        mt.failed |= !(mt.testMutex.FastLock(mt.testMutexTimeout) == NoError);
+        mt.failed |= !(mt.testMutex.FastLock(mt.testMutexTimeout) == ErrorManagement::NoError);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -182,17 +182,17 @@ void TestFastLockErrorCodeCallback(FastPollingMutexSemTest &mt) {
     mt.failed = false;
     FlagsType returnError;
     //This should fail because it was already locked in the TestFastLockErrorCode
-    ErrorType err = mt.testMutex.FastLock(mt.testMutexTimeout);
-    if (err != Timeout) {
+    ErrorManagement::ErrorType err = mt.testMutex.FastLock(mt.testMutexTimeout);
+    if (err != ErrorManagement::Timeout) {
         mt.failed = true;
     }
     Atomic::Decrement(&mt.nOfExecutingThreads);
 }
 
 bool FastPollingMutexSemTest::TestFastLockErrorCode() {
-    ErrorType err = testMutex.FastLock(TTInfiniteWait);
+    ErrorManagement::ErrorType err = testMutex.FastLock(TTInfiniteWait);
     bool ok = false;
-    if (err == NoError) {
+    if (err == ErrorManagement::NoError) {
         ok = GenericMutexTestCaller(1, 1, (ThreadFunctionType) TestFastLockErrorCodeCallback);
     }
     testMutex.FastUnLock();

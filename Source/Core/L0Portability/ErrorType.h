@@ -43,6 +43,8 @@
 /**
  * @brief Defines all the framework possible error types.
  */
+namespace ErrorManagement {
+
 typedef int8 ErrorType;
 
 /**
@@ -58,7 +60,7 @@ static const ErrorType Debug(3);
  */
 static const ErrorType Information(2);
 /**
- * Warning
+ * ErrorManagement::Warning
  */
 static const ErrorType Warning(1);
 /**
@@ -113,5 +115,6 @@ static const ErrorType SyntaxError(-12);
  * Unsupported feature
  */
 static const ErrorType UnsupportedFeature(-13);
+}
 
 #endif /* ERRORS_H_ */

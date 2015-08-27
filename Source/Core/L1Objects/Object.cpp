@@ -65,7 +65,7 @@ static FastPollingMutexSem refMux;
 
 uint32 Object::DecrementReferences() {
     uint32 ret = 0u;
-    if (refMux.FastLock() == NoError) {
+    if (refMux.FastLock() == ErrorManagement::NoError) {
         --referenceCounter;
         ret = referenceCounter;
     }
@@ -74,7 +74,7 @@ uint32 Object::DecrementReferences() {
 }
 
 void Object::IncrementReferences() {
-    if (refMux.FastLock() == NoError) {
+    if (refMux.FastLock() == ErrorManagement::NoError) {
         ++referenceCounter;
     }
     refMux.FastUnLock();
