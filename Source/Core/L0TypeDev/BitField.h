@@ -57,27 +57,38 @@ public:
     /**
      *
      */
-//    inline UnsignedBitRange(T x){
-//       value = (x << bitOffset) & mask;
-//    }
+    //    inline UnsignedBitRange(T x){
+    //       value = (x << bitOffset) & mask;
+    //    }
     template <typename T2>UnsignedBitRange(T2 x){
+        T temporaryValue = 0;
         if (x >= maxValue) {
-            value = (value & notMask) | (maxValue << bitOffset);
-// ERROR LOGGING
+            temporaryValue = maxValue;
+            // ERROR LOGGING
         }
-        else
-        if (x <= minValue) {
-            value = (minValue << bitOffset);
-// ERROR LOGGING
-        } else {
-            value = (x << bitOffset);
+        else {
+            if (x <= minValue) {
+                temporaryValue = minValue;
+                // ERROR LOGGING
+            } else {
+                temporaryValue = x;
+            }
         }
+        temporaryValue <<= bitOffset;
+        temporaryValue &= mask;
+        value = value & notMask;
+        value = value | temporaryValue;
     }
 
-
-
     inline operator T() const {
-        return (value >> bitOffset);
+        T temporaryValue = value;
+        temporaryValue &=mask;
+        // to align sign bits
+        temporaryValue <<= ((sizeof(T)*8)-bitOffset-bitSize);
+        // this should sign extend
+        temporaryValue >>= ((sizeof(T)*8)-bitSize);
+
+        return temporaryValue;
     }
 
     inline operator AnyType() const {
@@ -91,24 +102,53 @@ public:
 
 };
 
+
 template <typename T, uint8 bitSize,uint8 bitOffset>
 class SignedBitRange{
-
     T value;
 
 public:
 
-    static const T mask  = (0xFF >> (8-bitSize)) << bitOffset ;
+    static const T mask  = (~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset ;
+    static const T notMask  = ~((~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset) ;
+
+    static const T maxValue = (0x1 << (bitSize-1))-1;
+    static const T minValue = ~maxValue;
 
     /**
      *
      */
-    inline SignedBitRange(T x){
-       value = (x << bitOffset) & mask;
+    //    inline UnsignedBitRange(T x){
+    //       value = (x << bitOffset) & mask;
+    //    }
+    template <typename T2>SignedBitRange(T2 x){
+        T temporaryValue = 0;
+        if (x >= maxValue) {
+            temporaryValue = maxValue;
+            // ERROR LOGGING
+        }
+        else
+            if (x <= minValue) {
+                temporaryValue = minValue;
+                // ERROR LOGGING
+            } else {
+                temporaryValue = x;
+            }
+        temporaryValue <<= bitOffset;
+        temporaryValue &= mask;
+        value = value & notMask;
+        value = value | temporaryValue;
     }
 
     inline operator T() const {
-        return (value >> bitOffset);
+        T temporaryValue = value;
+        temporaryValue &=mask;
+        // to align sign bits
+        temporaryValue <<= ((sizeof(T)*8)-bitOffset-bitSize);
+        // this should sign extend
+        temporaryValue >>= ((sizeof(T)*8)-bitSize);
+
+        return temporaryValue;
     }
 
     inline operator AnyType() const {
@@ -121,6 +161,8 @@ public:
     static inline T BitOffset(){ return bitOffset; }
 
 };
+
+
 
 }
 
@@ -154,6 +196,35 @@ typedef TypeDefinition::UnsignedBitRange<uint32,29,0>  uint29;
 typedef TypeDefinition::UnsignedBitRange<uint32,30,0>  uint30;
 typedef TypeDefinition::UnsignedBitRange<uint32,31,0>  uint31;
 
+typedef TypeDefinition::SignedBitRange<int8  ,2,0>  int2;
+typedef TypeDefinition::SignedBitRange<int8  ,3,0>  int3;
+typedef TypeDefinition::SignedBitRange<int8  ,4,0>  int4;
+typedef TypeDefinition::SignedBitRange<int8  ,5,0>  int5;
+typedef TypeDefinition::SignedBitRange<int8  ,6,0>  int6;
+typedef TypeDefinition::SignedBitRange<int8  ,7,0>  int7;
+typedef TypeDefinition::SignedBitRange<int16, 9,0>  int9;
+typedef TypeDefinition::SignedBitRange<int16,10,0>  int10;
+typedef TypeDefinition::SignedBitRange<int16,11,0>  int11;
+typedef TypeDefinition::SignedBitRange<int16,12,0>  int12;
+typedef TypeDefinition::SignedBitRange<int16,13,0>  int13;
+typedef TypeDefinition::SignedBitRange<int16,14,0>  int14;
+typedef TypeDefinition::SignedBitRange<int16,15,0>  int15;
+typedef TypeDefinition::SignedBitRange<int32,17,0>  int17;
+typedef TypeDefinition::SignedBitRange<int32,18,0>  int18;
+typedef TypeDefinition::SignedBitRange<int32,19,0>  int19;
+typedef TypeDefinition::SignedBitRange<int32,20,0>  int20;
+typedef TypeDefinition::SignedBitRange<int32,21,0>  int21;
+typedef TypeDefinition::SignedBitRange<int32,22,0>  int22;
+typedef TypeDefinition::SignedBitRange<int32,23,0>  int23;
+typedef TypeDefinition::SignedBitRange<int32,24,0>  int24;
+typedef TypeDefinition::SignedBitRange<int32,25,0>  int25;
+typedef TypeDefinition::SignedBitRange<int32,26,0>  int26;
+typedef TypeDefinition::SignedBitRange<int32,27,0>  int27;
+typedef TypeDefinition::SignedBitRange<int32,28,0>  int28;
+typedef TypeDefinition::SignedBitRange<int32,29,0>  int29;
+typedef TypeDefinition::SignedBitRange<int32,30,0>  int30;
+typedef TypeDefinition::SignedBitRange<int32,31,0>  int31;
+
 
 
 typedef union {
@@ -174,4 +245,4 @@ const myBitStruct *p;
 /*---------------------------------------------------------------------------*/
 
 #endif /* BITFIELD_H_ */
-	
+
