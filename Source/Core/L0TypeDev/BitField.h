@@ -44,19 +44,37 @@ namespace TypeDefinition {
 
 template <typename T, uint8 bitSize,uint8 bitOffset>
 class UnsignedBitRange{
-
     T value;
 
 public:
 
-    static const T mask  = (0xFF >> (8-bitSize)) << bitOffset ;
+    static const T mask  = (~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset ;
+    static const T notMask  = ~((~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset) ;
+
+    static const T maxValue = (0x1 << bitSize)-1;
+    static const T minValue = 0;
 
     /**
      *
      */
-    inline UnsignedBitRange(T x){
-       value = (x << bitOffset) & mask;
+//    inline UnsignedBitRange(T x){
+//       value = (x << bitOffset) & mask;
+//    }
+    template <typename T2>UnsignedBitRange(T2 x){
+        if (x >= maxValue) {
+            value = (value & notMask) | (maxValue << bitOffset);
+// ERROR LOGGING
+        }
+        else
+        if (x <= minValue) {
+            value = (minValue << bitOffset);
+// ERROR LOGGING
+        } else {
+            value = (x << bitOffset);
+        }
     }
+
+
 
     inline operator T() const {
         return (value >> bitOffset);
@@ -142,7 +160,7 @@ typedef union {
     TypeDefinition::UnsignedBitRange<uint32,4,0>  a;
     TypeDefinition::UnsignedBitRange<uint32,4,4>  b;
     TypeDefinition::UnsignedBitRange<uint32,10,8>  c;
-    TypeDefinition::UnsignedBitRange<uint32,14,12>  d;
+    TypeDefinition::UnsignedBitRange<uint32,14,18>  d;
 
 }
 myBitStruct;
