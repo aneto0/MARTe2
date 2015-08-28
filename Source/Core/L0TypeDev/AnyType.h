@@ -38,7 +38,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 namespace TypeDefinition {
 
 /**
@@ -53,7 +52,8 @@ namespace TypeDefinition {
  */
 /*lint -save -e925 -e929 -e9005 -e1773 .
  * (925) pointer cast required by this implementation of AnyType */
-/* (9005,1773) Cast away of const required by this implementation of AnyType and justified because the information is stored.
+/* (9005,1773) Cast away of const required by this implementation of AnyType and justified because the in the TypeDescriptor
+ * attribute the flag isConstant will be set to true..
  */
 class AnyType {
 
@@ -73,13 +73,24 @@ public:
     inline AnyType(const AnyType &x);
 
     /**
-     * @brief Most General constructor.
-     *
-     * @details It is used as the terminated element in a Printf list.
-     * The data descriptor is void, the pointer null.
+     * @brief Most General constructor for a constant type.
+     * @param[in] dataDescriptor contains the type informations.
+     * @param[in] bitAddress specifies the bit-shift respect to \a dataPointer.
+     * @param[in] dataPointer is the pointer to a generic constant type which must be stored.
      */
-    inline AnyType(const TypeDescriptor &dataDescriptor, uint8 bitAddress, const void* const dataPointer);
-    inline AnyType(const TypeDescriptor &dataDescriptor, uint8 bitAddress, void* const dataPointer);
+    inline AnyType(const TypeDescriptor &dataDescriptor,
+                   uint8 bitAddress,
+                   const void* const dataPointer);
+
+    /**
+     * @brief Most General constructor for a non-constant type.
+     * @param[in] dataDescriptor contains the type informations.
+     * @param[in] bitAddress specifies the bit-shift respect to \a dataPointer.
+     * @param[in] dataPointer is the pointer to a generic type which must be stored.
+     */
+    inline AnyType(const TypeDescriptor &dataDescriptor,
+                   uint8 bitAddress,
+                   void* const dataPointer);
 
     /**
      * @brief Checks if the AnyType is empty.
@@ -88,116 +99,142 @@ public:
     inline bool IsVoid() const;
 
     /**
-     * @brief Constructor by float32.
-     * @param[in] i is a pointer to the float32 number.
-     */
-    inline AnyType(float32 &i);
-
-    /**
-     * @brief Constructor by const float32.
-     * @param[in] i is a pointer to the const float32 number.
-     *
-     * The flag isConstant is settes to true. */
-    inline AnyType(const float32 &i);
-
-    /**
-     * @brief Constructor from a float64.
-     * @param[in] i is a pointer to the data number.
-     */
-    inline AnyType(float64 &i);
-
-    /**
-     * @brief Constructor from a const float64.
-     * @param[in] i is a pointer to the const float64 number.
-     */
-    inline AnyType(const float64 &i);
-    /**
-     * @brief Constructor from an 8 bit integer constant.
-     * @param[in] i is the const 8 bit integer (const char8).
-     */
-    inline AnyType(const int8 &i);
-
-    /**
-     * @brief Constructor from an integer 8 bit.
-     * @param[in] i is the 8 bit integer (char8).
+     * @brief Constructor by signed 8 bit integer.
+     * @param[in] i is the signed 8 bit integer.
      */
     inline AnyType(int8 &i);
 
     /**
-     * @brief Constructor from an unsigned integer 8 bit.
+     * @brief Constructor by unsigned 8 bit integer.
      * @param[in] i is the unsigned 8 bit integer.
      */
     inline AnyType(uint8 &i);
 
     /**
-     * @brief Constructor from an integer 16 bit.
-     * @param[in] i is the 16 bit integer.
+     * @brief Constructor by constant signed 8 bit integer.
+     * @param[in] i is the constant signed 8 bit integer.
+     */
+    inline AnyType(const int8 &i);
+
+    /**
+     * @brief Constructor by constant unsigned 8 bit integer.
+     * @param[in] i is the constant unsigned 8 bit integer.
+     */
+    inline AnyType(const uint8 &i);
+
+    /**
+     * @brief Constructor by signed 16 bit integer.
+     * @param[in] i is the signed 16 bit integer.
      */
     inline AnyType(int16 &i);
 
     /**
-     * @brief Constructor from an unsigned integer 16 bit.
-     * @param[in] i is the 16 bit unsigned integer.
+     * @brief Constructor by unsigned 16 bit integer.
+     * @param[in] i is the unsigned 16 bit integer.
      */
     inline AnyType(uint16 &i);
 
     /**
-     * @brief Constructor from an unsigned integer 32 bit.
+     * @brief Constructor by constant signed 16 bit integer.
+     * @param[in] i is the constant signed 16 bit integer.
+     */
+
+    inline AnyType(const int16 &i);
+
+    /**
+     * @brief Constructor by constant unsigned 16 bit integer.
+     * @param[in] i is the constant 16 bit unsigned integer.
+     */
+    inline AnyType(const uint16 &i);
+
+    /**
+     * @brief Constructor by unsigned 32 bit integer.
      * @param[in] i is the unsigned 32 bit integer.
      */
     inline AnyType(uint32 &i);
 
     /**
-     * @brief Constructor from an unsigned constant integer 32 bit.
+     * @brief Constructor by signed 32 bit integer.
+     * @param[in] i is the signed 32 bit integer.
+     */
+    inline AnyType(int32 &i);
+
+    /**
+     * @brief Constructor by unsigned constant 32 bit integer.
      * @param[in] i is the constant unsigned 32 bit integer.
      */
     inline AnyType(const uint32 &i);
 
     /**
-     * @brief Constructor from an integer 32 bit.
-     * @param[in] i is the 32 bit integer.
-     */
-    inline AnyType(int32 &i);
-
-    /**
-     * @brief Constructor from a constant integer 32 bit.
-     * @param[in] i is the constant 32 bit integer.
+     * @brief Constructor by constant signed 32 bit integer.
+     * @param[in] i is the constant signed 32 bit integer.
      */
     inline AnyType(const int32 &i);
 
     /**
-     * @brief Constructor from an unsigned integer 64 bit.
+     * @brief Constructor by unsigned 64 bit integer.
      * @param[in] i is the unsigned 64 bit integer.
      */
     inline AnyType(uint64 &i);
 
     /**
-     * @brief Constructor from an integer 64 bit.
-     * @param[in] i is the 64 bit integer.
+     * @brief Constructor by signed  64 bit integer.
+     * @param[in] i is the signed 64 bit integer.
      */
     inline AnyType(int64 &i);
 
     /**
-     * @brief Constructor from a constant 64 bit integer.
-     * @param[in] i is the 64 bit constant integer.
+     * @brief Constructor by constant signed 64 bit integer.
+     * @param[in] i is the constant signed 64 bit integer.
      */
     inline AnyType(const int64 &i);
 
     /**
-     * @brief Constructor from a const void* pointer.
-     * @param[in] i is the const void* pointer.
+     * @brief Constructor by constant unsigned 64 bit integer.
+     * @param[in] i is the constant unsigned 64 bit integer.
+     */
+    inline AnyType(const uint64 &i);
+
+    /**
+     * @brief Constructor by 32 bit float number.
+     * @param[in] i is the 32 bit float number.
+     */
+    inline AnyType(float32 &i);
+
+    /**
+     * @brief Constructor by constant 32 bit float number.
+     * @param[in] i is the the constant 32 bit float number.
+     */
+    inline AnyType(const float32 &i);
+
+    /**
+     * @brief Constructor by 64 bit float number.
+     * @param[in] i the 64 bit float number.
+     */
+    inline AnyType(float64 &i);
+
+    /**
+     * @brief Constructor by constant 64 bit float number.
+     * @param[in] i is the constant 64 bit float number.
+     */
+    inline AnyType(const float64 &i);
+
+
+    /**
+     * @brief Constructor by constant void pointer.
+     * @param[in] i is the constant void pointer.
      */
     inline AnyType(const void * const p);
 
     /**
-     * @brief Constructor from a void* pointer.
-     * @param[in] i is the const void* pointer.
+     * @brief Constructor by void pointer.
+     * @param[in] i is the void pointer.
      */
     inline AnyType(void * const p);
 
     /**
-     * @brief Constructor from a const char8* string.
-     * @param[in] i is the const char8 pointer.
+     * @brief Constructor by C string.
+     * @param[in] i is the C string.
      */
     inline AnyType(const char8 * const p);
 
@@ -216,7 +253,7 @@ private:
     TypeDescriptor dataDescriptor;
 
     /**
-     * Used for BitSet typer.
+     * Used for BitSet types.
      * The maximum range is 255.
      */
     uint8 bitAddress;
@@ -238,55 +275,28 @@ AnyType::AnyType(const AnyType &x) {
     dataDescriptor = x.dataDescriptor;
 }
 
-AnyType::AnyType(const TypeDescriptor &dataDescriptor, uint8 bitAddress, const void* const dataPointer){
+AnyType::AnyType(const TypeDescriptor &dataDescriptor,
+                 uint8 bitAddress,
+                 const void* const dataPointer) {
     this->dataDescriptor = dataDescriptor;
     this->dataDescriptor.isConstant = true;
-    this->dataPointer =  dataPointer;
-    this->bitAddress =  bitAddress;
+    this->dataPointer = const_cast<void*>(dataPointer);
+    this->bitAddress = bitAddress;
 }
 
-AnyType::AnyType(const TypeDescriptor &dataDescriptor, uint8 bitAddress, void* const dataPointer){
+AnyType::AnyType(const TypeDescriptor &dataDescriptor,
+                 uint8 bitAddress,
+                 void* const dataPointer) {
     this->dataDescriptor = dataDescriptor;
-    this->dataPointer =  dataPointer;
-    this->bitAddress =  bitAddress;
+    this->dataPointer = dataPointer;
+    this->bitAddress = bitAddress;
 }
 
 bool AnyType::IsVoid() const {
     return (dataDescriptor == VoidType);
 }
 
-AnyType::AnyType(float32 &i) {
-    dataPointer = static_cast<void *>(&i);
-    bitAddress = 0u;
-    dataDescriptor = Float32Bit;
-}
-
-AnyType::AnyType(const float32 &i) {
-    dataPointer = static_cast<void *>(&i);
-    bitAddress = 0u;
-    dataDescriptor = Float32Bit;
-    dataDescriptor.isConstant = true;
-}
-
-AnyType::AnyType(float64 &i) {
-    dataPointer = static_cast<void *>(&i);
-    bitAddress = 0u;
-    dataDescriptor = Float64Bit;
-}
-
-AnyType::AnyType(const float64 &i) {
-    dataPointer = static_cast<void *>(&i);
-    bitAddress = 0u;
-    dataDescriptor = Float64Bit;
-    dataDescriptor.isConstant = true;
-}
-
-AnyType::AnyType(const int8 &i) {
-    dataPointer = static_cast<void *>(&i);
-    bitAddress = 0u;
-    dataDescriptor = SignedInteger8Bit;
-    dataDescriptor.isConstant = true;
-}
+////////////////
 
 AnyType::AnyType(int8 &i) {
     dataPointer = static_cast<void *>(&i);
@@ -300,6 +310,22 @@ AnyType::AnyType(uint8 &i) {
     dataDescriptor = UnsignedInteger8Bit;
 }
 
+AnyType::AnyType(const int8 &i) {
+    dataPointer = static_cast<void *>(const_cast<int8 *>(&i));
+    bitAddress = 0u;
+    dataDescriptor = SignedInteger8Bit;
+    dataDescriptor.isConstant = true;
+}
+
+AnyType::AnyType(const uint8 &i) {
+    dataPointer = static_cast<void *>(const_cast<uint8 *>(&i));
+    bitAddress = 0u;
+    dataDescriptor = UnsignedInteger8Bit;
+    dataDescriptor.isConstant = true;
+}
+
+////////////////
+
 AnyType::AnyType(int16 &i) {
     dataPointer = static_cast<void *>(&i);
     bitAddress = 0u;
@@ -312,18 +338,21 @@ AnyType::AnyType(uint16 &i) {
     dataDescriptor = UnsignedInteger16Bit;
 }
 
-AnyType::AnyType(uint32 &i) {
-    dataPointer = static_cast<void *>(&i);
+AnyType::AnyType(const int16 &i) {
+    dataPointer = static_cast<void *>(const_cast<int16 *>(&i));
     bitAddress = 0u;
-    dataDescriptor = UnsignedInteger32Bit;
-}
-
-AnyType::AnyType(const uint32 &i) {
-    dataPointer = static_cast<void *>(&i);
-    bitAddress = 0u;
-    dataDescriptor = UnsignedInteger32Bit;
+    dataDescriptor = SignedInteger16Bit;
     dataDescriptor.isConstant = true;
 }
+
+AnyType::AnyType(const uint16 &i) {
+    dataPointer = static_cast<void *>(const_cast<uint16 *>(&i));
+    bitAddress = 0u;
+    dataDescriptor = UnsignedInteger16Bit;
+    dataDescriptor.isConstant = true;
+}
+
+////////////////////////////////////////
 
 AnyType::AnyType(int32 &i) {
     dataPointer = static_cast<void *>(&i);
@@ -331,11 +360,34 @@ AnyType::AnyType(int32 &i) {
     dataDescriptor = SignedInteger32Bit;
 }
 
-AnyType::AnyType(const int32 &i) {
+AnyType::AnyType(uint32 &i) {
     dataPointer = static_cast<void *>(&i);
+    bitAddress = 0u;
+    dataDescriptor = UnsignedInteger32Bit;
+}
+
+AnyType::AnyType(const int32 &i) {
+    dataPointer = static_cast<void *>(const_cast<int32 *>(&i));
     bitAddress = 0u;
     dataDescriptor = SignedInteger32Bit;
     dataDescriptor.isConstant = true;
+}
+
+AnyType::AnyType(const uint32 &i) {
+    dataPointer = static_cast<void *>(const_cast<uint32 *>(&i));
+    bitAddress = 0u;
+    dataDescriptor = UnsignedInteger32Bit;
+    dataDescriptor.isConstant = true;
+}
+
+
+////////////////////////////
+
+
+AnyType::AnyType(int64 &i) {
+    dataPointer = static_cast<void *>(&i);
+    bitAddress = 0u;
+    dataDescriptor = SignedInteger64Bit;
 }
 
 AnyType::AnyType(uint64 &i) {
@@ -344,44 +396,76 @@ AnyType::AnyType(uint64 &i) {
     dataDescriptor = UnsignedInteger64Bit;
 }
 
-AnyType::AnyType(int64 &i) {
-    dataPointer = static_cast<void *>(&i);
-    bitAddress = 0u;
-    dataDescriptor = SignedInteger64Bit;
-}
-
 AnyType::AnyType(const int64 &i) {
-    dataPointer = static_cast<void *>(&i);
+    dataPointer = static_cast<void *>(const_cast<int64 *>(&i));
     bitAddress = 0u;
     dataDescriptor = SignedInteger64Bit;
     dataDescriptor.isConstant = true;
 }
 
+AnyType::AnyType(const uint64 &i) {
+    dataPointer = static_cast<void *>(const_cast<uint64 *>(&i));
+    bitAddress = 0u;
+    dataDescriptor = UnsignedInteger64Bit;
+    dataDescriptor.isConstant = true;
+}
+
+////////////////////////////////
+
+AnyType::AnyType(float32 &i) {
+    dataPointer = static_cast<void *>(&i);
+    bitAddress = 0u;
+    dataDescriptor = Float32Bit;
+}
+
+AnyType::AnyType(const float32 &i) {
+    dataPointer = static_cast<void *>(const_cast<float32 *>(&i));
+    bitAddress = 0u;
+    dataDescriptor = Float32Bit;
+    dataDescriptor.isConstant = true;
+}
+
+//////////////////////////////
+
+AnyType::AnyType(float64 &i) {
+    dataPointer = static_cast<void *>(&i);
+    bitAddress = 0u;
+    dataDescriptor = Float64Bit;
+}
+
+AnyType::AnyType(const float64 &i) {
+    dataPointer = static_cast<void *>(const_cast<float64 *>(&i));
+    bitAddress = 0u;
+    dataDescriptor = Float64Bit;
+    dataDescriptor.isConstant = true;
+}
+
+//////////////////////////////
+
+
 AnyType::AnyType(const void * const p) {
-    dataPointer = static_cast<void *>(p);
+    dataPointer = const_cast<void *>(p);
     bitAddress = 0u;
     dataDescriptor = VoidPointer;
     dataDescriptor.isConstant = true;
 }
 
 AnyType::AnyType(void * const p) {
-    dataPointer = static_cast<void *>(p);
+    dataPointer = p;
     bitAddress = 0u;
     dataDescriptor = VoidPointer;
 }
 
 AnyType::AnyType(const char8 * const p) {
-    dataPointer = static_cast<void *>(p); // we will either print the variable or the string
+    dataPointer = static_cast<void *>(const_cast<char8 *>(p)); // we will either print the variable or the string
     bitAddress = 0u;
     dataDescriptor = ConstCString;
 }
 
 /**
- * Definition of the void AnyType (empty contructor).
+ * Definition of the void AnyType (empty constructor).
  */
 static const AnyType voidAnyType;
-
-
 
 }
 

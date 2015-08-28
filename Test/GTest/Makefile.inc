@@ -65,10 +65,10 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES += -I../ 
 INCLUDES += -I../Core/L0Portability
 INCLUDES += -I../Core/L1Objects
-INCLUDES += -I../Core/LXTypeDev
+INCLUDES += -I../Core/L0TypeDev
 INCLUDES += -I../../Source/Core/L0Portability
 INCLUDES += -I../../Source/Core/L1Objects
-INCLUDES += -I../../Source/Core/LXTypeDev
+INCLUDES += -I../../Source/Core/L0TypeDev
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 all: $(OBJS)    \

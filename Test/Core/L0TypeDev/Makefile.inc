@@ -36,7 +36,7 @@ INCLUDES += -I../../../Source/Core/L0Portability
 INCLUDES += -I../../../Source/Core/L0TypeDev
 
 all: $(OBJS) \
-                $(BUILD_DIR)/L1ObjectsTest$(LIBEXT)                 
+                $(BUILD_DIR)/L0TypeDevTest$(LIBEXT)                 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

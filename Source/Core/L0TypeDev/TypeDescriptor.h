@@ -42,16 +42,14 @@ namespace TypeDefinition {
 
 /**
  * guarantees that only 4 bits are used
- */
+
 class BasicType{
 
     uint8 value;
 
 public:
 
-    /**
-     *
-     */
+
     BasicType(uint8 x){
        value = x & 0xF;
     }
@@ -61,7 +59,9 @@ public:
     }
 };
 
+*/
 
+typedef uint8 BasicType;
 
 /**
  * The type is signed.
