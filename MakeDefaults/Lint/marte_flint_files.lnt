@@ -37,6 +37,7 @@ StringHelperExtras_Generic.cpp
 ThreadsDatabase_Generic.cpp
 ThreadsDatabase_Generic.h
 AnyType.h
+BitField.h
 FormatDescriptor.h
 FormatDescriptor.cpp
 TypeDescriptor.h

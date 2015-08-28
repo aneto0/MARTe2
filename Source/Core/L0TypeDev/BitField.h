@@ -95,7 +95,7 @@ public:
 /**
  * @brief An integer with the desired size in bits.
  */
-template<typename baseType, int bitSize>
+template<typename baseType, uint8 bitSize>
 class FractionalInteger {
 
     /**
@@ -206,7 +206,7 @@ public:
  *  @brief A number with a settable size and a settable bit shift.
  *  @details Using these types into an union allows to have the same effect of a struct with bit fielded attributes.
  */
-template<typename baseType, int bitSize, int bitOffset>
+template<typename baseType, uint8 bitSize, uint8 bitOffset>
 class BitRange {
 
     /**
@@ -283,12 +283,10 @@ public:
         value |= temporaryValue;
     }
 
-
     /**
-     * @brief baseType cast.
-     * @details This operator allows to treat this object as a baseType object.\n
-     * The number will be
-     * @
+     * @brief Cast to the type of the value attribute.
+     * @details Thanks to this operator this object can be treated as a number.
+     * @return the number value.
      */
     inline operator baseType() const {
 
@@ -305,6 +303,11 @@ public:
         return temporaryValue;
     }
 
+    /**
+     * @brief Cast to AnyType.
+     * @details Thanks to this operator this object can be treated as an AnyType object.
+     * @return the AnyType associated to this object.
+     */
     inline operator AnyType() const {
         BasicType bt = UnsignedInteger;
         if (TypeCharacteristics<baseType>::IsSigned()) {
@@ -314,10 +317,18 @@ public:
         return AnyType(td, bitOffset, this);
     }
 
+    /**
+     * @brief Returns the bit size.
+     * @return the bit size.
+     */
     static inline baseType BitSize() {
         return bitSize;
     }
 
+    /**
+     * @brief Returns the bit offset.
+     * @return the bit offset.
+     */
     static inline baseType BitOffset() {
         return bitOffset;
     }
@@ -326,65 +337,65 @@ public:
 
 }
 
-typedef TypeDefinition::FractionalInteger<uint8, 1> uint1;
-typedef TypeDefinition::FractionalInteger<uint8, 2> uint2;
-typedef TypeDefinition::FractionalInteger<uint8, 3> uint3;
-typedef TypeDefinition::FractionalInteger<uint8, 4> uint4;
-typedef TypeDefinition::FractionalInteger<uint8, 5> uint5;
-typedef TypeDefinition::FractionalInteger<uint8, 6> uint6;
-typedef TypeDefinition::FractionalInteger<uint8, 7> uint7;
-typedef TypeDefinition::FractionalInteger<uint16, 9> uint9;
-typedef TypeDefinition::FractionalInteger<uint16, 10> uint10;
-typedef TypeDefinition::FractionalInteger<uint16, 11> uint11;
-typedef TypeDefinition::FractionalInteger<uint16, 12> uint12;
-typedef TypeDefinition::FractionalInteger<uint16, 13> uint13;
-typedef TypeDefinition::FractionalInteger<uint16, 14> uint14;
-typedef TypeDefinition::FractionalInteger<uint16, 15> uint15;
-typedef TypeDefinition::FractionalInteger<uint32, 17> uint17;
-typedef TypeDefinition::FractionalInteger<uint32, 18> uint18;
-typedef TypeDefinition::FractionalInteger<uint32, 19> uint19;
-typedef TypeDefinition::FractionalInteger<uint32, 20> uint20;
-typedef TypeDefinition::FractionalInteger<uint32, 21> uint21;
-typedef TypeDefinition::FractionalInteger<uint32, 22> uint22;
-typedef TypeDefinition::FractionalInteger<uint32, 23> uint23;
-typedef TypeDefinition::FractionalInteger<uint32, 24> uint24;
-typedef TypeDefinition::FractionalInteger<uint32, 25> uint25;
-typedef TypeDefinition::FractionalInteger<uint32, 26> uint26;
-typedef TypeDefinition::FractionalInteger<uint32, 27> uint27;
-typedef TypeDefinition::FractionalInteger<uint32, 28> uint28;
-typedef TypeDefinition::FractionalInteger<uint32, 29> uint29;
-typedef TypeDefinition::FractionalInteger<uint32, 30> uint30;
-typedef TypeDefinition::FractionalInteger<uint32, 31> uint31;
+typedef TypeDefinition::FractionalInteger<uint8, 1u> uint1;
+typedef TypeDefinition::FractionalInteger<uint8, 2u> uint2;
+typedef TypeDefinition::FractionalInteger<uint8, 3u> uint3;
+typedef TypeDefinition::FractionalInteger<uint8, 4u> uint4;
+typedef TypeDefinition::FractionalInteger<uint8, 5u> uint5;
+typedef TypeDefinition::FractionalInteger<uint8, 6u> uint6;
+typedef TypeDefinition::FractionalInteger<uint8, 7u> uint7;
+typedef TypeDefinition::FractionalInteger<uint16, 9u> uint9;
+typedef TypeDefinition::FractionalInteger<uint16, 10u> uint10;
+typedef TypeDefinition::FractionalInteger<uint16, 11u> uint11;
+typedef TypeDefinition::FractionalInteger<uint16, 12u> uint12;
+typedef TypeDefinition::FractionalInteger<uint16, 13u> uint13;
+typedef TypeDefinition::FractionalInteger<uint16, 14u> uint14;
+typedef TypeDefinition::FractionalInteger<uint16, 15u> uint15;
+typedef TypeDefinition::FractionalInteger<uint32, 17u> uint17;
+typedef TypeDefinition::FractionalInteger<uint32, 18u> uint18;
+typedef TypeDefinition::FractionalInteger<uint32, 19u> uint19;
+typedef TypeDefinition::FractionalInteger<uint32, 20u> uint20;
+typedef TypeDefinition::FractionalInteger<uint32, 21u> uint21;
+typedef TypeDefinition::FractionalInteger<uint32, 22u> uint22;
+typedef TypeDefinition::FractionalInteger<uint32, 23u> uint23;
+typedef TypeDefinition::FractionalInteger<uint32, 24u> uint24;
+typedef TypeDefinition::FractionalInteger<uint32, 25u> uint25;
+typedef TypeDefinition::FractionalInteger<uint32, 26u> uint26;
+typedef TypeDefinition::FractionalInteger<uint32, 27u> uint27;
+typedef TypeDefinition::FractionalInteger<uint32, 28u> uint28;
+typedef TypeDefinition::FractionalInteger<uint32, 29u> uint29;
+typedef TypeDefinition::FractionalInteger<uint32, 30u> uint30;
+typedef TypeDefinition::FractionalInteger<uint32, 31u> uint31;
 
-typedef TypeDefinition::FractionalInteger<int8, 2> int2;
-typedef TypeDefinition::FractionalInteger<int8, 3> int3;
-typedef TypeDefinition::FractionalInteger<int8, 4> int4;
-typedef TypeDefinition::FractionalInteger<int8, 5> int5;
-typedef TypeDefinition::FractionalInteger<int8, 6> int6;
-typedef TypeDefinition::FractionalInteger<int8, 7> int7;
-typedef TypeDefinition::FractionalInteger<int16, 9> int9;
-typedef TypeDefinition::FractionalInteger<int16, 10> int10;
-typedef TypeDefinition::FractionalInteger<int16, 11> int11;
-typedef TypeDefinition::FractionalInteger<int16, 12> int12;
-typedef TypeDefinition::FractionalInteger<int16, 13> int13;
-typedef TypeDefinition::FractionalInteger<int16, 14> int14;
-typedef TypeDefinition::FractionalInteger<int16, 15> int15;
-typedef TypeDefinition::FractionalInteger<int32, 17> int17;
-typedef TypeDefinition::FractionalInteger<int32, 18> int18;
-typedef TypeDefinition::FractionalInteger<int32, 19> int19;
-typedef TypeDefinition::FractionalInteger<int32, 20> int20;
-typedef TypeDefinition::FractionalInteger<int32, 21> int21;
-typedef TypeDefinition::FractionalInteger<int32, 22> int22;
-typedef TypeDefinition::FractionalInteger<int32, 23> int23;
-typedef TypeDefinition::FractionalInteger<int32, 24> int24;
-typedef TypeDefinition::FractionalInteger<int32, 25> int25;
-typedef TypeDefinition::FractionalInteger<int32, 26> int26;
-typedef TypeDefinition::FractionalInteger<int32, 27> int27;
-typedef TypeDefinition::FractionalInteger<int32, 28> int28;
-typedef TypeDefinition::FractionalInteger<int32, 29> int29;
-typedef TypeDefinition::FractionalInteger<int32, 30> int30;
-typedef TypeDefinition::FractionalInteger<int32, 31> int31;
-
+typedef TypeDefinition::FractionalInteger<int8, 2u> int2;
+typedef TypeDefinition::FractionalInteger<int8, 3u> int3;
+typedef TypeDefinition::FractionalInteger<int8, 4u> int4;
+typedef TypeDefinition::FractionalInteger<int8, 5u> int5;
+typedef TypeDefinition::FractionalInteger<int8, 6u> int6;
+typedef TypeDefinition::FractionalInteger<int8, 7u> int7;
+typedef TypeDefinition::FractionalInteger<int16, 9u> int9;
+typedef TypeDefinition::FractionalInteger<int16, 10u> int10;
+typedef TypeDefinition::FractionalInteger<int16, 11u> int11;
+typedef TypeDefinition::FractionalInteger<int16, 12u> int12;
+typedef TypeDefinition::FractionalInteger<int16, 13u> int13;
+typedef TypeDefinition::FractionalInteger<int16, 14u> int14;
+typedef TypeDefinition::FractionalInteger<int16, 15u> int15;
+typedef TypeDefinition::FractionalInteger<int32, 17u> int17;
+typedef TypeDefinition::FractionalInteger<int32, 18u> int18;
+typedef TypeDefinition::FractionalInteger<int32, 19u> int19;
+typedef TypeDefinition::FractionalInteger<int32, 20u> int20;
+typedef TypeDefinition::FractionalInteger<int32, 21u> int21;
+typedef TypeDefinition::FractionalInteger<int32, 22u> int22;
+typedef TypeDefinition::FractionalInteger<int32, 23u> int23;
+typedef TypeDefinition::FractionalInteger<int32, 24u> int24;
+typedef TypeDefinition::FractionalInteger<int32, 25u> int25;
+typedef TypeDefinition::FractionalInteger<int32, 26u> int26;
+typedef TypeDefinition::FractionalInteger<int32, 27u> int27;
+typedef TypeDefinition::FractionalInteger<int32, 28u> int28;
+typedef TypeDefinition::FractionalInteger<int32, 29u> int29;
+typedef TypeDefinition::FractionalInteger<int32, 30u> int30;
+typedef TypeDefinition::FractionalInteger<int32, 31u> int31;
+/*
 typedef union {
     TypeDefinition::BitRange<uint32, 4, 0> a;
     TypeDefinition::BitRange<uint32, 4, 4> b;
@@ -394,7 +405,7 @@ typedef union {
 } myBitStruct;
 
 const myBitStruct *p;
-
+*/
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

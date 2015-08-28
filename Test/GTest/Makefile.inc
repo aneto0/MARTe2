@@ -53,8 +53,7 @@ OBJSX=  StandardHeap_GenericGTest.x \
 	ReferenceContainerNodeGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
-    	ErrorManagementGTest.x \
-    	BitFieldGTest.x
+    	ErrorManagementGTest.x 
 
 PACKAGE=
 ROOT_DIR=../..
