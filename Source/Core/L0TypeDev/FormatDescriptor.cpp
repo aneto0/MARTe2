@@ -39,6 +39,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace TypeDefinition {
 /*
 
  DATA TABLES FIRST
@@ -57,29 +58,33 @@ struct FDLookup {
 };
 
 /// 0 terminated vector of FDLookups
-static const FDLookup flagsLookup[] = { { ' ', FormatDescriptor(0u, 0u, true, false, Notation::FixedPointNotation, Notation::DecimalNotation, false, false) }, // ' '
-        { '-', FormatDescriptor(0u, 0u, true, true, Notation::FixedPointNotation, Notation::DecimalNotation, false, false) },  // '-'
-        { '0', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::DecimalNotation, true, false) },  // '0'
-        { '#', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::DecimalNotation, false, true) },  // '#'
+static const FDLookup flagsLookup[] = {
+        { ' ', FormatDescriptor(PrintAnything,0u, 0u, true, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { '-', FormatDescriptor(PrintAnything,0u, 0u, true, true, FixedPointNotation, DecimalNotation, false, false) },  // '-'
+        { '0', FormatDescriptor(PrintAnything,0u, 0u, false, false, FixedPointNotation, DecimalNotation, true, false) },  // '0'
+        { '#', FormatDescriptor(PrintAnything,0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, true) },  // '#'
         { static_cast<char8>(0), FormatDescriptor(0u) } };
 
 /// 0 terminated vector of FDLookups
-static const FDLookup typesLookup[] = { { 'd', FormatDescriptor(0u) },  //d
-        { 'i', FormatDescriptor(0u) },  //i
-        { 'u', FormatDescriptor(0u) },  //u
-        { 's', FormatDescriptor(0u) },  //s
-        { 'c', FormatDescriptor(0u) },  //c
-        { 'f', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::DecimalNotation, false, false) },  //f
-        { 'F', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointRNotation, Notation::DecimalNotation, false, false) },  //F
-        { 'e', FormatDescriptor(0u, 0u, false, false, Notation::ExponentNotation, Notation::DecimalNotation, false, false) },  //e
-        { 'E', FormatDescriptor(0u, 0u, false, false, Notation::EngineeringNotation, Notation::DecimalNotation, false, false) },  //E
-        { 'g', FormatDescriptor(0u, 0u, false, false, Notation::SmartNotation, Notation::DecimalNotation, false, false) },  //g
-        { 'G', FormatDescriptor(0u, 0u, false, false, Notation::CompactNotation, Notation::DecimalNotation, false, false) },  //
-        { 'a', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::HexNotation, false, false) },  //a
-        { 'x', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::HexNotation, false, false) },  //x
-        { 'p', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::HexNotation, true, true) },  //p
-        { 'o', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::OctalNotation, false, false) },  //o
-        { 'b', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::BitNotation, false, false) },  //b
+static const FDLookup typesLookup[] = {
+        { '!', FormatDescriptor(PrintAnything,0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { '?', FormatDescriptor(PrintInfo    ,0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { '@', FormatDescriptor(PrintStruct  ,0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 'd', FormatDescriptor(PrintInteger ,0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 'i', FormatDescriptor(PrintInteger ,0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 'u', FormatDescriptor(PrintInteger ,0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 's', FormatDescriptor(PrintString  ,0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 'c', FormatDescriptor(PrintString  ,0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 'f', FormatDescriptor(PrintFloat   ,0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) },  //f
+        { 'F', FormatDescriptor(PrintFloat   ,0u, 0u, false, false, FixedPointRNotation,DecimalNotation, false, false) },  //F
+        { 'e', FormatDescriptor(PrintFloat   ,0u, 0u, false, false, ExponentNotation,   DecimalNotation, false, false) },  //e
+        { 'E', FormatDescriptor(PrintFloat   ,0u, 0u, false, false, EngineeringNotation,DecimalNotation, false, false) },  //E
+        { 'g', FormatDescriptor(PrintFloat   ,0u, 0u, false, false, SmartNotation,      DecimalNotation, false, false) },  //g
+        { 'G', FormatDescriptor(PrintFloat   ,0u, 0u, false, false, CompactNotation,    DecimalNotation, false, false) },  //
+        { 'x', FormatDescriptor(PrintInteger ,0u, 0u, false, false, FixedPointNotation, HexNotation, false, false) },  //x
+        { 'p', FormatDescriptor(PrintPointer ,0u, 0u, false, false, FixedPointNotation, HexNotation, true, true) },  //p
+        { 'o', FormatDescriptor(PrintInteger ,0u, 0u, false, false, FixedPointNotation, OctalNotation, false, false) },  //o
+        { 'b', FormatDescriptor(PrintInteger ,0u, 0u, false, false, FixedPointNotation, BitNotation, false, false) },  //b
         { static_cast<char8>(0), FormatDescriptor(0u) } };
 
 /**
@@ -207,3 +212,5 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
     }
     return ret;
 }
+
+} // end namespace TypeDefinition {

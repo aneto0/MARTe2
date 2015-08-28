@@ -412,7 +412,9 @@ namespace HeapManager /*Internals*/{
                 /** already found */
                 if (heap == newHeap) {
                     ok = false;
+
                     REPORT_ERROR(ErrorManagement::FatalError, "Error: heap already registered in the database")
+
                 }
             }
 

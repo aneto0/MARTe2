@@ -335,6 +335,56 @@ public:
 
 };
 
+
+/**
+ *  to be used in unions so no constructor!
+ */
+template <typename baseType, int bitOffset>
+class BitBoolean{
+    baseType value;
+
+    static const baseType baseTypeBitSize = (sizeof(baseType)*8);
+
+    static const baseType mask  = (1 << bitOffset) ;
+
+    static const baseType notMask  = ~mask ;
+
+public:
+
+    /**
+     * not a constructor to allow use in unions
+     */
+    void operator=(bool flag){
+        if (flag) {
+            value |= mask;
+        } else {
+            value &= notMask;
+        }
+    }
+
+    inline operator bool() const {
+        return ((value & mask) != 0);
+    }
+
+    inline operator AnyType() const {
+        const TypeDescriptor td = { false, false, { { UnsignedInteger, 1 } } };
+        return AnyType (td, bitOffset, this);
+    }
+
+    static inline baseType BitSize(){
+        return 1;
+    }
+
+    static inline baseType BitOffset(){
+        return bitOffset;
+    }
+
+};
+
+
+
+
+
 }
 
 typedef TypeDefinition::FractionalInteger<uint8, 1u> uint1;

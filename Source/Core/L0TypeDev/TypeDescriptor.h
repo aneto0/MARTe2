@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
+#include "BasicType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -41,6 +42,7 @@ namespace TypeDefinition {
 
 
 /**
+<<<<<<< HEAD
  * guarantees that only 4 bits are used
 
 class BasicType{
@@ -112,10 +114,13 @@ const BasicType StreamString = 11u;
 const BasicType StreamInterface = 12u;
 
 /**
+=======
+>>>>>>> refs/remotes/origin/BitField_Handling
  * @brief A structure Used to describe the type pointed to by a pointer.
  * @details Depending on the first bit isStructuredData it may contain a code identifying a structure
  * or the remaining bit can be used to identify a specific basic type.\n
  * Basic types are ints 8-64 bit, floats, doubles, char pointers and void pointers.
+ * Cannot use BitField.h as TypeDescriptor is required by it
  */
 struct TypeDescriptor {
 
@@ -175,72 +180,72 @@ struct TypeDescriptor {
 /** Float descriptor. */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor Float32Bit = { false, false, { { Float, 32u } } };
+static const TypeDescriptor Float32Bit = { false, false, { { Float, 32u } } };
 
 /** Double descriptor. */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor Float64Bit = { false, false, { { Float, 64u } } };
+static const TypeDescriptor Float64Bit = { false, false, { { Float, 64u } } };
 
 /** 128 bit Float descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor Float128Bit = { false, false, { { Float, 128u } } };
+static const TypeDescriptor Float128Bit = { false, false, { { Float, 128u } } };
 
 /** Void descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor VoidType = { false, false, { { SignedInteger, 0u } } };
+static const TypeDescriptor VoidType = { false, false, { { SignedInteger, 0u } } };
 
 /** Int8 descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor SignedInteger8Bit = { false, false, { { SignedInteger, 8u } } };
+static const TypeDescriptor SignedInteger8Bit = { false, false, { { SignedInteger, 8u } } };
 
 /** Uint8 descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor UnsignedInteger8Bit = { false, false, { { UnsignedInteger, 8u } } };
+static const TypeDescriptor UnsignedInteger8Bit = { false, false, { { UnsignedInteger, 8u } } };
 
 /** Int16 descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor SignedInteger16Bit = { false, false, { { SignedInteger, 16u } } };
+static const TypeDescriptor SignedInteger16Bit = { false, false, { { SignedInteger, 16u } } };
 
 /** Uint16 descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor UnsignedInteger16Bit = { false, false, { { UnsignedInteger, 16u } } };
+static const TypeDescriptor UnsignedInteger16Bit = { false, false, { { UnsignedInteger, 16u } } };
 
 /** Int32 descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor SignedInteger32Bit = { false, false, { { SignedInteger, 32u } } };
+static const TypeDescriptor SignedInteger32Bit = { false, false, { { SignedInteger, 32u } } };
 
 /** Uint32 descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor UnsignedInteger32Bit = { false, false, { { UnsignedInteger, 32u } } };
+static const TypeDescriptor UnsignedInteger32Bit = { false, false, { { UnsignedInteger, 32u } } };
 
 /** Int64 descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor SignedInteger64Bit = { false, false, { { SignedInteger, 64u } } };
+static const TypeDescriptor SignedInteger64Bit = { false, false, { { SignedInteger, 64u } } };
 
 /** Uint64 descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor UnsignedInteger64Bit = { false, false, { { UnsignedInteger, 64u } } };
+static const TypeDescriptor UnsignedInteger64Bit = { false, false, { { UnsignedInteger, 64u } } };
 
 /** Pointer descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor VoidPointer = { false, false, { { Pointer, sizeof(void *) * 8u } } };
+static const TypeDescriptor VoidPointer = { false, false, { { Pointer, sizeof(void *) * 8u } } };
 
 /** CCString descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-const TypeDescriptor ConstCString = { true, false, { { CCString, 0u } } };
+static const TypeDescriptor ConstCString = { true, false, { { CCString, 0u } } };
 
 }
 
