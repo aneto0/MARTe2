@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=  
+OBJSX=  BitFieldTest.x
 		
 PACKAGE=Core
 ROOT_DIR=../../..

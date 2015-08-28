@@ -38,6 +38,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+/*
 template<typename T, uint8 size, uint8 offset>
 bool BitFieldTest<T, size, offset>::TestSum() {
 
@@ -95,7 +96,7 @@ bool BitFieldTest<T, size, offset>::TestSubtraction() {
 }
 
 
-
+*/
 
 
 

@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "BasicType.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -42,84 +41,10 @@ namespace TypeDefinition {
 
 
 /**
-<<<<<<< HEAD
- * guarantees that only 4 bits are used
-
-class BasicType{
-
-    uint8 value;
-
-public:
-
-
-    BasicType(uint8 x){
-       value = x & 0xF;
-    }
-
-    operator uint8() const {
-        return value ;
-    }
-};
-
-*/
-
-typedef uint8 BasicType;
-
-/**
- * The type is signed.
- */
-const BasicType SignedInteger = 0u;
-
-/**
- * The type is unsigned.
- */
-const BasicType UnsignedInteger = 1u;
-
-/**
- * The type is a float number.
- */
-const BasicType Float = 2u;
-
-/**
- * The type is a pointer.
- */
-const BasicType Pointer = 3u;
-
-/**
- * The type is a C string
- * (const char *)
- */
-const BasicType CCString = 8u;
-
-/**
- * The type is a pointer to a C string allocated on heap.
- * (char **)
- */
-const BasicType PCString = 9u;
-
-/**
- * The type is an array of bytes with the size
- * specified in the size field.
- */
-const BasicType CArray = 10u;
-
-/**
- * The type is a StreamString class.
- */
-const BasicType StreamString = 11u;
-
-/**
- * The type is a StreamInterface class.
- */
-const BasicType StreamInterface = 12u;
-
-/**
-=======
->>>>>>> refs/remotes/origin/BitField_Handling
  * @brief A structure Used to describe the type pointed to by a pointer.
  * @details Depending on the first bit isStructuredData it may contain a code identifying a structure
  * or the remaining bit can be used to identify a specific basic type.\n
- * Basic types are ints 8-64 bit, floats, doubles, char pointers and void pointers.
+ * Basic types are integers 8-64 bit, floats, doubles, char pointers and void pointers.
  * Cannot use BitField.h as TypeDescriptor is required by it
  */
 struct TypeDescriptor {
@@ -146,7 +71,7 @@ struct TypeDescriptor {
             /**
              the actual type of data
              */
-            BasicType type :4;
+            uint32 type :4;
 
             /**
              the size in bytes or bits

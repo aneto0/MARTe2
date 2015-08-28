@@ -1,8 +1,8 @@
 /**
- * @file BitFieldTest.h
- * @brief Header file for class BitFieldTest
- * @date 27/08/2015
- * @author Giuseppe Ferrò
+ * @file BitRange.h
+ * @brief Header file for class BitRange
+ * @date 28/ago/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BitFieldTest
+ * @details This header file contains the declaration of the class BitRange
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BITFIELDTEST_H_
-#define BITFIELDTEST_H_
+		#ifndef BITRANGE_H_
+		#define 		BITRANGE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,23 +32,17 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "BitField.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-template<typename T, uint8 size, uint8 offset>
-class BitFieldTest {
-/*
-    bool TestSum();
 
-    bool TestSubtraction();
-*/
-};
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* BITFIELDTEST_H_ */
-
+		#endif /* BITRANGE_H_ */
+	

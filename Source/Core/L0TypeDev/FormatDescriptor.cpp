@@ -181,7 +181,7 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
             }
 
             // get any integer number from string if any
-            temporaryFormat.StandardField.size = GetIntegerNumber(string);
+            temporaryFormat.size = GetIntegerNumber(string);
 
             // after a dot look for the precision field
             if (string[0] == '.') {
@@ -189,11 +189,11 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
 
                 if (GetDigit(string[0]) < 0) {
                     //If the precision field is empty return -1 to use default precision.
-                    temporaryFormat.StandardField.precision = defaultPrecision;
+                    temporaryFormat.precision = defaultPrecision;
                 }
                 else {
                     // get any integer number from string if any
-                    temporaryFormat.StandardField.precision = GetIntegerNumber(string);
+                    temporaryFormat.precision = GetIntegerNumber(string);
                 }
             }
 

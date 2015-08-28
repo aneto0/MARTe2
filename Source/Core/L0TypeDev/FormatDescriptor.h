@@ -32,7 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-#include "BitField.h"
+#include "BitRange.h"
+#include "BitBoolean.h"
+#include "FractionalInteger.h"
 
 
 /*---------------------------------------------------------------------------*/
