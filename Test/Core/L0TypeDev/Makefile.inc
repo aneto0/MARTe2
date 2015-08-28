@@ -20,22 +20,23 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
+OBJSX=  BitFieldTest.x
+		
 PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  FormatDescriptor.x 
-
-#LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
-INCLUDES+=-I../L0Portability
-
-
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L0TypeDev$(LIBEXT)
+INCLUDES += -I../../../Source/Core/L0Portability
+INCLUDES += -I../../../Source/Core/L0TypeDev
+
+all: $(OBJS) \
+                $(BUILD_DIR)/L1ObjectsTest$(LIBEXT)                 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

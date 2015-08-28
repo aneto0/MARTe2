@@ -156,6 +156,7 @@ public:
     static const T mask  = (~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset ;
     static const T notMask  = ~((~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset) ;
 
+    //the max value without considering the offset (i.e bitSize=5  maxValue=0..011111
     static const T maxValue = (0x1 << bitSize)-1;
     static const T minValue = 0;
 
@@ -188,7 +189,7 @@ public:
     inline operator T() const {
         T temporaryValue = value;
         temporaryValue &=mask;
-        // to align sign bits
+        // to align sign bits ?? why?? You do not need the sign only >>bitOffset
         temporaryValue <<= ((sizeof(T)*8)-bitOffset-bitSize);
         // this should sign extend
         temporaryValue >>= ((sizeof(T)*8)-bitSize);
@@ -214,8 +215,10 @@ class SignedBitRange{
 
 public:
 
+
     static const T mask  = (~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset ;
     static const T notMask  = ~((~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset) ;
+
 
     static const T maxValue = (0x1 << (bitSize-1))-1;
     static const T minValue = ~maxValue;
@@ -227,6 +230,9 @@ public:
     //       value = (x << bitOffset) & mask;
     //    }
     template <typename T2>SignedBitRange(T2 x){
+
+        // build the temporary value as if it is
+        // the entire number
         T temporaryValue = 0;
         if (x >= maxValue) {
             temporaryValue = maxValue;
@@ -241,7 +247,10 @@ public:
             }
         temporaryValue <<= bitOffset;
         temporaryValue &= mask;
+
+        // clear the bits that you need
         value = value & notMask;
+        //put the value in your space
         value = value | temporaryValue;
     }
 
