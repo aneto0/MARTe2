@@ -1,7 +1,7 @@
 /**
- * @file BitFieldTest.h
- * @brief Header file for class BitFieldTest
- * @date 27/08/2015
+ * @file BitBooleanTest.h
+ * @brief Header file for class BitBooleanTest
+ * @date 28/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BitFieldTest
+ * @details This header file contains the declaration of the class BitBooleanTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BITFIELDTEST_H_
-#define BITFIELDTEST_H_
+#ifndef BITBOOLEANTEST_H_
+#define BITBOOLEANTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,24 +31,46 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "BitField.h"
+#include "BitBoolean.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-template<typename T, uint8 size, uint8 offset>
-class BitFieldTest {
-/*
-    bool TestSum();
+template<typename T>
+class BitBooleanTest {
+public:
+    bool TestCopyOperator(T input);
 
-    bool TestSubtraction();
-*/
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+template<typename T>
+bool BitBooleanTest<T>::TestCopyOperator(T input) {
 
-#endif /* BITFIELDTEST_H_ */
+
+    const uint8 max=sizeof(input)*8 -1;
+    const uint8 half= max/2;
+    const uint8 zero=0;
+
+
+
+    TypeDefinition::BitBoolean<T, 0> myShiftedBool;
+    myShiftedBool = true;
+    if (myShiftedBool != 1) {
+        return false;
+    }
+
+    myShiftedBool = false;
+
+    if (myShiftedBool != 0) {
+        return false;
+    }
+
+    return true;
+
+}
+
+#endif /* BITBOOLEANTEST_H_ */
 

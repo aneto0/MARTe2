@@ -1,7 +1,7 @@
 /**
- * @file BitFieldTest.cpp
- * @brief Source file for class BitFieldTest
- * @date 27/ago/2015
+ * @file BitBooleanGTest.cpp
+ * @brief Source file for class BitBooleanGTest
+ * @date 28/ago/2015
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,19 +17,25 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class BitFieldTest (public, protected, and private). Be aware that some 
+ * the class BitBooleanGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "BitFieldTest.h"
+#include "gtest/gtest.h"
+#include "BitBooleanTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,70 +44,11 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-/*
-template<typename T, uint8 size, uint8 offset>
-bool BitFieldTest<T, size, offset>::TestSum() {
 
-    T maxValue = ~((T) 0);
-    T value1 = 0;
-
-    uint64 testValue1=0;
-    uint64 testValue2=0;
-    uint64 mask=(1<<(sizeof(T)*8))-1;
-
-    for (T value1 = 0; value1 < maxValue; value1++) {
-        for(T value2 =0 ; value2< maxValue; value2++){
-
-            T sum=value1+value2;
-            uint64 testSum=(testValue1+testValue2) & mask;
-
-            if(sum != testSum){
-                return false;
-            }
-            testValue2++;
-        }
-        testValue1++;
-    }
-
-    return true;
+TEST(BitBooleanGTest,TestCopyOperator) {
+    BitBooleanTest<uint32> bitbool;
+    uint32 x=0;
+    ASSERT_TRUE(bitbool.TestCopyOperator(x));
 }
 
-
-
-template<typename T, uint8 size, uint8 offset>
-bool BitFieldTest<T, size, offset>::TestSubtraction() {
-
-    T maxValue = ~((T) 0);
-    T value1 = 0;
-
-    uint64 testValue1=0;
-    uint64 testValue2=0;
-    uint64 mask=(1<<(sizeof(T)*8))-1;
-
-    for (T value1 = 0; value1 < maxValue; value1++) {
-        for(T value2 =0 ; value2< maxValue; value2++){
-
-            T sum=value1+value2;
-            uint64 testDiff=(testValue1-testValue2) & mask;
-
-            if(sum != testDiff){
-                return false;
-            }
-            testValue2++;
-        }
-        testValue1++;
-    }
-
-    return true;
-}
-
-
-*/
-
-
-
-
-
-
-
-
+	

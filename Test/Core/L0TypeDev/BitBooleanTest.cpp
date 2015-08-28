@@ -1,7 +1,7 @@
 /**
- * @file BitFieldGTest.cpp
- * @brief Source file for class BitFieldGTest
- * @date 27/08/2015
+ * @file BitBooleanTest.cpp
+ * @brief Source file for class BitBooleanTest
+ * @date 28/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class BitFieldGTest (public, protected, and private). Be aware that some 
+ * the class BitBooleanTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,13 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
-#include "gtest/gtest.h"
+#include "BitBooleanTest.h"
 
-/*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-#include "BitFieldTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -44,14 +39,3 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-TEST(BitFieldGTest,TestSum) {
-    BitFieldTest<uint32, 32, 0> bitFieldTest;
-    ASSERT_TRUE(bitFieldTest.TestSum());
-}
-
-TEST(BitFieldGTest,TestSubtraction) {
-    BitFieldTest<uint32, 32, 0> bitFieldTest;
-    ASSERT_TRUE(bitFieldTest.TestSubtraction());
-}
-	
