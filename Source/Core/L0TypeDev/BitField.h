@@ -71,50 +71,32 @@ static inline const T MinValue() {
 }
 };
 
-template <typename baseType, int bitSize>
-class FractionalTypeCharacteristics{
-public:
-
-static inline bool IsSigned(){
-    return ((static_cast<baseType>(-1))<0);
-}
-
-static inline const baseType MaxValue() {
-    baseType temp;
-    if (TypeCharacteristics<baseType>::IsSigned()){
-        temp = (0x1 << (bitSize-1))-1;
-
-    } else {
-        temp = static_cast<baseType>(-1) >> ((sizeof(baseType)*8)-bitSize);
-    }
-    return temp;
-}
-static inline const baseType MinValue() {
-    baseType temp;
-    if (TypeCharacteristics<baseType>::IsSigned()){
-        temp = (-1 << (bitSize-1));
-    } else {
-        temp = 0;
-    }
-
-    return temp;
-}
-};
 
 
 template <typename baseType, int bitSize>
 class FractionalInteger{
+
     baseType value;
 
     static const bool isSigned = ((static_cast<baseType>(-1))<0);
 
     static const baseType minValue = (isSigned?(-1  << (bitSize-1))   :0);
+
     static const baseType maxValue = (isSigned?((0x1 << (bitSize-1))-1):(static_cast<baseType>(-1) >> ((sizeof(baseType)*8)-bitSize)) );
 
 public:
 
+    static inline int BitSize(){
+        return bitSize;
+    }
 
-    static inline int BitSize(){ return bitSize; }
+    static inline int MaxValue(){
+        return maxValue;
+    }
+
+    static inline int MinValue(){
+        return minValue;
+    }
 
     FractionalInteger(){
         value = 0;
@@ -126,12 +108,12 @@ public:
      */
     template <typename inputType>FractionalInteger(inputType input){
         baseType temporaryValue = 0;
-        if (input >= maxValue) {
+        if (input >= static_cast<inputType>(maxValue)) {
             value = maxValue;
             // ERROR LOGGING
         }
         else {
-            if (input <= minValue) {
+            if (input <= static_cast<inputType>(minValue)) {
                 value = minValue;
                 // ERROR LOGGING
             } else {
@@ -156,128 +138,84 @@ public:
 
 };
 
+/**
+ *  to be used in unions so no constructor!
+ */
+template <typename baseType, int bitSize,int bitOffset>
+class BitRange{
+    baseType value;
 
+    static const baseType baseTypeBitSize = (sizeof(baseType)*8);
 
+    static const bool isSigned = ((static_cast<baseType>(-1))<0);
 
-template <typename T, uint8 bitSize,uint8 bitOffset>
-class UnsignedBitRange{
-    T value;
+    static const baseType minValue = (isSigned?(-1  << (bitSize-1))   :0);
+
+    static const baseType maxValue = (isSigned?((0x1 << (bitSize-1))-1):(static_cast<baseType>(-1) >> ((sizeof(baseType)*8)-bitSize)) );
+
+    static const baseType mask  = static_cast<baseType>((~0u >> (baseTypeBitSize-bitSize)) << bitOffset) ;
+
+    static const baseType notMask  = ~mask ;
 
 public:
-
-    static const T mask  = (~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset ;
-    static const T notMask  = ~((~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset) ;
-
-    static const T maxValue = (0x1 << bitSize)-1;
-    static const T minValue = 0;
 
     /**
      *
      */
-    //    inline UnsignedBitRange(T x){
-    //       value = (x << bitOffset) & mask;
-    //    }
-    template <typename T2>UnsignedBitRange(T2 x){
-        T temporaryValue = 0;
-        if (x >= maxValue) {
+    template <typename inputType>void operator=(inputType input){
+        baseType temporaryValue = 0;
+        if (input >= static_cast<inputType>(maxValue)) {
             temporaryValue = maxValue;
             // ERROR LOGGING
         }
         else {
-            if (x <= minValue) {
+            if (input <= static_cast<inputType>(minValue)) {
                 temporaryValue = minValue;
-                // ERROR LOGGING
             } else {
-                temporaryValue = x;
+                temporaryValue = input;
             }
         }
         temporaryValue <<= bitOffset;
+
         temporaryValue &= mask;
-        value = value & notMask;
-        value = value | temporaryValue;
+
+        value          &= notMask;
+
+        value |= temporaryValue;
     }
 
-    inline operator T() const {
-        T temporaryValue = value;
-        temporaryValue &=mask;
+    inline operator baseType() const {
+        baseType temporaryValue = value;
+
+        temporaryValue &= mask;
+
         // to align sign bits
-        temporaryValue <<= ((sizeof(T)*8)-bitOffset-bitSize);
+        temporaryValue <<= (baseTypeBitSize - bitOffset - bitSize);
+
         // this should sign extend
-        temporaryValue >>= ((sizeof(T)*8)-bitSize);
+        temporaryValue >>= (baseTypeBitSize - bitSize);
 
         return temporaryValue;
     }
 
     inline operator AnyType() const {
-        const TypeDescriptor td = { false, false, { { UnsignedInteger, bitSize } } };
-        return AnyType (td, bitOffset, this);
-    }
-
-    static inline T BitSize(){ return bitSize; }
-
-    static inline T BitOffset(){ return bitOffset; }
-
-};
-
-
-template <typename T, uint8 bitSize,uint8 bitOffset>
-class SignedBitRange{
-    T value;
-
-public:
-
-    static const T mask  = (~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset ;
-    static const T notMask  = ~((~0u >> ((sizeof(T)*8)-bitSize)) << bitOffset) ;
-
-    static const T maxValue = (0x1 << (bitSize-1))-1;
-    static const T minValue = ~maxValue;
-
-    /**
-     *
-     */
-    //    inline UnsignedBitRange(T x){
-    //       value = (x << bitOffset) & mask;
-    //    }
-    template <typename T2>SignedBitRange(T2 x){
-        T temporaryValue = 0;
-        if (x >= maxValue) {
-            temporaryValue = maxValue;
-            // ERROR LOGGING
+        BasicType bt = UnsignedInteger;
+        if (TypeCharacteristics<baseType>::IsSigned()){
+            bt = SignedInteger;
         }
-        else
-            if (x <= minValue) {
-                temporaryValue = minValue;
-                // ERROR LOGGING
-            } else {
-                temporaryValue = x;
-            }
-        temporaryValue <<= bitOffset;
-        temporaryValue &= mask;
-        value = value & notMask;
-        value = value | temporaryValue;
-    }
-
-    inline operator T() const {
-        T temporaryValue = value;
-        temporaryValue &=mask;
-        // to align sign bits
-        temporaryValue <<= ((sizeof(T)*8)-bitOffset-bitSize);
-        // this should sign extend
-        temporaryValue >>= ((sizeof(T)*8)-bitSize);
-
-        return temporaryValue;
-    }
-
-    inline operator AnyType() const {
-        const TypeDescriptor td = { false, false, { { SignedInteger, bitSize } } };
+        const TypeDescriptor td = { false, false, { { bt, bitSize } } };
         return AnyType (td, bitOffset, this);
     }
 
-    static inline T BitSize(){ return bitSize; }
+    static inline baseType BitSize(){ return bitSize; }
 
-    static inline T BitOffset(){ return bitOffset; }
+    static inline baseType BitOffset(){ return bitOffset; }
 
 };
+
+
+
+
 
 
 
@@ -345,10 +283,10 @@ typedef TypeDefinition::FractionalInteger<int32,31>  int31;
 
 
 typedef union {
-    TypeDefinition::UnsignedBitRange<uint32,4,0>  a;
-    TypeDefinition::UnsignedBitRange<uint32,4,4>  b;
-    TypeDefinition::UnsignedBitRange<uint32,10,8>  c;
-    TypeDefinition::UnsignedBitRange<uint32,14,18>  d;
+    TypeDefinition::BitRange<uint32,4,0>  a;
+    TypeDefinition::BitRange<uint32,4,4>  b;
+    TypeDefinition::BitRange<uint32,10,8>  c;
+    TypeDefinition::BitRange<uint32,14,18>  d;
 
 }
 myBitStruct;
