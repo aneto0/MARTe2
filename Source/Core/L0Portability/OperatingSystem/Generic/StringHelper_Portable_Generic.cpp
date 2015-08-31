@@ -50,7 +50,7 @@ uint32 Length(const char8* const string) {
         }
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
 
     return i;
@@ -84,7 +84,7 @@ int32 Compare(const char8* const string1,
 
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
@@ -120,7 +120,7 @@ int32 CompareN(const char8* const string1,
 
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
 
     return ret;
@@ -141,7 +141,7 @@ bool Concatenate(char8* const destination,
         ret = true;
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
@@ -163,7 +163,7 @@ bool ConcatenateN(char8* const destination,
         ret = true;
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
     return ret;
 
@@ -193,7 +193,7 @@ const char8* SearchChar(const char8* const string,
         }
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
     return ret;
 
@@ -207,7 +207,7 @@ bool Copy(char8* const destination,
         ret = Concatenate(destination, source);
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
@@ -221,7 +221,7 @@ bool CopyN(char8* const destination,
         ret = ConcatenateN(destination, source, size);
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
@@ -255,7 +255,7 @@ int32 SearchIndex(const char8* const string1,
         }
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
@@ -298,7 +298,7 @@ const char8* SearchChars(const char8* const string1,
         }
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
 
     return ret;
@@ -323,7 +323,7 @@ const char8* SearchLastChar(const char8* const string,
         }
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
 
     return ret;
@@ -350,7 +350,7 @@ const char8* SearchString(const char8* const string,
         }
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
 
     return ret;
@@ -370,7 +370,7 @@ bool SetChar(char8* const string,
         ret = true;
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
     return ret;
 }

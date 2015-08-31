@@ -49,7 +49,7 @@ ReferenceContainer::ReferenceContainer() :
 /*lint -e{929} -e{925} the current implementation of the ReferenceContainer requires pointer to pointer casting*/
 Reference ReferenceContainer::Get(const uint32 idx) {
     Reference ref;
-    if (mux.FastLock(muxTimeout) == NoError) {
+    if (mux.FastLock(muxTimeout) == ErrorManagement::NoError) {
         if (idx < list.ListSize()) {
             ReferenceContainerNode *node = dynamic_cast<ReferenceContainerNode *>(list.ListPeek(idx));
             if (node != NULL) {
@@ -83,7 +83,7 @@ ReferenceContainer::~ReferenceContainer() {
 
 bool ReferenceContainer::Insert(Reference ref,
                                 const int32 &position) {
-    bool ok = (mux.FastLock(muxTimeout) == NoError);
+    bool ok = (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
     if (ok) {
         ReferenceContainerNode *newItem = new ReferenceContainerNode();
         if (newItem->SetReference(ref)) {
@@ -120,7 +120,7 @@ bool ReferenceContainer::IsContainer(const Reference &ref) const {
 void ReferenceContainer::Find(ReferenceContainer &result,
                               ReferenceContainerFilter &filter) {
     int32 index = 0;
-    bool ok = (mux.FastLock(muxTimeout) == NoError);
+    bool ok = (mux.FastLock(muxTimeout) == ErrorManagement::NoError);
     if (ok && (list.ListSize() > 0u)) {
         if (filter.IsReverse()) {
             index = static_cast<int32>(list.ListSize()) - 1;
@@ -170,7 +170,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                     uint32 sizeBeforeBranching = result.list.ListSize();
                     mux.FastUnLock();
                     currentNodeContainer->Find(result, filter);
-                    if (mux.FastLock(muxTimeout) == NoError) {
+                    if (mux.FastLock(muxTimeout) == ErrorManagement::NoError) {
                         //Something was found if the result size has changed
                         if (sizeBeforeBranching == result.list.ListSize()) {
                             //Nothing found. Remove the stored path (which led to nowhere).
@@ -195,7 +195,7 @@ void ReferenceContainer::Find(ReferenceContainer &result,
 
 uint32 ReferenceContainer::Size() {
     uint32 size = 0u;
-    if (mux.FastLock(muxTimeout) == NoError) {
+    if (mux.FastLock(muxTimeout) == ErrorManagement::NoError) {
         size = list.ListSize();
     }
     mux.FastUnLock();

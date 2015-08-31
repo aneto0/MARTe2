@@ -101,9 +101,9 @@ TEST(EventSemGTest,TestWaitTimeout) {
     ASSERT_TRUE(eventSemTest.TestWait(500));
 }
 
-TEST(EventSemGTest,TestWaitNoTimeout) {
+TEST(EventSemGTest,TestWaitTimeoutNoTimeout) {
     EventSemTest eventSemTest;
-    ASSERT_TRUE(eventSemTest.TestWaitNoTimeout(32));
+    ASSERT_TRUE(eventSemTest.TestWaitTimeoutNoTimeout(32));
 }
 
 TEST(EventSemGTest,TestWaitTimeoutSuccess) {

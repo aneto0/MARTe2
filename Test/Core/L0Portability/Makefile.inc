@@ -46,7 +46,7 @@ OBJSX=  StandardHeap_GenericTest.x \
 	LoadableLibraryTest.x \
 	FastMathTest.x \
 	StringPortableTest.x \
-	LoggerTest.x \
+	ErrorManagementTest.x \
 
 
 PACKAGE=Core

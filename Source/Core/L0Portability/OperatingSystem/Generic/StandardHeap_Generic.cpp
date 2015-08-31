@@ -30,7 +30,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StandardHeap.h"
-
+#ifndef LINT
+#include <string.h>
+#endif
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -56,7 +58,6 @@ StandardHeap::~StandardHeap() {
     lastAddress = 0U;
     firstAddress = 0U;
 }
-
 
 /**
  * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
@@ -89,7 +90,7 @@ void *StandardHeap::Malloc(const uint32 size) {
 
     }
     else {
-        REPORT_LOG_MESSAGE(OSError, "Error: malloc()")
+        REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()")
     }
     return pointer;
 
@@ -136,7 +137,7 @@ void *StandardHeap::Realloc(void *&data,
                 }
             }
             else {
-                REPORT_LOG_MESSAGE(OSError, "Error: realloc()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: realloc()")
             }
         }
     }
@@ -153,12 +154,12 @@ void *StandardHeap::Duplicate(const void * const data,
     // check if 0 zerminated copy to be done
     if (size == 0U) {
         const char8* inputData = static_cast<const char8 *>(data);
-        size = strlen(inputData);
+        size = static_cast<uint32>(strlen(inputData));
         if (data != NULL) {
             duplicate = strdup(inputData);
         }
         if (duplicate == NULL) {
-            REPORT_LOG_MESSAGE(OSError, "Error: strdup()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: strdup()")
         }
     }
     else { // strdup style
@@ -174,7 +175,7 @@ void *StandardHeap::Duplicate(const void * const data,
             } //copy loop
         } //check Malloc success
         else {
-            REPORT_LOG_MESSAGE(OSError, "Error: malloc()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()")
         }
     } // copy bound by size
 

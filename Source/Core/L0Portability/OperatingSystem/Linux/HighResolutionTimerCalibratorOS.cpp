@@ -65,7 +65,7 @@ HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
             fclose(f);
         }
         else{
-            REPORT_LOG_MESSAGE(OSError, "Error: fopen()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: fopen()")
         }
 
         if (size > 0u) {
@@ -83,11 +83,11 @@ HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
             }
         }
         else{
-            REPORT_LOG_MESSAGE(OSError, "Error: fread()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: fread()")
         }
     }
     else{
-        REPORT_LOG_MESSAGE(OSError, "Error: gettimeofday()")
+        REPORT_ERROR(ErrorManagement::OSError, "Error: gettimeofday()")
     }
 }
 
@@ -123,7 +123,7 @@ bool HighResolutionTimerCalibratorOS::GetTimeStamp(TimeValues &timeStamp) const 
         timeStamp.year = static_cast<uint32>(tValues->tm_year);
     }
     else{
-        REPORT_LOG_MESSAGE(OSError, "Error: localtime()")
+        REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()")
     }
     return ret;
 }

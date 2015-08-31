@@ -62,13 +62,13 @@ ThreadInformation::ThreadInformation(const ThreadFunctionType threadFunction,
     if (threadName != NULL) {
         this->name = StringHelper::StringDup(threadName);
         if (this->name == NULL) {
-            REPORT_LOG_MESSAGE(FatalError, "Error: duplication of thread name failed")
+            REPORT_ERROR(ErrorManagement::FatalError, "Error: duplication of thread name failed")
         }
     }
     else {
         this->name = StringHelper::StringDup("Unknown");
         if (this->name == NULL) {
-            REPORT_LOG_MESSAGE(FatalError, "Error: duplication of thread name (Unknown) failed")
+            REPORT_ERROR(ErrorManagement::FatalError, "Error: duplication of thread name (Unknown) failed")
         }
     }
     threadId = InvalidThreadIdentifier;
@@ -133,7 +133,7 @@ void ThreadInformation::SetThreadIdentifier(const ThreadIdentifier &newThreadId)
     this->threadId = newThreadId;
 }
 
-ErrorType ThreadInformation::ThreadWait() {
+ErrorManagement::ErrorType ThreadInformation::ThreadWait() {
     return startThreadSynchSem.Wait();
 }
 

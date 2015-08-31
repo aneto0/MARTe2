@@ -35,7 +35,7 @@
 #include "ErrorType.h"
 #include "TimeoutType.h"
 #include "GeneralDefinitions.h"
-#include "Logger.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -92,22 +92,22 @@ public:
      * @brief Waits for a post event without timeout (i.e. possibly forever).
      * @details Calling this function on a semaphore that was not reset will
      * not block the calling thread.
-     * @return NoError if the operating system call returns with no errors.
+     * @return ErrorManagement::NoError if the operating system call returns with no errors.
      * @pre the semaphore was successfully created.
      */
-    ErrorType Wait();
+    ErrorManagement::ErrorType Wait();
 
     /**
      * @brief Waits for a post event, limited by the timeout time.
      * @details Calling this function on a semaphore that was not reset will
      * not block the calling thread.
      * @param[in] timeout the maximum time that the barrier will be set.
-     * @return NoError if the operating system call returns with no errors or
+     * @return ErrorManagement::NoError if the operating system call returns with no errors or
      * Timeout if the time waiting in the barrier (from when the function was called)
      * was greater than the specified timeout.
      * @pre the semaphore was successfully created.
      */
-    ErrorType Wait(const TimeoutType &timeout);
+    ErrorManagement::ErrorType Wait(const TimeoutType &timeout);
 
     /**
      * @brief Resets the semaphore (raises the barrier).
@@ -127,10 +127,10 @@ public:
      * @brief Resets the semaphore (raises the barrier) and waits.
      * @param[in] timeout is the desired timeout.
      * @return true if both system level Reset returns true and
-     * the Wait function returns NoError.
+     * the Wait function returns ErrorManagement::NoError.
      * @pre the semaphore was successfully created.
      */
-    ErrorType ResetWait(const TimeoutType &timeout);
+    ErrorManagement::ErrorType ResetWait(const TimeoutType &timeout);
 
     /**
      * @brief Return the operating system low level properties.

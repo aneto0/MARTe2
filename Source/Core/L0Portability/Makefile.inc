@@ -34,7 +34,7 @@ OBJSX=  FastMath.x \
         HeapManager.x \
         FastPollingMutexSem.x \
         StringHelper.x \
-        Logger.x
+        ErrorManagement.x
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 

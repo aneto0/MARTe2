@@ -46,7 +46,7 @@ bool BasicConsoleTest::TestConstructor() {
     uint32 nRowsOut;
     uint32 nColsOut;
     //in some os you need to open the console first.
-    if (myConsole.GetSize(nColsOut, nRowsOut) == NoError) {
+    if (myConsole.GetSize(nColsOut, nRowsOut) == ErrorManagement::NoError) {
 
         if (nColsOut != 0 || nRowsOut != 0) {
             return false;
@@ -60,39 +60,39 @@ bool BasicConsoleTest::TestOpenModeDefault(FlagsType openingMode) {
 
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    ErrorType error = myConsole.Open(BasicConsoleMode::Default);
-    return error == NoError;
+    ErrorManagement::ErrorType error = myConsole.Open(BasicConsoleMode::Default);
+    return error == ErrorManagement::NoError;
 
 }
 
 bool BasicConsoleTest::TestOpenModeCreateNewBuffer() {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    ErrorType error = myConsole.Open(BasicConsoleMode::CreateNewBuffer);
+    ErrorManagement::ErrorType error = myConsole.Open(BasicConsoleMode::CreateNewBuffer);
 
-    return error == NoError;
+    return error == ErrorManagement::NoError;
 }
 
 bool BasicConsoleTest::TestOpenModePerformCharacterInput() {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    ErrorType error = myConsole.Open(BasicConsoleMode::PerformCharacterInput);
-    return error == NoError;
+    ErrorManagement::ErrorType error = myConsole.Open(BasicConsoleMode::PerformCharacterInput);
+    return error == ErrorManagement::NoError;
 
 }
 
 bool BasicConsoleTest::TestOpenModeDisableControlBreak() {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    ErrorType error = myConsole.Open(BasicConsoleMode::DisableControlBreak);
-    return error == NoError;
+    ErrorManagement::ErrorType error = myConsole.Open(BasicConsoleMode::DisableControlBreak);
+    return error == ErrorManagement::NoError;
 }
 
 bool BasicConsoleTest::TestOpenModeEnablePaging() {
     BasicConsole myConsole;
     myConsole.SetSize(numberOfColumns, numberOfRows);
-    ErrorType error = myConsole.Open(BasicConsoleMode::EnablePaging);
-    return error == NoError;
+    ErrorManagement::ErrorType error = myConsole.Open(BasicConsoleMode::EnablePaging);
+    return error == ErrorManagement::NoError;
 }
 
 bool BasicConsoleTest::TestGetOpeningMode() {
@@ -141,8 +141,8 @@ bool BasicConsoleTestWrite(const char8 *string,
     if (size < 0) {
         return false;
     }
-    ErrorType ret = myConsole.Write(string, size, TTInfiniteWait);
-    return (ret == NoError);
+    ErrorManagement::ErrorType ret = myConsole.Write(string, size, TTInfiniteWait);
+    return (ret == ErrorManagement::NoError);
 }
 
 bool BasicConsoleTest::TestWriteCheckReturn(const char8 *string,
@@ -187,7 +187,7 @@ bool BasicConsoleTest::TestWriteNullString() {
     if (size < 0) {
         return false;
     }
-    retValue = (Warning == myConsole.Write(string, size, TTInfiniteWait));
+    retValue = (ErrorManagement::Warning == myConsole.Write(string, size, TTInfiniteWait));
     return retValue;
 }
 
@@ -304,12 +304,12 @@ bool BasicConsoleTest::TestRead(const char8 *stringArg) {
     BasicConsoleTestWrite(result, 0, myConsole);
     //read the string
     uint32 totalSize = N_CHARS_NEWLINE + stringSize;
-    ErrorType err = myConsole.Read(string, totalSize, TTInfiniteWait);
+    ErrorManagement::ErrorType err = myConsole.Read(string, totalSize, TTInfiniteWait);
     string[stringSize] = '\0';
     //compare the read string with the argument
     bool stringLengthOK = StringTestHelper::Compare(string, stringArg);
 
-    return (err == NoError) && stringLengthOK;
+    return (err == ErrorManagement::NoError) && stringLengthOK;
 }
 
 bool BasicConsoleTest::TestTimeoutRead(uint32 timeout) {
@@ -323,24 +323,24 @@ bool BasicConsoleTest::TestTimeoutRead(uint32 timeout) {
 
     char buffer[32];
     uint32 size = 32;
-    return myConsole.Read(buffer, size, timeout) == Timeout;
+    return myConsole.Read(buffer, size, timeout) == ErrorManagement::Timeout;
 
 }
 
 bool BasicConsoleTest::TestSetGetSize(uint32 columnIn,
                                       uint32 rowIn) {
     BasicConsole myConsole;
-    ErrorType error = NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
     uint32 rowOut = 0;
     uint32 columnOut = 0;
     myConsole.Open(BasicConsoleMode::Default);
     error = myConsole.SetSize(columnIn, rowIn);
 
-    if (error != NoError) {
+    if (error != ErrorManagement::NoError) {
         return false;
     }
     error = myConsole.GetSize(columnOut, rowOut);
-    if (error != NoError) {
+    if (error != ErrorManagement::NoError) {
         return false;
     }
     return ((rowIn == rowOut) && (columnIn == columnOut));
@@ -355,9 +355,9 @@ bool BasicConsoleTest::TestSetGetWindowSize(uint32 numberOfColumns,
     myConsole.Open(BasicConsoleMode::Default);
     myConsole.SetSize(numberOfColumns, numberOfRows);
 
-    ErrorType error = NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
     error = myConsole.SetWindowSize(numberOfColumns - 2, numberOfRows - 2);
-    if (error != NoError) {
+    if (error != ErrorManagement::NoError) {
         return false;
     }
 
@@ -365,7 +365,7 @@ bool BasicConsoleTest::TestSetGetWindowSize(uint32 numberOfColumns,
     uint32 nCols = 0;
 
     error = myConsole.GetWindowSize(nCols, nRows);
-    if (error != NoError) {
+    if (error != ErrorManagement::NoError) {
         return false;
     }
     if ((nRows != (numberOfRows - 2) || nCols != (numberOfColumns - 2))) {
@@ -373,11 +373,11 @@ bool BasicConsoleTest::TestSetGetWindowSize(uint32 numberOfColumns,
     }
 
     error = myConsole.SetWindowSize(numberOfColumns + 10, numberOfRows + 10);
-    if (error != NoError) {
+    if (error != ErrorManagement::NoError) {
         return false;
     }
     error = myConsole.GetWindowSize(nCols, nRows);
-    if (error != NoError) {
+    if (error != ErrorManagement::NoError) {
         return false;
     }
 
@@ -389,8 +389,8 @@ bool BasicConsoleTest::TestClear() {
     myConsole.Open(BasicConsoleMode::Default);
     myConsole.SetSize(numberOfColumns, numberOfRows);
 
-    ErrorType err = myConsole.Clear();
-    return (err == NoError);
+    ErrorManagement::ErrorType err = myConsole.Clear();
+    return (err == ErrorManagement::NoError);
 }
 
 bool BasicConsoleTest::TestPerfChar() {
@@ -404,7 +404,7 @@ bool BasicConsoleTest::TestPerfChar() {
     myConsole.Write(myMessage, sizeMyMessage, TTInfiniteWait);
     char8 read[1];
     uint32 size = 5;
-    bool ok = (NoError == myConsole.Read(read, size, TTInfiniteWait));
+    bool ok = (ErrorManagement::NoError == myConsole.Read(read, size, TTInfiniteWait));
     return ok && (size == 1);
 }
 
@@ -415,11 +415,11 @@ bool BasicConsoleTest::TestShowBuffer() {
     }
     myConsole.Open(BasicConsoleMode::CreateNewBuffer);
 
-    ErrorType error = myConsole.ShowBuffer();
+    ErrorManagement::ErrorType error = myConsole.ShowBuffer();
     uint32 size = 5;
     myConsole.Write("Hello", size, TTInfiniteWait);
     Sleep::Sec(1.5);
-    return error == NoError;
+    return error == ErrorManagement::NoError;
 }
 
 bool BasicConsoleTest::TestSetGetTitleBar(const char8 *title) {
@@ -430,17 +430,17 @@ bool BasicConsoleTest::TestSetGetTitleBar(const char8 *title) {
     }
     myConsole.Open(BasicConsoleMode::Default);
 
-    if (myConsole.SetTitleBar(NULL) == NoError) {
+    if (myConsole.SetTitleBar(NULL) == ErrorManagement::NoError) {
         return false;
     }
 
-    if (myConsole.SetTitleBar(title) != NoError) {
+    if (myConsole.SetTitleBar(title) != ErrorManagement::NoError) {
         return false;
     }
 
     char buffer[64];
 
-    if (myConsole.GetTitleBar(buffer, 64) != NoError) {
+    if (myConsole.GetTitleBar(buffer, 64) != ErrorManagement::NoError) {
         return false;
     }
 
@@ -449,7 +449,7 @@ bool BasicConsoleTest::TestSetGetTitleBar(const char8 *title) {
     }
 
     Sleep::Sec(1.5);
-    return myConsole.GetTitleBar(NULL, 10) == Warning;
+    return myConsole.GetTitleBar(NULL, 10) == ErrorManagement::Warning;
 }
 
 bool BasicConsoleTest::TestSetGetCursorPosition(uint32 column,
@@ -464,12 +464,12 @@ bool BasicConsoleTest::TestSetGetCursorPosition(uint32 column,
 
     bool ok = true;
 
-    ok = myConsole.SetCursorPosition(column, row) == NoError;
+    ok = myConsole.SetCursorPosition(column, row) == ErrorManagement::NoError;
 
     uint32 colRet = 0;
     uint32 rowRet = 0;
 
-    ok &= myConsole.GetCursorPosition(colRet, rowRet) == NoError;
+    ok &= myConsole.GetCursorPosition(colRet, rowRet) == ErrorManagement::NoError;
     Sleep::Sec(1.5);
 
     myConsole.Clear();
@@ -487,7 +487,7 @@ bool BasicConsoleTest::TestSetColour(Colours foregroundColour,
     myConsole.Open(BasicConsoleMode::Default);
     myConsole.Clear();
     myConsole.SetCursorPosition(0, 0);
-    bool ok = (myConsole.SetColour(foregroundColour, backgroundColour) == NoError);
+    bool ok = (myConsole.SetColour(foregroundColour, backgroundColour) == ErrorManagement::NoError);
     uint32 size = 11;
     myConsole.Write("Hello World", size, TTInfiniteWait);
     Sleep::Sec(1.5);
@@ -507,7 +507,7 @@ bool BasicConsoleTest::TestPlotChar(char8 c,
     }
     myConsole.Clear();
     myConsole.SetCursorPosition(0, 0);
-    bool ok = myConsole.PlotChar(c, foregroundColour, backgroundColour, column, row) == NoError;
+    bool ok = myConsole.PlotChar(c, foregroundColour, backgroundColour, column, row) == ErrorManagement::NoError;
     Sleep::Sec(1.5);
     return ok;
 }

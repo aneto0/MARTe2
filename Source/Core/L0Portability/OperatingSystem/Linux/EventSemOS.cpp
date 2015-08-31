@@ -143,15 +143,15 @@ bool EventSem::Create() {
         if (ok) {
             ok = (pthread_cond_init(&handle->eventVariable, static_cast<const pthread_condattr_t *>(NULL)) == 0);
             if (!ok) {
-                REPORT_LOG_MESSAGE(OSError, "Error: pthread_cond_init()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_cond_init()")
             }
         }
         else {
-            REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutex_init()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_init()")
         }
     }
     else {
-        REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutexattr_init()")
+        REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_init()")
     }
     handle->referencesMux = 0;
     return ok;
@@ -170,16 +170,16 @@ bool EventSem::Close() {
         if (ok) {
             ok = (pthread_mutex_destroy(&handle->mutexHandle) == 0);
             if (!ok) {
-                REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutex_destroy()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_destroy()")
             }
         }
         else {
-            REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutexattr_destroy()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_destroy()")
         }
         if (ok) {
             ok = (pthread_cond_destroy(&handle->eventVariable) == 0);
             if (!ok) {
-                REPORT_LOG_MESSAGE(OSError, "Error: pthread_cond_destroy()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_cond_destroy()")
             }
         }
     }
@@ -188,13 +188,13 @@ bool EventSem::Close() {
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to handle*/
-ErrorType EventSem::Wait() {
+ErrorManagement::ErrorType EventSem::Wait() {
     bool ok = false;
-    ErrorType err = NoError;
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
     if (!handle->closed) {
         bool okLock = (pthread_mutex_lock(&handle->mutexHandle) == 0);
         if (!okLock) {
-            REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutex_lock()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_lock()")
         }
 
         bool okWait = true;
@@ -202,21 +202,21 @@ ErrorType EventSem::Wait() {
             okWait = (pthread_cond_wait(&handle->eventVariable, &handle->mutexHandle) == 0);
         }
         if (!okWait) {
-            REPORT_LOG_MESSAGE(OSError, "Error: pthread_cond_wait()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_cond_wait()")
         }
 
         bool okUnLock = (pthread_mutex_unlock(&handle->mutexHandle) == 0);
         if (!okUnLock) {
-            REPORT_LOG_MESSAGE(OSError, "Error: pthread_mutex_unlock()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_unlock()")
         }
         ok = (okLock && okWait && okUnLock);
         if (!ok) {
-            err = OSError;
+            err = ErrorManagement::OSError;
         }
     }
     else {
-        err = FatalError;
-        REPORT_LOG_MESSAGE(err, "Error: the semaphore handle is closed")
+        err = ErrorManagement::FatalError;
+        REPORT_ERROR(err, "Error: the semaphore handle is closed")
     }
 
     return err;
@@ -224,9 +224,9 @@ ErrorType EventSem::Wait() {
 
 /*lint -e{613} guaranteed by design that it is not possible to call this function with a NULL
  * reference to handle*/
-ErrorType EventSem::Wait(const TimeoutType &timeout) {
+ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
     bool ok = !handle->closed;
-    ErrorType err = NoError;
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
     if (timeout == TTInfiniteWait) {
         err = Wait();
     }
@@ -252,8 +252,8 @@ ErrorType EventSem::Wait(const TimeoutType &timeout) {
                     if (handle->stop) {
                         ok = (pthread_cond_timedwait(&handle->eventVariable, &handle->mutexHandle, &timesValues) == 0);
                         if (!ok) {
-                            err = Timeout;
-                            REPORT_LOG_MESSAGE(err, "Information: timeout occurred")
+                            err = ErrorManagement::Timeout;
+                            REPORT_ERROR(err, "Information: timeout occurred")
                         }
                     }
                 }
@@ -261,18 +261,18 @@ ErrorType EventSem::Wait(const TimeoutType &timeout) {
                 /*lint -e{455} false positive from that does not understand that pthread_mutex_timedlock locks the semaphore*/
                 bool okOs = (pthread_mutex_unlock(&handle->mutexHandle) == 0);
                 if (!okOs) {
-                    err = OSError;
-                    REPORT_LOG_MESSAGE(err, "Error: pthread_mutex_unlock()")
+                    err = ErrorManagement::OSError;
+                    REPORT_ERROR(err, "Error: pthread_mutex_unlock()")
                 }
             }
             else {
-                err = OSError;
-                REPORT_LOG_MESSAGE(err, "Error: ftime()");
+                err = ErrorManagement::OSError;
+                REPORT_ERROR(err, "Error: ftime()")
             }
         }
         else {
-            err = FatalError;
-            REPORT_LOG_MESSAGE(err, "Error: the semaphore handle is closed")
+            err = ErrorManagement::FatalError;
+            REPORT_ERROR(err, "Error: the semaphore handle is closed")
         }
     }
     return err;
@@ -306,9 +306,9 @@ bool EventSem::Reset() {
     return ok;
 }
 
-ErrorType EventSem::ResetWait(const TimeoutType &timeout) {
+ErrorManagement::ErrorType EventSem::ResetWait(const TimeoutType &timeout) {
     bool ok = Reset();
-    ErrorType err = OSError;
+    ErrorManagement::ErrorType err = ErrorManagement::OSError;
     if (ok) {
         err = Wait(timeout);
     }

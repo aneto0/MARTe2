@@ -1,6 +1,6 @@
 /**
- * @file LogInformation.h
- * @brief Header file for class LogInformation
+ * @file ErrorInformation.h
+ * @brief Header file for class ErrorInformation
  * @date 24/08/2015
  * @author Giuseppe Ferrò
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class LogInformation
+ * @details This header file contains the declaration of the class ErrorInformation
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef LOGINFORMATION_H_
-#define LOGINFORMATION_H_
+#ifndef ERRORINFORMATION_H_
+#define ERRORINFORMATION_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -36,12 +36,12 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace Logger {
+namespace ErrorManagement {
 
 /**
  @brief Information structure associated to the error.
  */
-struct LogInformation {
+struct ErrorInformation {
 
     /**
      * Definition of the header.
@@ -56,7 +56,7 @@ struct LogInformation {
         /**
          * The error line number.
          */
-        uint16 lineNumber;
+        int16 lineNumber;
 
         /**
          * Specified is the error is triggered within an object.
@@ -106,5 +106,5 @@ struct LogInformation {
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* LOGINFORMATION_H_ */
+#endif /* ERRORINFORMATION_H_ */
 

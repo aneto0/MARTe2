@@ -1,8 +1,8 @@
 /**
- * @file Logger.cpp
- * @brief Source file for class Logger
- * @date 25/ago/2015
- * @author pc
+ * @file ErrorManagement.cpp
+ * @brief Source file for class ErrorManagement
+ * @date 25/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class Logger (public, protected, and private). Be aware that some 
+ * the class ErrorManagement (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "Logger.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,15 +42,15 @@
 
 
 
-namespace Logger {
+namespace ErrorManagement {
 
 
-void NullLogMessageProcessFunction(const LogInformation &errorInfo,
+void NullErrorProcessFunction(const ErrorInformation &errorInfo,
                                                  const char8 * const errorDescription) {
 }
 
 
-LogMessageProcessFunctionType logMessageProcessFunction = &NullLogMessageProcessFunction;
+ErrorProcessFunctionType errorMessageProcessFunction = &NullErrorProcessFunction;
 
 
 /**
@@ -96,52 +96,56 @@ const char8 *ToName(const ErrorType errorCode) {
 }
 
 
-void ReportLogMessage(const ErrorType code,
+void ReportError(const ErrorType code,
                  const char8 * const errorDescription,
                  const char8 * const fileName,
                  const int16 lineNumber,
                  const char8 * const functionName) {
-    LogInformation logInfo;
-    logInfo.threadId = InvalidThreadIdentifier;
-    logInfo.objectPointer = static_cast<void*>(NULL);
-    logInfo.className       = static_cast<const char8 *>(NULL);
-    logInfo.header.errorType = code;
-    logInfo.header.lineNumber = lineNumber;
-    logInfo.fileName = fileName;
-    logInfo.functionName = functionName;
-    logInfo.hrtTime = HighResolutionTimer::Counter();
+    ErrorInformation errorInfo;
+    errorInfo.threadId = InvalidThreadIdentifier;
+    errorInfo.objectPointer = static_cast<void*>(NULL);
+    errorInfo.className       = static_cast<const char8 *>(NULL);
+    errorInfo.header.errorType = code;
+
+    errorInfo.header.lineNumber = lineNumber;
+    errorInfo.fileName = fileName;
+    errorInfo.functionName = functionName;
+    errorInfo.hrtTime = HighResolutionTimer::Counter();
 #ifndef INTERRUPT_SUPPORTED
-    logInfo.threadId = Threads::Id();
+    errorInfo.threadId = Threads::Id();
 #endif
-    logMessageProcessFunction(logInfo, errorDescription);
+    errorMessageProcessFunction(errorInfo, errorDescription);
 }
 
 
-void ReportLogMessageFullContext(const ErrorType code,
+void ReportErrorFullContext(const ErrorType code,
                             const char8 * const errorDescription,
                             const char8 * const fileName,
                             const int16 lineNumber,
                             const char8 * const functionName) {
-    LogInformation logInfo;
-    logInfo.threadId = InvalidThreadIdentifier;
-    logInfo.objectPointer = static_cast<void*>(NULL);
-    logInfo.className       = static_cast<const char8 *>(NULL);
-    logInfo.header.errorType = code;
-    logInfo.header.lineNumber = lineNumber;
-    logInfo.fileName = fileName;
-    logInfo.functionName = functionName;
-    logInfo.hrtTime = HighResolutionTimer::Counter();
-    logInfo.threadId = Threads::Id();
-    logMessageProcessFunction(logInfo, errorDescription);
+    ErrorInformation errorInfo;
+    errorInfo.threadId = InvalidThreadIdentifier;
+    errorInfo.objectPointer = static_cast<void*>(NULL);
+    errorInfo.className       = static_cast<const char8 *>(NULL);
+    errorInfo.header.errorType = code;
+    errorInfo.header.lineNumber = lineNumber;
+    errorInfo.fileName = fileName;
+    errorInfo.functionName = functionName;
+    errorInfo.hrtTime = HighResolutionTimer::Counter();
+    errorInfo.threadId = Threads::Id();
+    errorMessageProcessFunction(errorInfo, errorDescription);
 }
 
 
 
 
 
-void SetLogMessageProcessFunction(const LogMessageProcessFunctionType userFun) {
+void SetErrorProcessFunction(const ErrorProcessFunctionType userFun) {
     if (userFun != NULL){
-        logMessageProcessFunction = userFun;
+        errorMessageProcessFunction = userFun;
+    }
+    else{
+        errorMessageProcessFunction = userFun;
     }
 }
 

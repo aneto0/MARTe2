@@ -27,7 +27,7 @@ ReferenceContainerNode.cpp
 ReferenceContainerFilterObjectName.cpp
 ReferenceContainerFilterReferences.cpp
 ReferenceContainerFilter.cpp
-Logger.cpp
+ErrorManagement.cpp
 MemoryOperationsHelper_CLIB_Generic.cpp
 StandardHeap_Generic.cpp
 StringHelper_CLIB_Generic.cpp

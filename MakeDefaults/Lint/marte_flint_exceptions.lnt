@@ -70,7 +70,7 @@
  * Justification: Not applicable to a framework
  */
 /* global macro not referenced */
--esym(755,REPORT_LOG_MESSAGE,REPORT_LOG_MESSAGE_FULL)
+-esym(755,REPORT_ERROR,REPORT_ERROR_FULL)
 
 /*
  * Local macro not referenced
@@ -101,7 +101,7 @@
 -esym(758,SFTestType)
 /* global struct not referenced */
 -esym(768,TimeValues::*)
--esym(768,LogInformation::*)
+-esym(768,ErrorInformation::*)
 -esym(768,isObject)
 -esym(768,IBasicConsole::*)
 -esym(768,ExceptionHandler::*)
@@ -132,7 +132,7 @@
 -esym(1714,Endianity::*)
 -esym(1714,Atomic::*)
 -esym(1714,Flags::*) 
--esym(1714,Logger::*)
+-esym(1714,ErrorManagement::*)
 -esym(1714,Processor::*)
 -esym(1714,TimeoutType::*)
 -esym(1714,ProcessorType::*)
@@ -145,7 +145,7 @@
 -esym(1714,ExceptionHandler::*)
 -esym(1714,ThreadInformation::*)
 -esym(1714,Memory::*)
--esym(1714,Logger::*)
+-esym(1714,ErrorManagement::*)
 -esym(1714,LinkedListable::*)
 -esym(1714,LinkedListHolder::*)
 -esym(1714,ClassProperties::*)
@@ -168,7 +168,7 @@
  * Symbol not referenced
  * Justfication: Not applicable to a framework
  */
--esym(714,Logger::*)
+-esym(714,ErrorManagement::*)
 -esym(714,HeapManager::*)
 -esym(714,Sleep::*)
 -esym(714,Threads::*)
@@ -295,8 +295,8 @@
 -esym(9141,ExceptionHandler)
 -esym(9141,Memory)
 -esym(9141,Memory::*)
--esym(9141,Logger)
--esym(9141,Logger::*)
+-esym(9141,ErrorManagement)
+-esym(9141,ErrorManagement::*)
 -esym(9141,Iterator)
 -esym(9141,SearchFilter)
 -esym(9141,SortFilter)
@@ -369,7 +369,7 @@
  */
 -esym(1960, TimeoutType::SetTimeoutSec*)
 -esym(1960, TimeoutType::SetTimeoutHighResolutionTimerTicks*)
--esym(1960, Logger::NullLogMessageProcessFunction*)
+-esym(1960, ErrorManagement::NullErrorProcessFunction*)
 -esym(1960, ReferenceT<<1>>::Init*)
 -esym(1960, ReferenceT<<1>>::RemoveReference*)
 
