@@ -61,7 +61,7 @@ class BitBoolean {
     /**
      * The mask (only a bit shifted)
      */
-    static const baseType mask = (1 << bitOffset);
+    static const baseType mask = (static_cast<baseType>(1) << bitOffset);
 
     /**
      * A mask with 0 in the specified bit and 1 in other number bits.
@@ -118,7 +118,7 @@ void BitBoolean<baseType, bitOffset>::operator=(bool flag) {
 
 template<typename baseType, uint8 bitOffset>
 BitBoolean<baseType, bitOffset>::operator bool() const {
-    return ((value & mask) != 0);
+    return ((value & mask) == mask);
 }
 
 template<typename baseType, uint8 bitOffset>
@@ -129,7 +129,7 @@ BitBoolean<baseType, bitOffset>::operator AnyType() const {
 
 template<typename baseType, uint8 bitOffset>
 baseType BitBoolean<baseType, bitOffset>::BitSize() {
-    return 1;
+    return static_cast<baseType>(1);
 }
 
 template<typename baseType, uint8 bitOffset>

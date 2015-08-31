@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "BitBoolean.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -39,37 +40,163 @@
 template<typename T>
 class BitBooleanTest {
 public:
-    bool TestCopyOperator(T input);
+
+    bool TestCopyOperatorUnion();
+
+    bool TestBoolCast(T input);
+
+    bool TestAnyTypeCast(T input);
 
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+union UnionExample {
+
+    uint32 intx1 :31;
+
+    TypeDefinition::BitBoolean<uint64, 31> bitBool;
+
+    uint64 intx3;
+
+};
+
 template<typename T>
-bool BitBooleanTest<T>::TestCopyOperator(T input) {
+bool BitBooleanTest<T>::TestCopyOperatorUnion() {
+    UnionExample testShiftBool;
+    testShiftBool.intx1 = 0x40000000;
+    testShiftBool.bitBool = true;
 
-
-    const uint8 max=sizeof(input)*8 -1;
-    const uint8 half= max/2;
-    const uint8 zero=0;
-
-
-
-    TypeDefinition::BitBoolean<T, 0> myShiftedBool;
-    myShiftedBool = true;
-    if (myShiftedBool != 1) {
+    if ((testShiftBool.intx1 != 0x40000000) || (!testShiftBool.bitBool)) {
         return false;
     }
 
-    myShiftedBool = false;
+    testShiftBool.intx3 = 0xf0000000;
+    testShiftBool.bitBool = false;
 
-    if (myShiftedBool != 0) {
+    return ((testShiftBool.intx1 == 0x70000000) && (!testShiftBool.bitBool) && (sizeof(UnionExample) == 8u));
+
+}
+
+template<typename T>
+bool BitBooleanTest<T>::TestBoolCast(T input) {
+
+    const uint8 max = sizeof(input) * 8 - 1;
+    const uint8 half = max / 2;
+    const uint8 zero = 0;
+
+    TypeDefinition::BitBoolean<T, zero> myZeroShiftedBool;
+    myZeroShiftedBool = true;
+    if (!myZeroShiftedBool) {
+        return false;
+    }
+
+    myZeroShiftedBool = false;
+
+    if (myZeroShiftedBool) {
+        return false;
+    }
+
+    TypeDefinition::BitBoolean<T, half> myHalfShiftedBool;
+
+    myHalfShiftedBool = true;
+    if (!myHalfShiftedBool) {
+        printf("\n%d %d\n", 1 << half, myHalfShiftedBool);
+        return false;
+    }
+
+    myHalfShiftedBool = false;
+
+    if (myHalfShiftedBool) {
+        return false;
+    }
+
+    TypeDefinition::BitBoolean<T, max> myMaxShiftedBool;
+
+    myMaxShiftedBool = true;
+    if (!myMaxShiftedBool) {
+        printf("\n%d %d\n", 1 << max, myMaxShiftedBool);
+        return false;
+    }
+
+    myMaxShiftedBool = false;
+
+    if (myMaxShiftedBool) {
         return false;
     }
 
     return true;
 
+}
+
+template<typename T>
+bool BitBooleanTest<T>::TestAnyTypeCast(T input) {
+
+    const uint8 max = sizeof(input) * 8 - 1;
+    const uint8 half = max / 2;
+    const uint8 zero = 0;
+
+    TypeDefinition::BitBoolean<T, zero> myZeroShiftedBool;
+    myZeroShiftedBool = true;
+
+    TypeDefinition::AnyType atTest=myZeroShiftedBool;
+
+    if(atTest.GetDataPointer()!=(&myZeroShiftedBool)){
+        return false;
+    }
+
+    TypeDefinition::TypeDescriptor tdTest=atTest.GetTypeDescriptor();
+    if(tdTest.isStructuredData || tdTest.isConstant || tdTest.typeInfo.type!=TypeDefinition::UnsignedInteger || tdTest.typeInfo.size!=1){
+        return false;
+    }
+
+
+    if(atTest.GetBitAddress()!=zero){
+        return false;
+    }
+
+    TypeDefinition::BitBoolean<T, half> myHalfShiftedBool;
+
+    myHalfShiftedBool = true;
+    atTest=myHalfShiftedBool;
+
+    if(atTest.GetDataPointer()!=(&myHalfShiftedBool)){
+        return false;
+    }
+
+    tdTest=atTest.GetTypeDescriptor();
+    if(tdTest.isStructuredData || tdTest.isConstant || tdTest.typeInfo.type!=TypeDefinition::UnsignedInteger || tdTest.typeInfo.size!=1){
+        return false;
+    }
+
+
+    if(atTest.GetBitAddress()!=half){
+        return false;
+    }
+
+    TypeDefinition::BitBoolean<T, max> myMaxShiftedBool;
+
+    myMaxShiftedBool = true;
+    atTest=myMaxShiftedBool;
+
+    if(atTest.GetDataPointer()!=(&myMaxShiftedBool)){
+        return false;
+    }
+
+    tdTest=atTest.GetTypeDescriptor();
+    if(tdTest.isStructuredData || tdTest.isConstant || tdTest.typeInfo.type!=TypeDefinition::UnsignedInteger || tdTest.typeInfo.size!=1){
+        return false;
+    }
+
+
+    if(atTest.GetBitAddress()!=max){
+        return false;
+    }
+
+
+    return true;
 }
 
 #endif /* BITBOOLEANTEST_H_ */

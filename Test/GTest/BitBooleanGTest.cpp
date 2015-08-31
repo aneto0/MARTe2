@@ -45,10 +45,65 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(BitBooleanGTest,TestCopyOperator) {
-    BitBooleanTest<uint32> bitbool;
-    uint32 x=0;
-    ASSERT_TRUE(bitbool.TestCopyOperator(x));
+TEST(BitBooleanGTest,TestCopyOperatorUnion) {
+    BitBooleanTest<int64> bitbool;
+    ASSERT_TRUE(bitbool.TestCopyOperatorUnion());
 }
 
-	
+
+
+TEST(BitBooleanGTest,TestBoolCastU8) {
+    BitBooleanTest<uint8> bitbool;
+    uint8 x=0;
+    ASSERT_TRUE(bitbool.TestBoolCast(x));
+}
+
+
+TEST(BitBooleanGTest,TestBoolCastU16) {
+    BitBooleanTest<uint16> bitbool;
+    uint16 x=0;
+    ASSERT_TRUE(bitbool.TestBoolCast(x));
+}
+
+TEST(BitBooleanGTest,TestBoolCastU32) {
+    BitBooleanTest<uint32> bitbool;
+    uint32 x=0;
+    ASSERT_TRUE(bitbool.TestBoolCast(x));
+}
+
+TEST(BitBooleanGTest,TestBoolCastU64) {
+    BitBooleanTest<uint64> bitbool;
+    uint64 x=0;
+    ASSERT_TRUE(bitbool.TestBoolCast(x));
+}
+
+TEST(BitBooleanGTest,TestBoolCastS8) {
+    BitBooleanTest<int8> bitbool;
+    int8 x=0;
+    ASSERT_TRUE(bitbool.TestBoolCast(x));
+}
+
+TEST(BitBooleanGTest,TestBoolCastS16) {
+    BitBooleanTest<int16> bitbool;
+    int16 x=0;
+    ASSERT_TRUE(bitbool.TestBoolCast(x));
+}
+
+TEST(BitBooleanGTest,TestBoolCastS32) {
+    BitBooleanTest<int32> bitbool;
+    int32 x=0;
+    ASSERT_TRUE(bitbool.TestBoolCast(x));
+}
+
+TEST(BitBooleanGTest,TestBoolCastS64) {
+    BitBooleanTest<int64> bitbool;
+    int64 x=0;
+    ASSERT_TRUE(bitbool.TestBoolCast(x));
+}
+
+
+TEST(BitBooleanGTest,TestAnyTypeCast) {
+    BitBooleanTest<int32> bitbool;
+    int32 x=0;
+    ASSERT_TRUE(bitbool.TestAnyTypeCast(x));
+}

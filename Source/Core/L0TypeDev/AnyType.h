@@ -238,6 +238,31 @@ public:
      */
     inline AnyType(const char8 * const p);
 
+
+    /**
+     * @brief Returns the data pointer.
+     * @return the data pointer.
+     */
+    void* GetDataPointer(){
+        return dataPointer;
+    }
+
+    /**
+     * @brief Returns the data type descriptor.
+     * @return the data type descriptor.
+     */
+    TypeDescriptor GetTypeDescriptor(){
+        return dataDescriptor;
+    }
+
+    /**
+     * @brief Returns the data bit address.
+     * @return the data bit address (i.e  the bit shift respect to the data pointer).
+     */
+    uint8 GetBitAddress(){
+        return bitAddress;
+    }
+
 private:
 
     /**
