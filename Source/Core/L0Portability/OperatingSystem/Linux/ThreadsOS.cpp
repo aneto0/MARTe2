@@ -1,6 +1,6 @@
 /**
  * @file ThreadsOS.cpp
- * @brief Source file for class ThreadsOS
+ * @brief Source file for module Threads
  * @date 27/07/2015
  * @author André Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ThreadsOS (public, protected, and private). Be aware that some 
+ * the module Threads (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -34,6 +34,7 @@
 
 #include "Threads.h"
 #include "ThreadsDatabase.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -93,9 +94,13 @@ static ThreadInformation * threadInitialisationInterfaceConstructor(const Thread
     return new ThreadInformation(userThreadFunction, userData, threadName);
 }
 
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace Threads {
 
 /*lint -e{715} Not implemented in Linux.*/
 ThreadStateType GetState(const ThreadIdentifier &threadId) {
@@ -125,7 +130,7 @@ ThreadIdentifier Id() {
     return pthread_self();
 }
 
-/**
+/*
  * In linux the priority will vary between 0, i.e. priorityClass = Unknown
  * and priorityLevel = 0 and 99, i.e. priorityClass = RealTime
  * and priorityLevel = 15
@@ -217,7 +222,7 @@ PriorityClassType GetPriorityClass(const ThreadIdentifier &threadId) {
 
 }
 
-/**
+/*
  * A signal is used to know if the other thread is alive.
  */
 bool IsAlive(const ThreadIdentifier &threadId) {
@@ -236,7 +241,7 @@ bool IsAlive(const ThreadIdentifier &threadId) {
     return alive;
 }
 
-/**
+/*
  * Note that a thread cannot be deleted if it locks a mutex semaphore.
  */
 bool Kill(const ThreadIdentifier &threadId) {

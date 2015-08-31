@@ -1,6 +1,6 @@
 /**
  * @file HeapManager.cpp
- * @brief Source file for class HeapManager
+ * @brief Source file for module HeapManager
  * @date Aug 7, 2015
  * @author fsartori
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class HeapManager (public, protected, and private). Be aware that some 
+ * the module HeapManager (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -42,7 +42,7 @@
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,StandardHeap.h)
 
 /*---------------------------------------------------------------------------*/
-/*                           Local Class declaration                         */
+/*                           Local Module declaration                         */
 /*---------------------------------------------------------------------------*/
 
 namespace HeapManager /*Internals*/{
@@ -56,6 +56,7 @@ namespace HeapManager /*Internals*/{
      * @brief Hidden class to store HeapI pointers.
      */
     class HeapDataBase {
+
         /**
          * @brief Lists all heaps
          * all unused heaps have a NULL pointer.
@@ -91,10 +92,12 @@ namespace HeapManager /*Internals*/{
          * @return true if index is within range; specified slot contains heapl heap is not NULL
          * */
         bool UnsetHeap(int32 index, const HeapI *heap);
+
         /**
          * @brief constructor
          * */
         HeapDataBase();
+
         /**
          * @brief locks access to database
          * @return true if locking successful
@@ -175,12 +178,12 @@ namespace HeapManager /*Internals*/{
 
     HeapI *FindHeap(const void * const address) {
 
-        /**
+        /*
          address range of currently found heap
          */
         uintp foundSpan = 0U;
 
-        /**
+        /*
          * the search will set this pointer to point to the heap found
          * by default return the standard heap
          */
@@ -192,16 +195,16 @@ namespace HeapManager /*Internals*/{
             int32 i;
             for(i=0;(i<MaximumNumberOfHeaps);i++) {
 
-                /** retrieve heap information in current slot */
+                /* retrieve heap information in current slot */
                 HeapI *heap = heapDataBase.GetHeap(i);
 
-                /** if slot used */
+                /* if slot used */
                 if (heap != NULL_PTR(HeapI *)) {
 
                     /* check address compatibility */
                     if ( heap->Owns(address)) {
 
-                        /** check if first occurrence or */
+                        /* check if first occurrence or */
                         if (foundHeap == NULL_PTR(HeapI *)) {
 
                             /* size of memory space */
@@ -216,7 +219,7 @@ namespace HeapManager /*Internals*/{
                             /* size of memory space */
                             uintp newFoundSpan = heap->LastAddress() - heap->FirstAddress();
 
-                            /**
+                            /*
                              * smaller memory span and intersecting memory address space
                              * it can only mean that this heap is a sub-heap of the previously found heap
                              */
@@ -243,7 +246,7 @@ namespace HeapManager /*Internals*/{
         /* assign to heap the found heap or the default one */
         if (foundHeap == NULL_PTR(HeapI *)) {
 
-            /** try default heap */
+            /* try default heap */
             foundHeap = &standardHeap;
 
             /* check ownership of default heap */
@@ -260,12 +263,12 @@ namespace HeapManager /*Internals*/{
 
         bool ok = (name != NULL);
 
-        /**
+        /*
          * found heap
          */
         bool found = false;
 
-        /**
+        /*
          * the search will set this pointer to point to the heap found
          */
         HeapI *foundHeap = NULL_PTR(HeapI *);
@@ -277,10 +280,10 @@ namespace HeapManager /*Internals*/{
                 int32 i;
                 for(i=0;(i<MaximumNumberOfHeaps) && (!found);i++) {
 
-                    /** retrieve heap information in current slot */
+                    /* retrieve heap information in current slot */
                     HeapI *heap = heapDataBase.GetHeap(i);
 
-                    /** if slot used */
+                    /* if slot used */
                     if (heap != NULL_PTR(HeapI *)) {
 
                         /* check address compatibility */
@@ -307,7 +310,7 @@ namespace HeapManager /*Internals*/{
 
         bool ok = false;
 
-        /** Does not belong to any heap?*/
+        /* Does not belong to any heap?*/
         if (heap != NULL_PTR(HeapI *)) {
 
             heap->Free(data);
@@ -328,7 +331,7 @@ namespace HeapManager /*Internals*/{
 
         void *address = NULL_PTR(void *);
 
-        /** Standard behavior */
+        /* Standard behavior */
         if (heapName == NULL) {
             address = standardHeap.Malloc(size);
         }
@@ -406,10 +409,10 @@ namespace HeapManager /*Internals*/{
             int32 i;
             /* check if not registered already */
             for(i=0;(i<MaximumNumberOfHeaps) && ok;i++) {
-                /** retrieve heap information in current slot */
+                /* retrieve heap information in current slot */
                 HeapI *heap = heapDataBase.GetHeap(i);
 
-                /** already found */
+                /* already found */
                 if (heap == newHeap) {
                     ok = false;
 
@@ -424,11 +427,11 @@ namespace HeapManager /*Internals*/{
                 bool found = false;
                 /* for each slot  */
                 for(i=0;(i<MaximumNumberOfHeaps) && (!found);i++) {
-                    /** try to set each slot */
+                    /* try to set each slot */
                     found = heapDataBase.SetHeap(i, newHeap);
                 }
 
-                /** no more space */
+                /* no more space */
                 if (!found) {
                     ok = false;
                     REPORT_LOG_MESSAGE(FatalError, "Error: not enough space in the database for new records")
@@ -451,13 +454,12 @@ namespace HeapManager /*Internals*/{
             int32 i;
             /* check if not registered already */
             for(i=0;(i<MaximumNumberOfHeaps) && (!found);i++) {
-                /** retrieve heap information in current slot */
+                /* retrieve heap information in current slot */
                 found = heapDataBase.UnsetHeap(i,heap);
             }
             /* controls access to database */
             heapDataBase.UnLock();
         }
-
 
         return found;
     }

@@ -1,6 +1,6 @@
 /**
  * @file HeapManager.h
- * @brief Header file for class HeapManager
+ * @brief Header file for module HeapManager
  * @date 6/08/2015
  * @author Filippo Sartori
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HeapManager
+ * @details This header file contains the declaration of the module HeapManager
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -35,34 +35,32 @@
 #include "HeapI.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
-
-
 
 /**
  * @brief Implementation of functions for the heap memory management.
  * @details Using these functions is possible adding different HeapI
- * objects in an hidden static database and using their specific functions for the
+ * objects in a hidden static database and using their specific functions for the
  * desired heap management.
  */
-namespace HeapManager{
-
+namespace HeapManager {
 
 /**
  * @brief Finds the HeapI that manages the specified memory location in the database.
  * @param[in] address is a memory address that the target heap should manage.
- * @return NULL if the address is not found in the HeapI objects in the database.
+ * @return a pointer to the HeapI that manages the specified memory location or
+ * GetStandardHeap() if no one in HeapI objects' database manages that address.
  */
 HeapI *FindHeap(const void * const address);
 
 /**
  * @brief Finds the HeapI object by name in the database.
  * @param[in] name is the name of the desired heap.
- * @return GetStandardHeap() if the HeapI with the specified name is not found.
+ * @return a pointer to the HeapI with the specified name or
+ * NULL if the name is not found in the HeapI objects' database.
  */
 HeapI *FindHeap(const char8 * const name);
-
 
 /**
  * @brief Returns the standard heap.
@@ -71,11 +69,10 @@ HeapI *FindHeap(const char8 * const name);
  */
 HeapI *GetStandardHeap();
 
-
 /**
- * @brief Registers an HeapI object in the database.
+ * @brief Registers a HeapI object in the database.
  * @param[in] newHeap is a pointer to the HeapI object which must be added.
- * @return true is \a newHeap is correctly registered in the database,
+ * @return true if newHeap has been correctly registered in the database,
  * false if the object is already registered or if there is no space to add it.
  */
 bool AddHeap(HeapI *newHeap);
@@ -83,12 +80,10 @@ bool AddHeap(HeapI *newHeap);
 /**
  * @brief Removes a specified HeapI object from the database.
  * @param[in] heap is the HeapI object which must be removed.
- * @return true if the specified \a heap is in the database and it is correctly
- * removed, false otherwise.
+ * @return true if the specified heap was in the database and
+ * it has been correctly removed, false otherwise.
  */
 bool RemoveHeap(const HeapI * const heap);
-
-
 
 /**
  * @brief Calls the HeapI::Free function of the HeapI
@@ -109,7 +104,8 @@ bool Free(void *&data);
  * @param[in] heapName name of heap to use.
  * @return The pointer to the allocated memory. NULL if allocation failed.
  */
-void *Malloc(uint32 size, const char8 * const heapName = NULL_PTR(char8 *));
+void *Malloc(uint32 size,
+             const char8 * const heapName = NULL_PTR(char8 *));
 
 /**
  * @brief Reallocates a memory portion possibly contiguously with the specified already existent memory area.
@@ -119,7 +115,8 @@ void *Malloc(uint32 size, const char8 * const heapName = NULL_PTR(char8 *));
  * @param[in] newSize The size of the new memory block.
  * @return The pointer to the new data block. NULL if reallocation failed.
  */
-void *Realloc(void *&data,const uint32 newSize);
+void *Realloc(void *&data,
+              const uint32 newSize);
 /**
  * @brief Duplicates a memory section into a new area from the specified heap.
  * @param[in] data The pointer to the memory which must be copied.
@@ -127,8 +124,9 @@ void *Realloc(void *&data,const uint32 newSize);
  * @param[in] heapName name of heap to use. default= copy on the same heap as data
  * @return The pointer to the new allocated memory which contains a copy of s.
  */
-void *Duplicate(const void * const data, const uint32 size=0U, const char8 * const heapName = NULL_PTR(char8 *));
-
+void *Duplicate(const void * const data,
+                const uint32 size = 0U,
+                const char8 * const heapName = NULL_PTR(char8 *));
 
 }
 

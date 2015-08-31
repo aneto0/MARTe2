@@ -1,6 +1,6 @@
 /**
  * @file SleepOS.cpp
- * @brief Source file for class SleepOS
+ * @brief Source file for module SleepOS
  * @date 05/07/2015
  * @author André Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class SleepOS (public, protected, and private). Be aware that some 
+ * the module SleepOS (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -48,8 +48,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-namespace Sleep{
+namespace Sleep {
 
 void AtLeast(float64 sec) {
     int32 nsecRemainder = -1;
@@ -144,7 +143,7 @@ void MSec(int32 msec) {
 }
 
 void SemiBusy(float64 totalSleepSec,
-                     float64 nonBusySleepSec) {
+              float64 nonBusySleepSec) {
     int64 startCounter = HighResolutionTimer::Counter();
     float64 endCounterF = totalSleepSec * static_cast<float64>(HighResolutionTimer::Frequency());
     int64 sleepUntilCounter = startCounter + static_cast<int64>(endCounterF);

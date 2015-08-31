@@ -1,6 +1,6 @@
 /**
  * @file HighResolutionTimer.h
- * @brief Header file for class HighResolutionTimer
+ * @brief Header file for module HighResolutionTimer
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HighResolutionTimer
+ * @details This header file contains the declaration of the module HighResolutionTimer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -36,11 +36,11 @@
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
 #include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,HighResolutionTimerOS.h)
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
- * @brief This class implements useful functions for high resolution timing using the cpu clock.
+ * @brief This module implements useful functions for high resolution timing using the cpu clock.
  *
  * @details These functions are used when a timeout implementation is required like for examples for semaphores.\n
  * Most of the implementation is delegated to HighResolutionTimerA.h which use very low level code (assembly)
@@ -49,15 +49,14 @@
  */
 namespace HighResolutionTimer {
 
-
     /**
-     * @brief An high resolution 64-bit time counter.
+     * @brief A high resolution 64-bit time counter.
      * @details Reads the cpu ticks on an 64 bits integer.
      */
     inline int64 Counter();
 
     /**
-     * @brief An high resolution 32-bit time counter.
+     * @brief A high resolution 32-bit time counter.
      * @details Reads the cpu ticks on an 32 bits integer.
      */
     inline uint32 Counter32();
@@ -81,7 +80,7 @@ namespace HighResolutionTimer {
      * @return the time elapsed in seconds
      */
     inline float64 TicksToTime(int64 tStop,
-                                      int64 tStart = 0);
+                               int64 tStart = 0);
 
     /**
      * @brief Gets the current time stamp [microseconds, seconds, minutes, hour, day, month, year].
@@ -95,6 +94,5 @@ namespace HighResolutionTimer {
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 
 #endif /* HIGHRESOLUTIONTIME_H_ */

@@ -228,7 +228,7 @@ public:
      * memory address are discarded.
      * @param[in, out] destination the destination where to write the unique object to.
      * If enough space is available the string will be zero terminated.
-     * @param[in] the size of the \a destination input string.
+     * @param[in] size the size of the \a destination input string.
      */
     void GetUniqueName(char8 * const destination, const uint32 &size) const;
 

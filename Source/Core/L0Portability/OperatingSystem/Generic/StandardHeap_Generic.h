@@ -1,6 +1,6 @@
 /**
  * @file StandardHeap_Generic.h
- * @brief Header file for class StandardHeap_Generic
+ * @brief Header file for class StandardHeap
  * @date 13/08/2015
  * @author Filippo Sartori
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StandardHeap_Generic
+ * @details This header file contains the declaration of the class StandardHeap
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */

@@ -1,6 +1,6 @@
 /**
  * @file ThreadsDatabase_Generic.cpp
- * @brief Source file for class ThreadsDatabase
+ * @brief Source file for module ThreadsDatabase
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ThreadsDatabase (public, protected, and private). Be aware that some 
+ * the module ThreadsDatabase (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 

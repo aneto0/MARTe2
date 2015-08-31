@@ -1,6 +1,6 @@
 /**
  * @file GeneralDefinitionsA.h
- * @brief Header file for class GeneralDefinitionsA
+ * @brief Header file for GeneralDefinitionsA
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -68,4 +68,3 @@ typedef uint32      uintp;
 #define HANDLE void *
 
 #endif /* GENERALDEFINITIONSA_H_ */
-

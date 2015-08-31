@@ -1,6 +1,6 @@
 /**
- * @file MemoryOS.cpp
- * @brief Source file for class MemoryOS
+ * @file MemoryCheckOS.cpp
+ * @brief Source file for module MemoryCheck
  * @date 27/07/2015
  * @author Giuseppe Ferrò
  *
@@ -17,13 +17,14 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MemoryOS (public, protected, and private). Be aware that some 
+ * the module MemoryCheck (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #ifndef LINT
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -36,7 +37,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include <MemoryCheck.h>
+
+#include "../../MemoryCheck.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -46,16 +48,13 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 namespace MemoryCheck {
 
 bool Check(const void * const address,
-                   const MemoryTestAccessMode accessMode,
-                   const uint32 size) {
+           const MemoryTestAccessMode accessMode,
+           const uint32 size) {
 
     return address != NULL;
 }
 
 }
-
-

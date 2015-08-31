@@ -1,6 +1,6 @@
 /**
  * @file MemoryCheck.h
- * @brief Header file for class MemoryCheck
+ * @brief Header file for module MemoryCheck
  * @date 18/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class MemoryCheck
+ * @details This header file contains the declaration of the module MemoryCheck
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -35,7 +35,7 @@
 #include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
@@ -43,36 +43,36 @@
  */
 namespace MemoryCheck {
 
-    /**
-     * Set of flags indicating desired access modes to the
-     * memory by processes.
-     */
-    enum MemoryTestAccessMode {
-        /** read and execute */
-        Execute = 0x00000001,
+/**
+ * Set of flags indicating desired access modes to the
+ * memory by processes.
+ */
+enum MemoryTestAccessMode {
 
-        /** read  */
-        Read = 0x00000002,
+    /** read and execute */
+    Execute = 0x00000001,
 
-        /** read  */
-        Write = 0x00000004
+    /** read  */
+    Read = 0x00000002,
 
-    };
-
-
-    /**
-     * @brief Checks if the process has the access to the specified memory area.
-     * @param[in] address The pointer to the memory block to be checked.
-     * @param[in] accessMode The type of memory access to perform.
-     * @param[in] size is the number of bytes to check.
-     * @return true if the process has the access to the memory with the specified permissions, false otherwise.
-     */
-    bool Check(const void * const address,
-                      const MemoryTestAccessMode accessMode,
-                      const uint32 size = 4u);
-
+    /** read  */
+    Write = 0x00000004
 
 };
+
+/**
+ * @brief Checks if the process has the access to the specified memory area.
+ * @param[in] address The pointer to the memory block to be checked.
+ * @param[in] accessMode The type of memory access to perform.
+ * @param[in] size is the number of bytes to check.
+ * @return true if the process has the access to the memory with the specified permissions, false otherwise.
+ */
+bool Check(const void * const address,
+           const MemoryTestAccessMode accessMode,
+           const uint32 size = 4u);
+
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

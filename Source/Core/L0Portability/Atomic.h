@@ -1,6 +1,6 @@
 /**
  * @file Atomic.h
- * @brief Header file for class Atomic
+ * @brief Header file for module Atomic
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Atomic
+ * @details This header file contains the declaration of the module Atomic
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -35,23 +35,27 @@
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,AtomicA.h)
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
  * @brief A collector of functions that are executed atomically even on multiprocessor machines.
  *
- * @details The target   inline void Increment (volatile int32 *p ); architecture is the one of the machine where the code is being executed.
+ * @details The target architecture is the one of the machine where the code is being executed.
  * Most of the implementation is therefore delegated to the AtomicA.h implementation,
  * which will be specific for each type of supported architecture.
  *
  * These methods are particularly useful in the implementation of functionality that requires
  * protected basic operations between multiple asynchronous accesses like in a multi-thread system.
- * These methods are also used to implement fast threading synchronization constructors (@see FastPollingMutexSem)
+ *
+ * These methods are also used to implement fast threading synchronization constructors
+ *
+ * @see FastPollingMutexSem
  */
 /*lint -e(766) the header file AtomicA.h is not used here. This file is just for declaration and documentation. */
 /*lint -e(762) these declarations are redundant. */
-namespace  Atomic {
+namespace Atomic {
+
     /**
      * @brief Atomically increments a 32 bit integer in memory.
      * @param[in,out] p the pointer to the 32 bit variable to increment.
@@ -141,12 +145,10 @@ namespace  Atomic {
      */
     inline void Sub (volatile int32 *p, int32 value);
 
-
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
 #endif /* ATOMIC_H_ */
-

@@ -1,6 +1,6 @@
 /**
  * @file ThreadsDatabase_Generic.h
- * @brief Header file for class ThreadsDatabase
+ * @brief Header file for module ThreadsDatabase
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ThreadsDatabase
+ * @details This header file contains the declaration of the module ThreadsDatabase
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -37,7 +37,7 @@
 #include "Logger.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**

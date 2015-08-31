@@ -42,7 +42,7 @@
 static const uint32 defaultPrecision = 0xffu;
 
 /**
- * A struct used to choose the float and binary representation modes
+ * A namespace used to define the float and binary representation modes
  */
 namespace Notation {
 

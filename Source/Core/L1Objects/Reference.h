@@ -31,12 +31,14 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Object.h"
 #include "StructuredData.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
  * @brief Shared pointer implementation.
  * @details The Reference class is a smart pointer implementation where the shared
@@ -45,7 +47,6 @@
  * it is no longer referenced.
  *
  * The Reference might also own no object, in which case the function IsValid will return false.
- *
  */
 class Reference {
 public:

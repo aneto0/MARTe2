@@ -1,8 +1,8 @@
 /**
  * @file StringHelper.cpp
- * @brief Source file for class StringHelper
+ * @brief Source file for module StringHelper
  * @date Aug 13, 2015
- * @author fsartori
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StringHelper (public, protected, and private). Be aware that some 
+ * the module StringHelper (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -62,4 +62,3 @@ char8 *StringDup(const char8 * const s) {
 }
 
 }
-

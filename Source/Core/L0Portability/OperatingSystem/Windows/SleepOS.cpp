@@ -1,6 +1,6 @@
 /**
  * @file SleepOS.cpp
- * @brief Source file for class SleepOS
+ * @brief Source file for module Sleep
  * @date 20/06/2015
  * @author Giuseppe Ferr�
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class SleepOS (public, protected, and private). Be aware that some 
+ * the module Sleep (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -42,7 +42,9 @@ static const uint32 winSleepFreq = 1000;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace Sleep {
+
 void AtLeast(float64 sec) {
     int32 ticks = (int32) (winSleepFreq * sec + 0.9999);
     if (ticks < 0) {
@@ -82,4 +84,5 @@ void SemiBusy(float64 totalSleepSec,
 int32 GetDateSeconds() {
     return (int32) time((time_t *) NULL);
 }
+
 }

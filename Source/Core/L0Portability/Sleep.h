@@ -1,6 +1,6 @@
 /**
  * @file Sleep.h
- * @brief Header file for class Sleep
+ * @brief Header file for module Sleep
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Sleep
+ * @details This header file contains the declaration of the module Sleep
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -36,7 +36,7 @@
 #include "HighResolutionTimer.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
@@ -47,7 +47,7 @@
  * These functions are generally used in multithreading applications for example to allows threads to wait on a
  * condition without use cpu.
  *
- * @details Most of the implementation is delegated to SleepOS.h which provides system calls to allows sleep functions.
+ * Most of the implementation is delegated to SleepOS.h which provides system calls to allows sleep functions.
  */
 namespace Sleep {
 
@@ -99,7 +99,6 @@ inline void Busy(float64 sec);
 void SemiBusy(float64 totalSleepSec,
               float64 nonBusySleepSec);
 }
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

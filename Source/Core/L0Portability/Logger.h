@@ -1,6 +1,6 @@
 /**
  * @file Logger.h
- * @brief Header file for class Logger
+ * @brief Header file for module Logger
  * @date 25/08/2015
  * @author Giuseppe Ferrò
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Logger
+ * @details This header file contains the declaration of the module Logger
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -31,13 +31,15 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "ErrorType.h"
 #include "Threads.h"
 #include "HighResolutionTimer.h"
 #include "LogInformation.h"
+
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
@@ -50,7 +52,7 @@
 namespace Logger {
 
 /**
- * @brief The type of an user provided ErrorProcessing function
+ * @brief The type of a user provided ErrorProcessing function
  */
 typedef void (*LogMessageProcessFunctionType)(const LogInformation &errorInfo,
                                               const char8 * const errorDescription);
@@ -60,6 +62,11 @@ typedef void (*LogMessageProcessFunctionType)(const LogInformation &errorInfo,
  */
 extern LogMessageProcessFunctionType logMessageProcessFunction;
 
+/**
+ * @brief A null ErrorProcessing function
+ * @details This function is compatible with the function prototype defined
+ * as LogMessageProcessFunctionType. Its purpose is to do nothing.
+ */
 void NullLogMessageProcessFunction(const LogInformation &errorInfo,
                                    const char8 * const errorDescription);
 /**
@@ -130,10 +137,6 @@ Logger::ReportLogMessage(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAM
  */
 #define REPORT_LOG_MESSAGE_FULL(code,message)\
 Logger::ReportLogMessageFullContext(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__);
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
 
 #endif /* LOGGER_H_ */
 

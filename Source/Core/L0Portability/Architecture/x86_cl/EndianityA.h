@@ -1,6 +1,6 @@
 /**
  * @file EndianityA.h
- * @brief Header file for class EndianityA
+ * @brief Header file for module EndianityA
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class EndianityA
+ * @details This header file contains the declaration of the module EndianityA
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -35,7 +35,11 @@
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 namespace Endianity {
@@ -487,9 +491,4 @@ inline void MemCopyToLittleEndian(int16 *dest,
 
 }
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
 #endif /* ENDIANITYA_H_ */
-

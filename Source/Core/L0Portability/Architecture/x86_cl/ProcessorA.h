@@ -1,6 +1,6 @@
 /**
  * @file ProcessorA.h
- * @brief Header file for class ProcessorA
+ * @brief Header file for module ProcessorA
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ProcessorA
+ * @details This header file contains the declaration of the module ProcessorA
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -37,15 +37,12 @@
 #include "Processor.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-
-
 
 namespace Processor{
 
@@ -77,11 +74,6 @@ inline void CPUID(uint32 code,
     D = cpuInfo[3];
 }
 
-/**
- * @brief Get the cpu family.
- * @details Called by Processor::Family
- * @return the cpu family.
- */
 uint32 Family() {
     uint32 eax = 0;
     uint32 ebx = 0;
@@ -95,11 +87,6 @@ uint32 Family() {
     return family;
 }
 
-/**
- * @brief Get the cpu model.
- * @details Called by Processor::Model()
- * @return the cpu model.
- */
 uint32 Model() {
     uint32 eax = 0;
     uint32 ebx = 0;
@@ -115,11 +102,6 @@ uint32 Model() {
     return model;
 }
 
-/**
- * @brief Get the identifier of the cpu.
- * @details Called by Processor::VendorId()
- * @return the cpu id.
- */
 const char8 *VendorId() {
 
     uint32 eax = 0;

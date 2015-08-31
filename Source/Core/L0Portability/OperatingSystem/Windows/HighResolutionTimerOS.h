@@ -1,6 +1,6 @@
 /**
  * @file HighResolutionTimerOS.h
- * @brief Header file for class HighResolutionTimerOS
+ * @brief Header file for module HighResolutionTimer
  * @date 05/07/2015
  * @author André Neto
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HighResolutionTimerOS
+ * @details This header file contains the declaration of the module HighResolutionTimer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -36,7 +36,7 @@
 #include "HighResolutionTimerCalibratorOS.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/

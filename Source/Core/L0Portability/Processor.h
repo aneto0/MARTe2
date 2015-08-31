@@ -1,6 +1,6 @@
 /**
  * @file Processor.h
- * @brief Header file for class Processor
+ * @brief Header file for module Processor
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Processor
+ * @details This header file contains the declaration of the module Processor
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -36,19 +36,18 @@
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,ProcessorA.h)
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
  * @brief General information about the processor executing the framework code.
  *
- * @details This class enables the retrieval of runtime information about the
+ * @details This module enables the retrieval of runtime information about the
  * processor executing the framework code.
  * Based on this information framework users are allowed to take runtime decisions
  * against specific processor characteristics.
  */
 namespace Processor {
-
 
     /**
      * @brief Returns the processor vendor identifier.
@@ -79,6 +78,4 @@ namespace Processor {
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-
 #endif /* PROCESSOR_H_ */
-

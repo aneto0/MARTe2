@@ -31,39 +31,47 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Reference.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
  * @brief Namespace to define the possible modes of search.
  */
 namespace ReferenceContainerFilterMode {
+
 /**
  * @brief Store all the nodes leading to a given occurrence.
  * @details Only valid if \a occurrence != -1 in the constructor of ReferenceContainerSearchMode.
  */
-static const uint32 PATH = 0x1u;
+const uint32 PATH = 0x1u;
+
 /**
  * @brief Search recursively in all the tree nodes.
  */
-static const uint32 RECURSIVE = 0x2u;
+const uint32 RECURSIVE = 0x2u;
+
 /**
  * @brief If set, the search is performed from left to right, otherwise from right to left.
  * @details Note that to search he last occurrence of a given node it is sufficient to set
  * ReferenceContainerSearchMode(1, RECURSIVE | REVERSE)
  */
-static const uint32 REVERSE = 0x4u;
+const uint32 REVERSE = 0x4u;
+
 /**
  * @brief If set the nodes that are found are deleted.
  * @details To destroy all occurrences \a occurrence must be set to -1 in the constructor of ReferenceContainerSearchMode.
  * If REMOVE is set, PATH will be automatically unset.
  */
-static const uint32 REMOVE = 0x8u;
+const uint32 REMOVE = 0x8u;
+
 }
 
 class ReferenceContainer;
+
 /**
  * @brief Defines the filtering criteria for the ReferenceContainer searches.
  * @details This class needs to be specialised to implement different search criteria.
@@ -87,7 +95,6 @@ public:
      * @param[in] filterCopy is the filter to be copied.
      */
     ReferenceContainerFilter(const ReferenceContainerFilter &filterCopy);
-
 
     /**
      * @brief Sets the searching mode parameters.
@@ -212,4 +219,3 @@ private:
 /*---------------------------------------------------------------------------*/
 
 #endif /* REFERENCECONTAINERFILTER_H_ */
-

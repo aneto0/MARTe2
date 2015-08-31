@@ -1,6 +1,6 @@
 /**
  * @file Logger.cpp
- * @brief Source file for class Logger
+ * @brief Source file for module Logger
  * @date 25/ago/2015
  * @author pc
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class Logger (public, protected, and private). Be aware that some 
+ * the module Logger (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -39,55 +39,33 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-
-
 namespace Logger {
 
-
 void NullLogMessageProcessFunction(const LogInformation &errorInfo,
-                                                 const char8 * const errorDescription) {
+                                   const char8 * const errorDescription) {
 }
-
 
 LogMessageProcessFunctionType logMessageProcessFunction = &NullLogMessageProcessFunction;
 
-
-/**
- * @brief A structure pairing an error code with its explanation.
+/*
+ * A structure pairing an error code with its explanation.
  */
-const
-        struct {
+static const struct {
     const char8 *name;
     ErrorType error;
-} errorNames[] = {
-        {"NoError",               NoError  },
-        {"Debug Information",     Debug},
-        {"Information",           Information },
-        {"Warning",               Warning },
-        {"FatalError",            FatalError },
-        {"RecoverableError",      RecoverableError },
-        {"InitialisationError",   InitialisationError },
-        {"OSError",               OSError },
-        {"ParametersError",       ParametersError },
-        {"IllegalOperation",      IllegalOperation },
-        {"ErrorSharing",          ErrorSharing },
-        {"ErrorAccessDenied",     ErrorAccessDenied},
-        {"Exception",             Exception},
-        {"Timeout",               Timeout},
-        {"CommunicationError",    CommunicationError},
-        {"SyntaxError",           SyntaxError},
-        {"UnsupportedError",      UnsupportedFeature},
-        {static_cast<const char8 *>(NULL),  SyntaxError},
-};
+} errorNames[] = { { "NoError", NoError }, { "Debug Information", Debug }, { "Information", Information }, { "Warning", Warning }, { "FatalError", FatalError },
+        { "RecoverableError", RecoverableError }, { "InitialisationError", InitialisationError }, { "OSError", OSError },
+        { "ParametersError", ParametersError }, { "IllegalOperation", IllegalOperation }, { "ErrorSharing", ErrorSharing }, { "ErrorAccessDenied",
+                ErrorAccessDenied }, { "Exception", Exception }, { "Timeout", Timeout }, { "CommunicationError", CommunicationError }, { "SyntaxError",
+                SyntaxError }, { "UnsupportedError", UnsupportedFeature }, { static_cast<const char8 *>(NULL), SyntaxError }, };
 
 const char8 *ToName(const ErrorType errorCode) {
     uint32 i = 0u;
-    const char8* retString="Unrecognized Error";
+    const char8* retString = "Unrecognized Error";
 
     while (errorNames[i].name != NULL) {
-        if (errorNames[i].error == errorCode){
-            retString =errorNames[i].name;
+        if (errorNames[i].error == errorCode) {
+            retString = errorNames[i].name;
             break;
         }
         i++;
@@ -95,16 +73,15 @@ const char8 *ToName(const ErrorType errorCode) {
     return retString;
 }
 
-
 void ReportLogMessage(const ErrorType code,
-                 const char8 * const errorDescription,
-                 const char8 * const fileName,
-                 const int16 lineNumber,
-                 const char8 * const functionName) {
+                      const char8 * const errorDescription,
+                      const char8 * const fileName,
+                      const int16 lineNumber,
+                      const char8 * const functionName) {
     LogInformation logInfo;
     logInfo.threadId = InvalidThreadIdentifier;
     logInfo.objectPointer = static_cast<void*>(NULL);
-    logInfo.className       = static_cast<const char8 *>(NULL);
+    logInfo.className = static_cast<const char8 *>(NULL);
     logInfo.header.errorType = code;
     logInfo.header.lineNumber = lineNumber;
     logInfo.fileName = fileName;
@@ -116,16 +93,15 @@ void ReportLogMessage(const ErrorType code,
     logMessageProcessFunction(logInfo, errorDescription);
 }
 
-
 void ReportLogMessageFullContext(const ErrorType code,
-                            const char8 * const errorDescription,
-                            const char8 * const fileName,
-                            const int16 lineNumber,
-                            const char8 * const functionName) {
+                                 const char8 * const errorDescription,
+                                 const char8 * const fileName,
+                                 const int16 lineNumber,
+                                 const char8 * const functionName) {
     LogInformation logInfo;
     logInfo.threadId = InvalidThreadIdentifier;
     logInfo.objectPointer = static_cast<void*>(NULL);
-    logInfo.className       = static_cast<const char8 *>(NULL);
+    logInfo.className = static_cast<const char8 *>(NULL);
     logInfo.header.errorType = code;
     logInfo.header.lineNumber = lineNumber;
     logInfo.fileName = fileName;
@@ -135,16 +111,10 @@ void ReportLogMessageFullContext(const ErrorType code,
     logMessageProcessFunction(logInfo, errorDescription);
 }
 
-
-
-
-
 void SetLogMessageProcessFunction(const LogMessageProcessFunctionType userFun) {
-    if (userFun != NULL){
+    if (userFun != NULL) {
         logMessageProcessFunction = userFun;
     }
 }
-
-
 
 }
