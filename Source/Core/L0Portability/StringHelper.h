@@ -71,6 +71,7 @@ namespace StringHelper {
      * @param[in] source the string to be appended to the destination.
      * @param[in] size is the maximum number of bytes to append.
      * @return true if all parameters were ok
+     * @pre size <= length of the string source.
      */
     bool ConcatenateN(char8 *destination,const char8 *source,uint32 size);
 
@@ -96,6 +97,7 @@ namespace StringHelper {
      * @param[in] string2 is the second string.
      * @param[in] size is the maximum number of characters to compare.
      * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
+     * @pre size <= largest length of the string1 or string2.
      */
     int32 CompareN(const char8* const string1,const char8* const string2,const uint32 size);
 
@@ -117,6 +119,7 @@ namespace StringHelper {
      * @param[in] source the string to copy into the destination.
      * @param[in] size the maximum number of bytes to copy.
      * @return true if the source is copied to the destination.
+     * @pre size <= length source
      */
     bool CopyN(char8 *destination,const char8 *source,uint32 size);
 
@@ -260,6 +263,7 @@ namespace StringHelper {
      * @param[out] result is the concatenated string.
      * @param[in,out] size is the maximum number of characters to append.
      * @return true if strings are not NULL.
+     * @pre size <=  length of the string2
      */
     bool ConcatenateN(const char8* const string1,
                              const char8* const string2,

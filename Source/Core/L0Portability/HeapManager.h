@@ -42,7 +42,8 @@
 
 /**
  * @brief Implementation of functions for the heap memory management.
- * @details Using these functions is possible adding different HeapI
+ *
+ * Using these functions is possible adding different HeapI
  * objects in an hidden static database and using their specific functions for the
  * desired heap management.
  */
@@ -63,7 +64,6 @@ HeapI *FindHeap(const void * const address);
  */
 HeapI *FindHeap(const char8 * const name);
 
-
 /**
  * @brief Returns the standard heap.
  * @returns a pointer to the standard heap object.
@@ -75,8 +75,10 @@ HeapI *GetStandardHeap();
 /**
  * @brief Registers an HeapI object in the database.
  * @param[in] newHeap is a pointer to the HeapI object which must be added.
- * @return true is \a newHeap is correctly registered in the database,
+ * @return true if \a newHeap is correctly registered in the database,
  * false if the object is already registered or if there is no space to add it.
+ * @pre All the heaps added have to have different names. AddHeap does not check if it is already include
+ * a heap with the same name.
  */
 bool AddHeap(HeapI *const newHeap);
 
@@ -129,7 +131,7 @@ void *Realloc(void *&data,const uint32 newSize);
  * terminated string and copies the memory until a zero is found (C string duplication).
  * @param[in] data The pointer to the memory which must be copied.
  * @param[in] size size of memory to allocate. if size = 0 then memory is copied until a zero is found
- * @param[in] heapName name of heap to use. default= copy on the same heap as data
+ * @param[in] heapName name of heap to use. default = copy on the same heap as data
  * @return The pointer to the new allocated memory which contains a copy of s.
  * @pre If size = 0 the memory area pointed by \a data must be a zero terminated string.
  */

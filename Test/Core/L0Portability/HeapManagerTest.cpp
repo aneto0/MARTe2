@@ -45,8 +45,6 @@ using namespace HeapManager;
 HeapManagerTest::HeapManagerTest() {
     ptr = NULL;
     retVal = false;
-    // Auto-generated constructor stub for HeapManagerTest
-    // TODO Verify if manual additions are needed
 }
 
 HeapManagerTest::~HeapManagerTest() {
