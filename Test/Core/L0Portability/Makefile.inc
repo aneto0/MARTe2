@@ -25,25 +25,28 @@
 #############################################################
 
 OBJSX=  StandardHeap_GenericTest.x \
-        HeapManagerTest.x
-#EndianityTest.x \
-# ThreadsTest.x \
-      #  SleepTest.x \
-      #  ProcessorTest.x \
-       # AtomicTest.x \
-        #ProcessorTypeTest.x \
-	#EventSemTest.x \
-	#MutexSemTest.x \
-	#BasicConsoleTest.x \
-	#HighResolutionTimerTest.x \
-	#MemoryTest.x \
-	#FastPollingMutexSemTest.x \
-	#StringHelperTest.x \
-	#TimeoutTypeTest.x \
-	#LoadableLibraryTest.x \
-	#FastMathTest.x \
-	#StringPortableTest.x \
-	#LoggerTest.x \
+        HeapManagerTest.x \
+        AuxHeap.x\
+        MemoryCheckTest.x \
+        MemoryOperationsHelperTest.x\
+        EndianityTest.x \
+        ThreadsTest.x \
+        SleepTest.x \
+        ProcessorTest.x \
+        AtomicTest.x \
+        ProcessorTypeTest.x \
+	EventSemTest.x \
+	MutexSemTest.x \
+	BasicConsoleTest.x \
+	HighResolutionTimerTest.x \
+	MemoryTest.x \
+	FastPollingMutexSemTest.x \
+	StringHelperTest.x \
+	TimeoutTypeTest.x \
+	LoadableLibraryTest.x \
+	FastMathTest.x \
+	StringPortableTest.x \
+	LoggerTest.x \
 
 
 PACKAGE=Core

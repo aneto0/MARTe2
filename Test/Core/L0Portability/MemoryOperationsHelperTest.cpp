@@ -49,3 +49,253 @@ MemoryOperationsHelperTest::~MemoryOperationsHelperTest() {
     // TODO Verify if manual additions are needed
 }
 
+
+bool MemoryOperationsHelperTest::TestCopy() {
+    int32 myIntArray[5];
+    float32 myFloatArray[5];
+
+    for (int32 i = 0; i < 5; i++) {
+        myIntArray[i] = i;
+        myFloatArray[i] = 0.0;
+    }
+
+    //Copy the int array in the float32 array.
+    uint32 sizeToCopy = 4 * sizeof(int32);
+    if (!MemoryOperationsHelper::Copy(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
+        return false;
+    }
+
+    //Check that bytes are equal independently from type.
+    if (MemoryOperationsHelper::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
+        return false;
+    }
+
+    uint32 checkSize = sizeToCopy + sizeof(int32);
+
+    if (MemoryOperationsHelper::Compare((const void*) myFloatArray, (const void*) myIntArray, checkSize) == 0) {
+        return false;
+    }
+
+    return true;
+
+}
+
+bool MemoryOperationsHelperTest::TestCopyZeroSize() {
+    int32 myIntArray[5] = { 1 };
+    float32 myFloatArray[5] = { 2.0 };
+
+//size=0
+    uint32 sizeToCopy = 0;
+    if (!MemoryOperationsHelper::Copy(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
+        return false;
+    }
+
+    return (myIntArray[0] == 1) && (myFloatArray[0] == 2.0);
+
+}
+
+bool MemoryOperationsHelperTest::TestCopyNullPointer() {
+    int32 myIntArray[5] = { 1 };
+    float32 myFloatArray[5] = { 0.0 };
+    uint32 sizeToCopy = 1;
+    return (!MemoryOperationsHelper::Copy(NULL, NULL, sizeToCopy) &&
+            !MemoryOperationsHelper::Copy(NULL, (const void*) myIntArray, sizeToCopy) &&
+            !MemoryOperationsHelper::Copy(myFloatArray, NULL, sizeToCopy));
+}
+
+
+bool MemoryOperationsHelperTest::TestMove() {
+
+    int32 myIntArray[5];
+    float32 myFloatArray[5];
+
+    for (int32 i = 0; i < 5; i++) {
+        myIntArray[i] = i;
+        myFloatArray[i] = 0.0;
+    }
+
+    //Copy the int array in the float32 array.
+    uint32 sizeToCopy = 4 * sizeof(int32);
+    if (!MemoryOperationsHelper::Move(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
+        return false;
+    }
+
+    //Check that bytes are equal independently from type.
+    if (MemoryOperationsHelper::Compare((const void*) myFloatArray, (const void*) myIntArray, sizeToCopy) != 0) {
+        return false;
+    }
+
+    uint32 checkSize = sizeToCopy + sizeof(int32);
+
+    return (MemoryOperationsHelper::Compare((const void*) myFloatArray, (const void*) myIntArray, checkSize) != 0);
+
+}
+
+
+bool MemoryOperationsHelperTest::TestMoveZeroSize() {
+    int32 myIntArray[5] = { 1 };
+    float32 myFloatArray[5] = { 2.0 };
+
+    //size=0
+    uint32 sizeToCopy = 0;
+    if (!MemoryOperationsHelper::Move(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
+        return false;
+    }
+    //nothing should change
+    return (myIntArray[0] == 1) && (myFloatArray[0] == 2.0);
+}
+
+bool MemoryOperationsHelperTest::TestMoveNullPointer() {
+    int32 myIntArray[5];
+    float32 myFloatArray[5];
+
+    uint32 sizeToCopy = 1;
+    return (!MemoryOperationsHelper::Move(NULL, NULL, sizeToCopy) &&
+            !MemoryOperationsHelper::Move(NULL, (const void*) myIntArray, sizeToCopy) &&
+            !MemoryOperationsHelper::Move(myFloatArray, NULL, sizeToCopy));
+
+}
+
+bool MemoryOperationsHelperTest::TestCompare() {
+    const char8 *source = "Hello World";
+    const char8 *test = "Hello W0000";
+
+    uint32 sizeToCopy = 7;
+
+    //Source must be equal to test until 6.
+    if (MemoryOperationsHelper::Compare(source, test, sizeToCopy) != 0) {
+        return false;
+    }
+
+    sizeToCopy = 11;
+
+    //Source must be greater than test.
+    if (MemoryOperationsHelper::Compare(source, test, sizeToCopy) != 2) {
+        return false;
+    }
+
+    //Test must be less than source.
+    if (MemoryOperationsHelper::Compare(test, source, sizeToCopy) != 1) {
+        return false;
+    }
+
+    //Test the result in case of NULL argument.
+    if (MemoryOperationsHelper::Compare(NULL, source, sizeToCopy) != -1) {
+        return false;
+    }
+
+    //Test with size=0.
+    sizeToCopy = 0;
+    if (MemoryOperationsHelper::Compare(test, source, sizeToCopy) != 0) {
+        return false;
+    }
+
+    sizeToCopy = 1;
+    return (MemoryOperationsHelper::Compare(NULL, NULL, sizeToCopy) == -1 &&
+            MemoryOperationsHelper::Compare(source, NULL, sizeToCopy) == -1 &&
+            MemoryOperationsHelper::Compare(NULL, test, sizeToCopy) == -1);
+
+}
+
+bool MemoryOperationsHelperTest::TestSet() {
+
+    uint32 size = 10;
+    char8 *buffPointer = (char8*) HeapManager::Malloc(size);
+
+    if (buffPointer == NULL) {
+        return false;
+    }
+
+    //Set first 5 bytes to 'o'.
+    char8 myFavouriteChar = 'o';
+    uint32 charSize = 5;
+    if (!MemoryOperationsHelper::Set(buffPointer, myFavouriteChar, size)) {
+        HeapManager::Free((void*&) buffPointer);
+        return false;
+    }
+
+    char8 *newBuffPointer = buffPointer + charSize;
+
+    //Set last 5 bytes to 'u'.
+    myFavouriteChar = 'u';
+
+    if (!MemoryOperationsHelper::Set(newBuffPointer, myFavouriteChar, size - charSize)) {
+        HeapManager::Free((void*&) buffPointer);
+        return false;
+    }
+
+    char8 test[] = "ooooouuuuu";
+
+    //Check that the Set result is correct.
+    if (MemoryOperationsHelper::Compare(test, buffPointer, size) != 0) {
+        HeapManager::Free((void*&) buffPointer);
+        return false;
+    }
+
+    size = 1;
+    return !MemoryOperationsHelper::Set(NULL, myFavouriteChar, size);
+
+}
+
+bool MemoryOperationsHelperTest::TestSetZeroSize() {
+    char buffPointer[32] = { 'a' };
+
+    char myFavouriteChar = 'b';
+
+//use size=0
+    uint32 size = 0;
+    if (!MemoryOperationsHelper::Set(buffPointer, myFavouriteChar, size)) {
+        return false;
+    }
+
+    return buffPointer[0] == 'a';
+}
+
+
+bool MemoryOperationsHelperTest::TestSearch() {
+
+    uint32 size = 10;
+    const char8 *buffPointer = "Hello World";
+
+    //Test the Search function.
+    char8 myFavouriteChar = 'W';
+
+    if (MemoryOperationsHelper::Search(buffPointer, myFavouriteChar, size) != (buffPointer + 6)) {
+        return false;
+    }
+
+    size = 1;
+    return MemoryOperationsHelper::Search(NULL, myFavouriteChar, size) == NULL;
+
+}
+
+
+bool MemoryOperationsHelperTest::TestSearchNotInBuffer() {
+    uint32 size = 10;
+    const char8 *buffPointer = "Hello World";
+
+    //Test the result of Search when the character is not found.
+    char8 imNotInBuffer = 'a';
+    return (MemoryOperationsHelper::Search(buffPointer, imNotInBuffer, size) == NULL);
+}
+
+bool MemoryOperationsHelperTest::TestSearchOutOfRanges() {
+    uint32 size = 10;
+    const char8 *buffPointer = "Hello World";
+
+    //Test the result of Search when the character is over the size passed by argument.
+    char8 outOfRanges = 'd';
+
+    return (MemoryOperationsHelper::Search(buffPointer, outOfRanges, size) == NULL);
+}
+
+bool MemoryOperationsHelperTest::TestSearchZeroSize() {
+    uint32 size = 0;
+
+    const char8 *buffPointer = "Hello World";
+
+    char8 myFavouriteChar = 'W';
+
+    return (MemoryOperationsHelper::Search(buffPointer, myFavouriteChar, size) == NULL);
+
+}

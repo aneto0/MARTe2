@@ -32,6 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "../../../Source/Core/L0Portability/MemoryOperationsHelper.h"
+#include "../../../Source/Core/L0Portability/HeapManager.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -40,6 +43,87 @@ class MemoryOperationsHelperTest {
 public:
     MemoryOperationsHelperTest();
     virtual ~MemoryOperationsHelperTest();
+
+    /**
+     * @brief Tests the Memory::Copy function.
+     * @details Copies an area of memory checking if the number of size specified are copied correctly.
+     * @return true if the memory is copied correctly.
+     */
+    bool TestCopy();
+
+    /**
+     * @brief Tests the Memory::Copy function with size = 0.
+     * @return true if the Memory::Copy function returns true and no data is copied.
+     */
+    bool TestCopyZeroSize();
+
+    /**
+     * @brief Tests the Memory::Copy function with a NULL pointer.
+     * @return true if the Memory::Copy function returns false.
+     */
+    bool TestCopyNullPointer();
+
+    /**
+     * @brief Tests the Memory::Move function.
+     * @return true if an area of memory can be successfully moved.
+     */
+    bool TestMove();
+
+    /**
+     * @brief Tests the Memory::Move function with size = 0.
+     * @return true if the Memory::Move function returns true and no data is moved.
+     */
+    bool TestMoveZeroSize();
+
+    /**
+     * @brief Tests the Memory::Move function with a NULL pointer.
+     * @return true if the Memory::Move function returns false.
+     */
+    bool TestMoveNullPointer();
+
+    /**
+     * @brief Tests the Memory::Compare function.
+     * @details Exercises the Compares Memory::Compare function with several patterns.
+     * @return true if all the patterns return as expected.
+     */
+    bool TestCompare();
+
+    /**
+     * @brief Tests the Memory::Set function.
+     * @details Sets a list of characters in the beginning of a memory area and another list of characters at its end.
+     * @return true if the memory is set as specified above.
+     */
+    bool TestSet();
+
+    /**
+     * @brief Tests the Memory::Set function with size = 0.
+     * @return true if the Memory::Set function returns true and no data is moved.
+     */
+    bool TestSetZeroSize();
+
+    /**
+     * @brief Tests the Memory::Search function, searching for a character saved on a memory area .
+     * @return true if the the character can be found.
+     */
+    bool TestSearch();
+
+    /**
+     * @brief Tests the Memory::Search function, searching for a non-existing character on a memory area .
+     * @return true if the the character cannot be found.
+     */
+    bool TestSearchNotInBuffer();
+
+    /**
+     * @brief Tests the Memory::Search function looking for a character that exists but is out of the searching bounds.
+     * @return true if the Memory::Search returns false.
+     */
+    bool TestSearchOutOfRanges();
+
+    /**
+     * @brief Tests the Memory::Search function with size = 0.
+     * @return true if the Memory::Search function returns false for size = 0.
+     */
+    bool TestSearchZeroSize();
 
 };
 

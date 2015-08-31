@@ -52,10 +52,20 @@ TEST(HeapManagerGTest,TestMallocSpecificName) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestMallocSpecificName());
 }
+
+TEST(HeapManagerGTest,TestMallocInvalidName) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestMallocInvalidName());
+}
 	
 TEST(HeapManagerGTest,TestFree) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestFree());
+}
+
+TEST(HeapManagerGTest,TestFreeInvalidPointer) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestFreeInvalidPointer());
 }
 
 TEST(HeapManagerGTest,TestRealloc) {
@@ -63,9 +73,29 @@ TEST(HeapManagerGTest,TestRealloc) {
     ASSERT_TRUE(myHeapManagerTest.TestRealloc());
 }
 
+TEST(HeapManagerGTest,TestReallocInvalidPointer) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestReallocInvalidPointer());
+}
+
 TEST(HeapManagerGTest,TestAddHeap) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestAddHeap());
+}
+
+TEST(HeapManagerGTest,TestAddHeapNULL) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestAddHeapNULL());
+}
+
+TEST(HeapManagerGTest,TestAddHeapRepetedHeap) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestAddHeapRepetedHeap());
+}
+
+TEST(HeapManagerGTest,TestAddHeapTooMuch) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestAddHeapTooMuch());
 }
 
 TEST(HeapManagerGTest,TestFindHeapByName) {
@@ -73,9 +103,30 @@ TEST(HeapManagerGTest,TestFindHeapByName) {
     ASSERT_TRUE(myHeapManagerTest.TestFindHeapByName());
 }
 
+TEST(HeapManagerGTest,TestFindHeapByNameInvalidName) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestFindHeapByNameInvalidName());
+}
+
 TEST(HeapManagerGTest,TestFindHeapByAddress) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestFindHeapByAddress());
+}
+
+TEST(HeapManagerGTest,TestFindHeapByAddressInvalidAddress) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestFindHeapByAddressInvalidAddress());
+}
+
+
+TEST(HeapManagerGTest,TestFindHeapByAddress2Heaps) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestFindHeapByAddress2Heaps());
+}
+
+TEST(HeapManagerGTest,TestGetStandardHeap) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestGetStandardHeap());
 }
 
 TEST(HeapManagerGTest,TestRemoveHeap) {
@@ -86,4 +137,19 @@ TEST(HeapManagerGTest,TestRemoveHeap) {
 TEST(HeapManagerGTest,TestDuplicateDefault) {
     HeapManagerTest myHeapManagerTest;
     ASSERT_TRUE(myHeapManagerTest.TestDuplicateDefault());
+}
+
+TEST(HeapManagerGTest,TestDuplicateSpecificName) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestDuplicateSpecificName());
+}
+
+TEST(HeapManagerGTest,TestDuplicateString) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestDuplicateString());
+}
+
+TEST(HeapManagerGTest,TestDuplicateNOAllocationMemory) {
+    HeapManagerTest myHeapManagerTest;
+    ASSERT_TRUE(myHeapManagerTest.TestDuplicateNOAllocationMemory());
 }
