@@ -120,12 +120,18 @@ void *Malloc(uint32 size, const char8 * const heapName = NULL_PTR(char8 *));
  * @return The pointer to the new data block. NULL if reallocation failed.
  */
 void *Realloc(void *&data,const uint32 newSize);
+
 /**
  * @brief Duplicates a memory section into a new area from the specified heap.
+ * @details If \a size != 0 the function duplicates the specified number of bytes of
+ * the memory area pointed by \a data.\n
+ * If \a size = 0 the function considers the memory area pointed by \a data as a zero
+ * terminated string and copies the memory until a zero is found (C string duplication).
  * @param[in] data The pointer to the memory which must be copied.
  * @param[in] size size of memory to allocate. if size = 0 then memory is copied until a zero is found
  * @param[in] heapName name of heap to use. default= copy on the same heap as data
  * @return The pointer to the new allocated memory which contains a copy of s.
+ * @pre If size = 0 the memory area pointed by \a data must be a zero terminated string.
  */
 void *Duplicate(const void * const data, const uint32 size=0U, const char8 * const heapName = NULL_PTR(char8 *));
 
