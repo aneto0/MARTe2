@@ -127,13 +127,9 @@ void *Malloc(uint32 size,
  * @param[in] newSize The size of the new memory block.
  * @return The pointer to the new data block. NULL if reallocation failed.
  */
-<<<<<<< HEAD
 void *Realloc(void *&data,
               const uint32 newSize);
-=======
-void *Realloc(void *&data,const uint32 newSize);
 
->>>>>>> branch 'Mayor_l0_refactor' of https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git
 /**
  * @brief Duplicates a memory section into a new area from the specified heap.
  * @details If \a size != 0 the function duplicates the specified number of bytes of
