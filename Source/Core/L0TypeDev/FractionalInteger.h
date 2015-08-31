@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
+#include "TypeCharacteristics.h"
 #include "TypeDescriptor.h"
 #include "AnyType.h"
 
@@ -95,6 +96,9 @@ public:
      * @return the AnyType associated to this object.
      */
     inline operator AnyType() const;
+
+
+
 
 private:
 

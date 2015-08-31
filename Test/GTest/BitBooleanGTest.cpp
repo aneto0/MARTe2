@@ -44,6 +44,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+/*
+TEST(BitBooleanGTest,myTest) {
+    BitBooleanTest<int64> bitbool;
+    ASSERT_TRUE(bitbool.myTest());
+}
+*/
 
 TEST(BitBooleanGTest,TestCopyOperatorUnion) {
     BitBooleanTest<int64> bitbool;
@@ -107,3 +113,150 @@ TEST(BitBooleanGTest,TestAnyTypeCast) {
     int32 x=0;
     ASSERT_TRUE(bitbool.TestAnyTypeCast(x));
 }
+
+TEST(BitBooleanGTest,TestBitSizeU8) {
+    BitBooleanTest<uint8> bitbool;
+    uint8 x=0;
+    ASSERT_TRUE(bitbool.TestBitSize(x));
+}
+
+TEST(BitBooleanGTest,TestBitSizeU16) {
+    BitBooleanTest<uint16> bitbool;
+    uint16 x=0;
+    ASSERT_TRUE(bitbool.TestBitSize(x));
+}
+
+TEST(BitBooleanGTest,TestBitSizeU32) {
+    BitBooleanTest<uint32> bitbool;
+    uint32 x=0;
+    ASSERT_TRUE(bitbool.TestBitSize(x));
+}
+
+TEST(BitBooleanGTest,TestBitSizeU64) {
+    BitBooleanTest<uint64> bitbool;
+    uint64 x=0;
+    ASSERT_TRUE(bitbool.TestBitSize(x));
+}
+
+TEST(BitBooleanGTest,TestBitSizeS8) {
+    BitBooleanTest<int8> bitbool;
+    int8 x=0;
+    ASSERT_TRUE(bitbool.TestBitSize(x));
+}
+
+TEST(BitBooleanGTest,TestBitSizeS16) {
+    BitBooleanTest<int16> bitbool;
+    int16 x=0;
+    ASSERT_TRUE(bitbool.TestBitSize(x));
+}
+
+TEST(BitBooleanGTest,TestBitSizeS32) {
+    BitBooleanTest<int32> bitbool;
+    int32 x=0;
+    ASSERT_TRUE(bitbool.TestBitSize(x));
+}
+
+TEST(BitBooleanGTest,TestBitSizeS64) {
+    BitBooleanTest<int64> bitbool;
+    int64 x=0;
+    ASSERT_TRUE(bitbool.TestBitSize(x));
+}
+
+
+TEST(BitBooleanGTest,TestBitOffsetU8) {
+    BitBooleanTest<uint8> bitbool;
+    uint8 x=0;
+    ASSERT_TRUE(bitbool.TestBitOffset(x));
+}
+
+TEST(BitBooleanGTest,TestBitOffsetU16) {
+    BitBooleanTest<uint16> bitbool;
+    uint16 x=0;
+    ASSERT_TRUE(bitbool.TestBitOffset(x));
+}
+
+TEST(BitBooleanGTest,TestBitOffsetU32) {
+    BitBooleanTest<uint32> bitbool;
+    uint32 x=0;
+    ASSERT_TRUE(bitbool.TestBitOffset(x));
+}
+
+TEST(BitBooleanGTest,TestBitOffsetU64) {
+    BitBooleanTest<uint64> bitbool;
+    uint64 x=0;
+    ASSERT_TRUE(bitbool.TestBitOffset(x));
+}
+
+TEST(BitBooleanGTest,TestBitOffsetS8) {
+    BitBooleanTest<int8> bitbool;
+    int8 x=0;
+    ASSERT_TRUE(bitbool.TestBitOffset(x));
+}
+
+TEST(BitBooleanGTest,TestBitOffsetS16) {
+    BitBooleanTest<int16> bitbool;
+    int16 x=0;
+    ASSERT_TRUE(bitbool.TestBitOffset(x));
+}
+
+TEST(BitBooleanGTest,TestBitOffsetS32) {
+    BitBooleanTest<int32> bitbool;
+    int32 x=0;
+    ASSERT_TRUE(bitbool.TestBitOffset(x));
+}
+
+TEST(BitBooleanGTest,TestBitOffsetS64) {
+    BitBooleanTest<int64> bitbool;
+    int64 x=0;
+    ASSERT_TRUE(bitbool.TestBitOffset(x));
+}
+
+
+TEST(BitBooleanGTest,TestOffsetOutOfRangeU8) {
+    BitBooleanTest<uint8> bitbool;
+    uint8 x=0;
+    ASSERT_TRUE(bitbool.TestOffsetOutOfRange(x));
+}
+
+TEST(BitBooleanGTest,TestOffsetOutOfRangeU16) {
+    BitBooleanTest<uint16> bitbool;
+    uint16 x=0;
+    ASSERT_TRUE(bitbool.TestOffsetOutOfRange(x));
+}
+
+TEST(BitBooleanGTest,TestOffsetOutOfRangeU32) {
+    BitBooleanTest<uint32> bitbool;
+    uint32 x=0;
+    ASSERT_TRUE(bitbool.TestOffsetOutOfRange(x));
+}
+
+TEST(BitBooleanGTest,TestOffsetOutOfRangeU64) {
+    BitBooleanTest<uint64> bitbool;
+    uint64 x=0;
+    ASSERT_TRUE(bitbool.TestOffsetOutOfRange(x));
+}
+
+TEST(BitBooleanGTest,TestOffsetOutOfRangeS8) {
+    BitBooleanTest<int8> bitbool;
+    int8 x=0;
+    ASSERT_TRUE(bitbool.TestOffsetOutOfRange(x));
+}
+
+TEST(BitBooleanGTest,TestOffsetOutOfRangeS16) {
+    BitBooleanTest<int16> bitbool;
+    int16 x=0;
+    ASSERT_TRUE(bitbool.TestOffsetOutOfRange(x));
+}
+
+TEST(BitBooleanGTest,TestOffsetOutOfRangeS32) {
+    BitBooleanTest<int32> bitbool;
+    int32 x=0;
+    ASSERT_TRUE(bitbool.TestOffsetOutOfRange(x));
+}
+
+TEST(BitBooleanGTest,TestOffsetOutOfRangeS64) {
+    BitBooleanTest<int64> bitbool;
+    int64 x=0;
+    ASSERT_TRUE(bitbool.TestOffsetOutOfRange(x));
+}
+

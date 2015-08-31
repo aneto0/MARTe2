@@ -50,10 +50,10 @@ namespace TypeDefinition {
  * For each type a constructor can automatically built the relative AnyType
  * object and this is very useful for example in the Printf function.
  */
-/*lint -save -e925 -e929 -e9005 -e1773 .
+/*lint -save -e925 -e926 -e929 -e9005 -e1773 .
  * (925) pointer cast required by this implementation of AnyType */
 /* (9005,1773) Cast away of const required by this implementation of AnyType and justified because the in the TypeDescriptor
- * attribute the flag isConstant will be set to true..
+ * attribute the flag isConstant will be set to true..ì
  */
 class AnyType {
 
@@ -78,9 +78,9 @@ public:
      * @param[in] bitAddress specifies the bit-shift respect to \a dataPointer.
      * @param[in] dataPointer is the pointer to a generic constant type which must be stored.
      */
-    inline AnyType(const TypeDescriptor &dataDescriptor,
-                   uint8 bitAddress,
-                   const void* const dataPointer);
+    inline AnyType(const TypeDescriptor &dataDescriptorIn,
+                   const uint8 bitAddressIn,
+                   const void* const dataPointerIn);
 
     /**
      * @brief Most General constructor for a non-constant type.
@@ -88,9 +88,9 @@ public:
      * @param[in] bitAddress specifies the bit-shift respect to \a dataPointer.
      * @param[in] dataPointer is the pointer to a generic type which must be stored.
      */
-    inline AnyType(const TypeDescriptor &dataDescriptor,
-                   uint8 bitAddress,
-                   void* const dataPointer);
+    inline AnyType(const TypeDescriptor &dataDescriptorIn,
+                   const uint8 bitAddressIn,
+                   void* const dataPointerIn);
 
     /**
      * @brief Checks if the AnyType is empty.
@@ -219,7 +219,6 @@ public:
      */
     inline AnyType(const float64 &i);
 
-
     /**
      * @brief Constructor by constant void pointer.
      * @param[in] i is the constant void pointer.
@@ -238,30 +237,23 @@ public:
      */
     inline AnyType(const char8 * const p);
 
-
     /**
      * @brief Returns the data pointer.
      * @return the data pointer.
      */
-    void* GetDataPointer(){
-        return dataPointer;
-    }
+    inline void* GetDataPointer();
 
     /**
      * @brief Returns the data type descriptor.
      * @return the data type descriptor.
      */
-    TypeDescriptor GetTypeDescriptor(){
-        return dataDescriptor;
-    }
+    inline TypeDescriptor GetTypeDescriptor() const;
 
     /**
      * @brief Returns the data bit address.
      * @return the data bit address (i.e  the bit shift respect to the data pointer).
      */
-    uint8 GetBitAddress(){
-        return bitAddress;
-    }
+    inline uint8 GetBitAddress() const;
 
 private:
 
@@ -295,26 +287,26 @@ AnyType::AnyType(void) {
 }
 
 AnyType::AnyType(const AnyType &x) {
-    dataPointer = x.dataPointer;
-    bitAddress = x.bitAddress;
-    dataDescriptor = x.dataDescriptor;
+    this->dataPointer = x.dataPointer;
+    this->bitAddress = x.bitAddress;
+    this->dataDescriptor = x.dataDescriptor;
 }
 
-AnyType::AnyType(const TypeDescriptor &dataDescriptor,
-                 uint8 bitAddress,
-                 const void* const dataPointer) {
-    this->dataDescriptor = dataDescriptor;
+AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
+                 const uint8 bitAddressIn,
+                 const void* const dataPointerIn) {
+    this->dataDescriptor = dataDescriptorIn;
     this->dataDescriptor.isConstant = true;
-    this->dataPointer = const_cast<void*>(dataPointer);
-    this->bitAddress = bitAddress;
+    this->dataPointer = const_cast<void*>(dataPointerIn);
+    this->bitAddress = bitAddressIn;
 }
 
-AnyType::AnyType(const TypeDescriptor &dataDescriptor,
-                 uint8 bitAddress,
-                 void* const dataPointer) {
-    this->dataDescriptor = dataDescriptor;
-    this->dataPointer = dataPointer;
-    this->bitAddress = bitAddress;
+AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
+                 const uint8 bitAddressIn,
+                 void* const dataPointerIn) {
+    this->dataDescriptor = dataDescriptorIn;
+    this->dataPointer = dataPointerIn;
+    this->bitAddress = bitAddressIn;
 }
 
 bool AnyType::IsVoid() const {
@@ -405,9 +397,7 @@ AnyType::AnyType(const uint32 &i) {
     dataDescriptor.isConstant = true;
 }
 
-
 ////////////////////////////
-
 
 AnyType::AnyType(int64 &i) {
     dataPointer = static_cast<void *>(&i);
@@ -467,7 +457,6 @@ AnyType::AnyType(const float64 &i) {
 
 //////////////////////////////
 
-
 AnyType::AnyType(const void * const p) {
     dataPointer = const_cast<void *>(p);
     bitAddress = 0u;
@@ -485,6 +474,28 @@ AnyType::AnyType(const char8 * const p) {
     dataPointer = static_cast<void *>(const_cast<char8 *>(p)); // we will either print the variable or the string
     bitAddress = 0u;
     dataDescriptor = ConstCString;
+}
+
+///////////////////////
+
+void* AnyType::GetDataPointer() {
+    return dataPointer;
+}
+
+/**
+ * @brief Returns the data type descriptor.
+ * @return the data type descriptor.
+ */
+TypeDescriptor AnyType::GetTypeDescriptor() const {
+    return dataDescriptor;
+}
+
+/**
+ * @brief Returns the data bit address.
+ * @return the data bit address (i.e  the bit shift respect to the data pointer).
+ */
+uint8 AnyType::GetBitAddress() const {
+    return bitAddress;
 }
 
 /**

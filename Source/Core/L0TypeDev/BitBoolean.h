@@ -34,7 +34,6 @@
 #include "GeneralDefinitions.h"
 #include "TypeDescriptor.h"
 #include "AnyType.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -47,26 +46,6 @@ namespace TypeDefinition {
  */
 template<typename baseType, uint8 bitOffset>
 class BitBoolean {
-
-    /**
-     * The number value.
-     */
-    baseType value;
-
-    /**
-     * The number size.
-     */
-    static const baseType baseTypeBitSize = (sizeof(baseType) * 8);
-
-    /**
-     * The mask (only a bit shifted)
-     */
-    static const baseType mask = (static_cast<baseType>(1) << bitOffset);
-
-    /**
-     * A mask with 0 in the specified bit and 1 in other number bits.
-     */
-    static const baseType notMask = ~mask;
 
 public:
 
@@ -100,6 +79,27 @@ public:
      */
     static inline baseType BitOffset();
 
+private:
+    /**
+     * The number value.
+     */
+    baseType value;
+
+    /**
+     * The number size.
+     */
+    static const baseType baseTypeBitSize = (sizeof(baseType) * 8);
+
+    /**
+     * The mask (only a bit shifted)
+     */
+    static const baseType mask = (static_cast<baseType>(1) << bitOffset);
+
+    /**
+     * A mask with 0 in the specified bit and 1 in other number bits.
+     */
+    static const baseType notMask = ~mask;
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -118,7 +118,7 @@ void BitBoolean<baseType, bitOffset>::operator=(bool flag) {
 
 template<typename baseType, uint8 bitOffset>
 BitBoolean<baseType, bitOffset>::operator bool() const {
-    return ((value & mask) == mask);
+    return ((value & mask) == mask) && (mask != static_cast<baseType>(0));
 }
 
 template<typename baseType, uint8 bitOffset>

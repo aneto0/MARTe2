@@ -101,17 +101,20 @@ private:
     /**
      * The minimum possible value.
      */
-    static const baseType minValue = (isSigned ? (-1 << (bitSize - 1)) : 0);
+    static const baseType minValue = (isSigned ? (static_cast<baseType>(-1) << (bitSize - static_cast<baseType>(1))) : 0);
 
     /**
      * The maximum possible value.
      */
-    static const baseType maxValue = (isSigned ? ((0x1 << (bitSize - 1)) - 1) : (static_cast<baseType>(-1) >> ((sizeof(baseType) * 8) - bitSize)));
+    static const baseType maxValue = (
+            isSigned ?
+                    ((static_cast<baseType>(1) << (bitSize - static_cast<baseType>(1))) - static_cast<baseType>(1)) :
+                    (static_cast<baseType>(-1) >> ((sizeof(baseType) * 8) - bitSize)));
 
     /**
      * The mask covering with ones the specified bit range.
      */
-    static const baseType mask = static_cast<baseType>((~0u >> (baseTypeBitSize - bitSize)) << bitOffset);
+    static const baseType mask = static_cast<baseType>((~static_cast<baseType>(0u) >> (baseTypeBitSize - bitSize)) << bitOffset);
 
     /**
      * The mask covering with ones the space out of the bit range.
@@ -122,9 +125,6 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-
-
 
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
 template<typename inputType>
