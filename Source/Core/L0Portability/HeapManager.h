@@ -40,8 +40,14 @@
 
 /**
  * @brief Implementation of functions for the heap memory management.
+<<<<<<< HEAD
  * @details Using these functions is possible adding different HeapI
  * objects in a hidden static database and using their specific functions for the
+=======
+ *
+ * Using these functions is possible adding different HeapI
+ * objects in an hidden static database and using their specific functions for the
+>>>>>>> branch 'Mayor_l0_refactor' of https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git
  * desired heap management.
  */
 namespace HeapManager {
@@ -72,10 +78,16 @@ HeapI *GetStandardHeap();
 /**
  * @brief Registers a HeapI object in the database.
  * @param[in] newHeap is a pointer to the HeapI object which must be added.
+<<<<<<< HEAD
  * @return true if newHeap has been correctly registered in the database,
+=======
+ * @return true if \a newHeap is correctly registered in the database,
+>>>>>>> branch 'Mayor_l0_refactor' of https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git
  * false if the object is already registered or if there is no space to add it.
+ * @pre All the heaps added have to have different names. AddHeap does not check if it is already include
+ * a heap with the same name.
  */
-bool AddHeap(HeapI *newHeap);
+bool AddHeap(HeapI *const newHeap);
 
 /**
  * @brief Removes a specified HeapI object from the database.
@@ -115,14 +127,24 @@ void *Malloc(uint32 size,
  * @param[in] newSize The size of the new memory block.
  * @return The pointer to the new data block. NULL if reallocation failed.
  */
+<<<<<<< HEAD
 void *Realloc(void *&data,
               const uint32 newSize);
+=======
+void *Realloc(void *&data,const uint32 newSize);
+
+>>>>>>> branch 'Mayor_l0_refactor' of https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git
 /**
  * @brief Duplicates a memory section into a new area from the specified heap.
+ * @details If \a size != 0 the function duplicates the specified number of bytes of
+ * the memory area pointed by \a data.\n
+ * If \a size = 0 the function considers the memory area pointed by \a data as a zero
+ * terminated string and copies the memory until a zero is found (C string duplication).
  * @param[in] data The pointer to the memory which must be copied.
  * @param[in] size size of memory to allocate. if size = 0 then memory is copied until a zero is found
- * @param[in] heapName name of heap to use. default= copy on the same heap as data
+ * @param[in] heapName name of heap to use. default = copy on the same heap as data
  * @return The pointer to the new allocated memory which contains a copy of s.
+ * @pre If size = 0 the memory area pointed by \a data must be a zero terminated string.
  */
 void *Duplicate(const void * const data,
                 const uint32 size = 0U,

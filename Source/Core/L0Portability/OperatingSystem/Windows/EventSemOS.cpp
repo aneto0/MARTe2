@@ -147,22 +147,22 @@ EventSem::~EventSem() {
 }
 
 ErrorType EventSem::Wait() {
-    ErrorType error = NoError;
+    ErrorType error = ErrorManagement::NoError;
     int ret = WaitForSingleObject(osProperties->eventHandle, INFINITE);
 
     if (ret == WAIT_FAILED) {
-        error = OSError;
+        error = ErrorManagement::OSError;
     }
 
     return error;
 }
 
 ErrorType EventSem::Wait(const TimeoutType &timeout) {
-    ErrorType error = NoError;
+    ErrorType error = ErrorManagement::NoError;
     int ret = WaitForSingleObject(osProperties->eventHandle, timeout.GetTimeoutMSec());
 
     if (ret == WAIT_FAILED) {
-        error = OSError;
+        error = ErrorManagement::OSError;
     }
 
     if (ret == WAIT_TIMEOUT) {

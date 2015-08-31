@@ -1,6 +1,6 @@
 /**
- * @file LoggerTest.cpp
- * @brief Source file for class LoggerTest
+ * @file ErrorManagementTest.cpp
+ * @brief Source file for class ErrorManagementTest
  * @date 25/08/2015
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class LoggerTest (public, protected, and private). Be aware that some 
+ * the class ErrorManagementTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "LoggerTest.h"
+#include "ErrorManagementTest.h"
 #include "StringHelper.h"
 #include "Sleep.h"
 #include "Threads.h"
@@ -37,53 +37,54 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 //define static members
-ErrorType LoggerTest::expectedErrorCode;
-const char8* LoggerTest::expectedErrorDescription;
-const char8* LoggerTest::expectedErrorFilename;
-uint16 LoggerTest::expectedErrorLine;
-const char8* LoggerTest::expectedErrorFunction;
-const char8* LoggerTest::expectedErrorName;
-bool LoggerTest::fullContext = false;
-bool LoggerTest::retVal = false;
+ErrorManagement::ErrorType ErrorManagementTest::expectedErrorCode;
+const char8* ErrorManagementTest::expectedErrorDescription;
+const char8* ErrorManagementTest::expectedErrorFilename;
+uint16 ErrorManagementTest::expectedErrorLine;
+const char8* ErrorManagementTest::expectedErrorFunction;
+const char8* ErrorManagementTest::expectedErrorName;
+bool ErrorManagementTest::fullContext = false;
+bool ErrorManagementTest::retVal = false;
 
-void DummyErrorFunction(const Logger::LogInformation& errorInfo,
+void DummyErrorFunction(const ErrorManagement::ErrorInformation& errorInfo,
                         const char * const description) {
 
-    LoggerTest newEM;
+    ErrorManagementTest newEM;
     newEM.retVal = true;
 
 }
 
-void ReportTestFunction(const Logger::LogInformation& errorInfo,
+void ReportTestFunction(const ErrorManagement::ErrorInformation& errorInfo,
                         const char * const description) {
 
     //shared static attributes
-    LoggerTest newEM;
+    ErrorManagementTest newEM;
     //checks if the structure is filled correctly
     newEM.CheckParameters(errorInfo, description);
 
 }
 
-void ThreadErrorTestFunction(LoggerTest& t) {
+void ThreadErrorTestFunction(ErrorManagementTest& t) {
     //launches error report functions.
     t.fullContext = false;
 
-    Logger::ReportLogMessage(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
+    ErrorManagement::ReportError(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
     t.fullContext = true;
-    Logger::ReportLogMessageFullContext(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine, t.expectedErrorFunction);
+    ErrorManagement::ReportErrorFullContext(t.expectedErrorCode, t.expectedErrorDescription, t.expectedErrorFilename, t.expectedErrorLine,
+                                            t.expectedErrorFunction);
 
     t.syncFlag = true;
 }
 
-void ThreadErrorTestFunctionMacro(LoggerTest &t) {
+void ThreadErrorTestFunctionMacro(ErrorManagementTest &t) {
     //launches error report functions.
     t.fullContext = false;
     t.expectedErrorFunction = __DECORATED_FUNCTION_NAME__;
     t.expectedErrorLine = __LINE__ + 1;
-    REPORT_LOG_MESSAGE(t.expectedErrorCode, t.expectedErrorDescription);
+    REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
     t.fullContext = true;
     t.expectedErrorLine = __LINE__ + 1;
-    REPORT_LOG_MESSAGE_FULL(t.expectedErrorCode, t.expectedErrorDescription);
+    REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
 
     t.syncFlag = true;
 }
@@ -91,43 +92,46 @@ void ThreadErrorTestFunctionMacro(LoggerTest &t) {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool LoggerTest::TestSetLogMessageProcessFunction() {
+bool ErrorManagementTest::TestSetErrorProcessFunction() {
     retVal = false;
 
-    Logger::SetLogMessageProcessFunction(DummyErrorFunction);
+    ErrorManagement::SetErrorProcessFunction(DummyErrorFunction);
 
-    Logger::ReportLogMessage(Information, "");
+    ErrorManagement::ReportError(ErrorManagement::Information, "", "", 0, "");
 
     return retVal;
 
 }
 
-bool LoggerTest::TestToName() {
+bool ErrorManagementTest::TestToName() {
 
-    ErrorType all[] = { NoError, Debug, Information, Warning, FatalError, RecoverableError, InitialisationError, OSError, ParametersError, IllegalOperation,
-            ErrorSharing, ErrorAccessDenied, Exception, Timeout, CommunicationError, SyntaxError, UnsupportedFeature };
+    ErrorManagement::ErrorType all[] = { ErrorManagement::NoError, ErrorManagement::Debug, ErrorManagement::Information, ErrorManagement::Warning,
+            ErrorManagement::FatalError, ErrorManagement::RecoverableError, ErrorManagement::InitialisationError, ErrorManagement::OSError,
+            ErrorManagement::ParametersError, ErrorManagement::IllegalOperation, ErrorManagement::ErrorSharing, ErrorManagement::ErrorAccessDenied,
+            ErrorManagement::Exception, ErrorManagement::Timeout, ErrorManagement::CommunicationError, ErrorManagement::SyntaxError,
+            ErrorManagement::UnsupportedFeature };
 
     const char8 *names[] = { "NoError", "Debug Information", "Information", "Warning", "FatalError", "RecoverableError", "InitialisationError", "OSError",
             "ParametersError", "IllegalOperation", "ErrorSharing", "ErrorAccessDenied", "Exception", "Timeout", "CommunicationError", "SyntaxError",
             "UnsupportedError" };
 
     uint32 i = 0;
-    while (all[i] != UnsupportedFeature) {
-        if (StringHelper::Compare(Logger::ToName(all[i]), names[i]) != 0) {
+    while (all[i] != ErrorManagement::UnsupportedFeature) {
+        if (StringHelper::Compare(ErrorManagement::ToName(all[i]), names[i]) != 0) {
             return false;
         }
         i++;
     }
 
-    return StringHelper::Compare(Logger::ToName(UnsupportedFeature), "UnsupportedError") == 0;
+    return StringHelper::Compare(ErrorManagement::ToName(ErrorManagement::UnsupportedFeature), "UnsupportedError") == 0;
 }
 
-bool LoggerTest::TestReportLogMessage(ErrorType code,
-                                      const char8* errorName,
-                                      const char8* errorDescription,
-                                      const char8* errorFileName,
-                                      uint16 errorLineNumber,
-                                      const char8* errorFunctionName) {
+bool ErrorManagementTest::TestReportError(ErrorManagement::ErrorType code,
+                                          const char8* errorName,
+                                          const char8* errorDescription,
+                                          const char8* errorFileName,
+                                          uint16 errorLineNumber,
+                                          const char8* errorFunctionName) {
 
     expectedErrorCode = code;
     expectedErrorDescription = errorDescription;
@@ -136,19 +140,19 @@ bool LoggerTest::TestReportLogMessage(ErrorType code,
     expectedErrorFunction = errorFunctionName;
     expectedErrorName = errorName;
 
-    Logger::SetLogMessageProcessFunction(ReportTestFunction);
-    Logger::ReportLogMessage(code, errorDescription, errorFileName, errorLineNumber, errorFunctionName);
+    ErrorManagement::SetErrorProcessFunction(ReportTestFunction);
+    ErrorManagement::ReportError(code, errorDescription, errorFileName, errorLineNumber, errorFunctionName);
 
     return retVal;
 }
 
-bool LoggerTest::TestReportLogMessageFullContext(ErrorType code,
-                                                 const char8* errorName,
-                                                 const char8* errorDescription,
-                                                 const char8* errorFileName,
-                                                 uint16 errorLineNumber,
-                                                 const char8* errorFunctionName,
-                                                 uint32 numThreads) {
+bool ErrorManagementTest::TestReportErrorFullContext(ErrorManagement::ErrorType code,
+                                                     const char8* errorName,
+                                                     const char8* errorDescription,
+                                                     const char8* errorFileName,
+                                                     uint16 errorLineNumber,
+                                                     const char8* errorFunctionName,
+                                                     uint32 numThreads) {
 
     //Fill the class attributes
     expectedErrorCode = code;
@@ -159,7 +163,7 @@ bool LoggerTest::TestReportLogMessageFullContext(ErrorType code,
     expectedErrorName = errorName;
     nThreads = numThreads;
 
-    Logger::SetLogMessageProcessFunction(ReportTestFunction);
+    ErrorManagement::SetErrorProcessFunction(ReportTestFunction);
 
     for (uint32 i = 0; i < nThreads; i++) {
         retVal = false;
@@ -191,35 +195,35 @@ bool LoggerTest::TestReportLogMessageFullContext(ErrorType code,
     return retVal;
 }
 
-bool LoggerTest::TestReportLogMessageMacro(ErrorType code,
-                                           const char8 *errorDescription,
-                                           const char8 *errorName) {
+bool ErrorManagementTest::TestReportErrorMacro(ErrorManagement::ErrorType code,
+                                               const char8 *errorDescription,
+                                               const char8 *errorName) {
 
     expectedErrorCode = code;
     expectedErrorDescription = errorDescription;
     expectedErrorFilename = __FILE__;
     expectedErrorFunction = __DECORATED_FUNCTION_NAME__;
     expectedErrorName = errorName;
-    Logger::SetLogMessageProcessFunction(ReportTestFunction);
+    ErrorManagement::SetErrorProcessFunction(ReportTestFunction);
 
     //put always the report error at the next line otherwise the test will fail!
     expectedErrorLine = __LINE__ + 1;
-    REPORT_LOG_MESSAGE(code, errorDescription);
+    REPORT_ERROR(code, errorDescription);
 
     return retVal;
 
 }
 
-bool LoggerTest::TestReportLogMessageMacroFullContext(ErrorType code,
-                                                      const char8 *errorDescription,
-                                                      const char8 *errorName,
-                                                      uint32 numThreads) {
+bool ErrorManagementTest::TestReportErrorMacroFullContext(ErrorManagement::ErrorType code,
+                                                          const char8 *errorDescription,
+                                                          const char8 *errorName,
+                                                          uint32 numThreads) {
 
     expectedErrorCode = code;
     expectedErrorDescription = errorDescription;
     expectedErrorFilename = __FILE__;
     expectedErrorName = errorName;
-    Logger::SetLogMessageProcessFunction(ReportTestFunction);
+    ErrorManagement::SetErrorProcessFunction(ReportTestFunction);
     nThreads = numThreads;
 
     for (uint32 i = 0; i < nThreads; i++) {
@@ -253,8 +257,8 @@ bool LoggerTest::TestReportLogMessageMacroFullContext(ErrorType code,
 
 }
 
-void LoggerTest::CheckParameters(const Logger::LogInformation& errorInfo,
-                                 const char* description) {
+void ErrorManagementTest::CheckParameters(const ErrorManagement::ErrorInformation& errorInfo,
+                                          const char* description) {
 
     //Checks the error code
     if (errorInfo.header.errorType != expectedErrorCode) {
@@ -295,7 +299,7 @@ void LoggerTest::CheckParameters(const Logger::LogInformation& errorInfo,
 
     }
     //Tests the errorName function.
-    if (StringHelper::Compare(Logger::ToName(expectedErrorCode), expectedErrorName) != 0) {
+    if (StringHelper::Compare(ErrorManagement::ToName(expectedErrorCode), expectedErrorName) != 0) {
         retVal = false;
         return;
     }

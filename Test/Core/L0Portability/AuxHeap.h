@@ -1,7 +1,7 @@
 /**
- * @file HeapI.h
- * @brief Header file for class HeapI
- * @date 04/08/2015
+ * @file AuxHeap.h
+ * @brief Header file for class AuxHeap
+ * @date 13/08/2015
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HeapI
+ * @details This header file contains the declaration of the class AuxHeap
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef HEAP_INTERFACE_H_
-#define HEAP_INTERFACE_H_
+#ifndef AUXHEAP_H_
+#define AUXHEAP_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,22 +31,40 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
-#include "ErrorManagement.h"
+
+#include "../../../Source/Core/L0Portability/HeapI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-namespace HeapManager {
-
+namespace HeapManager{
 /**
- * @brief Heap interface and standard implementation.
- * @details Framework objects can be allocated in different types of heap memory.
- * This class provides the interface method definitions allowing different ways to
- * manage the heap memory.
+ * @brief Implementation of standard heap memory management functions.
+ * @details These functions allows to allocate, reallocate and free portion of
+ * memory dynamically in the heap memory area using the standard C functions
+ * (malloc, realloc, free, ...).
  */
-class HeapI {
+class AuxHeap: public HeapI {
+
+    /**
+     * @brief The minor address returned by a Malloc function.
+     */
+    uintp firstAddress;
+    /**
+     * @brief The greater address returned by a Malloc function
+     */
+    uintp lastAddress;
 public:
+
+    /**
+     * @brief Default constructor.
+     */
+    AuxHeap();
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~AuxHeap();
 
 
     /**
@@ -54,7 +72,7 @@ public:
      * @param[in] size The size in byte of the memory to allocate.
      * @return The pointer to the allocated memory. NULL if allocation fails.
      */
-    virtual void *Malloc(const uint32 size) = 0;
+    virtual void *Malloc(const uint32 size);
 
     /**
      * @brief Releases a memory area and sets its pointer to NULL.
@@ -62,7 +80,7 @@ public:
      * @return true if the memory is freed, false in case of invalid pointer.
      * @post data = NULL
      */
-    virtual void Free(void *&data) = 0;
+    virtual void Free(void *&data);
 
     /**
      * @brief Reallocates a memory portion possibly contiguously with the specified already existent memory area.
@@ -72,8 +90,7 @@ public:
      * @param[in] newSize The size of the new memory block.
      * @return The pointer to the new data block. NULL if reallocation failed.
      */
-    virtual void *Realloc(void *&data,
-                          const uint32 newSize) = 0;
+    virtual void *Realloc(void *&data,const uint32 newSize);
 
     /**
      * @brief Duplicates a memory section into a new area from the specified heap.
@@ -82,50 +99,28 @@ public:
      * @return The pointer to the new allocated memory which contains a copy of s.
      */
     /*lint -e(1735) the derived classes shall use this default parameter or no default parameter at all*/
-    virtual void *Duplicate(const void * const data,
-                            uint32 size = 0U) = 0;
+    virtual void *Duplicate(const void * const data, uint32 size=0U);
 
     /**
      * @brief Returns the start of range of memory addresses served by this heap.
      * @return The start of range of memory addresses served by this heap.
      */
-    virtual uintp FirstAddress() const = 0;
+    virtual uintp FirstAddress()const;
 
     /**
-     * @brief Return the end (inclusive) of range of memory addresses served by this heap.
+     * @brief Returns the end (inclusive) of range of memory addresses served by this heap.
      * @return The end (inclusive) of range of memory addresses served by this heap.
      */
-    virtual uintp LastAddress() const = 0;
-
-    /**
-     * @brief Checks if memory is part of the heap managed area
-     * @param[in] data is the pointer to be checked.
-     * @return true if \a data is in the heap range of addresses, false otherwise.
-     */
-    virtual bool Owns(void const * const data) const {
-        /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-         * in order to be able to compare the address with a range of addresses
-         * uintp is an integer type that has by design the same span as a pointer in all systems*/
-        uintp address = reinterpret_cast<uintp>(data);
-
-        bool check1 = (address >= FirstAddress());
-        bool check2 = (address <= LastAddress());
-
-        return check1 && check2;
-    }
+    virtual uintp LastAddress()const;
 
     /**
      * @brief Returns the name of the heap
      * @return The name of the heap
      */
-    virtual const char8 *Name() const =0;
+    virtual const char8 *Name()const;
 
-};
+} ;
 
 }
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-#endif /* HEAP_INTERFACE_H_ */
+#endif /*AUXHEAP_H_ */
 

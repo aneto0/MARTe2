@@ -1,8 +1,8 @@
 /**
- * @file StringHelper.cpp
- * @brief Source file for module StringHelper
- * @date Aug 13, 2015
- * @author Filippo Sartori
+ * @file MemoryCheckTest.cpp
+ * @brief Source file for class MemoryCheckTest
+ * @date 25/08/2015
+ * @author Llorenç Capellà
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the module StringHelper (public, protected, and private). Be aware that some
+ * the class MemoryCheckTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,8 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StringHelper.h"
-#include "HeapManager.h"
+#include "MemoryCheckTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,25 +39,41 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace StringHelper {
-
-/*lint -e{925} cast pointer to pointer required */
-char8 *StringDup(const char8 * const s) {
-
-    char8 *duplicate = NULL_PTR(char8 *);
-    if (s != NULL) {
-
-        void *copy = HeapManager::Duplicate(static_cast<const void *>(s));
-        duplicate = static_cast<char8 *>(copy);
-        if (duplicate == NULL) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: string duplication failed")
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
-    }
-
-    return duplicate;
+MemoryCheckTest::MemoryCheckTest() {
+    // Auto-generated constructor stub for MemoryCheckTest
+    // TODO Verify if manual additions are needed
 }
 
+MemoryCheckTest::~MemoryCheckTest() {
+    // Auto-generated destructor stub for MemoryCheckTest
+    // TODO Verify if manual additions are needed
 }
+
+bool MemoryCheckTest::TestCheck() {
+    uint32 size = 100;
+    //allocate a space of size integers
+    int32* allocated = (int32*) HeapManager::Malloc(size * sizeof(int32));
+
+    //checks if all the memory is allocated correctly
+    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), size * sizeof(int32))) {
+        return false;
+    }
+
+    //checks if a part the memory is allocated correctly
+    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), (size / 2) * sizeof(int32))) {
+        return false;
+    }
+
+    //0 as size
+    uint32 testSize = 0;
+    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), testSize)) {
+        return false;
+    }
+
+    HeapManager::Free((void*&) allocated);
+
+    //the check function on a null pointer should return false
+    return !MemoryCheck::Check(NULL, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), size);
+
+}
+

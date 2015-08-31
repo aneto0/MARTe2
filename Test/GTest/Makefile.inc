@@ -22,20 +22,24 @@
 #
 #############################################################
 
-OBJSX= EndianityGTest.x \
-	SleepGTest.x \
-	ProcessorGTest.x \
-	AtomicGTest.x \
-	ProcessorTypeGTest.x \
-	EventSemGTest.x \
-	HighResolutionTimerGTest.x \
-	MemoryGTest.x \
-	FastPollingMutexSemGTest.x \
-	StringHelperGTest.x \
-	StringPortableGTest.x \
-	ThreadsGTest.x \
-	MutexSemGTest.x \
-	BasicConsoleGTest.x \
+OBJSX=  StandardHeap_GenericGTest.x \
+        HeapManagerGTest.x \
+        MemoryCheckGTest.x \
+        MemoryOperationsHelperGTest.x\
+        EndianityGTest.x \
+ 	SleepGTest.x \
+ 	ProcessorGTest.x \
+ 	AtomicGTest.x \
+ 	ProcessorTypeGTest.x \
+ 	EventSemGTest.x \
+ 	HighResolutionTimerGTest.x \
+ 	MemoryGTest.x \
+ 	FastPollingMutexSemGTest.x \
+ 	StringHelperGTest.x \
+ 	StringPortableGTest.x \
+ 	ThreadsGTest.x \
+ 	MutexSemGTest.x \
+ 	BasicConsoleGTest.x \
 	TimeoutTypeGTest.x \
 	LoadableLibraryGTest.x \
 	FastMathGTest.x \
@@ -51,7 +55,7 @@ OBJSX= EndianityGTest.x \
 	ReferenceContainerNodeGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
-    	LoggerGTest.x
+   	ErrorManagementGTest.x
 
 PACKAGE=
 ROOT_DIR=../..

@@ -1,8 +1,8 @@
 /**
- * @file ErrorType.h
- * @brief Header file for class Errors
- * @date 06/07/2015
- * @author Andre' Neto
+ * @file MemoryCheckTest.h
+ * @brief Header file for class MemoryCheckTest
+ * @date 25/08/2015
+ * @author Llorenç Capellà
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Errors
+ * @details This header file contains the declaration of the class MemoryCheckTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ERRORS_H_
-#define ERRORS_H_
+#ifndef TEST_CORE_L0PORTABILITY_MEMORYCHECKTEST_H_
+#define TEST_CORE_L0PORTABILITY_MEMORYCHECKTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,90 +31,32 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
+
+#include "../../../Source/Core/L0Portability/MemoryCheck.h"
+#include "../../../Source/Core/L0Portability/HeapManager.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+class MemoryCheckTest {
+public:
+    MemoryCheckTest();
+    virtual ~MemoryCheckTest();
+
+    /**
+     * @brief Tests the Memory::Check function.
+     * @param[in] size is the size which must be allocated.
+     * @return true if the Memory::Check function returns true on the memory previously allocated and false in
+     * case of a NULL pointer input
+     */
+    bool TestCheck();
+
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief Defines all the framework possible error types.
- */
-namespace ErrorManagement {
+#endif /* TEST_CORE_L0PORTABILITY_MEMORYCHECKTEST_H_ */
 
-typedef int8 ErrorType;
-
-/**
- * No error to report
- */
-static const ErrorType NoError(0);
-/**
- * Debug information
- */
-static const ErrorType Debug(3);
-/**
- * General information
- */
-static const ErrorType Information(2);
-/**
- * ErrorManagement::Warning
- */
-static const ErrorType Warning(1);
-/**
- * Fatal Error
- */
-static const ErrorType FatalError(-1);
-/**
- * Recoverable error
- */
-static const ErrorType RecoverableError(-2);
-/**
- * Initialization error
- */
-static const ErrorType InitialisationError(-3);
-/**
- * Operating system error
- */
-static const ErrorType OSError(-4);
-/**
- * Parameters error
- */
-static const ErrorType ParametersError(-5);
-/**
- * Illegal operation
- */
-static const ErrorType IllegalOperation(-6);
-/**
- * Sharing error
- */
-static const ErrorType ErrorSharing(-7);
-/**
- * Access denied
- */
-static const ErrorType ErrorAccessDenied(-8);
-/**
- * Exception
- */
-static const ErrorType Exception(-9);
-/**
- * Timeout occurred
- */
-static const ErrorType Timeout(-10);
-/**
- * Error during comunication
- */
-static const ErrorType CommunicationError(-11);
-/**
- * Syntax error
- */
-static const ErrorType SyntaxError(-12);
-/**
- * Unsupported feature
- */
-static const ErrorType UnsupportedFeature(-13);
-}
-
-#endif /* ERRORS_H_ */

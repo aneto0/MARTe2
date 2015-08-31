@@ -77,7 +77,7 @@ bool Concatenate(const char8* const string1,
         }
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
 
     return ret;
@@ -123,7 +123,7 @@ bool ConcatenateN(const char8* const string1,
         }
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
@@ -171,7 +171,7 @@ const char8* TokenizeByChars(const char8* const string,
         }
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
@@ -210,7 +210,7 @@ const char8* TokenizeByString(const char8* const string,
         }
     }
     else {
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
     }
     return ret;
 }
@@ -223,7 +223,7 @@ bool Substr(const uint32 begin,
     bool ret = true;
     if ((string == NULL) || (result == NULL) || (end < begin)) {
         ret = false;
-        REPORT_LOG_MESSAGE(FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
 
     }
     else {

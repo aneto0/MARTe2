@@ -1,8 +1,8 @@
 /**
- * @file StringHelper.cpp
- * @brief Source file for module StringHelper
- * @date Aug 13, 2015
- * @author Filippo Sartori
+ * @file MemoryCheckGTest.cpp
+ * @brief Source file for class MemoryCheckGTest
+ * @date 28/08/2015
+ * @author Llorenç Capellà
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the module StringHelper (public, protected, and private). Be aware that some
+ * the class MemoryCheckTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,12 +25,14 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <limits.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StringHelper.h"
-#include "HeapManager.h"
+#include "gtest/gtest.h"
+#include "MemoryCheckTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,25 +42,9 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace StringHelper {
-
-/*lint -e{925} cast pointer to pointer required */
-char8 *StringDup(const char8 * const s) {
-
-    char8 *duplicate = NULL_PTR(char8 *);
-    if (s != NULL) {
-
-        void *copy = HeapManager::Duplicate(static_cast<const void *>(s));
-        duplicate = static_cast<char8 *>(copy);
-        if (duplicate == NULL) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: string duplication failed")
-        }
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
-    }
-
-    return duplicate;
+TEST(MemoryCheckGTest,TestCheck) {
+    MemoryCheckTest MyMemoryCheckTest;
+    ASSERT_TRUE(MyMemoryCheckTest.TestCheck());
 }
 
-}
+	

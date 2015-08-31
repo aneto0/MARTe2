@@ -56,14 +56,14 @@ static void SystemThreadFunction(ThreadInformation * const threadInfo) {
             //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
             ErrorType err = threadInfo->ThreadWait();
             //Start the user thread
-            if (err == NoError) {
+            if (err == ErrorManagement::NoError) {
                 threadInfo->UserThreadFunction();
 
                 ok = ThreadsDatabase::Lock();
                 if (ok) {
                     ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Id());
                     if (threadInfo != threadInfo2) {
-                        //CStaticAssertErrorCondition(FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
+                        //CStaticAssertErrorCondition(ErrorManagement::FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
                     }
                 }
                 ThreadsDatabase::UnLock();

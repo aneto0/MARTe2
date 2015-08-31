@@ -83,14 +83,14 @@ const ClassProperties *ClassRegistryItem::GetClassProperties() const {
 }
 
 void ClassRegistryItem::IncrementNumberOfInstances() {
-    if (classRegistryItemMuxSem.FastLock() == NoError) {
+    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
         numberOfInstances++;
     }
     classRegistryItemMuxSem.FastUnLock();
 }
 
 void ClassRegistryItem::DecrementNumberOfInstances() {
-    if (classRegistryItemMuxSem.FastLock() == NoError) {
+    if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
         numberOfInstances--;
     }
     classRegistryItemMuxSem.FastUnLock();

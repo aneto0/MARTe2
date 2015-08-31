@@ -165,7 +165,7 @@ namespace HeapManager /*Internals*/{
     }
 
     bool HeapDataBase::Lock() {
-        return (mux.FastLock()==NoError);
+        return (mux.FastLock()==ErrorManagement::NoError);
     }
 
     void HeapDataBase::UnLock() {
@@ -320,7 +320,7 @@ namespace HeapManager /*Internals*/{
         }
         else {
 
-            REPORT_LOG_MESSAGE(FatalError, "Error: the pointer in input does not belong to any heap")
+            REPORT_ERROR(ErrorManagement::FatalError, "Error: the pointer in input does not belong to any heap")
 
         }
 
@@ -343,7 +343,7 @@ namespace HeapManager /*Internals*/{
                 address = heap->Malloc(size);
             }
             else {
-                REPORT_LOG_MESSAGE(FatalError, "Error: no heaps with the specified name found")
+                REPORT_ERROR(ErrorManagement::FatalError, "Error: no heaps with the specified name found")
             }
 
         }
@@ -388,7 +388,7 @@ namespace HeapManager /*Internals*/{
         }
         // if the address is not found considers the memory as a static
         else {
-            //REPORT_LOG_MESSAGE(Warning, "Warning: the input address does not belong to any heap. It will be considered as a static memory address")
+            //REPORT_ERROR(ErrorManagement::Warning, "ErrorManagement::Warning: the input address does not belong to any heap. It will be considered as a static memory address")
             newAddress = standardHeap.Duplicate(data,size);
         }
         return newAddress;
@@ -416,7 +416,7 @@ namespace HeapManager /*Internals*/{
                 if (heap == newHeap) {
                     ok = false;
 
-                    REPORT_LOG_MESSAGE(FatalError, "Error: heap already registered in the database")
+                    REPORT_ERROR(ErrorManagement::FatalError, "Error: heap already registered in the database")
 
                 }
             }
@@ -434,7 +434,7 @@ namespace HeapManager /*Internals*/{
                 /* no more space */
                 if (!found) {
                     ok = false;
-                    REPORT_LOG_MESSAGE(FatalError, "Error: not enough space in the database for new records")
+                    REPORT_ERROR(ErrorManagement::FatalError, "Error: not enough space in the database for new records")
 
                 }
 

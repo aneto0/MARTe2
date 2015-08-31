@@ -1,6 +1,6 @@
 /**
- * @file StandardHeap_Generic.cpp
- * @brief Source file for class StandardHeap
+ * @file AuxHeap.cpp
+ * @brief Source file for class AuxHeap
  * @date 13/08/2015
  * @author Filippo Sartori
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StandardHeap (public, protected, and private). Be aware that some
+ * the class AuxHeap (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,10 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StandardHeap.h"
-#ifndef LINT
-#include <string.h>
-#endif
+#include "AuxHeap.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -45,7 +43,7 @@ namespace HeapManager {
 /**
  * @brief constructor
  */
-StandardHeap::StandardHeap() {
+AuxHeap::AuxHeap() {
 
     /** initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
     firstAddress = 0U;
@@ -54,17 +52,18 @@ StandardHeap::StandardHeap() {
 /**
  * @brief destructor
  */
-StandardHeap::~StandardHeap() {
+AuxHeap::~AuxHeap() {
     lastAddress = 0U;
     firstAddress = 0U;
 }
+
 
 /**
  * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
  * @return a pointer to the allocated memory or NULL if the allocation fails.
  */
 /*lint -e{586} use of malloc function (deprecated) */
-void *StandardHeap::Malloc(const uint32 size) {
+void *AuxHeap::Malloc(const uint32 size) {
     //void *pointer = malloc(size);
     //void *pointer = new char8[size];
 
@@ -101,7 +100,7 @@ void *StandardHeap::Malloc(const uint32 size) {
  * @param data the data to be freed.
  */
 /*lint -e{586} use of free function (deprecated) */
-void StandardHeap::Free(void *&data) {
+void AuxHeap::Free(void *&data) {
     if (data != NULL) {
         free(data);
     }
@@ -111,15 +110,15 @@ void StandardHeap::Free(void *&data) {
 }
 
 /*lint -e{586} use of realloc function (deprecated) */
-void *StandardHeap::Realloc(void *&data,
+void *AuxHeap::Realloc(void *&data,
                             const uint32 newSize) {
 
     if (data == NULL) {
-        data = StandardHeap::Malloc(newSize);
+        data = AuxHeap::Malloc(newSize);
     }
     else {
         if (newSize == 0u) {
-            StandardHeap::Free(data);
+            AuxHeap::Free(data);
         }
         else {
             data = realloc(data, static_cast<osulong>(newSize));
@@ -146,7 +145,7 @@ void *StandardHeap::Realloc(void *&data,
 }
 
 /*lint -e{925} cast pointer to pointer required */
-void *StandardHeap::Duplicate(const void * const data,
+void *AuxHeap::Duplicate(const void * const data,
                               uint32 size) {
 
     void *duplicate = NULL_PTR(void *);
@@ -154,7 +153,7 @@ void *StandardHeap::Duplicate(const void * const data,
     // check if 0 zerminated copy to be done
     if (size == 0U) {
         const char8* inputData = static_cast<const char8 *>(data);
-        size = static_cast<uint32>(strlen(inputData));
+        size = strlen(inputData);
         if (data != NULL) {
             duplicate = strdup(inputData);
         }
@@ -163,7 +162,7 @@ void *StandardHeap::Duplicate(const void * const data,
         }
     }
     else { // strdup style
-        duplicate = StandardHeap::Malloc(size);
+        duplicate = AuxHeap::Malloc(size);
         if (duplicate != NULL) {
             const char8 *source = static_cast<const char8 *>(data);
             char8 *destination = static_cast<char8 *>(duplicate);
@@ -200,7 +199,7 @@ void *StandardHeap::Duplicate(const void * const data,
  * @brief start of range of memory addresses served by this heap.
  * @return first memory address
  */
-uintp StandardHeap::FirstAddress() const {
+uintp AuxHeap::FirstAddress() const {
     return firstAddress;
 }
 
@@ -208,7 +207,7 @@ uintp StandardHeap::FirstAddress() const {
  * @brief end (inclusive) of range of memory addresses served by this heap.
  * @return last memory address
  */
-uintp StandardHeap::LastAddress() const {
+uintp AuxHeap::LastAddress() const {
     return lastAddress;
 }
 
@@ -216,8 +215,8 @@ uintp StandardHeap::LastAddress() const {
  * @brief Returns the name of the heap
  * @return name of the heap
  */
-const char8 *StandardHeap::Name() const {
-    return "StandardHeap";
+const char8 *AuxHeap::Name() const {
+    return "AuxHeap";
 }
 
 }
