@@ -149,19 +149,19 @@ ErrorManagement::ErrorType BasicConsole::Open(const FlagsType &mode) {
             ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &(handle->outputConsoleHandle)) >= 0);
             if (!ok) {
                 err = ErrorManagement::OSError;
-                REPORT_ERROR(err,"Error: iocl()")
+                REPORT_ERROR(err,"Error: iocl()");
             }
         }
         else {
             err = ErrorManagement::OSError;
-            REPORT_ERROR(err,"Error: iocl()")
+            REPORT_ERROR(err,"Error: iocl()");
         }
     }
     if (err == ErrorManagement::NoError) {
         bool ok = (fflush(stdout) == 0);
         if (!ok) {
             err = ErrorManagement::OSError;
-            REPORT_ERROR(err,"Error: fflush()")
+            REPORT_ERROR(err,"Error: fflush()");
         }
     }
     return err;
@@ -186,7 +186,7 @@ ErrorManagement::ErrorType BasicConsole::Close() {
         bool ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &handle->initialInfo) >= 0);
         if (!ok) {
             err = ErrorManagement::OSError;
-            REPORT_ERROR(err,"Error: iocl()")
+            REPORT_ERROR(err,"Error: iocl()");
         }
     }
     return err;
@@ -245,7 +245,7 @@ ErrorManagement::ErrorType BasicConsole::OSWrite(const char8* const buffer,
                 ssize_t wbytes = write(BasicConsoleOSProperties::STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
                 if (wbytes == -1) {
                     err = ErrorManagement::OSError;
-                    REPORT_ERROR(err,"Error: write()")
+                    REPORT_ERROR(err,"Error: write()");
                 }
                 writtenBytes += wbytes;
             }
@@ -256,7 +256,7 @@ ErrorManagement::ErrorType BasicConsole::OSWrite(const char8* const buffer,
             ssize_t wbytes = write(BasicConsoleOSProperties::STDOUT, &newLine, static_cast<osulong>(1));
             if (wbytes == -1) {
                 err = ErrorManagement::OSError;
-                REPORT_ERROR(err,"Error: write()")
+                REPORT_ERROR(err,"Error: write()");
             }
             currentColumn = 0u;
         }
@@ -269,7 +269,7 @@ ErrorManagement::ErrorType BasicConsole::OSWrite(const char8* const buffer,
     size = static_cast<uint32>(writtenBytes);
     if (size == 0u) {
         err = ErrorManagement::Warning;
-        REPORT_ERROR(err,"ErrorManagement::Warning: zero bytes written")
+        REPORT_ERROR(err,"ErrorManagement::Warning: zero bytes written");
     }
     return err;
 }
@@ -286,7 +286,7 @@ ErrorManagement::ErrorType BasicConsole::Read(char8 * const buffer,
             int32 eofCheck = static_cast<int32>(*readChar);
             if (eofCheck == EOF) {
                 err = ErrorManagement::OSError;
-                REPORT_ERROR(err,"Error: getchar()")
+                REPORT_ERROR(err,"Error: getchar()");
             }
             else {
                 size = 1u;
@@ -296,11 +296,11 @@ ErrorManagement::ErrorType BasicConsole::Read(char8 * const buffer,
             ssize_t readBytes = read(BasicConsoleOSProperties::STDIN, buffer, static_cast<osulong>(size));
             if (readBytes == -1) {
                 err = ErrorManagement::OSError;
-                REPORT_ERROR(err,"Error: read()")
+                REPORT_ERROR(err,"Error: read()");
             }
             else if (readBytes == 0) {
                 err = ErrorManagement::Warning;
-                REPORT_ERROR(err,"ErrorManagement::Warning: zero bytes read")
+                REPORT_ERROR(err,"ErrorManagement::Warning: zero bytes read");
             }
             else {
                 size = static_cast<uint32>(readBytes);
@@ -309,7 +309,7 @@ ErrorManagement::ErrorType BasicConsole::Read(char8 * const buffer,
     }
     else {
         err = ErrorManagement::Warning;
-        REPORT_ERROR(err,"ErrorManagement::Warning: invalid input parameters")
+        REPORT_ERROR(err,"ErrorManagement::Warning: invalid input parameters");
     }
     return err;
 }
@@ -334,7 +334,7 @@ ErrorManagement::ErrorType BasicConsole::Clear() {
         ssize_t writtenBytes = write(BasicConsoleOSProperties::STDOUT, "\n", static_cast<osulong>(1u));
         if (writtenBytes == -1) {
             err = ErrorManagement::OSError;
-            REPORT_ERROR(err,"Error: write()")
+            REPORT_ERROR(err,"Error: write()");
         }
     }
     return err;
@@ -366,34 +366,34 @@ bool BasicConsole::TimeoutSupported() const {
 
 /*lint -e{715} function not implemented in Linux*/
 ErrorManagement::ErrorType BasicConsole::ShowBuffer() {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented")
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
     return ErrorManagement::UnsupportedFeature;
 }
 
 /*lint -e{715} function not implemented in Linux*/
 ErrorManagement::ErrorType BasicConsole::SetColour(const Colours &foregroundColour,
                                   const Colours &backgroundColour) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented")
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
     return ErrorManagement::UnsupportedFeature;
 }
 
 /*lint -e{715} function not implemented in Linux*/
 ErrorManagement::ErrorType BasicConsole::SetTitleBar(const char8 * const title) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented")
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
     return ErrorManagement::UnsupportedFeature;
 }
 
 /*lint -e{715} function not implemented in Linux*/
 ErrorManagement::ErrorType BasicConsole::GetTitleBar(char8 * const title,
                                     const uint32 &size) const {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented")
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
     return ErrorManagement::UnsupportedFeature;
 }
 
 /*lint -e{715} function not implemented in Linux*/
 ErrorManagement::ErrorType BasicConsole::SetCursorPosition(const uint32 &column,
                                           const uint32 &row) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented")
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
 
     return ErrorManagement::UnsupportedFeature;
 }
@@ -407,7 +407,7 @@ ErrorManagement::ErrorType BasicConsole::GetCursorPosition(uint32 &column,
 /*lint -e{715} function not implemented in Linux*/
 ErrorManagement::ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
                                       const uint32 &numberOfRows) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented")
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
 
     return ErrorManagement::UnsupportedFeature;
 }
@@ -415,7 +415,7 @@ ErrorManagement::ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfCol
 /*lint -e{715} function not implemented in Linux*/
 ErrorManagement::ErrorType BasicConsole::GetWindowSize(uint32 &numberOfColumns,
                                       uint32 &numberOfRows) const {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented")
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
 
     return ErrorManagement::UnsupportedFeature;
 }
@@ -426,7 +426,7 @@ ErrorManagement::ErrorType BasicConsole::PlotChar(const char8 &c,
                                  const Colours &backgroundColour,
                                  const uint32 &column,
                                  const uint32 &row) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented")
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
 
     return ErrorManagement::UnsupportedFeature;
 }

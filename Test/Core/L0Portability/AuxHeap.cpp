@@ -89,7 +89,7 @@ void *AuxHeap::Malloc(const uint32 size) {
 
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()")
+        REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()");
     }
     return pointer;
 
@@ -136,7 +136,7 @@ void *AuxHeap::Realloc(void *&data,
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: realloc()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: realloc()");
             }
         }
     }
@@ -158,7 +158,7 @@ void *AuxHeap::Duplicate(const void * const data,
             duplicate = strdup(inputData);
         }
         if (duplicate == NULL) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: strdup()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: strdup()");
         }
     }
     else { // strdup style
@@ -174,7 +174,7 @@ void *AuxHeap::Duplicate(const void * const data,
             } //copy loop
         } //check Malloc success
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()");
         }
     } // copy bound by size
 

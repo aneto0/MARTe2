@@ -147,26 +147,26 @@ bool MutexSem::Create(const bool &recursive) {
                 //with PTHREAD_MUTEX_NORMAL the same thread cannot lock the semaphore without unlocking it first.
                 ok = (pthread_mutexattr_settype(&handle->mutexAttributes, PTHREAD_MUTEX_NORMAL) == 0);
                 if (!ok) {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_settype()")
+                    REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_settype()");
                 }
                 handle->recursive = false;
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_setprotocol()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_setprotocol()");
         }
 
 
         if (ok) {
             ok = (pthread_mutex_init(&handle->mutexHandle, &handle->mutexAttributes) == 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_init()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_init()");
             }
         }
 
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_init()")
+        REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_init()");
     }
     handle->referencesMux = 0;
     return ok;
@@ -185,11 +185,11 @@ bool MutexSem::Close() {
         if (ok) {
             ok = (pthread_mutex_destroy(&handle->mutexHandle) == 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_destroy()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_destroy()");
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_destroy()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_destroy()");
         }
     }
     return ok;
@@ -206,16 +206,16 @@ ErrorManagement::ErrorType MutexSem::Lock() {
 
         if (!okCancel) {
             err = ErrorManagement::OSError;
-            REPORT_ERROR(err, "Error: pthread_setcancelstate()")
+            REPORT_ERROR(err, "Error: pthread_setcancelstate()");
         }
         if (!okLock) {
             err = ErrorManagement::OSError;
-            REPORT_ERROR(err, "Error: pthread_mutex_lock()")
+            REPORT_ERROR(err, "Error: pthread_mutex_lock()");
         }
     }
     else {
         err = ErrorManagement::FatalError;
-        REPORT_ERROR(err, "Error: the semaphore handle is closed")
+        REPORT_ERROR(err, "Error: the semaphore handle is closed");
     }
 
     return err;
@@ -250,19 +250,19 @@ ErrorManagement::ErrorType MutexSem::Lock(const TimeoutType &timeout) {
                 ok = (pthread_mutex_timedlock(&handle->mutexHandle, &timesValues) == 0);
                 if (!ok) {
                     err = ErrorManagement::Timeout;
-                    REPORT_ERROR(err, "Information: timeout occurred")
+                    REPORT_ERROR(err, "Information: timeout occurred");
                 }
                 else {
                     err = ErrorManagement::NoError;
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: ftime()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: ftime()");
             }
         }
         else {
             err = ErrorManagement::FatalError;
-            REPORT_ERROR(err, "Information: the semaphore handle is closed")
+            REPORT_ERROR(err, "Information: the semaphore handle is closed");
         }
     }
     return err;
@@ -278,15 +278,15 @@ bool MutexSem::UnLock() {
         if (ok) {
             ok = (pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, static_cast<int32 *>(NULL)) == 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_setcancelstate()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_setcancelstate()");
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_unlock()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_unlock()");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: the semaphore handle is closed")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: the semaphore handle is closed");
     }
     return ok;
 }

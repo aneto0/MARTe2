@@ -51,11 +51,11 @@ char8 *StringDup(const char8 * const s) {
         void *copy = HeapManager::Duplicate(static_cast<const void *>(s));
         duplicate = static_cast<char8 *>(copy);
         if (duplicate == NULL) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Error: string duplication failed")
+            REPORT_ERROR(ErrorManagement::FatalError, "Error: string duplication failed");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
 
     return duplicate;
