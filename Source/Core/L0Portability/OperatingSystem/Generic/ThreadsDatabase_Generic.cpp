@@ -107,6 +107,8 @@ ThreadInformation *RemoveEntry(const ThreadIdentifier &threadId) {
 
                 // free at the end
                 if (nOfEntries == 0u) {
+                    /*lint -e{9025} We are passing a double-pointer to a reference */
+                    /*lint -e{929} Type handled inside HeapManager::Free through a HeapI interface */
                     bool ok = HeapManager::Free(reinterpret_cast<void *&>(entries));
                     if (!ok) {
                         REPORT_ERROR(ErrorManagement::FatalError, "Error: database memory cleanup failed")
@@ -212,6 +214,7 @@ bool AllocMore() {
         // first time?
         if (entries == NULL) {
             uint32 size = static_cast<uint32>(sizeof(ThreadInformation *)) * THREADS_DATABASE_GRANULARITY;
+            /*lint -e{925} HeapManager::Malloc returns ThreadInformation ** */
             entries = static_cast<ThreadInformation **>(HeapManager::Malloc(size));
             if (entries != NULL) {
                 maxNOfEntries = THREADS_DATABASE_GRANULARITY;
@@ -224,6 +227,9 @@ bool AllocMore() {
         }
         else {
             uint32 newSize = static_cast<uint32>(sizeof(ThreadInformation *)) * (THREADS_DATABASE_GRANULARITY + maxNOfEntries);
+            /*lint -e{9025} We are passing a double-pointer to a reference */
+            /*lint -e{929} Type handled inside HeapManager::Realloc through a HeapI interface */
+            /*lint -e{925} HeapManager::Realloc returns ThreadInformation ** */
             entries = static_cast<ThreadInformation **>(HeapManager::Realloc(reinterpret_cast<void *&>(entries), newSize));
             if (entries != NULL) {
                 maxNOfEntries += THREADS_DATABASE_GRANULARITY;
