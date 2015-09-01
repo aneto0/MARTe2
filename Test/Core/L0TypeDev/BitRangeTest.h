@@ -42,8 +42,10 @@ class BitRangeTest {
 public:
 
     template<typename T2>
-    bool TestCopyOperatorMinorSizeUnSigned(T thisType,
-                                           T2 input);
+    bool TestCopyOperatorMinorSize(T2 input);
+
+    template<typename T2>
+    bool TestCopyOperatorMajorSize(T2 input);
 
     bool TestCopyOperatorUnion();
 
@@ -52,97 +54,6 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-template<typename T>
-template<typename T2>
-bool BitRangeTest<T>::TestCopyOperatorMinorSizeUnSigned(T thisType,
-                                                        T2 input) {
-
-    // test with 3 different shifts
-    const uint8 zero = 0;
-    const uint8 max = sizeof(T) * 8 - 1;
-    const uint8 half = max / 2;
-
-    const uint8 inputSize = sizeof(T2) * 8 - 1;
-
-    bool isSigned = TypeDefinition::TypeCharacteristics<T>::IsSigned();
-    const T2 maxValue = isSigned ? (~(((T2) 1) << inputSize)) : ~((T2) 0);
-    const T2 minValue = isSigned ? (((T2) 1) << inputSize) : 0;
-
-    const T thisMaxValue = isSigned ? (~(((T) 1) << max)) : ~((T) 0);
-    const T thisMinValue = isSigned ? (((T) 1) << max) : 0;
-
-    //the size is minor
-    const uint8 minorSize = sizeof(T2) * 8 - 1;
-
-    TypeDefinition::BitRange<T, minorSize, zero> myZeroBitRange;
-
-    for (T2 i = minValue; i < maxValue; i++) {
-
-        myZeroBitRange = i;
-        if (i > thisMaxValue) {
-            if (myZeroBitRange != thisMaxValue) {
-                return false;
-            }
-            else {
-                continue;
-            }
-        }
-
-        if (i < thisMinValue) {
-            if (myZeroBitRange != thisMinValue) {
-                return false;
-            }
-            else
-                continue;
-        }
-
-        if (myZeroBitRange != i) {
-            return false;
-        }
-    }
-
-    TypeDefinition::BitRange<T, minorSize, half> myHalfBitRange;
-
-    for (T2 i = minValue; i < maxValue; i++) {
-
-        myHalfBitRange = i;
-        if (i > thisMaxValue) {
-            if (myHalfBitRange != thisMaxValue) {
-                return false;
-            }
-            else {
-                continue;
-            }
-        }
-
-        if (i < thisMinValue) {
-            if (myHalfBitRange != thisMinValue) {
-                return false;
-            }
-            else {
-                continue;
-            }
-        }
-
-        if (myHalfBitRange != i) {
-            return false;
-        }
-    }
-
-    TypeDefinition::BitRange<T, minorSize, max> myMaxBitRange;
-
-    for (T2 i = minValue; i < maxValue; i++) {
-
-        myMaxBitRange = i;
-        if (myMaxBitRange != 1) {
-            return false;
-        }
-    }
-
-    return true;
-
-}
 
 union BitRangeUnionExample {
     TypeDefinition::BitRange<uint64, 8, 0> first;
@@ -177,6 +88,366 @@ bool BitRangeTest<T>::TestCopyOperatorUnion() {
 
     return sizeof(BitRangeUnionExample) == 8;
 }
+
+template<typename T>
+template<typename T2>
+bool BitRangeTest<T>::TestCopyOperatorMinorSize(T2 input) {
+
+    const uint8 max = sizeof(T) * 8;
+    const uint8 half = max / 2;
+    const uint8 inputSize = sizeof(T2) * 8;
+
+    const uint8 minorSize = (inputSize < max) ? (inputSize - 1) : (half - 1);
+
+    TypeDefinition::BitRange<T, minorSize, half> myBitRange;
+
+    bool isInputSigned = TypeDefinition::TypeCharacteristics<T2>::IsSigned();
+    T2 maxValue = isInputSigned ? ((((T) 1) << (inputSize - (T) 1)) - (T) 1) : ~((T2) 0);
+    T2 minValue = isInputSigned ? ~((((T) 1) << (inputSize - (T) 1)) - (T) 1) : 0;
+    T2 zero = (T2) 0;
+
+    bool isSigned = TypeDefinition::TypeCharacteristics<T>::IsSigned();
+
+    const T thisMaxValue = isSigned ? ((((T) 1) << (minorSize - (T) 1)) - (T) 1) : (((T) -1) >> (sizeof(T) * 8 - minorSize));
+    const T thisMinValue = isSigned ? ~((((T) 1) << (minorSize - (T) 1)) - (T) 1) : (T) 0;
+
+    myBitRange = maxValue;
+
+    if (myBitRange != thisMaxValue) {
+        printf("\n1 %x %x %d\n", (T) myBitRange, thisMaxValue, minorSize);
+        return false;
+    }
+    myBitRange = minValue;
+    if (myBitRange != thisMinValue) {
+        if ((!isInputSigned) && (isSigned)) {
+            if (myBitRange != 0) {
+                return false;
+            }
+        }
+        else {
+            printf("\n2 %x %x %x\n", (T) myBitRange, thisMinValue, minValue);
+            return false;
+        }
+    }
+
+    myBitRange = zero;
+    if (myBitRange != zero) {
+        printf("\n3 %x %x\n", (T) myBitRange, zero);
+
+        return false;
+    }
+
+    return true;
+}
+
+template<typename T>
+template<typename T2>
+bool BitRangeTest<T>::TestCopyOperatorMajorSize(T2 input) {
+
+    const uint8 max = sizeof(T) * 8;
+    const uint8 inputSize = sizeof(T2) * 8;
+    const uint8 half = 0;//max / 2 - 2;
+    const uint8 majorSize = (inputSize < max) ? (inputSize + 1) : (inputSize );
+
+    TypeDefinition::BitRange<T, majorSize, half> myBitRange;
+
+    bool isInputSigned = TypeDefinition::TypeCharacteristics<T2>::IsSigned();
+    T2 maxValue = isInputSigned ? ((((T) 1) << (inputSize - (T) 1)) - (T) 1) : ~((T2) 0);
+    T2 minValue = isInputSigned ? ~((((T) 1) << (inputSize - (T) 1)) - (T) 1) : 0;
+    T2 zero = (T2) 0;
+
+    bool isSigned = TypeDefinition::TypeCharacteristics<T>::IsSigned();
+
+    const T thisMaxValue = isSigned ? ((((T) 1) << (majorSize - (T) 1)) - (T) 1) : (((T) -1) >> (sizeof(T) * 8 - majorSize));
+    const T thisMinValue = isSigned ? ~((((T) 1) << (majorSize - (T) 1)) - (T) 1) : 0;
+
+    myBitRange = maxValue;
+
+    if (myBitRange != maxValue) {
+        printf("\n1 %x %x\n", (T) myBitRange, maxValue);
+
+        return false;
+    }
+    myBitRange = minValue;
+    if (myBitRange != minValue) {
+
+        if ((!isSigned) && (isInputSigned)) {
+            if (myBitRange != 0) {
+                return false;
+            }
+        }
+        else {
+            printf("\n2 %x %x\n", (T) myBitRange, minValue);
+
+            return false;
+        }
+    }
+
+    myBitRange = zero;
+    if (myBitRange != zero) {
+        printf("\n3 %x %x\n", myBitRange, zero);
+
+        return false;
+    }
+
+    return true;
+}
+#if 0
+template<typename T>
+template<typename T2>
+bool BitRangeTest<T>::TestCopyOperatorMinorSize(T2 input) {
+
+// test with 3 different shifts
+    const uint8 zero = 0;
+    const uint8 max = sizeof(T) * 8 - 1;
+    const uint8 half = max / 2;
+
+    const uint8 inputSize = sizeof(T2) * 8 - 1;
+
+    bool isInputSigned = TypeDefinition::TypeCharacteristics<T2>::IsSigned();
+    const T2 maxValue = isInputSigned ? ((((T) 1) << (inputSize - (T) 1)) - (T) 1) : ~((T2) 0);
+    const T2 minValue = isInputSigned ? ~((((T) 1) << (inputSize - (T) 1)) - (T) 1) : 0;
+
+//the size is minor
+    const uint8 minorSize = sizeof(T2) * 8 - 1;
+    bool isSigned = TypeDefinition::TypeCharacteristics<T>::IsSigned();
+
+    const T thisMaxValue = isSigned ? ((((T) 1) << (minorSize - (T) 1)) - (T) 1) : (~((T) 0) >> (sizeof(T) * 8 - minorSize));
+    const T thisMinValue = isSigned ? ~((((T) 1) << (minorSize - (T) 1)) - (T) 1) : 0;
+
+    TypeDefinition::BitRange<T, minorSize, zero> myZeroBitRange;
+
+    uint8 shift = zero;
+    T clipMask = ((shift + minorSize) > (sizeof(T) * 8)) ? ((((T) 1) << (sizeof(T) * 8 - shift)) - 1) : ~((T) 0);
+
+    /*    int8 x = -1;
+
+     uint32 x32= (uint32)x;
+
+     printf("\nahaha %d", x32);
+
+     myZeroBitRange = (unsigned char) 128;
+     if (myZeroBitRange != 128) {
+     return false;
+     }
+     */
+    for (T2 i = minValue; i < maxValue; i++) {
+
+        myZeroBitRange = i;
+
+        if (i > thisMaxValue) {
+            if (myZeroBitRange != (thisMaxValue & clipMask)) {
+                printf("\n1\n");
+                return false;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if (i < thisMinValue) {
+            if (myZeroBitRange != (thisMinValue & clipMask)) {
+                return false;
+                printf("\n2\n");
+            }
+            else {
+                continue;
+            }
+        }
+
+        if (myZeroBitRange != (i & clipMask)) {
+            printf("\n3\n");
+            return false;
+        }
+        if (i < 10)
+        printf("\n%x %d\n", (T) myZeroBitRange, i);
+    }
+
+    shift = half;
+    clipMask = ((shift + minorSize) > (sizeof(T) * 8)) ? (((T) 1) << (sizeof(T) * 8 - shift) - 1) : ~((T) 0);
+
+    TypeDefinition::BitRange<T, minorSize, half> myHalfBitRange;
+
+    for (T2 i = minValue; i < maxValue; i++) {
+        myHalfBitRange = i;
+        if (i > thisMaxValue) {
+            if (myHalfBitRange != (thisMaxValue & clipMask)) {
+                return false;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if (i < thisMinValue) {
+            if (myHalfBitRange != (thisMinValue & clipMask)) {
+                return false;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if (myHalfBitRange != (i & clipMask)) {
+            return false;
+        }
+    }
+
+    shift = max;
+    clipMask = ((shift + minorSize) > (sizeof(T) * 8)) ? (((T) 1) << (sizeof(T) * 8 - shift) - 1) : ~((T) 0);
+
+    TypeDefinition::BitRange<T, minorSize, max> myMaxBitRange;
+
+    for (T2 i = minValue; i < maxValue; i++) {
+
+        myMaxBitRange = i;
+        if (i > thisMaxValue) {
+            if (myMaxBitRange != (thisMaxValue & clipMask)) {
+                return false;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if (i < thisMinValue) {
+            if (myMaxBitRange != (thisMinValue & clipMask)) {
+                return false;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if (myMaxBitRange != (i & clipMask)) {
+            return false;
+        }
+    }
+
+    return true;
+
+}
+
+template<typename T>
+template<typename T2>
+bool BitRangeTest<T>::TestCopyOperatorMajorSize(T2 input) {
+
+// test with 3 different shifts
+    const uint8 zero = 0;
+    const uint8 max = sizeof(T) * 8 - 1;
+    const uint8 half = max / 2;
+
+    const uint8 inputSize = sizeof(T2) * 8 - 1;
+
+    bool isInputSigned = TypeDefinition::TypeCharacteristics<T2>::IsSigned();
+    const T2 maxValue = isInputSigned ? (~(((T2) 1) << inputSize)) : ~((T2) 0);
+    const T2 minValue = isInputSigned ? (((T2) 1) << inputSize) : 0;
+
+//the size is minor
+    const uint8 majorSize = sizeof(T2) * 8 + 1;
+    bool isSigned = TypeDefinition::TypeCharacteristics<T>::IsSigned();
+
+    const T thisMaxValue = isSigned ? ((((T) 1) << (majorSize - (T) 1)) - (T) 1) : (~((T) 0) >> (sizeof(T) * 8 - majorSize));
+    const T thisMinValue = isSigned ? ~((((T) 1) << (majorSize - (T) 1)) - (T) 1) : 0;
+
+    TypeDefinition::BitRange<T, majorSize, zero> myZeroBitRange;
+
+    uint8 shift = zero;
+    T clipMask = ((shift + majorSize) > (sizeof(T) * 8)) ? ((((T) 1) << (sizeof(T) * 8 - shift)) - 1) : ~((T) 0);
+
+    for (T2 i = minValue; i < maxValue; i++) {
+
+        myZeroBitRange = i;
+
+        if ((T) i > (T) thisMaxValue) {
+            if (myZeroBitRange != (thisMaxValue & clipMask)) {
+                return false;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if ((T) i < (T) thisMinValue) {
+            if (myZeroBitRange != (thisMinValue & clipMask)) {
+                return false;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if ((T) myZeroBitRange != (T) (i & clipMask)) {
+            return false;
+        }
+    }
+
+    shift = half;
+    clipMask = ((shift + majorSize) > (sizeof(T) * 8)) ? (((T) 1) << (sizeof(T) * 8 - shift) - 1) : ~((T) 0);
+
+    TypeDefinition::BitRange<T, majorSize, half> myHalfBitRange;
+
+    for (T2 i = minValue; i < maxValue; i++) {
+        myHalfBitRange = i;
+        if ((T) i > (T) thisMaxValue) {
+            if (myHalfBitRange != (thisMaxValue & clipMask)) {
+                return false;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if ((T) i < (T) thisMinValue) {
+            if (myHalfBitRange != (thisMinValue & clipMask)) {
+                return false;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if (myHalfBitRange != (i & clipMask)) {
+            return false;
+        }
+    }
+
+    shift = max;
+    clipMask = ((shift + majorSize) > (sizeof(T) * 8)) ? (((T) 1) << (sizeof(T) * 8 - shift) - 1) : ~((T) 0);
+
+    TypeDefinition::BitRange<T, majorSize, max> myMaxBitRange;
+
+    for (T2 i = minValue; i < maxValue; i++) {
+
+        myMaxBitRange = i;
+        if ((T) i > (T) thisMaxValue) {
+            if (myMaxBitRange != (thisMaxValue & clipMask)) {
+                return false;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if ((T) i < (T) thisMinValue) {
+            if (myMaxBitRange != (thisMinValue & clipMask)) {
+                return false;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if (myMaxBitRange != (i & clipMask)) {
+            return false;
+        }
+    }
+
+    return true;
+
+}
+
+#endif
 
 #endif /* BITRANGETEST_H_ */
 

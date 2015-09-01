@@ -35,6 +35,7 @@
 #include "TypeDescriptor.h"
 #include "AnyType.h"
 #include "TypeCharacteristics.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -101,7 +102,7 @@ private:
     /**
      * The minimum possible value.
      */
-    static const baseType minValue = (isSigned ? (static_cast<baseType>(-1) << (bitSize - static_cast<baseType>(1))) : 0);
+    static const baseType minValue = (isSigned ? (static_cast<baseType>(-1) << (bitSize - static_cast<baseType>(1))) : static_cast<baseType>(0));
 
     /**
      * The maximum possible value.
@@ -129,21 +130,49 @@ private:
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
 template<typename inputType>
 void BitRange<baseType, bitSize, bitOffset>::operator=(inputType input) {
-    baseType temporaryValue = 0;
 
-    // saturates the input value if its out of allowed range
-    if (input >= static_cast<inputType>(maxValue)) {
-        temporaryValue = maxValue;
-        // ERROR LOGGING
+    baseType temporaryValue = 0;
+    const bool isInputSigned = TypeCharacteristics<inputType>::IsSigned();
+
+    if ((!isInputSigned) && (isSigned)) {
+        // in this case checks only who is the greater (input is always >0)
+        if (input > static_cast<inputType>(maxValue)) {
+            temporaryValue = maxValue;
+        }
+        else {
+            temporaryValue = static_cast<baseType>(input);
+        }
     }
-    else {
-        if (input <= static_cast<inputType>(minValue)) {
+    else if ((isInputSigned) && (!isSigned)) {
+        // in this case if input is negative saturates this to zero
+        if (input < static_cast<inputType>(0)) {
+            //0
             temporaryValue = minValue;
         }
         else {
-            temporaryValue = input;
+            //if the input is >0 saturates in case.
+            if (static_cast<baseType>(input) > maxValue) {
+                temporaryValue = maxValue;
+            }
+            else {
+                temporaryValue = static_cast<baseType>(input);
+            }
         }
     }
+    else {
+        // the types are both signed or unsigned
+        if (static_cast<baseType>(input) > maxValue) {
+            temporaryValue = maxValue;
+        }
+
+        else if (static_cast<baseType>(input) < minValue) {
+            temporaryValue = minValue;
+        }
+        else {
+            temporaryValue = static_cast<baseType>(input);
+        }
+    }
+
     // shifts the number
     temporaryValue <<= bitOffset;
 

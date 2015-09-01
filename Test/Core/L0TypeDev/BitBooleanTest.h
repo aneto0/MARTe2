@@ -46,15 +46,15 @@ public:
 
     bool TestCopyOperatorUnion();
 
-    bool TestBoolCast(T input);
+    bool TestBoolCast();
 
-    bool TestAnyTypeCast(T input);
+    bool TestAnyTypeCast();
 
-    bool TestBitSize(T input);
+    bool TestBitSize();
 
-    bool TestBitOffset(T input);
+    bool TestBitOffset();
 
-    bool TestOffsetOutOfRange(T input);
+    bool TestOffsetOutOfRange();
 
 };
 
@@ -90,9 +90,9 @@ bool BitBooleanTest<T>::TestCopyOperatorUnion() {
 }
 
 template<typename T>
-bool BitBooleanTest<T>::TestBoolCast(T input) {
+bool BitBooleanTest<T>::TestBoolCast() {
 
-    const uint8 max = sizeof(input) * 8 - 1;
+    const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
@@ -141,9 +141,9 @@ bool BitBooleanTest<T>::TestBoolCast(T input) {
 }
 
 template<typename T>
-bool BitBooleanTest<T>::TestAnyTypeCast(T input) {
+bool BitBooleanTest<T>::TestAnyTypeCast() {
 
-    const uint8 max = sizeof(input) * 8 - 1;
+    const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
@@ -209,9 +209,9 @@ bool BitBooleanTest<T>::TestAnyTypeCast(T input) {
 }
 
 template<typename T>
-bool BitBooleanTest<T>::TestBitSize(T input) {
+bool BitBooleanTest<T>::TestBitSize() {
 
-    const uint8 max = sizeof(input) * 8 - 1;
+    const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
@@ -236,9 +236,9 @@ bool BitBooleanTest<T>::TestBitSize(T input) {
 }
 
 template<typename T>
-bool BitBooleanTest<T>::TestBitOffset(T input) {
+bool BitBooleanTest<T>::TestBitOffset() {
 
-    const uint8 max = sizeof(input) * 8 - 1;
+    const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
@@ -263,7 +263,7 @@ bool BitBooleanTest<T>::TestBitOffset(T input) {
 }
 
 template<typename T>
-bool BitBooleanTest<T>::TestOffsetOutOfRange(T input) {
+bool BitBooleanTest<T>::TestOffsetOutOfRange() {
     const uint8 offset = sizeof(T) * 8;
 
     // in this case since the mask is 0, the bool should always be false

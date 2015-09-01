@@ -118,7 +118,7 @@ void BitBoolean<baseType, bitOffset>::operator=(bool flag) {
 
 template<typename baseType, uint8 bitOffset>
 BitBoolean<baseType, bitOffset>::operator bool() const {
-    return ((value & mask) == mask) && (mask != static_cast<baseType>(0));
+    return ((value & mask) != 0);
 }
 
 template<typename baseType, uint8 bitOffset>
