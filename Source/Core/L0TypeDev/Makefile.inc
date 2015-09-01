@@ -26,7 +26,7 @@ PACKAGE=Core
 ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  FormatDescriptor.x 
+OBJSX=  FormatDescriptor.x
 
 #LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 INCLUDES+=-I../L0Portability

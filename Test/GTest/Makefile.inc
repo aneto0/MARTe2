@@ -22,7 +22,8 @@
 #
 #############################################################
 
-OBJSX=  StandardHeap_GenericGTest.x \
+OBJSX=  AnyTypeGTest.x\
+        StandardHeap_GenericGTest.x \
         HeapManagerGTest.x \
         EndianityGTest.x \
 	SleepGTest.x \
@@ -53,7 +54,7 @@ OBJSX=  StandardHeap_GenericGTest.x \
 	ReferenceContainerNodeGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
-    	ErrorManagementGTest.x \
+   	ErrorManagementGTest.x \
     	BitBooleanGTest.x
 
 PACKAGE=

@@ -31,6 +31,8 @@ LIBRARIES   += ../../Source/Core/L0Portability/$(TARGET)/L0Portability$(LIBEXT)
 LIBRARIES   += ../../Test/Core/L0Portability/$(TARGET)/L0PortabilityTest$(LIBEXT) 
 LIBRARIES   += ../../Source/Core/L1Objects/$(TARGET)/L1Objects$(LIBEXT) 
 LIBRARIES   += ../../Test/Core/L1Objects/$(TARGET)/L1ObjectsTest$(LIBEXT) 
+LIBRARIES   += ../../Source/Core/L0TypeDev/$(TARGET)/L0TypeDev$(LIBEXT)
+LIBRARIES   += ../../Test/Core/L0TypeDev/$(TARGET)/L0TypeDevTest$(LIBEXT)
 LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
 
 

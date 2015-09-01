@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=  BitBooleanTest.x
+OBJSX=  BitBooleanTest.x\
+        AnyTypeTest.x
 		
 PACKAGE=Core
 ROOT_DIR=../../..
