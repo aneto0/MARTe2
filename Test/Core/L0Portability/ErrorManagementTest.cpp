@@ -111,7 +111,7 @@ bool ErrorManagementTest::TestToName() {
             ErrorManagement::Exception, ErrorManagement::Timeout, ErrorManagement::CommunicationError, ErrorManagement::SyntaxError,
             ErrorManagement::UnsupportedFeature };
 
-    const char8 *names[] = { "NoError", "Debug Information", "Information", "Warning", "FatalError", "RecoverableError", "InitialisationError", "OSError",
+    const char8 *names[] = { "NoError", "Debug", "Information", "Warning", "FatalError", "RecoverableError", "InitialisationError", "OSError",
             "ParametersError", "IllegalOperation", "ErrorSharing", "ErrorAccessDenied", "Exception", "Timeout", "CommunicationError", "SyntaxError",
             "UnsupportedError" };
 

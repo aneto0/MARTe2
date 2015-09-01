@@ -57,7 +57,7 @@ const
     ErrorType error;
 } errorNames[] = {
         {"NoError",               NoError  },
-        {"Debug Information",     Debug},
+        {"Debug",                 Debug},
         {"Information",           Information },
         {"Warning",               Warning },
         {"FatalError",            FatalError },
@@ -140,7 +140,7 @@ void SetErrorProcessFunction(const ErrorProcessFunctionType userFun) {
         errorMessageProcessFunction = userFun;
     }
     else{
-        errorMessageProcessFunction = userFun;
+        errorMessageProcessFunction = NullErrorProcessFunction;
     }
 }
 
