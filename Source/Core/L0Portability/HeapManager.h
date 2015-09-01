@@ -40,14 +40,8 @@
 
 /**
  * @brief Implementation of functions for the heap memory management.
-<<<<<<< HEAD
  * @details Using these functions is possible adding different HeapI
  * objects in a hidden static database and using their specific functions for the
-=======
- *
- * Using these functions is possible adding different HeapI
- * objects in an hidden static database and using their specific functions for the
->>>>>>> branch 'Mayor_l0_refactor' of https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git
  * desired heap management.
  */
 namespace HeapManager {
@@ -78,11 +72,7 @@ HeapI *GetStandardHeap();
 /**
  * @brief Registers a HeapI object in the database.
  * @param[in] newHeap is a pointer to the HeapI object which must be added.
-<<<<<<< HEAD
  * @return true if newHeap has been correctly registered in the database,
-=======
- * @return true if \a newHeap is correctly registered in the database,
->>>>>>> branch 'Mayor_l0_refactor' of https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git
  * false if the object is already registered or if there is no space to add it.
  * @pre All the heaps added have to have different names. AddHeap does not check if it is already include
  * a heap with the same name.
