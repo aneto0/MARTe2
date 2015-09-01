@@ -140,7 +140,7 @@ void SetErrorProcessFunction(const ErrorProcessFunctionType userFun) {
         errorMessageProcessFunction = userFun;
     }
     else{
-        errorMessageProcessFunction = NullErrorProcessFunction;
+        errorMessageProcessFunction = &NullErrorProcessFunction;
     }
 }
 
