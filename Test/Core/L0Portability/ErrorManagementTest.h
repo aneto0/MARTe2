@@ -92,6 +92,12 @@ public:
      */
     bool syncFlag;
 
+
+    /**
+     * Stores the high resolution timer counter.
+     */
+    static uint64 expectedHRTCounter;
+
 public:
 
     /**
