@@ -24,10 +24,11 @@
 #
 #############################################################
 
-OBJSX=  BitBooleanTest.x \
-		BitRangeTest.x \
-		FractionalIntegerTest.x \
-		AnyTypeTest.x
+OBJSX=  BitBooleanTest.x\
+	BitRangeTest.x \
+        AnyTypeTest.x \
+        FractionalIntegerTest.x \
+        FormatDescriptorTest.x
 		
 PACKAGE=Core
 ROOT_DIR=../../..
