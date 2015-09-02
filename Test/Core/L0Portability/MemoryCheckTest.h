@@ -32,9 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../Source/Core/L0Portability/MemoryCheck.h"
-#include "../../../Source/Core/L0Portability/HeapManager.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -46,12 +43,10 @@ public:
 
     /**
      * @brief Tests the Memory::Check function.
-     * @param[in] size is the size which must be allocated.
      * @return true if the Memory::Check function returns true on the memory previously allocated and false in
      * case of a NULL pointer input
      */
     bool TestCheck();
-
 };
 
 /*---------------------------------------------------------------------------*/

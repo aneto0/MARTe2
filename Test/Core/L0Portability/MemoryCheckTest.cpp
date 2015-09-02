@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MemoryCheckTest.h"
+#include "../../../Source/Core/L0Portability/MemoryCheck.h"
+#include "../../../Source/Core/L0Portability/HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,27 +42,26 @@
 /*---------------------------------------------------------------------------*/
 
 MemoryCheckTest::MemoryCheckTest() {
-    // Auto-generated constructor stub for MemoryCheckTest
-    // TODO Verify if manual additions are needed
 }
 
 MemoryCheckTest::~MemoryCheckTest() {
-    // Auto-generated destructor stub for MemoryCheckTest
-    // TODO Verify if manual additions are needed
 }
 
 bool MemoryCheckTest::TestCheck() {
     uint32 size = 100;
+
     //allocate a space of size integers
     int32* allocated = (int32*) HeapManager::Malloc(size * sizeof(int32));
 
     //checks if all the memory is allocated correctly
-    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), size * sizeof(int32))) {
+    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute),
+                            size * sizeof(int32))) {
         return false;
     }
 
     //checks if a part the memory is allocated correctly
-    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), (size / 2) * sizeof(int32))) {
+    if (!MemoryCheck::Check(allocated, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute),
+                            (size / 2) * sizeof(int32))) {
         return false;
     }
 
@@ -74,6 +75,4 @@ bool MemoryCheckTest::TestCheck() {
 
     //the check function on a null pointer should return false
     return !MemoryCheck::Check(NULL, (MemoryCheck::MemoryTestAccessMode) (MemoryCheck::Read | MemoryCheck::Write | MemoryCheck::Execute), size);
-
 }
-

@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MemoryOperationsHelperTest.h"
+#include "../../../Source/Core/L0Portability/MemoryOperationsHelper.h"
+#include "../../../Source/Core/L0Portability/HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,15 +42,10 @@
 /*---------------------------------------------------------------------------*/
 
 MemoryOperationsHelperTest::MemoryOperationsHelperTest() {
-    // Auto-generated constructor stub for MemoryOperationsHelperTest
-    // TODO Verify if manual additions are needed
 }
 
 MemoryOperationsHelperTest::~MemoryOperationsHelperTest() {
-    // Auto-generated destructor stub for MemoryOperationsHelperTest
-    // TODO Verify if manual additions are needed
 }
-
 
 bool MemoryOperationsHelperTest::TestCopy() {
     int32 myIntArray[5];
@@ -84,7 +81,7 @@ bool MemoryOperationsHelperTest::TestCopyZeroSize() {
     int32 myIntArray[5] = { 1 };
     float32 myFloatArray[5] = { 2.0 };
 
-//size=0
+    //size=0
     uint32 sizeToCopy = 0;
     if (!MemoryOperationsHelper::Copy(myFloatArray, (const void*) myIntArray, sizeToCopy)) {
         return false;
@@ -98,11 +95,9 @@ bool MemoryOperationsHelperTest::TestCopyNullPointer() {
     int32 myIntArray[5] = { 1 };
     float32 myFloatArray[5] = { 0.0 };
     uint32 sizeToCopy = 1;
-    return (!MemoryOperationsHelper::Copy(NULL, NULL, sizeToCopy) &&
-            !MemoryOperationsHelper::Copy(NULL, (const void*) myIntArray, sizeToCopy) &&
-            !MemoryOperationsHelper::Copy(myFloatArray, NULL, sizeToCopy));
+    return (!MemoryOperationsHelper::Copy(NULL, NULL, sizeToCopy) && !MemoryOperationsHelper::Copy(NULL, (const void*) myIntArray, sizeToCopy)
+            && !MemoryOperationsHelper::Copy(myFloatArray, NULL, sizeToCopy));
 }
-
 
 bool MemoryOperationsHelperTest::TestMove() {
 
@@ -131,7 +126,6 @@ bool MemoryOperationsHelperTest::TestMove() {
 
 }
 
-
 bool MemoryOperationsHelperTest::TestMoveZeroSize() {
     int32 myIntArray[5] = { 1 };
     float32 myFloatArray[5] = { 2.0 };
@@ -150,9 +144,8 @@ bool MemoryOperationsHelperTest::TestMoveNullPointer() {
     float32 myFloatArray[5];
 
     uint32 sizeToCopy = 1;
-    return (!MemoryOperationsHelper::Move(NULL, NULL, sizeToCopy) &&
-            !MemoryOperationsHelper::Move(NULL, (const void*) myIntArray, sizeToCopy) &&
-            !MemoryOperationsHelper::Move(myFloatArray, NULL, sizeToCopy));
+    return (!MemoryOperationsHelper::Move(NULL, NULL, sizeToCopy) && !MemoryOperationsHelper::Move(NULL, (const void*) myIntArray, sizeToCopy)
+            && !MemoryOperationsHelper::Move(myFloatArray, NULL, sizeToCopy));
 
 }
 
@@ -191,9 +184,8 @@ bool MemoryOperationsHelperTest::TestCompare() {
     }
 
     sizeToCopy = 1;
-    return (MemoryOperationsHelper::Compare(NULL, NULL, sizeToCopy) == -1 &&
-            MemoryOperationsHelper::Compare(source, NULL, sizeToCopy) == -1 &&
-            MemoryOperationsHelper::Compare(NULL, test, sizeToCopy) == -1);
+    return (MemoryOperationsHelper::Compare(NULL, NULL, sizeToCopy) == -1 && MemoryOperationsHelper::Compare(source, NULL, sizeToCopy) == -1
+            && MemoryOperationsHelper::Compare(NULL, test, sizeToCopy) == -1);
 
 }
 
@@ -242,7 +234,7 @@ bool MemoryOperationsHelperTest::TestSetZeroSize() {
 
     char myFavouriteChar = 'b';
 
-//use size=0
+    //use size=0
     uint32 size = 0;
     if (!MemoryOperationsHelper::Set(buffPointer, myFavouriteChar, size)) {
         return false;
@@ -250,7 +242,6 @@ bool MemoryOperationsHelperTest::TestSetZeroSize() {
 
     return buffPointer[0] == 'a';
 }
-
 
 bool MemoryOperationsHelperTest::TestSearch() {
 
@@ -268,7 +259,6 @@ bool MemoryOperationsHelperTest::TestSearch() {
     return MemoryOperationsHelper::Search(NULL, myFavouriteChar, size) == NULL;
 
 }
-
 
 bool MemoryOperationsHelperTest::TestSearchNotInBuffer() {
     uint32 size = 10;

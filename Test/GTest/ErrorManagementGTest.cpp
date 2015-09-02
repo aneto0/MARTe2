@@ -83,6 +83,6 @@ TEST(ErrorManagementGTest,TestReportErrorMacroFullContext) {
 TEST(ErrorManagementGTest,TestSetErrorProcessFunction) {
     ErrorManagementTest errorManTest;
     ASSERT_TRUE(errorManTest.TestSetErrorProcessFunction());
-    ErrorManagement::SetErrorProcessFunction (ErrorManagement::NullErrorProcessFunction);
+    ErrorManagement::SetErrorProcessFunction (NULL);
 
 }

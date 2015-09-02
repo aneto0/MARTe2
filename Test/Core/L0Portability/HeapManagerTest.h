@@ -32,9 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../Source/Core/L0Portability/HeapI.h"
 #include "../../../Source/Core/L0Portability/OperatingSystem/Linux/StandardHeap.h"
-#include "../../../Source/Core/L0Portability/HeapManager.h"
 #include "AuxHeap.h"
 
 /*---------------------------------------------------------------------------*/
@@ -43,16 +41,37 @@
 
 class HeapManagerTest {
 public:
+
+    /*
+     * @brief Default constructor
+     */
     HeapManagerTest();
+
+    /*
+     * @brief Destructor
+     */
     virtual ~HeapManagerTest();
 
+    /*
+     * @brief Pointer used by all tests to point to the memory allocated.
+     */
     void *ptr;
 
+    /*
+     * @brief Flag used by all tests to store the result of the execution.
+     */
     bool retVal;
 
+    /*
+     * @brief An instance of the HeapManager::StandardHeap to be used on tests
+     */
     HeapManager::StandardHeap sh;
 
+    /*
+     * @brief An instance of the HeapManager::AuxHeap to be used on tests
+     */
     HeapManager::AuxHeap ah;
+
     /**
      * @brief Test HeapManager::Malloc function using the default options
      * @return true if the Malloc function return a Non NULL pointer
@@ -112,6 +131,7 @@ public:
      * @return return true if the second AddHeap returns false.
      */
     bool TestAddHeapRepetedHeap();
+
     /**
      * @brief Test HeapManager::AddHeap function adding more heaps than the maximum number of heaps allowed
      * @return true if the second-to-last AddHep returns true and the last AddHeap returns false.
@@ -158,7 +178,6 @@ public:
      */
     bool TestFindHeapByAddress2Heaps();
 
-
     /**
      * @brief Basic test HeapManager::GetStandardHeap functions
      * @return true if HeapManager::GetStandardHeap returns true.
@@ -166,7 +185,7 @@ public:
     bool TestGetStandardHeap();
 
     /**
-     * @brief Test HeapManager::TestRemoveHeapAdd function
+     * @brief Test HeapManager::TestRemoveHeap function
      * @return true if the returned value of the RemoveHeap function is true.
      */
     bool TestRemoveHeap();
@@ -197,7 +216,7 @@ public:
      * brief Test HeapManager::Duplicate without allocating memory.
      * @return true if returned the copy is equal to the original.
      */
-    bool TestDuplicateNOAllocationMemory();
+    bool TestDuplicateNoAllocationMemory();
 };
 
 /*---------------------------------------------------------------------------*/

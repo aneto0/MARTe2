@@ -32,16 +32,22 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../Source/Core/L0Portability/MemoryOperationsHelper.h"
-#include "../../../Source/Core/L0Portability/HeapManager.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 class MemoryOperationsHelperTest {
+
 public:
+
+    /*
+     * @brief Default constructor
+     */
     MemoryOperationsHelperTest();
+
+    /*
+     * @brief Destructor
+     */
     virtual ~MemoryOperationsHelperTest();
 
     /**

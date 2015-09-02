@@ -30,7 +30,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HeapManagerTest.h"
+#include "../../../Source/Core/L0Portability/HeapI.h"
 #include "../../../Source/Core/L0Portability/StringHelper.h"
+#include "../../../Source/Core/L0Portability/HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -48,11 +50,9 @@ HeapManagerTest::HeapManagerTest() {
 }
 
 HeapManagerTest::~HeapManagerTest() {
-    // Auto-generated destructor stub for HeapManagerTest
-    // TODO Verify if manual additions are needed
 }
 
-bool HeapManagerTest::TestMallocDefaultName(){
+bool HeapManagerTest::TestMallocDefaultName() {
     uint32 size = 2;
     ptr = Malloc(size * sizeof(int32));
     retVal = (ptr != NULL);
@@ -60,27 +60,27 @@ bool HeapManagerTest::TestMallocDefaultName(){
     return retVal;
 }
 
-bool HeapManagerTest::TestMallocSpecificName(){
+bool HeapManagerTest::TestMallocSpecificName() {
     uint32 size = 2;
     AddHeap(&sh);
-    ptr = Malloc(size*sizeof(int32), "StandardHeap");
+    ptr = Malloc(size * sizeof(int32), "StandardHeap");
     retVal = (ptr != NULL);
     Free(ptr);
     RemoveHeap(&sh);
     return retVal;
 }
 
-bool HeapManagerTest::TestMallocInvalidName(){
+bool HeapManagerTest::TestMallocInvalidName() {
     uint32 size = 2;
     AddHeap(&sh);
-    ptr = Malloc(size*sizeof(int32), "WrongName");
+    ptr = Malloc(size * sizeof(int32), "WrongName");
     retVal = (ptr == NULL);
     Free(ptr);
     RemoveHeap(&sh);
     return retVal;
 }
 
-bool HeapManagerTest::TestFree(){
+bool HeapManagerTest::TestFree() {
     uint32 size = 2;
     ptr = Malloc(size * sizeof(int32));
     retVal = Free(ptr);
@@ -88,13 +88,13 @@ bool HeapManagerTest::TestFree(){
     return retVal;
 }
 
-bool HeapManagerTest::TestFreeInvalidPointer(){
+bool HeapManagerTest::TestFreeInvalidPointer() {
     ptr = &sh;
     retVal = !Free(ptr);
     return retVal;
 }
 
-bool HeapManagerTest::TestRealloc(){
+bool HeapManagerTest::TestRealloc() {
     uint32 size = 2;
     void *ptr1 = NULL;
     ptr = Malloc(size * sizeof(int32));
@@ -106,7 +106,7 @@ bool HeapManagerTest::TestRealloc(){
     return retVal;
 }
 
-bool HeapManagerTest::TestReallocInvalidPointer(){
+bool HeapManagerTest::TestReallocInvalidPointer() {
     uint32 size = 2;
     void *ptr1 = NULL;
     void *invalidptr = NULL;
@@ -119,25 +119,25 @@ bool HeapManagerTest::TestReallocInvalidPointer(){
     return retVal;
 }
 
-bool HeapManagerTest::TestAddHeap(){
+bool HeapManagerTest::TestAddHeap() {
     retVal = AddHeap(&sh);
     RemoveHeap(&sh);
     return retVal;
 }
 
-bool HeapManagerTest::TestAddHeapNULL(){
+bool HeapManagerTest::TestAddHeapNULL() {
     retVal = !AddHeap(NULL);
     return retVal;
 }
 
-bool HeapManagerTest::TestAddHeapRepetedHeap(){
+bool HeapManagerTest::TestAddHeapRepetedHeap() {
     AddHeap(&sh);
     retVal = !AddHeap(&sh);
     RemoveHeap(&sh);
     return retVal;
 }
 
-bool HeapManagerTest::TestAddHeapTooMuch(){
+bool HeapManagerTest::TestAddHeapTooMuch() {
     StandardHeap sh1;
     StandardHeap sh2;
     StandardHeap sh3;
@@ -193,7 +193,7 @@ bool HeapManagerTest::TestAddHeapTooMuch(){
     return retVal;
 }
 
-bool HeapManagerTest::TestFindHeapByName(){
+bool HeapManagerTest::TestFindHeapByName() {
     void * ptr;
     AddHeap(&sh);
     ptr = FindHeap("StandardHeap");
@@ -202,7 +202,7 @@ bool HeapManagerTest::TestFindHeapByName(){
     return retVal;
 }
 
-bool HeapManagerTest::TestFindHeapByNameInvalidName(){
+bool HeapManagerTest::TestFindHeapByNameInvalidName() {
     void * ptr;
     AddHeap(&sh);
     ptr = FindHeap("WrongName");
@@ -211,12 +211,12 @@ bool HeapManagerTest::TestFindHeapByNameInvalidName(){
     return retVal;
 }
 
-bool HeapManagerTest::TestFindHeapByAddress(){
+bool HeapManagerTest::TestFindHeapByAddress() {
     uint32 size = 4;
     void *ptr;
     void *ptr1;
     AddHeap(&sh);
-    ptr1 = Malloc(size*sizeof(uint32), "StandardHeap");
+    ptr1 = Malloc(size * sizeof(uint32), "StandardHeap");
     ptr = FindHeap(ptr1);
     retVal = (ptr == &sh);
     Free(ptr1);
@@ -224,7 +224,7 @@ bool HeapManagerTest::TestFindHeapByAddress(){
     return retVal;
 }
 
-bool HeapManagerTest::TestFindHeapByAddressInvalidAddress(){
+bool HeapManagerTest::TestFindHeapByAddressInvalidAddress() {
     void *ptr1 = NULL;
     ptr = &sh;
     ptr1 = FindHeap(ptr);
@@ -232,16 +232,16 @@ bool HeapManagerTest::TestFindHeapByAddressInvalidAddress(){
     return retVal;
 }
 
-bool HeapManagerTest::TestFindHeapByAddress2Heaps(){
+bool HeapManagerTest::TestFindHeapByAddress2Heaps() {
     uint32 size = 4;
     void *ptr1;
-    void *shptr[3] = {NULL, NULL, NULL};
+    void *shptr[3] = { NULL, NULL, NULL };
     void *ahptr;
     void *copyahptr = NULL;
     AddHeap(&sh);
     AddHeap(&ah);
     ptr1 = Malloc(size * sizeof(uint32), "StandardHeap");
-    //Malloc several times in order to increase the "size of the StandarHeap, then free the moemory
+    //Malloc several times in order to increase the "size of the StandarHeap, then free the memory
     //in order to be used by "AuxHeap". As a result the two heaps memory span is shared.
     shptr[0] = Malloc(size * sizeof(uint32), "StandardHeap");
     shptr[1] = Malloc(size * sizeof(uint32), "StandardHeap");
@@ -249,7 +249,7 @@ bool HeapManagerTest::TestFindHeapByAddress2Heaps(){
     Free(shptr[0]);
     Free(shptr[1]);
     Free(shptr[2]);
-    ahptr = Malloc(size * sizeof(uint32),"AuxHeap");
+    ahptr = Malloc(size * sizeof(uint32), "AuxHeap");
     ptr = FindHeap(ahptr);
     retVal = (ptr == &ah);
     copyahptr = ahptr;
@@ -262,19 +262,19 @@ bool HeapManagerTest::TestFindHeapByAddress2Heaps(){
     return retVal;
 }
 
-bool HeapManagerTest::TestGetStandardHeap(){
+bool HeapManagerTest::TestGetStandardHeap() {
     ptr = GetStandardHeap();
     retVal = (ptr != NULL);
     return retVal;
 }
 
-bool HeapManagerTest::TestRemoveHeap(){
+bool HeapManagerTest::TestRemoveHeap() {
     AddHeap(&sh);
     retVal = RemoveHeap(&sh);
     return retVal;
 }
 
-bool HeapManagerTest::TestDuplicateDefault(){
+bool HeapManagerTest::TestDuplicateDefault() {
     void *ptr1 = NULL;
     uint32 size = 10;
     ptr = Malloc(size * sizeof(int32));
@@ -285,44 +285,44 @@ bool HeapManagerTest::TestDuplicateDefault(){
     return retVal;
 }
 
-bool HeapManagerTest::TestDuplicateSpecificName(){
+bool HeapManagerTest::TestDuplicateSpecificName() {
     uint32 size = 4;
     int32 * auxIntPtr = NULL;
     int32 * auxIntPtr1 = NULL;
     void *ptr1 = NULL;
     AddHeap(&ah);
     ptr = Malloc(size * sizeof(int32), "AuxHeap");
-    auxIntPtr = (int32*)(ptr);
+    auxIntPtr = (int32*) (ptr);
     *auxIntPtr = 0;
     *(auxIntPtr + 1) = 1;
     *(auxIntPtr + 2) = 2;
     *(auxIntPtr + 3) = 3;
-    ptr1 = Duplicate(ptr, size*sizeof(int32),"AuxHeap");
-    auxIntPtr1 = (int32*)ptr1;
+    ptr1 = Duplicate(ptr, size * sizeof(int32), "AuxHeap");
+    auxIntPtr1 = (int32*) ptr1;
     retVal = (*auxIntPtr == *auxIntPtr1);
-    retVal &= (*(auxIntPtr + 1) == *(auxIntPtr1 +1));
-    retVal &= (*(auxIntPtr + 2) == *(auxIntPtr1 +2));
-    retVal &= (*(auxIntPtr + 3) == *(auxIntPtr1 +3));
+    retVal &= (*(auxIntPtr + 1) == *(auxIntPtr1 + 1));
+    retVal &= (*(auxIntPtr + 2) == *(auxIntPtr1 + 2));
+    retVal &= (*(auxIntPtr + 3) == *(auxIntPtr1 + 3));
     Free(ptr);
     Free(ptr1);
     RemoveHeap(&ah);
     return retVal;
 }
 
-bool HeapManagerTest::TestDuplicateString(){
+bool HeapManagerTest::TestDuplicateString() {
     uint32 size = 4;
     char8 *auxCharPtr = NULL;
     char8 *auxCharPtr1 = NULL;
     void *ptr1 = NULL;
     AddHeap(&ah);
     ptr = Malloc(size * sizeof(char8), "AuxHeap");
-    auxCharPtr = (char8*)(ptr);
+    auxCharPtr = (char8*) (ptr);
     *auxCharPtr = 'a';
     *(auxCharPtr + 1) = 'b';
     *(auxCharPtr + 2) = 'c';
     *(auxCharPtr + 3) = '\0';
-    ptr1 = Duplicate(ptr, 0,"AuxHeap");
-    auxCharPtr1 = (char8*)ptr1;
+    ptr1 = Duplicate(ptr, 0, "AuxHeap");
+    auxCharPtr1 = (char8*) ptr1;
     retVal = (*auxCharPtr == *auxCharPtr1);
     retVal &= (*(auxCharPtr + 1) == *(auxCharPtr1 + 1));
     retVal &= (*(auxCharPtr + 2) == *(auxCharPtr1 + 2));
@@ -333,12 +333,10 @@ bool HeapManagerTest::TestDuplicateString(){
     return retVal;
 }
 
-bool HeapManagerTest::TestDuplicateNOAllocationMemory(){
+bool HeapManagerTest::TestDuplicateNoAllocationMemory() {
     const char8 *s = "hello";
     ptr = Duplicate(s);
-    retVal = (StringHelper::Compare(s, (char*)(ptr)) == 0);
+    retVal = (StringHelper::Compare(s, (char*) (ptr)) == 0);
     return retVal;
 }
-
-
 

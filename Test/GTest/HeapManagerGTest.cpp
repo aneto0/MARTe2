@@ -149,7 +149,7 @@ TEST(HeapManagerGTest,TestDuplicateString) {
     ASSERT_TRUE(myHeapManagerTest.TestDuplicateString());
 }
 
-TEST(HeapManagerGTest,TestDuplicateNOAllocationMemory) {
+TEST(HeapManagerGTest,TestDuplicateNoAllocationMemory) {
     HeapManagerTest myHeapManagerTest;
-    ASSERT_TRUE(myHeapManagerTest.TestDuplicateNOAllocationMemory());
+    ASSERT_TRUE(myHeapManagerTest.TestDuplicateNoAllocationMemory());
 }
