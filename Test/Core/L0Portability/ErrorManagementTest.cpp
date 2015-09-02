@@ -33,10 +33,11 @@
 #include "StringHelper.h"
 #include "Sleep.h"
 #include "Threads.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-//define static members
+
 ErrorManagement::ErrorType ErrorManagementTest::expectedErrorCode;
 const char8* ErrorManagementTest::expectedErrorDescription;
 const char8* ErrorManagementTest::expectedErrorFilename;
@@ -46,16 +47,15 @@ const char8* ErrorManagementTest::expectedErrorName;
 bool ErrorManagementTest::fullContext = false;
 bool ErrorManagementTest::retVal = false;
 
-void DummyErrorFunction(const ErrorManagement::ErrorInformation& errorInfo,
-                        const char * const description) {
+static void DummyErrorFunction(const ErrorManagement::ErrorInformation& errorInfo,
+                               const char * const description) {
 
-    ErrorManagementTest newEM;
-    newEM.retVal = true;
+    ErrorManagementTest::retVal = true;
 
 }
 
-void ReportTestFunction(const ErrorManagement::ErrorInformation& errorInfo,
-                        const char * const description) {
+static void ReportTestFunction(const ErrorManagement::ErrorInformation& errorInfo,
+                               const char * const description) {
 
     //shared static attributes
     ErrorManagementTest newEM;
@@ -64,7 +64,7 @@ void ReportTestFunction(const ErrorManagement::ErrorInformation& errorInfo,
 
 }
 
-void ThreadErrorTestFunction(ErrorManagementTest& t) {
+static void ThreadErrorTestFunction(ErrorManagementTest& t) {
     //launches error report functions.
     t.fullContext = false;
 
@@ -76,7 +76,7 @@ void ThreadErrorTestFunction(ErrorManagementTest& t) {
     t.syncFlag = true;
 }
 
-void ThreadErrorTestFunctionMacro(ErrorManagementTest &t) {
+static void ThreadErrorTestFunctionMacro(ErrorManagementTest &t) {
     //launches error report functions.
     t.fullContext = false;
     t.expectedErrorFunction = __DECORATED_FUNCTION_NAME__;
@@ -88,6 +88,7 @@ void ThreadErrorTestFunctionMacro(ErrorManagementTest &t) {
 
     t.syncFlag = true;
 }
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -113,7 +114,7 @@ bool ErrorManagementTest::TestToName() {
 
     const char8 *names[] = { "NoError", "Debug", "Information", "Warning", "FatalError", "RecoverableError", "InitialisationError", "OSError",
             "ParametersError", "IllegalOperation", "ErrorSharing", "ErrorAccessDenied", "Exception", "Timeout", "CommunicationError", "SyntaxError",
-            "UnsupportedError" };
+            "UnsupportedFeature" };
 
     uint32 i = 0;
     while (all[i] != ErrorManagement::UnsupportedFeature) {
@@ -123,7 +124,7 @@ bool ErrorManagementTest::TestToName() {
         i++;
     }
 
-    return StringHelper::Compare(ErrorManagement::ToName(ErrorManagement::UnsupportedFeature), "UnsupportedError") == 0;
+    return StringHelper::Compare(ErrorManagement::ToName(ErrorManagement::UnsupportedFeature), "UnsupportedFeature") == 0;
 }
 
 bool ErrorManagementTest::TestReportError(ErrorManagement::ErrorType code,
