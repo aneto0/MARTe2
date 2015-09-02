@@ -109,6 +109,9 @@
 -esym(768,ClassRegistryDatabase::*)
 -esym(768,Introspection::*)
 -esym(768,Object::*)
+-esym(768,TypeDefinition::BitBoolean::*)
+
+
 /* global constant enumeration not referenced */ 
 -esym(769,SFTestType::*)
 -esym(769,Colours::*) 

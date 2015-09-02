@@ -63,6 +63,9 @@ public:
      */
     static inline const T MinValue();
 
+
+    static inline const T UsableBitSize();
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -101,6 +104,21 @@ const T TypeCharacteristics<T>::MinValue() {
         return temp;
     }
 }
+
+template<typename T>
+const T TypeCharacteristics<T>::UsableBitSize() {
+    if (IsSigned()) {
+        // 0x80...0 if signed
+        T temp = sizeof(T) * 8 - 1;
+        return temp;
+    }
+    else {
+        // 0 if unsigned
+        T temp = sizeof(T) * 8 ;
+        return temp;
+    }
+}
+
 
 }
 
