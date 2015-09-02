@@ -46,8 +46,8 @@ AnyTypeTest::AnyTypeTest():dummy(1),constantPtrToConstant(&dummy), constPtr(NULL
     defaultBitAddress = 1;
     defaultDataDescription.isConstant = true;
     defaultDataDescription.isStructuredData = false;
-    defaultDataDescription.typeInfo.size = 5;
-    defaultDataDescription.typeInfo.type = Float;
+    defaultDataDescription.size = 5;
+    defaultDataDescription.type = Float;
 }
 
 AnyTypeTest::~AnyTypeTest() {
@@ -63,8 +63,8 @@ bool AnyTypeTest::TestAnyType_Void(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 0);
-    retVal &= (td.typeInfo.size == 0);
+    retVal &= (td.type == 0);
+    retVal &= (td.size == 0);
 
     return retVal;
 }
@@ -78,8 +78,8 @@ bool AnyTypeTest::TestAnyType_AnyTypeVoid(){
     td = anytype1.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 0);
-    retVal &= (td.typeInfo.size == 0);
+    retVal &= (td.type == 0);
+    retVal &= (td.size == 0);
 
     return retVal;
 }
@@ -125,8 +125,8 @@ bool AnyTypeTest::TestAnyType_Int8(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 0);
-    retVal &= (td.typeInfo.size == 8);
+    retVal &= (td.type == 0);
+    retVal &= (td.size == 8);
 
     return retVal;
 }
@@ -140,8 +140,8 @@ bool AnyTypeTest::TestAnyType_UInt8(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 1);
-    retVal &= (td.typeInfo.size == 8);
+    retVal &= (td.type == 1);
+    retVal &= (td.size == 8);
 
     return retVal;
 }
@@ -155,8 +155,8 @@ bool AnyTypeTest::TestAnyType_ConstInt8(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 0);
-    retVal &= (td.typeInfo.size == 8);
+    retVal &= (td.type == 0);
+    retVal &= (td.size == 8);
 
     return retVal;
 }
@@ -170,8 +170,8 @@ bool AnyTypeTest::TestAnyType_ConstUInt8(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 1);
-    retVal &= (td.typeInfo.size == 8);
+    retVal &= (td.type == 1);
+    retVal &= (td.size == 8);
 
     return retVal;
 }
@@ -185,8 +185,8 @@ bool AnyTypeTest::TestAnyType_Int16(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 0);
-    retVal &= (td.typeInfo.size == 16);
+    retVal &= (td.type == 0);
+    retVal &= (td.size == 16);
 
     return retVal;
 }
@@ -200,8 +200,8 @@ bool AnyTypeTest::TestAnyType_UInt16(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 1);
-    retVal &= (td.typeInfo.size == 16);
+    retVal &= (td.type == 1);
+    retVal &= (td.size == 16);
 
     return retVal;
 }
@@ -215,8 +215,8 @@ bool AnyTypeTest::TestAnyType_ConstInt16(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 0);
-    retVal &= (td.typeInfo.size == 16);
+    retVal &= (td.type == 0);
+    retVal &= (td.size == 16);
 
     return retVal;
 }
@@ -230,8 +230,8 @@ bool AnyTypeTest::TestAnyType_ConstUInt16(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 1);
-    retVal &= (td.typeInfo.size == 16);
+    retVal &= (td.type == 1);
+    retVal &= (td.size == 16);
 
     return retVal;
 }
@@ -245,8 +245,8 @@ bool AnyTypeTest::TestAnyType_Int32(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 0);
-    retVal &= (td.typeInfo.size == 32);
+    retVal &= (td.type == 0);
+    retVal &= (td.size == 32);
 
     return retVal;
 }
@@ -260,8 +260,8 @@ bool AnyTypeTest::TestAnyType_UInt32(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 1);
-    retVal &= (td.typeInfo.size == 32);
+    retVal &= (td.type == 1);
+    retVal &= (td.size == 32);
 
     return retVal;
 }
@@ -275,8 +275,8 @@ bool AnyTypeTest::TestAnyType_ConstInt32(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 0);
-    retVal &= (td.typeInfo.size == 32);
+    retVal &= (td.type == 0);
+    retVal &= (td.size == 32);
 
     return retVal;
 }
@@ -290,8 +290,8 @@ bool AnyTypeTest::TestAnyType_ConstUInt32(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 1);
-    retVal &= (td.typeInfo.size == 32);
+    retVal &= (td.type == 1);
+    retVal &= (td.size == 32);
 
     return retVal;
 }
@@ -305,8 +305,8 @@ bool AnyTypeTest::TestAnyType_Int64(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 0);
-    retVal &= (td.typeInfo.size == 64);
+    retVal &= (td.type == 0);
+    retVal &= (td.size == 64);
 
     return retVal;
 }
@@ -320,8 +320,8 @@ bool AnyTypeTest::TestAnyType_UInt64(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 1);
-    retVal &= (td.typeInfo.size == 64);
+    retVal &= (td.type == 1);
+    retVal &= (td.size == 64);
 
     return retVal;
 }
@@ -335,8 +335,8 @@ bool AnyTypeTest::TestAnyType_ConstInt64(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 0);
-    retVal &= (td.typeInfo.size == 64);
+    retVal &= (td.type == 0);
+    retVal &= (td.size == 64);
 
     return retVal;
 }
@@ -350,8 +350,8 @@ bool AnyTypeTest::TestAnyType_ConstUInt64(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 1);
-    retVal &= (td.typeInfo.size == 64);
+    retVal &= (td.type == 1);
+    retVal &= (td.size == 64);
 
     return retVal;
 }
@@ -365,8 +365,8 @@ bool AnyTypeTest::TestAnyType_Float32(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 2);
-    retVal &= (td.typeInfo.size == 32);
+    retVal &= (td.type == 2);
+    retVal &= (td.size == 32);
 
     return retVal;
 }
@@ -380,8 +380,8 @@ bool AnyTypeTest::TestAnyType_ConstFloat32(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 2);
-    retVal &= (td.typeInfo.size == 32);
+    retVal &= (td.type == 2);
+    retVal &= (td.size == 32);
 
     return retVal;
 }
@@ -395,8 +395,8 @@ bool AnyTypeTest::TestAnyType_Float64(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 2);
-    retVal &= (td.typeInfo.size == 64);
+    retVal &= (td.type == 2);
+    retVal &= (td.size == 64);
 
     return retVal;
 }
@@ -410,8 +410,8 @@ bool AnyTypeTest::TestAnyType_ConstFloat64(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 2);
-    retVal &= (td.typeInfo.size == 64);
+    retVal &= (td.type == 2);
+    retVal &= (td.size == 64);
 
     return retVal;
 }
@@ -424,8 +424,8 @@ bool AnyTypeTest::TestAnyType_ConstPointerToConts(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 3);
-    retVal &= (td.typeInfo.size == sizeof(void *) * 8u);
+    retVal &= (td.type == 3);
+    retVal &= (td.size == sizeof(void *) * 8u);
 
     return retVal;
 }
@@ -438,8 +438,8 @@ bool AnyTypeTest::TestAnyType_ConstPointer(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
-    retVal &= (td.typeInfo.type == 3);
-    retVal &= (td.typeInfo.size == sizeof(void *) * 8u);
+    retVal &= (td.type == 3);
+    retVal &= (td.size == sizeof(void *) * 8u);
 
     return retVal;
 }
@@ -453,8 +453,8 @@ bool AnyTypeTest::TestAnyType_ConstCharPointerToConst(){
     td = anytype.GetTypeDescriptor();
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
-    retVal &= (td.typeInfo.type == 8);
-    retVal &= (td.typeInfo.size == sizeof(const char *) * 8u);
+    retVal &= (td.type == 8);
+    retVal &= (td.size == sizeof(const char *) * 8u);
 
     return retVal;
 }

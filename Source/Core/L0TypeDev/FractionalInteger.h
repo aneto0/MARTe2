@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "TypeCharacteristics.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -88,8 +87,6 @@ public:
      */
     inline operator baseType() const;
 
-
-
 private:
 
     /**
@@ -110,7 +107,9 @@ private:
     /**
      * The maximum value of the integer.
      */
-    static const baseType maxValue = (isSigned ? ((static_cast<baseType>(1) << (bitSize - 1)) - static_cast<baseType>(1)) : (static_cast<baseType>(-1) >> ((sizeof(baseType) * 8) - bitSize)));
+    static const baseType maxValue =
+            (isSigned ?
+                    ((static_cast<baseType>(1) << (bitSize - 1)) - static_cast<baseType>(1)) : (static_cast<baseType>(-1) >> ((sizeof(baseType) * 8) - bitSize)));
 
 };
 
@@ -141,6 +140,52 @@ FractionalInteger<baseType, bitSize>::FractionalInteger() {
 template<typename baseType, uint8 bitSize>
 template<typename inputType>
 FractionalInteger<baseType, bitSize>::FractionalInteger(inputType input) {
+
+    // saturation to max
+    if (input > static_cast<inputType>(0)) {
+        // cast to the type which has the max usable size
+        if (TypeCharacteristics<inputType>::UsableBitSize() > TypeCharacteristics<baseType>::UsableBitSize()) {
+            if (input > static_cast<inputType>(maxValue)) {
+                input = maxValue;
+            }
+        }
+        else {
+            // input<0 and basetype unsigned bug
+            if (static_cast<baseType>(input) > maxValue) {
+                input = maxValue;
+            }
+        }
+    }
+
+    //saturation to min
+    else {
+        // check min
+        if (!isSigned) {
+            input = 0;
+        }
+        else {
+
+            // only consider signed against signed for minimum
+            // unsigned have 0 as minimum which is greater than the minimum of all fractional signed
+            if (TypeCharacteristics<inputType>::IsSigned()) {
+                if (TypeCharacteristics<inputType>::UsableBitSize() > TypeCharacteristics<baseType>::UsableBitSize()) {
+                    if (input < static_cast<inputType>(minValue)) {
+                        input = minValue;
+                    }
+                }
+                else {
+
+                    // input>0 and basetype signed bug
+                    if (static_cast<baseType>(input) < minValue) {
+                        input = minValue;
+                    }
+                }
+            }
+        }
+    }
+
+    value = static_cast<baseType>(input);
+
     /*  baseType temporaryValue = 0;
      // saturation in case of input value out of range
      if (input >= static_cast<inputType>(maxValue)) {
@@ -157,69 +202,69 @@ FractionalInteger<baseType, bitSize>::FractionalInteger(inputType input) {
      }
      }
      */
+    /*
+     const bool isInputSigned = (static_cast<inputType>(-1)<0);
 
-    const bool isInputSigned = (static_cast<inputType>(-1)<0);
+     const uint8 inputBitSize = static_cast<uint8>(sizeof(inputType) * 8);
+     const uint8 baseTypeBitSize = static_cast<uint8>(sizeof(baseType) * 8);
 
-    const uint8 inputBitSize = static_cast<uint8>(sizeof(inputType) * 8);
-    const uint8 baseTypeBitSize = static_cast<uint8>(sizeof(baseType) * 8);
+     if ((!isInputSigned) && (isSigned)) {
+     // in this case checks only who is the greater (input is always >0)
+     if (input > static_cast<inputType>(maxValue)) {
+     value = maxValue;
+     }
+     else {
+     value = static_cast<baseType>(input);
+     }
+     }
+     else if ((isInputSigned) && (!isSigned)) {
+     // in this case if input is negative saturates this to zero
+     if (input < static_cast<inputType>(0)) {
+     //0
+     value = minValue;
+     }
+     else {
+     //if the input is >0 saturates in case.
+     if (static_cast<baseType>(input) > maxValue) {
+     value = maxValue;
+     }
+     else {
+     value = static_cast<baseType>(input);
+     }
+     }
+     }
+     else {
 
-    if ((!isInputSigned) && (isSigned)) {
-        // in this case checks only who is the greater (input is always >0)
-        if (input > static_cast<inputType>(maxValue)) {
-            value = maxValue;
-        }
-        else {
-            value = static_cast<baseType>(input);
-        }
-    }
-    else if ((isInputSigned) && (!isSigned)) {
-        // in this case if input is negative saturates this to zero
-        if (input < static_cast<inputType>(0)) {
-            //0
-            value = minValue;
-        }
-        else {
-            //if the input is >0 saturates in case.
-            if (static_cast<baseType>(input) > maxValue) {
-                value = maxValue;
-            }
-            else {
-                value = static_cast<baseType>(input);
-            }
-        }
-    }
-    else {
+     // choose the correct cast otherwise a positive number
+     // could become negative because clipped by the cast
+     if (inputBitSize <= baseTypeBitSize) {
+     // the types are both signed or unsigned
+     if (static_cast<baseType>(input) > maxValue) {
+     value = maxValue;
+     }
 
-        // choose the correct cast otherwise a positive number
-        // could become negative because clipped by the cast
-        if (inputBitSize <= baseTypeBitSize) {
-            // the types are both signed or unsigned
-            if (static_cast<baseType>(input) > maxValue) {
-                value = maxValue;
-            }
+     else if (static_cast<baseType>(input) < minValue) {
+     value = minValue;
+     }
+     else {
+     value = static_cast<baseType>(input);
+     }
+     }
+     else {
+     // the types are both signed or unsigned
+     if (input > static_cast<inputType>(maxValue)) {
+     value = maxValue;
+     }
 
-            else if (static_cast<baseType>(input) < minValue) {
-                value = minValue;
-            }
-            else {
-                value = static_cast<baseType>(input);
-            }
-        }
-        else {
-            // the types are both signed or unsigned
-            if (input > static_cast<inputType>(maxValue)) {
-                value = maxValue;
-            }
+     else if (input < static_cast<inputType>(minValue)) {
+     value = minValue;
+     }
+     else {
+     value = static_cast<baseType>(input);
+     }
 
-            else if (input < static_cast<inputType>(minValue)) {
-                value = minValue;
-            }
-            else {
-                value = static_cast<baseType>(input);
-            }
-
-        }
-    }
+     }
+     }*/
 
 }
 
@@ -227,8 +272,6 @@ template<typename baseType, uint8 bitSize>
 FractionalInteger<baseType, bitSize>::operator baseType() const {
     return value;
 }
-
-
 
 }
 

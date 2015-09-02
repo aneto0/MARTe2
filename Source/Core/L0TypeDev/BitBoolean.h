@@ -51,14 +51,15 @@ public:
      * @brief Copy operator.
      * @param[in] flag is the boolean value in input
      */
-    void operator=(bool flag);
+    /**lint -e(1721) This = operator is not assignment operator. Justification: the input argument is a bool because
+     * this type should be used as a bool type.*/
+    void operator=(const bool flag);
 
     /**
      * @brief Returns the boolean value.
      * @return the boolean value.
      */
     inline operator bool() const;
-
 
     /**
      * @brief Returns the bit size.
@@ -81,7 +82,7 @@ private:
     /**
      * The number size.
      */
-    static const baseType baseTypeBitSize = (sizeof(baseType) * 8);
+    static const uint8 baseTypeBitSize = static_cast<uint8>(sizeof(baseType) * 8u);
 
     /**
      * The mask (only a bit shifted)
@@ -113,7 +114,6 @@ template<typename baseType, uint8 bitOffset>
 BitBoolean<baseType, bitOffset>::operator bool() const {
     return ((value & mask) != 0);
 }
-
 
 template<typename baseType, uint8 bitOffset>
 baseType BitBoolean<baseType, bitOffset>::BitSize() {

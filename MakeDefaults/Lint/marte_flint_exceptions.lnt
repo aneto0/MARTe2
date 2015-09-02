@@ -90,7 +90,7 @@
 /*
  * Local class member not referenced
  */
--esym(754,FormatDescriptor::*)
+-esym(754,TypeDefinition::FormatDescriptor::*)
 
 
 
@@ -109,6 +109,9 @@
 -esym(768,ClassRegistryDatabase::*)
 -esym(768,Introspection::*)
 -esym(768,Object::*)
+-esym(768,TypeDefinition::BitBoolean::*)
+
+
 /* global constant enumeration not referenced */ 
 -esym(769,SFTestType::*)
 -esym(769,Colours::*) 
@@ -160,7 +163,7 @@
 -esym(1714,ReferenceContainerFilterReferences::*)
 -esym(1714,ReferenceContainerFilterObjectName::*)
 -esym(1714,TypeDefinition::AnyType::*)
--esym(1714,FormatDescriptor::*)
+-esym(1714,TypeDefinition::FormatDescriptor::*)
 
 
 /*
@@ -398,6 +401,8 @@
   * Justification: Not applicable to a framework.
   */
 -esym(1795, ReferenceT*)
+-esym(1795, TypeDefinition::AnyType::*)
+
 
 /*
  * Rule flexelint 1531. 

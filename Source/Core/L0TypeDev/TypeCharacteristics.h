@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-#include "TypeDescriptor.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -63,6 +62,9 @@ public:
      * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
      */
     static inline const T MinValue();
+
+
+    static inline const T UsableBitSize();
 
 };
 
@@ -102,6 +104,21 @@ const T TypeCharacteristics<T>::MinValue() {
         return temp;
     }
 }
+
+template<typename T>
+const T TypeCharacteristics<T>::UsableBitSize() {
+    if (IsSigned()) {
+        // 0x80...0 if signed
+        T temp = sizeof(T) * 8 - 1;
+        return temp;
+    }
+    else {
+        // 0 if unsigned
+        T temp = sizeof(T) * 8 ;
+        return temp;
+    }
+}
+
 
 }
 

@@ -223,7 +223,7 @@ bool BitRangeTest<T>::TestAnyTypeCast() {
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
 
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.typeInfo.type != TypeDefinition::UnsignedInteger || tdTest.typeInfo.size != size) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != size) {
         return false;
     }
 

@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "FractionalInteger.h"
 #include "AnyType.h"
+#include "printf.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -74,8 +75,8 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMinorSize(T2 input) {
     bool isInputSigned = TypeDefinition::TypeCharacteristics<T2>::IsSigned();
 
     // max and min values of the input
-    T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T) 1) : ((T2) -1);
-    T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T) 1) : 0;
+    T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : ((T2) -1);
+    T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : (T2)0;
     T2 zero = (T2) 0;
 
     bool isSigned = TypeDefinition::TypeCharacteristics<T>::IsSigned();
@@ -88,18 +89,20 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMinorSize(T2 input) {
 
     // since the bit range has a size minor than the input normally the value should be saturated
     if (myFractionalInteger != thisMaxValue) {
+        printf("\n1 %x %x %x\n", (T) myFractionalInteger, thisMaxValue, maxValue);
         return false;
     }
     myFractionalInteger = minValue;
     if (myFractionalInteger != thisMinValue) {
-
-        //if the input is unsigned and the bit ragnge signed, the minValue passed is zero
+        //if the input is unsigned and the bit range signed, the minValue passed is zero
         if ((!isInputSigned) && (isSigned)) {
-            if (myFractionalInteger != 0) {
+            if (myFractionalInteger != minValue) {
                 return false;
             }
         }
+        //if the input is signed and the bit range unsigned, the minValue passed is zero alias thisMinValue
         else {
+            printf("\n2 %x %x %x\n", (T) myFractionalInteger, thisMinValue, minValue);
             return false;
         }
     }
@@ -183,7 +186,7 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastNonConst() {
 
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
-    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.typeInfo.type != TypeDefinition::UnsignedInteger) || (tdTest.typeInfo.size != size)) {
+    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != TypeDefinition::UnsignedInteger) || (tdTest.size != size)) {
         return false;
     }
 
@@ -211,8 +214,7 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastConst() {
 
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
-
-    if ((tdTest.isStructuredData) || (!tdTest.isConstant) || (tdTest.typeInfo.type) != (TypeDefinition::UnsignedInteger) || (tdTest.typeInfo.size != size)) {
+    if ((tdTest.isStructuredData) || (!tdTest.isConstant) || (tdTest.type) != (TypeDefinition::UnsignedInteger) || (tdTest.size != size)) {
         return false;
     }
 
