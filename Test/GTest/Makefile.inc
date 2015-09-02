@@ -56,7 +56,9 @@ OBJSX=  FormatDescriptorGTest.x \
 #	ReferenceContainerFilterReferencesGTest.x \
 #	ReferenceContainerFilterObjectNameGTest.x \
  #  	ErrorManagementGTest.x \
-#    	BitBooleanGTest.x
+#    	BitBooleanGTest.x \
+# 	FractionalIntegerGTest.x \
+# 	BitRangeGTest.x 
 
 PACKAGE=
 ROOT_DIR=../..

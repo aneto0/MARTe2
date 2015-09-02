@@ -25,7 +25,9 @@
 #############################################################
 
 OBJSX=  BitBooleanTest.x\
+	BitRangeTest.x \
         AnyTypeTest.x \
+        FractionalIntegerTest.x \
         FormatDescriptorTest.x
 		
 PACKAGE=Core
