@@ -101,7 +101,7 @@ private:
 /*---------------------------------------------------------------------------*/
 
 template<typename baseType, uint8 bitOffset>
-void BitBoolean<baseType, bitOffset>::operator=(bool flag) {
+void BitBoolean<baseType, bitOffset>::operator=(const bool flag) {
     if (flag) {
         value |= mask;
     }
