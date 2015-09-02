@@ -24,7 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -96,13 +96,15 @@ static const FDLookup typesLookup[] = {
 /// strchr equivalent
 static inline const FDLookup *LookupCharacter(const char8 c,
                                               const FDLookup *lookupTable) {
-
     if (lookupTable != NULL) {
         while (lookupTable->character != '\0') {
             if (lookupTable->character == c) {
                 break;
             }
             lookupTable++;
+        }
+        if (lookupTable->character == '\0'){
+            lookupTable = static_cast<FDLookup *>(NULL);
         }
     }
     return lookupTable;
@@ -112,10 +114,9 @@ static inline const FDLookup *LookupCharacter(const char8 c,
 static bool ParseCharacter(const char8 c,
                            FormatDescriptor &format,
                            const FDLookup * const lookupTable) {
-
+    static int32 aux = 0;
     // find the position of c in flagsLookup
     const FDLookup *found = LookupCharacter(c, lookupTable);
-
     bool ret = (found != NULL);
     // not found!
     if (ret) {
@@ -168,13 +169,11 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
     FormatDescriptor temporaryFormat;
 
     bool ret = false;
-
     /// check pointer
     if (string != NULL) {
 
         // expect at least a character
         if (string[0] != '\0') {
-
             //parse options
             while (ParseCharacter(string[0], temporaryFormat, &flagsLookup[0])) {
                 string++;
@@ -182,7 +181,6 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
 
             // get any integer number from string if any
             temporaryFormat.size = GetIntegerNumber(string);
-
             // after a dot look for the precision field
             if (string[0] == '.') {
                 string++;

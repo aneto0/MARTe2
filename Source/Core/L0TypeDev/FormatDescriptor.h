@@ -277,7 +277,6 @@ public:
                             const bool isBinaryPadded,
                             const bool isFullNotation);
 
-private:
 
     /*lint -e{9018} Use of union allows to use this memory to describe or objects or basic types in an exclusive way.*/
     union {
