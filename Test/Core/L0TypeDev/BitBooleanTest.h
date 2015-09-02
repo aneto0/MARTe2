@@ -157,7 +157,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
 
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.typeInfo.type != TypeDefinition::UnsignedInteger || tdTest.typeInfo.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
         return false;
     }
 
@@ -175,7 +175,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
     }
 
     tdTest = atTest.GetTypeDescriptor();
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.typeInfo.type != TypeDefinition::UnsignedInteger || tdTest.typeInfo.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
         return false;
     }
 
@@ -193,7 +193,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
     }
 
     tdTest = atTest.GetTypeDescriptor();
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.typeInfo.type != TypeDefinition::UnsignedInteger || tdTest.typeInfo.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
         return false;
     }
 

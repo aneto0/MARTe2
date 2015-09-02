@@ -183,7 +183,7 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastNonConst() {
 
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
-    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.typeInfo.type != TypeDefinition::UnsignedInteger) || (tdTest.typeInfo.size != size)) {
+    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != TypeDefinition::UnsignedInteger) || (tdTest.size != size)) {
         return false;
     }
 
@@ -212,7 +212,7 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastConst() {
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
 
-    if ((tdTest.isStructuredData) || (!tdTest.isConstant) || (tdTest.typeInfo.type) != (TypeDefinition::UnsignedInteger) || (tdTest.typeInfo.size != size)) {
+    if ((tdTest.isStructuredData) || (!tdTest.isConstant) || (tdTest.type) != (TypeDefinition::UnsignedInteger) || (tdTest.size != size)) {
         return false;
     }
 
