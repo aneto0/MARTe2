@@ -72,7 +72,7 @@ const
         {"Timeout",               Timeout},
         {"CommunicationError",    CommunicationError},
         {"SyntaxError",           SyntaxError},
-        {"UnsupportedError",      UnsupportedFeature},
+        {"UnsupportedFeature",      UnsupportedFeature},
         {static_cast<const char8 *>(NULL),  SyntaxError},
 };
 
