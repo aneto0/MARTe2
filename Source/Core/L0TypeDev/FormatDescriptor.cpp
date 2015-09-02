@@ -24,7 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include "stdio.h"
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -104,10 +104,6 @@ static inline const FDLookup *LookupCharacter(const char8 c,
         if (lookupTable->character == '\0'){
             lookupTable = static_cast<FDLookup *>(NULL);
         }
-
-        if (lookupTable->character == '\0') {
-            lookupTable = static_cast<FDLookup *>(NULL);
-        }
     }
     return lookupTable;
 }
@@ -116,7 +112,6 @@ static inline const FDLookup *LookupCharacter(const char8 c,
 static bool ParseCharacter(const char8 c,
                            FormatDescriptor &format,
                            const FDLookup * const lookupTable) {
-    static int32 aux = 0;
     // find the position of c in flagsLookup
     const FDLookup *found = LookupCharacter(c, lookupTable);
     bool ret = (found != NULL);

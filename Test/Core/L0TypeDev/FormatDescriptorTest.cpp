@@ -53,26 +53,99 @@ FormatDescriptorTest::~FormatDescriptorTest() {
 }
 
 bool FormatDescriptorTest::TestInitialiseFromString(){
-    s = "#9.9f";
+    s = "#7.9f";
+
     retVal = fd.InitialiseFromString(s);
     retVal &= (fd.desiredAction == PrintFloat);
-    //printf("\n fd.desiredAction %u\n", fd.desiredAction);
-    retVal &= (fd.size == 9);
+    retVal &= (fd.size == 7);
     retVal &= (fd.precision == 9);
     retVal &= (fd.padded == false);
     retVal &= (fd.leftAligned == false);
-    retVal &= (fd.floatNotation == 0);
-    retVal &= (fd.binaryNotation == 0);
-    retVal &= (fd.fullNotation == false);
-    retVal &= (fd.spareBits == true);
+    retVal &= (fd.floatNotation == FixedPointNotation);
+    retVal &= (fd.binaryNotation == DecimalNotation);
+    retVal &= (fd.binaryPadded == false);
+    retVal &= (fd.fullNotation == true);
+    retVal &= (fd.spareBits == 0u);
+
     return retVal;
 }
 
-/*
-bool FormatDescriptorTest::TestDefaultConstructor(){
-    FormatDescriptor fdDefaultConst;
-    retVal = true;
+bool FormatDescriptorTest::TestInitialiseFromString2(){
+    s = "#7.af";
+
+    retVal = !fd.InitialiseFromString(s);
+
     return retVal;
 }
-*/
+
+bool FormatDescriptorTest::TestDefaultConstructor(){
+    FormatDescriptor fdDefaultConst;
+
+    retVal = (fdDefaultConst.desiredAction == PrintAnything);
+    retVal &= (fdDefaultConst.size == 0u);
+    retVal &= (fdDefaultConst.precision == defaultPrecision);
+    retVal &= (fdDefaultConst.padded == false);
+    retVal &= (fdDefaultConst.leftAligned == false);
+    retVal &= (fdDefaultConst.floatNotation == FixedPointNotation);
+    retVal &= (fdDefaultConst.binaryNotation == DecimalNotation);
+    retVal &= (fdDefaultConst.binaryPadded == false);
+    retVal &= (fdDefaultConst.fullNotation == false);
+    retVal &= (fdDefaultConst.spareBits == 0u);
+
+    return retVal;
+}
+
+bool FormatDescriptorTest::TestIntConstructor(){
+    const uint32 aux = 7;
+    FormatDescriptor fdIntConst(aux);
+
+    retVal = (fdIntConst.format_as_uint32 == aux);
+
+    return retVal;
+}
+
+bool FormatDescriptorTest::TestConstructor(){
+    FormatDescriptor fdDefaultConst(PrintAnything, 0u, defaultPrecision, false, false, FixedPointNotation, DecimalNotation, false, false);
+
+    retVal = (fdDefaultConst.desiredAction == PrintAnything);
+    retVal &= (fdDefaultConst.size == 0u);
+    retVal &= (fdDefaultConst.precision == defaultPrecision);
+    retVal &= (fdDefaultConst.padded == false);
+    retVal &= (fdDefaultConst.leftAligned == false);
+    retVal &= (fdDefaultConst.floatNotation == FixedPointNotation);
+    retVal &= (fdDefaultConst.binaryNotation == DecimalNotation);
+    retVal &= (fdDefaultConst.binaryPadded == false);
+    retVal &= (fdDefaultConst.fullNotation == false);
+    retVal &= (fdDefaultConst.spareBits == 0u);
+
+    return retVal;
+}
+
+bool FormatDescriptorTest::TestAssignOperator(){
+    FormatDescriptor fd;
+    FormatDescriptor fd1(PrintAnything, 0u, defaultPrecision, true, true, FixedPointNotation, DecimalNotation, true, true);
+
+    fd = fd1;
+    retVal = (fd.padded == true);
+    retVal &= (fd.leftAligned == true);
+    retVal &= (fd.binaryPadded == true);
+    retVal &= (fd.fullNotation == true);
+
+    return retVal;
+}
+
+bool FormatDescriptorTest::TestBitWiseOrOperator(){
+    FormatDescriptor fd;
+    FormatDescriptor fd1(PrintAnything, 0u, defaultPrecision, true, true, FixedPointNotation, DecimalNotation, true, true);
+
+    fd |= fd1;
+    retVal = (fd.padded == true);
+    retVal &= (fd.leftAligned == true);
+    retVal &= (fd.binaryPadded == true);
+    retVal &= (fd.fullNotation == true);
+
+    return retVal;
+}
+
+
 

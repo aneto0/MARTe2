@@ -45,10 +45,13 @@ public:
     FormatDescriptorTest();
     virtual ~FormatDescriptorTest();
 
+    //Returned value
     bool retVal;
 
+    //string used to initialize a FormatDescripto object
     const char8* s;
 
+    //Format descriptor object used during the test.
     FormatDescriptor fd;
 
     /**
@@ -57,7 +60,43 @@ public:
      */
     bool TestInitialiseFromString();
 
-    //bool TestDefaultConstructor();
+    /**
+     * @brief Test InitialiseFromString().
+     * @details This test is equal than TestInitialiseFromString but with different input parameters in
+     * order to cover all the text lines. In this test the input string parameters are wrong.
+     * @return True if the function InitialiseFromString() returns false.
+     */
+    bool TestInitialiseFromString2();
+
+    /**
+     * @brief Test default FormatDescriptor constructor.
+     * @return True if all the variables as set as expected.
+     */
+    bool TestDefaultConstructor();
+
+    /**
+     * @brief Test FormatDescriptor constructor using an uint32 as a input parameter.
+     * @return True if the FormatDEscriptor variable is constructed as expected (format_as_uint32 == aux).
+     */
+    bool TestIntConstructor();
+
+    /**
+     * @brief Test FormatDescriptor constructor specifying the parameters.
+     * @return True if all the variables as set as expected.
+     */
+    bool TestConstructor();
+
+    /**
+     * @brief Test Assign operator();
+     * return True if the FormatDescriptor is assigned as expected.
+     */
+    bool TestAssignOperator();
+
+    /**
+     * @brief Test |= operator.
+     * return True if the BitWiseOperator set the parameters of the FormatDescriptor to what is expected.
+     */
+    bool TestBitWiseOrOperator();
 };
 
 /*---------------------------------------------------------------------------*/

@@ -47,10 +47,35 @@ TEST(FormatDescriptorGTest,TestInitialiseFromString) {
     ASSERT_TRUE(MyFormatDEscriptorTest.TestInitialiseFromString());
 }
 
-/*
+TEST(FormatDescriptorGTest,TestInitialiseFromString2) {
+    FormatDescriptorTest MyFormatDEscriptorTest;
+    ASSERT_TRUE(MyFormatDEscriptorTest.TestInitialiseFromString2());
+}
+
 TEST(FormatDescriptorGTest,TestDefaultConstructor) {
     FormatDescriptorTest MyFormatDEscriptorTest;
     ASSERT_TRUE(MyFormatDEscriptorTest.TestDefaultConstructor());
 }
-*/
+
+TEST(FormatDescriptorGTest,TestIntConstructor) {
+    FormatDescriptorTest MyFormatDEscriptorTest;
+    ASSERT_TRUE(MyFormatDEscriptorTest.TestIntConstructor());
+}
+
+TEST(FormatDescriptorGTest,TestConstructor) {
+    FormatDescriptorTest MyFormatDEscriptorTest;
+    ASSERT_TRUE(MyFormatDEscriptorTest.TestConstructor());
+}
+
+TEST(FormatDescriptorGTest,TestAssignOperator) {
+    FormatDescriptorTest MyFormatDEscriptorTest;
+    ASSERT_TRUE(MyFormatDEscriptorTest.TestAssignOperator());
+}
+
+TEST(FormatDescriptorGTest,TestBitWiseOrOperator) {
+    FormatDescriptorTest MyFormatDEscriptorTest;
+    ASSERT_TRUE(MyFormatDEscriptorTest.TestBitWiseOrOperator());
+}
+
+
 	
