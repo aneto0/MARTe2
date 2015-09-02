@@ -33,6 +33,7 @@
 #include "StringHelper.h"
 #include "Sleep.h"
 #include "Threads.h"
+#include "HighResolutionTimer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -45,6 +46,7 @@ const char8* ErrorManagementTest::expectedErrorFunction;
 const char8* ErrorManagementTest::expectedErrorName;
 bool ErrorManagementTest::fullContext = false;
 bool ErrorManagementTest::retVal = false;
+uint64 ErrorManagementTest::expectedHRTCounter=HighResolutionTimer::Counter();
 
 void DummyErrorFunction(const ErrorManagement::ErrorInformation& errorInfo,
                         const char * const description) {
@@ -139,6 +141,7 @@ bool ErrorManagementTest::TestReportError(ErrorManagement::ErrorType code,
     expectedErrorLine = errorLineNumber;
     expectedErrorFunction = errorFunctionName;
     expectedErrorName = errorName;
+    expectedHRTCounter=HighResolutionTimer::Counter();
 
     ErrorManagement::SetErrorProcessFunction(ReportTestFunction);
     ErrorManagement::ReportError(code, errorDescription, errorFileName, errorLineNumber, errorFunctionName);
@@ -161,6 +164,7 @@ bool ErrorManagementTest::TestReportErrorFullContext(ErrorManagement::ErrorType 
     expectedErrorLine = errorLineNumber;
     expectedErrorFunction = errorFunctionName;
     expectedErrorName = errorName;
+    expectedHRTCounter=HighResolutionTimer::Counter();
     nThreads = numThreads;
 
     ErrorManagement::SetErrorProcessFunction(ReportTestFunction);
@@ -204,6 +208,7 @@ bool ErrorManagementTest::TestReportErrorMacro(ErrorManagement::ErrorType code,
     expectedErrorFilename = __FILE__;
     expectedErrorFunction = __DECORATED_FUNCTION_NAME__;
     expectedErrorName = errorName;
+    expectedHRTCounter=HighResolutionTimer::Counter();
     ErrorManagement::SetErrorProcessFunction(ReportTestFunction);
 
     //put always the report error at the next line otherwise the test will fail!
@@ -223,6 +228,7 @@ bool ErrorManagementTest::TestReportErrorMacroFullContext(ErrorManagement::Error
     expectedErrorDescription = errorDescription;
     expectedErrorFilename = __FILE__;
     expectedErrorName = errorName;
+    expectedHRTCounter=HighResolutionTimer::Counter();
     ErrorManagement::SetErrorProcessFunction(ReportTestFunction);
     nThreads = numThreads;
 
@@ -298,6 +304,12 @@ void ErrorManagementTest::CheckParameters(const ErrorManagement::ErrorInformatio
         }
 
     }
+
+    if((errorInfo.hrtTime-expectedHRTCounter)<0){
+        retVal= false;
+        return;
+    }
+
     //Tests the errorName function.
     if (StringHelper::Compare(ErrorManagement::ToName(expectedErrorCode), expectedErrorName) != 0) {
         retVal = false;
