@@ -1,7 +1,7 @@
 /**
- * @file PWMP.c
- * @brief Source file for class PWMP
- * @date 17/08/2015
+ * @file CaptureInputP.cpp
+ * @brief Source file for class CaptureInputP
+ * @date 26/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class PWMP (public, protected, and private). Be aware that some 
+ * the class CaptureInputP (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,42 +28,21 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "CaptureInput.h"
 
-#include "PWM.h"
-#include "Clock.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-
 #define ENABLE_TIM_CLOCK(instance)           __HAL_RCC_TIM##instance##_CLK_ENABLE()
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-/* Timers-Pin table
- ******PP1  PP2  PP3  PP1  PP2  PP3  PP1  PP2  PP3  PP1  PP2  PP3
- TIM1  PA8  PE9       PA9  PE10      PA10 PE13      PA11 PE14
- TIM2  PA0  PA5  PA15 PA1  PB3       PA2  PB10      PA3  PB11
- TIM3  PA6  PB4  PC6  PA7  PB5  PC7  PB0  PC8       PB1  PC9
- TIM4  PB6  PD12      PB7  PD13      PB8  PD14      PB9  PD15
- TIM5  PA0  PH10      PA1  PH11      PA2  PH12      PA3  PI0
- TIM8  PC6  PI5       PC7  PI6       PC8  PI7       PC9  PI2
- TIM9  PA2  PE5       PA3  PE6
- TIM10 PB8  PF6
- TIM11 PB9  PF7
- TIM12 PB14 PH6       PB15 PH9
- TIM13 PA6  PF8
- TIM14 PA7  PF9
- */
 
-bool PWM::Init(uint8 instance,
-               uint16 frequency,
-               uint8 dutyCycle,
-               uint8 mode,
-               uint8 channelMask,
-               bool initialize) {
-
-    /* Configure the system clock to 168 MHz */
+bool CaptureInput::Init(uint8 instance,
+                        bool mode,
+                        uint8 channelMask,
+                        bool initialize) {
 
     TIM_TypeDef* TIMInstance[] = { TIM1, TIM2, TIM3, TIM4, TIM5, TIM6, TIM7, TIM8, TIM9, TIM10, TIM11, TIM12, TIM13, TIM14 };
 
@@ -122,52 +101,31 @@ bool PWM::Init(uint8 instance,
 
         }
 
-        // Note: The max period is 65535 (16 bit).
-        // So if you want a little PWM frequency choose also a bigger prescaler value.
-
-        /* Time base configuration */
-        // prescaler=(sysclock/2)/(tick_frequency)-1
-        //Cannot have a frequency > clock_frequency/10000
-        //choose a standard tick period
-        tickPeriod = 1999;
-
-        //tickFrequency=(tickPeriod+1)*frequency
-        prescalerValue = (uint16) (((Clock::GetClockFrequency()) / (2 * ((tickPeriod + 1) * frequency))) - 1);
-        // period=tick_frequency/pwm_frequency -1
-
-        /* Compute the prescaler value */
-
-        //choose the period accordingly with the desired PWM frequency
-        handle.Init.Period = tickPeriod;    //pwm frequency = 1!
-        handle.Init.Prescaler = prescalerValue;
+        handle.Init.Period = 0xFFFF;
+        handle.Init.Prescaler = 0;
         handle.Init.ClockDivision = 0;
         handle.Init.CounterMode = TIM_COUNTERMODE_UP;
-        if (HAL_TIM_PWM_Init(&handle) != HAL_OK) {
+        if (HAL_TIM_IC_Init(&handle) != HAL_OK) {
             return false;
         }
     }
-    uint16 pulse = (tickPeriod * dutyCycle) / 100;
 
-    /* TIM PWM1 Mode configuration: Channel */
-    /* Output Compare Timing Mode configuration: Channel1 */
+    TIM_IC_InitTypeDef config;
 
-    TIM_OC_InitTypeDef config;
-
-    //clear on compare match
-    if (mode == 1) {
-        config.OCMode = TIM_OCMODE_PWM1;
-        config.OCIdleState = TIM_CCx_ENABLE;
-        config.Pulse = pulse;
-        config.OCPolarity = TIM_OCPOLARITY_HIGH;
+    if (mode) {
+        // interrup on rising
+        config.ICPolarity = TIM_ICPOLARITY_RISING;
+        config.ICSelection = TIM_ICSELECTION_DIRECTTI;
     }
-    //set on compare match
-    if (mode == 2) {
-        config.OCMode = TIM_OCMODE_PWM2;
-        config.Pulse = pulse;
-        config.OCPolarity = TIM_OCPOLARITY_LOW;
+    else {
+
+        //interrupt on falling
+        config.ICPolarity = TIM_ICPOLARITY_FALLING;
+        config.ICSelection = TIM_ICSELECTION_INDIRECTTI;
     }
 
-    /* Output Compare PWM Mode configuration: Channel1 */
+    config.ICPrescaler = 0;
+    config.ICFilter = 0;
 
     configChannelMask = channelMask;
 
@@ -175,7 +133,7 @@ bool PWM::Init(uint8 instance,
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_1)) {
             return false;
         }
-        if (HAL_TIM_PWM_ConfigChannel(&handle, &config, TIM_CHANNEL_1) != HAL_OK) {
+        if (HAL_TIM_IC_ConfigChannel(&handle, &config, TIM_CHANNEL_1) != HAL_OK) {
             return false;
         }
     }
@@ -185,7 +143,7 @@ bool PWM::Init(uint8 instance,
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_2)) {
             return false;
         }
-        if (HAL_TIM_PWM_ConfigChannel(&handle, &config, TIM_CHANNEL_2) != HAL_OK) {
+        if (HAL_TIM_IC_ConfigChannel(&handle, &config, TIM_CHANNEL_2) != HAL_OK) {
             return false;
         }
     }
@@ -196,7 +154,7 @@ bool PWM::Init(uint8 instance,
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_3)) {
             return false;
         }
-        if (HAL_TIM_PWM_ConfigChannel(&handle, &config, TIM_CHANNEL_3) != HAL_OK) {
+        if (HAL_TIM_IC_ConfigChannel(&handle, &config, TIM_CHANNEL_3) != HAL_OK) {
             return false;
         }
     }
@@ -206,15 +164,15 @@ bool PWM::Init(uint8 instance,
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_4)) {
             return false;
         }
-        if (HAL_TIM_PWM_ConfigChannel(&handle, &config, TIM_CHANNEL_4) != HAL_OK) {
+        if (HAL_TIM_IC_ConfigChannel(&handle, &config, TIM_CHANNEL_4) != HAL_OK) {
             return false;
         }
     }
     return true;
+
 }
 
-bool PWM::Start(uint8 channelMask) {
-
+bool CaptureInput::Start(uint8 channelMask) {
 
     if ((channelMask & configChannelMask) != channelMask) {
         return false;
@@ -224,7 +182,7 @@ bool PWM::Start(uint8 channelMask) {
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_1)) {
             return false;
         }
-        HAL_TIM_PWM_Start(&handle, TIM_CHANNEL_1);
+        HAL_TIM_IC_Start_IT(&handle, TIM_CHANNEL_1);
     }
 
     /* Output Compare PWM Mode configuration: Channel2 */
@@ -232,7 +190,7 @@ bool PWM::Start(uint8 channelMask) {
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_2)) {
             return false;
         }
-        HAL_TIM_PWM_Start(&handle, TIM_CHANNEL_2);
+        HAL_TIM_IC_Start_IT(&handle, TIM_CHANNEL_2);
     }
 
     /* Output Compare PWM Mode configuration: Channel3 */
@@ -241,7 +199,7 @@ bool PWM::Start(uint8 channelMask) {
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_3)) {
             return false;
         }
-        HAL_TIM_PWM_Start(&handle, TIM_CHANNEL_3);
+        HAL_TIM_IC_Start_IT(&handle, TIM_CHANNEL_3);
     }
     /* Output Compare PWM1 Mode configuration: Channel4 */
     if ((channelMask & 0x8) == 0x8) {
@@ -249,13 +207,13 @@ bool PWM::Start(uint8 channelMask) {
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_4)) {
             return false;
         }
-        HAL_TIM_PWM_Start(&handle, TIM_CHANNEL_4);
+        HAL_TIM_IC_Start_IT(&handle, TIM_CHANNEL_4);
     }
 
     return true;
 }
 
-bool PWM::Stop(uint8 channelMask) {
+bool CaptureInput::Stop(uint8 channelMask) {
     if ((channelMask & configChannelMask) != channelMask) {
         return false;
     }
@@ -264,7 +222,7 @@ bool PWM::Stop(uint8 channelMask) {
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_1)) {
             return false;
         }
-        HAL_TIM_PWM_Stop(&handle, TIM_CHANNEL_1);
+        HAL_TIM_IC_Stop_IT(&handle, TIM_CHANNEL_1);
     }
 
     /* Output Compare PWM Mode configuration: Channel2 */
@@ -272,7 +230,7 @@ bool PWM::Stop(uint8 channelMask) {
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_2)) {
             return false;
         }
-        HAL_TIM_PWM_Stop(&handle, TIM_CHANNEL_2);
+        HAL_TIM_IC_Stop_IT(&handle, TIM_CHANNEL_2);
     }
 
     /* Output Compare PWM Mode configuration: Channel3 */
@@ -281,7 +239,7 @@ bool PWM::Stop(uint8 channelMask) {
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_3)) {
             return false;
         }
-        HAL_TIM_PWM_Stop(&handle, TIM_CHANNEL_3);
+        HAL_TIM_IC_Stop_IT(&handle, TIM_CHANNEL_3);
     }
     /* Output Compare PWM1 Mode configuration: Channel4 */
     if ((channelMask & 0x8) == 0x8) {
@@ -289,75 +247,17 @@ bool PWM::Stop(uint8 channelMask) {
         if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_4)) {
             return false;
         }
-        HAL_TIM_PWM_Stop(&handle, TIM_CHANNEL_4);
+        HAL_TIM_IC_Stop_IT(&handle, TIM_CHANNEL_4);
     }
 
     return true;
 }
 
-bool PWM::SetDutyCycle(uint8 dutyCycle,
-                       uint8 channelMask) {
-
-    if ((channelMask & configChannelMask) != channelMask) {
-        return false;
-    }
-
-    uint16 pulse = (tickPeriod * dutyCycle) / 100;
-    if ((channelMask & 0x1) == 0x1) {
-        if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_1)) {
-            return false;
-        }
-        //choose a compare set to a fraction of the period for the duty value
-        __HAL_TIM_SET_COMPARE(&handle, TIM_CHANNEL_1, pulse);
-    }
-
-    /* Output Compare PWM Mode configuration: Channel2 */
-    if ((channelMask & 0x2) == 0x2) {
-        if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_2)) {
-            return false;
-        }
-        //choose a compare set to a fraction of the period for the duty value
-        __HAL_TIM_SET_COMPARE(&handle, TIM_CHANNEL_2, pulse);
-    }
-
-    /* Output Compare PWM Mode configuration: Channel3 */
-    if ((channelMask & 0x4) == 0x4) {
-
-        if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_3)) {
-            return false;
-        }
-        //choose a compare set to a fraction of the period for the duty value
-        __HAL_TIM_SET_COMPARE(&handle, TIM_CHANNEL_3, pulse);
-    }
-    /* Output Compare PWM1 Mode configuration: Channel4 */
-    if ((channelMask & 0x8) == 0x8) {
-
-        if (!IS_TIM_CCX_INSTANCE(handle.Instance, TIM_CHANNEL_4)) {
-            return false;
-        }
-        //choose a compare set to a fraction of the period for the duty value
-        __HAL_TIM_SET_COMPARE(&handle, TIM_CHANNEL_4, pulse);
-    }
-
-    return true;
+void CaptureInput::DeInit() {
+    HAL_TIM_IC_DeInit(&handle);
 }
 
-void PWM::SetFrequency(uint16 frequency) {
-
-    uint16 tickFrequency = (Clock::GetClockFrequency()) / (2 * (prescalerValue + 1));
-
-    // period=tick_frequency/pwm_frequency -1
-    tickPeriod = (tickFrequency / frequency) - 1;
-
-    /*to set another period*/
-    __HAL_TIM_SET_AUTORELOAD(&handle, tickPeriod);
-
+CapInHandle *CaptureInput::GetHandlePtr() {
+    return &handle;
 }
-
-void PWM::DeInit() {
-    HAL_TIM_PWM_DeInit(&handle);
-}
-
-//to set a new value in the rim register at runtime.
-//__HAL_TIM_SET_COUNTER(&handle, (TIM_ARR - MaxAcceleration) / 2);
 

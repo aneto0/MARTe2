@@ -56,6 +56,8 @@ typedef TIM_HandleTypeDef PWMHandle;
 
 typedef TIM_HandleTypeDef TimerHandle;
 
+typedef TIM_HandleTypeDef CapInHandle;
+
 typedef GPIO_TypeDef* GPIOHandle;
 
 #endif /* DRIVERSDEFINITIONP_H_ */

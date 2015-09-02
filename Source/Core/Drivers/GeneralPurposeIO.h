@@ -38,26 +38,35 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+// Define your callback function, then use this macro in your code which
+// automatically wraps your function with the default callback.
+#define SET_EXTI_INTERRUPT_CALLBACK_FUNCTION(line, pinMask, function) \
+    extern "C"{ \
+        void EXTI##line##_IRQHandler() { \
+            if(__HAL_GPIO_EXTI_GET_IT(pinMask) != RESET) { \
+                __HAL_GPIO_EXTI_CLEAR_IT(pinMask); \
+                function(); \
+            } \
+        } \
+    }
+
 class GeneralPurposeIO {
 public:
     // initializes a group of pins of a specified port
     void Init(uint16 pinMask,
-              uint8 modeNumber,
-              uint32 pullMask,
-              uint32 speed,
-              uint8 alternateFunction,
-              uint8 portNumber);
-
+            uint8 modeNumber,
+            uint32 pullMask,
+            uint32 speed,
+            uint8 alternateFunction,
+            uint8 portNumber);
 
     void DeInit(uint16 pinMask);
-
 
     bool ReadPin(uint16 pinMask);
 
     void WritePin(uint16 pinMask, bool value);
 
     void TogglePin(uint16 pinMask);
-
 
 private:
     GPIOHandle handle;

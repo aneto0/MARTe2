@@ -62,6 +62,8 @@
 //#define  GPIO_NOPULL        ((uint32_t)0x00000000)   /*!< No Pull-up or Pull-down activation  */
 //#define  GPIO_PULLUP        ((uint32_t)0x00000001)   /*!< Pull-up activation                  */
 //#define  GPIO_PULLDOWN      ((uint32_t)0x00000002)   /*!< Pull-down activation
+
+//For mapping of alternate functions see STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h
 void GeneralPurposeIO::Init(uint16 pinMask,
                             uint8 modeNumber,
                             uint32 pullMask,

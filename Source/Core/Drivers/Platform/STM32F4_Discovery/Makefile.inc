@@ -36,7 +36,8 @@ OBJSX=ClockP.x \
 	GeneralPurposeIOP.x \
 	PWMP.x \
 	InterruptP.x \
-	TimerP.x
+	TimerP.x \
+	CaptureInputP.x
        
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

@@ -1,7 +1,7 @@
 /**
- * @file PWM.h
- * @brief Header file for class PWM
- * @date 17/08/2015
+ * @file CaptureInput.h
+ * @brief Header file for class CaptureInput
+ * @date 26/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class PWM
+ * @details This header file contains the declaration of the class CaptureInput
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef PWM_H_
-#define PWM_H_
+#ifndef CAPTUREINPUT_H_
+#define CAPTUREINPUT_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -37,39 +37,42 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class PWM {
+// Define your callback function, then use this macro in your code which
+// automatically wraps your function with the default callback.
+#define SET_CAPTURE_INPUT_CALLBACK_FUNCTION(n, channel, function, timHandlePtr) \
+    extern "C"{ \
+        void TIM##n##_IRQHandler(void) { \
+            __HAL_TIM_CLEAR_IT(timHandlePtr, TIM_IT_CC##channel); \
+            timHandlePtr->Channel = HAL_TIM_ACTIVE_CHANNEL_##channel; \
+            uint32 TIM_CCMRArr[]={0, 0x0003, 0x0300, 0x0003, 0x0300}; \
+            uint32 CCMRArr[]={0, timHandlePtr->Instance->CCMR1,timHandlePtr->Instance->CCMR1, timHandlePtr->Instance->CCMR2,timHandlePtr->Instance->CCMR2}; \
+            if((CCMRArr[channel] & TIM_CCMRArr[channel]) != 0x00) \
+               function(); \
+            timHandlePtr->Channel = HAL_TIM_ACTIVE_CHANNEL_CLEARED; \
+        } \
+     }
+
+class CaptureInput {
 public:
 
-    bool Init(uint8 instance,
-            uint16 frequency,
-            uint8 dutyCycle,
-            uint8 mode,
-            uint8 channelMask,
-            bool initialize=true);
+    bool Init(uint8 instance, bool mode, uint8 channelMask, bool initialize=true);
 
     bool Start(uint8 channelMask);
 
     bool Stop(uint8 channelMask);
 
-    void SetFrequency(uint16 frequency);
-
-    bool SetDutyCycle(uint8 dutyCycle, uint8 channelMask);
-
     void DeInit();
 
+    CapInHandle *GetHandlePtr();
+
 private:
-
-    PWMHandle handle;
-
-    uint16 tickPeriod;
-
+    CapInHandle handle;
     uint8 configChannelMask;
-
-    uint16 prescalerValue;
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* PWM_H_ */
+#endif /* CAPTUREINPUT_H_ */
 

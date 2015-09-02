@@ -206,7 +206,6 @@ bool Clock::SysClockUpdate() {
     return true;
 }
 
-
 uint32 Clock::GetClockFrequency() {
 
     return HAL_RCC_GetHCLKFreq();
