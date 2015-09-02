@@ -47,215 +47,222 @@ TEST(BitRangeGTest,TestCopyOperatorUnion) {
     ASSERT_TRUE(bitrange.TestCopyOperatorUnion());
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeUnsignedUnsigned16in32) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned16in32) {
     BitRangeTest<uint32> bitrange;
     uint16 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeUnsignedUnsigned16in32) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned16in32) {
     BitRangeTest<uint32> bitrange;
     uint16 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeSignedUnsigned16in32) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned16in32) {
     BitRangeTest<int32> bitrange;
     uint16 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeSignedUnsigned16in32) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedUnsigned16in32) {
     BitRangeTest<int32> bitrange;
     uint16 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeSignedSigned16in32) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned16in32) {
     BitRangeTest<int32> bitrange;
     int16 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeSignedSigned16in32) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedSigned16in32) {
     BitRangeTest<int32> bitrange;
     int16 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeUnSignedSigned16in32) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned16in32) {
     BitRangeTest<uint32> bitrange;
     int16 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeUnSignedSigned16in32) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned16in32) {
     BitRangeTest<uint32> bitrange;
     int16 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
-
-
 
 ///////////////////////////////////////////////
 
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeUnsignedUnsigned8in16) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned8in16) {
     BitRangeTest<uint16> bitrange;
     uint8 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeUnsignedUnsigned8in16) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned8in16) {
     BitRangeTest<uint16> bitrange;
     uint8 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeSignedUnsigned8in16) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned8in16) {
     BitRangeTest<int16> bitrange;
     uint8 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeSignedUnsigned8in16) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedUnsigned8in16) {
     BitRangeTest<int16> bitrange;
     uint8 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeSignedSigned8in16) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned8in16) {
     BitRangeTest<int16> bitrange;
     int8 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeSignedSigned8in16) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedSigned8in16) {
     BitRangeTest<int16> bitrange;
     int8 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeUnSignedSigned8in16) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned8in16) {
     BitRangeTest<uint16> bitrange;
     int8 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeUnSignedSigned8in16) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned8in16) {
     BitRangeTest<uint16> bitrange;
     int8 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
 //////////////////////////////////////////////////////
 
-
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeUnsignedUnsigned32in64) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned32in64) {
     BitRangeTest<uint64> bitrange;
     uint32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeUnsignedUnsigned32in64) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnsignedUnsigned32in64) {
     BitRangeTest<uint64> bitrange;
     uint32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeSignedUnsigned32in64) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned32in64) {
     BitRangeTest<int64> bitrange;
     uint32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeSignedUnsigned32in64) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedUnsigned32in64) {
     BitRangeTest<int64> bitrange;
     uint32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeSignedSigned32in64) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned32in64) {
     BitRangeTest<int64> bitrange;
     int32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeSignedSigned32in64) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeSignedSigned32in64) {
     BitRangeTest<int64> bitrange;
     int32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeUnSignedSigned32in64) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned32in64) {
     BitRangeTest<uint64> bitrange;
     int32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeUnSignedSigned32in64) {
+TEST(BitRangeGTest,TestBasicTypeCastMajorSizeUnSignedSigned32in64) {
     BitRangeTest<uint64> bitrange;
     int32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMajorSize(input));
 }
-
-
-
 
 /////////////////////////////////
 
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeUnsignedUnsignedSameSize32) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsignedSameSize32) {
     BitRangeTest<uint32> bitrange;
     uint32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeUnsignedUnsignedSameSize32) {
-    BitRangeTest<uint32> bitrange;
-    uint32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
-}
-
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeSignedUnsignedSameSize32) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsignedSameSize32) {
     BitRangeTest<int32> bitrange;
     uint32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeSignedUnsignedSameSize32) {
-    BitRangeTest<int32> bitrange;
-    uint32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
-}
-
-
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeSignedSignedSameSize32) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedSignedSameSize32) {
     BitRangeTest<int32> bitrange;
     int32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeSignedSignedSameSize32) {
-    BitRangeTest<int32> bitrange;
-    int32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
-}
-
-
-TEST(BitRangeGTest,TestCopyOperatorMinorSizeUnSignedSignedSameSize32) {
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSignedSameSize32) {
     BitRangeTest<uint32> bitrange;
     int32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMinorSize(input));
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
 }
 
-TEST(BitRangeGTest,TestCopyOperatorMajorSizeUnSignedSignedSameSize32) {
+///////////////////////////////////
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned64in32) {
     BitRangeTest<uint32> bitrange;
-    int32 input = 0;
-    ASSERT_TRUE(bitrange.TestCopyOperatorMajorSize(input));
+    uint64 input = 0;
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
+}
+
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedUnsigned64in32) {
+    BitRangeTest<int32> bitrange;
+    uint64 input = 0;
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
+}
+
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeSignedSigned64in32) {
+    BitRangeTest<int32> bitrange;
+    int64 input = 0;
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
+}
+
+TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned64in32) {
+    BitRangeTest<uint32> bitrange;
+    int64 input = 0;
+    ASSERT_TRUE(bitrange.TestBasicTypeCastMinorSize(input));
+}
+
+/////////////////////////////
+
+
+TEST(BitRangeGTest,TestAnyTypeCast) {
+    BitRangeTest<uint32> bitrange;
+    ASSERT_TRUE(bitrange.TestAnyTypeCast());
 }
 
 
 
+TEST(BitRangeGTest,TestBitSize) {
+    BitRangeTest<uint32> bitrange;
+    ASSERT_TRUE(bitrange.TestBitSize());
+}
+
+
+TEST(BitRangeGTest,TestBitOffset) {
+    BitRangeTest<uint32> bitrange;
+    ASSERT_TRUE(bitrange.TestBitOffset());
+}

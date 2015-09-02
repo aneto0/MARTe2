@@ -32,8 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-#include "TypeDescriptor.h"
-#include "AnyType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -60,12 +58,7 @@ public:
      * @return the boolean value.
      */
     inline operator bool() const;
-    /**
-     * @brief Cast to AnyType.
-     * @details Thanks to this operator this object can be treated as an AnyType object.
-     * @return the AnyType associated to this object.
-     */
-    inline operator AnyType() const;
+
 
     /**
      * @brief Returns the bit size.
@@ -121,11 +114,6 @@ BitBoolean<baseType, bitOffset>::operator bool() const {
     return ((value & mask) != 0);
 }
 
-template<typename baseType, uint8 bitOffset>
-BitBoolean<baseType, bitOffset>::operator AnyType() const {
-    const TypeDescriptor td = { false, false, { { UnsignedInteger, 1 } } };
-    return AnyType(td, bitOffset, this);
-}
 
 template<typename baseType, uint8 bitOffset>
 baseType BitBoolean<baseType, bitOffset>::BitSize() {

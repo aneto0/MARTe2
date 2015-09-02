@@ -32,10 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-#include "TypeDescriptor.h"
-#include "AnyType.h"
 #include "TypeCharacteristics.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -65,12 +62,7 @@ public:
      * @return the number value.
      */
     inline operator baseType() const;
-    /**
-     * @brief Cast to AnyType.
-     * @details Thanks to this operator this object can be treated as an AnyType object.
-     * @return the AnyType associated to this object.
-     */
-    inline operator AnyType() const;
+
 
     /**
      * @brief Returns the bit size.
@@ -102,14 +94,14 @@ private:
     /**
      * The minimum possible value.
      */
-    static const baseType minValue = (isSigned ? (static_cast<baseType>(-1) << (bitSize - static_cast<baseType>(1))) : static_cast<baseType>(0));
+    static const baseType minValue = (isSigned ? (static_cast<baseType>(-1) << (bitSize - 1)) : static_cast<baseType>(0));
 
     /**
      * The maximum possible value.
      */
     static const baseType maxValue = (
             isSigned ?
-                    ((static_cast<baseType>(1) << (bitSize - static_cast<baseType>(1))) - static_cast<baseType>(1)) :
+                    ((static_cast<baseType>(1) << (bitSize - 1)) - static_cast<baseType>(1)) :
                     (static_cast<baseType>(-1) >> ((sizeof(baseType) * 8) - bitSize)));
 
     /**
@@ -133,6 +125,7 @@ void BitRange<baseType, bitSize, bitOffset>::operator=(inputType input) {
 
     baseType temporaryValue = 0;
     const bool isInputSigned = TypeCharacteristics<inputType>::IsSigned();
+    const uint8 inputBitSize = static_cast<uint8>(sizeof(inputType) * 8);
 
     if ((!isInputSigned) && (isSigned)) {
         // in this case checks only who is the greater (input is always >0)
@@ -160,16 +153,35 @@ void BitRange<baseType, bitSize, bitOffset>::operator=(inputType input) {
         }
     }
     else {
-        // the types are both signed or unsigned
-        if (static_cast<baseType>(input) > maxValue) {
-            temporaryValue = maxValue;
-        }
 
-        else if (static_cast<baseType>(input) < minValue) {
-            temporaryValue = minValue;
+        // choose the correct cast otherwise a positive number
+        // could become negative because clipped by the cast
+        if (inputBitSize <= baseTypeBitSize) {
+            // the types are both signed or unsigned
+            if (static_cast<baseType>(input) > maxValue) {
+                temporaryValue = maxValue;
+            }
+
+            else if (static_cast<baseType>(input) < minValue) {
+                temporaryValue = minValue;
+            }
+            else {
+                temporaryValue = static_cast<baseType>(input);
+            }
         }
         else {
-            temporaryValue = static_cast<baseType>(input);
+            // the types are both signed or unsigned
+            if (input > static_cast<inputType>(maxValue)) {
+                temporaryValue = maxValue;
+            }
+
+            else if (input < static_cast<inputType>(minValue)) {
+                temporaryValue = minValue;
+            }
+            else {
+                temporaryValue = static_cast<baseType>(input);
+            }
+
         }
     }
 
@@ -202,15 +214,7 @@ BitRange<baseType, bitSize, bitOffset>::operator baseType() const {
     return temporaryValue;
 }
 
-template<typename baseType, uint8 bitSize, uint8 bitOffset>
-BitRange<baseType, bitSize, bitOffset>::operator AnyType() const {
-    BasicType bt = UnsignedInteger;
-    if (TypeCharacteristics<baseType>::IsSigned()) {
-        bt = SignedInteger;
-    }
-    const TypeDescriptor td = { false, false, { { bt, bitSize } } };
-    return AnyType(td, bitOffset, this);
-}
+
 
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
 baseType BitRange<baseType, bitSize, bitOffset>::BitSize() {
@@ -223,17 +227,6 @@ baseType BitRange<baseType, bitSize, bitOffset>::BitOffset() {
 
 }
 
-/*
- typedef union {
- TypeDefinition::BitRange<uint32, 4, 0> a;
- TypeDefinition::BitRange<uint32, 4, 4> b;
- TypeDefinition::BitRange<uint32, 10, 8> c;
- TypeDefinition::BitRange<uint32, 14, 18> d;
-
- } myBitStruct;
-
- const myBitStruct *p;
- */
 
 #endif /* L0TYPEDEV_BITRANGE_H_ */
 

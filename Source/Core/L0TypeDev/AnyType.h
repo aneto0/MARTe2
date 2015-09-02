@@ -34,6 +34,9 @@
 
 #include "GeneralDefinitions.h"
 #include "TypeDescriptor.h"
+#include "BitBoolean.h"
+#include "FractionalInteger.h"
+#include "BitRange.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -236,6 +239,20 @@ public:
      * @param[in] i is the C string.
      */
     inline AnyType(const char8 * const p);
+
+    template<typename baseType, uint8 bitOffset>
+    AnyType(BitBoolean<baseType, bitOffset> &bitBool);
+
+
+    template<typename baseType, uint8 bitSize, uint8 bitOffset>
+    AnyType(BitRange<baseType, bitSize, bitOffset> &bitRange);
+
+
+    template<typename baseType, uint8 bitSize>
+    AnyType(FractionalInteger<baseType, bitSize> &fractionalInt);
+
+    template<typename baseType, uint8 bitSize>
+    AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt);
 
     /**
      * @brief Returns the data pointer.
@@ -474,6 +491,46 @@ AnyType::AnyType(const char8 * const p) {
     dataPointer = static_cast<void *>(const_cast<char8 *>(p)); // we will either print the variable or the string
     bitAddress = 0u;
     dataDescriptor = ConstCString;
+}
+
+///////////////////////////////
+
+
+template<typename baseType, uint8 bitOffset>
+AnyType::AnyType(BitBoolean<baseType, bitOffset> &bitBool) {
+    dataDescriptor = {false, false, { {UnsignedInteger, 1}}};
+    bitAddress=bitBool.BitOffset();
+    dataPointer=static_cast<void *>(&bitBool);
+}
+
+
+
+template<typename baseType, uint8 bitSize, uint8 bitOffset>
+AnyType::AnyType(BitRange<baseType, bitSize, bitOffset> &bitRange) {
+    TypeDefinition::BasicType type = (TypeCharacteristics<baseType>::IsSigned()) ? SignedInteger : UnsignedInteger;
+    dataDescriptor = {false, false, { {type, bitRange.BitSize()}}};
+    bitAddress = bitRange.BitOffset();
+    dataPointer = static_cast<void *>(&bitRange);
+}
+
+
+
+template<typename baseType, uint8 bitSize>
+AnyType::AnyType(FractionalInteger<baseType, bitSize> &fractionalInt) {
+    TypeDefinition::BasicType type = (TypeCharacteristics<baseType>::IsSigned()) ? SignedInteger : UnsignedInteger;
+
+    dataDescriptor = {false, false, { {type, fractionalInt.BitSize()}}};
+    bitAddress = 0;
+    dataPointer = static_cast<void *>(&fractionalInt);
+}
+
+template<typename baseType, uint8 bitSize>
+AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
+    TypeDefinition::BasicType type = (TypeCharacteristics<baseType>::IsSigned()) ? SignedInteger : UnsignedInteger;
+
+    dataDescriptor = {false, true, { {type, fractionalInt.BitSize()}}};
+    bitAddress = 0;
+    dataPointer = (void*)(&fractionalInt);
 }
 
 ///////////////////////

@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "BitBoolean.h"
 #include "FractionalInteger.h"
-#include "stdio.h"
+#include "AnyType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -112,7 +112,6 @@ bool BitBooleanTest<T>::TestBoolCast() {
 
     myHalfShiftedBool = true;
     if (!myHalfShiftedBool) {
-        printf("\n%d %d\n", 1 << half, myHalfShiftedBool);
         return false;
     }
 
@@ -126,7 +125,6 @@ bool BitBooleanTest<T>::TestBoolCast() {
 
     myMaxShiftedBool = true;
     if (!myMaxShiftedBool) {
-        printf("\n%d %d\n", 1 << max, myMaxShiftedBool);
         return false;
     }
 
@@ -157,9 +155,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
     }
 
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
-    if (tdTest.isConstant) {
-        printf("\nErrore const!!\n");
-    }
+
 
     if (tdTest.isStructuredData || tdTest.isConstant || tdTest.typeInfo.type != TypeDefinition::UnsignedInteger || tdTest.typeInfo.size != 1) {
         return false;
