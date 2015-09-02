@@ -26,7 +26,8 @@
 
 OBJSX=  BitBooleanTest.x \
 		BitRangeTest.x \
-		FractionalIntegerTest.x
+		FractionalIntegerTest.x \
+		AnyTypeTest.x
 		
 PACKAGE=Core
 ROOT_DIR=../../..

@@ -170,7 +170,7 @@ static const TypeDescriptor VoidPointer = { false, false, { { Pointer, sizeof(vo
 /** CCString descriptor */
 /*lint -e{9119} Implicit conversion of integer to a smaller type justified for number which require less than 14 bits.*/
 /*lint -e{708} Union initialization justified since the standard initializes the first member.*/
-static const TypeDescriptor ConstCString = { true, false, { { CCString, 0u } } };
+static const TypeDescriptor ConstCString = { false, true, { { CCString, sizeof(const char *) *8u } } };
 
 }
 

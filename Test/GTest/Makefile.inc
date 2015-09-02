@@ -56,7 +56,8 @@ OBJSX=  StandardHeap_GenericGTest.x \
     	ErrorManagementGTest.x \
     	BitBooleanGTest.x \
     	BitRangeGTest.x \
-    	FractionalIntegerGTest.x
+    	FractionalIntegerGTest.x \
+    	AnyTypeGTest.x
 
 PACKAGE=
 ROOT_DIR=../..

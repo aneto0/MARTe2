@@ -35,7 +35,7 @@
 #include "BitRange.h"
 #include "BitBoolean.h"
 #include "FractionalInteger.h"
-
+#include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
