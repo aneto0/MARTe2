@@ -32,11 +32,11 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace HeapManager{
+namespace HeapManager {
+
 /**
  * @brief Implementation of standard heap memory management functions.
  * @details These functions allows to allocate, reallocate and free portion of
@@ -53,6 +53,7 @@ class StandardHeap: public HeapI {
      * @brief The greater address returned by a Malloc function
      */
     uintp lastAddress;
+
 public:
 
     /**
@@ -64,7 +65,6 @@ public:
      * @brief Destructor.
      */
     virtual ~StandardHeap();
-
 
     /**
      * @brief Allocates a portion of memory on the heap.
@@ -89,7 +89,8 @@ public:
      * @param[in] newSize The size of the new memory block.
      * @return The pointer to the new data block. NULL if reallocation failed.
      */
-    virtual void *Realloc(void *&data,const uint32 newSize);
+    virtual void *Realloc(void *&data,
+                          const uint32 newSize);
 
     /**
      * @brief Duplicates a memory section into a new area from the specified heap.
@@ -98,27 +99,28 @@ public:
      * @return The pointer to the new allocated memory which contains a copy of s.
      */
     /*lint -e(1735) the derived classes shall use this default parameter or no default parameter at all*/
-    virtual void *Duplicate(const void * const data, uint32 size=0U);
+    virtual void *Duplicate(const void * const data,
+                            uint32 size = 0U);
 
     /**
      * @brief Returns the start of range of memory addresses served by this heap.
      * @return The start of range of memory addresses served by this heap.
      */
-    virtual uintp FirstAddress()const;
+    virtual uintp FirstAddress() const;
 
     /**
      * @brief Returns the end (inclusive) of range of memory addresses served by this heap.
      * @return The end (inclusive) of range of memory addresses served by this heap.
      */
-    virtual uintp LastAddress()const;
+    virtual uintp LastAddress() const;
 
     /**
      * @brief Returns the name of the heap
      * @return The name of the heap
      */
-    virtual const char8 *Name()const;
+    virtual const char8 *Name() const;
 
-} ;
+};
 
 }
 #endif /*STANDARDHEAP_GENERIC_H_ */

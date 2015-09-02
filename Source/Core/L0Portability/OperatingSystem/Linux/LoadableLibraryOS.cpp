@@ -67,7 +67,7 @@ bool LoadableLibrary::Open(char8 const * const dllName) {
      * in operating system api*/
     m = dlopen(dllName, RTLD_NOW | RTLD_GLOBAL);
     if (m == NULL) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: dlopen() L0")
+        REPORT_ERROR(ErrorManagement::OSError, "Error: dlopen()");
         ret = false;
     }
     SetModule(m);
@@ -83,11 +83,11 @@ void *LoadableLibrary::Function(char8 const * const name) {
             ret = dlsym(m, name);
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: GetModule() L0")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: GetModule()");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments L0")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
 
     }
 

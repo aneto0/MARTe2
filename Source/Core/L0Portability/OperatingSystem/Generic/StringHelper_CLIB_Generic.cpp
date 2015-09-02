@@ -53,7 +53,7 @@ bool Concatenate(char8 *destination,
         strcat(destination, source);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -67,7 +67,7 @@ bool ConcatenateN(char8 *destination,
         strncat(destination, source, static_cast<osulong>(size));
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -79,7 +79,7 @@ const char8 *SearchChar(const char8 *string,
         ret = strchr(string, c);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -100,7 +100,7 @@ int32 Compare(const char8 *string1,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -122,7 +122,7 @@ int32 CompareN(const char8 *string1,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -135,7 +135,7 @@ bool Copy(char8 *destination,
         strcpy(destination, source);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -149,7 +149,7 @@ bool CopyN(char8 *destination,
         strncpy(destination, source, static_cast<osulong>(size));
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -161,7 +161,7 @@ int32 SearchIndex(const char8 *string1,
         ret = static_cast<int32>(strcspn(string1, string2));
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -172,7 +172,7 @@ uint32 Length(const char8 *string) {
         ret = static_cast<uint32>(strlen(string));
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -184,7 +184,7 @@ const char8 *SearchChars(const char8 *string1,
         ret = strpbrk(string1, string2);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -196,7 +196,7 @@ const char8 *SearchLastChar(const char8 *string,
         ret = strrchr(string, c);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -208,7 +208,7 @@ const char8 *SearchString(const char8 *string,
         ret = strstr(string, substring);
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }
@@ -224,7 +224,7 @@ bool SetChar(char8 * const string,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments")
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
 }

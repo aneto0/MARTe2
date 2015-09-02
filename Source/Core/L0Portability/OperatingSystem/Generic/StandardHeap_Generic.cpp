@@ -42,27 +42,18 @@
 /*---------------------------------------------------------------------------*/
 
 namespace HeapManager {
-/**
- * @brief constructor
- */
-StandardHeap::StandardHeap() {
 
-    /** initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
+StandardHeap::StandardHeap() {
+    /* initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
     firstAddress = 0U;
     lastAddress = 0U;
 }
-/**
- * @brief destructor
- */
+
 StandardHeap::~StandardHeap() {
     lastAddress = 0U;
     firstAddress = 0U;
 }
 
-/**
- * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
- * @return a pointer to the allocated memory or NULL if the allocation fails.
- */
 /*lint -e{586} use of malloc function (deprecated) */
 void *StandardHeap::Malloc(const uint32 size) {
     //void *pointer = malloc(size);
@@ -90,16 +81,12 @@ void *StandardHeap::Malloc(const uint32 size) {
 
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()")
+        REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()");
     }
     return pointer;
 
 }
 
-/**
- * @brief free the pointer data and its associated memory.
- * @param data the data to be freed.
- */
 /*lint -e{586} use of free function (deprecated) */
 void StandardHeap::Free(void *&data) {
     if (data != NULL) {
@@ -137,7 +124,7 @@ void *StandardHeap::Realloc(void *&data,
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: realloc()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: realloc()");
             }
         }
     }
@@ -151,15 +138,17 @@ void *StandardHeap::Duplicate(const void * const data,
 
     void *duplicate = NULL_PTR(void *);
 
-    // check if 0 zerminated copy to be done
+    // check if 0 terminated copy to be done
     if (size == 0U) {
         const char8* inputData = static_cast<const char8 *>(data);
+        /*lint -e{586} the use of strlen is necessary because
+         * the size of the array is unknown */
         size = static_cast<uint32>(strlen(inputData));
         if (data != NULL) {
             duplicate = strdup(inputData);
         }
         if (duplicate == NULL) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: strdup()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: strdup()");
         }
     }
     else { // strdup style
@@ -175,7 +164,7 @@ void *StandardHeap::Duplicate(const void * const data,
             } //copy loop
         } //check Malloc success
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()");
         }
     } // copy bound by size
 
@@ -196,26 +185,14 @@ void *StandardHeap::Duplicate(const void * const data,
     return duplicate;
 }
 
-/**
- * @brief start of range of memory addresses served by this heap.
- * @return first memory address
- */
 uintp StandardHeap::FirstAddress() const {
     return firstAddress;
 }
 
-/**
- * @brief end (inclusive) of range of memory addresses served by this heap.
- * @return last memory address
- */
 uintp StandardHeap::LastAddress() const {
     return lastAddress;
 }
 
-/**
- * @brief Returns the name of the heap
- * @return name of the heap
- */
 const char8 *StandardHeap::Name() const {
     return "StandardHeap";
 }

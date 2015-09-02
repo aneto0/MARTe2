@@ -57,7 +57,7 @@ const
     ErrorType error;
 } errorNames[] = {
         {"NoError",               NoError  },
-        {"Debug Information",     Debug},
+        {"Debug",                 Debug},
         {"Information",           Information },
         {"Warning",               Warning },
         {"FatalError",            FatalError },
@@ -72,7 +72,7 @@ const
         {"Timeout",               Timeout},
         {"CommunicationError",    CommunicationError},
         {"SyntaxError",           SyntaxError},
-        {"UnsupportedError",      UnsupportedFeature},
+        {"UnsupportedFeature",      UnsupportedFeature},
         {static_cast<const char8 *>(NULL),  SyntaxError},
 };
 
@@ -140,7 +140,7 @@ void SetErrorProcessFunction(const ErrorProcessFunctionType userFun) {
         errorMessageProcessFunction = userFun;
     }
     else{
-        errorMessageProcessFunction = userFun;
+        errorMessageProcessFunction = &NullErrorProcessFunction;
     }
 }
 

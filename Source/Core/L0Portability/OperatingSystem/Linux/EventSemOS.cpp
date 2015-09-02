@@ -143,15 +143,15 @@ bool EventSem::Create() {
         if (ok) {
             ok = (pthread_cond_init(&handle->eventVariable, static_cast<const pthread_condattr_t *>(NULL)) == 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_cond_init()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_cond_init()");
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_init()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_init()");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_init()")
+        REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_init()");
     }
     handle->referencesMux = 0;
     return ok;
@@ -170,16 +170,16 @@ bool EventSem::Close() {
         if (ok) {
             ok = (pthread_mutex_destroy(&handle->mutexHandle) == 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_destroy()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_destroy()");
             }
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_destroy()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutexattr_destroy()");
         }
         if (ok) {
             ok = (pthread_cond_destroy(&handle->eventVariable) == 0);
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_cond_destroy()")
+                REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_cond_destroy()");
             }
         }
     }
@@ -194,7 +194,7 @@ ErrorManagement::ErrorType EventSem::Wait() {
     if (!handle->closed) {
         bool okLock = (pthread_mutex_lock(&handle->mutexHandle) == 0);
         if (!okLock) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_lock()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_lock()");
         }
 
         bool okWait = true;
@@ -202,12 +202,12 @@ ErrorManagement::ErrorType EventSem::Wait() {
             okWait = (pthread_cond_wait(&handle->eventVariable, &handle->mutexHandle) == 0);
         }
         if (!okWait) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_cond_wait()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_cond_wait()");
         }
 
         bool okUnLock = (pthread_mutex_unlock(&handle->mutexHandle) == 0);
         if (!okUnLock) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_unlock()")
+            REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_mutex_unlock()");
         }
         ok = (okLock && okWait && okUnLock);
         if (!ok) {
@@ -216,7 +216,7 @@ ErrorManagement::ErrorType EventSem::Wait() {
     }
     else {
         err = ErrorManagement::FatalError;
-        REPORT_ERROR(err, "Error: the semaphore handle is closed")
+        REPORT_ERROR(err, "Error: the semaphore handle is closed");
     }
 
     return err;
@@ -253,7 +253,7 @@ ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
                         ok = (pthread_cond_timedwait(&handle->eventVariable, &handle->mutexHandle, &timesValues) == 0);
                         if (!ok) {
                             err = ErrorManagement::Timeout;
-                            REPORT_ERROR(err, "Information: timeout occurred")
+                            REPORT_ERROR(err, "Information: timeout occurred");
                         }
                     }
                 }
@@ -262,17 +262,17 @@ ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
                 bool okOs = (pthread_mutex_unlock(&handle->mutexHandle) == 0);
                 if (!okOs) {
                     err = ErrorManagement::OSError;
-                    REPORT_ERROR(err, "Error: pthread_mutex_unlock()")
+                    REPORT_ERROR(err, "Error: pthread_mutex_unlock()");
                 }
             }
             else {
                 err = ErrorManagement::OSError;
-                REPORT_ERROR(err, "Error: ftime()")
+                REPORT_ERROR(err, "Error: ftime()");
             }
         }
         else {
             err = ErrorManagement::FatalError;
-            REPORT_ERROR(err, "Error: the semaphore handle is closed")
+            REPORT_ERROR(err, "Error: the semaphore handle is closed");
         }
     }
     return err;
