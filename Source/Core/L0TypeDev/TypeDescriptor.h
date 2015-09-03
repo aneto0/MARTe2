@@ -92,9 +92,7 @@ public:
      * @brief Constructor by 16 bit integer.
      * @param[in] x contains the type informations which must be stored into this memory area.
      */
-    TypeDescriptor(const uint16 x = 0u) {
-        all = x;
-    }
+    inline TypeDescriptor(const uint16 x = 0u);
 
     /**
      * @brief Basic Type constructor.
@@ -102,27 +100,17 @@ public:
      * @param[in] typeIn is the type.
      * @param[in] sizeIn is the size.
      */
-    TypeDescriptor(const bool isConstantIn,
-                   const uint16 typeIn,
-                   const uint16 sizeIn) {
-        isStructuredData = false;
-        isConstant = isConstantIn;
-        type = typeIn;
-        size = sizeIn;
-    }
+    inline TypeDescriptor(const bool isConstantIn,
+                          const uint16 typeIn,
+                          const uint16 sizeIn);
 
     /**
      * @brief Structured objects constructor.
      * @param[in] isConstantIn in specifies if the object is constant.
      * @param[in] structuredDataIdCodeIn is the 14 bit code associated to the object type.
      */
-    TypeDescriptor(const bool isConstantIn,
-                   const uint16 structuredDataIdCodeIn) {
-
-        isStructuredData = true;
-        isConstant = isConstantIn;
-        structuredDataIdCode = structuredDataIdCodeIn;
-    }
+    inline TypeDescriptor(const bool isConstantIn,
+                          const uint16 structuredDataIdCodeIn);
 
     /**
      * @brief Equal operator used to compare types.
@@ -130,11 +118,37 @@ public:
      * @return In case of native types returns true if type and size fields are equal.
      * If the type is an object compares the structuredDataIdCode.
      */
-    bool operator==(const TypeDescriptor &typeDescriptor) const {
-        return (structuredDataIdCode == typeDescriptor.structuredDataIdCode);
-    }
+    inline bool operator==(const TypeDescriptor &typeDescriptor) const;
 
 };
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+TypeDescriptor::TypeDescriptor(const bool isConstantIn,
+        const uint16 typeIn,
+        const uint16 sizeIn) {
+    isStructuredData = false;
+    isConstant = isConstantIn;
+    type = typeIn;
+    size = sizeIn;
+}
+
+TypeDescriptor::TypeDescriptor(const bool isConstantIn,
+        const uint16 structuredDataIdCodeIn) {
+
+    isStructuredData = true;
+    isConstant = isConstantIn;
+    structuredDataIdCode = structuredDataIdCodeIn;
+}
+
+bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
+    return (structuredDataIdCode == typeDescriptor.structuredDataIdCode);
+}
+
+
+
 
 /** Float descriptor. */
 static const TypeDescriptor Float32Bit(false, Float, 32u);
@@ -173,10 +187,6 @@ static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
 static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 
 }
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
 
 #endif /* TYPEDESCRIPTOR_H_ */
 
