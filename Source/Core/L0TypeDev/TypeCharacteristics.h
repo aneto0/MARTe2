@@ -57,7 +57,7 @@ bool IsSigned() {
 template<typename T>
 const T MaxValue() {
     /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
-    const T maxValue = (IsSigned<T>()) ? static_cast<T>((static_cast<T>(1) << (sizeof(T) * 8u - 1u)) - static_cast<T>(1)) : static_cast<T>(~static_cast<T>(0));
+    const T maxValue = (IsSigned<T>()) ? static_cast<T>((static_cast<T>(1) << (sizeof(T) * 8u - 1u)) - static_cast<T>(1)) : static_cast<T>(-1);
     return maxValue;
 }
 
