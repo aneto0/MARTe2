@@ -31,7 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -41,7 +43,7 @@ namespace TypeDefinition {
 /**
  *  @brief Boolean shifted type.
  *  @details This type could be used in an union obtaining the same effect of a one bit boolean in a structure.
- *  @warning \a bitOffset must be minor than the bit size of \a baseType.
+ *  @warning bitOffset must be minor than the bit size of baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is bool because this type must be used as a boolean type.*/
 template<typename baseType, uint8 bitOffset>
@@ -74,6 +76,7 @@ public:
     static inline baseType BitOffset();
 
 private:
+
     /**
      * The number value.
      */
@@ -127,6 +130,6 @@ baseType BitBoolean<baseType, bitOffset>::BitOffset() {
     return bitOffset;
 }
 
-} // end TypeDefinition namespace
-#endif /* BITBOOLEAN_H_ */
+}
 
+#endif /* BITBOOLEAN_H_ */
