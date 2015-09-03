@@ -29,53 +29,25 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-
+#include "FractionalInteger.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace TypeDefinition {
 
-
 /**
- * guarantees that only 4 bits are used
- * cannot use BitFields as they need TypeDescriptor
+ * Definition of BasicType as a 4 bit integer.
  */
-class BasicType{
-
-    uint8 value;
-
-public:
-
-    /**
-     *
-     */
-    template <typename T> BasicType(T x){
-        if (x > static_cast<T>(15)) {
-            value = 15;
-        } else {
-            if (x < static_cast<T>(0)){
-                value = 0;
-            } else {
-                value = x;
-            }
-        }
-    }
-
-    operator uint8() const {
-        return value ;
-    }
-};
-
-
+typedef uint4 BasicType;
 
 /**
- * The type is signed.
+ * The type is a signed integer.
  */
 const BasicType SignedInteger = 0u;
 
 /**
- * The type is unsigned.
+ * The type is an unsigned integer.
  */
 const BasicType UnsignedInteger = 1u;
 
@@ -118,12 +90,6 @@ const BasicType StreamString = 11u;
 const BasicType StreamInterface = 12u;
 
 }
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
-/*---------------------------------------------------------------------------*/
-
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

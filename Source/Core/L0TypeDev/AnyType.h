@@ -77,9 +77,9 @@ public:
 
     /**
      * @brief Most General constructor for a constant type.
-     * @param[in] dataDescriptor contains the type informations.
-     * @param[in] bitAddress specifies the bit-shift respect to \a dataPointer.
-     * @param[in] dataPointer is the pointer to a generic constant type which must be stored.
+     * @param[in] dataDescriptorIn contains the type informations.
+     * @param[in] bitAddressIn specifies the bit-shift respect to \a dataPointer.
+     * @param[in] dataPointerIn is the pointer to a generic constant type which must be stored.
      */
     inline AnyType(const TypeDescriptor &dataDescriptorIn,
                    const uint8 bitAddressIn,
@@ -87,9 +87,9 @@ public:
 
     /**
      * @brief Most General constructor for a non-constant type.
-     * @param[in] dataDescriptor contains the type informations.
-     * @param[in] bitAddress specifies the bit-shift respect to \a dataPointer.
-     * @param[in] dataPointer is the pointer to a generic type which must be stored.
+     * @param[in] dataDescriptorIn contains the type informations.
+     * @param[in] bitAddressIn specifies the bit-shift respect to \a dataPointer.
+     * @param[in] dataPointerIn is the pointer to a generic type which must be stored.
      */
     inline AnyType(const TypeDescriptor &dataDescriptorIn,
                    const uint8 bitAddressIn,
@@ -224,19 +224,19 @@ public:
 
     /**
      * @brief Constructor by constant void pointer.
-     * @param[in] i is the constant void pointer input.
+     * @param[in] p is the constant void pointer input.
      */
     inline AnyType(const void * const p);
 
     /**
      * @brief Constructor by void pointer.
-     * @param[in] i is the void pointer input.
+     * @param[in] p is the void pointer input.
      */
     inline AnyType(void * const p);
 
     /**
      * @brief Constructor by C string.
-     * @param[in] i is the C string input.
+     * @param[in] p is the C string input.
      */
     inline AnyType(const char8 * const p);
 
@@ -531,7 +531,7 @@ AnyType::AnyType(BitBoolean<baseType, bitOffset> &bitBool) {
 
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
 AnyType::AnyType(BitRange<baseType, bitSize, bitOffset> &bitRange) {
-    TypeDefinition::BasicType type = (TypeCharacteristics<baseType>::IsSigned()) ? SignedInteger : UnsignedInteger;
+    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = false;
     dataDescriptor.type = type;
@@ -542,7 +542,7 @@ AnyType::AnyType(BitRange<baseType, bitSize, bitOffset> &bitRange) {
 
 template<typename baseType, uint8 bitSize>
 AnyType::AnyType(FractionalInteger<baseType, bitSize> &fractionalInt) {
-    TypeDefinition::BasicType type = (TypeCharacteristics<baseType>::IsSigned()) ? SignedInteger : UnsignedInteger;
+    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = false;
     dataDescriptor.type = type;
@@ -553,7 +553,7 @@ AnyType::AnyType(FractionalInteger<baseType, bitSize> &fractionalInt) {
 
 template<typename baseType, uint8 bitSize>
 AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
-    TypeDefinition::BasicType type = (TypeCharacteristics<baseType>::IsSigned()) ? SignedInteger : UnsignedInteger;
+    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = true;
     dataDescriptor.type = type;

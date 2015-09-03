@@ -249,12 +249,15 @@ TEST(BitRangeGTest,TestBasicTypeCastMinorSizeUnSignedSigned64in32) {
 /////////////////////////////
 
 
-TEST(BitRangeGTest,TestAnyTypeCast) {
-    BitRangeTest<uint32> bitrange;
+TEST(BitRangeGTest,TestAnyTypeCastSigned) {
+    BitRangeTest<int32> bitrange;
     ASSERT_TRUE(bitrange.TestAnyTypeCast());
 }
 
-
+TEST(BitRangeGTest,TestAnyTypeCastUnsigned) {
+    BitRangeTest<uint32> bitrange;
+    ASSERT_TRUE(bitrange.TestAnyTypeCast());
+}
 
 TEST(BitRangeGTest,TestBitSize) {
     BitRangeTest<uint32> bitrange;

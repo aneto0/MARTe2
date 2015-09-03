@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "FractionalInteger.h"
 #include "AnyType.h"
-#include "printf.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -72,14 +72,14 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMinorSize(T2 input) {
 
     TypeDefinition::FractionalInteger<T, minorSize> myFractionalInteger;
 
-    bool isInputSigned = TypeDefinition::TypeCharacteristics<T2>::IsSigned();
+    bool isInputSigned = TypeDefinition::TypeCharacteristics::IsSigned<T2>();
 
     // max and min values of the input
     T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : ((T2) -1);
-    T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : (T2)0;
+    T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : (T2) 0;
     T2 zero = (T2) 0;
 
-    bool isSigned = TypeDefinition::TypeCharacteristics<T>::IsSigned();
+    bool isSigned = TypeDefinition::TypeCharacteristics::IsSigned<T>();
 
     // max and min values of the bit range
     const T thisMaxValue = isSigned ? ((((T) 1) << (minorSize - (T) 1)) - (T) 1) : (((T) -1) >> (sizeof(T) * 8 - minorSize));
@@ -120,19 +120,17 @@ template<typename T>
 template<typename T2>
 bool FractionalIntegerTest<T>::TestBasicTypeCastMajorSize(T2 input) {
 
-    const uint8 max = sizeof(T) * 8;
     const uint8 inputSize = sizeof(T2) * 8;
-    const uint8 half = 0;
     const uint8 majorSize = (inputSize + 1);
 
     TypeDefinition::FractionalInteger<T, majorSize> myFractionalInteger;
 
-    bool isInputSigned = TypeDefinition::TypeCharacteristics<T2>::IsSigned();
+    bool isInputSigned = TypeDefinition::TypeCharacteristics::IsSigned<T2>();
     T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : ((T2) -1);
     T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : 0;
     T2 zero = (T2) 0;
 
-    bool isSigned = TypeDefinition::TypeCharacteristics<T>::IsSigned();
+    bool isSigned = TypeDefinition::TypeCharacteristics::IsSigned<T>();
 
     myFractionalInteger = maxValue;
 
@@ -170,8 +168,6 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMajorSize(T2 input) {
 
 template<typename T>
 bool FractionalIntegerTest<T>::TestAnyTypeCastNonConst() {
-    const uint8 max = sizeof(T) * 8 - 1;
-    const uint8 zero = 0;
 
     const uint8 size = 8;
 
@@ -185,8 +181,11 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastNonConst() {
     }
 
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
+    bool isSigned = T(-1) < 0;
 
-    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != TypeDefinition::UnsignedInteger) || (tdTest.size != size)) {
+    TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
+
+    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
         return false;
     }
 
@@ -199,9 +198,6 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastNonConst() {
 
 template<typename T>
 bool FractionalIntegerTest<T>::TestAnyTypeCastConst() {
-    const uint8 max = sizeof(T) * 8 - 1;
-    const uint8 zero = 0;
-
     const uint8 size = 8;
 
     const TypeDefinition::FractionalInteger<T, size> myFractionalInteger(0);
@@ -214,7 +210,11 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastConst() {
 
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
-    if ((tdTest.isStructuredData) || (!tdTest.isConstant) || (tdTest.type) != (TypeDefinition::UnsignedInteger) || (tdTest.size != size)) {
+    bool isSigned = T(-1) < 0;
+
+    TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
+
+    if ((tdTest.isStructuredData) || (!tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
         return false;
     }
 

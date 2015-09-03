@@ -95,7 +95,7 @@
 
 
 /* global typedef not referenced */
--esym(756,intptr,Colours)
+-esym(756,intptr,Colours,int*,uint*)
 /* global struct/union/enum not referenced */
 -etype(758,Flags)
 -esym(758,SFTestType)
@@ -109,7 +109,9 @@
 -esym(768,ClassRegistryDatabase::*)
 -esym(768,Introspection::*)
 -esym(768,Object::*)
--esym(768,TypeDefinition::BitBoolean::*)
+-esym(768,TypeDefinition::BitBoolean*)
+-esym(768,TypeDefinition::BitRange*)
+-esym(768,TypeDefinition::FractionalInteger*)
 
 
 /* global constant enumeration not referenced */ 
@@ -164,6 +166,7 @@
 -esym(1714,ReferenceContainerFilterObjectName::*)
 -esym(1714,TypeDefinition::AnyType::*)
 -esym(1714,TypeDefinition::FormatDescriptor::*)
+-esym(1714,TypeDefinition::TypeDescriptor::*)
 
 
 /*
@@ -341,6 +344,8 @@
 -esym(9141,ReferenceContainerFilterReferences::*)
 -esym(9141,ReferenceContainerFilterObjectName)
 -esym(9141,ReferenceContainerFilterObjectName::*)
+-esym(9141,int*)
+-esym(9141,uint*)
 
 
 /*
@@ -401,7 +406,12 @@
   * Justification: Not applicable to a framework.
   */
 -esym(1795, ReferenceT*)
+-esym(1795, TypeDefinition::*)
 -esym(1795, TypeDefinition::AnyType::*)
+-esym(1795, TypeDefinition::BitBoolean*)
+-esym(1795, TypeDefinition::BitRange*)
+-esym(1795, TypeDefinition::FractionalInteger*)
+-esym(1795, TypeDefinition::TypeCharacteristics*)
 
 
 /*
@@ -435,6 +445,10 @@
   * Justification: Required for template implementation.
   */
 -esym(9107, ReferenceT*)
+-esym(9107, TypeDefinition::BitBoolean*)
+-esym(9107, TypeDefinition::BitRange*)
+-esym(9107, TypeDefinition::TypeCharacteristics*)
+-esym(9107, TypeDefinition::FractionalInteger*)
 
 /*
  * Rule flexelint 1793

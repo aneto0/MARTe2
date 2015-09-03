@@ -22,6 +22,7 @@
 #
 #############################################################
 
+<<<<<<< HEAD
 OBJSX=   TypeCharacteristicsGTest.x
 #        BasicTypeGTest.x \
 #        BasicConsoleGTest.x \
@@ -62,6 +63,45 @@ OBJSX=   TypeCharacteristicsGTest.x
 #    	BitBooleanGTest.x \
 # 	FractionalIntegerGTest.x \
 # 	BitRangeGTest.x 
+=======
+OBJSX=  FormatDescriptorGTest.x \
+        AnyTypeGTest.x\
+        StandardHeap_GenericGTest.x \
+        HeapManagerGTest.x \
+        EndianityGTest.x \
+	SleepGTest.x \
+	ProcessorGTest.x \
+	AtomicGTest.x \
+	ProcessorTypeGTest.x \
+	EventSemGTest.x \
+	HighResolutionTimerGTest.x \
+	MemoryGTest.x \
+	FastPollingMutexSemGTest.x \
+	StringHelperGTest.x \
+	StringPortableGTest.x \
+	ThreadsGTest.x \
+	MutexSemGTest.x \
+	BasicConsoleGTest.x \
+	TimeoutTypeGTest.x \
+	LoadableLibraryGTest.x \
+	FastMathGTest.x \
+	LinkedListableGTest.x \
+	LinkedListHolderGTest.x \
+	ClassRegistryDatabaseGTest.x \
+	ClassPropertiesGTest.x \
+	ClassRegistryItemGTest.x \
+	ObjectGTest.x \
+	ReferenceGTest.x \
+	ReferenceContainerGTest.x \
+	ReferenceTGTest.x \
+	ReferenceContainerNodeGTest.x \
+	ReferenceContainerFilterReferencesGTest.x \
+	ReferenceContainerFilterObjectNameGTest.x \
+   	ErrorManagementGTest.x \
+    	BitBooleanGTest.x \
+ 	FractionalIntegerGTest.x \
+ 	BitRangeGTest.x 
+>>>>>>> branch '#196_#204_#203_TypeDefinitions' of https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2.git
 
 PACKAGE=
 ROOT_DIR=../..
