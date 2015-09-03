@@ -42,8 +42,7 @@ template<typename T>
 class BitBooleanTest {
 public:
 
-    // bool myTest();
-
+    /**     */
     bool TestCopyOperatorUnion();
 
     bool TestBoolCast();
@@ -280,36 +279,6 @@ bool BitBooleanTest<T>::TestOffsetOutOfRange() {
     return myTestBitBool.BitOffset() == offset;
 }
 
-/*
-
- template<typename T>
- bool BitBooleanTest<T>::myTest(){
-
-
- TypeDefinition::TypeDescriptor dataDescriptorIn={ false, false, { { TypeDefinition::UnsignedInteger, 32u } } };
- uint8 bitAddressIn=0;
- const void* dataPointerIn1;
- void* dataPointerIn2;
-
- TypeDefinition::AnyType typ1(dataDescriptorIn,bitAddressIn,dataPointerIn1);
- TypeDefinition::AnyType typ2(dataDescriptorIn,bitAddressIn,dataPointerIn2);
-
- //    TypeDefinition::BitBoolean<uint32, 5> myTestBitBool;
- //    TypeDefinition::AnyType typ3(myTestBitBool);
-
- TypeDefinition::BitBoolean<uint32, 5> myTestBitBoolConst;
-
-
-
-
- TypeDefinition::AnyType typ4 =(*(const_cast<const TypeDefinition::BitBoolean<uint32, 5>*>(&myTestBitBoolConst)));
- TypeDefinition::AnyType typ5 =myTestBitBoolConst;
-
-
-
-
- }
- */
 
 #endif /* BITBOOLEANTEST_H_ */
 

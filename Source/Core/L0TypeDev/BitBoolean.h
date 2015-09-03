@@ -42,6 +42,7 @@ namespace TypeDefinition {
  *  @brief Boolean shifted type.
  *  @details This type could be used in an union obtaining the same effect of a one bit boolean in a structure.
  */
+/*lint -e{1721} operator= is not assignment operator. Justification: the input argument is bool because this type must be used as a boolean type.*/
 template<typename baseType, uint8 bitOffset>
 class BitBoolean {
 
@@ -51,8 +52,6 @@ public:
      * @brief Copy operator.
      * @param[in] flag is the boolean value in input
      */
-    /**lint -e(1721) This = operator is not assignment operator. Justification: the input argument is a bool because
-     * this type should be used as a bool type.*/
     void operator=(const bool flag);
 
     /**
@@ -87,12 +86,13 @@ private:
     /**
      * The mask (only a bit shifted)
      */
-    static const baseType mask = (static_cast<baseType>(1) << bitOffset);
+    /*lint -e{845} The right argument to operator >> / << is certain to be 0. Justification: it depends by the template instance. */
+    static const baseType mask = static_cast<baseType>(static_cast<baseType>(1) << bitOffset);
 
     /**
      * A mask with 0 in the specified bit and 1 in other number bits.
      */
-    static const baseType notMask = ~mask;
+    static const baseType notMask = static_cast<baseType>(~mask);
 
 };
 
@@ -100,6 +100,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+/*lint -e{1539} the attribute value is not initialized because this type can be used inside an union*/
 template<typename baseType, uint8 bitOffset>
 void BitBoolean<baseType, bitOffset>::operator=(const bool flag) {
     if (flag) {

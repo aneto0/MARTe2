@@ -108,14 +108,14 @@ bool BitRangeTest<T>::TestBasicTypeCastMinorSize(T2 input) {
 
     TypeDefinition::BitRange<T, minorSize, half> myBitRange;
 
-    bool isInputSigned = TypeDefinition::TypeCharacteristics<T2>::IsSigned();
+    bool isInputSigned = TypeDefinition::TypeCharacteristics::IsSigned<T2>();
 
     // max and min values of the input
     T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T) 1) : ((T2) -1);
     T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T) 1) : 0;
     T2 zero = (T2) 0;
 
-    bool isSigned = TypeDefinition::TypeCharacteristics<T>::IsSigned();
+    bool isSigned = TypeDefinition::TypeCharacteristics::IsSigned<T>();
 
     // max and min values of the bit range
     const T thisMaxValue = isSigned ? ((((T) 1) << (minorSize - (T) 1)) - (T) 1) : (((T) -1) >> (sizeof(T) * 8 - minorSize));
@@ -156,18 +156,17 @@ bool BitRangeTest<T>::TestBasicTypeCastMajorSize(T2 input) {
 
     const uint8 max = sizeof(T) * 8;
     const uint8 inputSize = sizeof(T2) * 8;
-    const uint8 half = 0;
+    const uint8 half = max / 2 - 2;
     const uint8 majorSize = (inputSize + 1);
 
     TypeDefinition::BitRange<T, majorSize, half> myBitRange;
 
-    bool isInputSigned = TypeDefinition::TypeCharacteristics<T2>::IsSigned();
+    bool isInputSigned = TypeDefinition::TypeCharacteristics::IsSigned<T2>();
     T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : ((T2) -1);
     T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : 0;
     T2 zero = (T2) 0;
 
-    bool isSigned = TypeDefinition::TypeCharacteristics<T>::IsSigned();
-
+    bool isSigned = TypeDefinition::TypeCharacteristics::IsSigned<T>();
 
     myBitRange = maxValue;
 
@@ -207,7 +206,6 @@ template<typename T>
 bool BitRangeTest<T>::TestAnyTypeCast() {
     const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
-    const uint8 zero = 0;
 
     const uint8 size = 8;
 
@@ -221,9 +219,11 @@ bool BitRangeTest<T>::TestAnyTypeCast() {
     }
 
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
+    bool isSigned = T(-1) < 0;
 
+    TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
 
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != size) {
+    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
         return false;
     }
 

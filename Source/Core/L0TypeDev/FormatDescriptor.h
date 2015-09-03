@@ -35,7 +35,6 @@
 #include "BitRange.h"
 #include "BitBoolean.h"
 #include "FractionalInteger.h"
-#include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -253,12 +252,13 @@ public:
 
     /**
      * @brief Constructor field by field.
+     * @param[in] desiredActionToSet specifies the action to be performed (i.e. print an integer or print a string)
      * @param[in] sizeToSet is the desired maximum size for the print.
      * @param[in] precisionToSet specifies the precision for float number print.
      * @param[in] isPadded specifies if the space remained until the desired size must be filled with ' '.
      * @param[in] isLeftAligned specifies if the padding is at the beginning (false) or at the end (true).
-     * @param[in] isFloatNotation specifies the desired notation for float numbers (fixed point, exponential, ...)
-     * @param[in] isBinaryNotation specifies the desired notation for integer numbers (decimal, exadecimal, ...)
+     * @param[in] floatNotationToSet specifies the desired notation for float numbers (fixed point, exponential, ...)
+     * @param[in] binaryNotationToSet specifies the desired notation for integer numbers (decimal, exadecimal, ...)
      * @param[in] isBinaryPadded specifies if the trailing zeros must be added for integer prints.
      * @param[in] isFullNotation specifies if the header (0x, 0o, 0b) must be added for integer prints.
      */

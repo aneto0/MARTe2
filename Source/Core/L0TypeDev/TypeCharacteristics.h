@@ -38,87 +38,154 @@
 
 namespace TypeDefinition {
 
+namespace TypeCharacteristics {
+
 /**
- * @brief Provides information about the template type in input.
+ *  @brief Returns true if the integer type is signed, false otherwise.
+ *  @return true if the type is signed, false otherwise.
  */
 template<typename T>
-class TypeCharacteristics {
-public:
-
-    /**
-     *  @brief Returns true if the type is signed, false otherwise.
-     *  @return true if the type is signed, false otherwise.
-     */
-    static inline bool IsSigned();
-
-    /**
-     * @brief Returns the maximum possible value of the template type.
-     * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
-     */
-    static inline const T MaxValue();
-
-    /**
-     * @brief Returns the minimum possible value of the template type.
-     * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
-     */
-    static inline const T MinValue();
-
-
-    static inline const T UsableBitSize();
-
-};
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
-template<typename T>
-bool TypeCharacteristics<T>::IsSigned() {
+bool IsSigned() {
+    /*lint -e{948}   Operator '<' always evaluates to True\False. Justification: it depends by the template instance. */
     return ((static_cast<T>(-1)) < 0);
 }
 
+/**
+ * @brief Returns the maximum possible value of the template integer type.
+ * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
+ */
 template<typename T>
-const T TypeCharacteristics<T>::MaxValue() {
-    if (IsSigned()) {
-        // 0x7fff..f if signed
-        T temp = 1 << (sizeof(T) * 8 - 1);
-        return ~temp;
-    }
-    else {
-        // 0xffff...f if unsigned
-        T temp = 0;
-        return ~temp;
-    }
+const T MaxValue() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const T maxValue = (IsSigned<T>()) ? static_cast<T>(static_cast<T>(1) << (sizeof(T) * 8u - 1u)) : static_cast<T>(static_cast<T>(0));
+    return maxValue;
 }
 
+/**
+ * @brief Returns the minimum possible value of the template integer type.
+ * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
+ */
 template<typename T>
-const T TypeCharacteristics<T>::MinValue() {
-    if (IsSigned()) {
-        // 0x80...0 if signed
-        T temp = 1 << (sizeof(T) * 8 - 1);
-        return temp;
-    }
-    else {
-        // 0 if unsigned
-        T temp = 0;
-        return temp;
-    }
+const T MinValue() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const T minValue = (IsSigned<T>()) ? static_cast<T>(1 << (sizeof(T) * 8u - 1u)) : static_cast<T>(0);
+    return minValue;
 }
 
+/**
+ * @brief Returns the type usable bit size.
+ * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1)
+ * @return the type usable bit size.
+ */
 template<typename T>
-const T TypeCharacteristics<T>::UsableBitSize() {
-    if (IsSigned()) {
-        // 0x80...0 if signed
-        T temp = sizeof(T) * 8 - 1;
-        return temp;
-    }
-    else {
-        // 0 if unsigned
-        T temp = sizeof(T) * 8 ;
-        return temp;
-    }
+const uint8 UsableBitSize() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const uint8 nOfBits = (IsSigned<T>()) ? static_cast<uint8>(sizeof(T) * 8u - 1u) : static_cast<uint8>(sizeof(T) * 8u);
+    return nOfBits;
 }
 
+/**
+ * @brief Returns the maximum possible value of the template integer type with the specified bit size.
+ * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
+ */
+template<typename T, uint8 bitSize>
+const T MaxValue() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const T maxValue =
+            (IsSigned<T>()) ?
+                    static_cast<T>(static_cast<T>(static_cast<T>(1) << (bitSize - 1u)) - static_cast<T>(1)) :
+                    static_cast<T>(static_cast<T>(-1) >> ((sizeof(T) * 8u) - bitSize));
+
+    return maxValue;
+}
+
+/**
+ * @brief Returns the minimum possible value of the template integer type with the specified bit size.
+ * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
+ */
+template<typename T, uint8 bitSize>
+const T MinValue() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const T minValue = (IsSigned<T>()) ? static_cast<T>(static_cast<T>(-1) << (bitSize - 1u)) : static_cast<T>(0);
+    return minValue;
+}
+
+/**
+ * @brief Returns the type usable bit size with the specified bit size.
+ * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1)
+ * @return the type usable bit size.
+ */
+template<typename T, uint8 bitSize>
+const uint8 UsableBitSize() {
+    /*lint -e{944}  Left argument for operator '?' always evaluates to True\False. Justification: it depends by the template instance. */
+    const uint8 nOfBits = (IsSigned<T>() ? (bitSize - 1u) : bitSize);
+    return nOfBits;
+}
+
+}
+
+/**
+ * @brief Saturates the input if it does not fit within the range of numbers with the specified bit size.
+ * @param[in] input is the input value.
+ * @return If the input value is minor than the maximum value (depending on the specified type and bit size)
+ * and greater than the minimum value it will be returned untouched. Otherwise this function returns the
+ * maximum value if it is minor than the input, or the minimum value if is greater than the input.
+ */
+template<typename outputType, typename inputType, uint8 bitSize>
+outputType SaturateInteger(const inputType input) {
+
+    const bool isSigned = TypeCharacteristics::IsSigned<outputType>();
+
+    const outputType minValue = TypeCharacteristics::MinValue<outputType, bitSize>();
+
+    const outputType maxValue = TypeCharacteristics::MaxValue<outputType, bitSize>();
+
+    //default assignment
+    outputType value = static_cast<outputType>(input);
+
+    // saturation to max
+    if (input >= static_cast<inputType>(0)) {
+
+        // cast to the type which has the max usable size
+        if (TypeCharacteristics::UsableBitSize<inputType>() > TypeCharacteristics::UsableBitSize<outputType>()) {
+            if (input > static_cast<inputType>(maxValue)) {
+                value = maxValue;
+            }
+        }
+        else {
+            // input<0 and base type unsigned bug
+            if (static_cast<outputType>(input) > maxValue) {
+                value = maxValue;
+            }
+        }
+    }
+
+    //saturation to min
+    else {
+        // check min
+        if (!isSigned) {
+            value = static_cast<outputType>(0);
+        }
+        else {
+
+            // only consider signed against signed for minimum
+            // unsigned have 0 as minimum which is greater than the minimum of all fractional signed
+            if (TypeCharacteristics::UsableBitSize<inputType>() > TypeCharacteristics::UsableBitSize<outputType>()) {
+                if (input < static_cast<inputType>(minValue)) {
+                    value = minValue;
+                }
+            }
+            else {
+
+                // input>0 and base type signed bug
+                if (static_cast<outputType>(input) < minValue) {
+                    value = minValue;
+                }
+            }
+        }
+    }
+    return value;
+}
 
 }
 

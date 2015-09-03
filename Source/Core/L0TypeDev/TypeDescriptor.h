@@ -114,8 +114,7 @@ public:
     /**
      * @brief Structured objects constructor.
      * @param[in] isConstantIn in specifies if the object is constant.
-     * @param[in] typeIn is the type.
-     * @param[in] sizeIn is the size.
+     * @param[in] structuredDataIdCodeIn is the 14 bit code associated to the object type.
      */
     TypeDescriptor(const bool isConstantIn,
                    const uint16 structuredDataIdCodeIn) {
