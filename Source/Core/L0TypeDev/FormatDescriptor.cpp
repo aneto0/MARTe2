@@ -208,4 +208,4 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
     return ret;
 }
 
-} // end namespace TypeDefinition {
+}

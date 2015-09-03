@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "BitRange.h"
 #include "BitBoolean.h"
@@ -42,11 +43,15 @@
 
 namespace TypeDefinition {
 
-/**
+/*
  * Notations used for float types representation.
  */
 
+/**
+ * @brief Definition of FloatNotation as a 3 bit integer.
+ */
 typedef uint3 FloatNotation;
+
 /**
  * Fixed point notation.
  * The precision is the number of decimals (i.e. 123.45 => precision=2).
@@ -77,6 +82,7 @@ const FloatNotation EngineeringNotation = 3u;
  * The precision is the total number of digits (i.e. 123.45 => precision=5).
  */
 const FloatNotation SmartNotation = 6u;
+
 /**
  * Most meaningful notation fitting within constraints
  * Choice among FixedPointRNotation, ExponentNotation and SmartNotation.
@@ -158,13 +164,12 @@ const DesiredAction PrintStruct = 6u;
 static const uint32 defaultPrecision = 0xffu;
 
 /**
- * @brief FormatDescriptor class.
- *
- * @details This class contains a structure to store the informations the print of each type.\n
- * It defines also functions due to fill the structure getting the information from
- * a printf like constant char8* string which specifies the desired print format.\n
- *
- * Defines the conversion from AnyType to String based types */
+ * @brief This class defines a format descriptor.
+ * @details This class contains a structure to store the informations the print of each type.
+ * @details It defines also functions due to fill the structure getting the information from
+ * a printf like constant char8* string which specifies the desired print format.
+ * @details Defines the conversion from AnyType to String based types
+ */
 class FormatDescriptor {
 public:
 
@@ -175,9 +180,10 @@ public:
      *
      * @details Takes a printf like string already pointing at the character after % (see below format)
      * and parses it recovering all the useful information, discarding all redundant ones,
-     * and fills up the fields in this structure.
-     * At the end the pointer string is moved to the next character after the parsed block
-     *
+     * and fills up the fields in this structure. At the end the pointer string is moved to the next
+     * character after the parsed block.
+     */
+     /*
      * The overall printf-like format supported is the following:
      * %[flags][width][.precision]type
      * Note that the full printf would be this:
@@ -224,9 +230,9 @@ public:
      * @ --> Any type is fine - prints full content in case of known structures
      */
     bool InitialiseFromString(const char8 *&string);
+
     /**
      * @brief Default constructor.
-     *
      * @details Precision = -1 means default precision for float types.
      */
     inline FormatDescriptor();
@@ -234,8 +240,8 @@ public:
     /**
      * @brief Constructor from unsigned integer.
      * @param[in] x contains the bits for the FormatDescriptor structure.
-     *
-     * Just copy bit by bit. */
+     * @details Just copy bit by bit.
+     */
     inline FormatDescriptor(const uint32 x);
 
     /**
@@ -282,8 +288,7 @@ public:
 
         /**
          * The maximum size of representation.
-         * 0 = unlimited
-         * maximum size = 255.
+         * 0 = unlimited, maximum size = 255
          */
         BitRange<uint32, 8u, 0u> size;
 
@@ -301,8 +306,7 @@ public:
         BitRange<uint32, 8u, 8u> precision;
 
         /**
-         * True means produce a number of characters equal to width
-         * fill up using spaces.
+         * True means produce a number of characters equal to width fill up using spaces.
          */
         BitBoolean<uint32, 16u> padded;
 
@@ -351,9 +355,9 @@ public:
  */
 static const FormatDescriptor standardFormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false);
 
-/**********************************************
- * INLINE FUNCTIONS
- * *********************************************/
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
 /*lint -e{9119} assignment of integer to 3-bit floatNotation and 2-bit binaryNotation justified because only
  * the defined Notation flags shall be used.*/
@@ -407,10 +411,7 @@ FormatDescriptor::FormatDescriptor(const DesiredAction &desiredActionToSet,
     fullNotation = isFullNotation;
     spareBits = 0u;
 }
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
 
-} // end of namespace TypeDefinition
+}
+
 #endif /* FORMATDESCRIPTOR_H_ */
-
