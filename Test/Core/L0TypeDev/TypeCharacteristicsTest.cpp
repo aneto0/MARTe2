@@ -41,23 +41,19 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace TypeDefinition;
+using namespace TypeDefinition::TypeCharacteristics;
+
 
 TypeCharacteristicsTest::TypeCharacteristicsTest() {
     retVal = false;
 }
 
-TypeCharacteristicsTest::~TypeCharacteristicsTest() {
-    // Auto-generated destructor stub for TypeCharacteristicsTest
-    // TODO Verify if manual additions are needed
-}
-
 bool TypeCharacteristicsTest::TestIsSignedInt8(){
-    TypeCharacteristics <int8> tc;
-    retVal = tc.IsSigned();
+
+    retVal = IsSigned<int8>();
     return retVal;
 }
-
+/*
 bool TypeCharacteristicsTest::TestIsSignedUInt32(){
     TypeCharacteristics <uint32> tc;
     retVal = !tc.IsSigned();
@@ -100,4 +96,4 @@ bool TypeCharacteristicsTest::TestUsableBitSizeUInt32(){
     return retVal;
 }
 
-
+*/

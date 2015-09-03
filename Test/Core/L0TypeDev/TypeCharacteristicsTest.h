@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../Source/Core/L0TypeDev/TypeCharacteristics.h"
+#include "TypeCharacteristics.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -41,7 +41,6 @@
 class TypeCharacteristicsTest {
 public:
     TypeCharacteristicsTest();
-    virtual ~TypeCharacteristicsTest();
 
     bool retVal;
 
