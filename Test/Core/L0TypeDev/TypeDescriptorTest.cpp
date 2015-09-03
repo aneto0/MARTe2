@@ -111,11 +111,12 @@ bool TypeDescriptorTest::TestObjectConstructor(bool isConst,
     return true;
 }
 
-bool TypeDescriptorTest::TestIsEqualOperator(bool isConst,
-                                             uint16 size,
+bool TypeDescriptorTest::TestIsEqualOperator(uint16 size,
                                              TypeDefinition::BasicType type) {
 
+    bool isConst = true;
     TypeDefinition::TypeDescriptor byBasicType1(isConst, type, size);
+    isConst = false;
     TypeDefinition::TypeDescriptor byBasicType2(isConst, type, size);
 
     if (!(byBasicType1 == byBasicType2)) {
@@ -123,7 +124,9 @@ bool TypeDescriptorTest::TestIsEqualOperator(bool isConst,
     }
 
     uint16 code = (type) | (size << 4);
+    isConst = true;
     TypeDefinition::TypeDescriptor byObj1(isConst, code);
+    isConst = false;
     TypeDefinition::TypeDescriptor byObj2(isConst, code);
 
     if (!(byObj1 == byObj2)) {

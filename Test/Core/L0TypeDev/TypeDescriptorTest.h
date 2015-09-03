@@ -78,21 +78,24 @@ public:
                                uint16 objCode);
 
     /**
-     * @brief Tests the constructor by structured types.
-     * @param[in] isConst specifies if the type is constant.
+     * @brief Tests the equal operator.
      * @param[in] size is the code related to the object.
      * @param[in] type is the type.
-     * @return true if the TypeDescriptor attributes are filled correctly. False otherwise.
+     * @return true if the operator returns true if between two TypeDescriptors all the fields except the isConstant flag are equal.
+     * False otherwise.
      */
-    bool TestIsEqualOperator(bool isConst,
-                             uint16 size,
+    bool TestIsEqualOperator(uint16 size,
                              TypeDefinition::BasicType type);
 
+    /**
+     * @brief Checks if the equal operator fails comparing two TypeDescriptor with different attribute values.
+     * @return if the equal operator fails comparing two TypeDescriptor with different attribute values. False otherwise.
+     */
     bool TestIsEqualOperatorFail();
 
     /**
      * @brief Checks if the attributes are saturated to their maximum value.
-     * @return true if initializing attributes with values greater than the maximum alloed by their
+     * @return true if initializing attributes with values greater than the maximum allowed by their
      * bit size, the attribute value in TypeDescriptor is saturated. False otherwise.
      */
     bool TestFieldSaturation();

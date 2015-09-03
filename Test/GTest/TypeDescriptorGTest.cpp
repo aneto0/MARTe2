@@ -59,7 +59,7 @@ TEST(TypeDescriptorGTest,TestObjectConstructor) {
 
 TEST(TypeDescriptorGTest,TestIsEqualOperator) {
     TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestIsEqualOperator(true, 21,TypeDefinition::Pointer));
+    ASSERT_TRUE(typeDescriptorTest.TestIsEqualOperator( 21,TypeDefinition::Pointer));
 }
 
 
