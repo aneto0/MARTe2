@@ -101,8 +101,8 @@ public:
      * @param[in] sizeIn is the size.
      */
     inline TypeDescriptor(const bool isConstantIn,
-                          const uint16 typeIn,
-                          const uint16 sizeIn);
+                   const uint16 typeIn,
+                   const uint16 sizeIn);
 
     /**
      * @brief Structured objects constructor.
@@ -110,7 +110,7 @@ public:
      * @param[in] structuredDataIdCodeIn is the 14 bit code associated to the object type.
      */
     inline TypeDescriptor(const bool isConstantIn,
-                          const uint16 structuredDataIdCodeIn);
+                   const uint16 structuredDataIdCodeIn);
 
     /**
      * @brief Equal operator used to compare types.
@@ -122,9 +122,11 @@ public:
 
 };
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+TypeDescriptor::TypeDescriptor(const uint16 x) {
+       all = x;
+   }
+
+
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
         const uint16 typeIn,
@@ -187,6 +189,10 @@ static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
 static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 
 }
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
 #endif /* TYPEDESCRIPTOR_H_ */
 
