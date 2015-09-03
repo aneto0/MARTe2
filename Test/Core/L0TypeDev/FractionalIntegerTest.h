@@ -33,24 +33,55 @@
 /*---------------------------------------------------------------------------*/
 #include "FractionalInteger.h"
 #include "AnyType.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+/**
+ * @brief Tests all the FractionalInteger functions.
+ */
 template<typename T>
 class FractionalIntegerTest {
 public:
 
+    /**
+     * @brief Tests the cast to the base type using for FractionalInteger with a bit size
+     * minor than the input size.
+     * @param[in] input specifies the input type.
+     * @return true if the maximum input value is saturated to the maximum FractionalInteger value and
+     * if the minimum input value is saturated to the minimum FractionalInteger value. If this type is
+     * signed and the input is unsigned returns true if FractionalInteger value is set to zero. False otherwise
+     */
     template<typename T2>
     bool TestBasicTypeCastMinorSize(T2 input);
 
+    /**
+     * @brief Tests the cast to the base type using for FractionalInteger a bit size
+     * greater than the input size.
+     * @param[in] input specifies the input type.
+     * @return true if the FractionalInteger value is equal to the maximum input value and
+     * if the FractionalInteger value is equal to the minimum input value is saturated to the minimum. If this type is
+     * unsigned and the input is negative returns true if FractionalInteger is set to zero. False otherwise.
+     */
     template<typename T2>
     bool TestBasicTypeCastMajorSize(T2 input);
 
+    /**
+     * @brief Tests the AnyType cast by constant FractionalInteger.
+     * @return true if all AnyType attributes are initialized correctly.
+     */
     bool TestAnyTypeCastNonConst();
 
+    /**
+     * @brief Tests the AnyType cast by FractionalInteger.
+     * @return true if all AnyType attributes are initialized correctly.
+     */
     bool TestAnyTypeCastConst();
 
+    /**
+     * @brief Checks if BitSize function returns the same size specified in template initialization.
+     * @return true if BitSize function returns the same size specified in template initialization, false otherwise.
+     */
     bool TestBitSize();
 
 };
@@ -89,7 +120,6 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMinorSize(T2 input) {
 
     // since the bit range has a size minor than the input normally the value should be saturated
     if (myFractionalInteger != thisMaxValue) {
-        printf("\n1 %x %x %x\n", (T) myFractionalInteger, thisMaxValue, maxValue);
         return false;
     }
     myFractionalInteger = minValue;
@@ -102,7 +132,6 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMinorSize(T2 input) {
         }
         //if the input is signed and the bit range unsigned, the minValue passed is zero alias thisMinValue
         else {
-            printf("\n2 %x %x %x\n", (T) myFractionalInteger, thisMinValue, minValue);
             return false;
         }
     }

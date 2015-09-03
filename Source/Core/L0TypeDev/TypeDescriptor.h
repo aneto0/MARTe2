@@ -73,7 +73,7 @@ public:
         BitRange<uint16, 4u, 2u> type;
 
         /**
-         the size in bytes or bits
+         the size in bits
          */
         BitRange<uint16, 10u, 6u> size;
 

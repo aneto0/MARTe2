@@ -186,37 +186,6 @@ TEST(BitBooleanGTest,TestBitOffsetS64) {
     ASSERT_TRUE(bitbool.TestBitOffset());
 }
 
-
-TEST(BitBooleanGTest,TestOffsetOutOfRangeU8) {
-    BitBooleanTest<uint8> bitbool;
-    ASSERT_TRUE(bitbool.TestOffsetOutOfRange());
-}
-
-TEST(BitBooleanGTest,TestOffsetOutOfRangeU16) {
-    BitBooleanTest<uint16> bitbool;
-    ASSERT_TRUE(bitbool.TestOffsetOutOfRange());
-}
-
-TEST(BitBooleanGTest,TestOffsetOutOfRangeU32) {
-    BitBooleanTest<uint32> bitbool;
-    ASSERT_TRUE(bitbool.TestOffsetOutOfRange());
-}
-
-TEST(BitBooleanGTest,TestOffsetOutOfRangeU64) {
-    BitBooleanTest<uint64> bitbool;
-    ASSERT_TRUE(bitbool.TestOffsetOutOfRange());
-}
-
-TEST(BitBooleanGTest,TestOffsetOutOfRangeS8) {
-    BitBooleanTest<int8> bitbool;
-    ASSERT_TRUE(bitbool.TestOffsetOutOfRange());
-}
-
-TEST(BitBooleanGTest,TestOffsetOutOfRangeS16) {
-    BitBooleanTest<int16> bitbool;
-    ASSERT_TRUE(bitbool.TestOffsetOutOfRange());
-}
-
 TEST(BitBooleanGTest,TestOffsetOutOfRangeS32) {
     BitBooleanTest<int32> bitbool;
     ASSERT_TRUE(bitbool.TestOffsetOutOfRange());

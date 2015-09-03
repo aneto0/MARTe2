@@ -41,6 +41,7 @@ namespace TypeDefinition {
 /**
  *  @brief Boolean shifted type.
  *  @details This type could be used in an union obtaining the same effect of a one bit boolean in a structure.
+ *  @warning \a bitOffset must be minor than the bit size of \a baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is bool because this type must be used as a boolean type.*/
 template<typename baseType, uint8 bitOffset>

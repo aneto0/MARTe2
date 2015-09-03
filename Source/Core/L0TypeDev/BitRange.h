@@ -39,8 +39,9 @@
 namespace TypeDefinition {
 
 /**
- *  @brief A number with a configurable size and bit offset.
+ *  @brief A number with configurable size and bit offset.
  *  @details Using these types into an union allows to have the same effect of a struct with bit fielded attributes.
+ *  @warning \a bitSize + \a bitOffset must be minor than the bit size of \a baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is a
 basic type because this type must be used as a binary number.*/
