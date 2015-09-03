@@ -40,27 +40,132 @@
 
 class TypeCharacteristicsTest {
 public:
+    /**
+     * TypeCharacterisitcs constructor.
+     */
     TypeCharacteristicsTest();
-
+    /**
+     * Returned value. It is used in all function to return the result of the test.
+     */
     bool retVal;
 
+    /**
+     * @brief Test the function IsSigned with the type int8.
+     * @return True if IsSigned returns true.
+     */
     bool TestIsSignedInt8();
 
+    /**
+     * @brief Test the function IsSigned with the type uint32.
+     * @return True if IsSigned returns false.
+     */
     bool TestIsSignedUInt32();
 
+    /**
+     * @brief Test the function MaxValue with the type int8.
+     * @return True if MaxValue returns 127 (max value of int8).
+     */
     bool TestMaxValueInt8();
 
-    bool TestMaxValueInt8BZ();
+    /**
+     * @brief Test the MaxValue using int8 and BitSize = 2 as an input parameters of the function.
+     * @return True if MaxValue returns 1 (which is the max value assuming two bits int).
+     */
+    bool TestMaxValueInt8BZ2();
 
+    /**
+     * @brief Test The function MaxValue using uint32.
+     * @return true if MaxValue returns 4294967295 (which is the max value of an uint32).
+     */
     bool TestMaxValueUInt32();
 
+    /**
+     * @brief Test the function MaxValue using int32 and bitsize = 2.
+     * @return True if the MaxValue returns 3.
+     */
+    bool TestMaxValueUInt32BZ2();
+
+    /**
+     * @brief Test the MinValue function using an int8.
+     * @returns True if MinValue returns -128 (which is the minimum possible representation with int8).
+     */
     bool TestMinValueInt8();
 
+    /**
+     * @brief Test the MinValue function using int8 and BitSize = 2
+     * @return True if MinValue returns -2.
+     */
+    bool TestMinValueInt8BZ2();
+
+    /**
+     * @brief Test MinValue function using uint32.
+     * @return true if MinValue returns 0.
+     */
     bool TestMinValueUInt32();
 
+    /**
+     * @brief Test MinValue function using uint32 and BitSize = 2.
+     * @return true if MinValue returns 0.
+     */
+    bool TestMinValueUInt32BZ2();
+
+    /**
+     * @brief Test UsableBitSize using int8.
+     * @return True if UsableBitSize return 7.
+     */
     bool TestUsableBitSizeInt8();
 
+    /**
+     * @brief Test UsableBitSize using an int8 and BitSize = 2.
+     * @return True if UsableBitSize returns 1.
+     */
+    bool TestUsableBitSizeInt8BZ();
+
+    /**
+     * @brief Test UsableBitSize using an uint32.
+     * @return True if UsableBitSize returns 32.
+     */
     bool TestUsableBitSizeUInt32();
+
+    /**
+     * @brief Test UsableBitSize using uint32 and BitSize = 2.
+     * @return True if UsableBitSize returns 2.
+     */
+    bool TestUsableBitSizeUInt32BZ2();
+
+    /**
+     * @brief Test SaturableInteger function using a value in the range type.
+     * @return True if SaturableInteger the input value.
+     */
+    bool TestSaturableIntegerNoChanges();
+
+    /**
+     * @brief Test SaturableInteger function using a value larger than the maximum value.
+     * @detail The output value range is equal than the input value range.
+     * @return True if SaturableInteger returns 7 (the maximum possible value).
+     */
+    bool TestSaturableIntegerLargerThan();
+
+    /**
+     * @brief Test SaturableInteger function using a value larger than the maximum value.
+     * @detail The output value range is smaller than the input value range.
+     * @return True if SaturableInteger returns 7 (the maximum possible value).
+     */
+    bool TestSaturableIntegerLargerThan2();
+
+    /**
+     * @brief Test SaturableInteger function using a value smaller than the minimum value.
+     * @detail The output value range is equal than the input value range.
+     * @return True if SaturableInteger returns -4 (the minimum possible value).
+     */
+    bool TestSaturableIntegerLessThan();
+
+    /**
+     * @brief Test SaturableInteger function using a value smaller than the maximum value.
+     * @detail The output value range is smaller than the input value range.
+     * @return True if SaturableInteger returns -4 (the minimum possible value).
+     */
+    bool TestSaturableIntegerLessThan2();
 
 };
 
