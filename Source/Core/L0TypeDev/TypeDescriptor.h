@@ -101,8 +101,8 @@ public:
      * @param[in] sizeIn is the size.
      */
     inline TypeDescriptor(const bool isConstantIn,
-                   const uint16 typeIn,
-                   const uint16 sizeIn);
+                          const uint16 typeIn,
+                          const uint16 sizeIn);
 
     /**
      * @brief Structured objects constructor.
@@ -110,7 +110,7 @@ public:
      * @param[in] structuredDataIdCodeIn is the 14 bit code associated to the object type.
      */
     inline TypeDescriptor(const bool isConstantIn,
-                   const uint16 structuredDataIdCodeIn);
+                          const uint16 structuredDataIdCodeIn);
 
     /**
      * @brief Equal operator used to compare types.
@@ -123,14 +123,12 @@ public:
 };
 
 TypeDescriptor::TypeDescriptor(const uint16 x) {
-       all = x;
-   }
-
-
+    all = x;
+}
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
-        const uint16 typeIn,
-        const uint16 sizeIn) {
+                               const uint16 typeIn,
+                               const uint16 sizeIn) {
     isStructuredData = false;
     isConstant = isConstantIn;
     type = typeIn;
@@ -138,7 +136,7 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
 }
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
-        const uint16 structuredDataIdCodeIn) {
+                               const uint16 structuredDataIdCodeIn) {
 
     isStructuredData = true;
     isConstant = isConstantIn;
@@ -146,11 +144,10 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
 }
 
 bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
-    return (structuredDataIdCode == typeDescriptor.structuredDataIdCode) && (isStructuredData==typeDescriptor.isStructuredData);
+    bool ret1 = (structuredDataIdCode == typeDescriptor.structuredDataIdCode);
+    bool ret2 = (isStructuredData == typeDescriptor.isStructuredData);
+    return ret1 && ret2;
 }
-
-
-
 
 /** Float descriptor. */
 static const TypeDescriptor Float32Bit(false, Float, 32u);
