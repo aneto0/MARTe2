@@ -186,13 +186,3 @@ TEST(BitBooleanGTest,TestBitOffsetS64) {
     ASSERT_TRUE(bitbool.TestBitOffset());
 }
 
-TEST(BitBooleanGTest,TestOffsetOutOfRangeS32) {
-    BitBooleanTest<int32> bitbool;
-    ASSERT_TRUE(bitbool.TestOffsetOutOfRange());
-}
-
-TEST(BitBooleanGTest,TestOffsetOutOfRangeS64) {
-    BitBooleanTest<int64> bitbool;
-    ASSERT_TRUE(bitbool.TestOffsetOutOfRange());
-}
-
