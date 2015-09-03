@@ -38,22 +38,43 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+
+/**
+ * @brief Tests all the BitBoolean functions.
+ */
 template<typename T>
 class BitBooleanTest {
 public:
 
-    /**     */
+    /**
+     * @brief Tests if the = operator of BitBoolean does not overlap memory outside its own bit in a union.
+     * @return true if the = operator changes only the specified bit in the union memory. False otherwise.
+     */
     bool TestCopyOperatorUnion();
 
+    /**
+     * @brief Tests the cast to boolean type.
+     * @return true if the BitBoolean object behaves as a boolean type, false otherwise.
+     */
     bool TestBoolCast();
 
+    /**
+     * @brief Tests the cast to AnyType.
+     * @return true if the AnyType attributes are initialized correctly. False otherwise.
+     */
     bool TestAnyTypeCast();
 
+    /**
+     * @brief Tests if the returned bit size is correct.
+     * @return true if the bit size returned is equal to the specified bit size in template initialization.
+     */
     bool TestBitSize();
 
+    /**
+     * @brief Tests if the returned bit offset is correct.
+     * @return true if the bit offset returned is equal to the specified bit size in template initialization.
+     */
     bool TestBitOffset();
-
-    bool TestOffsetOutOfRange();
 
 };
 
@@ -133,7 +154,10 @@ bool BitBooleanTest<T>::TestBoolCast() {
         return false;
     }
 
-    return true;
+    uint32 x = 1;
+    myMaxShiftedBool = (x == 1);
+
+    return myMaxShiftedBool;
 
 }
 
@@ -154,7 +178,6 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
     }
 
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
-
 
     if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
         return false;
@@ -256,29 +279,6 @@ bool BitBooleanTest<T>::TestBitOffset() {
 
     return true;
 }
-
-template<typename T>
-bool BitBooleanTest<T>::TestOffsetOutOfRange() {
-    const uint8 offset = sizeof(T) * 8;
-
-    // in this case since the mask is 0, the bool should always be false
-    TypeDefinition::BitBoolean<T, offset> myTestBitBool;
-
-    myTestBitBool = true;
-
-    if (myTestBitBool) {
-
-        return false;
-    }
-
-    myTestBitBool = false;
-    if (myTestBitBool) {
-        return false;
-    }
-
-    return myTestBitBool.BitOffset() == offset;
-}
-
 
 #endif /* BITBOOLEANTEST_H_ */
 

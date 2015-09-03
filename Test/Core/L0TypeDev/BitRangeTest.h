@@ -36,23 +36,58 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+/**
+ * @brief Tests all the BitRange functions.
+ */
 template<typename T>
 class BitRangeTest {
 
 public:
 
+    /**
+     * @brief Tests the cast to the base type using for BitRange with a bit size
+     * minor than the input size.
+     * @param[in] input specifies the input type.
+     * @return true if the maximum input value is saturated to the maximum BitRange value and
+     * if the minimum input value is saturated to the minimum BitRange value. If this type is
+     * signed and the input is unsigned returns true if BitRange value is set to zero. False otherwise
+     */
     template<typename T2>
     bool TestBasicTypeCastMinorSize(T2 input);
 
+    /**
+     * @brief Tests the cast to the base type using for BitRange a bit size
+     * greater than the input size.
+     * @param[in] input specifies the input type.
+     * @return true if the BitRange value is equal to the maximum input value and
+     * if the BitRange value is equal to the minimum input value is saturated to the minimum. If this type is
+     * unsigned and the input is negative returns true if BitRange is set to zero. False otherwise.
+     */
     template<typename T2>
     bool TestBasicTypeCastMajorSize(T2 input);
 
+    /**
+     * @brief Tests if the = operator of BitRange does not overlap memory outside its bit range in a union.
+     * @return true if the = operator changes only the specified bit range in the union memory. False otherwise.
+     */
     bool TestCopyOperatorUnion();
 
+    /**
+     * @brief Tests the cast to AnyType.
+     * @return true if the AnyType attributes are initialized correctly. False otherwise.
+     */
     bool TestAnyTypeCast();
 
+    /**
+     * @brief Tests if the returned bit size is correct.
+     * @return true if the bit size returned is equal to the specified bit size in template initialization.
+     */
     bool TestBitSize();
 
+    /**
+     * @brief Tests if the returned bit offset is correct.
+     * @return true if the bit offset returned is equal to the specified bit size in template initialization.
+     */
     bool TestBitOffset();
 
 };
@@ -130,7 +165,7 @@ bool BitRangeTest<T>::TestBasicTypeCastMinorSize(T2 input) {
     myBitRange = minValue;
     if (myBitRange != thisMinValue) {
 
-        //if the input is unsigned and the bit ragnge signed, the minValue passed is zero
+        //if the input is unsigned and the bit range signed, the minValue passed is zero
         if ((!isInputSigned) && (isSigned)) {
             if (myBitRange != 0) {
                 return false;

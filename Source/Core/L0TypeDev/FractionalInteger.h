@@ -40,7 +40,8 @@
 namespace TypeDefinition {
 
 /**
- * @brief An integer with the desired size in bits.
+ * @brief An integer with configurable bit size.
+ * @warning \a bitSize must be minor than the bit size of \a baseType.
  */
 /*lint -e{1789} Template constructor cannot be a copy constructor. Justification: the constructor must not be used as a copy constructor
  * but as a constructor by integer number. */
