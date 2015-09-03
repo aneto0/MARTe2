@@ -30,7 +30,8 @@ OBJSX=  BitBooleanTest.x\
         FractionalIntegerTest.x \
         FormatDescriptorTest.x \
         BasicTypeTest.x \
-        TypeCharacteristicsTest.x
+        TypeCharacteristicsTest.x \
+        TypeDescriptorTest.x
 		
 PACKAGE=Core
 ROOT_DIR=../../..

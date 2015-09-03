@@ -23,46 +23,46 @@
 #############################################################
 
 
-OBJSX=   TypeCharacteristicsGTest.x
-#        BasicTypeGTest.x \
-#        BasicConsoleGTest.x \
-#        FormatDescriptorGTest.x \
-#        AnyTypeGTest.x\
-#        StandardHeap_GenericGTest.x \
-#        HeapManagerGTest.x \
-#        EndianityGTest.x \
-#	SleepGTest.x \
-#	ProcessorGTest.x \
-#	AtomicGTest.x \
-#	ProcessorTypeGTest.x \
-#	EventSemGTest.x \
-#	HighResolutionTimerGTest.x \
-#	MemoryGTest.x \
-#	FastPollingMutexSemGTest.x \
-#	StringHelperGTest.x \
-#	StringPortableGTest.x \
-#	ThreadsGTest.x \
-#	MutexSemGTest.x \
-#	BasicConsoleGTest.x \
-#	TimeoutTypeGTest.x \
-#	LoadableLibraryGTest.x \
-#	FastMathGTest.x \
-#	LinkedListableGTest.x \
-#	LinkedListHolderGTest.x \
-#	ClassRegistryDatabaseGTest.x \
-#	ClassPropertiesGTest.x \
-#	ClassRegistryItemGTest.x \
-#	ObjectGTest.x \
-#	ReferenceGTest.x \
-#	ReferenceContainerGTest.x \
-#	ReferenceTGTest.x \
-#	ReferenceContainerNodeGTest.x \
-#	ReferenceContainerFilterReferencesGTest.x \
-#	ReferenceContainerFilterObjectNameGTest.x \
-#  	ErrorManagementGTest.x \
-#    	BitBooleanGTest.x \
-# 	FractionalIntegerGTest.x \
-# 	BitRangeGTest.x 
+OBJSX=  TypeCharacteristicsGTest.x \
+        BasicTypeGTest.x \
+        BasicConsoleGTest.x \
+        FormatDescriptorGTest.x \
+        AnyTypeGTest.x\
+        StandardHeap_GenericGTest.x \
+        HeapManagerGTest.x \
+        EndianityGTest.x \
+	SleepGTest.x \
+	ProcessorGTest.x \
+	AtomicGTest.x \
+	ProcessorTypeGTest.x \
+	EventSemGTest.x \
+	HighResolutionTimerGTest.x \
+	MemoryGTest.x \
+	FastPollingMutexSemGTest.x \
+	StringHelperGTest.x \
+	StringPortableGTest.x \
+	ThreadsGTest.x \
+	MutexSemGTest.x \
+	TimeoutTypeGTest.x \
+	LoadableLibraryGTest.x \
+	FastMathGTest.x \
+	LinkedListableGTest.x \
+	LinkedListHolderGTest.x \
+	ClassRegistryDatabaseGTest.x \
+	ClassPropertiesGTest.x \
+	ClassRegistryItemGTest.x \
+	ObjectGTest.x \
+	ReferenceGTest.x \
+	ReferenceContainerGTest.x \
+	ReferenceTGTest.x \
+	ReferenceContainerNodeGTest.x \
+	ReferenceContainerFilterReferencesGTest.x \
+	ReferenceContainerFilterObjectNameGTest.x \
+  	ErrorManagementGTest.x \
+    	BitBooleanGTest.x \
+ 	FractionalIntegerGTest.x \
+ 	BitRangeGTest.x \
+	TypeDescriptorGTest.x
 
 PACKAGE=
 ROOT_DIR=../..
