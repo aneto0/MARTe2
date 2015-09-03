@@ -57,9 +57,19 @@ TEST(TypeCharacteristicsGTest,TestMaxValueInt8) {
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMaxValueInt8());
 }
 
+TEST(TypeCharacteristicsGTest,TestMaxValueInt8BZ2) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestMaxValueInt8BZ2());
+}
+
 TEST(TypeCharacteristicsGTest,TestMaxValueUInt32) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMaxValueUInt32());
+}
+
+TEST(TypeCharacteristicsGTest,TestMaxValueUInt32BZ2) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestMaxValueUInt32BZ2());
 }
 
 TEST(TypeCharacteristicsGTest,TestMinValueInt8) {
@@ -67,9 +77,19 @@ TEST(TypeCharacteristicsGTest,TestMinValueInt8) {
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMinValueInt8());
 }
 
+TEST(TypeCharacteristicsGTest,TestMinValueInt8BZ2) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestMinValueInt8BZ2());
+}
+
 TEST(TypeCharacteristicsGTest,TestMinValueUInt32) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestMinValueUInt32());
+}
+
+TEST(TypeCharacteristicsGTest,TestMinValueUInt32BZ2) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestMinValueUInt32BZ2());
 }
 
 TEST(TypeCharacteristicsGTest,TestUsableBitSizeInt8) {
@@ -77,9 +97,44 @@ TEST(TypeCharacteristicsGTest,TestUsableBitSizeInt8) {
     ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableBitSizeInt8());
 }
 
+TEST(TypeCharacteristicsGTest,TestUsableBitSizeInt8BZ) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableBitSizeInt8BZ());
+}
+
 TEST(TypeCharacteristicsGTest,TestUsableBitSizeUInt32) {
     TypeCharacteristicsTest myTypeCharacteristicsTest;
     ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableBitSizeUInt32());
+}
+
+TEST(TypeCharacteristicsGTest,TestUsableBitSizeUInt32BZ2) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestUsableBitSizeUInt32BZ2());
+}
+
+TEST(TypeCharacteristicsGTest,TestSaturableIntegerNoChanges) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerNoChanges());
+}
+
+TEST(TypeCharacteristicsGTest,TestSaturableIntegerLargerThan) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerLargerThan());
+}
+
+TEST(TypeCharacteristicsGTest,TestSaturableIntegerLargerThan2) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerLargerThan2());
+}
+
+TEST(TypeCharacteristicsGTest,TestSaturableIntegerLessThan) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerLessThan());
+}
+
+TEST(TypeCharacteristicsGTest,TestSaturableIntegerLessThan2) {
+    TypeCharacteristicsTest myTypeCharacteristicsTest;
+    ASSERT_TRUE(myTypeCharacteristicsTest.TestSaturableIntegerLessThan2());
 }
 
 

@@ -64,9 +64,20 @@ bool TypeCharacteristicsTest::TestMaxValueInt8(){
     return retVal;
 }
 
+bool TypeCharacteristicsTest::TestMaxValueInt8BZ2(){
+    retVal = (MaxValue<int8, 2>() == 1);
+    return retVal;
+}
+
 bool TypeCharacteristicsTest::TestMaxValueUInt32(){
     uint32 maxUInt = 4294967295; //(2^32)-1
     retVal = (MaxValue<uint32>() == maxUInt);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestMaxValueUInt32BZ2(){
+    uint32 maxUInt = 3; //(2^2)-1
+    retVal = (MaxValue<uint32, 2>() == maxUInt);
     return retVal;
 }
 
@@ -75,8 +86,18 @@ bool TypeCharacteristicsTest::TestMinValueInt8(){
     return retVal;
 }
 
+bool TypeCharacteristicsTest::TestMinValueInt8BZ2(){
+    retVal = (MinValue<int8, 2>() == -2);
+    return retVal;
+}
+
 bool TypeCharacteristicsTest::TestMinValueUInt32(){
     retVal = (MinValue<uint32>() == 0);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestMinValueUInt32BZ2(){
+    retVal = (MinValue<uint32, 2>() == 0);
     return retVal;
 }
 
@@ -85,8 +106,43 @@ bool TypeCharacteristicsTest::TestUsableBitSizeInt8(){
     return retVal;
 }
 
+bool TypeCharacteristicsTest::TestUsableBitSizeInt8BZ(){
+    retVal = (UsableBitSize<int8,2>() == 1);
+    return retVal;
+}
+
 bool TypeCharacteristicsTest::TestUsableBitSizeUInt32(){
     retVal = (UsableBitSize<uint32>() == 32);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestUsableBitSizeUInt32BZ2(){
+    retVal = (UsableBitSize<uint32,2>() == 2);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestSaturableIntegerNoChanges(){
+    retVal = (TypeDefinition::SaturateInteger<uint32,uint32,32>(10) == 10);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestSaturableIntegerLargerThan(){
+    retVal = (TypeDefinition::SaturateInteger<uint32,uint32, 3>(10) == 7);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestSaturableIntegerLargerThan2(){
+    retVal = (TypeDefinition::SaturateInteger<uint16,uint32, 3>(10) == 7);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestSaturableIntegerLessThan(){
+    retVal = (TypeDefinition::SaturateInteger<int32,int32, 3>(-10) == -4);
+    return retVal;
+}
+
+bool TypeCharacteristicsTest::TestSaturableIntegerLessThan2(){
+    retVal = (TypeDefinition::SaturateInteger<int16,int32, 3>(-10) == -4);
     return retVal;
 }
 
