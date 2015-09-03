@@ -58,7 +58,8 @@ OBJSX=  FormatDescriptorGTest.x \
    	ErrorManagementGTest.x \
     	BitBooleanGTest.x \
  	FractionalIntegerGTest.x \
- 	BitRangeGTest.x 
+ 	BitRangeGTest.x \
+ 	TypeDescriptorGTest.x
 
 PACKAGE=
 ROOT_DIR=../..

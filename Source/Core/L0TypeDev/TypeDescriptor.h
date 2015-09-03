@@ -146,7 +146,7 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
 }
 
 bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
-    return (structuredDataIdCode == typeDescriptor.structuredDataIdCode);
+    return (structuredDataIdCode == typeDescriptor.structuredDataIdCode) && (isStructuredData==typeDescriptor.isStructuredData);
 }
 
 
