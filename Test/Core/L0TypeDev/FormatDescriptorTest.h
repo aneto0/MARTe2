@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../Source/Core/L0TypeDev/FormatDescriptor.h"
+#include "FormatDescriptor.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -42,16 +42,24 @@ using namespace TypeDefinition;
 
 class FormatDescriptorTest {
 public:
+    /**
+     * FormatDescriptorTest default constructor.
+     */
     FormatDescriptorTest();
-    virtual ~FormatDescriptorTest();
 
-    //Returned value
+    /**
+     * Returned value
+     */
     bool retVal;
 
-    //string used to initialize a FormatDescripto object
+    /**
+     * String used to initialize a FormatDescripto object
+     */
     const char8* s;
 
-    //Format descriptor object used during the test.
+    /**
+     * Format descriptor object used during the test.
+     */
     FormatDescriptor fd;
 
     /**
@@ -88,13 +96,13 @@ public:
 
     /**
      * @brief Test Assign operator();
-     * return True if the FormatDescriptor is assigned as expected.
+     * @return True if the FormatDescriptor is assigned as expected.
      */
     bool TestAssignOperator();
 
     /**
      * @brief Test |= operator.
-     * return True if the BitWiseOperator set the parameters of the FormatDescriptor to what is expected.
+     * @return True if the BitWiseOperator set the parameters of the FormatDescriptor to what is expected.
      */
     bool TestBitWiseOrOperator();
 };

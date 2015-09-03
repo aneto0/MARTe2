@@ -50,11 +50,6 @@ AnyTypeTest::AnyTypeTest():dummy(1),constantPtrToConstant(&dummy), constPtr(NULL
     defaultDataDescription.type = Float;
 }
 
-AnyTypeTest::~AnyTypeTest() {
-    // Auto-generated destructor stub for AnyTypeTest
-    // TODO Verify if manual additions are needed
-}
-
 bool AnyTypeTest::TestAnyType_Void(){
     AnyType anytype;
 

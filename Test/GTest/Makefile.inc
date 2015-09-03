@@ -22,7 +22,11 @@
 #
 #############################################################
 
-OBJSX=  FormatDescriptorGTest.x \
+
+OBJSX=  TypeCharacteristicsGTest.x \
+        BasicTypeGTest.x \
+        BasicConsoleGTest.x \
+        FormatDescriptorGTest.x \
         AnyTypeGTest.x\
         StandardHeap_GenericGTest.x \
         HeapManagerGTest.x \
@@ -39,7 +43,6 @@ OBJSX=  FormatDescriptorGTest.x \
 	StringPortableGTest.x \
 	ThreadsGTest.x \
 	MutexSemGTest.x \
-	BasicConsoleGTest.x \
 	TimeoutTypeGTest.x \
 	LoadableLibraryGTest.x \
 	FastMathGTest.x \
@@ -55,10 +58,11 @@ OBJSX=  FormatDescriptorGTest.x \
 	ReferenceContainerNodeGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
-   	ErrorManagementGTest.x \
+  	ErrorManagementGTest.x \
     	BitBooleanGTest.x \
  	FractionalIntegerGTest.x \
- 	BitRangeGTest.x 
+ 	BitRangeGTest.x \
+	TypeDescriptorGTest.x
 
 PACKAGE=
 ROOT_DIR=../..
