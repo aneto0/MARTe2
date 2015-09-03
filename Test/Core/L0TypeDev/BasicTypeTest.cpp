@@ -39,13 +39,175 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+using namespace TypeDefinition;
+
 BasicTypeTest::BasicTypeTest() {
-    // Auto-generated constructor stub for BasicTypeTest
-    // TODO Verify if manual additions are needed
+    retVal = false;
 }
 
-BasicTypeTest::~BasicTypeTest() {
-    // Auto-generated destructor stub for BasicTypeTest
-    // TODO Verify if manual additions are needed
+bool BasicTypeTest::TestBasicTypeConstructorInt8(){
+    int8 x1 = 16;
+    int8 x2 = 5;
+    int8 x3 = -5;
+    BasicType btLarge(x1);
+    BasicType btMedium(x2);
+    BasicType btSmall(x3);
+
+    retVal = (btLarge.operator unsigned char() == 15);
+    retVal &= (btMedium.operator unsigned char() == x2);
+    retVal &= (btSmall.operator unsigned char() == 0);
+
+    return retVal;
 }
+
+bool BasicTypeTest::TestBasicTypeConstructorUInt8(){
+    uint8 x1 = 16;
+    uint8 x2 = 5;
+    uint8 x3 = 0;
+    BasicType btLarge(x1);
+    BasicType btMedium(x2);
+    BasicType btSmall(x3);
+
+    retVal = (btLarge.operator unsigned char() == 15);
+    retVal &= (btMedium.operator unsigned char() == x2);
+    retVal &= (btSmall.operator unsigned char() == 0);
+
+    return retVal;
+}
+
+bool BasicTypeTest::TestBasicTypeConstructorInt16(){
+    int16 x1 = 16;
+    int16 x2 = 5;
+    int16 x3 = -5;
+    BasicType btLarge(x1);
+    BasicType btMedium(x2);
+    BasicType btSmall(x3);
+
+    retVal = (btLarge.operator unsigned char() == 15);
+    retVal &= (btMedium.operator unsigned char() == x2);
+    retVal &= (btSmall.operator unsigned char() == 0);
+
+    return retVal;
+}
+
+bool BasicTypeTest::TestBasicTypeConstructorUInt16(){
+    uint16 x1 = 16;
+    uint16 x2 = 5;
+    uint16 x3 = 0;
+    BasicType btLarge(x1);
+    BasicType btMedium(x2);
+    BasicType btSmall(x3);
+
+    retVal = (btLarge.operator unsigned char() == 15);
+    retVal &= (btMedium.operator unsigned char() == x2);
+    retVal &= (btSmall.operator unsigned char() == 0);
+
+    return retVal;
+}
+
+bool BasicTypeTest::TestBasicTypeConstructorInt32(){
+    int32 x1 = 16;
+    int32 x2 = 5;
+    int32 x3 = -5;
+    BasicType btLarge(x1);
+    BasicType btMedium(x2);
+    BasicType btSmall(x3);
+
+    retVal = (btLarge.operator unsigned char() == 15);
+    retVal &= (btMedium.operator unsigned char() == x2);
+    retVal &= (btSmall.operator unsigned char() == 0);
+
+    return retVal;
+}
+
+bool BasicTypeTest::TestBasicTypeConstructorUInt32(){
+    uint32 x1 = 16;
+    uint32 x2 = 5;
+    uint32 x3 = 0;
+    BasicType btLarge(x1);
+    BasicType btMedium(x2);
+    BasicType btSmall(x3);
+
+    retVal = (btLarge.operator unsigned char() == 15);
+    retVal &= (btMedium.operator unsigned char() == x2);
+    retVal &= (btSmall.operator unsigned char() == 0);
+
+    return retVal;
+}
+
+bool BasicTypeTest::TestBasicTypeConstructorInt64(){
+    int64 x1 = 16;
+    int64 x2 = 5;
+    int64 x3 = -5;
+    BasicType btLarge(x1);
+    BasicType btMedium(x2);
+    BasicType btSmall(x3);
+
+    retVal = (btLarge.operator unsigned char() == 15);
+    retVal &= (btMedium.operator unsigned char() == x2);
+    retVal &= (btSmall.operator unsigned char() == 0);
+
+    return retVal;
+}
+
+bool BasicTypeTest::TestBasicTypeConstructorUInt64(){
+    uint64 x1 = 16;
+    uint64 x2 = 5;
+    uint64 x3 = 0;
+    BasicType btLarge(x1);
+    BasicType btMedium(x2);
+    BasicType btSmall(x3);
+
+    retVal = (btLarge.operator unsigned char() == 15);
+    retVal &= (btMedium.operator unsigned char() == x2);
+    retVal &= (btSmall.operator unsigned char() == 0);
+
+    return retVal;
+}
+
+bool BasicTypeTest::TestBasicTypeConstructorFloat32(){
+    float32 x1 = 16;
+    float32 x2 = 5;
+    float32 x3 = -5;
+    BasicType btLarge(x1);
+    BasicType btMedium(x2);
+    BasicType btSmall(x3);
+
+    retVal = (btLarge.operator unsigned char() == 15);
+    retVal &= (btMedium.operator unsigned char() == x2);
+    retVal &= (btSmall.operator unsigned char() == 0);
+
+    return retVal;
+}
+
+bool BasicTypeTest::TestBasicTypeConstructorFloat64(){
+    float64 x1 = 16;
+    float64 x2 = 5;
+    float64 x3 = -5;
+    BasicType btLarge(x1);
+    BasicType btMedium(x2);
+    BasicType btSmall(x3);
+
+    retVal = (btLarge.operator unsigned char() == 15);
+    retVal &= (btMedium.operator unsigned char() == x2);
+    retVal &= (btSmall.operator unsigned char() == 0);
+
+    return retVal;
+}
+
+bool BasicTypeTest::TestBasicTypeConstructorChar8(){
+    char8 x1 = 16;
+    char8 x2 = 5;
+    char8 x3 = -5;
+    BasicType btLarge(x1);
+    BasicType btMedium(x2);
+    BasicType btSmall(x3);
+
+    retVal = (btLarge.operator unsigned char() == 15);
+    retVal &= (btMedium.operator unsigned char() == x2);
+    retVal &= (btSmall.operator unsigned char() == 0);
+
+    return retVal;
+}
+
 

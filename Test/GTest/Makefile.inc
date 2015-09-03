@@ -22,7 +22,10 @@
 #
 #############################################################
 
-OBJSX=  FormatDescriptorGTest.x \
+OBJSX=   TypeCharacteristicsGTest.x
+#        BasicTypeGTest.x \
+#        BasicConsoleGTest.x \
+#        FormatDescriptorGTest.x \
 #        AnyTypeGTest.x\
  #       StandardHeap_GenericGTest.x \
 #        HeapManagerGTest.x \
