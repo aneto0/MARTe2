@@ -1,8 +1,8 @@
 /**
  * @file BasicType.h
  * @brief Header file for class BasicType
- * @date Aug 28, 2015
- * @author fsartori
+ * @date 28/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -30,6 +30,7 @@
 
 #include "GeneralDefinitions.h"
 #include "FractionalInteger.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -37,9 +38,10 @@
 namespace TypeDefinition {
 
 /**
- * Definition of BasicType as a 4 bit integer.
+ * @brief Definition of BasicType as a 4 bit integer.
  */
 typedef uint4 BasicType;
+
 
 /**
  * The type is a signed integer.
@@ -95,5 +97,4 @@ const BasicType StreamInterface = 12u;
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L0TYPEDEV_BASICTYPE_H_ */
-	
+#endif /* BASICTYPE_H_ */
