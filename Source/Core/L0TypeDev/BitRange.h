@@ -31,20 +31,23 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "TypeCharacteristics.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace TypeDefinition {
 
 /**
  *  @brief A number with configurable size and bit offset.
  *  @details Using these types into an union allows to have the same effect of a struct with bit fielded attributes.
- *  @warning \a bitSize + \a bitOffset must be minor than the bit size of \a baseType.
+ *  @warning bitSize + bitOffset must be minor than the bit size of baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is a
-basic type because this type must be used as a binary number.*/
+ basic type because this type must be used as a binary number.*/
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
 class BitRange {
 
@@ -53,13 +56,14 @@ public:
     /**
      * @brief Copy operator.
      * @details Since this type could be used in an union, this function change only
-     * the range of bits specified leaving untouched the bits outside the range.\n
-     * The \a input argument could be another type. If its value is greater than the maximum possible value
+     * the range of bits specified leaving untouched the bits outside the range.
+     * @details The input argument could be another type. If its value is greater than the maximum possible value
      * or lower than the minimum possible value, the value assigned will be saturated.
      * @param[in] input is the desired number value.
      */
     template<typename inputType>
     void operator=(inputType input);
+
     /**
      * @brief Cast to the type of the value attribute.
      * @details Thanks to this operator this object can be treated as a number.
@@ -72,6 +76,7 @@ public:
      * @return the bit size.
      */
     static inline baseType BitSize();
+
     /**
      * @brief Returns the bit offset.
      * @return the bit offset.
@@ -79,6 +84,7 @@ public:
     static inline baseType BitOffset();
 
 private:
+
     /**
      * The number value.
      */
@@ -101,6 +107,7 @@ private:
     static const baseType notMask = static_cast<baseType>(~mask);
 
 };
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
@@ -144,6 +151,7 @@ template<typename baseType, uint8 bitSize, uint8 bitOffset>
 baseType BitRange<baseType, bitSize, bitOffset>::BitSize() {
     return bitSize;
 }
+
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
 baseType BitRange<baseType, bitSize, bitOffset>::BitOffset() {
     return bitOffset;
@@ -152,4 +160,3 @@ baseType BitRange<baseType, bitSize, bitOffset>::BitOffset() {
 }
 
 #endif /* L0TYPEDEV_BITRANGE_H_ */
-

@@ -47,11 +47,6 @@ FormatDescriptorTest::FormatDescriptorTest() {
     s = NULL;
 }
 
-FormatDescriptorTest::~FormatDescriptorTest() {
-    // Auto-generated destructor stub for FormatDescriptorTest
-    // TODO Verify if manual additions are needed
-}
-
 bool FormatDescriptorTest::TestInitialiseFromString(){
     s = "#7.9f";
 
