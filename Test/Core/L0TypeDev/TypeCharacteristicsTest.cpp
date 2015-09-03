@@ -53,47 +53,40 @@ bool TypeCharacteristicsTest::TestIsSignedInt8(){
     retVal = IsSigned<int8>();
     return retVal;
 }
-/*
+
 bool TypeCharacteristicsTest::TestIsSignedUInt32(){
-    TypeCharacteristics <uint32> tc;
-    retVal = !tc.IsSigned();
+    retVal = !IsSigned<uint32>();
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMaxValueInt8(){
-    TypeCharacteristics <int8> tc;
-    retVal = (tc.MaxValue() == 127);
+    retVal = (MaxValue<int8>() == 127);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMaxValueUInt32(){
-    TypeCharacteristics <uint32> tc;
-    retVal = (tc.MaxValue() == (2^32));
+    uint32 maxUInt = 4294967295; //(2^32)-1
+    retVal = (MaxValue<uint32>() == maxUInt);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMinValueInt8(){
-    TypeCharacteristics <int8> tc;
-    retVal = (tc.MinValue() == -128);
+    retVal = (MinValue<int8>() == -128);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestMinValueUInt32(){
-    TypeCharacteristics <uint32> tc;
-    retVal = (tc.MinValue() == 0);
+    retVal = (MinValue<uint32>() == 0);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestUsableBitSizeInt8(){
-    TypeCharacteristics <int8> tc;
-    retVal = (tc.UsableBitSize() == 7);
+    retVal = (UsableBitSize<int8>() == 7);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestUsableBitSizeUInt32(){
-    TypeCharacteristics <uint32> tc;
-    retVal = (tc.UsableBitSize() == 32);
+    retVal = (UsableBitSize<uint32>() == 32);
     return retVal;
 }
 
-*/

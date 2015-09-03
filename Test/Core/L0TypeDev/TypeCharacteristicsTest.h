@@ -50,6 +50,8 @@ public:
 
     bool TestMaxValueInt8();
 
+    bool TestMaxValueInt8BZ();
+
     bool TestMaxValueUInt32();
 
     bool TestMinValueInt8();
