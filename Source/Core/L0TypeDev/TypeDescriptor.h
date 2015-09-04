@@ -31,10 +31,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "BasicType.h"
 #include "BitRange.h"
 #include "BitBoolean.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -44,8 +46,8 @@ namespace TypeDefinition {
 /**
  * @brief A structure Used to describe the type pointed to by a pointer.
  * @details Depending on the first bit isStructuredData it may contain a code identifying a structure
- * or the remaining bit can be used to identify a specific basic type.\n
- * Basic types are integers 8-64 bit, floats, doubles, char pointers and void pointers.
+ * or the remaining bit can be used to identify a specific basic type.
+ * @details Basic types are integers 8-64 bit, floats, doubles, char pointers and void pointers.
  * Cannot use BitField.h as TypeDescriptor is required by it
  */
 class TypeDescriptor {
@@ -57,23 +59,23 @@ public:
     /*lint -e{9018} Use of union allows to use this memory to describe or objects or basic types in an exclusive way.*/
     union {
         /**
-         if true then the data is a structure or class and its definition
-         has to be found in the ObjectRegistryDatabase
+         * If true then the data is a structure or class and its definition
+         * has to be found in the ObjectRegistryDatabase
          */
         BitBoolean<uint16, 0u> isStructuredData;
 
         /**
-         the data is constant - cannot be written to
+         * The data is constant - cannot be written to
          */
         BitBoolean<uint16, 1u> isConstant;
 
         /**
-         the actual type of data
+         * The actual type of data
          */
         BitRange<uint16, 4u, 2u> type;
 
         /**
-         the size in bits
+         * The size in bits
          */
         BitRange<uint16, 10u, 6u> size;
 
@@ -96,7 +98,7 @@ public:
 
     /**
      * @brief Basic Type constructor.
-     * @param[in] isConstantIn in specifies if the type is constant.
+     * @param[in] isConstantIn specifies if the type is constant.
      * @param[in] typeIn is the type.
      * @param[in] sizeIn is the size.
      */
@@ -122,6 +124,74 @@ public:
 
 };
 
+/**
+ * 32 bit float descriptor.
+ */
+static const TypeDescriptor Float32Bit(false, Float, 32u);
+
+/**
+ * 64 bit float descriptor.
+ */
+static const TypeDescriptor Float64Bit(false, Float, 64u);
+
+/**
+ * 128 bit Float descriptor
+ */
+static const TypeDescriptor Float128Bit(false, Float, 128u);
+
+/**
+ * Void descriptor
+ */
+static const TypeDescriptor VoidType(false, SignedInteger, 0u);
+
+/**
+ * 8 bit signed integer descriptor
+ */
+static const TypeDescriptor SignedInteger8Bit(false, SignedInteger, 8u);
+
+/**
+ * 8 bit unsigned integer descriptor
+ */
+static const TypeDescriptor UnsignedInteger8Bit(false, UnsignedInteger, 8u);
+
+/**
+ * 16 bit signed integer descriptor
+ */
+static const TypeDescriptor SignedInteger16Bit(false, SignedInteger, 16u);
+
+/**
+ * 16 bit unsigned integer descriptor
+ */
+static const TypeDescriptor UnsignedInteger16Bit(false, UnsignedInteger, 16u);
+
+/**
+ * 32 bit signed integer descriptor
+ */
+static const TypeDescriptor SignedInteger32Bit(false, SignedInteger, 32u);
+
+/**
+ * 32 bit unsigned integer descriptor
+ */
+static const TypeDescriptor UnsignedInteger32Bit(false, UnsignedInteger, 32u);
+
+/**
+ * 64 bit signed integer descriptor
+ */
+static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
+
+/**
+ * 64 bit unsigned integer descriptor
+ */
+static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
+
+}
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+namespace TypeDefinition {
+
 TypeDescriptor::TypeDescriptor(const uint16 x) {
     all = x;
 }
@@ -137,7 +207,6 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
                                const uint16 structuredDataIdCodeIn) {
-
     isStructuredData = true;
     isConstant = isConstantIn;
     structuredDataIdCode = structuredDataIdCodeIn;
@@ -149,47 +218,6 @@ bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
     return ret1 && ret2;
 }
 
-/** Float descriptor. */
-static const TypeDescriptor Float32Bit(false, Float, 32u);
-
-/** Double descriptor. */
-static const TypeDescriptor Float64Bit(false, Float, 64u);
-
-/** 128 bit Float descriptor */
-static const TypeDescriptor Float128Bit(false, Float, 128u);
-
-/** Void descriptor */
-static const TypeDescriptor VoidType(false, SignedInteger, 0u);
-
-/** Int8 descriptor */
-static const TypeDescriptor SignedInteger8Bit(false, SignedInteger, 8u);
-
-/** Uint8 descriptor */
-static const TypeDescriptor UnsignedInteger8Bit(false, UnsignedInteger, 8u);
-
-/** Int16 descriptor */
-static const TypeDescriptor SignedInteger16Bit(false, SignedInteger, 16u);
-
-/** Uint16 descriptor */
-static const TypeDescriptor UnsignedInteger16Bit(false, UnsignedInteger, 16u);
-
-/** Int32 descriptor */
-static const TypeDescriptor SignedInteger32Bit(false, SignedInteger, 32u);
-
-/** Uint32 descriptor */
-static const TypeDescriptor UnsignedInteger32Bit(false, UnsignedInteger, 32u);
-
-/** Int64 descriptor */
-static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
-
-/** Uint64 descriptor */
-static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
-
 }
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
 #endif /* TYPEDESCRIPTOR_H_ */
-
