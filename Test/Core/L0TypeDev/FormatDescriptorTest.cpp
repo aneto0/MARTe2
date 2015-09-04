@@ -44,31 +44,31 @@ using namespace TypeDefinition;
 
 FormatDescriptorTest::FormatDescriptorTest() {
     retVal = false;
-    s = NULL;
+    string = NULL;
 }
 
 bool FormatDescriptorTest::TestInitialiseFromString(){
-    s = "#7.9f";
+    string = "#7.9f";
 
-    retVal = fd.InitialiseFromString(s);
-    retVal &= (fd.desiredAction == PrintFloat);
-    retVal &= (fd.size == 7);
-    retVal &= (fd.precision == 9);
-    retVal &= (fd.padded == false);
-    retVal &= (fd.leftAligned == false);
-    retVal &= (fd.floatNotation == FixedPointNotation);
-    retVal &= (fd.binaryNotation == DecimalNotation);
-    retVal &= (fd.binaryPadded == false);
-    retVal &= (fd.fullNotation == true);
-    retVal &= (fd.spareBits == 0u);
+    retVal = formatDescriptor.InitialiseFromString(string);
+    retVal &= (formatDescriptor.desiredAction == PrintFloat);
+    retVal &= (formatDescriptor.size == 7);
+    retVal &= (formatDescriptor.precision == 9);
+    retVal &= (formatDescriptor.padded == false);
+    retVal &= (formatDescriptor.leftAligned == false);
+    retVal &= (formatDescriptor.floatNotation == FixedPointNotation);
+    retVal &= (formatDescriptor.binaryNotation == DecimalNotation);
+    retVal &= (formatDescriptor.binaryPadded == false);
+    retVal &= (formatDescriptor.fullNotation == true);
+    retVal &= (formatDescriptor.spareBits == 0u);
 
     return retVal;
 }
 
 bool FormatDescriptorTest::TestInitialiseFromString2(){
-    s = "#7.af";
+    string = "#7.af";
 
-    retVal = !fd.InitialiseFromString(s);
+    retVal = !formatDescriptor.InitialiseFromString(string);
 
     return retVal;
 }
@@ -117,27 +117,25 @@ bool FormatDescriptorTest::TestConstructor(){
 }
 
 bool FormatDescriptorTest::TestAssignOperator(){
-    FormatDescriptor fd;
-    FormatDescriptor fd1(PrintAnything, 0u, defaultPrecision, true, true, FixedPointNotation, DecimalNotation, true, true);
+    FormatDescriptor formatDescriptor1(PrintAnything, 0u, defaultPrecision, true, true, FixedPointNotation, DecimalNotation, true, true);
 
-    fd = fd1;
-    retVal = (fd.padded == true);
-    retVal &= (fd.leftAligned == true);
-    retVal &= (fd.binaryPadded == true);
-    retVal &= (fd.fullNotation == true);
+    formatDescriptor = formatDescriptor1;
+    retVal = (formatDescriptor.padded == true);
+    retVal &= (formatDescriptor.leftAligned == true);
+    retVal &= (formatDescriptor.binaryPadded == true);
+    retVal &= (formatDescriptor.fullNotation == true);
 
     return retVal;
 }
 
 bool FormatDescriptorTest::TestBitWiseOrOperator(){
-    FormatDescriptor fd;
-    FormatDescriptor fd1(PrintAnything, 0u, defaultPrecision, true, true, FixedPointNotation, DecimalNotation, true, true);
+    FormatDescriptor formatDescriptor1(PrintAnything, 0u, defaultPrecision, true, true, FixedPointNotation, DecimalNotation, true, true);
 
-    fd |= fd1;
-    retVal = (fd.padded == true);
-    retVal &= (fd.leftAligned == true);
-    retVal &= (fd.binaryPadded == true);
-    retVal &= (fd.fullNotation == true);
+    formatDescriptor |= formatDescriptor1;
+    retVal = (formatDescriptor.padded == true);
+    retVal &= (formatDescriptor.leftAligned == true);
+    retVal &= (formatDescriptor.binaryPadded == true);
+    retVal &= (formatDescriptor.fullNotation == true);
 
     return retVal;
 }

@@ -42,45 +42,11 @@ using namespace TypeDefinition;
 
 class AnyTypeTest {
 public:
+
     /**
      * AnyTypeTest constructor.
      */
     AnyTypeTest();
-
-    /**
-     * Target variable. Only used to be pointed to.
-     */
-    const int32 dummy;
-
-    /**
-     * Returned value of the function
-     */
-    bool retVal;
-
-    /**
-     * TypeDescriptor variable used to save the information of anyType.
-     */
-    TypeDescriptor td;
-
-    /**
-     * Default arbitrary bit address
-     */
-    uint8 defaultBitAddress;
-
-    /**
-     * Default arbitrary TypeDescriptor variable used to initialize AnyType.
-     */
-    TypeDescriptor defaultDataDescription;
-
-    /**
-     * Constant void pointer to constant used to initialize AnyType.
-     */
-    const void* const constantPtrToConstant;
-
-    /**
-     * Constant void pointer used to initialize AnyType.
-     */
-    void* const constPtr;
 
     /**
      * @brief Test AnyType default constructor
@@ -250,6 +216,44 @@ public:
      * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstCharPointerToConst();
+
+private:
+
+    /**
+     * Target variable. Only used to be pointed to.
+     */
+    const int32 targetVariable;
+
+    /**
+     * Returned value of the function
+     */
+    bool retVal;
+
+    /**
+     * TypeDescriptor variable used to save the information of anyType.
+     */
+    TypeDescriptor td;
+
+    /**
+     * Default arbitrary bit address
+     */
+    uint8 defaultBitAddress;
+
+    /**
+     * Default arbitrary TypeDescriptor variable used to initialize AnyType.
+     */
+    TypeDescriptor defaultDataDescription;
+
+    /**
+     * Constant void pointer to constant used to initialize AnyType.
+     */
+    const void* const constantPtrToConstant;
+
+    /**
+     * Constant void pointer used to initialize AnyType.
+     */
+    void* const constPtr;
+
 
 };
 

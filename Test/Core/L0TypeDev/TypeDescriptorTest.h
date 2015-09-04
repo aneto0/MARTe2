@@ -53,7 +53,7 @@ public:
      * @param[in] type is the type.
      * @return true if the TypeDescriptor attributes are filled correctly. False otherwise.
      */
-    bool TestConstructorByUint(bool isObject,
+    bool TestConstructorUint(bool isObject,
                                bool isConst,
                                uint16 size,
                                TypeDefinition::BasicType type);
@@ -64,7 +64,7 @@ public:
      * @param[in] type is the type.
      * @return true if the TypeDescriptor attributes are filled correctly. False otherwise.
      */
-    bool TestBasicTypeConstructor(bool isConst,
+    bool TestConstructorBasicType(bool isConst,
                                   uint16 size,
                                   TypeDefinition::BasicType type);
 
@@ -74,7 +74,7 @@ public:
      * @param[in] objCode is the code related to the object.
      * @return true if the TypeDescriptor attributes are filled correctly. False otherwise.
      */
-    bool TestObjectConstructor(bool isConst,
+    bool TestConstructorObject(bool isConst,
                                uint16 objCode);
 
     /**

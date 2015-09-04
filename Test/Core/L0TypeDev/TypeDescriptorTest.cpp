@@ -38,7 +38,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool TypeDescriptorTest::TestConstructorByUint(bool isObject,
+bool TypeDescriptorTest::TestConstructorUint(bool isObject,
                                                bool isConst,
                                                uint16 size,
                                                TypeDefinition::BasicType type) {
@@ -65,7 +65,7 @@ bool TypeDescriptorTest::TestConstructorByUint(bool isObject,
     return true;
 }
 
-bool TypeDescriptorTest::TestBasicTypeConstructor(bool isConst,
+bool TypeDescriptorTest::TestConstructorBasicType(bool isConst,
                                                   uint16 size,
                                                   TypeDefinition::BasicType type) {
 
@@ -91,7 +91,7 @@ bool TypeDescriptorTest::TestBasicTypeConstructor(bool isConst,
 
 }
 
-bool TypeDescriptorTest::TestObjectConstructor(bool isConst,
+bool TypeDescriptorTest::TestConstructorObject(bool isConst,
                                                uint16 objCode) {
 
     TypeDefinition::TypeDescriptor testTD(isConst, objCode);

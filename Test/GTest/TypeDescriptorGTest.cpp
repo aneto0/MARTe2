@@ -42,19 +42,19 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(TypeDescriptorGTest,TestConstructorByUint) {
+TEST(TypeDescriptorGTest,TestConstructorUint) {
     TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestConstructorByUint(true, false, 10, TypeDefinition::Float));
+    ASSERT_TRUE(typeDescriptorTest.TestConstructorUint(true, false, 10, TypeDefinition::Float));
 }
 
-TEST(TypeDescriptorGTest,TestBasicTypeConstructor) {
+TEST(TypeDescriptorGTest,TestConstructorBasicType) {
     TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestBasicTypeConstructor(false, 10, TypeDefinition::CCString));
+    ASSERT_TRUE(typeDescriptorTest.TestConstructorBasicType(false, 10, TypeDefinition::CCString));
 }
 
-TEST(TypeDescriptorGTest,TestObjectConstructor) {
+TEST(TypeDescriptorGTest,TestConstructorObject) {
     TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestObjectConstructor(false, 23));
+    ASSERT_TRUE(typeDescriptorTest.TestConstructorObject(false, 23));
 }
 
 TEST(TypeDescriptorGTest,TestIsEqualOperator) {

@@ -45,7 +45,7 @@ BasicTypeTest::BasicTypeTest() {
     retVal = false;
 }
 
-bool BasicTypeTest::TestBasicTypeConstructorInt8(){
+bool BasicTypeTest::TestConstructorInt8(){
     int8 x1 = 16;
     int8 x2 = 5;
     int8 x3 = -5;
@@ -60,7 +60,7 @@ bool BasicTypeTest::TestBasicTypeConstructorInt8(){
     return retVal;
 }
 
-bool BasicTypeTest::TestBasicTypeConstructorUInt8(){
+bool BasicTypeTest::TestConstructorUInt8(){
     uint8 x1 = 16;
     uint8 x2 = 5;
     uint8 x3 = 0;
@@ -75,7 +75,7 @@ bool BasicTypeTest::TestBasicTypeConstructorUInt8(){
     return retVal;
 }
 
-bool BasicTypeTest::TestBasicTypeConstructorInt16(){
+bool BasicTypeTest::TestConstructorInt16(){
     int16 x1 = 16;
     int16 x2 = 5;
     int16 x3 = -5;
@@ -90,7 +90,7 @@ bool BasicTypeTest::TestBasicTypeConstructorInt16(){
     return retVal;
 }
 
-bool BasicTypeTest::TestBasicTypeConstructorUInt16(){
+bool BasicTypeTest::TestConstructorUInt16(){
     uint16 x1 = 16;
     uint16 x2 = 5;
     uint16 x3 = 0;
@@ -105,7 +105,7 @@ bool BasicTypeTest::TestBasicTypeConstructorUInt16(){
     return retVal;
 }
 
-bool BasicTypeTest::TestBasicTypeConstructorInt32(){
+bool BasicTypeTest::TestConstructorInt32(){
     int32 x1 = 16;
     int32 x2 = 5;
     int32 x3 = -5;
@@ -120,7 +120,7 @@ bool BasicTypeTest::TestBasicTypeConstructorInt32(){
     return retVal;
 }
 
-bool BasicTypeTest::TestBasicTypeConstructorUInt32(){
+bool BasicTypeTest::TestConstructorUInt32(){
     uint32 x1 = 16;
     uint32 x2 = 5;
     uint32 x3 = 0;
@@ -135,7 +135,7 @@ bool BasicTypeTest::TestBasicTypeConstructorUInt32(){
     return retVal;
 }
 
-bool BasicTypeTest::TestBasicTypeConstructorInt64(){
+bool BasicTypeTest::TestConstructorInt64(){
     int64 x1 = 16;
     int64 x2 = 5;
     int64 x3 = -5;
@@ -150,7 +150,7 @@ bool BasicTypeTest::TestBasicTypeConstructorInt64(){
     return retVal;
 }
 
-bool BasicTypeTest::TestBasicTypeConstructorUInt64(){
+bool BasicTypeTest::TestConstructorUInt64(){
     uint64 x1 = 16;
     uint64 x2 = 5;
     uint64 x3 = 0;
@@ -165,7 +165,7 @@ bool BasicTypeTest::TestBasicTypeConstructorUInt64(){
     return retVal;
 }
 
-bool BasicTypeTest::TestBasicTypeConstructorFloat32(){
+bool BasicTypeTest::TestConstructorFloat32(){
     float32 x1 = 16;
     float32 x2 = 5;
     float32 x3 = -5;
@@ -180,7 +180,7 @@ bool BasicTypeTest::TestBasicTypeConstructorFloat32(){
     return retVal;
 }
 
-bool BasicTypeTest::TestBasicTypeConstructorFloat64(){
+bool BasicTypeTest::TestConstructorFloat64(){
     float64 x1 = 16;
     float64 x2 = 5;
     float64 x3 = -5;
@@ -195,7 +195,7 @@ bool BasicTypeTest::TestBasicTypeConstructorFloat64(){
     return retVal;
 }
 
-bool BasicTypeTest::TestBasicTypeConstructorChar8(){
+bool BasicTypeTest::TestConstructorChar8(){
     char8 x1 = 16;
     char8 x2 = 5;
     char8 x3 = -5;

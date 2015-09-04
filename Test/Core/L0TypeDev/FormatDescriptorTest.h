@@ -48,21 +48,6 @@ public:
     FormatDescriptorTest();
 
     /**
-     * Returned value
-     */
-    bool retVal;
-
-    /**
-     * String used to initialize a FormatDescripto object
-     */
-    const char8* s;
-
-    /**
-     * Format descriptor object used during the test.
-     */
-    FormatDescriptor fd;
-
-    /**
      * @brief Test InitialiseFromString().
      * @return True if the function InitialiseFromString() returns true && the variables as set as expected
      */
@@ -105,6 +90,23 @@ public:
      * @return True if the BitWiseOperator set the parameters of the FormatDescriptor to what is expected.
      */
     bool TestBitWiseOrOperator();
+
+private:
+    /**
+     * Returned value
+     */
+    bool retVal;
+
+    /**
+     * String used to initialize a FormatDescripto object
+     */
+    const char8* string;
+
+    /**
+     * Format descriptor object used during the test.
+     */
+    FormatDescriptor formatDescriptor;
+
 };
 
 /*---------------------------------------------------------------------------*/

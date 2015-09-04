@@ -41,7 +41,7 @@
 
 using namespace TypeDefinition;
 
-AnyTypeTest::AnyTypeTest():dummy(1),constantPtrToConstant(&dummy), constPtr(NULL) {
+AnyTypeTest::AnyTypeTest():targetVariable(1),constantPtrToConstant(&targetVariable), constPtr(NULL) {
     retVal = false;
     defaultBitAddress = 1;
     defaultDataDescription.isConstant = true;
@@ -82,7 +82,7 @@ bool AnyTypeTest::TestAnyType_AnyTypeVoid(){
 bool AnyTypeTest::TestAnyType_TypeDescriptor_BitAddress_ConstPointerToConst(){
     AnyType anytype(defaultDataDescription,  defaultBitAddress, constantPtrToConstant);
 
-    retVal = (anytype.GetDataPointer() == &dummy);
+    retVal = (anytype.GetDataPointer() == &targetVariable);
     retVal &= (anytype.GetBitAddress() == 1);
     td = anytype.GetTypeDescriptor();
     retVal &= (td == defaultDataDescription);

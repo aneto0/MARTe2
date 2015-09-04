@@ -44,10 +44,6 @@ public:
      * TypeCharacterisitcs constructor.
      */
     TypeCharacteristicsTest();
-    /**
-     * Returned value. It is used in all function to return the result of the test.
-     */
-    bool retVal;
 
     /**
      * @brief Test the function IsSigned with the type int8.
@@ -141,31 +137,39 @@ public:
 
     /**
      * @brief Test SaturableInteger function using a value larger than the maximum value.
-     * @detail The output value range is equal than the input value range.
+     * @details The output value range is equal than the input value range.
      * @return True if SaturableInteger returns 7 (the maximum possible value).
      */
     bool TestSaturableIntegerLargerThan();
 
     /**
      * @brief Test SaturableInteger function using a value larger than the maximum value.
-     * @detail The output value range is smaller than the input value range.
+     * @details The output value range is smaller than the input value range.
      * @return True if SaturableInteger returns 7 (the maximum possible value).
      */
     bool TestSaturableIntegerLargerThan2();
 
     /**
      * @brief Test SaturableInteger function using a value smaller than the minimum value.
-     * @detail The output value range is equal than the input value range.
+     * @details The output value range is equal than the input value range.
      * @return True if SaturableInteger returns -4 (the minimum possible value).
      */
     bool TestSaturableIntegerLessThan();
 
     /**
      * @brief Test SaturableInteger function using a value smaller than the maximum value.
-     * @detail The output value range is smaller than the input value range.
+     * @details The output value range is smaller than the input value range.
      * @return True if SaturableInteger returns -4 (the minimum possible value).
      */
     bool TestSaturableIntegerLessThan2();
+
+private:
+
+    /**
+     * Returned value. It is used in all function to return the result of the test.
+     */
+    bool retVal;
+
 
 };
 

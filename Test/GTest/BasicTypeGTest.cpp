@@ -44,59 +44,59 @@
 /*---------------------------------------------------------------------------*/
 
 
-TEST(BasicTypeGTest,TestBasicTypeConstructorInt8) {
+TEST(BasicTypeGTest,TestConstructorInt8) {
     BasicTypeTest myBasicTypeTest;
-    ASSERT_TRUE(myBasicTypeTest.TestBasicTypeConstructorInt8());
+    ASSERT_TRUE(myBasicTypeTest.TestConstructorInt8());
 }
 
-TEST(BasicTypeGTest,TestBasicTypeConstructorUInt8) {
+TEST(BasicTypeGTest,TestConstructorUInt8) {
     BasicTypeTest myBasicTypeTest;
-    ASSERT_TRUE(myBasicTypeTest.TestBasicTypeConstructorUInt8());
+    ASSERT_TRUE(myBasicTypeTest.TestConstructorUInt8());
 }
 
-TEST(BasicTypeGTest,TestBasicTypeConstructorInt16) {
+TEST(BasicTypeGTest,TestConstructorInt16) {
     BasicTypeTest myBasicTypeTest;
-    ASSERT_TRUE(myBasicTypeTest.TestBasicTypeConstructorInt16());
+    ASSERT_TRUE(myBasicTypeTest.TestConstructorInt16());
 }
 
-TEST(BasicTypeGTest,TestBasicTypeConstructorUInt16) {
+TEST(BasicTypeGTest,TestConstructorUInt16) {
     BasicTypeTest myBasicTypeTest;
-    ASSERT_TRUE(myBasicTypeTest.TestBasicTypeConstructorUInt16());
+    ASSERT_TRUE(myBasicTypeTest.TestConstructorUInt16());
 }
 
-TEST(BasicTypeGTest,TestBasicTypeConstructorInt32) {
+TEST(BasicTypeGTest,TestConstructorInt32) {
     BasicTypeTest myBasicTypeTest;
-    ASSERT_TRUE(myBasicTypeTest.TestBasicTypeConstructorInt32());
+    ASSERT_TRUE(myBasicTypeTest.TestConstructorInt32());
 }
 
-TEST(BasicTypeGTest,TestBasicTypeConstructorUInt32) {
+TEST(BasicTypeGTest,TestConstructorUInt32) {
     BasicTypeTest myBasicTypeTest;
-    ASSERT_TRUE(myBasicTypeTest.TestBasicTypeConstructorUInt32());
+    ASSERT_TRUE(myBasicTypeTest.TestConstructorUInt32());
 }
 
-TEST(BasicTypeGTest,TestBasicTypeConstructorInt64) {
+TEST(BasicTypeGTest,TestConstructorInt64) {
     BasicTypeTest myBasicTypeTest;
-    ASSERT_TRUE(myBasicTypeTest.TestBasicTypeConstructorInt64());
+    ASSERT_TRUE(myBasicTypeTest.TestConstructorInt64());
 }
 
-TEST(BasicTypeGTest,TestBasicTypeConstructorUInt64) {
+TEST(BasicTypeGTest,TestConstructorUInt64) {
     BasicTypeTest myBasicTypeTest;
-    ASSERT_TRUE(myBasicTypeTest.TestBasicTypeConstructorUInt64());
+    ASSERT_TRUE(myBasicTypeTest.TestConstructorUInt64());
 }
 
-TEST(BasicTypeGTest,TestBasicTypeConstructorFloat32) {
+TEST(BasicTypeGTest,TestConstructorFloat32) {
     BasicTypeTest myBasicTypeTest;
-    ASSERT_TRUE(myBasicTypeTest.TestBasicTypeConstructorFloat32());
+    ASSERT_TRUE(myBasicTypeTest.TestConstructorFloat32());
 }
 
-TEST(BasicTypeGTest,TestBasicTypeConstructorFloat64) {
+TEST(BasicTypeGTest,TestConstructorFloat64) {
     BasicTypeTest myBasicTypeTest;
-    ASSERT_TRUE(myBasicTypeTest.TestBasicTypeConstructorFloat64());
+    ASSERT_TRUE(myBasicTypeTest.TestConstructorFloat64());
 }
 
-TEST(BasicTypeGTest,TestBasicTypeConstructorChar8) {
+TEST(BasicTypeGTest,TestConstructorChar8) {
     BasicTypeTest myBasicTypeTest;
-    ASSERT_TRUE(myBasicTypeTest.TestBasicTypeConstructorChar8());
+    ASSERT_TRUE(myBasicTypeTest.TestConstructorChar8());
 }
 
 
