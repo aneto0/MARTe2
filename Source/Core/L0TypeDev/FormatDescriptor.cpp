@@ -35,16 +35,10 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-
 namespace TypeDefinition {
 /*
-
  DATA TABLES FIRST
-
- */
+*/
 
 /* To implement a look-up table between characters in the
  printf format encoding and the set of bits to be set in
@@ -157,6 +151,10 @@ static inline uint32 GetIntegerNumber(const char8 *&string) {
 
     return number;
 }
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
 
 /*lint -e{9119} assignment of integer to size field*/
 bool FormatDescriptor::InitialiseFromString(const char8 *&string) {

@@ -109,10 +109,10 @@ const BinaryNotation BitNotation = 2u;
 const BinaryNotation OctalNotation = 3u;
 
 /**
- * What was the user desiring to do with the object?
- * print an integer a float?
- * write the information about the object?
- * do the default action?
+ * What was the user desiring to do with the object?\n
+ * Print an integer a float?\n
+ * Write the information about the object?\n
+ * Do the default action?
  */
 typedef uint3 DesiredAction;
 
@@ -152,10 +152,7 @@ const DesiredAction PrintInfo = 5u;
  */
 const DesiredAction PrintStruct = 6u;
 
-/**
- * ???
- */
-static const uint32 defaultPrecision = 0xffu;
+
 
 /**
  * @brief FormatDescriptor class.
@@ -334,26 +331,33 @@ public:
         BitBoolean<uint32, 24u> fullNotation;
 
         /**
-         * What was the user intention?
-         * This can be different from what the system can do.
-         * For instance print an integer and a float is passed
+         * Specifies the type that the user wants to print.
+         * This can be different from what the system can do,
+         * i.e. print an integer and a float is passed.
          */
         BitRange<uint32, 3u, 25u> desiredAction;
 
+        /**
+         * Unnecessary bits.
+         */
         BitRange<uint32, 4u, 28u> spareBits;
 
     };
 
 };
 
-/**
- * Default Format Descriptor.
- */
-static const FormatDescriptor standardFormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false);
 
-/**********************************************
- * INLINE FUNCTIONS
- * *********************************************/
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+/**
+ * Default precision: is set if the user does not specify the desired precision.
+ * A fixed default precision will be used depending on the type to be printed.
+ */
+const uint32 defaultPrecision = 0xffu;
+
 
 /*lint -e{9119} assignment of integer to 3-bit floatNotation and 2-bit binaryNotation justified because only
  * the defined Notation flags shall be used.*/
@@ -407,9 +411,12 @@ FormatDescriptor::FormatDescriptor(const DesiredAction &desiredActionToSet,
     fullNotation = isFullNotation;
     spareBits = 0u;
 }
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+
+
+/**
+ * Default Format Descriptor.
+ */
+static const FormatDescriptor standardFormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false);
 
 } // end of namespace TypeDefinition
 #endif /* FORMATDESCRIPTOR_H_ */
