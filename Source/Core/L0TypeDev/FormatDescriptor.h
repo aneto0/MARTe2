@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "BitRange.h"
 #include "BitBoolean.h"
@@ -45,8 +46,8 @@ namespace TypeDefinition {
 /**
  * Notations used for float types representation.
  */
-
 typedef uint3 FloatNotation;
+
 /**
  * Fixed point notation.
  * The precision is the number of decimals (i.e. 123.45 => precision=2).
@@ -110,11 +111,7 @@ const BinaryNotation BitNotation = 2u;
 const BinaryNotation OctalNotation = 3u;
 
 /**
- * What was the user desiring to do with the object?\n
- * Print an integer a float?\n
- * Write the information about the object?\n
- * Do the default action?
- */
+ * Enumeration-like type for encoding the desired printing action */
 typedef uint3 DesiredAction;
 
 /**
@@ -220,6 +217,7 @@ public:
      * @ --> Any type is fine - prints full content in case of known structures
      */
     bool InitialiseFromString(const char8 *&string);
+
     /**
      * @brief Default constructor.
      *
@@ -283,15 +281,15 @@ public:
         BitRange<uint32, 8u, 0u> size;
 
         /**
-         * The minimum (whenever applicable) number of meaningful digits (unless overridden by width)  max 64
-         * differently from printf this includes characters before comma
-         * excludes characters used for the exponents or for the sign and the .
-         * 0.34 has precision 2        -> (precision =8)  0.3400000
-         * 234 has precision 3         -> (precision =8)  234.00000
-         * 2345678000 has precision 10 -> (precision =8) unchanged still precision 10
-         * 2.345678E9 has precision 7  -> (precision =8) 2.3456780E9
-         * 234 (int) has precision 3   -> (precision =8) unchanged  still precision 3
-         * 0x4ABCD has precision 5     -> (precision =8) unchanged  still precision 5
+         * The minimum (whenever applicable) number of meaningful digits (unless overridden by width)\n
+         * max 64 differently from printf this includes characters before comma\n
+         * excludes characters used for the exponents or for the sign and the .\n
+         * 0.34 has precision 2        -> (precision =8)  0.3400000\n
+         * 234 has precision 3         -> (precision =8)  234.00000\n
+         * 2345678000 has precision 10 -> (precision =8) unchanged still precision 10\n
+         * 2.345678E9 has precision 7  -> (precision =8) 2.3456780E9\n
+         * 234 (int) has precision 3   -> (precision =8) unchanged  still precision 3\n
+         * 0x4ABCD has precision 5     -> (precision =8) unchanged  still precision 5\n
          */
         BitRange<uint32, 8u, 8u> precision;
 
@@ -344,15 +342,20 @@ public:
 
 };
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
-
 /**
  * Default precision: is set if the user does not specify the desired precision.
  * A fixed default precision will be used depending on the type to be printed.
  */
 const uint32 defaultPrecision = 0xffu;
+
+/**
+ * Default Format Descriptor.
+ */
+static const FormatDescriptor standardFormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false);
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
 /*lint -e{9119} assignment of integer to 3-bit floatNotation and 2-bit binaryNotation justified because only
  * the defined Notation flags shall be used.*/
@@ -407,11 +410,7 @@ FormatDescriptor::FormatDescriptor(const DesiredAction &desiredActionToSet,
     spareBits = 0u;
 }
 
-/**
- * Default Format Descriptor.
- */
-static const FormatDescriptor standardFormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false);
+}
 
-} // end of namespace TypeDefinition
 #endif /* FORMATDESCRIPTOR_H_ */
 
