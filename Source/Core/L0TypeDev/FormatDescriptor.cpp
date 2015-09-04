@@ -36,29 +36,36 @@
 /*---------------------------------------------------------------------------*/
 
 namespace TypeDefinition {
-/*
- DATA TABLES FIRST
-*/
 
-/* To implement a look-up table between characters in the
- printf format encoding and the set of bits to be set in
- the FormatDescriptor
+/**
+ * @brief To implement a look-up table between characters in the
+ * printf format encoding and the set of bits to be set in
+ * the FormatDescriptor
  */
 struct FDLookup {
-    // the character in the printf format
+    /**
+     * the character in the printf format
+     */
     char8 character;
-    // the set of flags
+
+    /**
+     * the set of flags
+     */
     FormatDescriptor format;
 };
 
-/// 0 terminated vector of FDLookups
+/**
+ * 0 terminated vector of FDLookups
+ */
 static const FDLookup flagsLookup[] = { { ' ', FormatDescriptor(PrintAnything, 0u, 0u, true, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
         { '-', FormatDescriptor(PrintAnything, 0u, 0u, true, true, FixedPointNotation, DecimalNotation, false, false) },  // '-'
         { '0', FormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, true, false) },  // '0'
         { '#', FormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, true) },  // '#'
         { static_cast<char8>(0), FormatDescriptor(0u) } };
 
-/// 0 terminated vector of FDLookups
+/**
+ * 0 terminated vector of FDLookups
+ */
 static const FDLookup typesLookup[] = { { '!', FormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
         { '?', FormatDescriptor(PrintInfo, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
         { '@', FormatDescriptor(PrintStruct, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
@@ -80,12 +87,8 @@ static const FDLookup typesLookup[] = { { '!', FormatDescriptor(PrintAnything, 0
         { static_cast<char8>(0), FormatDescriptor(0u) } };
 
 /**
-
- FUNCTIONS BELOW
-
+ * strchr equivalent
  */
-
-/// strchr equivalent
 static inline const FDLookup *LookupCharacter(const char8 c,
                                               const FDLookup *lookupTable) {
     if (lookupTable != NULL) {
@@ -95,14 +98,16 @@ static inline const FDLookup *LookupCharacter(const char8 c,
             }
             lookupTable++;
         }
-        if (lookupTable->character == '\0'){
+        if (lookupTable->character == '\0') {
             lookupTable = static_cast<FDLookup *>(NULL);
         }
     }
     return lookupTable;
 }
 
-/// add to format the identified flag
+/**
+ * add to format the identified flag
+ */
 static bool ParseCharacter(const char8 c,
                            FormatDescriptor &format,
                            const FDLookup * const lookupTable) {
@@ -119,8 +124,8 @@ static bool ParseCharacter(const char8 c,
 }
 
 /**
- 0-9 if it is a digit
- otherwise negative
+ * 0-9 if it is a digit
+ * otherwise negative
  */
 static inline int8 GetDigit(const char8 c) {
     int8 digit = static_cast<int8>(c - '0');
@@ -129,9 +134,9 @@ static inline int8 GetDigit(const char8 c) {
 
 }
 
-/*
- Parses a number out of string
- returns 0 if no number is encountered
+/**
+ * Parses a number out of string
+ * returns 0 if no number is encountered
  */
 static inline uint32 GetIntegerNumber(const char8 *&string) {
 
@@ -151,10 +156,14 @@ static inline uint32 GetIntegerNumber(const char8 *&string) {
 
     return number;
 }
+
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace TypeDefinition {
 
 /*lint -e{9119} assignment of integer to size field*/
 bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
