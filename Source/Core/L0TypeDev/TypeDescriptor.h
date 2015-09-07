@@ -48,7 +48,6 @@ namespace TypeDefinition {
  * @details Depending on the first bit isStructuredData it may contain a code identifying a structure
  * or the remaining bit can be used to identify a specific basic type.
  * @details Basic types are integers 8-64 bit, floats, doubles, char pointers and void pointers.
- * Cannot use BitField.h as TypeDescriptor is required by it
  */
 class TypeDescriptor {
 public:
