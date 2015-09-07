@@ -558,7 +558,7 @@ AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
     dataDescriptor.type = type;
     dataDescriptor.size = fractionalInt.BitSize();
     bitAddress = 0;
-    dataPointer = (void*) (&fractionalInt);
+    dataPointer = static_cast<void *> (&fractionalInt);
 }
 
 /*---------------------------------------------------------------------------*/

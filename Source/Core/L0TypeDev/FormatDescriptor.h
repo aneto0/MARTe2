@@ -357,8 +357,7 @@ static const FormatDescriptor standardFormatDescriptor(PrintAnything, 0u, 0u, fa
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/*lint -e{9119} assignment of integer to 3-bit floatNotation and 2-bit binaryNotation justified because only
- * the defined Notation flags shall be used.*/
+
 FormatDescriptor::FormatDescriptor() {
     desiredAction = PrintAnything;
     size = 0u;
@@ -387,7 +386,6 @@ void FormatDescriptor::operator |=(const FormatDescriptor &src) {
     format_as_uint32 |= src.format_as_uint32;
 }
 
-/*lint -e{9119} assignment of integer to 3-bit floatNotation and 2-bit binaryNotation justified*/
 FormatDescriptor::FormatDescriptor(const DesiredAction &desiredActionToSet,
                                    const uint8 sizeToSet,
                                    const uint8 precisionToSet,
