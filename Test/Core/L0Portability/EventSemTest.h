@@ -158,7 +158,7 @@ public:
      * @param[in] nOfThreads is the number of threads to launch.
      * @return true if the final value of sharedVariable == nOfThreads
      */
-    bool TestWaitNoTimeout(uint32 nOfThreads);
+    bool TestWaitTimeoutNoTimeout(uint32 nOfThreads);
 
     /**
      * @brief Test for an finite timeout of 2 seconds
@@ -182,7 +182,7 @@ public:
     /**
      * @brief Checks that a semaphore, even after timing out still works.
      * @param[in] nOfThreads is the number of threads to launch.
-     * @return Forces timeout by calling WaitTimeoutTestFailure and WaitNoTimeoutTest returns true afterwards.
+     * @return Forces timeout by calling WaitTimeoutTestFailure and WaitErrorManagement::NoTimeoutTest returns true afterwards.
      */
     bool TestWaitTimeoutFailureFollowedBySuccess(uint32 nOfThreads);
 

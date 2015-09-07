@@ -28,7 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "Memory.h"
+#include "HeapManager.h"
+#include "MemoryOperationsHelper.h"
 #include "StringHelper.h"
 #include "ReferenceContainerFilterObjectName.h"
 /*---------------------------------------------------------------------------*/
@@ -97,7 +98,7 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
 
             for (uint32 i = 0u; i < addressNumberNodes; i++) {
                 uint32 strLength = static_cast<uint32>(StringHelper::SearchIndex(&lastOccurrence[0], "."));
-                addressToSearch[i] = static_cast<char8 *>(Memory::Malloc(strLength + 1u));
+                addressToSearch[i] = static_cast<char8 *>(HeapManager::Malloc(strLength + 1u));
                 lastOccurrence = StringHelper::TokenizeByChars(lastOccurrence, ".", addressToSearch[i]);
 
             }
@@ -126,9 +127,9 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const Ref
         addressToSearch = new char8*[addressNumberNodes];
         for (uint32 i = 0u; i < addressNumberNodes; i++) {
             uint32 length = StringHelper::Length(other.addressToSearch[i]) + 1u;
-            addressToSearch[i] = static_cast<char8 *>(Memory::Malloc(length));
+            addressToSearch[i] = static_cast<char8 *>(HeapManager::Malloc(length));
             /*lint -e{534} possible failure is not handled nor propagated.*/
-            Memory::Copy(addressToSearch[i], other.addressToSearch[i], length);
+            MemoryOperationsHelper::Copy(addressToSearch[i], other.addressToSearch[i], length);
         }
     }
     Reset();
@@ -140,7 +141,10 @@ ReferenceContainerFilterObjectName &ReferenceContainerFilterObjectName::operator
         if (addressNumberNodes > 0u) {
 
             for (uint32 i = 0u; i < addressNumberNodes; i++) {
-                Memory::Free(reinterpret_cast<void *&>(addressToSearch[i]));
+                bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
+                if (!ok) {
+                    // TODO error here
+                }
             }
         }
 
@@ -154,9 +158,9 @@ ReferenceContainerFilterObjectName &ReferenceContainerFilterObjectName::operator
             addressToSearch = new char8*[addressNumberNodes];
             for (uint32 i = 0u; i < addressNumberNodes; i++) {
                 uint32 length = StringHelper::Length(other.addressToSearch[i]) + 1u;
-                addressToSearch[i] = static_cast<char8 *>(Memory::Malloc(length));
+                addressToSearch[i] = static_cast<char8 *>(HeapManager::Malloc(length));
                 /*lint -e{534} possible failure is not handled nor propagated.*/
-                Memory::Copy(addressToSearch[i], other.addressToSearch[i], length);
+                MemoryOperationsHelper::Copy(addressToSearch[i], other.addressToSearch[i], length);
             }
         }
     }
@@ -170,7 +174,10 @@ ReferenceContainerFilterObjectName::~ReferenceContainerFilterObjectName() {
     if (addressNumberNodes > 0u) {
 
         for (uint32 i = 0u; i < addressNumberNodes; i++) {
-            Memory::Free(reinterpret_cast<void *&>(addressToSearch[i]));
+            bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
+            if (!ok) {
+                //TODO error here
+            }
         }
         delete[] addressToSearch;
     }
@@ -180,7 +187,7 @@ ReferenceContainerFilterObjectName::~ReferenceContainerFilterObjectName() {
 bool ReferenceContainerFilterObjectName::TestPath(ReferenceContainer &previouslyFound) const {
     bool found = (previouslyFound.Size() == (addressNumberNodes - 1u));
     int32 i;
-    for (i= (static_cast<int32>(previouslyFound.Size()) - 1); (found) && (i >= 0); i--) {
+    for (i = (static_cast<int32>(previouslyFound.Size()) - 1); (found) && (i >= 0); i--) {
         found = false;
         if (previouslyFound.Get(static_cast<uint32>(i)).IsValid()) {
             if (previouslyFound.Get(static_cast<uint32>(i))->GetName() != NULL) {

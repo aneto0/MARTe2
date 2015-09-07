@@ -48,14 +48,14 @@ public:
     ReferenceContainerFilterObjectName();
 
     /**
-     * @brief Sets the filter to look for the \a address.
+     * @brief Sets the filter to look for the address.
      * @param[in] occurrenceNumber the ordinal occurrence number (i.e. find the first, the second, ...) of the finding of
      * a node which meets a given criteria or -1 to look for all occurrences. This parameter is indexed to 1.
      * @param[in] modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
      * @param[in] address a string with the name of the object to find or with the full path (from the root) to the object.
      * A full path is specified by separating with dots the path (e.g. A.B.C). If a full path is specified only the first
-     * occurrence can be searched and the \a mode will be set to ReferenceContainerFilterMode::RECURSIVE and ReferenceContainerFilterMode::PATH.
+     * occurrence can be searched and the mode will be set to ReferenceContainerFilterMode::RECURSIVE and ReferenceContainerFilterMode::PATH.
      */
     ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
                                        const uint32 &modeToSet,
@@ -82,15 +82,15 @@ public:
     virtual ~ReferenceContainerFilterObjectName();
 
     /**
-     * @brief Tests if the name of the object hold by \a referenceToTest is compatible with the \address.
-     * @details This method will return true when the name of object hold by \a referenceToTest is the same
+     * @brief Tests if the name of the object hold by referenceToTest is compatible with the address.
+     * @details This method will return true when the name of object hold by referenceToTest is the same
      * of the last node in the address specified in the constructor. If a full path was specified as the address,
-     * this method will return true if, and only if, all the elements in \a previouslyFound where found in the
-     * exact same order set in the constructor \a address.
+     * this method will return true if, and only if, all the elements in previouslyFound where found in the
+     * exact same order set in the constructor address.
      * Each time this method finds a matching reference the number of occurrences will be incremented.
      * @param[in] previouslyFound the history of the path found so far.
      * @param[in] referenceToTest the reference to test (where the name of object will be extracted from).
-     * @return true if the name of the object hold by \a referenceToTest is compatible with the address.
+     * @return true if the name of the object hold by referenceToTest is compatible with the address.
      */
     virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest);
 
@@ -106,10 +106,10 @@ private:
     uint32 addressNumberNodes;
 
     /**
-     * @brief Verifies if the \a previouslyFound path is consistent with the originally set address.
+     * @brief Verifies if the previouslyFound path is consistent with the originally set address.
      * @param[in] previouslyFound a container with all the nodes that make the path leading to the node to be tested.
-     * @return true if all all the elements in \a previouslyFound are in the exact same order specified in
-     * the \a address parameter of the constructor.
+     * @return true if all all the elements in previouslyFound are in the exact same order specified in
+     * the address parameter of the constructor.
      */
     bool TestPath(ReferenceContainer &previouslyFound) const;
 

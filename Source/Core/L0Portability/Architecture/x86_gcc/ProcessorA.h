@@ -1,6 +1,6 @@
 /**
  * @file ProcessorA.h
- * @brief Header file for class ProcessorA
+ * @brief Header file for module ProcessorA
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ProcessorA
+ * @details This header file contains the declaration of the module ProcessorA
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -35,12 +35,14 @@
 #include "Processor.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace Processor {
 
 /**
  * Buffer used to store the processor identifier
@@ -68,12 +70,7 @@ static inline void CPUID(uint32 info,
     );
 }
 
-/**
- * @brief Get the cpu family.
- * @details Called by Processor::Family()
- * @return the cpu family.
- */
-inline uint32 Processor::Family() {
+inline uint32 Family() {
     uint32 eax = 0;
     uint32 ebx = 0;
     uint32 ecx = 0;
@@ -86,12 +83,7 @@ inline uint32 Processor::Family() {
     return family;
 }
 
-/**
- * @brief Get the cpu model.
- * @details Called by Processor::Model()
- * @return the cpu model.
- */
-inline uint32 Processor::Model() {
+inline uint32 Model() {
     uint32 eax = 0;
     uint32 ebx = 0;
     uint32 ecx = 0;
@@ -106,16 +98,13 @@ inline uint32 Processor::Model() {
     return model;
 }
 
-/**
- * @brief Get the identifier of the cpu.
- * @details Called by Processor::VendorId()
- * @return the cpu id.
- */
-inline const char8 *Processor::VendorId() {
+inline const char8 *VendorId() {
     uint32 eax = 0;
     CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
     processorVendorId[12] = 0;
     return &(processorVendorId[0]);
+}
+
 }
 
 #endif /* PROCESSORA_H_ */

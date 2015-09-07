@@ -22,7 +22,7 @@
  */
 
 #ifndef GENERALDEFINITIONSOS_H_
-#define 		GENERALDEFINITIONSOS_H_
+#define GENERALDEFINITIONSOS_H_
 
 
 
@@ -54,6 +54,8 @@ static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdenti
 
 typedef long oslong;
 typedef unsigned long osulong;
+
+#define __DECORATED_FUNCTION_NAME__   __FUNCDNAME__  windows
 
 /**
  * Know shared library extensions

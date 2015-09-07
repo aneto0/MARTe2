@@ -20,8 +20,6 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
 PACKAGE=Core
@@ -30,17 +28,13 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 SPB=OperatingSystem/$(OPERATING_SYSTEM).x
 
-OBJSX=  Atomic.x \
-        Endianity.x \
-        FastMath.x \
+OBJSX=  FastMath.x \
         ProcessorType.x \
-        StringPortable.x \
-        ThreadsDatabase.x \
         ThreadInformation.x \
-        LoadableLibrary.x \
-        Heap.x \
-        FastPollingMutexSem.x
-
+        HeapManager.x \
+        FastPollingMutexSem.x \
+        StringHelper.x \
+        ErrorManagement.x
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 

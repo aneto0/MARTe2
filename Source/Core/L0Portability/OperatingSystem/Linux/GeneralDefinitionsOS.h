@@ -60,10 +60,23 @@ typedef struct termio ConsoleHandle;
 typedef long oslong;
 typedef unsigned long osulong;
 
+
+#define __DECORATED_FUNCTION_NAME__   __PRETTY_FUNCTION__
+
 /**
  * Know shared library extensions
  */
 static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
+
+struct MutexSemOSProperties;
+#define MutexSemHandle MutexSemOSProperties*
+
+struct EventSemOSProperties;
+#define EventSemHandle EventSemOSProperties*
+
+struct BasicConsoleOSProperties;
+#define BasicConsoleHandle BasicConsoleOSProperties*
+
 
 #endif /* GENERALDEFINITIONSOS_H_ */
 

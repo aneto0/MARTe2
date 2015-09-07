@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -92,7 +92,7 @@ public:
      * @brief Gets the module handle
      * @return a copy of the module handle
      */
-    HANDLE GetModule( void );
+    HANDLE GetModule();
 
     /**
      * @brief Sets the module handle

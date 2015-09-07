@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "EventSem.h"
-#include "Memory.h"
 #include "ExceptionHandler.h"
 #include "Threads.h"
 
@@ -92,7 +91,7 @@ public:
      *  that all the necessary housekeeping is performed before calling the user callback function.
      *  @return the value returned by EventSem::Wait
      */
-    ErrorType ThreadWait();
+    ErrorManagement::ErrorType ThreadWait();
 
     /**
      *  @brief Post an internal EventSem.

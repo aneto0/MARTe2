@@ -33,10 +33,14 @@ OBJSX=  BasicConsoleOS.x \
         HighResolutionTimerCalibratorOS.x \
         EventSemOS.x \
         MutexSemOS.x \
-        MemoryOS.x \
+        ThreadsDatabase.x \
         ThreadsOS.x \
         ProcessorOS.x \
-        StringHelperOS.x
+        MemoryCheckOS.x \
+        MemoryOperationsHelper_CLIB.x \
+        StringHelper_Portable.x\
+        StringHelperExtras.x\
+        StandardHeap.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

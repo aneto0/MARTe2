@@ -67,31 +67,31 @@ public:
     /**
      * @brief Tests the correct opening of the console with default mode.
      * @param[in] openingMode is a flag with define the properties of the console.
-     * @return true if the returned value of BasicConsole.Open() is NoError.
+     * @return true if the returned value of BasicConsole.Open() is ErrorManagement::NoError.
      */
     bool TestOpenModeDefault(FlagsType openingMode = BasicConsoleMode::Default);
 
     /**
      * @brief Tests the correct opening of the console with CreateNewBuffer mode.
-     * @return true if the returned value of BasicConsole.Open() is NoError.
+     * @return true if the returned value of BasicConsole.Open() is ErrorManagement::NoError.
      */
     bool TestOpenModeCreateNewBuffer();
 
     /**
      * @brief Tests the correct opening of the console with PerformCharacterInput mode.
-     * @return true if the returned value of BasicConsole.Open() is NoError.
+     * @return true if the returned value of BasicConsole.Open() is ErrorManagement::NoError.
      */
     bool TestOpenModePerformCharacterInput();
 
     /**
      * @brief Tests the correct opening of the console with DisableControlBreak mode.
-     * @return true if the returned value of BasicConsole.Open() is NoError.
+     * @return true if the returned value of BasicConsole.Open() is ErrorManagement::NoError.
      */
     bool TestOpenModeDisableControlBreak();
 
     /**
      * @brief Tests the correct opening of the console with EnablePaging mode.
-     * @return true if the returned value of BasicConsole.Open() is NoError.
+     * @return true if the returned value of BasicConsole.Open() is ErrorManagement::NoError.
      */
     bool TestOpenModeEnablePaging();
 
@@ -118,7 +118,7 @@ public:
      * @param[in] string is the string to write.
      * @param[in] padding is the difference between the size that we want to pass to the write function
      * and the real string size. In this test when padding is negative automatically it is set to 0.
-     * @return true if the BasicConsol::write() returns NoError for all open modes.
+     * @return true if the BasicConsol::write() returns ErrorManagement::NoError for all open modes.
      */
     bool TestWriteCheckReturn(const char8 *string,
                               uint32 padding);
@@ -126,7 +126,7 @@ public:
      * @brief Tests BasicConsole::Write() function.
      * @details Checks for the mode Default, the returned value of the BasicConsole::Write() function when
      * tries to write a NULL string on the console
-     * @return true if the BasicConsol::write() returns Warning.
+     * @return true if the BasicConsol::write() returns ErrorManagement::Warning.
      */
     bool TestWriteNullString();
 
@@ -164,7 +164,7 @@ public:
      * @param[in] overflow is the difference between the rows of the string to write and the row dimension of the console.
      * @param[in] rows is the desired row dimension of the console.
      * @param[in] columns is the desired column dimension of the console.
-     * @return true if BasicConsol::Write() returns NoError. Also can be visually check that is written
+     * @return true if BasicConsol::Write() returns ErrorManagement::NoError. Also can be visually check that is written
      * in the right place
      */
     bool TestPaging(uint32 overflow,

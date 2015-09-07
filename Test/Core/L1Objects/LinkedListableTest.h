@@ -32,7 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "LinkedListable.h"
-#include "Memory.h"
+
+#include "../../../Source/Core/L0Portability/MemoryCheck.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

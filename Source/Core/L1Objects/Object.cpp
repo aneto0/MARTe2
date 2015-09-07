@@ -28,10 +28,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "Memory.h"
 #include "Object.h"
 #include "FastPollingMutexSem.h"
 #include "StringHelper.h"
+#include "HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -51,7 +51,10 @@ Object::Object() {
 Object::~Object() {
     if (name != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        Memory::Free(reinterpret_cast<void *&>(name));
+        bool ok = HeapManager::Free(reinterpret_cast<void *&>(name));
+        if (!ok) {
+            //TODO Error message here
+        }
     }
 }
 
@@ -62,7 +65,7 @@ static FastPollingMutexSem refMux;
 
 uint32 Object::DecrementReferences() {
     uint32 ret = 0u;
-    if (refMux.FastLock() == NoError) {
+    if (refMux.FastLock() == ErrorManagement::NoError) {
         --referenceCounter;
         ret = referenceCounter;
     }
@@ -71,7 +74,7 @@ uint32 Object::DecrementReferences() {
 }
 
 void Object::IncrementReferences() {
-    if (refMux.FastLock() == NoError) {
+    if (refMux.FastLock() == ErrorManagement::NoError) {
         ++referenceCounter;
     }
     refMux.FastUnLock();
@@ -105,7 +108,8 @@ const char8 * const Object::GetName() const {
     return name;
 }
 
-void Object::GetUniqueName(char8 * const destination, const uint32 &size) const {
+void Object::GetUniqueName(char8 * const destination,
+                           const uint32 &size) const {
     /*lint -e{9091} -e{923} the casting from pointer type to integer type is required in order to be able to get a
      * numeric address of the pointer.*/
     uintp ptrHex = reinterpret_cast<uintp>(this);
@@ -158,7 +162,8 @@ void Object::GetUniqueName(char8 * const destination, const uint32 &size) const 
     //If there is no space to even write \0 don't even try
     if (i < size) {
         if (GetName() != NULL) {
-            if (StringHelper::ConcatenateN(destination, GetName(), size - i) == NULL) {
+            // TODO check memory allocation
+            if (!StringHelper::ConcatenateN(destination, GetName(), size - i)) {
                 destination[i] = '\0';
             }
         }
@@ -171,9 +176,12 @@ void Object::GetUniqueName(char8 * const destination, const uint32 &size) const 
 void Object::SetName(const char8 * const newName) {
     if (name != NULL_PTR(char8 *)) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
-        Memory::Free(reinterpret_cast<void *&>(name));
+        bool ok = HeapManager::Free(reinterpret_cast<void *&>(name));
+        if (!ok) {
+            //TODO error here.
+        }
     }
-    name = Memory::StringDup(newName);
+    name = StringHelper::StringDup(newName);
 }
 
 CLASS_REGISTER(Object, "1.0")

@@ -67,8 +67,7 @@ bool ObjectTest::TestInitialise() {
 }
 
 bool ObjectTest::TestNumberOfReferences() {
-    Heap myHeap;
-    Reference objRef("Object", myHeap);
+    Reference objRef("Object");
 
     if (objRef->NumberOfReferences() != 1) {
         return false;

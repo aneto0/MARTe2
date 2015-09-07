@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Heap.h"
+#include "HeapI.h"
 #include "LinkedListable.h"
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
@@ -44,7 +44,7 @@ class Object;
  * @param[in] heap the desired heap memory area where the object will be created.
  * @return a pointer to the created object.
  */
-typedef Object *(ObjectBuildFn)(const Heap &);
+typedef Object *(ObjectBuildFn)(HeapManager::HeapI* const);
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -55,6 +55,10 @@ typedef Object *(ObjectBuildFn)(const Heap &);
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
+/* TODO CHECK for remove this lint comment section */
+/*lint -e{1790} for performance reasons it was decided to implement the usage of LinkedListable this way.
+ * This guarantees that the movements in the list are always performed with the correct pointer (i.e. pointing to the base class).
+ * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.*/
 class ClassRegistryItem: public LinkedListable {
 public:
     /**

@@ -31,7 +31,6 @@
 
 #include "ReferenceContainerFilterObjectNameTest.h"
 #include "StringHelper.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -102,8 +101,7 @@ bool ReferenceContainerFilterObjectNameTest::TestCopyConstructor(int32 occurrenc
         // creates a filter
         ReferenceContainerFilterObjectName *myFilterName = new ReferenceContainerFilterObjectName(occurrence, mode, toSearch);
 
-        Heap h;
-        Reference testRef = Reference("Object", h);
+        Reference testRef = Reference("Object");
         testRef->SetName(toSearch);
 
         ReferenceContainer fakeTree;
@@ -156,8 +154,7 @@ bool ReferenceContainerFilterObjectNameTest::TestDestructor() {
 
     ReferenceContainerFilterObjectName filter(1, 0, "Hello");
 // checks if the string is created on heap
-    Heap h;
-    Reference testRef("Object", h);
+    Reference testRef("Object");
 
     ReferenceContainer fakeTree;
     if (!filter.Test(fakeTree, testRef)) {
@@ -174,7 +171,6 @@ bool ReferenceContainerFilterObjectNameTest::TestTest(ReferenceContainer &previo
                                                       const char8 *toSearch,
                                                       bool expected) {
 
-    Heap h;
 
     if (toSearch[0] == '.') {
         toSearch++;
@@ -202,7 +198,7 @@ bool ReferenceContainerFilterObjectNameTest::TestTest(ReferenceContainer &previo
         }
     }
 
-    Reference toBeSearched("Object", h);
+    Reference toBeSearched("Object");
     toBeSearched->SetName(lastNode);
 
     for (uint32 mode = 0u; mode < 8u; mode++) {
@@ -223,8 +219,7 @@ bool ReferenceContainerFilterObjectNameTest::TestAssignOperator(int32 occurrence
         // creates a filter
         ReferenceContainerFilterObjectName *myFilterName = new ReferenceContainerFilterObjectName(occurrence, mode, toSearch);
 
-        Heap h;
-        Reference testRef = Reference("Object", h);
+        Reference testRef = Reference("Object");
         testRef->SetName(toSearch);
 
         ReferenceContainer fakeTree;

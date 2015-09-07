@@ -30,8 +30,9 @@
 /*---------------------------------------------------------------------------*/
 #include "ClassRegistryItem.h"
 #include "Object.h"
-#include "Memory.h"
+#include "HeapManager.h"
 #include "StringHelper.h"
+#include "MemoryOperationsHelper.h"
 #include "LoadableLibrary.h"
 #include "ClassRegistryItem.h"
 #include "ClassRegistryDatabase.h"
@@ -114,7 +115,7 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     /*lint -e{593} this pointer is freed by the registry item when it is destructed*/
     if ((registryItem == NULL_PTR(ClassRegistryItem *)) && (dllName[0] != '\0')) {
         uint32 fullSize = StringHelper::Length(&(dllName[0])) + 5u;
-        char8 *fullName = static_cast<char8 *>(Memory::Malloc(fullSize));
+        char8 *fullName = static_cast<char8 *>(HeapManager::Malloc(fullSize));
 
         LoadableLibrary *loader = new LoadableLibrary();
 
@@ -122,9 +123,10 @@ ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
         bool dllOpened = false;
         //Check for all known operating system extensions.
         while (operatingSystemDLLExtensions[i] != 0) {
-            if (Memory::Set(fullName, '\0', fullSize)) {
+            if (MemoryOperationsHelper::Set(fullName, '\0', fullSize)) {
                 const char8 *extension = operatingSystemDLLExtensions[i];
-                if (StringHelper::ConcatenateN(fullName, extension, 4u) != NULL_PTR(char8 *)) {
+                // TODO check memory allocation
+                if (StringHelper::ConcatenateN(fullName, extension, 4u)) {
                     dllOpened = loader->Open(fullName);
                     if (dllOpened) {
                         break;

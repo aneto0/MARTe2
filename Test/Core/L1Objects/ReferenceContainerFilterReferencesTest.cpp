@@ -31,7 +31,6 @@
 
 #include "ReferenceContainerFilterReferencesTest.h"
 #include "ReferenceContainer.h"
-#include "Memory.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -53,8 +52,7 @@ bool ReferenceContainerFilterReferencesTest::TestDefaultConstructor() {
 bool ReferenceContainerFilterReferencesTest::TestFullConstructor(int32 occurrenceNumber,
                                                                  uint32 mode) {
 
-    Heap h;
-    Reference ref = Reference("Object", h);
+    Reference ref = Reference("Object");
     ReferenceContainerFilterReferences myRefFilter(occurrenceNumber, mode, ref);
 
     //consider the exclusive conditions
@@ -83,14 +81,13 @@ bool ReferenceContainerFilterReferencesTest::TestFullConstructor(int32 occurrenc
 bool ReferenceContainerFilterReferencesTest::TestTest(uint32 nRefs,
                                                       int32 occurrence) {
 
-    Reference **arrayRefs = (Reference**) Memory::Malloc(sizeof(Reference*) * nRefs);
+    Reference **arrayRefs = (Reference**) HeapManager::Malloc(sizeof(Reference*) * nRefs);
 
     if (arrayRefs == NULL) {
         return false;
     }
 
-    Heap h;
-    Reference original = Reference("Object", h);
+    Reference original = Reference("Object");
     for (uint32 i = 0; i < nRefs; i++) {
         arrayRefs[i] = new Reference(original);
     }
@@ -117,19 +114,18 @@ bool ReferenceContainerFilterReferencesTest::TestTest(uint32 nRefs,
     }
 
     for (uint32 i = 0; i < nRefs; i++) {
-        Memory::Free((void*&) arrayRefs[i]);
+        HeapManager::Free((void*&) arrayRefs[i]);
     }
 
-    Memory::Free((void*&) arrayRefs);
+    HeapManager::Free((void*&) arrayRefs);
 
     return (ret) && (cnt == (uint32) occurrence);
 }
 
 bool ReferenceContainerFilterReferencesTest::TestTestFailure() {
 
-    Heap h;
-    Reference tesRef1 = Reference("Object", h);
-    Reference tesRef2 = Reference("Object", h);
+    Reference tesRef1 = Reference("Object");
+    Reference tesRef2 = Reference("Object");
 
     ReferenceContainer myTree;
     ReferenceContainerFilterReferences myRefFilter(1, 0, tesRef1);
@@ -140,8 +136,7 @@ bool ReferenceContainerFilterReferencesTest::TestTestFailure() {
 
 bool ReferenceContainerFilterReferencesTest::TestIncrementFound() {
 
-    Heap h;
-    Reference testRef = Reference("Object", h);
+    Reference testRef = Reference("Object");
     ReferenceContainer myTree;
 
     ReferenceContainerFilterReferences myRefFilter(1, 0, testRef);
@@ -351,8 +346,7 @@ bool ReferenceContainerFilterReferencesTest::TestSetGetMode(int32 occurrence) {
 
 bool ReferenceContainerFilterReferencesTest::TestReset(uint32 occurrence) {
 
-    Heap h;
-    Reference testRef = Reference("Object", h);
+    Reference testRef = Reference("Object");
     ReferenceContainerFilterReferences myRefFilter(occurrence, 0, testRef);
     ReferenceContainer myTree;
 
@@ -387,8 +381,7 @@ bool ReferenceContainerFilterReferencesTest::TestReset(uint32 occurrence) {
 
 bool ReferenceContainerFilterReferencesTest::TestSetGetOriginalSetOccurrence(int32 initialOccurrence,
                                                                              int32 finalOccurrence) {
-    Heap h;
-    Reference testRef = Reference("Object", h);
+    Reference testRef = Reference("Object");
     ReferenceContainerFilterReferences myRefFilter(initialOccurrence, ReferenceContainerFilterMode::PATH, testRef);
     ReferenceContainer myTree;
 

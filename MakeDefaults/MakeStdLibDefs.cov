@@ -37,6 +37,7 @@ GCNOEXT=.gcno
 GCDAEXT=.gcda
 
 OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
+CPPS=   $(OBJSX:%.x=%.cpp)
 OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.o) 
 OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)/%.o) 
 

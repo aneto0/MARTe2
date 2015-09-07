@@ -24,7 +24,12 @@
 #
 #############################################################
 
-OBJSX=  EndianityTest.x \
+OBJSX=  StandardHeap_GenericTest.x \
+        HeapManagerTest.x \
+        AuxHeap.x\
+        MemoryCheckTest.x \
+        MemoryOperationsHelperTest.x\
+        EndianityTest.x \
         ThreadsTest.x \
         SleepTest.x \
         ProcessorTest.x \
@@ -40,7 +45,9 @@ OBJSX=  EndianityTest.x \
 	TimeoutTypeTest.x \
 	LoadableLibraryTest.x \
 	FastMathTest.x \
-	StringPortableTest.x
+	StringPortableTest.x \
+	ErrorManagementTest.x \
+
 
 PACKAGE=Core
 ROOT_DIR=../../..

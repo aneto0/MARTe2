@@ -1,6 +1,6 @@
 /**
  * @file HighResolutionTimerOS.h
- * @brief Header file for class HighResolutionTimerOS
+ * @brief Header file for module HighResolutionTimer
  * @date 05/07/2015
  * @author André Neto
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HighResolutionTimerOS
+ * @details This header file contains the declaration of the module HighResolutionTimer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -42,24 +42,30 @@
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 extern HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
 
-inline int64 HighResolutionTimer::Frequency(){
+namespace HighResolutionTimer {
+
+
+
+inline int64 Frequency() {
     return calibratedHighResolutionTimer.GetFrequency();
 }
 
-inline float64 HighResolutionTimer::Period(){
+inline float64 Period() {
     return calibratedHighResolutionTimer.GetPeriod();
 }
 
-inline float64 HighResolutionTimer::TicksToTime(int64 tStop, int64 tStart){
+inline float64 TicksToTime(int64 tStop,
+                           int64 tStart) {
     int64 dT = tStop - tStart;
     return dT * Period();
 }
 
-inline bool HighResolutionTimer::GetTimeStamp(TimeValues &date){
+inline bool GetTimeStamp(TimeValues &date) {
     return calibratedHighResolutionTimer.GetTimeStamp(date);
+}
+
 }
 
 #endif /* HIGHRESOLUTIONTIMEROS_H_ */

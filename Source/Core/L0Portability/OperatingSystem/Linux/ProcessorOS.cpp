@@ -1,6 +1,6 @@
 /**
  * @file ProcessorOS.cpp
- * @brief Source file for class Processor
+ * @brief Source file for module Processor
  * @date 26/07/2015
  * @author André Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class Processor (public, protected, and private). Be aware that some 
+ * the module Processor (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -36,13 +36,18 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+
+namespace Processor {
 /*lint -e{9141} constant that can be reused by other classes*/
 char8 processorVendorId[13] = { '\0' };
 
-uint32 Processor::Available() {
+
+uint32 Available() {
     return static_cast<uint32>(sysconf(_SC_NPROCESSORS_ONLN));
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/

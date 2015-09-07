@@ -22,7 +22,15 @@
 #
 #############################################################
 
-OBJSX= EndianityGTest.x \
+
+OBJSX=  TypeCharacteristicsGTest.x \
+        BasicTypeGTest.x \
+        BasicConsoleGTest.x \
+        FormatDescriptorGTest.x \
+        AnyTypeGTest.x\
+        StandardHeap_GenericGTest.x \
+        HeapManagerGTest.x \
+        EndianityGTest.x \
 	SleepGTest.x \
 	ProcessorGTest.x \
 	AtomicGTest.x \
@@ -35,7 +43,6 @@ OBJSX= EndianityGTest.x \
 	StringPortableGTest.x \
 	ThreadsGTest.x \
 	MutexSemGTest.x \
-	BasicConsoleGTest.x \
 	TimeoutTypeGTest.x \
 	LoadableLibraryGTest.x \
 	FastMathGTest.x \
@@ -50,9 +57,12 @@ OBJSX= EndianityGTest.x \
 	ReferenceTGTest.x \
 	ReferenceContainerNodeGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
-	ReferenceContainerFilterObjectNameGTest.x
-
-
+	ReferenceContainerFilterObjectNameGTest.x \
+  	ErrorManagementGTest.x \
+    	BitBooleanGTest.x \
+ 	FractionalIntegerGTest.x \
+ 	BitRangeGTest.x \
+	TypeDescriptorGTest.x
 
 PACKAGE=
 ROOT_DIR=../..
@@ -63,10 +73,10 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES += -I../ 
 INCLUDES += -I../Core/L0Portability
 INCLUDES += -I../Core/L1Objects
-INCLUDES += -I../Core/LXTypeDev
+INCLUDES += -I../Core/L0TypeDev
 INCLUDES += -I../../Source/Core/L0Portability
 INCLUDES += -I../../Source/Core/L1Objects
-INCLUDES += -I../../Source/Core/LXTypeDev
+INCLUDES += -I../../Source/Core/L0TypeDev
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 all: $(OBJS)    \

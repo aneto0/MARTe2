@@ -64,6 +64,9 @@ HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
             size = fread(&buffer[0], static_cast<size_t>(size), static_cast<size_t>(1u), f);
             fclose(f);
         }
+        else{
+            REPORT_ERROR(ErrorManagement::OSError, "Error: fopen()");
+        }
 
         if (size > 0u) {
             const char8 *pattern = "MHz";
@@ -79,6 +82,12 @@ HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
                 }
             }
         }
+        else{
+            REPORT_ERROR(ErrorManagement::OSError, "Error: fread()");
+        }
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::OSError, "Error: gettimeofday()");
     }
 }
 
@@ -112,6 +121,9 @@ bool HighResolutionTimerCalibratorOS::GetTimeStamp(TimeValues &timeStamp) const 
         timeStamp.days = static_cast<uint32>(tValues->tm_mday);
         timeStamp.month = static_cast<uint32>(tValues->tm_mon);
         timeStamp.year = static_cast<uint32>(tValues->tm_year);
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
     }
     return ret;
 }

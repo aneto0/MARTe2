@@ -35,16 +35,23 @@ OBJSX=  BasicConsoleOS.x \
         MutexSemOS.x \
         ProcessorOS.x \
         ThreadsOS.x \
-        MemoryOS.x \
-        StringHelperOS.x
+        MemoryCheckOS.x \
+        MemoryOperationsHelper_CLIB_Gen.x \
+        StringHelper_CLIB_Gen.x \
+        StringHelperExtras_Gen.x \
+        StandardHeap_Gen.x \
+        ThreadsDatabase_Gen.x \
+        LoadableLibraryOS.x
+
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
 
 all: $(OBJS)    \
+				$(CPPS) \
                 $(BUILD_DIR)/L0PortabilityOS$(LIBEXT)
-	echo  $(OBJS)
+	echo  $(OBJS) $(CPPS)
 
 include depends.$(TARGET)
 

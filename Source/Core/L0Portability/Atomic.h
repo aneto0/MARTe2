@@ -1,6 +1,6 @@
 /**
  * @file Atomic.h
- * @brief Header file for class Atomic
+ * @brief Header file for module Atomic
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Atomic
+ * @details This header file contains the declaration of the module Atomic
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef ATOMIC_H_
-#define 		ATOMIC_H_
+#define ATOMIC_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,AtomicA.h)
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /**
@@ -46,58 +46,63 @@
  *
  * These methods are particularly useful in the implementation of functionality that requires
  * protected basic operations between multiple asynchronous accesses like in a multi-thread system.
- * These methods are also used to implement fast threading synchronization constructors (@see FastPollingMutexSem)
+ *
+ * These methods are also used to implement fast threading synchronization constructors
+ *
+ * @see FastPollingMutexSem
  */
-class Atomic {
-public:
+/*lint -e(766) the header file AtomicA.h is not used here. This file is just for declaration and documentation. */
+/*lint -e(762) these declarations are redundant. */
+namespace Atomic {
+
     /**
      * @brief Atomically increments a 32 bit integer in memory.
      * @param[in,out] p the pointer to the 32 bit variable to increment.
      * @pre p != NULL.
      */
-    static inline void Increment (volatile int32 *p );
+    inline void Increment (volatile int32 *p );
 
     /**
      * @brief Atomically increments a 16 bit integer in memory.
      * @param[in,out] p the pointer to the 16 bit variable to increment.
      * @pre p != NULL.
      */
-    static inline void Increment (volatile int16 *p);
+    inline void Increment (volatile int16 *p);
 
     /**
      * @brief Atomically increments a 8 bit integer in memory.
      * @param[in,out] p the pointer to the 8 bit variable to increment.
      * @pre p != NULL.
      */
-    static inline void Increment (volatile int8 *p);
+    inline void Increment (volatile int8 *p);
 
     /**
      * @brief Atomically decrements a 32 bit integer in memory.
      * @param[in,out] p the pointer to the 32 bit variable to decrement.
      * @pre p != NULL.
      */
-    static inline void Decrement (volatile int32 *p);
+    inline void Decrement (volatile int32 *p);
 
     /**
      * @brief Atomically decrements a 16 bit integer in memory.
      * @param[in,out] p the pointer to the 16 bit variable to decrement.
      * @pre p != NULL.
      */
-    static inline void Decrement (volatile int16 *p);
+    inline void Decrement (volatile int16 *p);
 
     /**
      * @brief Atomically decrements a 8 bit integer in memory.
      * @param[in,out] p the pointer to the 8 bit variable to decrement.
      * @pre p != NULL.
      */
-    static inline void Decrement (volatile int8 *p);
+    inline void Decrement (volatile int8 *p);
 
     /**
      * @brief Atomically exchanges the contents of a variable with the specified memory location.
      * @param[out] p the pointer to the 32 bit variable where will be stored the value of v atomically.
      * @param[in] v the value to store in the variable pointed by p.
      */
-    static inline int32 Exchange (volatile int32 *p, int32 v);
+    inline int32 Exchange (volatile int32 *p, int32 v);
 
     /**
      * @brief Tests and sets a 32 bit memory location in a thread safe way.
@@ -105,7 +110,7 @@ public:
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
-    static inline bool TestAndSet(volatile int32 *p);
+    inline bool TestAndSet(volatile int32 *p);
 
     /**
      * @brief Tests and sets a 16 bit memory location in a thread safe way.
@@ -113,7 +118,7 @@ public:
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
-    static inline bool TestAndSet(volatile int16 *p);
+    inline bool TestAndSet(volatile int16 *p);
 
     /**
      * @brief Tests and sets a 8 bit memory location in a thread safe way.
@@ -121,7 +126,7 @@ public:
      * @return true if *p = 0 and set *p = 1. If *p != 0 return false.
      * @pre p != NULL.
      */
-    static inline bool TestAndSet(volatile int8 *p);
+    inline bool TestAndSet(volatile int8 *p);
 
     /**
      * @brief Atomically adds two 32 bit integers.
@@ -129,7 +134,7 @@ public:
      * @param[in] value the value to add to *p.
      * @pre p != NULL.
      */
-    static inline void Add (volatile int32 *p, int32 value);
+    inline void Add (volatile int32 *p, int32 value);
 
     /**
      * @brief Atomically subtracts two 32 bit integers.
@@ -137,15 +142,12 @@ public:
      * @param[in] value the value to subtract to *p.
      * @pre p != NULL.
      */
-    static inline void Sub (volatile int32 *p, int32 value);
+    inline void Sub (volatile int32 *p, int32 value);
 
-};
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,AtomicA.h)
-
 
 #endif /* ATOMIC_H_ */
-

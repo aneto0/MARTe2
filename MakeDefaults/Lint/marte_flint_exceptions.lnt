@@ -7,6 +7,8 @@
  * Justification: reason why the rule does not apply
  */
 
+
+
 /* 
  * Disable all errors from misra which are related to external libraries not under our control
  */
@@ -54,6 +56,11 @@
 -sem(Reference::RemoveReference,cleanup)
 
 /*
+ * Destructor calls the cleanup function 
+ */
+-sem(Reference::RemoveReference,cleanup)
+
+/*
  * Linux is not certifiable. Disable all operating system headers related warnings.
  */
 -e829
@@ -62,19 +69,51 @@
  * Rule GLOBAL
  * Justification: Not applicable to a framework
  */
+/* global macro not referenced */
+-esym(755,REPORT_ERROR,REPORT_ERROR_FULL)
+
+/*
+ * Local macro not referenced
+ */
+-esym(750,ATOMIC_H_)
+-esym(750,ENDIANITY_H_)
+-esym(750,TYPEDESCRIPTOR_H_)
+-esym(750,FORMATDESCRIPTOR_H_)
+-esym(750,ANYTYPE_H_)
+
+/*
+ * Local declarator not referenced 
+ */
+-esym(752,TypeDefinition::*)
+-esym(752,Notation::*)
+
+/*
+ * Local class member not referenced
+ */
+-esym(754,TypeDefinition::FormatDescriptor::*)
+
+
+
 /* global typedef not referenced */
--esym(756,intptr,Colours)
+-esym(756,intptr,Colours,int*,uint*)
 /* global struct/union/enum not referenced */
 -etype(758,Flags)
 -esym(758,SFTestType)
 /* global struct not referenced */
 -esym(768,TimeValues::*)
+-esym(768,ErrorInformation::*)
+-esym(768,isObject)
 -esym(768,IBasicConsole::*)
 -esym(768,ExceptionHandler::*)
 -esym(768,ExceptionHandler::*)
 -esym(768,ClassRegistryDatabase::*)
 -esym(768,Introspection::*)
 -esym(768,Object::*)
+-esym(768,TypeDefinition::BitBoolean*)
+-esym(768,TypeDefinition::BitRange*)
+-esym(768,TypeDefinition::FractionalInteger*)
+
+
 /* global constant enumeration not referenced */ 
 -esym(769,SFTestType::*)
 -esym(769,Colours::*) 
@@ -89,10 +128,7 @@
 -esym(1715,FastMath::*)
 -esym(1715,ExceptionHandler::*)
 
-/*
- * Rule 0-1-10 
- * Justfication: Not applicable to a framework
- */
+
 /* member function not referenced */
 -esym(1714,Sleep::*)
 -esym(1714,HighResolutionTimer::*)
@@ -101,7 +137,7 @@
 -esym(1714,Endianity::*)
 -esym(1714,Atomic::*)
 -esym(1714,Flags::*) 
--esym(1714,Error::*)
+-esym(1714,ErrorManagement::*)
 -esym(1714,Processor::*)
 -esym(1714,TimeoutType::*)
 -esym(1714,ProcessorType::*)
@@ -114,6 +150,7 @@
 -esym(1714,ExceptionHandler::*)
 -esym(1714,ThreadInformation::*)
 -esym(1714,Memory::*)
+-esym(1714,ErrorManagement::*)
 -esym(1714,LinkedListable::*)
 -esym(1714,LinkedListHolder::*)
 -esym(1714,ClassProperties::*)
@@ -127,6 +164,20 @@
 -esym(1714,ReferenceContainerFilterObjectName::*)
 -esym(1714,ReferenceContainerFilterReferences::*)
 -esym(1714,ReferenceContainerFilterObjectName::*)
+-esym(1714,TypeDefinition::AnyType::*)
+-esym(1714,TypeDefinition::FormatDescriptor::*)
+-esym(1714,TypeDefinition::TypeDescriptor::*)
+
+
+/*
+ * Rule 0-1-10 
+ * Symbol not referenced
+ * Justfication: Not applicable to a framework
+ */
+-esym(714,ErrorManagement::*)
+-esym(714,HeapManager::*)
+-esym(714,Sleep::*)
+-esym(714,Threads::*)
 
 
 
@@ -164,6 +215,7 @@
  */
 -efunc(715,BasicConsoleOS::SetColour,BasicConsoleOS::SetTitleBar,BasicConsoleOS::GetTitleBar,BasicConsoleOS::SetCursorPosition,BasicConsoleOS::GetCursorPosition,BasicConsoleOS::SetWindowSize,BasicConsoleOS::GetWindowSize,BasicConsoleOS::PlotChar)
 -efunc(715,Memory::Malloc,Memory::Check)
+-esym(715,errorDescription,errorInfo)
 -efunc(715,previouslyFound)
 
 /*
@@ -202,7 +254,6 @@
 -esym(9141,Colours)
 -esym(9141,Endianity)
 -esym(9141,Endianity::*)
--esym(9141,Error)
 -esym(9141,ErrorType)
 -esym(9141,EventSem::*)
 -esym(9141,EventSemOSProperties)
@@ -250,6 +301,8 @@
 -esym(9141,ExceptionHandler)
 -esym(9141,Memory)
 -esym(9141,Memory::*)
+-esym(9141,ErrorManagement)
+-esym(9141,ErrorManagement::*)
 -esym(9141,Iterator)
 -esym(9141,SearchFilter)
 -esym(9141,SortFilter)
@@ -291,6 +344,8 @@
 -esym(9141,ReferenceContainerFilterReferences::*)
 -esym(9141,ReferenceContainerFilterObjectName)
 -esym(9141,ReferenceContainerFilterObjectName::*)
+-esym(9141,int*)
+-esym(9141,uint*)
 
 
 /*
@@ -318,10 +373,11 @@
  * Rule flexelint 1960 
  * Rule MISRA 0-1-8
  * Void functions must have an external effect.
- * Justification: They do change a class attribute.
+ * Justification: They changed a class attribute.
  */
 -esym(1960, TimeoutType::SetTimeoutSec*)
 -esym(1960, TimeoutType::SetTimeoutHighResolutionTimerTicks*)
+-esym(1960, ErrorManagement::NullErrorProcessFunction*)
 -esym(1960, ReferenceT<<1>>::Init*)
 -esym(1960, ReferenceT<<1>>::RemoveReference*)
 
@@ -350,6 +406,13 @@
   * Justification: Not applicable to a framework.
   */
 -esym(1795, ReferenceT*)
+-esym(1795, TypeDefinition::*)
+-esym(1795, TypeDefinition::AnyType::*)
+-esym(1795, TypeDefinition::BitBoolean*)
+-esym(1795, TypeDefinition::BitRange*)
+-esym(1795, TypeDefinition::FractionalInteger*)
+-esym(1795, TypeDefinition::TypeCharacteristics*)
+
 
 /*
  * Rule flexelint 1531. 
@@ -382,6 +445,10 @@
   * Justification: Required for template implementation.
   */
 -esym(9107, ReferenceT*)
+-esym(9107, TypeDefinition::BitBoolean*)
+-esym(9107, TypeDefinition::BitRange*)
+-esym(9107, TypeDefinition::TypeCharacteristics*)
+-esym(9107, TypeDefinition::FractionalInteger*)
 
 /*
  * Rule flexelint 1793

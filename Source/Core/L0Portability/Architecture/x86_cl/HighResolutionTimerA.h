@@ -1,6 +1,6 @@
 /**
  * @file HighResolutionTimerA.h
- * @brief Header file for class HighResolutionTimerA
+ * @brief Header file for module HighResolutionTimerA
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HighResolutionTimerA
+ * @details This header file contains the declaration of the module HighResolutionTimerA
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -35,30 +35,26 @@
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief Reads the High Resolution Timer as 32 bit. Fast inline assembler.
- * @return number of cpu ticks in a 32 bit integer.
- */
-inline uint32 HighResolutionTimer::Counter32() {
+namespace HighResolutionTimer{
+
+inline uint32 Counter32() {
 
     return (uint32) __rdtsc();
 
 }
 
-/**
- * @brief Reads the High Resolution Timer as 64 bit int. Fast inline assembler.
- * @return number of cpu ticks in a 64 bit integer.
- */
-inline int64 HighResolutionTimer::Counter() {
+inline int64 Counter() {
 
     return (int64) __rdtsc();
+
+}
 
 }
 

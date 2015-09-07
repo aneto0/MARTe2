@@ -38,6 +38,7 @@
 #include "HighResolutionTimer.h"
 #include "TimeoutType.h"
 #include "Sleep.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -76,10 +77,10 @@ public:
      * @details If the semaphore is locked tries to lock until the timeout expire. A double consecutive lock
      * by the same thread causes a deadlock.
      * @param[in] msecTimeout is the desired timeout.
-     * @return Timeout if the semaphore is locked for a period which is greater than the
-     * specified timeout. Otherwise NoError is returned.
+     * @return ErrorManagement::Timeout if the semaphore is locked for a period which is greater than the
+     * specified timeout. Otherwise ErrorManagement::NoError is returned.
      */
-    inline ErrorType FastLock(const TimeoutType &msecTimeout = TTInfiniteWait);
+    inline ErrorManagement::ErrorType FastLock(const TimeoutType &msecTimeout = TTInfiniteWait);
 
     /**
      * @brief Tries to lock and in case of failure returns immediately.
@@ -125,15 +126,16 @@ bool FastPollingMutexSem::Locked() const {
     return flag == 1;
 }
 
-ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout) {
+ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msecTimeout) {
     int64 ticksStop = msecTimeout.HighResolutionTimerTicks();
     ticksStop += HighResolutionTimer::Counter();
-    ErrorType err = NoError;
+    ErrorManagement::ErrorType err = ErrorManagement::NoError;
     while (!Atomic::TestAndSet(&flag)) {
         if (msecTimeout != TTInfiniteWait) {
             int64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
-                err = Timeout;
+                err = ErrorManagement::Timeout;
+                REPORT_ERROR(ErrorManagement::Timeout,"Information: timeout occurred");
                 break;
             }
         }

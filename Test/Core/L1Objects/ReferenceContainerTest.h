@@ -287,7 +287,7 @@ public:
      * @return the time in seconds that it took to execute the function.
      */
     float TestFindPerformance(ReferenceT<ReferenceContainer> largeTree,
-                             ReferenceContainerFilter &filter);
+                              ReferenceContainerFilter &filter);
 
     /**
      * @brief Tests the ReferenceContainer::Insert function.
@@ -416,7 +416,7 @@ private:
     /**
      * Heap used for the tests
      */
-    Heap h;
+    HeapManager::HeapI* h;
 
     /**
      * @brief Verifies if the \a source and \a test containers contain the same information.

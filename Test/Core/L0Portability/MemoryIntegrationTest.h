@@ -2,7 +2,7 @@
  * @file MemoryIntegrationTest.h
  * @brief Header file for class MemoryIntegrationTest
  * @date 29/06/2015
- * @author Giuseppe Ferrò
+ * @author Giuseppe Ferrï¿½
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,7 +31,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "Memory.h"
+#include "../../../Source/Core/L0Portability/MemoryCheck.h"
 #include "Sleep.h"
 #include "Threads.h"
 #include "EventSem.h"

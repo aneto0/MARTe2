@@ -30,11 +30,12 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ReferenceTest.h"
+
+#include "../../../Source/Core/L0Portability/MemoryCheck.h"
 #include "ObjectTestHelper.h"
 #include "ClassRegistryDatabase.h"
 #include "Threads.h"
 #include "Sleep.h"
-#include "Memory.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -56,8 +57,7 @@ bool ReferenceTest::TestDefaultConstructor() {
 
 bool ReferenceTest::TestCopyConstructor() {
 
-    Heap mem;
-    Reference toCopy("IntegerObject", mem);
+    Reference toCopy("IntegerObject");
 
     (dynamic_cast<IntegerObject*>(toCopy.operator->()))->SetVariable(1);
 
@@ -77,8 +77,7 @@ bool ReferenceTest::TestCopyConstructorNullPtr() {
 
 bool ReferenceTest::TestBuildObjectConstructor() {
 
-    Heap mem;
-    Reference buildObj("IntegerObject", mem);
+    Reference buildObj("IntegerObject");
 
     if (buildObj->NumberOfReferences() != 1) {
         return false;
@@ -92,10 +91,9 @@ bool ReferenceTest::TestBuildObjectConstructor() {
 
 bool ReferenceTest::TestBuildFakeObjectConstructor() {
 
-    Heap mem;
 
     //an object with this name is not registered!
-    Reference buildObj("FakeObject", mem);
+    Reference buildObj("FakeObject");
 
     //the reference should be invalid!
     return !buildObj.IsValid();
@@ -103,8 +101,7 @@ bool ReferenceTest::TestBuildFakeObjectConstructor() {
 
 bool ReferenceTest::TestCopyFromObjPtrConstructor() {
 
-    Heap mem;
-    Reference myIntObj("IntegerObject", mem);
+    Reference myIntObj("IntegerObject");
 
     (dynamic_cast<IntegerObject*>(myIntObj.operator->()))->SetVariable(2);
 
@@ -126,7 +123,7 @@ bool ReferenceTest::TestCopyFromObjPtrConstructor() {
         return false;
     }
 
-    Reference ref3("IntegerObject", mem);
+    Reference ref3("IntegerObject");
 
     ref3 = (dynamic_cast<IntegerObject*>(myIntObj.operator->()));
 
@@ -147,10 +144,9 @@ bool ReferenceTest::TestCopyFromObjPtrConstructorNullPtr() {
 }
 
 bool ReferenceTest::TestDestructor() {
-    Heap mem;
 
     //an object with this name is not registered!
-    Reference buildObj("IntegerObject", mem);
+    Reference buildObj("IntegerObject");
 
     if ((buildObj.NumberOfReferences() != 1) && (buildObj.IsValid())) {
         return false;
@@ -167,9 +163,8 @@ bool ReferenceTest::TestInitialise() {
 
 bool ReferenceTest::TestRemoveReference() {
 
-    Heap mem;
 
-    Reference intObjRef = Reference("IntegerObject", mem);
+    Reference intObjRef = Reference("IntegerObject");
 
     //creates an array of references to the object
     Reference refs[32];
@@ -200,9 +195,7 @@ bool ReferenceTest::TestRemoveReference() {
 
 bool ReferenceTest::TestCopyOperatorReference() {
 
-    Heap mem;
-
-    Reference intObjRef = Reference("IntegerObject", mem);
+    Reference intObjRef = Reference("IntegerObject");
     (dynamic_cast<IntegerObject*>(intObjRef.operator->()))->SetVariable(2);
 
     Reference copyObj = intObjRef;
@@ -228,9 +221,7 @@ bool ReferenceTest::TestCopyOperatorReferenceNull() {
 bool ReferenceTest::TestCopyOperatorObject() {
     ClassRegistryDatabase db = ClassRegistryDatabase::Instance();
 
-    Heap mem;
-
-    Reference intObjRef = Reference("IntegerObject", mem);
+    Reference intObjRef = Reference("IntegerObject");
     (dynamic_cast<IntegerObject*>(intObjRef.operator->()))->SetVariable(2);
 
     Reference copyObj = (dynamic_cast<IntegerObject*>(intObjRef.operator->()));
@@ -254,10 +245,8 @@ bool ReferenceTest::TestCopyOperatorObjectNull() {
 
 bool ReferenceTest::TestIsValid() {
 
-    Heap mem;
-
     //an object with this name is not registered!
-    Reference fakeObj("FakeObject", mem);
+    Reference fakeObj("FakeObject");
 
     //the reference should be invalid!
     if (fakeObj.IsValid()) {
@@ -270,7 +259,7 @@ bool ReferenceTest::TestIsValid() {
         return false;
     }
 
-    Reference buildObj("IntegerObject", mem);
+    Reference buildObj("IntegerObject");
     //the reference should be valid!
     if (!buildObj.IsValid()) {
         return false;
@@ -284,9 +273,7 @@ bool ReferenceTest::TestIsValid() {
 
 bool ReferenceTest::TestNumberOfReferences() {
 
-    Heap mem;
-
-    Reference buildObj("IntegerObject", mem);
+    Reference buildObj("IntegerObject");
 
     Reference builtFromRef(buildObj);
     Reference builtFromObj(dynamic_cast<IntegerObject*>(buildObj.operator->()));
@@ -326,9 +313,7 @@ bool ReferenceTest::TestNumberOfReferences() {
 
 bool ReferenceTest::TestEqualOperator() {
 
-    Heap mem;
-
-    Reference buildObj("IntegerObject", mem);
+    Reference buildObj("IntegerObject");
 
     Reference copy(buildObj);
 
@@ -337,7 +322,7 @@ bool ReferenceTest::TestEqualOperator() {
     }
 
     //another instance of the same class
-    Reference test("IntegerObject", mem);
+    Reference test("IntegerObject");
 
     if (buildObj == test) {
         return false;
@@ -363,9 +348,7 @@ bool ReferenceTest::TestEqualOperator() {
 
 bool ReferenceTest::TestDifferentOperator() {
 
-    Heap mem;
-
-    Reference buildObj("IntegerObject", mem);
+    Reference buildObj("IntegerObject");
 
     Reference copy(buildObj);
 
@@ -403,8 +386,7 @@ void CreateRefsOnStack(ReferenceTest &rt) {
 
 bool ReferenceTest::TestInFunctionOnStack() {
 
-    Heap mem;
-    storedRef = Reference("Object", mem);
+    storedRef = Reference("Object");
 
     Threads::BeginThread((ThreadFunctionType) CreateRefsOnStack, this);
 
@@ -432,7 +414,7 @@ bool ReferenceTest::TestInFunctionOnStack() {
 
 void CreateRefsOnHeap(ReferenceTest &rt) {
 
-    rt.arrayRefs = (Reference **) Memory::Malloc(sizeof(Reference*) * rt.nRefs);
+    rt.arrayRefs = (Reference **) HeapManager::Malloc(sizeof(Reference*) * rt.nRefs);
 
     for (uint32 i = 0; i < rt.nRefs; i++) {
         rt.arrayRefs[i] = new Reference;
@@ -446,8 +428,7 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
 
     ClassRegistryDatabase db = ClassRegistryDatabase::Instance();
 
-    Heap mem;
-    storedRef = Reference("Object", mem);
+    storedRef = Reference("Object");
 
     Threads::BeginThread((ThreadFunctionType) CreateRefsOnHeap, this);
 
@@ -483,25 +464,24 @@ bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
     }
 
     // free the pointers array
-    Memory::Free((void*&) arrayRefs);
+    HeapManager::Free((void*&) arrayRefs);
     return ret;
 
 }
 
 bool ReferenceTest::TestRightInherithance() {
 
-    Heap mem;
 
-    Reference integer = Reference("IntegerObject", mem);
+    Reference integer = Reference("IntegerObject");
 
-    Reference specialInteger = Reference("SpecialIntegerObject", mem);
+    Reference specialInteger = Reference("SpecialIntegerObject");
 
     specialInteger = integer;
     if ((specialInteger->NumberOfReferences() != 2)) {
         return false;
     }
 
-    specialInteger = Reference("SpecialIntegerObject", mem);
+    specialInteger = Reference("SpecialIntegerObject");
 
     integer = specialInteger;
 
@@ -511,17 +491,15 @@ bool ReferenceTest::TestRightInherithance() {
 
 bool ReferenceTest::TestWrongInherithance() {
 
-    Heap mem;
+    Reference integer = Reference("IntegerObject");
 
-    Reference integer = Reference("IntegerObject", mem);
-
-    Reference floatn = Reference("FloatObject", mem);
+    Reference floatn = Reference("FloatObject");
 
     floatn = integer;
     if (floatn->NumberOfReferences() != 2) {
         return false;
     }
-    floatn = Reference("FloatObject", mem);
+    floatn = Reference("FloatObject");
 
     integer = floatn;
 
@@ -583,12 +561,10 @@ void ActsOnRefs2(ReferenceTest &rt) {
 bool ReferenceTest::HugeTest(uint32 nRefs) {
 
     this->nRefs = nRefs;
-    arrayRefs = (Reference**) Memory::Malloc(4 * sizeof(Reference*) * nRefs);
+    arrayRefs = (Reference**) HeapManager::Malloc(4 * sizeof(Reference*) * nRefs);
 
-    Heap h;
-
-    storedRef = Reference("Object", h);
-    storedRef2 = Reference("Object", h);
+    storedRef = Reference("Object");
+    storedRef2 = Reference("Object");
 
     Threads::BeginThread((ThreadFunctionType) ActsOnRefs1, this);
     Threads::BeginThread((ThreadFunctionType) ActsOnRefs2, this);
@@ -618,7 +594,7 @@ bool ReferenceTest::HugeTest(uint32 nRefs) {
         delete arrayRefs[i];
     }
 
-    Memory::Free((void*&) arrayRefs);
+    HeapManager::Free((void*&) arrayRefs);
     return ret;
 }
 

@@ -1,6 +1,6 @@
 /**
  * @file GeneralDefinitions.h
- * @brief Header file for class GeneralDefinitions
+ * @brief Header file for GeneralDefinitions
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GeneralDefinitions
+ * @details This header file contains the declaration of the GeneralDefinitions
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -50,6 +50,10 @@
  #endif
  */
 
+#ifndef __DECORATED_FUNCTION_NAME__
+#define __DECORATED_FUNCTION_NAME__ __func__
+#endif
+
 /** List of colors */
 typedef enum {
     Black = 0,
@@ -70,7 +74,6 @@ typedef enum {
     DarkGrey = 15
 
 }Colours;
-
 
 /**
  * @brief A structure containing the time stamp informations.
@@ -99,6 +102,7 @@ struct TimeValues {
     uint32 year;
 };
 
+
 /** Large enough to store a pointer*/
 #ifdef __LP64__
 typedef unsigned long intptr;
@@ -109,6 +113,8 @@ typedef unsigned long long intptr;
 #else
 typedef unsigned long intptr;
 #endif
+
+
 
 #endif /* GENERALDEFINITIONS_H_ */
 

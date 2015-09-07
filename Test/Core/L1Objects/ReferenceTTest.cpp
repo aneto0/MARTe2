@@ -30,11 +30,12 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ReferenceTTest.h"
+
+#include "../../../Source/Core/L0Portability/MemoryCheck.h"
 #include "ObjectTestHelper.h"
 #include "ClassRegistryDatabase.h"
 #include "Threads.h"
 #include "Sleep.h"
-#include "Memory.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -56,8 +57,7 @@ bool ReferenceTTest::TestDefaultConstructor() {
 
 bool ReferenceTTest::TestCopyConstructorReference() {
 
-    Heap mem;
-    Reference toCopy("IntegerObject", mem);
+    Reference toCopy("IntegerObject");
 
     (dynamic_cast<IntegerObject*>(toCopy.operator->()))->SetVariable(1);
 
@@ -69,8 +69,7 @@ bool ReferenceTTest::TestCopyConstructorReference() {
 
 bool ReferenceTTest::TestCopyConstructorReferenceParentToChild() {
 
-    Heap mem;
-    Reference integer("IntegerObject", mem);
+    Reference integer("IntegerObject");
     ReferenceT<SpecialIntegerObject> specialInteger(integer);
 
     return !specialInteger.IsValid();
@@ -78,8 +77,7 @@ bool ReferenceTTest::TestCopyConstructorReferenceParentToChild() {
 
 bool ReferenceTTest::TestCopyConstructorReferenceChildToParent() {
 
-    Heap mem;
-    Reference specialInteger("SpecialIntegerObject", mem);
+    Reference specialInteger("SpecialIntegerObject");
     ReferenceT<IntegerObject> integer(specialInteger);
 
     return integer->NumberOfReferences() == 2;
@@ -87,8 +85,7 @@ bool ReferenceTTest::TestCopyConstructorReferenceChildToParent() {
 
 bool ReferenceTTest::TestCopyConstructorReferenceT() {
 
-    Heap mem;
-    ReferenceT<IntegerObject> toCopy("IntegerObject", mem);
+    ReferenceT<IntegerObject> toCopy("IntegerObject");
 
     (dynamic_cast<IntegerObject*>(toCopy.operator->()))->SetVariable(1);
 
@@ -100,8 +97,7 @@ bool ReferenceTTest::TestCopyConstructorReferenceT() {
 
 bool ReferenceTTest::TestCopyConstructorReferenceTParentToChild() {
 
-    Heap mem;
-    ReferenceT<IntegerObject> integer("IntegerObject", mem);
+    ReferenceT<IntegerObject> integer("IntegerObject");
     ReferenceT<SpecialIntegerObject> specialInteger(integer);
 
     return !specialInteger.IsValid();
@@ -109,8 +105,7 @@ bool ReferenceTTest::TestCopyConstructorReferenceTParentToChild() {
 
 bool ReferenceTTest::TestCopyConstructorReferenceTChildToParent() {
 
-    Heap mem;
-    ReferenceT<SpecialIntegerObject> specialInteger("SpecialIntegerObject", mem);
+    ReferenceT<SpecialIntegerObject> specialInteger("SpecialIntegerObject");
     ReferenceT<IntegerObject> integer(specialInteger);
 
     return integer->NumberOfReferences() == 2;
@@ -126,7 +121,7 @@ bool ReferenceTTest::TestCopyConstructorNullPtr() {
 
 bool ReferenceTTest::TestCreateConstructor() {
 
-    Heap mem;
+    HeapManager::HeapI* mem=NULL;
     ReferenceT<IntegerObject> ref(mem);
 
     if (!ref.IsValid()) {
@@ -139,8 +134,7 @@ bool ReferenceTTest::TestCreateConstructor() {
 
 bool ReferenceTTest::TestBuildObjectConstructor() {
 
-    Heap mem;
-    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject");
 
     if (buildObj->NumberOfReferences() != 1) {
         return false;
@@ -154,10 +148,9 @@ bool ReferenceTTest::TestBuildObjectConstructor() {
 
 bool ReferenceTTest::TestBuildFakeObjectConstructor() {
 
-    Heap mem;
 
     //an object with this name is not registered!
-    ReferenceT<Object> buildObj("FakeObject", mem);
+    ReferenceT<Object> buildObj("FakeObject");
 
     //the reference should be invalid!
     return !buildObj.IsValid();
@@ -165,8 +158,7 @@ bool ReferenceTTest::TestBuildFakeObjectConstructor() {
 
 bool ReferenceTTest::TestCopyFromObjPtrConstructor() {
 
-    Heap mem;
-    ReferenceT<IntegerObject> myIntObj = ReferenceT<IntegerObject>("IntegerObject", mem);
+    ReferenceT<IntegerObject> myIntObj = ReferenceT<IntegerObject>("IntegerObject");
 
     myIntObj->SetVariable(2);
 
@@ -193,10 +185,9 @@ bool ReferenceTTest::TestCopyFromObjPtrConstructorNullPtr() {
 }
 
 bool ReferenceTTest::TestDestructor() {
-    Heap mem;
 
     //an object with this name is not registered!
-    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject");
 
     if ((buildObj.NumberOfReferences() != 1) && (buildObj.IsValid())) {
         return false;
@@ -213,9 +204,8 @@ bool ReferenceTTest::TestInitialise() {
 
 bool ReferenceTTest::TestRemoveReference() {
 
-    Heap mem;
 
-    ReferenceT<IntegerObject> intObjRef("IntegerObject", mem);
+    ReferenceT<IntegerObject> intObjRef("IntegerObject");
 
     //creates an array of references to the object
     ReferenceT<IntegerObject> refs[32];
@@ -245,9 +235,8 @@ bool ReferenceTTest::TestRemoveReference() {
 }
 bool ReferenceTTest::TestCopyOperatorReference() {
 
-    Heap mem;
 
-    Reference intObjRef = Reference("IntegerObject", mem);
+    Reference intObjRef = Reference("IntegerObject");
 
     (dynamic_cast<IntegerObject*>(intObjRef.operator->()))->SetVariable(2);
 
@@ -272,9 +261,8 @@ bool ReferenceTTest::TestCopyOperatorReferenceNull() {
 
 bool ReferenceTTest::TestCopyOperatorReferenceT() {
 
-    Heap mem;
 
-    ReferenceT<IntegerObject> intObjRef("IntegerObject", mem);
+    ReferenceT<IntegerObject> intObjRef("IntegerObject");
     intObjRef->SetVariable(2);
 
     ReferenceT<IntegerObject> copyObj = intObjRef;
@@ -298,9 +286,8 @@ bool ReferenceTTest::TestCopyOperatorReferenceTNull() {
 
 bool ReferenceTTest::TestCopyOperatorObject() {
 
-    Heap mem;
 
-    ReferenceT<IntegerObject> source("IntegerObject", mem);
+    ReferenceT<IntegerObject> source("IntegerObject");
 
     source->SetVariable(2);
 
@@ -324,10 +311,9 @@ bool ReferenceTTest::TestCopyOperatorObjectNull() {
 
 bool ReferenceTTest::TestIsValid() {
 
-    Heap mem;
 
     //an object with this name is not registered!
-    ReferenceT<IntegerObject> fakeObj("FakeObject", mem);
+    ReferenceT<IntegerObject> fakeObj("FakeObject");
 
     //the reference should be invalid!
     if (fakeObj.IsValid()) {
@@ -340,7 +326,7 @@ bool ReferenceTTest::TestIsValid() {
         return false;
     }
 
-    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject");
     //the reference should be valid!
     if (!buildObj.IsValid()) {
         return false;
@@ -354,9 +340,8 @@ bool ReferenceTTest::TestIsValid() {
 
 bool ReferenceTTest::TestNumberOfReferences() {
 
-    Heap mem;
 
-    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject");
 
     ReferenceT<IntegerObject> builtFromRef(buildObj);
     ReferenceT<IntegerObject> builtFromObj(buildObj.operator->());
@@ -396,9 +381,8 @@ bool ReferenceTTest::TestNumberOfReferences() {
 
 bool ReferenceTTest::TestEqualOperator() {
 
-    Heap mem;
 
-    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject");
 
     ReferenceT<IntegerObject> copy(buildObj);
 
@@ -407,7 +391,7 @@ bool ReferenceTTest::TestEqualOperator() {
     }
 
     //another instance of the same class
-    ReferenceT<IntegerObject> test("IntegerObject", mem);
+    ReferenceT<IntegerObject> test("IntegerObject");
 
     if (buildObj == test) {
         return false;
@@ -433,9 +417,8 @@ bool ReferenceTTest::TestEqualOperator() {
 
 bool ReferenceTTest::TestDifferentOperator() {
 
-    Heap mem;
 
-    ReferenceT<IntegerObject> buildObj("IntegerObject", mem);
+    ReferenceT<IntegerObject> buildObj("IntegerObject");
 
     ReferenceT<IntegerObject> copy(buildObj);
 
@@ -474,8 +457,7 @@ void CreateRefsOnStack(ReferenceTTest &rt) {
 
 bool ReferenceTTest::TestInFunctionOnStack() {
 
-    Heap mem;
-    storedRef = ReferenceT<Object>("Object", mem);
+    storedRef = ReferenceT<Object>("Object");
 
     Threads::BeginThread((ThreadFunctionType) CreateRefsOnStack, this);
 
@@ -503,7 +485,7 @@ bool ReferenceTTest::TestInFunctionOnStack() {
 
 void CreateRefsOnHeap(ReferenceTTest &rt) {
 
-    rt.arrayRefs = (ReferenceT<Object> **) Memory::Malloc(sizeof(ReferenceT<Object>*) * rt.nRefs);
+    rt.arrayRefs = (ReferenceT<Object> **) HeapManager::Malloc(sizeof(ReferenceT<Object>*) * rt.nRefs);
 
     for (uint32 i = 0; i < rt.nRefs; i++) {
         rt.arrayRefs[i] = new ReferenceT<Object>;
@@ -515,8 +497,7 @@ void CreateRefsOnHeap(ReferenceTTest &rt) {
 
 bool ReferenceTTest::TestInFunctionOnHeap(uint32 nRefs) {
 
-    Heap mem;
-    storedRef = ReferenceT<Object>("Object", mem);
+    storedRef = ReferenceT<Object>("Object");
 
     Threads::BeginThread((ThreadFunctionType) CreateRefsOnHeap, this);
 
@@ -550,18 +531,17 @@ bool ReferenceTTest::TestInFunctionOnHeap(uint32 nRefs) {
     }
 
     // free the pointers array
-    Memory::Free((void*&) arrayRefs);
+    HeapManager::Free((void*&) arrayRefs);
     return true;
 
 }
 
 bool ReferenceTTest::TestRightInherithance() {
 
-    Heap mem;
 
-    ReferenceT<IntegerObject> integer = ReferenceT<IntegerObject>("IntegerObject", mem);
+    ReferenceT<IntegerObject> integer = ReferenceT<IntegerObject>("IntegerObject");
 
-    ReferenceT<SpecialIntegerObject> specialInteger = ReferenceT<SpecialIntegerObject>("SpecialIntegerObject", mem);
+    ReferenceT<SpecialIntegerObject> specialInteger = ReferenceT<SpecialIntegerObject>("SpecialIntegerObject");
 
     integer = specialInteger;
 
@@ -573,7 +553,7 @@ bool ReferenceTTest::TestRightInherithance() {
         return false;
     }
 
-    integer = ReferenceT<IntegerObject>("IntegerObject", mem);
+    integer = ReferenceT<IntegerObject>("IntegerObject");
 
     //not possible the assignment from top-down
     specialInteger = integer;
@@ -583,11 +563,10 @@ bool ReferenceTTest::TestRightInherithance() {
 
 bool ReferenceTTest::TestWrongInherithance() {
 
-    Heap mem;
 
-    ReferenceT<IntegerObject> integer = ReferenceT<IntegerObject>("IntegerObject", mem);
+    ReferenceT<IntegerObject> integer = ReferenceT<IntegerObject>("IntegerObject");
 
-    ReferenceT<FloatObject> floatn = ReferenceT<FloatObject>("FloatObject", mem);
+    ReferenceT<FloatObject> floatn = ReferenceT<FloatObject>("FloatObject");
 
     floatn = integer;
 
@@ -595,7 +574,7 @@ bool ReferenceTTest::TestWrongInherithance() {
         return false;
     }
 
-    floatn = ReferenceT<FloatObject>("FloatObject", mem);
+    floatn = ReferenceT<FloatObject>("FloatObject");
 
     integer = floatn;
 

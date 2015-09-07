@@ -34,9 +34,10 @@
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceContainerFilter.h"
 #include "StringHelper.h"
-#include "Memory.h"
+#include "MemoryOperationsHelper.h"
 
 ReferenceContainerTest::ReferenceContainerTest() {
+    h = NULL;
     tree = GenerateTestTree();
 }
 
@@ -60,8 +61,7 @@ bool ReferenceContainerTest::TestGetClassPropertiesCopy() {
 }
 
 bool ReferenceContainerTest::TestGetTimeout(TimeoutType timeout) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
+    ReferenceT<ReferenceContainer> container("ReferenceContainer");
     bool ok = container.IsValid();
     if (ok) {
         container->SetTimeout(timeout);
@@ -71,8 +71,7 @@ bool ReferenceContainerTest::TestGetTimeout(TimeoutType timeout) {
 }
 
 bool ReferenceContainerTest::TestSetTimeout(TimeoutType timeout) {
-    Heap h;
-    ReferenceT<ReferenceContainer> container("ReferenceContainer", h);
+    ReferenceT<ReferenceContainer> container("ReferenceContainer");
     bool ok = container.IsValid();
     if (ok) {
         container->SetTimeout(timeout);
@@ -701,10 +700,9 @@ bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingRefere
                                                                                      ReferenceContainer &result,
                                                                                      const char8 * const str) {
     bool ok = true;
-    Heap h;
     uint32 len = StringHelper::Length(str) + 1;
     char8 *name = new char[len];
-    Memory::Set(name, '\0', len);
+    MemoryOperationsHelper::Set(name, '\0', len);
 
     uint32 i;
     uint32 j = 0;
@@ -718,7 +716,7 @@ bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingRefere
                 result.Insert(resultSingle.Get(0));
             }
             j = 0;
-            Memory::Set(name, '\0', len);
+            MemoryOperationsHelper::Set(name, '\0', len);
         }
         else {
             name[j++] = str[i];
@@ -741,20 +739,19 @@ bool ReferenceContainerTest::GenerateExpectedResultFromStringUsingExistingRefere
 bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer &result,
                                                               const char8 * const str) {
     bool ok = true;
-    Heap h;
     uint32 len = StringHelper::Length(str) + 1;
     char8 *name = new char[len];
-    Memory::Set(name, '\0', len);
+    MemoryOperationsHelper::Set(name, '\0', len);
 
     uint32 i;
     uint32 j = 0;
     for (i = 0; i < (len - 1); i++) {
         if (str[i] == '.') {
-            ReferenceT<ReferenceContainer> node("ReferenceContainer", h);
+            ReferenceT<ReferenceContainer> node("ReferenceContainer");
             node->SetName(name);
             result.Insert(node);
             j = 0;
-            Memory::Set(name, '\0', len);
+            MemoryOperationsHelper::Set(name, '\0', len);
         }
         else {
             name[j++] = str[i];
@@ -763,7 +760,7 @@ bool ReferenceContainerTest::GenerateExpectedResultFromString(ReferenceContainer
     //Last node must be a leaf
     //If nothing was found => first node is also a leaf
     if (len > 1) {
-        ReferenceT<Object> leaf("Object", h);
+        ReferenceT<Object> leaf("Object");
         leaf->SetName(name);
         result.Insert(leaf);
     }

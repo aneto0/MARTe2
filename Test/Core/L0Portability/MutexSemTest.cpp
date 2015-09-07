@@ -103,8 +103,8 @@ bool MutexSemTest::GenericMutexSemTestCaller(int32 nOfThreads,
 void TestLockCallback(MutexSemTest &mt) {
     mt.synchSem.Wait();
     while (!mt.stop) {
-        ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
-        mt.failed |= (err != NoError);
+        ErrorManagement::ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
+        mt.failed |= (err != ErrorManagement::NoError);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -131,8 +131,8 @@ void TestUnLockCallback(MutexSemTest &mt) {
     mt.synchSem.Wait();
 
     while (!mt.stop) {
-        ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
-        mt.failed |= (err != NoError);
+        ErrorManagement::ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
+        mt.failed |= (err != ErrorManagement::NoError);
         int32 state = mt.sharedVariable;
         mt.sharedVariable++;
         Sleep::MSec(10);
@@ -158,8 +158,8 @@ bool MutexSemTest::TestUnLock(int32 nOfThreads,
 void TestLockErrorCodeCallback(MutexSemTest &mt) {
     mt.failed = false;
     //This should fail because it was already locked in the TestLockErrorCode
-    ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
-    if (err != Timeout) {
+    ErrorManagement::ErrorType err = mt.testMutex.Lock(mt.testMutexTimeout);
+    if (err != ErrorManagement::Timeout) {
         mt.failed = true;
     }
     Atomic::Decrement(&mt.nOfExecutingThreads);
@@ -167,8 +167,8 @@ void TestLockErrorCodeCallback(MutexSemTest &mt) {
 
 bool MutexSemTest::TestLockErrorCode() {
     bool ok = false;
-    ErrorType err = testMutex.Lock();
-    if (err == NoError) {
+    ErrorManagement::ErrorType err = testMutex.Lock();
+    if (err == ErrorManagement::NoError) {
         ok = GenericMutexSemTestCaller(1, 1, (ThreadFunctionType) TestLockErrorCodeCallback);
     }
     testMutex.UnLock();
@@ -251,7 +251,7 @@ bool MutexSemTest::TestCopyConstructor() {
         test = false;
     }
 
-    test &= (testMutex.Lock() == NoError);
+    test &= (testMutex.Lock() == ErrorManagement::NoError);
     test &= copyTestMutex.UnLock();
 
     return test;

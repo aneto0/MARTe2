@@ -31,9 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "HeapI.h"
+#include "HeapManager.h"
 #include "GeneralDefinitions.h"
 #include "StructuredData.h"
-#include "Heap.h"
 #include "Introspection.h"
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
@@ -72,7 +73,7 @@
      * Note that the selected heap might be different for each type of class.                                          \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
-    static void * operator new(const osulong size, Heap &heap);                                                         \
+    static void * operator new(const osulong size, HeapManager::HeapI *heap = static_cast<HeapManager::HeapI *>(NULL));                                                         \
     /*                                                                                                                 \
      * @brief Delete the object.                                                                                       \
      * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \
@@ -95,15 +96,10 @@
  */
 #define CLASS_REGISTER(name,ver)                                                                                       \
     /*                                                                                                                 \
-     * The heap which is used to instantiate objects from this class type. Only one heap can be set                    \
-     * pre class type                                                                                                  \
-     */                                                                                                                \
-    static Heap name ## Heap_;                                                                                         \
-    /*                                                                                                                 \
      * Forward declaration of function which allows to build a new instance of the object                              \
      * e.g. Object *MyClassTypeBuildFn_(const Heap &h);                                                                \
      */                                                                                                                \
-    Object * name ## BuildFn_(const Heap &h);                                                                          \
+    Object * name ## BuildFn_(HeapManager::HeapI* const heap);                                                                          \
     /*                                                                                                                 \
      * Class properties of this class type. One instance per class type automatically instantiated at the start        \
      * of an application or loading of a loadable library.                                                             \
@@ -123,13 +119,8 @@
      * @return a new instance of the object from the class type.                                                       \
      * e.g. Object *MyClassTypeBuildFn_( const Heap &h);                                                               \
      */                                                                                                                \
-    Object * name ## BuildFn_(const Heap &h){                                                                          \
-        static bool heapAlreadySet = false;                                                                            \
-        if (!heapAlreadySet) {                                                                                         \
-            name ## Heap_= h;                                                                                          \
-            heapAlreadySet = true;                                                                                     \
-        }                                                                                                              \
-        name *p = new (name ## Heap_) name ();                                                                         \
+    Object * name ## BuildFn_(HeapManager::HeapI* const heap){                                                                      \
+        name *p = new (heap) name ();                                                                                  \
         return p;                                                                                                      \
     }                                                                                                                  \
     /*                                                                                                                 \
@@ -139,11 +130,16 @@
         const ClassProperties *properties = name ## ClassRegistryItem_.GetClassProperties();                           \
         destination = *properties;                                                                                     \
     }                                                                                                                  \
-    /*lint -e{1531}                                                                                                                 \
+    /*lint -e{1531}                                                                                                                \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
-    void * name::operator new(const osulong size, Heap &heap) {                                                         \
-        void *obj = heap.Malloc(static_cast<uint32>(size));                                                            \
+    void * name::operator new(const size_t size, HeapManager::HeapI* const heap) {                                                  \
+        void *obj = NULL_PTR(void *);                                                                                  \
+        if (heap != NULL) {                                                                                            \
+            obj = heap->Malloc(static_cast<uint32>(size));                                                             \
+        } else {                                                                                                       \
+            obj = HeapManager::Malloc(static_cast<uint32>(size));                                                      \
+        }                                                                                                              \
         name ## ClassRegistryItem_.IncrementNumberOfInstances();                                                       \
         return obj;                                                                                                    \
     }                                                                                                                  \
@@ -151,7 +147,10 @@
      * e.g. void *MyClassType::operator delete(void *p);                                                               \
      */                                                                                                                \
     void name::operator delete(void *p) {                                                                              \
-        name ## Heap_.Free(p);                                                                                         \
+        bool ok = HeapManager::Free(p);                                                                                \
+        if(!ok){                                                                                                       \
+            /* TODO error here */                                                                                      \
+        }                                                                                                             \
         name ## ClassRegistryItem_.DecrementNumberOfInstances();                                                       \
     }
 /*lint -restore */
@@ -222,7 +221,7 @@ public:
     /**
      * @brief Returns an object name which is guaranteed to be unique.
      * @details The object unique name is composed by the object memory
-     * address and by the object name as returned by GetName().
+     *  address and by the object name as returned by GetName().
      *
      * If GetName() returns NULL the unique name will be the object memory address.
      * The format of the unique name is xMemoryAddress::Name. The leading zeros of the
@@ -236,7 +235,7 @@ public:
     /**
      * @brief Sets the object name.
      * @details If a name had already been set the object name will be updated to this name.
-     * @param[in] newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
+     * @param newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
      * @pre newName != NULL
      */
     void SetName(const char8 * const newName);

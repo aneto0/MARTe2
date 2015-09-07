@@ -1,6 +1,6 @@
 /**
  * @file AtomicA.h
- * @brief Header file for class AtomicA
+ * @brief Header file for module AtomicA
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class AtomicA
+ * @details This header file contains the declaration of the module AtomicA
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -33,56 +33,59 @@
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
-inline void Atomic::Increment(volatile int32 *p) {
+namespace Atomic {
+
+inline void Increment(volatile int32 *p) {
     asm volatile(
             "lock incl (%0)\n"
             : : "r" (p)
     );
 }
 
-inline void Atomic::Increment(volatile int16 *p) {
+inline void Increment(volatile int16 *p) {
     asm volatile(
             "lock incw (%0)\n"
             : : "r" (p)
     );
 }
 
-
-inline void Atomic::Increment(volatile int8 *p) {
+inline void Increment(volatile int8 *p) {
     asm volatile(
             "lock incb (%0)\n"
             : : "r" (p)
     );
 }
 
-inline void Atomic::Decrement(volatile int32 *p) {
+inline void Decrement(volatile int32 *p) {
     asm volatile(
             "lock decl (%0)\n"
             : : "r" (p)
     );
 }
 
-inline void Atomic::Decrement(volatile int16 *p) {
+inline void Decrement(volatile int16 *p) {
     asm volatile(
             "lock decw (%0)\n"
             : : "r" (p)
     );
 }
 
-
-inline void Atomic::Decrement(volatile int8 *p) {
+inline void Decrement(volatile int8 *p) {
     asm volatile(
             "lock decb (%0)\n"
             : : "r" (p)
     );
 }
 
-inline int32 Atomic::Exchange(volatile int32 *p,
-                               int32 v) {
+inline int32 Exchange(volatile int32 *p,
+                      int32 v) {
     asm volatile(
             "lock xchg (%1), %0"
             :"=r" (v) : "r" (p), "0" (v)
@@ -90,8 +93,7 @@ inline int32 Atomic::Exchange(volatile int32 *p,
     return v;
 }
 
-
-inline bool Atomic::TestAndSet(volatile int32 *p) {
+inline bool TestAndSet(volatile int32 *p) {
     register int32 out = 1;
     asm volatile (
             "lock xchg (%2),%1"
@@ -100,7 +102,7 @@ inline bool Atomic::TestAndSet(volatile int32 *p) {
     return (out == 0);
 }
 
-inline bool Atomic::TestAndSet(volatile int16 *p) {
+inline bool TestAndSet(volatile int16 *p) {
     register int16 out = 1;
     asm volatile (
             "lock xchgw (%2),%1"
@@ -109,7 +111,7 @@ inline bool Atomic::TestAndSet(volatile int16 *p) {
     return (out == 0);
 }
 
-inline bool Atomic::TestAndSet(volatile int8 *p) {
+inline bool TestAndSet(volatile int8 *p) {
     register int8 out = 1;
     asm volatile (
             "lock xchgb (%2),%1"
@@ -118,8 +120,8 @@ inline bool Atomic::TestAndSet(volatile int8 *p) {
     return (out == 0);
 }
 
-inline void Atomic::Add(volatile int32 *p,
-                         int32 value) {
+inline void Add(volatile int32 *p,
+                int32 value) {
     asm volatile (
             "lock addl %1, (%0)"
             : /* output */
@@ -127,8 +129,8 @@ inline void Atomic::Add(volatile int32 *p,
     );
 }
 
-inline void Atomic::Sub(volatile int32 *p,
-                         int32 value) {
+inline void Sub(volatile int32 *p,
+                int32 value) {
     asm volatile (
             "lock subl %1, (%0)"
             : /* output */
@@ -136,9 +138,6 @@ inline void Atomic::Sub(volatile int32 *p,
     );
 }
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+}
 
 #endif /* ATOMICA_H_ */
-

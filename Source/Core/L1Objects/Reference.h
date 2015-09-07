@@ -31,12 +31,14 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Object.h"
 #include "StructuredData.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
  * @brief Shared pointer implementation.
  * @details The Reference class is a smart pointer implementation where the shared
@@ -45,7 +47,6 @@
  * it is no longer referenced.
  *
  * The Reference might also own no object, in which case the function IsValid will return false.
- *
  */
 class Reference {
 public:
@@ -68,7 +69,7 @@ public:
      * @param[in] heap the heap responsible for allocating the object.
      */
     Reference(const char8* const typeName,
-              const Heap &heap);
+              HeapManager::HeapI* const heap = static_cast<HeapManager::HeapI *>(NULL));
 
     /**
      * @brief Creates a reference to an existing \a pointer.
@@ -173,7 +174,7 @@ private:
      * @return a new object of the specified class or NULL if the \a className does not exist.
      */
     Object *CreateByName(const char8 * const className,
-                         const Heap &heap) const;
+                         HeapManager::HeapI* const heap) const;
 
 };
 

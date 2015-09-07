@@ -144,9 +144,9 @@ MutexSem::~MutexSem() {
 
 ErrorType MutexSem::Lock() {
     DWORD ret = WaitForSingleObject(osProperties->mutexHandle, INFINITE);
-    ErrorType error = NoError;
+    ErrorType error = ErrorManagement::NoError;
     if (ret == WAIT_FAILED) {
-        error = OSError;
+        error = ErrorManagement::OSError;
     }
 
     return error;
@@ -154,11 +154,11 @@ ErrorType MutexSem::Lock() {
 
 ErrorType MutexSem::Lock(const TimeoutType &timeout) {
     DWORD ret = WaitForSingleObject(osProperties->mutexHandle, timeout.GetTimeoutMSec());
-    ErrorType error = NoError;
+    ErrorType error = ErrorManagement::NoError;
     if (ret == WAIT_FAILED) {
-        error = OSError;
+        error = ErrorManagement::OSError;
     }
-    if (error == NoError && ret == WAIT_TIMEOUT) {
+    if (error == ErrorManagement::NoError && ret == WAIT_TIMEOUT) {
         error = Timeout;
     }
     return error;

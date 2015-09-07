@@ -1,6 +1,6 @@
 /**
  * @file FastMathA.h
- * @brief Header file for class FastMathA
+ * @brief Header file for module FastMathA
  * @date 26/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class FastMathA
+ * @details This header file contains the declaration of the module FastMathA
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -33,17 +33,16 @@
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
-/*
- * @brief Implementation of math operations.
- */
-/**
- * @see FastMath::Sin
- * @brief Calculate the sine of an angle.
- * @param[in] angle is the angle parameter in radiants.
- * @return the value of the sine of angle. */
-float FastMath::Sin(float angle) {
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+namespace FastMath {
+
+float Sin(float angle) {
     volatile float output;
     __asm__ __volatile__(
             "fsin"
@@ -52,13 +51,7 @@ float FastMath::Sin(float angle) {
     return output;
 }
 
-/**
- * @see FastMath::Cos
- * @brief Calculate the cosine of an angle.
- * @param[in] angle is the angle parameter in radiants.
- * @return the value of the cosine of angle.
- */
-float FastMath::Cos(float angle) {
+float Cos(float angle) {
     volatile float output;
     __asm__ __volatile__(
             "fcos;"
@@ -67,12 +60,7 @@ float FastMath::Cos(float angle) {
     return output;
 }
 
-/**
- * @see FastMath::FloatToInt
- * @brief Fast conversion to int by float.
- * @param[in] input is the float number to convert.
- * @return the floor of input (32 bits integer). */
-int32 FastMath::FloatToInt(float input) {
+int32 FloatToInt(float input) {
     volatile int32 output;
     __asm__ __volatile__(
             "fld   %1;\n"
@@ -81,9 +69,7 @@ int32 FastMath::FloatToInt(float input) {
     );
     return output;
 }
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+
+}
 
 #endif /* FASTMATHA_H_ */
-

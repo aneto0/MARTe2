@@ -1,6 +1,6 @@
 /**
  * @file AtomicA.h
- * @brief Header file for class AtomicA
+ * @brief Header file for module AtomicA
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class AtomicA
+ * @details This header file contains the declaration of the module AtomicA
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
 #ifndef ATOMICA_H_
-#define 		ATOMICA_H_
+#define ATOMICA_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -35,85 +35,84 @@
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
-/**
- * @brief Platform dependent functions for atomic operations.
- * @details These functions define atomic operation optimizing as more as possible the performance.
- */
 
-inline void Atomic::Increment(volatile int32 *p) {
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+namespace Atomic {
+
+inline void Increment(volatile int32 *p) {
     volatile long* pp = (volatile long *) p;
     _InterlockedIncrement(pp);
 }
 
-inline void Atomic::Increment(volatile int16 *p) {
+inline void Increment(volatile int16 *p) {
     volatile short* pp = (volatile short*) p;
     _InterlockedIncrement16(pp);
 }
 
-inline void Atomic::Increment(volatile int8 *p) {
+inline void Increment(volatile int8 *p) {
     //There is not _InterlockedIncrement8 function.
     volatile char8 *pp = (volatile char8*) p;
     _InterlockedExchangeAdd8(pp, 1);
 }
 
-inline void Atomic::Decrement(volatile int32 *p) {
+inline void Decrement(volatile int32 *p) {
     volatile long* pp = (volatile long *) p;
     _InterlockedDecrement(pp);
 }
 
-inline void Atomic::Decrement(volatile int16 *p) {
+inline void Decrement(volatile int16 *p) {
     volatile short* pp = (volatile short *) p;
     _InterlockedDecrement16(pp);
 }
 
-inline void Atomic::Decrement(volatile int8 *p) {
+inline void Decrement(volatile int8 *p) {
     volatile char8 *pp = (volatile char8 *) p;
     _InterlockedExchangeAdd8(pp, -1);
 }
 
-inline int32 Atomic::Exchange(volatile int32 *p,
-                              int32 v) {
+inline int32 Exchange(volatile int32 *p,
+                      int32 v) {
     volatile long* pp = (volatile long *) p;
     return _InterlockedExchange(pp, v);
 }
 
-inline bool Atomic::TestAndSet(volatile int32 *p) {
+inline bool TestAndSet(volatile int32 *p) {
     volatile long* pp = (volatile long *) p;
     //returns the initial value of *pp
     return _InterlockedCompareExchange(pp, 1, 0) == 0;
 }
 
-inline bool Atomic::TestAndSet(volatile int16 *p) {
+inline bool TestAndSet(volatile int16 *p) {
     volatile short* pp = (volatile short *) p;
     //returns the initial value of *pp
     return _InterlockedCompareExchange16(pp, 1, 0) == 0;
 }
 
-inline bool Atomic::TestAndSet(volatile int8 *p) {
+inline bool TestAndSet(volatile int8 *p) {
     volatile char8 *pp = (volatile char8*) p;
 
     //returns the initial value of *pp
     return _InterlockedCompareExchange8(pp, 1, 0) == 0;
 }
 
-inline void Atomic::Add(volatile int32 *p,
-                        int32 value) {
+inline void Add(volatile int32 *p,
+                int32 value) {
 
     volatile long* pp = (volatile long *) p;
     _InterlockedExchangeAdd(pp, value);
 }
 
-inline void Atomic::Sub(volatile int32 *p,
-                        int32 value) {
+inline void Sub(volatile int32 *p,
+                int32 value) {
     volatile long* pp = (volatile long *) p;
     _InterlockedExchangeAdd(pp, -value);
 }
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+}
 
 #endif /* ATOMICA_H_ */
-

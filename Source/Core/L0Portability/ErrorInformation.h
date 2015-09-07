@@ -1,7 +1,7 @@
 /**
  * @file ErrorInformation.h
  * @brief Header file for class ErrorInformation
- * @date 14/08/2015
+ * @date 24/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -31,12 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "ErrorType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace ErrorManagement {
+
 /**
  @brief Information structure associated to the error.
  */
@@ -55,7 +56,7 @@ struct ErrorInformation {
         /**
          * The error line number.
          */
-        uint16 lineNumber;
+        int16 lineNumber;
 
         /**
          * Specified is the error is triggered within an object.
@@ -99,7 +100,6 @@ struct ErrorInformation {
     const char8 * className;
 
 };
-
 }
 
 /*---------------------------------------------------------------------------*/

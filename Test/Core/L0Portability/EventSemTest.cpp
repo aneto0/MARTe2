@@ -147,11 +147,11 @@ bool EventSemTest::TestCopyConstructor2Sem() {
 bool EventSemTest::TestWait(TimeoutType timeoutTime) {
 
     EventSem newSem(eventSem);
-    ErrorType err = eventSem.Wait(timeoutTime);
-    if (err == Timeout) {
+    ErrorManagement::ErrorType err = eventSem.Wait(timeoutTime);
+    if (err == ErrorManagement::Timeout) {
         err = newSem.ResetWait(timeoutTime);
     }
-    return (err == Timeout);
+    return (err == ErrorManagement::Timeout);
 }
 
 bool EventSemTest::TestPost() {
@@ -192,11 +192,11 @@ bool EventSemTest::TestWait() {
     eventSem.Reset();
     sharedVariable = 0;
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
-    ErrorType err = eventSem.Wait();
+    ErrorManagement::ErrorType err = eventSem.Wait();
 
     if (sharedVariable == 0) {
         //Too fast wait has failed for sure...
-        err = FatalError;
+        err = ErrorManagement::FatalError;
     }
     sharedVariable = 2;
     eventSem.Close();
@@ -209,17 +209,17 @@ bool EventSemTest::TestWait() {
             break;
         }
     }
-    return (err == NoError);
+    return (err == ErrorManagement::NoError);
 }
 
 bool EventSemTest::TestResetWait() {
     sharedVariable = 0;
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) PosterThreadCallback, this);
-    ErrorType err = eventSem.ResetWait(TTInfiniteWait);
+    ErrorManagement::ErrorType err = eventSem.ResetWait(TTInfiniteWait);
 
     if (sharedVariable == 0) {
         //Too fast wait has failed for sure...
-        err = FatalError;
+        err = ErrorManagement::FatalError;
     }
     sharedVariable = 2;
     eventSem.Close();
@@ -233,7 +233,7 @@ bool EventSemTest::TestResetWait() {
             break;
         }
     }
-    return (err == NoError);
+    return (err == ErrorManagement::NoError);
 }
 
 void MultiThreadedTestWaitCallback(EventSemTest &eventSemTest) {
@@ -295,7 +295,7 @@ bool EventSemTest::MultiThreadedTestWait(uint32 nOfThreads) {
     return true;
 }
 
-bool EventSemTest::TestWaitNoTimeout(uint32 nOfThreads) {
+bool EventSemTest::TestWaitTimeoutNoTimeout(uint32 nOfThreads) {
     timeout = TTInfiniteWait;
     return MultiThreadedTestWait(nOfThreads);
 }
@@ -315,6 +315,6 @@ bool EventSemTest::TestWaitTimeoutFailure(uint32 nOfThreads) {
 }
 
 bool EventSemTest::TestWaitTimeoutFailureFollowedBySuccess(uint32 nOfThreads) {
-    return TestWaitTimeoutFailure(nOfThreads) && TestWaitNoTimeout(nOfThreads);
+    return TestWaitTimeoutFailure(nOfThreads) && TestWaitTimeoutNoTimeout(nOfThreads);
 }
 

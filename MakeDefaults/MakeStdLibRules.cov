@@ -22,9 +22,12 @@
 # $Id$
 #
 #############################################################
-
 ctags : %.cpp %.c %.h
 	ctags -R
+
+%_Gen.cpp : ../Generic/%_Generic.cpp
+	cp ../Generic/$*_Generic.cpp $*_Gen.cpp
+	
 
 $(BUILD_DIR)/%.o : %.cpp
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
@@ -96,4 +99,10 @@ clean:  $(SUBPROJC)
 	@rm -f $(BUILD_DIR)/*$(ASMEXT)
 	@rm -f $(BUILD_DIR)/*$(GCNOEXT)
 	@rm -f $(BUILD_DIR)/*$(GCDAEXT)
+	@rm -f *_Gen.cpp
+	@rm -f *_Gen.c
+	
+clean_gen: $(SUBPROJC)
+	@rm -f *_Gen.cpp
+	@rm -f *_Gen.c
 
