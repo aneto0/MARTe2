@@ -56,8 +56,8 @@ namespace TypeDefinition {
  */
 /*lint -save -e925 -e926 -e929 -e9005 -e1773 .
  * (925) pointer cast required by this implementation of AnyType */
-/* (9005,1773) Cast away of const required by this implementation of AnyType and justified because the in the TypeDescriptor
- * attribute flag "isConstant" will be set to true.
+/* (9005,1773) Cast away of const required by this implementation of AnyType and justified because in the TypeDescriptor
+ * attribute the flag "isConstant" will be set to true.
  */
 class AnyType {
 
