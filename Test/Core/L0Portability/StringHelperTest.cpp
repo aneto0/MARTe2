@@ -383,7 +383,7 @@ bool StringHelperTest::TestSearchIndex() {
     //these chars are not in the string
     const char8 *invalid = "xpqg";
 
-    if (StringHelper::SearchIndex(buffer, invalid) != StringHelper::Length(buffer)) {
+    if (StringHelper::SearchIndex(buffer, invalid) != (uint32)StringHelper::Length(buffer)) {
         return false;
     }
 
