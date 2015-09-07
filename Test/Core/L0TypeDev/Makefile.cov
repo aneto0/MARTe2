@@ -23,16 +23,13 @@
 #
 #############################################################
 
-TARGET=linux
+TARGET=cov
 
 include Makefile.inc
 
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0Portability/L0Portability$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0Portability/L0PortabilityTest$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/L1Objects/L1Objects$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/Core/L1Objects/L1ObjectsTest$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0TypeDev/L0TypeDev$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0TypeDev/L0TypeDevTest$(LIBEXT)
-LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
+LIBRARIES   += ../../../Source/Core/L0Portability/$(TARGET)/L0Portability$(LIBEXT)
+LIBRARIES   += ../../../Source/Core/L1CLib/$(TARGET)/L1CLib$(LIBEXT)
+
 
 OPTIM=-finline-functions
+

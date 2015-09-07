@@ -108,20 +108,39 @@ const float64 SQRT2 = 1.41421356237309504880;
  */
 const float64 SQRT1_2 = 0.70710678118654752440;
 
+<<<<<<< HEAD
 /**
  * @brief Converts a float to an integer using a processor instruction.
  * @param[in] input the value to convert
  * @return the input as an integer
  */
 inline int32 FloatToInt(const float32 input);
+=======
+    /**
+     * @brief Converts a float to an integer using a processor instruction.
+     * @param[in] input the value to convert
+     * @return the input as an integer
+     */
+    inline int32 FloatToInt(const float32 input);
+>>>>>>> refs/heads/#196_#204_#203_TypeDefinitions
 
+<<<<<<< HEAD
 /**
  * @brief Computes the cosine of an angle using a processor instruction.
  * @param[in] angle the angle to compute
  * @return the cosine of angle
  */
 inline float32 Cos(const float32 angle);
+=======
+    /**
+     * @brief Computes the cosine of an angle using a processor instruction.
+     * @param[in] angle the angle to compute
+     * @return the cosine of angle
+     */
+    inline float32 Cos(const float32 angle);
+>>>>>>> refs/heads/#196_#204_#203_TypeDefinitions
 
+<<<<<<< HEAD
 /**
  * @brief Computes the sine of an angle using a processor instruction.
  * @param[in] angle the angle to compute
@@ -129,6 +148,14 @@ inline float32 Cos(const float32 angle);
  */
 inline float32 Sin(const float32 angle);
 
+=======
+    /**
+     * @brief Computes the sine of an angle using a processor instruction.
+     * @param[in] angle the angle to compute
+     * @return the sine of angle
+     */
+    inline float32 Sin(const float32 angle);
+>>>>>>> refs/heads/#196_#204_#203_TypeDefinitions
 }
 
 /*---------------------------------------------------------------------------*/

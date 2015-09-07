@@ -35,63 +35,62 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
+namespace TypeDefinition {
 
-/*
-
- DATA TABLES FIRST
-
- */
-
-/* To implement a look-up table between characters in the
- printf format encoding and the set of bits to be set in
- the FormatDescriptor
+/**
+ * @brief To implement a look-up table between characters in the
+ * printf format encoding and the set of bits to be set in
+ * the FormatDescriptor
  */
 struct FDLookup {
-    // the character in the printf format
+    /**
+     * the character in the printf format
+     */
     char8 character;
-    // the set of flags
+
+    /**
+     * the set of flags
+     */
     FormatDescriptor format;
 };
 
-/// 0 terminated vector of FDLookups
-static const FDLookup flagsLookup[] = { { ' ', FormatDescriptor(0u, 0u, true, false, Notation::FixedPointNotation, Notation::DecimalNotation, false, false) }, // ' '
-        { '-', FormatDescriptor(0u, 0u, true, true, Notation::FixedPointNotation, Notation::DecimalNotation, false, false) },  // '-'
-        { '0', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::DecimalNotation, true, false) },  // '0'
-        { '#', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::DecimalNotation, false, true) },  // '#'
-        { static_cast<char8>(0), FormatDescriptor(0u) } };
-
-/// 0 terminated vector of FDLookups
-static const FDLookup typesLookup[] = { { 'd', FormatDescriptor(0u) },  //d
-        { 'i', FormatDescriptor(0u) },  //i
-        { 'u', FormatDescriptor(0u) },  //u
-        { 's', FormatDescriptor(0u) },  //s
-        { 'c', FormatDescriptor(0u) },  //c
-        { 'f', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::DecimalNotation, false, false) },  //f
-        { 'F', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointRNotation, Notation::DecimalNotation, false, false) },  //F
-        { 'e', FormatDescriptor(0u, 0u, false, false, Notation::ExponentNotation, Notation::DecimalNotation, false, false) },  //e
-        { 'E', FormatDescriptor(0u, 0u, false, false, Notation::EngineeringNotation, Notation::DecimalNotation, false, false) },  //E
-        { 'g', FormatDescriptor(0u, 0u, false, false, Notation::SmartNotation, Notation::DecimalNotation, false, false) },  //g
-        { 'G', FormatDescriptor(0u, 0u, false, false, Notation::CompactNotation, Notation::DecimalNotation, false, false) },  //
-        { 'a', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::HexNotation, false, false) },  //a
-        { 'x', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::HexNotation, false, false) },  //x
-        { 'p', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::HexNotation, true, true) },  //p
-        { 'o', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::OctalNotation, false, false) },  //o
-        { 'b', FormatDescriptor(0u, 0u, false, false, Notation::FixedPointNotation, Notation::BitNotation, false, false) },  //b
+/**
+ * 0 terminated vector of FDLookups
+ */
+static const FDLookup flagsLookup[] = { { ' ', FormatDescriptor(PrintAnything, 0u, 0u, true, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { '-', FormatDescriptor(PrintAnything, 0u, 0u, true, true, FixedPointNotation, DecimalNotation, false, false) },  // '-'
+        { '0', FormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, true, false) },  // '0'
+        { '#', FormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, true) },  // '#'
         { static_cast<char8>(0), FormatDescriptor(0u) } };
 
 /**
-
- FUNCTIONS BELOW
-
+ * 0 terminated vector of FDLookups
  */
+static const FDLookup typesLookup[] = { { '!', FormatDescriptor(PrintAnything, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { '?', FormatDescriptor(PrintInfo, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { '@', FormatDescriptor(PrintStruct, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 'd', FormatDescriptor(PrintInteger, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 'i', FormatDescriptor(PrintInteger, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 'u', FormatDescriptor(PrintInteger, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 's', FormatDescriptor(PrintString, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 'c', FormatDescriptor(PrintString, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) }, // ' '
+        { 'f', FormatDescriptor(PrintFloat, 0u, 0u, false, false, FixedPointNotation, DecimalNotation, false, false) },  //f
+        { 'F', FormatDescriptor(PrintFloat, 0u, 0u, false, false, FixedPointRNotation, DecimalNotation, false, false) },  //F
+        { 'e', FormatDescriptor(PrintFloat, 0u, 0u, false, false, ExponentNotation, DecimalNotation, false, false) },  //e
+        { 'E', FormatDescriptor(PrintFloat, 0u, 0u, false, false, EngineeringNotation, DecimalNotation, false, false) },  //E
+        { 'g', FormatDescriptor(PrintFloat, 0u, 0u, false, false, SmartNotation, DecimalNotation, false, false) },  //g
+        { 'G', FormatDescriptor(PrintFloat, 0u, 0u, false, false, CompactNotation, DecimalNotation, false, false) },  //
+        { 'x', FormatDescriptor(PrintInteger, 0u, 0u, false, false, FixedPointNotation, HexNotation, false, false) },  //x
+        { 'p', FormatDescriptor(PrintPointer, 0u, 0u, false, false, FixedPointNotation, HexNotation, true, true) },  //p
+        { 'o', FormatDescriptor(PrintInteger, 0u, 0u, false, false, FixedPointNotation, OctalNotation, false, false) },  //o
+        { 'b', FormatDescriptor(PrintInteger, 0u, 0u, false, false, FixedPointNotation, BitNotation, false, false) },  //b
+        { static_cast<char8>(0), FormatDescriptor(0u) } };
 
-/// strchr equivalent
+/**
+ * strchr equivalent
+ */
 static inline const FDLookup *LookupCharacter(const char8 c,
                                               const FDLookup *lookupTable) {
-
     if (lookupTable != NULL) {
         while (lookupTable->character != '\0') {
             if (lookupTable->character == c) {
@@ -99,18 +98,21 @@ static inline const FDLookup *LookupCharacter(const char8 c,
             }
             lookupTable++;
         }
+        if (lookupTable->character == '\0') {
+            lookupTable = static_cast<FDLookup *>(NULL);
+        }
     }
     return lookupTable;
 }
 
-/// add to format the identified flag
+/**
+ * add to format the identified flag
+ */
 static bool ParseCharacter(const char8 c,
                            FormatDescriptor &format,
                            const FDLookup * const lookupTable) {
-
     // find the position of c in flagsLookup
     const FDLookup *found = LookupCharacter(c, lookupTable);
-
     bool ret = (found != NULL);
     // not found!
     if (ret) {
@@ -122,8 +124,8 @@ static bool ParseCharacter(const char8 c,
 }
 
 /**
- 0-9 if it is a digit
- otherwise negative
+ * 0-9 if it is a digit
+ * otherwise negative
  */
 static inline int8 GetDigit(const char8 c) {
     int8 digit = static_cast<int8>(c - '0');
@@ -132,9 +134,9 @@ static inline int8 GetDigit(const char8 c) {
 
 }
 
-/*
- Parses a number out of string
- returns 0 if no number is encountered
+/**
+ * Parses a number out of string
+ * returns 0 if no number is encountered
  */
 static inline uint32 GetIntegerNumber(const char8 *&string) {
 
@@ -155,6 +157,14 @@ static inline uint32 GetIntegerNumber(const char8 *&string) {
     return number;
 }
 
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+namespace TypeDefinition {
+
 /*lint -e{9119} assignment of integer to size field*/
 bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
 
@@ -163,32 +173,29 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
     FormatDescriptor temporaryFormat;
 
     bool ret = false;
-
     /// check pointer
     if (string != NULL) {
 
         // expect at least a character
         if (string[0] != '\0') {
-
             //parse options
             while (ParseCharacter(string[0], temporaryFormat, &flagsLookup[0])) {
                 string++;
             }
 
             // get any integer number from string if any
-            temporaryFormat.StandardField.size = GetIntegerNumber(string);
-
+            temporaryFormat.size = GetIntegerNumber(string);
             // after a dot look for the precision field
             if (string[0] == '.') {
                 string++;
 
                 if (GetDigit(string[0]) < 0) {
                     //If the precision field is empty return -1 to use default precision.
-                    temporaryFormat.StandardField.precision = defaultPrecision;
+                    temporaryFormat.precision = defaultPrecision;
                 }
                 else {
                     // get any integer number from string if any
-                    temporaryFormat.StandardField.precision = GetIntegerNumber(string);
+                    temporaryFormat.precision = GetIntegerNumber(string);
                 }
             }
 
@@ -206,4 +213,6 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
         }
     }
     return ret;
+}
+
 }

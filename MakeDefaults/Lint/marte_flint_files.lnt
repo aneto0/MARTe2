@@ -40,3 +40,14 @@ AnyType.h
 FormatDescriptor.h
 FormatDescriptor.cpp
 TypeDescriptor.h
+BitBoolean.h
+//BitBooleanGTest.cpp
+BitRange.h
+//BitRangeGTest.cpp
+TypeCharacteristics.h
+FractionalInteger.h
+//FractionalIntegerGTest.cpp
+
+
+
+

@@ -22,24 +22,27 @@
 #
 #############################################################
 
-OBJSX=  StandardHeap_GenericGTest.x \
+
+OBJSX=  TypeCharacteristicsGTest.x \
+        BasicTypeGTest.x \
+        BasicConsoleGTest.x \
+        FormatDescriptorGTest.x \
+        AnyTypeGTest.x\
+        StandardHeap_GenericGTest.x \
         HeapManagerGTest.x \
-        MemoryCheckGTest.x \
-        MemoryOperationsHelperGTest.x\
         EndianityGTest.x \
- 	SleepGTest.x \
- 	ProcessorGTest.x \
- 	AtomicGTest.x \
- 	ProcessorTypeGTest.x \
- 	EventSemGTest.x \
- 	HighResolutionTimerGTest.x \
- 	MemoryGTest.x \
- 	FastPollingMutexSemGTest.x \
- 	StringHelperGTest.x \
- 	StringPortableGTest.x \
- 	ThreadsGTest.x \
- 	MutexSemGTest.x \
- 	BasicConsoleGTest.x \
+	SleepGTest.x \
+	ProcessorGTest.x \
+	AtomicGTest.x \
+	ProcessorTypeGTest.x \
+	EventSemGTest.x \
+	HighResolutionTimerGTest.x \
+	MemoryGTest.x \
+	FastPollingMutexSemGTest.x \
+	StringHelperGTest.x \
+	StringPortableGTest.x \
+	ThreadsGTest.x \
+	MutexSemGTest.x \
 	TimeoutTypeGTest.x \
 	LoadableLibraryGTest.x \
 	FastMathGTest.x \
@@ -55,7 +58,11 @@ OBJSX=  StandardHeap_GenericGTest.x \
 	ReferenceContainerNodeGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
-   	ErrorManagementGTest.x
+  	ErrorManagementGTest.x \
+    	BitBooleanGTest.x \
+ 	FractionalIntegerGTest.x \
+ 	BitRangeGTest.x \
+	TypeDescriptorGTest.x
 
 PACKAGE=
 ROOT_DIR=../..
@@ -66,10 +73,10 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES += -I../ 
 INCLUDES += -I../Core/L0Portability
 INCLUDES += -I../Core/L1Objects
-INCLUDES += -I../Core/LXTypeDev
+INCLUDES += -I../Core/L0TypeDev
 INCLUDES += -I../../Source/Core/L0Portability
 INCLUDES += -I../../Source/Core/L1Objects
-INCLUDES += -I../../Source/Core/LXTypeDev
+INCLUDES += -I../../Source/Core/L0TypeDev
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 all: $(OBJS)    \

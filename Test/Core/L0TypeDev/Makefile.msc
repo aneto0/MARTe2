@@ -19,20 +19,13 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-
-TARGET=linux
+TARGET=msc
 
 include Makefile.inc
 
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0Portability/L0Portability$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0Portability/L0PortabilityTest$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/L1Objects/L1Objects$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/Core/L1Objects/L1ObjectsTest$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0TypeDev/L0TypeDev$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0TypeDev/L0TypeDevTest$(LIBEXT)
-LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
+LIBRARIES   += ../../Build/$(TARGET)/$(TESTING_LIBRARY)/L0Portability$(LIBEXT)
+LIBRARIES   += ../../Build/$(TARGET)/$(TESTING_LIBRARY)/$(TESTING_LIBRARY)$(LIBEXT)
 
-OPTIM=-finline-functions
