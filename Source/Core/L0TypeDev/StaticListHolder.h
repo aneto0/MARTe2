@@ -1,8 +1,8 @@
 /**
  * @file StaticListHolder.h
  * @brief Header file for class StaticListHolder
- * @date Aug 31, 2015
- * @author fsartori
+ * @date 31/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -32,8 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "TypeCharacteristics.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -41,13 +39,89 @@
 namespace Lists {
 
 /**
+ * @brief Abstracts an array which can grow and shrink
+ *
+ * @invariant ... GetSize() <= max(uint32)
+ *
  * It is a managed array of objects
  * it supports:
  * 1) extensions and contraction via realloc
  * 2) granularity in growth and shrinking
  * 3) Add at any position (start middle end)
  */
-class StaticListHolder{
+class StaticListHolder {
+
+public:
+
+    /**
+     * @brief Constructor parameterised by element size and allocation granularity
+     * param[in] listElementSize The size in bytes of one element of the list
+     * - could be sizeof(void) for a list of pointers
+     * param[in] listAllocationGranularity The size in bytes of the increment
+     * of reserved space when the list grows.
+     */
+    StaticListHolder(uint32 listElementSize,
+                     uint32 listAllocationGranularity);
+
+    /**
+     * @brief Gets the element size
+     */
+    uint32 GetElementSize(void) const;
+
+    /*
+     * @brief Gets the allocation granularity
+     */
+    uint32 GetAllocationGranularity(void) const;
+
+    /**
+     * @brief Gets the size of the list
+     */
+    uint32 GetSize(void) const;
+
+    /**
+     * @brief Gets the allocated size of the list
+     */
+    uint32 GetAllocatedSize(void) const;
+
+    /**
+     * @brief Adds an element to the list by position
+     * @param[in] position The index where the new element has to be added in the range [0..GetSize()]
+     * @param[in] copyFrom The pointer to the memory address where the new element must be copied from
+     *
+     * @pre position>=0 && position<=GetSize() && copyFrom!=NULL
+     * @post position'old = this'old->GetSize() => GetSize()==this'old->GetSize()+1 &&
+     *       Peek(position'old
+     *
+     * position = listSize is an append otherwise it is an insert
+     */
+    bool Add(const uint32 position,
+             const void *copyFrom);
+
+    /**
+     * @brief Peeks an element of the list by position
+     * @param[in] position The index of the requested element in the range [0..GetSize())
+     * @param[in] copyTo The pointer to the memory address where the requested element must be copied to
+     * @returns true the element was if copy successful and position ok
+     *
+     * @pre position>=0 && position<GetSize() && copyTo!=NULL
+     * @post *copyTo holds a copy of the requested element
+     */
+    bool Peek(const uint32 position,
+              void *copyTo) const;
+
+    /**
+     * @brief Extracts (i.e. peeks and deletes) an element from the list by position
+     * @param[in] position The index of the requested element in the range [0..GetSize())
+     * @param[in] copyTo The pointer to the memory address where the requested element must be copied to
+     *
+     * @pre position>=0 && position<GetSize() && copyTo!=NULL
+     * @post *copyTo!=NULL => holds a copy of the requested element &&
+     *       Peek(position'old) does not hold the value copied to *copyTo
+     */
+    bool Extract(const uint32 position,
+                 void *copyTo);
+
+private:
 
     /**
      * increments listSize by 1
@@ -55,37 +129,8 @@ class StaticListHolder{
      */
     bool IncreaseListSize();
 
-public:
-
-    /**
-     * listElementSize is the size in bytes of one element of the list - could be sizeof (void) for a list of pointers
-     */
-    StaticListHolder(uint32 listElementSize, uint32 listAllocationGranularity);
-
-    /**
-     * @brief Browses the list.
-     * @param[in] position the position of the requested element (0 means the first element).
-     * @param[in] copyTo a pointer to memory where to copy an element from the list
-     * @return true if copy successful and position ok
-     */
-    bool ListPeek (const uint32 position, void *copyTo)const;
-
-    /**
-     * position is the address of the object to be copied in the list
-     * position can be from 0 to listSize inclusive
-     * position = listSize is an append otherwise it is an insert
-     * copyFrom
-     */
-    bool ListAdd   (const uint32 position, const void *copyFrom);
-
-    /**
-     * position is the address of the object to be copied in the list
-     * position can be from 0 to listSize-1 inclusive
-     * removes the element at position and if copyFrom is not NULL copies it there
-     */
-    bool ListExtract   (const uint32 position, void *copyTo);
-
 private:
+
     /**
      * size of one elemeTypeCharacteristicsnt in the list
      */
@@ -102,7 +147,7 @@ private:
     uint32 listAllocatedSize;
 
     /*
-     *
+     * allocation granularity
      */
     uint32 listAllocationGranularity;
 
@@ -118,38 +163,39 @@ private:
     uint8* allocatedMemory;
 };
 
-
-
-
-template <typename elementType>
-class StaticList: public StaticListHolder
-{
+//TODO: listAllocationGranularity could be a template parameter with a default value
+template<typename elementType>
+class StaticList: public StaticListHolder {
 public:
 
-    StaticList(uint32 listAllocationGranularity):StaticListHolder(sizeof(elementType), listAllocationGranularity){
+    StaticList(uint32 listAllocationGranularity) :
+            StaticListHolder(sizeof(elementType), listAllocationGranularity) {
     }
 
-    bool Peek(const uint32 position,elementType &value)const {
-        return StaticListHolder::ListPeek(position, static_cast<void *>(&value));
+    bool Peek(const uint32 position,
+              elementType &value) const {
+        return StaticListHolder::Peek(position, static_cast<void *>(&value));
     }
 
-    bool Add(const uint32 position,const elementType &value){
-        return StaticListHolder::ListAdd(position, static_cast<const void *>(&value));
+    bool Add(const uint32 position,
+             const elementType &value) {
+        return StaticListHolder::Add(position, static_cast<const void *>(&value));
     }
 
-    bool Remove(const uint32 position){
-        return StaticListHolder::ListExtract(position, NULL_PTR(void *));
+    bool Remove(const uint32 position) {
+        return StaticListHolder::Extract(position, NULL_PTR(void *));
     }
 
-    bool Extract(const uint32 position,elementType &value){
-        return StaticListHolder::ListExtract(position, static_cast<void *>(&value));
+    bool Extract(const uint32 position,
+                 elementType &value) {
+        return StaticListHolder::Extract(position, static_cast<void *>(&value));
     }
 };
 
-};
+}
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* STATICLISTHOLDER_H_ */
-
