@@ -59,8 +59,13 @@ typedef Object *(ObjectBuildFn)(HeapManager::HeapI* const);
 /*lint -e{1790} for performance reasons it was decided to implement the usage of LinkedListable this way.
  * This guarantees that the movements in the list are always performed with the correct pointer (i.e. pointing to the base class).
  * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.*/
-class ClassRegistryItem: public LinkedListable {
+class ClassRegistryItem {
 public:
+    /**
+     * @brief Default constructor
+     */
+    ClassRegistryItem();
+
     /**
      * @brief Assigns the input variables to the class members.
      * @param[in] clProperties the class properties associated with the class that is being registered.
@@ -125,6 +130,12 @@ public:
      */
     const ObjectBuildFn *GetObjectBuildFunction() const;
 
+    /**
+     * @brief Sets the unique identifier for the class described by this ClassRegistryItem.
+     * @param uid the new unique identifier to be set for the class described by this ClassRegistryItem.
+     */
+    void SetUniqueIdentifier(const uint32 &uid);
+
 private:
     /**
      * The properties of the class represented by this registry item.
@@ -146,13 +157,6 @@ private:
      * The object instantiation function.
      */
     const ObjectBuildFn *objectBuildFn;
-
-    /**
-     * @brief The default constructor is not supposed to be used
-     */
-    /*lint -e{1704} private constructor not to be called*/
-    ClassRegistryItem();
-
 };
 
 /*---------------------------------------------------------------------------*/

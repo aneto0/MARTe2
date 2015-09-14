@@ -47,6 +47,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../../../Source/Core/L0Portability
+INCLUDES += -I../../../Source/Core/L0TypeDev
 INCLUDES += -I../../../Source/Core/L1Objects
 INCLUDES += -I../L0Portability
 

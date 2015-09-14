@@ -57,3 +57,11 @@ const char8* ClassProperties::GetVersion() const {
     return classVersion;
 }
 
+uint32 ClassProperties::GetUniqueIdentifier() const{
+    return uniqueIdentifier;
+}
+
+void ClassProperties::SetUniqueIdentifier(const uint32 &uid){
+    uniqueIdentifier = uid;
+}
+

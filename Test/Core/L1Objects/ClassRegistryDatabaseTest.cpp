@@ -43,11 +43,11 @@
 
 bool ClassRegistryDatabaseTest::TestInstance() {
 
-    ClassRegistryDatabase db = ClassRegistryDatabase::Instance();
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
     // see ObjectTestHelper: IntegerObject should be registered.
 
-    ClassRegistryItem *integerItem = db.Find("IntegerObject");
+    const ClassRegistryItem *integerItem = db->Find("IntegerObject");
 
     if (integerItem == NULL) {
         return false;
@@ -67,22 +67,22 @@ bool ClassRegistryDatabaseTest::TestInstance() {
     }
 
     //gets again the database and checks that is the same instance
-    ClassRegistryDatabase db1 = ClassRegistryDatabase::Instance();
+    ClassRegistryDatabase *db1 = ClassRegistryDatabase::Instance();
 
-    ClassRegistryItem *integerItemPtr = db1.Find("IntegerObject");
+    const ClassRegistryItem *integerItemPtr = db1->Find("IntegerObject");
 
     //none has still instantiated it
     return (integerItem->GetNumberOfInstances() == 1) && (integerItemPtr != NULL);
 }
 
-bool ClassRegistryDatabaseTest::TestDeleteTrue() {
+/*bool ClassRegistryDatabaseTest::TestDeleteTrue() {
     ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
 
     ClassProperties testClassProperties("TestDeleteTrue", "");
 
     ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
 
-    uint32 size = db->Size();
+    uint32 size = db->GetSize();
 
     //checks if the class is in the database
 
@@ -99,9 +99,9 @@ bool ClassRegistryDatabaseTest::TestDeleteTrue() {
     }
 
     return db->Find("TestDeleteTrue") == NULL;
-}
+}*/
 
-bool ClassRegistryDatabaseTest::TestDeleteFalse() {
+/*bool ClassRegistryDatabaseTest::TestDeleteFalse() {
 
     ClassRegistryItem *fakePtr = NULL;
     //checks if the class is in the database
@@ -109,57 +109,59 @@ bool ClassRegistryDatabaseTest::TestDeleteFalse() {
 
     return (!db->Delete(fakePtr));
 
-}
+}*/
 
 bool ClassRegistryDatabaseTest::TestAdd() {
 
-    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    uint32 sizeDB = db->Size();
+    uint32 sizeDB = db->GetSize();
 
     ClassProperties testClassProperties("TestAdd", "V");
 
     //the add function is called directly by the constructor
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
+    ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+    //These are deleted by the the ClassRegistryDatabase destructor
 
-    uint32 newSizeDB = db->Size();
+    uint32 newSizeDB = db->GetSize();
 
     if (sizeDB != (newSizeDB - 1)) {
         return false;
     }
 
-    ClassRegistryItem *ret = db->Find("TestAdd");
+    const ClassRegistryItem *ret = db->Find("TestAdd");
 
-    bool retVal = (StringHelper::Compare(ret->GetClassProperties()->GetName(), "TestAdd") == 0)
-            && (StringHelper::Compare(ret->GetClassProperties()->GetVersion(), "V") == 0);
+    bool retVal = (StringHelper::Compare(ret->GetClassProperties()->GetName(), "TestAdd") == 0);
+    retVal &= (StringHelper::Compare(ret->GetClassProperties()->GetVersion(), "V") == 0);
 
-    return db->Delete(ret) && retVal;
+    return retVal;
 }
 
 bool ClassRegistryDatabaseTest::TestAddTheSameName() {
 
-    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    uint32 sizeDB = db->Size();
+    uint32 sizeDB = db->GetSize();
 
     ClassProperties testClassProperties1("Hello", "World");
     ClassProperties testClassProperties2("Hello", "Mondo");
 
     //the add function is called directly by the constructor
-    ClassRegistryItem myItem1 = ClassRegistryItem(testClassProperties1, NULL);
-    ClassRegistryItem myItem2 = ClassRegistryItem(testClassProperties2, NULL);
+    ClassRegistryItem *myItem1 = new ClassRegistryItem(testClassProperties1, NULL);
+    ClassRegistryItem *myItem2 = new ClassRegistryItem(testClassProperties2, NULL);
+    //These are deleted by the the ClassRegistryDatabase destructor
 
-    uint32 newSizeDB = db->Size();
+    uint32 newSizeDB = db->GetSize();
 
     if (sizeDB != (newSizeDB - 1)) {
         return false;
     }
 
-    ClassRegistryItem *ret = db->Find("Hello");
-    bool retVal = (StringHelper::Compare(ret->GetClassProperties()->GetName(), "Hello") == 0)
-            && (StringHelper::Compare(ret->GetClassProperties()->GetVersion(), "Mondo") == 0);
+    const ClassRegistryItem *ret = db->Find("Hello");
+    bool retVal = (StringHelper::Compare(ret->GetClassProperties()->GetName(), "Hello") == 0);
+    retVal &= (StringHelper::Compare(ret->GetClassProperties()->GetVersion(), "Mondo") == 0);
 
-    return retVal && db->Delete(ret);
+    return retVal;
 
 }
 
@@ -169,7 +171,7 @@ bool ClassRegistryDatabaseTest::TestFindDLL(const char8* dllName,
 
     char8 fullName[64];
     StringHelper::Copy(fullName, dllName);
-    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
     StringHelper::Concatenate(fullName, "::");
     StringHelper::Concatenate(fullName, className);
@@ -180,21 +182,23 @@ bool ClassRegistryDatabaseTest::TestFindDLL(const char8* dllName,
 bool ClassRegistryDatabaseTest::TestFind(const char8 *name,
                                          bool create) {
 
-    ClassRegistryDatabase* db = &(ClassRegistryDatabase::Instance());
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
     if (create) {
         ClassProperties testClassProperties(name, "V");
 
         //the add function is called directly by the constructor
-        ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
-        return (db->Find(name) != NULL) && (db->Delete(&myItem));
+        ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+        bool found = (db->Find(name) != NULL);
+        //These are deleted by the the ClassRegistryDatabase destructor
+        return found;
     }
 
     return (db->Find(name) == NULL);
 
 }
 
-bool ClassRegistryDatabaseTest::TestList() {
+/*bool ClassRegistryDatabaseTest::TestList() {
 
     ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
 
@@ -223,19 +227,19 @@ bool ClassRegistryDatabaseTest::TestList() {
 
     return retVal && (db->Delete(&myItem));
 }
-
-bool ClassRegistryDatabaseTest::TestSize() {
+*/
+bool ClassRegistryDatabaseTest::TestGetSize() {
 
     const char* names[] = { "1", "2", "3", "4", NULL };
 
-    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    uint32 prevSize = db->Size();
+    uint32 prevSize = db->GetSize();
 
     ClassRegistryItem *root;
 
     uint32 i = 0;
-//add the elements to the database.
+    //add the elements to the database.
     while (names[i] != NULL) {
         ClassProperties *testClassProperties = new ClassProperties(names[i], "V");
         ClassRegistryItem *element = new ClassRegistryItem(*testClassProperties, NULL);
@@ -246,7 +250,8 @@ bool ClassRegistryDatabaseTest::TestSize() {
         i++;
     }
 
-    if ((db->Size() - prevSize) != 4) {
+    return ((db->GetSize() - prevSize) == 4);
+    /*if ((db->GetSize() - prevSize) != 4) {
         return false;
     }
 
@@ -258,26 +263,25 @@ bool ClassRegistryDatabaseTest::TestSize() {
         i++;
     }
 
-    return db->Size() == prevSize;
+    return db->Size() == prevSize;*/
 
 }
 
-bool ClassRegistryDatabaseTest::TestElementAt() {
-    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
+bool ClassRegistryDatabaseTest::TestPeek() {
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
     ClassProperties testClassProperties("TestElementAt", "V");
 
-//the add function is called directly by the constructor
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
-
-    return (db->List() == db->ElementAt(0)) && (db->ElementAt(db->Size() - 1) == &myItem) && (db->ElementAt(db->Size()) == NULL);
-
+    //the add function is called directly by the constructor
+    ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+    //These are deleted by the the ClassRegistryDatabase destructor
+    return (db->Peek(db->GetSize() - 1) == myItem) && (db->Peek(db->GetSize()) == NULL);
 }
 
 bool ClassRegistryDatabaseTest::TestCreateInstances() {
-    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
-    ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
+    const ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
+    const ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
 
     if ((integerObjProp == NULL) || (specialIntegerObjProp == NULL)) {
         return false;
@@ -319,10 +323,10 @@ bool ClassRegistryDatabaseTest::TestCreateInstances() {
 
 bool ClassRegistryDatabaseTest::TestPolimorphismChild2Father() {
 
-    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
-    ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
+    const ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
+    const ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
 
     ReferenceT<IntegerObject> child2father = ReferenceT<IntegerObject>("SpecialIntegerObject");
 
@@ -341,10 +345,10 @@ bool ClassRegistryDatabaseTest::TestPolimorphismChild2Father() {
 }
 
 bool ClassRegistryDatabaseTest::TestPolimorphismFather2Child() {
-    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
-    ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
+    const ClassRegistryItem *integerObjProp = db->Find("IntegerObject");
+    const ClassRegistryItem *specialIntegerObjProp = db->Find("SpecialIntegerObject");
 
     ReferenceT<SpecialIntegerObject> father2child = ReferenceT<SpecialIntegerObject>("IntegerObject");
 

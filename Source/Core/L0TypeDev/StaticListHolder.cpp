@@ -78,13 +78,9 @@ uint32 StaticListHolder::GetAllocatedSize(void) const {
 }
 
 bool StaticListHolder::Add(const uint32 position,
-                               const void *copyFrom) {
+                           const void *copyFrom) {
     bool ret = true;
-    if (position > listSize) {
-        ret = false;
-    }
-
-    if (ret) {
+    if (position >= listAllocatedSize) {
         ret = IncreaseListSize();
     }
 
@@ -92,19 +88,20 @@ bool StaticListHolder::Add(const uint32 position,
         uint8* pointer = (allocatedMemory + listElementSize * position);
 
         // note that listSize was increased earlier!
-        if (position != (listSize - 1)) {
+        if (position != listSize) {
             // move all data in - note that listSize is already incremented by 1
             MemoryOperationsHelper::Move(pointer + listElementSize, pointer, listElementSize * (listSize - 1 - position));
         }
 
         MemoryOperationsHelper::Copy(pointer, copyFrom, listElementSize);
+        listSize++;
     }
 
     return ret;
 }
 
 bool StaticListHolder::Peek(const uint32 position,
-                                void *copyTo) const {
+                            void *copyTo) const {
     bool ret = false;
     if (position <= listSize) {
         ret = true;
@@ -115,7 +112,7 @@ bool StaticListHolder::Peek(const uint32 position,
 }
 
 bool StaticListHolder::Extract(const uint32 position,
-                                   void *copyTo) {
+                               void *copyTo) {
     bool ret = true;
     if (position >= listSize) {
         ret = false;
@@ -142,8 +139,8 @@ bool StaticListHolder::Extract(const uint32 position,
 
 bool StaticListHolder::IncreaseListSize() {
     bool ret = true;
-    uint32 templistSize = listSize + 1;
-    if (templistSize > listAllocatedSize) {
+    uint32 templistSize = listSize;
+    if (templistSize >= listAllocatedSize) {
 
         // cannot increase any more!
         if (listAllocatedSize >= maxListSize) {

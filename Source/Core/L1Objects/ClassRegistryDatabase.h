@@ -31,8 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "FastPollingMutexSem.h"
 #include "ClassRegistryItem.h"
-#include "LinkedListHolder.h"
+#include "StaticListHolder.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -54,7 +55,7 @@ public:
      * @brief Singleton access to the database.
      * @return a reference to the database.
      */
-    static ClassRegistryDatabase &Instance();
+    static ClassRegistryDatabase *Instance();
 
     /**
      * @brief Destructor. Removes all the elements hold by the database.
@@ -63,12 +64,11 @@ public:
 
     /**
      * @brief Removes an element from the database.
-     * @details This method should only be called by the
-     * ClassRegistryItem destructor.
+     * @details This method should only be called by the ClassRegistryItem destructor.
      * @param[in] p the element to be removed.
      * @return true if the element was successfully removed from the database.
      */
-    bool Delete(ClassRegistryItem * const p);
+    bool Extract(ClassRegistryItem * const p);
 
     /**
      * @brief Adds an element to the database.
@@ -84,26 +84,32 @@ public:
      * @param[in] className the name of the class to be searched.
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    ClassRegistryItem *Find(const char8 *className);
+    //TODO Check documentation
+    const ClassRegistryItem *Find(const char8 *className);
 
     /**
      * @brief Returns an access point to the database root.
      * @return a pointer to the database root which can be used to scan the database.
      */
-    ClassRegistryItem *List();
+    //TODO CLEAN
+    //ClassRegistryItem *List();
 
     /**
      * @brief Returns the number of classes registered in the database.
      * @return the number of classes registered in the database.
      */
-    uint32 Size() const;
+    uint32 GetSize();
 
     /**
-     * @brief Returns the element at position idx.
+     * @brief Copies the element at position idx to \a param.
      * @param idx the index of the ClassRegistryItem to be retrieved.
-     * @return the ClassRegistryItem at position idx or NULL if there is no element at that position.
+     * @param item the reference where the requested \a idx must be copied to.
+     *
+     * @pre idx>=0 && position<Size()
+     * @post item holds a copy of the requested element
      */
-    const ClassRegistryItem *ElementAt(const uint32 &idx);
+    const ClassRegistryItem *Peek(const uint32 &idx);
+
 private:
     /**
      * @brief Private Constructor.
@@ -114,7 +120,17 @@ private:
     /**
      * The database is implemented as a LinkedListHolder
      */
-    LinkedListHolder classDatabase;
+    Lists::StaticList<ClassRegistryItem *> classDatabase;
+
+    /**
+     * Protects the concurrent access to the database
+     */
+    FastPollingMutexSem mux;
+
+    /**
+     * Unique identifier of the latest registered class;
+     */
+    uint32 classUniqueIdentifier;
 };
 
 /*---------------------------------------------------------------------------*/

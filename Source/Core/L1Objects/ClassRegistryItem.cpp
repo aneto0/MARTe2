@@ -45,20 +45,20 @@ static FastPollingMutexSem classRegistryItemMuxSem;
 /*---------------------------------------------------------------------------*/
 //LCOV_EXCL_START
 ClassRegistryItem::ClassRegistryItem() :
-        LinkedListable(), classProperties() {
+        classProperties() {
     numberOfInstances = 0u;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = NULL_PTR(ObjectBuildFn *);
 }
 //LCOV_EXCL_STOP
 
-ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties, const ObjectBuildFn * const objBuildFn) :
-        LinkedListable() {
+ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
+                                     const ObjectBuildFn * const objBuildFn) {
     numberOfInstances = 0u;
     classProperties = clProperties;
     loadableLibrary = NULL_PTR(LoadableLibrary *);
     objectBuildFn = objBuildFn;
-    ClassRegistryDatabase::Instance().Add(this);
+    ClassRegistryDatabase::Instance()->Add(this);
 }
 
 /*lint -e{1551} no exception should be thrown. Only reason is if the pointers are messed-up
@@ -67,7 +67,7 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties, const 
 ClassRegistryItem::~ClassRegistryItem() {
     const LoadableLibrary *loader = loadableLibrary;
     /*lint -e{534} if is missing. This will have to be sent to the logger. TODO*/
-    ClassRegistryDatabase::Instance().Delete(this);
+    ClassRegistryDatabase::Instance()->Extract(this);
     if (loader != NULL) {
         delete loader;
     }
@@ -110,4 +110,8 @@ void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLib
 
 const ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
     return objectBuildFn;
+}
+
+void ClassRegistryItem::SetUniqueIdentifier(const uint32 &uid) {
+    classProperties.SetUniqueIdentifier(uid);
 }

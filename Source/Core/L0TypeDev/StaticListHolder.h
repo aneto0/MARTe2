@@ -168,25 +168,25 @@ template<typename elementType>
 class StaticList: public StaticListHolder {
 public:
 
-    StaticList(uint32 listAllocationGranularity) :
+    StaticList(const uint32 &listAllocationGranularity) :
             StaticListHolder(sizeof(elementType), listAllocationGranularity) {
     }
 
-    bool Peek(const uint32 position,
+    bool Peek(const uint32 &position,
               elementType &value) const {
         return StaticListHolder::Peek(position, static_cast<void *>(&value));
     }
 
-    bool Add(const uint32 position,
+    bool Add(const uint32 &position,
              const elementType &value) {
         return StaticListHolder::Add(position, static_cast<const void *>(&value));
     }
 
-    bool Remove(const uint32 position) {
+    bool Remove(const uint32 &position) {
         return StaticListHolder::Extract(position, NULL_PTR(void *));
     }
 
-    bool Extract(const uint32 position,
+    bool Extract(const uint32 &position,
                  elementType &value) {
         return StaticListHolder::Extract(position, static_cast<void *>(&value));
     }

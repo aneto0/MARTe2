@@ -73,9 +73,9 @@ bool ClassRegistryItemTest::TestConstructor() {
     }
 
     //checks if the class is in the database
-    ClassRegistryDatabase db = ClassRegistryDatabase::Instance();
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    if (db.Find("Hello") == NULL) {
+    if (db->Find("Hello") == NULL) {
         return false;
     }
 
@@ -104,16 +104,16 @@ bool ClassRegistryItemTest::TestDestructor() {
     ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, dummyBuildFcn);
 
     // checks if the class is in the database
-    ClassRegistryDatabase db = ClassRegistryDatabase::Instance();
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    if (db.Find("Hello") == NULL) {
+    if (db->Find("Hello") == NULL) {
         return false;
     }
 
     myItem.~ClassRegistryItem();
 
     //checks that it is not in the database anymore
-    return db.Find("Hello") == NULL;
+    return db->Find("Hello") == NULL;
 }
 
 bool ClassRegistryItemTest::TestIncrementNumberOfInstances() {

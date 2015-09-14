@@ -101,21 +101,22 @@ public:
     bool TestList();
 
     /**
-     * @brief Tests the size function.
+     * @brief Tests the GetSize function.
      * @details Registers a number of classes in the database and checks that the size increases. Then delete these elements and checks that
      * the size decreases.
      * @return true if the test explained in the details section succeeds, false otherwise.
      */
-    bool TestSize();
+    bool TestGetSize();
 
     /**
-     * @brief Tests the ElementAt function.
+     * @brief Tests the Peek function.
+     * TODO CHECK DOCUMENTATION
      * @details Tests if passing index = 0 the ElementAt function it returns the first element (same result of List function). Then adds an element
      * and checks that with an index=size-1 the ElementAt function returns the same element (the last in the database). At last checks if passing an index >=size
      * the function returns a NULL pointer.
      * @return true if the tests explained in the details section succeeds, false otherwise.
      */
-    bool TestElementAt();
+    bool TestPeek();
 
     /**
      * @brief Tests if instantiating objects, the number of instances parameter is correct.
