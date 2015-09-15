@@ -61,11 +61,11 @@ TEST(ClassPropertiesGTest,TestGetVersion) {
 
 TEST(ClassPropertiesGTest,TestGetUniqueIdentifier) {
     ClassPropertiesTest myClassPropertiesTest;
-    ASSERT_TRUE(myClassPropertiesTest.TestGetUniqueIdentifier(0xfe));
+    ASSERT_TRUE(myClassPropertiesTest.TestGetUniqueIdentifier(0xfffff2));
 }
 
 TEST(ClassPropertiesGTest,TestSetUniqueIdentifier) {
     ClassPropertiesTest myClassPropertiesTest;
-    ASSERT_TRUE(myClassPropertiesTest.TestSetUniqueIdentifier(0xef));
+    ASSERT_TRUE(myClassPropertiesTest.TestSetUniqueIdentifier(0xfffff3));
 }
 

@@ -170,8 +170,7 @@ bool ClassRegistryDatabaseTest::TestPeek() {
     bool ok = (peekedItem == myItem);
 
     uint32 peededItemUniqueIdentifier = peekedItem->GetClassProperties()->GetUniqueIdentifier();
-    ok &= (peededItemUniqueIdentifier == db->GetSize() - 1);
-    ok &= (db->Peek(db->GetSize()) == NULL);
+    ok &= (peededItemUniqueIdentifier == (db->GetSize() - 1));
 
     return ok;
 }

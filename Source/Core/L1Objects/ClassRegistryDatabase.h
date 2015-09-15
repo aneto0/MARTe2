@@ -86,12 +86,11 @@ public:
     uint32 GetSize();
 
     /**
-     * @brief Copies the element at position idx to \a param.
+     * @brief Returns the ClassRegistryItem at position \a idx.
      * @param idx the index of the ClassRegistryItem to be retrieved.
-     * @param item the reference where the requested \a idx must be copied to.
+     * @return the ClassRegistryItem at position \a idx or NULL if no element exists at that position.
      *
-     * @pre idx>=0 && position<Size()
-     * @post item holds a copy of the requested element
+     * @pre idx>=0 && position < GetSize()
      */
     const ClassRegistryItem *Peek(const uint32 &idx);
 

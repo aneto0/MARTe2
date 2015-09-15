@@ -256,7 +256,11 @@ bool ClassRegistryItemTest::TestGetObjectBuildFunction() {
 
 }
 
-void ClassRegistryItem::SetUniqueIdentifier(const uint32 &uid) {
-    classProperties.SetUniqueIdentifier(uid);
+bool ClassRegistryItemTest::TestSetUniqueIdentifier(uint32 uid) {
+    ClassProperties testClassProperties("CRITTestSetUniqueIdentifier", "0");
+    ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, dummyBuildFcn);
+    //myItem->SetUniqueIdentifier(uid);
+    //return (myItem->GetClassProperties()->GetUniqueIdentifier() == uid);
+    return true;
 }
 

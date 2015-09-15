@@ -95,3 +95,8 @@ TEST(ClassRegistryItemGTest,TestGetObjectBuildFunction) {
     ClassRegistryItemTest myClassRegistryItemTest;
     ASSERT_TRUE(myClassRegistryItemTest.TestGetObjectBuildFunction());
 }
+
+TEST(ClassRegistryItemGTest,TestSetUniqueIdentifier) {
+    ClassRegistryItemTest myClassRegistryItemTest;
+    ASSERT_TRUE(myClassRegistryItemTest.TestSetUniqueIdentifier(0xfffff1));
+}

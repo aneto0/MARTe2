@@ -55,16 +55,8 @@ typedef Object *(ObjectBuildFn)(HeapManager::HeapI* const);
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
-/* TODO CHECK for remove this lint comment section */
-/*lint -e{1790} for performance reasons it was decided to implement the usage of LinkedListable this way.
- * This guarantees that the movements in the list are always performed with the correct pointer (i.e. pointing to the base class).
- * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.*/
 class ClassRegistryItem {
 public:
-    /**
-     * @brief Default constructor
-     */
-    ClassRegistryItem();
 
     /**
      * @brief Assigns the input variables to the class members.
@@ -72,13 +64,14 @@ public:
      * @param[in] objBuildFn the function that allows to instantiate a new object from the class
      * represented by this ClassRegistryItem instance.
      */
-    ClassRegistryItem(const ClassProperties &clProperties, const ObjectBuildFn * const objBuildFn);
+    ClassRegistryItem(const ClassProperties &clProperties,
+                      const ObjectBuildFn * const objBuildFn);
 
     /**
      * Destructor.
      * Responsible for destroying the assigned loadable library.
      */
-    virtual ~ClassRegistryItem();
+    ~ClassRegistryItem();
 
     /**
      * @brief Increments the number of instantiated objects of the class type represented by this registry item.
@@ -114,7 +107,7 @@ public:
      * @brief Returns a pointer to the library (dll).
      * @return a pointer to the library (dll) of the class type represented by this registry item.
      */
-    const LoadableLibrary *GetLoadableLibrary() const ;
+    const LoadableLibrary *GetLoadableLibrary() const;
 
     /**
      * @brief Updates the pointer to the loadable library (dll).
@@ -132,7 +125,7 @@ public:
 
     /**
      * @brief Sets the unique identifier for the class described by this ClassRegistryItem.
-     * @param uid the new unique identifier to be set for the class described by this ClassRegistryItem.
+     * @param[in] uid the new unique identifier to be set for the class described by this ClassRegistryItem.
      */
     void SetUniqueIdentifier(const uint32 &uid);
 
@@ -157,6 +150,13 @@ private:
      * The object instantiation function.
      */
     const ObjectBuildFn *objectBuildFn;
+
+    /**
+     * @brief Default constructor
+     */
+    /*lint -e{1704} the default constructor is not to be used.
+     * Each ClassRegistryItem is automatically constructed (using the public constructor) by the Object macros*/
+    ClassRegistryItem();
 };
 
 /*---------------------------------------------------------------------------*/

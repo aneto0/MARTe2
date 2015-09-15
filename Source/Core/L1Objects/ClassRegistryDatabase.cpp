@@ -50,8 +50,8 @@ ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
 }
 
 ClassRegistryDatabase::ClassRegistryDatabase() :
-        classDatabase(8) {
-    classUniqueIdentifier = 0;
+        classDatabase(32u) {
+    classUniqueIdentifier = 0u;
 }
 
 ClassRegistryDatabase::~ClassRegistryDatabase() {
@@ -60,15 +60,13 @@ ClassRegistryDatabase::~ClassRegistryDatabase() {
 void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     if (mux.FastLock() == ErrorManagement::NoError) {
         p->SetUniqueIdentifier(classUniqueIdentifier);
-        classDatabase.Add(classUniqueIdentifier, p);
-        classUniqueIdentifier++;
+        if (classDatabase.Add(classUniqueIdentifier, p)) {
+            classUniqueIdentifier++;
+        }
     }
     mux.FastUnLock();
 }
 
-/*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting
- * i.e. downcasting is necessary.*/
-//TODO Check lint
 const ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
     if (mux.FastLock() == ErrorManagement::NoError) {
@@ -95,57 +93,68 @@ const ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
             uint32 i;
             uint32 databaseSize = classDatabase.GetSize();
             for (i = 0u; i < databaseSize; i++) {
-                classDatabase.Peek(i, p);
-                if (StringHelper::Compare(p->GetClassProperties()->GetName(), className) == 0) {
-                    registryItem = p;
-                    found = true;
-                    break;
+                if (classDatabase.Peek(i, p)) {
+                    const ClassProperties *classProperties = p->GetClassProperties();
+                    if (classProperties != NULL_PTR(ClassProperties *)) {
+                        if (StringHelper::Compare(classProperties->GetName(), className) == 0) {
+                            registryItem = p;
+                            found = true;
+                            break;
+                        }
+                    }
                 }
             }
         }
 
         //registryItem still not found. Try to look inside the dll (if it exists)
         /*lint -e{593} this pointer is freed by the registry item when it is destructed*/
-        if (!found && (dllName[0] != '\0')) {
-            uint32 fullSize = StringHelper::Length(&(dllName[0])) + 5u;
-            char8 *fullName = static_cast<char8 *>(HeapManager::Malloc(fullSize));
+        if (!found) {
+            if (dllName[0] != '\0') {
 
-            LoadableLibrary *loader = new LoadableLibrary();
+                uint32 fullSize = StringHelper::Length(&(dllName[0])) + 5u;
+                /*lint -e{925} pointer to pointer required due to Malloc implementation*/
+                char8 *fullName = static_cast<char8 *>(HeapManager::Malloc(fullSize));
 
-            uint32 i = 0u;
-            bool dllOpened = false;
-            //Check for all known operating system extensions.
-            while (operatingSystemDLLExtensions[i] != 0) {
-                if (MemoryOperationsHelper::Set(fullName, '\0', fullSize)) {
-                    const char8 *extension = operatingSystemDLLExtensions[i];
-                    if (StringHelper::ConcatenateN(fullName, extension, 4u)) {
-                        dllOpened = loader->Open(fullName);
-                        if (dllOpened) {
-                            break;
+                LoadableLibrary *loader = new LoadableLibrary();
+
+                uint32 i = 0u;
+                bool dllOpened = false;
+                //Check for all known operating system extensions.
+                while (operatingSystemDLLExtensions[i] != 0) {
+                    if (MemoryOperationsHelper::Set(fullName, '\0', fullSize)) {
+                        const char8 *extension = operatingSystemDLLExtensions[i];
+                        if (StringHelper::ConcatenateN(fullName, extension, 4u)) {
+                            dllOpened = loader->Open(fullName);
+                            if (dllOpened) {
+                                break;
+                            }
+                            i++;
                         }
-                        i++;
                     }
                 }
-            }
 
-            //If the dll was successfully opened than it is likely that more classes were registered
-            //in the database. Search again.
-            if (dllOpened) {
-                ClassRegistryItem *p;
-                uint32 i;
-                uint32 databaseSize = classDatabase.GetSize();
-                for (i = 0u; (i < databaseSize) && (!found); i++) {
-                    classDatabase.Peek(i, p);
-                    if (StringHelper::Compare(p->GetClassProperties()->GetName(), className) == 0) {
-                        registryItem = p;
-                        registryItem->SetLoadableLibrary(loader);
-                        found = true;
+                //If the dll was successfully opened than it is likely that more classes were registered
+                //in the database. Search again.
+                if (dllOpened) {
+                    ClassRegistryItem *p;
+                    uint32 databaseSize = classDatabase.GetSize();
+                    for (i = 0u; (i < databaseSize) && (!found); i++) {
+                        if (classDatabase.Peek(i, p)) {
+                            const ClassProperties *classProperties = p->GetClassProperties();
+                            if (classProperties != NULL_PTR(ClassProperties *)) {
+                                if (StringHelper::Compare(classProperties->GetName(), className) == 0) {
+                                    registryItem = p;
+                                    registryItem->SetLoadableLibrary(loader);
+                                    found = true;
+                                }
+                            }
+                        }
                     }
                 }
-            }
-            //Not found...
-            if (!found) {
-                delete loader;
+                //Not found...
+                if (!found) {
+                    delete loader;
+                }
             }
         }
     }
@@ -165,7 +174,9 @@ uint32 ClassRegistryDatabase::GetSize() {
 const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
     ClassRegistryItem *item = NULL_PTR(ClassRegistryItem *);
     if (mux.FastLock() == ErrorManagement::NoError) {
-        classDatabase.Peek(idx, item);
+        if(!classDatabase.Peek(idx, item)){
+            item = NULL_PTR(ClassRegistryItem *);
+        }
     }
     mux.FastUnLock();
     return item;

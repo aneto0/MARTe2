@@ -64,7 +64,6 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
 /*lint -e{1551} no exception should be thrown as loadableLibrary is properly initialised and
  * before deleting it is verified if the pointer is NULL*/
 ClassRegistryItem::~ClassRegistryItem() {
-    /*lint -e{534} if is missing. This will have to be sent to the logger. TODO*/
     if (loadableLibrary != NULL_PTR(LoadableLibrary *)) {
         delete loadableLibrary;
     }
