@@ -63,17 +63,10 @@ public:
     ~ClassRegistryDatabase();
 
     /**
-     * @brief Removes an element from the database.
-     * @details This method should only be called by the ClassRegistryItem destructor.
-     * @param[in] p the element to be removed.
-     * @return true if the element was successfully removed from the database.
-     */
-    bool Extract(ClassRegistryItem * const p);
-
-    /**
      * @brief Adds an element to the database.
-     * @details This method should only be called by the
-     * ClassRegistryItem constructor.
+     * @details This method should only be called by the ClassRegistryItem constructor.
+     * After adding the element to the database the ClassRegistryItem unique identifier value is set
+     * to the position at which it was added to the database.
      * @param[in] p the element to be added.
      */
     void Add(ClassRegistryItem * const p);
@@ -84,15 +77,7 @@ public:
      * @param[in] className the name of the class to be searched.
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    //TODO Check documentation
     const ClassRegistryItem *Find(const char8 *className);
-
-    /**
-     * @brief Returns an access point to the database root.
-     * @return a pointer to the database root which can be used to scan the database.
-     */
-    //TODO CLEAN
-    //ClassRegistryItem *List();
 
     /**
      * @brief Returns the number of classes registered in the database.
@@ -118,7 +103,8 @@ private:
     ClassRegistryDatabase();
 
     /**
-     * The database is implemented as a LinkedListHolder
+     * The database is implemented as a LinkedListHolder.
+     * The destructor of the list will clean its elements.
      */
     Lists::StaticList<ClassRegistryItem *> classDatabase;
 

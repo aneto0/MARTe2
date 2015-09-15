@@ -110,11 +110,8 @@ public:
 
     /**
      * @brief Tests the Peek function.
-     * TODO CHECK DOCUMENTATION
-     * @details Tests if passing index = 0 the ElementAt function it returns the first element (same result of List function). Then adds an element
-     * and checks that with an index=size-1 the ElementAt function returns the same element (the last in the database). At last checks if passing an index >=size
-     * the function returns a NULL pointer.
-     * @return true if the tests explained in the details section succeeds, false otherwise.
+     * @details Adds an element to the database and verifies if this element can be successfully peeked.
+     * @return true if the element is added to the database and if can then be later retrieved.
      */
     bool TestPeek();
 

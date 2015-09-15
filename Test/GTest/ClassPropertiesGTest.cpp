@@ -59,3 +59,13 @@ TEST(ClassPropertiesGTest,TestGetVersion) {
     ASSERT_TRUE(myClassPropertiesTest.TestGetVersion("World"));
 }
 
+TEST(ClassPropertiesGTest,TestGetUniqueIdentifier) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestGetUniqueIdentifier(0xfe));
+}
+
+TEST(ClassPropertiesGTest,TestSetUniqueIdentifier) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestSetUniqueIdentifier(0xef));
+}
+

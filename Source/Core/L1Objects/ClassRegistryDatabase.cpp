@@ -57,17 +57,6 @@ ClassRegistryDatabase::ClassRegistryDatabase() :
 ClassRegistryDatabase::~ClassRegistryDatabase() {
 }
 
-bool ClassRegistryDatabase::Extract(ClassRegistryItem * const p) {
-    bool ok = false;
-    if (mux.FastLock() == ErrorManagement::NoError) {
-        const uint32 uid = p->GetClassProperties()->GetUniqueIdentifier();
-        ClassRegistryItem *nullItem = NULL_PTR(ClassRegistryItem *);
-        ok = classDatabase.Extract(uid, nullItem);
-    }
-    mux.FastUnLock();
-    return ok;
-}
-
 void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     if (mux.FastLock() == ErrorManagement::NoError) {
         p->SetUniqueIdentifier(classUniqueIdentifier);
@@ -129,7 +118,6 @@ const ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
             while (operatingSystemDLLExtensions[i] != 0) {
                 if (MemoryOperationsHelper::Set(fullName, '\0', fullSize)) {
                     const char8 *extension = operatingSystemDLLExtensions[i];
-                    // TODO check memory allocation
                     if (StringHelper::ConcatenateN(fullName, extension, 4u)) {
                         dllOpened = loader->Open(fullName);
                         if (dllOpened) {
@@ -164,12 +152,6 @@ const ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     mux.FastUnLock();
     return registryItem;
 }
-
-/*lint -e{929} the current implementation of the LinkedListable requires downcasting.*/
-//TODO CLEAN
-/*ClassRegistryItem * ClassRegistryDatabase::List() {
- return dynamic_cast<ClassRegistryItem *>(classDatabase.List());
- }*/
 
 uint32 ClassRegistryDatabase::GetSize() {
     uint32 size = 0u;

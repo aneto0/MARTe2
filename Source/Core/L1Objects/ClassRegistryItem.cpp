@@ -61,15 +61,12 @@ ClassRegistryItem::ClassRegistryItem(const ClassProperties &clProperties,
     ClassRegistryDatabase::Instance()->Add(this);
 }
 
-/*lint -e{1551} no exception should be thrown. Only reason is if the pointers are messed-up
- * by some racing condition or similar. Should not happen as the only user of this class
- * is the ClassRegistryDatabase.*/
+/*lint -e{1551} no exception should be thrown as loadableLibrary is properly initialised and
+ * before deleting it is verified if the pointer is NULL*/
 ClassRegistryItem::~ClassRegistryItem() {
-    const LoadableLibrary *loader = loadableLibrary;
     /*lint -e{534} if is missing. This will have to be sent to the logger. TODO*/
-    ClassRegistryDatabase::Instance()->Extract(this);
-    if (loader != NULL) {
-        delete loader;
+    if (loadableLibrary != NULL_PTR(LoadableLibrary *)) {
+        delete loadableLibrary;
     }
     loadableLibrary = NULL_PTR(LoadableLibrary *);
 }
