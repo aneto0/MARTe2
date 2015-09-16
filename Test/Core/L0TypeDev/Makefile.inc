@@ -25,13 +25,14 @@
 #############################################################
 
 OBJSX=  BitBooleanTest.x\
-	BitRangeTest.x \
+        BitRangeTest.x \
         AnyTypeTest.x \
         FractionalIntegerTest.x \
         FormatDescriptorTest.x \
         BasicTypeTest.x \
         TypeCharacteristicsTest.x \
-        TypeDescriptorTest.x
+        TypeDescriptorTest.x \
+        StaticListTest.x
 		
 PACKAGE=Core
 ROOT_DIR=../../..
