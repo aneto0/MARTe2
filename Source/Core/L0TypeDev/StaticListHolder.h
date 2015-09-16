@@ -3,6 +3,7 @@
  * @brief Header file for class StaticListHolder
  * @date 31/08/2015
  * @author Filippo Sartori
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -32,6 +33,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -55,13 +58,23 @@ public:
 
     /**
      * @brief Constructor parameterised by element size and allocation granularity
-     * param[in] listElementSize The size in bytes of one element of the list
+     * @param[in] listElementSize The size in bytes of one element of the list
      * - could be sizeof(void) for a list of pointers
-     * param[in] listAllocationGranularity The size in bytes of the increment
+     * @param[in] listAllocationGranularity The size in bytes of the increment
      * of reserved space when the list grows.
+     * @pre true
+     * @post GetElementSize() == listElementSize &&
+             GetAllocationGranularity() == listAllocationGranularity &&
+             GetSize() == 0 &&
+             GetAllocatedSize() == 0
      */
-    StaticListHolder(uint32 listElementSize,
-                     uint32 listAllocationGranularity);
+    StaticListHolder(const uint32 listElementSize,
+                     const uint32 listAllocationGranularity);
+
+    /**
+     * @brief Destructor
+     */
+    ~StaticListHolder();
 
     /**
      * @brief Gets the element size
@@ -79,43 +92,59 @@ public:
     uint32 GetSize(void) const;
 
     /**
-     * @brief Gets the allocated size of the list
+     * @brief Gets the capacity of the list, i.e. the actual allocated size of the list in memory
      */
-    uint32 GetAllocatedSize(void) const;
+    uint32 GetCapacity(void) const;
+
+    /*
+     *
+     */
+    uint32 GetMaxCapacity(void) const;
 
     /**
-     * @brief Adds an element to the list by position
+     * @brief Adds an element at the end of the list
      * @param[in] position The index where the new element has to be added in the range [0..GetSize()]
      * @param[in] copyFrom The pointer to the memory address where the new element must be copied from
      *
-     * @pre position>=0 && position<=GetSize() && copyFrom!=NULL
-     * @post position'old = this'old->GetSize() => GetSize()==this'old->GetSize()+1 &&
-     *       Peek(position'old
+     * @pre GetSize() < GetCapacity() && copyFrom != NULL
+     * @post GetSize() == this'old->GetSize() + 1 &&
+     *       [value:elementType | Peek(this'old->GetSize()-1,&value) => value == *copyFrom]
      *
-     * position = listSize is an append otherwise it is an insert
+     * exception position > GetSize()
      */
-    bool Add(const uint32 position,
+    bool Add(const void *copyFrom);
+
+    /**
+     * @brief Inserts an element at a given position
+     * @pre position>=0 && position<GetSize() && copyFrom!=NULL
+     * @post GetSize() == this'old->GetSize() + 1 &&
+     *       [value:elementType | Peek(position,&value) => value == *copyFrom] &&
+     *       [value1,value2:elementType; i: uint32, i from position to GetSize()-1 | Peek(i,&value1) && this'old->Peek(i-1,&value2) => *value1 == *value2]
+     */
+    bool Insert(const uint32 position,
              const void *copyFrom);
 
     /**
-     * @brief Peeks an element of the list by position
-     * @param[in] position The index of the requested element in the range [0..GetSize())
+     * @brief Peeks an element at a given position
+     * @param[in] position The index of the requested element in the range [0..GetSize()-1]
      * @param[in] copyTo The pointer to the memory address where the requested element must be copied to
      * @returns true the element was if copy successful and position ok
      *
      * @pre position>=0 && position<GetSize() && copyTo!=NULL
-     * @post *copyTo holds a copy of the requested element
+     * @post result && copyTo != NULL => *copyTo holds a copy of the requested element
+     *
+     * O(1)
      */
     bool Peek(const uint32 position,
               void *copyTo) const;
 
     /**
      * @brief Extracts (i.e. peeks and deletes) an element from the list by position
-     * @param[in] position The index of the requested element in the range [0..GetSize())
+     * @param[in] position The index of the requested element in the range [0..GetSize()-1]
      * @param[in] copyTo The pointer to the memory address where the requested element must be copied to
      *
      * @pre position>=0 && position<GetSize() && copyTo!=NULL
-     * @post *copyTo!=NULL => holds a copy of the requested element &&
+     * @post result && *copyTo!=NULL => copyTo holds a copy of the requested element &&
      *       Peek(position'old) does not hold the value copied to *copyTo
      */
     bool Extract(const uint32 position,
@@ -123,73 +152,44 @@ public:
 
 private:
 
-    /**
-     * increments listSize by 1
-     * mallocs or reallocs if necessary
+    /*
+     * @pre GetAllocatedSize() + GetAllocationGranularity() <= GetMaxCapacity()
+     * @post GetCapacity() == GetAllocatedSize()'old + GetAllocationGranularity()
+     *
+     * exception GetCapacity() + GetAllocationGranularity() > GetMaxCapacity()
      */
-    bool IncreaseListSize();
-
-private:
+    bool IncreaseCapacity(void);
 
     /**
-     * size of one elemeTypeCharacteristicsnt in the list
+     * size of one element in the list
      */
-    uint32 listElementSize;
+    uint32 listElementSize_;
 
     /**
      *  actual number of elements in list
      */
-    uint32 listSize;
+    uint32 listSize_;
 
     /**
      *  spaces in the list
      */
-    uint32 listAllocatedSize;
+    uint32 listCapacity_;
 
     /*
      * allocation granularity
      */
-    uint32 listAllocationGranularity;
+    uint32 listAllocationGranularity_;
 
     /*
      * accounts for maxint and listElementSize and listAllocationGranularity
      * it is a multiple of listAllocationGranularity that multiplied by listElementSize fits within maxint
      */
-    uint32 maxListSize;
+    uint32 maxListCapacity_;
 
     /**
      * the actual list
      */
-    uint8* allocatedMemory;
-};
-
-//TODO: listAllocationGranularity could be a template parameter with a default value
-template<typename elementType>
-class StaticList: public StaticListHolder {
-public:
-
-    StaticList(uint32 listAllocationGranularity) :
-            StaticListHolder(sizeof(elementType), listAllocationGranularity) {
-    }
-
-    bool Peek(const uint32 position,
-              elementType &value) const {
-        return StaticListHolder::Peek(position, static_cast<void *>(&value));
-    }
-
-    bool Add(const uint32 position,
-             const elementType &value) {
-        return StaticListHolder::Add(position, static_cast<const void *>(&value));
-    }
-
-    bool Remove(const uint32 position) {
-        return StaticListHolder::Extract(position, NULL_PTR(void *));
-    }
-
-    bool Extract(const uint32 position,
-                 elementType &value) {
-        return StaticListHolder::Extract(position, static_cast<void *>(&value));
-    }
+    uint8* allocatedMemory_;
 };
 
 }
