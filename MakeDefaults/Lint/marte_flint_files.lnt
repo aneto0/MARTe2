@@ -47,6 +47,7 @@ BitRange.h
 TypeCharacteristics.h
 FractionalInteger.h
 //FractionalIntegerGTest.cpp
+StaticListHolder.cpp
 
 
 

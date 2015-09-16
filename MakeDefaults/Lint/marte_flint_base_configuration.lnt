@@ -5,6 +5,8 @@
 -i./Source/Core/L0Portability/OperatingSystem/Linux 
 -i./Source/Core/L0Portability/Architecture/x86_gcc 
 -i./Source/Core/L1Objects/ 
+-i./Source/Core/L0TypeDev/
+-i./Source/Core/L0Portability/OperatingSystem/Generic
 
 /* 
  * Enable all warnings 
