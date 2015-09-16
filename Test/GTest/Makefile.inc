@@ -62,7 +62,8 @@ OBJSX=  TypeCharacteristicsGTest.x \
     	BitBooleanGTest.x \
  	FractionalIntegerGTest.x \
  	BitRangeGTest.x \
-	TypeDescriptorGTest.x
+	TypeDescriptorGTest.x \
+	StaticListGTest.x
 
 PACKAGE=
 ROOT_DIR=../..
