@@ -68,7 +68,7 @@ public:
      * @brief Tests if the returned bit size is correct.
      * @return true if the bit size returned is equal to the specified bit size in template initialization.
      */
-    bool TestBitSize();
+    bool TestNumberOfBits();
 
     /**
      * @brief Tests if the returned bit offset is correct.
@@ -179,7 +179,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
 
     TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.numberOfBits != 1) {
         return false;
     }
 
@@ -197,7 +197,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
     }
 
     tdTest = atTest.GetTypeDescriptor();
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.numberOfBits != 1) {
         return false;
     }
 
@@ -215,7 +215,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
     }
 
     tdTest = atTest.GetTypeDescriptor();
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.numberOfBits != 1) {
         return false;
     }
 
@@ -227,7 +227,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
 }
 
 template<typename T>
-bool BitBooleanTest<T>::TestBitSize() {
+bool BitBooleanTest<T>::TestNumberOfBits() {
 
     const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
@@ -235,18 +235,18 @@ bool BitBooleanTest<T>::TestBitSize() {
 
     TypeDefinition::BitBoolean<T, zero> myZeroShiftedBool;
 
-    if (myZeroShiftedBool.BitSize() != 1) {
+    if (myZeroShiftedBool.NumberOfBits() != 1) {
         return false;
     }
 
     TypeDefinition::BitBoolean<T, half> myHalfShiftedBool;
 
-    if (myHalfShiftedBool.BitSize() != 1) {
+    if (myHalfShiftedBool.NumberOfBits() != 1) {
         return false;
     }
     TypeDefinition::BitBoolean<T, max> myMaxShiftedBool;
 
-    if (myMaxShiftedBool.BitSize() != 1) {
+    if (myMaxShiftedBool.NumberOfBits() != 1) {
         return false;
     }
 

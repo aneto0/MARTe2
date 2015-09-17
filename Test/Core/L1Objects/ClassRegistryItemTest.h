@@ -79,19 +79,23 @@ public:
     /**
      * @brief Tests the ClassRegistryItem::GetClassPropertiesCopy.
      * @param[in] name is the desired class name.
+     * @param[in] typeidName is the desired class name.
      * @param[in] version is the desired class version.
      * @return true if the ClassProperties copy has the same attributes values of the properties passed by constructor, false otherwise.
      */
     bool TestGetClassPropertiesCopy(const char8* name,
+                                    const char8* typeidName,
                                     const char8* version);
 
     /**
      * @brief Tests the ClassRegistryItem::GetClassProperties.
      * @param[in] name is the desired class name.
+     * @param[in] typeidName is the desired class name.
      * @param[in] version is the desired class version.
      * @return true if the ClassProperties returned has the same attributes values of the properties passed by constructor, false otherwise.
      */
     bool TestGetClassProperties(const char8* name,
+                                const char8* typeidName,
                                 const char8* version);
 
     /**

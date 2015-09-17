@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AnyTypeTest.h"
+#include "TestObjectHelper1.h"
+#include <typeinfo>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,16 +43,19 @@
 
 using namespace TypeDefinition;
 
-AnyTypeTest::AnyTypeTest():targetVariable(1),constantPtrToConstant(&targetVariable), constPtr(NULL) {
+AnyTypeTest::AnyTypeTest() :
+        targetVariable(1),
+        constantPtrToConstant(&targetVariable),
+        constPtr(NULL) {
     retVal = false;
     defaultBitAddress = 1;
     defaultDataDescription.isConstant = true;
     defaultDataDescription.isStructuredData = false;
-    defaultDataDescription.size = 5;
+    defaultDataDescription.numberOfBits = 5;
     defaultDataDescription.type = Float;
 }
 
-bool AnyTypeTest::TestAnyType_Void(){
+bool AnyTypeTest::TestAnyType_Void() {
     AnyType anytype;
 
     retVal = (anytype.GetDataPointer() == NULL);
@@ -59,12 +64,12 @@ bool AnyTypeTest::TestAnyType_Void(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 0);
-    retVal &= (td.size == 0);
+    retVal &= (td.numberOfBits == 0);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_AnyTypeVoid(){
+bool AnyTypeTest::TestAnyType_AnyTypeVoid() {
     AnyType anytype;
     AnyType anytype1(anytype);
 
@@ -74,13 +79,13 @@ bool AnyTypeTest::TestAnyType_AnyTypeVoid(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 0);
-    retVal &= (td.size == 0);
+    retVal &= (td.numberOfBits == 0);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_TypeDescriptor_BitAddress_ConstPointerToConst(){
-    AnyType anytype(defaultDataDescription,  defaultBitAddress, constantPtrToConstant);
+bool AnyTypeTest::TestAnyType_TypeDescriptor_BitAddress_ConstPointerToConst() {
+    AnyType anytype(defaultDataDescription, defaultBitAddress, constantPtrToConstant);
 
     retVal = (anytype.GetDataPointer() == &targetVariable);
     retVal &= (anytype.GetBitAddress() == 1);
@@ -90,8 +95,8 @@ bool AnyTypeTest::TestAnyType_TypeDescriptor_BitAddress_ConstPointerToConst(){
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_TypeDescriptor_BitAddress_ConstPointer(){
-    AnyType anytype(defaultDataDescription,  defaultBitAddress, constPtr);
+bool AnyTypeTest::TestAnyType_TypeDescriptor_BitAddress_ConstPointer() {
+    AnyType anytype(defaultDataDescription, defaultBitAddress, constPtr);
 
     retVal = (anytype.GetDataPointer() == NULL);
     retVal &= (anytype.GetBitAddress() == 1);
@@ -101,9 +106,9 @@ bool AnyTypeTest::TestAnyType_TypeDescriptor_BitAddress_ConstPointer(){
     return retVal;
 }
 
-bool AnyTypeTest::TestIsVoid(){
+bool AnyTypeTest::TestIsVoid() {
     AnyType anytype;
-    AnyType anytype2(defaultDataDescription,  defaultBitAddress, constPtr);
+    AnyType anytype2(defaultDataDescription, defaultBitAddress, constPtr);
 
     retVal = anytype.IsVoid();
     retVal &= !anytype2.IsVoid();
@@ -111,7 +116,7 @@ bool AnyTypeTest::TestIsVoid(){
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_Int8(){
+bool AnyTypeTest::TestAnyType_Int8() {
     int8 a = 1;
     AnyType anytype(a);
 
@@ -121,12 +126,12 @@ bool AnyTypeTest::TestAnyType_Int8(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 0);
-    retVal &= (td.size == 8);
+    retVal &= (td.numberOfBits == 8);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_UInt8(){
+bool AnyTypeTest::TestAnyType_UInt8() {
     uint8 a = 1;
     AnyType anytype(a);
 
@@ -136,12 +141,12 @@ bool AnyTypeTest::TestAnyType_UInt8(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 1);
-    retVal &= (td.size == 8);
+    retVal &= (td.numberOfBits == 8);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstInt8(){
+bool AnyTypeTest::TestAnyType_ConstInt8() {
     const int8 a = 1;
     AnyType anytype(a);
 
@@ -151,12 +156,12 @@ bool AnyTypeTest::TestAnyType_ConstInt8(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 0);
-    retVal &= (td.size == 8);
+    retVal &= (td.numberOfBits == 8);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstUInt8(){
+bool AnyTypeTest::TestAnyType_ConstUInt8() {
     const uint8 a = 1;
     AnyType anytype(a);
 
@@ -166,12 +171,12 @@ bool AnyTypeTest::TestAnyType_ConstUInt8(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 1);
-    retVal &= (td.size == 8);
+    retVal &= (td.numberOfBits == 8);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_Int16(){
+bool AnyTypeTest::TestAnyType_Int16() {
     int16 a = 1;
     AnyType anytype(a);
 
@@ -181,12 +186,12 @@ bool AnyTypeTest::TestAnyType_Int16(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 0);
-    retVal &= (td.size == 16);
+    retVal &= (td.numberOfBits == 16);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_UInt16(){
+bool AnyTypeTest::TestAnyType_UInt16() {
     uint16 a = 1;
     AnyType anytype(a);
 
@@ -196,12 +201,12 @@ bool AnyTypeTest::TestAnyType_UInt16(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 1);
-    retVal &= (td.size == 16);
+    retVal &= (td.numberOfBits == 16);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstInt16(){
+bool AnyTypeTest::TestAnyType_ConstInt16() {
     const int16 a = 1;
     AnyType anytype(a);
 
@@ -211,12 +216,12 @@ bool AnyTypeTest::TestAnyType_ConstInt16(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 0);
-    retVal &= (td.size == 16);
+    retVal &= (td.numberOfBits == 16);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstUInt16(){
+bool AnyTypeTest::TestAnyType_ConstUInt16() {
     const uint16 a = 1;
     AnyType anytype(a);
 
@@ -226,12 +231,12 @@ bool AnyTypeTest::TestAnyType_ConstUInt16(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 1);
-    retVal &= (td.size == 16);
+    retVal &= (td.numberOfBits == 16);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_Int32(){
+bool AnyTypeTest::TestAnyType_Int32() {
     int32 a = 1;
     AnyType anytype(a);
 
@@ -241,12 +246,12 @@ bool AnyTypeTest::TestAnyType_Int32(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 0);
-    retVal &= (td.size == 32);
+    retVal &= (td.numberOfBits == 32);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_UInt32(){
+bool AnyTypeTest::TestAnyType_UInt32() {
     uint32 a = 1;
     AnyType anytype(a);
 
@@ -256,12 +261,12 @@ bool AnyTypeTest::TestAnyType_UInt32(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 1);
-    retVal &= (td.size == 32);
+    retVal &= (td.numberOfBits == 32);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstInt32(){
+bool AnyTypeTest::TestAnyType_ConstInt32() {
     const int32 a = 1;
     AnyType anytype(a);
 
@@ -271,12 +276,12 @@ bool AnyTypeTest::TestAnyType_ConstInt32(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 0);
-    retVal &= (td.size == 32);
+    retVal &= (td.numberOfBits == 32);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstUInt32(){
+bool AnyTypeTest::TestAnyType_ConstUInt32() {
     const uint32 a = 1;
     AnyType anytype(a);
 
@@ -286,12 +291,12 @@ bool AnyTypeTest::TestAnyType_ConstUInt32(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 1);
-    retVal &= (td.size == 32);
+    retVal &= (td.numberOfBits == 32);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_Int64(){
+bool AnyTypeTest::TestAnyType_Int64() {
     int64 a = 1;
     AnyType anytype(a);
 
@@ -301,12 +306,12 @@ bool AnyTypeTest::TestAnyType_Int64(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 0);
-    retVal &= (td.size == 64);
+    retVal &= (td.numberOfBits == 64);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_UInt64(){
+bool AnyTypeTest::TestAnyType_UInt64() {
     uint64 a = 1;
     AnyType anytype(a);
 
@@ -316,12 +321,12 @@ bool AnyTypeTest::TestAnyType_UInt64(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 1);
-    retVal &= (td.size == 64);
+    retVal &= (td.numberOfBits == 64);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstInt64(){
+bool AnyTypeTest::TestAnyType_ConstInt64() {
     const int64 a = 1;
     AnyType anytype(a);
 
@@ -331,12 +336,12 @@ bool AnyTypeTest::TestAnyType_ConstInt64(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 0);
-    retVal &= (td.size == 64);
+    retVal &= (td.numberOfBits == 64);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstUInt64(){
+bool AnyTypeTest::TestAnyType_ConstUInt64() {
     const uint64 a = 1;
     AnyType anytype(a);
 
@@ -346,12 +351,12 @@ bool AnyTypeTest::TestAnyType_ConstUInt64(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 1);
-    retVal &= (td.size == 64);
+    retVal &= (td.numberOfBits == 64);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_Float32(){
+bool AnyTypeTest::TestAnyType_Float32() {
     float32 a = 1.1;
     AnyType anytype(a);
 
@@ -361,12 +366,12 @@ bool AnyTypeTest::TestAnyType_Float32(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 2);
-    retVal &= (td.size == 32);
+    retVal &= (td.numberOfBits == 32);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstFloat32(){
+bool AnyTypeTest::TestAnyType_ConstFloat32() {
     const float32 a = 1.1;
     AnyType anytype(a);
 
@@ -376,12 +381,12 @@ bool AnyTypeTest::TestAnyType_ConstFloat32(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 2);
-    retVal &= (td.size == 32);
+    retVal &= (td.numberOfBits == 32);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_Float64(){
+bool AnyTypeTest::TestAnyType_Float64() {
     float64 a = 1.1;
     AnyType anytype(a);
 
@@ -391,12 +396,12 @@ bool AnyTypeTest::TestAnyType_Float64(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 2);
-    retVal &= (td.size == 64);
+    retVal &= (td.numberOfBits == 64);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstFloat64(){
+bool AnyTypeTest::TestAnyType_ConstFloat64() {
     const float64 a = 1.1;
     AnyType anytype(a);
 
@@ -406,12 +411,12 @@ bool AnyTypeTest::TestAnyType_ConstFloat64(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 2);
-    retVal &= (td.size == 64);
+    retVal &= (td.numberOfBits == 64);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstPointerToConts(){
+bool AnyTypeTest::TestAnyType_ConstPointerToConts() {
     AnyType anytype(constantPtrToConstant);
 
     retVal = (anytype.GetDataPointer() == constantPtrToConstant);
@@ -420,12 +425,12 @@ bool AnyTypeTest::TestAnyType_ConstPointerToConts(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 3);
-    retVal &= (td.size == sizeof(void *) * 8u);
+    retVal &= (td.numberOfBits == sizeof(void *) * 8u);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstPointer(){
+bool AnyTypeTest::TestAnyType_ConstPointer() {
     AnyType anytype(constPtr);
 
     retVal = (anytype.GetDataPointer() == constPtr);
@@ -434,13 +439,13 @@ bool AnyTypeTest::TestAnyType_ConstPointer(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
     retVal &= (td.type == 3);
-    retVal &= (td.size == sizeof(void *) * 8u);
+    retVal &= (td.numberOfBits == sizeof(void *) * 8u);
 
     return retVal;
 }
 
-bool AnyTypeTest::TestAnyType_ConstCharPointerToConst(){
-    const char8 *const charPtr = "hello";
+bool AnyTypeTest::TestAnyType_ConstCharPointerToConst() {
+    const char8 * const charPtr = "hello";
     AnyType anytype(charPtr);
 
     retVal = (anytype.GetDataPointer() == charPtr);
@@ -449,10 +454,97 @@ bool AnyTypeTest::TestAnyType_ConstCharPointerToConst(){
     retVal &= (td.isStructuredData == false);
     retVal &= (td.isConstant == true);
     retVal &= (td.type == 8);
-    retVal &= (td.size == sizeof(const char *) * 8u);
+    retVal &= (td.numberOfBits == sizeof(const char *) * 8u);
 
     return retVal;
 }
 
+bool AnyTypeTest::TestAnyType_Object() {
+    TestObjectHelper1 obj;
+    AnyType anytype(obj);
+    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+    const ClassRegistryItem *classItem = classDatabase->Find("TestObjectHelper1");
 
+    retVal = (classItem != NULL);
+    if (retVal) {
+        retVal &= (anytype.GetBitAddress() == 0);
+        retVal &= (anytype.GetDataPointer() == &obj);
 
+        td = anytype.GetTypeDescriptor();
+        retVal &= (td.isStructuredData == true);
+        retVal &= (td.isConstant == false);
+
+        uint32 structuredDataIdCode = td.structuredDataIdCode;
+        uint32 classUniqueId = classItem->GetClassProperties()->GetUniqueIdentifier();
+        retVal &= (structuredDataIdCode == classUniqueId);
+    }
+    return retVal;
+}
+
+bool AnyTypeTest::TestAnyType_ConstObject() {
+    const TestObjectHelper1 obj;
+    AnyType anytype(obj);
+    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+    const ClassRegistryItem *classItem = classDatabase->Find("TestObjectHelper1");
+
+    retVal = (classItem != NULL);
+    if (retVal) {
+        retVal &= (anytype.GetBitAddress() == 0);
+        retVal &= (anytype.GetDataPointer() == &obj);
+
+        td = anytype.GetTypeDescriptor();
+        retVal &= (td.isStructuredData == true);
+        retVal &= (td.isConstant == true);
+
+        uint32 structuredDataIdCode = td.structuredDataIdCode;
+        uint32 classUniqueId = classItem->GetClassProperties()->GetUniqueIdentifier();
+        retVal &= (structuredDataIdCode == classUniqueId);
+    }
+    return retVal;
+}
+
+bool AnyTypeTest::TestCreateFromOtherType() {
+    TestObjectHelper1 obj;
+    AnyType anytype;
+    AnyType::CreateFromOtherType(anytype, obj);
+    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+    const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(TestObjectHelper1).name());
+
+    retVal = (classItem != NULL);
+    if (retVal) {
+        retVal &= (anytype.GetBitAddress() == 0);
+        retVal &= (anytype.GetDataPointer() == &obj);
+
+        td = anytype.GetTypeDescriptor();
+        retVal &= (td.isStructuredData == true);
+        retVal &= (td.isConstant == false);
+
+        uint32 structuredDataIdCode = td.structuredDataIdCode;
+        uint32 classUniqueId = classItem->GetClassProperties()->GetUniqueIdentifier();
+        retVal &= (structuredDataIdCode == classUniqueId);
+    }
+    return retVal;
+}
+
+bool AnyTypeTest::TestCreateFromOtherConstType() {
+    const TestObjectHelper1 obj;
+    AnyType anytype;
+    AnyType::CreateFromOtherType(anytype, obj);
+    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+    const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(TestObjectHelper1).name());
+
+    retVal = (classItem != NULL);
+    if (retVal) {
+        retVal &= (anytype.GetBitAddress() == 0);
+        retVal &= (anytype.GetDataPointer() == &obj);
+
+        td = anytype.GetTypeDescriptor();
+        retVal &= (td.isStructuredData == true);
+        retVal &= (td.isConstant == true);
+
+        uint32 structuredDataIdCode = td.structuredDataIdCode;
+        uint32 classUniqueId = classItem->GetClassProperties()->GetUniqueIdentifier();
+        retVal &= (structuredDataIdCode == classUniqueId);
+    }
+    return retVal;
+}

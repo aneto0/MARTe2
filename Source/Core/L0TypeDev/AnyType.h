@@ -33,10 +33,12 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
+#include "ClassRegistryDatabase.h"
 #include "TypeDescriptor.h"
 #include "BitBoolean.h"
 #include "FractionalInteger.h"
 #include "BitRange.h"
+#include "Object.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -47,12 +49,12 @@ namespace TypeDefinition {
 /**
  * @brief AnyType class.
  *
- * @details This class provide a smart mechanism for the manipulation of each type.\n
+ * @details This class provides a smart mechanism for the manipulation of types.\n
  * It is composed by a void* pointer to the element and by a descriptor
  * which gives information about the type (the size, if it is a signed or
- * unsigned number, if it is constant, if it is an object or a native element, ecc).\n
- * For each type a constructor can automatically built the relative AnyType
- * object and this is very useful for example in the Printf function.
+ * unsigned number, if it is constant, if it is an object or a native element, etc).\n
+ * For each type an implicit constructor can automatically build the relative AnyType
+ * object (which is very useful for example in the Printf function).
  */
 /*lint -save -e925 -e926 -e929 -e9005 -e1773 .
  * (925) pointer cast required by this implementation of AnyType */
@@ -103,143 +105,155 @@ public:
     inline bool IsVoid() const;
 
     /**
-     * @brief Constructor by signed 8 bit integer.
+     * @brief Constructor from signed 8 bit integer.
      * @param[in] i is the signed 8 bit integer input.
      */
     inline AnyType(int8 &i);
 
     /**
-     * @brief Constructor by unsigned 8 bit integer.
+     * @brief Constructor from unsigned 8 bit integer.
      * @param[in] i is the unsigned 8 bit integer input.
      */
     inline AnyType(uint8 &i);
 
     /**
-     * @brief Constructor by constant signed 8 bit integer.
+     * @brief Constructor from constant signed 8 bit integer.
      * @param[in] i is the constant signed 8 bit integer input.
      */
     inline AnyType(const int8 &i);
 
     /**
-     * @brief Constructor by constant unsigned 8 bit integer.
+     * @brief Constructor from constant unsigned 8 bit integer.
      * @param[in] i is the constant unsigned 8 bit integer input.
      */
     inline AnyType(const uint8 &i);
 
     /**
-     * @brief Constructor by signed 16 bit integer.
+     * @brief Constructor from signed 16 bit integer.
      * @param[in] i is the signed 16 bit integer input.
      */
     inline AnyType(int16 &i);
 
     /**
-     * @brief Constructor by unsigned 16 bit integer.
+     * @brief Constructor from unsigned 16 bit integer.
      * @param[in] i is the unsigned 16 bit integer input.
      */
     inline AnyType(uint16 &i);
 
     /**
-     * @brief Constructor by constant signed 16 bit integer.
+     * @brief Constructor from constant signed 16 bit integer.
      * @param[in] i is the constant signed 16 bit integer input.
      */
 
     inline AnyType(const int16 &i);
 
     /**
-     * @brief Constructor by constant unsigned 16 bit integer.
+     * @brief Constructor from constant unsigned 16 bit integer.
      * @param[in] i is the constant 16 bit unsigned integer input.
      */
     inline AnyType(const uint16 &i);
 
     /**
-     * @brief Constructor by signed 32 bit integer.
+     * @brief Constructor from signed 32 bit integer.
      * @param[in] i is the signed 32 bit integer input.
      */
     inline AnyType(int32 &i);
 
     /**
-     * @brief Constructor by unsigned 32 bit integer.
+     * @brief Constructor from unsigned 32 bit integer.
      * @param[in] i is the unsigned 32 bit integer input.
      */
     inline AnyType(uint32 &i);
 
     /**
-     * @brief Constructor by constant signed 32 bit integer.
+     * @brief Constructor from constant signed 32 bit integer.
      * @param[in] i is the constant signed 32 bit integer input.
      */
     inline AnyType(const int32 &i);
 
     /**
-     * @brief Constructor by constant unsigned 32 bit integer.
+     * @brief Constructor from constant unsigned 32 bit integer.
      * @param[in] i is the constant unsigned 32 bit integer input.
      */
     inline AnyType(const uint32 &i);
 
     /**
-     * @brief Constructor by signed 64 bit integer.
+     * @brief Constructor from signed 64 bit integer.
      * @param[in] i is the signed 64 bit integer input.
      */
     inline AnyType(int64 &i);
 
     /**
-     * @brief Constructor by unsigned 64 bit integer.
+     * @brief Constructor from unsigned 64 bit integer.
      * @param[in] i is the unsigned 64 bit integer input.
      */
     inline AnyType(uint64 &i);
 
     /**
-     * @brief Constructor by constant signed 64 bit integer.
+     * @brief Constructor from constant signed 64 bit integer.
      * @param[in] i is the constant signed 64 bit integer input.
      */
     inline AnyType(const int64 &i);
 
     /**
-     * @brief Constructor by constant unsigned 64 bit integer.
+     * @brief Constructor from constant unsigned 64 bit integer.
      * @param[in] i is the constant unsigned 64 bit integer input.
      */
     inline AnyType(const uint64 &i);
 
     /**
-     * @brief Constructor by 32 bit float number.
+     * @brief Constructor from 32 bit float number.
      * @param[in] i is the 32 bit float number input.
      */
     inline AnyType(float32 &i);
 
     /**
-     * @brief Constructor by constant 32 bit float number.
+     * @brief Constructor from constant 32 bit float number.
      * @param[in] i is the the constant 32 bit float number input.
      */
     inline AnyType(const float32 &i);
 
     /**
-     * @brief Constructor by 64 bit float number.
+     * @brief Constructor from 64 bit float number.
      * @param[in] i the 64 bit float number input.
      */
     inline AnyType(float64 &i);
 
     /**
-     * @brief Constructor by constant 64 bit float number.
+     * @brief Constructor from constant 64 bit float number.
      * @param[in] i is the constant 64 bit float number input.
      */
     inline AnyType(const float64 &i);
 
     /**
-     * @brief Constructor by void pointer.
+     * @brief Constructor from void pointer.
      * @param[in] p is the void pointer input.
      */
     inline AnyType(void * const p);
 
     /**
-     * @brief Constructor by constant void pointer.
+     * @brief Constructor from constant void pointer.
      * @param[in] p is the constant void pointer input.
      */
     inline AnyType(const void * const p);
 
     /**
-     * @brief Constructor by C string.
+     * @brief Constructor from C string.
      * @param[in] p is the C string input.
      */
     inline AnyType(const char8 * const p);
+
+    /**
+     * @brief Constructor from Object (or inherited class).
+     * @param[in] obj the source Object.
+     */
+    inline AnyType(Object &obj);
+
+    /**
+     * @brief Constructor from const Object (or inherited class).
+     * @param[in] obj the source Object.
+     */
+    inline AnyType(const Object &obj);
 
     /**
      * @brief Constructor by BitBoolean.
@@ -287,6 +301,26 @@ public:
      */
     inline uint8 GetBitAddress() const;
 
+    /**
+     * @brief Generate an AnyType from a type registered in the ClassRegisteredDatabase.
+     * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegisteredDatabase).
+     * @param[out] dest the generated AnyType is written in this variable.
+     * @param[in] obj the source Object.
+     */
+    template<typename baseType>
+    static void CreateFromOtherType(AnyType &dest,
+                                    baseType &obj);
+
+    /**
+     * @brief Generate an AnyType from a type registered in the ClassRegisteredDatabase.
+     * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegisteredDatabase).
+     * @param[out] dest the generated AnyType is written in this variable.
+     * @param[in] obj the source Object.
+     */
+    template<typename baseType>
+    static void CreateFromOtherType(AnyType &dest,
+                                    const baseType &obj);
+
 private:
 
     /**
@@ -319,6 +353,7 @@ AnyType::AnyType(void) {
 }
 
 AnyType::AnyType(const AnyType &x) {
+    /*lint -e{1554} the dataPointer is to be shared with the copied AnyType.*/
     this->dataPointer = x.dataPointer;
     this->bitAddress = x.bitAddress;
     this->dataDescriptor = x.dataDescriptor;
@@ -495,7 +530,7 @@ AnyType::AnyType(void * const p) {
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = false;
     dataDescriptor.type = Pointer;
-    dataDescriptor.size = sizeof(void*) * 8u;
+    dataDescriptor.numberOfBits = sizeof(void*) * 8u;
 }
 
 AnyType::AnyType(const void * const p) {
@@ -504,7 +539,7 @@ AnyType::AnyType(const void * const p) {
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = true;
     dataDescriptor.type = Pointer;
-    dataDescriptor.size = sizeof(void*) * 8u;
+    dataDescriptor.numberOfBits = sizeof(void*) * 8u;
 }
 
 AnyType::AnyType(const char8 * const p) {
@@ -513,17 +548,74 @@ AnyType::AnyType(const char8 * const p) {
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = true;
     dataDescriptor.type = CCString;
-    dataDescriptor.size = sizeof(const char8*) * 8u;
+    dataDescriptor.numberOfBits = sizeof(const char8*) * 8u;
 }
 
 /*---------------------------------------------------------------------------*/
+AnyType::AnyType(Object &obj) {
+    dataPointer = static_cast<void *>(&obj);
+    bitAddress = 0u;
+
+    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+    const char8 *className = obj.GetClassProperties()->GetName();
+    const ClassRegistryItem *classItem = classDatabase->Find(className);
+    if (classItem != NULL_PTR(ClassRegistryItem *)) {
+        dataDescriptor.isStructuredData = true;
+        dataDescriptor.isConstant = false;
+        dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
+    }
+}
+
+AnyType::AnyType(const Object &obj) {
+    dataPointer = static_cast<void *>(const_cast<Object *>(&obj));
+    bitAddress = 0u;
+
+    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+    const char8 *className = obj.GetClassProperties()->GetName();
+    const ClassRegistryItem *classItem = classDatabase->Find(className);
+    if (classItem != NULL_PTR(ClassRegistryItem *)) {
+        dataDescriptor.isStructuredData = true;
+        dataDescriptor.isConstant = true;
+        dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
+    }
+}
+
+template<typename baseType>
+void AnyType::CreateFromOtherType(AnyType &dest,
+                                  baseType &obj) {
+    dest.dataPointer = static_cast<void *>(&obj);
+    dest.bitAddress = 0u;
+
+    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+    const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(obj).name());
+    if (classItem != NULL_PTR(ClassRegistryItem *)) {
+        dest.dataDescriptor.isStructuredData = true;
+        dest.dataDescriptor.isConstant = false;
+        dest.dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
+    }
+}
+
+template<typename baseType>
+void AnyType::CreateFromOtherType(AnyType &dest,
+                                  const baseType &obj) {
+    dest.dataPointer = static_cast<void *>(const_cast<baseType *>(&obj));
+    dest.bitAddress = 0u;
+
+    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+    const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(obj).name());
+    if (classItem != NULL_PTR(ClassRegistryItem *)) {
+        dest.dataDescriptor.isStructuredData = true;
+        dest.dataDescriptor.isConstant = true;
+        dest.dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
+    }
+}
 
 template<typename baseType, uint8 bitOffset>
 AnyType::AnyType(BitBoolean<baseType, bitOffset> &bitBool) {
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = false;
     dataDescriptor.type = UnsignedInteger;
-    dataDescriptor.size = 1u;
+    dataDescriptor.numberOfBits = 1u;
     bitAddress = bitBool.BitOffset();
     dataPointer = static_cast<void *>(&bitBool);
 }
@@ -534,7 +626,7 @@ AnyType::AnyType(BitRange<baseType, bitSize, bitOffset> &bitRange) {
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = false;
     dataDescriptor.type = type;
-    dataDescriptor.size = bitRange.BitSize();
+    dataDescriptor.numberOfBits = bitRange.GetNumberOfBits();
     bitAddress = bitRange.BitOffset();
     dataPointer = static_cast<void *>(&bitRange);
 }
@@ -545,7 +637,7 @@ AnyType::AnyType(FractionalInteger<baseType, bitSize> &fractionalInt) {
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = false;
     dataDescriptor.type = type;
-    dataDescriptor.size = fractionalInt.BitSize();
+    dataDescriptor.numberOfBits = fractionalInt.GetNumberOfBits();
     bitAddress = 0;
     dataPointer = static_cast<void *>(&fractionalInt);
 }
@@ -556,9 +648,9 @@ AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = true;
     dataDescriptor.type = type;
-    dataDescriptor.size = fractionalInt.BitSize();
+    dataDescriptor.numberOfBits = fractionalInt.GetNumberOfBits();
     bitAddress = 0;
-    dataPointer = static_cast<void *>(const_cast<FractionalInteger<baseType, bitSize> *> (&fractionalInt));
+    dataPointer = static_cast<void *>(const_cast<FractionalInteger<baseType, bitSize> *>(&fractionalInt));
 }
 
 /*---------------------------------------------------------------------------*/

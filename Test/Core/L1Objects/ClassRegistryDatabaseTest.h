@@ -83,6 +83,12 @@ public:
                   bool create);
 
     /**
+     * @brief Tests the TestFindTypeIdName function.
+     * @return true if db->FindTypeIdName(typeid(Object).name()) returns not NULL.
+     */
+    bool TestFindTypeIdName();
+
+    /**
      * @brief Tests the find function with the DLLName::ClassName pattern.
      * @param[in] dllName is the desired dll name.
      * @param[in] class name is the desired class name.

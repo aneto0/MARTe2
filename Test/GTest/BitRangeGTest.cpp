@@ -259,9 +259,9 @@ TEST(BitRangeGTest,TestAnyTypeCastUnsigned) {
     ASSERT_TRUE(bitrange.TestAnyTypeCast());
 }
 
-TEST(BitRangeGTest,TestBitSize) {
+TEST(BitRangeGTest,TestNumberOfBits) {
     BitRangeTest<uint32> bitrange;
-    ASSERT_TRUE(bitrange.TestBitSize());
+    ASSERT_TRUE(bitrange.TestNumberOfBits());
 }
 
 

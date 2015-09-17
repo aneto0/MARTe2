@@ -49,26 +49,27 @@ bool ClassPropertiesTest::TestDefaultConstructor() {
 }
 
 bool ClassPropertiesTest::TestFullConstructor(const char8 *name,
+                                              const char8 *typeidName,
                                               const char8 *version) {
-    ClassProperties classProperties(name, version);
+    ClassProperties classProperties(name, typeidName, version);
 
     if ((StringHelper::Compare(name, classProperties.GetName()) != 0) || (StringHelper::Compare(version, classProperties.GetVersion()) != 0)) {
         return false;
     }
 
-    ClassProperties classProperties1((const char8*) NULL, version);
+    ClassProperties classProperties1((const char8*) NULL, typeidName, version);
 
     if ((classProperties1.GetName() != NULL) || (StringHelper::Compare(version, classProperties1.GetVersion()) != 0)) {
         return false;
     }
 
-    ClassProperties classProperties2(name, (const char8*) NULL);
+    ClassProperties classProperties2(name, typeidName, (const char8*) NULL);
 
     if ((StringHelper::Compare(name, classProperties2.GetName()) != 0) || (classProperties2.GetVersion() != NULL)) {
         return false;
     }
 
-    ClassProperties classProperties3(NULL, NULL);
+    ClassProperties classProperties3(NULL, NULL, NULL);
     bool ok = (classProperties3.GetName() == NULL);
     ok &= (classProperties3.GetVersion() == NULL);
     ok &= (classProperties3.GetUniqueIdentifier() == 0);
@@ -81,7 +82,7 @@ bool ClassPropertiesTest::TestGetName(const char8*name) {
         return false;
     }
 
-    ClassProperties classProperties1(name, NULL);
+    ClassProperties classProperties1(name, name, NULL);
 
     return (StringHelper::Compare(classProperties1.GetName(), name) == 0);
 
@@ -93,7 +94,7 @@ bool ClassPropertiesTest::TestGetVersion(const char8*version) {
         return false;
     }
 
-    ClassProperties classProperties1(NULL, version);
+    ClassProperties classProperties1(NULL, NULL, version);
 
     return (StringHelper::Compare(classProperties1.GetVersion(), version) == 0);
 
@@ -105,7 +106,7 @@ bool ClassPropertiesTest::TestGetUniqueIdentifier(uint32 uniqueIdentifier) {
         return false;
     }
 
-    ClassProperties classProperties1(NULL, NULL);
+    ClassProperties classProperties1(NULL, NULL, NULL);
     classProperties1.SetUniqueIdentifier(uniqueIdentifier);
     return (classProperties1.GetUniqueIdentifier() == uniqueIdentifier);
 
@@ -116,7 +117,7 @@ bool ClassPropertiesTest::TestSetUniqueIdentifier(uint32 uniqueIdentifier) {
         return false;
     }
 
-    ClassProperties classProperties1(NULL, NULL);
+    ClassProperties classProperties1(NULL, NULL, NULL);
     classProperties1.SetUniqueIdentifier(uniqueIdentifier);
     return (classProperties1.GetUniqueIdentifier() == uniqueIdentifier);
 }

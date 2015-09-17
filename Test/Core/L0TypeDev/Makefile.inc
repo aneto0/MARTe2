@@ -41,6 +41,8 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../../../Source/Core/L0Portability
 INCLUDES += -I../../../Source/Core/L0TypeDev
+INCLUDES += -I../../../Source/Core/L1Objects
+INCLUDES += -I../L1Objects
 
 all: $(OBJS) \
                 $(BUILD_DIR)/L0TypeDevTest$(LIBEXT)                 

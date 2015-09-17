@@ -38,6 +38,7 @@
 #include "Introspection.h"
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
+#include <typeinfo>
 
 /*---------------------------------------------------------------------------*/
 /*                        Macro definitions                                  */
@@ -68,24 +69,29 @@
      */                                                                                                                \
     virtual void GetClassPropertiesCopy(ClassProperties &destination) const;                                           \
     /*                                                                                                                 \
+     * @brief Returns the class properties associated with this class type.                                            \
+     * @param[in, out] destination the destination where to copy the class properties to.                              \
+     */                                                                                                                \
+    virtual const ClassProperties *GetClassProperties() const;                                                         \
+    /*                                                                                                                 \
      * @brief Allocates a new instance of the class type in the provided heap. Note that this                          \
      * is automatically called by the compiler (given that we use placement new).                                      \
      * Note that the selected heap might be different for each type of class.                                          \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
-    static void * operator new(const osulong size, HeapManager::HeapI *heap = static_cast<HeapManager::HeapI *>(NULL));                                                         \
+    static void * operator new(const osulong size, HeapManager::HeapI *heap = static_cast<HeapManager::HeapI *>(NULL));\
     /*                                                                                                                 \
      * @brief Delete the object.                                                                                       \
      * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \
      * cannot call non-static members and as a consequence the heap variable must have global                          \
      * scope in the unit file (but is not exported) (see CLASS_REGISTER).                                              \
-     * @param[in] p the pointer to the object to be deleted.                                                               \
+     * @param[in] p the pointer to the object to be deleted.                                                           \
      */                                                                                                                \
     static void operator delete(void *p);
 
 /**
  * This macro has to be inserted in every unit file.
- * The definition of the  _## name ## ClassRegistryItem variable will
+ * The definition of the  _## className ## ClassRegistryItem variable will
  * instantiate a new ClassRegistryItem for every unit file compiled in the application.
  * Upon instantiation each ClassRegistryItem will automatically add itself to the ClassRegistryDatabase.
  * When required the ClassRegistryItem will instantiate new objects by asking the ClassRegistryItem
@@ -94,64 +100,70 @@
  * functions in the class (or its derived classes). Because their implementation is specific to the final
  * class they had to be written as part of the macro as well.
  */
-#define CLASS_REGISTER(name,ver)                                                                                       \
+#define CLASS_REGISTER(className,ver)                                                                                  \
     /*                                                                                                                 \
      * Forward declaration of function which allows to build a new instance of the object                              \
      * e.g. Object *MyClassTypeBuildFn_(const Heap &h);                                                                \
      */                                                                                                                \
-    Object * name ## BuildFn_(HeapManager::HeapI* const heap);                                                                          \
+    Object * className ## BuildFn_(HeapManager::HeapI* const heap);                                                    \
     /*                                                                                                                 \
      * Class properties of this class type. One instance per class type automatically instantiated at the start        \
      * of an application or loading of a loadable library.                                                             \
-     * e.g. static ClassProperties MyClassTypeClassProperties_( "MyClassType" , "1.0");                                \
+     * e.g. static ClassProperties MyClassTypeClassProperties_("MyClassType", typeid(MyClassType).name(), "1.0");      \
      */                                                                                                                \
-    static ClassProperties name ## ClassProperties_( #name , ver);                                                     \
+    static ClassProperties className ## ClassProperties_( #className , typeid(className).name(), ver);                 \
     /*                                                                                                                 \
      * Class registry item of this class type. One instance per class type automatically instantiated at the start     \
      * of an application or loading of a loadable library. It will automatically add the class type to the             \
      * ClassRegistryDatabase.                                                                                          \
      * e.g. static ClassRegistryItem MyClassTypeClassRegistryItem_( MyClassTypeClassProperties_, &MyClassTypeBuildFn_);\
      */                                                                                                                \
-    static ClassRegistryItem name ## ClassRegistryItem_( name ## ClassProperties_, & name ## BuildFn_);                \
+    static ClassRegistryItem className ## ClassRegistryItem_( className ## ClassProperties_, & className ## BuildFn_); \
     /*                                                                                                                 \
      * @brief Function called when a new instance of this class type is to be instantiated in the provided heap.       \
      * @param[in] h the heap where the object will be instantiated.                                                    \
      * @return a new instance of the object from the class type.                                                       \
      * e.g. Object *MyClassTypeBuildFn_( const Heap &h);                                                               \
      */                                                                                                                \
-    Object * name ## BuildFn_(HeapManager::HeapI* const heap){                                                                      \
-        name *p = new (heap) name ();                                                                                  \
+    Object * className ## BuildFn_(HeapManager::HeapI* const heap){                                                    \
+        className *p = new (heap) className ();                                                                        \
         return p;                                                                                                      \
     }                                                                                                                  \
     /*                                                                                                                 \
      * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
      */                                                                                                                \
-    void name::GetClassPropertiesCopy(ClassProperties &destination) const {                                            \
-        const ClassProperties *properties = name ## ClassRegistryItem_.GetClassProperties();                           \
+    void className::GetClassPropertiesCopy(ClassProperties &destination) const {                                       \
+        const ClassProperties *properties = className ## ClassRegistryItem_.GetClassProperties();                      \
         destination = *properties;                                                                                     \
     }                                                                                                                  \
-    /*lint -e{1531}                                                                                                                \
+    /*                                                                                                                 \
+     * e.g. MyClassType *MyClassType::GetClassPropertiesCopy( ClassProperties &destination) const;                     \
+     */                                                                                                                \
+    const ClassProperties *className::GetClassProperties() const {                                                     \
+        return className ## ClassRegistryItem_.GetClassProperties();                                                   \
+    }                                                                                                                  \
+    /*lint -e{1531}                                                                                                    \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
-    void * name::operator new(const size_t size, HeapManager::HeapI* const heap) {                                                  \
+    void * className::operator new(const size_t size, HeapManager::HeapI* const heap) {                                \
         void *obj = NULL_PTR(void *);                                                                                  \
         if (heap != NULL) {                                                                                            \
             obj = heap->Malloc(static_cast<uint32>(size));                                                             \
         } else {                                                                                                       \
             obj = HeapManager::Malloc(static_cast<uint32>(size));                                                      \
         }                                                                                                              \
-        name ## ClassRegistryItem_.IncrementNumberOfInstances();                                                       \
+        className ## ClassRegistryItem_.IncrementNumberOfInstances();                                                  \
         return obj;                                                                                                    \
     }                                                                                                                  \
     /*                                                                                                                 \
      * e.g. void *MyClassType::operator delete(void *p);                                                               \
      */                                                                                                                \
-    void name::operator delete(void *p) {                                                                              \
+    void className::operator delete(void *p) {                                                                         \
         bool ok = HeapManager::Free(p);                                                                                \
         if(!ok){                                                                                                       \
             /* TODO error here */                                                                                      \
-        }                                                                                                             \
-        name ## ClassRegistryItem_.DecrementNumberOfInstances();                                                       \
+        }                                                                                                              \
+        className ## ClassRegistryItem_.DecrementNumberOfInstances();                                                  \
     }
 /*lint -restore */
 

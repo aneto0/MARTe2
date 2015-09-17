@@ -162,6 +162,31 @@ const ClassRegistryItem *ClassRegistryDatabase::Find(const char8 *className) {
     return registryItem;
 }
 
+const ClassRegistryItem *ClassRegistryDatabase::FindTypeIdName(const char8 * const typeidName) {
+    ClassRegistryItem *registryItem = NULL_PTR(ClassRegistryItem *);
+    if (mux.FastLock() == ErrorManagement::NoError) {
+        bool found = false;
+        if (typeidName != NULL) {
+            ClassRegistryItem *p;
+            uint32 i;
+            uint32 databaseSize = classDatabase.GetSize();
+            for (i = 0u; (i < databaseSize) && (!found); i++) {
+                if (classDatabase.Peek(i, p)) {
+                    const ClassProperties *classProperties = p->GetClassProperties();
+                    if (classProperties != NULL_PTR(ClassProperties *)) {
+                        if (StringHelper::Compare(classProperties->GetTypeIdName(), typeidName) == 0) {
+                            registryItem = p;
+                            found = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    mux.FastUnLock();
+    return registryItem;
+}
+
 uint32 ClassRegistryDatabase::GetSize() {
     uint32 size = 0u;
     if (mux.FastLock() == ErrorManagement::NoError) {

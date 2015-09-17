@@ -80,6 +80,14 @@ public:
     const ClassRegistryItem *Find(const char8 *className);
 
     /**
+     * @brief Returns the ClassRegistryItem associated to the class with typeid(class).name() equal to \a typeidName.
+     * @details The returned pointer will be valid as long as it exists in the database.
+     * @param[in] typeidName the typeid().name() of the class to be searched.
+     * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
+     */
+    const ClassRegistryItem *FindTypeIdName(const char8 * const typeidName);
+
+    /**
      * @brief Returns the number of classes registered in the database.
      * @return the number of classes registered in the database.
      */

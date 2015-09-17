@@ -82,7 +82,7 @@ public:
      * @brief Checks if BitSize function returns the same size specified in template initialization.
      * @return true if BitSize function returns the same size specified in template initialization, false otherwise.
      */
-    bool TestBitSize();
+    bool TestGetNumberOfBits();
 
 };
 
@@ -214,7 +214,7 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastNonConst() {
 
     TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
 
-    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
+    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.numberOfBits != size)) {
         return false;
     }
 
@@ -243,7 +243,7 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastConst() {
 
     TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
 
-    if ((tdTest.isStructuredData) || (!tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
+    if ((tdTest.isStructuredData) || (!tdTest.isConstant) || (tdTest.type != type) || (tdTest.numberOfBits != size)) {
         return false;
     }
 
@@ -255,7 +255,7 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastConst() {
 }
 
 template<typename T>
-bool FractionalIntegerTest<T>::TestBitSize() {
+bool FractionalIntegerTest<T>::TestGetNumberOfBits() {
 
     const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
@@ -263,18 +263,18 @@ bool FractionalIntegerTest<T>::TestBitSize() {
 
     TypeDefinition::FractionalInteger<T, zero> myZeroFractionalInteger;
 
-    if (myZeroFractionalInteger.BitSize() != zero) {
+    if (myZeroFractionalInteger.GetNumberOfBits() != zero) {
         return false;
     }
 
     TypeDefinition::FractionalInteger<T, half> myHalfFractionalInteger;
 
-    if (myHalfFractionalInteger.BitSize() != half) {
+    if (myHalfFractionalInteger.GetNumberOfBits() != half) {
         return false;
     }
     TypeDefinition::FractionalInteger<T, max> myMaxFractionalInteger;
 
-    if (myMaxFractionalInteger.BitSize() != max) {
+    if (myMaxFractionalInteger.GetNumberOfBits() != max) {
         return false;
     }
 

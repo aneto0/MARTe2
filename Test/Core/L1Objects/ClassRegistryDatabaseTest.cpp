@@ -32,6 +32,7 @@
 #include "ReferenceT.h"
 #include "ObjectTestHelper.h"
 #include "StringHelper.h"
+#include <typeinfo>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -82,7 +83,7 @@ bool ClassRegistryDatabaseTest::TestAdd() {
 
     uint32 sizeDB = db->GetSize();
 
-    ClassProperties testClassProperties("TestAdd", "V");
+    ClassProperties testClassProperties("TestAdd", "TestAdd", "V");
 
     //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
@@ -122,7 +123,7 @@ bool ClassRegistryDatabaseTest::TestFind(const char8 *name,
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
     if (create) {
-        ClassProperties testClassProperties(name, "V");
+        ClassProperties testClassProperties(name, "", "V");
 
         //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
         ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
@@ -133,6 +134,15 @@ bool ClassRegistryDatabaseTest::TestFind(const char8 *name,
 
     return (db->Find(name) == NULL);
 
+}
+
+bool ClassRegistryDatabaseTest::TestFindTypeIdName() {
+
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+
+    bool found = (db->FindTypeIdName(typeid(Object).name()) != NULL);
+    //These are deleted by the the ClassRegistryDatabase destructor
+    return found;
 }
 
 bool ClassRegistryDatabaseTest::TestGetSize() {
@@ -148,7 +158,7 @@ bool ClassRegistryDatabaseTest::TestGetSize() {
     uint32 i = 0;
     //add the elements to the database.
     while (names[i] != NULL) {
-        ClassProperties *testClassProperties = new ClassProperties(names[i], "V");
+        ClassProperties *testClassProperties = new ClassProperties(names[i], names[i], "V");
         ClassRegistryItem *element = new ClassRegistryItem(*testClassProperties, NULL);
         delete testClassProperties;
         if (i == 0) {
@@ -162,7 +172,7 @@ bool ClassRegistryDatabaseTest::TestGetSize() {
 
 bool ClassRegistryDatabaseTest::TestPeek() {
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
-    ClassProperties testClassProperties("TestElementAt", "V");
+    ClassProperties testClassProperties("TestElementAt", "TestElementAt", "V");
 
     //the add function is called directly by the constructor. myItem cannot be deleted before the end of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);

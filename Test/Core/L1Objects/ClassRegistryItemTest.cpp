@@ -34,6 +34,7 @@
 #include "../../../Source/Core/L0Portability/MemoryCheck.h"
 #include "StringHelper.h"
 #include "ClassRegistryDatabase.h"
+#include <typeinfo>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -51,7 +52,7 @@ Object* dummyBuildFcn(HeapManager::HeapI * const h __attribute__((unused))) {
 
 bool ClassRegistryItemTest::TestConstructor() {
 
-    ClassProperties testClassProperties("Hello", "World");
+    ClassProperties testClassProperties("Hello", typeid(Object).name(), "World");
 
     //myItem cannot be destroyed until the end of the execution of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, dummyBuildFcn);
@@ -66,6 +67,10 @@ bool ClassRegistryItemTest::TestConstructor() {
     }
 
     if (StringHelper::Compare((myItem->GetClassProperties())->GetName(), "Hello") != 0) {
+        return false;
+    }
+
+    if (StringHelper::Compare((myItem->GetClassProperties())->GetTypeIdName(), typeid(Object).name()) != 0) {
         return false;
     }
 
@@ -100,7 +105,7 @@ bool ClassRegistryItemTest::TestConstructor() {
 }
 
 bool ClassRegistryItemTest::TestDestructor() {
-    ClassProperties testClassProperties("Hello", "World");
+    ClassProperties testClassProperties("Hello", "", "World");
 
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, dummyBuildFcn);
 
@@ -124,7 +129,7 @@ bool ClassRegistryItemTest::TestDestructor() {
 
 bool ClassRegistryItemTest::TestIncrementNumberOfInstances() {
 
-    ClassProperties testClassProperties("Hello", "World");
+    ClassProperties testClassProperties("Hello", "", "World");
 
     //myItem cannot be destroyed until the end of the execution of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, dummyBuildFcn);
@@ -141,7 +146,7 @@ bool ClassRegistryItemTest::TestIncrementNumberOfInstances() {
 
 bool ClassRegistryItemTest::TestDecrementNumberOfInstances() {
 
-    ClassProperties testClassProperties("Hello", "World");
+    ClassProperties testClassProperties("Hello", "", "World");
 
     //myItem cannot be destroyed until the end of the execution of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, dummyBuildFcn);
@@ -164,7 +169,7 @@ bool ClassRegistryItemTest::TestDecrementNumberOfInstances() {
 
 bool ClassRegistryItemTest::TestGetNumberOfInstances(uint32 nInstances) {
 
-    ClassProperties testClassProperties("Hello", "World");
+    ClassProperties testClassProperties("Hello", "", "World");
 
     //myItem cannot be destroyed until the end of the execution of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, dummyBuildFcn);
@@ -185,26 +190,29 @@ bool ClassRegistryItemTest::TestGetNumberOfInstances(uint32 nInstances) {
 }
 
 bool ClassRegistryItemTest::TestGetClassPropertiesCopy(const char8* name,
+                                                       const char8* typeidName,
                                                        const char8* version) {
 
-    ClassProperties testClassProperties(name, version);
+    ClassProperties testClassProperties(name, typeidName, version);
 
     //myItem cannot be destroyed until the end of the execution of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, dummyBuildFcn);
 
-    ClassProperties propertiesCopy("Hello", "World");
+    ClassProperties propertiesCopy("Hello", "Hello", "World");
 
     myItem->GetClassPropertiesCopy(propertiesCopy);
 
     bool ok = (name == NULL ? propertiesCopy.GetName() == NULL : StringHelper::Compare(propertiesCopy.GetName(), name) == 0);
+    ok &= (typeidName == NULL ? propertiesCopy.GetTypeIdName() == NULL : StringHelper::Compare(propertiesCopy.GetTypeIdName(), typeidName) == 0);
     ok &= (version == NULL ? propertiesCopy.GetVersion() == NULL : StringHelper::Compare(propertiesCopy.GetVersion(), version) == 0);
     return ok;
 }
 
 bool ClassRegistryItemTest::TestGetClassProperties(const char8* name,
+                                                   const char8* typeidName,
                                                    const char8* version) {
 
-    ClassProperties testClassProperties(name, version);
+    ClassProperties testClassProperties(name, typeidName, version);
 
     //myItem cannot be destroyed until the end of the execution of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, dummyBuildFcn);
@@ -212,13 +220,14 @@ bool ClassRegistryItemTest::TestGetClassProperties(const char8* name,
     const ClassProperties *propertiesCopy = myItem->GetClassProperties();
 
     bool ok = (name == NULL ? propertiesCopy->GetName() == NULL : StringHelper::Compare(propertiesCopy->GetName(), name) == 0);
+    ok &= (typeidName == NULL ? propertiesCopy->GetTypeIdName() == NULL : StringHelper::Compare(propertiesCopy->GetTypeIdName(), typeidName) == 0);
     ok &= (version == NULL ? propertiesCopy->GetVersion() == NULL : StringHelper::Compare(propertiesCopy->GetVersion(), version) == 0);
     return ok;
 }
 
 bool ClassRegistryItemTest::TestSetGetLoadableLibrary(const char8 *llname) {
 
-    ClassProperties testClassProperties("Hello", "World");
+    ClassProperties testClassProperties("Hello", "", "World");
 
     //myItem cannot be destroyed until the end of the execution of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, dummyBuildFcn);
@@ -234,7 +243,7 @@ bool ClassRegistryItemTest::TestSetGetLoadableLibrary(const char8 *llname) {
 
 bool ClassRegistryItemTest::TestGetObjectBuildFunction() {
 
-    ClassProperties testClassProperties("Hello", "World");
+    ClassProperties testClassProperties("Hello", "", "World");
 
     //myItem cannot be destroyed until the end of the execution of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, dummyBuildFcn);
@@ -257,7 +266,7 @@ bool ClassRegistryItemTest::TestGetObjectBuildFunction() {
 }
 
 bool ClassRegistryItemTest::TestSetUniqueIdentifier(uint32 uid) {
-    ClassProperties testClassProperties("CRITTestSetUniqueIdentifier", "0");
+    ClassProperties testClassProperties("CRITTestSetUniqueIdentifier", "", "0");
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, dummyBuildFcn);
     //myItem->SetUniqueIdentifier(uid);
     //return (myItem->GetClassProperties()->GetUniqueIdentifier() == uid);

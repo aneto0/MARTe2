@@ -32,7 +32,6 @@ OBJSX=  FormatDescriptor.x \
 #LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 INCLUDES+=-I../L0Portability
 
-
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 all: $(OBJS) $(SUBPROJ)   \

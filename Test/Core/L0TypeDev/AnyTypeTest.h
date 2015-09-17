@@ -81,141 +81,162 @@ public:
 
     /**
      * @brief Test the AnyType constructor using int8.
-     * @return True if the type is set as expected.
      */
     bool TestAnyType_Int8();
 
     /**
      * @brief Test AnyType constructor using uint8.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_UInt8();
 
     /**
      * @brief Test AnyType constructor using const int8.
-     * @return True if the anyTYpe is constructed as expected.
      */
     bool TestAnyType_ConstInt8();
 
     /**
      * @brief Test AnyType constructor using const uint8.
-     * @return True if anyType is constructed as expected.
      */
     bool TestAnyType_ConstUInt8();
 
     /**
      * @brief Test AnyType constructor using int16.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_Int16();
 
     /**
      * @brief Test AnyType constructor using uint16.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_UInt16();
 
     /**
      * @brief Test AnyType constructor using const int16.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstInt16();
 
     /**
      * @brief Test AnyType constructor using const uint16.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstUInt16();
 
     /**
      * @brief Test AnyType constructor using int32.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_Int32();
 
     /**
      * @brief Test AnyType constructor using uint32.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_UInt32();
 
     /**
      * @brief Test AnyType constructor using const int32.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstInt32();
 
     /**
      * @brief Test AnyType constructor using const uint32.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstUInt32();
 
     /**
      * @brief Test AnyType constructor using int64.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_Int64();
 
     /**
      * @brief Test AnyType constructor using uint64.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_UInt64();
 
     /**
      * @brief Test AnyType constructor using const int64.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstInt64();
 
     /**
      * @brief Test AnyType constructor using const uint64.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstUInt64();
 
     /**
      * @brief Test AnyType constructor using float32.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_Float32();
 
     /**
      * @brief Test AnyType constructor using const float32.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstFloat32();
 
     /**
      * @brief Test AnyType constructor using float64.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_Float64();
 
     /**
      * @brief Test AnyType constructor using const float64.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstFloat64();
 
     /**
      * @brief Test AnyType constructor using const void* const pointer.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstPointerToConts();
 
     /**
      * @brief Test AnyType constructor using void* const pointer.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstPointer();
 
     /**
      * @brief Test AnyType constructor using const char *const pointer.
-     * @return True if the anyType is constructed as expected.
      */
     bool TestAnyType_ConstCharPointerToConst();
+
+    /**
+     * @brief Tests the AnyType constructor with a BitBoolean variable.
+     */
+    template<typename baseType>
+    bool TestAnyType_BitBoolean();
+
+    /**
+     * @brief Tests the AnyType constructor with a BitRange variable.
+     */
+    template<typename baseType>
+    bool TestAnyType_BitRange();
+
+    /**
+     * @brief Tests the AnyType constructor with a FractionalInteger variable.
+     */
+    template<typename baseType>
+    bool TestAnyType_FractionalInteger();
+
+    /**
+     * @brief Tests the AnyType constructor with a ConstFractionalInteger variable.
+     */
+    template<typename baseType>
+    bool TestAnyType_ConstFractionalInteger();
+
+    /**
+     * @brief Tests the AnyType constructor with an Object variable.
+     */
+    bool TestAnyType_Object();
+
+    /**
+     * @brief Tests the AnyType constructor with a const Object variable.
+     */
+    bool TestAnyType_ConstObject();
+
+    /**
+     * @brief Tests the AnyType::CreateFromOtherType function with an element that is registered in the database.
+     */
+    bool TestCreateFromOtherType();
+
+    /**
+     * @brief Tests the AnyType::CreateFromOtherType function with an element that is registered in the database.
+     */
+    bool TestCreateFromOtherConstType();
 
 private:
 
@@ -254,12 +275,77 @@ private:
      */
     void* const constPtr;
 
-
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+template<typename baseType>
+bool AnyTypeTest::TestAnyType_BitBoolean() {
+    TypeDefinition::BitBoolean<baseType, 2> bitBoolean;
+    AnyType anytype(bitBoolean);
+    TypeDescriptor td = anytype.GetTypeDescriptor();
+    retVal = (td.isStructuredData == false);
+    retVal &= (td.isConstant == false);
+    retVal &= (td.type == UnsignedInteger);
+    retVal &= (td.numberOfBits == 1u);
+    retVal &= (anytype.GetBitAddress() == bitBoolean.BitOffset());
+    retVal &= (anytype.GetDataPointer() == static_cast<void *>(&bitBoolean));
+
+    return retVal;
+}
+
+template<typename baseType>
+bool AnyTypeTest::TestAnyType_BitRange() {
+    TypeDefinition::BitRange<baseType, sizeof(baseType), 2> bitRange;
+    AnyType anytype(bitRange);
+
+    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    TypeDescriptor td = anytype.GetTypeDescriptor();
+    retVal = (td.isStructuredData == false);
+    retVal &= (td.isConstant == false);
+    retVal &= (td.type == type);
+    retVal &= (td.numberOfBits == sizeof(baseType));
+    retVal &= (anytype.GetBitAddress() == bitRange.BitOffset());
+    retVal &= (anytype.GetDataPointer() == static_cast<void *>(&bitRange));
+
+    return retVal;
+}
+
+template<typename baseType>
+bool AnyTypeTest::TestAnyType_FractionalInteger() {
+    TypeDefinition::FractionalInteger<baseType, sizeof(baseType)> fractionalInteger;
+    AnyType anytype(fractionalInteger);
+
+    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    TypeDescriptor td = anytype.GetTypeDescriptor();
+    retVal = (td.isStructuredData == false);
+    retVal &= (td.isConstant == false);
+    retVal &= (td.type == type);
+    retVal &= (td.numberOfBits == sizeof(baseType));
+    retVal &= (anytype.GetBitAddress() == 0);
+    retVal &= (anytype.GetDataPointer() == static_cast<void *>(&fractionalInteger));
+
+    return retVal;
+}
+
+template<typename baseType>
+bool AnyTypeTest::TestAnyType_ConstFractionalInteger() {
+    const TypeDefinition::FractionalInteger<baseType, sizeof(baseType)> fractionalInteger;
+    AnyType anytype(fractionalInteger);
+
+    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    TypeDescriptor td = anytype.GetTypeDescriptor();
+    retVal = (td.isStructuredData == false);
+    retVal &= (td.isConstant == true);
+    retVal &= (td.type == type);
+    retVal &= (td.numberOfBits == sizeof(baseType));
+    retVal &= (anytype.GetBitAddress() == 0);
+    void *dataPointer = (const_cast<FractionalInteger<baseType, sizeof(baseType)> *>(&fractionalInteger));
+    retVal &= (anytype.GetDataPointer() == dataPointer);
+
+    return retVal;
+}
 
 #endif /* TEST_CORE_L0TYPEDEV_ANYTYPETEST_H_ */
 

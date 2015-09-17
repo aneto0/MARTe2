@@ -42,21 +42,21 @@
 namespace TypeDefinition {
 
 /**
- * @brief A integer like generic class parameterizable by bit size.
- * @warning bitSize must be minor than the bit size of baseType.
+ * @brief An integer wrapper class parameterisable by bit size.
+ * @warning numberOfBits must be less than the number of bits of baseType.
  */
 /*lint -e{1789} Template constructor cannot be a copy constructor. Justification: the constructor must not be used as a copy constructor
  * but as a constructor by integer number. */
-template<typename baseType, uint8 bitSize>
+template<typename baseType, uint8 numberOfBits>
 class FractionalInteger {
 
 public:
 
     /**
-     * @brief Returns the size of the number as number of bits.
-     * @return the number bit size.
+     * @brief Returns the number of bits associated to this FractionalInteger.
+     * @return the number of bits.
      */
-    static inline const uint8 BitSize();
+    static inline const uint8 GetNumberOfBits();
 
     /**
      * @brief Default constructor.
@@ -93,24 +93,24 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template<typename baseType, uint8 bitSize>
-const uint8 FractionalInteger<baseType, bitSize>::BitSize() {
-    return bitSize;
+template<typename baseType, uint8 numberOfBits>
+const uint8 FractionalInteger<baseType, numberOfBits>::GetNumberOfBits() {
+    return numberOfBits;
 }
 
-template<typename baseType, uint8 bitSize>
-FractionalInteger<baseType, bitSize>::FractionalInteger() {
+template<typename baseType, uint8 numberOfBits>
+FractionalInteger<baseType, numberOfBits>::FractionalInteger() {
     value = static_cast<baseType>(0);
 }
 
-template<typename baseType, uint8 bitSize>
+template<typename baseType, uint8 numberOfBits>
 template<typename inputType>
-FractionalInteger<baseType, bitSize>::FractionalInteger(inputType input) {
-    value = SaturateInteger<baseType, inputType, bitSize>(input);
+FractionalInteger<baseType, numberOfBits>::FractionalInteger(inputType input) {
+    value = SaturateInteger<baseType, inputType, numberOfBits>(input);
 }
 
-template<typename baseType, uint8 bitSize>
-FractionalInteger<baseType, bitSize>::operator baseType() const {
+template<typename baseType, uint8 numberOfBits>
+FractionalInteger<baseType, numberOfBits>::operator baseType() const {
     return value;
 }
 

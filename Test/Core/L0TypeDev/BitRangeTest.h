@@ -82,7 +82,7 @@ public:
      * @brief Tests if the returned bit size is correct.
      * @return true if the bit size returned is equal to the specified bit size in template initialization.
      */
-    bool TestBitSize();
+    bool TestNumberOfBits();
 
     /**
      * @brief Tests if the returned bit offset is correct.
@@ -258,7 +258,7 @@ bool BitRangeTest<T>::TestAnyTypeCast() {
 
     TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
 
-    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
+    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.numberOfBits != size)) {
         return false;
     }
 
@@ -270,7 +270,7 @@ bool BitRangeTest<T>::TestAnyTypeCast() {
 }
 
 template<typename T>
-bool BitRangeTest<T>::TestBitSize() {
+bool BitRangeTest<T>::TestNumberOfBits() {
 
     const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
@@ -278,18 +278,18 @@ bool BitRangeTest<T>::TestBitSize() {
 
     TypeDefinition::BitRange<T, zero, 0> myZeroBitRange;
 
-    if (myZeroBitRange.BitSize() != zero) {
+    if (myZeroBitRange.GetNumberOfBits() != zero) {
         return false;
     }
 
     TypeDefinition::BitRange<T, half, 0> myHalfBitRange;
 
-    if (myHalfBitRange.BitSize() != half) {
+    if (myHalfBitRange.GetNumberOfBits() != half) {
         return false;
     }
     TypeDefinition::BitRange<T, max, 0> myMaxBitRange;
 
-    if (myMaxBitRange.BitSize() != max) {
+    if (myMaxBitRange.GetNumberOfBits() != max) {
         return false;
     }
 

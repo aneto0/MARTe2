@@ -64,10 +64,10 @@ public:
     inline operator bool() const;
 
     /**
-     * @brief Returns the bit size.
-     * @return the bit size.
+     * @brief Returns number of bits.
+     * @return the number of bits.
      */
-    static inline baseType BitSize();
+    static inline baseType NumberOfBits();
 
     /**
      * @brief Returns the bit offset.
@@ -117,11 +117,11 @@ void BitBoolean<baseType, bitOffset>::operator=(const bool flag) {
 
 template<typename baseType, uint8 bitOffset>
 BitBoolean<baseType, bitOffset>::operator bool() const {
-    return ((value & mask) != 0);
+    return ((value & mask) != 0u);
 }
 
 template<typename baseType, uint8 bitOffset>
-baseType BitBoolean<baseType, bitOffset>::BitSize() {
+baseType BitBoolean<baseType, bitOffset>::NumberOfBits() {
     return static_cast<baseType>(1);
 }
 

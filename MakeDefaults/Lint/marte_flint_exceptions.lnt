@@ -66,6 +66,11 @@
 -e829
 
 /*
+ * Disable warnings related to having .h included in the marte_flint_files.lnt
+ */
+-e617
+
+/*
  * Rule GLOBAL
  * Justification: Not applicable to a framework
  */

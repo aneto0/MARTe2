@@ -54,7 +54,7 @@ bool TypeDescriptorTest::TestConstructorUint(bool isObject,
         return false;
     }
 
-    if (testTD.size != size) {
+    if (testTD.numberOfBits != size) {
         return false;
     }
 
@@ -79,7 +79,7 @@ bool TypeDescriptorTest::TestConstructorBasicType(bool isConst,
         return false;
     }
 
-    if (testTD.size != size) {
+    if (testTD.numberOfBits != size) {
         return false;
     }
 

@@ -264,6 +264,6 @@ TEST(FractionalIntegerGTest,TestAnyTypeCastConstUnigned) {
 
 TEST(FractionalIntegerGTest,TestBitSize) {
     FractionalIntegerTest<uint32> fractionalInteger;
-    ASSERT_TRUE(fractionalInteger.TestBitSize());
+    ASSERT_TRUE(fractionalInteger.TestGetNumberOfBits());
 }
 
