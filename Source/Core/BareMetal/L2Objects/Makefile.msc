@@ -20,25 +20,19 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX=
-SPB    = Source/Core/BareMetal.x Source/Core/Scheduler.x
+TARGET=msc
 
-
-#    Test/Core/L0Portability.x Test/Core/L0TypeDev.x Test/Core/L1Objects.x Test/GTest.x
-
- 
-MAKEDEFAULTDIR=MakeDefaults
-
-ROOT_DIR=.
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-all: $(OBJS) $(SUBPROJ)
-	echo  $(OBJS)
+include Makefile.inc
 
 
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
+
+
+
+
+
 

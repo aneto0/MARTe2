@@ -24,18 +24,18 @@
 #
 #############################################################
 OBJSX=
-SPB    = Source/Core/BareMetal.x Source/Core/Scheduler.x
+SPB    = L1Portability.x
+PACKAGE=Core
+MAKEDEFAULTDIR=../../../MakeDefaults
 
-
-#    Test/Core/L0Portability.x Test/Core/L0TypeDev.x Test/Core/L1Objects.x Test/GTest.x
-
- 
-MAKEDEFAULTDIR=MakeDefaults
-
-ROOT_DIR=.
+ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) $(SUBPROJ)
+LIBRARIES_STATIC+=$(BUILD_DIR)/../BareMetal/MARTeCoreB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1Portability$(LIBEXT)
+
+all: $(OBJS) $(SUBPROJ) \
+		$(BUILD_DIR)/MARTeCoreS$(LIBEXT)
 	echo  $(OBJS)
 
 

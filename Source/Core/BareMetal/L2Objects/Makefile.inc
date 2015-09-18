@@ -2,7 +2,7 @@
 #
 # Copyright 2015 F4E | European Joint Undertaking for ITER 
 #  and the Development of Fusion Energy ('Fusion for Energy')
-#
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -20,25 +20,33 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
-OBJSX=
-SPB    = Source/Core/BareMetal.x Source/Core/Scheduler.x
 
+PACKAGE=Core/BareMetal
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-#    Test/Core/L0Portability.x Test/Core/L0TypeDev.x Test/Core/L1Objects.x Test/GTest.x
+OBJSX=  ClassRegistryItem.x \
+    Object.x \
+    ClassProperties.x \
+    Reference.x \
+    ReferenceT.x \
+    ReferenceContainer.x \
+    ReferenceContainerNode.x \
+    ReferenceContainerFilter.x \
+    ReferenceContainerFilterReferences.x\
+    ReferenceContainerFilterObjectName.x\
+    ClassRegistryDatabase.x
 
- 
-MAKEDEFAULTDIR=MakeDefaults
-
-ROOT_DIR=.
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) $(SUBPROJ)
+INCLUDES+=-I../L1Portability -I../L0Foundation
+
+all: $(OBJS) $(SUBPROJ)   \
+		$(BUILD_DIR)/L2Objects$(LIBEXT)
 	echo  $(OBJS)
 
-
+include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

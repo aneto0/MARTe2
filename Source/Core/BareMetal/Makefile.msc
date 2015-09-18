@@ -1,7 +1,6 @@
 #############################################################
 #
-# Copyright 2015 F4E | European Joint Undertaking for ITER 
-#  and the Development of Fusion Energy ('Fusion for Energy')
+# Copyright 2011 EFDA | European Fusion Development Agreement
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -20,25 +19,19 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX=
-SPB    = Source/Core/BareMetal.x Source/Core/Scheduler.x
+TARGET=msc
 
+include Makefile.inc
 
-#    Test/Core/L0Portability.x Test/Core/L0TypeDev.x Test/Core/L1Objects.x Test/GTest.x
-
- 
-MAKEDEFAULTDIR=MakeDefaults
-
-ROOT_DIR=.
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-all: $(OBJS) $(SUBPROJ)
-	echo  $(OBJS)
+LIBRARIES0   = kernel32.lib wsock32.lib largeint.lib user32.lib advapi32.lib ws2_32.lib
+LIBRARIES   += $(LIBRARIES0) $(BLCOMPONENTS)
 
 
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+OPTIM= -G6 -O2 -Ob2
+
+
 
