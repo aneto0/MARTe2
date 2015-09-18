@@ -31,9 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+/*lint -efile(766,FractionalInteger.h) The header file TemplateParametersVerificator.h is used when the template is expanded (by the header that includes this header).*/
 #include "GeneralDefinitions.h"
 #include "TypeCharacteristics.h"
+#include "TemplateParametersVerificator.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -47,8 +48,11 @@ namespace TypeDefinition {
  */
 /*lint -e{1789} Template constructor cannot be a copy constructor. Justification: the constructor must not be used as a copy constructor
  * but as a constructor by integer number. */
+/*lint -etemplate(1016, 948, 1790, 1942, 685, 944, 845) No code is truly generated. This strategy is used to guarantee that certain rules
+ * about the template are guaranteed at compilation time.
+ * Operator will always evaluate to true if the template is correctly used, otherwise it will not compile (which the objective)*/
 template<typename baseType, uint8 numberOfBits>
-class FractionalInteger {
+class FractionalInteger: public TemplateParametersVerificator<((sizeof(baseType)*8u)>=numberOfBits) && (numberOfBits > 0u)> {
 
 public:
 

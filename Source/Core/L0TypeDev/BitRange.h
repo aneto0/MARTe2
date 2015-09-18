@@ -31,9 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+/*lint -efile(766,BitRange.h) The header file TemplateParametersVerificator.h is used when the template is expanded (by the header that includes this header).*/
 #include "GeneralDefinitions.h"
 #include "TypeCharacteristics.h"
+#include "TemplateParametersVerificator.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,8 +49,11 @@ namespace TypeDefinition {
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is a
  basic type because this type must be used as a binary number.*/
+/*lint -etemplate(948, 1790, 1942, 685, 944, 845) No code is truly generated.
+ * This strategy is used to guarantee that certain rules about the template are guaranteed at compilation time.
+ * Operator will always evaluate to true if the template is correctly used, otherwise it will not compile (which the objective)*/
 template<typename baseType, uint8 numberOfBits, uint8 bitOffset>
-class BitRange {
+class BitRange: public TemplateParametersVerificator<((sizeof(baseType)*8u)>=(numberOfBits+bitOffset)) && (numberOfBits > 0u) && (bitOffset >= 0u)> {
 
 public:
 

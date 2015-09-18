@@ -274,11 +274,11 @@ bool BitRangeTest<T>::TestNumberOfBits() {
 
     const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
-    const uint8 zero = 0;
+    const uint8 one = 1;
 
-    TypeDefinition::BitRange<T, zero, 0> myZeroBitRange;
+    TypeDefinition::BitRange<T, one, 0> myZeroBitRange;
 
-    if (myZeroBitRange.GetNumberOfBits() != zero) {
+    if (myZeroBitRange.GetNumberOfBits() != one) {
         return false;
     }
 
@@ -300,11 +300,11 @@ template<typename T>
 bool BitRangeTest<T>::TestBitOffset() {
     const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
-    const uint8 zero = 0;
+    const uint8 one = 1;
 
-    TypeDefinition::BitRange<T, max, zero> myZeroBitRange;
+    TypeDefinition::BitRange<T, max, one> myZeroBitRange;
 
-    if (myZeroBitRange.BitOffset() != zero) {
+    if (myZeroBitRange.BitOffset() != one) {
         return false;
     }
 
@@ -313,9 +313,9 @@ bool BitRangeTest<T>::TestBitOffset() {
     if (myHalfBitRange.BitOffset() != half) {
         return false;
     }
-    TypeDefinition::BitRange<T, max, max> myMaxBitRange;
+    TypeDefinition::BitRange<T, max, one> myMaxBitRange;
 
-    if (myMaxBitRange.BitOffset() != max) {
+    if (myMaxBitRange.BitOffset() != one) {
         return false;
     }
 

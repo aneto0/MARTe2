@@ -259,11 +259,11 @@ bool FractionalIntegerTest<T>::TestGetNumberOfBits() {
 
     const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
-    const uint8 zero = 0;
+    const uint8 one = 1;
 
-    TypeDefinition::FractionalInteger<T, zero> myZeroFractionalInteger;
+    TypeDefinition::FractionalInteger<T, one> myZeroFractionalInteger;
 
-    if (myZeroFractionalInteger.GetNumberOfBits() != zero) {
+    if (myZeroFractionalInteger.GetNumberOfBits() != one) {
         return false;
     }
 

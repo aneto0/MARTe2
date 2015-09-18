@@ -31,9 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+/*lint -efile(766,BitBoolean.h) The header file TemplateParametersVerificator.h is used when the template is expanded (by the header that includes this header).*/
 #include "GeneralDefinitions.h"
-
+#include "TemplateParametersVerificator.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -43,13 +43,16 @@ namespace TypeDefinition {
 /**
  *  @brief Boolean shifted type.
  *  @details This type could be used in an union obtaining the same effect of a one bit boolean in a structure.
- *  @warning bitOffset must be minor than the bit size of baseType.
+ *  @warning bitOffset must be less than the number of bits of baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is bool because this type must be used as a boolean type.*/
+/*lint -etemplate(948, 1790, 1942) No code is truly generated. This strategy is used to guarantee that certain rules
+ * about the template are guaranteed at compilation time.
+ * Operator will always evaluate to true if the template is correctly used, otherwise it will not compile (which the objective)*/
 template<typename baseType, uint8 bitOffset>
-class BitBoolean {
+class BitBoolean: public TemplateParametersVerificator<((sizeof(baseType)*8u)>bitOffset)> {
 
-public:
+ public:
 
     /**
      * @brief Copy operator.
@@ -133,3 +136,4 @@ baseType BitBoolean<baseType, bitOffset>::BitOffset() {
 }
 
 #endif /* BITBOOLEAN_H_ */
+
