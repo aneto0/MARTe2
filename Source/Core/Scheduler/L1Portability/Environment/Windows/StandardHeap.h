@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L0PORTABILITY_OPERATINGSYSTEM_LINUX_STANDARDHEAP_H_
-#define SOURCE_CORE_L0PORTABILITY_OPERATINGSYSTEM_LINUX_STANDARDHEAP_H_
+#ifndef STANDARDHEAP_ENV_H_
+#define STANDARDHEAP_ENV_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -45,5 +45,5 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L0PORTABILITY_OPERATINGSYSTEM_LINUX_STANDARDHEAP_H_ */
+#endif /* STANDARDHEAP_ENV_H */
 	

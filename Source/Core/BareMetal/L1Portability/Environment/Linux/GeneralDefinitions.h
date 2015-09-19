@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GENERALDEFINITIONSOS_H_
-#define GENERALDEFINITIONSOS_H_
+#ifndef GENERALDEFINITIONS_ENV_H_
+#define GENERALDEFINITIONS_ENV_H_
 
 
 #include <pthread.h>
@@ -77,5 +77,5 @@ struct BasicConsoleProperties;
 #define BasicConsoleHandle BasicConsoleProperties*
 
 
-#endif /* GENERALDEFINITIONSOS_H_ */
+#endif /* GENERALDEFINITIONS_ENV_H_ */
 

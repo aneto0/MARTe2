@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef HIGHRESOLUTIONTIMEROS_H_
-#define HIGHRESOLUTIONTIMEROS_H_
+#ifndef HIGHRESOLUTIONTIMER_ENV_H_
+#define HIGHRESOLUTIONTIMER_ENV_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../HighResolutionTimer.h"
+#include "HighResolutionTimer.h"
 #include "HighResolutionTimerCalibrator.h"
 
 /*---------------------------------------------------------------------------*/
@@ -69,4 +69,4 @@ inline bool GetTimeStamp(TimeValues &date) {
 
 }
 
-#endif /* HIGHRESOLUTIONTIMEROS_H_ */
+#endif /* HIGHRESOLUTIONTIMER_ENV_H_ */

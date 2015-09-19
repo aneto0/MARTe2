@@ -27,7 +27,5 @@ TARGET=cov
 
 include Makefile.inc
 
-LIBRARIES   += ../../../Source/Core/L0Portability/$(TARGET)/L0Portability$(LIBEXT)
-
 OPTIM=-finline-functions
 

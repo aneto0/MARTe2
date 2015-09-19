@@ -1,6 +1,6 @@
 /**
- * @file MutexSemOS.cpp
- * @brief Source file for class MutexSemOS
+ * @file MutexSem.cpp
+ * @brief Source file for class MutexSem
  * @date 20/06/2015
  * @author Giuseppe Ferr�
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MutexSemOS (public, protected, and private). Be aware that some 
+ * the class MutexSem (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -36,7 +36,7 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-struct MutexSemOSProperties {
+struct MutexSemProperties {
 
     /**
      * Mutex Handle
@@ -70,7 +70,7 @@ struct MutexSemOSProperties {
 /*---------------------------------------------------------------------------*/
 
 MutexSem::MutexSem() {
-    osProperties = new MutexSemOSProperties();
+    osProperties = new MutexSemProperties();
     osProperties->closed = true;
     osProperties->recursive = false;
     osProperties->references = 1u;
@@ -78,8 +78,8 @@ MutexSem::MutexSem() {
 }
 
 MutexSem::MutexSem(MutexSem &source) {
-    osProperties = source.GetOSProperties();
-    if (osProperties == static_cast<MutexSemOSProperties *>(NULL)) {
+    osProperties = source.GetProperties();
+    if (osProperties == static_cast<MutexSemProperties *>(NULL)) {
 
         //Capture the case that it got the osProperties while the source semaphore
         //was already being destructed...
@@ -121,7 +121,7 @@ bool MutexSem::Close() {
 
 MutexSem::~MutexSem() {
 
-    if (osProperties != static_cast<MutexSemOSProperties *>(NULL)) {
+    if (osProperties != static_cast<MutexSemProperties *>(NULL)) {
 
         while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
         }
@@ -132,7 +132,7 @@ MutexSem::~MutexSem() {
 
             }
             delete osProperties;
-            osProperties = static_cast<MutexSemOSProperties *>(NULL);
+            osProperties = static_cast<MutexSemProperties *>(NULL);
         }
         else {
 
@@ -173,13 +173,13 @@ bool MutexSem::IsRecursive() const {
     return osProperties->recursive;
 }
 
-MutexSemOSProperties * MutexSem::GetOSProperties() {
+MutexSemProperties * MutexSem::GetProperties() {
     return osProperties;
 }
 
 bool MutexSem::IsClosed() const {
     bool ok = true;
-    if (osProperties != static_cast<MutexSemOSProperties *>(NULL)) {
+    if (osProperties != static_cast<MutexSemProperties *>(NULL)) {
         ok = osProperties->closed;
     }
     return ok;

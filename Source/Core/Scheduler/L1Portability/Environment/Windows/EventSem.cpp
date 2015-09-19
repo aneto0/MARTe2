@@ -1,6 +1,6 @@
 /**
- * @file EventSemOS.cpp
- * @brief Source file for class EventSemOS
+ * @file EventSem.cpp
+ * @brief Source file for class EventSem
  * @date 20/07/2015
  * @author Giuseppe Ferr�
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class EventSemOS (public, protected, and private). Be aware that some 
+ * the class EventSem (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,7 +25,7 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#include "../../Atomic.h"
+#include "Atomic.h"
 #include "Windows.h"
 
 /*---------------------------------------------------------------------------*/
@@ -38,7 +38,7 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-struct EventSemOSProperties {
+struct EventSemProperties {
 
     /**
      * Event Handle
@@ -66,7 +66,7 @@ struct EventSemOSProperties {
 /*---------------------------------------------------------------------------*/
 
 EventSem::EventSem() {
-    osProperties = new EventSemOSProperties();
+    osProperties = new EventSemProperties();
     osProperties->eventHandle = NULL;
     osProperties->closed = true;
     osProperties->references = 1u;
@@ -94,8 +94,8 @@ bool EventSem::Create() {
 
 EventSem::EventSem(EventSem &source) {
 
-    osProperties = source.GetOSProperties();
-    if (osProperties == static_cast<EventSemOSProperties *>(NULL)) {
+    osProperties = source.GetProperties();
+    if (osProperties == static_cast<EventSemProperties *>(NULL)) {
         //Capture the case that it got the osProperties reference while the source semaphore
         //was already being destructed...
         EventSem();
@@ -113,7 +113,7 @@ bool EventSem::Close() {
     if (!osProperties->closed) {
         osProperties->closed = true;
 
-        if (osProperties->eventHandle != static_cast<EventSemOSProperties *>(NULL)) {
+        if (osProperties->eventHandle != static_cast<EventSemProperties *>(NULL)) {
             ok = (CloseHandle(osProperties->eventHandle) == TRUE);
 
         }
@@ -124,7 +124,7 @@ bool EventSem::Close() {
 }
 
 EventSem::~EventSem() {
-    if (osProperties != static_cast<EventSemOSProperties *>(NULL)) {
+    if (osProperties != static_cast<EventSemProperties *>(NULL)) {
         while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
         }
 
@@ -135,7 +135,7 @@ EventSem::~EventSem() {
             }
 
             delete osProperties;
-            osProperties = static_cast<EventSemOSProperties *>(NULL);
+            osProperties = static_cast<EventSemProperties *>(NULL);
         }
         else {
             osProperties->references--;
@@ -187,13 +187,13 @@ ErrorType EventSem::ResetWait(const TimeoutType &timeout) {
     return Wait(timeout);
 }
 
-EventSemOSProperties * EventSem::GetOSProperties() {
+EventSemProperties * EventSem::GetProperties() {
     return osProperties;
 }
 
 bool EventSem::IsClosed() const {
     bool ok = true;
-    if (osProperties != static_cast<EventSemOSProperties *>(NULL)) {
+    if (osProperties != static_cast<EventSemProperties *>(NULL)) {
         ok = osProperties->closed;
     }
     return ok;

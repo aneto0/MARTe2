@@ -26,8 +26,8 @@
  * @file
  * @brief Loadable library implementation in Linux
  */
-#ifndef LOADABLE_LIBRARY_OS_H
-#define LOADABLE_LIBRARY_OS_H
+#ifndef LOADABLE_LIBRARY_ENV_H
+#define LOADABLE_LIBRARY_ENV_H
 
 #include <Winbase.h>
 

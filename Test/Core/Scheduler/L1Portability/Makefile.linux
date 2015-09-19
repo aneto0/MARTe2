@@ -27,7 +27,5 @@ TARGET=linux
 
 include Makefile.inc
 
-LIBRARIES   += ../../../Build/$(TARGET)/Core/L0Portability/L0Portability$(LIBEXT)
-
 OPTIM=-finline-functions
 

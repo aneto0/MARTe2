@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef HIGHRESOLUTIONTIMERCALIBRATOROS_H_
-#define HIGHRESOLUTIONTIMERCALIBRATOROS_H_
+#ifndef HIGHRESOLUTIONTIMERCALIBRATOR_ENV_H_
+#define HIGHRESOLUTIONTIMERCALIBRATOR_ENV_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -109,4 +109,4 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* HIGHRESOLUTIONTIMERCALIBRATOROS_H_ */
+#endif /* HIGHRESOLUTIONTIMERCALIBRATOR_ENV_H_ */

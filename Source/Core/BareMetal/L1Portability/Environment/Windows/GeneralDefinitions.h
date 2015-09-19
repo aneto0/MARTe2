@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef GENERALDEFINITIONSOS_H_
-#define GENERALDEFINITIONSOS_H_
+#ifndef GENERALDEFINITIONS_ENV_H_
+#define GENERALDEFINITIONS_ENV_H_
 
 
 
@@ -62,4 +62,4 @@ typedef unsigned long osulong;
  */
 static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
 
-#endif /* GENERALDEFINITIONSOS_H_ */
+#endif /* GENERALDEFINITIONS_ENV_H_ */

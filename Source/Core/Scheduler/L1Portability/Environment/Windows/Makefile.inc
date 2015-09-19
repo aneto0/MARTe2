@@ -24,30 +24,24 @@
 #
 #############################################################
 
-PACKAGE=Core/L0Portability
-ROOT_DIR=../../../../..
+PACKAGE=Core/Scheduler/L1Portability
+ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  BasicConsoleOS.x \
-        SleepOS.x \
-        HighResolutionTimerCalibratorOS.x \
-        EventSemOS.x \
-        MutexSemOS.x \
-        ThreadsDatabase.x \
-        ThreadsOS.x \
-        ProcessorOS.x \
-        MemoryCheckOS.x \
-        MemoryOperationsHelper_CLIB.x \
-        StringHelper_Portable.x\
-        StringHelperExtras.x\
-        StandardHeap.x
+OBJSX=  EventSem.x \
+        MutexSem.x \
+        Processor.x \
+        Threads.x \
+        ThreadsDatabase_Gen.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
+INCLUDES+=-I../../../../BareMetal/L0Foundation/
+INCLUDES+=-I../../../../BareMetal/L1Portability
 
-all: $(OBJS)    \
-                $(BUILD_DIR)/L0PortabilityOS$(LIBEXT)
+all: $(OBJS)    $(CPPS) \
+                $(BUILD_DIR)/L1Portability$(LIBEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

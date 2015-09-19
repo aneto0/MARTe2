@@ -42,8 +42,7 @@ INCLUDES+=-I../../
 INCLUDES+=-I../../../../BareMetal/L0Foundation/
 INCLUDES+=-I../../../../BareMetal/L1Portability
 
-all: $(OBJS)    \
-				$(CPPS) \
+all: $(OBJS)    $(CPPS) \
                 $(BUILD_DIR)/L1Portability$(LIBEXT)
 	echo  $(OBJS) $(CPPS)
 
