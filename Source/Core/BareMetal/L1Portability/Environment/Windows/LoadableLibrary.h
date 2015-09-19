@@ -31,7 +31,7 @@
 
 #include <Winbase.h>
 
-class LoadableLibraryOS {
+class LoadableLibrary {
 
 public:
 

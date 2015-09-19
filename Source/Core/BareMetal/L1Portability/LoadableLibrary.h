@@ -40,7 +40,7 @@
 
 /** 
  * @brief This functions allows to load dinamically a library and its functions.
- * Most of the implementation is delegated to LoadableLibraryOS.h which is different
+ * Most of the implementation is delegated to LoadableLibrary.h which is different
  * for each operating systems and contains the non portable system calls to load libraries.
  */
 class LoadableLibrary {

@@ -1,6 +1,6 @@
 /**
- * @file SleepOS.cpp
- * @brief Source file for module SleepOS
+ * @file Sleep.cpp
+ * @brief Source file for module Sleep
  * @date 05/07/2015
  * @author André Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the module SleepOS (public, protected, and private). Be aware that some
+ * the module Sleep (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 

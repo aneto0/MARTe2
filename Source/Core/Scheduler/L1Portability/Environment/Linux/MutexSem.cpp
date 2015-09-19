@@ -1,6 +1,6 @@
 /**
- * @file MutexSemOS.cpp
- * @brief Source file for class MutexSemOS
+ * @file MutexSem.cpp
+ * @brief Source file for class MutexSem
  * @date 08/07/2015
  * @author André Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class MutexSemOS (public, protected, and private). Be aware that some 
+ * the class MutexSem (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -41,7 +41,7 @@
 /*---------------------------------------------------------------------------*/
 
 /*lint -e{9109} forward declaration in MutexSem.h is required to define the class*/
-struct MutexSemOSProperties {
+struct MutexSemProperties {
 
     /**
      * Mutex Handle
@@ -83,7 +83,7 @@ MutexSem::MutexSem() {
     /*lint -e{1732} -e{1733} no default assignment and no default copy constructor.
      *This is safe since none of the struct members point to dynamically allocated memory*/
     /*lint -e{1713} with the meaning of the () to initialise a struct is clear*/
-    handle = new MutexSemOSProperties();
+    handle = new MutexSemProperties();
     handle->closed = true;
     handle->recursive = false;
     handle->references = 1u;
@@ -91,12 +91,12 @@ MutexSem::MutexSem() {
 }
 
 MutexSem::MutexSem(MutexSem &source) {
-    handle = source.GetOSProperties();
+    handle = source.GetProperties();
     while (!Atomic::TestAndSet(&handle->referencesMux)) {
     }
     //Capture the case that it got the handle while the source semaphore
     //was already being destructed...
-    if (handle == static_cast<MutexSemOSProperties *>(NULL)) {
+    if (handle == static_cast<MutexSemProperties *>(NULL)) {
         MutexSem();
     }
     else {
@@ -107,7 +107,7 @@ MutexSem::MutexSem(MutexSem &source) {
 
 /*lint -e{1551} only C calls are performed. No exception can be raised*/
 MutexSem::~MutexSem() {
-    if (handle != static_cast<MutexSemOSProperties *>(NULL)) {
+    if (handle != static_cast<MutexSemProperties *>(NULL)) {
         while (!Atomic::TestAndSet(&handle->referencesMux)) {
         }
         if (handle->references == 1u) {
@@ -117,7 +117,7 @@ MutexSem::~MutexSem() {
             }
             /*lint -esym(1578, MutexSem::handle) the variable is correctly freed here when this is the last reference alive.*/
             delete handle;
-            handle = static_cast<MutexSemOSProperties *>(NULL);
+            handle = static_cast<MutexSemProperties *>(NULL);
         }
         else {
             handle->references--;
@@ -297,13 +297,13 @@ bool MutexSem::IsRecursive() const {
     return handle->recursive;
 }
 
-MutexSemOSProperties * MutexSem::GetOSProperties() {
+MutexSemProperties * MutexSem::GetProperties() {
     return handle;
 }
 
 bool MutexSem::IsClosed() const {
     bool ok = true;
-    if (handle != static_cast<MutexSemOSProperties *>(NULL)) {
+    if (handle != static_cast<MutexSemProperties *>(NULL)) {
         ok = handle->closed;
     }
     return ok;

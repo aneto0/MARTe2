@@ -1,6 +1,6 @@
 /**
  * @file HighResolutionTimerCalibrator.h
- * @brief Header file for class HighResolutionTimerCalibratorOS
+ * @brief Header file for class HighResolutionTimerCalibrator
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HighResolutionTimerCalibratorOS
+ * @details This header file contains the declaration of the class HighResolutionTimerCalibrator
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -44,7 +44,7 @@
 /**
  * @brief A class to get the period and the frequency of the clock.
  */
-class HighResolutionTimerCalibratorOS {
+class HighResolutionTimerCalibrator {
 
 public:
 
@@ -55,7 +55,7 @@ public:
      * In the Linux implementation these values are read from the /proc/cpuinfo file.
      * The number of elapsed cpu ticks is also stored at this moment.
      */
-    HighResolutionTimerCalibratorOS();
+    HighResolutionTimerCalibrator();
 
     /**
      * @brief Get the current time stamp.

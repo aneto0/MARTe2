@@ -213,7 +213,7 @@
  * features are not supported. As a consequence the method variables are not references. 
  * The Linux operating system version of MARTe2 is not certifiable. 
  */
--efunc(715,BasicConsoleOS::SetColour,BasicConsoleOS::SetTitleBar,BasicConsoleOS::GetTitleBar,BasicConsoleOS::SetCursorPosition,BasicConsoleOS::GetCursorPosition,BasicConsoleOS::SetWindowSize,BasicConsoleOS::GetWindowSize,BasicConsoleOS::PlotChar)
+-efunc(715,BasicConsole::SetColour,BasicConsole::SetTitleBar,BasicConsole::GetTitleBar,BasicConsole::SetCursorPosition,BasicConsole::GetCursorPosition,BasicConsole::SetWindowSize,BasicConsole::GetWindowSize,BasicConsole::PlotChar)
 -efunc(715,Memory::Malloc,Memory::Check)
 -esym(715,errorDescription,errorInfo)
 -efunc(715,previouslyFound)
@@ -222,7 +222,7 @@
  * Rule 0-1-12
  * Justification: Same as 0-1-11 
  */
- -efile(715,BasicConsoleOS.cpp)
+ -efile(715,BasicConsole.cpp)
 
 /*
  * Rule 3-3-1
@@ -247,7 +247,7 @@
 /* global declaration */
 -esym(9141,Atomic)
 -esym(9141,Atomic::*)
--esym(9141,BasicConsoleOSProperties)
+-esym(9141,BasicConsoleProperties)
 -esym(9141,BasicConsole)
 -esym(9141,BasicConsole::)
 -esym(9141,BasicConsole::*)
@@ -256,7 +256,7 @@
 -esym(9141,Endianity::*)
 -esym(9141,ErrorType)
 -esym(9141,EventSem::*)
--esym(9141,EventSemOSProperties)
+-esym(9141,EventSemProperties)
 -esym(9141,FastPollingMutexSem)
 -esym(9141,Flags)
 -esym(9141,HighResolutionTimer)
@@ -265,7 +265,7 @@
 -esym(9141,IBasicConsole::*)
 -esym(9141,intptr)
 -esym(9141,MutexSem::*)
--esym(9141,MutexSemOSProperties)
+-esym(9141,MutexSemProperties)
 -esym(9141,Processor)
 -esym(9141,Processor::*)
 -esym(9141,ProcessorType)

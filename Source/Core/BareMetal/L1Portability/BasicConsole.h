@@ -79,7 +79,7 @@ const FlagsType EnablePaging(8u);
  * Forward declaration of the operating system specific properties (defined in the operating system
  * specific unit file).
  */
-struct BasicConsoleOSProperties;
+struct BasicConsoleProperties;
 
 /**
  * @brief Multi-platform basic console support.

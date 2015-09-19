@@ -1,6 +1,6 @@
 /**
- * @file BasicConsoleOS.cpp
- * @brief Source file for class BasicConsoleOS
+ * @file BasicConsole.cpp
+ * @brief Source file for class BasicConsole
  * @date 20/06/2015
  * @author Giuseppe Ferr�
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class BasicConsoleOS (public, protected, and private). Be aware that some 
+ * the class BasicConsole (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -37,7 +37,7 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-struct BasicConsoleOSProperties {
+struct BasicConsoleProperties {
 
     /**
      * The input console handle
@@ -77,7 +77,7 @@ struct BasicConsoleOSProperties {
 /*---------------------------------------------------------------------------*/
 
 BasicConsole::BasicConsole() {
-    osProperties = new BasicConsoleOSProperties();
+    osProperties = new BasicConsoleProperties();
     osProperties->nOfColumns = 0u;
     osProperties->nOfRows = 0u;
     memset(&osProperties->inputConsoleHandle, 0, sizeof(ConsoleHandle));
@@ -88,7 +88,7 @@ BasicConsole::BasicConsole() {
 }
 
 BasicConsole::~BasicConsole() {
-    if (osProperties != static_cast<BasicConsoleOSProperties *>(NULL)) {
+    if (osProperties != static_cast<BasicConsoleProperties *>(NULL)) {
         /*lint -e{534} possible closure failure is not handled in the destructor.*/
         /*lint -e{1551} exception not caught.*/
         Close();

@@ -99,12 +99,6 @@ TEST(BitBooleanGTest,TestBoolCastS64) {
     ASSERT_TRUE(bitbool.TestBoolCast());
 }
 
-
-TEST(BitBooleanGTest,TestAnyTypeCast) {
-    BitBooleanTest<int32> bitbool;
-    ASSERT_TRUE(bitbool.TestAnyTypeCast());
-}
-
 TEST(BitBooleanGTest,TestBitSizeU8) {
     BitBooleanTest<uint8> bitbool;
     ASSERT_TRUE(bitbool.TestBitSize());

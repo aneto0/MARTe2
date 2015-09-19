@@ -1,6 +1,6 @@
 /**
  * @file GeneralDefinitions.h
- * @brief Header file for class GeneralDefinitionsOS
+ * @brief Header file for class GeneralDefinitions
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class GeneralDefinitionsOS
+ * @details This header file contains the declaration of the class GeneralDefinitions
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -67,14 +67,14 @@ typedef unsigned long osulong;
  */
 static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
 
-struct MutexSemOSProperties;
-#define MutexSemHandle MutexSemOSProperties*
+struct MutexSemProperties;
+#define MutexSemHandle MutexSemProperties*
 
-struct EventSemOSProperties;
-#define EventSemHandle EventSemOSProperties*
+struct EventSemProperties;
+#define EventSemHandle EventSemProperties*
 
-struct BasicConsoleOSProperties;
-#define BasicConsoleHandle BasicConsoleOSProperties*
+struct BasicConsoleProperties;
+#define BasicConsoleHandle BasicConsoleProperties*
 
 
 #endif /* GENERALDEFINITIONSOS_H_ */

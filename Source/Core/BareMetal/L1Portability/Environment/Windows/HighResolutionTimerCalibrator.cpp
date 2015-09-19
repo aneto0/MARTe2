@@ -1,6 +1,6 @@
 /**
- * @file HighResolutionTimerCalibratorOS.cpp
- * @brief Source file for class HighResolutionTimerCalibratorOS
+ * @file HighResolutionTimerCalibrator.cpp
+ * @brief Source file for class HighResolutionTimerCalibrator
  * @date 20/07/2015
  * @author Giuseppe Ferr�
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class HighResolutionTimerCalibratorOS (public, protected, and private). Be aware that some 
+ * the class HighResolutionTimerCalibrator (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HighResolutionTimerCalibrator.h"
-#include "../../HighResolutionTimer.h"
+#include "HighResolutionTimer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,9 +40,9 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
+HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
-HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
+HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     time((time_t *) &initialTime.tv_sec);
 
     //The precision is at the millisecond!
@@ -81,7 +81,7 @@ HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
     period = 1.0 / frequency;
 }
 
-bool HighResolutionTimerCalibratorOS::GetTimeStamp(TimeValues &timeStamp) {
+bool HighResolutionTimerCalibrator::GetTimeStamp(TimeValues &timeStamp) {
 
     uint64 ticks = HighResolutionTimer::Counter() - initialTicks;
 
@@ -113,10 +113,10 @@ bool HighResolutionTimerCalibratorOS::GetTimeStamp(TimeValues &timeStamp) {
     return true;
 }
 
-int64 HighResolutionTimerCalibratorOS::GetFrequency() const {
+int64 HighResolutionTimerCalibrator::GetFrequency() const {
     return frequency;
 }
 
-float64 HighResolutionTimerCalibratorOS::GetPeriod() const {
+float64 HighResolutionTimerCalibrator::GetPeriod() const {
     return period;
 }

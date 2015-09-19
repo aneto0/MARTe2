@@ -1,5 +1,5 @@
 /**
- * @file BasicConsoleOS.cpp
+ * @file BasicConsole.cpp
  * @brief Source file for class BasicConsole
  * @date 05/07/2015
  * @author André Neto
@@ -44,8 +44,8 @@
 /*---------------------------------------------------------------------------*/
 
 /*lint -e{9109} forward declaration in BasicConsole.h is required to define the class*/
-/*lint -esym(9150, BasicConsoleOSProperties::*) */
-struct BasicConsoleOSProperties {
+/*lint -esym(9150, BasicConsoleProperties::*) */
+struct BasicConsoleProperties {
     /**
      * Standard output file descriptor.
      */
@@ -55,7 +55,7 @@ struct BasicConsoleOSProperties {
      */
     static const int32 STDIN = 0;
     /**
-     * Number of rows that will be cleared when BasicConsoleOSClear is called
+     * Number of rows that will be cleared when BasicConsoleClear is called
      */
     static const uint32 BASIC_CONSOLE_LINUX_CLEAR_ROWS = 40u;
 
@@ -104,7 +104,7 @@ struct BasicConsoleOSProperties {
 BasicConsole::BasicConsole() {
     /*lint -e{1732} -e{1733} no default assignment and no default copy constructor.
      *This is safe since none of the struct members point to dynamically allocated memory*/
-    handle = new BasicConsoleOSProperties();
+    handle = new BasicConsoleProperties();
     handle->columnCount = 0u;
     handle->nOfColumns = 0u;
     handle->nOfRows = 0u;
@@ -116,7 +116,7 @@ BasicConsole::BasicConsole() {
 }
 
 BasicConsole::~BasicConsole() {
-    if (handle != static_cast<BasicConsoleOSProperties *>(NULL)) {
+    if (handle != static_cast<BasicConsoleProperties *>(NULL)) {
         /*lint -e{534} possible closure failure is not handled in the destructor.*/
         /*lint -e{1551} exception not caught.*/
         Close();
@@ -242,7 +242,7 @@ ErrorManagement::ErrorType BasicConsole::OSWrite(const char8* const buffer,
             sizeToWrite = (index - start) + 1u;
 
             if (sizeToWrite > 0u) {
-                ssize_t wbytes = write(BasicConsoleOSProperties::STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
+                ssize_t wbytes = write(BasicConsoleProperties::STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
                 if (wbytes == -1) {
                     err = ErrorManagement::OSError;
                     REPORT_ERROR(err,"Error: write()");
@@ -253,7 +253,7 @@ ErrorManagement::ErrorType BasicConsole::OSWrite(const char8* const buffer,
             sink = false;
         }
         if (currentColumn == handle->nOfColumns) {
-            ssize_t wbytes = write(BasicConsoleOSProperties::STDOUT, &newLine, static_cast<osulong>(1));
+            ssize_t wbytes = write(BasicConsoleProperties::STDOUT, &newLine, static_cast<osulong>(1));
             if (wbytes == -1) {
                 err = ErrorManagement::OSError;
                 REPORT_ERROR(err,"Error: write()");
@@ -293,7 +293,7 @@ ErrorManagement::ErrorType BasicConsole::Read(char8 * const buffer,
             }
         }
         else {
-            ssize_t readBytes = read(BasicConsoleOSProperties::STDIN, buffer, static_cast<osulong>(size));
+            ssize_t readBytes = read(BasicConsoleProperties::STDIN, buffer, static_cast<osulong>(size));
             if (readBytes == -1) {
                 err = ErrorManagement::OSError;
                 REPORT_ERROR(err,"Error: read()");
@@ -330,8 +330,8 @@ ErrorManagement::ErrorType BasicConsole::GetSize(uint32 &numberOfColumns,
 
 ErrorManagement::ErrorType BasicConsole::Clear() {
     ErrorManagement::ErrorType err = ErrorManagement::NoError;
-    for (uint32 i = 0u; i < BasicConsoleOSProperties::BASIC_CONSOLE_LINUX_CLEAR_ROWS; i++) {
-        ssize_t writtenBytes = write(BasicConsoleOSProperties::STDOUT, "\n", static_cast<osulong>(1u));
+    for (uint32 i = 0u; i < BasicConsoleProperties::BASIC_CONSOLE_LINUX_CLEAR_ROWS; i++) {
+        ssize_t writtenBytes = write(BasicConsoleProperties::STDOUT, "\n", static_cast<osulong>(1u));
         if (writtenBytes == -1) {
             err = ErrorManagement::OSError;
             REPORT_ERROR(err,"Error: write()");

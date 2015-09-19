@@ -1,5 +1,5 @@
 /**
- * @file ProcessorOS.cpp
+ * @file Processor.cpp
  * @brief Source file for module Processor
  * @date 26/07/2015
  * @author André Neto

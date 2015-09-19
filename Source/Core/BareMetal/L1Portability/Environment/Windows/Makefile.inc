@@ -32,9 +32,9 @@ OBJSX=  MemoryOperationsHelper_CLIB.x \
         StringHelper_Portable.x\
         StringHelperExtras.x\
         StandardHeap.x \
-        BasicConsoleOS.x \
-        SleepOS.x \
-        HighResolutionTimerCalibratorOS.x 
+        BasicConsole.x \
+        Sleep.x \
+        HighResolutionTimerCalibrator.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

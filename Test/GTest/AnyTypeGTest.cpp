@@ -186,6 +186,30 @@ TEST(AnyTypeGTest, TestAnyType_ConstCharPointerToConst) {
     ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstCharPointerToConst());
 }
 
+TEST(AnyTypeGTest,TestAnyTypeCast) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyTypeCastFromBitBoolean<int32>());
+}
+
+TEST(AnyTypeGTest,TestAnyTypeCastNonConstSigned) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyTypeCastNonConstFromFractionalInteger<int32>());
+}
+
+TEST(AnyTypeGTest,TestAnyTypeCastNonConstUnsigned) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyTypeCastNonConstFromFractionalInteger<uint32>());
+}
+
+TEST(AnyTypeGTest,TestAnyTypeCastConstSigned) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyTypeCastConstFromFractionalInteger<int32>());
+}
+
+TEST(AnyTypeGTest,TestAnyTypeCastConstUnigned) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyTypeCastConstFromFractionalInteger<uint32>());
+}
 
 #endif /* TEST_GTEST_ANYTYPEGTEST_CPP_ */
 	

@@ -1,5 +1,5 @@
 /**
- * @file ThreadsOS.cpp
+ * @file Threads.cpp
  * @brief Source file for module Threads
  * @date 27/07/2015
  * @author André Neto

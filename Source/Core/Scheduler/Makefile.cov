@@ -26,6 +26,8 @@ TARGET=cov
 
 include Makefile.inc
 
+LIBRARIES_STATIC=L1Portability/cov/L1Portability$(LIBEXT)
+
 OPTIM = -finline-functions
 
 LIBRARIES += -lm

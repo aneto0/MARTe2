@@ -43,7 +43,7 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-extern HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
+extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 
 namespace HighResolutionTimer {

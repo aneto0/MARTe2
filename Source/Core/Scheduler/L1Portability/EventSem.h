@@ -45,7 +45,7 @@
  * Forward declaration of the operating system specific properties (defined in the operating system
  * specific unit file).
  */
-struct EventSemOSProperties;
+struct EventSemProperties;
 
 /**
  * @brief Event semaphore.
@@ -136,7 +136,7 @@ public:
      * @brief Return the operating system low level properties.
      * @return the operating system low level semaphore properties structure.
      */
-    EventSemOSProperties *GetOSProperties();
+    EventSemProperties *GetProperties();
 
     /**
      * @brief Checks if the semaphore is closed.
