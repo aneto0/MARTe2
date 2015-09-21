@@ -82,13 +82,14 @@ void NoMore(const float64 sec) {
     uint32 linuxSleepNoMoreMinUsecTime = 5000u;
     int64 secCounts = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
 
-    sec -= static_cast<float64>(linuxSleepNoMoreMinUsecTime) * 1e-6;
+    float64 secNoMore = sec;
+    secNoMore -= static_cast<float64>(linuxSleepNoMoreMinUsecTime) * 1e-6;
     int64 start = HighResolutionTimer::Counter();
-    if (sec > 0.) {
+    if (secNoMore > 0.) {
         struct timespec timesValues;
         struct timespec remTimesValues;
-        float64 roundValue = floor(sec);
-        float64 nsecSleep = (sec - roundValue) * 1e9;
+        float64 roundValue = floor(secNoMore);
+        float64 nsecSleep = (secNoMore - roundValue) * 1e9;
         timesValues.tv_sec = static_cast<time_t>(roundValue);
         timesValues.tv_nsec = static_cast<oslong>(nsecSleep);
         while (nanosleep(&timesValues, &remTimesValues) == -1) {

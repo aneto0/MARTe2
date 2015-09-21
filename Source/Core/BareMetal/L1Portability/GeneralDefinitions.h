@@ -30,8 +30,8 @@
 
 namespace MARTe{
 
-#ifndef __DECORATED_FUNCTION_NAME__
-#define __DECORATED_FUNCTION_NAME__ __func__
+#ifndef __ERROR_FUNCTION_NAME__
+#define __ERROR_FUNCTION_NAME__ __func__
 #endif
 
 /** List of colors */

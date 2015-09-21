@@ -155,6 +155,7 @@ protected:
      * The pointer to the referenced object.
      */
     /*lint -e9150 the member is not private so that ReferenceT can access it.*/
+    /*lint -sem(MARTe::Reference::RemoveReference,cleanup)*/
     Object* objectPointer;
 
 private:

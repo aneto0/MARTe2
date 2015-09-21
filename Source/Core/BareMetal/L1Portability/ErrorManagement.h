@@ -129,7 +129,7 @@ void SetErrorProcessFunction(const ErrorProcessFunctionType userFun);
  * 9026: function-like macro defined.
  */
 #define REPORT_ERROR(code,message)\
-ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__)
+ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 /**
  * @brief The function to call in case of errors.
  * @details Calls ErrorManagement::ReportErrorFullContext with the file name, the function and the line number of the error as inputs.
@@ -137,7 +137,7 @@ ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION
  * @param[in] message is the description associated to the error.
  */
 #define REPORT_ERROR_FULL(code,message)\
-ErrorManagement::ReportErrorFullContext(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__)
+ErrorManagement::ReportErrorFullContext(code,message,__FILE__,__LINE__,__ERROR_FUNCTION_NAME__)
 
 
 }

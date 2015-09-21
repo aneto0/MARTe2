@@ -320,6 +320,7 @@ AnyType::AnyType(void) {
 }
 
 AnyType::AnyType(const AnyType &x) {
+    /*lint -e{1554} the implementation requires two AnyTypes to share the same underlying pointer to the dataPointer*/
     this->dataPointer = x.dataPointer;
     this->bitAddress = x.bitAddress;
     this->dataDescriptor = x.dataDescriptor;

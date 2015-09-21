@@ -122,7 +122,7 @@ EventSem::~EventSem() {
                 /*lint -e{534} possible closure failure is not handled in the destructor.*/
                 Close();
             }
-            /*lint -esym(1578, EventSem::handle) the variable is correctly freed here when this is the last reference alive.*/
+            /*lint -esym(1579, MARTe::EventSem::handle) the variable is correctly freed here when this is the last reference alive.*/
             delete handle;
             handle = static_cast<EventSemProperties *>(NULL);
         }

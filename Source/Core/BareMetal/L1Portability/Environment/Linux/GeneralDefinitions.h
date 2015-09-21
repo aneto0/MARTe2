@@ -62,7 +62,7 @@ const uint32 N_CHARS_NEWLINE = 1u;
 typedef long oslong;
 typedef unsigned long osulong;
 
-#define __DECORATED_FUNCTION_NAME__   __PRETTY_FUNCTION__
+#define __ERROR_FUNCTION_NAME__   __PRETTY_FUNCTION__
 
 /**
  * Know shared library extensions

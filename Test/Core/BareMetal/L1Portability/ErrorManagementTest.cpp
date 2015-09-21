@@ -83,7 +83,7 @@ static void ThreadErrorTestFunction(ErrorManagementTest& t) {
 static void ThreadErrorTestFunctionMacro(ErrorManagementTest &t) {
     //launches error report functions.
     t.fullContext = false;
-    t.expectedErrorFunction = __DECORATED_FUNCTION_NAME__;
+    t.expectedErrorFunction = __ERROR_FUNCTION_NAME__;
     t.expectedErrorLine = __LINE__ + 1;
     REPORT_ERROR(t.expectedErrorCode, t.expectedErrorDescription);
     t.fullContext = true;
@@ -209,7 +209,7 @@ bool ErrorManagementTest::TestReportErrorMacro(ErrorManagement::ErrorType code,
     expectedErrorCode = code;
     expectedErrorDescription = errorDescription;
     expectedErrorFilename = __FILE__;
-    expectedErrorFunction = __DECORATED_FUNCTION_NAME__;
+    expectedErrorFunction = __ERROR_FUNCTION_NAME__;
     expectedErrorName = errorName;
     expectedHRTCounter=HighResolutionTimer::Counter();
     ErrorManagement::SetErrorProcessFunction(ReportTestFunction);

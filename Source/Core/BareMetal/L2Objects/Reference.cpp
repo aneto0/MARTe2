@@ -88,7 +88,6 @@ Reference& Reference::operator=(Object * const pointer) {
  * RemoveReference() to decrement references in a NULL objectPointer
  * which is properly protected. The delete of objectPointer at least
  * for versions < C++11 do not through an exception. */
-/*lint -sem(Reference::RemoveReference,cleanup)*/
 Reference::~Reference() {
     Reference::RemoveReference();
 }
