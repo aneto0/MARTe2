@@ -24,6 +24,8 @@
 #ifndef COMPILERTYPESA_H_
 #define COMPILERTYPESA_H_
 
+namespace MARTe {
+
 /** 64 Bit unsigned integer. */
 typedef unsigned long long uint64;
 /** 64 Bit signed integer. */
@@ -66,5 +68,7 @@ typedef uint32      uintp;
 #define msizeof(type,field) sizeof(((type *)1024)->field)
 
 #define HANDLE void *
+
+}
 
 #endif /* COMPILERTYPESA */

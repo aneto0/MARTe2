@@ -38,7 +38,7 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe {
 
 namespace TypeCharacteristics {
 

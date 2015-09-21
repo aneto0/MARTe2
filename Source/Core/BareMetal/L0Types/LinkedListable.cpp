@@ -39,6 +39,9 @@
 
 #include "LinkedListable.h"
 
+namespace MARTe {
+
+
 LinkedListable::LinkedListable() {
     next = NULL_PTR(LinkedListable *);
 }
@@ -291,4 +294,6 @@ void LinkedListable::Iterate(Iterator * const it) {
             p = p->next;
         }
     }
+}
+
 }

@@ -24,6 +24,9 @@
 #ifndef COMPILERTYPES_H_
 #define COMPILERTYPES_H_
 
+namespace MARTe {
+
+
 /*lint -save -e9026, function-like macro defined */
 #define QUOTE(x) QUOTE_1(x)
 /*lint -restore */
@@ -57,7 +60,7 @@ typedef unsigned long long intptr;
 typedef unsigned long intptr;
 #endif
 
-
+}
 
 #endif /* COMPILERTYPES */
 

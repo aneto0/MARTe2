@@ -41,7 +41,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe {
 
 /**
  * @brief A structure Used to describe the type pointed to by a pointer.
@@ -183,13 +183,11 @@ static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
  */
 static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
 
 TypeDescriptor::TypeDescriptor(const uint16 x) {
     all = x;

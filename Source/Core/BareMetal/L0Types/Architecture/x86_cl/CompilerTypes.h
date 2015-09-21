@@ -26,6 +26,8 @@
 
 #include <windows.h>
 
+namespace MARTe {
+
 /** 64 Bit unsigned integer. */
 typedef unsigned _int64 uint64;
 /** 64 Bit signed integer. */
@@ -70,5 +72,7 @@ typedef unsigned long      uintp;
 #define msizeof(type,field) sizeof(((type *)0)->field)
 
 #define HANDLE void *
+
+}
 
 #endif /* COMPILERTYPESA */

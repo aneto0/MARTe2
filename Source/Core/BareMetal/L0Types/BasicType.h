@@ -35,7 +35,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe {
 
 /**
  * @brief Definition of BasicType as a 4 bit integer.
@@ -91,7 +91,8 @@ const BasicType StreamString = 11u;
  */
 const BasicType StreamInterface = 12u;
 
-}
+
+} // namespace MARTe
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

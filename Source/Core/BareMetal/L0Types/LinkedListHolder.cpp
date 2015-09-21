@@ -36,6 +36,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
 
 void LinkedListHolder::CleanUp() {
     LinkedListable *p = llhRoot.Next();
@@ -227,4 +229,5 @@ void LinkedListHolder::ListIterate(Iterator * const it) {
     if (llhRoot.Next() != NULL) {
         llhRoot.Next()->Iterate(it);
     }
+}
 }

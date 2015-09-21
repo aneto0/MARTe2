@@ -43,6 +43,9 @@
 /**
  * @brief Defines all the framework possible error types.
  */
+
+namespace MARTe {
+
 namespace ErrorManagement {
 
 typedef int8 ErrorType;
@@ -115,6 +118,7 @@ static const ErrorType SyntaxError(-12);
  * Unsupported feature
  */
 static const ErrorType UnsupportedFeature(-13);
-}
 
+}
+}
 #endif /* ERRORS_H_ */

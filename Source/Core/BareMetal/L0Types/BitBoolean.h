@@ -38,7 +38,9 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe {
+
+
 
 /**
  *  @brief Boolean shifted type.
@@ -129,6 +131,7 @@ template<typename baseType, uint8 bitOffset>
 baseType BitBoolean<baseType, bitOffset>::BitOffset() {
     return bitOffset;
 }
+
 
 }
 
