@@ -531,7 +531,7 @@ AnyType::AnyType(BitBoolean<baseType, bitOffset> &bitBool) {
 
 template<typename baseType, uint8 bitSize, uint8 bitOffset>
 AnyType::AnyType(BitRange<baseType, bitSize, bitOffset> &bitRange) {
-    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = false;
     dataDescriptor.type = type;
@@ -542,7 +542,7 @@ AnyType::AnyType(BitRange<baseType, bitSize, bitOffset> &bitRange) {
 
 template<typename baseType, uint8 bitSize>
 AnyType::AnyType(FractionalInteger<baseType, bitSize> &fractionalInt) {
-    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = false;
     dataDescriptor.type = type;
@@ -553,7 +553,7 @@ AnyType::AnyType(FractionalInteger<baseType, bitSize> &fractionalInt) {
 
 template<typename baseType, uint8 bitSize>
 AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
-    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = true;
     dataDescriptor.type = type;

@@ -37,6 +37,7 @@
 
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
+using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

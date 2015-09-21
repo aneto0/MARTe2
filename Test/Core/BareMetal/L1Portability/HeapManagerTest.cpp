@@ -42,7 +42,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace HeapManager;
+using namespace MARTe::HeapManager;
+using namespace MARTe;
 
 HeapManagerTest::HeapManagerTest() {
     ptr = NULL;

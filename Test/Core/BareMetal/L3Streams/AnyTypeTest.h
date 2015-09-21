@@ -33,13 +33,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AnyType.h"
+using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-using namespace TypeDefinition;
-
 class AnyTypeTest {
 public:
 
@@ -298,18 +296,18 @@ bool AnyTypeTest::TestAnyTypeCastFromBitBoolean() {
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    TypeDefinition::BitBoolean<T, zero> myZeroShiftedBool;
+    BitBoolean<T, zero> myZeroShiftedBool;
     myZeroShiftedBool = true;
 
-    TypeDefinition::AnyType atTest = myZeroShiftedBool;
+    AnyType atTest = myZeroShiftedBool;
 
     if (atTest.GetDataPointer() != (&myZeroShiftedBool)) {
         return false;
     }
 
-    TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
+    TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != UnsignedInteger || tdTest.size != 1) {
         return false;
     }
 
@@ -317,7 +315,7 @@ bool AnyTypeTest::TestAnyTypeCastFromBitBoolean() {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, half> myHalfShiftedBool;
+    BitBoolean<T, half> myHalfShiftedBool;
 
     myHalfShiftedBool = true;
     atTest = myHalfShiftedBool;
@@ -327,7 +325,7 @@ bool AnyTypeTest::TestAnyTypeCastFromBitBoolean() {
     }
 
     tdTest = atTest.GetTypeDescriptor();
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != UnsignedInteger || tdTest.size != 1) {
         return false;
     }
 
@@ -335,7 +333,7 @@ bool AnyTypeTest::TestAnyTypeCastFromBitBoolean() {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, max> myMaxShiftedBool;
+    BitBoolean<T, max> myMaxShiftedBool;
 
     myMaxShiftedBool = true;
     atTest = myMaxShiftedBool;
@@ -345,7 +343,7 @@ bool AnyTypeTest::TestAnyTypeCastFromBitBoolean() {
     }
 
     tdTest = atTest.GetTypeDescriptor();
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != UnsignedInteger || tdTest.size != 1) {
         return false;
     }
 
@@ -361,19 +359,19 @@ bool AnyTypeTest::TestAnyTypeCastNonConstFromFractionalInteger() {
 
     const uint8 size = 8;
 
-    TypeDefinition::FractionalInteger<T, size> myFractionalInteger;
+    FractionalInteger<T, size> myFractionalInteger;
     myFractionalInteger = 0;
 
-    TypeDefinition::AnyType atTest = myFractionalInteger;
+    AnyType atTest = myFractionalInteger;
 
     if (atTest.GetDataPointer() != (&myFractionalInteger)) {
         return false;
     }
 
-    TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
+    TypeDescriptor tdTest = atTest.GetTypeDescriptor();
     bool isSigned = T(-1) < 0;
 
-    TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
+    BasicType type = (isSigned) ? SignedInteger : UnsignedInteger;
 
     if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
         return false;
@@ -390,19 +388,19 @@ template<typename T>
 bool AnyTypeTest::TestAnyTypeCastConstFromFractionalInteger() {
     const uint8 size = 8;
 
-    const TypeDefinition::FractionalInteger<T, size> myFractionalInteger(0);
+    const FractionalInteger<T, size> myFractionalInteger(0);
 
-    TypeDefinition::AnyType atTest = myFractionalInteger;
+    AnyType atTest = myFractionalInteger;
 
     if (atTest.GetDataPointer() != (&myFractionalInteger)) {
         return false;
     }
 
-    TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
+    TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
     bool isSigned = T(-1) < 0;
 
-    TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
+    BasicType type = (isSigned) ? SignedInteger : UnsignedInteger;
 
     if ((tdTest.isStructuredData) || (!tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
         return false;
@@ -422,19 +420,19 @@ bool AnyTypeTest::TestAnyTypeCastConstFromBitRange() {
 
     const uint8 size = 8;
 
-    TypeDefinition::BitRange<T, size, half> myBitRange;
+    BitRange<T, size, half> myBitRange;
     myBitRange = 0;
 
-    TypeDefinition::AnyType atTest = myBitRange;
+    AnyType atTest = myBitRange;
 
     if (atTest.GetDataPointer() != (&myBitRange)) {
         return false;
     }
 
-    TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
+    TypeDescriptor tdTest = atTest.GetTypeDescriptor();
     bool isSigned = T(-1) < 0;
 
-    TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
+    BasicType type = (isSigned) ? SignedInteger : UnsignedInteger;
 
     if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
         return false;

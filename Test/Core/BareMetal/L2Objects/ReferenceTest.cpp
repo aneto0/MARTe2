@@ -30,6 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ReferenceTest.h"
+#include "ReferenceT.h"
 
 #include "MemoryCheck.h"
 #include "ObjectTestHelper.h"

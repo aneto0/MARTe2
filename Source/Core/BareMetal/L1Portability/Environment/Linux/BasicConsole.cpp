@@ -45,7 +45,7 @@
 namespace MARTe{
 
 /*lint -e{9109} forward declaration in BasicConsole.h is required to define the class*/
-/*lint -esym(9150, BasicConsoleProperties::*) */
+/*lint -esym(9150, MARTe::BasicConsoleProperties::*) */
 struct BasicConsoleProperties {
     /**
      * Standard output file descriptor.

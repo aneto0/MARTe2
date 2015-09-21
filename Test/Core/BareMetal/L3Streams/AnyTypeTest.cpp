@@ -39,7 +39,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace TypeDefinition;
+using namespace MARTe;
 
 AnyTypeTest::AnyTypeTest():targetVariable(1),constantPtrToConstant(&targetVariable), constPtr(NULL) {
     retVal = false;

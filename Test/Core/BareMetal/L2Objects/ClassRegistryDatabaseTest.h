@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ClassRegistryDatabase.h"
+using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

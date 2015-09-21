@@ -39,7 +39,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace HeapManager {
+namespace MARTe {
 /**
  * @brief constructor
  */

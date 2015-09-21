@@ -65,12 +65,12 @@ public:
     /*
      * @brief An instance of the HeapManager::StandardHeap to be used on tests
      */
-    StandardHeap sh;
+    MARTe::StandardHeap sh;
 
     /*
      * @brief An instance of the HeapManager::AuxHeap to be used on tests
      */
-    AuxHeap ah;
+    MARTe::AuxHeap ah;
 
     /**
      * @brief Test HeapManager::Malloc function using the default options

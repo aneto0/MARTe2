@@ -32,6 +32,8 @@
 
 #include "FormatDescriptorTest.h"
 
+using namespace MARTe;
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,8 +41,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-using namespace TypeDefinition;
 
 FormatDescriptorTest::FormatDescriptorTest() {
     retVal = false;

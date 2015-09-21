@@ -84,13 +84,13 @@
 /*
  * Local declarator not referenced 
  */
--esym(752,TypeDefinition::*)
+-esym(752,MARTe::*)
 -esym(752,Notation::*)
 
 /*
  * Local class member not referenced
  */
--esym(754,TypeDefinition::FormatDescriptor::*)
+-esym(754,MARTe::FormatDescriptor::*)
 
 
 
@@ -100,95 +100,26 @@
 -etype(758,Flags)
 -esym(758,SFTestType)
 /* global struct not referenced */
--esym(768,TimeValues::*)
--esym(768,ErrorInformation::*)
--esym(768,isObject)
--esym(768,IBasicConsole::*)
--esym(768,ExceptionHandler::*)
--esym(768,ExceptionHandler::*)
--esym(768,ClassRegistryDatabase::*)
--esym(768,Introspection::*)
--esym(768,Object::*)
--esym(768,TypeDefinition::BitBoolean*)
--esym(768,TypeDefinition::BitRange*)
--esym(768,TypeDefinition::FractionalInteger*)
+-esym(768,MARTe::*)
 
 
 /* global constant enumeration not referenced */ 
--esym(769,SFTestType::*)
--esym(769,Colours::*) 
--esym(769,ErrorType::*)
--esym(769,Threads::ThreadStateType::*)
--esym(769,Threads::PriorityClassType::*)
--esym(769,Memory::MemoryTestAccessMode::*)
--esym(769,Memory::MemoryAllocationFlags::*)
+-esym(769,MARTe::*)
  /* static member not referenced */
--esym(1715,IBasicConsole::*)
--esym(1715,ProcessorType::UndefinedCPUs)
--esym(1715,FastMath::*)
--esym(1715,ExceptionHandler::*)
-
+-esym(1715,MARTe::*)
 
 /* member function not referenced */
--esym(1714,Sleep::*)
--esym(1714,HighResolutionTimer::*)
--esym(1714,StringHelper::*)
--esym(1714,StringPortable::*)
--esym(1714,Endianity::*)
--esym(1714,Atomic::*)
--esym(1714,Flags::*) 
--esym(1714,ErrorManagement::*)
--esym(1714,Processor::*)
--esym(1714,TimeoutType::*)
--esym(1714,ProcessorType::*)
--esym(1714,EventSem::*)
--esym(1714,MutexSem::*)
--esym(1714,FastPollingMutexSem::*)
--esym(1714,LoadableLibrary::*)
--esym(1714,FastMath::*)
--esym(1714,Threads::*)
--esym(1714,ExceptionHandler::*)
--esym(1714,ThreadInformation::*)
--esym(1714,Memory::*)
--esym(1714,ErrorManagement::*)
--esym(1714,LinkedListable::*)
--esym(1714,LinkedListHolder::*)
--esym(1714,ClassProperties::*)
--esym(1714,ClassRegistryItem::*)
--esym(1714,ClassRegistryDatabase::*)
--esym(1714,Object::*)
--esym(1714,Reference::*)
--esym(1714,ReferenceContainer::*)
--esym(1714,ReferenceContainerItem::*)
--esym(1714,ReferenceContainerFilter::*)
--esym(1714,ReferenceContainerFilterObjectName::*)
--esym(1714,ReferenceContainerFilterReferences::*)
--esym(1714,ReferenceContainerFilterObjectName::*)
--esym(1714,TypeDefinition::AnyType::*)
--esym(1714,TypeDefinition::FormatDescriptor::*)
--esym(1714,TypeDefinition::TypeDescriptor::*)
-
+-esym(1714,MARTe::*)
 
 /*
  * Rule 0-1-10 
  * Symbol not referenced
  * Justfication: Not applicable to a framework
  */
--esym(714,ErrorManagement::*)
--esym(714,HeapManager::*)
--esym(714,Sleep::*)
--esym(714,Threads::*)
--esym(714,StringHelper::*)
-
-
-
+-esym(714,MARTe::*)
 
 /* virtual member function not referenced */
--esym(1716,IBasicConsole::*)
--esym(1716,Object::*)
--esym(1716,Reference::*)
-//From Object.h macro
--esym(1716,*::GetClassPropertiesCopy*)
+-esym(1716,MARTe::*)
 
 /* default constructor not referenced */
 -esym(1914,Flags::*) 
@@ -412,12 +343,12 @@
   * Justification: Not applicable to a framework.
   */
 -esym(1795, ReferenceT*)
--esym(1795, TypeDefinition::*)
--esym(1795, TypeDefinition::AnyType::*)
--esym(1795, TypeDefinition::BitBoolean*)
--esym(1795, TypeDefinition::BitRange*)
--esym(1795, TypeDefinition::FractionalInteger*)
--esym(1795, TypeDefinition::TypeCharacteristics*)
+-esym(1795, MARTe::*)
+-esym(1795, MARTe::AnyType::*)
+-esym(1795, MARTe::BitBoolean*)
+-esym(1795, MARTe::BitRange*)
+-esym(1795, MARTe::FractionalInteger*)
+-esym(1795, MARTe::TypeCharacteristics*)
 
 
 /*
@@ -451,10 +382,10 @@
   * Justification: Required for template implementation.
   */
 -esym(9107, ReferenceT*)
--esym(9107, TypeDefinition::BitBoolean*)
--esym(9107, TypeDefinition::BitRange*)
--esym(9107, TypeDefinition::TypeCharacteristics*)
--esym(9107, TypeDefinition::FractionalInteger*)
+-esym(9107, MARTe::BitBoolean*)
+-esym(9107, MARTe::BitRange*)
+-esym(9107, MARTe::TypeCharacteristics*)
+-esym(9107, MARTe::FractionalInteger*)
 
 /*
  * Rule flexelint 1793

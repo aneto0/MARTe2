@@ -32,6 +32,8 @@
 #include "LoadableLibraryTest.h"
 #include "GeneralDefinitions.h"
 
+using namespace MARTe;
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

@@ -51,7 +51,7 @@ namespace MARTe{
 
 namespace Sleep {
 
-void AtLeast(float64 sec) {
+void AtLeast(const float64 sec) {
     int32 nsecRemainder = -1;
     struct timespec timesValues;
     struct timespec remTimesValues;
@@ -120,7 +120,7 @@ void Sec(float64 sec) {
     }
 }
 
-void MSec(int32 msec) {
+void MSec(const int32 msec) {
     int32 sec = 0;
     int32 nsecSleep = 0;
     if (msec >= 1000) {
@@ -143,8 +143,8 @@ void MSec(int32 msec) {
     }
 }
 
-void SemiBusy(float64 totalSleepSec,
-              float64 nonBusySleepSec) {
+void SemiBusy(const float64 totalSleepSec,
+              const float64 nonBusySleepSec) {
     int64 startCounter = HighResolutionTimer::Counter();
     float64 endCounterF = totalSleepSec * static_cast<float64>(HighResolutionTimer::Frequency());
     int64 sleepUntilCounter = startCounter + static_cast<int64>(endCounterF);

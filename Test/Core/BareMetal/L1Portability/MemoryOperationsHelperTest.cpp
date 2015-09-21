@@ -33,6 +33,8 @@
 #include "MemoryOperationsHelper.h"
 #include "HeapManager.h"
 
+using namespace MARTe;
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

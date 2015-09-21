@@ -35,6 +35,8 @@
  * @brief Tests all the ClassProperties functions.
  */
 #include "ClassProperties.h"
+using namespace MARTe;
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/

@@ -34,6 +34,9 @@
 #include "Sleep.h"
 #include "HighResolutionTimer.h"
 #include "Threads.h"
+
+using namespace MARTe;
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

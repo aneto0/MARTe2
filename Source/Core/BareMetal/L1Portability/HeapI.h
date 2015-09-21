@@ -48,6 +48,7 @@ namespace MARTe{
 class HeapI {
 public:
 
+    virtual ~HeapI() = 0;
 
     /**
      * @brief Allocates a portion of memory on the heap.

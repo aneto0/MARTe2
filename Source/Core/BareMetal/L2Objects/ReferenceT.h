@@ -216,13 +216,7 @@ ReferenceT<T>::ReferenceT(T * const p) :
     }
 }
 
-/*lint -e{1566} Init function initializes members */
-template<typename T>
-ReferenceT<T>::ReferenceT(const Reference& sourceReference) :
-        Reference(sourceReference) {
-    //use operator =
-    (*this) = sourceReference;
-}
+
 
 template<typename T>
 ReferenceT<T>::ReferenceT(const ReferenceT<T>& sourceReference) :
@@ -248,24 +242,6 @@ ReferenceT<T>::ReferenceT(const char8* const typeName,
 }
 
 template<typename T>
-ReferenceT<T>::~ReferenceT() {
-    typeTObjectPointer = static_cast<T *>(NULL);
-}
-
-template<typename T>
-void ReferenceT<T>::RemoveReference() {
-    typeTObjectPointer = static_cast<T *>(NULL);
-
-    Reference::RemoveReference();
-}
-
-template<typename T>
-bool ReferenceT<T>::IsValid() const {
-
-    return (Reference::IsValid()) ? (typeTObjectPointer != NULL) : false;
-}
-
-template<typename T>
 ReferenceT<T>& ReferenceT<T>::operator=(const ReferenceT<T>& sourceReference) {
     if (this != &sourceReference) {
         RemoveReference();
@@ -277,51 +253,9 @@ ReferenceT<T>& ReferenceT<T>::operator=(const ReferenceT<T>& sourceReference) {
     return *this;
 }
 
-/*lint -e{929} -e{925} the current implementation of the LinkedListable requires pointer to pointer casting*/
-template<typename T>
-ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
-    RemoveReference();
-
-    if (sourceReference.IsValid()) {
-        // do this first to allow access to objectPointer
-        Reference::operator=(sourceReference);
-        typeTObjectPointer = dynamic_cast<T*>(objectPointer);
-        if (typeTObjectPointer == NULL) {
-            RemoveReference();
-        }
-    }
-
-    return *this;
-}
-
 template<typename T>
 bool ReferenceT<T>::operator==(const ReferenceT<T>& sourceReference) const {
     return (typeTObjectPointer == sourceReference.typeTObjectPointer);
-}
-
-template<typename T>
-T* ReferenceT<T>::operator->() {
-    return typeTObjectPointer;
-}
-
-template<typename T>
-bool ReferenceT<T>::Initialise(const StructuredData &data,
-                               const bool &createOnly) {
-    Reference ref;
-    bool ok = true;
-    if (ref.Initialise(data, createOnly)) {
-        *this = ref;
-        ok = IsValid();
-    }
-    else {
-        ok = false;
-    }
-    return ok;
-}
-
-template<typename T>
-ReferenceT<T>* ReferenceT<T>::operator&() {
-    return this;
 }
 
 }
