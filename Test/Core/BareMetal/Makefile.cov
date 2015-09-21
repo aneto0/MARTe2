@@ -27,7 +27,7 @@ TARGET=cov
 
 include Makefile.inc
 
-LIBRARIES_STATIC=L0Foundation/cov/L0FoundationTest$(LIBEXT)
+LIBRARIES_STATIC=L0Types/cov/L0TypesTest$(LIBEXT)
 LIBRARIES_STATIC+=L1Portability/cov/L1PortabilityTest$(LIBEXT)
 LIBRARIES_STATIC+=L2Objects/cov/L2ObjectsTest$(LIBEXT)
 LIBRARIES_STATIC+=L3Streams/cov/L3StreamsTest$(LIBEXT)

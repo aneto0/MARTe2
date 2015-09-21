@@ -28,7 +28,7 @@ include Makefile.inc
 
 OPTIM = -finline-functions
 
-LIBRARIES_STATIC=L0Foundation/cov/L0Foundation$(LIBEXT)
+LIBRARIES_STATIC=L0Types/cov/L0Types$(LIBEXT)
 LIBRARIES_STATIC+=L1Portability/cov/L1Portability$(LIBEXT)
 LIBRARIES_STATIC+=L2Objects/cov/L2Objects$(LIBEXT)
 

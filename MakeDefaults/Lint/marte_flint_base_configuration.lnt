@@ -1,8 +1,8 @@
 /*
  * Include directories
  */
--i./Source/Core/BareMetal/L0Foundation/
--i./Source/Core/BareMetal/L0Foundation/Architecture/x86_gcc
+-i./Source/Core/BareMetal/L0Types/
+-i./Source/Core/BareMetal/L0Types/Architecture/x86_gcc
 -i./Source/Core/BareMetal/L1Portability/
 -i./Source/Core/BareMetal/L1Portability/Architecture/x86_gcc
 -i./Source/Core/BareMetal/L1Portability/Environment/Linux

@@ -39,7 +39,7 @@ OBJSX=  EventSem.x \
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
-INCLUDES+=-I../../../../BareMetal/L0Foundation/
+INCLUDES+=-I../../../../BareMetal/L0Types/
 INCLUDES+=-I../../../../BareMetal/L1Portability
 
 all: $(OBJS)    $(CPPS) \

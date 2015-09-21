@@ -20,31 +20,20 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
 
-OBJSX=  BitBooleanTest.x\
-	BitRangeTest.x \
-        FractionalIntegerTest.x \
-        BasicTypeTest.x \
-        TypeCharacteristicsTest.x \
-        LinkedListableTest.x \
-        LinkedListHolderTest.x \
-        TypeDescriptorTest.x
-		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
+OBJSX=  LinkedListable.x \
+        LinkedListHolder.x 
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES += -I../../../../Source/Core/BareMetal/L0Foundation
-INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
-INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 
-all: $(OBJS) \
-                $(BUILD_DIR)/L0FoundationTest$(LIBEXT)
+all: $(OBJS) $(SUBPROJ)   \
+		$(BUILD_DIR)/L0Types$(LIBEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

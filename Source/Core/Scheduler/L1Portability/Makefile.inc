@@ -34,7 +34,7 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES+=-I../../BareMetal/L1Portability -I../../BareMetal/L0Foundation
+INCLUDES+=-I../../BareMetal/L1Portability -I../../BareMetal/L0Types
 
 all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L1Portability$(LIBEXT)

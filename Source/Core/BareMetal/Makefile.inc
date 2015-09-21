@@ -24,14 +24,14 @@
 #
 #############################################################
 OBJSX=
-SPB    = L0Foundation.x L1Portability.x L2Objects.x 
+SPB    = L0Types.x L1Portability.x L2Objects.x 
 PACKAGE=Core
 MAKEDEFAULTDIR=../../../MakeDefaults
 
 ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/L0Foundation/L0Foundation$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L0Types/L0Types$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1Portability$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L2Objects/L2Objects$(LIBEXT)
 

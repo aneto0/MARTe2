@@ -43,7 +43,7 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
 
-INCLUDES+=-I../../../L0Foundation
+INCLUDES+=-I../../../L0Types
 
 all: $(OBJS) $(CPPS) \
      $(BUILD_DIR)/L1Portability$(LIBEXT)
