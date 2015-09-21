@@ -78,7 +78,7 @@ void AtLeast(const float64 sec) {
     }
 }
 
-void NoMore(float64 sec) {
+void NoMore(const float64 sec) {
     uint32 linuxSleepNoMoreMinUsecTime = 5000u;
     int64 secCounts = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
 
@@ -104,7 +104,7 @@ void NoMore(float64 sec) {
 
 }
 
-void Sec(float64 sec) {
+void Sec(const float64 sec) {
     struct timespec timesValues;
     struct timespec remTimesValues;
     float64 roundValue = floor(sec);

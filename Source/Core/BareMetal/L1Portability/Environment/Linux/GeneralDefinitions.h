@@ -29,7 +29,7 @@
 #ifndef LINT
 #include <termio.h>
 #else
-typedef unsigned long int pthread_t;
+//typedef unsigned long int pthread_t;
 #endif
 
 #ifndef NULL
@@ -46,16 +46,16 @@ static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdenti
 typedef struct termio ConsoleHandle;
 
 /** Threads database memory granularity */
-#define THREADS_DATABASE_GRANULARITY 64u
+const uint32 THREADS_DATABASE_GRANULARITY = 64u;
 
 /** Defines the default stack size for a thread. */
-#define THREADS_DEFAULT_STACKSIZE 32768
+const uint32 THREADS_DEFAULT_STACKSIZE = 32768u;
 
 /** Defines the maximum number of elements in the memory database */
-#define MAX_NO_OF_MEMORY_MONITORS 64
+const uint32 MAX_NO_OF_MEMORY_MONITORS = 64u;
 
 /** In windows the newline is specified with \r\n */
-#define N_CHARS_NEWLINE 1u
+const uint32 N_CHARS_NEWLINE = 1u;
 
 /** This is just to avoid an exception to Rule 3-9-2 of MISRA, given that many Linux operating system calls require a long as an input
  * and the framework does not define such type*/
@@ -67,7 +67,7 @@ typedef unsigned long osulong;
 /**
  * Know shared library extensions
  */
-static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
+static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", static_cast<char8 *>(NULL) };
 
 struct MutexSemProperties;
 #define MutexSemHandle MutexSemProperties*

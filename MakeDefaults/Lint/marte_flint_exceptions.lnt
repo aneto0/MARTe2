@@ -45,6 +45,11 @@
 -e537
 
 /*
+ * We also lint some header files (which are not necessarly modules)
+ */
+-e617
+
+/*
  * Lint is not understanding that the memory is freed in the destructor
  */
  -sem(EventSem::~EventSem, cleanup)
@@ -71,6 +76,7 @@
  */
 /* global macro not referenced */
 -esym(755,REPORT_ERROR,REPORT_ERROR_FULL)
+-esym(755,MAX_NO_OF_MEMORY_MONITORS,MAX_NO_OF_MEMORY_MONITORS)
 
 /*
  * Local macro not referenced
@@ -101,6 +107,7 @@
 -esym(758,SFTestType)
 /* global struct not referenced */
 -esym(768,MARTe::*)
+-esym(768,isObject)
 
 
 /* global constant enumeration not referenced */ 
@@ -122,22 +129,7 @@
 -esym(1716,MARTe::*)
 
 /* default constructor not referenced */
--esym(1914,Flags::*) 
--esym(1914,BasicConsole::*)
--esym(1914,FastPollingMutexSem::*)
--esym(1914,LoadableLibrary::*)  
--esym(1914,ExceptionHandler::*)
--esym(1914,ThreadInformation::*)
--esym(1914,LinkedListHolder::*)
--esym(1914,ClassProperties::*)
--esym(1914,ClassRegistryItem::*)
--esym(1914,Object::*)
--esym(1914,Reference::*)
--esym(1914,ReferenceContainer::*)
--esym(1914,ReferenceContainerNode::*)
--esym(1914,ReferenceContainerItem::*)
--esym(1914,ReferenceContainerFilterObjectName::*)
--esym(1914,ReferenceContainerFilterReferences::*)
+-esym(1914,MARTe::*) 
 
 /*
  * Rule 0-1-11

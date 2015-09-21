@@ -71,13 +71,13 @@ void AtLeast(const float64 sec);
  * @details This function uses HighResolutionTimer functions.
  * @param[in] sec is the time in seconds to sleep (no more).
  */
-void NoMore(float64 sec);
+void NoMore(const float64 sec);
 
 /**
  * @brief Sleeps for sec seconds (float64 value).
  * @param[in] sec is the time to sleep.
  */
-void Sec(float64 sec);
+void Sec(const float64 sec);
 
 /**
  * @brief Sleeps for msec milliseconds.
