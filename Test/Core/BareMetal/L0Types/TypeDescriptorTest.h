@@ -38,6 +38,8 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+using namespace MARTe;
+
 /**
  * @brief Tests all the TypeDescriptor functions.
  */
@@ -56,7 +58,7 @@ public:
     bool TestConstructorUint(bool isObject,
                                bool isConst,
                                uint16 size,
-                               TypeDefinition::BasicType type);
+                               BasicType type);
     /**
      * @brief Tests the constructor by basic types.
      * @param[in] isConst specifies if the type is constant.
@@ -66,7 +68,7 @@ public:
      */
     bool TestConstructorBasicType(bool isConst,
                                   uint16 size,
-                                  TypeDefinition::BasicType type);
+                                  BasicType type);
 
     /**
      * @brief Tests the constructor by structured types.
@@ -85,7 +87,7 @@ public:
      * False otherwise.
      */
     bool TestIsEqualOperator(uint16 size,
-                             TypeDefinition::BasicType type);
+                             BasicType type);
 
     /**
      * @brief Checks if the equal operator fails comparing two TypeDescriptor with different attribute values.

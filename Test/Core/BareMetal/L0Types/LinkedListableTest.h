@@ -39,6 +39,9 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+using namespace MARTe;
+
+
 /**
  * @brief Tests all the LinkedListable functions.
  */

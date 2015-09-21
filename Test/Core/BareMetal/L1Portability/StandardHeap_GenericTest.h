@@ -40,6 +40,8 @@
 /*---------------------------------------------------------------------------*/
 
 
+using namespace MARTe;
+
 /**
  * @brief A class to test the StandarHeap_GenericTest functions.
  */

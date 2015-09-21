@@ -42,7 +42,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-Object* dummyBuildFcn(HeapManager::HeapI * const h __attribute__((unused))) {
+Object* dummyBuildFcn(HeapI * const h __attribute__((unused))) {
     Object *p = (Object*) HeapManager::Malloc(sizeof(Object));
     char *pp = (char*) p;
     (*pp) = 9;
@@ -79,7 +79,7 @@ bool ClassRegistryItemTest::TestConstructor() {
         return false;
     }
 
-    HeapManager::HeapI * h = NULL;
+    HeapI * h = NULL;
 
     //check if the correct function is saved
     Object* instance = myItem.GetObjectBuildFunction()(h);
@@ -230,7 +230,7 @@ bool ClassRegistryItemTest::TestGetObjectBuildFunction() {
         return false;
     }
 
-    HeapManager::HeapI * h=NULL;
+    HeapI * h=NULL;
 //call the function to see if it behaves as expected
     Object* instance = myItem.GetObjectBuildFunction()(h);
     bool retVal = true;

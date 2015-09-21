@@ -31,7 +31,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-class LinkedListable;
+
+namespace MARTe {
+
+     class LinkedListable;
+
+}
 
 #include "CompilerTypes.h"
 #include "Iterator.h"
@@ -43,6 +48,7 @@ class LinkedListable;
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 
 /**
  * @brief Linked list implementation.

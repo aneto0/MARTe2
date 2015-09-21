@@ -41,6 +41,8 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 /**
  * Forward declaration of the operating system specific properties (defined in the operating system
  * specific unit file).
@@ -140,5 +142,6 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+}
 #endif /* MUTEXSEM_H_ */
 

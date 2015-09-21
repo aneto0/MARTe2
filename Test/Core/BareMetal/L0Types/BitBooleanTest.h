@@ -37,6 +37,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+using namespace MARTe;
 
 /**
  * @brief Tests all the BitBoolean functions.
@@ -79,7 +80,7 @@ union BitBoolUnionExample {
 
     uint32 intx1 :31;
 
-    TypeDefinition::BitBoolean<uint64, 31> bitBool;
+    BitBoolean<uint64, 31> bitBool;
 
     uint64 intx3;
 
@@ -109,7 +110,7 @@ bool BitBooleanTest<T>::TestBoolCast() {
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    TypeDefinition::BitBoolean<T, zero> myZeroShiftedBool;
+    BitBoolean<T, zero> myZeroShiftedBool;
     myZeroShiftedBool = true;
     if (!myZeroShiftedBool) {
         return false;
@@ -121,7 +122,7 @@ bool BitBooleanTest<T>::TestBoolCast() {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, half> myHalfShiftedBool;
+    BitBoolean<T, half> myHalfShiftedBool;
 
     myHalfShiftedBool = true;
     if (!myHalfShiftedBool) {
@@ -134,7 +135,7 @@ bool BitBooleanTest<T>::TestBoolCast() {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, max> myMaxShiftedBool;
+    BitBoolean<T, max> myMaxShiftedBool;
 
     myMaxShiftedBool = true;
     if (!myMaxShiftedBool) {
@@ -161,18 +162,18 @@ bool BitBooleanTest<T>::TestBitSize() {
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    TypeDefinition::BitBoolean<T, zero> myZeroShiftedBool;
+    BitBoolean<T, zero> myZeroShiftedBool;
 
     if (myZeroShiftedBool.BitSize() != 1) {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, half> myHalfShiftedBool;
+    BitBoolean<T, half> myHalfShiftedBool;
 
     if (myHalfShiftedBool.BitSize() != 1) {
         return false;
     }
-    TypeDefinition::BitBoolean<T, max> myMaxShiftedBool;
+    BitBoolean<T, max> myMaxShiftedBool;
 
     if (myMaxShiftedBool.BitSize() != 1) {
         return false;
@@ -188,18 +189,18 @@ bool BitBooleanTest<T>::TestBitOffset() {
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    TypeDefinition::BitBoolean<T, zero> myZeroShiftedBool;
+    BitBoolean<T, zero> myZeroShiftedBool;
 
     if (myZeroShiftedBool.BitOffset() != zero) {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, half> myHalfShiftedBool;
+    BitBoolean<T, half> myHalfShiftedBool;
 
     if (myHalfShiftedBool.BitOffset() != half) {
         return false;
     }
-    TypeDefinition::BitBoolean<T, max> myMaxShiftedBool;
+    BitBoolean<T, max> myMaxShiftedBool;
 
     if (myMaxShiftedBool.BitOffset() != max) {
         return false;

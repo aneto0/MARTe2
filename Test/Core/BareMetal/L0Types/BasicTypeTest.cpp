@@ -39,7 +39,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace TypeDefinition;
+using namespace MARTe;
 
 BasicTypeTest::BasicTypeTest() {
     retVal = false;

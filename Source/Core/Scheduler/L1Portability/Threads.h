@@ -41,6 +41,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 /**
  * Forward declaration of a thread information database.
  */
@@ -252,6 +254,7 @@ ThreadIdentifier FindByName(const char8 * const name);
 
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

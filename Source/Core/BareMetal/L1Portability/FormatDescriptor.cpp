@@ -157,13 +157,11 @@ static inline uint32 GetIntegerNumber(const char8 *&string) {
     return number;
 }
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
 
 /*lint -e{9119} assignment of integer to size field*/
 bool FormatDescriptor::InitialiseFromString(const char8 *&string) {

@@ -35,7 +35,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+using namespace MARTe;
+
+
 /**
+ *
  * @brief Tests all the LinkedListHolder functions.
  */
 class LinkedListHolderTest {

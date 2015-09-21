@@ -42,6 +42,9 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
+
 ThreadInformation::ThreadInformation() {
     userThreadFunction = static_cast<ThreadFunctionType>(NULL);
     userData = static_cast<void *>(NULL);
@@ -140,4 +143,6 @@ ErrorManagement::ErrorType ThreadInformation::ThreadWait() {
 
 bool ThreadInformation::ThreadPost() {
     return startThreadSynchSem.Post();
+}
+
 }

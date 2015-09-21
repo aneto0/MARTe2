@@ -39,6 +39,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
 /**
  * @brief A class which stores information about a thread: name, function, argument, identifier and priority related information.
@@ -177,6 +178,7 @@ private:
     EventSem startThreadSynchSem;
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

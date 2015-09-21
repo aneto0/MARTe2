@@ -32,9 +32,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "CompilerTypes.h"
+#include "LinkedListable.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 
 namespace MARTe {
 
@@ -58,8 +62,8 @@ public:
      * @param[in] data2 the second LinkedListable object pointer.
      * @return a positive value if data1 is not ordered with respect to data2, negative otherwise.
      */
-    virtual int32 Compare(LinkedListable *data1,
-                          LinkedListable *data2)=0;
+    virtual int32 Compare(LinkedListable * data1,
+                          LinkedListable * data2)=0;
 
 };
 

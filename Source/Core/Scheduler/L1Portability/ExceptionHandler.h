@@ -31,6 +31,8 @@
 
 #include "CompilerTypes.h"
 
+namespace MARTe {
+
 /** @brief Exception handler plugin interface. */
 class ExceptionHandler {
 private:
@@ -68,5 +70,6 @@ public:
      }*/
 };
 
+}
 #endif
 

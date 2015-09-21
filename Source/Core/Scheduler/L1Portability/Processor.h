@@ -39,6 +39,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 /**
  * @brief General information about the processor executing the framework code.
  *
@@ -74,6 +76,7 @@ namespace Processor {
     uint32 Available();
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

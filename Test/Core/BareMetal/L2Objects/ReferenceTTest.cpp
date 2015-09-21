@@ -121,7 +121,7 @@ bool ReferenceTTest::TestCopyConstructorNullPtr() {
 
 bool ReferenceTTest::TestCreateConstructor() {
 
-    HeapManager::HeapI* mem=NULL;
+    HeapI* mem=NULL;
     ReferenceT<IntegerObject> ref(mem);
 
     if (!ref.IsValid()) {
