@@ -37,6 +37,8 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief Defines the processors where a particular task should run.
  *
@@ -165,5 +167,6 @@ static const ProcessorType UndefinedCPUs(0u);
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+}
 #endif /* PROCESSORTYPE_H_ */
 

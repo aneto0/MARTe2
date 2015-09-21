@@ -37,6 +37,8 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 struct BasicConsoleProperties {
 
     /**
@@ -607,4 +609,6 @@ bool BasicConsole::ConsoleBufferSupported() const {
 
 bool BasicConsole::TimeoutSupported() const {
     return true;
+}
+
 }

@@ -41,6 +41,8 @@
 /*                           Module declaration                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief Collection of functions and  types to manage error reporting.
  * @details These functions allows an error reporting mechanism. The user should only pass the code of the error
@@ -137,5 +139,7 @@ ErrorManagement::ReportError(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION
 #define REPORT_ERROR_FULL(code,message)\
 ErrorManagement::ReportErrorFullContext(code,message,__FILE__,__LINE__,__DECORATED_FUNCTION_NAME__)
 
+
+}
 #endif /* ERRORMANAGEMENT_H_ */
 

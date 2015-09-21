@@ -47,6 +47,8 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief A class to get the period and the frequency of the cpu clock depending on the operating system.
  */
@@ -105,6 +107,7 @@ private:
     int64 initialTicks;
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

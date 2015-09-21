@@ -24,6 +24,7 @@
 #ifndef GENERALDEFINITIONS_ENV_H_
 #define GENERALDEFINITIONS_ENV_H_
 
+namespace MARTe{
 
 
 /** Defines the event handle */
@@ -62,4 +63,5 @@ typedef unsigned long osulong;
  */
 static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
 
+}
 #endif /* GENERALDEFINITIONS_ENV_H_ */

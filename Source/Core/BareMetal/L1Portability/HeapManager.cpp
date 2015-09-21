@@ -41,6 +41,9 @@
 /*                           Local Module declaration                         */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
+
 namespace HeapManager /*Internals*/{
 
     /**
@@ -462,3 +465,4 @@ namespace HeapManager /*Internals*/{
 
 }
 
+}

@@ -42,6 +42,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe{
 
 /*lint -e{9109} forward declaration in BasicConsole.h is required to define the class*/
 /*lint -esym(9150, BasicConsoleProperties::*) */
@@ -429,4 +430,6 @@ ErrorManagement::ErrorType BasicConsole::PlotChar(const char8 &c,
     REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
 
     return ErrorManagement::UnsupportedFeature;
+}
+
 }

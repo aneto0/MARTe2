@@ -37,6 +37,8 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 namespace Threads {
 
 bool isRealtimeClass = false;
@@ -345,6 +347,8 @@ bool GetThreadInfoCopy(ThreadInformation &copy,
 
 ThreadIdentifier FindByName(const char8 * const name) {
     return ThreadsDatabase::Find(name);
+}
+
 }
 
 }

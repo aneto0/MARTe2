@@ -40,6 +40,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+
+
 ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName() :
         ReferenceContainerFilter() {
     addressNumberNodes = 0u;
@@ -223,3 +227,4 @@ bool ReferenceContainerFilterObjectName::Test(ReferenceContainer &previouslyFoun
     return found;
 }
 
+}

@@ -38,6 +38,8 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 namespace ThreadsDatabase {
 
 /**
@@ -251,4 +253,5 @@ bool AllocMore() {
     return ok;
 }
 
+}
 }

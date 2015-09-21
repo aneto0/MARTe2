@@ -39,6 +39,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief Sleep functions.
  *
@@ -112,4 +114,5 @@ void Sleep::Busy(float64 sec) {
     }
 }
 
+}
 #endif /* SLEEP_H_ */

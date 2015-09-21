@@ -37,6 +37,8 @@ typedef unsigned long int pthread_t;
 #endif
 
 
+namespace MARTe{
+
 typedef pthread_t ThreadIdentifier;
 static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdentifier>(0);
 
@@ -76,6 +78,8 @@ struct EventSemProperties;
 struct BasicConsoleProperties;
 #define BasicConsoleHandle BasicConsoleProperties*
 
+
+}
 
 #endif /* GENERALDEFINITIONS_ENV_H_ */
 

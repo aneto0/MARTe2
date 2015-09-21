@@ -41,6 +41,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+
 Object::Object() {
     referenceCounter = 0u;
     name = NULL_PTR(char8 *);
@@ -186,3 +190,5 @@ void Object::SetName(const char8 * const newName) {
 }
 
 CLASS_REGISTER(Object, "1.0")
+
+}

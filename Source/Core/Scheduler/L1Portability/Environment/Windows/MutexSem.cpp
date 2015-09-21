@@ -36,6 +36,8 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 struct MutexSemProperties {
 
     /**
@@ -183,4 +185,6 @@ bool MutexSem::IsClosed() const {
         ok = osProperties->closed;
     }
     return ok;
+}
+
 }

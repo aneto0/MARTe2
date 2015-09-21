@@ -40,6 +40,9 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
+
 /*lint -e{9109} forward declaration in MutexSem.h is required to define the class*/
 struct MutexSemProperties {
 
@@ -307,4 +310,6 @@ bool MutexSem::IsClosed() const {
         ok = handle->closed;
     }
     return ok;
+}
+
 }

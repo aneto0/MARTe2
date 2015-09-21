@@ -40,6 +40,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+namespace MARTe{
 
 namespace FastMath {
 
@@ -57,5 +58,6 @@ int32 FloatToInt(float input) {
 
 }
 
+}
 #endif /* FASTMATHA_H_ */
 

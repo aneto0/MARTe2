@@ -40,6 +40,8 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 namespace FastMath {
 
 float Sin(float angle) {
@@ -71,5 +73,5 @@ int32 FloatToInt(float input) {
 }
 
 }
-
+}
 #endif /* FASTMATHA_H_ */

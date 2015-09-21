@@ -38,6 +38,9 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
+
 struct EventSemProperties {
 
     /**
@@ -197,4 +200,6 @@ bool EventSem::IsClosed() const {
         ok = osProperties->closed;
     }
     return ok;
+}
+
 }

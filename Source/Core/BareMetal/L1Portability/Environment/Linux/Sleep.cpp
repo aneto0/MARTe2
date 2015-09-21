@@ -47,6 +47,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe{
 
 namespace Sleep {
 
@@ -168,6 +169,8 @@ void SemiBusy(float64 totalSleepSec,
 
 int32 GetDateSeconds() {
     return static_cast<int32>(time(static_cast<time_t *>(NULL)));
+}
+
 }
 
 }

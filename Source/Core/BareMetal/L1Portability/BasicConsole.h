@@ -39,6 +39,8 @@
 #include "StringHelper.h"
 #include "TimeoutType.h"
 
+namespace MARTe{
+
 /**
  * FlagsType determining the console operating modes.\n
  * These are usually set when the console is constructed.
@@ -436,4 +438,5 @@ ErrorManagement::ErrorType BasicConsole::PagedWrite(const char8 * const buffer, 
     return err;
 }
 
+}
 #endif /*BASICCONSOLE_H_ */

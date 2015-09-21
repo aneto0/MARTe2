@@ -35,7 +35,7 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe{
 
 /**
  * @brief To implement a look-up table between characters in the

@@ -41,7 +41,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace HeapManager {
+
+namespace MARTe{
 
 StandardHeap::StandardHeap() {
     /* initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */

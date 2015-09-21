@@ -37,6 +37,7 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
 
 namespace Processor {
 /*lint -e{9141} constant that can be reused by other classes*/
@@ -47,6 +48,7 @@ uint32 Available() {
     return static_cast<uint32>(sysconf(_SC_NPROCESSORS_ONLN));
 }
 
+}
 }
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

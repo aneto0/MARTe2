@@ -36,6 +36,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+
 /**
  * @brief Template version of the shared pointer implementation (see Reference).
  */
@@ -319,5 +322,7 @@ bool ReferenceT<T>::Initialise(const StructuredData &data,
 template<typename T>
 ReferenceT<T>* ReferenceT<T>::operator&() {
     return this;
+}
+
 }
 #endif /* REFERENCET_H_ */

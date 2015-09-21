@@ -39,6 +39,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+
 Reference::Reference() {
     objectPointer = NULL_PTR(Object*);
 }
@@ -155,4 +159,6 @@ Object *Reference::CreateByName(const char8 * const className, HeapManager::Heap
     }
 
     return obj;
+}
+
 }

@@ -44,6 +44,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+
 ClassRegistryDatabase &ClassRegistryDatabase::Instance() {
     static ClassRegistryDatabase instance;
     return instance;
@@ -169,4 +173,6 @@ uint32 ClassRegistryDatabase::Size() const {
 /*lint -e{929} the current implementation of the LinkedListable requires downcasting.*/
 const ClassRegistryItem *ClassRegistryDatabase::ElementAt(const uint32 &idx) {
     return dynamic_cast<ClassRegistryItem *>(classDatabase.ListPeek(idx));
+}
+
 }

@@ -36,14 +36,17 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
-static const uint32 winSleepFreq = 1000;
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 namespace Sleep {
+
+static const uint32 winSleepFreq = 1000;
 
 void AtLeast(float64 sec) {
     int32 ticks = (int32) (winSleepFreq * sec + 0.9999);
@@ -83,6 +86,8 @@ void SemiBusy(float64 totalSleepSec,
 
 int32 GetDateSeconds() {
     return (int32) time((time_t *) NULL);
+}
+
 }
 
 }

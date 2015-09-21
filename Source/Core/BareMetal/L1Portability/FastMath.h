@@ -38,6 +38,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief Performs mathematical operations using fast processor instructions.
  */
@@ -133,6 +135,8 @@ inline float32 Sin(const float32 angle);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+}
 
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,FastMathA.h)
 

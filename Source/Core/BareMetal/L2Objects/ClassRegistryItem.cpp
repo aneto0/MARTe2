@@ -33,6 +33,8 @@
 
 #include "FastPollingMutexSem.h"
 
+namespace MARTe {
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -111,4 +113,6 @@ void ClassRegistryItem::SetLoadableLibrary(const LoadableLibrary * const loadLib
 
 const ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
     return objectBuildFn;
+}
+
 }

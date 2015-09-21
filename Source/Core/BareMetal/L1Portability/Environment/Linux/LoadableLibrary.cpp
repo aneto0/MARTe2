@@ -39,6 +39,9 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
+
 HANDLE LoadableLibrary::GetModule() {
     return module;
 }
@@ -92,4 +95,6 @@ void *LoadableLibrary::Function(char8 const * const name) {
     }
 
     return ret;
+}
+
 }

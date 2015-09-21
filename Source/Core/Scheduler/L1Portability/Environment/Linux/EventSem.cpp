@@ -40,6 +40,8 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 /*lint -e{9109} forward declaration in EventSem.h is required to define the class*/
 struct EventSemProperties {
 
@@ -326,4 +328,5 @@ bool EventSem::IsClosed() const {
         ok = handle->closed;
     }
     return ok;
+}
 }

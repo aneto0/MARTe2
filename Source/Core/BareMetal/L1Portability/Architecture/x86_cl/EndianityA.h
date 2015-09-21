@@ -42,6 +42,8 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 namespace Endianity {
 
 inline void Swap32(volatile void * x) {
@@ -491,4 +493,5 @@ inline void MemCopyToLittleEndian(int16 *dest,
 
 }
 
+}
 #endif /* ENDIANITYA_H_ */

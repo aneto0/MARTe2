@@ -41,7 +41,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe{
 
 /**
  * Notations used for float types representation.

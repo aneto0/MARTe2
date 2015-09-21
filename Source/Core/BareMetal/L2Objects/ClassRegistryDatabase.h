@@ -37,6 +37,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
 /**
  * @brief Database of framework base classes.
  * @details Most of the framework user classes inherit from Object. As a
@@ -117,6 +120,7 @@ private:
     LinkedListHolder classDatabase;
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

@@ -39,6 +39,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief Implementation of functions to manipulate strings.
  * @details These methods allows the most used and basic functions to manipulate char8 *strings and
@@ -295,6 +297,7 @@ bool ConcatenateN(const char8* const string1,
 
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

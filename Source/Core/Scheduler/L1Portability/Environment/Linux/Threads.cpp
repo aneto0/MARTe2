@@ -39,6 +39,8 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 namespace Threads {
 
 /**
@@ -94,13 +96,11 @@ static ThreadInformation * threadInitialisationInterfaceConstructor(const Thread
     return new ThreadInformation(userThreadFunction, userData, threadName);
 }
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace Threads {
 
 /*lint -e{715} Not implemented in Linux.*/
 ThreadStateType GetState(const ThreadIdentifier &threadId) {
@@ -383,4 +383,5 @@ ThreadIdentifier FindByName(const char8 * const name) {
     return ThreadsDatabase::Find(name);
 }
 
+}
 }

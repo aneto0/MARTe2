@@ -37,7 +37,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace HeapManager {
+namespace MARTe{
 
 /**
  * @brief Heap interface and standard implementation.

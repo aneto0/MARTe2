@@ -39,6 +39,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief This module implements useful functions for high resolution timing using the cpu clock.
  *
@@ -92,6 +94,7 @@ namespace HighResolutionTimer {
     inline bool GetTimeStamp(TimeValues &date);
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

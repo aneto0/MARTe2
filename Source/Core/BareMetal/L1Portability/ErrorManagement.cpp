@@ -39,6 +39,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 namespace ErrorManagement {
 
 
@@ -142,6 +144,8 @@ void SetErrorProcessFunction(const ErrorProcessFunctionType userFun) {
     else{
         errorMessageProcessFunction = &NullErrorProcessFunction;
     }
+}
+
 }
 
 }

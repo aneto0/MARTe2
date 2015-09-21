@@ -39,6 +39,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
 /**
  * @brief Shared pointer implementation.
  * @details The Reference class is a smart pointer implementation where the shared
@@ -178,6 +179,7 @@ private:
 
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

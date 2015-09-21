@@ -44,6 +44,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+
 /*lint -e{9141} constant that can be reused by other classes*/
 HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
@@ -134,4 +137,6 @@ int64 HighResolutionTimerCalibrator::GetFrequency() const {
 
 float64 HighResolutionTimerCalibrator::GetPeriod() const {
     return period;
+}
+
 }

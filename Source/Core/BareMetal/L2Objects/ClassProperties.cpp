@@ -38,6 +38,9 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
+
 ClassProperties::ClassProperties() {
     className = static_cast<const char8 *>(NULL);
     classVersion = static_cast<const char8 *>(NULL);
@@ -57,3 +60,4 @@ const char8* ClassProperties::GetVersion() const {
     return classVersion;
 }
 
+}

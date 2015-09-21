@@ -40,6 +40,9 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
+
 HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
@@ -119,4 +122,6 @@ int64 HighResolutionTimerCalibrator::GetFrequency() const {
 
 float64 HighResolutionTimerCalibrator::GetPeriod() const {
     return period;
+}
+
 }

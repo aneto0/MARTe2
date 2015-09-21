@@ -28,6 +28,8 @@
 
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,GeneralDefinitions.h)
 
+namespace MARTe{
+
 #ifndef __DECORATED_FUNCTION_NAME__
 #define __DECORATED_FUNCTION_NAME__ __func__
 #endif
@@ -80,6 +82,7 @@ struct TimeValues {
     uint32 year;
 };
 
+}
 
 #endif /* GENERALDEFINITIONS_H_ */
 

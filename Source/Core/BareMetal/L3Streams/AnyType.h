@@ -42,7 +42,8 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe {
+
 
 /**
  * @brief AnyType class.

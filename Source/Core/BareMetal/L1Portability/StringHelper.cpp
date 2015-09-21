@@ -41,6 +41,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 namespace StringHelper {
 
 /*lint -e{925} cast pointer to pointer required */
@@ -60,6 +62,8 @@ char8 *StringDup(const char8 * const s) {
     }
 
     return duplicate;
+}
+
 }
 
 }

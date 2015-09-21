@@ -44,6 +44,8 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 namespace Processor{
 
 /**
@@ -112,4 +114,5 @@ const char8 *VendorId() {
 
 }
 
+}
 #endif /* PROCESSORA_H_ */

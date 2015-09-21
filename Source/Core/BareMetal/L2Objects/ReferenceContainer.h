@@ -44,6 +44,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+
 /**
  * @brief Container of references.
  * @details One of the basilar classes of the framework. Linear container of references which may also
@@ -144,6 +147,7 @@ private:
     TimeoutType muxTimeout;
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

@@ -39,6 +39,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 ReferenceContainerFilter::ReferenceContainerFilter() {
     occurrence = 0;
     originallySetOccurrence = 0;
@@ -123,4 +125,6 @@ void ReferenceContainerFilter::SetMode(const uint32& modeToSet) {
     if (IsStorePath()) {
         mode |= ReferenceContainerFilterMode::RECURSIVE;
     }
+}
+
 }

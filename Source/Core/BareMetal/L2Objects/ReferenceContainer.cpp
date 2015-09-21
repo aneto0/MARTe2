@@ -40,6 +40,10 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+
+
 ReferenceContainer::ReferenceContainer() :
         Object() {
     mux.Create();
@@ -202,4 +206,8 @@ uint32 ReferenceContainer::Size() {
     return size;
 }
 
+
 CLASS_REGISTER(ReferenceContainer, "1.0")
+
+}
+

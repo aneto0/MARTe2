@@ -31,6 +31,8 @@
 
 #include <Winbase.h>
 
+namespace MARTe{
+
 class LoadableLibrary {
 
 public:
@@ -86,4 +88,5 @@ public:
 
 };
 
+}
 #endif

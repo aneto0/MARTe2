@@ -42,6 +42,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+
+
 extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 namespace HighResolutionTimer {
@@ -68,4 +72,5 @@ inline bool GetTimeStamp(TimeValues &date) {
 
 }
 
+}
 #endif /* HIGHRESOLUTIONTIMER_ENV_H_ */

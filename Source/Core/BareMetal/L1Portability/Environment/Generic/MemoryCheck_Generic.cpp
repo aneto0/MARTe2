@@ -48,6 +48,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 namespace MemoryCheck {
 
 bool Check(const void * const address,
@@ -57,4 +59,5 @@ bool Check(const void * const address,
     return address != NULL;
 }
 
+}
 }

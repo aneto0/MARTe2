@@ -37,6 +37,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe{
 
 /** 
  * @brief This functions allows to load dinamically a library and its functions.
@@ -125,4 +126,5 @@ void *LoadableLibrary::operator[](char8 const * const name) {
     return Function(name);
 }
 
+}
 #endif
