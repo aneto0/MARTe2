@@ -110,7 +110,7 @@ private:
     ClassRegistryDatabase();
 
     /**
-     * The database is implemented as a LinkedListHolder.
+     * The database is implemented as a StaticList.
      * The destructor of the list will clean its elements.
      */
     Lists::StaticList<ClassRegistryItem *> classDatabase;
