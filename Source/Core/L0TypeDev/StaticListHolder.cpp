@@ -47,23 +47,33 @@ namespace Lists {
 
 StaticListHolder::StaticListHolder(const uint32 listElementSize,
                                    const uint32 listAllocationGranularity) {
+    //Initializes the element size
     listElementSize_ = listElementSize;
+
+    //Initializes the allocation granularity
     listAllocationGranularity_ = listAllocationGranularity;
 
-    uint32 granuleSize = listAllocationGranularity_ * listElementSize_;
+    //Calculates and initializes the maximum capacity
+    {
+        uint32 granuleSize = listAllocationGranularity_ * listElementSize_;
+        uint32 maxValue = TypeDefinition::TypeCharacteristics::MaxValue<uint32>();
+        maxListCapacity_ = maxValue / granuleSize;
+        maxListCapacity_ *= granuleSize;
+        maxListCapacity_ /= listElementSize_;
+    }
 
-    uint32 maxValue = TypeDefinition::TypeCharacteristics::MaxValue<uint32>();
-
-    maxListCapacity_ = maxValue / granuleSize;
-    maxListCapacity_ *= granuleSize;
+    //Initializes the pointer to the first byte of the array of elements
     allocatedMemory_ = NULL_PTR(uint8 *);
-    listCapacity_ = 0U;
-    listSize_ = 0U;
 
+    //Initializes the actual capacity
+    listCapacity_ = 0U;
+
+    //Initializes the actual size
+    listSize_ = 0U;
 }
 
 StaticListHolder::~StaticListHolder() {
-    //TODO Free allocatedMemory_
+    HeapManager::Free(allocatedMemory_);
 }
 
 uint32 StaticListHolder::GetElementSize(void) const {
@@ -72,6 +82,9 @@ uint32 StaticListHolder::GetElementSize(void) const {
 
 uint32 StaticListHolder::GetAllocationGranularity(void) const {
     return listAllocationGranularity_;
+}
+
+uint32 StaticListHolder::GetMaxCapacity(void) const {
 }
 
 uint32 StaticListHolder::GetSize(void) const {
@@ -85,18 +98,25 @@ uint32 StaticListHolder::GetCapacity(void) const {
 bool StaticListHolder::Add(const void *copyFrom) {
     bool ret = true;
 
+    //Checks the precondition
+    if (copyFrom == NULL_PTR(void *)) {
+        ret = true;
+    }
+
     // Increases capacity if after adding an element, the list is going to fall short of space.
-    if ((listSize_ + 1u) >= listCapacity_) {
-        //Checks if new capacity will be on range and calls IncreaseCapacity or signals error otherwise.
-        if ((listCapacity_ + listAllocationGranularity_) <= maxListCapacity_) {
-            ret = IncreaseCapacity();
-        }
-        else {
-            ret = false;
+    if (ret) {
+        if ((listSize_ + 1u) > listCapacity_) {
+            //Checks if new capacity will be on range and calls IncreaseCapacity or signals error otherwise.
+            if ((listCapacity_ + listAllocationGranularity_) <= maxListCapacity_) {
+                ret = IncreaseCapacity();
+            }
+            else {
+                ret = false;
+            }
         }
     }
 
-    //Copies the element to the end of the list
+    //Copies the element to the back of the list
     if (ret) {
         uint8* pointer = (allocatedMemory_ + (listElementSize_ * listSize_));
         ret = MemoryOperationsHelper::Copy(pointer, copyFrom, listElementSize_);
@@ -112,27 +132,30 @@ bool StaticListHolder::Insert(const uint32 position,
                               const void *copyFrom) {
     bool ret = true;
 
-    if (position > listSize_) {
+    //Checks the precondition
+    if (position > listSize_ || copyFrom == NULL_PTR(void *)) {
         ret = false;
     }
 
     // Increases capacity if after adding an element, the list is going to fall short of space.
-    if ((listSize_ + 1u) >= listCapacity_) {
-        //Checks if new capacity will be on range and calls IncreaseCapacity or signals error otherwise.
-        if ((listCapacity_ + listAllocationGranularity_) <= maxListCapacity_) {
-            ret = IncreaseCapacity();
-        }
-        else {
-            ret = false;
+    if (ret) {
+        if ((listSize_ + 1u) > listCapacity_) {
+            //Checks if new capacity will be on range and calls IncreaseCapacity or signals error otherwise.
+            if ((listCapacity_ + listAllocationGranularity_) <= maxListCapacity_) {
+                ret = IncreaseCapacity();
+            }
+            else {
+                ret = false;
+            }
         }
     }
 
+    //Copies the element to the requested position of the list and moves previous elements to right if required
     if (ret) {
-        uint8* pointer = (allocatedMemory_ + listElementSize_ * position);
+        uint8* pointer = (allocatedMemory_ + (listElementSize_ * position));
 
-        // note that listSize was increased earlier!
-        if (position != (listSize_)) {
-            // move all data in - note that listSize is already incremented by 1
+        if (position < (listSize_)) {
+            //Expands the array moving the elements to their right position
             ret = MemoryOperationsHelper::Move(pointer + listElementSize_, pointer, listElementSize_ * ((listSize_) - position));
         }
 
@@ -152,13 +175,20 @@ bool StaticListHolder::Insert(const uint32 position,
 bool StaticListHolder::Peek(const uint32 position,
                             void *copyTo) const {
     bool ret = true;
-    if (position <= listSize_) {
-        void * copyFrom = static_cast<void *>(allocatedMemory_ + listElementSize_ * position);
-        ret = MemoryOperationsHelper::Copy(copyTo, copyFrom, listElementSize_);
-    }
-    else {
+
+    //Checks the precondition
+    if (position >= listSize_ || copyTo == NULL_PTR(void *)) {
         ret = false;
     }
+
+    //Retrieves the element from the requested position of the list
+    if (ret) {
+        if (position <= listSize_) {
+            void * copyFrom = static_cast<void *>(allocatedMemory_ + listElementSize_ * position);
+            ret = MemoryOperationsHelper::Copy(copyTo, copyFrom, listElementSize_);
+        }
+    }
+
     return ret;
 }
 
@@ -166,10 +196,12 @@ bool StaticListHolder::Extract(const uint32 position,
                                void *copyTo) {
     bool ret = true;
 
-    if (position >= listSize_) {
+    //Checks the precondition
+    if (position >= listSize_ || copyTo == NULL_PTR(void *)) {
         ret = false;
     }
 
+    //Peeks and removes the element from the requested position on the list and moves previous elements to left if required
     if (ret) {
         uint8* pointer = (allocatedMemory_ + (listElementSize_ * position));
 
@@ -178,9 +210,8 @@ bool StaticListHolder::Extract(const uint32 position,
         }
 
         if (ret) {
-            // not at the end - therefore must compact
-            if (position != (listSize_ - 1u)) {
-                // move all data in - note that listSize is already incremented by 1
+            if (position < (listSize_ - 1u)) {
+                //Compacts the array moving the elements to their left position
                 ret = MemoryOperationsHelper::Move(pointer, pointer + listElementSize_, listElementSize_ * ((listSize_ - 1U) - position));
             }
             if (ret) {
@@ -194,28 +225,36 @@ bool StaticListHolder::Extract(const uint32 position,
 
 bool StaticListHolder::IncreaseCapacity(void) {
     bool ret = true;
+
+    //Checks the precondition
     if ((listCapacity_ + listAllocationGranularity_) > maxListCapacity_) {
         ret = false;
     }
+
+    //Allocates or reallocates the memory reserved for the array depending on current allocated memory
     if (ret) {
         uint32 tempListAllocatedSize = listCapacity_ + listAllocationGranularity_;
         if (listCapacity_ == 0U) {
+            //The array has not memory reserved, yet, so it allocates memory for it
             allocatedMemory_ = static_cast<uint8 *>(HeapManager::Malloc(tempListAllocatedSize * listElementSize_));
             if (allocatedMemory_ != NULL_PTR(void *)) {
                 listCapacity_ = tempListAllocatedSize;
             }
             else {
+                //Implicit rollback of allocatedMemory_
                 ret = false;
             }
         }
         else { // { listAllocatedSize_ > 0U }
+               //The array has already memory reserved, so it reallocates memory for it
             void *memoryPointer = allocatedMemory_;
             allocatedMemory_ = static_cast<uint8 *>(HeapManager::Realloc(memoryPointer, tempListAllocatedSize * listElementSize_));
             if (allocatedMemory_ != NULL_PTR(void *)) {
                 listCapacity_ = tempListAllocatedSize;
             }
             else {
-                //TODO It is assured that memoryPointer is still pointing to a valid allocated memory?
+                //TODO Is it assured that memoryPointer is still pointing to a valid allocated memory?
+                //Explicit rollback of allocatedMemory_
                 allocatedMemory_ = static_cast<uint8 *>(memoryPointer);
                 ret = false;
             }

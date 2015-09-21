@@ -65,10 +65,10 @@ public:
     bool TestGetSize(void);
 
     /**
-     * @brief
+     * @brief Tests getting the capacity of a list before, during and after adding an element until reaching GetMaxCapacity()
      */
     template<elementType value>
-    bool TestGetCapacityOnNewList(void);
+    bool TestGetCapacity(void);
 
     /**
      * @brief Tests adding an element on an empty list
@@ -77,7 +77,7 @@ public:
     bool TestAddOnEmptyList(void);
 
     /**
-     * @brief Tests adding an element on a list initialised with the elements from demoValues array
+     * @brief Tests adding an element on a list initialized with the elements from demoValues array
      */
     template<elementType addValue>
     bool TestAddOnNonEmptyList(void);
@@ -95,55 +95,55 @@ public:
     bool TestInsertOnEmptyList(void);
 
     /**
-     * @brief Tests inserting an element at the beginning on a list initialised with the elements from demoValues array
+     * @brief Tests inserting an element at the beginning on a list initialized with the elements from demoValues array
      */
     template<elementType insertValueBeginning>
     bool TestInsertOnNonEmptyListAtBeginning(void);
 
     /**
-     * @brief Tests inserting an element at the middle on a list initialised with the elements from demoValues array
+     * @brief Tests inserting an element at the middle on a list initialized with the elements from demoValues array
      */
     template<elementType insertValueMiddle>
     bool TestInsertOnNonEmptyListAtMiddle(void);
 
     /**
-     * @brief Tests inserting an element at the end on a list initialised with the elements from demoValues array
+     * @brief Tests inserting an element at the end on a list initialized with the elements from demoValues array
      */
     template<elementType insertValueEnd>
     bool TestInsertOnNonEmptyListAtEnd(void);
 
     /**
-     * @brief Tests removing the element at the beginning of a list initialised with the elements from demoValues array
+     * @brief Tests removing the element at the beginning of a list initialized with the elements from demoValues array
      */
     bool TestRemoveAtBeginning(void);
 
     /**
-     * @brief Tests removing the element at the middle of a list initialised with the elements from demoValues array
+     * @brief Tests removing the element at the middle of a list initialized with the elements from demoValues array
      */
     bool TestRemoveAtMiddle(void);
 
     /**
-     * @brief Tests removing the element at the end of a list initialised with the elements from demoValues array
+     * @brief Tests removing the element at the end of a list initialized with the elements from demoValues array
      */
     bool TestRemoveAtEnd(void);
 
     /**
-     * @brief Tests extracting the element at the beginning of a list initialised with the elements from demoValues array
+     * @brief Tests extracting the element at the beginning of a list initialized with the elements from demoValues array
      */
     bool TestExtractAtBeginning(void);
 
     /**
-     * @brief Tests extracting the element at the middle of a list initialised with the elements from demoValues array
+     * @brief Tests extracting the element at the middle of a list initialized with the elements from demoValues array
      */
     bool TestExtractAtMiddle(void);
 
     /**
-     * @brief Tests extracting the element at the end of a list initialised with the elements from demoValues array
+     * @brief Tests extracting the element at the end of a list initialized with the elements from demoValues array
      */
     bool TestExtractAtEnd(void);
 
     /**
-     * @brief Tests peeking all the elements of a list initialised with the elements from demoValues array
+     * @brief Tests peeking all the elements of a list initialized with the elements from demoValues array
      */
     bool TestPeek(void);
 };
@@ -167,28 +167,37 @@ StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestDefaultConstructor(void) {
-    StaticList<elementType, listAllocationGranularity> target;
-    return (target.GetElementSize() == sizeof(elementType) && target.GetAllocationGranularity() == 10 && target.GetSize() == 0 && target.GetCapacity() == 0);
+    bool result = false;
+    StaticList<elementType, listAllocationGranularity> targetList;
+    const uint32 MAXINDEX = TypeDefinition::TypeCharacteristics::MaxValue<uint32>();
+    const uint32 MAXCAPACITY = (((MAXINDEX / (targetList.AllocationGranularity() * targetList.ElementSize()))
+            * (targetList.AllocationGranularity() * targetList.ElementSize())) / targetList.ElementSize());
+
+    //Tests if the object has been properly constructed querying its properties:
+    result = (targetList.GetElementSize() == sizeof(elementType) && targetList.GetAllocationGranularity() == 10 &&
+            targetList.MaxCapacity() == MAXCAPACITY && targetList.GetSize() == 0 && targetList.GetCapacity() == 0);
+
+    return result;
 }
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestGetSize(void) {
     bool result = true;
-    StaticList<elementType, listAllocationGranularity> target;
+    StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Tests if size zero after default construction
+    //Tests if size zero after default construction:
     result = result && (target.GetSize() == 0);
 
-    //Tests if size is increased after adding each of the demo values
+    //Tests if size is increased after adding each of the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
-        target.Add(demoValues[i]);
-        result = result && (target.GetSize() == i + 1);
+        targetList.Add(demoValues[i]);
+        result = result && (targetList.GetSize() == i + 1);
     }
 
-    //Tests if size is decreased after removing each of the values
+    //Tests if size is decreased after removing each of the values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
-        target.Remove(target.GetSize() - 1); //Or 0 instead of target.GetSize()-1
-        result = result && (target.GetSize() == (maxDemoValues - (i + 1)));
+        targetList.Remove(targetList.GetSize() - 1); //Or 0 instead of targetList.GetSize()-1
+        result = result && (targetList.GetSize() == (maxDemoValues - (i + 1)));
     }
 
     return result;
@@ -196,7 +205,8 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 template<elementType value>
-bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestGetCapacityOnNewList(void) {
+bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestGetCapacity(void) {
+    //TODO TestGetCapacity is not implemented
     bool result = false;
     return result;
 }
@@ -207,7 +217,7 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = false;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Tests adding a value on the target list
+    //Tests adding a value on the target list:
     {
         elementType peekValue;
         targetList.Add(addValue);
@@ -215,7 +225,7 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
         result = (peekValue == addValue && targetList.GetSize() == 1);
     }
 
-    return (result);
+    return result;
 }
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
@@ -224,12 +234,12 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = false;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Initialises the target list with the demo values
+    //Initializes the target list with the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Add(demoValues[i]);
     }
 
-    //Tests adding a value on the target list
+    //Tests adding a value on the target list:
     {
         elementType peekValue;
         targetList.Add(addValue);
@@ -237,7 +247,7 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
         result = (peekValue == addValue && targetList.GetSize() == maxDemoValues + 1);
     }
 
-    return (result);
+    return result;
 }
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
@@ -254,7 +264,7 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = false;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Tests inserting a value at the only position available after default construction
+    //Tests inserting a value at the only position available after default construction:
     {
         elementType peekValue;
         targetList.Insert(0, insertValue);
@@ -271,12 +281,12 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Initialises the target list with the demo values
+    //Initializes the target list with the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Add(demoValues[i]);
     }
 
-    //Tests inserting a value at the beginning
+    //Tests inserting a value at the beginning:
     {
         const uint32 indexValueBeginning = 0;
         elementType peekValue;
@@ -294,7 +304,7 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Initialises the target list with the demo values
+    //Initializes the target list with the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Add(demoValues[i]);
     }
@@ -317,7 +327,7 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Initialises the target list with the demo values
+    //Initializes the target list with the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Add(demoValues[i]);
     }
@@ -339,12 +349,12 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Initialises the target list with the demo values
+    //Initializes the target list with the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Add(demoValues[i]);
     }
 
-    //Tests extracting a value at the beginning
+    //Tests extracting a value at the beginning:
     {
         const uint32 indexValueBeginning = 0;
         targetList.Remove(indexValueBeginning);
@@ -364,12 +374,12 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Initialises the target list with the demo values
+    //Initializes the target list with the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Add(demoValues[i]);
     }
 
-    //Tests extracting a value at the middle
+    //Tests extracting a value at the middle:
     {
         const uint32 indexValueMiddle = maxDemoValues / 2;
         targetList.Remove(indexValueMiddle);
@@ -394,12 +404,12 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Initialises the target list with the demo values
+    //Initializes the target list with the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Add(demoValues[i]);
     }
 
-    //Tests extracting a value at the end
+    //Tests extracting a value at the end:
     {
         const uint32 indexValueEnd = maxDemoValues - 1;
         targetList.Remove(indexValueEnd);
@@ -419,12 +429,12 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Initialises the target list with the demo values
+    //Initializes the target list with the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Add(demoValues[i]);
     }
 
-    //Tests extracting a value at the beginning
+    //Tests extracting a value at the beginning:
     {
         const uint32 indexValueBeginning = 0;
         elementType extractValue;
@@ -445,12 +455,12 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Initialises the target list with the demo values
+    //Initializes the target list with the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Add(demoValues[i]);
     }
 
-    //Tests extracting a value at the middle
+    //Tests extracting a value at the middle:
     {
         const uint32 indexValueMiddle = maxDemoValues / 2;
         elementType extractValue;
@@ -476,12 +486,12 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Initialises the target list with the demo values
+    //Initializes the target list with the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Add(demoValues[i]);
     }
 
-    //Tests extracting a value at the end
+    //Tests extracting a value at the end:
     {
         const uint32 indexValueEnd = maxDemoValues - 1;
         elementType extractValue;
@@ -502,12 +512,12 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Initialises the target list with the demo values
+    //Initializes the target list with the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Add(demoValues[i]);
     }
 
-    //Tests peeking all the demo values from the target list
+    //Tests peeking all the demo values from the target list:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         elementType peekValue;
         targetList.Peek(i, peekValue);
