@@ -222,14 +222,7 @@
   * Rule 14-7-1
   * Justification: Not applicable to a framework.
   */
--esym(1795, ReferenceT*)
 -esym(1795, MARTe::*)
--esym(1795, MARTe::AnyType::*)
--esym(1795, MARTe::BitBoolean*)
--esym(1795, MARTe::BitRange*)
--esym(1795, MARTe::FractionalInteger*)
--esym(1795, MARTe::TypeCharacteristics*)
-
 
 /*
  * Rule flexelint 1531. 
@@ -259,13 +252,10 @@
 
  /*
   * Rule 3-1-1
-  * Justification: Required for template implementation.
+  * Justification: Required for template implementation. No code is actually being generated and the header
+  * files can be included in multiple unit files.
   */
--esym(9107, ReferenceT*)
--esym(9107, MARTe::BitBoolean*)
--esym(9107, MARTe::BitRange*)
--esym(9107, MARTe::TypeCharacteristics*)
--esym(9107, MARTe::FractionalInteger*)
+-esym(9107, MARTe::ReferenceT*)
 
 /*
  * Rule flexelint 1793
