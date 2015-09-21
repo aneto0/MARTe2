@@ -56,10 +56,10 @@ inline float64 Period() {
     return calibratedHighResolutionTimer.GetPeriod();
 }
 
-inline float64 TicksToTime(int64 tStop,
-                           int64 tStart) {
+inline float64 TicksToTime(const int64 tStop,
+                           const int64 tStart) {
     int64 dT = tStop - tStart;
-    return dT * Period();
+    return static_cast<float64>(dT) * Period();
 }
 
 inline bool GetTimeStamp(TimeValues &date) {

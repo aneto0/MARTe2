@@ -47,6 +47,7 @@
  * for the Counter functions, while the Frequency and Period functions are delegated to HighResolutionTimerCalibratorOs.h
  * which returns the current cpu frequency.
  */
+/*lint -e{762} the functions are declared in the public header file and defined in the header file of the specific architecture.*/
 namespace HighResolutionTimer {
 
     /**
