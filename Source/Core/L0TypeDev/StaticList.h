@@ -41,47 +41,85 @@
 
 namespace Lists {
 
+/**
+ * @brief This template class is a ADT for an unbounded list which allows
+ * adding, inserting, removing and peeking elements at arbitrary positions
+ * in a range from 0 onwards.
+ *
+ * @details This class is the template version of the class StaticListHolder,
+ * parameterising the elementType and listAllocationGranularity. Thus, the
+ * instantiation of the template class determines automatically the size of
+ * the element type and sets the allocation granularity for all the instances.
+ *
+ * @see Lists::StaticListHolder
+ */
 template<typename elementType, uint32 listAllocationGranularity = 10>
 class StaticList {
 public:
 
+    /**
+     * @brief Default constructor
+     */
     StaticList();
 
     /**
-     * @brief Gets the element size
+     * @brief StaticListHolder::GetElementSize()
      */
     uint32 GetElementSize(void) const;
 
-    /*
-     * @brief Gets the allocation granularity
+    /**
+     * @brief StaticListHolder::GetAllocationGranularity()
      */
     uint32 GetAllocationGranularity(void) const;
 
     /**
-     * @brief Gets the size of the list
+     * @brief StaticListHolder::GetSize()
      */
     uint32 GetSize(void) const;
 
     /**
-     * @brief Gets the allocated size of the list
+     * @brief StaticListHolder::GetCapacity()
      */
     uint32 GetCapacity(void) const;
 
+    /**
+     * @brief StaticListHolder::GetMaxCapacity()
+     */
+    uint32 GetMaxCapacity(void) const;
+
+    /**
+     * @brief StaticListHolder::Peek()
+     */
     bool Peek(const uint32 position,
               elementType &value) const;
 
+    /**
+     * @brief StaticListHolder::Add()
+     */
     bool Add(const elementType &value);
 
+    /**
+     * @brief StaticListHolder::Insert()
+     */
     bool Insert(const uint32 position,
              const elementType &value);
 
+    /**
+     * @brief StaticListHolder::Remove()
+     */
     bool Remove(const uint32 position);
 
+    /**
+     * @brief StaticListHolder::Extract()
+     */
     bool Extract(const uint32 position,
                  elementType &value);
 
 private:
 
+    /**
+     * @brief The instance of StaticListHolder to which the implementation is delegated.
+     */
     StaticListHolder slh;
 
 };
@@ -96,17 +134,17 @@ namespace Lists {
 
 template<typename elementType, uint32 listAllocationGranularity>
 StaticList<elementType, listAllocationGranularity>::StaticList() :
-        slh(sizeof(elementType), listAllocationGranularity) {
+    slh(sizeof(elementType), listAllocationGranularity) {
 }
 
 template<typename elementType, uint32 listAllocationGranularity>
 uint32 StaticList<elementType, listAllocationGranularity>::GetElementSize(void) const {
-    return sizeof(elementType);
+    return slh.GetElementSize(); /* sizeof(elementType); */
 }
 
 template<typename elementType, uint32 listAllocationGranularity>
 uint32 StaticList<elementType, listAllocationGranularity>::GetAllocationGranularity(void) const {
-    return listAllocationGranularity;
+    return slh.GetAllocationGranularity(); /* listAllocationGranularity; */
 }
 
 template<typename elementType, uint32 listAllocationGranularity>
@@ -117,6 +155,11 @@ uint32 StaticList<elementType, listAllocationGranularity>::GetSize(void) const {
 template<typename elementType, uint32 listAllocationGranularity>
 uint32 StaticList<elementType, listAllocationGranularity>::GetCapacity(void) const {
     return slh.GetCapacity();
+}
+
+template<typename elementType, uint32 listAllocationGranularity>
+uint32 StaticList<elementType, listAllocationGranularity>::GetMaxCapacity(void) const {
+    return slh.GetMaxCapacity();
 }
 
 template<typename elementType, uint32 listAllocationGranularity>
@@ -138,7 +181,7 @@ bool StaticList<elementType, listAllocationGranularity>::Insert(const uint32 pos
 
 template<typename elementType, uint32 listAllocationGranularity>
 bool StaticList<elementType, listAllocationGranularity>::Remove(const uint32 position) {
-    return slh.Extract(position, NULL_PTR(void *));
+    return slh.Remove(position);
 }
 
 template<typename elementType, uint32 listAllocationGranularity>

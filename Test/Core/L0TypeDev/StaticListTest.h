@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StaticList.h"
+#include "TypeCharacteristicsTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -60,14 +61,18 @@ public:
     bool TestDefaultConstructor(void);
 
     /**
+     * @brief Tests getting the element size of a list before, during and after adding/removing elements from demoValues array
+     */
+    bool TestConstantness(void);
+
+    /**
      * @brief Tests getting the size of a list before, during and after adding/removing elements from demoValues array
      */
     bool TestGetSize(void);
 
     /**
-     * @brief Tests getting the capacity of a list before, during and after adding an element until reaching GetMaxCapacity()
+     * @brief Tests getting the capacity of a list before, during and after adding elements from demoValues array
      */
-    template<elementType value>
     bool TestGetCapacity(void);
 
     /**
@@ -167,15 +172,49 @@ StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestDefaultConstructor(void) {
+    const uint32 MAXINDEX = TypeDefinition::TypeCharacteristics::MaxValue<uint32>();
+    const uint32 MAXCAPACITY = (((MAXINDEX / (listAllocationGranularity * sizeof(elementType)))
+            * (listAllocationGranularity * sizeof(elementType))) / sizeof(elementType));
+
     bool result = false;
     StaticList<elementType, listAllocationGranularity> targetList;
-    const uint32 MAXINDEX = TypeDefinition::TypeCharacteristics::MaxValue<uint32>();
-    const uint32 MAXCAPACITY = (((MAXINDEX / (targetList.AllocationGranularity() * targetList.ElementSize()))
-            * (targetList.AllocationGranularity() * targetList.ElementSize())) / targetList.ElementSize());
 
     //Tests if the object has been properly constructed querying its properties:
-    result = (targetList.GetElementSize() == sizeof(elementType) && targetList.GetAllocationGranularity() == 10 &&
-            targetList.MaxCapacity() == MAXCAPACITY && targetList.GetSize() == 0 && targetList.GetCapacity() == 0);
+    result = (targetList.GetElementSize() == sizeof(elementType) && targetList.GetAllocationGranularity() == 10 && targetList.GetMaxCapacity() == MAXCAPACITY
+            && targetList.GetSize() == 0 && targetList.GetCapacity() == 0);
+
+    return result;
+}
+
+template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
+bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestConstantness(void) {
+    const uint32 MAXINDEX = TypeDefinition::TypeCharacteristics::MaxValue<uint32>();
+    const uint32 MAXCAPACITY = (((MAXINDEX / (listAllocationGranularity * sizeof(elementType)))
+            * (listAllocationGranularity * sizeof(elementType))) / sizeof(elementType));
+
+    bool result = true;
+    StaticList<elementType, listAllocationGranularity> targetList;
+
+    //Tests constants after default construction:
+    result = result && (targetList.GetElementSize() == sizeof(elementType));
+    result = result && (targetList.GetAllocationGranularity() == listAllocationGranularity);
+    result = result && (targetList.GetMaxCapacity() == MAXCAPACITY);
+
+    //Tests constants after adding each of the demo values:
+    for (uint32 i = 0; i < maxDemoValues; i++) {
+        targetList.Add(demoValues[i]);
+        result = result && (targetList.GetElementSize() == sizeof(elementType));
+        result = result && (targetList.GetAllocationGranularity() == listAllocationGranularity);
+        result = result && (targetList.GetMaxCapacity() == MAXCAPACITY);
+    }
+
+    //Tests constants after removing each of the values:
+    for (uint32 i = 0; i < maxDemoValues; i++) {
+        targetList.Remove(targetList.GetSize() - 1); //Or 0 instead of targetList.GetSize()-1
+        result = result && (targetList.GetElementSize() == sizeof(elementType));
+        result = result && (targetList.GetAllocationGranularity() == listAllocationGranularity);
+        result = result && (targetList.GetMaxCapacity() == MAXCAPACITY);
+    }
 
     return result;
 }
@@ -185,8 +224,8 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
 
-    //Tests if size zero after default construction:
-    result = result && (target.GetSize() == 0);
+    //Tests if size is zero after default construction:
+    result = result && (targetList.GetSize() == 0);
 
     //Tests if size is increased after adding each of the demo values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
@@ -194,20 +233,44 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
         result = result && (targetList.GetSize() == i + 1);
     }
 
+    //Tests if size is max after adding all demo values:
+    result = result && (targetList.GetSize() == maxDemoValues);
+
     //Tests if size is decreased after removing each of the values:
     for (uint32 i = 0; i < maxDemoValues; i++) {
         targetList.Remove(targetList.GetSize() - 1); //Or 0 instead of targetList.GetSize()-1
         result = result && (targetList.GetSize() == (maxDemoValues - (i + 1)));
     }
 
+    //Tests if size is zero after removing adding all demo values:
+    result = result && (targetList.GetSize() == 0);
+
     return result;
 }
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
-template<elementType value>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestGetCapacity(void) {
-    //TODO TestGetCapacity is not implemented
-    bool result = false;
+    bool result = true;
+    StaticList<elementType, listAllocationGranularity> targetList;
+
+    //Tests if capacity is zero after default construction:
+    result = result && (targetList.GetCapacity() == 0);
+
+    //Tests if capacity is increased after adding groups of demo values:
+    {
+        uint32 capacity = 0;
+        for (uint32 i = 0; i < maxDemoValues; i++) {
+            targetList.Add(demoValues[i]);
+            if (i % listAllocationGranularity == 0) {
+                capacity = capacity + listAllocationGranularity;
+            }
+            result = result && (targetList.GetCapacity() == capacity);
+        }
+    }
+
+    //Tests if capacity is ok after adding all demo values:
+    result = result && (targetList.GetCapacity() == listAllocationGranularity * ((maxDemoValues / listAllocationGranularity) + 1));
+
     return result;
 }
 
@@ -253,8 +316,19 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 template<elementType value>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestAddOnFullList(void) {
-    bool result = false;
-    StaticList<elementType, listAllocationGranularity> target;
+    bool result = true;
+    StaticList<elementType, listAllocationGranularity> targetList;
+
+    //Tests adding elements until exhausting capacity:
+    {
+        bool ret = true;
+        while (ret == true) {
+            ret = targetList.Add(value);
+        }
+    }
+
+    result = (targetList.GetCapacity() == targetList.GetMaxCapacity());
+
     return result;
 }
 

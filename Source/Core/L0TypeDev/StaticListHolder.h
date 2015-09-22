@@ -181,7 +181,7 @@ public:
      * @return false if precondition is broken or memory allocation fails
      * @warning *copyFrom must be a valid allocated memory of size GetElementSize()
      */
-    bool Add(const void *copyFrom);
+    bool Add(const void * const copyFrom);
 
     /**
      * @brief Inserts an element at a given position of the list
@@ -201,7 +201,7 @@ public:
      * @warning *copyFrom must be valid allocated memory of size GetElementSize()
      */
     bool Insert(const uint32 position,
-             const void *copyFrom);
+             const void * const copyFrom);
 
     /**
      * @brief Peeks an element from a given position of the list
@@ -220,7 +220,8 @@ public:
      * O(1)
      */
     bool Peek(const uint32 position,
-              void *copyTo) const;
+              void * const copyTo) const;
+
     /**
      * @brief Extracts an element from a given position of the list (i.e. peeks and deletes)
      * @param[in] position The index of the element to remove
@@ -248,7 +249,7 @@ public:
      * @return false if precondition is broken or memory allocation fails
      */
     bool Extract(const uint32 position,
-                 void *copyTo);
+                 void * const copyTo);
 
 private:
 
@@ -281,14 +282,18 @@ private:
     uint8* allocatedMemory_;
 
     /**
+     * Stores the ListCapacity
+     */
+    uint32 listCapacity_;
+
+    /**
      * Stores the Size
      */
     uint32 listSize_;
 
-    /**
-     * Stores the ListCapacity
-     */
-    uint32 listCapacity_;
+    /*lint -e{1712} This class does not have a default constructor because
+     * the element type size must defined on construction and remain constant
+     * during object's lifetime*/
 };
 
 }

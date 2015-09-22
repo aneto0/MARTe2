@@ -46,34 +46,38 @@
 namespace Lists {
 
 StaticListHolder::StaticListHolder(const uint32 listElementSize,
-                                   const uint32 listAllocationGranularity) {
-    //Initializes the element size
-    listElementSize_ = listElementSize;
+                                   const uint32 listAllocationGranularity) :
+        //Initializes the element size
+        listElementSize_(listElementSize),
 
-    //Initializes the allocation granularity
-    listAllocationGranularity_ = listAllocationGranularity;
+        //Initializes the allocation granularity
+        listAllocationGranularity_(listAllocationGranularity),
 
-    //Calculates and initializes the maximum capacity
-    {
-        uint32 granuleSize = listAllocationGranularity_ * listElementSize_;
-        uint32 maxValue = TypeDefinition::TypeCharacteristics::MaxValue<uint32>();
-        maxListCapacity_ = maxValue / granuleSize;
-        maxListCapacity_ *= granuleSize;
-        maxListCapacity_ /= listElementSize_;
-    }
+        //Calculates and initializes the maximum capacity
+        maxListCapacity_(
+                ((TypeDefinition::TypeCharacteristics::MaxValue<uint32>() / (listAllocationGranularity_ * listElementSize_))
+                        * (listAllocationGranularity_ * listElementSize_)) / listElementSize_),
 
-    //Initializes the pointer to the first byte of the array of elements
-    allocatedMemory_ = NULL_PTR(uint8 *);
+        //Initializes the pointer to the first byte of the array of elements
+        allocatedMemory_(NULL_PTR(uint8 *)),
 
-    //Initializes the actual capacity
-    listCapacity_ = 0U;
+        //Initializes the actual capacity
+        listCapacity_(0U),
 
-    //Initializes the actual size
-    listSize_ = 0U;
+        //Initializes the actual size
+        listSize_(0U) {
 }
 
 StaticListHolder::~StaticListHolder() {
-    HeapManager::Free(allocatedMemory_);
+    if (allocatedMemory_ != NULL_PTR(uint8 *)) {
+        void * pointer = static_cast<void *>(allocatedMemory_);
+        /*lint -e{1551} HeapManager::Free is expected to be exception free*/
+        /*lint -e{534} It is not necessary to check for error/result on
+         * HeapManager::Free result, because allocatedMemory_ was initialized
+         * by IncreaseCapacity*/
+        HeapManager::Free(pointer);
+    }
+    /*lint -e{1740} allocatedMemory_ was zero or it is freed and zeroed by HeapManager::Free*/
 }
 
 uint32 StaticListHolder::GetElementSize(void) const {
@@ -85,6 +89,7 @@ uint32 StaticListHolder::GetAllocationGranularity(void) const {
 }
 
 uint32 StaticListHolder::GetMaxCapacity(void) const {
+    return maxListCapacity_;
 }
 
 uint32 StaticListHolder::GetSize(void) const {
@@ -95,12 +100,12 @@ uint32 StaticListHolder::GetCapacity(void) const {
     return listCapacity_;
 }
 
-bool StaticListHolder::Add(const void *copyFrom) {
+bool StaticListHolder::Add(const void * const copyFrom) {
     bool ret = true;
 
     //Checks the precondition
     if (copyFrom == NULL_PTR(void *)) {
-        ret = true;
+        ret = false;
     }
 
     // Increases capacity if after adding an element, the list is going to fall short of space.
@@ -118,6 +123,8 @@ bool StaticListHolder::Add(const void *copyFrom) {
 
     //Copies the element to the back of the list
     if (ret) {
+        /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
+        /*lint -e{679} This implementation uses pointer arithmetic instead of array indexing*/
         uint8* pointer = (allocatedMemory_ + (listElementSize_ * listSize_));
         ret = MemoryOperationsHelper::Copy(pointer, copyFrom, listElementSize_);
         if (ret) {
@@ -129,11 +136,11 @@ bool StaticListHolder::Add(const void *copyFrom) {
 }
 
 bool StaticListHolder::Insert(const uint32 position,
-                              const void *copyFrom) {
+                              const void * const copyFrom) {
     bool ret = true;
 
     //Checks the precondition
-    if (position > listSize_ || copyFrom == NULL_PTR(void *)) {
+    if ((position > listSize_) || (copyFrom == NULL_PTR(void *))) {
         ret = false;
     }
 
@@ -152,10 +159,13 @@ bool StaticListHolder::Insert(const uint32 position,
 
     //Copies the element to the requested position of the list and moves previous elements to right if required
     if (ret) {
+        /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
+        /*lint -e{679} This implementation uses pointer arithmetic instead of array indexing*/
         uint8* pointer = (allocatedMemory_ + (listElementSize_ * position));
 
         if (position < (listSize_)) {
             //Expands the array moving the elements to their right position
+            /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
             ret = MemoryOperationsHelper::Move(pointer + listElementSize_, pointer, listElementSize_ * ((listSize_) - position));
         }
 
@@ -173,18 +183,20 @@ bool StaticListHolder::Insert(const uint32 position,
 }
 
 bool StaticListHolder::Peek(const uint32 position,
-                            void *copyTo) const {
+                            void * const copyTo) const {
     bool ret = true;
 
     //Checks the precondition
-    if (position >= listSize_ || copyTo == NULL_PTR(void *)) {
+    if ((position >= listSize_) || (copyTo == NULL_PTR(void *))) {
         ret = false;
     }
 
     //Retrieves the element from the requested position of the list
     if (ret) {
         if (position <= listSize_) {
-            void * copyFrom = static_cast<void *>(allocatedMemory_ + listElementSize_ * position);
+            /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
+            /*lint -e{679} This implementation uses pointer arithmetic instead of array indexing*/
+            void * copyFrom = static_cast<void *>(allocatedMemory_ + (listElementSize_ * position));
             ret = MemoryOperationsHelper::Copy(copyTo, copyFrom, listElementSize_);
         }
     }
@@ -192,28 +204,59 @@ bool StaticListHolder::Peek(const uint32 position,
     return ret;
 }
 
-bool StaticListHolder::Extract(const uint32 position,
-                               void *copyTo) {
+bool StaticListHolder::Remove(const uint32 position) {
     bool ret = true;
 
     //Checks the precondition
-    if (position >= listSize_ || copyTo == NULL_PTR(void *)) {
+    if (position >= listSize_) {
+        ret = false;
+    }
+
+    //Removes the element from the requested position on the list and moves previous elements to left if required
+    if (ret) {
+        /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
+        /*lint -e{679} This implementation uses pointer arithmetic instead of array indexing*/
+        uint8* pointer = (allocatedMemory_ + (listElementSize_ * position));
+
+        if (position < (listSize_ - 1u)) {
+            //Compacts the array moving the elements to their left position
+            /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
+            ret = MemoryOperationsHelper::Move(pointer, pointer + listElementSize_, listElementSize_ * ((listSize_ - 1U) - position));
+        }
+
+        if (ret) {
+            listSize_--;
+        }
+
+    }
+
+    return ret;
+}
+
+bool StaticListHolder::Extract(const uint32 position,
+                               void * const copyTo) {
+    bool ret = true;
+
+    //Checks the precondition
+    if ((position >= listSize_) || (copyTo == NULL_PTR(void *))) {
         ret = false;
     }
 
     //Peeks and removes the element from the requested position on the list and moves previous elements to left if required
     if (ret) {
+        /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
+        /*lint -e{679} This implementation uses pointer arithmetic instead of array indexing*/
         uint8* pointer = (allocatedMemory_ + (listElementSize_ * position));
 
-        if (copyTo != NULL_PTR(void *)) {
-            ret = MemoryOperationsHelper::Copy(copyTo, static_cast<void *>(pointer), listElementSize_);
-        }
+        ret = MemoryOperationsHelper::Copy(copyTo, static_cast<void *>(pointer), listElementSize_);
 
         if (ret) {
             if (position < (listSize_ - 1u)) {
                 //Compacts the array moving the elements to their left position
+                /*lint -e{9016} This implementation uses pointer arithmetic instead of array indexing*/
                 ret = MemoryOperationsHelper::Move(pointer, pointer + listElementSize_, listElementSize_ * ((listSize_ - 1U) - position));
             }
+
             if (ret) {
                 listSize_--;
             }

@@ -41,13 +41,5 @@
 
 namespace Lists {
 
-//TODO: Remove these explicit instantiations
-template class StaticList<uint32>;
-template class StaticList<uint32,20>;
-template class StaticList<int32>;
-template class StaticList<int32,30>;
-template class StaticList<uint32*>;
-template class StaticList<uint32*,40>;
-
 }
 

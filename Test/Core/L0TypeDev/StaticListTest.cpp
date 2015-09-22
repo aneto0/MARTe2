@@ -38,11 +38,6 @@
 
 namespace {
 
-//TODO: Remove these data for explicit instantiations
-uint32 uint32Values[] = {3,7,2,5,45,3,6,7,47,3,74,5,32,91,8,66,9};
-int32 intValues[] = {3,7,2,5,45,3,6,7,47,3,74,5,32,91,8,66,9};
-int32* intpValues[] = {&intValues[0], &intValues[1], &intValues[2], &intValues[3]};
-
 }
 
 /*---------------------------------------------------------------------------*/
@@ -50,13 +45,6 @@ int32* intpValues[] = {&intValues[0], &intValues[1], &intValues[2], &intValues[3
 /*---------------------------------------------------------------------------*/
 
 namespace Lists {
-
-//TODO: Remove these explicit instantiations
-template class StaticListTest<uint32,10,uint32Values,sizeof(uint32Values)>;
-template bool StaticListTest<uint32,10,uint32Values,sizeof(uint32Values)>::TestAddOnEmptyList<10>(void);
-
-template class StaticListTest<int32,10,intValues,sizeof(intValues)>;
-template class StaticListTest<int32*,10,intpValues,sizeof(intpValues)>;
 
 }
 
