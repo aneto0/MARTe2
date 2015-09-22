@@ -49,8 +49,7 @@ ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
     return &instance;
 }
 
-ClassRegistryDatabase::ClassRegistryDatabase() :
-        classDatabase(8) {
+ClassRegistryDatabase::ClassRegistryDatabase() {
     classUniqueIdentifier = 0;
 }
 
@@ -61,8 +60,7 @@ bool ClassRegistryDatabase::Extract(ClassRegistryItem * const p) {
     bool ok = false;
     if (mux.FastLock() == ErrorManagement::NoError) {
         const uint32 uid = p->GetClassProperties()->GetUniqueIdentifier();
-        ClassRegistryItem *nullItem = NULL_PTR(ClassRegistryItem *);
-        ok = classDatabase.Extract(uid, nullItem);
+        ok = classDatabase.Remove(uid);
     }
     mux.FastUnLock();
     return ok;
@@ -71,7 +69,7 @@ bool ClassRegistryDatabase::Extract(ClassRegistryItem * const p) {
 void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     if (mux.FastLock() == ErrorManagement::NoError) {
         p->SetUniqueIdentifier(classUniqueIdentifier);
-        classDatabase.Add(classUniqueIdentifier, p);
+        classDatabase.Insert(classUniqueIdentifier, p);
         classUniqueIdentifier++;
     }
     mux.FastUnLock();

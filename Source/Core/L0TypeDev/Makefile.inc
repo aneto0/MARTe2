@@ -27,7 +27,8 @@ ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  FormatDescriptor.x \
-        StaticListHolder.x
+        StaticListHolder.x \
+        StaticList.x
 
 #LIBRARIES_STATIC+=$(BUILD_DIR)/$(OPERATING_SYSTEM)/L0PortabilityOS$(LIBEXT)
 INCLUDES+=-I../L0Portability

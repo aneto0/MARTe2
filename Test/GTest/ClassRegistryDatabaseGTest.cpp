@@ -90,7 +90,7 @@ TEST(ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameFalse) {
     ASSERT_TRUE(classRegistryDatabaseTest.TestList());
 }*/
 
-TEST(ClassRegistryDatabaseGTest,TestSize) {
+TEST(ClassRegistryDatabaseGTest,TestGetSize) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestGetSize());
 }

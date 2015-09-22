@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "FastPollingMutexSem.h"
 #include "ClassRegistryItem.h"
-#include "StaticListHolder.h"
+#include "StaticList.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -120,7 +120,7 @@ private:
     /**
      * The database is implemented as a LinkedListHolder
      */
-    Lists::StaticList<ClassRegistryItem *> classDatabase;
+    Lists::StaticList<ClassRegistryItem *, 8> classDatabase;
 
     /**
      * Protects the concurrent access to the database

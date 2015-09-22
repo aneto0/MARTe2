@@ -167,6 +167,7 @@
 -esym(1714,TypeDefinition::AnyType::*)
 -esym(1714,TypeDefinition::FormatDescriptor::*)
 -esym(1714,TypeDefinition::TypeDescriptor::*)
+-esym(1714,Lists::StaticListHolder::*)
 
 
 /*
