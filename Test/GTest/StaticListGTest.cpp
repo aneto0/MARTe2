@@ -43,7 +43,7 @@ using namespace Lists;
 
 namespace {
 
-uint32 demoValues[] = {3,7,2,5,45,3,6,7,47,3,74,5,32,91,8,66,9};
+uint32 demoValues[] = { 3, 7, 2, 5, 45, 3, 6, 7, 47, 3, 74, 5, 32, 91, 8, 66, 9 };
 
 }
 
@@ -52,76 +52,92 @@ uint32 demoValues[] = {3,7,2,5,45,3,6,7,47,3,74,5,32,91,8,66,9};
 /*---------------------------------------------------------------------------*/
 
 TEST(StaticListGTest,TestDefaultConstructor) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestDefaultConstructor());
 }
 
 TEST(StaticListGTest,TestAddOnEmptyList) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestAddOnEmptyList<25u>());
 }
 
 TEST(StaticListGTest,TestAddOnNonEmptyList) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestAddOnNonEmptyList<25u>());
 }
 
+TEST(StaticListGTest,TestAddOnFullList) {
+    //WARN This test stresses the capacity of the list, so it takes a long time to finish.
+    //StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    //ASSERT_TRUE(tester.TestAddOnFullList<25u>());
+}
+
 TEST(StaticListGTest,TestInsertOnEmptyList) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestInsertOnEmptyList<25u>());
 }
 
 TEST(StaticListGTest,TestInsertOnNonEmptyListAtBeginning) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestInsertOnNonEmptyListAtBeginning<25u>());
 }
 
 TEST(StaticListGTest,TestInsertOnNonEmptyListAtMiddle) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestInsertOnNonEmptyListAtMiddle<25u>());
 }
 
 TEST(StaticListGTest,TestInsertOnNonEmptyListAtEnd) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestInsertOnNonEmptyListAtEnd<25u>());
 }
 
 TEST(StaticListGTest,TestExtractAtBeginning) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestExtractAtBeginning());
 }
 
 TEST(StaticListGTest,TestExtractAtMiddle) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestExtractAtMiddle());
 }
 
 TEST(StaticListGTest,TestExtractAtEnd) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestExtractAtEnd());
 }
 
 TEST(StaticListGTest,TestRemoveAtBeginning) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestRemoveAtBeginning());
 }
 
 TEST(StaticListGTest,TestRemoveAtMiddle) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestRemoveAtMiddle());
 }
 
 TEST(StaticListGTest,TestRemoveAtEnd) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestRemoveAtEnd());
 }
 
+TEST(StaticListGTest,TestConstantness) {
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
+    ASSERT_TRUE(tester.TestConstantness());
+}
+
 TEST(StaticListGTest,TestGetSize) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestGetSize());
 }
 
+TEST(StaticListGTest,TestGetCapacity) {
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
+    ASSERT_TRUE(tester.TestGetCapacity());
+}
+
 TEST(StaticListGTest,TestPeek) {
-    StaticListTest<uint32,10,demoValues,sizeof(demoValues)> tester;
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestPeek());
 }
