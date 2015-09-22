@@ -83,7 +83,7 @@ public:
      * @brief Returns the number of classes registered in the database.
      * @return the number of classes registered in the database.
      */
-    uint32 GetSize() const;
+    uint32 GetSize();
 
     /**
      * @brief Returns the ClassRegistryItem at position \a idx.

@@ -82,7 +82,8 @@ public:
      * @param[in] version is the desired class version.
      * @return true if the ClassProperties copy has the same attributes values of the properties passed by constructor, false otherwise.
      */
-    bool TestGetClassPropertiesCopy(const char8* name, const char8* version);
+    bool TestGetClassPropertiesCopy(const char8* name,
+                                    const char8* version);
 
     /**
      * @brief Tests the ClassRegistryItem::GetClassProperties.
@@ -90,7 +91,8 @@ public:
      * @param[in] version is the desired class version.
      * @return true if the ClassProperties returned has the same attributes values of the properties passed by constructor, false otherwise.
      */
-    bool TestGetClassProperties(const char8* name, const char8* version);
+    bool TestGetClassProperties(const char8* name,
+                                const char8* version);
 
     /**
      * @brief Tests the ClassRegistryItem::SetLoadableLibrary and ClassRegistryItem::GetLoadableLibrary.
@@ -106,6 +108,14 @@ public:
      * @return true if the test explained in details section has success, false otherwise.
      */
     bool TestGetObjectBuildFunction();
+
+    /**
+     * @brief Tests the ClassRegistryItem::SetUniqueIdentifier function.
+     * @param uniqueIdentifier the unique identifier value to test.
+     * @return true if after calling ClassRegistryItem::SetUniqueIdentifier(\a uniqueIdentifier),
+     * ClassRegistryItem->GetClassProperties()->GetUniqueIdentifier() == \a uniqueIdentifier;
+     */
+    bool TestSetUniqueIdentifier(uint32 uniqueIdentifier);
 
 };
 

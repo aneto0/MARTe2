@@ -35,7 +35,6 @@ StringHelper_CLIB_Generic.cpp
 StringHelper.cpp
 StringHelperExtras_Generic.cpp
 ThreadsDatabase_Generic.cpp
-ThreadsDatabase_Generic.h
 AnyType.h
 FormatDescriptor.h
 FormatDescriptor.cpp

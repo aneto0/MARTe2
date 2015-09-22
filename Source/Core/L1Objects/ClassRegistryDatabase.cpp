@@ -49,8 +49,7 @@ ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
     return &instance;
 }
 
-ClassRegistryDatabase::ClassRegistryDatabase() :
-        classDatabase(32u) {
+ClassRegistryDatabase::ClassRegistryDatabase() {
     classUniqueIdentifier = 0u;
 }
 
@@ -60,7 +59,7 @@ ClassRegistryDatabase::~ClassRegistryDatabase() {
 void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     if (mux.FastLock() == ErrorManagement::NoError) {
         p->SetUniqueIdentifier(classUniqueIdentifier);
-        if (classDatabase.Add(classUniqueIdentifier, p)) {
+        if (classDatabase.Insert(classUniqueIdentifier, p)) {
             classUniqueIdentifier++;
         }
     }

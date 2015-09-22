@@ -73,6 +73,20 @@ public:
      */
     bool TestGetVersion(const char8*version);
 
+    /**
+     * @brief Tests the ClassProperties::GetUniqueIdentifier function.
+     * @param uniqueIdentifier the unique identifier value to test.
+     * @return true if after calling ClassProperties::SetUniqueIdentifier(\a uniqueIdentifier), ClassProperties::GetUniqueIdentifier() == \a uniqueIdentifier;
+     */
+    bool TestGetUniqueIdentifier(uint32 uniqueIdentifier);
+
+    /**
+     * @brief Tests the ClassProperties::SetUniqueIdentifier function.
+     * @param uniqueIdentifier the unique identifier value to test.
+     * @return true if after calling ClassProperties::SetUniqueIdentifier(\a uniqueIdentifier), ClassProperties::GetUniqueIdentifier() == \a uniqueIdentifier;
+     */
+    bool TestSetUniqueIdentifier(uint32 uniqueIdentifier);
+
 };
 
 /*---------------------------------------------------------------------------*/
