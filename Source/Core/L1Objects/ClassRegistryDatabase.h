@@ -63,17 +63,10 @@ public:
     ~ClassRegistryDatabase();
 
     /**
-     * @brief Removes an element from the database.
-     * @details This method should only be called by the ClassRegistryItem destructor.
-     * @param[in] p the element to be removed.
-     * @return true if the element was successfully removed from the database.
-     */
-    bool Extract(ClassRegistryItem * const p);
-
-    /**
      * @brief Adds an element to the database.
-     * @details This method should only be called by the
-     * ClassRegistryItem constructor.
+     * @details This method should only be called by the ClassRegistryItem constructor.
+     * After adding the element to the database the ClassRegistryItem unique identifier value is set
+     * to the position at which it was added to the database.
      * @param[in] p the element to be added.
      */
     void Add(ClassRegistryItem * const p);
@@ -84,29 +77,20 @@ public:
      * @param[in] className the name of the class to be searched.
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    //TODO Check documentation
     const ClassRegistryItem *Find(const char8 *className);
-
-    /**
-     * @brief Returns an access point to the database root.
-     * @return a pointer to the database root which can be used to scan the database.
-     */
-    //TODO CLEAN
-    //ClassRegistryItem *List();
 
     /**
      * @brief Returns the number of classes registered in the database.
      * @return the number of classes registered in the database.
      */
-    uint32 GetSize();
+    uint32 GetSize() const;
 
     /**
-     * @brief Copies the element at position idx to \a param.
+     * @brief Returns the ClassRegistryItem at position \a idx.
      * @param idx the index of the ClassRegistryItem to be retrieved.
-     * @param item the reference where the requested \a idx must be copied to.
+     * @return the ClassRegistryItem at position \a idx or NULL if no element exists at that position.
      *
-     * @pre idx>=0 && position<Size()
-     * @post item holds a copy of the requested element
+     * @pre idx>=0 && position < GetSize()
      */
     const ClassRegistryItem *Peek(const uint32 &idx);
 
@@ -118,9 +102,10 @@ private:
     ClassRegistryDatabase();
 
     /**
-     * The database is implemented as a LinkedListHolder
+     * The database is implemented as a LinkedListHolder.
+     * The destructor of the list will clean its elements.
      */
-    Lists::StaticList<ClassRegistryItem *, 8> classDatabase;
+    Lists::StaticList<ClassRegistryItem *> classDatabase;
 
     /**
      * Protects the concurrent access to the database

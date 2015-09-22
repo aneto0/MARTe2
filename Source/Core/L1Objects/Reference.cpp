@@ -147,8 +147,8 @@ Object* Reference::operator->() {
 Object *Reference::CreateByName(const char8 * const className, HeapManager::HeapI* const heap) const {
     Object *obj = NULL_PTR(Object *);
 
-    const ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance()->Find(className);
-    if ((classRegistryItem != NULL)) {
+    ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance().Find(className);
+    if (classRegistryItem != NULL) {
         if (classRegistryItem->GetObjectBuildFunction() != NULL) {
             obj = classRegistryItem->GetObjectBuildFunction()(heap);
         }

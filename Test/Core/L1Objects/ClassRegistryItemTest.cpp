@@ -1,8 +1,8 @@
 /**
- * @file ClassRegistryItemTest.cpp
- * @brief Source file for class ClassRegistryItemTest
- * @date 11/08/2015
- * @author Giuseppe Ferrò
+ * @file ClassRegistryDatabaseTest.h
+ * @brief Header file for class ClassRegistryDatabaseTest
+ * @date 06/08/2015
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,230 +16,135 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This source file contains the definition of all the methods for
- * the class ClassRegistryItemTest (public, protected, and private). Be aware that some 
- * methods, such as those inline could be defined on the header file, instead.
+ * @details This header file contains the declaration of the class ClassRegistryDatabaseTest
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
 
+#ifndef CLASSREGISTRYDATABASETEST_H_
+#define CLASSREGISTRYDATABASETEST_H_
+
 /*---------------------------------------------------------------------------*/
-/*                         Standard header includes                          */
+/*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
+/*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "ClassRegistryItemTest.h"
-
-#include "../../../Source/Core/L0Portability/MemoryCheck.h"
-#include "StringHelper.h"
 #include "ClassRegistryDatabase.h"
 
 /*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+/**
+ * @brief Tests the ClassRegistryDatabase functions.
+ */
+class ClassRegistryDatabaseTest {
+public:
+    /**
+     * @brief Tests the Instance function.
+     * @return Since the database is a singleton, this test returns true if the instance function
+     * returns always the same database object.
+     */
+    bool TestInstance();
+
+    /**
+     * @brief Tests the Delete function.
+     * @details Create objects and checks if they are deleted from the database after the delete call.
+     * @return true if ClassRegistryDatabase::Find fails after the delete and the size is decremented.
+     */
+    bool TestDeleteTrue();
+
+    /**
+     * @brief Tests the Delete function passing an invalid element.
+     * @return true if the delete fails as expected.
+     */
+    bool TestDeleteFalse();
+
+    /**
+     * @brief Tests the ClassRegistryDatabase::Add function.
+     * @return true if after adding a ClassRegistryItem element to the database, it can be found and the database size is incremented.
+     */
+    bool TestAdd();
+
+    /**
+     * @brief Tests the Add function with two classes with the same name.
+     * @return true if the last class to be added is saved in the database, false otherwise.
+     */
+    bool TestAddTheSameName();
+
+    /**
+     * @brief Tests the Find function.
+     * @param[in] name is the name of the class to find in the database.
+     * @param[in] create specifies if the class should be registered or not in the database (determining the result of the find function).
+     * @return true if the find on registered class names succeeds and fails if the class is not registered.
+     */
+    bool TestFind(const char8 *name,
+                  bool create);
+
+    /**
+     * @brief Tests the find function with the DLLName::ClassName pattern.
+     * @param[in] dllName is the desired dll name.
+     * @param[in] class name is the desired class name.
+     * @param[in] validName specified if the pattern in input dllName::className is valid (the test should return true) or not
+     * (the test should return false)
+     * @return true if \a validName=true DLLName::ClassName returns true and if \a validName=false and DLLName::ClassName returns false.
+     */
+    bool TestFindDLL(const char8* dllName,
+                     const char8* className,
+                     bool validName);
+
+    /**
+     * @brief Tests the List function.
+     * @return true if is returned the first element registered in the database, false otherwise.
+     */
+    bool TestList();
+
+    /**
+     * @brief Tests the GetSize function.
+     * @details Registers a number of classes in the database and checks that the size increases. Then delete these elements and checks that
+     * the size decreases.
+     * @return true if the test explained in the details section succeeds, false otherwise.
+     */
+    bool TestGetSize();
+
+    /**
+     * @brief Tests the Peek function.
+     * @details Adds an element to the database and verifies if this element can be successfully peeked.
+     * @return true if the element is added to the database and if can then be later retrieved.
+     */
+    bool TestPeek();
+
+    /**
+     * @brief Tests if instantiating objects, the number of instances parameter is correct.
+     * @details A certain number of objects of a particular class are created using Reference class and this test checks that
+     * the number of instances for the class is correct. Then creates an instance of a collector class which contains other registered classes
+     * as attributes and checks that only the instance counter of the collector is incremented.
+     * @return true if the tests explained in the details section succeeds, false otherwise.
+     */
+    bool TestCreateInstances();
+
+    /**
+     * @brief Tests the number of instances returned when an object is created by a reference of its father class.
+     * @details Using ReferenceT, with the template of the father class, creates the child class. Then checks that only the number
+     * of instances of the child class is incremented and that the number of reference is valid.
+     * @return true if the test explained in the details section succeeds, false otherwise.
+     */
+    bool TestPolimorphismChild2Father();
+
+    /**
+     * @brief Tests the number of instances returned when an object is created by a reference of its child class.
+     * @details Using ReferenceT, with the template of the father class, creates the child class. Since the dynamic_cast fails in
+     * this case, the object should not be created and the reference should be invalid.
+     * @return true if the test explained in the details section succeeds, false otherwise.
+     */
+    bool TestPolimorphismFather2Child();
+
+};
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-Object* dummyBuildFcn(HeapManager::HeapI * const h __attribute__((unused))) {
-    Object *p = (Object*) HeapManager::Malloc(sizeof(Object));
-    char *pp = (char*) p;
-    (*pp) = 9;
-    return p;
-}
-
-bool ClassRegistryItemTest::TestConstructor() {
-
-    ClassProperties testClassProperties("Hello", "World");
-
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, dummyBuildFcn);
-
-    // checks the attributes.
-    if (myItem.GetNumberOfInstances() != 0) {
-        return false;
-    }
-
-    if (myItem.GetLoadableLibrary() != NULL) {
-        return false;
-    }
-
-    if (StringHelper::Compare((myItem.GetClassProperties())->GetName(), "Hello") != 0) {
-        return false;
-    }
-
-    if (StringHelper::Compare((myItem.GetClassProperties())->GetVersion(), "World") != 0) {
-        return false;
-    }
-
-    //checks if the class is in the database
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
-
-    if (db->Find("Hello") == NULL) {
-        return false;
-    }
-
-    HeapManager::HeapI * h = NULL;
-
-    //check if the correct function is saved
-    Object* instance = myItem.GetObjectBuildFunction()(h);
-
-    if (instance == NULL) {
-        return false;
-    }
-
-    bool retVal = true;
-    if ((*((char*) instance)) != 9) {
-        retVal = false;
-    }
-
-    HeapManager::Free((void*&) instance);
-    return retVal;
-
-}
-
-bool ClassRegistryItemTest::TestDestructor() {
-    ClassProperties testClassProperties("Hello", "World");
-
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, dummyBuildFcn);
-
-    // checks if the class is in the database
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
-
-    if (db->Find("Hello") == NULL) {
-        return false;
-    }
-
-    myItem.~ClassRegistryItem();
-
-    //checks that it is not in the database anymore
-    return db->Find("Hello") == NULL;
-}
-
-bool ClassRegistryItemTest::TestIncrementNumberOfInstances() {
-
-    ClassProperties testClassProperties("Hello", "World");
-
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, dummyBuildFcn);
-
-    if (myItem.GetNumberOfInstances() != 0) {
-        return false;
-    }
-
-    myItem.IncrementNumberOfInstances();
-
-    return myItem.GetNumberOfInstances() == 1;
-
-}
-
-bool ClassRegistryItemTest::TestDecrementNumberOfInstances() {
-
-    ClassProperties testClassProperties("Hello", "World");
-
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, dummyBuildFcn);
-
-    if (myItem.GetNumberOfInstances() != 0) {
-        return false;
-    }
-
-    myItem.IncrementNumberOfInstances();
-
-    if (myItem.GetNumberOfInstances() != 1) {
-        return false;
-    }
-
-    myItem.DecrementNumberOfInstances();
-
-    return myItem.GetNumberOfInstances() == 0;
-
-}
-
-bool ClassRegistryItemTest::TestGetNumberOfInstances(uint32 nInstances) {
-
-    ClassProperties testClassProperties("Hello", "World");
-
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, dummyBuildFcn);
-
-    for (uint32 i = 0; i < nInstances; i++) {
-        myItem.IncrementNumberOfInstances();
-    }
-
-    if (myItem.GetNumberOfInstances() != nInstances) {
-        return false;
-    }
-
-    for (uint32 i = 0; i < nInstances; i++) {
-        myItem.DecrementNumberOfInstances();
-    }
-
-    return myItem.GetNumberOfInstances() == 0;
-}
-
-bool ClassRegistryItemTest::TestGetClassPropertiesCopy(const char8* name,
-                                                       const char8* version) {
-
-    ClassProperties testClassProperties(name, version);
-
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, dummyBuildFcn);
-
-    ClassProperties propertiesCopy("Hello", "World");
-
-    myItem.GetClassPropertiesCopy(propertiesCopy);
-
-    return (name == NULL ? propertiesCopy.GetName() == NULL : StringHelper::Compare(propertiesCopy.GetName(), name) == 0)
-            && (version == NULL ? propertiesCopy.GetVersion() == NULL : StringHelper::Compare(propertiesCopy.GetVersion(), version) == 0);
-
-}
-
-bool ClassRegistryItemTest::TestGetClassProperties(const char8* name,
-                                                   const char8* version) {
-
-    ClassProperties testClassProperties(name, version);
-
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, dummyBuildFcn);
-
-    const ClassProperties *propertiesCopy = myItem.GetClassProperties();
-
-    return (name == NULL ? propertiesCopy->GetName() == NULL : StringHelper::Compare(propertiesCopy->GetName(), name) == 0)
-            && (version == NULL ? propertiesCopy->GetVersion() == NULL : StringHelper::Compare(propertiesCopy->GetVersion(), version) == 0);
-
-}
-
-bool ClassRegistryItemTest::TestSetGetLoadableLibrary(const char8 *llname) {
-
-    ClassProperties testClassProperties("Hello", "World");
-
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, dummyBuildFcn);
-
-    LoadableLibrary *myLib = new LoadableLibrary;
-
-    myLib->Open(llname);
-
-    myItem.SetLoadableLibrary(myLib);
-
-    return myItem.GetLoadableLibrary() == myLib;
-}
-
-bool ClassRegistryItemTest::TestGetObjectBuildFunction() {
-
-    ClassProperties testClassProperties("Hello", "World");
-
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, dummyBuildFcn);
-
-    if (myItem.GetObjectBuildFunction() != dummyBuildFcn) {
-        return false;
-    }
-
-    HeapManager::HeapI * h=NULL;
-//call the function to see if it behaves as expected
-    Object* instance = myItem.GetObjectBuildFunction()(h);
-    bool retVal = true;
-    if ((*((char*) instance)) != 9) {
-        retVal = false;
-    }
-
-    HeapManager::Free((void*&) instance);
-    return retVal;
-
-}
+#endif /* CLASSREGISTRYDATABASETEST_H_ */
 

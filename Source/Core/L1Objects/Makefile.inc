@@ -43,7 +43,6 @@ OBJSX=  ClassRegistryItem.x \
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../L0Portability
-INCLUDES+=-I../L0TypeDev
 
 all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L1Objects$(LIBEXT)

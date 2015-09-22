@@ -45,25 +45,11 @@ TEST(ClassRegistryDatabaseGTest,TestInstance) {
     ASSERT_TRUE(classRegistryDatabaseTest.TestInstance());
 }
 
-/*TEST(ClassRegistryDatabaseGTest,TestDeleteTrue) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestDeleteTrue());
-}
-
-TEST(ClassRegistryDatabaseGTest,TestDeleteFalse) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestDeleteFalse());
-}*/
-
 TEST(ClassRegistryDatabaseGTest,TestAdd) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestAdd());
 }
 
-TEST(ClassRegistryDatabaseGTest,TestAddTheSameName) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestAddTheSameName());
-}
 
 TEST(ClassRegistryDatabaseGTest,TestFindTrue) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
@@ -85,17 +71,12 @@ TEST(ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameFalse) {
     ASSERT_TRUE(classRegistryDatabaseTest.TestFindDLL("boh","boh",false));
 }
 
-/*TEST(ClassRegistryDatabaseGTest,TestList) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestList());
-}*/
-
 TEST(ClassRegistryDatabaseGTest,TestGetSize) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestGetSize());
 }
 
-TEST(ClassRegistryDatabaseGTest,TestElementAt) {
+TEST(ClassRegistryDatabaseGTest,TestPeek) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestPeek());
 }

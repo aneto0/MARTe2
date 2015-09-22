@@ -45,15 +45,14 @@ bool ClassRegistryDatabaseTest::TestInstance() {
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
-    // see ObjectTestHelper: IntegerObject should be registered.
-
+    //ObjectTestHelper: IntegerObject should be registered.
     const ClassRegistryItem *integerItem = db->Find("IntegerObject");
 
     if (integerItem == NULL) {
         return false;
     }
 
-    //none has still instantiated it
+    //No one has still instantiated it, so the number of instance should be zero
     if (integerItem->GetNumberOfInstances() != 0) {
         return false;
     }
@@ -66,50 +65,16 @@ bool ClassRegistryDatabaseTest::TestInstance() {
         return false;
     }
 
-    //gets again the database and checks that is the same instance
+    //gets again the database and checks that it is the same instance
     ClassRegistryDatabase *db1 = ClassRegistryDatabase::Instance();
 
     const ClassRegistryItem *integerItemPtr = db1->Find("IntegerObject");
 
-    //none has still instantiated it
-    return (integerItem->GetNumberOfInstances() == 1) && (integerItemPtr != NULL);
+    //Only one instance should exist and it should not be null
+    bool ok = (integerItem->GetNumberOfInstances() == 1);
+    ok &= (integerItemPtr != NULL);
+    return ok;
 }
-
-/*bool ClassRegistryDatabaseTest::TestDeleteTrue() {
-    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
-
-    ClassProperties testClassProperties("TestDeleteTrue", "");
-
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
-
-    uint32 size = db->GetSize();
-
-    //checks if the class is in the database
-
-    if (db->Find("TestDeleteTrue") == NULL) {
-        return false;
-    }
-
-    if (!db->Delete(&myItem)) {
-        return false;
-    }
-
-    if ((size - 1) != db->Size()) {
-        return false;
-    }
-
-    return db->Find("TestDeleteTrue") == NULL;
-}*/
-
-/*bool ClassRegistryDatabaseTest::TestDeleteFalse() {
-
-    ClassRegistryItem *fakePtr = NULL;
-    //checks if the class is in the database
-    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
-
-    return (!db->Delete(fakePtr));
-
-}*/
 
 bool ClassRegistryDatabaseTest::TestAdd() {
 
@@ -119,9 +84,8 @@ bool ClassRegistryDatabaseTest::TestAdd() {
 
     ClassProperties testClassProperties("TestAdd", "V");
 
-    //the add function is called directly by the constructor
+    //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
-    //These are deleted by the the ClassRegistryDatabase destructor
 
     uint32 newSizeDB = db->GetSize();
 
@@ -137,33 +101,6 @@ bool ClassRegistryDatabaseTest::TestAdd() {
     return retVal;
 }
 
-bool ClassRegistryDatabaseTest::TestAddTheSameName() {
-
-    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
-
-    uint32 sizeDB = db->GetSize();
-
-    ClassProperties testClassProperties1("Hello", "World");
-    ClassProperties testClassProperties2("Hello", "Mondo");
-
-    //the add function is called directly by the constructor
-    ClassRegistryItem *myItem1 = new ClassRegistryItem(testClassProperties1, NULL);
-    ClassRegistryItem *myItem2 = new ClassRegistryItem(testClassProperties2, NULL);
-    //These are deleted by the the ClassRegistryDatabase destructor
-
-    uint32 newSizeDB = db->GetSize();
-
-    if (sizeDB != (newSizeDB - 1)) {
-        return false;
-    }
-
-    const ClassRegistryItem *ret = db->Find("Hello");
-    bool retVal = (StringHelper::Compare(ret->GetClassProperties()->GetName(), "Hello") == 0);
-    retVal &= (StringHelper::Compare(ret->GetClassProperties()->GetVersion(), "Mondo") == 0);
-
-    return retVal;
-
-}
 
 bool ClassRegistryDatabaseTest::TestFindDLL(const char8* dllName,
                                             const char8* className,
@@ -187,7 +124,7 @@ bool ClassRegistryDatabaseTest::TestFind(const char8 *name,
     if (create) {
         ClassProperties testClassProperties(name, "V");
 
-        //the add function is called directly by the constructor
+        //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
         ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
         bool found = (db->Find(name) != NULL);
         //These are deleted by the the ClassRegistryDatabase destructor
@@ -198,36 +135,6 @@ bool ClassRegistryDatabaseTest::TestFind(const char8 *name,
 
 }
 
-/*bool ClassRegistryDatabaseTest::TestList() {
-
-    ClassRegistryDatabase *db = &(ClassRegistryDatabase::Instance());
-
-    if (db->List() != db->ElementAt(0)) {
-        return false;
-    }
-    ClassProperties testClassProperties("TestList", "V");
-
-//the add function is called directly by the constructor
-    ClassRegistryItem myItem = ClassRegistryItem(testClassProperties, NULL);
-
-    uint32 size = db->Size();
-
-    ClassRegistryItem *cursor = db->List();
-
-    for (uint32 i = 0; i < (size - 1); i++) {
-
-        cursor = (ClassRegistryItem*) cursor->Next();
-    }
-
-    if (cursor == NULL) {
-        return true;
-    }
-    bool retVal = (StringHelper::Compare(cursor->GetClassProperties()->GetName(), "TestList") == 0)
-            && (StringHelper::Compare(cursor->GetClassProperties()->GetVersion(), "V") == 0);
-
-    return retVal && (db->Delete(&myItem));
-}
-*/
 bool ClassRegistryDatabaseTest::TestGetSize() {
 
     const char* names[] = { "1", "2", "3", "4", NULL };
@@ -251,30 +158,21 @@ bool ClassRegistryDatabaseTest::TestGetSize() {
     }
 
     return ((db->GetSize() - prevSize) == 4);
-    /*if ((db->GetSize() - prevSize) != 4) {
-        return false;
-    }
-
-    i = 0;
-    while (names[i] != NULL) {
-        ClassRegistryItem *newRoot = (ClassRegistryItem *) root->Next();
-        db->Delete(root);
-        root = newRoot;
-        i++;
-    }
-
-    return db->Size() == prevSize;*/
-
 }
 
 bool ClassRegistryDatabaseTest::TestPeek() {
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
     ClassProperties testClassProperties("TestElementAt", "V");
 
-    //the add function is called directly by the constructor
+    //the add function is called directly by the constructor. myItem cannot be deleted before the end of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
-    //These are deleted by the the ClassRegistryDatabase destructor
-    return (db->Peek(db->GetSize() - 1) == myItem) && (db->Peek(db->GetSize()) == NULL);
+    const ClassRegistryItem *peekedItem = db->Peek(db->GetSize() - 1);
+    bool ok = (peekedItem == myItem);
+
+    uint32 peededItemUniqueIdentifier = peekedItem->GetClassProperties()->GetUniqueIdentifier();
+    ok &= (peededItemUniqueIdentifier == (db->GetSize() - 1));
+
+    return ok;
 }
 
 bool ClassRegistryDatabaseTest::TestCreateInstances() {

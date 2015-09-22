@@ -54,8 +54,7 @@ public:
      * @param[in] cName the name of the class.
      * @param[in] cVersion the version of the class.
      */
-    ClassProperties(const char8 * const cName,
-                    const char8 * const cVersion);
+    ClassProperties(const char8 * const cName, const char8 * const cVersion);
 
     /**
      * @brief Returns the name of the class.
@@ -69,15 +68,16 @@ public:
      */
     const char8 *GetVersion() const;
 
+
     /**
      * @brief Returns the unique identifier of the class.
-     * @return the the unique identifier of the class.
+     * @return the unique identifier of the class.
      */
     uint32 GetUniqueIdentifier() const;
 
     /**
      * @brief Sets the unique identifier for the class described by this ClassProperties instance.
-     * @param uid the new unique identifier to be set for the class.
+     * @param[in] uid the new unique identifier to be set for the class.
      */
     void SetUniqueIdentifier(const uint32 &uid);
 

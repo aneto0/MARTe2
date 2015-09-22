@@ -41,12 +41,14 @@
 ClassProperties::ClassProperties() {
     className = static_cast<const char8 *>(NULL);
     classVersion = static_cast<const char8 *>(NULL);
+    uniqueIdentifier = 0u;
 }
 
 ClassProperties::ClassProperties(const char8 * const cName,
                                  const char8 * const cVersion) {
     className = cName;
     classVersion = cVersion;
+    uniqueIdentifier = 0u;
 }
 
 const char8* ClassProperties::GetName() const {
