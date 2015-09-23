@@ -30,8 +30,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MemoryOperationsHelperTest.h"
-#include "../../../Source/Core/L0Portability/MemoryOperationsHelper.h"
-#include "../../../Source/Core/L0Portability/HeapManager.h"
+#include "MemoryOperationsHelper.h"
+#include "HeapManager.h"
+
+using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

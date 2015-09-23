@@ -34,6 +34,7 @@ OBJSX=  FastMath.x \
         FastPollingMutexSem.x \
         StringHelper.x \
         ErrorManagement.x \
+        StaticListHolder.x \
         FormatDescriptor.x
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)

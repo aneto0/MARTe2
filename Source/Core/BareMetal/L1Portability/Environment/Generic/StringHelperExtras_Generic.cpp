@@ -39,6 +39,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 namespace StringHelper {
 
 bool Concatenate(const char8* const string1,
@@ -244,6 +246,8 @@ bool Substr(const uint32 begin,
     }
 
     return ret;
+
+}
 
 }
 

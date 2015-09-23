@@ -40,12 +40,13 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
 /**
  * Forward declaration of the operating system specific properties (defined in the operating system
  * specific unit file).
  */
-struct MutexSemOSProperties;
+struct MutexSemProperties;
 
 /**
  * @brief Mutual exclusion semaphore.
@@ -126,7 +127,7 @@ public:
      * @brief Return the operating system low level properties.
      * @return the operating system low level semaphore properties structure.
      */
-    MutexSemOSProperties *GetOSProperties();
+    MutexSemProperties *GetProperties();
 
 private:
 
@@ -140,5 +141,6 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+}
 #endif /* MUTEXSEM_H_ */
 

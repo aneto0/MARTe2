@@ -38,6 +38,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 ClassProperties::ClassProperties() {
     className = static_cast<const char8 *>(NULL);
     typeidClassName = static_cast<const char8 *>(NULL);
@@ -74,3 +76,4 @@ void ClassProperties::SetUniqueIdentifier(const uint32 &uid){
     uniqueIdentifier = uid;
 }
 
+}

@@ -40,6 +40,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
 /**
  * Forward declaration of a thread information database.
@@ -55,7 +56,7 @@ typedef void (*ThreadFunctionType)(const void * const parameters);
  * @brief Threads management module.
  *
  * @details These module allows to create, manage and monitor the life-cycle of any framework thread/
- * The default stack size associated to a thread THREADS_DEFAULT_STACKSIZE is defined in GeneralDefinitionsOS.h
+ * The default stack size associated to a thread THREADS_DEFAULT_STACKSIZE is defined in GeneralDefinitions.h
  * for each different operating system.
  */
 namespace Threads {
@@ -252,6 +253,7 @@ ThreadIdentifier FindByName(const char8 * const name);
 
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

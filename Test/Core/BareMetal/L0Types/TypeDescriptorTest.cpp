@@ -41,10 +41,10 @@
 bool TypeDescriptorTest::TestConstructorUint(bool isObject,
                                                bool isConst,
                                                uint16 size,
-                                               TypeDefinition::BasicType type) {
+                                               BasicType type) {
 
     uint16 initNumber = (isObject) | (isConst << 1) | (type << 2) | (size << 6);
-    TypeDefinition::TypeDescriptor testTD = initNumber;
+    TypeDescriptor testTD = initNumber;
 
     if (testTD.isStructuredData != isObject) {
         return false;
@@ -67,9 +67,9 @@ bool TypeDescriptorTest::TestConstructorUint(bool isObject,
 
 bool TypeDescriptorTest::TestConstructorBasicType(bool isConst,
                                                   uint16 size,
-                                                  TypeDefinition::BasicType type) {
+                                                  BasicType type) {
 
-    TypeDefinition::TypeDescriptor testTD(isConst, type, size);
+    TypeDescriptor testTD(isConst, type, size);
 
     if (testTD.isStructuredData != false) {
         return false;
@@ -94,7 +94,7 @@ bool TypeDescriptorTest::TestConstructorBasicType(bool isConst,
 bool TypeDescriptorTest::TestConstructorObject(bool isConst,
                                                uint16 objCode) {
 
-    TypeDefinition::TypeDescriptor testTD(isConst, objCode);
+    TypeDescriptor testTD(isConst, objCode);
 
     if (testTD.isStructuredData != true) {
         return false;
@@ -112,12 +112,12 @@ bool TypeDescriptorTest::TestConstructorObject(bool isConst,
 }
 
 bool TypeDescriptorTest::TestIsEqualOperator(uint16 size,
-                                             TypeDefinition::BasicType type) {
+                                             BasicType type) {
 
     bool isConst = true;
-    TypeDefinition::TypeDescriptor byBasicType1(isConst, type, size);
+    TypeDescriptor byBasicType1(isConst, type, size);
     isConst = false;
-    TypeDefinition::TypeDescriptor byBasicType2(isConst, type, size);
+    TypeDescriptor byBasicType2(isConst, type, size);
 
     if (!(byBasicType1 == byBasicType2)) {
         return false;
@@ -125,9 +125,9 @@ bool TypeDescriptorTest::TestIsEqualOperator(uint16 size,
 
     uint16 code = (type) | (size << 4);
     isConst = true;
-    TypeDefinition::TypeDescriptor byObj1(isConst, code);
+    TypeDescriptor byObj1(isConst, code);
     isConst = false;
-    TypeDefinition::TypeDescriptor byObj2(isConst, code);
+    TypeDescriptor byObj2(isConst, code);
 
     if (!(byObj1 == byObj2)) {
         return false;
@@ -138,9 +138,9 @@ bool TypeDescriptorTest::TestIsEqualOperator(uint16 size,
 
 bool TypeDescriptorTest::TestIsEqualOperatorFail() {
 
-    TypeDefinition::TypeDescriptor test1(0x10);
+    TypeDescriptor test1(0x10);
 
-    TypeDefinition::TypeDescriptor test2(0x20);
+    TypeDescriptor test2(0x20);
 
     return !(test1 == test2);
 
@@ -153,18 +153,18 @@ bool TypeDescriptorTest::TestFieldSaturation() {
 
     bool isConst = true;
 
-    TypeDefinition::TypeDescriptor testTD1(isConst, type, size);
+    TypeDescriptor testTD1(isConst, type, size);
     if (testTD1.all != 0xfffe) {
         return false;
     }
 
     type = 0;
-    TypeDefinition::TypeDescriptor testTD2(isConst, type, size);
+    TypeDescriptor testTD2(isConst, type, size);
     if (testTD2.all != 0xffc2) {
         return false;
     }
 
     uint16 code = (size << 4) | (type);
-    TypeDefinition::TypeDescriptor testTD3(isConst, code);
+    TypeDescriptor testTD3(isConst, code);
     return testTD3.all != 0xfffe;
 }

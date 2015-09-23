@@ -44,6 +44,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
 ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
     static ClassRegistryDatabase instance;
     return &instance;
@@ -205,4 +207,6 @@ const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
     }
     mux.FastUnLock();
     return item;
+}
+
 }

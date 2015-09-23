@@ -241,27 +241,6 @@ TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnSignedSigned64in32) {
 }
 
 /////////////////////////////
-
-TEST(FractionalIntegerGTest,TestAnyTypeCastNonConstSigned) {
-    FractionalIntegerTest<int32> fractionalInteger;
-    ASSERT_TRUE(fractionalInteger.TestAnyTypeCastNonConst());
-}
-
-TEST(FractionalIntegerGTest,TestAnyTypeCastNonConstUnsigned) {
-    FractionalIntegerTest<uint32> fractionalInteger;
-    ASSERT_TRUE(fractionalInteger.TestAnyTypeCastNonConst());
-}
-
-TEST(FractionalIntegerGTest,TestAnyTypeCastConstSigned) {
-    FractionalIntegerTest<int32> fractionalInteger;
-    ASSERT_TRUE(fractionalInteger.TestAnyTypeCastConst());
-}
-
-TEST(FractionalIntegerGTest,TestAnyTypeCastConstUnigned) {
-    FractionalIntegerTest<uint32> fractionalInteger;
-    ASSERT_TRUE(fractionalInteger.TestAnyTypeCastConst());
-}
-
 TEST(FractionalIntegerGTest,TestBitSize) {
     FractionalIntegerTest<uint32> fractionalInteger;
     ASSERT_TRUE(fractionalInteger.TestGetNumberOfBits());

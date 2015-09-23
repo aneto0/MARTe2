@@ -36,10 +36,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
 
 void LinkedListHolder::CleanUp() {
     LinkedListable *p = llhRoot.Next();
-    llhRoot.SetNext(static_cast<LinkedListable *>(NULL));
+    llhRoot.SetNext(NULL_PTR(LinkedListable *));
     while (p != NULL) {
         LinkedListable *q = p;
         p = p->Next();
@@ -49,13 +51,13 @@ void LinkedListHolder::CleanUp() {
 }
 
 void LinkedListHolder::Reset() {
-    llhRoot.SetNext(static_cast<LinkedListable *>(NULL));
+    llhRoot.SetNext(NULL_PTR(LinkedListable *));
     llhSize = 0u;
 }
 
 LinkedListHolder::LinkedListHolder() {
     llhSize = 0u;
-    llhRoot.SetNext(static_cast<LinkedListable *>(NULL));
+    llhRoot.SetNext(NULL_PTR(LinkedListable *));
 }
 
 /*lint -e{1551} the only reason why this could throw an exception is if
@@ -127,7 +129,7 @@ bool LinkedListHolder::ListSearch(const LinkedListable * const p) {
 
 LinkedListable *LinkedListHolder::ListSearch(SearchFilter * const filter) {
 
-    return (llhRoot.Next() == NULL) ? static_cast<LinkedListable*>(NULL) : llhRoot.Next()->Search(filter);
+    return (llhRoot.Next() == NULL) ? NULL_PTR(LinkedListable *) : llhRoot.Next()->Search(filter);
 }
 
 bool LinkedListHolder::ListExtract(LinkedListable * const p) {
@@ -201,7 +203,7 @@ LinkedListable *LinkedListHolder::ListPeek(const uint32 index) {
 
 LinkedListable *LinkedListHolder::ListExtract(uint32 index) {
 
-    LinkedListable *ret = static_cast<LinkedListable *>(NULL);
+    LinkedListable *ret = NULL_PTR(LinkedListable *);
     LinkedListable *p = &llhRoot;
     while ((p != NULL) && (index > 0u)) {
         p = p->Next();
@@ -214,7 +216,7 @@ LinkedListable *LinkedListHolder::ListExtract(uint32 index) {
         if (q != NULL) {
             llhSize--;
             p->SetNext(q->Next());
-            q->SetNext(static_cast<LinkedListable *>(NULL));
+            q->SetNext(NULL_PTR(LinkedListable *));
         }
         ret = q;
 
@@ -227,4 +229,5 @@ void LinkedListHolder::ListIterate(Iterator * const it) {
     if (llhRoot.Next() != NULL) {
         llhRoot.Next()->Iterate(it);
     }
+}
 }

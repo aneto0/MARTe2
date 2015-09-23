@@ -41,7 +41,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace TypeDefinition::TypeCharacteristics;
+using namespace MARTe::TypeCharacteristics;
+using namespace MARTe;
 
 
 TypeCharacteristicsTest::TypeCharacteristicsTest() {
@@ -122,27 +123,27 @@ bool TypeCharacteristicsTest::TestUsableBitSizeUInt32BZ2(){
 }
 
 bool TypeCharacteristicsTest::TestSaturableIntegerNoChanges(){
-    retVal = (TypeDefinition::SaturateInteger<uint32,uint32,32>(10) == 10);
+    retVal = (SaturateInteger<uint32,uint32,32>(10) == 10);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestSaturableIntegerLargerThan(){
-    retVal = (TypeDefinition::SaturateInteger<uint32,uint32, 3>(10) == 7);
+    retVal = (SaturateInteger<uint32,uint32, 3>(10) == 7);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestSaturableIntegerLargerThan2(){
-    retVal = (TypeDefinition::SaturateInteger<uint16,uint32, 3>(10) == 7);
+    retVal = (SaturateInteger<uint16,uint32, 3>(10) == 7);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestSaturableIntegerLessThan(){
-    retVal = (TypeDefinition::SaturateInteger<int32,int32, 3>(-10) == -4);
+    retVal = (SaturateInteger<int32,int32, 3>(-10) == -4);
     return retVal;
 }
 
 bool TypeCharacteristicsTest::TestSaturableIntegerLessThan2(){
-    retVal = (TypeDefinition::SaturateInteger<int16,int32, 3>(-10) == -4);
+    retVal = (SaturateInteger<int16,int32, 3>(-10) == -4);
     return retVal;
 }
 

@@ -1,17 +1,17 @@
 
 Atomic.h       
 Endianity.h
-ProcessorOS.cpp  
-SleepOS.cpp
-HighResolutionTimerCalibratorOS.cpp
+Processor.cpp  
+Sleep.cpp
+HighResolutionTimerCalibrator.cpp
 ProcessorType.cpp
-EventSemOS.cpp
-MutexSemOS.cpp
-BasicConsoleOS.cpp
+EventSem.cpp
+MutexSem.cpp
+BasicConsole.cpp
 FastMath.cpp
 ThreadInformation.cpp 
-ThreadsOS.cpp
-LoadableLibraryOS.cpp
+Threads.cpp
+LoadableLibrary.cpp
 FastPollingMutexSem.cpp   
 LinkedListable.cpp
 LinkedListHolder.cpp

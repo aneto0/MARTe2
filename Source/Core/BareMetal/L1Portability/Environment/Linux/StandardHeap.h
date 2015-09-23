@@ -1,8 +1,8 @@
 /**
  * @file StandardHeap.h
  * @brief Header file for class StandardHeap
- * @date Aug 13, 2015
- * @author fsartori
+ * @date 13/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SOURCE_CORE_L0PORTABILITY_OPERATINGSYSTEM_LINUX_STANDARDHEAP_H_
-#define SOURCE_CORE_L0PORTABILITY_OPERATINGSYSTEM_LINUX_STANDARDHEAP_H_
+#ifndef STANDARDHEAP_ENV_H_
+#define STANDARDHEAP_ENV_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -54,5 +54,5 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOURCE_CORE_L0PORTABILITY_OPERATINGSYSTEM_LINUX_STANDARDHEAP_H_ */
+#endif /* STANDARDHEAP_ENV_H_ */
 	

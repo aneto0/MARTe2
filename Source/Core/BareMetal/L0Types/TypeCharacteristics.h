@@ -32,13 +32,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+#include "CompilerTypes.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe {
 
 namespace TypeCharacteristics {
 

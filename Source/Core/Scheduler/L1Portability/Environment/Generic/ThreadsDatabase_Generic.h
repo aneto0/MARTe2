@@ -39,6 +39,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 
 /**
  * @brief A database of ThreadInformation objects.
@@ -124,4 +125,5 @@ namespace ThreadsDatabase {
 
 }
 
+}
 #endif /* THREADSDATABASE_H_ */

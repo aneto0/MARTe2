@@ -34,6 +34,9 @@
 #include "GeneralDefinitions.h"
 #include "ErrorType.h"
 #include "ErrorManagement.h"
+
+using namespace MARTe;
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/

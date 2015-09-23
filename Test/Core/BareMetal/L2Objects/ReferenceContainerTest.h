@@ -37,6 +37,7 @@
 
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
+using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -416,7 +417,7 @@ private:
     /**
      * Heap used for the tests
      */
-    HeapManager::HeapI* h;
+    HeapI* h;
 
     /**
      * @brief Verifies if the \a source and \a test containers contain the same information.

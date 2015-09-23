@@ -38,6 +38,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 /**
  * @brief Database of framework base classes.
  * @details Most of the framework user classes inherit from Object. As a
@@ -113,7 +114,7 @@ private:
      * The database is implemented as a StaticList.
      * The destructor of the list will clean its elements.
      */
-    Lists::StaticList<ClassRegistryItem *> classDatabase;
+    StaticList<ClassRegistryItem *> classDatabase;
 
     /**
      * Protects the concurrent access to the database
@@ -126,6 +127,7 @@ private:
     uint32 classUniqueIdentifier;
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

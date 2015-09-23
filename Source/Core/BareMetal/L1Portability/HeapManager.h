@@ -38,6 +38,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief Implementation of functions for the heap memory management.
  * @details Using these functions is possible adding different HeapI
@@ -138,6 +140,7 @@ void *Duplicate(const void * const data,
 
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

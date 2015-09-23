@@ -31,7 +31,7 @@
 
 #include "ReferenceTTest.h"
 
-#include "../../../Source/Core/L0Portability/MemoryCheck.h"
+#include "MemoryCheck.h"
 #include "ObjectTestHelper.h"
 #include "ClassRegistryDatabase.h"
 #include "Threads.h"
@@ -121,7 +121,7 @@ bool ReferenceTTest::TestCopyConstructorNullPtr() {
 
 bool ReferenceTTest::TestCreateConstructor() {
 
-    HeapManager::HeapI* mem=NULL;
+    HeapI* mem=NULL;
     ReferenceT<IntegerObject> ref(mem);
 
     if (!ref.IsValid()) {

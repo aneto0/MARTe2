@@ -37,6 +37,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe{
 
 
 ReferenceContainerNode::ReferenceContainerNode() : LinkedListable() {
@@ -52,4 +53,6 @@ Reference ReferenceContainerNode::GetReference() const {
 bool ReferenceContainerNode::SetReference(Reference newReference) {
     reference = newReference;
     return reference.IsValid();
+}
+
 }

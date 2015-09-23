@@ -65,7 +65,7 @@ bool MutexSemTest::TestCreate(bool recursive) {
     MutexSem testSem;
     bool test = testSem.Create(recursive);
     if (test) {
-        test &= (testSem.GetOSProperties() != NULL);
+        test &= (testSem.GetProperties() != NULL);
     }
     testSem.Close();
     return test;
@@ -247,7 +247,7 @@ bool MutexSemTest::TestCopyConstructor() {
     test = testMutex.Create(false);
     MutexSem copyTestMutex(testMutex);
 
-    if (testMutex.GetOSProperties() != copyTestMutex.GetOSProperties()) {
+    if (testMutex.GetProperties() != copyTestMutex.GetProperties()) {
         test = false;
     }
 

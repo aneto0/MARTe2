@@ -32,13 +32,15 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../Source/Core/L0Portability/HeapI.h"
-#include "../../../Source/Core/L0Portability/OperatingSystem/Linux/StandardHeap.h"
+#include "HeapI.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,StandardHeap.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+
+using namespace MARTe;
 
 /**
  * @brief A class to test the StandarHeap_GenericTest functions.

@@ -1,5 +1,5 @@
 /**
- * @file ProcessorOS.cpp
+ * @file Processor.cpp
  * @brief Source file for module Processor
  * @date 26/07/2015
  * @author André Neto
@@ -37,6 +37,7 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
 
 namespace Processor {
 /*lint -e{9141} constant that can be reused by other classes*/
@@ -45,6 +46,8 @@ char8 processorVendorId[13] = { '\0' };
 
 uint32 Available() {
     return static_cast<uint32>(sysconf(_SC_NPROCESSORS_ONLN));
+}
+
 }
 
 }

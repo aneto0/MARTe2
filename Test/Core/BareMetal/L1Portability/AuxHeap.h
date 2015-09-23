@@ -32,12 +32,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../Source/Core/L0Portability/HeapI.h"
+#include "HeapI.h"
+
+namespace MARTe{
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace HeapManager{
 /**
  * @brief Implementation of standard heap memory management functions.
  * @details These functions allows to allocate, reallocate and free portion of

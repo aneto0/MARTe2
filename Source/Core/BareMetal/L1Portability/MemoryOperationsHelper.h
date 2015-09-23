@@ -32,12 +32,14 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 #include "ErrorManagement.h"
+#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
 
 namespace MemoryOperationsHelper {
 
@@ -104,6 +106,7 @@ bool Set(void * const mem,
 
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

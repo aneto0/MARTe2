@@ -40,6 +40,7 @@
 #include "ClassRegistryItem.h"
 #include <typeinfo>
 
+namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                        Macro definitions                                  */
 /*---------------------------------------------------------------------------*/
@@ -79,7 +80,7 @@
      * Note that the selected heap might be different for each type of class.                                          \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
-    static void * operator new(const osulong size, HeapManager::HeapI *heap = static_cast<HeapManager::HeapI *>(NULL));\
+    static void * operator new(const osulong size, HeapI *heap = static_cast<HeapI *>(NULL));\
     /*                                                                                                                 \
      * @brief Delete the object.                                                                                       \
      * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \
@@ -105,7 +106,7 @@
      * Forward declaration of function which allows to build a new instance of the object                              \
      * e.g. Object *MyClassTypeBuildFn_(const Heap &h);                                                                \
      */                                                                                                                \
-    Object * className ## BuildFn_(HeapManager::HeapI* const heap);                                                    \
+    Object * className ## BuildFn_(HeapI* const heap);                                                    \
     /*                                                                                                                 \
      * Class properties of this class type. One instance per class type automatically instantiated at the start        \
      * of an application or loading of a loadable library.                                                             \
@@ -125,7 +126,7 @@
      * @return a new instance of the object from the class type.                                                       \
      * e.g. Object *MyClassTypeBuildFn_( const Heap &h);                                                               \
      */                                                                                                                \
-    Object * className ## BuildFn_(HeapManager::HeapI* const heap){                                                    \
+    Object * className ## BuildFn_(HeapI* const heap){                                                    \
         className *p = new (heap) className ();                                                                        \
         return p;                                                                                                      \
     }                                                                                                                  \
@@ -145,7 +146,7 @@
     /*lint -e{1531}                                                                                                    \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
-    void * className::operator new(const size_t size, HeapManager::HeapI* const heap) {                                \
+    void * className::operator new(const size_t size, HeapI* const heap) {                                \
         void *obj = NULL_PTR(void *);                                                                                  \
         if (heap != NULL) {                                                                                            \
             obj = heap->Malloc(static_cast<uint32>(size));                                                             \
@@ -297,6 +298,7 @@ private:
     char8 *name;
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

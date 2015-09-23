@@ -32,12 +32,14 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
-#include "TimeoutType.h"
-#include "FlagsType.h"
-#include "StringHelper.h"
-#include "ErrorType.h"
 #include "ErrorManagement.h"
+#include "ErrorType.h"
+#include "FlagsType.h"
+#include "GeneralDefinitions.h"
+#include "StringHelper.h"
+#include "TimeoutType.h"
+
+namespace MARTe{
 
 /**
  * FlagsType determining the console operating modes.\n
@@ -79,7 +81,7 @@ const FlagsType EnablePaging(8u);
  * Forward declaration of the operating system specific properties (defined in the operating system
  * specific unit file).
  */
-struct BasicConsoleOSProperties;
+struct BasicConsoleProperties;
 
 /**
  * @brief Multi-platform basic console support.
@@ -436,4 +438,5 @@ ErrorManagement::ErrorType BasicConsole::PagedWrite(const char8 * const buffer, 
     return err;
 }
 
+}
 #endif /*BASICCONSOLE_H_ */

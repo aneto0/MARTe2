@@ -29,7 +29,10 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+
 #include "ProcessorType.h"
+
+namespace MARTe{
 
 #if ProcessorTypeDefaultCPUs
 uint32 ProcessorType::defaultCPUs = ProcessorTypeDefaultCPUs;
@@ -109,4 +112,6 @@ ProcessorType::ProcessorType(const uint32 cpuMask) {
 
 ProcessorType::ProcessorType(const ProcessorType &pt) {
     processorMask = pt.processorMask;
+}
+
 }

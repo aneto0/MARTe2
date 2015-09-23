@@ -32,17 +32,19 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 #include "Atomic.h"
+#include "ErrorManagement.h"
 #include "ErrorType.h"
+#include "GeneralDefinitions.h"
 #include "HighResolutionTimer.h"
 #include "TimeoutType.h"
 #include "Sleep.h"
-#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
 
 /**
  * @brief Implementation of semaphore based on spin locks.
@@ -153,4 +155,5 @@ void FastPollingMutexSem::FastUnLock() {
     flag = 0;
 }
 
+}
 #endif /* FASTPOLLINGMUTEXSEM_H_ */

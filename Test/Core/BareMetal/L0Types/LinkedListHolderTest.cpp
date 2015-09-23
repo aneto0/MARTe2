@@ -41,6 +41,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+using namespace MARTe;
+
 bool LinkedListHolderTest::TestConstructor() {
 
     LinkedListHolder list;

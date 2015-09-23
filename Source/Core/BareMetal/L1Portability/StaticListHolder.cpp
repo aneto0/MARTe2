@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+#include "CompilerTypes.h"
 #include "StaticListHolder.h"
 #include "HeapManager.h"
 #include "MemoryOperationsHelper.h"
@@ -43,7 +43,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace Lists {
+namespace MARTe {
 
 StaticListHolder::StaticListHolder(uint32 listElementSize,
                                    uint32 listAllocationGranularity) {
@@ -52,7 +52,7 @@ StaticListHolder::StaticListHolder(uint32 listElementSize,
 
     uint32 granuleSize = listAllocationGranularity * listElementSize;
 
-    uint32 maxValue = TypeDefinition::TypeCharacteristics::MaxValue<uint32>();
+    uint32 maxValue = TypeCharacteristics::MaxValue<uint32>();
 
     maxListSize = maxValue / granuleSize;
     maxListSize *= granuleSize;

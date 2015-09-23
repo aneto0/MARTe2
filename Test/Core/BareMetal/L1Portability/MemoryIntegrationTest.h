@@ -22,7 +22,7 @@
  */
 
 #ifndef MEMORYINTEGRATIONTEST_H_
-#define 		MEMORYINTEGRATIONTEST_H_
+#define MEMORYINTEGRATIONTEST_H_
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -31,7 +31,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../Source/Core/L0Portability/MemoryCheck.h"
+#include "MemoryCheck.h"
 #include "Sleep.h"
 #include "Threads.h"
 #include "EventSem.h"

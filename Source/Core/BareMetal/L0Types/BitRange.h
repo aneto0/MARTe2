@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 /*lint -efile(766,BitRange.h) The header file TemplateParametersVerificator.h is used when the template is expanded (by the header that includes this header).*/
-#include "GeneralDefinitions.h"
+#include "CompilerTypes.h"
 #include "TypeCharacteristics.h"
 #include "TemplateParametersVerificator.h"
 
@@ -40,7 +40,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe {
 
 /**
  *  @brief A number with configurable size and bit offset.

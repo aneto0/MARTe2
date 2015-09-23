@@ -38,6 +38,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+
 /**
  * @brief timeout type definition.
  *
@@ -201,5 +204,6 @@ inline uint32 TimeoutType::GetTimeoutMSec() const {
     return msecTimeout;
 }
 
+}
 #endif /* TIMEOUTTYPE_H_ */
 

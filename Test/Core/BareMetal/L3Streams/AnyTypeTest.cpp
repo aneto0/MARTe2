@@ -41,7 +41,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace TypeDefinition;
+using namespace MARTe;
 
 AnyTypeTest::AnyTypeTest() :
         targetVariable(1),

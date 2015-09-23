@@ -29,21 +29,19 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
-
 #include "HeapManager.h"
-
-#include "HeapI.h"
-
-#include "StringHelper.h"
-
 #include "FastPollingMutexSem.h"
-
-#include INCLUDE_FILE_OPERATING_SYSTEM(OPERATING_SYSTEM,StandardHeap.h)
+#include "GeneralDefinitions.h"
+#include "HeapI.h"
+#include "StringHelper.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,StandardHeap.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Local Module declaration                         */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+
 
 namespace HeapManager /*Internals*/{
 
@@ -466,3 +464,4 @@ namespace HeapManager /*Internals*/{
 
 }
 
+}

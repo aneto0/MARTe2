@@ -36,6 +36,8 @@
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
 
+namespace MARTe {
+
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
 class Object;
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
@@ -44,7 +46,7 @@ class Object;
  * @param[in] heap the desired heap memory area where the object will be created.
  * @return a pointer to the created object.
  */
-typedef Object *(ObjectBuildFn)(HeapManager::HeapI* const);
+typedef Object *(ObjectBuildFn)(HeapI* const);
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -159,6 +161,7 @@ private:
     ClassRegistryItem();
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

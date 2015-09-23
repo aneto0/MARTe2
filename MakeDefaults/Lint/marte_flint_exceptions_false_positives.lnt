@@ -67,5 +67,13 @@
   * False positives related to sched.h
   */
  -esym(9018,stackSizeAttribute)
- -esym(526,__builtin_memset)
- -esym(628,__builtin_memset)
+ -esym(526,MARTe::Threads::__builtin_memset)
+ -esym(628,MARTe::Threads::__builtin_memset)
+
+ /*
+  * Rule flexelint 495.
+  * This is a false alarm. The access to the variables is protected by a semaphore wrapped
+  * in ThreadsDatabase::Lock and ThreadsDatabase::UnLock
+  */
+ -esym(459, MARTe::Threads::SystemThreadFunction*) 
+ 

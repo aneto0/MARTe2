@@ -33,13 +33,11 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AnyType.h"
+using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-using namespace TypeDefinition;
-
 class AnyTypeTest {
 public:
 
@@ -282,7 +280,7 @@ private:
 /*---------------------------------------------------------------------------*/
 template<typename baseType>
 bool AnyTypeTest::TestAnyType_BitBoolean() {
-    TypeDefinition::BitBoolean<baseType, 2> bitBoolean;
+    BitBoolean<baseType, 2> bitBoolean;
     AnyType anytype(bitBoolean);
     TypeDescriptor td = anytype.GetTypeDescriptor();
     retVal = (td.isStructuredData == false);
@@ -297,10 +295,10 @@ bool AnyTypeTest::TestAnyType_BitBoolean() {
 
 template<typename baseType>
 bool AnyTypeTest::TestAnyType_BitRange() {
-    TypeDefinition::BitRange<baseType, sizeof(baseType), 2> bitRange;
+    BitRange<baseType, sizeof(baseType), 2> bitRange;
     AnyType anytype(bitRange);
 
-    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
     TypeDescriptor td = anytype.GetTypeDescriptor();
     retVal = (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
@@ -314,10 +312,10 @@ bool AnyTypeTest::TestAnyType_BitRange() {
 
 template<typename baseType>
 bool AnyTypeTest::TestAnyType_FractionalInteger() {
-    TypeDefinition::FractionalInteger<baseType, sizeof(baseType)> fractionalInteger;
+    FractionalInteger<baseType, sizeof(baseType)> fractionalInteger;
     AnyType anytype(fractionalInteger);
 
-    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
     TypeDescriptor td = anytype.GetTypeDescriptor();
     retVal = (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
@@ -331,10 +329,10 @@ bool AnyTypeTest::TestAnyType_FractionalInteger() {
 
 template<typename baseType>
 bool AnyTypeTest::TestAnyType_ConstFractionalInteger() {
-    const TypeDefinition::FractionalInteger<baseType, sizeof(baseType)> fractionalInteger;
+    const FractionalInteger<baseType, sizeof(baseType)> fractionalInteger;
     AnyType anytype(fractionalInteger);
 
-    TypeDefinition::BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
     TypeDescriptor td = anytype.GetTypeDescriptor();
     retVal = (td.isStructuredData == false);
     retVal &= (td.isConstant == true);

@@ -35,6 +35,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
 /**
  * @brief LinkedListable iterator interface.
  * @details For each element on a LinkedListable list the function Do(LinkedListable *) is called.
@@ -56,6 +58,7 @@ public:
     virtual void Do(LinkedListable *data)=0;
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

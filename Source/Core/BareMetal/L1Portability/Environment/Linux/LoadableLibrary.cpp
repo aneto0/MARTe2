@@ -1,6 +1,6 @@
 /**
- * @file LoadableLibraryOS.cpp
- * @brief Source file for class LoadableLibraryOS
+ * @file LoadableLibrary.cpp
+ * @brief Source file for class LoadableLibrary
  * @date 26/08/2015
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class LoadableLibraryOS (public, protected, and private). Be aware that some 
+ * the class LoadableLibrary (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -38,6 +38,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
 
 HANDLE LoadableLibrary::GetModule() {
     return module;
@@ -92,4 +94,6 @@ void *LoadableLibrary::Function(char8 const * const name) {
     }
 
     return ret;
+}
+
 }

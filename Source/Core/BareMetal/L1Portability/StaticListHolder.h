@@ -36,7 +36,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace Lists {
+namespace MARTe {
 
 /**
  * @brief Abstracts an array which can grow and shrink

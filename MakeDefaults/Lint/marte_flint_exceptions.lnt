@@ -45,6 +45,11 @@
 -e537
 
 /*
+ * We also lint some header files (which are not necessarly modules)
+ */
+-e617
+
+/*
  * Lint is not understanding that the memory is freed in the destructor
  */
  -sem(EventSem::~EventSem, cleanup)
@@ -76,6 +81,7 @@
  */
 /* global macro not referenced */
 -esym(755,REPORT_ERROR,REPORT_ERROR_FULL)
+-esym(755,MAX_NO_OF_MEMORY_MONITORS,MAX_NO_OF_MEMORY_MONITORS)
 
 /*
  * Local macro not referenced
@@ -89,13 +95,13 @@
 /*
  * Local declarator not referenced 
  */
--esym(752,TypeDefinition::*)
+-esym(752,MARTe::*)
 -esym(752,Notation::*)
 
 /*
  * Local class member not referenced
  */
--esym(754,TypeDefinition::FormatDescriptor::*)
+-esym(754,MARTe::FormatDescriptor::*)
 
 
 
@@ -105,112 +111,30 @@
 -etype(758,Flags)
 -esym(758,SFTestType)
 /* global struct not referenced */
--esym(768,TimeValues::*)
--esym(768,ErrorInformation::*)
+-esym(768,MARTe::*)
 -esym(768,isObject)
--esym(768,IBasicConsole::*)
--esym(768,ExceptionHandler::*)
--esym(768,ExceptionHandler::*)
--esym(768,ClassRegistryDatabase::*)
--esym(768,Introspection::*)
--esym(768,Object::*)
--esym(768,TypeDefinition::BitBoolean*)
--esym(768,TypeDefinition::BitRange*)
--esym(768,TypeDefinition::FractionalInteger*)
 
 
 /* global constant enumeration not referenced */ 
--esym(769,SFTestType::*)
--esym(769,Colours::*) 
--esym(769,ErrorType::*)
--esym(769,Threads::ThreadStateType::*)
--esym(769,Threads::PriorityClassType::*)
--esym(769,Memory::MemoryTestAccessMode::*)
--esym(769,Memory::MemoryAllocationFlags::*)
+-esym(769,MARTe::*)
  /* static member not referenced */
--esym(1715,IBasicConsole::*)
--esym(1715,ProcessorType::UndefinedCPUs)
--esym(1715,FastMath::*)
--esym(1715,ExceptionHandler::*)
-
+-esym(1715,MARTe::*)
 
 /* member function not referenced */
--esym(1714,Sleep::*)
--esym(1714,HighResolutionTimer::*)
--esym(1714,StringHelper::*)
--esym(1714,StringPortable::*)
--esym(1714,Endianity::*)
--esym(1714,Atomic::*)
--esym(1714,Flags::*) 
--esym(1714,ErrorManagement::*)
--esym(1714,Processor::*)
--esym(1714,TimeoutType::*)
--esym(1714,ProcessorType::*)
--esym(1714,EventSem::*)
--esym(1714,MutexSem::*)
--esym(1714,FastPollingMutexSem::*)
--esym(1714,LoadableLibrary::*)
--esym(1714,FastMath::*)
--esym(1714,Threads::*)
--esym(1714,ExceptionHandler::*)
--esym(1714,ThreadInformation::*)
--esym(1714,Memory::*)
--esym(1714,ErrorManagement::*)
--esym(1714,LinkedListable::*)
--esym(1714,LinkedListHolder::*)
--esym(1714,ClassProperties::*)
--esym(1714,ClassRegistryItem::*)
--esym(1714,ClassRegistryDatabase::*)
--esym(1714,Object::*)
--esym(1714,Reference::*)
--esym(1714,ReferenceContainer::*)
--esym(1714,ReferenceContainerItem::*)
--esym(1714,ReferenceContainerFilter::*)
--esym(1714,ReferenceContainerFilterObjectName::*)
--esym(1714,ReferenceContainerFilterReferences::*)
--esym(1714,ReferenceContainerFilterObjectName::*)
--esym(1714,TypeDefinition::AnyType::*)
--esym(1714,TypeDefinition::FormatDescriptor::*)
--esym(1714,TypeDefinition::TypeDescriptor::*)
-
+-esym(1714,MARTe::*)
 
 /*
  * Rule 0-1-10 
  * Symbol not referenced
  * Justfication: Not applicable to a framework
  */
--esym(714,ErrorManagement::*)
--esym(714,HeapManager::*)
--esym(714,Sleep::*)
--esym(714,Threads::*)
-
-
-
+-esym(714,MARTe::*)
 
 /* virtual member function not referenced */
--esym(1716,IBasicConsole::*)
--esym(1716,Object::*)
--esym(1716,Reference::*)
-//From Object.h macro
--esym(1716,*::GetClassPropertiesCopy*)
+-esym(1716,MARTe::*)
 
 /* default constructor not referenced */
--esym(1914,Flags::*) 
--esym(1914,BasicConsole::*)
--esym(1914,FastPollingMutexSem::*)
--esym(1914,LoadableLibrary::*)  
--esym(1914,ExceptionHandler::*)
--esym(1914,ThreadInformation::*)
--esym(1914,LinkedListHolder::*)
--esym(1914,ClassProperties::*)
--esym(1914,ClassRegistryItem::*)
--esym(1914,Object::*)
--esym(1914,Reference::*)
--esym(1914,ReferenceContainer::*)
--esym(1914,ReferenceContainerNode::*)
--esym(1914,ReferenceContainerItem::*)
--esym(1914,ReferenceContainerFilterObjectName::*)
--esym(1914,ReferenceContainerFilterReferences::*)
+-esym(1914,MARTe::*) 
 
 /*
  * Rule 0-1-11
@@ -218,7 +142,7 @@
  * features are not supported. As a consequence the method variables are not references. 
  * The Linux operating system version of MARTe2 is not certifiable. 
  */
--efunc(715,BasicConsoleOS::SetColour,BasicConsoleOS::SetTitleBar,BasicConsoleOS::GetTitleBar,BasicConsoleOS::SetCursorPosition,BasicConsoleOS::GetCursorPosition,BasicConsoleOS::SetWindowSize,BasicConsoleOS::GetWindowSize,BasicConsoleOS::PlotChar)
+-efunc(715,BasicConsole::SetColour,BasicConsole::SetTitleBar,BasicConsole::GetTitleBar,BasicConsole::SetCursorPosition,BasicConsole::GetCursorPosition,BasicConsole::SetWindowSize,BasicConsole::GetWindowSize,BasicConsole::PlotChar)
 -efunc(715,Memory::Malloc,Memory::Check)
 -esym(715,errorDescription,errorInfo)
 -efunc(715,previouslyFound)
@@ -227,7 +151,7 @@
  * Rule 0-1-12
  * Justification: Same as 0-1-11 
  */
- -efile(715,BasicConsoleOS.cpp)
+ -efile(715,BasicConsole.cpp)
 
 /*
  * Rule 3-3-1
@@ -244,114 +168,6 @@
 -esym(759,MemoryMalloc, MemoryFree, MemoryRealloc, MemoryAllocationStatistics, MemoryGetHeaderInfo, MemoryClearStatisticsDatabase, MemoryGetStatisticsDatabaseNElements, MemoryGetUsedHeap, MemoryCheck, MemorySharedAlloc, MemorySharedFree, MemoryCopy, MemoryCompare, MemorySearch, MemoryMove, MemorySet, MemoryStringDup)
 -esym(765,MemoryMalloc, MemoryFree, MemoryRealloc, MemoryAllocationStatistics, MemoryGetHeaderInfo, MemoryClearStatisticsDatabase, MemoryGetStatisticsDatabaseNElements, MemoryGetUsedHeap, MemoryCheck, MemorySharedAlloc, MemorySharedFree, MemoryCopy, MemoryCompare, MemorySearch, MemoryMove, MemorySet, MemoryStringDup)
 -esym(765,MemoryMalloc, MemoryFree, MemoryRealloc, MemoryAllocationStatistics, MemoryGetHeaderInfo, MemoryClearStatisticsDatabase, MemoryGetStatisticsDatabaseNElements, MemoryGetUsedHeap, MemoryCheck, MemorySharedAlloc, MemorySharedFree, MemoryCopy, MemoryCompare, MemorySearch, MemoryMove, MemorySet, MemoryStringDup)
-
-/*
- * Rule 7-3-1 
- * Justfication: Not applicable to a framework
- */
-/* global declaration */
--esym(9141,Atomic)
--esym(9141,Atomic::*)
--esym(9141,BasicConsoleOSProperties)
--esym(9141,BasicConsole)
--esym(9141,BasicConsole::)
--esym(9141,BasicConsole::*)
--esym(9141,Colours)
--esym(9141,Endianity)
--esym(9141,Endianity::*)
--esym(9141,ErrorType)
--esym(9141,EventSem::*)
--esym(9141,EventSemOSProperties)
--esym(9141,FastPollingMutexSem)
--esym(9141,Flags)
--esym(9141,HighResolutionTimer)
--esym(9141,HighResolutionTimer::*)
--esym(9141,IBasicConsole)
--esym(9141,IBasicConsole::*)
--esym(9141,intptr)
--esym(9141,MutexSem::*)
--esym(9141,MutexSemOSProperties)
--esym(9141,Processor)
--esym(9141,Processor::*)
--esym(9141,ProcessorType)
--esym(9141,ProcessorType::*)
--esym(9141,Sleep)
--esym(9141,Sleep::*)
--esym(9141,StringHelper)
--esym(9141,StringHelper::*)
--esym(9141,StringPortable)
--esym(9141,StringPortable::*)
--esym(9141,TimeValues)
--esym(9141,TimeoutType)
--esym(9141,TimeoutType::*)
--esym(9141,Threads)
--esym(9141,Threads::*)
--esym(9141,ThreadInformation)
--esym(9141,ThreadInformation::*)
--esym(9141,ThreadsDatabase)
--esym(9141,ThreadsDatabase::*)
--esym(9141,ThreadFunctionType)
--esym(9141,ThreadsDatabase)
--esym(9141,TTNoWait)
--esym(9141,TTInfiniteWait)
--esym(9141,TTUnProtected)
--esym(9141,TTDefault)
--esym(9141,LoadableLibrary)
--esym(9141,LoadableLibraryOpen)
--esym(9141,LoadableLibraryClose)
--esym(9141,LoadableLibraryFunction)
--esym(9141,FastMath)
--esym(9141,FastMath::*)
--esym(9141,FloatToInt)
--esym(9141,ExceptionHandler)
--esym(9141,Memory)
--esym(9141,Memory::*)
--esym(9141,ErrorManagement)
--esym(9141,ErrorManagement::*)
--esym(9141,Iterator)
--esym(9141,SearchFilter)
--esym(9141,SortFilter)
--esym(9141,LinkedListable)
--esym(9141,LinkedListable::*)
--esym(9141,IteratorFn)
--esym(9141,SearchFilterFn)
--esym(9141,SortFilterFn)
--esym(9141,SFTestType)
--esym(9141,LinkedListHolder)
--esym(9141,ClassProperties)
--esym(9141,ClassRegistryItem)
--esym(9141,ClassRegistryDatabase)
--esym(9141,ClassRegistryDatabase::*)
--esym(9141,Object)
--esym(9141,Object::*)
--esym(9141,Introspection)
--esym(9141,Introspection::*)
--esym(9141,StructuredData)
--esym(9141,StructuredData::*)
--esym(9141,*Heap_)
--esym(9141,*BuildFn_*)
--esym(9141,*ClassProperties_)
--esym(9141,*ClassRegistryItem_)
--esym(9141,Reference)
--esym(9141,Reference::*)
--esym(9141,ReferenceT)
--esym(9141,ReferenceT::*)
--esym(9141,ReferenceT*)
--esym(9141,ReferenceContainer)
--esym(9141,ReferenceContainer::*)
--esym(9141,ReferenceContainerNode)
--esym(9141,ReferenceContainerNode::*)
--esym(9141,ReferenceContainerItem)
--esym(9141,ReferenceContainerItem::*)
--esym(9141,ReferenceContainerFilter)
--esym(9141,ReferenceContainerFilter::*)
--esym(9141,ReferenceContainerFilterReferences)
--esym(9141,ReferenceContainerFilterReferences::*)
--esym(9141,ReferenceContainerFilterObjectName)
--esym(9141,ReferenceContainerFilterObjectName::*)
--esym(9141,int*)
--esym(9141,uint*)
-
 
 /*
  * MISRA 3-3-1
@@ -380,11 +196,12 @@
  * Void functions must have an external effect.
  * Justification: They changed a class attribute.
  */
--esym(1960, TimeoutType::SetTimeoutSec*)
--esym(1960, TimeoutType::SetTimeoutHighResolutionTimerTicks*)
--esym(1960, ErrorManagement::NullErrorProcessFunction*)
--esym(1960, ReferenceT<<1>>::Init*)
--esym(1960, ReferenceT<<1>>::RemoveReference*)
+-esym(1960, MARTe::TimeoutType::SetTimeoutSec*)
+-esym(1960, MARTe::TimeoutType::SetTimeoutHighResolutionTimerTicks*)
+-esym(1960, MARTe::ErrorManagement::NullErrorProcessFunction*)
+-esym(1960, MARTe::ReferenceT<<1>>::Init*)
+-esym(1960, MARTe::ReferenceT<<1>>::RemoveReference*)
+-esym(1960, MARTe::BitBoolean*::operator=*)
 
 /*
  * Rule flexelint 1784. 
@@ -410,14 +227,7 @@
   * Rule 14-7-1
   * Justification: Not applicable to a framework.
   */
--esym(1795, ReferenceT*)
--esym(1795, TypeDefinition::*)
--esym(1795, TypeDefinition::AnyType::*)
--esym(1795, TypeDefinition::BitBoolean*)
--esym(1795, TypeDefinition::BitRange*)
--esym(1795, TypeDefinition::FractionalInteger*)
--esym(1795, TypeDefinition::TypeCharacteristics*)
-
+-esym(1795, MARTe::*)
 
 /*
  * Rule flexelint 1531. 
@@ -447,13 +257,10 @@
 
  /*
   * Rule 3-1-1
-  * Justification: Required for template implementation.
+  * Justification: Required for template implementation. No code is actually being generated and the header
+  * files can be included in multiple unit files.
   */
--esym(9107, ReferenceT*)
--esym(9107, TypeDefinition::BitBoolean*)
--esym(9107, TypeDefinition::BitRange*)
--esym(9107, TypeDefinition::TypeCharacteristics*)
--esym(9107, TypeDefinition::FractionalInteger*)
+-esym(9107, MARTe::ReferenceT*)
 
 /*
  * Rule flexelint 1793
@@ -461,3 +268,9 @@
  * object hold by the reference can be retrieved.
  */
 -estring(1793,"*Reference::operator->*")
+
+/*
+ * Rule 17-0-2 
+ * Justification: Re-use of C++ identifier required to guarantee a portable and unique interpretation of the implementation of PRETTY_FUNCTION  
+ */
+ -esym(1960, __ERROR_FUNCTION_NAME__)

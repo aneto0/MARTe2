@@ -35,6 +35,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
 /**
  * @brief Properties of a framework base class.
  * @details Provides introspection information about any framework base class (i.e. one that inherits from Object).
@@ -111,6 +113,7 @@ private:
     uint32 uniqueIdentifier;
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
