@@ -27,12 +27,10 @@ TARGET=linux
 
 include Makefile.inc
 
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0Portability/L0Portability$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0Portability/L0PortabilityTest$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/L1Objects/L1Objects$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/Core/L1Objects/L1ObjectsTest$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0TypeDev/L0TypeDev$(LIBEXT)
-LIBRARIES   += ../../Build/$(TARGET)/Core/L0TypeDev/L0TypeDevTest$(LIBEXT)
+LIBRARIES   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT) 
+LIBRARIES   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreBTest$(LIBEXT) 
+LIBRARIES   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT) 
+LIBRARIES   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
 LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
 
 OPTIM=-finline-functions

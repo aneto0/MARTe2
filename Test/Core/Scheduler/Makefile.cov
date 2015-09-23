@@ -9,7 +9,7 @@
 # Licence. 
 # You may obtain a copy of the Licence at: 
 #  
-# http:\\ec.europa.eu\idabc\eupl
+# http://ec.europa.eu/idabc/eupl
 #
 # Unless required by applicable law or agreed to in 
 # writing, software distributed under the Licence is 
@@ -19,20 +19,16 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-TARGET=msc
+TARGET=cov
 
 include Makefile.inc
 
-CPPFLAGS+= -fprofile-arcs -ftest-coverage -coverage
+OPTIM = -finline-functions
 
-LIBRARIES   += ..\..\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT) 
-LIBRARIES   += ..\..\Build\$(TARGET)\Core\BareMetal\MARTeCoreBTest$(LIBEXT) 
-LIBRARIES   += ..\..\Build\$(TARGET)\Core\Scheduler\MARTeCoreS$(LIBEXT) 
-LIBRARIES   += ..\..\Build\$(TARGET)\Core\Scheduler\MARTeCoreSTest$(LIBEXT)
+LIBRARIES_STATIC=L1Portability/cov/L1PortabilityTest$(LIBEXT)
 
+LIBRARIES += -lm
 
-LIBRARIES   += ..\..\Lib\gtest-1.7.0\gtest_main-md.lib ..\..\Lib\gtest-1.7.0\gtest-md.lib 
-LIBRARIES   += Winmm.lib

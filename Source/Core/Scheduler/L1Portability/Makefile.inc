@@ -1,7 +1,8 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
-#
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -9,7 +10,7 @@
 # Licence. 
 # You may obtain a copy of the Licence at: 
 #  
-# http:\\ec.europa.eu\idabc\eupl
+# http://ec.europa.eu/idabc/eupl
 #
 # Unless required by applicable law or agreed to in 
 # writing, software distributed under the Licence is 
@@ -19,20 +20,26 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
-TARGET=msc
 
-include Makefile.inc
+PACKAGE=Core/Scheduler
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-CPPFLAGS+= -fprofile-arcs -ftest-coverage -coverage
+SPB=Environment/$(ENVIRONMENT).x
 
-LIBRARIES   += ..\..\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT) 
-LIBRARIES   += ..\..\Build\$(TARGET)\Core\BareMetal\MARTeCoreBTest$(LIBEXT) 
-LIBRARIES   += ..\..\Build\$(TARGET)\Core\Scheduler\MARTeCoreS$(LIBEXT) 
-LIBRARIES   += ..\..\Build\$(TARGET)\Core\Scheduler\MARTeCoreSTest$(LIBEXT)
+OBJSX=  ThreadInformation.x 
 
+LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
-LIBRARIES   += ..\..\Lib\gtest-1.7.0\gtest_main-md.lib ..\..\Lib\gtest-1.7.0\gtest-md.lib 
-LIBRARIES   += Winmm.lib
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+INCLUDES+=-I../../BareMetal/L1Portability -I../../BareMetal/L0Types
+
+all: $(OBJS) $(SUBPROJ)   \
+		$(BUILD_DIR)/L1Portability$(LIBEXT)
+	echo  $(OBJS)
+
+include depends.$(TARGET)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)

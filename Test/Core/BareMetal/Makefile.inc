@@ -1,6 +1,7 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -19,19 +20,27 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
+OBJSX=
+SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x
+PACKAGE=Core
+MAKEDEFAULTDIR=../../../MakeDefaults
 
-TARGET=cov
+ROOT_DIR=../../..
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-include Makefile.inc
+LIBRARIES_STATIC+=$(BUILD_DIR)/L0Types/L0TypesTest$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityTest$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L2Objects/L2ObjectsTest$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L3Streams/L3StreamsTest$(LIBEXT)
 
-LIBRARIES   += ../../Source/Core/BareMetal/$(TARGET)/MARTeCoreB$(LIBEXT) 
-LIBRARIES   += ../../Test/Core/BareMetal/$(TARGET)/MARTeCoreBTest$(LIBEXT) 
-LIBRARIES   += ../../Source/Core/Scheduler/$(TARGET)/MARTeCoreS$(LIBEXT) 
-LIBRARIES   += ../../Test/Core/Scheduler/$(TARGET)/MARTeCoreSTest$(LIBEXT)
+all: $(OBJS) $(SUBPROJ) \
+		$(BUILD_DIR)/MARTeCoreBTest$(LIBEXT)
+	echo  $(OBJS)
 
-LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
 
-OPTIM=-finline-functions
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
