@@ -151,11 +151,18 @@ const DesiredAction PrintInfo = 5u;
 const DesiredAction PrintStruct = 6u;
 
 /**
- * @brief This class defines a format descriptor.
- * @details This class contains a structure to store the informations the print of each type.
- * @details It defines also functions due to fill the structure getting the information from
- * a printf like constant char8* string which specifies the desired print format.
- * @details Defines the conversion from AnyType to String based types
+ * @brief Definition of a format descriptor.
+ * @details This class is used to describe the output format of a variable.\n
+ * The format representation is made by:
+ *   - the user-selected output format (e.g. integer, string...);
+ *   - the maximum size (in characters);
+ *   - the precision (for float values);
+ *   - a set of flags to fine tune white space padding;
+ *   - a set of flags to define the output notation (fixed point, hexadecimal...).
+ *
+ * The FormatDescriptor provides also a function (InitialiseFromString) to automatically
+ * populate the class from a const char8* string which specifies the desired print format
+ * in a printf-like fashion.
  */
 class FormatDescriptor {
 public:
@@ -165,81 +172,91 @@ public:
      * @param[in] string is the string which contains a printf like format.
      * @return false if string is null or empty.
      *
-     * @details Takes a printf like string already pointing at the character after % (see below format)
-     * and parses it recovering all the useful information, discarding all redundant ones,
-     * and fills up the fields in this structure. At the end the pointer string is moved to the next
-     * character after the parsed block.
-     */
-    /*
-     * The overall printf-like format supported is the following:
-     * %[flags][width][.precision]type
-     * Note that the full printf would be this:
-     * %[parameter][flags][width][.precision][length]type
-     * !which is not supported!
-
-     * [flags]: // slightly different from standard printf notation
-     * ' ' Activates padding:
-     * fills up to width using spaces
-     * -  Left-align : put padding spaces after printing the object
-     * #   Activate fullNotation:
-     * + in front of integers
-     * 0x/0b/0o in front of Hex/octal/binary
-     * 0  Prepends zeros for Hex Octal and Binary notations (binaryPadded activated)
-     * Number of zeros depends on number precision and chosen notation (64 bit int and binary notation = up to 64 zeros)
-
-     * [width].[precision]  two numbers
-     * [width] specifies the MAXIMUM or EXACT number of characters to output, depending on the padding [flags] being set on or not
-     * NOTE that in a normal printf this would be the MINIMUM or EXACT number of characters...
-     * [Precision]
-     * This is the minimum number of meaningful digits used to represent a number
-     * Differently from printf this includes numbers before .
-     * if the exact representation of the number uses less digits [precision] is not considered
-     * if [width] is such that a numeric representation with the given precision cannot be fully represented than the number is replaced with a ?
-     * type
-     * This is one character among the following
+     * @details Takes a printf like string already pointing at the character after % (see below format),
+     * parses it, and fills up the fields in this class.\n
+     * At the end the pointer string is moved to the next character after the parsed block.\n
      *
-     * Note if data type does not match the selection below a warning will be issued but correct print will be performed
-     * d,i,u --> intention integer printing
-     * s --> intention string printing (any source of characters is ok)
-     * f --> fixed point numeric format selected - absolute precision mode : precision is the number of digits below 1
-     * F --> fixed point relative precision selected
-     * e --> exponential format
-     * E --> engineering format
-     * g --> smart format   - like E but replaces E-12 to E+12 with one of the following letters "TGMK munp"
-     * G --> compact format
-     * x,p --> activate hexadecimal display (p activates full notation: header+trailing zeros)
-     * p --> pointer printing intention (not compatible with integers)
-     * o --> activate octal display
-     * b --> activate binary display
-     * ######## NON STANDARD TBD
+     * The overall printf-like format supported is the following:\n
+     * @verbatim %[flags][width][.precision]type @endverbatim
+     *
+     * The <tt>[flags]</tt> notation is slightly different from the standard printf notation:
+     *   - ' ': activates padding (fills up to width using spaces);
+     *   - '-': left-align (put padding spaces after printing the object);
+     *   - '#': activates fullNotation, i.e.:
+     *     - + in front of integers
+     *     - 0x/0b/0o in front of Hex/octal/binary
+     *   - '0': prepends zeros for Hex Octal and Binary notations.\n
+     *     The number of zeros depends on precision and chosen notation (64 bit int and binary notation = up to 64 zeros)
+     *
+     * <tt>[width].[precision]</tt> are two integer numbers.
+     *
+     * <tt>[width]</tt> specifies the MAXIMUM or EXACT number of characters to output, depending on the padding being set on or not.
+     * Note that in a normal printf this would be the MINIMUM or EXACT number of characters.
+     *
+     * <tt>[precision]</tt> defines the minimum number of meaningful digits used to represent a number.
+     * Differently from printf this includes the numbers before the decimal separator.\n
+     * If the exact representation of the number uses less digits, <tt>[precision]</tt> is not considered.\n
+     * If <tt>[width]</tt> is such that a numeric representation with the given precision cannot be fully represented,
+     * then the number is replaced with a '?'.
+     *
+     * <tt>type</tt> is one character among the following:
+     * - d,i,u: integer format;
+     * - s: string format(any source of characters is ok);
+     * - f: fixed point numeric format selected - absolute precision mode (precision is the number of digits below 1);
+     * - F: fixed point relative precision format;
+     * - e: exponential format;
+     * - E: engineering format;
+     * - g: "smart" format (like E but replaces E-12 to E+12 with one of the following letters "TGMK munp");
+     * - G: compact format;
+     * - x,p: hexadecimal display (p activates full notation: header+trailing zeros);
+     * - p: pointer format (not compatible with integers);
+     * - o: octal format;
+     * - b: binary format;
+     * - !: AnyType - prints the default value;
+     * - ?: AnyType - prints information about the type;
+     * - @: AnyType - prints full content in case of known structures.
+     *
+     * @note Note that if the data type does not match <tt>type</tt> a warning will be issued but the correct print will be performed.
+     *
+     * @attention Note that the full printf syntax is:\n
+     * @verbatim %[parameter][flags][width][.precision][length]type @endverbatim
+     * This syntax is not supported by this function.\n
+     */
+     /*
+      * * ######## NON STANDARD TBD
      * ! --> Any type is fine - prints the default value
      * ? --> Any type is fine - prints information about the type
      * @ --> Any type is fine - prints full content in case of known structures
-     */
+      */
     bool InitialiseFromString(const char8 *&string);
 
     /**
      * @brief Default constructor.
      *
-     * @details Precision = -1 means default precision for float types.
+     * @details Initialises FormatDescriptor with default values, namely:
+     *  - Print anything;
+     *  - No maximum size;
+     *  - Default precision;
+     *  - Fixed-point notation for floats, decimal notation for binaries;
+     *  - No padding.
      */
     inline FormatDescriptor();
 
     /**
      * @brief Constructor from unsigned integer.
-     * @details Just copy bit by bit.
+     * @details Simply copies bit by bit the content of x.
      * @param[in] x contains the bits for the FormatDescriptor structure.
      */
     inline FormatDescriptor(const uint32 x);
 
     /**
      * @brief Copy operator.
-     * @param[in] src is the format descriptor to be copied in this.
+     * @param[in] src is the FormatDescriptor to be copied.
      */
     inline FormatDescriptor& operator=(const FormatDescriptor &src);
 
     /**
-     * @brief Bitwise or operator
+     * @brief Bitwise or operator.
      * @param[in] src is format descriptor argument.
      */
     inline void operator |=(const FormatDescriptor &src);
@@ -266,7 +283,7 @@ public:
                             const bool isBinaryPadded,
                             const bool isFullNotation);
 
-    /*lint -e{9018} Use of union allows to use this memory to describe or objects or basic types in an exclusive way.*/
+    /*lint -e{9018} Use of union allows to use this memory to describe both objects and basic types.*/
     union {
 
         /**

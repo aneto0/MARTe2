@@ -173,7 +173,7 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
     FormatDescriptor temporaryFormat;
 
     bool ret = false;
-    /// check pointer
+    // check pointer
     if (string != NULL) {
 
         // expect at least a character
