@@ -67,22 +67,22 @@ TEST(ClassRegistryItemGTest,TestGetNumberOfInstances) {
 
 TEST(ClassRegistryItemGTest,TestGetClassPropertiesCopy) {
     ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassPropertiesCopy("Hello","World"));
+    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassPropertiesCopy("Hello", "Hello", "World"));
 }
 
 TEST(ClassRegistryItemGTest,TestGetClassPropertiesCopyNull) {
     ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassPropertiesCopy(NULL,NULL));
+    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassPropertiesCopy(NULL, NULL, NULL));
 }
 
 TEST(ClassRegistryItemGTest,TestGetClassProperties) {
     ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassProperties("Hello","World"));
+    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassProperties("Hello", "Hello", "World"));
 }
 
 TEST(ClassRegistryItemGTest,TestGetClassPropertiesNull) {
     ClassRegistryItemTest myClassRegistryItemTest;
-    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassProperties(NULL,"World"));
+    ASSERT_TRUE(myClassRegistryItemTest.TestGetClassProperties(NULL, NULL, "World"));
 }
 
 

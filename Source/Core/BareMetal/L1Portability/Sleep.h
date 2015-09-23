@@ -39,6 +39,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief Sleep functions.
  *
@@ -47,7 +49,7 @@
  * These functions are generally used in multithreading applications for example to allows threads to wait on a
  * condition without use cpu.
  *
- * Most of the implementation is delegated to SleepOS.h which provides system calls to allows sleep functions.
+ * Most of the implementation is delegated to Sleep.h which provides system calls to allows sleep functions.
  */
 namespace Sleep {
 
@@ -62,26 +64,26 @@ int32 GetDateSeconds(void);
  * @details This function uses HighResolutionTimer functions.
  * @param[in] sec is the time in seconds to sleep (at least).
  */
-void AtLeast(float64 sec);
+void AtLeast(const float64 sec);
 
 /**
  * @brief Sleeps no more than the requested time.
  * @details This function uses HighResolutionTimer functions.
  * @param[in] sec is the time in seconds to sleep (no more).
  */
-void NoMore(float64 sec);
+void NoMore(const float64 sec);
 
 /**
  * @brief Sleeps for sec seconds (float64 value).
  * @param[in] sec is the time to sleep.
  */
-void Sec(float64 sec);
+void Sec(const float64 sec);
 
 /**
  * @brief Sleeps for msec milliseconds.
  * @param[in] msec is the number of milliseconds to sleep.
  */
-void MSec(int32 msec);
+void MSec(const int32 msec);
 
 /**
  * @brief Sleep without yield cpu.
@@ -96,15 +98,15 @@ inline void Busy(float64 sec);
  * @param[in] totalSleepSec is the total time in seconds to sleep.
  * @param[in] nonBusySleepSec is the time to sleep without use cpu.
  */
-void SemiBusy(float64 totalSleepSec,
-              float64 nonBusySleepSec);
+void SemiBusy(const float64 totalSleepSec,
+              const float64 nonBusySleepSec);
 }
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-void Sleep::Busy(float64 sec) {
+void Sleep::Busy(const float64 sec) {
     int64 startCounter = HighResolutionTimer::Counter();
     int64 endCounter = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
     int64 sleepUntilCounter = startCounter + endCounter;
@@ -112,4 +114,5 @@ void Sleep::Busy(float64 sec) {
     }
 }
 
+}
 #endif /* SLEEP_H_ */

@@ -35,7 +35,7 @@
 #include "GeneralDefinitions.h"
 #include "gtest/gtest.h"
 
-using namespace Lists;
+using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

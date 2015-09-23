@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
+#include "CompilerTypes.h"
 #include "BasicType.h"
 #include "BitRange.h"
 #include "BitBoolean.h"
@@ -41,12 +41,12 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe {
 
 /**
  * @brief A structure Used to describe the type pointed to by a pointer.
  * @details Depending on the first bit isStructuredData it may contain a code identifying a structure
- * or the remaining bit can be used to identify a specific basic type.
+ * or the remaining bits can be used to identify a specific basic type.
  * @details Basic types are integers 8-64 bit, floats, doubles, char pointers and void pointers.
  */
 class TypeDescriptor {
@@ -76,7 +76,7 @@ public:
         /**
          * The size in bits
          */
-        BitRange<uint16, 10u, 6u> size;
+        BitRange<uint16, 10u, 6u> numberOfBits;
 
         /**
          * A code related univocally to a record in the ObjectRegistryDatabase
@@ -99,11 +99,11 @@ public:
      * @brief Basic Type constructor.
      * @param[in] isConstantIn specifies if the type is constant.
      * @param[in] typeIn is the type.
-     * @param[in] sizeIn is the size.
+     * @param[in] numberOfBitsIn the number of bits associated to the type.
      */
     inline TypeDescriptor(const bool isConstantIn,
                           const uint16 typeIn,
-                          const uint16 sizeIn);
+                          const uint16 numberOfBitsIn);
 
     /**
      * @brief Structured objects constructor.
@@ -119,6 +119,7 @@ public:
      * @return In case of native types returns true if type and size fields are equal.
      * If the type is an object compares the structuredDataIdCode.
      */
+    /*lint -e(1739) , operation uint16 == TypeDescriptor will not be supported*/
     inline bool operator==(const TypeDescriptor &typeDescriptor) const;
 
 };
@@ -183,13 +184,11 @@ static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
  */
 static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
 
 TypeDescriptor::TypeDescriptor(const uint16 x) {
     all = x;
@@ -197,11 +196,11 @@ TypeDescriptor::TypeDescriptor(const uint16 x) {
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,
                                const uint16 typeIn,
-                               const uint16 sizeIn) {
+                               const uint16 numberOfBitsIn) {
     isStructuredData = false;
     isConstant = isConstantIn;
     type = typeIn;
-    size = sizeIn;
+    numberOfBits = numberOfBitsIn;
 }
 
 TypeDescriptor::TypeDescriptor(const bool isConstantIn,

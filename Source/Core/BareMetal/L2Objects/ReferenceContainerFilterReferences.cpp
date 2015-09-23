@@ -37,6 +37,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe{
 
 ReferenceContainerFilterReferences::ReferenceContainerFilterReferences() :
         ReferenceContainerFilter() {
@@ -60,3 +61,4 @@ bool ReferenceContainerFilterReferences::Test(ReferenceContainer &previouslyFoun
     return found;
 }
 
+}

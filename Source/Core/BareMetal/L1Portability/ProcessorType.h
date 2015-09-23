@@ -37,11 +37,13 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief Defines the processors where a particular task should run.
  *
  * @details CPUs are set by a mask of bits (32 bits max => 32 processors max).
- * System dependent calls to get the used cpus could be found in ProcessorTypeOS.h
+ * System dependent calls to get the used cpus could be found in ProcessorType.h
  */
 class ProcessorType {
 public:
@@ -165,5 +167,6 @@ static const ProcessorType UndefinedCPUs(0u);
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+}
 #endif /* PROCESSORTYPE_H_ */
 

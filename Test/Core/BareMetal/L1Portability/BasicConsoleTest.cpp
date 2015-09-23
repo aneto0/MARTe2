@@ -32,6 +32,9 @@
 #include "GeneralDefinitions.h"
 #include "BasicConsoleTest.h"
 #include "StringTestHelper.h"
+
+using namespace MARTe;
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

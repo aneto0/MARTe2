@@ -32,6 +32,7 @@
 #include "ClassRegistryItem.h"
 #include "FastPollingMutexSem.h"
 
+namespace MARTe {
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -110,4 +111,6 @@ const ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
 
 void ClassRegistryItem::SetUniqueIdentifier(const uint32 &uid) {
     classProperties.SetUniqueIdentifier(uid);
+}
+
 }

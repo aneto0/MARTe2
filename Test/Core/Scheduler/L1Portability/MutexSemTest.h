@@ -34,6 +34,7 @@
 #include "MutexSem.h"
 #include "EventSem.h"
 #include "Threads.h"
+using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

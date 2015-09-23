@@ -31,25 +31,28 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "GeneralDefinitions.h"
-
+/*lint -efile(766,BitBoolean.h) The header file TemplateParametersVerificator.h is used when the template is expanded (by the header that includes this header).*/
+#include "CompilerTypes.h"
+#include "TemplateParametersVerificator.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe {
 
 /**
  *  @brief Boolean shifted type.
  *  @details This type could be used in an union obtaining the same effect of a one bit boolean in a structure.
- *  @warning bitOffset must be minor than the bit size of baseType.
+ *  @warning bitOffset must be less than the number of bits of baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is bool because this type must be used as a boolean type.*/
+/*lint -etemplate(948, 1790, 1942) No code is truly generated. This strategy is used to guarantee that certain rules
+ * about the template are guaranteed at compilation time.
+ * Operator will always evaluate to true if the template is correctly used, otherwise it will not compile (which the objective)*/
 template<typename baseType, uint8 bitOffset>
-class BitBoolean {
+class BitBoolean: public TemplateParametersVerificator<((sizeof(baseType)*8u)>bitOffset)> {
 
-public:
+ public:
 
     /**
      * @brief Copy operator.
@@ -64,10 +67,10 @@ public:
     inline operator bool() const;
 
     /**
-     * @brief Returns the bit size.
-     * @return the bit size.
+     * @brief Returns number of bits.
+     * @return the number of bits.
      */
-    static inline baseType BitSize();
+    static inline baseType NumberOfBits();
 
     /**
      * @brief Returns the bit offset.
@@ -117,11 +120,11 @@ void BitBoolean<baseType, bitOffset>::operator=(const bool flag) {
 
 template<typename baseType, uint8 bitOffset>
 BitBoolean<baseType, bitOffset>::operator bool() const {
-    return ((value & mask) != 0);
+    return ((value & mask) != 0u);
 }
 
 template<typename baseType, uint8 bitOffset>
-baseType BitBoolean<baseType, bitOffset>::BitSize() {
+baseType BitBoolean<baseType, bitOffset>::NumberOfBits() {
     return static_cast<baseType>(1);
 }
 
@@ -133,3 +136,4 @@ baseType BitBoolean<baseType, bitOffset>::BitOffset() {
 }
 
 #endif /* BITBOOLEAN_H_ */
+

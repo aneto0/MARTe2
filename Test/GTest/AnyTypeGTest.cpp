@@ -186,6 +186,184 @@ TEST(AnyTypeGTest, TestAnyType_ConstCharPointerToConst) {
     ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstCharPointerToConst());
 }
 
+TEST(AnyTypeGTest, TestAnyType_Object) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_Object());
+}
 
+TEST(AnyTypeGTest, TestAnyType_ConstObject) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstObject());
+}
+
+TEST(AnyTypeGTest, TestCreateFromOtherType) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestCreateFromOtherType());
+}
+
+TEST(AnyTypeGTest, TestCreateFromOtherConstType) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestCreateFromOtherConstType());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitBooleanUInt8) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<uint8>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitBooleanUInt16) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<uint16>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitBooleanUInt32) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<uint32>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitBooleanUInt64) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<uint64>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitBooleanInt8) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<int8>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitBooleanInt16) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<int16>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitBooleanInt32) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<int32>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitBooleanInt64) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitBoolean<int64>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitRangeUInt8) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<uint8>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitRangeUInt16) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<uint16>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitRangeUInt32) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<uint32>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitRangeUInt64) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<uint64>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitRangeInt8) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<int8>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitRangeInt16) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<int16>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitRangeInt32) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<int32>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_BitRangeInt64) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_BitRange<int64>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_FractionalIntegerUInt8) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<uint8>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_FractionalIntegerUInt16) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<uint16>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_FractionalIntegerUInt32) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<uint32>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_FractionalIntegerUInt64) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<uint64>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_FractionalIntegerInt8) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<int8>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_FractionalIntegerInt16) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<int16>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_FractionalIntegerInt32) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<int32>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_FractionalIntegerInt64) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_FractionalInteger<int64>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerUInt8) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<uint8>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerUInt16) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<uint16>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerUInt32) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<uint32>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerUInt64) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<uint64>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerInt8) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<int8>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerInt16) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<int16>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerInt32) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<int32>());
+}
+
+TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerInt64) {
+    AnyTypeTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<int64>());
+}
 #endif /* TEST_GTEST_ANYTYPEGTEST_CPP_ */
 	

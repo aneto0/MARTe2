@@ -32,8 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../Source/Core/L0Portability/OperatingSystem/Linux/StandardHeap.h"
 #include "AuxHeap.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,StandardHeap.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -65,12 +65,12 @@ public:
     /*
      * @brief An instance of the HeapManager::StandardHeap to be used on tests
      */
-    HeapManager::StandardHeap sh;
+    MARTe::StandardHeap sh;
 
     /*
      * @brief An instance of the HeapManager::AuxHeap to be used on tests
      */
-    HeapManager::AuxHeap ah;
+    MARTe::AuxHeap ah;
 
     /**
      * @brief Test HeapManager::Malloc function using the default options

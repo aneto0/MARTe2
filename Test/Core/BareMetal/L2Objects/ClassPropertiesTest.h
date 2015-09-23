@@ -35,6 +35,8 @@
  * @brief Tests all the ClassProperties functions.
  */
 #include "ClassProperties.h"
+using namespace MARTe;
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -52,11 +54,13 @@ public:
 
     /**
      * @brief Tests the full constructor.
-     * @param[in] the desired name.
-     * @param[in] the desired version.
+     * @param[in] name the desired name.
+     * @param[in] name the desired typeidName.
+     * @param[in] version the desired version.
      * @return true if the attributes are set equal to inputs.
      */
-    bool TestFullConstructor(const char8* name,
+    bool TestFullConstructor(const char8 *name,
+                             const char8 *typeidName,
                              const char8* version);
 
     /**

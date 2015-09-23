@@ -35,7 +35,7 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe{
 
 /**
  * @brief To implement a look-up table between characters in the
@@ -157,13 +157,11 @@ static inline uint32 GetIntegerNumber(const char8 *&string) {
     return number;
 }
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
 
 /*lint -e{9119} assignment of integer to size field*/
 bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
@@ -173,7 +171,7 @@ bool FormatDescriptor::InitialiseFromString(const char8 *&string) {
     FormatDescriptor temporaryFormat;
 
     bool ret = false;
-    /// check pointer
+    // check pointer
     if (string != NULL) {
 
         // expect at least a character

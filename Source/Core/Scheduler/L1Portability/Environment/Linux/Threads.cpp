@@ -1,5 +1,5 @@
 /**
- * @file ThreadsOS.cpp
+ * @file Threads.cpp
  * @brief Source file for module Threads
  * @date 27/07/2015
  * @author André Neto
@@ -38,6 +38,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 namespace Threads {
 
@@ -94,13 +96,11 @@ static ThreadInformation * threadInitialisationInterfaceConstructor(const Thread
     return new ThreadInformation(userThreadFunction, userData, threadName);
 }
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace Threads {
 
 /*lint -e{715} Not implemented in Linux.*/
 ThreadStateType GetState(const ThreadIdentifier &threadId) {
@@ -381,6 +381,8 @@ bool GetThreadInfoCopy(ThreadInformation &copy,
 
 ThreadIdentifier FindByName(const char8 * const name) {
     return ThreadsDatabase::Find(name);
+}
+
 }
 
 }

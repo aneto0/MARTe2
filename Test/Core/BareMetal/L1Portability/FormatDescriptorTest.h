@@ -38,7 +38,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-using namespace TypeDefinition;
+using namespace MARTe;
 
 class FormatDescriptorTest {
 public:

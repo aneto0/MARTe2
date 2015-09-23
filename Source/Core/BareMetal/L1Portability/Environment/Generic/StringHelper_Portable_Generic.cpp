@@ -38,6 +38,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe{
 
 namespace StringHelper {
 
@@ -374,6 +375,8 @@ bool SetChar(char8* const string,
         REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
     }
     return ret;
+}
+
 }
 
 }

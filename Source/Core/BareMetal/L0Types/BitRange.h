@@ -31,25 +31,29 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "GeneralDefinitions.h"
+/*lint -efile(766,BitRange.h) The header file TemplateParametersVerificator.h is used when the template is expanded (by the header that includes this header).*/
+#include "CompilerTypes.h"
 #include "TypeCharacteristics.h"
+#include "TemplateParametersVerificator.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace TypeDefinition {
+namespace MARTe {
 
 /**
  *  @brief A number with configurable size and bit offset.
  *  @details Using these types into an union allows to have the same effect of a struct with bit fielded attributes.
- *  @warning bitSize + bitOffset must be minor than the bit size of baseType.
+ *  @warning numberOfBits + bitOffset must be minor than the bit size of baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is a
  basic type because this type must be used as a binary number.*/
-template<typename baseType, uint8 bitSize, uint8 bitOffset>
-class BitRange {
+/*lint -etemplate(948, 1790, 1942, 685, 944, 845) No code is truly generated.
+ * This strategy is used to guarantee that certain rules about the template are guaranteed at compilation time.
+ * Operator will always evaluate to true if the template is correctly used, otherwise it will not compile (which the objective)*/
+template<typename baseType, uint8 numberOfBits, uint8 bitOffset>
+class BitRange: public TemplateParametersVerificator<((sizeof(baseType)*8u)>=(numberOfBits+bitOffset)) && (numberOfBits > 0u) && (bitOffset >= 0u)> {
 
 public:
 
@@ -72,10 +76,10 @@ public:
     inline operator baseType() const;
 
     /**
-     * @brief Returns the bit size.
+     * @brief Returns the number of bits.
      * @return the bit size.
      */
-    static inline baseType BitSize();
+    static inline baseType GetNumberOfBits();
 
     /**
      * @brief Returns the bit offset.
@@ -99,7 +103,7 @@ private:
      * The mask covering with ones the specified bit range.
      */
     /*lint -e{845} The right argument to operator >> / << is certain to be 0. Justification: it depends by the template instance. */
-    static const baseType mask = static_cast<baseType>((static_cast<baseType>(~static_cast<baseType>(0u)) >> (baseTypeBitSize - bitSize)) << bitOffset);
+    static const baseType mask = static_cast<baseType>((static_cast<baseType>(~static_cast<baseType>(0u)) >> (baseTypeBitSize - numberOfBits)) << bitOffset);
 
     /**
      * The mask covering with ones the space out of the bit range.
@@ -112,11 +116,11 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-template<typename baseType, uint8 bitSize, uint8 bitOffset>
+template<typename baseType, uint8 numberOfBits, uint8 bitOffset>
 template<typename inputType>
-void BitRange<baseType, bitSize, bitOffset>::operator=(inputType input) {
+void BitRange<baseType, numberOfBits, bitOffset>::operator=(inputType input) {
 
-    baseType temporaryValue = SaturateInteger<baseType, inputType, bitSize>(input);
+    baseType temporaryValue = SaturateInteger<baseType, inputType, numberOfBits>(input);
 
     // shifts the number
     temporaryValue <<= bitOffset;
@@ -131,29 +135,29 @@ void BitRange<baseType, bitSize, bitOffset>::operator=(inputType input) {
     value |= temporaryValue;
 }
 
-template<typename baseType, uint8 bitSize, uint8 bitOffset>
-BitRange<baseType, bitSize, bitOffset>::operator baseType() const {
+template<typename baseType, uint8 numberOfBits, uint8 bitOffset>
+BitRange<baseType, numberOfBits, bitOffset>::operator baseType() const {
 
     baseType temporaryValue = value;
 
     temporaryValue &= mask;
 
     // to align sign bits
-    temporaryValue <<= (baseTypeBitSize - bitOffset - bitSize);
+    temporaryValue <<= (baseTypeBitSize - bitOffset - numberOfBits);
 
     // this should sign extend
-    temporaryValue >>= (baseTypeBitSize - bitSize);
+    temporaryValue >>= (baseTypeBitSize - numberOfBits);
 
     return temporaryValue;
 }
 
-template<typename baseType, uint8 bitSize, uint8 bitOffset>
-baseType BitRange<baseType, bitSize, bitOffset>::BitSize() {
-    return bitSize;
+template<typename baseType, uint8 numberOfBits, uint8 bitOffset>
+baseType BitRange<baseType, numberOfBits, bitOffset>::GetNumberOfBits() {
+    return numberOfBits;
 }
 
-template<typename baseType, uint8 bitSize, uint8 bitOffset>
-baseType BitRange<baseType, bitSize, bitOffset>::BitOffset() {
+template<typename baseType, uint8 numberOfBits, uint8 bitOffset>
+baseType BitRange<baseType, numberOfBits, bitOffset>::BitOffset() {
     return bitOffset;
 }
 

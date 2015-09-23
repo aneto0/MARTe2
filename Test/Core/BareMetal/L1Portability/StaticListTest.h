@@ -33,13 +33,13 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StaticList.h"
-#include "TypeCharacteristicsTest.h"
+#include "TypeCharacteristics.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace Lists {
+namespace MARTe {
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 class StaticListTest {
@@ -180,7 +180,7 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace Lists {
+namespace MARTe {
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::StaticListTest() {
@@ -193,7 +193,7 @@ StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestDefaultConstructor(void) {
-    const uint32 MAXINDEX = TypeDefinition::TypeCharacteristics::MaxValue<uint32>();
+    const uint32 MAXINDEX = TypeCharacteristics::MaxValue<uint32>();
     const uint32 MAXCAPACITY = (((MAXINDEX / (listAllocationGranularity * sizeof(elementType)))
             * (listAllocationGranularity * sizeof(elementType))) / sizeof(elementType));
 
@@ -209,7 +209,7 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestConstantness(void) {
-    const uint32 MAXINDEX = TypeDefinition::TypeCharacteristics::MaxValue<uint32>();
+    const uint32 MAXINDEX = TypeCharacteristics::MaxValue<uint32>();
     const uint32 MAXCAPACITY = (((MAXINDEX / (listAllocationGranularity * sizeof(elementType)))
             * (listAllocationGranularity * sizeof(elementType))) / sizeof(elementType));
 

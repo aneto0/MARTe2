@@ -39,7 +39,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace Lists {
+namespace MARTe {
 
 /**
  * @brief This template class is a ADT (Abstract Data Type) for an unbounded list which allows
@@ -130,7 +130,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace Lists {
+namespace MARTe {
 
 template<typename elementType, uint32 listAllocationGranularity>
 StaticList<elementType, listAllocationGranularity>::StaticList() :

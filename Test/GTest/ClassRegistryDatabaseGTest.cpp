@@ -50,7 +50,6 @@ TEST(ClassRegistryDatabaseGTest,TestAdd) {
     ASSERT_TRUE(classRegistryDatabaseTest.TestAdd());
 }
 
-
 TEST(ClassRegistryDatabaseGTest,TestFindTrue) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestFind("abcdefg", true));
@@ -59,6 +58,11 @@ TEST(ClassRegistryDatabaseGTest,TestFindTrue) {
 TEST(ClassRegistryDatabaseGTest,TestFindFalse) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestFind("abcd", false));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindByTypeIdName) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFindTypeIdName());
 }
 
 TEST(ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameTrue) {

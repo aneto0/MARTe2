@@ -39,6 +39,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
 Reference::Reference() {
     objectPointer = NULL_PTR(Object*);
 }
@@ -48,7 +50,7 @@ Reference::Reference(const Reference& sourceReference) {
     (*this) = sourceReference;
 }
 
-Reference::Reference(const char8* const typeName, HeapManager::HeapI* const heap) {
+Reference::Reference(const char8* const typeName, HeapI* const heap) {
     objectPointer = NULL_PTR(Object*);
     Object *objPtr = CreateByName(typeName, heap);
     if (objPtr != NULL_PTR(Object*)) {
@@ -84,7 +86,6 @@ Reference& Reference::operator=(Object * const pointer) {
  * RemoveReference() to decrement references in a NULL objectPointer
  * which is properly protected. The delete of objectPointer at least
  * for versions < C++11 do not through an exception. */
-/*lint -sem(Reference::RemoveReference,cleanup)*/
 Reference::~Reference() {
     Reference::RemoveReference();
 }
@@ -144,7 +145,7 @@ Object* Reference::operator->() {
     return objectPointer;
 }
 
-Object *Reference::CreateByName(const char8 * const className, HeapManager::HeapI* const heap) const {
+Object *Reference::CreateByName(const char8 * const className, HeapI* const heap) const {
     Object *obj = NULL_PTR(Object *);
 
     const ClassRegistryItem *classRegistryItem = ClassRegistryDatabase::Instance()->Find(className);
@@ -155,4 +156,6 @@ Object *Reference::CreateByName(const char8 * const className, HeapManager::Heap
     }
 
     return obj;
+}
+
 }

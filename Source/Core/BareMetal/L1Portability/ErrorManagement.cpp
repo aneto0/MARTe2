@@ -39,6 +39,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 namespace ErrorManagement {
 
 
@@ -97,7 +99,7 @@ void ReportError(const ErrorType code,
                  const int16 lineNumber,
                  const char8 * const functionName) {
     ErrorInformation errorInfo;
-    errorInfo.threadId = InvalidThreadIdentifier;
+//    errorInfo.threadId = InvalidThreadIdentifier;
     errorInfo.objectPointer = static_cast<void*>(NULL);
     errorInfo.className       = static_cast<const char8 *>(NULL);
     errorInfo.header.errorType = code;
@@ -107,7 +109,7 @@ void ReportError(const ErrorType code,
     errorInfo.functionName = functionName;
     errorInfo.hrtTime = HighResolutionTimer::Counter();
 #ifndef INTERRUPT_SUPPORTED
-    errorInfo.threadId = Threads::Id();
+//    errorInfo.threadId = Threads::Id();
 #endif
     errorMessageProcessFunction(errorInfo, errorDescription);
 }
@@ -119,7 +121,7 @@ void ReportErrorFullContext(const ErrorType code,
                             const int16 lineNumber,
                             const char8 * const functionName) {
     ErrorInformation errorInfo;
-    errorInfo.threadId = InvalidThreadIdentifier;
+//    errorInfo.threadId = InvalidThreadIdentifier;
     errorInfo.objectPointer = static_cast<void*>(NULL);
     errorInfo.className       = static_cast<const char8 *>(NULL);
     errorInfo.header.errorType = code;
@@ -127,7 +129,7 @@ void ReportErrorFullContext(const ErrorType code,
     errorInfo.fileName = fileName;
     errorInfo.functionName = functionName;
     errorInfo.hrtTime = HighResolutionTimer::Counter();
-    errorInfo.threadId = Threads::Id();
+//    errorInfo.threadId = Threads::Id();
     errorMessageProcessFunction(errorInfo, errorDescription);
 }
 
@@ -142,6 +144,8 @@ void SetErrorProcessFunction(const ErrorProcessFunctionType userFun) {
     else{
         errorMessageProcessFunction = &NullErrorProcessFunction;
     }
+}
+
 }
 
 }

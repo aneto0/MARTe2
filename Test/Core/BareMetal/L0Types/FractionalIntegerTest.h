@@ -37,6 +37,8 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+using namespace MARTe;
+
 /**
  * @brief Tests all the FractionalInteger functions.
  */
@@ -82,7 +84,7 @@ public:
      * @brief Checks if BitSize function returns the same size specified in template initialization.
      * @return true if BitSize function returns the same size specified in template initialization, false otherwise.
      */
-    bool TestBitSize();
+    bool TestGetNumberOfBits();
 
 };
 
@@ -101,16 +103,16 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMinorSize(T2 input) {
     // the size of the bit range
     const uint8 minorSize = (inputSize < max) ? (inputSize - 1) : (half - 1);
 
-    TypeDefinition::FractionalInteger<T, minorSize> myFractionalInteger;
+    FractionalInteger<T, minorSize> myFractionalInteger;
 
-    bool isInputSigned = TypeDefinition::TypeCharacteristics::IsSigned<T2>();
+    bool isInputSigned = TypeCharacteristics::IsSigned<T2>();
 
     // max and min values of the input
     T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : ((T2) -1);
     T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : (T2) 0;
     T2 zero = (T2) 0;
 
-    bool isSigned = TypeDefinition::TypeCharacteristics::IsSigned<T>();
+    bool isSigned = TypeCharacteristics::IsSigned<T>();
 
     // max and min values of the bit range
     const T thisMaxValue = isSigned ? ((((T) 1) << (minorSize - (T) 1)) - (T) 1) : (((T) -1) >> (sizeof(T) * 8 - minorSize));
@@ -152,14 +154,14 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMajorSize(T2 input) {
     const uint8 inputSize = sizeof(T2) * 8;
     const uint8 majorSize = (inputSize + 1);
 
-    TypeDefinition::FractionalInteger<T, majorSize> myFractionalInteger;
+    FractionalInteger<T, majorSize> myFractionalInteger;
 
-    bool isInputSigned = TypeDefinition::TypeCharacteristics::IsSigned<T2>();
+    bool isInputSigned = TypeCharacteristics::IsSigned<T2>();
     T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : ((T2) -1);
     T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : 0;
     T2 zero = (T2) 0;
 
-    bool isSigned = TypeDefinition::TypeCharacteristics::IsSigned<T>();
+    bool isSigned = TypeCharacteristics::IsSigned<T>();
 
     myFractionalInteger = maxValue;
 
@@ -200,21 +202,21 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastNonConst() {
 
     const uint8 size = 8;
 
-    TypeDefinition::FractionalInteger<T, size> myFractionalInteger;
+    FractionalInteger<T, size> myFractionalInteger;
     myFractionalInteger = 0;
 
-    TypeDefinition::AnyType atTest = myFractionalInteger;
+    AnyType atTest = myFractionalInteger;
 
     if (atTest.GetDataPointer() != (&myFractionalInteger)) {
         return false;
     }
 
-    TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
+    TypeDescriptor tdTest = atTest.GetTypeDescriptor();
     bool isSigned = T(-1) < 0;
 
-    TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
+    BasicType type = (isSigned) ? SignedInteger : UnsignedInteger;
 
-    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
+    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.numberOfBits != size)) {
         return false;
     }
 
@@ -229,21 +231,21 @@ template<typename T>
 bool FractionalIntegerTest<T>::TestAnyTypeCastConst() {
     const uint8 size = 8;
 
-    const TypeDefinition::FractionalInteger<T, size> myFractionalInteger(0);
+    const FractionalInteger<T, size> myFractionalInteger(0);
 
-    TypeDefinition::AnyType atTest = myFractionalInteger;
+    AnyType atTest = myFractionalInteger;
 
     if (atTest.GetDataPointer() != (&myFractionalInteger)) {
         return false;
     }
 
-    TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
+    TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
     bool isSigned = T(-1) < 0;
 
-    TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
+    BasicType type = (isSigned) ? SignedInteger : UnsignedInteger;
 
-    if ((tdTest.isStructuredData) || (!tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
+    if ((tdTest.isStructuredData) || (!tdTest.isConstant) || (tdTest.type != type) || (tdTest.numberOfBits != size)) {
         return false;
     }
 
@@ -255,26 +257,26 @@ bool FractionalIntegerTest<T>::TestAnyTypeCastConst() {
 }
 
 template<typename T>
-bool FractionalIntegerTest<T>::TestBitSize() {
+bool FractionalIntegerTest<T>::TestGetNumberOfBits() {
 
     const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
-    const uint8 zero = 0;
+    const uint8 one = 1;
 
-    TypeDefinition::FractionalInteger<T, zero> myZeroFractionalInteger;
+    FractionalInteger<T, one> myZeroFractionalInteger;
 
-    if (myZeroFractionalInteger.BitSize() != zero) {
+    if (myZeroFractionalInteger.GetNumberOfBits() != one) {
         return false;
     }
 
-    TypeDefinition::FractionalInteger<T, half> myHalfFractionalInteger;
+    FractionalInteger<T, half> myHalfFractionalInteger;
 
-    if (myHalfFractionalInteger.BitSize() != half) {
+    if (myHalfFractionalInteger.GetNumberOfBits() != half) {
         return false;
     }
-    TypeDefinition::FractionalInteger<T, max> myMaxFractionalInteger;
+    FractionalInteger<T, max> myMaxFractionalInteger;
 
-    if (myMaxFractionalInteger.BitSize() != max) {
+    if (myMaxFractionalInteger.GetNumberOfBits() != max) {
         return false;
     }
 

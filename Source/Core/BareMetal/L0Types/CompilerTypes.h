@@ -21,54 +21,45 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef COMPILERTYPESA_H_
-#define COMPILERTYPESA_H_
+#ifndef COMPILERTYPES_H_
+#define COMPILERTYPES_H_
+
+/*lint -save -e9026, function-like macro defined */
+#define QUOTE(x) QUOTE_1(x)
+/*lint -restore */
+/*lint -save -e9026 -e9024, function-like macro defined, '#/##' operators used in macro */
+#define QUOTE_1(x) #x
+/*lint -restore */
+/*lint -save -e9026 -estring(1960, *16-0-6*) , function-like macro defined, unparenthesized macro parameter*/
+#define INCLUDE_FILE_ARCHITECTURE(x,y) QUOTE(Architecture/x/y)
+#define INCLUDE_FILE_ENVIRONMENT(x,y) QUOTE(Environment/x/y)
+/*lint -restore */
+
+#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,CompilerTypes.h)
+
+/*lint -save -e9026, function-like macro defined. The aim is to reduce the clutter in the code
+ * This avoids replacing ptr = static<MyObject *>(NULL) with ptr = NULL_PTR(MyObject *)*/
+#define NULL_PTR(ptr) static_cast<ptr>(0)
+/*lint -restore */
+
+#ifndef NULL
+#define NULL NULL_PTR(void *)
+#endif
 
 namespace MARTe {
 
-/** 64 Bit unsigned integer. */
-typedef unsigned long long uint64;
-/** 64 Bit signed integer. */
-typedef long long int64;
-
-/** 32 Bit unsigned integer. */
-typedef unsigned int uint32;
-/** 32 Bit signed integer. */
-typedef signed int int32;
-
-/** 16 Bit unsigned integer. */
-typedef unsigned short uint16;
-/** 16 Bit signed integer. */
-typedef signed short int16;
-/** 8 Bit unsigned integer. */
-typedef unsigned char uint8;
-/** 8 Bit signed integer. */
-typedef signed char int8;
-
-/** IEEE 754 single precision float */
-typedef float float32;
-/** IEEE 754 double precision float */
-typedef double float64;
-
-/** 8 Bit character */
-typedef char char8;
-
-/** Sufficiently large to hold a pointer address in the target architecture*/
-#if defined(__LP64__) || defined(__ILP64__) || defined (__LLP64__)
-typedef uint64      uintp;
+/** Large enough to store a pointer*/
+#ifdef __LP64__
+typedef unsigned long intptr;
+#elif defined __ILP64__
+typedef unsigned long intptr;
+#elif defined __LLP64__
+typedef unsigned long long intptr;
 #else
-typedef uint32      uintp;
+typedef unsigned long intptr;
 #endif
-
-/** A tool to find indexes of structures fields.
- 1024 has been used to avoid alignment problems. */
-#define indexof(type,field) ((intptr)&(((type *)1024)->field) - 1024)
-/** A tool to find the size of structures fields.
- 1024 has been used to avoid alignment problems. */
-#define msizeof(type,field) sizeof(((type *)1024)->field)
-
-#define HANDLE void *
 
 }
 
-#endif /* COMPILERTYPESA */
+#endif /* COMPILERTYPES */
+

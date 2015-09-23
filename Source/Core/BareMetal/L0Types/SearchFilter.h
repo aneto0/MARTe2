@@ -35,6 +35,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+
 /**
  * @brief LinkedListable search interface.
  * @details For each element on a LinkedListable list the function Test(LinkedListable *) is called.
@@ -58,6 +60,8 @@ public:
      */
     virtual bool Test(LinkedListable *data)=0;
 };
+
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

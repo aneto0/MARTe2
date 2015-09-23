@@ -75,7 +75,7 @@ bool EventSemTest::TestCreate() {
     EventSem testSem;
     bool test = testSem.Create();
     if (test) {
-        test &= (testSem.GetOSProperties() != NULL);
+        test &= (testSem.GetProperties() != NULL);
     }
     testSem.Close();
     return test;
@@ -97,7 +97,7 @@ bool EventSemTest::TestCopyConstructor() {
     testSem.Wait(tt);
 
     bool test = copySem.Post();
-    test &= (testSem.GetOSProperties() == copySem.GetOSProperties());
+    test &= (testSem.GetProperties() == copySem.GetProperties());
 
     testSem.Close();
     copySem.Close();

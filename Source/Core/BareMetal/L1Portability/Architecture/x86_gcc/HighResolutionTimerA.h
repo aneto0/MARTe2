@@ -40,6 +40,8 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 namespace HighResolutionTimer {
 
 inline uint32 Counter32() {
@@ -63,6 +65,8 @@ inline int64 Counter() {
             : "=a"(pperf[0]) , "=d"(pperf[1])
     );
     return perf;
+}
+
 }
 
 }

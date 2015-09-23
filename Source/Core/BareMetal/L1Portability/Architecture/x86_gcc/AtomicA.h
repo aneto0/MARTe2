@@ -40,6 +40,8 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 namespace Atomic {
 
 inline void Increment(volatile int32 *p) {
@@ -140,4 +142,5 @@ inline void Sub(volatile int32 *p,
 
 }
 
+}
 #endif /* ATOMICA_H_ */

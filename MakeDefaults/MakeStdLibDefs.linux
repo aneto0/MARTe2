@@ -25,7 +25,8 @@
 
 BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
 
-OPERATING_SYSTEM=Linux
+ENVIRONMENT=Linux
+ARCHITECTURE=x86_gcc
 EXEEXT=.ex
 DLLEXT=.so
 LIBEXT=.a
@@ -57,7 +58,7 @@ INCLUDE =
 LFLAGS = -Wl,--no-as-needed  
 CFLAGS = -fPIC -Wall
 CPPFLAGS = -fPIC -frtti -Wall 
-CFLAGSPEC= -DARCHITECTURE=x86_gcc -DOPERATING_SYSTEM=Linux -DUSE_PTHREAD -pthread
+CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

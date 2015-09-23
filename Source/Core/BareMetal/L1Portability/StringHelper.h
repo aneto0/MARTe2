@@ -32,18 +32,21 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 #include "ErrorManagement.h"
+#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
 
 /**
  * @brief Implementation of functions to manipulate strings.
  * @details These methods allows the most used and basic functions to manipulate char8 *strings and
  * are particularly useful in the implementation of higher levels string and stream implementations.
  */
+/*lint -e{762} the functions are declared in the public header file and defined in the header file of the specific architecture.*/
 namespace StringHelper {
 
 /**
@@ -294,6 +297,7 @@ bool ConcatenateN(const char8* const string1,
 
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

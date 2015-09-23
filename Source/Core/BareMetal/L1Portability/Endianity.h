@@ -39,6 +39,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief Converts any basic type to (from) the target architecture, from (to)
  * the requested endianity.
@@ -642,4 +644,5 @@ inline uint8 Endianity::Type() {
     return endianityType;
 }
 
+}
 #endif /* ENDIANITY_H_ */

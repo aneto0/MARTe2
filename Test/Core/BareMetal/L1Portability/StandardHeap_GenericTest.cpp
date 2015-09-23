@@ -40,7 +40,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-using namespace HeapManager;
+//using namespace MARTe::HeapManager;
+using namespace MARTe;
+
 
 StandardHeap_GenericTest::StandardHeap_GenericTest() {
     retVal = false;

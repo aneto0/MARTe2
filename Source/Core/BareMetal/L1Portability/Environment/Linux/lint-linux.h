@@ -29,7 +29,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
 #include <time.h>
 #include <sys/time.h>
 #include <errno.h>
@@ -39,6 +38,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <pthread.h>
+#include "../../GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */

@@ -30,9 +30,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HeapManagerTest.h"
-#include "../../../Source/Core/L0Portability/HeapI.h"
-#include "../../../Source/Core/L0Portability/StringHelper.h"
-#include "../../../Source/Core/L0Portability/HeapManager.h"
+#include "HeapI.h"
+#include "StringHelper.h"
+#include "HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,7 +42,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace HeapManager;
+using namespace MARTe::HeapManager;
+using namespace MARTe;
 
 HeapManagerTest::HeapManagerTest() {
     ptr = NULL;

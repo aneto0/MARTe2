@@ -43,7 +43,7 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace Lists {
+namespace MARTe {
 
 StaticListHolder::StaticListHolder(const uint32 listElementSize,
                                    const uint32 listAllocationGranularity) :
@@ -55,7 +55,7 @@ StaticListHolder::StaticListHolder(const uint32 listElementSize,
 
         //Calculates and initializes the maximum capacity
         maxListCapacity_(
-                ((TypeDefinition::TypeCharacteristics::MaxValue<uint32>() / (listAllocationGranularity_ * listElementSize_))
+                ((TypeCharacteristics::MaxValue<uint32>() / (listAllocationGranularity_ * listElementSize_))
                         * (listAllocationGranularity_ * listElementSize_)) / listElementSize_),
 
         //Initializes the pointer to the first byte of the array of elements

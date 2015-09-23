@@ -46,6 +46,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 namespace MemoryOperationsHelper {
 
 bool Copy(void* const destination,
@@ -145,6 +147,8 @@ bool Set(void * const mem,
     }
 
     return ret;
+
+}
 
 }
 

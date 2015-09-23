@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "ClassRegistryDatabase.h"
+using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -81,6 +82,12 @@ public:
      */
     bool TestFind(const char8 *name,
                   bool create);
+
+    /**
+     * @brief Tests the TestFindTypeIdName function.
+     * @return true if db->FindTypeIdName(typeid(Object).name()) returns not NULL.
+     */
+    bool TestFindTypeIdName();
 
     /**
      * @brief Tests the find function with the DLLName::ClassName pattern.

@@ -31,6 +31,8 @@
 
 #include "ReferenceContainerFilterReferencesTest.h"
 #include "ReferenceContainer.h"
+using namespace MARTe;
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

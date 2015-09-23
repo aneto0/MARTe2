@@ -31,13 +31,14 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "AnyType.h"
 #include "BitBoolean.h"
 #include "FractionalInteger.h"
-#include "AnyType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+using namespace MARTe;
 
 /**
  * @brief Tests all the BitBoolean functions.
@@ -68,7 +69,7 @@ public:
      * @brief Tests if the returned bit size is correct.
      * @return true if the bit size returned is equal to the specified bit size in template initialization.
      */
-    bool TestBitSize();
+    bool TestNumberOfBits();
 
     /**
      * @brief Tests if the returned bit offset is correct.
@@ -86,7 +87,7 @@ union BitBoolUnionExample {
 
     uint32 intx1 :31;
 
-    TypeDefinition::BitBoolean<uint64, 31> bitBool;
+    BitBoolean<uint64, 31> bitBool;
 
     uint64 intx3;
 
@@ -116,7 +117,7 @@ bool BitBooleanTest<T>::TestBoolCast() {
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    TypeDefinition::BitBoolean<T, zero> myZeroShiftedBool;
+    BitBoolean<T, zero> myZeroShiftedBool;
     myZeroShiftedBool = true;
     if (!myZeroShiftedBool) {
         return false;
@@ -128,7 +129,7 @@ bool BitBooleanTest<T>::TestBoolCast() {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, half> myHalfShiftedBool;
+    BitBoolean<T, half> myHalfShiftedBool;
 
     myHalfShiftedBool = true;
     if (!myHalfShiftedBool) {
@@ -141,7 +142,7 @@ bool BitBooleanTest<T>::TestBoolCast() {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, max> myMaxShiftedBool;
+    BitBoolean<T, max> myMaxShiftedBool;
 
     myMaxShiftedBool = true;
     if (!myMaxShiftedBool) {
@@ -168,18 +169,18 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    TypeDefinition::BitBoolean<T, zero> myZeroShiftedBool;
+    BitBoolean<T, zero> myZeroShiftedBool;
     myZeroShiftedBool = true;
 
-    TypeDefinition::AnyType atTest = myZeroShiftedBool;
+    AnyType atTest = myZeroShiftedBool;
 
     if (atTest.GetDataPointer() != (&myZeroShiftedBool)) {
         return false;
     }
 
-    TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
+    TypeDescriptor tdTest = atTest.GetTypeDescriptor();
 
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != UnsignedInteger || tdTest.numberOfBits != 1) {
         return false;
     }
 
@@ -187,7 +188,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, half> myHalfShiftedBool;
+    BitBoolean<T, half> myHalfShiftedBool;
 
     myHalfShiftedBool = true;
     atTest = myHalfShiftedBool;
@@ -197,7 +198,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
     }
 
     tdTest = atTest.GetTypeDescriptor();
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != UnsignedInteger || tdTest.numberOfBits != 1) {
         return false;
     }
 
@@ -205,7 +206,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, max> myMaxShiftedBool;
+    BitBoolean<T, max> myMaxShiftedBool;
 
     myMaxShiftedBool = true;
     atTest = myMaxShiftedBool;
@@ -215,7 +216,7 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
     }
 
     tdTest = atTest.GetTypeDescriptor();
-    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != TypeDefinition::UnsignedInteger || tdTest.size != 1) {
+    if (tdTest.isStructuredData || tdTest.isConstant || tdTest.type != UnsignedInteger || tdTest.numberOfBits != 1) {
         return false;
     }
 
@@ -227,26 +228,26 @@ bool BitBooleanTest<T>::TestAnyTypeCast() {
 }
 
 template<typename T>
-bool BitBooleanTest<T>::TestBitSize() {
+bool BitBooleanTest<T>::TestNumberOfBits() {
 
     const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    TypeDefinition::BitBoolean<T, zero> myZeroShiftedBool;
+    BitBoolean<T, zero> myZeroShiftedBool;
 
-    if (myZeroShiftedBool.BitSize() != 1) {
+    if (myZeroShiftedBool.NumberOfBits() != 1) {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, half> myHalfShiftedBool;
+    BitBoolean<T, half> myHalfShiftedBool;
 
-    if (myHalfShiftedBool.BitSize() != 1) {
+    if (myHalfShiftedBool.NumberOfBits() != 1) {
         return false;
     }
-    TypeDefinition::BitBoolean<T, max> myMaxShiftedBool;
+    BitBoolean<T, max> myMaxShiftedBool;
 
-    if (myMaxShiftedBool.BitSize() != 1) {
+    if (myMaxShiftedBool.NumberOfBits() != 1) {
         return false;
     }
 
@@ -260,18 +261,18 @@ bool BitBooleanTest<T>::TestBitOffset() {
     const uint8 half = max / 2;
     const uint8 zero = 0;
 
-    TypeDefinition::BitBoolean<T, zero> myZeroShiftedBool;
+    BitBoolean<T, zero> myZeroShiftedBool;
 
     if (myZeroShiftedBool.BitOffset() != zero) {
         return false;
     }
 
-    TypeDefinition::BitBoolean<T, half> myHalfShiftedBool;
+    BitBoolean<T, half> myHalfShiftedBool;
 
     if (myHalfShiftedBool.BitOffset() != half) {
         return false;
     }
-    TypeDefinition::BitBoolean<T, max> myMaxShiftedBool;
+    BitBoolean<T, max> myMaxShiftedBool;
 
     if (myMaxShiftedBool.BitOffset() != max) {
         return false;

@@ -46,7 +46,7 @@ TEST(ClassPropertiesGTest,TestDefaultConstructor) {
 
 TEST(ClassPropertiesGTest,TestFullConstructor) {
     ClassPropertiesTest myClassPropertiesTest;
-    ASSERT_TRUE(myClassPropertiesTest.TestFullConstructor("Hello","World"));
+    ASSERT_TRUE(myClassPropertiesTest.TestFullConstructor("Hello", "Hello", "World"));
 }
 
 TEST(ClassPropertiesGTest,TestGetName) {

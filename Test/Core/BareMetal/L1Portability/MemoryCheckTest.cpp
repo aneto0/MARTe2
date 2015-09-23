@@ -30,8 +30,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "MemoryCheckTest.h"
-#include "../../../Source/Core/L0Portability/MemoryCheck.h"
-#include "../../../Source/Core/L0Portability/HeapManager.h"
+#include "MemoryCheck.h"
+#include "HeapManager.h"
+
+using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

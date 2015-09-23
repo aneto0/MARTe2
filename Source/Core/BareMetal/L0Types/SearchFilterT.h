@@ -36,6 +36,8 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 /**
  * @brief Template version of the SearchFilter interface.
  */

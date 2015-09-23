@@ -38,21 +38,30 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 ClassProperties::ClassProperties() {
     className = static_cast<const char8 *>(NULL);
+    typeidClassName = static_cast<const char8 *>(NULL);
     classVersion = static_cast<const char8 *>(NULL);
     uniqueIdentifier = 0u;
 }
 
 ClassProperties::ClassProperties(const char8 * const cName,
+                                 const char8 * const typeidName,
                                  const char8 * const cVersion) {
     className = cName;
+    typeidClassName = typeidName;
     classVersion = cVersion;
     uniqueIdentifier = 0u;
 }
 
 const char8* ClassProperties::GetName() const {
     return className;
+}
+
+const char8* ClassProperties::GetTypeIdName() const {
+    return typeidClassName;
 }
 
 const char8* ClassProperties::GetVersion() const {
@@ -67,3 +76,4 @@ void ClassProperties::SetUniqueIdentifier(const uint32 &uid){
     uniqueIdentifier = uid;
 }
 
+}

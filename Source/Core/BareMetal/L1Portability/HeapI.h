@@ -31,13 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
 #include "ErrorManagement.h"
+#include "GeneralDefinitions.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace HeapManager {
+namespace MARTe{
 
 /**
  * @brief Heap interface and standard implementation.
@@ -48,6 +48,11 @@ namespace HeapManager {
 class HeapI {
 public:
 
+    /**
+     * @brief Virtual destructor.
+     */
+    virtual ~HeapI() {
+    }
 
     /**
      * @brief Allocates a portion of memory on the heap.

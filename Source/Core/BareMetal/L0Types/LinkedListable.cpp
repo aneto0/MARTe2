@@ -39,12 +39,16 @@
 
 #include "LinkedListable.h"
 
+
+namespace MARTe {
+
+
 LinkedListable::LinkedListable() {
-    next = static_cast<LinkedListable *>(NULL);
+    next = NULL_PTR(LinkedListable *);
 }
 
 LinkedListable::~LinkedListable() {
-    next = static_cast<LinkedListable *>(NULL);
+    next = NULL_PTR(LinkedListable *);
 }
 
 LinkedListable *LinkedListable::Next() {
@@ -158,7 +162,7 @@ void LinkedListable::Add(LinkedListable * const p) {
             q = q->next;
         }
         q->next = p;
-        p->next = static_cast<LinkedListable *>(NULL);
+        p->next = NULL_PTR(LinkedListable *);
     }
 }
 
@@ -187,7 +191,7 @@ bool LinkedListable::Search(const LinkedListable * const p) {
 
 LinkedListable *LinkedListable::Search(SearchFilter * const filter) {
 
-    LinkedListable *ret = static_cast<LinkedListable *>(NULL);
+    LinkedListable *ret = NULL_PTR(LinkedListable *);
     if (filter != NULL) {
 
         LinkedListable *q = this;
@@ -218,7 +222,7 @@ bool LinkedListable::Extract(LinkedListable * const p) {
 
         if (ret) {
             q->next = q->next->next;
-            p->next = static_cast<LinkedListable *>(NULL);
+            p->next = NULL_PTR(LinkedListable *);
         }
     }
     return ret;
@@ -226,7 +230,7 @@ bool LinkedListable::Extract(LinkedListable * const p) {
 
 LinkedListable *LinkedListable::Extract(SearchFilter * const filter) {
 
-    LinkedListable *ret = static_cast<LinkedListable *>(NULL);
+    LinkedListable *ret = NULL_PTR(LinkedListable *);
 
     if (filter != NULL) {
         LinkedListable *q = this;
@@ -234,7 +238,7 @@ LinkedListable *LinkedListable::Extract(SearchFilter * const filter) {
             if (filter->Test(q->next)) {
                 LinkedListable *p = q->next;
                 q->next = q->next->next;
-                p->next = static_cast<LinkedListable *>(NULL);
+                p->next = NULL_PTR(LinkedListable *);
                 ret = p;
                 break;
             }
@@ -291,4 +295,6 @@ void LinkedListable::Iterate(Iterator * const it) {
             p = p->next;
         }
     }
+}
+
 }

@@ -30,8 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ReferenceTest.h"
-
-#include "../../../Source/Core/L0Portability/MemoryCheck.h"
+#include "ReferenceT.h"
+#include "MemoryCheck.h"
 #include "ObjectTestHelper.h"
 #include "ClassRegistryDatabase.h"
 #include "Threads.h"

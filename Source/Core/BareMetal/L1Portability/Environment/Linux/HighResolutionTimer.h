@@ -1,5 +1,5 @@
 /**
- * @file HighResolutionTimerOS.h
+ * @file HighResolutionTimer.h
  * @brief Header file for module HighResolutionTimer
  * @date 05/07/2015
  * @author André Neto
@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef HIGHRESOLUTIONTIMEROS_H_
-#define HIGHRESOLUTIONTIMEROS_H_
+#ifndef HIGHRESOLUTIONTIMER_ENV_H_
+#define HIGHRESOLUTIONTIMER_ENV_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "../../HighResolutionTimer.h"
-#include "HighResolutionTimerCalibratorOS.h"
+#include "HighResolutionTimerCalibrator.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -42,7 +42,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-extern HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
+
+namespace MARTe{
+
+
+extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
 
 namespace HighResolutionTimer {
 
@@ -56,10 +60,10 @@ inline float64 Period() {
     return calibratedHighResolutionTimer.GetPeriod();
 }
 
-inline float64 TicksToTime(int64 tStop,
-                           int64 tStart) {
+inline float64 TicksToTime(const int64 tStop,
+                           const int64 tStart) {
     int64 dT = tStop - tStart;
-    return dT * Period();
+    return static_cast<float64>(dT) * Period();
 }
 
 inline bool GetTimeStamp(TimeValues &date) {
@@ -68,4 +72,5 @@ inline bool GetTimeStamp(TimeValues &date) {
 
 }
 
-#endif /* HIGHRESOLUTIONTIMEROS_H_ */
+}
+#endif /* HIGHRESOLUTIONTIMER_ENV_H_ */

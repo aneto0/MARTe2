@@ -36,6 +36,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+using namespace MARTe;
+
 /**
  * @brief Tests all the BitRange functions.
  */
@@ -82,7 +85,7 @@ public:
      * @brief Tests if the returned bit size is correct.
      * @return true if the bit size returned is equal to the specified bit size in template initialization.
      */
-    bool TestBitSize();
+    bool TestNumberOfBits();
 
     /**
      * @brief Tests if the returned bit offset is correct.
@@ -97,10 +100,10 @@ public:
 /*---------------------------------------------------------------------------*/
 
 union BitRangeUnionExample {
-    TypeDefinition::BitRange<uint64, 8, 0> first;
-    TypeDefinition::BitRange<uint64, 8, 8> second;
-    TypeDefinition::BitRange<uint64, 16, 16> third;
-    TypeDefinition::BitRange<uint64, 32, 32> fourth;
+    BitRange<uint64, 8, 0> first;
+    BitRange<uint64, 8, 8> second;
+    BitRange<uint64, 16, 16> third;
+    BitRange<uint64, 32, 32> fourth;
 
     uint64 alternative;
 
@@ -141,16 +144,16 @@ bool BitRangeTest<T>::TestBasicTypeCastMinorSize(T2 input) {
     // the size of the bit range
     const uint8 minorSize = (inputSize < max) ? (inputSize - 1) : (half - 1);
 
-    TypeDefinition::BitRange<T, minorSize, half> myBitRange;
+    BitRange<T, minorSize, half> myBitRange;
 
-    bool isInputSigned = TypeDefinition::TypeCharacteristics::IsSigned<T2>();
+    bool isInputSigned = TypeCharacteristics::IsSigned<T2>();
 
     // max and min values of the input
     T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T) 1) : ((T2) -1);
     T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T) 1) : 0;
     T2 zero = (T2) 0;
 
-    bool isSigned = TypeDefinition::TypeCharacteristics::IsSigned<T>();
+    bool isSigned = TypeCharacteristics::IsSigned<T>();
 
     // max and min values of the bit range
     const T thisMaxValue = isSigned ? ((((T) 1) << (minorSize - (T) 1)) - (T) 1) : (((T) -1) >> (sizeof(T) * 8 - minorSize));
@@ -194,14 +197,14 @@ bool BitRangeTest<T>::TestBasicTypeCastMajorSize(T2 input) {
     const uint8 half = max / 2 - 2;
     const uint8 majorSize = (inputSize + 1);
 
-    TypeDefinition::BitRange<T, majorSize, half> myBitRange;
+    BitRange<T, majorSize, half> myBitRange;
 
-    bool isInputSigned = TypeDefinition::TypeCharacteristics::IsSigned<T2>();
+    bool isInputSigned = TypeCharacteristics::IsSigned<T2>();
     T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : ((T2) -1);
     T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : 0;
     T2 zero = (T2) 0;
 
-    bool isSigned = TypeDefinition::TypeCharacteristics::IsSigned<T>();
+    bool isSigned = TypeCharacteristics::IsSigned<T>();
 
     myBitRange = maxValue;
 
@@ -244,21 +247,21 @@ bool BitRangeTest<T>::TestAnyTypeCast() {
 
     const uint8 size = 8;
 
-    TypeDefinition::BitRange<T, size, half> myBitRange;
+    BitRange<T, size, half> myBitRange;
     myBitRange = 0;
 
-    TypeDefinition::AnyType atTest = myBitRange;
+    AnyType atTest = myBitRange;
 
     if (atTest.GetDataPointer() != (&myBitRange)) {
         return false;
     }
 
-    TypeDefinition::TypeDescriptor tdTest = atTest.GetTypeDescriptor();
+    TypeDescriptor tdTest = atTest.GetTypeDescriptor();
     bool isSigned = T(-1) < 0;
 
-    TypeDefinition::BasicType type = (isSigned) ? TypeDefinition::SignedInteger : TypeDefinition::UnsignedInteger;
+    BasicType type = (isSigned) ? SignedInteger : UnsignedInteger;
 
-    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.size != size)) {
+    if ((tdTest.isStructuredData) || (tdTest.isConstant) || (tdTest.type != type) || (tdTest.numberOfBits != size)) {
         return false;
     }
 
@@ -270,26 +273,26 @@ bool BitRangeTest<T>::TestAnyTypeCast() {
 }
 
 template<typename T>
-bool BitRangeTest<T>::TestBitSize() {
+bool BitRangeTest<T>::TestNumberOfBits() {
 
     const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
-    const uint8 zero = 0;
+    const uint8 one = 1;
 
-    TypeDefinition::BitRange<T, zero, 0> myZeroBitRange;
+    BitRange<T, one, 0> myZeroBitRange;
 
-    if (myZeroBitRange.BitSize() != zero) {
+    if (myZeroBitRange.GetNumberOfBits() != one) {
         return false;
     }
 
-    TypeDefinition::BitRange<T, half, 0> myHalfBitRange;
+    BitRange<T, half, 0> myHalfBitRange;
 
-    if (myHalfBitRange.BitSize() != half) {
+    if (myHalfBitRange.GetNumberOfBits() != half) {
         return false;
     }
-    TypeDefinition::BitRange<T, max, 0> myMaxBitRange;
+    BitRange<T, max, 0> myMaxBitRange;
 
-    if (myMaxBitRange.BitSize() != max) {
+    if (myMaxBitRange.GetNumberOfBits() != max) {
         return false;
     }
 
@@ -300,22 +303,22 @@ template<typename T>
 bool BitRangeTest<T>::TestBitOffset() {
     const uint8 max = sizeof(T) * 8 - 1;
     const uint8 half = max / 2;
-    const uint8 zero = 0;
+    const uint8 one = 1;
 
-    TypeDefinition::BitRange<T, max, zero> myZeroBitRange;
+    BitRange<T, max, one> myZeroBitRange;
 
-    if (myZeroBitRange.BitOffset() != zero) {
+    if (myZeroBitRange.BitOffset() != one) {
         return false;
     }
 
-    TypeDefinition::BitRange<T, half, half> myHalfBitRange;
+    BitRange<T, half, half> myHalfBitRange;
 
     if (myHalfBitRange.BitOffset() != half) {
         return false;
     }
-    TypeDefinition::BitRange<T, max, max> myMaxBitRange;
+    BitRange<T, max, one> myMaxBitRange;
 
-    if (myMaxBitRange.BitOffset() != max) {
+    if (myMaxBitRange.BitOffset() != one) {
         return false;
     }
 

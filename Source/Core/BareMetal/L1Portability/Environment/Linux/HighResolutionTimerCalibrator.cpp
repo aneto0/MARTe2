@@ -1,6 +1,6 @@
 /**
- * @file HighResolutionTimerOS.cpp
- * @brief Source file for class HighResolutionTimerOS
+ * @file HighResolutionTimer.cpp
+ * @brief Source file for class HighResolutionTimer
  * @date 05/07/2015
  * @author André Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class HighResolutionTimerCalibratorOS (public, protected, and private). Be aware that some
+ * the class HighResolutionTimerCalibrator (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -33,9 +33,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "HighResolutionTimerCalibratorOS.h"
-#include "HighResolutionTimer.h"
-#include "StringHelper.h"
+#include "HighResolutionTimerCalibrator.h"
+#include "../../HighResolutionTimer.h"
+#include "../../StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -44,10 +44,13 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-/*lint -e{9141} constant that can be reused by other classes*/
-HighResolutionTimerCalibratorOS calibratedHighResolutionTimer;
 
-HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
+namespace MARTe{
+
+/*lint -e{9141} constant that can be reused by other classes*/
+HighResolutionTimerCalibrator calibratedHighResolutionTimer;
+
+HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     const size_t LINUX_CPUINFO_BUFFER_SIZE = 1023u;
     initialTicks = HighResolutionTimer::Counter();
     frequency = 0;
@@ -91,7 +94,7 @@ HighResolutionTimerCalibratorOS::HighResolutionTimerCalibratorOS() {
     }
 }
 
-bool HighResolutionTimerCalibratorOS::GetTimeStamp(TimeValues &timeStamp) const {
+bool HighResolutionTimerCalibrator::GetTimeStamp(TimeValues &timeStamp) const {
 
     int64 ticksFromStart = HighResolutionTimer::Counter() - initialTicks;
 
@@ -128,10 +131,12 @@ bool HighResolutionTimerCalibratorOS::GetTimeStamp(TimeValues &timeStamp) const 
     return ret;
 }
 
-int64 HighResolutionTimerCalibratorOS::GetFrequency() const {
+int64 HighResolutionTimerCalibrator::GetFrequency() const {
     return frequency;
 }
 
-float64 HighResolutionTimerCalibratorOS::GetPeriod() const {
+float64 HighResolutionTimerCalibrator::GetPeriod() const {
     return period;
+}
+
 }

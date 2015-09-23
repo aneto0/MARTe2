@@ -1,6 +1,6 @@
 /**
- * @file EventSemOS.cpp
- * @brief Source file for class EventSemOS
+ * @file EventSem.cpp
+ * @brief Source file for class EventSem
  * @date 06/07/2015
  * @author André Neto
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class EventSemOS (public, protected, and private). Be aware that some 
+ * the class EventSem (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -39,8 +39,10 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 /*lint -e{9109} forward declaration in EventSem.h is required to define the class*/
-struct EventSemOSProperties {
+struct EventSemProperties {
 
     /**
      * Mutex Handle
@@ -87,7 +89,7 @@ EventSem::EventSem() {
     /*lint -e{1732} -e{1733} no default assignment and no default copy constructor.
      *This is safe since none of the struct members point to dynamically allocated memory*/
     /*lint -e{1713} with the meaning of the () to initialise a struct is clear*/
-    handle = new EventSemOSProperties();
+    handle = new EventSemProperties();
     handle->closed = true;
     handle->references = 1u;
     handle->referencesMux = 0;
@@ -95,12 +97,12 @@ EventSem::EventSem() {
 }
 
 EventSem::EventSem(EventSem &source) {
-    handle = source.GetOSProperties();
+    handle = source.GetProperties();
     while (!Atomic::TestAndSet(&handle->referencesMux)) {
     }
     //Capture the case that it got the handle reference while the source semaphore
     //was already being destructed...
-    if (handle == static_cast<EventSemOSProperties *>(NULL)) {
+    if (handle == static_cast<EventSemProperties *>(NULL)) {
         EventSem();
     }
     else {
@@ -111,7 +113,7 @@ EventSem::EventSem(EventSem &source) {
 
 /*lint -e{1551} only C calls are performed. No exception can be raised*/
 EventSem::~EventSem() {
-    if (handle != static_cast<EventSemOSProperties *>(NULL)) {
+    if (handle != static_cast<EventSemProperties *>(NULL)) {
         while (!Atomic::TestAndSet(&handle->referencesMux)) {
         }
         if (handle->references == 1u) {
@@ -119,9 +121,9 @@ EventSem::~EventSem() {
                 /*lint -e{534} possible closure failure is not handled in the destructor.*/
                 Close();
             }
-            /*lint -esym(1578, EventSem::handle) the variable is correctly freed here when this is the last reference alive.*/
+            /*lint -esym(1579, MARTe::EventSem::handle) the variable is correctly freed here when this is the last reference alive.*/
             delete handle;
-            handle = static_cast<EventSemOSProperties *>(NULL);
+            handle = static_cast<EventSemProperties *>(NULL);
         }
         else {
             handle->references--;
@@ -315,14 +317,15 @@ ErrorManagement::ErrorType EventSem::ResetWait(const TimeoutType &timeout) {
     return err;
 }
 
-EventSemOSProperties *EventSem::GetOSProperties() {
+EventSemProperties *EventSem::GetProperties() {
     return handle;
 }
 
 bool EventSem::IsClosed() const {
     bool ok = true;
-    if (handle != static_cast<EventSemOSProperties *>(NULL)) {
+    if (handle != static_cast<EventSemProperties *>(NULL)) {
         ok = handle->closed;
     }
     return ok;
+}
 }

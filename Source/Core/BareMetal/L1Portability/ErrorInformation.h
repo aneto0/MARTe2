@@ -35,6 +35,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe{
 
 namespace ErrorManagement {
 
@@ -83,7 +84,7 @@ struct ErrorInformation {
     /**
      * thread ID of the threads who generate the error.
      */
-    ThreadIdentifier threadId;
+//    ThreadIdentifier threadId;
 
     /**
      * The Address of the object that produced the error.
@@ -102,6 +103,7 @@ struct ErrorInformation {
 };
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

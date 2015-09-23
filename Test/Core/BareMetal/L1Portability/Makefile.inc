@@ -43,8 +43,7 @@ OBJSX=  StandardHeap_GenericTest.x \
 	FastMathTest.x \
 	StringPortableTest.x \
 	ErrorManagementTest.x \
-	StaticList.x \
-	StaticListHolder.x \
+	StaticListTest.x \
 	FormatDescriptorTest.x
 
 

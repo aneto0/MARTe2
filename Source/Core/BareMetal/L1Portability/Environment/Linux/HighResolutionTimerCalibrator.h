@@ -1,6 +1,6 @@
 /**
- * @file HighResolutionTimerCalibratorOS.h
- * @brief Header file for class HighResolutionTimerCalibratorOS
+ * @file HighResolutionTimerCalibrator.h
+ * @brief Header file for class HighResolutionTimerCalibrator
  * @date 17/06/2015
  * @author Giuseppe Ferr�
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class HighResolutionTimerCalibratorOS
+ * @details This header file contains the declaration of the class HighResolutionTimerCalibrator
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef HIGHRESOLUTIONTIMERCALIBRATOROS_H_
-#define HIGHRESOLUTIONTIMERCALIBRATOROS_H_
+#ifndef HIGHRESOLUTIONTIMERCALIBRATOR_ENV_H_
+#define HIGHRESOLUTIONTIMERCALIBRATOR_ENV_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -47,10 +47,12 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief A class to get the period and the frequency of the cpu clock depending on the operating system.
  */
-class HighResolutionTimerCalibratorOS {
+class HighResolutionTimerCalibrator {
 
 public:
 
@@ -61,7 +63,7 @@ public:
      * In the Linux implementation these values are read from the /proc/cpuinfo file.
      * The number of elapsed cpu ticks is also stored at this moment.
      */
-    HighResolutionTimerCalibratorOS();
+    HighResolutionTimerCalibrator();
 
     /**
      * @brief Get the current time stamp.
@@ -105,6 +107,7 @@ private:
     int64 initialTicks;
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

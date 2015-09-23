@@ -32,9 +32,16 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "CompilerTypes.h"
+#include "LinkedListable.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+
+namespace MARTe {
+
 /**
  * @brief LinkedListable sorting interface.
  * @details Sort LinkedListable list by calling the function Compare(LinkedListable *, LinkedListable *).
@@ -60,6 +67,7 @@ public:
 
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

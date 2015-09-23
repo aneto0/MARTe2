@@ -38,6 +38,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
 /**
  * @brief Database of framework base classes.
  * @details Most of the framework user classes inherit from Object. As a
@@ -80,6 +81,14 @@ public:
     const ClassRegistryItem *Find(const char8 *className);
 
     /**
+     * @brief Returns the ClassRegistryItem associated to the class with typeid(class).name() equal to \a typeidName.
+     * @details The returned pointer will be valid as long as it exists in the database.
+     * @param[in] typeidName the typeid().name() of the class to be searched.
+     * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
+     */
+    const ClassRegistryItem *FindTypeIdName(const char8 * const typeidName);
+
+    /**
      * @brief Returns the number of classes registered in the database.
      * @return the number of classes registered in the database.
      */
@@ -88,8 +97,9 @@ public:
     /**
      * @brief Returns the ClassRegistryItem at position \a idx.
      * @param[in] idx the index of the ClassRegistryItem to be retrieved.
-     * @pre idx>=0 && position < GetSize()
      * @return the ClassRegistryItem at position \a idx or NULL if no element exists at that position.
+     *
+     * @pre idx>=0 && position < GetSize()
      */
     const ClassRegistryItem *Peek(const uint32 &idx);
 
@@ -101,10 +111,10 @@ private:
     ClassRegistryDatabase();
 
     /**
-     * The database is implemented as a LinkedListHolder.
+     * The database is implemented as a StaticList.
      * The destructor of the list will clean its elements.
      */
-    Lists::StaticList<ClassRegistryItem *> classDatabase;
+    StaticList<ClassRegistryItem *> classDatabase;
 
     /**
      * Protects the concurrent access to the database
@@ -117,6 +127,7 @@ private:
     uint32 classUniqueIdentifier;
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

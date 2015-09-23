@@ -111,7 +111,7 @@ private:
     /**
      * LoadableLibrary object
      */
-    LoadableLibrary myLoadableLibrary;
+    MARTe::LoadableLibrary myLoadableLibrary;
 };
 
 /*---------------------------------------------------------------------------*/

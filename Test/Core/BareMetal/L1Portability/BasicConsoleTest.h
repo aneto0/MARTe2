@@ -33,8 +33,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BasicConsole.h"
-#include "Threads.h"
 #include "Sleep.h"
+
+using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

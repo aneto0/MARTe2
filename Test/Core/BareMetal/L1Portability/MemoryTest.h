@@ -32,17 +32,17 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../../../Source/Core/L0Portability/MemoryCheck.h"
-#include "../../../Source/Core/L0Portability/MemoryOperationsHelper.h"
-#include "../../../Source/Core/L0Portability/HeapManager.h"
-#include "../../../Source/Core/L0Portability/StringHelper.h"
+#include "MemoryCheck.h"
+#include "MemoryOperationsHelper.h"
+#include "HeapManager.h"
+#include "StringHelper.h"
 // TODO split files
 // TODO test of HeapManager
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
+using namespace MARTe;
 /**
  * @brief A class to test the Memory functions.
  */

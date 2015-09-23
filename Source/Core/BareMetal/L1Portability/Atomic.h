@@ -37,6 +37,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief A collector of functions that are executed atomically even on multiprocessor machines.
  *
@@ -146,6 +148,7 @@ namespace Atomic {
 
 }
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

@@ -29,6 +29,10 @@
 #ifndef EXCEPTION_HANDLER
 #define EXCEPTION_HANDLER
 
+#include "CompilerTypes.h"
+
+namespace MARTe {
+
 /** @brief Exception handler plugin interface. */
 class ExceptionHandler {
 private:
@@ -66,5 +70,6 @@ public:
      }*/
 };
 
+}
 #endif
 

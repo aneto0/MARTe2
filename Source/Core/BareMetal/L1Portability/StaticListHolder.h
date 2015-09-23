@@ -40,7 +40,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace Lists {
+namespace MARTe {
 
 /**
  * @brief This class is an ADT for an unbounded list which allows adding,

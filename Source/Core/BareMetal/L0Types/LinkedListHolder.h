@@ -36,6 +36,8 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
 /**
  * @brief Implementation of a singly linked list with a well defined root .
  *
@@ -43,7 +45,6 @@
  * the concept of a root. In this way it is always possible to link to a well
  * defined item (e.g. to perform a search on the full list).
  */
-
 class LinkedListHolder {
 
 public:
@@ -229,6 +230,8 @@ void LinkedListHolder::FastListInsertSingle(LinkedListable &p) {
     llhSize++;
     p.SetNext(llhRoot.Next());
     llhRoot.SetNext(&p);
+}
+
 }
 #endif /* LINKEDLISTHOLDER_H_ */
 

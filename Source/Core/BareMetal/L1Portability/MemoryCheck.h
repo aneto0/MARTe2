@@ -38,6 +38,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe{
+
 /**
  * @brief Implementation of functions for the memory checking.
  */
@@ -77,4 +79,5 @@ bool Check(const void * const address,
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+}
 #endif /* MEMORY_H_ */

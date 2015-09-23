@@ -35,7 +35,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace HeapManager {
+namespace MARTe{
 
 /**
  * @brief Implementation of standard heap memory management functions.
@@ -121,6 +121,7 @@ public:
     virtual const char8 *Name() const;
 
 };
+
 
 }
 #endif /*STANDARDHEAP_GENERIC_H_ */

@@ -1,12 +1,18 @@
 /*
  * Include directories
  */
--i./Source/Core/L0Portability/ 
--i./Source/Core/L0Portability/OperatingSystem/Linux 
--i./Source/Core/L0Portability/Architecture/x86_gcc 
--i./Source/Core/L1Objects/ 
--i./Source/Core/L0TypeDev/
--i./Source/Core/L0Portability/OperatingSystem/Generic
+-i./Source/Core/BareMetal/L0Types/
+-i./Source/Core/BareMetal/L0Types/Architecture/x86_gcc
+-i./Source/Core/BareMetal/L1Portability/
+-i./Source/Core/BareMetal/L1Portability/Architecture/x86_gcc
+-i./Source/Core/BareMetal/L1Portability/Environment/Linux
+-i./Source/Core/BareMetal/L1Portability/Environment/Generic
+-i./Source/Core/BareMetal/L2Objects/
+-i./Source/Core/BareMetal/L3Streams/
+
+-i./Source/Core/Scheduler/L1Portability/
+-i./Source/Core/Scheduler/L1Portability/Environment/Linux
+-i./Source/Core/Scheduler/L1Portability/Environment/Generic
 
 /* 
  * Enable all warnings 
@@ -17,7 +23,7 @@
  * MARTe required compilation macros
  */ 
 -#dARCHITECTURE=x86_gcc
--#dOPERATING_SYSTEM=Linux
+-#dENVIRONMENT=Linux
 -dMEMORY_STATISTICS
 -dProcessorTypeDefaultCPUs=1u
 +cpp(.h)
