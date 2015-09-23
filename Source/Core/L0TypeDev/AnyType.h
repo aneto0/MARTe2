@@ -49,12 +49,15 @@ namespace TypeDefinition {
 /**
  * @brief AnyType class.
  *
- * @details This class provides a smart mechanism for the manipulation of types.\n
- * It is composed by a void* pointer to the element and by a descriptor
- * which gives information about the type (the size, if it is a signed or
- * unsigned number, if it is constant, if it is an object or a native element, etc).\n
- * For each type an implicit constructor can automatically build the relative AnyType
- * object (which is very useful for example in the Printf function).
+ * @details This class provides a smart mechanism for the generic representation of types.\n
+ * An AnyType is made by:
+ *   - a void* pointer to the data;
+ *   - an uint8 representing the bit-shift from the void* pointer to the actual data (used in bitfields);
+ *   - a TypeDescriptor which defines the type, constantness, signedness, etc. of the data.
+ *
+ * AnyType works with basic types as well as classes, as long as they are registered in the ClassRegistryDatabase.\n
+ * @note A constructor for each basic type has been defined and implemented in order to
+ * automatically build the relative AnyType object.
  */
 /*lint -save -e925 -e926 -e929 -e9005 -e1773 .
  * (925) pointer cast required by this implementation of AnyType */
@@ -67,8 +70,8 @@ public:
 
     /**
      * @brief Default constructor.
-     * @details It is used as the terminated element in a Printf list.
-     * The data descriptor is void, the pointer null.
+     * @details TypeDescriptor is initialized to VoidType, dataPointer to null and the bit-shift to 0.
+     * @note The empty AnyType is used as the terminator element in a Printf list.
      */
     inline AnyType(void);
 
@@ -79,20 +82,20 @@ public:
     inline AnyType(const AnyType &x);
 
     /**
-     * @brief Most general constructor for a constant type.
-     * @param[in] dataDescriptorIn contains the type informations.
-     * @param[in] bitAddressIn specifies the bit-shift respect to dataPointer.
-     * @param[in] dataPointerIn is the pointer to a generic constant type which must be stored.
+     * @brief Generic constructor for a constant type.
+     * @param[in] dataDescriptorIn contains the type informations in a TypeDescriptor class.
+     * @param[in] bitAddressIn specifies the bit-shift of the data with respect to dataPointer.
+     * @param[in] dataPointerIn is the pointer to the constant data.
      */
     inline AnyType(const TypeDescriptor &dataDescriptorIn,
                    const uint8 bitAddressIn,
                    const void* const dataPointerIn);
 
     /**
-     * @brief Most general constructor for a non-constant type.
-     * @param[in] dataDescriptorIn contains the type informations.
-     * @param[in] bitAddressIn specifies the bit-shift respect to dataPointer.
-     * @param[in] dataPointerIn is the pointer to a generic type which must be stored.
+     * @brief Generic constructor for a non-constant type.
+     * @param[in] dataDescriptorIn contains the type informations in a TypeDescriptor class.
+     * @param[in] bitAddressIn specifies the bit-shift of the data with respect to dataPointer.
+     * @param[in] dataPointerIn is the pointer to the data.
      */
     inline AnyType(const TypeDescriptor &dataDescriptorIn,
                    const uint8 bitAddressIn,
@@ -100,7 +103,7 @@ public:
 
     /**
      * @brief Checks if the AnyType is empty.
-     * @return true if the data descriptor is VoidType.
+     * @return true if the TypeDescriptor is VoidType.
      */
     inline bool IsVoid() const;
 
@@ -284,25 +287,25 @@ public:
     AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt);
 
     /**
-     * @brief Returns the data pointer.
-     * @return the data pointer.
+     * @brief Returns the pointer to the data.
+     * @return the pointer to the data.
      */
     inline void* GetDataPointer();
 
     /**
-     * @brief Returns the data type descriptor.
-     * @return the data type descriptor.
+     * @brief Returns the pointed data TypeDescriptor.
+     * @return the data TypeDescriptor.
      */
     inline TypeDescriptor GetTypeDescriptor() const;
 
     /**
-     * @brief Returns the data bit address.
-     * @return the data bit address (i.e  the bit shift respect to the data pointer).
+     * @brief Returns the data bit address (i.e  the bit shift respect to the data pointer).
+     * @return the data bit address.
      */
     inline uint8 GetBitAddress() const;
 
     /**
-     * @brief Generate an AnyType from a type registered in the ClassRegisteredDatabase.
+     * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegisteredDatabase).
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
@@ -312,8 +315,8 @@ public:
                                     baseType &obj);
 
     /**
-     * @brief Generate an AnyType from a type registered in the ClassRegisteredDatabase.
-     * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegisteredDatabase).
+     * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
+     * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegistryDatabase).
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
      */
@@ -324,7 +327,7 @@ public:
 private:
 
     /**
-     * A pointer to the element.
+     * Pointer to the data.
      */
     void * dataPointer;
 
@@ -336,8 +339,8 @@ private:
     TypeDescriptor dataDescriptor;
 
     /**
-     * Used for BitSet types.
-     * The maximum range is 255.
+     * The bit-shift of the actual data from the dataPointer.
+     * It is used for BitSet types,and the maximum range is 255.
      */
     uint8 bitAddress;
 };
