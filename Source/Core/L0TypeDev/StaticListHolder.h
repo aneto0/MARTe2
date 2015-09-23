@@ -1,4 +1,5 @@
 /**
+
  * @file StaticListHolder.h
  * @brief Header file for class StaticListHolder
  * @date 31/08/2015
@@ -176,7 +177,7 @@ public:
      *   copyFrom != NULL
      * @post
      *   GetSize() == this'old->GetSize() + 1 &&
-     *   GetCapacity() >= this'old->GetCapacity()
+     *   GetCapacity() >= this'old->GetCapacity() &&
      *   {value:*elementType | Peek(GetSize()-1,value) => *value == *copyFrom}
      * @return false if precondition is broken or memory allocation fails
      * @warning *copyFrom must be a valid allocated memory of size GetElementSize()
@@ -193,12 +194,12 @@ public:
      *   copyFrom!=NULL
      * @post
      *   GetSize() == this'old->GetSize() + 1 &&
-     *   GetCapacity() >= this'old->GetCapacity()
+     *   GetCapacity() >= this'old->GetCapacity() &&
      *   {value:*elementType | Peek(position,value) => *value == *copyFrom} &&
      *   {value1,value2:*elementType; i:uint32 in [position+1..GetSize()-1] |
      *    Peek(i,value1) && this'old->Peek(i-1,value2) => *value1 == *value2}
-     * @return false if precondition is broken or memory allocation fails
      * @warning *copyFrom must be valid allocated memory of size GetElementSize()
+     * @return false if precondition is broken or memory allocation fails
      */
     bool Insert(const uint32 position,
              const void * const copyFrom);
@@ -208,16 +209,14 @@ public:
      * @param[in] position The index of the requested element
      * @param[in] copyTo The pointer to the memory address where the requested element must be copied to
      * @pre
-     *   position>=0 &&
-     *   position<GetSize() &&
-     *   copyTo!=NULL
+     *   position >= 0 &&
+     *   position < GetSize() &&
+     *   copyTo != NULL
      * @post
      *   copyTo != NULL &&
      *   *copyTo holds a copy of the requested element
-     * @returns true the element was if copy successful and position ok
      * @warning *copyTo must be a valid allocated memory of size GetElementSize()
-     * @return false if precondition is broken or memory allocation fails
-     * O(1)
+     * @return false if precondition is broken or memory operation fails.
      */
     bool Peek(const uint32 position,
               void * const copyTo) const;
@@ -226,13 +225,13 @@ public:
      * @brief Extracts an element from a given position of the list (i.e. peeks and deletes)
      * @param[in] position The index of the element to remove
      * @pre
-     *   position>=0 &&
-     *   position<GetSize() &&
+     *   position >= 0 &&
+     *   position < GetSize() &&
      * @post
      *   GetSize() == this'old->GetSize() - 1 &&
      *   {value1,value2:*elementType; i:uint32 in [position..GetSize()-1] |
      *    Peek(i,value1) && this'old->Peek(i+1,value2) => *value1 == *value2}
-     * @return false if precondition is broken or memory allocation fails
+     * @return false if precondition is broken or memory operation fails.
      */
     bool Remove(const uint32 position);
 
@@ -246,7 +245,7 @@ public:
      * }
      * @pre Peek'pre && Remove'pre
      * @post Peek'post && Remove'post
-     * @return false if precondition is broken or memory allocation fails
+     * @return false if precondition is broken or memory operation fails.
      */
     bool Extract(const uint32 position,
                  void * const copyTo);

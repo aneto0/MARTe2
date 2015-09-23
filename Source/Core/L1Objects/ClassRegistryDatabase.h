@@ -87,10 +87,9 @@ public:
 
     /**
      * @brief Returns the ClassRegistryItem at position \a idx.
-     * @param idx the index of the ClassRegistryItem to be retrieved.
-     * @return the ClassRegistryItem at position \a idx or NULL if no element exists at that position.
-     *
+     * @param[in] idx the index of the ClassRegistryItem to be retrieved.
      * @pre idx>=0 && position < GetSize()
+     * @return the ClassRegistryItem at position \a idx or NULL if no element exists at that position.
      */
     const ClassRegistryItem *Peek(const uint32 &idx);
 

@@ -42,7 +42,7 @@
 namespace Lists {
 
 /**
- * @brief This template class is a ADT for an unbounded list which allows
+ * @brief This template class is a ADT (Abstract Data Type) for an unbounded list which allows
  * adding, inserting, removing and peeking elements at arbitrary positions
  * in a range from 0 onwards.
  *
@@ -63,54 +63,54 @@ public:
     StaticList();
 
     /**
-     * @brief StaticListHolder::GetElementSize()
+     * @see StaticListHolder::GetElementSize()
      */
     uint32 GetElementSize(void) const;
 
     /**
-     * @brief StaticListHolder::GetAllocationGranularity()
+     * @see StaticListHolder::GetAllocationGranularity()
      */
     uint32 GetAllocationGranularity(void) const;
 
     /**
-     * @brief StaticListHolder::GetSize()
+     * @see StaticListHolder::GetSize()
      */
     uint32 GetSize(void) const;
 
     /**
-     * @brief StaticListHolder::GetCapacity()
+     * @see StaticListHolder::GetCapacity()
      */
     uint32 GetCapacity(void) const;
 
     /**
-     * @brief StaticListHolder::GetMaxCapacity()
+     * @see StaticListHolder::GetMaxCapacity()
      */
     uint32 GetMaxCapacity(void) const;
 
     /**
-     * @brief StaticListHolder::Peek()
+     * @see StaticListHolder::Peek()
      */
     bool Peek(const uint32 position,
               elementType &value) const;
 
     /**
-     * @brief StaticListHolder::Add()
+     * @see StaticListHolder::Add()
      */
     bool Add(const elementType &value);
 
     /**
-     * @brief StaticListHolder::Insert()
+     * @see StaticListHolder::Insert()
      */
     bool Insert(const uint32 position,
              const elementType &value);
 
     /**
-     * @brief StaticListHolder::Remove()
+     * @see StaticListHolder::Remove()
      */
     bool Remove(const uint32 position);
 
     /**
-     * @brief StaticListHolder::Extract()
+     * @see StaticListHolder::Extract()
      */
     bool Extract(const uint32 position,
                  elementType &value);
