@@ -92,6 +92,11 @@ TEST(StaticListGTest,TestInsertOnNonEmptyListAtEnd) {
     ASSERT_TRUE(tester.TestInsertOnNonEmptyListAtEnd<25u>());
 }
 
+TEST(StaticListGTest,TestInsertOnNonEmptyListAtInvalidPosition) {
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
+    ASSERT_TRUE(tester.TestInsertOnNonEmptyListAtInvalidPosition<5u>());
+}
+
 TEST(StaticListGTest,TestExtractAtBeginning) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestExtractAtBeginning());
@@ -107,6 +112,11 @@ TEST(StaticListGTest,TestExtractAtEnd) {
     ASSERT_TRUE(tester.TestExtractAtEnd());
 }
 
+TEST(StaticListGTest,TestExtractInvalidPosition) {
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
+    ASSERT_TRUE(tester.TestExtractInvalidPosition());
+}
+
 TEST(StaticListGTest,TestRemoveAtBeginning) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestRemoveAtBeginning());
@@ -120,6 +130,11 @@ TEST(StaticListGTest,TestRemoveAtMiddle) {
 TEST(StaticListGTest,TestRemoveAtEnd) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestRemoveAtEnd());
+}
+
+TEST(StaticListGTest,TestRemoveInvalidPosition) {
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
+    ASSERT_TRUE(tester.TestRemoveInvalidPosition());
 }
 
 TEST(StaticListGTest,TestConstantness) {
@@ -140,4 +155,9 @@ TEST(StaticListGTest,TestGetCapacity) {
 TEST(StaticListGTest,TestPeek) {
     StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
     ASSERT_TRUE(tester.TestPeek());
+}
+
+TEST(StaticListGTest,TestPeekInvalidPosition) {
+    StaticListTest<uint32, 10, demoValues, sizeof(demoValues)> tester;
+    ASSERT_TRUE(tester.TestPeekInvalidPosition());
 }

@@ -88,7 +88,7 @@ public:
     bool TestAddOnNonEmptyList(void);
 
     /**
-     * @brief
+     * @brief Stress test. Add elements until the table capacity arrive to the MAXCAPACITY
      */
     template<elementType value>
     bool TestAddOnFullList(void);
@@ -118,6 +118,12 @@ public:
     bool TestInsertOnNonEmptyListAtEnd(void);
 
     /**
+     * @brief Test insert an element at an invalid position.
+     */
+    template<elementType insertValueInvalidPosition>
+    bool TestInsertOnNonEmptyListAtInvalidPosition(void);
+
+    /**
      * @brief Tests removing the element at the beginning of a list initialized with the elements from demoValues array
      */
     bool TestRemoveAtBeginning(void);
@@ -131,6 +137,11 @@ public:
      * @brief Tests removing the element at the end of a list initialized with the elements from demoValues array
      */
     bool TestRemoveAtEnd(void);
+
+    /**
+     * @brief Tests removing the element from invalid position
+     */
+    bool TestRemoveInvalidPosition(void);
 
     /**
      * @brief Tests extracting the element at the beginning of a list initialized with the elements from demoValues array
@@ -148,9 +159,19 @@ public:
     bool TestExtractAtEnd(void);
 
     /**
+     * @brief Tests extracting the element from invalid position
+     */
+    bool TestExtractInvalidPosition(void);
+
+    /**
      * @brief Tests peeking all the elements of a list initialized with the elements from demoValues array
      */
     bool TestPeek(void);
+
+    /**
+     * @brief Test peeking from invalid position.
+     */
+    bool TestPeekInvalidPosition();
 };
 
 }
@@ -418,6 +439,25 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     return result;
 }
 
+
+template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
+template<elementType insertValueInvalidPosition>
+bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestInsertOnNonEmptyListAtInvalidPosition(void) {
+    bool result = true;
+    StaticList<elementType, listAllocationGranularity> targetList;
+
+    //Initializes the target list with the demo values:
+    for (uint32 i = 0; i < maxDemoValues; i++) {
+        targetList.Add(demoValues[i]);
+    }
+
+    //Tests inserting a value at invalid position
+        const uint32 indexValueInvalidPosition = maxDemoValues + 5;
+        result = !targetList.Insert(indexValueInvalidPosition, insertValueInvalidPosition);
+
+    return result;
+}
+
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestRemoveAtBeginning(void) {
     bool result = true;
@@ -494,6 +534,24 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
             result = (result && peekValue == demoValues[i]);
         }
     }
+
+    return result;
+}
+
+template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
+bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestRemoveInvalidPosition(void) {
+    bool result = true;
+    StaticList<elementType, listAllocationGranularity> targetList;
+
+    //Initializes the target list with the demo values:
+    for (uint32 i = 0; i < maxDemoValues; i++) {
+        targetList.Add(demoValues[i]);
+    }
+
+    //Tests extracting a value from invalid position:
+
+    const uint32 indexValueInvalidPosition = maxDemoValues + 5;
+    result = !targetList.Remove(indexValueInvalidPosition);
 
     return result;
 }
@@ -582,6 +640,24 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
 }
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
+bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestExtractInvalidPosition(void) {
+    bool result = true;
+    StaticList<elementType, listAllocationGranularity> targetList;
+
+    //Initializes the target list with the demo values:
+    for (uint32 i = 0; i < maxDemoValues; i++) {
+        targetList.Add(demoValues[i]);
+    }
+
+    //Tests extracting a value from invalid position
+    const uint32 indexValueInvalid = maxDemoValues + 5;
+    elementType extractValue;
+    result = !targetList.Extract(indexValueInvalid, extractValue);
+
+    return result;
+}
+
+template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestPeek(void) {
     bool result = true;
     StaticList<elementType, listAllocationGranularity> targetList;
@@ -597,6 +673,24 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
         targetList.Peek(i, peekValue);
         result = result && (peekValue == demoValues[i]);
     }
+
+    return result;
+}
+
+template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
+bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestPeekInvalidPosition(void) {
+    bool result = true;
+    StaticList<elementType, listAllocationGranularity> targetList;
+
+    //Initializes the target list with the demo values:
+    for (uint32 i = 0; i < maxDemoValues; i++) {
+        targetList.Add(demoValues[i]);
+    }
+
+    //Tests peeking from invalid position
+    elementType peekValue;
+    uint32 invalidPosition = maxDemoValues + 5;
+    result = !targetList.Peek(invalidPosition, peekValue);
 
     return result;
 }
