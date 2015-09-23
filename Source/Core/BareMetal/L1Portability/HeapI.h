@@ -51,7 +51,8 @@ public:
     /**
      * @brief Virtual destructor.
      */
-    virtual ~HeapI() = 0;
+    virtual ~HeapI() {
+    }
 
     /**
      * @brief Allocates a portion of memory on the heap.
