@@ -1,7 +1,8 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
-#
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -19,19 +20,28 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
 
-TARGET=cov
+OBJSX=  AnyTypeTest.x
+		
+PACKAGE=Core/BareMetal
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-include Makefile.inc
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-LIBRARIES   += ../../Source/Core/BareMetal/$(TARGET)/MARTeCoreB$(LIBEXT) 
-LIBRARIES   += ../../Test/Core/BareMetal/$(TARGET)/MARTeCoreBTest$(LIBEXT) 
-LIBRARIES   += ../../Source/Core/Scheduler/$(TARGET)/MARTeCoreS$(LIBEXT) 
-LIBRARIES   += ../../Test/Core/Scheduler/$(TARGET)/MARTeCoreSTest$(LIBEXT)
+INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
+INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
+INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
+INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 
-LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
+all: $(OBJS) \
+                $(BUILD_DIR)/L3StreamsTest$(LIBEXT)
+	echo  $(OBJS)
 
-OPTIM=-finline-functions
+include depends.$(TARGET)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
