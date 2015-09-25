@@ -256,12 +256,6 @@ public:
     inline FormatDescriptor& operator=(const FormatDescriptor &src);
 
     /**
-     * @brief Bitwise or operator.
-     * @param[in] src is format descriptor argument.
-     */
-    inline void operator |=(const FormatDescriptor &src);
-
-    /**
      * @brief Constructor field by field.
      * @param[in] desiredActionToSet specifies the action to be performed (i.e. print an integer or print a string)
      * @param[in] sizeToSet is the desired maximum size for the print.
@@ -397,10 +391,6 @@ FormatDescriptor& FormatDescriptor::operator=(const FormatDescriptor &src) {
         format_as_uint32 = src.format_as_uint32;
     }
     return *this;
-}
-
-void FormatDescriptor::operator |=(const FormatDescriptor &src) {
-    format_as_uint32 |= src.format_as_uint32;
 }
 
 FormatDescriptor::FormatDescriptor(const DesiredAction &desiredActionToSet,
