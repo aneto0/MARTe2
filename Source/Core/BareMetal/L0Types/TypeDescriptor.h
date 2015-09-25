@@ -47,7 +47,19 @@ namespace MARTe {
  * @brief A structure Used to describe the type pointed to by a pointer.
  * @details Depending on the first bit isStructuredData it may contain a code identifying a structure
  * or the remaining bits can be used to identify a specific basic type.
- * @details Basic types are integers 8-64 bit, floats, doubles, char pointers and void pointers.
+ *
+ * Basic types are integers 8-64 bit, floats, doubles, char pointers and void pointers.
+ *
+ * @note The TypeDescriptor is internally represented as a 16-bit bitfield-like union with one of the following structures (depending on the type
+ * described, if a basic one, or a structured one):
+ * | isStructuredData   | isConstant  | type   | numberOfBits |
+ * | :----:             | :----:      | :----: | :----:       |
+ * |  1                 | 1           | 4      | 10           |
+ *
+ * | isStructuredData   | isConstant  | structuredDataIdCode  |
+ * | :----:             | :----:      | :----:                |
+ * |  1                 | 1           | 14                    |
+ *
  */
 class TypeDescriptor {
 public:
@@ -114,7 +126,7 @@ public:
                           const uint16 structuredDataIdCodeIn);
 
     /**
-     * @brief Equal operator used to compare types.
+     * @brief Equality operator used to compare types.
      * @param[in] typeDescriptor is the type to be compared with.
      * @return In case of native types returns true if type and size fields are equal.
      * If the type is an object compares the structuredDataIdCode.

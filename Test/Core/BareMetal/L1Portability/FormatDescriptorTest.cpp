@@ -128,17 +128,5 @@ bool FormatDescriptorTest::TestAssignOperator(){
     return retVal;
 }
 
-bool FormatDescriptorTest::TestBitWiseOrOperator(){
-    FormatDescriptor formatDescriptor1(PrintAnything, 0u, defaultPrecision, true, true, FixedPointNotation, DecimalNotation, true, true);
-
-    formatDescriptor |= formatDescriptor1;
-    retVal = (formatDescriptor.padded == true);
-    retVal &= (formatDescriptor.leftAligned == true);
-    retVal &= (formatDescriptor.binaryPadded == true);
-    retVal &= (formatDescriptor.fullNotation == true);
-
-    return retVal;
-}
-
 
 

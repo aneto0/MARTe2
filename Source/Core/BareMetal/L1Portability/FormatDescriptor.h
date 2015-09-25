@@ -163,6 +163,11 @@ const DesiredAction PrintStruct = 6u;
  * The FormatDescriptor provides also a function (InitialiseFromString) to automatically
  * populate the class from a const char8* string which specifies the desired print format
  * in a printf-like fashion.
+ *
+ * @note The FormatDescriptor is internally represented as a 32-bit bitfield-like union with the following structure:
+ * | size   | precision  | padded  | leftAligned | floatNotation | binaryNotation | binaryPadded | fullNotation | desiredAction | spareBits |
+ * | :----: | :----:     | :----:  | :----:      | :----:        | :----:         | :----:       | :----:       | :----:        | :----:    |
+ * |  8     | 8          | 1       | 1           | 3             | 2              | 1            | 1            | 3             | 4         |
  */
 class FormatDescriptor {
 public:
@@ -277,6 +282,9 @@ public:
                             const bool isBinaryPadded,
                             const bool isFullNotation);
 
+    /* @union
+     * @brief Prova descrizione
+     */
     /*lint -e{9018} Use of union allows to use this memory to describe both objects and basic types.*/
     union {
 
@@ -292,36 +300,38 @@ public:
         BitRange<uint32, 8u, 0u> size;
 
         /**
-         * The minimum (whenever applicable) number of meaningful digits (unless overridden by width)\n
-         * max 64 differently from printf this includes characters before comma\n
-         * excludes characters used for the exponents or for the sign and the .\n
-         * 0.34 has precision 2        -> (precision =8)  0.3400000\n
-         * 234 has precision 3         -> (precision =8)  234.00000\n
-         * 2345678000 has precision 10 -> (precision =8) unchanged still precision 10\n
-         * 2.345678E9 has precision 7  -> (precision =8) 2.3456780E9\n
-         * 234 (int) has precision 3   -> (precision =8) unchanged  still precision 3\n
-         * 0x4ABCD has precision 5     -> (precision =8) unchanged  still precision 5\n
+         * The minimum (whenever applicable) number of meaningful digits (unless overridden by <tt>width</tt>)\n
+         * The maximum is 64 (differently from the standard printf, this includes the characters before the decimal
+         * separator, and excludes characters used for the exponents or for the sign and the .).\n
+         * Examples:
+         *   - 0.34 has precision 2        -> (precision =8)  0.3400000\n
+         *   - 234 has precision 3         -> (precision =8)  234.00000\n
+         *   - 2345678000 has precision 10 -> (precision =8) unchanged still precision 10\n
+         *   - 2.345678E9 has precision 7  -> (precision =8) 2.3456780E9\n
+         *   - 234 (int) has precision 3   -> (precision =8) unchanged  still precision 3\n
+         *   - 0x4ABCD has precision 5     -> (precision =8) unchanged  still precision 5\n
          */
         BitRange<uint32, 8u, 8u> precision;
 
         /**
-         * True means produce a number of characters equal to width
+         * Setting this to true means printing a number of characters equal to <tt>width</tt>
          * fill up using spaces.
          */
         BitBoolean<uint32, 16u> padded;
 
         /**
-         * True means to produce pad spaces after printing the object representation.
+         * Setting this to true will print the padding spaces at the right of the value, so that the resulting output
+         * will be left-aligned.
          */
         BitBoolean<uint32, 17u> leftAligned;
 
         /**
-         * In case of a float, this field is used to determine how to print it.
+         * In case of a float, this field is used to determine how to print it (see the FloatNotation constants).
          */
         BitRange<uint32, 3u, 18u> floatNotation;
 
         /**
-         * The notation used for binary representation.
+         * The notation used for binary representation (see the BinaryNotation constants).
          */
         BitRange<uint32, 2u, 21u> binaryNotation;
 
@@ -333,19 +343,19 @@ public:
 
         /**
          * Only meaningful for numbers.
-         * Add the missing + or 0x 0B or 0o as header.
+         * Adds the missing + or 0x 0B or 0o as header.
          */
         BitBoolean<uint32, 24u> fullNotation;
 
         /**
          * Specifies the type that the user wants to print.
          * This can be different from what the system can do,
-         * i.e. print an integer and a float is passed.
+         * i.e. print an integer when a float is passed.
          */
         BitRange<uint32, 3u, 25u> desiredAction;
 
         /**
-         * Unnecessary bits.
+         * Extra bits.
          */
         BitRange<uint32, 4u, 28u> spareBits;
 

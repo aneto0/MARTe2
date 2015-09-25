@@ -72,10 +72,5 @@ TEST(FormatDescriptorGTest,TestAssignOperator) {
     ASSERT_TRUE(MyFormatDEscriptorTest.TestAssignOperator());
 }
 
-TEST(FormatDescriptorGTest,TestBitWiseOrOperator) {
-    FormatDescriptorTest MyFormatDEscriptorTest;
-    ASSERT_TRUE(MyFormatDEscriptorTest.TestBitWiseOrOperator());
-}
-
 
 	
