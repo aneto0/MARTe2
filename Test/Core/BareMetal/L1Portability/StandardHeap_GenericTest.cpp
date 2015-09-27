@@ -32,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StandardHeap_GenericTest.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,StandardHeap.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,7 +41,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-//using namespace MARTe::HeapManager;
 using namespace MARTe;
 
 

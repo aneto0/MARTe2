@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 #include "ClassRegistryItem.h"
 #include "Object.h"
-#include "HeapManager.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
 #include "LoadableLibrary.h"
@@ -47,8 +46,12 @@
 namespace MARTe {
 
 ClassRegistryDatabase *ClassRegistryDatabase::Instance() {
-    static ClassRegistryDatabase instance;
-    return &instance;
+    static ClassRegistryDatabase *instance = NULL_PTR(ClassRegistryDatabase *);
+    if (instance == NULL_PTR(ClassRegistryDatabase *)) {
+        instance = new ClassRegistryDatabase();
+        GlobalObjectsDatabase::Instance()->Add(instance, NUMBER_OF_GLOBAL_OBJECTS - 2u);
+    }
+    return instance;
 }
 
 ClassRegistryDatabase::ClassRegistryDatabase() {
@@ -200,12 +203,16 @@ uint32 ClassRegistryDatabase::GetSize() {
 const ClassRegistryItem *ClassRegistryDatabase::Peek(const uint32 &idx) {
     ClassRegistryItem *item = NULL_PTR(ClassRegistryItem *);
     if (mux.FastLock() == ErrorManagement::NoError) {
-        if(!classDatabase.Peek(idx, item)){
+        if (!classDatabase.Peek(idx, item)) {
             item = NULL_PTR(ClassRegistryItem *);
         }
     }
     mux.FastUnLock();
     return item;
+}
+
+const char8 * const ClassRegistryDatabase::GetClassName() const {
+    return "ClassRegistryDatabase";
 }
 
 }

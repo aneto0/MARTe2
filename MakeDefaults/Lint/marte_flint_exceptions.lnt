@@ -234,6 +234,14 @@
  * Justification: The object macros guarantee that the new and delete are always implemented in the final object.
  */
  -esym(1531, *Object::operator*)
+
+/*
+ * Rule flexelint 1531. 
+ * Justification: Cannot compare the size of the new with the size of the object being constructed. It cannot
+ * be done given that we only know the sizeof(GlobalObjectI) but not the size of a class that inherits from
+ * GlobalObjectI.
+ */
+ -esym(1531, MARTe::GlobalObjectI::*) 
  
 /*
  * Rule flexelint 1511. 
@@ -254,7 +262,7 @@
  * Otherwise it would have required to use dynamic_cast which has a performance impact that we are not ready to give away here.
  */
  -estring(1790, *LinkedListable*)
-
+  
  /*
   * Rule 3-1-1
   * Justification: Required for template implementation. No code is actually being generated and the header

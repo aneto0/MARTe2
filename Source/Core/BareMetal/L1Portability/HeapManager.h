@@ -65,13 +65,6 @@ HeapI *FindHeap(const void * const address);
 HeapI *FindHeap(const char8 * const name);
 
 /**
- * @brief Returns the standard heap.
- * @returns a pointer to the standard heap object.
- * @see StandardHeap.
- */
-HeapI *GetStandardHeap();
-
-/**
  * @brief Registers a HeapI object in the database.
  * @param[in] newHeap is a pointer to the HeapI object which must be added.
  * @return true if newHeap has been correctly registered in the database,

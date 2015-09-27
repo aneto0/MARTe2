@@ -143,10 +143,10 @@ namespace MARTe {
     const ClassProperties *className::GetClassProperties() const {                                                     \
         return className ## ClassRegistryItem_.GetClassProperties();                                                   \
     }                                                                                                                  \
-    /*lint -e{1531}                                                                                                    \
+    /*                                                                                                                 \
      * e.g. void *MyClassType::operator new(const size_t size, Heap &heap);                                            \
      */                                                                                                                \
-    void * className::operator new(const size_t size, HeapI* const heap) {                                \
+    void * className::operator new(const size_t size, HeapI* const heap) {                                             \
         void *obj = NULL_PTR(void *);                                                                                  \
         if (heap != NULL) {                                                                                            \
             obj = heap->Malloc(static_cast<uint32>(size));                                                             \

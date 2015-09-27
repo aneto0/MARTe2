@@ -103,7 +103,6 @@ bool ClassRegistryDatabaseTest::TestAdd() {
     return retVal;
 }
 
-
 bool ClassRegistryDatabaseTest::TestFindDLL(const char8* dllName,
                                             const char8* className,
                                             bool validName) {
@@ -219,7 +218,6 @@ bool ClassRegistryDatabaseTest::TestCreateInstances() {
         }
     }
 
-
 //the internal objects are not counted as instances.
     ReferenceT<CollectInts> refCollectInts = ReferenceT<CollectInts>("CollectInts");
 
@@ -269,4 +267,9 @@ bool ClassRegistryDatabaseTest::TestPolimorphismFather2Child() {
     //the reference should be invalid!
     return (!father2child.IsValid()) && (specialIntegerObjProp->GetNumberOfInstances() == 0);
 
+}
+
+bool ClassRegistryDatabaseTest::TestGetClassName() {
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+    return (StringHelper::Compare(db->GetClassName(), "ClassRegistryDatabase") == 0);
 }

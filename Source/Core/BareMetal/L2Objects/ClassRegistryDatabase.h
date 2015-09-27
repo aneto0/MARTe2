@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "../L1Portability/GlobalObjectsDatabase.h"
 #include "FastPollingMutexSem.h"
 #include "ClassRegistryItem.h"
 #include "StaticList.h"
@@ -49,7 +50,7 @@ namespace MARTe {
  * ClassRegistryItem and automatically added to a ClassRegistryDatabase. This
  * database can then be used to retrieve information about the registered classes.
  */
-class ClassRegistryDatabase {
+class ClassRegistryDatabase : public GlobalObjectI {
 
 public:
     /**
@@ -61,7 +62,7 @@ public:
     /**
      * @brief Destructor. Removes all the elements hold by the database.
      */
-    ~ClassRegistryDatabase();
+    virtual ~ClassRegistryDatabase();
 
     /**
      * @brief Adds an element to the database.
@@ -102,6 +103,12 @@ public:
      * @pre idx>=0 && position < GetSize()
      */
     const ClassRegistryItem *Peek(const uint32 &idx);
+
+    /**
+     * @brief Returns "ClassRegistryDatabase"
+     * @return "ClassRegistryDatabase".
+     */
+    virtual const char8 * const GetClassName() const;
 
 private:
     /**

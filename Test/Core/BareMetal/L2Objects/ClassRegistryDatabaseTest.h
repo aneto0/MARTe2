@@ -147,6 +147,11 @@ public:
      */
     bool TestPolimorphismFather2Child();
 
+    /**
+     * @brief Tests that GetClassName() returns "ClassRegistryDatabase"
+     */
+    bool TestGetClassName();
+
 };
 
 /*---------------------------------------------------------------------------*/

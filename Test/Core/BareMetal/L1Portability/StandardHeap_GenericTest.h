@@ -33,7 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HeapI.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,StandardHeap.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

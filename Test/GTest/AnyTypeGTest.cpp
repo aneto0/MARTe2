@@ -21,9 +21,6 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TEST_GTEST_ANYTYPEGTEST_CPP_
-#define TEST_GTEST_ANYTYPEGTEST_CPP_
-
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -365,5 +362,4 @@ TEST(AnyTypeGTest, TestAnyType_ConstFractionalIntegerInt64) {
     AnyTypeTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstFractionalInteger<int64>());
 }
-#endif /* TEST_GTEST_ANYTYPEGTEST_CPP_ */
-	
+

@@ -99,3 +99,8 @@ TEST(ClassRegistryDatabaseGTest,TestPolimorphismFather2Child) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestPolimorphismFather2Child());
 }
+
+TEST(ClassRegistryDatabaseGTest,TestGetClassName) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestGetClassName());
+}

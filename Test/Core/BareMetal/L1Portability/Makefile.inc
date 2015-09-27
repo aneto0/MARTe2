@@ -44,6 +44,7 @@ OBJSX=  StandardHeap_GenericTest.x \
 	StringPortableTest.x \
 	ErrorManagementTest.x \
 	StaticListTest.x \
+	GlobalObjectsDatabaseTest.x \
 	FormatDescriptorTest.x
 
 

@@ -57,6 +57,9 @@ const uint32 MAX_NO_OF_MEMORY_MONITORS = 64u;
 /** In windows the newline is specified with \r\n */
 const uint32 N_CHARS_NEWLINE = 1u;
 
+/** Maximum number of global databases */
+const uint32 NUMBER_OF_GLOBAL_OBJECTS = 64u;
+
 /** This is just to avoid an exception to Rule 3-9-2 of MISRA, given that many Linux operating system calls require a long as an input
  * and the framework does not define such type*/
 typedef long oslong;

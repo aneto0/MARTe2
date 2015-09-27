@@ -63,6 +63,7 @@ OBJSX=  TypeCharacteristicsGTest.x \
  	FractionalIntegerGTest.x \
  	BitRangeGTest.x \
  	StaticListGTest.x \
+ 	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x
 
 PACKAGE=

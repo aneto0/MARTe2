@@ -32,6 +32,8 @@ OBJSX=  FastMath.x \
         ProcessorType.x \
         HeapManager.x \
         FastPollingMutexSem.x \
+        GlobalObjectI.x \
+        GlobalObjectsDatabase.x \
         StringHelper.x \
         ErrorManagement.x \
         StaticListHolder.x \

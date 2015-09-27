@@ -30,6 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HeapManagerTest.h"
+
+#include <GlobalObjectsDatabase.h>
 #include "HeapI.h"
 #include "StringHelper.h"
 #include "HeapManager.h"
@@ -264,7 +266,7 @@ bool HeapManagerTest::TestFindHeapByAddress2Heaps() {
 }
 
 bool HeapManagerTest::TestGetStandardHeap() {
-    ptr = GetStandardHeap();
+    ptr = GlobalObjectsDatabase::Instance()->GetStandardHeap();
     retVal = (ptr != NULL);
     return retVal;
 }

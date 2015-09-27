@@ -291,7 +291,7 @@ private:
     uint32 listSize_;
 
     /*lint -e{1712} This class does not have a default constructor because
-     * the element type size must defined on construction and remain constant
+     * the element type size must be defined on construction and remain constant
      * during object's lifetime*/
 };
 
