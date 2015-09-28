@@ -664,7 +664,7 @@ bool LinkedListHolderTest::TestListDeleteSearchFilter() {
 
 bool LinkedListHolderTest::TestListSafeDelete() {
 
-    uint32 size=32;
+    const uint32 size=32;
 
     LinkedListHolder list;
 

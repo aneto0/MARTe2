@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HighResolutionTimerCalibrator.h"
-#include "HighResolutionTimer.h"
+#include "../../HighResolutionTimer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

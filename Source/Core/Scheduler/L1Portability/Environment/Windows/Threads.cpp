@@ -56,7 +56,7 @@ static void SystemThreadFunction(ThreadInformation * const threadInfo) {
             threadInfo->SetPriorityLevel(0u);
             SetPriority(Id(), NormalPriorityClass, 0u);
             //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
-            ErrorType err = threadInfo->ThreadWait();
+            ErrorManagement::ErrorType err = threadInfo->ThreadWait();
             //Start the user thread
             if (err == ErrorManagement::NoError) {
                 threadInfo->UserThreadFunction();

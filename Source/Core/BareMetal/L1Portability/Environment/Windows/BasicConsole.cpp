@@ -79,29 +79,29 @@ struct BasicConsoleProperties {
 /*---------------------------------------------------------------------------*/
 
 BasicConsole::BasicConsole() {
-    osProperties = new BasicConsoleProperties();
-    osProperties->nOfColumns = 0u;
-    osProperties->nOfRows = 0u;
-    memset(&osProperties->inputConsoleHandle, 0, sizeof(ConsoleHandle));
-    memset(&osProperties->outputConsoleHandle, 0, sizeof(ConsoleHandle));
-    memset(&osProperties->initialInfo, 0, sizeof(ConsoleHandle));
+    handle = new BasicConsoleProperties();
+    handle->nOfColumns = 0u;
+    handle->nOfRows = 0u;
+    memset(&handle->inputConsoleHandle, 0, sizeof(ConsoleHandle));
+    memset(&handle->outputConsoleHandle, 0, sizeof(ConsoleHandle));
+    memset(&handle->initialInfo, 0, sizeof(ConsoleHandle));
     lastPagingCounter = 0;
     lineCount = 0u;
 }
 
 BasicConsole::~BasicConsole() {
-    if (osProperties != static_cast<BasicConsoleProperties *>(NULL)) {
+    if (handle != static_cast<BasicConsoleProperties *>(NULL)) {
         /*lint -e{534} possible closure failure is not handled in the destructor.*/
         /*lint -e{1551} exception not caught.*/
         Close();
-        delete osProperties;
+        delete handle;
     }
 }
 
-ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
+ErrorManagement::ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
                                 const uint32 &numberOfRows) {
 
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
     SHORT windowColumns = 0;
     SHORT windowRows = 0;
 
@@ -112,7 +112,7 @@ ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
     CONSOLE_SCREEN_BUFFER_INFO info;
 
     //get the console informations
-    if (GetConsoleScreenBufferInfo(osProperties->outputConsoleHandle, &info) == 0) {
+    if (GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info) == 0) {
         error = ErrorManagement::OSError;
 
     }
@@ -134,7 +134,7 @@ ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
         }
 
         //set the buffer size
-        if (!SetConsoleScreenBufferSize(osProperties->outputConsoleHandle, stage1BufferSize)) {
+        if (!SetConsoleScreenBufferSize(handle->outputConsoleHandle, stage1BufferSize)) {
             // CStaticAssertPlatformErrorCondition(Errors::ErrorManagement::OSError,"BasicConsole:SetSize:failed SetConsoleScreenBufferSize ");
             error = ErrorManagement::OSError;
 
@@ -169,7 +169,7 @@ ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
         srect.Bottom = srect.Top + windowRows - 1;
 
         //set the new windows size
-        if (!SetConsoleWindowInfo(osProperties->outputConsoleHandle, TRUE, &srect)) {
+        if (!SetConsoleWindowInfo(handle->outputConsoleHandle, TRUE, &srect)) {
             //  CStaticAssertPlatformErrorCondition(Errors::ErrorManagement::OSError,"BasicConsole:SetSize:failed SetConsoleWindowInfo ");
             error = ErrorManagement::OSError;
 
@@ -183,7 +183,7 @@ ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
         stage2BufferSize.X = numberOfColumns;
         stage2BufferSize.Y = numberOfRows;
 
-        if (!SetConsoleScreenBufferSize(osProperties->outputConsoleHandle, stage2BufferSize)) {
+        if (!SetConsoleScreenBufferSize(handle->outputConsoleHandle, stage2BufferSize)) {
             error = ErrorManagement::OSError;
 
         }
@@ -193,42 +193,42 @@ ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
     return error;
 }
 
-ErrorType BasicConsole::Open(const FlagsType &mode) {
+ErrorManagement::ErrorType BasicConsole::Open(const FlagsType &mode) {
 
 //    con.selectedStream      = NormalStreamMode;
     int32 shortMask = 0xffff;
 
 
 
-    ErrorType error = ErrorManagement::NoError;
-    osProperties->openingMode = mode;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    handle->openingMode = mode;
 
-    if (osProperties->openingMode & BasicConsoleMode::CreateNewBuffer) {
+    if (handle->openingMode & BasicConsoleMode::CreateNewBuffer) {
         //get the console handles
-        osProperties->inputConsoleHandle = GetStdHandle(STD_INPUT_HANDLE);
-        if (osProperties->inputConsoleHandle == INVALID_HANDLE_VALUE) {
+        handle->inputConsoleHandle = GetStdHandle(STD_INPUT_HANDLE);
+        if (handle->inputConsoleHandle == INVALID_HANDLE_VALUE) {
             error = ErrorManagement::OSError;
 
         }
-        osProperties->outputConsoleHandle = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-        if (osProperties->outputConsoleHandle == INVALID_HANDLE_VALUE) {
+        handle->outputConsoleHandle = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+        if (handle->outputConsoleHandle == INVALID_HANDLE_VALUE) {
             error = ErrorManagement::OSError;
         }
     }
     else {
-        osProperties->inputConsoleHandle = GetStdHandle(STD_INPUT_HANDLE);
-        if (osProperties->inputConsoleHandle == INVALID_HANDLE_VALUE) {
+        handle->inputConsoleHandle = GetStdHandle(STD_INPUT_HANDLE);
+        if (handle->inputConsoleHandle == INVALID_HANDLE_VALUE) {
             error = ErrorManagement::OSError;
         }
-        osProperties->outputConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-        if (osProperties->outputConsoleHandle == INVALID_HANDLE_VALUE) {
+        handle->outputConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (handle->outputConsoleHandle == INVALID_HANDLE_VALUE) {
             error = ErrorManagement::OSError;
         }
     }
 
     if (error == ErrorManagement::NoError) {
         CONSOLE_SCREEN_BUFFER_INFO info;
-        if (GetConsoleScreenBufferInfo(osProperties->outputConsoleHandle, &(osProperties->initialInfo)) == 0) {
+        if (GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &(handle->initialInfo)) == 0) {
             error = ErrorManagement::OSError;
         }
     }
@@ -236,17 +236,17 @@ ErrorType BasicConsole::Open(const FlagsType &mode) {
     if (error == ErrorManagement::NoError) {
         int stdConsoleColumns;
         int stdConsoleRows;
-        stdConsoleColumns = osProperties->initialInfo.dwSize.X;
+        stdConsoleColumns = handle->initialInfo.dwSize.X;
 
-        stdConsoleRows = osProperties->initialInfo.dwSize.Y;
+        stdConsoleRows = handle->initialInfo.dwSize.Y;
 
-        osProperties->nOfColumns = stdConsoleColumns;
+        handle->nOfColumns = stdConsoleColumns;
 
-        osProperties->nOfRows = stdConsoleRows;
+        handle->nOfRows = stdConsoleRows;
 
         //set the console mode
         DWORD consoleMode = 0;
-        if (osProperties->openingMode & BasicConsoleMode::PerformCharacterInput) {
+        if (handle->openingMode & BasicConsoleMode::PerformCharacterInput) {
             consoleMode |= 0;
         }
         else {
@@ -254,16 +254,16 @@ ErrorType BasicConsole::Open(const FlagsType &mode) {
             consoleMode |= ENABLE_LINE_INPUT;
         }
 
-        if (osProperties->openingMode & BasicConsoleMode::DisableControlBreak) {
+        if (handle->openingMode & BasicConsoleMode::DisableControlBreak) {
             consoleMode |= 0;
         }
         else {
             consoleMode |= ENABLE_PROCESSED_INPUT;
         }
 
-        SetConsoleMode(osProperties->inputConsoleHandle, consoleMode);
+        SetConsoleMode(handle->inputConsoleHandle, consoleMode);
 
-        FlushConsoleInputBuffer(osProperties->inputConsoleHandle);
+        FlushConsoleInputBuffer(handle->inputConsoleHandle);
 
     }
 
@@ -271,13 +271,13 @@ ErrorType BasicConsole::Open(const FlagsType &mode) {
 }
 
 FlagsType BasicConsole::GetOpeningMode() const {
-    return osProperties->openingMode;
+    return handle->openingMode;
 }
 
-ErrorType BasicConsole::ShowBuffer() {
-    ErrorType error = ErrorManagement::NoError;
+ErrorManagement::ErrorType BasicConsole::ShowBuffer() {
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
 
-    if (SetConsoleActiveScreenBuffer(osProperties->outputConsoleHandle) == FALSE) {
+    if (SetConsoleActiveScreenBuffer(handle->outputConsoleHandle) == FALSE) {
         error = ErrorManagement::OSError;
     }
 
@@ -285,13 +285,13 @@ ErrorType BasicConsole::ShowBuffer() {
 
 }
 
-ErrorType BasicConsole::Write(const char8* buffer,
+ErrorManagement::ErrorType BasicConsole::Write(const char8* buffer,
                               uint32 &size,
                               const TimeoutType &timeout) {
 
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
 
-    if (osProperties->openingMode & BasicConsoleMode::EnablePaging) {
+    if (handle->openingMode & BasicConsoleMode::EnablePaging) {
         error = PagedWrite(buffer, size, timeout);
     }
     else {
@@ -302,14 +302,14 @@ ErrorType BasicConsole::Write(const char8* buffer,
 
 }
 
-ErrorType BasicConsole::OSWrite(const char8* const buffer,
+ErrorManagement::ErrorType BasicConsole::OSWrite(const char8* const buffer,
                                 uint32 &size,
                                 const TimeoutType &timeout) {
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
 
     if ((size > 0) && (buffer != NULL)) {
 
-        if (!WriteConsole(osProperties->outputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
+        if (!WriteConsole(handle->outputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
 
             error = ErrorManagement::OSError;
         }
@@ -323,31 +323,31 @@ ErrorType BasicConsole::OSWrite(const char8* const buffer,
 
 }
 
-ErrorType BasicConsole::Read(char8* const buffer,
+ErrorManagement::ErrorType BasicConsole::Read(char8* const buffer,
                              uint32 &size,
                              const TimeoutType &timeout) {
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
     DWORD ret = 0;
 
     if (timeout.IsFinite()) {
 
-        FlushConsoleInputBuffer(osProperties->inputConsoleHandle);
-        ret = WaitForSingleObject(osProperties->inputConsoleHandle, (DWORD) timeout.GetTimeoutMSec());
+        FlushConsoleInputBuffer(handle->inputConsoleHandle);
+        ret = WaitForSingleObject(handle->inputConsoleHandle, (DWORD) timeout.GetTimeoutMSec());
         if (ret != 0) {
             size = 0;
-            error = Timeout;
+            error = ErrorManagement::Timeout;
         }
     }
 
     if (error == ErrorManagement::NoError) {
-        if (osProperties->openingMode & BasicConsoleMode::PerformCharacterInput) {
+        if (handle->openingMode & BasicConsoleMode::PerformCharacterInput) {
             size = 1;
-            if (!ReadConsole(osProperties->inputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
+            if (!ReadConsole(handle->inputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
                 error = ErrorManagement::OSError;
             }
         }
         else {
-            if (!ReadConsole(osProperties->inputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
+            if (!ReadConsole(handle->inputConsoleHandle, buffer, size, (unsigned long *) &size, NULL)) {
                 error = ErrorManagement::OSError;
             }
 
@@ -358,8 +358,8 @@ ErrorType BasicConsole::Read(char8* const buffer,
 
 }
 
-ErrorType BasicConsole::SetTitleBar(const char8 *title) {
-    ErrorType error = ErrorManagement::NoError;
+ErrorManagement::ErrorType BasicConsole::SetTitleBar(const char8 *title) {
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
 
     if (!SetConsoleTitle(title)) {
         error = ErrorManagement::OSError;
@@ -368,7 +368,7 @@ ErrorType BasicConsole::SetTitleBar(const char8 *title) {
     return error;
 }
 
-ErrorType BasicConsole::GetTitleBar(char8 *title,
+ErrorManagement::ErrorType BasicConsole::GetTitleBar(char8 *title,
                                     const uint32 &size) const {
 
     if (title == NULL) {
@@ -381,18 +381,18 @@ ErrorType BasicConsole::GetTitleBar(char8 *title,
 
 }
 
-ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
+ErrorManagement::ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
                                       const uint32 &numberOfRows) {
 
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
 
-    COORD max = GetLargestConsoleWindowSize(osProperties->outputConsoleHandle);
+    COORD max = GetLargestConsoleWindowSize(handle->outputConsoleHandle);
 
     uint32 numberOfColumnsUsed = numberOfColumns;
     uint32 numberOfRowsUsed = numberOfRows;
 
     CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(osProperties->outputConsoleHandle, &info);
+    GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info);
 
     if (info.dwSize.X < 0 || info.dwSize.Y < 0) {
         error = ErrorManagement::OSError;
@@ -425,7 +425,7 @@ ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
         srect.Right = srect.Left + numberOfColumnsUsed - 1;
         srect.Bottom = srect.Top + numberOfRowsUsed - 1;
 
-        if (!SetConsoleWindowInfo(osProperties->outputConsoleHandle, TRUE, &srect)) {
+        if (!SetConsoleWindowInfo(handle->outputConsoleHandle, TRUE, &srect)) {
             //  CStaticPlatformErrorCondition(Errors::ErrorManagement::OSError,"BasicConsole:SetWindowSize:failed SetConsoleWindowInfo ");
 
             error = ErrorManagement::OSError;
@@ -435,23 +435,23 @@ ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
     return error;
 }
 
-ErrorType BasicConsole::GetWindowSize(uint32 &numberOfColumns,
+ErrorManagement::ErrorType BasicConsole::GetWindowSize(uint32 &numberOfColumns,
                                       uint32 &numberOfRows) const {
 
     CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(osProperties->outputConsoleHandle, &info);
+    GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info);
 
     numberOfColumns = info.srWindow.Right - info.srWindow.Left + 1;
     numberOfRows = info.srWindow.Bottom - info.srWindow.Top + 1;
     return ErrorManagement::NoError;
 }
 
-ErrorType BasicConsole::GetSize(uint32 &numberOfColumns,
+ErrorManagement::ErrorType BasicConsole::GetSize(uint32 &numberOfColumns,
                                 uint32 &numberOfRows) const {
 
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
     CONSOLE_SCREEN_BUFFER_INFO info;
-    if (GetConsoleScreenBufferInfo(osProperties->outputConsoleHandle, &info) == FALSE) {
+    if (GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info) == FALSE) {
         //  CStaticAssertPlatformErrorCondition(Errors::ErrorManagement::OSError,"BasicConsole:GetSize:failed GetConsoleScreenBufferInfo ");
         error = ErrorManagement::OSError;
     }
@@ -464,23 +464,23 @@ ErrorType BasicConsole::GetSize(uint32 &numberOfColumns,
 
 }
 
-ErrorType BasicConsole::SetCursorPosition(const uint32 &column,
+ErrorManagement::ErrorType BasicConsole::SetCursorPosition(const uint32 &column,
                                           const uint32 &row) {
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
     COORD c = { column, row };
-    if (SetConsoleCursorPosition(osProperties->outputConsoleHandle, c) == FALSE) {
+    if (SetConsoleCursorPosition(handle->outputConsoleHandle, c) == FALSE) {
         error = ErrorManagement::OSError;
     }
 
     return error;
 }
 
-ErrorType BasicConsole::GetCursorPosition(uint32 &column,
+ErrorManagement::ErrorType BasicConsole::GetCursorPosition(uint32 &column,
                                           uint32 &row) const {
 
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
     CONSOLE_SCREEN_BUFFER_INFO info;
-    if (GetConsoleScreenBufferInfo(osProperties->outputConsoleHandle, &info) == FALSE) {
+    if (GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info) == FALSE) {
         error = ErrorManagement::OSError;
     }
 
@@ -492,16 +492,16 @@ ErrorType BasicConsole::GetCursorPosition(uint32 &column,
     return error;
 }
 
-ErrorType BasicConsole::SetColour(const Colours &foregroundColour,
+ErrorManagement::ErrorType BasicConsole::SetColour(const Colours &foregroundColour,
                                   const Colours &backgroundColour) {
 
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
 
     WORD attribute;
     attribute = (int) foregroundColour & 0xF;
     attribute |= (((int) backgroundColour & 0xF) << 4);
 
-    if (!SetConsoleTextAttribute(osProperties->outputConsoleHandle, attribute)) {
+    if (!SetConsoleTextAttribute(handle->outputConsoleHandle, attribute)) {
         error = ErrorManagement::OSError;
     }
 
@@ -509,20 +509,20 @@ ErrorType BasicConsole::SetColour(const Colours &foregroundColour,
 
 }
 
-ErrorType BasicConsole::Clear() {
+ErrorManagement::ErrorType BasicConsole::Clear() {
 
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
 
     COORD c;
     c.X = 0;
     c.Y = 0;
 
     CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(osProperties->outputConsoleHandle, &info);
+    GetConsoleScreenBufferInfo(handle->outputConsoleHandle, &info);
     int nOfChars = info.dwSize.Y * info.dwSize.X;
     DWORD NumberOfCharsWritten;
-    FillConsoleOutputAttribute(osProperties->outputConsoleHandle, info.wAttributes, nOfChars, c, &NumberOfCharsWritten);
-    if (!FillConsoleOutputCharacter(osProperties->outputConsoleHandle, ' ', nOfChars, c, &NumberOfCharsWritten)) {
+    FillConsoleOutputAttribute(handle->outputConsoleHandle, info.wAttributes, nOfChars, c, &NumberOfCharsWritten);
+    if (!FillConsoleOutputCharacter(handle->outputConsoleHandle, ' ', nOfChars, c, &NumberOfCharsWritten)) {
         error = ErrorManagement::OSError;
     }
 
@@ -530,13 +530,13 @@ ErrorType BasicConsole::Clear() {
 
 }
 
-ErrorType BasicConsole::PlotChar(const char8 &c,
+ErrorManagement::ErrorType BasicConsole::PlotChar(const char8 &c,
                                  const Colours &foregroundColour,
                                  const Colours &backgroundColour,
                                  const uint32 &column,
                                  const uint32 &row) {
 
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
     COORD coord;
     coord.X = 0;
     coord.Y = 0;
@@ -559,7 +559,7 @@ ErrorType BasicConsole::PlotChar(const char8 &c,
     writeRegion.Top = column;
     writeRegion.Bottom = column;
 
-    if (WriteConsoleOutput(osProperties->outputConsoleHandle, &cInfo, bufferSize, coord, &writeRegion) == FALSE) {
+    if (WriteConsoleOutput(handle->outputConsoleHandle, &cInfo, bufferSize, coord, &writeRegion) == FALSE) {
         error = ErrorManagement::OSError;
     }
 
@@ -567,21 +567,21 @@ ErrorType BasicConsole::PlotChar(const char8 &c,
 
 }
 
-ErrorType BasicConsole::Close() {
+ErrorManagement::ErrorType BasicConsole::Close() {
 
-    ErrorType error = ErrorManagement::NoError;
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
     DWORD consoleMode = ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT;
-    if (osProperties->openingMode & BasicConsoleMode::CreateNewBuffer) {
-        CloseHandle(osProperties->outputConsoleHandle);
+    if (handle->openingMode & BasicConsoleMode::CreateNewBuffer) {
+        CloseHandle(handle->outputConsoleHandle);
     }
     else {
         //reset the initial conditions of the console.
-        int nCol = osProperties->initialInfo.dwSize.X;
-        int nRow = osProperties->initialInfo.dwSize.Y;
+        int nCol = handle->initialInfo.dwSize.X;
+        int nRow = handle->initialInfo.dwSize.Y;
         SetSize(nCol, nRow);
-        SetConsoleWindowInfo(osProperties->outputConsoleHandle, TRUE, &(osProperties->initialInfo.srWindow));
-        SetConsoleMode(osProperties->outputConsoleHandle, consoleMode);
-        SetConsoleTextAttribute(osProperties->outputConsoleHandle, osProperties->initialInfo.wAttributes);
+        SetConsoleWindowInfo(handle->outputConsoleHandle, TRUE, &(handle->initialInfo.srWindow));
+        SetConsoleMode(handle->outputConsoleHandle, consoleMode);
+        SetConsoleTextAttribute(handle->outputConsoleHandle, handle->initialInfo.wAttributes);
     }
 
     return error;

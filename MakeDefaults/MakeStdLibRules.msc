@@ -23,8 +23,8 @@
 #
 #############################################################
 
-%.cpp : ../Generic/%_Generic.cpp
-	cp ../Generic/$*_Generic.cpp $*.cpp
+%_Gen.cpp : ../Generic/%_Generic.cpp
+	cp ../Generic/$*_Generic.cpp $*_Gen.cpp
 
 
 $(BUILD_DIR)/%.obj : %.cpp

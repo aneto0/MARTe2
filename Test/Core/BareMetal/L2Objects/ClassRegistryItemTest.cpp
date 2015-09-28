@@ -43,7 +43,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-Object* dummyBuildFcn(HeapI * const h __attribute__((unused))) {
+Object* dummyBuildFcn(HeapI * const h) {
     Object *p = (Object*) HeapManager::Malloc(sizeof(Object));
     char *pp = (char*) p;
     (*pp) = 9;

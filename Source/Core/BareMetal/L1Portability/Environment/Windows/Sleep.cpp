@@ -1,8 +1,8 @@
 /**
- * @file MemoryCheck.cpp
- * @brief Source file for module MemoryCheck
- * @date 27/07/2015
- * @author Giuseppe Ferrò
+ * @file Sleep.cpp
+ * @brief Source file for module Sleep
+ * @date 05/07/2015
+ * @author André Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the module MemoryCheck (public, protected, and private). Be aware that some
+ * the module Sleep (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -25,38 +25,68 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#ifndef LINT
+#include <time.h>
 
-#include <stdlib.h>
-#include <string.h>
-#else
-#include "lint-linux.h"
-#endif
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "../../MemoryCheck.h"
+#include "../../Sleep.h"
+namespace MARTe{
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+static const uint32 winSleepFreq = 1000;
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace Sleep {
 
-namespace MemoryCheck {
+void AtLeast(const float64 sec) {
+    int32 ticks = (int32) (winSleepFreq * sec + 0.9999);
+      if (ticks < 0) {
+          return;
+      }
 
-bool Check(const void * const address,
-           const MemoryTestAccessMode accessMode,
-           const uint32 size) {
+      ::Sleep(ticks);
+}
 
-    return address != NULL;
+void NoMore(const float64 sec) {
+    int ticks = (int) (winSleepFreq * sec);
+    if (ticks < 0)
+        return;
+
+    ::Sleep(ticks);
+}
+
+void Sec(const float64 sec) {
+    if (sec < 0)
+        return;
+
+    ::Sleep((unsigned long) (sec * 1000.0 + 0.5));
+}
+
+void MSec(const int32 msec) {
+    if (msec < 0)
+        return;
+
+    ::Sleep(msec);
+}
+
+void SemiBusy(const float64 totalSleepSec,
+              const float64 nonBusySleepSec) {
+    NoMore(totalSleepSec);
+
+}
+
+int32 GetDateSeconds() {
+    return static_cast<int32>(time(static_cast<time_t *>(NULL)));
 }
 
 }
+
 }

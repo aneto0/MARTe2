@@ -69,43 +69,43 @@ struct EventSemProperties {
 /*---------------------------------------------------------------------------*/
 
 EventSem::EventSem() {
-    osProperties = new EventSemProperties();
-    osProperties->eventHandle = NULL;
-    osProperties->closed = true;
-    osProperties->references = 1u;
+    handle = new EventSemProperties();
+    handle->eventHandle = NULL;
+    handle->closed = true;
+    handle->references = 1u;
 
-    osProperties->referencesMux = 0;
+    handle->referencesMux = 0;
 
 }
 
 bool EventSem::Create() {
-    while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
+    while (!Atomic::TestAndSet(&handle->referencesMux)) {
     }
 
-    osProperties->closed = false;
+    handle->closed = false;
 
     //If the handle is valid close it
-    CloseHandle(osProperties->eventHandle);
+    CloseHandle(handle->eventHandle);
 
-    osProperties->eventHandle = CreateEvent(NULL, TRUE, FALSE, NULL);
+    handle->eventHandle = CreateEvent(NULL, TRUE, FALSE, NULL);
 
-    bool ok = (osProperties->eventHandle != NULL);
+    bool ok = (handle->eventHandle != NULL);
 
-    osProperties->referencesMux = 0;
+    handle->referencesMux = 0;
     return ok;
 }
 
 EventSem::EventSem(EventSem &source) {
 
-    osProperties = source.GetProperties();
-    if (osProperties == static_cast<EventSemProperties *>(NULL)) {
-        //Capture the case that it got the osProperties reference while the source semaphore
+    handle = source.GetProperties();
+    if (handle == static_cast<EventSemProperties *>(NULL)) {
+        //Capture the case that it got the handle reference while the source semaphore
         //was already being destructed...
         EventSem();
     }
     else {
-        osProperties->references++;
-        osProperties->referencesMux = 0;
+        handle->references++;
+        handle->referencesMux = 0;
     }
 }
 
@@ -113,11 +113,11 @@ bool EventSem::Close() {
 
     bool ok = true;
 
-    if (!osProperties->closed) {
-        osProperties->closed = true;
+    if (!handle->closed) {
+        handle->closed = true;
 
-        if (osProperties->eventHandle != static_cast<EventSemProperties *>(NULL)) {
-            ok = (CloseHandle(osProperties->eventHandle) == TRUE);
+        if (handle->eventHandle != static_cast<EventSemProperties *>(NULL)) {
+            ok = (CloseHandle(handle->eventHandle) == TRUE);
 
         }
 
@@ -127,31 +127,31 @@ bool EventSem::Close() {
 }
 
 EventSem::~EventSem() {
-    if (osProperties != static_cast<EventSemProperties *>(NULL)) {
-        while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
+    if (handle != static_cast<EventSemProperties *>(NULL)) {
+        while (!Atomic::TestAndSet(&handle->referencesMux)) {
         }
 
-        if (osProperties->references == 1u) {
-            if (!osProperties->closed) {
+        if (handle->references == 1u) {
+            if (!handle->closed) {
                 Close();
 
             }
 
-            delete osProperties;
-            osProperties = static_cast<EventSemProperties *>(NULL);
+            delete handle;
+            handle = static_cast<EventSemProperties *>(NULL);
         }
         else {
-            osProperties->references--;
-            osProperties->referencesMux = 0;
+            handle->references--;
+            handle->referencesMux = 0;
 
         }
     }
 
 }
 
-ErrorType EventSem::Wait() {
-    ErrorType error = ErrorManagement::NoError;
-    int ret = WaitForSingleObject(osProperties->eventHandle, INFINITE);
+ErrorManagement::ErrorType EventSem::Wait() {
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    int ret = WaitForSingleObject(handle->eventHandle, INFINITE);
 
     if (ret == WAIT_FAILED) {
         error = ErrorManagement::OSError;
@@ -160,16 +160,16 @@ ErrorType EventSem::Wait() {
     return error;
 }
 
-ErrorType EventSem::Wait(const TimeoutType &timeout) {
-    ErrorType error = ErrorManagement::NoError;
-    int ret = WaitForSingleObject(osProperties->eventHandle, timeout.GetTimeoutMSec());
+ErrorManagement::ErrorType EventSem::Wait(const TimeoutType &timeout) {
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
+    int ret = WaitForSingleObject(handle->eventHandle, timeout.GetTimeoutMSec());
 
     if (ret == WAIT_FAILED) {
         error = ErrorManagement::OSError;
     }
 
     if (ret == WAIT_TIMEOUT) {
-        error = Timeout;
+        error = ErrorManagement::Timeout;
     }
 
     return error;
@@ -177,27 +177,27 @@ ErrorType EventSem::Wait(const TimeoutType &timeout) {
 
 bool EventSem::Post() {
 
-    return (SetEvent(osProperties->eventHandle) == TRUE);
+    return (SetEvent(handle->eventHandle) == TRUE);
 }
 
 bool EventSem::Reset() {
 
-    return (ResetEvent(osProperties->eventHandle) == TRUE);
+    return (ResetEvent(handle->eventHandle) == TRUE);
 }
 
-ErrorType EventSem::ResetWait(const TimeoutType &timeout) {
+ErrorManagement::ErrorType EventSem::ResetWait(const TimeoutType &timeout) {
     Reset();
     return Wait(timeout);
 }
 
 EventSemProperties * EventSem::GetProperties() {
-    return osProperties;
+    return handle;
 }
 
 bool EventSem::IsClosed() const {
     bool ok = true;
-    if (osProperties != static_cast<EventSemProperties *>(NULL)) {
-        ok = osProperties->closed;
+    if (handle != static_cast<EventSemProperties *>(NULL)) {
+        ok = handle->closed;
     }
     return ok;
 }
