@@ -45,24 +45,9 @@ TEST(ClassRegistryDatabaseGTest,TestInstance) {
     ASSERT_TRUE(classRegistryDatabaseTest.TestInstance());
 }
 
-TEST(ClassRegistryDatabaseGTest,TestDeleteTrue) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestDeleteTrue());
-}
-
-TEST(ClassRegistryDatabaseGTest,TestDeleteFalse) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestDeleteFalse());
-}
-
 TEST(ClassRegistryDatabaseGTest,TestAdd) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestAdd());
-}
-
-TEST(ClassRegistryDatabaseGTest,TestAddTheSameName) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestAddTheSameName());
 }
 
 TEST(ClassRegistryDatabaseGTest,TestFindTrue) {
@@ -75,6 +60,11 @@ TEST(ClassRegistryDatabaseGTest,TestFindFalse) {
     ASSERT_TRUE(classRegistryDatabaseTest.TestFind("abcd", false));
 }
 
+TEST(ClassRegistryDatabaseGTest,TestFindByTypeIdName) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFindTypeIdName());
+}
+
 TEST(ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameTrue) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestFindDLL("boh","IntegerObject",true));
@@ -85,19 +75,14 @@ TEST(ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameFalse) {
     ASSERT_TRUE(classRegistryDatabaseTest.TestFindDLL("boh","boh",false));
 }
 
-TEST(ClassRegistryDatabaseGTest,TestList) {
+TEST(ClassRegistryDatabaseGTest,TestGetSize) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestList());
+    ASSERT_TRUE(classRegistryDatabaseTest.TestGetSize());
 }
 
-TEST(ClassRegistryDatabaseGTest,TestSize) {
+TEST(ClassRegistryDatabaseGTest,TestPeek) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestSize());
-}
-
-TEST(ClassRegistryDatabaseGTest,TestElementAt) {
-    ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestElementAt());
+    ASSERT_TRUE(classRegistryDatabaseTest.TestPeek());
 }
 
 TEST(ClassRegistryDatabaseGTest,TestCreateInstances) {
@@ -113,4 +98,9 @@ TEST(ClassRegistryDatabaseGTest,TestPolimorphismChild2Father) {
 TEST(ClassRegistryDatabaseGTest,TestPolimorphismFather2Child) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestPolimorphismFather2Child());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestGetClassName) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestGetClassName());
 }

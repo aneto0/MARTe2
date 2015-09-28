@@ -24,9 +24,7 @@
 #
 #############################################################
 OBJSX=
-SPB    = Source/Core/L0Portability.x Source/Core/L1Objects.x  Source/Core/L0TypeDev.x \
-    Test/Core/L0Portability.x Test/Core/L0TypeDev.x Test/Core/L1Objects.x Test/GTest.x
-
+SPB    = Source/Core/BareMetal.x Source/Core/Scheduler.x Test/Core/BareMetal.x Test/Core/Scheduler.x Test/GTest.x
  
 MAKEDEFAULTDIR=MakeDefaults
 

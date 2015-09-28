@@ -46,7 +46,7 @@ TEST(ClassPropertiesGTest,TestDefaultConstructor) {
 
 TEST(ClassPropertiesGTest,TestFullConstructor) {
     ClassPropertiesTest myClassPropertiesTest;
-    ASSERT_TRUE(myClassPropertiesTest.TestFullConstructor("Hello","World"));
+    ASSERT_TRUE(myClassPropertiesTest.TestFullConstructor("Hello", "Hello", "World"));
 }
 
 TEST(ClassPropertiesGTest,TestGetName) {
@@ -57,5 +57,15 @@ TEST(ClassPropertiesGTest,TestGetName) {
 TEST(ClassPropertiesGTest,TestGetVersion) {
     ClassPropertiesTest myClassPropertiesTest;
     ASSERT_TRUE(myClassPropertiesTest.TestGetVersion("World"));
+}
+
+TEST(ClassPropertiesGTest,TestGetUniqueIdentifier) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestGetUniqueIdentifier(0xfffff2));
+}
+
+TEST(ClassPropertiesGTest,TestSetUniqueIdentifier) {
+    ClassPropertiesTest myClassPropertiesTest;
+    ASSERT_TRUE(myClassPropertiesTest.TestSetUniqueIdentifier(0xfffff3));
 }
 
