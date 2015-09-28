@@ -148,7 +148,7 @@ bool ClassRegistryDatabaseTest::TestFindLongName(bool create) {
         ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
         bool found = (db->Find(name) != NULL);
         //These are deleted by the the ClassRegistryDatabase destructor
-        return found;
+        return !found;
     }
 
     return (db->Find(name) == NULL);
