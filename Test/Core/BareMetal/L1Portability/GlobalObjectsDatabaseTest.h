@@ -31,14 +31,19 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GlobalObjectsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
-class GlobalObjectsDatabaseTest{
+
+class GlobalObjectsDatabaseTest {
+
 public:
+
     /**
      * @brief Tests that an instance of the GlobalObjectsDatabase exists.
      */
@@ -54,9 +59,11 @@ public:
      */
     bool TestGetStandardHeap();
 };
+
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TEST_CORE_BAREMETAL_L1PORTABILITY_GLOBALOBJECTSDATABASETEST_H_ */
+#endif /* GLOBALOBJECTSDATABASETEST_H_ */

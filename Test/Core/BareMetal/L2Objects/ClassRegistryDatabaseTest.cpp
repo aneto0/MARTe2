@@ -28,13 +28,13 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "ClassRegistryDatabaseTest.h"
 #include "ReferenceT.h"
 #include "ObjectTestHelper.h"
 #include "StringHelper.h"
 #include <typeinfo>
 
-using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -103,8 +103,8 @@ bool ClassRegistryDatabaseTest::TestAdd() {
     return retVal;
 }
 
-bool ClassRegistryDatabaseTest::TestFindDLL(const char8* dllName,
-                                            const char8* className,
+bool ClassRegistryDatabaseTest::TestFindDLL(const MARTe::char8* dllName,
+                                            const MARTe::char8* className,
                                             bool validName) {
 
     char8 fullName[64];
@@ -117,7 +117,7 @@ bool ClassRegistryDatabaseTest::TestFindDLL(const char8* dllName,
     return !(validName ^ (db->Find(fullName) != NULL));
 }
 
-bool ClassRegistryDatabaseTest::TestFind(const char8 *name,
+bool ClassRegistryDatabaseTest::TestFind(const MARTe::char8 *name,
                                          bool create) {
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();

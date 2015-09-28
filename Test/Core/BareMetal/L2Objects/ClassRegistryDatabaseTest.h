@@ -31,17 +31,20 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ClassRegistryDatabase.h"
-using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
  * @brief Tests the ClassRegistryDatabase functions.
  */
 class ClassRegistryDatabaseTest {
+
 public:
+
     /**
      * @brief Tests the Instance function.
      * @return Since the database is a singleton, this test returns true if the instance function
@@ -80,7 +83,7 @@ public:
      * @param[in] create specifies if the class should be registered or not in the database (determining the result of the find function).
      * @return true if the find on registered class names succeeds and fails if the class is not registered.
      */
-    bool TestFind(const char8 *name,
+    bool TestFind(const MARTe::char8 *name,
                   bool create);
 
     /**
@@ -97,8 +100,8 @@ public:
      * (the test should return false)
      * @return true if \a validName=true DLLName::ClassName returns true and if \a validName=false and DLLName::ClassName returns false.
      */
-    bool TestFindDLL(const char8* dllName,
-                     const char8* className,
+    bool TestFindDLL(const MARTe::char8* dllName,
+                     const MARTe::char8* className,
                      bool validName);
 
     /**

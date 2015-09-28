@@ -1,8 +1,8 @@
 /**
  * @file HeapManager.cpp
  * @brief Source file for module HeapManager
- * @date Aug 7, 2015
- * @author fsartori
+ * @date 07/08/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -130,6 +130,7 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 HeapDatabase *HeapDatabase::Instance() {
     static HeapDatabase *instance = NULL_PTR(HeapDatabase *);
     if (instance == NULL_PTR(HeapDatabase *)) {
@@ -303,7 +304,7 @@ HeapI *FindHeap(const char8 * const name) {
         /* controls access to database */
         if (HeapDatabase::Instance()->Lock()) {
             int32 i;
-            for(i=0;(i<MaximumNumberOfHeaps) && (!found);i++) {
+            for (i = 0; (i < MaximumNumberOfHeaps) && (!found); i++) {
 
                 /* retrieve heap information in current slot */
                 HeapI *heap = HeapDatabase::Instance()->GetHeap(i);
@@ -312,7 +313,7 @@ HeapI *FindHeap(const char8 * const name) {
                 if (heap != NULL_PTR(HeapI *)) {
 
                     /* check address compatibility */
-                    if( StringHelper::Compare (heap->Name(),name) == 0 ) {
+                    if (StringHelper::Compare(heap->Name(), name) == 0) {
 
                         found = true;
 
@@ -384,11 +385,11 @@ void *Realloc(void *&data,
     HeapI *chosenHeap = FindHeap(data);
 
     if (chosenHeap != NULL) {
-        newAddress = chosenHeap->Realloc(data,newSize);
+        newAddress = chosenHeap->Realloc(data, newSize);
     }
     //if the heap is not found (the data is null) allocates it on the standard heap (C malloc).
     else {
-        newAddress = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Realloc(data,newSize);
+        newAddress = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Realloc(data, newSize);
     }
 
     return newAddress;
@@ -413,12 +414,12 @@ void *Duplicate(const void * const data,
 
     // if found calls the correct heap duplicate
     if (chosenHeap != NULL) {
-        newAddress = chosenHeap->Duplicate(data,size);
+        newAddress = chosenHeap->Duplicate(data, size);
     }
     // if the address is not found considers the memory as a static
     else {
         //REPORT_ERROR(ErrorManagement::Warning, "ErrorManagement::Warning: the input address does not belong to any heap. It will be considered as a static memory address");
-        newAddress = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Duplicate(data,size);
+        newAddress = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Duplicate(data, size);
     }
     return newAddress;
 
