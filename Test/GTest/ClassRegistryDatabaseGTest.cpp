@@ -55,6 +55,11 @@ TEST(ClassRegistryDatabaseGTest,TestFindTrue) {
     ASSERT_TRUE(classRegistryDatabaseTest.TestFind("abcdefg", true));
 }
 
+TEST(ClassRegistryDatabaseGTest,TestFindLongName) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFindLongName(true));
+}
+
 TEST(ClassRegistryDatabaseGTest,TestFindFalse) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
     ASSERT_TRUE(classRegistryDatabaseTest.TestFind("abcd", false));

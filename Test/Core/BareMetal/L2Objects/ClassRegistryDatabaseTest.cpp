@@ -103,7 +103,6 @@ bool ClassRegistryDatabaseTest::TestAdd() {
     return retVal;
 }
 
-
 bool ClassRegistryDatabaseTest::TestFindDLL(const char8* dllName,
                                             const char8* className,
                                             bool validName) {
@@ -123,6 +122,25 @@ bool ClassRegistryDatabaseTest::TestFind(const char8 *name,
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
 
+    if (create) {
+        ClassProperties testClassProperties(name, "", "V");
+
+        //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
+        ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+        bool found = (db->Find(name) != NULL);
+        //These are deleted by the the ClassRegistryDatabase destructor
+        return found;
+    }
+
+    return (db->Find(name) == NULL);
+
+}
+
+bool ClassRegistryDatabaseTest::TestFindLongName(bool create) {
+
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+    const char *name =
+            "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf";
     if (create) {
         ClassProperties testClassProperties(name, "", "V");
 
@@ -218,7 +236,6 @@ bool ClassRegistryDatabaseTest::TestCreateInstances() {
             return false;
         }
     }
-
 
 //the internal objects are not counted as instances.
     ReferenceT<CollectInts> refCollectInts = ReferenceT<CollectInts>("CollectInts");

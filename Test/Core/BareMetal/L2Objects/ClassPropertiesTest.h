@@ -48,46 +48,46 @@ public:
 
     /**
      * @brief Tests the default constructor.
-     * @return true if the name and version fields are initialised to NULL.
+     * @return True if the name and version fields are initialised to NULL.
      */
     bool TestDefaultConstructor();
 
     /**
      * @brief Tests the full constructor.
-     * @param[in] name the desired name.
-     * @param[in] name the desired typeidName.
-     * @param[in] version the desired version.
-     * @return true if the attributes are set equal to inputs.
+     * @param[in] name the desired name of the class.
+     * @param[in] typeidName he name of the class as returned by typeid.
+     * @param[in] version the version of the class.
+     * @return True if the attributes are set equal to inputs.
      */
-    bool TestFullConstructor(const char8 *name,
-                             const char8 *typeidName,
-                             const char8* version);
+    bool TestFullConstructor(const char8 * name,
+                             const char8 * typeidName,
+                             const char8 * version);
 
     /**
      * @brief Tests the ClassProperties::GetName function.
-     * @param[in] the desired name.
-     * @return true if the name returned is correct.
+     * @param[in] name the desired name of the class.
+     * @return True if the name returned is correct.
      */
-    bool TestGetName(const char8*name);
+    bool TestGetName(const char8* name);
 
     /**
-     * @brief Tests the ClassProperties::GetVersion function.
-     * @param[in] the desired version.
-     * @return true if the version returned is correct.
+     * @brief Test the ClassProperties::GetVersion function.
+     * @param[in] version the desired version of the class.
+     * @return True if the version returned is equal to the input version.
      */
-    bool TestGetVersion(const char8*version);
+    bool TestGetVersion(const char8 * version);
 
     /**
      * @brief Tests the ClassProperties::GetUniqueIdentifier function.
-     * @param uniqueIdentifier the unique identifier value to test.
-     * @return true if after calling ClassProperties::SetUniqueIdentifier(\a uniqueIdentifier), ClassProperties::GetUniqueIdentifier() == \a uniqueIdentifier;
+     * @param[in] UniqueIdentifier the unique identifier value to test.
+     * @return True if after calling ClassProperties::SetUniqueIdentifier(\a uniqueIdentifier), ClassProperties::GetUniqueIdentifier() == \a uniqueIdentifier;
      */
     bool TestGetUniqueIdentifier(uint32 uniqueIdentifier);
 
     /**
      * @brief Tests the ClassProperties::SetUniqueIdentifier function.
-     * @param uniqueIdentifier the unique identifier value to test.
-     * @return true if after calling ClassProperties::SetUniqueIdentifier(\a uniqueIdentifier), ClassProperties::GetUniqueIdentifier() == \a uniqueIdentifier;
+     * @param[in] uniqueIdentifier the unique identifier value to test.
+     * @return True if after calling ClassProperties::SetUniqueIdentifier(\a uniqueIdentifier), ClassProperties::GetUniqueIdentifier() == \a uniqueIdentifier;
      */
     bool TestSetUniqueIdentifier(uint32 uniqueIdentifier);
 

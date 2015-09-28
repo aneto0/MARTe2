@@ -127,6 +127,3 @@ bool FormatDescriptorTest::TestAssignOperator(){
 
     return retVal;
 }
-
-
-
