@@ -50,7 +50,7 @@ bool ProcessorTest::TestVendorId(const char8* vendorIdTest) {
     vendorId = Processor::VendorId();
 
     //return true if testEqual & vendorId==vendorIdTest || !testEqual & !vendorIdTest
-    return !(testEqual^(StringHelper::Compare(vendorId,vendorIdTest)));
+    return !(testEqual^(StringHelper::Compare(vendorId,vendorIdTest)==0));
 }
 
 bool ProcessorTest::TestFamily(uint32 familyTest) {
@@ -65,6 +65,7 @@ bool ProcessorTest::TestModel(uint32 modelTest) {
     uint32 model;
 
     model = Processor::Model();
+
     return !(testEqual^(model == modelTest));
 }
 
@@ -72,5 +73,6 @@ bool ProcessorTest::TestAvailable(uint32 availableCPUTest) {
     uint32 available;
 
     available = Processor::Available();
+
     return !(testEqual^(available == availableCPUTest));
 }

@@ -85,8 +85,9 @@ $(BUILD_DIR)/%.lib : $(OBJS) $(OBJSRTTI)
 $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.obj $(OBJS) $(LIBRARIES)
 	$(COMPILER)  $(LFLAGS)  $(DEBUG) $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) -o $@ $(LOPTS)
 	
-$(BUILD_DIR)/%.dll : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
-	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) $*.def -o $@
+$(BUILD_DIR)/%.dll : $(OBJS)  $(LIBRARIES) 
+	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(LIBRARIES) -o $@
+	cp $@ $(ROOT_DIR)/Build/$(TARGET)/GTest/
 
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
 	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(BUILD_DIR)/$*.obj $(LIBRARIES) $*.def -o $@
