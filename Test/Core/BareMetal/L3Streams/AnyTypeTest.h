@@ -59,7 +59,7 @@ public:
     bool TestAnyType_AnyTypeVoid();
 
     /**
-     * @brief Test AnyType constructor defining the TypeDescriptor the bitAddress and the constant pointer to a constant.
+     * @brief Test AnyType constructor defining the TypeDescriptor, the bitAddress and the constant pointer to a constant.
      * @return True if the type is set as expected.
      */
     bool TestAnyType_TypeDescriptor_BitAddress_ConstPointerToConst();

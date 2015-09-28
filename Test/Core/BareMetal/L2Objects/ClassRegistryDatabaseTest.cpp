@@ -136,6 +136,25 @@ bool ClassRegistryDatabaseTest::TestFind(const MARTe::char8 *name,
 
 }
 
+bool ClassRegistryDatabaseTest::TestFindLongName(bool create) {
+
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+    const char *name =
+            "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf";
+    if (create) {
+        ClassProperties testClassProperties(name, "", "V");
+
+        //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
+        ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+        bool found = (db->Find(name) != NULL);
+        //These are deleted by the the ClassRegistryDatabase destructor
+        return found;
+    }
+
+    return (db->Find(name) == NULL);
+
+}
+
 bool ClassRegistryDatabaseTest::TestFindTypeIdName() {
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();

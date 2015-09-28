@@ -87,8 +87,15 @@ public:
                   bool create);
 
     /**
+     * @brief Tests the Find function using a string length > 129u and the pattern dllname::name.
+     * @param[in] create specifies if the class should be registered or not in the database (determining the result of the find function).
+     * @return True if the find on registered class returns NULL.
+     */
+    bool TestFindLongName(bool create);
+
+    /**
      * @brief Tests the TestFindTypeIdName function.
-     * @return true if db->FindTypeIdName(typeid(Object).name()) returns not NULL.
+     * @return True if db->FindTypeIdName(typeid(Object).name()) returns not NULL.
      */
     bool TestFindTypeIdName();
 
@@ -106,7 +113,7 @@ public:
 
     /**
      * @brief Tests the List function.
-     * @return true if is returned the first element registered in the database, false otherwise.
+     * @return True if is returned the first element registered in the database, false otherwise.
      */
     bool TestList();
 
@@ -138,7 +145,7 @@ public:
      * @brief Tests the number of instances returned when an object is created by a reference of its father class.
      * @details Using ReferenceT, with the template of the father class, creates the child class. Then checks that only the number
      * of instances of the child class is incremented and that the number of reference is valid.
-     * @return true if the test explained in the details section succeeds, false otherwise.
+     * @return True if the test explained in the details section succeeds, false otherwise.
      */
     bool TestPolimorphismChild2Father();
 
@@ -146,7 +153,7 @@ public:
      * @brief Tests the number of instances returned when an object is created by a reference of its child class.
      * @details Using ReferenceT, with the template of the father class, creates the child class. Since the dynamic_cast fails in
      * this case, the object should not be created and the reference should be invalid.
-     * @return true if the test explained in the details section succeeds, false otherwise.
+     * @return True if the test explained in the details section succeeds, false otherwise.
      */
     bool TestPolimorphismFather2Child();
 
