@@ -44,12 +44,12 @@
 
 TEST(TypeDescriptorGTest,TestConstructorUint) {
     TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestConstructorUint(true, false, 10, TypeDefinition::Float));
+    ASSERT_TRUE(typeDescriptorTest.TestConstructorUint(true, false, 10, Float));
 }
 
 TEST(TypeDescriptorGTest,TestConstructorBasicType) {
     TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestConstructorBasicType(false, 10, TypeDefinition::CCString));
+    ASSERT_TRUE(typeDescriptorTest.TestConstructorBasicType(false, 10, CCString));
 }
 
 TEST(TypeDescriptorGTest,TestConstructorObject) {
@@ -59,7 +59,7 @@ TEST(TypeDescriptorGTest,TestConstructorObject) {
 
 TEST(TypeDescriptorGTest,TestIsEqualOperator) {
     TypeDescriptorTest typeDescriptorTest;
-    ASSERT_TRUE(typeDescriptorTest.TestIsEqualOperator( 21,TypeDefinition::Pointer));
+    ASSERT_TRUE(typeDescriptorTest.TestIsEqualOperator( 21,Pointer));
 }
 
 

@@ -105,44 +105,44 @@ TEST(BitBooleanGTest,TestAnyTypeCast) {
     ASSERT_TRUE(bitbool.TestAnyTypeCast());
 }
 
-TEST(BitBooleanGTest,TestBitSizeU8) {
+TEST(BitBooleanGTest,TestNumberOfBitsU8) {
     BitBooleanTest<uint8> bitbool;
-    ASSERT_TRUE(bitbool.TestBitSize());
+    ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestBitSizeU16) {
+TEST(BitBooleanGTest,TestNumberOfBitsU16) {
     BitBooleanTest<uint16> bitbool;
-    ASSERT_TRUE(bitbool.TestBitSize());
+    ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestBitSizeU32) {
+TEST(BitBooleanGTest,TestNumberOfBitsU32) {
     BitBooleanTest<uint32> bitbool;
-    ASSERT_TRUE(bitbool.TestBitSize());
+    ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestBitSizeU64) {
+TEST(BitBooleanGTest,TestNumberOfBitsU64) {
     BitBooleanTest<uint64> bitbool;
-    ASSERT_TRUE(bitbool.TestBitSize());
+    ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestBitSizeS8) {
+TEST(BitBooleanGTest,TestNumberOfBitsS8) {
     BitBooleanTest<int8> bitbool;
-    ASSERT_TRUE(bitbool.TestBitSize());
+    ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestBitSizeS16) {
+TEST(BitBooleanGTest,TestNumberOfBitsS16) {
     BitBooleanTest<int16> bitbool;
-    ASSERT_TRUE(bitbool.TestBitSize());
+    ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestBitSizeS32) {
+TEST(BitBooleanGTest,TestNumberOfBitsS32) {
     BitBooleanTest<int32> bitbool;
-    ASSERT_TRUE(bitbool.TestBitSize());
+    ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
-TEST(BitBooleanGTest,TestBitSizeS64) {
+TEST(BitBooleanGTest,TestNumberOfBitsS64) {
     BitBooleanTest<int64> bitbool;
-    ASSERT_TRUE(bitbool.TestBitSize());
+    ASSERT_TRUE(bitbool.TestNumberOfBits());
 }
 
 

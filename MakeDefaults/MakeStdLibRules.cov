@@ -38,8 +38,9 @@ $(BUILD_DIR)/%.o : %.c
 #	$(COMPILER) -S $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.c -o $(BUILD_DIR)/$*.s
 
 $(BUILD_DIR)/%.a : $(OBJS)
+	mkdir -p cov
 	touch $@
-	rm $(BUILD_DIR)/$*.a
+	rm $(BUILD_DIR)/$*.a	
 	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $@
 
 $(BUILD_DIR)/%.so : $(BUILD_DIR)/%.o $(OBJS)
