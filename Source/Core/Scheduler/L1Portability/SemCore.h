@@ -41,7 +41,7 @@
 /**
  * @brief This class provides basic facilities to use semaphores.
  */
-class SemCore {
+class DLL_API SemCore {
 
 public:
 

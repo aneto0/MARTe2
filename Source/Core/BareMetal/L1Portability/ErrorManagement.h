@@ -61,20 +61,20 @@ typedef void (*ErrorProcessFunctionType)(const ErrorInformation &errorInfo,
 /**
  * @brief A pointer to the function that will process the errors.
  */
-extern ErrorProcessFunctionType errorMessageProcessFunction;
+extern DLL_API ErrorProcessFunctionType errorMessageProcessFunction;
 
 /**
  * @brief A null ErrorProcessing function
  * @details This function is compatible with the function prototype defined
  * as LogMessageProcessFunctionType. Its purpose is to do nothing.
  */
-void NullErrorProcessFunction(const ErrorInformation &errorInfo,
+DLL_API void NullErrorProcessFunction(const ErrorInformation &errorInfo,
                                    const char8 * const errorDescription);
 /**
  * @brief Returns the name string associated to the error code.
  * @param[in] errorCode is the error code.
  */
-const char8 *ToName(const ErrorType errorCode);
+const DLL_API char8 *ToName(const ErrorType errorCode);
 
 /**
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.
@@ -86,7 +86,7 @@ const char8 *ToName(const ErrorType errorCode);
  * @param[in] lineNumber is the line number where the error was triggered.
  * @param[in] functionName is the name of the function where the error is triggered.
  */
-void ReportError(const ErrorType code,
+DLL_API void ReportError(const ErrorType code,
                  const char8 * const errorDescription,
                  const char8 * const fileName = static_cast<const char8 *>(NULL),
                  const int16 lineNumber = 0,
@@ -101,7 +101,7 @@ void ReportError(const ErrorType code,
  * @param[in] lineNumber is the line number where the error was triggered.
  * @param[in] functionName is the name of the function where the error is triggered.
  */
-void ReportErrorFullContext(const ErrorType code,
+DLL_API void ReportErrorFullContext(const ErrorType code,
                             const char8 * const errorDescription,
                             const char8 * const fileName = static_cast<const char8 *>(NULL),
                             const int16 lineNumber = 0,
@@ -111,7 +111,7 @@ void ReportErrorFullContext(const ErrorType code,
  * @brief Sets the routine for error managing.
  * @param[in] userFun is a pointer to the function called by ReportError.
  */
-void SetErrorProcessFunction(const ErrorProcessFunctionType userFun);
+DLL_API void SetErrorProcessFunction(const ErrorProcessFunctionType userFun);
 
 }
 

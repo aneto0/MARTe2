@@ -183,7 +183,7 @@ namespace MARTe {
  */
 /*lint -e{9109} Object is forward declared in ClassRegistryItem (in order to be able to have access the function pointer to
  * create new instances.*/
-class Object {
+class DLL_API Object {
     /**
      * This allows the Reference class to be the only interface to manage the number of instances pointing to this object.
      */

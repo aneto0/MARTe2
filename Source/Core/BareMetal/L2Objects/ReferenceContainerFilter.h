@@ -84,7 +84,7 @@ class ReferenceContainer;
  * Every time the Test function is to return it should call
  * IncrementFound so that the number of occurrences found is correctly tracked.
  */
-class ReferenceContainerFilter {
+class DLL_API ReferenceContainerFilter {
 public:
     /**
      * @brief Default constructor

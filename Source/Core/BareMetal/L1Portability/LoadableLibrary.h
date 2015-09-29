@@ -44,7 +44,7 @@ namespace MARTe{
  * Most of the implementation is delegated to LoadableLibrary.h which is different
  * for each operating systems and contains the non portable system calls to load libraries.
  */
-class LoadableLibrary {
+class DLL_API LoadableLibrary {
 
 public:
 

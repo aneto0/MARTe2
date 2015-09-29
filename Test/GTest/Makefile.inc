@@ -24,14 +24,14 @@
 
 
 OBJSX=  TypeCharacteristicsGTest.x \
-        BasicTypeGTest.x \
-        BasicConsoleGTest.x \
-        FormatDescriptorGTest.x \
-        AnyTypeGTest.x\
-        StandardHeap_GenericGTest.x \
-        HeapManagerGTest.x \
-        EndianityGTest.x \
+	BasicTypeGTest.x \
+	BasicConsoleGTest.x \
 	SleepGTest.x \
+	FormatDescriptorGTest.x \
+	AnyTypeGTest.x\
+	StandardHeap_GenericGTest.x \
+	HeapManagerGTest.x \
+	EndianityGTest.x \
 	ProcessorGTest.x \
 	AtomicGTest.x \
 	ProcessorTypeGTest.x \
@@ -58,12 +58,12 @@ OBJSX=  TypeCharacteristicsGTest.x \
 	ReferenceContainerNodeGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
-  	ErrorManagementGTest.x \
-    	BitBooleanGTest.x \
- 	FractionalIntegerGTest.x \
- 	BitRangeGTest.x \
- 	StaticListGTest.x \
- 	GlobalObjectsDatabaseGTest.x \
+	ErrorManagementGTest.x \
+	BitBooleanGTest.x \
+	FractionalIntegerGTest.x \
+	BitRangeGTest.x \
+	StaticListGTest.x \
+	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x
 
 PACKAGE=

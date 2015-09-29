@@ -51,7 +51,7 @@ namespace MARTe {
  *
  * @details Singly linked list implementation (possible to move only in the forward direction).
  */
-class LinkedListable {
+class DLL_API LinkedListable {
 
 
 public:

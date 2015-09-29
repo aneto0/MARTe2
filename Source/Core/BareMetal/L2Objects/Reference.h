@@ -48,7 +48,7 @@ namespace MARTe {
  *
  * The Reference might also own no object, in which case the function IsValid will return false.
  */
-class Reference {
+class DLL_API Reference {
 public:
 
     /**

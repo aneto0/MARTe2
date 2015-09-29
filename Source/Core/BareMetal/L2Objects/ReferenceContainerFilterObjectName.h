@@ -42,7 +42,7 @@ namespace MARTe{
 /**
  * @brief ReferenceContainerFilter for object names.
  */
-class ReferenceContainerFilterObjectName: public ReferenceContainerFilter {
+class DLL_API ReferenceContainerFilterObjectName: public ReferenceContainerFilter {
 public:
     /**
      * @brief Default constructor.

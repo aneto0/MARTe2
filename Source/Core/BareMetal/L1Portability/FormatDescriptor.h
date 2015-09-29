@@ -164,7 +164,7 @@ const DesiredAction PrintStruct = 6u;
  * populate the class from a const char8* string which specifies the desired print format
  * in a printf-like fashion.
  */
-class FormatDescriptor {
+class DLL_API FormatDescriptor {
 public:
 
     /**

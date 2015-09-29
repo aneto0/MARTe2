@@ -49,7 +49,7 @@ namespace MARTe{
  * This class is used to implement semaphores with timed locks and in applications which needs
  * Timeouts.
  */
-class TimeoutType {
+class DLL_API TimeoutType {
 
 public:
 

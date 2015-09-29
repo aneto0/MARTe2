@@ -57,7 +57,7 @@ typedef Object *(ObjectBuildFn)(HeapI* const);
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
-class ClassRegistryItem {
+class DLL_API ClassRegistryItem {
 public:
 
     /**

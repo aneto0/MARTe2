@@ -74,5 +74,6 @@ struct EventSemProperties;
 struct BasicConsoleProperties;
 #define BasicConsoleHandle BasicConsoleProperties*
 
+
 }
 #endif /* GENERALDEFINITIONS_ENV_H_ */

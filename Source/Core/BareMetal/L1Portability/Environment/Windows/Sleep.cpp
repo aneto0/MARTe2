@@ -1,8 +1,8 @@
 /**
  * @file Sleep.cpp
  * @brief Source file for module Sleep
- * @date 05/07/2015
- * @author André Neto
+ * @date 20/06/2015
+ * @author Giuseppe Ferr�
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,24 +21,27 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
 #include <time.h>
 
-
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "../../Sleep.h"
-namespace MARTe{
+#include "Sleep.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-static const uint32 winSleepFreq = 1000;
+namespace MARTe {
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -46,45 +49,47 @@ static const uint32 winSleepFreq = 1000;
 
 namespace Sleep {
 
-void AtLeast(const float64 sec) {
+static const uint32 winSleepFreq = 1000;
+
+void AtLeast(float64 sec) {
     int32 ticks = (int32) (winSleepFreq * sec + 0.9999);
-      if (ticks < 0) {
-          return;
-      }
-
-      ::Sleep(ticks);
-}
-
-void NoMore(const float64 sec) {
-    int ticks = (int) (winSleepFreq * sec);
-    if (ticks < 0)
+    if (ticks < 0) {
         return;
+    }
 
     ::Sleep(ticks);
 }
 
-void Sec(const float64 sec) {
-    if (sec < 0)
+void NoMore(float64 sec) {
+    int ticks = (int) (winSleepFreq * sec);
+    if (ticks < 0){
         return;
+    }
+    ::Sleep(ticks);
+}
+
+void Sec(float64 sec) {
+    if (sec < 0){
+        return;
+    }
 
     ::Sleep((unsigned long) (sec * 1000.0 + 0.5));
 }
 
-void MSec(const int32 msec) {
-    if (msec < 0)
+void MSec(int32 msec) {
+    if (msec < 0){
         return;
-
+    }
     ::Sleep(msec);
 }
 
-void SemiBusy(const float64 totalSleepSec,
-              const float64 nonBusySleepSec) {
+void SemiBusy(float64 totalSleepSec,
+              float64 nonBusySleepSec) {
     NoMore(totalSleepSec);
-
 }
 
 int32 GetDateSeconds() {
-    return static_cast<int32>(time(static_cast<time_t *>(NULL)));
+    return (int32) time((time_t *) NULL);
 }
 
 }

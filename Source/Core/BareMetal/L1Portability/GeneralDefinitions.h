@@ -34,6 +34,7 @@ namespace MARTe{
 #define __ERROR_FUNCTION_NAME__ __func__
 #endif
 
+
 /** List of colors */
 typedef enum {
     Black = 0,

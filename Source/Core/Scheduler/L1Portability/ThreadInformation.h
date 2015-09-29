@@ -45,7 +45,7 @@ namespace MARTe {
  * @brief A class which stores information about a thread: name, function, argument, identifier and priority related information.
  */
 /*lint -e{9109} forward declaration of ThreadInformation required in Threads.h*/
-class ThreadInformation {
+class DLL_API ThreadInformation {
 
 public:
 
