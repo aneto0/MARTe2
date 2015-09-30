@@ -38,7 +38,6 @@ OBJSX=  TypeCharacteristicsGTest.x \
 	EventSemGTest.x \
 	HighResolutionTimerGTest.x \
 	MemoryGTest.x \
-	FastPollingMutexSemGTest.x \
 	StringHelperGTest.x \
 	StringPortableGTest.x \
 	ThreadsGTest.x \
@@ -64,7 +63,9 @@ OBJSX=  TypeCharacteristicsGTest.x \
 	BitRangeGTest.x \
 	StaticListGTest.x \
 	GlobalObjectsDatabaseGTest.x \
-	TypeDescriptorGTest.x
+	TypeDescriptorGTest.x \
+	FastPollingMutexSemGTest.x 
+	
 
 PACKAGE=
 ROOT_DIR=../..

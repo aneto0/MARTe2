@@ -107,7 +107,7 @@ DLL_API int32 Compare(const char8* const string1,
  * @return (0 if string1 = string2), (1 if string1 < string2), (2 if string1 > string2), (-1 in case of NULL strings).
  * @pre size <= largest length of the string1 or string2.
  */
-int32 CompareN(const char8* const string1,
+DLL_API int32 CompareN(const char8* const string1,
                const char8* const string2,
                const uint32 size);
 

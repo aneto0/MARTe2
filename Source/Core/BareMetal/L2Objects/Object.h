@@ -68,19 +68,19 @@ namespace MARTe {
      * @brief Returns a copy of the class properties associated with this class type.                                  \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
-    virtual void GetClassPropertiesCopy(ClassProperties &destination) const;                                           \
+    DLL_API virtual void GetClassPropertiesCopy(ClassProperties &destination) const;                                           \
     /*                                                                                                                 \
      * @brief Returns the class properties associated with this class type.                                            \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
-    virtual const ClassProperties *GetClassProperties() const;                                                         \
+    DLL_API virtual const ClassProperties *GetClassProperties() const;                                                         \
     /*                                                                                                                 \
      * @brief Allocates a new instance of the class type in the provided heap. Note that this                          \
      * is automatically called by the compiler (given that we use placement new).                                      \
      * Note that the selected heap might be different for each type of class.                                          \
      * @param[in, out] destination the destination where to copy the class properties to.                              \
      */                                                                                                                \
-    static void * operator new(const osulong size, HeapI *heap = static_cast<HeapI *>(NULL));\
+    DLL_API static void * operator new(const osulong size, HeapI *heap = static_cast<HeapI *>(NULL));\
     /*                                                                                                                 \
      * @brief Delete the object.                                                                                       \
      * @details Will delegate the deleting of the object to the correct heap. Note that the delete function            \
@@ -88,7 +88,7 @@ namespace MARTe {
      * scope in the unit file (but is not exported) (see CLASS_REGISTER).                                              \
      * @param[in] p the pointer to the object to be deleted.                                                           \
      */                                                                                                                \
-    static void operator delete(void *p);
+     DLL_API static void operator delete(void *p);
 
 /**
  * This macro has to be inserted in every unit file.
@@ -183,7 +183,7 @@ namespace MARTe {
  */
 /*lint -e{9109} Object is forward declared in ClassRegistryItem (in order to be able to have access the function pointer to
  * create new instances.*/
-class DLL_API Object {
+class Object {
     /**
      * This allows the Reference class to be the only interface to manage the number of instances pointing to this object.
      */
@@ -194,12 +194,12 @@ public:
     /**
      * @brief Default constructor. Sets the number of references to zero.
      */
-    Object();
+    DLL_API Object();
 
     /**
      * @brief Virtual destructor. No operation.
      */
-    virtual ~Object();
+    DLL_API virtual ~Object();
 
     /**
      * @brief Initialises the object against a structured list of elements.
@@ -211,25 +211,25 @@ public:
      * @return true if all the input \a data is valid and can be successfully assigned
      * to the Object member variables.
      */
-    virtual bool Initialise(const StructuredData &data);
+    DLL_API virtual bool Initialise(const StructuredData &data);
 
     /**
      * @brief Returns a copy to the object introspection properties.
      * @param[out] destination Copies the object introspection properties to the \a destination.
      */
-    void GetIntrospectionCopy(Introspection &destination) const;
+    DLL_API void GetIntrospectionCopy(Introspection &destination) const;
 
     /**
      * @brief Returns the number of references.
      * @return the number of references pointing to this object.
      */
-    uint32 NumberOfReferences() const;
+    DLL_API uint32 NumberOfReferences() const;
 
     /**
      * @brief Returns the object name.
      * @return the object name (which might be NULL).
      */
-    const char8 * const GetName() const;
+    DLL_API const char8 * const GetName() const;
 
     /**
      * @brief Returns an object name which is guaranteed to be unique.
@@ -243,7 +243,7 @@ public:
      * If enough space is available the string will be zero terminated.
      * @param[in] size the size of the \a destination input string.
      */
-    void GetUniqueName(char8 * const destination, const uint32 &size) const;
+    DLL_API void GetUniqueName(char8 * const destination, const uint32 &size) const;
 
     /**
      * @brief Sets the object name.
@@ -251,7 +251,7 @@ public:
      * @param newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
      * @pre newName != NULL
      */
-    void SetName(const char8 * const newName);
+    DLL_API void SetName(const char8 * const newName);
 
 private:
 
@@ -260,13 +260,13 @@ private:
      * @details Only accessible to the Reference class.
      * @return the number of references after the operation.
      */
-    uint32 DecrementReferences();
+    DLL_API uint32 DecrementReferences();
 
     /**
      * @brief Increments the number of references to this object.
      * @details Only accessible to the Reference class.
      */
-    void IncrementReferences();
+    DLL_API void IncrementReferences();
 
     /**
      * @brief Clones the object.
@@ -274,13 +274,13 @@ private:
      * Only accessible to the Reference class.
      * @return a clone of this object.
      */
-    virtual Object* Clone() const;
+    DLL_API virtual Object* Clone() const;
 
     /**
      * @brief Disallow the usage of new.
      * @param[in] size the size of the object.
      */
-    static void *operator new(osulong size) throw ();
+    DLL_API static void *operator new(osulong size) throw ();
 
     /**
      * Object introspection properties.

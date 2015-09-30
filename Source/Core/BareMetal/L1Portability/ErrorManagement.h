@@ -74,7 +74,7 @@ DLL_API void NullErrorProcessFunction(const ErrorInformation &errorInfo,
  * @brief Returns the name string associated to the error code.
  * @param[in] errorCode is the error code.
  */
-const DLL_API char8 *ToName(const ErrorType errorCode);
+DLL_API const char8 *ToName(const ErrorType errorCode);
 
 /**
  * @brief Stores the error informations in an ErrorInformation structure, then calls a predefined routine.

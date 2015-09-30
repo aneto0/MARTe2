@@ -28,7 +28,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 SPB=Environment/$(ENVIRONMENT).x
 
-OBJSX=  ThreadInformation.x 
+OBJSX =
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
@@ -37,7 +37,9 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES+=-I../../BareMetal/L1Portability -I../../BareMetal/L0Types
 
 all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L1Portability$(LIBEXT)
+		$(BUILD_DIR)/L1PortabilityS$(LIBEXT) \
+		$(BUILD_DIR)/L1PortabilityS.def		
+		
 	echo  $(OBJS)
 
 include depends.$(TARGET)

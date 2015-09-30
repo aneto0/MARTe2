@@ -42,13 +42,13 @@ namespace MARTe{
 /**
  * @brief ReferenceContainerFilter for reference searching.
  */
-class DLL_API ReferenceContainerFilterReferences: public ReferenceContainerFilter {
+class ReferenceContainerFilterReferences: public ReferenceContainerFilter {
 public:
 
     /**
      * @brief Default constructor. NOOP.
      */
-    ReferenceContainerFilterReferences();
+    DLL_API ReferenceContainerFilterReferences();
 
     /**
      * @brief Sets the searching mode parameters.
@@ -58,7 +58,7 @@ public:
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
      * @param[in] refToSearch the reference to be searched.
      */
-    ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
+    DLL_API ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
                                        const uint32 &modeToSet,
                                        Reference refToSearch);
 
@@ -69,7 +69,7 @@ public:
      * @param[in] referenceToTest the reference to test.
      * @return true if \a referenceToTest == \a referenceToSearch.
      */
-    virtual bool Test(ReferenceContainer &previouslyFound,
+    DLL_API virtual bool Test(ReferenceContainer &previouslyFound,
                       Reference &referenceToTest);
 
 private:

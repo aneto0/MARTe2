@@ -44,24 +44,24 @@ namespace MARTe {
  * implement this interface and register in the GlobalObjectsDatabase by calling
  * the GlobalObjectsDatabase->Add method.
  */
-class DLL_API GlobalObjectI {
+class GlobalObjectI {
 public:
     /**
      * @brief Destructor. NOOP
      */
-    virtual ~GlobalObjectI();
+    DLL_API virtual ~GlobalObjectI();
 
     /**
      * @brief Returns the name of the class.
      * @return the class name.
      */
-    virtual const char8 * const GetClassName() const = 0;
+    DLL_API virtual const char8 * const GetClassName() const = 0;
 
     /**
      * @brief Guarantees that the class is instantiated in the StandardHeap.
      * @return a new instance of the class allocated in the StandardHeap.
      */
-    static void * operator new(const osulong size);
+    DLL_API static void * operator new(const osulong size);
 };
 }
 

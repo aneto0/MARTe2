@@ -32,7 +32,8 @@ OBJSX=  EventSem.x \
         MutexSem.x \
         Processor.x \
         Threads.x \
-        ThreadsDatabase_Gen.x
+        ThreadsDatabase_Gen.x \
+        ThreadInformation_Gen.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
@@ -41,7 +42,9 @@ INCLUDES+=-I../../../../BareMetal/L0Types/
 INCLUDES+=-I../../../../BareMetal/L1Portability
 
 all: $(OBJS)    $(CPPS) \
-                $(BUILD_DIR)/L1Portability$(LIBEXT)
+                $(BUILD_DIR)/L1Portability$(LIBEXT) \
+                $(BUILD_DIR)/L1Portability.def
+                
 	echo  $(OBJS)
 
 include depends.$(TARGET)
