@@ -106,6 +106,7 @@ clean:  $(SUBPROJC)
 	@rm -f $(BUILD_DIR)/*$(ASMEXT)
 	@rm -f $(BUILD_DIR)/*$(GCNOEXT)
 	@rm -f $(BUILD_DIR)/*$(GCDAEXT)
+	@rm -f $(BUILD_DIR)/*$(DEFEXT)
 	@rm -f *_Gen.cpp
 	@rm -f *_Gen.c
 
