@@ -22,16 +22,13 @@
 # $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-
 TARGET=linux
 
 include Makefile.inc
-#LIBRARIES   += ../../MakeDefaults/DLLs/MARTe2$(DLLEXT) 
 
-LIBRARIES   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreBTest$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT) 
-LIBRARIES   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
-LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
+OPTIM = -finline-functions
 
-OPTIM=-finline-functions
+LIBRARIES += -lm
+
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT)
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT)

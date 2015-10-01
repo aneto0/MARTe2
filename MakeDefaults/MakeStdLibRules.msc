@@ -89,7 +89,7 @@ $(BUILD_DIR)/%.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	$(subst /,\,$(ROOT_DIR))\MakeDefaults\DLLs\expdef.exe $@ > $(@:%.dll=%.def)
 	rm dllGenerator.def
 	cp $@ $(subst /,\,$(ROOT_DIR))\MakeDefaults\DLLs
-	cp $@ $(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\GTest
+#cp $@ $(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\GTest
 	
 	
 $(BUILD_DIR)/dummy.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
