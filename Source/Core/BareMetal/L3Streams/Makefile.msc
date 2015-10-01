@@ -20,26 +20,22 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX=
-SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x
-PACKAGE=Core
-MAKEDEFAULTDIR=../../../MakeDefaults
 
-ROOT_DIR=../../..
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+TARGET=msc
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/L0Types/L0Types$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1Portability$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L2Objects/L2Objects$(LIBEXT)
-
-all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTeCoreB$(LIBEXT)
-	echo  $(OBJS)
+include Makefile.inc
 
 
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
+
+
+
+
+
+
+
 

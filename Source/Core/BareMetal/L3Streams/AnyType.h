@@ -287,6 +287,9 @@ public:
     template<typename baseType, uint8 bitSize>
     AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt);
 
+
+    inline void SetDataPointer(void* p);
+
     /**
      * @brief Returns the pointer to the data.
      * @return the pointer to the data.
@@ -661,6 +664,10 @@ AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
 
 void* AnyType::GetDataPointer() {
     return dataPointer;
+}
+
+void AnyType::SetDataPointer(void *p) {
+    dataPointer=p;
 }
 
 TypeDescriptor AnyType::GetTypeDescriptor() const {
