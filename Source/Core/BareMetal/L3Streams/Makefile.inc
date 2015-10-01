@@ -29,7 +29,7 @@ BufferedStream.x BufferedStreamIOBuffer.x \
 StreamWrapperIOBuffer.x Streamable.x StreamStringIOBuffer.x  StreamString.x \
 StreamMemoryReference.x MemoryReferenceIOBuffer.x
 
-PACKAGE=Core
+PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

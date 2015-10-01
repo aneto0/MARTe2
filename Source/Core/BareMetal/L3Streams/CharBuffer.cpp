@@ -63,7 +63,7 @@ bool CharBuffer::SetBufferAllocationSize(
 		uint32 			desiredSize,
         uint32 			allocationGranularityMask
 ){
-	// if memory referenc is present remove it 
+	// if memory reference is present remove it
 	// otherwise we end up reallocating others's memory!!
 	if ((bufferSize > 0) && (!bufferMode.allocated)){
 		Clean();
