@@ -187,7 +187,7 @@ protected: // methods to be implemented by deriving classes
      *  I.E. sockets with blocking activated wait forever when noWait is used .... 
     */
     virtual bool        UnBufferedRead(
-                            char*               buffer,
+                            char8*               buffer,
                             uint32 &            size,
                             TimeoutType         msecTimeout     = TTDefault,
                             bool                complete        = false)=0;
@@ -208,7 +208,7 @@ protected: // methods to be implemented by deriving classes
      *  I.E. sockets with blocking activated wait forever when noWait is used .... 
     */
     virtual bool        UnBufferedWrite(
-                            const char*         buffer,
+                            const char8*         buffer,
                             uint32 &            size,
                             TimeoutType         msecTimeout     = TTDefault,
                             bool                complete        = false)=0;
@@ -245,12 +245,12 @@ protected: // methods to be implemented by deriving classes
     /** @brief Pure virtual function. Select the stream to read from. Switching may reset the stream to the start.
       * 
       * Not implemented here. */
-    virtual bool        UnBufferedSwitch(const char *name)=0;
+    virtual bool        UnBufferedSwitch(const char8 *name)=0;
     
     /** @brief Pure virtual function. Remove a stream.
       * 
       * Not implemented here. */
-    virtual bool        UnBufferedRemoveStream(const char *name)=0;
+    virtual bool        UnBufferedRemoveStream(const char8 *name)=0;
  
     
 private: // mode switch methods
@@ -351,7 +351,7 @@ public:  // special inline methods for buffering
      * In buffered mode uses the inline IOBuffer::PutC of writeBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */  
-    inline bool         PutC(char c)
+    inline bool         PutC(char8 c)
     {   	
     	if (operatingModes.mutexReadMode) {
     	     if (!SwitchToWriteMode()) return false;
@@ -373,7 +373,7 @@ public:  // special inline methods for buffering
      * In buffered mode uses the inline IOBuffer::GetC of readBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
-    inline bool         GetC(char &c) {
+    inline bool         GetC(char8 &c) {
 
     	if (operatingModes.mutexWriteMode) {
     	     if (!SwitchToReadMode()) return false;
@@ -408,7 +408,7 @@ public:
       * Timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
       * when noWait is used .... */
     virtual bool         Read(
-                            char *              buffer,
+                            char8 *              buffer,
                             uint32 &            size,
                             TimeoutType         msecTimeout     = TTDefault,
                             bool                completeRead    = false);
@@ -436,7 +436,7 @@ public:
      * Timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
      *  when noWait is used .... */
     virtual bool         Write(
-                            const char*         buffer,
+                            const char8*         buffer,
                             uint32 &            size,
                             TimeoutType         msecTimeout     = TTDefault,
                             bool                completeWrite   = false);
@@ -499,14 +499,14 @@ public:
       * @param name is the name of the desired stream.
       * 
       * Depends on UnBufferedSwitch. */
-    virtual bool        Switch(const char *name);
+    virtual bool        Switch(const char8 *name);
 
     /** @brief Remove an existing stream.
       * @param name is the name of the stream which should be removed.
       *
       * Depends on UnBufferedRemoveStream.
     */
-    virtual bool        RemoveStream(const char *name);
+    virtual bool        RemoveStream(const char8 *name);
 
 };
 

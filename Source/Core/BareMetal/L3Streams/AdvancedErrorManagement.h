@@ -36,7 +36,7 @@
 
 #define REPORT_ERROR_PARAMETERS(code,message,...) \
 { \
-	char buffer[MAX_ERROR_MESSAGE_SIZE+1];\
+	char8 buffer[MAX_ERROR_MESSAGE_SIZE+1];\
 	StreamMemoryReference smr(buffer,MAX_ERROR_MESSAGE_SIZE);\
 	smr.Printf(message,__VA_ARGS__);\
 	buffer[smr.Size()]=0;\

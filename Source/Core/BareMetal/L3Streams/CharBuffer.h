@@ -28,7 +28,7 @@
  * @brief Implementation of a buffer with allocation and reallocation and access functions.
  * 
  * This class implements a generic buffer which could be allocated and reallocated dinamically
- * on the heap or assigned passing a memory reference in input. It consists in a char* pointer
+ * on the heap or assigned passing a memory reference in input. It consists in a char8* pointer
  * to the begin of the buffer and some attributes like the size of the buffer.
  */
 #ifndef CHAR_BUFFER_H
@@ -43,7 +43,7 @@ namespace MARTe{
  *
  *  A basic implementation of a buffer of character.
     A replacement for dealing directly with mallocs and reallocs.
-    Access as char * both read-only and read-write.
+    Access as char8 * both read-only and read-write.
     Supports up to 4G of ram. 
 */
 class CharBuffer {
@@ -63,7 +63,7 @@ private:
     uint32 		bufferSize;
 
     /**  a pointer at the beginning of the memory buffer  */
-    char * 		buffer;
+    char8 * 		buffer;
 	   
 private:
 
@@ -123,7 +123,7 @@ public:
      * If buffer is valid set the buffer pointer and the buffer size by input parameters and readOnly=false.
     */
     virtual void SetBufferReference(
-    		char *			buffer, 
+    		char8 *			buffer, 
     		uint32 			bufferSize
     );
     
@@ -137,7 +137,7 @@ public:
      * ReadOnly flag remains true.
     */
     virtual void SetBufferReference(
-    		const char *	buffer, 
+    		const char8 *	buffer, 
     		uint32 			bufferSize
     );
     
@@ -147,7 +147,7 @@ public:
      * @brief Read Only access to the internal buffer.
      * @return The pointer to the buffer.
      */
-    inline const char *Buffer() const {
+    inline const char8 *Buffer() const {
         return buffer;
     }
 
@@ -155,7 +155,7 @@ public:
      * @brief  Read Write access top the internal buffer
        @return The pointer to the buffer
      */
-    inline char *BufferReference() const {
+    inline char8 *BufferReference() const {
     	if (bufferMode.readOnly) return NULL;
         return buffer;
     }

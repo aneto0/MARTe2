@@ -96,10 +96,10 @@ bool CharBuffer::SetBufferAllocationSize(
     }
 
     if (buffer == NULL) {
-        buffer = (char *) HeapManager::Malloc(neededMemory);
+        buffer = (char8 *) HeapManager::Malloc(neededMemory);
     }
     else {
-        buffer = (char *) HeapManager::Realloc((void *&) buffer, neededMemory);
+        buffer = (char8 *) HeapManager::Realloc((void *&) buffer, neededMemory);
     }
     // if the pointer is not NULL it means we have been successful
     if (buffer != NULL){
@@ -120,7 +120,7 @@ bool CharBuffer::SetBufferAllocationSize(
     for the buffer size. round up the others
 */
 void CharBuffer::SetBufferReference(
-		char *			buffer, 
+		char8 *			buffer, 
 		uint32 			bufferSize
 ){
 	Clean();
@@ -140,11 +140,11 @@ void CharBuffer::SetBufferReference(
     for the buffer size. round up the others
 */
 void CharBuffer::SetBufferReference(
-		const char *	buffer, 
+		const char8 *	buffer, 
 		uint32 			bufferSize
 ){
 	Clean();
-    this->buffer = (char *)buffer;
+    this->buffer = (char8 *)buffer;
     bufferMode.readOnly 	= true;
     bufferMode.allocated 	= false;
 	if (buffer != NULL){

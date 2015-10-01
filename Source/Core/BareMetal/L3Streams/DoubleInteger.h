@@ -23,7 +23,7 @@
 **/
 /**
  * @file 
- * @brief Constructs integer of double size. Limited operator support.
+ * @brief Constructs integer of float64 size. Limited operator support.
 */
 
 #if !defined DOUBLE_INTEGER
@@ -37,7 +37,7 @@ namespace MARTe{
 /** @brief Implementation of an integer which duplicates the size of the template passed in argument.
   * 
   * Implementation is endianity dependant.
-  * Implements an integer number of double the size of T.
+  * Implements an integer number of float64 the size of T.
   * Uses operators of T to implement operators.
  */
 template<typename T>

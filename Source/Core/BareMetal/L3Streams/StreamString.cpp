@@ -52,7 +52,7 @@ IOBuffer *StreamString::GetOutputBuffer() {
     timeout behaviour depends on class characteristics and sync mode.
 */
 bool StreamString::Read(
-                        char*               buffer,
+                        char8*               buffer,
                         uint32 &            size,
                         TimeoutType         msecTimeout,
                         bool                complete){
@@ -68,7 +68,7 @@ bool StreamString::Read(
     timeout behaviour depends on class characteristics and sync mode. 
 */
 bool StreamString::Write(
-                        const char*         buffer,
+                        const char8*         buffer,
                         uint32 &            size,
                         TimeoutType         msecTimeout,
                         bool                complete){
@@ -137,7 +137,7 @@ bool StreamString::CanSeek() const {
  * @param  c the character to be copied.
  * @return true if successful. false otherwise.
  */
-bool StreamString::AppendOrSet(char c, bool append) {
+bool StreamString::AppendOrSet(char8 c, bool append) {
     if (append){
     	buffer.Seek(buffer.UsedSize());
 	} else {
@@ -153,7 +153,7 @@ bool StreamString::AppendOrSet(char c, bool append) {
  * @param  s The pointer to the string to be copied
  * @return true if successful. false otherwise.
  */
-bool StreamString::AppendOrSet(const char *s, bool append) {
+bool StreamString::AppendOrSet(const char8 *s, bool append) {
     if (s == NULL){
 		//REPORT_ERROR(ParametersError,"s == NULL")
         return false;
@@ -189,16 +189,16 @@ bool StreamString::AppendOrSet(const StreamString &s, bool append) {
 	return true;
 }
 
-/** Checks if a char is in the string
+/** Checks if a char8 is in the string
  @param c The character to look for.
  @return >0 the first position if found. -1 otherwise.
  */
-int32 StreamString::Locate(char c) const {
+int32 StreamString::Locate(char8 c) const {
 	// Stream::Size is not const!
     if (buffer.UsedSize() == 0){
         return -1;
     }
-    const char *string = buffer.Buffer(); 
+    const char8 *string = buffer.Buffer(); 
 	if (string == NULL) {
 		return -1;
 	}
@@ -226,8 +226,8 @@ int32 StreamString::Locate(const StreamString &x) const {
     }
     if (x.buffer.Buffer() == NULL) return -1;
     if (buffer.Buffer() == NULL) return -1;
-    const char *string = buffer.Buffer(); 
-    const char *pattern = x.buffer.Buffer();
+    const char8 *string = buffer.Buffer(); 
+    const char8 *pattern = x.buffer.Buffer();
     
 	uint32 index = 0;
 	// no point to try match the tail of the string if it is smaller than the pattern
@@ -237,7 +237,7 @@ int32 StreamString::Locate(const StreamString &x) const {
     	// detect the start as a potential match
     	if (string[index]==pattern[0])   {
     		uint32 index2 = 1;
-    		const char *stringSegment = string+index;
+    		const char8 *stringSegment = string+index;
     		// check the remainder
     		while (index2 < x.buffer.UsedSize()){
     			if (stringSegment[index2] != pattern[index2]) break;

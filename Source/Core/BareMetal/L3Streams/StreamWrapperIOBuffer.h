@@ -42,7 +42,7 @@ public: // read buffer private methods
      * @param buffer is the pointer to the preallocated memory.
      * @param size is the size of the buffer.
      */
-    StreamWrapperIOBuffer(StreamInterface *s,char *buffer,uint32 size){
+    StreamWrapperIOBuffer(StreamInterface *s,char8 *buffer,uint32 size){
         stream=s;
         SetBufferReferencedMemory(buffer,size);
     }

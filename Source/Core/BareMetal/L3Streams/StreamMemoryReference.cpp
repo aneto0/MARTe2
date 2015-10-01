@@ -50,7 +50,7 @@ IOBuffer *StreamMemoryReference::GetOutputBuffer() {
     timeout behaviour depends on class characteristics and sync mode.
 */
 bool StreamMemoryReference::Read(
-                        char*               buffer,
+                        char8*               buffer,
                         uint32 &            size,
                         TimeoutType         msecTimeout,
                         bool                complete){
@@ -66,7 +66,7 @@ bool StreamMemoryReference::Read(
     timeout behaviour depends on class characteristics and sync mode. 
 */
 bool StreamMemoryReference::Write(
-                        const char*         buffer,
+                        const char8*         buffer,
                         uint32 &            size,
                         TimeoutType         msecTimeout,
                         bool                complete){

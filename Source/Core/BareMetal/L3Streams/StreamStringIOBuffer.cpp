@@ -24,7 +24,7 @@ bool  StreamStringIOBuffer::SetBufferAllocationSize(
 /** copies buffer of size size at the end of writeBuffer
  * before calling check that bufferPtr is not NULL
  */ 
-void StreamStringIOBuffer::Write(const char *buffer, uint32 &size){
+void StreamStringIOBuffer::Write(const char8 *buffer, uint32 &size){
 	
 	if (size > AmountLeft()) {
 		SetBufferAllocationSize(Position() + size);

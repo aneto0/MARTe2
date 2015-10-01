@@ -73,7 +73,7 @@ public: // read buffer private methods
      * If size is greater than amountLeft allocates new memory calling SetBufferAllocationSize passing the size of the filled memory + size;
      * then calls IOBuffer::Write.
      */ 
-    virtual void 		Write(const char *buffer, uint32 &size);    
+    virtual void 		Write(const char8 *buffer, uint32 &size);    
 
     /** @brief Add the termination character at the end of the filled memory. */
     virtual void 		Terminate();

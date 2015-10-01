@@ -62,7 +62,7 @@ public:
     // PURE STREAMING (UNBUFFERED)
 
     /** 
-     * @brief Pure virtual method. Reads data from the stream to a char* buffer.
+     * @brief Pure virtual method. Reads data from the stream to a char8* buffer.
      * @param buffer is the buffer where datas must be copied.
      * @param size is the desired number of bytes to copy.
      * @param msecTimeout is the desired timeout.
@@ -82,13 +82,13 @@ public:
         parameters error, for instance buffer = NULL 
     */
     virtual bool        Read(
-                            char*               buffer,
+                            char8*               buffer,
                             uint32 &            size,
                             TimeoutType         msecTimeout     = TTDefault,
                             bool                complete        = false)=0;
 
     /** 
-     * @brief Pure virtual method. Writes from a const char* buffer to the stream.
+     * @brief Pure virtual method. Writes from a const char8* buffer to the stream.
      * @param buffer contains the datas which must be copied on the stream.
      * @param size is the desired number of bytes to write.
      * @param msecTimeout is the desired timeout.
@@ -108,7 +108,7 @@ public:
         parameters error, for instance buffer = NULL 
     */
     virtual bool        Write(
-                            const char*         buffer,
+                            const char8*         buffer,
                             uint32 &            size,
                             TimeoutType         msecTimeout     = TTDefault,
                             bool                complete        = false) = 0;
@@ -130,7 +130,7 @@ public:
      *
      * Uses the derived class implementation of Write function with one as size parameter,
      * then the function behavior depends from the derived class Write function.*/
-    inline bool         PutC(char c){
+    inline bool         PutC(char8 c){
     	uint32 size = 1;
     	return Write(&c,size);
     }
@@ -142,7 +142,7 @@ public:
      *
      * Uses the derived class implementation of Read function with one as size parameter,
      * then the function behavior depends from the derived class Read function. */
-    inline bool         GetC(char &c) {
+    inline bool         GetC(char8 &c) {
     	uint32 size = 1;
     	return Read(&c,size);
     	
@@ -231,7 +231,7 @@ public:
      * @brief Pure virtual method. Select the stream by name.
      * @param name is the name of the desired stream.
      * @return depends on the derived classes implementation. */
-    virtual bool        Switch(const char *name)=0;
+    virtual bool        Switch(const char8 *name)=0;
 
     /** 
      * @brief Pure virtual method. Returns the number of the selected stream.
@@ -244,24 +244,24 @@ public:
      * @param name is the name of the desired stream in return.
      * @param nameSize is the maximum size of the name buffer.
      * @return depends on the derived classes implementation. */
-    virtual bool        StreamName(uint32 n,char *name,int nameSize)const =0;
+    virtual bool        StreamName(uint32 n,char8 *name,int nameSize)const =0;
 
     /** 
      * @brief Pure virtual method. Add a new stream.
      * @param name is the name to be assigned to the new stream.
      * @return depends on the derived classes implementation. */
-    virtual bool        AddStream(const char *name)=0;
+    virtual bool        AddStream(const char8 *name)=0;
 
     /** 
      * @brief Pure virtual method. Remove an existing stream.
      * @param name is the name of the stream to be removed.
      * @return depends on the derived classes implementation. */
-    virtual bool        RemoveStream(const char *name)=0;
+    virtual bool        RemoveStream(const char8 *name)=0;
 
     // Utility functions interface
 
     /**
-     * @brief Pure virtual method. Get a token from the stream and write it on a char* buffer.
+     * @brief Pure virtual method. Get a token from the stream and write it on a char8* buffer.
      * @param outputBuffer is the buffer where the token must be written.
      * @param terminator is a list of terminator characters.
      * @param outputBufferSize is the maximum size of the output buffer.
@@ -276,11 +276,11 @@ public:
         skipCharacters=NULL is equivalent to skipCharacters = terminator
         {BUFFERED}    */
     virtual bool        GetToken(
-                            char *              outputBuffer,
-                            const char *        terminator,
+                            char8 *              outputBuffer,
+                            const char8 *        terminator,
                             uint32              outputBufferSize,
-                            char *              saveTerminator,
-                            const char *        skipCharacters)=0;
+                            char8 *              saveTerminator,
+                            const char8 *        skipCharacters)=0;
 
     /** 
      * @brief Pure virtual method. Get a token from the stream and write it on another stream.
@@ -304,9 +304,9 @@ public:
     */
     virtual bool        GetToken(
     		                StreamInterface &  	output,
-                            const char *        terminator,
-                            char *              saveTerminator=NULL,
-                            const char *        skipCharacters=NULL)=0;
+                            const char8 *        terminator,
+                            char8 *              saveTerminator=NULL,
+                            const char8 *        skipCharacters=NULL)=0;
 
     /**
      * @brief Pure virtual method. Skips a series of tokens delimited by terminators or 0.
@@ -315,19 +315,19 @@ public:
      * @return depends on the derived classes implementation. */
     virtual bool        SkipTokens(
                             uint32              count,
-                            const char *        terminator)=0;
+                            const char8 *        terminator)=0;
   
     /**
-     * @brief Inline method which use pure virtual GetToken. Extract a line and write it on a char* buffer.
+     * @brief Inline method which use pure virtual GetToken. Extract a line and write it on a char8* buffer.
      * @param outputBuffer is the buffer where de line must be written.
      * @param outputBufferSize is the maximum size of the output buffer.
-     * @param skipTerminators defines if the \r char should be skipped (true) or not (false).
+     * @param skipTerminators defines if the \r char8 should be skipped (true) or not (false).
      * @return depends on the derived classes implementation.  */
     inline bool 		GetLine(
-    						char *				outputBuffer,
+    						char8 *				outputBuffer,
     						uint32 				outputBufferSize,
     						bool 				skipTerminators=true){
-        const char *skipCharacters = "\r";
+        const char8 *skipCharacters = "\r";
 #if defined (_WIN32)
         if (!skipTerminators) skipCharacters = "\r";
 #else
@@ -339,12 +339,12 @@ public:
     /**
      * @brief Inline method which use pure virtual GetToken. Extract a line and write it on another stream.
      * @param outputBuffer is the output stream where de line must be written.
-     * @param skipTerminators defines if the \r char should be skipped (true) or not (false).
+     * @param skipTerminators defines if the \r char8 should be skipped (true) or not (false).
      * @return depends on the derived classes implementation.  */
     inline bool 		GetLine(
     						StreamInterface &  	output,
     						bool 				skipTerminators=true){
-        const char *skipCharacters = "\r";
+        const char8 *skipCharacters = "\r";
 #if defined (_WIN32)
         if (!skipTerminators) skipCharacters = "\r";
 #else
@@ -367,7 +367,7 @@ public:
      * @param pars is a list of types to be printed.
      * @return true if successful, false otherwise. 
     */
-    virtual bool 		PrintFormatted(const char *format, const AnyType pars[])=0;
+    virtual bool 		PrintFormatted(const char8 *format, const AnyType pars[])=0;
 
     /** 
      * @brief PrintFormatted with only one element to print.
@@ -375,7 +375,7 @@ public:
      * @param par1 is the element to be printed.
      * @return true if successfull, false otherwise.
     */
-    inline bool 		Printf(const char *format, const AnyType& par1){
+    inline bool 		Printf(const char8 *format, const AnyType& par1){
     	AnyType pars[2] = { par1,voidAnyType};
     	return PrintFormatted(format, pars);
     }
@@ -383,7 +383,7 @@ public:
     /** 
      * @see Printf with two elements to print.
     */
-    inline bool 		Printf(const char *format, const AnyType& par1, const AnyType& par2){
+    inline bool 		Printf(const char8 *format, const AnyType& par1, const AnyType& par2){
     	AnyType pars[3] = { par1,par2,voidAnyType}; 
     	return PrintFormatted(format, pars);
     }
@@ -391,7 +391,7 @@ public:
     /** 
      * @see Printf with three elements to print.
     */
-    inline bool 		Printf(const char *format, const AnyType& par1, const AnyType& par2, const AnyType& par3){
+    inline bool 		Printf(const char8 *format, const AnyType& par1, const AnyType& par2, const AnyType& par3){
     	AnyType pars[4] = { par1,par2,par3,voidAnyType}; 
     	return PrintFormatted(format, pars);
     }
@@ -399,17 +399,17 @@ public:
     /** 
      * @see Printf with four element to print.
     */
-    inline bool 		Printf(const char *format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4){
+    inline bool 		Printf(const char8 *format, const AnyType& par1, const AnyType& par2, const AnyType& par3, const AnyType& par4){
     	AnyType pars[5] = { par1,par2,par3,par4,voidAnyType}; 
     	return PrintFormatted(format, pars);
     }
     
     /**
-     * @brief Pure virtual method. Copies a const char* buffer into the stream from current position.
+     * @brief Pure virtual method. Copies a const char8* buffer into the stream from current position.
      * @param buffer is the buffer which must be copied on the stream.
      * @return depends on the derived classes implementation.
     */
-    virtual bool 		Copy(const char *buffer) = 0;
+    virtual bool 		Copy(const char8 *buffer) = 0;
 
     /**
      * @brief Pure virtual method. Copies on this stream another stream from its current Position to end.

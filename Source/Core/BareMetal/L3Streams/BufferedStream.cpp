@@ -86,7 +86,7 @@ IOBuffer *BufferedStream::GetOutputBuffer() {
 
 
 bool BufferedStream::Read(
-                        char *              buffer,
+                        char8 *              buffer,
                         uint32 &            size,
                         TimeoutType         msecTimeout,
                         bool                completeRead){
@@ -142,7 +142,7 @@ bool BufferedStream::Read(
     timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
     when noWait is used .... */
 bool BufferedStream::Write(
-                        const char*         buffer,
+                        const char8*         buffer,
                         uint32 &            size,
                         TimeoutType         msecTimeout ,
                         bool                completeWrite)
@@ -303,7 +303,7 @@ bool BufferedStream::Switch(uint32 n)
 }
 
 /** select the stream to read from. Switching may reset the stream to the start. */
-bool BufferedStream::Switch(const char *name)
+bool BufferedStream::Switch(const char8 *name)
 {
     // commit all changes
     FlushAndResync();
@@ -313,7 +313,7 @@ bool BufferedStream::Switch(const char *name)
 /**  remove an existing stream .
     current stream cannot be removed 
 */
-bool BufferedStream::RemoveStream(const char *name)
+bool BufferedStream::RemoveStream(const char8 *name)
 {
     // commit all changes
     FlushAndResync();

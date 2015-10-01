@@ -206,26 +206,26 @@ public:
     inline AnyType(const uint64 &i);
 
     /**
-     * @brief Constructor from 32 bit float number.
-     * @param[in] i is the 32 bit float number input.
+     * @brief Constructor from 32 bit float32 number.
+     * @param[in] i is the 32 bit float32 number input.
      */
     inline AnyType(float32 &i);
 
     /**
-     * @brief Constructor from constant 32 bit float number.
-     * @param[in] i is the the constant 32 bit float number input.
+     * @brief Constructor from constant 32 bit float32 number.
+     * @param[in] i is the the constant 32 bit float32 number input.
      */
     inline AnyType(const float32 &i);
 
     /**
-     * @brief Constructor from 64 bit float number.
-     * @param[in] i the 64 bit float number input.
+     * @brief Constructor from 64 bit float32 number.
+     * @param[in] i the 64 bit float32 number input.
      */
     inline AnyType(float64 &i);
 
     /**
-     * @brief Constructor from constant 64 bit float number.
-     * @param[in] i is the constant 64 bit float number input.
+     * @brief Constructor from constant 64 bit float32 number.
+     * @param[in] i is the constant 64 bit float32 number input.
      */
     inline AnyType(const float64 &i);
 
