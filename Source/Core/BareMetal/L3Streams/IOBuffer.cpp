@@ -116,7 +116,7 @@ bool IOBuffer::SetBufferHeapMemory(
 	// saturate index 
 	if (position > usedSize) position = usedSize;  
 	
-	bool ret = CharBuffer::SetBufferAllocationSize(desiredSize,allocationGranularityMask);
+	bool ret = CharBuffer::SetBufferSize(desiredSize,allocationGranularityMask);
 
 	bufferPtr = ( char *)Buffer();
 

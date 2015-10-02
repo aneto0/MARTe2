@@ -56,16 +56,6 @@
  -sem(MutexSem::~MutexSem, cleanup)
 
 /*
- * Destructor calls the cleanup function 
- */
--sem(Reference::RemoveReference,cleanup)
-
-/*
- * Destructor calls the cleanup function 
- */
--sem(Reference::RemoveReference,cleanup)
-
-/*
  * Linux is not certifiable. Disable all operating system headers related warnings.
  */
 -e829

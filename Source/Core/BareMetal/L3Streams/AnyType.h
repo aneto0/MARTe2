@@ -46,7 +46,6 @@
 
 namespace MARTe {
 
-
 /**
  * @brief AnyType class.
  *
@@ -287,8 +286,11 @@ public:
     template<typename baseType, uint8 bitSize>
     AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt);
 
-
-    inline void SetDataPointer(void* p);
+    /**
+     * @brief Sets the data pointer hold by this AnyType instance.
+     * @param[in] p a pointer to the data.
+     */
+    inline void SetDataPointer(void* const p);
 
     /**
      * @brief Returns the pointer to the data.
@@ -666,8 +668,8 @@ void* AnyType::GetDataPointer() {
     return dataPointer;
 }
 
-void AnyType::SetDataPointer(void *p) {
-    dataPointer=p;
+void AnyType::SetDataPointer(void * const p) {
+    dataPointer = p;
 }
 
 TypeDescriptor AnyType::GetTypeDescriptor() const {

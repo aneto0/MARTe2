@@ -234,7 +234,7 @@ public:
      * @brief The size of the allocated memory.
      * @return the size of the allocated memory. */
     uint32 				BufferSize() 		const{
-    	return CharBuffer::BufferSize();
+    	return CharBuffer::Size();
     }
     
      /**

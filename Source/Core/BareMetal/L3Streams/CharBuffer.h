@@ -1,180 +1,195 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file AnyType.h
+ * @brief Header file for class AnyType
+ * @date 01/10/2015
+ * @author Filippo Sartori
+ * @author Andre' Neto
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id: $
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
 
-/** 
- * @file CharBuffer.h
- * @brief Implementation of a buffer with allocation and reallocation and access functions.
- * 
- * This class implements a generic buffer which could be allocated and reallocated dinamically
- * on the heap or assigned passing a memory reference in input. It consists in a char* pointer
- * to the begin of the buffer and some attributes like the size of the buffer.
+ * @details This header file contains the declaration of the class AnyType
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
+
 #ifndef CHAR_BUFFER_H
 #define CHAR_BUFFER_H
 
-#include "GeneralDefinitions.h"
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+#include "GeneralDefinitions.h"
+#include "BitBoolean.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+namespace MARTe {
 
 /**
- * @brief CharBuffer class.
+ * @brief Char buffer wrapper.
  *
- *  A basic implementation of a buffer of character.
-    A replacement for dealing directly with mallocs and reallocs.
-    Access as char * both read-only and read-write.
-    Supports up to 4G of ram. 
-*/
+ * @details This class implements a generic character buffer. It wraps a char8 * buffer
+ * which can either be dynamically allocated by this class on the heap, or can be assigned
+ * to an existing memory reference.
+ */
 class CharBuffer {
-private:
-	
-	struct {
-		/** true if memory was allocated by this class methods 
-		 *  false means that it is a reference to a buffer*/
-		bool 		allocated:1;		
-		
-		/** true if it is read-only memory */
-		bool 		readOnly:1;		
-				
-	} bufferMode;
-	
-    /** the size of the allocated memory block  */
-    uint32 		bufferSize;
-
-    /**  a pointer at the beginning of the memory buffer  */
-    char * 		buffer;
-	   
-private:
-
-    /** 
-     * @brief Clean the buffer.
-     * 
-     * Sets the size to zero.
-     * In case of heap buffer, frees the memory too.
-     */
-    virtual void Clean();
 
 public:
 
     /** 
      * @brief Default constructor.
-     * 
-     * At the beginning the buffer pointer is null. */
-    CharBuffer() {
-    	this->bufferSize 		= 0;
-        this->buffer 			= NULL;
-        bufferMode.readOnly 	= true;
-        bufferMode.allocated 	= false;
-    }
+     * @post
+     *   CanWrite() == false &&
+     *   Buffer() == NULL
+     */
+    CharBuffer();
 
     /** 
      * @brief Default destructor.
      */
-    virtual ~CharBuffer();
-    
+    ~CharBuffer();
+
     /**
-     * @brief Allocate or reallocate memory to the desired size on the heap.
-     * @param desiredSize is the desired size of the buffer.
-     * @param allocationGranularityMask impose granularity and maximum size.
-     * @return false if desiredSize is greater than the maximum possible or if the allocation fails.
-     *
-     * AllocationGranularityMask should be composed by ones and at the end by the desired number of zeros 
-     * (i.e 0xfffffff0 ==> 4 zeros ==> granularity: 2^4=16 bytes)
-     * The granularity is defined as the 2 complement of AllocationGranularityMask (default 1).
-     * The maximum possible size is allocationGranularityMask << 1.
-     * The minimum possible size is 1, in this case it allocates the granularity, if desiredSize is zero frees the memory.
-     * In case of no errors, it allocates k*granularity bytes with k integer such that k*granularity >= desiredSize.
-     *
-        Content is preserved by copy, if contiguus memory is not available, as long as it fits the newsize.
-        AllocationGranularityMask defines how many bits to consider 
-        for the buffer size, round up the others
-    */
-    virtual bool SetBufferAllocationSize(
-    		uint32 			desiredSize,
-            uint32 			allocationGranularityMask 		= 0xFFFFFFFF);
-    
+     * @brief Allocates or reallocate memory to the desired size on the heap.
+     * @details Allocates \a desiredSize bytes in the heaps. If Buffer() != NULL the
+     * buffer is resized (Realloc) for \a desiredSize bytes.
+     * @param[in] desiredSize the desired size of the buffer.
+     * @param[in] granularityMask defines the granularity (and the maximum size).
+     * granularity = ~granularityMask + 1 (2's complement).
+     * (e.g. granularityMask=0xfffffff0 ==> 4 zeros ==> granularity: 2^4=16 bytes)
+     * If desiredSize < granularity => desiredSize = granularity
+     * @pre desiredSize < granularityMask
+     * @return false if precondition fails or if the (re)allocation of the desiredSize in the heap fails.
+     */
+    bool SetBufferSize(const uint32 desiredSize,
+                               const uint32 granularityMask = 0xFFFFFFFFu);
+
     /**
      * @brief Memory assignment of a preallocated buffer in read and write mode.
-     * @param buffer is a pointer to the writable buffer.
-     * @param bufferSize is the size of the buffer.
-     *
-     * If buffer is null just call clean and set allocated=false and readOnly=true,
-     * If buffer is valid set the buffer pointer and the buffer size by input parameters and readOnly=false.
-    */
-    virtual void SetBufferReference(
-    		char *			buffer, 
-    		uint32 			bufferSize
-    );
-    
+     * @param[in, out] buff a pointer to the writable buffer.
+     * @param[in] buffSize the size of the buffer.
+     * @pre
+     *    buff != NULL
+     * @post
+     *    Buffer() == buff &&
+     *    CanWrite() == true &&
+     *    BufferSize() == buffSize
+     */
+    void SetBufferReference(char8 * const buff,
+                                    const uint32 buffSize);
+
     /**
-     * @brief Memory assignment of a preallocated buffer in read mode.
-     * @param buffer is a pointer to the buffer without write access.
-     * @param bufferSize is the size of the buffer.
+     * @brief Memory assignment of a preallocated buffer in read-only mode.
+     * @param buff is a pointer to the buffer without write access.
+     * @param buffSize is the size of the buffer.
      *
-     * If buffer is null just call clean and set allocated=false and readOnly=true,
-     * If buffer is valid set the buffer pointer and the buffer size by input parameters.
-     * ReadOnly flag remains true.
-    */
-    virtual void SetBufferReference(
-    		const char *	buffer, 
-    		uint32 			bufferSize
-    );
-    
-public:
-    
+     * @pre
+     *    buff != NULL
+     * @post
+     *    Buffer() == buff &&
+     *    CanWrite() == false &&
+     *    BufferSize() == buffSize
+     */
+    void SetBufferReference(const char8 * const buff,
+                                    const uint32 buffSize);
+
     /** 
-     * @brief Read Only access to the internal buffer.
-     * @return The pointer to the buffer.
+     * @brief Read-only access to the internal buffer.
+     * @return a pointer to the buffer.
      */
-    inline const char *Buffer() const {
-        return buffer;
-    }
+    inline const char8 *Buffer() const;
 
     /**
-     * @brief  Read Write access top the internal buffer
-       @return The pointer to the buffer
+     * @brief Read/Write access top the internal buffer
+     * @return a pointer to the buffer.
      */
-    inline char *BufferReference() const {
-    	if (bufferMode.readOnly) return NULL;
-        return buffer;
-    }
+    inline char8 *BufferReference() const;
 
     /**
-     * @brief Get the size of the memory associated to the buffer.
-     * @return the size of the memory associated to the buffer. */
-    inline uint32 BufferSize() const{
-        return bufferSize;
-    }
-    
+     * @brief Gets the size of the memory associated to the buffer.
+     * @return the size of the memory associated to the buffer.
+     */
+    inline uint32 Size() const;
+
     /**
-     * @brief If the buffer is writable.
-     * @return true if readOnly flag is false, false otherwise. */
-    bool CanWrite() const {
-    	return !bufferMode.readOnly;
-    }
+     * @brief Checks if the buffer is writable.
+     * @return true if the buffer is writable.
+     */
+    bool CanWrite() const;
+
+private:
+    /**
+     * true if memory was allocated by this class
+     * false if this class only holds a reference to a an existing buffer
+     */
+    bool allocated;
+
+    /**
+     * true if it is read-only memory
+     */
+    bool readOnly;
+
+    /**
+     * The size of the allocated memory block
+     */
+    uint32 bufferSize;
+
+    /**
+     * The wrapper char8 * buffer
+     */
+    /*lint -sem(MARTe::CharBuffer::Clean,cleanup)*/
+    char8 *buffer;
+
+    /**
+     * @brief Releases any memory previously allocated in the heap.
+     * @post
+     *   Buffer() == NULL &&
+     *   BufferSize() == 0
+     */
+    void Clean();
 
 };
+}
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+namespace MARTe {
+
+inline const char8 *CharBuffer::Buffer() const {
+    return buffer;
+}
+
+inline char8 *CharBuffer::BufferReference() const {
+    char8 *retBuffer = buffer;
+    if (readOnly) {
+        retBuffer = NULL_PTR(char8 *);
+    }
+    return retBuffer;
+}
+
+inline uint32 CharBuffer::Size() const {
+    return bufferSize;
+}
+
+inline bool CharBuffer::CanWrite() const {
+    return !readOnly;
+}
+
 }
 
 #endif

@@ -45,6 +45,6 @@ FractionalInteger.h
 StaticListHolder.cpp
 GlobalObjectsDatabase.cpp
 GlobalObjectI.cpp
-
+CharBuffer.cpp
 
 
