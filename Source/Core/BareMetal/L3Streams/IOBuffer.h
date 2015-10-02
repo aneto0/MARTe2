@@ -43,7 +43,7 @@
 namespace MARTe {
 
 /**
- * @brief IOBuffer class.
+ * @brief The most generic buffer used by streams.
  *
  * @details This class inherits from CharBuffer which represents a naked memory buffer with a pointer
  * at the beginning. It adds a movable pointer across the memory area and attributes
@@ -81,8 +81,8 @@ public:
      * @brief The routine executed in GetC when amountLeft is <= undoLevel, namely the cursor arrived to a specific position.
      * @details This implementation is basic and only returns false.
      *
-     * In BufferedStreamIOBuffer undoLevel is zero, so when the cursor arrived at the end of the memory
-     * this function refill the buffer from the stream for a new read operation.
+     * In BufferedStreamIOBuffer undoLevel is zero, so when the cursor arrives at the end of the memory
+     * this function refills the buffer from the stream for a new read operation.
      *
      * @param[in] msecTimeout is the timeout (not used at this implementation level).
      * @return false in this implementation.
@@ -139,7 +139,8 @@ public:
     inline IOBuffer();
 
     /**
-     * @brief Default destructor. */
+     * @brief Default destructor.
+     */
     virtual ~IOBuffer();
 
 public:
