@@ -64,7 +64,17 @@ OBJSX=  TypeCharacteristicsGTest.x \
  	BitRangeGTest.x \
  	StaticListGTest.x \
  	GlobalObjectsDatabaseGTest.x \
-	TypeDescriptorGTest.x
+	TypeDescriptorGTest.x \
+	BitSetToIntegerGTest.x \
+	BufferedStreamGTest.x \
+	DoubleIntegerGTest.x \
+	FloatToStreamGTest.x \
+	IntegerToStreamGTest.x \
+	StreamableGTest.x \
+	StreamMemoryReferenceGTest.x \
+	StreamStringGTest.x
+	
+	
 
 PACKAGE=
 ROOT_DIR=../..

@@ -87,7 +87,7 @@ protected: // mode switch methods
      * @brief Select the stream to read from. Switching may reset the stream to the start.
      * @param name is the name of the desired stream.
      * @return false in this implementation. */
-    virtual bool        Switch(const char *name);
+    virtual bool        Switch(const char8 *name);
 
     /** 
      * @brief Returns the number of the selected stream.
@@ -102,19 +102,19 @@ protected: // mode switch methods
      * @param nameSize is the size of the buffer.
      * @return false in this implementation.
      */
-    virtual bool        StreamName(uint32 n,char *name,int nameSize) const ;
+    virtual bool        StreamName(uint32 n,char8 *name,int nameSize) const ;
 
     /**
      * @brief Add a new stream to write to.
      * @param name is the name to be assigned to the new stream.
      * @return false in this implementation. */
-    virtual bool        AddStream(const char *name);
+    virtual bool        AddStream(const char8 *name);
 
     /**  
      * @brief Remove an existing stream.
      * @param name is the name of the stream to remove.
      * @return false in this implementation */
-    virtual bool        RemoveStream(const char *name);
+    virtual bool        RemoveStream(const char8 *name);
     
     
 public:  // auxiliary functions based on buffering
@@ -129,7 +129,7 @@ public:  // auxiliary functions based on buffering
     }
     
     /**
-     * @brief Reads a token from the stream and writes it on the char* buffer provided.
+     * @brief Reads a token from the stream and writes it on the char8* buffer provided.
      * @param terminator is a list of terminator characters.
      * @param outputBufferSize is the maximum size of the output buffer.
      * @param saveTerminator is the found terminator in return.
@@ -147,11 +147,11 @@ public:  // auxiliary functions based on buffering
         skipCharacters=NULL is equivalent to skipCharacters = terminator.
         */
     virtual bool        GetToken(
-                            char *              outputBuffer,
-                            const char *        terminator,
+                            char8 *              outputBuffer,
+                            const char8 *        terminator,
                             uint32              outputBufferSize,
-                            char *              saveTerminator,
-                            const char *        skipCharacters);
+                            char8 *              saveTerminator,
+                            const char8 *        skipCharacters);
 
     /**
      * @brief Reads a token from the stream and writes it on another stream.
@@ -180,9 +180,9 @@ public:  // auxiliary functions based on buffering
     */
     virtual bool        GetToken(
     						StreamInterface &   output,
-                            const char *        terminator,
-                            char *              saveTerminator=NULL,
-                            const char *        skipCharacters=NULL);
+                            const char8 *        terminator,
+                            char8 *              saveTerminator=NULL,
+                            const char8 *        skipCharacters=NULL);
    
     
     /**
@@ -193,7 +193,7 @@ public:  // auxiliary functions based on buffering
      */
     virtual bool        SkipTokens(
                             uint32              count,
-                            const char *        terminator);
+                            const char8 *        terminator);
 
       
     //  Methods to convert and print numbers and other objects 
@@ -205,7 +205,7 @@ public:  // auxiliary functions based on buffering
      * @return depends by par type and on the functions called for its conversion to printable characters.
      *
      * The class AnyType provides a void* pointer and a descriptor of the element type. Besides the descriptor
-     * (integer, float, const char string, ecc), the right function is called passing the stream and the element
+     * (integer, float32, const char8 string, ecc), the right function is called passing the stream and the element
      * and it prints the element on the stream converting it in characters.
      * For more informations on AnyType class @see AnyType.h, for more informations on the format descriptor
      * @see FormatDescriptor.h
@@ -222,14 +222,14 @@ public:  // auxiliary functions based on buffering
          Format follows the TypeDescriptor::InitialiseFromString.
          Prints all data pointed to by pars.
     */
-    virtual bool 		PrintFormatted(const char *format, const AnyType pars[]);
+    virtual bool 		PrintFormatted(const char8 *format, const AnyType pars[]);
 
     /**
-     * @brief Copies a const char* into this stream from current position.
+     * @brief Copies a const char8* into this stream from current position.
      * @param buffer is the buffer to be copied on the stream.
      * @return the result of the Write operation which depends on derived classes implementation.
     */
-    virtual bool 		Copy(const char *buffer);
+    virtual bool 		Copy(const char8 *buffer);
 
     /**
      * @brief Copies from stream current Position to end.

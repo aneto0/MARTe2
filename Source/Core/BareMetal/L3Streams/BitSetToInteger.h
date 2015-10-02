@@ -253,7 +253,7 @@ static inline bool BitSetToBitSet(
 		BSToBS(destination64,destinationBitShift,destinationBitSize,destinationIsSigned,source64,sourceBitShift,sourceBitSize,sourceIsSigned);
 	}
     else if ((sourceBitEnd <= 128) && (destinationBitEnd <= 128) && (granularity <= 128)){
-		// if 128 is fine then operate with double(uint64)
+		// if 128 is fine then operate with float64(uint64)
     	DoubleInteger<uint64> *destination128  = (DoubleInteger<uint64> *)destination;
     	DoubleInteger<uint64> *source128       = (DoubleInteger<uint64> *)source;
     	

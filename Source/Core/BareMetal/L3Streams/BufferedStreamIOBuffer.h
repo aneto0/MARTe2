@@ -1,104 +1,136 @@
-#if !defined BUFFEREDSTREAM_IOBUFFER
-#define BUFFEREDSTREAM_IOBUFFER
-
-//#include "TypeConversion.h"
-#include "TimeoutType.h"
-#include "BufferedStream.h"
-#include "IOBuffer.h"
-namespace MARTe{
-
-
 /**
  * @file BufferedStreamIOBuffer.h
- * @brief Implementation of the IOBuffer for buffered streams.
- */ 
+ * @brief Header file for class BufferedStreamIOBuffer
+ * @date 02/10/2015
+ * @author Giuseppe Ferrò
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This header file contains the declaration of the class BufferedStreamIOBuffer
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+ */
+
+#ifndef BUFFEREDSTREAMIOBUFFER_H_
+#define BUFFEREDSTREAMIOBUFFER_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+#include "TimeoutType.h"
+#include "IOBuffer.h"
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
 class BufferedStream;
 
 /**
  * @brief BufferedStreamIOBuffer class.
- * 
- * This class inherits from IOBuffer but implements NoMoreSpaceToWrite and NoMoreDataToRead accordingly
- * to the buffered stream requirements. In particular NoMoreSpaceToWrite acts as a flush on the stream,
- * while NoMoreDataToRead refills this buffer from the stream. Moreover also the Resync function is implemented
+ *
+ * @details This class inherits from IOBuffer specializing NoMoreSpaceToWrite and NoMoreDataToRead functions accordingly
+ * to the buffered stream requirements. In particular NoMoreSpaceToWrite acts as a flush on the stream and
+ * NoMoreDataToRead refills this buffer from the stream. Moreover also the Resync function is implemented
  * due to adjust the stream position after a buffered read or write operation.
  *
- * Since this buffers has to read and write on the associated stream, in the constructor must be passed a pointer to the associated stream. */
-class BufferedStreamIOBuffer:public IOBuffer{
-private:
-    /** the stream related to the IOBuffer. */
-    BufferedStream *stream;
-    
-       
-public: // read buffer private methods
+ * @details Since this buffers has to read and write on the associated stream, in the constructor must be passed a pointer to the associated stream.
+ */
+class BufferedStreamIOBuffer: public IOBuffer {
+
+public:
 
     /**
      * @brief Default constructor.
-     * @param s is a pointer to the stream which uses this buffer. */
-    BufferedStreamIOBuffer(BufferedStream *s){
-        stream=s;
-    }
+     * @param[in] s is a pointer to the stream which uses this buffer.
+     */
+    BufferedStreamIOBuffer(BufferedStream *s);
 
-    /**  
+    /**
      * @brief Refills the buffer reading from the stream.
-     * @param msecTimeout is the timeout not used here.
-     * @return false if the buffer is null or in case of stream read error.
-     * 
-     * Empties the buffer, calls BufferedStream::UnBufferedRead with size = MaxUsableAmount.
+     * @details Empties the buffer, calls BufferedStream::UnBufferedRead with size = MaxUsableAmount.
      * In case of stream read error empties the buffer and returns false.
-    */
-    virtual bool 		NoMoreDataToRead( TimeoutType         msecTimeout     = TTDefault);
-    
+     *
+     * @param[in] msecTimeout is the timeout not used here.
+     * @return false if the buffer is null or in case of stream read error.
+     */
+    virtual bool NoMoreDataToRead(TimeoutType msecTimeout = TTDefault);
+
     /**
      * @brief User friendly function which simply calls NoMoreDataToRead.
-     * @param msecTimeout is the timeout not used here.
-     * @return the NoMoreDataToRead return. */
-    inline bool Refill(TimeoutType         msecTimeout     = TTDefault){
-    	return NoMoreDataToRead(msecTimeout);
-    }
-    
+     * @param[in] msecTimeout is the timeout not used here.
+     * @return the NoMoreDataToRead return.
+     */
+    inline bool Refill(TimeoutType msecTimeout = TTDefault);
+
     /**
      * @brief Flushes the buffer writing on the stream.
-     * @param neededSize is not used here.
-     * @param msecTimeout is the timeout. 
+     * @param[in] neededSize is not used here.
+     * @param[in] msecTimeout is the timeout.
      * @return false if the buffer is null or in case of stream write error.
-     * 
-     * Calls BufferedStream::UnBufferedWrite with size = the size of the filled memory.*/
-    virtual bool 		NoMoreSpaceToWrite(
-                uint32              neededSize      = 1,
-                TimeoutType         msecTimeout     = TTDefault);
-    
+     */
+    virtual bool NoMoreSpaceToWrite(uint32 neededSize = 1,
+                                    TimeoutType msecTimeout = TTDefault);
+
     /**
      * @brief User friendly function which simply calls NoMoreSpaceToWrite.
-     * @param msecTimeout is the timeout not used here.
-     * @return the NoMoreSpaceToWrite return. */
-    inline bool Flush(TimeoutType         msecTimeout     = TTDefault){
-    	return NoMoreSpaceToWrite(0, msecTimeout);
-    }
+     * @param[in] msecTimeout is the timeout not used here.
+     * @return the NoMoreSpaceToWrite return.
+     */
+    inline bool Flush(TimeoutType msecTimeout = TTDefault);
 
     /**
-      * @brief Adjusts the position of the stream.
-      * @param msecTimeout is the timeout.
-      * @return false if the stream seek fails.
-      *
-      * This function is called from the stream after a read operation because the position was shifted
-      * of the buffer size because of the refill. Calls BufferedStream::Seek moving the cursor back of
-      * UsedAmountLeft.
-    */
-    virtual bool 		Resync(TimeoutType      msecTimeout     = TTDefault);    
-    
-    /**
-     * @brief Allocate or reallocate memory to the desired size.
-     * @param size is the desired size for the buffer.
-     * @return false in case of allocations errors.
+     * @brief Adjusts the position of the stream.
+     * @details This function is called from the stream after a read operation because the position was shifted
+     * forward (+bufferSize) because of the refill. Calls BufferedStream::Seek moving the cursor back (-UsedAmountLeft).
      *
-     * Calls IOBuffer::SetBufferHeapMemory passing size.  
-    */ 
-    bool SetBufferSize(uint32 size){
-    	return IOBuffer::SetBufferHeapMemory(size);
-    }
-    
+     * @param[in] msecTimeout is the timeout.
+     * @return false if the stream seek fails.
+     */
+    virtual bool Resync(TimeoutType msecTimeout = TTDefault);
+
+    /**
+     * @brief Allocates or reallocate memory to the desired size.
+     * @param[in] size is the desired size for the buffer.
+     * @return false in case of allocations errors.
+     */
+    bool SetBufferSize(uint32 size);
+
+private:
+    /**
+     * The stream that uses this buffer
+     */
+    BufferedStream *stream;
+
 };
 
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+bool BufferedStreamIOBuffer::Refill(TimeoutType msecTimeout) {
+    return NoMoreDataToRead(msecTimeout);
+}
+
+bool BufferedStreamIOBuffer::Flush(TimeoutType msecTimeout) {
+    return NoMoreSpaceToWrite(0, msecTimeout);
+}
 
 }
-#endif
+#endif /* BUFFEREDSTREAMIOBUFFER_H_ */
+

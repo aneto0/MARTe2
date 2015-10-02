@@ -39,7 +39,7 @@
 namespace MARTe {
 
 /**
- * @brief Reads a token from a stream buffer and writes it on a char* output buffer.
+ * @brief Reads a token from a stream buffer and writes it on a char8* output buffer.
  * @param terminator is a list of terminator characters.
  * @param outputBufferSize is the size of the output buffer.
  * @param saveTerminator is the found terminator in return.
@@ -61,11 +61,11 @@ namespace MARTe {
  */
 static inline
 bool GetTokenFromStream(IOBuffer & iobuff,
-                        char * outputBuffer,
-                        const char * terminator,
+                        char8 * outputBuffer,
+                        const char8 * terminator,
                         uint32 outputBufferSize,
-                        char * saveTerminator,
-                        const char * skipCharacters) {
+                        char8 * saveTerminator,
+                        const char8 * skipCharacters) {
     // need space for trailing 0
     outputBufferSize--;
 
@@ -73,7 +73,7 @@ bool GetTokenFromStream(IOBuffer & iobuff,
 
     uint32 tokenSize = 0;
     while (1) {
-        char c;
+        char8 c;
         if (iobuff.GetC(c) == false) {
 
             // 0 terminated string
@@ -145,15 +145,15 @@ bool GetTokenFromStream(IOBuffer & iobuff,
 static inline
 bool GetTokenFromStream(IOBuffer & inputStream,
                         IOBuffer & outputStream,
-                        const char * terminator,
-                        char * saveTerminator,
-                        const char * skipCharacters) {
+                        const char8 * terminator,
+                        char8 * saveTerminator,
+                        const char8 * skipCharacters) {
 
     if (skipCharacters == NULL) skipCharacters = terminator;
 
     uint32 tokenSize=0;
     while(1) {
-        char c;
+        char8 c;
         if (inputStream.GetC(c)==false) {
 
             if (saveTerminator != NULL) *saveTerminator = 0;
@@ -194,11 +194,11 @@ bool GetTokenFromStream(IOBuffer & inputStream,
 static inline
 bool SkipTokensInStream(IOBuffer & iobuff,
                         uint32 count,
-                        const char * terminator) {
+                        const char8 * terminator) {
 
     uint32 tokenSize = 0;
     while (count > 0) {
-        char c;
+        char8 c;
         if (iobuff.GetC(c) == false) {
 
             if (tokenSize == 0)
@@ -224,7 +224,7 @@ bool SkipTokensInStream(IOBuffer & iobuff,
 }
 
 /** 
- * @brief Print a const char* string on a stream buffer.
+ * @brief Print a const char8* string on a stream buffer.
  * @param iobuff is the output stream buffer.
  * @param string is the string to be printed.
  * @param fd specifies the desired format for the string.
@@ -234,7 +234,7 @@ bool SkipTokensInStream(IOBuffer & iobuff,
  */
 static inline
 bool PrintCCString(IOBuffer & iobuff,
-                   const char * string,
+                   const char8 * string,
                    FormatDescriptor fd) {
     //if the string is null print NULL pointer on the stream.
     if (string == NULL) string = "NULL pointer";
@@ -330,7 +330,7 @@ bool PrintStream(IOBuffer & iobuff,
     }
 
     //write the stream input on the stream buffer output
-    char c;
+    char8 c;
     while (streamSize > 0) {
         if (!stream->GetC(c)) {
             return false;
@@ -440,25 +440,25 @@ bool PrintToStream(IOBuffer & iobuff,
 
     }
     if (((par.GetTypeDescriptor()).type) == Float) {
-        //native float types. Float 128 bit is not supported.
+        //native float32 types. Float 128 bit is not supported.
         switch ((par.GetTypeDescriptor()).numberOfBits) {
         case 32: {
-            float *data = (float32 *) dataPointer;
+            float32 *data = (float32 *) dataPointer;
             return FloatToStream(iobuff, *data, fd);
         }
             break;
         case 64: {
-            double *data = (float64 *) dataPointer;
+            float64 *data = (float64 *) dataPointer;
             return FloatToStream(iobuff, *data, fd);
         }
             break;
         case 128: {
-            //REPORT_ERROR(UnsupportedError,"unsupported 128 bit float")
+            //REPORT_ERROR(UnsupportedError,"unsupported 128 bit float32")
             return false;
         }
             break;
         default: {
-            //REPORT_ERROR(ParametersError,"non standard float size")
+            //REPORT_ERROR(ParametersError,"non standard float32 size")
             return false;
         }
         }
@@ -473,7 +473,7 @@ bool PrintToStream(IOBuffer & iobuff,
         at.SetDataPointer((void *) &dataPointer);
         return PrintToStream(iobuff, at, fd);
     }
-    //const char* string type.
+    //const char8* string type.
     //if in the format descriptor is specified the hex notation (%p or %x)
     //print the value of the pointer.
     if (((par.GetTypeDescriptor()).type) == CCString) {
@@ -485,7 +485,7 @@ bool PrintToStream(IOBuffer & iobuff,
             at.SetDataPointer((void *) &dataPointer);
             return PrintToStream(iobuff, at, fd);
         }
-        const char *string = (const char *) dataPointer;
+        const char8 *string = (const char8 *) dataPointer;
         return PrintCCString(iobuff, string, fd);
     }
 
@@ -510,7 +510,7 @@ bool PrintToStream(IOBuffer & iobuff,
  * calls the PrintToStream function passing the next AnyType element in the list.*/
 static
 bool PrintFormattedToStream(IOBuffer & iobuff,
-                            const char * format,
+                            const char8 * format,
                             const AnyType pars[]) {
     // indicates active parameter
     int parsIndex = 0;

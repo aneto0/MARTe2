@@ -262,7 +262,7 @@ template <typename T> uint16 GetNumberOfDigitsBinaryNotation(T number){
   * This way the number of 32/64 bit operations are reduced.
   * NumberFillLength is used to specify how many digits to prints at least (this would include trailingzeros).
   * It will never prints more trailing zeros than the maximum size of a number of that format.
-  * Streamer must have a PutC(char) method. It will be used to output the digits. */
+  * Streamer must have a PutC(char8) method. It will be used to output the digits. */
 template <typename T> 
 static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s, T positiveNumber,int16 numberFillLength=0){
 
@@ -340,7 +340,7 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s, T positiveNu
 	// 16 bit code 
 	if (sizeof(T)<=2){
 		// sufficient for  a 16 - 8 bit number NO terminator needed
-		char buffer[5]; 
+		char8 buffer[5]; 
 
 		int index = sizeof(buffer)-1;
 	
@@ -369,7 +369,7 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s, T positiveNu
   * @param stream is a generic stream class which implements a PutC() function.
   * @param s is the string to be printed. */
 template <class streamer>
-static inline void PutS(streamer & stream,const char *s){
+static inline void PutS(streamer & stream,const char8 *s){
 	while (*s != 0){
 		stream.PutC(*s);
 		s++;

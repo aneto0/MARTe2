@@ -1,221 +1,269 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file IOBuffer.cpp
+ * @brief Source file for class IOBuffer
+ * @date 01/10/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id: $
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
 
-/** 
- * @file
- * Implementation of a buffer with allocation and reallocation and access functions
+ * @details This source file contains the definition of all the methods for
+ * the class IOBuffer (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
 
 #include "IOBuffer.h"
 #include "AdvancedErrorManagement.h"
-namespace MARTe{
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
-/**
- * position is set relative to start of buffer
- */
-bool IOBuffer::Seek(uint32 position){
-    if (position > UsedSize()) return false; 
-    amountLeft = MaxUsableAmount() - position;
-    bufferPtr = ( char *)Buffer() + position;
+namespace MARTe {
+
+// position is set relative to start of buffer
+bool IOBuffer::Seek(const uint32 position) {
+    bool retval = (position <= UsedSize());
+
+    if (retval) {
+        amountLeft = MaxUsableAmount() - position;
+        bufferPtr = const_cast<char8 *>(&((Buffer())[position]));
+    }
+    return retval;
+}
+
+//position is set relative to current position
+bool IOBuffer::RelativeSeek(int32 delta) {
+    bool ret = true;
+    if (delta >= 0) {
+        uint32 actualLeft = amountLeft - fillLeft;
+        //cannot seek beyond fillLeft
+        if (static_cast<uint32>(delta) > actualLeft) {
+            delta = static_cast<int32>(actualLeft);
+            //  saturate at the end
+            ret = false;
+//REPORT_ERROR_PARAMETERS(ErrorType::ParametersError,"delta=%i at position %i moves out of range %i, moving to end of stream",delta,Position(),MaxUsableAmount())
+        }
+    }
+    else {
+        // cannot seek below 0
+        if (static_cast<uint32>(-delta) > Position()) {
+            //  saturate at the beginning
+            ret = false;
+            delta = -static_cast<int32>(Position());
+//REPORT_ERROR_PARAMETERS(ParametersError,"delta=%i at position %i moves out of range 0, moving to beginning of stream",delta,Position())
+        }
+    }
+    amountLeft -= delta;
+    bufferPtr += delta;
+    return ret;
+}
+
+bool IOBuffer::SetUsedSize(uint32 size) {
+    if (size > maxUsableAmount) {
+        size = maxUsableAmount;
+    }
+
+    fillLeft = maxUsableAmount - size;
+
     return true;
 }
-    
-/**
- * position is set relative to current position
+
+IOBuffer::~IOBuffer() {
+}
+
+/*
+ allocate or reallocate memory to the desired size
+ content is preserved by copy, if contiguus memory is not available, as long as it fits the newsize
+ allocationGranularityMask defines how many bits to consider
+ for the buffer size. round up the others
  */
-bool IOBuffer::RelativeSeek(int32 delta){
-	bool ret = true;
-	if (delta >= 0){
-		uint32 actualLeft = amountLeft-fillLeft;
-		//cannot seek beyond fillLeft
-		if ((uint32)delta > actualLeft){
-			delta = actualLeft;
-			///  saturate at the end
-			ret =  false;
-			//REPORT_ERROR_PARAMETERS(ErrorType::ParametersError,"delta=%i at position %i moves out of range %i, moving to end of stream",delta,Position(),MaxUsableAmount())
-		}
-	} else {
-		// cannot seek below 0
-		if ((uint32)(-delta) > Position()){
-			///  saturate at the beginning
-			ret =  false;
-			delta = -Position();
-			//REPORT_ERROR_PARAMETERS(ParametersError,"delta=%i at position %i moves out of range 0, moving to beginning of stream",delta,Position())
-		}
-	}
-	amountLeft -= delta;
-	bufferPtr += delta;
-	return ret;
-}    
+bool IOBuffer::SetBufferHeapMemory(const uint32 desiredSize,
+                                   const uint32 allocationGranularityMask,
+                                   const uint32 reservedSpaceAtEnd) {
+    // save position
+    uint32 position = Position();
+    uint32 usedSize = UsedSize();
 
-bool IOBuffer::SetUsedSize(uint32 size){
-	if (size > maxUsableAmount){
-		size = maxUsableAmount;
-	}
-	
-	fillLeft = maxUsableAmount - size;
-	
-	return true;
-}
+    //special case: if we consider the difference
+    //between two unsigned integers we can obtain bigger numbers (overflow).
+    if (desiredSize < reservedSpaceAtEnd) {
+        usedSize = 0u;
+    }
 
+    // truncating
+    if ((desiredSize - reservedSpaceAtEnd) < usedSize) {
+        usedSize = desiredSize - reservedSpaceAtEnd;
+    }
 
-IOBuffer::~IOBuffer(){
-}
+    // saturate index
+    if (position > usedSize) {
+        position = usedSize;
+    }
 
+    bool ret = CharBuffer::SetBufferSize(desiredSize, allocationGranularityMask);
 
-/**
-    allocate or reallocate memory to the desired size
-    content is preserved by copy, if contiguus memory is not available, as long as it fits the newsize
-    allocationGranularityMask defines how many bits to consider 
-    for the buffer size. round up the others
-*/
-bool IOBuffer::SetBufferHeapMemory(
-		uint32 			desiredSize,
-        uint32 			allocationGranularityMask,
-        uint32          reservedSpaceAtEnd      
-){
-	// save position    	
-	uint32 position = Position();
-	uint32 usedSize = UsedSize();
+    bufferPtr = BufferReference();
 
-	
-	//special case: if we consider the difference
-        //between two uint we can obtain bigger numbers (overflow).
-	if(desiredSize < reservedSpaceAtEnd){
-		usedSize = 0;
-	}
+    maxUsableAmount = BufferSize();
 
-	// truncating
-	if ((desiredSize-reservedSpaceAtEnd) < usedSize){
-		usedSize = desiredSize-reservedSpaceAtEnd;
-	}
+    if (maxUsableAmount <= reservedSpaceAtEnd) {
+        maxUsableAmount = 0u;
+    }
+    else {
+        maxUsableAmount = BufferSize() - reservedSpaceAtEnd;
+    }
 
-	// saturate index 
-	if (position > usedSize) position = usedSize;  
-	
-	bool ret = CharBuffer::SetBufferSize(desiredSize,allocationGranularityMask);
+    amountLeft = maxUsableAmount - position;
+    fillLeft = maxUsableAmount - usedSize;
 
-	bufferPtr = ( char *)Buffer();
-
-	maxUsableAmount = BufferSize();
-
-	if (maxUsableAmount <= reservedSpaceAtEnd){
-		maxUsableAmount = 0;
-	}
-	 else {
-        	maxUsableAmount = BufferSize() - reservedSpaceAtEnd;
-	}
-
-	amountLeft = maxUsableAmount - position;
-	fillLeft   = maxUsableAmount - usedSize;
-
-	bufferPtr += position;
+    bufferPtr = &bufferPtr[position];
     return ret;
-}       
+}
 
-/**
- * wipes all content and replaces the used buffer
-*/
-bool IOBuffer::SetBufferReferencedMemory(
-		char *			buffer, 
-		uint32 			bufferSize,
-        uint32          reservedSpaceAtEnd           
-){
-	CharBuffer::SetBufferReference(buffer,bufferSize);
-    bufferPtr 		= ( char *)Buffer();
+// wipes all content and replaces the used buffer
+bool IOBuffer::SetBufferReferencedMemory(char8 * const buffer,
+                                         const uint32 bufferSize,
+                                         const uint32 reservedSpaceAtEnd) {
+    CharBuffer::SetBufferReference(buffer, bufferSize);
+    bufferPtr = BufferReference();
     maxUsableAmount = BufferSize() - reservedSpaceAtEnd;
     Empty();
-    return true;    	
+    return true;
 }
 
-/**
- * wipes all content and replaces the used buffer
-*/
-bool IOBuffer::SetBufferReadOnlyReferencedMemory(
-		const char *	buffer, 
-		uint32 			bufferSize,
-        uint32          reservedSpaceAtEnd          
-){
-	CharBuffer::SetBufferReference(buffer,bufferSize);
-    bufferPtr 		= ( char *)Buffer();
+
+bool IOBuffer::SetBufferReadOnlyReferencedMemory(const char8 * const buffer,
+                                                 const uint32 bufferSize,
+                                                 const uint32 reservedSpaceAtEnd) {
+    CharBuffer::SetBufferReference(buffer, bufferSize);
+    bufferPtr = BufferReference();
     maxUsableAmount = BufferSize() - reservedSpaceAtEnd;
     Empty();
-    return true;    	
+    return true;
 }
 
-bool IOBuffer::NoMoreSpaceToWrite(
-            uint32              neededSize,
-            TimeoutType         msecTimeout){ 
-	return false; 
+bool IOBuffer::NoMoreSpaceToWrite(const uint32 neededSize,
+                                  const TimeoutType msecTimeout) {
+    return false;
 }
 
-/** 
- * deals with the case when we do not have any more data to read 
+/*
+ * deals with the case when we do not have any more data to read
  * it might reset accessPosition and fill the buffer with more data
  * or it might fail
- * READ OPERATIONS 
+ * READ OPERATIONS
  * */
-bool IOBuffer::NoMoreDataToRead(TimeoutType         msecTimeout){ 
-	return false; 
+bool IOBuffer::NoMoreDataToRead(const TimeoutType msecTimeout) {
+    return false;
 }
 
 /**
-    sets amountLeft to 0
-    adjust the seek position of the stream to reflect the bytes read from the buffer
- * READ OPERATIONS 
-*/
-bool IOBuffer::Resync(TimeoutType         msecTimeout){ 
-	return false; 
-}   
+ sets amountLeft to 0
+ adjust the seek position of the stream to reflect the bytes read from the buffer
+ * READ OPERATIONS
+ */
+bool IOBuffer::Resync(const TimeoutType msecTimeout) {
+    return false;
+}
 
 //void IOBuffer::Terminate(){
 //}
 
-
-/** copies buffer of size size at the end of writeBuffer
+/*
+ *  copies buffer of size size at the end of writeBuffer
  * before calling check that bufferPtr is not NULL
  * can be overridden to allow resizeable buffers
- */ 
-void IOBuffer::Write(const char *buffer, uint32 &size){
-	if (!CanWrite()) return;
-	
-	// clip to spaceLeft
-	if (size > amountLeft) {
-		size = amountLeft;
-	}
+ */
+void IOBuffer::Write(const char8 * const buffer,
+                     uint32 &size) {
+    if (CanWrite()) {
 
-	// fill the buffer with the remainder 
-	if (size > 0){
-		MemoryOperationsHelper::Copy(bufferPtr,buffer,size);
-
-    	bufferPtr += size; 
-		amountLeft -=size;
-        if (fillLeft > amountLeft){
-        	fillLeft = amountLeft;
+        // clip to spaceLeft
+        if (size > amountLeft) {
+            size = amountLeft;
         }
-	}    	
+
+        // fill the buffer with the remainder
+        if (size > 0u) {
+            MemoryOperationsHelper::Copy(bufferPtr, buffer, size);
+
+            bufferPtr = &bufferPtr[size];
+            amountLeft -= size;
+            if (fillLeft > amountLeft) {
+                fillLeft = amountLeft;
+            }
+        }
+    }
 }
+
+bool IOBuffer::WriteAll(const char8 * buffer,
+                        const uint32 &size) {
+
+    bool retval = true;
+    //size to be copied.
+    uint32 leftSize = size;
+    while (leftSize > 0u) {
+        //if the cursor is at the end call NoMoreSpaceToWrite
+        // flushes the buffer or allocates new memory.
+        if (amountLeft == 0u) {
+            if (!NoMoreSpaceToWrite(leftSize, TTDefault)) {
+                retval = false;
+            }
+            //Something wrong, no more avaiable space, return false.
+            if (amountLeft == 0u) {
+                retval = false;
+            }
+        }
+        if(!retval){
+            break;
+        }
+
+        uint32 toDo = leftSize;
+        Write(buffer, toDo);
+        buffer = &buffer[toDo];
+        //if all the size is copied leftSize becomes 0 and return true
+        leftSize -= toDo;
+    }
+    return retval;
+}
+
+void IOBuffer::Read(char8 * const buffer,
+                    uint32 &size) {
+
+    uint32 maxSize = UsedAmountLeft();
+    // clip to available space
+    if (size > maxSize) {
+        size = maxSize;
+    }
+
+    // fill the buffer with the remainder
+    if (size > 0u) {
+        MemoryOperationsHelper::Copy(buffer, bufferPtr, size);
+
+        amountLeft -= size;
+        bufferPtr = &bufferPtr[size];
+    }
+}
+
 }

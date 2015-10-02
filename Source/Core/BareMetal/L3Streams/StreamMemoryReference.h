@@ -70,23 +70,23 @@ public: // usable constructors
 
     /**
      * @brief Binds this object to a memory area in read and write mode.
-     * @param buffer is the char pointer of the preallocated memory.
+     * @param buffer is the char8 pointer of the preallocated memory.
      * @param bufferSize is the usable size of the buffer.
      *
      * The function assumes that the area of memory is empty and therefore the Stream::Size is 0
      * */
-    StreamMemoryReference(char *buffer,uint32 bufferSize){
+    StreamMemoryReference(char8 *buffer,uint32 bufferSize){
     	this->buffer.SetBufferReferencedMemory(buffer,bufferSize);
     }
 
     /** 
      * @brief Binds this object to a memory area in read only mode.
-     * @param buffer is the const char pointer to a preallocated read only memory.
+     * @param buffer is the const char8 pointer to a preallocated read only memory.
      * @param bufferSize is the usable size of the buffer.
      *
      * The function assumes that the area of memory is full and therefore the Stream::Size is bufferSize
      * */
-    StreamMemoryReference(const char *buffer,uint32 bufferSize){
+    StreamMemoryReference(const char8 *buffer,uint32 bufferSize){
     	this->buffer.SetBufferReadOnlyReferencedMemory(buffer,bufferSize);
     	this->buffer.SetUsedSize(bufferSize);
     }
@@ -111,7 +111,7 @@ public:
         timeout behaviour depends on class characteristics and sync mode.
     */
     virtual bool        Read(
-                            char*               buffer,
+                            char8*               buffer,
                             uint32 &            size,
                             TimeoutType         msecTimeout     = TTDefault,
                             bool                complete        = false);
@@ -132,7 +132,7 @@ public:
         timeout behaviour depends on class characteristics and sync mode. 
     */
     virtual bool        Write(
-                            const char*         buffer,
+                            const char8*         buffer,
                             uint32 &            size,
                             TimeoutType         msecTimeout     = TTDefault,
                             bool                complete        = false);
@@ -195,7 +195,7 @@ public: // DIRECT ACCESS FUNCTIONS
      * @brief Read Only access to the internal buffer. It calls a CharBuffer function.
      * @return The pointer to the internal buffer.
      */
-    inline const char *Buffer() const {
+    inline const char8 *Buffer() const {
         return buffer.Buffer();
     }
 
@@ -203,7 +203,7 @@ public: // DIRECT ACCESS FUNCTIONS
      * @brief Read Write access top the internal buffer. It calls a CharBuffer function.
      * @return The pointer to the internal buffer.
      */
-    inline char *BufferReference() const {
+    inline char8 *BufferReference() const {
         return buffer.BufferReference();
     }
 
@@ -213,7 +213,7 @@ public: // DIRECT ACCESS FUNCTIONS
      * @param  ix the offset from the end of buffer. valid ranges is 0 to Size()-1
      * @return pointer to the tail of the buffer
      */
-    inline const char *Tail(int32 ix) const {
+    inline const char8 *Tail(int32 ix) const {
     	if (ix > 0) 				return 0;
     	if ((ix - buffer.UsedSize() -1)< 0) 	return 0;
     	return buffer.BufferReference() + buffer.UsedSize() - ix - 1;

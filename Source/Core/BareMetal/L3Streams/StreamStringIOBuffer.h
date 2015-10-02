@@ -1,84 +1,119 @@
-#if !defined (STREAMSTRING_IO_BUFFER)
-#define STREAMSTRING_IO_BUFFER
+/**
+ * @file StreamStringIOBuffer.h
+ * @brief Header file for class StreamStringIOBuffer
+ * @date 02/10/2015
+ * @author Giuseppe Ferrò
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This header file contains the declaration of the class StreamStringIOBuffer
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+ */
+
+#ifndef STREAMSTRINGIOBUFFER_H_
+#define STREAMSTRINGIOBUFFER_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
 #include "HeapManager.h"
 #include "CharBuffer.h"
 #include "IOBuffer.h"
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-
-/**
- * @file StreamStringIOBuffer.h
- * @brief Implementation of basic functions of the buffer used for StreamString class.
- *
- * These functions allows to allocate new space in the heap for the buffer, read and write operations.
- * This buffer is an attribute of StreamString class.
- */
-
+namespace MARTe {
 
 /**
- * @brief StreamStringIOBuffer class.
+ * @brief The StreamString buffer.
  *
- * This class inherits from IOBuffer and implements NoMoreSpaceToWrite accordingly to
+ * @details This class inherits from IOBuffer and specialize the function NoMoreSpaceToWrite accordingly to
  * the string requirements, namely allocating new space when the buffer is full in case of write operations.
  *
- * It implements also a Terminate function to put the final \0 at the end of the string.
- *
- * For memory allocations it adds one to the desired size passed by argument and sets reservedSpaceAtEnd = 1 for the 
- * final \0 character.   */
-class StreamStringIOBuffer:public IOBuffer {
-       
-public: // 
+ * @details For memory allocations it adds one to the desired size passed by argument and sets reservedSpaceAtEnd = 1 for the
+ * final \0 character.
+ */
+class StreamStringIOBuffer: public IOBuffer {
 
-	/** @brief Default constructor */
-	StreamStringIOBuffer(){	}
-	
-	/** @brief Default destructor. */
-	virtual ~StreamStringIOBuffer();
-		
-	/**
-         * @brief Sets the size of the buffer to be desiredSize or greater up next granularity. 
-         *
-         * Truncates stringSize to desiredSize-1.
-         *
-         * @param desiredSize is the desired size to allocate without considering the final \0.
-         * @param allocationGranularityMask defines the desired granularity (see CharBuffer::SetBufferAllocationSize), default is granularity=64 bytes.
-         * @return false in case of errors in the allocation.
-         *
-         * This function calls IOBuffer::SetBufferHeapMemory with desiredSize+1 and reservedSpaceAtEnd=1.
-	*/
-    virtual bool  		SetBufferAllocationSize(
-                uint32 			desiredSize,
-                uint32 			allocationGranularityMask 		= 0xFFFFFFC0);
-	
-public: // read buffer private methods
-    
-    /** 
-     * @brief If buffer is full this is called to allocate new memory.
-     * @param neededSize is the desired size to allocate.
-     * @param msecTimeout is the timeout not used here. 
-     * @return false in case of errors in the allocation.
+public:
+
+
+    /**
+     * @brief Default constructor
+     */
+    StreamStringIOBuffer();
+
+    /**
+     * @brief Default destructor.
+     */
+    virtual ~StreamStringIOBuffer();
+
+    /**
+     * @brief Sets the size of the buffer to be desiredSize or greater up next granularity.
      *
-     * This function calls SetBufferAllocationSize passing neededSize. */    
-    virtual bool 		NoMoreSpaceToWrite(
-                uint32              neededSize      = 1,
-                TimeoutType         msecTimeout     = TTDefault);
-     
+     * @details Truncates stringSize to desiredSize-1.\n
+     * Calls IOBuffer::SetBufferHeapMemory with desiredSize+1 and reservedSpaceAtEnd=1.
+     *
+     * @param[in] desiredSize is the desired size to allocate without considering the final \0.
+     * @param[in] allocationGranularityMask defines the desired granularity (see CharBuffer::SetBufferAllocationSize), default is granularity=64 bytes.
+     * @return false in case of errors in the allocation.
+     */
+    virtual bool SetBufferAllocationSize(uint32 desiredSize,
+                                         uint32 allocationGranularityMask = 0xFFFFFFC0);
+
+public:
+    /**
+     * @brief If the buffer is full this function is called to allocate new memory.
+     *
+     * @details This function calls SetBufferAllocationSize passing neededSize.
+     *
+     * @param[in] neededSize is the desired size to allocate.
+     * @param[in] msecTimeout is the timeout not used here.
+     * @return false in case of errors in the memory allocation.
+     */
+    virtual bool NoMoreSpaceToWrite(uint32 neededSize = 1,
+                                    TimeoutType msecTimeout = TTDefault);
+
     /**
      * @brief Copies buffer the end of writeBuffer.
-     * @param buffer contains data to be written.
-     * @param size is the desired number of bytes to copy.
-     * 
-     * If size is greater than amountLeft allocates new memory calling SetBufferAllocationSize passing the size of the filled memory + size;
-     * then calls IOBuffer::Write.
-     */ 
-    virtual void 		Write(const char *buffer, uint32 &size);    
+     *
+     * @details If the current buffer size is not enough a new portion of memory
+     * will be dynamically allocated.
+     *
+     * @param[in] buffer contains data to be written.
+     * @param[in] size is the desired number of bytes to copy.
+     */
+    virtual void Write(const char8 *buffer,
+                       uint32 &size);
 
-    /** @brief Add the termination character at the end of the filled memory. */
-    virtual void 		Terminate();
+    /**
+     * @brief Adds the termination character at the end of the filled memory.
+     */
+    virtual void Terminate();
 
 };
 }
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
-#endif
+#endif /* STREAMSTRINGIOBUFFER_H_ */
+

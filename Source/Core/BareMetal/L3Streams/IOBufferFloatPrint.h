@@ -23,7 +23,7 @@
  **/
 /**
  * @file 
- * @brief Functions to print float numbers on generic streams.
+ * @brief Functions to print float32 numbers on generic streams.
  */
 
 #if !defined IOBUFFER_FLOAT_PRINT
@@ -129,7 +129,7 @@ static inline void FastPowerOf10Private(T &output,
         exponent = -exponent;
     }
 
-    // double logaritmic approach
+    // float64 logaritmic approach
     // decompose exponent in sum of powers of 2	
     output = 1.0;
     // limit to range of quad precision (128 bits)
@@ -764,7 +764,7 @@ static inline void ExponentToStreamPrivate(IOBuffer & stream,
 
 /** @brief Implements functions to print the number for each format on a generic stream which implements a PutC() function.
  * @param notation is the desired notation.
- * @param stream is the generic stream (any class with a PutC(char c) method )
+ * @param stream is the generic stream (any class with a PutC(char8 c) method )
  * @param normalizedNumber is the normalized number.
  * @param exponent is the exponent of the number.
  * @param precision is the number of the first significative digits to print.
@@ -811,7 +811,7 @@ bool FloatToStreamPrivate(FloatNotation notation,
         FloatToFixedPrivate(stream, normalizedNumber, exponent, precision);
         // check if exponent in correct range
         if ((engineeringExponent != 0) && (engineeringExponent <= 24) && (engineeringExponent >= -24)) {
-            static const char *symbols = "yzafpnum KMGTPEZY";
+            static const char8 *symbols = "yzafpnum KMGTPEZY";
             stream.PutC(symbols[engineeringExponent / 3 + 8]);
         }
         else {
@@ -833,7 +833,7 @@ bool FloatToStreamPrivate(FloatNotation notation,
 
             //Put the symbol only if the engineering exp is different than zero.
             if (engineeringExponent != 0) {
-                static const char *symbols = "yzafpnum KMGTPEZY";
+                static const char8 *symbols = "yzafpnum KMGTPEZY";
                 stream.PutC(symbols[engineeringExponent / 3 + 8]);
             }
         }
@@ -852,7 +852,7 @@ bool FloatToStreamPrivate(FloatNotation notation,
 
 /** @brief A list of avaiable display modalities to manage the behaviour of the function. */
 enum FloatDisplayModes {
-    Normal = 0,  // one of the float Notations
+    Normal = 0,  // one of the float32 Notations
     ZeroFloat = 11, // 0
     NanFloat = 22, // Nan
     InfPFloat = 33, //+Inf
@@ -928,7 +928,7 @@ T RoundUpNumber(T number,
     return number;
 }
 
-/** @brief Prints a float (or equivalent) number on a generic stream which implements a PutC() function.
+/** @brief Prints a float32 (or equivalent) number on a generic stream which implements a PutC() function.
  * @param stream is a generic stream class.
  * @param number is the number to print.
  * @param format specifies the desired format (padding, precision, max size)
@@ -949,14 +949,14 @@ bool FloatToStream(IOBuffer & stream, // must have a GetC(c) function where c is
 
     // 0 means unlimited
     // to keep things symmetric we set to a large number
-    // 1000 should not constitute a limit for a float!
+    // 1000 should not constitute a limit for a float32!
     if (maximumSize == 0) {
         maximumSize = 1000;
         format.padded = false;
     }
 
     // on precision 0 the max useful precision is chosen 
-    // based on the ieee float format number of significative digits
+    // based on the ieee float32 format number of significative digits
     if (format.precision == -1) {
         if (sizeof(T) > 8) {
             format.precision = 34;

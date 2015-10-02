@@ -1,84 +1,110 @@
-#if !defined STREAMWRAPPER_IOBUFFER
-#define STREAMWRAPPER_IOBUFFER
+/**
+ * @file StreamWrapperIOBuffer.h
+ * @brief Header file for class StreamWrapperIOBuffer
+ * @date 02/10/2015
+ * @author Giuseppe Ferrò
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
 
-//#include "TypeConversion.h"
+ * @details This header file contains the declaration of the class StreamWrapperIOBuffer
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
+ */
+
+#ifndef STREAMWRAPPERIOBUFFER_H_
+#define STREAMWRAPPERIOBUFFER_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 #include "TimeoutType.h"
 #include "StreamInterface.h"
 #include "IOBuffer.h"
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
 
-namespace MARTe{
-
-/** 
- * @file StreamWrapperIOBuffer.h
- * @brief A generic buffer associated to a Streamable which could be allocated dinamically or by reference. */
-
+namespace MARTe {
 
 /**
- * @brief StreamWrapperIOBuffer class.
+ * @brief A buffer associated to a generic stream.
  *
- * This type of buffer is used in Printf and GetToken functions when the streams does not provide 
- * their own buffers. It could be used as a temporary buffer for unbuffered streams. */
-class StreamWrapperIOBuffer:public IOBuffer{
+ * This type of buffer is used in Printf and GetToken functions when the streams does not provide
+ * their own buffers. It could be used as a temporary buffer for unbuffered streams.
+ *
+ * The NoMoreDataToRead function is implemented as a refill from the stream,
+ * the NoMoreSpaceToWrite is implemented as a flush on the stream.
+ */
+class StreamWrapperIOBuffer: public IOBuffer {
 private:
-	/** A pointer to the associated stream. */
-	StreamInterface *stream;
-       
-public: // read buffer private methods
-
-    /** 
-     * @brief Constructor for dinamic allocated buffer.
-     * @param s is the stream which uses this buffer.
-     * @param size is the size to allocate for this buffer. 
-     *
-     * Calls IOBuffer::SetBufferHeapMemory.*/
-    StreamWrapperIOBuffer(StreamInterface *s,uint32 size){
-        stream=s;
-        SetBufferHeapMemory(size);
-    }
-
     /**
-     * @brief Constructor for memory referenced buffer. 
-     * @param s is the stream which uses this buffer.
-     * @param buffer is the pointer to the preallocated memory.
-     * @param size is the size of the buffer.
+     * A pointer to the associated stream.
      */
-    StreamWrapperIOBuffer(StreamInterface *s,char *buffer,uint32 size){
-        stream=s;
-        SetBufferReferencedMemory(buffer,size);
-    }
-    
+    StreamInterface *stream;
+
+public:
+
     /**
-     * @brief Refill the buffer reading from the stream.
-     * @param msecTimeout is the timeout not used here.
+     * @brief Constructor for dynamic allocated buffer.
+     * @param[in] s is the stream which uses this buffer.
+     * @param[in] size is the size to allocate for this buffer.
+     */
+    StreamWrapperIOBuffer(StreamInterface *s,
+                          uint32 size);
+
+    /**
+     * @brief Constructor for memory referenced buffer.
+     * @param[in] s is the stream which uses this buffer.
+     * @param[in] buffer is the pointer to the preallocated memory.
+     * @param[in] size is the size of the buffer.
+     */
+    StreamWrapperIOBuffer(StreamInterface *s,
+                          char8 *buffer,
+                          uint32 size);
+
+    /**
+     * @brief Refills the buffer reading from the stream.
+     * @param[in] msecTimeout is the timeout not used here.
      * @return false if the buffer is null or if the stream read fails.
-     *
-     * Calls the stream read function refilling the buffer.  
-    */
-    virtual bool 		NoMoreDataToRead( TimeoutType         msecTimeout     = TTDefault);
-    
+     */
+    virtual bool NoMoreDataToRead(TimeoutType msecTimeout = TTDefault);
+
     /**
      * @brief Flushes the buffer on the stream.
-     * @param neededSize is not used here.
-     * @param msecTimeout is not used here.
-     * 
-     * Calls the stream write function writes all the used size. */
-    virtual bool 		NoMoreSpaceToWrite(
-                uint32              neededSize      = 1,
-                TimeoutType         msecTimeout     = TTDefault);
+     * @param[in] neededSize is not used here.
+     * @param[in] msecTimeout (not used in this case).
+     */
+    virtual bool NoMoreSpaceToWrite(uint32 neededSize = 1,
+                                    TimeoutType msecTimeout = TTDefault);
 
     /**
-     * @brief Adjusts the cursor position of the stream.
-     * @param msecTimeout is the timeout not used here.
+     * @brief Adjusts the cursor position.
+     * @param[in] msecTimeout is the timeout not used here.
      * @return false if the stream seek fails.
-     *
-     * Calls the stream seek function moving the cursor back of UsedAmountLeft.
-    */
-    virtual bool 		Resync(TimeoutType      msecTimeout     = TTDefault);    
-    
+     */
+    virtual bool Resync(TimeoutType msecTimeout = TTDefault);
+
 };
 
 }
 
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
+#endif /* STREAMWRAPPERIOBUFFER_H_ */
 
-#endif 

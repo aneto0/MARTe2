@@ -25,9 +25,9 @@ namespace MARTe{
 
 extern "C"{
 
-    bool GetCStringToken(const char *&input,char *buffer,const char *terminator,uint32 maxSize);
+    bool GetCStringToken(const char8 *&input,char8 *buffer,const char8 *terminator,uint32 maxSize);
 
-    char *DestructiveGetCStringToken(char *&input,const char *terminator,char *saveTerminator=NULL,const char *skip="");
+    char8 *DestructiveGetCStringToken(char8 *&input,const char8 *terminator,char8 *saveTerminator=NULL,const char8 *skip="");
 
 }
 
@@ -38,9 +38,9 @@ extern "C"{
         returns true if some data was read. false only on no data available
         The input pointer will be left pointing at the terminator. The terminator is not consumed    */
     bool  GetCStringToken(
-                                const char *&       input,
-                                char *              buffer,
-                                const char *        terminator,
+                                const char8 *&       input,
+                                char8 *              buffer,
+                                const char8 *        terminator,
                                 uint32              maxSize);
 
     /** extract a token from the string into a string until a terminator or 0 is found.
@@ -49,11 +49,11 @@ extern "C"{
         Never returs NULL unless the input is NULL;
         The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
     */
-    char *DestructiveGetCStringToken(
-                                char *&             input,
-                                const char *        terminator,
-                                char *              saveTerminator  =NULL,
-                                const char *        skipCharacters  ="");
+    char8 *DestructiveGetCStringToken(
+                                char8 *&             input,
+                                const char8 *        terminator,
+                                char8 *              saveTerminator  =NULL,
+                                const char8 *        skipCharacters  ="");
 
 
 #endif
@@ -67,16 +67,16 @@ extern "C"{
 /************************************************************/
 
 
-bool GetCStringToken(const char *&input,char *buffer,const char *terminator,uint32 maxSize){
+bool GetCStringToken(const char8 *&input,char8 *buffer,const char8 *terminator,uint32 maxSize){
     maxSize--; // for the trailing 0
-    char *p = buffer;
+    char8 *p = buffer;
     while(maxSize > 0){
         if (*input == 0){
             *p = 0;
             if (p == buffer) return false;
             else             return true;
         }
-        char c = *input;
+        char8 c = *input;
         if ((strchr(terminator,c)!=NULL)||(c==0)){
             // exit only if some data was read, otw just skip separator block
             if (p != buffer){
@@ -93,9 +93,9 @@ bool GetCStringToken(const char *&input,char *buffer,const char *terminator,uint
     return true;
 }
 
-char *DestructiveGetCStringToken(char *&input,const char *terminator,char *saveTerminator,const char *skip){
+char8 *DestructiveGetCStringToken(char8 *&input,const char8 *terminator,char8 *saveTerminator,const char8 *skip){
     if (skip == NULL) skip = terminator;
-    char *p = input;
+    char8 *p = input;
     if (p == NULL) return NULL;
     while(1){
         if (*input == 0){
@@ -103,7 +103,7 @@ char *DestructiveGetCStringToken(char *&input,const char *terminator,char *saveT
             return p;
         }
 
-        char c = *input;
+        char8 c = *input;
         bool isTerminator = (strchr(terminator,c)!=NULL);
         bool isSkip       = (strchr(skip      ,c)!=NULL);
 
@@ -123,7 +123,7 @@ char *DestructiveGetCStringToken(char *&input,const char *terminator,char *saveT
 }
 
 /// convert to buffer
-inline char *toBuffer_u8(char (& buffer)[4],uint8 number){
+inline char8 *toBuffer_u8(char8 (& buffer)[4],uint8 number){
 	buffer[3] = 0;
 	uint8_t ix = 3;
 	if (number == 0){
@@ -140,7 +140,7 @@ inline char *toBuffer_u8(char (& buffer)[4],uint8 number){
 }
 
 /// convert to buffer
-inline char *toBuffer_u16(char (& buffer)[6],uint16 number){
+inline char8 *toBuffer_u16(char8 (& buffer)[6],uint16 number){
 	buffer[5] = 0;
 	uint8_t ix = 5;
 	if (number == 0){
@@ -157,7 +157,7 @@ inline char *toBuffer_u16(char (& buffer)[6],uint16 number){
 }
 
 /// convert to buffer
-inline char *toBuffer_u32(char (& buffer)[11],uint32 number){
+inline char8 *toBuffer_u32(char8 (& buffer)[11],uint32 number){
 	buffer[10] = 0;
 	uint8 ix = 10;
 	if (number == 0){
@@ -176,7 +176,7 @@ inline char *toBuffer_u32(char (& buffer)[11],uint32 number){
 }
 
 /// convert to buffer
-inline char *toBuffer_u64(char (& buffer)[21],uint64 number){
+inline char8 *toBuffer_u64(char8 (& buffer)[21],uint64 number){
 	buffer[10] = 0;
 	uint8 ix = 10;
 	if (number == 0){
@@ -194,7 +194,7 @@ inline char *toBuffer_u64(char (& buffer)[21],uint64 number){
 	return &buffer[ix];
 }
 
-template <T,n> char *toBuffer(char (& buffer)[21],T number){
+template <T,n> char8 *toBuffer(char8 (& buffer)[21],T number){
 	buffer[20] = 0;
 	uint8 ix = 20;
 	if (number == 0){
@@ -223,7 +223,7 @@ template <T,n> char *toBuffer(char (& buffer)[21],T number){
 
 
 
-uint8_t Putn_s(Print &stream,const char *s, uint8_t size){
+uint8_t Putn_s(Print &stream,const char8 *s, uint8_t size){
 	while (*s!= 0){
 		if (size==0) return size;
 		stream.print(s[0]);
@@ -236,7 +236,7 @@ uint8_t Putn_s(Print &stream,const char *s, uint8_t size){
 // progmem string
 uint8_t Putn_ps(Print &stream,const prog_char *s, uint8_t size){
 	if (s == NULL) return size;
-	char c = pgm_read_byte(s);
+	char8 c = pgm_read_byte(s);
 	while (c != 0){
 		if (size==0) return size;
 		stream.print(c);
@@ -250,7 +250,7 @@ uint8_t Putn_ps(Print &stream,const prog_char *s, uint8_t size){
 /// move labels to match data and return how far it had to move - should be = data 
 uint8_t enumFind(uint8_t data,const prog_char *&labels){
 	uint8_t index = 0;
-	char c = pgm_read_byte(labels);
+	char8 c = pgm_read_byte(labels);
 	while ((index < data) && (c != 0)){
 		if (c == ';') index++;
 		labels++;
@@ -269,7 +269,7 @@ uint8_t Putn_enum(Print &stream,uint8_t data,const prog_char *labels,uint8_t max
 
 	if (index == data) {
 		uint16_t labelSize = 0;
-		char c = pgm_read_byte(labels+labelSize);	
+		char8 c = pgm_read_byte(labels+labelSize);	
 		while ((c != 0) && (c != ';')){
 			labelSize++;
 			c = pgm_read_byte(labels+labelSize);
@@ -288,8 +288,8 @@ uint8_t Putn_enum(Print &stream,uint8_t data,const prog_char *labels,uint8_t max
 
 // up to size or ?
 uint8_t Putn_u32(Print &stream,uint32_t number,uint8_t maxPrint){
-	char buffer[11];
-	char *ptr = toBuffer_u32(buffer,number);
+	char8 buffer[11];
+	char8 *ptr = toBuffer_u32(buffer,number);
 	int8_t neededSize = (&buffer[10] - ptr);
 	if (neededSize > maxPrint){
 		if (maxPrint > 0){
@@ -303,8 +303,8 @@ uint8_t Putn_u32(Print &stream,uint32_t number,uint8_t maxPrint){
 
 /// up to size or ?
 uint8_t Putn_u16(Print &stream,uint16_t number,uint8_t maxPrint){
-	char buffer[6];
-	char *ptr = toBuffer_u16(buffer,number);
+	char8 buffer[6];
+	char8 *ptr = toBuffer_u16(buffer,number);
 	int8_t neededSize = (&buffer[5] - ptr);
 	if (neededSize > maxPrint){
 		if (maxPrint > 0){
@@ -319,8 +319,8 @@ uint8_t Putn_u16(Print &stream,uint16_t number,uint8_t maxPrint){
 
 // up to size or ?
 uint8_t Putn_u8(Print &stream,uint8_t number,uint8_t maxPrint){
-	char buffer[4];
-	char *ptr = toBuffer_u8(buffer,number);
+	char8 buffer[4];
+	char8 *ptr = toBuffer_u8(buffer,number);
 	int8_t neededSize = (&buffer[3] - ptr);
 	if (neededSize > maxPrint){
 		if (maxPrint > 0){
@@ -333,13 +333,13 @@ uint8_t Putn_u8(Print &stream,uint8_t number,uint8_t maxPrint){
 
 }
 
-char toHex(uint8_t nibble){
+char8 toHex(uint8_t nibble){
 	if (nibble < 9) return '0'+nibble;
 	if (nibble > 15) return '?';
 	return 'A'+nibble-10;
 }
 
-static const char PROGMEM hexLabel[] = "0x";
+static const char8 PROGMEM hexLabel[] = "0x";
 
 // up to size or ?
 uint8_t Putn_u8x(Print &stream,uint8_t number,uint8_t maxPrint){
@@ -427,7 +427,7 @@ uint8_t Putn_i8(Print &stream,int8_t number,uint8_t maxPrint){
 }
 
 // for internal use only - number must be normalised fabs(number)<10 - exponent is carried separately
-static uint8_t Putn_fixed(Print &stream,float number,uint8_t maxPrint,uint8_t numberOfSignificantFigures,int16_t exponent){
+static uint8_t Putn_fixed(Print &stream,float32 number,uint8_t maxPrint,uint8_t numberOfSignificantFigures,int16_t exponent){
 	
 	// suffix 0.000 in case of negative exponent
 	if (exponent < 0){
@@ -460,10 +460,10 @@ static uint8_t Putn_fixed(Print &stream,float number,uint8_t maxPrint,uint8_t nu
 		}
 		uint8_t digit = (uint8_t)number;
 		if (maxPrint > 0){
-			stream.print((char)('0'+digit));
+			stream.print((char8)('0'+digit));
 			maxPrint--;
 		}
-		float digitF = digit;
+		float32 digitF = digit;
 		number = number - digitF;
 		number *= 10.0;			
 		exponent--;
@@ -473,7 +473,7 @@ static uint8_t Putn_fixed(Print &stream,float number,uint8_t maxPrint,uint8_t nu
 }
 
 // for internal use only - number must be normalised fabs(number)<10 - exponent is carried separately
-static uint8_t Putn_scientific(Print &stream,float number,uint8_t maxPrint,uint8_t numberOfSignificantFigures,int16_t decimalExponent,int16_t expNDigits){
+static uint8_t Putn_scientific(Print &stream,float32 number,uint8_t maxPrint,uint8_t numberOfSignificantFigures,int16_t decimalExponent,int16_t expNDigits){
 	if (maxPrint > (expNDigits+3)){
 		maxPrint -= expNDigits+3; // 3 = E+ and at least one digit (expNDigit=0 ==> 1 digit)
 		maxPrint = Putn_fixed(stream,number,maxPrint,numberOfSignificantFigures,0);
@@ -499,7 +499,7 @@ static uint8_t Putn_scientific(Print &stream,float number,uint8_t maxPrint,uint8
 }
 
 // used internally 
-static int16_t normalizeNumber(float &number){
+static int16_t normalizeNumber(float32 &number){
 	if (number == 0.0) return 0;
 	int16_t powerShift = 0;
 	while (number >= 10.0){
@@ -514,7 +514,7 @@ static int16_t normalizeNumber(float &number){
 }
 
 // up to size or ?
-uint8_t Putn_float(Print &stream,float number,uint8_t numberOfSignificantFigures,uint8_t maxPrint){
+uint8_t Putn_float(Print &stream,float32 number,uint8_t numberOfSignificantFigures,uint8_t maxPrint){
 	if (isnan(number)){
 		if (maxPrint > 3) {
 			maxPrint-=3;
@@ -586,7 +586,7 @@ uint8_t Putn_float(Print &stream,float number,uint8_t numberOfSignificantFigures
   			maxPrint = Putn_fixed(stream,number,maxPrint,numberOfSignificantFigures,nDigits);
   		} else {
   			nDigits = (nDigits + 12)%3;
-  			static const char *symbols = "pnum kMGT";
+  			static const char8 *symbols = "pnum kMGT";
   			if (maxPrint > 0){
   				maxPrint--;
   				maxPrint = Putn_fixed(stream,number,maxPrint,numberOfSignificantFigures,nDigits);

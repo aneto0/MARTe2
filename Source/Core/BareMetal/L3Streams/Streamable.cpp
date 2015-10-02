@@ -41,19 +41,19 @@ uint32 Streamable::NOfStreams() { return 0; }
 bool Streamable::Switch(uint32 n){ return false; }
 
 /** select the stream to read from. Switching may reset the stream to the start. */
-bool Streamable::Switch(const char *name){ return false; }
+bool Streamable::Switch(const char8 *name){ return false; }
 
 /** how many streams are available */
 uint32 Streamable::SelectedStream(){ return 0; }
 
 /** the name of the stream we are using */
-bool Streamable::StreamName(uint32 n,char *name,int nameSize)const { return false; }
+bool Streamable::StreamName(uint32 n,char8 *name,int nameSize)const { return false; }
 
 /**  add a new stream to write to. */
-bool Streamable::AddStream(const char *name){ return false; }
+bool Streamable::AddStream(const char8 *name){ return false; }
 
 /**  remove an existing stream . */
-bool Streamable::RemoveStream(const char *name){ return false; }
+bool Streamable::RemoveStream(const char8 *name){ return false; }
 
 
 /** extract a token from the stream into a string data until a terminator or 0 is found.
@@ -63,16 +63,16 @@ bool Streamable::RemoveStream(const char *name){ return false; }
     skipCharacters=NULL is equivalent to skipCharacters = terminator
     {BUFFERED}    */
 bool Streamable::GetToken(
-                            char *              outputBuffer,
-                            const char *        terminator,
+                            char8 *              outputBuffer,
+                            const char8 *        terminator,
                             uint32              outputBufferSize,
-                            char *              saveTerminator,
-                            const char *        skipCharacters){
+                            char8 *              saveTerminator,
+                            const char8 *        skipCharacters){
 	
 	// retrieve stream mechanism
 	IOBuffer *inputIOBuffer = GetInputBuffer(); 
 	if (inputIOBuffer == NULL){
-		char stackBuffer[64];		
+		char8 stackBuffer[64];		
 		StreamWrapperIOBuffer inputIOBuffer (this,stackBuffer,sizeof (stackBuffer));
 		
 		bool ret = GetTokenFromStream(inputIOBuffer, outputBuffer,terminator,outputBufferSize,saveTerminator,skipCharacters);
@@ -98,9 +98,9 @@ bool Streamable::GetToken(
 */
 bool Streamable::GetToken(
 							StreamInterface &   output,
-                            const char *        terminator,
-                            char *              saveTerminator,
-                            const char *        skipCharacters){
+                            const char8 *        terminator,
+                            char8 *              saveTerminator,
+                            const char8 *        skipCharacters){
 
 	// retrieve stream mechanism
 	IOBuffer *inputIOBuffer   = GetInputBuffer();
@@ -109,13 +109,13 @@ bool Streamable::GetToken(
 	bool ret = false; 
 	
 	if (inputIOBuffer == NULL){
-		char stackBuffer[64];
+		char8 stackBuffer[64];
 		//create a buffer on the stack as the read buffer.		
 		StreamWrapperIOBuffer inputIOBufferS (this,stackBuffer,sizeof (stackBuffer));
 		inputIOBuffer   = &inputIOBufferS;
 		
 		if (outputIOBuffer == NULL){
-			char stackBuffer[64];
+			char8 stackBuffer[64];
 			//create a buffer on the stack as the write buffer		
 			StreamWrapperIOBuffer outputIOBufferS (&output,stackBuffer,sizeof (stackBuffer));		
 			outputIOBuffer   = &outputIOBufferS;
@@ -129,7 +129,7 @@ bool Streamable::GetToken(
 	} else {
 		
 		if (outputIOBuffer == NULL){
-			char stackBuffer[64];		
+			char8 stackBuffer[64];		
 			//create a buffer on the stack as write buffer.
 			StreamWrapperIOBuffer outputIOBufferS (&output,stackBuffer,sizeof (stackBuffer));		
 			outputIOBuffer = &outputIOBufferS; 
@@ -150,12 +150,12 @@ bool Streamable::GetToken(
     {BUFFERED}    */
 bool Streamable::SkipTokens(
                             uint32              count,
-                            const char *        terminator){
+                            const char8 *        terminator){
 
 	// retrieve stream mechanism
 	IOBuffer *inputBuffer = GetInputBuffer(); 
 	if (inputBuffer == NULL){
-		char stackBuffer[64];		
+		char8 stackBuffer[64];		
 		StreamWrapperIOBuffer inputBuffer (this,stackBuffer,sizeof (stackBuffer));
 		
 		return SkipTokensInStream(inputBuffer,count,terminator);
@@ -169,7 +169,7 @@ bool Streamable::Print(const AnyType& par,FormatDescriptor fd){
 	// retrieve stream mechanism
 	IOBuffer *outputBuffer = GetOutputBuffer(); 
 	if (outputBuffer == NULL){
-		char stackBuffer[64];		
+		char8 stackBuffer[64];		
 		StreamWrapperIOBuffer outputBuffer (this,stackBuffer,sizeof (stackBuffer));
 
 		return PrintToStream(outputBuffer,par,fd);
@@ -178,13 +178,13 @@ bool Streamable::Print(const AnyType& par,FormatDescriptor fd){
 	return PrintToStream(*outputBuffer,par,fd);
 }
 
-bool Streamable::PrintFormatted(const char *format, const AnyType pars[]){
+bool Streamable::PrintFormatted(const char8 *format, const AnyType pars[]){
 
 	// retrieve stream mechanism
 	// the output buffer is flushed in streamable.
 	IOBuffer *outputBuffer = GetOutputBuffer(); 
 	if (outputBuffer == NULL){
-		char stackBuffer[64];
+		char8 stackBuffer[64];
 		StreamWrapperIOBuffer outputBuffer (this,stackBuffer,sizeof (stackBuffer));
 		
 		return PrintFormattedToStream(outputBuffer,format,pars);
@@ -195,9 +195,9 @@ bool Streamable::PrintFormatted(const char *format, const AnyType pars[]){
 
 
 /**
- * copies a const char* into this stream from current position
+ * copies a const char8* into this stream from current position
 */
-bool Streamable::Copy(const char *buffer){
+bool Streamable::Copy(const char8 *buffer){
 	if (buffer == NULL){
 		return false;
 	}
@@ -212,7 +212,7 @@ bool Streamable::Copy(const char *buffer){
 */
 bool Streamable::Copy(StreamInterface &stream){
 
-	char buffer[256];
+	char8 buffer[256];
 	uint32 size = sizeof(buffer);
 
 	//read in buffer
