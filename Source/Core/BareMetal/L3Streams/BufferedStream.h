@@ -1,516 +1,245 @@
-#if !defined BUFFERED_STREAM
-#define BUFFERED_STREAM
+/*
+ * Copyright 2011 EFDA | European Fusion Development Agreement
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they 
+   will be approved by the European Commission - subsequent  
+   versions of the EUPL (the "Licence"); 
+ * You may not use this work except in compliance with the 
+   Licence. 
+ * You may obtain a copy of the Licence at: 
+ *  
+ * http://ec.europa.eu/idabc/eupl
+ *
+ * Unless required by applicable law or agreed to in 
+   writing, software distributed under the Licence is 
+   distributed on an "AS IS" basis, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+   express or implied. 
+ * See the Licence for the specific language governing 
+   permissions and limitations under the Licence. 
+ *
+ * $Id: ErrorManagement.h 3 2012-01-15 16:26:07Z aneto $
+ *
+**/
+
+
+#if !defined STREAMABLE
+#define STREAMABLE
 
 //#include "TypeConversion.h"
 #include "TimeoutType.h"
-#include "StreamInterface.h"
-#include "IOBuffer.h"
 #include "AnyType.h"
-#include "FormatDescriptor.h"
-#include "Streamable.h"
-#include "BufferedStreamIOBuffer.h"
+#include "StreamI.h"
 
 namespace MARTe{
 
-
 /**
  * @file BufferedStream.h
- * @brief Implementation of streamable type functions.
- * 
- * Implementation of streamable type functions for read, write and seek operations in buffered and unbuffered modes for streamable types
- * i.e files. Most of the functions depends from the virtual UnBuffered functions which must be implemented in the derived classes
- * because could be differents for different streamable types. 
+ * @brief Common father class for all streamable implementations.
  *
- * BufferedStream uses two IOBuffer in buffered modes, one for reading and one for writing operations and they are used togheter if the stream is defined as
- * readable, writable and seekable.*/ 
+ * This functions implements the most useful and powerful functions like Printf and GetToken leaving
+ * other functions implementation to the derived classes.  
+ *
+ * Since StreamI performs just an interface, this class is the father of the
+ * more specific streams like for example BufferedStream (file, socket, ecc.) StreamString (advanced strings manager with 
+ * heap memory allocation), StreamMemoryReference (stack memory).
+ *
+ * StreamI functions for the multi stream are overloaded protected because are not used by all descendents.
+ */ 
 
 
-/**
-  * @brief BufferedStream class.
 
-    Replaces CStream and Streamable of BL1
-    Inherits from pure virtual StreamInterface and does not resolve all pure virtual functions
-   
-    Uses the following StreamInterface methods to operate:
-        CanRead  Read
-        CanWrite Write
-        CanSeek  Seek 
-    But only allows using GetC and PutC as it masks the whole StreamInterface
-    To use the whole StreamInterface one needs to implement safe versions of 
-    all functions. This is left for for further class derivations. 
 
-    Note also that this class supports partially or fully disabled buffering.
-    Just set the buffer size to 0 and the buffer to NULL.
-
-    It is a buffering mechanism for character streams
-    It operates in 6 modes (+variants) depending on the Stream capabilities 
-       CanSeek CanRead CanWrite
-    and user Buffering choices
-
-    1) Separate Buffering Output Mode
-        CanWrite !CanSeek
-        Used for devices where in and out streams are separate (for instance console )
-        writeBuffer.Buffer()!=NULL && operatingMode.MutexBuffering() = false   
-        !Can be combined with Separate Buffering Input Mode
-    1a) writeBuffer.Buffer()== NULL just call directly StreamInterface::Write  
-
-    2) Separate buffering Input Mode
-        CanRead  !CanSeek
-        Used for devices where in and out streams are separate (for instance console )
-        readBuffer.Buffer()!=NULL  &&  operatingMode.mutexBuffering = false   
-        !Can be combined with Separate Buffering Output Mode
-    2a) readBuffer.Buffer()== NULL just call directly StreamInterface::Read  
-
-    3) Dual separate buffers Input and Output Mode
-        CanRead CanWrite !CanSeek
-        Mode 1/1a and 2/2a combined
-
-    4) Joint buffering Mode
-        CanRead CanWrite CanSeek
-        readBuffer.Buffer()!=NULL  && writeBuffer.Buffer()!=NULL && 
-        operatingMode.mutexBuffering() = true   
-        operatingMode.mutexWriteMode and
-        operatingMode.mutexReadMode  determines whether the read 
-        or write buffering is active
-        Get and Put toggle the two flags
-        everytime the flags are changed a proper Flush operation is 
-        triggered to clean the buffers
-    4a-b) one of readBuffer or writeBuffer is NULL
-        same toggling of flags and flushing
-
-    5) Joint buffering Read Only Mode
-        CanRead !CanWrite CanSeek
-        readBuffer.Buffer()!=NULL  && writeBuffer.Buffer()==NULL && 
-        operatingMode.mutexBuffering() = false   
-        Operates identically to mode 2 but cannot be active together
-        with mode 6 
-    5a) same as 2a
-
-    6) Joint buffering Write Only Mode
-        !CanRead CanWrite CanSeek
-        readBuffer.Buffer()==NULL  && writeBuffer.Buffer()!=NULL && 
-        operatingMode.mutexBuffering() = false   
-        Operates identically to mode 1 but cannot be active together
-        with mode 5
-    6a) same as 1a 
-
-*/
-class BufferedStream: public Streamable {
-protected:    
-    /**
-       Defines the operation mode and status of a basic stream
-       one only can be set of the first 4.
-    */
-    struct OperatingModes{
-
-    	/** cache of canSeek() used in all the buffering functions 
-    	for accelleration sake
-    	*/
-    	bool canSeek:1;
-
-        /** writeBuffer is the active one.
-        */
-        bool mutexReadMode:1;
-
-        /** writeBuffer is the active one.
-        */
-        bool mutexWriteMode:1;
-    	
-
-    };
-    /** set automatically on initialisation by calling of the Canxxx functions */
-    OperatingModes           operatingModes;
-    
-private: // read and write buffers
-friend class BufferedStreamIOBuffer; 
-//friend class StreamableWriteBuffer; 
+/** 
+ * @brief Abstract super class for all streamables.
+ *
+ * It's the common point of implementation between BufferedStream descendent
+ * and MemoryMappedStreams.
+ * Provide common abstract buffering scheme.
+ */
+class BufferedStream: public StreamI {
        
-	/** 
-         * The read buffer. It is used just like
-         * a middle buffer between the stream and the output.
-         * For each read operation this buffer is filled completely
-         * and then the desired size is copied on the output.
-         * Using the buffer mode, the GetC function always use this buffer,
-         * while for Read function it is used only if the size to read is minor
-         * than a quarter than the buffer size.
-         * Function BufferedStreamIOBuffer::NoMoreSpaceToWrite acts
-         * as a flush and the more confidencial function Flush calls it.
-         * @see BufferedStreamBuffer for more informations.*/
-	BufferedStreamIOBuffer		readBuffer;
-    
+protected: // mode switch methods
 
-        /**
-         * The write buffer. It is used just like an
-         * intermediate between the input and the stream. Write 
-         * operations copies data from the input to this buffer 
-         * and only when the buffer is full (or in case of an explicit
-         * FlushAndResync call) the buffer is flushed on the stream.
-         * Using the buffer mode, the PutC function always use this buffer,
-         * while for Write function it is used only if the buffer is 4 times greater
-         * than the size to write.
-	 * Function BufferedStreamIOBuffer::NoMoreSpaceToRead acts
-	 * as a refill and the more confidential function Refill calls it.
-        */
-	BufferedStreamIOBuffer   	writeBuffer;
-    
-protected: // methods to be implemented by deriving classes
-
-    /**
-     * @brief Get the read buffer.
-     * @return BufferedStreamIOBuffer readBuffer pointer.
-     *
-     * This function is used by Printf and GetToken functions.
-    */
-    virtual IOBuffer *			GetInputBuffer();
-    
-    /** 
-     * @brief Get the write buffer.
-     * @return BufferedStreamIOBuffer writeBuffer pointer. 
-     *
-     * This function is used by Printf and GetToken functions.
-     */ 
-    virtual IOBuffer *			GetOutputBuffer();
-    
-protected: // methods to be implemented by deriving classes
-    
-    /** 
-     * @brief Reads data into an output buffer directly.
-     * @param buffer is the buffer where stream datas must be written
-     * @param size is the number of bytes to read.
-     * @param msecTimeout is the timeout unused here.
-     * @param complete is a flag unused here.
-     * 
-     *  As much as size byte are read, 
-     *  actual read size is returned in size. 
-     *  msecTimeout is how much the operation should last - no more.
-     *  Timeout behaviour depends on class characteristics and sync mode. 
-     *  I.E. sockets with blocking activated wait forever when noWait is used .... 
-    */
-    virtual bool        UnBufferedRead(
-                            char8*               buffer,
-                            uint32 &            size,
-                            TimeoutType         msecTimeout     = TTDefault,
-                            bool                complete        = false)=0;
-
-  
-    /** 
-     * @brief Write data from an input buffer to the stream directly.
-     * @param buffer is the buffer which contains datas to write on the stream.
-     * @param size is the number of bytes to write.
-     * @param msecTimeout is the timeout.
-     * @param complete is a flag unused here.
-     *
-     *  This function is not implemented here but depends from the derived classes.
-     *  As much as size byte are written, 
-     *  actual written size is returned in size. 
-     *  msecTimeout is how much the operation should last.
-     *  Timeout behaviour depends on class characteristics and sync mode. 
-     *  I.E. sockets with blocking activated wait forever when noWait is used .... 
-    */
-    virtual bool        UnBufferedWrite(
-                            const char8*         buffer,
-                            uint32 &            size,
-                            TimeoutType         msecTimeout     = TTDefault,
-                            bool                complete        = false)=0;
-
-    // RANDOM ACCESS INTERFACE
-
-    /** @brief Pure virtual function. The size of the stream.
-      * 
-      * Not implemented here. */
-    virtual int64       UnBufferedSize()const =0;
-
-    /** @brief Pure virtual function. Moves within the file to an absolute location.
-     *
-     * Not implemented here. */
-    virtual bool        UnBufferedSeek(int64 pos)=0;
-
-    /** @brief Pure virtual function. Returns current position.
-     *
-     * Not implemented here. */
-    virtual int64       UnBufferedPosition()const =0;
-
-    /** @brief Pure virtual function. Clip the stream size to a specified point.
-      * 
-      * Not implemented here. */
-    virtual bool        UnBufferedSetSize(int64 size)=0;
-
-    // Extended Attributes or Multiple Streams INTERFACE
-
-    /** @brief Pure virtual function. Select the stream to read from. Switching may reset the stream to the start.
-      * 
-      * Not implemented here. */
-    virtual bool        UnBufferedSwitch(uint32 n)=0;
-
-    /** @brief Pure virtual function. Select the stream to read from. Switching may reset the stream to the start.
-      * 
-      * Not implemented here. */
-    virtual bool        UnBufferedSwitch(const char8 *name)=0;
-    
-    /** @brief Pure virtual function. Remove a stream.
-      * 
-      * Not implemented here. */
-    virtual bool        UnBufferedRemoveStream(const char8 *name)=0;
- 
-    
-private: // mode switch methods
-    
-    /** 
-     * @brief Switch to the write mode.
-     * @return false if the resyncronization goes wrong.
-     *
-     *  Sets the readBufferFillAmount to 0.
-     *  Syncronize the position in the stream.
-     *  Sets the mutexWriteMode.
-     *  Does not check for mutexBuffering to be active
-    */
-    inline bool SwitchToWriteMode(){
-        if (!readBuffer.Resync()) return false;
-        operatingModes.mutexWriteMode = true;
-        operatingModes.mutexReadMode = false;
-        return true;
-    }
-    
-    /** 
-     * @brief Switch to the read mode.
-     * @return false if the flush function fails.
-     *
-     *  Flushes writeBuffer.
-     *  Resets mutexWriteMode.
-     *  Does not refill the buffer nor check the mutexBuffering is active.
-    */
-    inline bool SwitchToReadMode(){
-        if (!writeBuffer.Flush()) return false;
-        operatingModes.mutexWriteMode = false;
-        operatingModes.mutexReadMode = true; 
-        return true;
-    }
-   
-protected:
-    /**
-     * @brief Default constructor.
-     * 
-     * At the beginning the stream is monodirectional. */
-    BufferedStream() : readBuffer(this),writeBuffer(this)
-    {
-    	operatingModes.canSeek      	= false;
-    	operatingModes.mutexReadMode 	= false;
-    	operatingModes.mutexWriteMode 	= false;
+    /// default constructor
+    BufferedStream(){
     }
 
-    /** @brief Default destructor. */
+    /// default destructor
     virtual ~BufferedStream();
+
     
-    /**
-     * @brief Sets the buffers size, impose the buffered modality.
-     * @param readBufferSize is the desired size for the read buffer.
-     * @param readBufferSize is the desired size for the write buffer.
-     * @return true if the memory is allocated correctly.
-     * 
-     * If readBufferSize and writeBufferSize are minor than 8, they becomes equalt to 8.
-     * If CanRead return false readBufferSize becomes 0.
-     * If CanWrite return false writeBufferSize becomes 0.
-     * If both returns true and also CanSeek return true, the mutex mode is activated.
-     * The function calls FlushAndResync and then allocates the desired sizes for
-     * readBuffer and writeBuffer using IOBuffer::SetBufferHeapMemory.
-    */
-    virtual bool SetBufferSize(uint32 readBufferSize=0, uint32 writeBufferSize=0);
-
-public:  // special inline methods for buffering
-    
-    /** 
-     * @brief Resyncronization and flush of the buffers.
-     * @param msecTimeout is the timeout.
-     * @return true if the Resync and Flush operations for buffers goes fine.
-     *
-     * On dual separate buffering (CanSeek=false) just Flush output.
-     * On joint buffering (CanSeek= true) depending on read/write mode 
-     * either Resync or Flush. 
-     * The function BufferedStream::Resync adjusts the position on the stream
-     * after a read operation, shifted because of the Refill.
-     */
-    inline bool FlushAndResync(TimeoutType         msecTimeout     = TTDefault){
-    	// if there is something in the buffer, and canSeek it means we can and need to resync
-    	// if the buffers are separated (!canseek) than resync cannot be done
-    	if (readBuffer.UsedSize() && operatingModes.canSeek){
-    		return readBuffer.Resync();
-    	} 
-        // some data in writeBuffer
-    	// we can flush in all cases then
-    	if (writeBuffer.UsedSize() ){
-       		return writeBuffer.Flush();    		
-    	}
-    	return true;
-    }
-
-    /**
-     * @brief Simply write a character to the stream if space exist and if operatingModes allows.
-     * @param c is the character to be written on the stream.
-     * @return false in case of errors.
-     *
-     * In buffered mode uses the inline IOBuffer::PutC of writeBuffer
-     * but with the specific implementations of BufferedStreamIOBuffer.
-     */  
-    inline bool         PutC(char8 c)
-    {   	
-    	if (operatingModes.mutexReadMode) {
-    	     if (!SwitchToWriteMode()) return false;
-    	}
-    	
-        if (writeBuffer.BufferSize() > 0){
-        	return writeBuffer.PutC(c);
-        }
-        
-        uint32 size = 1;
-        return UnBufferedWrite(&c,size);
-    }    
-
-    /**
-     * @brief Simply read a character from stream.
-     * @param c is the character by reference in return.
-     * @return false in case of errors.
-     *
-     * In buffered mode uses the inline IOBuffer::GetC of readBuffer
-     * but with the specific implementations of BufferedStreamIOBuffer.
-     */
-    inline bool         GetC(char8 &c) {
-
-    	if (operatingModes.mutexWriteMode) {
-    	     if (!SwitchToReadMode()) return false;
-    	}
-
-        if (readBuffer.BufferSize() > 0){
-        	return readBuffer.GetC(c);
-        }
-        
-        uint32 size = 1;
-        return UnBufferedRead(&c,size);
-    }    
-
-public:
-    // PURE STREAMING  built upon UnBuffered version 
-
-    /** @brief Reads data from stream into buffer.
-      * @param buffer is the output memory where datas must be written.
-      * @param size is the number of bytes to read from stream.
-      * @param msecTimeout is the timeout.
-      * @param completeRead is a flag which specified is the read operation is completed.
-      * @return true if successful, false otherwise.
-      *
-      * In unbuffered mode calls UnBufferedRead function.
-      * In buffered mode reads from the readBuffer to the outpur buffer. If not all the desired
-      * size is copied, the readBuffer is refilled again if the remained size is minor than
-      * a quarter of the readBuffer size, otherwise calls UnBufferedRead which should copy
-      * directly datas from the stream to the output buffer.
-      *
-      * As much as size byte are written, actual size
-      * is returned in size. msecTimeout is how much the operation should last.
-      * Timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
-      * when noWait is used .... */
-    virtual bool         Read(
-                            char8 *              buffer,
-                            uint32 &            size,
-                            TimeoutType         msecTimeout     = TTDefault,
-                            bool                completeRead    = false);
-    // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT 
-    
-
-    /**
-     * @brief Write data from a buffer to the stream.
-     * @param buffer contains the datas to write on the stream.
-     * @param size is the desired number of bytes to write.
-     * @param msecTimeout is the timeout.
-     * @param completeWrite is a flac which specified is the write operations is completed.
-     * @return true if successful, false otherwise. 
-     *
-     * In unbuffered mode calls UnBufferedWrite function.
-     * In buffered mode writes from the input buffer to writeBuffer if the size to write is
-     * minor than a quarter of the writeBuffer size. If not all the size can be written,
-     * flushes the buffer on the stream and write the remained size on writeBuffer.
-     * Again, If the size to copy is greater than a quarter of the writeBuffer size,
-     * it flushes the writeBuffer and then calls UnBufferedWrite
-     * which should copy data from input buffer to the stream directly. 
-     *
-     * As much as size byte are written, actual size
-     * is returned in size. msecTimeout is how much the operation should last.
-     * Timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
-     *  when noWait is used .... */
-    virtual bool         Write(
-                            const char8*         buffer,
-                            uint32 &            size,
-                            TimeoutType         msecTimeout     = TTDefault,
-                            bool                completeWrite   = false);
-
-    // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT 
-
-
-    // RANDOM ACCESS INTERFACE
-
-    /** @brief The size of the stream.
-      * @return the size of the filled memory.
-      * 
-      * Calls FlushAndResync and then UnBufferedSize. */
-    virtual int64       Size() ;
-
-    /** @brief Moves within the file to an absolute location.
-      * @param pos is the absolute desired position in the stream.
-      * @return false if CanSeek returns false or in case of errors.
-      *
-      * If writeBuffer is not empty, flushes it and then calls UnBufferedSeek.
-      * If readBuffer is not empty, if the position falls in the readBuffer range calls readBuffer.Seek
-      * otherwise empties the readBuffer and calls UnBufferedSeek.  
-      */
-    virtual bool        Seek(int64 pos);
-    // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT 
-
-    /** @brief Moves within the file relative to current location.
-      * @param deltaPos is the desired relative position from the current.
-      * @return false if canSeek returns false or in case of errors.
-      *
-      * If writeBuffer is not empty, flushes it and calls UnBufferedSeek with the current position + deltaPos
-      * If readBuffer is not empty, if the final position falls in the range calls readBuffer.RelativeSeek
-      * otherwise calls UnBufferedSeek passing currentStreamPos-readBuffer.Size+readBuffer.Position+deltaPos  */
-    virtual bool        RelativeSeek(int32 deltaPos);
-    // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT 
-    
-    /** @brief Returns current position.
-      * @return the current position in the stream.
-      *
-      * Flushed the writeBuffer if it is not empty, then return currentPos-readBuffer.Size+readBuffer.Position */
-    virtual int64       Position() ;
-    // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT 
-
-    /** @brief Clip the stream size to a specified point.
-      * @param size is the new desired size for the stream.
-      *
-      * Depends on UnBufferedSetSize. */
-    virtual bool        SetSize(int64 size);
-    // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT 
-
     // MULTISTREAM INTERFACE
+    // DEFAULT IMPLEMENTATION = NO MULTISTREAM
+    
+    /**
+     * @brief Returns how many streams are available.
+     * @return 0 in this implementation. */
+    virtual uint32      NOfStreams();
 
-    /** @brief Select the stream to read from. Switching may reset the stream to the start.ù
-      * @param n is the number of the desired stream.
-      * 
-      * Depends on UnBufferedSwitch. */
+    /**
+     * @brief Select the stream to read from. Switching may reset the stream to the start.
+     * @param n is the number of the desired stream.
+     * @return false in this implementation.  */
     virtual bool        Switch(uint32 n);
 
-    /** @brief Select the stream to read from. Switching may reset the stream to the start.
-      * @param name is the name of the desired stream.
-      * 
-      * Depends on UnBufferedSwitch. */
+    /**
+     * @brief Select the stream to read from. Switching may reset the stream to the start.
+     * @param name is the name of the desired stream.
+     * @return false in this implementation. */
     virtual bool        Switch(const char8 *name);
 
-    /** @brief Remove an existing stream.
-      * @param name is the name of the stream which should be removed.
-      *
-      * Depends on UnBufferedRemoveStream.
-    */
+    /** 
+     * @brief Returns the number of the selected stream.
+     * @return 0 in this implementation.
+     */
+    virtual uint32      SelectedStream();
+
+    /**
+     * @brief The name of a stream.
+     * @param n is the number of the desired stream.
+     * @param name is the output buffer which will contains the stream name.
+     * @param nameSize is the size of the buffer.
+     * @return false in this implementation.
+     */
+    virtual bool        StreamName(uint32 n,char8 *name,int nameSize) const ;
+
+    /**
+     * @brief Add a new stream to write to.
+     * @param name is the name to be assigned to the new stream.
+     * @return false in this implementation. */
+    virtual bool        AddStream(const char8 *name);
+
+    /**  
+     * @brief Remove an existing stream.
+     * @param name is the name of the stream to remove.
+     * @return false in this implementation */
     virtual bool        RemoveStream(const char8 *name);
+    
+    
+public:  // auxiliary functions based on buffering
 
+    /**
+     * @brief Automatic cast to AnyType for a generic stream Printf. */
+    operator AnyType(){
+    	void *dataPointer = (void *)this;
+        TypeDescriptor dataDescriptor(false, Stream, 0);
+
+    	return AnyType(dataDescriptor,0,dataPointer);
+    }
+    
+    /**
+     * @brief Reads a token from the stream and writes it on the char8* buffer provided.
+     * @param terminator is a list of terminator characters.
+     * @param outputBufferSize is the maximum size of the output buffer.
+     * @param saveTerminator is the found terminator in return.
+     * @param skipCharacters is a list of characters to be skipped.
+     * @return false if no data read, true otherwise.
+     *
+     * This function is performed for buffered streams, namely streams with an IOBuffer type as read buffer.
+     * If the function GetInputBuffer returns NULL a StreamWrapperIOBuffer is created at the moment on the stack
+     * with a dimension of 64 bytes and it substitutes the absent IOBuffer.
+     *
+        Extract a token from the stream into a string data until a terminator or 0 is found.
+        Skips all skip characters, if you want to skip also terminator characters at the begging add them to skip characters.
+        Returns true if some data was read before any error or file termination. false only on error and no data available
+        The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
+        skipCharacters=NULL is equivalent to skipCharacters = terminator.
+        */
+    virtual bool        GetToken(
+                            char8 *              outputBuffer,
+                            const char8 *        terminator,
+                            uint32              outputBufferSize,
+                            char8 *              saveTerminator,
+                            const char8 *        skipCharacters);
+
+    /**
+     * @brief Reads a token from the stream and writes it on another stream.
+     * @param terminator is a list of terminator characters.
+     * @param saveTerminator is the found terminator in return.
+     * @param skipCharacters is a list of characters to be skipped.
+     * @return false if no data read, true otherwise.
+     *
+     * This function is performed for buffered streams, namely this stream should have an IOBuffer type as read buffer
+     * and the output stream an IOBuffer as write buffer.
+     * If the function GetInputBuffer returns NULL for this stream a StreamWrapperIOBuffer is created at the moment on the stack
+     * with a dimension of 64 bytes and it substitutes the absent IOBuffer for read operations.
+     * If the function GetOutputBuffer returns NULL for the output stream a StreamWrapperIOBuffer is created at the moment
+     * on the stack with a dimension of 64 bytes and it substitutes the absent IOBuffer for write operations. 
+     *
+     ** extract a token from the stream into a string data until a terminator or 0 is found.
+        Skips all skip characters, if you want to skip also terminator characters at the beginning add them to the skip characters.
+        returns true if some data was read before any error or file termination. false only on error and no data available
+        The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
+        skipCharacters=NULL is equivalent to skipCharacters = terminator
+        A character can be found in the terminator or in the skipCharacters list  in both or in none
+        0) none                 the character is copied
+        1) terminator           the character is not copied the string is terminated
+        2) skip                 the character is not copied
+        3) skip + terminator    the character is not copied, the string is terminated only if not empty
+    */
+    virtual bool        GetToken(
+    						StreamI &   output,
+                            const char8 *        terminator,
+                            char8 *              saveTerminator=NULL,
+                            const char8 *        skipCharacters=NULL);
+   
+    
+    /**
+     * @brief Skips a series of tokens delimited by terminators or 0.
+     * @param count is the number of tokens to be skipped.
+     * @param terminator is a list of terminator characters.
+     * @return false if no data read, true otherwise.
+     */
+    virtual bool        SkipTokens(
+                            uint32              count,
+                            const char8 *        terminator);
+
+      
+    //  Methods to convert and print numbers and other objects 
+    
+    /**
+     * @brief Very powerful function to handle data conversion into a stream of characters.
+     * @param par is the element to be printed.
+     * @param fd is the desired printf like format.
+     * @return depends by par type and on the functions called for its conversion to printable characters.
+     *
+     * The class AnyType provides a void* pointer and a descriptor of the element type. Besides the descriptor
+     * (integer, float32, const char8 string, ecc), the right function is called passing the stream and the element
+     * and it prints the element on the stream converting it in characters.
+     * For more informations on AnyType class @see AnyType.h, for more informations on the format descriptor
+     * @see FormatDescriptor.h
+    */
+    virtual bool 		Print(const AnyType& par,FormatDescriptor fd=standardFormatDescriptor);
+
+    /** 
+     * @brief Prints a list of elements looking to a specified format.
+     * @param format is a printf like string format.
+     * @param pars is a list of elements to be printed.
+     * @see Print.
+     *
+         Pars is a vector terminated by voidAnyType value.
+         Format follows the TypeDescriptor::InitialiseFromString.
+         Prints all data pointed to by pars.
+    */
+    virtual bool 		PrintFormatted(const char8 *format, const AnyType pars[]);
+
+    /**
+     * @brief Copies a const char8* into this stream from current position.
+     * @param buffer is the buffer to be copied on the stream.
+     * @return the result of the Write operation which depends on derived classes implementation.
+    */
+    virtual bool 		Copy(const char8 *buffer);
+
+    /**
+     * @brief Copies from stream current Position to end.
+     * @param stream is the stream to be copied on this stream.
+     * @param return false if the results of Read and Write streams operations fails.
+    */
+    virtual bool 		Copy(StreamI &stream);
+    
+    
 };
-
 }
-
 
 #endif

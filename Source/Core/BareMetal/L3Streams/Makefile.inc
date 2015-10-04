@@ -24,10 +24,16 @@
 #
 #############################################################
 
-OBJSX=CharBuffer.x IOBuffer.x \
-BufferedStream.x BufferedStreamIOBuffer.x \
-StreamWrapperIOBuffer.x Streamable.x StreamStringIOBuffer.x  StreamString.x \
-StreamMemoryReference.x MemoryReferenceIOBuffer.x
+OBJSX=CharBuffer.x \
+    IOBuffer.x \
+    BufferedStream.x \
+    DoubleBufferedStream.x \
+    BufferedStreamIOBuffer.x \
+    StreamWrapperIOBuffer.x \
+    StreamStringIOBuffer.x \
+    StreamString.x \
+    StreamMemoryReference.x \
+    MemoryReferenceIOBuffer.x
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

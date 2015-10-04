@@ -52,7 +52,7 @@
 #include "HeapManager.h"
 #include "CharBuffer.h"
 #include "StreamStringIOBuffer.h"
-#include "Streamable.h"
+#include "BufferedStream.h"
 #include "TimeoutType.h"
 #include "StringHelper.h"
 #include "AnyType.h"
@@ -61,7 +61,7 @@ namespace MARTe{
 
 
 /** @brief StreamString class. */
-class StreamString: public Streamable {
+class StreamString: public BufferedStream {
 
 private:    
 

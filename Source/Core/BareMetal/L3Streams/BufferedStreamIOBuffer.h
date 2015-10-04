@@ -59,7 +59,7 @@ public:
      * @brief Default constructor.
      * @param[in] s is a pointer to the stream which uses this buffer.
      */
-    BufferedStreamIOBuffer(BufferedStream *s);
+    BufferedStreamIOBuffer(StreamI *s);
 
     /**
      * @brief Refills the buffer reading from the stream.
@@ -115,7 +115,7 @@ private:
     /**
      * The stream that uses this buffer
      */
-    BufferedStream *stream;
+    StreamI *stream;
 
 };
 

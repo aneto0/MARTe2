@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "BufferedStream.h"
+#include "DoubleBufferedStream.h"
 #include "BufferedStreamIOBuffer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,7 +40,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-BufferedStreamIOBuffer::BufferedStreamIOBuffer(BufferedStream *s) {
+BufferedStreamIOBuffer::BufferedStreamIOBuffer(StreamI *s) {
     stream = s;
 }
 
@@ -56,7 +56,7 @@ bool BufferedStreamIOBuffer::Resync(TimeoutType msecTimeout) {
     // adjust seek position
     // in read mode the actual stream
     // position is to the character after the buffer end
-    if (!stream->UnBufferedSeek(stream->UnBufferedPosition() - deltaToEnd)) {
+    if (!stream->Seek(stream->Position() - deltaToEnd)) {
         Empty();
         return false;
     }
@@ -77,7 +77,7 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead(TimeoutType msecTimeout) {
 
     uint32 readSize = MaxUsableAmount();
 
-    if (stream->UnBufferedRead(BufferReference(),readSize)) {
+    if (stream->Read(BufferReference(),readSize)) {
         SetUsedSize(readSize);
         return true;
     }
@@ -96,7 +96,7 @@ bool BufferedStreamIOBuffer::NoMoreSpaceToWrite(uint32 neededSize,
     uint32 writeSize = UsedSize();
 
     // write
-    if (!stream->UnBufferedWrite(Buffer(),writeSize,msecTimeout,true)) {
+    if (!stream->Write(Buffer(),writeSize,msecTimeout,true)) {
         return false;
     }
 

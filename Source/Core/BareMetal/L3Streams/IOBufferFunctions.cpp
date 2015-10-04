@@ -43,7 +43,7 @@
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
 #include "IOBuffer.h"
-#include "StreamInterface.h"
+#include "StreamI.h"
 
 namespace MARTe {
 

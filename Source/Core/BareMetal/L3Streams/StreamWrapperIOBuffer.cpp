@@ -41,13 +41,13 @@
 
 namespace MARTe {
 
-StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamInterface *s,
+StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamI *s,
                       uint32 size) {
     stream = s;
     SetBufferHeapMemory(size);
 }
 
-StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamInterface *s,
+StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamI *s,
                       char8 *buffer,
                       uint32 size) {
     stream = s;

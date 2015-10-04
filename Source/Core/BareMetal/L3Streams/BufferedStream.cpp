@@ -23,302 +23,236 @@
 **/
 
 #include "BufferedStream.h"
-#include "ErrorManagement.h"
+#include "AdvancedErrorManagement.h"
 #include "StringHelper.h"
+#include "IOBufferFunctions.h"
+#include "StreamWrapperIOBuffer.h"
 namespace MARTe{
+
 
 /// default destructor
 BufferedStream::~BufferedStream(){
+}
 
-//	writeBuffer.Flush();
+/** how many streams are available */
+uint32 BufferedStream::NOfStreams() { return 0; }
+
+/** select the stream to read from. Switching may reset the stream to the start. */
+bool BufferedStream::Switch(uint32 n){ return false; }
+
+/** select the stream to read from. Switching may reset the stream to the start. */
+bool BufferedStream::Switch(const char8 *name){ return false; }
+
+/** how many streams are available */
+uint32 BufferedStream::SelectedStream(){ return 0; }
+
+/** the name of the stream we are using */
+bool BufferedStream::StreamName(uint32 n,char8 *name,int nameSize)const { return false; }
+
+/**  add a new stream to write to. */
+bool BufferedStream::AddStream(const char8 *name){ return false; }
+
+/**  remove an existing stream . */
+bool BufferedStream::RemoveStream(const char8 *name){ return false; }
+
+
+/** extract a token from the stream into a string data until a terminator or 0 is found.
+    Skips all skip characters and those that are also terminators at the beginning
+    returns true if some data was read before any error or file termination. false only on error and no data available
+    The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
+    skipCharacters=NULL is equivalent to skipCharacters = terminator
+    {BUFFERED}    */
+bool BufferedStream::GetToken(
+                            char8 *              outputBuffer,
+                            const char8 *        terminator,
+                            uint32              outputBufferSize,
+                            char8 *              saveTerminator,
+                            const char8 *        skipCharacters){
+
+	// retrieve stream mechanism
+	IOBuffer *inputIOBuffer = GetInputBuffer();
+	if (inputIOBuffer == NULL){
+		char8 stackBuffer[64];
+		StreamWrapperIOBuffer inputIOBuffer (this,stackBuffer,sizeof (stackBuffer));
+
+		bool ret = GetTokenFromStream(inputIOBuffer, outputBuffer,terminator,outputBufferSize,saveTerminator,skipCharacters);
+
+		return ret;
+	}
+
+	return GetTokenFromStream(*inputIOBuffer, outputBuffer,terminator,outputBufferSize,saveTerminator,skipCharacters);
 }
 
 
-bool BufferedStream::SetBufferSize(uint32 readBufferSize, uint32 writeBufferSize){
+/** extract a token from the stream into a string data until a terminator or 0 is found.
+    Skips all skip characters and those that are also terminators at the beginning
+    returns true if some data was read before any error or file termination. false only on error and no data available
+    The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
+    skipCharacters=NULL is equivalent to skipCharacters = terminator
+    {BUFFERED}
+    A character can be found in the terminator or in the skipCharacters list  in both or in none
+    0) none                 the character is copied
+    1) terminator           the character is not copied the string is terminated
+    2) skip                 the character is not copied
+    3) skip + terminator    the character is not copied, the string is terminated if not empty
+*/
+bool BufferedStream::GetToken(
+							StreamI &   output,
+                            const char8 *        terminator,
+                            char8 *              saveTerminator,
+                            const char8 *        skipCharacters){
 
-    operatingModes.canSeek = CanSeek(); 
+	// retrieve stream mechanism
+	IOBuffer *inputIOBuffer   = GetInputBuffer();
+	IOBuffer *outputIOBuffer  = output.GetOutputBuffer();
+
+	bool ret = false;
+
+	if (inputIOBuffer == NULL){
+		char8 stackBuffer[64];
+		//create a buffer on the stack as the read buffer.
+		StreamWrapperIOBuffer inputIOBufferS (this,stackBuffer,sizeof (stackBuffer));
+		inputIOBuffer   = &inputIOBufferS;
+
+		if (outputIOBuffer == NULL){
+			char8 stackBuffer[64];
+			//create a buffer on the stack as the write buffer
+			StreamWrapperIOBuffer outputIOBufferS (&output,stackBuffer,sizeof (stackBuffer));
+			outputIOBuffer   = &outputIOBufferS;
+
+			ret = GetTokenFromStream(*inputIOBuffer, *outputIOBuffer,terminator,saveTerminator,skipCharacters);
+
+
+		} else {
+			ret = GetTokenFromStream(*inputIOBuffer, *outputIOBuffer,terminator,saveTerminator,skipCharacters);
+		}
+	} else {
+
+		if (outputIOBuffer == NULL){
+			char8 stackBuffer[64];
+			//create a buffer on the stack as write buffer.
+			StreamWrapperIOBuffer outputIOBufferS (&output,stackBuffer,sizeof (stackBuffer));
+			outputIOBuffer = &outputIOBufferS;
+
+			ret = GetTokenFromStream(*inputIOBuffer, *outputIOBuffer,terminator,saveTerminator,skipCharacters);
+
+		} else {
+
+			ret = GetTokenFromStream(*inputIOBuffer, *outputIOBuffer,terminator,saveTerminator,skipCharacters);
+		}
+	}
+
+	return ret;
+}
 	
-    // mutex mode is enabled if CanSeek and both can Read and Write
-	// in that case the stream is single and bidirectional
-    if (CanSeek() && CanWrite() && CanRead()) {
-    	operatingModes.mutexWriteMode = true;
-	    operatingModes.mutexReadMode = false;
-    }    	
-    
-    // minimum size = 8
-    if (readBufferSize < 8)  readBufferSize  = 8;
-    if (writeBufferSize < 8) writeBufferSize = 8;
-    
-    // do not allocate if not necessary
-    if (!CanRead())  readBufferSize = 0;   
-    if (!CanWrite()) writeBufferSize = 0;   
 
-    // dump any data in the write Queue
-    if (!FlushAndResync()) return false;
-    
-    // adjust readBufferSize
-    readBuffer.SetBufferSize(readBufferSize);
+/** to skip a series of tokens delimited by terminators or 0
+    {BUFFERED}    */
+bool BufferedStream::SkipTokens(
+                            uint32              count,
+                            const char8 *        terminator){
 
-    // adjust writeBufferSize
-    writeBuffer.SetBufferSize(writeBufferSize);
-    
-    return true;
+	// retrieve stream mechanism
+	IOBuffer *inputBuffer = GetInputBuffer();
+	if (inputBuffer == NULL){
+		char8 stackBuffer[64];
+		StreamWrapperIOBuffer inputBuffer (this,stackBuffer,sizeof (stackBuffer));
+
+		return SkipTokensInStream(inputBuffer,count,terminator);
+	}
+	
+	return SkipTokensInStream(*inputBuffer,count,terminator);
 }
 
-///
-IOBuffer *BufferedStream::GetInputBuffer() {
-    if (operatingModes.mutexWriteMode) {
-       if (!SwitchToReadMode()) return NULL;
-    }
-	return &readBuffer;
+bool BufferedStream::Print(const AnyType& par,FormatDescriptor fd){
+
+	// retrieve stream mechanism
+	IOBuffer *outputBuffer = GetOutputBuffer(); 
+	if (outputBuffer == NULL){
+		char8 stackBuffer[64];		
+		StreamWrapperIOBuffer outputBuffer (this,stackBuffer,sizeof (stackBuffer));
+
+		return PrintToStream(outputBuffer,par,fd);
+	}
+		
+	return PrintToStream(*outputBuffer,par,fd);
 }
 
-///
-IOBuffer *BufferedStream::GetOutputBuffer() {
-    // check for mutually exclusive buffering and 
-    // whether one needs to switch to WriteMode
-    if (operatingModes.mutexReadMode) {
-       if (!SwitchToWriteMode()) return NULL;
-    }
+bool BufferedStream::PrintFormatted(const char8 *format, const AnyType pars[]){
 
-    return &writeBuffer;
+	// retrieve stream mechanism
+	// the output buffer is flushed in streamable.
+	IOBuffer *outputBuffer = GetOutputBuffer(); 
+	if (outputBuffer == NULL){
+		char8 stackBuffer[64];
+		StreamWrapperIOBuffer outputBuffer (this,stackBuffer,sizeof (stackBuffer));
+		
+		return PrintFormattedToStream(outputBuffer,format,pars);
+		
+	}
+	return PrintFormattedToStream(*outputBuffer,format,pars);
 }
 
 
-bool BufferedStream::Read(
-                        char8 *              buffer,
-                        uint32 &            size,
-                        TimeoutType         msecTimeout,
-                        bool                completeRead){
-    // check for mutually exclusive buffering and 
-    // whether one needs to switch to ReadMode
-    if (operatingModes.mutexWriteMode) {
-       if (!SwitchToReadMode()) return false;
-    }
+/**
+ * copies a const char8* into this stream from current position
+*/
+bool BufferedStream::Copy(const char8 *buffer){
+	if (buffer == NULL){
+		return false;
+	}
+	
+	uint32 len = (uint32 )StringHelper::Length(buffer);
 
-    // check whether we have a buffer
-    if (readBuffer.BufferSize() > 0){ 
-
-        // read from buffer first
-        uint32 toRead = size;
-    	
-        // try once 
-        readBuffer.Read(buffer, size);
-    	
-    	if (size == toRead ){
-    		return true;
-    	} else {  // partial only so continue
-    		
-    		// adjust toRead
-    		toRead -= size;
-    		
-    		// decide whether to use the buffer again or just to read directly
-    		if ((toRead*4) < readBuffer.MaxUsableAmount()){
-    			if (!readBuffer.Refill()) return false;
-    			
-    			readBuffer.Read(buffer+size, toRead);
-    			size += toRead;
-    			
-    			// should have completed
-    			// as our buffer is at least 4x the need
-    			return true;
-    			
-    		} else {
-                // if needed read directly from stream
-                if (!UnBufferedRead(buffer+size,toRead,msecTimeout)) return false;
-                size += toRead;
-    			return true;
-    		}
-    	} 
-    }
-    	
-   // if needed read directly from stream
-   return UnBufferedRead(buffer,size,msecTimeout);
+	return Write(buffer,len,TTDefault,true);
 }
-  
-    
-/** Write data from a buffer to the stream. As much as size byte are written, actual size
-    is returned in size. msecTimeout is how much the operation should last.
-    timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
-    when noWait is used .... */
-bool BufferedStream::Write(
-                        const char8*         buffer,
-                        uint32 &            size,
-                        TimeoutType         msecTimeout ,
-                        bool                completeWrite)
-{
 
-    // check for mutually exclusive buffering and 
-    // whether one needs to switch to WriteMode
-    if (operatingModes.mutexReadMode) {
-       if (!SwitchToWriteMode()) return false;
-    }
-    
-    // buffering active?
-    if (writeBuffer.BufferSize() > 0){
-    	// separate input and output size
-    	
-    	uint32 toWrite = size;
-    	// check available buffer size versus write size 
-        // if size is comparable to buffer size there 
-        // is no reason to use the buffering mechanism
-        if (writeBuffer.MaxUsableAmount() > (4 *size)){
-        	
-        	// try writing the buffer
-        	writeBuffer.Write(buffer, size);
-        	
-        	// all done! space available! 
-        	if (size == toWrite) return true;
-        	
-        	// make space
-        	if (!writeBuffer.Flush()) return false;
+/**
+ * copies from stream current Position to end
+*/
+bool BufferedStream::Copy(StreamI &stream){
 
-        	toWrite -= size;
-        	uint32 leftToWrite = toWrite;
-        	
-        	// try writing the buffer
-        	writeBuffer.Write(buffer+size, leftToWrite);
+	char8 buffer[256];
+	uint32 size = sizeof(buffer);
 
-        	size+= leftToWrite;
-        	
-        	// should have been able to fill in it!!!
-        	if (leftToWrite != toWrite) return false;
-        	return true;               
-        } else {
-        	// write the buffer so far
-        	if (!writeBuffer.Flush()) return false;
-        }
-        
-    }
-    return UnBufferedWrite(buffer,size,msecTimeout);
+	//read in buffer
+	bool ret = stream.Read(buffer,size);
+	while ((ret) && (size > 0)){
 
+		//write in buffer
+		ret = Write(buffer,size,TTDefault,true);
+	        //in case of ret false don't write again
+         	size = 0;
+
+		//if successful, read again and size becomes zero if
+                //there is no more data to read
+		if (ret){
+			size = sizeof(buffer);
+			ret = stream.Read(buffer,size);
+		}
+	}
+	//if exit because ret is false
+        //something was read in buffer
+	if (size > 0){
+		//write on the stream
+		//ret = ret && Write(buffer,size,TTDefault,true);
+	        Write(buffer,size,TTDefault,true);
+	//	size = 0;
+	}
+	
+	return ret;
+	
 } 
 
-/** The size of the stream */
-int64 BufferedStream::Size() {
-	// just commit all pending changes if any
-	// so stream size will be updated     	
-	FlushAndResync();
-	// then call Size from unbuffered stream 
-	return UnBufferedSize(); 
+
+
 }
 
 
-/** Moves within the file to an absolute location */
-bool BufferedStream::Seek(int64 pos)
-{
-	// no point to go here if cannot seek
-    if (!operatingModes.canSeek) return false;
-    
-    // if write mode on then just flush out data
-    // then seek the stream
-    if (writeBuffer.UsedSize() > 0){
-    	writeBuffer.Flush();
-    } else {
-    	// if read buffer has some data, check whether seek can be within buffer
-        if (readBuffer.UsedSize() > 0){
-    		int64 currentStreamPosition = UnBufferedPosition();
-    		int64 bufferStartPosition = currentStreamPosition - readBuffer.UsedSize();
-    		
-    		// if within range just update readBufferAccessPosition
-    		if ((pos >= bufferStartPosition) &&
-                    (pos < currentStreamPosition)){
-    			readBuffer.Seek(pos - bufferStartPosition);
-		
-   			return true;
-    		} else { // otherwise mark read buffer empty and proceed with normal seek
-    			readBuffer.Empty();
-    			// continues at the end of the function
-    		}
-    	}       	
-    }
-	
-	return UnBufferedSeek(pos);
-}
-
-/** Moves within the file relative to current location */
-bool  BufferedStream::RelativeSeek(int32 deltaPos){
-    if (deltaPos == 0) return true;
-    if (!operatingModes.canSeek) return false;
-    
-     // if write mode on then just flush out data
-    if (writeBuffer.UsedSize() > 0){
-    	// this will move the stream pointer ahead to the correct position
-    	writeBuffer.Flush();
-    } else {
-
-	//save the current position because in case of out of range
-        //the position becomes one of the buffer bounds.
-	int64 currentPos=readBuffer.Position();
-
-    	// on success it means we are in range
-    	if (readBuffer.RelativeSeek(deltaPos)){
-    		// no need to move stream pointer
-    		return true;
-    	}
-    	// out of buffer range
-		// adjust stream seek poistion to account for actual read buffer usage
-		deltaPos -= (readBuffer.UsedSize()-currentPos);
-		
-		// empty buffer
-		readBuffer.Empty();
-    	
-    }
-
-    // seek 
-	return UnBufferedSeek( UnBufferedPosition() + deltaPos);
-}    
-
-/** Returns current position */
-int64 BufferedStream::Position() {
-	// cannot seek
-    if (!operatingModes.canSeek) return -1;
-    
-    // if write mode on then just flush out data
-    if (writeBuffer.UsedSize() > 0){
-    	return UnBufferedPosition() + writeBuffer.Position();
-    }
-
-    return UnBufferedPosition() - readBuffer.UsedSize() + readBuffer.Position();
-}
-
-/** Clip the stream size to a specified point */
-bool BufferedStream::SetSize(int64 size)
-{
-    if (!operatingModes.canSeek) return false;
-    
-    // commit all changes
-    FlushAndResync();
-    
-    return UnBufferedSetSize(size);
-}
 
 
-/** select the stream to read from. Switching may reset the stream to the start. */
-bool BufferedStream::Switch(uint32 n)
-{
-    // commit all changes
-    FlushAndResync();
-	return UnBufferedSwitch(n);
-}
 
-/** select the stream to read from. Switching may reset the stream to the start. */
-bool BufferedStream::Switch(const char8 *name)
-{
-    // commit all changes
-    FlushAndResync();
-    return UnBufferedSwitch(name);
-}
 
-/**  remove an existing stream .
-    current stream cannot be removed 
-*/
-bool BufferedStream::RemoveStream(const char8 *name)
-{
-    // commit all changes
-    FlushAndResync();
-    return UnBufferedRemoveStream(name);
-}
 
-}
+
 

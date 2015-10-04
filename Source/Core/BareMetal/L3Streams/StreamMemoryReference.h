@@ -37,14 +37,14 @@
 
 #include "GeneralDefinitions.h"
 #include "MemoryReferenceIOBuffer.h"
-#include "Streamable.h"
+#include "BufferedStream.h"
 #include "TimeoutType.h"
 namespace MARTe{
 
 /**
     @brief A basic implementation of a stream which allows reading and writing to a memory location
 */
-class StreamMemoryReference: public Streamable {
+class StreamMemoryReference: public BufferedStream {
 
 private:    
 

@@ -1,5 +1,5 @@
+#include "../../../../Source/Core/BareMetal/L3Streams/DoubleBufferedStream.h"
 #include "StreamString.h"
-#include "BufferedStream.h"
 #include "MemoryOperationsHelper.h"
 #include "StreamWrapperIOBuffer.h"
 #define MAX_STREAM_DIMENSION 512

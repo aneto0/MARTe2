@@ -2,34 +2,34 @@
  * Copyright 2011 EFDA | European Fusion Development Agreement
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they 
-   will be approved by the European Commission - subsequent  
-   versions of the EUPL (the "Licence"); 
+   will be approved by the European Commission - subsequent
+   versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the 
-   Licence. 
+   Licence.
  * You may obtain a copy of the Licence at: 
  *  
  * http://ec.europa.eu/idabc/eupl
  *
  * Unless required by applicable law or agreed to in 
-   writing, software distributed under the Licence is 
-   distributed on an "AS IS" basis, 
+   writing, software distributed under the Licence is
+   distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-   express or implied. 
+   express or implied.
  * See the Licence for the specific language governing 
-   permissions and limitations under the Licence. 
+   permissions and limitations under the Licence.
  *
- * $Id: StreamInterface.h 3 2012-01-15 16:26:07Z aneto $
+ * $Id: StreamI.h 3 2012-01-15 16:26:07Z aneto $
  *
 **/
 
 /** 
- * @file StreamInterface.h 
+ * @file StreamI.h
  * @brief The base interface for the streams
  *
  * Defines the prototipes of a generic stream class.
  */
-#ifndef STREAM_INTERFACE_H
-#define STREAM_INTERFACE_H
+#ifndef STREAMI_H
+#define STREAMI_H
 
 #include "TimeoutType.h"
 #include "AnyType.h"
@@ -39,25 +39,25 @@ namespace MARTe{
 
 
 /** @brief A more abstract version of Streamable. It is used to allow referring to streams at lower levels */
-class StreamInterface{
+class StreamI {
 //friend class Streamable;
 public:
 // BUFFERED STREAMING 
     /**
      * @brief Pure virtual method. Get the read buffer.
-     * @return a pointer to the read buffer. */ 
+     * @return a pointer to the read buffer. */
     virtual IOBuffer *GetInputBuffer() = 0;
 
     /**
      * @brief Pure virtual method. Get the write buffer.
      * @return a pointer to the write buffer. */
     virtual IOBuffer *GetOutputBuffer() = 0;
-	
+
 public:
     /** @brief Default destructor */
-    virtual             ~StreamInterface(){};
+    virtual             ~StreamI(){};
 
-public: 
+public:
 
     // PURE STREAMING (UNBUFFERED)
 
@@ -70,16 +70,16 @@ public:
      *
      * The behavior depends by derived classes implementation. 
      * 
-        Reads data into buffer. 
-        As much as size byte are read, 
+        Reads data into buffer.
+        As much as size byte are read,
         actual read size is returned in size. (unless complete = true)
-        msecTimeout is how much the operation should last - no more - if not any (all) data read then return false  
+        msecTimeout is how much the operation should last - no more - if not any (all) data read then return false
         timeout behaviour depends on class characteristics and sync mode.
         return false implies failure to comply with minimum requirements:
         timeout and complete and data read  != size
         timeout and data read == 0
-        error in the stream  ==> no point to try again      
-        parameters error, for instance buffer = NULL 
+        error in the stream  ==> no point to try again
+        parameters error, for instance buffer = NULL
     */
     virtual bool        Read(
                             char8*               buffer,
@@ -96,16 +96,16 @@ public:
      *
      * The behavior depends by derived classes implementation. 
      *
-        Write data from a buffer to the stream. 
-        As much as size byte are written, 
-        actual written size is returned in size. 
+        Write data from a buffer to the stream.
+        As much as size byte are written,
+        actual written size is returned in size.
         msecTimeout is how much the operation should last.
-        timeout behaviour depends on class characteristics and sync mode. 
+        timeout behaviour depends on class characteristics and sync mode.
         return false implies failure to comply with minimum requirements:
         timeout and complete and data written  != size
         timeout and data written == 0
-        error in the stream ==> no point to try again       
-        parameters error, for instance buffer = NULL 
+        error in the stream ==> no point to try again
+        parameters error, for instance buffer = NULL
     */
     virtual bool        Write(
                             const char8*         buffer,
@@ -122,7 +122,7 @@ public:
      * @brief Pure virtual function. Defines if read operations can be performed on the stream.
      * @return return value depends from derived classes implementation. */
     virtual bool        CanRead()const =0;
-        
+
     /**
      * @brief Writes a character on the stream.
      * @param c is the character to write on the stream.
@@ -145,7 +145,7 @@ public:
     inline bool         GetC(char8 &c) {
     	uint32 size = 1;
     	return Read(&c,size);
-    	
+
     }
 
     // SYNCHRONISATION INTERFACE
@@ -157,19 +157,19 @@ public:
      * Anyway since the method is virtual, it could be implemented differently in
      * the derived classes.
      *
-       whether it can wait to complete operation 
-       or in absence of data or buffer space the 
-       operation terminates immediately       
-       msecTimeout is used to limit the blocking time 
+       whether it can wait to complete operation
+       or in absence of data or buffer space the
+       operation terminates immediately
+       msecTimeout is used to limit the blocking time
        when blocking is active. It is not used otherwise - unless
-       complete is set in which case the operation is tried multiple 
-       times each after fixed interval (set as timeout/10 or 1ms min) 
-       This implies that class implementations of Read and Write 
+       complete is set in which case the operation is tried multiple
+       times each after fixed interval (set as timeout/10 or 1ms min)
+       This implies that class implementations of Read and Write
        might have to involve a select call or something similar
-       for classes light String blocking has no meaning.        
+       for classes light String blocking has no meaning.
     */
     virtual bool        CanBlock(){ return false; };
-    
+
     /** 
      * @brief Sets or unsets the blocking mode.
      * @param flag is a flag.
@@ -191,13 +191,13 @@ public:
      * @param pos is the desired absolute position.
      * @return return value depends on derived classes implementation. */
     virtual bool        Seek(int64 pos) = 0;
-    
+
     /** 
      * @brief Pure virtual method. Moves within the file relative to current location.
      * @param deltaPos is the gap from the current position.
      * @return return value depends on derived classes implementation. */
     virtual bool        RelativeSeek(int32 deltaPos)=0;
-    
+
     /**
      * @brief Pure virtual method. Returns current position.
      * @return the current position in the stream. */
@@ -303,7 +303,7 @@ public:
         3) skip + terminator    the character is not copied, the string is terminated if not empty
     */
     virtual bool        GetToken(
-    		                StreamInterface &  	output,
+    		                StreamI &  	output,
                             const char8 *        terminator,
                             char8 *              saveTerminator=NULL,
                             const char8 *        skipCharacters=NULL)=0;
@@ -316,7 +316,7 @@ public:
     virtual bool        SkipTokens(
                             uint32              count,
                             const char8 *        terminator)=0;
-  
+
     /**
      * @brief Inline method which use pure virtual GetToken. Extract a line and write it on a char8* buffer.
      * @param outputBuffer is the buffer where de line must be written.
@@ -342,7 +342,7 @@ public:
      * @param skipTerminators defines if the \r char8 should be skipped (true) or not (false).
      * @return depends on the derived classes implementation.  */
     inline bool 		GetLine(
-    						StreamInterface &  	output,
+    						StreamI &  	output,
     						bool 				skipTerminators=true){
         const char8 *skipCharacters = "\r";
 #if defined (_WIN32)
@@ -351,8 +351,8 @@ public:
         if (!skipTerminators) skipCharacters = "";
 #endif
         return GetToken(output,"\n",NULL,skipCharacters);
-    }    
-    
+    }
+
     /**
      * @brief Pure virtual method. Prints a generic type in a specified format looking at the format descriptor.
      * @param par a generic type to print.
@@ -365,11 +365,11 @@ public:
      * @brief Pure virtual method. Prints a list of types in a specified format.
      * @param format is the printf like desired format.
      * @param pars is a list of types to be printed.
-     * @return true if successful, false otherwise. 
+     * @return true if successful, false otherwise.
     */
     virtual bool 		PrintFormatted(const char8 *format, const AnyType pars[])=0;
 
-    /** 
+    /**
      * @brief PrintFormatted with only one element to print.
      * @param format is the desired printf like format.
      * @param par1 is the element to be printed.
@@ -379,16 +379,16 @@ public:
     	AnyType pars[2] = { par1,voidAnyType};
     	return PrintFormatted(format, pars);
     }
-    
-    /** 
+
+    /**
      * @see Printf with two elements to print.
     */
     inline bool 		Printf(const char8 *format, const AnyType& par1, const AnyType& par2){
-    	AnyType pars[3] = { par1,par2,voidAnyType}; 
+    	AnyType pars[3] = { par1,par2,voidAnyType};
     	return PrintFormatted(format, pars);
     }
 
-    /** 
+    /**
      * @see Printf with three elements to print.
     */
     inline bool 		Printf(const char8 *format, const AnyType& par1, const AnyType& par2, const AnyType& par3){
@@ -416,7 +416,7 @@ public:
      * @param stream is the stream which must be copied in this stream.
      * @return depends on the derived classes implementation. 
     */
-    virtual bool 		Copy(StreamInterface &stream) = 0; 
+    virtual bool 		Copy(StreamI &stream) = 0;
     
 };
 }

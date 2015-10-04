@@ -32,7 +32,7 @@
 #ifndef BUFFERED_STREAM_TEST_H
 #define BUFFERED_STREAM_TEST_H
 
-#include "BufferedStream.h"
+#include "../../../../Source/Core/BareMetal/L3Streams/DoubleBufferedStream.h"
 #include "FormatDescriptor.h"
 using namespace MARTe;
 
