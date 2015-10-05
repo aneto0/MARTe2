@@ -269,7 +269,7 @@ public:
      * @param[in] buffer contains the data to be written write in this buffer.
      * @param[in] size is the number of bytes to be copied.
      */
-    virtual void Write(const char8 * const buffer,
+    virtual bool Write(const char8 * const buffer,
                        uint32 &size);
 
     /**
@@ -286,7 +286,7 @@ public:
      * @param[out] buffer is the output buffer where data must be written.
      * @param[in] size is the number of bytes to be read.
      */
-    void Read(char8 * const buffer,
+    bool Read(char8 * const buffer,
               uint32 &size);
 
 protected:
