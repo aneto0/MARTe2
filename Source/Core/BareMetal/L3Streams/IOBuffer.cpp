@@ -172,7 +172,7 @@ bool IOBuffer::NoMoreSpaceToWrite() {
     return false;
 }
 
-bool IOBuffer::NoMoreSpaceToWrite(uint32 neededSize) {
+bool IOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
     return NoMoreSpaceToWrite();
 }
 
@@ -204,7 +204,7 @@ bool IOBuffer::Resync(const TimeoutType msecTimeout) {
  * before calling check that positionPtr is not NULL
  * can be overridden to allow resizeable buffers
  */
-void IOBuffer::Write(const char8 * const buffer,
+bool IOBuffer::Write(const char8 * const buffer,
                      uint32 &size) {
     if (internalBuffer.CanWrite()) {
 

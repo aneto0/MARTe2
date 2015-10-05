@@ -36,6 +36,7 @@
 #include "HeapManager.h"
 #include "CharBuffer.h"
 #include "IOBuffer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -49,64 +50,58 @@ namespace MARTe {
  * the string requirements, namely allocating new space when the buffer is full in case of write operations.
  *
  * @details For memory allocations it adds one to the desired size passed by argument and sets reservedSpaceAtEnd = 1 for the
- * final \0 character.
+ * final '\0' character.
  */
 class StreamStringIOBuffer: public IOBuffer {
 
 public:
 
-
     /**
      * @brief Default constructor
+     * @pre true
+     * @post this->granularity == 0xFFFFFFC0U
      */
     StreamStringIOBuffer();
 
-
-    StreamStringIOBuffer(uint32 granularity);
+    /**
+     * @brief Constructor specifying granularity
+     * @pre true
+     * @post this->granularity == granularity
+     */
+    StreamStringIOBuffer(const uint32 granularity);
 
     /**
-     * @brief Default destructor.
+     * @brief Destructor.
      */
     virtual ~StreamStringIOBuffer();
 
     /**
-     * @brief Sets the size of the buffer to be desiredSize or greater up next granularity.
-     *
+     * @brief Sets the size of the buffer to be desiredSize.
      * @details Truncates stringSize to desiredSize-1.\n
      * Calls IOBuffer::SetBufferHeapMemory with desiredSize+1 and reservedSpaceAtEnd=1.
-     *
-     * @param[in] desiredSize is the desired size to allocate without considering the final \0.
-     * @param[in] allocationGranularityMask defines the desired granularity (see CharBuffer::SetBufferAllocationSize), default is granularity=64 bytes.
+     * @param[in] desiredSize is the desired size to allocate without considering the final '\0'.
      * @return false in case of errors in the allocation.
      */
-    virtual bool SetBufferAllocationSize(uint32 desiredSize);
+    virtual bool SetBufferAllocationSize(const uint32 desiredSize);
 
-public:
     /**
-     * @brief If the buffer is full this function is called to allocate new memory.
-     *
-     * @details This function calls SetBufferAllocationSize passing neededSize.
-     *
-     * @param[in] neededSize is the desired size to allocate.
-     * @param[in] msecTimeout is the timeout not used here.
-     * @return false in case of errors in the memory allocation.
+     * @see IOBuffer::Write(const char8 * const, uint32&)
+     */
+    virtual bool Write(const char8 * const buffer,
+                       uint32 &size);
+
+protected:
+
+    /**
+     * @brief Calls NoMoreSpaceToWrite(1U)
+     * @see IOBuffer::NoMoreSpaceToWrite()
      */
     virtual bool NoMoreSpaceToWrite();
 
-
-    virtual bool NoMoreSpaceToWrite(uint32 neededSize);
-
     /**
-     * @brief Copies buffer the end of writeBuffer.
-     *
-     * @details If the current buffer size is not enough a new portion of memory
-     * will be dynamically allocated.
-     *
-     * @param[in] buffer contains data to be written.
-     * @param[in] size is the desired number of bytes to copy.
+     * @see IOBuffer::NoMoreSpaceToWrite(const uint32)
      */
-    virtual void Write(const char8 *buffer,
-                       uint32 &size);
+    virtual bool NoMoreSpaceToWrite(const uint32 neededSize);
 
     /**
      * @brief Adds the termination character at the end of the filled memory.
@@ -114,7 +109,9 @@ public:
     virtual void Terminate();
 
 };
+
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
