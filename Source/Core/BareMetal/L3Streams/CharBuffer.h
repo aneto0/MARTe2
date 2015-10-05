@@ -59,6 +59,8 @@ public:
      */
     CharBuffer();
 
+    CharBuffer(uint32 allocationGranularityMaskIn);
+
     /** 
      * @brief Default destructor.
      */
@@ -76,8 +78,7 @@ public:
      * @pre desiredSize < granularityMask
      * @return false if precondition fails or if the (re)allocation of the desiredSize in the heap fails.
      */
-    bool SetBufferSize(const uint32 desiredSize,
-                               const uint32 granularityMask = 0xFFFFFFFFu);
+    bool SetBufferSize(const uint32 desiredSize);
 
     /**
      * @brief Memory assignment of a preallocated buffer in read and write mode.
@@ -133,6 +134,10 @@ public:
     bool CanWrite() const;
 
 private:
+
+    uint32 allocationGranularityMask;
+
+
     /**
      * true if memory was allocated by this class
      * false if this class only holds a reference to a an existing buffer

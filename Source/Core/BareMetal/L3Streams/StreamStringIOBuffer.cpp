@@ -41,7 +41,11 @@
 
 namespace MARTe {
 
-StreamStringIOBuffer::StreamStringIOBuffer(){
+StreamStringIOBuffer::StreamStringIOBuffer():IOBuffer(0xFFFFFFC0){
+
+}
+
+StreamStringIOBuffer::StreamStringIOBuffer(uint32 granularity):IOBuffer(granularity){
 
 }
 
@@ -49,11 +53,10 @@ StreamStringIOBuffer::~StreamStringIOBuffer() {
 
 }
 
-bool StreamStringIOBuffer::SetBufferAllocationSize(uint32 desiredSize,
-                                                   uint32 allocationGranularityMask) {
+bool StreamStringIOBuffer::SetBufferAllocationSize(uint32 desiredSize) {
 
     //add one to desired size for the terminator character.
-    bool ret = SetBufferHeapMemory(desiredSize + 1, allocationGranularityMask, 1);
+    bool ret = SetBufferHeapMemory(desiredSize + 1, 1);
     Terminate();
     return ret;
 
@@ -71,8 +74,19 @@ void StreamStringIOBuffer::Write(const char8 *buffer,
 }
 
 
-bool StreamStringIOBuffer::NoMoreSpaceToWrite(uint32 neededSize,
-                                              TimeoutType msecTimeout) {
+bool StreamStringIOBuffer::NoMoreSpaceToWrite() {
+
+    // reallocate buffer
+    // uses safe version of the function
+    // implemented in this class
+    if (!SetBufferAllocationSize(BufferSize() + 1u)) {
+        return false;
+    }
+
+    return true;
+}
+
+bool StreamStringIOBuffer::NoMoreSpaceToWrite(uint32 neededSize) {
 
     // reallocate buffer
     // uses safe version of the function
@@ -83,6 +97,7 @@ bool StreamStringIOBuffer::NoMoreSpaceToWrite(uint32 neededSize,
 
     return true;
 }
+
 
 void StreamStringIOBuffer::Terminate() {
     if (BufferReference() != NULL)

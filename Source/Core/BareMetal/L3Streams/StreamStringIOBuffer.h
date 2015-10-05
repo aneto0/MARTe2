@@ -61,6 +61,9 @@ public:
      */
     StreamStringIOBuffer();
 
+
+    StreamStringIOBuffer(uint32 granularity);
+
     /**
      * @brief Default destructor.
      */
@@ -76,8 +79,7 @@ public:
      * @param[in] allocationGranularityMask defines the desired granularity (see CharBuffer::SetBufferAllocationSize), default is granularity=64 bytes.
      * @return false in case of errors in the allocation.
      */
-    virtual bool SetBufferAllocationSize(uint32 desiredSize,
-                                         uint32 allocationGranularityMask = 0xFFFFFFC0);
+    virtual bool SetBufferAllocationSize(uint32 desiredSize);
 
 public:
     /**
@@ -89,8 +91,10 @@ public:
      * @param[in] msecTimeout is the timeout not used here.
      * @return false in case of errors in the memory allocation.
      */
-    virtual bool NoMoreSpaceToWrite(uint32 neededSize = 1,
-                                    TimeoutType msecTimeout = TTDefault);
+    virtual bool NoMoreSpaceToWrite();
+
+
+    virtual bool NoMoreSpaceToWrite(uint32 neededSize);
 
     /**
      * @brief Copies buffer the end of writeBuffer.

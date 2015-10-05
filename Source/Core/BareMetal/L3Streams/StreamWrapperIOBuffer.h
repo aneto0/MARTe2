@@ -81,15 +81,14 @@ public:
      * @param[in] msecTimeout is the timeout not used here.
      * @return false if the buffer is null or if the stream read fails.
      */
-    virtual bool NoMoreDataToRead(TimeoutType msecTimeout = TTDefault);
+    virtual bool NoMoreDataToRead();
 
     /**
      * @brief Flushes the buffer on the stream.
      * @param[in] neededSize is not used here.
      * @param[in] msecTimeout (not used in this case).
      */
-    virtual bool NoMoreSpaceToWrite(uint32 neededSize = 1,
-                                    TimeoutType msecTimeout = TTDefault);
+    virtual bool NoMoreSpaceToWrite();
 
     /**
      * @brief Adjusts the cursor position.

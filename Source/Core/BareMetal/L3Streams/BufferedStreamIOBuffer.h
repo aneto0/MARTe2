@@ -69,7 +69,7 @@ public:
      * @param[in] msecTimeout is the timeout not used here.
      * @return false if the buffer is null or in case of stream read error.
      */
-    virtual bool NoMoreDataToRead(TimeoutType msecTimeout = TTDefault);
+    virtual bool NoMoreDataToRead();
 
     /**
      * @brief User friendly function which simply calls NoMoreDataToRead.
@@ -84,8 +84,7 @@ public:
      * @param[in] msecTimeout is the timeout.
      * @return false if the buffer is null or in case of stream write error.
      */
-    virtual bool NoMoreSpaceToWrite(uint32 neededSize = 1,
-                                    TimeoutType msecTimeout = TTDefault);
+    virtual bool NoMoreSpaceToWrite();
 
     /**
      * @brief User friendly function which simply calls NoMoreSpaceToWrite.
@@ -124,11 +123,11 @@ private:
 /*---------------------------------------------------------------------------*/
 
 bool BufferedStreamIOBuffer::Refill(TimeoutType msecTimeout) {
-    return NoMoreDataToRead(msecTimeout);
+    return NoMoreDataToRead();
 }
 
 bool BufferedStreamIOBuffer::Flush(TimeoutType msecTimeout) {
-    return NoMoreSpaceToWrite(0, msecTimeout);
+    return NoMoreSpaceToWrite();
 }
 
 }

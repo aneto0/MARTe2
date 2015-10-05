@@ -44,14 +44,14 @@ namespace MARTe {
 StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamI *s,
                       uint32 size) {
     stream = s;
-    SetBufferHeapMemory(size);
+    SetBufferHeapMemory(size, 0u);
 }
 
 StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamI *s,
                       char8 *buffer,
                       uint32 size) {
     stream = s;
-    SetBufferReferencedMemory(buffer, size);
+    SetBufferReferencedMemory(buffer, size, 0u);
 }
 
 bool StreamWrapperIOBuffer::Resync(TimeoutType msecTimeout) {
@@ -77,7 +77,7 @@ bool StreamWrapperIOBuffer::Resync(TimeoutType msecTimeout) {
 }
 
 
-bool StreamWrapperIOBuffer::NoMoreDataToRead(TimeoutType msecTimeout) {
+bool StreamWrapperIOBuffer::NoMoreDataToRead() {
 // can we write on it?
     if (BufferReference() == NULL) {
         return false;
@@ -98,8 +98,7 @@ bool StreamWrapperIOBuffer::NoMoreDataToRead(TimeoutType msecTimeout) {
 }
 
 
-bool StreamWrapperIOBuffer::NoMoreSpaceToWrite(uint32 neededSize,
-                                               TimeoutType msecTimeout) {
+bool StreamWrapperIOBuffer::NoMoreSpaceToWrite() {
     // no buffering!
     if (Buffer() == NULL)return true;
 
@@ -107,7 +106,7 @@ bool StreamWrapperIOBuffer::NoMoreSpaceToWrite(uint32 neededSize,
             uint32 writeSize = UsedSize();
 
             // write
-            if (!stream->Write(Buffer(),writeSize,msecTimeout,true)) {
+            if (!stream->Write(Buffer(),writeSize,/*msecTimeout,*/true)) {
                 return false;
             }
 

@@ -76,7 +76,7 @@ public: // usable constructors
      * The function assumes that the area of memory is empty and therefore the Stream::Size is 0
      * */
     StreamMemoryReference(char8 *buffer,uint32 bufferSize){
-    	this->buffer.SetBufferReferencedMemory(buffer,bufferSize);
+    	this->buffer.SetBufferReferencedMemory(buffer,bufferSize,0u);
     }
 
     /** 
@@ -87,7 +87,7 @@ public: // usable constructors
      * The function assumes that the area of memory is full and therefore the Stream::Size is bufferSize
      * */
     StreamMemoryReference(const char8 *buffer,uint32 bufferSize){
-    	this->buffer.SetBufferReadOnlyReferencedMemory(buffer,bufferSize);
+    	this->buffer.SetBufferReadOnlyReferencedMemory(buffer,bufferSize,0u);
     	this->buffer.SetUsedSize(bufferSize);
     }
     
