@@ -38,6 +38,7 @@
 #include "GeneralDefinitions.h"
 #include "BufferedStream.h"
 #include "TimeoutType.h"
+#include "IOBuffer.h"
 namespace MARTe{
 
 /**

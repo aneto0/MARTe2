@@ -267,7 +267,7 @@ public:
      * If size is greater than amountLeft is clipped.
      *
      * @param[in] buffer contains the data to be written write in this buffer.
-     * @param[in] size is the number of bytes to be copied.
+     * @param[in,out] size is the number of bytes to be copied.
      */
     virtual void Write(const char8 * const buffer,
                        uint32 &size);

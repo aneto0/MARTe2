@@ -172,8 +172,8 @@ protected: // methods to be implemented by deriving classes
     virtual IOBuffer *			GetOutputBuffer();
     
     //TODO
-    StreamI *unbufferedWriteStream;
-    StreamI *unbufferedReadStream;
+    RawStream *unbufferedWriteStream;
+    RawStream *unbufferedReadStream;
 
 protected: // methods to be implemented by deriving classes
     

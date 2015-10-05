@@ -43,19 +43,19 @@ namespace MARTe {
 
 
 StreamWrapperIOBuffer::StreamWrapperIOBuffer():IOBuffer() {
-    stream = static_cast<StreamI *>(NULL);
+    stream = static_cast<BufferedStream *>(NULL);
 }
 
 /*lint -e{534} [MISRA C++ Rule 0-1-7], [MISRA C++ Rule 0-3-2]. Justification: the return value of IOBuffer::SetBufferHeapMemory
  * cannot be returned by the constructor with this implementation. */
-StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamI * const s,
+StreamWrapperIOBuffer::StreamWrapperIOBuffer(BufferedStream * const s,
                                              const uint32 size):IOBuffer() {
     stream = s;
     IOBuffer::SetBufferHeapMemory(size, 0u);
 }
 
 /*lint -e{534} [MISRA C++ Rule 0-1-7], [MISRA C++ Rule 0-3-2]. Justification: IOBuffer::SetBufferReferencedMemory always returns true.*/
-StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamI * const s,
+StreamWrapperIOBuffer::StreamWrapperIOBuffer(BufferedStream * const s,
                                              char8 * const buffer,
                                              const uint32 size):IOBuffer() {
     stream = s;

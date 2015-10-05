@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "TimeoutType.h"
 #include "IOBuffer.h"
-#include "StreamI.h"
+#include "BufferedStream.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -63,7 +63,7 @@ public:
      * @param[in] s is the stream which uses this buffer.
      * @param[in] size is the size to allocate for this buffer.
      */
-    StreamWrapperIOBuffer(StreamI * const s,
+    StreamWrapperIOBuffer(BufferedStream * const s,
                           const uint32 size);
 
     /**
@@ -72,7 +72,7 @@ public:
      * @param[in] buffer is the pointer to the preallocated memory.
      * @param[in] size is the size of the buffer.
      */
-    StreamWrapperIOBuffer(StreamI * const s,
+    StreamWrapperIOBuffer(BufferedStream * const s,
                           char8 * const buffer,
                           const uint32 size);
 
@@ -104,7 +104,7 @@ private:
     /**
      * A pointer to the associated stream.
      */
-    StreamI *stream;
+    BufferedStream *stream;
 };
 
 }

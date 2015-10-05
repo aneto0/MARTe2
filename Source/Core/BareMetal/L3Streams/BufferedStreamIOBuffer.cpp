@@ -43,11 +43,11 @@ namespace MARTe {
 
 BufferedStreamIOBuffer::BufferedStreamIOBuffer() :
         IOBuffer() {
-    stream = static_cast<StreamI *>(NULL);
+    stream = static_cast<RawStream *>(NULL);
     timeout = TTDefault;
 }
 
-BufferedStreamIOBuffer::BufferedStreamIOBuffer(StreamI * const s,
+BufferedStreamIOBuffer::BufferedStreamIOBuffer(RawStream * const s,
                                                const TimeoutType msecTimeout) :
         IOBuffer() {
     stream = s;
