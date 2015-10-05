@@ -267,9 +267,9 @@ public:
      * If size is greater than amountLeft is clipped.
      *
      * @param[in] buffer contains the data to be written write in this buffer.
-     * @param[in] size is the number of bytes to be copied.
+     * @param[in,out] size is the number of bytes to be copied. This value will be clipped to the space left if needed.
      */
-    virtual void Write(const char8 * const buffer,
+    virtual bool Write(const char8 * const buffer,
                        uint32 &size);
 
     /**
@@ -292,6 +292,11 @@ public:
 protected:
 
     /**
+     * @see NoMoreSpaceToWrite(const uint32)
+     */
+    virtual bool NoMoreSpaceToWrite();
+
+    /**
      * @brief The routine executed in PutC when amountLeft is <= undoLevel, namely the cursor arrived to a specific position.
      * @details This basic implementation only returns false.\n
      *
@@ -301,24 +306,10 @@ protected:
      * In BufferedStreamIOBuffer undoLevel is zero, so when the cursor arrived at the end of the memory
      * this function flushes this buffer to the stream.\n
      *
-     * @return false at this implementation level.
-     */
-    virtual bool NoMoreSpaceToWrite();
-
-    /**
-     * @brief The routine executed in WriteAll when the buffer is filled.
-     * @details This basic implementation only calls NoMoreSpaceToWrite.\n
-     *
-     * In StreamStringIOBuffer undoLevel is zero, so when the cursor arrived at the end of the memory,
-     * this function allocated a new portion of memory on the queue.\n
-     *
-     * In BufferedStreamIOBuffer undoLevel is zero, so when the cursor arrived at the end of the memory
-     * this function flushes this buffer to the stream.\n
-     *
      * @param[in] neededSize is the size of the memory to be allocated or flushed (not used at this implementation level).
      * @return false at this implementation level.
      */
-    virtual bool NoMoreSpaceToWrite(uint32 neededSize);
+    virtual bool NoMoreSpaceToWrite(const uint32 neededSize);
 
     /**
      * @brief The routine executed in GetC when amountLeft is <= undoLevel, namely the cursor arrived to a specific position.

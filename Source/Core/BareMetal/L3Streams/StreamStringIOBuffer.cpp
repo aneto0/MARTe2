@@ -41,11 +41,13 @@
 
 namespace MARTe {
 
-StreamStringIOBuffer::StreamStringIOBuffer():IOBuffer(0xFFFFFFC0){
+StreamStringIOBuffer::StreamStringIOBuffer() :
+        IOBuffer(0xFFFFFFC0U) {
 
 }
 
-StreamStringIOBuffer::StreamStringIOBuffer(uint32 granularity):IOBuffer(granularity){
+StreamStringIOBuffer::StreamStringIOBuffer(const uint32 granularity) :
+        IOBuffer(granularity) {
 
 }
 
@@ -53,55 +55,65 @@ StreamStringIOBuffer::~StreamStringIOBuffer() {
 
 }
 
-bool StreamStringIOBuffer::SetBufferAllocationSize(uint32 desiredSize) {
+bool StreamStringIOBuffer::SetBufferAllocationSize(const uint32 desiredSize) {
+
+    bool ret;
 
     //add one to desired size for the terminator character.
-    bool ret = SetBufferHeapMemory(desiredSize + 1, 1);
-    Terminate();
-    return ret;
+    ret = SetBufferHeapMemory(desiredSize + 1U, 1U);
 
-}
-
-void StreamStringIOBuffer::Write(const char8 *buffer,
-                                 uint32 &size) {
-
-    if (size > AmountLeft()) {
-        SetBufferAllocationSize(Position() + size);
+    if (ret) {
+        Terminate();
     }
 
-    IOBuffer::Write(buffer, size);
-
+    return ret;
 }
 
+bool StreamStringIOBuffer::Write(const char8 * const buffer,
+                                 uint32 &size) {
+
+    bool ret = true;
+
+    if (size > AmountLeft()) {
+        ret = SetBufferAllocationSize(Position() + size);
+    }
+
+    if (ret) {
+        ret = IOBuffer::Write(buffer, size);
+    }
+
+    return ret;
+}
 
 bool StreamStringIOBuffer::NoMoreSpaceToWrite() {
 
-    // reallocate buffer
-    // uses safe version of the function
-    // implemented in this class
-    if (!SetBufferAllocationSize(BufferSize() + 1u)) {
-        return false;
-    }
-
-    return true;
-}
-
-bool StreamStringIOBuffer::NoMoreSpaceToWrite(uint32 neededSize) {
+    bool ret;
 
     // reallocate buffer
     // uses safe version of the function
     // implemented in this class
-    if (!SetBufferAllocationSize(BufferSize() + neededSize)) {
-        return false;
-    }
+    ret = SetBufferAllocationSize(BufferSize() + 1u);
 
-    return true;
+    return ret;
 }
 
+bool StreamStringIOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
+
+    bool ret;
+
+    // reallocate buffer
+    // uses safe version of the function
+    // implemented in this class
+    ret = SetBufferAllocationSize(BufferSize() + neededSize);
+
+    return ret;
+}
 
 void StreamStringIOBuffer::Terminate() {
-    if (BufferReference() != NULL)
-    BufferReference()[UsedSize()]= 0;
+    if (BufferReference() != NULL) {
+        BufferReference()[UsedSize()] = '\0';
+    }
 }
+
 }
 

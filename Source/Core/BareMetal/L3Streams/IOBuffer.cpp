@@ -173,7 +173,10 @@ bool IOBuffer::NoMoreSpaceToWrite() {
     return false;
 }
 
+<<<<<<< HEAD
 /*lint -e{715} [MISRA C++ Rule 0-1-119]. Justification: The default behavior does not need the input argument.*/
+=======
+>>>>>>> refs/heads/IOBuffer_#237_lint_StreamStringIOBuffer
 bool IOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
     return NoMoreSpaceToWrite();
 }
@@ -206,7 +209,7 @@ bool IOBuffer::Resync() {
  * before calling check that positionPtr is not NULL
  * can be overridden to allow resizeable buffers
  */
-void IOBuffer::Write(const char8 * const buffer,
+bool IOBuffer::Write(const char8 * const buffer,
                      uint32 &size) {
     if (internalBuffer.CanWrite()) {
 
