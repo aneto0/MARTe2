@@ -81,7 +81,7 @@ bool IOBuffer::RelativeSeek(const int32 delta) {
 //REPORT_ERROR_PARAMETERS(ParametersError,"delta=%i at position %i moves out of range 0, moving to beginning of stream",delta,Position())
         }
         amountLeft += gap;
-        positionPtr = &((BufferReference())[Position()-gap]);
+        positionPtr = &((BufferReference())[Position() - gap]);
     }
 
     return ret;
@@ -178,7 +178,6 @@ bool IOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
     return NoMoreSpaceToWrite();
 }
 
-
 /*
  * deals with the case when we do not have any more data to read
  * it might reset accessPosition and fill the buffer with more data
@@ -208,6 +207,7 @@ bool IOBuffer::Resync() {
  */
 bool IOBuffer::Write(const char8 * const buffer,
                      uint32 &size) {
+    bool retval = true;
     if (internalBuffer.CanWrite()) {
 
         // clip to spaceLeft
@@ -217,8 +217,8 @@ bool IOBuffer::Write(const char8 * const buffer,
 
         // fill the buffer with the remainder
         if (size > 0u) {
-            if(!MemoryOperationsHelper::Copy(positionPtr, buffer, size)){
-
+            if (!MemoryOperationsHelper::Copy(positionPtr, buffer, size)) {
+                retval = false;
             }
 
             positionPtr = &positionPtr[size];
@@ -228,6 +228,7 @@ bool IOBuffer::Write(const char8 * const buffer,
             }
         }
     }
+    return retval;
 }
 
 bool IOBuffer::WriteAll(const char8 * buffer,
@@ -264,6 +265,7 @@ bool IOBuffer::WriteAll(const char8 * buffer,
 bool IOBuffer::Read(char8 * const buffer,
                     uint32 &size) {
 
+    bool retval = true;
     uint32 maxSize = UsedAmountLeft();
     // clip to available space
     if (size > maxSize) {
@@ -272,13 +274,15 @@ bool IOBuffer::Read(char8 * const buffer,
 
     // fill the buffer with the remainder
     if (size > 0u) {
-        if(!MemoryOperationsHelper::Copy(buffer, positionPtr, size)){
+        if (!MemoryOperationsHelper::Copy(buffer, positionPtr, size)) {
+            retval = false;
 
         }
 
         amountLeft -= size;
         positionPtr = &positionPtr[size];
     }
+    return retval;
 }
 
 }
