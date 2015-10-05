@@ -90,6 +90,11 @@ public:
     virtual bool Write(const char8 * const buffer,
                        uint32 &size);
 
+    /**
+     * @brief Adds the termination character at the end of the filled memory.
+     */
+    virtual void Terminate();
+
 protected:
 
     /**
@@ -102,11 +107,6 @@ protected:
      * @see IOBuffer::NoMoreSpaceToWrite(const uint32)
      */
     virtual bool NoMoreSpaceToWrite(const uint32 neededSize);
-
-    /**
-     * @brief Adds the termination character at the end of the filled memory.
-     */
-    virtual void Terminate();
 
 };
 

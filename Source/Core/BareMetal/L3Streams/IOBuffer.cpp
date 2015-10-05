@@ -173,10 +173,7 @@ bool IOBuffer::NoMoreSpaceToWrite() {
     return false;
 }
 
-<<<<<<< HEAD
 /*lint -e{715} [MISRA C++ Rule 0-1-119]. Justification: The default behavior does not need the input argument.*/
-=======
->>>>>>> refs/heads/IOBuffer_#237_lint_StreamStringIOBuffer
 bool IOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
     return NoMoreSpaceToWrite();
 }
@@ -264,7 +261,7 @@ bool IOBuffer::WriteAll(const char8 * buffer,
     return retval;
 }
 
-void IOBuffer::Read(char8 * const buffer,
+bool IOBuffer::Read(char8 * const buffer,
                     uint32 &size) {
 
     uint32 maxSize = UsedAmountLeft();
