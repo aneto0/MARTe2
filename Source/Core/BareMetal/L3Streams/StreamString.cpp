@@ -122,7 +122,7 @@ int64 StreamString::Position() {
  @return true if successful. false otherwise.
  */
 bool StreamString::SetSize(int64 size){
-    buffer.SetBufferAllocationSize(size+1, 0xFFFFFFC0);
+    buffer.SetBufferAllocationSize(size+1);
     return true;
 }
 

@@ -66,7 +66,7 @@ bool BufferedStreamIOBuffer::Resync(TimeoutType msecTimeout) {
     return true;
 }
 
-bool BufferedStreamIOBuffer::NoMoreDataToRead(TimeoutType msecTimeout) {
+bool BufferedStreamIOBuffer::NoMoreDataToRead() {
 // can we write on it?
     if (BufferReference() == NULL) {
         return false;
@@ -87,8 +87,7 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead(TimeoutType msecTimeout) {
 
 }
 
-bool BufferedStreamIOBuffer::NoMoreSpaceToWrite(uint32 neededSize,
-                                                TimeoutType msecTimeout) {
+bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
     // no buffering!
     if (Buffer() == NULL) return true;
 
@@ -96,7 +95,7 @@ bool BufferedStreamIOBuffer::NoMoreSpaceToWrite(uint32 neededSize,
     uint32 writeSize = UsedSize();
 
     // write
-    if (!stream->Write(Buffer(),writeSize,msecTimeout,true)) {
+    if (!stream->Write(Buffer(),writeSize)) {
         return false;
     }
 
@@ -104,8 +103,11 @@ bool BufferedStreamIOBuffer::NoMoreSpaceToWrite(uint32 neededSize,
     return true;
 }
 
+
+
+
 bool BufferedStreamIOBuffer::SetBufferSize(uint32 size) {
-    return IOBuffer::SetBufferHeapMemory(size);
+    return IOBuffer::SetBufferHeapMemory(size, 0u);
 }
 
 }
