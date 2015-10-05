@@ -169,7 +169,7 @@ public:
      * 
      * If the position is out of ranges, position becomes the end of the stream.
      * This function calls IOBuffer::Seek, see it for more informations. */
-    virtual bool        Seek(int64 pos);
+    virtual bool        Seek(uint64 pos);
     
     /** 
      * @brief Moves within the string relative to current location.
@@ -185,7 +185,7 @@ public:
      * @return the current position.
      *
      * This function calls IOBuffer::Position, see it for more informations. */
-    virtual int64       Position() ;
+    virtual uint64       Position() ;
 
     /**
      * @brief Set the size of the buffer.

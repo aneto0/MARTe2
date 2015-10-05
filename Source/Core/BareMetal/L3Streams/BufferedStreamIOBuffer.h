@@ -39,8 +39,6 @@
 
 namespace MARTe {
 
-class BufferedStream;
-
 /**
  * @brief BufferedStreamIOBuffer class.
  *
@@ -57,64 +55,72 @@ public:
 
     /**
      * @brief Default constructor.
-     * @param[in] s is a pointer to the stream which uses this buffer.
      */
-    BufferedStreamIOBuffer(StreamI *s);
+    BufferedStreamIOBuffer();
 
     /**
-     * @brief Refills the buffer reading from the stream.
-     * @details Empties the buffer, calls BufferedStream::UnBufferedRead with size = MaxUsableAmount.
-     * In case of stream read error empties the buffer and returns false.
-     *
-     * @param[in] msecTimeout is the timeout not used here.
-     * @return false if the buffer is null or in case of stream read error.
+     * @brief Constructor.
+     * @param[in] s is a pointer to the stream which uses this buffer.
+     * @param[in] msecTimeout is the desired timeout for read-write operations.
      */
-    virtual bool NoMoreDataToRead();
+    BufferedStreamIOBuffer(StreamI * const s,
+                           const TimeoutType msecTimeout = TTDefault);
 
     /**
      * @brief User friendly function which simply calls NoMoreDataToRead.
-     * @param[in] msecTimeout is the timeout not used here.
      * @return the NoMoreDataToRead return.
      */
-    inline bool Refill(TimeoutType msecTimeout = TTDefault);
-
-    /**
-     * @brief Flushes the buffer writing on the stream.
-     * @param[in] neededSize is not used here.
-     * @param[in] msecTimeout is the timeout.
-     * @return false if the buffer is null or in case of stream write error.
-     */
-    virtual bool NoMoreSpaceToWrite();
+    inline bool Refill();
 
     /**
      * @brief User friendly function which simply calls NoMoreSpaceToWrite.
-     * @param[in] msecTimeout is the timeout not used here.
      * @return the NoMoreSpaceToWrite return.
      */
-    inline bool Flush(TimeoutType msecTimeout = TTDefault);
+    inline bool Flush();
 
     /**
      * @brief Adjusts the position of the stream.
      * @details This function is called from the stream after a read operation because the position was shifted
      * forward (+bufferSize) because of the refill. Calls BufferedStream::Seek moving the cursor back (-UsedAmountLeft).
      *
-     * @param[in] msecTimeout is the timeout.
      * @return false if the stream seek fails.
      */
-    virtual bool Resync(TimeoutType msecTimeout = TTDefault);
+    virtual bool Resync();
 
     /**
      * @brief Allocates or reallocate memory to the desired size.
      * @param[in] size is the desired size for the buffer.
      * @return false in case of allocations errors.
      */
-    bool SetBufferSize(uint32 size);
+    bool SetBufferSize(const uint32 size);
+
+protected:
+
+    /**
+     * @brief Refills the buffer reading from the stream.
+     * @details Empties the buffer, calls BufferedStream::UnBufferedRead with size = MaxUsableAmount.
+     * In case of stream read error empties the buffer and returns false.
+     *
+     * @return false if the buffer is null or in case of stream read error.
+     */
+    virtual bool NoMoreDataToRead();
+
+    /**
+     * @brief Flushes the buffer writing on the stream.
+     * @return false if the buffer is null or in case of stream write error.
+     */
+    virtual bool NoMoreSpaceToWrite();
 
 private:
     /**
-     * The stream that uses this buffer
+     * The stream that uses this buffer.
      */
     StreamI *stream;
+
+    /**
+     * The timeout for read and write operations.
+     */
+    TimeoutType timeout;
 
 };
 
@@ -122,11 +128,11 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-bool BufferedStreamIOBuffer::Refill(TimeoutType msecTimeout) {
+bool BufferedStreamIOBuffer::Refill() {
     return NoMoreDataToRead();
 }
 
-bool BufferedStreamIOBuffer::Flush(TimeoutType msecTimeout) {
+bool BufferedStreamIOBuffer::Flush() {
     return NoMoreSpaceToWrite();
 }
 

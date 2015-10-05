@@ -36,7 +36,6 @@
 #define STREAM_MEMORY_REFERENCE_H
 
 #include "GeneralDefinitions.h"
-#include "MemoryReferenceIOBuffer.h"
 #include "BufferedStream.h"
 #include "TimeoutType.h"
 namespace MARTe{
@@ -52,7 +51,7 @@ private:
          * Simply a normal IOBuffer. Nothing is overloaded.
          * It is allocated by IOBuffer::SetBufferReferencedMemory or IOBuffer::SetBufferReadOnlyReferencedMemory
          * @see IOBuffer.cpp for the naked implementation of this buffer.  */
-	MemoryReferenceIOBuffer 	buffer;	
+	IOBuffer 	buffer;
    
 protected: // methods to be implemented by deriving classes
 
@@ -160,7 +159,7 @@ public:
      * @return false in case of position out of bounds.
      *
      * If the desired position falls out of the range, the position becomes the end of the filled stream. */
-    virtual bool        Seek(int64 pos);
+    virtual bool        Seek(uint64 pos);
     
     /** 
      * @brief Moves within the stream relative to current location.
@@ -173,7 +172,7 @@ public:
     /**
      * @brief  Returns current position.
      * @return the current position. */
-    virtual int64       Position() ;
+    virtual uint64       Position() ;
 
     /**
      * @brief Set the used size.

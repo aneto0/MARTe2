@@ -40,73 +40,87 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-BufferedStreamIOBuffer::BufferedStreamIOBuffer(StreamI *s) {
+
+BufferedStreamIOBuffer::BufferedStreamIOBuffer() :
+        IOBuffer() {
+    stream = static_cast<StreamI *>(NULL);
+    timeout = TTDefault;
+}
+
+BufferedStreamIOBuffer::BufferedStreamIOBuffer(StreamI * const s,
+                                               const TimeoutType msecTimeout) :
+        IOBuffer() {
     stream = s;
+    timeout = msecTimeout;
 }
 
-bool BufferedStreamIOBuffer::Resync(TimeoutType msecTimeout) {
+bool BufferedStreamIOBuffer::Resync() {
+    bool retval = true;
 // empty!
-    if (MaxUsableAmount() == 0) {
-        return true;
-    }
+    if (MaxUsableAmount() != 0u) {
 
-    // distance to end
-    uint32 deltaToEnd = UsedAmountLeft();
+        // distance to end
+        uint32 deltaToEnd = UsedAmountLeft();
 
-    // adjust seek position
-    // in read mode the actual stream
-    // position is to the character after the buffer end
-    if (!stream->Seek(stream->Position() - deltaToEnd)) {
+        // adjust seek position
+        // in read mode the actual stream
+        // position is to the character after the buffer end
+        if (!stream->Seek(stream->Position() - deltaToEnd)) {
+            retval = false;
+        }
+
+        // mark it as empty
         Empty();
-        return false;
-    }
 
-    // mark it as empty
-    Empty();
-    return true;
+    }
+    return retval;
 }
 
+/*lint -e{534} [MISRA C++ Rule 0-1-7], [MISRA C++ Rule 0-3-2]. Justification: IOBuffer::SetUsedSize always returns true.*/
 bool BufferedStreamIOBuffer::NoMoreDataToRead() {
+
+    bool retval = false;
 // can we write on it?
-    if (BufferReference() == NULL) {
-        return false;
+    if (BufferReference() != NULL) {
+
+        // move all pointers and indexes to empty status
+        Empty();
+
+        uint32 readSize = MaxUsableAmount();
+
+        if (stream->Read(BufferReference(),readSize, timeout, true)) {
+            IOBuffer::SetUsedSize(readSize);
+            retval = true;
+        }
+        else {
+            Empty();
+        }
+
     }
-
-    // move all pointers and indexes to empty status
-    Empty();
-
-    uint32 readSize = MaxUsableAmount();
-
-    if (stream->Read(BufferReference(),readSize)) {
-        SetUsedSize(readSize);
-        return true;
-    }
-
-    Empty();
-    return false;
-
+    return retval;
 }
 
 bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
+    bool retval = true;
+
     // no buffering!
-    if (Buffer() == NULL) return true;
+    if (Buffer() != NULL) {
 
-    // how much was written?
-    uint32 writeSize = UsedSize();
+        // how much was written?
+        uint32 writeSize = UsedSize();
 
-    // write
-    if (!stream->Write(Buffer(),writeSize)) {
-        return false;
+        // write
+        if (!stream->Write(Buffer(),writeSize,timeout, true)) {
+            retval=false;
+        }
+        else {
+            Empty();
+        }
     }
-
-    Empty();
-    return true;
+    return retval;
 }
 
-
-
-
-bool BufferedStreamIOBuffer::SetBufferSize(uint32 size) {
+bool BufferedStreamIOBuffer::SetBufferSize(const uint32 size) {
     return IOBuffer::SetBufferHeapMemory(size, 0u);
 }
 

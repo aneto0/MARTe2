@@ -53,6 +53,7 @@ bool IOBuffer::Seek(const uint32 position) {
 }
 
 //position is set relative to current position
+/*lint -e{9125} [MISRA C++ Rule 5-0-9]. Justification: the sign does not change because delta is negative (see the inline code).*/
 bool IOBuffer::RelativeSeek(const int32 delta) {
     bool ret = true;
     if (delta >= 0) {
@@ -172,7 +173,8 @@ bool IOBuffer::NoMoreSpaceToWrite() {
     return false;
 }
 
-bool IOBuffer::NoMoreSpaceToWrite(uint32 neededSize) {
+/*lint -e{715} [MISRA C++ Rule 0-1-119]. Justification: The default behavior does not need the input argument.*/
+bool IOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
     return NoMoreSpaceToWrite();
 }
 
@@ -187,12 +189,12 @@ bool IOBuffer::NoMoreDataToRead() {
     return false;
 }
 
-/**
+/*
  sets amountLeft to 0
  adjust the seek position of the stream to reflect the bytes read from the buffer
  * READ OPERATIONS
  */
-bool IOBuffer::Resync(const TimeoutType msecTimeout) {
+bool IOBuffer::Resync() {
     return false;
 }
 

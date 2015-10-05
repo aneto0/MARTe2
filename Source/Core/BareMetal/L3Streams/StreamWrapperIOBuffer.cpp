@@ -41,77 +41,91 @@
 
 namespace MARTe {
 
-StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamI *s,
-                      uint32 size) {
-    stream = s;
-    SetBufferHeapMemory(size, 0u);
+
+StreamWrapperIOBuffer::StreamWrapperIOBuffer():IOBuffer() {
+    stream = static_cast<StreamI *>(NULL);
 }
 
-StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamI *s,
-                      char8 *buffer,
-                      uint32 size) {
+/*lint -e{534} [MISRA C++ Rule 0-1-7], [MISRA C++ Rule 0-3-2]. Justification: the return value of IOBuffer::SetBufferHeapMemory
+ * cannot be returned by the constructor with this implementation. */
+StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamI * const s,
+                                             const uint32 size):IOBuffer() {
     stream = s;
-    SetBufferReferencedMemory(buffer, size, 0u);
+    IOBuffer::SetBufferHeapMemory(size, 0u);
 }
 
-bool StreamWrapperIOBuffer::Resync(TimeoutType msecTimeout) {
+/*lint -e{534} [MISRA C++ Rule 0-1-7], [MISRA C++ Rule 0-3-2]. Justification: IOBuffer::SetBufferReferencedMemory always returns true.*/
+StreamWrapperIOBuffer::StreamWrapperIOBuffer(StreamI * const s,
+                                             char8 * const buffer,
+                                             const uint32 size):IOBuffer() {
+    stream = s;
+    IOBuffer::SetBufferReferencedMemory(buffer, size, 0u);
+}
+
+bool StreamWrapperIOBuffer::Resync() {
+
+    bool retval = true;
 // empty!
-    if (MaxUsableAmount() == 0) {
-        return true;
-    }
+    if (MaxUsableAmount() != 0u) {
 
-    // distance to end
-    uint32 deltaToEnd = UsedAmountLeft();
+        // distance to end
+        uint32 deltaToEnd = UsedAmountLeft();
 
-    // adjust seek position
-    // in read mode the actual stream
-    // position is to the character after the buffer end
-    if (!stream->Seek(stream->Position() - deltaToEnd)) {
+        //uint64 seekPosition=static_cast<uint64>
+        // adjust seek position
+        // in read mode the actual stream
+        // position is to the character after the buffer end
+        if (!stream->Seek(stream->Position() - deltaToEnd)) {
+
+            retval = false;
+        }
+
+        // mark it as empty
         Empty();
-        return false;
-    }
 
-    // mark it as empty
-    Empty();
-    return true;
+    }
+    return retval;
 }
 
-
+/*lint -e{534} [MISRA C++ Rule 0-1-7], [MISRA C++ Rule 0-3-2]. Justification: IOBuffer::SetUsedSize always returns true.*/
 bool StreamWrapperIOBuffer::NoMoreDataToRead() {
+    bool retval = false;
 // can we write on it?
-    if (BufferReference() == NULL) {
-        return false;
+    if (BufferReference() != NULL) {
+
+        Empty();
+
+        uint32 readSize = MaxUsableAmount();
+
+        if (stream->Read(BufferReference(),readSize)) {
+            IOBuffer::SetUsedSize(readSize);
+            retval= true;
+        }
+        else {
+            Empty();
+        }
+
     }
-
-    Empty();
-
-    uint32 readSize = MaxUsableAmount();
-
-    if (stream->Read(BufferReference(),readSize)) {
-        SetUsedSize(readSize);
-        return true;
-    }
-
-    Empty();
-    return false;
-
+    return retval;
 }
-
 
 bool StreamWrapperIOBuffer::NoMoreSpaceToWrite() {
+    bool retval = true;
     // no buffering!
-    if (Buffer() == NULL)return true;
+    if (BufferReference() != NULL) {
 
-            // how much was written?
-            uint32 writeSize = UsedSize();
+        // how much was written?
+        uint32 writeSize = UsedSize();
 
-            // write
-            if (!stream->Write(Buffer(),writeSize,/*msecTimeout,*/true)) {
-                return false;
-            }
-
+        // write
+        if (!stream->Write(Buffer(),writeSize/*,msecTimeout,true*/)) {
+            retval= false;
+        }
+        else {
             Empty();
-            return true;
         }
     }
+    return retval;
+}
+}
 

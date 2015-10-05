@@ -32,9 +32,8 @@ OBJSX=CharBuffer.x \
     StreamWrapperIOBuffer.x \
     StreamStringIOBuffer.x \
     StreamString.x \
-    StreamMemoryReference.x \
-    MemoryReferenceIOBuffer.x
-
+    StreamMemoryReference.x 
+    
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults

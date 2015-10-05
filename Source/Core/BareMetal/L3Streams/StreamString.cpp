@@ -95,7 +95,7 @@ int64 StreamString::Size(){
 }
 
 /** Moves within the file to an absolute location */
-bool StreamString::Seek(int64 pos){
+bool StreamString::Seek(uint64 pos){
 	uint32 usedSize = buffer.UsedSize(); 
 	if (pos > usedSize) {
 		//REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
@@ -112,7 +112,7 @@ bool StreamString::RelativeSeek(int32 deltaPos){
 }
 
 /** Returns current position */
-int64 StreamString::Position() { 
+uint64 StreamString::Position() {
 	return buffer.Position(); 
 }
 

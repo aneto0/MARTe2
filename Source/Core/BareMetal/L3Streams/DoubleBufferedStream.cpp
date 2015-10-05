@@ -205,7 +205,7 @@ int64 DoubleBufferedStream::Size() {
 
 
 /** Moves within the file to an absolute location */
-bool DoubleBufferedStream::Seek(int64 pos)
+bool DoubleBufferedStream::Seek(uint64 pos)
 {
 	// no point to go here if cannot seek
     if (!operatingModes.canSeek) return false;
@@ -270,7 +270,7 @@ bool  DoubleBufferedStream::RelativeSeek(int32 deltaPos){
 }    
 
 /** Returns current position */
-int64 DoubleBufferedStream::Position() {
+uint64 DoubleBufferedStream::Position() {
 	// cannot seek
     if (!operatingModes.canSeek) return -1;
     

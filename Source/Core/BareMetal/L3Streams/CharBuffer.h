@@ -59,7 +59,14 @@ public:
      */
     CharBuffer();
 
-    CharBuffer(uint32 allocationGranularityMaskIn);
+    /**
+     * @brief Constructor.
+     * @details If the input allocationGranularity is not a power of two, the granularity will be the immediate power of two greater than
+     * the input (i.e input=10 ==> granularity=16).
+     * @param[in] allocationGranularity specifies the minimum size which can be allocated.
+     * The memory allocated will be always a multiple of this number.
+     */
+    CharBuffer(const uint32 allocationGranularity);
 
     /** 
      * @brief Default destructor.
@@ -71,11 +78,6 @@ public:
      * @details Allocates \a desiredSize bytes in the heaps. If Buffer() != NULL the
      * buffer is resized (Realloc) for \a desiredSize bytes.
      * @param[in] desiredSize the desired size of the buffer.
-     * @param[in] granularityMask defines the granularity (and the maximum size).
-     * granularity = ~granularityMask + 1 (2's complement).
-     * (e.g. granularityMask=0xfffffff0 ==> 4 zeros ==> granularity: 2^4=16 bytes)
-     * If desiredSize < granularity => desiredSize = granularity
-     * @pre desiredSize < granularityMask
      * @return false if precondition fails or if the (re)allocation of the desiredSize in the heap fails.
      */
     bool SetBufferSize(const uint32 desiredSize);
@@ -135,8 +137,12 @@ public:
 
 private:
 
-    uint32 allocationGranularityMask;
 
+    /**
+     * A mask of bits which represents the allocation granularity
+     * as a power of two.
+     */
+    uint32 allocationGranularityMask;
 
     /**
      * true if memory was allocated by this class

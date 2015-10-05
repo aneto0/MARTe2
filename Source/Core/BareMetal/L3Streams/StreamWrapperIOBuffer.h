@@ -43,28 +43,28 @@ namespace MARTe {
 /**
  * @brief A buffer associated to a generic stream.
  *
- * This type of buffer is used in Printf and GetToken functions when the streams does not provide
+ * @details This type of buffer is used in Printf and GetToken functions when the streams does not provide
  * their own buffers. It could be used as a temporary buffer for unbuffered streams.
  *
- * The NoMoreDataToRead function is implemented as a refill from the stream,
- * the NoMoreSpaceToWrite is implemented as a flush on the stream.
+ * @details The NoMoreDataToRead function is implemented as a refill from the stream.
+ * The NoMoreSpaceToWrite is implemented as a flush on the stream.
  */
 class StreamWrapperIOBuffer: public IOBuffer {
-private:
-    /**
-     * A pointer to the associated stream.
-     */
-    StreamI *stream;
+
 
 public:
+
+    StreamWrapperIOBuffer();
+
+
 
     /**
      * @brief Constructor for dynamic allocated buffer.
      * @param[in] s is the stream which uses this buffer.
      * @param[in] size is the size to allocate for this buffer.
      */
-    StreamWrapperIOBuffer(StreamI *s,
-                          uint32 size);
+    StreamWrapperIOBuffer(StreamI * const s,
+                          const uint32 size);
 
     /**
      * @brief Constructor for memory referenced buffer.
@@ -72,9 +72,19 @@ public:
      * @param[in] buffer is the pointer to the preallocated memory.
      * @param[in] size is the size of the buffer.
      */
-    StreamWrapperIOBuffer(StreamI *s,
-                          char8 *buffer,
-                          uint32 size);
+    StreamWrapperIOBuffer(StreamI * const s,
+                          char8 * const buffer,
+                          const uint32 size);
+
+
+    /**
+     * @brief Adjusts the cursor position.
+     * @param[in] msecTimeout is the timeout not used here.
+     * @return false if the stream seek fails.
+     */
+    virtual bool Resync();
+
+protected:
 
     /**
      * @brief Refills the buffer reading from the stream.
@@ -90,13 +100,11 @@ public:
      */
     virtual bool NoMoreSpaceToWrite();
 
+private:
     /**
-     * @brief Adjusts the cursor position.
-     * @param[in] msecTimeout is the timeout not used here.
-     * @return false if the stream seek fails.
+     * A pointer to the associated stream.
      */
-    virtual bool Resync(TimeoutType msecTimeout = TTDefault);
-
+    StreamI *stream;
 };
 
 }

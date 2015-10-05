@@ -47,10 +47,10 @@ CharBuffer::CharBuffer() {
     buffer = NULL_PTR(char8 *);
     readOnly = true;
     allocated = false;
-    allocationGranularityMask= 0xFFFFFFFF;
+    allocationGranularityMask= 0xFFFFFFFFu;
 }
 
-CharBuffer::CharBuffer(uint32 granularity) {
+CharBuffer::CharBuffer(const uint32 allocationGranularity) {
     bufferSize = 0u;
     buffer = NULL_PTR(char8 *);
     readOnly = true;
@@ -58,8 +58,8 @@ CharBuffer::CharBuffer(uint32 granularity) {
     uint32 granularityTest=1u;
 
     // round the granularity mask at the first 2^x up
-    for(uint32 i=0; i<31; i++){
-        if(granularity>=granularity){
+    for(uint32 i=0u; i<31u; i++){
+        if(granularityTest>=allocationGranularity){
             break;
         }
         granularityTest<<=1u;
@@ -84,6 +84,12 @@ CharBuffer::~CharBuffer() {
 }
 
 bool CharBuffer::SetBufferSize(const uint32 desiredSize) {
+
+    /* granularity = ~granularityMask + 1 (2's complement).
+     * (e.g. granularityMask=0xfffffff0 ==> 4 zeros ==> granularity: 2^4=16 bytes)
+     * If desiredSize < granularity => desiredSize = granularity
+     */
+
     bool ok = true;
     // If memory reference is present remove it otherwise we end up reallocating others's memory!!
     if ((bufferSize > 0u) && (!allocated)) {

@@ -465,7 +465,7 @@ public:
       * If readBuffer is not empty, if the position falls in the readBuffer range calls readBuffer.Seek
       * otherwise empties the readBuffer and calls UnBufferedSeek.  
       */
-    virtual bool        Seek(int64 pos);
+    virtual bool        Seek(uint64 pos);
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT 
 
     /** @brief Moves within the file relative to current location.
@@ -482,7 +482,7 @@ public:
       * @return the current position in the stream.
       *
       * Flushed the writeBuffer if it is not empty, then return currentPos-readBuffer.Size+readBuffer.Position */
-    virtual int64       Position() ;
+    virtual uint64       Position() ;
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT 
 
     /** @brief Clip the stream size to a specified point.

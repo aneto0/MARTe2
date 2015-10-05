@@ -66,10 +66,9 @@ public:
      * In BufferedStreamIOBuffer flushes the write buffer after write operations or adjusts the
      * stream position (shifted after a refill because of a previous read operation).
      *
-     * @param[in] msecTimeout is the timeout (not used at this implementation level).
      * @return false in this implementation.
      */
-    virtual bool Resync(TimeoutType msecTimeout);
+    virtual bool Resync();
 
     /**
      * @brief Moves the cursor to an absolute position.
@@ -84,7 +83,7 @@ public:
     /**
      * @brief Moves the cursor relatively from the current position.
      * @details Checks that the final position is >= 0 and <= UsedSize, then moves the cursor.\n
-     * -If the final position is < 0 moves the cursor at beginning.\n
+     * -If the final position is < 0 moves the cursor at the beginning.\n
      * -If the final position is > UsedSize moves the cursor at the end.\n
      *
      * @param[in] delta is the step from the current position.
@@ -212,7 +211,7 @@ public:
 
     /**
      * @brief Puts a character on the buffer.
-     * @details This inline function is called by Printf functions for streamables. The
+     * @details This inline function is called by formatted print-like functions for buffered streams. The
      * implementation of NoMoreSpaceToWrite depends on children classes and it could be
      * for example a flush (BufferedStreamIOBuffer) or a new allocation (StreamStringIOBuffer).\n
      *
@@ -220,7 +219,7 @@ public:
      * the cursor is at a specific position.
      *
      * @param[in] c is the character to copy on this buffer.
-     * @return false if there is no space to write or the buffer is not writable.
+     * @return false if there is no space to write or the buffer is not writable, true otherwise.
      */
     inline bool PutC(const char8 c);
 
@@ -228,7 +227,7 @@ public:
      * @brief If possible remove the last character from the buffer.
      * @details Increments amountLeft and decrements the cursor.
      *
-     * @return false if the position is at the beginning.
+     * @return false if the position is at the beginning, true otherwise.
      */
     inline bool UnPutC();
 
@@ -239,7 +238,7 @@ public:
      * when the cursor is in a specific position defined by undoLevel.
      *
      * @param[out] c is the character in return.
-     * @return false if the cursor is at the end of the filled memory.
+     * @return false if the cursor is at the end of the filled memory, true otherwise.
      */
     inline bool GetC(char8 &c);
 
@@ -248,7 +247,7 @@ public:
      *
      * @details It decrements the cursor and increments amountLeft.
      *
-     * @return false if the cursor is at the beginning.
+     * @return false if the cursor is at the beginning, true otherwise.
      */
     inline bool UnGetC();
 
@@ -302,13 +301,23 @@ protected:
      * In BufferedStreamIOBuffer undoLevel is zero, so when the cursor arrived at the end of the memory
      * this function flushes this buffer to the stream.\n
      *
-     * @param[in] neededSize is the size of the memory to be allocated or flushed (not used at this implementation level).
-     * @param[in] msecTimeout is the timeout (not used at this implementation level).
      * @return false at this implementation level.
      */
     virtual bool NoMoreSpaceToWrite();
 
-
+    /**
+     * @brief The routine executed in WriteAll when the buffer is filled.
+     * @details This basic implementation only calls NoMoreSpaceToWrite.\n
+     *
+     * In StreamStringIOBuffer undoLevel is zero, so when the cursor arrived at the end of the memory,
+     * this function allocated a new portion of memory on the queue.\n
+     *
+     * In BufferedStreamIOBuffer undoLevel is zero, so when the cursor arrived at the end of the memory
+     * this function flushes this buffer to the stream.\n
+     *
+     * @param[in] neededSize is the size of the memory to be allocated or flushed (not used at this implementation level).
+     * @return false at this implementation level.
+     */
     virtual bool NoMoreSpaceToWrite(uint32 neededSize);
 
     /**
@@ -318,7 +327,6 @@ protected:
      * In BufferedStreamIOBuffer undoLevel is zero, so when the cursor arrives at the end of the memory
      * this function refills the buffer from the stream for a new read operation.
      *
-     * @param[in] msecTimeout is the timeout (not used at this implementation level).
      * @return false in this implementation.
      */
     virtual bool NoMoreDataToRead();
@@ -326,6 +334,9 @@ protected:
 
 private:
 
+    /**
+     * The internal buffer.
+     */
     CharBuffer internalBuffer;
 
     /**

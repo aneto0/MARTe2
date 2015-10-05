@@ -190,7 +190,7 @@ public:
      * @brief Pure virtual method. Moves within the stream to an absolute location.
      * @param pos is the desired absolute position.
      * @return return value depends on derived classes implementation. */
-    virtual bool        Seek(int64 pos) = 0;
+    virtual bool        Seek(uint64 pos) = 0;
 
     /** 
      * @brief Pure virtual method. Moves within the file relative to current location.
@@ -201,7 +201,7 @@ public:
     /**
      * @brief Pure virtual method. Returns current position.
      * @return the current position in the stream. */
-    virtual int64       Position()  = 0 ;
+    virtual uint64       Position()  = 0 ;
 
     /**
      * @brief Pure virtual method. Clip the stream size to the desired value.

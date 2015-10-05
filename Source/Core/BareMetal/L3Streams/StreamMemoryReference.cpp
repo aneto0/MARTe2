@@ -97,7 +97,7 @@ bool StreamMemoryReference::SetSize(int64 size){
 }
 
 /** Moves within the file to an absolute location */
-bool StreamMemoryReference::Seek(int64 pos){
+bool StreamMemoryReference::Seek(uint64 pos){
 	uint32 usedSize = buffer.UsedSize(); 
 	if (pos > usedSize) {
 		//REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
@@ -114,7 +114,7 @@ bool StreamMemoryReference::RelativeSeek(int32 deltaPos){
 }
 
 /** Returns current position */
-int64 StreamMemoryReference::Position() { 
+uint64 StreamMemoryReference::Position() {
 	return buffer.Position(); 
 }
 
