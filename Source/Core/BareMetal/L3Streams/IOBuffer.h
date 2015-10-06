@@ -322,6 +322,10 @@ protected:
      */
     virtual bool NoMoreDataToRead();
 
+    /*---------------------------------------------------------------------------*/
+
+    bool PrintFormattedToStream(const char8 * format,
+                                const AnyType pars[]);
 
 private:
 

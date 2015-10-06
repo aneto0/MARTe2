@@ -38,10 +38,11 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 #include "ErrorManagement.h"
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
+#include "IOBufferIntegerPrint.h"
+#include "IOBufferFloatPrint.h"
 #include "IOBuffer.h"
 #include "StreamI.h"
 
@@ -68,7 +69,9 @@ namespace MARTe {
  2) skip                 the character is not copied
  3) skip + terminator    the character is not copied, the string is terminated only if not empty
  */
-bool IOBuffer::GetTokenFromStream(char8 * outputBuffer,
+static inline
+bool GetTokenFromStream(IOBuffer & iobuff,
+                        char8 * outputBuffer,
                         const char8 * terminator,
                         uint32 outputBufferSize,
                         char8 * saveTerminator,
@@ -81,7 +84,7 @@ bool IOBuffer::GetTokenFromStream(char8 * outputBuffer,
     uint32 tokenSize = 0;
     while (1) {
         char8 c;
-        if (GetC(c) == false) {
+        if (iobuff.GetC(c) == false) {
 
             // 0 terminated string
             outputBuffer[tokenSize] = 0;
@@ -149,8 +152,9 @@ bool IOBuffer::GetTokenFromStream(char8 * outputBuffer,
  2) skip                 the character is not copied
  3) skip + terminator    the character is not copied, the string is terminated if not empty
  */
-
-bool IOBuffer::GetTokenFromStream(IOBuffer & inputStream,
+static inline
+bool GetTokenFromStream(IOBuffer & inputStream,
+                        IOBuffer & outputStream,
                         const char8 * terminator,
                         char8 * saveTerminator,
                         const char8 * skipCharacters) {
@@ -182,7 +186,7 @@ bool IOBuffer::GetTokenFromStream(IOBuffer & inputStream,
         }
         else
         if (!isSkip && !isTerminator) {
-            PutC(c);
+            outputStream.PutC(c);
             tokenSize++;
         }
     }
@@ -197,13 +201,15 @@ bool IOBuffer::GetTokenFromStream(IOBuffer & inputStream,
  * @param terminator is a list of terminator characters for the tokenize operation.
  * @return false if the number of skipped tokens is minor than the desired.
  */
-bool IOBuffer::SkipTokensInStream(uint32 count,
+static inline
+bool SkipTokensInStream(IOBuffer & iobuff,
+                        uint32 count,
                         const char8 * terminator) {
 
     uint32 tokenSize = 0;
     while (count > 0) {
         char8 c;
-        if (GetC(c) == false) {
+        if (iobuff.GetC(c) == false) {
 
             if (tokenSize == 0)
                 return false;
@@ -236,7 +242,9 @@ bool IOBuffer::SkipTokensInStream(uint32 count,
  *
  * This function calls IOBuffer::WriteAll to write the complete string size on the stream buffer.
  */
-bool IOBuffer::PrintCCString(const char8 * string,
+static inline
+bool PrintCCString(IOBuffer & iobuff,
+                   const char8 * string,
                    FormatDescriptor fd) {
     //if the string is null print NULL pointer on the stream.
     if (string == NULL) string = "NULL pointer";
@@ -264,15 +272,15 @@ bool IOBuffer::PrintCCString(const char8 * string,
 
     //if right aligned put the padding at the beginning
     if (!fd.leftAligned && (paddingSize > 0)) {
-        for (i=0;i < paddingSize;i++) ret = ret && PutC(' ');
+        for (i=0;i < paddingSize;i++) ret = ret && iobuff.PutC(' ');
     }
 
     //print the string on the buffer completely.
-    ret = ret && WriteAll(string,stringSize);
+    ret = ret && iobuff.WriteAll(string,stringSize);
 
     //if left aligned put the padding at the end
     if (fd.leftAligned && (paddingSize > 0)) {
-        for (i=0;i < paddingSize;i++) ret = ret && PutC(' ');
+        for (i=0;i < paddingSize;i++) ret = ret && iobuff.PutC(' ');
     }
 
     return ret;
@@ -285,19 +293,21 @@ bool IOBuffer::PrintCCString(const char8 * string,
  * @param fd specifies the desired printing format.
  * @return false in case of errors in read and write operations.
  *
- * This function calls the function StreamInterface::GetC which calls the specific stream Write function truth the virtual table.
+ * This function calls the function StreamI::GetC which calls the specific stream Write function truth the virtual table.
  * Gets a character from the stream and use IOBuffer::PutC to write it on the output stream buffer doing this operation for
  * each character from the cursor to the end of the input stream.*/
-bool IOBuffer::PrintStream(StreamInterface * stream,
+static inline
+bool PrintStream(IOBuffer & iobuff,
+                 BufferedStream * stream,
                  FormatDescriptor fd) {
     //print NULL pointer if the input stream is null.
     if (stream == NULL) {
-        return PrintCCString("!!NULL pointer!!",fd);
+        return PrintCCString(iobuff,"!!NULL pointer!!",fd);
     }
 
     //the input stream must be seekable, otherwise the cursor is always at the end.
     if (!stream->CanSeek()) {
-        return PrintCCString("!!stream !seek!!",fd);
+        return PrintCCString(iobuff,"!!stream !seek!!",fd);
     }
 
     //calculates the size from the cursor to the end of the filled memory in the input stream
@@ -318,7 +328,7 @@ bool IOBuffer::PrintStream(StreamInterface * stream,
     }
     //limit within 32 bit and further limit to 10000 chars
     if (streamSizeL > 10000) {
-        return PrintCCString("!! too big > 10000 characters!!",fd);
+        return PrintCCString(iobuff,"!! too big > 10000 characters!!",fd);
     }
     uint32 streamSize = (uint32)streamSizeL;
 
@@ -326,7 +336,7 @@ bool IOBuffer::PrintStream(StreamInterface * stream,
     uint32 i;
     //if right aligned put the padding at the beginning
     if (!fd.leftAligned && (paddingSize > 0)) {
-        for (i=0;i < paddingSize;i++) ret = ret && PutC(' ');
+        for (i=0;i < paddingSize;i++) ret = ret && iobuff.PutC(' ');
     }
 
     //write the stream input on the stream buffer output
@@ -335,7 +345,7 @@ bool IOBuffer::PrintStream(StreamInterface * stream,
         if (!stream->GetC(c)) {
             return false;
         }
-        if (!PutC(c)) {
+        if (!iobuff.PutC(c)) {
             return false;
         }
         streamSize--;
@@ -343,7 +353,7 @@ bool IOBuffer::PrintStream(StreamInterface * stream,
 
     //if left aligned put the padding at the end.
     if (fd.leftAligned && (paddingSize > 0)) {
-        for (i=0;i < paddingSize;i++) ret = ret && PutC(' ');
+        for (i=0;i < paddingSize;i++) ret = ret && iobuff.PutC(' ');
     }
 
     return ret;
@@ -358,8 +368,8 @@ bool IOBuffer::PrintStream(StreamInterface * stream,
  * Looking at the AnyType structure fields, calls the right function
  * for the conversion to string and the print of each type.
  */
-static inline
-bool PrintToStream(IOBuffer &iobuff,
+static
+bool PrintToStream(IOBuffer & iobuff,
                    const AnyType & parIn,
                    FormatDescriptor fd) {
 
@@ -380,22 +390,22 @@ bool PrintToStream(IOBuffer &iobuff,
             switch ((par.GetTypeDescriptor()).numberOfBits) {
             case 8: {
                 uint8 *data = (uint8 *) dataPointer;
-                return iobuff.IntegerToStream(*data, fd);
+                return IntegerToStream(iobuff, *data, fd);
             }
                 break;
             case 16: {
                 uint16 *data = (uint16 *) dataPointer;
-                return iobuff.IntegerToStream(*data, fd);
+                return IntegerToStream(iobuff, *data, fd);
             }
                 break;
             case 32: {
                 uint32 *data = (uint32 *) dataPointer;
-                return iobuff.IntegerToStream(*data, fd);
+                return IntegerToStream(iobuff, *data, fd);
             }
                 break;
             case 64: {
                 uint64 *data = (uint64 *) dataPointer;
-                return iobuff.IntegerToStream( *data, fd);
+                return IntegerToStream(iobuff, *data, fd);
             }
                 break;
             }
@@ -403,7 +413,8 @@ bool PrintToStream(IOBuffer &iobuff,
         // use native standard integer
         unsigned int *number = (unsigned int *) dataPointer;
         // all the remaining cases here
-        return iobuff.BitSetToStream( number, par.GetBitAddress(), (par.GetTypeDescriptor()).numberOfBits, false, fd);
+        uint8 nBits=(par.GetTypeDescriptor()).numberOfBits;
+        return BitSetToStream(iobuff, number, par.GetBitAddress(),nBits , false, fd);
 
     }
 
@@ -413,30 +424,31 @@ bool PrintToStream(IOBuffer &iobuff,
             switch ((par.GetTypeDescriptor()).numberOfBits) {
             case 8: {
                 int8 *data = (int8 *) dataPointer;
-                return iobuff.IntegerToStream(*data, fd);
+                return IntegerToStream(iobuff, *data, fd);
             }
                 break;
             case 16: {
                 int16 *data = (int16 *) dataPointer;
-                return iobuff.IntegerToStream(*data, fd);
+                return IntegerToStream(iobuff, *data, fd);
             }
                 break;
             case 32: {
                 int32 *data = (int32 *) dataPointer;
-                return iobuff.IntegerToStream( *data, fd);
+                return IntegerToStream(iobuff, *data, fd);
             }
                 break;
             case 64: {
                 int64 *data = (int64 *) dataPointer;
-                return iobuff.IntegerToStream(*data, fd);
+                return IntegerToStream(iobuff, *data, fd);
             }
                 break;
             }
         }
         // use native standard integer
         unsigned int *number = (unsigned int *) dataPointer;
+        uint8 nBits=(par.GetTypeDescriptor()).numberOfBits;
         // all the remaining cases here
-        return iobuff.BitSetToStream(number, par.GetBitAddress(), (par.GetTypeDescriptor()).numberOfBits, true, fd);
+        return BitSetToStream(iobuff, number, par.GetBitAddress(), nBits , true, fd);
 
     }
     if (((par.GetTypeDescriptor()).type) == Float) {
@@ -444,12 +456,12 @@ bool PrintToStream(IOBuffer &iobuff,
         switch ((par.GetTypeDescriptor()).numberOfBits) {
         case 32: {
             float32 *data = (float32 *) dataPointer;
-            return iobuff.FloatToStream(*data, fd);
+            return FloatToStream(iobuff, *data, fd);
         }
             break;
         case 64: {
             float64 *data = (float64 *) dataPointer;
-            return iobuff.FloatToStream(*data, fd);
+            return FloatToStream(iobuff, *data, fd);
         }
             break;
         case 128: {
@@ -471,7 +483,7 @@ bool PrintToStream(IOBuffer &iobuff,
         // the UnsignedInteger expects a pointer to the number
 
         at.SetDataPointer((void *) &dataPointer);
-        return iobuff.PrintToStream(at, fd);
+        return PrintToStream(iobuff, at, fd);
     }
     //const char8* string type.
     //if in the format descriptor is specified the hex notation (%p or %x)
@@ -483,16 +495,16 @@ bool PrintToStream(IOBuffer &iobuff,
             //the UnsignedInteger expects a pointer to the number
 
             at.SetDataPointer((void *) &dataPointer);
-            return iobuff.PrintToStream(at, fd);
+            return PrintToStream(iobuff, at, fd);
         }
         const char8 *string = (const char8 *) dataPointer;
-        return iobuff.PrintCCString( string, fd);
+        return PrintCCString(iobuff, string, fd);
     }
 
     //general stream type.
     if (((par.GetTypeDescriptor()).type) == Stream) {
-        StreamInterface * stream = (StreamInterface *) dataPointer;
-        return iobuff.PrintStream( stream, fd);
+        BufferedStream * stream = (BufferedStream *) dataPointer;
+        return PrintStream(iobuff, stream, fd);
 
     }
     //REPORT_ERROR(UnsupportedError,"unsupported format")
@@ -508,7 +520,6 @@ bool PrintToStream(IOBuffer &iobuff,
  *
  * This function read the format, builds the related format descriptor and then
  * calls the PrintToStream function passing the next AnyType element in the list.*/
-
 bool IOBuffer::PrintFormattedToStream(const char8 * format,
                             const AnyType pars[]) {
     // indicates active parameter
@@ -542,7 +553,7 @@ bool IOBuffer::PrintFormattedToStream(const char8 * format,
         // if void simply skip and continue
         if (!pars[parsIndex].IsVoid()) {
             // use it to process parameters
-            if (!PrintToStream(iobuff, pars[parsIndex++], fd))
+            if (!PrintToStream(this, pars[parsIndex++], fd))
                 return false;
         }
     }
@@ -551,5 +562,3 @@ bool IOBuffer::PrintFormattedToStream(const char8 * format,
 }
 
 }
-
-	
