@@ -47,7 +47,7 @@ CharBuffer::CharBuffer() {
     buffer = NULL_PTR(char8 *);
     readOnly = true;
     allocated = false;
-    allocationGranularityMask= 0xFFFFFFFFu;
+    allocationGranularityMask = 0xFFFFFFFFu;
 }
 
 CharBuffer::CharBuffer(const uint32 allocationGranularity) {
@@ -55,19 +55,22 @@ CharBuffer::CharBuffer(const uint32 allocationGranularity) {
     buffer = NULL_PTR(char8 *);
     readOnly = true;
     allocated = false;
-    uint32 granularityTest=1u;
 
-    // round the granularity mask at the first 2^x up
-    for(uint32 i=0u; i<31u; i++){
-        if(granularityTest>=allocationGranularity){
-            break;
+    {
+        uint32 granularityTest = 1u;
+        // round the granularity mask at the first 2^x up
+        for (uint32 i = 0u; i < 31u; i++) {
+            if (granularityTest >= allocationGranularity) {
+                break;
+            }
+            granularityTest <<= 1u;
         }
-        granularityTest<<=1u;
+        // sets the allocation granularity mask
+        allocationGranularityMask = ~(granularityTest - 1u);
     }
-    allocationGranularityMask= ~(granularityTest-1u);
 }
 
-void CharBuffer::Clean() {
+void CharBuffer::Reset() {
     if (allocated) {
         if (buffer != NULL) {
             if (HeapManager::Free(reinterpret_cast<void *&>(buffer))) {
@@ -75,12 +78,16 @@ void CharBuffer::Clean() {
             }
         }
     }
+    bufferSize = 0u;
+    buffer = NULL_PTR(char8 *);
+    readOnly = true;
+    allocated = false;
 }
 
 /*lint -e{1551} The free should not cause a segmentation fault given that buffer != NULL is checked
  * the pointer is properly initialised and is allocated by this class (so it should stay valid).*/
 CharBuffer::~CharBuffer() {
-    Clean();
+    Reset();
 }
 
 bool CharBuffer::SetBufferSize(const uint32 desiredSize) {
@@ -93,7 +100,7 @@ bool CharBuffer::SetBufferSize(const uint32 desiredSize) {
     bool ok = true;
     // If memory reference is present remove it otherwise we end up reallocating others's memory!!
     if ((bufferSize > 0u) && (!allocated)) {
-        Clean();
+        Reset();
     }
 
     //the mask is the 2 complement of the actual granularity
@@ -133,25 +140,17 @@ bool CharBuffer::SetBufferSize(const uint32 desiredSize) {
 
 void CharBuffer::SetBufferReference(char8 * const buff,
                                     const uint32 buffSize) {
-    Clean();
+    Reset();
     buffer = buff;
-    readOnly = true;
-    allocated = false;
-    if (buffer != NULL) {
-        bufferSize = buffSize;
-        readOnly = false;
-    }
+    bufferSize = buffSize;
+    readOnly = false;
 }
 
 void CharBuffer::SetBufferReference(const char8 * const buff,
                                     const uint32 buffSize) {
-    Clean();
+    Reset();
     buffer = const_cast<char8 *>(buff);
-    readOnly = true;
-    allocated = false;
-    if (buffer != NULL) {
-        bufferSize = buffSize;
-    }
+    bufferSize = buffSize;
 }
 
 }

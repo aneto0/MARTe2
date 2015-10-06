@@ -32,20 +32,26 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "BitBoolean.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
  * @brief Char buffer wrapper.
  *
  * @details This class implements a generic character buffer. It wraps a char8 * buffer
- * which can either be dynamically allocated by this class on the heap, or can be assigned
+ * which can either be dynamically allocated by this class on the heap, or can be linked
  * to an existing memory reference.
+ *
+ * @invariant 1) CanWrite() => Buffer() == BufferReference()
+ * @invariant 2) not CanWrite() => Buffer() != BufferReference() && BufferReference() == NULL
+ * @invariant 3) (Buffer() != NULL && Size() > 0) || (Buffer() == NULL && Size() == 0)
  */
 class CharBuffer {
 
@@ -53,9 +59,13 @@ public:
 
     /** 
      * @brief Default constructor.
+     * @pre true
      * @post
-     *   CanWrite() == false &&
-     *   Buffer() == NULL
+     *   Buffer() == NULL &&
+     *   Size() == 0 &&
+     *   AllocationGranularityMask() == 0xFFFFFFFFu &&
+     *   not CanWrite() &&
+     *   not IsAllocated()
      */
     CharBuffer();
 
@@ -65,11 +75,18 @@ public:
      * the input (i.e input=10 ==> granularity=16).
      * @param[in] allocationGranularity specifies the minimum size which can be allocated.
      * The memory allocated will be always a multiple of this number.
+     * @pre true
+     * @post
+     *   Buffer() == NULL &&
+     *   Size() == 0 &&
+     *   AllocationGranularityMask() == ~("allocationGranularity rounded at the first 2^x up" - 1u) &&
+     *   not CanWrite() &&
+     *   not IsAllocated()
      */
     CharBuffer(const uint32 allocationGranularity);
 
     /** 
-     * @brief Default destructor.
+     * @brief Destructor.
      */
     ~CharBuffer();
 
@@ -79,46 +96,53 @@ public:
      * buffer is resized (Realloc) for \a desiredSize bytes.
      * @param[in] desiredSize the desired size of the buffer.
      * @return false if precondition fails or if the (re)allocation of the desiredSize in the heap fails.
+     * @pre true
+     * @post
+     *    Buffer() != NULL &&
+     *    BufferSize() == ((desiredSize + (~allocationGranularityMask() + 1u) - 1u) & allocationGranularityMask()) &&
+     *    CanWrite()
      */
     bool SetBufferSize(const uint32 desiredSize);
 
     /**
      * @brief Memory assignment of a preallocated buffer in read and write mode.
-     * @param[in, out] buff a pointer to the writable buffer.
+     * @param[in] buff a pointer to the writable buffer.
      * @param[in] buffSize the size of the buffer.
      * @pre
-     *    buff != NULL
+     *    buff != NULL && buffSize > 0
      * @post
      *    Buffer() == buff &&
-     *    CanWrite() == true &&
-     *    BufferSize() == buffSize
+     *    BufferSize() == buffSize &&
+     *    CanWrite()
+     * @warning buff is an input parameter, because this method only sets the
+     * pointer, but once assigned the pointee could be accessed for read and
+     * write.
      */
     void SetBufferReference(char8 * const buff,
-                                    const uint32 buffSize);
+                            const uint32 buffSize);
 
     /**
      * @brief Memory assignment of a preallocated buffer in read-only mode.
-     * @param buff is a pointer to the buffer without write access.
-     * @param buffSize is the size of the buffer.
-     *
+     * @param[in] buff is a pointer to the buffer without write access.
+     * @param[in] buffSize is the size of the buffer.
      * @pre
-     *    buff != NULL
+     *    buff != NULL && buffSize > 0
      * @post
      *    Buffer() == buff &&
-     *    CanWrite() == false &&
-     *    BufferSize() == buffSize
+     *    BufferSize() == buffSize &&
+     *    not CanWrite()
      */
     void SetBufferReference(const char8 * const buff,
-                                    const uint32 buffSize);
+                            const uint32 buffSize);
 
     /** 
-     * @brief Read-only access to the internal buffer.
+     * @brief Gets a read-only pointer to the internal buffer.
      * @return a pointer to the buffer.
      */
     inline const char8 *Buffer() const;
 
     /**
-     * @brief Read/Write access top the internal buffer
+     * @brief Gets a read/Write pointer to the internal buffer
      * @return a pointer to the buffer.
      */
     inline char8 *BufferReference() const;
@@ -130,13 +154,22 @@ public:
     inline uint32 Size() const;
 
     /**
-     * @brief Checks if the buffer is writable.
+     * @brief Queries if the buffer is writable.
      * @return true if the buffer is writable.
      */
     bool CanWrite() const;
 
-private:
+    /**
+     * @brief Queries if the current buffer is allocated
+     */
+    bool IsAllocated() const;
 
+    /**
+     * @brief Gets the allocation granularity mask
+     */
+    uint32 AllocationGranularityMask() const;
+
+private:
 
     /**
      * A mask of bits which represents the allocation granularity
@@ -163,22 +196,29 @@ private:
     /**
      * The wrapper char8 * buffer
      */
-    /*lint -sem(MARTe::CharBuffer::Clean,cleanup)*/
+    /*lint -sem(MARTe::CharBuffer::Reset,cleanup)*/
     char8 *buffer;
 
     /**
-     * @brief Releases any memory previously allocated in the heap.
+     * @brief Resets the buffer, releasing any memory previously allocated in
+     * the heap if it was allocated by the class itself.
+     * @pre true
      * @post
      *   Buffer() == NULL &&
-     *   BufferSize() == 0
+     *   Size() == 0 &&
+     *   not CanWrite() &&
+     *   not IsAllocated()
      */
-    void Clean();
+    void Reset();
 
 };
+
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 inline const char8 *CharBuffer::Buffer() const {
@@ -201,7 +241,14 @@ inline bool CharBuffer::CanWrite() const {
     return !readOnly;
 }
 
+inline bool CharBuffer::IsAllocated() const {
+    return allocated;
 }
 
-#endif
+inline uint32 CharBuffer::AllocationGranularityMask() const {
+    return allocationGranularityMask;
+}
 
+}
+
+#endif /* CHAR_BUFFER_H */
