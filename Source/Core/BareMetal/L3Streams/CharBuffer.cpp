@@ -104,7 +104,7 @@ bool CharBuffer::SetBufferSize(const uint32 desiredSize) {
     }
 
     //the mask is the 2 complement of the actual granularity
-    uint32 allocationGranularity = ~allocationGranularityMask + 1u;
+    uint32 allocationGranularity = AllocationGranularity();
     uint32 allocationBoundary = allocationGranularityMask;
 
     // stay within mathematical limits

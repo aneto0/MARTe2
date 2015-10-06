@@ -63,7 +63,7 @@ public:
      * @post
      *   Buffer() == NULL &&
      *   Size() == 0 &&
-     *   AllocationGranularityMask() == 0xFFFFFFFFu &&
+     *   AllocationGranularity() == 1u &&
      *   not CanWrite() &&
      *   not IsAllocated()
      */
@@ -79,7 +79,7 @@ public:
      * @post
      *   Buffer() == NULL &&
      *   Size() == 0 &&
-     *   AllocationGranularityMask() == ~("allocationGranularity rounded at the first 2^x up" - 1u) &&
+     *   AllocationGranularity() == "allocationGranularity rounded at the first 2^x up" &&
      *   not CanWrite() &&
      *   not IsAllocated()
      */
@@ -99,7 +99,7 @@ public:
      * @pre true
      * @post
      *    Buffer() != NULL &&
-     *    BufferSize() == ((desiredSize + (~allocationGranularityMask() + 1u) - 1u) & allocationGranularityMask()) &&
+     *    BufferSize() == (((desiredSize + AllocationGranularity()) - 1u) & ~(AllocationGranularity() - 1u)) &&
      *    CanWrite()
      */
     bool SetBufferSize(const uint32 desiredSize);
@@ -165,9 +165,9 @@ public:
     bool IsAllocated() const;
 
     /**
-     * @brief Gets the allocation granularity mask
+     * @brief Gets the allocation granularity
      */
-    uint32 AllocationGranularityMask() const;
+    uint32 AllocationGranularity() const;
 
 private:
 
@@ -245,8 +245,8 @@ inline bool CharBuffer::IsAllocated() const {
     return allocated;
 }
 
-inline uint32 CharBuffer::AllocationGranularityMask() const {
-    return allocationGranularityMask;
+inline uint32 CharBuffer::AllocationGranularity() const {
+    return (~allocationGranularityMask + 1u);
 }
 
 }
