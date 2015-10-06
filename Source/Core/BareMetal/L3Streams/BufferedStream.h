@@ -77,17 +77,6 @@ public:
      */
     virtual ~BufferedStream();
 
-    /**
-     * @brief Pure virtual method. Gets the read buffer.
-     * @return a pointer to the read buffer.
-     */
-    virtual IOBuffer *GetInputBuffer() = 0;
-
-    /**
-     * @brief Pure virtual method. Get the write buffer.
-     * @return a pointer to the write buffer.
-     */
-    virtual IOBuffer *GetOutputBuffer() = 0;
 
     /**
      * @brief Pure virtual function. Defines if write operations can be performed on the stream.
@@ -127,10 +116,8 @@ public:
      error in the stream  ==> no point to try again
      parameters error, for instance buffer = NULL
      */
-    virtual bool Read(char8* buffer,
-                      uint32 & size,
-                      TimeoutType msecTimeout = TTDefault,
-                      bool complete = false)=0;
+    virtual bool Read(char8* bufferIn,
+                      uint32 & size)=0;
 
     /**
      * @brief Pure virtual method. Writes from a const char8* buffer to the stream.
@@ -152,10 +139,8 @@ public:
      error in the stream ==> no point to try again
      parameters error, for instance buffer = NULL
      */
-    virtual bool Write(const char8* buffer,
-                       uint32 & size,
-                       TimeoutType msecTimeout = TTDefault,
-                       bool complete = false) = 0;
+    virtual bool Write(const char8* bufferIn,
+                       uint32 & size) = 0;
 
     /**
      * @brief Pure virtual method. The size of the stream.
@@ -213,11 +198,11 @@ public:
      The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
      skipCharacters=NULL is equivalent to skipCharacters = terminator.
      */
-    virtual bool GetToken(char8 * outputBuffer,
-                          const char8 * terminator,
-                          uint32 outputBufferSize,
-                          char8 * saveTerminator,
-                          const char8 * skipCharacters);
+    virtual bool GetToken(char8 * const outputBuffer,
+                          const char8 * const terminator,
+                          const uint32 outputBufferSize,
+                          char8 * const saveTerminator,
+                          const char8 * const skipCharacters);
 
     /**
      * @brief Reads a token from the stream and writes it on another stream.
@@ -244,10 +229,10 @@ public:
      2) skip                 the character is not copied
      3) skip + terminator    the character is not copied, the string is terminated only if not empty
      */
-    virtual bool GetToken(BufferedStream & output,
-                          const char8 * terminator,
-                          char8 * saveTerminator = NULL,
-    const char8 * skipCharacters=NULL);
+    bool GetToken(BufferedStream & output,
+                          const char8 * const terminator,
+                          char8 * const saveTerminator = static_cast<char8 *>(NULL),
+    const char8 * const skipCharacters=static_cast<const char8 *>(NULL));
 
     /**
      * @brief Skips a series of tokens delimited by terminators or 0.
@@ -255,8 +240,8 @@ public:
      * @param terminator is a list of terminator characters.
      * @return false if no data read, true otherwise.
      */
-    virtual bool SkipTokens(uint32 count,
-    const char8 * terminator);
+    bool SkipTokens(const uint32 count,
+    const char8 * const terminator);
 
     /**
      * @brief Very powerful function to handle data conversion into a stream of characters.
@@ -270,8 +255,8 @@ public:
      * For more informations on AnyType class @see AnyType.h, for more informations on the format descriptor
      * @see FormatDescriptor.h
      */
-    virtual bool Print(const AnyType& par,
-    FormatDescriptor fd = standardFormatDescriptor);
+    bool Print(const AnyType& par,
+    const FormatDescriptor fd = standardFormatDescriptor);
 
     /**
      * @brief Prints a list of elements looking to a specified format.
@@ -283,7 +268,7 @@ public:
      Format follows the TypeDescriptor::InitialiseFromString.
      Prints all data pointed to by pars.
      */
-    virtual bool PrintFormatted(const char8 *format,
+    bool PrintFormatted(const char8 * const format,
     const AnyType pars[]);
 
     /**
@@ -291,26 +276,26 @@ public:
      * @param buffer is the buffer to be copied on the stream.
      * @return the result of the Write operation which depends on derived classes implementation.
      */
-    virtual bool Copy(const char8 *buffer);
+    bool Copy(const char8 * const buffer);
 
     /**
      * @brief Copies from stream current Position to end.
      * @param stream is the stream to be copied on this stream.
      * @param return false if the results of Read and Write streams operations fails.
      */
-    virtual bool Copy(BufferedStream &stream);
+    bool Copy(BufferedStream &stream);
 
     /**
      * @see Printf with two elements to print.
      */
-    inline bool Printf(const char8 *format,
+    inline bool Printf(const char8 * const format,
     const AnyType& par1,
     const AnyType& par2);
 
     /**
      * @see Printf with three elements to print.
      */
-    inline bool Printf(const char8 *format,
+    inline bool Printf(const char8 * const format,
     const AnyType& par1,
     const AnyType& par2,
     const AnyType& par3);
@@ -318,7 +303,7 @@ public:
     /**
      * @see Printf with four element to print.
      */
-    inline bool Printf(const char8 *format,
+    inline bool Printf(const char8 * const format,
     const AnyType& par1,
     const AnyType& par2,
     const AnyType& par3,
@@ -341,8 +326,22 @@ public:
      * @return depends on the derived classes implementation.
      */
     inline bool GetLine(char8 *outputBuffer,
-    uint32 outputBufferSize,
+                        const uint32 outputBufferSize,
     bool skipTerminators = true);
+
+protected:
+    /**
+     * @brief Pure virtual method. Gets the read buffer.
+     * @return a pointer to the read buffer.
+     */
+    virtual IOBuffer *GetInputBuffer() = 0;
+
+    /**
+     * @brief Pure virtual method. Get the write buffer.
+     * @return a pointer to the write buffer.
+     */
+    virtual IOBuffer *GetOutputBuffer() = 0;
+
 
 };
 
@@ -351,38 +350,38 @@ public:
 /*---------------------------------------------------------------------------*/
 
 BufferedStream::operator AnyType() {
-    void *dataPointer = (void *) this;
-    TypeDescriptor dataDescriptor(false, Stream, 0);
+    void *dataPointer = static_cast<void *> (this);
+    TypeDescriptor dataDescriptor(false, Stream, 0u);
 
-    return AnyType(dataDescriptor, 0, dataPointer);
+    return AnyType(dataDescriptor, 0u, dataPointer);
 }
 
-bool BufferedStream::Printf(const char8 *format,
+bool BufferedStream::Printf(const char8 * const format,
                             const AnyType& par1,
                             const AnyType& par2) {
     AnyType pars[3] = { par1, par2, voidAnyType };
-    return PrintFormatted(format, pars);
+    return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStream::Printf(const char8 *format,
+bool BufferedStream::Printf(const char8 * const format,
                             const AnyType& par1,
                             const AnyType& par2,
                             const AnyType& par3) {
     AnyType pars[4] = { par1, par2, par3, voidAnyType };
-    return PrintFormatted(format, pars);
+    return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStream::Printf(const char8 *format,
+bool BufferedStream::Printf(const char8 * const format,
                             const AnyType& par1,
                             const AnyType& par2,
                             const AnyType& par3,
                             const AnyType& par4) {
     AnyType pars[5] = { par1, par2, par3, par4, voidAnyType };
-    return PrintFormatted(format, pars);
+    return PrintFormatted(format, &pars[0]);
 }
 
 bool BufferedStream::GetLine(BufferedStream & output,
-                             bool skipTerminators) {
+                             const bool skipTerminators) {
     const char8 *skipCharacters = "\r";
 #if defined (_WIN32)
     if (!skipTerminators) {
@@ -393,12 +392,12 @@ bool BufferedStream::GetLine(BufferedStream & output,
         skipCharacters = "";
     }
 #endif
-    return GetToken(output, "\n", NULL,skipCharacters);
+    return GetToken(output, "\n", static_cast<char8 *>(NULL),skipCharacters);
 }
 
-bool BufferedStream::GetLine(char8 *outputBuffer,
-                             uint32 outputBufferSize,
-                             bool skipTerminators) {
+bool BufferedStream::GetLine(char8 * const outputBuffer,
+                             const uint32 outputBufferSize,
+                             const bool skipTerminators) {
     const char8 *skipCharacters = "\r";
 #if defined (_WIN32)
     if (!skipTerminators) {
@@ -409,7 +408,7 @@ bool BufferedStream::GetLine(char8 *outputBuffer,
         skipCharacters = "";
     }
 #endif
-    return GetToken(outputBuffer, "\n", outputBufferSize, NULL,skipCharacters);
+    return GetToken(outputBuffer, "\n", outputBufferSize, static_cast<char8 *>(NULL),skipCharacters);
 }
 
 }

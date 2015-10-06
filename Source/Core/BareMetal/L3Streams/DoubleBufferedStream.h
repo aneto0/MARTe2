@@ -128,83 +128,25 @@ namespace MARTe {
 
  */
 class DoubleBufferedStream: public BufferedStream {
-protected:
 
-    /**
-     * The read buffer. It is used just like
-     * a middle buffer between the stream and the output.
-     * For each read operation this buffer is filled completely
-     * and then the desired size is copied on the output.
-     * Using the buffer mode, the GetC function always use this buffer,
-     * while for Read function it is used only if the size to read is minor
-     * than a quarter than the buffer size.
-     * Function BufferedStreamIOBuffer::NoMoreSpaceToWrite acts
-     * as a flush and the more confidencial function Flush calls it.
-     * @see BufferedStreamBuffer for more informations.*/
-    BufferedStreamIOBuffer readBuffer;
+public:
 
-    /**
-     * The write buffer. It is used just like an
-     * intermediate between the input and the stream. Write
-     * operations copies data from the input to this buffer
-     * and only when the buffer is full (or in case of an explicit
-     * FlushAndResync call) the buffer is flushed on the stream.
-     * Using the buffer mode, the PutC function always use this buffer,
-     * while for Write function it is used only if the buffer is 4 times greater
-     * than the size to write.
-     * Function BufferedStreamIOBuffer::NoMoreSpaceToRead acts
-     * as a refill and the more confidential function Refill calls it.
-     */
-    BufferedStreamIOBuffer writeBuffer;
-
-protected:
-    // methods to be implemented by deriving classes
-
-    /**
-     * @brief Get the read buffer.
-     * @return BufferedStreamIOBuffer readBuffer pointer.
-     *
-     * This function is used by Printf and GetToken functions.
-     */
-    virtual IOBuffer *GetInputBuffer();
-
-    /**
-     * @brief Get the write buffer.
-     * @return BufferedStreamIOBuffer writeBuffer pointer.
-     *
-     * This function is used by Printf and GetToken functions.
-     */
-    virtual IOBuffer *GetOutputBuffer();
-
-    //TODO
-    RawStream *unbufferedStream;
-
-protected:
-    // methods to be implemented by deriving classes
-
-private:
-    // mode switch methods
-
-protected:
-
-    bool CanSeek() const;
+    virtual bool CanSeek() const;
 
     /** whether it can be written into */
-    bool CanWrite() const;
+    virtual bool CanWrite() const;
 
     /** whether it can be  read */
-    bool CanRead() const;
+    virtual bool CanRead() const;
 
     /**
      * @brief Default constructor.
      *
      * At the beginning the stream is monodirectional. */
     //TODO the construction of readBuffer and writeBuffer has to be changed.
-    DoubleBufferedStream() :
-            readBuffer(unbufferedStream),
-            writeBuffer(unbufferedStream) {
+    DoubleBufferedStream();
 
-    }
+    DoubleBufferedStream(TimeoutType msecTimeout);
 
     /** @brief Default destructor. */
     virtual ~DoubleBufferedStream();
@@ -225,7 +167,6 @@ protected:
     virtual bool SetBufferSize(uint32 readBufferSize = 0,
                                uint32 writeBufferSize = 0);
 
-public:
     // special inline methods for buffering
 
     /**
@@ -239,15 +180,7 @@ public:
      * The function DoubleBufferedStream::Resync adjusts the position on the stream
      * after a read operation, shifted because of the Refill.
      */
-    inline bool Flush(TimeoutType msecTimeout = TTDefault) {
-
-        // some data in writeBuffer
-        // we can flush in all cases then
-        if (writeBuffer.UsedSize() > 0) {
-            return writeBuffer.Flush();
-        }
-        return true;
-    }
+    inline bool Flush(TimeoutType msecTimeout = TTDefault);
 
     /**
      * @brief Simply write a character to the stream if space exist and if operatingModes allows.
@@ -257,15 +190,7 @@ public:
      * In buffered mode uses the inline IOBuffer::PutC of writeBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
-    inline bool PutC(char8 c) {
-
-        if (writeBuffer.BufferSize() > 0) {
-            return writeBuffer.PutC(c);
-        }
-
-        uint32 size = 1;
-        return unbufferedStream->Write(&c, size);
-    }
+    inline bool PutC(char8 c);
 
     /**
      * @brief Simply read a character from stream.
@@ -275,15 +200,7 @@ public:
      * In buffered mode uses the inline IOBuffer::GetC of readBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
-    inline bool GetC(char8 &c) {
-
-        if (readBuffer.BufferSize() > 0) {
-            return readBuffer.GetC(c);
-        }
-
-        uint32 size = 1;
-        return unbufferedStream->Read(&c, size);
-    }
+    inline bool GetC(char8 &c);
 
 public:
     // PURE STREAMING  built upon UnBuffered version
@@ -305,10 +222,8 @@ public:
      * is returned in size. msecTimeout is how much the operation should last.
      * Timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
      * when noWait is used .... */
-    virtual bool Read(char8 * buffer,
-                      uint32 & size,
-                      TimeoutType msecTimeout = TTDefault,
-                      bool completeRead = false);
+    virtual bool Read(char8 * bufferIn,
+                      uint32 & size);
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
 
     /**
@@ -331,10 +246,8 @@ public:
      * is returned in size. msecTimeout is how much the operation should last.
      * Timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
      *  when noWait is used .... */
-    virtual bool Write(const char8* buffer,
-                       uint32 & size,
-                       TimeoutType msecTimeout = TTDefault,
-                       bool completeWrite = false);
+    virtual bool Write(const char8* bufferIn,
+                       uint32 & size);
 
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
 
@@ -381,12 +294,92 @@ public:
     virtual bool SetSize(uint64 size);
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
 
+protected:
+
+    /**
+     * The read buffer. It is used just like
+     * a middle buffer between the stream and the output.
+     * For each read operation this buffer is filled completely
+     * and then the desired size is copied on the output.
+     * Using the buffer mode, the GetC function always use this buffer,
+     * while for Read function it is used only if the size to read is minor
+     * than a quarter than the buffer size.
+     * Function BufferedStreamIOBuffer::NoMoreSpaceToWrite acts
+     * as a flush and the more confidencial function Flush calls it.
+     * @see BufferedStreamBuffer for more informations.*/
+    BufferedStreamIOBuffer readBuffer;
+
+    /**
+     * The write buffer. It is used just like an
+     * intermediate between the input and the stream. Write
+     * operations copies data from the input to this buffer
+     * and only when the buffer is full (or in case of an explicit
+     * FlushAndResync call) the buffer is flushed on the stream.
+     * Using the buffer mode, the PutC function always use this buffer,
+     * while for Write function it is used only if the buffer is 4 times greater
+     * than the size to write.
+     * Function BufferedStreamIOBuffer::NoMoreSpaceToRead acts
+     * as a refill and the more confidential function Refill calls it.
+     */
+    BufferedStreamIOBuffer writeBuffer;
+
+    /**
+     * @brief Get the read buffer.
+     * @return BufferedStreamIOBuffer readBuffer pointer.
+     *
+     * This function is used by Printf and GetToken functions.
+     */
+    virtual IOBuffer *GetInputBuffer();
+
+    /**
+     * @brief Get the write buffer.
+     * @return BufferedStreamIOBuffer writeBuffer pointer.
+     *
+     * This function is used by Printf and GetToken functions.
+     */
+    virtual IOBuffer *GetOutputBuffer();
+
+    //TODO
+    RawStream *unbufferedStream;
+
+    TimeoutType timeout;
+
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+bool DoubleBufferedStream::Flush(TimeoutType msecTimeout ) {
+
+    // some data in writeBuffer
+    // we can flush in all cases then
+    if (writeBuffer.UsedSize() > 0) {
+        return writeBuffer.Flush();
+    }
+    return true;
+}
+
+bool DoubleBufferedStream::PutC(char8 c) {
+
+    if (writeBuffer.BufferSize() > 0) {
+        return writeBuffer.PutC(c);
+    }
+
+    uint32 size = 1;
+    return unbufferedStream->Write(&c, size, timeout);
+}
+
+bool DoubleBufferedStream::GetC(char8 &c) {
+
+    if (readBuffer.BufferSize() > 0) {
+        return readBuffer.GetC(c);
+    }
+
+    uint32 size = 1;
+    return unbufferedStream->Read(&c, size, timeout);
+}
+
+}
 #endif /* DOUBLEBUFFEREDSTREAM_H_ */
 

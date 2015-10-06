@@ -43,6 +43,22 @@
 
 namespace MARTe {
 
+SingleBufferedStream::SingleBufferedStream() :
+        readBuffer(unbufferedStream),
+        writeBuffer(unbufferedStream) {
+    operatingModes.mutexReadMode = false;
+    operatingModes.mutexWriteMode = false;
+    timeout = TTDefault;
+}
+
+SingleBufferedStream::SingleBufferedStream(TimeoutType msecTimeout) :
+        readBuffer(unbufferedStream, msecTimeout),
+        writeBuffer(unbufferedStream, msecTimeout) {
+    operatingModes.mutexReadMode = false;
+    operatingModes.mutexWriteMode = false;
+    timeout = msecTimeout;
+}
+
 /// default destructor
 SingleBufferedStream::~SingleBufferedStream() {
 
@@ -119,10 +135,8 @@ IOBuffer *SingleBufferedStream::GetOutputBuffer() {
         return &writeBuffer;
     }
 
-bool SingleBufferedStream::Read(char8 * buffer,
-                                uint32 & size,
-                                TimeoutType msecTimeout,
-                                bool completeRead) {
+bool SingleBufferedStream::Read(char8 * bufferIn,
+                                uint32 & size) {
     // check for mutually exclusive buffering and
     // whether one needs to switch to ReadMode
     if (operatingModes.mutexWriteMode) {
@@ -137,7 +151,7 @@ bool SingleBufferedStream::Read(char8 * buffer,
         uint32 toRead = size;
 
         // try once
-        readBuffer.Read(buffer, size);
+        readBuffer.Read(bufferIn, size);
 
         if (size == toRead) {
             return true;
@@ -152,7 +166,7 @@ bool SingleBufferedStream::Read(char8 * buffer,
                 if (!readBuffer.Refill())
                     return false;
 
-                readBuffer.Read(buffer + size, toRead);
+                readBuffer.Read(bufferIn + size, toRead);
                 size += toRead;
 
                 // should have completed
@@ -162,7 +176,7 @@ bool SingleBufferedStream::Read(char8 * buffer,
             }
             else {
                 // if needed read directly from stream
-                if (!unbufferedStream->Read(buffer + size, toRead, msecTimeout))
+                if (!unbufferedStream->Read(bufferIn + size, toRead, timeout))
                     return false;
                 size += toRead;
                 return true;
@@ -171,17 +185,15 @@ bool SingleBufferedStream::Read(char8 * buffer,
     }
 
     // if needed read directly from stream
-    return unbufferedStream->Read(buffer, size, msecTimeout);
+    return unbufferedStream->Read(bufferIn, size, timeout);
 }
 
 /** Write data from a buffer to the stream. As much as size byte are written, actual size
  is returned in size. msecTimeout is how much the operation should last.
  timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
  when noWait is used .... */
-bool SingleBufferedStream::Write(const char8* buffer,
-                                 uint32 & size,
-                                 TimeoutType msecTimeout,
-                                 bool completeWrite) {
+bool SingleBufferedStream::Write(const char8* bufferIn,
+                                 uint32 & size) {
 
     // check for mutually exclusive buffering and
     // whether one needs to switch to WriteMode
@@ -201,7 +213,7 @@ bool SingleBufferedStream::Write(const char8* buffer,
         if (writeBuffer.MaxUsableAmount() > (4 * size)) {
 
             // try writing the buffer
-            writeBuffer.Write(buffer, size);
+            writeBuffer.Write(bufferIn, size);
 
             // all done! space available!
             if (size == toWrite)
@@ -215,7 +227,7 @@ bool SingleBufferedStream::Write(const char8* buffer,
             uint32 leftToWrite = toWrite;
 
             // try writing the buffer
-            writeBuffer.Write(buffer + size, leftToWrite);
+            writeBuffer.Write(bufferIn + size, leftToWrite);
 
             size += leftToWrite;
 
@@ -231,7 +243,7 @@ bool SingleBufferedStream::Write(const char8* buffer,
         }
 
     }
-    return unbufferedStream->Write(buffer, size, msecTimeout);
+    return unbufferedStream->Write(bufferIn, size, timeout);
 
 }
 
@@ -246,8 +258,6 @@ uint64 SingleBufferedStream::Size() {
 
 /** Moves within the file to an absolute location */
 bool SingleBufferedStream::Seek(uint64 pos) {
-
-
 
     // if write mode on then just flush out data
     // then seek the stream

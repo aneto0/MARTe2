@@ -42,6 +42,18 @@
 
 namespace MARTe {
 
+DoubleBufferedStream::DoubleBufferedStream() :
+        readBuffer(unbufferedStream),
+        writeBuffer(unbufferedStream) {
+    timeout = TTDefault;
+}
+
+DoubleBufferedStream::DoubleBufferedStream(TimeoutType msecTimeout) :
+        readBuffer(unbufferedStream, msecTimeout),
+        writeBuffer(unbufferedStream, msecTimeout) {
+    timeout = msecTimeout;
+}
+
 /// default destructor
 DoubleBufferedStream::~DoubleBufferedStream() {
 
@@ -102,10 +114,8 @@ IOBuffer *DoubleBufferedStream::GetOutputBuffer() {
     return &writeBuffer;
 }
 
-bool DoubleBufferedStream::Read(char8 * buffer,
-                                uint32 & size,
-                                TimeoutType msecTimeout,
-                                bool completeRead) {
+bool DoubleBufferedStream::Read(char8 * bufferIn,
+                                uint32 & size) {
 
     // check whether we have a buffer
     if (readBuffer.BufferSize() > 0) {
@@ -114,7 +124,7 @@ bool DoubleBufferedStream::Read(char8 * buffer,
         uint32 toRead = size;
 
         // try once
-        readBuffer.Read(buffer, size);
+        readBuffer.Read(bufferIn, size);
 
         if (size == toRead) {
             return true;
@@ -129,7 +139,7 @@ bool DoubleBufferedStream::Read(char8 * buffer,
                 if (!readBuffer.Refill())
                     return false;
 
-                readBuffer.Read(buffer + size, toRead);
+                readBuffer.Read(bufferIn + size, toRead);
                 size += toRead;
 
                 // should have completed
@@ -139,7 +149,7 @@ bool DoubleBufferedStream::Read(char8 * buffer,
             }
             else {
                 // if needed read directly from stream
-                if (!unbufferedStream->Read(buffer + size, toRead, msecTimeout))
+                if (!unbufferedStream->Read(bufferIn + size, toRead, timeout))
                     return false;
                 size += toRead;
                 return true;
@@ -148,17 +158,15 @@ bool DoubleBufferedStream::Read(char8 * buffer,
     }
 
     // if needed read directly from stream
-    return unbufferedStream->Read(buffer, size, msecTimeout);
+    return unbufferedStream->Read(bufferIn, size, timeout);
 }
 
 /** Write data from a buffer to the stream. As much as size byte are written, actual size
  is returned in size. msecTimeout is how much the operation should last.
  timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
  when noWait is used .... */
-bool DoubleBufferedStream::Write(const char8* buffer,
-                                 uint32 & size,
-                                 TimeoutType msecTimeout,
-                                 bool completeWrite) {
+bool DoubleBufferedStream::Write(const char8* bufferIn,
+                                 uint32 & size) {
 
     // buffering active?
     if (writeBuffer.BufferSize() > 0) {
@@ -171,7 +179,7 @@ bool DoubleBufferedStream::Write(const char8* buffer,
         if (writeBuffer.MaxUsableAmount() > (4 * size)) {
 
             // try writing the buffer
-            writeBuffer.Write(buffer, size);
+            writeBuffer.Write(bufferIn, size);
 
             // all done! space available!
             if (size == toWrite)
@@ -185,7 +193,7 @@ bool DoubleBufferedStream::Write(const char8* buffer,
             uint32 leftToWrite = toWrite;
 
             // try writing the buffer
-            writeBuffer.Write(buffer + size, leftToWrite);
+            writeBuffer.Write(bufferIn + size, leftToWrite);
 
             size += leftToWrite;
 
@@ -201,7 +209,7 @@ bool DoubleBufferedStream::Write(const char8* buffer,
         }
 
     }
-    return unbufferedStream->Write(buffer, size, msecTimeout);
+    return unbufferedStream->Write(bufferIn, size, timeout);
 
 }
 

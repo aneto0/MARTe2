@@ -41,6 +41,25 @@
 
 namespace MARTe {
 
+StreamString::StreamString() :
+        BufferedStream() {
+}
+
+/** @brief Copy constructor from a const char8*. */
+StreamString::StreamString(const char8 * const initialisationString) :
+        BufferedStream() {
+    if (initialisationString != static_cast<const char8 *>(NULL)) {
+        if(!AppendOrSet(initialisationString,false)) {
+            // TODo
+        }
+    }
+}
+
+StreamString::operator AnyType() {
+    AnyType at(Buffer());
+    return at;
+}
+
 /** Destructor */
 StreamString::~StreamString() {
 }
@@ -62,11 +81,9 @@ IOBuffer *StreamString::GetOutputBuffer() {
  msecTimeout is how much the operation should last - no more - if not any (all) data read then return false
  timeout behaviour depends on class characteristics and sync mode.
  */
-bool StreamString::Read(char8* buffer,
-                        uint32 & size,
-                        TimeoutType msecTimeout,
-                        bool complete) {
-    this->buffer.Read(buffer, size);
+bool StreamString::Read(char8* const bufferIn,
+                        uint32 & size) {
+    this->buffer.Read(&bufferIn[0], size);
     return true;
 }
 
@@ -77,11 +94,9 @@ bool StreamString::Read(char8* buffer,
  msecTimeout is how much the operation should last.
  timeout behaviour depends on class characteristics and sync mode.
  */
-bool StreamString::Write(const char8* buffer,
-                         uint32 & size,
-                         TimeoutType msecTimeout,
-                         bool complete) {
-    this->buffer.Write(buffer, size);
+bool StreamString::Write(const char8* const bufferIn,
+                         uint32 & size) {
+    this->buffer.Write(&bufferIn[0], size);
 
 //this->buffer.Terminate();
     return true;
@@ -104,20 +119,22 @@ uint64 StreamString::Size() {
 }
 
 /** Moves within the file to an absolute location */
-bool StreamString::Seek(uint64 pos) {
+bool StreamString::Seek(const uint64 pos) {
     bool retval = true;
     uint32 usedSize = buffer.UsedSize();
     if (pos > usedSize) {
 //REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
-        buffer.Seek(usedSize);
+        if (!buffer.Seek(usedSize)) {
+            //TODO
+        }
         retval = false;
     }
 
-    return (retval) ? (buffer.Seek((uint32) pos)) : false;
+    return (retval) ? (buffer.Seek(static_cast<uint32>(pos))) : false;
 }
 
 /** Moves within the file relative to current location */
-bool StreamString::RelativeSeek(int32 deltaPos) {
+bool StreamString::RelativeSeek(const int32 deltaPos) {
     return buffer.RelativeSeek(deltaPos);
 }
 
@@ -130,8 +147,10 @@ uint64 StreamString::Position() {
  @param newStringSize The size of the buffer.
  @return true if successful. false otherwise.
  */
-bool StreamString::SetSize(uint64 size) {
-    buffer.SetBufferAllocationSize(size + 1u);
+bool StreamString::SetSize(const uint64 size) {
+    if (!buffer.SetBufferAllocationSize(static_cast<uint32>(size) + 1u)) {
+        //TODO
+    }
     return true;
 }
 
@@ -145,10 +164,12 @@ bool StreamString::CanSeek() const {
  * @param  c the character to be copied.
  * @return true if successful. false otherwise.
  */
-bool StreamString::AppendOrSet(char8 c,
-                               bool append) {
+bool StreamString::AppendOrSet(const char8 c,
+                               const bool append) {
     if (append) {
-        buffer.Seek(buffer.UsedSize());
+        if (!buffer.Seek(buffer.UsedSize())) {
+            //TODO
+        }
     }
     else {
         buffer.Empty();
@@ -163,8 +184,8 @@ bool StreamString::AppendOrSet(char8 c,
  * @param  s The pointer to the string to be copied
  * @return true if successful. false otherwise.
  */
-bool StreamString::AppendOrSet(const char8 *s,
-                               bool append) {
+bool StreamString::AppendOrSet(const char8 * const s,
+                               const bool append) {
 
     bool ret = false;
     if (s != NULL) {
@@ -172,7 +193,9 @@ bool StreamString::AppendOrSet(const char8 *s,
         uint32 size = StringHelper::Length(s);
 
         if (append) {
-            buffer.Seek(buffer.UsedSize());
+            if(!buffer.Seek(buffer.UsedSize())) {
+                //TODO
+            }
         }
         else {
             buffer.Empty();
@@ -189,10 +212,12 @@ bool StreamString::AppendOrSet(const char8 *s,
  * @return true if successful. false otherwise.
  */
 bool StreamString::AppendOrSet(const StreamString &s,
-                               bool append) {
+                               const bool append) {
 
     if (append) {
-        buffer.Seek(buffer.UsedSize());
+        if (!buffer.Seek(buffer.UsedSize())) {
+            //TODO
+        }
     }
     else {
         buffer.Empty();
@@ -208,16 +233,16 @@ bool StreamString::AppendOrSet(const StreamString &s,
  @param c The character to look for.
  @return >0 the first position if found. -1 otherwise.
  */
-int32 StreamString::Locate(char8 c) const {
+int32 StreamString::Locate(const char8 c) const {
 // Stream::Size is not const!
 
-    int32 ret = -1;
-    if (buffer.UsedSize() != 0) {
+    uint32 ret = 0xffffffffu;
+    if (buffer.UsedSize() != 0u) {
 
         const char8 *string = buffer.Buffer();
         if (string != NULL) {
 
-            uint32 index = 0;
+            uint32 index = 0u;
             while (index < buffer.UsedSize()) {
                 if (string[index] == c) {
                     ret = index;
@@ -227,7 +252,7 @@ int32 StreamString::Locate(char8 c) const {
             }
         }
     }
-    return ret;
+    return static_cast<int32>(ret);
 }
 
 /** Checks if a string is contained in the string.
@@ -236,9 +261,9 @@ int32 StreamString::Locate(char8 c) const {
  */
 int32 StreamString::Locate(const StreamString &x) const {
 
-    bool ok = (x.buffer.UsedSize() != 0) && (x.buffer.UsedSize() <= buffer.UsedSize()) && (x.buffer.Buffer() != NULL)&& (buffer.Buffer() != NULL);
+    bool ok = (x.buffer.UsedSize() != 0u) && (x.buffer.UsedSize() <= buffer.UsedSize()) && (x.buffer.Buffer() != NULL)&& (buffer.Buffer() != NULL);
 
-    int32 ret=-1;
+    uint32 ret=0xffffffffu;
     if(ok) {
 
         const char8 *string = buffer.Buffer();
@@ -246,13 +271,13 @@ int32 StreamString::Locate(const StreamString &x) const {
 
         uint32 index = 0u;
 // no point to try match the tail of the string if it is smaller than the pattern
-            uint32 maxIndex = (1u + buffer.UsedSize() - x.buffer.UsedSize());
+            uint32 maxIndex = ((1u + buffer.UsedSize()) - x.buffer.UsedSize());
 // loop through the string characters
             while (index < maxIndex) {
                 // detect the start as a potential match
                 if (string[index] == pattern[0]) {
                     uint32 index2 = 1u;
-                    const char8 *stringSegment = string + index;
+                    const char8 *stringSegment = &string[index];
                     // check the remainder
                     while (index2 < x.buffer.UsedSize()) {
                         if (stringSegment[index2] != pattern[index2]) {
@@ -270,7 +295,7 @@ int32 StreamString::Locate(const StreamString &x) const {
             }
         }
 
-        return ret;
+        return static_cast<int32>(ret);
     }
 }
 

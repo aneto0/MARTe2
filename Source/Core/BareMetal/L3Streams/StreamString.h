@@ -49,48 +49,22 @@ namespace MARTe {
 /** @brief StreamString class. */
 class StreamString: public BufferedStream {
 
-private:
-
-    /**
-     * All read and write operations are performed on this buffer.
-     * Also if each streamable implementation has its own read and write buffers,
-     * defining all of them as descendants of IOBuffers specific functions are called
-     * passing truth the virtual table.
-     * The function IOBuffer::Write and IOBuffer::NoMoreSpaceToWrite are overloaded to reallocate new memory in case of full buffer.*/
-    StreamStringIOBuffer buffer;
-
-protected:
-    // methods to be implemented by deriving classes
-
-    /**
-     * @brief Returns buffer as the read buffer. It is both read and write buffer.
-     * @return a pointer to the StreamStringIOBuffer buffer.
-     */
-    virtual IOBuffer *GetInputBuffer();
-
-    /**
-     * @brief Returns buffer as the write buffer.
-     * @return a pointer to the StreamStringIOBuffer buffer. */
-    virtual IOBuffer *GetOutputBuffer();
-
 public:
     // usable constructors
 
+    StreamString();
+
     /** @brief Copy constructor from a const char8*. */
-    StreamString(const char8 *initialisationString = NULL) {
-        if (initialisationString != NULL) AppendOrSet(initialisationString,false);
-    }
+    StreamString(const char8 * const initialisationString);
 
     /** @brief Destructor */
     virtual ~StreamString();
 
     /** @brief Automatic cast to AnyType as a const char8 passing Buffer() return value. */
-    operator AnyType() {
-        AnyType at(Buffer());
-        return at;
-    }
+    operator AnyType();
 
-public:
+    /*---------------------------------------------------------------------------*/
+
     /**
      * @brief Reads data into buffer.
      * @param buffer is the output buffer.
@@ -105,11 +79,8 @@ public:
      *  msecTimeout is how much the operation should last - no more - if not any (all) data read then return false
      *  timeout behaviour depends on class characteristics and sync mode.
      */
-    virtual bool Read(
-            char8* buffer,
-            uint32 & size,
-            TimeoutType msecTimeout = TTDefault,
-            bool complete = false);
+    virtual bool Read(char8* bufferIn,
+                      uint32 & size);
 
     /**
      * @brief Write from a buffer to the string.
@@ -125,11 +96,8 @@ public:
      *  msecTimeout is how much the operation should last.
      *  timeout behaviour depends on class characteristics and sync mode.
      */
-    virtual bool Write(
-            const char8* buffer,
-            uint32 & size,
-            TimeoutType msecTimeout = TTDefault,
-            bool complete = false);
+    virtual bool Write(const char8* bufferIn,
+                       uint32 & size);
 
     /**
      * @brief Specifies if the string can be written.
@@ -190,7 +158,7 @@ public:
      */
     virtual bool CanSeek() const;
 
-public: // DIRECT ACCESS FUNCTIONS
+    /*---------------------------------------------------------------------------*/
 
     /**
      * @brief Read Only access to the internal buffer.
@@ -217,57 +185,30 @@ public: // DIRECT ACCESS FUNCTIONS
      * @param  ix the offset from the end of buffer. valid ranges is 0 to Size()-1.
      * @return pointer to the tail of the buffer.
      */
-    inline const char8 *Tail(int32 ix) const;
+    inline const char8 *Tail(uint32 ix) const;
 
-private: // DIRECT MANIPULATION FUNCTIONS
+    /*---------------------------------------------------------------------------*/
 
-    /**
-     * @brief Copy a character into the StreamString buffer or append it at the end.
-     * @param  c the character to be copied.
-     * @param append defines if the character must be appended or assigned.
-     * @return true if successful. false otherwise.
-     *
-     * If append is true there is an IOBuffer::Seek at the buffer size and then a IOBuffer::PutC.
-     * If append is false the string is cleaned calling IOBuffer::Empty and then used a IOBuffer::PutC.
-     */
-    virtual bool AppendOrSet(char8 c, bool append=true);
-
-    /**
-     * @brief Copy a string into the StreamString buffer.
-     * @param  s The pointer to the string to be copied or appended.
-     * @param append defines if s must be appended or assigned.
-     * @return true if successful. false otherwise.
-     */
-    virtual bool AppendOrSet(const char8 *s, bool append=true);
-
-    /**
-     * @brief Copy a StreamString into a StreamString.
-     * @param  s The StreamString to be copied.
-     * @param append defines if s must be appended or assigned.
-     * @return true if successful. false otherwise.
-     */
-    virtual bool AppendOrSet(const StreamString &s, bool append=true);
-public:
     /**
      * @brief Sets StreamString to be a copy of the input parameter.
      * @param c The character to copy.
      * @return true if successful. false otherwise.
      */
-    inline bool operator=(char8 c);
+    inline bool operator=(const char8 c);
 
     /**
      * @brief Sets StreamString to be a copy of the input parameter.
      * @param s The string to copy.
      * @return true if successful. false otherwise.
      */
-    inline bool operator=(const char8 *s);
+    inline bool operator=(const char8 * const s);
 
     /**
      * @brief Sets StreamString to be a copy of the input parameter.
      * @param s The StreamString to copy.
      * @return true if successful. false otherwise.
      */
-    inline bool operator=(const StreamString &s);
+    inline StreamString& operator=(const StreamString &s);
 
     /**
      * @brief Concatenate the character to the string contained in the buffer.
@@ -281,54 +222,54 @@ public:
      * @param s The string to concatenate.
      * @return true if successful. false otherwise.
      */
-    inline bool operator+=(const char8 *s);
+    inline bool operator+=(const char8 * const s);
 
     /**
      * @brief Concatenate the StreamString to the string contained in the buffer.
      * @param  s The StreamString to concatenate.
      * @return true if successful. false otherwise.
      */
-    inline bool operator+=(StreamString &s);
+    inline bool operator+=(const StreamString &s);
 
     /**
      * @brief  Compare the buffer content with the input content.
      * @param s The buffer to be compared with.
      * @return true if the two buffers are the same. false otherwise.
      */
-    inline bool operator==(StreamString &s) const;
+    inline bool operator==(const StreamString &s) const;
 
     /**
      * @brief Compare the buffer content with the input content.
      * @param s The buffer to be compared with.
      * @return true if the two buffers are the same. false otherwise.
      */
-    inline bool operator==(const char8 *s) const;
+    inline bool operator==(const char8 * const s) const;
 
     /**
      * @brief Compare the buffer content with the input content.SOURCE_
      * @param s The StreamString to be compared with.
      * @return trye if the two buffer are different, false otherwise. */
-    inline bool operator!=(StreamString &s) const;
+    inline bool operator!=(const StreamString &s) const;
 
     /**
      * @brief Compare the buffer content with the input content.
      * @param s The StreamString to be compared with.
      * @return trye if the two buffer are different, false otherwise. */
-    inline bool operator!=(const char8 *s) const;
+    inline bool operator!=(const char8 * const s) const;
 
     /**
      * @brief Allows access to character within the buffer.
      * @param  pos The position in the buffer to be accessed.
      * @return 0 if the position is outside the buffer limits. The character at position pos otherwise.
      */
-    inline char8 operator[](uint32 pos);
+    inline char8 operator[](const uint32 pos) const;
 
     /**
      * @brief Checks if a char8 is in the string
      * @param c The character to look for.
      * @return >0 the first position if found. -1 otherwise.
      */
-    virtual int32 Locate(char8 c) const;
+    virtual int32 Locate(const char8 c) const;
 
     /**
      * @brief Checks if a string is contained in the string.
@@ -336,6 +277,60 @@ public:
      * @return >0 the first position if found. -1 otherwise.
      */
     virtual int32 Locate(const StreamString &x) const;
+
+protected:
+    // methods to be implemented by deriving classes
+
+    /**
+     * @brief Returns buffer as the read buffer. It is both read and write buffer.
+     * @return a pointer to the StreamStringIOBuffer buffer.
+     */
+    virtual IOBuffer *GetInputBuffer();
+
+    /**
+     * @brief Returns buffer as the write buffer.
+     * @return a pointer to the StreamStringIOBuffer buffer. */
+    virtual IOBuffer *GetOutputBuffer();
+
+private:
+    /**
+     * @brief Copy a character into the StreamString buffer or append it at the end.
+     * @param  c the character to be copied.
+     * @param append defines if the character must be appended or assigned.
+     * @return true if successful. false otherwise.
+     *
+     * If append is true there is an IOBuffer::Seek at the buffer size and then a IOBuffer::PutC.
+     * If append is false the string is cleaned calling IOBuffer::Empty and then used a IOBuffer::PutC.
+     */
+    bool AppendOrSet(const char8 c,
+                     const bool append);
+
+    /**
+     * @brief Copy a string into the StreamString buffer.
+     * @param  s The pointer to the string to be copied or appended.
+     * @param append defines if s must be appended or assigned.
+     * @return true if successful. false otherwise.
+     */
+    bool AppendOrSet(const char8 * const s,
+                     const bool append);
+
+    /**
+     * @brief Copy a StreamString into a StreamString.
+     * @param  s The StreamString to be copied.
+     * @param append defines if s must be appended or assigned.
+     * @return true if successful. false otherwise.
+     */
+    bool AppendOrSet(const StreamString &s,
+                     const bool append);
+
+    /**
+     * All read and write operations are performed on this buffer.
+     * Also if each streamable implementation has its own read and write buffers,
+     * defining all of them as descendants of IOBuffers specific functions are called
+     * passing truth the virtual table.
+     * The function IOBuffer::Write and IOBuffer::NoMoreSpaceToWrite are overloaded to reallocate new memory in case of full buffer.*/
+    StreamStringIOBuffer buffer;
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -352,54 +347,64 @@ char8 *StreamString::BufferReference() {
     return buffer.BufferReference();
 }
 
-const char8 *StreamString::Tail(int32 ix) const {
-    bool ok= (ix >= 0) && ((ix - buffer.UsedSize() - 1) >= 0);
+const char8 *StreamString::Tail(const uint32 ix) const {
+    bool ok = (ix <= (buffer.UsedSize() - 1u));
 
-    return ok?&(buffer.BufferReference()[buffer.UsedSize() - ix - 1u]):static_cast<const char8 *>(NULL);
+    return ok ? &(buffer.BufferReference()[(buffer.UsedSize() - ix) - 1u]) : static_cast<const char8 *>(NULL);
 }
 
-bool StreamString::operator=(char8 c) {
+bool StreamString::operator=(const char8 c) {
     return AppendOrSet(c, false);
+
 }
 
-bool StreamString::operator=(const char8 *s) {
+bool StreamString::operator=(const char8 * const s) {
     return AppendOrSet(s, false);
 }
 
-bool StreamString::operator=(const StreamString &s) {
-    return AppendOrSet(s, false);
+StreamString& StreamString::operator=(const StreamString &s) {
+    if (!AppendOrSet(s, false)) {
+        //TODO
+    }
+    return *this;
 }
 
 bool StreamString::operator+=(const char8 c) {
     return AppendOrSet(c, true);
 }
 
-bool StreamString::operator+=(const char8 *s) {
+bool StreamString::operator+=(const char8 * const s) {
     return AppendOrSet(s, true);
 }
 
-bool StreamString::operator+=(StreamString &s) {
+bool StreamString::operator+=(const StreamString &s) {
     return AppendOrSet(s, true);
 }
 
-bool StreamString::operator==(StreamString &s) const {
-    return (buffer.UsedSize() == s.buffer.UsedSize()) && (StringHelper::CompareN(buffer.Buffer(), s.buffer.Buffer(), buffer.UsedSize()) == 0);
+bool StreamString::operator==(const StreamString &s) const {
+    bool ok1 = (buffer.UsedSize() == s.buffer.UsedSize());
+    bool ok2 = (StringHelper::CompareN(buffer.Buffer(), s.buffer.Buffer(), buffer.UsedSize()) == 0);
+
+    return ok1 && ok2;
 }
 
-bool StreamString::operator==(const char8 *s) const {
-    return (s != NULL) && ((uint32)StringHelper::Length(s) == buffer.UsedSize()) && (StringHelper::CompareN(buffer.Buffer(),s,buffer.UsedSize()) == 0);
+bool StreamString::operator==(const char8 * const s) const {
+    bool ok1 = (s != NULL);
+    bool ok2=(StringHelper::Length(s) == buffer.UsedSize());
+    bool ok3=(StringHelper::CompareN(buffer.Buffer(),s,buffer.UsedSize()) == 0);
+    return (ok1) && (ok2) && (ok3);
 
 }
 
-bool StreamString::operator!=(StreamString &s) const {
+bool StreamString::operator!=(const StreamString &s) const {
     return !((*this) == s);
 }
 
-bool StreamString::operator!=(const char8 *s) const {
+bool StreamString::operator!=(const char8 * const s) const {
     return !((*this) == s);
 }
 
-char8 StreamString::operator[](uint32 pos) {
+char8 StreamString::operator[](const uint32 pos) const {
     char8 ret = static_cast<char8>(0);
     if (pos < buffer.UsedSize()) {
         ret = buffer.BufferReference()[pos];

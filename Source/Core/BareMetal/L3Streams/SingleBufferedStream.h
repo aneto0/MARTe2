@@ -127,126 +127,16 @@ namespace MARTe {
 
  */
 class SingleBufferedStream: public BufferedStream {
-protected:
-    /**
-     Defines the operation mode and status of a basic stream
-     one only can be set of the first 4.
-     */
-    struct OperatingModes {
 
-        /** writeBuffer is the active one.
-         */
-        bool mutexReadMode :1;
-
-        /** writeBuffer is the active one.
-         */
-        bool mutexWriteMode :1;
-
-    };
-    /** set automatically on initialisation by calling of the Canxxx functions */
-    OperatingModes operatingModes;
-
-private:
-    /**
-     * The read buffer. It is used just like
-     * a middle buffer between the stream and the output.
-     * For each read operation this buffer is filled completely
-     * and then the desired size is copied on the output.
-     * Using the buffer mode, the GetC function always use this buffer,
-     * while for Read function it is used only if the size to read is minor
-     * than a quarter than the buffer size.
-     * Function BufferedStreamIOBuffer::NoMoreSpaceToWrite acts
-     * as a flush and the more confidential function Flush calls it.
-     * @see BufferedStreamBuffer for more informations.*/
-    BufferedStreamIOBuffer readBuffer;
-
-    /**
-     * The write buffer. It is used just like an
-     * intermediate between the input and the stream. Write
-     * operations copies data from the input to this buffer
-     * and only when the buffer is full (or in case of an explicit
-     * FlushAndResync call) the buffer is flushed on the stream.
-     * Using the buffer mode, the PutC function always use this buffer,
-     * while for Write function it is used only if the buffer is 4 times greater
-     * than the size to write.
-     * Function BufferedStreamIOBuffer::NoMoreSpaceToRead acts
-     * as a refill and the more confidential function Refill calls it.
-     */
-    BufferedStreamIOBuffer writeBuffer;
-
-protected:
-    // methods to be implemented by deriving classes
-
-    /**
-     * @brief Get the read buffer.
-     * @return BufferedStreamIOBuffer readBuffer pointer.
-     *
-     * This function is used by Printf and GetToken functions.
-     */
-    virtual IOBuffer *GetInputBuffer();
-
-    /**
-     * @brief Get the write buffer.
-     * @return BufferedStreamIOBuffer writeBuffer pointer.
-     *
-     * This function is used by Printf and GetToken functions.
-     */
-    virtual IOBuffer *GetOutputBuffer();
-
-    //TODO
-    RawStream *unbufferedStream;
-
-protected:
-    // methods to be implemented by deriving classes
-
-private:
-    // mode switch methods
-
-    /**
-     * @brief Switch to the write mode.
-     * @return false if the re-synchronization goes wrong.
-     *
-     *  Sets the readBufferFillAmount to 0.
-     *  Synchronize the position in the stream.
-     *  Sets the mutexWriteMode.
-     *  Does not check for mutexBuffering to be active
-     */
-    inline bool SwitchToWriteMode() {
-        if (!readBuffer.Resync())
-            return false;
-        operatingModes.mutexWriteMode = true;
-        operatingModes.mutexReadMode = false;
-        return true;
-    }
-
-    /**
-     * @brief Switch to the read mode.
-     * @return false if the flush function fails.
-     *
-     *  Flushes writeBuffer.
-     *  Resets mutexWriteMode.
-     *  Does not refill the buffer nor check the mutexBuffering is active.
-     */
-    inline bool SwitchToReadMode() {
-        if (!writeBuffer.Flush())
-            return false;
-        operatingModes.mutexWriteMode = false;
-        operatingModes.mutexReadMode = true;
-        return true;
-    }
-
-protected:
+public:
     /**
      * @brief Default constructor.
      *
      * At the beginning the stream is monodirectional. */
     //TODO the construction of readBuffer and writeBuffer has to be changed.
-    SingleBufferedStream() :
-            readBuffer(unbufferedStream),
-            writeBuffer(unbufferedStream) {
-        operatingModes.mutexReadMode = false;
-        operatingModes.mutexWriteMode = false;
-    }
+    SingleBufferedStream();
+
+    SingleBufferedStream(TimeoutType msecTimeout);
 
     /** @brief Default destructor. */
     virtual ~SingleBufferedStream();
@@ -267,7 +157,6 @@ protected:
     virtual bool SetBufferSize(uint32 readBufferSize = 0,
                                uint32 writeBufferSize = 0);
 
-public:
     // special inline methods for buffering
 
     /**
@@ -281,20 +170,7 @@ public:
      * The function SingleBufferedStream::Resync adjusts the position on the stream
      * after a read operation, shifted because of the Refill.
      */
-    inline bool FlushAndResync(TimeoutType msecTimeout = TTDefault) {
-        // if there is something in the buffer, and canSeek it means we can and need to resync
-        // if the buffers are separated (!canseek) than resync cannot be done
-        if (readBuffer.UsedSize() && operatingModes.canSeek) {
-            return readBuffer.Resync();
-        }
-        // some data in writeBuffer
-        // we can flush in all cases then
-        if (writeBuffer.UsedSize()) {
-            return writeBuffer.Flush();
-        }
-        return true;
-    }
-
+    inline bool FlushAndResync(TimeoutType msecTimeout = TTDefault);
     /**
      * @brief Simply write a character to the stream if space exist and if operatingModes allows.
      * @param c is the character to be written on the stream.
@@ -303,19 +179,7 @@ public:
      * In buffered mode uses the inline IOBuffer::PutC of writeBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
-    inline bool PutC(char8 c) {
-        if (operatingModes.mutexReadMode) {
-            if (!SwitchToWriteMode())
-                return false;
-        }
-
-        if (writeBuffer.BufferSize() > 0) {
-            return writeBuffer.PutC(c);
-        }
-
-        uint32 size = 1;
-        return unbufferedStream->Write(&c, size);
-    }
+    inline bool PutC(char8 c);
 
     /**
      * @brief Simply read a character from stream.
@@ -325,23 +189,7 @@ public:
      * In buffered mode uses the inline IOBuffer::GetC of readBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
-    inline bool GetC(char8 &c) {
-
-        if (operatingModes.mutexWriteMode) {
-            if (!SwitchToReadMode())
-                return false;
-        }
-
-        if (readBuffer.BufferSize() > 0) {
-            return readBuffer.GetC(c);
-        }
-
-        uint32 size = 1;
-        return unbufferedStream->Read(&c, size);
-    }
-
-public:
-    // PURE STREAMING  built upon UnBuffered version
+    inline bool GetC(char8 &c);
 
     /** @brief Reads data from stream into buffer.
      * @param buffer is the output memory where datas must be written.
@@ -360,10 +208,8 @@ public:
      * is returned in size. msecTimeout is how much the operation should last.
      * Timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
      * when noWait is used .... */
-    virtual bool Read(char8 * buffer,
-                      uint32 & size,
-                      TimeoutType msecTimeout = TTDefault,
-                      bool completeRead = false);
+    virtual bool Read(char8 * bufferIn,
+                      uint32 & size);
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
 
     /**
@@ -386,10 +232,8 @@ public:
      * is returned in size. msecTimeout is how much the operation should last.
      * Timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
      *  when noWait is used .... */
-    virtual bool Write(const char8* buffer,
-                       uint32 & size,
-                       TimeoutType msecTimeout = TTDefault,
-                       bool completeWrite = false);
+    virtual bool Write(const char8* bufferIn,
+                       uint32 & size);
 
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
 
@@ -436,21 +280,170 @@ public:
     virtual bool SetSize(uint64 size);
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
 
-    virtual bool  CanSeek() const;
+    virtual bool CanSeek() const;
 
     /** whether it can be written into */
-    virtual bool  CanWrite() const;
+    virtual bool CanWrite() const;
 
     /** whether it can be  read */
-    virtual bool  CanRead() const;
+    virtual bool CanRead() const;
+
+protected:
+    /**
+     Defines the operation mode and status of a basic stream
+     one only can be set of the first 4.
+     */
+    struct OperatingModes {
+
+        /** writeBuffer is the active one.
+         */
+        bool mutexReadMode :1;
+
+        /** writeBuffer is the active one.
+         */
+        bool mutexWriteMode :1;
+
+    };
+    /** set automatically on initialisation by calling of the Canxxx functions */
+    OperatingModes operatingModes;
+
+    // methods to be implemented by deriving classes
+
+    /**
+     * @brief Get the read buffer.
+     * @return BufferedStreamIOBuffer readBuffer pointer.
+     *
+     * This function is used by Printf and GetToken functions.
+     */
+    virtual IOBuffer *GetInputBuffer();
+
+    /**
+     * @brief Get the write buffer.
+     * @return BufferedStreamIOBuffer writeBuffer pointer.
+     *
+     * This function is used by Printf and GetToken functions.
+     */
+    virtual IOBuffer *GetOutputBuffer();
+
+    //TODO
+    RawStream *unbufferedStream;
+
+private:
+    /**
+     * @brief Switch to the write mode.
+     * @return false if the re-synchronization goes wrong.
+     *
+     *  Sets the readBufferFillAmount to 0.
+     *  Synchronize the position in the stream.
+     *  Sets the mutexWriteMode.
+     *  Does not check for mutexBuffering to be active
+     */
+    inline bool SwitchToWriteMode();
+
+    /**
+     * @brief Switch to the read mode.
+     * @return false if the flush function fails.
+     *
+     *  Flushes writeBuffer.
+     *  Resets mutexWriteMode.
+     *  Does not refill the buffer nor check the mutexBuffering is active.
+     */
+    inline bool SwitchToReadMode();
+
+    /**
+     * The read buffer. It is used just like
+     * a middle buffer between the stream and the output.
+     * For each read operation this buffer is filled completely
+     * and then the desired size is copied on the output.
+     * Using the buffer mode, the GetC function always use this buffer,
+     * while for Read function it is used only if the size to read is minor
+     * than a quarter than the buffer size.
+     * Function BufferedStreamIOBuffer::NoMoreSpaceToWrite acts
+     * as a flush and the more confidential function Flush calls it.
+     * @see BufferedStreamBuffer for more informations.*/
+    BufferedStreamIOBuffer readBuffer;
+
+    /**
+     * The write buffer. It is used just like an
+     * intermediate between the input and the stream. Write
+     * operations copies data from the input to this buffer
+     * and only when the buffer is full (or in case of an explicit
+     * FlushAndResync call) the buffer is flushed on the stream.
+     * Using the buffer mode, the PutC function always use this buffer,
+     * while for Write function it is used only if the buffer is 4 times greater
+     * than the size to write.
+     * Function BufferedStreamIOBuffer::NoMoreSpaceToRead acts
+     * as a refill and the more confidential function Refill calls it.
+     */
+    BufferedStreamIOBuffer writeBuffer;
+
+    TimeoutType timeout;
 
 };
-
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+ bool SingleBufferedStream::FlushAndResync(TimeoutType msecTimeout = TTDefault) {
+    // if there is something in the buffer, and canSeek it means we can and need to resync
+    // if the buffers are separated (!canseek) than resync cannot be done
+    if (readBuffer.UsedSize() && operatingModes.canSeek) {
+        return readBuffer.Resync();
+    }
+    // some data in writeBuffer
+    // we can flush in all cases then
+    if (writeBuffer.UsedSize()) {
+        return writeBuffer.Flush();
+    }
+    return true;
+}
 
+bool SingleBufferedStream::PutC(char8 c) {
+    if (operatingModes.mutexReadMode) {
+        if (!SwitchToWriteMode())
+            return false;
+    }
+
+    if (writeBuffer.BufferSize() > 0) {
+        return writeBuffer.PutC(c);
+    }
+
+    uint32 size = 1;
+    return unbufferedStream->Write(&c, size);
+}
+
+bool SingleBufferedStream::GetC(char8 &c) {
+
+    if (operatingModes.mutexWriteMode) {
+        if (!SwitchToReadMode())
+            return false;
+    }
+
+    if (readBuffer.BufferSize() > 0) {
+        return readBuffer.GetC(c);
+    }
+
+    uint32 size = 1;
+    return unbufferedStream->Read(&c, size);
+}
+
+
+bool SingleBufferedStream::SwitchToWriteMode() {
+    if (!readBuffer.Resync())
+        return false;
+    operatingModes.mutexWriteMode = true;
+    operatingModes.mutexReadMode = false;
+    return true;
+}
+
+bool SingleBufferedStream::SwitchToReadMode() {
+    if (!writeBuffer.Flush())
+        return false;
+    operatingModes.mutexWriteMode = false;
+    operatingModes.mutexReadMode = true;
+    return true;
+}
+
+}
 #endif /* SINGLEBUFFEREDSTREAM_H_ */
 

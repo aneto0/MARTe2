@@ -47,30 +47,11 @@ namespace MARTe {
  */
 class StreamMemoryReference: public BufferedStream {
 
-private:
 
-    /**
-     * Simply a normal IOBuffer. Nothing is overloaded.
-     * It is allocated by IOBuffer::SetBufferReferencedMemory or IOBuffer::SetBufferReadOnlyReferencedMemory
-     * @see IOBuffer.cpp for the naked implementation of this buffer.  */
-    IOBuffer buffer;
-
-protected:
-    // methods to be implemented by deriving classes
-
-    /**
-     * @brief Returns the read buffer.
-     * @return a pointer to the MemoryReferenceIOBuffer buffer. */
-    virtual IOBuffer *GetInputBuffer();
-
-    /**
-     * @brief Returns the write buffer.
-     * @return a pointer to the MemoryReferenceIOBuffer buffer. */
-    virtual IOBuffer *GetOutputBuffer();
 
 public:
-    // usable constructors
 
+    StreamMemoryReference();
     /**
      * @brief Binds this object to a memory area in read and write mode.
      * @param buffer is the char8 pointer of the preallocated memory.
@@ -78,8 +59,8 @@ public:
      *
      * The function assumes that the area of memory is empty and therefore the Stream::Size is 0
      * */
-    StreamMemoryReference(char8 *buffer,
-                          uint32 bufferSize);
+    StreamMemoryReference(char8 * const bufferIn,
+                          const uint32 bufferSize);
 
     /**
      * @brief Binds this object to a memory area in read only mode.
@@ -88,13 +69,14 @@ public:
      *
      * The function assumes that the area of memory is full and therefore the Stream::Size is bufferSize
      * */
-    StreamMemoryReference(const char8 *buffer,
-                          uint32 bufferSize);
+    StreamMemoryReference(const char8 * const bufferIn,
+                          const uint32 bufferSize);
 
     /** Destructor */
     virtual ~StreamMemoryReference();
 
-public:
+    /*---------------------------------------------------------------------------*/
+
     /**
      * @brief Reads data from the stream to the buffer.
      * @param buffer is the buffer where data must be written.
@@ -110,10 +92,8 @@ public:
      msecTimeout is how much the operation should last - no more - if not any (all) data read then return false
      timeout behaviour depends on class characteristics and sync mode.
      */
-    virtual bool Read(char8* buffer,
-                      uint32 & size,
-                      TimeoutType msecTimeout = TTDefault,
-                      bool complete = false);
+    virtual bool Read(char8* bufferIn,
+                      uint32 & size);
 
     /**
      * @brief Write data from a buffer to the stream.
@@ -130,10 +110,8 @@ public:
      msecTimeout is how much the operation should last.
      timeout behaviour depends on class characteristics and sync mode.
      */
-    virtual bool Write(const char8* buffer,
-                       uint32 & size,
-                       TimeoutType msecTimeout = TTDefault,
-                       bool complete = false);
+    virtual bool Write(const char8* bufferIn,
+                       uint32 & size);
 
     /**
      * @brief Write operations allowed.
@@ -186,8 +164,8 @@ public:
      * @return true. */
     virtual bool CanSeek() const;
 
-public:
-    // DIRECT ACCESS FUNCTIONS
+    /*---------------------------------------------------------------------------*/
+
 
     /**
      * @brief Read Only access to the internal buffer. It calls a CharBuffer function.
@@ -206,7 +184,31 @@ public:
      * @param  ix the offset from the end of buffer. valid ranges is 0 to Size()-1
      * @return pointer to the tail of the buffer
      */
-    inline const char8 *Tail(int32 ix) const;
+    inline const char8 *Tail(const uint32 ix) const;
+
+
+protected:
+    // methods to be implemented by deriving classes
+
+    /**
+     * @brief Returns the read buffer.
+     * @return a pointer to the MemoryReferenceIOBuffer buffer. */
+    virtual IOBuffer *GetInputBuffer();
+
+    /**
+     * @brief Returns the write buffer.
+     * @return a pointer to the MemoryReferenceIOBuffer buffer. */
+    virtual IOBuffer *GetOutputBuffer();
+
+private:
+
+    /**
+     * Simply a normal IOBuffer. Nothing is overloaded.
+     * It is allocated by IOBuffer::SetBufferReferencedMemory or IOBuffer::SetBufferReadOnlyReferencedMemory
+     * @see IOBuffer.cpp for the naked implementation of this buffer.  */
+    IOBuffer buffer;
+
+
 
 };
 
@@ -214,20 +216,18 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 const char8 *StreamMemoryReference::Buffer() const {
-       return buffer.Buffer();
-   }
+    return buffer.Buffer();
+}
 
 char8 *StreamMemoryReference::BufferReference() const {
-       return buffer.BufferReference();
-   }
+    return buffer.BufferReference();
+}
 
-const char8 *StreamMemoryReference::Tail(int32 ix) const {
-       if (ix > 0)
-           return 0;
-       if ((ix - buffer.UsedSize() - 1) < 0)
-           return 0;
-       return buffer.BufferReference() + buffer.UsedSize() - ix - 1;
-   }
+const char8 *StreamMemoryReference::Tail(const uint32 ix) const {
+    bool ok = (ix <= (buffer.UsedSize() - 1u));
+
+    return (ok) ? (&(buffer.BufferReference()[(buffer.UsedSize() - ix) - 1u])) : static_cast<const char8 *>(NULL);
+}
 
 }
 #endif /* STREAMMEMORYREFERENCE_H_ */

@@ -49,12 +49,11 @@ BufferedStream::BufferedStream() {
 BufferedStream::~BufferedStream() {
 }
 
-
-bool BufferedStream::GetToken(char8 * outputBuffer,
-                              const char8 * terminator,
-                              uint32 outputBufferSize,
-                              char8 * saveTerminator,
-                              const char8 * skipCharacters) {
+bool BufferedStream::GetToken(char8 * const outputBuffer,
+                              const char8 * const terminator,
+                              const uint32 outputBufferSize,
+                              char8 * const saveTerminator,
+                              const char8 * const skipCharacters) {
 
     bool retval = false;
 // retrieve stream mechanism
@@ -66,11 +65,10 @@ bool BufferedStream::GetToken(char8 * outputBuffer,
     return retval;
 }
 
-
 bool BufferedStream::GetToken(BufferedStream & output,
-                              const char8 * terminator,
-                              char8 * saveTerminator,
-                              const char8 * skipCharacters) {
+                              const char8 * const terminator,
+                              char8 * const saveTerminator,
+                              const char8 * const skipCharacters) {
 
 // retrieve stream mechanism
     IOBuffer *inputIOBuffer = GetInputBuffer();
@@ -85,8 +83,8 @@ bool BufferedStream::GetToken(BufferedStream & output,
     return ret;
 }
 
-bool BufferedStream::SkipTokens(uint32 count,
-                                const char8 * terminator) {
+bool BufferedStream::SkipTokens(const uint32 count,
+                                const char8 * const terminator) {
 
     bool ret = false;
 // retrieve stream mechanism
@@ -99,7 +97,7 @@ bool BufferedStream::SkipTokens(uint32 count,
 }
 
 bool BufferedStream::Print(const AnyType& par,
-                           FormatDescriptor fd) {
+                           const FormatDescriptor fd) {
 
     bool ret = false;
 // retrieve stream mechanism
@@ -111,7 +109,7 @@ bool BufferedStream::Print(const AnyType& par,
     return ret;
 }
 
-bool BufferedStream::PrintFormatted(const char8 *format,
+bool BufferedStream::PrintFormatted(const char8 * const format,
                                     const AnyType pars[]) {
 
     bool ret = false;
@@ -126,14 +124,14 @@ bool BufferedStream::PrintFormatted(const char8 *format,
     return ret;
 }
 
-bool BufferedStream::Copy(const char8 *buffer) {
+bool BufferedStream::Copy(const char8 * const buffer) {
 
     bool ret = false;
     if (buffer != NULL) {
 
-        uint32 len = (uint32 )StringHelper::Length(buffer);
+        uint32 len = static_cast<uint32>(StringHelper::Length(buffer));
 
-        ret=Write(buffer,len,TTDefault,true);
+        ret=Write(buffer,len);
     }
     return ret;
 }
@@ -141,30 +139,30 @@ bool BufferedStream::Copy(const char8 *buffer) {
 bool BufferedStream::Copy(BufferedStream &stream) {
 
     char8 buffer[256];
-    uint32 size = sizeof(buffer);
+    uint32 size = static_cast<uint32>(sizeof(buffer));
 
 //read in buffer
-    bool ret = stream.Read(buffer, size);
-    while ((ret) && (size > 0)) {
+    bool ret = stream.Read(&buffer[0], size);
+    while ((ret) && (size > 0u)) {
 
 //write in buffer
-        ret = Write(buffer, size, TTDefault, true);
+        ret = Write(&buffer[0], size);
         //in case of ret false don't write again
-        size = 0;
+        size = 0u;
 
 //if successful, read again and size becomes zero if
         //there is no more data to read
         if (ret) {
-            size = sizeof(buffer);
-            ret = stream.Read(buffer, size);
+            size = static_cast<uint32>(sizeof(buffer));
+            ret = stream.Read(&buffer[0], size);
         }
     }
 //if exit because ret is false
     //something was read in buffer
-    if (size > 0) {
+    if (size > 0u) {
 //write on the stream
 //ret = ret && Write(buffer,size,TTDefault,true);
-        Write(buffer, size, TTDefault, true);
+        ret = (ret) && (Write(&buffer[0], size));
 //size = 0;
     }
 

@@ -41,67 +41,58 @@
 
 namespace MARTe {
 
-StreamMemoryReference::StreamMemoryReference(char8 *buffer,
-                                             uint32 bufferSize) {
-    this->buffer.SetBufferReferencedMemory(buffer, bufferSize, 0u);
+StreamMemoryReference::StreamMemoryReference():BufferedStream() {
+
 }
 
-StreamMemoryReference::StreamMemoryReference(const char8 *buffer,
-                                             uint32 bufferSize) {
-    this->buffer.SetBufferReadOnlyReferencedMemory(buffer, bufferSize, 0u);
-    this->buffer.SetUsedSize(bufferSize);
+
+StreamMemoryReference::StreamMemoryReference(char8 * const bufferIn,
+                                             const uint32 bufferSize):BufferedStream() {
+    if(this->buffer.SetBufferReferencedMemory(bufferIn, bufferSize, 0u)){
+        //TODO
+    }
+}
+
+StreamMemoryReference::StreamMemoryReference(const char8 * const bufferIn,
+                                             const uint32 bufferSize):BufferedStream() {
+    if(!this->buffer.SetBufferReadOnlyReferencedMemory(bufferIn, bufferSize, 0u)){
+        //TODO
+    }
+    if(!this->buffer.SetUsedSize(bufferSize)){
+        //TODO
+    }
 }
 
 StreamMemoryReference::~StreamMemoryReference() {
 }
 
-///
 IOBuffer *StreamMemoryReference::GetInputBuffer() {
     return &buffer;
 }
 
-///
 IOBuffer *StreamMemoryReference::GetOutputBuffer() {
     return &buffer;
 }
 
-/**
- Reads data into buffer.
- As much as size byte are read,
- actual read size is returned in size. (unless complete = true)
- msecTimeout is how much the operation should last - no more - if not any (all) data read then return false
- timeout behaviour depends on class characteristics and sync mode.
- */
-bool StreamMemoryReference::Read(char8* buffer,
-                                 uint32 & size,
-                                 TimeoutType msecTimeout,
-                                 bool complete) {
-    this->buffer.Read(buffer, size);
+
+bool StreamMemoryReference::Read(char8* const bufferIn,
+                                 uint32 & size) {
+    this->buffer.Read(&bufferIn[0], size);
     return true;
 }
 
-/**
- Write data from a buffer to the stream.
- As much as size byte are written,
- actual written size is returned in size.
- msecTimeout is how much the operation should last.
- timeout behaviour depends on class characteristics and sync mode.
- */
-bool StreamMemoryReference::Write(const char8* buffer,
-                                  uint32 & size,
-                                  TimeoutType msecTimeout,
-                                  bool complete) {
-    this->buffer.Write(buffer, size);
+
+bool StreamMemoryReference::Write(const char8* const bufferIn,
+                                  uint32 & size) {
+    this->buffer.Write(&bufferIn[0], size);
     return true;
 
 }
 
-/** whether it can be written into */
 bool StreamMemoryReference::CanWrite() const {
     return (buffer.BufferReference() != NULL);
 };
 
-/** whether it can be  read */
 bool StreamMemoryReference::CanRead() const {
     return (buffer.Buffer() != NULL);
 };
@@ -111,27 +102,30 @@ uint64 StreamMemoryReference::Size() {
     return buffer.UsedSize();
 }
 
-bool StreamMemoryReference::SetSize(uint64 size) {
-    if (size < 0)
-        size = 0;
-    buffer.SetUsedSize((uint32) size);
+bool StreamMemoryReference::SetSize(const uint64 size) {
+
+    if(!buffer.SetUsedSize(static_cast<uint32>(size))){
+        //TODO
+    }
     return true;
 }
 
-/** Moves within the file to an absolute location */
-bool StreamMemoryReference::Seek(uint64 pos) {
+bool StreamMemoryReference::Seek(const uint64 pos) {
     uint32 usedSize = buffer.UsedSize();
+    bool ret=true;
     if (pos > usedSize) {
 //REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
-        buffer.Seek(usedSize);
-        return false;
+        if(!buffer.Seek(usedSize)){
+            //TODO
+        }
+        ret=false;
     }
 
-    return buffer.Seek((uint32) pos);
+    return (ret)?(buffer.Seek(static_cast<uint32>(pos))):(false);
 }
 
 /** Moves within the file relative to current location */
-bool StreamMemoryReference::RelativeSeek(int32 deltaPos) {
+bool StreamMemoryReference::RelativeSeek(const int32 deltaPos) {
     return buffer.RelativeSeek(deltaPos);
 }
 
@@ -144,7 +138,7 @@ uint64 StreamMemoryReference::Position() {
 bool StreamMemoryReference::CanSeek() const {
     return true;
 }
-;
+
 
 }
 

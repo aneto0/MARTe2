@@ -47,5 +47,7 @@ GlobalObjectsDatabase.cpp
 GlobalObjectI.cpp
 CharBuffer.cpp
 IOBuffer.cpp
-StreamWrapperIOBuffer.cpp
 BufferedStreamIOBuffer.cpp
+BufferedStream.cpp
+StreamString.cpp
+StreamMemoryReference.cpp
