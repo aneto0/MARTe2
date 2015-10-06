@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "TimeoutType.h"
 #include "IOBuffer.h"
+#include "RawStream.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -63,7 +64,7 @@ public:
      * @param[in] s is a pointer to the stream which uses this buffer.
      * @param[in] msecTimeout is the desired timeout for read-write operations.
      */
-    BufferedStreamIOBuffer(StreamI * const s,
+    BufferedStreamIOBuffer(RawStream * const s,
                            const TimeoutType msecTimeout = TTDefault);
 
     /**
@@ -115,7 +116,7 @@ private:
     /**
      * The stream that uses this buffer.
      */
-    StreamI *stream;
+    RawStream *stream;
 
     /**
      * The timeout for read and write operations.

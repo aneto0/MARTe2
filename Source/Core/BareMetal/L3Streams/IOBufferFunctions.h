@@ -34,7 +34,8 @@
 #include "IOBufferIntegerPrint.h"
 #include "IOBufferFloatPrint.h"
 #include "IOBuffer.h"
-#include "StreamI.h"
+#include "RawStream.h"
+#include "StringHelper.h"
 
 namespace MARTe {
 
@@ -283,12 +284,12 @@ bool PrintCCString(IOBuffer & iobuff,
  * @param fd specifies the desired printing format.
  * @return false in case of errors in read and write operations. 
  *
- * This function calls the function StreamI::GetC which calls the specific stream Write function truth the virtual table.
+ * This function calls the function RawStream::GetC which calls the specific stream Write function truth the virtual table.
  * Gets a character from the stream and use IOBuffer::PutC to write it on the output stream buffer doing this operation for
  * each character from the cursor to the end of the input stream.*/
 static inline
 bool PrintStream(IOBuffer & iobuff,
-                 StreamI * stream,
+                 RawStream * stream,
                  FormatDescriptor fd) {
     //print NULL pointer if the input stream is null.
     if (stream == NULL) {
@@ -491,7 +492,7 @@ bool PrintToStream(IOBuffer & iobuff,
 
     //general stream type.
     if (((par.GetTypeDescriptor()).type) == Stream) {
-        StreamI * stream = (StreamI *) dataPointer;
+        RawStream * stream = (RawStream *) dataPointer;
         return PrintStream(iobuff, stream, fd);
 
     }

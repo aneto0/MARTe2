@@ -29,7 +29,6 @@ OBJSX=CharBuffer.x \
     BufferedStream.x \
     DoubleBufferedStream.x \
     BufferedStreamIOBuffer.x \
-    StreamWrapperIOBuffer.x \
     StreamStringIOBuffer.x \
     StreamString.x \
     StreamMemoryReference.x 
