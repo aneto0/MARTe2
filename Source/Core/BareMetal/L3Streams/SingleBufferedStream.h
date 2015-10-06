@@ -1,6 +1,6 @@
 /**
- * @file DoubleBufferedStream.h
- * @brief Header file for class DoubleBufferedStream
+ * @file SingleBufferedStream.h
+ * @brief Header file for class SingleBufferedStream
  * @date 06/10/2015
  * @author Giuseppe Ferrò
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DoubleBufferedStream
+ * @details This header file contains the declaration of the class SingleBufferedStream
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DOUBLEBUFFEREDSTREAM_H_
-#define DOUBLEBUFFEREDSTREAM_H_
+#ifndef SINGLEBUFFEREDSTREAM_H_
+#define SINGLEBUFFEREDSTREAM_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,11 +31,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
-/*---------------------------------------------------------------------------*/
-
 #include "TimeoutType.h"
 #include "IOBuffer.h"
 #include "AnyType.h"
@@ -44,21 +39,25 @@
 #include "BufferedStreamIOBuffer.h"
 #include "BufferedStream.h"
 
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
- * @file DoubleBufferedStream.h
+ * @file SingleBufferedStream.h
  * @brief Implementation of streamable type functions.
  *
  * Implementation of streamable type functions for read, write and seek operations in buffered and unbuffered modes for streamable types
  * i.e files. Most of the functions depends from the virtual UnBuffered functions which must be implemented in the derived classes
  * because could be differents for different streamable types.
  *
- * DoubleBufferedStream uses two IOBuffer in buffered modes, one for reading and one for writing operations and they are used togheter if the stream is defined as
+ * SingleBufferedStream uses two IOBuffer in buffered modes, one for reading and one for writing operations and they are used togheter if the stream is defined as
  * readable, writable and seekable.*/
 
 /**
- * @brief DoubleBufferedStream class.
+ * @brief SingleBufferedStream class.
 
  Replaces CStream and Streamable of BL1
  Inherits from pure virtual StreamInterface and does not resolve all pure virtual functions
@@ -127,9 +126,27 @@ namespace MARTe {
  6a) same as 1a
 
  */
-class DoubleBufferedStream: public BufferedStream {
+class SingleBufferedStream: public BufferedStream {
 protected:
+    /**
+     Defines the operation mode and status of a basic stream
+     one only can be set of the first 4.
+     */
+    struct OperatingModes {
 
+        /** writeBuffer is the active one.
+         */
+        bool mutexReadMode :1;
+
+        /** writeBuffer is the active one.
+         */
+        bool mutexWriteMode :1;
+
+    };
+    /** set automatically on initialisation by calling of the Canxxx functions */
+    OperatingModes operatingModes;
+
+private:
     /**
      * The read buffer. It is used just like
      * a middle buffer between the stream and the output.
@@ -139,7 +156,7 @@ protected:
      * while for Read function it is used only if the size to read is minor
      * than a quarter than the buffer size.
      * Function BufferedStreamIOBuffer::NoMoreSpaceToWrite acts
-     * as a flush and the more confidencial function Flush calls it.
+     * as a flush and the more confidential function Flush calls it.
      * @see BufferedStreamBuffer for more informations.*/
     BufferedStreamIOBuffer readBuffer;
 
@@ -185,29 +202,54 @@ protected:
 private:
     // mode switch methods
 
+    /**
+     * @brief Switch to the write mode.
+     * @return false if the re-synchronization goes wrong.
+     *
+     *  Sets the readBufferFillAmount to 0.
+     *  Synchronize the position in the stream.
+     *  Sets the mutexWriteMode.
+     *  Does not check for mutexBuffering to be active
+     */
+    inline bool SwitchToWriteMode() {
+        if (!readBuffer.Resync())
+            return false;
+        operatingModes.mutexWriteMode = true;
+        operatingModes.mutexReadMode = false;
+        return true;
+    }
+
+    /**
+     * @brief Switch to the read mode.
+     * @return false if the flush function fails.
+     *
+     *  Flushes writeBuffer.
+     *  Resets mutexWriteMode.
+     *  Does not refill the buffer nor check the mutexBuffering is active.
+     */
+    inline bool SwitchToReadMode() {
+        if (!writeBuffer.Flush())
+            return false;
+        operatingModes.mutexWriteMode = false;
+        operatingModes.mutexReadMode = true;
+        return true;
+    }
+
 protected:
-
-    bool CanSeek() const;
-
-    /** whether it can be written into */
-    bool CanWrite() const;
-
-    /** whether it can be  read */
-    bool CanRead() const;
-
     /**
      * @brief Default constructor.
      *
      * At the beginning the stream is monodirectional. */
     //TODO the construction of readBuffer and writeBuffer has to be changed.
-    DoubleBufferedStream() :
+    SingleBufferedStream() :
             readBuffer(unbufferedStream),
             writeBuffer(unbufferedStream) {
-
+        operatingModes.mutexReadMode = false;
+        operatingModes.mutexWriteMode = false;
     }
 
     /** @brief Default destructor. */
-    virtual ~DoubleBufferedStream();
+    virtual ~SingleBufferedStream();
 
     /**
      * @brief Sets the buffers size, impose the buffered modality.
@@ -236,14 +278,18 @@ public:
      * On dual separate buffering (CanSeek=false) just Flush output.
      * On joint buffering (CanSeek= true) depending on read/write mode
      * either Resync or Flush.
-     * The function DoubleBufferedStream::Resync adjusts the position on the stream
+     * The function SingleBufferedStream::Resync adjusts the position on the stream
      * after a read operation, shifted because of the Refill.
      */
-    inline bool Flush(TimeoutType msecTimeout = TTDefault) {
-
+    inline bool FlushAndResync(TimeoutType msecTimeout = TTDefault) {
+        // if there is something in the buffer, and canSeek it means we can and need to resync
+        // if the buffers are separated (!canseek) than resync cannot be done
+        if (readBuffer.UsedSize() && operatingModes.canSeek) {
+            return readBuffer.Resync();
+        }
         // some data in writeBuffer
         // we can flush in all cases then
-        if (writeBuffer.UsedSize() > 0) {
+        if (writeBuffer.UsedSize()) {
             return writeBuffer.Flush();
         }
         return true;
@@ -258,6 +304,10 @@ public:
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
     inline bool PutC(char8 c) {
+        if (operatingModes.mutexReadMode) {
+            if (!SwitchToWriteMode())
+                return false;
+        }
 
         if (writeBuffer.BufferSize() > 0) {
             return writeBuffer.PutC(c);
@@ -276,6 +326,11 @@ public:
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
     inline bool GetC(char8 &c) {
+
+        if (operatingModes.mutexWriteMode) {
+            if (!SwitchToReadMode())
+                return false;
+        }
 
         if (readBuffer.BufferSize() > 0) {
             return readBuffer.GetC(c);
@@ -381,12 +436,21 @@ public:
     virtual bool SetSize(uint64 size);
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
 
+    virtual bool  CanSeek() const;
+
+    /** whether it can be written into */
+    virtual bool  CanWrite() const;
+
+    /** whether it can be  read */
+    virtual bool  CanRead() const;
+
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* DOUBLEBUFFEREDSTREAM_H_ */
+#endif /* SINGLEBUFFEREDSTREAM_H_ */
 

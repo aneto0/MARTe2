@@ -66,41 +66,45 @@ namespace MARTe {
  */
 class BufferedStream {
 
-protected:
-    // mode switch methods
-
-    /// default constructor
-    BufferedStream() {
-    }
-
-    /// default destructor
-    virtual ~BufferedStream();
-
 public:
 
     /**
-     * @brief Pure virtual method. Get the read buffer.
-     * @return a pointer to the read buffer. */
+     * @brief Default constructor
+     */
+    BufferedStream();
+    /**
+     * default destructor
+     */
+    virtual ~BufferedStream();
+
+    /**
+     * @brief Pure virtual method. Gets the read buffer.
+     * @return a pointer to the read buffer.
+     */
     virtual IOBuffer *GetInputBuffer() = 0;
 
     /**
      * @brief Pure virtual method. Get the write buffer.
-     * @return a pointer to the write buffer. */
+     * @return a pointer to the write buffer.
+     */
     virtual IOBuffer *GetOutputBuffer() = 0;
 
     /**
      * @brief Pure virtual function. Defines if write operations can be performed on the stream.
-     * @return return value depends from derived classes implementation. */
+     * @return return value depends from derived classes implementation.
+     */
     virtual bool CanWrite() const =0;
 
     /**
      * @brief Pure virtual function. Defines if read operations can be performed on the stream.
-     * @return return value depends from derived classes implementation. */
+     * @return return value depends from derived classes implementation.
+     */
     virtual bool CanRead() const =0;
 
     /**
      * @brief Pure virtual method. Defines if seek operations can be performed on the stream.
-     * @return return value depends on the derived classes implementation. */
+     * @return return value depends on the derived classes implementation.
+     */
     virtual bool CanSeek() const =0;
 
     /**
@@ -116,7 +120,7 @@ public:
      As much as size byte are read,
      actual read size is returned in size. (unless complete = true)
      msecTimeout is how much the operation should last - no more - if not any (all) data read then return false
-     timeout behaviour depends on class characteristics and sync mode.
+     timeout behavior depends on class characteristics and sync mode.
      return false implies failure to comply with minimum requirements:
      timeout and complete and data read  != size
      timeout and data read == 0
@@ -141,7 +145,7 @@ public:
      As much as size byte are written,
      actual written size is returned in size.
      msecTimeout is how much the operation should last.
-     timeout behaviour depends on class characteristics and sync mode.
+     timeout behavior depends on class characteristics and sync mode.
      return false implies failure to comply with minimum requirements:
      timeout and complete and data written  != size
      timeout and data written == 0
@@ -155,36 +159,40 @@ public:
 
     /**
      * @brief Pure virtual method. The size of the stream.
-     * @return the size of the stream depending on derived classes implementation.  */
-    virtual int64 Size() = 0;
+     * @return the size of the stream depending on derived classes implementation.
+     */
+    virtual uint64 Size() = 0;
 
     /**
      * @brief Pure virtual method. Moves within the stream to an absolute location.
      * @param pos is the desired absolute position.
-     * @return return value depends on derived classes implementation. */
+     * @return return value depends on derived classes implementation.
+     */
     virtual bool Seek(uint64 pos) = 0;
 
     /**
      * @brief Pure virtual method. Moves within the file relative to current location.
      * @param deltaPos is the gap from the current position.
-     * @return return value depends on derived classes implementation. */
+     * @return return value depends on derived classes implementation.
+     */
     virtual bool RelativeSeek(int32 deltaPos)=0;
 
     /**
      * @brief Pure virtual method. Returns current position.
-     * @return the current position in the stream. */
+     * @return the current position in the stream.
+     */
     virtual uint64 Position() = 0;
 
     /**
      * @brief Pure virtual method. Clip the stream size to the desired value.
      * @param size is the desired size.
-     * @return return value depends on the derived classes implementation. */
-    virtual bool SetSize(int64 size) = 0;
-
-    // auxiliary functions based on buffering
+     * @return return value depends on the derived classes implementation.
+     */
+    virtual bool SetSize(uint64 size) = 0;
 
     /**
-     * @brief Automatic cast to AnyType for a generic stream Printf. */
+     * @brief Automatic cast to AnyType for a generic stream Printf.
+     */
     inline operator AnyType();
 
     /**
@@ -249,8 +257,6 @@ public:
      */
     virtual bool SkipTokens(uint32 count,
     const char8 * terminator);
-
-    //  Methods to convert and print numbers and other objects
 
     /**
      * @brief Very powerful function to handle data conversion into a stream of characters.
@@ -320,18 +326,20 @@ public:
 
     /**
      * @brief Inline method which use pure virtual GetToken. Extract a line and write it on another stream.
-     * @param outputBuffer is the output stream where de line must be written.
+     * @param outputBuffer is the output stream where the line must be written.
      * @param skipTerminators defines if the \r char8 should be skipped (true) or not (false).
-     * @return depends on the derived classes implementation.  */
+     * @return depends on the derived classes implementation.
+     */
     inline bool GetLine(BufferedStream & output,
     bool skipTerminators = true);
 
     /**
      * @brief Inline method which use pure virtual GetToken. Extract a line and write it on a char8* buffer.
-     * @param outputBuffer is the buffer where de line must be written.
+     * @param outputBuffer is the buffer where the line must be written.
      * @param outputBufferSize is the maximum size of the output buffer.
      * @param skipTerminators defines if the \r char8 should be skipped (true) or not (false).
-     * @return depends on the derived classes implementation.  */
+     * @return depends on the derived classes implementation.
+     */
     inline bool GetLine(char8 *outputBuffer,
     uint32 outputBufferSize,
     bool skipTerminators = true);
@@ -377,10 +385,13 @@ bool BufferedStream::GetLine(BufferedStream & output,
                              bool skipTerminators) {
     const char8 *skipCharacters = "\r";
 #if defined (_WIN32)
-    if (!skipTerminators) skipCharacters = "\r";
+    if (!skipTerminators) {
+        skipCharacters = "\r";
+    }
 #else
-    if (!skipTerminators)
+    if (!skipTerminators) {
         skipCharacters = "";
+    }
 #endif
     return GetToken(output, "\n", NULL,skipCharacters);
 }
@@ -390,10 +401,13 @@ bool BufferedStream::GetLine(char8 *outputBuffer,
                              bool skipTerminators) {
     const char8 *skipCharacters = "\r";
 #if defined (_WIN32)
-    if (!skipTerminators) skipCharacters = "\r";
+    if (!skipTerminators) {
+        skipCharacters = "\r";
+    }
 #else
-    if (!skipTerminators)
+    if (!skipTerminators) {
         skipCharacters = "";
+    }
 #endif
     return GetToken(outputBuffer, "\n", outputBufferSize, NULL,skipCharacters);
 }

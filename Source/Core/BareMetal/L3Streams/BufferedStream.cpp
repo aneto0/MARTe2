@@ -33,7 +33,6 @@
 #include "AdvancedErrorManagement.h"
 #include "StringHelper.h"
 #include "IOBufferFunctions.h"
-#include "StreamWrapperIOBuffer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -44,48 +43,30 @@
 
 namespace MARTe {
 
-/// default destructor
+BufferedStream::BufferedStream() {
+}
+
 BufferedStream::~BufferedStream() {
 }
 
-/** extract a token from the stream into a string data until a terminator or 0 is found.
- Skips all skip characters and those that are also terminators at the beginning
- returns true if some data was read before any error or file termination. false only on error and no data available
- The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
- skipCharacters=NULL is equivalent to skipCharacters = terminator
- {BUFFERED}    */
+
 bool BufferedStream::GetToken(char8 * outputBuffer,
                               const char8 * terminator,
                               uint32 outputBufferSize,
                               char8 * saveTerminator,
                               const char8 * skipCharacters) {
 
+    bool retval = false;
 // retrieve stream mechanism
     IOBuffer *inputIOBuffer = GetInputBuffer();
-    if (inputIOBuffer == NULL) {
-        char8 stackBuffer[64];
-        StreamWrapperIOBuffer inputIOBuffer (this,stackBuffer,sizeof (stackBuffer));
+    if (inputIOBuffer != NULL) {
 
-        bool ret = GetTokenFromStream(inputIOBuffer, outputBuffer,terminator,outputBufferSize,saveTerminator,skipCharacters);
-
-        return ret;
+        retval= GetTokenFromStream(*inputIOBuffer, outputBuffer, terminator, outputBufferSize, saveTerminator, skipCharacters);
     }
-
-    return GetTokenFromStream(*inputIOBuffer, outputBuffer, terminator, outputBufferSize, saveTerminator, skipCharacters);
+    return retval;
 }
 
-/** extract a token from the stream into a string data until a terminator or 0 is found.
- Skips all skip characters and those that are also terminators at the beginning
- returns true if some data was read before any error or file termination. false only on error and no data available
- The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
- skipCharacters=NULL is equivalent to skipCharacters = terminator
- {BUFFERED}
- A character can be found in the terminator or in the skipCharacters list  in both or in none
- 0) none                 the character is copied
- 1) terminator           the character is not copied the string is terminated
- 2) skip                 the character is not copied
- 3) skip + terminator    the character is not copied, the string is terminated if not empty
- */
+
 bool BufferedStream::GetToken(BufferedStream & output,
                               const char8 * terminator,
                               char8 * saveTerminator,
@@ -97,109 +78,66 @@ bool BufferedStream::GetToken(BufferedStream & output,
 
     bool ret = false;
 
-    if (inputIOBuffer == NULL) {
-        char8 stackBuffer[64];
-//create a buffer on the stack as the read buffer.
-        StreamWrapperIOBuffer inputIOBufferS (this,stackBuffer,sizeof (stackBuffer));
-        inputIOBuffer = &inputIOBufferS;
-
-        if (outputIOBuffer == NULL) {
-            char8 stackBuffer[64];
-//create a buffer on the stack as the write buffer
-            StreamWrapperIOBuffer outputIOBufferS (&output,stackBuffer,sizeof (stackBuffer));
-            outputIOBuffer = &outputIOBufferS;
-
-            ret = GetTokenFromStream(*inputIOBuffer, *outputIOBuffer,terminator,saveTerminator,skipCharacters);
-
-        }
-        else {
-            ret = GetTokenFromStream(*inputIOBuffer, *outputIOBuffer,terminator,saveTerminator,skipCharacters);
-        }
-    }
-    else {
-
-        if (outputIOBuffer == NULL) {
-            char8 stackBuffer[64];
-//create a buffer on the stack as write buffer.
-            StreamWrapperIOBuffer outputIOBufferS (&output,stackBuffer,sizeof (stackBuffer));
-            outputIOBuffer = &outputIOBufferS;
-
-            ret = GetTokenFromStream(*inputIOBuffer, *outputIOBuffer,terminator,saveTerminator,skipCharacters);
-
-        }
-        else {
-
-            ret = GetTokenFromStream(*inputIOBuffer, *outputIOBuffer,terminator,saveTerminator,skipCharacters);
-        }
+    if ((inputIOBuffer != NULL) && (outputIOBuffer!=NULL)) {
+        ret = GetTokenFromStream(*inputIOBuffer, *outputIOBuffer,terminator,saveTerminator,skipCharacters);
     }
 
     return ret;
 }
 
-/** to skip a series of tokens delimited by terminators or 0
- {BUFFERED}    */
 bool BufferedStream::SkipTokens(uint32 count,
                                 const char8 * terminator) {
 
+    bool ret = false;
 // retrieve stream mechanism
     IOBuffer *inputBuffer = GetInputBuffer();
-    if (inputBuffer == NULL) {
-        char8 stackBuffer[64];
-        StreamWrapperIOBuffer inputBuffer (this,stackBuffer,sizeof (stackBuffer));
-
-        return SkipTokensInStream(inputBuffer,count,terminator);
+    if (inputBuffer != NULL) {
+        ret= SkipTokensInStream(*inputBuffer,count,terminator);
     }
 
-    return SkipTokensInStream(*inputBuffer, count, terminator);
+    return ret;
 }
 
 bool BufferedStream::Print(const AnyType& par,
                            FormatDescriptor fd) {
 
+    bool ret = false;
 // retrieve stream mechanism
     IOBuffer *outputBuffer = GetOutputBuffer();
-    if (outputBuffer == NULL) {
-        char8 stackBuffer[64];
-        StreamWrapperIOBuffer outputBuffer (this,stackBuffer,sizeof (stackBuffer));
-
-        return PrintToStream(outputBuffer,par,fd);
+    if (outputBuffer != NULL) {
+        ret= PrintToStream(*outputBuffer, par, fd);
     }
 
-    return PrintToStream(*outputBuffer, par, fd);
+    return ret;
 }
 
 bool BufferedStream::PrintFormatted(const char8 *format,
                                     const AnyType pars[]) {
 
+    bool ret = false;
 // retrieve stream mechanism
 // the output buffer is flushed in streamable.
     IOBuffer *outputBuffer = GetOutputBuffer();
-    if (outputBuffer == NULL) {
-        char8 stackBuffer[64];
-        StreamWrapperIOBuffer outputBuffer (this,stackBuffer,sizeof (stackBuffer));
+    if (outputBuffer != NULL) {
 
-        return PrintFormattedToStream(outputBuffer,format,pars);
+        ret=PrintFormattedToStream(*outputBuffer,format,pars);
 
     }
-    return PrintFormattedToStream(*outputBuffer, format, pars);
+    return ret;
 }
 
-/**
- * copies a const char8* into this stream from current position
- */
 bool BufferedStream::Copy(const char8 *buffer) {
-    if (buffer == NULL) {
-        return false;
+
+    bool ret = false;
+    if (buffer != NULL) {
+
+        uint32 len = (uint32 )StringHelper::Length(buffer);
+
+        ret=Write(buffer,len,TTDefault,true);
     }
-
-    uint32 len = (uint32 )StringHelper::Length(buffer);
-
-    return Write(buffer,len,TTDefault,true);
+    return ret;
 }
 
-/**
- * copies from stream current Position to end
- */
 bool BufferedStream::Copy(BufferedStream &stream) {
 
     char8 buffer[256];
