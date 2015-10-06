@@ -43,14 +43,26 @@
 namespace MARTe {
 
 DoubleBufferedStream::DoubleBufferedStream() :
-        readBuffer(unbufferedStream),
-        writeBuffer(unbufferedStream) {
+        BufferedStream(),
+        readBuffer(),
+        writeBuffer() {
+    unbufferedStream = static_cast<RawStream *>(NULL);
     timeout = TTDefault;
 }
 
-DoubleBufferedStream::DoubleBufferedStream(TimeoutType msecTimeout) :
-        readBuffer(unbufferedStream, msecTimeout),
-        writeBuffer(unbufferedStream, msecTimeout) {
+DoubleBufferedStream::DoubleBufferedStream(RawStream* const lowLevelStream) :
+        BufferedStream(),
+        readBuffer(lowLevelStream),
+        writeBuffer(lowLevelStream) {
+    unbufferedStream = lowLevelStream;
+    timeout = TTDefault;
+}
+
+DoubleBufferedStream::DoubleBufferedStream(RawStream* const lowLevelStream, const TimeoutType &msecTimeout) :
+        BufferedStream(),
+        readBuffer(lowLevelStream, msecTimeout),
+        writeBuffer(lowLevelStream, msecTimeout) {
+    unbufferedStream = lowLevelStream;
     timeout = msecTimeout;
 }
 
@@ -77,139 +89,159 @@ bool DoubleBufferedStream::CanRead() const {
 bool DoubleBufferedStream::SetBufferSize(uint32 readBufferSize,
                                          uint32 writeBufferSize) {
 
+    bool ret = true;
     // minimum size = 8
-    if (readBufferSize < 8)
-        readBufferSize = 8;
-    if (writeBufferSize < 8)
-        writeBufferSize = 8;
+    if (readBufferSize < 8u) {
+        readBufferSize = 8u;
+    }
+    if (writeBufferSize < 8u) {
+        writeBufferSize = 8u;
+    }
 
     // do not allocate if not necessary
-    if (!CanRead())
-        readBufferSize = 0;
-    if (!CanWrite())
-        writeBufferSize = 0;
+    if (!CanRead()) {
+        readBufferSize = 0u;
+    }
+    if (!CanWrite()) {
+        writeBufferSize = 0u;
+    }
 
     // dump any data in the write Queue
-    if (!Flush())
-        return false;
+    if (Flush()) {
 
-    // adjust readBufferSize
-    readBuffer.SetBufferSize(readBufferSize);
+        // adjust readBufferSize
+        if (!readBuffer.SetBufferSize(readBufferSize)) {
+            //TODO
+        }
 
-    // adjust writeBufferSize
-    writeBuffer.SetBufferSize(writeBufferSize);
+        // adjust writeBufferSize
+        if (!writeBuffer.SetBufferSize(writeBufferSize)) {
+            //TODO
+        }
+    }
+    else {
+        ret = false;
+    }
 
-    return true;
+    return ret;
 }
 
 ///
-IOBuffer *DoubleBufferedStream::GetInputBuffer() {
+IOBuffer * DoubleBufferedStream::GetInputBuffer() {
 
     return &readBuffer;
 }
 
 ///
-IOBuffer *DoubleBufferedStream::GetOutputBuffer() {
+IOBuffer * DoubleBufferedStream::GetOutputBuffer() {
 
     return &writeBuffer;
 }
 
-bool DoubleBufferedStream::Read(char8 * bufferIn,
+bool DoubleBufferedStream::Read(char8 * const bufferIn,
                                 uint32 & size) {
 
+    bool ret = true;
+
     // check whether we have a buffer
-    if (readBuffer.BufferSize() > 0) {
+    if (readBuffer.BufferSize() > 0u) {
 
         // read from buffer first
         uint32 toRead = size;
 
         // try once
-        readBuffer.Read(bufferIn, size);
+        readBuffer.Read(&bufferIn[0], size);
 
-        if (size == toRead) {
-            return true;
-        }
-        else {  // partial only so continue
+        if (size != toRead) {
+            // partial only so continue
 
             // adjust toRead
             toRead -= size;
 
             // decide whether to use the buffer again or just to read directly
-            if ((toRead * 4) < readBuffer.MaxUsableAmount()) {
-                if (!readBuffer.Refill())
-                    return false;
+            if ((toRead * 4u) < readBuffer.MaxUsableAmount()) {
+                if (!readBuffer.Refill()) {
+                    ret = false;
+                }
 
-                readBuffer.Read(bufferIn + size, toRead);
-                size += toRead;
+                else {
 
-                // should have completed
-                // as our buffer is at least 4x the need
-                return true;
+                    readBuffer.Read(&bufferIn[size], toRead);
+                    size += toRead;
+
+                    // should have completed
+                    // as our buffer is at least 4x the need
+                }
 
             }
             else {
                 // if needed read directly from stream
-                if (!unbufferedStream->Read(bufferIn + size, toRead, timeout))
-                    return false;
-                size += toRead;
-                return true;
+                if (!unbufferedStream->Read(&bufferIn[size], toRead, timeout)) {
+                    ret = false;
+                }
+                else {
+                    size += toRead;
+                }
             }
         }
     }
 
     // if needed read directly from stream
-    return unbufferedStream->Read(bufferIn, size, timeout);
+    return (ret) ? (unbufferedStream->Read(&bufferIn[0], size, timeout)) : (false);
 }
 
 /** Write data from a buffer to the stream. As much as size byte are written, actual size
  is returned in size. msecTimeout is how much the operation should last.
  timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
  when noWait is used .... */
-bool DoubleBufferedStream::Write(const char8* bufferIn,
+bool DoubleBufferedStream::Write(const char8* const bufferIn,
                                  uint32 & size) {
 
+    bool ret = true;
     // buffering active?
-    if (writeBuffer.BufferSize() > 0) {
+    if (writeBuffer.BufferSize() > 0u) {
         // separate input and output size
 
         uint32 toWrite = size;
         // check available buffer size versus write size
         // if size is comparable to buffer size there
         // is no reason to use the buffering mechanism
-        if (writeBuffer.MaxUsableAmount() > (4 * size)) {
+        if (writeBuffer.MaxUsableAmount() > (4u * size)) {
 
             // try writing the buffer
-            writeBuffer.Write(bufferIn, size);
+            writeBuffer.Write(&bufferIn[0], size);
 
             // all done! space available!
-            if (size == toWrite)
-                return true;
+            if (size != toWrite) {
+                // make space
+                if (!writeBuffer.Flush()) {
+                    ret = false;
+                }
+                else {
+                    toWrite -= size;
+                    uint32 leftToWrite = toWrite;
 
-            // make space
-            if (!writeBuffer.Flush())
-                return false;
+                    // try writing the buffer
+                    writeBuffer.Write(&bufferIn[size], leftToWrite);
 
-            toWrite -= size;
-            uint32 leftToWrite = toWrite;
+                    size += leftToWrite;
 
-            // try writing the buffer
-            writeBuffer.Write(bufferIn + size, leftToWrite);
-
-            size += leftToWrite;
-
-            // should have been able to fill in it!!!
-            if (leftToWrite != toWrite)
-                return false;
-            return true;
+                    // should have been able to fill in it!!!
+                    if (leftToWrite != toWrite) {
+                        ret = false;
+                    }
+                }
+            }
         }
         else {
             // write the buffer so far
-            if (!writeBuffer.Flush())
-                return false;
+            if (!writeBuffer.Flush()) {
+                ret = false;
+            }
         }
 
     }
-    return unbufferedStream->Write(bufferIn, size, timeout);
+    return (ret) ? (unbufferedStream->Write(&bufferIn[0], size, timeout)) : (false);
 
 }
 
@@ -219,12 +251,12 @@ uint64 DoubleBufferedStream::Size() {
 }
 
 /** Moves within the file to an absolute location */
-bool DoubleBufferedStream::Seek(uint64 pos) {
-    return unbufferedStream->RelativeSeek(pos);
+bool DoubleBufferedStream::Seek(const uint64 pos) {
+    return unbufferedStream->Seek(pos);
 }
 
 /** Moves within the file relative to current location */
-bool DoubleBufferedStream::RelativeSeek(int32 deltaPos) {
+bool DoubleBufferedStream::RelativeSeek(const int32 deltaPos) {
     return unbufferedStream->RelativeSeek(deltaPos);
 }
 
@@ -234,7 +266,7 @@ uint64 DoubleBufferedStream::Position() {
 }
 
 /** Clip the stream size to a specified point */
-bool DoubleBufferedStream::SetSize(uint64 size) {
+bool DoubleBufferedStream::SetSize(const uint64 size) {
     return unbufferedStream->SetSize(size);
 }
 

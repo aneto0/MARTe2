@@ -131,14 +131,6 @@ class DoubleBufferedStream: public BufferedStream {
 
 public:
 
-    virtual bool CanSeek() const;
-
-    /** whether it can be written into */
-    virtual bool CanWrite() const;
-
-    /** whether it can be  read */
-    virtual bool CanRead() const;
-
     /**
      * @brief Default constructor.
      *
@@ -146,7 +138,9 @@ public:
     //TODO the construction of readBuffer and writeBuffer has to be changed.
     DoubleBufferedStream();
 
-    DoubleBufferedStream(TimeoutType msecTimeout);
+    DoubleBufferedStream(RawStream* const lowLevelStream);
+
+    DoubleBufferedStream(RawStream* const lowLevelStream, const TimeoutType &msecTimeout);
 
     /** @brief Default destructor. */
     virtual ~DoubleBufferedStream();
@@ -164,10 +158,10 @@ public:
      * The function calls FlushAndResync and then allocates the desired sizes for
      * readBuffer and writeBuffer using IOBuffer::SetBufferHeapMemory.
      */
-    virtual bool SetBufferSize(uint32 readBufferSize = 0,
-                               uint32 writeBufferSize = 0);
+    virtual bool SetBufferSize(uint32 readBufferSize,
+                               uint32 writeBufferSize);
 
-    // special inline methods for buffering
+    /*---------------------------------------------------------------------------*/
 
     /**
      * @brief Resyncronization and flush of the buffers.
@@ -180,7 +174,7 @@ public:
      * The function DoubleBufferedStream::Resync adjusts the position on the stream
      * after a read operation, shifted because of the Refill.
      */
-    inline bool Flush(TimeoutType msecTimeout = TTDefault);
+    inline bool Flush();
 
     /**
      * @brief Simply write a character to the stream if space exist and if operatingModes allows.
@@ -190,7 +184,7 @@ public:
      * In buffered mode uses the inline IOBuffer::PutC of writeBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
-    inline bool PutC(char8 c);
+    inline bool PutC(const char8 c);
 
     /**
      * @brief Simply read a character from stream.
@@ -202,8 +196,15 @@ public:
      */
     inline bool GetC(char8 &c);
 
-public:
-    // PURE STREAMING  built upon UnBuffered version
+    /*---------------------------------------------------------------------------*/
+
+    virtual bool CanSeek() const;
+
+    /** whether it can be written into */
+    virtual bool CanWrite() const;
+
+    /** whether it can be  read */
+    virtual bool CanRead() const;
 
     /** @brief Reads data from stream into buffer.
      * @param buffer is the output memory where datas must be written.
@@ -297,6 +298,24 @@ public:
 protected:
 
     /**
+     * @brief Get the read buffer.
+     * @return BufferedStreamIOBuffer readBuffer pointer.
+     *
+     * This function is used by Printf and GetToken functions.
+     */
+    virtual IOBuffer *GetInputBuffer();
+
+    /**
+     * @brief Get the write buffer.
+     * @return BufferedStreamIOBuffer writeBuffer pointer.
+     *
+     * This function is used by Printf and GetToken functions.
+     */
+    virtual IOBuffer *GetOutputBuffer();
+
+private:
+
+    /**
      * The read buffer. It is used just like
      * a middle buffer between the stream and the output.
      * For each read operation this buffer is filled completely
@@ -323,22 +342,6 @@ protected:
      */
     BufferedStreamIOBuffer writeBuffer;
 
-    /**
-     * @brief Get the read buffer.
-     * @return BufferedStreamIOBuffer readBuffer pointer.
-     *
-     * This function is used by Printf and GetToken functions.
-     */
-    virtual IOBuffer *GetInputBuffer();
-
-    /**
-     * @brief Get the write buffer.
-     * @return BufferedStreamIOBuffer writeBuffer pointer.
-     *
-     * This function is used by Printf and GetToken functions.
-     */
-    virtual IOBuffer *GetOutputBuffer();
-
     //TODO
     RawStream *unbufferedStream;
 
@@ -350,34 +353,43 @@ protected:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-bool DoubleBufferedStream::Flush(TimeoutType msecTimeout ) {
+bool DoubleBufferedStream::Flush() {
 
+    bool ret = true;
     // some data in writeBuffer
     // we can flush in all cases then
-    if (writeBuffer.UsedSize() > 0) {
-        return writeBuffer.Flush();
+    if (writeBuffer.UsedSize() > 0u) {
+        ret = writeBuffer.Flush();
     }
-    return true;
+    return ret;
 }
 
-bool DoubleBufferedStream::PutC(char8 c) {
+bool DoubleBufferedStream::PutC(const char8 c) {
 
-    if (writeBuffer.BufferSize() > 0) {
-        return writeBuffer.PutC(c);
+    bool ret = false;
+    if (writeBuffer.BufferSize() > 0u) {
+        ret = writeBuffer.PutC(c);
     }
-
-    uint32 size = 1;
-    return unbufferedStream->Write(&c, size, timeout);
+    else {
+        uint32 size = 1u;
+        ret = unbufferedStream->Write(&c, size, timeout);
+    }
+    return ret;
 }
 
 bool DoubleBufferedStream::GetC(char8 &c) {
 
-    if (readBuffer.BufferSize() > 0) {
-        return readBuffer.GetC(c);
-    }
+    bool ret = false;
 
-    uint32 size = 1;
-    return unbufferedStream->Read(&c, size, timeout);
+    if (readBuffer.BufferSize() > 0u) {
+        ret = readBuffer.GetC(c);
+    }
+    else {
+
+        uint32 size = 1u;
+        ret = unbufferedStream->Read(&c, size, timeout);
+    }
+    return ret;
 }
 
 }

@@ -136,7 +136,10 @@ public:
     //TODO the construction of readBuffer and writeBuffer has to be changed.
     SingleBufferedStream();
 
-    SingleBufferedStream(TimeoutType msecTimeout);
+    SingleBufferedStream(RawStream* const lowLevelStream);
+
+    SingleBufferedStream(RawStream* const lowLevelStream,
+                         const TimeoutType & msecTimeout);
 
     /** @brief Default destructor. */
     virtual ~SingleBufferedStream();
@@ -154,8 +157,8 @@ public:
      * The function calls FlushAndResync and then allocates the desired sizes for
      * readBuffer and writeBuffer using IOBuffer::SetBufferHeapMemory.
      */
-    virtual bool SetBufferSize(uint32 readBufferSize = 0,
-                               uint32 writeBufferSize = 0);
+    virtual bool SetBufferSize(uint32 readBufferSize,
+                               uint32 writeBufferSize);
 
     // special inline methods for buffering
 
@@ -170,7 +173,7 @@ public:
      * The function SingleBufferedStream::Resync adjusts the position on the stream
      * after a read operation, shifted because of the Refill.
      */
-    inline bool FlushAndResync(TimeoutType msecTimeout = TTDefault);
+    inline bool FlushAndResync();
     /**
      * @brief Simply write a character to the stream if space exist and if operatingModes allows.
      * @param c is the character to be written on the stream.
@@ -179,7 +182,7 @@ public:
      * In buffered mode uses the inline IOBuffer::PutC of writeBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
-    inline bool PutC(char8 c);
+    inline bool PutC(const char8 c);
 
     /**
      * @brief Simply read a character from stream.
@@ -297,11 +300,11 @@ protected:
 
         /** writeBuffer is the active one.
          */
-        bool mutexReadMode :1;
+        bool mutexReadMode;
 
         /** writeBuffer is the active one.
          */
-        bool mutexWriteMode :1;
+        bool mutexWriteMode;
 
     };
     /** set automatically on initialisation by calling of the Canxxx functions */
@@ -384,64 +387,84 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
- bool SingleBufferedStream::FlushAndResync(TimeoutType msecTimeout = TTDefault) {
+bool SingleBufferedStream::FlushAndResync() {
+
+    bool ret = true;
     // if there is something in the buffer, and canSeek it means we can and need to resync
     // if the buffers are separated (!canseek) than resync cannot be done
-    if (readBuffer.UsedSize() && operatingModes.canSeek) {
-        return readBuffer.Resync();
+    if (readBuffer.UsedSize() > 0u) {
+        ret = readBuffer.Resync();
     }
-    // some data in writeBuffer
-    // we can flush in all cases then
-    if (writeBuffer.UsedSize()) {
-        return writeBuffer.Flush();
+    else {
+        // some data in writeBuffer
+        // we can flush in all cases then
+        if (writeBuffer.UsedSize() > 0u) {
+            ret = writeBuffer.Flush();
+        }
     }
-    return true;
+    return ret;
 }
 
-bool SingleBufferedStream::PutC(char8 c) {
+bool SingleBufferedStream::PutC(const char8 c) {
+    bool ret = true;
+
     if (operatingModes.mutexReadMode) {
-        if (!SwitchToWriteMode())
-            return false;
+        if (!SwitchToWriteMode()) {
+            ret = false;
+        }
     }
 
-    if (writeBuffer.BufferSize() > 0) {
-        return writeBuffer.PutC(c);
+    if (ret) {
+        if (writeBuffer.BufferSize() > 0u) {
+            ret = writeBuffer.PutC(c);
+        }
+        else {
+            uint32 size = 1u;
+            ret = unbufferedStream->Write(&c, size, timeout);
+        }
     }
 
-    uint32 size = 1;
-    return unbufferedStream->Write(&c, size);
+    return ret;
 }
 
 bool SingleBufferedStream::GetC(char8 &c) {
 
+    bool ret = true;
     if (operatingModes.mutexWriteMode) {
-        if (!SwitchToReadMode())
-            return false;
+        if (!SwitchToReadMode()) {
+            ret = false;
+        }
     }
 
-    if (readBuffer.BufferSize() > 0) {
-        return readBuffer.GetC(c);
+    if (ret) {
+        if (readBuffer.BufferSize() > 0u) {
+            ret = readBuffer.GetC(c);
+        }
+        else {
+            uint32 size = 1u;
+            ret = unbufferedStream->Read(&c, size, timeout);
+        }
     }
-
-    uint32 size = 1;
-    return unbufferedStream->Read(&c, size);
+    return ret;
 }
 
-
 bool SingleBufferedStream::SwitchToWriteMode() {
-    if (!readBuffer.Resync())
-        return false;
-    operatingModes.mutexWriteMode = true;
-    operatingModes.mutexReadMode = false;
-    return true;
+    bool ret = readBuffer.Resync();
+    if (ret) {
+        operatingModes.mutexWriteMode = true;
+        operatingModes.mutexReadMode = false;
+    }
+    return ret;
 }
 
 bool SingleBufferedStream::SwitchToReadMode() {
-    if (!writeBuffer.Flush())
-        return false;
-    operatingModes.mutexWriteMode = false;
-    operatingModes.mutexReadMode = true;
-    return true;
+    bool ret = !writeBuffer.Flush();
+    if (ret) {
+
+        operatingModes.mutexWriteMode = false;
+        operatingModes.mutexReadMode = true;
+    }
+    return ret;
 }
 
 }

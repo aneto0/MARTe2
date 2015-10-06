@@ -41,7 +41,7 @@
 
 namespace MARTe {
 
-StreamMemoryReference::StreamMemoryReference():BufferedStream() {
+StreamMemoryReference::StreamMemoryReference():BufferedStream(),buffer() {
 
 }
 
