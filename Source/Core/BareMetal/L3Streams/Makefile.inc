@@ -31,7 +31,9 @@ OBJSX=CharBuffer.x \
     BufferedStreamIOBuffer.x \
     StreamStringIOBuffer.x \
     StreamString.x \
-    StreamMemoryReference.x 
+    StreamMemoryReference.x \
+    IOBufferIntegerPrint.x \
+    IOBufferFunctions.x
     
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

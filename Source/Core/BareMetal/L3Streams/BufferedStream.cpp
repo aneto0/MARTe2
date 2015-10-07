@@ -32,7 +32,6 @@
 #include "BufferedStream.h"
 #include "AdvancedErrorManagement.h"
 #include "StringHelper.h"
-#include "IOBufferFunctions.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -60,7 +59,7 @@ bool BufferedStream::GetToken(char8 * const outputBuffer,
     IOBuffer *inputIOBuffer = GetInputBuffer();
     if (inputIOBuffer != NULL) {
 
-        retval= GetTokenFromStream(*inputIOBuffer, outputBuffer, terminator, outputBufferSize, saveTerminator, skipCharacters);
+        retval= inputIOBuffer->GetTokenFromStream(outputBuffer, terminator, outputBufferSize, saveTerminator, skipCharacters);
     }
     return retval;
 }
@@ -77,7 +76,7 @@ bool BufferedStream::GetToken(BufferedStream & output,
     bool ret = false;
 
     if ((inputIOBuffer != NULL) && (outputIOBuffer!=NULL)) {
-        ret = GetTokenFromStream(*inputIOBuffer, *outputIOBuffer,terminator,saveTerminator,skipCharacters);
+        ret = inputIOBuffer->GetTokenFromStream(*outputIOBuffer,terminator,saveTerminator,skipCharacters);
     }
 
     return ret;
@@ -90,24 +89,12 @@ bool BufferedStream::SkipTokens(const uint32 count,
 // retrieve stream mechanism
     IOBuffer *inputBuffer = GetInputBuffer();
     if (inputBuffer != NULL) {
-        ret= SkipTokensInStream(*inputBuffer,count,terminator);
+        ret= inputBuffer->SkipTokensInStream(count,terminator);
     }
 
     return ret;
 }
 
-bool BufferedStream::Print(const AnyType& par,
-                           const FormatDescriptor fd) {
-
-    bool ret = false;
-// retrieve stream mechanism
-    IOBuffer *outputBuffer = GetOutputBuffer();
-    if (outputBuffer != NULL) {
-        ret= PrintToStream(*outputBuffer, par, fd);
-    }
-
-    return ret;
-}
 
 bool BufferedStream::PrintFormatted(const char8 * const format,
                                     const AnyType pars[]) {
@@ -118,7 +105,7 @@ bool BufferedStream::PrintFormatted(const char8 * const format,
     IOBuffer *outputBuffer = GetOutputBuffer();
     if (outputBuffer != NULL) {
 
-        ret=PrintFormattedToStream(*outputBuffer,format,pars);
+        ret=outputBuffer->PrintFormattedToStream(format,pars);
 
     }
     return ret;

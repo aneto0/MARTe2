@@ -1,8 +1,8 @@
 /**
  * @file IOBufferFloatPrint.cpp
  * @brief Source file for class IOBufferFloatPrint
- * @date 02/ott/2015
- * @author pc
+ * @date 02/10/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -946,8 +946,8 @@ T RoundUpNumber(T number,
  * It prints NaN in case of nan (i.e 0/0) or +Inf (i.e 1/0) or -Inf (i.e -1/0). */
 template<typename T>
 bool FloatToStreamPrivate(IOBuffer & stream, // must have a GetC(c) function where c is of a type that can be obtained from chars
-                   T number,
-                   FormatDescriptor format) {
+                          T number,
+                          FormatDescriptor format) {
 
     FloatDisplayModes chosenMode = NoFormat;
 
@@ -1155,14 +1155,16 @@ bool FloatToStreamPrivate(IOBuffer & stream, // must have a GetC(c) function whe
     return true;
 }
 
-bool IOBuffer::FloatToStream(float32 number,
-                             FormatDescriptor format) {
-    return FloatToStreamPrivate(*this, number, format);
+bool FloatToStream(IOBuffer &buffer,
+                   float32 number,
+                   FormatDescriptor format) {
+    return FloatToStreamPrivate(buffer, number, format);
 }
 
-bool IOBuffer::FloatToStream(float64 number,
-                             FormatDescriptor format) {
-    return FloatToStreamPrivate(*this, number, format);
+bool FloatToStream(IOBuffer &buffer,
+                   float64 number,
+                   FormatDescriptor format) {
+    return FloatToStreamPrivate(buffer, number, format);
 }
 
 }

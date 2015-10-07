@@ -1,8 +1,8 @@
 /**
  * @file IOBufferIntegerPrint.cpp
  * @brief Source file for class IOBufferIntegerPrint
- * @date 02/ott/2015
- * @author pc
+ * @date 02/10/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -950,13 +950,13 @@ bool BitSetToStreamPrivate(IOBuffer &stream,
                 int8 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret)
-                    return IntegerToStream(stream, destination, format, numberBitSize);
+                    return IntegerToStreamPrivate(stream, destination, format, numberBitSize);
             }
             else {
                 uint8 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret)
-                    return IntegerToStream(stream, destination, format, numberBitSize);
+                    return IntegerToStreamPrivate(stream, destination, format, numberBitSize);
             }
 
         }
@@ -965,14 +965,14 @@ bool BitSetToStreamPrivate(IOBuffer &stream,
                 int16 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret)
-                    return IntegerToStream(stream, destination, format, numberBitSize);
+                    return IntegerToStreamPrivate(stream, destination, format, numberBitSize);
 
             }
             else {
                 uint16 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret)
-                    return IntegerToStream(stream, destination, format, numberBitSize);
+                    return IntegerToStreamPrivate(stream, destination, format, numberBitSize);
 
             }
         }
@@ -985,13 +985,13 @@ bool BitSetToStreamPrivate(IOBuffer &stream,
                 int32 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret)
-                    return IntegerToStream(stream, destination, format, numberBitSize);
+                    return IntegerToStreamPrivate(stream, destination, format, numberBitSize);
             }
             else {
                 uint32 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret)
-                    return IntegerToStream(stream, destination, format, numberBitSize);
+                    return IntegerToStreamPrivate(stream, destination, format, numberBitSize);
             }
 
         }
@@ -1000,13 +1000,13 @@ bool BitSetToStreamPrivate(IOBuffer &stream,
                 int64 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret)
-                    return IntegerToStream(stream, destination, format, numberBitSize);
+                    return IntegerToStreamPrivate(stream, destination, format, numberBitSize);
             }
             else {
                 uint64 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret)
-                    return IntegerToStream(stream, destination, format, numberBitSize);
+                    return IntegerToStreamPrivate(stream, destination, format, numberBitSize);
             }
         }
     }
@@ -1014,45 +1014,54 @@ bool BitSetToStreamPrivate(IOBuffer &stream,
     return ret;
 }
 
-bool IOBuffer::IntegerToStream(uint8 number,
-                               FormatDescriptor format) {
-    return IntegerToStreamPrivate(*this, number, format);
+bool IntegerToStream(IOBuffer &stream,
+                     uint8 number,
+                     FormatDescriptor format) {
+    return IntegerToStreamPrivate(stream, number, format);
 }
-bool IOBuffer::IntegerToStream(int8 number,
-                               FormatDescriptor format) {
-    return IntegerToStreamPrivate(*this, number, format, actualBitSize);
+bool IntegerToStream(IOBuffer &stream,
+                     int8 number,
+                     FormatDescriptor format) {
+    return IntegerToStreamPrivate(stream, number, format);
 }
-bool IOBuffer::IntegerToStream(uint16 number,
-                               FormatDescriptor format) {
-    return IntegerToStreamPrivate(*this, number, format, actualBitSize);
+bool IntegerToStream(IOBuffer &stream,
+                     uint16 number,
+                     FormatDescriptor format) {
+    return IntegerToStreamPrivate(stream, number, format);
 }
-bool IOBuffer::IntegerToStream(int16 number,
-                               FormatDescriptor format) {
-    return IntegerToStreamPrivate(*this, number, format, actualBitSize);
+bool IntegerToStream(IOBuffer &stream,
+                     int16 number,
+                     FormatDescriptor format) {
+    return IntegerToStreamPrivate(stream, number, format);
 }
-bool IOBuffer::IntegerToStream(uint32 number,
-                               FormatDescriptor format) {
-    return IntegerToStreamPrivate(*this, number, format, actualBitSize);
+bool IntegerToStream(IOBuffer &stream,
+                     uint32 number,
+                     FormatDescriptor format) {
+    return IntegerToStreamPrivate(stream, number, format);
 }
-bool IOBuffer::IntegerToStream(int32 number,
-                               FormatDescriptor format) {
-    return IntegerToStreamPrivate(*this, number, format, actualBitSize);
+bool IntegerToStream(IOBuffer &stream,
+                     int32 number,
+                     FormatDescriptor format) {
+    return IntegerToStreamPrivate(stream, number, format);
 }
-bool IOBuffer::IntegerToStream(uint64 number,
-                               FormatDescriptor format) {
-    return IntegerToStreamPrivate(*this, number, format, actualBitSize);
+bool IntegerToStream(IOBuffer &stream,
+                     uint64 number,
+                     FormatDescriptor format) {
+    return IntegerToStreamPrivate(stream, number, format);
 }
-bool IOBuffer::IntegerToStream(int8 number,
-                               FormatDescriptor format) {
-    return IntegerToStreamPrivate(*this, number, format, actualBitSize);
+bool IntegerToStream(IOBuffer &stream,
+                     int64 number,
+                     FormatDescriptor format) {
+    return IntegerToStreamPrivate(stream, number, format);
 }
 
-bool IOBuffer::BitSetToStream(unsigned int *numberAddress,
-                              uint8 numberBitShift,
-                              uint8 numberBitSize,
-                              bool numberIsSigned,
-                              FormatDescriptor format) {
-    return BitSetToStreamPrivate(*this, numberAddress, numberBitShift, numberBitSize, numberIsSigned, format);
+bool BitSetToStream(IOBuffer &stream,
+                    uint32 *numberAddress,
+                    uint8 numberBitShift,
+                    uint8 numberBitSize,
+                    bool numberIsSigned,
+                    FormatDescriptor format) {
+    return BitSetToStreamPrivate(stream, numberAddress, numberBitShift, numberBitSize, numberIsSigned, format);
 
 }
 

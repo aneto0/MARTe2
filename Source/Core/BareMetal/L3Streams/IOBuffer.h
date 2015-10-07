@@ -36,6 +36,7 @@
 #include "HeapManager.h"
 #include "MemoryOperationsHelper.h"
 #include "TimeoutType.h"
+#include "AnyType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -267,11 +268,7 @@ public:
      * If size is greater than amountLeft is clipped.
      *
      * @param[in] buffer contains the data to be written write in this buffer.
-<<<<<<< HEAD
      * @param[in,out] size is the number of bytes to be copied. This value will be clipped to the space left if needed.
-=======
-     * @param[in,out] size is the number of bytes to be copied.
->>>>>>> refs/remotes/origin/#238.1_Streams
      */
     virtual bool Write(const char8 * const buffer,
                        uint32 &size);
@@ -292,6 +289,75 @@ public:
      */
     bool Read(char8 * const buffer,
               uint32 &size);
+
+    /*---------------------------------------------------------------------------*/
+
+    bool PrintFormattedToStream(const char8 * format,
+                                const AnyType pars[]);
+    /**
+     * @brief Reads a token from a stream buffer and writes it on a char8* output buffer.
+     * @param terminator is a list of terminator characters.
+     * @param outputBufferSize is the size of the output buffer.
+     * @param saveTerminator is the found terminator in return.
+     * @param skipCharacters is a list of characters to be skipped.
+     * @return false if no data read, true otherwise.
+     *
+     * This function is performed for buffered streams, namely the stream should have an IOBuffer type as read buffer, actually
+     * in this function is passed an IOBuffer type.
+     ** Extract a token from the stream into a string data until a terminator or 0 is found.
+     Skips all skip characters, if you want to skip also terminator characters at the beginning add them to the skip characters.
+     returns true if some data was read before any error or file termination. false only on error and no data available
+     The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
+     skipCharacters=NULL is equivalent to skipCharacters = terminator
+     A character can be found in the terminator or in the skipCharacters list  in both or in none
+     0) none                 the character is copied
+     1) terminator           the character is not copied the string is terminated
+     2) skip                 the character is not copied
+     3) skip + terminator    the character is not copied, the string is terminated only if not empty
+     */
+    bool GetTokenFromStream(char8 * outputBuffer,
+                            const char8 * terminator,
+                            uint32 outputBufferSize,
+                            char8 * saveTerminator,
+                            const char8 * skipCharacters);
+    /**
+     * @brief Reads a token from a stream buffer and writes it on another stream buffer.
+     * @param inputStream is the input stream buffer.
+     * @param outputStream is the output stream buffer.
+     * @param terminator is a list of terminator characters.
+     * @param skipCharacters is a list of characters to be skipped.
+     * @return false if no data read, true otherwise.
+     *
+     * This function is performed for buffered streams, namely the input and output streams should have an IOBuffer type as read buffer, actually
+     * in this function are passed two IOBuffer types.
+
+     Extract a token from the stream into a string data until a terminator or 0 is found.
+     Skips all skip characters and those that are also terminators at the beginning.
+     Returns true if some data was read before any error or file termination. false only on error and no data available.
+     The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
+     skipCharacters=NULL is equivalent to skipCharacters = terminator
+     {BUFFERED}
+     A character can be found in the terminator or in the skipCharacters list  in both or in none
+     0) none                 the character is copied
+     1) terminator           the character is not copied the string is terminated
+     2) skip                 the character is not copied
+     3) skip + terminator    the character is not copied, the string is terminated if not empty
+     */
+    bool GetTokenFromStream(IOBuffer & outputBuffer,
+                            const char8 * terminator,
+                            char8 * saveTerminator,
+                            const char8 * skipCharacters);
+
+    /**
+     * @brief Skips a number of tokens on a stream buffer.
+     * @param iobuff is the stream buffer.
+     * @param count is the number of tokens to be skipped.
+     * @param terminator is a list of terminator characters for the tokenize operation.
+     * @return false if the number of skipped tokens is minor than the desired.
+     */
+    bool SkipTokensInStream(uint32 count,
+                            const char8 * terminator);
+
 
 protected:
 
@@ -326,10 +392,7 @@ protected:
      */
     virtual bool NoMoreDataToRead();
 
-    /*---------------------------------------------------------------------------*/
 
-    bool PrintFormattedToStream(const char8 * format,
-                                const AnyType pars[]);
 
 private:
 
