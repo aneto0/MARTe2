@@ -36,6 +36,7 @@
 #include "HeapManager.h"
 #include "MemoryOperationsHelper.h"
 #include "TimeoutType.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -45,20 +46,22 @@ namespace MARTe {
 /**
  * @brief The most generic buffer used by streams.
  *
- * @details This class inherits from CharBuffer which represents a naked memory buffer with a pointer
- * at the beginning. It adds a movable pointer across the memory area and attributes
+ * @details This class represents a naked memory buffer with a pointer at the
+ * beginning. It adds a movable pointer across the memory area and attributes
  * to get the size of the filled area and the readable area of the buffer.
  *
- * @details This class implements basic methods for read, write and seek operations on the buffer which are virtual
- * to avoid overloading in children.
+ * @details This class implements basic methods for read, write and seek
+ * operations on the buffer which are virtual to avoid overloading in children.
  *
- * @details The most important functions are the inline PutC and GetC which are used in Printf and GetToken
- * functions and are shared by all children (besides the implementation of NoMoreSpaceToWrite and
- * NoMoreDataToRead depends on the specific derived class implementation)
+ * @details The most important functions are the inline PutC and GetC which
+ * are used in Printf and GetToken functions and are shared by all children
+ * (besides the implementation of NoMoreSpaceToWrite and NoMoreDataToRead
+ * depends on the specific derived class implementation)
  */
 class IOBuffer {
 
 public:
+
     /**
      * @brief Synchronizes the stream position with this buffer position.
      * @details This implementation is basic and only returns false.
@@ -72,13 +75,12 @@ public:
 
     /**
      * @brief Moves the cursor to an absolute position.
-     * @details Adjusts amountLeft = maxUsableAmount - position\n
-     * and sets positionPtr to Char::BufferReference() (the beginning of the buffer) + position.
+     * @details Adjusts AmountLeft() == MaxUsableAmount() - position\n
      *
      * @param[in] position is the desired position in the filled memory.
      * @return false if position is greater than the size of the filled memory.
      */
-    virtual bool Seek(uint32 position);
+    virtual bool Seek(const uint32 position);
 
     /**
      * @brief Moves the cursor relatively from the current position.
@@ -89,7 +91,7 @@ public:
      * @param[in] delta is the step from the current position.
      * @return false if the final calculated position falls out of ranges, true otherwise.
      */
-    virtual bool RelativeSeek(int32 delta);
+    virtual bool RelativeSeek(const int32 delta);
 
     /**
      * @brief Sets manually the size of the filled memory.
@@ -98,22 +100,44 @@ public:
      * @param[in] size is the desired used size.
      * @return true.
      */
-    virtual bool SetUsedSize(uint32 size);
+    virtual bool SetUsedSize(const uint32 desiredSize);
 
     /*---------------------------------------------------------------------------*/
 
     /**
      * @brief Default constructor.
+     * @pre true
+     * @post
+     *   Buffer() == NULL &&
+     *   BufferSize() == 0u &&
+     *   AmountLeft() == 0u &&
+     *   MaxUsableAmount() == 0u &&
+     *   UsedAmountLeft() == 0 &&
+     *   Position() == 0u &&
+     *   UsedSize() == 0 &&
+     *   AllocationGranularity() == 1u &&
+     *   UndoLevel() == 0
      */
     inline IOBuffer();
 
     /**
      * @brief Constructor with the granularity mask input.
+     * @pre true
+     * @post
+     *   Buffer() == NULL &&
+     *   BufferSize() == 0u &&
+     *   AmountLeft() == 0u &&
+     *   MaxUsableAmount() == 0u &&
+     *   UsedAmountLeft() == 0 &&
+     *   Position() == 0u &&
+     *   UsedSize() == 0 &&
+     *   AllocationGranularity() == allocationGranularity &&
+     *   UndoLevel() == newUndoLevel
      */
-    inline IOBuffer(const uint32 allocationGranularity);
+    inline IOBuffer(const uint32 allocationGranularity, const uint32 newUndoLevel);
 
     /**
-     * @brief Default destructor.
+     * @brief Destructor.
      */
     virtual ~IOBuffer();
 
@@ -121,8 +145,8 @@ public:
      * @brief Allocates dynamically a memory portion on the heap.
      * @details
      * -If the new size (desiredSize-reservedSpaceAtEnd) is minor than the current used size, usedSize
-     * is clipped and if the position was over, it becomes the end of the new  size.\n
-     * -This function calls CharBuffer::SetBufferAllocationSize, then fixes maxUsableAmount to desiredSize-reservedSpaceAtEnd.
+     * is clipped and if the position was over, it becomes the end of the new size.\n
+     * -This function fixes maxUsableAmount to desiredSize-reservedSpaceAtEnd.
      *
      * @param[in] desiredSize is the desired size to be allocated.
      * @param[in] reservedSpaceAtEnd is the space allocated over the usable memory area (maxUsableAmount does not consider it).\n
@@ -134,7 +158,7 @@ public:
 
     /**
      * @brief Assigns a preallocated memory with read and write access.
-     * @details Calls CharBuffer::SetBufferReference, then sets the buffer as empty and maxUsableAmount = (bufferSize - reservedSpaceAtEnd).
+     * @details Sets the buffer as empty and maxUsableAmount = (bufferSize - reservedSpaceAtEnd).
      *
      * @param[in] buffer is a pointer to a preallocated memory.
      * @param[in] bufferSize is the size of the memory.
@@ -147,8 +171,7 @@ public:
 
     /**
      * @brief Assigns a preallocated memory only with read access.
-     * @details Calls CharBuffer::SetBufferReference, then sets the buffer as empty and maxUsableAmount = (bufferSize - reservedSpaceAtEnd).
-     * if buffer is a const char pointer the flag readOnly is set true then also CharBuffer::CanWrite returns false.
+     * @details Sets the buffer as empty and maxUsableAmount = (bufferSize - reservedSpaceAtEnd).
      *
      * @param[in] buffer is a pointer to a preallocated memory.
      * @param[in] bufferSize is the size of the memory.
@@ -162,7 +185,7 @@ public:
     /*---------------------------------------------------------------------------*/
 
     /**
-     * @brief The size of the allocated memory.
+     * @brief Gets the size of the allocated memory.
      * @return the size of the allocated memory.
      */
     inline uint32 BufferSize() const;
@@ -207,15 +230,25 @@ public:
      */
     inline char8 *BufferReference() const;
 
+    /**
+     * @brief Gets the allocation granularity
+     */
+    inline uint32 AllocationGranularity() const;
+
+    /**
+     * @brief Gets the UndoLevel
+     */
+    inline uint32 UndoLevel() const;
+
     /*---------------------------------------------------------------------------*/
 
     /**
      * @brief Puts a character on the buffer.
-     * @details This inline function is called by formatted print-like functions for buffered streams. The
+     * @details This function is called by formatted print-like functions for buffered streams. The
      * implementation of NoMoreSpaceToWrite depends on children classes and it could be
      * for example a flush (BufferedStreamIOBuffer) or a new allocation (StreamStringIOBuffer).\n
      *
-     * The value of undoLevel could be used to trigger the call to NoMoreSpaceToWrite when
+     * The value of UndoLevel() could be used to trigger the call to NoMoreSpaceToWrite when
      * the cursor is at a specific position.
      *
      * @param[in] c is the character to copy on this buffer.
@@ -235,7 +268,7 @@ public:
      * @brief Get a character from the buffer.
      * @details This function calls NoMoreDataToRead which can for example
      * refill this buffer from the stream (BufferedStreamIOBuffer)
-     * when the cursor is in a specific position defined by undoLevel.
+     * when the cursor is in a specific position defined by UndoLevel().
      *
      * @param[out] c is the character in return.
      * @return false if the cursor is at the end of the filled memory, true otherwise.
@@ -266,7 +299,7 @@ public:
      * positions forward and adjusts fillLeft and amountLeft accordingly.\n
      * If size is greater than amountLeft is clipped.
      *
-     * @param[in] buffer contains the data to be written write in this buffer.
+     * @param[in] buffer contains the data to be written in this buffer.
      * @param[in,out] size is the number of bytes to be copied. This value will be clipped to the space left if needed.
      */
     virtual bool Write(const char8 * const buffer,
@@ -297,13 +330,13 @@ protected:
     virtual bool NoMoreSpaceToWrite();
 
     /**
-     * @brief The routine executed in PutC when amountLeft is <= undoLevel, namely the cursor arrived to a specific position.
+     * @brief The routine executed in PutC when amountLeft is <= UndoLevel(), namely the cursor arrived to a specific position.
      * @details This basic implementation only returns false.\n
      *
-     * In StreamStringIOBuffer undoLevel is zero, so when the cursor arrived at the end of the memory,
+     * In StreamStringIOBuffer UndoLevel() is zero, so when the cursor arrived at the end of the memory,
      * this function allocated a new portion of memory in the queue.\n
      *
-     * In BufferedStreamIOBuffer undoLevel is zero, so when the cursor arrived at the end of the memory
+     * In BufferedStreamIOBuffer UndoLevel() is zero, so when the cursor arrived at the end of the memory
      * this function flushes this buffer to the stream.\n
      *
      * @param[in] neededSize is the size of the memory to be allocated or flushed (not used at this implementation level).
@@ -312,16 +345,15 @@ protected:
     virtual bool NoMoreSpaceToWrite(const uint32 neededSize);
 
     /**
-     * @brief The routine executed in GetC when amountLeft is <= undoLevel, namely the cursor arrived to a specific position.
+     * @brief The routine executed in GetC when amountLeft is <= UndoLevel(), namely the cursor arrived to a specific position.
      * @details This implementation is basic and only returns false.
      *
-     * In BufferedStreamIOBuffer undoLevel is zero, so when the cursor arrives at the end of the memory
+     * In BufferedStreamIOBuffer UndoLevel() is zero, so when the cursor arrives at the end of the memory
      * this function refills the buffer from the stream for a new read operation.
      *
      * @return false in this implementation.
      */
     virtual bool NoMoreDataToRead();
-
 
 private:
 
@@ -376,13 +408,13 @@ IOBuffer::IOBuffer() :
     undoLevel = 0u;
 }
 
-IOBuffer::IOBuffer(const uint32 allocationGranularity) :
+IOBuffer::IOBuffer(const uint32 allocationGranularity, const uint32 newUndoLevel) :
         internalBuffer(allocationGranularity) {
     amountLeft = 0u;
     maxUsableAmount = 0u;
     positionPtr = static_cast<char8 *>(NULL);
     fillLeft = 0u;
-    undoLevel = 0u;
+    undoLevel = newUndoLevel;
 }
 
 uint32 IOBuffer::BufferSize() const {
@@ -415,6 +447,14 @@ const char8 *IOBuffer::Buffer() const {
 
 char8 *IOBuffer::BufferReference() const {
     return internalBuffer.BufferReference();
+}
+
+uint32 IOBuffer::AllocationGranularity() const {
+    return internalBuffer.AllocationGranularity();
+}
+
+uint32 IOBuffer::UndoLevel() const {
+    return undoLevel;
 }
 
 void IOBuffer::Empty() {
@@ -514,4 +554,3 @@ bool IOBuffer::UnGetC() {
 }
 
 #endif /* IOBUFFER_H_ */
-

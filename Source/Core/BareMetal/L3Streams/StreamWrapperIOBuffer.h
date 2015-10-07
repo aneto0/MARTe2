@@ -31,9 +31,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "TimeoutType.h"
 #include "IOBuffer.h"
 #include "StreamI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -51,17 +53,43 @@ namespace MARTe {
  */
 class StreamWrapperIOBuffer: public IOBuffer {
 
-
 public:
 
+    /**
+     * @brief Default constructor
+     * @pre true
+     * @post
+     *   Buffer() == NULL &&
+     *   BufferSize() == 0u &&
+     *   AmountLeft() == 0u &&
+     *   MaxUsableAmount() == 0u &&
+     *   UsedAmountLeft() == 0 &&
+     *   Position() == 0u &&
+     *   UsedSize() == 0 &&
+     *   undoLevel == 0 ??
+     *   AllocationGranularity() == 1u && &&
+     *   UndoLevel() == 0
+     *   GetStream() == NULL &&
+     */
     StreamWrapperIOBuffer();
-
-
 
     /**
      * @brief Constructor for dynamic allocated buffer.
      * @param[in] s is the stream which uses this buffer.
      * @param[in] size is the size to allocate for this buffer.
+     * @pre true
+     * @post
+     *   Buffer() == NULL &&
+     *   BufferSize() == size &&
+     *   AmountLeft() == 0u &&
+     *   MaxUsableAmount() == 0u &&
+     *   UsedAmountLeft() == 0 &&
+     *   Position() == 0u &&
+     *   UsedSize() == 0 &&
+     *   undoLevel == 0 ??
+     *   AllocationGranularity() == 1u && &&
+     *   UndoLevel() == 0
+     *   GetStream() == s &&
      */
     StreamWrapperIOBuffer(StreamI * const s,
                           const uint32 size);
@@ -71,36 +99,51 @@ public:
      * @param[in] s is the stream which uses this buffer.
      * @param[in] buffer is the pointer to the preallocated memory.
      * @param[in] size is the size of the buffer.
+     * @pre true
+     * @post
+     *   Buffer() == buffer &&
+     *   BufferSize() == size &&
+     *   AmountLeft() == 0u &&
+     *   MaxUsableAmount() == 0u &&
+     *   UsedAmountLeft() == 0 &&
+     *   Position() == 0u &&
+     *   UsedSize() == 0 &&
+     *   undoLevel == 0 ??
+     *   AllocationGranularity() == 1u && &&
+     *   UndoLevel() == 0
+     *   GetStream() == s
      */
     StreamWrapperIOBuffer(StreamI * const s,
                           char8 * const buffer,
                           const uint32 size);
 
-
     /**
      * @brief Adjusts the cursor position.
-     * @param[in] msecTimeout is the timeout not used here.
      * @return false if the stream seek fails.
      */
     virtual bool Resync();
+
+    /**
+     * Gets the stream pointer
+     */
+    inline const StreamI* GetStream() const;
 
 protected:
 
     /**
      * @brief Refills the buffer reading from the stream.
-     * @param[in] msecTimeout is the timeout not used here.
      * @return false if the buffer is null or if the stream read fails.
      */
     virtual bool NoMoreDataToRead();
 
     /**
      * @brief Flushes the buffer on the stream.
-     * @param[in] neededSize is not used here.
-     * @param[in] msecTimeout (not used in this case).
+     * @return false if the buffer is null or if the stream write fails.
      */
     virtual bool NoMoreSpaceToWrite();
 
 private:
+
     /**
      * A pointer to the associated stream.
      */
@@ -112,6 +155,14 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+const StreamI* StreamWrapperIOBuffer::GetStream() const {
+    return stream;
+}
+
+}
 
 #endif /* STREAMWRAPPERIOBUFFER_H_ */
 

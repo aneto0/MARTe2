@@ -99,7 +99,7 @@ public:
      * @pre true
      * @post
      *    Buffer() != NULL &&
-     *    BufferSize() == (((desiredSize + AllocationGranularity()) - 1u) & ~(AllocationGranularity() - 1u)) &&
+     *    Size() == (((desiredSize + AllocationGranularity()) - 1u) & ~(AllocationGranularity() - 1u)) &&
      *    CanWrite()
      */
     bool SetBufferSize(const uint32 desiredSize);
@@ -112,7 +112,7 @@ public:
      *    buff != NULL && buffSize > 0
      * @post
      *    Buffer() == buff &&
-     *    BufferSize() == buffSize &&
+     *    Size() == buffSize &&
      *    CanWrite()
      * @warning buff is an input parameter, because this method only sets the
      * pointer, but once assigned the pointee could be accessed for read and
@@ -129,7 +129,7 @@ public:
      *    buff != NULL && buffSize > 0
      * @post
      *    Buffer() == buff &&
-     *    BufferSize() == buffSize &&
+     *    Size() == buffSize &&
      *    not CanWrite()
      */
     void SetBufferReference(const char8 * const buff,

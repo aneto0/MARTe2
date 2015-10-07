@@ -31,6 +31,7 @@
 
 #include "IOBuffer.h"
 #include "AdvancedErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -87,9 +88,14 @@ bool IOBuffer::RelativeSeek(const int32 delta) {
     return ret;
 }
 
-bool IOBuffer::SetUsedSize(uint32 size) {
-    if (size > maxUsableAmount) {
+bool IOBuffer::SetUsedSize(const uint32 desiredSize) {
+    uint32 size;
+
+    if (desiredSize > maxUsableAmount) {
         size = maxUsableAmount;
+    }
+    else {
+        size = desiredSize;
     }
 
     fillLeft = maxUsableAmount - size;
@@ -98,6 +104,7 @@ bool IOBuffer::SetUsedSize(uint32 size) {
 }
 
 IOBuffer::~IOBuffer() {
+    positionPtr = static_cast<char8 *>(NULL);
 }
 
 /*
@@ -189,19 +196,16 @@ bool IOBuffer::NoMoreDataToRead() {
 }
 
 /*
- sets amountLeft to 0
- adjust the seek position of the stream to reflect the bytes read from the buffer
+ * sets amountLeft to 0
+ * adjust the seek position of the stream to reflect the bytes read from the buffer
  * READ OPERATIONS
  */
 bool IOBuffer::Resync() {
     return false;
 }
 
-//void IOBuffer::Terminate(){
-//}
-
 /*
- *  copies buffer of size size at the end of writeBuffer
+ * copies buffer of size size at the end of writeBuffer
  * before calling check that positionPtr is not NULL
  * can be overridden to allow resizeable buffers
  */
@@ -221,10 +225,12 @@ bool IOBuffer::Write(const char8 * const buffer,
                 retval = false;
             }
 
-            positionPtr = &positionPtr[size];
-            amountLeft -= size;
-            if (fillLeft > amountLeft) {
-                fillLeft = amountLeft;
+            if (retval) {
+                positionPtr = &positionPtr[size];
+                amountLeft -= size;
+                if (fillLeft > amountLeft) {
+                    fillLeft = amountLeft;
+                }
             }
         }
     }
@@ -237,27 +243,30 @@ bool IOBuffer::WriteAll(const char8 * buffer,
     bool retval = true;
     //size to be copied.
     uint32 leftSize = size;
-    while (leftSize > 0u) {
+    while (retval && (leftSize > 0u)) {
         // if the cursor is at the end call NoMoreSpaceToWrite
         // flushes the buffer or allocates new memory.
         if (amountLeft == 0u) {
             if (!NoMoreSpaceToWrite(leftSize)) {
                 retval = false;
             }
-            //Something wrong, no more avaiable space, return false.
-            if (amountLeft == 0u) {
-                retval = false;
+            if (retval) {
+                //Something wrong, no more available space, return false.
+                if (amountLeft == 0u) {
+                    retval = false;
+                }
             }
         }
-        if (!retval) {
-            break;
-        }
 
-        uint32 toDo = leftSize;
-        Write(buffer, toDo);
-        buffer = &buffer[toDo];
-        //if all the size is copied leftSize becomes 0 and return true
-        leftSize -= toDo;
+        if (retval) {
+            uint32 toDo = leftSize;
+            retval = Write(buffer, toDo);
+            if (retval) {
+                buffer = &buffer[toDo];
+                //if all the size is copied leftSize becomes 0 and return true
+                leftSize -= toDo;
+            }
+        }
     }
     return retval;
 }

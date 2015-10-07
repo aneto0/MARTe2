@@ -59,14 +59,34 @@ public:
     /**
      * @brief Default constructor
      * @pre true
-     * @post this->granularity == 0xFFFFFFC0U
+     * @post
+     *   Buffer() == NULL &&
+     *   BufferSize() == 0u &&
+     *   AmountLeft() == 0u &&
+     *   MaxUsableAmount() == 0u &&
+     *   UsedAmountLeft() == 0 &&
+     *   Position() == 0u &&
+     *   UsedSize() == 0 &&
+     *   undoLevel == 0 ??
+     *   AllocationGranularity() == 64u &&
+     *   UndoLevel() == 0
      */
     StreamStringIOBuffer();
 
     /**
      * @brief Constructor specifying granularity
      * @pre true
-     * @post this->granularity == granularity
+     * @post
+     *   Buffer() == NULL &&
+     *   BufferSize() == 0u &&
+     *   AmountLeft() == 0u &&
+     *   MaxUsableAmount() == 0u &&
+     *   UsedAmountLeft() == 0 &&
+     *   Position() == 0u &&
+     *   UsedSize() == 0 &&
+     *   undoLevel == 0 ??
+     *   AllocationGranularity() == granularity &&
+     *   UndoLevel() == 0
      */
     StreamStringIOBuffer(const uint32 granularity);
 

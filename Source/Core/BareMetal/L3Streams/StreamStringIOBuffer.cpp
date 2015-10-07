@@ -42,12 +42,12 @@
 namespace MARTe {
 
 StreamStringIOBuffer::StreamStringIOBuffer() :
-        IOBuffer(0xFFFFFFC0U) {
+        IOBuffer(64u, 0u) {
 
 }
 
 StreamStringIOBuffer::StreamStringIOBuffer(const uint32 granularity) :
-        IOBuffer(granularity) {
+        IOBuffer(granularity, 0u) {
 
 }
 

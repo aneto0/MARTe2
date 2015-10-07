@@ -31,8 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "TimeoutType.h"
 #include "IOBuffer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -55,6 +57,20 @@ public:
 
     /**
      * @brief Default constructor.
+     * @pre true
+     * @post
+     *   Buffer() == NULL &&
+     *   BufferSize() == 0u &&
+     *   AmountLeft() == 0u &&
+     *   MaxUsableAmount() == 0u &&
+     *   UsedAmountLeft() == 0 &&
+     *   Position() == 0u &&
+     *   UsedSize() == 0 &&
+     *   undoLevel == 0 ??
+     *   AllocationGranularity() == 1u && &&
+     *   UndoLevel() == 0
+     *   GetStream() == NULL &&
+     *   GetTimeout() == TTDefault
      */
     BufferedStreamIOBuffer();
 
@@ -62,9 +78,23 @@ public:
      * @brief Constructor.
      * @param[in] s is a pointer to the stream which uses this buffer.
      * @param[in] msecTimeout is the desired timeout for read-write operations.
+     * @pre true
+     * @post
+     *   Buffer() == NULL &&
+     *   BufferSize() == 0u &&
+     *   AmountLeft() == 0u &&
+     *   MaxUsableAmount() == 0u &&
+     *   UsedAmountLeft() == 0 &&
+     *   Position() == 0u &&
+     *   UsedSize() == 0 &&
+     *   undoLevel == 0 ??
+     *   AllocationGranularity() == 1u && &&
+     *   UndoLevel() == 0
+     *   GetStream() == s &&
+     *   GetTimeout() == msecTimeout
      */
     BufferedStreamIOBuffer(StreamI * const s,
-                           const TimeoutType msecTimeout = TTDefault);
+                           const TimeoutType& msecTimeout = TTDefault);
 
     /**
      * @brief User friendly function which simply calls NoMoreDataToRead.
@@ -81,18 +111,29 @@ public:
     /**
      * @brief Adjusts the position of the stream.
      * @details This function is called from the stream after a read operation because the position was shifted
-     * forward (+bufferSize) because of the refill. Calls BufferedStream::Seek moving the cursor back (-UsedAmountLeft).
+     * forward (+bufferSize) because of the refill. Calls Seek moving the cursor back (-UsedAmountLeft).
      *
      * @return false if the stream seek fails.
      */
     virtual bool Resync();
 
     /**
-     * @brief Allocates or reallocate memory to the desired size.
+     * @brief Sets the buffer size
+     * @details Implies allocating or reallocating memory to the desired size.
      * @param[in] size is the desired size for the buffer.
      * @return false in case of allocations errors.
      */
     bool SetBufferSize(const uint32 size);
+
+    /**
+     * Gets the timeout
+     */
+    inline TimeoutType GetTimeout() const;
+
+    /**
+     * Gets the stream pointer
+     */
+    inline const StreamI* GetStream() const;
 
 protected:
 
@@ -112,6 +153,7 @@ protected:
     virtual bool NoMoreSpaceToWrite();
 
 private:
+
     /**
      * The stream that uses this buffer.
      */
@@ -134,6 +176,14 @@ bool BufferedStreamIOBuffer::Refill() {
 
 bool BufferedStreamIOBuffer::Flush() {
     return NoMoreSpaceToWrite();
+}
+
+TimeoutType BufferedStreamIOBuffer::GetTimeout() const {
+    return timeout;
+}
+
+const StreamI* BufferedStreamIOBuffer::GetStream() const {
+    return stream;
 }
 
 }

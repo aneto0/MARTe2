@@ -110,7 +110,7 @@ bool StreamWrapperIOBuffer::NoMoreDataToRead() {
 }
 
 bool StreamWrapperIOBuffer::NoMoreSpaceToWrite() {
-    bool retval = true;
+    bool retval = false;
     // no buffering!
     if (BufferReference() != NULL) {
 
