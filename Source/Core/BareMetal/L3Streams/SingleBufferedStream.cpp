@@ -326,7 +326,7 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
 
             // if within range just update readBufferAccessPosition
             if ((pos >= bufferStartPosition) && (pos < currentStreamPosition)) {
-                if(!readBuffer.Seek(static_cast<uint32>(pos - bufferStartPosition))){
+                if (!readBuffer.Seek(static_cast<uint32>(pos - bufferStartPosition))) {
                     //TODO
                 }
 
@@ -346,14 +346,13 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
 bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
     bool ubSeek = false;
 
-
     if (deltaPos != 0) {
 
-        ubSeek=true;
+        ubSeek = true;
         // if write mode on then just flush out data
         if (writeBuffer.UsedSize() > 0u) {
             // this will move the stream pointer ahead to the correct position
-            if(!writeBuffer.Flush()){
+            if (!writeBuffer.Flush()) {
                 //TODO
             }
         }
@@ -371,8 +370,15 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
             if (ubSeek) {
                 // out of buffer range
                 // adjust stream seek position to account for actual read buffer usage
-                deltaPos -= static_cast<int32>(readBuffer.UsedSize() - currentPos);
 
+                /*lint -e{9125} [MISRA C++ Rule 5-0-9]. Justification: If the number is not in the signed range a warning will be generated*/
+                int32 gap = static_cast<int32>(readBuffer.UsedSize() - currentPos);
+
+                // if gap is not in the signed range generate a warning
+                if (gap < 0) {
+                    //TODO
+                }
+                deltaPos -= gap;
                 // empty buffer
                 readBuffer.Empty();
             }
@@ -381,6 +387,7 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
     }
 
     // seek
+    /*lint -e{9117} -e{737} [MISRA C++ Rule 5-0-4]. The input value is always positive so the signed does not change. */
     return (ubSeek) ? (unbufferedStream->Seek(static_cast<uint64>(unbufferedStream->Position() + deltaPos))) : (true);
 }
 
@@ -403,7 +410,7 @@ uint64 SingleBufferedStream::Position() {
 bool SingleBufferedStream::SetSize(const uint64 size) {
 
     // commit all changes
-    if(!FlushAndResync()){
+    if (!FlushAndResync()) {
         //TODO
     }
 

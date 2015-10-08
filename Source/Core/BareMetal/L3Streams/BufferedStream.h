@@ -256,7 +256,7 @@ public:
      * @see FormatDescriptor.h
      */
     bool Print(const AnyType& par,
-    const FormatDescriptor fd = standardFormatDescriptor);
+    const FormatDescriptor &fd = standardFormatDescriptor);
 
     /**
      * @brief Prints a list of elements looking to a specified format.

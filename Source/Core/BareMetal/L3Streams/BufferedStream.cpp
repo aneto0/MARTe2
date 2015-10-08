@@ -97,7 +97,7 @@ bool BufferedStream::SkipTokens(const uint32 count,
 }
 
 bool BufferedStream::Print(const AnyType& par,
-                           const FormatDescriptor fd) {
+                           const FormatDescriptor &fd) {
 
     bool ret = false;
 // retrieve stream mechanism
@@ -162,7 +162,8 @@ bool BufferedStream::Copy(BufferedStream &stream) {
     if (size > 0u) {
 //write on the stream
 //ret = ret && Write(buffer,size,TTDefault,true);
-        ret = (ret) && (Write(&buffer[0], size));
+        bool writeOk = Write(&buffer[0], size);
+        ret = (ret) && (writeOk);
 //size = 0;
     }
 
