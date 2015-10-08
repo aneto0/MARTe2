@@ -267,7 +267,11 @@ public:
      * If size is greater than amountLeft is clipped.
      *
      * @param[in] buffer contains the data to be written write in this buffer.
+<<<<<<< HEAD
      * @param[in,out] size is the number of bytes to be copied. This value will be clipped to the space left if needed.
+=======
+     * @param[in,out] size is the number of bytes to be copied.
+>>>>>>> refs/remotes/origin/#238.1_Streams
      */
     virtual bool Write(const char8 * const buffer,
                        uint32 &size);

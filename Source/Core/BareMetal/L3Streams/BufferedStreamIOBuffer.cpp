@@ -43,11 +43,11 @@ namespace MARTe {
 
 BufferedStreamIOBuffer::BufferedStreamIOBuffer() :
         IOBuffer() {
-    stream = static_cast<StreamI *>(NULL);
+    stream = static_cast<RawStream *>(NULL);
     timeout = TTDefault;
 }
 
-BufferedStreamIOBuffer::BufferedStreamIOBuffer(StreamI * const s,
+BufferedStreamIOBuffer::BufferedStreamIOBuffer(RawStream * const s,
                                                const TimeoutType msecTimeout) :
         IOBuffer() {
     stream = s;
@@ -88,7 +88,7 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead() {
 
         uint32 readSize = MaxUsableAmount();
 
-        if (stream->Read(BufferReference(),readSize, timeout, true)) {
+        if (stream->Read(BufferReference(),readSize, timeout)) {
             IOBuffer::SetUsedSize(readSize);
             retval = true;
         }
@@ -110,7 +110,7 @@ bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
         uint32 writeSize = UsedSize();
 
         // write
-        if (!stream->Write(Buffer(),writeSize,timeout, true)) {
+        if (!stream->Write(Buffer(),writeSize,timeout)) {
             retval=false;
         }
         else {

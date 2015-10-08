@@ -1,6 +1,6 @@
 /**
- * @file DoubleBufferedStream.h
- * @brief Header file for class DoubleBufferedStream
+ * @file SingleBufferedStream.h
+ * @brief Header file for class SingleBufferedStream
  * @date 06/10/2015
  * @author Giuseppe Ferrò
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DoubleBufferedStream
+ * @details This header file contains the declaration of the class SingleBufferedStream
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DOUBLEBUFFEREDSTREAM_H_
-#define DOUBLEBUFFEREDSTREAM_H_
+#ifndef SINGLEBUFFEREDSTREAM_H_
+#define SINGLEBUFFEREDSTREAM_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,11 +31,6 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
-/*---------------------------------------------------------------------------*/
-
 #include "TimeoutType.h"
 #include "IOBuffer.h"
 #include "AnyType.h"
@@ -44,21 +39,25 @@
 #include "BufferedStreamIOBuffer.h"
 #include "BufferedStream.h"
 
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
- * @file DoubleBufferedStream.h
+ * @file SingleBufferedStream.h
  * @brief Implementation of streamable type functions.
  *
  * Implementation of streamable type functions for read, write and seek operations in buffered and unbuffered modes for streamable types
  * i.e files. Most of the functions depends from the virtual UnBuffered functions which must be implemented in the derived classes
  * because could be differents for different streamable types.
  *
- * DoubleBufferedStream uses two IOBuffer in buffered modes, one for reading and one for writing operations and they are used togheter if the stream is defined as
+ * SingleBufferedStream uses two IOBuffer in buffered modes, one for reading and one for writing operations and they are used togheter if the stream is defined as
  * readable, writable and seekable.*/
 
 /**
- * @brief DoubleBufferedStream class.
+ * @brief SingleBufferedStream class.
 
  Replaces CStream and Streamable of BL1
  Inherits from pure virtual StreamInterface and does not resolve all pure virtual functions
@@ -127,23 +126,23 @@ namespace MARTe {
  6a) same as 1a
 
  */
-class DoubleBufferedStream: public BufferedStream {
+class SingleBufferedStream: public BufferedStream {
 
 public:
-
     /**
      * @brief Default constructor.
      *
      * At the beginning the stream is monodirectional. */
     //TODO the construction of readBuffer and writeBuffer has to be changed.
-    DoubleBufferedStream();
+    SingleBufferedStream();
 
-    DoubleBufferedStream(RawStream* const lowLevelStream);
+    SingleBufferedStream(RawStream* const lowLevelStream);
 
-    DoubleBufferedStream(RawStream* const lowLevelStream, const TimeoutType &msecTimeout);
+    SingleBufferedStream(RawStream* const lowLevelStream,
+                         const TimeoutType & msecTimeout);
 
     /** @brief Default destructor. */
-    virtual ~DoubleBufferedStream();
+    virtual ~SingleBufferedStream();
 
     /**
      * @brief Sets the buffers size, impose the buffered modality.
@@ -161,7 +160,7 @@ public:
     virtual bool SetBufferSize(uint32 readBufferSize,
                                uint32 writeBufferSize);
 
-    /*---------------------------------------------------------------------------*/
+    // special inline methods for buffering
 
     /**
      * @brief Resyncronization and flush of the buffers.
@@ -171,11 +170,10 @@ public:
      * On dual separate buffering (CanSeek=false) just Flush output.
      * On joint buffering (CanSeek= true) depending on read/write mode
      * either Resync or Flush.
-     * The function DoubleBufferedStream::Resync adjusts the position on the stream
+     * The function SingleBufferedStream::Resync adjusts the position on the stream
      * after a read operation, shifted because of the Refill.
      */
-    inline bool Flush();
-
+    inline bool FlushAndResync();
     /**
      * @brief Simply write a character to the stream if space exist and if operatingModes allows.
      * @param c is the character to be written on the stream.
@@ -195,16 +193,6 @@ public:
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
     inline bool GetC(char8 &c);
-
-    /*---------------------------------------------------------------------------*/
-
-    virtual bool CanSeek() const;
-
-    /** whether it can be written into */
-    virtual bool CanWrite() const;
-
-    /** whether it can be  read */
-    virtual bool CanRead() const;
 
     /** @brief Reads data from stream into buffer.
      * @param buffer is the output memory where datas must be written.
@@ -295,7 +283,34 @@ public:
     virtual bool SetSize(uint64 size);
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
 
+    virtual bool CanSeek() const;
+
+    /** whether it can be written into */
+    virtual bool CanWrite() const;
+
+    /** whether it can be  read */
+    virtual bool CanRead() const;
+
 protected:
+    /**
+     Defines the operation mode and status of a basic stream
+     one only can be set of the first 4.
+     */
+    struct OperatingModes {
+
+        /** writeBuffer is the active one.
+         */
+        bool mutexReadMode;
+
+        /** writeBuffer is the active one.
+         */
+        bool mutexWriteMode;
+
+    };
+    /** set automatically on initialisation by calling of the Canxxx functions */
+    OperatingModes operatingModes;
+
+    // methods to be implemented by deriving classes
 
     /**
      * @brief Get the read buffer.
@@ -313,7 +328,30 @@ protected:
      */
     virtual IOBuffer *GetOutputBuffer();
 
+    //TODO
+    RawStream *unbufferedStream;
+
 private:
+    /**
+     * @brief Switch to the write mode.
+     * @return false if the re-synchronization goes wrong.
+     *
+     *  Sets the readBufferFillAmount to 0.
+     *  Synchronize the position in the stream.
+     *  Sets the mutexWriteMode.
+     *  Does not check for mutexBuffering to be active
+     */
+    inline bool SwitchToWriteMode();
+
+    /**
+     * @brief Switch to the read mode.
+     * @return false if the flush function fails.
+     *
+     *  Flushes writeBuffer.
+     *  Resets mutexWriteMode.
+     *  Does not refill the buffer nor check the mutexBuffering is active.
+     */
+    inline bool SwitchToReadMode();
 
     /**
      * The read buffer. It is used just like
@@ -324,7 +362,7 @@ private:
      * while for Read function it is used only if the size to read is minor
      * than a quarter than the buffer size.
      * Function BufferedStreamIOBuffer::NoMoreSpaceToWrite acts
-     * as a flush and the more confidencial function Flush calls it.
+     * as a flush and the more confidential function Flush calls it.
      * @see BufferedStreamBuffer for more informations.*/
     BufferedStreamIOBuffer readBuffer;
 
@@ -342,9 +380,6 @@ private:
      */
     BufferedStreamIOBuffer writeBuffer;
 
-    //TODO
-    RawStream *unbufferedStream;
-
     TimeoutType timeout;
 
 };
@@ -352,46 +387,86 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-bool DoubleBufferedStream::Flush() {
+bool SingleBufferedStream::FlushAndResync() {
 
     bool ret = true;
-    // some data in writeBuffer
-    // we can flush in all cases then
-    if (writeBuffer.UsedSize() > 0u) {
-        ret = writeBuffer.Flush();
-    }
-    return ret;
-}
-
-bool DoubleBufferedStream::PutC(const char8 c) {
-
-    bool ret = false;
-    if (writeBuffer.BufferSize() > 0u) {
-        ret = writeBuffer.PutC(c);
+    // if there is something in the buffer, and canSeek it means we can and need to resync
+    // if the buffers are separated (!canseek) than resync cannot be done
+    if (readBuffer.UsedSize() > 0u) {
+        ret = readBuffer.Resync();
     }
     else {
-        uint32 size = 1u;
-        ret = unbufferedStream->Write(&c, size, timeout);
+        // some data in writeBuffer
+        // we can flush in all cases then
+        if (writeBuffer.UsedSize() > 0u) {
+            ret = writeBuffer.Flush();
+        }
     }
     return ret;
 }
 
-bool DoubleBufferedStream::GetC(char8 &c) {
+bool SingleBufferedStream::PutC(const char8 c) {
+    bool ret = true;
 
-    bool ret = false;
-
-    if (readBuffer.BufferSize() > 0u) {
-        ret = readBuffer.GetC(c);
+    if (operatingModes.mutexReadMode) {
+        if (!SwitchToWriteMode()) {
+            ret = false;
+        }
     }
-    else {
 
-        uint32 size = 1u;
-        ret = unbufferedStream->Read(&c, size, timeout);
+    if (ret) {
+        if (writeBuffer.BufferSize() > 0u) {
+            ret = writeBuffer.PutC(c);
+        }
+        else {
+            uint32 size = 1u;
+            ret = unbufferedStream->Write(&c, size, timeout);
+        }
+    }
+
+    return ret;
+}
+
+bool SingleBufferedStream::GetC(char8 &c) {
+
+    bool ret = true;
+    if (operatingModes.mutexWriteMode) {
+        if (!SwitchToReadMode()) {
+            ret = false;
+        }
+    }
+
+    if (ret) {
+        if (readBuffer.BufferSize() > 0u) {
+            ret = readBuffer.GetC(c);
+        }
+        else {
+            uint32 size = 1u;
+            ret = unbufferedStream->Read(&c, size, timeout);
+        }
+    }
+    return ret;
+}
+
+bool SingleBufferedStream::SwitchToWriteMode() {
+    bool ret = readBuffer.Resync();
+    if (ret) {
+        operatingModes.mutexWriteMode = true;
+        operatingModes.mutexReadMode = false;
+    }
+    return ret;
+}
+
+bool SingleBufferedStream::SwitchToReadMode() {
+    bool ret = !writeBuffer.Flush();
+    if (ret) {
+
+        operatingModes.mutexWriteMode = false;
+        operatingModes.mutexReadMode = true;
     }
     return ret;
 }
 
 }
-#endif /* DOUBLEBUFFEREDSTREAM_H_ */
+#endif /* SINGLEBUFFEREDSTREAM_H_ */
 
