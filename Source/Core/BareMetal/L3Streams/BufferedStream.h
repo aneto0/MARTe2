@@ -36,7 +36,6 @@
 #include "AnyType.h"
 #include "FormatDescriptor.h"
 #include "IOBuffer.h"
-#include "IOBufferFunctions.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -76,7 +75,6 @@ public:
      * default destructor
      */
     virtual ~BufferedStream();
-
 
     /**
      * @brief Pure virtual function. Defines if write operations can be performed on the stream.
@@ -181,6 +179,24 @@ public:
     inline operator AnyType();
 
     /**
+     * @brief Writes a character on the stream.
+     * @param c is the character to write on the stream.
+     * @return depends from derived classes implementation.
+     *
+     * Uses the derived class implementation of Write function with one as size parameter,
+     * then the function behavior depends from the derived class Write function.*/
+    inline bool PutC(const char8 c);
+
+    /**
+     * @brief Reads a character from the stream.
+     * @param c is the character in return.
+     * @return depends from derived classes implementation.
+     *
+     * Uses the derived class implementation of Read function with one as size parameter,
+     * then the function behavior depends from the derived class Read function. */
+    inline bool GetC(char8 &c);
+
+    /**
      * @brief Reads a token from the stream and writes it on the char8* buffer provided.
      * @param terminator is a list of terminator characters.
      * @param outputBufferSize is the maximum size of the output buffer.
@@ -230,8 +246,8 @@ public:
      3) skip + terminator    the character is not copied, the string is terminated only if not empty
      */
     bool GetToken(BufferedStream & output,
-                          const char8 * const terminator,
-                          char8 * const saveTerminator = static_cast<char8 *>(NULL),
+                  const char8 * const terminator,
+                  char8 * const saveTerminator = static_cast<char8 *>(NULL),
     const char8 * const skipCharacters=static_cast<const char8 *>(NULL));
 
     /**
@@ -242,21 +258,6 @@ public:
      */
     bool SkipTokens(const uint32 count,
     const char8 * const terminator);
-
-    /**
-     * @brief Very powerful function to handle data conversion into a stream of characters.
-     * @param par is the element to be printed.
-     * @param fd is the desired printf like format.
-     * @return depends by par type and on the functions called for its conversion to printable characters.
-     *
-     * The class AnyType provides a void* pointer and a descriptor of the element type. Besides the descriptor
-     * (integer, float32, const char8 string, ecc), the right function is called passing the stream and the element
-     * and it prints the element on the stream converting it in characters.
-     * For more informations on AnyType class @see AnyType.h, for more informations on the format descriptor
-     * @see FormatDescriptor.h
-     */
-    bool Print(const AnyType& par,
-    const FormatDescriptor &fd = standardFormatDescriptor);
 
     /**
      * @brief Prints a list of elements looking to a specified format.
@@ -326,7 +327,7 @@ public:
      * @return depends on the derived classes implementation.
      */
     inline bool GetLine(char8 *outputBuffer,
-                        const uint32 outputBufferSize,
+    const uint32 outputBufferSize,
     bool skipTerminators = true);
 
 protected:
@@ -342,7 +343,6 @@ protected:
      */
     virtual IOBuffer *GetOutputBuffer() = 0;
 
-
 };
 
 /*---------------------------------------------------------------------------*/
@@ -350,10 +350,21 @@ protected:
 /*---------------------------------------------------------------------------*/
 
 BufferedStream::operator AnyType() {
-    void *dataPointer = static_cast<void *> (this);
+    void *dataPointer = static_cast<void *>(this);
     TypeDescriptor dataDescriptor(false, Stream, 0u);
 
     return AnyType(dataDescriptor, 0u, dataPointer);
+}
+
+bool BufferedStream::PutC(const char8 c) {
+    uint32 size = 1u;
+    return Write(&c, size);
+}
+
+bool BufferedStream::GetC(char8 &c) {
+    uint32 size = 1u;
+    return Read(&c, size);
+
 }
 
 bool BufferedStream::Printf(const char8 * const format,
