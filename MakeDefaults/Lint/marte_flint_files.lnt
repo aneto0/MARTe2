@@ -57,3 +57,4 @@ SingleBufferedStream.cpp
 IOBufferFunctions.cpp
 IOBufferFloatPrint.cpp
 IOBufferIntegerPrint.cpp
+BitSetToInteger.h
