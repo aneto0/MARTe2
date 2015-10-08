@@ -54,3 +54,7 @@ StreamString.cpp
 StreamMemoryReference.cpp
 DoubleBufferedStream.cpp
 SingleBufferedStream.cpp
+IOBufferIntegerPrint.cpp
+IOBufferFloatPrint.cpp
+IOBufferFunctions.cpp
+

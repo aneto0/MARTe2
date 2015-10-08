@@ -46,66 +46,56 @@
 
 namespace MARTe {
 
-/*lint -e526 . Justification: The function is not defined here. */
+/*lint -e526 . Justification: The following functions are not defined here. */
 extern bool IntegerToStream(IOBuffer &stream,
                             uint8 number,
-                            FormatDescriptor format);
+                            const FormatDescriptor &format);
 
-/*lint -e{526} . Justification: The function is not defined here. */
 extern bool IntegerToStream(IOBuffer &stream,
                             int8 number,
-                            FormatDescriptor format);
+                            const FormatDescriptor &format);
 
-/*lint -e{526} . Justification: The function is not defined here. */
 extern bool IntegerToStream(IOBuffer &stream,
                             uint16 number,
-                            FormatDescriptor format);
+                            const FormatDescriptor &format);
 
-/*lint -e{526} . Justification: The function is not defined here. */
 extern bool IntegerToStream(IOBuffer &stream,
                             int16 number,
-                            FormatDescriptor format);
+                            const FormatDescriptor &format);
 
-/*lint -e{526} . Justification: The function is not defined here. */
 extern bool IntegerToStream(IOBuffer &stream,
                             uint32 number,
-                            FormatDescriptor format);
+                            const FormatDescriptor &format);
 
-/*lint -e{526} . Justification: The function is not defined here. */
 extern bool IntegerToStream(IOBuffer &stream,
                             int32 number,
-                            FormatDescriptor format);
+                            const FormatDescriptor &format);
 
-/*lint -e{526} . Justification: The function is not defined here. */
 extern bool IntegerToStream(IOBuffer &stream,
                             uint64 number,
-                            FormatDescriptor format);
+                            const FormatDescriptor &format);
 
-/*lint -e{526} . Justification: The function is not defined here. */
 extern bool IntegerToStream(IOBuffer &stream,
                             int64 number,
-                            FormatDescriptor format);
+                            const FormatDescriptor &format);
 
 
-/*lint -e{526} . Justification: The function is not defined here. */
 extern bool BitSetToStream(IOBuffer &stream,
                            uint32 *numberAddress,
                            uint8 numberBitShift,
                            uint8 numberBitSize,
                            bool numberIsSigned,
-                           FormatDescriptor format);
+                           const FormatDescriptor &format);
 
 
-/*lint -e{526} . Justification: The function is not defined here. */
 extern bool FloatToStream(IOBuffer &buffer,
                           float32 number,
-                          FormatDescriptor format);
+                          const FormatDescriptor &format);
 
 
-/*lint -e{526} . Justification: The function is not defined here. */
 extern bool FloatToStream(IOBuffer &buffer,
                           float64 number,
-                          FormatDescriptor format);
+                          const FormatDescriptor &format);
 
 
 bool IOBuffer::GetTokenFromStream(char8 * const outputBuffer,

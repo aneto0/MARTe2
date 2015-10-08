@@ -78,8 +78,9 @@ SingleBufferedStream::SingleBufferedStream(RawStream* const lowLevelStream,
 SingleBufferedStream::~SingleBufferedStream() {
 
     unbufferedStream = static_cast<RawStream *>(NULL);
-
-//writeBuffer.Flush();
+    if(!writeBuffer.Flush()){
+        //TODO
+    }
 }
 
 bool SingleBufferedStream::CanSeek() const {

@@ -43,7 +43,7 @@
 #include "Shift.h"
 #include "BitSetToInteger.h"
 
-/*lint -save -e774 -e9112 -e9129 -e9127 -e9023 -e9024
+/*lint -save -e9023 -e9024
  * 9023, 9024  [MISRA C++ Rule 16-3-1] [MISRA C++ Rule 16-3-2]. Justification: Use of operators # and ## required by this implementation. */
 
 #define CHECK_AND_REDUCE(number,step,exponent)\
@@ -73,23 +73,24 @@ exponent-=(step+1); \
 number *= 10E ## step ## Q; \
 }
  */
+namespace MARTe {
 
-static inline bool isNaN(const MARTe::float32 x) {
+static inline bool isNaN(const float32 x) {
 
     /*lint -e{9137} -e{777} [MISRA C++ Rule 6-2-2]. Justification: It is a trick to detect nan floats in standard IEEE.*/
     return (x != x);
 }
 
-static inline bool isNaN(const MARTe::float64 x) {
+static inline bool isNaN(const float64 x) {
     /*lint -e{9137} -e{777} [MISRA C++ Rule 6-2-2]. Justification: It is a trick to detect nan floats in standard IEEE.*/
     return (x != x);
 }
 
-static inline bool isInf(const MARTe::float32 x) {
+static inline bool isInf(const float32 x) {
     return (!isNaN(x)) && (isNaN(x - x));
 }
 
-static inline bool isInf(const MARTe::float64 x) {
+static inline bool isInf(const float64 x) {
     return (!isNaN(x)) && (isNaN(x - x));
 }
 
@@ -101,7 +102,7 @@ static inline bool isInf(const MARTe::float64 x) {
  * Supports numbers up to quad precision. */
 template<typename T>
 static inline void NormalizeFloatNumberPrivate(T &positiveNumber,
-                                               MARTe::int16 &exponent) {
+                                               int16 &exponent) {
 
     // used internally
     if (positiveNumber > static_cast<T>(0.0)) {
@@ -155,7 +156,7 @@ static inline void NormalizeFloatNumberPrivate(T &positiveNumber,
  * Supports up to quad precision. */
 template<typename T>
 static inline void FastPowerOf10Private(T &output,
-                                        MARTe::int16 exponent) {
+                                        int16 exponent) {
     T radix = static_cast<T>(10.0);
     if (exponent < 0) {
         radix = static_cast<T>(0.1);
@@ -166,29 +167,29 @@ static inline void FastPowerOf10Private(T &output,
     // decompose exponent in sum of powers of 2
     output = static_cast<T>(1.0);
     // limit to range of quad precision (128 bits)
-    MARTe::uint16 mask = 0x2000u;
+    uint16 mask = 0x2000u;
     // loop through trailing zeroes
-    while ((mask > 0u) && (((static_cast<MARTe::uint16>(exponent)) & mask) == 0u)) {
-        mask = MARTe::Shift::LogicalRightSafeShift(mask, 1u);
+    while ((mask > 0u) && (((static_cast<uint16>(exponent)) & mask) == 0u)) {
+        mask = Shift::LogicalRightSafeShift(mask, 1u);
     }
     // loop from first one
     while (mask > 0u) {
         // at each step calculates the square of the power so far
         output *= output;
         // if the bit is set then multiply or divide by 10
-        if (((static_cast<MARTe::uint16>(exponent)) & (mask)) != 0u) {
+        if (((static_cast<uint16>(exponent)) & (mask)) != 0u) {
             output *= radix;
         }
-        mask = MARTe::Shift::LogicalRightSafeShift(mask, 1u);
+        mask = Shift::LogicalRightSafeShift(mask, 1u);
     }
 }
 
 /** @brief Rapid determination of size of the exponent.
  * @param exponent is the exponent parameter.
  * @return the number of digits for the exponent notation E+n. */
-static inline MARTe::int16 NumberOfDigitsOfExponent(MARTe::int16 exponent) {
+static inline int16 NumberOfDigitsOfExponent(int16 exponent) {
 
-    MARTe::int16 exponentNumberOfDigits = 0;
+    int16 exponentNumberOfDigits = 0;
     // no exponent!
     if (exponent != 0) {
 
@@ -230,8 +231,8 @@ static inline MARTe::int16 NumberOfDigitsOfExponent(MARTe::int16 exponent) {
  * Exponent is modified to be the remainder.
  * Original exponent is the sum of the two parts.
  */
-static inline MARTe::int16 ExponentToEngineeringPrivate(MARTe::int16 &exponent) {
-    MARTe::int16 engineeringExponent = 0;
+static inline int16 ExponentToEngineeringPrivate(int16 &exponent) {
+    int16 engineeringExponent = 0;
     // if negative we need to bias by 2 so that exp=-1 => eng_exp = -3 and not 0
     if (exponent < 0) {
         engineeringExponent = (exponent - 2) / 3;
@@ -259,14 +260,14 @@ static inline MARTe::int16 ExponentToEngineeringPrivate(MARTe::int16 &exponent) 
  * Calculates size of fixed numeric representation considering the zeros and the . needed beyond the significative digits.
  * Precision is int16 to allow safe subtraction and is updated to fit within maximumSize and converted into relative format
  * (first significative digits of the number). Negative precision means overflow (? print), zero precision means underflow (0 print). */
-static inline MARTe::int16 NumberOfDigitsFixedNotation(const MARTe::int16 exponent,
+static inline int16 NumberOfDigitsFixedNotation(const int16 exponent,
                                                 const bool hasSign,
-                                                MARTe::int16 & precision,
-                                                const MARTe::int16 maximumSize) {
+                                                int16 & precision,
+                                                const int16 maximumSize) {
 
     bool returned = false;
     // this will be the output
-    MARTe::int16 fixedNotationSize = 0;
+    int16 fixedNotationSize = 0;
 
     // in the positive case
     // start by evaluating size of number of minimum resolution
@@ -284,7 +285,7 @@ static inline MARTe::int16 NumberOfDigitsFixedNotation(const MARTe::int16 expone
     }
 
     // these are the decimal digits required beyond the minimum size
-    MARTe::int16 desiredDecimalDigits = precision;
+    int16 desiredDecimalDigits = precision;
 
     // consider the sign
     if (hasSign) {
@@ -292,7 +293,7 @@ static inline MARTe::int16 NumberOfDigitsFixedNotation(const MARTe::int16 expone
     }
 
     // how much space left?
-    MARTe::int16 spaceLeft = maximumSize - fixedNotationSize;
+    int16 spaceLeft = maximumSize - fixedNotationSize;
 
     // are we not within limits even when disregarding precision?
     if (spaceLeft < 0) {
@@ -349,7 +350,7 @@ static inline MARTe::int16 NumberOfDigitsFixedNotation(const MARTe::int16 expone
 
             if (!returned) {
                 // how many digits will I not be able to print?
-                MARTe::int16 excessOfDigits = desiredDecimalDigits - spaceLeft;
+                int16 excessOfDigits = desiredDecimalDigits - spaceLeft;
 
                 // if any adjust precision and digits
                 if (excessOfDigits > 0) {
@@ -392,18 +393,18 @@ static inline MARTe::int16 NumberOfDigitsFixedNotation(const MARTe::int16 expone
  * Calculate size of fixed numeric representation considering the zeros and the . needed beyond the significative digits
  * precision is int16 to allow safe subtraction and is updated to fit within maximumSize. Negative precision means overflow (? print),
  * zero precision means underflow (0 print). */
-static inline MARTe::int16 NumberOfDigitsFixedRelativeNotation(const MARTe::int16 exponent,
+static inline int16 NumberOfDigitsFixedRelativeNotation(const int16 exponent,
                                                         const bool hasSign,
-                                                        MARTe::int16 & precision,
-                                                        const MARTe::int16 maximumSize) {
+                                                        int16 & precision,
+                                                        const int16 maximumSize) {
 
     bool returned = false;
 
     // this will be the output
-    MARTe::int16 fixedNotationSize = 0;
+    int16 fixedNotationSize = 0;
 
     // how many digits to print below zero
-    MARTe::int16 desiredDecimalDigits = 0;
+    int16 desiredDecimalDigits = 0;
 
     // in the positive case
     // start by evaluating size of number without decimals
@@ -411,7 +412,7 @@ static inline MARTe::int16 NumberOfDigitsFixedRelativeNotation(const MARTe::int1
 
         // size of integer part
         // this needs to be printed
-        MARTe::int16 integerPartSize = exponent + 1;
+        int16 integerPartSize = exponent + 1;
 
         // these are the decimal digits required
         desiredDecimalDigits = precision - integerPartSize;
@@ -434,7 +435,7 @@ static inline MARTe::int16 NumberOfDigitsFixedRelativeNotation(const MARTe::int1
     }
 
     // how much space left?
-    MARTe::int16 spaceLeft = maximumSize - fixedNotationSize;
+    int16 spaceLeft = maximumSize - fixedNotationSize;
 
     // are we not within limits even when disregarding precision?
     if (spaceLeft < 0) {
@@ -499,7 +500,7 @@ static inline MARTe::int16 NumberOfDigitsFixedRelativeNotation(const MARTe::int1
                 if (!returned) {
 
                     // how many digits will I not be able to print?
-                    MARTe::int16 excessOfDigits = desiredDecimalDigits - spaceLeft;
+                    int16 excessOfDigits = desiredDecimalDigits - spaceLeft;
 
                     // if any adjust precision and digits
                     if (excessOfDigits > 0) {
@@ -526,23 +527,23 @@ static inline MARTe::int16 NumberOfDigitsFixedRelativeNotation(const MARTe::int1
  *
  * Calculate size of exponential representation considering the zeros and the . needed beyond the significative digits
  * precision is int16 to allow safe subtraction and is updated to fit within maximumSize. Negative precision means overflow (? print).*/
-static inline int16 NumberOfDigitsExponentialNotation(const MARTe::int16 exponent,
+static inline int16 NumberOfDigitsExponentialNotation(const int16 exponent,
                                                       const bool hasSign,
-                                                      MARTe::int16 & precision,
-                                                      const MARTe::int16 maximumSize) {
+                                                      int16 & precision,
+                                                      const int16 maximumSize) {
     // does not fit
-    MARTe::int16 retval = 1;
+    int16 retval = 1;
 
     if (precision > 0) {
 
         //exponential notation number size
-        MARTe::int16 exponentNotationSize = 0;
+        int16 exponentNotationSize = 0;
 
         // include exponent size
         exponentNotationSize += NumberOfDigitsOfExponent(exponent);
 
         // include mantissa size
-        MARTe::int16 mantissaSize = NumberOfDigitsFixedRelativeNotation(0, hasSign, precision, maximumSize - exponentNotationSize);
+        int16 mantissaSize = NumberOfDigitsFixedRelativeNotation(0, hasSign, precision, maximumSize - exponentNotationSize);
 
         retval = exponentNotationSize + mantissaSize;
     }
@@ -559,26 +560,26 @@ static inline int16 NumberOfDigitsExponentialNotation(const MARTe::int16 exponen
  *
  * Calculate size of engineering representation considering the zeros and the . needed beyond the significative digits
  * precision is int16 to allow safe subtraction and is updated to fit within maximumSize. Negative precision means overflow (? print).*/
-static inline int16 NumberOfDigitsEngineeringNotation(const MARTe::int16 exponent,
+static inline int16 NumberOfDigitsEngineeringNotation(const int16 exponent,
                                                       const bool hasSign,
-                                                      MARTe::int16 & precision,
-                                                      const MARTe::int16 maximumSize) {
+                                                      int16 & precision,
+                                                      const int16 maximumSize) {
 
     // does not fit
-    MARTe::int16 retval = 1;
+    int16 retval = 1;
     if (precision > 0) {
 
         // decompose exponent in two parts
-        MARTe::int16 exponentRemainder = exponent;
-        MARTe::int16 engineeringExponent = ExponentToEngineeringPrivate(exponentRemainder);
+        int16 exponentRemainder = exponent;
+        int16 engineeringExponent = ExponentToEngineeringPrivate(exponentRemainder);
 
-        MARTe::int16 engineeringNotationSize = 0;
+        int16 engineeringNotationSize = 0;
 
         // include exponent size
         engineeringNotationSize += NumberOfDigitsOfExponent(engineeringExponent);
 
         // include mantissa size
-        MARTe::int16 mantissaSize = NumberOfDigitsFixedRelativeNotation(exponentRemainder, hasSign, precision, maximumSize - engineeringNotationSize);
+        int16 mantissaSize = NumberOfDigitsFixedRelativeNotation(exponentRemainder, hasSign, precision, maximumSize - engineeringNotationSize);
 
         retval = engineeringNotationSize + mantissaSize;
     }
@@ -595,20 +596,20 @@ static inline int16 NumberOfDigitsEngineeringNotation(const MARTe::int16 exponen
  *
  * Calculate size of smart representation considering the zeros and the . needed beyond the significative digits
  * precision is int16 to allow safe subtraction and is updated to fit within maximumSize. Negative precision means overflow (? print).*/
-static inline MARTe::int16 NumberOfDigitsSmartNotation(const MARTe::int16 exponent,
+static inline int16 NumberOfDigitsSmartNotation(const int16 exponent,
                                                 const bool hasSign,
-                                                MARTe::int16 &precision,
-                                                const MARTe::int16 maximumSize) {
+                                                int16 &precision,
+                                                const int16 maximumSize) {
 
     // does not fit
-    MARTe::int16 retval = 1;
+    int16 retval = 1;
     if (precision > 0) {
 
         // decompose exponent in two parts
-        MARTe::int16 exponentRemainder = exponent;
-        MARTe::int16 engineeringExponent = ExponentToEngineeringPrivate(exponentRemainder);
+        int16 exponentRemainder = exponent;
+        int16 engineeringExponent = ExponentToEngineeringPrivate(exponentRemainder);
 
-        MARTe::int16 smartNotationSize = 0;
+        int16 smartNotationSize = 0;
 
         // check if in range for smart replacement of exponent
         if ((engineeringExponent != 0) && (engineeringExponent <= 24) && (engineeringExponent >= -24)) {
@@ -621,7 +622,7 @@ static inline MARTe::int16 NumberOfDigitsSmartNotation(const MARTe::int16 expone
         }
 
         // include mantissa size
-        MARTe::int16 mantissaSize = NumberOfDigitsFixedRelativeNotation(exponentRemainder, hasSign, precision, maximumSize - smartNotationSize);
+        int16 mantissaSize = NumberOfDigitsFixedRelativeNotation(exponentRemainder, hasSign, precision, maximumSize - smartNotationSize);
 
         retval = smartNotationSize + mantissaSize;
     }
@@ -638,22 +639,22 @@ static inline MARTe::int16 NumberOfDigitsSmartNotation(const MARTe::int16 expone
  *
  * Calculate size of compact representation considering the zeros and the . needed beyond the significative digits
  * precision is int16 to allow safe subtraction and is updated to fit within maximumSize. Negative precision means overflow (? print).*/
-static inline MARTe::int16 NumberOfDigitsCompactNotation(const MARTe::int16 exponent,
+static inline int16 NumberOfDigitsCompactNotation(const int16 exponent,
                                                   const bool hasSign,
-                                                  MARTe::int16 & precision,
-                                                  const MARTe::int16 maximumSize) {
+                                                  int16 & precision,
+                                                  const int16 maximumSize) {
 
     // does not fit
-    MARTe::int16 retval = 1;
+    int16 retval = 1;
 
     if (precision > 0) {
 
         // decompose exponent in two parts
-        MARTe::int16 exponentRemainder = exponent;
-        MARTe::int16 engineeringExponent = ExponentToEngineeringPrivate(exponentRemainder);
+        int16 exponentRemainder = exponent;
+        int16 engineeringExponent = ExponentToEngineeringPrivate(exponentRemainder);
 
-        MARTe::int16 smartNotationSize = 0;
-        MARTe::int16 mantissaSize = 0;
+        int16 smartNotationSize = 0;
+        int16 mantissaSize = 0;
 
         // check if in range for smart replacement of exponent
         if ((engineeringExponent <= 24) && (engineeringExponent >= -24)) {
@@ -691,40 +692,40 @@ static inline MARTe::int16 NumberOfDigitsCompactNotation(const MARTe::int16 expo
  *
  * Given the format the exponent, the sign and the available size
  * calculates number size and achievable precision. */
-static inline MARTe::int16 NumberOfDigitsNotation(const MARTe::FloatNotation &notation,
-                                           const MARTe::int16 exponent,
+static inline int16 NumberOfDigitsNotation(const FloatNotation &notation,
+                                           const int16 exponent,
                                            const bool hasSign,
-                                           MARTe::int16 & precision,
-                                           const MARTe::int16 maximumSize) {
+                                           int16 & precision,
+                                           const int16 maximumSize) {
 
-    MARTe::int16 numberSize = 0;
+    int16 numberSize = 0;
 
     // do round ups
-    if (notation == MARTe::FixedPointNotation) {
+    if (notation == FixedPointNotation) {
 
         numberSize = NumberOfDigitsFixedNotation(exponent, hasSign, precision, maximumSize);
     }
-    if (notation == MARTe::FixedPointRNotation) {
+    if (notation == FixedPointRNotation) {
 
         numberSize = NumberOfDigitsFixedRelativeNotation(exponent, hasSign, precision, maximumSize);
     }
 
-    if (notation == MARTe::ExponentNotation) {
+    if (notation == ExponentNotation) {
 
         numberSize = NumberOfDigitsExponentialNotation(exponent, hasSign, precision, maximumSize);
 
     }
-    if (notation == MARTe::EngineeringNotation) {
+    if (notation == EngineeringNotation) {
 
         numberSize = NumberOfDigitsEngineeringNotation(exponent, hasSign, precision, maximumSize);
 
     }
-    if (notation == MARTe::SmartNotation) {
+    if (notation == SmartNotation) {
 
         numberSize = NumberOfDigitsSmartNotation(exponent, hasSign, precision, maximumSize);
 
     }
-    if (notation == MARTe::CompactNotation) {
+    if (notation == CompactNotation) {
 
         numberSize = NumberOfDigitsCompactNotation(exponent, hasSign, precision, maximumSize);
 
@@ -744,10 +745,10 @@ static inline MARTe::int16 NumberOfDigitsNotation(const MARTe::FloatNotation &no
  * Converts a couple of positiveNumber-exponent to a string using fixed format.
  * PositiveNumber is not 0 nor Nan nor Inf and is positive, precision should be strictly positive. */
 template<typename T>
-bool FloatToFixedPrivate(MARTe::IOBuffer & stream,
+bool FloatToFixedPrivate(IOBuffer & stream,
                          T positiveNumber,
-                         MARTe::int16 exponent,
-                         MARTe::int16 precision) {
+                         int16 exponent,
+                         int16 precision) {
 
     bool ret = true;
 
@@ -774,7 +775,7 @@ bool FloatToFixedPrivate(MARTe::IOBuffer & stream,
 
             // loop and add zeros
 
-            for (MARTe::int16 i = 0; i < -(exponent + 1); i++) {
+            for (int16 i = 0; i < -(exponent + 1); i++) {
                 if (!stream.PutC('0')) {
                     //TODO
                 }
@@ -804,11 +805,12 @@ bool FloatToFixedPrivate(MARTe::IOBuffer & stream,
             }
             else {
                 // get a digit and shift the number
-                MARTe::int8 digit = static_cast<MARTe::int8>(positiveNumber);
+                int8 digit = static_cast<int8>(positiveNumber);
                 positiveNumber -= static_cast<T>(digit);
                 positiveNumber *= static_cast<T>(10.0);
 
-                if (!stream.PutC(static_cast<MARTe::char8>('0' + digit))) {
+                int8 zero = static_cast<int8>('0');
+                if (!stream.PutC(static_cast<char8>(zero + digit))) {
                     //TODO
                 }
             }
@@ -829,8 +831,8 @@ bool FloatToFixedPrivate(MARTe::IOBuffer & stream,
  * @param stream is the generic stream.
  * @param exponent is the exponent of the number.
  */
-static inline void ExponentToStreamPrivate(MARTe::IOBuffer & stream,
-                                           MARTe::int16 exponent) {
+static inline void ExponentToStreamPrivate(IOBuffer & stream,
+                                           int16 exponent) {
     // output exponent if exists
     if (exponent != 0) {
         if (!stream.PutC('E')) {
@@ -862,23 +864,23 @@ static inline void ExponentToStreamPrivate(MARTe::IOBuffer & stream,
  * @param precision is the number of the first significative digits to print.
  */
 template<typename T>
-bool FloatToStreamPrivate(const MARTe::FloatNotation &notation,
-                          MARTe::IOBuffer & stream,
+bool FloatToStreamPrivate(const FloatNotation &notation,
+                          IOBuffer & stream,
                           const T normalizedNumber,
-                          MARTe::int16 exponent,
-                          const MARTe::int16 precision) {
+                          int16 exponent,
+                          const int16 precision) {
 
     bool ret = false;
     // do round ups
-    bool isFPNotation = (notation == MARTe::FixedPointNotation);
-    bool isFPRNotation = (notation == MARTe::FixedPointRNotation);
+    bool isFPNotation = (notation == FixedPointNotation);
+    bool isFPRNotation = (notation == FixedPointRNotation);
     if ((isFPNotation) || (isFPRNotation)) {
 
         // does all the work of conversion but for the sign and special cases
         ret = FloatToFixedPrivate(stream, normalizedNumber, exponent, precision);
 
     }
-    if (notation == MARTe::ExponentNotation) {
+    if (notation == ExponentNotation) {
 
         // does all the work of conversion but for the sign and special cases
         ret = FloatToFixedPrivate(stream, normalizedNumber, 0, precision);
@@ -887,10 +889,10 @@ bool FloatToStreamPrivate(const MARTe::FloatNotation &notation,
         ExponentToStreamPrivate(stream, exponent);
 
     }
-    if (notation == MARTe::EngineeringNotation) {
+    if (notation == EngineeringNotation) {
 
         // partitions the exponent between engineering part and residual
-        MARTe::int16 engineeringExponent = ExponentToEngineeringPrivate(exponent);
+        int16 engineeringExponent = ExponentToEngineeringPrivate(exponent);
 
         // does all the work of conversion but for the sign and special cases
         ret = FloatToFixedPrivate(stream, normalizedNumber, exponent, precision);
@@ -899,16 +901,16 @@ bool FloatToStreamPrivate(const MARTe::FloatNotation &notation,
         ExponentToStreamPrivate(stream, engineeringExponent);
 
     }
-    if (notation == MARTe::SmartNotation) {
+    if (notation == SmartNotation) {
 
         // partitions the exponent between engineering part and residual
-        MARTe::int16 engineeringExponent = ExponentToEngineeringPrivate(exponent);
+        int16 engineeringExponent = ExponentToEngineeringPrivate(exponent);
 
         // does all the work of conversion but for the sign and special cases
         ret = FloatToFixedPrivate(stream, normalizedNumber, exponent, precision);
         // check if exponent in correct range
         if ((engineeringExponent != 0) && (engineeringExponent <= 24) && (engineeringExponent >= -24)) {
-            static const MARTe::char8 * const symbols = "yzafpnum KMGTPEZY";
+            static const char8 * const symbols = "yzafpnum KMGTPEZY";
             if (!stream.PutC(symbols[(engineeringExponent / 3) + 8])) {
                 //TODO
             }
@@ -919,10 +921,10 @@ bool FloatToStreamPrivate(const MARTe::FloatNotation &notation,
         }
 
     }
-    if (notation == MARTe::CompactNotation) {
+    if (notation == CompactNotation) {
 
         // partitions the exponent between engineering part and residual
-        MARTe::int16 engineeringExponent = ExponentToEngineeringPrivate(exponent);
+        int16 engineeringExponent = ExponentToEngineeringPrivate(exponent);
 
         // check if exponent in correct range
         if ((engineeringExponent <= 24) && (engineeringExponent >= -24)) {
@@ -932,7 +934,7 @@ bool FloatToStreamPrivate(const MARTe::FloatNotation &notation,
 
             //Put the symbol only if the engineering exp is different than zero.
             if (engineeringExponent != 0) {
-                static const MARTe::char8 * const symbols = "yzafpnum KMGTPEZY";
+                static const char8 * const symbols = "yzafpnum KMGTPEZY";
                 if (!stream.PutC(symbols[(engineeringExponent / 3) + 8])) {
                     //TODO
                 }
@@ -968,8 +970,8 @@ enum FloatDisplayModes {
  */
 template<typename T>
 FloatDisplayModes CheckNumber(const T number,
-                              const MARTe::int16 maximumSize,
-                              MARTe::int16 & neededSize) {
+                              const int16 maximumSize,
+                              int16 & neededSize) {
 
     // not decided yet
     neededSize = 0;
@@ -1025,9 +1027,9 @@ FloatDisplayModes CheckNumber(const T number,
  * It adds 5 to the first digit after the precision digits. */
 template<typename T>
 T RoundUpNumber(T number,
-                const MARTe::int16 precision) {
+                const int16 precision) {
     // what is the magnitude of the correction
-    MARTe::int16 correctionExponent = -precision;
+    int16 correctionExponent = -precision;
 
     // to round up add a correction value just below last visible digit
     // calculates 5 * 10**correctionExponent
@@ -1049,12 +1051,12 @@ T RoundUpNumber(T number,
  * If the number cannot fit in the desired maximum size  because the overflow '?' will be printed, '0' in case of underflow.
  * It prints NaN in case of nan (i.e 0/0) or +Inf (i.e 1/0) or -Inf (i.e -1/0). */
 template<typename T>
-bool FloatToStreamPrivate(MARTe::IOBuffer & stream, // must have a GetC(c) function where c is of a type that can be obtained from chars
+bool FloatToStreamPrivate(IOBuffer & stream, // must have a GetC(c) function where c is of a type that can be obtained from chars
                           const T number,
-                          const MARTe::FormatDescriptor &format) {
+                          const FormatDescriptor &format) {
 
     // the space to our disposal to print the number
-    MARTe::int16 maximumSize = static_cast<MARTe::int16>(format.size);
+    int16 maximumSize = static_cast<int16>(format.size);
     // in case of right alignment
     bool isPadded = format.padded;
 
@@ -1066,11 +1068,11 @@ bool FloatToStreamPrivate(MARTe::IOBuffer & stream, // must have a GetC(c) funct
         isPadded = false;
     }
 
-    MARTe::int16 formatPrecision = static_cast<MARTe::int16>(format.precision);
+    int16 formatPrecision = static_cast<int16>(format.precision);
 
     // on precision 0 the max useful precision is chosen
     // based on the ieee float32 format number of significative digits
-    if (format.precision == MARTe::defaultPrecision) {
+    if (format.precision == defaultPrecision) {
         if (sizeof(T) > 8u) {
             formatPrecision = 34;
         }
@@ -1082,23 +1084,23 @@ bool FloatToStreamPrivate(MARTe::IOBuffer & stream, // must have a GetC(c) funct
         }
 
         //Default 6 decimal digits for fixed point notation.
-        if (format.floatNotation == MARTe::FixedPointNotation) {
+        if (format.floatNotation == FixedPointNotation) {
             formatPrecision = 6;
         }
     }
 
     // number of decimal digits or number of significative digits
-    MARTe::int16 precision = formatPrecision;
+    int16 precision = formatPrecision;
 
     // this is the second main objective of the first part
     // to find out the size that is needed or if there is no space
-    MARTe::int16 numberSize;
+    int16 numberSize;
 
     // this will be used everywhere!
     T positiveNumber = number;
 
     // hold the exponent after normalisation
-    MARTe::int16 exponent = 0;
+    int16 exponent = 0;
 
     // whether the - needs to be output
     bool hasSign = false;
@@ -1120,15 +1122,15 @@ bool FloatToStreamPrivate(MARTe::IOBuffer & stream, // must have a GetC(c) funct
         NormalizeFloatNumberPrivate(positiveNumber, exponent);
 
         // work out achievable precision  and number size
-        MARTe::uint8 notation = static_cast<MARTe::uint8>(format.floatNotation);
+        uint8 notation = static_cast<uint8>(format.floatNotation);
         numberSize = NumberOfDigitsNotation(notation, exponent, hasSign, precision, maximumSize);
 
         //the precision to use after the rounding in case of overflow.
-        MARTe::int16 maxPrecisionAfterRounding = formatPrecision;
+        int16 maxPrecisionAfterRounding = formatPrecision;
 
         // apply rounding up. Remember that for fix point precision is different.
-        bool isFPNotation = format.floatNotation == MARTe::FixedPointNotation;
-        bool isFPRNotation = format.floatNotation == MARTe::FixedPointRNotation;
+        bool isFPNotation = format.floatNotation == FixedPointNotation;
+        bool isFPRNotation = format.floatNotation == FixedPointRNotation;
         if ((isFPNotation) || (isFPRNotation)) {
 
             if (precision >= 0) {
@@ -1180,7 +1182,7 @@ bool FloatToStreamPrivate(MARTe::IOBuffer & stream, // must have a GetC(c) funct
             //if (debug)printf ("2nd normN = %f exp =%i prec= %i\n",positiveNumber,exponent,precision);
 
             // work out achievable precision  and number size
-            notation = static_cast<MARTe::uint8>(format.floatNotation);
+            notation = static_cast<uint8>(format.floatNotation);
             numberSize = NumberOfDigitsNotation(notation, exponent, hasSign, precision, maximumSize);
             //if (debug)printf ("2nd Nsize = %i prec= %i\n",numberSize,precision);
 
@@ -1207,7 +1209,7 @@ bool FloatToStreamPrivate(MARTe::IOBuffer & stream, // must have a GetC(c) funct
 
     bool isLeftAligned = format.leftAligned;
     if ((isPadded) && (!isLeftAligned)) {
-        for (MARTe::int32 i = numberSize; i < maximumSize; i++) {
+        for (int32 i = numberSize; i < maximumSize; i++) {
             if (!stream.PutC(' ')) {
                 //TODO
             }
@@ -1223,7 +1225,7 @@ bool FloatToStreamPrivate(MARTe::IOBuffer & stream, // must have a GetC(c) funct
                 //TODO
             }
         }
-        MARTe::uint8 notation = static_cast<MARTe::uint8>(format.floatNotation);
+        uint8 notation = static_cast<uint8>(format.floatNotation);
         if (!FloatToStreamPrivate(notation, stream, positiveNumber, exponent, precision)) {
             //TODO
         }
@@ -1289,7 +1291,7 @@ bool FloatToStreamPrivate(MARTe::IOBuffer & stream, // must have a GetC(c) funct
 
     // in case of left alignment
     if ((isPadded) && (isLeftAligned)) {
-        for (MARTe::int32 i = numberSize; i < maximumSize; i++) {
+        for (int32 i = numberSize; i < maximumSize; i++) {
             if (!stream.PutC(' ')) {
                 //TODO
             }
@@ -1299,8 +1301,6 @@ bool FloatToStreamPrivate(MARTe::IOBuffer & stream, // must have a GetC(c) funct
     return true;
 }
 
-namespace MARTe {
-
 bool FloatToStream(IOBuffer &buffer,
                    const float32 number,
                    const FormatDescriptor &format) {
@@ -1308,8 +1308,8 @@ bool FloatToStream(IOBuffer &buffer,
 }
 
 bool FloatToStream(IOBuffer &buffer,
-                   float64 number,
-                   FormatDescriptor format) {
+                   const float64 number,
+                   const FormatDescriptor &format) {
     return FloatToStreamPrivate(buffer, number, format);
 }
 

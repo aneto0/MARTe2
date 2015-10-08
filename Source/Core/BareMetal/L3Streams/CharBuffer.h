@@ -83,7 +83,7 @@ public:
      *   not CanWrite() &&
      *   not IsAllocated()
      */
-    CharBuffer(const uint32 allocationGranularity);
+    CharBuffer(uint32 allocationGranularity);
 
     /** 
      * @brief Destructor.

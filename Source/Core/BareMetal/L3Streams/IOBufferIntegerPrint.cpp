@@ -45,7 +45,7 @@
 
 namespace MARTe {
 
-/*lint -e568 */
+/*lint -e568 [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 // returns the exponent
 // positiveNumber is the abs (number)
 /** @brief Calculates the order of a number, namely its number of digits minus one.
@@ -566,15 +566,18 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &stream,
             // skips trailing zeros until we encounter the first non zero, or if putTrailingZeros was already set
             //if ((digit != 0) || (putTrailingZeros)){
             //putTrailingZeros = true;
+            uint8 zero=static_cast<uint8>('0');
+            uint8 ten=static_cast<uint8>('A');
+
             if (digit < 10u) {
                 /*lint -e(9125) -e(9117) */
-                if (!stream.PutC(static_cast<char8>('0' + digit))) {
+                if (!stream.PutC(static_cast<char8>(zero + digit))) {
                     //TODO
                 }
             }
             else {
                 /*lint -e(9125) -e(9117) */
-                if (!stream.PutC(static_cast<char8>(('A' + digit) - 10u))) {
+                if (!stream.PutC(static_cast<char8>((ten + digit) - 10u))) {
                     //TODO
                 }
             }
@@ -710,8 +713,9 @@ bool IntegerToStreamOctalNotation(IOBuffer &stream,
 
             //right shift of the number
             uint8 digit = static_cast<uint8>(static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & 0x7u);
+            uint8 zero=static_cast<uint8>('0');
             /*lint -e(9125) -e(9117) */
-            if (!stream.PutC(static_cast<char8>('0' + digit))) {
+            if (!stream.PutC(static_cast<char8>(zero + digit))) {
                 //TODO
             }
         }
@@ -843,9 +847,11 @@ bool IntegerToStreamBinaryNotation(IOBuffer &stream,
             //to get the digit, shift the number and by masking select only the 4 LSB bits
             uint8 digit = (static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & 0x1u);
 
+            uint8 zero=static_cast<uint8>('0');
+
             // skips trailing zeros until we encounter the first non zero, or if putTrailingZeros was already set
             /*lint -e(9125) -e(9117) */
-            if (!stream.PutC(static_cast<char8>('0' + digit))) {
+            if (!stream.PutC(static_cast<char8>(zero + digit))) {
                 //TODO
             }
 

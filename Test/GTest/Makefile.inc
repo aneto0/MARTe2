@@ -65,7 +65,8 @@ OBJSX=  TypeCharacteristicsGTest.x \
  	StaticListGTest.x \
  	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x \
-	BitSetToIntegerGTest.x \
+	CharBufferGTest.x
+#	BitSetToIntegerGTest.x \
 	BufferedStreamGTest.x \
 	DoubleIntegerGTest.x \
 	FloatToStreamGTest.x \

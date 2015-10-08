@@ -58,7 +58,8 @@ DoubleBufferedStream::DoubleBufferedStream(RawStream* const lowLevelStream) :
     timeout = TTDefault;
 }
 
-DoubleBufferedStream::DoubleBufferedStream(RawStream* const lowLevelStream, const TimeoutType &msecTimeout) :
+DoubleBufferedStream::DoubleBufferedStream(RawStream* const lowLevelStream,
+                                           const TimeoutType &msecTimeout) :
         BufferedStream(),
         readBuffer(lowLevelStream, msecTimeout),
         writeBuffer(lowLevelStream, msecTimeout) {
@@ -69,9 +70,9 @@ DoubleBufferedStream::DoubleBufferedStream(RawStream* const lowLevelStream, cons
 DoubleBufferedStream::~DoubleBufferedStream() {
 
     unbufferedStream = static_cast<RawStream *>(NULL);
-
-//writeBuffer.Flush();
-}
+    if(!writeBuffer.Flush()) {
+        //TODO
+    }}
 
 bool DoubleBufferedStream::CanSeek() const {
     return unbufferedStream->CanSeek();
@@ -149,7 +150,7 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
         uint32 toRead = size;
 
         // try once
-        if(!readBuffer.Read(&bufferIn[0], size)){
+        if (!readBuffer.Read(&bufferIn[0], size)) {
             //TODO
         }
 
@@ -167,7 +168,7 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
 
                 else {
 
-                    if(!readBuffer.Read(&bufferIn[size], toRead)){
+                    if (!readBuffer.Read(&bufferIn[size], toRead)) {
                         //TODO
                     }
                     size += toRead;
@@ -212,7 +213,7 @@ bool DoubleBufferedStream::Write(const char8* const bufferIn,
         if (writeBuffer.MaxUsableAmount() > (4u * size)) {
 
             // try writing the buffer
-            if(!writeBuffer.Write(&bufferIn[0], size)){
+            if (!writeBuffer.Write(&bufferIn[0], size)) {
                 //TODO
             }
 
@@ -227,7 +228,7 @@ bool DoubleBufferedStream::Write(const char8* const bufferIn,
                     uint32 leftToWrite = toWrite;
 
                     // try writing the buffer
-                    if(!writeBuffer.Write(&bufferIn[size], leftToWrite)){
+                    if (!writeBuffer.Write(&bufferIn[size], leftToWrite)) {
                         //TODO
                     }
 

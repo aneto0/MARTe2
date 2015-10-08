@@ -30,7 +30,6 @@
 
 #include "GeneralDefinitions.h"
 #include "FormatDescriptor.h"
-#include "DoubleInteger.h"
 #include "IOBuffer.h"
 #include "Shift.h"
 namespace MARTe {
@@ -38,7 +37,6 @@ namespace MARTe {
  * 774 [MISRA C++ Rule 0-1-1] [MISRA C++ Rule 0-1-2] [MISRA C++ Rule 0-1-9]. Justification: If return value depends on template type.
  * 740, 826, 927, 928 [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by this implementation.
  * */
-/* -e9112 -e9129 -e9127 -e927 -e740 -e826 -e928*/
 
 /** @brief Prints an integer number on a general stream in decimal notation.
  * @param s is a general stream class which implements a putC() function.
@@ -392,6 +390,7 @@ static inline bool BitSetToBitSet(T *& destination,
 
         BSToBS(destination64, destinationBitShift, destinationBitSize, destinationIsSigned, source64, sourceBitShift, sourceBitSize, sourceIsSigned);
     }
+    /*
     else if ((sourceBitEnd <= 128u) && (destinationBitEnd <= 128u) && (granularity <= 128u)) {
         // if 128 is fine then operate with float64(uint64)
         DoubleInteger<uint64> *destination128 = reinterpret_cast<DoubleInteger<uint64> *>(destination);
@@ -399,6 +398,7 @@ static inline bool BitSetToBitSet(T *& destination,
 
         BSToBS(destination128, destinationBitShift, destinationBitSize, destinationIsSigned, source128, sourceBitShift, sourceBitSize, sourceIsSigned);
     }
+    */
     else {
         //TODO
     }
