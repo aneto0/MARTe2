@@ -48,7 +48,7 @@ BufferedStreamIOBuffer::BufferedStreamIOBuffer() :
 }
 
 BufferedStreamIOBuffer::BufferedStreamIOBuffer(RawStream * const s,
-                                               const TimeoutType msecTimeout) :
+                                               const TimeoutType &msecTimeout) :
         IOBuffer() {
     stream = s;
     timeout = msecTimeout;
