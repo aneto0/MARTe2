@@ -75,6 +75,10 @@ public:
     /** Destructor */
     virtual ~StreamMemoryReference();
 
+
+    /** @brief Automatic cast to AnyType as a const char8 passing Buffer() return value. */
+    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The StreamMemoryReference is considered as a string and not as a standard stream*/
+    operator AnyType();
     /*---------------------------------------------------------------------------*/
 
     /**
@@ -228,6 +232,7 @@ const char8 *StreamMemoryReference::Tail(const uint32 ix) const {
 
     return (ok) ? (&(buffer.BufferReference()[(buffer.UsedSize() - ix) - 1u])) : static_cast<const char8 *>(NULL);
 }
+
 
 }
 #endif /* STREAMMEMORYREFERENCE_H_ */

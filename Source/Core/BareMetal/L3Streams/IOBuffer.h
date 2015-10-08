@@ -325,6 +325,7 @@ public:
 
     /*---------------------------------------------------------------------------*/
 
+    /*lint -e1526 The following functions are defined in IOBufferFunctions.cpp*/
     bool PrintFormattedToStream(const char8 * format,
                                 const AnyType pars[]);
     /**
@@ -410,7 +411,7 @@ protected:
      * @param[in] neededSize is the size of the memory to be allocated or flushed (not used at this implementation level).
      * @return false at this implementation level.
      */
-    virtual bool NoMoreSpaceToWrite(const uint32 neededSize);
+    virtual bool NoMoreSpaceToWrite(uint32 neededSize);
 
     /**
      * @brief The routine executed in GetC when amountLeft is <= UndoLevel(), namely the cursor arrived to a specific position.

@@ -64,12 +64,12 @@ StreamString::operator AnyType() {
 StreamString::~StreamString() {
 }
 
-///
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
 IOBuffer *StreamString::GetInputBuffer() {
     return &buffer;
 }
 
-///
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
 IOBuffer *StreamString::GetOutputBuffer() {
     return &buffer;
 }
@@ -83,8 +83,7 @@ IOBuffer *StreamString::GetOutputBuffer() {
  */
 bool StreamString::Read(char8* const bufferIn,
                         uint32 & size) {
-    this->buffer.Read(&bufferIn[0], size);
-    return true;
+    return this->buffer.Read(&bufferIn[0], size);
 }
 
 /**
@@ -96,10 +95,7 @@ bool StreamString::Read(char8* const bufferIn,
  */
 bool StreamString::Write(const char8* const bufferIn,
                          uint32 & size) {
-    this->buffer.Write(&bufferIn[0], size);
-
-//this->buffer.Terminate();
-    return true;
+    return this->buffer.Write(&bufferIn[0], size);
 
 }
 
@@ -200,8 +196,8 @@ bool StreamString::AppendOrSet(const char8 * const s,
         else {
             buffer.Empty();
         }
-        buffer.Write(s,size);
-        ret=true;
+        ret=buffer.Write(s,size);
+
     }
     return ret;
 }
@@ -224,9 +220,7 @@ bool StreamString::AppendOrSet(const StreamString &s,
     }
 
     uint32 size = s.buffer.UsedSize();
-    buffer.Write(s.buffer.Buffer(), size);
-//buffer.Terminate();
-    return true;
+    return buffer.Write(s.buffer.Buffer(), size);
 }
 
 /** Checks if a char8 is in the string

@@ -66,8 +66,9 @@ DoubleBufferedStream::DoubleBufferedStream(RawStream* const lowLevelStream, cons
     timeout = msecTimeout;
 }
 
-/// default destructor
 DoubleBufferedStream::~DoubleBufferedStream() {
+
+    unbufferedStream = static_cast<RawStream *>(NULL);
 
 //writeBuffer.Flush();
 }
@@ -125,14 +126,12 @@ bool DoubleBufferedStream::SetBufferSize(uint32 readBufferSize,
 
     return ret;
 }
-
-///
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
 IOBuffer * DoubleBufferedStream::GetInputBuffer() {
-
     return &readBuffer;
 }
 
-///
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
 IOBuffer * DoubleBufferedStream::GetOutputBuffer() {
 
     return &writeBuffer;
@@ -150,7 +149,9 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
         uint32 toRead = size;
 
         // try once
-        readBuffer.Read(&bufferIn[0], size);
+        if(!readBuffer.Read(&bufferIn[0], size)){
+            //TODO
+        }
 
         if (size != toRead) {
             // partial only so continue
@@ -166,7 +167,9 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
 
                 else {
 
-                    readBuffer.Read(&bufferIn[size], toRead);
+                    if(!readBuffer.Read(&bufferIn[size], toRead)){
+                        //TODO
+                    }
                     size += toRead;
 
                     // should have completed
@@ -209,7 +212,9 @@ bool DoubleBufferedStream::Write(const char8* const bufferIn,
         if (writeBuffer.MaxUsableAmount() > (4u * size)) {
 
             // try writing the buffer
-            writeBuffer.Write(&bufferIn[0], size);
+            if(!writeBuffer.Write(&bufferIn[0], size)){
+                //TODO
+            }
 
             // all done! space available!
             if (size != toWrite) {
@@ -222,7 +227,9 @@ bool DoubleBufferedStream::Write(const char8* const bufferIn,
                     uint32 leftToWrite = toWrite;
 
                     // try writing the buffer
-                    writeBuffer.Write(&bufferIn[size], leftToWrite);
+                    if(!writeBuffer.Write(&bufferIn[size], leftToWrite)){
+                        //TODO
+                    }
 
                     size += leftToWrite;
 

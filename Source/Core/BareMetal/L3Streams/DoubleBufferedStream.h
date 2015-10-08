@@ -184,6 +184,8 @@ public:
      * In buffered mode uses the inline IOBuffer::PutC of writeBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
+    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Write(1), but
+     * this inline implementation could be faster if the write buffer is not full */
     inline bool PutC(const char8 c);
 
     /**
@@ -194,6 +196,8 @@ public:
      * In buffered mode uses the inline IOBuffer::GetC of readBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
+    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Read(1), but
+      * this inline implementation could be faster if the read buffer is not empty */
     inline bool GetC(char8 &c);
 
     /*---------------------------------------------------------------------------*/

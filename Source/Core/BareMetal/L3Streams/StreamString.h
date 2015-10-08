@@ -61,6 +61,7 @@ public:
     virtual ~StreamString();
 
     /** @brief Automatic cast to AnyType as a const char8 passing Buffer() return value. */
+    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The StreamString is considered as a string and not as a standard stream*/
     operator AnyType();
 
     /*---------------------------------------------------------------------------*/

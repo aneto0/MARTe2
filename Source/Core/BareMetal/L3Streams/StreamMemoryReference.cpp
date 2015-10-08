@@ -66,10 +66,18 @@ StreamMemoryReference::StreamMemoryReference(const char8 * const bufferIn,
 StreamMemoryReference::~StreamMemoryReference() {
 }
 
+StreamMemoryReference::operator AnyType() {
+    AnyType at(Buffer());
+    return at;
+}
+
+
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
 IOBuffer *StreamMemoryReference::GetInputBuffer() {
     return &buffer;
 }
 
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
 IOBuffer *StreamMemoryReference::GetOutputBuffer() {
     return &buffer;
 }
@@ -77,15 +85,13 @@ IOBuffer *StreamMemoryReference::GetOutputBuffer() {
 
 bool StreamMemoryReference::Read(char8* const bufferIn,
                                  uint32 & size) {
-    this->buffer.Read(&bufferIn[0], size);
-    return true;
+    return this->buffer.Read(&bufferIn[0], size);
 }
 
 
 bool StreamMemoryReference::Write(const char8* const bufferIn,
                                   uint32 & size) {
-    this->buffer.Write(&bufferIn[0], size);
-    return true;
+    return this->buffer.Write(&bufferIn[0], size);
 
 }
 
