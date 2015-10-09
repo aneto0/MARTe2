@@ -79,11 +79,11 @@ public:
      * @post
      *   Buffer() == NULL &&
      *   Size() == 0 &&
-     *   AllocationGranularity() == "allocationGranularity rounded at the first 2^x up" &&
+     *   AllocationGranularity() == "allocationGranularity rounded at the first minor 2^x value" &&
      *   not CanWrite() &&
      *   not IsAllocated()
      */
-    CharBuffer(uint32 allocationGranularity);
+    CharBuffer(const uint32 allocationGranularity);
 
     /** 
      * @brief Destructor.
@@ -246,7 +246,7 @@ inline bool CharBuffer::IsAllocated() const {
 }
 
 inline uint32 CharBuffer::AllocationGranularity() const {
-    return (~allocationGranularityMask + 1u);
+    return ((~allocationGranularityMask) + 1u);
 }
 
 }

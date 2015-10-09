@@ -50,7 +50,7 @@ CharBuffer::CharBuffer() {
     allocationGranularityMask = 0xFFFFFFFFu;
 }
 
-CharBuffer::CharBuffer(uint32 allocationGranularity) {
+CharBuffer::CharBuffer(const uint32 allocationGranularity) {
     bufferSize = 0u;
     buffer = NULL_PTR(char8 *);
     readOnly = true;
@@ -58,19 +58,29 @@ CharBuffer::CharBuffer(uint32 allocationGranularity) {
 
     {
         uint32 granularity = 1u;
+        uint32 allocationGranularityTest = allocationGranularity;
 
-        // fast round the granularity mask at the first 2^x up
-        if (allocationGranularity > 0x1000u) {
-            granularity *= 16u;
-            allocationGranularity >>= 4u;
+        // fast round the granularity mask at the first 2^x below
+        if (allocationGranularityTest >= 0x10000u) {
+            granularity <<= 16u;
+            allocationGranularityTest >>= 16u;
         }
-        if (allocationGranularity > 0x10u) {
-            granularity *= 4u;
-            allocationGranularity >>= 2u;
+        if (allocationGranularityTest >= 0x100u) {
+            granularity <<= 8u;
+            allocationGranularityTest >>= 8u;
         }
-        if (allocationGranularity > 1u) {
-            granularity *= 2u;
+        if (allocationGranularityTest >= 16u) {
+            granularity <<= 4u;
+            allocationGranularityTest >>= 4u;
         }
+        if (allocationGranularityTest >= 4u) {
+            granularity <<= 2u;
+            allocationGranularityTest >>= 2u;
+        }
+        if (allocationGranularityTest >= 2u) {
+            granularity <<= 1u;
+        }
+
 
         // sets the allocation granularity mask
         allocationGranularityMask = ~(granularity - 1u);
