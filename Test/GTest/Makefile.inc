@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=  TypeCharacteristicsGTest.x \
+OBJSX=	CharBufferGTest.x  
+#       TypeCharacteristicsGTest.x \
         BasicTypeGTest.x \
         BasicConsoleGTest.x \
         FormatDescriptorGTest.x \
@@ -65,8 +66,7 @@ OBJSX=  TypeCharacteristicsGTest.x \
  	StaticListGTest.x \
  	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x \
-	CharBufferGTest.x
-#	BitSetToIntegerGTest.x \
+	BitSetToIntegerGTest.x \
 	BufferedStreamGTest.x \
 	DoubleIntegerGTest.x \
 	FloatToStreamGTest.x \
