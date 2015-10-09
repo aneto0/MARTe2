@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=	CharBufferGTest.x  
+OBJSX=	CharBufferGTest.x \
+        IOBufferGTest.x 
 #       TypeCharacteristicsGTest.x \
         BasicTypeGTest.x \
         BasicConsoleGTest.x \

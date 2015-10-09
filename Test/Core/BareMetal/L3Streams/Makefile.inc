@@ -25,7 +25,8 @@
 #############################################################
 
 OBJSX= AnyTypeTest.x \
-       CharBufferTest.x 
+       CharBufferTest.x \
+       IOBufferTest.x
 # IntegerToStreamTest.x \
 	FloatToStreamTest.x \
 	BitSetToIntegerTest.x \

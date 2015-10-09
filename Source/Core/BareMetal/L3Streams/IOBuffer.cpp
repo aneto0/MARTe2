@@ -119,6 +119,12 @@ bool IOBuffer::SetBufferHeapMemory(const uint32 desiredSize,
     uint32 position = Position();
     uint32 usedSize = UsedSize();
 
+    // if the buffer was set on a memory reference begin again
+    if ((!internalBuffer.IsAllocated()) && (positionPtr != static_cast<char8 *>(NULL))) {
+        position=0u;
+        usedSize=0u;
+    }
+
     //special case: if we consider the difference
     //between two unsigned integers we can obtain bigger numbers (overflow).
     if (desiredSize < reservedSpaceAtEnd) {
@@ -211,8 +217,8 @@ bool IOBuffer::Resync() {
  */
 bool IOBuffer::Write(const char8 * const buffer,
                      uint32 &size) {
-    bool retval = true;
-    if (internalBuffer.CanWrite()) {
+    bool retval = internalBuffer.CanWrite();
+    if (retval) {
 
         // clip to spaceLeft
         if (size > amountLeft) {
@@ -234,6 +240,7 @@ bool IOBuffer::Write(const char8 * const buffer,
             }
         }
     }
+
     return retval;
 }
 
