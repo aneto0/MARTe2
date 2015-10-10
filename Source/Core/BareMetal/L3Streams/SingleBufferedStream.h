@@ -46,159 +46,91 @@
 namespace MARTe {
 
 /**
- * @file SingleBufferedStream.h
- * @brief Implementation of streamable type functions.
- *
- * Implementation of streamable type functions for read, write and seek operations in buffered and unbuffered modes for streamable types
- * i.e files. Most of the functions depends from the virtual UnBuffered functions which must be implemented in the derived classes
- * because could be differents for different streamable types.
- *
- * SingleBufferedStream uses two IOBuffer in buffered modes, one for reading and one for writing operations and they are used togheter if the stream is defined as
- * readable, writable and seekable.*/
-
-/**
- * @brief SingleBufferedStream class.
-
- Replaces CStream and Streamable of BL1
- Inherits from pure virtual StreamInterface and does not resolve all pure virtual functions
-
- Uses the following StreamInterface methods to operate:
- CanRead  Read
- CanWrite Write
- CanSeek  Seek
- But only allows using GetC and PutC as it masks the whole StreamInterface
- To use the whole StreamInterface one needs to implement safe versions of
- all functions. This is left for for further class derivations.
-
- Note also that this class supports partially or fully disabled buffering.
- Just set the buffer size to 0 and the buffer to NULL.
-
- It is a buffering mechanism for character streams
- It operates in 6 modes (+variants) depending on the Stream capabilities
- CanSeek CanRead CanWrite
- and user Buffering choices
-
- 1) Separate Buffering Output Mode
- CanWrite !CanSeek
- Used for devices where in and out streams are separate (for instance console )
- writeBuffer.Buffer()!=NULL && operatingMode.MutexBuffering() = false
- !Can be combined with Separate Buffering Input Mode
- 1a) writeBuffer.Buffer()== NULL just call directly StreamInterface::Write
-
- 2) Separate buffering Input Mode
- CanRead  !CanSeek
- Used for devices where in and out streams are separate (for instance console )
- readBuffer.Buffer()!=NULL  &&  operatingMode.mutexBuffering = false
- !Can be combined with Separate Buffering Output Mode
- 2a) readBuffer.Buffer()== NULL just call directly StreamInterface::Read
-
- 3) Dual separate buffers Input and Output Mode
- CanRead CanWrite !CanSeek
- Mode 1/1a and 2/2a combined
-
- 4) Joint buffering Mode
- CanRead CanWrite CanSeek
- readBuffer.Buffer()!=NULL  && writeBuffer.Buffer()!=NULL &&
- operatingMode.mutexBuffering() = true
- operatingMode.mutexWriteMode and
- operatingMode.mutexReadMode  determines whether the read
- or write buffering is active
- Get and Put toggle the two flags
- everytime the flags are changed a proper Flush operation is
- triggered to clean the buffers
- 4a-b) one of readBuffer or writeBuffer is NULL
- same toggling of flags and flushing
-
- 5) Joint buffering Read Only Mode
- CanRead !CanWrite CanSeek
- readBuffer.Buffer()!=NULL  && writeBuffer.Buffer()==NULL &&
- operatingMode.mutexBuffering() = false
- Operates identically to mode 2 but cannot be active together
- with mode 6
- 5a) same as 2a
-
- 6) Joint buffering Write Only Mode
- !CanRead CanWrite CanSeek
- readBuffer.Buffer()==NULL  && writeBuffer.Buffer()!=NULL &&
- operatingMode.mutexBuffering() = false
- Operates identically to mode 1 but cannot be active together
- with mode 5
- 6a) same as 1a
-
+ * @brief Buffered stream implementation (single buffer).
+ * @details This class offers a buffering mechanism for character streams.
+ * It supplements a low-level RawStream (which implements the low-level calls such as Read,
+ * Write, Seek, ...) with a buffering scheme.
  */
 class SingleBufferedStream: public BufferedStream {
 
 public:
     /**
      * @brief Default constructor.
-     *
-     * At the beginning the stream is monodirectional. */
-    //TODO the construction of readBuffer and writeBuffer has to be changed.
+     * @post
+     *   GetInputBuffer() == NULL &&
+     *   GetOutputBuffer() == NULL &&
+     *   GetTimeout() == TTDefault
+     */
+    //TODO do we really need it? CanRead, CanWrite, ... would crash given that the lowLevelStream is NULL...
     SingleBufferedStream();
 
+    /**
+     * @brief Initialises the stream to work with an existing RawStream.
+     * @param[in] lowLevelStream the RawStream responsible for implementing the low-level calls.
+     * @post
+     *   GetInputBuffer() == lowLevelStream &&
+     *   GetOutputBuffer() == lowLevelStream &&
+     *   GetTimeout() == TTDefault
+     */
     SingleBufferedStream(RawStream* const lowLevelStream);
 
+    /**
+     * @brief Initialises the stream to work with an existing RawStream.
+     * @param[in] lowLevelStream the RawStream responsible for implementing the low-level calls.
+     * @param[in] msecTimeout the timeout to be used in the Read and Write operations.
+     * @post
+     *   GetInputBuffer() == lowLevelStream &&
+     *   GetOutputBuffer() == lowLevelStream &&
+     *   GetTimeout() == msecTimeout
+     */
+    //TODO the Read and the Write functions might deserve their own timeout.
     SingleBufferedStream(RawStream* const lowLevelStream,
                          const TimeoutType & msecTimeout);
 
-    /** @brief Default destructor. */
+    /**
+     * @brief Default destructor.
+     */
     virtual ~SingleBufferedStream();
 
     /**
-     * @brief Sets the buffers size, impose the buffered modality.
-     * @param readBufferSize is the desired size for the read buffer.
-     * @param readBufferSize is the desired size for the write buffer.
-     * @return true if the memory is allocated correctly.
-     *
-     * If readBufferSize and writeBufferSize are minor than 8, they becomes equalt to 8.
-     * If CanRead return false readBufferSize becomes 0.
-     * If CanWrite return false writeBufferSize becomes 0.
-     * If both returns true and also CanSeek return true, the mutex mode is activated.
-     * The function calls FlushAndResync and then allocates the desired sizes for
-     * readBuffer and writeBuffer using IOBuffer::SetBufferHeapMemory.
+     * @brief Sets the buffers size.
+     * @param readBufferSize the desired size for the read buffer.
+     * @param readBufferSize the desired size for the write buffer.
+     * @return true if the buffer memory is allocated correctly.
      */
+    //TODO this must be wrong? For the signle buffered stream only one size should be set, no?
     virtual bool SetBufferSize(uint32 readBufferSize,
                                uint32 writeBufferSize);
 
-    // special inline methods for buffering
+    /**
+     * @brief Re-synchronisation and flushing of the read/write buffer.
+     * @return true if the buffer is successfully flushed and resynch.
+     */
+    //TODO is this really a public function?
+    inline bool FlushAndResync();
 
     /**
-     * @brief Resyncronization and flush of the buffers.
-     * @param msecTimeout is the timeout.
-     * @return true if the Resync and Flush operations for buffers goes fine.
-     *
-     * On dual separate buffering (CanSeek=false) just Flush output.
-     * On joint buffering (CanSeek= true) depending on read/write mode
-     * either Resync or Flush.
-     * The function SingleBufferedStream::Resync adjusts the position on the stream
-     * after a read operation, shifted because of the Refill.
-     */
-    inline bool FlushAndResync();
-    /**
-     * @brief Simply write a character to the stream if space exist and if operatingModes allows.
-     * @param c is the character to be written on the stream.
-     * @return false in case of errors.
-     *
-     * In buffered mode uses the inline IOBuffer::PutC of writeBuffer
-     * but with the specific implementations of BufferedStreamIOBuffer.
+     * @brief Writes a single character to the stream.
+     * @details if the size of the buffer is zero the character is directly written in the low level RawStream.
+     * @param[in] c the character to be written on the stream.
+     * @return true if the character is successfully written to the stream.
      */
     /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Write(1), but
      * this inline implementation could be faster if the write buffer is not full */
     inline bool PutC(const char8 c);
 
     /**
-     * @brief Simply read a character from stream.
-     * @param c is the character by reference in return.
-     * @return false in case of errors.
-     *
-     * In buffered mode uses the inline IOBuffer::GetC of readBuffer
-     * but with the specific implementations of BufferedStreamIOBuffer.
+     * @brief Reads a single character from the stream.
+     * @details if the size of the buffer is zero the character is directly written from the low level RawStream.
+     * @param[out] c the character read from the stream.
+     * @return true if the character is successfully read to the stream.
      */
     /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Read(1), but
-      * this inline implementation could be faster if the read buffer is not empty */
+     * this inline implementation could be faster if the read buffer is not empty */
     inline bool GetC(char8 &c);
 
-    /** @brief Reads data from stream into buffer.
+    /**
+     * @brief Reads data from stream into buffer.
      * @param buffer is the output memory where datas must be written.
      * @param size is the number of bytes to read from stream.
      * @param msecTimeout is the timeout.
@@ -294,6 +226,11 @@ public:
 
     /** whether it can be  read */
     virtual bool CanRead() const;
+
+    /**
+     *
+     */
+    TimeoutType GetTimeout() const;
 
 protected:
     /**

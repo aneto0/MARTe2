@@ -78,7 +78,7 @@ SingleBufferedStream::SingleBufferedStream(RawStream* const lowLevelStream,
 SingleBufferedStream::~SingleBufferedStream() {
 
     unbufferedStream = static_cast<RawStream *>(NULL);
-    if(!writeBuffer.Flush()){
+    if (!writeBuffer.Flush()) {
         //TODO
     }
 }
@@ -194,7 +194,7 @@ bool SingleBufferedStream::Read(char8 * const bufferIn,
             uint32 toRead = size;
 
             // try once
-            if(!readBuffer.Read(&bufferIn[0], size)){
+            if (!readBuffer.Read(&bufferIn[0], size)) {
                 //TODO
             }
 
@@ -212,7 +212,7 @@ bool SingleBufferedStream::Read(char8 * const bufferIn,
 
                     else {
 
-                        if(!readBuffer.Read(&bufferIn[size], toRead)){
+                        if (!readBuffer.Read(&bufferIn[size], toRead)) {
                             //TODO
                         }
                         size += toRead;
@@ -266,7 +266,7 @@ bool SingleBufferedStream::Write(const char8 * const bufferIn,
             if (writeBuffer.MaxUsableAmount() > (4u * size)) {
 
                 // try writing the buffer
-                if(!writeBuffer.Write(&bufferIn[0], size)){
+                if (!writeBuffer.Write(&bufferIn[0], size)) {
                     //TODO
                 }
 
@@ -281,7 +281,7 @@ bool SingleBufferedStream::Write(const char8 * const bufferIn,
                         uint32 leftToWrite = toWrite;
 
                         // try writing the buffer
-                        if(!writeBuffer.Write(&bufferIn[size], leftToWrite)){
+                        if (!writeBuffer.Write(&bufferIn[size], leftToWrite)) {
                             //TODO
                         }
 
@@ -426,6 +426,10 @@ bool SingleBufferedStream::SetSize(const uint64 size) {
     }
 
     return unbufferedStream->SetSize(size);
+}
+
+TimeoutType SingleBufferedStream::GetTimeout() const{
+    return timeout;
 }
 
 }
