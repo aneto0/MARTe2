@@ -321,22 +321,82 @@ TEST(IOBufferGTest, TestSetUsedSize_clipped) {
 }
 TEST(IOBufferGTest, TestWrite_Heap_size_in_allocated) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestWrite_Heap(10,32,"HelloWorld"));
+    ASSERT_TRUE(myIOBufferTest.TestWrite_Heap(32,10,"HelloWorld"));
 }
 
 TEST(IOBufferGTest, TestWrite_Heap_allocated_in_size) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestWrite_Heap(10,5,"HelloWorld"));
+    ASSERT_TRUE(myIOBufferTest.TestWrite_Heap(8,32,"HelloWorld"));
 }
 
 TEST(IOBufferGTest, TestWrite_Memoryreference) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestWrite_Memoryreference());
 }
-TEST(IOBufferGTest, TestWrite_MemoryreferenceRO) {
+
+TEST(IOBufferGTest, TestWrite_NULL_Buffer) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestWrite_MemoryreferenceRO());
+    ASSERT_TRUE(myIOBufferTest.TestWrite_NULL_Buffer());
 }
+
+TEST(IOBufferGTest, TestRead_Heap_allocated_in_size) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestRead_Heap(8,32));
+}
+
+TEST(IOBufferGTest, TestRead_Heap_size_in_allocated) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestRead_Heap(32,10));
+}
+
+TEST(IOBufferGTest, TestRead_MemoryReference) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestRead_MemoryReference());
+}
+
+
+TEST(IOBufferGTest, TestRead_NULL_Buffer) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestRead_NULL_Buffer());
+}
+
+
+TEST(IOBufferGTest, TestWriteAll_size_in_allocated) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestWriteAll(10, 5, "HelloWorld"));
+}
+
+
+TEST(IOBufferGTest, TestWriteAll_allocated_in_size) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestWriteAll(5, 10, "HelloWorld"));
+}
+
+TEST(IOBufferGTest, TestEmpty) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestEmpty());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_Integer_Decimal) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Integer_Decimal());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_Integer_Hexadecimal) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Integer_Hexadecimal());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_Integer_Octal) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Integer_Octal());
+}
+TEST(IOBufferGTest, TestPrintFormattedToStream_Integer_Binary) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Integer_Binary());
+}
+
+
 
 
 
