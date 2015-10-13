@@ -84,7 +84,7 @@ public:
      * @brief Reads data from the stream.
      * @detail Reads up to \a size bytes into \a bufferIn. The actual read size is
      * returned in \a size.
-     * @param[in,out] bufferIn the buffer where to read the data into.
+     * @param[out] bufferIn the buffer where to read the data into.
      * @param[in,out] size the number of bytes to read. Upon return of the function \a size contains the number of bytes actually read.
      * @return true if \a size bytes are successfully read into \a bufferIn.
      */
@@ -95,7 +95,7 @@ public:
      * @brief Writes data into the stream.
      * @detail Writes up to \a size bytes into \a bufferIn. The actual written size is
      * returned in \a size.
-     * @param[in,out] bufferIn the buffer where to read the data from.
+     * @param[out] bufferIn the buffer where to read the data from.
      * @param[in,out] size the number of bytes to write. Upon return of the function \a size contains the number of bytes actually written.
      * @return true if \a size bytes are successfully read from \a bufferIn and written into the stream.
      */
