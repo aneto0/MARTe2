@@ -241,6 +241,11 @@ public:
      */
     inline uint32 UndoLevel() const;
 
+    /**
+     * @brief Returns true if the buffer is writable, false otherwise.
+     */
+    inline bool CanWrite() const;
+
     /*---------------------------------------------------------------------------*/
 
     /**
@@ -620,6 +625,11 @@ bool IOBuffer::UnGetC() {
 
     return retval;
 }
+
+bool IOBuffer::CanWrite() const {
+    return internalBuffer.CanWrite();
+}
+
 
 }
 
