@@ -124,7 +124,7 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
         // call this template with 16 bit number
         // otherwise infinite recursion!
         /*lint -e{9125} -e{571} [MISRA C++ Rule 5-0-9]. Justification: The result has always a size < 16 bit and the input number is always positive.*/
-        uint16 x = static_cast<uint6>(positiveNumber);
+        uint16 x = static_cast<uint16>(positiveNumber);
         // recurse into this function
         Number2StreamDecimalNotationPrivate(s, x, numberFillLength);
     }

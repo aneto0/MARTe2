@@ -121,6 +121,26 @@ public:
     bool TestWrite_Memoryreference();
 
     bool TestWrite_MemoryreferenceRO();
+
+    bool TestWrite_NULL_Buffer();
+
+    bool TestRead_Heap(uint32 allocationSize, uint32 readSize);
+
+    bool TestRead_MemoryReference();
+
+    bool TestRead_NULL_Buffer();
+
+    bool TestWriteAll(uint32 allocationSize, uint32 writeSize, const char8* string);
+
+    bool TestEmpty();
+
+    bool TestPrintFormattedToStream_Integer_Decimal();
+
+    bool TestPrintFormattedToStream_Integer_Hexadecimal();
+
+    bool TestPrintFormattedToStream_Integer_Octal();
+
+    bool TestPrintFormattedToStream_Integer_Binary();
 };
 
 /*---------------------------------------------------------------------------*/

@@ -292,34 +292,34 @@ static inline uint16 GetNumberOfDigitsBinaryNotation(T number) {
     return nDigits;
 }
 
-/** @brief Prints a string on a generic stream.
- * @param stream is a generic stream class which implements a PutC() function.
+/** @brief Prints a string on a generic ioBuffer.
+ * @param ioBuffer is a generic ioBuffer class which implements a PutC() function.
  * @param s is the string to be printed. */
-template<class streamer>
-static inline void PutS(streamer & stream,
+template<class ioBufferer>
+static inline void PutS(ioBufferer & ioBuffer,
                         const char8 *s) {
     while (s[0] != '\0') {
-        if (!stream.PutC(s[0])) {
+        if (!ioBuffer.PutC(s[0])) {
             //TODO
         }
         s = &s[1];
     }
 }
 
-/** @brief Prints an integer number on a general stream in decimal notation.
- * @param stream is a general stream class which implements a PutC() function.
+/** @brief Prints an integer number on a general ioBuffer in decimal notation.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
  * @param maximumSize is the maximum requested space for the number print.
  * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
  * @param leftAligned specifies if the number must be print with left or right alignment.
  * @param addPositiveSign specifies if we want print the '+' before positive numbers.
  * @return true.
  *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the stream stream by mean of a method PutC.
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
  * Respects maximumSize and number integrity.
  * If not possible (maximum size minor than the minimum space for the number print) outputs is ? */
 /*lint -e{9143} [MISRA C++ Rule 5-3-2]. Justification: application of sign - is applied only in case of negative number (then signed numbers).*/
 template<typename T>
-bool IntegerToStreamDecimalNotation(IOBuffer &stream,                     // must have a GetC(c) function where c is of a type that can be obtained from chars
+bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,                     // must have a GetC(c) function where c is of a type that can be obtained from chars
                                     const T number,
                                     uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
                                     bool padded = false,   // if maximumSize!=0 & align towards the right or the left
@@ -358,19 +358,19 @@ bool IntegerToStreamDecimalNotation(IOBuffer &stream,                     // mus
     // 0x800000....
     if (positiveNumber < static_cast<T>(0)) {
         if ((sizeof(T) == 8u) && (maximumSize >= 20u)) {
-            PutS(stream, "-9223372036854775808");
+            PutS(ioBuffer, "-9223372036854775808");
             ret = true;
         }
         if ((sizeof(T) == 4u) && (maximumSize >= 10u)) {
-            PutS(stream, "-2147483648");
+            PutS(ioBuffer, "-2147483648");
             ret = true;
         }
         if ((sizeof(T) == 2u) && (maximumSize >= 6u)) {
-            PutS(stream, "-32768");
+            PutS(ioBuffer, "-32768");
             ret = true;
         }
         if ((sizeof(T) == 1u) && (maximumSize >= 4u)) {
-            PutS(stream, "-128");
+            PutS(ioBuffer, "-128");
             ret = true;
         }
 
@@ -394,14 +394,14 @@ bool IntegerToStreamDecimalNotation(IOBuffer &stream,                     // mus
             // fill up to from 1 maximumSize with ' '
             if ((padded) && (!leftAligned)) {
                 for (uint32 i = 1u; i < maximumSize; i++) {
-                    if (!stream.PutC(' ')) {
+                    if (!ioBuffer.PutC(' ')) {
                         //TODO
                     }
                 }
             }
 
             // put the ?
-            if (!stream.PutC('?')) {
+            if (!ioBuffer.PutC('?')) {
                 //TODO
             }
 
@@ -411,7 +411,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &stream,                     // mus
             // fill up from numberSize to maximumSize with ' '
             if ((padded) && (!leftAligned)) {
                 for (uint32 i = numberSize; i < maximumSize; i++) {
-                    if (!stream.PutC(' ')) {
+                    if (!ioBuffer.PutC(' ')) {
                         //TODO
                     }
                 }
@@ -419,26 +419,26 @@ bool IntegerToStreamDecimalNotation(IOBuffer &stream,                     // mus
 
             // add sign
             if (number < static_cast<T>(0)) {
-                if (!stream.PutC('-')) {
+                if (!ioBuffer.PutC('-')) {
                     //TODO
                 }
             }
             else {
                 if (addPositiveSign) {
-                    if (!stream.PutC('+')) {
+                    if (!ioBuffer.PutC('+')) {
                         //TODO
                     }
                 }
             }
 
             // put number
-            Number2StreamDecimalNotationPrivate(stream, positiveNumber);
+            Number2StreamDecimalNotationPrivate(ioBuffer, positiveNumber);
         }
 
         // fill up from numberSize to maximumSize with ' '
         if ((padded) && (leftAligned)) {
             for (uint32 i = numberSize; i < maximumSize; i++) {
-                if (!stream.PutC(' ')) {
+                if (!ioBuffer.PutC(' ')) {
                     //TODO
                 }
             }
@@ -448,8 +448,8 @@ bool IntegerToStreamDecimalNotation(IOBuffer &stream,                     // mus
     return true;
 }
 
-/** @brief Prints an integer number on a general stream in hexadecimal notation.
- * @param stream is a general stream class which implements a PutC() function.
+/** @brief Prints an integer number on a general ioBuffer in hexadecimal notation.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
  * @param maximumSize is the maximum requested space for the number print.
  * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
  * @param leftAligned specifies if the number must be print with left or right alignment.
@@ -457,12 +457,12 @@ bool IntegerToStreamDecimalNotation(IOBuffer &stream,                     // mus
  * @param addHeader specifies if we want to add the hex header '0x' before the number.
  * @return true.
  *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the stream stream by mean of a method PutC.
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
  * Uses hexadecimal notation.
  * Respects maximumSize and number integrity.
  * If not possible (maximum size minor than the minimum space for the number print) output is ? */
 template<typename T>
-bool IntegerToStreamExadecimalNotation(IOBuffer &stream,
+bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
                                        const T number,
                                        uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
                                        bool padded = false,   // if maximumSize!=0 & align towards the right or the left
@@ -497,13 +497,13 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &stream,
         // pad on the left
         if ((padded) && (!leftAligned)) {
             for (uint32 i = 1u; i < maximumSize; i++) {
-                if (!stream.PutC(' ')) {
+                if (!ioBuffer.PutC(' ')) {
                     //TODO
                 }
             }
         }
         // put the ?
-        if (!stream.PutC('?')) {
+        if (!ioBuffer.PutC('?')) {
             //TODO
         }
 
@@ -538,7 +538,7 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &stream,
         // in case of left alignment
         if ((padded) && (!leftAligned)) {
             for (uint32 i = numberSize; i < maximumSize; i++) {
-                if (!stream.PutC(' ')) {
+                if (!ioBuffer.PutC(' ')) {
                     //TODO
                 }
             }
@@ -546,10 +546,10 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &stream,
 
         // add header
         if (addHeader) {
-            if (!stream.PutC('0')) {
+            if (!ioBuffer.PutC('0')) {
                 //TODO
             }
-            if (!stream.PutC('x')) {
+            if (!ioBuffer.PutC('x')) {
                 //TODO
             }
         }
@@ -571,13 +571,13 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &stream,
 
             if (digit < 10u) {
                 /*lint -e(9125) -e(9117) */
-                if (!stream.PutC(static_cast<char8>(zero + digit))) {
+                if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
                     //TODO
                 }
             }
             else {
                 /*lint -e(9125) -e(9117) */
-                if (!stream.PutC(static_cast<char8>((ten + digit) - 10u))) {
+                if (!ioBuffer.PutC(static_cast<char8>((ten + digit) - 10u))) {
                     //TODO
                 }
             }
@@ -588,7 +588,7 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &stream,
     // in case of right alignment
     if ((padded) && (leftAligned)) {
         for (uint16 i = numberSize; i < maximumSize; i++) {
-            if (!stream.PutC(' ')) {
+            if (!ioBuffer.PutC(' ')) {
                 //TODO
             }
         }
@@ -597,8 +597,8 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &stream,
 
 }
 
-/** @brief Prints an integer number on a general stream in octal notation.
- * @param stream is a general stream class which implements a PutC() function.
+/** @brief Prints an integer number on a general ioBuffer in octal notation.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
  * @param maximumSize is the maximum requested space for the number print.
  * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
  * @param leftAligned specifies if the number must be print with left or right alignment.
@@ -606,12 +606,12 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &stream,
  * @param addHeader specifies if we want to add the oct header '0o' before the number.
  * @return true.
  *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the stream stream by mean of a method PutC.
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
  * Uses octal notation.
  * Respects maximumSize and number integrity.
  * If not possible (maximum size minor than the minimum space for the number print) output is ?  */
 template<typename T>
-bool IntegerToStreamOctalNotation(IOBuffer &stream,
+bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
                                   const T number,
                                   uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
                                   bool padded = false,   // if maximumSize!=0 & align towards the right or the left
@@ -646,13 +646,13 @@ bool IntegerToStreamOctalNotation(IOBuffer &stream,
         // pad on the left
         if ((padded) && (!leftAligned)) {
             for (uint32 i = 1u; i < maximumSize; i++) {
-                if (!stream.PutC(' ')) {
+                if (!ioBuffer.PutC(' ')) {
                     //TODO
                 }
             }
         }
         // put the ?
-        if (!stream.PutC('?')) {
+        if (!ioBuffer.PutC('?')) {
             //TODO
         }
 
@@ -688,7 +688,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &stream,
         // in case of left alignment
         if ((padded) && (!leftAligned)) {
             for (uint32 i = numberSize; i < maximumSize; i++) {
-                if (!stream.PutC(' ')) {
+                if (!ioBuffer.PutC(' ')) {
                     //TODO
                 }
             }
@@ -696,10 +696,10 @@ bool IntegerToStreamOctalNotation(IOBuffer &stream,
 
         // add header
         if (addHeader) {
-            if (!stream.PutC('0')) {
+            if (!ioBuffer.PutC('0')) {
                 //TODO
             }
-            if (!stream.PutC('o')) {
+            if (!ioBuffer.PutC('o')) {
                 //TODO
             }
         }
@@ -715,7 +715,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &stream,
             uint8 digit = static_cast<uint8>(static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & 0x7u);
             uint8 zero=static_cast<uint8>('0');
             /*lint -e(9125) -e(9117) */
-            if (!stream.PutC(static_cast<char8>(zero + digit))) {
+            if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
                 //TODO
             }
         }
@@ -724,7 +724,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &stream,
 // in case of right alignment
     if ((padded) && (leftAligned)) {
         for (uint16 i = numberSize; i < maximumSize; i++) {
-            if (!stream.PutC(' ')) {
+            if (!ioBuffer.PutC(' ')) {
                 //TODO
             }
         }
@@ -732,8 +732,8 @@ bool IntegerToStreamOctalNotation(IOBuffer &stream,
     return true;
 }
 
-/** @brief Prints an integer number on a general stream in binary notation.
- * @param stream is a general stream class which implements a PutC() function.
+/** @brief Prints an integer number on a general ioBuffer in binary notation.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
  * @param maximumSize is the maximum requested space for the number print.
  * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
  * @param leftAligned specifies if the number must be print with left or right alignment.
@@ -741,12 +741,12 @@ bool IntegerToStreamOctalNotation(IOBuffer &stream,
  * @param addHeader specifies if we want to add the bin header '0b' before the number.
  * @return true.
  *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the stream stream by mean of a method PutC.
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
  * Uses binary notation.
  * Respects maximumSize and number integrity.
  * If not possible (maximum size minor than the minimum space for the number print) output is ?  */
 template<typename T>
-bool IntegerToStreamBinaryNotation(IOBuffer &stream,
+bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
                                    const T number,
                                    uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
                                    bool padded = false,   // if maximumSize!=0 & align towards the right or the left
@@ -782,13 +782,13 @@ bool IntegerToStreamBinaryNotation(IOBuffer &stream,
         // pad on the left
         if ((padded) && (!leftAligned)) {
             for (uint32 i = 1u; i < maximumSize; i++) {
-                if (!stream.PutC(' ')) {
+                if (!ioBuffer.PutC(' ')) {
                     //TODO
                 }
             }
         }
         // put the ?
-        if (!stream.PutC('?')) {
+        if (!ioBuffer.PutC('?')) {
             //TODO
         }
 
@@ -822,7 +822,7 @@ bool IntegerToStreamBinaryNotation(IOBuffer &stream,
         // in case of left alignment
         if ((padded) && (!leftAligned)) {
             for (uint32 i = numberSize; i < maximumSize; i++) {
-                if (!stream.PutC(' ')) {
+                if (!ioBuffer.PutC(' ')) {
                     //TODO
                 }
             }
@@ -830,10 +830,10 @@ bool IntegerToStreamBinaryNotation(IOBuffer &stream,
 
         // add header
         if (addHeader) {
-            if (!stream.PutC('0')) {
+            if (!ioBuffer.PutC('0')) {
                 //TODO
             }
-            if (!stream.PutC('b')) {
+            if (!ioBuffer.PutC('b')) {
                 //TODO
             }
         }
@@ -851,7 +851,7 @@ bool IntegerToStreamBinaryNotation(IOBuffer &stream,
 
             // skips trailing zeros until we encounter the first non zero, or if putTrailingZeros was already set
             /*lint -e(9125) -e(9117) */
-            if (!stream.PutC(static_cast<char8>(zero + digit))) {
+            if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
                 //TODO
             }
 
@@ -861,7 +861,7 @@ bool IntegerToStreamBinaryNotation(IOBuffer &stream,
     // in case of right alignment
     if (padded && leftAligned) {
         for (uint16 i = 0u; i < (maximumSize - numberSize); i++) {
-            if (!stream.PutC(' ')) {
+            if (!ioBuffer.PutC(' ')) {
                 //TODO
             }
         }
@@ -869,19 +869,19 @@ bool IntegerToStreamBinaryNotation(IOBuffer &stream,
     return true;
 }
 
-/** @brief Print on a general stream using a specific format.
- * @param stream is a general stream class which implements a PutC() function.
+/** @brief Print on a general ioBuffer using a specific format.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
  * @param number is the integer to print.
  * @param format is the desired format.
  * @return true if the format is correct, false otherwise.
  *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the stream stream by mean of a method PutC.
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
  * Uses notation specified in format.
  * Also respects all relevant format parameters.
  * Respects format.size and number integrity.
  * If not possible output is ? */
 template<typename T>
-bool IntegerToStreamPrivate(IOBuffer &stream,
+bool IntegerToStreamPrivate(IOBuffer &ioBuffer,
                             const T number,
                             const FormatDescriptor &format,
                             uint16 actualBitSize = static_cast<uint16>(sizeof(T) * 8u)) {
@@ -892,39 +892,39 @@ bool IntegerToStreamPrivate(IOBuffer &stream,
         actualBitSize = 0u;
     }
 
-    if (format.binaryPadded == DecimalNotation) {
-        ret = IntegerToStreamDecimalNotation(stream, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, format.fullNotation);
+    if (format.binaryNotation == DecimalNotation) {
+        ret = IntegerToStreamDecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, format.fullNotation);
     }
-    if (format.binaryPadded == HexNotation) {
-        ret = IntegerToStreamExadecimalNotation(stream, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
+    if (format.binaryNotation == HexNotation) {
+        ret = IntegerToStreamExadecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
                                                 format.fullNotation);
     }
-    if (format.binaryPadded == OctalNotation) {
-        ret = IntegerToStreamOctalNotation(stream, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
+    if (format.binaryNotation == OctalNotation) {
+        ret = IntegerToStreamOctalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
                                            format.fullNotation);
     }
-    if (format.binaryPadded == BitNotation) {
-        ret = IntegerToStreamBinaryNotation(stream, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
+    if (format.binaryNotation == BitNotation) {
+        ret = IntegerToStreamBinaryNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
                                             format.fullNotation);
     }
 
     return ret;
 }
 
-/** @brief Print on a general stream using a specific format.
- * @param stream is a general stream class which implements a PutC() function.
+/** @brief Print on a general ioBuffer using a specific format.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
  * @param number is the integer to print.
  * @param format is the desired format.
  * @return true if the format is correct, false otherwise.
  *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the stream stream by mean of a method PutC.
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
  * Uses notation specified in format.
  * Also respects all relevant format parameters.
  * Respects format.size and number integrity.
  * If not possible output is ? */
 
 static
-bool BitSetToStreamPrivate(IOBuffer &stream,
+bool BitSetToStreamPrivate(IOBuffer &ioBuffer,
                            uint32 *numberAddress,
                            uint8 numberBitShift,
                            const uint8 numberBitSize,
@@ -941,14 +941,14 @@ bool BitSetToStreamPrivate(IOBuffer &stream,
                 int8 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret) {
-                    ret = IntegerToStreamPrivate(stream, destination, format, numberBitSize);
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
                 }
             }
             else {
                 uint8 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret) {
-                    ret = IntegerToStreamPrivate(stream, destination, format, numberBitSize);
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
                 }
             }
 
@@ -958,7 +958,7 @@ bool BitSetToStreamPrivate(IOBuffer &stream,
                 int16 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret) {
-                    ret = IntegerToStreamPrivate(stream, destination, format, numberBitSize);
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
                 }
 
             }
@@ -966,7 +966,7 @@ bool BitSetToStreamPrivate(IOBuffer &stream,
                 uint16 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret) {
-                    ret = IntegerToStreamPrivate(stream, destination, format, numberBitSize);
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
                 }
 
             }
@@ -980,14 +980,14 @@ bool BitSetToStreamPrivate(IOBuffer &stream,
                 int32 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret) {
-                    ret = IntegerToStreamPrivate(stream, destination, format, numberBitSize);
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
                 }
             }
             else {
                 uint32 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret) {
-                    ret = IntegerToStreamPrivate(stream, destination, format, numberBitSize);
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
                 }
             }
 
@@ -997,14 +997,14 @@ bool BitSetToStreamPrivate(IOBuffer &stream,
                 int64 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret) {
-                    ret = IntegerToStreamPrivate(stream, destination, format, numberBitSize);
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
                 }
             }
             else {
                 uint64 destination;
                 ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
                 if (ret) {
-                    ret = IntegerToStreamPrivate(stream, destination, format, numberBitSize);
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
                 }
             }
         }
@@ -1013,54 +1013,54 @@ bool BitSetToStreamPrivate(IOBuffer &stream,
     return ret;
 }
 
-bool IntegerToStream(IOBuffer &stream,
+bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint8 number,
                      const FormatDescriptor &format) {
-    return IntegerToStreamPrivate(stream, number, format);
+    return IntegerToStreamPrivate(ioBuffer, number, format);
 }
-bool IntegerToStream(IOBuffer &stream,
+bool IntegerToStream(IOBuffer &ioBuffer,
                      const int8 number,
                      const FormatDescriptor &format) {
-    return IntegerToStreamPrivate(stream, number, format);
+    return IntegerToStreamPrivate(ioBuffer, number, format);
 }
-bool IntegerToStream(IOBuffer &stream,
+bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint16 number,
                      const FormatDescriptor &format) {
-    return IntegerToStreamPrivate(stream, number, format);
+    return IntegerToStreamPrivate(ioBuffer, number, format);
 }
-bool IntegerToStream(IOBuffer &stream,
+bool IntegerToStream(IOBuffer &ioBuffer,
                      const int16 number,
                      const FormatDescriptor &format) {
-    return IntegerToStreamPrivate(stream, number, format);
+    return IntegerToStreamPrivate(ioBuffer, number, format);
 }
-bool IntegerToStream(IOBuffer &stream,
+bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint32 number,
                      const FormatDescriptor &format) {
-    return IntegerToStreamPrivate(stream, number, format);
+    return IntegerToStreamPrivate(ioBuffer, number, format);
 }
-bool IntegerToStream(IOBuffer &stream,
+bool IntegerToStream(IOBuffer &ioBuffer,
                      const int32 number,
                      const FormatDescriptor &format) {
-    return IntegerToStreamPrivate(stream, number, format);
+    return IntegerToStreamPrivate(ioBuffer, number, format);
 }
-bool IntegerToStream(IOBuffer &stream,
+bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint64 number,
                      const FormatDescriptor &format) {
-    return IntegerToStreamPrivate(stream, number, format);
+    return IntegerToStreamPrivate(ioBuffer, number, format);
 }
-bool IntegerToStream(IOBuffer &stream,
+bool IntegerToStream(IOBuffer &ioBuffer,
                      const int64 number,
                      const FormatDescriptor &format) {
-    return IntegerToStreamPrivate(stream, number, format);
+    return IntegerToStreamPrivate(ioBuffer, number, format);
 }
 
-bool BitSetToStream(IOBuffer &stream,
+bool BitSetToStream(IOBuffer &ioBuffer,
                     uint32 * const numberAddress,
                     const uint8 numberBitShift,
                     const uint8 numberBitSize,
                     const bool numberIsSigned,
                     const FormatDescriptor &format) {
-    return BitSetToStreamPrivate(stream, numberAddress, numberBitShift, numberBitSize, numberIsSigned, format);
+    return BitSetToStreamPrivate(ioBuffer, numberAddress, numberBitShift, numberBitSize, numberIsSigned, format);
 
 }
 

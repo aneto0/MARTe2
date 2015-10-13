@@ -47,40 +47,40 @@
 namespace MARTe {
 
 /*lint -e526 . Justification: The following functions are not defined here. */
-extern bool IntegerToStream(IOBuffer &stream,
+extern bool IntegerToStream(IOBuffer &ioBuffer,
                             uint8 number,
                             const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &stream,
+extern bool IntegerToStream(IOBuffer &ioBuffer,
                             int8 number,
                             const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &stream,
+extern bool IntegerToStream(IOBuffer &ioBuffer,
                             uint16 number,
                             const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &stream,
+extern bool IntegerToStream(IOBuffer &ioBuffer,
                             int16 number,
                             const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &stream,
+extern bool IntegerToStream(IOBuffer &ioBuffer,
                             uint32 number,
                             const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &stream,
+extern bool IntegerToStream(IOBuffer &ioBuffer,
                             int32 number,
                             const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &stream,
+extern bool IntegerToStream(IOBuffer &ioBuffer,
                             uint64 number,
                             const FormatDescriptor &format);
 
-extern bool IntegerToStream(IOBuffer &stream,
+extern bool IntegerToStream(IOBuffer &ioBuffer,
                             int64 number,
                             const FormatDescriptor &format);
 
 
-extern bool BitSetToStream(IOBuffer &stream,
+extern bool BitSetToStream(IOBuffer &ioBuffer,
                            uint32 *numberAddress,
                            uint8 numberBitShift,
                            uint8 numberBitSize,

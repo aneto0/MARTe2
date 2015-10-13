@@ -973,7 +973,9 @@ bool IOBufferTest::TestSetUsedSize(uint32 allocatedSize,
     IOBuffer ioBuffer;
 
     ioBuffer.SetBufferHeapMemory(allocatedSize, 0);
-    ioBuffer.SetUsedSize(desiredSize);
+    if (!ioBuffer.SetUsedSize(desiredSize)) {
+        return false;
+    }
 
     return (desiredSize > allocatedSize) ? (ioBuffer.UsedSize() == allocatedSize) : (ioBuffer.UsedSize() == desiredSize);
 }
@@ -986,7 +988,9 @@ bool IOBufferTest::TestWrite_Heap(uint32 allocationSize,
 
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
 
-    ioBuffer.Write(string, writeSize);
+    if (!ioBuffer.Write(string, writeSize)) {
+        return false;
+    }
 
     uint32 compareSize = (allocationSize > writeSize) ? (writeSize) : (allocationSize);
 
@@ -999,11 +1003,13 @@ bool IOBufferTest::TestWrite_Memoryreference() {
 
     const uint32 size = 32;
     char8 bufferIn[size];
-    ioBuffer.SetBufferReferencedMemory(bufferIn,size, 0);
+    ioBuffer.SetBufferReferencedMemory(bufferIn, size, 0);
 
     const char8* string = "HelloWorld";
     uint32 writeSize = StringHelper::Length(string);
-    ioBuffer.Write(string, writeSize);
+    if (!ioBuffer.Write(string, writeSize)) {
+        return false;
+    }
 
     if (StringHelper::CompareN(ioBuffer.Buffer(), string, writeSize) != 0) {
         return false;
@@ -1011,7 +1017,9 @@ bool IOBufferTest::TestWrite_Memoryreference() {
 
     writeSize -= 5;
 
-    ioBuffer.Write(string, writeSize);
+    if (!ioBuffer.Write(string, writeSize)) {
+        return false;
+    }
 
     return StringHelper::CompareN(ioBuffer.Buffer(), string, writeSize) == 0;
 }
@@ -1021,10 +1029,804 @@ bool IOBufferTest::TestWrite_MemoryreferenceRO() {
     IOBuffer ioBuffer;
 
     const uint32 size = 32;
-    const char8 *bufferIn="HelloWorld";
-    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn,size, 0);
+    const char8 *bufferIn = "HelloWorld";
+    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, size, 0);
 
     const char8* string = "HelloWorld";
     uint32 writeSize = StringHelper::Length(string);
     return !ioBuffer.Write(string, writeSize);
+}
+
+bool IOBufferTest::TestWrite_NULL_Buffer() {
+    IOBuffer ioBuffer;
+
+    uint32 allocSize = 32;
+    ioBuffer.SetBufferHeapMemory(allocSize, 0);
+
+    const char8 *bufferIn = NULL;
+    return !ioBuffer.Write(bufferIn, allocSize);
+
+}
+
+bool IOBufferTest::TestRead_Heap(uint32 allocatedSize,
+                                 uint32 readSize) {
+    IOBuffer ioBuffer;
+
+    ioBuffer.SetBufferHeapMemory(allocatedSize, 0);
+
+    for (uint32 i = 0; i < allocatedSize; i++) {
+        ioBuffer.PutC('a');
+    }
+
+    char8 buffer[32];
+
+    ioBuffer.Read(buffer, readSize);
+
+    if (readSize > allocatedSize) {
+        readSize = allocatedSize;
+    }
+
+    for (uint32 i = 0; i < readSize; i++) {
+        if (buffer[i] != 'a') {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IOBufferTest::TestRead_MemoryReference() {
+    IOBuffer ioBuffer;
+
+    char8 bufferIn[32];
+    uint32 allocatedSize = 32;
+    ioBuffer.SetBufferReferencedMemory(bufferIn, allocatedSize, 0);
+
+    for (uint32 i = 0; i < allocatedSize; i++) {
+        ioBuffer.PutC('a');
+    }
+
+    char8 bufferOut[32];
+
+    // greater size
+    uint32 readSize = 34;
+
+    ioBuffer.Seek(0);
+    ioBuffer.Read(bufferOut, readSize);
+
+    for (uint32 i = 0; i < allocatedSize; i++) {
+        if (bufferOut[i] != 'a') {
+            return false;
+        }
+    }
+
+    //empty the out buffer
+    for (uint32 i = 0; i < 32; i++) {
+        bufferOut[i] = '\0';
+    }
+
+    ioBuffer.Seek(0);
+    readSize = 5;
+    ioBuffer.Read(bufferOut, readSize);
+
+    return StringHelper::Compare(bufferOut, "aaaaa") == 0;
+}
+
+bool IOBufferTest::TestRead_NULL_Buffer() {
+
+    const char8 *bufferIn = "Hello";
+    IOBuffer ioBuffer;
+    uint32 allocSize = 16;
+
+    ioBuffer.SetBufferHeapMemory(allocSize, 0);
+
+    uint32 writeSize = StringHelper::Length(bufferIn);
+    ioBuffer.Write(bufferIn, writeSize);
+
+    ioBuffer.Seek(0);
+    char8* bufferOut = NULL;
+    return !ioBuffer.Read(bufferOut, allocSize);
+}
+
+bool IOBufferTest::TestWriteAll(uint32 allocationSize,
+                                uint32 writeSize,
+                                const char8* string) {
+
+    IOBuffer ioBuffer;
+
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    if (allocationSize > writeSize) {
+        if (!ioBuffer.WriteAll(string, writeSize)) {
+            return false;
+        }
+    }
+    else {
+        if (ioBuffer.WriteAll(string, writeSize)) {
+            return false;
+        }
+        writeSize = allocationSize;
+    }
+
+    return StringHelper::CompareN(ioBuffer.Buffer(), string, writeSize) == 0;
+}
+
+bool IOBufferTest::TestEmpty() {
+    IOBuffer ioBuffer;
+
+    uint32 allocationSize = 32;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    //at the beginnig the buffer is empty
+    if (ioBuffer.Position() != 0) {
+        return false;
+    }
+
+    if ((ioBuffer.AmountLeft() != allocationSize) || (ioBuffer.UsedAmountLeft() != 0)) {
+        return false;
+    }
+
+    // put something in the buffer
+    const char8 *toWrite = "HelloWorld";
+    uint32 writeSize = StringHelper::Length(toWrite);
+    ioBuffer.Write(toWrite, writeSize);
+
+    if (ioBuffer.Position() != writeSize) {
+        return false;
+    }
+    if (ioBuffer.AmountLeft() != (allocationSize - writeSize)) {
+        return false;
+    }
+
+    ioBuffer.Seek(0);
+    if (ioBuffer.UsedAmountLeft() != writeSize) {
+        return false;
+    }
+
+    ioBuffer.Seek(writeSize);
+
+    ioBuffer.Empty();
+    //the buffer is empty
+    if (ioBuffer.Position() != 0) {
+        return false;
+    }
+
+    if ((ioBuffer.AmountLeft() != allocationSize) || (ioBuffer.UsedAmountLeft() != 0)) {
+        return false;
+    }
+
+    return true;
+
+}
+
+void Clear(IOBuffer &ioBuffer) {
+    ioBuffer.Seek(0);
+    for (uint32 i = 0; i < ioBuffer.MaxUsableAmount(); i++) {
+        ioBuffer.PutC(0);
+    }
+    ioBuffer.Seek(0);
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_Integer_Decimal() {
+
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 32;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    uint8 ubit8 = 255;
+    AnyType toPrint = ubit8;
+
+    Clear(ioBuffer);
+
+    ioBuffer.PrintFormattedToStream("%d", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+    if (StringHelper::Compare("255", ioBuffer.Buffer()) != 0) {
+        printf("\n1\n");
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //with size but and not padded (nothing happen)
+    ioBuffer.PrintFormattedToStream("%5d", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    if (StringHelper::Compare("255", ioBuffer.Buffer()) != 0) {
+        printf("\n2\n");
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //RightAligned
+    ioBuffer.PrintFormattedToStream("% 5d", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    if (StringHelper::Compare("  255", ioBuffer.Buffer()) != 0) {
+        printf("\n2\n");
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //LeftAligned
+    ioBuffer.PrintFormattedToStream("%-5d", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    if (StringHelper::Compare("255  ", ioBuffer.Buffer()) != 0) {
+        printf("\n2\n");
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    Clear(ioBuffer);
+    int8 sbit8 = -127;
+    toPrint = sbit8;
+
+    ioBuffer.PrintFormattedToStream("%d", &toPrint);
+
+    if (StringHelper::Compare("-127", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //LeftAligned and padded "...  "
+    ioBuffer.PrintFormattedToStream("%-6i", &toPrint);
+    if (StringHelper::Compare("-127  ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //Max int8
+    sbit8 = 0x80;
+    toPrint = sbit8;
+
+    ioBuffer.PrintFormattedToStream("%d", &toPrint);
+
+    if (StringHelper::Compare("-128", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    uint16 ubit16 = 12345;
+    toPrint = ubit16;
+    ioBuffer.PrintFormattedToStream("%u", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    if (StringHelper::Compare("12345", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //LeftAligned and padded with positive sign "+...  "
+    ioBuffer.PrintFormattedToStream("%-#8d", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    if (StringHelper::Compare("+12345  ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    int16 sbit16 = -12345;
+
+    toPrint = sbit16;
+
+    ioBuffer.PrintFormattedToStream("%d", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    if (StringHelper::Compare("-12345", ioBuffer.Buffer()) != 0) {
+
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Max int16
+    sbit16 = 0x8000;
+    toPrint = sbit16;
+    ioBuffer.PrintFormattedToStream("%i", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    if (StringHelper::Compare("-32768", ioBuffer.Buffer()) != 0) {
+
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    uint32 ubit32 = 123456789;
+    toPrint = ubit32;
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    ioBuffer.PrintFormattedToStream("%d", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    if (StringHelper::Compare("123456789", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //RightAligned and padded with sign " +..."
+    ioBuffer.PrintFormattedToStream("% #11u", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    if (StringHelper::Compare(" +123456789", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    int32 sbit32 = -123456789;
+    toPrint = sbit32;
+
+    ioBuffer.PrintFormattedToStream("%i", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    if (StringHelper::Compare("-123456789", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //Max int32
+    sbit32 = 0x80000000;
+    toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("%i", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+
+    if (StringHelper::Compare("-2147483648", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    uint64 ubit64 = 12345678912345678;
+    toPrint = ubit64;
+    ioBuffer.PrintFormattedToStream("%u", &toPrint);
+
+    if (StringHelper::Compare("12345678912345678", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    int64 sbit64 = -12345678912345678;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%i", &toPrint);
+
+    if (StringHelper::Compare("-12345678912345678", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Max int64
+    sbit64 = 0x8000000000000000;
+    toPrint = sbit64;
+
+    ioBuffer.PrintFormattedToStream("%i", &toPrint);
+
+    if (StringHelper::Compare("-9223372036854775808", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //? if the maxSize is incorrect (padded)
+    ioBuffer.PrintFormattedToStream("% #11d", &toPrint);
+
+    if (StringHelper::Compare("          ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    return true;
+
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_Integer_Hexadecimal() {
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 32;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+    Clear(ioBuffer);
+    uint8 ubit8 = 0xea;
+
+    AnyType toPrint = ubit8;
+
+    ioBuffer.PrintFormattedToStream("%x", &toPrint);
+    if (StringHelper::Compare("EA", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //Check if works also for negative signed numbers.
+    int8 sbit8 = 0xea;
+    toPrint = sbit8;
+    ioBuffer.PrintFormattedToStream("%x", &toPrint);
+
+    if (StringHelper::Compare("EA", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //size but not padded (nothing happen)
+    ioBuffer.PrintFormattedToStream("%5x", &toPrint);
+    if (StringHelper::Compare("EA", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    //Add Header and trailing zeros
+    Clear(ioBuffer);
+    ioBuffer.PrintFormattedToStream("%#0x", &toPrint);
+    if (StringHelper::Compare("0xEA", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    ubit8 = 0xf;
+    toPrint = ubit8;
+    //Add only trailing zeros
+    Clear(ioBuffer);
+
+    ioBuffer.PrintFormattedToStream("%0x", &toPrint);
+
+    if (StringHelper::Compare("0F", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //All true with a space more... it must print only a space after.
+    uint16 ubit16 = 0xabcd;
+    toPrint = ubit16;
+    ioBuffer.PrintFormattedToStream("%-#07x", &toPrint);
+
+    if (StringHelper::Compare("0xABCD ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    ubit16 = 0xcd;
+    toPrint = ubit16;
+    //With zeros and 3 as number of digits (without header).
+    ioBuffer.PrintFormattedToStream("%#05x", &toPrint);
+
+    if (StringHelper::Compare("0x0CD", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //Only right aligned with header
+    uint32 ubit32 = 0xabcdef78;
+    toPrint = ubit32;
+    ioBuffer.PrintFormattedToStream("% #12x", &toPrint);
+
+    if (StringHelper::Compare("  0xABCDEF78", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    ubit32 = 0x00abcd0f;
+    toPrint = ubit32;
+    //Right align with zero and header
+    ioBuffer.PrintFormattedToStream("% #011x", &toPrint);
+
+    if (StringHelper::Compare(" 0x00ABCD0F", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //Right align without zeros and header
+    ioBuffer.PrintFormattedToStream("% 11x", &toPrint);
+
+    if (StringHelper::Compare("     ABCD0F", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //padded=false
+    uint64 ubit64 = 0x89abcdef0123fff0;
+    toPrint = ubit64;
+    ioBuffer.PrintFormattedToStream("%120x", &toPrint);
+
+    if (StringHelper::Compare("89ABCDEF0123FFF0", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //?
+    ubit64 = 0x123fff0;
+    toPrint = ubit64;
+    ioBuffer.PrintFormattedToStream("% 5x", &toPrint);
+
+    if (StringHelper::Compare("    ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    ubit64 = 0xfff0;
+    toPrint = ubit64;
+
+    ioBuffer.PrintFormattedToStream("%-07x", &toPrint);
+
+    if (StringHelper::Compare("000FFF0", ioBuffer.Buffer()) != 0) {
+
+        return false;
+    }
+
+    return true;
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_Integer_Octal() {
+    IOBuffer ioBuffer;
+
+    uint32 allocationSize = 32;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    Clear(ioBuffer);
+    uint8 ubit8 = 0xea;
+    AnyType toPrint = ubit8;
+
+    ioBuffer.PrintFormattedToStream("%o", &toPrint);
+    if (StringHelper::Compare("352", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Test if works also for negative signed numbers.
+    int8 sbit8 = -22;
+    toPrint = sbit8;
+    ioBuffer.PrintFormattedToStream("%o", &toPrint);
+
+    if (StringHelper::Compare("352", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //with size but not padded (nothing happen)
+    ioBuffer.PrintFormattedToStream("%5o", &toPrint);
+
+    if (StringHelper::Compare("352", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    //Add Header and trailing zeros
+    Clear(ioBuffer);
+    ioBuffer.PrintFormattedToStream("%#0o", &toPrint);
+
+    if (StringHelper::Compare("0o352", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    ubit8 = 0xf;
+    toPrint = ubit8;
+
+    //Add only trailing zeros
+    ioBuffer.PrintFormattedToStream("%0o", &toPrint);
+
+    if (StringHelper::Compare("017", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //All true with a space more... it must print a space after.
+    uint16 ubit16 = 0x7bcd; //6 is the maximum now are 5
+    toPrint = ubit16;
+
+    ioBuffer.PrintFormattedToStream("%-#09o", &toPrint);
+
+    if (StringHelper::Compare("0o075715 ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    ubit16 = 0xcd;
+    toPrint = ubit16;
+    //With zeros and 5 as number of digits (without header).
+
+    ioBuffer.PrintFormattedToStream("%#07o", &toPrint);
+
+    if (StringHelper::Compare("0o00315", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Only right aligned with header
+    uint32 ubit32 = 0xabcdef78;
+    toPrint = ubit32;
+    ioBuffer.PrintFormattedToStream("% #15o", &toPrint);
+
+    if (StringHelper::Compare("  0o25363367570", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    ubit32 = 0xcd0f;
+    toPrint = ubit32;
+    //Right align with zero and header
+    ioBuffer.PrintFormattedToStream("% #015o", &toPrint);
+
+    if (StringHelper::Compare("  0o00000146417", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Right align without zeros and header
+    ioBuffer.PrintFormattedToStream("% 15o", &toPrint);
+
+    if (StringHelper::Compare("         146417", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //padded=false
+    uint64 ubit64 = 0x89abcdef01240000;
+    toPrint = ubit64;
+    ioBuffer.PrintFormattedToStream("%120o", &toPrint);
+
+    if (StringHelper::Compare("1046536336740111000000", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+    //?
+    ubit64 = 0x123fff0;
+    toPrint = ubit64;
+    ioBuffer.PrintFormattedToStream("% 5o", &toPrint);
+
+    if (StringHelper::Compare("    ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    ubit64 = 0xfff0;
+    toPrint = ubit64;
+
+    ioBuffer.PrintFormattedToStream("%-07o", &toPrint);
+
+    if (StringHelper::Compare("0177760", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    return true;
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_Integer_Binary() {
+
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 64;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    Clear(ioBuffer);
+
+    uint8 ubit8 = 0xea;
+    AnyType toPrint = ubit8;
+
+    ioBuffer.PrintFormattedToStream("%b", &toPrint);
+
+    if (StringHelper::Compare("11101010", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Test if works also for negative signed numbers
+    int8 sbit8 = 0xea;
+    toPrint = sbit8;
+
+    ioBuffer.PrintFormattedToStream("%b", &toPrint);
+    if (StringHelper::Compare("11101010", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //with size but not padded (nothing happen)
+    ioBuffer.PrintFormattedToStream("%50b", &toPrint);
+
+    if (StringHelper::Compare("11101010", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    //Add header and trailing zeros
+    Clear(ioBuffer);
+    ioBuffer.PrintFormattedToStream("%#0b", &toPrint);
+    if (StringHelper::Compare("0b11101010", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    ubit8 = 0xf;
+    toPrint = ubit8;
+
+    //Add only trailing zeros
+    ioBuffer.PrintFormattedToStream("%0b", &toPrint);
+    if (StringHelper::Compare("00001111", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //All true with a space more... it must print a space after.
+    uint16 ubit16 = 0x7bcd; //
+    toPrint = ubit16;
+
+    ioBuffer.PrintFormattedToStream("%-#019b", &toPrint);
+    if (StringHelper::Compare("0b0111101111001101 ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    ubit16 = 0xcd;
+    toPrint = ubit16;
+    //With zeros and 10 as number of digits (without header).
+    ioBuffer.PrintFormattedToStream("%#012b", &toPrint);
+    if (StringHelper::Compare("0b0011001101", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //right aligned with header
+    uint32 ubit32 = 0xabcdef78;
+    toPrint = ubit32;
+
+    ioBuffer.PrintFormattedToStream("% #36b", &toPrint);
+    printf("\n|%s|\n", ioBuffer.Buffer());
+    if (StringHelper::Compare("  0b10101011110011011110111101111000", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    ubit32 = 0xcd0f;
+    toPrint = ubit32;
+
+    ioBuffer.PrintFormattedToStream("% 0b", &toPrint);
+    //Right align with zeros
+    if (StringHelper::Compare("  00000000000000001100110100001111", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Right align without zeros and header
+    ioBuffer.PrintFormattedToStream("% 34b", &toPrint);
+    if (StringHelper::Compare("                  1100110100001111", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //padded=false
+    uint64 ubit64 = 0x8000000000000001;
+    toPrint = ubit64;
+    ioBuffer.PrintFormattedToStream("%120b", &toPrint);
+    if (StringHelper::Compare("1000000000000000000000000000000000000000000000000000000000000001", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //?
+    ubit64 = 0x123fff0;
+    toPrint = ubit64;
+    ioBuffer.PrintFormattedToStream("% 5b", &toPrint);
+    if (StringHelper::Compare("    ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    ubit64 = 0xff0;
+    toPrint = ubit64;
+    ioBuffer.PrintFormattedToStream("%-014b", &toPrint);
+    if (StringHelper::Compare("00111111110000", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    return true;
 }
