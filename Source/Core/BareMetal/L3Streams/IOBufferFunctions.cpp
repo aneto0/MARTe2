@@ -79,7 +79,6 @@ extern bool IntegerToStream(IOBuffer &ioBuffer,
                             int64 number,
                             const FormatDescriptor &format);
 
-
 extern bool BitSetToStream(IOBuffer &ioBuffer,
                            uint32 *numberAddress,
                            uint8 numberBitShift,
@@ -87,16 +86,13 @@ extern bool BitSetToStream(IOBuffer &ioBuffer,
                            bool numberIsSigned,
                            const FormatDescriptor &format);
 
-
 extern bool FloatToStream(IOBuffer &buffer,
                           float32 number,
                           const FormatDescriptor &format);
 
-
 extern bool FloatToStream(IOBuffer &buffer,
                           float64 number,
                           const FormatDescriptor &format);
-
 
 bool IOBuffer::GetTokenFromStream(char8 * const outputBuffer,
                                   const char8 * const terminator,
@@ -484,7 +480,11 @@ bool PrintToStream(IOBuffer & iobuff,
                         }
                         break;
                         default: {
-                            ret= false;
+                            // use native standard integer
+                            uint32 *number = static_cast<uint32 *> (dataPointer);
+                            // all the remaining cases here
+                            uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
+                            ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, false, fd);
                         }
                     }
                 }
@@ -523,7 +523,11 @@ bool PrintToStream(IOBuffer & iobuff,
                         }
                         break;
                         default: {
-                            ret= false;
+                            // use native standard integer
+                            uint32 *number = static_cast<uint32 *> (dataPointer);
+                            uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
+                            // all the remaining cases here
+                            ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, true, fd);
                         }
                     }
                 }

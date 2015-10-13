@@ -304,7 +304,6 @@ TEST(IOBufferGTest, TestUnPutC) {
     ASSERT_TRUE(myIOBufferTest.TestUnPutC());
 }
 
-
 TEST(IOBufferGTest, TestUnGetC) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUnGetC());
@@ -312,21 +311,21 @@ TEST(IOBufferGTest, TestUnGetC) {
 
 TEST(IOBufferGTest, TestSetUsedSize) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestSetUsedSize(32,31));
+    ASSERT_TRUE(myIOBufferTest.TestSetUsedSize(32, 31));
 }
 
 TEST(IOBufferGTest, TestSetUsedSize_clipped) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestSetUsedSize(32,33));
+    ASSERT_TRUE(myIOBufferTest.TestSetUsedSize(32, 33));
 }
 TEST(IOBufferGTest, TestWrite_Heap_size_in_allocated) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestWrite_Heap(32,10,"HelloWorld"));
+    ASSERT_TRUE(myIOBufferTest.TestWrite_Heap(32, 10, "HelloWorld"));
 }
 
 TEST(IOBufferGTest, TestWrite_Heap_allocated_in_size) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestWrite_Heap(8,32,"HelloWorld"));
+    ASSERT_TRUE(myIOBufferTest.TestWrite_Heap(8, 32, "HelloWorld"));
 }
 
 TEST(IOBufferGTest, TestWrite_Memoryreference) {
@@ -341,12 +340,12 @@ TEST(IOBufferGTest, TestWrite_NULL_Buffer) {
 
 TEST(IOBufferGTest, TestRead_Heap_allocated_in_size) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestRead_Heap(8,32));
+    ASSERT_TRUE(myIOBufferTest.TestRead_Heap(8, 32));
 }
 
 TEST(IOBufferGTest, TestRead_Heap_size_in_allocated) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestRead_Heap(32,10));
+    ASSERT_TRUE(myIOBufferTest.TestRead_Heap(32, 10));
 }
 
 TEST(IOBufferGTest, TestRead_MemoryReference) {
@@ -354,18 +353,15 @@ TEST(IOBufferGTest, TestRead_MemoryReference) {
     ASSERT_TRUE(myIOBufferTest.TestRead_MemoryReference());
 }
 
-
 TEST(IOBufferGTest, TestRead_NULL_Buffer) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestRead_NULL_Buffer());
 }
 
-
 TEST(IOBufferGTest, TestWriteAll_size_in_allocated) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestWriteAll(10, 5, "HelloWorld"));
 }
-
 
 TEST(IOBufferGTest, TestWriteAll_allocated_in_size) {
     IOBufferTest myIOBufferTest;
@@ -395,6 +391,63 @@ TEST(IOBufferGTest, TestPrintFormattedToStream_Integer_Binary) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Integer_Binary());
 }
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_Float_FixedPoint) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_FixedPoint());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_Float_FixedRelativePoint) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_FixedRelativePoint());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_Float_Exponential) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_Exponential());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_Float_Engeneering) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_Engeneering());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_Float_Smart) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_Smart());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_Float_Compact) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_Compact());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_CCString) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_CCString());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_Pointer) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Pointer());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_Stream) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Stream());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_BitSet_Unsigned) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_BitSet_Unsigned());
+}
+
+TEST(IOBufferGTest, TestPrintFormattedToStream_BitSet_Signed) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_BitSet_Signed());
+}
+
+
 
 
 

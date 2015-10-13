@@ -114,9 +114,12 @@ public:
 
     bool TestUnGetC();
 
-    bool TestSetUsedSize(uint32 allocatedSize, uint32 desiredSize);
+    bool TestSetUsedSize(uint32 allocatedSize,
+                         uint32 desiredSize);
 
-    bool TestWrite_Heap(uint32 allocationSize, uint32 writeSize, const char8 *string);
+    bool TestWrite_Heap(uint32 allocationSize,
+                        uint32 writeSize,
+                        const char8 *string);
 
     bool TestWrite_Memoryreference();
 
@@ -124,13 +127,16 @@ public:
 
     bool TestWrite_NULL_Buffer();
 
-    bool TestRead_Heap(uint32 allocationSize, uint32 readSize);
+    bool TestRead_Heap(uint32 allocationSize,
+                       uint32 readSize);
 
     bool TestRead_MemoryReference();
 
     bool TestRead_NULL_Buffer();
 
-    bool TestWriteAll(uint32 allocationSize, uint32 writeSize, const char8* string);
+    bool TestWriteAll(uint32 allocationSize,
+                      uint32 writeSize,
+                      const char8* string);
 
     bool TestEmpty();
 
@@ -141,6 +147,28 @@ public:
     bool TestPrintFormattedToStream_Integer_Octal();
 
     bool TestPrintFormattedToStream_Integer_Binary();
+
+    bool TestPrintFormattedToStream_Float_FixedPoint();
+
+    bool TestPrintFormattedToStream_Float_FixedRelativePoint();
+
+    bool TestPrintFormattedToStream_Float_Exponential();
+
+    bool TestPrintFormattedToStream_Float_Engeneering();
+
+    bool TestPrintFormattedToStream_Float_Smart();
+
+    bool TestPrintFormattedToStream_Float_Compact();
+
+    bool TestPrintFormattedToStream_CCString();
+
+    bool TestPrintFormattedToStream_Pointer();
+
+    bool TestPrintFormattedToStream_Stream();
+
+    bool TestPrintFormattedToStream_BitSet_Unsigned();
+
+    bool TestPrintFormattedToStream_BitSet_Signed();
 };
 
 /*---------------------------------------------------------------------------*/

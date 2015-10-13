@@ -31,6 +31,7 @@
 
 #include "IOBufferTest.h"
 #include "StringHelper.h"
+//#include "StreamTestHelper.h"
 #include "printf.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -1706,7 +1707,7 @@ bool IOBufferTest::TestPrintFormattedToStream_Integer_Octal() {
 bool IOBufferTest::TestPrintFormattedToStream_Integer_Binary() {
 
     IOBuffer ioBuffer;
-    uint32 allocationSize = 64;
+    uint32 allocationSize = 128;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
 
     Clear(ioBuffer);
@@ -1789,7 +1790,7 @@ bool IOBufferTest::TestPrintFormattedToStream_Integer_Binary() {
     ubit32 = 0xcd0f;
     toPrint = ubit32;
 
-    ioBuffer.PrintFormattedToStream("% 0b", &toPrint);
+    ioBuffer.PrintFormattedToStream("% 034b", &toPrint);
     //Right align with zeros
     if (StringHelper::Compare("  00000000000000001100110100001111", ioBuffer.Buffer()) != 0) {
         return false;
@@ -1830,3 +1831,1194 @@ bool IOBufferTest::TestPrintFormattedToStream_Integer_Binary() {
     }
     return true;
 }
+
+bool IOBufferTest::TestPrintFormattedToStream_Float_FixedPoint() {
+
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 32;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+    Clear(ioBuffer);
+
+    float32 sbit32 = -1.1234567;
+    AnyType toPrint = sbit32;
+
+    //Left padded, negative number, exact precision.
+    ioBuffer.PrintFormattedToStream("%- 12.7f", &toPrint);
+    printf("%12.7f %s", sbit32, ioBuffer.Buffer());
+    if (StringHelper::Compare("-1.1234567  ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //6 decimal numbers by default.
+    ioBuffer.PrintFormattedToStream("%f", &toPrint);
+    if (StringHelper::Compare("-1.123457", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Less precision.
+    ioBuffer.PrintFormattedToStream("%- 12.3f", &toPrint);
+    if (StringHelper::Compare("-1.123      ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Right aligned padding.
+    sbit32 = 112345.67; //112345,...
+    toPrint = sbit32;
+
+    ioBuffer.PrintFormattedToStream("% 12.2f", &toPrint);
+    if (StringHelper::Compare("   112345.67", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Print 0
+    sbit32 = 0; //112345,...
+    toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("% 3.2f", &toPrint);
+    if (StringHelper::Compare("  0", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Underflow
+
+    sbit32 = 0.09; //112345,...
+    toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("% 1.2f", &toPrint);
+
+    if (StringHelper::Compare("0", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Round up correction.
+    float64 sbit64 = 12345.9999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 10.3f", &toPrint);
+
+    if (StringHelper::Compare(" 12346.000", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Get the integer part.
+    ioBuffer.PrintFormattedToStream("% 10.0f", &toPrint);
+
+    if (StringHelper::Compare("     12346", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Over precision
+    sbit64 = 999999.99996;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 17.9f", &toPrint);
+
+    if (StringHelper::Compare(" 999999.999960000", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Overflow and not enough space, because the rounding up we need at least seven digits.
+    ioBuffer.PrintFormattedToStream("% 6.4f", &toPrint);
+    if (StringHelper::Compare("     ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Point removing and overflow.
+    ioBuffer.PrintFormattedToStream("%-8.4f", &toPrint);
+    if (StringHelper::Compare("1000000 ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    //Enough space for the point and a decimal number.
+    Clear(ioBuffer);
+
+    ioBuffer.PrintFormattedToStream("%-9.4f", &toPrint);
+    if (StringHelper::Compare("1000000.0", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //No space for the fraction part.
+    sbit64 = -222222.5255;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%7.4f", &toPrint);
+    if (StringHelper::Compare("-222223", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //No space for the fraction part again.
+    ioBuffer.PrintFormattedToStream("% 8.4f", &toPrint);
+    if (StringHelper::Compare(" -222223", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Space enough for one decimal number. Approximation at the second digit after .
+    ioBuffer.PrintFormattedToStream("% 9.4f", &toPrint);
+    if (StringHelper::Compare("-222222.5", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Space enouh for two decimal numbers. Approximation at the third digit after .
+    ioBuffer.PrintFormattedToStream("% 10.4f", &toPrint);
+    if (StringHelper::Compare("-222222.53", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Not enough space for the integer part.
+    ioBuffer.PrintFormattedToStream("% 5.4f", &toPrint);
+    if (StringHelper::Compare("    ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //Negative exponent.
+    sbit64 = 0.009;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 5.2f", &toPrint);
+
+    if (StringHelper::Compare(" 0.01", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //Not enough space (it must be at least 12+1(zero)+1(point)=14)
+    sbit64 = 1e-12;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 12.4f", &toPrint);
+    if (StringHelper::Compare("           0", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Not enough space with 1 as maxSize and for negative number (it must be at least 12+1(zero)+1(point)=14)
+    sbit64 = -1e-12;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 1.10f", &toPrint);
+    if (StringHelper::Compare("0", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Positive inf.
+    float32 inf = 1.0 / 0.0;
+    toPrint = inf;
+    ioBuffer.PrintFormattedToStream("%10.10f", &toPrint);
+    if (StringHelper::Compare("+Inf", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Negative inf
+    float64 ninf = -1.0 / 0.0;
+    toPrint = ninf;
+    ioBuffer.PrintFormattedToStream("% 10.10f", &toPrint);
+    if (StringHelper::Compare("      -Inf", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Not enough space to print -Inf
+    ioBuffer.PrintFormattedToStream("%-1.10f", &toPrint);
+    if (StringHelper::Compare("?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //NaN
+    float64 nan = 0.0 / 0.0;
+    toPrint = nan;
+    ioBuffer.PrintFormattedToStream("%-10.10f", &toPrint);
+    if (StringHelper::Compare("NaN       ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Nan with automatic size
+    ioBuffer.PrintFormattedToStream("% 0.4f", &toPrint);
+    if (StringHelper::Compare("NaN", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Not enough space to print Nan
+    ioBuffer.PrintFormattedToStream("% 2.10f", &toPrint);
+    if (StringHelper::Compare(" ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    return true;
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_Float_FixedRelativePoint() {
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 64;
+
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+    Clear(ioBuffer);
+
+    float32 sbit32 = -1.1234567;
+    AnyType toPrint = sbit32;
+    //Left padded, negative number, exact precision
+
+    ioBuffer.PrintFormattedToStream("%-12.8F", &toPrint);
+    if (StringHelper::Compare("-1.1234567  ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Automatic precision set to 7 for 32 bit numbers.
+    ioBuffer.PrintFormattedToStream("%-12F", &toPrint);
+    if (StringHelper::Compare("-1.123457   ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Precision 0.
+    ioBuffer.PrintFormattedToStream("%-12.0F", &toPrint);
+    if (StringHelper::Compare("0           ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Less precision.
+    ioBuffer.PrintFormattedToStream("%-12.4F", &toPrint);
+    if (StringHelper::Compare("-1.123      ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Right aligned padding
+    sbit32 = 112345.67; //112345,...
+    toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("% 12.8F", &toPrint);
+    if (StringHelper::Compare("   112345.67", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Round up correction
+    float64 sbit64 = 12345.9999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 10.8F", &toPrint);
+    if (StringHelper::Compare(" 12346.000", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Less precision than the size of integer part.
+    ioBuffer.PrintFormattedToStream("% 10.3F", &toPrint);
+    if (StringHelper::Compare("     12300", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Over precision.
+    sbit64 = 999999.99996;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 17.15F", &toPrint);
+    if (StringHelper::Compare(" 999999.999960000", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Overflow and not enough space because the round up.
+    ioBuffer.PrintFormattedToStream("% 6.10F", &toPrint);
+    if (StringHelper::Compare("     ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Overflow, no space for decimals.
+    ioBuffer.PrintFormattedToStream("%-8.10F", &toPrint);
+    if (StringHelper::Compare("1000000 ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Enough space for the point and a decimal number.
+    ioBuffer.PrintFormattedToStream("%-9.10F", &toPrint);
+    if (StringHelper::Compare("1000000.0", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //No space for decimal numbers
+    sbit64 = -222222.5255;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%7.10F", &toPrint);
+    if (StringHelper::Compare("-222223", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //No space for decimal numbers again.
+    ioBuffer.PrintFormattedToStream("% 8.10F", &toPrint);
+    if (StringHelper::Compare(" -222223", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Space enough for one decimal number. Approximation at the second digit after .
+    ioBuffer.PrintFormattedToStream("% 9.10F", &toPrint);
+    if (StringHelper::Compare("-222222.5", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Space enough for two numbers. Approximation at the third digit after .
+    ioBuffer.PrintFormattedToStream("% 10.10F", &toPrint);
+    if (StringHelper::Compare("-222222.53", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Not enough space for the integer part
+    ioBuffer.PrintFormattedToStream("% 5.10F", &toPrint);
+    if (StringHelper::Compare("    ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Not enough space (it must be at least 12+1(zero)+1(point)=14)
+    sbit64 = 1e-12;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 12.12F", &toPrint);
+    if (StringHelper::Compare("           0", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Poisitive inf.
+    float32 inf = 1.0 / 0.0;
+    toPrint = inf;
+    ioBuffer.PrintFormattedToStream("%10.10F", &toPrint);
+    if (StringHelper::Compare("+Inf", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Negative inf
+    float64 ninf = -1.0 / 0.0;
+    toPrint = ninf;
+    ioBuffer.PrintFormattedToStream("% 10.10F", &toPrint);
+    if (StringHelper::Compare("      -Inf", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Not enough space to print -Inf
+    ioBuffer.PrintFormattedToStream("%-1.10F", &toPrint);
+    if (StringHelper::Compare("?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //NaN
+    float64 nan = 0.0 / 0.0;
+    toPrint = nan;
+    ioBuffer.PrintFormattedToStream("%-10.10F", &toPrint);
+    if (StringHelper::Compare("NaN       ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Nan with automatic size
+    ioBuffer.PrintFormattedToStream("% 0.10F", &toPrint);
+    if (StringHelper::Compare("NaN", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Not enough space to print Nan
+    ioBuffer.PrintFormattedToStream("% 2.10F", &toPrint);
+    if (StringHelper::Compare(" ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    return true;
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_Float_Exponential() {
+    IOBuffer ioBuffer;
+
+    uint32 allocationSize = 64;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    Clear(ioBuffer);
+
+    float32 sbit32 = -11.234567;
+    AnyType toPrint = sbit32;
+
+    ioBuffer.PrintFormattedToStream("%-15.8e", &toPrint);
+    //Left alignment padded
+    if (StringHelper::Compare("-1.1234567E+1  ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Left alignment, clip the number without rounding (the next is 4).
+    ioBuffer.PrintFormattedToStream("%-9.4e", &toPrint);
+    if (StringHelper::Compare("-1.123E+1", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Right Alignment with round up because the size (the next number is 6 because precision became 10(size)-3(exp)-1(point)=6)
+    sbit32 = 112345.67; //112345,...
+    toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("% 10.8e", &toPrint);
+    if (StringHelper::Compare("1.12346E+5", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Automatic precision=15 for 64 bit.
+    float64 sbit64 = -12345.9999;
+    toPrint = sbit64;
+
+    ioBuffer.PrintFormattedToStream("% 21.e", &toPrint);
+    if (StringHelper::Compare(" -1.23459999000000E+4", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Round up and zero added because the chosen precision.
+    sbit64 = -12345.9999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 13.8e", &toPrint);
+    if (StringHelper::Compare("-1.2346000E+4", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //In case of round up overflow.
+    sbit64 = 999999.55556;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%.6e", &toPrint);
+    if (StringHelper::Compare("1.00000E+6", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Clip the precision because of the size.
+    ioBuffer.PrintFormattedToStream("%-5.6e", &toPrint);
+    if (StringHelper::Compare("1E+6 ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Too few space for number + exponent.
+    ioBuffer.PrintFormattedToStream("%-3.2e", &toPrint);
+    if (StringHelper::Compare("?  ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //The number initially does not fit but later yes thanks to the approximation.
+
+    sbit64 = 9.5e-10;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%-4.2e", &toPrint);
+    if (StringHelper::Compare("1E-9", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //The approximation is not sufficient now.
+    sbit64 = 9.4999e-10;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%-4.2e", &toPrint);
+    if (StringHelper::Compare("?   ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Support exponent with 3 digits
+    /*    sbit64 = 9.9999e-101;
+     toPrint = sbit64;
+     ioBuffer.PrintFormattedToStream("%-6.2e", &toPrint);
+     if (StringHelper::Compare("1E-100", ioBuffer.Buffer()) != 0) {
+     return false;
+     }
+     Clear(ioBuffer);
+
+     //Support exponent with 4 digits
+     sbit64 = 9.9999e+999;
+     toPrint = sbit64;
+     ioBuffer.PrintFormattedToStream("%-7.2e", &toPrint);
+     if (StringHelper::Compare("1E+1000", ioBuffer.Buffer()) != 0) {
+     return false;
+     }
+     Clear(ioBuffer);
+     */
+    return true;
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_Float_Engeneering() {
+    IOBuffer ioBuffer;
+
+    uint32 allocationSize = 64;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    Clear(ioBuffer);
+
+    //Precision lost (with float32 this happens frequently)!
+    float32 sbit32 = -11.234567;
+    AnyType toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("%.9E", &toPrint);
+    if (StringHelper::Compare("-11.2345671", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Left Align without correction (the next number is 4)
+    sbit32 *= 100;
+    toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("%-10.4E", &toPrint);
+    if (StringHelper::Compare("-1.123E+3 ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Right align padded with round up correction (the next number is 5)
+
+    sbit32 = 112345.67;
+    toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("% 10.8E", &toPrint);
+    if (StringHelper::Compare("112.346E+3", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Round up and zero added because the precision clip caused by the size (precision become 6).
+    float64 sbit64 = 12345.9999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 10.9E", &toPrint);
+    if (StringHelper::Compare("12.3460E+3", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Without rounding up it can't print (999e-3) but with approximation it can.
+    sbit64 = -0.9999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 3.3E", &toPrint);
+    if (StringHelper::Compare(" -1", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //If precision is too much we don't have approximation, then the size is not sufficient.
+    sbit64 = -0.9999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 3.5E", &toPrint);
+    if (StringHelper::Compare(" -1", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Round up and right aligned padd.
+    sbit64 = 999999.99999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 20.10E", &toPrint);
+    if (StringHelper::Compare("      1.000000000E+6", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Automatic precision=34 for 128 bit number (clipped).
+    sbit64 = 999999.9999900000000000000000000000;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 19E", &toPrint);
+    if (StringHelper::Compare("999.999999990000E+3", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+    //Not enough space for decimal numbers.
+    sbit64 = -9.99999e9;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%-7.3E", &toPrint);
+    if (StringHelper::Compare("-10E+9 ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Not enough space to print the approximated number -100E+9.
+    sbit64 *= 10; //-99e9
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 6.4E", &toPrint);
+    if (StringHelper::Compare("     ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Also increasing the precision, it is clipped because the size then with the overflow the size is not sufficient.
+    ioBuffer.PrintFormattedToStream("% 6.6E", &toPrint);
+    if (StringHelper::Compare("     ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+
+    //? the size is less than the minimum required
+    sbit64 *= 10; //-1E+12 min_size=6
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%5.2E", &toPrint);
+
+    if (StringHelper::Compare("?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //The number enter as 999 not approximated, and then approximation enter again in the size
+    sbit64 = 999.9;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 4.10E", &toPrint);
+    if (StringHelper::Compare("1E+3", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //The number enter as 999 not approximated, but with approximation exceed the size then ?
+    ioBuffer.PrintFormattedToStream("% 3.10E", &toPrint);
+    if (StringHelper::Compare("  ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //The number does not enter as 999E+3 but after approximation enter in the size as 1E+6
+    sbit64 = 999.9e3;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 4.10E", &toPrint);
+    if (StringHelper::Compare("1E+6", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //The number initially does not fit, but it fit later thanks to approximation.
+    sbit64 = 950.0e-6;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 4.10E", &toPrint);
+    if (StringHelper::Compare("1E-3", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //The approximation is not enough for the rounding.
+    sbit64 = 949.9e-6;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 4.10E", &toPrint);
+    if (StringHelper::Compare("   ?", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    return true;
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_Float_Smart() {
+
+    IOBuffer ioBuffer;
+
+    uint32 allocationGranularity = 64;
+
+    ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
+
+    Clear(ioBuffer);
+    float32 sbit32 = -11.234567;
+    AnyType toPrint = sbit32;
+
+    ioBuffer.PrintFormattedToStream("%.9g", &toPrint);
+    //Precision lost (with float32 this happens frequently)!
+    if (StringHelper::Compare("-11.2345671", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Left Align without correction (the next is 4)
+    sbit32 *= 100; //1123.4567
+    toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("%- 10.4g", &toPrint);
+    if (StringHelper::Compare("-1.123K   ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Right align padded with round up correction (the next is 5)
+    sbit32 = 112345.67; //112345,...
+    toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("% 8.6g", &toPrint);
+    if (StringHelper::Compare("112.346K", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Round up and zero added because the chosen precision.
+    float64 sbit64 = 12345.9999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 10.6g", &toPrint);
+    if (StringHelper::Compare("  12.3460K", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    sbit64 = -0.9999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 3.3g", &toPrint);
+    if (StringHelper::Compare(" -1", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Round up and right aligned padd.
+    sbit64 = 999999.99999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 20.10g", &toPrint);
+
+    if (StringHelper::Compare("        1.000000000M", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Automatic size definition
+    sbit64 = -9.99999e9;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%-7.3g", &toPrint);
+    if (StringHelper::Compare("-10.0G ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Clip the precision because the size
+    sbit64 *= 10; //-9.9e10
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%-4.4g", &toPrint);
+    if (StringHelper::Compare("?   ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+    //? the size is less than the minimum required
+    sbit64 *= 10; //-999E+9 min_size=7
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 4.5g", &toPrint);
+    if (StringHelper::Compare(" -1T", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //The number enter as 999 not approximated, and then approximation enter again in the size
+    sbit64 = 999.9;
+    ioBuffer.PrintFormattedToStream("% 4.10g", &toPrint);
+    if (StringHelper::Compare("1.0K", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //The number does not enter as 999K but after approximation enter in the size as 1M
+    sbit64 = 999.9e3;
+    ioBuffer.PrintFormattedToStream("% 3.10g", &toPrint);
+    if (StringHelper::Compare(" 1M", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //print as engineering for exponents >24 and <-24
+    sbit64 = 9e28;
+    ioBuffer.PrintFormattedToStream("%-7.10g", &toPrint);
+    if (StringHelper::Compare("90E+27 ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    sbit64 = -9.9e-28;
+    ioBuffer.PrintFormattedToStream("% 9.10g", &toPrint);
+    if (StringHelper::Compare(" -990E-30", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    return true;
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_Float_Compact() {
+    IOBuffer ioBuffer;
+
+    uint32 allocationSize = 64;
+
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    Clear(ioBuffer);
+
+    float32 sbit32 = -11.234567;
+    AnyType toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("%.9G", &toPrint);
+    //Precision lost (with float32 this happens frequently)!
+    if (StringHelper::Compare("-11.2345671", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Left Align without correction (the next is 4)
+    sbit32 *= 100; //1123.4567
+    toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("%-10.4G", &toPrint);
+    if (StringHelper::Compare("-1.123K   ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Right align padded with round up correction (the next is 5)
+    sbit32 = 112345.67; //112345,...
+    toPrint = sbit32;
+    ioBuffer.PrintFormattedToStream("% 8.6G", &toPrint);
+    if (StringHelper::Compare("112.346K", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Round up and zero added because the chosen precision.
+    float64 sbit64 = 12345.9999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 10.6G", &toPrint);
+    if (StringHelper::Compare("  12.3460K", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    sbit64 = -0.9999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 3.3G", &toPrint);
+    if (StringHelper::Compare(" -1", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Round up and right aligned padd.
+    sbit64 = 999999.99999;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 20.10G", &toPrint);
+    if (StringHelper::Compare("        1.000000000M", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Automatic size definition
+    sbit64 = -9.99999e9;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%-7.3G", &toPrint);
+    if (StringHelper::Compare("-10.0G ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //Clip the precision because the size
+    sbit64 *= 10; //-9.9e10
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%-4.4G", &toPrint);
+    if (StringHelper::Compare("?   ", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer);
+    //? the size is less than the minimum required
+    sbit64 *= 10; //-999E+9 min_size=7
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 4.54G", &toPrint);
+
+    if (StringHelper::Compare(" -1T", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //The number enter as 999 not approximated, and then approximation enter again in the size
+    sbit64 = 999.9;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 4.10G", &toPrint);
+    if (StringHelper::Compare("1.0K", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //The number does not enter as 999K but after approximation enter in the size as 1M
+    sbit64 = 999.9e3;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 3.10G", &toPrint);
+    if (StringHelper::Compare(" 1M", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    //print as engineering for exponents >24 and <-24
+    sbit64 = 9e28;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("%-7.10G", &toPrint);
+    if (StringHelper::Compare("9.0E+28", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    sbit64 = -9.9e-28;
+    toPrint = sbit64;
+    ioBuffer.PrintFormattedToStream("% 9.10G", &toPrint);
+    if (StringHelper::Compare("-9.90E-28", ioBuffer.Buffer()) != 0) {
+        return false;
+    }
+    Clear(ioBuffer);
+
+    return true;
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_CCString() {
+
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 64;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    Clear(ioBuffer);
+
+    const char* Hello = "HelloWorld";
+
+    AnyType toPrint = Hello;
+
+    ioBuffer.PrintFormattedToStream("string:%s", &toPrint);
+    if (StringHelper::Compare(ioBuffer.Buffer(), "string:HelloWorld") != 0) {
+        return false;
+    }
+    //Clip the string
+    Clear(ioBuffer);
+    ioBuffer.PrintFormattedToStream("string:%5s", &toPrint);
+    if (StringHelper::Compare(ioBuffer.Buffer(), "string:Hello") != 0) {
+        return false;
+    }
+    //Padd right the string
+    Clear(ioBuffer);
+    ioBuffer.PrintFormattedToStream("string:% 11s", &toPrint);
+    if (StringHelper::Compare(ioBuffer.Buffer(), "string: HelloWorld") != 0) {
+        return false;
+    }
+
+    //Padd left the string
+    Clear(ioBuffer);
+    ioBuffer.PrintFormattedToStream("string:%- 11s", &toPrint);
+    if (StringHelper::Compare(ioBuffer.Buffer(), "string:HelloWorld ") != 0) {
+        return false;
+    }
+    return true;
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_Pointer() {
+
+    IOBuffer ioBuffer1;
+    IOBuffer ioBuffer2;
+
+    uint32 allocationSize = 64;
+    ioBuffer1.SetBufferHeapMemory(allocationSize, 0);
+    ioBuffer2.SetBufferHeapMemory(allocationSize, 0);
+    Clear(ioBuffer1);
+    Clear(ioBuffer2);
+    //return the pointer thanks to hex notation.
+
+    const char *charPointer = "Hello";
+    AnyType toPrintChar = charPointer;
+    uint64 UIntPointer = (uint64) charPointer;
+    AnyType toPrintUInt = UIntPointer;
+    ioBuffer1.PrintFormattedToStream("%x", &toPrintChar);
+    ioBuffer2.PrintFormattedToStream("%x", &toPrintUInt);
+
+    if (StringHelper::Compare(ioBuffer1.Buffer(), ioBuffer2.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer1);
+    Clear(ioBuffer2);
+    //%p format as the complete 32 bit pointer with header
+
+    void* pointer = (void*) charPointer;
+    AnyType toPrintPointer = pointer;
+
+    ioBuffer1.PrintFormattedToStream("%p", &toPrintPointer);
+    ioBuffer2.PrintFormattedToStream("% #0x", &toPrintUInt);
+
+    if (StringHelper::Compare(ioBuffer1.Buffer(), ioBuffer2.Buffer()) != 0) {
+        return false;
+    }
+
+    return true;
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_Stream() {
+    /*
+     IOBuffer ioBuffer;
+
+     uint32 allocationSize = 64;
+     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+     Clear(ioBuffer);
+
+     //cast StreamString to anytype.
+     StreamString input = "HelloWorld";
+
+     AnyType toPrint = input;
+
+     myString.Printf("string:%s, number:%3d", input, dbit64);
+     if (myString != "string:HelloWorld, number:3.4") {
+     return false;
+     }
+
+     //Clip the stream.
+     myString = "";
+     input = "HelloWorld";
+     myString.Printf("string:%5s, number:%3d", input, dbit64);
+     if (myString != "string:Hello, number:3.4") {
+     return false;
+     }
+
+     //right padd
+     myString = "";
+     input = "HelloWorld";
+     myString.Printf("string:% 12s, number:%3d", input, dbit64);
+     if (myString != "string:  HelloWorld, number:3.4") {
+     return false;
+     }
+
+     //left padd
+     myString = "";
+     input = "HelloWorld";
+     myString.Printf("string:%-12s, number:%3d", input, dbit64);
+     if (myString != "string:HelloWorld  , number:3.4") {
+     return false;
+     }*/
+
+    //TODO
+    return true;
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_BitSet_Unsigned() {
+
+    uint64 data[5] = { 0x13579BDF02468ACE, 0x13579BDF02468ACE, 0x123456789ABCDEF0, 0xDEADBABEBAB00111 };
+    const char streamString[] = "DEADBABEBAB00111123456789ABCDEF013579BDF02468ACE13579BDF02468ACE";
+    int32 sizeStr = 63;
+    uint32 dataBitSize = 256;
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 256;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+    Clear(ioBuffer);
+
+    uint32* source = (uint32*) data;
+
+    //from size =4 to size = 64
+    for (uint32 size = 4; size < 32; size += 4) {
+        int32 beg = 0;
+        int32 end = 0;
+
+        for (uint32 myShift = 0; myShift < dataBitSize; myShift += size) {
+            //source and shift are automatically modified by the function.
+            TypeDescriptor td(false, UnsignedInteger, size);
+            AnyType toPrint(td, myShift, source);
+
+            ioBuffer.PrintFormattedToStream("%0x", &toPrint);
+            char buffer[128];
+
+            end = sizeStr - myShift / 4;
+            beg = (end - (size / 4)) + 1;
+            StringHelper::Substr(beg, end, streamString, buffer);
+            printf("\n|%s| |%s|\n", buffer, ioBuffer.Buffer());
+
+            if (StringHelper::Compare(buffer, ioBuffer.Buffer()) != 0) {
+                printf("\n%d %d\n", myShift, size);
+                return false;
+            }
+            Clear(ioBuffer);
+
+            //Avoids to print shit. (it remains less than size)
+            if ((dataBitSize - myShift) < (2 * size)) {
+                break;
+            }
+        }
+    }
+
+    return true;
+
+}
+
+bool IOBufferTest::TestPrintFormattedToStream_BitSet_Signed() {
+
+    int64 data[5] = { 0x13579BDF02468ACE, 0x13579BDF02468ACE, 0x123456789ABCDEF0, 0xDEADBABEBAB00111 };
+    const char streamString[] = "DEADBABEBAB00111123456789ABCDEF013579BDF02468ACE13579BDF02468ACE";
+    int32 sizeStr = 63;
+    uint32 dataBitSize = 256;
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 256;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+    Clear(ioBuffer);
+
+    int32* source = (int32*) data;
+
+    //from size =4 to size = 64
+    for (uint32 size = 4; size < 32; size += 4) {
+        int32 beg = 0;
+        int32 end = 0;
+
+        for (uint32 myShift = 0; myShift < dataBitSize; myShift += size) {
+            //source and shift are automatically modified by the function.
+            TypeDescriptor td(false, SignedInteger, size);
+            AnyType toPrint(td, myShift, source);
+
+            ioBuffer.PrintFormattedToStream("%0x", &toPrint);
+            char buffer[128];
+
+            end = sizeStr - myShift / 4;
+            beg = (end - (size / 4)) + 1;
+            StringHelper::Substr(beg, end, streamString, buffer);
+
+            //the number is negative
+            if (buffer[0] > ('0' + 7)) {
+                uint8 numberSize = 2;
+                uint32 index = 0;
+                char8 prefix[32];
+                while (numberSize < (size / 4)) {
+                    numberSize *= 2;
+                }
+                for (uint32 k = index; k < (numberSize - (size / 4)); k++) {
+                    prefix[k] = 'F';
+                    index++;
+                }
+                prefix[index] = '\0';
+                char result[32];
+                StringHelper::Concatenate(prefix, buffer, result);
+                StringHelper::Copy(buffer, result);
+            }
+
+            printf("\n|%s| |%s|\n", buffer, ioBuffer.Buffer());
+
+            if (StringHelper::Compare(buffer, ioBuffer.Buffer()) != 0) {
+                printf("\n%d %d\n", myShift, size);
+                return false;
+            }
+            Clear(ioBuffer);
+
+            //Avoids to print shit. (it remains less than size)
+            if ((dataBitSize - myShift) < (2 * size)) {
+                break;
+            }
+        }
+    }
+
+    return true;
+
+}
+

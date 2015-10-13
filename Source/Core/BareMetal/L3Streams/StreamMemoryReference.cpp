@@ -41,24 +41,27 @@
 
 namespace MARTe {
 
-StreamMemoryReference::StreamMemoryReference():BufferedStream(),buffer() {
+StreamMemoryReference::StreamMemoryReference() :
+        BufferedStream(),
+        buffer() {
 
 }
 
-
 StreamMemoryReference::StreamMemoryReference(char8 * const bufferIn,
-                                             const uint32 bufferSize):BufferedStream() {
-    if(this->buffer.SetBufferReferencedMemory(bufferIn, bufferSize, 0u)){
+                                             const uint32 bufferSize) :
+        BufferedStream() {
+    if (this->buffer.SetBufferReferencedMemory(bufferIn, bufferSize, 0u)) {
         //TODO
     }
 }
 
 StreamMemoryReference::StreamMemoryReference(const char8 * const bufferIn,
-                                             const uint32 bufferSize):BufferedStream() {
-    if(!this->buffer.SetBufferReadOnlyReferencedMemory(bufferIn, bufferSize, 0u)){
+                                             const uint32 bufferSize) :
+        BufferedStream() {
+    if (!this->buffer.SetBufferReadOnlyReferencedMemory(bufferIn, bufferSize, 0u)) {
         //TODO
     }
-    if(!this->buffer.SetUsedSize(bufferSize)){
+    if (!this->buffer.SetUsedSize(bufferSize)) {
         //TODO
     }
 }
@@ -71,7 +74,6 @@ StreamMemoryReference::operator AnyType() {
     return at;
 }
 
-
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
 IOBuffer *StreamMemoryReference::GetInputBuffer() {
     return &buffer;
@@ -82,12 +84,10 @@ IOBuffer *StreamMemoryReference::GetOutputBuffer() {
     return &buffer;
 }
 
-
 bool StreamMemoryReference::Read(char8* const bufferIn,
                                  uint32 & size) {
     return this->buffer.Read(&bufferIn[0], size);
 }
-
 
 bool StreamMemoryReference::Write(const char8* const bufferIn,
                                   uint32 & size) {
@@ -96,7 +96,9 @@ bool StreamMemoryReference::Write(const char8* const bufferIn,
 }
 
 bool StreamMemoryReference::CanWrite() const {
-    return (buffer.BufferReference() != NULL);
+    bool cond1 = (buffer.BufferReference() != NULL);
+    bool cond2 = buffer.CanWrite();
+    return (cond1) && (cond2);
 };
 
 bool StreamMemoryReference::CanRead() const {
@@ -110,7 +112,7 @@ uint64 StreamMemoryReference::Size() {
 
 bool StreamMemoryReference::SetSize(const uint64 size) {
 
-    if(!buffer.SetUsedSize(static_cast<uint32>(size))){
+    if (!buffer.SetUsedSize(static_cast<uint32>(size))) {
         //TODO
     }
     return true;
@@ -118,16 +120,16 @@ bool StreamMemoryReference::SetSize(const uint64 size) {
 
 bool StreamMemoryReference::Seek(const uint64 pos) {
     uint32 usedSize = buffer.UsedSize();
-    bool ret=true;
+    bool ret = true;
     if (pos > usedSize) {
 //REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
-        if(!buffer.Seek(usedSize)){
+        if (!buffer.Seek(usedSize)) {
             //TODO
         }
-        ret=false;
+        ret = false;
     }
 
-    return (ret)?(buffer.Seek(static_cast<uint32>(pos))):(false);
+    return (ret) ? (buffer.Seek(static_cast<uint32>(pos))) : (false);
 }
 
 /** Moves within the file relative to current location */
@@ -144,7 +146,6 @@ uint64 StreamMemoryReference::Position() {
 bool StreamMemoryReference::CanSeek() const {
     return true;
 }
-
 
 }
 
