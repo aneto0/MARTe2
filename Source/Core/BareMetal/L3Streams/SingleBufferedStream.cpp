@@ -45,30 +45,15 @@ namespace MARTe {
 
 SingleBufferedStream::SingleBufferedStream() :
         BufferedStream(),
-        readBuffer(),
-        writeBuffer() {
-    unbufferedStream = static_cast<RawStream *>(NULL);
+        internalBuffer(this) {
     operatingModes.mutexReadMode = false;
     operatingModes.mutexWriteMode = false;
     timeout = TTDefault;
 }
 
-SingleBufferedStream::SingleBufferedStream(RawStream* const lowLevelStream) :
+SingleBufferedStream::SingleBufferedStream(const TimeoutType &msecTimeout) :
         BufferedStream(),
-        readBuffer(lowLevelStream),
-        writeBuffer(lowLevelStream) {
-    unbufferedStream = lowLevelStream;
-    operatingModes.mutexReadMode = false;
-    operatingModes.mutexWriteMode = false;
-    timeout = TTDefault;
-}
-
-SingleBufferedStream::SingleBufferedStream(RawStream* const lowLevelStream,
-                                           const TimeoutType &msecTimeout) :
-        BufferedStream(),
-        readBuffer(lowLevelStream, msecTimeout),
-        writeBuffer(lowLevelStream, msecTimeout) {
-    unbufferedStream = lowLevelStream;
+        internalBuffer(this, msecTimeout) {
     operatingModes.mutexReadMode = false;
     operatingModes.mutexWriteMode = false;
     timeout = msecTimeout;
@@ -77,24 +62,9 @@ SingleBufferedStream::SingleBufferedStream(RawStream* const lowLevelStream,
 /// default destructor
 SingleBufferedStream::~SingleBufferedStream() {
 
-    unbufferedStream = static_cast<RawStream *>(NULL);
-    if(!writeBuffer.Flush()){
+    if (!internalBuffer.Flush()) {
         //TODO
     }
-}
-
-bool SingleBufferedStream::CanSeek() const {
-    return unbufferedStream->CanSeek();
-}
-
-/** whether it can be written into */
-bool SingleBufferedStream::CanWrite() const {
-    return unbufferedStream->CanWrite();
-}
-
-/** whether it can be  read */
-bool SingleBufferedStream::CanRead() const {
-    return unbufferedStream->CanRead();
 }
 
 bool SingleBufferedStream::SetBufferSize(uint32 readBufferSize,
@@ -131,12 +101,12 @@ bool SingleBufferedStream::SetBufferSize(uint32 readBufferSize,
     if (FlushAndResync()) {
 
         // adjust readBufferSize
-        if (!readBuffer.SetBufferSize(readBufferSize)) {
+        if (!internalBuffer.SetBufferSize(readBufferSize)) {
             //TODO
         }
 
         // adjust writeBufferSize
-        if (!writeBuffer.SetBufferSize(writeBufferSize)) {
+        if (!internalBuffer.SetBufferSize(writeBufferSize)) {
             //TODO
         }
 
@@ -149,7 +119,7 @@ bool SingleBufferedStream::SetBufferSize(uint32 readBufferSize,
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
 IOBuffer *SingleBufferedStream::GetInputBuffer() {
-    IOBuffer *ret = &readBuffer;
+    IOBuffer *ret = &internalBuffer;
     if (operatingModes.mutexWriteMode) {
         if (!SwitchToReadMode()) {
             ret = static_cast<IOBuffer *>(NULL);
@@ -161,7 +131,7 @@ IOBuffer *SingleBufferedStream::GetInputBuffer() {
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
 IOBuffer *SingleBufferedStream::GetOutputBuffer() {
-    IOBuffer *ret = &writeBuffer;
+    IOBuffer *ret = &internalBuffer;
 
     // check for mutually exclusive buffering and
     // whether one needs to switch to WriteMode
@@ -188,13 +158,13 @@ bool SingleBufferedStream::Read(char8 * const bufferIn,
     if (ret) {
 
         // check whether we have a buffer
-        if (readBuffer.BufferSize() > 0u) {
+        if (internalBuffer.BufferSize() > 0u) {
 
             // read from buffer first
             uint32 toRead = size;
 
             // try once
-            if(!readBuffer.Read(&bufferIn[0], size)){
+            if (!internalBuffer.Read(&bufferIn[0], size)) {
                 //TODO
             }
 
@@ -205,14 +175,14 @@ bool SingleBufferedStream::Read(char8 * const bufferIn,
                 toRead -= size;
 
                 // decide whether to use the buffer again or just to read directly
-                if ((toRead * 4u) < readBuffer.MaxUsableAmount()) {
-                    if (!readBuffer.Refill()) {
+                if ((toRead * 4u) < internalBuffer.MaxUsableAmount()) {
+                    if (!internalBuffer.Refill()) {
                         ret = false;
                     }
 
                     else {
 
-                        if(!readBuffer.Read(&bufferIn[size], toRead)){
+                        if (!internalBuffer.Read(&bufferIn[size], toRead)) {
                             //TODO
                         }
                         size += toRead;
@@ -224,7 +194,7 @@ bool SingleBufferedStream::Read(char8 * const bufferIn,
                 }
                 else {
                     // if needed read directly from stream
-                    if (!unbufferedStream->Read(&bufferIn[size], toRead, timeout)) {
+                    if (!UnbufferedRead(&bufferIn[size], toRead, timeout)) {
                         ret = false;
                     }
                     else {
@@ -236,7 +206,7 @@ bool SingleBufferedStream::Read(char8 * const bufferIn,
     }
 
     // if needed read directly from stream
-    return (ret) ? (unbufferedStream->Read(&bufferIn[0], size, timeout)) : (false);
+    return (ret) ? (UnbufferedRead(&bufferIn[0], size, timeout)) : (false);
 }
 
 /** Write data from a buffer to the stream. As much as size byte are written, actual size
@@ -255,25 +225,26 @@ bool SingleBufferedStream::Write(const char8 * const bufferIn,
         }
     }
     if (ret) {
+
         // buffering active?
-        if (writeBuffer.BufferSize() > 0u) {
+        if (internalBuffer.BufferSize() > 0u) {
             // separate input and output size
 
             uint32 toWrite = size;
             // check available buffer size versus write size
             // if size is comparable to buffer size there
             // is no reason to use the buffering mechanism
-            if (writeBuffer.MaxUsableAmount() > (4u * size)) {
+            if (internalBuffer.MaxUsableAmount() > (4u * size)) {
 
                 // try writing the buffer
-                if(!writeBuffer.Write(&bufferIn[0], size)){
+                if (!internalBuffer.Write(&bufferIn[0], size)) {
                     //TODO
                 }
 
                 // all done! space available!
                 if (size != toWrite) {
                     // make space
-                    if (!writeBuffer.Flush()) {
+                    if (!internalBuffer.Flush()) {
                         ret = false;
                     }
                     else {
@@ -281,7 +252,7 @@ bool SingleBufferedStream::Write(const char8 * const bufferIn,
                         uint32 leftToWrite = toWrite;
 
                         // try writing the buffer
-                        if(!writeBuffer.Write(&bufferIn[size], leftToWrite)){
+                        if (!internalBuffer.Write(&bufferIn[size], leftToWrite)) {
                             //TODO
                         }
 
@@ -296,14 +267,14 @@ bool SingleBufferedStream::Write(const char8 * const bufferIn,
             }
             else {
                 // write the buffer so far
-                if (!writeBuffer.Flush()) {
+                if (!internalBuffer.Flush()) {
                     ret = false;
                 }
             }
 
         }
     }
-    return (ret) ? (unbufferedStream->Write(&bufferIn[0], size, timeout)) : (false);
+    return (ret) ? (UnbufferedWrite(&bufferIn[0], size, timeout)) : (false);
 
 }
 
@@ -315,7 +286,7 @@ uint64 SingleBufferedStream::Size() {
         //TODO
     }
 // then call Size from unbuffered stream
-    return unbufferedStream->Size();
+    return UnbufferedSize();
 }
 
 /** Moves within the file to an absolute location */
@@ -324,33 +295,33 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
     bool ubSeek = true;
     // if write mode on then just flush out data
     // then seek the stream
-    if (writeBuffer.UsedSize() > 0u) {
-        if (!writeBuffer.Flush()) {
+    if (internalBuffer.UsedSize() > 0u) {
+        if (!internalBuffer.Flush()) {
             //TODO
         }
     }
     else {
         // if read buffer has some data, check whether seek can be within buffer
-        if (readBuffer.UsedSize() > 0u) {
-            uint64 currentStreamPosition = unbufferedStream->Position();
-            uint64 bufferStartPosition = currentStreamPosition - readBuffer.UsedSize();
+        if (internalBuffer.UsedSize() > 0u) {
+            uint64 currentStreamPosition = UnbufferedPosition();
+            uint64 bufferStartPosition = currentStreamPosition - internalBuffer.UsedSize();
 
             // if within range just update readBufferAccessPosition
             if ((pos >= bufferStartPosition) && (pos < currentStreamPosition)) {
-                if (!readBuffer.Seek(static_cast<uint32>(pos - bufferStartPosition))) {
+                if (!internalBuffer.Seek(static_cast<uint32>(pos - bufferStartPosition))) {
                     //TODO
                 }
 
                 ubSeek = false;
             }
             else { // otherwise mark read buffer empty and proceed with normal seek
-                readBuffer.Empty();
+                internalBuffer.Empty();
                 // continues at the end of the function
             }
         }
     }
 
-    return (ubSeek) ? (unbufferedStream->Seek(pos)) : (true);
+    return (ubSeek) ? (UnbufferedSeek(pos)) : (true);
 }
 
 /** Moves within the file relative to current location */
@@ -361,9 +332,9 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
 
         ubSeek = true;
         // if write mode on then just flush out data
-        if (writeBuffer.UsedSize() > 0u) {
+        if (internalBuffer.UsedSize() > 0u) {
             // this will move the stream pointer ahead to the correct position
-            if (!writeBuffer.Flush()) {
+            if (!internalBuffer.Flush()) {
                 //TODO
             }
         }
@@ -371,10 +342,10 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
 
             //save the current position because in case of out of range
             //the position becomes one of the buffer bounds.
-            uint64 currentPos = readBuffer.Position();
+            uint64 currentPos = internalBuffer.Position();
 
             // on success it means we are in range
-            if (readBuffer.RelativeSeek(deltaPos)) {
+            if (internalBuffer.RelativeSeek(deltaPos)) {
                 // no need to move stream pointer
                 ubSeek = false;
             }
@@ -383,7 +354,7 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
                 // adjust stream seek position to account for actual read buffer usage
 
                 /*lint -e{9125} [MISRA C++ Rule 5-0-9]. Justification: If the number is not in the signed range a warning will be generated*/
-                int32 gap = static_cast<int32>(readBuffer.UsedSize() - currentPos);
+                int32 gap = static_cast<int32>(internalBuffer.UsedSize() - currentPos);
 
                 // if gap is not in the signed range generate a warning
                 if (gap < 0) {
@@ -391,7 +362,7 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
                 }
                 deltaPos -= gap;
                 // empty buffer
-                readBuffer.Empty();
+                internalBuffer.Empty();
             }
 
         }
@@ -399,7 +370,7 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
 
     // seek
     /*lint -e{9117} -e{737} [MISRA C++ Rule 5-0-4]. The input value is always positive so the signed does not change. */
-    return (ubSeek) ? (unbufferedStream->Seek(static_cast<uint64>(unbufferedStream->Position() + deltaPos))) : (true);
+    return (ubSeek) ? (UnbufferedSeek(static_cast<uint64>(UnbufferedPosition() + deltaPos))) : (true);
 }
 
 /** Returns current position */
@@ -407,12 +378,12 @@ uint64 SingleBufferedStream::Position() {
 
     uint64 ret = 0u;
     // if write mode on then just flush out data
-    if (writeBuffer.UsedSize() > 0u) {
-        ret = unbufferedStream->Position() + writeBuffer.Position();
+    if (internalBuffer.UsedSize() > 0u) {
+        ret = UnbufferedPosition() + internalBuffer.Position();
     }
     else {
 
-        ret = (unbufferedStream->Position() - readBuffer.UsedSize()) + readBuffer.Position();
+        ret = (UnbufferedPosition() - internalBuffer.UsedSize()) + internalBuffer.Position();
     }
     return ret;
 }
@@ -425,7 +396,7 @@ bool SingleBufferedStream::SetSize(const uint64 size) {
         //TODO
     }
 
-    return unbufferedStream->SetSize(size);
+    return UnbufferedSetSize(size);
 }
 
 }

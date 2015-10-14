@@ -138,9 +138,7 @@ public:
     //TODO the construction of readBuffer and writeBuffer has to be changed.
     DoubleBufferedStream();
 
-    DoubleBufferedStream(RawStream* const lowLevelStream);
-
-    DoubleBufferedStream(RawStream* const lowLevelStream, const TimeoutType &msecTimeout);
+    DoubleBufferedStream(const TimeoutType &msecTimeout);
 
     /** @brief Default destructor. */
     virtual ~DoubleBufferedStream();
@@ -197,18 +195,10 @@ public:
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
     /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Read(1), but
-      * this inline implementation could be faster if the read buffer is not empty */
+     * this inline implementation could be faster if the read buffer is not empty */
     inline bool GetC(char8 &c);
 
     /*---------------------------------------------------------------------------*/
-
-    virtual bool CanSeek() const;
-
-    /** whether it can be written into */
-    virtual bool CanWrite() const;
-
-    /** whether it can be  read */
-    virtual bool CanRead() const;
 
     /** @brief Reads data from stream into buffer.
      * @param buffer is the output memory where datas must be written.
@@ -217,10 +207,10 @@ public:
      * @param completeRead is a flag which specified is the read operation is completed.
      * @return true if successful, false otherwise.
      *
-     * In unbuffered mode calls unbufferedStream->Read function.
+     * In unbuffered mode calls UnbufferedRead function.
      * In buffered mode reads from the readBuffer to the outpur buffer. If not all the desired
      * size is copied, the readBuffer is refilled again if the remained size is minor than
-     * a quarter of the readBuffer size, otherwise calls unbufferedStream->Read which should copy
+     * a quarter of the readBuffer size, otherwise calls UnbufferedRead which should copy
      * directly datas from the stream to the output buffer.
      *
      * As much as size byte are written, actual size
@@ -239,12 +229,12 @@ public:
      * @param completeWrite is a flac which specified is the write operations is completed.
      * @return true if successful, false otherwise.
      *
-     * In unbuffered mode calls unbufferedStream->Write function.
+     * In unbuffered mode calls UnbufferedWrite function.
      * In buffered mode writes from the input buffer to writeBuffer if the size to write is
      * minor than a quarter of the writeBuffer size. If not all the size can be written,
      * flushes the buffer on the stream and write the remained size on writeBuffer.
      * Again, If the size to copy is greater than a quarter of the writeBuffer size,
-     * it flushes the writeBuffer and then calls unbufferedStream->Write
+     * it flushes the writeBuffer and then calls UnbufferedWrite
      * which should copy data from input buffer to the stream directly.
      *
      * As much as size byte are written, actual size
@@ -346,9 +336,6 @@ private:
      */
     BufferedStreamIOBuffer writeBuffer;
 
-    //TODO
-    RawStream *unbufferedStream;
-
     TimeoutType timeout;
 
 };
@@ -376,7 +363,7 @@ bool DoubleBufferedStream::PutC(const char8 c) {
     }
     else {
         uint32 size = 1u;
-        ret = unbufferedStream->Write(&c, size, timeout);
+        ret = UnbufferedWrite(&c, size, timeout);
     }
     return ret;
 }
@@ -391,7 +378,7 @@ bool DoubleBufferedStream::GetC(char8 &c) {
     else {
 
         uint32 size = 1u;
-        ret = unbufferedStream->Read(&c, size, timeout);
+        ret = UnbufferedRead(&c, size, timeout);
     }
     return ret;
 }

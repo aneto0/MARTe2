@@ -265,31 +265,69 @@ int32 StreamString::Locate(const StreamString &x) const {
 
         uint32 index = 0u;
 // no point to try match the tail of the string if it is smaller than the pattern
-            uint32 maxIndex = ((1u + buffer.UsedSize()) - x.buffer.UsedSize());
+        uint32 maxIndex = ((1u + buffer.UsedSize()) - x.buffer.UsedSize());
 // loop through the string characters
-            while (index < maxIndex) {
-                // detect the start as a potential match
-                if (string[index] == pattern[0]) {
-                    uint32 index2 = 1u;
-                    const char8 *stringSegment = &string[index];
-                    // check the remainder
-                    while (index2 < x.buffer.UsedSize()) {
-                        if (stringSegment[index2] != pattern[index2]) {
-                            break;
-                        }
-                        index2++;
-                    }
-                    // found it as we exit with index2 at the max value
-                    if (index2 == x.buffer.UsedSize()) {
-                        ret= index;
+        while (index < maxIndex) {
+            // detect the start as a potential match
+            if (string[index] == pattern[0]) {
+                uint32 index2 = 1u;
+                const char8 *stringSegment = &string[index];
+                // check the remainder
+                while (index2 < x.buffer.UsedSize()) {
+                    if (stringSegment[index2] != pattern[index2]) {
                         break;
                     }
+                    index2++;
                 }
-                index++;
+                // found it as we exit with index2 at the max value
+                if (index2 == x.buffer.UsedSize()) {
+                    ret= index;
+                    break;
+                }
             }
+            index++;
         }
-
-        return static_cast<int32>(ret);
     }
+
+    return static_cast<int32>(ret);
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
+bool StreamString::UnbufferedWrite(const char8 * const bufferIn,
+                                   uint32 & size,
+                                   const TimeoutType &msecTimeout) {
+    return false;
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
+bool StreamString::UnbufferedRead(char8 * const bufferIn,
+                                  uint32 & size,
+                                  const TimeoutType &msecTimeout) {
+    return false;
+}
+
+uint64 StreamString::UnbufferedSize() {
+    return 0u;
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
+bool StreamString::UnbufferedSeek(const uint64 pos) {
+    return false;
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
+bool StreamString::UnbufferedRelativeSeek(const int32 deltaPos) {
+    return false;
+}
+
+uint64 StreamString::UnbufferedPosition() {
+    return 0u;
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-119]. Justification: The default behavior does not need the input argument.*/
+bool StreamString::UnbufferedSetSize(const uint64 size) {
+    return false;
+}
+
 }
 

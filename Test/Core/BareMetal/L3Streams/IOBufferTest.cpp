@@ -86,6 +86,21 @@ bool IOBufferTest::TestFullConstructor(uint32 undoLevel) {
     return ioBuffer.UndoLevel() == undoLevel;
 }
 
+bool IOBufferTest::TestDestructor() {
+    IOBuffer ioBuffer;
+
+    const uint32 size = 32;
+    char8 buffer[size];
+
+    ioBuffer.SetBufferReferencedMemory(buffer, size, 0);
+    if (ioBuffer.Buffer() == NULL) {
+        return false;
+    }
+
+    ioBuffer.~IOBuffer();
+    return ioBuffer.Buffer() == NULL;
+}
+
 bool IOBufferTest::TestBufferSize(uint32 size,
                                   uint32 granularity) {
     IOBuffer ioBuffer(granularity, 0u);
@@ -351,6 +366,30 @@ bool IOBufferTest::TestUndoLevel(uint32 undoLevel) {
 
     return ioBuffer.UndoLevel() == undoLevel;
 
+}
+
+bool IOBufferTest::TestCanWrite() {
+    IOBuffer ioBuffer;
+
+    const uint32 allocationSize = 32;
+
+    char8 bufferIn[allocationSize];
+
+    ioBuffer.SetBufferReferencedMemory(bufferIn, allocationSize, 0);
+    if (!ioBuffer.CanWrite()) {
+        return false;
+    }
+
+    const char8 *bufferInConst = "";
+
+    ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, allocationSize, 0);
+    if (ioBuffer.CanWrite()) {
+        return false;
+    }
+
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    return ioBuffer.CanWrite();
 }
 
 bool IOBufferTest::TestSetBufferHeapMemory(uint32 size,
@@ -3019,6 +3058,87 @@ bool IOBufferTest::TestPrintFormattedToStream_BitSet_Signed() {
     }
 
     return true;
+}
+
+bool IOBufferTest::TestGetTokenFromStream_ConstCharOutput() {
+
+    //TODO
+    return true;
 
 }
 
+bool IOBufferTest::TestGetTokenFromStream_IOBufferOutput() {
+    //TODO
+    return true;
+}
+
+bool IOBufferTest::TestSkipTokenInStream() {
+    IOBuffer ioBuffer;
+
+    uint32 allocationSize = 64;
+
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    const char8* toWrite = "HelloWorld:This.:Is..A:.:Test.";
+
+    Clear(ioBuffer);
+    uint32 writeSize = StringHelper::Length(toWrite);
+    ioBuffer.Write(toWrite, writeSize);
+    ioBuffer.Seek(0);
+
+    //count=0
+    ioBuffer.SkipTokensInStream(0u, ".:");
+    if (ioBuffer.Position() != 0) {
+        return false;
+    }
+
+    ioBuffer.SkipTokensInStream(1u, ".:");
+
+    if (ioBuffer.Position() != 11) {
+        return false;
+    }
+
+    // if there is no data between two terminators they are considered as one
+    ioBuffer.SkipTokensInStream(2u, ".:");
+
+    if (ioBuffer.Position() != 20) {
+        return false;
+    }
+
+    ioBuffer.SkipTokensInStream(1u, ".");
+
+    if (ioBuffer.Position() != 24) {
+        return false;
+    }
+
+    //the end of the filled memory
+    ioBuffer.SkipTokensInStream(1u, ":");
+    if (ioBuffer.Position() != 31) {
+        return false;
+    }
+
+    ioBuffer.Seek(0);
+    ioBuffer.SkipTokensInStream(3u, ".:");
+
+    return (ioBuffer.Position() == 20);
+}
+
+bool IOBufferTest::TestSkipTokenInStream_NULL_Terminator() {
+    IOBuffer ioBuffer;
+
+    uint32 allocationSize = 64;
+
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    const char8* toWrite = "HelloWorld:This.:Is..A:.:Test.";
+
+    Clear(ioBuffer);
+    uint32 writeSize = StringHelper::Length(toWrite);
+    ioBuffer.Write(toWrite, writeSize);
+    ioBuffer.Seek(0);
+
+    ioBuffer.SkipTokensInStream(1u, NULL);
+
+    // returns the end
+    return (ioBuffer.Position() == 31);
+}

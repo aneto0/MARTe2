@@ -44,48 +44,23 @@ namespace MARTe {
 
 DoubleBufferedStream::DoubleBufferedStream() :
         BufferedStream(),
-        readBuffer(),
-        writeBuffer() {
-    unbufferedStream = static_cast<RawStream *>(NULL);
+        readBuffer(this),
+        writeBuffer(this) {
     timeout = TTDefault;
 }
 
-DoubleBufferedStream::DoubleBufferedStream(RawStream* const lowLevelStream) :
+DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &msecTimeout) :
         BufferedStream(),
-        readBuffer(lowLevelStream),
-        writeBuffer(lowLevelStream) {
-    unbufferedStream = lowLevelStream;
-    timeout = TTDefault;
-}
-
-DoubleBufferedStream::DoubleBufferedStream(RawStream* const lowLevelStream,
-                                           const TimeoutType &msecTimeout) :
-        BufferedStream(),
-        readBuffer(lowLevelStream, msecTimeout),
-        writeBuffer(lowLevelStream, msecTimeout) {
-    unbufferedStream = lowLevelStream;
+        readBuffer(this, msecTimeout),
+        writeBuffer(this, msecTimeout) {
     timeout = msecTimeout;
 }
 
 DoubleBufferedStream::~DoubleBufferedStream() {
 
-    unbufferedStream = static_cast<RawStream *>(NULL);
-    if(!writeBuffer.Flush()) {
+    if (!writeBuffer.Flush()) {
         //TODO
-    }}
-
-bool DoubleBufferedStream::CanSeek() const {
-    return unbufferedStream->CanSeek();
-}
-
-/** whether it can be written into */
-bool DoubleBufferedStream::CanWrite() const {
-    return unbufferedStream->CanWrite();
-}
-
-/** whether it can be  read */
-bool DoubleBufferedStream::CanRead() const {
-    return unbufferedStream->CanRead();
+    }
 }
 
 bool DoubleBufferedStream::SetBufferSize(uint32 readBufferSize,
@@ -180,7 +155,7 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
             }
             else {
                 // if needed read directly from stream
-                if (!unbufferedStream->Read(&bufferIn[size], toRead, timeout)) {
+                if (!UnbufferedRead(&bufferIn[size], toRead, timeout)) {
                     ret = false;
                 }
                 else {
@@ -191,7 +166,7 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
     }
 
     // if needed read directly from stream
-    return (ret) ? (unbufferedStream->Read(&bufferIn[0], size, timeout)) : (false);
+    return (ret) ? (UnbufferedRead(&bufferIn[0], size, timeout)) : (false);
 }
 
 /** Write data from a buffer to the stream. As much as size byte are written, actual size
@@ -249,33 +224,33 @@ bool DoubleBufferedStream::Write(const char8* const bufferIn,
         }
 
     }
-    return (ret) ? (unbufferedStream->Write(&bufferIn[0], size, timeout)) : (false);
+    return (ret) ? (UnbufferedWrite(&bufferIn[0], size, timeout)) : (false);
 
 }
 
 /** The size of the stream */
 uint64 DoubleBufferedStream::Size() {
-    return unbufferedStream->Size();
+    return UnbufferedSize();
 }
 
 /** Moves within the file to an absolute location */
 bool DoubleBufferedStream::Seek(const uint64 pos) {
-    return unbufferedStream->Seek(pos);
+    return UnbufferedSeek(pos);
 }
 
 /** Moves within the file relative to current location */
 bool DoubleBufferedStream::RelativeSeek(const int32 deltaPos) {
-    return unbufferedStream->RelativeSeek(deltaPos);
+    return UnbufferedRelativeSeek(deltaPos);
 }
 
 /** Returns current position */
 uint64 DoubleBufferedStream::Position() {
-    return unbufferedStream->Position();
+    return UnbufferedPosition();
 }
 
 /** Clip the stream size to a specified point */
 bool DoubleBufferedStream::SetSize(const uint64 size) {
-    return unbufferedStream->SetSize(size);
+    return UnbufferedSetSize(size);
 }
 
 }

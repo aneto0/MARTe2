@@ -81,16 +81,16 @@ namespace MARTe {
  1) Separate Buffering Output Mode
  CanWrite !CanSeek
  Used for devices where in and out streams are separate (for instance console )
- writeBuffer.Buffer()!=NULL && operatingMode.MutexBuffering() = false
+ internalBuffer.Buffer()!=NULL && operatingMode.MutexBuffering() = false
  !Can be combined with Separate Buffering Input Mode
- 1a) writeBuffer.Buffer()== NULL just call directly StreamInterface::Write
+ 1a) internalBuffer.Buffer()== NULL just call directly StreamInterface::Write
 
  2) Separate buffering Input Mode
  CanRead  !CanSeek
  Used for devices where in and out streams are separate (for instance console )
- readBuffer.Buffer()!=NULL  &&  operatingMode.mutexBuffering = false
+ internalBuffer.Buffer()!=NULL  &&  operatingMode.mutexBuffering = false
  !Can be combined with Separate Buffering Output Mode
- 2a) readBuffer.Buffer()== NULL just call directly StreamInterface::Read
+ 2a) internalBuffer.Buffer()== NULL just call directly StreamInterface::Read
 
  3) Dual separate buffers Input and Output Mode
  CanRead CanWrite !CanSeek
@@ -98,7 +98,7 @@ namespace MARTe {
 
  4) Joint buffering Mode
  CanRead CanWrite CanSeek
- readBuffer.Buffer()!=NULL  && writeBuffer.Buffer()!=NULL &&
+ internalBuffer.Buffer()!=NULL  && internalBuffer.Buffer()!=NULL &&
  operatingMode.mutexBuffering() = true
  operatingMode.mutexWriteMode and
  operatingMode.mutexReadMode  determines whether the read
@@ -106,12 +106,12 @@ namespace MARTe {
  Get and Put toggle the two flags
  everytime the flags are changed a proper Flush operation is
  triggered to clean the buffers
- 4a-b) one of readBuffer or writeBuffer is NULL
+ 4a-b) one of internalBuffer or internalBuffer is NULL
  same toggling of flags and flushing
 
  5) Joint buffering Read Only Mode
  CanRead !CanWrite CanSeek
- readBuffer.Buffer()!=NULL  && writeBuffer.Buffer()==NULL &&
+ internalBuffer.Buffer()!=NULL  && internalBuffer.Buffer()==NULL &&
  operatingMode.mutexBuffering() = false
  Operates identically to mode 2 but cannot be active together
  with mode 6
@@ -119,7 +119,7 @@ namespace MARTe {
 
  6) Joint buffering Write Only Mode
  !CanRead CanWrite CanSeek
- readBuffer.Buffer()==NULL  && writeBuffer.Buffer()!=NULL &&
+ internalBuffer.Buffer()==NULL  && internalBuffer.Buffer()!=NULL &&
  operatingMode.mutexBuffering() = false
  Operates identically to mode 1 but cannot be active together
  with mode 5
@@ -133,13 +133,10 @@ public:
      * @brief Default constructor.
      *
      * At the beginning the stream is monodirectional. */
-    //TODO the construction of readBuffer and writeBuffer has to be changed.
+    //TODO the construction of internalBuffer and internalBuffer has to be changed.
     SingleBufferedStream();
 
-    SingleBufferedStream(RawStream* const lowLevelStream);
-
-    SingleBufferedStream(RawStream* const lowLevelStream,
-                         const TimeoutType & msecTimeout);
+    SingleBufferedStream(const TimeoutType & msecTimeout);
 
     /** @brief Default destructor. */
     virtual ~SingleBufferedStream();
@@ -155,7 +152,7 @@ public:
      * If CanWrite return false writeBufferSize becomes 0.
      * If both returns true and also CanSeek return true, the mutex mode is activated.
      * The function calls FlushAndResync and then allocates the desired sizes for
-     * readBuffer and writeBuffer using IOBuffer::SetBufferHeapMemory.
+     * internalBuffer and internalBuffer using IOBuffer::SetBufferHeapMemory.
      */
     virtual bool SetBufferSize(uint32 readBufferSize,
                                uint32 writeBufferSize);
@@ -179,7 +176,7 @@ public:
      * @param c is the character to be written on the stream.
      * @return false in case of errors.
      *
-     * In buffered mode uses the inline IOBuffer::PutC of writeBuffer
+     * In buffered mode uses the inline IOBuffer::PutC of internalBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
     /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Write(1), but
@@ -191,11 +188,11 @@ public:
      * @param c is the character by reference in return.
      * @return false in case of errors.
      *
-     * In buffered mode uses the inline IOBuffer::GetC of readBuffer
+     * In buffered mode uses the inline IOBuffer::GetC of internalBuffer
      * but with the specific implementations of BufferedStreamIOBuffer.
      */
     /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Read(1), but
-      * this inline implementation could be faster if the read buffer is not empty */
+     * this inline implementation could be faster if the read buffer is not empty */
     inline bool GetC(char8 &c);
 
     /** @brief Reads data from stream into buffer.
@@ -205,10 +202,10 @@ public:
      * @param completeRead is a flag which specified is the read operation is completed.
      * @return true if successful, false otherwise.
      *
-     * In unbuffered mode calls unbufferedStream->Read function.
-     * In buffered mode reads from the readBuffer to the outpur buffer. If not all the desired
-     * size is copied, the readBuffer is refilled again if the remained size is minor than
-     * a quarter of the readBuffer size, otherwise calls unbufferedStream->Read which should copy
+     * In unbuffered mode calls UnbufferedRead function.
+     * In buffered mode reads from the internalBuffer to the outpur buffer. If not all the desired
+     * size is copied, the internalBuffer is refilled again if the remained size is minor than
+     * a quarter of the internalBuffer size, otherwise calls UnbufferedRead which should copy
      * directly datas from the stream to the output buffer.
      *
      * As much as size byte are written, actual size
@@ -227,12 +224,12 @@ public:
      * @param completeWrite is a flac which specified is the write operations is completed.
      * @return true if successful, false otherwise.
      *
-     * In unbuffered mode calls unbufferedStream->Write function.
-     * In buffered mode writes from the input buffer to writeBuffer if the size to write is
-     * minor than a quarter of the writeBuffer size. If not all the size can be written,
-     * flushes the buffer on the stream and write the remained size on writeBuffer.
-     * Again, If the size to copy is greater than a quarter of the writeBuffer size,
-     * it flushes the writeBuffer and then calls unbufferedStream->Write
+     * In unbuffered mode calls UnbufferedWrite function.
+     * In buffered mode writes from the input buffer to internalBuffer if the size to write is
+     * minor than a quarter of the internalBuffer size. If not all the size can be written,
+     * flushes the buffer on the stream and write the remained size on internalBuffer.
+     * Again, If the size to copy is greater than a quarter of the internalBuffer size,
+     * it flushes the internalBuffer and then calls UnbufferedWrite
      * which should copy data from input buffer to the stream directly.
      *
      * As much as size byte are written, actual size
@@ -256,9 +253,9 @@ public:
      * @param pos is the absolute desired position in the stream.
      * @return false if CanSeek returns false or in case of errors.
      *
-     * If writeBuffer is not empty, flushes it and then calls UnBufferedSeek.
-     * If readBuffer is not empty, if the position falls in the readBuffer range calls readBuffer.Seek
-     * otherwise empties the readBuffer and calls UnBufferedSeek.
+     * If internalBuffer is not empty, flushes it and then calls UnBufferedSeek.
+     * If internalBuffer is not empty, if the position falls in the internalBuffer range calls internalBuffer.Seek
+     * otherwise empties the internalBuffer and calls UnBufferedSeek.
      */
     virtual bool Seek(uint64 pos);
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
@@ -267,16 +264,16 @@ public:
      * @param deltaPos is the desired relative position from the current.
      * @return false if canSeek returns false or in case of errors.
      *
-     * If writeBuffer is not empty, flushes it and calls UnBufferedSeek with the current position + deltaPos
-     * If readBuffer is not empty, if the final position falls in the range calls readBuffer.RelativeSeek
-     * otherwise calls UnBufferedSeek passing currentStreamPos-readBuffer.Size+readBuffer.Position+deltaPos  */
+     * If internalBuffer is not empty, flushes it and calls UnBufferedSeek with the current position + deltaPos
+     * If internalBuffer is not empty, if the final position falls in the range calls internalBuffer.RelativeSeek
+     * otherwise calls UnBufferedSeek passing currentStreamPos-internalBuffer.Size+internalBuffer.Position+deltaPos  */
     virtual bool RelativeSeek(int32 deltaPos);
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
 
     /** @brief Returns current position.
      * @return the current position in the stream.
      *
-     * Flushed the writeBuffer if it is not empty, then return currentPos-readBuffer.Size+readBuffer.Position */
+     * Flushed the internalBuffer if it is not empty, then return currentPos-internalBuffer.Size+internalBuffer.Position */
     virtual uint64 Position();
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
 
@@ -287,13 +284,7 @@ public:
     virtual bool SetSize(uint64 size);
     // NOTE: Implemented in .cpp but no need to have c- mangling functions as function will be normally acceessed via VT
 
-    virtual bool CanSeek() const;
 
-    /** whether it can be written into */
-    virtual bool CanWrite() const;
-
-    /** whether it can be  read */
-    virtual bool CanRead() const;
 
 protected:
     /**
@@ -302,11 +293,11 @@ protected:
      */
     struct OperatingModes {
 
-        /** writeBuffer is the active one.
+        /** internalBuffer is the active one.
          */
         bool mutexReadMode;
 
-        /** writeBuffer is the active one.
+        /** internalBuffer is the active one.
          */
         bool mutexWriteMode;
 
@@ -318,7 +309,7 @@ protected:
 
     /**
      * @brief Get the read buffer.
-     * @return BufferedStreamIOBuffer readBuffer pointer.
+     * @return BufferedStreamIOBuffer internalBuffer pointer.
      *
      * This function is used by Printf and GetToken functions.
      */
@@ -326,14 +317,11 @@ protected:
 
     /**
      * @brief Get the write buffer.
-     * @return BufferedStreamIOBuffer writeBuffer pointer.
+     * @return BufferedStreamIOBuffer internalBuffer pointer.
      *
      * This function is used by Printf and GetToken functions.
      */
     virtual IOBuffer *GetOutputBuffer();
-
-    //TODO
-    RawStream *unbufferedStream;
 
 private:
     /**
@@ -351,7 +339,7 @@ private:
      * @brief Switch to the read mode.
      * @return false if the flush function fails.
      *
-     *  Flushes writeBuffer.
+     *  Flushes internalBuffer.
      *  Resets mutexWriteMode.
      *  Does not refill the buffer nor check the mutexBuffering is active.
      */
@@ -368,8 +356,6 @@ private:
      * Function BufferedStreamIOBuffer::NoMoreSpaceToWrite acts
      * as a flush and the more confidential function Flush calls it.
      * @see BufferedStreamBuffer for more informations.*/
-    BufferedStreamIOBuffer readBuffer;
-
     /**
      * The write buffer. It is used just like an
      * intermediate between the input and the stream. Write
@@ -382,7 +368,7 @@ private:
      * Function BufferedStreamIOBuffer::NoMoreSpaceToRead acts
      * as a refill and the more confidential function Refill calls it.
      */
-    BufferedStreamIOBuffer writeBuffer;
+    BufferedStreamIOBuffer internalBuffer;
 
     TimeoutType timeout;
 
@@ -396,14 +382,14 @@ bool SingleBufferedStream::FlushAndResync() {
     bool ret = true;
     // if there is something in the buffer, and canSeek it means we can and need to resync
     // if the buffers are separated (!canseek) than resync cannot be done
-    if (readBuffer.UsedSize() > 0u) {
-        ret = readBuffer.Resync();
+    if (internalBuffer.UsedSize() > 0u) {
+        ret = internalBuffer.Resync();
     }
     else {
-        // some data in writeBuffer
+        // some data in internalBuffer
         // we can flush in all cases then
-        if (writeBuffer.UsedSize() > 0u) {
-            ret = writeBuffer.Flush();
+        if (internalBuffer.UsedSize() > 0u) {
+            ret = internalBuffer.Flush();
         }
     }
     return ret;
@@ -419,12 +405,12 @@ bool SingleBufferedStream::PutC(const char8 c) {
     }
 
     if (ret) {
-        if (writeBuffer.BufferSize() > 0u) {
-            ret = writeBuffer.PutC(c);
+        if (internalBuffer.BufferSize() > 0u) {
+            ret = internalBuffer.PutC(c);
         }
         else {
             uint32 size = 1u;
-            ret = unbufferedStream->Write(&c, size, timeout);
+            ret = UnbufferedWrite(&c, size, timeout);
         }
     }
 
@@ -441,19 +427,19 @@ bool SingleBufferedStream::GetC(char8 &c) {
     }
 
     if (ret) {
-        if (readBuffer.BufferSize() > 0u) {
-            ret = readBuffer.GetC(c);
+        if (internalBuffer.BufferSize() > 0u) {
+            ret = internalBuffer.GetC(c);
         }
         else {
             uint32 size = 1u;
-            ret = unbufferedStream->Read(&c, size, timeout);
+            ret = UnbufferedRead(&c, size, timeout);
         }
     }
     return ret;
 }
 
 bool SingleBufferedStream::SwitchToWriteMode() {
-    bool ret = readBuffer.Resync();
+    bool ret = internalBuffer.Resync();
     if (ret) {
         operatingModes.mutexWriteMode = true;
         operatingModes.mutexReadMode = false;
@@ -462,7 +448,7 @@ bool SingleBufferedStream::SwitchToWriteMode() {
 }
 
 bool SingleBufferedStream::SwitchToReadMode() {
-    bool ret = !writeBuffer.Flush();
+    bool ret = !internalBuffer.Flush();
     if (ret) {
 
         operatingModes.mutexWriteMode = false;

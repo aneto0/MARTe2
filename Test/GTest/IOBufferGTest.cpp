@@ -62,6 +62,11 @@ TEST(IOBufferGTest, TestFullConstructor_MAX) {
     ASSERT_TRUE(myIOBufferTest.TestFullConstructor(0xffffffff));
 }
 
+TEST(IOBufferGTest, TestDestructor) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestDestructor());
+}
+
 TEST(IOBufferGTest, TestSize_size_in_granularity) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestBufferSize(10, 32));
@@ -201,6 +206,12 @@ TEST(IOBufferGTest, TestUndoLevel_MAX) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestUndoLevel(0xffffffff));
 }
+
+TEST(IOBufferGTest, TestCanWrite) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestCanWrite());
+}
+
 
 TEST(IOBufferGTest, TestSetBufferHeapMemory_size_in_granularity) {
     IOBufferTest myIOBufferTest;
@@ -447,7 +458,15 @@ TEST(IOBufferGTest, TestPrintFormattedToStream_BitSet_Signed) {
     ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_BitSet_Signed());
 }
 
+TEST(IOBufferGTest, TestSkipTokenInStream) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestSkipTokenInStream());
+}
 
+TEST(IOBufferGTest, TestSkipTokenInStream_NULL_Terminator) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestSkipTokenInStream_NULL_Terminator());
+}
 
 
 

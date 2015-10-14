@@ -54,7 +54,6 @@ public:
     virtual ~RawStream() {
     }
 
-
     /**
      * @brief Pure virtual method. Reads data from the stream to a char8* buffer.
      * @param buffer is the buffer where datas must be copied.
@@ -75,9 +74,9 @@ public:
      error in the stream  ==> no point to try again
      parameters error, for instance buffer = NULL
      */
-    virtual bool Read(char8* buffer,
-                      uint32 & size,
-                      TimeoutType msecTimeout)=0;
+    virtual bool UnbufferedRead(char8* buffer,
+                                uint32 & size,
+                                TimeoutType msecTimeout)=0;
 
     /**
      * @brief Pure virtual method. Writes from a const char8* buffer to the stream.
@@ -88,7 +87,7 @@ public:
      *
      * The behavior depends by derived classes implementation.
      *
-     Write data from a buffer to the stream.
+     UnbufferedWrite data from a buffer to the stream.
      As much as size byte are written,
      actual written size is returned in size.
      msecTimeout is how much the operation should last.
@@ -99,9 +98,9 @@ public:
      error in the stream ==> no point to try again
      parameters error, for instance buffer = NULL
      */
-    virtual bool Write(const char8* buffer,
-                       uint32 & size,
-                       TimeoutType msecTimeout) = 0;
+    virtual bool UnbufferedWrite(const char8* buffer,
+                                 uint32 & size,
+                                 TimeoutType msecTimeout) = 0;
 
     /**
      * @brief Pure virtual function. Defines if write operations can be performed on the stream.
@@ -113,20 +112,18 @@ public:
      * @return return value depends from derived classes implementation. */
     virtual bool CanRead() const =0;
 
-
     /**
      * @brief Pure virtual method. Defines if seek operations can be performed on the stream.
      * @return return value depends on the derived classes implementation. */
     virtual bool CanSeek() const =0;
-
 
     /**
      * @brief Writes a character on the stream.
      * @param c is the character to write on the stream.
      * @return depends from derived classes implementation.
      *
-     * Uses the derived class implementation of Write function with one as size parameter,
-     * then the function behavior depends from the derived class Write function.*/
+     * Uses the derived class implementation of UnbufferedWrite function with one as size parameter,
+     * then the function behavior depends from the derived class UnbufferedWrite function.*/
     inline bool PutC(const char8 c);
 
     /**
@@ -134,8 +131,8 @@ public:
      * @param c is the character in return.
      * @return depends from derived classes implementation.
      *
-     * Uses the derived class implementation of Read function with one as size parameter,
-     * then the function behavior depends from the derived class Read function. */
+     * Uses the derived class implementation of UnbufferedRead function with one as size parameter,
+     * then the function behavior depends from the derived class UnbufferedRead function. */
     inline bool GetC(char8 &c);
 
     // SYNCHRONISATION INTERFACE
@@ -154,7 +151,7 @@ public:
      when blocking is active. It is not used otherwise - unless
      complete is set in which case the operation is tried multiple
      times each after fixed interval (set as timeout/10 or 1ms min)
-     This implies that class implementations of Read and Write
+     This implies that class implementations of UnbufferedRead and UnbufferedWrite
      might have to involve a select call or something similar
      for classes light String blocking has no meaning.
      */
@@ -199,8 +196,6 @@ public:
      * @return return value depends on the derived classes implementation. */
     virtual bool SetSize(uint64 size) = 0;
 
-
-
 };
 
 /*---------------------------------------------------------------------------*/
@@ -209,12 +204,12 @@ public:
 
 bool RawStream::PutC(const char8 c) {
     uint32 size = 1u;
-    return Write(&c, size, TTDefault);
+    return UnbufferedWrite(&c, size, TTDefault);
 }
 
 bool RawStream::GetC(char8 &c) {
     uint32 size = 1u;
-    return Read(&c, size, TTDefault);
+    return UnbufferedRead(&c, size, TTDefault);
 
 }
 }

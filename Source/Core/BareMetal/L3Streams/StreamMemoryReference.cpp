@@ -147,5 +147,42 @@ bool StreamMemoryReference::CanSeek() const {
     return true;
 }
 
+/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
+bool StreamMemoryReference::UnbufferedWrite(const char8 * const bufferIn,
+                                            uint32 & size,
+                                            const TimeoutType &msecTimeout) {
+    return false;
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
+bool StreamMemoryReference::UnbufferedRead(char8 * const bufferIn,
+                                           uint32 & size,
+                                           const TimeoutType &msecTimeout) {
+    return false;
+}
+
+uint64 StreamMemoryReference::UnbufferedSize() {
+    return 0u;
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
+bool StreamMemoryReference::UnbufferedSeek(const uint64 pos) {
+    return false;
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
+bool StreamMemoryReference::UnbufferedRelativeSeek(const int32 deltaPos) {
+    return false;
+}
+
+uint64 StreamMemoryReference::UnbufferedPosition() {
+    return 0u;
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
+bool StreamMemoryReference::UnbufferedSetSize(const uint64 size) {
+    return false;
+}
+
 }
 

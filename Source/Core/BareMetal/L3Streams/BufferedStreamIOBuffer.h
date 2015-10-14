@@ -34,7 +34,7 @@
 
 #include "TimeoutType.h"
 #include "IOBuffer.h"
-#include "RawStream.h"
+#include "BufferedStream.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -94,7 +94,7 @@ public:
      *   GetStream() == s &&
      *   GetTimeout() == msecTimeout
      */
-    BufferedStreamIOBuffer(RawStream * const s,
+    BufferedStreamIOBuffer(BufferedStream * const s,
                            const TimeoutType& msecTimeout = TTDefault);
 
     /**
@@ -134,7 +134,7 @@ public:
     /**
      * Gets the stream pointer
      */
-    inline const RawStream* GetStream() const;
+    inline const BufferedStream* GetStream() const;
 
 protected:
 
@@ -158,7 +158,7 @@ private:
     /**
      * The stream that uses this buffer.
      */
-    RawStream *stream;
+    BufferedStream *stream;
 
     /**
      * The timeout for read and write operations.
@@ -183,7 +183,7 @@ TimeoutType BufferedStreamIOBuffer::GetTimeout() const {
     return timeout;
 }
 
-const RawStream* BufferedStreamIOBuffer::GetStream() const {
+const BufferedStream* BufferedStreamIOBuffer::GetStream() const {
     return stream;
 }
 

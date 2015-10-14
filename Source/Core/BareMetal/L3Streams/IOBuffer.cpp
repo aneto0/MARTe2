@@ -186,7 +186,7 @@ bool IOBuffer::NoMoreSpaceToWrite() {
     return false;
 }
 
-/*lint -e{715} [MISRA C++ Rule 0-1-119]. Justification: The default behavior does not need the input argument.*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: The default behavior does not need the input argument.*/
 bool IOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
     return NoMoreSpaceToWrite();
 }
@@ -294,9 +294,10 @@ bool IOBuffer::Read(char8 * const buffer,
             retval = false;
 
         }
-
-        amountLeft -= size;
-        positionPtr = &positionPtr[size];
+        if (retval) {
+            amountLeft -= size;
+            positionPtr = &positionPtr[size];
+        }
     }
     return retval;
 }
