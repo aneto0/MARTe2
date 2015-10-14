@@ -26,7 +26,6 @@
 
 OBJSX=CharBuffer.x \
     IOBuffer.x \
-    IOBufferFunctions.x \
     IOBufferIntegerPrint.x \
     IOBufferFloatPrint.x \
     BufferedStream.x \
