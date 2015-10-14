@@ -35,6 +35,7 @@
 #include "LinkedListable.h"
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
+#include "FractionalInteger.h"
 
 namespace MARTe {
 
@@ -129,7 +130,7 @@ public:
      * @brief Sets the unique identifier for the class described by this ClassRegistryItem.
      * @param[in] uid the new unique identifier to be set for the class described by this ClassRegistryItem.
      */
-    void SetUniqueIdentifier(const uint32 &uid);
+    void SetUniqueIdentifier(const ClassUID &uid);
 
 private:
     /**

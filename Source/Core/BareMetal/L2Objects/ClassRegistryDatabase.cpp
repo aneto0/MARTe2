@@ -67,7 +67,7 @@ void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     if (mux.FastLock() == ErrorManagement::NoError) {
         p->SetUniqueIdentifier(classUniqueIdentifier);
         if (classDatabase.Insert(classUniqueIdentifier, p)) {
-            classUniqueIdentifier++;
+            classUniqueIdentifier = classUniqueIdentifier + 1u;
         }
     }
     mux.FastUnLock();

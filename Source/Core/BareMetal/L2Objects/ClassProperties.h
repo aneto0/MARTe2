@@ -32,6 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
+#include "FractionalInteger.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -83,13 +85,13 @@ public:
      * @brief Returns the unique identifier of the class.
      * @return the unique identifier of the class.
      */
-    uint32 GetUniqueIdentifier() const;
+    ClassUID GetUniqueIdentifier() const;
 
     /**
      * @brief Sets the unique identifier for the class described by this ClassProperties instance.
      * @param[in] uid the new unique identifier to be set for the class.
      */
-    void SetUniqueIdentifier(const uint32 &uid);
+    void SetUniqueIdentifier(const ClassUID &uid);
 
 private:
     /**
@@ -110,7 +112,7 @@ private:
     /**
      * A unique identifier for this class
      */
-    uint32 uniqueIdentifier;
+    uint14 uniqueIdentifier;
 };
 
 }

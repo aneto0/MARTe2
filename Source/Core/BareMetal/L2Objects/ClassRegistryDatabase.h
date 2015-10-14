@@ -32,10 +32,11 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../L1Portability/GlobalObjectsDatabase.h"
+#include "GlobalObjectsDatabase.h"
 #include "FastPollingMutexSem.h"
 #include "ClassRegistryItem.h"
 #include "StaticList.h"
+#include "FractionalInteger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -136,7 +137,7 @@ private:
     /**
      * Unique identifier of the latest registered class;
      */
-    uint32 classUniqueIdentifier;
+    ClassUID classUniqueIdentifier;
 };
 
 }

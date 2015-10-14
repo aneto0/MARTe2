@@ -109,7 +109,7 @@ const ObjectBuildFn *ClassRegistryItem::GetObjectBuildFunction() const {
     return objectBuildFn;
 }
 
-void ClassRegistryItem::SetUniqueIdentifier(const uint32 &uid) {
+void ClassRegistryItem::SetUniqueIdentifier(const ClassUID &uid) {
     classProperties.SetUniqueIdentifier(uid);
 }
 
