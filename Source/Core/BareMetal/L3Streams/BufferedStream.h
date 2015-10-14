@@ -36,6 +36,7 @@
 #include "AnyType.h"
 #include "FormatDescriptor.h"
 #include "IOBuffer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -45,15 +46,16 @@ namespace MARTe {
 /**
  * @brief Abstract super class for all buffered streams.
  *
- * @details This class provides the interface specification for all the streams which support buffering.
- * It also offers a standard implementation to GetToken and GetLine functions.
+ * @details This class provides the interface specification for all the
+ * streams which support buffering. It also offers a standard implementation
+ * to GetToken and GetLine functions.
  */
 class BufferedStream {
 
 public:
 
     /**
-     * @brief Default constructor
+     * Default constructor
      */
     BufferedStream();
 
@@ -84,22 +86,22 @@ public:
      * @brief Reads data from the stream.
      * @detail Reads up to \a size bytes into \a bufferIn. The actual read size is
      * returned in \a size.
-     * @param[out] bufferIn the buffer where to read the data into.
+     * @param[out] output the buffer where to read the data into.
      * @param[in,out] size the number of bytes to read. Upon return of the function \a size contains the number of bytes actually read.
      * @return true if \a size bytes are successfully read into \a bufferIn.
      */
-    virtual bool Read(char8* bufferIn,
+    virtual bool Read(char8* output,
                       uint32 & size)=0;
 
     /**
      * @brief Writes data into the stream.
      * @detail Writes up to \a size bytes into \a bufferIn. The actual written size is
      * returned in \a size.
-     * @param[out] bufferIn the buffer where to read the data from.
+     * @param[in] input the buffer where to read the data from.
      * @param[in,out] size the number of bytes to write. Upon return of the function \a size contains the number of bytes actually written.
      * @return true if \a size bytes are successfully read from \a bufferIn and written into the stream.
      */
-    virtual bool Write(const char8* bufferIn,
+    virtual bool Write(const char8* input,
                        uint32 & size) = 0;
 
     /**
@@ -119,12 +121,12 @@ public:
 
     /**
      * @brief Moves within the stream to a position that is relative to the current location.
-     * @param[in] deltaPos is the distance from the current position.
+     * @param[in] delta is the distance from the current position.
      * @return true if the stream is successfully moved to \a deltaPos.
      * @post
      *   Position() == this'old->Position() + deltaPos
      */
-    virtual bool RelativeSeek(int32 deltaPos)=0;
+    virtual bool RelativeSeek(int32 delta)=0;
 
     /**
      * @brief Gets the current position.
@@ -274,6 +276,7 @@ public:
                        const AnyType& par4);
 
 protected:
+
     /**
      * @brief Gets the read buffer.
      * @return a pointer to the read buffer.

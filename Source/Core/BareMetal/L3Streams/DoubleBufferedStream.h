@@ -47,7 +47,6 @@
 namespace MARTe {
 
 /**
- * @file DoubleBufferedStream.h
  * @brief Implementation of streamable type functions.
  *
  * Implementation of streamable type functions for read, write and seek operations in buffered and unbuffered modes for streamable types

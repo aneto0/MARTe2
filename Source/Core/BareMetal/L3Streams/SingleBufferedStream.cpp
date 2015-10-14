@@ -173,7 +173,7 @@ IOBuffer *SingleBufferedStream::GetOutputBuffer() {
     return ret;
 }
 
-bool SingleBufferedStream::Read(char8 * const bufferIn,
+bool SingleBufferedStream::Read(char8 * const output,
                                 uint32 & size) {
 
     bool ret = true;
@@ -194,7 +194,7 @@ bool SingleBufferedStream::Read(char8 * const bufferIn,
             uint32 toRead = size;
 
             // try once
-            if (!readBuffer.Read(&bufferIn[0], size)) {
+            if (!readBuffer.Read(&output[0], size)) {
                 //TODO
             }
 
@@ -212,7 +212,7 @@ bool SingleBufferedStream::Read(char8 * const bufferIn,
 
                     else {
 
-                        if (!readBuffer.Read(&bufferIn[size], toRead)) {
+                        if (!readBuffer.Read(&output[size], toRead)) {
                             //TODO
                         }
                         size += toRead;
@@ -224,7 +224,7 @@ bool SingleBufferedStream::Read(char8 * const bufferIn,
                 }
                 else {
                     // if needed read directly from stream
-                    if (!unbufferedStream->Read(&bufferIn[size], toRead, timeout)) {
+                    if (!unbufferedStream->Read(&output[size], toRead, timeout)) {
                         ret = false;
                     }
                     else {
@@ -236,14 +236,14 @@ bool SingleBufferedStream::Read(char8 * const bufferIn,
     }
 
     // if needed read directly from stream
-    return (ret) ? (unbufferedStream->Read(&bufferIn[0], size, timeout)) : (false);
+    return (ret) ? (unbufferedStream->Read(&output[0], size, timeout)) : (false);
 }
 
 /** Write data from a buffer to the stream. As much as size byte are written, actual size
  is returned in size. msecTimeout is how much the operation should last.
  timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
  when noWait is used .... */
-bool SingleBufferedStream::Write(const char8 * const bufferIn,
+bool SingleBufferedStream::Write(const char8 * const input,
                                  uint32 & size) {
 
     bool ret = true;
@@ -266,7 +266,7 @@ bool SingleBufferedStream::Write(const char8 * const bufferIn,
             if (writeBuffer.MaxUsableAmount() > (4u * size)) {
 
                 // try writing the buffer
-                if (!writeBuffer.Write(&bufferIn[0], size)) {
+                if (!writeBuffer.Write(&input[0], size)) {
                     //TODO
                 }
 
@@ -281,7 +281,7 @@ bool SingleBufferedStream::Write(const char8 * const bufferIn,
                         uint32 leftToWrite = toWrite;
 
                         // try writing the buffer
-                        if (!writeBuffer.Write(&bufferIn[size], leftToWrite)) {
+                        if (!writeBuffer.Write(&input[size], leftToWrite)) {
                             //TODO
                         }
 
@@ -303,7 +303,7 @@ bool SingleBufferedStream::Write(const char8 * const bufferIn,
 
         }
     }
-    return (ret) ? (unbufferedStream->Write(&bufferIn[0], size, timeout)) : (false);
+    return (ret) ? (unbufferedStream->Write(&input[0], size, timeout)) : (false);
 
 }
 
@@ -354,10 +354,10 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
 }
 
 /** Moves within the file relative to current location */
-bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
+bool SingleBufferedStream::RelativeSeek(int32 delta) {
     bool ubSeek = false;
 
-    if (deltaPos != 0) {
+    if (delta != 0) {
 
         ubSeek = true;
         // if write mode on then just flush out data
@@ -374,7 +374,7 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
             uint64 currentPos = readBuffer.Position();
 
             // on success it means we are in range
-            if (readBuffer.RelativeSeek(deltaPos)) {
+            if (readBuffer.RelativeSeek(delta)) {
                 // no need to move stream pointer
                 ubSeek = false;
             }
@@ -389,7 +389,7 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
                 if (gap < 0) {
                     //TODO
                 }
-                deltaPos -= gap;
+                delta -= gap;
                 // empty buffer
                 readBuffer.Empty();
             }
@@ -399,7 +399,7 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
 
     // seek
     /*lint -e{9117} -e{737} [MISRA C++ Rule 5-0-4]. The input value is always positive so the signed does not change. */
-    return (ubSeek) ? (unbufferedStream->Seek(static_cast<uint64>(unbufferedStream->Position() + deltaPos))) : (true);
+    return (ubSeek) ? (unbufferedStream->Seek(static_cast<uint64>(unbufferedStream->Position() + delta))) : (true);
 }
 
 /** Returns current position */

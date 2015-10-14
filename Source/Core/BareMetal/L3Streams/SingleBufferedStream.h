@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "TimeoutType.h"
 #include "IOBuffer.h"
 #include "AnyType.h"
@@ -48,12 +49,13 @@ namespace MARTe {
 /**
  * @brief Buffered stream implementation (single buffer).
  * @details This class offers a buffering mechanism for character streams.
- * It supplements a low-level RawStream (which implements the low-level calls such as Read,
- * Write, Seek, ...) with a buffering scheme.
+ * It supplements a low-level RawStream (which implements the low-level calls
+ * such as Read, Write, Seek, ...) with a buffering scheme.
  */
 class SingleBufferedStream: public BufferedStream {
 
 public:
+
     /**
      * @brief Default constructor.
      * @post
@@ -135,7 +137,7 @@ public:
      *   Position() == this'old->Position() + size
      *   TODO check if this post condition is always true
      */
-    virtual bool Read(char8 * bufferIn,
+    virtual bool Read(char8 * output,
                       uint32 & size);
 
     /**
@@ -144,7 +146,7 @@ public:
      *   Position() == this'old->Position() + size
      *   TODO check if this post condition is always true
      */
-    virtual bool Write(const char8* bufferIn,
+    virtual bool Write(const char8* input,
                        uint32 & size);
 
     /**
@@ -160,7 +162,7 @@ public:
     /**
      * @see BufferedStream::RelativeSeek
      */
-    virtual bool RelativeSeek(int32 deltaPos);
+    virtual bool RelativeSeek(int32 delta);
 
     /**
      * @see BufferedStream::Position
@@ -193,6 +195,20 @@ public:
      */
     TimeoutType GetTimeout() const;
 
+protected:
+
+    /**
+     * @brief Gets the read buffer.
+     * @return BufferedStreamIOBuffer readBuffer pointer.
+     */
+    virtual IOBuffer *GetInputBuffer();
+
+    /**
+     * @brief Gets the write buffer.
+     * @return BufferedStreamIOBuffer writeBuffer pointer.
+     */
+    virtual IOBuffer *GetOutputBuffer();
+
 //TODO This was protected before. Check if can be private.
 private:
     //TODO these OperatingModes are just providing a namespace. Simplify and just have two booleans please.
@@ -211,20 +227,9 @@ private:
         bool mutexWriteMode;
 
     };
+
     /** set automatically on initialisation by calling of the Canxxx functions */
     OperatingModes operatingModes;
-
-    /**
-     * @brief Gets the read buffer.
-     * @return BufferedStreamIOBuffer readBuffer pointer.
-     */
-    IOBuffer *GetInputBuffer();
-
-    /**
-     * @brief Gets the write buffer.
-     * @return BufferedStreamIOBuffer writeBuffer pointer.
-     */
-    IOBuffer *GetOutputBuffer();
 
     /**
      * @brief Switches the stream to write mode.
@@ -270,6 +275,7 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 bool SingleBufferedStream::FlushAndResync() {
 
     bool ret = true;
@@ -351,5 +357,6 @@ bool SingleBufferedStream::SwitchToReadMode() {
 }
 
 }
+
 #endif /* SINGLEBUFFEREDSTREAM_H_ */
 
