@@ -36,6 +36,7 @@
 #include "AnyType.h"
 #include "FormatDescriptor.h"
 #include "IOBuffer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -43,54 +44,41 @@
 namespace MARTe {
 
 /**
- * @file BufferedStream.h
- * @brief Common father class for all streamable implementations.
+ * @brief Abstract super class for all buffered streams.
  *
- * This functions implements the most useful and powerful functions like Printf and GetToken leaving
- * other functions implementation to the derived classes.
- *
- * Since StreamI performs just an interface, this class is the father of the
- * more specific streams like for example BufferedStream (file, socket, ecc.) StreamString (advanced strings manager with
- * heap memory allocation), StreamMemoryReference (stack memory).
- *
- * StreamI functions for the multi stream are overloaded protected because are not used by all descendents.
- */
-
-/**
- * @brief Abstract super class for all streamables.
- *
- * It's the common point of implementation between BufferedStream descendent
- * and MemoryMappedStreams.
- * Provide common abstract buffering scheme.
+ * @details This class provides the interface specification for all the
+ * streams which support buffering. It also offers a standard implementation
+ * to GetToken and GetLine functions.
  */
 class BufferedStream {
 
 public:
 
     /**
-     * @brief Default constructor
+     * Default constructor
      */
     BufferedStream();
+
     /**
-     * default destructor
+     * @brief Default destructor
      */
     virtual ~BufferedStream();
 
     /**
-     * @brief Pure virtual function. Defines if write operations can be performed on the stream.
-     * @return return value depends from derived classes implementation.
+     * @brief Queries if the stream is writable.
+     * @return true if the stream is writable.
      */
     virtual bool CanWrite() const =0;
 
     /**
-     * @brief Pure virtual function. Defines if read operations can be performed on the stream.
-     * @return return value depends from derived classes implementation.
+     * @brief Queries if the stream is readable.
+     * @return if the stream is readable.
      */
     virtual bool CanRead() const =0;
 
     /**
-     * @brief Pure virtual method. Defines if seek operations can be performed on the stream.
-     * @return return value depends on the derived classes implementation.
+     * @brief Queries if seek operations can be performed on the stream.
+     * @return true if seek operations can be performed on the stream.
      */
     virtual bool CanSeek() const =0;
 
@@ -131,124 +119,96 @@ public:
     virtual bool UnbufferedSetSize(uint64 size) = 0;
 
     /**
-     * @brief Pure virtual method. Reads data from the stream to a char8* buffer.
-     * @param buffer is the buffer where datas must be copied.
-     * @param size is the desired number of bytes to copy.
-     * @param msecTimeout is the desired timeout.
-     * @param complete is a flag.
-     *
-     * The behavior depends by derived classes implementation.
-     *
-     Reads data into buffer.
-     As much as size byte are read,
-     actual read size is returned in size. (unless complete = true)
-     msecTimeout is how much the operation should last - no more - if not any (all) data read then return false
-     timeout behavior depends on class characteristics and sync mode.
-     return false implies failure to comply with minimum requirements:
-     timeout and complete and data read  != size
-     timeout and data read == 0
-     error in the stream  ==> no point to try again
-     parameters error, for instance buffer = NULL
+     * @brief Reads data from the stream.
+     * @detail Reads up to \a size bytes into \a bufferIn. The actual read size is
+     * returned in \a size.
+     * @param[out] output the buffer where to read the data into.
+     * @param[in,out] size the number of bytes to read. Upon return of the function \a size contains the number of bytes actually read.
+     * @return true if \a size bytes are successfully read into \a bufferIn.
      */
-    virtual bool Read(char8* bufferIn,
+    virtual bool Read(char8* output,
                       uint32 & size)=0;
 
     /**
-     * @brief Pure virtual method. Writes from a const char8* buffer to the stream.
-     * @param buffer contains the datas which must be copied on the stream.
-     * @param size is the desired number of bytes to write.
-     * @param msecTimeout is the desired timeout.
-     * @param complete is a flag.
-     *
-     * The behavior depends by derived classes implementation.
-     *
-     Write data from a buffer to the stream.
-     As much as size byte are written,
-     actual written size is returned in size.
-     msecTimeout is how much the operation should last.
-     timeout behavior depends on class characteristics and sync mode.
-     return false implies failure to comply with minimum requirements:
-     timeout and complete and data written  != size
-     timeout and data written == 0
-     error in the stream ==> no point to try again
-     parameters error, for instance buffer = NULL
+     * @brief Writes data into the stream.
+     * @detail Writes up to \a size bytes into \a bufferIn. The actual written size is
+     * returned in \a size.
+     * @param[in] input the buffer where to read the data from.
+     * @param[in,out] size the number of bytes to write. Upon return of the function \a size contains the number of bytes actually written.
+     * @return true if \a size bytes are successfully read from \a bufferIn and written into the stream.
      */
-    virtual bool Write(const char8* bufferIn,
+    virtual bool Write(const char8* input,
                        uint32 & size) = 0;
 
     /**
-     * @brief Pure virtual method. The size of the stream.
-     * @return the size of the stream depending on derived classes implementation.
+     * @brief Gets the size of the stream.
+     * @return the size of the stream.
      */
     virtual uint64 Size() = 0;
 
     /**
-     * @brief Pure virtual method. Moves within the stream to an absolute location.
-     * @param pos is the desired absolute position.
-     * @return return value depends on derived classes implementation.
+     * @brief Moves within the stream to an absolute location.
+     * @param[in] pos the desired absolute position.
+     * @return true if the stream is successfully moved to \a pos.
+     * @post
+     *   Position() == pos
      */
     virtual bool Seek(uint64 pos) = 0;
 
     /**
-     * @brief Pure virtual method. Moves within the file relative to current location.
-     * @param deltaPos is the gap from the current position.
-     * @return return value depends on derived classes implementation.
+     * @brief Moves within the stream to a position that is relative to the current location.
+     * @param[in] delta is the distance from the current position.
+     * @return true if the stream is successfully moved to \a deltaPos.
+     * @post
+     *   Position() == this'old->Position() + deltaPos
      */
-    virtual bool RelativeSeek(int32 deltaPos)=0;
+    virtual bool RelativeSeek(int32 delta)=0;
 
     /**
-     * @brief Pure virtual method. Returns current position.
+     * @brief Gets the current position.
      * @return the current position in the stream.
      */
     virtual uint64 Position() = 0;
 
     /**
-     * @brief Pure virtual method. Clip the stream size to the desired value.
-     * @param size is the desired size.
-     * @return return value depends on the derived classes implementation.
+     * @brief Clips the stream size.
+     * @param size the new size of the stream.
+     * @return true if the size of the stream is set to \a size.
+     * @post
+     *   GetSize() == size
      */
     virtual bool SetSize(uint64 size) = 0;
 
     /**
-     * @brief Automatic cast to AnyType for a generic stream Printf.
+     * @brief Casts the stream to AnyType.
+     * @return an AnyType representation of the stream.
      */
     inline operator AnyType();
 
     /**
-     * @brief Writes a character on the stream.
-     * @param c is the character to write on the stream.
-     * @return depends from derived classes implementation.
-     *
-     * Uses the derived class implementation of Write function with one as size parameter,
-     * then the function behavior depends from the derived class Write function.*/
+     * @brief Writes a character to the stream.
+     * @param[in] c the character to write on the stream.
+     * @return true if the character is successfully written into the stream.
+     */
     inline bool PutC(const char8 c);
 
     /**
      * @brief Reads a character from the stream.
-     * @param c is the character in return.
-     * @return depends from derived classes implementation.
-     *
-     * Uses the derived class implementation of Read function with one as size parameter,
-     * then the function behavior depends from the derived class Read function. */
+     * @param[in] c the character to read from the stream.
+     * @return true if the character is successfully read from the stream.
+     */
     inline bool GetC(char8 &c);
 
     /**
-     * @brief Reads a token from the stream and writes it on the char8* buffer provided.
-     * @param terminator is a list of terminator characters.
-     * @param outputBufferSize is the maximum size of the output buffer.
-     * @param saveTerminator is the found terminator in return.
-     * @param skipCharacters is a list of characters to be skipped.
-     * @return false if no data read, true otherwise.
+     * @brief Reads a token from the stream.
+     * @details Extracts a token from the stream until a terminator or \0 is found.
      *
-     * This function is performed for buffered streams, namely streams with an IOBuffer type as read buffer.
-     * If the function GetInputBuffer returns NULL a StreamWrapperIOBuffer is created at the moment on the stack
-     * with a dimension of 64 bytes and it substitutes the absent IOBuffer.
-     *
-     Extract a token from the stream into a string data until a terminator or 0 is found.
-     Skips all skip characters, if you want to skip also terminator characters at the begging add them to skip characters.
-     Returns true if some data was read before any error or file termination. false only on error and no data available
-     The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
-     skipCharacters=NULL is equivalent to skipCharacters = terminator.
+     * @param[out] outputBuffer the buffer where to write the retrieved tokens into.
+     * @param[in] terminator a list of terminator characters, i.e. characters that allow to distinguish tokens.
+     * @param[in] outputBufferSize the maximum size of the output buffer.
+     * @param[in] saveTerminator if true the terminators are also included in the string saved into \a outputBuffer.
+     * @param[in] skipCharacters a list of characters to be skipped.
+     * @return false if no data is read, true otherwise.
      */
     virtual bool GetToken(char8 * const outputBuffer,
                           const char8 * const terminator,
@@ -257,124 +217,110 @@ public:
                           const char8 * const skipCharacters);
 
     /**
-     * @brief Reads a token from the stream and writes it on another stream.
-     * @param terminator is a list of terminator characters.
-     * @param saveTerminator is the found terminator in return.
-     * @param skipCharacters is a list of characters to be skipped.
-     * @return false if no data read, true otherwise.
+     * @brief Reads a token from the stream.
+     * @details Extracts a token from the stream until a terminator or \0 is found.
      *
-     * This function is performed for buffered streams, namely this stream should have an IOBuffer type as read buffer
-     * and the output stream an IOBuffer as write buffer.
-     * If the function GetInputBuffer returns NULL for this stream a StreamWrapperIOBuffer is created at the moment on the stack
-     * with a dimension of 64 bytes and it substitutes the absent IOBuffer for read operations.
-     * If the function GetOutputBuffer returns NULL for the output stream a StreamWrapperIOBuffer is created at the moment
-     * on the stack with a dimension of 64 bytes and it substitutes the absent IOBuffer for write operations.
-     *
-     ** extract a token from the stream into a string data until a terminator or 0 is found.
-     Skips all skip characters, if you want to skip also terminator characters at the beginning add them to the skip characters.
-     returns true if some data was read before any error or file termination. false only on error and no data available
-     The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
-     skipCharacters=NULL is equivalent to skipCharacters = terminator
-     A character can be found in the terminator or in the skipCharacters list  in both or in none
-     0) none                 the character is copied
-     1) terminator           the character is not copied the string is terminated
-     2) skip                 the character is not copied
-     3) skip + terminator    the character is not copied, the string is terminated only if not empty
+     * @param[out] outputBuffer the buffer where to write the retrieved tokens into.
+     * @param[in] terminator a list of terminator characters, i.e. characters that allow to distinguish tokens.
+     * @param[in] outputBufferSize the maximum size of the output buffer.
+     * @param[in] saveTerminator if true the terminators are also included in the string saved into \a outputBuffer.
+     * @param[in] skipCharacters a list of characters to be skipped.
+     * @return false if no data is read, true otherwise.
      */
     bool GetToken(BufferedStream & output,
                   const char8 * const terminator,
-                  char8 * const saveTerminator = static_cast<char8 *>(NULL),
-    const char8 * const skipCharacters=static_cast<const char8 *>(NULL));
+                  char8 * const saveTerminator = NULL_PTR(char8 *),
+                  const char8 * const skipCharacters = NULL_PTR(const char8 *));
 
     /**
-     * @brief Skips a series of tokens delimited by terminators or 0.
-     * @param count is the number of tokens to be skipped.
-     * @param terminator is a list of terminator characters.
+     * @brief Skips a series of tokens delimited by terminators or \0.
+     * @param[in] count the number of tokens to be skipped.
+     * @param[in] terminator a list of terminator characters.
      * @return false if no data read, true otherwise.
      */
     bool SkipTokens(const uint32 count,
-    const char8 * const terminator);
+                    const char8 * const terminator);
 
     /**
-     * @brief Prints a list of elements looking to a specified format.
-     * @param format is a printf like string format.
-     * @param pars is a list of elements to be printed.
-     * @see Print.
-     *
-     Pars is a vector terminated by voidAnyType value.
-     Format follows the TypeDescriptor::InitialiseFromString.
-     Prints all data pointed to by pars.
+     * @brief Extracts a line from this stream into another stream.
+     * @param[out] output is the output stream where the line must be written.
+     * @param[in] skipTerminators if true \r is skipped.
+     * @return true if a line is successfully read from this stream and written into \a output.
+     */
+    bool GetLine(BufferedStream & output,
+                 bool skipTerminators = true);
+
+    /**
+     * @brief Extracts a line from this stream into a character buffer.
+     * @param[out] outputBuffer is the character buffer where the line must be written into.
+     * @param[in] outputBufferSize the size of \a outputBuffer.
+     * @param[in] skipTerminators if true \r is skipped.
+     * @return true if a line is successfully read from this stream and written into \a outputBuffer.
+     */
+    bool GetLine(char8 *outputBuffer,
+                 const uint32 outputBufferSize,
+                 bool skipTerminators = true);
+
+    /**
+     * @brief Printf implementation.
+     * @param format printf format as specified in FormatDescriptor::InitialiseFromString.
+     * @param pars the list of elements that are to be replaced in the \a format string. It must be terminated
+     * by a voidAnyType element (i.e. pars[length(pars)-1] == voidAnyType).
+     * @return true if the string is successfully printed.
      */
     bool PrintFormatted(const char8 * const format,
-    const AnyType pars[]);
+                        const AnyType pars[]);
 
     /**
-     * @brief Copies a const char8* into this stream from current position.
-     * @param buffer is the buffer to be copied on the stream.
-     * @return the result of the Write operation which depends on derived classes implementation.
+     * @brief Copies a character buffer.
+     * @detail Copies a character buffer into this stream (from the current position).
+     * @param[out] buffer is the buffer to be copied into the stream.
+     * @return true if buffer is successfully copied into the stream.
      */
     bool Copy(const char8 * const buffer);
 
     /**
-     * @brief Copies from stream current Position to end.
-     * @param stream is the stream to be copied on this stream.
-     * @param return false if the results of Read and Write streams operations fails.
+     * @brief Copies from a stream.
+     * @detail Copies a stream into this stream (from the current position).
+     * @param[out] stream is the stream to be copied into the stream.
+     * @return true if stream is successfully copied into the stream.
      */
     bool Copy(BufferedStream &stream);
 
     /**
-     * @see Printf with two elements to print.
+     * @see PrintFormatted.
      */
     inline bool Printf(const char8 * const format,
-    const AnyType& par1,
-    const AnyType& par2);
+                       const AnyType& par1,
+                       const AnyType& par2);
 
     /**
-     * @see Printf with three elements to print.
+     * @see PrintFormatted.
      */
     inline bool Printf(const char8 * const format,
-    const AnyType& par1,
-    const AnyType& par2,
-    const AnyType& par3);
+                       const AnyType& par1,
+                       const AnyType& par2,
+                       const AnyType& par3);
 
     /**
-     * @see Printf with four element to print.
+     * @see PrintFormatted.
      */
     inline bool Printf(const char8 * const format,
-    const AnyType& par1,
-    const AnyType& par2,
-    const AnyType& par3,
-    const AnyType& par4);
-
-    /**
-     * @brief Inline method which use pure virtual GetToken. Extract a line and write it on another stream.
-     * @param outputBuffer is the output stream where the line must be written.
-     * @param skipTerminators defines if the \r char8 should be skipped (true) or not (false).
-     * @return depends on the derived classes implementation.
-     */
-    inline bool GetLine(BufferedStream & output,
-    bool skipTerminators = true);
-
-    /**
-     * @brief Inline method which use pure virtual GetToken. Extract a line and write it on a char8* buffer.
-     * @param outputBuffer is the buffer where the line must be written.
-     * @param outputBufferSize is the maximum size of the output buffer.
-     * @param skipTerminators defines if the \r char8 should be skipped (true) or not (false).
-     * @return depends on the derived classes implementation.
-     */
-    inline bool GetLine(char8 *outputBuffer,
-    const uint32 outputBufferSize,
-    bool skipTerminators = true);
+                       const AnyType& par1,
+                       const AnyType& par2,
+                       const AnyType& par3,
+                       const AnyType& par4);
 
 protected:
+
     /**
-     * @brief Pure virtual method. Gets the read buffer.
+     * @brief Gets the read buffer.
      * @return a pointer to the read buffer.
      */
     virtual IOBuffer *GetInputBuffer() = 0;
 
     /**
-     * @brief Pure virtual method. Get the write buffer.
+     * @brief Gets the write buffer.
      * @return a pointer to the write buffer.
      */
     virtual IOBuffer *GetOutputBuffer() = 0;
@@ -425,37 +371,6 @@ bool BufferedStream::Printf(const char8 * const format,
                             const AnyType& par4) {
     AnyType pars[5] = { par1, par2, par3, par4, voidAnyType };
     return PrintFormatted(format, &pars[0]);
-}
-
-bool BufferedStream::GetLine(BufferedStream & output,
-                             const bool skipTerminators) {
-    const char8 *skipCharacters = "\r";
-#if defined (_WIN32)
-    if (!skipTerminators) {
-        skipCharacters = "\r";
-    }
-#else
-    if (!skipTerminators) {
-        skipCharacters = "";
-    }
-#endif
-    return GetToken(output, "\n", static_cast<char8 *>(NULL),skipCharacters);
-}
-
-bool BufferedStream::GetLine(char8 * const outputBuffer,
-                             const uint32 outputBufferSize,
-                             const bool skipTerminators) {
-    const char8 *skipCharacters = "\r";
-#if defined (_WIN32)
-    if (!skipTerminators) {
-        skipCharacters = "\r";
-    }
-#else
-    if (!skipTerminators) {
-        skipCharacters = "";
-    }
-#endif
-    return GetToken(outputBuffer, "\n", outputBufferSize, static_cast<char8 *>(NULL),skipCharacters);
 }
 
 }

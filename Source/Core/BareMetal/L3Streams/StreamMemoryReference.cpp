@@ -69,7 +69,7 @@ StreamMemoryReference::StreamMemoryReference(const char8 * const bufferIn,
 StreamMemoryReference::~StreamMemoryReference() {
 }
 
-StreamMemoryReference::operator AnyType() {
+StreamMemoryReference::operator AnyType() const {
     AnyType at(Buffer());
     return at;
 }
@@ -84,28 +84,25 @@ IOBuffer *StreamMemoryReference::GetOutputBuffer() {
     return &buffer;
 }
 
-bool StreamMemoryReference::Read(char8* const bufferIn,
+bool StreamMemoryReference::Read(char8* const output,
                                  uint32 & size) {
-    return this->buffer.Read(&bufferIn[0], size);
+    return this->buffer.Read(&output[0], size);
 }
 
-bool StreamMemoryReference::Write(const char8* const bufferIn,
+bool StreamMemoryReference::Write(const char8* const input,
                                   uint32 & size) {
-    return this->buffer.Write(&bufferIn[0], size);
+    return this->buffer.Write(&input[0], size);
 
 }
 
 bool StreamMemoryReference::CanWrite() const {
-    bool cond1 = (buffer.BufferReference() != NULL);
-    bool cond2 = buffer.CanWrite();
-    return (cond1) && (cond2);
+    return ((buffer.BufferReference() != NULL) && buffer.CanWrite());
 };
 
 bool StreamMemoryReference::CanRead() const {
     return (buffer.Buffer() != NULL);
 };
 
-/** The size of the stream */
 uint64 StreamMemoryReference::Size() {
     return buffer.UsedSize();
 }
@@ -132,17 +129,14 @@ bool StreamMemoryReference::Seek(const uint64 pos) {
     return (ret) ? (buffer.Seek(static_cast<uint32>(pos))) : (false);
 }
 
-/** Moves within the file relative to current location */
-bool StreamMemoryReference::RelativeSeek(const int32 deltaPos) {
-    return buffer.RelativeSeek(deltaPos);
+bool StreamMemoryReference::RelativeSeek(const int32 delta) {
+    return buffer.RelativeSeek(delta);
 }
 
-/** Returns current position */
 uint64 StreamMemoryReference::Position() {
     return buffer.Position();
 }
 
-/** can you move the pointer */
 bool StreamMemoryReference::CanSeek() const {
     return true;
 }

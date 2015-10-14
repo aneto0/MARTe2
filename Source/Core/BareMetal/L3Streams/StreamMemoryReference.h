@@ -36,6 +36,7 @@
 #include "BufferedStream.h"
 #include "TimeoutType.h"
 #include "IOBuffer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -43,133 +44,166 @@
 namespace MARTe {
 
 /**
- @brief A basic implementation of a stream which allows reading and writing to a memory location
+ * @brief A basic implementation of a stream which allows reading and writing
+ * to an underlying memory location.
  */
 class StreamMemoryReference: public BufferedStream {
 
-
-
 public:
 
-    StreamMemoryReference();
     /**
-     * @brief Binds this object to a memory area in read and write mode.
-     * @param buffer is the char8 pointer of the preallocated memory.
-     * @param bufferSize is the usable size of the buffer.
-     *
-     * The function assumes that the area of memory is empty and therefore the Stream::Size is 0
-     * */
+     * @brief Default constructor
+     * @pre
+     *   true
+     * @post
+     *   not CanRead() &&
+     *   not CanWrite() &&
+     *   CanSeek() &&
+     *   Position() == 0 &&
+     *   Size() == 0
+     */
+    StreamMemoryReference();
+
+    /**
+     * @brief Constructor from a preallocated read/write buffer
+     * @details This constructor binds the object to a memory area in
+     * read/write mode. It also assumes that the area of memory is empty
+     * and therefore the stream's size is 0.
+     * @param[in] buffer is the char8 pointer of the preallocated read/write memory.
+     * @param[in] bufferSize is the usable size of the buffer.
+     * @warning The buffer pointer is an input parameter to the constructor,
+     * but the pointee will be accessed for reading and writing by the other
+     * methods of the class.
+     * @pre
+     *   bufferIn != NULL
+     *   bufferSize > 0
+     * @post
+     *   CanRead() &&
+     *   CanWrite() &&
+     *   CanSeek() &&
+     *   Position() == 0 &&
+     *   Size() == 0
+     */
     StreamMemoryReference(char8 * const bufferIn,
                           const uint32 bufferSize);
 
     /**
-     * @brief Binds this object to a memory area in read only mode.
-     * @param buffer is the const char8 pointer to a preallocated read only memory.
-     * @param bufferSize is the usable size of the buffer.
-     *
-     * The function assumes that the area of memory is full and therefore the Stream::Size is bufferSize
-     * */
+     * @brief Constructor from a preallocated read only buffer
+     * @details This constructor binds the object to a memory area in
+     * read only mode. It also assumes that the area of memory is full
+     * and therefore the stream's size is bufferSize.
+     * @param[in] buffer is the const char8 pointer to a preallocated read only memory.
+     * @param[in] bufferSize is the usable size of the buffer.
+     * @warning The buffer pointer is an input parameter to the constructor,
+     * but the pointee will be accessed (read only) by the other methods of
+     * the class.
+     * @pre
+     *   bufferIn != NULL
+     *   bufferSize > 0
+     * @post
+     *   CanRead() &&
+     *   not CanWrite() &&
+     *   CanSeek() &&
+     *   Position() == 0 &&
+     *   Size() == bufferSize
+     */
     StreamMemoryReference(const char8 * const bufferIn,
                           const uint32 bufferSize);
 
-    /** Destructor */
+    /**
+     * @brief Destructor
+     */
     virtual ~StreamMemoryReference();
 
-
-    /** @brief Automatic cast to AnyType as a const char8 passing Buffer() return value. */
+    /**
+     *  @brief Automatic cast to AnyType as a const char8 passing Buffer() return value.
+     */
     /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The StreamMemoryReference is considered as a string and not as a standard stream*/
-    operator AnyType();
-    /*---------------------------------------------------------------------------*/
+    operator AnyType() const;
+
+    /*-----------------------------------------------------------------------*/
 
     /**
-     * @brief Reads data from the stream to the buffer.
-     * @param buffer is the buffer where data must be written.
-     * @param is the desired number of bytes to read.
-     * @param msecTimeout is the desired timeout unused here.
-     * @param complete is a flag unused here.
-     * @return true.
-     *
-     * This function calls IOBuffer::Read, see it for more informations.
-     *
-     As much as size byte are read,
-     actual read size is returned in size. (unless complete = true)
-     msecTimeout is how much the operation should last - no more - if not any (all) data read then return false
-     timeout behaviour depends on class characteristics and sync mode.
+     * @brief Reads data into a buffer.
+     * @param[out] output is the buffer where data must be written to.
+     * @param[in,out] size is the number of bytes to copy. This value will be
+     * updated with the bytes actually read.
+     * @return false if errors on copying data
      */
-    virtual bool Read(char8* bufferIn,
+    virtual bool Read(char8* output,
                       uint32 & size);
 
     /**
-     * @brief Write data from a buffer to the stream.
-     * @param buffer contains the data to write on the stream.
-     * @param size is the number of bytes to write on the stream.
-     * @param msecTimeout is the desired timeout unused here.
-     * @param complete is a flag unused here.
-     * @return true.
-     *
-     * This function calls IOBuffer::Write, see it for more informations.
-     *
-     As much as size byte are written,
-     actual written size is returned in size.
-     msecTimeout is how much the operation should last.
-     timeout behaviour depends on class characteristics and sync mode.
+     * @brief Write from a buffer to the string.
+     * @param[in] input is the buffer with the data to be written from.
+     * @param[in,out] size is the number of bytes to copy. This value will be
+     * updated with the bytes actually written.
+     * @return false if errors on copying data
      */
-    virtual bool Write(const char8* bufferIn,
+    virtual bool Write(const char8* input,
                        uint32 & size);
 
     /**
-     * @brief Write operations allowed.
-     * @return true if the preallocated memory is valid (pointer != NULL). */
+     * @brief Queries if the stream is writable.
+     * @return true if the stream is writable.
+     */
     virtual bool CanWrite() const;
 
     /**
-     * @brief Read operations allowed.
-     * @return true if the preallocated memory is valid (pointer != NULL). */
+     * @brief Queries if the stream is readable.
+     * @return true if the stream is readable.
+     */
     virtual bool CanRead() const;
 
     /**
-     * @brief The size of the filled memory.
-     * @return the size of the stream.
-     *
-     * For this object the size is always minor than the buffer dimension passed in the constructor. */
+     * @brief Gets the size of the stream.
+     * @details For this object the size is always minor than the buffer
+     * dimension passed in the constructor.
+     * @return the current stream size.
+     */
     virtual uint64 Size();
 
     /**
-     * @brief Moves within the file to an absolute location.
-     * @param pos is the desired absolute position.
-     * @return false in case of position out of bounds.
-     *
-     * If the desired position falls out of the range, the position becomes the end of the filled stream. */
-    virtual bool Seek(uint64 pos);
+     * @brief Moves within the stream to an absolute location.
+     * @param[in] pos is the desired absolute position.
+     * @return false in case of cursor out of ranges or other errors.
+     * @post
+     *   pos <= Size() => Position() == pos
+     *   pos > Size() => Position() == Size()
+     */
+    virtual bool Seek(const uint64 pos);
 
     /**
      * @brief Moves within the stream relative to current location.
-     * @param deltaPos is the gap from the current position.
+     * @details Checks that the final position is >= 0 and <= UsedSize, then moves the cursor.\n
+     * -If the final position is < 0 moves the cursor at the beginning.\n
+     * -If the final position is > UsedSize moves the cursor at the end.\n
+     * @param[in] delta is the gap from the current position.
      * @return false if the position falls out of bounds.
-     *
-     * If the final position falls out of the stream bounds, it becomes one of the bounds. */
-    virtual bool RelativeSeek(int32 deltaPos);
+     */
+    virtual bool RelativeSeek(const int32 delta);
 
     /**
-     * @brief  Returns current position.
-     * @return the current position. */
+     * @brief Gets the current position.
+     * @return the current position.
+     */
     virtual uint64 Position();
 
     /**
-     * @brief Set the used size.
-     * @param size is the desired stream size.
+     * @brief Sets the used size.
+     * @details Setting the size manually you can read until that position.
+     * @param[in] size is the desired stream size.
      * @return true.
-     *
-     * Setting the size manually you can read until that position. */
-    virtual bool SetSize(uint64 size);
+     */
+    virtual bool SetSize(const uint64 size);
 
     /**
-     * @brief Seek operations are allowed
-     * @return true. */
+     * @brief Queries if seek operations can be performed on the stream.
+     * @return true.
+     */
     virtual bool CanSeek() const;
 
-    /*---------------------------------------------------------------------------*/
-
+    /*-----------------------------------------------------------------------*/
 
     virtual bool UnbufferedWrite(const char8* const bufferIn,
                                  uint32 & size,
@@ -212,36 +246,40 @@ public:
 
 
     /**
-     * @brief Read Only access to the internal buffer. It calls a CharBuffer function.
+     * @brief Gets a pointer to the beginning of the internal buffer with read
+     * only access.
      * @return The pointer to the internal buffer.
      */
     inline const char8 *Buffer() const;
 
     /**
-     * @brief Read Write access top the internal buffer. It calls a CharBuffer function.
+     * @brief Gets a pointer to the beginning of the internal buffer with read
+     * write access.
      * @return The pointer to the internal buffer.
      */
     inline char8 *BufferReference() const;
 
     /**
-     * @brief Returns a pointer to the tail of the buffer.
-     * @param  ix the offset from the end of buffer. valid ranges is 0 to Size()-1
-     * @return pointer to the tail of the buffer
+     * @brief Gets a pointer to the tail of the internal buffer with read only
+     * access.
+     * @param[in] ix the offset from the end of buffer.
+     * @return pointer to the tail of the intenal buffer.
+     * @pre ix >= 0 && ix < Size().
      */
     inline const char8 *Tail(const uint32 ix) const;
 
-
 protected:
-    // methods to be implemented by deriving classes
 
     /**
-     * @brief Returns the read buffer.
-     * @return a pointer to the MemoryReferenceIOBuffer buffer. */
+     * @brief Gets the read buffer.
+     * @return a pointer to the read buffer.
+     */
     virtual IOBuffer *GetInputBuffer();
 
     /**
-     * @brief Returns the write buffer.
-     * @return a pointer to the MemoryReferenceIOBuffer buffer. */
+     * @brief Gets the write buffer.
+     * @return a pointer to the write buffer.
+     */
     virtual IOBuffer *GetOutputBuffer();
 
 private:
@@ -249,16 +287,16 @@ private:
     /**
      * Simply a normal IOBuffer. Nothing is overloaded.
      * It is allocated by IOBuffer::SetBufferReferencedMemory or IOBuffer::SetBufferReadOnlyReferencedMemory
-     * @see IOBuffer.cpp for the naked implementation of this buffer.  */
+     * @see IOBuffer.cpp for the naked implementation of this buffer.
+     */
     IOBuffer buffer;
-
-
 
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 const char8 *StreamMemoryReference::Buffer() const {
     return buffer.Buffer();
 }
@@ -273,7 +311,7 @@ const char8 *StreamMemoryReference::Tail(const uint32 ix) const {
     return (ok) ? (&(buffer.BufferReference()[(buffer.UsedSize() - ix) - 1u])) : static_cast<const char8 *>(NULL);
 }
 
-
 }
+
 #endif /* STREAMMEMORYREFERENCE_H_ */
 

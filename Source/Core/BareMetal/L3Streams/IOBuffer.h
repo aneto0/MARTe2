@@ -116,7 +116,8 @@ public:
      *   Position() == 0u &&
      *   UsedSize() == 0 &&
      *   AllocationGranularity() == 1u &&
-     *   UndoLevel() == 0
+     *   UndoLevel() == 0 &&
+     *   not CanWrite()
      */
     inline IOBuffer();
 
@@ -132,7 +133,8 @@ public:
      *   Position() == 0u &&
      *   UsedSize() == 0 &&
      *   AllocationGranularity() == allocationGranularity &&
-     *   UndoLevel() == newUndoLevel
+     *   UndoLevel() == newUndoLevel &&
+     *   not CanWrite()
      */
     inline IOBuffer(const uint32 allocationGranularity,
                     const uint32 newUndoLevel);
@@ -307,13 +309,15 @@ public:
      *
      * @param[in] buffer contains the data to be written in this buffer.
      * @param[in,out] size is the number of bytes to be copied. This value will be clipped to the space left if needed.
+     * @return false if errors copying data
      */
     virtual bool Write(const char8 * const buffer,
                        uint32 &size);
 
     /**
      * @brief Writes all the size in the argument from an input buffer.
-     * @details This function calls Write and NoMoreSpaceToWrite until size is consumed.
+     * @details This function calls Write and NoMoreSpaceToWrite until size
+     * is consumed.
      * @param[in] buffer contains data to be written in this buffer.
      * @param[in] size is the number of byte to be copied.
      */
@@ -323,7 +327,9 @@ public:
     /**
      * @brief Reads from this buffer to an output buffer.
      * @param[out] buffer is the output buffer where data must be written.
-     * @param[in] size is the number of bytes to be read.
+     * @param[in,out] size is the number of bytes to be read. This value will
+     * be clipped to the space left if needed.
+     * @return false if errors copying data
      */
     bool Read(char8 * const buffer,
               uint32 &size);
