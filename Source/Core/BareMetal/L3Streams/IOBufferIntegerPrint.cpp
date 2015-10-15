@@ -41,7 +41,6 @@
 
 namespace MARTe {
 
-
 /*lint -e568 [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 // returns the exponent
 // positiveNumber is the abs (number)
@@ -289,7 +288,6 @@ static inline uint16 GetNumberOfDigitsBinaryNotation(T number) {
     return nDigits;
 }
 
-
 /** @brief Prints an integer number on a general stream in decimal notation.
  * @param s is a general stream class which implements a putC() function.
  * @param positiveNumber is the number to print (it must be positive the '-' is added a part).
@@ -402,27 +400,27 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
 
         // first fill in all necessary zeros
         int16 i = 0;
+        bool ok = true;
         if (numberFillLength > 0) {
             // clamp to 5
             if (numberFillLength > 5) {
                 numberFillLength = 5;
             }
             // fill up with zeros
-            for (i = (5 - numberFillLength); i <= index; i++) {
+            for (i = (5 - numberFillLength); ok && (i <= index); i++) {
                 if (!s.PutC('0')) {
-                    //TODO
+                    ok = false;
                 }
             }
         }
         // then complete by outputting all digits
-        for (i = index + 1; i <= 4; i++) {
+        for (i = index + 1; ok && (i <= 4); i++) {
             if (!s.PutC(buffer[i])) {
-                //TODO
+                ok = false;
             }
         }
     }
 }
-
 
 /** @brief Prints a string on a generic ioBuffer.
  * @param ioBuffer is a generic ioBuffer class which implements a PutC() function.
@@ -430,11 +428,14 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
 template<class ioBufferer>
 static inline void PutS(ioBufferer & ioBuffer,
                         const char8 *s) {
-    while (s[0] != '\0') {
-        if (!ioBuffer.PutC(s[0])) {
-            //TODO
+    bool ok = true;
+    while (ok && (s[0] != '\0')) {
+        if (ioBuffer.PutC(s[0])) {
+            s = &s[1];
         }
-        s = &s[1];
+        else {
+            ok = false;
+        }
     }
 }
 
@@ -667,6 +668,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,                     // m
         numberSize += GetOrderOfMagnitude(positiveNumber);
     }
 
+    bool ok = true;
     if (!ret) {
 
         // is there enough space for the number?
@@ -676,16 +678,16 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,                     // m
 
             // fill up to from 1 maximumSize with ' '
             if ((padded) && (!leftAligned)) {
-                for (uint32 i = 1u; i < maximumSize; i++) {
+                for (uint32 i = 1u; ok && (i < maximumSize); i++) {
                     if (!ioBuffer.PutC(' ')) {
-                        //TODO
+                        ok = false;
                     }
                 }
             }
 
             // put the ?
             if (!ioBuffer.PutC('?')) {
-                //TODO
+                ok = false;
             }
 
         }
@@ -693,9 +695,9 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,                     // m
 
             // fill up from numberSize to maximumSize with ' '
             if ((padded) && (!leftAligned)) {
-                for (uint32 i = numberSize; i < maximumSize; i++) {
+                for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
                     if (!ioBuffer.PutC(' ')) {
-                        //TODO
+                        ok = false;
                     }
                 }
             }
@@ -703,13 +705,13 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,                     // m
             // add sign
             if (number < static_cast<T>(0)) {
                 if (!ioBuffer.PutC('-')) {
-                    //TODO
+                    ok = false;
                 }
             }
             else {
                 if (addPositiveSign) {
                     if (!ioBuffer.PutC('+')) {
-                        //TODO
+                        ok = false;
                     }
                 }
             }
@@ -720,15 +722,15 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,                     // m
 
         // fill up from numberSize to maximumSize with ' '
         if ((padded) && (leftAligned)) {
-            for (uint32 i = numberSize; i < maximumSize; i++) {
+            for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    //TODO
+                    ok = false;
                 }
             }
         }
     }
 
-    return true;
+    return ok;
 }
 
 /** @brief Prints an integer number on a general ioBuffer in hexadecimal notation.
@@ -774,20 +776,21 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
     }
 
     // cannot fit the number even without trailing zeroes
+    bool ok = true;
     if (maximumSize < numberSize) {
         numberSize = 1u; // just the '?'
 
         // pad on the left
         if ((padded) && (!leftAligned)) {
-            for (uint32 i = 1u; i < maximumSize; i++) {
+            for (uint32 i = 1u; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    //TODO
+                    ok = false;
                 }
             }
         }
         // put the ?
         if (!ioBuffer.PutC('?')) {
-            //TODO
+            ok = false;
         }
 
     }
@@ -820,9 +823,9 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
 
         // in case of left alignment
         if ((padded) && (!leftAligned)) {
-            for (uint32 i = numberSize; i < maximumSize; i++) {
+            for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    //TODO
+                    ok = false;
                 }
             }
         }
@@ -830,10 +833,10 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
         // add header
         if (addHeader) {
             if (!ioBuffer.PutC('0')) {
-                //TODO
+                ok = false;
             }
             if (!ioBuffer.PutC('x')) {
-                //TODO
+                ok = false;
             }
         }
 
@@ -842,26 +845,26 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
         uint8 bits = static_cast<uint8>((numberOfDigits - 1u) * 4u);
 
         // loop backwards stepping each nibble
-        for (uint8 i = bits; static_cast<int8>(i) >= 0; i -= 4u) {
+        for (uint8 i = bits; ok && (static_cast<int8>(i) >= 0); i -= 4u) {
             //to get the digit, shift the number and by masking select only the 4 LSB bits
             uint8 digit = (static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & (0xFu));
 
             // skips trailing zeros until we encounter the first non zero, or if putTrailingZeros was already set
             //if ((digit != 0) || (putTrailingZeros)){
             //putTrailingZeros = true;
-            uint8 zero=static_cast<uint8>('0');
-            uint8 ten=static_cast<uint8>('A');
+            uint8 zero = static_cast<uint8>('0');
+            uint8 ten = static_cast<uint8>('A');
 
             if (digit < 10u) {
                 /*lint -e(9125) -e(9117) */
                 if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
-                    //TODO
+                    ok = false;
                 }
             }
             else {
                 /*lint -e(9125) -e(9117) */
                 if (!ioBuffer.PutC(static_cast<char8>((ten + digit) - 10u))) {
-                    //TODO
+                    ok = false;
                 }
             }
 
@@ -870,13 +873,13 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
 
     // in case of right alignment
     if ((padded) && (leftAligned)) {
-        for (uint16 i = numberSize; i < maximumSize; i++) {
+        for (uint16 i = numberSize; ok && (i < maximumSize); i++) {
             if (!ioBuffer.PutC(' ')) {
-                //TODO
+                ok = false;
             }
         }
     }
-    return true;
+    return ok;
 
 }
 
@@ -923,20 +926,21 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
         padded = false;
     }
     // cannot fit the number even without trailing zeroes
+    bool ok = true;
     if (maximumSize < numberSize) {
         numberSize = 1u; // just the '?'
 
         // pad on the left
         if ((padded) && (!leftAligned)) {
-            for (uint32 i = 1u; i < maximumSize; i++) {
+            for (uint32 i = 1u; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    //TODO
+                    ok = false;
                 }
             }
         }
         // put the ?
         if (!ioBuffer.PutC('?')) {
-            //TODO
+            ok = false;
         }
 
     }
@@ -970,9 +974,9 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
 
         // in case of left alignment
         if ((padded) && (!leftAligned)) {
-            for (uint32 i = numberSize; i < maximumSize; i++) {
+            for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    //TODO
+                    ok = false;
                 }
             }
         }
@@ -980,10 +984,10 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
         // add header
         if (addHeader) {
             if (!ioBuffer.PutC('0')) {
-                //TODO
+                ok = false;
             }
             if (!ioBuffer.PutC('o')) {
-                //TODO
+                ok = false;
             }
         }
 
@@ -992,27 +996,27 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
         uint8 bits = static_cast<uint8>((numberOfDigits - 1u) * 3u);
 
         // loop backwards stepping each nibble
-        for (uint8 i = bits; static_cast<int8>(i) >= 0; i -= 3u) {
+        for (uint8 i = bits; ok && (static_cast<int8>(i) >= 0); i -= 3u) {
 
             //right shift of the number
             uint8 digit = static_cast<uint8>(static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & 0x7u);
-            uint8 zero=static_cast<uint8>('0');
+            uint8 zero = static_cast<uint8>('0');
             /*lint -e(9125) -e(9117) */
             if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
-                //TODO
+                ok = false;
             }
         }
     }
 
 // in case of right alignment
     if ((padded) && (leftAligned)) {
-        for (uint16 i = numberSize; i < maximumSize; i++) {
+        for (uint16 i = numberSize; ok && (i < maximumSize); i++) {
             if (!ioBuffer.PutC(' ')) {
-                //TODO
+                ok = false;
             }
         }
     }
-    return true;
+    return ok;
 }
 
 /** @brief Prints an integer number on a general ioBuffer in binary notation.
@@ -1059,6 +1063,7 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
     uint16 numberSize = headerSize + numberOfDigits;
 
     // cannot fit the number even without trailing zeroes
+    bool ok = true;
     if (maximumSize < numberSize) {
         numberSize = 1u; // just the '?'
 
@@ -1066,13 +1071,13 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
         if ((padded) && (!leftAligned)) {
             for (uint32 i = 1u; i < maximumSize; i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    //TODO
+                    ok = false;
                 }
             }
         }
         // put the ?
         if (!ioBuffer.PutC('?')) {
-            //TODO
+            ok = false;
         }
 
     }
@@ -1104,9 +1109,9 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
 
         // in case of left alignment
         if ((padded) && (!leftAligned)) {
-            for (uint32 i = numberSize; i < maximumSize; i++) {
+            for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    //TODO
+                    ok = false;
                 }
             }
         }
@@ -1114,10 +1119,10 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
         // add header
         if (addHeader) {
             if (!ioBuffer.PutC('0')) {
-                //TODO
+                ok = false;
             }
             if (!ioBuffer.PutC('b')) {
-                //TODO
+                ok = false;
             }
         }
 
@@ -1126,16 +1131,16 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
         uint8 bits = static_cast<uint8>(numberOfDigits - 1u);
 
         // loop backwards stepping each nibble
-        for (uint8 i = bits; static_cast<int8>(i) >= 0; i--) {
+        for (uint8 i = bits; ok && (static_cast<int8>(i) >= 0); i--) {
             //to get the digit, shift the number and by masking select only the 4 LSB bits
             uint8 digit = (static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & 0x1u);
 
-            uint8 zero=static_cast<uint8>('0');
+            uint8 zero = static_cast<uint8>('0');
 
             // skips trailing zeros until we encounter the first non zero, or if putTrailingZeros was already set
             /*lint -e(9125) -e(9117) */
             if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
-                //TODO
+                ok = false;
             }
 
         }
@@ -1143,13 +1148,13 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
 
     // in case of right alignment
     if (padded && leftAligned) {
-        for (uint16 i = 0u; i < (maximumSize - numberSize); i++) {
+        for (uint16 i = 0u; ok && (i < (maximumSize - numberSize)); i++) {
             if (!ioBuffer.PutC(' ')) {
-                //TODO
+                ok = false;
             }
         }
     }
-    return true;
+    return ok;
 }
 
 bool IntegerToStream(IOBuffer &ioBuffer,

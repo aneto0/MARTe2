@@ -714,7 +714,7 @@ bool IOBuffer::RelativeSeek(const int32 delta) {
     return ret;
 }
 
-bool IOBuffer::SetUsedSize(const uint32 desiredSize) {
+void IOBuffer::SetUsedSize(const uint32 desiredSize) {
     uint32 size;
 
     if (desiredSize > maxUsableAmount) {
@@ -725,8 +725,6 @@ bool IOBuffer::SetUsedSize(const uint32 desiredSize) {
     }
 
     fillLeft = maxUsableAmount - size;
-
-    return true;
 }
 
 IOBuffer::~IOBuffer() {
@@ -788,24 +786,22 @@ bool IOBuffer::SetBufferHeapMemory(const uint32 desiredSize,
 }
 
 // wipes all content and replaces the used buffer
-bool IOBuffer::SetBufferReferencedMemory(char8 * const buffer,
+void IOBuffer::SetBufferReferencedMemory(char8 * const buffer,
                                          const uint32 bufferSize,
                                          const uint32 reservedSpaceAtEnd) {
     internalBuffer.SetBufferReference(buffer, bufferSize);
     positionPtr = BufferReference();
     maxUsableAmount = BufferSize() - reservedSpaceAtEnd;
     Empty();
-    return true;
 }
 
-bool IOBuffer::SetBufferReadOnlyReferencedMemory(const char8 * const buffer,
+void IOBuffer::SetBufferReadOnlyReferencedMemory(const char8 * const buffer,
                                                  const uint32 bufferSize,
                                                  const uint32 reservedSpaceAtEnd) {
     internalBuffer.SetBufferReference(buffer, bufferSize);
     positionPtr = BufferReference();
     maxUsableAmount = BufferSize() - reservedSpaceAtEnd;
     Empty();
-    return true;
 }
 
 bool IOBuffer::NoMoreSpaceToWrite() {

@@ -50,20 +50,14 @@ StreamMemoryReference::StreamMemoryReference() :
 StreamMemoryReference::StreamMemoryReference(char8 * const bufferIn,
                                              const uint32 bufferSize) :
         BufferedStream() {
-    if (this->buffer.SetBufferReferencedMemory(bufferIn, bufferSize, 0u)) {
-        //TODO
-    }
+    buffer.SetBufferReferencedMemory(bufferIn, bufferSize, 0u);
 }
 
 StreamMemoryReference::StreamMemoryReference(const char8 * const bufferIn,
                                              const uint32 bufferSize) :
         BufferedStream() {
-    if (!this->buffer.SetBufferReadOnlyReferencedMemory(bufferIn, bufferSize, 0u)) {
-        //TODO
-    }
-    if (!this->buffer.SetUsedSize(bufferSize)) {
-        //TODO
-    }
+    buffer.SetBufferReadOnlyReferencedMemory(bufferIn, bufferSize, 0u);
+    buffer.SetUsedSize(bufferSize);
 }
 
 StreamMemoryReference::~StreamMemoryReference() {
@@ -109,9 +103,7 @@ uint64 StreamMemoryReference::Size() {
 
 bool StreamMemoryReference::SetSize(const uint64 size) {
 
-    if (!buffer.SetUsedSize(static_cast<uint32>(size))) {
-        //TODO
-    }
+    buffer.SetUsedSize(static_cast<uint32>(size));
     return true;
 }
 

@@ -744,7 +744,7 @@ static inline int16 NumberOfDigitsSmartNotation(const int16 exponent,
             smartNotationSize++;
         }
         else {
-            // or the whole E-xxx
+            // or the whole E-xyz
             smartNotationSize += NumberOfDigitsOfExponent(engineeringExponent);
         }
 
@@ -795,7 +795,7 @@ static inline int16 NumberOfDigitsCompactNotation(const int16 exponent,
 
         }
         else {
-            // or the whole E-xxx
+            // or the whole E-xyz
             smartNotationSize += NumberOfDigitsOfExponent(engineeringExponent + exponentRemainder);
 
             // include mantissa size
@@ -870,24 +870,26 @@ static inline void ExponentToStreamPrivate(IOBuffer & ioBuffer,
                                            int16 exponent) {
     // output exponent if exists
     if (exponent != 0) {
-        if (!ioBuffer.PutC('E')) {
-            //TODO
-        }
-        // print the exponent sign (both)
-        // get the absolute value
-        if (exponent > 0) {
-            if (!ioBuffer.PutC('+')) {
-                //TODO
+        if (ioBuffer.PutC('E')) {
+            bool ok = true;
+            // print the exponent sign (both)
+            // get the absolute value
+            if (exponent > 0) {
+                if (!ioBuffer.PutC('+')) {
+                    ok = false;
+                }
+            }
+            else {
+                exponent = -exponent;
+                if (!ioBuffer.PutC('-')) {
+                    ok = false;
+                }
+            }
+            // fast convert to int
+            if (ok) {
+                Number2StreamDecimalNotationPrivate(ioBuffer, exponent);
             }
         }
-        else {
-            exponent = -exponent;
-            if (!ioBuffer.PutC('-')) {
-                //TODO
-            }
-        }
-        // fast convert to int
-        Number2StreamDecimalNotationPrivate(ioBuffer, exponent);
     }
 }
 
@@ -914,16 +916,16 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
                          int16 exponent,
                          int16 precision) {
 
-    bool ret = true;
+    bool ok = true;
 
-    // impossible
-    // should never be called like this
-    // better handle it anyway
+// impossible
+// should never be called like this
+// better handle it anyway
     if ((positiveNumber < static_cast<T>(0.0)) || (positiveNumber >= static_cast<T>(10.0))) {
         if (!ioBuffer.PutC('!')) {
-            //TODO
+            ok = false;
         }
-        ret = false;
+        ok = false;
     }
     else {
 
@@ -931,17 +933,17 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
         // start with a 0.000 until we reach the first non zero digit
         if (exponent < 0) {
             if (!ioBuffer.PutC('0')) {
-                //TODO
+                ok = false;
             }
             if (!ioBuffer.PutC('.')) {
-                //TODO
+                ok = false;
             }
 
             // loop and add zeros
 
-            for (int16 i = 0; i < -(exponent + 1); i++) {
+            for (int16 i = 0; ok && (i < -(exponent + 1)); i++) {
                 if (!ioBuffer.PutC('0')) {
-                    //TODO
+                    ok = false;
                 }
             }
             // exponent has only the job of marking where to put the '.'
@@ -951,12 +953,12 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
 
         // loop to fulfil precision
         // also must reach the end of the integer part thus exponent is checked
-        while ((exponent >= 0) || (precision > 0)) {
+        while (ok && ((exponent >= 0) || (precision > 0))) {
 
             // before outputting the fractional part add a '.'
             if (exponent == -1) {
                 if (!ioBuffer.PutC('.')) {
-                    //TODO
+                    ok = false;
                 }
             }
 
@@ -964,7 +966,7 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
             // but still some exponent (fixed format)
             if (precision == 0) {
                 if (!ioBuffer.PutC('0')) {
-                    //TODO
+                    ok = false;
                 }
             }
             else {
@@ -975,7 +977,7 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
 
                 int8 zero = static_cast<int8>('0');
                 if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
-                    //TODO
+                    ok = false;
                 }
             }
 
@@ -988,7 +990,7 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
             exponent--;
         }
     }
-    return ret;
+    return ok;
 }
 
 /** @brief Implements functions to print the number for each format on a generic ioBuffer which implements a PutC() function.
@@ -1005,20 +1007,20 @@ bool FloatToStreamPrivate(const FloatNotation &notation,
                           int16 exponent,
                           const int16 precision) {
 
-    bool ret = false;
-    // do round ups
+    bool ok = false;
+// do round ups
     bool isFPNotation = (notation == FixedPointNotation);
     bool isFPRNotation = (notation == FixedPointRNotation);
     if ((isFPNotation) || (isFPRNotation)) {
 
         // does all the work of conversion but for the sign and special cases
-        ret = FloatToFixedPrivate(ioBuffer, normalizedNumber, exponent, precision);
+        ok = FloatToFixedPrivate(ioBuffer, normalizedNumber, exponent, precision);
 
     }
     if (notation == ExponentNotation) {
 
         // does all the work of conversion but for the sign and special cases
-        ret = FloatToFixedPrivate(ioBuffer, normalizedNumber, 0, precision);
+        ok = FloatToFixedPrivate(ioBuffer, normalizedNumber, 0, precision);
 
         // writes exponent
         ExponentToStreamPrivate(ioBuffer, exponent);
@@ -1030,7 +1032,7 @@ bool FloatToStreamPrivate(const FloatNotation &notation,
         int16 engineeringExponent = ExponentToEngineeringPrivate(exponent);
 
         // does all the work of conversion but for the sign and special cases
-        ret = FloatToFixedPrivate(ioBuffer, normalizedNumber, exponent, precision);
+        ok = FloatToFixedPrivate(ioBuffer, normalizedNumber, exponent, precision);
 
         // writes exponent
         ExponentToStreamPrivate(ioBuffer, engineeringExponent);
@@ -1042,12 +1044,12 @@ bool FloatToStreamPrivate(const FloatNotation &notation,
         int16 engineeringExponent = ExponentToEngineeringPrivate(exponent);
 
         // does all the work of conversion but for the sign and special cases
-        ret = FloatToFixedPrivate(ioBuffer, normalizedNumber, exponent, precision);
+        ok = FloatToFixedPrivate(ioBuffer, normalizedNumber, exponent, precision);
         // check if exponent in correct range
         if ((engineeringExponent != 0) && (engineeringExponent <= 24) && (engineeringExponent >= -24)) {
             static const char8 * const symbols = "yzafpnum KMGTPEZY";
             if (!ioBuffer.PutC(symbols[(engineeringExponent / 3) + 8])) {
-                //TODO
+                ok = false;
             }
         }
         else {
@@ -1065,26 +1067,26 @@ bool FloatToStreamPrivate(const FloatNotation &notation,
         if ((engineeringExponent <= 24) && (engineeringExponent >= -24)) {
 
             // does all the work of conversion but for the sign and special cases
-            ret = FloatToFixedPrivate(ioBuffer, normalizedNumber, exponent, precision);
+            ok = FloatToFixedPrivate(ioBuffer, normalizedNumber, exponent, precision);
 
             //Put the symbol only if the engineering exp is different than zero.
             if (engineeringExponent != 0) {
                 static const char8 * const symbols = "yzafpnum KMGTPEZY";
                 if (!ioBuffer.PutC(symbols[(engineeringExponent / 3) + 8])) {
-                    //TODO
+                    ok = false;
                 }
             }
         }
         else {
             // does all the work of conversion but for the sign and special cases
-            ret = FloatToFixedPrivate(ioBuffer, normalizedNumber, 0, precision);
+            ok = FloatToFixedPrivate(ioBuffer, normalizedNumber, 0, precision);
 
             // writes exponent
             ExponentToStreamPrivate(ioBuffer, engineeringExponent + exponent);
         }
 
     }
-    return ret;
+    return ok;
 }
 
 /** @brief A list of avaiable display modalities to manage the behaviour of the function. */
@@ -1108,11 +1110,11 @@ FloatDisplayModes CheckNumber(const T number,
                               const int16 maximumSize,
                               int16 & neededSize) {
 
-    // not decided yet
+// not decided yet
     neededSize = 0;
     FloatDisplayModes ret = NoFormat;
 
-    // check for NaN
+// check for NaN
     if (isNaN(number)) {
         if (maximumSize < 3) {
             neededSize = 1;
@@ -1124,7 +1126,7 @@ FloatDisplayModes CheckNumber(const T number,
         }
     }
 
-    // check for Inf
+// check for Inf
     if (isInf(number)) {
         if (maximumSize < 4) {
             neededSize = 1;
@@ -1141,7 +1143,7 @@ FloatDisplayModes CheckNumber(const T number,
         }
     }
 
-    // check for zero
+// check for zero
     /*lint -e{9137} -e{777} [MISRA C++ Rule 6-2-2]. Justification: This condition is intended to be true when the float number is precisely equal to zero
      * and not in a small range.*/
     if (number == static_cast<T>(0.0)) {
@@ -1163,11 +1165,11 @@ FloatDisplayModes CheckNumber(const T number,
 template<typename T>
 T RoundUpNumber(T number,
                 const int16 precision) {
-    // what is the magnitude of the correction
+// what is the magnitude of the correction
     int16 correctionExponent = -precision;
 
-    // to round up add a correction value just below last visible digit
-    // calculates 5 * 10**correctionExponent
+// to round up add a correction value just below last visible digit
+// calculates 5 * 10**correctionExponent
     T correction;
     FastPowerOf10Private(correction, correctionExponent);
     correction *= static_cast<T>(5.0);
@@ -1190,14 +1192,14 @@ bool FloatToStreamPrivate(IOBuffer & ioBuffer, // must have a GetC(c) function w
                           const T number,
                           const FormatDescriptor &format) {
 
-    // the space to our disposal to print the number
+// the space to our disposal to print the number
     int16 maximumSize = static_cast<int16>(format.size);
-    // in case of right alignment
+// in case of right alignment
     bool isPadded = format.padded;
 
-    // 0 means unlimited
-    // to keep things symmetric we set to a large number
-    // 1000 should not constitute a limit for a float32!
+// 0 means unlimited
+// to keep things symmetric we set to a large number
+// 1000 should not constitute a limit for a float32!
     if (maximumSize == 0) {
         maximumSize = 1000;
         isPadded = false;
@@ -1205,8 +1207,8 @@ bool FloatToStreamPrivate(IOBuffer & ioBuffer, // must have a GetC(c) function w
 
     int16 formatPrecision = static_cast<int16>(format.precision);
 
-    // on precision 0 the max useful precision is chosen
-    // based on the ieee float32 format number of significative digits
+// on precision 0 the max useful precision is chosen
+// based on the ieee float32 format number of significative digits
     if (format.precision == defaultPrecision) {
         if (sizeof(T) > 8u) {
             formatPrecision = 34;
@@ -1224,33 +1226,33 @@ bool FloatToStreamPrivate(IOBuffer & ioBuffer, // must have a GetC(c) function w
         }
     }
 
-    // number of decimal digits or number of significative digits
+// number of decimal digits or number of significative digits
     int16 precision = formatPrecision;
 
-    // this is the second main objective of the first part
-    // to find out the size that is needed or if there is no space
+// this is the second main objective of the first part
+// to find out the size that is needed or if there is no space
     int16 numberSize;
 
-    // this will be used everywhere!
+// this will be used everywhere!
     T positiveNumber = number;
 
-    // hold the exponent after normalisation
+// hold the exponent after normalisation
     int16 exponent = 0;
 
-    // whether the - needs to be output
+// whether the - needs to be output
     bool hasSign = false;
 
-    // adjust sign
+// adjust sign
     if (number < 0.0) {
         hasSign = true;
         positiveNumber = -number;
     }
 
-    // check for special cases where notation is not relevant
-    // if found them then mode and size are assigned
+// check for special cases where notation is not relevant
+// if found them then mode and size are assigned
     FloatDisplayModes chosenMode = CheckNumber(number, maximumSize, numberSize);
 
-    // no chosen mode yet try all formats
+// no chosen mode yet try all formats
     if (chosenMode == NoFormat) {
 
         // normalize number
@@ -1342,11 +1344,12 @@ bool FloatToStreamPrivate(IOBuffer & ioBuffer, // must have a GetC(c) function w
 
     }
 
+    bool ok = true;
     bool isLeftAligned = format.leftAligned;
     if ((isPadded) && (!isLeftAligned)) {
         for (int32 i = numberSize; i < maximumSize; i++) {
             if (!ioBuffer.PutC(' ')) {
-                //TODO
+                ok = false;
             }
         }
     }
@@ -1357,83 +1360,83 @@ bool FloatToStreamPrivate(IOBuffer & ioBuffer, // must have a GetC(c) function w
         // output sign
         if (hasSign) {
             if (!ioBuffer.PutC('-')) {
-                //TODO
+                ok = false;
             }
         }
         uint8 notation = static_cast<uint8>(format.floatNotation);
         if (!FloatToStreamPrivate(notation, ioBuffer, positiveNumber, exponent, precision)) {
-            //TODO
+            ok = false;
         }
     }
         break;
     case NoFormat:
     case InsufficientSpaceForFloat: {
         if (!ioBuffer.PutC('?')) {
-            //TODO
+            ok = false;
         }
     }
         break;
     case NanFloat: {
 
         if (!ioBuffer.PutC('N')) {
-            //TODO
+            ok = false;
         }
         if (!ioBuffer.PutC('a')) {
-            //TODO
+            ok = false;
         }
         if (!ioBuffer.PutC('N')) {
-            //TODO
+            ok = false;
         }
     }
         break;
     case InfPFloat: {
         if (!ioBuffer.PutC('+')) {
-            //TODO
+            ok = false;
         }
         if (!ioBuffer.PutC('I')) {
-            //TODO
+            ok = false;
         }
         if (!ioBuffer.PutC('n')) {
-            //TODO
+            ok = false;
         }
         if (!ioBuffer.PutC('f')) {
-            //TODO
+            ok = false;
         }
     }
         break;
     case InfNFloat: {
         if (!ioBuffer.PutC('-')) {
-            //TODO
+            ok = false;
         }
         if (!ioBuffer.PutC('I')) {
-            //TODO
+            ok = false;
         }
         if (!ioBuffer.PutC('n')) {
-            //TODO
+            ok = false;
         }
         if (!ioBuffer.PutC('f')) {
-            //TODO
+            ok = false;
         }
     }
         break;
     case ZeroFloat: {
         if (!ioBuffer.PutC('0')) {
-            //TODO
+            ok = false;
         }
     }
         break;
     }
 
-    // in case of left alignment
+// in case of left alignment
     if ((isPadded) && (isLeftAligned)) {
         for (int32 i = numberSize; i < maximumSize; i++) {
             if (!ioBuffer.PutC(' ')) {
-                //TODO
+                ok = false;
             }
         }
     }
 
-    return true;
+    return ok;
 }
 
 bool FloatToStream(IOBuffer &buffer,

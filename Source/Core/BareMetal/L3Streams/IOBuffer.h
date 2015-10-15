@@ -97,9 +97,8 @@ public:
      * @details If the desired size is greater than maxUsableAmount it clips the desired size to maxUsableAmount.
      *
      * @param[in] size is the desired used size.
-     * @return true.
      */
-    virtual bool SetUsedSize(const uint32 desiredSize);
+    virtual void SetUsedSize(const uint32 desiredSize);
 
     /*---------------------------------------------------------------------------*/
 
@@ -165,9 +164,8 @@ public:
      * @param[in] buffer is a pointer to a preallocated memory.
      * @param[in] bufferSize is the size of the memory.
      * @param[in] reservedSpaceAtEnd is the memory allocated over the usable memory area.
-     * @return true.
      */
-    virtual bool SetBufferReferencedMemory(char8 * const buffer,
+    virtual void SetBufferReferencedMemory(char8 * const buffer,
                                            const uint32 bufferSize,
                                            const uint32 reservedSpaceAtEnd);
 
@@ -178,9 +176,8 @@ public:
      * @param[in] buffer is a pointer to a preallocated memory.
      * @param[in] bufferSize is the size of the memory.
      * @param[in] reservedSpaceAtEnd is the memory allocated but not .
-     * @return true.
      */
-    virtual bool SetBufferReadOnlyReferencedMemory(const char8 * const buffer,
+    virtual void SetBufferReadOnlyReferencedMemory(const char8 * const buffer,
                                                    const uint32 bufferSize,
                                                    const uint32 reservedSpaceAtEnd);
 
