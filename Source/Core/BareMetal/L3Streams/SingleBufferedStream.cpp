@@ -46,17 +46,16 @@ namespace MARTe {
 SingleBufferedStream::SingleBufferedStream() :
         BufferedStream(),
         internalBuffer(this) {
-    operatingModes.mutexReadMode = false;
-    operatingModes.mutexWriteMode = false;
-    timeout = TTDefault;
+    mutexReadMode = false;
+    mutexWriteMode = false;
 }
 
-SingleBufferedStream::SingleBufferedStream(const TimeoutType &msecTimeout) :
+SingleBufferedStream::SingleBufferedStream(const TimeoutType &timeoutIn) :
         BufferedStream(),
-        internalBuffer(this, msecTimeout) {
-    operatingModes.mutexReadMode = false;
-    operatingModes.mutexWriteMode = false;
-    timeout = msecTimeout;
+        internalBuffer(this) {
+    mutexReadMode = false;
+    mutexWriteMode = false;
+    SetTimeout(timeoutIn);
 }
 
 /// default destructor
@@ -67,8 +66,7 @@ SingleBufferedStream::~SingleBufferedStream() {
     }
 }
 
-bool SingleBufferedStream::SetBufferSize(uint32 readBufferSize,
-                                         uint32 writeBufferSize) {
+bool SingleBufferedStream::SetBufferSize(uint32 bufferSize) {
 
     bool ret = true;
     // mutex mode is enabled if CanSeek and both can Read and Write
@@ -77,39 +75,25 @@ bool SingleBufferedStream::SetBufferSize(uint32 readBufferSize,
     bool canRead = CanRead();
     bool canWrite = CanWrite();
     if (canSeek && canWrite && canRead) {
-        operatingModes.mutexWriteMode = true;
-        operatingModes.mutexReadMode = false;
+        mutexWriteMode = true;
+        mutexReadMode = false;
     }
 
     // minimum size = 8
-    if (readBufferSize < 8u) {
-        readBufferSize = 8u;
-    }
-    if (writeBufferSize < 8u) {
-        writeBufferSize = 8u;
+    if (bufferSize < 8u) {
+        bufferSize = 8u;
     }
 
     // do not allocate if not necessary
-    if (!CanRead()) {
-        readBufferSize = 0u;
-    }
-    if (!CanWrite()) {
-        writeBufferSize = 0u;
+    if (!CanRead() && !CanWrite()) {
+        bufferSize = 0u;
     }
 
     // dump any data in the write Queue
     if (FlushAndResync()) {
-
-        // adjust readBufferSize
-        if (!internalBuffer.SetBufferSize(readBufferSize)) {
+        if (!internalBuffer.SetBufferSize(bufferSize)) {
             //TODO
         }
-
-        // adjust writeBufferSize
-        if (!internalBuffer.SetBufferSize(writeBufferSize)) {
-            //TODO
-        }
-
     }
     else {
         ret = false;
@@ -120,7 +104,7 @@ bool SingleBufferedStream::SetBufferSize(uint32 readBufferSize,
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
 IOBuffer *SingleBufferedStream::GetInputBuffer() {
     IOBuffer *ret = &internalBuffer;
-    if (operatingModes.mutexWriteMode) {
+    if (mutexWriteMode) {
         if (!SwitchToReadMode()) {
             ret = static_cast<IOBuffer *>(NULL);
         }
@@ -135,7 +119,7 @@ IOBuffer *SingleBufferedStream::GetOutputBuffer() {
 
     // check for mutually exclusive buffering and
     // whether one needs to switch to WriteMode
-    if (operatingModes.mutexReadMode) {
+    if (mutexReadMode) {
         if (!SwitchToWriteMode()) {
             ret = static_cast<IOBuffer *>(NULL);
         }
@@ -150,7 +134,7 @@ bool SingleBufferedStream::Read(char8 * const output,
 
     // check for mutually exclusive buffering and
     // whether one needs to switch to ReadMode
-    if (operatingModes.mutexWriteMode) {
+    if (mutexWriteMode) {
         if (!SwitchToReadMode()) {
             ret = false;
         }
@@ -194,7 +178,7 @@ bool SingleBufferedStream::Read(char8 * const output,
                 }
                 else {
                     // if needed read directly from stream
-                    if (!UnbufferedRead(&output[size], toRead, timeout)) {
+                    if (!UnbufferedRead(&output[size], toRead)) {
                         ret = false;
                     }
                     else {
@@ -206,7 +190,7 @@ bool SingleBufferedStream::Read(char8 * const output,
     }
 
     // if needed read directly from stream
-    return (ret) ? (UnbufferedRead(&output[0], size, timeout)) : (false);
+    return (ret) ? (UnbufferedRead(&output[0], size)) : (false);
 }
 
 /** Write data from a buffer to the stream. As much as size byte are written, actual size
@@ -219,7 +203,7 @@ bool SingleBufferedStream::Write(const char8 * const input,
     bool ret = true;
     // check for mutually exclusive buffering and
     // whether one needs to switch to WriteMode
-    if (operatingModes.mutexReadMode) {
+    if (mutexReadMode) {
         if (!SwitchToWriteMode()) {
             ret = false;
         }
@@ -274,7 +258,7 @@ bool SingleBufferedStream::Write(const char8 * const input,
 
         }
     }
-    return (ret) ? (UnbufferedWrite(&input[0], size, timeout)) : (false);
+    return (ret) ? (UnbufferedWrite(&input[0], size)) : (false);
 
 }
 
@@ -397,10 +381,6 @@ bool SingleBufferedStream::SetSize(const uint64 size) {
     }
 
     return UnbufferedSetSize(size);
-}
-
-TimeoutType SingleBufferedStream::GetTimeout() const{
-    return timeout;
 }
 
 }

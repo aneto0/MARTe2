@@ -137,7 +137,7 @@ public:
     //TODO the construction of readBuffer and writeBuffer has to be changed.
     DoubleBufferedStream();
 
-    DoubleBufferedStream(const TimeoutType &msecTimeout);
+    DoubleBufferedStream(const TimeoutType &timeoutIn);
 
     /** @brief Default destructor. */
     virtual ~DoubleBufferedStream();
@@ -362,7 +362,7 @@ bool DoubleBufferedStream::PutC(const char8 c) {
     }
     else {
         uint32 size = 1u;
-        ret = UnbufferedWrite(&c, size, timeout);
+        ret = UnbufferedWrite(&c, size);
     }
     return ret;
 }
@@ -377,7 +377,7 @@ bool DoubleBufferedStream::GetC(char8 &c) {
     else {
 
         uint32 size = 1u;
-        ret = UnbufferedRead(&c, size, timeout);
+        ret = UnbufferedRead(&c, size);
     }
     return ret;
 }

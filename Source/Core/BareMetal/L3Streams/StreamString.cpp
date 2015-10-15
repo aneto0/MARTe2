@@ -249,15 +249,13 @@ int32 StreamString::Locate(const StreamString &x) const {
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
 bool StreamString::UnbufferedWrite(const char8 * const bufferIn,
-                                   uint32 & size,
-                                   const TimeoutType &msecTimeout) {
+                                   uint32 & size) {
     return false;
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
 bool StreamString::UnbufferedRead(char8 * const bufferIn,
-                                  uint32 & size,
-                                  const TimeoutType &msecTimeout) {
+                                  uint32 & size) {
     return false;
 }
 

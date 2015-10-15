@@ -57,17 +57,23 @@ public:
     /**
      * @brief Default constructor.
      * @post
-     *   GetTimeout() == TTDefault
+     *   CanRead() == false
+     *   CanWrite() == false
+     *   GetInputBuffer() == BufferedStreamIOBuffer
+     *   GetTimeout() == TTInfiniteWait
      */
-    //TODO do we really need it? CanRead, CanWrite, ... would crash given that the lowLevelStream is NULL...
     SingleBufferedStream();
 
     /**
      * @brief Initialises object with a specified timeout.
+     * @param[in] timeoutIn the timeout for the read and write operations.
      * @post
-     *   GetTimeout() == TTDefault
+     *   CanRead() == false
+     *   CanWrite() == false
+     *   GetInputBuffer() == BufferedStreamIOBuffer
+     *   GetTimeout() == timeoutIn
      */
-    SingleBufferedStream(const TimeoutType & msecTimeout);
+    SingleBufferedStream(const TimeoutType & timeoutIn);
 
     /** 
      * @brief Default destructor. 
@@ -75,21 +81,17 @@ public:
     virtual ~SingleBufferedStream();
 
     /**
-     * @brief Sets the buffers size.
-     * @param readBufferSize the desired size for the read buffer.
-     * @param readBufferSize the desired size for the write buffer.
-     * @return true if the buffer memory is allocated correctly.
+     * @brief Sets the buffer size.
+     * @param[in] bufferSize the desired size for the buffer.
+     * @return true if the buffer memory is reallocated correctly.
+     * @pre
+     *    bufferSize > 8u
+     *    CanRead() == true || CanWrite() == true
+     * @post
+     *    GetInputStream()->BufferSize() == bufferSize
      */
-    //TODO this must be wrong? For the signle buffered stream only one size should be set, no?
-    virtual bool SetBufferSize(uint32 readBufferSize,
-                               uint32 writeBufferSize);
+    virtual bool SetBufferSize(uint32 bufferSize);
 
-    /**
-     * @brief Re-synchronisation and flushing of the read/write buffer.
-     * @return true if the buffer is successfully flushed and resynch.
-     */
-    //TODO is this really a public function?
-    inline bool FlushAndResync();
     /**
      * @brief Writes a single character to the stream.
      * @details if the size of the buffer is zero the character is directly written in the low level RawStream.
@@ -109,19 +111,19 @@ public:
     /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Read(1), but
      * this inline implementation could be faster if the read buffer is not empty */
     inline bool GetC(char8 &c);
+
     /**
      * @see BufferedStream::Read
      * @post
      *   Position() == this'old->Position() + size
-     *   TODO check if this post condition is always true
      */
     virtual bool Read(char8 * output,
                       uint32 & size);
+
     /**
      * @see BufferedStream::Write
      * @post
      *   Position() == this'old->Position() + size
-     *   TODO check if this post condition is always true
      */
     virtual bool Write(const char8* input,
                        uint32 & size);
@@ -130,14 +132,17 @@ public:
      * @see BufferedStream::Size
      */
     virtual uint64 Size();
+
     /**
      * @see BufferedStream::Seek
      */
     virtual bool Seek(uint64 pos);
+
     /**
      * @see BufferedStream::RelativeSeek
      */
     virtual bool RelativeSeek(int32 deltaPos);
+
     /**
      * @see BufferedStream::Position
      */
@@ -147,12 +152,6 @@ public:
      * @see BufferedStream::SetSize
      */
     virtual bool SetSize(uint64 size);
-
-    /**
-     * @brief Gets the timeout associated to the operations on this stream.
-     * @return the currently set timeout.
-     */
-    TimeoutType GetTimeout() const;
 
 protected:
     /**
@@ -168,25 +167,16 @@ protected:
     virtual IOBuffer *GetOutputBuffer();
 
 private:
-    //TODO these OperatingModes are just providing a namespace. Simplify and just have two booleans please.
+
     /**
-     Defines the operation mode and status of a basic stream
-     one only can be set of the first 4.
+     * Stream is exclusive read mode.
      */
-    struct OperatingModes {
+    bool mutexReadMode;
 
-        /** readBuffer is the active one.
-         */
-        bool mutexReadMode;
-
-        /** writeBuffer is the active one.
-         */
-        bool mutexWriteMode;
-
-    };
-
-    /** set automatically on initialisation by calling of the Canxxx functions */
-    OperatingModes operatingModes;
+    /**
+     * Stream is exclusive write mode.
+     */
+    bool mutexWriteMode;
 
     /**
      * @brief Switches the stream to write mode.
@@ -213,11 +203,11 @@ private:
      */
     BufferedStreamIOBuffer internalBuffer;
 
-
     /**
-     * Timeout for the read and write operations.
+     * @brief Re-synchronisation and flushing of the read/write buffer.
+     * @return true if the buffer is successfully flushed and resynch.
      */
-    TimeoutType timeout;
+    inline bool FlushAndResync();
 
 };
 
@@ -245,7 +235,7 @@ bool SingleBufferedStream::FlushAndResync() {
 bool SingleBufferedStream::PutC(const char8 c) {
     bool ret = true;
 
-    if (operatingModes.mutexReadMode) {
+    if (mutexReadMode) {
         if (!SwitchToWriteMode()) {
             ret = false;
         }
@@ -257,7 +247,7 @@ bool SingleBufferedStream::PutC(const char8 c) {
         }
         else {
             uint32 size = 1u;
-            ret = UnbufferedWrite(&c, size, timeout);
+            ret = UnbufferedWrite(&c, size);
         }
     }
 
@@ -267,7 +257,7 @@ bool SingleBufferedStream::PutC(const char8 c) {
 bool SingleBufferedStream::GetC(char8 &c) {
 
     bool ret = true;
-    if (operatingModes.mutexWriteMode) {
+    if (mutexWriteMode) {
         if (!SwitchToReadMode()) {
             ret = false;
         }
@@ -279,7 +269,7 @@ bool SingleBufferedStream::GetC(char8 &c) {
         }
         else {
             uint32 size = 1u;
-            ret = UnbufferedRead(&c, size, timeout);
+            ret = UnbufferedRead(&c, size);
         }
     }
     return ret;
@@ -288,8 +278,8 @@ bool SingleBufferedStream::GetC(char8 &c) {
 bool SingleBufferedStream::SwitchToWriteMode() {
     bool ret = internalBuffer.Resync();
     if (ret) {
-        operatingModes.mutexWriteMode = true;
-        operatingModes.mutexReadMode = false;
+        mutexWriteMode = true;
+        mutexReadMode = false;
     }
     return ret;
 }
@@ -297,9 +287,8 @@ bool SingleBufferedStream::SwitchToWriteMode() {
 bool SingleBufferedStream::SwitchToReadMode() {
     bool ret = !internalBuffer.Flush();
     if (ret) {
-
-        operatingModes.mutexWriteMode = false;
-        operatingModes.mutexReadMode = true;
+        mutexWriteMode = false;
+        mutexReadMode = true;
     }
     return ret;
 }
