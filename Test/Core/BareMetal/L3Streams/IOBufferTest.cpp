@@ -2910,10 +2910,12 @@ bool IOBufferTest::TestPrintFormattedToStream_Stream() {
 
     Clear(ioBuffer);
     DummySingleBufferedStream stream;
-
+    stream.SetBufferSize(32);
 
     const char8 * toWrite = "HelloWorldThisIsATest";
-    StringHelper::Copy(stream.Buffer(), toWrite);
+    uint32 writeSize = StringHelper::Length(toWrite);
+    stream.Write(toWrite, writeSize);
+    stream.FlushAndResync();
     stream.Seek(0);
 
     printf("\n%s\n", stream.Buffer());
@@ -2924,43 +2926,8 @@ bool IOBufferTest::TestPrintFormattedToStream_Stream() {
 
     printf("\n%s\n", ioBuffer.Buffer());
 
-    /*
-     //cast StreamString to anytype.
-     StreamString input = "HelloWorld";
+    return StringHelper::Compare(ioBuffer.Buffer(), stream.Buffer()) == 0;
 
-     AnyType toPrint = input;
-
-     myString.Printf("string:%s, number:%3d", input, dbit64);
-     if (myString != "string:HelloWorld, number:3.4") {
-     return false;
-     }
-
-     //Clip the stream.
-     myString = "";
-     input = "HelloWorld";
-     myString.Printf("string:%5s, number:%3d", input, dbit64);
-     if (myString != "string:Hello, number:3.4") {
-     return false;
-     }
-
-     //right padd
-     myString = "";
-     input = "HelloWorld";
-     myString.Printf("string:% 12s, number:%3d", input, dbit64);
-     if (myString != "string:  HelloWorld, number:3.4") {
-     return false;
-     }
-
-     //left padd
-     myString = "";
-     input = "HelloWorld";
-     myString.Printf("string:%-12s, number:%3d", input, dbit64);
-     if (myString != "string:HelloWorld  , number:3.4") {
-     return false;
-     }*/
-
-    //TODO
-    return true;
 }
 
 bool IOBufferTest::TestPrintFormattedToStream_BitSet_Unsigned() {
@@ -3078,6 +3045,21 @@ bool IOBufferTest::TestPrintFormattedToStream_BitSet_Signed() {
 }
 
 bool IOBufferTest::TestGetTokenFromStream_ConstCharOutput() {
+    IOBuffer ioBuffer;
+
+    uint32 allocationSize = 64;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    Clear(ioBuffer);
+    DummySingleBufferedStream stream;
+    stream.SetBufferSize(32);
+
+    const char8 * toWrite = "HelloWorldThisIsATest";
+    uint32 writeSize = StringHelper::Length(toWrite);
+    StringHelper::Copy(stream.Buffer(), toWrite);
+    stream.Write(toWrite, writeSize);
+    stream.FlushAndResync();
+    stream.Seek(0);
 
     //TODO
     return true;

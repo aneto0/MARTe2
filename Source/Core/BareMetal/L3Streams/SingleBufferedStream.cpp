@@ -61,9 +61,9 @@ SingleBufferedStream::SingleBufferedStream(const TimeoutType &timeoutIn) :
 /// default destructor
 SingleBufferedStream::~SingleBufferedStream() {
 
-    if (!internalBuffer.Flush()) {
-        //TODO
-    }
+    /* if (!internalBuffer.Flush()) {
+     //TODO
+     }*/
 }
 
 bool SingleBufferedStream::SetBufferSize(uint32 bufferSize) {
@@ -140,7 +140,6 @@ bool SingleBufferedStream::Read(char8 * const output,
         }
     }
     if (ret) {
-
         // check whether we have a buffer
         if (internalBuffer.BufferSize() > 0u) {
 
@@ -187,10 +186,14 @@ bool SingleBufferedStream::Read(char8 * const output,
                 }
             }
         }
+        else {
+            // if needed read directly from stream
+            ret = UnbufferedRead(&output[0], size);
+        }
+
     }
 
-    // if needed read directly from stream
-    return (ret) ? (UnbufferedRead(&output[0], size)) : (false);
+    return ret;
 }
 
 /** Write data from a buffer to the stream. As much as size byte are written, actual size
@@ -254,11 +257,18 @@ bool SingleBufferedStream::Write(const char8 * const input,
                 if (!internalBuffer.Flush()) {
                     ret = false;
                 }
+                else{
+                    ret = UnbufferedWrite(&input[0], size);
+                }
             }
 
         }
+        else {
+            ret = UnbufferedWrite(&input[0], size);
+        }
+
     }
-    return (ret) ? (UnbufferedWrite(&input[0], size)) : (false);
+    return ret;
 
 }
 

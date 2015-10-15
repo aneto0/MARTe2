@@ -330,7 +330,7 @@ public:
      * be clipped to the space left if needed.
      * @return false if errors copying data
      */
-    bool Read(char8 * const buffer,
+    virtual bool Read(char8 * const buffer,
               uint32 &size);
 
     /*---------------------------------------------------------------------------*/

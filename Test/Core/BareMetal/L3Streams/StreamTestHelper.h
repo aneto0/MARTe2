@@ -196,6 +196,9 @@ public:
             SingleBufferedStream() {
     }
 
+    virtual ~DummySingleBufferedStream(){
+    }
+
     /**
      * @brief Returns the current stream position.
      * @return the current stream position.

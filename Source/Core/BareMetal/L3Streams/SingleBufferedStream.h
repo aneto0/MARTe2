@@ -153,6 +153,12 @@ public:
      */
     virtual bool SetSize(uint64 size);
 
+    /**
+     * @brief Re-synchronisation and flushing of the read/write buffer.
+     * @return true if the buffer is successfully flushed and resynch.
+     */
+    inline bool FlushAndResync();
+
 protected:
     /**
      * @brief Gets the read buffer.
@@ -202,12 +208,6 @@ private:
      * FlushAndResync call) the buffer is flushed on the stream.
      */
     BufferedStreamIOBuffer internalBuffer;
-
-    /**
-     * @brief Re-synchronisation and flushing of the read/write buffer.
-     * @return true if the buffer is successfully flushed and resynch.
-     */
-    inline bool FlushAndResync();
 
 };
 
@@ -285,7 +285,7 @@ bool SingleBufferedStream::SwitchToWriteMode() {
 }
 
 bool SingleBufferedStream::SwitchToReadMode() {
-    bool ret = !internalBuffer.Flush();
+    bool ret = internalBuffer.Flush();
     if (ret) {
         mutexWriteMode = false;
         mutexReadMode = true;
