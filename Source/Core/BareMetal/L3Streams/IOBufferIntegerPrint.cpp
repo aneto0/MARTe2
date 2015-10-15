@@ -29,22 +29,17 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-
 #include "GeneralDefinitions.h"
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
 #include "IOBuffer.h"
 #include "Shift.h"
 
-namespace MARTe {
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 
+namespace MARTe {
 
 /*lint -e568 [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 // returns the exponent
@@ -293,7 +288,6 @@ static inline uint16 GetNumberOfDigitsBinaryNotation(T number) {
     return nDigits;
 }
 
-
 /** @brief Prints an integer number on a general stream in decimal notation.
  * @param s is a general stream class which implements a putC() function.
  * @param positiveNumber is the number to print (it must be positive the '-' is added a part).
@@ -406,27 +400,27 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
 
         // first fill in all necessary zeros
         int16 i = 0;
+        bool ok = true;
         if (numberFillLength > 0) {
             // clamp to 5
             if (numberFillLength > 5) {
                 numberFillLength = 5;
             }
             // fill up with zeros
-            for (i = (5 - numberFillLength); i <= index; i++) {
+            for (i = (5 - numberFillLength); ok && (i <= index); i++) {
                 if (!s.PutC('0')) {
-                    //TODO
+                    ok = false;
                 }
             }
         }
         // then complete by outputting all digits
-        for (i = index + 1; i <= 4; i++) {
+        for (i = index + 1; ok && (i <= 4); i++) {
             if (!s.PutC(buffer[i])) {
-                //TODO
+                ok = false;
             }
         }
     }
 }
-
 
 /** @brief Prints a string on a generic ioBuffer.
  * @param ioBuffer is a generic ioBuffer class which implements a PutC() function.
@@ -434,575 +428,15 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
 template<class ioBufferer>
 static inline void PutS(ioBufferer & ioBuffer,
                         const char8 *s) {
-    while (s[0] != '\0') {
-        if (!ioBuffer.PutC(s[0])) {
-            //TODO
+    bool ok = true;
+    while (ok && (s[0] != '\0')) {
+        if (ioBuffer.PutC(s[0])) {
+            s = &s[1];
         }
-        s = &s[1];
-    }
-}
-
-/** @brief Prints an integer number on a general ioBuffer in decimal notation.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param maximumSize is the maximum requested space for the number print.
- * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
- * @param leftAligned specifies if the number must be print with left or right alignment.
- * @param addPositiveSign specifies if we want print the '+' before positive numbers.
- * @return true.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Respects maximumSize and number integrity.
- * If not possible (maximum size minor than the minimum space for the number print) outputs is ? */
-/*lint -e{9143} [MISRA C++ Rule 5-3-2]. Justification: application of sign - is applied only in case of negative number (then signed numbers).*/
-template<typename T>
-bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,                     // must have a GetC(c) function where c is of a type that can be obtained from chars
-                                    const T number,
-                                    uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
-                                    bool padded = false,   // if maximumSize!=0 & align towards the right or the left
-                                    const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
-                                    const bool addPositiveSign = false)   // prepend with + not just with - for negative numbers
-                                    {
-
-    bool ret = false;
-
-    // if no limits set the numberSize as big enough for the largest integer
-    if (maximumSize == 0u) {
-        maximumSize = 20u;
-        padded = false;
-    }
-
-    // put here the unsigned version of the number
-    T positiveNumber;
-    // put here the total space needed for the number
-    // 1 always for the one figure to print
-    uint16 numberSize = 1u;
-
-    // if negative invert it and account for the '-' in the size
-    if (number < static_cast<T>(0)) {
-        /*lint -e{9134} -e{501} -e{732} the number is signed */
-        positiveNumber = -number;
-        numberSize++;
-    }
-    else {
-        // if positive copy it and account for the '+' in the size if addPositiveSign set
-        positiveNumber = number;
-        if (addPositiveSign) {
-            numberSize++;
+        else {
+            ok = false;
         }
     }
-
-    // 0x800000....
-    if (positiveNumber < static_cast<T>(0)) {
-        if ((sizeof(T) == 8u) && (maximumSize >= 20u)) {
-            PutS(ioBuffer, "-9223372036854775808");
-            ret = true;
-        }
-        if ((sizeof(T) == 4u) && (maximumSize >= 10u)) {
-            PutS(ioBuffer, "-2147483648");
-            ret = true;
-        }
-        if ((sizeof(T) == 2u) && (maximumSize >= 6u)) {
-            PutS(ioBuffer, "-32768");
-            ret = true;
-        }
-        if ((sizeof(T) == 1u) && (maximumSize >= 4u)) {
-            PutS(ioBuffer, "-128");
-            ret = true;
-        }
-
-        // does not fit
-        numberSize = maximumSize + 1u;
-    }
-
-    else {
-
-        // add the number of figures beyond the first
-        numberSize += GetOrderOfMagnitude(positiveNumber);
-    }
-
-    if (!ret) {
-
-        // is there enough space for the number?
-        if (maximumSize < numberSize) {
-            // if no than we shall print '?' so the size is 1 now
-            numberSize = 1u;
-
-            // fill up to from 1 maximumSize with ' '
-            if ((padded) && (!leftAligned)) {
-                for (uint32 i = 1u; i < maximumSize; i++) {
-                    if (!ioBuffer.PutC(' ')) {
-                        //TODO
-                    }
-                }
-            }
-
-            // put the ?
-            if (!ioBuffer.PutC('?')) {
-                //TODO
-            }
-
-        }
-        else { // enough space
-
-            // fill up from numberSize to maximumSize with ' '
-            if ((padded) && (!leftAligned)) {
-                for (uint32 i = numberSize; i < maximumSize; i++) {
-                    if (!ioBuffer.PutC(' ')) {
-                        //TODO
-                    }
-                }
-            }
-
-            // add sign
-            if (number < static_cast<T>(0)) {
-                if (!ioBuffer.PutC('-')) {
-                    //TODO
-                }
-            }
-            else {
-                if (addPositiveSign) {
-                    if (!ioBuffer.PutC('+')) {
-                        //TODO
-                    }
-                }
-            }
-
-            // put number
-            Number2StreamDecimalNotationPrivate(ioBuffer, positiveNumber);
-        }
-
-        // fill up from numberSize to maximumSize with ' '
-        if ((padded) && (leftAligned)) {
-            for (uint32 i = numberSize; i < maximumSize; i++) {
-                if (!ioBuffer.PutC(' ')) {
-                    //TODO
-                }
-            }
-        }
-    }
-
-    return true;
-}
-
-/** @brief Prints an integer number on a general ioBuffer in hexadecimal notation.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param maximumSize is the maximum requested space for the number print.
- * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
- * @param leftAligned specifies if the number must be print with left or right alignment.
- * @param zeroPaddedBitSize specifies the actual number of bits in format. Set to sizeof(T) means to add trailing zeros, any smaller, non zero value means determines how many bits to print
- * @param addHeader specifies if we want to add the hex header '0x' before the number.
- * @return true.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Uses hexadecimal notation.
- * Respects maximumSize and number integrity.
- * If not possible (maximum size minor than the minimum space for the number print) output is ? */
-template<typename T>
-bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
-                                       const T number,
-                                       uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
-                                       bool padded = false,   // if maximumSize!=0 & align towards the right or the left
-                                       const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
-                                       const uint16 zeroPaddedBitSize = 0u,       // if not 0 is used to determine how many trailing zeroes to print
-                                       const bool addHeader = false)   // prepend with 0x
-                                       {
-    // put here size of number
-    uint16 headerSize = 0u;
-
-    // adding two chars 0x header
-    if (addHeader) {
-        headerSize = 2u;
-    }
-
-    // actual meaningful digits
-    uint16 numberOfDigits = GetNumberOfDigitsHexNotation(number);
-
-    // add header for total size if padded
-    uint16 numberSize = headerSize + numberOfDigits;
-
-    // 1000 = no limits
-    if (maximumSize == 0u) {
-        maximumSize = 1000u;
-        padded = false;
-    }
-
-    // cannot fit the number even without trailing zeroes
-    if (maximumSize < numberSize) {
-        numberSize = 1u; // just the '?'
-
-        // pad on the left
-        if ((padded) && (!leftAligned)) {
-            for (uint32 i = 1u; i < maximumSize; i++) {
-                if (!ioBuffer.PutC(' ')) {
-                    //TODO
-                }
-            }
-        }
-        // put the ?
-        if (!ioBuffer.PutC('?')) {
-            //TODO
-        }
-
-    }
-    else {
-        // work out what it means in terms of hex digits
-        uint16 zeroPaddedDigits = (zeroPaddedBitSize + 3u) / 4u;
-
-        //In case of trailing zeros the digits are the maximum possible or equal to maximum size (-2 if there is header)
-        if (zeroPaddedDigits > numberOfDigits) {
-
-            // add header for total size if padded
-            uint16 fullNumberSize = headerSize + zeroPaddedDigits;
-
-            // check if adding all zeros number will not fit
-            if (fullNumberSize > maximumSize) {
-                // how much is exceeding?
-                uint16 excess = fullNumberSize - maximumSize;
-                // number is made to fit the available space
-                numberSize = maximumSize;
-                // we cannot print all the zeros, remove excess
-                numberOfDigits = zeroPaddedDigits - excess;
-            }
-            else {
-                // we will use the full number size
-                numberSize = fullNumberSize;
-                // we will print all digits
-                numberOfDigits = zeroPaddedDigits;
-            }
-        }
-
-        // in case of left alignment
-        if ((padded) && (!leftAligned)) {
-            for (uint32 i = numberSize; i < maximumSize; i++) {
-                if (!ioBuffer.PutC(' ')) {
-                    //TODO
-                }
-            }
-        }
-
-        // add header
-        if (addHeader) {
-            if (!ioBuffer.PutC('0')) {
-                //TODO
-            }
-            if (!ioBuffer.PutC('x')) {
-                //TODO
-            }
-        }
-
-        // work out how much to shift number to extract most significative hex
-        // we use the above calculate number size
-        uint8 bits = static_cast<uint8>((numberOfDigits - 1u) * 4u);
-
-        // loop backwards stepping each nibble
-        for (uint8 i = bits; static_cast<int8>(i) >= 0; i -= 4u) {
-            //to get the digit, shift the number and by masking select only the 4 LSB bits
-            uint8 digit = (static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & (0xFu));
-
-            // skips trailing zeros until we encounter the first non zero, or if putTrailingZeros was already set
-            //if ((digit != 0) || (putTrailingZeros)){
-            //putTrailingZeros = true;
-            uint8 zero=static_cast<uint8>('0');
-            uint8 ten=static_cast<uint8>('A');
-
-            if (digit < 10u) {
-                /*lint -e(9125) -e(9117) */
-                if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
-                    //TODO
-                }
-            }
-            else {
-                /*lint -e(9125) -e(9117) */
-                if (!ioBuffer.PutC(static_cast<char8>((ten + digit) - 10u))) {
-                    //TODO
-                }
-            }
-
-        }
-    }
-
-    // in case of right alignment
-    if ((padded) && (leftAligned)) {
-        for (uint16 i = numberSize; i < maximumSize; i++) {
-            if (!ioBuffer.PutC(' ')) {
-                //TODO
-            }
-        }
-    }
-    return true;
-
-}
-
-/** @brief Prints an integer number on a general ioBuffer in octal notation.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param maximumSize is the maximum requested space for the number print.
- * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
- * @param leftAligned specifies if the number must be print with left or right alignment.
- * @param zeroPaddedBitSize specifies the actual number of bits in format. Set to sizeof(T) means to add trailing zeros, any smaller, non zero value means determines how many bits to print
- * @param addHeader specifies if we want to add the oct header '0o' before the number.
- * @return true.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Uses octal notation.
- * Respects maximumSize and number integrity.
- * If not possible (maximum size minor than the minimum space for the number print) output is ?  */
-template<typename T>
-bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
-                                  const T number,
-                                  uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
-                                  bool padded = false,   // if maximumSize!=0 & align towards the right or the left
-                                  const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
-                                  const uint16 zeroPaddedBitSize = 0u,       // if not 0 is used to determine how many trailing zeroes to print
-                                  bool addHeader = false)   // prepend with 0o
-                                  {
-
-    // put here size of number
-    uint16 headerSize = 0u;
-
-    // adding two chars 0x header
-    if (addHeader) {
-        headerSize = 2u;
-    }
-
-    // actual meaningful digits
-    uint16 numberOfDigits = GetNumberOfDigitsOctalNotation(number);
-
-    // add header for total size if padded
-    uint16 numberSize = headerSize + numberOfDigits;
-
-    // 1000 = no limits
-    if (maximumSize == 0u) {
-        maximumSize = 1000u;
-        padded = false;
-    }
-    // cannot fit the number even without trailing zeroes
-    if (maximumSize < numberSize) {
-        numberSize = 1u; // just the '?'
-
-        // pad on the left
-        if ((padded) && (!leftAligned)) {
-            for (uint32 i = 1u; i < maximumSize; i++) {
-                if (!ioBuffer.PutC(' ')) {
-                    //TODO
-                }
-            }
-        }
-        // put the ?
-        if (!ioBuffer.PutC('?')) {
-            //TODO
-        }
-
-    }
-    else {
-        // work out what it means in terms of octal digits
-        uint16 zeroPaddedDigits = (zeroPaddedBitSize + 2u) / 3u;
-
-        // if the zero padded number needs to be bigger
-        // work out how many zeroes we can actually afford
-        if (zeroPaddedDigits > numberOfDigits) {
-
-            // add header for total size if padded
-            uint16 fullNumberSize = headerSize + zeroPaddedDigits;
-
-            // check if adding all zeros number will not fit
-            if (fullNumberSize > maximumSize) {
-                // how much is exceeding?
-                uint16 excess = fullNumberSize - maximumSize;
-                // number is made to fit the available space
-                numberSize = maximumSize;
-                // we cannot print all the zeros, remove excess
-                numberOfDigits = zeroPaddedDigits - excess;
-            }
-            else {
-                // we will use the full number size
-                numberSize = fullNumberSize;
-                // we will print all digits
-                numberOfDigits = zeroPaddedDigits;
-            }
-        }
-
-        // in case of left alignment
-        if ((padded) && (!leftAligned)) {
-            for (uint32 i = numberSize; i < maximumSize; i++) {
-                if (!ioBuffer.PutC(' ')) {
-                    //TODO
-                }
-            }
-        }
-
-        // add header
-        if (addHeader) {
-            if (!ioBuffer.PutC('0')) {
-                //TODO
-            }
-            if (!ioBuffer.PutC('o')) {
-                //TODO
-            }
-        }
-
-        // work out how much to shift number to extract most significative hex
-        // we use the above calculate number size
-        uint8 bits = static_cast<uint8>((numberOfDigits - 1u) * 3u);
-
-        // loop backwards stepping each nibble
-        for (uint8 i = bits; static_cast<int8>(i) >= 0; i -= 3u) {
-
-            //right shift of the number
-            uint8 digit = static_cast<uint8>(static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & 0x7u);
-            uint8 zero=static_cast<uint8>('0');
-            /*lint -e(9125) -e(9117) */
-            if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
-                //TODO
-            }
-        }
-    }
-
-// in case of right alignment
-    if ((padded) && (leftAligned)) {
-        for (uint16 i = numberSize; i < maximumSize; i++) {
-            if (!ioBuffer.PutC(' ')) {
-                //TODO
-            }
-        }
-    }
-    return true;
-}
-
-/** @brief Prints an integer number on a general ioBuffer in binary notation.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param maximumSize is the maximum requested space for the number print.
- * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
- * @param leftAligned specifies if the number must be print with left or right alignment.
- * @param zeroPaddedBitSize specifies the actual number of bits in format. Set to sizeof(T) means to add trailing zeros, any smaller, non zero value means determines how many bits to print
- * @param addHeader specifies if we want to add the bin header '0b' before the number.
- * @return true.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Uses binary notation.
- * Respects maximumSize and number integrity.
- * If not possible (maximum size minor than the minimum space for the number print) output is ?  */
-template<typename T>
-bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
-                                   const T number,
-                                   uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
-                                   bool padded = false,   // if maximumSize!=0 & align towards the right or the left
-                                   const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
-                                   const uint16 zeroPaddedBitSize = 0u,       // if not 0 is used to determine how many trailing zeroes to print
-                                   const bool addHeader = false)   // prepend with 0b
-                                   {
-
-// 1000 = no limits
-    if (maximumSize == 0u) {
-        maximumSize = 1000u;
-        padded = false;
-    }
-
-    // put here size of number
-    uint16 headerSize = 0u;
-
-    // adding two chars 0x header
-    if (addHeader) {
-        headerSize = 2u;
-    }
-
-    // actual meaningful digits
-    uint16 numberOfDigits = GetNumberOfDigitsBinaryNotation(number);
-
-    // add header for total size if padded
-    uint16 numberSize = headerSize + numberOfDigits;
-
-    // cannot fit the number even without trailing zeroes
-    if (maximumSize < numberSize) {
-        numberSize = 1u; // just the '?'
-
-        // pad on the left
-        if ((padded) && (!leftAligned)) {
-            for (uint32 i = 1u; i < maximumSize; i++) {
-                if (!ioBuffer.PutC(' ')) {
-                    //TODO
-                }
-            }
-        }
-        // put the ?
-        if (!ioBuffer.PutC('?')) {
-            //TODO
-        }
-
-    }
-    else {
-
-        // if the zero padded number needs to be bigger
-        // work out how many zeroes we can actually afford
-        if (zeroPaddedBitSize > numberOfDigits) {
-
-            // add header for total size if padded
-            uint16 fullNumberSize = headerSize + zeroPaddedBitSize;
-
-            // check if adding all zeros number will not fit
-            if (fullNumberSize > maximumSize) {
-                // how much is exceeding?
-                uint16 excess = fullNumberSize - maximumSize;
-                // number is made to fit the available space
-                numberSize = maximumSize;
-                // we cannot print all the zeros, remove excess
-                numberOfDigits = zeroPaddedBitSize - excess;
-            }
-            else {
-                // we will use the full number size
-                numberSize = fullNumberSize;
-                // we will print all digits
-                numberOfDigits = zeroPaddedBitSize;
-            }
-        }
-
-        // in case of left alignment
-        if ((padded) && (!leftAligned)) {
-            for (uint32 i = numberSize; i < maximumSize; i++) {
-                if (!ioBuffer.PutC(' ')) {
-                    //TODO
-                }
-            }
-        }
-
-        // add header
-        if (addHeader) {
-            if (!ioBuffer.PutC('0')) {
-                //TODO
-            }
-            if (!ioBuffer.PutC('b')) {
-                //TODO
-            }
-        }
-
-        // work out how much to shift number to extract most significative hex
-        // we use the above calculate number size
-        uint8 bits = static_cast<uint8>(numberOfDigits - 1u);
-
-        // loop backwards stepping each nibble
-        for (uint8 i = bits; static_cast<int8>(i) >= 0; i--) {
-            //to get the digit, shift the number and by masking select only the 4 LSB bits
-            uint8 digit = (static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & 0x1u);
-
-            uint8 zero=static_cast<uint8>('0');
-
-            // skips trailing zeros until we encounter the first non zero, or if putTrailingZeros was already set
-            /*lint -e(9125) -e(9117) */
-            if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
-                //TODO
-            }
-
-        }
-    }
-
-    // in case of right alignment
-    if (padded && leftAligned) {
-        for (uint16 i = 0u; i < (maximumSize - numberSize); i++) {
-            if (!ioBuffer.PutC(' ')) {
-                //TODO
-            }
-        }
-    }
-    return true;
 }
 
 /** @brief Print on a general ioBuffer using a specific format.
@@ -1058,7 +492,6 @@ bool IntegerToStreamPrivate(IOBuffer &ioBuffer,
  * Also respects all relevant format parameters.
  * Respects format.size and number integrity.
  * If not possible output is ? */
-
 static
 bool BitSetToStreamPrivate(IOBuffer &ioBuffer,
                            uint32 *numberAddress,
@@ -1149,41 +582,623 @@ bool BitSetToStreamPrivate(IOBuffer &ioBuffer,
     return ret;
 }
 
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+/** @brief Prints an integer number on a general ioBuffer in decimal notation.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
+ * @param maximumSize is the maximum requested space for the number print.
+ * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
+ * @param leftAligned specifies if the number must be print with left or right alignment.
+ * @param addPositiveSign specifies if we want print the '+' before positive numbers.
+ * @return true.
+ *
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Respects maximumSize and number integrity.
+ * If not possible (maximum size minor than the minimum space for the number print) outputs is ? */
+/*lint -e{9143} [MISRA C++ Rule 5-3-2]. Justification: application of sign - is applied only in case of negative number (then signed numbers).*/
+template<typename T>
+bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,                     // must have a GetC(c) function where c is of a type that can be obtained from chars
+                                    const T number,
+                                    uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
+                                    bool padded = false,   // if maximumSize!=0 & align towards the right or the left
+                                    const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
+                                    const bool addPositiveSign = false)   // prepend with + not just with - for negative numbers
+                                    {
+
+    bool ret = false;
+
+    // if no limits set the numberSize as big enough for the largest integer
+    if (maximumSize == 0u) {
+        maximumSize = 20u;
+        padded = false;
+    }
+
+    // put here the unsigned version of the number
+    T positiveNumber;
+    // put here the total space needed for the number
+    // 1 always for the one figure to print
+    uint16 numberSize = 1u;
+
+    // if negative invert it and account for the '-' in the size
+    if (number < static_cast<T>(0)) {
+        /*lint -e{9134} -e{501} -e{732} the number is signed */
+        positiveNumber = -number;
+        numberSize++;
+    }
+    else {
+        // if positive copy it and account for the '+' in the size if addPositiveSign set
+        positiveNumber = number;
+        if (addPositiveSign) {
+            numberSize++;
+        }
+    }
+
+    // 0x800000....
+    if (positiveNumber < static_cast<T>(0)) {
+        if ((sizeof(T) == 8u) && (maximumSize >= 20u)) {
+            PutS(ioBuffer, "-9223372036854775808");
+            ret = true;
+        }
+        if ((sizeof(T) == 4u) && (maximumSize >= 10u)) {
+            PutS(ioBuffer, "-2147483648");
+            ret = true;
+        }
+        if ((sizeof(T) == 2u) && (maximumSize >= 6u)) {
+            PutS(ioBuffer, "-32768");
+            ret = true;
+        }
+        if ((sizeof(T) == 1u) && (maximumSize >= 4u)) {
+            PutS(ioBuffer, "-128");
+            ret = true;
+        }
+
+        // does not fit
+        numberSize = maximumSize + 1u;
+    }
+
+    else {
+
+        // add the number of figures beyond the first
+        numberSize += GetOrderOfMagnitude(positiveNumber);
+    }
+
+    bool ok = true;
+    if (!ret) {
+
+        // is there enough space for the number?
+        if (maximumSize < numberSize) {
+            // if no than we shall print '?' so the size is 1 now
+            numberSize = 1u;
+
+            // fill up to from 1 maximumSize with ' '
+            if ((padded) && (!leftAligned)) {
+                for (uint32 i = 1u; ok && (i < maximumSize); i++) {
+                    if (!ioBuffer.PutC(' ')) {
+                        ok = false;
+                    }
+                }
+            }
+
+            // put the ?
+            if (!ioBuffer.PutC('?')) {
+                ok = false;
+            }
+
+        }
+        else { // enough space
+
+            // fill up from numberSize to maximumSize with ' '
+            if ((padded) && (!leftAligned)) {
+                for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
+                    if (!ioBuffer.PutC(' ')) {
+                        ok = false;
+                    }
+                }
+            }
+
+            // add sign
+            if (number < static_cast<T>(0)) {
+                if (!ioBuffer.PutC('-')) {
+                    ok = false;
+                }
+            }
+            else {
+                if (addPositiveSign) {
+                    if (!ioBuffer.PutC('+')) {
+                        ok = false;
+                    }
+                }
+            }
+
+            // put number
+            Number2StreamDecimalNotationPrivate(ioBuffer, positiveNumber);
+        }
+
+        // fill up from numberSize to maximumSize with ' '
+        if ((padded) && (leftAligned)) {
+            for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
+                if (!ioBuffer.PutC(' ')) {
+                    ok = false;
+                }
+            }
+        }
+    }
+
+    return ok;
+}
+
+/** @brief Prints an integer number on a general ioBuffer in hexadecimal notation.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
+ * @param maximumSize is the maximum requested space for the number print.
+ * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
+ * @param leftAligned specifies if the number must be print with left or right alignment.
+ * @param zeroPaddedBitSize specifies the actual number of bits in format. Set to sizeof(T) means to add trailing zeros, any smaller, non zero value means determines how many bits to print
+ * @param addHeader specifies if we want to add the hex header '0x' before the number.
+ * @return true.
+ *
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Uses hexadecimal notation.
+ * Respects maximumSize and number integrity.
+ * If not possible (maximum size minor than the minimum space for the number print) output is ? */
+template<typename T>
+bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
+                                       const T number,
+                                       uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
+                                       bool padded = false,   // if maximumSize!=0 & align towards the right or the left
+                                       const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
+                                       const uint16 zeroPaddedBitSize = 0u,       // if not 0 is used to determine how many trailing zeroes to print
+                                       const bool addHeader = false)   // prepend with 0x
+                                       {
+    // put here size of number
+    uint16 headerSize = 0u;
+
+    // adding two chars 0x header
+    if (addHeader) {
+        headerSize = 2u;
+    }
+
+    // actual meaningful digits
+    uint16 numberOfDigits = GetNumberOfDigitsHexNotation(number);
+
+    // add header for total size if padded
+    uint16 numberSize = headerSize + numberOfDigits;
+
+    // 1000 = no limits
+    if (maximumSize == 0u) {
+        maximumSize = 1000u;
+        padded = false;
+    }
+
+    // cannot fit the number even without trailing zeroes
+    bool ok = true;
+    if (maximumSize < numberSize) {
+        numberSize = 1u; // just the '?'
+
+        // pad on the left
+        if ((padded) && (!leftAligned)) {
+            for (uint32 i = 1u; ok && (i < maximumSize); i++) {
+                if (!ioBuffer.PutC(' ')) {
+                    ok = false;
+                }
+            }
+        }
+        // put the ?
+        if (!ioBuffer.PutC('?')) {
+            ok = false;
+        }
+
+    }
+    else {
+        // work out what it means in terms of hex digits
+        uint16 zeroPaddedDigits = (zeroPaddedBitSize + 3u) / 4u;
+
+        //In case of trailing zeros the digits are the maximum possible or equal to maximum size (-2 if there is header)
+        if (zeroPaddedDigits > numberOfDigits) {
+
+            // add header for total size if padded
+            uint16 fullNumberSize = headerSize + zeroPaddedDigits;
+
+            // check if adding all zeros number will not fit
+            if (fullNumberSize > maximumSize) {
+                // how much is exceeding?
+                uint16 excess = fullNumberSize - maximumSize;
+                // number is made to fit the available space
+                numberSize = maximumSize;
+                // we cannot print all the zeros, remove excess
+                numberOfDigits = zeroPaddedDigits - excess;
+            }
+            else {
+                // we will use the full number size
+                numberSize = fullNumberSize;
+                // we will print all digits
+                numberOfDigits = zeroPaddedDigits;
+            }
+        }
+
+        // in case of left alignment
+        if ((padded) && (!leftAligned)) {
+            for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
+                if (!ioBuffer.PutC(' ')) {
+                    ok = false;
+                }
+            }
+        }
+
+        // add header
+        if (addHeader) {
+            if (!ioBuffer.PutC('0')) {
+                ok = false;
+            }
+            if (!ioBuffer.PutC('x')) {
+                ok = false;
+            }
+        }
+
+        // work out how much to shift number to extract most significative hex
+        // we use the above calculate number size
+        uint8 bits = static_cast<uint8>((numberOfDigits - 1u) * 4u);
+
+        // loop backwards stepping each nibble
+        for (uint8 i = bits; ok && (static_cast<int8>(i) >= 0); i -= 4u) {
+            //to get the digit, shift the number and by masking select only the 4 LSB bits
+            uint8 digit = (static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & (0xFu));
+
+            // skips trailing zeros until we encounter the first non zero, or if putTrailingZeros was already set
+            //if ((digit != 0) || (putTrailingZeros)){
+            //putTrailingZeros = true;
+            uint8 zero = static_cast<uint8>('0');
+            uint8 ten = static_cast<uint8>('A');
+
+            if (digit < 10u) {
+                /*lint -e(9125) -e(9117) */
+                if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
+                    ok = false;
+                }
+            }
+            else {
+                /*lint -e(9125) -e(9117) */
+                if (!ioBuffer.PutC(static_cast<char8>((ten + digit) - 10u))) {
+                    ok = false;
+                }
+            }
+
+        }
+    }
+
+    // in case of right alignment
+    if ((padded) && (leftAligned)) {
+        for (uint16 i = numberSize; ok && (i < maximumSize); i++) {
+            if (!ioBuffer.PutC(' ')) {
+                ok = false;
+            }
+        }
+    }
+    return ok;
+
+}
+
+/** @brief Prints an integer number on a general ioBuffer in octal notation.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
+ * @param maximumSize is the maximum requested space for the number print.
+ * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
+ * @param leftAligned specifies if the number must be print with left or right alignment.
+ * @param zeroPaddedBitSize specifies the actual number of bits in format. Set to sizeof(T) means to add trailing zeros, any smaller, non zero value means determines how many bits to print
+ * @param addHeader specifies if we want to add the oct header '0o' before the number.
+ * @return true.
+ *
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Uses octal notation.
+ * Respects maximumSize and number integrity.
+ * If not possible (maximum size minor than the minimum space for the number print) output is ?  */
+template<typename T>
+bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
+                                  const T number,
+                                  uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
+                                  bool padded = false,   // if maximumSize!=0 & align towards the right or the left
+                                  const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
+                                  const uint16 zeroPaddedBitSize = 0u,       // if not 0 is used to determine how many trailing zeroes to print
+                                  bool addHeader = false)   // prepend with 0o
+                                  {
+
+    // put here size of number
+    uint16 headerSize = 0u;
+
+    // adding two chars 0x header
+    if (addHeader) {
+        headerSize = 2u;
+    }
+
+    // actual meaningful digits
+    uint16 numberOfDigits = GetNumberOfDigitsOctalNotation(number);
+
+    // add header for total size if padded
+    uint16 numberSize = headerSize + numberOfDigits;
+
+    // 1000 = no limits
+    if (maximumSize == 0u) {
+        maximumSize = 1000u;
+        padded = false;
+    }
+    // cannot fit the number even without trailing zeroes
+    bool ok = true;
+    if (maximumSize < numberSize) {
+        numberSize = 1u; // just the '?'
+
+        // pad on the left
+        if ((padded) && (!leftAligned)) {
+            for (uint32 i = 1u; ok && (i < maximumSize); i++) {
+                if (!ioBuffer.PutC(' ')) {
+                    ok = false;
+                }
+            }
+        }
+        // put the ?
+        if (!ioBuffer.PutC('?')) {
+            ok = false;
+        }
+
+    }
+    else {
+        // work out what it means in terms of octal digits
+        uint16 zeroPaddedDigits = (zeroPaddedBitSize + 2u) / 3u;
+
+        // if the zero padded number needs to be bigger
+        // work out how many zeroes we can actually afford
+        if (zeroPaddedDigits > numberOfDigits) {
+
+            // add header for total size if padded
+            uint16 fullNumberSize = headerSize + zeroPaddedDigits;
+
+            // check if adding all zeros number will not fit
+            if (fullNumberSize > maximumSize) {
+                // how much is exceeding?
+                uint16 excess = fullNumberSize - maximumSize;
+                // number is made to fit the available space
+                numberSize = maximumSize;
+                // we cannot print all the zeros, remove excess
+                numberOfDigits = zeroPaddedDigits - excess;
+            }
+            else {
+                // we will use the full number size
+                numberSize = fullNumberSize;
+                // we will print all digits
+                numberOfDigits = zeroPaddedDigits;
+            }
+        }
+
+        // in case of left alignment
+        if ((padded) && (!leftAligned)) {
+            for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
+                if (!ioBuffer.PutC(' ')) {
+                    ok = false;
+                }
+            }
+        }
+
+        // add header
+        if (addHeader) {
+            if (!ioBuffer.PutC('0')) {
+                ok = false;
+            }
+            if (!ioBuffer.PutC('o')) {
+                ok = false;
+            }
+        }
+
+        // work out how much to shift number to extract most significative hex
+        // we use the above calculate number size
+        uint8 bits = static_cast<uint8>((numberOfDigits - 1u) * 3u);
+
+        // loop backwards stepping each nibble
+        for (uint8 i = bits; ok && (static_cast<int8>(i) >= 0); i -= 3u) {
+
+            //right shift of the number
+            uint8 digit = static_cast<uint8>(static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & 0x7u);
+            uint8 zero = static_cast<uint8>('0');
+            /*lint -e(9125) -e(9117) */
+            if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
+                ok = false;
+            }
+        }
+    }
+
+// in case of right alignment
+    if ((padded) && (leftAligned)) {
+        for (uint16 i = numberSize; ok && (i < maximumSize); i++) {
+            if (!ioBuffer.PutC(' ')) {
+                ok = false;
+            }
+        }
+    }
+    return ok;
+}
+
+/** @brief Prints an integer number on a general ioBuffer in binary notation.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
+ * @param maximumSize is the maximum requested space for the number print.
+ * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
+ * @param leftAligned specifies if the number must be print with left or right alignment.
+ * @param zeroPaddedBitSize specifies the actual number of bits in format. Set to sizeof(T) means to add trailing zeros, any smaller, non zero value means determines how many bits to print
+ * @param addHeader specifies if we want to add the bin header '0b' before the number.
+ * @return true.
+ *
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Uses binary notation.
+ * Respects maximumSize and number integrity.
+ * If not possible (maximum size minor than the minimum space for the number print) output is ?  */
+template<typename T>
+bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
+                                   const T number,
+                                   uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
+                                   bool padded = false,   // if maximumSize!=0 & align towards the right or the left
+                                   const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
+                                   const uint16 zeroPaddedBitSize = 0u,       // if not 0 is used to determine how many trailing zeroes to print
+                                   const bool addHeader = false)   // prepend with 0b
+                                   {
+
+// 1000 = no limits
+    if (maximumSize == 0u) {
+        maximumSize = 1000u;
+        padded = false;
+    }
+
+    // put here size of number
+    uint16 headerSize = 0u;
+
+    // adding two chars 0x header
+    if (addHeader) {
+        headerSize = 2u;
+    }
+
+    // actual meaningful digits
+    uint16 numberOfDigits = GetNumberOfDigitsBinaryNotation(number);
+
+    // add header for total size if padded
+    uint16 numberSize = headerSize + numberOfDigits;
+
+    // cannot fit the number even without trailing zeroes
+    bool ok = true;
+    if (maximumSize < numberSize) {
+        numberSize = 1u; // just the '?'
+
+        // pad on the left
+        if ((padded) && (!leftAligned)) {
+            for (uint32 i = 1u; i < maximumSize; i++) {
+                if (!ioBuffer.PutC(' ')) {
+                    ok = false;
+                }
+            }
+        }
+        // put the ?
+        if (!ioBuffer.PutC('?')) {
+            ok = false;
+        }
+
+    }
+    else {
+
+        // if the zero padded number needs to be bigger
+        // work out how many zeroes we can actually afford
+        if (zeroPaddedBitSize > numberOfDigits) {
+
+            // add header for total size if padded
+            uint16 fullNumberSize = headerSize + zeroPaddedBitSize;
+
+            // check if adding all zeros number will not fit
+            if (fullNumberSize > maximumSize) {
+                // how much is exceeding?
+                uint16 excess = fullNumberSize - maximumSize;
+                // number is made to fit the available space
+                numberSize = maximumSize;
+                // we cannot print all the zeros, remove excess
+                numberOfDigits = zeroPaddedBitSize - excess;
+            }
+            else {
+                // we will use the full number size
+                numberSize = fullNumberSize;
+                // we will print all digits
+                numberOfDigits = zeroPaddedBitSize;
+            }
+        }
+
+        // in case of left alignment
+        if ((padded) && (!leftAligned)) {
+            for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
+                if (!ioBuffer.PutC(' ')) {
+                    ok = false;
+                }
+            }
+        }
+
+        // add header
+        if (addHeader) {
+            if (!ioBuffer.PutC('0')) {
+                ok = false;
+            }
+            if (!ioBuffer.PutC('b')) {
+                ok = false;
+            }
+        }
+
+        // work out how much to shift number to extract most significative hex
+        // we use the above calculate number size
+        uint8 bits = static_cast<uint8>(numberOfDigits - 1u);
+
+        // loop backwards stepping each nibble
+        for (uint8 i = bits; ok && (static_cast<int8>(i) >= 0); i--) {
+            //to get the digit, shift the number and by masking select only the 4 LSB bits
+            uint8 digit = (static_cast<uint8>(Shift::LogicalRightSafeShift(number, i)) & 0x1u);
+
+            uint8 zero = static_cast<uint8>('0');
+
+            // skips trailing zeros until we encounter the first non zero, or if putTrailingZeros was already set
+            /*lint -e(9125) -e(9117) */
+            if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
+                ok = false;
+            }
+
+        }
+    }
+
+    // in case of right alignment
+    if (padded && leftAligned) {
+        for (uint16 i = 0u; ok && (i < (maximumSize - numberSize)); i++) {
+            if (!ioBuffer.PutC(' ')) {
+                ok = false;
+            }
+        }
+    }
+    return ok;
+}
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint8 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int8 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint16 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int16 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint32 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int32 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint64 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int64 number,
                      const FormatDescriptor &format) {

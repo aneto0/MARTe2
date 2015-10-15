@@ -162,13 +162,13 @@ public:
 protected:
     /**
      * @brief Gets the read buffer.
-     * @return BufferedStreamIOBuffer readBuffer pointer.
+     * @return the BufferedStreamIOBuffer readBuffer pointer.
      */
     virtual IOBuffer *GetInputBuffer();
 
     /**
      * @brief Gets the write buffer.
-     * @return BufferedStreamIOBuffer writeBuffer pointer.
+     * @return the BufferedStreamIOBuffer writeBuffer pointer.
      */
     virtual IOBuffer *GetOutputBuffer();
 

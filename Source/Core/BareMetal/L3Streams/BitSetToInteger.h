@@ -38,7 +38,6 @@ namespace MARTe {
  * 740, 826, 927, 928 [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by this implementation.
  * */
 
-
 /** @Brief BitSet to BitSet function for private use only.
  * @param destination is a pointer to the bitSet destination.
  * @param destinationBitShift is the desired shift in bit in destination variable.
@@ -191,6 +190,7 @@ static inline bool BitSetToBitSet(T *& destination,
                                   const uint8 sourceBitSize,
                                   const bool sourceIsSigned) {
 
+    bool ret = true;
     // calculates granularity as bits
     uint8 granularity = static_cast<uint8>(sizeof(T) * 8u);
     // mask to eliminate multiples of granularity -
@@ -259,22 +259,22 @@ static inline bool BitSetToBitSet(T *& destination,
         BSToBS(destination64, destinationBitShift, destinationBitSize, destinationIsSigned, source64, sourceBitShift, sourceBitSize, sourceIsSigned);
     }
     /*
-    else if ((sourceBitEnd <= 128u) && (destinationBitEnd <= 128u) && (granularity <= 128u)) {
-        // if 128 is fine then operate with float64(uint64)
-        DoubleInteger<uint64> *destination128 = reinterpret_cast<DoubleInteger<uint64> *>(destination);
-        DoubleInteger<uint64> *source128 = reinterpret_cast<DoubleInteger<uint64> *>(source);
+     else if ((sourceBitEnd <= 128u) && (destinationBitEnd <= 128u) && (granularity <= 128u)) {
+     // if 128 is fine then operate with float64(uint64)
+     DoubleInteger<uint64> *destination128 = reinterpret_cast<DoubleInteger<uint64> *>(destination);
+     DoubleInteger<uint64> *source128 = reinterpret_cast<DoubleInteger<uint64> *>(source);
 
-        BSToBS(destination128, destinationBitShift, destinationBitSize, destinationIsSigned, source128, sourceBitShift, sourceBitSize, sourceIsSigned);
-    }
-    */
+     BSToBS(destination128, destinationBitShift, destinationBitSize, destinationIsSigned, source128, sourceBitShift, sourceBitSize, sourceIsSigned);
+     }
+     */
     else {
-        //TODO
+        ret = false;
     }
 
     sourceBitShift += sourceBitSize;
     destinationBitShift += destinationBitSize;
 
-    return true;
+    return ret;
 }
 
 /** @Brief BitSet to Integer function.
