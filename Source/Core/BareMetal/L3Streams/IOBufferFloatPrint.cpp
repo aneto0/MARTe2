@@ -29,19 +29,15 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-
 #include "GeneralDefinitions.h"
 #include "FormatDescriptor.h"
 #include "IOBuffer.h"
 #include "Shift.h"
 #include "BitSetToInteger.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 
 /*lint -save -e9023 -e9024
  * 9023, 9024  [MISRA C++ Rule 16-3-1] [MISRA C++ Rule 16-3-2]. Justification: Use of operators # and ## required by this implementation. */
@@ -73,6 +69,7 @@ exponent-=(step+1); \
 number *= 10E ## step ## Q; \
 }
  */
+
 namespace MARTe {
 
 static inline bool isNaN(const float32 x) {
@@ -735,6 +732,43 @@ static inline int16 NumberOfDigitsNotation(const FloatNotation &notation,
 
 }
 
+/** @brief Prints the notation E+/-n on a generic ioBuffer which implements a PutC() function.
+ * @param ioBuffer is the generic ioBuffer.
+ * @param exponent is the exponent of the number.
+ */
+static inline void ExponentToStreamPrivate(IOBuffer & ioBuffer,
+                                           int16 exponent) {
+    // output exponent if exists
+    if (exponent != 0) {
+        if (!ioBuffer.PutC('E')) {
+            //TODO
+        }
+        // print the exponent sign (both)
+        // get the absolute value
+        if (exponent > 0) {
+            if (!ioBuffer.PutC('+')) {
+                //TODO
+            }
+        }
+        else {
+            exponent = -exponent;
+            if (!ioBuffer.PutC('-')) {
+                //TODO
+            }
+        }
+        // fast convert to int
+        Number2StreamDecimalNotationPrivate(ioBuffer, exponent);
+    }
+}
+
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
 /** @brief Print the number (without sign and padding) on a generic ioBuffer which implements a PutC() function.
  * @param ioBuffer is the generic ioBuffer.
  * @param positiveNumber is the absolute value of the normalized number.
@@ -825,35 +859,6 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
         }
     }
     return ret;
-}
-
-/** @brief Prints the notation E+/-n on a generic ioBuffer which implements a PutC() function.
- * @param ioBuffer is the generic ioBuffer.
- * @param exponent is the exponent of the number.
- */
-static inline void ExponentToStreamPrivate(IOBuffer & ioBuffer,
-                                           int16 exponent) {
-    // output exponent if exists
-    if (exponent != 0) {
-        if (!ioBuffer.PutC('E')) {
-            //TODO
-        }
-        // print the exponent sign (both)
-        // get the absolute value
-        if (exponent > 0) {
-            if (!ioBuffer.PutC('+')) {
-                //TODO
-            }
-        }
-        else {
-            exponent = -exponent;
-            if (!ioBuffer.PutC('-')) {
-                //TODO
-            }
-        }
-        // fast convert to int
-        Number2StreamDecimalNotationPrivate(ioBuffer, exponent);
-    }
 }
 
 /** @brief Implements functions to print the number for each format on a generic ioBuffer which implements a PutC() function.
@@ -1314,4 +1319,3 @@ bool FloatToStream(IOBuffer &buffer,
 }
 
 }
-
