@@ -30,7 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BufferedStreamIOBufferTest.h"
-
+#include "StreamTestHelper.h"
+#include "printf.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -68,5 +69,217 @@ bool BufferedStreamIOBufferTest::TestDefaultConstructor() {
         return false;
     }
     return buffered.UndoLevel() == 0;
+
+}
+
+bool BufferedStreamIOBufferTest::TestFullConstructor() {
+
+    DummySingleBufferedStream stream;
+    TimeoutType msecTimeout = 500;
+    BufferedStreamIOBuffer buffered(&stream, msecTimeout);
+
+    if (buffered.AmountLeft() != 0) {
+        return false;
+    }
+
+    if (buffered.UsedAmountLeft() != 0) {
+        return false;
+    }
+
+    if (buffered.MaxUsableAmount() != 0) {
+        return false;
+    }
+
+    if (buffered.Buffer() != NULL) {
+        return false;
+    }
+
+    if (buffered.GetTimeout() != msecTimeout) {
+        return false;
+    }
+
+    if (buffered.GetStream() != (&stream)) {
+        return false;
+    }
+    return buffered.UndoLevel() == 0;
+
+}
+
+bool BufferedStreamIOBufferTest::TestRefill() {
+
+    DummySingleBufferedStream stream;
+    BufferedStreamIOBuffer buffered(&stream);
+
+    uint32 bufferSize = 10;
+    buffered.SetBufferSize(bufferSize);
+
+    const char8* toWrite = "HelloWorldThisIsATest";
+
+    uint32 writeSize = StringHelper::Length(toWrite);
+
+    buffered.WriteAll(toWrite, writeSize);
+    stream.Seek(0);
+
+    //try to trick with a non empty buffer
+    const char8 *trick = "trick";
+    uint32 trickSize = StringHelper::Length(trick);
+    buffered.Write(trick, trickSize);
+
+    buffered.Refill();
+
+    if (buffered.UsedAmountLeft() != buffered.MaxUsableAmount()) {
+        return false;
+    }
+
+    return StringHelper::CompareN(buffered.Buffer(), toWrite, bufferSize) == 0;
+}
+
+bool BufferedStreamIOBufferTest::TestRefill_NULL_Stream() {
+    BufferedStreamIOBuffer buffered;
+
+    uint32 bufferSize=10;
+    buffered.SetBufferSize(bufferSize);
+
+    return !buffered.Refill();
+}
+
+bool BufferedStreamIOBufferTest::TestRefill_NULL_Buffer() {
+
+    DummySingleBufferedStream stream;
+    BufferedStreamIOBuffer buffered(&stream);
+
+
+    return !buffered.Refill();
+}
+
+bool BufferedStreamIOBufferTest::TestFlush() {
+    DummySingleBufferedStream stream;
+    BufferedStreamIOBuffer buffered(&stream);
+
+    uint32 bufferSize = 10;
+    buffered.SetBufferSize(bufferSize);
+
+    const char8* toWrite = "Hello";
+    uint32 writeSize = StringHelper::Length(toWrite);
+
+    buffered.Write(toWrite, writeSize);
+
+    buffered.Flush();
+    //the buffer now is empty
+    if ((buffered.Position() != 0) || (buffered.UsedSize() != 0)) {
+        return false;
+    }
+
+    printf("\n|%s|\n", stream.Buffer());
+    return StringHelper::Compare(stream.Buffer(), toWrite) == 0;
+}
+
+bool BufferedStreamIOBufferTest::TestFlush_NULL_Stream() {
+    BufferedStreamIOBuffer buffered;
+
+    uint32 bufferSize=10;
+    buffered.SetBufferSize(bufferSize);
+
+    return !buffered.Flush();
+}
+
+bool BufferedStreamIOBufferTest::TestFlush_NULL_Buffer() {
+
+    DummySingleBufferedStream stream;
+    BufferedStreamIOBuffer buffered(&stream);
+
+
+    return !buffered.Flush();
+}
+
+
+
+
+bool BufferedStreamIOBufferTest::TestResync() {
+
+    DummySingleBufferedStream stream;
+    BufferedStreamIOBuffer buffered(&stream);
+    printf("\n%d\n", stream.UnbufferedPosition());
+
+    uint32 bufferSize = 10;
+    buffered.SetBufferSize(bufferSize);
+
+    const char8* toWrite = "HelloWorldThisIsATest";
+
+    uint32 writeSize = StringHelper::Length(toWrite);
+
+    buffered.WriteAll(toWrite, writeSize);
+    printf("\n%d\n", stream.UnbufferedPosition());
+
+    buffered.Flush();
+
+    stream.Seek(0);
+    printf("\n%d\n", stream.UnbufferedPosition());
+
+    //something is written on the stream.
+
+    char8 bufferOut[32];
+    uint32 toRead = 5;
+    // the buffer is refilled until 10 chars
+    buffered.Refill();
+    buffered.Read(bufferOut, toRead);
+
+    printf("\n%d\n", stream.UnbufferedPosition());
+    if (stream.UnbufferedPosition() != bufferSize) {
+        return false;
+    }
+
+    buffered.Resync();
+
+    printf("\n%d\n", stream.UnbufferedPosition());
+    return stream.UnbufferedPosition() == toRead;
+}
+
+bool BufferedStreamIOBufferTest::TestResync_NULL_Stream() {
+    BufferedStreamIOBuffer buffered;
+
+    uint32 bufferSize=10;
+    buffered.SetBufferSize(bufferSize);
+
+    return !buffered.Resync();
+}
+
+bool BufferedStreamIOBufferTest::TestResync_NULL_Buffer() {
+
+    DummySingleBufferedStream stream;
+    BufferedStreamIOBuffer buffered(&stream);
+
+
+    return buffered.Resync();
+}
+
+
+
+
+
+bool BufferedStreamIOBufferTest::TestSetBufferSize(uint32 size) {
+    BufferedStreamIOBuffer buffered;
+
+    if (buffered.BufferSize() != 0) {
+        return false;
+    }
+
+    if ((!buffered.SetBufferSize(size)) && (size != 0)) {
+        return false;
+    }
+
+    printf("\n%d %d\n", buffered.BufferSize(), buffered.MaxUsableAmount());
+    return (buffered.BufferSize() == size) && (buffered.MaxUsableAmount() == (buffered.BufferSize()));
+}
+
+bool BufferedStreamIOBufferTest::TestGetStream() {
+    BufferedStreamIOBuffer buffered;
+
+    if (buffered.GetStream() != NULL) {
+        return false;
+    }
+    DummySingleBufferedStream stream;
+    BufferedStreamIOBuffer buffer2(&stream);
+    return buffered.GetStream() == (&stream);
 
 }

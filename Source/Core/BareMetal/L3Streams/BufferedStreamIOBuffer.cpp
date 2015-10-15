@@ -106,9 +106,9 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead() {
 }
 
 bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
-    bool retval = (stream != NULL);
+    bool retval = false;
 
-    if (retval) {
+    if (stream!=NULL) {
         // no buffering!
         if (Buffer() != NULL) {
 
@@ -116,10 +116,8 @@ bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
             uint32 writeSize = UsedSize();
 
             // write
-            if (!stream->UnbufferedWrite(Buffer(),writeSize,timeout)) {
-                retval=false;
-            }
-            else {
+            if (stream->UnbufferedWrite(Buffer(),writeSize,timeout)) {
+                retval=true;
                 Empty();
             }
         }

@@ -31,7 +31,7 @@
 
 #include "IOBufferTest.h"
 #include "StringHelper.h"
-//#include "StreamTestHelper.h"
+#include "StreamTestHelper.h"
 #include "printf.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -403,7 +403,9 @@ bool IOBufferTest::TestSetBufferHeapMemory(uint32 size,
     ioBuffer.SetUsedSize(10);
     ioBuffer.Seek(3);
 
-    ioBuffer.SetBufferHeapMemory(size, endSpace);
+    if ((!ioBuffer.SetBufferHeapMemory(size, endSpace)) && (size != 0)) {
+        return false;
+    }
 
     size = ioBuffer.BufferSize();
     uint32 expected = (endSpace > size) ? (0) : (size - endSpace);
@@ -2900,14 +2902,29 @@ bool IOBufferTest::TestPrintFormattedToStream_Pointer() {
 }
 
 bool IOBufferTest::TestPrintFormattedToStream_Stream() {
+
+    IOBuffer ioBuffer;
+
+    uint32 allocationSize = 64;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    Clear(ioBuffer);
+    DummySingleBufferedStream stream;
+
+
+    const char8 * toWrite = "HelloWorldThisIsATest";
+    StringHelper::Copy(stream.Buffer(), toWrite);
+    stream.Seek(0);
+
+    printf("\n%s\n", stream.Buffer());
+
+    AnyType toPrint = stream;
+
+    ioBuffer.PrintFormattedToStream("\n%s\n", &toPrint);
+
+    printf("\n%s\n", ioBuffer.Buffer());
+
     /*
-     IOBuffer ioBuffer;
-
-     uint32 allocationSize = 64;
-     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
-
-     Clear(ioBuffer);
-
      //cast StreamString to anytype.
      StreamString input = "HelloWorld";
 
@@ -2975,7 +2992,7 @@ bool IOBufferTest::TestPrintFormattedToStream_BitSet_Unsigned() {
             end = sizeStr - myShift / 4;
             beg = (end - (size / 4)) + 1;
             StringHelper::Substr(beg, end, streamString, buffer);
-            printf("\n|%s| |%s|\n", buffer, ioBuffer.Buffer());
+            //  printf("\n|%s| |%s|\n", buffer, ioBuffer.Buffer());
 
             if (StringHelper::Compare(buffer, ioBuffer.Buffer()) != 0) {
                 printf("\n%d %d\n", myShift, size);
@@ -3042,7 +3059,7 @@ bool IOBufferTest::TestPrintFormattedToStream_BitSet_Signed() {
                 StringHelper::Copy(buffer, result);
             }
 
-            printf("\n|%s| |%s|\n", buffer, ioBuffer.Buffer());
+            //     printf("\n|%s| |%s|\n", buffer, ioBuffer.Buffer());
 
             if (StringHelper::Compare(buffer, ioBuffer.Buffer()) != 0) {
                 printf("\n%d %d\n", myShift, size);

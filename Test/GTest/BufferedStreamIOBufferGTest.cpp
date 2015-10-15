@@ -46,3 +46,57 @@ TEST(BufferedStreamIOBufferGTest, TestDefaultConstructor) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestDefaultConstructor());
 }
+
+TEST(BufferedStreamIOBufferGTest, TestFullConstructor) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestFullConstructor());
+}
+
+TEST(BufferedStreamIOBufferGTest, TestRefill) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestRefill());
+}
+TEST(BufferedStreamIOBufferGTest, TestRefill_NULL_Stream) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestRefill_NULL_Stream());
+}
+TEST(BufferedStreamIOBufferGTest, TestRefill_NULL_Buffer) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestRefill_NULL_Buffer());
+}
+
+TEST(BufferedStreamIOBufferGTest, TestFlush) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestFlush());
+}
+
+TEST(BufferedStreamIOBufferGTest, TestFlush_NULL_Stream) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestFlush_NULL_Stream());
+}
+TEST(BufferedStreamIOBufferGTest, TestFlush_NULL_Buffer) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestFlush_NULL_Buffer());
+}
+TEST(BufferedStreamIOBufferGTest, TestResync) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestResync());
+}
+TEST(BufferedStreamIOBufferGTest, TestResync_NULL_Stream) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestResync_NULL_Stream());
+}
+TEST(BufferedStreamIOBufferGTest, TestResync_NULL_Buffer) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestResync_NULL_Buffer());
+}
+
+TEST(BufferedStreamIOBufferGTest, TestSetBufferSize) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestSetBufferSize(32));
+}
+
+TEST(BufferedStreamIOBufferGTest, TestSetBufferSize_zero_size) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestSetBufferSize(0));
+}

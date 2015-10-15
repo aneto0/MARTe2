@@ -74,9 +74,9 @@ public:
      error in the stream  ==> no point to try again
      parameters error, for instance buffer = NULL
      */
-    virtual bool UnbufferedRead(char8* buffer,
+    virtual bool UnbufferedRead(char8 * const buffer,
                                 uint32 & size,
-                                TimeoutType msecTimeout)=0;
+                                const TimeoutType &msecTimeout)=0;
 
     /**
      * @brief Pure virtual method. Writes from a const char8* buffer to the stream.
@@ -98,9 +98,9 @@ public:
      error in the stream ==> no point to try again
      parameters error, for instance buffer = NULL
      */
-    virtual bool UnbufferedWrite(const char8* buffer,
+    virtual bool UnbufferedWrite(const char8 * const buffer,
                                  uint32 & size,
-                                 TimeoutType msecTimeout) = 0;
+                                 const TimeoutType &msecTimeout) = 0;
 
     /**
      * @brief Pure virtual function. Defines if write operations can be performed on the stream.
@@ -171,30 +171,30 @@ public:
     /**
      * @brief Pure virtual method. The size of the stream.
      * @return the size of the stream depending on derived classes implementation.  */
-    virtual uint64 Size() = 0;
+    virtual uint64 UnbufferedSize() = 0;
 
     /**
      * @brief Pure virtual method. Moves within the stream to an absolute location.
      * @param pos is the desired absolute position.
      * @return return value depends on derived classes implementation. */
-    virtual bool Seek(uint64 pos) = 0;
+    virtual bool UnbufferedSeek(uint64 pos) = 0;
 
     /**
      * @brief Pure virtual method. Moves within the file relative to current location.
      * @param deltaPos is the gap from the current position.
      * @return return value depends on derived classes implementation. */
-    virtual bool RelativeSeek(int32 deltaPos)=0;
+    virtual bool UnbufferedRelativeSeek(int32 deltaPos)=0;
 
     /**
      * @brief Pure virtual method. Returns current position.
      * @return the current position in the stream. */
-    virtual uint64 Position() = 0;
+    virtual uint64 UnbufferedPosition() = 0;
 
     /**
      * @brief Pure virtual method. Clip the stream size to the desired value.
      * @param size is the desired size.
      * @return return value depends on the derived classes implementation. */
-    virtual bool SetSize(uint64 size) = 0;
+    virtual bool UnbufferedSetSize(uint64 size) = 0;
 
 };
 

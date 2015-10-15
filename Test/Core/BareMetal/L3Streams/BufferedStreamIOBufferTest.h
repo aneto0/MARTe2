@@ -42,9 +42,30 @@ class BufferedStreamIOBufferTest {
 
 public:
     bool TestDefaultConstructor();
-/*
+
     bool TestFullConstructor();
-*/
+
+    bool TestRefill();
+
+    bool TestRefill_NULL_Stream();
+
+    bool TestRefill_NULL_Buffer();
+
+    bool TestFlush();
+
+    bool TestFlush_NULL_Stream();
+
+    bool TestFlush_NULL_Buffer();
+
+    bool TestResync();
+
+    bool TestResync_NULL_Stream();
+
+    bool TestResync_NULL_Buffer();
+
+    bool TestSetBufferSize(uint32 size);
+
+    bool TestGetStream();
 };
 
 /*---------------------------------------------------------------------------*/

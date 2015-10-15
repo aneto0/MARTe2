@@ -232,6 +232,12 @@ TEST(IOBufferGTest, TestSetBufferHeapMemory_bigEndSpace_out_memory) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetBufferHeapMemory(8, 12, 8));
 }
+
+TEST(IOBufferGTest, TestSetBufferHeapMemory_zero_size) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestSetBufferHeapMemory(0, 12, 8));
+}
+
 TEST(IOBufferGTest, TestSetBufferHeapMemoryIncrease) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSetBufferHeapMemoryIncrease());

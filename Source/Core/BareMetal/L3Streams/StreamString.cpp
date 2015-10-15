@@ -279,7 +279,7 @@ uint64 StreamString::UnbufferedPosition() {
     return 0u;
 }
 
-/*lint -e{715} [MISRA C++ Rule 0-1-119]. Justification: The default behavior does not need the input argument.*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not need the input argument.*/
 bool StreamString::UnbufferedSetSize(const uint64 size) {
     return false;
 }
