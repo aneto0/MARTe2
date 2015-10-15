@@ -42,15 +42,17 @@
 namespace MARTe {
 
 /*lint -e568 [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
-// returns the exponent
-// positiveNumber is the abs (number)
-/** @brief Calculates the order of a number, namely its number of digits minus one.
- * @param positiveNumber is the number argument which must be positive.
+
+/**
+ * @brief Calculates the order of a number, namely its number of digits
+ * minus one.
+ * @details The function operates by comparing with 10**N with converging
+ * by bisection to the correct value.
+ * @param[in] positiveNumber is the number argument which must be positive.
  * @return the number of digits minus one.
- *
- * The function operates by comparing with 10**N with converging by bisection to the correct value. */
+ */
 template<typename T>
-static inline uint16 GetOrderOfMagnitude(const T positiveNumber) {
+static uint16 GetOrderOfMagnitude(const T positiveNumber) {
     T tenToExponent = static_cast<T>(1);
     uint8 nDigits = 0u;
     // check whether exponent greater than 10
@@ -103,16 +105,15 @@ static inline uint16 GetOrderOfMagnitude(const T positiveNumber) {
     return nDigits;
 }
 
-// returns the number of digits necessary to represent this number -1
-/** @brief Calculates the number of digits for a hexadecimal representation.
- * @param number is the number argument.
+/**
+ * @brief Calculates the number of digits for a hexadecimal representation.
+ * @details This function operates comparing the number with 16**N numbers
+ * with N=1,2,4,8 converging by bisection to the correct value.
+ * @param[in] number is the number argument.
  * @return the minimum number of digits for an hexadecimal print.
- *
- * This function operates comparing the number with 16**N numbers with N=1,2,4,8 converging by
- * bisection to the correct value. */
-
+ */
 template<typename T>
-static inline uint16 GetNumberOfDigitsHexNotation(T number) {
+static uint16 GetNumberOfDigitsHexNotation(T number) {
     uint8 nDigits = 1u;
 
     // negative numbers are 2 complements and have therefore all bits
@@ -158,16 +159,15 @@ static inline uint16 GetNumberOfDigitsHexNotation(T number) {
     return nDigits;
 }
 
-// returns the number of digits necessary to represent this number -1
-/** @brief Calculates the number of digits for an octal representation.
- * @param number is the number argument.
+/**
+ * @brief Calculates the number of digits for an octal representation.
+ * @details This function operates comparing the number with 8**N numbers
+ * with N=1,2,4,8,16 converging by bisection to the correct value.
+ * @param[in] number is the number argument.
  * @return the minimum number of digits for an octal print.
- *
- * This function operates comparing the number with 8**N numbers with N=1,2,4,8,16 converging by
- * bisection to the correct value. */
-
+ */
 template<typename T>
-static inline uint16 GetNumberOfDigitsOctalNotation(T number) {
+static uint16 GetNumberOfDigitsOctalNotation(T number) {
     // negative numbers are 2 complements and have therefore all bits
     uint8 nDigits = 1u;
 
@@ -218,16 +218,15 @@ static inline uint16 GetNumberOfDigitsOctalNotation(T number) {
     return nDigits;
 }
 
-// returns the number of digits necessary to represent this number -1
-/** @brief Calculates the number of digits for a binary representation.
- * @param number is the number argument.
+/**
+ * @brief Calculates the number of digits for a binary representation.
+ * @details This function operates comparing the number with 2**N numbers
+ * with N=1,2,4,8,16,32 converging by bisection to the correct value.
+ * @param[in] number is the number argument.
  * @return the minimum number of digits for a binary print.
- *
- * This function operates comparing the number with 2**N numbers with N=1,2,4,8,16,32 converging by
- * bisection to the correct value. */
-
+ */
 template<typename T>
-static inline uint16 GetNumberOfDigitsBinaryNotation(T number) {
+static uint16 GetNumberOfDigitsBinaryNotation(T number) {
     uint8 nDigits = 1u;
 
     // negative numbers are 2 complements and have therefore all bits
@@ -288,21 +287,25 @@ static inline uint16 GetNumberOfDigitsBinaryNotation(T number) {
     return nDigits;
 }
 
-/** @brief Prints an integer number on a general stream in decimal notation.
- * @param s is a general stream class which implements a putC() function.
- * @param positiveNumber is the number to print (it must be positive the '-' is added a part).
- * @param numberFillLength is the minimum number of digits requested for each 16 bit number (<5 because 2**16 has 5 digits) and
- * the function fills the different between it and the minimum necessary space with zeros.
- *
- * This function implements a 2 step conversion - step1 32/64 to 16bit step2 10bit to decimal.
- * This way the number of 32/64 bit operations are reduced.
- * NumberFillLength is used to specify how many digits to prints at least (this would include trailingzeros).
- * It will never prints more trailing zeros than the maximum size of a number of that format.
- * Streamer must have a PutC(char8) method. It will be used to output the digits. */
+/**
+ * @brief Prints an integer number on a general buffer in decimal notation.
+ * @details This function implements a 2 step conversion - step1 32/64 to
+ * 16bit step2 10bit to decimal. This way the number of 32/64 bit operations
+ * are reduced. NumberFillLength is used to specify how many digits to prints
+ * at least (this would include trailingzeros). It will never prints more
+ * trailing zeros than the maximum size of a number of that format. Streamer
+ * must have a PutC(char8) method. It will be used to output the digits.
+ * @param[out] s is a general buffer class which implements a putC() function.
+ * @param[in] positiveNumber is the number to print (it must be positive the
+ * '-' is added a part).
+ * @param[in] numberFillLength is the minimum number of digits requested for
+ * each 16 bit number (<5 because 2**16 has 5 digits) and the function fills
+ * the different between it and the minimum necessary space with zeros.
+ */
 template<typename T>
-static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
-                                                       T positiveNumber,
-                                                       int16 numberFillLength = 0) {
+static void Number2StreamDecimalNotationPrivate(IOBuffer &s,
+                                                T positiveNumber,
+                                                int16 numberFillLength = 0) {
 
     // no negative!
     if (numberFillLength < 0) {
@@ -422,12 +425,14 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
     }
 }
 
-/** @brief Prints a string on a generic ioBuffer.
- * @param ioBuffer is a generic ioBuffer class which implements a PutC() function.
- * @param s is the string to be printed. */
+/**
+ * @brief Prints a string on a generic buffer.
+ * @param[out] ioBuffer is a generic ioBuffer class which implements a PutC() function.
+ * @param[in] s is the string to be printed.
+ */
 template<class ioBufferer>
-static inline void PutS(ioBufferer & ioBuffer,
-                        const char8 *s) {
+static void PutS(ioBufferer & ioBuffer,
+                 const char8 *s) {
     bool ok = true;
     while (ok && (s[0] != '\0')) {
         if (ioBuffer.PutC(s[0])) {
@@ -439,17 +444,19 @@ static inline void PutS(ioBufferer & ioBuffer,
     }
 }
 
-/** @brief Print on a general ioBuffer using a specific format.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param number is the integer to print.
- * @param format is the desired format.
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts any integer type, signed and unsigned to a sequence of
+ * characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format. Also respects all relevant format
+ * parameters. Respects format.size and number integrity. If not possible
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements a PutC() function.
+ * @param[in] number is the integer to print.
+ * @param[in] format is the desired format.
+ * @param[in] actualBitSize is the actual bit size.
  * @return true if the format is correct, false otherwise.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Uses notation specified in format.
- * Also respects all relevant format parameters.
- * Respects format.size and number integrity.
- * If not possible output is ? */
+ */
 template<typename T>
 bool IntegerToStreamPrivate(IOBuffer &ioBuffer,
                             const T number,
@@ -481,24 +488,29 @@ bool IntegerToStreamPrivate(IOBuffer &ioBuffer,
     return ret;
 }
 
-/** @brief Print on a general ioBuffer using a specific format.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param number is the integer to print.
- * @param format is the desired format.
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts any integer type, signed and unsigned to a sequence of
+ * characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format. Also respects all relevant format
+ * parameters. Respects format.size and number integrity. If not possible
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] numberAddress is the integer to print.
+ * @param[in] numberBitShift is the shift for the number to print.
+ * @param[in] numberBitSize is the desired size in bit for the number to print.
+ * @param[in] numberIsSigned specifies if the number to print will be
+ * considered signed (true) or not (false).
+ * @param[in] format is the desired format.
  * @return true if the format is correct, false otherwise.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Uses notation specified in format.
- * Also respects all relevant format parameters.
- * Respects format.size and number integrity.
- * If not possible output is ? */
-static
-bool BitSetToStreamPrivate(IOBuffer &ioBuffer,
-                           uint32 *numberAddress,
-                           uint8 numberBitShift,
-                           const uint8 numberBitSize,
-                           const bool numberIsSigned,
-                           const FormatDescriptor &format) {
+ */
+static bool BitSetToStreamPrivate(IOBuffer &ioBuffer,
+                                  uint32 *numberAddress,
+                                  uint8 numberBitShift,
+                                  const uint8 numberBitSize,
+                                  const bool numberIsSigned,
+                                  const FormatDescriptor &format) {
 
     bool ret = true;
 
@@ -590,25 +602,33 @@ bool BitSetToStreamPrivate(IOBuffer &ioBuffer,
 
 namespace MARTe {
 
-/** @brief Prints an integer number on a general ioBuffer in decimal notation.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param maximumSize is the maximum requested space for the number print.
- * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
- * @param leftAligned specifies if the number must be print with left or right alignment.
- * @param addPositiveSign specifies if we want print the '+' before positive numbers.
+/**
+ * @brief Prints an integer number on a general ioBuffer in decimal notation.
+ * @details Converts any integer type, signed and unsigned to a sequence of
+ * characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Respects maximumSize and number integrity. If not possible (maximum size
+ * minor than the minimum space for the number print) outputs is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements a PutC() function.
+ * @param[in] number is the number to print.
+ * @param[in] maximumSize is the maximum requested space for the number print
+ * (0 means that the number is printed in its entirety).
+ * @param[in] padded specifies if the difference between maximumSize and the
+ * necessary space for the number must be filled by spaces ' '
+ * (if maximumSize!=0 & align towards the right or the left).
+ * @param[in] leftAligned specifies if the number must be print with left or
+ * right alignment (if padded and maximumSize!=0 align towards the left).
+ * @param[in] addPositiveSign specifies if we want print the '+' before
+ * positive numbers (prepend with + not just with - for negative numbers).
  * @return true.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Respects maximumSize and number integrity.
- * If not possible (maximum size minor than the minimum space for the number print) outputs is ? */
+ */
 /*lint -e{9143} [MISRA C++ Rule 5-3-2]. Justification: application of sign - is applied only in case of negative number (then signed numbers).*/
 template<typename T>
-bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,                     // must have a GetC(c) function where c is of a type that can be obtained from chars
+bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
                                     const T number,
-                                    uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
-                                    bool padded = false,   // if maximumSize!=0 & align towards the right or the left
-                                    const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
-                                    const bool addPositiveSign = false)   // prepend with + not just with - for negative numbers
+                                    uint16 maximumSize = 0u,
+                                    bool padded = false,
+                                    const bool leftAligned = false,
+                                    const bool addPositiveSign = false)
                                     {
 
     bool ret = false;
@@ -733,27 +753,40 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,                     // m
     return ok;
 }
 
-/** @brief Prints an integer number on a general ioBuffer in hexadecimal notation.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param maximumSize is the maximum requested space for the number print.
- * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
- * @param leftAligned specifies if the number must be print with left or right alignment.
- * @param zeroPaddedBitSize specifies the actual number of bits in format. Set to sizeof(T) means to add trailing zeros, any smaller, non zero value means determines how many bits to print
- * @param addHeader specifies if we want to add the hex header '0x' before the number.
+/**
+ * @brief Prints an integer number on a general ioBuffer in hexadecimal
+ * notation.
+ * @details Converts any integer type, signed and unsigned to a sequence of
+ * characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Uses hexadecimal notation. Respects maximumSize and number integrity.
+ * If not possible (maximum size minor than the minimum space for the number
+ * print) output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements a
+ * PutC() function.
+ * @param[in] number is the number to print.
+ * @param[in] maximumSize is the maximum requested space for the number print
+ * (0 means that the number is printed in its entirety).
+ * @param[in] padded specifies if the difference between maximumSize and the
+ * necessary space for the number must be filled by spaces ' '
+ * (if maximumSize!=0 & align towards the right or the left).
+ * @param leftAligned specifies if the number must be print with left or right
+ * alignment (if padded and maximumSize!=0 align towards the left).
+ * @param[in] zeroPaddedBitSize specifies the actual number of bits in format.
+ * Set to sizeof(T) means to add trailing zeros, any smaller, non zero value
+ * means determines how many bits to print (if not 0 is used to determine how
+ * many trailing zeroes to print)
+ * @param[in] addHeader specifies if we want to add the hex header '0x' before
+ * the number (prepend with 0x).
  * @return true.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Uses hexadecimal notation.
- * Respects maximumSize and number integrity.
- * If not possible (maximum size minor than the minimum space for the number print) output is ? */
+ */
 template<typename T>
 bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
                                        const T number,
-                                       uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
-                                       bool padded = false,   // if maximumSize!=0 & align towards the right or the left
-                                       const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
-                                       const uint16 zeroPaddedBitSize = 0u,       // if not 0 is used to determine how many trailing zeroes to print
-                                       const bool addHeader = false)   // prepend with 0x
+                                       uint16 maximumSize = 0u,
+                                       bool padded = false,
+                                       const bool leftAligned = false,
+                                       const uint16 zeroPaddedBitSize = 0u,
+                                       const bool addHeader = false)
                                        {
     // put here size of number
     uint16 headerSize = 0u;
@@ -883,27 +916,39 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
 
 }
 
-/** @brief Prints an integer number on a general ioBuffer in octal notation.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param maximumSize is the maximum requested space for the number print.
- * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
- * @param leftAligned specifies if the number must be print with left or right alignment.
- * @param zeroPaddedBitSize specifies the actual number of bits in format. Set to sizeof(T) means to add trailing zeros, any smaller, non zero value means determines how many bits to print
- * @param addHeader specifies if we want to add the oct header '0o' before the number.
+/**
+ * @brief Prints an integer number on a general ioBuffer in octal notation.
+ * @details Converts any integer type, signed and unsigned to a sequence of
+ * characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Uses octal notation. Respects maximumSize and number integrity. If not
+ * possible (maximum size minor than the minimum space for the number print)
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] number is the number to print.
+ * @param[in] maximumSize is the maximum requested space for the number print
+ * (0 means that the number is printed in its entirety).
+ * @param[in] padded specifies if the difference between maximumSize and the
+ * necessary space for the number must be filled by spaces ' '
+ * (if maximumSize!=0 & align towards the right or the left).
+ * @param[in] leftAligned specifies if the number must be print with left or
+ * right alignment (if padded and maximumSize!=0 align towards the left).
+ * @param[in] zeroPaddedBitSize specifies the actual number of bits in format.
+ * Set to sizeof(T) means to add trailing zeros, any smaller, non zero value
+ * means determines how many bits to print (if not 0 is used to determine how
+ * many trailing zeroes to print)
+ * @param[in] addHeader specifies if we want to add the oct header '0o' before
+ * the number (prepend with 0o).
  * @return true.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Uses octal notation.
- * Respects maximumSize and number integrity.
- * If not possible (maximum size minor than the minimum space for the number print) output is ?  */
+ */
 template<typename T>
 bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
                                   const T number,
-                                  uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
-                                  bool padded = false,   // if maximumSize!=0 & align towards the right or the left
-                                  const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
-                                  const uint16 zeroPaddedBitSize = 0u,       // if not 0 is used to determine how many trailing zeroes to print
-                                  bool addHeader = false)   // prepend with 0o
+                                  uint16 maximumSize = 0u,
+                                  bool padded = false,
+                                  const bool leftAligned = false,
+                                  const uint16 zeroPaddedBitSize = 0u,
+                                  bool addHeader = false)
                                   {
 
     // put here size of number
@@ -1019,27 +1064,39 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
     return ok;
 }
 
-/** @brief Prints an integer number on a general ioBuffer in binary notation.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param maximumSize is the maximum requested space for the number print.
- * @param padded specifies if the difference between maximumSize and the necessary space for the number must be filled by spaces ' '.
- * @param leftAligned specifies if the number must be print with left or right alignment.
- * @param zeroPaddedBitSize specifies the actual number of bits in format. Set to sizeof(T) means to add trailing zeros, any smaller, non zero value means determines how many bits to print
- * @param addHeader specifies if we want to add the bin header '0b' before the number.
+/**
+ * @brief Prints an integer number on a general ioBuffer in binary notation.
+ * @details Converts any integer type, signed and unsigned to a sequence of
+ * characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Uses binary notation. Respects maximumSize and number integrity. If not
+ * possible (maximum size minor than the minimum space for the number print)
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] number is the number to print.
+ * @param[in] maximumSize is the maximum requested space for the number print
+ * (0 means that the number is printed in its entirety).
+ * @param[in] padded specifies if the difference between maximumSize and the
+ * necessary space for the number must be filled by spaces ' '
+ * (if maximumSize!=0 & align towards the right or the left).
+ * @param[in] leftAligned specifies if the number must be print with left or
+ * right alignment (if padded and maximumSize!=0 align towards the left).
+ * @param[in] zeroPaddedBitSize specifies the actual number of bits in format.
+ * Set to sizeof(T) means to add trailing zeros, any smaller, non zero value
+ * means determines how many bits to print (if not 0 is used to determine how
+ * many trailing zeroes to print).
+ * @param[in] addHeader specifies if we want to add the bin header '0b' before
+ * the number (prepend with 0b).
  * @return true.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Uses binary notation.
- * Respects maximumSize and number integrity.
- * If not possible (maximum size minor than the minimum space for the number print) output is ?  */
+ */
 template<typename T>
 bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
                                    const T number,
-                                   uint16 maximumSize = 0u,       // 0 means that the number is printed in its entirety
-                                   bool padded = false,   // if maximumSize!=0 & align towards the right or the left
-                                   const bool leftAligned = false,   // if padded and maximumSize!=0 align towards the left
-                                   const uint16 zeroPaddedBitSize = 0u,       // if not 0 is used to determine how many trailing zeroes to print
-                                   const bool addHeader = false)   // prepend with 0b
+                                   uint16 maximumSize = 0u,
+                                   bool padded = false,
+                                   const bool leftAligned = false,
+                                   const uint16 zeroPaddedBitSize = 0u,
+                                   const bool addHeader = false)
                                    {
 
 // 1000 = no limits
@@ -1157,54 +1214,175 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
     return ok;
 }
 
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts an uint8 sequence of characters inserted
+ * into the buffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format. Also respects all relevant format
+ * parameters. Respects format.size and number integrity. If not possible
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] number is the integer to print.
+ * @param[in] format is the desired format.
+ * @return true if the format is correct, false otherwise.
+ */
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint8 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
 
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts an int8 sequence of characters inserted
+ * into the buffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format. Also respects all relevant format
+ * parameters. Respects format.size and number integrity. If not possible
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] number is the integer to print.
+ * @param[in] format is the desired format.
+ * @return true if the format is correct, false otherwise.
+ */
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int8 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
 
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts an uint16 sequence of characters inserted
+ * into the buffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format. Also respects all relevant format
+ * parameters. Respects format.size and number integrity. If not possible
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] number is the integer to print.
+ * @param[in] format is the desired format.
+ * @return true if the format is correct, false otherwise.
+ */
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint16 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
 
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts an int16 sequence of characters inserted
+ * into the buffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format. Also respects all relevant format
+ * parameters. Respects format.size and number integrity. If not possible
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] number is the integer to print.
+ * @param[in] format is the desired format.
+ * @return true if the format is correct, false otherwise.
+ */
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int16 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
 
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts an uint32 sequence of characters inserted
+ * into the buffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format. Also respects all relevant format
+ * parameters. Respects format.size and number integrity. If not possible
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] number is the integer to print.
+ * @param[in] format is the desired format.
+ * @return true if the format is correct, false otherwise.
+ */
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint32 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
 
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts an int32 sequence of characters inserted
+ * into the buffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format. Also respects all relevant format
+ * parameters. Respects format.size and number integrity. If not possible
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] number is the integer to print.
+ * @param[in] format is the desired format.
+ * @return true if the format is correct, false otherwise.
+ */
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int32 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
 
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts an uint64 sequence of characters inserted
+ * into the buffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format. Also respects all relevant format
+ * parameters. Respects format.size and number integrity. If not possible
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] number is the integer to print.
+ * @param[in] format is the desired format.
+ * @return true if the format is correct, false otherwise.
+ */
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint64 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
 
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts an int64 sequence of characters inserted
+ * into the buffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format. Also respects all relevant format
+ * parameters. Respects format.size and number integrity. If not possible
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] number is the integer to print.
+ * @param[in] format is the desired format.
+ * @return true if the format is correct, false otherwise.
+ */
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int64 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
 
+/**
+ * @brief Print on a general ioBuffer using a specific format.
+ * @details Converts an uint8 sequence of characters inserted
+ * into the buffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format. Also respects all relevant format
+ * parameters. Respects format.size and number integrity. If not possible
+ * output is ?
+ * @param[out] ioBuffer is a general ioBuffer class which implements
+ * a PutC() function.
+ * @param[in] numberAddress is the integer to print.
+ * @param[in] numberBitShift is the shift for the number to print.
+ * @param[in] numberBitSize is the desired size in bit for the number to print.
+ * @param[in] numberIsSigned specifies if the number to print will be
+ * considered signed (true) or not (false).
+ * @param[in] format is the desired format.
+ * @return true if the format is correct, false otherwise.
+ */
 bool BitSetToStream(IOBuffer &ioBuffer,
                     uint32 * const numberAddress,
                     const uint8 numberBitShift,
