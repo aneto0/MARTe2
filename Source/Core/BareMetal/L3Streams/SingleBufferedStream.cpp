@@ -58,7 +58,6 @@ SingleBufferedStream::SingleBufferedStream(const TimeoutType &timeoutIn) :
     SetTimeout(timeoutIn);
 }
 
-/// default destructor
 SingleBufferedStream::~SingleBufferedStream() {
 
     if (!internalBuffer.Flush()) {
@@ -193,10 +192,6 @@ bool SingleBufferedStream::Read(char8 * const output,
     return (ret) ? (UnbufferedRead(&output[0], size)) : (false);
 }
 
-/** Write data from a buffer to the stream. As much as size byte are written, actual size
- is returned in size. msecTimeout is how much the operation should last.
- timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
- when noWait is used .... */
 bool SingleBufferedStream::Write(const char8 * const input,
                                  uint32 & size) {
 
@@ -262,18 +257,15 @@ bool SingleBufferedStream::Write(const char8 * const input,
 
 }
 
-/** The size of the stream */
 uint64 SingleBufferedStream::Size() {
-// just commit all pending changes if any
+// commit all pending changes if any
 // so stream size will be updated
     if (!FlushAndResync()) {
         //TODO
     }
-// then call Size from unbuffered stream
     return UnbufferedSize();
 }
 
-/** Moves within the file to an absolute location */
 bool SingleBufferedStream::Seek(const uint64 pos) {
 
     bool ubSeek = true;
@@ -308,7 +300,6 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
     return (ubSeek) ? (UnbufferedSeek(pos)) : (true);
 }
 
-/** Moves within the file relative to current location */
 bool SingleBufferedStream::RelativeSeek(int32 delta) {
     bool ubSeek = false;
 
@@ -357,7 +348,6 @@ bool SingleBufferedStream::RelativeSeek(int32 delta) {
     return (ubSeek) ? (UnbufferedSeek(static_cast<uint64>(UnbufferedPosition() + delta))) : (true);
 }
 
-/** Returns current position */
 uint64 SingleBufferedStream::Position() {
 
     uint64 ret = 0u;
@@ -372,7 +362,6 @@ uint64 SingleBufferedStream::Position() {
     return ret;
 }
 
-/** Clip the stream size to a specified point */
 bool SingleBufferedStream::SetSize(const uint64 size) {
 
     // commit all changes

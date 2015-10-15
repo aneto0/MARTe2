@@ -168,10 +168,6 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
     return (ret) ? (UnbufferedRead(&bufferIn[0], size)) : (false);
 }
 
-/** Write data from a buffer to the stream. As much as size byte are written, actual size
- is returned in size. msecTimeout is how much the operation should last.
- timeout behaviour is class specific. I.E. sockets with blocking activated wait forever
- when noWait is used .... */
 bool DoubleBufferedStream::Write(const char8* const bufferIn,
                                  uint32 & size) {
 
@@ -227,27 +223,22 @@ bool DoubleBufferedStream::Write(const char8* const bufferIn,
 
 }
 
-/** The size of the stream */
 uint64 DoubleBufferedStream::Size() {
     return UnbufferedSize();
 }
 
-/** Moves within the file to an absolute location */
 bool DoubleBufferedStream::Seek(const uint64 pos) {
     return UnbufferedSeek(pos);
 }
 
-/** Moves within the file relative to current location */
 bool DoubleBufferedStream::RelativeSeek(const int32 deltaPos) {
     return UnbufferedRelativeSeek(deltaPos);
 }
 
-/** Returns current position */
 uint64 DoubleBufferedStream::Position() {
     return UnbufferedPosition();
 }
 
-/** Clip the stream size to a specified point */
 bool DoubleBufferedStream::SetSize(const uint64 size) {
     return UnbufferedSetSize(size);
 }
