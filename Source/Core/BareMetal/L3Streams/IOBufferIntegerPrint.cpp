@@ -45,6 +45,7 @@
 
 namespace MARTe {
 
+
 /*lint -e568 [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 // returns the exponent
 // positiveNumber is the abs (number)
@@ -291,6 +292,141 @@ static inline uint16 GetNumberOfDigitsBinaryNotation(T number) {
 
     return nDigits;
 }
+
+
+/** @brief Prints an integer number on a general stream in decimal notation.
+ * @param s is a general stream class which implements a putC() function.
+ * @param positiveNumber is the number to print (it must be positive the '-' is added a part).
+ * @param numberFillLength is the minimum number of digits requested for each 16 bit number (<5 because 2**16 has 5 digits) and
+ * the function fills the different between it and the minimum necessary space with zeros.
+ *
+ * This function implements a 2 step conversion - step1 32/64 to 16bit step2 10bit to decimal.
+ * This way the number of 32/64 bit operations are reduced.
+ * NumberFillLength is used to specify how many digits to prints at least (this would include trailingzeros).
+ * It will never prints more trailing zeros than the maximum size of a number of that format.
+ * Streamer must have a PutC(char8) method. It will be used to output the digits. */
+template<typename T>
+static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
+                                                       T positiveNumber,
+                                                       int16 numberFillLength = 0) {
+
+    // no negative!
+    if (numberFillLength < 0) {
+        numberFillLength = 0;
+    }
+
+    // 64 bits
+    if (sizeof(T) == 8u) {
+        // treat 64 bit numbers dividing them into 5 blocks of max 4 digits
+        // 16 12 8 4 zeroes
+        const int64 tests[4] = { 10000000000000000, 1000000000000, 100000000, 10000 };
+
+        // how many figures are below the current test point
+        int16 figures = 16;
+        int32 i;
+        for (i = 0; i < 4; i++) {
+            // enter if a big number or if zero padding required
+            if ((positiveNumber > static_cast<T>(tests[i])) || (numberFillLength > figures)) {
+                // call this template with 16 bit number
+                // otherwise infinite recursion!
+
+                /*lint -e{9125} -e{9123} -e{571} [MISRA C++ Rule 5-0-9] [MISRA C++ Rule 5-0-8]. Justification: The result has always a size < 16 bit and the input number is always positive.*/
+                uint16 x = static_cast<uint16>(positiveNumber / static_cast<T>(tests[i]));
+                positiveNumber = positiveNumber % static_cast<T>(tests[i]);
+
+                // process the upper part as uint16
+                // recurse into this function
+                Number2StreamDecimalNotationPrivate(s, x, numberFillLength - figures);
+
+                // print all the blocks in full from now on
+                numberFillLength = figures;
+            }
+            // update
+            figures -= 4;
+        }
+        // call this template with 16 bit number
+        // otherwise infinite recursion!
+        /*lint -e{9125} -e{571} [MISRA C++ Rule 5-0-9]. Justification: The result has always a size < 16 bit and the input number is always positive.*/
+        uint16 x = static_cast<uint16>(positiveNumber);
+        // recurse into this function
+        Number2StreamDecimalNotationPrivate(s, x, numberFillLength);
+    }
+
+    // treat 32 bit numbers dividing them into 3 blocks of max 4 digits
+    if (sizeof(T) == 4u) {
+        // 8 4 zeroes
+        const int32 tests[2] = { 100000000, 10000 };
+        // how many figures are below the current test point
+        int16 figures = 8;
+        int32 i;
+        for (i = 0; i < 2; i++) {
+            /*lint -e{571} . Removed Warning: Suspicious Cast.*/
+            if ((positiveNumber > static_cast<T>(tests[i])) || (numberFillLength > figures)) {
+                // call this template with 16 bit number
+                // otherwise infinite recursion!
+                /*lint -e{9125} -e{9123} -e{571} [MISRA C++ Rule 5-0-9] [MISRA C++ Rule 5-0-8]. Justification: The result has always a size < 16 bit and the input number is always positive.*/
+                uint16 x = static_cast<uint16>(positiveNumber / static_cast<T>(tests[i]));
+                positiveNumber = positiveNumber % static_cast<T>(tests[i]);
+
+                // process the upper part as uint16
+                // recurse into this function
+                Number2StreamDecimalNotationPrivate(s, x, numberFillLength - figures);
+
+                // print all the blocks in full from now on
+                numberFillLength = figures;
+            } // after this 11 max
+            figures -= 4;
+        }
+        // call this template with 16 bit number
+        // otherwise infinite recursion!
+        /*lint -e{9125} -e{571} [MISRA C++ Rule 5-0-9]. Justification: The result has always a size < 16 bit and the input number is always positive.*/
+        uint16 x = static_cast<uint16>(positiveNumber);
+        // recurse into this function
+        Number2StreamDecimalNotationPrivate(s, x, numberFillLength);
+    }
+
+    // 16 bit code
+    if (sizeof(T) <= 2u) {
+        // sufficient for  a 16 - 8 bit number NO terminator needed
+        char8 buffer[5];
+
+        int16 index = static_cast<int16>(sizeof(buffer)) - 1;
+
+        // if not zero extract digits backwards
+        do {
+            /*lint -e{9125} [MISRA C++ Rule 5-0-9]. Justification: the result is always in [0-9] */
+            int8 digit = static_cast<int8>((positiveNumber) % static_cast<T>(10));
+            int8 zero = static_cast<int8>('0');
+            positiveNumber = positiveNumber / static_cast<T>(10);
+
+            buffer[index] = static_cast<char8>(zero + digit);
+            index--;
+        }
+        while (positiveNumber > static_cast<T>(0));
+
+        // first fill in all necessary zeros
+        int16 i = 0;
+        if (numberFillLength > 0) {
+            // clamp to 5
+            if (numberFillLength > 5) {
+                numberFillLength = 5;
+            }
+            // fill up with zeros
+            for (i = (5 - numberFillLength); i <= index; i++) {
+                if (!s.PutC('0')) {
+                    //TODO
+                }
+            }
+        }
+        // then complete by outputting all digits
+        for (i = index + 1; i <= 4; i++) {
+            if (!s.PutC(buffer[i])) {
+                //TODO
+            }
+        }
+    }
+}
+
 
 /** @brief Prints a string on a generic ioBuffer.
  * @param ioBuffer is a generic ioBuffer class which implements a PutC() function.
