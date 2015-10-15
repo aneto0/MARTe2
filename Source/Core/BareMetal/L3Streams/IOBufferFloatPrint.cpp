@@ -205,6 +205,7 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
         while (positiveNumber > static_cast<T>(0));
 
         // first fill in all necessary zeros
+        bool ok = true;
         int16 i = 0;
         if (numberFillLength > 0) {
             // clamp to 5
@@ -212,17 +213,13 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
                 numberFillLength = 5;
             }
             // fill up with zeros
-            for (i = (5 - numberFillLength); i <= index; i++) {
-                if (!s.PutC('0')) {
-                    //TODO
-                }
+            for (i = (5 - numberFillLength); ok && (i <= index); i++) {
+                ok = s.PutC('0');
             }
         }
         // then complete by outputting all digits
-        for (i = index + 1; i <= 4; i++) {
-            if (!s.PutC(buffer[i])) {
-                //TODO
-            }
+        for (i = index + 1; ok && (i <= 4); i++) {
+            ok = s.PutC(buffer[i]);
         }
     }
 }
