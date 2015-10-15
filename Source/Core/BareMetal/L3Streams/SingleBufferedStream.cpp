@@ -263,11 +263,9 @@ uint64 SingleBufferedStream::Size() {
     if (!FlushAndResync()) {
         //TODO
     }
-// then call Size from unbuffered stream
     return UnbufferedSize();
 }
 
-/** Moves within the file to an absolute location */
 bool SingleBufferedStream::Seek(const uint64 pos) {
 
     bool ubSeek = true;
@@ -302,7 +300,6 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
     return (ubSeek) ? (UnbufferedSeek(pos)) : (true);
 }
 
-/** Moves within the file relative to current location */
 bool SingleBufferedStream::RelativeSeek(int32 delta) {
     bool ubSeek = false;
 
@@ -351,7 +348,6 @@ bool SingleBufferedStream::RelativeSeek(int32 delta) {
     return (ubSeek) ? (UnbufferedSeek(static_cast<uint64>(UnbufferedPosition() + delta))) : (true);
 }
 
-/** Returns current position */
 uint64 SingleBufferedStream::Position() {
 
     uint64 ret = 0u;
@@ -366,7 +362,6 @@ uint64 SingleBufferedStream::Position() {
     return ret;
 }
 
-/** Clip the stream size to a specified point */
 bool SingleBufferedStream::SetSize(const uint64 size) {
 
     // commit all changes
