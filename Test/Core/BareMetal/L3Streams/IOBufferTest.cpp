@@ -1015,9 +1015,8 @@ bool IOBufferTest::TestSetUsedSize(uint32 allocatedSize,
     IOBuffer ioBuffer;
 
     ioBuffer.SetBufferHeapMemory(allocatedSize, 0);
-    if (!ioBuffer.SetUsedSize(desiredSize)) {
-        return false;
-    }
+    ioBuffer.SetUsedSize(desiredSize);
+
 
     return (desiredSize > allocatedSize) ? (ioBuffer.UsedSize() == allocatedSize) : (ioBuffer.UsedSize() == desiredSize);
 }
