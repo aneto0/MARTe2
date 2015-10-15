@@ -222,7 +222,8 @@ bool PrintStream(IOBuffer & iobuff,
                 //write the stream input on the stream buffer output
                 char8 c;
                 while (streamSizeL > 0u) {
-                    if (!stream->GetC(c)) {
+                    uint32 size = 1;
+                    if (!stream->Read(&c, size)) {
                         ret = false;
                     }
                     if (!iobuff.PutC(c)) {

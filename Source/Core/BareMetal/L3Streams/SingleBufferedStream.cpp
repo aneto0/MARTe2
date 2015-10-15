@@ -46,23 +46,21 @@ namespace MARTe {
 SingleBufferedStream::SingleBufferedStream() :
         BufferedStream(),
         internalBuffer(this) {
-    mutexReadMode = false;
+    mutexReadMode = true;
     mutexWriteMode = false;
+    internalBuffer.SetBufferSize(32u);
 }
 
 SingleBufferedStream::SingleBufferedStream(const TimeoutType &timeoutIn) :
         BufferedStream(),
         internalBuffer(this) {
-    mutexReadMode = false;
+    mutexReadMode = true;
     mutexWriteMode = false;
     SetTimeout(timeoutIn);
+    internalBuffer.SetBufferSize(32u);
 }
 
 SingleBufferedStream::~SingleBufferedStream() {
-
-    /* if (!internalBuffer.Flush()) {
-     //TODO
-     }*/
 }
 
 bool SingleBufferedStream::SetBufferSize(uint32 bufferSize) {

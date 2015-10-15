@@ -152,20 +152,6 @@ public:
     inline operator AnyType();
 
     /**
-     * @brief Writes a character to the stream.
-     * @param[in] c the character to write on the stream.
-     * @return true if the character is successfully written into the stream.
-     */
-    inline bool PutC(const char8 c);
-
-    /**
-     * @brief Reads a character from the stream.
-     * @param[in] c the character to read from the stream.
-     * @return true if the character is successfully read from the stream.
-     */
-    inline bool GetC(char8 &c);
-
-    /**
      * @brief Reads a token from the stream.
      * @details Extracts a token from the stream until a terminator or \0 is found.
      *
@@ -378,17 +364,6 @@ BufferedStream::operator AnyType() {
     TypeDescriptor dataDescriptor(false, Stream, 0u);
 
     return AnyType(dataDescriptor, 0u, dataPointer);
-}
-
-bool BufferedStream::PutC(const char8 c) {
-    uint32 size = 1u;
-    return Write(&c, size);
-}
-
-bool BufferedStream::GetC(char8 &c) {
-    uint32 size = 1u;
-    return Read(&c, size);
-
 }
 
 bool BufferedStream::Printf(const char8 * const format,

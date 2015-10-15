@@ -63,6 +63,8 @@ public:
      *   GetInputBuffer() == BufferedStreamIOBuffer
      *   GetOutputBuffer() == BufferedStreamIOBuffer
      *   GetTimeout() == TTInfiniteWait
+     *   GetInputBuffer()->BufferSize() == 32u
+     *   GetOutputBuffer()->BufferSize() == 32u
      */
     DoubleBufferedStream();
 
@@ -74,6 +76,8 @@ public:
      *   GetInputBuffer() == BufferedStreamIOBuffer
      *   GetOutputBuffer() == BufferedStreamIOBuffer
      *   GetTimeout() == timeoutIn
+     *   GetInputBuffer()->BufferSize() == 32u
+     *   GetOutputBuffer()->BufferSize() == 32u
      */
     DoubleBufferedStream(const TimeoutType &timeoutIn);
 
@@ -97,25 +101,6 @@ public:
     virtual bool SetBufferSize(uint32 readBufferSize,
                                uint32 writeBufferSize);
 
-    /**
-     * @brief Writes a single character to the stream.
-     * @details if the size of the buffer is zero the character is directly written in the low level RawStream.
-     * @param[in] c the character to be written on the stream.
-     * @return true if the character is successfully written to the stream.
-     */
-    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Write(1), but
-     * this inline implementation could be faster if the write buffer is not full */
-    inline bool PutC(const char8 c);
-
-    /**
-     * @brief Reads a single character from the stream.
-     * @details if the size of the buffer (see SetBufferSize) is zero the character is directly written to the low level RawStream.
-     * @param[out] c the character read from the stream.
-     * @return true if the character is successfully read to the stream.
-     */
-    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Read(1), but
-     * this inline implementation could be faster if the read buffer is not empty */
-    inline bool GetC(char8 &c);
 
     /**
      * @see BufferedStream::Read
@@ -205,34 +190,6 @@ bool DoubleBufferedStream::Flush() {
     // we can flush in all cases then
     if (writeBuffer.UsedSize() > 0u) {
         ret = writeBuffer.Flush();
-    }
-    return ret;
-}
-
-bool DoubleBufferedStream::PutC(const char8 c) {
-
-    bool ret = false;
-    if (writeBuffer.BufferSize() > 0u) {
-        ret = writeBuffer.PutC(c);
-    }
-    else {
-        uint32 size = 1u;
-        ret = UnbufferedWrite(&c, size);
-    }
-    return ret;
-}
-
-bool DoubleBufferedStream::GetC(char8 &c) {
-
-    bool ret = false;
-
-    if (readBuffer.BufferSize() > 0u) {
-        ret = readBuffer.GetC(c);
-    }
-    else {
-
-        uint32 size = 1u;
-        ret = UnbufferedRead(&c, size);
     }
     return ret;
 }

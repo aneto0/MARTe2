@@ -3,9 +3,9 @@
  *
  *  Created on: Mar 5, 2015
  */
+#include "BufferedStreamTest.h"
 #include <limits.h>
 #include "gtest/gtest.h"
-#include "BufferedStreamTest.h"
 
 class BufferedStreamGTest: public ::testing::Test {
 protected:
@@ -20,18 +20,27 @@ protected:
     }
 };
 
-TEST_F(BufferedStreamGTest,TestGetC) {
+TEST_F(BufferedStreamGTest,TestDefaultConstructor) {
     BufferedStreamTest streamtest;
-    ASSERT_TRUE(streamtest.TestGetC("HelloWorld"));
+    ASSERT_TRUE(streamtest.TestDefaultConstructor());
 }
 
-TEST_F(BufferedStreamGTest,TestPutC) {
+TEST_F(BufferedStreamGTest,TestAnyType) {
     BufferedStreamTest streamtest;
-    ASSERT_TRUE(streamtest.TestPutC("HelloWorld"));
+    ASSERT_TRUE(streamtest.TestAnyType());
 }
 
+TEST_F(BufferedStreamGTest,TestGetTimeout) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetTimeout());
+}
 
-TEST_F(BufferedStreamGTest,TestGetCAndPutC) {
+TEST_F(BufferedStreamGTest,TestSetTimeout) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestSetTimeout());
+}
+
+/*TEST_F(BufferedStreamGTest,TestGetCAndPutC) {
     BufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetCAndPutC("HelloWorld"));
 }
@@ -73,7 +82,7 @@ TEST_F(BufferedStreamGTest,TestPrint) {
 TEST_F(BufferedStreamGTest,TestToken) {
     BufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestToken());
-}
+}*/
 
 
 

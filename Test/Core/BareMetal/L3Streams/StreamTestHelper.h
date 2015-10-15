@@ -173,7 +173,7 @@ public:
     char8 * Buffer() {
         return buffer;
     }
-private:
+
     /** first buffer */
     char8 buffer[MAX_STREAM_DIMENSION];
 

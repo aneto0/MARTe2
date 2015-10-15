@@ -46,6 +46,8 @@ DoubleBufferedStream::DoubleBufferedStream() :
         BufferedStream(),
         readBuffer(this),
         writeBuffer(this) {
+    readBuffer.SetBufferSize(32u);
+    writeBuffer.SetBufferSize(32u);
 }
 
 DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &timeoutIn) :
@@ -53,6 +55,8 @@ DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &timeoutIn) :
         readBuffer(this),
         writeBuffer(this) {
     SetTimeout(timeoutIn);
+    readBuffer.SetBufferSize(32u);
+    writeBuffer.SetBufferSize(32u);
 }
 
 DoubleBufferedStream::~DoubleBufferedStream() {

@@ -118,26 +118,6 @@ public:
     virtual bool CanSeek() const =0;
 
     /**
-     * @brief Writes a character on the stream.
-     * @param c is the character to write on the stream.
-     * @return depends from derived classes implementation.
-     *
-     * Uses the derived class implementation of UnbufferedWrite function with one as size parameter,
-     * then the function behavior depends from the derived class UnbufferedWrite function.*/
-    inline bool PutC(const char8 c);
-
-    /**
-     * @brief Reads a character from the stream.
-     * @param c is the character in return.
-     * @return depends from derived classes implementation.
-     *
-     * Uses the derived class implementation of UnbufferedRead function with one as size parameter,
-     * then the function behavior depends from the derived class UnbufferedRead function. */
-    inline bool GetC(char8 &c);
-
-    // SYNCHRONISATION INTERFACE
-
-    /**
      * @brief Defines if operations could be blocking.
      * @return false. It means that a default stream has non blocking operations.
      *
@@ -202,16 +182,6 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-bool RawStream::PutC(const char8 c) {
-    uint32 size = 1u;
-    return UnbufferedWrite(&c, size, TTDefault);
-}
-
-bool RawStream::GetC(char8 &c) {
-    uint32 size = 1u;
-    return UnbufferedRead(&c, size, TTDefault);
-
-}
 }
 #endif /* RAWSTREAM_H_ */
 
