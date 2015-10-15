@@ -29,19 +29,15 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Static definitions                              */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
-
 #include "GeneralDefinitions.h"
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
 #include "IOBuffer.h"
 #include "Shift.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
@@ -441,6 +437,157 @@ static inline void PutS(ioBufferer & ioBuffer,
         s = &s[1];
     }
 }
+
+/** @brief Print on a general ioBuffer using a specific format.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
+ * @param number is the integer to print.
+ * @param format is the desired format.
+ * @return true if the format is correct, false otherwise.
+ *
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format.
+ * Also respects all relevant format parameters.
+ * Respects format.size and number integrity.
+ * If not possible output is ? */
+template<typename T>
+bool IntegerToStreamPrivate(IOBuffer &ioBuffer,
+                            const T number,
+                            const FormatDescriptor &format,
+                            uint16 actualBitSize = static_cast<uint16>(sizeof(T) * 8u)) {
+
+    bool ret = false;
+// do not use actual Bit Size if binaryPadded is not set
+    if (!format.binaryPadded) {
+        actualBitSize = 0u;
+    }
+
+    if (format.binaryNotation == DecimalNotation) {
+        ret = IntegerToStreamDecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, format.fullNotation);
+    }
+    if (format.binaryNotation == HexNotation) {
+        ret = IntegerToStreamExadecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
+                                                format.fullNotation);
+    }
+    if (format.binaryNotation == OctalNotation) {
+        ret = IntegerToStreamOctalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
+                                           format.fullNotation);
+    }
+    if (format.binaryNotation == BitNotation) {
+        ret = IntegerToStreamBinaryNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
+                                            format.fullNotation);
+    }
+
+    return ret;
+}
+
+/** @brief Print on a general ioBuffer using a specific format.
+ * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
+ * @param number is the integer to print.
+ * @param format is the desired format.
+ * @return true if the format is correct, false otherwise.
+ *
+ * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
+ * Uses notation specified in format.
+ * Also respects all relevant format parameters.
+ * Respects format.size and number integrity.
+ * If not possible output is ? */
+static
+bool BitSetToStreamPrivate(IOBuffer &ioBuffer,
+                           uint32 *numberAddress,
+                           uint8 numberBitShift,
+                           const uint8 numberBitSize,
+                           const bool numberIsSigned,
+                           const FormatDescriptor &format) {
+
+    bool ret = true;
+
+    // smaller than 16 bit
+    if (numberBitSize <= 16u) {
+
+        if (numberBitSize <= 8u) {
+            if (numberIsSigned) {
+                int8 destination;
+                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
+                if (ret) {
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
+                }
+            }
+            else {
+                uint8 destination;
+                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
+                if (ret) {
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
+                }
+            }
+
+        }
+        else {
+            if (numberIsSigned) {
+                int16 destination;
+                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
+                if (ret) {
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
+                }
+
+            }
+            else {
+                uint16 destination;
+                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
+                if (ret) {
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
+                }
+
+            }
+        }
+
+    }
+    else {
+
+        if (numberBitSize <= 32u) {
+            if (numberIsSigned) {
+                int32 destination;
+                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
+                if (ret) {
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
+                }
+            }
+            else {
+                uint32 destination;
+                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
+                if (ret) {
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
+                }
+            }
+
+        }
+        else {
+            if (numberIsSigned) {
+                int64 destination;
+                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
+                if (ret) {
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
+                }
+            }
+            else {
+                uint64 destination;
+                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
+                if (ret) {
+                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
+                }
+            }
+        }
+    }
+
+    return ret;
+}
+
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 /** @brief Prints an integer number on a general ioBuffer in decimal notation.
  * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
@@ -1005,185 +1152,48 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
     return true;
 }
 
-/** @brief Print on a general ioBuffer using a specific format.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param number is the integer to print.
- * @param format is the desired format.
- * @return true if the format is correct, false otherwise.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Uses notation specified in format.
- * Also respects all relevant format parameters.
- * Respects format.size and number integrity.
- * If not possible output is ? */
-template<typename T>
-bool IntegerToStreamPrivate(IOBuffer &ioBuffer,
-                            const T number,
-                            const FormatDescriptor &format,
-                            uint16 actualBitSize = static_cast<uint16>(sizeof(T) * 8u)) {
-
-    bool ret = false;
-// do not use actual Bit Size if binaryPadded is not set
-    if (!format.binaryPadded) {
-        actualBitSize = 0u;
-    }
-
-    if (format.binaryNotation == DecimalNotation) {
-        ret = IntegerToStreamDecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, format.fullNotation);
-    }
-    if (format.binaryNotation == HexNotation) {
-        ret = IntegerToStreamExadecimalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
-                                                format.fullNotation);
-    }
-    if (format.binaryNotation == OctalNotation) {
-        ret = IntegerToStreamOctalNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
-                                           format.fullNotation);
-    }
-    if (format.binaryNotation == BitNotation) {
-        ret = IntegerToStreamBinaryNotation(ioBuffer, number, static_cast<uint16>(format.size), format.padded, format.leftAligned, actualBitSize,
-                                            format.fullNotation);
-    }
-
-    return ret;
-}
-
-/** @brief Print on a general ioBuffer using a specific format.
- * @param ioBuffer is a general ioBuffer class which implements a PutC() function.
- * @param number is the integer to print.
- * @param format is the desired format.
- * @return true if the format is correct, false otherwise.
- *
- * Converts any integer type, signed and unsigned to a sequence of characters inserted into the ioBuffer ioBuffer by mean of a method PutC.
- * Uses notation specified in format.
- * Also respects all relevant format parameters.
- * Respects format.size and number integrity.
- * If not possible output is ? */
-
-static
-bool BitSetToStreamPrivate(IOBuffer &ioBuffer,
-                           uint32 *numberAddress,
-                           uint8 numberBitShift,
-                           const uint8 numberBitSize,
-                           const bool numberIsSigned,
-                           const FormatDescriptor &format) {
-
-    bool ret = true;
-
-    // smaller than 16 bit
-    if (numberBitSize <= 16u) {
-
-        if (numberBitSize <= 8u) {
-            if (numberIsSigned) {
-                int8 destination;
-                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
-                if (ret) {
-                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
-                }
-            }
-            else {
-                uint8 destination;
-                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
-                if (ret) {
-                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
-                }
-            }
-
-        }
-        else {
-            if (numberIsSigned) {
-                int16 destination;
-                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
-                if (ret) {
-                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
-                }
-
-            }
-            else {
-                uint16 destination;
-                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
-                if (ret) {
-                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
-                }
-
-            }
-        }
-
-    }
-    else {
-
-        if (numberBitSize <= 32u) {
-            if (numberIsSigned) {
-                int32 destination;
-                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
-                if (ret) {
-                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
-                }
-            }
-            else {
-                uint32 destination;
-                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
-                if (ret) {
-                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
-                }
-            }
-
-        }
-        else {
-            if (numberIsSigned) {
-                int64 destination;
-                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
-                if (ret) {
-                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
-                }
-            }
-            else {
-                uint64 destination;
-                ret = BitSetToInteger(destination, numberAddress, numberBitShift, numberBitSize, numberIsSigned);
-                if (ret) {
-                    ret = IntegerToStreamPrivate(ioBuffer, destination, format, numberBitSize);
-                }
-            }
-        }
-    }
-
-    return ret;
-}
-
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint8 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int8 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint16 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int16 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint32 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int32 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const uint64 number,
                      const FormatDescriptor &format) {
     return IntegerToStreamPrivate(ioBuffer, number, format);
 }
+
 bool IntegerToStream(IOBuffer &ioBuffer,
                      const int64 number,
                      const FormatDescriptor &format) {
