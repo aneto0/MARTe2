@@ -240,9 +240,8 @@ public:
      * @param complete is unused here.
      * @return true if successful, false otherwise. */
     bool UnbufferedRead(char8 * const outBuffer,
-                        uint32 &inSize,
-                        const TimeoutType &timeout) {
-        return DummyRawStream::UnbufferedRead(outBuffer, inSize, timeout);
+                        uint32 &inSize) {
+        return DummyRawStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
     }
 
     /**
@@ -253,10 +252,9 @@ public:
      * @param complete is unused here.
      * @return true if successful, false otherwise. */
     bool UnbufferedWrite(const char8 * const inBuffer,
-                         uint32 &outSize,
-                         const TimeoutType &timeout) {
+                         uint32 &outSize) {
 
-        return DummyRawStream::UnbufferedWrite(inBuffer, outSize, timeout);
+        return DummyRawStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());
     }
 
     /**

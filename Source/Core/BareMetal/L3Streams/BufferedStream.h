@@ -48,7 +48,7 @@ namespace MARTe {
  *
  * @details This class provides the interface specification for all the
  * streams which support buffering. It also offers a standard implementation
- * to GetToken and GetLine functions.
+ * of the GetToken and GetLine functions.
  */
 class BufferedStream {
 
@@ -56,6 +56,8 @@ public:
 
     /**
      * Default constructor
+     * @post
+     *   GetTimeout() == TTInfiniteWait
      */
     BufferedStream();
 
@@ -82,49 +84,13 @@ public:
      */
     virtual bool CanSeek() const =0;
 
-    virtual bool UnbufferedWrite(const char8 * const bufferIn,
-                                 uint32 & size,
-                                 const TimeoutType &msecTimeout)=0;
-
-    virtual bool UnbufferedRead(char8 * const bufferIn,
-                                uint32 & size,
-                                const TimeoutType &msecTimeout)=0;
-
-    /**
-     * @brief Pure virtual method. The size of the stream.
-     * @return the size of the stream depending on derived classes implementation.  */
-    virtual uint64 UnbufferedSize() = 0;
-
-    /**
-     * @brief Pure virtual method. Moves within the stream to an absolute location.
-     * @param pos is the desired absolute position.
-     * @return return value depends on derived classes implementation. */
-    virtual bool UnbufferedSeek(uint64 pos) = 0;
-
-    /**
-     * @brief Pure virtual method. Moves within the file relative to current location.
-     * @param deltaPos is the gap from the current position.
-     * @return return value depends on derived classes implementation. */
-    virtual bool UnbufferedRelativeSeek(int32 deltaPos)=0;
-
-    /**
-     * @brief Pure virtual method. Returns current position.
-     * @return the current position in the stream. */
-    virtual uint64 UnbufferedPosition() = 0;
-
-    /**
-     * @brief Pure virtual method. Clip the stream size to the desired value.
-     * @param size is the desired size.
-     * @return return value depends on the derived classes implementation. */
-    virtual bool UnbufferedSetSize(uint64 size) = 0;
-
     /**
      * @brief Reads data from the stream.
      * @detail Reads up to \a size bytes into \a bufferIn. The actual read size is
      * returned in \a size.
      * @param[out] output the buffer where to read the data into.
      * @param[in,out] size the number of bytes to read. Upon return of the function \a size contains the number of bytes actually read.
-     * @return true if \a size bytes are successfully read into \a bufferIn.
+     * @return true if \a size bytes are successfully read into \a bufferIn within the specified timeout (see SetTimeout).
      */
     virtual bool Read(char8* output,
                       uint32 & size)=0;
@@ -135,7 +101,7 @@ public:
      * returned in \a size.
      * @param[in] input the buffer where to read the data from.
      * @param[in,out] size the number of bytes to write. Upon return of the function \a size contains the number of bytes actually written.
-     * @return true if \a size bytes are successfully read from \a bufferIn and written into the stream.
+     * @return true if \a size bytes are successfully read from \a bufferIn and written into the stream within the specified timeout (see SetTimeout).
      */
     virtual bool Write(const char8* input,
                        uint32 & size) = 0;
@@ -157,12 +123,12 @@ public:
 
     /**
      * @brief Moves within the stream to a position that is relative to the current location.
-     * @param[in] delta is the distance from the current position.
+     * @param[in] deltaPos is the distance from the current position.
      * @return true if the stream is successfully moved to \a deltaPos.
      * @post
      *   Position() == this'old->Position() + deltaPos
      */
-    virtual bool RelativeSeek(int32 delta)=0;
+    virtual bool RelativeSeek(int32 deltaPos)=0;
 
     /**
      * @brief Gets the current position.
@@ -311,6 +277,77 @@ public:
                        const AnyType& par3,
                        const AnyType& par4);
 
+    /**
+     * @brief Writes without buffering.
+     * @param[in] data the array of bytes to write.
+     * @param[in,out] size as input is the number of bytes to write. In output the number of bytes actually written.
+     * @return true if \a size bytes of data are successfully written within the specified \a timeout (see SetTimeout).
+     */
+    virtual bool UnbufferedWrite(const char8 * const data,
+                                 uint32 & size)=0;
+
+    /**
+     * @brief Reads without buffering.
+     * @param[out] data destination array where the read data will be put.
+     * @param[in,out] size as input is the number of bytes to read. In output the number of bytes actually read.
+     * @return true if \a size bytes of data are successfully read within the specified \a timeout (see SetTimeout).
+     */
+    virtual bool UnbufferedRead(char8 * const data,
+                                uint32 & size)=0;
+
+    /**
+     * @brief Retrieves the size of the low-level, unbuffered, stream implementation.
+     * @return the size of the low-level stream.
+     */
+    virtual uint64 UnbufferedSize() = 0;
+
+    /**
+     * @brief Moves within the low-level, unbuffered, stream implementation to an absolute location.
+     * @param[in] pos the desired absolute position.
+     * @return true if the stream is successfully moved to \a pos.
+     * @post
+     *   UnbufferedPosition() == pos
+     */
+    virtual bool UnbufferedSeek(uint64 pos) = 0;
+
+    /**
+     * @brief Moves within the low-level, unbuffered, stream to a position that is relative to the current location.
+     * @param[in] deltaPos is the distance from the current position.
+     * @return true if the stream is successfully moved to \a deltaPos.
+     * @post
+     *   UnbufferedPosition() == this'old->UnbufferedPosition() + deltaPos
+     */
+    virtual bool UnbufferedRelativeSeek(int32 deltaPos)=0;
+
+    /**
+     * @brief Gets the current position in the low-level, unbuffered, stream.
+     * @return the current position in the low-level stream.
+     */
+    virtual uint64 UnbufferedPosition() = 0;
+
+    /**
+     * @brief Clips the low-level, unbuffered, stream size.
+     * @param size the new size of the low-level stream.
+     * @return true if the size of the low-level stream is set to \a size.
+     * @post
+     *   UnbufferedSize() == size
+     */
+    virtual bool UnbufferedSetSize(uint64 size) = 0;
+
+    /**
+     * @brief Gets the read/write timeout value.
+     * @return the read/write timeout value.
+     */
+    TimeoutType GetTimeout() const;
+
+    /**
+     * @brief Sets the read/write timeout value.
+     * @param[in] timeoutIn the new read/write timeout value.
+     * @post
+     *   GetTimeout() == timeout
+     */
+    void SetTimeout(const TimeoutType timeoutIn);
+
 protected:
 
     /**
@@ -325,6 +362,11 @@ protected:
      */
     virtual IOBuffer *GetOutputBuffer() = 0;
 
+private:
+    /**
+     * Timeout for the read/write operations
+     */
+    TimeoutType timeout;
 };
 
 /*---------------------------------------------------------------------------*/

@@ -46,14 +46,13 @@ DoubleBufferedStream::DoubleBufferedStream() :
         BufferedStream(),
         readBuffer(this),
         writeBuffer(this) {
-    timeout = TTDefault;
 }
 
-DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &msecTimeout) :
+DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &timeoutIn) :
         BufferedStream(),
-        readBuffer(this, msecTimeout),
-        writeBuffer(this, msecTimeout) {
-    timeout = msecTimeout;
+        readBuffer(this),
+        writeBuffer(this) {
+    SetTimeout(timeoutIn);
 }
 
 DoubleBufferedStream::~DoubleBufferedStream() {
@@ -155,7 +154,7 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
             }
             else {
                 // if needed read directly from stream
-                if (!UnbufferedRead(&bufferIn[size], toRead, timeout)) {
+                if (!UnbufferedRead(&bufferIn[size], toRead)) {
                     ret = false;
                 }
                 else {
@@ -166,7 +165,7 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
     }
 
     // if needed read directly from stream
-    return (ret) ? (UnbufferedRead(&bufferIn[0], size, timeout)) : (false);
+    return (ret) ? (UnbufferedRead(&bufferIn[0], size)) : (false);
 }
 
 /** Write data from a buffer to the stream. As much as size byte are written, actual size
@@ -224,7 +223,7 @@ bool DoubleBufferedStream::Write(const char8* const bufferIn,
         }
 
     }
-    return (ret) ? (UnbufferedWrite(&bufferIn[0], size, timeout)) : (false);
+    return (ret) ? (UnbufferedWrite(&bufferIn[0], size)) : (false);
 
 }
 

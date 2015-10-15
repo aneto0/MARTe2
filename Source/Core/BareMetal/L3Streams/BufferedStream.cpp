@@ -43,6 +43,7 @@
 namespace MARTe {
 
 BufferedStream::BufferedStream() {
+    timeout = TTInfiniteWait;
 }
 
 BufferedStream::~BufferedStream() {
@@ -185,5 +186,15 @@ bool BufferedStream::Copy(BufferedStream &stream) {
     return ret;
 
 }
+
+
+TimeoutType BufferedStream::GetTimeout() const {
+    return timeout;
+}
+
+void BufferedStream::SetTimeout(const TimeoutType timeoutIn) {
+    timeout = timeoutIn;
+}
+
 
 }

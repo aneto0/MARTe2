@@ -34,7 +34,6 @@
 
 #include "GeneralDefinitions.h"
 #include "BufferedStream.h"
-#include "TimeoutType.h"
 #include "IOBuffer.h"
 
 /*---------------------------------------------------------------------------*/
@@ -206,12 +205,10 @@ public:
     /*-----------------------------------------------------------------------*/
 
     virtual bool UnbufferedWrite(const char8* const bufferIn,
-                                 uint32 & size,
-                                 const TimeoutType &msecTimeout);
+                                 uint32 & size);
 
     virtual bool UnbufferedRead(char8 * const bufferIn,
-                                uint32 & size,
-                                const TimeoutType &msecTimeout);
+                                uint32 & size);
 
     /**
      * @brief Pure virtual method. The size of the stream.

@@ -71,14 +71,12 @@ public:
      *   AllocationGranularity() == 1u && &&
      *   UndoLevel() == 0
      *   GetStream() == NULL &&
-     *   GetTimeout() == TTDefault
      */
     BufferedStreamIOBuffer();
 
     /**
      * @brief Constructor.
      * @param[in] s is a pointer to the stream which uses this buffer.
-     * @param[in] msecTimeout is the desired timeout for read-write operations.
      * @pre true
      * @post
      *   Buffer() == NULL &&
@@ -92,10 +90,8 @@ public:
      *   AllocationGranularity() == 1u && &&
      *   UndoLevel() == 0
      *   GetStream() == s &&
-     *   GetTimeout() == msecTimeout
      */
-    BufferedStreamIOBuffer(BufferedStream * const s,
-                           const TimeoutType& msecTimeout = TTDefault);
+    BufferedStreamIOBuffer(BufferedStream * const s);
 
     /**
      * @brief User friendly function which simply calls NoMoreDataToRead.

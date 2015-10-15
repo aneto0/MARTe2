@@ -35,7 +35,6 @@
 #include "CharBuffer.h"
 #include "HeapManager.h"
 #include "MemoryOperationsHelper.h"
-#include "TimeoutType.h"
 #include "AnyType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

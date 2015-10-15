@@ -61,9 +61,6 @@ bool BufferedStreamIOBufferTest::TestDefaultConstructor() {
         return false;
     }
 
-    if (buffered.GetTimeout() != TTDefault) {
-        return false;
-    }
 
     if (buffered.GetStream() != NULL) {
         return false;
@@ -75,8 +72,7 @@ bool BufferedStreamIOBufferTest::TestDefaultConstructor() {
 bool BufferedStreamIOBufferTest::TestFullConstructor() {
 
     DummySingleBufferedStream stream;
-    TimeoutType msecTimeout = 500;
-    BufferedStreamIOBuffer buffered(&stream, msecTimeout);
+    BufferedStreamIOBuffer buffered(&stream);
 
     if (buffered.AmountLeft() != 0) {
         return false;
@@ -94,9 +90,6 @@ bool BufferedStreamIOBufferTest::TestFullConstructor() {
         return false;
     }
 
-    if (buffered.GetTimeout() != msecTimeout) {
-        return false;
-    }
 
     if (buffered.GetStream() != (&stream)) {
         return false;
