@@ -38,8 +38,9 @@
 
 namespace MARTe {
 
-// These functions are implemented in IOBufferIntegerPrint.cpp
 /*lint -e526 . Justification: The following functions are not defined here. */
+
+// These functions are implemented in IOBufferIntegerPrint.cpp
 extern bool IntegerToStream(IOBuffer &ioBuffer,
                             uint8 number,
                             const FormatDescriptor &format);
@@ -92,19 +93,16 @@ extern bool FloatToStream(IOBuffer &buffer,
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-/*
- * @brief Print a const char8* string on a stream buffer.
- * @param iobuff is the output stream buffer.
- * @param string is the string to be printed.
- * @param fd specifies the desired format for the string.
+/**
+ * @brief Print a const char8* string on a buffer.
+ * @param[out] iobuff is the output stream buffer.
+ * @param[in] string is the string to be printed.
+ * @param[in] fd specifies the desired format for the string.
  * @return true if the string is printed correctly.
- *
- * This function calls IOBuffer::WriteAll to write the complete string size on the stream buffer.
  */
-static inline
-bool PrintCCString(IOBuffer & iobuff,
-                   const char8 * string,
-                   const FormatDescriptor &fd) {
+static bool PrintCCString(IOBuffer & iobuff,
+                          const char8 * string,
+                          const FormatDescriptor &fd) {
     //if the string is null print NULL pointer on the stream.
     if (string == NULL) {
         string = "NULL pointer";
@@ -162,20 +160,16 @@ bool PrintCCString(IOBuffer & iobuff,
     return ret;
 }
 
-/*
- * @brief Prints the bytes contained on a stream to a stream buffer.
- * @param iobuff is the output stream buffer.
- * @param stream is the stream in input which contains data to be copied.
- * @param fd specifies the desired printing format.
+/**
+ * @brief Prints the bytes contained on a stream to a buffer.
+ * @param[out] iobuff is the output stream buffer.
+ * @param[in] stream is the stream in input which contains data to be copied.
+ * @param[in] fd specifies the desired printing format.
  * @return false in case of errors in read and write operations.
- *
- * This function calls the function StreamI::GetC which calls the specific stream Write function truth the virtual table.
- * Gets a character from the stream and use IOBuffer::PutC to write it on the output stream buffer doing this operation for
- * each character from the cursor to the end of the input stream.*/
-static inline
-bool PrintStream(IOBuffer & iobuff,
-                 BufferedStream * const stream,
-                 const FormatDescriptor &fd) {
+ */
+static bool PrintStream(IOBuffer & iobuff,
+                        BufferedStream * const stream,
+                        const FormatDescriptor &fd) {
 
     bool ret = true;
     //print NULL pointer if the input stream is null.
@@ -254,19 +248,15 @@ bool PrintStream(IOBuffer & iobuff,
     return ret;
 }
 
-/*
- * @brief Prints a generic AnyType object on a stream buffer.
- * @param iobuff is the stream buffer output.
- * @param par is the generic object to be printed.
- * @param fd specifies the desired printing format.
- *
- * Looking at the AnyType structure fields, calls the right function
- * for the conversion to string and the print of each type.
+/**
+ * @brief Prints a generic AnyType object on a buffer.
+ * @param[out] iobuff is the stream buffer output.
+ * @param[in] parIn is the generic object to be printed.
+ * @param[in] fd specifies the desired printing format.
  */
-static
-bool PrintToStream(IOBuffer & iobuff,
-                   const AnyType & parIn,
-                   const FormatDescriptor &fd) {
+static bool PrintToStream(IOBuffer & iobuff,
+                          const AnyType & parIn,
+                          const FormatDescriptor &fd) {
 
     bool ret = true;
     // void anytype
@@ -598,15 +588,6 @@ bool IOBuffer::SkipTokensInStream(uint32 count,
     return ret;
 }
 
-/*
- * @brief The function called by all Printf operations.
- * @param iobuff is the stream buffer in the output.
- * @param format is a printf like string format.
- * @param pars is a list of AnyType elements to print.
- * @return the return of PrintToStream function.
- *
- * This function read the format, builds the related format descriptor and then
- * calls the PrintToStream function passing the next AnyType element in the list.*/
 bool IOBuffer::PrintFormattedToStream(const char8 * format,
                                       const AnyType pars[]) {
 
@@ -668,7 +649,6 @@ bool IOBuffer::PrintFormattedToStream(const char8 * format,
     return ret;
 }
 
-// position is set relative to start of buffer
 bool IOBuffer::Seek(const uint32 position) {
     bool retval = (position <= UsedSize());
 
@@ -731,12 +711,6 @@ IOBuffer::~IOBuffer() {
     positionPtr = static_cast<char8 *>(NULL);
 }
 
-/*
- allocate or reallocate memory to the desired size
- content is preserved by copy, if contiguus memory is not available, as long as it fits the newsize
- allocationGranularityMask defines how many bits to consider
- for the buffer size. round up the others
- */
 bool IOBuffer::SetBufferHeapMemory(const uint32 desiredSize,
                                    const uint32 reservedSpaceAtEnd) {
     // save position
@@ -785,7 +759,6 @@ bool IOBuffer::SetBufferHeapMemory(const uint32 desiredSize,
     return ret;
 }
 
-// wipes all content and replaces the used buffer
 void IOBuffer::SetBufferReferencedMemory(char8 * const buffer,
                                          const uint32 bufferSize,
                                          const uint32 reservedSpaceAtEnd) {
@@ -813,30 +786,14 @@ bool IOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
     return NoMoreSpaceToWrite();
 }
 
-/*
- * deals with the case when we do not have any more data to read
- * it might reset accessPosition and fill the buffer with more data
- * or it might fail
- * READ OPERATIONS
- * */
 bool IOBuffer::NoMoreDataToRead() {
     return false;
 }
 
-/*
- * sets amountLeft to 0
- * adjust the seek position of the stream to reflect the bytes read from the buffer
- * READ OPERATIONS
- */
 bool IOBuffer::Resync() {
     return false;
 }
 
-/*
- * copies buffer of size size at the end of writeBuffer
- * before calling check that positionPtr is not NULL
- * can be overridden to allow resizeable buffers
- */
 bool IOBuffer::Write(const char8 * const buffer,
                      uint32 &size) {
     bool retval = internalBuffer.CanWrite();
