@@ -102,6 +102,48 @@ bool BufferedStreamTest::TestGetToken(uint32 bufferSize,
     return result;
 }
 
+bool BufferedStreamTest::TestGetToken_Stream(uint32 bufferSize,
+                                             const TokenTestTableRow *table) {
+    DummySingleBufferedStream myStream;
+    myStream.SetBufferSize(bufferSize);
+
+    uint32 i = 0u;
+    const TokenTestTableRow *row = &table[i];
+    bool result = true;
+
+    while (result && (row->toTokenize != NULL)) {
+        myStream.Clear();
+        StringHelper::Copy(myStream.buffer, row->toTokenize);
+        char saveTerminator;
+        uint32 t = 0u;
+
+        DummySingleBufferedStream outputStream;
+        outputStream.SetBufferSize(bufferSize);
+        outputStream.Seek(0);
+        outputStream.Clear();
+
+        while (myStream.GetToken(outputStream, row->terminators, saveTerminator, row->skipCharacters)) {
+            outputStream.FlushAndResync();
+            if (StringHelper::Compare(outputStream.Buffer(), row->expectedResult[t]) != 0) {
+                result = false;
+            }
+            if (row->saveTerminatorResult[t] != saveTerminator) {
+                //When it gets to the end of the string the terminator is \0
+                if (saveTerminator != '\0') {
+                    result = false;
+                }
+            }
+            outputStream.Seek(0);
+            outputStream.Clear();
+            t++;
+        }
+
+        row = &table[++i];
+
+    }
+    return result;
+}
+
 bool BufferedStreamTest::TestSkipTokens(uint32 bufferSize,
                                         const SkipTokensTestTableRow *table) {
     DummySingleBufferedStream myStream;
@@ -173,3 +215,11 @@ bool BufferedStreamTest::TestGetLine(uint32 bufferSize,
     return result;
 }
 
+bool BufferedStreamTest::TestCopy(uint32 bufferSize) {
+    const char *line = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.\nAenean commodo ligula eget dolor. "
+                "Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+                "Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.";
+    DummySingleBufferedStream myStream;
+    myStream.Copy(line);
+    return (StringHelper::Compare(myStream.buffer, line) == 0);
+}

@@ -72,7 +72,7 @@ bool BufferedStream::GetToken(BufferedStream & output,
 
 // retrieve stream mechanism
     IOBuffer *inputIOBuffer = GetInputBuffer();
-    IOBuffer *outputIOBuffer = GetOutputBuffer();
+    IOBuffer *outputIOBuffer = output.GetOutputBuffer();
 
     bool ret = false;
 

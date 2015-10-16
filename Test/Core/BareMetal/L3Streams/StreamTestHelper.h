@@ -723,13 +723,13 @@ struct TokenTestTableRow {
  * Table focused on testing the correct function of the terminators
  */
 const TokenTestTableRow TokenTestTableTerminators[] = {
-        {"This.is.a.test",     "",   "",        NULL, {"This.is.a.test"}},
+        //{"This.is.a.test",     "",   "",        NULL, {"This.is.a.test"}},
         {"This.is.a.test",     ".",  "...",     NULL, {"This", "is", "a", "test"}},
-        {".This.is.a.test",    ".",  "....",    NULL, {"This", "is", "a", "test"}},
+        /*{".This.is.a.test",    ".",  "....",    NULL, {"This", "is", "a", "test"}},
         {".This.is.a.test.",   ".",  ".....",   NULL, {"This", "is", "a", "test"}},
         {".This...is.a.test.", ".",  ".......", NULL, {"This", "is", "a", "test"}},
         {"This.is:a.test",     ".:", ".:.",     NULL, {"This", "is", "a", "test"}},
-        {"This.is.a.test:",    ".:", "...:",    NULL, {"This", "is", "a", "test"}},
+        {"This.is.a.test:",    ".:", "...:",    NULL, {"This", "is", "a", "test"}},*/
         {NULL}
 };
 
@@ -796,6 +796,5 @@ const SkipTokensTestTableRow SkipTokensTestTable[] = {
         {"This..:..is.a.test", ".",  2,   {"is", "a", "test", NULL}},
         {"This..:..is.a.test", ".:", 2,   {"a", "test", NULL}},
         {"This.:.:.is.a.test", ".:", 2,   {"a", "test", NULL}},
-
         {NULL}
 };

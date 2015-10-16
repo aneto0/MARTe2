@@ -55,17 +55,26 @@ public:
     /**
      * @brief Tests the GetToken function. The possible tables to be used are defined in StreamTestHelper.
      */
-    bool TestGetToken(uint32 bufferSize, const TokenTestTableRow *table);
+    bool TestGetToken(uint32 bufferSize,
+                      const TokenTestTableRow *table);
+
+    /**
+     * @brief Tests the GetToken function with the stream input. The possible tables to be used are defined in StreamTestHelper.
+     */
+    bool TestGetToken_Stream(uint32 bufferSize,
+                             const TokenTestTableRow *table);
 
     /**
      * @brief Tests the SkipTokens function. The possible tables to be used are defined in StreamTestHelper.
      */
-    bool TestSkipTokens(uint32 bufferSize, const SkipTokensTestTableRow *table);
+    bool TestSkipTokens(uint32 bufferSize,
+                        const SkipTokensTestTableRow *table);
 
     /**
      * @brief Tests the GetLine function.
      */
-    bool TestGetLine(uint32 bufferSize, bool skipCharacter);
+    bool TestGetLine(uint32 bufferSize,
+                     bool skipCharacter);
 
     /**
      * @brief Tests the PrintfFormatted function.
@@ -77,9 +86,7 @@ public:
     /**
      * @brief Tests the Copy function.
      */
-    bool TestCopy() {
-        return true;
-    }
+    bool TestCopy(uint32 bufferSize);
 
     /**
      * @brief Tests the Printf function.

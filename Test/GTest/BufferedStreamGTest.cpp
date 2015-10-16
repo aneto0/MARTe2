@@ -55,9 +55,19 @@ TEST_F(BufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_8) {
     ASSERT_TRUE(streamtest.TestGetToken(8, &TokenTestTableTerminators[0]));
 }
 
-TEST_F(BufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_32) {
+TEST_F(BufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_64) {
     BufferedStreamTest streamtest;
-    ASSERT_TRUE(streamtest.TestGetToken(32, &TokenTestTableTerminators[0]));
+    ASSERT_TRUE(streamtest.TestGetToken(64, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_128) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(128, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_1024) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(1024, &TokenTestTableTerminators[0]));
 }
 
 TEST_F(BufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_1) {
@@ -75,9 +85,79 @@ TEST_F(BufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_8) {
     ASSERT_TRUE(streamtest.TestGetToken(8, &TokenTestTableSkipCharacters[0]));
 }
 
-TEST_F(BufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_32) {
+TEST_F(BufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_64) {
     BufferedStreamTest streamtest;
-    ASSERT_TRUE(streamtest.TestGetToken(32, &TokenTestTableSkipCharacters[0]));
+    ASSERT_TRUE(streamtest.TestGetToken(64, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_128) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(128, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_1024) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(1024, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableTerminators_BufferSize_1) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(1, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableTerminators_BufferSize_2) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(2, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableTerminators_BufferSize_8) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(8, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableTerminators_BufferSize_64) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(64, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableTerminators_BufferSize_128) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(128, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableTerminators_BufferSize_1024) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(1024, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableSkipCharacters_BufferSize_1) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(1, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableSkipCharacters_BufferSize_2) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(2, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableSkipCharacters_BufferSize_8) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(8, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableSkipCharacters_BufferSize_64) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(64, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableSkipCharacters_BufferSize_128) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(128, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestGetToken_Stream_TableSkipCharacters_BufferSize_1024) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken_Stream(1024, &TokenTestTableSkipCharacters[0]));
 }
 
 TEST_F(BufferedStreamGTest,TestSkipTokens_BufferSize_1) {
@@ -95,9 +175,19 @@ TEST_F(BufferedStreamGTest,TestSkipTokens_BufferSize_8) {
     ASSERT_TRUE(streamtest.TestSkipTokens(8, &SkipTokensTestTable[0]));
 }
 
-TEST_F(BufferedStreamGTest,TestSkipTokens_BufferSize_32) {
+TEST_F(BufferedStreamGTest,TestSkipTokens_BufferSize_64) {
     BufferedStreamTest streamtest;
-    ASSERT_TRUE(streamtest.TestSkipTokens(32, &SkipTokensTestTable[0]));
+    ASSERT_TRUE(streamtest.TestSkipTokens(64, &SkipTokensTestTable[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestSkipTokens_BufferSize_128) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestSkipTokens(128, &SkipTokensTestTable[0]));
+}
+
+TEST_F(BufferedStreamGTest,TestSkipTokens_BufferSize_1024) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestSkipTokens(1024, &SkipTokensTestTable[0]));
 }
 
 TEST_F(BufferedStreamGTest,TestGetLine_NoSkipCharacter_BufferSize_1) {
@@ -115,9 +205,19 @@ TEST_F(BufferedStreamGTest,TestGetLine_NoSkipCharacter_BufferSize_8) {
     ASSERT_TRUE(streamtest.TestGetLine(8, false));
 }
 
-TEST_F(BufferedStreamGTest,TestGetLine_NoSkipCharacter_BufferSize_32) {
+TEST_F(BufferedStreamGTest,TestGetLine_NoSkipCharacter_BufferSize_64) {
     BufferedStreamTest streamtest;
-    ASSERT_TRUE(streamtest.TestGetLine(32, false));
+    ASSERT_TRUE(streamtest.TestGetLine(64, false));
+}
+
+TEST_F(BufferedStreamGTest,TestGetLine_NoSkipCharacter_BufferSize_128) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetLine(128, false));
+}
+
+TEST_F(BufferedStreamGTest,TestGetLine_NoSkipCharacter_BufferSize_1024) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetLine(1024, false));
 }
 
 TEST_F(BufferedStreamGTest,TestGetLine_SkipCharacter_BufferSize_1) {
@@ -135,9 +235,49 @@ TEST_F(BufferedStreamGTest,TestGetLine_SkipCharacter_BufferSize_8) {
     ASSERT_TRUE(streamtest.TestGetLine(8, true));
 }
 
-TEST_F(BufferedStreamGTest,TestGetLine_SkipCharacter_BufferSize_32) {
+TEST_F(BufferedStreamGTest,TestGetLine_SkipCharacter_BufferSize_64) {
     BufferedStreamTest streamtest;
-    ASSERT_TRUE(streamtest.TestGetLine(32, true));
+    ASSERT_TRUE(streamtest.TestGetLine(64, true));
+}
+
+TEST_F(BufferedStreamGTest,TestGetLine_SkipCharacter_BufferSize_128) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetLine(128, true));
+}
+
+TEST_F(BufferedStreamGTest,TestGetLine_SkipCharacter_BufferSize_1024) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetLine(1024, true));
+}
+
+TEST_F(BufferedStreamGTest,TestCopy_BufferSize_1) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestCopy(1));
+}
+
+TEST_F(BufferedStreamGTest,TestCopy_BufferSize_2) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestCopy(2));
+}
+
+TEST_F(BufferedStreamGTest,TestCopy_BufferSize_8) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestCopy(8));
+}
+
+TEST_F(BufferedStreamGTest,TestCopy_BufferSize_64) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestCopy(64));
+}
+
+TEST_F(BufferedStreamGTest,TestCopy_BufferSize_128) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestCopy(128));
+}
+
+TEST_F(BufferedStreamGTest,TestCopy_BufferSize_1024) {
+    BufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestCopy(1024));
 }
 
 /*TEST_F(BufferedStreamGTest,TestGetCAndPutC) {
