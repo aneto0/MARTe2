@@ -359,7 +359,7 @@ public:
     bool GetTokenFromStream(char8 * outputBuffer,
                             const char8 * terminator,
                             uint32 outputBufferSize,
-                            char8 * saveTerminator,
+                            char8 &saveTerminator,
                             const char8 * skipCharacters);
     /**
      * @brief Reads a token from a stream buffer and writes it on another stream buffer.
@@ -386,7 +386,7 @@ public:
      */
     bool GetTokenFromStream(IOBuffer & outputBuffer,
                             const char8 * terminator,
-                            char8 * saveTerminator,
+                            char8 &saveTerminator,
                             const char8 * skipCharacters);
 
     /**

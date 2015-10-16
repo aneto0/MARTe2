@@ -179,7 +179,7 @@ public:
     virtual bool GetToken(char8 * const outputBuffer,
                           const char8 * const terminator,
                           const uint32 outputBufferSize,
-                          char8 * const saveTerminator,
+                          char8 &saveTerminator,
                           const char8 * const skipCharacters);
 
     /**
@@ -195,7 +195,7 @@ public:
      */
     bool GetToken(BufferedStream & output,
                   const char8 * const terminator,
-                  char8 * const saveTerminator = NULL_PTR(char8 *),
+                  char8 &saveTerminator,
                   const char8 * const skipCharacters = NULL_PTR(const char8 *));
 
     /**

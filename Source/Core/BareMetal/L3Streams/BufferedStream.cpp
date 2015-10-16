@@ -52,7 +52,7 @@ BufferedStream::~BufferedStream() {
 bool BufferedStream::GetToken(char8 * const outputBuffer,
                               const char8 * const terminator,
                               const uint32 outputBufferSize,
-                              char8 * const saveTerminator,
+                              char8 &saveTerminator,
                               const char8 * const skipCharacters) {
 
     bool retval = false;
@@ -67,7 +67,7 @@ bool BufferedStream::GetToken(char8 * const outputBuffer,
 
 bool BufferedStream::GetToken(BufferedStream & output,
                               const char8 * const terminator,
-                              char8 * const saveTerminator,
+                              char8 &saveTerminator,
                               const char8 * const skipCharacters) {
 
 // retrieve stream mechanism
@@ -107,7 +107,8 @@ bool BufferedStream::GetLine(BufferedStream & output,
             skipCharacters = "";
         }
     }
-    return GetToken(output, "\n", NULL_PTR(char8 *), skipCharacters);
+    char8 terminator;
+    return GetToken(output, "\n", terminator, skipCharacters);
 }
 
 bool BufferedStream::GetLine(char8 * const outputBuffer,
@@ -122,7 +123,8 @@ bool BufferedStream::GetLine(char8 * const outputBuffer,
             skipCharacters = "";
         }
     }
-    return GetToken(outputBuffer, "\n", outputBufferSize, NULL_PTR(char8 *), skipCharacters);
+    char8 terminator;
+    return GetToken(outputBuffer, "\n", outputBufferSize, terminator, skipCharacters);
 }
 
 bool BufferedStream::PrintFormatted(const char8 * const format,

@@ -339,6 +339,12 @@ public:
      */
     bool TestPrintFormattedToStream_BitSet_Signed();
 
+
+    /**
+     * @brief Tests the print of more than one types.
+     */
+    bool TestPrintFormattedMultiple();
+
     /**
      * @brief Tests if the function gets the correct token passing a C string buffer as output.
      */

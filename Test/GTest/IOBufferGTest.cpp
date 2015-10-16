@@ -464,6 +464,21 @@ TEST(IOBufferGTest, TestPrintFormattedToStream_BitSet_Signed) {
     ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_BitSet_Signed());
 }
 
+TEST(IOBufferGTest, TestPrintFormattedMultiple) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedMultiple());
+}
+
+TEST(IOBufferGTest, TestGetTokenFromStream_ConstCharOutput) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestGetTokenFromStream_ConstCharOutput());
+}
+
+TEST(IOBufferGTest, TestGetTokenFromStream_IOBufferOutput) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestGetTokenFromStream_IOBufferOutput());
+}
+
 TEST(IOBufferGTest, TestSkipTokenInStream) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestSkipTokenInStream());
