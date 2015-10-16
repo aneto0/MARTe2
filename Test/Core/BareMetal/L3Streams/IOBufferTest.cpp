@@ -1481,36 +1481,24 @@ bool IOBufferTest::TestPrintFormattedToStream_CCString() {
     uint32 allocationSize = 64;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
 
-    Clear(ioBuffer);
-
-    const char* Hello = "HelloWorld";
-
-    AnyType toPrint = Hello;
-
-    ioBuffer.PrintFormattedToStream("string:%s", &toPrint);
-    if (StringHelper::Compare(ioBuffer.Buffer(), "string:HelloWorld") != 0) {
-        return false;
-    }
-    //Clip the string
-    Clear(ioBuffer);
-    ioBuffer.PrintFormattedToStream("string:%5s", &toPrint);
-    if (StringHelper::Compare(ioBuffer.Buffer(), "string:Hello") != 0) {
-        return false;
-    }
-    //Padd right the string
-    Clear(ioBuffer);
-    ioBuffer.PrintFormattedToStream("string:% 11s", &toPrint);
-    if (StringHelper::Compare(ioBuffer.Buffer(), "string: HelloWorld") != 0) {
-        return false;
+    uint32 i = 0;
+    while (printfCStringTable[i][0] != NULL) {
+        Clear(ioBuffer);
+        AnyType toPrint = printfCStringTable[i][1];
+        if(ioBuffer.PrintFormattedToStream(printfCStringTable[i][0], &toPrint)){
+        if (StringHelper::Compare(ioBuffer.Buffer(), printfCStringTable[i][2]) != 0) {
+            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfCStringTable[i][2], i);
+            return false;
+        }
+        }
+        else{
+            return printfCStringTable[i][1]==NULL;
+        }
+        i++;
     }
 
-    //Padd left the string
-    Clear(ioBuffer);
-    ioBuffer.PrintFormattedToStream("string:%- 11s", &toPrint);
-    if (StringHelper::Compare(ioBuffer.Buffer(), "string:HelloWorld ") != 0) {
-        return false;
-    }
     return true;
+
 }
 
 bool IOBufferTest::TestPrintFormattedToStream_Pointer() {
@@ -1556,25 +1544,34 @@ bool IOBufferTest::TestPrintFormattedToStream_Pointer() {
 bool IOBufferTest::TestPrintFormattedToStream_Stream() {
 
     IOBuffer ioBuffer;
-
     uint32 allocationSize = 64;
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
 
-    Clear(ioBuffer);
     DummySingleBufferedStream stream;
     stream.SetBufferSize(32);
 
-    const char8 * toWrite = "HelloWorldThisIsATest";
-    uint32 writeSize = StringHelper::Length(toWrite);
-    stream.Write(toWrite, writeSize);
-    stream.FlushAndResync();
-    stream.Seek(0);
+    uint32 i = 0;
+    while (printfCStringTable[i][0] != NULL) {
+        Clear(ioBuffer);
+        stream.Clear();
+        const char8 * toWrite = printfCStringTable[i][1];
 
-    AnyType toPrint = stream;
+        uint32 writeSize = StringHelper::Length(toWrite);
+        stream.Write(toWrite, writeSize);
+        stream.FlushAndResync();
+        stream.Seek(0);
 
-    ioBuffer.PrintFormattedToStream("%s", &toPrint);
+        AnyType toPrint = stream;
+        ioBuffer.PrintFormattedToStream(printfCStringTable[i][0], &toPrint);
+        if (StringHelper::Compare(ioBuffer.Buffer(), printfCStringTable[i][2]) != 0) {
+            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfCStringTable[i][2], i);
+            return false;
+        }
+        stream.FlushAndResync();
+        i++;
+    }
 
-    return StringHelper::Compare(ioBuffer.Buffer(), stream.Buffer()) == 0;
+    return true;
 
 }
 
@@ -1692,26 +1689,25 @@ bool IOBufferTest::TestPrintFormattedToStream_BitSet_Signed() {
     return true;
 }
 
-
-bool IOBufferTest::TestPrintFormattedMultiple(){
+bool IOBufferTest::TestPrintFormattedMultiple() {
     IOBuffer ioBuffer;
 
-     uint32 allocationGranularity = 64;
+    uint32 allocationGranularity = 64;
 
-     ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
+    ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
 
-     uint32 i = 0;
-     while (StringHelper::Compare(printfGenericTable[i].format, "") != 0) {
-         Clear(ioBuffer);
-         ioBuffer.PrintFormattedToStream(printfGenericTable[i].format, printfGenericTable[i].inputs);
-         if (StringHelper::Compare(printfGenericTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-             printf("\n%s %s %d\n", ioBuffer.Buffer(), printfGenericTable[i].expectedResult, i);
-             return false;
-         }
-         i++;
-     }
+    uint32 i = 0;
+    while (StringHelper::Compare(printfGenericTable[i].format, "") != 0) {
+        Clear(ioBuffer);
+        ioBuffer.PrintFormattedToStream(printfGenericTable[i].format, printfGenericTable[i].inputs);
+        if (StringHelper::Compare(printfGenericTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
+            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfGenericTable[i].expectedResult, i);
+            return false;
+        }
+        i++;
+    }
 
-     return true;
+    return true;
 }
 
 bool IOBufferTest::TestGetTokenFromStream_ConstCharOutput() {

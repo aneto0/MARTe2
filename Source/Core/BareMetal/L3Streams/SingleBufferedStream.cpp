@@ -252,7 +252,7 @@ bool SingleBufferedStream::Write(const char8 * const input,
                 if (!internalBuffer.Flush()) {
                     ret = false;
                 }
-                else{
+                else {
                     ret = UnbufferedWrite(&input[0], size);
                 }
             }
@@ -281,12 +281,14 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
     bool ubSeek = true;
     // if write mode on then just flush out data
     // then seek the stream
-    if (internalBuffer.UsedSize() > 0u) {
-        if (!internalBuffer.Flush()) {
-            //TODO
+    if (mutexWriteMode) {
+        if (internalBuffer.UsedSize() > 0u) {
+            if (!internalBuffer.Flush()) {
+                //TODO
+            }
         }
     }
-    else {
+    if (mutexReadMode) {
         // if read buffer has some data, check whether seek can be within buffer
         if (internalBuffer.UsedSize() > 0u) {
             uint64 currentStreamPosition = UnbufferedPosition();
@@ -317,13 +319,15 @@ bool SingleBufferedStream::RelativeSeek(int32 delta) {
 
         ubSeek = true;
         // if write mode on then just flush out data
-        if (internalBuffer.UsedSize() > 0u) {
-            // this will move the stream pointer ahead to the correct position
-            if (!internalBuffer.Flush()) {
-                //TODO
+        if (mutexWriteMode) {
+            if (internalBuffer.UsedSize() > 0u) {
+                // this will move the stream pointer ahead to the correct position
+                if (!internalBuffer.Flush()) {
+                    //TODO
+                }
             }
         }
-        else {
+        if (mutexReadMode) {
 
             //save the current position because in case of out of range
             //the position becomes one of the buffer bounds.
@@ -362,12 +366,12 @@ uint64 SingleBufferedStream::Position() {
 
     uint64 ret = 0u;
     // if write mode on then just flush out data
-    if (internalBuffer.UsedSize() > 0u) {
+    if (mutexWriteMode) {
         ret = UnbufferedPosition() + internalBuffer.Position();
     }
-    else {
+    if (mutexReadMode) {
 
-        ret = (UnbufferedPosition() - internalBuffer.UsedSize()) + internalBuffer.Position();
+        ret = UnbufferedPosition() - internalBuffer.UsedAmountLeft();
     }
     return ret;
 }

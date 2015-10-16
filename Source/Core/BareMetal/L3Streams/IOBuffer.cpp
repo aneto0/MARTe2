@@ -101,58 +101,56 @@ extern bool FloatToStream(IOBuffer &buffer,
  * @return true if the string is printed correctly.
  */
 static bool PrintCCString(IOBuffer & iobuff,
-                   const char8 * string,
-                   const FormatDescriptor &fd) {
-    //if the string is null print NULL pointer on the stream.
-    if (string == NULL) {
-        string = "NULL pointer";
-    }
+                          const char8 * string,
+                          const FormatDescriptor &fd) {
 
-    //get the string size
-    uint32 stringSize = StringHelper::Length(string);
-    uint32 paddingSize = 0u;
+    bool ret = (string != NULL);
 
-    //is the desired size is 0 print completely the string without padd.
-    if (fd.size != 0u) {
-        //clip the string size if the desired size is minor.
-        if (stringSize > fd.size) {
-            stringSize = fd.size;
-        }
+    if (ret) {
+        //get the string size
+        uint32 stringSize = StringHelper::Length(string);
+        uint32 paddingSize = 0u;
 
-        //if padded and desired size is greater than the string size
-        //the difference is the padding size.
-        bool isPadded = fd.padded;
-        if (isPadded) {
-            if (stringSize < fd.size) {
-                paddingSize = fd.size - stringSize;
+        //is the desired size is 0 print completely the string without padd.
+        if (fd.size != 0u) {
+            //clip the string size if the desired size is minor.
+            if (stringSize > fd.size) {
+                stringSize = fd.size;
+            }
+
+            //if padded and desired size is greater than the string size
+            //the difference is the padding size.
+            bool isPadded = fd.padded;
+            if (isPadded) {
+                if (stringSize < fd.size) {
+                    paddingSize = fd.size - stringSize;
+                }
             }
         }
-    }
 
-    bool ret = true;
+        bool isLeftAligned = fd.leftAligned;
+        bool isPaddingSize = (paddingSize > 0u);
 
-    bool isLeftAligned = fd.leftAligned;
-    bool isPaddingSize = (paddingSize > 0u);
-
-    //if right aligned put the padding at the beginning
-    if ((!isLeftAligned) && (isPaddingSize)) {
-        for (uint32 i = 0u; i < paddingSize; i++) {
-            if (!iobuff.PutC(' ')) {
-                ret = false;
+        //if right aligned put the padding at the beginning
+        if ((!isLeftAligned) && (isPaddingSize)) {
+            for (uint32 i = 0u; i < paddingSize; i++) {
+                if (!iobuff.PutC(' ')) {
+                    ret = false;
+                }
             }
         }
-    }
 
-    //print the string on the buffer completely.
-    if (!iobuff.WriteAll(string, stringSize)) {
-        ret = false;
-    }
+        //print the string on the buffer completely.
+        if (!iobuff.WriteAll(string, stringSize)) {
+            ret = false;
+        }
 
-    //if left aligned put the padding at the end
-    if ((isLeftAligned) && (isPaddingSize)) {
-        for (uint32 i = 0u; i < paddingSize; i++) {
-            if (!iobuff.PutC(' ')) {
-                ret = false;
+        //if left aligned put the padding at the end
+        if ((isLeftAligned) && (isPaddingSize)) {
+            for (uint32 i = 0u; i < paddingSize; i++) {
+                if (!iobuff.PutC(' ')) {
+                    ret = false;
+                }
             }
         }
     }
@@ -168,8 +166,8 @@ static bool PrintCCString(IOBuffer & iobuff,
  * @return false in case of errors in read and write operations.
  */
 static bool PrintStream(IOBuffer & iobuff,
-                 BufferedStream &stream,
-                 const FormatDescriptor &fd) {
+                        BufferedStream &stream,
+                        const FormatDescriptor &fd) {
 
     bool ret = true;
     //print NULL pointer if the input stream is null.
@@ -251,8 +249,8 @@ static bool PrintStream(IOBuffer & iobuff,
  * @param[in] fd specifies the desired printing format.
  */
 static bool PrintToStream(IOBuffer & iobuff,
-                   const AnyType & parIn,
-                   const FormatDescriptor &fd) {
+                          const AnyType & parIn,
+                          const FormatDescriptor &fd) {
 
     bool ret = true;
 // void anytype
@@ -440,7 +438,6 @@ bool IOBuffer::GetTokenFromStream(char8 * const outputBuffer,
             // 0 terminated string
             outputBuffer[tokenSize] = '\0';
 
-            
             saveTerminator = '\0';
 
             //

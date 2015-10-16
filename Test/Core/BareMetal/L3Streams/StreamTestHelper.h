@@ -415,6 +415,23 @@ static const PrintfNode printfGenericTable[] = {
 
 
 
+static const char8* printfCStringTable[][5] = {
+        {"string:%s","HelloWorld","string:HelloWorld"},
+        {"string:%5s","HelloWorld","string:Hello"},
+        {"string:% 11s","HelloWorld","string: HelloWorld"},
+        {"string:%-11s","HelloWorld","string:HelloWorld "},
+        {"% 5s","  ","     "},
+        {"%-5s","  ","     "},
+        {"%s",(const char8*)NULL,""},
+        {NULL,NULL,NULL}
+};
+
+
+
+
+
+
+
 class DummyRawStream: public RawStream {
 
 public:
@@ -549,7 +566,7 @@ public:
     void Clear() {
         position = 0;
         size = 0;
-        for (int i = 0; i < MAX_STREAM_DIMENSION; i++) {
+        for (uint32 i = 0; i < MAX_STREAM_DIMENSION; i++) {
             buffer[i] = 0;
         }
     }

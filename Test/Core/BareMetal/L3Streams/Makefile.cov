@@ -27,8 +27,8 @@ TARGET=cov
 
 include Makefile.inc
 
-LIBRARIES   += ../../../Source/Core/L0Portability/$(TARGET)/L0Portability$(LIBEXT)
-LIBRARIES   += ../../../Source/Core/L1CLib/$(TARGET)/L1CLib$(LIBEXT)
-LIBRARIES   += ../../../Source/Core/LXTypeDev/$(TARGET)/LXTypeDev$(LIBEXT)
+#LIBRARIES   += ../../../Source/Core/L0Portability/$(TARGET)/L0Portability$(LIBEXT)
+#LIBRARIES   += ../../../Source/Core/L1CLib/$(TARGET)/L1CLib$(LIBEXT)
+#LIBRARIES   += ../../../Source/Core/LXTypeDev/$(TARGET)/LXTypeDev$(LIBEXT)
 
 OPTIM=-finline-functions

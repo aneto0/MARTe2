@@ -1,26 +1,33 @@
-/* Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file StreamStringTest.cpp
+ * @brief Source file for class StreamStringTest
+ * @date 16/10/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http: //ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id:$
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This source file contains the definition of all the methods for
+ * the class StreamStringTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
 #include "StreamStringTest.h"
@@ -28,6 +35,14 @@
 #include "StreamTestHelper.h"
 #include "DoubleInteger.h"
 #include "stdio.h"
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
 using namespace MARTe;
 static void cleanOutputBuffer(char* buffer,
                               int32 size) {
@@ -69,7 +84,7 @@ bool StreamStringTest::TestPutC(const char* inputString) {
 
     myString.Seek(0);
 
-    //Check the result.	
+    //Check the result.
     if (myString != inputString) {
         return false;
     }
@@ -87,7 +102,7 @@ bool StreamStringTest::TestRead(const char* inputString) {
     char outputBuffer[32];
     cleanOutputBuffer(outputBuffer, 32);
 
-    //size equal to inputString length (+1 for the terminated char).	
+    //size equal to inputString length (+1 for the terminated char).
     uint32 size = StringHelper::Length(inputString);
     myString.Read(outputBuffer, size);
 
@@ -97,7 +112,7 @@ bool StreamStringTest::TestRead(const char* inputString) {
     }
 
     cleanOutputBuffer(outputBuffer, 32);
-    //size greater than inputString length.	
+    //size greater than inputString length.
     size += 10;
 
     //return at the beginning
@@ -109,7 +124,7 @@ bool StreamStringTest::TestRead(const char* inputString) {
         return false;
     }
 
-    //size minor than inputString length.	
+    //size minor than inputString length.
     size = StringHelper::Length(inputString) - 1;
     if (size <= 0) {
         size++;
@@ -151,7 +166,7 @@ bool StreamStringTest::TestWrite(const char* inputString) {
     char test[128];
     StringHelper::Copy(test, inputString);
 
-    //size equal to the inputString length	
+    //size equal to the inputString length
     uint32 size = StringHelper::Length(inputString);
 
     myString.Write(inputString, size);
@@ -277,7 +292,7 @@ bool StreamStringTest::TestOperators(const char* firstString,
 
     char* s = NULL;
 
-    //Null assignment return false	
+    //Null assignment return false
     if (myString1 = s) {
         return false;
     }
@@ -454,11 +469,11 @@ bool StreamStringTest::TestPrint() {
     //    shifted64bit.dataDescriptor = SignedShift;
     AnyType shifted64bit(SignedShift, 12, &shifted64bitNumber);
 
-    //Use the unbuffered PutC, 4 parameters.	
+    //Use the unbuffered PutC, 4 parameters.
     //For integer the letter is useless
     myString.Printf("% 3u % 3f % 3d % 3x\n", sbit8, fbit32, sbit16, sbit8);
 
-    //Use the unbuffered PutC, 4 parameters.	
+    //Use the unbuffered PutC, 4 parameters.
     //For integer the letter is useless
     myString.Printf("% 3u % 3f % 3d % 3x\n", ubit64, fbit32, ubit16, sbit8);
 
@@ -496,11 +511,11 @@ bool StreamStringTest::TestPrint() {
     }
 
     //structured data anytype
-/*    ubit128.dataDescriptor.isStructuredData = true;
-    if (myString.Printf("% 3d", ubit128)) {
-        return false;
-    }
-*/
+    /*    ubit128.dataDescriptor.isStructuredData = true;
+     if (myString.Printf("% 3d", ubit128)) {
+     return false;
+     }
+     */
     //wrong type in the format
     if (myString.Printf("%3l", fbit32)) {
         return false;
@@ -739,4 +754,3 @@ bool StreamStringTest::TestToken() {
     return true;
 
 }
-

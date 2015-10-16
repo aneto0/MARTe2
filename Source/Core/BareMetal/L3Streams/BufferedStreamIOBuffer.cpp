@@ -64,7 +64,7 @@ bool BufferedStreamIOBuffer::Resync() {
             // adjust seek position
             // in read mode the actual stream
             // position is to the character after the buffer end
-            if (!stream->UnbufferedSeek(stream->Position() - deltaToEnd)) {
+            if (!stream->UnbufferedSeek(stream->UnbufferedPosition() - deltaToEnd)) {
                 retval = false;
             }
 

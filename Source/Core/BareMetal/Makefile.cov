@@ -31,6 +31,7 @@ OPTIM = -finline-functions
 LIBRARIES_STATIC=L0Types/cov/L0Types$(LIBEXT)
 LIBRARIES_STATIC+=L1Portability/cov/L1Portability$(LIBEXT)
 LIBRARIES_STATIC+=L2Objects/cov/L2Objects$(LIBEXT)
+LIBRARIES_STATIC+=L3Streams/cov/L3Streams$(LIBEXT)
 
 LIBRARIES += -lm
 
