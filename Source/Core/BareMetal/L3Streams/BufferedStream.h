@@ -152,29 +152,18 @@ public:
     inline operator AnyType();
 
     /**
-     * @brief Writes a character to the stream.
-     * @param[in] c the character to write on the stream.
-     * @return true if the character is successfully written into the stream.
-     */
-    inline bool PutC(const char8 c);
-
-    /**
-     * @brief Reads a character from the stream.
-     * @param[in] c the character to read from the stream.
-     * @return true if the character is successfully read from the stream.
-     */
-    inline bool GetC(char8 &c);
-
-    /**
      * @brief Reads a token from the stream.
      * @details Extracts a token from the stream until a terminator or \0 is found.
      *
      * @param[out] outputBuffer the buffer where to write the retrieved tokens into.
      * @param[in] terminator a list of terminator characters, i.e. characters that allow to distinguish tokens.
      * @param[in] outputBufferSize the maximum size of the output buffer.
-     * @param[in] saveTerminator if true the terminators are also included in the string saved into \a outputBuffer.
-     * @param[in] skipCharacters a list of characters to be skipped.
-     * @return false if no data is read, true otherwise.
+     * @param[out] saveTerminator if not NULL the found terminator (from the terminator list) is stored in this variable.
+     * @param[in] skipCharacters a list of characters to be removed from the \a outputBuffer. As a consequence, if a
+     * skipCharacter is also a terminator, when consecutive instances of the same terminator are found (e.g. ::A:::B:C, where
+     * : is the terminator), the terminator is skipped until the next token is found (in the previous example, the first token
+     * to be found would be A).
+     * @return false if no data is stored in the outputBuffer, true otherwise (meaning that a token was found).
      */
     virtual bool GetToken(char8 * const outputBuffer,
                           const char8 * const terminator,
@@ -189,9 +178,12 @@ public:
      * @param[out] outputBuffer the buffer where to write the retrieved tokens into.
      * @param[in] terminator a list of terminator characters, i.e. characters that allow to distinguish tokens.
      * @param[in] outputBufferSize the maximum size of the output buffer.
-     * @param[in] saveTerminator if true the terminators are also included in the string saved into \a outputBuffer.
-     * @param[in] skipCharacters a list of characters to be skipped.
-     * @return false if no data is read, true otherwise.
+     * @param[out] saveTerminator if not NULL the found terminator (from the terminator list) is stored in this variable.
+     * @param[in] skipCharacters a list of characters to be removed from the \a outputBuffer. As a consequence, if a
+     * skipCharacter is also a terminator, when consecutive instances of the same terminator are found (i.e. without a token in-between)
+     * (e.g. ::A:::B:C, where : is the terminator), the terminator is skipped until the next token is found (in the previous example, the first token
+     * to be found would be A).
+     * @return false if no data is stored in the outputBuffer, true otherwise (meaning that a token was found).
      */
     bool GetToken(BufferedStream & output,
                   const char8 * const terminator,
@@ -200,9 +192,11 @@ public:
 
     /**
      * @brief Skips a series of tokens delimited by terminators or \0.
+     * @details The functionality skipCharacters=terminator (see GetToken) is automatically set, so
+     * that consecutive instances of the same terminator
      * @param[in] count the number of tokens to be skipped.
      * @param[in] terminator a list of terminator characters.
-     * @return false if no data read, true otherwise.
+     * @return false if no data is read, true (meaning that at least a token was found).
      */
     bool SkipTokens(const uint32 count,
                     const char8 * const terminator);
@@ -210,7 +204,7 @@ public:
     /**
      * @brief Extracts a line from this stream into another stream.
      * @param[out] output is the output stream where the line must be written.
-     * @param[in] skipTerminators if true \r is skipped.
+     * @param[in] skipTerminators if true the \r is skipped.
      * @return true if a line is successfully read from this stream and written into \a output.
      */
     bool GetLine(BufferedStream & output,
@@ -220,7 +214,7 @@ public:
      * @brief Extracts a line from this stream into a character buffer.
      * @param[out] outputBuffer is the character buffer where the line must be written into.
      * @param[in] outputBufferSize the size of \a outputBuffer.
-     * @param[in] skipTerminators if true \r is skipped.
+     * @param[in] skipTerminators if true the \r is skipped.
      * @return true if a line is successfully read from this stream and written into \a outputBuffer.
      */
     bool GetLine(char8 *outputBuffer,
@@ -378,17 +372,6 @@ BufferedStream::operator AnyType() {
     TypeDescriptor dataDescriptor(false, Stream, 0u);
 
     return AnyType(dataDescriptor, 0u, dataPointer);
-}
-
-bool BufferedStream::PutC(const char8 c) {
-    uint32 size = 1u;
-    return Write(&c, size);
-}
-
-bool BufferedStream::GetC(char8 &c) {
-    uint32 size = 1u;
-    return Read(&c, size);
-
 }
 
 bool BufferedStream::Printf(const char8 * const format,

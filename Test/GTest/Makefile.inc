@@ -26,6 +26,7 @@
 OBJSX=	CharBufferGTest.x \
         IOBufferGTest.x \
         StreamStringIOBufferGTest.x \
+        BufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x
 #       TypeCharacteristicsGTest.x \
         BasicTypeGTest.x \
@@ -70,7 +71,6 @@ OBJSX=	CharBufferGTest.x \
  	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x \
 	BitSetToIntegerGTest.x \
-	BufferedStreamGTest.x \
 	DoubleIntegerGTest.x \
 	FloatToStreamGTest.x \
 	IntegerToStreamGTest.x \

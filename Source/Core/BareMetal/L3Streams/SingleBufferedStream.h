@@ -57,10 +57,11 @@ public:
     /**
      * @brief Default constructor.
      * @post
-     *   CanRead() == false
+     *   CanRead() == true
      *   CanWrite() == false
      *   GetInputBuffer() == BufferedStreamIOBuffer
      *   GetTimeout() == TTInfiniteWait
+     *   GetInputBuffer()->BufferSize() == 32u
      */
     SingleBufferedStream();
 
@@ -68,10 +69,11 @@ public:
      * @brief Initialises object with a specified timeout.
      * @param[in] timeoutIn the timeout for the read and write operations.
      * @post
-     *   CanRead() == false
+     *   CanRead() == true
      *   CanWrite() == false
      *   GetInputBuffer() == BufferedStreamIOBuffer
      *   GetTimeout() == timeoutIn
+     *   GetInputBuffer()->BufferSize() == 32u
      */
     SingleBufferedStream(const TimeoutType & timeoutIn);
 
@@ -91,26 +93,6 @@ public:
      *    GetInputStream()->BufferSize() == bufferSize
      */
     virtual bool SetBufferSize(uint32 bufferSize);
-
-    /**
-     * @brief Writes a single character to the stream.
-     * @details if the size of the buffer is zero the character is directly written in the low level RawStream.
-     * @param[in] c the character to be written on the stream.
-     * @return true if the character is successfully written to the stream.
-     */
-    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Write(1), but
-     * this inline implementation could be faster if the write buffer is not full */
-    inline bool PutC(const char8 c);
-
-    /**
-     * @brief Reads a single character from the stream.
-     * @details if the size of the buffer (see SetBufferSize) is zero the character is directly written to the low level RawStream.
-     * @param[out] c the character read from the stream.
-     * @return true if the character is successfully read to the stream.
-     */
-    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The Printf function uses the standard Read(1), but
-     * this inline implementation could be faster if the read buffer is not empty */
-    inline bool GetC(char8 &c);
 
     /**
      * @see BufferedStream::Read
@@ -219,58 +201,11 @@ bool SingleBufferedStream::FlushAndResync() {
     bool ret = true;
     // if there is something in the buffer, and canSeek it means we can and need to resync
     // if the buffers are separated (!canseek) than resync cannot be done
-    if (internalBuffer.UsedSize() > 0u) {
-        ret = internalBuffer.Resync();
-    }
-    else {
-        // some data in internalBuffer
-        // we can flush in all cases then
-        if (internalBuffer.UsedSize() > 0u) {
-            ret = internalBuffer.Flush();
-        }
-    }
-    return ret;
-}
-
-bool SingleBufferedStream::PutC(const char8 c) {
-    bool ret = true;
-
-    if (mutexReadMode) {
-        if (!SwitchToWriteMode()) {
-            ret = false;
-        }
-    }
-
-    if (ret) {
-        if (internalBuffer.BufferSize() > 0u) {
-            ret = internalBuffer.PutC(c);
-        }
-        else {
-            uint32 size = 1u;
-            ret = UnbufferedWrite(&c, size);
-        }
-    }
-
-    return ret;
-}
-
-bool SingleBufferedStream::GetC(char8 &c) {
-
-    bool ret = true;
     if (mutexWriteMode) {
-        if (!SwitchToReadMode()) {
-            ret = false;
-        }
+        ret = internalBuffer.Flush();
     }
-
-    if (ret) {
-        if (internalBuffer.BufferSize() > 0u) {
-            ret = internalBuffer.GetC(c);
-        }
-        else {
-            uint32 size = 1u;
-            ret = UnbufferedRead(&c, size);
-        }
+    if (mutexReadMode) {
+        ret = internalBuffer.Resync();
     }
     return ret;
 }

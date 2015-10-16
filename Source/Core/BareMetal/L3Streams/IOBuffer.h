@@ -330,7 +330,7 @@ public:
      * @return false if errors copying data
      */
     virtual bool Read(char8 * const buffer,
-              uint32 &size);
+                      uint32 &size);
 
     /*---------------------------------------------------------------------------*/
 
@@ -343,8 +343,8 @@ public:
      * @param[in] pars is a list of AnyType elements to print.
      * @return false in case of errors.
      */
-    bool PrintFormattedToStream(const char8 * format,
-                                const AnyType pars[]);
+    bool PrintFormatted(const char8 * format,
+                        const AnyType pars[]);
 
     /**
      * @brief Reads a token from the buffer and writes it on an output buffer.
@@ -371,11 +371,11 @@ public:
      * @returns true if some data was read before any error or file
      * termination, false only on error and no data available.
      */
-    bool GetTokenFromStream(char8 * outputBuffer,
-                            const char8 * terminator,
-                            uint32 outputBufferSize,
-                            char8 &saveTerminator,
-                            const char8 * skipCharacters);
+    bool GetToken(char8 * outputBuffer,
+                  const char8 * terminator,
+                  uint32 outputBufferSize,
+                  char8 &saveTerminator,
+                  const char8 * skipCharacters);
     /**
      * @brief Reads a token from the buffer and writes it on an output buffer.
      * @details Extracts a token from the buffer into a string data until a
@@ -399,10 +399,10 @@ public:
      * @return true if some data was read before any error or file termination.
      * false only on error and no data available.
      */
-    bool GetTokenFromStream(IOBuffer & outputBuffer,
-                            const char8 * terminator,
-                            char8 &saveTerminator,
-                            const char8 * skipCharacters);
+    bool GetToken(IOBuffer & outputBuffer,
+                  const char8 * terminator,
+                  char8 &saveTerminator,
+                  const char8 * skipCharacters);
 
     /**
      * @brief Skips a number of tokens on the buffer.
@@ -410,8 +410,8 @@ public:
      * @param[in] terminator is a list of terminator characters for the tokenize operation.
      * @return false if the number of skipped tokens is minor than the desired.
      */
-    bool SkipTokensInStream(uint32 count,
-                            const char8 * terminator);
+    bool SkipTokens(uint32 count,
+                    const char8 * terminator);
 protected:
 
     /**

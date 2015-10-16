@@ -390,78 +390,78 @@ TEST(IOBufferGTest, TestEmpty) {
     ASSERT_TRUE(myIOBufferTest.TestEmpty());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_Integer_Decimal) {
+TEST(IOBufferGTest, TestPrintFormatted_Integer_Decimal) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Integer_Decimal());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Integer_Decimal());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_Integer_Hexadecimal) {
+TEST(IOBufferGTest, TestPrintFormatted_Integer_Hexadecimal) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Integer_Hexadecimal());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Integer_Hexadecimal());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_Integer_Octal) {
+TEST(IOBufferGTest, TestPrintFormatted_Integer_Octal) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Integer_Octal());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Integer_Octal());
 }
-TEST(IOBufferGTest, TestPrintFormattedToStream_Integer_Binary) {
+TEST(IOBufferGTest, TestPrintFormatted_Integer_Binary) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Integer_Binary());
-}
-
-TEST(IOBufferGTest, TestPrintFormattedToStream_Float_FixedPoint) {
-    IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_FixedPoint());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Integer_Binary());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_Float_FixedRelativePoint) {
+TEST(IOBufferGTest, TestPrintFormatted_Float_FixedPoint) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_FixedRelativePoint());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Float_FixedPoint());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_Float_Exponential) {
+TEST(IOBufferGTest, TestPrintFormatted_Float_FixedRelativePoint) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_Exponential());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Float_FixedRelativePoint());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_Float_Engeneering) {
+TEST(IOBufferGTest, TestPrintFormatted_Float_Exponential) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_Engeneering());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Float_Exponential());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_Float_Smart) {
+TEST(IOBufferGTest, TestPrintFormatted_Float_Engeneering) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_Smart());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Float_Engeneering());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_Float_Compact) {
+TEST(IOBufferGTest, TestPrintFormatted_Float_Smart) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Float_Compact());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Float_Smart());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_CCString) {
+TEST(IOBufferGTest, TestPrintFormatted_Float_Compact) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_CCString());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Float_Compact());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_Pointer) {
+TEST(IOBufferGTest, TestPrintFormatted_CCString) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Pointer());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_CCString());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_Stream) {
+TEST(IOBufferGTest, TestPrintFormatted_Pointer) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_Stream());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Pointer());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_BitSet_Unsigned) {
+TEST(IOBufferGTest, TestPrintFormatted_Stream) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_BitSet_Unsigned());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Stream());
 }
 
-TEST(IOBufferGTest, TestPrintFormattedToStream_BitSet_Signed) {
+TEST(IOBufferGTest, TestPrintFormatted_BitSet_Unsigned) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestPrintFormattedToStream_BitSet_Signed());
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_BitSet_Unsigned());
+}
+
+TEST(IOBufferGTest, TestPrintFormatted_BitSet_Signed) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_BitSet_Signed());
 }
 
 TEST(IOBufferGTest, TestPrintFormattedMultiple) {
@@ -469,24 +469,24 @@ TEST(IOBufferGTest, TestPrintFormattedMultiple) {
     ASSERT_TRUE(myIOBufferTest.TestPrintFormattedMultiple());
 }
 
-TEST(IOBufferGTest, TestGetTokenFromStream_ConstCharOutput) {
+TEST(IOBufferGTest, TestGetToken_ConstCharOutput) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestGetTokenFromStream_ConstCharOutput());
+    ASSERT_TRUE(myIOBufferTest.TestGetToken_ConstCharOutput());
 }
 
-TEST(IOBufferGTest, TestGetTokenFromStream_IOBufferOutput) {
+TEST(IOBufferGTest, TestGetToken_IOBufferOutput) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestGetTokenFromStream_IOBufferOutput());
+    ASSERT_TRUE(myIOBufferTest.TestGetToken_IOBufferOutput());
 }
 
-TEST(IOBufferGTest, TestSkipTokenInStream) {
+TEST(IOBufferGTest, TestSkipToken) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestSkipTokenInStream());
+    ASSERT_TRUE(myIOBufferTest.TestSkipToken());
 }
 
-TEST(IOBufferGTest, TestSkipTokenInStream_NULL_Terminator) {
+TEST(IOBufferGTest, TestSkipToken_NULL_Terminator) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestSkipTokenInStream_NULL_Terminator());
+    ASSERT_TRUE(myIOBufferTest.TestSkipToken_NULL_Terminator());
 }
 
 

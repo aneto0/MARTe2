@@ -33,7 +33,7 @@
 #ifndef FLOAT_TO_STREAM_TEST_H
 #define FLOAT_TO_STREAM_TEST_H
 
-#include "IOBufferFloatPrint.h"
+
 #include "FormatDescriptor.h"
 using namespace MARTe;
 

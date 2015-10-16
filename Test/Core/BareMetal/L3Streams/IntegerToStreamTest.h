@@ -33,7 +33,7 @@
 #ifndef INTEGER_TO_STREAM_TEST_H
 #define INTEGER_TO_STREAM_TEST_H
 
-#include "IOBufferIntegerPrint.h"
+
 #include "FormatDescriptor.h"
 #define MAX_DIMENSION 128 
 using namespace MARTe;

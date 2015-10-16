@@ -213,7 +213,8 @@ static bool PrintStream(IOBuffer & iobuff,
             //write the stream input on the stream buffer output
             char8 c;
             while (streamSizeL > 0u) {
-                if (!stream.GetC(c)) {
+                uint32 size = 1u;            
+                if (!stream.Read(&c, size)) {
                     ret = false;
                 }
                 if (!iobuff.PutC(c)) {
@@ -415,7 +416,7 @@ static bool PrintToStream(IOBuffer & iobuff,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool IOBuffer::GetTokenFromStream(char8 * const outputBuffer,
+bool IOBuffer::GetToken(char8 * const outputBuffer,
                                   const char8 * const terminator,
                                   uint32 outputBufferSize,
                                   char8 &saveTerminator,
@@ -487,7 +488,7 @@ bool IOBuffer::GetTokenFromStream(char8 * const outputBuffer,
     return ret;
 }
 
-bool IOBuffer::GetTokenFromStream(IOBuffer & outputBuffer,
+bool IOBuffer::GetToken(IOBuffer & outputBuffer,
                                   const char8 * const terminator,
                                   char8 &saveTerminator,
                                   const char8 * skipCharacters) {
@@ -542,7 +543,7 @@ bool IOBuffer::GetTokenFromStream(IOBuffer & outputBuffer,
     return ret;
 }
 
-bool IOBuffer::SkipTokensInStream(uint32 count,
+bool IOBuffer::SkipTokens(uint32 count,
                                   const char8 * const terminator) {
 
     bool ret = true;
@@ -572,7 +573,7 @@ bool IOBuffer::SkipTokensInStream(uint32 count,
     return ret;
 }
 
-bool IOBuffer::PrintFormattedToStream(const char8 * format,
+bool IOBuffer::PrintFormatted(const char8 * format,
                                       const AnyType pars[]) {
 
     bool ret = true;

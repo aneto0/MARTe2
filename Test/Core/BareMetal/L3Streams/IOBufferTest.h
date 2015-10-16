@@ -266,78 +266,78 @@ public:
     /**
      * @brief Tests the print of a integer with decimal notation.
      */
-    bool TestPrintFormattedToStream_Integer_Decimal();
+    bool TestPrintFormatted_Integer_Decimal();
 
     /**
      * @brief Tests the print of a integer with hexadecimal notation.
      */
-    bool TestPrintFormattedToStream_Integer_Hexadecimal();
+    bool TestPrintFormatted_Integer_Hexadecimal();
 
     /**
      * @brief Tests the print of a integer with octal notation.
      */
-    bool TestPrintFormattedToStream_Integer_Octal();
+    bool TestPrintFormatted_Integer_Octal();
 
     /**
      * @brief Tests the print of a integer with binary notation.
      */
-    bool TestPrintFormattedToStream_Integer_Binary();
+    bool TestPrintFormatted_Integer_Binary();
 
     /**
      * @brief Tests the print of a float with fixed point notation (precision=number of decimals)
      */
-    bool TestPrintFormattedToStream_Float_FixedPoint();
+    bool TestPrintFormatted_Float_FixedPoint();
 
     /**
      * @brief Tests the print of a float with fixed point relative notation (precision=number of significative digits)
      */
-    bool TestPrintFormattedToStream_Float_FixedRelativePoint();
+    bool TestPrintFormatted_Float_FixedRelativePoint();
 
     /**
      * @brief Tests the print of a float with exponential notation.
      */
-    bool TestPrintFormattedToStream_Float_Exponential();
+    bool TestPrintFormatted_Float_Exponential();
 
     /**
      * @brief Tests the print of a float with engeneering notation.
      */
-    bool TestPrintFormattedToStream_Float_Engeneering();
+    bool TestPrintFormatted_Float_Engeneering();
 
     /**
      * @brief Tests the print of a float with smart notation (symbols instead of exponent)
      */
-    bool TestPrintFormattedToStream_Float_Smart();
+    bool TestPrintFormatted_Float_Smart();
 
     /**
      * @brief Test the print of a float with compact notation (chooses the best notation to have the maximum
      * precision in the specified size).
      */
-    bool TestPrintFormattedToStream_Float_Compact();
+    bool TestPrintFormatted_Float_Compact();
 
     /**
      * @brief Tests the print of a C string.
      */
-    bool TestPrintFormattedToStream_CCString();
+    bool TestPrintFormatted_CCString();
 
     /**
      * @brief Tests the print of a pointer.
      */
-    bool TestPrintFormattedToStream_Pointer();
+    bool TestPrintFormatted_Pointer();
 
     /**
      * @brief Tests the print of a stream.
      */
-    bool TestPrintFormattedToStream_Stream();
+    bool TestPrintFormatted_Stream();
 
     /**
      * @brief Tests the print of a unsigned bit set.
      */
-    bool TestPrintFormattedToStream_BitSet_Unsigned();
+    bool TestPrintFormatted_BitSet_Unsigned();
 
     /**
      * @brief Tests the print of a signed bit set.
      */
-    bool TestPrintFormattedToStream_BitSet_Signed();
+    bool TestPrintFormatted_BitSet_Signed();
 
 
     /**
@@ -348,23 +348,23 @@ public:
     /**
      * @brief Tests if the function gets the correct token passing a C string buffer as output.
      */
-    bool TestGetTokenFromStream_ConstCharOutput();
+    bool TestGetToken_ConstCharOutput();
 
     /**
      * @brief Tests if the function gets the correct token passing another IOBuffer as output.
      */
-    bool TestGetTokenFromStream_IOBufferOutput();
+    bool TestGetToken_IOBufferOutput();
 
     /**
      * @brief Tests if the function skips correctly the tokens.
      */
-    bool TestSkipTokenInStream();
+    bool TestSkipToken();
 
     /**
      * @brief Tests if putting null as the terminator characters the function returns when
      * '\0' is found.
      */
-    bool TestSkipTokenInStream_NULL_Terminator();
+    bool TestSkipToken_NULL_Terminator();
 };
 
 /*---------------------------------------------------------------------------*/

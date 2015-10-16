@@ -28,12 +28,12 @@ OBJSX= AnyTypeTest.x \
        CharBufferTest.x \
        IOBufferTest.x \
        StreamStringIOBufferTest.x \
+       BufferedStreamTest.x \
        BufferedStreamIOBufferTest.x
 # IntegerToStreamTest.x \
 	FloatToStreamTest.x \
 	BitSetToIntegerTest.x \
 	DoubleIntegerTest.x \
-	BufferedStreamTest.x \
 	StreamStringTest.x \
 	StreamMemoryReferenceTest.x \
 	StreamableTest.x \
