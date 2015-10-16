@@ -72,7 +72,7 @@ bool BufferedStream::GetToken(BufferedStream & output,
 
 // retrieve stream mechanism
     IOBuffer *inputIOBuffer = GetInputBuffer();
-    IOBuffer *outputIOBuffer = output.GetOutputBuffer();
+    IOBuffer *outputIOBuffer = GetOutputBuffer();
 
     bool ret = false;
 
@@ -100,9 +100,9 @@ bool BufferedStream::GetLine(BufferedStream & output,
                              const bool skipTerminators) {
     const char8 *skipCharacters = "\r";
     if (!skipTerminators) {
-        /*lint -e{774} [MISRA C++ Rule 0-1-1], [MISRA C++ Rule 0-1-2], [MISRA C++ Rule 0-1-9]. Justification: It is a compile time platform constant. */
-        /*lint -e{948} [MISRA C++ Rule 0-1-9]. Justification: It is a compile time platform constant. */
-        /*lint -e{506} [MISRA C++ Rule 0-1-1]. Justification: It is a compile time platform constant. */
+        /*lint -e{774} [MISRA C++ Rule 0-1-1], [MISRA C++ Rule 0-1-2], [MISRA C++ Rule 0-1-9]. Justification: It is a compilation time platform constant. */
+        /*lint -e{948} [MISRA C++ Rule 0-1-9]. Justification: It is a compilation time platform constant. */
+        /*lint -e{506} [MISRA C++ Rule 0-1-1]. Justification: It is a compilation time platform constant. */
         if (N_CHARS_NEWLINE == 1u) {
             skipCharacters = "";
         }
@@ -115,9 +115,9 @@ bool BufferedStream::GetLine(char8 * const outputBuffer,
                              const bool skipTerminators) {
     const char8 *skipCharacters = "\r";
     if (!skipTerminators) {
-        /*lint -e{774} [MISRA C++ Rule 0-1-1], [MISRA C++ Rule 0-1-2], [MISRA C++ Rule 0-1-9]. Justification: It is a compile time platform constant. */
-        /*lint -e{948} [MISRA C++ Rule 0-1-9]. Justification: It is a compile time platform constant. */
-        /*lint -e{506} [MISRA C++ Rule 0-1-1]. Justification: It is a compile time platform constant. */
+        /*lint -e{774} [MISRA C++ Rule 0-1-1], [MISRA C++ Rule 0-1-2], [MISRA C++ Rule 0-1-9]. Justification: It is a compilation time platform constant. */
+        /*lint -e{948} [MISRA C++ Rule 0-1-9]. Justification: It is a compilation time platform constant. */
+        /*lint -e{506} [MISRA C++ Rule 0-1-1]. Justification: It is a compilation time platform constant. */
         if (N_CHARS_NEWLINE == 1u) {
             skipCharacters = "";
         }

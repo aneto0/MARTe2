@@ -291,3 +291,136 @@ public:
 
 };
 
+/**
+ * Each row defines a different GetToken test
+ */
+struct TokenTestTableRow {
+    /**
+     * Element to be tokenized
+     */
+    const char8 *toTokenize;
+    /**
+     * Terminator to be used
+     */
+    const char8 *terminators;
+    /**
+     * If not NULL contains the expected sequence of saved terminators
+     */
+    const char8 *saveTerminatorResult;
+    /**
+     * Characters to skip
+     */
+    const char8 *skipCharacters;
+
+    /**
+     * Array of strings with the expected result
+     */
+    const char8 * expectedResult[32];
+};
+
+/**
+ * Table focused on testing the correct function of the terminators
+ */
+const TokenTestTableRow TokenTestTableTerminators[] = {
+        {"This.is.a.test",     "",   NULL,      NULL, {"This.is.a.test"}},
+        {"This.is.a.test",     "",   "",        NULL, {"This.is.a.test"}},
+        {"This.is.a.test",     ".",  NULL,      NULL, {"This", "is", "a", "test"}},
+        {"This.is.a.test",     ".",  "...",     NULL, {"This", "is", "a", "test"}},
+        {".This.is.a.test",    ".",  NULL,      NULL, {"This", "is", "a", "test"}},
+        {".This.is.a.test",    ".",  "....",    NULL, {"This", "is", "a", "test"}},
+        {".This.is.a.test.",   ".",  NULL,      NULL, {"This", "is", "a", "test"}},
+        {".This.is.a.test.",   ".",  ".....",   NULL, {"This", "is", "a", "test"}},
+        {".This...is.a.test.", ".",  NULL,      NULL, {"This", "is", "a", "test"}},
+        {".This...is.a.test.", ".",  ".......", NULL, {"This", "is", "a", "test"}},
+        {"This.is:a.test",     ".:", NULL,      NULL, {"This", "is", "a", "test"}},
+        {"This.is:a.test",     ".:", ".:.",     NULL, {"This", "is", "a", "test"}},
+        {"This.is.a.test:",    ".:", NULL,      NULL, {"This", "is", "a", "test"}},
+        {"This.is.a.test:",    ".:", "...:",    NULL, {"This", "is", "a", "test"}},
+        {NULL}
+};
+
+/**
+ * Table focused on testing the correct function of the skip characters
+ */
+const TokenTestTableRow TokenTestTableSkipCharacters[] = {
+        {"This.is.a.test",     "",   NULL,      "",     {"This.is.a.test"}},
+        {"This.is.a.test",     "",   "",        "",     {"This.is.a.test"}},
+        {"This.is.a.test",     ".",  NULL,      "",     {"This", "is", "a", "test"}},
+        {"This.is.a.test",     ".",  "...",     "",     {"This", "is", "a", "test"}},
+        {".This.is.a.test",    ".",  NULL,      "",     {"", "This", "is", "a", "test"}},
+        {".This.is.a.test",    ".",  "....",    "",     {"", "This", "is", "a", "test"}},
+        {".This.is.a.test.",   ".",  NULL,      "",     {"", "This", "is", "a", "test", ""}},
+        {".This.is.a.test.",   ".",  ".....",   "",     {"", "This", "is", "a", "test", ""}},
+        {".This...is.a.test.", ".",  NULL,      "",     {"", "This", "", "", "is", "a", "test", ""}},
+        {".This...is.a.test.", ".",  ".......", "",     {"", "This", "", "", "is", "a", "test", ""}},
+        {"This.is:a.test",     ".:", NULL,      "",     {"This", "is", "a", "test"}},
+        {"This.is:a.test",     ".:", ".:.",     "",     {"This", "is", "a", "test"}},
+        {"This.is.a.test:",    ".:", NULL,      "",     {"This", "is", "a", "test", ""}},
+        {"This.is.a.test:",    ".:", "...:",    "",     {"This", "is", "a", "test", ""}},
+        {"This.is.a.test",     "",   NULL,      "",     {"This.is.a.test"}},
+        {"This.is.a.test",     "",   "",        ".",    {"Thisisatest"}},
+        {"This.is.a.test",     ".",  NULL,      ".",    {"This", "is", "a", "test"}},
+        {"This.is.a.test",     ".",  "...",     ".",    {"This", "is", "a", "test"}},
+        {".This.is.a.test",    ".",  NULL,      ".",    {"This", "is", "a", "test"}},
+        {".This.is.a.test",    ".",  "....",    ".",    {"This", "is", "a", "test"}},
+        {".This.is.a.test.",   ".",  NULL,      ".",    {"This", "is", "a", "test"}},
+        {".This.is.a.test.",   ".",  ".....",   ".",    {"This", "is", "a", "test"}},
+        {".This...is.a.test.", ".",  NULL,      ".",    {"This", "is", "a", "test"}},
+        {".This...is.a.test.", ".",  ".......", ".",    {"This", "is", "a", "test"}},
+        {"This.is:a.test",     ".:", NULL,      ".",    {"This", "is", "a", "test"}},
+        {"This.is:a.test",     ".:", ".:.",     ".",    {"This", "is", "a", "test"}},
+        {"This.is.a.test:",    ".:", NULL,      ".",    {"This", "is", "a", "test", ""}},
+        {"This.is.a.test:",    ".:", "...:",    ".",    {"This", "is", "a", "test", ""}},
+        {"This.is.a.test:",    ".:", NULL,      ".:",   {"This", "is", "a", "test"}},
+        {"This.is.a.test:",    ".:", "...:",    ":.",   {"This", "is", "a", "test"}},
+        {"This.is.a.test:",    ".:", NULL,      ".:",   {"This", "is", "a", "test"}},
+        {"This.is.a.test:",    ".:", NULL,     ":.a",   {"This", "is", "test"}},
+        {"This.is.a.test:",    ".:", "..:",    ":.a",   {"This", "is", "test"}},
+        {"This.is.a.test:",    ".:", NULL,     ":i.a",  {"Ths", "s", "test"}},
+        {"This.is.a.test:",    ".:", "..:",    ":i.a",  {"Ths", "s", "test"}},
+        {"This.is.a.test:",    ".:", NULL,    ":.ahis", {"T", "tet"}},
+        {"This.is.a.test:",    ".:", ".:",    ":.hisa", {"T", "tet"}},
+        {NULL}
+};
+
+
+/**
+ * Each row defines a different SkipTokens test
+ */
+struct SkipTokensTestTableRow {
+    /**
+     * Element to be tokenized
+     */
+    const char8 *toTokenize;
+    /**
+     * Terminator to be used
+     */
+    const char8 *terminators;
+    /**
+     * Number of tokens to skip
+     */
+    uint32 nOfSkipTokens;
+    /**
+     * Array of strings with the expected result
+     */
+    const char8 * expectedResult[32];
+};
+
+/**
+ * Table focused on testing the correct function of the terminators
+ */
+const SkipTokensTestTableRow SkipTokensTestTable[] = {
+        {"This.is.a.test",     "",   0,   {"This.is.a.test", NULL}},
+        {"This.is.a.test",     "",   1,   {NULL}},
+        {"This.is.a.test",     ".",  0,   {"This", "is", "a", "test", NULL}},
+        {"This.is.a.test",     ".",  1,   {"is", "a", "test", NULL}},
+        {"This.is.a.test",     ".",  2,   {"a", "test", NULL}},
+        {"This.is.a.test",     ".",  3,   {"test", NULL}},
+        {"This.is.a.test",     ".",  4,   {NULL}},
+        {"...This.is.a.test",  ".",  2,   {"a", "test", NULL}},
+        {"This..:..is.a.test", ".",  2,   {"is", "a", "test", NULL}},
+        {"This..:..is.a.test", ".:", 2,   {"a", "test", NULL}},
+        {"This.:.:.is.a.test", ".:", 2,   {"a", "test", NULL}},
+
+        {NULL}
+};

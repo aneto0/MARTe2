@@ -29,7 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "BufferedStreamTest.h"
-#include "StreamTestHelper.h"
 
 using namespace MARTe;
 /*---------------------------------------------------------------------------*/
@@ -53,7 +52,6 @@ bool BufferedStreamTest::TestAnyType() {
     return ok;
 }
 
-
 bool BufferedStreamTest::TestGetTimeout() const {
     TimeoutType tt = 1;
     DummySingleBufferedStream myStream;
@@ -67,3 +65,121 @@ bool BufferedStreamTest::TestSetTimeout() {
     myStream.SetTimeout(tt);
     return (myStream.GetTimeout() == tt);
 }
+
+bool BufferedStreamTest::TestGetToken(uint32 bufferSize,
+                                      const TokenTestTableRow *table) {
+    DummySingleBufferedStream myStream;
+    myStream.SetBufferSize(bufferSize);
+
+    uint32 i = 0u;
+    const TokenTestTableRow *row = &table[i];
+    bool result = true;
+
+    while (result && (row->toTokenize != NULL)) {
+        myStream.Clear();
+        StringHelper::Copy(myStream.buffer, row->toTokenize);
+        const uint32 bufferSize = 32;
+        char buffer[bufferSize];
+        char saveTerminator;
+        uint32 t = 0u;
+
+        if (row->saveTerminatorResult == NULL) {
+            while (myStream.GetToken(buffer, row->terminators, bufferSize, NULL, row->skipCharacters)) {
+                if (StringHelper::Compare(buffer, row->expectedResult[t++]) != 0) {
+                    result = false;
+                }
+            }
+        }
+        else {
+            while (myStream.GetToken(buffer, row->terminators, bufferSize, &saveTerminator, row->skipCharacters)) {
+                if (StringHelper::Compare(buffer, row->expectedResult[t]) != 0) {
+                    result = false;
+                }
+                if (row->saveTerminatorResult[t] != saveTerminator) {
+                    //When it gets to the end of the string the terminator is \0
+                    if (saveTerminator != '\0') {
+                        result = false;
+                    }
+                }
+                t++;
+            }
+        }
+
+        row = &table[++i];
+
+    }
+    return result;
+}
+
+bool BufferedStreamTest::TestSkipTokens(uint32 bufferSize,
+                                        const SkipTokensTestTableRow *table) {
+    DummySingleBufferedStream myStream;
+    myStream.SetBufferSize(bufferSize);
+
+    uint32 i = 0u;
+    const SkipTokensTestTableRow *row = &table[i];
+    bool result = true;
+
+    while (result && (row->toTokenize != NULL)) {
+        myStream.Clear();
+        StringHelper::Copy(myStream.buffer, row->toTokenize);
+        myStream.SkipTokens(row->nOfSkipTokens, row->terminators);
+
+        const uint32 bufferSize = 32;
+        char buffer[bufferSize];
+        uint32 t = 0u;
+        while (row->expectedResult[t] != NULL) {
+            myStream.GetToken(buffer, row->terminators, bufferSize, NULL, NULL);
+            if (StringHelper::Compare(buffer, row->expectedResult[t]) != 0) {
+                result = false;
+            }
+            t++;
+        }
+        row = &table[++i];
+
+    }
+    return result;
+}
+
+bool BufferedStreamTest::TestGetLine(uint32 bufferSize,
+                                     bool skipCharacter) {
+    DummySingleBufferedStream myStream;
+    myStream.SetBufferSize(bufferSize);
+    bool result = true;
+    const char8 *lines[] = {
+            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+            " Aenean commodo ligula eget dolor.",
+            "Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+            "Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.", };
+    char8 line[512];
+    line[0] = '\0';
+
+    StringHelper::Concatenate(line, lines[0]);
+    if (skipCharacter) {
+        StringHelper::Concatenate(line, "\r");
+    }
+    StringHelper::Concatenate(line, "\n");
+    StringHelper::Concatenate(line, lines[1]);
+    if (skipCharacter) {
+        StringHelper::Concatenate(line, "\r");
+    }
+    StringHelper::Concatenate(line, "\n");
+    StringHelper::Concatenate(line, lines[2]);
+    if (skipCharacter) {
+        StringHelper::Concatenate(line, "\r");
+    }
+    StringHelper::Concatenate(line, "\n");
+    StringHelper::Concatenate(line, lines[3]);
+
+    StringHelper::Copy(myStream.buffer, line);
+
+    bufferSize = 128;
+    char8 buffer[bufferSize];
+    uint32 i;
+    for (i = 0; i < 4; i++) {
+        myStream.GetLine(buffer, bufferSize, skipCharacter);
+        result &= (StringHelper::Compare(buffer, lines[i]) == 0);
+    }
+    return result;
+}
+

@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "TimeoutType.h"
+#include "StreamTestHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -52,25 +53,19 @@ public:
     bool TestAnyType();
 
     /**
-     * @brief Tests the GetToken function.
+     * @brief Tests the GetToken function. The possible tables to be used are defined in StreamTestHelper.
      */
-    bool TestGetToken() {
-        return true;
-    }
+    bool TestGetToken(uint32 bufferSize, const TokenTestTableRow *table);
 
     /**
-     * @brief Tests the SkipTokens function.
+     * @brief Tests the SkipTokens function. The possible tables to be used are defined in StreamTestHelper.
      */
-    bool TestSkipTokens() {
-        return true;
-    }
+    bool TestSkipTokens(uint32 bufferSize, const SkipTokensTestTableRow *table);
 
     /**
      * @brief Tests the GetLine function.
      */
-    bool TestGetLine() {
-        return true;
-    }
+    bool TestGetLine(uint32 bufferSize, bool skipCharacter);
 
     /**
      * @brief Tests the PrintfFormatted function.
