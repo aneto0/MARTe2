@@ -38,9 +38,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-
 using namespace MARTe;
-
 
 /** @brief Class for testing of StreamString functions. */
 class StreamStringTest {
@@ -50,32 +48,32 @@ private:
 public:
 
     /**
-     * @brief Tests the streamString GetC function.
-     * @param inputString is the string.
-     * @return true if the read string is equal to the parameter.
-     *
-     * The inputString is copied on the streamString and then read using GetC.*/
-    bool TestGetC(const char* inputString);
-
-    /**
-     * @brief Test the streamString PutC function.
-     * @param inputString is the string to put on the streamString.
-     * @return true if on the stream is copied the parameter.
-     *
-     * The inputString is written on the stream using the PutC function. */
-    bool TestPutC(const char* inputString);
-
-    /**
      * @brief Tests the streamString read function.
      * @param inputString is the string on the streamString.
      * @return true if the read string is equal to inputString using Read function. */
-    bool TestRead(const char* inputString);
+    bool TestRead(const char8* inputString,
+                  uint32 sizeToRead);
 
     /**
      * @brief Tests the streamString write function.
      * @param inputString is the string to write on the streamString.
      * @return true if the string written on the streamString using Write function is equal to inputString.*/
-    bool TestWrite(const char* inputString);
+    bool TestWrite(const char* inputString,
+                   uint32 sizeToWrite);
+
+    bool TestUnbufferedWrite();
+
+    bool TestUnbufferedRead();
+
+    uint64 TestUnbufferedSize();
+
+    bool TestUnbufferedSeek();
+
+    bool TestUnbufferedRelativeSeek();
+
+    uint64 TestUnbufferedPosition();
+
+    bool TestUnbufferedSetSize();
 
     /**
      * @brief Tests the streamString Seek and RelativeSeek.
@@ -84,7 +82,9 @@ public:
      * @return true if the seek operations returns the correct result.
      *
      * Test the seek functions in different conditions, for example using a positions which falls out of bounds. */
-    bool TestSeek(const char* inputString);
+    bool TestSeek(uint32 usedSize,
+                  uint32 seek,
+                  bool expected);
 
     /**
      * @brief Tests the streamString operators.
@@ -93,7 +93,8 @@ public:
      * @return true if tests goes fine.
      *
      * Using the string parameters the streamString operators are tested. */
-    bool TestOperators(const char* firstString, const char* secondString);
+    bool TestOperators(const char* firstString,
+                       const char* secondString);
 
     /**
      * @brief Tests the printf functions.
@@ -110,8 +111,6 @@ public:
     bool TestToken();
 
 };
-
-#endif
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

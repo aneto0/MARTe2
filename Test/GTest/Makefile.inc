@@ -27,7 +27,8 @@ OBJSX=	CharBufferGTest.x \
         IOBufferGTest.x \
         StreamStringIOBufferGTest.x \
         BufferedStreamGTest.x \
-        BufferedStreamIOBufferGTest.x
+        BufferedStreamIOBufferGTest.x \
+        StreamStringGTest.x
 #       TypeCharacteristicsGTest.x \
         BasicTypeGTest.x \
         BasicConsoleGTest.x \

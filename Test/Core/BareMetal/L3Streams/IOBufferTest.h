@@ -32,6 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "IOBuffer.h"
+#include "StreamTestHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -330,6 +332,16 @@ public:
     bool TestPrintFormatted_Stream();
 
     /**
+     * Tests the limit of 10000 characters for a print of a stream.
+     */
+    bool TestPrintFormatted_TooBigStream();
+
+    /**
+     * Tests if it is printed an erro message in case of not seekable stream.
+     */
+    bool TestPrintFormatted_Stream_NotSeekable();
+
+    /**
      * @brief Tests the print of a unsigned bit set.
      */
     bool TestPrintFormatted_BitSet_Unsigned();
@@ -348,23 +360,25 @@ public:
     /**
      * @brief Tests if the function gets the correct token passing a C string buffer as output.
      */
-    bool TestGetToken_ConstCharOutput();
+    bool TestGetToken_ConstCharOutput(const TokenTestTableRow *table);
+
+
+    /**
+     * @brief Tests if the token is clipped when the output buffer is too short.
+     */
+    bool GetToken_ConstCharOutput_ClipSize();
 
     /**
      * @brief Tests if the function gets the correct token passing another IOBuffer as output.
      */
-    bool TestGetToken_IOBufferOutput();
+    bool TestGetToken_IOBufferOutput(const TokenTestTableRow *table);
 
     /**
      * @brief Tests if the function skips correctly the tokens.
      */
-    bool TestSkipToken();
+    bool TestSkipToken(const SkipTokensTestTableRow *table);
 
-    /**
-     * @brief Tests if putting null as the terminator characters the function returns when
-     * '\0' is found.
-     */
-    bool TestSkipToken_NULL_Terminator();
+
 };
 
 /*---------------------------------------------------------------------------*/

@@ -454,6 +454,17 @@ TEST(IOBufferGTest, TestPrintFormatted_Stream) {
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Stream());
 }
 
+TEST(IOBufferGTest, TestPrintFormatted_TooBigStream) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_TooBigStream());
+}
+
+TEST(IOBufferGTest, TestPrintFormatted_Stream_NotSeekable) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_Stream_NotSeekable());
+}
+
+
 TEST(IOBufferGTest, TestPrintFormatted_BitSet_Unsigned) {
     IOBufferTest myIOBufferTest;
     ASSERT_TRUE(myIOBufferTest.TestPrintFormatted_BitSet_Unsigned());
@@ -469,25 +480,38 @@ TEST(IOBufferGTest, TestPrintFormattedMultiple) {
     ASSERT_TRUE(myIOBufferTest.TestPrintFormattedMultiple());
 }
 
-TEST(IOBufferGTest, TestGetToken_ConstCharOutput) {
+TEST(IOBufferGTest, TestGetToken_ConstCharOutput_TableTerminators) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestGetToken_ConstCharOutput());
+    ASSERT_TRUE(myIOBufferTest.TestGetToken_ConstCharOutput(&TokenTestTableTerminators[0]));
 }
 
-TEST(IOBufferGTest, TestGetToken_IOBufferOutput) {
+TEST(IOBufferGTest, TestGetToken_ConstCharOutput_TableSkip) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestGetToken_IOBufferOutput());
+    ASSERT_TRUE(myIOBufferTest.TestGetToken_ConstCharOutput(&TokenTestTableSkipCharacters[0]));
+}
+
+
+TEST(IOBufferGTest, GetToken_ConstCharOutput_ClipSize) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.GetToken_ConstCharOutput_ClipSize());
+}
+
+TEST(IOBufferGTest, TestGetToken_IOBufferOutput_TableTerminators) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestGetToken_IOBufferOutput(&TokenTestTableTerminators[0]));
+}
+
+TEST(IOBufferGTest, TestGetToken_IOBufferOutput_TableSkip) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestGetToken_IOBufferOutput(&TokenTestTableSkipCharacters[0]));
 }
 
 TEST(IOBufferGTest, TestSkipToken) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestSkipToken());
+    ASSERT_TRUE(myIOBufferTest.TestSkipToken(&SkipTokensTestTable[0]));
 }
 
-TEST(IOBufferGTest, TestSkipToken_NULL_Terminator) {
-    IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestSkipToken_NULL_Terminator());
-}
+
 
 
 

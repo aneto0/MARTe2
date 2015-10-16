@@ -31,7 +31,6 @@
 
 #include "IOBufferTest.h"
 #include "StringHelper.h"
-#include "StreamTestHelper.h"
 #include "printf.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -1246,14 +1245,8 @@ void Clear(IOBuffer &ioBuffer) {
     ioBuffer.Seek(0);
 }
 
-bool IOBufferTest::TestPrintFormatted_Integer_Decimal() {
-
-    IOBuffer ioBuffer;
-
-    uint32 allocationGranularity = 64;
-
-    ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
-
+static bool TestTheTable(const PrintfNode testTable[],
+                  IOBuffer &ioBuffer) {
     uint32 i = 0;
     while (StringHelper::Compare(printfDecTable[i].format, "") != 0) {
         Clear(ioBuffer);
@@ -1267,8 +1260,19 @@ bool IOBufferTest::TestPrintFormatted_Integer_Decimal() {
         }
         i++;
     }
-
     return true;
+}
+
+bool IOBufferTest::TestPrintFormatted_Integer_Decimal() {
+
+    IOBuffer ioBuffer;
+
+    uint32 allocationGranularity = 64;
+
+    ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
+
+    return TestTheTable(printfDecTable, ioBuffer);
+
 }
 
 bool IOBufferTest::TestPrintFormatted_Integer_Hexadecimal() {
@@ -1279,20 +1283,8 @@ bool IOBufferTest::TestPrintFormatted_Integer_Hexadecimal() {
 
     ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
 
-    uint32 i = 0;
-    while (StringHelper::Compare(printfHexTable[i].format, "") != 0) {
-        Clear(ioBuffer);
+    return TestTheTable(printfHexTable, ioBuffer);
 
-        ioBuffer.PrintFormatted(printfHexTable[i].format, printfHexTable[i].inputs);
-        if (StringHelper::Compare(printfHexTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfHexTable[i].expectedResult, i);
-
-            return false;
-        }
-        i++;
-    }
-
-    return true;
 }
 
 bool IOBufferTest::TestPrintFormatted_Integer_Octal() {
@@ -1303,19 +1295,8 @@ bool IOBufferTest::TestPrintFormatted_Integer_Octal() {
 
     ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
 
-    uint32 i = 0;
-    while (StringHelper::Compare(printfOctTable[i].format, "") != 0) {
-        Clear(ioBuffer);
+    return TestTheTable(printfOctTable, ioBuffer);
 
-        ioBuffer.PrintFormatted(printfOctTable[i].format, printfOctTable[i].inputs);
-        if (StringHelper::Compare(printfOctTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfOctTable[i].expectedResult, i);
-
-            return false;
-        }
-        i++;
-    }
-    return true;
 
 }
 
@@ -1327,19 +1308,8 @@ bool IOBufferTest::TestPrintFormatted_Integer_Binary() {
 
     ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
 
-    uint32 i = 0;
-    while (StringHelper::Compare(printfBinTable[i].format, "") != 0) {
-        Clear(ioBuffer);
+    return TestTheTable(printfBinTable, ioBuffer);
 
-        ioBuffer.PrintFormatted(printfBinTable[i].format, printfBinTable[i].inputs);
-        if (StringHelper::Compare(printfBinTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfBinTable[i].expectedResult, i);
-
-            return false;
-        }
-        i++;
-    }
-    return true;
 }
 
 bool IOBufferTest::TestPrintFormatted_Float_FixedPoint() {
@@ -1350,18 +1320,8 @@ bool IOBufferTest::TestPrintFormatted_Float_FixedPoint() {
 
     ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
 
-    uint32 i = 0;
-    while (StringHelper::Compare(printfFloatFPTable[i].format, "") != 0) {
-        Clear(ioBuffer);
-        ioBuffer.PrintFormatted(printfFloatFPTable[i].format, printfFloatFPTable[i].inputs);
-        if (StringHelper::Compare(printfFloatFPTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfFloatFPTable[i].expectedResult, i);
-            return false;
-        }
-        i++;
-    }
+    return TestTheTable(printfFloatFPTable, ioBuffer);
 
-    return true;
 }
 
 bool IOBufferTest::TestPrintFormatted_Float_FixedRelativePoint() {
@@ -1371,18 +1331,8 @@ bool IOBufferTest::TestPrintFormatted_Float_FixedRelativePoint() {
 
     ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
 
-    uint32 i = 0;
-    while (StringHelper::Compare(printfFloatFPRTable[i].format, "") != 0) {
-        Clear(ioBuffer);
-        ioBuffer.PrintFormatted(printfFloatFPRTable[i].format, printfFloatFPRTable[i].inputs);
-        if (StringHelper::Compare(printfFloatFPRTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfFloatFPRTable[i].expectedResult, i);
-            return false;
-        }
-        i++;
-    }
+    return TestTheTable(printfFloatFPRTable, ioBuffer);
 
-    return true;
 }
 
 bool IOBufferTest::TestPrintFormatted_Float_Exponential() {
@@ -1392,18 +1342,8 @@ bool IOBufferTest::TestPrintFormatted_Float_Exponential() {
 
     ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
 
-    uint32 i = 0;
-    while (StringHelper::Compare(printfFloatExpTable[i].format, "") != 0) {
-        Clear(ioBuffer);
-        ioBuffer.PrintFormatted(printfFloatExpTable[i].format, printfFloatExpTable[i].inputs);
-        if (StringHelper::Compare(printfFloatExpTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfFloatExpTable[i].expectedResult, i);
-            return false;
-        }
-        i++;
-    }
+    return TestTheTable(printfFloatExpTable, ioBuffer);
 
-    return true;
 }
 
 bool IOBufferTest::TestPrintFormatted_Float_Engeneering() {
@@ -1413,18 +1353,7 @@ bool IOBufferTest::TestPrintFormatted_Float_Engeneering() {
 
     ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
 
-    uint32 i = 0;
-    while (StringHelper::Compare(printfFloatEngTable[i].format, "") != 0) {
-        Clear(ioBuffer);
-        ioBuffer.PrintFormatted(printfFloatEngTable[i].format, printfFloatEngTable[i].inputs);
-        if (StringHelper::Compare(printfFloatEngTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfFloatEngTable[i].expectedResult, i);
-            return false;
-        }
-        i++;
-    }
-
-    return true;
+    return TestTheTable(printfFloatEngTable, ioBuffer);
 }
 
 bool IOBufferTest::TestPrintFormatted_Float_Smart() {
@@ -1435,20 +1364,7 @@ bool IOBufferTest::TestPrintFormatted_Float_Smart() {
 
     ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
 
-    uint32 i = 0;
-    while (StringHelper::Compare(printfFloatSmartTable[i].format, "") != 0) {
-        Clear(ioBuffer);
-
-        ioBuffer.PrintFormatted(printfFloatSmartTable[i].format, printfFloatSmartTable[i].inputs);
-        if (StringHelper::Compare(printfFloatSmartTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfFloatSmartTable[i].expectedResult, i);
-
-            return false;
-        }
-        i++;
-    }
-
-    return true;
+    return TestTheTable(printfFloatSmartTable, ioBuffer);
 
 }
 
@@ -1459,20 +1375,7 @@ bool IOBufferTest::TestPrintFormatted_Float_Compact() {
 
     ioBuffer.SetBufferHeapMemory(allocationGranularity, 0);
 
-    uint32 i = 0;
-    while (StringHelper::Compare(printfFloatCompactTable[i].format, "") != 0) {
-        Clear(ioBuffer);
-
-        ioBuffer.PrintFormatted(printfFloatCompactTable[i].format, printfFloatCompactTable[i].inputs);
-        if (StringHelper::Compare(printfFloatCompactTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfFloatCompactTable[i].expectedResult, i);
-
-            return false;
-        }
-        i++;
-    }
-
-    return true;
+    return TestTheTable(printfFloatCompactTable, ioBuffer);
 }
 
 bool IOBufferTest::TestPrintFormatted_CCString() {
@@ -1485,14 +1388,14 @@ bool IOBufferTest::TestPrintFormatted_CCString() {
     while (printfCStringTable[i][0] != NULL) {
         Clear(ioBuffer);
         AnyType toPrint = printfCStringTable[i][1];
-        if(ioBuffer.PrintFormatted(printfCStringTable[i][0], &toPrint)){
-        if (StringHelper::Compare(ioBuffer.Buffer(), printfCStringTable[i][2]) != 0) {
-            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfCStringTable[i][2], i);
-            return false;
+        if (ioBuffer.PrintFormatted(printfCStringTable[i][0], &toPrint)) {
+            if (StringHelper::Compare(ioBuffer.Buffer(), printfCStringTable[i][2]) != 0) {
+                printf("\n%s %s %d\n", ioBuffer.Buffer(), printfCStringTable[i][2], i);
+                return false;
+            }
         }
-        }
-        else{
-            return printfCStringTable[i][1]==NULL;
+        else {
+            return printfCStringTable[i][1] == NULL;
         }
         i++;
     }
@@ -1573,6 +1476,44 @@ bool IOBufferTest::TestPrintFormatted_Stream() {
 
     return true;
 
+}
+
+bool IOBufferTest::TestPrintFormatted_TooBigStream() {
+
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 64;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    Clear(ioBuffer);
+
+    DummySingleBufferedStream stream;
+    stream.SetBufferSize(32);
+
+    stream.SetFakeSize(10001);
+
+    AnyType toPrint = stream;
+    printf("\n%d\n", stream.Size());
+    ioBuffer.PrintFormatted("%s", &toPrint);
+
+    return StringHelper::Compare(ioBuffer.Buffer(), "!! too big > 10000 characters!!") == 0;
+}
+
+bool IOBufferTest::TestPrintFormatted_Stream_NotSeekable() {
+
+    IOBuffer ioBuffer;
+    uint32 allocationSize = 64;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    Clear(ioBuffer);
+
+    DummySingleBufferedStream stream(false);
+    stream.SetBufferSize(32);
+
+    AnyType toPrint = stream;
+    ioBuffer.PrintFormatted("%s", &toPrint);
+    printf("\n%s\n", ioBuffer.Buffer());
+
+    return StringHelper::Compare(ioBuffer.Buffer(), "!!stream !seek!!") == 0;
 }
 
 bool IOBufferTest::TestPrintFormatted_BitSet_Unsigned() {
@@ -1710,7 +1651,8 @@ bool IOBufferTest::TestPrintFormattedMultiple() {
     return true;
 }
 
-bool IOBufferTest::TestGetToken_ConstCharOutput() {
+bool IOBufferTest::TestGetToken_ConstCharOutput(const TokenTestTableRow *table) {
+
     IOBuffer ioBuffer;
 
     uint32 allocationSize = 64;
@@ -1718,76 +1660,61 @@ bool IOBufferTest::TestGetToken_ConstCharOutput() {
 
     Clear(ioBuffer);
 
-    const char8 * toWrite = "HelloWorld::This...:.Is:.ATest";
-    uint32 writeSize = StringHelper::Length(toWrite) + 1;
+    uint32 i = 0u;
+    const TokenTestTableRow *row = &table[i];
+    bool result = true;
 
-    ioBuffer.Write(toWrite, writeSize);
-    ioBuffer.Seek(0);
+    while (result && (row->toTokenize != NULL)) {
+        Clear(ioBuffer);
+        uint32 inputSize = StringHelper::Length(row->toTokenize) + 1;
+        ioBuffer.Write(row->toTokenize, inputSize);
+        ioBuffer.Seek(0);
+        const uint32 bufferSize = 32;
+        char buffer[bufferSize];
+        char saveTerminator;
+        uint32 t = 0u;
 
-    const uint32 outSize = 32;
-    char8 outBuffer[outSize];
+        while (ioBuffer.GetToken(buffer, row->terminators, bufferSize, saveTerminator, row->skipCharacters)) {
+            if (StringHelper::Compare(buffer, row->expectedResult[t]) != 0) {
+                result = false;
+            }
+            if (row->saveTerminatorResult[t] != saveTerminator) {
+                //When it gets to the end of the string the terminator is \0
+                if (saveTerminator != '\0') {
+                    result = false;
+                }
+            }
+            t++;
+        }
 
-    char8 terminator;
-    ioBuffer.GetToken(outBuffer, ":.", outSize, terminator, "");
+        row = &table[++i];
 
-    printf("\n%s\n", outBuffer);
-    if (StringHelper::Compare(outBuffer, "HelloWorld") != 0) {
-        return false;
     }
-    if (terminator != ':') {
-        return false;
-    }
-
-    //if the skipchars is null consecutive terminators are skipped
-    ioBuffer.GetToken(outBuffer, ":.", outSize, terminator, NULL);
-
-    printf("\n%s\n", outBuffer);
-    if (StringHelper::Compare(outBuffer, "This") != 0) {
-        return false;
-    }
-    if (terminator != '.') {
-        return false;
-    }
-
-    uint32 positionTest = ioBuffer.Position() + 3;
-    //if the skip chars is empty, none will be skipped
-    ioBuffer.GetToken(outBuffer, ":.", outSize, terminator, ".");
-
-    printf("\n%s\n", outBuffer);
-    if ((StringHelper::Compare(outBuffer, "") != 0) || (ioBuffer.Position() != positionTest)) {
-        return false;
-    }
-    if (terminator != ':') {
-        return false;
-    }
-    //skip only the dot
-    ioBuffer.GetToken(outBuffer, ":.", outSize, terminator, "");
-
-    printf("\n%s\n", outBuffer);
-    if (StringHelper::Compare(outBuffer, "") != 0) {
-        return false;
-    }
-    if (terminator != '.') {
-        return false;
-    }
-    //if the skip a token putting it in the skip chars list
-    ioBuffer.GetToken(outBuffer, ":.", outSize, terminator, "Is.:");
-
-    printf("\n%s\n", outBuffer);
-    if (StringHelper::Compare(outBuffer, "ATet") != 0) {
-        return false;
-    }
-    if (terminator != '\0') {
-        return false;
-    }
-
-    ioBuffer.Seek(0);
-    ioBuffer.GetToken(outBuffer, "()", outSize, terminator, NULL);
-    return StringHelper::Compare(outBuffer, toWrite) == 0;
+    return result;
 
 }
 
-bool IOBufferTest::TestGetToken_IOBufferOutput() {
+bool IOBufferTest::GetToken_ConstCharOutput_ClipSize() {
+
+    IOBuffer ioBuffer;
+
+    uint32 allocationSize = 64;
+    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
+
+    Clear(ioBuffer);
+    const char8 * input = "HelloWorl.d";
+    uint32 inputSize = StringHelper::Length(input) + 1;
+    ioBuffer.Write(input, inputSize);
+    ioBuffer.Seek(0);
+
+    const uint32 outSize = 8;
+    char8 outBuffer[outSize];
+    char8 saveTerminator;
+    ioBuffer.GetToken(outBuffer, ".", outSize, saveTerminator, "");
+    return StringHelper::Compare(outBuffer, "HelloWo") == 0;
+}
+
+bool IOBufferTest::TestGetToken_IOBufferOutput(const TokenTestTableRow *table) {
     IOBuffer ioBuffer;
 
     uint32 allocationSize = 64;
@@ -1795,147 +1722,81 @@ bool IOBufferTest::TestGetToken_IOBufferOutput() {
 
     Clear(ioBuffer);
 
-    const char8 * toWrite = "HelloWorld::This...:.Is:.ATest";
-    uint32 writeSize = StringHelper::Length(toWrite) + 1;
-
-    ioBuffer.Write(toWrite, writeSize);
-    ioBuffer.Seek(0);
-
-    const uint32 outSize = 32;
     IOBuffer outBuffer;
     outBuffer.SetBufferHeapMemory(allocationSize, 0);
     Clear(outBuffer);
 
-    char8 terminator;
-    ioBuffer.GetToken(outBuffer, ":.", terminator, "");
+    uint32 i = 0u;
+    const TokenTestTableRow *row = &table[i];
+    bool result = true;
 
-    if (StringHelper::Compare(outBuffer.Buffer(), "HelloWorld") != 0) {
-        return false;
+    while (result && (row->toTokenize != NULL)) {
+        Clear(ioBuffer);
+        uint32 inputSize = StringHelper::Length(row->toTokenize) + 1;
+        ioBuffer.Write(row->toTokenize, inputSize);
+        ioBuffer.Seek(0);
+
+        char saveTerminator;
+        uint32 t = 0u;
+
+        while (ioBuffer.GetToken(outBuffer, row->terminators, saveTerminator, row->skipCharacters)) {
+
+            if (StringHelper::Compare(outBuffer.Buffer(), row->expectedResult[t]) != 0) {
+                printf("\n%s %s %d\n", outBuffer.Buffer(), row->expectedResult[t], t);
+                result = false;
+            }
+            if (row->saveTerminatorResult[t] != saveTerminator) {
+                //When it gets to the end of the string the terminator is \0
+                if (saveTerminator != '\0') {
+                    result = false;
+                }
+            }
+            Clear(outBuffer);
+
+            t++;
+        }
+
+        row = &table[++i];
+
     }
-    if (terminator != ':') {
-        return false;
-    }
-    Clear(outBuffer);
+    return result;
 
-    //if the skipchars is null consecutive terminators are skipped
-    ioBuffer.GetToken(outBuffer, ":.", terminator, NULL);
-
-    if (StringHelper::Compare(outBuffer.Buffer(), "This") != 0) {
-        return false;
-    }
-    if (terminator != '.') {
-        return false;
-    }
-    Clear(outBuffer);
-
-    uint32 positionTest = ioBuffer.Position() + 3;
-    //if the skip chars is empty, none will be skipped
-    ioBuffer.GetToken(outBuffer, ":.", terminator, ".");
-
-    if ((StringHelper::Compare(outBuffer.Buffer(), "") != 0) || (ioBuffer.Position() != positionTest)) {
-        return false;
-    }
-    if (terminator != ':') {
-        return false;
-    }
-
-    Clear(outBuffer);
-
-    //skip only the dot
-    ioBuffer.GetToken(outBuffer, ":.", terminator, "");
-
-    if (StringHelper::Compare(outBuffer.Buffer(), "") != 0) {
-        return false;
-    }
-    if (terminator != '.') {
-        return false;
-    }
-
-    Clear(outBuffer);
-
-    //if the skip a token putting it in the skip chars list
-    ioBuffer.GetToken(outBuffer, ":.", terminator, "Is.:");
-
-    if (StringHelper::Compare(outBuffer.Buffer(), "ATet") != 0) {
-        return false;
-    }
-    if (terminator != '\0') {
-        return false;
-    }
-    Clear(outBuffer);
-
-    ioBuffer.Seek(0);
-    ioBuffer.GetToken(outBuffer, "()", terminator, NULL);
-    return StringHelper::Compare(outBuffer.Buffer(), toWrite) == 0;
 }
 
-bool IOBufferTest::TestSkipToken() {
+bool IOBufferTest::TestSkipToken(const SkipTokensTestTableRow *table) {
+
     IOBuffer ioBuffer;
 
     uint32 allocationSize = 64;
-
     ioBuffer.SetBufferHeapMemory(allocationSize, 0);
 
-    const char8* toWrite = "HelloWorld:This.:Is..A:.:Test.";
-
     Clear(ioBuffer);
-    uint32 writeSize = StringHelper::Length(toWrite);
-    ioBuffer.Write(toWrite, writeSize);
-    ioBuffer.Seek(0);
 
-    //count=0
-    ioBuffer.SkipTokens(0u, ".:");
-    if (ioBuffer.Position() != 0) {
-        return false;
+    uint32 i = 0u;
+    const SkipTokensTestTableRow *row = &table[i];
+    bool result = true;
+
+    while (result && (row->toTokenize != NULL)) {
+        Clear(ioBuffer);
+        uint32 inputSize = StringHelper::Length(row->toTokenize) + 1;
+        ioBuffer.Write(row->toTokenize, inputSize);
+        ioBuffer.Seek(0);
+        ioBuffer.SkipTokens(row->nOfSkipTokens, row->terminators);
+
+        const uint32 bufferSize = 32;
+        char buffer[bufferSize];
+        uint32 t = 0u;
+        while (row->expectedResult[t] != NULL) {
+            char saveTerminator;
+            ioBuffer.GetToken(buffer, row->terminators, bufferSize, saveTerminator, NULL);
+            if (StringHelper::Compare(buffer, row->expectedResult[t]) != 0) {
+                result = false;
+            }
+            t++;
+        }
+        row = &table[++i];
+
     }
+    return result;
 
-    ioBuffer.SkipTokens(1u, ".:");
-
-    if (ioBuffer.Position() != 11) {
-        return false;
-    }
-
-    // if there is no data between two terminators they are considered as one
-    ioBuffer.SkipTokens(2u, ".:");
-
-    if (ioBuffer.Position() != 20) {
-        return false;
-    }
-
-    ioBuffer.SkipTokens(1u, ".");
-
-    if (ioBuffer.Position() != 24) {
-        return false;
-    }
-
-    //the end of the filled memory
-    ioBuffer.SkipTokens(1u, ":");
-    if (ioBuffer.Position() != 31) {
-        return false;
-    }
-
-    ioBuffer.Seek(0);
-    ioBuffer.SkipTokens(3u, ".:");
-
-    return (ioBuffer.Position() == 20);
-}
-
-bool IOBufferTest::TestSkipToken_NULL_Terminator() {
-    IOBuffer ioBuffer;
-
-    uint32 allocationSize = 64;
-
-    ioBuffer.SetBufferHeapMemory(allocationSize, 0);
-
-    const char8* toWrite = "HelloWorld:This.:Is..A:.:Test.";
-
-    Clear(ioBuffer);
-    uint32 writeSize = StringHelper::Length(toWrite);
-    ioBuffer.Write(toWrite, writeSize);
-    ioBuffer.Seek(0);
-
-    ioBuffer.SkipTokens(1u, NULL);
-
-    // returns the end
-    return (ioBuffer.Position() == 31);
 }
