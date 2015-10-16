@@ -36,6 +36,7 @@
 #include "HeapManager.h"
 #include "MemoryOperationsHelper.h"
 #include "AnyType.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -64,10 +65,9 @@ public:
     /**
      * @brief Synchronizes the stream position with this buffer position.
      * @details This implementation is basic and only returns false.
-     *
-     * In BufferedStreamIOBuffer flushes the write buffer after write operations or adjusts the
-     * stream position (shifted after a refill because of a previous read operation).
-     *
+     * In BufferedStreamIOBuffer flushes the write buffer after write
+     * operations or adjusts the stream position (shifted after a refill
+     * because of a previous read operation).
      * @return false in this implementation.
      */
     virtual bool Resync();
@@ -145,13 +145,16 @@ public:
     /**
      * @brief Allocates dynamically a memory portion on the heap.
      * @details
-     * -If the new size (desiredSize-reservedSpaceAtEnd) is minor than the current used size, usedSize
-     * is clipped and if the position was over, it becomes the end of the new size.\n
+     * -If the new size (desiredSize-reservedSpaceAtEnd) is minor than the
+     * current used size, usedSize is clipped and if the position was over,
+     * it becomes the end of the new size.\n
      * -This function fixes maxUsableAmount to desiredSize-reservedSpaceAtEnd.
      *
      * @param[in] desiredSize is the desired size to be allocated.
-     * @param[in] reservedSpaceAtEnd is the space allocated over the usable memory area (maxUsableAmount does not consider it).\n
-     * It could be for example the zero terminator character at the end of a string.
+     * @param[in] reservedSpaceAtEnd is the space allocated over the usable
+     * memory area (maxUsableAmount does not consider it).\n
+     * It could be for example the zero terminator character at the end of a
+     * string.
      * @return false if the allocation fails, true otherwise.
      */
     virtual bool SetBufferHeapMemory(const uint32 desiredSize,
@@ -297,14 +300,13 @@ public:
 
     /**
      * @brief Writes from an input buffer.
-     *
      * @details The function does nothing if CharBuffer::CanWrite returns false,
      * otherwise copy size bytes from the input buffer, sets the cursor size
      * positions forward and adjusts fillLeft and amountLeft accordingly.\n
      * If size is greater than amountLeft is clipped.
-     *
      * @param[in] buffer contains the data to be written in this buffer.
-     * @param[in,out] size is the number of bytes to be copied. This value will be clipped to the space left if needed.
+     * @param[in,out] size is the number of bytes to be copied. This value will
+     * be clipped to the space left if needed.
      * @return false if errors copying data
      */
     virtual bool Write(const char8 * const buffer,
@@ -332,29 +334,42 @@ public:
 
     /*---------------------------------------------------------------------------*/
 
-    /*lint -e1526 The following functions are defined in IOBufferFunctions.cpp*/
+    /*
+     * @brief The function called by all Printf operations.
+     * @details This function read the format, builds the related format
+     * descriptor and then calls the PrintToStream function passing the
+     * next AnyType element in the list.
+     * @param[in] format is a printf like string format.
+     * @param[in] pars is a list of AnyType elements to print.
+     * @return false in case of errors.
+     */
     bool PrintFormattedToStream(const char8 * format,
                                 const AnyType pars[]);
+
     /**
-     * @brief Reads a token from a stream buffer and writes it on a char8* output buffer.
-     * @param terminator is a list of terminator characters.
-     * @param outputBufferSize is the size of the output buffer.
-     * @param saveTerminator is the found terminator in return.
-     * @param skipCharacters is a list of characters to be skipped.
-     * @return false if no data read, true otherwise.
-     *
-     * This function is performed for buffered streams, namely the stream should have an IOBuffer type as read buffer, actually
-     * in this function is passed an IOBuffer type.
-     ** Extract a token from the stream into a string data until a terminator or 0 is found.
-     Skips all skip characters, if you want to skip also terminator characters at the beginning add them to the skip characters.
-     returns true if some data was read before any error or file termination. false only on error and no data available
-     The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
-     skipCharacters=NULL is equivalent to skipCharacters = terminator
-     A character can be found in the terminator or in the skipCharacters list  in both or in none
-     0) none                 the character is copied
-     1) terminator           the character is not copied the string is terminated
-     2) skip                 the character is not copied
-     3) skip + terminator    the character is not copied, the string is terminated only if not empty
+     * @brief Reads a token from the buffer and writes it on an output buffer.
+     * @details Extracts a token from the buffer into a string data until a
+     * terminator or 0 is found. Skips all skip characters, if you want to
+     * skip also terminator characters at the beginning add them to the skip
+     * characters.
+     * The terminator (just the first encountered) is consumed in the process
+     * and saved in saveTerminator if provided skipCharacters=NULL is
+     * equivalent to skipCharacters = terminator
+     * A character can be found in the terminator or in the skipCharacters
+     * list in both or in none
+     * 0) none                 the character is copied.
+     * 1) terminator           the character is not copied the string
+     *                         is terminated.
+     * 2) skip                 the character is not copied.
+     * 3) skip + terminator    the character is not copied, the string
+     *                         is terminated only if not empty.
+     * @param[out] outputBuffer is the output buffer.
+     * @param[in] terminator is a list of terminator characters.
+     * @param[in] outputBufferSize is the size of the output buffer.
+     * @param[out] saveTerminator is the found terminator in return.
+     * @param[in] skipCharacters is a list of characters to be skipped.
+     * @returns true if some data was read before any error or file
+     * termination, false only on error and no data available.
      */
     bool GetTokenFromStream(char8 * outputBuffer,
                             const char8 * terminator,
@@ -362,27 +377,27 @@ public:
                             char8 &saveTerminator,
                             const char8 * skipCharacters);
     /**
-     * @brief Reads a token from a stream buffer and writes it on another stream buffer.
-     * @param inputStream is the input stream buffer.
-     * @param outputStream is the output stream buffer.
-     * @param terminator is a list of terminator characters.
-     * @param skipCharacters is a list of characters to be skipped.
+     * @brief Reads a token from the buffer and writes it on an output buffer.
+     * @details Extracts a token from the buffer into a string data until a
+     * terminator or 0 is found. Skips all skip characters and those that are
+     * also terminators at the beginning.
+     * The terminator (just the first encountered) is consumed in the process
+     * and saved in saveTerminator if provided skipCharacters=NULL is
+     * equivalent to skipCharacters = terminator {BUFFERED}
+     * A character can be found in the terminator or in the skipCharacters
+     * list  in both or in none
+     * 0) none                 the character is copied.
+     * 1) terminator           the character is not copied the string
+     *                         is terminated.
+     * 2) skip                 the character is not copied.
+     * 3) skip + terminator    the character is not copied, the string
+     *                         is terminated if not empty.
+     * @param[out] outputBuffer is the output buffer.
+     * @param[in] terminator is a list of terminator characters.
+     * @param[in] skipCharacters is a list of characters to be skipped.
      * @return false if no data read, true otherwise.
-     *
-     * This function is performed for buffered streams, namely the input and output streams should have an IOBuffer type as read buffer, actually
-     * in this function are passed two IOBuffer types.
-
-     Extract a token from the stream into a string data until a terminator or 0 is found.
-     Skips all skip characters and those that are also terminators at the beginning.
-     Returns true if some data was read before any error or file termination. false only on error and no data available.
-     The terminator (just the first encountered) is consumed in the process and saved in saveTerminator if provided
-     skipCharacters=NULL is equivalent to skipCharacters = terminator
-     {BUFFERED}
-     A character can be found in the terminator or in the skipCharacters list  in both or in none
-     0) none                 the character is copied
-     1) terminator           the character is not copied the string is terminated
-     2) skip                 the character is not copied
-     3) skip + terminator    the character is not copied, the string is terminated if not empty
+     * @return true if some data was read before any error or file termination.
+     * false only on error and no data available.
      */
     bool GetTokenFromStream(IOBuffer & outputBuffer,
                             const char8 * terminator,
@@ -390,10 +405,9 @@ public:
                             const char8 * skipCharacters);
 
     /**
-     * @brief Skips a number of tokens on a stream buffer.
-     * @param iobuff is the stream buffer.
-     * @param count is the number of tokens to be skipped.
-     * @param terminator is a list of terminator characters for the tokenize operation.
+     * @brief Skips a number of tokens on the buffer.
+     * @param[in,out] count is the number of tokens to be skipped.
+     * @param[in] terminator is a list of terminator characters for the tokenize operation.
      * @return false if the number of skipped tokens is minor than the desired.
      */
     bool SkipTokensInStream(uint32 count,
@@ -406,26 +420,32 @@ protected:
     virtual bool NoMoreSpaceToWrite();
 
     /**
-     * @brief The routine executed in PutC when amountLeft is <= UndoLevel(), namely the cursor arrived to a specific position.
+     * @brief The routine executed in PutC when amountLeft is <= UndoLevel(),
+     * namely the cursor arrived to a specific position.
      * @details This basic implementation only returns false.\n
      *
-     * In StreamStringIOBuffer UndoLevel() is zero, so when the cursor arrived at the end of the memory,
-     * this function allocated a new portion of memory in the queue.\n
+     * In StreamStringIOBuffer UndoLevel() is zero, so when the cursor arrived
+     * at the end of the memory, this function allocated a new portion of
+     * memory in the queue.\n
      *
-     * In BufferedStreamIOBuffer UndoLevel() is zero, so when the cursor arrived at the end of the memory
-     * this function flushes this buffer to the stream.\n
+     * In BufferedStreamIOBuffer UndoLevel() is zero, so when the cursor
+     * arrived at the end of the memory this function flushes this buffer
+     * to the stream.\n
      *
-     * @param[in] neededSize is the size of the memory to be allocated or flushed (not used at this implementation level).
+     * @param[in] neededSize is the size of the memory to be allocated or
+     * flushed (not used at this implementation level).
      * @return false at this implementation level.
      */
     virtual bool NoMoreSpaceToWrite(uint32 neededSize);
 
     /**
-     * @brief The routine executed in GetC when amountLeft is <= UndoLevel(), namely the cursor arrived to a specific position.
+     * @brief The routine executed in GetC when amountLeft is <= UndoLevel(),
+     * namely the cursor arrived to a specific position.
      * @details This implementation is basic and only returns false.
      *
-     * In BufferedStreamIOBuffer UndoLevel() is zero, so when the cursor arrives at the end of the memory
-     * this function refills the buffer from the stream for a new read operation.
+     * In BufferedStreamIOBuffer UndoLevel() is zero, so when the cursor
+     * arrives at the end of the memory this function refills the buffer
+     * from the stream for a new read operation.
      *
      * @return false in this implementation.
      */
@@ -631,7 +651,6 @@ bool IOBuffer::UnGetC() {
 bool IOBuffer::CanWrite() const {
     return internalBuffer.CanWrite();
 }
-
 
 }
 
