@@ -118,7 +118,7 @@ bool StreamStringIOBufferTest::TestSetBufferAllocationSize(uint32 size,
     // the function allocates space for the 0 char.
     size++;
 
-    if (stringBuffer.BufferSize() != 0) {
+    if (stringBuffer.GetBufferSize() != 0) {
         return false;
     }
     granularity = stringBuffer.AllocationGranularity();
@@ -129,7 +129,7 @@ bool StreamStringIOBufferTest::TestSetBufferAllocationSize(uint32 size,
         return false;
     }
 
-    return (stringBuffer.BufferSize() == ((size / granularity) + addChunk) * granularity) && (stringBuffer.MaxUsableAmount() == (stringBuffer.BufferSize() - 1));
+    return (stringBuffer.GetBufferSize() == ((size / granularity) + addChunk) * granularity) && (stringBuffer.MaxUsableAmount() == (stringBuffer.GetBufferSize() - 1));
 }
 
 bool StreamStringIOBufferTest::TestWrite(uint32 writeSize,

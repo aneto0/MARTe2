@@ -81,21 +81,20 @@ bool SingleBufferedStream::SetBufferSize(uint32 bufferSize) {
         bufferSize = 8u;
     }
 
-    // do not allocate if not necessary
-    if (!CanRead() && !CanWrite()) {
-        bufferSize = 0u;
-    }
-
     // dump any data in the write Queue
     if (FlushAndResync()) {
         if (!internalBuffer.SetBufferSize(bufferSize)) {
-            //TODO
+            ret = false;
         }
     }
     else {
         ret = false;
     }
     return ret;
+}
+
+uint32 SingleBufferedStream::GetBufferSize() {
+    return internalBuffer.GetBufferSize();
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
@@ -138,14 +137,14 @@ bool SingleBufferedStream::Read(char8 * const output,
     }
     if (ret) {
         // check whether we have a buffer
-        if (internalBuffer.BufferSize() > 0u) {
+        if (internalBuffer.GetBufferSize() > 0u) {
 
             // read from buffer first
             uint32 toRead = size;
 
             // try once
             if (!internalBuffer.Read(&output[0], size)) {
-                //TODO
+                ret = false;
             }
 
             if (size != toRead) {
@@ -163,7 +162,7 @@ bool SingleBufferedStream::Read(char8 * const output,
                     else {
 
                         if (!internalBuffer.Read(&output[size], toRead)) {
-                            //TODO
+                            ret = false;
                         }
                         size += toRead;
 
@@ -207,7 +206,7 @@ bool SingleBufferedStream::Write(const char8 * const input,
     if (ret) {
 
         // buffering active?
-        if (internalBuffer.BufferSize() > 0u) {
+        if (internalBuffer.GetBufferSize() > 0u) {
             // separate input and output size
 
             uint32 toWrite = size;
@@ -218,7 +217,7 @@ bool SingleBufferedStream::Write(const char8 * const input,
 
                 // try writing the buffer
                 if (!internalBuffer.Write(&input[0], size)) {
-                    //TODO
+                    ret = false;
                 }
 
                 // all done! space available!
@@ -233,7 +232,7 @@ bool SingleBufferedStream::Write(const char8 * const input,
 
                         // try writing the buffer
                         if (!internalBuffer.Write(&input[size], leftToWrite)) {
-                            //TODO
+                            ret = false;
                         }
 
                         size += leftToWrite;
@@ -268,8 +267,9 @@ bool SingleBufferedStream::Write(const char8 * const input,
 uint64 SingleBufferedStream::Size() {
 // commit all pending changes if any
 // so stream size will be updated
+    bool ret = true;
     if (!FlushAndResync()) {
-        //TODO
+        ret = false;
     }
     return UnbufferedSize();
 }
@@ -282,7 +282,7 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
     if (mutexWriteMode) {
         if (internalBuffer.UsedSize() > 0u) {
             if (!internalBuffer.Flush()) {
-                //TODO
+                ubSeek = false;
             }
         }
     }
@@ -295,7 +295,7 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
             // if within range just update readBufferAccessPosition
             if ((pos >= bufferStartPosition) && (pos < currentStreamPosition)) {
                 if (!internalBuffer.Seek(static_cast<uint32>(pos - bufferStartPosition))) {
-                    //TODO
+                    ubSeek = false;
                 }
 
                 ubSeek = false;
@@ -321,7 +321,7 @@ bool SingleBufferedStream::RelativeSeek(int32 delta) {
             if (internalBuffer.UsedSize() > 0u) {
                 // this will move the stream pointer ahead to the correct position
                 if (!internalBuffer.Flush()) {
-                    //TODO
+                    ubSeek = false;
                 }
             }
         }
@@ -345,7 +345,7 @@ bool SingleBufferedStream::RelativeSeek(int32 delta) {
 
                 // if gap is not in the signed range generate a warning
                 if (gap < 0) {
-                    //TODO
+                    ubSeek = false;
                 }
                 delta -= gap;
                 // empty buffer
@@ -375,13 +375,13 @@ uint64 SingleBufferedStream::Position() {
 }
 
 bool SingleBufferedStream::SetSize(const uint64 size) {
-
+    bool ret = true;
     // commit all changes
     if (!FlushAndResync()) {
-        //TODO
+        ret = false;
     }
 
-    return UnbufferedSetSize(size);
+    return ret && UnbufferedSetSize(size);
 }
 
 }

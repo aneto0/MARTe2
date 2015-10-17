@@ -56,7 +56,7 @@ bool BufferedStreamIOBuffer::Resync() {
 
     if (retval) {
         // empty!
-        if (MaxUsableAmount() != 0u) {
+        if (UsedSize() > 0u) {
 
             // distance to end
             uint32 deltaToEnd = UsedAmountLeft();
@@ -105,17 +105,21 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead() {
 bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
     bool retval = false;
 
-    if (stream!=NULL) {
+    if (stream != NULL) {
         // no buffering!
         if (Buffer() != NULL) {
 
             // how much was written?
             uint32 writeSize = UsedSize();
-
-            // write
-            if (stream->UnbufferedWrite(Buffer(),writeSize)) {
+            if(writeSize==0u) {
                 retval=true;
-                Empty();
+            }
+            // write
+            else {
+                if(stream->UnbufferedWrite(Buffer(),writeSize)) {
+                    retval=true;
+                    Empty();
+                }
             }
         }
     }

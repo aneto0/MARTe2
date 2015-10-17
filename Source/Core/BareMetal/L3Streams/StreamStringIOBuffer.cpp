@@ -92,7 +92,7 @@ bool StreamStringIOBuffer::NoMoreSpaceToWrite() {
     // reallocate buffer
     // uses safe version of the function
     // implemented in this class
-    ret = SetBufferAllocationSize(BufferSize() + 1u);
+    ret = SetBufferAllocationSize(GetBufferSize() + 1u);
 
     return ret;
 }
@@ -104,7 +104,7 @@ bool StreamStringIOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
     // reallocate buffer
     // uses safe version of the function
     // implemented in this class
-    ret = SetBufferAllocationSize(BufferSize() + neededSize);
+    ret = SetBufferAllocationSize(GetBufferSize() + neededSize);
 
     return ret;
 }

@@ -177,38 +177,61 @@ public:
 
     /*-----------------------------------------------------------------------*/
 
-    virtual bool UnbufferedWrite(const char8 * const bufferIn,
+    /**
+     * @brief Writes without buffering.
+     * @param[in] data the array of bytes to write.
+     * @param[in,out] size as input is the number of bytes to write. In output the number of bytes actually written.
+     * @return true if \a size bytes of data are successfully written within the specified \a timeout (see SetTimeout).
+     */
+    virtual bool UnbufferedWrite(const char8 * const data,
                                  uint32 & size);
 
-    virtual bool UnbufferedRead(char8 * const bufferIn,
+    /**
+     * @brief Reads without buffering.
+     * @param[out] data destination array where the read data will be put.
+     * @param[in,out] size as input is the number of bytes to read. In output the number of bytes actually read.
+     * @return true if \a size bytes of data are successfully read within the specified \a timeout (see SetTimeout).
+     */
+    virtual bool UnbufferedRead(char8 * const data,
                                 uint32 & size);
 
     /**
-     * @brief Pure virtual method. The size of the stream.
-     * @return the size of the stream depending on derived classes implementation.  */
+     * @brief Retrieves the size of the low-level, unbuffered, stream implementation.
+     * @return the size of the low-level stream.
+     */
     virtual uint64 UnbufferedSize();
 
     /**
-     * @brief Pure virtual method. Moves within the stream to an absolute location.
-     * @param pos is the desired absolute position.
-     * @return return value depends on derived classes implementation. */
+     * @brief Moves within the low-level, unbuffered, stream implementation to an absolute location.
+     * @param[in] pos the desired absolute position.
+     * @return true if the stream is successfully moved to \a pos.
+     * @post
+     *   UnbufferedPosition() == pos
+     */
     virtual bool UnbufferedSeek(uint64 pos);
 
     /**
-     * @brief Pure virtual method. Moves within the file relative to current location.
-     * @param deltaPos is the gap from the current position.
-     * @return return value depends on derived classes implementation. */
+     * @brief Moves within the low-level, unbuffered, stream to a position that is relative to the current location.
+     * @param[in] deltaPos is the distance from the current position.
+     * @return true if the stream is successfully moved to \a deltaPos.
+     * @post
+     *   UnbufferedPosition() == this'old->UnbufferedPosition() + deltaPos
+     */
     virtual bool UnbufferedRelativeSeek(int32 deltaPos);
 
     /**
-     * @brief Pure virtual method. Returns current position.
-     * @return the current position in the stream. */
+     * @brief Gets the current position in the low-level, unbuffered, stream.
+     * @return the current position in the low-level stream.
+     */
     virtual uint64 UnbufferedPosition();
 
     /**
-     * @brief Pure virtual method. Clip the stream size to the desired value.
-     * @param size is the desired size.
-     * @return return value depends on the derived classes implementation. */
+     * @brief Clips the low-level, unbuffered, stream size.
+     * @param size the new size of the low-level stream.
+     * @return true if the size of the low-level stream is set to \a size.
+     * @post
+     *   UnbufferedSize() == size
+     */
     virtual bool UnbufferedSetSize(uint64 size);
 
     /*---------------------------------------------------------------------------*/

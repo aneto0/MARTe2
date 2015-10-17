@@ -728,13 +728,13 @@ bool IOBuffer::SetBufferHeapMemory(const uint32 desiredSize,
 
     positionPtr = BufferReference();
 
-    maxUsableAmount = BufferSize();
+    maxUsableAmount = GetBufferSize();
 
     if (maxUsableAmount <= reservedSpaceAtEnd) {
         maxUsableAmount = 0u;
     }
     else {
-        maxUsableAmount = BufferSize() - reservedSpaceAtEnd;
+        maxUsableAmount = GetBufferSize() - reservedSpaceAtEnd;
     }
 
     amountLeft = maxUsableAmount - position;
@@ -749,7 +749,7 @@ void IOBuffer::SetBufferReferencedMemory(char8 * const buffer,
                                          const uint32 reservedSpaceAtEnd) {
     internalBuffer.SetBufferReference(buffer, bufferSize);
     positionPtr = BufferReference();
-    maxUsableAmount = BufferSize() - reservedSpaceAtEnd;
+    maxUsableAmount = GetBufferSize() - reservedSpaceAtEnd;
     Empty();
 }
 
@@ -758,7 +758,7 @@ void IOBuffer::SetBufferReadOnlyReferencedMemory(const char8 * const buffer,
                                                  const uint32 reservedSpaceAtEnd) {
     internalBuffer.SetBufferReference(buffer, bufferSize);
     positionPtr = BufferReference();
-    maxUsableAmount = BufferSize() - reservedSpaceAtEnd;
+    maxUsableAmount = GetBufferSize() - reservedSpaceAtEnd;
     Empty();
 }
 

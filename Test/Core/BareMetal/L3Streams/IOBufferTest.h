@@ -32,6 +32,8 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "IOBuffer.h"
+#include "StreamTestHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -264,55 +266,9 @@ public:
     bool TestEmpty();
 
     /**
-     * @brief Tests the print of a integer with decimal notation.
+     * @brief Tests the PrintFormatted against any of the tables defined in StreamTestHelper.
      */
-    bool TestPrintFormatted_Integer_Decimal();
-
-    /**
-     * @brief Tests the print of a integer with hexadecimal notation.
-     */
-    bool TestPrintFormatted_Integer_Hexadecimal();
-
-    /**
-     * @brief Tests the print of a integer with octal notation.
-     */
-    bool TestPrintFormatted_Integer_Octal();
-
-    /**
-     * @brief Tests the print of a integer with binary notation.
-     */
-    bool TestPrintFormatted_Integer_Binary();
-
-    /**
-     * @brief Tests the print of a float with fixed point notation (precision=number of decimals)
-     */
-    bool TestPrintFormatted_Float_FixedPoint();
-
-    /**
-     * @brief Tests the print of a float with fixed point relative notation (precision=number of significative digits)
-     */
-    bool TestPrintFormatted_Float_FixedRelativePoint();
-
-    /**
-     * @brief Tests the print of a float with exponential notation.
-     */
-    bool TestPrintFormatted_Float_Exponential();
-
-    /**
-     * @brief Tests the print of a float with engeneering notation.
-     */
-    bool TestPrintFormatted_Float_Engeneering();
-
-    /**
-     * @brief Tests the print of a float with smart notation (symbols instead of exponent)
-     */
-    bool TestPrintFormatted_Float_Smart();
-
-    /**
-     * @brief Test the print of a float with compact notation (chooses the best notation to have the maximum
-     * precision in the specified size).
-     */
-    bool TestPrintFormatted_Float_Compact();
+    bool TestPrintFormatted(uint32 allocationGranularity, const PrintfNode table[]);
 
     /**
      * @brief Tests the print of a C string.
@@ -330,6 +286,16 @@ public:
     bool TestPrintFormatted_Stream();
 
     /**
+     * Tests the limit of 10000 characters for a print of a stream.
+     */
+    bool TestPrintFormatted_TooBigStream();
+
+    /**
+     * Tests if it is printed an erro message in case of not seekable stream.
+     */
+    bool TestPrintFormatted_Stream_NotSeekable();
+
+    /**
      * @brief Tests the print of a unsigned bit set.
      */
     bool TestPrintFormatted_BitSet_Unsigned();
@@ -339,32 +305,27 @@ public:
      */
     bool TestPrintFormatted_BitSet_Signed();
 
-
-    /**
-     * @brief Tests the print of more than one types.
-     */
-    bool TestPrintFormattedMultiple();
-
     /**
      * @brief Tests if the function gets the correct token passing a C string buffer as output.
      */
-    bool TestGetToken_ConstCharOutput();
+    bool TestGetToken_ConstCharOutput(const TokenTestTableRow *table);
+
+    /**
+     * @brief Tests if the token is clipped when the output buffer is too short.
+     */
+    bool GetToken_ConstCharOutput_ClipSize();
 
     /**
      * @brief Tests if the function gets the correct token passing another IOBuffer as output.
      */
-    bool TestGetToken_IOBufferOutput();
+    bool TestGetToken_IOBufferOutput(const TokenTestTableRow *table);
 
     /**
      * @brief Tests if the function skips correctly the tokens.
      */
-    bool TestSkipToken();
+    bool TestSkipToken(const SkipTokensTestTableRow *table);
 
-    /**
-     * @brief Tests if putting null as the terminator characters the function returns when
-     * '\0' is found.
-     */
-    bool TestSkipToken_NULL_Terminator();
+
 };
 
 /*---------------------------------------------------------------------------*/

@@ -63,8 +63,8 @@ public:
      *   GetInputBuffer() == BufferedStreamIOBuffer
      *   GetOutputBuffer() == BufferedStreamIOBuffer
      *   GetTimeout() == TTInfiniteWait
-     *   GetInputBuffer()->BufferSize() == 32u
-     *   GetOutputBuffer()->BufferSize() == 32u
+     *   GetInputBuffer()->GetBufferSize() == 32u
+     *   GetOutputBuffer()->GetBufferSize() == 32u
      */
     DoubleBufferedStream();
 
@@ -76,8 +76,8 @@ public:
      *   GetInputBuffer() == BufferedStreamIOBuffer
      *   GetOutputBuffer() == BufferedStreamIOBuffer
      *   GetTimeout() == timeoutIn
-     *   GetInputBuffer()->BufferSize() == 32u
-     *   GetOutputBuffer()->BufferSize() == 32u
+     *   GetInputBuffer()->GetBufferSize() == 32u
+     *   GetOutputBuffer()->GetBufferSize() == 32u
      */
     DoubleBufferedStream(const TimeoutType &timeoutIn);
 
@@ -95,8 +95,8 @@ public:
      *    writeBufferSize > 8u
      *    CanRead() == true || CanWrite() == true
      * @post
-     *    GetInputStream()->BufferSize() == readBufferSize
-     *    GetOutputStream()->BufferSize() == writeBufferSize
+     *    GetInputStream()->GetBufferSize() == readBufferSize
+     *    GetOutputStream()->GetBufferSize() == writeBufferSize
      */
     virtual bool SetBufferSize(uint32 readBufferSize,
                                uint32 writeBufferSize);

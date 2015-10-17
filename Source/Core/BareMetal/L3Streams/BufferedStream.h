@@ -251,6 +251,12 @@ public:
      * @see PrintFormatted.
      */
     inline bool Printf(const char8 * const format,
+                       const AnyType& par1);
+
+    /**
+     * @see PrintFormatted.
+     */
+    inline bool Printf(const char8 * const format,
                        const AnyType& par1,
                        const AnyType& par2);
 
@@ -372,6 +378,12 @@ BufferedStream::operator AnyType() {
     TypeDescriptor dataDescriptor(false, Stream, 0u);
 
     return AnyType(dataDescriptor, 0u, dataPointer);
+}
+
+bool BufferedStream::Printf(const char8 * const format,
+                            const AnyType& par1) {
+    AnyType pars[2] = { par1, voidAnyType };
+    return PrintFormatted(format, &pars[0]);
 }
 
 bool BufferedStream::Printf(const char8 * const format,

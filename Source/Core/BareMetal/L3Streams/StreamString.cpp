@@ -101,7 +101,7 @@ bool StreamString::Seek(const uint64 pos) {
     bool retval = true;
     uint32 usedSize = buffer.UsedSize();
     if (pos > usedSize) {
-//REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
+        //REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
         if (!buffer.Seek(usedSize)) {
             //TODO
         }

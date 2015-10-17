@@ -61,7 +61,7 @@ public:
      * @pre true
      * @post
      *   Buffer() == NULL &&
-     *   BufferSize() == 0u &&
+     *   GetBufferSize() == 0u &&
      *   AmountLeft() == 0u &&
      *   MaxUsableAmount() == 0u &&
      *   UsedAmountLeft() == 0 &&
@@ -80,7 +80,7 @@ public:
      * @pre true
      * @post
      *   Buffer() == NULL &&
-     *   BufferSize() == 0u &&
+     *   GetBufferSize() == 0u &&
      *   AmountLeft() == 0u &&
      *   MaxUsableAmount() == 0u &&
      *   UsedAmountLeft() == 0 &&

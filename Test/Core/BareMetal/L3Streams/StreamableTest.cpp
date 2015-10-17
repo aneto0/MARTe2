@@ -28,7 +28,7 @@
 #include "StreamTestHelper.h"
 #include "DoubleInteger.h"
 #include "stdio.h"
-#include "StreamWrapperIOBuffer.h"
+//#include "StreamWrapperIOBuffer.h"
 
 bool StreamableTest::TestSeek() {
     //Use constructor to assig a StreamWrapperIOBuffer to the streamable

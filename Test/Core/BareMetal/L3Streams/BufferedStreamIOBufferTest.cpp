@@ -253,7 +253,7 @@ bool BufferedStreamIOBufferTest::TestResync_NULL_Buffer() {
 bool BufferedStreamIOBufferTest::TestSetBufferSize(uint32 size) {
     BufferedStreamIOBuffer buffered;
 
-    if (buffered.BufferSize() != 0) {
+    if (buffered.GetBufferSize() != 0) {
         return false;
     }
 
@@ -261,8 +261,8 @@ bool BufferedStreamIOBufferTest::TestSetBufferSize(uint32 size) {
         return false;
     }
 
-    printf("\n%d %d\n", buffered.BufferSize(), buffered.MaxUsableAmount());
-    return (buffered.BufferSize() == size) && (buffered.MaxUsableAmount() == (buffered.BufferSize()));
+    printf("\n%d %d\n", buffered.GetBufferSize(), buffered.MaxUsableAmount());
+    return (buffered.GetBufferSize() == size) && (buffered.MaxUsableAmount() == (buffered.GetBufferSize()));
 }
 
 bool BufferedStreamIOBufferTest::TestGetStream() {

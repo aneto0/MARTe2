@@ -121,7 +121,7 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
     bool ret = true;
 
     // check whether we have a buffer
-    if (readBuffer.BufferSize() > 0u) {
+    if (readBuffer.GetBufferSize() > 0u) {
 
         // read from buffer first
         uint32 toRead = size;
@@ -176,7 +176,7 @@ bool DoubleBufferedStream::Write(const char8* const bufferIn,
 
     bool ret = true;
     // buffering active?
-    if (writeBuffer.BufferSize() > 0u) {
+    if (writeBuffer.GetBufferSize() > 0u) {
         // separate input and output size
 
         uint32 toWrite = size;

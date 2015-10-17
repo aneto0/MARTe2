@@ -77,11 +77,36 @@ public:
                      bool skipCharacter);
 
     /**
-     * @brief Tests the PrintfFormatted function.
+     * @brief Tests the GetLine function with the stream input version.
      */
-    bool TestPrintFormatted() {
-        return true;
-    }
+    bool TestGetLine_Stream(uint32 bufferSize,
+                            bool skipCharacter);
+
+    /**
+     * @brief Tests the PrintfFormatted function. The possible tables to be used are defined in StreamTestHelper.
+     */
+    bool TestPrintFormatted(uint32 bufferSize,
+                            const PrintfNode testTable[]);
+
+    /**
+     * @brief Tests the PrintFormatted function with a CCString
+     */
+    bool TestPrintFormatted_CCString(uint32 bufferSize);
+
+    /**
+     * @brief Tests the print of a pointer.
+     */
+    bool TestPrintFormatted_Pointer(uint32 bufferSize);
+
+    /**
+     * @brief Tests the PrintFormatted function with an unsigned bitset
+     */
+    bool TestPrintFormatted_BitSet_Unsigned(uint32 bufferSize);
+
+    /**
+     * @brief Tests the PrintFormatted function with a signed bitset
+     */
+    bool TestPrintFormatted_BitSet_Signed(uint32 bufferSize);
 
     /**
      * @brief Tests the Copy function.
@@ -89,11 +114,14 @@ public:
     bool TestCopy(uint32 bufferSize);
 
     /**
-     * @brief Tests the Printf function.
+     * @brief Tests the Copy function using the stream version.
      */
-    bool TestPrintf() {
-        return true;
-    }
+    bool TestCopy_Stream(uint32 bufferSize);
+
+    /**
+     * @brief Tests the Printf function with a different number of arguments. Note that the true printing engine is the PrintFormatted.
+     */
+    bool TestPrintf();
 
     /**
      * @brief Tests the GetTimeout function.

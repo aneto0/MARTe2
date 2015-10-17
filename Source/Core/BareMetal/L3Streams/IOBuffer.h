@@ -107,7 +107,7 @@ public:
      * @pre true
      * @post
      *   Buffer() == NULL &&
-     *   BufferSize() == 0u &&
+     *   GetBufferSize() == 0u &&
      *   AmountLeft() == 0u &&
      *   MaxUsableAmount() == 0u &&
      *   UsedAmountLeft() == 0 &&
@@ -124,7 +124,7 @@ public:
      * @pre true
      * @post
      *   Buffer() == NULL &&
-     *   BufferSize() == 0u &&
+     *   GetBufferSize() == 0u &&
      *   AmountLeft() == 0u &&
      *   MaxUsableAmount() == 0u &&
      *   UsedAmountLeft() == 0 &&
@@ -190,7 +190,7 @@ public:
      * @brief Gets the size of the allocated memory.
      * @return the size of the allocated memory.
      */
-    inline uint32 BufferSize() const;
+    inline uint32 GetBufferSize() const;
 
     /**
      * @brief Gets the size from the beginning to the end of memory (without considering the reserved space).
@@ -460,9 +460,9 @@ private:
 
     /**
      * The size of the usable memory in the buffer.
-     * Usually it is equal to the CharBuffer::BufferSize
+     * Usually it is equal to the CharBuffer::GetBufferSize
      * but for example in StreamString considering the final 0
-     * the usable memory is CharBuffer::BufferSize - 1.
+     * the usable memory is CharBuffer::GetBufferSize - 1.
      */
     uint32 maxUsableAmount;
 
@@ -514,7 +514,7 @@ IOBuffer::IOBuffer(const uint32 allocationGranularity,
     undoLevel = newUndoLevel;
 }
 
-uint32 IOBuffer::BufferSize() const {
+uint32 IOBuffer::GetBufferSize() const {
     return internalBuffer.Size();
 }
 
