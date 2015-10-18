@@ -192,7 +192,7 @@ bool BufferedStreamIOBufferTest::TestResync() {
 
     DummySingleBufferedStream stream;
     BufferedStreamIOBuffer buffered(&stream);
-    printf("\n%d\n", stream.UnbufferedPosition());
+    printf("\n%lld\n", stream.UnbufferedPosition());
 
     uint32 bufferSize = 10;
     buffered.SetBufferSize(bufferSize);
@@ -202,12 +202,12 @@ bool BufferedStreamIOBufferTest::TestResync() {
     uint32 writeSize = StringHelper::Length(toWrite);
 
     buffered.WriteAll(toWrite, writeSize);
-    printf("\n%d\n", stream.UnbufferedPosition());
+    printf("\n%lld\n", stream.UnbufferedPosition());
 
     buffered.Flush();
 
     stream.Seek(0);
-    printf("\n%d\n", stream.UnbufferedPosition());
+    printf("\n%lld\n", stream.UnbufferedPosition());
 
     //something is written on the stream.
 
@@ -217,14 +217,14 @@ bool BufferedStreamIOBufferTest::TestResync() {
     buffered.Refill();
     buffered.Read(bufferOut, toRead);
 
-    printf("\n%d\n", stream.UnbufferedPosition());
+    printf("\n%lld\n", stream.UnbufferedPosition());
     if (stream.UnbufferedPosition() != bufferSize) {
         return false;
     }
 
     buffered.Resync();
 
-    printf("\n%d\n", stream.UnbufferedPosition());
+    printf("\n%lld\n", stream.UnbufferedPosition());
     return stream.UnbufferedPosition() == toRead;
 }
 

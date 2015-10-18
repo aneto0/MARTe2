@@ -143,7 +143,7 @@ bool DoubleBufferedStreamTest::TestSeek() {
         uint32 readSize = size - seekAmount;
         ok &= stream.Read(buffer, readSize);
         for (i = 0; i < readSize; i++) {
-            ok &= (buffer[i] == (i + seekAmount));
+            ok &= static_cast<char>((buffer[i] == (i + seekAmount)));
         }
     }
     return ok;

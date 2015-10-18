@@ -139,7 +139,7 @@ bool SingleBufferedStreamTest::TestSeek() {
         uint32 readSize = size - seekAmount;
         ok &= stream.Read(buffer, readSize);
         for (i = 0; i < readSize; i++) {
-            ok &= (buffer[i] == (i + seekAmount));
+            ok &= (buffer[i] == static_cast<char>((i + seekAmount)));
         }
     }
     return ok;
@@ -168,7 +168,7 @@ bool SingleBufferedStreamTest::TestRelativeSeek() {
         uint32 readSize = size - seekAmount - seekStart;
         ok &= stream.Read(buffer, readSize);
         for (i = 0; i < readSize; i++) {
-            ok &= (buffer[i] == (i + seekAmount + seekStart));
+            ok &= (buffer[i] == static_cast<char>((i + seekAmount + seekStart)));
         }
     }
     return ok;

@@ -95,14 +95,16 @@ bool StreamStringTest::TestWrite(const char8* inputString,
 
 bool StreamStringTest::TestUnbufferedWrite() {
     StreamString dummy;
-    uint32 dummySize = 1;
-    return !dummy.UnbufferedWrite("", dummySize);
+    uint32 dummySize = 0;
+    const char8 * const data = NULL;
+    return !dummy.UnbufferedWrite(data, dummySize);
 }
 
 bool StreamStringTest::TestUnbufferedRead() {
     StreamString dummy;
-    uint32 dummySize = 1;
-    return !dummy.UnbufferedRead("", dummySize);
+    uint32 dummySize = 0;
+    char8 * const data = NULL;
+    return !dummy.UnbufferedRead(data, dummySize);
 }
 
 uint64 StreamStringTest::TestUnbufferedSize() {

@@ -379,8 +379,6 @@ bool IOBufferTest::TestCanWrite() {
         return false;
     }
 
-    const char8 *bufferInConst = "";
-
     ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, allocationSize, 0);
     if (ioBuffer.CanWrite()) {
         return false;
@@ -1259,7 +1257,7 @@ bool IOBufferTest::TestPrintFormatted(uint32 allocationGranularity,
         ioBuffer.PrintFormatted(testTable[i].format, testTable[i].inputs);
         if (StringHelper::Compare(testTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
             AnyType data = testTable[i].inputs[i];
-            printf("\n%s %s %d %d\n", ioBuffer.Buffer(), testTable[i].expectedResult, i, *((float*) data.GetDataPointer()));
+            printf("\n%s %s %d %d\n", ioBuffer.Buffer(), testTable[i].expectedResult, i, *((uint32*) data.GetDataPointer()));
 
             return false;
         }
@@ -1383,7 +1381,7 @@ bool IOBufferTest::TestPrintFormatted_TooBigStream() {
     stream.SetFakeSize(10001);
 
     AnyType toPrint = stream;
-    printf("\n%d\n", stream.Size());
+    printf("\n%lld\n", stream.Size());
     ioBuffer.PrintFormatted("%s", &toPrint);
 
     return StringHelper::Compare(ioBuffer.Buffer(), "!! too big > 10000 characters!!") == 0;

@@ -368,17 +368,7 @@ const PrintfNode *GeneratePrintFormattedFloatEngTable();
 const PrintfNode *GeneratePrintFormattedFloatSmartTable();
 const PrintfNode *GeneratePrintFormattedFloatCompactTable();
 const PrintfNode *GeneratePrintFormattedGenericTable();
-
-static const char8* printfCStringTable[][5] = {
-    { "string:%s", "HelloWorld", "string:HelloWorld" },
-    { "string:%5s", "HelloWorld", "string:Hello" },
-    { "string:% 11s", "HelloWorld", "string: HelloWorld" },
-    { "string:%-11s", "HelloWorld", "string:HelloWorld " },
-    { "% 5s", "  ", "     " },
-    { "%-5s", "  ", "     " },
-    { "%s", (const char8*) NULL, "" },
-    { NULL, NULL, NULL }
-};
+extern const char8 *printfCStringTable[][3];
 
 /**
  * Each row defines a different GetToken test
