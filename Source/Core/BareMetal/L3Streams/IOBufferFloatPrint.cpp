@@ -32,7 +32,6 @@
 #include "GeneralDefinitions.h"
 #include "FormatDescriptor.h"
 #include "IOBuffer.h"
-#include "Shift.h"
 #include "BitSetToInteger.h"
 
 /*---------------------------------------------------------------------------*/
@@ -244,6 +243,8 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
  * @param[in,out] positiveNumber is the number to normalize.
  * @param[out] exponent is the exponent in return.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+/*lint -e{835} [MISRA C++ Rule 6-2-2]. Justification: False positive only true for types that are not used in the template.*/
 template<typename T>
 static inline void NormalizeFloatNumberPrivate(T &positiveNumber,
                                                int16 &exponent) {
@@ -299,6 +300,7 @@ static inline void NormalizeFloatNumberPrivate(T &positiveNumber,
  * @param[out] output is 10**exponent.
  * @param[in] exponent is the exponent.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
 static inline void FastPowerOf10Private(T &output,
                                         int16 exponent) {
@@ -972,7 +974,7 @@ bool FloatToFixedPrivate(IOBuffer & ioBuffer,
 // better handle it anyway
     if ((positiveNumber < static_cast<T>(0.0)) || (positiveNumber >= static_cast<T>(10.0))) {
         if (!ioBuffer.PutC('!')) {
-            ok = false;
+            REPORT_ERROR(ErrorManagement::FatalError, "FloatToFixedPrivate: PutC failed.");
         }
         ok = false;
     }
@@ -1162,6 +1164,7 @@ enum FloatDisplayModes {
  * @param[out] neededSize returns the size necessary
  * to print NaN or +/- Inf. It is 0 in case of normal number.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
 FloatDisplayModes CheckNumber(const T number,
                               const int16 maximumSize,
@@ -1218,6 +1221,7 @@ FloatDisplayModes CheckNumber(const T number,
  * @param[in] precision is the desired precision for the round.
  * @return the rounded number.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
 T RoundUpNumber(T number,
                 const int16 precision) {

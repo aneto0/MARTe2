@@ -92,7 +92,7 @@ public:
      * @param[in,out] size the number of bytes to read. Upon return of the function \a size contains the number of bytes actually read.
      * @return true if \a size bytes are successfully read into \a bufferIn within the specified timeout (see SetTimeout).
      */
-    virtual bool Read(char8* output,
+    virtual bool Read(char8 * const output,
                       uint32 & size)=0;
 
     /**
@@ -103,7 +103,7 @@ public:
      * @param[in,out] size the number of bytes to write. Upon return of the function \a size contains the number of bytes actually written.
      * @return true if \a size bytes are successfully read from \a bufferIn and written into the stream within the specified timeout (see SetTimeout).
      */
-    virtual bool Write(const char8* input,
+    virtual bool Write(const char8 * const input,
                        uint32 & size) = 0;
 
     /**
@@ -128,7 +128,7 @@ public:
      * @post
      *   Position() == this'old->Position() + deltaPos
      */
-    virtual bool RelativeSeek(int32 deltaPos)=0;
+    virtual bool RelativeSeek(const int32 deltaPos)=0;
 
     /**
      * @brief Gets the current position.
@@ -346,7 +346,7 @@ public:
      * @post
      *   GetTimeout() == timeout
      */
-    void SetTimeout(const TimeoutType timeoutIn);
+    void SetTimeout(const TimeoutType &timeoutIn);
 
 protected:
 

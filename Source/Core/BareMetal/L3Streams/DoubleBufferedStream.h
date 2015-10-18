@@ -49,8 +49,8 @@ namespace MARTe {
 /**
  * @brief Buffered stream implementation (double buffer).
  * @details This class offers a buffering mechanism for character streams.
- * It supplements two independent low-level RawStreams (which implements the low-level calls
- * such as Read, Write, Seek, ...) with a buffering scheme.
+ * It supplements two independent low-level RawStreams (which implement the low-level calls
+ * such as Read, Write, ...) with a buffering scheme.
  */
 class DoubleBufferedStream: public BufferedStream {
 
@@ -63,8 +63,8 @@ public:
      *   GetInputBuffer() == BufferedStreamIOBuffer
      *   GetOutputBuffer() == BufferedStreamIOBuffer
      *   GetTimeout() == TTInfiniteWait
-     *   GetInputBuffer()->GetBufferSize() == 32u
-     *   GetOutputBuffer()->GetBufferSize() == 32u
+     *   GetReadBufferSize() == 32u
+     *   GetWriteBufferSize() == 32u
      */
     DoubleBufferedStream();
 
@@ -76,8 +76,8 @@ public:
      *   GetInputBuffer() == BufferedStreamIOBuffer
      *   GetOutputBuffer() == BufferedStreamIOBuffer
      *   GetTimeout() == timeoutIn
-     *   GetInputBuffer()->GetBufferSize() == 32u
-     *   GetOutputBuffer()->GetBufferSize() == 32u
+     *   GetReadBufferSize() == 32u
+     *   GetWriteBufferSize() == 32u
      */
     DoubleBufferedStream(const TimeoutType &timeoutIn);
 
@@ -107,7 +107,7 @@ public:
      * @post
      *   Position() == this'old->Position() + size
      */
-    virtual bool Read(char8 * bufferIn,
+    virtual bool Read(char8 * const output,
                       uint32 & size);
 
     /**
@@ -115,8 +115,20 @@ public:
      * @post
      *   Position() == this'old->Position() + size
      */
-    virtual bool Write(const char8* bufferIn,
+    virtual bool Write(const char8 * const input,
                        uint32 & size);
+
+    /**
+     * @brief Gets the read buffer size.
+     * @return the read buffer size.
+     */
+    uint32 GetReadBufferSize() const;
+
+    /**
+     * @brief Gets the write buffer size.
+     * @return the write buffer size.
+     */
+    uint32 GetWriteBufferSize() const;
 
     /**
      * @see BufferedStream::Size
@@ -142,6 +154,12 @@ public:
      * @see BufferedStream::SetSize
      */
     virtual bool SetSize(uint64 size);
+
+    /**
+     * @brief Flushes the write buffer.
+     * @return true if the Flush of the buffer succeeds.
+     */
+    inline bool Flush();
 
 protected:
     /**
@@ -172,12 +190,8 @@ private:
      */
     BufferedStreamIOBuffer writeBuffer;
 
-    /**
-     * @brief Flushes the write buffer.
-     * @return true if the Flush of the buffer succeeds.
-     */
-    inline bool Flush();
 };
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

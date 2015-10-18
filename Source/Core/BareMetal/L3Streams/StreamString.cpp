@@ -111,8 +111,8 @@ bool StreamString::Seek(const uint64 pos) {
     return (retval) ? (buffer.Seek(static_cast<uint32>(pos))) : false;
 }
 
-bool StreamString::RelativeSeek(const int32 delta) {
-    return buffer.RelativeSeek(delta);
+bool StreamString::RelativeSeek(const int32 deltaPos) {
+    return buffer.RelativeSeek(deltaPos);
 }
 
 uint64 StreamString::Position() {
@@ -248,13 +248,13 @@ int32 StreamString::Locate(const StreamString &x) const {
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamString::UnbufferedWrite(const char8 * const bufferIn,
+bool StreamString::UnbufferedWrite(const char8 * const data,
                                    uint32 & size) {
     return false;
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamString::UnbufferedRead(char8 * const bufferIn,
+bool StreamString::UnbufferedRead(char8 * const data,
                                   uint32 & size) {
     return false;
 }

@@ -121,8 +121,8 @@ bool StreamMemoryReference::Seek(const uint64 pos) {
     return (ret) ? (buffer.Seek(static_cast<uint32>(pos))) : (false);
 }
 
-bool StreamMemoryReference::RelativeSeek(const int32 delta) {
-    return buffer.RelativeSeek(delta);
+bool StreamMemoryReference::RelativeSeek(const int32 deltaPos) {
+    return buffer.RelativeSeek(deltaPos);
 }
 
 uint64 StreamMemoryReference::Position() {
@@ -134,13 +134,13 @@ bool StreamMemoryReference::CanSeek() const {
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamMemoryReference::UnbufferedWrite(const char8 * const bufferIn,
+bool StreamMemoryReference::UnbufferedWrite(const char8 * const data,
                                             uint32 & size) {
     return false;
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamMemoryReference::UnbufferedRead(char8 * const bufferIn,
+bool StreamMemoryReference::UnbufferedRead(char8 * const data,
                                            uint32 & size) {
     return false;
 }

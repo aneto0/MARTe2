@@ -1,40 +1,47 @@
-/*
- * Copyright 2011 EFDA | European Fusion Development Agreement
- *
- * Licensed under the EUPL, Version 1.1 or - as soon they 
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the 
- Licence.
- * You may obtain a copy of the Licence at: 
- *  
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in 
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
- express or implied.
- * See the Licence for the specific language governing 
- permissions and limitations under the Licence.
- *
- * $Id: CStream.cpp 3 2012-01-15 16:26:07Z aneto $
- *
- **/
 /**
- * @file 
- * @brief Functions to convert range of bits among each other.
+ * @file BitSetToInteger.h
+ * @brief Header file for class BitSetToInteger
+ * @date 05/10/2015
+ * @author Giuseppe Ferrò
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing,
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This header file contains the declaration of the class BitSetToInteger
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
+
 #if !defined BITSET_TO_INTEGER
 #define BITSET_TO_INTEGER
 
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "FormatDescriptor.h"
 #include "IOBuffer.h"
 #include "Shift.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
 namespace MARTe {
 /*lint -save -e774 -e740 -e826 -e927 -e928
- * 774 [MISRA C++ Rule 0-1-1] [MISRA C++ Rule 0-1-2] [MISRA C++ Rule 0-1-9]. Justification: If return value depends on template type.
+ * 774 [MISRA C++ Rule 0-1-1] [MISRA C++ Rule 0-1-2] [MISRA C++ Rule 0-1-9]. Justification: Return value depends on template type.
  * 740, 826, 927, 928 [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by this implementation.
  * */
 
@@ -337,6 +344,11 @@ static inline bool IntegerToBitSet(T *& destination,
 
     return BitSetToBitSet(destination, destinationBitShift, destinationBitSize, destinationIsSigned, source, sourceBitShift, sourceBitSize, sourceIsSigned);
 }
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
 }
 
 #endif

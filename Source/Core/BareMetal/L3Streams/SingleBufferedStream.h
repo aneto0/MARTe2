@@ -58,9 +58,9 @@ public:
      * @brief Default constructor.
      * @post
      *   CanRead() == true
-     *   CanWrite() == false
-     *   GetInputBuffer() == BufferedStreamIOBuffer
-     *   GetTimeout() == TTInfiniteWait
+     *   CanWrite() == false &&
+     *   GetInputBuffer() == BufferedStreamIOBuffer &&
+     *   GetTimeout() == TTInfiniteWait &&
      *   GetInputBuffer()->GetBufferSize() == 32u
      */
     SingleBufferedStream();
@@ -70,9 +70,9 @@ public:
      * @param[in] timeoutIn the timeout for the read and write operations.
      * @post
      *   CanRead() == true
-     *   CanWrite() == false
-     *   GetInputBuffer() == BufferedStreamIOBuffer
-     *   GetTimeout() == timeoutIn
+     *   CanWrite() == false &&
+     *   GetInputBuffer() == BufferedStreamIOBuffer &&
+     *   GetTimeout() == timeoutIn &&
      *   GetInputBuffer()->GetBufferSize() == 32u
      */
     SingleBufferedStream(const TimeoutType & timeoutIn);
@@ -98,14 +98,14 @@ public:
      * @brief Gets the buffer size.
      * @return the currently set buffer size
      */
-    virtual uint32 GetBufferSize();
+    virtual uint32 GetBufferSize() const;
 
     /**
      * @see BufferedStream::Read
      * @post
      *   Position() == this'old->Position() + size
      */
-    virtual bool Read(char8 * output,
+    virtual bool Read(char8 * const output,
                       uint32 & size);
 
     /**
@@ -113,7 +113,7 @@ public:
      * @post
      *   Position() == this'old->Position() + size
      */
-    virtual bool Write(const char8* input,
+    virtual bool Write(const char8 * const input,
                        uint32 & size);
 
     /**

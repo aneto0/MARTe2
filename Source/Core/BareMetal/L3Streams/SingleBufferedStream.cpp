@@ -48,7 +48,9 @@ SingleBufferedStream::SingleBufferedStream() :
         internalBuffer(this) {
     mutexReadMode = true;
     mutexWriteMode = false;
-    internalBuffer.SetBufferSize(32u);
+    if (!internalBuffer.SetBufferSize(32u)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+    }
 }
 
 SingleBufferedStream::SingleBufferedStream(const TimeoutType &timeoutIn) :
@@ -57,7 +59,9 @@ SingleBufferedStream::SingleBufferedStream(const TimeoutType &timeoutIn) :
     mutexReadMode = true;
     mutexWriteMode = false;
     SetTimeout(timeoutIn);
-    internalBuffer.SetBufferSize(32u);
+    if (!internalBuffer.SetBufferSize(32u)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+    }
 }
 
 SingleBufferedStream::~SingleBufferedStream() {
@@ -93,7 +97,7 @@ bool SingleBufferedStream::SetBufferSize(uint32 bufferSize) {
     return ret;
 }
 
-uint32 SingleBufferedStream::GetBufferSize() {
+uint32 SingleBufferedStream::GetBufferSize() const {
     return internalBuffer.GetBufferSize();
 }
 
@@ -147,7 +151,7 @@ bool SingleBufferedStream::Read(char8 * const output,
                 ret = false;
             }
 
-            if (size != toRead) {
+            if (ret && (size != toRead)) {
                 // partial only so continue
 
                 // adjust toRead
@@ -221,7 +225,7 @@ bool SingleBufferedStream::Write(const char8 * const input,
                 }
 
                 // all done! space available!
-                if (size != toWrite) {
+                if (ret && (size != toWrite)) {
                     // make space
                     if (!internalBuffer.Flush()) {
                         ret = false;
@@ -267,11 +271,15 @@ bool SingleBufferedStream::Write(const char8 * const input,
 uint64 SingleBufferedStream::Size() {
 // commit all pending changes if any
 // so stream size will be updated
-    bool ret = true;
+    bool ok = true;
     if (!FlushAndResync()) {
-        ret = false;
+        ok = false;
     }
-    return UnbufferedSize();
+    uint64 size = 0u;
+    if (ok) {
+        size = UnbufferedSize();
+    }
+    return size;
 }
 
 bool SingleBufferedStream::Seek(const uint64 pos) {
@@ -295,10 +303,11 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
             // if within range just update readBufferAccessPosition
             if ((pos >= bufferStartPosition) && (pos < currentStreamPosition)) {
                 if (!internalBuffer.Seek(static_cast<uint32>(pos - bufferStartPosition))) {
-                    ubSeek = false;
+                    REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to seek the internal buffer");
                 }
 
                 ubSeek = false;
+
             }
             else { // otherwise mark read buffer empty and proceed with normal seek
                 internalBuffer.Empty();
@@ -310,10 +319,10 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
     return (ubSeek) ? (UnbufferedSeek(pos)) : (true);
 }
 
-bool SingleBufferedStream::RelativeSeek(int32 delta) {
+bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
     bool ubSeek = false;
 
-    if (delta != 0) {
+    if (deltaPos != 0) {
 
         ubSeek = true;
         // if write mode on then just flush out data
@@ -332,7 +341,7 @@ bool SingleBufferedStream::RelativeSeek(int32 delta) {
             uint64 currentPos = internalBuffer.Position();
 
             // on success it means we are in range
-            if (internalBuffer.RelativeSeek(delta)) {
+            if (internalBuffer.RelativeSeek(deltaPos)) {
                 // no need to move stream pointer
                 ubSeek = false;
             }
@@ -347,7 +356,7 @@ bool SingleBufferedStream::RelativeSeek(int32 delta) {
                 if (gap < 0) {
                     ubSeek = false;
                 }
-                delta -= gap;
+                deltaPos -= gap;
                 // empty buffer
                 internalBuffer.Empty();
             }
@@ -357,7 +366,7 @@ bool SingleBufferedStream::RelativeSeek(int32 delta) {
 
     // seek
     /*lint -e{9117} -e{737} [MISRA C++ Rule 5-0-4]. The input value is always positive so the signed does not change. */
-    return (ubSeek) ? (UnbufferedSeek(static_cast<uint64>(UnbufferedPosition() + delta))) : (true);
+    return (ubSeek) ? (UnbufferedSeek(static_cast<uint64>(UnbufferedPosition() + deltaPos))) : (true);
 }
 
 uint64 SingleBufferedStream::Position() {
@@ -381,7 +390,10 @@ bool SingleBufferedStream::SetSize(const uint64 size) {
         ret = false;
     }
 
-    return ret && UnbufferedSetSize(size);
+    if (ret) {
+        ret = UnbufferedSetSize(size);
+    }
+    return ret;
 }
 
 }

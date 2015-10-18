@@ -46,8 +46,12 @@ DoubleBufferedStream::DoubleBufferedStream() :
         BufferedStream(),
         readBuffer(this),
         writeBuffer(this) {
-    readBuffer.SetBufferSize(32u);
-    writeBuffer.SetBufferSize(32u);
+    if (!readBuffer.SetBufferSize(32u)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+    }
+    if (!writeBuffer.SetBufferSize(32u)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+    }
 }
 
 DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &timeoutIn) :
@@ -55,14 +59,15 @@ DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &timeoutIn) :
         readBuffer(this),
         writeBuffer(this) {
     SetTimeout(timeoutIn);
-    readBuffer.SetBufferSize(32u);
-    writeBuffer.SetBufferSize(32u);
+    if (!readBuffer.SetBufferSize(32u)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+    }
+    if (!writeBuffer.SetBufferSize(32u)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+    }
 }
 
 DoubleBufferedStream::~DoubleBufferedStream() {
-    if (!writeBuffer.Flush()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Failed to flush buffer");
-    }
 }
 
 bool DoubleBufferedStream::SetBufferSize(uint32 readBufferSize,
@@ -115,7 +120,7 @@ IOBuffer * DoubleBufferedStream::GetOutputBuffer() {
     return &writeBuffer;
 }
 
-bool DoubleBufferedStream::Read(char8 * const bufferIn,
+bool DoubleBufferedStream::Read(char8 * const output,
                                 uint32 & size) {
 
     bool ret = true;
@@ -127,7 +132,7 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
         uint32 toRead = size;
 
         // try once
-        if (!readBuffer.Read(&bufferIn[0], size)) {
+        if (!readBuffer.Read(&output[0], size)) {
             ret = false;
         }
 
@@ -145,7 +150,7 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
 
                 else {
 
-                    if (!readBuffer.Read(&bufferIn[size], toRead)) {
+                    if (!readBuffer.Read(&output[size], toRead)) {
                         ret = false;
                     }
                     size += toRead;
@@ -157,7 +162,7 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
             }
             else {
                 // if needed read directly from stream
-                if (!UnbufferedRead(&bufferIn[size], toRead)) {
+                if (!UnbufferedRead(&output[size], toRead)) {
                     ret = false;
                 }
                 else {
@@ -168,10 +173,10 @@ bool DoubleBufferedStream::Read(char8 * const bufferIn,
     }
 
     // if needed read directly from stream
-    return (ret) ? (UnbufferedRead(&bufferIn[0], size)) : (false);
+    return (ret) ? (UnbufferedRead(&output[0], size)) : (false);
 }
 
-bool DoubleBufferedStream::Write(const char8* const bufferIn,
+bool DoubleBufferedStream::Write(const char8 * const input,
                                  uint32 & size) {
 
     bool ret = true;
@@ -186,7 +191,7 @@ bool DoubleBufferedStream::Write(const char8* const bufferIn,
         if (writeBuffer.MaxUsableAmount() > (4u * size)) {
 
             // try writing the buffer
-            if (!writeBuffer.Write(&bufferIn[0], size)) {
+            if (!writeBuffer.Write(&input[0], size)) {
                 ret = false;
             }
 
@@ -201,7 +206,7 @@ bool DoubleBufferedStream::Write(const char8* const bufferIn,
                     uint32 leftToWrite = toWrite;
 
                     // try writing the buffer
-                    if (!writeBuffer.Write(&bufferIn[size], leftToWrite)) {
+                    if (!writeBuffer.Write(&input[size], leftToWrite)) {
                         ret = false;
                     }
 
@@ -219,10 +224,13 @@ bool DoubleBufferedStream::Write(const char8* const bufferIn,
             if (!writeBuffer.Flush()) {
                 ret = false;
             }
+            else {
+                ret = UnbufferedWrite(&input[0], size);
+            }
         }
 
     }
-    return (ret) ? (UnbufferedWrite(&bufferIn[0], size)) : (false);
+    return (ret) ? (UnbufferedWrite(&input[0], size)) : (false);
 
 }
 
@@ -244,6 +252,14 @@ uint64 DoubleBufferedStream::Position() {
 
 bool DoubleBufferedStream::SetSize(const uint64 size) {
     return UnbufferedSetSize(size);
+}
+
+uint32 DoubleBufferedStream::GetReadBufferSize() const {
+    return readBuffer.GetBufferSize();
+}
+
+uint32 DoubleBufferedStream::GetWriteBufferSize() const {
+    return writeBuffer.GetBufferSize();
 }
 
 }

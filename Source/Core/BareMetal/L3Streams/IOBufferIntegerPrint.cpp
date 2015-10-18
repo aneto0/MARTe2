@@ -33,15 +33,12 @@
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
 #include "IOBuffer.h"
-#include "Shift.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-/*lint -e568 [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 
 /**
  * @brief Calculates the order of a number, namely its number of digits
@@ -51,6 +48,8 @@ namespace MARTe {
  * @param[in] positiveNumber is the number argument which must be positive.
  * @return the number of digits minus one.
  */
+/*lint -e{835} [Warning A zero has been given as right argument to operator '*']. Justification: for types with size >= 64 bit the right hand operator will not be zero*/
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
 static uint16 GetOrderOfMagnitude(const T positiveNumber) {
     T tenToExponent = static_cast<T>(1);
@@ -112,6 +111,8 @@ static uint16 GetOrderOfMagnitude(const T positiveNumber) {
  * @param[in] number is the number argument.
  * @return the minimum number of digits for an hexadecimal print.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+/*lint -e{568} [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 template<typename T>
 static uint16 GetNumberOfDigitsHexNotation(T number) {
     uint8 nDigits = 1u;
@@ -166,6 +167,8 @@ static uint16 GetNumberOfDigitsHexNotation(T number) {
  * @param[in] number is the number argument.
  * @return the minimum number of digits for an octal print.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+/*lint -e{568} [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 template<typename T>
 static uint16 GetNumberOfDigitsOctalNotation(T number) {
     // negative numbers are 2 complements and have therefore all bits
@@ -225,6 +228,8 @@ static uint16 GetNumberOfDigitsOctalNotation(T number) {
  * @param[in] number is the number argument.
  * @return the minimum number of digits for a binary print.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+/*lint -e{568} [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 template<typename T>
 static uint16 GetNumberOfDigitsBinaryNotation(T number) {
     uint8 nDigits = 1u;
@@ -430,6 +435,7 @@ static void Number2StreamDecimalNotationPrivate(IOBuffer &s,
  * @param[out] ioBuffer is a generic ioBuffer class which implements a PutC() function.
  * @param[in] s is the string to be printed.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<class ioBufferer>
 static void PutS(ioBufferer & ioBuffer,
                  const char8 *s) {
@@ -622,6 +628,7 @@ namespace MARTe {
  * @return true.
  */
 /*lint -e{9143} [MISRA C++ Rule 5-3-2]. Justification: application of sign - is applied only in case of negative number (then signed numbers).*/
+/*lint -e{568} [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 template<typename T>
 bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
                                     const T number,
@@ -779,6 +786,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
  * the number (prepend with 0x).
  * @return true.
  */
+/*lint -e{568} [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 template<typename T>
 bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
                                        const T number,
@@ -941,6 +949,7 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
  * the number (prepend with 0o).
  * @return true.
  */
+/*lint -e{568} [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 template<typename T>
 bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
                                   const T number,
@@ -1089,6 +1098,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
  * the number (prepend with 0b).
  * @return true.
  */
+/*lint -e{568} [Warning: non-negative quantity is never less than zero]. Justification: a template could be signed or unsigned.*/
 template<typename T>
 bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
                                    const T number,

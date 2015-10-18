@@ -101,7 +101,7 @@ extern bool FloatToStream(IOBuffer &buffer,
  * @return true if the string is printed correctly.
  */
 static bool PrintCCString(IOBuffer & iobuff,
-                          const char8 * string,
+                          const char8 * const string,
                           const FormatDescriptor &fd) {
 
     bool ret = (string != NULL);

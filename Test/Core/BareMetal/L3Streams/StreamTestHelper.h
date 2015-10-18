@@ -278,6 +278,78 @@ public:
 
 };
 
+/**
+ * @brief Minimal DoubleBufferedStream implementation for the Buffer and Stream tests
+ */
+class DummyDoubleBufferedStream: public DummyRawStream, public DoubleBufferedStream {
+public:
+
+    DummyDoubleBufferedStream(uint32 timeout) :
+            DummyRawStream(true),
+            DoubleBufferedStream(timeout) {
+    }
+
+
+    DummyDoubleBufferedStream(bool canSeek=true) :
+            DummyRawStream(canSeek),
+            DoubleBufferedStream() {
+    }
+
+    virtual ~DummyDoubleBufferedStream() {
+    }
+
+    uint64 UnbufferedSize() {
+        return DummyRawStream::UnbufferedSize();
+    }
+
+    bool UnbufferedSeek(uint64 seek) {
+        return DummyRawStream::UnbufferedSeek(seek);
+    }
+
+    bool UnbufferedRelativeSeek(int32 delta) {
+        return DummyRawStream::UnbufferedRelativeSeek(delta);
+    }
+
+    uint64 UnbufferedPosition() {
+        return DummyRawStream::UnbufferedPosition();
+    }
+
+    bool UnbufferedSetSize(uint64 desSize) {
+        return DummyRawStream::UnbufferedSetSize(desSize);
+    }
+
+    bool UnbufferedRead(char8 * const outBuffer,
+                        uint32 &inSize) {
+        return DummyRawStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
+    }
+
+    bool UnbufferedWrite(const char8 * const inBuffer,
+                         uint32 &outSize) {
+
+        return DummyRawStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());
+    }
+
+    bool CanWrite() const {
+        return DummyRawStream::CanWrite();
+    }
+
+    bool CanSeek() const {
+        return DummyRawStream::CanSeek();
+    }
+
+    bool CanRead() const {
+        return DummyRawStream::CanRead();
+    }
+
+    bool CanBlock() {
+        return DummyRawStream::CanBlock();
+    }
+
+    bool SetBlocking(bool flag) {
+        return DummyRawStream::SetBlocking(flag);
+    }
+
+};
 
 static const uint32 numberOfIntegers = 32;
 static const uint32 numberOfFloats = 64;

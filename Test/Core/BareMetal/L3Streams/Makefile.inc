@@ -32,6 +32,7 @@ OBJSX= AnyTypeTest.x \
        BufferedStreamIOBufferTest.x \
        StreamTestHelper.x \
        SingleBufferedStreamTest.x \
+       DoubleBufferedStreamTest.x \
        StreamStringTest.x
 # IntegerToStreamTest.x \
 	FloatToStreamTest.x \

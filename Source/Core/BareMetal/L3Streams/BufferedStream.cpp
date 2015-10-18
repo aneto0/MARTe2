@@ -194,7 +194,7 @@ TimeoutType BufferedStream::GetTimeout() const {
     return timeout;
 }
 
-void BufferedStream::SetTimeout(const TimeoutType timeoutIn) {
+void BufferedStream::SetTimeout(const TimeoutType &timeoutIn) {
     timeout = timeoutIn;
 }
 

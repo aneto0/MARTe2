@@ -115,7 +115,7 @@ public:
      * updated with the bytes actually written.
      * @return false if errors on copying data
      */
-    virtual bool Write(const char8* input,
+    virtual bool Write(const char8 * const input,
                        uint32 & size);
 
     /**
@@ -151,10 +151,10 @@ public:
      * @details Checks that the final position is >= 0 and <= UsedSize, then moves the cursor.\n
      * -If the final position is < 0 moves the cursor at the beginning.\n
      * -If the final position is > UsedSize moves the cursor at the end.\n
-     * @param[in] delta is the gap from the current position.
+     * @param[in] deltaPos is the gap from the current position.
      * @return false if the position falls out of bounds.
      */
-    virtual bool RelativeSeek(const int32 delta);
+    virtual bool RelativeSeek(const int32 deltaPos);
 
     /**
      * @brief Gets the current position.

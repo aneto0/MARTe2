@@ -28,6 +28,7 @@ OBJSX=	CharBufferGTest.x \
         StreamStringIOBufferGTest.x \
         BufferedStreamGTest.x \
         SingleBufferedStreamGTest.x \
+        DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
         StreamStringGTest.x
 #       TypeCharacteristicsGTest.x \
