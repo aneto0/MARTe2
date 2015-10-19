@@ -102,7 +102,7 @@ uint32 SingleBufferedStream::GetBufferSize() const {
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
-IOBuffer *SingleBufferedStream::GetInputBuffer() {
+IOBuffer *SingleBufferedStream::GetReadBuffer() {
     IOBuffer *ret = &internalBuffer;
     if (mutexWriteMode) {
         if (!SwitchToReadMode()) {
@@ -114,7 +114,7 @@ IOBuffer *SingleBufferedStream::GetInputBuffer() {
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
-IOBuffer *SingleBufferedStream::GetOutputBuffer() {
+IOBuffer *SingleBufferedStream::GetWriteBuffer() {
     IOBuffer *ret = &internalBuffer;
 
     // check for mutually exclusive buffering and
@@ -177,7 +177,7 @@ bool SingleBufferedStream::Read(char8 * const output,
                 }
                 else {
                     // if needed read directly from stream
-                    if (!UnbufferedRead(&output[size], toRead)) {
+                    if (!OSRead(&output[size], toRead)) {
                         ret = false;
                     }
                     else {
@@ -188,7 +188,7 @@ bool SingleBufferedStream::Read(char8 * const output,
         }
         else {
             // if needed read directly from stream
-            ret = UnbufferedRead(&output[0], size);
+            ret = OSRead(&output[0], size);
         }
 
     }
@@ -254,13 +254,13 @@ bool SingleBufferedStream::Write(const char8 * const input,
                     ret = false;
                 }
                 else {
-                    ret = UnbufferedWrite(&input[0], size);
+                    ret = OSWrite(&input[0], size);
                 }
             }
 
         }
         else {
-            ret = UnbufferedWrite(&input[0], size);
+            ret = OSWrite(&input[0], size);
         }
 
     }
@@ -277,7 +277,7 @@ uint64 SingleBufferedStream::Size() {
     }
     uint64 size = 0u;
     if (ok) {
-        size = UnbufferedSize();
+        size = OSSize();
     }
     return size;
 }
@@ -297,7 +297,7 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
     if (mutexReadMode) {
         // if read buffer has some data, check whether seek can be within buffer
         if (internalBuffer.UsedSize() > 0u) {
-            uint64 currentStreamPosition = UnbufferedPosition();
+            uint64 currentStreamPosition = OSPosition();
             uint64 bufferStartPosition = currentStreamPosition - internalBuffer.UsedSize();
 
             // if within range just update readBufferAccessPosition
@@ -316,7 +316,7 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
         }
     }
 
-    return (ubSeek) ? (UnbufferedSeek(pos)) : (true);
+    return (ubSeek) ? (OSSeek(pos)) : (true);
 }
 
 bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
@@ -366,7 +366,7 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
 
     // seek
     /*lint -e{9117} -e{737} [MISRA C++ Rule 5-0-4]. The input value is always positive so the signed does not change. */
-    return (ubSeek) ? (UnbufferedSeek(static_cast<uint64>(UnbufferedPosition() + deltaPos))) : (true);
+    return (ubSeek) ? (OSSeek(static_cast<uint64>(OSPosition() + deltaPos))) : (true);
 }
 
 uint64 SingleBufferedStream::Position() {
@@ -374,11 +374,11 @@ uint64 SingleBufferedStream::Position() {
     uint64 ret = 0u;
     // if write mode on then just flush out data
     if (mutexWriteMode) {
-        ret = UnbufferedPosition() + internalBuffer.Position();
+        ret = OSPosition() + internalBuffer.Position();
     }
     if (mutexReadMode) {
 
-        ret = UnbufferedPosition() - internalBuffer.UsedAmountLeft();
+        ret = OSPosition() - internalBuffer.UsedAmountLeft();
     }
     return ret;
 }
@@ -391,7 +391,7 @@ bool SingleBufferedStream::SetSize(const uint64 size) {
     }
 
     if (ret) {
-        ret = UnbufferedSetSize(size);
+        ret = OSSetSize(size);
     }
     return ret;
 }

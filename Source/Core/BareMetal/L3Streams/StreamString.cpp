@@ -65,12 +65,12 @@ StreamString::~StreamString() {
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
-IOBuffer *StreamString::GetInputBuffer() {
+IOBuffer *StreamString::GetReadBuffer() {
     return &buffer;
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
-IOBuffer *StreamString::GetOutputBuffer() {
+IOBuffer *StreamString::GetWriteBuffer() {
     return &buffer;
 }
 
@@ -245,41 +245,6 @@ int32 StreamString::Locate(const StreamString &x) const {
     }
 
     return static_cast<int32>(ret);
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamString::UnbufferedWrite(const char8 * const data,
-                                   uint32 & size) {
-    return false;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamString::UnbufferedRead(char8 * const data,
-                                  uint32 & size) {
-    return false;
-}
-
-uint64 StreamString::UnbufferedSize() {
-    return 0u;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamString::UnbufferedSeek(const uint64 pos) {
-    return false;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamString::UnbufferedRelativeSeek(const int32 deltaPos) {
-    return false;
-}
-
-uint64 StreamString::UnbufferedPosition() {
-    return 0u;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not need the input argument.*/
-bool StreamString::UnbufferedSetSize(const uint64 size) {
-    return false;
 }
 
 }

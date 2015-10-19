@@ -69,20 +69,20 @@ public:
     bool TestWrite(const char* inputString,
                    uint32 sizeToWrite);
 
-    /*  bool TestUnbufferedWrite();
+    bool TestCanWrite();
 
-     bool TestUnbufferedRead();
+    bool TestCanRead();
 
-     uint64 TestUnbufferedSize();
+    bool TestCanSeek();
 
-     bool TestUnbufferedSeek();
+    bool TestSize(const char8 * input);
 
-     bool TestUnbufferedRelativeSeek();
+    bool TestSetSize(uint32 size);
 
-     uint64 TestUnbufferedPosition();
+    bool TestBuffer(const char8 * input);
 
-     bool TestUnbufferedSetSize();
-     */
+    bool TestBufferReference(const char8 * input);
+
     /**
      * @brief Tests the streamString Seek and RelativeSeek.
      * @param stringToRead is the string already on the stream.
@@ -98,9 +98,16 @@ public:
                           int32 delta,
                           bool expected);
 
-
-
     bool TestPosition();
+
+    bool TestTail(const char8* input,
+                  uint32 index);
+
+    bool TestCopyOperator_Char(char8 input);
+
+    bool TestCopyOperator_CCString(const char8 * input);
+
+    bool TestCopyOperator_StreamString(const char8 * input);
 
     /**
      * @brief Tests the streamString operators.

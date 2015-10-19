@@ -225,32 +225,32 @@ public:
     virtual ~DummySingleBufferedStream() {
     }
 
-    uint64 UnbufferedSize() {
+    uint64 OSSize() {
         return DummyRawStream::UnbufferedSize();
     }
 
-    bool UnbufferedSeek(uint64 seek) {
+    bool OSSeek(uint64 seek) {
         return DummyRawStream::UnbufferedSeek(seek);
     }
 
-    bool UnbufferedRelativeSeek(int32 delta) {
+    bool OSRelativeSeek(int32 delta) {
         return DummyRawStream::UnbufferedRelativeSeek(delta);
     }
 
-    uint64 UnbufferedPosition() {
+    uint64 OSPosition() {
         return DummyRawStream::UnbufferedPosition();
     }
 
-    bool UnbufferedSetSize(uint64 desSize) {
+    bool OSSetSize(uint64 desSize) {
         return DummyRawStream::UnbufferedSetSize(desSize);
     }
 
-    bool UnbufferedRead(char8 * const outBuffer,
+    bool OSRead(char8 * const outBuffer,
                         uint32 &inSize) {
         return DummyRawStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
     }
 
-    bool UnbufferedWrite(const char8 * const inBuffer,
+    bool OSWrite(const char8 * const inBuffer,
                          uint32 &outSize) {
 
         return DummyRawStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());
@@ -298,32 +298,32 @@ public:
     virtual ~DummyDoubleBufferedStream() {
     }
 
-    uint64 UnbufferedSize() {
+    uint64 OSSize() {
         return DummyRawStream::UnbufferedSize();
     }
 
-    bool UnbufferedSeek(uint64 seek) {
+    bool OSSeek(uint64 seek) {
         return DummyRawStream::UnbufferedSeek(seek);
     }
 
-    bool UnbufferedRelativeSeek(int32 delta) {
+    bool OSRelativeSeek(int32 delta) {
         return DummyRawStream::UnbufferedRelativeSeek(delta);
     }
 
-    uint64 UnbufferedPosition() {
+    uint64 OSPosition() {
         return DummyRawStream::UnbufferedPosition();
     }
 
-    bool UnbufferedSetSize(uint64 desSize) {
+    bool OSSetSize(uint64 desSize) {
         return DummyRawStream::UnbufferedSetSize(desSize);
     }
 
-    bool UnbufferedRead(char8 * const outBuffer,
+    bool OSRead(char8 * const outBuffer,
                         uint32 &inSize) {
         return DummyRawStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
     }
 
-    bool UnbufferedWrite(const char8 * const inBuffer,
+    bool OSWrite(const char8 * const inBuffer,
                          uint32 &outSize) {
 
         return DummyRawStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());

@@ -43,6 +43,7 @@
 #include "FormatDescriptor.h"
 #include "BufferedStreamIOBuffer.h"
 #include "StreamI.h"
+#include "OperatingSystemCallbacksI.h"
 
 namespace MARTe {
 
@@ -52,7 +53,7 @@ namespace MARTe {
  * It supplements two independent low-level RawStreams (which implement the low-level calls
  * such as Read, Write, ...) with a buffering scheme.
  */
-class DoubleBufferedStream: public StreamI {
+class DoubleBufferedStream: public StreamI, public OperatingSystemCallbacksI {
 
 public:
     /**
@@ -166,13 +167,13 @@ protected:
      * @brief Gets the read buffer.
      * @return the BufferedStreamIOBuffer readBuffer pointer.
      */
-    virtual IOBuffer *GetInputBuffer();
+    virtual IOBuffer *GetReadBuffer();
 
     /**
      * @brief Gets the write buffer.
      * @return the BufferedStreamIOBuffer writeBuffer pointer.
      */
-    virtual IOBuffer *GetOutputBuffer();
+    virtual IOBuffer *GetWriteBuffer();
 
 private:
 

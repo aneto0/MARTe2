@@ -90,6 +90,75 @@ TEST(StreamStringGTest,TestWrite_bigger_size) {
     ASSERT_TRUE(stringtest.TestWrite("HelloWorld", 20));
 }
 
+TEST(StreamStringGTest,TestCanWrite) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCanWrite());
+}
+
+TEST(StreamStringGTest,TestCanRead) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCanRead());
+}
+
+TEST(StreamStringGTest,TestCanSeek) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCanSeek());
+}
+
+TEST(StreamStringGTest,TestPosition) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestPosition());
+}
+
+TEST(StreamStringGTest,TestSize) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSize("HelloWorld"));
+}
+
+TEST(StreamStringGTest,TestSize_NULL) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSize(NULL));
+}
+
+TEST(StreamStringGTest,TestSetSize) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSetSize(32));
+}
+
+TEST(StreamStringGTest,TestSetSize_0) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSetSize(0));
+}
+
+TEST(StreamStringGTest,TestBuffer) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestBuffer("HelloWorld"));
+}
+
+TEST(StreamStringGTest,TestBufferReference) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestBufferReference("HelloWorld"));
+}
+
+TEST(StreamStringGTest,TestTail_0) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestTail("abcdefg", 0));
+}
+
+TEST(StreamStringGTest,TestTail_3) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestTail("abcdefg", 3));
+}
+
+TEST(StreamStringGTest,TestTail_size) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestTail("abcdefg", 6));
+}
+
+TEST(StreamStringGTest,TestTail_out_size) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestTail("abcdefg", 8));
+}
 
 /*
  TEST(StreamStringGTest,TestUnbufferedWrite) {
@@ -134,7 +203,6 @@ TEST(StreamStringGTest, TestSeek_out_range) {
     ASSERT_TRUE(stringtest.TestSeek(32, 33, false));
 }
 
-
 TEST(StreamStringGTest, TestRelativeSeek_in_range) {
     StreamStringTest stringtest;
     ASSERT_TRUE(stringtest.TestRelativeSeek(16, 8, true));
@@ -149,4 +217,21 @@ TEST(StreamStringGTest, TestRelativeSeek_right_boundary) {
     StreamStringTest stringtest;
     ASSERT_TRUE(stringtest.TestRelativeSeek(16, 17, false));
 }
+
+TEST(StreamStringGTest, TestCopyOperator_Char) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCopyOperator_Char(' '));
+}
+
+TEST(StreamStringGTest, TestCopyOperator_CCString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCopyOperator_CCString("HelloWorld"));
+}
+
+TEST(StreamStringGTest, TestCopyOperator_StreamString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCopyOperator_StreamString("HelloWorld"));
+}
+
+
 
