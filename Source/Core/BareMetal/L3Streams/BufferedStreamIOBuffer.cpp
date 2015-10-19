@@ -43,10 +43,10 @@ namespace MARTe {
 
 BufferedStreamIOBuffer::BufferedStreamIOBuffer() :
         IOBuffer() {
-    stream = static_cast<BufferedStream *>(NULL);
+    stream = static_cast<StreamI *>(NULL);
 }
 
-BufferedStreamIOBuffer::BufferedStreamIOBuffer(BufferedStream * const s) :
+BufferedStreamIOBuffer::BufferedStreamIOBuffer(StreamI * const s) :
         IOBuffer() {
     stream = s;
 }

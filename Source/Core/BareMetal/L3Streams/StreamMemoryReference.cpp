@@ -42,20 +42,20 @@
 namespace MARTe {
 
 StreamMemoryReference::StreamMemoryReference() :
-        BufferedStream(),
+        StreamI(),
         buffer() {
 
 }
 
 StreamMemoryReference::StreamMemoryReference(char8 * const bufferIn,
                                              const uint32 bufferSize) :
-        BufferedStream() {
+        StreamI() {
     buffer.SetBufferReferencedMemory(bufferIn, bufferSize, 0u);
 }
 
 StreamMemoryReference::StreamMemoryReference(const char8 * const bufferIn,
                                              const uint32 bufferSize) :
-        BufferedStream() {
+        StreamI() {
     buffer.SetBufferReadOnlyReferencedMemory(bufferIn, bufferSize, 0u);
     buffer.SetUsedSize(bufferSize);
 }
@@ -68,12 +68,12 @@ StreamMemoryReference::operator AnyType() const {
     return at;
 }
 
-/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
 IOBuffer *StreamMemoryReference::GetInputBuffer() {
     return &buffer;
 }
 
-/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
 IOBuffer *StreamMemoryReference::GetOutputBuffer() {
     return &buffer;
 }

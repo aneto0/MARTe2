@@ -28,7 +28,7 @@ OBJSX= AnyTypeTest.x \
        CharBufferTest.x \
        IOBufferTest.x \
        StreamStringIOBufferTest.x \
-       BufferedStreamTest.x \
+       StreamITest.x \
        BufferedStreamIOBufferTest.x \
        StreamTestHelper.x \
        SingleBufferedStreamTest.x \

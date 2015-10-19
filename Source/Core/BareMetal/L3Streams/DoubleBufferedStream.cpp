@@ -43,7 +43,7 @@
 namespace MARTe {
 
 DoubleBufferedStream::DoubleBufferedStream() :
-        BufferedStream(),
+        StreamI(),
         readBuffer(this),
         writeBuffer(this) {
     if (!readBuffer.SetBufferSize(32u)) {
@@ -55,7 +55,7 @@ DoubleBufferedStream::DoubleBufferedStream() :
 }
 
 DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &timeoutIn) :
-        BufferedStream(),
+        StreamI(),
         readBuffer(this),
         writeBuffer(this) {
     SetTimeout(timeoutIn);
@@ -109,12 +109,12 @@ bool DoubleBufferedStream::SetBufferSize(uint32 readBufferSize,
 
     return ret;
 }
-/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
 IOBuffer * DoubleBufferedStream::GetInputBuffer() {
     return &readBuffer;
 }
 
-/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
 IOBuffer * DoubleBufferedStream::GetOutputBuffer() {
 
     return &writeBuffer;

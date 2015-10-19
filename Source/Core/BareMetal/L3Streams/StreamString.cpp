@@ -42,12 +42,12 @@
 namespace MARTe {
 
 StreamString::StreamString() :
-        BufferedStream() {
+        StreamI() {
 }
 
 /** @brief Copy constructor from a const char8*. */
 StreamString::StreamString(const char8 * const initialisationString) :
-        BufferedStream() {
+        StreamI() {
     if (initialisationString != static_cast<const char8 *>(NULL)) {
         if (!Set(initialisationString)) {
             // TODO
@@ -64,12 +64,12 @@ StreamString::operator AnyType() {
 StreamString::~StreamString() {
 }
 
-/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
 IOBuffer *StreamString::GetInputBuffer() {
     return &buffer;
 }
 
-/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
 IOBuffer *StreamString::GetOutputBuffer() {
     return &buffer;
 }

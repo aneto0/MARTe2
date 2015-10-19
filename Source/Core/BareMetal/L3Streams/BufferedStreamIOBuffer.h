@@ -34,7 +34,7 @@
 
 #include "TimeoutType.h"
 #include "IOBuffer.h"
-#include "BufferedStream.h"
+#include "StreamI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -91,7 +91,7 @@ public:
      *   UndoLevel() == 0
      *   GetStream() == s &&
      */
-    BufferedStreamIOBuffer(BufferedStream * const s);
+    BufferedStreamIOBuffer(StreamI * const s);
 
     /**
      * @brief User friendly function which simply calls NoMoreDataToRead.
@@ -130,13 +130,13 @@ public:
     /**
      * Gets the stream pointer
      */
-    inline const BufferedStream* GetStream() const;
+    inline const StreamI* GetStream() const;
 
 protected:
 
     /**
      * @brief Refills the buffer reading from the stream.
-     * @details Empties the buffer, calls BufferedStream::UnBufferedRead with size = MaxUsableAmount.
+     * @details Empties the buffer, calls StreamI::UnBufferedRead with size = MaxUsableAmount.
      * In case of stream read error empties the buffer and returns false.
      *
      * @return false if the buffer is null or in case of stream read error.
@@ -154,7 +154,7 @@ private:
     /**
      * The stream that uses this buffer.
      */
-    BufferedStream *stream;
+    StreamI *stream;
 
     /**
      * The timeout for read and write operations.
@@ -179,7 +179,7 @@ TimeoutType BufferedStreamIOBuffer::GetTimeout() const {
     return timeout;
 }
 
-const BufferedStream* BufferedStreamIOBuffer::GetStream() const {
+const StreamI* BufferedStreamIOBuffer::GetStream() const {
     return stream;
 }
 

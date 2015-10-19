@@ -1,6 +1,6 @@
 /**
- * @file BufferedStream.h
- * @brief Header file for class BufferedStream
+ * @file StreamI.h
+ * @brief Header file for class StreamI
  * @date 05/10/2015
  * @author Giuseppe Ferrò
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BufferedStream
+ * @details This header file contains the declaration of the class StreamI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BUFFEREDSTREAM_H_
-#define BUFFEREDSTREAM_H_
+#ifndef STREAMI_H_
+#define STREAMI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -50,7 +50,7 @@ namespace MARTe {
  * streams which support buffering. It also offers a standard implementation
  * of the GetToken and GetLine functions.
  */
-class BufferedStream {
+class StreamI {
 
 public:
 
@@ -59,12 +59,12 @@ public:
      * @post
      *   GetTimeout() == TTInfiniteWait
      */
-    BufferedStream();
+    StreamI();
 
     /**
      * @brief Default destructor
      */
-    virtual ~BufferedStream();
+    virtual ~StreamI();
 
     /**
      * @brief Queries if the stream is writable.
@@ -185,7 +185,7 @@ public:
      * to be found would be A).
      * @return false if no data is stored in the outputBuffer, true otherwise (meaning that a token was found).
      */
-    bool GetToken(BufferedStream & output,
+    bool GetToken(StreamI & output,
                   const char8 * const terminator,
                   char8 &saveTerminator,
                   const char8 * const skipCharacters = NULL_PTR(const char8 *));
@@ -207,7 +207,7 @@ public:
      * @param[in] skipTerminators if true the \r is skipped.
      * @return true if a line is successfully read from this stream and written into \a output.
      */
-    bool GetLine(BufferedStream & output,
+    bool GetLine(StreamI & output,
                  bool skipTerminators = true);
 
     /**
@@ -245,7 +245,7 @@ public:
      * @param[out] stream is the stream to be copied into the stream.
      * @return true if stream is successfully copied into the stream.
      */
-    bool Copy(BufferedStream &stream);
+    bool Copy(StreamI &stream);
 
     /**
      * @see PrintFormatted.
@@ -373,27 +373,27 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-BufferedStream::operator AnyType() {
+StreamI::operator AnyType() {
     void *dataPointer = static_cast<void *>(this);
     TypeDescriptor dataDescriptor(false, Stream, 0u);
 
     return AnyType(dataDescriptor, 0u, dataPointer);
 }
 
-bool BufferedStream::Printf(const char8 * const format,
+bool StreamI::Printf(const char8 * const format,
                             const AnyType& par1) {
     AnyType pars[2] = { par1, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStream::Printf(const char8 * const format,
+bool StreamI::Printf(const char8 * const format,
                             const AnyType& par1,
                             const AnyType& par2) {
     AnyType pars[3] = { par1, par2, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStream::Printf(const char8 * const format,
+bool StreamI::Printf(const char8 * const format,
                             const AnyType& par1,
                             const AnyType& par2,
                             const AnyType& par3) {
@@ -401,7 +401,7 @@ bool BufferedStream::Printf(const char8 * const format,
     return PrintFormatted(format, &pars[0]);
 }
 
-bool BufferedStream::Printf(const char8 * const format,
+bool StreamI::Printf(const char8 * const format,
                             const AnyType& par1,
                             const AnyType& par2,
                             const AnyType& par3,

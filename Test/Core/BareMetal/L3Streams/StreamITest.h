@@ -1,6 +1,6 @@
 /**
- * @file BufferedStreamTest.h
- * @brief Header file for class BufferedStreamTest
+ * @file StreamITest.h
+ * @brief Header file for class StreamITest
  * @date 15/10/2015
  * @author Andre' Neto
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BufferedStreamTest
+ * @details This header file contains the declaration of the class StreamITest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BUFFEREDSTREAMTEST_H_
-#define BUFFEREDSTREAMTEST_H_
+#ifndef STREAMITEST_H_
+#define STREAMITEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -38,9 +38,9 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief Class for testing of BufferedStream functions.
+ * @brief Class for testing of StreamI functions.
  */
-class BufferedStreamTest {
+class StreamITest {
 public:
     /**
      * @brief Tests the default constructor

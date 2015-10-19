@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "DoubleBufferedStreamTest.h"
-#include "BufferedStream.h"
+#include "StreamI.h"
 #include "StreamTestHelper.h"
 
 /*---------------------------------------------------------------------------*/

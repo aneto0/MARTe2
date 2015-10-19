@@ -36,7 +36,7 @@
 #include "HeapManager.h"
 #include "CharBuffer.h"
 #include "StreamStringIOBuffer.h"
-#include "BufferedStream.h"
+#include "StreamI.h"
 #include "TimeoutType.h"
 #include "StringHelper.h"
 #include "AnyType.h"
@@ -51,7 +51,7 @@ namespace MARTe {
  * @brief A basic implementation of a stream which allows reading and writing
  * to an underlying string.
  */
-class StreamString: public BufferedStream {
+class StreamString: public StreamI {
 
 public:
 

@@ -34,9 +34,9 @@
 #include "SingleBufferedStream.h"
 #include "StreamString.h"
 #include "MemoryOperationsHelper.h"
-#include "RawStream.h"
 #include "AnyType.h"
 #include "stdio.h"
+#include "../../../../Source/Core/BareMetal/L3Streams/OperatingSystemStream.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -75,9 +75,9 @@ public:
 };
 
 /**
- * @brief Minimal RawStream implementation for the Buffer and Stream tests
+ * @brief Minimal OperatingSystemStream implementation for the Buffer and Stream tests
  */
-class DummyRawStream: public RawStream {
+class DummyRawStream: public OperatingSystemStream {
 
 public:
 
@@ -206,7 +206,7 @@ public:
 };
 
 /**
- * @brief Minimal BufferedStream implementation for the Buffer and Stream tests
+ * @brief Minimal StreamI implementation for the Buffer and Stream tests
  */
 class DummySingleBufferedStream: public DummyRawStream, public SingleBufferedStream {
 public:

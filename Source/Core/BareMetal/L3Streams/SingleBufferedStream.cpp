@@ -44,7 +44,7 @@
 namespace MARTe {
 
 SingleBufferedStream::SingleBufferedStream() :
-        BufferedStream(),
+        StreamI(),
         internalBuffer(this) {
     mutexReadMode = true;
     mutexWriteMode = false;
@@ -54,7 +54,7 @@ SingleBufferedStream::SingleBufferedStream() :
 }
 
 SingleBufferedStream::SingleBufferedStream(const TimeoutType &timeoutIn) :
-        BufferedStream(),
+        StreamI(),
         internalBuffer(this) {
     mutexReadMode = true;
     mutexWriteMode = false;
@@ -101,7 +101,7 @@ uint32 SingleBufferedStream::GetBufferSize() const {
     return internalBuffer.GetBufferSize();
 }
 
-/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
 IOBuffer *SingleBufferedStream::GetInputBuffer() {
     IOBuffer *ret = &internalBuffer;
     if (mutexWriteMode) {
@@ -113,7 +113,7 @@ IOBuffer *SingleBufferedStream::GetInputBuffer() {
     return ret;
 }
 
-/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStream must have the access to the final buffers.*/
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
 IOBuffer *SingleBufferedStream::GetOutputBuffer() {
     IOBuffer *ret = &internalBuffer;
 

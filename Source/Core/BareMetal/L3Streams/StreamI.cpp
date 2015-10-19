@@ -1,6 +1,6 @@
 /**
- * @file BufferedStream.cpp
- * @brief Source file for class BufferedStream
+ * @file StreamI.cpp
+ * @brief Source file for class StreamI
  * @date 05/ott/2015
  * @author pc
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class BufferedStream (public, protected, and private). Be aware that some 
+ * the class StreamI (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "BufferedStream.h"
+#include "StreamI.h"
 #include "AdvancedErrorManagement.h"
 #include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
@@ -42,14 +42,14 @@
 
 namespace MARTe {
 
-BufferedStream::BufferedStream() {
+StreamI::StreamI() {
     timeout = TTInfiniteWait;
 }
 
-BufferedStream::~BufferedStream() {
+StreamI::~StreamI() {
 }
 
-bool BufferedStream::GetToken(char8 * const outputBuffer,
+bool StreamI::GetToken(char8 * const outputBuffer,
                               const char8 * const terminator,
                               const uint32 outputBufferSize,
                               char8 &saveTerminator,
@@ -65,7 +65,7 @@ bool BufferedStream::GetToken(char8 * const outputBuffer,
     return retval;
 }
 
-bool BufferedStream::GetToken(BufferedStream & output,
+bool StreamI::GetToken(StreamI & output,
                               const char8 * const terminator,
                               char8 &saveTerminator,
                               const char8 * const skipCharacters) {
@@ -83,7 +83,7 @@ bool BufferedStream::GetToken(BufferedStream & output,
     return ret;
 }
 
-bool BufferedStream::SkipTokens(const uint32 count,
+bool StreamI::SkipTokens(const uint32 count,
                                 const char8 * const terminator) {
 
     bool ret = false;
@@ -96,7 +96,7 @@ bool BufferedStream::SkipTokens(const uint32 count,
     return ret;
 }
 
-bool BufferedStream::GetLine(BufferedStream & output,
+bool StreamI::GetLine(StreamI & output,
                              const bool skipTerminators) {
     const char8 *skipCharacters = "\r";
     if (!skipTerminators) {
@@ -111,7 +111,7 @@ bool BufferedStream::GetLine(BufferedStream & output,
     return GetToken(output, "\n", terminator, skipCharacters);
 }
 
-bool BufferedStream::GetLine(char8 * const outputBuffer,
+bool StreamI::GetLine(char8 * const outputBuffer,
                              const uint32 outputBufferSize,
                              const bool skipTerminators) {
     const char8 *skipCharacters = "\r";
@@ -127,7 +127,7 @@ bool BufferedStream::GetLine(char8 * const outputBuffer,
     return GetToken(outputBuffer, "\n", outputBufferSize, terminator, skipCharacters);
 }
 
-bool BufferedStream::PrintFormatted(const char8 * const format,
+bool StreamI::PrintFormatted(const char8 * const format,
                                     const AnyType pars[]) {
 
     bool ret = false;
@@ -142,7 +142,7 @@ bool BufferedStream::PrintFormatted(const char8 * const format,
     return ret;
 }
 
-bool BufferedStream::Copy(const char8 * const buffer) {
+bool StreamI::Copy(const char8 * const buffer) {
 
     bool ret = false;
     if (buffer != NULL) {
@@ -154,7 +154,7 @@ bool BufferedStream::Copy(const char8 * const buffer) {
     return ret;
 }
 
-bool BufferedStream::Copy(BufferedStream &stream) {
+bool StreamI::Copy(StreamI &stream) {
 
     char8 buffer[256];
     uint32 size = static_cast<uint32>(sizeof(buffer));
@@ -190,11 +190,11 @@ bool BufferedStream::Copy(BufferedStream &stream) {
 }
 
 
-TimeoutType BufferedStream::GetTimeout() const {
+TimeoutType StreamI::GetTimeout() const {
     return timeout;
 }
 
-void BufferedStream::SetTimeout(const TimeoutType &timeoutIn) {
+void StreamI::SetTimeout(const TimeoutType &timeoutIn) {
     timeout = timeoutIn;
 }
 

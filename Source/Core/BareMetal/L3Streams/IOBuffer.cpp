@@ -34,7 +34,7 @@
 #include "StringHelper.h"
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
-#include "BufferedStream.h"
+#include "StreamI.h"
 
 namespace MARTe {
 
@@ -166,7 +166,7 @@ static bool PrintCCString(IOBuffer & iobuff,
  * @return false in case of errors in read and write operations.
  */
 static bool PrintStream(IOBuffer & iobuff,
-                        BufferedStream &stream,
+                        StreamI &stream,
                         const FormatDescriptor &fd) {
 
     bool ret = true;
@@ -399,7 +399,7 @@ static bool PrintToStream(IOBuffer & iobuff,
 
             //general stream type.
             if (((par.GetTypeDescriptor()).type) == Stream) {
-                BufferedStream * stream = static_cast<BufferedStream *>(dataPointer);
+                StreamI * stream = static_cast<StreamI *>(dataPointer);
                 ret = PrintStream(iobuff, *stream, fd);
 
             }

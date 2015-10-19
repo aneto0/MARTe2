@@ -31,7 +31,7 @@
 #ifndef STREAM_STRING_TEST_H
 #define STREAM_STRING_TEST_H
 
-#include "../../../../Source/Core/BareMetal/L3Streams/BufferedStream.h"
+#include "../../../../Source/Core/BareMetal/L3Streams/StreamI.h"
 #include "FormatDescriptor.h"
 
 /** @brief Class for testing of Streamable functions. */

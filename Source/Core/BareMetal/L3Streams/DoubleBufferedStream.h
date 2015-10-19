@@ -39,10 +39,10 @@
 #include "TimeoutType.h"
 #include "IOBuffer.h"
 #include "AnyType.h"
-#include "BufferedStream.h"
+#include "StreamI.h"
 #include "FormatDescriptor.h"
 #include "BufferedStreamIOBuffer.h"
-#include "BufferedStream.h"
+#include "StreamI.h"
 
 namespace MARTe {
 
@@ -52,7 +52,7 @@ namespace MARTe {
  * It supplements two independent low-level RawStreams (which implement the low-level calls
  * such as Read, Write, ...) with a buffering scheme.
  */
-class DoubleBufferedStream: public BufferedStream {
+class DoubleBufferedStream: public StreamI {
 
 public:
     /**
@@ -103,7 +103,7 @@ public:
 
 
     /**
-     * @see BufferedStream::Read
+     * @see StreamI::Read
      * @post
      *   Position() == this'old->Position() + size
      */
@@ -111,7 +111,7 @@ public:
                       uint32 & size);
 
     /**
-     * @see BufferedStream::Write
+     * @see StreamI::Write
      * @post
      *   Position() == this'old->Position() + size
      */
@@ -131,27 +131,27 @@ public:
     uint32 GetWriteBufferSize() const;
 
     /**
-     * @see BufferedStream::Size
+     * @see StreamI::Size
      */
     virtual uint64 Size();
 
     /**
-     * @see BufferedStream::Seek
+     * @see StreamI::Seek
      */
     virtual bool Seek(uint64 pos);
 
     /**
-     * @see BufferedStream::RelativeSeek
+     * @see StreamI::RelativeSeek
      */
     virtual bool RelativeSeek(int32 deltaPos);
 
     /**
-     * @see BufferedStream::Position
+     * @see StreamI::Position
      */
     virtual uint64 Position();
 
     /**
-     * @see BufferedStream::SetSize
+     * @see StreamI::SetSize
      */
     virtual bool SetSize(uint64 size);
 

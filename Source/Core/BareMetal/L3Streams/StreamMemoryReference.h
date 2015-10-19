@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include "BufferedStream.h"
+#include "StreamI.h"
 #include "IOBuffer.h"
 
 /*---------------------------------------------------------------------------*/
@@ -46,7 +46,7 @@ namespace MARTe {
  * @brief A basic implementation of a stream which allows reading and writing
  * to an underlying memory location.
  */
-class StreamMemoryReference: public BufferedStream {
+class StreamMemoryReference: public StreamI {
 
 public:
 

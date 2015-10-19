@@ -1,6 +1,6 @@
 /**
- * @file RawStream.h
- * @brief Header file for class RawStream
+ * @file OperatingSystemStream.h
+ * @brief Header file for class OperatingSystemStream
  * @date 05/10/2015
  * @author Giuseppe Ferrò
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class RawStream
+ * @details This header file contains the declaration of the class OperatingSystemStream
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -46,12 +46,12 @@ namespace MARTe {
  * @brief
  * A more abstract version of Streamable. It is used to allow referring to streams at lower levels
  */
-class RawStream {
+class OperatingSystemStream {
 
 public:
 
     /** @brief Default destructor */
-    virtual ~RawStream() {
+    virtual ~OperatingSystemStream() {
     }
 
     /**

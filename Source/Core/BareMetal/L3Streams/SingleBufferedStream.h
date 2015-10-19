@@ -34,10 +34,10 @@
 #include "TimeoutType.h"
 #include "IOBuffer.h"
 #include "AnyType.h"
-#include "BufferedStream.h"
+#include "StreamI.h"
 #include "FormatDescriptor.h"
 #include "BufferedStreamIOBuffer.h"
-#include "BufferedStream.h"
+#include "StreamI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,10 +48,10 @@ namespace MARTe {
 /**
  * @brief Buffered stream implementation (single buffer).
  * @details This class offers a buffering mechanism for character streams.
- * It supplements a low-level RawStream (which implements the low-level calls
+ * It supplements a low-level OperatingSystemStream (which implements the low-level calls
  * such as Read, Write, Seek, ...) with a buffering scheme.
  */
-class SingleBufferedStream: public BufferedStream {
+class SingleBufferedStream: public StreamI {
 
 public:
     /**
@@ -101,7 +101,7 @@ public:
     virtual uint32 GetBufferSize() const;
 
     /**
-     * @see BufferedStream::Read
+     * @see StreamI::Read
      * @post
      *   Position() == this'old->Position() + size
      */
@@ -109,7 +109,7 @@ public:
                       uint32 & size);
 
     /**
-     * @see BufferedStream::Write
+     * @see StreamI::Write
      * @post
      *   Position() == this'old->Position() + size
      */
@@ -117,27 +117,27 @@ public:
                        uint32 & size);
 
     /**
-     * @see BufferedStream::Size
+     * @see StreamI::Size
      */
     virtual uint64 Size();
 
     /**
-     * @see BufferedStream::Seek
+     * @see StreamI::Seek
      */
     virtual bool Seek(uint64 pos);
 
     /**
-     * @see BufferedStream::RelativeSeek
+     * @see StreamI::RelativeSeek
      */
     virtual bool RelativeSeek(int32 deltaPos);
 
     /**
-     * @see BufferedStream::Position
+     * @see StreamI::Position
      */
     virtual uint64 Position();
 
     /**
-     * @see BufferedStream::SetSize
+     * @see StreamI::SetSize
      */
     virtual bool SetSize(uint64 size);
 

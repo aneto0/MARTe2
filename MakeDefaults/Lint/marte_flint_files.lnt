@@ -49,7 +49,7 @@ CharBuffer.cpp
 IOBuffer.cpp
 StreamStringIOBuffer.cpp
 BufferedStreamIOBuffer.cpp
-BufferedStream.cpp
+StreamI.cpp
 StreamString.cpp
 StreamMemoryReference.cpp
 DoubleBufferedStream.cpp
