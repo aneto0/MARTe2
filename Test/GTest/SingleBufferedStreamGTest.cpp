@@ -132,6 +132,11 @@ TEST_F(SingleBufferedStreamGTest,TestRead_Size_1024) {
     ASSERT_TRUE(streamtest.TestRead(1024, 1024));
 }
 
+TEST_F(SingleBufferedStreamGTest,TestWrite_NotCanWrite) {
+    SingleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestWrite_NotCanWrite());
+}
+
 TEST_F(SingleBufferedStreamGTest,TestWrite_Size_1) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite(0, 1));
@@ -180,6 +185,18 @@ TEST_F(SingleBufferedStreamGTest,TestWrite_Size_1024) {
     ASSERT_TRUE(streamtest.TestWrite(8, 1024));
     ASSERT_TRUE(streamtest.TestWrite(64, 1024));
     ASSERT_TRUE(streamtest.TestWrite(1024, 1024));
+}
+
+TEST_F(SingleBufferedStreamGTest,TestWrite_OverflowInternalBuffer_Size) {
+    SingleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(8, 256));
+    ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(32, 256));
+    ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(64, 256));
+}
+
+TEST_F(SingleBufferedStreamGTest,TestRead_NotCanRead) {
+    SingleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestRead_NotCanRead());
 }
 
 TEST_F(SingleBufferedStreamGTest,TestSize_1) {
@@ -240,6 +257,13 @@ TEST_F(SingleBufferedStreamGTest,TestSeek) {
 TEST_F(SingleBufferedStreamGTest,TestRelativeSeek) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRelativeSeek());
+}
+
+TEST_F(SingleBufferedStreamGTest,TestRelativeSeek_OverflowInternalBuffer_Size) {
+    SingleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestRelativeSeek_OverflowInternalBuffer(8, 256));
+    ASSERT_TRUE(streamtest.TestRelativeSeek_OverflowInternalBuffer(32, 256));
+    ASSERT_TRUE(streamtest.TestRelativeSeek_OverflowInternalBuffer(64, 256));
 }
 
 TEST_F(SingleBufferedStreamGTest,TestPosition) {

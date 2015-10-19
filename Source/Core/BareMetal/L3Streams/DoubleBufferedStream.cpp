@@ -82,14 +82,6 @@ bool DoubleBufferedStream::SetBufferSize(uint32 readBufferSize,
         writeBufferSize = 8u;
     }
 
-    // do not allocate if not necessary
-    if (!CanRead()) {
-        readBufferSize = 0u;
-    }
-    if (!CanWrite()) {
-        writeBufferSize = 0u;
-    }
-
     // dump any data in the write Queue
     if (Flush()) {
 
@@ -123,10 +115,8 @@ IOBuffer * DoubleBufferedStream::GetWriteBuffer() {
 bool DoubleBufferedStream::Read(char8 * const output,
                                 uint32 & size) {
 
-    bool ret = true;
-
-    // check whether we have a buffer
-    if (readBuffer.GetBufferSize() > 0u) {
+    bool ret = CanRead();
+    if (ret) {
 
         // read from buffer first
         uint32 toRead = size;
@@ -179,9 +169,8 @@ bool DoubleBufferedStream::Read(char8 * const output,
 bool DoubleBufferedStream::Write(const char8 * const input,
                                  uint32 & size) {
 
-    bool ret = true;
-    // buffering active?
-    if (writeBuffer.GetBufferSize() > 0u) {
+    bool ret = CanWrite();
+    if (ret) {
         // separate input and output size
 
         uint32 toWrite = size;

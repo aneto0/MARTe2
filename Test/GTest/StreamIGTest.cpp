@@ -405,6 +405,11 @@ TEST_F(StreamIGTest,TestCopy_Stream_BufferSize_1024) {
     ASSERT_TRUE(streamtest.TestCopy_Stream(1024));
 }
 
+/*TEST_F(StreamIGTest,TestPrintFormatted_Integer_Decimal_BufferSize_0) {
+    StreamITest streamtest;
+    ASSERT_TRUE(streamtest.TestPrintFormatted(0, GeneratePrintFormattedDecimalTable()));
+}*/
+
 TEST_F(StreamIGTest,TestPrintFormatted_Integer_Decimal_BufferSize_1) {
     StreamITest streamtest;
     ASSERT_TRUE(streamtest.TestPrintFormatted(1, GeneratePrintFormattedDecimalTable()));

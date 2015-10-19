@@ -132,27 +132,27 @@ public:
     uint32 GetWriteBufferSize() const;
 
     /**
-     * @see StreamI::Size
+     * @see OperatingSystemCallbacksI::OSSize
      */
     virtual uint64 Size();
 
     /**
-     * @see StreamI::Seek
+     * @see OperatingSystemCallbacksI::OSSeek
      */
     virtual bool Seek(uint64 pos);
 
     /**
-     * @see StreamI::RelativeSeek
+     * @see OperatingSystemCallbacksI::RelativeSeek
      */
     virtual bool RelativeSeek(int32 deltaPos);
 
     /**
-     * @see StreamI::Position
+     * @see OperatingSystemCallbacksI::Position
      */
     virtual uint64 Position();
 
     /**
-     * @see StreamI::SetSize
+     * @see OperatingSystemCallbacksI::OSSetSize
      */
     virtual bool SetSize(uint64 size);
 

@@ -36,7 +36,7 @@
 #include "MemoryOperationsHelper.h"
 #include "AnyType.h"
 #include "stdio.h"
-#include "../../../../Source/Core/BareMetal/L3Streams/OperatingSystemStream.h"
+#include "OperatingSystemStream.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -81,9 +81,11 @@ class DummyRawStream: public OperatingSystemStream {
 
 public:
 
-    DummyRawStream(bool canSeek=true) {
+    DummyRawStream(bool canSeek = true, bool canRead = true, bool canWrite = true) {
         position = 0;
         seekable = canSeek;
+        readable = canRead;
+        writable = canWrite;
         size = 0;
         buffer = (char8 *)malloc(MAX_STREAM_DIMENSION);
         for (uint32 i = 0; i < MAX_STREAM_DIMENSION; i++) {
@@ -163,7 +165,7 @@ public:
     }
 
     bool CanWrite() const {
-        return true;
+        return writable;
     }
 
     bool CanSeek() const {
@@ -171,7 +173,7 @@ public:
     }
 
     bool CanRead() const {
-        return true;
+        return readable;
     }
 
     bool CanBlock() {
@@ -200,8 +202,11 @@ public:
 
     uint32 size;
 
-
     bool seekable;
+
+    bool readable;
+
+    bool writable;
 
 };
 
@@ -217,8 +222,8 @@ public:
     }
 
 
-    DummySingleBufferedStream(bool canSeek=true) :
-            DummyRawStream(canSeek),
+    DummySingleBufferedStream(bool canSeek=true, bool canRead = true, bool canWrite = true) :
+            DummyRawStream(canSeek, canRead, canWrite),
             SingleBufferedStream() {
     }
 
@@ -290,7 +295,7 @@ public:
     }
 
 
-    DummyDoubleBufferedStream(bool canSeek=true) :
+    DummyDoubleBufferedStream(bool canSeek=true, bool canRead = true, bool canWrite = true) :
             DummyRawStream(canSeek),
             DoubleBufferedStream() {
     }

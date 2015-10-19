@@ -84,10 +84,9 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
     while ((size > 0) && (stream.Write(bufferWrite + start, size))) {
         start += size;
         if (size > 0) {
-            size = (readSize - size);
+            size = (readSize - start);
         }
     }
-    bool ok = (stream.Position() == readSize);
     stream.Seek(0);
 
     char8 *bufferRead = (char8 *) malloc(readSize);
@@ -97,14 +96,13 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
     while ((size > 0) && (stream.Read(bufferRead + start, size))) {
         start += size;
         if (size > 0) {
-            size = (readSize - size);
+            size = (readSize - start);
         }
     }
 
     bufferRead[readSize - 1] = '\0';
     bufferWrite[readSize - 1] = '\0';
-    ok &= (StringHelper::Compare(bufferRead, bufferWrite) == 0);
-    ok &= (stream.Position() == readSize);
+    bool ok = (StringHelper::Compare(bufferRead, bufferWrite) == 0);
 
     free(bufferRead);
     free(bufferWrite);
@@ -126,56 +124,23 @@ bool DoubleBufferedStreamTest::TestSeek() {
     DummyDoubleBufferedStream stream(true);
     stream.SetBufferSize(64, 64);
 
-    uint32 size = 32;
-    char buffer[size];
-    uint32 i = 0;
-    for (i = 0; i < size; i++) {
-        buffer[i] = i;
-    }
-    bool ok = stream.Write(buffer, size);
-    for (i = 0; i < size; i++) {
-        buffer[i] = 0;
-    }
+    uint32 streamSeek = 100;
+    stream.Seek(streamSeek);
 
-    uint32 seekAmount;
-    for (seekAmount = 0; seekAmount < 30; seekAmount += 3) {
-        ok &= stream.Seek(seekAmount);
-        uint32 readSize = size - seekAmount;
-        ok &= stream.Read(buffer, readSize);
-        for (i = 0; i < readSize; i++) {
-            ok &= static_cast<char>((buffer[i] == (i + seekAmount)));
-        }
-    }
-    return ok;
+    return (stream.Position() == streamSeek);
 }
 
 bool DoubleBufferedStreamTest::TestRelativeSeek() {
     DummyDoubleBufferedStream stream(true);
     stream.SetBufferSize(64, 64);
 
-    uint32 size = 32;
-    char buffer[size];
-    uint32 i = 0;
-    for (i = 0; i < size; i++) {
-        buffer[i] = i;
-    }
-    bool ok = stream.Write(buffer, size);
-    for (i = 0; i < size; i++) {
-        buffer[i] = 0;
-    }
+    uint32 streamSeek = 100;
+    stream.Seek(streamSeek);
 
-    uint32 seekStart = 5;
-    uint32 seekAmount = 0;
-    for (seekAmount = 0; seekAmount < 25; seekAmount++) {
-        ok &= stream.Seek(seekStart);
-        ok &= stream.RelativeSeek(seekAmount);
-        uint32 readSize = size - seekAmount - seekStart;
-        ok &= stream.Read(buffer, readSize);
-        for (i = 0; i < readSize; i++) {
-            ok &= (buffer[i] == static_cast<char>((i + seekAmount + seekStart)));
-        }
-    }
-    return ok;
+    uint32 streamRelativeSeek = 111;
+    stream.RelativeSeek(streamRelativeSeek);
+
+    return (stream.Position() == (streamSeek + streamRelativeSeek));
 }
 
 bool DoubleBufferedStreamTest::TestPosition() {

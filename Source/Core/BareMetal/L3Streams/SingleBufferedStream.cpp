@@ -70,15 +70,6 @@ SingleBufferedStream::~SingleBufferedStream() {
 bool SingleBufferedStream::SetBufferSize(uint32 bufferSize) {
 
     bool ret = true;
-    // mutex mode is enabled if CanSeek and both can Read and Write
-// in that case the stream is single and bidirectional
-    bool canSeek = CanSeek();
-    bool canRead = CanRead();
-    bool canWrite = CanWrite();
-    if (canSeek && canWrite && canRead) {
-        mutexWriteMode = true;
-        mutexReadMode = false;
-    }
 
     // minimum size = 8
     if (bufferSize < 8u) {
@@ -130,67 +121,58 @@ IOBuffer *SingleBufferedStream::GetWriteBuffer() {
 bool SingleBufferedStream::Read(char8 * const output,
                                 uint32 & size) {
 
-    bool ret = true;
+    bool ret = CanRead();
 
     // check for mutually exclusive buffering and
     // whether one needs to switch to ReadMode
-    if (mutexWriteMode) {
+    if (ret && mutexWriteMode) {
         if (!SwitchToReadMode()) {
             ret = false;
         }
     }
     if (ret) {
-        // check whether we have a buffer
-        if (internalBuffer.GetBufferSize() > 0u) {
+        // read from buffer first
+        uint32 toRead = size;
 
-            // read from buffer first
-            uint32 toRead = size;
+        // try once
+        if (!internalBuffer.Read(&output[0], size)) {
+            ret = false;
+        }
 
-            // try once
-            if (!internalBuffer.Read(&output[0], size)) {
-                ret = false;
-            }
+        if (ret && (size != toRead)) {
+            // partial only so continue
 
-            if (ret && (size != toRead)) {
-                // partial only so continue
+            // adjust toRead
+            toRead -= size;
 
-                // adjust toRead
-                toRead -= size;
+            // decide whether to use the buffer again or just to read directly
+            if ((toRead * 4u) < internalBuffer.MaxUsableAmount()) {
+                if (!internalBuffer.Refill()) {
+                    ret = false;
+                }
 
-                // decide whether to use the buffer again or just to read directly
-                if ((toRead * 4u) < internalBuffer.MaxUsableAmount()) {
-                    if (!internalBuffer.Refill()) {
+                else {
+
+                    if (!internalBuffer.Read(&output[size], toRead)) {
                         ret = false;
                     }
+                    size += toRead;
 
-                    else {
+                    // should have completed
+                    // as our buffer is at least 4x the need
+                }
 
-                        if (!internalBuffer.Read(&output[size], toRead)) {
-                            ret = false;
-                        }
-                        size += toRead;
-
-                        // should have completed
-                        // as our buffer is at least 4x the need
-                    }
-
+            }
+            else {
+                // if needed read directly from stream
+                if (!OSRead(&output[size], toRead)) {
+                    ret = false;
                 }
                 else {
-                    // if needed read directly from stream
-                    if (!OSRead(&output[size], toRead)) {
-                        ret = false;
-                    }
-                    else {
-                        size += toRead;
-                    }
+                    size += toRead;
                 }
             }
         }
-        else {
-            // if needed read directly from stream
-            ret = OSRead(&output[0], size);
-        }
-
     }
 
     return ret;
@@ -199,70 +181,60 @@ bool SingleBufferedStream::Read(char8 * const output,
 bool SingleBufferedStream::Write(const char8 * const input,
                                  uint32 & size) {
 
-    bool ret = true;
+    bool ret = CanWrite();
     // check for mutually exclusive buffering and
     // whether one needs to switch to WriteMode
-    if (mutexReadMode) {
+    if (ret && mutexReadMode) {
         if (!SwitchToWriteMode()) {
             ret = false;
         }
     }
     if (ret) {
 
-        // buffering active?
-        if (internalBuffer.GetBufferSize() > 0u) {
-            // separate input and output size
+        uint32 toWrite = size;
+        // check available buffer size versus write size
+        // if size is comparable to buffer size there
+        // is no reason to use the buffering mechanism
+        if (internalBuffer.MaxUsableAmount() > (4u * size)) {
 
-            uint32 toWrite = size;
-            // check available buffer size versus write size
-            // if size is comparable to buffer size there
-            // is no reason to use the buffering mechanism
-            if (internalBuffer.MaxUsableAmount() > (4u * size)) {
-
-                // try writing the buffer
-                if (!internalBuffer.Write(&input[0], size)) {
-                    ret = false;
-                }
-
-                // all done! space available!
-                if (ret && (size != toWrite)) {
-                    // make space
-                    if (!internalBuffer.Flush()) {
-                        ret = false;
-                    }
-                    else {
-                        toWrite -= size;
-                        uint32 leftToWrite = toWrite;
-
-                        // try writing the buffer
-                        if (!internalBuffer.Write(&input[size], leftToWrite)) {
-                            ret = false;
-                        }
-
-                        size += leftToWrite;
-
-                        // should have been able to fill in it!!!
-                        if (leftToWrite != toWrite) {
-                            ret = false;
-                        }
-                    }
-                }
+            // try writing the buffer
+            if (!internalBuffer.Write(&input[0], size)) {
+                ret = false;
             }
-            else {
-                // write the buffer so far
+
+            // all done! space available!
+            if (ret && (size != toWrite)) {
+                // make space
                 if (!internalBuffer.Flush()) {
                     ret = false;
                 }
                 else {
-                    ret = OSWrite(&input[0], size);
+                    toWrite -= size;
+                    uint32 leftToWrite = toWrite;
+
+                    // try writing the buffer
+                    if (!internalBuffer.Write(&input[size], leftToWrite)) {
+                        ret = false;
+                    }
+
+                    size += leftToWrite;
+
+                    // should have been able to fill in it!!!
+                    if (leftToWrite != toWrite) {
+                        ret = false;
+                    }
                 }
             }
-
         }
         else {
-            ret = OSWrite(&input[0], size);
+            // write the buffer so far
+            if (!internalBuffer.Flush()) {
+                ret = false;
+            }
+            else {
+                ret = OSWrite(&input[0], size);
+            }
         }
-
     }
     return ret;
 
@@ -287,14 +259,14 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
     bool ubSeek = true;
     // if write mode on then just flush out data
     // then seek the stream
-    if (mutexWriteMode) {
+    if (CanSeek() && mutexWriteMode) {
         if (internalBuffer.UsedSize() > 0u) {
             if (!internalBuffer.Flush()) {
                 ubSeek = false;
             }
         }
     }
-    if (mutexReadMode) {
+    if (CanSeek() && mutexReadMode) {
         // if read buffer has some data, check whether seek can be within buffer
         if (internalBuffer.UsedSize() > 0u) {
             uint64 currentStreamPosition = OSPosition();
@@ -322,7 +294,7 @@ bool SingleBufferedStream::Seek(const uint64 pos) {
 bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
     bool ubSeek = false;
 
-    if (deltaPos != 0) {
+    if (CanSeek() && (deltaPos != 0)) {
 
         ubSeek = true;
         // if write mode on then just flush out data
