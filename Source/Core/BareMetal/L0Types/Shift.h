@@ -1,48 +1,54 @@
-/*
- * Copyright 2015 F4E | European Joint Undertaking for 
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
- *
- * Licensed under the EUPL, Version 1.1 or - as soon they 
- will be approved by the European Commission - subsequent  
- versions of the EUPL (the "Licence"); 
- * You may not use this work except in compliance with the 
- Licence. 
- * You may obtain a copy of the Licence at: 
- *  
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in 
- writing, software distributed under the Licence is 
- distributed on an "AS IS" basis, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
- express or implied. 
- * See the Licence  
- permissions and limitations under the Licence. 
- *
- * $Id: $
- *
- **/
-
 /**
- * @file
- * @brief Logical and mathematic shift operations.
+ * @file Shift.h
+ * @brief Header file for class Shift
+ * @date 19/10/2015
+ * @author Giuseppe Ferrò
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This header file contains the declaration of the class Shift
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
-#ifndef SHIFT_H
-#define SHIFT_H
+
+#ifndef L0TYPES_SHIFT_H_
+#define L0TYPES_SHIFT_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
 
 namespace MARTe {
 
-/** @brief A collector of functions that implements logical and mathematic shift in safe mode. 
+/** @brief A collector of functions that implements logical and mathematic shift in safe mode.
  *
- * These methods implements shift operations in the right way, returning zero when the shift is 
+ * These methods implements shift operations in the right way, returning zero when the shift is
  * greater than the size of the number. Furthermore they implements the logical shift which
  * does not extend the sign for negative numbers and it is very useful in many functionalities.
  */
 class Shift {
 
-public:
+private:
 
     /** @brief Logical right shift for uint8 numbers.
      * @param number is the number to shift.
@@ -198,11 +204,12 @@ public:
     static inline T LogicalRightSafeShift(T number,
                                           uint8 shift) {
 
-        uint8 bound = sizeof(T) * 8;
+        uint8 bound = static_cast<uint8>(sizeof(T) * 8u);
 
         //if |shift| is greater than the size of the number return 0.
-        if (shift >= bound)
+        if (shift >= bound) {
             return (T) 0;
+        }
 
         return LogicalRightShift(number, shift);
     }
@@ -215,11 +222,12 @@ public:
     static inline T LogicalLeftSafeShift(T number,
                                          uint8 shift) {
 
-        uint8 bound = sizeof(T) * 8;
+        uint8 bound = sizeof(T) * 8u;
 
         //if |shift| is greater than the size of the number return 0.
-        if (shift >= bound)
+        if (shift >= bound) {
             return (T) 0;
+        }
 
         return number << shift;
     }
@@ -250,5 +258,10 @@ public:
 };
 
 }
-#endif
+
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
+
+#endif /* L0TYPES_SHIFT_H_ */
 
