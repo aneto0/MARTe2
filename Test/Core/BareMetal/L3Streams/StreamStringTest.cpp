@@ -51,6 +51,89 @@ static void cleanOutputBuffer(char8* buffer,
     }
 }
 
+bool StreamStringTest::TestDefaultConstructor() {
+    StreamString string;
+
+    if (string.Position() != 0) {
+        return false;
+    }
+
+    if (string.Size() != 0) {
+        return false;
+    }
+
+    return (string.CanWrite()) && (string.CanRead()) && (string.CanSeek());
+}
+
+bool StreamStringTest::TestCopyConstructor(const char8 * initializationString) {
+    StreamString string(initializationString);
+
+    const uint32 granularity = 64;
+    uint32 size = StringHelper::Length(initializationString);
+
+    if (string.Position() != size) {
+        printf("\n%d\n", string.Position());
+        return false;
+    }
+
+    if (string.Size() != size) {
+        printf("\n%d\n", string.Position());
+        return false;
+    }
+
+    if (StringHelper::Compare(string.Buffer(), initializationString) != 0) {
+
+        return false;
+    }
+
+    return (string.CanWrite()) && (string.CanRead()) && (string.CanSeek());
+}
+
+bool StreamStringTest::TestDestructor() {
+
+    const char8 * input = "HelloWorld";
+
+    StreamString string(input);
+
+    string.~StreamString();
+
+    return string.Buffer() == NULL;
+}
+
+bool StreamStringTest::TestAnyTypeOperator(const char8* initializationString) {
+
+    StreamString string(initializationString);
+
+    AnyType test = string;
+
+    TypeDescriptor td = test.GetTypeDescriptor();
+
+    if (td.isStructuredData) {
+        printf("\n1\n");
+        return false;
+    }
+
+    if (!td.isConstant) {
+        printf("\n2\n");
+        return false;
+    }
+
+    if (td.type != CCString) {
+        printf("\n3\n");
+        return false;
+    }
+    if (td.numberOfBits != (sizeof(const char8*) * 8)) {
+        printf("\n4\n");
+        return false;
+    }
+
+    if (test.GetDataPointer() != string.Buffer()) {
+        printf("\n5\n");
+        return false;
+    }
+    return test.GetBitAddress() == 0;
+}
+
 bool StreamStringTest::TestRead(const char8* inputString,
                                 uint32 sizeToRead) {
     StreamString myString;
@@ -93,44 +176,48 @@ bool StreamStringTest::TestWrite(const char8* inputString,
 
 }
 
-bool StreamStringTest::TestUnbufferedWrite() {
-    StreamString dummy;
-    uint32 dummySize = 0;
-    const char8 * const data = NULL;
-    return !dummy.UnbufferedWrite(data, dummySize);
-}
+/*
 
-bool StreamStringTest::TestUnbufferedRead() {
-    StreamString dummy;
-    uint32 dummySize = 0;
-    char8 * const data = NULL;
-    return !dummy.UnbufferedRead(data, dummySize);
-}
+ bool StreamStringTest::TestUnbufferedWrite() {
+ StreamString dummy;
+ uint32 dummySize = 0;
+ const char8 * const data = NULL;
+ return !dummy.UnbufferedWrite(data, dummySize);
+ }
 
-uint64 StreamStringTest::TestUnbufferedSize() {
-    StreamString dummy;
-    return dummy.UnbufferedSize() == 0;
-}
+ bool StreamStringTest::TestUnbufferedRead() {
+ StreamString dummy;
+ uint32 dummySize = 0;
+ char8 * const data = NULL;
+ return !dummy.UnbufferedRead(data, dummySize);
+ }
 
-bool StreamStringTest::TestUnbufferedSeek() {
-    StreamString dummy;
-    return !dummy.UnbufferedSeek(0);
-}
+ uint64 StreamStringTest::TestUnbufferedSize() {
+ StreamString dummy;
+ return dummy.UnbufferedSize() == 0;
+ }
 
-bool StreamStringTest::TestUnbufferedRelativeSeek() {
-    StreamString dummy;
-    return !dummy.UnbufferedRelativeSeek(0);
-}
+ bool StreamStringTest::TestUnbufferedSeek() {
+ StreamString dummy;
+ return !dummy.UnbufferedSeek(0);
+ }
 
-uint64 StreamStringTest::TestUnbufferedPosition() {
-    StreamString dummy;
-    return dummy.UnbufferedPosition() == 0;
-}
+ bool StreamStringTest::TestUnbufferedRelativeSeek() {
+ StreamString dummy;
+ return !dummy.UnbufferedRelativeSeek(0);
+ }
 
-bool StreamStringTest::TestUnbufferedSetSize() {
-    StreamString dummy;
-    return !dummy.UnbufferedSetSize(1);
-}
+ uint64 StreamStringTest::TestUnbufferedPosition() {
+ StreamString dummy;
+ return dummy.UnbufferedPosition() == 0;
+ }
+
+ bool StreamStringTest::TestUnbufferedSetSize() {
+ StreamString dummy;
+ return !dummy.UnbufferedSetSize(1);
+ }
+
+ */
 
 bool StreamStringTest::TestSeek(uint32 usedSize,
                                 uint32 seek,
@@ -145,7 +232,7 @@ bool StreamStringTest::TestSeek(uint32 usedSize,
     }
 
     myString.Seek(0);
-    if(myString.Position()!=0){
+    if (myString.Position() != 0) {
         return false;
     }
 
@@ -165,8 +252,101 @@ bool StreamStringTest::TestSeek(uint32 usedSize,
 
 }
 
+bool StreamStringTest::TestRelativeSeek(uint32 initialPos,
+                                        int32 delta,
+                                        bool expected) {
+    StreamString string;
+
+    uint32 usedSize = 2 * initialPos;
+
+    char8 toWrite[64];
+    string.Write((const char8*) toWrite, usedSize);
+
+    string.Seek(initialPos);
+
+    if (string.Position() != initialPos) {
+        return false;
+    }
+
+    bool ret = string.RelativeSeek(delta);
+    if (ret) {
+        if (string.Position() != (initialPos + delta)) {
+            return false;
+        }
+    }
+    else {
+        if (delta >= 0) {
+            if (string.Position() != (uint32) (usedSize)) {
+                return false;
+            }
+        }
+        else {
+            if (string.Position() != 0) {
+                return false;
+            }
+        }
+    }
+
+    return ret == expected;
+}
+
+bool StreamStringTest::TestPosition() {
+
+    StreamString string;
+
+    if(string.Position()!=0){
+        return false;
+    }
+
+    const char8 *toWrite = "HelloWorld";
+    uint32 expectedPosition = StringHelper::Length(toWrite);
+    string=toWrite;
+
+    if(string.Position()!=expec)
+
+
+
+    const char8 *toWrite = "HelloWorld";
+    uint32 expectedPosition = StringHelper::Length(toWrite);
+    ioBuffer.Write(toWrite, expectedPosition);
+    if (ioBuffer.Position() != expectedPosition) {
+        printf("\n3\n");
+        return false;
+    }
+
+    ioBuffer.Seek(0);
+
+    //the read change the position
+
+    char8 toRead[32];
+
+    ioBuffer.Read(toRead, expectedPosition);
+    if (ioBuffer.Position() != expectedPosition) {
+        printf("\n4\n");
+        return false;
+    }
+
+    //the seek change the position
+    ioBuffer.Seek(3);
+    if (ioBuffer.Position() != 3) {
+        printf("\n5\n");
+        return false;
+    }
+
+    //the relative seek change the position
+    ioBuffer.RelativeSeek(2);
+    if (ioBuffer.Position() != 5) {
+        printf("\n6 %d\n", ioBuffer.Position());
+        return false;
+    }
+
+    ioBuffer.Empty();
+    return ioBuffer.Position() == 0;
+
+}
+
 bool StreamStringTest::TestOperators(const char8* firstString,
-        const char8* secondString) {
+                                     const char8* secondString) {
     /* StreamString myString1;
      StreamString myString2;
 

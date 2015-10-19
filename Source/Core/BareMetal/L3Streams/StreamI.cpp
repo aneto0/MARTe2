@@ -50,25 +50,26 @@ StreamI::~StreamI() {
 }
 
 bool StreamI::GetToken(char8 * const outputBuffer,
-                              const char8 * const terminator,
-                              const uint32 outputBufferSize,
-                              char8 &saveTerminator,
-                              const char8 * const skipCharacters) {
+                       const char8 * const terminator,
+                       const uint32 outputBufferSize,
+                       char8 &saveTerminator,
+                       const char8 * const skipCharacters) {
 
     bool retval = false;
 // retrieve stream mechanism
     IOBuffer *inputIOBuffer = GetInputBuffer();
     if (inputIOBuffer != NULL) {
-
-        retval = inputIOBuffer->GetToken(outputBuffer, terminator, outputBufferSize, saveTerminator, skipCharacters);
+        if(CanRead()) {
+            retval = inputIOBuffer->GetToken(outputBuffer, terminator, outputBufferSize, saveTerminator, skipCharacters);
+        }
     }
     return retval;
 }
 
 bool StreamI::GetToken(StreamI & output,
-                              const char8 * const terminator,
-                              char8 &saveTerminator,
-                              const char8 * const skipCharacters) {
+                       const char8 * const terminator,
+                       char8 &saveTerminator,
+                       const char8 * const skipCharacters) {
 
 // retrieve stream mechanism
     IOBuffer *inputIOBuffer = GetInputBuffer();
@@ -77,27 +78,31 @@ bool StreamI::GetToken(StreamI & output,
     bool ret = false;
 
     if ((inputIOBuffer != NULL) && (outputIOBuffer != NULL)) {
-        ret = inputIOBuffer->GetToken(*outputIOBuffer, terminator, saveTerminator, skipCharacters);
+        if(CanRead()) {
+            ret = inputIOBuffer->GetToken(*outputIOBuffer, terminator, saveTerminator, skipCharacters);
+        }
     }
 
     return ret;
 }
 
 bool StreamI::SkipTokens(const uint32 count,
-                                const char8 * const terminator) {
+                         const char8 * const terminator) {
 
-    bool ret = false;
+    bool ret = CanRead();
+    if (ret) {
 // retrieve stream mechanism
-    IOBuffer *inputBuffer = GetInputBuffer();
-    if (inputBuffer != NULL) {
-        ret = inputBuffer->SkipTokens(count, terminator);
+        IOBuffer *inputBuffer = GetInputBuffer();
+        if (inputBuffer != NULL) {
+            ret = inputBuffer->SkipTokens(count, terminator);
+        }
     }
 
     return ret;
 }
 
 bool StreamI::GetLine(StreamI & output,
-                             const bool skipTerminators) {
+                      const bool skipTerminators) {
     const char8 *skipCharacters = "\r";
     if (!skipTerminators) {
         /*lint -e{774} [MISRA C++ Rule 0-1-1], [MISRA C++ Rule 0-1-2], [MISRA C++ Rule 0-1-9]. Justification: It is a compilation time platform constant. */
@@ -112,8 +117,8 @@ bool StreamI::GetLine(StreamI & output,
 }
 
 bool StreamI::GetLine(char8 * const outputBuffer,
-                             const uint32 outputBufferSize,
-                             const bool skipTerminators) {
+                      const uint32 outputBufferSize,
+                      const bool skipTerminators) {
     const char8 *skipCharacters = "\r";
     if (!skipTerminators) {
         /*lint -e{774} [MISRA C++ Rule 0-1-1], [MISRA C++ Rule 0-1-2], [MISRA C++ Rule 0-1-9]. Justification: It is a compilation time platform constant. */
@@ -128,16 +133,18 @@ bool StreamI::GetLine(char8 * const outputBuffer,
 }
 
 bool StreamI::PrintFormatted(const char8 * const format,
-                                    const AnyType pars[]) {
+                             const AnyType pars[]) {
 
-    bool ret = false;
+    bool ret = CanWrite();
 // retrieve stream mechanism
 // the output buffer is flushed in streamable.
-    IOBuffer *outputBuffer = GetOutputBuffer();
-    if (outputBuffer != NULL) {
+    if (ret) {
+        IOBuffer *outputBuffer = GetOutputBuffer();
+        if (outputBuffer != NULL) {
 
-        ret = outputBuffer->PrintFormatted(format, pars);
+            ret = outputBuffer->PrintFormatted(format, pars);
 
+        }
     }
     return ret;
 }
@@ -151,6 +158,7 @@ bool StreamI::Copy(const char8 * const buffer) {
 
         ret = Write(buffer, len);
     }
+
     return ret;
 }
 
@@ -189,7 +197,6 @@ bool StreamI::Copy(StreamI &stream) {
 
 }
 
-
 TimeoutType StreamI::GetTimeout() const {
     return timeout;
 }
@@ -197,6 +204,5 @@ TimeoutType StreamI::GetTimeout() const {
 void StreamI::SetTimeout(const TimeoutType &timeoutIn) {
     timeout = timeoutIn;
 }
-
 
 }

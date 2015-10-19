@@ -130,6 +130,13 @@ public:
      */
     virtual bool CanRead() const;
 
+
+    /**
+     * @brief Queries if seek operations can be performed on the stream.
+     * @return true.
+     */
+    virtual bool CanSeek() const;
+
     /**
      * @brief Gets the size of the stream.
      * @return the current stream size.
@@ -169,11 +176,7 @@ public:
      */
     virtual bool SetSize(const uint64 size);
 
-    /**
-     * @brief Queries if seek operations can be performed on the stream.
-     * @return true.
-     */
-    virtual bool CanSeek() const;
+
 
     /*-----------------------------------------------------------------------*/
 

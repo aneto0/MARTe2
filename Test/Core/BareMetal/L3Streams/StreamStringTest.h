@@ -47,6 +47,14 @@ private:
 
 public:
 
+    bool TestDefaultConstructor();
+
+    bool TestCopyConstructor(const char8 * initializationString);
+
+    bool TestDestructor();
+
+    bool TestAnyTypeOperator(const char8* initializationString);
+
     /**
      * @brief Tests the streamString read function.
      * @param inputString is the string on the streamString.
@@ -61,20 +69,20 @@ public:
     bool TestWrite(const char* inputString,
                    uint32 sizeToWrite);
 
-    bool TestUnbufferedWrite();
+    /*  bool TestUnbufferedWrite();
 
-    bool TestUnbufferedRead();
+     bool TestUnbufferedRead();
 
-    uint64 TestUnbufferedSize();
+     uint64 TestUnbufferedSize();
 
-    bool TestUnbufferedSeek();
+     bool TestUnbufferedSeek();
 
-    bool TestUnbufferedRelativeSeek();
+     bool TestUnbufferedRelativeSeek();
 
-    uint64 TestUnbufferedPosition();
+     uint64 TestUnbufferedPosition();
 
-    bool TestUnbufferedSetSize();
-
+     bool TestUnbufferedSetSize();
+     */
     /**
      * @brief Tests the streamString Seek and RelativeSeek.
      * @param stringToRead is the string already on the stream.
@@ -85,6 +93,14 @@ public:
     bool TestSeek(uint32 usedSize,
                   uint32 seek,
                   bool expected);
+
+    bool TestRelativeSeek(uint32 initialPos,
+                          int32 delta,
+                          bool expected);
+
+
+
+    bool TestPosition();
 
     /**
      * @brief Tests the streamString operators.
