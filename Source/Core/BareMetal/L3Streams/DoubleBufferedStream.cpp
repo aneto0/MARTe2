@@ -46,11 +46,14 @@ DoubleBufferedStream::DoubleBufferedStream() :
         StreamI(),
         readBuffer(this),
         writeBuffer(this) {
+    bufferSizeSet = true;
     if (!readBuffer.SetBufferSize(32u)) {
         REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+        bufferSizeSet = false;
     }
     if (!writeBuffer.SetBufferSize(32u)) {
         REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+        bufferSizeSet = false;
     }
 }
 
@@ -59,11 +62,14 @@ DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &timeoutIn) :
         readBuffer(this),
         writeBuffer(this) {
     SetTimeout(timeoutIn);
+    bufferSizeSet = true;
     if (!readBuffer.SetBufferSize(32u)) {
         REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+        bufferSizeSet = false;
     }
     if (!writeBuffer.SetBufferSize(32u)) {
         REPORT_ERROR(ErrorManagement::FatalError, "SingleBufferedStream: Failed to SetBufferSize(32)");
+        bufferSizeSet = false;
     }
 }
 
@@ -72,8 +78,6 @@ DoubleBufferedStream::~DoubleBufferedStream() {
 
 bool DoubleBufferedStream::SetBufferSize(uint32 readBufferSize,
                                          uint32 writeBufferSize) {
-
-    bool ret = true;
     // minimum size = 8
     if (readBufferSize < 8u) {
         readBufferSize = 8u;
@@ -82,24 +86,16 @@ bool DoubleBufferedStream::SetBufferSize(uint32 readBufferSize,
         writeBufferSize = 8u;
     }
 
+    bufferSizeSet = false;
     // dump any data in the write Queue
     if (Flush()) {
-
-        // adjust readBufferSize
-        if (!readBuffer.SetBufferSize(readBufferSize)) {
-            ret = false;
-        }
-
-        // adjust writeBufferSize
-        if (!writeBuffer.SetBufferSize(writeBufferSize)) {
-            ret = false;
+        bufferSizeSet = readBuffer.SetBufferSize(readBufferSize);
+        if (bufferSizeSet) {
+            bufferSizeSet = writeBuffer.SetBufferSize(writeBufferSize);
         }
     }
-    else {
-        ret = false;
-    }
 
-    return ret;
+    return bufferSizeSet;
 }
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
 IOBuffer * DoubleBufferedStream::GetReadBuffer() {
@@ -115,7 +111,7 @@ IOBuffer * DoubleBufferedStream::GetWriteBuffer() {
 bool DoubleBufferedStream::Read(char8 * const output,
                                 uint32 & size) {
 
-    bool ret = CanRead();
+    bool ret = CanRead() && bufferSizeSet;
     if (ret) {
 
         // read from buffer first
@@ -169,7 +165,7 @@ bool DoubleBufferedStream::Read(char8 * const output,
 bool DoubleBufferedStream::Write(const char8 * const input,
                                  uint32 & size) {
 
-    bool ret = CanWrite();
+    bool ret = CanWrite() && bufferSizeSet;
     if (ret) {
         // separate input and output size
 

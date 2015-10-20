@@ -191,6 +191,11 @@ private:
      */
     BufferedStreamIOBuffer writeBuffer;
 
+    /**
+     * Set to true if the buffer sizes could be successfully set
+     */
+    bool bufferSizeSet;
+
 };
 
 
