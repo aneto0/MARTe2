@@ -77,8 +77,6 @@ protected:
      * @brief Moves within the low-level, unbuffered, stream implementation to an absolute location.
      * @param[in] pos the desired absolute position.
      * @return true if the stream is successfully moved to \a pos.
-     * @post
-     *   UnbufferedPosition() == pos
      */
     virtual bool OSSeek(uint64 pos) = 0;
 
@@ -86,8 +84,6 @@ protected:
      * @brief Moves within the low-level, unbuffered, stream to a position that is relative to the current location.
      * @param[in] deltaPos is the distance from the current position.
      * @return true if the stream is successfully moved to \a deltaPos.
-     * @post
-     *   UnbufferedPosition() == this'old->UnbufferedPosition() + deltaPos
      */
     virtual bool OSRelativeSeek(int32 deltaPos)=0;
 
@@ -101,14 +97,13 @@ protected:
      * @brief Clips the low-level, unbuffered, stream size.
      * @param size the new size of the low-level stream.
      * @return true if the size of the low-level stream is set to \a size.
-     * @post
-     *   UnbufferedSize() == size
      */
     virtual bool OSSetSize(uint64 size) = 0;
 
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

@@ -49,7 +49,7 @@ namespace MARTe {
 
 /**
  * @brief A basic implementation of a stream which allows reading and writing
- * to an underlying string.
+ * to an underlying unbounded string, which can grow dynamically.
  */
 class StreamString: public StreamI {
 
@@ -147,15 +147,13 @@ public:
      * @brief Moves within the string to an absolute location.
      * @param[in] pos is the desired cursor position.
      * @return false in case of cursor out of ranges or other errors.
-     * @post
-     *   pos <= Size() => Position() == pos
-     *   pos > Size() => Position() == Size()
      */
     virtual bool Seek(const uint64 pos);
 
     /**
      * @brief Moves within the stream relative to current location.
-     * @details Checks that the final position is >= 0 and <= UsedSize, then moves the cursor.\n
+     * @details Checks that the final position is >= 0 and <= UsedSize, then
+     * moves the cursor.\n
      * -If the final position is < 0 moves the cursor at the beginning.\n
      * -If the final position is > UsedSize moves the cursor at the end.\n
      * @param[in] deltaPos is the gap from the current position.

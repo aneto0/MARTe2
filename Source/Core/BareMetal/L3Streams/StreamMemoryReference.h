@@ -44,7 +44,7 @@ namespace MARTe {
 
 /**
  * @brief A basic implementation of a stream which allows reading and writing
- * to an underlying memory location.
+ * to an underlying bounded and preallocated memory location.
  */
 class StreamMemoryReference: public StreamI {
 
@@ -166,9 +166,6 @@ public:
      * @brief Moves within the stream to an absolute location.
      * @param[in] pos is the desired absolute position.
      * @return false in case of cursor out of ranges or other errors.
-     * @post
-     *   pos <= Size() => Position() == pos
-     *   pos > Size() => Position() == Size()
      */
     virtual bool Seek(const uint64 pos);
 

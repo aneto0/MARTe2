@@ -164,8 +164,8 @@ public:
      * @param[in,out] size the number of bytes to write. Upon return of the
      * function \a size contains the number of bytes actually written.
      * @pre CanWrite()
-     * @post Size() == this'old->Size() + size &&
-     *       Position() == this'old->Position() + size
+     * @post Position() == this'old->Position() + size &&
+     *       this'old->Position() + size > Size() => Size() == Position()
      * @return true if \a size bytes are successfully read from \a input and
      * written into the stream within the specified timeout (see SetTimeout).
      */
@@ -183,17 +183,33 @@ public:
      * @param[in] pos the desired absolute position.
      * @return true if the stream is successfully moved to \a pos.
      * @pre CanSeek()
-     * @post Position() == pos
+     * @post
+     *   pos <= Size() => Position() == pos &&
+     *   pos > Size() => Position() == Size()
      */
     virtual bool Seek(uint64 pos) = 0;
 
     /**
      * @brief Moves within the stream to a position that is relative to the
      * current location.
+     * @details Checks that the final position is >= 0 and <= UsedSize, then
+     * moves the cursor.\n
+     * -If the final position is < 0 moves the cursor at the beginning.\n
+     * -If the final position is > UsedSize moves the cursor at the end.\n
      * @param[in] deltaPos is the distance from the current position.
      * @return true if the stream is successfully moved to \a deltaPos.
      * @pre CanSeek()
-     * @post Position() == this'old->Position() + deltaPos
+     * @post
+     *   pos + deltaPos < 0 => Position() == 0 &&
+     *   pos + deltaPos <= Size() =>
+     *   Position() == this'old->Position() + deltaPos &&
+     *   pos + deltaPos > Size() => Position() == Size()
+     * @warning (1) The deltaPos is a signed integer, so it will always have a
+     * half addressable space with respect to its unsigned counterpart, i.e.
+     * the Seek() method.
+     * @warning (2) Moreover, the deltaPos is a 32 bits integer, less than the
+     * 64 bits integer used in Seek(), so it will have a shorter addressable
+     * space, anyway.
      */
     virtual bool RelativeSeek(const int32 deltaPos) = 0;
 
