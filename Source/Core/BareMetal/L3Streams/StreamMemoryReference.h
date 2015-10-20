@@ -155,6 +155,12 @@ public:
     virtual bool CanRead() const;
 
     /**
+     * @brief Queries if seek operations can be performed on the stream.
+     * @return true.
+     */
+    virtual bool CanSeek() const;
+
+    /**
      * @brief Gets the size of the stream.
      * @details For this object the size is always minor than the buffer
      * dimension passed in the constructor.
@@ -196,72 +202,9 @@ public:
      */
     virtual bool SetSize(const uint64 size);
 
-    /**
-     * @brief Queries if seek operations can be performed on the stream.
-     * @return true.
-     */
-    virtual bool CanSeek() const;
+
 
     /*-----------------------------------------------------------------------*/
-
-    /**
-     * @brief Writes without buffering.
-     * @param[in] data the array of bytes to write.
-     * @param[in,out] size as input is the number of bytes to write. In output the number of bytes actually written.
-     * @return true if \a size bytes of data are successfully written within the specified \a timeout (see SetTimeout).
-     */
-    virtual bool UnbufferedWrite(const char8 * const data,
-                                 uint32 & size);
-
-    /**
-     * @brief Reads without buffering.
-     * @param[out] data destination array where the read data will be put.
-     * @param[in,out] size as input is the number of bytes to read. In output the number of bytes actually read.
-     * @return true if \a size bytes of data are successfully read within the specified \a timeout (see SetTimeout).
-     */
-    virtual bool UnbufferedRead(char8 * const data,
-                                uint32 & size);
-
-    /**
-     * @brief Retrieves the size of the low-level, unbuffered, stream implementation.
-     * @return the size of the low-level stream.
-     */
-    virtual uint64 UnbufferedSize();
-
-    /**
-     * @brief Moves within the low-level, unbuffered, stream implementation to an absolute location.
-     * @param[in] pos the desired absolute position.
-     * @return true if the stream is successfully moved to \a pos.
-     * @post
-     *   UnbufferedPosition() == pos
-     */
-    virtual bool UnbufferedSeek(uint64 pos);
-
-    /**
-     * @brief Moves within the low-level, unbuffered, stream to a position that is relative to the current location.
-     * @param[in] deltaPos is the distance from the current position.
-     * @return true if the stream is successfully moved to \a deltaPos.
-     * @post
-     *   UnbufferedPosition() == this'old->UnbufferedPosition() + deltaPos
-     */
-    virtual bool UnbufferedRelativeSeek(int32 deltaPos);
-
-    /**
-     * @brief Gets the current position in the low-level, unbuffered, stream.
-     * @return the current position in the low-level stream.
-     */
-    virtual uint64 UnbufferedPosition();
-
-    /**
-     * @brief Clips the low-level, unbuffered, stream size.
-     * @param size the new size of the low-level stream.
-     * @return true if the size of the low-level stream is set to \a size.
-     * @post
-     *   UnbufferedSize() == size
-     */
-    virtual bool UnbufferedSetSize(uint64 size);
-
-    /*---------------------------------------------------------------------------*/
 
     /**
      * @brief Gets a pointer to the beginning of the internal buffer with read
@@ -292,13 +235,13 @@ protected:
      * @brief Gets the read buffer.
      * @return a pointer to the read buffer.
      */
-    virtual IOBuffer *GetInputBuffer();
+    virtual IOBuffer *GetReadBuffer();
 
     /**
      * @brief Gets the write buffer.
      * @return a pointer to the write buffer.
      */
-    virtual IOBuffer *GetOutputBuffer();
+    virtual IOBuffer *GetWriteBuffer();
 
 private:
 

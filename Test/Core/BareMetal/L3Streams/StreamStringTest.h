@@ -40,91 +40,186 @@
 
 using namespace MARTe;
 
-/** @brief Class for testing of StreamString functions. */
+/**
+ * @brief Test the StreamString public methods.
+ */
 class StreamStringTest {
 
 private:
 
 public:
 
+    /**
+     * @brief Tests if the buffer is null at the beginning, and size and position are 0.
+     */
     bool TestDefaultConstructor();
 
+    /**
+     * @brief Tests if the buffer is initialized correctly by the const chat string in input.
+     */
+    bool TestConstructor_CCString(const char8 * initializationString);
+
+    /**
+     * @brief Tests if the buffer of the StreamString in input is duplicated correctly into the new instantiated object buffer.
+     */
     bool TestCopyConstructor(const char8 * initializationString);
 
+    /**
+     * @brief Tests if the destructor puts the buffer to NULL.
+     */
     bool TestDestructor();
 
+    /**
+     * @brief Tests if the StreamString is considered as a const char string by in the conversion to AnyType.
+     */
     bool TestAnyTypeOperator(const char8* initializationString);
 
     /**
-     * @brief Tests the streamString read function.
-     * @param inputString is the string on the streamString.
-     * @return true if the read string is equal to inputString using Read function. */
+     * @brief Tests if the specified number of chars are correctly read from the string.
+     */
     bool TestRead(const char8* inputString,
                   uint32 sizeToRead);
 
     /**
-     * @brief Tests the streamString write function.
-     * @param inputString is the string to write on the streamString.
-     * @return true if the string written on the streamString using Write function is equal to inputString.*/
+     * @brief TEsts if the specified number of chars are correctly write on the string.
+     */
     bool TestWrite(const char* inputString,
                    uint32 sizeToWrite);
 
-    /*  bool TestUnbufferedWrite();
-
-     bool TestUnbufferedRead();
-
-     uint64 TestUnbufferedSize();
-
-     bool TestUnbufferedSeek();
-
-     bool TestUnbufferedRelativeSeek();
-
-     uint64 TestUnbufferedPosition();
-
-     bool TestUnbufferedSetSize();
-     */
     /**
-     * @brief Tests the streamString Seek and RelativeSeek.
-     * @param stringToRead is the string already on the stream.
-     * @param stringToWrite is the string to write on the stream.
-     * @return true if the seek operations returns the correct result.
-     *
-     * Test the seek functions in different conditions, for example using a positions which falls out of bounds. */
+     * @brief Tests if the function returns true.
+     */
+    bool TestCanWrite();
+
+    /**
+     * @brief Tests if the function returns true.
+     */
+    bool TestCanRead();
+
+    /**
+     * @brief Tests if the function returns true.
+     */
+    bool TestCanSeek();
+
+    /**
+     * @brief Tests if the function returns size currently used in the stream.
+     */
+    bool TestSize(const char8 * input);
+
+    /**
+     * @brief Tests if the function allocates the desired size.
+     */
+    bool TestSetSize(uint32 size);
+
+    /**
+     * @brief Tests if the function returns the internal buffer with read only permissions.
+     */
+    bool TestBuffer(const char8 * input);
+
+    /**
+     * @brief Tests if the function returns the internal buffer with read-write permissions.
+     */
+    bool TestBufferReference(const char8 * input);
+
+    /**
+     * @brief Tests if after the seek the position in the stream is the desired one ore if the function fails in case of a desired position
+     * greater than the used size.
+     */
     bool TestSeek(uint32 usedSize,
                   uint32 seek,
                   bool expected);
 
+    /**
+     * @brief Tests if after the relative seek the position in the stream is the desired one ore if the function fails because the final
+     * position is minor than zero or greater than the used size.
+     */
     bool TestRelativeSeek(uint32 initialPos,
                           int32 delta,
                           bool expected);
 
-
-
+    /**
+     * @brief Tests if the position increase after read-write operations and if it changes after seek operations.
+     */
     bool TestPosition();
 
     /**
-     * @brief Tests the streamString operators.
-     * @param firstString is the first string parameter.
-     * @param secondString is the second string string parameter.
-     * @return true if tests goes fine.
-     *
-     * Using the string parameters the streamString operators are tested. */
-    bool TestOperators(const char* firstString,
-                       const char* secondString);
+     * @brief Tests if the function returns the correct character of it fails if the index is greater than the used size.
+     */
+    bool TestTail(const char8* input,
+                  uint32 index);
 
     /**
-     * @brief Tests the printf functions.
-     * @return true if successful, false otherwise.
-     *
-     * Tests the printf function with different types and formats.*/
-    bool TestPrint();
+     * @brief Tests if the char in input is copied in the stream.
+     */
+    bool TestCopyOperator_Char(char8 input);
 
     /**
-     * @brief Tests the GetToken function.
-     * @return true if successful, false otherwise.
-     *
-     * @Tests the GetToken function between stream-string and stream-stream. */
-    bool TestToken();
+     * @brief Tests if the C string in input is copied in the stream.
+     */
+    bool TestCopyOperator_CCString(const char8 * input);
+
+    /**
+     * @brief Tests if a StreamString in input is copied in the stream.
+     */
+    bool TestCopyOperator_StreamString(const char8 * input);
+
+    /**
+     * @brief Tests if the char in input is appended on the stream queue.
+     */
+    bool TestConcatenateOperator_Char(char8 input);
+
+    /**
+     * @brief Tests if the C string in input is appended on the stream queue.
+     */
+    bool TestConcatenateOperator_CCString(const char8 *input);
+
+    /**
+     * @brief Tests if a the buffer of a StreamString in input is appended on the stream queue.
+     */
+    bool TestConcatenateOperator_StreamString(const char8 *input);
+
+    /**
+     * @brief Tests if the function returns true if the buffers contain the same data of the C string in input.
+     */
+    bool TestIsEqualOperator_CCString(const char8 *input);
+
+    /**
+     * @brief Tests if the function returns true if the buffers of the two compared StreamString contain the same data.
+     */
+    bool TestIsEqualOperator_StreamString(const char8 *input);
+
+    /**
+     * @See TestIsEqualOperator_CCString. It returns the opposite value.
+     */
+    bool TestIsDifferentOperator_CCString(const char8 *input);
+
+    /**
+     * @See TestIsEqualOperator_StreamString. It returns the opposite value.
+     */
+    bool TestIsDifferentOperator_StreamString(const char8 *input);
+
+    /**
+     * @brief Tests if the function returns the character at the specified position or if it fails if the index is
+     * greater than the used size.
+     */
+    bool TestGetCharacterOperator(const char8* input,
+                                  uint32 index);
+
+    /**
+     * @brief Tests if the function returns the index of the first char matched with the input, or if it returns -1 if
+     * the character in input is not in the stream.
+     */
+    bool TestLocate_Char(const char8 *input,
+                         char8 c,
+                         int32 expected);
+
+    /**
+     * @brief Tests if the function returns the index of the first substring matched with the input, or if it returns -1 if
+     * the string in input is not contained in the stream.
+     */
+    bool TestLocate_String(const char8 *input,
+                           const char8* toSearch,
+                           int32 expected);
 
 };
 

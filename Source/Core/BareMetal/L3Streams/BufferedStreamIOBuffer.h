@@ -35,6 +35,7 @@
 #include "TimeoutType.h"
 #include "IOBuffer.h"
 #include "StreamI.h"
+#include "OperatingSystemCallbacksI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -54,7 +55,10 @@ namespace MARTe {
  */
 class BufferedStreamIOBuffer: public IOBuffer {
 
+
 public:
+
+
 
     /**
      * @brief Default constructor.
@@ -91,7 +95,7 @@ public:
      *   UndoLevel() == 0
      *   GetStream() == s &&
      */
-    BufferedStreamIOBuffer(StreamI * const s);
+    BufferedStreamIOBuffer(OperatingSystemCallbacksI * const s);
 
     /**
      * @brief User friendly function which simply calls NoMoreDataToRead.
@@ -130,7 +134,7 @@ public:
     /**
      * Gets the stream pointer
      */
-    inline const StreamI* GetStream() const;
+    inline const OperatingSystemCallbacksI* GetStream() const;
 
 protected:
 
@@ -154,7 +158,7 @@ private:
     /**
      * The stream that uses this buffer.
      */
-    StreamI *stream;
+    OperatingSystemCallbacksI *stream;
 
     /**
      * The timeout for read and write operations.
@@ -179,7 +183,7 @@ TimeoutType BufferedStreamIOBuffer::GetTimeout() const {
     return timeout;
 }
 
-const StreamI* BufferedStreamIOBuffer::GetStream() const {
+const OperatingSystemCallbacksI* BufferedStreamIOBuffer::GetStream() const {
     return stream;
 }
 

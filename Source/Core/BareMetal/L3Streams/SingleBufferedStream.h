@@ -38,6 +38,7 @@
 #include "FormatDescriptor.h"
 #include "BufferedStreamIOBuffer.h"
 #include "StreamI.h"
+#include "OperatingSystemCallbacksI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -51,7 +52,7 @@ namespace MARTe {
  * It supplements a low-level OperatingSystemStream (which implements the low-level calls
  * such as Read, Write, Seek, ...) with a buffering scheme.
  */
-class SingleBufferedStream: public StreamI {
+class SingleBufferedStream: public StreamI , public OperatingSystemCallbacksI{
 
 public:
     /**
@@ -152,13 +153,13 @@ protected:
      * @brief Gets the read buffer.
      * @return the BufferedStreamIOBuffer readBuffer pointer.
      */
-    virtual IOBuffer *GetInputBuffer();
+    virtual IOBuffer *GetReadBuffer();
 
     /**
      * @brief Gets the write buffer.
      * @return the BufferedStreamIOBuffer writeBuffer pointer.
      */
-    virtual IOBuffer *GetOutputBuffer();
+    virtual IOBuffer *GetWriteBuffer();
 
 private:
 
@@ -171,6 +172,11 @@ private:
      * Stream is exclusive write mode.
      */
     bool mutexWriteMode;
+
+    /**
+     * Set to true if the buffer size could be successfully set
+     */
+    bool bufferSizeSet;
 
     /**
      * @brief Switches the stream to write mode.

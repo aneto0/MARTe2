@@ -34,7 +34,6 @@
 #include "StringHelper.h"
 #include "StreamTestHelper.h"
 #include "DoubleInteger.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -62,26 +61,50 @@ bool StreamStringTest::TestDefaultConstructor() {
         return false;
     }
 
+    if (string.Buffer() != NULL) {
+        return false;
+    }
+
     return (string.CanWrite()) && (string.CanRead()) && (string.CanSeek());
 }
 
-bool StreamStringTest::TestCopyConstructor(const char8 * initializationString) {
+bool TestConstructor_CCString(const char8 * initializationString) {
     StreamString string(initializationString);
 
-    const uint32 granularity = 64;
     uint32 size = StringHelper::Length(initializationString);
 
     if (string.Position() != size) {
-        printf("\n%d\n", string.Position());
         return false;
     }
 
     if (string.Size() != size) {
-        printf("\n%d\n", string.Position());
         return false;
     }
 
     if (StringHelper::Compare(string.Buffer(), initializationString) != 0) {
+
+        return false;
+    }
+
+    return (string.CanWrite()) && (string.CanRead()) && (string.CanSeek());
+
+}
+
+bool StreamStringTest::TestCopyConstructor(const char8 * initializationString) {
+    StreamString toCopy = initializationString;
+    StreamString string(toCopy);
+
+    uint32 size = toCopy.Size();
+
+    if (string.Position() != size) {
+        return false;
+    }
+
+    if (string.Size() != size) {
+        return false;
+    }
+
+    if (StringHelper::Compare(string.Buffer(), toCopy.Buffer()) != 0) {
 
         return false;
     }
@@ -109,26 +132,21 @@ bool StreamStringTest::TestAnyTypeOperator(const char8* initializationString) {
     TypeDescriptor td = test.GetTypeDescriptor();
 
     if (td.isStructuredData) {
-        printf("\n1\n");
         return false;
     }
 
     if (!td.isConstant) {
-        printf("\n2\n");
         return false;
     }
 
     if (td.type != CCString) {
-        printf("\n3\n");
         return false;
     }
     if (td.numberOfBits != (sizeof(const char8*) * 8)) {
-        printf("\n4\n");
         return false;
     }
 
     if (test.GetDataPointer() != string.Buffer()) {
-        printf("\n5\n");
         return false;
     }
     return test.GetBitAddress() == 0;
@@ -148,7 +166,6 @@ bool StreamStringTest::TestRead(const char8* inputString,
     uint32 size = StringHelper::Length(inputString);
     myString.Read(outputBuffer, sizeToRead);
 
-    printf("\n|%s| |%s|\n", myString.Buffer(), outputBuffer);
 
     return (sizeToRead > size) ? (StringHelper::Compare(inputString, outputBuffer) == 0) : (StringHelper::CompareN(inputString, outputBuffer, sizeToRead) == 0);
 }
@@ -169,55 +186,65 @@ bool StreamStringTest::TestWrite(const char8* inputString,
     uint32 size = StringHelper::Length(inputString);
     myString.Write(inputBuffer, sizeToWrite);
 
-    printf("\n|%s| |%s|\n", myString.Buffer(), inputBuffer);
 
     return (sizeToWrite > size) ?
             (StringHelper::Compare(inputString, myString.Buffer()) == 0) : (StringHelper::CompareN(inputString, myString.Buffer(), sizeToWrite) == 0);
 
 }
 
-/*
+bool StreamStringTest::TestCanWrite() {
+    StreamString string;
+    return string.CanWrite();
+}
 
- bool StreamStringTest::TestUnbufferedWrite() {
- StreamString dummy;
- uint32 dummySize = 0;
- const char8 * const data = NULL;
- return !dummy.UnbufferedWrite(data, dummySize);
- }
+bool StreamStringTest::TestCanRead() {
+    StreamString string;
+    return string.CanRead();
+}
 
- bool StreamStringTest::TestUnbufferedRead() {
- StreamString dummy;
- uint32 dummySize = 0;
- char8 * const data = NULL;
- return !dummy.UnbufferedRead(data, dummySize);
- }
+bool StreamStringTest::TestCanSeek() {
+    StreamString string;
+    return string.CanSeek();
+}
 
- uint64 StreamStringTest::TestUnbufferedSize() {
- StreamString dummy;
- return dummy.UnbufferedSize() == 0;
- }
+bool StreamStringTest::TestSize(const char8 * input) {
+    StreamString string(input);
 
- bool StreamStringTest::TestUnbufferedSeek() {
- StreamString dummy;
- return !dummy.UnbufferedSeek(0);
- }
+    return string.Size() == StringHelper::Length(input);
+}
 
- bool StreamStringTest::TestUnbufferedRelativeSeek() {
- StreamString dummy;
- return !dummy.UnbufferedRelativeSeek(0);
- }
+bool StreamStringTest::TestSetSize(uint32 size) {
+    StreamString string;
 
- uint64 StreamStringTest::TestUnbufferedPosition() {
- StreamString dummy;
- return dummy.UnbufferedPosition() == 0;
- }
+    // set the size of the buffer
+    string.SetSize(size);
 
- bool StreamStringTest::TestUnbufferedSetSize() {
- StreamString dummy;
- return !dummy.UnbufferedSetSize(1);
- }
+    return string.Buffer() != NULL;
 
- */
+}
+
+bool StreamStringTest::TestBuffer(const char8 * input) {
+
+    StreamString string(input);
+
+    return StringHelper::Compare(input, string.Buffer()) == 0;
+
+}
+
+bool StreamStringTest::TestBufferReference(const char8 * input) {
+
+    StreamString string(input);
+
+    char8 *buff = string.BufferReference();
+    if (StringHelper::Compare(buff, input)) {
+        return false;
+    }
+
+    const char8* newInput = "";
+    StringHelper::Copy(buff, newInput);
+
+    return StringHelper::Compare(newInput, string.Buffer()) == 0;
+}
 
 bool StreamStringTest::TestSeek(uint32 usedSize,
                                 uint32 seek,
@@ -291,535 +318,216 @@ bool StreamStringTest::TestRelativeSeek(uint32 initialPos,
 }
 
 bool StreamStringTest::TestPosition() {
-/*
+
     StreamString string;
 
-    if(string.Position()!=0){
+    if (string.Position() != 0) {
         return false;
     }
 
     const char8 *toWrite = "HelloWorld";
     uint32 expectedPosition = StringHelper::Length(toWrite);
-    string=toWrite;
+    string = toWrite;
 
-    if(string.Position()!=expec)
-
-
-
-    const char8 *toWrite = "HelloWorld";
-    uint32 expectedPosition = StringHelper::Length(toWrite);
-    ioBuffer.Write(toWrite, expectedPosition);
-    if (ioBuffer.Position() != expectedPosition) {
-        printf("\n3\n");
+    if (string.Position() != expectedPosition) {
         return false;
     }
 
-    ioBuffer.Seek(0);
+    string.Write(toWrite, expectedPosition);
+    expectedPosition *= 2;
+
+    if (string.Position() != expectedPosition) {
+        return false;
+    }
+
+    string.Seek(0);
 
     //the read change the position
 
     char8 toRead[32];
 
-    ioBuffer.Read(toRead, expectedPosition);
-    if (ioBuffer.Position() != expectedPosition) {
-        printf("\n4\n");
+    string.Read(toRead, expectedPosition);
+    if (string.Position() != expectedPosition) {
         return false;
     }
 
     //the seek change the position
-    ioBuffer.Seek(3);
-    if (ioBuffer.Position() != 3) {
-        printf("\n5\n");
+    string.Seek(3);
+    if (string.Position() != 3) {
         return false;
     }
 
     //the relative seek change the position
-    ioBuffer.RelativeSeek(2);
-    if (ioBuffer.Position() != 5) {
-        printf("\n6 %d\n", ioBuffer.Position());
+    string.RelativeSeek(2);
+    if (string.Position() != 5) {
+        return false;
+    }
+    return true;
+}
+
+bool StreamStringTest::TestTail(const char8* input,
+                                uint32 index) {
+    StreamString string(input);
+    uint32 size = StringHelper::Length(input);
+
+    const char8 *ret = string.Tail(index);
+
+    if (ret == NULL) {
+        if (index < (size - 1)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    return ret[0] == input[size - index - 1];
+}
+
+bool StreamStringTest::TestCopyOperator_Char(char8 input) {
+
+    StreamString string = "DUMMY";
+
+    string = input;
+
+    return string.Buffer()[0] == input;
+
+}
+
+bool StreamStringTest::TestCopyOperator_CCString(const char8 * input) {
+
+    StreamString string = "DUMMY";
+
+    string = input;
+
+    return StringHelper::Compare(input, string.Buffer()) == 0;
+
+}
+
+bool StreamStringTest::TestCopyOperator_StreamString(const char8 * input) {
+
+    StreamString inputString = input;
+
+    StreamString outputString = "DUMMY";
+    outputString = inputString;
+
+    return StringHelper::Compare(inputString.Buffer(), outputString.Buffer()) == 0;
+
+}
+
+bool StreamStringTest::TestConcatenateOperator_Char(char8 input) {
+
+    const char8 *initial = "DUMMY";
+    uint32 size = StringHelper::Length(initial);
+    StreamString string = initial;
+    string += input;
+
+    char8 test[64];
+    StringHelper::Copy(test, initial);
+    test[size] = input;
+    test[size + 1] = 0;
+
+    return StringHelper::Compare(test, string.Buffer()) == 0;
+}
+
+bool StreamStringTest::TestConcatenateOperator_CCString(const char8 *input) {
+
+    const char8 *initial = "DUMMY";
+    StreamString string = initial;
+    string += input;
+    char8 test[64];
+    StringHelper::Copy(test, initial);
+    StringHelper::Concatenate(test, input);
+    return StringHelper::Compare(test, string.Buffer()) == 0;
+}
+
+bool StreamStringTest::TestConcatenateOperator_StreamString(const char8 *input) {
+    const char8 *initial = "DUMMY";
+    StreamString string = initial;
+    StreamString toConcatenate = input;
+    string += toConcatenate;
+    char8 test[64];
+    StringHelper::Copy(test, initial);
+    StringHelper::Concatenate(test, input);
+    return StringHelper::Compare(test, string.Buffer()) == 0;
+}
+
+bool StreamStringTest::TestIsEqualOperator_CCString(const char8 *input) {
+    StreamString string = input;
+
+    char8 testFalse[32];
+    StringHelper::Copy(testFalse, input);
+    StringHelper::Concatenate(testFalse, "a");
+
+    if (string == testFalse) {
         return false;
     }
 
-    ioBuffer.Empty();
-    return ioBuffer.Position() == 0;*/
-return true;
+    return string == input;
 }
 
-bool StreamStringTest::TestOperators(const char8* firstString,
-                                     const char8* secondString) {
-    /* StreamString myString1;
-     StreamString myString2;
+bool StreamStringTest::TestIsEqualOperator_StreamString(const char8 *input) {
+    StreamString inputString = input;
+    StreamString string = inputString;
 
-     //string parameters must be different each other
+    StreamString testFalse = input;
+    testFalse += "a";
 
-     //Assignment operator
-     myString1 = firstString;
+    if (string == testFalse) {
+        return false;
+    }
 
-     //return at the beginning.
-     myString1.Seek(0);
-
-     //Is different operator.
-     if (myString1 != firstString || !(myString1 == firstString) || myString1 == secondString) {
-     return false;
-     }
-
-     char8* s = NULL;
-
-     //Null assignment return false
-     if (myString1 = s) {
-     return false;
-     }
-
-     if (myString1 == s) {
-     return false;
-     }
-
-     //Different sizes.
-     myString2 = secondString;
-     if (myString1 == myString2) {
-     return false;
-     }
-
-     myString2 = firstString;
-     myString1.BufferReference()[0] = 'a';
-
-     //Same sizes but different strings
-     if (myString1 == myString2) {
-     return false;
-     }
-
-     //Another assignment
-     myString1 = secondString;
-
-     myString1.Seek(0);
-     //Is equal operator
-     if (myString1 == firstString || myString1 != secondString) {
-     return false;
-     }
-
-     //Same operators between two StreamStrings
-     myString1 = firstString;
-     myString2 = myString1;
-
-     myString1.Seek(0);
-     myString1.Seek(0);
-     if (myString1 != myString2 || !(myString1 == myString2)) {
-     return false;
-     }
-
-     //Append operation
-     myString1 = secondString;
-     myString1 += firstString;
-     char8 test[100];
-
-     StringHelper::Copy(test, secondString);
-     StringHelper::Concatenate(test, firstString);
-
-     myString1.Seek(0);
-     if (myString1 != test) {
-     return false;
-     }
-
-     //Append another StreamString
-     myString2 = firstString;
-
-     //Try to make it fail with a seek.
-     myString1.Seek(0);
-
-     myString1 += myString2;
-     StringHelper::Concatenate(test, firstString);
-
-     myString1.Seek(0);
-     if (myString1 != test) {
-     return false;
-     }
-
-     //Use char8
-     char8 c = 'c';
-     myString2 = c;
-     myString2 += c;
-     if (myString2 != "cc") {
-     return false;
-     }
-
-     //[] operator
-
-     myString1 = secondString;
-     if (secondString[1] != myString1[1]) {
-     return false;
-     }
-
-     //Should return 0 if the begin is greater than size.
-     uint32 size = StringHelper::Length(secondString);
-     if (myString1[size + 1] != 0) {
-     return false;
-     }
-
-     //Size function
-     if (myString1.Size() != size) {
-     return false;
-     }
-
-     //Locate function with char8
-
-     //empty string return false.
-     myString1 = "";
-     if (myString1.Locate('\0') != -1) {
-     return false;
-     }
-
-     myString1 = "HelloWorld";
-
-     if (myString1.Locate('W') != 5) {
-     return false;
-     }
-
-     //Locate function with another StreamString
-
-     myString2 = "World";
-     if (myString1.Locate(myString2) != 5) {
-     return false;
-     }
-
-     //not found
-     myString2 = "ImNotIn";
-
-     if (myString1.Locate(myString2) != -1) {
-     return false;
-     }
-
-     //greater string
-     myString2 = "HelloWorld!";
-     if (myString1.Locate(myString2) != -1) {
-     return false;
-     }
-
-     //empty string
-     myString2 = "";
-     if (myString1.Locate(myString2) != -1) {
-     return false;
-     }*/
-
-    return true;
+    return string == inputString;
 }
 
-bool StreamStringTest::TestPrint() {
-    /*
-     //Create a read&write streamable.
-     StreamString myString;
+bool StreamStringTest::TestIsDifferentOperator_CCString(const char8 *input) {
+    StreamString string = input;
 
-     uint8 ubit8 = 1;
-     uint16 ubit16 = 2;
-     uint32 ubit32 = 3;
-     uint64 ubit64 = 4;
-     DoubleInteger<uint64> ubit128Tmp = 5;
-     //ubit128.dataPointer = &ubit128Tmp;
-     const TypeDescriptor UnsignedInt128(false, UnsignedInteger, 128);
-     //ubit128.dataDescriptor = UnsignedInt128;
-     //ubit128.bitAddress = 0;
-     AnyType ubit128(UnsignedInt128, 0, &ubit128Tmp);
+    if (string != input) {
+        return false;
+    }
+    char8 testFalse[32];
+    StringHelper::Copy(testFalse, input);
+    StringHelper::Concatenate(testFalse, "a");
 
-     int8 sbit8 = -1;
-     int16 sbit16 = -2;
-     int32 sbit32 = -3;
-     int64 sbit64 = -4;
-
-     float fbit32 = 1.2;
-     double dbit64 = 3.4;
-     __float128 fbit128Tmp = 5.6Q;
-
-     //fbit128.dataPointer = &fbit128Tmp;
-     const TypeDescriptor Float128(false, Float, 128);
-     //fbit128.dataDescriptor = Float128;
-     //fbit128.bitAddress = 0;
-
-     AnyType fbit128(Float128, 0, &fbit128Tmp);
-
-     int64 shifted64bitNumber = 0xffffffffffffb234;
-     //  shifted64bit.dataPointer = &shifted64bitNumber;
-     //shifted64bit.bitAddress = 12;
-     const TypeDescriptor SignedShift(false, SignedInteger, 52);
-     //    shifted64bit.dataDescriptor = SignedShift;
-     AnyType shifted64bit(SignedShift, 12, &shifted64bitNumber);
-
-     //Use the unbuffered PutC, 4 parameters.
-     //For integer the letter is useless
-     myString.Printf("% 3u % 3f % 3d % 3x\n", sbit8, fbit32, sbit16, sbit8);
-
-     //Use the unbuffered PutC, 4 parameters.
-     //For integer the letter is useless
-     myString.Printf("% 3u % 3f % 3d % 3x\n", ubit64, fbit32, ubit16, sbit8);
-
-     //Use the unbuffered PutC, 3 parameters.
-     myString.Printf("% 3u % 3c % 3d\n", sbit64, ubit32, fbit32);
-
-     //Use the unbuffered PutC, 3 parameters.
-     myString.Printf("% 3i % 3c % 3d\n", shifted64bit, ubit128, fbit32);
-
-     //Use the unbuffered PutC, 2 parameters.
-     myString.Printf("% 3c % 3F\n", ubit8, dbit64);
-     //Use the unbuffered PutC, 2 parameters.
-     myString.Printf("% 3c % 3F\n", ubit8, dbit64);
-
-     //Use the unbuffered PutC, 1 parameter.
-     myString.Printf("% 3o\n", sbit32);
-
-     if (StringHelper::Compare(" -1 1.2  -2  FF\n  4 1.2   2  FF\n -4   3 1.2\n -5   5 1.2\n  1 3.4\n  1 3.4\n  ?\n", myString.Buffer()) != 0) {
-     return false;
-     }
-
-     //Use the print function
-     myString = "";
-     FormatDescriptor fd;
-     const char8* pformat = "d";
-     fd.InitialiseFromString(pformat);
-     myString.Print(ubit8, fd);
-     if (myString != "1") {
-     return false;
-     }
-
-     //Unsupported 128 float numbers
-     if (myString.Printf("%f", fbit128)) {
-     return false;
-     }
-
-     //structured data anytype
-
-     //wrong type in the format
-     if (myString.Printf("%3l", fbit32)) {
-     return false;
-     }
-
-     const char8* Hello = "HelloWorld";
-
-     //cast const char8* to anytype.
-     myString = "";
-     myString.Printf("string:%s, number:%3d", Hello, dbit64);
-     if (myString != "string:HelloWorld, number:3.4") {
-     return false;
-     }
-     //Clip the string
-     myString = "";
-     myString.Printf("string:%5s, number:%3d", Hello, dbit64);
-     if (myString != "string:Hello, number:3.4") {
-     return false;
-     }
-     //Padd right the string
-     myString = "";
-     myString.Printf("string:% 11s, number:%3d", Hello, dbit64);
-     if (myString != "string: HelloWorld, number:3.4") {
-     return false;
-     }
-
-     //Padd left the string
-     myString = "";
-     myString.Printf("string:%- 11s, number:%3d", Hello, dbit64);
-     if (myString != "string:HelloWorld , number:3.4") {
-     return false;
-     }
-
-     //cast StreamString to anytype.
-     myString = "";
-     StreamString input = "HelloWorld";
-     myString.Printf("string:%s, number:%3d", input, dbit64);
-     if (myString != "string:HelloWorld, number:3.4") {
-     return false;
-     }
-
-     //Clip the stream.
-     myString = "";
-     input = "HelloWorld";
-     myString.Printf("string:%5s, number:%3d", input, dbit64);
-     if (myString != "string:Hello, number:3.4") {
-     return false;
-     }
-
-     //right padd
-     myString = "";
-     input = "HelloWorld";
-     myString.Printf("string:% 12s, number:%3d", input, dbit64);
-     if (myString != "string:  HelloWorld, number:3.4") {
-     return false;
-     }
-
-     //left padd
-     myString = "";
-     input = "HelloWorld";
-     myString.Printf("string:%-12s, number:%3d", input, dbit64);
-     if (myString != "string:HelloWorld  , number:3.4") {
-     return false;
-     }
-
-     //return the pointer thanks to hex notation.
-     myString = "";
-     input = "";
-     const char8 *charPointer = "Hello";
-     uint64 pointer = (uint64) charPointer;
-     myString.Printf("%x", charPointer);
-     input.Printf("%x", pointer);
-     if (myString != input) {
-     return false;
-     }
-
-     //%p format as the complete 32 bit pointer with header
-     myString = "";
-     input = "";
-     myString.Printf("%p", (void*) charPointer);
-     input.Printf("% #0x", pointer);
-     if (myString != input) {
-     return false;
-     }*/
-
-    return true;
-}
-
-bool StreamStringTest::TestToken() {
-    /*
-     const char8* inputString = "Nome::: Giuseppe. Cognome: Ferrò:)";
-     uint32 size = StringHelper::Length(inputString);
-
-     StreamString myString;
-     myString = inputString;
-
-     char8 buffer[32];
-     char8 saveTerminator;
-
-     myString.Seek(0);
-
-     //TESTS ON TOKEN FUNCTIONS BETWEEN A STREAM AND A STRING
-     myString.GetToken(buffer, ".:", size, &saveTerminator, NULL);
-     if (StringHelper::Compare(buffer, "Nome") != 0 || saveTerminator != ':') {
-     return false;
-     }
-
-     //Without skip chars, the function skips consecutive terminators.
-     myString.GetToken(buffer, ".:", size, &saveTerminator, NULL);
-     if (StringHelper::Compare(buffer, " Giuseppe") != 0 || saveTerminator != '.') {
-     return false;
-     }
-
-     //return before the :::
-     myString.Seek(4);
-
-     //The function skips correctly the second ":"
-     myString.GetToken(buffer, ".:", size, &saveTerminator, ":");
-     if (StringHelper::Compare(buffer, " Giuseppe") != 0 || saveTerminator != '.') {
-     return false;
-     }
-
-     //return before the :::
-     myString.Seek(7);
-
-     //skip "u" and "p"
-     myString.GetToken(buffer, ".:", size, &saveTerminator, "up");
-     if (StringHelper::Compare(buffer, " Gisee") != 0 || saveTerminator != '.') {
-     return false;
-     }
-
-     //The function does not skips because the terminator character is not correct
-     myString.Seek(4);
-
-     myString.GetToken(buffer, ".:", size, &saveTerminator, ".");
-     if (StringHelper::Compare(buffer, "") != 0 || saveTerminator != ':') {
-     return false;
-     }
-
-     //Test with a minor maximum size passed by argument. The terminated char8 is calculated in the size
-     myString.Seek(4);
-
-     size = 4;
-     myString.GetToken(buffer, ".:", size, &saveTerminator, ":");
-     if (StringHelper::Compare(buffer, " Gi") != 0 || saveTerminator != 'i') {
-     return false;
-     }
-     size = StringHelper::Length(inputString);
-
-     //Arrive to the next terminator
-     myString.GetToken(buffer, ".:", size, &saveTerminator, ":");
-
-     //Test if the functions terminate when the string is terminated
-     for (uint32 i = 0; i < 3; i++) {
-     myString.GetToken(buffer, ".:", size, &saveTerminator, ":");
-     }
-     if (StringHelper::Compare(buffer, ")") != 0) {
-     return false;
-     }
-
-     myString.Seek(0);
-
-     myString.SkipTokens(3, ":.");
-     myString.GetToken(buffer, ")", size, &saveTerminator, NULL);
-     if (StringHelper::Compare(buffer, " Ferrò:") != 0) {
-     return false;
-     }
-
-     //TESTS ON TOKEN FUNCTIONS BETWEEN A STRING AND STREAM
-
-     myString.Seek(0);
-
-     SimpleBufferedStream outputStream;
-     outputStream.seekable = true;
-
-     uint32 buffOutputSize = 1;
-     if (!outputStream.SetBuffered(buffOutputSize)) {
-     return false;
-     }
-
-     myString.GetToken(outputStream, ".:", &saveTerminator, NULL);
-     outputStream.Seek(0);
-     if (StringHelper::Compare(outputStream.buffer, "Nome") != 0 || saveTerminator != ':') {
-     return false;
-     }
-     outputStream.Clear();
-
-     //Without skip chars, the function skips consecutive terminators.
-     myString.GetToken(outputStream, ".:", &saveTerminator, NULL);
-     outputStream.Seek(0);
-     if (StringHelper::Compare(outputStream.buffer, " Giuseppe") != 0 || saveTerminator != '.') {
-     return false;
-     }
-     outputStream.Clear();
-     //return before the :::
-     myString.Seek(4);
-
-     //The function skips correctly the second ":"
-     myString.GetToken(outputStream, ".:", &saveTerminator, ":");
-     outputStream.Seek(0);
-     if (StringHelper::Compare(outputStream.buffer, " Giuseppe") != 0 || saveTerminator != '.') {
-     return false;
-     }
-
-     outputStream.Clear();
-     //return after the :::
-     myString.Seek(7);
-
-     //skips "u" and "p"
-     myString.GetToken(outputStream, ".:", &saveTerminator, "up");
-     outputStream.Seek(0);
-     if (StringHelper::Compare(outputStream.buffer, " Gisee") != 0 || saveTerminator != '.') {
-     return false;
-     }
-
-     outputStream.Clear();
-     //The function does not skips because the terminator character is not correct
-     myString.Seek(4);
-
-     myString.GetToken(outputStream, ".:", &saveTerminator, ".");
-     outputStream.Seek(0);
-     if (StringHelper::Compare(outputStream.buffer, "") != 0 || saveTerminator != ':') {
-     return false;
-     }
-
-     //Test if the functions terminate when the string is terminated
-     for (uint32 i = 0; i < 3; i++) {
-     myString.GetToken(outputStream, ".:", &saveTerminator, ":");
-     }
-
-     outputStream.Seek(0);
-     if (StringHelper::Compare(outputStream.buffer, " Giuseppe Cognome Ferrò") != 0) {
-     return false;
-     }
-     */
-    return true;
+    return string != testFalse;
 
 }
+
+bool StreamStringTest::TestIsDifferentOperator_StreamString(const char8 *input) {
+    StreamString inputString = input;
+    StreamString string = inputString;
+
+    if (string != input) {
+        return false;
+    }
+    StreamString testFalse = input;
+    testFalse += "a";
+
+    return string != testFalse;
+
+}
+
+bool StreamStringTest::TestGetCharacterOperator(const char8 *input,
+                                                uint32 index) {
+    StreamString string = input;
+    uint32 size = StringHelper::Length(input);
+
+    return (index > size) ? (string[index] == 0) : string[index] == input[index];
+
+}
+
+bool StreamStringTest::TestLocate_Char(const char8 *input,
+                                       char8 c,
+                                       int32 expected) {
+    StreamString string = input;
+    return (string.Locate(c) == expected);
+}
+
+bool StreamStringTest::TestLocate_String(const char8 *input,
+                                         const char8* toSearch,
+                                         int32 expected) {
+    StreamString string = input;
+    return (string.Locate(toSearch) == expected);
+}
+

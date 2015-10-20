@@ -38,6 +38,10 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
+
+/**
+ * @brief Test the IOBuffer public methods.
+ */
 class IOBufferTest {
 
 public:
@@ -225,7 +229,8 @@ public:
     /**
      * @brief Tests if the function writes an input buffer on a pre-existent buffer.
      */
-    bool TestWrite_Memoryreference();
+    bool TestWrite_Memoryreference(const char8 *string,
+                                   uint32 writeSize);
 
     /**
      * @brief Tests if the function returns false because the buffer has read only access.

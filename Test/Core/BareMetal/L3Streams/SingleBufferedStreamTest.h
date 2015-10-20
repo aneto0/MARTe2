@@ -60,10 +60,30 @@ public:
                   MARTe::uint32 readSize);
 
     /**
-     * @brief Tests that readSize bytes can be successfully written to the stream.
+     * @brief Tests that writeSize bytes can be successfully written to the stream.
      */
     bool TestWrite(MARTe::uint32 bufferSize,
                    MARTe::uint32 writeSize);
+
+    /**
+     * @brief Tests that the Read function returns false when CanRead() == false
+     */
+    bool TestRead_NotCanRead();
+
+    /**
+     * @brief Tests that the Write function returns false when CanWrite() == false
+     */
+    bool TestWrite_NotCanWrite();
+
+    /**
+     * @brief Tests that writeSize bytes can be successfully written to the stream even when
+     * the number of bytes to write overflow the internal buffer capacity.
+     * @pre
+     *   bufferSize >= 8u
+     *   writeSize >= 4 * bufferSize
+     */
+    bool TestWrite_OverflowInternalBuffer(MARTe::uint32 bufferSize,
+                                          MARTe::uint32 writeSize);
 
     /**
      * @brief Tests that calling SetSize(size) => size == Size()
@@ -81,6 +101,15 @@ public:
      * position retrieves the expected data.
      */
     bool TestRelativeSeek();
+
+    /**
+     * @brief Tests that RelativeSeek even when the internal buffer overflows during the seeking operation.
+     * @pre
+     *   bufferSize >= 8u
+     *   writeSize >= 4 * bufferSize
+     */
+    bool TestRelativeSeek_OverflowInternalBuffer(MARTe::uint32 bufferSize,
+                                                 MARTe::uint32 writeSize);
 
     /**
      * @brief Tests that the Position is correctly retrieved (after performing Seek operations)

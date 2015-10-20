@@ -1,8 +1,8 @@
 /**
  * @file StreamI.cpp
  * @brief Source file for class StreamI
- * @date 05/ott/2015
- * @author pc
+ * @date 05/10/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -57,7 +57,7 @@ bool StreamI::GetToken(char8 * const outputBuffer,
 
     bool retval = false;
 // retrieve stream mechanism
-    IOBuffer *inputIOBuffer = GetInputBuffer();
+    IOBuffer *inputIOBuffer = GetReadBuffer();
     if (inputIOBuffer != NULL) {
         if(CanRead()) {
             retval = inputIOBuffer->GetToken(outputBuffer, terminator, outputBufferSize, saveTerminator, skipCharacters);
@@ -72,8 +72,8 @@ bool StreamI::GetToken(StreamI & output,
                        const char8 * const skipCharacters) {
 
 // retrieve stream mechanism
-    IOBuffer *inputIOBuffer = GetInputBuffer();
-    IOBuffer *outputIOBuffer = output.GetOutputBuffer();
+    IOBuffer *inputIOBuffer = GetReadBuffer();
+    IOBuffer *outputIOBuffer = output.GetWriteBuffer();
 
     bool ret = false;
 
@@ -92,7 +92,7 @@ bool StreamI::SkipTokens(const uint32 count,
     bool ret = CanRead();
     if (ret) {
 // retrieve stream mechanism
-        IOBuffer *inputBuffer = GetInputBuffer();
+        IOBuffer *inputBuffer = GetReadBuffer();
         if (inputBuffer != NULL) {
             ret = inputBuffer->SkipTokens(count, terminator);
         }
@@ -139,7 +139,7 @@ bool StreamI::PrintFormatted(const char8 * const format,
 // retrieve stream mechanism
 // the output buffer is flushed in streamable.
     if (ret) {
-        IOBuffer *outputBuffer = GetOutputBuffer();
+        IOBuffer *outputBuffer = GetWriteBuffer();
         if (outputBuffer != NULL) {
 
             ret = outputBuffer->PrintFormatted(format, pars);

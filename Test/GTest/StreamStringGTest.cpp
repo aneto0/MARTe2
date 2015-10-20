@@ -90,39 +90,76 @@ TEST(StreamStringGTest,TestWrite_bigger_size) {
     ASSERT_TRUE(stringtest.TestWrite("HelloWorld", 20));
 }
 
+TEST(StreamStringGTest,TestCanWrite) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCanWrite());
+}
 
-/*
- TEST(StreamStringGTest,TestUnbufferedWrite) {
- StreamStringTest stringtest;
- ASSERT_TRUE(stringtest.TestUnbufferedWrite());
- }
+TEST(StreamStringGTest,TestCanRead) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCanRead());
+}
 
- TEST(StreamStringGTest,TestUnbufferedRead) {
- StreamStringTest stringtest;
- ASSERT_TRUE(stringtest.TestUnbufferedRead());
- }
- TEST(StreamStringGTest,TestUnbufferedSize) {
- StreamStringTest stringtest;
- ASSERT_TRUE(stringtest.TestUnbufferedSize());
- }
- TEST(StreamStringGTest,TestUnbufferedSeek) {
- StreamStringTest stringtest;
- ASSERT_TRUE(stringtest.TestUnbufferedSeek());
- }
- TEST(StreamStringGTest,TestUnbufferedRelativeSeek) {
- StreamStringTest stringtest;
- ASSERT_TRUE(stringtest.TestUnbufferedRelativeSeek());
- }
- TEST(StreamStringGTest,TestUnbufferedPosition) {
- StreamStringTest stringtest;
- ASSERT_TRUE(stringtest.TestUnbufferedPosition());
- }
- TEST(StreamStringGTest,TestUnbufferedSetSize) {
- StreamStringTest stringtest;
- ASSERT_TRUE(stringtest.TestUnbufferedSetSize());
- }
+TEST(StreamStringGTest,TestCanSeek) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCanSeek());
+}
 
- */
+TEST(StreamStringGTest,TestPosition) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestPosition());
+}
+
+TEST(StreamStringGTest,TestSize) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSize("HelloWorld"));
+}
+
+TEST(StreamStringGTest,TestSize_NULL) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSize(NULL));
+}
+
+TEST(StreamStringGTest,TestSetSize) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSetSize(32));
+}
+
+TEST(StreamStringGTest,TestSetSize_0) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestSetSize(0));
+}
+
+TEST(StreamStringGTest,TestBuffer) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestBuffer("HelloWorld"));
+}
+
+TEST(StreamStringGTest,TestBufferReference) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestBufferReference("HelloWorld"));
+}
+
+TEST(StreamStringGTest,TestTail_0) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestTail("abcdefg", 0));
+}
+
+TEST(StreamStringGTest,TestTail_3) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestTail("abcdefg", 3));
+}
+
+TEST(StreamStringGTest,TestTail_size) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestTail("abcdefg", 6));
+}
+
+TEST(StreamStringGTest,TestTail_out_size) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestTail("abcdefg", 8));
+}
+
 
 TEST(StreamStringGTest, TestSeek_in_range) {
     StreamStringTest stringtest;
@@ -133,7 +170,6 @@ TEST(StreamStringGTest, TestSeek_out_range) {
     StreamStringTest stringtest;
     ASSERT_TRUE(stringtest.TestSeek(32, 33, false));
 }
-
 
 TEST(StreamStringGTest, TestRelativeSeek_in_range) {
     StreamStringTest stringtest;
@@ -148,5 +184,106 @@ TEST(StreamStringGTest, TestRelativeSeek_left_boundary) {
 TEST(StreamStringGTest, TestRelativeSeek_right_boundary) {
     StreamStringTest stringtest;
     ASSERT_TRUE(stringtest.TestRelativeSeek(16, 17, false));
+}
+
+TEST(StreamStringGTest, TestCopyOperator_Char) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCopyOperator_Char(' '));
+}
+
+TEST(StreamStringGTest, TestCopyOperator_CCString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCopyOperator_CCString("HelloWorld"));
+}
+
+TEST(StreamStringGTest, TestCopyOperator_StreamString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestCopyOperator_StreamString("HelloWorld"));
+}
+
+TEST(StreamStringGTest, TestConcatenateOperator_Char) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestConcatenateOperator_Char('a'));
+}
+
+TEST(StreamStringGTest, TestConcatenateOperator_CCString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestConcatenateOperator_CCString("HelloWorld"));
+}
+
+TEST(StreamStringGTest, TestConcatenateOperator_StreamString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestConcatenateOperator_StreamString("HelloWorld"));
+}
+
+TEST(StreamStringGTest, TestIsEqualOperator_CCString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestIsEqualOperator_CCString("HelloWorld"));
+}
+
+TEST(StreamStringGTest, TestIsEqualOperator_StreamString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestIsEqualOperator_StreamString("HelloWorld"));
+}
+
+TEST(StreamStringGTest, TestIsDifferentOperator_CCString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestIsDifferentOperator_CCString("HelloWorld"));
+}
+
+TEST(StreamStringGTest, TestIsDifferentOperator_StreamString) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestIsDifferentOperator_StreamString("HelloWorld"));
+}
+
+TEST(StreamStringGTest, TestGetCharacterOperator) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestGetCharacterOperator("HelloWorld", 5));
+}
+
+TEST(StreamStringGTest, TestLocate_Char_True) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestLocate_Char("HelloWorld", 'W', 5));
+}
+
+TEST(StreamStringGTest, TestLocate_Char_More_Than_one) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestLocate_Char("HelloWorld", 'l', 2));
+}
+
+TEST(StreamStringGTest, TestLocate_Char_False) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestLocate_Char("HelloWorld", 's', -1));
+}
+
+TEST(StreamStringGTest, TestLocate_Char_Terminator) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestLocate_Char("HelloWorld", '\0', -1));
+}
+
+
+TEST(StreamStringGTest, TestLocate_String_True) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestLocate_String("HelloWorld", "Worl", 5));
+}
+
+TEST(StreamStringGTest, TestLocate_String_OneChar) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestLocate_String("HelloWorld", "r", 7));
+}
+
+TEST(StreamStringGTest, TestLocate_String_Equal) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestLocate_String("HelloWorld", "HelloWorld", 0));
+}
+
+TEST(StreamStringGTest, TestLocate_String_Empty) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestLocate_String("HelloWorld", "", -1));
+}
+
+TEST(StreamStringGTest, TestLocate_String_False) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestLocate_String("HelloWorld", "elol", -1));
 }
 

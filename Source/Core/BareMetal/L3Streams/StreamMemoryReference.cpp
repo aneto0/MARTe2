@@ -69,12 +69,12 @@ StreamMemoryReference::operator AnyType() const {
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
-IOBuffer *StreamMemoryReference::GetInputBuffer() {
+IOBuffer *StreamMemoryReference::GetReadBuffer() {
     return &buffer;
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
-IOBuffer *StreamMemoryReference::GetOutputBuffer() {
+IOBuffer *StreamMemoryReference::GetWriteBuffer() {
     return &buffer;
 }
 
@@ -90,7 +90,7 @@ bool StreamMemoryReference::Write(const char8* const input,
 }
 
 bool StreamMemoryReference::CanWrite() const {
-    return ((buffer.BufferReference() != NULL) && buffer.CanWrite());
+    return ((buffer.BufferReference() != NULL) && (buffer.CanWrite()));
 };
 
 bool StreamMemoryReference::CanRead() const {
@@ -104,7 +104,7 @@ uint64 StreamMemoryReference::Size() {
 bool StreamMemoryReference::SetSize(const uint64 size) {
 
     buffer.SetUsedSize(static_cast<uint32>(size));
-    return true;
+    return (buffer.UsedSize() == static_cast<uint32>(size));
 }
 
 bool StreamMemoryReference::Seek(const uint64 pos) {
@@ -131,41 +131,6 @@ uint64 StreamMemoryReference::Position() {
 
 bool StreamMemoryReference::CanSeek() const {
     return true;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamMemoryReference::UnbufferedWrite(const char8 * const data,
-                                            uint32 & size) {
-    return false;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamMemoryReference::UnbufferedRead(char8 * const data,
-                                           uint32 & size) {
-    return false;
-}
-
-uint64 StreamMemoryReference::UnbufferedSize() {
-    return 0u;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamMemoryReference::UnbufferedSeek(const uint64 pos) {
-    return false;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamMemoryReference::UnbufferedRelativeSeek(const int32 deltaPos) {
-    return false;
-}
-
-uint64 StreamMemoryReference::UnbufferedPosition() {
-    return 0u;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamMemoryReference::UnbufferedSetSize(const uint64 size) {
-    return false;
 }
 
 }

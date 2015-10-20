@@ -43,10 +43,10 @@ namespace MARTe {
 
 BufferedStreamIOBuffer::BufferedStreamIOBuffer() :
         IOBuffer() {
-    stream = static_cast<StreamI *>(NULL);
+    stream = static_cast<OperatingSystemCallbacksI *>(NULL);
 }
 
-BufferedStreamIOBuffer::BufferedStreamIOBuffer(StreamI * const s) :
+BufferedStreamIOBuffer::BufferedStreamIOBuffer(OperatingSystemCallbacksI * const s) :
         IOBuffer() {
     stream = s;
 }
@@ -64,7 +64,7 @@ bool BufferedStreamIOBuffer::Resync() {
             // adjust seek position
             // in read mode the actual stream
             // position is to the character after the buffer end
-            if (!stream->UnbufferedSeek(stream->UnbufferedPosition() - deltaToEnd)) {
+            if (!stream->OSSeek(stream->OSPosition() - deltaToEnd)) {
                 retval = false;
             }
 
@@ -89,7 +89,7 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead() {
 
             uint32 readSize = MaxUsableAmount();
 
-            if (stream->UnbufferedRead(BufferReference(),readSize)) {
+            if (stream->OSRead(BufferReference(), readSize)) {
                 IOBuffer::SetUsedSize(readSize);
                 retval = true;
             }
@@ -111,13 +111,13 @@ bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
 
             // how much was written?
             uint32 writeSize = UsedSize();
-            if(writeSize==0u) {
-                retval=true;
+            if (writeSize == 0u) {
+                retval = true;
             }
             // write
             else {
-                if(stream->UnbufferedWrite(Buffer(),writeSize)) {
-                    retval=true;
+                if (stream->OSWrite(Buffer(), writeSize)) {
+                    retval = true;
                     Empty();
                 }
             }

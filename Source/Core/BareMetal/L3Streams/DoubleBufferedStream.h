@@ -43,6 +43,7 @@
 #include "FormatDescriptor.h"
 #include "BufferedStreamIOBuffer.h"
 #include "StreamI.h"
+#include "OperatingSystemCallbacksI.h"
 
 namespace MARTe {
 
@@ -52,7 +53,7 @@ namespace MARTe {
  * It supplements two independent low-level RawStreams (which implement the low-level calls
  * such as Read, Write, ...) with a buffering scheme.
  */
-class DoubleBufferedStream: public StreamI {
+class DoubleBufferedStream: public StreamI, public OperatingSystemCallbacksI {
 
 public:
     /**
@@ -131,27 +132,27 @@ public:
     uint32 GetWriteBufferSize() const;
 
     /**
-     * @see StreamI::Size
+     * @see OperatingSystemCallbacksI::OSSize
      */
     virtual uint64 Size();
 
     /**
-     * @see StreamI::Seek
+     * @see OperatingSystemCallbacksI::OSSeek
      */
     virtual bool Seek(uint64 pos);
 
     /**
-     * @see StreamI::RelativeSeek
+     * @see OperatingSystemCallbacksI::RelativeSeek
      */
     virtual bool RelativeSeek(int32 deltaPos);
 
     /**
-     * @see StreamI::Position
+     * @see OperatingSystemCallbacksI::Position
      */
     virtual uint64 Position();
 
     /**
-     * @see StreamI::SetSize
+     * @see OperatingSystemCallbacksI::OSSetSize
      */
     virtual bool SetSize(uint64 size);
 
@@ -166,13 +167,13 @@ protected:
      * @brief Gets the read buffer.
      * @return the BufferedStreamIOBuffer readBuffer pointer.
      */
-    virtual IOBuffer *GetInputBuffer();
+    virtual IOBuffer *GetReadBuffer();
 
     /**
      * @brief Gets the write buffer.
      * @return the BufferedStreamIOBuffer writeBuffer pointer.
      */
-    virtual IOBuffer *GetOutputBuffer();
+    virtual IOBuffer *GetWriteBuffer();
 
 private:
 
@@ -189,6 +190,11 @@ private:
      * and then the desired size is copied on the output.
      */
     BufferedStreamIOBuffer writeBuffer;
+
+    /**
+     * Set to true if the buffer sizes could be successfully set
+     */
+    bool bufferSizeSet;
 
 };
 

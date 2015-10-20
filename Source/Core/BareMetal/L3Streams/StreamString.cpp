@@ -45,12 +45,19 @@ StreamString::StreamString() :
         StreamI() {
 }
 
-/** @brief Copy constructor from a const char8*. */
 StreamString::StreamString(const char8 * const initialisationString) :
         StreamI() {
     if (initialisationString != static_cast<const char8 *>(NULL)) {
         if (!Set(initialisationString)) {
             // TODO
+        }
+    }
+}
+
+StreamString::StreamString(const StreamString &toCopy) {
+    if (&toCopy != this) {
+        if (!Set(toCopy)) {
+            //TODO
         }
     }
 }
@@ -65,12 +72,12 @@ StreamString::~StreamString() {
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
-IOBuffer *StreamString::GetInputBuffer() {
+IOBuffer *StreamString::GetReadBuffer() {
     return &buffer;
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: StreamI must have the access to the final buffers.*/
-IOBuffer *StreamString::GetOutputBuffer() {
+IOBuffer *StreamString::GetWriteBuffer() {
     return &buffer;
 }
 
@@ -183,10 +190,9 @@ bool StreamString::Set(const StreamString &s) {
 }
 
 int32 StreamString::Locate(const char8 c) const {
-// Stream::Size is not const!
 
     uint32 ret = 0xffffffffu;
-    if (buffer.UsedSize() != 0u) {
+    if (buffer.UsedSize() > 0u) {
 
         const char8 *string = buffer.Buffer();
         if (string != NULL) {
@@ -204,13 +210,10 @@ int32 StreamString::Locate(const char8 c) const {
     return static_cast<int32>(ret);
 }
 
-/** Checks if a string is contained in the string.
- @param x The string to look for.
- @return >0 the first position if found. -1 otherwise.
- */
+
 int32 StreamString::Locate(const StreamString &x) const {
 
-    bool ok = (x.buffer.UsedSize() != 0u) && (x.buffer.UsedSize() <= buffer.UsedSize()) && (x.buffer.Buffer() != NULL)&& (buffer.Buffer() != NULL);
+    bool ok = (x.buffer.UsedSize() > 0u) && (buffer.UsedSize() > 0u) && (x.buffer.UsedSize() <= buffer.UsedSize());
 
     uint32 ret=0xffffffffu;
     if(ok) {
@@ -219,68 +222,33 @@ int32 StreamString::Locate(const StreamString &x) const {
         const char8 *pattern = x.buffer.Buffer();
 
         uint32 index = 0u;
-// no point to try match the tail of the string if it is smaller than the pattern
-        uint32 maxIndex = ((1u + buffer.UsedSize()) - x.buffer.UsedSize());
-// loop through the string characters
-        while (index < maxIndex) {
-            // detect the start as a potential match
-            if (string[index] == pattern[0]) {
-                uint32 index2 = 1u;
-                const char8 *stringSegment = &string[index];
-                // check the remainder
-                while (index2 < x.buffer.UsedSize()) {
-                    if (stringSegment[index2] != pattern[index2]) {
+        // no point to try match the tail of the string if it is smaller than the pattern
+            uint32 maxIndex = ((1u + buffer.UsedSize()) - x.buffer.UsedSize());
+            // loop through the string characters
+            while (index < maxIndex) {
+                // detect the start as a potential match
+                if (string[index] == pattern[0]) {
+                    uint32 index2 = 1u;
+                    const char8 *stringSegment = &string[index];
+                    // check the remainder
+                    while (index2 < x.buffer.UsedSize()) {
+                        if (stringSegment[index2] != pattern[index2]) {
+                            break;
+                        }
+                        index2++;
+                    }
+                    // found it as we exit with index2 at the max value
+                    if (index2 == x.buffer.UsedSize()) {
+                        ret= index;
                         break;
                     }
-                    index2++;
                 }
-                // found it as we exit with index2 at the max value
-                if (index2 == x.buffer.UsedSize()) {
-                    ret= index;
-                    break;
-                }
+                index++;
             }
-            index++;
         }
+
+        return static_cast<int32>(ret);
     }
-
-    return static_cast<int32>(ret);
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamString::UnbufferedWrite(const char8 * const data,
-                                   uint32 & size) {
-    return false;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamString::UnbufferedRead(char8 * const data,
-                                  uint32 & size) {
-    return false;
-}
-
-uint64 StreamString::UnbufferedSize() {
-    return 0u;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamString::UnbufferedSeek(const uint64 pos) {
-    return false;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not requires input arguments.*/
-bool StreamString::UnbufferedRelativeSeek(const int32 deltaPos) {
-    return false;
-}
-
-uint64 StreamString::UnbufferedPosition() {
-    return 0u;
-}
-
-/*lint -e{715} [MISRA C++ Rule 0-1-11]. Justification: This implementation does not need the input argument.*/
-bool StreamString::UnbufferedSetSize(const uint64 size) {
-    return false;
-}
 
 }
 

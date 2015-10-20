@@ -23,15 +23,7 @@
 #############################################################
 
 
-OBJSX=	CharBufferGTest.x \
-        IOBufferGTest.x \
-        StreamStringIOBufferGTest.x \
-        StreamIGTest.x \
-        SingleBufferedStreamGTest.x \
-        DoubleBufferedStreamGTest.x \
-        BufferedStreamIOBufferGTest.x \
-        StreamStringGTest.x
-#       TypeCharacteristicsGTest.x \
+OBJSX=	TypeCharacteristicsGTest.x \
         BasicTypeGTest.x \
         BasicConsoleGTest.x \
         FormatDescriptorGTest.x \
@@ -72,14 +64,16 @@ OBJSX=	CharBufferGTest.x \
  	BitRangeGTest.x \
  	StaticListGTest.x \
  	GlobalObjectsDatabaseGTest.x \
-	TypeDescriptorGTest.x \
-	BitSetToIntegerGTest.x \
-	DoubleIntegerGTest.x \
-	FloatToStreamGTest.x \
-	IntegerToStreamGTest.x \
-	StreamableGTest.x \
-	StreamMemoryReferenceGTest.x \
-	StreamStringGTest.x
+	TypeDescriptorGTest.x  \
+	CharBufferGTest.x \
+        IOBufferGTest.x \
+        StreamStringIOBufferGTest.x \
+        StreamIGTest.x \
+        SingleBufferedStreamGTest.x \
+        DoubleBufferedStreamGTest.x \
+        BufferedStreamIOBufferGTest.x \
+        StreamStringGTest.x \
+        StreamMemoryReferenceGTest.x 
 	
 	
 
