@@ -34,6 +34,8 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+using namespace MARTe;
+
 static inline uint8 *SaveNumber(uint8 number) {
     static uint8 numberx[numberOfIntegers];
     static int32 index = -1;
@@ -447,3 +449,43 @@ const char8* printfCStringTable[][3] = {
             { "%s", (const char8*) NULL, "" },
             { NULL, NULL, NULL }
     };
+
+
+
+const BitSetToBitSetTableRow *GeneratedBitSetToBitSetTable(){
+    static const uint32 source[] = { 0xffffffb5, 0x00001111, 0x22223333, 0x0 };
+    static const BitSetToBitSetTableRow bitSetToBitSetTable[]={
+            {0, 0, 32, 32, (uint32*)source, 0, 0xffffffb5, true, true},
+            {32, 0, 32, 32, (uint32*)source, 1, 0xffffffb5, true, true},
+            {64, 16, 32, 32, (uint32*)source, 2, 0x1111ffff, true, true},
+            //Take only 16 bit size. Sign padding should work.
+            {64, 16, 32, 16, (uint32*)source, 2, 0xffffffff, true, true},
+            //Take only 3 bit size with shift=1. No sign padding
+            {64, 1, 32, 3, (uint32*)source, 2, 0x2, true, true},
+            //destSize < sourceSize, saturation.
+            {96, 0, 5, 16, (uint32*)source, 3, 0x10, true, true},
+            //saturation for unsigned source and signed destination.
+            {104, 16, 5, 16, (uint32*)source, 3, 0xf10, false, true},
+            //saturation to zero for negative source and unsigned destination.
+            {104, 16, 5, 16, (uint32*)source, 3, 0x10, true, false},
+            //8 bit pointer
+            {104, 64, 8, 3, (uint32*)source, 3, 0x310, false, false},
+            //16 bit pointer. Not padding because source is unsigned.
+            {96, 80, 16, 10, (uint32*)source, 3, 0x222, false, false},
+            //16 bit pointer to 32. Sign padding.
+            {104, 77, 16, 5, (uint32*)source, 3, 0xfff122, true, true},
+            //64 bit pointer to 128. Padding
+            //{32, 48, 32, 30, (int64*) source, 1, 0xf3330000, true, true}
+            {0, 0, 0, 0, (uint32*)NULL, 0, 0, true, true},
+
+    };
+
+    return bitSetToBitSetTable;
+}
+
+
+
+
+
+
+

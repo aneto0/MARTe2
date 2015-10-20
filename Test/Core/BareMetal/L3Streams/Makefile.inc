@@ -34,14 +34,8 @@ OBJSX= AnyTypeTest.x \
        SingleBufferedStreamTest.x \
        DoubleBufferedStreamTest.x \
        StreamStringTest.x \
-       StreamMemoryReferenceTest.x
-# IntegerToStreamTest.x \
-	FloatToStreamTest.x \
-	BitSetToIntegerTest.x \
-	DoubleIntegerTest.x \
-	StreamStringTest.x \
-	StreamMemoryReferenceTest.x \
-	StreamableTest.x \
+       StreamMemoryReferenceTest.x \
+       BitSetToIntegerTest.x
 	 
 		
 PACKAGE=Core/BareMetal
