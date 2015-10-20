@@ -23,15 +23,16 @@
 #############################################################
 
 
-OBJSX=	CharBufferGTest.x \
+OBJSX=	ShiftGTest.x \
+        CharBufferGTest.x \
         IOBufferGTest.x \
         StreamStringIOBufferGTest.x \
         StreamIGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
-        StreamStringGTest.x
-#       TypeCharacteristicsGTest.x \
+        StreamStringGTest.x \
+       TypeCharacteristicsGTest.x \
         BasicTypeGTest.x \
         BasicConsoleGTest.x \
         FormatDescriptorGTest.x \
@@ -66,22 +67,23 @@ OBJSX=	CharBufferGTest.x \
 	ReferenceContainerNodeGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
-  	ErrorManagementGTest.x \
+ 	ErrorManagementGTest.x \
     	BitBooleanGTest.x \
  	FractionalIntegerGTest.x \
  	BitRangeGTest.x \
  	StaticListGTest.x \
  	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x \
-	BitSetToIntegerGTest.x \
-	DoubleIntegerGTest.x \
-	FloatToStreamGTest.x \
-	IntegerToStreamGTest.x \
-	StreamableGTest.x \
-	StreamMemoryReferenceGTest.x \
-	StreamStringGTest.x
+#	BitSetToIntegerGTest.x \
+#	DoubleIntegerGTest.x \
+#	FloatToStreamGTest.x \
+#	IntegerToStreamGTest.x \
+#	StreamableGTest.x \
+#	StreamMemoryReferenceGTest.x \
+#	StreamStringGTest.x \
 	
 	
+
 
 PACKAGE=
 ROOT_DIR=../..
