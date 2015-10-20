@@ -88,15 +88,15 @@ TEST(ShiftGTest, TestLogicalRightSaveShiftInt32) {
 }
 
 TEST(ShiftGTest, TestLogicalRightSaveShiftUint64) {
-     ShiftTest myShift;
-     uint64 number = 1234567;
-     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
+    ShiftTest myShift;
+    uint64 number = 1234567;
+    ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
 TEST(ShiftGTest, TestLogicalRightSaveShiftInt64) {
-     ShiftTest myShift;
-     int64 number = 1234567;
-     ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
+    ShiftTest myShift;
+    int64 number = 1234567;
+    ASSERT_TRUE(myShift.TestLogicalRightSaveShift(number));
 }
 
 TEST(ShiftGTest, TestLogicalRightSaveShiftPositiveInt64) {
