@@ -155,6 +155,12 @@ public:
     virtual bool CanRead() const;
 
     /**
+     * @brief Queries if seek operations can be performed on the stream.
+     * @return true.
+     */
+    virtual bool CanSeek() const;
+
+    /**
      * @brief Gets the size of the stream.
      * @details For this object the size is always minor than the buffer
      * dimension passed in the constructor.
@@ -196,11 +202,7 @@ public:
      */
     virtual bool SetSize(const uint64 size);
 
-    /**
-     * @brief Queries if seek operations can be performed on the stream.
-     * @return true.
-     */
-    virtual bool CanSeek() const;
+
 
     /*-----------------------------------------------------------------------*/
 

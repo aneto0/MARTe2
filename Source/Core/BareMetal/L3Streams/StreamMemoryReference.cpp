@@ -90,7 +90,7 @@ bool StreamMemoryReference::Write(const char8* const input,
 }
 
 bool StreamMemoryReference::CanWrite() const {
-    return ((buffer.BufferReference() != NULL) && buffer.CanWrite());
+    return ((buffer.BufferReference() != NULL) && (buffer.CanWrite()));
 };
 
 bool StreamMemoryReference::CanRead() const {
@@ -104,7 +104,7 @@ uint64 StreamMemoryReference::Size() {
 bool StreamMemoryReference::SetSize(const uint64 size) {
 
     buffer.SetUsedSize(static_cast<uint32>(size));
-    return true;
+    return (buffer.UsedSize() == static_cast<uint32>(size));
 }
 
 bool StreamMemoryReference::Seek(const uint64 pos) {
