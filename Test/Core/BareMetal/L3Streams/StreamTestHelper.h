@@ -75,13 +75,20 @@ public:
 };
 
 /**
- * @brief Minimal OperatingSystemStream implementation for the Buffer and Stream tests
+ * @brief Minimal OperatingSystemStream implementation for the Buffer and Stream tests.
+ * It is implemented over a char buffer with dimension MAX_STREAM_DIMENSION
  */
-class DummyRawStream: public OperatingSystemStream {
+class DummyOSStream: public OperatingSystemStream {
 
 public:
 
-    DummyRawStream(bool canSeek = true, bool canRead = true, bool canWrite = true) {
+    /**
+     * Default constructor.
+     * CanSeek() = canSeek
+     * CanRead() = canRead
+     * CanWrite() = canWrite
+     */
+    DummyOSStream(bool canSeek = true, bool canRead = true, bool canWrite = true) {
         position = 0;
         seekable = canSeek;
         readable = canRead;
@@ -93,7 +100,7 @@ public:
         }
     }
 
-    ~DummyRawStream(){
+    ~DummyOSStream(){
         free(buffer);
     }
 
@@ -211,19 +218,19 @@ public:
 };
 
 /**
- * @brief Minimal StreamI implementation for the Buffer and Stream tests
+ * @brief Minimal StreamI (and SingleBufferedStream) implementation for the Buffer and Stream tests.
  */
-class DummySingleBufferedStream: public DummyRawStream, public SingleBufferedStream {
+class DummySingleBufferedStream: public DummyOSStream, public SingleBufferedStream {
 public:
 
     DummySingleBufferedStream(uint32 timeout) :
-            DummyRawStream(true),
+            DummyOSStream(true),
             SingleBufferedStream(timeout) {
     }
 
 
     DummySingleBufferedStream(bool canSeek=true, bool canRead = true, bool canWrite = true) :
-            DummyRawStream(canSeek, canRead, canWrite),
+            DummyOSStream(canSeek, canRead, canWrite),
             SingleBufferedStream() {
     }
 
@@ -231,54 +238,54 @@ public:
     }
 
     uint64 OSSize() {
-        return DummyRawStream::UnbufferedSize();
+        return DummyOSStream::UnbufferedSize();
     }
 
     bool OSSeek(uint64 seek) {
-        return DummyRawStream::UnbufferedSeek(seek);
+        return DummyOSStream::UnbufferedSeek(seek);
     }
 
     bool OSRelativeSeek(int32 delta) {
-        return DummyRawStream::UnbufferedRelativeSeek(delta);
+        return DummyOSStream::UnbufferedRelativeSeek(delta);
     }
 
     uint64 OSPosition() {
-        return DummyRawStream::UnbufferedPosition();
+        return DummyOSStream::UnbufferedPosition();
     }
 
     bool OSSetSize(uint64 desSize) {
-        return DummyRawStream::UnbufferedSetSize(desSize);
+        return DummyOSStream::UnbufferedSetSize(desSize);
     }
 
     bool OSRead(char8 * const outBuffer,
                         uint32 &inSize) {
-        return DummyRawStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
+        return DummyOSStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
     }
 
     bool OSWrite(const char8 * const inBuffer,
                          uint32 &outSize) {
 
-        return DummyRawStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());
+        return DummyOSStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());
     }
 
     bool CanWrite() const {
-        return DummyRawStream::CanWrite();
+        return DummyOSStream::CanWrite();
     }
 
     bool CanSeek() const {
-        return DummyRawStream::CanSeek();
+        return DummyOSStream::CanSeek();
     }
 
     bool CanRead() const {
-        return DummyRawStream::CanRead();
+        return DummyOSStream::CanRead();
     }
 
     bool CanBlock() {
-        return DummyRawStream::CanBlock();
+        return DummyOSStream::CanBlock();
     }
 
     bool SetBlocking(bool flag) {
-        return DummyRawStream::SetBlocking(flag);
+        return DummyOSStream::SetBlocking(flag);
     }
 
 };
@@ -286,17 +293,17 @@ public:
 /**
  * @brief Minimal DoubleBufferedStream implementation for the Buffer and Stream tests
  */
-class DummyDoubleBufferedStream: public DummyRawStream, public DoubleBufferedStream {
+class DummyDoubleBufferedStream: public DummyOSStream, public DoubleBufferedStream {
 public:
 
     DummyDoubleBufferedStream(uint32 timeout) :
-            DummyRawStream(true),
+            DummyOSStream(true),
             DoubleBufferedStream(timeout) {
     }
 
 
     DummyDoubleBufferedStream(bool canSeek=true, bool canRead = true, bool canWrite = true) :
-            DummyRawStream(canSeek, canRead, canWrite),
+            DummyOSStream(canSeek, canRead, canWrite),
             DoubleBufferedStream() {
     }
 
@@ -304,54 +311,54 @@ public:
     }
 
     uint64 OSSize() {
-        return DummyRawStream::UnbufferedSize();
+        return DummyOSStream::UnbufferedSize();
     }
 
     bool OSSeek(uint64 seek) {
-        return DummyRawStream::UnbufferedSeek(seek);
+        return DummyOSStream::UnbufferedSeek(seek);
     }
 
     bool OSRelativeSeek(int32 delta) {
-        return DummyRawStream::UnbufferedRelativeSeek(delta);
+        return DummyOSStream::UnbufferedRelativeSeek(delta);
     }
 
     uint64 OSPosition() {
-        return DummyRawStream::UnbufferedPosition();
+        return DummyOSStream::UnbufferedPosition();
     }
 
     bool OSSetSize(uint64 desSize) {
-        return DummyRawStream::UnbufferedSetSize(desSize);
+        return DummyOSStream::UnbufferedSetSize(desSize);
     }
 
     bool OSRead(char8 * const outBuffer,
                         uint32 &inSize) {
-        return DummyRawStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
+        return DummyOSStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
     }
 
     bool OSWrite(const char8 * const inBuffer,
                          uint32 &outSize) {
 
-        return DummyRawStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());
+        return DummyOSStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());
     }
 
     bool CanWrite() const {
-        return DummyRawStream::CanWrite();
+        return DummyOSStream::CanWrite();
     }
 
     bool CanSeek() const {
-        return DummyRawStream::CanSeek();
+        return DummyOSStream::CanSeek();
     }
 
     bool CanRead() const {
-        return DummyRawStream::CanRead();
+        return DummyOSStream::CanRead();
     }
 
     bool CanBlock() {
-        return DummyRawStream::CanBlock();
+        return DummyOSStream::CanBlock();
     }
 
     bool SetBlocking(bool flag) {
-        return DummyRawStream::SetBlocking(flag);
+        return DummyOSStream::SetBlocking(flag);
     }
 
 };
@@ -360,7 +367,7 @@ static const uint32 numberOfIntegers = 32;
 static const uint32 numberOfFloats = 64;
 
 /**
- * List of functions to generated tables for the IOBuffer and Stream PrintFormatted tests
+ * List of functions to generate the tables for the IOBuffer and StreamI PrintFormatted tests
  */
 const PrintfNode *GeneratePrintFormattedDecimalTable();
 const PrintfNode *GeneratePrintFormattedHexadecimalTable();
