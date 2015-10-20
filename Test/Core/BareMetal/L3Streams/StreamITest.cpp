@@ -71,6 +71,10 @@ bool StreamITest::TestGetToken(uint32 bufferSize,
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
 
+    //Force a switch to write mode (in order to force full coverage).
+    myStream.Printf("%d", 4);
+    myStream.Seek(0);
+
     uint32 i = 0u;
     const TokenTestTableRow *row = &table[i];
     bool result = true;

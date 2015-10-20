@@ -73,47 +73,94 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
     DummyDoubleBufferedStream stream(true);
     stream.SetBufferSize(bufferSize, bufferSize);
 
-    uint32 size = readSize;
-    char8 *bufferWrite = (char8 *) malloc(readSize);
-    uint32 i = 0;
-    for (i = 0; i < readSize; i++) {
-        bufferWrite[i] = i * i;
-    }
-
-    uint32 start = 0;
-    while ((size > 0) && (stream.Write(bufferWrite + start, size))) {
-        start += size;
-        if (size > 0) {
-            size = (readSize - size);
+    bool ok = true;
+    //Do the test twice to force switching from read to write mode and vice-versa
+    uint32 n = 0;
+    while (n < 2) {
+        uint32 size = readSize;
+        char8 *bufferWrite = (char8 *) malloc(readSize);
+        uint32 i = 0;
+        for (i = 0; i < readSize; i++) {
+            bufferWrite[i] = i * i;
         }
-    }
-    bool ok = (stream.Position() == readSize);
-    stream.Seek(0);
 
-    char8 *bufferRead = (char8 *) malloc(readSize);
-    size = readSize;
-
-    start = 0;
-    while ((size > 0) && (stream.Read(bufferRead + start, size))) {
-        start += size;
-        if (size > 0) {
-            size = (readSize - size);
+        uint32 start = 0;
+        while ((size > 0) && (stream.Write(bufferWrite + start, size))) {
+            start += size;
+            if (size > 0) {
+                size = (readSize - start);
+            }
         }
+        stream.Seek(0);
+
+        char8 *bufferRead = (char8 *) malloc(readSize);
+        size = readSize;
+
+        start = 0;
+        while ((size > 0) && (stream.Read(bufferRead + start, size))) {
+            start += size;
+            if (size > 0) {
+                size = (readSize - start);
+            }
+        }
+
+        bufferRead[readSize - 1] = '\0';
+        bufferWrite[readSize - 1] = '\0';
+        bool ok = (StringHelper::Compare(bufferRead, bufferWrite) == 0);
+
+        free(bufferRead);
+        free(bufferWrite);
+        n++;
     }
-
-    bufferRead[readSize - 1] = '\0';
-    bufferWrite[readSize - 1] = '\0';
-    ok &= (StringHelper::Compare(bufferRead, bufferWrite) == 0);
-    ok &= (stream.Position() == readSize);
-
-    free(bufferRead);
-    free(bufferWrite);
     return ok;
 }
 
 bool DoubleBufferedStreamTest::TestWrite(uint32 bufferSize,
                                          uint32 readSize) {
     return TestRead(bufferSize, readSize);
+}
+
+bool DoubleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSize,
+                                                                uint32 writeSize) {
+    DummyDoubleBufferedStream stream(true);
+    stream.SetBufferSize(bufferSize, bufferSize);
+
+    char8 *bufferWrite = (char8 *) malloc(writeSize);
+    uint32 i = 0;
+    for (i = 0; i < writeSize; i++) {
+        bufferWrite[i] = i * i;
+    }
+
+    uint32 start = 0;
+    uint32 size = bufferSize / 4 - 1;
+    while ((size > 0) && (stream.Write(bufferWrite + start, size))) {
+        start += size;
+        if (size > 0) {
+            size = bufferSize / 4 - 1;
+        }
+        if ((start + size) > writeSize) {
+            size = writeSize - start;
+        }
+    }
+
+    stream.Seek(0);
+    char8 *bufferRead = (char8 *) malloc(writeSize);
+    size = writeSize;
+    start = 0;
+    while ((size > 0) && (stream.Read(bufferRead + start, size))) {
+        start += size;
+        if (size > 0) {
+            size = (writeSize - start);
+        }
+    }
+
+    bufferRead[writeSize - 1] = '\0';
+    bufferWrite[writeSize - 1] = '\0';
+    bool ok = (StringHelper::Compare(bufferRead, bufferWrite) == 0);
+
+    free(bufferRead);
+    free(bufferWrite);
+    return ok;
 }
 
 bool DoubleBufferedStreamTest::TestSize(uint32 size) {
@@ -126,56 +173,23 @@ bool DoubleBufferedStreamTest::TestSeek() {
     DummyDoubleBufferedStream stream(true);
     stream.SetBufferSize(64, 64);
 
-    uint32 size = 32;
-    char buffer[size];
-    uint32 i = 0;
-    for (i = 0; i < size; i++) {
-        buffer[i] = i;
-    }
-    bool ok = stream.Write(buffer, size);
-    for (i = 0; i < size; i++) {
-        buffer[i] = 0;
-    }
+    uint32 streamSeek = 100;
+    stream.Seek(streamSeek);
 
-    uint32 seekAmount;
-    for (seekAmount = 0; seekAmount < 30; seekAmount += 3) {
-        ok &= stream.Seek(seekAmount);
-        uint32 readSize = size - seekAmount;
-        ok &= stream.Read(buffer, readSize);
-        for (i = 0; i < readSize; i++) {
-            ok &= static_cast<char>((buffer[i] == (i + seekAmount)));
-        }
-    }
-    return ok;
+    return (stream.Position() == streamSeek);
 }
 
 bool DoubleBufferedStreamTest::TestRelativeSeek() {
     DummyDoubleBufferedStream stream(true);
     stream.SetBufferSize(64, 64);
 
-    uint32 size = 32;
-    char buffer[size];
-    uint32 i = 0;
-    for (i = 0; i < size; i++) {
-        buffer[i] = i;
-    }
-    bool ok = stream.Write(buffer, size);
-    for (i = 0; i < size; i++) {
-        buffer[i] = 0;
-    }
+    uint32 streamSeek = 100;
+    stream.Seek(streamSeek);
 
-    uint32 seekStart = 5;
-    uint32 seekAmount = 0;
-    for (seekAmount = 0; seekAmount < 25; seekAmount++) {
-        ok &= stream.Seek(seekStart);
-        ok &= stream.RelativeSeek(seekAmount);
-        uint32 readSize = size - seekAmount - seekStart;
-        ok &= stream.Read(buffer, readSize);
-        for (i = 0; i < readSize; i++) {
-            ok &= (buffer[i] == static_cast<char>((i + seekAmount + seekStart)));
-        }
-    }
-    return ok;
+    uint32 streamRelativeSeek = 111;
+    stream.RelativeSeek(streamRelativeSeek);
+
+    return (stream.Position() == (streamSeek + streamRelativeSeek));
 }
 
 bool DoubleBufferedStreamTest::TestPosition() {
@@ -206,4 +220,58 @@ bool DoubleBufferedStreamTest::TestFlush(uint32 bufferSize) {
     ok &= stream.Flush();
     ok &= (StringHelper::Compare("8", stream.Buffer()) == 0);
     return ok;
+}
+
+bool DoubleBufferedStreamTest::TestRead_NotCanRead() {
+    DummyDoubleBufferedStream stream(true, false, true);
+    uint32 size = 8;
+    char buffer[size];
+    return !stream.Read(buffer, size);
+}
+
+bool DoubleBufferedStreamTest::TestWrite_NotCanWrite() {
+    DummyDoubleBufferedStream stream(true, true, false);
+    uint32 size = 8;
+    char buffer[size];
+    return !stream.Write(buffer, size);
+}
+
+bool DoubleBufferedStreamTest::TestGetToken(uint32 bufferSize,
+                                      const TokenTestTableRow *table) {
+    DummyDoubleBufferedStream myStream;
+    myStream.SetBufferSize(bufferSize, bufferSize);
+
+    //Force a switch to write mode (in order to force full coverage).
+    myStream.Printf("%d", 4);
+    myStream.Seek(0);
+
+    uint32 i = 0u;
+    const TokenTestTableRow *row = &table[i];
+    bool result = true;
+
+    while (result && (row->toTokenize != NULL)) {
+        myStream.Clear();
+        StringHelper::Copy(myStream.buffer, row->toTokenize);
+        const uint32 bufferSize = 32;
+        char buffer[bufferSize];
+        char saveTerminator;
+        uint32 t = 0u;
+
+        while (myStream.GetToken(buffer, row->terminators, bufferSize, saveTerminator, row->skipCharacters)) {
+            if (StringHelper::Compare(buffer, row->expectedResult[t]) != 0) {
+                result = false;
+            }
+            if (row->saveTerminatorResult[t] != saveTerminator) {
+                //When it gets to the end of the string the terminator is \0
+                if (saveTerminator != '\0') {
+                    result = false;
+                }
+            }
+            t++;
+        }
+
+        row = &table[++i];
+
+    }
+    return result;
 }

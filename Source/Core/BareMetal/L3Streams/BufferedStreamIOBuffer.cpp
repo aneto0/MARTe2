@@ -89,7 +89,7 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead() {
 
             uint32 readSize = MaxUsableAmount();
 
-            if (stream->OSRead(BufferReference(),readSize)) {
+            if (stream->OSRead(BufferReference(), readSize)) {
                 IOBuffer::SetUsedSize(readSize);
                 retval = true;
             }
@@ -111,13 +111,13 @@ bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
 
             // how much was written?
             uint32 writeSize = UsedSize();
-            if(writeSize==0u) {
-                retval=true;
+            if (writeSize == 0u) {
+                retval = true;
             }
             // write
             else {
-                if(stream->OSWrite(Buffer(),writeSize)) {
-                    retval=true;
+                if (stream->OSWrite(Buffer(), writeSize)) {
+                    retval = true;
                     Empty();
                 }
             }
