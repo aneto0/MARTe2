@@ -96,7 +96,7 @@ public:
      * @brief Sets manually the size of the filled memory.
      * @details If the desired size is greater than maxUsableAmount it clips the desired size to maxUsableAmount.
      *
-     * @param[in] size is the desired used size.
+     * @param[in] desiredSize is the desired used size.
      */
     virtual void SetUsedSize(const uint32 desiredSize);
 
@@ -339,7 +339,7 @@ public:
      * @details This function read the format, builds the related format
      * descriptor and then calls the PrintToStream function passing the
      * next AnyType element in the list.
-     * @param[in] format is a printf like string format.
+     * @param[in] format is a printf-like string format.
      * @param[in] pars is a list of AnyType elements to print.
      * @return false in case of errors.
      */
