@@ -47,10 +47,10 @@ namespace MARTe {
  *
  * @details This class inherits from IOBuffer specializing NoMoreSpaceToWrite and NoMoreDataToRead functions accordingly
  * to the buffered stream requirements. In particular NoMoreSpaceToWrite acts as a flush on the stream and
- * NoMoreDataToRead refills this buffer from the stream. Moreover also the Resync function is implemented
- * due to adjust the stream position after a buffered read or write operation.
+ * NoMoreDataToRead refills this buffer from the stream. The Resync function is also adjusts the stream position
+ * after a buffered read or write operation.
  *
- * @details Since this buffers has to read and write on the associated stream, in the constructor must be passed a pointer to the associated stream.
+ * @details Since this buffers has to read and write on the associated stream, the constructor needs a pointer to such stream.
  */
 class BufferedStreamIOBuffer: public IOBuffer {
 
@@ -95,20 +95,20 @@ public:
 
     /**
      * @brief User friendly function which simply calls NoMoreDataToRead.
-     * @return the NoMoreDataToRead return.
+     * @return whatever NoMoreDataToRead returns.
      */
     inline bool Refill();
 
     /**
      * @brief User friendly function which simply calls NoMoreSpaceToWrite.
-     * @return the NoMoreSpaceToWrite return.
+     * @return whatever NoMoreSpaceToWrite returns.
      */
     inline bool Flush();
 
     /**
      * @brief Adjusts the position of the stream.
      * @details This function is called from the stream after a read operation because the position was shifted
-     * forward (+bufferSize) because of the refill. Calls Seek moving the cursor back (-UsedAmountLeft).
+     * forward (+bufferSize) due to the refill. Calls Seek moving the cursor back (-UsedAmountLeft).
      *
      * @return false if the stream seek fails.
      */
@@ -118,12 +118,12 @@ public:
      * @brief Sets the buffer size
      * @details Implies allocating or reallocating memory to the desired size.
      * @param[in] size is the desired size for the buffer.
-     * @return false in case of allocations errors.
+     * @return false in case of allocation errors.
      */
     bool SetBufferSize(const uint32 size);
 
     /**
-     * Gets the timeout
+     * Gets the timeout for read and write operations.
      */
     inline TimeoutType GetTimeout() const;
 
