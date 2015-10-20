@@ -109,7 +109,7 @@ public:
      *   writeSize >= 4 * bufferSize
      */
     bool TestRelativeSeek_OverflowInternalBuffer(MARTe::uint32 bufferSize,
-                                             MARTe::uint32 writeSize);
+                                                 MARTe::uint32 writeSize);
 
     /**
      * @brief Tests that the Position is correctly retrieved (after performing Seek operations)

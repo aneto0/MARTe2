@@ -174,6 +174,11 @@ private:
     bool mutexWriteMode;
 
     /**
+     * Set to true if the buffer size could be successfully set
+     */
+    bool bufferSizeSet;
+
+    /**
      * @brief Switches the stream to write mode.
      * @return true if the re-synchronization of the buffer from read to write mode is successful.
      */

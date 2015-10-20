@@ -296,7 +296,7 @@ public:
 
 
     DummyDoubleBufferedStream(bool canSeek=true, bool canRead = true, bool canWrite = true) :
-            DummyRawStream(canSeek),
+            DummyRawStream(canSeek, canRead, canWrite),
             DoubleBufferedStream() {
     }
 

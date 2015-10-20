@@ -82,6 +82,11 @@ TEST_F(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_1024) {
     ASSERT_TRUE(streamtest.TestSetBufferSize(1024));
 }
 
+TEST_F(DoubleBufferedStreamGTest,TestRead_NotCanRead) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestRead_NotCanRead());
+}
+
 TEST_F(DoubleBufferedStreamGTest,TestRead_Size_1) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead(0, 1));
@@ -130,6 +135,11 @@ TEST_F(DoubleBufferedStreamGTest,TestRead_Size_1024) {
     ASSERT_TRUE(streamtest.TestRead(8, 1024));
     ASSERT_TRUE(streamtest.TestRead(64, 1024));
     ASSERT_TRUE(streamtest.TestRead(1024, 1024));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestWrite_NotCanWrite) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestWrite_NotCanWrite());
 }
 
 TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_1) {
@@ -181,6 +191,14 @@ TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_1024) {
     ASSERT_TRUE(streamtest.TestWrite(64, 1024));
     ASSERT_TRUE(streamtest.TestWrite(1024, 1024));
 }
+
+TEST_F(DoubleBufferedStreamGTest,TestWrite_OverflowInternalBuffer_Size) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(8, 256));
+    ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(32, 256));
+    ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(64, 256));
+}
+
 
 TEST_F(DoubleBufferedStreamGTest,TestSize_1) {
     DoubleBufferedStreamTest streamtest;
@@ -270,4 +288,64 @@ TEST_F(DoubleBufferedStreamGTest,TestFlush_64) {
 TEST_F(DoubleBufferedStreamGTest,TestFlush_1024) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestFlush(1024));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_1) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(1, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_2) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(2, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_8) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(8, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_64) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(64, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_128) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(128, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_1024) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(1024, &TokenTestTableTerminators[0]));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_1) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(1, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_2) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(2, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_8) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(8, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_64) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(64, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_128) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(128, &TokenTestTableSkipCharacters[0]));
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_1024) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetToken(1024, &TokenTestTableSkipCharacters[0]));
 }
