@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
 #include "GlobalObjectI.h"
 
@@ -39,7 +40,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
+
 /**
  * @brief Global objects (singletons) manager.
  * @details This class aims at addressing the static objects initialisation
@@ -50,8 +53,10 @@ namespace MARTe {
  * The global objects (which inherit from GlobalObjectI) are created in the StandardHeap and
  * registered by the caller in the GlobalObjectsDatabase.
  */
-class DLL_API GlobalObjectsDatabase {
+class GlobalObjectsDatabase {
+
 public:
+
     /**
      * @brief Singleton access to the GlobalObjectsDatabase.
      * @return a pointer to the GlobalObjectsDatabase.
@@ -60,11 +65,16 @@ public:
 
     /**
      * @brief Adds a new global object to the database.
-     * @details At the end of the program, the registered objects will be destroyed in ascending order of the destructionOrder.
+     * @details At the end of the program, the registered objects will be
+     * destroyed in ascending order of the destructionOrder. If two or more
+     * objects have the same order, they will be destroyed following the
+     * order of addition.
      * @param[in] globalObject a pointer to the global object to be added.
-     * @param[in] destructionOrder the order at which the global object should be destroyed. The higher the order, the later it will be destroyed
-     * w.r.t. to the other global objects.
+     * @param[in] destructionOrder the order at which the global object
+     * should be destroyed. The higher the order, the later it will be
+     * destroyed w.r.t. to the other global objects.
      * @pre
+     *   globalObject!=NULL &&
      *   destructionOrder>=0 &&
      *   destructionOrder<NUMBER_OF_GLOBAL_OBJECTS
      */
@@ -72,7 +82,7 @@ public:
              const uint32 destructionOrder);
 
     /**
-     * @brief Returns a pointer to the GlobalObject in position \a idx.
+     * @brief Gets a pointer to the GlobalObject in position \a idx.
      * @param[in] idx the index of the object to be peeked.
      * @pre
      *   idx>=0 &&
@@ -88,6 +98,7 @@ public:
     HeapI *GetStandardHeap();
 
 private:
+
     /**
      * @brief Sets all the internal database entries to NULL.
      */
@@ -114,11 +125,12 @@ private:
      */
     StandardHeap standardHeap;
 };
+
 }
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* GLOBALOBJECTSDATABASES_H_ */
+#endif /* GLOBALOBJECTSDATABASE_H_ */
 

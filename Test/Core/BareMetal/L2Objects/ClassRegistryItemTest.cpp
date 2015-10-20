@@ -252,7 +252,7 @@ bool ClassRegistryItemTest::TestGetObjectBuildFunction() {
         return false;
     }
 
-    HeapI * h=NULL;
+    HeapI * h = NULL;
     //call the function to see if it behaves as expected
     Object* instance = myItem->GetObjectBuildFunction()(h);
     bool retVal = true;

@@ -119,7 +119,7 @@ static bool ParseCharacter(const char8 c,
     if (ret) {
 
         // add the missing bits
-        format |= found->format;
+        format.format_as_uint32 |= found->format.format_as_uint32;
     }
     return ret;
 }

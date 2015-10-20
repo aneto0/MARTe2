@@ -39,9 +39,9 @@
 /*---------------------------------------------------------------------------*/
 
 bool TypeDescriptorTest::TestConstructorUint(bool isObject,
-                                               bool isConst,
-                                               uint16 size,
-                                               BasicType type) {
+                                             bool isConst,
+                                             uint16 size,
+                                             BasicType type) {
 
     uint16 initNumber = (isObject) | (isConst << 1) | (type << 2) | (size << 6);
     TypeDescriptor testTD = initNumber;

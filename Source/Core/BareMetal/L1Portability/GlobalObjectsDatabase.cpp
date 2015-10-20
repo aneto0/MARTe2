@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "GlobalObjectsDatabase.h"
 
 /*---------------------------------------------------------------------------*/
@@ -37,6 +38,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 GlobalObjectsDatabase *GlobalObjectsDatabase::Instance() {
@@ -100,4 +102,5 @@ const GlobalObjectI *GlobalObjectsDatabase::Peek(const uint32 idx) const {
 HeapI *GlobalObjectsDatabase::GetStandardHeap() {
     return &standardHeap;
 }
+
 }

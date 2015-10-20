@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "GlobalObjectsDatabaseTest.h"
 #include "StringHelper.h"
 
@@ -38,7 +39,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
+
 bool GlobalObjectsDatabaseTest::TestInstance() {
     return (GlobalObjectsDatabase::Instance() != NULL_PTR(GlobalObjectsDatabase *));
 }
@@ -49,9 +52,9 @@ bool GlobalObjectsDatabaseTest::TestPeek() {
     GlobalObjectsDatabase *database = GlobalObjectsDatabase::Instance();
     for (i = 0; i < NUMBER_OF_GLOBAL_OBJECTS; i++) {
         const GlobalObjectI *globalObjectI = database->Peek(i);
-        if(globalObjectI != NULL_PTR(GlobalObjectI *)){
-            const char8 *const className = globalObjectI->GetClassName();
-            if(StringHelper::Compare(className, "ClassRegistryDatabase") == 0){
+        if (globalObjectI != NULL_PTR(GlobalObjectI *)) {
+            const char8 * const className = globalObjectI->GetClassName();
+            if (StringHelper::Compare(className, "ClassRegistryDatabase") == 0) {
                 result = true;
                 break;
             }
@@ -65,4 +68,5 @@ bool GlobalObjectsDatabaseTest::TestGetStandardHeap() {
     StandardHeap *stdHeap = dynamic_cast<StandardHeap *>(heap);
     return (stdHeap != NULL_PTR(StandardHeap *));
 }
+
 }

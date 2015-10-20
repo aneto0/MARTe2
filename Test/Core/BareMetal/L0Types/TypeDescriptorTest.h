@@ -53,18 +53,18 @@ public:
      * @param[in] isConst specifies if the type is constant.
      * @param[in] size is the type bit size.
      * @param[in] type is the type.
-     * @return true if the TypeDescriptor attributes are filled correctly. False otherwise.
+     * @return True if the TypeDescriptor attributes are filled correctly. False otherwise.
      */
     bool TestConstructorUint(bool isObject,
-                               bool isConst,
-                               uint16 size,
-                               BasicType type);
+                             bool isConst,
+                             uint16 size,
+                             BasicType type);
     /**
      * @brief Tests the constructor by basic types.
      * @param[in] isConst specifies if the type is constant.
      * @param[in] size is the type bit size.
      * @param[in] type is the type.
-     * @return true if the TypeDescriptor attributes are filled correctly. False otherwise.
+     * @return True if the TypeDescriptor attributes are filled correctly. False otherwise.
      */
     bool TestConstructorBasicType(bool isConst,
                                   uint16 size,
@@ -74,7 +74,7 @@ public:
      * @brief Tests the constructor by structured types.
      * @param[in] isConst specifies if the type is constant.
      * @param[in] objCode is the code related to the object.
-     * @return true if the TypeDescriptor attributes are filled correctly. False otherwise.
+     * @return True if the TypeDescriptor attributes are filled correctly. False otherwise.
      */
     bool TestConstructorObject(bool isConst,
                                uint16 objCode);
@@ -83,7 +83,7 @@ public:
      * @brief Tests the equal operator.
      * @param[in] size is the code related to the object.
      * @param[in] type is the type.
-     * @return true if the operator returns true if between two TypeDescriptors all the fields except the isConstant flag are equal.
+     * @return True if the operator returns true if between two TypeDescriptors all the fields except the isConstant flag are equal.
      * False otherwise.
      */
     bool TestIsEqualOperator(uint16 size,
@@ -91,7 +91,7 @@ public:
 
     /**
      * @brief Checks if the equal operator fails comparing two TypeDescriptor with different attribute values.
-     * @return if the equal operator fails comparing two TypeDescriptor with different attribute values. False otherwise.
+     * @return True if the equal operator fails comparing two TypeDescriptor with different attribute values. False otherwise.
      */
     bool TestIsEqualOperatorFail();
 

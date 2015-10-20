@@ -39,8 +39,6 @@ OBJSX=  FastMath.x \
         StaticList.x \
         FormatDescriptor.x
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
-
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../L0Types

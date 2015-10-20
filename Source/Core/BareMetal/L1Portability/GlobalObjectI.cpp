@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "GlobalObjectsDatabase.h"
 #include "GlobalObjectI.h"
 
@@ -38,13 +39,13 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 GlobalObjectI::~GlobalObjectI() {
-
 }
 
-void * GlobalObjectI::operator new(const osulong size){
+void * GlobalObjectI::operator new(const osulong size) {
     void *obj = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(static_cast<uint32>(size));
     return obj;
 }

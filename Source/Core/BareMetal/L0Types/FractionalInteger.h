@@ -44,7 +44,17 @@ namespace MARTe {
 
 /**
  * @brief An integer wrapper class parameterisable by bit size.
- * @warning numberOfBits must be less than the number of bits of baseType.
+ *
+ * @details This template class is an helper used to define integer types with non-standard bit sizes, such as uint3 or uint63.\n
+ * The template requires two parameters: a baseType, i.e. the standard type which is used as a base for the new type; and numberOfBits, i.e.
+ * the actual size of the new type.
+ *
+ * Values which are greater than the maximum (or smaller than the minimum) allowed in a numberOfBits size will be saturated, thus avoiding
+ * any kind of rollover problem.
+ *
+ * The cast operator is overridden so that the class will behave as a basic type for mathematical operations.
+ *
+ * @pre numberOfBits must be less than the number of bits of baseType (e.g. less than 64 for a uint64)
  */
 /*lint -e{1789} Template constructor cannot be a copy constructor. Justification: the constructor must not be used as a copy constructor
  * but as a constructor by integer number. */

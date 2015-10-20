@@ -56,16 +56,6 @@
  -sem(MutexSem::~MutexSem, cleanup)
 
 /*
- * Destructor calls the cleanup function 
- */
--sem(Reference::RemoveReference,cleanup)
-
-/*
- * Destructor calls the cleanup function 
- */
--sem(Reference::RemoveReference,cleanup)
-
-/*
  * Linux is not certifiable. Disable all operating system headers related warnings.
  */
 -e829
@@ -282,3 +272,4 @@
  * Justification: Re-use of C++ identifier required to guarantee a portable and unique interpretation of the implementation of PRETTY_FUNCTION  
  */
  -esym(1960, __ERROR_FUNCTION_NAME__)
+ 

@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "../L1Portability/GlobalObjectsDatabase.h"
 #include "FastPollingMutexSem.h"
 #include "ClassRegistryItem.h"
@@ -39,7 +40,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
+
 /**
  * @brief Database of framework base classes.
  * @details Most of the framework user classes inherit from Object. As a
@@ -53,6 +56,7 @@ namespace MARTe {
 class ClassRegistryDatabase : public GlobalObjectI {
 
 public:
+
     /**
      * @brief Singleton access to the database.
      * @return a reference to the database.
@@ -111,6 +115,7 @@ public:
     DLL_API virtual const char8 * const GetClassName() const;
 
 private:
+
     /**
      * @brief Private Constructor.
      */
@@ -135,7 +140,9 @@ private:
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 #endif /* CLASSREGISTRYDATABASE_H_ */

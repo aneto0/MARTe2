@@ -36,6 +36,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -45,14 +46,17 @@ namespace MARTe {
  * the GlobalObjectsDatabase->Add method.
  */
 class GlobalObjectI {
+
 public:
+
     /**
-     * @brief Destructor. NOOP
+     * @brief Destructor.
+     * @details This destructor is pure virtual, so it will be a NOOP.
      */
     DLL_API virtual ~GlobalObjectI();
 
     /**
-     * @brief Returns the name of the class.
+     * @brief Gets the name of the class.
      * @return the class name.
      */
     DLL_API virtual const char8 * const GetClassName() const = 0;
@@ -63,6 +67,7 @@ public:
      */
     DLL_API static void * operator new(const osulong size);
 };
+
 }
 
 /*---------------------------------------------------------------------------*/

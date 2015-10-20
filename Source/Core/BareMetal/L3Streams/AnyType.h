@@ -46,7 +46,6 @@
 
 namespace MARTe {
 
-
 /**
  * @brief AnyType class.
  *
@@ -206,26 +205,26 @@ public:
     inline AnyType(const uint64 &i);
 
     /**
-     * @brief Constructor from 32 bit float number.
-     * @param[in] i is the 32 bit float number input.
+     * @brief Constructor from 32 bit float32 number.
+     * @param[in] i is the 32 bit float32 number input.
      */
     inline AnyType(float32 &i);
 
     /**
-     * @brief Constructor from constant 32 bit float number.
-     * @param[in] i is the the constant 32 bit float number input.
+     * @brief Constructor from constant 32 bit float32 number.
+     * @param[in] i is the the constant 32 bit float32 number input.
      */
     inline AnyType(const float32 &i);
 
     /**
-     * @brief Constructor from 64 bit float number.
-     * @param[in] i the 64 bit float number input.
+     * @brief Constructor from 64 bit float32 number.
+     * @param[in] i the 64 bit float32 number input.
      */
     inline AnyType(float64 &i);
 
     /**
-     * @brief Constructor from constant 64 bit float number.
-     * @param[in] i is the constant 64 bit float number input.
+     * @brief Constructor from constant 64 bit float32 number.
+     * @param[in] i is the constant 64 bit float32 number input.
      */
     inline AnyType(const float64 &i);
 
@@ -286,6 +285,12 @@ public:
      */
     template<typename baseType, uint8 bitSize>
     AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt);
+
+    /**
+     * @brief Sets the data pointer hold by this AnyType instance.
+     * @param[in] p a pointer to the data.
+     */
+    inline void SetDataPointer(void* const p);
 
     /**
      * @brief Returns the pointer to the data.
@@ -661,6 +666,10 @@ AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
 
 void* AnyType::GetDataPointer() {
     return dataPointer;
+}
+
+void AnyType::SetDataPointer(void * const p) {
+    dataPointer = p;
 }
 
 TypeDescriptor AnyType::GetTypeDescriptor() const {

@@ -1,7 +1,7 @@
 /**
  * @file HeapManager.h
  * @brief Header file for module HeapManager
- * @date 6/08/2015
+ * @date 06/08/2015
  * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and

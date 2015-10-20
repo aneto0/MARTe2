@@ -28,13 +28,13 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "ClassRegistryDatabaseTest.h"
 #include "ReferenceT.h"
 #include "ObjectTestHelper.h"
 #include "StringHelper.h"
 #include <typeinfo>
 
-using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -103,8 +103,8 @@ bool ClassRegistryDatabaseTest::TestAdd() {
     return retVal;
 }
 
-bool ClassRegistryDatabaseTest::TestFindDLL(const char8* dllName,
-                                            const char8* className,
+bool ClassRegistryDatabaseTest::TestFindDLL(const MARTe::char8* dllName,
+                                            const MARTe::char8* className,
                                             bool validName) {
 
     char8 fullName[64];
@@ -117,7 +117,7 @@ bool ClassRegistryDatabaseTest::TestFindDLL(const char8* dllName,
     return !(validName ^ (db->Find(fullName) != NULL));
 }
 
-bool ClassRegistryDatabaseTest::TestFind(const char8 *name,
+bool ClassRegistryDatabaseTest::TestFind(const MARTe::char8 *name,
                                          bool create) {
 
     ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
@@ -130,6 +130,25 @@ bool ClassRegistryDatabaseTest::TestFind(const char8 *name,
         bool found = (db->Find(name) != NULL);
         //These are deleted by the the ClassRegistryDatabase destructor
         return found;
+    }
+
+    return (db->Find(name) == NULL);
+
+}
+
+bool ClassRegistryDatabaseTest::TestFindLongName(bool create) {
+
+    ClassRegistryDatabase *db = ClassRegistryDatabase::Instance();
+    const char *name =
+            "abcdefghijklmnopqrstuvxyzaaabacadafagahaiajakalamanaoapaqarasatauavaxayazbabbbcbdbfbgbhbibjbkblbmbnbobpbqbrbsbtbubvbwbxbybzcacbcccdcfcgchcicjckclcmcncocp::asdf";
+    if (create) {
+        ClassProperties testClassProperties(name, "", "V");
+
+        //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
+        ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+        bool found = (db->Find(name) != NULL);
+        //These are deleted by the the ClassRegistryDatabase destructor
+        return !found;
     }
 
     return (db->Find(name) == NULL);

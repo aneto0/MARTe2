@@ -31,17 +31,20 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ClassRegistryDatabase.h"
-using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 /**
  * @brief Tests the ClassRegistryDatabase functions.
  */
 class ClassRegistryDatabaseTest {
+
 public:
+
     /**
      * @brief Tests the Instance function.
      * @return Since the database is a singleton, this test returns true if the instance function
@@ -80,12 +83,19 @@ public:
      * @param[in] create specifies if the class should be registered or not in the database (determining the result of the find function).
      * @return true if the find on registered class names succeeds and fails if the class is not registered.
      */
-    bool TestFind(const char8 *name,
+    bool TestFind(const MARTe::char8 *name,
                   bool create);
 
     /**
+     * @brief Tests the Find function using a string length > 129u and the pattern dllname::name.
+     * @param[in] create specifies if the class should be registered or not in the database (determining the result of the find function).
+     * @return True if the find on registered class returns NULL.
+     */
+    bool TestFindLongName(bool create);
+
+    /**
      * @brief Tests the TestFindTypeIdName function.
-     * @return true if db->FindTypeIdName(typeid(Object).name()) returns not NULL.
+     * @return True if db->FindTypeIdName(typeid(Object).name()) returns not NULL.
      */
     bool TestFindTypeIdName();
 
@@ -97,13 +107,13 @@ public:
      * (the test should return false)
      * @return true if \a validName=true DLLName::ClassName returns true and if \a validName=false and DLLName::ClassName returns false.
      */
-    bool TestFindDLL(const char8* dllName,
-                     const char8* className,
+    bool TestFindDLL(const MARTe::char8* dllName,
+                     const MARTe::char8* className,
                      bool validName);
 
     /**
      * @brief Tests the List function.
-     * @return true if is returned the first element registered in the database, false otherwise.
+     * @return True if is returned the first element registered in the database, false otherwise.
      */
     bool TestList();
 
@@ -135,7 +145,7 @@ public:
      * @brief Tests the number of instances returned when an object is created by a reference of its father class.
      * @details Using ReferenceT, with the template of the father class, creates the child class. Then checks that only the number
      * of instances of the child class is incremented and that the number of reference is valid.
-     * @return true if the test explained in the details section succeeds, false otherwise.
+     * @return True if the test explained in the details section succeeds, false otherwise.
      */
     bool TestPolimorphismChild2Father();
 
@@ -143,7 +153,7 @@ public:
      * @brief Tests the number of instances returned when an object is created by a reference of its child class.
      * @details Using ReferenceT, with the template of the father class, creates the child class. Since the dynamic_cast fails in
      * this case, the object should not be created and the reference should be invalid.
-     * @return true if the test explained in the details section succeeds, false otherwise.
+     * @return True if the test explained in the details section succeeds, false otherwise.
      */
     bool TestPolimorphismFather2Child();
 

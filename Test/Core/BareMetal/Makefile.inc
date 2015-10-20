@@ -31,11 +31,6 @@ MAKEDEFAULTDIR=../../../MakeDefaults
 ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/L0Types/L0TypesTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L2Objects/L2ObjectsTest$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L3Streams/L3StreamsTest$(LIBEXT)
-
 all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTeCoreBTest$(LIBEXT)
 	echo  $(OBJS)
