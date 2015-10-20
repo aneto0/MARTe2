@@ -1,8 +1,8 @@
 /**
  * @file StreamI.cpp
  * @brief Source file for class StreamI
- * @date 05/ott/2015
- * @author pc
+ * @date 05/10/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
