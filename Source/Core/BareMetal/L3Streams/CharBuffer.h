@@ -92,7 +92,7 @@ public:
 
     /**
      * @brief Allocates or reallocate memory to the desired size on the heap.
-     * @details Allocates \a desiredSize bytes in the heaps. If Buffer() != NULL the
+     * @details Allocates \a desiredSize bytes in the heap. If Buffer() != NULL the
      * buffer is resized (Realloc) for \a desiredSize bytes.
      * @param[in] desiredSize the desired size of the buffer.
      * @return false if precondition fails or if the (re)allocation of the desiredSize in the heap fails.
@@ -115,7 +115,7 @@ public:
      *    Size() == buffSize &&
      *    CanWrite()
      * @warning buff is an input parameter, because this method only sets the
-     * pointer, but once assigned the pointee could be accessed for read and
+     * pointer, but once assigned the pointer could be accessed for read and
      * write.
      */
     void SetBufferReference(char8 * const buff,
