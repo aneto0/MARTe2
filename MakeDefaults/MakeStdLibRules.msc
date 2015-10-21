@@ -119,7 +119,7 @@ depends.msc : dependsRaw.msc
 	sed -f CreateMSCDepends.sed dependsRaw.msc > depends.msc
 
 dependsRaw.msc: 
-	gcc -MM -D_CY32 -DWIN32 $(CFLAGS) $(INCLUDES) -DARCHITECTURE=x86_cl -DOPERATING_SYSTEM=windows *.c* > dependsRaw.msc
+	gcc -MM -D_CY32 -DWIN32 $(CFLAGS) $(INCLUDES) -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) *.c* > dependsRaw.msc
 	@if not exist temp mkdir temp
 	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 
@@ -134,7 +134,7 @@ $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
 
 
 clean:  $(SUBPROJC)
-	@if exist depends.* rm -f depends.*
+	@if exist depends.* rm -f depends*
 	@if exist $(BUILD_DIR)/*$(DLLEXT) rm -f $(BUILD_DIR)/*$(DLLEXT)	
 	@if exist $(BUILD_DIR)/*$(EXEEXT) rm -f $(BUILD_DIR)/*$(EXEEXT)
 	@if exist $(BUILD_DIR)/*$(LIBEXT) rm -f $(BUILD_DIR)/*$(LIBEXT)
