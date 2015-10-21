@@ -45,15 +45,16 @@ namespace MARTe {
  * 740, 826, 927, 928 [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by this implementation.
  * */
 
-/** @Brief BitSet to BitSet function for private use only.
- * @param destination is a pointer to the bitSet destination.
- * @param destinationBitShift is the desired shift in bit in destination variable.
- * @param destinationBitSize is the desired size in bit for the number to copy in destination.
- * @param destinationIsSigned specifies is the number in destination will be considered signed (true) or not (false).
- * @param source is a pointer to the bitSet source.
- * @param sourceBitShift defines the shift from which extract the number.
- * @param sourceBitSize is the desired size in bit for the number to extract from source.
- * @param sourceIsSigned specifies if the number to extract from source will be considered signed (true) or not (false).
+/**
+ * @Brief BitSet to BitSet function for private use only.
+ * @param[in, out] destination is a pointer to the bitSet destination.
+ * @param[in] destinationBitShift is the desired shift in bit in destination variable.
+ * @param[in] destinationBitSize is the desired size in bit for the number to copy in destination.
+ * @param[in] destinationIsSigned specifies if the number in destination will be considered signed (true) or not (false).
+ * @param[in] source is a pointer to the bitSet source.
+ * @param[in] sourceBitShift defines the shift from which extract the number.
+ * @param[in] sourceBitSize is the desired size in bit for the number to extract from source.
+ * @param[in] sourceIsSigned specifies if the number to extract from source will be considered signed (true) or not (false).
  *
  * Source negative (then signed) and destination unsigned leads that zero is copied (saturation).
  * Source negative and destination signed with a greater dimension leads that will be copied the number with the sign extension.
@@ -112,7 +113,7 @@ static inline void BSToBS(T * const & destination,
     bool sourceIsSignBit = (signBit != static_cast<T>(0));
     bool sourceIsNegative = ((sourceIsSigned) && (sourceIsSignBit));
 
-    // this means both that has sign and that the last bit is 1
+    // this means both: has sign and the last bit is 1
     if (sourceIsNegative) {
         // if destination is not signed saturates to 0
         if (!destinationIsSigned) {
@@ -170,15 +171,16 @@ static inline void BSToBS(T * const & destination,
 
 }
 
-/** @Brief BitSet to BitSet function for copy a bit range from a source to a destination.
- * @param destination is a pointer to the bitSet destination.
- * @param destinationBitShift is the desired shift in bit in destination variable.
- * @param destinationBitSize is the desired size in bit for the number to copy in destination.
- * @param destinationIsSigned specifies is the number in destination will be considered signed (true) or not (false).
- * @param source is a pointer to the bitSet source.
- * @param sourceBitShift defines the shift from which extract the number.
- * @param sourceBitSize is the desired size in bit for the number to extract from source.
- * @param sourceIsSigned specifies if the number to extract from source will be considered signed (true) or not (false).
+/**
+ * @Brief BitSet to BitSet function for copy a bit range from a source to a destination.
+ * @param[in, out] destination is a pointer to the bitSet destination.
+ * @param[in, out] destinationBitShift is the desired shift in bit in destination variable.
+ * @param[in] destinationBitSize is the desired size in bit for the number to copy in destination.
+ * @param[in] destinationIsSigned specifies is the number in destination will be considered signed (true) or not (false).
+ * @param[in, out] source is a pointer to the bitSet source.
+ * @param[in, out] sourceBitShift defines the shift from which extract the number.
+ * @param[in] sourceBitSize is the desired size in bit for the number to extract from source.
+ * @param[in] sourceIsSigned specifies if the number to extract from source will be considered signed (true) or not (false).
  *
  * Converts an integer of bitSize sourceBitSize located at address source and bitAddress sourceBitShift
  * into an integer of bitSize destinationBitSize located at address destination and bitAddress destinationBitShift
@@ -186,6 +188,8 @@ static inline void BSToBS(T * const & destination,
  * T must be unsigned int of byte size power of 2 (8,16,32,64,128...) not 24 48 etc...
  * T determines the minimum number size used for the operations.
  * T=uint8 means that any number may be used.
+ *
+ * @return True if the bit copy from source to destination is done. False if the bit copy from source to destination can not be done.
  */
 template<typename T>
 static inline bool BitSetToBitSet(T *& destination,
@@ -211,14 +215,16 @@ static inline bool BitSetToBitSet(T *& destination,
         temp = Shift::LogicalRightSafeShift(temp, 1u);
     }
 
-    // normalise sourceBitShift so that  0<sourceBitShift<granularity
-    // adjusts source pointer adding sourceBitShift/numberOfBytes.
+    // normalize sourceBitShift so that  0<sourceBitShift<granularity
+    // adjusts source pointer adding sourceBitShift/numberOfBits.
     if (sourceBitShift >= granularity) {
+        // index=sourceBitShift/numberOfBits
         uint8 index = Shift::LogicalRightSafeShift(sourceBitShift, granularityShift);
         source = &source[index];
+        // sourceBitShift=sourceBitShift % numberOfBits
         sourceBitShift &= granularityMask;
     }
-    // normalise destinationBitShift so that  0<destinationBitShift<granularity
+    // normalize destinationBitShift so that  0<destinationBitShift<granularity
     // adjusts destination pointer
     if (destinationBitShift >= granularity) {
         uint8 index = Shift::LogicalRightSafeShift(destinationBitShift, granularityShift);
@@ -232,7 +238,7 @@ static inline bool BitSetToBitSet(T *& destination,
     // and for destination
     uint8 destinationBitEnd = destinationBitShift + destinationBitSize;
 
-    // check number able to accomodate in full both input and output numbers
+    // check number able to accommodate in full both input and output numbers
     // and is big than granularity
     if ((sourceBitEnd <= 8u) && (destinationBitEnd <= 8u) && (granularity == 8u)) {
         // if 8 is fine then operate with 8 bit integers
@@ -284,19 +290,20 @@ static inline bool BitSetToBitSet(T *& destination,
     return ret;
 }
 
-/** @Brief BitSet to Integer function.
- * @param dest is the location for the copy of the desired bit range.
- * @param source is a pointer to the bitSet source.
- * @param sourceBitShift defines the shift from which extract the number.
- * @param sourceBitSize is the desired size in bit for the number to extract from source.
- * @param sourceIsSigned specifies if the number to extract from source will be considered signed (true) or not (false).
- *
+/**
+ * @Brief BitSet to Integer function.
+ * @param[in, out] dest is the location for the copy of the desired bit range.
+ * @param[in, out] source is a pointer to the bitSet source.
+ * @param[in, out] sourceBitShift defines the shift from which extract the number.
+ * @param[in] sourceBitSize is the desired size in bit for the number to extract from source.
+ * @param[in] sourceIsSigned specifies if the number to extract from source will be considered signed (true) or not (false).
  *
  * Converts an integer of bitSize sourceBitSize located at address source and bitAddress sourceBitShift
  * into an integer of type T2.
  * T must be unsigned int of byte size power of 2 (8,16,32,64,128...) not 24 48 etc...
  * T determines the minimum number size used for the operations.
- * T=uint8 means that any number may be used
+ * T=uint8 means that any number may be used.
+ * @return True if BitSetToBitSet returns true.
  */
 template<typename T, typename T2>
 static inline bool BitSetToInteger(T2 & dest,
@@ -315,18 +322,21 @@ static inline bool BitSetToInteger(T2 & dest,
     return BitSetToBitSet(destination, destinationBitShift, destinationBitSize, destinationIsSigned, source, sourceBitShift, sourceBitSize, sourceIsSigned);
 }
 
-/** @Brief Integer to BitSet function.
- * @param destination is a pointer to the bitSet destination.
- * @param destinationBitShift is the desired shift in bit in destination variable.
- * @param destinationBitSize is the desired size in bit for the number to copy in destination.
- * @param destinationIsSigned specifies is the number in destination will be considered signed (true) or not (false).
- * @param source is the integer to copy.
+/**
+ * @Brief Integer to BitSet function.
+ * @param[in, out] destination is a pointer to the bitSet destination.
+ * @param[in, out] destinationBitShift is the desired shift in bit in destination variable.
+ * @param[in] destinationBitSize is the desired size in bit for the number to copy in destination.
+ * @param[in] destinationIsSigned specifies is the number in destination will be considered signed (true) or not (false).
+ * @param[in, out] source is the integer to copy.
  *
  * Converts an integer of type T2 into an integer of bitSize destinationBitSize
  * located at address destination and bitAddress destinationBitShift.
  * T must be unsigned int of byte size power of 2 (8,16,32,64,128...) not 24 48 etc...
  * T determines the minimum number size used for the operations.
- * T=uint8 means that any number may be used.
+ * T = uint8 means that any number may be used.
+ *
+ * @return True if BitSetToBitSet returns true.
  */
 template<typename T, typename T2>
 static inline bool IntegerToBitSet(T *& destination,
