@@ -97,6 +97,22 @@ bool BufferedStreamIOBufferTest::TestFullConstructor() {
 
 }
 
+
+bool BufferedStreamIOBufferTest::TestGetTimeout() {
+    TimeoutType tt = 1;
+    BufferedStreamIOBuffer buffered;
+    buffered.SetTimeout(tt);
+    return (buffered.GetTimeout() == tt);
+}
+
+bool BufferedStreamIOBufferTest::TestSetTimeout() {
+    TimeoutType tt = 1;
+    BufferedStreamIOBuffer buffered;
+    buffered.SetTimeout(tt);
+    return (buffered.GetTimeout() == tt);
+}
+
+
 bool BufferedStreamIOBufferTest::TestRefill() {
 
     DummySingleBufferedStream stream;

@@ -55,10 +55,7 @@ namespace MARTe {
  */
 class BufferedStreamIOBuffer: public IOBuffer {
 
-
 public:
-
-
 
     /**
      * @brief Default constructor.
@@ -131,6 +128,12 @@ public:
      */
     inline TimeoutType GetTimeout() const;
 
+
+    /**
+     * Sets the timeout for read and write operations.
+     */
+    inline void SetTimeout(TimeoutType msecTimeout);
+
     /**
      * Gets the stream pointer
      */
@@ -185,6 +188,10 @@ TimeoutType BufferedStreamIOBuffer::GetTimeout() const {
 
 const OperatingSystemCallbacksI* BufferedStreamIOBuffer::GetStream() const {
     return stream;
+}
+
+void BufferedStreamIOBuffer::SetTimeout(TimeoutType msecTimeout) {
+    timeout = msecTimeout;
 }
 
 }

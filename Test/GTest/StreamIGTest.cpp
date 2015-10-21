@@ -65,15 +65,7 @@ TEST_F(StreamIGTest,TestAnyType) {
     ASSERT_TRUE(streamtest.TestAnyType());
 }
 
-TEST_F(StreamIGTest,TestGetTimeout) {
-    StreamITest streamtest;
-    ASSERT_TRUE(streamtest.TestGetTimeout());
-}
 
-TEST_F(StreamIGTest,TestSetTimeout) {
-    StreamITest streamtest;
-    ASSERT_TRUE(streamtest.TestSetTimeout());
-}
 
 TEST_F(StreamIGTest,TestGetToken_TableTerminators_BufferSize_1) {
     StreamITest streamtest;

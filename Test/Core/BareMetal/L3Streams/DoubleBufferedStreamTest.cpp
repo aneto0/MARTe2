@@ -57,6 +57,21 @@ bool DoubleBufferedStreamTest::TestConstructor_Timeout() {
     return ok;
 }
 
+bool DoubleBufferedStreamTest::TestGetTimeout() {
+    TimeoutType tt = 1;
+    DummyDoubleBufferedStream myStream;
+    myStream.SetTimeout(tt);
+    return (myStream.GetTimeout() == tt);
+}
+
+bool DoubleBufferedStreamTest::TestSetTimeout() {
+    TimeoutType tt = 1;
+    DummyDoubleBufferedStream myStream;
+    myStream.SetTimeout(tt);
+    return (myStream.GetTimeout() == tt);
+}
+
+
 bool DoubleBufferedStreamTest::TestSetBufferSize(uint32 bufferSize) {
     DummyDoubleBufferedStream stream;
     stream.SetBufferSize(bufferSize, bufferSize);

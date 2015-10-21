@@ -52,19 +52,7 @@ bool StreamITest::TestAnyType() {
     return ok;
 }
 
-bool StreamITest::TestGetTimeout() const {
-    TimeoutType tt = 1;
-    DummySingleBufferedStream myStream;
-    myStream.SetTimeout(tt);
-    return (myStream.GetTimeout() == tt);
-}
 
-bool StreamITest::TestSetTimeout() {
-    TimeoutType tt = 1;
-    DummySingleBufferedStream myStream;
-    myStream.SetTimeout(tt);
-    return (myStream.GetTimeout() == tt);
-}
 
 bool StreamITest::TestGetToken(uint32 bufferSize,
                                       const TokenTestTableRow *table) {

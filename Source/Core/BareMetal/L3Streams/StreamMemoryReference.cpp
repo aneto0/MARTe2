@@ -113,7 +113,7 @@ bool StreamMemoryReference::Seek(const uint64 pos) {
     if (pos > usedSize) {
 //REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
         if (!buffer.Seek(usedSize)) {
-            //TODO
+            REPORT_ERROR(ErrorManagement::FatalError, "StreammemoryReference: Failed in the buffer Seek function");
         }
         ret = false;
     }

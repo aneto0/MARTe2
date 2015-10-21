@@ -57,6 +57,16 @@ TEST_F(SingleBufferedStreamGTest,TestConstructor_Timeout) {
     ASSERT_TRUE(streamtest.TestConstructor_Timeout());
 }
 
+TEST_F(SingleBufferedStreamGTest,TestGetTimeout) {
+    SingleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetTimeout());
+}
+
+TEST_F(SingleBufferedStreamGTest,TestSetTimeout) {
+    SingleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestSetTimeout());
+}
+
 TEST_F(SingleBufferedStreamGTest,TestSetBufferSize_Buffer_1) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(1));

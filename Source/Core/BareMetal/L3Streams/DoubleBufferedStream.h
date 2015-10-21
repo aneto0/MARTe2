@@ -102,7 +102,6 @@ public:
     virtual bool SetBufferSize(uint32 readBufferSize,
                                uint32 writeBufferSize);
 
-
     /**
      * @see StreamI::Read
      */
@@ -158,6 +157,20 @@ public:
      */
     inline bool Flush();
 
+    /**
+     * @brief Gets the timeout value for read/write operations.
+     * @return the timeout value for read/write operations.
+     */
+    TimeoutType GetTimeout() const;
+
+    /**
+     * @brief Sets the read/write timeout value.
+     * @param[in] timeoutIn the new read/write timeout value.
+     * @pre true
+     * @post GetTimeout() == timeout
+     */
+    void SetTimeout(const TimeoutType &timeoutIn);
+
 protected:
     /**
      * @brief Gets the read buffer.
@@ -193,7 +206,6 @@ private:
     bool bufferSizeSet;
 
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

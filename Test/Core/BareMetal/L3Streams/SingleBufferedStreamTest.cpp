@@ -55,6 +55,21 @@ bool SingleBufferedStreamTest::TestConstructor_Timeout() {
     return ok;
 }
 
+bool SingleBufferedStreamTest::TestGetTimeout() {
+    TimeoutType tt = 1;
+    DummySingleBufferedStream myStream;
+    myStream.SetTimeout(tt);
+    return (myStream.GetTimeout() == tt);
+}
+
+bool SingleBufferedStreamTest::TestSetTimeout() {
+    TimeoutType tt = 1;
+    DummySingleBufferedStream myStream;
+    myStream.SetTimeout(tt);
+    return (myStream.GetTimeout() == tt);
+}
+
+
 bool SingleBufferedStreamTest::TestSetBufferSize(uint32 bufferSize) {
     DummySingleBufferedStream stream;
     stream.SetBufferSize(bufferSize);
