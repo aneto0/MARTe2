@@ -1,382 +1,383 @@
-/* Copyright 2015 F4E | European Joint Undertaking for
- * ITER and the Development of Fusion Energy ('Fusion for Energy')
+/**
+ * @file StreamMemoryReferenceTest.cpp
+ * @brief Source file for class StreamMemoryReferenceTest
+ * @date 19/ott/2015
+ * @author pc
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they
- will be approved by the European Commission - subsequent
- versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the
- Licence.
- * You may obtain a copy of the Licence at:
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * http: //ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in
- writing, software distributed under the Licence is
- distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- express or implied.
- * See the Licence
- permissions and limitations under the Licence.
- *
- * $Id:$
- *
- **/
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
 
-#include "GeneralDefinitions.h"
+ * @details This source file contains the definition of all the methods for
+ * the class StreamMemoryReferenceTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
+ */
+
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
 #include "StreamMemoryReferenceTest.h"
 #include "StringHelper.h"
 #include "StreamTestHelper.h"
-#include "DoubleInteger.h"
-#include "stdio.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
 
-void cleanBuffer(char* buffer, int32 size) {
-    for (int32 i = 0; i < size; i++) {
-        buffer[i] = 0;
+bool StreamMemoryReferenceTest::TestDefaultConstructor() {
+    StreamMemoryReference sMR;
+    if (sMR.Position() != 0) {
+        return false;
     }
+
+    if (sMR.Size() != 0) {
+        return false;
+    }
+
+    return (!sMR.CanRead()) && (!sMR.CanWrite());
 }
 
-bool StreamMemoryReferenceTest::TestGetC() {
-    char buffer[10];
-    StreamMemoryReference mBReference(buffer, 10);
-    const char* inputString = "Hello World";
-    uint32 size = StringHelper::Length(inputString);
+bool StreamMemoryReferenceTest::TestConstructor_CharPointer() {
+    const uint32 size = 64;
+    char8 preBuffer[size];
+    StreamMemoryReference sMR(preBuffer, size);
+    if (sMR.Position() != 0) {
+        return false;
+    }
 
-    mBReference.Write(inputString, size);
-    mBReference.Seek(0);
+    if (sMR.Size() != 0) {
+        return false;
+    }
 
-    char retC;
+    if (sMR.Buffer() != preBuffer) {
+        return false;
+    }
 
-    for (int32 i = 0; i < 10; i++) {
-        mBReference.GetC(retC);
-        if (retC != inputString[i]) {
+    return (sMR.CanRead()) && (sMR.CanWrite());
+
+}
+
+bool StreamMemoryReferenceTest::TestConstructor_ConstCharPointer() {
+    const char8 *preBuffer = "HelloWorld";
+    uint32 size = 20;
+    StreamMemoryReference sMR(preBuffer, size);
+    if (sMR.Position() != 0) {
+        return false;
+    }
+
+    if (sMR.Size() != size) {
+        return false;
+    }
+
+    if (sMR.Buffer() != preBuffer) {
+        return false;
+    }
+
+    return (sMR.CanRead()) && (!sMR.CanWrite());
+}
+
+bool StreamMemoryReferenceTest::TestDestructor() {
+
+    const char8 * input = "HelloWorld";
+
+    StreamMemoryReference sMR(input, 5);
+
+    sMR.~StreamMemoryReference();
+
+    return sMR.Buffer() == NULL;
+}
+
+bool StreamMemoryReferenceTest::TestAnyTypeOperator(const char8* initializationString) {
+
+    const uint32 size = StringHelper::Length(initializationString);
+
+    StreamMemoryReference sMR(initializationString, size);
+
+    AnyType test = sMR;
+
+    TypeDescriptor td = test.GetTypeDescriptor();
+
+    if (td.isStructuredData) {
+        return false;
+    }
+
+    if (!td.isConstant) {
+        return false;
+    }
+
+    if (td.type != CCString) {
+        return false;
+    }
+    if (td.numberOfBits != (sizeof(const char8*) * 8)) {
+        return false;
+    }
+
+    if (test.GetDataPointer() != sMR.Buffer()) {
+        return false;
+    }
+    return test.GetBitAddress() == 0;
+}
+
+bool StreamMemoryReferenceTest::TestCanWrite() {
+    StreamMemoryReference sMR;
+
+    if (sMR.CanWrite()) {
+        return false;
+    }
+
+    const char8 * input = "HelloWorld";
+    StreamMemoryReference sMR1(input, 5);
+    if (sMR.CanWrite()) {
+        return false;
+    }
+
+    const uint32 size = 32;
+    char8 bufferIn[size];
+    StreamMemoryReference sMR2(bufferIn, size);
+
+    return sMR2.CanWrite();
+}
+
+bool StreamMemoryReferenceTest::TestCanRead() {
+
+    StreamMemoryReference sMR;
+
+    if (sMR.CanRead()) {
+        return false;
+    }
+
+    const char8 * input = "HelloWorld";
+    StreamMemoryReference sMR1(input, 5);
+    if (!sMR1.CanRead()) {
+        return false;
+    }
+
+    const uint32 size = 32;
+    char8 bufferIn[size];
+    StreamMemoryReference sMR2(bufferIn, size);
+
+    return sMR2.CanRead();
+}
+
+bool StreamMemoryReferenceTest::TestCanSeek() {
+    StreamMemoryReference sMR;
+    return sMR.CanSeek();
+}
+
+bool StreamMemoryReferenceTest::TestWrite(const char8 *string,
+                                          uint32 writeSize,
+                                          const uint32 bufferSize) {
+
+    char8 bufferIn[64];
+
+    StreamMemoryReference sMR(bufferIn, bufferSize);
+
+    if (!sMR.Write(string, writeSize)) {
+        return false;
+    }
+
+    uint32 compareSize = (bufferSize > writeSize) ? (writeSize) : (bufferSize);
+
+    if (sMR.Size() != compareSize) {
+        return false;
+    }
+
+    return StringHelper::CompareN(sMR.Buffer(), string, compareSize) == 0;
+
+}
+
+bool StreamMemoryReferenceTest::TestWrite_RO() {
+
+    const char8 *bufferIn = "HelloWorld";
+    const uint32 size = StringHelper::Length(bufferIn);
+
+    StreamMemoryReference sMR(bufferIn, size);
+
+    const char8* string = "Nothing";
+    uint32 writeSize = StringHelper::Length(string);
+
+    return !sMR.Write(string, writeSize);
+}
+
+bool StreamMemoryReferenceTest::TestSize_Const(const char8 *input,
+                                               const uint32 bufferSize) {
+
+    StreamMemoryReference sMRConst(input, bufferSize);
+
+    return sMRConst.Size() == bufferSize;
+}
+
+bool StreamMemoryReferenceTest::TestSize(const char8 *input,
+                                         const uint32 bufferSize) {
+
+    char8 bufferIn[64];
+    StreamMemoryReference sMR(bufferIn, bufferSize);
+
+    uint32 inputSize = StringHelper::Length(input);
+
+    sMR.Write(input, inputSize);
+
+    uint32 compareSize = (inputSize > bufferSize) ? (bufferSize) : (inputSize);
+
+    return sMR.Size() == compareSize;
+}
+
+bool StreamMemoryReferenceTest::TestSeek(const uint32 bufferSize,
+                                         uint32 writeSize,
+                                         uint32 seek,
+                                         bool expected) {
+
+    char8 bufferIn[64];
+    StreamMemoryReference smr(bufferIn, bufferSize);
+    char8 toWrite[64];
+    smr.Write(toWrite, writeSize);
+
+    uint32 testSize = (writeSize > bufferSize) ? (bufferSize) : (writeSize);
+
+    if (smr.Position() != testSize) {
+        return false;
+    }
+
+    smr.Seek(0);
+    if (smr.Position() != 0) {
+        return false;
+    }
+
+    bool ret = smr.Seek(seek);
+    if (ret) {
+        if (smr.Position() != seek) {
+            return false;
+        }
+    }
+    else {
+        if (smr.Position() != testSize) {
             return false;
         }
     }
 
-    //out of range, retC remains the same!
-    mBReference.GetC(retC);
-
-    if (retC != 'l') {
-        return false;
-    }
-
-    return true;
+    return ret == expected;
 }
 
-bool StreamMemoryReferenceTest::TestPutC() {
+bool StreamMemoryReferenceTest::TestRelativeSeek(const uint32 bufferSize,
+                                                 uint32 initialPos,
+                                                 int32 delta,
+                                                 bool expected) {
 
-    char buffer[10];
-    StreamMemoryReference mBReference(buffer, 10);
-    const char* toPut = "Hello World";
+    char8 bufferIn[64];
+    StreamMemoryReference smr(bufferIn, bufferSize);
 
-    //Put all inputString on the StreamMemoryReference
-    for (int32 i = 0; i < 10; i++) {
-        mBReference.PutC(*toPut);
-        toPut++;
-    }
+    uint32 writeSize = 2 * initialPos;
 
-    //Size finished	
-    mBReference.PutC(*toPut);
+    char8 toWrite[64];
+    smr.Write((const char8*) toWrite, writeSize);
 
-    mBReference.Seek(0);
+    uint32 compareSize = (writeSize > bufferSize) ? (bufferSize) : (writeSize);
 
-    //Check the result.	
-    if (StringHelper::Compare(mBReference.Buffer(), "Hello Worl") != 0) {
+    smr.Seek(initialPos);
+
+    if (smr.Position() != initialPos) {
         return false;
     }
 
-    return true;
+    bool ret = smr.RelativeSeek(delta);
+    if (ret) {
+        if (smr.Position() != (initialPos + delta)) {
+            return false;
+        }
+    }
+    else {
+        if (delta >= 0) {
+            if (smr.Position() != (uint32) (compareSize)) {
+                return false;
+            }
+        }
+        else {
+            if (smr.Position() != 0) {
+                return false;
+            }
+        }
+    }
+    return ret == expected;
+
 }
 
-bool StreamMemoryReferenceTest::TestReadAndWrite() {
+bool StreamMemoryReferenceTest::TestPosition(const uint32 bufferSize,
+                                             uint32 finalPos) {
 
-    char* nullPointer = NULL;
-    StreamMemoryReference nullReference(nullPointer, 10);
+    char8 bufferIn[64];
 
-    //canSeek is always true
-    if (nullReference.CanRead() || nullReference.CanWrite()
-            || !nullReference.CanSeek()) {
+    StreamMemoryReference smr(bufferIn, bufferSize);
+
+    if (smr.Position() != 0) {
         return false;
     }
 
-    char buffer[10];
-    uint32 buffSize = 10;
-    StreamMemoryReference mBReference(buffer, buffSize);
+    char8 toWrite[64];
+    uint32 writeSize = finalPos;
+    smr.Write(toWrite, writeSize);
 
-    //buffer is empty.
-    if (mBReference.Size() != 0) {
+    uint32 expectedPosition = (finalPos > bufferSize) ? (bufferSize) : (finalPos);
+
+    if (smr.Position() != expectedPosition) {
         return false;
     }
 
-    //set the used size.
-    mBReference.SetSize(buffSize);
-    if (mBReference.Size() != buffSize) {
+    //the read change the position
+
+    smr.Seek(0);
+    char8 toRead[32];
+
+    uint32 readSize = finalPos;
+    smr.Read(toRead, readSize);
+    if (smr.Position() != expectedPosition) {
         return false;
     }
 
-    //return to empty.
-    mBReference.SetSize(0);
+    smr.Seek(0);
 
-    const char* inputString = "Hello World";
-
-    //Write only 7
-    uint32 tempSize = 7;
-    mBReference.Write(inputString, tempSize);
-
-    mBReference.Seek(0);
-    char outputBuffer[32];
-    cleanBuffer(outputBuffer, 32);
-
-    tempSize = 32;
-    mBReference.Read(outputBuffer, tempSize);
-
-    if (StringHelper::Compare(outputBuffer, "Hello W") != 0) {
+    //the seek change the position
+    smr.Seek(finalPos);
+    if (smr.Position() != expectedPosition) {
         return false;
     }
 
-    cleanBuffer(outputBuffer, 32);
+    //the relative seek change the position
+    smr.Seek(0);
 
-    //reWrite
-    tempSize = 32;
-    mBReference.Seek(0);
-    mBReference.Write(inputString, tempSize);
+    smr.RelativeSeek(finalPos);
+    return smr.Position() == expectedPosition;
 
-    //reRead
-    tempSize = 32;
-    mBReference.Seek(0);
-    mBReference.Read(outputBuffer, tempSize);
-    if (tempSize != 10) {
-        return false;
-    }
-
-    //already read all, tempSize becomes 0.
-    mBReference.Read(outputBuffer, tempSize);
-    if (tempSize != 0) {
-        return false;
-    }
-
-    if (StringHelper::Compare(outputBuffer, "Hello Worl") != 0) {
-        return false;
-    }
-
-    //create a read only buffer
-    StreamMemoryReference readOnly(inputString, 10);
-    cleanBuffer(outputBuffer, 32);
-
-    tempSize = 32;
-    readOnly.Read(outputBuffer, tempSize);
-
-    if (StringHelper::Compare(outputBuffer, "Hello Worl") != 0) {
-        return false;
-    }
-
-    return true;
 }
 
-bool StreamMemoryReferenceTest::TestSeek(const char *inputString) {
 
-    char buffer[10];
-    StreamMemoryReference mBReference(buffer, 10);
+bool StreamMemoryReferenceTest::TestSetSize(const uint32 bufferSize,
+                                            uint32 size,
+                                            bool expected) {
 
-    char test[11];
-    uint32 bufferSize = 10;
-    StringHelper::CopyN(test, inputString, bufferSize);
-    uint32 size = StringHelper::Length(inputString);
+    char8 bufferIn[64];
+    StreamMemoryReference smr(bufferIn, bufferSize);
 
-    if (size > bufferSize) {
-        size = bufferSize;
-    }
-
-    mBReference.Write(inputString, size);
-
-    //Test position
-    if (mBReference.Position() != size) {
-        return false;
-    }
-
-    //seek to zero
-    if (!mBReference.Seek(0)) {
-        return false;
-    }
-
-    if (StringHelper::CompareN(test, mBReference.Buffer(), size) != 0) {
-        return false;
-    }
-
-    //seek greater than the dimension
-    if (mBReference.Seek(size + 10)) {
-        return false;
-    }
-
-    if (mBReference.Position() != size) {
-        return false;
-    }
-
-    //relative seek
-    if (!mBReference.RelativeSeek(-1)) {
-        return false;
-    }
-
-    char outputBuffer[32];
-    uint32 dummySize = 1;
-    mBReference.Read(outputBuffer, dummySize);
-
-    //read a char. It increments the position.
-    if (mBReference.Position() != size
-            || (*outputBuffer) != inputString[size - 1]) {
-        return false;
-    }
-
-    //position under 0
-    if (mBReference.RelativeSeek(-size - 1)) {
-        return false;
-    }
-
-    if (StringHelper::CompareN(test, mBReference.Buffer(), size) != 0) {
-        return false;
-    }
-
-    //position over the size
-    if (mBReference.RelativeSeek(size + 10)) {
-        return false;
-    }
-
-    if (mBReference.Position() != size) {
-        return false;
-    }
-
-    return true;
-}
-
-bool StreamMemoryReferenceTest::TestPrint() {
-
-    char buffer[32];
-
-    //Create a read&write streamable.
-    StreamMemoryReference mBReference(buffer, 32);
-
-    uint8 ubit8 = 1;
-    uint16 ubit16 = 2;
-    uint32 ubit32 = 3;
-    uint64 ubit64 = 4;
-
-    int8 sbit8 = -1;
-    int16 sbit16 = -2;
-    int32 sbit32 = -3;
-    int64 sbit64 = -4;
-
-    float fbit32 = 1.2;
-    double dbit64 = 3.4;
-
-    //Use the unbuffered PutC, 4 parameters.	
-    //For integer the letter is useless
-    mBReference.Printf("% 3u % 3f % 3d % 3x\n", sbit8, fbit32, sbit16, sbit8);
-
-    //Use the unbuffered PutC, 4 parameters.	
-    //For integer the letter is useless
-    mBReference.Printf("% 3u % 3f % 3d % 3x\n", ubit64, fbit32, ubit16, sbit8);
-
-    //size expired
-
-    //Use the unbuffered PutC, 3 parameters.
-    mBReference.Printf("% 3u % 3c % 3d\n", sbit64, ubit32, fbit32);
-
-    //Use the unbuffered PutC, 3 parameters.
-    mBReference.Printf("% 3u % 3c % 3d\n", sbit8, ubit32, fbit32);
-
-    //Use the unbuffered PutC, 2 parameters.
-    mBReference.Printf("% 3c % 3F\n", ubit8, dbit64);
-    //Use the unbuffered PutC, 2 parameters.
-    mBReference.Printf("% 3c % 3F\n", ubit8, dbit64);
-
-    //Use the unbuffered PutC, 1 parameter.
-    mBReference.Printf("% 3o\n", sbit32);
-
-    if (StringHelper::CompareN(" -1 1.2  -2  FF\n  4 1.2   2  FF\n",
-                               mBReference.Buffer(), 32) != 0) {
-        return false;
-    }
-
-    return true;
-}
-
-bool StreamMemoryReferenceTest::TestToken() {
-
-    const char* inputString = "Nome::: Giuseppe. Cognome: Ferrò:)";
-    uint32 size = StringHelper::Length(inputString);
-
-    char inputBuffer[40];
-    StreamMemoryReference mBReference(inputBuffer, 40);
-    mBReference.Write(inputString, size);
-
-    char buffer[32];
-    char saveTerminator;
-
-    mBReference.Seek(0);
-
-    //TESTS ON TOKEN FUNCTIONS BETWEEN A STREAM AND A STRING
-    mBReference.GetToken(buffer, ".:", size, &saveTerminator, NULL);
-    if (StringHelper::Compare(buffer, "Nome") != 0 || saveTerminator != ':') {
-        return false;
-    }
-
-    //Without skip chars, the function skips consecutive terminators.
-    mBReference.GetToken(buffer, ".:", size, &saveTerminator, NULL);
-    if (StringHelper::Compare(buffer, " Giuseppe") != 0
-            || saveTerminator != '.') {
-        return false;
-    }
-
-    //return before the :::
-    mBReference.Seek(4);
-
-    //The function skips correctly the second ":"
-    mBReference.GetToken(buffer, ".:", size, &saveTerminator, ":");
-    if (StringHelper::Compare(buffer, " Giuseppe") != 0
-            || saveTerminator != '.') {
-        return false;
-    }
-
-    //The function does not skips because the terminator character is not correct
-    mBReference.Seek(4);
-
-    mBReference.GetToken(buffer, ".:", size, &saveTerminator, ".");
-    if (StringHelper::Compare(buffer, "") != 0 || saveTerminator != ':') {
-        return false;
-    }
-
-    //Test with a minor maximum size passed by argument. The terminated char is calculated in the size
-    mBReference.Seek(4);
-
-    size = 4;
-    mBReference.GetToken(buffer, ".:", size, &saveTerminator, ":");
-    if (StringHelper::Compare(buffer, " Gi") != 0 || saveTerminator != 'i') {
-        return false;
-    }
-    size = StringHelper::Length(inputString);
-
-    //Arrive to the next terminator
-    mBReference.GetToken(buffer, ".:", size, &saveTerminator, ":");
-
-    //Test if the functions terminate when the string is terminated
-    for (uint32 i = 0; i < 3; i++) {
-        mBReference.GetToken(buffer, ".:", size, &saveTerminator, ":");
-    }
-    if (StringHelper::Compare(buffer, ")") != 0) {
-        return false;
-    }
-
-    mBReference.Seek(0);
-
-    mBReference.SkipTokens(3, ":.");
-    mBReference.GetToken(buffer, ")", size, &saveTerminator, NULL);
-    if (StringHelper::Compare(buffer, " Ferrò:") != 0) {
-        return false;
-    }
-
-    return true;
-
+    bool ret = smr.SetSize(size);
+    uint32 compareSize = (size > bufferSize) ? (bufferSize) : (size);
+    return (smr.Size() == compareSize) && (ret == expected);
 }
 

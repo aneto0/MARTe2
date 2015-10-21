@@ -1,8 +1,8 @@
 /**
- * @file BitSetToIntegerGTest.cpp
- * @brief Source file for class BitSetToIntegerGTest
- * @date 21/10/2015
- * @author Giuseppe Ferrò
+ * @file ShiftTest.cpp
+ * @brief Source file for class ShiftTest
+ * @date 19/10/2015
+ * @author Llorenç Capellà
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,22 +17,19 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class BitSetToIntegerGTest (public, protected, and private). Be aware that some 
+ * the class ShiftTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
-#include "gtest/gtest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-
-#include "BitSetToIntegerTest.h"
-
+#include "ShiftTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -41,52 +38,4 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
-
-TEST(BitSetToIntegerGTest,TestBitSetToBitSet_32) {
-    BitSetToIntegerTest bitsettest;
-    ASSERT_TRUE(bitsettest.TestBitSetToBitSet<uint32>());
-    ASSERT_TRUE(bitsettest.TestBitSetToBitSet<int32>());
-}
-
-TEST(BitSetToIntegerGTest,TestBitSetToBitSet_16) {
-    BitSetToIntegerTest bitsettest;
-    ASSERT_TRUE(bitsettest.TestBitSetToBitSet<uint16>());
-    ASSERT_TRUE(bitsettest.TestBitSetToBitSet<int16>());}
-
-TEST(BitSetToIntegerGTest,TestBitSetToBitSet_8) {
-    BitSetToIntegerTest bitsettest;
-    ASSERT_TRUE(bitsettest.TestBitSetToBitSet<uint8>());
-    ASSERT_TRUE(bitsettest.TestBitSetToBitSet<int8>());}
-
-TEST(BitSetToIntegerGTest,TestBitSetToInteger_8) {
-    BitSetToIntegerTest bitsettest;
-    ASSERT_TRUE(bitsettest.TestBitSetToInteger_8());
-}
-
-TEST(BitSetToIntegerGTest,TestBitSetToInteger_16) {
-    BitSetToIntegerTest bitsettest;
-    ASSERT_TRUE(bitsettest.TestBitSetToInteger_16());
-}
-
-TEST(BitSetToIntegerGTest,TestBitSetToInteger_32) {
-    BitSetToIntegerTest bitsettest;
-    ASSERT_TRUE(bitsettest.TestBitSetToInteger_32());
-}
-
-TEST(BitSetToIntegerGTest,TestIntegerToBitSet_8) {
-    BitSetToIntegerTest bitsettest;
-    ASSERT_TRUE(bitsettest.TestIntegerToBitSet_8());
-}
-
-TEST(BitSetToIntegerGTest,TestIntegerToBitSet_16) {
-    BitSetToIntegerTest bitsettest;
-    ASSERT_TRUE(bitsettest.TestIntegerToBitSet_16());
-}
-
-TEST(BitSetToIntegerGTest,TestIntegerToBitSet_32) {
-    BitSetToIntegerTest bitsettest;
-    ASSERT_TRUE(bitsettest.TestIntegerToBitSet_32());
-}
-
 

@@ -129,7 +129,6 @@ bool IOBufferTest::TestMaxUsableAmount(uint32 size,
     size = ioBuffer.GetBufferSize();
     uint32 expected = (endSpace > size) ? (0) : (size - endSpace);
 
-    printf("\nexpected=%d\n", expected);
 
     return ioBuffer.MaxUsableAmount() == expected;
 }
@@ -147,7 +146,6 @@ bool IOBufferTest::TestAmountLeft(uint32 size,
     size = ioBuffer.GetBufferSize();
     uint32 expected = (endSpace > size) ? (0) : (size - endSpace);
 
-    printf("\nexpected=%d\n", expected);
 
     if (ioBuffer.AmountLeft() != expected) {
         return false;
@@ -180,7 +178,6 @@ bool IOBufferTest::TestUsedAmountLeft(uint32 size,
     size = ioBuffer.GetBufferSize();
     uint32 expected = (endSpace > size) ? (0) : (size - endSpace);
 
-    printf("\nexpected=%d\n", expected);
 
     if (ioBuffer.UsedAmountLeft() != 0) {
         return false;
@@ -258,7 +255,6 @@ bool IOBufferTest::TestPosition() {
         ioBuffer.PutC('a');
 
         if (ioBuffer.Position() != (i + 1)) {
-            printf("\n1\n");
             return false;
         }
     }
@@ -271,7 +267,6 @@ bool IOBufferTest::TestPosition() {
         ioBuffer.GetC(c);
 
         if (ioBuffer.Position() != (i + 1)) {
-            printf("\n2\n");
             return false;
         }
     }
@@ -285,7 +280,6 @@ bool IOBufferTest::TestPosition() {
     uint32 expectedPosition = StringHelper::Length(toWrite);
     ioBuffer.Write(toWrite, expectedPosition);
     if (ioBuffer.Position() != expectedPosition) {
-        printf("\n3\n");
         return false;
     }
 
@@ -297,21 +291,18 @@ bool IOBufferTest::TestPosition() {
 
     ioBuffer.Read(toRead, expectedPosition);
     if (ioBuffer.Position() != expectedPosition) {
-        printf("\n4\n");
         return false;
     }
 
     //the seek change the position
     ioBuffer.Seek(3);
     if (ioBuffer.Position() != 3) {
-        printf("\n5\n");
         return false;
     }
 
     //the relative seek change the position
     ioBuffer.RelativeSeek(2);
     if (ioBuffer.Position() != 5) {
-        printf("\n6 %d\n", ioBuffer.Position());
         return false;
     }
 
@@ -333,7 +324,6 @@ bool IOBufferTest::TestUsedSize(uint32 size,
     size = ioBuffer.GetBufferSize();
     uint32 expected = (endSpace > size) ? (0) : (size - endSpace);
 
-    printf("\nexpected=%d\n", expected);
 
     if (ioBuffer.UsedSize() != 0) {
         return false;
@@ -406,7 +396,6 @@ bool IOBufferTest::TestSetBufferHeapMemory(uint32 size,
     size = ioBuffer.GetBufferSize();
     uint32 expected = (endSpace > size) ? (0) : (size - endSpace);
 
-    printf("\nexpected=%d\n", expected);
 
     if (ioBuffer.MaxUsableAmount() != expected) {
         return false;
@@ -424,7 +413,6 @@ bool IOBufferTest::TestSetBufferHeapMemoryIncrease() {
     ioBuffer.SetBufferHeapMemory(size, endSpace);
 
     if (ioBuffer.MaxUsableAmount() != (size - endSpace)) {
-        printf("\n1\n");
         return false;
     }
 
@@ -435,11 +423,9 @@ bool IOBufferTest::TestSetBufferHeapMemoryIncrease() {
     ioBuffer.Write(buffer, fillSize);
 
     if (ioBuffer.UsedSize() != fillSize) {
-        printf("\n1\n");
         return false;
     }
     if (ioBuffer.Position() != fillSize) {
-        printf("\n2\n");
         return false;
     }
 
@@ -450,11 +436,9 @@ bool IOBufferTest::TestSetBufferHeapMemoryIncrease() {
     ioBuffer.SetBufferHeapMemory(size, endSpace);
 
     if (ioBuffer.UsedSize() != fillSize) {
-        printf("\n3\n");
         return false;
     }
     if (ioBuffer.Position() != fillSize) {
-        printf("\n4\n");
         return false;
     }
 
@@ -465,21 +449,17 @@ bool IOBufferTest::TestSetBufferHeapMemoryIncrease() {
 
     uint32 expectedUsedSize = fillSize - 2;
     if (ioBuffer.UsedSize() != expectedUsedSize) {
-        printf("\n5 %d\n", ioBuffer.UsedSize());
         return false;
     }
     if (ioBuffer.Position() != expectedUsedSize) {
-        printf("\n6\n");
         return false;
     }
 
     if (ioBuffer.MaxUsableAmount() != (size - endSpace)) {
-        printf("\n1\n");
         return false;
     }
 
     if (ioBuffer.GetBufferSize() != size) {
-        printf("\n1\n");
         return false;
     }
 
@@ -495,7 +475,6 @@ bool IOBufferTest::TestSetBufferHeapMemoryDecrease() {
     ioBuffer.SetBufferHeapMemory(size, endSpace);
 
     if (ioBuffer.MaxUsableAmount() != (size - endSpace)) {
-        printf("\n1\n");
         return false;
     }
 
@@ -506,11 +485,9 @@ bool IOBufferTest::TestSetBufferHeapMemoryDecrease() {
     ioBuffer.Write(buffer, fillSize);
 
     if (ioBuffer.UsedSize() != fillSize) {
-        printf("\n1\n");
         return false;
     }
     if (ioBuffer.Position() != fillSize) {
-        printf("\n2\n");
         return false;
     }
 
@@ -521,11 +498,9 @@ bool IOBufferTest::TestSetBufferHeapMemoryDecrease() {
     ioBuffer.SetBufferHeapMemory(size, endSpace);
 
     if (ioBuffer.UsedSize() != (size - endSpace)) {
-        printf("\n3\n");
         return false;
     }
     if (ioBuffer.Position() != (size - endSpace)) {
-        printf("\n4\n");
         return false;
     }
 
@@ -536,21 +511,17 @@ bool IOBufferTest::TestSetBufferHeapMemoryDecrease() {
     ioBuffer.SetBufferHeapMemory(size, endSpace);
 
     if (ioBuffer.UsedSize() != (size - endSpace)) {
-        printf("\n5 %d\n", ioBuffer.UsedSize());
         return false;
     }
     if (ioBuffer.Position() != (size - endSpace)) {
-        printf("\n6\n");
         return false;
     }
 
     if (ioBuffer.MaxUsableAmount() != (size - endSpace)) {
-        printf("\n1\n");
         return false;
     }
 
     if (ioBuffer.GetBufferSize() != size) {
-        printf("\n1\n");
         return false;
     }
 
@@ -571,22 +542,18 @@ bool IOBufferTest::TestSetBufferReadOnlyReferencedMemory() {
     ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, size, endSpace);
 
     if (ioBuffer.GetBufferSize() != size) {
-        printf("\n1\n");
         return false;
     }
 
     if (ioBuffer.Position() != 0) {
-        printf("\n2\n");
         return false;
     }
 
     if (ioBuffer.MaxUsableAmount() != (size - endSpace)) {
-        printf("\n3\n");
         return false;
     }
 
     if (ioBuffer.UsedSize() != 0) {
-        printf("\n4\n");
         return false;
     }
 
@@ -598,22 +565,18 @@ bool IOBufferTest::TestSetBufferReadOnlyReferencedMemory() {
     ioBuffer.SetBufferReadOnlyReferencedMemory(bufferIn, size, endSpace);
 
     if (ioBuffer.GetBufferSize() != size) {
-        printf("\n5\n");
         return false;
     }
 
     if (ioBuffer.Position() != 0) {
-        printf("\n6\n");
         return false;
     }
 
     if (ioBuffer.MaxUsableAmount() != (size - endSpace)) {
-        printf("\n7\n");
         return false;
     }
 
     if (ioBuffer.UsedSize() != 0) {
-        printf("\n8\n");
         return false;
     }
 
@@ -658,22 +621,18 @@ bool IOBufferTest::TestSetBufferReferencedMemory() {
     ioBuffer.SetBufferReferencedMemory(bufferIn, size, endSpace);
 
     if (ioBuffer.GetBufferSize() != size) {
-        printf("\n1\n");
         return false;
     }
 
     if (ioBuffer.Position() != 0) {
-        printf("\n2\n");
         return false;
     }
 
     if (ioBuffer.MaxUsableAmount() != (size - endSpace)) {
-        printf("\n3\n");
         return false;
     }
 
     if (ioBuffer.UsedSize() != 0) {
-        printf("\n4\n");
         return false;
     }
     ioBuffer.PutC('a');
@@ -684,22 +643,18 @@ bool IOBufferTest::TestSetBufferReferencedMemory() {
     ioBuffer.SetBufferReferencedMemory(bufferIn, size, endSpace);
 
     if (ioBuffer.GetBufferSize() != size) {
-        printf("\n5\n");
         return false;
     }
 
     if (ioBuffer.Position() != 0) {
-        printf("\n6\n");
         return false;
     }
 
     if (ioBuffer.MaxUsableAmount() != (size - endSpace)) {
-        printf("\n7\n");
         return false;
     }
 
     if (ioBuffer.UsedSize() != 0) {
-        printf("\n8\n");
         return false;
     }
 
@@ -812,18 +767,15 @@ bool IOBufferTest::TestPutC_Heap() {
     ioBuffer.SetBufferHeapMemory(size, 0);
     for (uint32 i = 0; i < size; i++) {
         if (!ioBuffer.PutC('a')) {
-            printf("\n1\n");
             return false;
         }
         bufferTest[i] = 'a';
     }
     if (StringHelper::CompareN(bufferTest, ioBuffer.Buffer(), size) != 0) {
-        printf("\n2\n");
         return false;
     }
     //size is finished
     if (ioBuffer.PutC('a')) {
-        printf("\n3\n");
         return false;
     }
     ioBuffer.Empty();
@@ -956,7 +908,6 @@ bool IOBufferTest::TestUnPutC() {
     ioBuffer.SetBufferHeapMemory(size, 0);
 
     if (ioBuffer.UnPutC()) {
-        printf("\n1\n");
         return false;
     }
 
@@ -966,11 +917,9 @@ bool IOBufferTest::TestUnPutC() {
 
     for (uint32 i = 0; i < usedSize; i++) {
         if (!ioBuffer.UnPutC()) {
-            printf("\n2\n");
             return false;
         }
         if (ioBuffer.UsedSize() != (usedSize - i - 1)) {
-            printf("\n3\n");
             return false;
         }
     }
@@ -993,11 +942,9 @@ bool IOBufferTest::TestUnGetC() {
     ioBuffer.Read(toRead, size);
     for (uint32 i = 0; i < size; i++) {
         if (!ioBuffer.UnGetC()) {
-            printf("\n2\n");
             return false;
         }
         if (ioBuffer.Position() != (size - i - 1)) {
-            printf("\n3\n");
             return false;
         }
     }
@@ -1033,31 +980,26 @@ bool IOBufferTest::TestWrite_Heap(uint32 allocationSize,
     return StringHelper::CompareN(ioBuffer.Buffer(), string, compareSize) == 0;
 }
 
-bool IOBufferTest::TestWrite_Memoryreference() {
+bool IOBufferTest::TestWrite_Memoryreference(const char8 *string,
+                                             uint32 writeSize) {
 
     IOBuffer ioBuffer;
 
-    const uint32 size = 32;
+    const uint32 size = 8;
     char8 bufferIn[size];
     ioBuffer.SetBufferReferencedMemory(bufferIn, size, 0);
 
-    const char8* string = "HelloWorld";
-    uint32 writeSize = StringHelper::Length(string);
     if (!ioBuffer.Write(string, writeSize)) {
         return false;
     }
 
-    if (StringHelper::CompareN(ioBuffer.Buffer(), string, writeSize) != 0) {
+    uint32 compareSize = (size > writeSize) ? (writeSize) : (size);
+
+    if(ioBuffer.UsedSize()!=compareSize){
         return false;
     }
 
-    writeSize -= 5;
-
-    if (!ioBuffer.Write(string, writeSize)) {
-        return false;
-    }
-
-    return StringHelper::CompareN(ioBuffer.Buffer(), string, writeSize) == 0;
+    return StringHelper::CompareN(ioBuffer.Buffer(), string, compareSize) == 0;
 }
 
 bool IOBufferTest::TestWrite_MemoryreferenceRO() {
@@ -1255,9 +1197,6 @@ bool IOBufferTest::TestPrintFormatted(uint32 allocationGranularity,
 
         ioBuffer.PrintFormatted(testTable[i].format, testTable[i].inputs);
         if (StringHelper::Compare(testTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-            AnyType data = testTable[i].inputs[i];
-            printf("\n%s %s %d %d\n", ioBuffer.Buffer(), testTable[i].expectedResult, i, *((uint32*) data.GetDataPointer()));
-
             return false;
         }
         i++;
@@ -1278,7 +1217,6 @@ bool IOBufferTest::TestPrintFormatted_CCString() {
         AnyType toPrint = printfCStringTable[i][1];
         if (ioBuffer.PrintFormatted(printfCStringTable[i][0], &toPrint)) {
             if (StringHelper::Compare(ioBuffer.Buffer(), printfCStringTable[i][2]) != 0) {
-                printf("\n%s %s %d\n", ioBuffer.Buffer(), printfCStringTable[i][2], i);
                 return false;
             }
         }
@@ -1355,7 +1293,6 @@ bool IOBufferTest::TestPrintFormatted_Stream() {
         AnyType toPrint = stream;
         ioBuffer.PrintFormatted(printfCStringTable[i][0], &toPrint);
         if (StringHelper::Compare(ioBuffer.Buffer(), printfCStringTable[i][2]) != 0) {
-            printf("\n%s %s %d\n", ioBuffer.Buffer(), printfCStringTable[i][2], i);
             return false;
         }
         stream.FlushAndResync();
@@ -1380,7 +1317,6 @@ bool IOBufferTest::TestPrintFormatted_TooBigStream() {
     stream.SetFakeSize(10001);
 
     AnyType toPrint = stream;
-    printf("\n%lld\n", stream.Size());
     ioBuffer.PrintFormatted("%s", &toPrint);
 
     return StringHelper::Compare(ioBuffer.Buffer(), "!! too big > 10000 characters!!") == 0;
@@ -1399,7 +1335,6 @@ bool IOBufferTest::TestPrintFormatted_Stream_NotSeekable() {
 
     AnyType toPrint = stream;
     ioBuffer.PrintFormatted("%s", &toPrint);
-    printf("\n%s\n", ioBuffer.Buffer());
 
     return StringHelper::Compare(ioBuffer.Buffer(), "!!stream !seek!!") == 0;
 }
@@ -1436,7 +1371,7 @@ bool IOBufferTest::TestPrintFormatted_BitSet_Unsigned() {
             //  printf("\n|%s| |%s|\n", buffer, ioBuffer.Buffer());
 
             if (StringHelper::Compare(buffer, ioBuffer.Buffer()) != 0) {
-                printf("\n%d %d\n", myShift, size);
+                //printf("\n%d %d\n", myShift, size);
                 return false;
             }
             Clear(ioBuffer);
@@ -1454,7 +1389,7 @@ bool IOBufferTest::TestPrintFormatted_BitSet_Unsigned() {
 
 bool IOBufferTest::TestPrintFormatted_BitSet_Signed() {
 
-    int64 data[5] = { 0x13579BDF02468ACE, 0x13579BDF02468ACE, 0x123456789ABCDEF0, 0xDEADBABEBAB00111 };
+    int64 data[5] = { (int64)0x13579BDF02468ACE, (int64)0x13579BDF02468ACE, (int64)0x123456789ABCDEF0, (int64)0xDEADBABEBAB00111 };
     const char streamString[] = "DEADBABEBAB00111123456789ABCDEF013579BDF02468ACE13579BDF02468ACE";
     int32 sizeStr = 63;
     uint32 dataBitSize = 256;
@@ -1503,7 +1438,7 @@ bool IOBufferTest::TestPrintFormatted_BitSet_Signed() {
             //     printf("\n|%s| |%s|\n", buffer, ioBuffer.Buffer());
 
             if (StringHelper::Compare(buffer, ioBuffer.Buffer()) != 0) {
-                printf("\n%d %d\n", myShift, size);
+                //printf("\n%d %d\n", myShift, size);
                 return false;
             }
             Clear(ioBuffer);
@@ -1609,7 +1544,6 @@ bool IOBufferTest::TestGetToken_IOBufferOutput(const TokenTestTableRow *table) {
         while (ioBuffer.GetToken(outBuffer, row->terminators, saveTerminator, row->skipCharacters)) {
 
             if (StringHelper::Compare(outBuffer.Buffer(), row->expectedResult[t]) != 0) {
-                printf("\n%s %s %d\n", outBuffer.Buffer(), row->expectedResult[t], t);
                 result = false;
             }
             if (row->saveTerminatorResult[t] != saveTerminator) {

@@ -490,4 +490,25 @@ const SkipTokensTestTableRow SkipTokensTestTable[] = {
         {NULL}
 };
 
+
+
+
+
+
+struct BitSetToBitSetTableRow{
+    uint8 destShift;
+    uint8 sourceShift;
+    uint8 destSize;
+    uint8 sourceSize;
+    uint32 *sPointer;
+    uint32 destArrayIndex;
+    uint32 result;
+    bool sourceIsSigned;
+    bool destIsSigned;
+};
+
+
+const BitSetToBitSetTableRow *GeneratedBitSetToBitSetTable();
+
+
 #endif

@@ -31,7 +31,6 @@
 
 #include "StreamStringIOBufferTest.h"
 #include "StringHelper.h"
-#include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -99,7 +98,7 @@ bool StreamStringIOBufferTest::TestGranularityConstructor(uint32 granularity,
 
 bool StreamStringIOBufferTest::TestDestructor() {
     StreamStringIOBuffer stringBuffer;
-    uint32 allocationSize;
+    uint32 allocationSize=1;
     stringBuffer.SetBufferAllocationSize(allocationSize);
 
     if (stringBuffer.Buffer() == NULL) {

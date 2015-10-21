@@ -44,7 +44,7 @@ namespace MARTe {
 
 /**
  * @brief A basic implementation of a stream which allows reading and writing
- * to an underlying memory location.
+ * to an underlying bounded and preallocated memory location.
  */
 class DLL_API StreamMemoryReference: public StreamI {
 
@@ -155,6 +155,12 @@ public:
     virtual bool CanRead() const;
 
     /**
+     * @brief Queries if seek operations can be performed on the stream.
+     * @return true.
+     */
+    virtual bool CanSeek() const;
+
+    /**
      * @brief Gets the size of the stream.
      * @details For this object the size is always minor than the buffer
      * dimension passed in the constructor.
@@ -166,9 +172,6 @@ public:
      * @brief Moves within the stream to an absolute location.
      * @param[in] pos is the desired absolute position.
      * @return false in case of cursor out of ranges or other errors.
-     * @post
-     *   pos <= Size() => Position() == pos
-     *   pos > Size() => Position() == Size()
      */
     virtual bool Seek(const uint64 pos);
 
@@ -196,11 +199,7 @@ public:
      */
     virtual bool SetSize(const uint64 size);
 
-    /**
-     * @brief Queries if seek operations can be performed on the stream.
-     * @return true.
-     */
-    virtual bool CanSeek() const;
+
 
     /*-----------------------------------------------------------------------*/
 

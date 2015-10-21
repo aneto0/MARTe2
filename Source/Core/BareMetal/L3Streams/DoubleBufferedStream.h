@@ -50,8 +50,8 @@ namespace MARTe {
 /**
  * @brief Buffered stream implementation (double buffer).
  * @details This class offers a buffering mechanism for character streams.
- * It supplements two independent low-level RawStreams (which implement the low-level calls
- * such as Read, Write, ...) with a buffering scheme.
+ * It supplements two independent low-level RawStreams (which implement the
+ * low-level calls such as Read, Write, ...) with a buffering scheme.
  */
 class DLL_API DoubleBufferedStream: public StreamI, public OperatingSystemCallbacksI {
 
@@ -59,8 +59,8 @@ public:
     /**
      * @brief Default constructor.
      * @post
-     *   CanRead() == false
-     *   CanWrite() == false
+     *   not CanRead() &&
+     *   not CanWrite() &&
      *   GetInputBuffer() == BufferedStreamIOBuffer
      *   GetOutputBuffer() == BufferedStreamIOBuffer
      *   GetTimeout() == TTInfiniteWait
@@ -72,8 +72,8 @@ public:
     /**
      * @brief Default constructor.
      * @post
-     *   CanRead() == false
-     *   CanWrite() == false
+     *   not CanRead() &&
+     *   not CanWrite() &&
      *   GetInputBuffer() == BufferedStreamIOBuffer
      *   GetOutputBuffer() == BufferedStreamIOBuffer
      *   GetTimeout() == timeoutIn
@@ -92,9 +92,9 @@ public:
      * @param[in] bufferSize the desired size for the buffer.
      * @return true if the buffer memory is reallocated correctly.
      * @pre
-     *    readBufferSize > 8u
-     *    writeBufferSize > 8u
-     *    CanRead() == true || CanWrite() == true
+     *    readBufferSize > 8u &&
+     *    writeBufferSize > 8u &&
+     *    (CanRead() || CanWrite())
      * @post
      *    GetInputStream()->GetBufferSize() == readBufferSize
      *    GetOutputStream()->GetBufferSize() == writeBufferSize
@@ -105,16 +105,12 @@ public:
 
     /**
      * @see StreamI::Read
-     * @post
-     *   Position() == this'old->Position() + size
      */
     virtual bool Read(char8 * const output,
                       uint32 & size);
 
     /**
      * @see StreamI::Write
-     * @post
-     *   Position() == this'old->Position() + size
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size);

@@ -647,7 +647,7 @@ bool IOBuffer::Seek(const uint32 position) {
 }
 
 //position is set relative to current position
-/*lint -e{9125} [MISRA C++ Rule 5-0-9]. Justification: the sign does not change because delta is negative (see the inline code).*/
+/*lint -e{9125} [MISRA C++ Rule 5-0-9]. Justification: the sign does not change because delta is positive (see the inline code).*/
 bool IOBuffer::RelativeSeek(const int32 delta) {
     bool ret = true;
     if (delta >= 0) {

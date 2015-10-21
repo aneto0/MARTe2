@@ -347,7 +347,12 @@ TEST(IOBufferGTest, TestWrite_Heap_allocated_in_size) {
 
 TEST(IOBufferGTest, TestWrite_Memoryreference) {
     IOBufferTest myIOBufferTest;
-    ASSERT_TRUE(myIOBufferTest.TestWrite_Memoryreference());
+    ASSERT_TRUE(myIOBufferTest.TestWrite_Memoryreference("HelloWorld",10));
+}
+
+TEST(IOBufferGTest, TestWrite_Memoryreference_Clip_Size) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestWrite_Memoryreference("HelloWorld",5));
 }
 
 TEST(IOBufferGTest, TestWrite_NULL_Buffer) {
