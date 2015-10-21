@@ -48,14 +48,16 @@ namespace MARTe {
  * A more abstract version of StreamI. It is used to allow referring to
  * streams at lower levels
  */
-class DLL_API OperatingSystemStream {
+class OperatingSystemStream {
 
 public:
 
     /**
      * @brief Destructor
      */
-    virtual ~OperatingSystemStream();
+    virtual ~OperatingSystemStream(){
+
+    }
 
     /**
      * @brief Reads data from the stream to a char8* buffer.
@@ -196,8 +198,6 @@ public:
 
 namespace MARTe {
 
-inline OperatingSystemStream::~OperatingSystemStream() {
-}
 
 }
 
