@@ -7,6 +7,7 @@
 #include "gtest/gtest.h"
 #include "BitSetToIntegerTest.h"
 
+
 class BitSetToIntegerGTest: public ::testing::Test {
 protected:
     virtual void SetUp() {
@@ -22,18 +23,28 @@ protected:
 
 
 
-TEST_F(BitSetToIntegerGTest,TestBitSetToBitSet) {
-    BitSetToIntegerTest bitsettest;
+TEST_F(BitSetToIntegerGTest,TestBitSetToBitSet_32) {
+    BitSetToIntegerTest<uint32> bitsettest;
+    ASSERT_TRUE(bitsettest.TestBitSetToBitSet());
+}
+
+TEST_F(BitSetToIntegerGTest,TestBitSetToBitSet_16) {
+    BitSetToIntegerTest<uint32> bitsettest;
+    ASSERT_TRUE(bitsettest.TestBitSetToBitSet());
+}
+
+TEST_F(BitSetToIntegerGTest,TestBitSetToBitSet_8) {
+    BitSetToIntegerTest<uint8> bitsettest;
     ASSERT_TRUE(bitsettest.TestBitSetToBitSet());
 }
 
 TEST_F(BitSetToIntegerGTest,TestBitSetToInteger) {
-    BitSetToIntegerTest bitsettest;
+    BitSetToIntegerTest<uint32> bitsettest;
     ASSERT_TRUE(bitsettest.TestBitSetToInteger());
 }
 
 TEST_F(BitSetToIntegerGTest,TestIntegerToBitSet) {
-    BitSetToIntegerTest bitsettest;
+    BitSetToIntegerTest<uint32> bitsettest;
     ASSERT_TRUE(bitsettest.TestIntegerToBitSet());
 }
 

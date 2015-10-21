@@ -336,7 +336,7 @@ static inline bool IntegerToBitSet(T *& destination,
                                    T2 & src) {
 
     // converts T2 into source,sourceBitShift,sourceBitSize,sourceIsSigned
-    T *source = static_cast<T*>(&src);
+    T *source = reinterpret_cast<T*>(&src);
     uint8 sourceBitShift = 0u;
     uint8 sourceBitSize = static_cast<uint8>(sizeof(T2) * 8u);
     // detect if T2 has sign by seing if we can initialise a number negative

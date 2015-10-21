@@ -85,6 +85,14 @@ public:
      */
     StreamString(const char8 * const initialisationString);
 
+
+    /**
+     * @brief Copy Constructor.
+     *
+     */
+    StreamString(const StreamString &toCopy);
+
+
     /**
      * @brief Destructor
      */
