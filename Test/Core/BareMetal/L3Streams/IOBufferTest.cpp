@@ -129,7 +129,6 @@ bool IOBufferTest::TestMaxUsableAmount(uint32 size,
     size = ioBuffer.GetBufferSize();
     uint32 expected = (endSpace > size) ? (0) : (size - endSpace);
 
-
     return ioBuffer.MaxUsableAmount() == expected;
 }
 
@@ -145,7 +144,6 @@ bool IOBufferTest::TestAmountLeft(uint32 size,
 
     size = ioBuffer.GetBufferSize();
     uint32 expected = (endSpace > size) ? (0) : (size - endSpace);
-
 
     if (ioBuffer.AmountLeft() != expected) {
         return false;
@@ -177,7 +175,6 @@ bool IOBufferTest::TestUsedAmountLeft(uint32 size,
 
     size = ioBuffer.GetBufferSize();
     uint32 expected = (endSpace > size) ? (0) : (size - endSpace);
-
 
     if (ioBuffer.UsedAmountLeft() != 0) {
         return false;
@@ -324,7 +321,6 @@ bool IOBufferTest::TestUsedSize(uint32 size,
     size = ioBuffer.GetBufferSize();
     uint32 expected = (endSpace > size) ? (0) : (size - endSpace);
 
-
     if (ioBuffer.UsedSize() != 0) {
         return false;
     }
@@ -395,7 +391,6 @@ bool IOBufferTest::TestSetBufferHeapMemory(uint32 size,
 
     size = ioBuffer.GetBufferSize();
     uint32 expected = (endSpace > size) ? (0) : (size - endSpace);
-
 
     if (ioBuffer.MaxUsableAmount() != expected) {
         return false;
@@ -995,7 +990,7 @@ bool IOBufferTest::TestWrite_Memoryreference(const char8 *string,
 
     uint32 compareSize = (size > writeSize) ? (writeSize) : (size);
 
-    if(ioBuffer.UsedSize()!=compareSize){
+    if (ioBuffer.UsedSize() != compareSize) {
         return false;
     }
 
@@ -1245,9 +1240,9 @@ bool IOBufferTest::TestPrintFormatted_Pointer() {
     const char *charPointer = "Hello";
     AnyType toPrintChar = charPointer;
     uint64 UIntPointer = (uint64) charPointer;
-    AnyType toPrintUInt = UIntPointer;
+    AnyType toPrintUInt64 = UIntPointer;
     ioBuffer1.PrintFormatted("%x", &toPrintChar);
-    ioBuffer2.PrintFormatted("%x", &toPrintUInt);
+    ioBuffer2.PrintFormatted("%x", &toPrintUInt64);
 
     if (StringHelper::Compare(ioBuffer1.Buffer(), ioBuffer2.Buffer()) != 0) {
         return false;
@@ -1258,10 +1253,18 @@ bool IOBufferTest::TestPrintFormatted_Pointer() {
     //%p format as the complete 32 bit pointer with header
 
     void* pointer = (void*) charPointer;
-    AnyType toPrintPointer = pointer;
 
-    ioBuffer1.PrintFormatted("%p", &toPrintPointer);
-    ioBuffer2.PrintFormatted("% #0x", &toPrintUInt);
+    if (sizeof(void*) == 8) {
+        AnyType toPrintPointer = pointer;
+        ioBuffer1.PrintFormatted("%p", &toPrintPointer);
+        ioBuffer2.PrintFormatted("% #0x", &toPrintUInt64);
+    }
+    if (sizeof(void*) == 4) {
+        AnyType toPrintPointer = pointer;
+        AnyType toPrintUInt32=(uint32)UIntPointer;
+        ioBuffer1.PrintFormatted("%p", &toPrintPointer);
+        ioBuffer2.PrintFormatted("% #0x", &toPrintUInt32);
+    }
 
     if (StringHelper::Compare(ioBuffer1.Buffer(), ioBuffer2.Buffer()) != 0) {
         return false;
@@ -1389,7 +1392,7 @@ bool IOBufferTest::TestPrintFormatted_BitSet_Unsigned() {
 
 bool IOBufferTest::TestPrintFormatted_BitSet_Signed() {
 
-    int64 data[5] = { (int64)0x13579BDF02468ACE, (int64)0x13579BDF02468ACE, (int64)0x123456789ABCDEF0, (int64)0xDEADBABEBAB00111 };
+    int64 data[5] = { (int64) 0x13579BDF02468ACE, (int64) 0x13579BDF02468ACE, (int64) 0x123456789ABCDEF0, (int64) 0xDEADBABEBAB00111 };
     const char streamString[] = "DEADBABEBAB00111123456789ABCDEF013579BDF02468ACE13579BDF02468ACE";
     int32 sizeStr = 63;
     uint32 dataBitSize = 256;
