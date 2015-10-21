@@ -1,6 +1,6 @@
 /**
- * @file AdvancedErrorManagement.h
- * @brief Header file for class AdvancedErrorManagement
+ * @file DoubleIntegerTest.h
+ * @brief Header file for class DoubleIntegerTest
  * @date 21/10/2015
  * @author Giuseppe Ferrò
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class AdvancedErrorManagement
+ * @details This header file contains the declaration of the class DoubleIntegerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ADVANCEDERRORMANAGEMENT_H_
-#define ADVANCEDERRORMANAGEMENT_H_
+#ifndef DOUBLEINTEGERTEST_H_
+#define DOUBLEINTEGERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,30 +31,35 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "ErrorManagement.h"
-#include "StreamMemoryReference.h"
-
+#include "DoubleInteger.h"
+#include "FormatDescriptor.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+using namespace MARTe;
 
-namespace MARTe {
-static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
 
-#define REPORT_ERROR_PARAMETERS(code,message,...)                                 \
-{                                                                                 \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1];                                       \
-    StreamMemoryReference smr(buffer,MAX_ERROR_MESSAGE_SIZE);                     \
-    smr.Printf(message,__VA_ARGS__);                                              \
-    buffer[smr.Size()]=0;                                                         \
-    ErrorManagement::ReportError(code,buffer,__FILE__,__LINE__,__FUNCTION_NAME__);\
-}
 
-}
+/** @brief Class for testing of DoubleInteger functions. */
+class DoubleIntegerTest {
+
+public:
+    /** @brief Tests the shift operations.
+     * @return true if all operations return the expected result. */
+    bool TestShift();
+
+    /** @brief Tests the Logical operations.
+     * @return true if all operations return the expected result. */
+    bool TestLogicalOperators();
+
+    /** @brief Tests the Mathematic operations.
+     * @return true of all operations return the expected result. */
+    bool TestMathematicOperators();
+
+};
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* ADVANCEDERRORMANAGEMENT_H_ */
+#endif /* DOUBLEINTEGERTEST_H_ */
 

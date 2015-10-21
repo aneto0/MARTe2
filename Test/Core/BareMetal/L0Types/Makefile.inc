@@ -32,7 +32,8 @@ OBJSX=  BitBooleanTest.x\
         LinkedListableTest.x \
         LinkedListHolderTest.x \
         TypeDescriptorTest.x \
-        ShiftTest.x
+        ShiftTest.x \
+        DoubleIntegerTest.x
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

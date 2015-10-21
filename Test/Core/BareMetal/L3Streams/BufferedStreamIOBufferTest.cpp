@@ -212,13 +212,13 @@ bool BufferedStreamIOBufferTest::TestResync() {
     buffered.Refill();
     buffered.Read(bufferOut, toRead);
 
-    if (stream.UnbufferedPosition() != bufferSize) {
+    if (stream.OSPosition() != bufferSize) {
         return false;
     }
 
     buffered.Resync();
 
-    return stream.UnbufferedPosition() == toRead;
+    return stream.OSPosition() == toRead;
 }
 
 bool BufferedStreamIOBufferTest::TestResync_NULL_Stream() {

@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
+#include "DoubleInteger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -40,7 +41,8 @@
 
 namespace MARTe {
 
-/** @brief A collector of functions that implements logical and mathematical shift in safe mode.
+/**
+ * @brief A collector of functions that implements logical and mathematical shift in safe mode.
  * @detail These methods implements shift operations in the right way, returning zero when the shift is
  * greater than the size of the number. Furthermore they implements the logical shift which
  * does not extend the sign for negative numbers and it is very useful in many functionalities.
@@ -162,6 +164,10 @@ private:
      */
     static inline int64 LogicalRightShift(int64 number,
                                           uint8 shift);
+
+    template<typename T2>
+    static inline DoubleInteger<T2> LogicalRightShift(DoubleInteger<T2> number,
+                                                      uint8 shift);
 };
 
 /*---------------------------------------------------------------------------*/
@@ -259,6 +265,12 @@ int32 Shift::LogicalRightShift(int32 number,
 int64 Shift::LogicalRightShift(int64 number,
                                uint8 shift) {
     return ((uint64) number) >> shift;
+}
+
+template<typename T2>
+DoubleInteger<T2> Shift::LogicalRightShift(DoubleInteger<T2> number,
+                                           uint8 shift) {
+    return number >> shift;
 }
 
 }

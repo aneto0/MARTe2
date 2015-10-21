@@ -104,25 +104,25 @@ public:
         free(buffer);
     }
 
-    uint64 UnbufferedSize() {
+    uint64 OSSize() {
         return size;
     }
 
-    bool UnbufferedSeek(uint64 seek) {
+    bool OSSeek(uint64 seek) {
         position = seek;
         return true;
     }
 
-    bool UnbufferedRelativeSeek(int32 delta) {
+    bool OSRelativeSeek(int32 delta) {
         position += delta;
         return true;
     }
 
-    uint64 UnbufferedPosition() {
+    uint64 OSPosition() {
         return position;
     }
 
-    bool UnbufferedSetSize(uint64 desSize) {
+    bool OSSetSize(uint64 desSize) {
         size = desSize;
         return true;
     }
@@ -132,7 +132,7 @@ public:
         return true;
     }
 
-    bool UnbufferedRead(char8 * const outBuffer,
+    bool OSRead(char8 * const outBuffer,
                         uint32 &inSize,
                         const TimeoutType &timeout) {
 
@@ -150,7 +150,7 @@ public:
 
     }
 
-    bool UnbufferedWrite(const char8 * const inBuffer,
+    bool OSWrite(const char8 * const inBuffer,
                          uint32 &outSize,
                          const TimeoutType &timeout) {
 
@@ -171,23 +171,23 @@ public:
         return true;
     }
 
-    bool CanWrite() const {
+    bool OSCanWrite() const {
         return writable;
     }
 
-    bool CanSeek() const {
+    bool OSCanSeek() const {
         return seekable;
     }
 
-    bool CanRead() const {
+    bool OSCanRead() const {
         return readable;
     }
 
-    bool CanBlock() {
+    bool OSCanBlock() {
         return false;
     }
 
-    bool SetBlocking(bool flag) {
+    bool OSSetBlocking(bool flag) {
         return true;
     }
 
@@ -238,54 +238,54 @@ public:
     }
 
     uint64 OSSize() {
-        return DummyOSStream::UnbufferedSize();
+        return DummyOSStream::OSSize();
     }
 
     bool OSSeek(uint64 seek) {
-        return DummyOSStream::UnbufferedSeek(seek);
+        return DummyOSStream::OSSeek(seek);
     }
 
     bool OSRelativeSeek(int32 delta) {
-        return DummyOSStream::UnbufferedRelativeSeek(delta);
+        return DummyOSStream::OSRelativeSeek(delta);
     }
 
     uint64 OSPosition() {
-        return DummyOSStream::UnbufferedPosition();
+        return DummyOSStream::OSPosition();
     }
 
     bool OSSetSize(uint64 desSize) {
-        return DummyOSStream::UnbufferedSetSize(desSize);
+        return DummyOSStream::OSSetSize(desSize);
     }
 
     bool OSRead(char8 * const outBuffer,
                         uint32 &inSize) {
-        return DummyOSStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
+        return DummyOSStream::OSRead(outBuffer, inSize, GetTimeout());
     }
 
     bool OSWrite(const char8 * const inBuffer,
                          uint32 &outSize) {
 
-        return DummyOSStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());
+        return DummyOSStream::OSWrite(inBuffer, outSize, GetTimeout());
     }
 
     bool CanWrite() const {
-        return DummyOSStream::CanWrite();
+        return DummyOSStream::OSCanWrite();
     }
 
     bool CanSeek() const {
-        return DummyOSStream::CanSeek();
+        return DummyOSStream::OSCanSeek();
     }
 
     bool CanRead() const {
-        return DummyOSStream::CanRead();
+        return DummyOSStream::OSCanRead();
     }
 
     bool CanBlock() {
-        return DummyOSStream::CanBlock();
+        return DummyOSStream::OSCanBlock();
     }
 
     bool SetBlocking(bool flag) {
-        return DummyOSStream::SetBlocking(flag);
+        return DummyOSStream::OSSetBlocking(flag);
     }
 
 };
@@ -311,54 +311,54 @@ public:
     }
 
     uint64 OSSize() {
-        return DummyOSStream::UnbufferedSize();
+        return DummyOSStream::OSSize();
     }
 
     bool OSSeek(uint64 seek) {
-        return DummyOSStream::UnbufferedSeek(seek);
+        return DummyOSStream::OSSeek(seek);
     }
 
     bool OSRelativeSeek(int32 delta) {
-        return DummyOSStream::UnbufferedRelativeSeek(delta);
+        return DummyOSStream::OSRelativeSeek(delta);
     }
 
     uint64 OSPosition() {
-        return DummyOSStream::UnbufferedPosition();
+        return DummyOSStream::OSPosition();
     }
 
     bool OSSetSize(uint64 desSize) {
-        return DummyOSStream::UnbufferedSetSize(desSize);
+        return DummyOSStream::OSSetSize(desSize);
     }
 
     bool OSRead(char8 * const outBuffer,
                         uint32 &inSize) {
-        return DummyOSStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
+        return DummyOSStream::OSRead(outBuffer, inSize, GetTimeout());
     }
 
     bool OSWrite(const char8 * const inBuffer,
                          uint32 &outSize) {
 
-        return DummyOSStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());
+        return DummyOSStream::OSWrite(inBuffer, outSize, GetTimeout());
     }
 
     bool CanWrite() const {
-        return DummyOSStream::CanWrite();
+        return DummyOSStream::OSCanWrite();
     }
 
     bool CanSeek() const {
-        return DummyOSStream::CanSeek();
+        return DummyOSStream::OSCanSeek();
     }
 
     bool CanRead() const {
-        return DummyOSStream::CanRead();
+        return DummyOSStream::OSCanRead();
     }
 
     bool CanBlock() {
-        return DummyOSStream::CanBlock();
+        return DummyOSStream::OSCanBlock();
     }
 
     bool SetBlocking(bool flag) {
-        return DummyOSStream::SetBlocking(flag);
+        return DummyOSStream::OSSetBlocking(flag);
     }
 
 };
