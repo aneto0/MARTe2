@@ -507,14 +507,6 @@ struct BitSetToBitSetTableRow{
     bool destIsSigned;
 };
 
-struct BitSetToIntegerTableRow{
-    uint32 *sPointer;
-    uint8 sourceShift;
-    uint8 sourceSize;
-    bool sourceIsSigned;
-    uint32 result;
-};
-
 
 const BitSetToBitSetTableRow *GeneratedBitSetToBitSetTable();
 

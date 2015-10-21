@@ -23,20 +23,8 @@
 #############################################################
 
 
-<<<<<<< HEAD
 OBJSX=	TypeCharacteristicsGTest.x \
-=======
-OBJSX=	ShiftGTest.x \
-        CharBufferGTest.x \
-        IOBufferGTest.x \
-        StreamStringIOBufferGTest.x \
-        StreamIGTest.x \
-        SingleBufferedStreamGTest.x \
-        DoubleBufferedStreamGTest.x \
-        BufferedStreamIOBufferGTest.x \
-        StreamStringGTest.x \
-       TypeCharacteristicsGTest.x \
->>>>>>> refs/remotes/origin/237.3_Shift
+        ShiftGTest.x \
         BasicTypeGTest.x \
         BasicConsoleGTest.x \
         FormatDescriptorGTest.x \
@@ -77,7 +65,6 @@ OBJSX=	ShiftGTest.x \
  	BitRangeGTest.x \
  	StaticListGTest.x \
  	GlobalObjectsDatabaseGTest.x \
-<<<<<<< HEAD
 	TypeDescriptorGTest.x  \
 	CharBufferGTest.x \
         IOBufferGTest.x \
@@ -89,16 +76,7 @@ OBJSX=	ShiftGTest.x \
         StreamStringGTest.x \
         StreamMemoryReferenceGTest.x \
         BitSetToIntegerGTest.x
-=======
-	TypeDescriptorGTest.x \
-#	BitSetToIntegerGTest.x \
-#	DoubleIntegerGTest.x \
-#	FloatToStreamGTest.x \
-#	IntegerToStreamGTest.x \
-#	StreamableGTest.x \
-#	StreamMemoryReferenceGTest.x \
-#	StreamStringGTest.x \
->>>>>>> refs/remotes/origin/237.3_Shift
+
 	
 	
 
