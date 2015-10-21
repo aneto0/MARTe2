@@ -55,6 +55,17 @@ TEST(StreamMemoryReferenceGTest,TestConstructor_ConstCharPointer) {
     ASSERT_TRUE(smrTest.TestConstructor_ConstCharPointer());
 }
 
+TEST(StreamMemoryReferenceGTest,TestAnyTypeOperator) {
+    StreamMemoryReferenceTest smrTest;
+    ASSERT_TRUE(smrTest.TestAnyTypeOperator("HelloWorld"));
+}
+
+TEST(StreamMemoryReferenceGTest,TestDestructor) {
+    StreamMemoryReferenceTest smrTest;
+    ASSERT_TRUE(smrTest.TestDestructor());
+}
+
+
 TEST(StreamMemoryReferenceGTest,TestWrite_Same_BufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
@@ -172,5 +183,20 @@ TEST(StreamMemoryReferenceGTest, TestSetSize_out_range) {
     const char8 bufferSize = 16;
     ASSERT_TRUE(smrTest.TestSetSize(bufferSize, 17, false));
 }
+
+TEST(StreamMemoryReferenceGTest, TestCanSeek) {
+    StreamMemoryReferenceTest smrTest;
+    ASSERT_TRUE(smrTest.TestCanSeek());
+}
+
+TEST(StreamMemoryReferenceGTest, TestCanWrite) {
+    StreamMemoryReferenceTest smrTest;
+    ASSERT_TRUE(smrTest.TestCanWrite());
+}
+TEST(StreamMemoryReferenceGTest, TestCanRead) {
+    StreamMemoryReferenceTest smrTest;
+    ASSERT_TRUE(smrTest.TestCanRead());
+}
+
 
 

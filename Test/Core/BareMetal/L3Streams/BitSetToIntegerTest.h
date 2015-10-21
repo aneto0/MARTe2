@@ -79,9 +79,31 @@ bool BitSetToIntegerTest<T>::TestBitSetToBitSet() {
         uint8 sourceSize = table[i].sourceSize;
         bool sourceIsSigned = table[i].sourceIsSigned;
         T* source = (T*) (table[i].sPointer);
+        uint32 typeSize = sizeof(T) * 8;
+        T* newSource = source + (sourceShift / typeSize);
+        uint32 newSourceShift = sourceSize + (sourceShift % typeSize);
+
+        T* newDest = destPointer + (destShift / typeSize);
+        uint32 newDestShift = destSize + (destShift % typeSize);
+
         BitSetToBitSet(destPointer, destShift, destSize, destIsSigned, source, sourceShift, sourceSize, sourceIsSigned);
 
         if (dest[table[i].destArrayIndex] != table[i].result) {
+            return false;
+        }
+
+        if (source != newSource) {
+            return false;
+        }
+
+        if (sourceShift != newSourceShift) {
+            return false;
+        }
+        if (destPointer != newDest) {
+            return false;
+        }
+
+        if (destShift != newDestShift) {
             return false;
         }
 
@@ -139,50 +161,72 @@ bool BitSetToIntegerTest<T>::TestBitSetToInteger() {
     if (sDest != 0x33330000) {
         return false;
     }
-/*---------------------------------------*/
-/*
-    uint32 source[] = { 0xffffffb5, 0x00001111, 0x22223333, 0x0 };
+    /*---------------------------------------*/
 
-    uint8 uDest16;
-    int8 sDest16;
+    //uint32 source[] = { 0xffffffb5, 0x00001111, 0x22223333, 0x0 };
+    uint16 uDest16;
+    int16 sDest16;
 
-    sourceShift = 48;
+    sourceShift = 65;
     sourceSize = 8;
     sPointer = source;
     //Sign padding for signed source.
     BitSetToInteger(sDest16, sPointer, sourceShift, sourceSize, true);
-    if (sDest16 != 0x22) {
-        printf("\n1\n");
+    if (sDest16 != (int16) 0xff99) {
+        printf("\n1 %x\n", sDest16);
         return false;
     }
 
-    sourceShift = 36;
-    sourceSize = 5;
+    sourceShift = 65;
+    sourceSize = 8;
     sPointer = source;
     //Remains the same for unsigned source.
     BitSetToInteger(sDest16, sPointer, sourceShift, sourceSize, false);
-    if (sDest16 != 0x11) {
+    if (sDest16 != (int16) 0x99) {
+        printf("\n2 %x\n", sDest16);
         return false;
     }
 
-    sourceShift = 32;
-    sourceSize = 5;
+    sourceShift = 5;
+    sourceSize = 7;
     sPointer = source;
     //Saturation to zero for signed source and unsigned dest.
     BitSetToInteger(uDest16, sPointer, sourceShift, sourceSize, true);
     if (uDest16 != 0) {
+        printf("\n3 %x\n", uDest16);
         return false;
     }
 
-    sourceShift = 32;
-    sourceSize = 9;
+    sourceShift = 15;
+    sourceSize = 16;
+    sPointer = source;
+    //Saturation to maximum possible for 8 bits.
+    BitSetToInteger(sDest16, sPointer, sourceShift, sourceSize, false);
+    if (sDest16 != (int16) 0x7fff) {
+        printf("\n%4 x\n", sDest16);
+        return false;
+    }
+
+    sourceShift = 17;
+    sourceSize = 17;
+    sPointer = source;
+    //Saturation to maximum possible for 8 bits.
+    BitSetToInteger(uDest16, sPointer, sourceShift, sourceSize, false);
+    if (uDest16 != 0xffff) {
+        printf("\n5 %x\n", uDest16);
+        return false;
+    }
+
+    sourceShift = 65;
+    sourceSize = 17;
     sPointer = source;
     //Saturation to minimum possible for 8 bits.
     BitSetToInteger(sDest16, sPointer, sourceShift, sourceSize, true);
-    if (sDest16 != (int8) 0x80) {
+    if (sDest16 != (int16) 0x8000) {
+        printf("\n6 %x\n", sDest16);
         return false;
     }
-    */
+
     /*---------------------------------------*/
 
     uint8 uDest8;
@@ -231,8 +275,8 @@ template<typename T>
 bool BitSetToIntegerTest<T>::TestIntegerToBitSet() {
 
     uint32 dest[] = { 0x12345678, 0x12345678, 0x87654321, 0x12348765 };
-    int32 sSource = -1;
-    uint32 uSource = 0xdfffffff;
+    int32 sSource32 = -1;
+    uint32 uSource32 = 0xdfffffff;
 
     uint8 destShift = 0;
     uint8 destSize = 32;
@@ -240,13 +284,13 @@ bool BitSetToIntegerTest<T>::TestIntegerToBitSet() {
     uint32 *dPointer = dest + 1;
 
     //Copy a signed 32 bit number in the stream.
-    IntegerToBitSet(dPointer, destShift, destSize, true, sSource);
-    if (sSource != (int32) dest[1]) {
+    IntegerToBitSet(dPointer, destShift, destSize, true, sSource32);
+    if (sSource32 != (int32) dest[1]) {
         return false;
     }
 
     //Automatic shift to dest[2]. Copy a signed 32 bit number, with dest unsigned it should be saturated to 0.
-    IntegerToBitSet(dPointer, destShift, destSize, false, sSource);
+    IntegerToBitSet(dPointer, destShift, destSize, false, sSource32);
     if ((int32) dest[2] != 0) {
         return false;
     }
@@ -254,7 +298,7 @@ bool BitSetToIntegerTest<T>::TestIntegerToBitSet() {
     destShift = 0;
     dPointer = dest;
     //Copy an unsigned 32 bit number, with dest signed. Saturation to the max possible.
-    IntegerToBitSet(dPointer, destShift, destSize, true, uSource);
+    IntegerToBitSet(dPointer, destShift, destSize, true, uSource32);
     if ((int32) dest[0] != 0x7fffffff) {
         return false;
     }
@@ -263,9 +307,9 @@ bool BitSetToIntegerTest<T>::TestIntegerToBitSet() {
     destSize = 16;
     destShift = 16;
     //Another saturation because of the minor size of destination.
-    sSource = 0x121234;
+    sSource32 = (int32) 0x121234;
     dPointer = dest;
-    IntegerToBitSet(dPointer, destShift, destSize, true, sSource);
+    IntegerToBitSet(dPointer, destShift, destSize, true, sSource32);
 
     if ((int32) dest[0] != 0x7fff0000) {
         return false;
@@ -274,12 +318,78 @@ bool BitSetToIntegerTest<T>::TestIntegerToBitSet() {
     destSize = 16;
     destShift = 0;
     //Saturation also with unsigned dest.
-    sSource = 0x121234;
+    sSource32 = (int32) 0x121234;
     dPointer = dest;
-    IntegerToBitSet(dPointer, destShift, destSize, false, sSource);
+    IntegerToBitSet(dPointer, destShift, destSize, false, sSource32);
     if ((int32) dest[0] != 0x7fffffff) {
         return false;
     }
+
+    /*--------------------------------------------------*/
+
+    dest[0] = 0x12345678;
+    dest[1] = 0x12345678;
+    dest[2] = 0x87654321;
+    dest[3] = 0x12348765;
+    //pointer to dest[1]
+    dPointer = dest + 1;
+
+    int16 sSource16 = -1;
+    uint16 uSource16 = 0xdfff;
+
+    destShift = 0;
+    destSize = 32;
+
+    //Copy a signed 16 bit number in the stream.
+    IntegerToBitSet(dPointer, destShift, destSize, true, sSource16);
+    if (sSource16 != dest[1]) {
+        printf("\n1 %x\n", dest[1]);
+
+        return false;
+    }
+
+    //Automatic shift. Copy a signed 16 bit number, with dest unsigned it should be saturated to 0.
+    IntegerToBitSet(dPointer, destShift, destSize, false, sSource16);
+    if (dest[2] != 0) {
+        printf("\n2 %x\n", dest[2]);
+        return false;
+    }
+
+    destShift = 0;
+    dPointer = dest;
+    destSize = 16;
+    //Copy an unsigned 16 bit number, with dest signed. Saturation to the max possible.
+    IntegerToBitSet(dPointer, destShift, destSize, true, uSource16);
+    if ( dest[0] !=(int32) 0x12347fff) {
+        printf("\n3 %x\n", dest[0]);
+        return false;
+    }
+
+    dest[0] = 0;
+    destSize = 15;
+    destShift = 16;
+    //Another saturation because of the minor size of destination.
+    sSource16 = (int16) 0x7234;
+    dPointer = dest;
+    IntegerToBitSet(dPointer, destShift, destSize, true, sSource16);
+
+    if ( dest[0] != (int32)0x3fff0000) {
+        printf("\n4 %x\n", dest[0]);
+        return false;
+    }
+
+    destSize = 8;
+    destShift = 71;
+    //Saturation also with unsigned dest.
+    sSource16 = (int16) 0xff80;
+    dPointer = dest;
+    IntegerToBitSet(dPointer, destShift, destSize, false, sSource16);
+    if ((int8) dest[2] >> 7 != 0) {
+        printf("\n5 %x\n", dest[2] >> 7);
+        return false;
+    }
+
+    /*--------------------------------------------------*/
 
     int8 sSource8 = -1;
     destSize = 28;
@@ -288,7 +398,72 @@ bool BitSetToIntegerTest<T>::TestIntegerToBitSet() {
     dest[3] = 0;
     //Sign padding
     IntegerToBitSet(dPointer, destShift, destSize, true, sSource8);
-    if ((int32) dest[3] != 0x0fffffff) {
+    if ( dest[3] != (int32)0x0fffffff) {
+        return false;
+    }
+
+    sSource8 = 0x80;
+    dest[0] = 0x12300456;
+    destSize = 7;
+    dPointer = dest;
+    destShift = 12;
+    IntegerToBitSet(dPointer, destShift, destSize, true, sSource8);
+    if ( dest[0] != (int32)0x12340456) {
+        return false;
+    }
+
+    sSource8 = 0x80;
+    dest[0] = 0x12300456;
+    destSize = 0;
+    dPointer = dest;
+    destShift = 12;
+    IntegerToBitSet(dPointer, destShift, destSize, true, sSource8);
+    if ( dest[0] != (int32)0x12300456) {
+        printf("\n%x\n", dest[0]);
+        return false;
+    }
+
+    sSource8 = 0x80;
+    dest[0] = 0x12300456;
+    destSize = 1;
+    dPointer = dest;
+    destShift = 12;
+    IntegerToBitSet(dPointer, destShift, destSize, true, sSource8);
+    if ( dest[0] != (int32)0x12301456) {
+        printf("\n%x\n", dest[0]);
+        return false;
+    }
+
+    uint8 uSource8 = 0x1;
+    dest[0] = 0x12300456;
+    destSize = 1;
+    dPointer = dest;
+    destShift = 12;
+    IntegerToBitSet(dPointer, destShift, destSize, true, uSource8);
+    if ( dest[0] != (int32)0x12300456) {
+        printf("\n1 %x\n", dest[0]);
+        return false;
+    }
+
+    uSource8 = 0x1;
+    dest[0] = 0x12300456;
+    destSize = 1;
+    dPointer = dest;
+    destShift = 12;
+    IntegerToBitSet(dPointer, destShift, destSize, false, uSource8);
+    if ( dest[0] != (int32)0x12301456) {
+        printf("\n2 %x\n", dest[0]);
+        return false;
+    }
+
+    uSource8 = 0x1;
+    dest[0] = 0x12300456;
+    destSize = 0;
+    dPointer = dest;
+    destShift = 12;
+    IntegerToBitSet(dPointer, destShift, destSize, false, uSource8);
+    if ( dest[0] != (int32)0x12300456) {
+        printf("\n3 %x\n", dest[0]);
         return false;
     }
 

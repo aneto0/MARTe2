@@ -23,8 +23,7 @@
 #############################################################
 
 
-OBJSX=	        BitSetToIntegerGTest.x
-#TypeCharacteristicsGTest.x \
+OBJSX=	TypeCharacteristicsGTest.x \
         BasicTypeGTest.x \
         BasicConsoleGTest.x \
         FormatDescriptorGTest.x \
@@ -75,6 +74,7 @@ OBJSX=	        BitSetToIntegerGTest.x
         BufferedStreamIOBufferGTest.x \
         StreamStringGTest.x \
         StreamMemoryReferenceGTest.x \
+        BitSetToIntegerGTest.x
 	
 	
 

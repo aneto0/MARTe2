@@ -167,7 +167,7 @@ bool StreamMemoryReferenceTest::TestCanRead() {
 
     const char8 * input = "HelloWorld";
     StreamMemoryReference sMR1(input, 5);
-    if (!sMR.CanRead()) {
+    if (!sMR1.CanRead()) {
         return false;
     }
 

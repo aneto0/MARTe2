@@ -38,16 +38,11 @@ TEST_F(BitSetToIntegerGTest,TestBitSetToBitSet_8) {
     ASSERT_TRUE(bitsettest.TestBitSetToBitSet());
 }
 
-TEST_F(BitSetToIntegerGTest,TestBitSetToSignedInteger) {
+TEST_F(BitSetToIntegerGTest,TestBitSetToInteger) {
     BitSetToIntegerTest<uint32> bitsettest;
-    ASSERT_TRUE(bitsettest.TestBitSetToSignedInteger());
+    ASSERT_TRUE(bitsettest.TestBitSetToInteger());
 }
-/*
-TEST_F(BitSetToIntegerGTest,TestBitSetToUnsignedInteger) {
-    BitSetToIntegerTest<uint32> bitsettest;
-    ASSERT_TRUE(bitsettest.TestBitSetToUnsignedInteger());
-}
-*/
+
 TEST_F(BitSetToIntegerGTest,TestIntegerToBitSet) {
     BitSetToIntegerTest<uint32> bitsettest;
     ASSERT_TRUE(bitsettest.TestIntegerToBitSet());
