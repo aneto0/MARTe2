@@ -210,7 +210,7 @@ bool StreamITest::TestGetLine(uint32 bufferSize,
     StringHelper::Copy(myStream.buffer, line);
 
     bufferSize = 128;
-    char8 buffer[bufferSize];
+    char8 buffer[128];
     uint32 i;
     for (i = 0; i < 4; i++) {
         myStream.GetLine(buffer, bufferSize, skipCharacter);

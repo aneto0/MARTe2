@@ -31,7 +31,6 @@
 
 #include "IOBufferTest.h"
 #include "StringHelper.h"
-#include "printf.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -989,7 +988,7 @@ bool IOBufferTest::TestUnGetC() {
 
     ioBuffer.SetUsedSize(size);
 
-    char8 toRead[size];
+    char8 toRead[64];
 
     ioBuffer.Read(toRead, size);
     for (uint32 i = 0; i < size; i++) {

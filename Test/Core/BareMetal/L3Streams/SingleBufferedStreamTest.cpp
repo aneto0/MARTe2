@@ -175,7 +175,7 @@ bool SingleBufferedStreamTest::TestSeek() {
     stream.SetBufferSize(64);
 
     uint32 size = 32;
-    char buffer[size];
+    char buffer[32];
     uint32 i = 0;
     for (i = 0; i < size; i++) {
         buffer[i] = i;
@@ -202,7 +202,7 @@ bool SingleBufferedStreamTest::TestRelativeSeek() {
     stream.SetBufferSize(64);
 
     uint32 size = 32;
-    char buffer[size];
+    char buffer[32];
     uint32 i = 0;
     for (i = 0; i < size; i++) {
         buffer[i] = i;
@@ -259,14 +259,14 @@ bool SingleBufferedStreamTest::TestFlushAndResync(uint32 bufferSize) {
 bool SingleBufferedStreamTest::TestRead_NotCanRead() {
     DummySingleBufferedStream stream(true, false, true);
     uint32 size = 8;
-    char buffer[size];
+    char buffer[8];
     return !stream.Read(buffer, size);
 }
 
 bool SingleBufferedStreamTest::TestWrite_NotCanWrite() {
     DummySingleBufferedStream stream(true, true, false);
     uint32 size = 8;
-    char buffer[size];
+    char buffer[8];
     return !stream.Write(buffer, size);
 }
 
