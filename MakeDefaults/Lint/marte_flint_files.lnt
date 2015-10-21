@@ -56,4 +56,4 @@ DoubleBufferedStream.cpp
 SingleBufferedStream.cpp
 IOBufferIntegerPrint.cpp
 IOBufferFloatPrint.cpp
-
+DoubleInteger.h
