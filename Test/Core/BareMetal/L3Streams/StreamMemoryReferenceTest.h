@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StreamMemoryReference.h"
+#include "StreamTestHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -134,13 +135,24 @@ public:
     bool TestPosition(const uint32 bufferSize,
                       uint32 finalPos);
 
-
     /**
      * @brief Tests if the function returns true if the input is minor than the buffer size and false otherwise.
      */
     bool TestSetSize(const uint32 bufferSize,
                      uint32 size,
                      bool expected);
+
+    /**
+     * @brief Tests the print formatted on a stream string.
+     */
+    bool TestPrintFormatted(uint32 bufferSize,
+                            const PrintfNode testTable[]);
+
+    /**
+     * @brief Tests the GetToken function.
+     */
+    bool TestGetToken(uint32 bufferSize,
+                      const TokenTestTableRow *table);
 
 };
 

@@ -287,3 +287,12 @@ TEST(StreamStringGTest, TestLocate_String_False) {
     ASSERT_TRUE(stringtest.TestLocate_String("HelloWorld", "elol", -1));
 }
 
+TEST(StreamStringGTest, TestPrintFormatted) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestPrintFormatted(GeneratePrintFormattedGenericTable()));
+}
+
+TEST(StreamStringGTest, TestGetToken) {
+    StreamStringTest stringtest;
+    ASSERT_TRUE(stringtest.TestGetToken(TokenTestTableTerminators));
+}

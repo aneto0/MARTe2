@@ -446,7 +446,7 @@ bool StreamITest::TestPrintFormatted_BitSet_Unsigned(uint32 bufferSize) {
 
 bool StreamITest::TestPrintFormatted_BitSet_Signed(uint32 bufferSize) {
 
-    int64 data[5] = { 0x13579BDF02468ACE, 0x13579BDF02468ACE, 0x123456789ABCDEF0, 0xDEADBABEBAB00111 };
+    int64 data[5] = { (int64)0x13579BDF02468ACE, (int64)0x13579BDF02468ACE, (int64)0x123456789ABCDEF0, (int64)0xDEADBABEBAB00111 };
     const char streamString[] = "DEADBABEBAB00111123456789ABCDEF013579BDF02468ACE13579BDF02468ACE";
     int32 sizeStr = 63;
     uint32 dataBitSize = 256;

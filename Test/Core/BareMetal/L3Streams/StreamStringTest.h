@@ -34,6 +34,8 @@
 
 #include "StreamString.h"
 #include "FormatDescriptor.h"
+#include "StreamTestHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -220,6 +222,19 @@ public:
     bool TestLocate_String(const char8 *input,
                            const char8* toSearch,
                            int32 expected);
+
+    /**
+     * @brief Tests the print formatted on a stream string.
+     */
+    bool TestPrintFormatted(const PrintfNode testTable[]);
+
+
+    /**
+     * @brief Tests the GetToken function.
+     */
+    bool TestGetToken(const TokenTestTableRow *table);
+
+
 
 };
 

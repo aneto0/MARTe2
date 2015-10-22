@@ -31,7 +31,6 @@
 
 #include "StreamMemoryReferenceTest.h"
 #include "StringHelper.h"
-#include "StreamTestHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -368,7 +367,6 @@ bool StreamMemoryReferenceTest::TestPosition(const uint32 bufferSize,
 
 }
 
-
 bool StreamMemoryReferenceTest::TestSetSize(const uint32 bufferSize,
                                             uint32 size,
                                             bool expected) {
@@ -379,5 +377,65 @@ bool StreamMemoryReferenceTest::TestSetSize(const uint32 bufferSize,
     bool ret = smr.SetSize(size);
     uint32 compareSize = (size > bufferSize) ? (bufferSize) : (size);
     return (smr.Size() == compareSize) && (ret == expected);
+}
+
+bool StreamMemoryReferenceTest::TestPrintFormatted(uint32 bufferSize,
+                                                   const PrintfNode testTable[]) {
+    char8 bufferIn[64];
+    StreamMemoryReference smr(bufferIn, bufferSize);
+
+    uint32 i = 0;
+    while (StringHelper::Compare(testTable[i].format, "") != 0) {
+        smr.Seek(0);
+
+        smr.PrintFormatted(testTable[i].format, testTable[i].inputs);
+        uint32 termSize = 1;
+        smr.Write("\0", termSize);
+        if (StringHelper::CompareN(testTable[i].expectedResult, smr.Buffer(), bufferSize) != 0) {
+            AnyType data = testTable[i].inputs[i];
+            printf("\n%s %s %d %d\n", smr.Buffer(), testTable[i].expectedResult, i, *((uint8*) data.GetDataPointer()));
+            return false;
+        }
+        i++;
+    }
+    return true;
+}
+
+bool StreamMemoryReferenceTest::TestGetToken(uint32 bufferSize,
+                                             const TokenTestTableRow *table) {
+
+    char8 inBuff[64];
+    StreamMemoryReference myStream(inBuff, bufferSize);
+
+    uint32 i = 0u;
+    const TokenTestTableRow *row = &table[i];
+    bool result = true;
+
+    while (result && (row->toTokenize != NULL)) {
+        StringHelper::Copy(myStream.BufferReference(), row->toTokenize);
+        myStream.Seek(0);
+        char saveTerminator;
+        uint32 t = 0u;
+
+        uint32 outBuffSize = 64;
+        char8 outputBuff[64] = { 0 };
+
+        while (myStream.GetToken(outputBuff, row->terminators, outBuffSize, saveTerminator, row->skipCharacters)) {
+            if (StringHelper::CompareN(outputBuff, row->expectedResult[t], bufferSize) != 0) {
+                result = false;
+            }
+            if (row->saveTerminatorResult[t] != saveTerminator) {
+                //When it gets to the end of the string the terminator is \0
+                if (saveTerminator != '\0') {
+                    result = false;
+                }
+            }
+            t++;
+        }
+
+        row = &table[++i];
+
+    }
+    return result;
 }
 

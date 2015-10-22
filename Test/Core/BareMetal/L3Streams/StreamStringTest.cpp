@@ -32,8 +32,7 @@
 #include "GeneralDefinitions.h"
 #include "StreamStringTest.h"
 #include "StringHelper.h"
-#include "StreamTestHelper.h"
-#include "DoubleInteger.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -166,7 +165,6 @@ bool StreamStringTest::TestRead(const char8* inputString,
     uint32 size = StringHelper::Length(inputString);
     myString.Read(outputBuffer, sizeToRead);
 
-
     return (sizeToRead > size) ? (StringHelper::Compare(inputString, outputBuffer) == 0) : (StringHelper::CompareN(inputString, outputBuffer, sizeToRead) == 0);
 }
 
@@ -185,7 +183,6 @@ bool StreamStringTest::TestWrite(const char8* inputString,
     //size equal to inputString length (+1 for the terminated char8).
     uint32 size = StringHelper::Length(inputString);
     myString.Write(inputBuffer, sizeToWrite);
-
 
     return (sizeToWrite > size) ?
             (StringHelper::Compare(inputString, myString.Buffer()) == 0) : (StringHelper::CompareN(inputString, myString.Buffer(), sizeToWrite) == 0);
@@ -531,3 +528,54 @@ bool StreamStringTest::TestLocate_String(const char8 *input,
     return (string.Locate(toSearch) == expected);
 }
 
+bool StreamStringTest::TestPrintFormatted(const PrintfNode testTable[]) {
+    StreamString string;
+    uint32 i = 0;
+    while (StringHelper::Compare(testTable[i].format, "") != 0) {
+        string = "";
+
+        string.PrintFormatted(testTable[i].format, testTable[i].inputs);
+        if (StringHelper::Compare(testTable[i].expectedResult, string.Buffer()) != 0) {
+            AnyType data = testTable[i].inputs[i];
+            printf("\n%s %s %d %d\n", string.Buffer(), testTable[i].expectedResult, i, *((uint8*) data.GetDataPointer()));
+            return false;
+        }
+        i++;
+    }
+    return true;
+}
+
+bool StreamStringTest::TestGetToken(const TokenTestTableRow *table) {
+    StreamString myStream;
+
+    uint32 i = 0u;
+    const TokenTestTableRow *row = &table[i];
+    bool result = true;
+
+    while (result && (row->toTokenize != NULL)) {
+        myStream=row->toTokenize;
+        myStream.Seek(0);
+        char saveTerminator;
+        uint32 t = 0u;
+
+        uint32 outBuffSize=64;
+        char8 outputBuff[64] = { 0 };
+
+        while (myStream.GetToken(outputBuff, row->terminators, outBuffSize, saveTerminator, row->skipCharacters)) {
+            if (StringHelper::Compare(outputBuff, row->expectedResult[t]) != 0) {
+                result = false;
+            }
+            if (row->saveTerminatorResult[t] != saveTerminator) {
+                //When it gets to the end of the string the terminator is \0
+                if (saveTerminator != '\0') {
+                    result = false;
+                }
+            }
+            t++;
+        }
+
+        row = &table[++i];
+
+    }
+    return result;
+}
