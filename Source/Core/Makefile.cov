@@ -28,10 +28,7 @@ include Makefile.inc
 
 OPTIM = -finline-functions
 
-LIBRARIES_STATIC=L0Types/cov/L0TypesB$(LIBEXT)
-LIBRARIES_STATIC+=L1Portability/cov/L1PortabilityB$(LIBEXT)
-LIBRARIES_STATIC+=L2Objects/cov/L2ObjectsB$(LIBEXT)
-LIBRARIES_STATIC+=L3Streams/cov/L3StreamsB$(LIBEXT)
-
 LIBRARIES += -lm
 
+LIBRARIES += BareMetal/cov/MARTeCoreB$(LIBEXT)
+LIBRARIES += Scheduler/cov/MARTeCoreS$(LIBEXT)

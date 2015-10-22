@@ -50,7 +50,6 @@ $(BUILD_DIR)/%.so : $(OBJS)
 	touch $(BUILD_DIR)/lib$*.so
 	rm  $(BUILD_DIR)/lib$*.so
 	ln -fns $*.so $(BUILD_DIR)/lib$*.so
-	cp $@ $(ROOT_DIR)/MakeDefaults/DLLs
 	rm dummy.*
 
 %.ifo :  %.h

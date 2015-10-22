@@ -88,9 +88,6 @@ $(BUILD_DIR)/%.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(LIBRARIES) dllGenerator.def -o $@
 	$(subst /,\,$(ROOT_DIR))\MakeDefaults\DLLs\expdef.exe $@ > $(@:%.dll=%.def)
 	rm dllGenerator.def
-	cp $@ $(subst /,\,$(ROOT_DIR))\MakeDefaults\DLLs
-#cp $@ $(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\GTest
-	
 	
 $(BUILD_DIR)/dummy.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	touch dummy.cpp
