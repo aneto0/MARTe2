@@ -53,7 +53,7 @@ namespace MARTe {
  * ClassRegistryItem and automatically added to a ClassRegistryDatabase. This
  * database can then be used to retrieve information about the registered classes.
  */
-class ClassRegistryDatabase : public GlobalObjectI {
+class DLL_API ClassRegistryDatabase : public GlobalObjectI {
 
 public:
 
@@ -61,12 +61,12 @@ public:
      * @brief Singleton access to the database.
      * @return a reference to the database.
      */
-    DLL_API static ClassRegistryDatabase *Instance();
+    static ClassRegistryDatabase *Instance();
 
     /**
      * @brief Destructor. Removes all the elements hold by the database.
      */
-    DLL_API virtual ~ClassRegistryDatabase();
+    virtual ~ClassRegistryDatabase();
 
     /**
      * @brief Adds an element to the database.
@@ -75,7 +75,7 @@ public:
      * to the position at which it was added to the database.
      * @param[in] p the element to be added.
      */
-    DLL_API void Add(ClassRegistryItem * const p);
+    void Add(ClassRegistryItem * const p);
 
     /**
      * @brief Returns the ClassRegistryItem associated to the class with name \a className.
@@ -83,7 +83,7 @@ public:
      * @param[in] className the name of the class to be searched.
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    DLL_API const ClassRegistryItem *Find(const char8 *className);
+    const ClassRegistryItem *Find(const char8 *className);
 
     /**
      * @brief Returns the ClassRegistryItem associated to the class with typeid(class).name() equal to \a typeidName.
@@ -91,13 +91,13 @@ public:
      * @param[in] typeidName the typeid().name() of the class to be searched.
      * @return a pointer to the ClassRegisteredItem or NULL if the \a className could not be found.
      */
-    DLL_API const ClassRegistryItem *FindTypeIdName(const char8 * const typeidName);
+    const ClassRegistryItem *FindTypeIdName(const char8 * const typeidName);
 
     /**
      * @brief Returns the number of classes registered in the database.
      * @return the number of classes registered in the database.
      */
-    DLL_API uint32 GetSize();
+    uint32 GetSize();
 
     /**
      * @brief Returns the ClassRegistryItem at position \a idx.
@@ -106,13 +106,13 @@ public:
      *
      * @pre idx>=0 && position < GetSize()
      */
-    DLL_API const ClassRegistryItem *Peek(const uint32 &idx);
+    const ClassRegistryItem *Peek(const uint32 &idx);
 
     /**
      * @brief Returns "ClassRegistryDatabase"
      * @return "ClassRegistryDatabase".
      */
-    DLL_API virtual const char8 * const GetClassName() const;
+    virtual const char8 * const GetClassName() const;
 
 private:
 
@@ -120,7 +120,7 @@ private:
      * @brief Private Constructor.
      */
     /*lint -e{1704} private constructor for singleton implementation*/
-    DLL_API ClassRegistryDatabase();
+    ClassRegistryDatabase();
 
     /**
      * The database is implemented as a StaticList.

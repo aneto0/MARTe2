@@ -42,12 +42,12 @@ namespace MARTe{
 /**
  * @brief ReferenceContainerFilter for object names.
  */
-class ReferenceContainerFilterObjectName: public ReferenceContainerFilter {
+class DLL_API ReferenceContainerFilterObjectName: public ReferenceContainerFilter {
 public:
     /**
      * @brief Default constructor.
      */
-    DLL_API ReferenceContainerFilterObjectName();
+     ReferenceContainerFilterObjectName();
 
     /**
      * @brief Sets the filter to look for the address.
@@ -59,7 +59,7 @@ public:
      * A full path is specified by separating with dots the path (e.g. A.B.C). If a full path is specified only the first
      * occurrence can be searched and the mode will be set to ReferenceContainerFilterMode::RECURSIVE and ReferenceContainerFilterMode::PATH.
      */
-    DLL_API ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
+     ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
                                        const uint32 &modeToSet,
                                        const char8 * const address);
 
@@ -68,7 +68,7 @@ public:
      * @details Copies all the parameters from another filter. This instance of the filter will be Reset().
      * @param[in] other the source ReferenceContainerFilterObjectName where to copy the information from.
      */
-    DLL_API ReferenceContainerFilterObjectName(const ReferenceContainerFilterObjectName &other);
+     ReferenceContainerFilterObjectName(const ReferenceContainerFilterObjectName &other);
 
     /**
      * @brief Assignment operator.
@@ -76,12 +76,12 @@ public:
      * @param[in] other the source ReferenceContainerFilterObjectName where to copy the information from.
      * @return this object.
      */
-    DLL_API ReferenceContainerFilterObjectName &operator =(const ReferenceContainerFilterObjectName &other);
+     ReferenceContainerFilterObjectName &operator =(const ReferenceContainerFilterObjectName &other);
 
     /**
      * @brief Destructor. Frees all the allocated memory.
      */
-    DLL_API virtual ~ReferenceContainerFilterObjectName();
+     virtual ~ReferenceContainerFilterObjectName();
 
     /**
      * @brief Tests if the name of the object hold by referenceToTest is compatible with the address.
@@ -94,7 +94,7 @@ public:
      * @param[in] referenceToTest the reference to test (where the name of object will be extracted from).
      * @return true if the name of the object hold by referenceToTest is compatible with the address.
      */
-    DLL_API virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest);
+     virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest);
 
 private:
     /**
@@ -113,7 +113,7 @@ private:
      * @return true if all all the elements in previouslyFound are in the exact same order specified in
      * the address parameter of the constructor.
      */
-    DLL_API bool TestPath(ReferenceContainer &previouslyFound) const;
+     bool TestPath(ReferenceContainer &previouslyFound) const;
 
 };
 

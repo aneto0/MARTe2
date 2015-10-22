@@ -48,27 +48,27 @@ namespace MARTe {
  *
  * The Reference might also own no object, in which case the function IsValid will return false.
  */
-class Reference {
+class DLL_API Reference {
 public:
 
     /**
      * @brief Creates an empty Reference (referenced object is set to NULL).
      */
-    DLL_API Reference();
+    Reference();
 
     /**
      * @brief Creates a Reference from an existing Reference.
      * @details This Reference will own the same object referenced by \a sourceReference.
      * @param[in] sourceReference the Reference to the object to be shared.
      */
-    DLL_API Reference(const Reference& sourceReference);
+    Reference(const Reference& sourceReference);
 
     /**
      * @brief Creates a new object of type \a typeName and links a reference to it.
      * @param[in] typeName the name of the class type.
      * @param[in] heap the heap responsible for allocating the object.
      */
-    DLL_API Reference(const char8* const typeName,
+    Reference(const char8* const typeName,
               HeapI* const heap = static_cast<HeapI *>(NULL));
 
     /**
@@ -76,13 +76,13 @@ public:
      * @details Increments the number of references referencing the underlying object.
      * @param[in] pointer source object to assign.
      */
-    DLL_API Reference(Object * const pointer);
+    Reference(Object * const pointer);
 
     /**
      * @brief Removes the reference to the underlying object.
      * @see RemoveReference.
      */
-    DLL_API virtual ~Reference();
+    virtual ~Reference();
 
     /**
      * @brief Creates an object from a structured list of elements.
@@ -90,7 +90,7 @@ public:
      * @param[in] createOnly if true the object Initialise method is not called.
      * @return true if the object was successfully created and initialized, false otherwise.
      */
-    DLL_API virtual bool Initialise(const StructuredData &data,
+    virtual bool Initialise(const StructuredData &data,
                             const bool &createOnly);
 
     /**
@@ -98,34 +98,34 @@ public:
      * @details If the number of references to the underlying object is zero, the object is deleted.
      * IsValid function will return false after this operation.
      */
-    DLL_API virtual void RemoveReference();
+    virtual void RemoveReference();
 
     /**
      * @brief Verifies if the reference to the underlying object is valid.
      * @details A valid reference is one where the referenced object is not NULL.
      * @return true if the referenced object is not NULL, false otherwise.
      */
-    DLL_API virtual bool IsValid() const;
+    virtual bool IsValid() const;
 
     /**
      * @brief Returns the number of references that are linked to the underlying object.
      * @return the number of references that are linked to the underlying object.
      */
-    DLL_API uint32 NumberOfReferences() const;
+    uint32 NumberOfReferences() const;
 
     /**
      * @brief Verifies if this Reference links to the same object of \a sourceReference.
      * @param[in] sourceReference reference to be compared.
      * @return true if the \a sourceReference links to the same object as this Reference.
      */
-    DLL_API bool operator==(const Reference& sourceReference) const;
+    bool operator==(const Reference& sourceReference) const;
 
     /**
      * @brief Verifies if this Reference owns the same object of \a sourceReference.
      * @param[in] sourceReference reference to be compared.
      * @return true if the \a sourceReference does not own the same object as this Reference.
      */
-    DLL_API virtual bool operator!=(const Reference& sourceReference) const;
+    virtual bool operator!=(const Reference& sourceReference) const;
 
     /**
      * @brief Assignment operator.
@@ -133,7 +133,7 @@ public:
      * @param[in] sourceReference the source reference to be assigned to this reference.
      * @return a reference to the object referenced by \a sourceReference.
      */
-    DLL_API virtual Reference& operator=(const Reference& sourceReference);
+    virtual Reference& operator=(const Reference& sourceReference);
 
     /**
      * @brief Assignment operator.
@@ -141,13 +141,13 @@ public:
      * @param[in] pointer source object to assign.
      * @return a reference to the underlying object.
      */
-    DLL_API virtual Reference& operator=(Object * const pointer);
+    virtual Reference& operator=(Object * const pointer);
 
     /**
      * @brief Provides access to the underlying object linked by this Reference.
      * @return a pointer to the underlying object linked by this Reference.
      */
-    DLL_API virtual Object* operator->();
+    virtual Object* operator->();
 
 protected:
     /**
@@ -164,7 +164,7 @@ private:
      */
     //LCOV_EXCL_START
     /*lint -e9135 unity operator overloaded in order to implement access to the shared object.*/
-    DLL_API virtual Reference* operator&() {
+    virtual Reference* operator&() {
         return this;
     }
     //LCOV_EXCL_STOP
@@ -174,7 +174,7 @@ private:
      * @param[in] heap the heap where the object is to be allocated.
      * @return a new object of the specified class or NULL if the \a className does not exist.
      */
-    DLL_API Object *CreateByName(const char8 * const className,
+    Object *CreateByName(const char8 * const className,
                          HeapI* const heap) const;
 
 };

@@ -42,29 +42,29 @@ namespace MARTe{
 /**
  * @brief Wraps a Reference around a LinkedListable so that it can be added to a container.
  */
-class ReferenceContainerNode: public LinkedListable {
+class DLL_API ReferenceContainerNode: public LinkedListable {
 public:
     /**
      * @brief Constructor. NOOP.
      */
-    DLL_API ReferenceContainerNode();
+     ReferenceContainerNode();
     /**
      * @brief Destructor. NOOP.
      */
-    DLL_API ~ReferenceContainerNode();
+     ~ReferenceContainerNode();
 
     /**
      * @brief Returns the Reference hold by this node.
      * @return the Reference hold by this node.
      */
-    DLL_API Reference GetReference() const;
+     Reference GetReference() const;
 
     /**
      * @brief Sets the to Reference hold by this node.
      * @param[in] newReference the reference to be set.
      * @return true if \a newReference is valid.
      */
-    DLL_API bool SetReference(Reference newReference);
+     bool SetReference(Reference newReference);
 
 private:
     /**

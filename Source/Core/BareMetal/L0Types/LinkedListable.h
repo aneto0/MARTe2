@@ -51,7 +51,7 @@ namespace MARTe {
  *
  * @details Singly linked list implementation (possible to move only in the forward direction).
  */
-class LinkedListable {
+class DLL_API LinkedListable {
 
 
 public:
@@ -59,21 +59,21 @@ public:
     /**
      * @brief Constructor.
      */
-    DLL_API LinkedListable();
+    LinkedListable();
 
     /**
      * @brief Destructor.
      * @details Needs to be virtual to allow proper deallocation on derived classes when used on a generic holder.
      * It sets the next pointer to NULL.
      */
-    DLL_API virtual ~LinkedListable();
+    virtual ~LinkedListable();
 
     /**
      * @brief Returns the next element of the list.
      * @details If the return value is NULL this object is the last element in the list.
      * @return a pointer to the next element in the list.
      */
-    DLL_API LinkedListable * Next();
+    LinkedListable * Next();
 
     /**
      * @brief Sets the next element of the list.
@@ -81,26 +81,26 @@ public:
      * @param[in] p is a pointer to the element to be added as the next.
      * @pre p != NULL.
      */
-    DLL_API void SetNext(LinkedListable * const p);
+    void SetNext(LinkedListable * const p);
 
     /**
      * @brief The number of elements in the sub-list at the right of this element (this element included).
      * @return the number of elements in the sub-list at the right of this element (this element included).
      */
-    DLL_API uint32 Size();
+    uint32 Size();
 
     /**
      * @brief Bubble Sort the sub-list to the right of this element.
      * @details The algorithm assumes that two elements are ordered if the SortFilter returns a value < 0.
      * @param[in] sorter implements the comparison criteria for the sorting.
      */
-    DLL_API void BSort(SortFilter * const sorter);
+    void BSort(SortFilter * const sorter);
 
     /**
      * @brief Inserts the entire list as in input to the next location.
      * @param[in] p the pointer to the LinkedListable to be inserted.
      */
-    DLL_API void Insert(LinkedListable * p);
+    void Insert(LinkedListable * p);
 
     /**
      * @brief Inserts a sorted set of all the elements from the sub-list p.
@@ -109,7 +109,7 @@ public:
      * @param[in] p the pointer to the LinkedListable to be inserted .
      * @param[in] sorter implements the comparison criteria for the sorting.
      */
-    DLL_API void Insert(LinkedListable *p, SortFilter * const sorter);
+    void Insert(LinkedListable *p, SortFilter * const sorter);
 
     /**
      * @brief Appends the first element of the input list \a p to the end of this list.
@@ -119,27 +119,27 @@ public:
      *      to NULL after the execution of the function. If instead \a p is a list, Add
      *      could lead to memory leaks.
      */
-    DLL_API void Add(LinkedListable * const p);
+    void Add(LinkedListable * const p);
 
     /**
      * @brief Appends the input list \a p to the end of this list.
      * @param[in] p a pointer to the LinkedListable to be appended.
      */
-    DLL_API void AddL(LinkedListable * const p);
+    void AddL(LinkedListable * const p);
 
     /**
      * @brief Searches if \a p is a member of the sub-list on the right of this element.
      * @param[in] p a pointer to the LinkedListable to be searched.
      * @return true if the element \a p is in the sub-list, false otherwise.
      */
-    DLL_API bool Search(const LinkedListable * const p);
+    bool Search(const LinkedListable * const p);
 
     /**
      * @brief Searches an element using a specific criteria in the sub-list to the right of this element.
      * @param[in] filter defines the search criteria.
      * @return a pointer to the LinkedListable member or NULL if the element was not found.
      */
-    DLL_API LinkedListable *Search(SearchFilter * const filter);
+    LinkedListable *Search(SearchFilter * const filter);
 
     /**
      * @brief Removes the requested element \a p from list.
@@ -147,7 +147,7 @@ public:
      * @param[in] p the pointer to the element to be removed.
      * @return true if the element \a p is removed, false if the element is not found in the sub-list.
      */
-    DLL_API bool Extract(LinkedListable * const p);
+    bool Extract(LinkedListable * const p);
 
     /**
      * @brief Finds and removes one element from the list using a filter as the search criteria.
@@ -155,7 +155,7 @@ public:
      * @param[in] filter defines the search criteria.
      * @return a pointer to the LinkedListable if it is found and removed, NULL otherwise.
      */
-    DLL_API LinkedListable *Extract(SearchFilter * const filter);
+    LinkedListable *Extract(SearchFilter * const filter);
 
     /**
      * @brief Deletes the requested element \a p.
@@ -163,7 +163,7 @@ public:
      * @param[in] p is the pointer to the element to be deleted.
      * @return true if the element \a p was in the list, false otherwise.
      */
-    DLL_API bool Delete(LinkedListable * const p);
+    bool Delete(LinkedListable * const p);
 
     /**
      * @brief Deletes all the elements which satisfy a specific criteria.
@@ -171,20 +171,20 @@ public:
      * @param[in] filter define the search criteria.
      * @return the number of elements deleted.
      */
-    DLL_API uint32 Delete(SearchFilter * const filter);
+    uint32 Delete(SearchFilter * const filter);
 
     /**
      * @brief Returns a pointer to the element at position \a index.
      * @param[in] index is the position of the requested element (0 is the current).
      * @return the pointer to the desired element.
      */
-    DLL_API LinkedListable *Peek(uint32 index);
+    LinkedListable *Peek(uint32 index);
 
     /**
      * @brief For each item in the list perform the action defined by the Iterator.
      * @param[in] it defines the action to be performed on each element.
      */
-    DLL_API void Iterate(Iterator * const it);
+    void Iterate(Iterator * const it);
 
 private:
 

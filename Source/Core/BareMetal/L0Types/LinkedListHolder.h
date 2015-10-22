@@ -45,7 +45,7 @@ namespace MARTe {
  * the concept of a root. In this way it is always possible to link to a well
  * defined item (e.g. to perform a search on the full list).
  */
-class LinkedListHolder {
+class DLL_API LinkedListHolder {
 
 public:
 
@@ -53,36 +53,36 @@ public:
      * @brief Deallocates all the contents of the list.
      * @details This functions deletes all the elements of the list, sets its size to 0 and the root element to NULL.
      */
-    DLL_API void CleanUp();
+    void CleanUp();
 
     /**
      * @brief Resets the list without deleting the objects.
      * @details This functions sets the size of the list to 0 and the root element to NULL.
      * Note that the element of the list are not destroyed. This could lead to memory leaks.
      */
-    DLL_API void Reset();
+    void Reset();
 
     /**
      * @brief Constructor.
      */
-    DLL_API LinkedListHolder();
+    LinkedListHolder();
 
     /**
      * @brief Destructor.
      */
-    DLL_API virtual ~LinkedListHolder();
+    virtual ~LinkedListHolder();
 
     /**
      * @brief Returns the first element of the list.
      * @return a pointer to the first element of the list.
      */
-    DLL_API LinkedListable *List();
+    LinkedListable *List();
 
     /**
      * @brief Returns the number of elements in the list.
      * @return the number of the elements in the list.
      */
-    DLL_API uint32 ListSize() const;
+    uint32 ListSize() const;
 
     /**
      * @brief Inserts \p at the beginning of the list.
@@ -97,7 +97,7 @@ public:
      * @brief Inserts at the beginning of the list \a p. \a p can be a single element or an entire list.
      * @param[in] p a pointer to the LinkedListable to insert.
      */
-    DLL_API void ListInsert(LinkedListable * const p);
+    void ListInsert(LinkedListable * const p);
 
     /**
      * @brief Inserts the input list using a SortFilter.
@@ -106,7 +106,7 @@ public:
      * @param[in] p the pointer to the LinkedListable to insert.
      * @param[in] sorter implements the comparison criteria for the sorting.
      */
-    DLL_API void ListInsert(LinkedListable * const p,
+    void ListInsert(LinkedListable * const p,
                     SortFilter * const sorter);
 
     /**
@@ -115,7 +115,7 @@ public:
      * @param[in] q the pointer to the LinkedListable to be inserted.
      * @param[in] index is the position in the list where \a p must be inserted.
      */
-    DLL_API void ListInsert(LinkedListable * const q,
+    void ListInsert(LinkedListable * const q,
                     const uint32 index);
 
     /**
@@ -125,55 +125,55 @@ public:
      *      to NULL after the execution of the function. If instead \a p is a list, Add
      *      could lead to memory leaks.
      */
-    DLL_API void ListAdd(LinkedListable * const p);
+    void ListAdd(LinkedListable * const p);
 
     /**
      * @brief Adds a LinkedListable list at the end of the list.
      * @param[in] p the pointer to the LinkedListable list to added.
      */
-    DLL_API void ListAddL(LinkedListable * const p);
+    void ListAddL(LinkedListable * const p);
 
     /**
      * @brief Searches a specified element in this list.
      * @param[in] p a pointer to the element to search.
      * @return true if \a p is in the list, false otherwise.
      */
-    DLL_API bool ListSearch(const LinkedListable * const p);
+    bool ListSearch(const LinkedListable * const p);
 
     /**
      * @brief Searches an element using a SearchFilter.
      * @param[in] filter defines the search criteria.
      * @return a pointer to the element if it is found in the list, NULL otherwise.
      */
-    DLL_API LinkedListable *ListSearch(SearchFilter * const filter);
+    LinkedListable *ListSearch(SearchFilter * const filter);
 
     /**
      * @brief Removes the requested element from the list.
      * @param[in] p the element to be removed.
      * @return true if \a p was in the list, false otherwise.
      */
-    DLL_API bool ListExtract(LinkedListable * const p);
+    bool ListExtract(LinkedListable * const p);
 
     /**
      * @brief Finds and removes one element from list using a SearchFilter.
      * @param[in] filter defines the search criteria.
      * @return the extracted element, NULL if it is not found in the list.
      */
-    DLL_API LinkedListable *ListExtract(SearchFilter * const filter);
+    LinkedListable *ListExtract(SearchFilter * const filter);
 
     /**
      * @brief Deletes the requested element.
      * @param[in] p is the element which must be deleted.
      * @return true if p is in the list, false otherwise.
      */
-    DLL_API bool ListDelete(LinkedListable * const p);
+    bool ListDelete(LinkedListable * const p);
 
     /**
      * @brief Deletes elements using a SearchFilter.
      * @param[in] filter defines the search criteria.
      * @return true if at least one element is deleted, false otherwise.
      */
-    DLL_API bool ListDelete(SearchFilter * const filter);
+    bool ListDelete(SearchFilter * const filter);
 
     /**
      * @brief Deletes a elements using a SearchFilter in safe mode.
@@ -181,33 +181,33 @@ public:
      * @param[in] filter defines the search criteria.
      * @return true if at least one object it is deleted, false otherwise.
      */
-    DLL_API bool ListSafeDelete(SearchFilter * const filter);
+    bool ListSafeDelete(SearchFilter * const filter);
 
     /**
      * @brief Sorts the elements in the list using a SortFilter.
      * @param[in] sorter defines the comparison criteria.
      */
-    DLL_API void ListBSort(SortFilter * const sorter);
+    void ListBSort(SortFilter * const sorter);
 
     /**
      * @brief Browses the list.
      * @param[in] index the position of the requested element (0 means the first element).
      * @return a pointer to the element at index position.
      */
-    DLL_API LinkedListable *ListPeek(const uint32 index);
+    LinkedListable *ListPeek(const uint32 index);
 
     /**
      * @brief Removes and gets the element of the list in a specified position.
      * @param[in] index the position of the requested element.
      * @return a pointer to the element at index position.
      */
-    DLL_API LinkedListable *ListExtract(uint32 index = 0u);
+    LinkedListable *ListExtract(uint32 index = 0u);
 
     /**
      * @brief For each item in the list perform the action defined by the Iterator.
      * @param[in] it defines the action to be performed on each element.
      */
-    DLL_API void ListIterate(Iterator * const it);
+    void ListIterate(Iterator * const it);
 
 private:
 

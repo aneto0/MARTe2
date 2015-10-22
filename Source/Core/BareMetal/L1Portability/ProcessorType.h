@@ -45,7 +45,7 @@ namespace MARTe{
  * @details CPUs are set by a mask of bits (32 bits max => 32 processors max).
  * System dependent calls to get the used cpus could be found in ProcessorType.h
  */
-class ProcessorType {
+class DLL_API ProcessorType {
 public:
 
     /**
@@ -54,49 +54,49 @@ public:
      * @details The default is to run the tasks all CPUs but the first.
      * @param[in] cpuMask the CPU mask.
      */
-    DLL_API ProcessorType(const uint32 cpuMask = 0xFEu);
+    ProcessorType(const uint32 cpuMask = 0xFEu);
 
     /**
      * @brief Constructor from another ProcessorType object
      * @param[in] pt the object to be copied into this.
      */
-    DLL_API ProcessorType(const ProcessorType &pt);
+    ProcessorType(const ProcessorType &pt);
 
     /**
      * @brief Set the processor mask.
      * @param[in] mask the CPU mask.
      */
-    DLL_API void SetMask(const uint32 mask);
+    void SetMask(const uint32 mask);
 
     /**
      * @brief Add a CPU to the mask.
      * @param[in] cpuNumber the number of the CPU to activate.
      */
-    DLL_API void AddCPU(const uint32 cpuNumber);
+    void AddCPU(const uint32 cpuNumber);
 
     /**
      * @brief Assign operator with integer.
      * @param[in] cpuMask is the desired CPU mask.
      */
-    DLL_API void operator=(const uint32 cpuMask);
+    void operator=(const uint32 cpuMask);
 
     /**
      * @brief Assign operator with another ProcessorType.
      * @param[in] pt is the ProcessorType to copy in this.
      */
-    DLL_API ProcessorType& operator=(const ProcessorType &pt);
+    ProcessorType& operator=(const ProcessorType &pt);
 
     /**
      * @brief or operator with integer.
      * @param[in] cpuMask is the CPU mask which will be in or with this.
      */
-    DLL_API void operator|=(const uint32 cpuMask);
+    void operator|=(const uint32 cpuMask);
 
     /**
      * @brief or operator with another ProcessorType object.
      * @param[in] pt is the ProcessorType which will be in or with this.
      */
-    DLL_API void operator|=(const ProcessorType &pt);
+    void operator|=(const ProcessorType &pt);
 
     /**
      * @brief Compares this object with another ProcessorType.
@@ -104,14 +104,14 @@ public:
      * @return true if masks are equal.
      */
     /*lint -e(1739) , operation int32 == ProcessorType will not be supported*/
-    DLL_API bool operator==(const ProcessorType &pt) const;
+    bool operator==(const ProcessorType &pt) const;
 
     /**
      * @brief Compares this CPU mask with an input mask.
      * @param[in] mask is the mask which will be compared with this CPU mask.
      * @return true if the masks are equal.
      */
-    DLL_API bool operator==(const uint32 mask) const;
+    bool operator==(const uint32 mask) const;
 
     /**
      * @brief Compares this object with another ProcessorType.
@@ -119,32 +119,32 @@ public:
      * @return true if the masks are different.
      */
     /*lint -e(1739) , operation int32 != ProcessorType will not be supported*/
-    DLL_API bool operator!=(const ProcessorType &pt) const;
+    bool operator!=(const ProcessorType &pt) const;
 
     /**
      * @brief Compares this CPU mask with an input mask.
      * @param[in] mask is the mask which will be compared with this CPU mask.
      * @return true if the masks are different.
      */
-    DLL_API bool operator!=(const uint32 mask) const;
+    bool operator!=(const uint32 mask) const;
 
     /**
      * @brief Returns the currently set CPU mask.
      * @return the CPU mask as an uint32.
      */
-    DLL_API uint32 GetProcessorMask() const;
+    uint32 GetProcessorMask() const;
 
     /**
      * @brief Rerurns the default CPU mask.
      * @return the default CPU mask.
      */
-    DLL_API static uint32 GetDefaultCPUs();
+    static uint32 GetDefaultCPUs();
 
     /**
      * @brief Sets the default CPU mask.
      * @param[in] mask defines the default CPU.
      */
-    DLL_API static void SetDefaultCPUs(const uint32 &mask);
+    static void SetDefaultCPUs(const uint32 &mask);
 
 private:
     /**
