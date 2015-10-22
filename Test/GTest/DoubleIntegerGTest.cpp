@@ -23,7 +23,7 @@ protected:
 
 TEST_F(DoubleIntegerGTest,TestRightShift_int64) {
     const testTableShiftDI<int64> testTable[]={
-            testTablShifteDI<int64>(DoubleInteger<int64>(0xf000000000000000, 0), 124, -1),
+            testTableShiftDI<int64>(DoubleInteger<int64>(0xf000000000000000, 0), 124, -1),
             testTableShiftDI<int64>(DoubleInteger<int64>(0x8000000000000000, 0), 3, DoubleInteger<int64>(0xf000000000000000, 0)),
             testTableShiftDI<int64>(DoubleInteger<int64>(0x7000000000000000, 0), 62, DoubleInteger<int64>(1,0xc000000000000000)),
             testTableShiftDI<int64>(0, 0xff, 0)
@@ -179,9 +179,67 @@ TEST_F(DoubleIntegerGTest,TestInvertOperator_int32) {
     ASSERT_TRUE(numbertest.TestInvertOperator(testTable));
 }
 
+TEST_F(DoubleIntegerGTest,TestAndOperator_uint32) {
 
+    const testTableLogicDI<uint32> testTable[]={
+            testTableLogicDI<uint32>(0xffffffffffffffff, 0, 0),
+            testTableLogicDI<uint32>(0xffffffff0fffffff, 0xfffffff0ffffffff, 0xfffffff00fffffff),
+            testTableLogicDI<uint32>(0, 0xff, 0, false)
+    };
+    DoubleIntegerTest<uint32> numbertest;
 
+    ASSERT_TRUE(numbertest.TestAndOperator(testTable));
+}
 
+TEST_F(DoubleIntegerGTest,TestOrOperator_uint32) {
+
+    const testTableLogicDI<uint32> testTable[]={
+            testTableLogicDI<uint32>(0xffffffffffffffff, 0, 0xffffffffffffffff),
+            testTableLogicDI<uint32>(0xffffffff0fffffff, 0xfffffff0ffffffff, 0xffffffffffffffff),
+            testTableLogicDI<uint32>(0, 0xff, 0, false)
+    };
+    DoubleIntegerTest<uint32> numbertest;
+
+    ASSERT_TRUE(numbertest.TestOrOperator(testTable));
+}
+
+TEST_F(DoubleIntegerGTest,TestInvertOperator_uint32) {
+
+    const testTableLogicDI<uint32> testTable[]={
+            testTableLogicDI<uint32>(0xffffffffffffffff, 0, 0),
+            testTableLogicDI<uint32>(0xffffffff0fffffff, 0, 0x00000000f0000000),
+            testTableLogicDI<uint32>(0, 0, 0, false)
+    };
+    DoubleIntegerTest<uint32> numbertest;
+    ASSERT_TRUE(numbertest.TestInvertOperator(testTable));
+}
+
+TEST_F(DoubleIntegerGTest,TestIsMajorOperator_int32) {
+
+    const testTableLogicDI<int32> testTable[]={
+            testTableLogicDI<int32>(0xffffffffffffffff, 0, 0),
+            testTableLogicDI<int32>(1, 0, 0),
+            testTableLogicDI<int32>(0xffffffffffffffff, 0xfffffffffffffffe, 0),
+            testTableLogicDI<int32>(0x7fffffffffffffff, 0x7ffffffffffffffe, 0),
+            testTableLogicDI<int32>(0, 0, 0, false)
+    };
+    DoubleIntegerTest<int32> numbertest;
+
+    ASSERT_TRUE(numbertest.TestIsMajorOperator(testTable));
+}
+
+TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int32) {
+
+    const testTableLogicDI<int32> testTable[]={
+            testTableLogicDI<int32>(0xffffffffffffffff, 0, 1),
+            testTableLogicDI<int32>(0xffffffffffffffff, 0xfffffffffffffffe, 1),
+            testTableLogicDI<int32>(0xfffffffffffffffe, 0xffffffffffffffffe, 0),
+            testTableLogicDI<int32>(0, 0, 0, false)
+    };
+    DoubleIntegerTest<int32> numbertest;
+
+    ASSERT_TRUE(numbertest.TestIsMinorOperator(testTable));
+}
 
 
 

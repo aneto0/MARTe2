@@ -68,7 +68,7 @@ public:
     testTableLogicDI(DoubleInteger<T> number1In,
                      DoubleInteger<T> number2In,
                      DoubleInteger<T> resultIn,
-                     bool isValidIn) :
+                     bool isValidIn = true) :
             number1(number1In),
             number2(number2In),
             result(resultIn) {
@@ -92,6 +92,10 @@ public:
     bool TestOrOperator(const testTableLogicDI<T> *table);
 
     bool TestInvertOperator(const testTableLogicDI<T> *table);
+
+    bool TestIsMajorOperator(const testTableLogicDI<T> *table);
+
+    bool TestIsMinorOperator(const testTableLogicDI<T> *table);
 
     /** @brief Tests the Logical operations.
      * @return true if all operations return the expected result. */
@@ -147,7 +151,7 @@ bool DoubleIntegerTest<T>::TestAndOperator(const testTableLogicDI<T> *table) {
 
         if ((table[i].number1 & table[i].number2) != table[i].result) {
             T lower = (table[i].number1 & table[i].number2).GetLower();
-            printf("\n%d %d %d %d\n", (int32) lower, i, sizeof(T), table[i].result);
+            printf("\n%d %d %d\n", (int32) lower, i, sizeof(T));
             return false;
         }
         i++;
@@ -163,7 +167,7 @@ bool DoubleIntegerTest<T>::TestOrOperator(const testTableLogicDI<T> *table) {
 
         if ((table[i].number1 | table[i].number2) != table[i].result) {
             T lower = (table[i].number1 & table[i].number2).GetLower();
-            printf("\n%d %d %d %d\n", (int32) lower, i, sizeof(T), table[i].result);
+            printf("\n%d %d %d\n", (int32) lower, i, sizeof(T));
             return false;
         }
         i++;
@@ -179,7 +183,7 @@ bool DoubleIntegerTest<T>::TestInvertOperator(const testTableLogicDI<T> *table) 
 
         if (~(table[i].number1) != table[i].result) {
             T lower = (table[i].number1 & table[i].number2).GetLower();
-            printf("\n%d %d %d %d\n", (int32) lower, i, sizeof(T), table[i].result);
+            printf("\n%d %d %d\n", (int32) lower, i, sizeof(T));
             return false;
         }
         i++;
@@ -187,6 +191,41 @@ bool DoubleIntegerTest<T>::TestInvertOperator(const testTableLogicDI<T> *table) 
 
     return true;
 }
+
+template<typename T>
+bool DoubleIntegerTest<T>::TestIsMajorOperator(const testTableLogicDI<T> *table) {
+    uint32 i = 0;
+    while (table[i].isValid) {
+
+        if ((table[i].number1 > table[i].number2) != table[i].result) {
+            T lower = (table[i].number1 & table[i].number2).GetLower();
+            printf("\n%d %d %d\n", (int32) lower, i, sizeof(T));
+            return false;
+        }
+        i++;
+    }
+
+    return true;
+}
+
+
+template<typename T>
+bool DoubleIntegerTest<T>::TestIsMajorOperator(const testTableLogicDI<T> *table) {
+    uint32 i = 0;
+    while (table[i].isValid) {
+
+        if ((table[i].number1 < table[i].number2) != table[i].result) {
+            T lower = (table[i].number1 & table[i].number2).GetLower();
+            printf("\n%d %d %d\n", (int32) lower, i, sizeof(T));
+            return false;
+        }
+        i++;
+    }
+
+    return true;
+}
+
+
 
 template<typename T>
 bool DoubleIntegerTest<T>::TestLogicalOperators() {
