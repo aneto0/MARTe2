@@ -54,7 +54,9 @@ StreamString::StreamString(const char8 * const initialisationString) :
     }
 }
 
-StreamString::StreamString(const StreamString &toCopy) {
+/*lint -e{1738} . Justification: StreamaI is only an interface there is nothing to be copied. */
+StreamString::StreamString(const StreamString &toCopy) :
+        StreamI() {
     if (&toCopy != this) {
         if (!Set(toCopy)) {
             REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed in the Set function");

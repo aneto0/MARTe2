@@ -132,7 +132,7 @@ public:
     /**
      * Sets the timeout for read and write operations.
      */
-    inline void SetTimeout(TimeoutType msecTimeout);
+    inline void SetTimeout(const TimeoutType &msecTimeout);
 
     /**
      * Gets the stream pointer
@@ -190,7 +190,7 @@ const OperatingSystemCallbacksI* BufferedStreamIOBuffer::GetStream() const {
     return stream;
 }
 
-void BufferedStreamIOBuffer::SetTimeout(TimeoutType msecTimeout) {
+void BufferedStreamIOBuffer::SetTimeout(const TimeoutType &msecTimeout) {
     timeout = msecTimeout;
 }
 
