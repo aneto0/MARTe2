@@ -43,7 +43,6 @@
 namespace MARTe {
 
 StreamI::StreamI() {
-    timeout = TTInfiniteWait;
 }
 
 StreamI::~StreamI() {
@@ -197,12 +196,6 @@ bool StreamI::Copy(StreamI &stream) {
 
 }
 
-TimeoutType StreamI::GetTimeout() const {
-    return timeout;
-}
 
-void StreamI::SetTimeout(const TimeoutType &timeoutIn) {
-    timeout = timeoutIn;
-}
 
 }

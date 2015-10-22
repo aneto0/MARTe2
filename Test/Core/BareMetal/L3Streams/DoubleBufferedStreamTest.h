@@ -49,6 +49,18 @@ public:
      */
     bool TestConstructor_Timeout();
 
+
+    /**
+     * @brief Tests the GetTimeout function.
+     */
+    bool TestGetTimeout();
+
+    /**
+     * @brief Tests the SetTimeout function.
+     */
+    bool TestSetTimeout();
+
+
     /**
      * @brief Tests that calling SetBufferSize(bufferSize) => bufferSize == GetBufferSize()
      */

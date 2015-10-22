@@ -57,6 +57,16 @@ TEST_F(DoubleBufferedStreamGTest,TestConstructor_Timeout) {
     ASSERT_TRUE(streamtest.TestConstructor_Timeout());
 }
 
+TEST_F(DoubleBufferedStreamGTest,TestGetTimeout) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestGetTimeout());
+}
+
+TEST_F(DoubleBufferedStreamGTest,TestSetTimeout) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestSetTimeout());
+}
+
 TEST_F(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_1) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(1));

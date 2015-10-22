@@ -123,15 +123,7 @@ public:
      */
     bool TestPrintf();
 
-    /**
-     * @brief Tests the GetTimeout function.
-     */
-    bool TestGetTimeout() const;
 
-    /**
-     * @brief Tests the SetTimeout function.
-     */
-    bool TestSetTimeout();
 };
 
 /*---------------------------------------------------------------------------*/

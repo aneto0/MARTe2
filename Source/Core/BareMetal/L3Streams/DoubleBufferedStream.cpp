@@ -248,5 +248,14 @@ uint32 DoubleBufferedStream::GetWriteBufferSize() const {
     return writeBuffer.GetBufferSize();
 }
 
+TimeoutType DoubleBufferedStream::GetTimeout() const {
+    return readBuffer.GetTimeout();
+}
+
+void DoubleBufferedStream::SetTimeout(const TimeoutType &timeoutIn) {
+    readBuffer.SetTimeout(timeoutIn);
+    writeBuffer.SetTimeout(timeoutIn);
+}
+
 }
 

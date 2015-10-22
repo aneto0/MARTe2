@@ -44,11 +44,13 @@ namespace MARTe {
 BufferedStreamIOBuffer::BufferedStreamIOBuffer() :
         IOBuffer() {
     stream = static_cast<OperatingSystemCallbacksI *>(NULL);
+    timeout = TTInfiniteWait;
 }
 
 BufferedStreamIOBuffer::BufferedStreamIOBuffer(OperatingSystemCallbacksI * const s) :
         IOBuffer() {
     stream = s;
+    timeout = TTInfiniteWait;
 }
 
 bool BufferedStreamIOBuffer::Resync() {

@@ -337,7 +337,7 @@ bool SingleBufferedStream::RelativeSeek(int32 deltaPos) {
         }
     }
 
-    if(ok && ubSeek){
+    if (ok && ubSeek) {
         /*lint -e{9117} -e{737} [MISRA C++ Rule 5-0-4]. The input value is always positive so the signed does not change. */
         ok = OSSeek(static_cast<uint64>(OSPosition() + deltaPos));
     }
@@ -369,6 +369,14 @@ bool SingleBufferedStream::SetSize(const uint64 size) {
         ret = OSSetSize(size);
     }
     return ret;
+}
+
+TimeoutType SingleBufferedStream::GetTimeout() const {
+    return internalBuffer.GetTimeout();
+}
+
+void SingleBufferedStream::SetTimeout(const TimeoutType &timeoutIn) {
+    internalBuffer.SetTimeout(timeoutIn);
 }
 
 }
