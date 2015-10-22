@@ -30,7 +30,6 @@ SPB=Environment/$(ENVIRONMENT).x
 
 OBJSX =
 
-
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../BareMetal/L1Portability -I../../BareMetal/L0Types

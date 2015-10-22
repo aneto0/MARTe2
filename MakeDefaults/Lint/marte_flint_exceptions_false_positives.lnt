@@ -77,3 +77,8 @@
   */
  -esym(459, MARTe::Threads::SystemThreadFunction*) 
  
+ /**
+  * Rule flexelint 767.
+  * DLL_API is not used in Linux
+  */
+ -estring(767,"*DLL_API*")
