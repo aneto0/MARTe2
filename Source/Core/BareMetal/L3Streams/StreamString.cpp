@@ -67,7 +67,6 @@ StreamString::operator AnyType() {
     return at;
 }
 
-/** Destructor */
 StreamString::~StreamString() {
 }
 
