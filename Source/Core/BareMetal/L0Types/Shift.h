@@ -313,6 +313,7 @@ DoubleInteger<T2> Shift::LogicalRightShift(DoubleInteger<T2> number,
     }
     return number;
 }
+}
 
 #endif /* L0TYPES_SHIFT_H_ */
 

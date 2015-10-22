@@ -33,11 +33,48 @@
 /*---------------------------------------------------------------------------*/
 #include "DoubleInteger.h"
 #include "FormatDescriptor.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
+
+template<typename T>
+class testTableShiftDI {
+public:
+    DoubleInteger<T> number;
+    uint8 shift;
+    DoubleInteger<T> result;
+
+    testTableShiftDI(DoubleInteger<T> numberIn,
+                     uint8 shiftIn,
+                     DoubleInteger<T> resultIn) :
+            number(numberIn),
+            result(resultIn) {
+
+        shift = shiftIn;
+
+    }
+};
+
+template<typename T>
+class testTableLogicDI {
+public:
+    DoubleInteger<T> number1;
+    DoubleInteger<T> number2;
+    DoubleInteger<T> result;
+    bool isValid;
+
+    testTableLogicDI(DoubleInteger<T> number1In,
+                     DoubleInteger<T> number2In,
+                     DoubleInteger<T> resultIn,
+                     bool isValidIn) :
+            number1(number1In),
+            number2(number2In),
+            result(resultIn) {
+        isValid = isValidIn;
+    }
+};
 
 /** @brief Class for testing of DoubleInteger functions. */
 template<typename T>
@@ -46,7 +83,15 @@ class DoubleIntegerTest {
 public:
     /** @brief Tests the shift operations.
      * @return true if all operations return the expected result. */
-    bool TestShift(const testTableDI *table);
+    bool TestRightShift(const testTableShiftDI<T> *table);
+
+    bool TestLeftShift(const testTableShiftDI<T> *table);
+
+    bool TestAndOperator(const testTableLogicDI<T> *table);
+
+    bool TestOrOperator(const testTableLogicDI<T> *table);
+
+    bool TestInvertOperator(const testTableLogicDI<T> *table);
 
     /** @brief Tests the Logical operations.
      * @return true if all operations return the expected result. */
@@ -62,70 +107,85 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-struct testTableDI {
-    template<typename T>
-    DoubleInteger<T> number;
-    uint8 shift;
-    template<typename T>
-    DoubleInteger<T> result;
-};
-
 template<typename T>
-bool DoubleIntegerTest<T>::TestShift(const testTableDI *table) {
-
+bool DoubleIntegerTest<T>::TestRightShift(const testTableShiftDI<T> *table) {
     uint32 i = 0;
     while (table[i].shift != 0xff) {
+
         if ((table[i].number >> table[i].shift) != table[i].result) {
+            T lower = (table[i].number >> table[i].shift).GetLower();
+            printf("\n%d %d %d %d\n", (int32) lower, i, sizeof(T), table[i].shift);
             return false;
         }
         i++;
     }
 
     return true;
-    /*
-     //init a 64 bit integer.
-     int64 assign = -1;
+}
 
-     DoubleInteger< int32 > number = assign;
+template<typename T>
+bool DoubleIntegerTest<T>::TestLeftShift(const testTableShiftDI<T> *table) {
+    uint32 i = 0;
+    while (table[i].shift != 0xff) {
 
-     //== operator
-     if (!(number == -1)) {
-     return false;
-     }
+        if ((table[i].number << table[i].shift) != table[i].result) {
+            T lower = (table[i].number >> table[i].shift).GetLower();
+            printf("\n%d %d %d %d\n", (int32) lower, i, sizeof(T), table[i].shift);
+            return false;
+        }
+        i++;
+    }
 
-     DoubleInteger< int32 > sbit64(0xf000000000000000);
+    return true;
+}
 
-     //!= operator
-     if (sbit64 != 0xf000000000000000) {
-     return false;
-     }
+template<typename T>
+bool DoubleIntegerTest<T>::TestAndOperator(const testTableLogicDI<T> *table) {
 
-     //Math shift with sign extension.
-     if ((sbit64 >> 60) != -1) {
-     return false;
-     }
+    uint32 i = 0;
+    while (table[i].isValid) {
 
-     //Copy bit a bit.
-     DoubleInteger< uint32 > ubit64(0xf000000000000000);
+        if ((table[i].number1 & table[i].number2) != table[i].result) {
+            T lower = (table[i].number1 & table[i].number2).GetLower();
+            printf("\n%d %d %d %d\n", (int32) lower, i, sizeof(T), table[i].result);
+            return false;
+        }
+        i++;
+    }
 
-     //Math shift without sign extension.
-     if ((ubit64 >> 60) != 0xf) {
-     return false;
-     }
+    return true;
+}
 
-     sbit64 = 0xf;
+template<typename T>
+bool DoubleIntegerTest<T>::TestOrOperator(const testTableLogicDI<T> *table) {
+    uint32 i = 0;
+    while (table[i].isValid) {
 
-     //left shift.
-     if ((sbit64 << 4) != 0xf0) {
-     return false;
-     }
+        if ((table[i].number1 | table[i].number2) != table[i].result) {
+            T lower = (table[i].number1 & table[i].number2).GetLower();
+            printf("\n%d %d %d %d\n", (int32) lower, i, sizeof(T), table[i].result);
+            return false;
+        }
+        i++;
+    }
 
-     //left shift.
-     if ((sbit64 << 63) != 0x8000000000000000) {
-     return false;
-     }
+    return true;
+}
 
-     return true;*/
+template<typename T>
+bool DoubleIntegerTest<T>::TestInvertOperator(const testTableLogicDI<T> *table) {
+    uint32 i = 0;
+    while (table[i].isValid) {
+
+        if (~(table[i].number1) != table[i].result) {
+            T lower = (table[i].number1 & table[i].number2).GetLower();
+            printf("\n%d %d %d %d\n", (int32) lower, i, sizeof(T), table[i].result);
+            return false;
+        }
+        i++;
+    }
+
+    return true;
 }
 
 template<typename T>

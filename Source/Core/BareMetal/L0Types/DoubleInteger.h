@@ -55,9 +55,13 @@ public:
     /** @brief Copy constructor. */
     DoubleInteger(const DoubleInteger<T> &n);
 
+
+    DoubleInteger(const T &upperIn, const T &lowerIn);
+
     /** @brief Smart copy constructor. */
     template<typename T2>
     DoubleInteger(T2 n);
+
 
     /*
      DoubleInteger(T *memory){
@@ -186,6 +190,13 @@ DoubleInteger<T>::DoubleInteger() {
     lower = static_cast<T>(0);
     upper = static_cast<T>(0);
 }
+
+template<typename T>
+DoubleInteger<T>::DoubleInteger(const T &upperIn, const T &lowerIn) {
+    lower = lowerIn;
+    upper = upperIn;
+}
+
 
 template<typename T>
 DoubleInteger<T>::DoubleInteger(const DoubleInteger<T> &n) {

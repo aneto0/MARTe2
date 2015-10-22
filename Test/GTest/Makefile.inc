@@ -23,9 +23,9 @@
 #############################################################
 
 
-OBJSX=	TypeCharacteristicsGTest.x \
+OBJSX=  DoubleIntegerGTest.x 
+#		TypeCharacteristicsGTest.x \
         ShiftGTest.x \
-        DoubleIntegerGTest.x \
         BasicTypeGTest.x \
         BasicConsoleGTest.x \
         FormatDescriptorGTest.x \
