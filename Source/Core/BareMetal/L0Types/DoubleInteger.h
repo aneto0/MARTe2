@@ -153,9 +153,12 @@ public:
      * @param n is the number to add.*/
     void operator+=(const DoubleInteger<T> &n);
 
-    T GetLower();
+    T GetLower() const;
 
-    T GetUpper();
+    T GetUpper() const;
+
+    void SetLower(T lowerIn);
+    void SetUpper(T upperIn);
 
 private:
 
@@ -475,13 +478,23 @@ void DoubleInteger<T>::operator+=(const DoubleInteger<T> &n) {
 }
 
 template<typename T>
-T DoubleInteger<T>::GetLower() {
+T DoubleInteger<T>::GetLower() const {
     return lower;
 }
 
 template<typename T>
-T DoubleInteger<T>::GetUpper() {
+T DoubleInteger<T>::GetUpper() const {
     return upper;
+}
+
+template<typename T>
+void DoubleInteger<T>::SetLower(T lowerIn) {
+    lower = lowerIn;
+}
+
+template<typename T>
+void DoubleInteger<T>::SetUpper(T upperIn) {
+    upper = upperIn;
 }
 
 }

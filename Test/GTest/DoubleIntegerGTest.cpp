@@ -23,17 +23,57 @@ protected:
 
 
 TEST_F(DoubleIntegerGTest,TestShift) {
-    DoubleIntegerTest numbertest;
-    ASSERT_TRUE(numbertest.TestShift());
+   /*
+
+    DoubleInteger< int32 > sbit64(0xf000000000000000);
+
+    //!= operator
+    if (sbit64 != 0xf000000000000000) {
+    return false;
+    }
+
+    //Math shift with sign extension.
+    if ((sbit64 >> 60) != -1) {
+    return false;
+    }
+
+    //Copy bit a bit.
+    DoubleInteger< uint32 > ubit64(0xf000000000000000);
+
+    //Math shift without sign extension.
+    if ((ubit64 >> 60) != 0xf) {
+    return false;
+    }
+
+    sbit64 = 0xf;
+
+    //left shift.
+    if ((sbit64 << 4) != 0xf0) {
+    return false;
+    }
+
+    //left shift.
+    if ((sbit64 << 63) != 0x8000000000000000) {
+    return false;
+    }
+    */
+    DoubleIntegerTest<int32> numbertest;
+
+    const testTableDI testTable[]={
+            {(DoubleInteger<int32>)0xf000000000000000, 60, (DoubleInteger<int32>)-1},
+            {(DoubleInteger<int32>)0, 0xff, (DoubleInteger<int32>)0}
+    };
+
+    ASSERT_TRUE(numbertest.TestShift(testTable));
 }
 
 TEST_F(DoubleIntegerGTest,TestLogicalOperators) {
-    DoubleIntegerTest numbertest;
+    DoubleIntegerTest<int32> numbertest;
     ASSERT_TRUE(numbertest.TestLogicalOperators());
 }
 
 TEST_F(DoubleIntegerGTest,TestMathematicOperators) {
-    DoubleIntegerTest numbertest;
+    DoubleIntegerTest<int32> numbertest;
     ASSERT_TRUE(numbertest.TestMathematicOperators());
 }
 

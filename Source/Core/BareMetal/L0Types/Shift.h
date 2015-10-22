@@ -270,9 +270,48 @@ int64 Shift::LogicalRightShift(int64 number,
 template<typename T2>
 DoubleInteger<T2> Shift::LogicalRightShift(DoubleInteger<T2> number,
                                            uint8 shift) {
-    return number >> shift;
-}
 
+    if (static_cast<T2>(-1) < 0) {
+
+        // shift of sizeof(T)*8 is treated as shift 0
+        // for this reason exit here to avoid this pitfall
+        if (shift > 0u) {
+            T2 lower = number.GetLower();
+            T2 upper = number.GetUpper();
+
+            // calculates n of bits of T
+            uint16 bitSize = static_cast<uint16>(sizeof(T2) * 8u);
+            // shift within one half
+            if (shift < bitSize) {
+                // shift lower first
+                lower = lower >> shift;
+                // add overflow from upper
+                // this would fail if shift is 0
+                lower |= (upper << (bitSize - shift));
+                // complete the upper
+                upper = upper >> shift;
+            }
+            else { // more than half!
+                   // remove half
+                shift -= bitSize;
+                // swap upper -> lower and shift with the remainder
+                lower = upper >> shift;
+                // upper is 0
+                if (upper < static_cast<T2>(0)) {
+                    upper = static_cast<T2>(-1);
+                }
+                else {
+                    upper = static_cast<T2>(0);
+                }
+            }
+            number.SetLower(lower);
+            number.SetUpper(upper);
+        }
+    }
+    else {
+        number >>= shift;
+    }
+    return number;
 }
 
 #endif /* L0TYPES_SHIFT_H_ */

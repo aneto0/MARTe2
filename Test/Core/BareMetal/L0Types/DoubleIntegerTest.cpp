@@ -41,6 +41,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+/*
 using namespace MARTe;
 
 bool DoubleIntegerTest::TestShift() {
@@ -318,3 +320,4 @@ bool DoubleIntegerTest::TestMathematicOperators() {
 
     return true;
 }
+*/
