@@ -69,6 +69,11 @@ public:
     bool TestBitSetToInteger_32();
 
     /**
+     * @brief Tests the conversion from BitSet to 64-bits integer.
+     */
+    bool TestBitSetToInteger_64();
+
+    /**
      * @brief Tests the conversion from 8-bits integer to BitSet.
      */
     bool TestIntegerToBitSet_8();

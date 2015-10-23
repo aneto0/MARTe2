@@ -81,8 +81,38 @@ template<typename T>
 class DoubleIntegerTest {
 
 public:
-    /** @brief Tests the shift operations.
-     * @return true if all operations return the expected result. */
+
+    /**
+     * @brief Tests if the number is initialized to zero.
+     */
+    bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests if the number is copied correctly by input.
+     */
+    bool TestCopyConstructor(DoubleInteger<T> input);
+
+    /**
+     * @brief Tests if the upper and lower setting goes well.
+     */
+    bool TestConstructorByParts(T upper,
+                                T lower);
+
+    /**
+     * @brief Tests if the constructor by generic type initializes the number correctly.
+     */
+    template<typename T2>
+    bool TestConstructorByType(T2 input);
+
+
+    bool TestGetLower(T lowerIn);
+
+    bool TestGetUpper(T upperIn);
+
+    bool TestSetLower(T lowerIn);
+
+    bool TestSetUpper(T upperIn);
+
     bool TestRightShift(const testTableShiftDI<T> *table);
 
     bool TestLeftShift(const testTableShiftDI<T> *table);
@@ -97,13 +127,17 @@ public:
 
     bool TestIsMinorOperator(const testTableLogicDI<T> *table);
 
-    /** @brief Tests the Logical operations.
-     * @return true if all operations return the expected result. */
-    bool TestLogicalOperators();
+    bool TestIsMajorEqualOperator(const testTableLogicDI<T> *table);
 
-    /** @brief Tests the Mathematic operations.
-     * @return true of all operations return the expected result. */
-    bool TestMathematicOperators();
+    bool TestIsMinorEqualOperator(const testTableLogicDI<T> *table);
+
+    bool TestSumOperator(const testTableLogicDI<T> *table);
+
+    bool TestSubOperator(const testTableLogicDI<T> *table);
+
+    bool TestIsEqual(const testTableLogicDI<T> *table);
+
+    bool TestIsDifferent(const testTableLogicDI<T> *table);
 
 };
 
@@ -112,16 +146,75 @@ public:
 /*---------------------------------------------------------------------------*/
 
 template<typename T>
+bool DoubleIntegerTest<T>::TestDefaultConstructor() {
+
+    DoubleInteger<T> x;
+    return x == 0;
+}
+
+template<typename T>
+bool DoubleIntegerTest<T>::TestCopyConstructor(DoubleInteger<T> input) {
+    DoubleInteger<T> x(input);
+    return x == input;
+}
+
+template<typename T>
+bool DoubleIntegerTest<T>::TestConstructorByParts(T upper,
+                                                  T lower) {
+    DoubleInteger<T> x(upper, lower);
+    return (x.GetLower() == lower) && (x.GetUpper() == upper);
+}
+
+template<typename T>
+template<typename T2>
+bool DoubleIntegerTest<T>::TestConstructorByType(T2 input) {
+    DoubleInteger<T> x(input);
+    return x == input;
+}
+
+template<typename T>
+bool DoubleIntegerTest<T>::TestGetLower(T lowerIn) {
+    DoubleInteger<T> x;
+    x.SetLower(lowerIn);
+    return x.GetLower() == lowerIn;
+}
+
+template<typename T>
+bool DoubleIntegerTest<T>::TestGetUpper(T upperIn) {
+    DoubleInteger<T> x;
+    x.SetUpper(upperIn);
+    return x.GetUpper() == upperIn;
+}
+
+template<typename T>
+bool DoubleIntegerTest<T>::TestSetLower(T lowerIn) {
+    DoubleInteger<T> x;
+    x.SetLower(lowerIn);
+    return x.GetLower() == lowerIn;
+}
+
+template<typename T>
+bool DoubleIntegerTest<T>::TestSetUpper(T upperIn) {
+    DoubleInteger<T> x;
+    x.SetUpper(upperIn);
+    return x.GetUpper() == upperIn;
+}
+
+template<typename T>
 bool DoubleIntegerTest<T>::TestRightShift(const testTableShiftDI<T> *table) {
     uint32 i = 0;
     while (table[i].shift != 0xff) {
 
         if ((table[i].number >> table[i].shift) != table[i].result) {
-            T lower = (table[i].number >> table[i].shift).GetLower();
-            printf("\n%d %d %d %d\n", (int32) lower, i, sizeof(T), table[i].shift);
             return false;
         }
         i++;
+    }
+
+    DoubleInteger<T> testN = table[i].number;
+    testN >>= table[i].shift;
+    if (testN != table[i].result) {
+        return false;
     }
 
     return true;
@@ -133,10 +226,15 @@ bool DoubleIntegerTest<T>::TestLeftShift(const testTableShiftDI<T> *table) {
     while (table[i].shift != 0xff) {
 
         if ((table[i].number << table[i].shift) != table[i].result) {
-            T lower = (table[i].number >> table[i].shift).GetLower();
-            printf("\n%d %d %d %d\n", (int32) lower, i, sizeof(T), table[i].shift);
             return false;
         }
+
+        DoubleInteger<T> testN = table[i].number;
+        testN <<= table[i].shift;
+        if (testN != table[i].result) {
+            return false;
+        }
+
         i++;
     }
 
@@ -150,8 +248,12 @@ bool DoubleIntegerTest<T>::TestAndOperator(const testTableLogicDI<T> *table) {
     while (table[i].isValid) {
 
         if ((table[i].number1 & table[i].number2) != table[i].result) {
-            T lower = (table[i].number1 & table[i].number2).GetLower();
-            printf("\n%d %d %d\n", (int32) lower, i, sizeof(T));
+            return false;
+        }
+
+        DoubleInteger<T> testN = table[i].number1;
+        testN &= table[i].number2;
+        if (testN != table[i].result) {
             return false;
         }
         i++;
@@ -166,10 +268,14 @@ bool DoubleIntegerTest<T>::TestOrOperator(const testTableLogicDI<T> *table) {
     while (table[i].isValid) {
 
         if ((table[i].number1 | table[i].number2) != table[i].result) {
-            T lower = (table[i].number1 & table[i].number2).GetLower();
-            printf("\n%d %d %d\n", (int32) lower, i, sizeof(T));
             return false;
         }
+        DoubleInteger<T> testN = table[i].number1;
+        testN |= table[i].number2;
+        if (testN != table[i].result) {
+            return false;
+        }
+
         i++;
     }
 
@@ -182,8 +288,6 @@ bool DoubleIntegerTest<T>::TestInvertOperator(const testTableLogicDI<T> *table) 
     while (table[i].isValid) {
 
         if (~(table[i].number1) != table[i].result) {
-            T lower = (table[i].number1 & table[i].number2).GetLower();
-            printf("\n%d %d %d\n", (int32) lower, i, sizeof(T));
             return false;
         }
         i++;
@@ -197,9 +301,7 @@ bool DoubleIntegerTest<T>::TestIsMajorOperator(const testTableLogicDI<T> *table)
     uint32 i = 0;
     while (table[i].isValid) {
 
-        if ((table[i].number1 > table[i].number2) != table[i].result) {
-            T lower = (table[i].number1 & table[i].number2).GetLower();
-            printf("\n%d %d %d\n", (int32) lower, i, sizeof(T));
+        if ((table[i].number1 > table[i].number2) != (table[i].result == 1)) {
             return false;
         }
         i++;
@@ -208,15 +310,13 @@ bool DoubleIntegerTest<T>::TestIsMajorOperator(const testTableLogicDI<T> *table)
     return true;
 }
 
-
 template<typename T>
-bool DoubleIntegerTest<T>::TestIsMajorOperator(const testTableLogicDI<T> *table) {
+bool DoubleIntegerTest<T>::TestIsMinorOperator(const testTableLogicDI<T> *table) {
     uint32 i = 0;
     while (table[i].isValid) {
 
-        if ((table[i].number1 < table[i].number2) != table[i].result) {
-            T lower = (table[i].number1 & table[i].number2).GetLower();
-            printf("\n%d %d %d\n", (int32) lower, i, sizeof(T));
+        if ((table[i].number1 < table[i].number2) != (table[i].result == 1)) {
+
             return false;
         }
         i++;
@@ -225,221 +325,100 @@ bool DoubleIntegerTest<T>::TestIsMajorOperator(const testTableLogicDI<T> *table)
     return true;
 }
 
-
-
 template<typename T>
-bool DoubleIntegerTest<T>::TestLogicalOperators() {
+bool DoubleIntegerTest<T>::TestIsMajorEqualOperator(const testTableLogicDI<T> *table) {
+    uint32 i = 0;
+    while (table[i].isValid) {
 
-    DoubleInteger<int32> test1(0x00ffffffffffffff);
-    DoubleInteger<int32> test2(0xff00000000000000);
+        if ((table[i].number1 >= table[i].number2) != (table[i].result == 1)) {
 
-    //Test or
-    if ((test1 | test2) != 0xffffffffffffffff) {
-        return false;
-    }
-
-    test1 |= test2;
-
-    if (test1 != 0xffffffffffffffff) {
-        return false;
-    }
-
-    //Test and
-    if ((test1 & test2) != test2) {
-        return false;
-    }
-
-    test1 &= 0;
-
-    if (test1 != 0) {
-        return false;
-    }
-
-    test1 = test2 + 1;
-
-    //Test <
-    if (test1 < test2) {
-        return false;
-    }
-
-    DoubleInteger<int32> zero;
-
-    //Test <=
-    if (test1 <= test2) {
-        return false;
-    }
-
-    if (!(zero <= 0)) {
-        return false;
-    }
-
-    //Test >
-    if (test2 > test1) {
-        return false;
-    }
-
-    //Test >=
-    if (test2 >= test1) {
-        return false;
-    }
-
-    if (!(zero >= 0)) {
-        return false;
-    }
-
-    test1 = -1;
-    test2 = -2;
-
-    if (test2 >= test1) {
-        return false;
+            return false;
+        }
+        i++;
     }
 
     return true;
 }
 
 template<typename T>
-bool DoubleIntegerTest<T>::TestMathematicOperators() {
+bool DoubleIntegerTest<T>::TestIsMinorEqualOperator(const testTableLogicDI<T> *table) {
+    uint32 i = 0;
+    while (table[i].isValid) {
 
-    DoubleInteger<int32> sbit64;
-    DoubleInteger<uint32> ubit64;
-/////////////Subtraction
+        if ((table[i].number1 <= table[i].number2) != (table[i].result == 1)) {
 
-//Subtraction with positive-negative lowers, GetUpper()--
-    ubit64 = 0xf7fffffff;
-    DoubleInteger<uint32> uAddend(0xefffffffe);
-
-    ubit64 -= uAddend;
-
-    sbit64 = 0xf7fffffff;
-    DoubleInteger<int32> sAddend(0xefffffffe);
-
-    sbit64 -= sAddend;
-
-    if ((int32) (ubit64.GetUpper()) != sbit64.GetUpper() || ubit64.GetLower() != (uint32) sbit64.GetLower() || ubit64.GetUpper() != 0
-            || sbit64.GetUpper() != 0) {
-        return false;
+            return false;
+        }
+        i++;
     }
 
-    //Subtraction with negative-positive lowers, uppers should not decrement.
-    ubit64 = 0xfffffffff;
-    uAddend = 0xe7ffffffe;
+    return true;
+}
 
-    DoubleInteger<uint32> test1 = ubit64 - uAddend;
+template<typename T>
+bool DoubleIntegerTest<T>::TestSumOperator(const testTableLogicDI<T> *table) {
+    uint32 i = 0;
+    while (table[i].isValid) {
 
-    sbit64 = 0xfffffffff;
-    sAddend = 0xe7ffffffe;
+        if ((table[i].number1 + table[i].number2) != table[i].result) {
 
-    DoubleInteger<int32> test2 = sbit64 - sAddend;
-
-    if ((int32) (test1.GetUpper()) != test2.GetUpper() || test1.GetLower() != (uint32) test2.GetLower() || test1.GetUpper() != 1 || test2.GetUpper() != 1) {
-        return false;
+            return false;
+        }
+        DoubleInteger<T> testN = table[i].number1;
+        testN += table[i].number2;
+        if (testN != table[i].result) {
+            return false;
+        }
+        i++;
     }
 
-    //Subtraction with positive-positive lowers, GetUpper() decrement.
-    ubit64 = 0xf6fffffff;
-    uAddend = 0xe7ffffffe;
+    return true;
+}
 
-    test1 = ubit64 - uAddend;
+template<typename T>
+bool DoubleIntegerTest<T>::TestSubOperator(const testTableLogicDI<T> *table) {
+    uint32 i = 0;
+    while (table[i].isValid) {
 
-    sbit64 = 0xf6fffffff;
-    sAddend = 0xe7ffffffe;
+        if ((table[i].number1 - table[i].number2) != table[i].result) {
 
-    test2 = sbit64 - sAddend;
-
-    if ((int32) (test1.GetUpper()) != test2.GetUpper() || test1.GetLower() != (uint32) test2.GetLower() || test1.GetUpper() != 0 || test2.GetUpper() != 0) {
-        return false;
+            return false;
+        }
+        DoubleInteger<T> testN = table[i].number1;
+        testN -= table[i].number2;
+        if (testN != table[i].result) {
+            return false;
+        }
+        i++;
     }
 
-    //Subtraction with negative-negative lowers, GetUpper() decrement.
-    ubit64 = 0xfefffffff;
-    uAddend = 0xefffffffe;
+    return true;
+}
 
-    test1 = ubit64 - uAddend;
+template<typename T>
+bool DoubleIntegerTest<T>::TestIsDifferent(const testTableLogicDI<T> *table) {
+    uint32 i = 0;
+    while (table[i].isValid) {
 
-    sbit64 = 0xfefffffff;
-    sAddend = 0xefffffffe;
-
-    test2 = sbit64 - sAddend;
-
-    if ((int32) (test1.GetUpper()) != test2.GetUpper() || test1.GetLower() != (uint32) test2.GetLower() || test1.GetUpper() != 0 || test2.GetUpper() != 0) {
-        return false;
+        if ((table[i].number1 != table[i].number2) != (table[i].result == 1)) {
+            return false;
+        }
+        i++;
     }
 
-/////////////Sum
+    return true;
+}
 
-//Addiction with positive-negative lowers, GetUpper()++
-    ubit64 = 0x7fffffff;
-    uAddend = (0xfffffffe);
+template<typename T>
+bool DoubleIntegerTest<T>::TestIsEqual(const testTableLogicDI<T> *table) {
 
-    ubit64 += uAddend;
+    uint32 i = 0;
+    while (table[i].isValid) {
 
-    sbit64 = 0x7fffffff;
-    sAddend = 0xfffffffe;
-
-    sbit64 += sAddend;
-
-    if ((int32) (ubit64.GetUpper()) != sbit64.GetUpper() || ubit64.GetLower() != (uint32) sbit64.GetLower() || ubit64.GetUpper() != 1
-            || sbit64.GetUpper() != 1) {
-        return false;
-    }
-
-    //Subtraction with negative-positive lowers, uppers ++.
-    ubit64 = 0xffffffff;
-    uAddend = 0x7ffffffe;
-
-    test1 = ubit64 + uAddend;
-
-    sbit64 = 0xffffffff;
-    sAddend = 0x7ffffffe;
-
-    test2 = sbit64 + sAddend;
-
-    if ((int32) (test1.GetUpper()) != test2.GetUpper() || test1.GetLower() != (uint32) test2.GetLower() || test1.GetUpper() != 1 || test2.GetUpper() != 1) {
-
-        return false;
-    }
-
-    //Subtraction with positive-positive lowers.
-    ubit64 = 0x7fffffff;
-    uAddend = 0x7ffffffe;
-
-    test1 = ubit64 + uAddend;
-
-    sbit64 = 0x7fffffff;
-    sAddend = 0x7ffffffe;
-
-    test2 = sbit64 + sAddend;
-
-    if ((int32) (test1.GetUpper()) != test2.GetUpper() || test1.GetLower() != (uint32) test2.GetLower() || test1.GetUpper() != 0 || test2.GetUpper() != 0) {
-
-        return false;
-    }
-
-    //Subtraction with negative-negative lowers, GetUpper() ++.
-    ubit64 = 0xefffffff;
-    uAddend = 0xfffffffe;
-
-    test1 = ubit64 + uAddend;
-
-    sbit64 = 0xefffffff;
-    sAddend = 0xfffffffe;
-
-    test2 = sbit64 + sAddend;
-
-    if ((int32) (test1.GetUpper()) != test2.GetUpper() || test1.GetLower() != (uint32) test2.GetLower() || test1.GetUpper() != 1 || test2.GetUpper() != 1) {
-        return false;
-    }
-
-    //Test operation with negative numbers.
-    sbit64 = -1;
-    test2 = -2;
-
-    if (sbit64 + test2 != -3) {
-        return false;
-    }
-
-    if (test2 - sbit64 != -1) {
-        return false;
+        if ((table[i].number1 == table[i].number2) != (table[i].result == 1)) {
+            return false;
+        }
+        i++;
     }
 
     return true;

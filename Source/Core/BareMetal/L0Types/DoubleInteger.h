@@ -40,139 +40,199 @@
 
 namespace MARTe {
 
-/** @brief Implementation of an integer which duplicates the size of the template passed in argument.
+/**
+ * @brief Implementation of an integer which duplicates the size of the type passed by argument.
  *
- * Implementation is endianity dependant.
- * Implements an integer number of float64 the size of T.
+ * @details Implementation is endianity dependent.\n
  * Uses operators of T to implement operators.
  */
 template<typename T>
 class DoubleInteger {
 public:
-    /** @brief Default constructor. */
+    /**
+     * @brief Default constructor.
+     */
     DoubleInteger();
 
-    /** @brief Copy constructor. */
+    /**
+     * @brief Copy constructor.
+     */
     DoubleInteger(const DoubleInteger<T> &n);
 
+    DoubleInteger(const T &upperIn,
+                  const T &lowerIn);
 
-    DoubleInteger(const T &upperIn, const T &lowerIn);
-
-    /** @brief Smart copy constructor. */
+    /**
+     * @brief Smart copy constructor.
+     */
     template<typename T2>
     DoubleInteger(T2 n);
 
 
-    /*
-     DoubleInteger(T *memory){
-     lower = *memory++;
-     upper = *memory;
-     }
+    /**
+     * @brief Implementation of arithmetic left shift.
+     * @param shift is the desired shift.
      */
-
-    /** @brief Implementation of mathematic left shift.
-     * @param shift is the desired shift. */
     void operator<<=(uint16 shift);
 
-    /** @brief Implementation of mathematic right shift.
-     * @param shift is the desired shift. */
+    /**
+     * @brief Implementation of arithmetic right shift.
+     * @param shift is the desired shift.
+     */
     void operator>>=(uint16 shift);
 
-    /** @brief Implementation of mathematic right shift.
+    /**
+     * @brief Implementation of arithmetic right shift.
      * @param shift is the desired shift.
-     * @return this right shifted of shift. */
+     * @return this right shifted of shift.
+     */
     DoubleInteger<T> operator>>(const uint8 shift) const;
 
-    /** @brief Implementation of mathematic left shift.
+    /**
+     * @brief Implementation of arithmetic left shift.
      * @param shift is the desired shift.
-     * @return this left shifted of shift. */
+     * @return this left shifted of shift.
+     */
     DoubleInteger<T> operator<<(const uint8 shift) const;
 
-    /** @brief Bitwise and operator.
-     * @param n is the DoubleInteger argument. */
+    /**
+     * @brief Bitwise and operator.
+     * @param n is the DoubleInteger argument.
+     */
     void operator&=(const DoubleInteger<T> &n);
 
-    /** @brief Bitwise or operator.
-     * @param n is the DoubleInteger argument. */
+    /**
+     * @brief Bitwise or operator.
+     * @param n is the DoubleInteger argument.
+     */
     void operator|=(const DoubleInteger<T> &n);
 
-    /** @brief Is Different operator.
+    /**
+     * @brief Is Different operator.
      * @param n is the DoubleInteger argument for comparison.
-     * @return false if this and n are equal, true otherwise. */
+     * @return false if this and n are equal, true otherwise.
+     */
     bool operator!=(const DoubleInteger<T> &n) const;
 
-    /** @brief Is Equal operator.
+    /**
+     * @brief Is Equal operator.
      * @param n is the DoubleInteger argument for comparison.
-     * @return true if this and n are equal, false otherwise. */
+     * @return true if this and n are equal, false otherwise.
+     */
     bool operator==(const DoubleInteger<T> &n) const;
 
-    /** @brief Bitwise invert. */
+    /**
+     * @brief Bitwise invert.
+     */
     DoubleInteger<T> operator~() const;
 
-    /** @brief Bitwise and.
+    /**
+     * @brief Bitwise and.
      * @param n is the DoubleInteger argument.
-     * @return the result of the bitwise and between this and n.*/
+     * @return the result of the bitwise and between this and n.
+     */
     DoubleInteger<T> operator&(const DoubleInteger<T> &n) const;
 
-    /** @brief Bitwise or.
+    /**
+     * @brief Bitwise or.
      * @param n is the DoubleInteger argument.
-     * @return the result of the bitwise or between this and n.*/
+     * @return the result of the bitwise or between this and n.
+     */
     DoubleInteger<T> operator|(const DoubleInteger<T> &n) const;
 
-    /** @brief Math subtraction.
+    /**
+     * @brief Math subtraction.
      * @param n is the number to subtract.
-     * @return the result of the subtraction. */
+     * @return the result of the subtraction.
+     */
     DoubleInteger<T> operator-(const DoubleInteger<T> &n) const;
 
-    /** @brief Math sum.
+    /**
+     * @brief Math sum.
      * @param n is the number to add.
-     * @return the sum. */
+     * @return the sum.
+     */
     DoubleInteger<T> operator+(const DoubleInteger<T> &n) const;
 
-    /** @brief Logical >.
+    /**
+     * @brief Logical >.
      * @param n is the DoubleInteger for the comparison.
-     * @return true if this is greater than n. */
+     * @return true if this is greater than n.
+     */
     bool operator>(const DoubleInteger<T> &n) const;
 
-    /** @brief Logical <.
+    /**
+     * @brief Logical <.
      * @param n is the DoubleInteger for the comparison.
-     * @return true if this is minor than n. */
+     * @return true if this is minor than n.
+     */
     bool operator<(const DoubleInteger<T> &n) const;
 
-    /** @brief Logical >=.
+    /**
+     * @brief Logical >=.
      * @param n is the DoubleInteger for the comparison.
-     * @return true if this is greater or equal than n. */
+     * @return true if this is greater or equal than n.
+     */
     bool operator>=(const DoubleInteger<T> &n) const;
 
-    /** @brief Logical <=.
+    /**
+     * @brief Logical <=.
      * @param n is the DoubleInteger for the comparison.
-     * @return true if this is minor than n. */
+     * @return true if this is minor than n.
+     */
     bool operator<=(const DoubleInteger<T> &n) const;
 
-    /** @brief Math subtraction.
-     * @param n is the number to subtract.*/
+    /**
+     * @brief Math subtraction.
+     * @param n is the number to subtract.
+     */
     void operator-=(const DoubleInteger<T> &n);
 
-    /** @brief Math sum.
-     * @param n is the number to add.*/
+    /**
+     * @brief Math sum.
+     * @param n is the number to add.
+     */
     void operator+=(const DoubleInteger<T> &n);
 
+    /**
+     * @brief Gets the the second part of the number.
+     */
     T GetLower() const;
 
+    /**
+     * @brief Gets the first part of the number.
+     */
     T GetUpper() const;
 
+
+
+    /**
+     * @brief Sets the the second part of the number.
+     */
     void SetLower(T lowerIn);
+
+
+    /**
+     * @brief Sets the the first part of the number.
+     */
     void SetUpper(T upperIn);
 
 private:
 
-    /** @brief Checks if the template is a signed type.
-     * @return true if the template is a signed type, false otherwise.*/
+    /**
+     * @brief Checks if the template is a signed type.
+     * @return true if the template is a signed type, false otherwise.
+     */
     static inline bool IsSigned();
 
-    /** Least significative. */
+    /**
+     * Least significative.
+     */
     T lower;
-    /** Most significative. */
+
+    /**
+     * Most significative.
+     */
     T upper;
 
 };
@@ -192,11 +252,11 @@ DoubleInteger<T>::DoubleInteger() {
 }
 
 template<typename T>
-DoubleInteger<T>::DoubleInteger(const T &upperIn, const T &lowerIn) {
+DoubleInteger<T>::DoubleInteger(const T &upperIn,
+                                const T &lowerIn) {
     lower = lowerIn;
     upper = upperIn;
 }
-
 
 template<typename T>
 DoubleInteger<T>::DoubleInteger(const DoubleInteger<T> &n) {
@@ -208,11 +268,11 @@ template<typename T>
 template<typename T2>
 DoubleInteger<T>::DoubleInteger(T2 n) {
     //if n=0 initialize to zero.
-    if (n == static_cast<T>(0)) {
+    if (n == static_cast<T2>(0)) {
         lower = static_cast<T>(0);
         upper = static_cast<T>(0);
     }
-    else if (n > static_cast<T>(0)) {
+    else if (n > static_cast<T2>(0)) {
         //cast the lower bits
         lower = static_cast<T>(n);
         upper = static_cast<T>(0);
@@ -460,20 +520,19 @@ bool DoubleInteger<T>::operator>(const DoubleInteger<T> &n) const {
 template<typename T>
 bool DoubleInteger<T>::operator<(const DoubleInteger<T> &n) const {
     DoubleInteger<T> output = (*this);
-    return !(output > n);
-//
+    return (!(output > n)) && (output != n);
 }
 
 template<typename T>
 bool DoubleInteger<T>::operator>=(const DoubleInteger<T> &n) const {
     DoubleInteger<T> output = (*this);
-    return ((output > n) || ((upper == static_cast<T>(0)) && (lower == static_cast<T>(0))));
+    return !(output < n);
 }
 
 template<typename T>
 bool DoubleInteger<T>::operator<=(const DoubleInteger<T> &n) const {
     DoubleInteger<T> output = (*this);
-    return ((output < n) || ((upper == static_cast<T>(0)) && (lower == static_cast<T>(0))));
+    return !(output > n);
 }
 
 template<typename T>

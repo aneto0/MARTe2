@@ -39,6 +39,68 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+bool BitSetToIntegerTest::TestBitSetToInteger_64() {
+
+    //128 bit source  [4294967221 -68, 4369, 572666675, 0]
+    uint32 source[] = { 0xffffffb5, 0x00001111, 0x22223333, 0x0 };
+    //128 bit dest
+    int64 sDest;
+    uint64 uDest;
+
+    uint8 sourceShift = 0;
+    uint8 sourceSize = 64;
+    uint32 *sPointer = source;
+
+    //Copy a signed 32 bit number.
+    BitSetToInteger(sDest, sPointer, sourceShift, sourceSize, true);
+    uint64 test = source[1];
+    test <<= 32;
+    test += source[0];
+    if (sDest != (int64) test) {
+        return false;
+    }
+
+    sourceShift = 0;
+    uint8 sourceSize = 33;
+    sPointer = source;
+    //Copy an unsigned 32 bit number, with source signed it should be saturated to 0.
+    BitSetToInteger(uDest, sPointer, sourceShift, sourceSize, true);
+    if (uDest != 0) {
+        return false;
+    }
+
+    sourceShift = 0;
+    sPointer = source;
+    //Copy an unsigned 32 bit number, with source unsigned.
+    test = 1;
+    test <<= 32;
+    test += source[0];
+    BitSetToInteger(uDest, sPointer, sourceShift, sourceSize, false);
+    if (uDest != source[0]) {
+        return false;
+    }
+
+    sourceShift = 16;
+    sourceSize = 16;
+
+    sPointer = source;
+    //Source shift
+    BitSetToInteger(sDest, sPointer, sourceShift, sourceSize, true);
+    if (sDest != 0x1111ffff) {
+        return false;
+    }
+
+    sourceSize = 17;
+
+    //Source automatic shift
+    BitSetToInteger(sDest, sPointer, sourceShift, sourceSize, true);
+    if (sDest != 0xffffffff33330000) {
+        return false;
+    }
+
+    return true;
+}
+
 bool BitSetToIntegerTest::TestBitSetToInteger_32() {
 
     //128 bit source  [4294967221 -68, 4369, 572666675, 0]

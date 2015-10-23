@@ -41,7 +41,11 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
+TEST(BitSetToIntegerGTest,TestBitSetToBitSet_64) {
+    BitSetToIntegerTest bitsettest;
+    ASSERT_TRUE(bitsettest.TestBitSetToBitSet<uint64>());
+    ASSERT_TRUE(bitsettest.TestBitSetToBitSet<int64>());
+}
 
 TEST(BitSetToIntegerGTest,TestBitSetToBitSet_32) {
     BitSetToIntegerTest bitsettest;

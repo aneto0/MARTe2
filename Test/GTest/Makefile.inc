@@ -23,7 +23,10 @@
 #############################################################
 
 
-OBJSX=  DoubleIntegerGTest.x 
+OBJSX=  DoubleIntegerGTest.x \
+        StreamIGTest.x \
+        IOBufferGTest.x \
+        BitSetToIntegerGTest.x
 #		TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
@@ -68,15 +71,12 @@ OBJSX=  DoubleIntegerGTest.x
  	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x  \
 	CharBufferGTest.x \
-        IOBufferGTest.x \
         StreamStringIOBufferGTest.x \
-        StreamIGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
         StreamStringGTest.x \
         StreamMemoryReferenceGTest.x \
-        BitSetToIntegerGTest.x
 
 	
 	
