@@ -86,12 +86,12 @@ $(BUILD_DIR)/%.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	@echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
 	@cat title $(IMPDEFS) > dllGenerator.def
 	$(COMPILER)  $(LFLAGS) -LDd -Zi $(OBJS) $(LIBRARIES) dllGenerator.def -o $@
-	$(subst /,\,$(ROOT_DIR))\MakeDefaults\DLLs\expdef.exe $@ > $(@:%.dll=%.def)
+	$(subst /,\,$(ROOT_DIR))\Build\Tools\expdef.exe $@ > $(@:%.dll=%.def)
 	rm dllGenerator.def
 	
 $(BUILD_DIR)/dummy.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	touch dummy.cpp
-	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $(INCLUDES) dummy.cpp  -Fa
+	$(COMPILER) -c $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $(INCLUDES) dummy.cpp  $(ASSEMBLER)
 	@echo LIBRARY $(@:$(BUILD_DIR)/%.dll=%.dll) > title
 	@cat title $(IMPDEFS) > dllGenerator.def
 	$(COMPILER)  $(LFLAGS) -LDd -Zi dummy.obj $(OBJS) $(LIBRARIES) dllGenerator.def -o $@
@@ -100,7 +100,7 @@ $(BUILD_DIR)/dummy.dll : $(OBJS) $(LIBRARIES) $(IMPDEFS)
 	
 	
 $(BUILD_DIR)/%.def : $(BUILD_DIR)/dummy.dll
-	$(subst /,\,$(ROOT_DIR))\MakeDefaults\DLLs\expdef.exe $< > $@
+	$(subst /,\,$(ROOT_DIR))\Build\Tools\expdef.exe $< > $@
 	@rm -f $(BUILD_DIR)/dummy.dll 
 
 
@@ -144,6 +144,5 @@ clean:  $(SUBPROJC)
 	@if exist $(BUILD_DIR)/*$(PDBEXT) rm -f $(BUILD_DIR)/*$(PDBEXT)
 	@if exist $(BUILD_DIR)/*$(DEFEXT) rm -f $(BUILD_DIR)/*$(DEFEXT)	
 	@if exist $(BUILD_DIR)/*$(OBJEXT) rm -f $(BUILD_DIR)/*$(OBJEXT)
-	@if exist $(ROOT_DIR)/MakeDefaults/DLLs/*$(DLLEXT) rm -f $(ROOT_DIR)/MakeDefaults/DLLs/*$(DLLEXT)
 	
 		
