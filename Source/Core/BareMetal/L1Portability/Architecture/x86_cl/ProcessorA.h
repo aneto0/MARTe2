@@ -51,7 +51,7 @@ namespace Processor{
 /**
  * Buffer used to store the processor identifier
  */
-extern char8 processorVendorId[13];
+DLL_API extern char8 processorVendorId[13];
 
 /**
  * @brief Implementation of the cpuid function for x86 and cl

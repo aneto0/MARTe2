@@ -20,7 +20,6 @@
  * the class IOBuffer (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -28,6 +27,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#define DLL_API
 
 #include "IOBuffer.h"
 #include "AdvancedErrorManagement.h"
@@ -35,6 +35,7 @@
 #include "FormatDescriptor.h"
 #include "BitSetToInteger.h"
 #include "StreamI.h"
+
 
 namespace MARTe {
 
@@ -74,10 +75,10 @@ extern bool IntegerToStream(IOBuffer &ioBuffer,
                             const FormatDescriptor &format);
 
 extern bool BitSetToStream(IOBuffer &ioBuffer,
-                           uint32 *numberAddress,
-                           uint8 numberBitShift,
-                           uint8 numberBitSize,
-                           bool numberIsSigned,
+                           uint32 * const numberAddress,
+                           const uint8 numberBitShift,
+                           const uint8 numberBitSize,
+                           const bool numberIsSigned,
                            const FormatDescriptor &format);
 
 // These functions are implemented in IOBufferFloatPrint.cpp

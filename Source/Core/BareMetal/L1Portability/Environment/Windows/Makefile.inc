@@ -36,7 +36,8 @@ OBJSX=  MemoryOperationsHelper_CLIB_Gen.x \
         Sleep.x \
         HighResolutionTimerCalibrator.x \
         LoadableLibrary.x  \
-        MemoryCheck_Gen.x
+        MemoryCheck_Gen.x \
+        ErrorManagement_Gen.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
@@ -45,7 +46,8 @@ INCLUDES+=-I../../
 INCLUDES+=-I../../../L0Types
 
 all: $(OBJS)  $(CPPS)  \
-                $(BUILD_DIR)/L1Portability$(LIBEXT)
+                $(BUILD_DIR)/L1Portability$(LIBEXT) \
+                $(BUILD_DIR)/L1Portability.def
 	echo  $(OBJS)
 
 include depends.$(TARGET)

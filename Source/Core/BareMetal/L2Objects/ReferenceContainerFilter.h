@@ -84,18 +84,18 @@ class ReferenceContainer;
  * Every time the Test function is to return it should call
  * IncrementFound so that the number of occurrences found is correctly tracked.
  */
-class ReferenceContainerFilter {
+class DLL_API ReferenceContainerFilter {
 public:
     /**
      * @brief Default constructor
      */
-    ReferenceContainerFilter();
+     ReferenceContainerFilter();
 
     /**
      * @brief Copy constructor.
      * @param[in] filterCopy is the filter to be copied.
      */
-    ReferenceContainerFilter(const ReferenceContainerFilter &filterCopy);
+     ReferenceContainerFilter(const ReferenceContainerFilter &filterCopy);
 
     /**
      * @brief Sets the searching mode parameters.
@@ -104,12 +104,12 @@ public:
      * @param[in] modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
      */
-    ReferenceContainerFilter(const int32 &occurrenceNumber,
+     ReferenceContainerFilter(const int32 &occurrenceNumber,
                              const uint32 &modeToSet);
     /**
      * @brief Destructor. NOOP
      */
-    virtual ~ReferenceContainerFilter();
+     virtual ~ReferenceContainerFilter();
 
     /**
      * @brief Tests if a given reference meets the searching criteria.
@@ -118,39 +118,39 @@ public:
      * @param[in] referenceToTest the Reference to be tested.
      * @return if the \a referenceToTest meets the searching criteria.
      */
-    virtual bool Test(ReferenceContainer &previouslyFound,
+     virtual bool Test(ReferenceContainer &previouslyFound,
                       Reference &referenceToTest) = 0;
 
     /**
      * @brief Informs that a new occurrence has been found.
      */
-    void IncrementFound();
+     void IncrementFound();
 
     /**
      * @brief Return true if the found nodes are to be deleted.
      * @return true if the found nodes are to be deleted, false otherwise.
      */
-    bool IsRemove() const;
+     bool IsRemove() const;
 
     /**
      * @brief Return true if the occurrence of the node being searched was found.
      * @return true if the occurrence of the node being searched was found, false otherwise.
      */
-    bool IsFinished() const;
+     bool IsFinished() const;
 
     /**
      * @brief Return true if the search is recursive in all the tree nodes.
      * @details This mode will be automatically enabled setting the PATH mode.
      * @return true if the search is recursive in all the tree nodes, false otherwise.
      */
-    virtual bool IsRecursive() const;
+     virtual bool IsRecursive() const;
 
     /**
      * @brief Return true if all occurrences of a given pattern are to be searched.
      * @details This mode disables automatically the PATH mode.
      * @return true if all occurrences of a given pattern are to searched, false otherwise.
      */
-    virtual bool IsSearchAll() const;
+     virtual bool IsSearchAll() const;
 
     /**
      * @brief Return true if all the nodes leading to a given occurrence are to be stored.
@@ -158,43 +158,43 @@ public:
      * RECURSIVE mode.
      * @return true true if all the nodes leading to a given occurrence are to be stored, false otherwise.
      */
-    virtual bool IsStorePath() const;
+     virtual bool IsStorePath() const;
 
     /**
      * @brief Return true if the tree should be searched from right to left.
      * @return true if the tree should be searched from right to left, false otherwise.
      */
-    bool IsReverse() const;
+     bool IsReverse() const;
 
     /**
      * @brief Return the search mode as a binary keyword.
      * @return the search mode as a binary keyword.
      */
-    uint32 GetMode() const;
+     uint32 GetMode() const;
 
     /**
      * @brief Updates the search mode to a new binary keyword.
      * @param[in] modeToSet any ored combination of ReferenceContainerFilterMode::PATH, ReferenceContainerFilterMode::RECURSIVE,
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
      */
-    void SetMode(const uint32 &modeToSet);
+     void SetMode(const uint32 &modeToSet);
 
     /**
      * @brief Resets the number of occurrences to the value that was set when the filter was created.
      */
-    void Reset();
+     void Reset();
 
     /**
      * @brief Return the number of occurrences that were set when the filter was created.
      * @return the number of occurrences that were set when the filter was created.
      */
-    int32 GetOriginalSetOccurrence() const;
+     int32 GetOriginalSetOccurrence() const;
 
     /**
      * @brief Updates the occurrence value. This will trigger a Reset().
      * @param[in] occurrenceToSet the new occurrence value that should be set when a Reset() is triggered.
      */
-    void SetOriginalSetOccurrence(const int32 occurrenceToSet);
+     void SetOriginalSetOccurrence(const int32 occurrenceToSet);
 
 protected:
     /**

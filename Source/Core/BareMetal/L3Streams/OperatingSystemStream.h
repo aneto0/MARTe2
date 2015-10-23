@@ -55,7 +55,9 @@ public:
     /**
      * @brief Destructor
      */
-    virtual ~OperatingSystemStream();
+    virtual ~OperatingSystemStream(){
+
+    }
 
     /**
      * @brief Reads data from the stream to a char8* buffer.
@@ -196,8 +198,6 @@ public:
 
 namespace MARTe {
 
-inline OperatingSystemStream::~OperatingSystemStream() {
-}
 
 }
 

@@ -240,14 +240,14 @@ bool DoubleBufferedStreamTest::TestFlush(uint32 bufferSize) {
 bool DoubleBufferedStreamTest::TestRead_NotCanRead() {
     DummyDoubleBufferedStream stream(true, false, true);
     uint32 size = 8;
-    char buffer[size];
+    char buffer[8];
     return !stream.Read(buffer, size);
 }
 
 bool DoubleBufferedStreamTest::TestWrite_NotCanWrite() {
     DummyDoubleBufferedStream stream(true, true, false);
     uint32 size = 8;
-    char buffer[size];
+    char buffer[8];
     return !stream.Write(buffer, size);
 }
 

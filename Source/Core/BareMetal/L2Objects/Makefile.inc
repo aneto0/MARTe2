@@ -43,7 +43,8 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES+=-I../L1Portability -I../L0Types
 
 all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L2Objects$(LIBEXT)
+		$(BUILD_DIR)/L2ObjectsB$(LIBEXT) \
+		$(BUILD_DIR)/L2ObjectsB.def
 	echo  $(OBJS)
 
 include depends.$(TARGET)

@@ -40,6 +40,8 @@ typedef CONSOLE_SCREEN_BUFFER_INFO ConsoleInfo;
 typedef DWORD ThreadIdentifier;
 static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdentifier>(0);
 
+/** Maximum number of global databases */
+const uint32 NUMBER_OF_GLOBAL_OBJECTS = 64u;
 
 /** Defines the default stack size for a thread. */
 #define THREADS_DEFAULT_STACKSIZE 32768
@@ -54,14 +56,24 @@ static const ThreadIdentifier InvalidThreadIdentifier = static_cast<ThreadIdenti
 #define N_CHARS_NEWLINE 2
 
 typedef long oslong;
-typedef unsigned long osulong;
+typedef size_t osulong;
 
-#define __ERROR_FUNCTION_NAME__   __FUNCDNAME__  windows
+#define __ERROR_FUNCTION_NAME__   __FUNCDNAME__  //windows
 
 /**
  * Know shared library extensions
  */
 static const char8 * const operatingSystemDLLExtensions[] = { ".gam", ".drv", ".so", 0 };
+
+struct MutexSemProperties;
+#define MutexSemHandle MutexSemProperties*
+
+struct EventSemProperties;
+#define EventSemHandle EventSemProperties*
+
+struct BasicConsoleProperties;
+#define BasicConsoleHandle BasicConsoleProperties*
+
 
 }
 #endif /* GENERALDEFINITIONS_ENV_H_ */

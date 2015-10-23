@@ -21,6 +21,9 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -59,23 +62,24 @@ void AtLeast(float64 sec) {
 
 void NoMore(float64 sec) {
     int ticks = (int) (winSleepFreq * sec);
-    if (ticks < 0)
+    if (ticks < 0){
         return;
-
+    }
     ::Sleep(ticks);
 }
 
 void Sec(float64 sec) {
-    if (sec < 0)
+    if (sec < 0){
         return;
+    }
 
     ::Sleep((unsigned long) (sec * 1000.0 + 0.5));
 }
 
 void MSec(int32 msec) {
-    if (msec < 0)
+    if (msec < 0){
         return;
-
+    }
     ::Sleep(msec);
 }
 

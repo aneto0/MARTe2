@@ -219,6 +219,7 @@ bool ReferenceTest::TestCopyOperatorReferenceNull() {
 }
 
 bool ReferenceTest::TestCopyOperatorObject() {
+    ClassRegistryDatabase::Instance();
 
     Reference intObjRef = Reference("IntegerObject");
     (dynamic_cast<IntegerObject*>(intObjRef.operator->()))->SetVariable(2);
@@ -424,6 +425,8 @@ void CreateRefsOnHeap(ReferenceTest &rt) {
 }
 
 bool ReferenceTest::TestInFunctionOnHeap(uint32 nRefs) {
+
+    ClassRegistryDatabase::Instance();
 
     storedRef = Reference("Object");
 

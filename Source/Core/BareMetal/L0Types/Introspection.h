@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief TODO
  */
-class Introspection {
+class DLL_API Introspection {
 public:
     //TODO
     Introspection(){}

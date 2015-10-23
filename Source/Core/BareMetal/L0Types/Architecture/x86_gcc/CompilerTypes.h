@@ -69,6 +69,9 @@ typedef uint32      uintp;
 
 #define HANDLE void *
 
+#define dll_import
+#define dll_export
+
 }
 
 #endif /* COMPILERTYPESA */

@@ -23,7 +23,7 @@
 # $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX=
+OBJSX= 
 SPB    = L1Portability.x
 PACKAGE=Core
 MAKEDEFAULTDIR=../../../MakeDefaults
@@ -31,9 +31,11 @@ MAKEDEFAULTDIR=../../../MakeDefaults
 ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
+LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityS$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTeCoreS$(LIBEXT)
+		$(BUILD_DIR)/MARTeCoreS$(LIBEXT) \
+		$(BUILD_DIR)/MARTeCoreS.def
 	echo  $(OBJS)
 
 

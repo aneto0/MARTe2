@@ -57,33 +57,33 @@ namespace Sleep {
  * @brief Retrieve the time as seconds from the start of time.
  * @return the seconds elapsed from 00:00 of Jan 1, 1970.
  */
-int32 GetDateSeconds(void);
+DLL_API int32 GetDateSeconds(void);
 
 /**
  * @brief Sleeps for the time requested or more.
  * @details This function uses HighResolutionTimer functions.
  * @param[in] sec is the time in seconds to sleep (at least).
  */
-void AtLeast(const float64 sec);
+DLL_API void AtLeast(const float64 sec);
 
 /**
  * @brief Sleeps no more than the requested time.
  * @details This function uses HighResolutionTimer functions.
  * @param[in] sec is the time in seconds to sleep (no more).
  */
-void NoMore(const float64 sec);
+DLL_API void NoMore(const float64 sec);
 
 /**
  * @brief Sleeps for sec seconds (float64 value).
  * @param[in] sec is the time to sleep.
  */
-void Sec(const float64 sec);
+DLL_API void Sec(const float64 sec);
 
 /**
  * @brief Sleeps for msec milliseconds.
  * @param[in] msec is the number of milliseconds to sleep.
  */
-void MSec(const int32 msec);
+DLL_API void MSec(const int32 msec);
 
 /**
  * @brief Sleep without yield cpu.
@@ -98,7 +98,7 @@ inline void Busy(float64 sec);
  * @param[in] totalSleepSec is the total time in seconds to sleep.
  * @param[in] nonBusySleepSec is the time to sleep without use cpu.
  */
-void SemiBusy(const float64 totalSleepSec,
+DLL_API void SemiBusy(const float64 totalSleepSec,
               const float64 nonBusySleepSec);
 }
 

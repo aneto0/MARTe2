@@ -21,6 +21,7 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -30,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HighResolutionTimerCalibrator.h"
-#include "HighResolutionTimer.h"
+#include "../../HighResolutionTimer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

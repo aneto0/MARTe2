@@ -73,6 +73,10 @@ typedef unsigned long      uintp;
 
 #define HANDLE void *
 
+
+#define dll_import __declspec(dllimport)
+#define dll_export __declspec(dllexport)
+
 }
 
 #endif /* COMPILERTYPESA */

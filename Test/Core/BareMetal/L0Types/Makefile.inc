@@ -33,7 +33,7 @@ OBJSX=  BitBooleanTest.x\
         LinkedListHolderTest.x \
         TypeDescriptorTest.x \
         ShiftTest.x
-		
+        		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults

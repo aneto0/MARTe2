@@ -53,7 +53,7 @@ namespace MARTe {
  * It supplements two independent low-level RawStreams (which implement the
  * low-level calls such as Read, Write, ...) with a buffering scheme.
  */
-class DoubleBufferedStream: public StreamI, public OperatingSystemCallbacksI {
+class DLL_API DoubleBufferedStream: public StreamI, public OperatingSystemCallbacksI {
 
 public:
     /**

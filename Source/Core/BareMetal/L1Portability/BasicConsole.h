@@ -90,7 +90,7 @@ struct BasicConsoleProperties;
  * The specificities of the behaviour are delegated to the underlying operating system.
  * Not all of the features are necessarily implemented in all the operating systems.
  */
-class BasicConsole {
+class DLL_API BasicConsole {
 
 public:
 
