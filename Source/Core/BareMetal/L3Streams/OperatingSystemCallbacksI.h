@@ -38,7 +38,7 @@
 
 namespace MARTe {
 
-class OperatingSystemCallbacksI {
+class DLL_API OperatingSystemCallbacksI {
 
     friend class BufferedStreamIOBuffer;
 

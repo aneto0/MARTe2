@@ -55,6 +55,21 @@ bool SingleBufferedStreamTest::TestConstructor_Timeout() {
     return ok;
 }
 
+bool SingleBufferedStreamTest::TestGetTimeout() {
+    TimeoutType tt = 1;
+    DummySingleBufferedStream myStream;
+    myStream.SetTimeout(tt);
+    return (myStream.GetTimeout() == tt);
+}
+
+bool SingleBufferedStreamTest::TestSetTimeout() {
+    TimeoutType tt = 1;
+    DummySingleBufferedStream myStream;
+    myStream.SetTimeout(tt);
+    return (myStream.GetTimeout() == tt);
+}
+
+
 bool SingleBufferedStreamTest::TestSetBufferSize(uint32 bufferSize) {
     DummySingleBufferedStream stream;
     stream.SetBufferSize(bufferSize);
@@ -175,7 +190,7 @@ bool SingleBufferedStreamTest::TestSeek() {
     stream.SetBufferSize(64);
 
     uint32 size = 32;
-    char buffer[size];
+    char buffer[32];
     uint32 i = 0;
     for (i = 0; i < size; i++) {
         buffer[i] = i;
@@ -202,7 +217,7 @@ bool SingleBufferedStreamTest::TestRelativeSeek() {
     stream.SetBufferSize(64);
 
     uint32 size = 32;
-    char buffer[size];
+    char buffer[32];
     uint32 i = 0;
     for (i = 0; i < size; i++) {
         buffer[i] = i;
@@ -259,14 +274,14 @@ bool SingleBufferedStreamTest::TestFlushAndResync(uint32 bufferSize) {
 bool SingleBufferedStreamTest::TestRead_NotCanRead() {
     DummySingleBufferedStream stream(true, false, true);
     uint32 size = 8;
-    char buffer[size];
+    char buffer[8];
     return !stream.Read(buffer, size);
 }
 
 bool SingleBufferedStreamTest::TestWrite_NotCanWrite() {
     DummySingleBufferedStream stream(true, true, false);
     uint32 size = 8;
-    char buffer[size];
+    char buffer[8];
     return !stream.Write(buffer, size);
 }
 

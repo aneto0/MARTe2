@@ -20,7 +20,7 @@
  * the class StreamI (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -43,7 +43,6 @@
 namespace MARTe {
 
 StreamI::StreamI() {
-    timeout = TTInfiniteWait;
 }
 
 StreamI::~StreamI() {
@@ -197,12 +196,6 @@ bool StreamI::Copy(StreamI &stream) {
 
 }
 
-TimeoutType StreamI::GetTimeout() const {
-    return timeout;
-}
 
-void StreamI::SetTimeout(const TimeoutType &timeoutIn) {
-    timeout = timeoutIn;
-}
 
 }

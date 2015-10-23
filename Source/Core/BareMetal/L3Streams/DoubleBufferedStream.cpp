@@ -21,6 +21,7 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -245,6 +246,15 @@ uint32 DoubleBufferedStream::GetReadBufferSize() const {
 
 uint32 DoubleBufferedStream::GetWriteBufferSize() const {
     return writeBuffer.GetBufferSize();
+}
+
+TimeoutType DoubleBufferedStream::GetTimeout() const {
+    return readBuffer.GetTimeout();
+}
+
+void DoubleBufferedStream::SetTimeout(const TimeoutType &timeoutIn) {
+    readBuffer.SetTimeout(timeoutIn);
+    writeBuffer.SetTimeout(timeoutIn);
 }
 
 }

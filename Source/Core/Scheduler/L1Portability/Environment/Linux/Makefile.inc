@@ -33,7 +33,8 @@ OBJSX=  EventSem.x \
         MutexSem.x \
         Processor.x \
         Threads.x \
-        ThreadsDatabase_Gen.x
+        ThreadsDatabase_Gen.x \
+        ThreadInformation_Gen.x
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)

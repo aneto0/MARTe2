@@ -52,6 +52,16 @@ TEST(BufferedStreamIOBufferGTest, TestFullConstructor) {
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestFullConstructor());
 }
 
+TEST(BufferedStreamIOBufferGTest, TestGetTimeout) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestGetTimeout());
+}
+
+TEST(BufferedStreamIOBufferGTest, TestSetTimeout) {
+    BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
+    ASSERT_TRUE(myBufferedStreamIOBufferTest.TestSetTimeout());
+}
+
 TEST(BufferedStreamIOBufferGTest, TestRefill) {
     BufferedStreamIOBufferTest myBufferedStreamIOBufferTest;
     ASSERT_TRUE(myBufferedStreamIOBufferTest.TestRefill());

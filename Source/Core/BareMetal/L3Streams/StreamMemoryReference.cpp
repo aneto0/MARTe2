@@ -20,7 +20,7 @@
  * the class StreamMemoryReference (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -113,7 +113,7 @@ bool StreamMemoryReference::Seek(const uint64 pos) {
     if (pos > usedSize) {
 //REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
         if (!buffer.Seek(usedSize)) {
-            //TODO
+            REPORT_ERROR(ErrorManagement::FatalError, "StreammemoryReference: Failed in the buffer Seek function");
         }
         ret = false;
     }

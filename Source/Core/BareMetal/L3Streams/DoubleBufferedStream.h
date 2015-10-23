@@ -53,7 +53,7 @@ namespace MARTe {
  * It supplements two independent low-level RawStreams (which implement the
  * low-level calls such as Read, Write, ...) with a buffering scheme.
  */
-class DoubleBufferedStream: public StreamI, public OperatingSystemCallbacksI {
+class DLL_API DoubleBufferedStream: public StreamI, public OperatingSystemCallbacksI {
 
 public:
     /**
@@ -101,7 +101,6 @@ public:
      */
     virtual bool SetBufferSize(uint32 readBufferSize,
                                uint32 writeBufferSize);
-
 
     /**
      * @see StreamI::Read
@@ -158,6 +157,20 @@ public:
      */
     inline bool Flush();
 
+    /**
+     * @brief Gets the timeout value for read/write operations.
+     * @return the timeout value for read/write operations.
+     */
+    TimeoutType GetTimeout() const;
+
+    /**
+     * @brief Sets the read/write timeout value.
+     * @param[in] timeoutIn the new read/write timeout value.
+     * @pre true
+     * @post GetTimeout() == timeout
+     */
+    void SetTimeout(const TimeoutType &timeoutIn);
+
 protected:
     /**
      * @brief Gets the read buffer.
@@ -193,7 +206,6 @@ private:
     bool bufferSizeSet;
 
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

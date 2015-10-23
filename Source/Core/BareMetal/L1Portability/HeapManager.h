@@ -54,7 +54,7 @@ namespace HeapManager {
  * @return a pointer to the HeapI that manages the specified memory location or
  * GetStandardHeap() if no one in HeapI objects' database manages that address.
  */
-HeapI *FindHeap(const void * const address);
+DLL_API HeapI *FindHeap(const void * const address);
 
 /**
  * @brief Finds the HeapI object by name in the database.
@@ -62,7 +62,7 @@ HeapI *FindHeap(const void * const address);
  * @return a pointer to the HeapI with the specified name or
  * NULL if the name is not found in the HeapI objects' database.
  */
-HeapI *FindHeap(const char8 * const name);
+DLL_API HeapI *FindHeap(const char8 * const name);
 
 /**
  * @brief Registers a HeapI object in the database.
@@ -72,7 +72,7 @@ HeapI *FindHeap(const char8 * const name);
  * @pre All the heaps added have to have different names. AddHeap does not check if it is already include
  * a heap with the same name.
  */
-bool AddHeap(HeapI *const newHeap);
+DLL_API bool AddHeap(HeapI *const newHeap);
 
 /**
  * @brief Removes a specified HeapI object from the database.
@@ -80,7 +80,7 @@ bool AddHeap(HeapI *const newHeap);
  * @return true if the specified heap was in the database and
  * it has been correctly removed, false otherwise.
  */
-bool RemoveHeap(const HeapI * const heap);
+DLL_API bool RemoveHeap(const HeapI * const heap);
 
 /**
  * @brief Calls the HeapI::Free function of the HeapI
@@ -91,7 +91,7 @@ bool RemoveHeap(const HeapI * const heap);
  * @return true if the memory is freed, false in case of belonging to no heap.
  * @post data = NULL
  */
-bool Free(void *&data);
+DLL_API bool Free(void *&data);
 
 /**
  * @brief Allocates a portion of memory on the specified heap.
@@ -101,7 +101,7 @@ bool Free(void *&data);
  * @param[in] heapName name of heap to use.
  * @return The pointer to the allocated memory. NULL if allocation failed.
  */
-void *Malloc(uint32 size,
+DLL_API void *Malloc(uint32 size,
              const char8 * const heapName = NULL_PTR(char8 *));
 
 /**
@@ -112,7 +112,7 @@ void *Malloc(uint32 size,
  * @param[in] newSize The size of the new memory block.
  * @return The pointer to the new data block. NULL if reallocation failed.
  */
-void *Realloc(void *&data,
+DLL_API void *Realloc(void *&data,
               const uint32 newSize);
 
 /**
@@ -127,7 +127,7 @@ void *Realloc(void *&data,
  * @return The pointer to the new allocated memory which contains a copy of s.
  * @pre If size = 0 the memory area pointed by \a data must be a zero terminated string.
  */
-void *Duplicate(const void * const data,
+DLL_API void *Duplicate(const void * const data,
                 const uint32 size = 0U,
                 const char8 * const heapName = NULL_PTR(char8 *));
 

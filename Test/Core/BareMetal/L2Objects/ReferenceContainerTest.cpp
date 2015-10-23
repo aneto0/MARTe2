@@ -421,7 +421,6 @@ bool ReferenceContainerTest::TestFindRemoveSecondOccurrenceReverse(ReferenceCont
 void PrintTree(ReferenceT<ReferenceContainer> tree) {
     uint32 i = 0;
     for (i = 0; i < tree->Size(); i++) {
-        printf("%s|", tree->Get(i)->GetName());
         ReferenceT<ReferenceContainer> node = tree->Get(i);
         if (node.IsValid()) {
             //PrintTree(node);

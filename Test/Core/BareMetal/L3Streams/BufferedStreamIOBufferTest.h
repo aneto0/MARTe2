@@ -38,33 +38,88 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Test the BufferedStreamIOBuffer public functions.
+ */
 class BufferedStreamIOBufferTest {
 
 public:
+
+    /**
+     * @brief Tests if the default constructor initializes the internal buffer to null
+     * and the stream pointer to null.
+     */
     bool TestDefaultConstructor();
 
+    /**
+     * @brief Tests if the stream pointer is initializated correctly.
+     */
     bool TestFullConstructor();
 
+    /**
+     * @brief Tests the GetTimeout function.
+     */
+    bool TestGetTimeout();
+
+    /**
+     * @brief Tests the SetTimeout function.
+     */
+    bool TestSetTimeout();
+
+    /**
+     * @brief Tests if the refill fills the buffer reading data from the stream below.
+     */
     bool TestRefill();
 
+    /**
+     * @brief Tests if the stream pointer is null the function returns false.
+     */
     bool TestRefill_NULL_Stream();
 
+    /**
+     * @brief Tests if the buffer pointer is null the function returns false.
+     */
     bool TestRefill_NULL_Buffer();
 
+    /**
+     * @brief Tests if the flushes empties the buffer writing data from the stream below.
+     */
     bool TestFlush();
 
+    /**
+     * @brief Tests if the stream pointer is null the function returns false.
+     */
     bool TestFlush_NULL_Stream();
 
+    /**
+     * @brief Tests if the buffer pointer is null the function returns false.
+     */
     bool TestFlush_NULL_Buffer();
 
+    /**
+     * @brief Tests if after a resync the position is correct.
+     */
     bool TestResync();
 
+
+    /**
+     * @brief Tests if the stream pointer is null the function returns false.
+     */
     bool TestResync_NULL_Stream();
 
+    /**
+     * @brief Tests if the buffer pointer is null the function returns false.
+     */
     bool TestResync_NULL_Buffer();
 
+    /**
+     * @brief Tests if the function sets correctly the buffer size.
+     */
     bool TestSetBufferSize(uint32 size);
 
+    /**
+     * @brief Tests if the stream pointer is returned.
+     */
     bool TestGetStream();
 };
 

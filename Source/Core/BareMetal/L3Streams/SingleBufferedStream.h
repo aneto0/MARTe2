@@ -52,7 +52,7 @@ namespace MARTe {
  * It supplements a low-level OperatingSystemStream (which implements the
  * low-level calls such as Read, Write, Seek, ...) with a buffering scheme.
  */
-class SingleBufferedStream: public StreamI , public OperatingSystemCallbacksI{
+class DLL_API SingleBufferedStream: public StreamI , public OperatingSystemCallbacksI{
 
 public:
     /**
@@ -144,6 +144,20 @@ public:
      */
     inline bool FlushAndResync();
 
+    /**
+     * @brief Gets the timeout value for read/write operations.
+     * @return the timeout value for read/write operations.
+     */
+    TimeoutType GetTimeout() const;
+
+    /**
+     * @brief Sets the read/write timeout value.
+     * @param[in] timeoutIn the new read/write timeout value.
+     * @pre true
+     * @post GetTimeout() == timeout
+     */
+    void SetTimeout(const TimeoutType &timeoutIn);
+
 protected:
     /**
      * @brief Gets the read buffer.
@@ -198,6 +212,12 @@ private:
      * FlushAndResync call) the buffer is flushed on the stream.
      */
     BufferedStreamIOBuffer internalBuffer;
+
+
+    /**
+     * Timeout for the read/write operations
+     */
+    TimeoutType timeout;
 
 };
 

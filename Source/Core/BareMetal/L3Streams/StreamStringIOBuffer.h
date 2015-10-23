@@ -52,7 +52,7 @@ namespace MARTe {
  * @details For memory allocations it adds one to the desired size passed by argument and sets reservedSpaceAtEnd = 1 for the
  * final '\0' character.
  */
-class StreamStringIOBuffer: public IOBuffer {
+class DLL_API StreamStringIOBuffer: public IOBuffer {
 
 public:
 

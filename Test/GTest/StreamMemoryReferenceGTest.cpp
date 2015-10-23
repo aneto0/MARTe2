@@ -198,5 +198,13 @@ TEST(StreamMemoryReferenceGTest, TestCanRead) {
     ASSERT_TRUE(smrTest.TestCanRead());
 }
 
+TEST(StreamMemoryReferenceGTest, TestPrintFormatted) {
+    StreamMemoryReferenceTest smrTest;
+    ASSERT_TRUE(smrTest.TestPrintFormatted(32, GeneratePrintFormattedGenericTable()));
+}
 
 
+TEST(StreamMemoryReferenceGTest, TestGetToken) {
+    StreamMemoryReferenceTest smrTest;
+    ASSERT_TRUE(smrTest.TestGetToken(32, TokenTestTableTerminators));
+}

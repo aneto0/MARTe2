@@ -34,7 +34,7 @@
 namespace MARTe {
 
 /** @brief Exception handler plugin interface. */
-class ExceptionHandler {
+class DLL_API ExceptionHandler {
 private:
     /** What to do in case of exception. */
     uint32 action;

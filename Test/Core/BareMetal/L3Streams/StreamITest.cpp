@@ -52,22 +52,10 @@ bool StreamITest::TestAnyType() {
     return ok;
 }
 
-bool StreamITest::TestGetTimeout() const {
-    TimeoutType tt = 1;
-    DummySingleBufferedStream myStream;
-    myStream.SetTimeout(tt);
-    return (myStream.GetTimeout() == tt);
-}
 
-bool StreamITest::TestSetTimeout() {
-    TimeoutType tt = 1;
-    DummySingleBufferedStream myStream;
-    myStream.SetTimeout(tt);
-    return (myStream.GetTimeout() == tt);
-}
 
 bool StreamITest::TestGetToken(uint32 bufferSize,
-                                      const TokenTestTableRow *table) {
+                               const TokenTestTableRow *table) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
 
@@ -107,7 +95,7 @@ bool StreamITest::TestGetToken(uint32 bufferSize,
 }
 
 bool StreamITest::TestGetToken_Stream(uint32 bufferSize,
-                                             const TokenTestTableRow *table) {
+                                      const TokenTestTableRow *table) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
 
@@ -149,7 +137,7 @@ bool StreamITest::TestGetToken_Stream(uint32 bufferSize,
 }
 
 bool StreamITest::TestSkipTokens(uint32 bufferSize,
-                                        const SkipTokensTestTableRow *table) {
+                                 const SkipTokensTestTableRow *table) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
 
@@ -180,7 +168,7 @@ bool StreamITest::TestSkipTokens(uint32 bufferSize,
 }
 
 bool StreamITest::TestGetLine(uint32 bufferSize,
-                                     bool skipCharacter) {
+                              bool skipCharacter) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
     bool result = true;
@@ -210,7 +198,7 @@ bool StreamITest::TestGetLine(uint32 bufferSize,
     StringHelper::Copy(myStream.buffer, line);
 
     bufferSize = 128;
-    char8 buffer[bufferSize];
+    char8 buffer[128];
     uint32 i;
     for (i = 0; i < 4; i++) {
         myStream.GetLine(buffer, bufferSize, skipCharacter);
@@ -220,7 +208,7 @@ bool StreamITest::TestGetLine(uint32 bufferSize,
 }
 
 bool StreamITest::TestGetLine_Stream(uint32 bufferSize,
-                                            bool skipCharacter) {
+                                     bool skipCharacter) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
     bool result = true;
@@ -262,7 +250,6 @@ bool StreamITest::TestGetLine_Stream(uint32 bufferSize,
     return result;
 }
 
-
 bool StreamITest::TestCopy(uint32 bufferSize) {
     const char *line = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.\nAenean commodo ligula eget dolor. "
             "Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
@@ -291,7 +278,7 @@ bool StreamITest::TestCopy_Stream(uint32 bufferSize) {
 }
 
 bool StreamITest::TestPrintFormatted(uint32 bufferSize,
-                                            const PrintfNode testTable[]) {
+                                     const PrintfNode testTable[]) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
     uint32 i = 0;
@@ -302,7 +289,6 @@ bool StreamITest::TestPrintFormatted(uint32 bufferSize,
         myStream.FlushAndResync();
         if (StringHelper::Compare(testTable[i].expectedResult, myStream.Buffer()) != 0) {
             AnyType data = testTable[i].inputs[i];
-            printf("\n%s %s %d %d\n", myStream.Buffer(), testTable[i].expectedResult, i, *((uint8*) data.GetDataPointer()));
             return false;
         }
         i++;
@@ -341,11 +327,19 @@ bool StreamITest::TestPrintFormatted_Pointer(uint32 bufferSize) {
     //%p format as the complete 32 bit pointer with header
 
     void* pointer = (void*) charPointer;
-    AnyType toPrintPointer = pointer;
+    if (sizeof(void*) == 8) {
+        AnyType toPrintPointer = pointer;
 
-    stream1.PrintFormatted("%p", &toPrintPointer);
-    stream2.PrintFormatted("% #0x", &toPrintUInt);
+        stream1.PrintFormatted("%p", &toPrintPointer);
+        stream2.PrintFormatted("% #0x", &toPrintUInt);
+    }
+    else {
+        AnyType toPrintPointer = pointer;
+        AnyType toPrintUInt32 = (uint32) UIntPointer;
+        stream1.PrintFormatted("%p", &toPrintPointer);
+        stream2.PrintFormatted("% #0x", &toPrintUInt32);
 
+    }
     stream1.FlushAndResync();
     stream2.FlushAndResync();
     if (StringHelper::Compare(stream1.Buffer(), stream2.Buffer()) != 0) {
@@ -458,7 +452,7 @@ bool StreamITest::TestPrintFormatted_BitSet_Unsigned(uint32 bufferSize) {
 
 bool StreamITest::TestPrintFormatted_BitSet_Signed(uint32 bufferSize) {
 
-    int64 data[5] = { 0x13579BDF02468ACE, 0x13579BDF02468ACE, 0x123456789ABCDEF0, 0xDEADBABEBAB00111 };
+    int64 data[5] = { (int64)0x13579BDF02468ACE, (int64)0x13579BDF02468ACE, (int64)0x123456789ABCDEF0, (int64)0xDEADBABEBAB00111 };
     const char streamString[] = "DEADBABEBAB00111123456789ABCDEF013579BDF02468ACE13579BDF02468ACE";
     int32 sizeStr = 63;
     uint32 dataBitSize = 256;

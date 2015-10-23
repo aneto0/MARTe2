@@ -60,8 +60,11 @@ bool BufferedStreamIOBufferTest::TestDefaultConstructor() {
         return false;
     }
 
-
     if (buffered.GetStream() != NULL) {
+        return false;
+    }
+
+    if (buffered.GetTimeout() != TTInfiniteWait) {
         return false;
     }
     return buffered.UndoLevel() == 0;
@@ -89,12 +92,30 @@ bool BufferedStreamIOBufferTest::TestFullConstructor() {
         return false;
     }
 
-
     if (buffered.GetStream() != (&stream)) {
         return false;
     }
+
+    if (buffered.GetTimeout() != TTInfiniteWait) {
+        return false;
+    }
+
     return buffered.UndoLevel() == 0;
 
+}
+
+bool BufferedStreamIOBufferTest::TestGetTimeout() {
+    TimeoutType tt = 1;
+    BufferedStreamIOBuffer buffered;
+    buffered.SetTimeout(tt);
+    return (buffered.GetTimeout() == tt);
+}
+
+bool BufferedStreamIOBufferTest::TestSetTimeout() {
+    TimeoutType tt = 1;
+    BufferedStreamIOBuffer buffered;
+    buffered.SetTimeout(tt);
+    return (buffered.GetTimeout() == tt);
 }
 
 bool BufferedStreamIOBufferTest::TestRefill() {
@@ -129,7 +150,7 @@ bool BufferedStreamIOBufferTest::TestRefill() {
 bool BufferedStreamIOBufferTest::TestRefill_NULL_Stream() {
     BufferedStreamIOBuffer buffered;
 
-    uint32 bufferSize=10;
+    uint32 bufferSize = 10;
     buffered.SetBufferSize(bufferSize);
 
     return !buffered.Refill();
@@ -139,7 +160,6 @@ bool BufferedStreamIOBufferTest::TestRefill_NULL_Buffer() {
 
     DummySingleBufferedStream stream;
     BufferedStreamIOBuffer buffered(&stream);
-
 
     return !buffered.Refill();
 }
@@ -168,7 +188,7 @@ bool BufferedStreamIOBufferTest::TestFlush() {
 bool BufferedStreamIOBufferTest::TestFlush_NULL_Stream() {
     BufferedStreamIOBuffer buffered;
 
-    uint32 bufferSize=10;
+    uint32 bufferSize = 10;
     buffered.SetBufferSize(bufferSize);
 
     return !buffered.Flush();
@@ -179,12 +199,8 @@ bool BufferedStreamIOBufferTest::TestFlush_NULL_Buffer() {
     DummySingleBufferedStream stream;
     BufferedStreamIOBuffer buffered(&stream);
 
-
     return !buffered.Flush();
 }
-
-
-
 
 bool BufferedStreamIOBufferTest::TestResync() {
 
@@ -224,7 +240,7 @@ bool BufferedStreamIOBufferTest::TestResync() {
 bool BufferedStreamIOBufferTest::TestResync_NULL_Stream() {
     BufferedStreamIOBuffer buffered;
 
-    uint32 bufferSize=10;
+    uint32 bufferSize = 10;
     buffered.SetBufferSize(bufferSize);
 
     return !buffered.Resync();
@@ -235,13 +251,8 @@ bool BufferedStreamIOBufferTest::TestResync_NULL_Buffer() {
     DummySingleBufferedStream stream;
     BufferedStreamIOBuffer buffered(&stream);
 
-
     return buffered.Resync();
 }
-
-
-
-
 
 bool BufferedStreamIOBufferTest::TestSetBufferSize(uint32 size) {
     BufferedStreamIOBuffer buffered;

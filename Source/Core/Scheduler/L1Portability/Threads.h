@@ -132,7 +132,7 @@ enum PriorityClassType {
  * @param[in] priorityLevel the priority level to be set. This must be a
  * value between 0 and 15.
  */
-void SetPriority(const ThreadIdentifier &threadId,
+DLL_API void SetPriority(const ThreadIdentifier &threadId,
                  const PriorityClassType &priorityClass,
                  const uint8 &priorityLevel);
 
@@ -150,7 +150,7 @@ void SetPriority(const ThreadIdentifier &threadId,
  * @param[in] runOnCPUs cpu mask where the thread can be executed.
  * @return The thread identification number.
  */
-ThreadIdentifier BeginThread(const ThreadFunctionType function,
+DLL_API ThreadIdentifier BeginThread(const ThreadFunctionType function,
                              const void * const parameters = static_cast<void *>(NULL),
                              const uint32 &stacksize = static_cast<uint32>(THREADS_DEFAULT_STACKSIZE),
                              const char8 * name = static_cast<char8*>(NULL),
@@ -161,7 +161,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
  * @brief Gets the current thread id;
  * @return the current thread id.
  */
-ThreadIdentifier Id(void);
+DLL_API ThreadIdentifier Id(void);
 
 /**
  * @brief Asynchronously kill a thread.
@@ -169,62 +169,62 @@ ThreadIdentifier Id(void);
  * @param[in] threadId the id of the thread to kill.
  * @return true if system level kill function returns without errors.
  */
-bool Kill(const ThreadIdentifier &threadId);
+DLL_API bool Kill(const ThreadIdentifier &threadId);
 
 /**
  * @brief Checks if a thread is still alive.
  * @param[in] threadId the id of the thread which must be checked.
  * @return true if the thread is still alive , false otherwise.
  */
-bool IsAlive(const ThreadIdentifier &threadId);
+DLL_API bool IsAlive(const ThreadIdentifier &threadId);
 
 /**
  * @brief Returns the thread name.
  * @param[in] threadId the id of the thread,
  * @return the name of the thread.
  */
-const char8 *Name(const ThreadIdentifier &threadId);
+DLL_API const char8 *Name(const ThreadIdentifier &threadId);
 
 /**
  * @brief Returns the task state.
  * @param[in] threadId the id of the requested thread.
  * @return the thread state(s).
  */
-ThreadStateType GetState(const ThreadIdentifier &threadId);
+DLL_API ThreadStateType GetState(const ThreadIdentifier &threadId);
 
 /**
  * @brief Returns the priority level of a thread.
  * @param[in] threadId is the id of the requested thread.
  * @return the thread priority level.
  */
-uint8 GetPriorityLevel(const ThreadIdentifier &threadId);
+DLL_API uint8 GetPriorityLevel(const ThreadIdentifier &threadId);
 
 /**
  * @brief Returns the priority class of a thread.
  * @param[in] threadId is the id of the requested thread.
  * @return the thread priority class.
  */
-PriorityClassType GetPriorityClass(const ThreadIdentifier &threadId);
+DLL_API PriorityClassType GetPriorityClass(const ThreadIdentifier &threadId);
 
 /**
  * @brief Returns the CPU mask associated to the specified thread.
  * @param[in] threadId is the thread identifier.
  * @return the CPU mask or 0 if the information cannot be retrieved.
  */
-uint32 GetCPUs(const ThreadIdentifier &threadId);
+DLL_API uint32 GetCPUs(const ThreadIdentifier &threadId);
 
 /**
  * @brief Returns the id of the n-th thread in the database.
  * @param[in] n the thread index.
  * @return the id of the n-th thread in the database, -1 if the database is empty.
  */
-ThreadIdentifier FindByIndex(const uint32 &n);
+DLL_API ThreadIdentifier FindByIndex(const uint32 &n);
 
 /**
  * @brief Returns the number of threads currently in the database.
  * @return the number of threads currently in the database.
  */
-uint32 NumberOfThreads();
+DLL_API uint32 NumberOfThreads();
 
 /**
  * @brief Get a copy of the thread information stored in the database.
@@ -232,7 +232,7 @@ uint32 NumberOfThreads();
  * @param[in] n is the threads index, if it is <0 is ignored.
  * @return true if the requested element is in the database, false otherwise.
  */
-bool GetThreadInfoCopy(ThreadInformation & copy,
+DLL_API bool GetThreadInfoCopy(ThreadInformation & copy,
                        const uint32 &n);
 
 /**
@@ -241,7 +241,7 @@ bool GetThreadInfoCopy(ThreadInformation & copy,
  * @param[in] threadId is the thread identifier.
  * @return true if the requested element is in the database, false otherwise.
  */
-bool GetThreadInfoCopy(ThreadInformation & copy,
+DLL_API bool GetThreadInfoCopy(ThreadInformation & copy,
                        const ThreadIdentifier &threadId);
 
 /**
@@ -249,7 +249,7 @@ bool GetThreadInfoCopy(ThreadInformation & copy,
  * @param[in] name is the thread name.
  * @return the id of the first found thread with the specified name.
  */
-ThreadIdentifier FindByName(const char8 * const name);
+DLL_API ThreadIdentifier FindByName(const char8 * const name);
 
 }
 

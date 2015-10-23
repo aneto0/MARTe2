@@ -68,13 +68,17 @@ bool ThreadsTest::TestBeginThread(const char8 *name,
 
         exitCondition = 0;
         //Calls the thread callback.
+        //Note: in windows if the stack size is zero, the thread is initialized with the default stack size.
         ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, stackSize, name);
         int32 j = 0;
+
+
 
         //Waits for the thread to begin
         while (exitCondition < 1) {
             if (j++ > 100) {
                 Threads::Kill(tid);
+
                 return false;
             }
             Sleep::Sec(10e-3);
@@ -87,6 +91,7 @@ bool ThreadsTest::TestBeginThread(const char8 *name,
         while (exitCondition < 3) {
             if (j++ > 100) {
                 Threads::Kill(tid);
+
                 return false;
             }
             Sleep::Sec(10e-3);

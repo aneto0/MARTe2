@@ -23,7 +23,7 @@
 # $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX=
+OBJSX= 
 SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x
 PACKAGE=Core
 MAKEDEFAULTDIR=../../../MakeDefaults
@@ -31,10 +31,14 @@ MAKEDEFAULTDIR=../../../MakeDefaults
 ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-
+LIBRARIES_STATIC+=$(BUILD_DIR)/L0Types/L0TypesB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L2Objects/L2ObjectsB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L3Streams/L3StreamsB$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTeCoreB$(LIBEXT)
+		$(BUILD_DIR)/MARTeCoreB$(LIBEXT) \
+		$(BUILD_DIR)/MARTeCoreB.def 
 	echo  $(OBJS)
 
 

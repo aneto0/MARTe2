@@ -32,10 +32,11 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "../L1Portability/GlobalObjectsDatabase.h"
+#include "GlobalObjectsDatabase.h"
 #include "FastPollingMutexSem.h"
 #include "ClassRegistryItem.h"
 #include "StaticList.h"
+#include "FractionalInteger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -53,7 +54,7 @@ namespace MARTe {
  * ClassRegistryItem and automatically added to a ClassRegistryDatabase. This
  * database can then be used to retrieve information about the registered classes.
  */
-class ClassRegistryDatabase : public GlobalObjectI {
+class DLL_API ClassRegistryDatabase : public GlobalObjectI {
 
 public:
 
@@ -136,7 +137,7 @@ private:
     /**
      * Unique identifier of the latest registered class;
      */
-    uint32 classUniqueIdentifier;
+    ClassUID classUniqueIdentifier;
 };
 
 }

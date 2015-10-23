@@ -104,7 +104,7 @@ namespace MARTe {
  * write, which increments position and/or size, will saturate them at the
  * maximum value on these cases.
  */
-class StreamI {
+class DLL_API StreamI {
 
 public:
 
@@ -396,19 +396,7 @@ public:
                        const AnyType& par3,
                        const AnyType& par4);
 
-    /**
-     * @brief Gets the timeout value for read/write operations.
-     * @return the timeout value for read/write operations.
-     */
-    TimeoutType GetTimeout() const;
 
-    /**
-     * @brief Sets the read/write timeout value.
-     * @param[in] timeoutIn the new read/write timeout value.
-     * @pre true
-     * @post GetTimeout() == timeout
-     */
-    void SetTimeout(const TimeoutType &timeoutIn);
 
 protected:
 
@@ -424,12 +412,6 @@ protected:
      */
     virtual IOBuffer *GetWriteBuffer() = 0;
 
-private:
-
-    /**
-     * Timeout for the read/write operations
-     */
-    TimeoutType timeout;
 };
 
 }

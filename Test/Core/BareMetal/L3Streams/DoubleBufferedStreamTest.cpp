@@ -57,6 +57,21 @@ bool DoubleBufferedStreamTest::TestConstructor_Timeout() {
     return ok;
 }
 
+bool DoubleBufferedStreamTest::TestGetTimeout() {
+    TimeoutType tt = 1;
+    DummyDoubleBufferedStream myStream;
+    myStream.SetTimeout(tt);
+    return (myStream.GetTimeout() == tt);
+}
+
+bool DoubleBufferedStreamTest::TestSetTimeout() {
+    TimeoutType tt = 1;
+    DummyDoubleBufferedStream myStream;
+    myStream.SetTimeout(tt);
+    return (myStream.GetTimeout() == tt);
+}
+
+
 bool DoubleBufferedStreamTest::TestSetBufferSize(uint32 bufferSize) {
     DummyDoubleBufferedStream stream;
     stream.SetBufferSize(bufferSize, bufferSize);
@@ -225,14 +240,14 @@ bool DoubleBufferedStreamTest::TestFlush(uint32 bufferSize) {
 bool DoubleBufferedStreamTest::TestRead_NotCanRead() {
     DummyDoubleBufferedStream stream(true, false, true);
     uint32 size = 8;
-    char buffer[size];
+    char buffer[8];
     return !stream.Read(buffer, size);
 }
 
 bool DoubleBufferedStreamTest::TestWrite_NotCanWrite() {
     DummyDoubleBufferedStream stream(true, true, false);
     uint32 size = 8;
-    char buffer[size];
+    char buffer[8];
     return !stream.Write(buffer, size);
 }
 
