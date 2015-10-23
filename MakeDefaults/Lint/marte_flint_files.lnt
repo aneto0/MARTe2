@@ -45,6 +45,15 @@ FractionalInteger.h
 StaticListHolder.cpp
 GlobalObjectsDatabase.cpp
 GlobalObjectI.cpp
-
-
+CharBuffer.cpp
+IOBuffer.cpp
+StreamStringIOBuffer.cpp
+BufferedStreamIOBuffer.cpp
+StreamI.cpp
+StreamString.cpp
+StreamMemoryReference.cpp
+DoubleBufferedStream.cpp
+SingleBufferedStream.cpp
+IOBufferIntegerPrint.cpp
+IOBufferFloatPrint.cpp
 

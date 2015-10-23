@@ -30,7 +30,6 @@ SPB=Environment/$(ENVIRONMENT).x
 
 OBJSX=  ThreadInformation.x 
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

@@ -27,6 +27,7 @@ TARGET=msc
 
 include Makefile.inc
 
+LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
 
 

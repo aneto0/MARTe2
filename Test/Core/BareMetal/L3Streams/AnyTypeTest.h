@@ -48,32 +48,32 @@ public:
 
     /**
      * @brief Test AnyType default constructor
-     * @return True if GetDataPointer() == NULL && GetBitAddress() == 0 && GetTypeDescriptor() == {false, false, 0, 0}
+     * @return true if GetDataPointer() == NULL && GetBitAddress() == 0 && GetTypeDescriptor() == {false, false, 0, 0}
      */
     bool TestAnyType_Void();
 
     /**
      * @brief Test AnyType constructor using anyType as an input.
-     * @return True if GetDataPointer() == NULL && GetBitAddress() == 0 && GetTypeDescriptor() == {false, false, 0, 0}
+     * @return true if GetDataPointer() == NULL && GetBitAddress() == 0 && GetTypeDescriptor() == {false, false, 0, 0}
      */
     bool TestAnyType_AnyTypeVoid();
 
     /**
      * @brief Test AnyType constructor defining the TypeDescriptor, the bitAddress and the constant pointer to a constant.
-     * @return True if the type is set as expected.
+     * @return true if the type is set as expected.
      */
     bool TestAnyType_TypeDescriptor_BitAddress_ConstPointerToConst();
 
     /**
      * @brief Test AnyType constructor defining the TypeDescriptor the bitAddress and the constant pointer.
-     * @return True if the type is set as expected.
+     * @return true if the type is set as expected.
      */
     bool TestAnyType_TypeDescriptor_BitAddress_ConstPointer();
 
     /**
      * @brief Test the AnyType::IsVoid.
      * @details Use this function twice one with a void and another with a different type.
-     * @return True if IsVoid() returns true for a void type and false for a different type.
+     * @return true if IsVoid() returns true for a void type and false for a different type.
      */
     bool TestIsVoid();
 

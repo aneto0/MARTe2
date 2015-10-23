@@ -24,16 +24,14 @@
 #
 #############################################################
 OBJSX=
-SPB    = L0Types.x L1Portability.x L2Objects.x 
+SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x
 PACKAGE=Core
 MAKEDEFAULTDIR=../../../MakeDefaults
 
 ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-LIBRARIES_STATIC+=$(BUILD_DIR)/L0Types/L0Types$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1Portability$(LIBEXT)
-LIBRARIES_STATIC+=$(BUILD_DIR)/L2Objects/L2Objects$(LIBEXT)
+
 
 all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTeCoreB$(LIBEXT)
