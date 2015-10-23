@@ -55,7 +55,7 @@ public:
     /**
      * @brief Destructor
      */
-    virtual ~OperatingSystemStream(){
+    virtual ~OperatingSystemStream() {
 
     }
 
@@ -77,9 +77,9 @@ public:
      * @param[in,out] size is the desired number of bytes to read.
      * @param[in] msecTimeout is the desired timeout.
      */
-    virtual bool OSRead(char8 * const buffer,
-                       uint32 & size,
-                       const TimeoutType &msecTimeout) = 0;
+    virtual bool Read(char8 * const buffer,
+                        uint32 & size,
+                        const TimeoutType &msecTimeout) = 0;
 
     /**
      * @brief Writes from a const char8* buffer to the stream.
@@ -99,30 +99,30 @@ public:
      *   parameters error, for instance buffer = NULL
      * Note: The behaviour depends by derived classes implementation.
      */
-    virtual bool OSWrite(const char8 * const buffer,
-                       uint32 & size,
-                       const TimeoutType &msecTimeout) = 0;
+    virtual bool Write(const char8 * const buffer,
+                         uint32 & size,
+                         const TimeoutType &msecTimeout) = 0;
 
     /**
      * @brief Pure virtual function. Defines if write operations can be
      * performed on the stream.
      * @return return value depends from derived classes implementation.
      */
-    virtual bool OSCanWrite() const = 0;
+    virtual bool CanWrite() const = 0;
 
     /**
      * @brief Pure virtual function. Defines if read operations can be
      * performed on the stream.
      * @return return value depends from derived classes implementation.
      */
-    virtual bool OSCanRead() const = 0;
+    virtual bool CanRead() const = 0;
 
     /**
      * @brief Pure virtual method. Defines if seek operations can be
      * performed on the stream.
      * @return return value depends on the derived classes implementation.
      */
-    virtual bool OSCanSeek() const = 0;
+    virtual bool CanSeek() const = 0;
 
     /**
      * @brief Defines if operations could be blocking.
@@ -140,7 +140,7 @@ public:
      * @return false. It means that a default stream has non blocking
      * operations.
      */
-    virtual bool OSCanBlock() = 0;
+    virtual bool CanBlock() = 0;
 
     /**
      * @brief Sets or unsets the blocking mode.
@@ -150,14 +150,14 @@ public:
      * @return false. It means that by default a stream cannot set blocking
      * mode.
      */
-    virtual bool OSSetBlocking(bool flag) = 0;
+    virtual bool SetBlocking(bool flag) = 0;
 
     /**
      * @brief Pure virtual method. The size of the stream.
      * @return the size of the stream depending on derived classes
      * implementation.
      */
-    virtual uint64 OSSize() = 0;
+    virtual uint64 Size() = 0;
 
     /**
      * @brief Pure virtual method. Moves within the stream to an absolute
@@ -165,7 +165,7 @@ public:
      * @param[in] pos is the desired absolute position.
      * @return return value depends on derived classes implementation.
      */
-    virtual bool OSSeek(uint64 pos) = 0;
+    virtual bool Seek(uint64 pos) = 0;
 
     /**
      * @brief Pure virtual method. Moves within the file relative to current
@@ -173,20 +173,20 @@ public:
      * @param[in] deltaPos is the gap from the current position.
      * @return return value depends on derived classes implementation.
      */
-    virtual bool OSRelativeSeek(int32 deltaPos) = 0;
+    virtual bool RelativeSeek(int32 deltaPos) = 0;
 
     /**
      * @brief Pure virtual method. Returns current position.
      * @return the current position in the stream.
      */
-    virtual uint64 OSPosition() = 0;
+    virtual uint64 Position() = 0;
 
     /**
      * @brief Pure virtual method. Clip the stream size to the desired value.
      * @param[in] size is the desired size.
      * @return return value depends on the derived classes implementation.
      */
-    virtual bool OSSetSize(uint64 size) = 0;
+    virtual bool SetSize(uint64 size) = 0;
 
 };
 
@@ -197,7 +197,6 @@ public:
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
 
 }
 
