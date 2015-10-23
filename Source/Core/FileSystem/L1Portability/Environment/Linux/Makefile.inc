@@ -1,7 +1,8 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
-#
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -19,18 +20,31 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-TARGET=linux
 
-include Makefile.inc
+PACKAGE=Core/FileSystem/L1Portability
+ROOT_DIR=../../../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OPTIM = -finline-functions
+OBJSX=  BasicFile.x
 
-LIBRARIES += -lm
 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/MARTeCoreF$(LIBEXT)
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+INCLUDES+=-I../../
+
+INCLUDES+=-I../../../../BareMetal/L0Types
+INCLUDES+=-I../../../../BareMetal/L1Portability
+INCLUDES+=-I../../../../BareMetal/L2Objects
+INCLUDES+=-I../../../../Scheduler/L1Portability
+
+all: $(OBJS) $(CPPS) \
+     $(BUILD_DIR)/L1Portability$(LIBEXT)
+	echo  $(OBJS) $(CPPS)
+
+include depends.$(TARGET)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

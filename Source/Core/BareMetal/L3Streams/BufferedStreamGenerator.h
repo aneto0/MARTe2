@@ -36,6 +36,9 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+
 template<class bufferedStream, class basicStream>
 class BufferedStreamGenerator: public bufferedStream, public basicStream {
 
@@ -187,6 +190,7 @@ protected:
 
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
