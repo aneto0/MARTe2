@@ -24,10 +24,7 @@
 
 
 OBJSX=  DoubleIntegerGTest.x \
-        StreamIGTest.x \
-        IOBufferGTest.x \
-        BitSetToIntegerGTest.x
-#		TypeCharacteristicsGTest.x \
+		TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
         BasicConsoleGTest.x \
@@ -77,6 +74,9 @@ OBJSX=  DoubleIntegerGTest.x \
         BufferedStreamIOBufferGTest.x \
         StreamStringGTest.x \
         StreamMemoryReferenceGTest.x \
+        StreamIGTest.x \
+        IOBufferGTest.x \
+        BitSetToIntegerGTest.x
 
 	
 	
