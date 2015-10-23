@@ -1,6 +1,7 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -19,18 +20,28 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-TARGET=linux
+OBJSX= 
+SPB    = L1Portability.x
+PACKAGE=Core
+MAKEDEFAULTDIR=../../../MakeDefaults
 
-include Makefile.inc
+ROOT_DIR=../../..
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-OPTIM = -finline-functions
+LIBRARIES_STATIC+=$(BUILD_DIR)/L0Types/L0TypesB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L2Objects/L2ObjectsB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L3Streams/L3StreamsB$(LIBEXT)
 
-LIBRARIES += -lm
+all: $(OBJS) $(SUBPROJ) \
+		$(BUILD_DIR)/MARTeCoreB$(LIBEXT) \
+		$(BUILD_DIR)/MARTeCoreB.def 
+	echo  $(OBJS)
 
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/FileSystem/MARTeCoreF$(LIBEXT)
+
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

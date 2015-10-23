@@ -1,8 +1,8 @@
 /**
  * @file BasicFile.cpp
  * @brief Source file for class BasicFile
- * @date Oct 23, 2015
- * @author llcapella
+ * @date 23/10/2015
+ * @author Llorenç Capellà
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -42,7 +42,7 @@
 
 
 
-
+namespace MARTe{
 
 
 void FileSetFileName(BasicFile &f,const char *name){
@@ -99,9 +99,9 @@ bool FileSeek(BasicFile &f,int64 pos){
     }
     if (pos != newpos){
         pos = newpos;
-        return False;
+        return false;
     } else {
-        return True;
+        return true;
     }
 }
 
@@ -128,7 +128,7 @@ bool  FileRelativeSeek(BasicFile &f,int64 pos){
         f.action = OSError;
         CStaticAssertPlatformErrorCondition(OSError,"BasicFile::RelativeSeek");
     }
-    return True;
+    return true;
 }
 
 /// Moves to position pos and returns new position on pos
@@ -138,10 +138,10 @@ bool  FilePositionSeek(BasicFile &f,int64 &pos){
     if (pp<0)  {
         f.action = OSError;
         CStaticAssertPlatformErrorCondition(OSError,"BasicFile::PositionSeek");
-        return False;
+        return false;
     }
     pos = pp;
-    return True;
+    return true;
 }
 
 bool FileOpen(BasicFile &f,const char *name){
@@ -170,14 +170,14 @@ bool FileOpen(BasicFile &f,const char *name){
     f.file = open (name, flags, mode);
     if (f.file != -1) {
         if(openDevDriver){
-            return True;
+            return true;
         }
 
         struct stat statistiche;
         int ret = fstat(f.file, &statistiche);
         if(ret < 0 || !S_ISREG(statistiche.st_mode)){
             close(f.file);
-            return False;
+            return false;
         }
 
         if (flags & O_CREAT) {
@@ -186,7 +186,7 @@ bool FileOpen(BasicFile &f,const char *name){
         } else {
             f.action = openWasOpen;
         }
-        return True;
+        return true;
     }
 
     if ((flags & O_CREAT) == 0){
@@ -203,10 +203,10 @@ bool FileOpen(BasicFile &f,const char *name){
             int ret = fstat(f.file, &statistiche);
             if(ret < 0 || !S_ISREG(statistiche.st_mode)){
                 close(f.file);
-                return False;
+                return false;
             }
             f.action = openWasCreate;
-            return True;
+            return true;
         }
     }
 
@@ -216,24 +216,24 @@ bool FileOpen(BasicFile &f,const char *name){
             errCode = ErrorAccessDenied;
         } break;
     }
-    return False;
-    return True;
+    return false;
+
 }
 
 
 bool FileLock(BasicFile &f,int64 start,int64 size,TimeoutType msecTimeout){
     // blocca, ma senza timeout!!!
     int ret=flock(f.file, LOCK_EX);
-    if (ret<0) return False;
-    return True;
+    if (ret<0) return false;
+    return true;
 }
 
 /// Undo the locking.
 bool FileUnLock(BasicFile &f,int64 start,int64 size,TimeoutType msecTimeout){
     // blocca, ma senza timeout!!!
     int ret=flock(f.file, LOCK_UN);
-    if (ret<0) return False;
-    return True;
+    if (ret<0) return false;
+    return true;
 
 }
 //@}
@@ -252,6 +252,7 @@ bool FileEraseFile(const char *fname,...){
     va_end(argList);
 
     int ret = remove(name);
-    if (ret<0) return False;
-    return True;
+    if (ret<0) return false;
+    return true;
+}
 }
