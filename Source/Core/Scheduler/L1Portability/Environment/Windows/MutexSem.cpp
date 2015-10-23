@@ -20,6 +20,7 @@
  * the class MutexSem (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -29,7 +30,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "../../Atomic.h"
+#include "Atomic.h"
 #include "MutexSem.h"
 
 /*---------------------------------------------------------------------------*/
@@ -61,7 +62,7 @@ struct MutexSemProperties {
     bool recursive;
 
     /**
-     * The number of handle references pointing at this structure.
+     * The number of  references pointing at this structure.
      */
     uint32 references;
 
@@ -72,49 +73,49 @@ struct MutexSemProperties {
 /*---------------------------------------------------------------------------*/
 
 MutexSem::MutexSem() {
-    osProperties = new MutexSemProperties();
-    osProperties->closed = true;
-    osProperties->recursive = false;
-    osProperties->references = 1u;
-    osProperties->referencesMux = 0;
+    handle = new MutexSemProperties();
+    handle->closed = true;
+    handle->recursive = false;
+    handle->references = 1u;
+    handle->referencesMux = 0;
 }
 
 MutexSem::MutexSem(MutexSem &source) {
-    osProperties = source.GetProperties();
-    if (osProperties == static_cast<MutexSemProperties *>(NULL)) {
+    handle = source.GetProperties();
+    if (handle == static_cast<MutexSemProperties *>(NULL)) {
 
-        //Capture the case that it got the osProperties while the source semaphore
+        //Capture the case that it got the handle while the source semaphore
         //was already being destructed...
         MutexSem();
     }
     else {
-        while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
+        while (!Atomic::TestAndSet(&handle->referencesMux)) {
         }
-        osProperties->references++;
-        osProperties->referencesMux = 0;
+        handle->references++;
+        handle->referencesMux = 0;
     }
 }
 
 bool MutexSem::Create(const bool &recursive) {
-    while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
+    while (!Atomic::TestAndSet(&handle->referencesMux)) {
     }
-    osProperties->mutexHandle = CreateMutex(NULL, false, NULL);
+    handle->mutexHandle = CreateMutex(NULL, false, NULL);
 
     //only recursive mode is supported.
-    osProperties->recursive = true;
-    osProperties->closed = false;
-    osProperties->referencesMux = 0;
-    return (osProperties->mutexHandle != NULL);
+    handle->recursive = true;
+    handle->closed = false;
+    handle->referencesMux = 0;
+    return (handle->mutexHandle != NULL);
 }
 
 bool MutexSem::Close() {
     bool ok = true;
-    if (!osProperties->closed) {
-        osProperties->closed = true;
+    if (!handle->closed) {
+        handle->closed = true;
 
-        if ((osProperties->mutexHandle != NULL)) {
+        if ((handle->mutexHandle != NULL)) {
 
-            ok = (CloseHandle(osProperties->mutexHandle) == TRUE);
+            ok = (CloseHandle(handle->mutexHandle) == TRUE);
         }
 
     }
@@ -123,30 +124,30 @@ bool MutexSem::Close() {
 
 MutexSem::~MutexSem() {
 
-    if (osProperties != static_cast<MutexSemProperties *>(NULL)) {
+    if (handle != static_cast<MutexSemProperties *>(NULL)) {
 
-        while (!Atomic::TestAndSet(&osProperties->referencesMux)) {
+        while (!Atomic::TestAndSet(&handle->referencesMux)) {
         }
 
-        if (osProperties->references == 1u) {
-            if (!osProperties->closed) {
+        if (handle->references == 1u) {
+            if (!handle->closed) {
                 Close();
 
             }
-            delete osProperties;
-            osProperties = static_cast<MutexSemProperties *>(NULL);
+            delete handle;
+            handle = static_cast<MutexSemProperties *>(NULL);
         }
         else {
 
-            osProperties->references--;
-            osProperties->referencesMux = 0;
+            handle->references--;
+            handle->referencesMux = 0;
         }
     }
 }
 
-ErrorType MutexSem::Lock() {
-    DWORD ret = WaitForSingleObject(osProperties->mutexHandle, INFINITE);
-    ErrorType error = ErrorManagement::NoError;
+ErrorManagement::ErrorType MutexSem::Lock() {
+    DWORD ret = WaitForSingleObject(handle->mutexHandle, INFINITE);
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
     if (ret == WAIT_FAILED) {
         error = ErrorManagement::OSError;
     }
@@ -154,35 +155,35 @@ ErrorType MutexSem::Lock() {
     return error;
 }
 
-ErrorType MutexSem::Lock(const TimeoutType &timeout) {
-    DWORD ret = WaitForSingleObject(osProperties->mutexHandle, timeout.GetTimeoutMSec());
-    ErrorType error = ErrorManagement::NoError;
+ErrorManagement::ErrorType MutexSem::Lock(const TimeoutType &timeout) {
+    DWORD ret = WaitForSingleObject(handle->mutexHandle, timeout.GetTimeoutMSec());
+    ErrorManagement::ErrorType error = ErrorManagement::NoError;
     if (ret == WAIT_FAILED) {
         error = ErrorManagement::OSError;
     }
     if (error == ErrorManagement::NoError && ret == WAIT_TIMEOUT) {
-        error = Timeout;
+        error = ErrorManagement::Timeout;
     }
     return error;
 }
 
 bool MutexSem::UnLock() {
 
-    return (ReleaseMutex(osProperties->mutexHandle) == TRUE);
+    return (ReleaseMutex(handle->mutexHandle) == TRUE);
 }
 
 bool MutexSem::IsRecursive() const {
-    return osProperties->recursive;
+    return handle->recursive;
 }
 
 MutexSemProperties * MutexSem::GetProperties() {
-    return osProperties;
+    return handle;
 }
 
 bool MutexSem::IsClosed() const {
     bool ok = true;
-    if (osProperties != static_cast<MutexSemProperties *>(NULL)) {
-        ok = osProperties->closed;
+    if (handle != static_cast<MutexSemProperties *>(NULL)) {
+        ok = handle->closed;
     }
     return ok;
 }

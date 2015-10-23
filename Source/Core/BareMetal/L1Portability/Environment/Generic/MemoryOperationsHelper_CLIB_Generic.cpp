@@ -20,13 +20,12 @@
  * the module MemoryOperationsHelper (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #ifndef LINT
-#include <sys/ipc.h>
-#include <sys/shm.h>
+
 #include <stdlib.h>
 #include <string.h>
 #else

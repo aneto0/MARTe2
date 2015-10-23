@@ -45,7 +45,7 @@ namespace MARTe {
  * the concept of a root. In this way it is always possible to link to a well
  * defined item (e.g. to perform a search on the full list).
  */
-class LinkedListHolder {
+class DLL_API LinkedListHolder {
 
 public:
 

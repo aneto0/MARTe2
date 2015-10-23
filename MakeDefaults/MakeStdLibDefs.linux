@@ -37,6 +37,7 @@ GAMEXT=.gam
 GCNOEXT=.gcno
 GCDAEXT=.gcda
 GCOVEXT=.gcov
+DEFEXT=.def
 
 OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
 OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.o) 

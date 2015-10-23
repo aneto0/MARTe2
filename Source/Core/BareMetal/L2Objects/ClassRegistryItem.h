@@ -35,6 +35,7 @@
 #include "LinkedListable.h"
 #include "LoadableLibrary.h"
 #include "ClassProperties.h"
+#include "FractionalInteger.h"
 
 namespace MARTe {
 
@@ -57,7 +58,7 @@ typedef Object *(ObjectBuildFn)(HeapI* const);
  * Every class that inherits from Object will be described by a ClassRegistryItem and
  * automatically added to a ClassRegistryDatabase.
  */
-class ClassRegistryItem {
+class DLL_API ClassRegistryItem {
 public:
 
     /**
@@ -129,7 +130,7 @@ public:
      * @brief Sets the unique identifier for the class described by this ClassRegistryItem.
      * @param[in] uid the new unique identifier to be set for the class described by this ClassRegistryItem.
      */
-    void SetUniqueIdentifier(const uint32 &uid);
+    void SetUniqueIdentifier(const ClassUID &uid);
 
 private:
     /**

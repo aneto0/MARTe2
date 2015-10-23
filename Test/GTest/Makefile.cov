@@ -32,6 +32,7 @@ LIBRARIES   += ../../Test/Core/BareMetal/$(TARGET)/MARTeCoreBTest$(LIBEXT)
 LIBRARIES   += ../../Source/Core/Scheduler/$(TARGET)/MARTeCoreS$(LIBEXT) 
 LIBRARIES   += ../../Test/Core/Scheduler/$(TARGET)/MARTeCoreSTest$(LIBEXT)
 
+
 LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
 
 OPTIM=-finline-functions

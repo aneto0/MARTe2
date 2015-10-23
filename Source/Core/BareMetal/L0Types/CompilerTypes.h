@@ -59,6 +59,23 @@ typedef unsigned long long intptr;
 typedef unsigned long intptr;
 #endif
 
+/** Macro for dll export and import */
+#if !defined (dll_import)
+#define dll_import
+#endif
+
+#if !defined (dll_import)
+#define dll_export
+#endif
+
+
+#if !defined (DLL_API)
+#define DLL_API dll_import
+#else
+#undef DLL_API
+#define DLL_API dll_export
+#endif
+
 }
 
 #endif /* COMPILERTYPES */

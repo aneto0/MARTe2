@@ -27,10 +27,12 @@ TARGET=msc
 
 include Makefile.inc
 
+LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/L0Types/L0TypesB$(LIBEXT) 
+LIBRARIES += $(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
+LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
-
-
+IMPDEFS += $(BUILD_DIR)/$(ENVIRONMENT)/L1Portability.def
 
 
 

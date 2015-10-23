@@ -1,4 +1,3 @@
-
 Atomic.h       
 Endianity.h
 Processor.cpp  
@@ -9,7 +8,7 @@ EventSem.cpp
 MutexSem.cpp
 BasicConsole.cpp
 FastMath.cpp
-ThreadInformation.cpp 
+ThreadInformation_Generic.cpp 
 Threads.cpp
 LoadableLibrary.cpp
 FastPollingMutexSem.cpp   
@@ -27,7 +26,7 @@ ReferenceContainerNode.cpp
 ReferenceContainerFilterObjectName.cpp
 ReferenceContainerFilterReferences.cpp
 ReferenceContainerFilter.cpp
-ErrorManagement.cpp
+ErrorManagement_Generic.cpp
 MemoryOperationsHelper_CLIB_Generic.cpp
 StandardHeap_Generic.cpp
 StringHelper_CLIB_Generic.cpp
@@ -45,6 +44,15 @@ FractionalInteger.h
 StaticListHolder.cpp
 GlobalObjectsDatabase.cpp
 GlobalObjectI.cpp
-
-
+CharBuffer.cpp
+IOBuffer.cpp
+StreamStringIOBuffer.cpp
+BufferedStreamIOBuffer.cpp
+StreamI.cpp
+StreamString.cpp
+StreamMemoryReference.cpp
+DoubleBufferedStream.cpp
+SingleBufferedStream.cpp
+IOBufferIntegerPrint.cpp
+IOBufferFloatPrint.cpp
 

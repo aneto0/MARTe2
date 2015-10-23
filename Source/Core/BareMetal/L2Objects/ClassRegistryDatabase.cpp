@@ -20,7 +20,7 @@
  * the class ClassRegistryDatabase (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -67,7 +67,7 @@ void ClassRegistryDatabase::Add(ClassRegistryItem * const p) {
     if (mux.FastLock() == ErrorManagement::NoError) {
         p->SetUniqueIdentifier(classUniqueIdentifier);
         if (classDatabase.Insert(classUniqueIdentifier, p)) {
-            classUniqueIdentifier++;
+            classUniqueIdentifier = classUniqueIdentifier + 1u;
         }
     }
     mux.FastUnLock();

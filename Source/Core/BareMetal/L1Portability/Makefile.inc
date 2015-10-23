@@ -35,19 +35,18 @@ OBJSX=  FastMath.x \
         GlobalObjectI.x \
         GlobalObjectsDatabase.x \
         StringHelper.x \
-        ErrorManagement.x \
         StaticListHolder.x \
         StaticList.x \
         FormatDescriptor.x
-
-LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../L0Types
 
 all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L1Portability$(LIBEXT)
+		$(BUILD_DIR)/L1PortabilityB$(LIBEXT) \
+		$(BUILD_DIR)/L1PortabilityB.def
+		
 	echo  $(OBJS)
 
 include depends.$(TARGET)

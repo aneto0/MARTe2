@@ -52,7 +52,7 @@ namespace MemoryOperationsHelper {
  * @return true if source, destination and destination after copy are not NULL.
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
-bool Copy(void * const destination,
+DLL_API bool Copy(void * const destination,
           const void * const source,
           uint32 size);
 
@@ -64,7 +64,7 @@ bool Copy(void * const destination,
  * @return (0 if mem1 == mem2), (1 if mem1 < mem2), (2 if mem1 > mem2).
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
-int32 Compare(const void * const mem1,
+DLL_API int32 Compare(const void * const mem1,
               const void * const mem2,
               uint32 size);
 
@@ -76,7 +76,7 @@ int32 Compare(const void * const mem1,
  * @return the pointer to the first occurrence of c in the memory. NULL if c is absent.
  * @pre the size parameter must be minor than the memory block size.
  */
-const void *Search(const void * const mem,
+DLL_API const void *Search(const void * const mem,
                    const char8 c,
                    const uint32 size);
 
@@ -88,7 +88,7 @@ const void *Search(const void * const mem,
  * @return true if source, destination, and destination after the copy are not NULL.
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
-bool Move(void * const destination,
+DLL_API bool Move(void * const destination,
           const void * const source,
           const uint32 size);
 
@@ -100,7 +100,7 @@ bool Move(void * const destination,
  * @return true if the memory could be set to desired value.
  * @pre the size parameter must be minor than the memory block size.
  */
-bool Set(void * const mem,
+DLL_API bool Set(void * const mem,
          const char8 c,
          const uint32 size);
 

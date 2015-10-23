@@ -48,11 +48,11 @@ namespace MARTe {
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is bool because this type must be used as a boolean type.*/
 /*lint -etemplate(948, 1790, 1942) No code is truly generated. This strategy is used to guarantee that certain rules
  * about the template are guaranteed at compilation time.
- * Operator will always evaluate to true if the template is correctly used, otherwise it will not compile (which the objective)*/
+ * Operator will always evaluate to true if the template is correctly used, otherwise it will not compile (which is the objective)*/
 template<typename baseType, uint8 bitOffset>
-class BitBoolean: public TemplateParametersVerificator<((sizeof(baseType)*8u)>bitOffset)> {
+class BitBoolean: public TemplateParametersVerificator<((sizeof(baseType) * 8u) > bitOffset)> {
 
- public:
+public:
 
     /**
      * @brief Copy operator.

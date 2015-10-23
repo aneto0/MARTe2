@@ -33,7 +33,9 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 
 all: $(OBJS) $(SUBPROJ)   \
-		$(BUILD_DIR)/L0Types$(LIBEXT)
+		$(BUILD_DIR)/L0TypesB$(LIBEXT) \
+		$(BUILD_DIR)/L0TypesB.def
+		
 	echo  $(OBJS)
 
 include depends.$(TARGET)

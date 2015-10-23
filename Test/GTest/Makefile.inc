@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=  TypeCharacteristicsGTest.x \
+OBJSX=	TypeCharacteristicsGTest.x \
+        ShiftGTest.x \
         BasicTypeGTest.x \
         BasicConsoleGTest.x \
         FormatDescriptorGTest.x \
@@ -58,13 +59,27 @@ OBJSX=  TypeCharacteristicsGTest.x \
 	ReferenceContainerNodeGTest.x \
 	ReferenceContainerFilterReferencesGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
-  	ErrorManagementGTest.x \
+ 	ErrorManagementGTest.x \
     	BitBooleanGTest.x \
  	FractionalIntegerGTest.x \
  	BitRangeGTest.x \
  	StaticListGTest.x \
  	GlobalObjectsDatabaseGTest.x \
-	TypeDescriptorGTest.x
+	TypeDescriptorGTest.x  \
+	CharBufferGTest.x \
+        IOBufferGTest.x \
+        StreamStringIOBufferGTest.x \
+        StreamIGTest.x \
+        SingleBufferedStreamGTest.x \
+        DoubleBufferedStreamGTest.x \
+        BufferedStreamIOBufferGTest.x \
+        StreamStringGTest.x \
+        StreamMemoryReferenceGTest.x \
+        BitSetToIntegerGTest.x
+
+	
+	
+
 
 PACKAGE=
 ROOT_DIR=../..

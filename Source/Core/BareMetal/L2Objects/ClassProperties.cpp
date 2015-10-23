@@ -20,7 +20,7 @@
  * the class ClassProperties (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
+#define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -68,11 +68,11 @@ const char8* ClassProperties::GetVersion() const {
     return classVersion;
 }
 
-uint32 ClassProperties::GetUniqueIdentifier() const{
+ClassUID ClassProperties::GetUniqueIdentifier() const{
     return uniqueIdentifier;
 }
 
-void ClassProperties::SetUniqueIdentifier(const uint32 &uid){
+void ClassProperties::SetUniqueIdentifier(const ClassUID &uid){
     uniqueIdentifier = uid;
 }
 

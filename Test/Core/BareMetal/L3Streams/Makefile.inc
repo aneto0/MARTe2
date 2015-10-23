@@ -24,7 +24,19 @@
 #
 #############################################################
 
-OBJSX=  AnyTypeTest.x
+OBJSX= AnyTypeTest.x \
+       CharBufferTest.x \
+       IOBufferTest.x \
+       StreamStringIOBufferTest.x \
+       StreamITest.x \
+       BufferedStreamIOBufferTest.x \
+       StreamTestHelper.x \
+       SingleBufferedStreamTest.x \
+       DoubleBufferedStreamTest.x \
+       StreamStringTest.x \
+       StreamMemoryReferenceTest.x \
+       BitSetToIntegerTest.x
+	 
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

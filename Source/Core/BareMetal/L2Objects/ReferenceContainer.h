@@ -53,7 +53,7 @@ namespace MARTe{
  * by an internal FastPollingMutexSem whose timeout can be specified.
  */
 /*lint -e{9109} forward declaration in ReferenceContainerFilter.h is required to define the class*/
-class ReferenceContainer: public Object {
+class DLL_API ReferenceContainer: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
 
@@ -61,12 +61,12 @@ public:
      * @brief Default constructor.
      * @details Initialises the semaphore and set the default timeout to infinite.
      */
-    ReferenceContainer();
+     ReferenceContainer();
 
     /**
      * @brief Destructor. Deletes all the elements hold by the container.
      */
-    virtual ~ReferenceContainer();
+     virtual ~ReferenceContainer();
 
     /**
      * @brief Inserts a new reference to the container.
@@ -75,7 +75,7 @@ public:
      * @param[in] position the position in the container where the reference is to be inserted.
      * @return true if \a ref is valid and it can be successfully added to the container.
      */
-    bool Insert(Reference ref,
+     bool Insert(Reference ref,
                 const int32 &position = -1);
 
     /**
@@ -85,7 +85,7 @@ public:
      * @param[in] ref the reference to be deleted.
      * @return true if the reference can be successfully removed (i.e. if the Size() of the list is decreased by 1).
      */
-    bool Delete(Reference ref);
+     bool Delete(Reference ref);
 
     /**
      * @brief Finds on or more elements in the container.
@@ -94,7 +94,7 @@ public:
      * @param[in,out] result container where to store the elements found (which may include a path to a given container).
      * @param[in,out] filter the searching criteria to be applied.
      */
-    void Find(ReferenceContainer &result,
+     void Find(ReferenceContainer &result,
               ReferenceContainerFilter &filter);
 
     /**
@@ -102,32 +102,32 @@ public:
      * @param[in] ref the reference to check.
      * @return true if \a ref holds ReferenceContainer.
      */
-    bool IsContainer(const Reference &ref) const;
+     bool IsContainer(const Reference &ref) const;
 
     /**
      * @brief Returns the number of elements in the container.
      * @return the number of elements in the container.
      */
-    uint32 Size();
+     uint32 Size();
 
     /**
      * @brief Returns the reference at position \a idx.
      * @param[in] idx the desired reference position.
      * @return the Reference at position \a idx or an empty Reference if \a idx < 0 or \a idx >  Size().
      */
-    Reference Get(const uint32 idx);
+     Reference Get(const uint32 idx);
 
     /**
      * @brief Returns the semaphore timeout time.
      * @return the semaphore timeout time.
      */
-    TimeoutType GetTimeout() const;
+     TimeoutType GetTimeout() const;
 
     /**
      * @brief Updates the semaphore timeout time.
      * @param[in] timeout the timeout to be set.
      */
-    void SetTimeout(const TimeoutType &timeout);
+     void SetTimeout(const TimeoutType &timeout);
 
 private:
     /**
