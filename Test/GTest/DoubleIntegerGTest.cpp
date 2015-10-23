@@ -100,17 +100,17 @@ TEST_F(DoubleIntegerGTest,TestConstructorByType_16) {
     ASSERT_TRUE(Unumbertest.TestConstructorByType(u8x2));
     DoubleIntegerTest<int16> Snumbertest;
     int32 s32x1=0xffff;
-    ASSERT_TRUE(Unumbertest.TestConstructorByType(s32x1));
+    ASSERT_TRUE(Snumbertest.TestConstructorByType(s32x1));
     int32 s32x2=-1;
-    ASSERT_TRUE(Unumbertest.TestConstructorByType(s32x2));
+    ASSERT_TRUE(Snumbertest.TestConstructorByType(s32x2));
     int16 s16x1=0xff;
-    ASSERT_TRUE(Unumbertest.TestConstructorByType(s16x1));
+    ASSERT_TRUE(Snumbertest.TestConstructorByType(s16x1));
     int16 s16x2=-1;
-    ASSERT_TRUE(Unumbertest.TestConstructorByType(s16x2));
+    ASSERT_TRUE(Snumbertest.TestConstructorByType(s16x2));
     int8 s8x1=0xf;
-    ASSERT_TRUE(Unumbertest.TestConstructorByType(s8x1));
+    ASSERT_TRUE(Snumbertest.TestConstructorByType(s8x1));
     int8 s8x2=-1;
-    ASSERT_TRUE(Unumbertest.TestConstructorByType(s8x2));
+    ASSERT_TRUE(Snumbertest.TestConstructorByType(s8x2));
 
 }
 
@@ -149,6 +149,8 @@ TEST_F(DoubleIntegerGTest,TestConstructorByType_32) {
     int8 s8x1=0xf;
     ASSERT_TRUE(Unumbertest.TestConstructorByType(s8x1));
     int8 s8x2=-1;
+    ASSERT_TRUE(Unumbertest.TestConstructorByType(s8x2));
+
 }
 
 
@@ -1085,7 +1087,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int64) {
             testTableLogicDI<int64>(DoubleInteger<int64>(0xffffffffffffffff,0xffffffffffffffff), 0, 1),
             testTableLogicDI<int64>(0, 1, 1),
             testTableLogicDI<int64>(DoubleInteger<int64>(0xffffffffffffffff,0xffffffffffffffff), DoubleInteger<int64>(0xffffffffffffffff,0xfffffffffffffffe), 0),
-            testTableLogicDI<int64>(DoubleInteger<int64>(0xffffffffffffffff,0xfffffffffffffffe), DoubleInteger<int64>(0xffffffffffffffff,0xffffffffffffffffe), 0),
+            testTableLogicDI<int64>(DoubleInteger<int64>(0xffffffffffffffff,0xfffffffffffffffe), DoubleInteger<int64>(0xffffffffffffffff,0xfffffffffffffffe), 0),
             testTableLogicDI<int64>(0, 0, 0, false)
     };
     DoubleIntegerTest<int64> numbertest;
@@ -1099,7 +1101,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_uint64) {
             testTableLogicDI<uint64>(0, DoubleInteger<uint64>(0xffffffffffffffff,0xffffffffffffffff), 1),
             testTableLogicDI<uint64>(0, 1, 1),
             testTableLogicDI<uint64>(DoubleInteger<uint64>(0xffffffffffffffff,0xfffffffffffffffe), DoubleInteger<uint64>(0xffffffffffffffff,0xffffffffffffffff), 1),
-            testTableLogicDI<uint64>(DoubleInteger<uint64>(0xffffffffffffffff,0xfffffffffffffffe), DoubleInteger<uint64>(0xffffffffffffffff,0xffffffffffffffffe), 0),
+            testTableLogicDI<uint64>(DoubleInteger<uint64>(0xffffffffffffffff,0xfffffffffffffffe), DoubleInteger<uint64>(0xffffffffffffffff,0xfffffffffffffffe), 0),
             testTableLogicDI<uint64>(0, 0, 0, false)
     };
     DoubleIntegerTest<uint64> numbertest;
@@ -1114,7 +1116,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int32) {
             testTableLogicDI<int32>(0xffffffffffffffff, 0, 1),
             testTableLogicDI<int32>(0, 1, 1),
             testTableLogicDI<int32>(0xffffffffffffffff, 0xfffffffffffffffe, 0),
-            testTableLogicDI<int32>(0xfffffffffffffffe, 0xffffffffffffffffe, 0),
+            testTableLogicDI<int32>(0xfffffffffffffffe, 0xfffffffffffffffe, 0),
             testTableLogicDI<int32>(0, 0, 0, false)
     };
     DoubleIntegerTest<int32> numbertest;
@@ -1129,7 +1131,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_uint32) {
             testTableLogicDI<uint32>(0xffffffffffffffff, 0, 0),
             testTableLogicDI<uint32>(0, 1, 1),
             testTableLogicDI<uint32>(0xffffffffffffffff, 0xfffffffffffffffe, 0),
-            testTableLogicDI<uint32>(0xfffffffffffffffe, 0xffffffffffffffffe, 0),
+            testTableLogicDI<uint32>(0xfffffffffffffffe, 0xfffffffffffffffe, 0),
             testTableLogicDI<uint32>(0, 0, 0, false)
     };
     DoubleIntegerTest<uint32> numbertest;
@@ -1144,7 +1146,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int16) {
             testTableLogicDI<int16>(0xffffffff, 0, 1),
             testTableLogicDI<int16>(0, 1, 1),
             testTableLogicDI<int16>(0xffffffff, 0xfffffffe, 0),
-            testTableLogicDI<int16>(0xfffffffe, 0xffffffffe, 0),
+            testTableLogicDI<int16>(0xfffffffe, 0xfffffffe, 0),
             testTableLogicDI<int16>(0, 0, 0, false)
     };
     DoubleIntegerTest<int16> numbertest;
@@ -1159,7 +1161,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_uint16) {
             testTableLogicDI<uint16>(0, 0xffffffff, 1),
             testTableLogicDI<uint16>(0, 1, 1),
             testTableLogicDI<uint16>(0xffffffff, 0xfffffffe, 0),
-            testTableLogicDI<uint16>(0xfffffffe, 0xffffffffe, 0),
+            testTableLogicDI<uint16>(0xfffffffe, 0xfffffffe, 0),
             testTableLogicDI<uint16>(0, 0, 0, false)
     };
     DoubleIntegerTest<uint16> numbertest;
@@ -1364,7 +1366,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_int32) {
             testTableLogicDI<int32>(0xffffffffffffffff, 0, 1),
             testTableLogicDI<int32>(0, 1, 1),
             testTableLogicDI<int32>(0xffffffffffffffff, 0xfffffffffffffffe, 0),
-            testTableLogicDI<int32>(0xfffffffffffffffe, 0xffffffffffffffffe, 1),
+            testTableLogicDI<int32>(0xfffffffffffffffe, 0xfffffffffffffffe, 1),
             testTableLogicDI<int32>(0, 0, 0, false)
     };
     DoubleIntegerTest<int32> numbertest;
@@ -1380,7 +1382,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_uint32) {
             testTableLogicDI<uint32>(0xffffffffffffffff, 0, 0),
             testTableLogicDI<uint32>(0, 1, 1),
             testTableLogicDI<uint32>(0xffffffffffffffff, 0xfffffffffffffffe, 0),
-            testTableLogicDI<uint32>(0xfffffffffffffffe, 0xffffffffffffffffe, 1),
+            testTableLogicDI<uint32>(0xfffffffffffffffe, 0xfffffffffffffffe, 1),
             testTableLogicDI<uint32>(0, 0, 0, false)
     };
     DoubleIntegerTest<uint32> numbertest;

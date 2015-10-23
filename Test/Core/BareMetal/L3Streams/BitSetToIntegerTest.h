@@ -87,6 +87,11 @@ public:
      * @brief Tests the conversion from 32-bits integer to BitSet.
      */
     bool TestIntegerToBitSet_32();
+
+    /**
+     * @brief Tests the conversion from 64-bits integer to BitSet.
+     */
+    bool TestIntegerToBitSet_64();
 };
 
 template<typename T>

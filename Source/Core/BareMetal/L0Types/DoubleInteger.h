@@ -46,6 +46,7 @@ namespace MARTe {
  * @details Implementation is endianity dependent.\n
  * Uses operators of T to implement operators.
  */
+
 template<typename T>
 class DoubleInteger {
 public:
@@ -73,12 +74,14 @@ public:
      * @brief Implementation of arithmetic left shift.
      * @param shift is the desired shift.
      */
+    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator<<=(uint16 shift);
 
     /**
      * @brief Implementation of arithmetic right shift.
      * @param shift is the desired shift.
      */
+    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator>>=(uint16 shift);
 
     /**
@@ -99,12 +102,14 @@ public:
      * @brief Bitwise and operator.
      * @param n is the DoubleInteger argument.
      */
+    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator&=(const DoubleInteger<T> &n);
 
     /**
      * @brief Bitwise or operator.
      * @param n is the DoubleInteger argument.
      */
+    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator|=(const DoubleInteger<T> &n);
 
     /**
@@ -186,12 +191,14 @@ public:
      * @brief Math subtraction.
      * @param n is the number to subtract.
      */
+    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator-=(const DoubleInteger<T> &n);
 
     /**
      * @brief Math sum.
      * @param n is the number to add.
      */
+    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator+=(const DoubleInteger<T> &n);
 
     /**
@@ -209,12 +216,14 @@ public:
     /**
      * @brief Sets the the second part of the number.
      */
+    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attribute. */
     void SetLower(T lowerIn);
 
 
     /**
      * @brief Sets the the first part of the number.
      */
+    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attribute. */
     void SetUpper(T upperIn);
 
 private:
