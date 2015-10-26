@@ -160,7 +160,7 @@ bool DoubleBufferedStream::Read(char8 * const output,
     }
 
     // if needed read directly from stream
-    return (ret) ? (OSRead(&output[0], size)) : (false);
+    return ret;
 }
 
 
@@ -228,7 +228,7 @@ bool DoubleBufferedStream::Write(const char8 * const input,
         }
 
     }
-    return (ret) ? (OSWrite(&input[0], size)) : (false);
+    return ret;
 
 }
 

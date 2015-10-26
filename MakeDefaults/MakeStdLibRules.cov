@@ -46,6 +46,7 @@ $(BUILD_DIR)/%.a : $(OBJS)
 	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $@
 
 $(BUILD_DIR)/%.so : $(OBJS)
+	mkdir -p cov
 	touch dummy.cpp	
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  dummy.cpp -o dummy.o
 	$(COMPILER) $(LFLAGS) -shared -fPIC dummy.o $(OBJS) $(LIBRARIES) -o $(BUILD_DIR)/$*.so
