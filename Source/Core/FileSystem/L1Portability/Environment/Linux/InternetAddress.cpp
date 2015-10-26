@@ -159,6 +159,23 @@ const char8 *InternetAddress::GetHostName(String &hostName) {
     return hostName.Buffer();
 }
 
+
+static class SocketInitialization{
+public:
+    SocketInitialization(){
+        Init();
+    }
+    void Init(){
+        if (!sockInitialized) sock_init();
+        sockInitialized = true;
+    }
+} socketInitialization;
+
+void InternetAddress::SocketInit(){
+    socketInitialization.Init();
+}
+
+
 const char8 *InternetAddress::GetLocalAddress() {
     return InternetAddressInfo.GetLocalAddress();
 }

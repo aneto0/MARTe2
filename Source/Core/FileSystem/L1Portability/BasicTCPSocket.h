@@ -32,11 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "System.h"
-#include "BasicSocket.h"
-#include "SocketSelect.h"
-#include "InternetService.h"
-#include "Sleep.h"
+#include "TimeoutType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,25 +44,15 @@ class BasicTCPSocket: public BasicSocket {
 public:
 
     /** just a constructor */
-    BasicTCPSocket(int32 socket = 0);
+    BasicTCPSocket();
+
+    BasicTCPSocket(int32 socket);
 
     /** destructor */
     ~BasicTCPSocket();
 
     /**  set blocking mode for the stream! */
     bool SetBlocking(bool flag);
-
-    /** returns the socket number */
-    int32 Socket();
-
-    /** closes the socket */
-    bool Close();
-
-    /** where the packet came from */
-    InternetAddress &Source();
-
-    /** where the packet is going to */
-    InternetAddress &Destination();
 
     /** basic Read*/
     bool BasicRead(void* buffer,
@@ -91,6 +77,10 @@ public:
     bool Listen(char8 *serviceName,
                 int32 maxConnections = 1);
 
+    bool Connect(const char *address,
+                 int32 port,
+                 TimeoutType msecTimeout = TTInfiniteWait,
+                 int32 retry = 12);
 
     /** connects an unconnected socket to address address and with port port */
     bool Connect(const char8 *address,
@@ -104,16 +94,6 @@ public:
     BasicTCPSocket *WaitConnection(TimeoutType msecTimeout = TTInfiniteWait,
                                    BasicTCPSocket *client = NULL);
 
-private:
-
-    /** where the packet goes to */
-    InternetAddress destination;
-
-    /** where packets comes from */
-    InternetAddress source;
-
-    /** the socket handle */
-    int32 connectionSocket;
 };
 }
 

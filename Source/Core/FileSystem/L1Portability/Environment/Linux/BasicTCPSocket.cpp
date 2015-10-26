@@ -24,12 +24,21 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <signal.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <net/if.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <errno.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
-
+#include "BasicSocket.h"
+#include "BasicTCPSocket.h"
+#include "Sleep.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -39,283 +48,423 @@
 /*---------------------------------------------------------------------------*/
 
 
+#define sock_errno()  errno
 
-#include "System.h"
-#include "BasicSocket.h"
-#include "SocketSelect.h"
-#include "InternetService.h"
-#include "Sleep.h"
+namespace MARTe {
+
+static const uint32 SELECT_WIDTH= 256u;
 
 
-protected:
+/** Allows synchronising to a group of sockets.
+CAN ONLY SELECT SOCKETS FROM A SINGLE SOURCE TYPE. CANNOT MIX ATM and UDP (on NT only?) */
+class  SocketSelect {
+private:
+    /** */
+    fd_set readFDS;
 
-    /** where the packet goes to */
-    InternetAddress    destination;
+    /** */
+    fd_set writeFDS;
 
-    /** where packets comes from */
-    InternetAddress    source;
+    /** */
+    fd_set exceptFDS;
 
-    /** the socket handle */
-    int32              connectionSocket;
+    /** */
+    fd_set readFDS_done;
+
+    /** */
+    fd_set writeFDS_done;
+
+    /** */
+    fd_set exceptFDS_done;
+
+    /** */
+    int32 readySockets;
 
 public:
-    /** constructor  */
-    BasicSocket(int32 socket = 0){
-        connectionSocket = socket;
+    /** */
+    SocketSelect(){
+        Reset();
     }
 
-    /** destructor */
-    ~BasicSocket(){
-        Close();
+    /** */
+    void Reset(){
+        FD_ZERO(&readFDS);
+        FD_ZERO(&writeFDS);
+        FD_ZERO(&exceptFDS);
+        FD_ZERO(&readFDS_done);
+        FD_ZERO(&writeFDS_done);
+        FD_ZERO(&exceptFDS_done);
     }
 
-    /**  set blocking mode for the stream! */
-    bool SetBlocking(bool flag){
-        int stat;
-        if (flag == True) stat = 0;
-        else stat = 1;
-
-        int ret = ioctl(connectionSocket,FIONBIO,(char *)&stat,sizeof(stat));
-        return ( ret >= 0);
+    /** */
+    void AddWaitOnWriteReady(BasicSocket *s){
+        if (s==NULL) return ;
+        FD_SET(s->Socket(),&writeFDS);
     }
-
-    /** returns the socket number */
-    int32 Socket(){
-        return connectionSocket;
+    /** */
+    void DeleteWaitOnWriteReady(BasicSocket *s){
+        if (s==NULL) return ;
+        FD_CLR(s->Socket(),&writeFDS);
     }
-
-    /** closes the socket */
-    bool Close(){
-        if (connectionSocket != 0){
-            int ret = soclose(connectionSocket);
-            connectionSocket = 0;
-            if(ret<0){
-                CStaticAssertErrorCondition(OSError,"BasicSocket::Close failed returning %i\n",ret);
-                return False;
-            }
-        } else return False;
-        return True;
+    /** */
+    void AddWaitOnReadReady(BasicSocket *s){
+        if (s==NULL) return ;
+        FD_SET(s->Socket(),&readFDS);
     }
-
-    /** where the packet came from */
-    InternetAddress &Source(){
-        return source;
+    /** */
+    void DeleteWaitOnReadReady(BasicSocket *s){
+        if (s==NULL) return ;
+        FD_CLR(s->Socket(),&readFDS);
     }
-
-    /** where the packet is going to */
-    InternetAddress &Destination(){
-        return destination;
+    /** */
+    void AddWaitOnExceptReady(BasicSocket *s){
+        if (s==NULL) return ;
+        FD_SET(s->Socket(),&exceptFDS);
     }
-
-
-
-    /** Sets the error status and depending on setup does appropriate action */
-    void AssertSocketErrorCondition(EMFErrorType errorCode,const char *errorDescription=NULL,...){
-        va_list argList;
-        va_start(argList,errorDescription);
-        VCAssertSocketErrorCondition(errorCode,this,"BasicSocket",errorDescription,argList);
-        va_end(argList);
+    /** */
+    void DeleteWaitOnExceptReady(BasicSocket *s){
+        if (s==NULL) return ;
+        FD_CLR(s->Socket(),&exceptFDS);
     }
+    /** Wait for all the event*/
+    bool Wait(TimeoutType msecTimeout = TTInfiniteWait){
+        readFDS_done   = readFDS;
+        writeFDS_done  = writeFDS;
+        exceptFDS_done = exceptFDS;
 
-
-
-
-
-
-#define BasicTCPSocketVersion "$Id: BasicTCPSocket.h 3 2012-01-15 16:26:07Z aneto $"
-class BasicTCPSocket: public BasicSocket {
-public:
-
-    /** basic Read*/
-    bool BasicRead(void* buffer, uint32 &size){
-        int32 ret = recv(connectionSocket,(char *)buffer,size,0);
-        if (ret < 0) {
-            AssertSocketErrorCondition(OSError,"BasicTCPSocket::BlockRead");
-            size = 0;
-            return False;
+        timeval timeWait;
+        if (msecTimeout == TTInfiniteWait) {
+            readySockets = select(SELECT_WIDTH,&readFDS_done,&writeFDS_done,&exceptFDS_done,NULL);
+        } else {
+            timeWait.tv_sec  = msecTimeout.GetTimeoutMSec() / 1000;
+            timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
+            readySockets = select(SELECT_WIDTH,&readFDS_done,&writeFDS_done,&exceptFDS_done,&timeWait);
         }
-        size = ret;
-        // to avoid polling continuously release CPU time when reading 0 bytes
-        if (size == 0) SleepMsec(1);
-        return True;
+        return (readySockets > 0);
     }
 
-    /** basic write */
-    bool BasicWrite(const void* buffer, uint32 &size){
-        int32 ret = send(connectionSocket,(char *)buffer,size,0);
-        if (ret < 0) {
-            AssertSocketErrorCondition(OSError,"BasicTCPSocket::BlockWrite");
-            size = 0;
-            return False;
+    /** wait for data on the input */
+    bool WaitRead(TimeoutType msecTimeout = TTInfiniteWait){
+        readFDS_done   = readFDS;
+
+        timeval timeWait;
+        if (msecTimeout == TTInfiniteWait) {
+            readySockets = select(SELECT_WIDTH,&readFDS_done,NULL,NULL,NULL);
+        } else {
+            timeWait.tv_sec  = msecTimeout.GetTimeoutMSec() / 1000;
+            timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
+            readySockets = select(SELECT_WIDTH,&readFDS_done,NULL,NULL,&timeWait);
         }
-        size = ret;
-        return True;
+        return (readySockets > 0);
     }
 
-    /** Read without consuming */
-    bool Peek(void* buffer, uint32 &size){
-        int32 ret = recv(connectionSocket,(char *)buffer,size,MSG_PEEK);
-        if (ret < 0) {
-            AssertSocketErrorCondition(OSError,"BasicTCPSocket::BlockPeek");
-            size = 0;
-            return False;
+    /** wait on free space on the output buffer*/
+    bool WaitWrite(TimeoutType msecTimeout = TTInfiniteWait){
+        writeFDS_done   = writeFDS;
+
+        timeval timeWait;
+        if (msecTimeout == TTInfiniteWait) {
+            readySockets = select(SELECT_WIDTH,NULL,&writeFDS_done,NULL,NULL);
+        } else {
+            timeWait.tv_sec  = msecTimeout.GetTimeoutMSec() / 1000;
+            timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
+            readySockets = select(SELECT_WIDTH,NULL,&writeFDS_done,NULL,&timeWait);
         }
-        size = ret;
-        return True;
+        return (readySockets > 0);
     }
 
-    /** just a constructor */
-    BasicTCPSocket(int32 socket = 0){
-        signal (SIGPIPE, SIG_IGN);
-        connectionSocket = socket;
-    }
+    /** wait for an exception */
+    bool WaitExcept(TimeoutType msecTimeout = TTInfiniteWait){
+        exceptFDS_done = exceptFDS;
 
-    /** Opens a stream socket */
-    bool Open(){
-        SocketInit();
-        connectionSocket = socket(PF_INET,SOCK_STREAM,0);
-        const int one = 1;
-        if (setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)) < 0){
-            AssertSocketErrorCondition(OSError,"BasicTCPSocket::constructor failed calling setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one) (this machine ip is %s)",GetLocalIpNumber());
-            return False;
+        timeval timeWait;
+        if (msecTimeout == TTInfiniteWait) {
+            readySockets = select(SELECT_WIDTH,NULL,NULL,&exceptFDS_done,NULL);
+        } else {
+            timeWait.tv_sec  = msecTimeout.GetTimeoutMSec() / 1000;
+            timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
+            readySockets = select(SELECT_WIDTH,NULL,NULL,&exceptFDS_done,&timeWait);
         }
-
-        if (connectionSocket < 0){
-            AssertSocketErrorCondition(OSError,"BasicTCPSocket::constructor failed calling socket(PF_INET,SOCK_STREAM,0) (this machine ip is %s)",GetLocalIpNumber());
-            return False;
-        }
-
-        return True;
-    };
-
-    /** Opens a socket as a server at port port */
-    bool Listen(int port,int maxConnections=1){
-        InternetAddress    server;
-
-        server.SetPort(port);
-        int errorCode = bind(connectionSocket, server.Address(),server.Size());
-        if (errorCode < 0) {
-            AssertSocketErrorCondition(OSError,"BasicTCPSocket::Listen::bind");
-            return False;
-        }
-
-        errorCode = listen (connectionSocket,maxConnections);
-        if (errorCode < 0) {
-            AssertSocketErrorCondition(OSError,"BasicTCPSocket::Listen::listen");
-            return False;
-        }
-
-        return True;
+        return (readySockets > 0);
     }
 
-    /** Opens a socket as a server at port port */
-    bool Listen(char *serviceName,int maxConnections=1){
-        int32 port = InternetService::GetPortByName(serviceName);
-        if (port == -1) return False;
-        return Listen(port,maxConnections);
-    }
+    /** */
+    int32 ReadySockets(){ return readySockets; }
 
-    /** connects an unconnected socket to address address and with port port
-        if msecTimeout is TTDefault then select is not used */
-    bool Connect(const char *address,int port,TimeoutType msecTimeout = TTInfiniteWait, int retry=12){
-        destination.SetPort(port);
-        if (destination.SetAddressByDotName(address) == False) {
-            if (destination.SetAddressByName(address) == False) {
-                CStaticAssertErrorCondition(ParametersError,"BasicTCPSocket::Connect:wrong address [%s], port [%d]",address,port);
-                return False;
-            }
-        }
+    /** */
+    bool CheckRead(BasicSocket *s){ return (FD_ISSET(s->Socket(),&readFDS_done)!= 0); }
 
-        int32 errorCode = connect(connectionSocket,destination.Address(),destination.Size());
-        if (errorCode < 0){
+    /** */
+    bool CheckWrite(BasicSocket *s){ return (FD_ISSET(s->Socket(),&writeFDS_done)!= 0); }
 
-            errorCode = sock_errno();
-            if (errorCode == EINTR){
-                if(retry > 0){
-                    return Connect(address, port, msecTimeout, retry--);
-                }
-                else{
-                    AssertSocketErrorCondition(OSError,"BasicTCPSocket::Connect failed. Interrupted system call...");
-                    return False;
-                }
-            }
-            if ((errorCode != 0) &&
-                (errorCode != EINPROGRESS) &&
-                (errorCode != EWOULDBLOCK)){
-                AssertSocketErrorCondition(OSError,"BasicTCPSocket::Connect failed ");
-                return False;
-            } else {
-                if (msecTimeout != TTDefault){
-                    SocketSelect sel;
-                    sel.AddWaitOnWriteReady(this);
-                    bool ret = sel.WaitWrite(msecTimeout);
-                    if (ret) return True;
-                }
-                AssertSocketErrorCondition(OSError,"BasicTCPSocket::Timeout on Connect");
-                return False;
-            }
-        }
-        return True;
-    }
+    /** */
+    bool CheckExcept(BasicSocket *s){ return (FD_ISSET(s->Socket(),&exceptFDS_done)!= 0); }
 
-    /** connects an unconnected socket to address address and with port port */
-    bool Connect(const char *address,const char *serviceName,TimeoutType msecTimeout = TTInfiniteWait){
-        int32 port = InternetService::GetPortByName(serviceName);
-        if (port == -1) return False;
-        return Connect(address,port,msecTimeout);
-    }
+    /** */
+    fd_set &ReadFDS(){ return readFDS_done; }
 
-    /** True if we are still connected  Still experimental */
-    bool IsConnected(){
+    /** */
+    fd_set &WriteFDS(){ return readFDS_done; }
 
-
-        int32           errorCode;
-        InternetAddress information;
-
-        socklen_t len   = information.Size();
-
-        int32 ret = getpeername(connectionSocket,information.Address(),&len);
-
-        errorCode = sock_errno();
-
-
-        return (ret == 0);
-
-    }
-
-    /** this is a BasicTCPSocket constructor .. */
-    BasicTCPSocket *WaitConnection(TimeoutType msecTimeout = TTInfiniteWait,BasicTCPSocket *client=NULL){
-        int size = source.Size();
-        int newSocket = accept(connectionSocket,source.Address(),(socklen_t *)&size);
-
-        if  ( newSocket != -1 ) {
-            if (!client) client = new BasicTCPSocket(newSocket);
-            client->destination = source;
-            client->source      = source;
-            client->connectionSocket = newSocket;
-            return client;
-        } else
-        if (msecTimeout != TTDefault){
-            int32 errorCode;
-            errorCode = sock_errno();
-
-            if ((errorCode != 0) &&
-                (errorCode != EINPROGRESS) &&
-                (errorCode != EWOULDBLOCK)){
-                AssertSocketErrorCondition(OSError,"BasicTCPSocket::WaitConnection failed ");
-                return NULL;
-            } else {
-                SocketSelect sel;
-                sel.AddWaitOnReadReady(this);
-                bool ret = sel.WaitRead(msecTimeout);
-                if (ret) return WaitConnection(TTDefault,client);
-                //AssertSocketErrorCondition(Warning,"BasicTCPSocket::Timeout on Connect");
-                return NULL;
-            }
-
-        }
-        return NULL;
-    }
+    /** */
+    fd_set &ExceptFDS(){ return readFDS_done; }
 
 };
-	
+
+
+
+
+/**
+ * @file
+ * Allows handling ports by name
+ */
+
+class InternetService{
+    /** */
+    servent service;
+
+public:
+    /** */
+    bool SearchByName(const char8 *name,char8 *protocol=NULL){
+        servent *serv = getservbyname(name,protocol);
+        if (serv == NULL) return false;
+        service = *serv;
+        return true;
+
+    }
+
+    /** */
+    bool SearchByPort(int32 port,char8 *protocol=NULL){
+        servent *serv = getservbyport(port,protocol);
+        if (serv == NULL) return false;
+        service = *serv;
+        return true;
+
+    }
+
+    /** */
+    int32 Port() {
+        return service.s_port;
+    }
+
+    /** */
+    const char8 *Name() {
+        return service.s_name;
+    }
+
+    /** */
+    const char8 *Protocol() {
+        return service.s_proto;
+    }
+
+    /** */
+    static int32 GetPortByName(const char8 *name){
+        InternetService service;
+        service.SearchByName(name);
+        return service.Port();
+    }
+};
+
+
+
+
+
+
+
+/** basic Read*/
+bool BasicTCPSocket::BasicRead(void* buffer,
+                               uint32 &size) {
+    int32 ret = recv(GetConnectionSocket(), (char8 *) buffer, size, 0);
+    if (ret < 0) {
+        size = 0;
+        return false;
+    }
+    size = ret;
+    // to avoid polling continuously release CPU time when reading 0 bytes
+    if (size == 0)
+        Sleep::MSec(1);
+    return true;
+}
+
+/** basic write */
+bool BasicTCPSocket::BasicWrite(const void* buffer,
+                                uint32 &size) {
+    int32 ret = send(GetConnectionSocket(), (char8 *) buffer, size, 0);
+    if (ret < 0) {
+        size = 0;
+        return false;
+    }
+    size = ret;
+    return true;
+}
+
+/** Read without consuming */
+bool BasicTCPSocket::Peek(void* buffer,
+                          uint32 &size) {
+    int32 ret = recv(GetConnectionSocket(), (char8 *) buffer, size, MSG_PEEK);
+    if (ret < 0) {
+        size = 0;
+        return false;
+    }
+    size = ret;
+    return true;
+}
+
+
+/** just a constructor */
+BasicTCPSocket::BasicTCPSocket() {
+    signal(SIGPIPE, SIG_IGN);
+}
+
+/** just a constructor */
+BasicTCPSocket::BasicTCPSocket(int32 socket) {
+    signal(SIGPIPE, SIG_IGN);
+    SetConnectionSocket(socket);
+}
+
+/** Opens a stream socket */
+bool BasicTCPSocket::Open() {
+    InternetAddress::SocketInit();
+    SetConnectionSocket(socket(PF_INET, SOCK_STREAM, 0));
+    const int32 one = 1;
+    if (setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)) < 0) {
+        return false;
+    }
+
+    if (GetConnectionSocket() < 0) {
+        return false;
+    }
+
+    return true;
+}
+
+
+/** Opens a socket as a server at port port */
+bool BasicTCPSocket::Listen(int32 port,
+                            int32 maxConnections) {
+    InternetAddress server;
+
+    server.SetPort(port);
+    int32 errorCode = bind(GetConnectionSocket(), server.GetAddress(), server.Size());
+    if (errorCode < 0) {
+        return false;
+    }
+
+    errorCode = listen(GetConnectionSocket(), maxConnections);
+    if (errorCode < 0) {
+        return false;
+    }
+
+    return true;
+}
+
+/** Opens a socket as a server at port port */
+bool BasicTCPSocket::Listen(char8 *serviceName,
+                            int32 maxConnections) {
+    int32 port = InternetService::GetPortByName(serviceName);
+    if (port == -1)
+        return false;
+    return Listen(port, maxConnections);
+}
+
+/** connects an unconnected socket to address address and with port port
+ if msecTimeout is TTDefault then select is not used */
+bool BasicTCPSocket::Connect(const char8 *address,
+                             int32 port,
+                             TimeoutType msecTimeout,
+                             int32 retry) {
+    GetDestination().SetPort(port);
+    if (GetDestination().SetAddressByDotName(address) == false) {
+        if (GetDestination().SetAddressByName(address) == false) {
+            return false;
+        }
+    }
+
+    int32 errorCode = connect(GetConnectionSocket(), GetDestination().GetAddress(), GetDestination().Size());
+    if (errorCode < 0) {
+
+        errorCode = sock_errno();
+        if (errorCode == EINTR) {
+            if (retry > 0) {
+                return Connect(address, port, msecTimeout, retry--);
+            }
+            else {
+                return false;
+            }
+        }
+        if ((errorCode != 0) && (errorCode != EINPROGRESS) && (errorCode != EWOULDBLOCK)) {
+            return false;
+        }
+        else {
+            if (msecTimeout != TTDefault) {
+                SocketSelect sel;
+                sel.AddWaitOnWriteReady(this);
+                bool ret = sel.WaitWrite(msecTimeout);
+                if (ret)
+                    return true;
+            }
+            return false;
+        }
+    }
+    return true;
+}
+
+/** connects an unconnected socket to address address and with port port */
+bool BasicTCPSocket::Connect(const char8 *address,
+                             const char8 *serviceName,
+                             TimeoutType msecTimeout) {
+    int32 port = InternetService::GetPortByName(serviceName);
+    if (port == -1)
+        return false;
+    return Connect(address, port, msecTimeout);
+}
+
+/** true if we are still connected  Still experimental */
+bool BasicTCPSocket::IsConnected() {
+
+    int32 errorCode;
+    InternetAddress information;
+
+    socklen_t len = information.Size();
+
+    int32 ret = getpeername(GetConnectionSocket(), information.GetAddress(), &len);
+
+    errorCode = sock_errno();
+
+    return (ret == 0);
+
+}
+
+/** this is a BasicTCPSocket constructor .. */
+BasicTCPSocket *BasicTCPSocket::WaitConnection(TimeoutType msecTimeout,
+                                               BasicTCPSocket *client) {
+    int32 size = GetSource().Size();
+    int32 newSocket = accept(GetConnectionSocket(), GetSource().GetAddress(), (socklen_t *) &size);
+
+    if (newSocket != -1) {
+        if (!client)
+            client = new BasicTCPSocket(newSocket);
+        client->SetDestination(GetSource());
+        client->SetSource(GetSource());
+        client->SetConnectionSocket(newSocket);
+        return client;
+    }
+    else if (msecTimeout != TTDefault) {
+        int32 errorCode;
+        errorCode = sock_errno();
+
+        if ((errorCode != 0) && (errorCode != EINPROGRESS) && (errorCode != EWOULDBLOCK)) {
+            return NULL;
+        }
+        else {
+            SocketSelect sel;
+            sel.AddWaitOnReadReady(this);
+            bool ret = sel.WaitRead(msecTimeout);
+            if (ret) return WaitConnection(TTDefault,client);
+            return NULL;
+        }
+
+    }
+    return NULL;}
+
+}

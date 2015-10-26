@@ -77,6 +77,8 @@ public:
     /**  do not use to initialize objects. It is valid after static objects initializations */
     static const char8 *GetLocalIpNumber();
 
+    static void SocketInit();
+
     /** The same as LocalAddress but returns a 32 bit integer*/
     static uint32 GetLocalAddressAsNumber();
 

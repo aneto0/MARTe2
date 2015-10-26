@@ -29,7 +29,8 @@ ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  BasicSocket.x \
-        InternetAddress.x
+        InternetAddress.x \
+        BasicTCPSocket.x
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
