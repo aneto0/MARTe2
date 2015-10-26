@@ -37,163 +37,308 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
+
+
+/**
+ * @brief A class to add buffering support to OperatingSystemStream.
+ *
+ * @details The functions Read(*), Write(*), Seek(*), RelativeSeek(*), Position(*), Size(*), SetSize(*)
+ * wrap the related functions inherited by the buffered stream in order to implement all advanced
+ * read write operations defined in BufferedStreamI with buffering support.
+ *
+ * @details The functions CanRead(*), CanWrite(*) and CanSeek(*) wrap the operating system stream related functions
+ * defining the permissions stream operations.
+ *
+ * @details All the other operating system stream functions will be left untouched allowing full access to the specific
+ * operating system stream implementation.
+ */
 template<class bufferedStream, class basicStream>
 class BufferedStreamGenerator: public bufferedStream, public basicStream {
 
 public:
-    BufferedStreamGenerator() :
-            bufferedStream(),
-            basicStream() {
-    }
-
-    BufferedStreamGenerator(uint32 timeout) :
-            bufferedStream(timeout),
-            basicStream() {
-    }
-
-    virtual ~BufferedStreamGenerator() {
-    }
+    /**
+     * @brief Default constructor.
+     * @post bufferedStream(), basicStream().
+     */
+    BufferedStreamGenerator();
 
     /**
-     * @brief Calls the buffered read.
+     * @brief Constructor with timeout set.
+     * @param[in] timeout The timeout used in all read-write operations.
+     * @post bufferedStream(timeout), basicStream().
+     */
+    BufferedStreamGenerator(uint32 timeout);
+
+    /**
+     * @brief Default destructor.
+     */
+    virtual ~BufferedStreamGenerator();
+
+    /**
+     * @brief Wraps bufferedStream::Read(*).
+     * @see BufferedStreamI::Read(*).
      */
     virtual bool Read(char8 * const outBuffer,
-                      uint32 &inSize) {
-        return bufferedStream::Read(outBuffer, inSize);
-    }
+                      uint32 &size);
 
     /**
-     * @brief Performs a read operation with the specified timeout.
-     * To change the timeout permanently (also for printf, get token ecc) use SetTimeout.
+     * @brief Performs a buffered read operation with a specific timeout.
+     * @warning The specified timeout will be used only for this operation.
+     * To change the timeout used in all read-write operations permanently use SetTimeout(*).
+     * @param[out] output the buffer in output which will contain the read data.
+     * @param[in,out] size the number of bytes to read.
+     * @param[in] msecTimeout The timeout used in this operation.
+     * @see BufferedStreamI::Read(*).
      */
-    virtual bool Read(char8 * const outBuffer,
-                      uint32 &inSize,
-                      TimeoutType msecTimeout) {
-        TimeoutType prevTimeout = bufferedStream::GetTimeout();
-        bufferedStream::SetTimeout(msecTimeout);
-        bool ret = bufferedStream::Read(outBuffer, inSize);
-        bufferedStream::SetTimeout(prevTimeout);
-        return ret;
-    }
+    virtual bool Read(char8 * const output,
+                      uint32 &size,
+                      TimeoutType msecTimeout);
 
     /**
-     * @brief Calls the buffered write.
+     * @brief Wraps bufferedStream::Write(*)
+     * @see BufferedStreamI::Write(*).
      */
-    virtual bool Write(const char8 * const outBuffer,
-                       uint32 &inSize) {
-        return bufferedStream::Write(outBuffer, inSize);
-    }
+    virtual bool Write(const char8 * const input,
+                       uint32 &size);
 
     /**
-     * @brief Performs a write operation with the specified timeout.
-     * To change the timeout permanently (also for printf, get token ecc) use SetTimeout.
+     * @brief Performs a buffered write operation with a specific timeout.
+     * @warning The specified timeout will be used only for this operation.
+     * To change the timeout used in all read-write operations permanently use SetTimeout(*).
+     * @param[in] input the buffer in input which contains the data to be written.
+     * @param[in,out] size the number of bytes to write.
+     * @param[in] msecTimeout The timeout used in this operation.
+     * @see BufferedStreamI::Write(*).
      */
-    virtual bool Write(const char8 * const outBuffer,
-                       uint32 &inSize,
-                       TimeoutType msecTimeout) {
-        TimeoutType prevTimeout = bufferedStream::GetTimeout();
-        bufferedStream::SetTimeout(msecTimeout);
-        return bufferedStream::Write(outBuffer, inSize);
-        bufferedStream::SetTimeout(prevTimeout);
-        return ret;
-
-    }
+    virtual bool Write(const char8 * const input,
+                       uint32 &size,
+                       TimeoutType msecTimeout);
 
     /**
-     * @brief Calls buffered size.
+     * @brief Wraps bufferedStream::Size(*)
+     * @see BufferedStreamI::Size(*).
      */
-    virtual uint64 Size() {
-        return bufferedStream::Size();
-    }
+    virtual uint64 Size();
 
     /**
-     * @brief Calls buffered seek.
+     * @brief Wraps bufferedStream::Seek(*)
+     * BufferedStreamI::Seek(*).
      */
-    virtual bool Seek(uint64 pos) {
-        return DoubleBufferedStream::Seek(pos);
-    }
+    virtual bool Seek(uint64 pos);
 
     /**
-     * @brief Calls buffered relative seek.
+     * @brief Wraps bufferedStream::RelativeSeek(*).
+     * BufferedStreamI::RelativeSeek(*).
      */
-    virtual bool RelativeSeek(const int32 deltaPos) {
-        return bufferedStream::RelativeSeek(deltaPos);
-    }
+    virtual bool RelativeSeek(const int32 deltaPos);
 
     /**
-     * @brief Calls buffered position.
+     * @brief Wraps bufferedStream::Position(*).
+     * BufferedStreamI::Position(*).
      */
-    virtual uint64 Position() {
-        return bufferedStream::Position();
-    }
+    virtual uint64 Position();
 
     /**
-     * @brief Calls buffered set size.     */
-    virtual bool SetSize(uint64 size) {
-        return bufferedStream::SetSize(size);
-    }
-
-    /**
-     * @brief Calls basic can write.
+     * @brief Wraps bufferedStream::SetSize(*).
+     * BufferedStreamI::SetSize(*).
      */
-    virtual bool CanWrite() const {
-        return basicStream::CanWrite();
-    }
+    virtual bool SetSize(uint64 size);
 
     /**
-     * @brief Calls basic can seek.
+     * @brief Wraps basicStream::CanWrite(*).
+     * StreamI::CanWrite(*).
      */
-    virtual bool CanSeek() const {
-        return basicStream::CanSeek();
-    }
+    virtual bool CanWrite() const;
 
     /**
-     * @brief Calls basic can read.
+     * @brief Wraps basicStream::CanSeek(*).
+     * StreamI::CanSeek(*).
      */
-    virtual bool CanRead() const {
-        return basicStream::CanRead();
-    }
+    virtual bool CanSeek() const;
+
+    /**
+     * @brief Wraps basicStream::CanRead(*).
+     * StreamI::CanRead(*).
+     */
+    virtual bool CanRead() const;
 
 protected:
-    uint64 OSSize() {
-        return basicStream::Size();
-    }
 
-    bool OSSeek(uint64 seek) {
-        return basicStream::Seek(seek);
-    }
+    /**
+     * @brief Wraps the basicStream::Size(*)
+     */
+    virtual uint64 OSSize();
 
-    bool OSRelativeSeek(int32 delta) {
-        return basicStream::RelativeSeek(delta);
-    }
+    /**
+     * @brief Wraps the basicStream::Seek(*)
+     */
+    virtual bool OSSeek(uint64 pos);
 
-    uint64 OSPosition() {
-        return basicStream::Position();
-    }
+    /**
+     * @brief Wraps the basicStream::RelativeSeek(*)
+     */
+    virtual bool OSRelativeSeek(int32 deltaPos);
 
-    bool OSSetSize(uint64 desSize) {
-        return basicStream::SetSize(desSize);
-    }
+    /**
+     * @brief Wraps the basicStream::Position(*)
+     */
+    virtual uint64 OSPosition();
 
-    bool OSRead(char8 * const outBuffer,
-                uint32 &inSize) {
-        return basicStream::Read(outBuffer, inSize, GetTimeout());
-    }
+    /**
+     * @brief Wraps the basicStream::SetSize(*)
+     */
+    virtual bool OSSetSize(uint64 size);
 
-    bool OSWrite(const char8 * const inBuffer,
-                 uint32 &outSize) {
+    /**
+     * @brief Wraps the basicStream::Read(*) with the timeout set using
+     * bufferedStream::SetTimeout(*)
+     */
+    virtual bool OSRead(char8 * const data,
+                        uint32 &size);
 
-        return basicStream::Write(inBuffer, outSize, GetTimeout());
-    }
-
+    /**
+     * @brief Wraps the basicStream::Write(*) with the timeout set using
+     * bufferedStream::SetTimeout(*)
+     */
+    virtual bool OSWrite(const char8 * const data,
+                         uint32 &size);
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+template<class bufferedStream, class basicStream>
+BufferedStreamGenerator<bufferedStream, basicStream>::BufferedStreamGenerator() :
+        bufferedStream(),
+        basicStream() {
+}
+
+template<class bufferedStream, class basicStream>
+BufferedStreamGenerator<bufferedStream, basicStream>::BufferedStreamGenerator(uint32 timeout) :
+        bufferedStream(timeout),
+        basicStream() {
+}
+
+template<class bufferedStream, class basicStream>
+BufferedStreamGenerator<bufferedStream, basicStream>::~BufferedStreamGenerator() {
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::Read(char8 * const output,
+                                                                uint32 &size) {
+    return bufferedStream::Read(output, size);
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::Read(char8 * const output,
+                                                                uint32 &size,
+                                                                TimeoutType msecTimeout) {
+    TimeoutType prevTimeout = bufferedStream::GetTimeout();
+    bufferedStream::SetTimeout(msecTimeout);
+    bool ret = bufferedStream::Read(output, size);
+    bufferedStream::SetTimeout(prevTimeout);
+    return ret;
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::Write(const char8 * const input,
+                                                                 uint32 &size) {
+    return bufferedStream::Write(input, size);
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::Write(const char8 * const input,
+                                                                 uint32 &size,
+                                                                 TimeoutType msecTimeout) {
+    TimeoutType prevTimeout = bufferedStream::GetTimeout();
+    bufferedStream::SetTimeout(msecTimeout);
+    return bufferedStream::Write(input, size);
+    bufferedStream::SetTimeout(prevTimeout);
+    return ret;
+
+}
+
+template<class bufferedStream, class basicStream>
+uint64 BufferedStreamGenerator<bufferedStream, basicStream>::Size() {
+    return bufferedStream::Size();
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::Seek(uint64 pos) {
+    return DoubleBufferedStream::Seek(pos);
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::RelativeSeek(const int32 deltaPos) {
+    return bufferedStream::RelativeSeek(deltaPos);
+}
+
+template<class bufferedStream, class basicStream>
+uint64 BufferedStreamGenerator<bufferedStream, basicStream>::Position() {
+    return bufferedStream::Position();
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::SetSize(uint64 size) {
+    return bufferedStream::SetSize(size);
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::CanWrite() const {
+    return basicStream::CanWrite();
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::CanSeek() const {
+    return basicStream::CanSeek();
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::CanRead() const {
+    return basicStream::CanRead();
+}
+
+template<class bufferedStream, class basicStream>
+uint64 BufferedStreamGenerator<bufferedStream, basicStream>::OSSize() {
+    return basicStream::Size();
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::OSSeek(uint64 pos) {
+    return basicStream::Seek(pos);
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::OSRelativeSeek(int32 deltaPos) {
+    return basicStream::RelativeSeek(deltaPos);
+}
+
+template<class bufferedStream, class basicStream>
+uint64 BufferedStreamGenerator<bufferedStream, basicStream>::OSPosition() {
+    return basicStream::Position();
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::OSSetSize(uint64 size) {
+    return basicStream::SetSize(size);
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::OSRead(char8 * const data,
+                                                                  uint32 &size) {
+    return basicStream::Read(data, size, GetTimeout());
+}
+
+template<class bufferedStream, class basicStream>
+bool BufferedStreamGenerator<bufferedStream, basicStream>::OSWrite(const char8 * const data,
+                                                                   uint32 &size) {
+
+    return basicStream::Write(data, size, GetTimeout());
+}
+}
 
 #endif /* BUFFEREDSTREAMGENERATOR_H_ */
 

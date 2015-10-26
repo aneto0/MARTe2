@@ -42,7 +42,6 @@
 #include "BufferedStreamI.h"
 #include "FormatDescriptor.h"
 #include "BufferedStreamIOBuffer.h"
-#include "StreamI.h"
 #include "OperatingSystemCallbacksI.h"
 
 namespace MARTe {
@@ -103,13 +102,13 @@ public:
                                uint32 writeBufferSize);
 
     /**
-     * @see StreamI::Read
+     * @see BufferedStreamI::Read
      */
     virtual bool Read(char8 * const output,
                       uint32 & size);
 
     /**
-     * @see StreamI::Write
+     * @see BufferedStreamI::Write
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size);
