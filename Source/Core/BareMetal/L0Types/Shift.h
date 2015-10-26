@@ -52,7 +52,7 @@ class Shift {
 public:
 
     /**
-     * @brief implementation of a template function for safe logical right shifts.
+     * @brief Implementation of a template function for safe logical right shifts.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -62,7 +62,7 @@ public:
                                           uint8 shift);
 
     /**
-     * @brief implementation of a template function for safe logical shifts.
+     * @brief Implementation of a template function for safe logical shifts.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -72,7 +72,7 @@ public:
                                          uint8 shift);
 
     /**
-     * @brief implementation of a template function for safe mathematical right shifts.
+     * @brief Implementation of a template function for safe mathematical right shifts.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -82,7 +82,7 @@ public:
                                              uint8 shift);
 
     /**
-     * @brief implementation of a template function for safe mathematical left shifts.
+     * @brief Implementation of a template function for safe mathematical left shifts.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -94,7 +94,7 @@ public:
 private:
 
     /**
-     * @brief logical right shift for uint8 numbers.
+     * @brief Logical right shift for uint8 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the number of bits shifted.
      * @return the number right shifted.
@@ -103,7 +103,7 @@ private:
                                           uint8 shift);
 
     /**
-     * @brief logical right shift for uint16 numbers.
+     * @brief Logical right shift for uint16 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the number of bits shifted.
      * @return the number right shifted.
@@ -121,7 +121,7 @@ private:
                                            uint8 shift);
 
     /**
-     * @brief logical right shift for uint64 numbers.
+     * @brief Logical right shift for uint64 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the shift in bits.
      * @return the number right shifted.
@@ -139,7 +139,7 @@ private:
                                          uint8 shift);
 
     /**
-     * @brief logical right shift for int16 numbers.
+     * @brief Logical right shift for int16 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the number of bits shifted.
      * @return the number right shifted.
@@ -148,7 +148,7 @@ private:
                                           uint8 shift);
 
     /**
-     * @brief logical right shift for int32 numbers.
+     * @brief Logical right shift for int32 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the number of bits shifted.
      * @return the number right shifted.
@@ -157,7 +157,7 @@ private:
                                           uint8 shift);
 
     /**
-     * @brief logical right shift for int64 numbers.
+     * @brief Logical right shift for int64 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the number of bits shifted.
      * @return the number right shifted.
@@ -165,6 +165,12 @@ private:
     static inline int64 LogicalRightShift(int64 number,
                                           uint8 shift);
 
+    /**
+     * @brief Logical right shift for DoubleInteger.
+     * @param[in] number is the number to shift.
+     * @param[in] shift is the number of bits shifted.
+     * @return the number right shifted.
+     */
     template<typename T2>
     static inline DoubleInteger<T2> LogicalRightShift(DoubleInteger<T2> number,
                                                       uint8 shift);

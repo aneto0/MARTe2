@@ -90,7 +90,7 @@ bool ShiftTest::TestLogicalRightSaveShift(T number) {
     }
 
     //shift less than size
-    if (Shift::LogicalRightSafeShift(number, shiftLessThanSize) != static_cast<T>((static_cast<uint64>(number)) >> shiftLessThanSize)) {
+    if (Shift::LogicalRightSafeShift(number, shiftLessThanSize) != ((number) >> shiftLessThanSize)) {
         //return false;
     }
 
@@ -114,7 +114,7 @@ bool ShiftTest::TestLogicalLeftSaveShift(T number) {
     }
 
     //shift less than size
-    if (Shift::LogicalLeftSafeShift(number, shiftLessThanSize) != number * 2) {
+    if (Shift::LogicalLeftSafeShift(number, shiftLessThanSize) != (number << shiftLessThanSize)) {
         return false;
     }
 
