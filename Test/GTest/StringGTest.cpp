@@ -77,6 +77,23 @@ TEST(StringGTest,TestRead_bigger_size) {
     ASSERT_TRUE(stringtest.TestRead("HelloWorld", 20));
 }
 
+TEST(StringGTest,TestRead_minor_size_timeout) {
+    StringTest stringtest;
+    ASSERT_TRUE(stringtest.TestReadTimeout("HelloWorld", 5));
+}
+
+TEST(StringGTest,TestRead_equal_size_timeout) {
+    StringTest stringtest;
+    ASSERT_TRUE(stringtest.TestReadTimeout("HelloWorld", 10));
+}
+
+TEST(StringGTest,TestRead_bigger_size_timeout) {
+    StringTest stringtest;
+    ASSERT_TRUE(stringtest.TestReadTimeout("HelloWorld", 20));
+}
+
+
+
 TEST(StringGTest,TestWrite_minor_size) {
     StringTest stringtest;
     ASSERT_TRUE(stringtest.TestWrite("HelloWorld", 5));
@@ -90,6 +107,21 @@ TEST(StringGTest,TestWrite_equal_size) {
 TEST(StringGTest,TestWrite_bigger_size) {
     StringTest stringtest;
     ASSERT_TRUE(stringtest.TestWrite("HelloWorld", 20));
+}
+
+TEST(StringGTest,TestWrite_minor_size_timeout) {
+    StringTest stringtest;
+    ASSERT_TRUE(stringtest.TestWriteTimeout("HelloWorld", 5));
+}
+
+TEST(StringGTest,TestWrite_equal_size_timeout) {
+    StringTest stringtest;
+    ASSERT_TRUE(stringtest.TestWriteTimeout("HelloWorld", 10));
+}
+
+TEST(StringGTest,TestWrite_bigger_size_timeout) {
+    StringTest stringtest;
+    ASSERT_TRUE(stringtest.TestWriteTimeout("HelloWorld", 20));
 }
 
 TEST(StringGTest,TestCanWrite) {

@@ -236,11 +236,8 @@ template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::Read(char8 * const output,
                                                                 uint32 &size,
                                                                 TimeoutType msecTimeout) {
-    TimeoutType prevTimeout = bufferedStream::GetTimeout();
-    bufferedStream::SetTimeout(msecTimeout);
-    bool ret = bufferedStream::Read(output, size);
-    bufferedStream::SetTimeout(prevTimeout);
-    return ret;
+    return bufferedStream::Read(output, size, msecTimeout);
+
 }
 
 template<class bufferedStream, class basicStream>
@@ -253,11 +250,7 @@ template<class bufferedStream, class basicStream>
 bool BufferedStreamGenerator<bufferedStream, basicStream>::Write(const char8 * const input,
                                                                  uint32 &size,
                                                                  TimeoutType msecTimeout) {
-    TimeoutType prevTimeout = bufferedStream::GetTimeout();
-    bufferedStream::SetTimeout(msecTimeout);
-    return bufferedStream::Write(input, size);
-    bufferedStream::SetTimeout(prevTimeout);
-    return ret;
+    return bufferedStream::Write(input, size, msecTimeout);
 
 }
 

@@ -133,5 +133,22 @@ bool StreamMemoryReference::CanSeek() const {
     return true;
 }
 
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
+ * used by other buffered streams. */
+bool StreamMemoryReference::Read(char8 * const output,
+                                   uint32 & size,
+                                   const TimeoutType &msecTimeout) {
+    return Read(output, size);
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
+ * used by other buffered streams. */
+bool StreamMemoryReference::Write(const char8 * const input,
+                                    uint32 & size,
+                                    const TimeoutType &msecTimeout) {
+    return Write(input, size);
+}
+
 }
 

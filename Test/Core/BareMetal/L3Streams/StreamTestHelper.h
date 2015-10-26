@@ -35,7 +35,6 @@
 #include "MemoryOperationsHelper.h"
 #include "AnyType.h"
 #include "stdio.h"
-#include "OperatingSystemStream.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -74,10 +73,10 @@ public:
 };
 
 /**
- * @brief Minimal OperatingSystemStream implementation for the Buffer and Stream tests.
+ * @brief Minimal StreamI implementation for the Buffer and Stream tests.
  * It is implemented over a char buffer with dimension MAX_STREAM_DIMENSION
  */
-class DummyOSStream: public OperatingSystemStream {
+class DummyOSStream: public StreamI {
 
 public:
 

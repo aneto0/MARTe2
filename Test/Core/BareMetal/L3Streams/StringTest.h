@@ -82,10 +82,24 @@ public:
     bool TestRead(const char8* inputString,
                   uint32 sizeToRead);
 
+
     /**
-     * @brief TEsts if the specified number of chars are correctly write on the string.
+     * @brief Tests if the behavior is the same of the normal Read.
+     */
+    bool TestReadTimeout(const char* inputString,
+                   uint32 sizeToWrite);
+
+    /**
+     * @brief Tests if the specified number of chars are correctly write on the string.
      */
     bool TestWrite(const char* inputString,
+                   uint32 sizeToWrite);
+
+
+    /**
+     * @brief Tests if the behavior is the same of the normal Write.
+     */
+    bool TestWriteTimeout(const char* inputString,
                    uint32 sizeToWrite);
 
     /**

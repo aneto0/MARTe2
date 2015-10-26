@@ -65,6 +65,41 @@ TEST(StreamMemoryReferenceGTest,TestDestructor) {
     ASSERT_TRUE(smrTest.TestDestructor());
 }
 
+TEST(StreamMemoryReferenceGTest,TestRead_Same_BufferSize) {
+    StreamMemoryReferenceTest smrTest;
+    const char8 bufferSize = 8;
+    ASSERT_TRUE(smrTest.TestRead("HelloWorld", bufferSize, bufferSize));
+}
+
+TEST(StreamMemoryReferenceGTest,TestRead_greater_than_BufferSize) {
+    StreamMemoryReferenceTest smrTest;
+    const char8 bufferSize = 8;
+    ASSERT_TRUE(smrTest.TestRead("HelloWorld", 10, bufferSize));
+}
+
+TEST(StreamMemoryReferenceGTest,TestRead_minor_than_BufferSize) {
+    StreamMemoryReferenceTest smrTest;
+    const char8 bufferSize = 8;
+    ASSERT_TRUE(smrTest.TestRead("HelloWorld", 5, bufferSize));
+}
+
+TEST(StreamMemoryReferenceGTest,TestRead_Same_BufferSize_timeout) {
+    StreamMemoryReferenceTest smrTest;
+    const char8 bufferSize = 8;
+    ASSERT_TRUE(smrTest.TestReadTimeout("HelloWorld", bufferSize, bufferSize));
+}
+
+TEST(StreamMemoryReferenceGTest,TestRead_greater_than_BufferSize_timeout) {
+    StreamMemoryReferenceTest smrTest;
+    const char8 bufferSize = 8;
+    ASSERT_TRUE(smrTest.TestReadTimeout("HelloWorld", 10, bufferSize));
+}
+
+TEST(StreamMemoryReferenceGTest,TestRead_minor_than_BufferSize_timeout) {
+    StreamMemoryReferenceTest smrTest;
+    const char8 bufferSize = 8;
+    ASSERT_TRUE(smrTest.TestReadTimeout("HelloWorld", 5, bufferSize));
+}
 
 TEST(StreamMemoryReferenceGTest,TestWrite_Same_BufferSize) {
     StreamMemoryReferenceTest smrTest;
@@ -82,6 +117,24 @@ TEST(StreamMemoryReferenceGTest,TestWrite_minor_than_BufferSize) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 8;
     ASSERT_TRUE(smrTest.TestWrite("HelloWorld", 5, bufferSize));
+}
+
+TEST(StreamMemoryReferenceGTest,TestWrite_Same_BufferSize_timeout) {
+    StreamMemoryReferenceTest smrTest;
+    const char8 bufferSize = 8;
+    ASSERT_TRUE(smrTest.TestWriteTimeout("HelloWorld", bufferSize, bufferSize));
+}
+
+TEST(StreamMemoryReferenceGTest,TestWrite_greater_than_BufferSize_timeout) {
+    StreamMemoryReferenceTest smrTest;
+    const char8 bufferSize = 8;
+    ASSERT_TRUE(smrTest.TestWriteTimeout("HelloWorld", 10, bufferSize));
+}
+
+TEST(StreamMemoryReferenceGTest,TestWrite_minor_than_BufferSize_timeout) {
+    StreamMemoryReferenceTest smrTest;
+    const char8 bufferSize = 8;
+    ASSERT_TRUE(smrTest.TestWriteTimeout("HelloWorld", 5, bufferSize));
 }
 
 TEST(StreamMemoryReferenceGTest,TestWrite_RO) {
@@ -143,7 +196,6 @@ TEST(StreamMemoryReferenceGTest, TestRelativeSeek_pos_in_bufferSize_in_size) {
     ASSERT_TRUE(smrTest.TestRelativeSeek(bufferSize, 14, 2, true));
 }
 
-
 TEST(StreamMemoryReferenceGTest, TestRelativeSeek_bufferSize_in_pos_in_size) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;
@@ -157,7 +209,6 @@ TEST(StreamMemoryReferenceGTest, TestRelativeSeek_bufferSize_in_size_in_pos) {
     ASSERT_TRUE(smrTest.TestRelativeSeek(bufferSize, 14, -15, false));
 }
 
-
 TEST(StreamMemoryReferenceGTest, TestPosition_in_range) {
     StreamMemoryReferenceTest smrTest;
     const char8 bufferSize = 16;
@@ -169,8 +220,6 @@ TEST(StreamMemoryReferenceGTest, TestPosition_out_range) {
     const char8 bufferSize = 16;
     ASSERT_TRUE(smrTest.TestPosition(bufferSize, 17));
 }
-
-
 
 TEST(StreamMemoryReferenceGTest, TestSetSize_in_range) {
     StreamMemoryReferenceTest smrTest;
@@ -202,7 +251,6 @@ TEST(StreamMemoryReferenceGTest, TestPrintFormatted) {
     StreamMemoryReferenceTest smrTest;
     ASSERT_TRUE(smrTest.TestPrintFormatted(32, GeneratePrintFormattedGenericTable()));
 }
-
 
 TEST(StreamMemoryReferenceGTest, TestGetToken) {
     StreamMemoryReferenceTest smrTest;
