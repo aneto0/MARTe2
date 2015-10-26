@@ -35,30 +35,7 @@
 #include "ErrorManagement.h"
 
 
-class InternetAddress;
-
-extern "C" {
-
-    /** */
-    extern bool sockInitialized;
-
-    /** */
-    const char *GetLocalAddress();
-
-    /** */
-    const char *GetLocalIpNumber();
-
-    /** returns the host name (as a pointer to the BString buffer)
-     * by searching the name server. NULL means failure*/
-    const char *GetHostName(InternetAddress &ia,BString &hostName);
-
-    /** */
-    uint32 GetLocalAddressAsNumber();
-
-    /** to be used only within BaseLib !*/
-    void SocketInit();
-
-}
+namespace MARTe{
 
 class InternetAddress {
 
@@ -68,9 +45,53 @@ friend class BasicSocket;
 friend class BasicATMSocket;
 
 
-    friend const char *GetHostName(InternetAddress &ia,BString &hostName);
 
-protected:
+public:
+    /** creates an InternetAddress with the given information
+        a NULL value for addr will select the INADDR_ANY  */
+    InternetAddress(uint16 port=0,const char *addr=NULL){
+
+        address.sin_family      = AF_INET;
+        SetPort(port);
+        address.sin_addr.s_addr = INADDR_ANY;
+        if (addr != NULL) address.sin_addr.s_addr = inet_addr((char *)addr);
+    }
+
+
+    /**  returns the port number associated */
+    int16 Port(){
+        return htons(address.sin_port);
+    }
+
+    /** returns the host name in the x.x.x.x format
+        the return is pointer to the BString buffer */
+    const char *DotName(BString &dotName){
+        dotName = inet_ntoa(address.sin_addr);
+        return dotName.Buffer();
+    }
+
+    /** returns the host name (as a pointer to the BString buffer)
+     * by searching the name server. NULL means failure*/
+    const char *GetHostName(BString &hostName);
+
+
+    /**  returns the host number associated to this InternetAddress*/
+    uint32 HostNumber() {
+        return (uint32) address.sin_addr.s_addr;
+    }
+
+    /**  do not use to initialize objects. It is valid after static objects initializations */
+    static const char *LocalAddress();
+
+
+    /**  do not use to initialize objects. It is valid after static objects initializations */
+    static const char *LocalIpNumber();
+
+    /** The same as LocalAddress but returns a 32 bit integer*/
+    static uint32 LocalAddressAsNumber();
+
+
+private:
 
     /** */
     sockaddr_in address;
@@ -95,31 +116,14 @@ protected:
 
     /**  The routine searches the NameServer for the name and gets the ip-number. returns True in case of success */
     bool SetAddressByName(const char *hostName){
-#if defined(_LINUX) || defined(_RTAI) || defined(_MACOSX)
         if(hostName == NULL){
             hostName = "localhost";
         }
-#endif
-#if (defined(_WIN32) || defined(_SOLARIS) || defined(_LINUX) || defined(_MACOSX))
         //  hostName can be NULL meaning localhost
         struct hostent *h = gethostbyname(hostName);
         if (h == NULL) return False;
         address.sin_addr.s_addr = *((int *)(h->h_addr_list[0]));
         return True;
-#elif defined(_RTAI)
-        int h = fcomm_gethostbyname(hostName);
-	if (h==-1) return False;
-	address.sin_addr.s_addr = h;
-	return True;
-#elif defined(_VXWORKS)
-        address.sin_addr.s_addr = INADDR_ANY;
-        // Get the ip number (as an integer) and check for the existence of the host
-        int ipNumb = hostGetByName((char *)hostName);
-        if (ipNumb == ERROR) return False;
-        address.sin_addr.s_addr = ipNumb;
-	return True;
-#endif
-        return False;
     }
 
     /**  The address number is set, the value passed must be in the internet format */
@@ -142,66 +146,10 @@ protected:
         return sizeof (address);
     }
 
-public:
-    /** creates an InternetAddress with the given information
-        a NULL value for addr will select the INADDR_ANY  */
-    InternetAddress(uint16 port=0,const char *addr=NULL){
-
-        address.sin_family      = AF_INET;
-        SetPort(port);
-        address.sin_addr.s_addr = INADDR_ANY;
-        if (addr != NULL) address.sin_addr.s_addr = inet_addr((char *)addr);
-    }
-
-
-    /**  returns the port number associated */
-    int16 Port(){
-        return htons(address.sin_port);
-    }
-
-    /** returns the host name in the x.x.x.x format
-        the return is pointer to the BString buffer */
-    const char *DotName(BString &dotName){
-#ifndef _RTAI    
-        dotName = inet_ntoa(address.sin_addr);
-#else
-	char buffer[64];
-	inet_ntoa(buffer, 64, address.sin_addr);
-	dotName = buffer;
-#endif
-        return dotName.Buffer();
-    }
-
-    /** returns the host name (as a pointer to the BString buffer)
-     * by searching the name server. NULL means failure*/
-    const char *HostName(BString &hostName){
-        return GetHostName(*this,hostName);
-    }
-
-    /**  returns the host number associated to this InternetAddress*/
-    uint32 HostNumber() {
-        return (uint32) address.sin_addr.s_addr;
-    }
-
-    /**  do not use to initialize objects. It is valid after static objects initializations */
-    static const char *LocalAddress(){
-        return GetLocalAddress();
-    }
-
-
-    /**  do not use to initialize objects. It is valid after static objects initializations */
-    static const char *LocalIpNumber(){
-        return GetLocalIpNumber();
-    }
-
-    /** The same as LocalAddress but returns a 32 bit integer*/
-    static uint32 LocalAddressAsNumber(){
-        return GetLocalAddressAsNumber();
-    }
 
 };
 
-
+}
 
 
 #endif
