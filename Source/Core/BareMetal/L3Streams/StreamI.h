@@ -134,7 +134,7 @@ public:
      * @pre CanRead()
      * @post Position() == this'old->Position() + size
      * @return true if \a size bytes are successfully read from the stream and
-     * written into \a output within the specified timeout (see SetTimeout).
+     * written into \a output.
      */
     virtual bool Read(char8 * const output,
                       uint32 & size) = 0;
@@ -150,7 +150,7 @@ public:
      * @post Position() == this'old->Position() + size &&
      *       this'old->Position() + size > Size() => Size() == Position()
      * @return true if \a size bytes are successfully read from \a input and
-     * written into the stream within the specified timeout (see SetTimeout).
+     * written into the stream.
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size) = 0;
