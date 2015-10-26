@@ -44,7 +44,7 @@
 namespace MARTe {
 
 SingleBufferedStream::SingleBufferedStream() :
-        StreamI(),
+        BufferedStreamI(),
         internalBuffer(this) {
     mutexReadMode = true;
     mutexWriteMode = false;
@@ -56,7 +56,7 @@ SingleBufferedStream::SingleBufferedStream() :
 }
 
 SingleBufferedStream::SingleBufferedStream(const TimeoutType &timeoutIn) :
-        StreamI(),
+        BufferedStreamI(),
         internalBuffer(this) {
     mutexReadMode = true;
     mutexWriteMode = false;

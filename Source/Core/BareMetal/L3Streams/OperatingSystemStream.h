@@ -35,7 +35,7 @@
 #include "TimeoutType.h"
 #include "AnyType.h"
 #include "FormatDescriptor.h"
-#include "IOBuffer.h"
+#include "StreamI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,7 +48,7 @@ namespace MARTe {
  * A more abstract version of StreamI. It is used to allow referring to
  * streams at lower levels
  */
-class OperatingSystemStream {
+class OperatingSystemStream: public StreamI {
 
 public:
 
@@ -58,6 +58,8 @@ public:
     virtual ~OperatingSystemStream() {
 
     }
+
+
 
     /**
      * @brief Reads data from the stream to a char8* buffer.
@@ -103,26 +105,7 @@ public:
                          uint32 & size,
                          const TimeoutType &msecTimeout) = 0;
 
-    /**
-     * @brief Pure virtual function. Defines if write operations can be
-     * performed on the stream.
-     * @return return value depends from derived classes implementation.
-     */
-    virtual bool CanWrite() const = 0;
 
-    /**
-     * @brief Pure virtual function. Defines if read operations can be
-     * performed on the stream.
-     * @return return value depends from derived classes implementation.
-     */
-    virtual bool CanRead() const = 0;
-
-    /**
-     * @brief Pure virtual method. Defines if seek operations can be
-     * performed on the stream.
-     * @return return value depends on the derived classes implementation.
-     */
-    virtual bool CanSeek() const = 0;
 
     /**
      * @brief Defines if operations could be blocking.
@@ -152,41 +135,6 @@ public:
      */
     virtual bool SetBlocking(bool flag) = 0;
 
-    /**
-     * @brief Pure virtual method. The size of the stream.
-     * @return the size of the stream depending on derived classes
-     * implementation.
-     */
-    virtual uint64 Size() = 0;
-
-    /**
-     * @brief Pure virtual method. Moves within the stream to an absolute
-     * location.
-     * @param[in] pos is the desired absolute position.
-     * @return return value depends on derived classes implementation.
-     */
-    virtual bool Seek(uint64 pos) = 0;
-
-    /**
-     * @brief Pure virtual method. Moves within the file relative to current
-     * location.
-     * @param[in] deltaPos is the gap from the current position.
-     * @return return value depends on derived classes implementation.
-     */
-    virtual bool RelativeSeek(int32 deltaPos) = 0;
-
-    /**
-     * @brief Pure virtual method. Returns current position.
-     * @return the current position in the stream.
-     */
-    virtual uint64 Position() = 0;
-
-    /**
-     * @brief Pure virtual method. Clip the stream size to the desired value.
-     * @param[in] size is the desired size.
-     * @return return value depends on the derived classes implementation.
-     */
-    virtual bool SetSize(uint64 size) = 0;
 
 };
 
@@ -196,9 +144,7 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
 
-}
 
 #endif /* RAWSTREAM_H_ */
 

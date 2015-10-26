@@ -44,10 +44,10 @@
 namespace MARTe {
 
 /**
- * @brief Abstract super class for all buffered streams.
+ * @brief Abstract super class for all streams.
  *
  * @details This class provides the common interface specification for all the
- * streams which support buffering.
+ * streams.
  *
  * The stream represents a sequence of bytes which can be mapped to arrays,
  * strings, files, sockets, and so on, but that it can be accessed uniformly
@@ -55,35 +55,17 @@ namespace MARTe {
  * have the notion of cursor, which can be positioned randomly on any byte of
  * the stream; size, which allows to know the actual size of the stream; and
  * timeout, which allows to define a time out for read and write operations,
- * so they will not last for ever in case of I/O problems. Moreover, the
- * stream have implicit reading and writing buffers which are expected to be
- * defined by subclasses of the stream, but used by upper level functions
- * like read or write.
+ * so they will not last for ever in case of I/O problems.
  *
  * Attributes:
  * - Size: The size of the stream, i.e. the number of bytes that it holds.
  * - Position: The position of the cursor, i.e. the zero-based index of the
  *   byte where the next read/write operation will occur.
- * - Timeout: It is the time out for read and write operations, infinite
- *   by default.
- * - ReadBuffer: It is the buffer for reading data, which will be used by
- *   the specific implementations of the read function.
- * - WriteBuffer: It is the buffer for writing data, which will be used by
- *   the specific implementations of the write function.
- *
- * Operators:
- * - AnyType()
  *
  * Operations:
  * - Read
  * - Write
  * - Seek
- * - Copy (*)
- * - GetToken (*)
- * - SkipTokens (*)
- * - GetLine (*)
- * - Printf (*)
- * - PrintFormatted (*)
  *
  * (*) The class supplies a standard implementation for these operations.
  *
@@ -110,15 +92,16 @@ public:
 
     /**
      * Default constructor
-     * @post
-     *   GetTimeout() == TTInfiniteWait
      */
-    StreamI();
+    StreamI(){
+    }
 
     /**
      * @brief Default destructor
      */
-    virtual ~StreamI();
+    virtual ~StreamI(){
+
+    }
 
     /**
      * @brief Queries if the stream is writable, i.e. if write operations can
@@ -228,190 +211,6 @@ public:
      */
     virtual bool SetSize(uint64 size) = 0;
 
-    /**
-     * @brief Casts the stream to AnyType.
-     * @return an AnyType representation of the stream.
-     */
-    inline operator AnyType();
-
-    /**
-     * @brief Reads a token from the stream into a character buffer.
-     * @details Extracts a token from the stream until a terminator or \0
-     * is found.
-     * @param[out] outputBuffer the buffer where to write the retrieved
-     * tokens into.
-     * @param[in] terminator a list of terminator characters, i.e. characters
-     * that allow to distinguish tokens.
-     * @param[in] outputBufferSize the maximum size of the output buffer.
-     * @param[out] saveTerminator if not NULL the found terminator (from the
-     * terminator list) is stored in this variable.
-     * @param[in] skipCharacters a list of characters to be removed from the
-     * \a outputBuffer. As a consequence, if a skipCharacter is also a
-     * terminator, when consecutive instances of the same terminator are found
-     * (e.g. ::A:::B:C, where : is the terminator), the terminator is skipped
-     * until the next token is found (in the previous example, the first token
-     * to be found would be A).
-     * @return false if no data is stored in the outputBuffer, true otherwise
-     * (meaning that a token was found).
-     * @pre CanRead() && GetReadBuffer() != NULL
-     * @post see brief
-     */
-    virtual bool GetToken(char8 * const outputBuffer,
-                          const char8 * const terminator,
-                          const uint32 outputBufferSize,
-                          char8 &saveTerminator,
-                          const char8 * const skipCharacters);
-
-    /**
-     * @brief Reads a token from the stream into another stream.
-     * @details Extracts a token from the stream until a terminator or \0 is
-     * found.
-     * @param[out] outputBuffer the buffer where to write the retrieved
-     * tokens into.
-     * @param[in] terminator a list of terminator characters, i.e. characters
-     * that allow to distinguish tokens.
-     * @param[in] outputBufferSize the maximum size of the output buffer.
-     * @param[out] saveTerminator if not NULL the found terminator (from the
-     * terminator list) is stored in this variable.
-     * @param[in] skipCharacters a list of characters to be removed from the
-     * \a outputBuffer. As a consequence, if a skipCharacter is also a
-     * terminator, when consecutive instances of the same terminator are found
-     * (i.e. without a token in-between) (e.g. ::A:::B:C, where : is the
-     * terminator), the terminator is skipped until the next token is found
-     * (in the previous example, the first token to be found would be A).
-     * @return false if no data is stored in the outputBuffer, true otherwise
-     * (meaning that a token was found).
-     * @pre CanRead() && GetReadBuffer() != NULL
-     * @post see brief
-     */
-    bool GetToken(StreamI & output,
-                  const char8 * const terminator,
-                  char8 &saveTerminator,
-                  const char8 * const skipCharacters = NULL_PTR(const char8 *));
-
-    /**
-     * @brief Skips a series of tokens delimited by terminators or \0.
-     * @details The functionality skipCharacters=terminator (see GetToken) is
-     * automatically set, so that consecutive instances of the same terminator
-     * @param[in] count the number of tokens to be skipped.
-     * @param[in] terminator a list of terminator characters.
-     * @return false if no data is read, true (meaning that at least a token
-     * was found).
-     * @pre CanRead() && GetReadBuffer() != NULL
-     * @post see brief
-     */
-    bool SkipTokens(const uint32 count,
-                    const char8 * const terminator);
-
-    /**
-     * @brief Extracts a line from this stream into another stream.
-     * @param[out] output is the output stream where the line must be written.
-     * @param[in] skipTerminators if true the "\r" is skipped.
-     * @return true if a line is successfully read from this stream and written
-     * into \a output.
-     * @pre CanRead() && GetReadBuffer() != NULL
-     * @post see brief
-     */
-    bool GetLine(StreamI & output,
-                 bool skipTerminators = true);
-
-    /**
-     * @brief Extracts a line from this stream into a character buffer.
-     * @param[out] outputBuffer is the character buffer where the line must be
-     * written into.
-     * @param[in] outputBufferSize the size of \a outputBuffer.
-     * @param[in] skipTerminators if true the "\r" is skipped.
-     * @return true if a line is successfully read from this stream and
-     * written into \a outputBuffer.
-     * @pre CanRead() && GetReadBuffer() != NULL
-     * @post see brief
-     */
-    bool GetLine(char8 *outputBuffer,
-                 const uint32 outputBufferSize,
-                 bool skipTerminators = true);
-
-    /**
-     * @brief Printf implementation.
-     * @param[in] format printf format as specified
-     * in FormatDescriptor::InitialiseFromString.
-     * @param[in] pars the list of elements that are to be replaced in the
-     * \a format string. It must be terminated by a voidAnyType element
-     * (i.e. pars[length(pars)-1] == voidAnyType).
-     * @return true if the string is successfully printed.
-     * @pre CanWrite() && GetWriteBuffer() != NULL
-     * @post see brief
-     */
-    bool PrintFormatted(const char8 * const format,
-                        const AnyType pars[]);
-
-    /**
-     * @brief Copies a character buffer.
-     * @detail Copies a character buffer into this stream (from the
-     * current position).
-     * @param[in] buffer is the buffer to be copied into the stream.
-     * @return true if buffer is successfully copied into the stream.
-     * @pre CanWrite() && GetWriteBuffer() != NULL
-     * @post see brief
-     */
-    bool Copy(const char8 * const buffer);
-
-    /**
-     * @brief Copies from a stream.
-     * @detail Copies a stream into this stream (from the current
-     * position).
-     * @param[in,out] stream is the stream to be copied into the stream.
-     * @return true if stream is successfully copied into the stream.
-     * @pre CanWrite() && GetWriteBuffer() != NULL
-     * @post see brief
-     */
-    bool Copy(StreamI &stream);
-
-    /**
-     * @see PrintFormatted.
-     */
-    inline bool Printf(const char8 * const format,
-                       const AnyType& par1);
-
-    /**
-     * @see PrintFormatted.
-     */
-    inline bool Printf(const char8 * const format,
-                       const AnyType& par1,
-                       const AnyType& par2);
-
-    /**
-     * @see PrintFormatted.
-     */
-    inline bool Printf(const char8 * const format,
-                       const AnyType& par1,
-                       const AnyType& par2,
-                       const AnyType& par3);
-
-    /**
-     * @see PrintFormatted.
-     */
-    inline bool Printf(const char8 * const format,
-                       const AnyType& par1,
-                       const AnyType& par2,
-                       const AnyType& par3,
-                       const AnyType& par4);
-
-
-
-protected:
-
-    /**
-     * @brief Gets the read buffer.
-     * @return a pointer to the read buffer.
-     */
-    virtual IOBuffer *GetReadBuffer() = 0;
-
-    /**
-     * @brief Gets the write buffer.
-     * @return a pointer to the write buffer.
-     */
-    virtual IOBuffer *GetWriteBuffer() = 0;
-
 };
 
 }
@@ -419,47 +218,6 @@ protected:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-
-StreamI::operator AnyType() {
-    void *dataPointer = static_cast<void *>(this);
-    TypeDescriptor dataDescriptor(false, Stream, 0u);
-
-    return AnyType(dataDescriptor, 0u, dataPointer);
-}
-
-bool StreamI::Printf(const char8 * const format,
-                     const AnyType& par1) {
-    AnyType pars[2] = { par1, voidAnyType };
-    return PrintFormatted(format, &pars[0]);
-}
-
-bool StreamI::Printf(const char8 * const format,
-                     const AnyType& par1,
-                     const AnyType& par2) {
-    AnyType pars[3] = { par1, par2, voidAnyType };
-    return PrintFormatted(format, &pars[0]);
-}
-
-bool StreamI::Printf(const char8 * const format,
-                     const AnyType& par1,
-                     const AnyType& par2,
-                     const AnyType& par3) {
-    AnyType pars[4] = { par1, par2, par3, voidAnyType };
-    return PrintFormatted(format, &pars[0]);
-}
-
-bool StreamI::Printf(const char8 * const format,
-                     const AnyType& par1,
-                     const AnyType& par2,
-                     const AnyType& par3,
-                     const AnyType& par4) {
-    AnyType pars[5] = { par1, par2, par3, par4, voidAnyType };
-    return PrintFormatted(format, &pars[0]);
-}
-
-}
 
 #endif /* BUFFEREDSTREAM_H_ */
 

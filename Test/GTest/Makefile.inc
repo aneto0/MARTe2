@@ -68,13 +68,13 @@ OBJSX=  DoubleIntegerGTest.x \
  	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x  \
 	CharBufferGTest.x \
-        StreamStringIOBufferGTest.x \
+        StringIOBufferGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
-        StreamStringGTest.x \
+        StringGTest.x \
         StreamMemoryReferenceGTest.x \
-        StreamIGTest.x \
+        BufferedStreamIGTest.x \
         IOBufferGTest.x \
         BitSetToIntegerGTest.x
 

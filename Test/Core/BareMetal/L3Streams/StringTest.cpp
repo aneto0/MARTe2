@@ -1,7 +1,7 @@
 /**
- * @file StreamStringTest.cpp
- * @brief Source file for class StreamStringTest
- * @date 16/10/2015
+ * @file StringTest.cpp
+ * @brief Source file for class StringTest
+ * @date 26/10/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StreamStringTest (public, protected, and private). Be aware that some 
+ * the class StringTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include "StreamStringTest.h"
+#include "StringTest.h"
 #include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
@@ -49,8 +49,8 @@ static void cleanOutputBuffer(char8* buffer,
     }
 }
 
-bool StreamStringTest::TestDefaultConstructor() {
-    StreamString string;
+bool StringTest::TestDefaultConstructor() {
+    String string;
 
     if (string.Position() != 0) {
         return false;
@@ -68,7 +68,7 @@ bool StreamStringTest::TestDefaultConstructor() {
 }
 
 bool TestConstructor_CCString(const char8 * initializationString) {
-    StreamString string(initializationString);
+    String string(initializationString);
 
     uint32 size = StringHelper::Length(initializationString);
 
@@ -89,9 +89,9 @@ bool TestConstructor_CCString(const char8 * initializationString) {
 
 }
 
-bool StreamStringTest::TestCopyConstructor(const char8 * initializationString) {
-    StreamString toCopy = initializationString;
-    StreamString string(toCopy);
+bool StringTest::TestCopyConstructor(const char8 * initializationString) {
+    String toCopy = initializationString;
+    String string(toCopy);
 
     uint32 size = toCopy.Size();
 
@@ -111,20 +111,20 @@ bool StreamStringTest::TestCopyConstructor(const char8 * initializationString) {
     return (string.CanWrite()) && (string.CanRead()) && (string.CanSeek());
 }
 
-bool StreamStringTest::TestDestructor() {
+bool StringTest::TestDestructor() {
 
     const char8 * input = "HelloWorld";
 
-    StreamString string(input);
+    String string(input);
 
-    string.~StreamString();
+    string.~String();
 
     return true;
 }
 
-bool StreamStringTest::TestAnyTypeOperator(const char8* initializationString) {
+bool StringTest::TestAnyTypeOperator(const char8* initializationString) {
 
-    StreamString string(initializationString);
+    String string(initializationString);
 
     AnyType test = string;
 
@@ -151,9 +151,9 @@ bool StreamStringTest::TestAnyTypeOperator(const char8* initializationString) {
     return test.GetBitAddress() == 0;
 }
 
-bool StreamStringTest::TestRead(const char8* inputString,
+bool StringTest::TestRead(const char8* inputString,
                                 uint32 sizeToRead) {
-    StreamString myString;
+    String myString;
     myString = inputString;
 
     myString.Seek(0);
@@ -168,10 +168,10 @@ bool StreamStringTest::TestRead(const char8* inputString,
     return (sizeToRead > size) ? (StringHelper::Compare(inputString, outputBuffer) == 0) : (StringHelper::CompareN(inputString, outputBuffer, sizeToRead) == 0);
 }
 
-bool StreamStringTest::TestWrite(const char8* inputString,
+bool StringTest::TestWrite(const char8* inputString,
                                  uint32 sizeToWrite) {
 
-    StreamString myString;
+    String myString;
     myString = inputString;
 
     myString.Seek(0);
@@ -189,29 +189,29 @@ bool StreamStringTest::TestWrite(const char8* inputString,
 
 }
 
-bool StreamStringTest::TestCanWrite() {
-    StreamString string;
+bool StringTest::TestCanWrite() {
+    String string;
     return string.CanWrite();
 }
 
-bool StreamStringTest::TestCanRead() {
-    StreamString string;
+bool StringTest::TestCanRead() {
+    String string;
     return string.CanRead();
 }
 
-bool StreamStringTest::TestCanSeek() {
-    StreamString string;
+bool StringTest::TestCanSeek() {
+    String string;
     return string.CanSeek();
 }
 
-bool StreamStringTest::TestSize(const char8 * input) {
-    StreamString string(input);
+bool StringTest::TestSize(const char8 * input) {
+    String string(input);
 
     return string.Size() == StringHelper::Length(input);
 }
 
-bool StreamStringTest::TestSetSize(uint32 size) {
-    StreamString string;
+bool StringTest::TestSetSize(uint32 size) {
+    String string;
 
     // set the size of the buffer
     string.SetSize(size);
@@ -220,17 +220,17 @@ bool StreamStringTest::TestSetSize(uint32 size) {
 
 }
 
-bool StreamStringTest::TestBuffer(const char8 * input) {
+bool StringTest::TestBuffer(const char8 * input) {
 
-    StreamString string(input);
+    String string(input);
 
     return StringHelper::Compare(input, string.Buffer()) == 0;
 
 }
 
-bool StreamStringTest::TestBufferReference(const char8 * input) {
+bool StringTest::TestBufferReference(const char8 * input) {
 
-    StreamString string(input);
+    String string(input);
 
     char8 *buff = string.BufferReference();
     if (StringHelper::Compare(buff, input)) {
@@ -243,11 +243,11 @@ bool StreamStringTest::TestBufferReference(const char8 * input) {
     return StringHelper::Compare(newInput, string.Buffer()) == 0;
 }
 
-bool StreamStringTest::TestSeek(uint32 usedSize,
+bool StringTest::TestSeek(uint32 usedSize,
                                 uint32 seek,
                                 bool expected) {
 
-    StreamString myString;
+    String myString;
     char8 toWrite[64];
     myString.Write(toWrite, usedSize);
 
@@ -276,10 +276,10 @@ bool StreamStringTest::TestSeek(uint32 usedSize,
 
 }
 
-bool StreamStringTest::TestRelativeSeek(uint32 initialPos,
+bool StringTest::TestRelativeSeek(uint32 initialPos,
                                         int32 delta,
                                         bool expected) {
-    StreamString string;
+    String string;
 
     uint32 usedSize = 2 * initialPos;
 
@@ -314,9 +314,9 @@ bool StreamStringTest::TestRelativeSeek(uint32 initialPos,
     return ret == expected;
 }
 
-bool StreamStringTest::TestPosition() {
+bool StringTest::TestPosition() {
 
-    StreamString string;
+    String string;
 
     if (string.Position() != 0) {
         return false;
@@ -362,9 +362,9 @@ bool StreamStringTest::TestPosition() {
     return true;
 }
 
-bool StreamStringTest::TestTail(const char8* input,
+bool StringTest::TestTail(const char8* input,
                                 uint32 index) {
-    StreamString string(input);
+    String string(input);
     uint32 size = StringHelper::Length(input);
 
     const char8 *ret = string.Tail(index);
@@ -381,9 +381,9 @@ bool StreamStringTest::TestTail(const char8* input,
     return ret[0] == input[size - index - 1];
 }
 
-bool StreamStringTest::TestCopyOperator_Char(char8 input) {
+bool StringTest::TestCopyOperator_Char(char8 input) {
 
-    StreamString string = "DUMMY";
+    String string = "DUMMY";
 
     string = input;
 
@@ -391,9 +391,9 @@ bool StreamStringTest::TestCopyOperator_Char(char8 input) {
 
 }
 
-bool StreamStringTest::TestCopyOperator_CCString(const char8 * input) {
+bool StringTest::TestCopyOperator_CCString(const char8 * input) {
 
-    StreamString string = "DUMMY";
+    String string = "DUMMY";
 
     string = input;
 
@@ -401,22 +401,22 @@ bool StreamStringTest::TestCopyOperator_CCString(const char8 * input) {
 
 }
 
-bool StreamStringTest::TestCopyOperator_StreamString(const char8 * input) {
+bool StringTest::TestCopyOperator_StreamString(const char8 * input) {
 
-    StreamString inputString = input;
+    String inputString = input;
 
-    StreamString outputString = "DUMMY";
+    String outputString = "DUMMY";
     outputString = inputString;
 
     return StringHelper::Compare(inputString.Buffer(), outputString.Buffer()) == 0;
 
 }
 
-bool StreamStringTest::TestConcatenateOperator_Char(char8 input) {
+bool StringTest::TestConcatenateOperator_Char(char8 input) {
 
     const char8 *initial = "DUMMY";
     uint32 size = StringHelper::Length(initial);
-    StreamString string = initial;
+    String string = initial;
     string += input;
 
     char8 test[64];
@@ -427,10 +427,10 @@ bool StreamStringTest::TestConcatenateOperator_Char(char8 input) {
     return StringHelper::Compare(test, string.Buffer()) == 0;
 }
 
-bool StreamStringTest::TestConcatenateOperator_CCString(const char8 *input) {
+bool StringTest::TestConcatenateOperator_CCString(const char8 *input) {
 
     const char8 *initial = "DUMMY";
-    StreamString string = initial;
+    String string = initial;
     string += input;
     char8 test[64];
     StringHelper::Copy(test, initial);
@@ -438,10 +438,10 @@ bool StreamStringTest::TestConcatenateOperator_CCString(const char8 *input) {
     return StringHelper::Compare(test, string.Buffer()) == 0;
 }
 
-bool StreamStringTest::TestConcatenateOperator_StreamString(const char8 *input) {
+bool StringTest::TestConcatenateOperator_StreamString(const char8 *input) {
     const char8 *initial = "DUMMY";
-    StreamString string = initial;
-    StreamString toConcatenate = input;
+    String string = initial;
+    String toConcatenate = input;
     string += toConcatenate;
     char8 test[64];
     StringHelper::Copy(test, initial);
@@ -449,8 +449,8 @@ bool StreamStringTest::TestConcatenateOperator_StreamString(const char8 *input) 
     return StringHelper::Compare(test, string.Buffer()) == 0;
 }
 
-bool StreamStringTest::TestIsEqualOperator_CCString(const char8 *input) {
-    StreamString string = input;
+bool StringTest::TestIsEqualOperator_CCString(const char8 *input) {
+    String string = input;
 
     char8 testFalse[32];
     StringHelper::Copy(testFalse, input);
@@ -463,11 +463,11 @@ bool StreamStringTest::TestIsEqualOperator_CCString(const char8 *input) {
     return string == input;
 }
 
-bool StreamStringTest::TestIsEqualOperator_StreamString(const char8 *input) {
-    StreamString inputString = input;
-    StreamString string = inputString;
+bool StringTest::TestIsEqualOperator_StreamString(const char8 *input) {
+    String inputString = input;
+    String string = inputString;
 
-    StreamString testFalse = input;
+    String testFalse = input;
     testFalse += "a";
 
     if (string == testFalse) {
@@ -477,8 +477,8 @@ bool StreamStringTest::TestIsEqualOperator_StreamString(const char8 *input) {
     return string == inputString;
 }
 
-bool StreamStringTest::TestIsDifferentOperator_CCString(const char8 *input) {
-    StreamString string = input;
+bool StringTest::TestIsDifferentOperator_CCString(const char8 *input) {
+    String string = input;
 
     if (string != input) {
         return false;
@@ -491,45 +491,45 @@ bool StreamStringTest::TestIsDifferentOperator_CCString(const char8 *input) {
 
 }
 
-bool StreamStringTest::TestIsDifferentOperator_StreamString(const char8 *input) {
-    StreamString inputString = input;
-    StreamString string = inputString;
+bool StringTest::TestIsDifferentOperator_StreamString(const char8 *input) {
+    String inputString = input;
+    String string = inputString;
 
     if (string != input) {
         return false;
     }
-    StreamString testFalse = input;
+    String testFalse = input;
     testFalse += "a";
 
     return string != testFalse;
 
 }
 
-bool StreamStringTest::TestGetCharacterOperator(const char8 *input,
+bool StringTest::TestGetCharacterOperator(const char8 *input,
                                                 uint32 index) {
-    StreamString string = input;
+    String string = input;
     uint32 size = StringHelper::Length(input);
 
     return (index > size) ? (string[index] == 0) : string[index] == input[index];
 
 }
 
-bool StreamStringTest::TestLocate_Char(const char8 *input,
+bool StringTest::TestLocate_Char(const char8 *input,
                                        char8 c,
                                        int32 expected) {
-    StreamString string = input;
+    String string = input;
     return (string.Locate(c) == expected);
 }
 
-bool StreamStringTest::TestLocate_String(const char8 *input,
+bool StringTest::TestLocate_String(const char8 *input,
                                          const char8* toSearch,
                                          int32 expected) {
-    StreamString string = input;
+    String string = input;
     return (string.Locate(toSearch) == expected);
 }
 
-bool StreamStringTest::TestPrintFormatted(const PrintfNode testTable[]) {
-    StreamString string;
+bool StringTest::TestPrintFormatted(const PrintfNode testTable[]) {
+    String string;
     uint32 i = 0;
     while (StringHelper::Compare(testTable[i].format, "") != 0) {
         string = "";
@@ -545,8 +545,8 @@ bool StreamStringTest::TestPrintFormatted(const PrintfNode testTable[]) {
     return true;
 }
 
-bool StreamStringTest::TestGetToken(const TokenTestTableRow *table) {
-    StreamString myStream;
+bool StringTest::TestGetToken(const TokenTestTableRow *table) {
+    String myStream;
 
     uint32 i = 0u;
     const TokenTestTableRow *row = &table[i];

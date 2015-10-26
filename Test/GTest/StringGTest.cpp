@@ -1,7 +1,7 @@
 /**
- * @file StreamStringGTest.cpp
- * @brief Source file for class StreamStringGTest
- * @date 19/10/2015
+ * @file StringGTest.cpp
+ * @brief Source file for class StringGTest
+ * @date 26/10/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,9 +17,11 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StreamStringGTest (public, protected, and private). Be aware that some 
+ * the class StringGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
+
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -30,7 +32,7 @@
 /*---------------------------------------------------------------------------*/
 #include <limits.h>
 #include "gtest/gtest.h"
-#include "StreamStringTest.h"
+#include "StringTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,259 +42,259 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(StreamStringGTest,TestDefaultConstructor) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestDefaultConstructor) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestDefaultConstructor());
 }
 
-TEST(StreamStringGTest,TestCopyConstructor) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestCopyConstructor) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestCopyConstructor("HelloWorld"));
 }
 
-TEST(StreamStringGTest,TestDestructor) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestDestructor) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestDestructor());
 }
 
-TEST(StreamStringGTest,TestAnyTypeOperator) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestAnyTypeOperator) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestAnyTypeOperator("HelloWorld"));
 }
 
-TEST(StreamStringGTest,TestRead_minor_size) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestRead_minor_size) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestRead("HelloWorld", 5));
 }
 
-TEST(StreamStringGTest,TestRead_equal_size) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestRead_equal_size) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestRead("HelloWorld", 10));
 }
 
-TEST(StreamStringGTest,TestRead_bigger_size) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestRead_bigger_size) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestRead("HelloWorld", 20));
 }
 
-TEST(StreamStringGTest,TestWrite_minor_size) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestWrite_minor_size) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestWrite("HelloWorld", 5));
 }
 
-TEST(StreamStringGTest,TestWrite_equal_size) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestWrite_equal_size) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestWrite("HelloWorld", 10));
 }
 
-TEST(StreamStringGTest,TestWrite_bigger_size) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestWrite_bigger_size) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestWrite("HelloWorld", 20));
 }
 
-TEST(StreamStringGTest,TestCanWrite) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestCanWrite) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestCanWrite());
 }
 
-TEST(StreamStringGTest,TestCanRead) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestCanRead) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestCanRead());
 }
 
-TEST(StreamStringGTest,TestCanSeek) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestCanSeek) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestCanSeek());
 }
 
-TEST(StreamStringGTest,TestPosition) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestPosition) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestPosition());
 }
 
-TEST(StreamStringGTest,TestSize) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestSize) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestSize("HelloWorld"));
 }
 
-TEST(StreamStringGTest,TestSize_NULL) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestSize_NULL) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestSize(NULL));
 }
 
-TEST(StreamStringGTest,TestSetSize) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestSetSize) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestSetSize(32));
 }
 
-TEST(StreamStringGTest,TestSetSize_0) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestSetSize_0) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestSetSize(0));
 }
 
-TEST(StreamStringGTest,TestBuffer) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestBuffer) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestBuffer("HelloWorld"));
 }
 
-TEST(StreamStringGTest,TestBufferReference) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestBufferReference) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestBufferReference("HelloWorld"));
 }
 
-TEST(StreamStringGTest,TestTail_0) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestTail_0) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestTail("abcdefg", 0));
 }
 
-TEST(StreamStringGTest,TestTail_3) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestTail_3) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestTail("abcdefg", 3));
 }
 
-TEST(StreamStringGTest,TestTail_size) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestTail_size) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestTail("abcdefg", 6));
 }
 
-TEST(StreamStringGTest,TestTail_out_size) {
-    StreamStringTest stringtest;
+TEST(StringGTest,TestTail_out_size) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestTail("abcdefg", 8));
 }
 
 
-TEST(StreamStringGTest, TestSeek_in_range) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestSeek_in_range) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestSeek(32, 16, true));
 }
 
-TEST(StreamStringGTest, TestSeek_out_range) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestSeek_out_range) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestSeek(32, 33, false));
 }
 
-TEST(StreamStringGTest, TestRelativeSeek_in_range) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestRelativeSeek_in_range) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestRelativeSeek(16, 8, true));
 }
 
-TEST(StreamStringGTest, TestRelativeSeek_left_boundary) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestRelativeSeek_left_boundary) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestRelativeSeek(16, -17, false));
 }
 
-TEST(StreamStringGTest, TestRelativeSeek_right_boundary) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestRelativeSeek_right_boundary) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestRelativeSeek(16, 17, false));
 }
 
-TEST(StreamStringGTest, TestCopyOperator_Char) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestCopyOperator_Char) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestCopyOperator_Char(' '));
 }
 
-TEST(StreamStringGTest, TestCopyOperator_CCString) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestCopyOperator_CCString) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestCopyOperator_CCString("HelloWorld"));
 }
 
-TEST(StreamStringGTest, TestCopyOperator_StreamString) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestCopyOperator_StreamString) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestCopyOperator_StreamString("HelloWorld"));
 }
 
-TEST(StreamStringGTest, TestConcatenateOperator_Char) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestConcatenateOperator_Char) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestConcatenateOperator_Char('a'));
 }
 
-TEST(StreamStringGTest, TestConcatenateOperator_CCString) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestConcatenateOperator_CCString) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestConcatenateOperator_CCString("HelloWorld"));
 }
 
-TEST(StreamStringGTest, TestConcatenateOperator_StreamString) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestConcatenateOperator_StreamString) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestConcatenateOperator_StreamString("HelloWorld"));
 }
 
-TEST(StreamStringGTest, TestIsEqualOperator_CCString) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestIsEqualOperator_CCString) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestIsEqualOperator_CCString("HelloWorld"));
 }
 
-TEST(StreamStringGTest, TestIsEqualOperator_StreamString) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestIsEqualOperator_StreamString) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestIsEqualOperator_StreamString("HelloWorld"));
 }
 
-TEST(StreamStringGTest, TestIsDifferentOperator_CCString) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestIsDifferentOperator_CCString) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestIsDifferentOperator_CCString("HelloWorld"));
 }
 
-TEST(StreamStringGTest, TestIsDifferentOperator_StreamString) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestIsDifferentOperator_StreamString) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestIsDifferentOperator_StreamString("HelloWorld"));
 }
 
-TEST(StreamStringGTest, TestGetCharacterOperator) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestGetCharacterOperator) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestGetCharacterOperator("HelloWorld", 5));
 }
 
-TEST(StreamStringGTest, TestLocate_Char_True) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestLocate_Char_True) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestLocate_Char("HelloWorld", 'W', 5));
 }
 
-TEST(StreamStringGTest, TestLocate_Char_More_Than_one) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestLocate_Char_More_Than_one) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestLocate_Char("HelloWorld", 'l', 2));
 }
 
-TEST(StreamStringGTest, TestLocate_Char_False) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestLocate_Char_False) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestLocate_Char("HelloWorld", 's', -1));
 }
 
-TEST(StreamStringGTest, TestLocate_Char_Terminator) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestLocate_Char_Terminator) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestLocate_Char("HelloWorld", '\0', -1));
 }
 
 
-TEST(StreamStringGTest, TestLocate_String_True) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestLocate_String_True) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestLocate_String("HelloWorld", "Worl", 5));
 }
 
-TEST(StreamStringGTest, TestLocate_String_OneChar) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestLocate_String_OneChar) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestLocate_String("HelloWorld", "r", 7));
 }
 
-TEST(StreamStringGTest, TestLocate_String_Equal) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestLocate_String_Equal) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestLocate_String("HelloWorld", "HelloWorld", 0));
 }
 
-TEST(StreamStringGTest, TestLocate_String_Empty) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestLocate_String_Empty) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestLocate_String("HelloWorld", "", -1));
 }
 
-TEST(StreamStringGTest, TestLocate_String_False) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestLocate_String_False) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestLocate_String("HelloWorld", "elol", -1));
 }
 
-TEST(StreamStringGTest, TestPrintFormatted) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestPrintFormatted) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestPrintFormatted(GeneratePrintFormattedGenericTable()));
 }
 
-TEST(StreamStringGTest, TestGetToken) {
-    StreamStringTest stringtest;
+TEST(StringGTest, TestGetToken) {
+    StringTest stringtest;
     ASSERT_TRUE(stringtest.TestGetToken(TokenTestTableTerminators));
 }

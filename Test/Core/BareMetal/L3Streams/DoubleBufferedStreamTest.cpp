@@ -31,7 +31,7 @@
 #include "DoubleBufferedStreamTest.h"
 #include "StreamI.h"
 #include "StreamTestHelper.h"
-
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

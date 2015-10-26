@@ -1,8 +1,8 @@
 /**
- * @file StreamStringTest.h
- * @brief Header file for class StreamStringTest
- * @date 16/10/2015
- * @author Giuseppe Ferrò
+ * @file StringTest.h
+ * @brief Header file for class StringTest
+ * @date 26/ott/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StreamStringTest
+ * @details This header file contains the declaration of the class StringTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STREAMSTRINGTEST_H_
-#define STREAMSTRINGTEST_H_
+#ifndef STRINGTEST_H_
+#define STRINGTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "StreamString.h"
+#include "String.h"
 #include "FormatDescriptor.h"
 #include "StreamTestHelper.h"
 
@@ -45,7 +45,7 @@ using namespace MARTe;
 /**
  * @brief Test the StreamString public methods.
  */
-class StreamStringTest {
+class StringTest {
 
 private:
 
@@ -242,5 +242,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* STREAMSTRINGTEST_H_ */
+#endif /* STRINGTEST_H_ */
 

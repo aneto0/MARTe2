@@ -31,7 +31,7 @@
 #include "SingleBufferedStreamTest.h"
 #include "SingleBufferedStream.h"
 #include "StreamTestHelper.h"
-
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

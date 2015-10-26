@@ -1,7 +1,7 @@
 /**
- * @file StreamString.h
- * @brief Header file for class StreamString
- * @date 06/10/2015
+ * @file String.h
+ * @brief Header file for class String
+ * @date 26/10/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StreamString
+ * @details This header file contains the declaration of the class String
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STREAMSTRING_H_
-#define STREAMSTRING_H_
+#ifndef L3STREAMS_STRING_H_
+#define L3STREAMS_STRING_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -35,8 +35,8 @@
 #include "GeneralDefinitions.h"
 #include "HeapManager.h"
 #include "CharBuffer.h"
-#include "StreamStringIOBuffer.h"
-#include "StreamI.h"
+#include "StringIOBuffer.h"
+#include "BufferedStreamI.h"
 #include "TimeoutType.h"
 #include "StringHelper.h"
 #include "AnyType.h"
@@ -51,7 +51,7 @@ namespace MARTe {
  * @brief A basic implementation of a stream which allows reading and writing
  * to an underlying unbounded string, which can grow dynamically.
  */
-class DLL_API StreamString: public StreamI {
+class DLL_API String: public BufferedStreamI {
 
 public:
 
@@ -67,7 +67,7 @@ public:
      *   Position() == 0 &&
      *   Size() == 0
      */
-    StreamString();
+    String();
 
     /**
      * @brief Constructor from a null terminated C-string
@@ -83,25 +83,25 @@ public:
      *   Position() == 0 &&
      *   Size() == StringHelper::Length(initialisationString)
      */
-    StreamString(const char8 * const initialisationString);
+    String(const char8 * const initialisationString);
 
 
     /**
      * @brief Copy Constructor.
      *
      */
-    StreamString(const StreamString &toCopy);
+    String(const String &toCopy);
 
 
     /**
      * @brief Destructor
      */
-    virtual ~StreamString();
+    virtual ~String();
 
     /**
      * @brief Automatic cast to AnyType as a const char8 passing Buffer() return value.
      */
-    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The StreamString is considered as a string and not as a standard stream*/
+    /*lint -e{1511} [MISRA C++ Rule 2-10-2]. Justification: The String is considered as a string and not as a standard stream*/
     operator AnyType();
 
     /*-----------------------------------------------------------------------*/
@@ -216,25 +216,25 @@ public:
     /*-----------------------------------------------------------------------*/
 
     /**
-     * @brief Sets StreamString to be a copy of the input parameter.
+     * @brief Sets String to be a copy of the input parameter.
      * @param[in] c The character to copy.
      * @return true if successful. false otherwise.
      */
     inline bool operator=(const char8 c);
 
     /**
-     * @brief Sets StreamString to be a copy of the input parameter.
+     * @brief Sets String to be a copy of the input parameter.
      * @param[in] s The string to copy.
      * @return true if successful. false otherwise.
      */
     inline bool operator=(const char8 * const s);
 
     /**
-     * @brief Sets StreamString to be a copy of the input parameter.
-     * @param[in] s The StreamString to copy.
+     * @brief Sets String to be a copy of the input parameter.
+     * @param[in] s The String to copy.
      * @return true if successful. false otherwise.
      */
-    inline StreamString& operator=(const StreamString &s);
+    inline String& operator=(const String &s);
 
     /**
      * @brief Concatenate the character to the string contained in the buffer.
@@ -251,18 +251,18 @@ public:
     inline bool operator+=(const char8 * const s);
 
     /**
-     * @brief Concatenate the StreamString to the string contained in the buffer.
-     * @param[in] s The StreamString to concatenate.
+     * @brief Concatenate the String to the string contained in the buffer.
+     * @param[in] s The String to concatenate.
      * @return true if successful. false otherwise.
      */
-    inline bool operator+=(const StreamString &s);
+    inline bool operator+=(const String &s);
 
     /**
      * @brief  Compare the buffer content with the input content.
      * @param[in] s The buffer to be compared with.
      * @return true if the two buffers are the same. false otherwise.
      */
-    inline bool operator==(const StreamString &s) const;
+    inline bool operator==(const String &s) const;
 
     /**
      * @brief Compare the buffer content with the input content.
@@ -273,14 +273,14 @@ public:
 
     /**
      * @brief Compare the buffer content with the input content.SOURCE_
-     * @param[in] s The StreamString to be compared with.
+     * @param[in] s The String to be compared with.
      * @return trye if the two buffer are different, false otherwise.
      */
-    inline bool operator!=(const StreamString &s) const;
+    inline bool operator!=(const String &s) const;
 
     /**
      * @brief Compare the buffer content with the input content.
-     * @param[in] s The StreamString to be compared with.
+     * @param[in] s The String to be compared with.
      * @return trye if the two buffer are different, false otherwise.
      */
     inline bool operator!=(const char8 * const s) const;
@@ -300,11 +300,11 @@ public:
     virtual int32 Locate(const char8 c) const;
 
     /**
-     * @brief Checks if a StreamString is contained in the string.
+     * @brief Checks if a String is contained in the string.
      * @param[in] x The stream string to look for.
      * @return >0 the first position if found. -1 otherwise.
      */
-    virtual int32 Locate(const StreamString &x) const;
+    virtual int32 Locate(const String &x) const;
 
 protected:
 
@@ -351,18 +351,18 @@ private:
     bool Set(const char8 * const s);
 
     /**
-     * @brief Appends a StreamString at the end of the buffer.
-     * @param[in] s The StreamString to be copied.
+     * @brief Appends a String at the end of the buffer.
+     * @param[in] s The String to be copied.
      * @return true if successful. false otherwise.
      */
-    bool Append(const StreamString &s);
+    bool Append(const String &s);
 
     /**
-     * @brief Sets a StreamString to the buffer.
-     * @param[in] s The StreamString to be copied.
+     * @brief Sets a String to the buffer.
+     * @param[in] s The String to be copied.
      * @return true if successful. false otherwise.
      */
-    bool Set(const StreamString &s);
+    bool Set(const String &s);
 
     /**
      * All read and write operations are performed on this buffer.
@@ -371,7 +371,7 @@ private:
      * passing through the virtual table.
      * The function IOBuffer::Write and IOBuffer::NoMoreSpaceToWrite are overloaded to reallocate new memory in case of full buffer.
      */
-    StreamStringIOBuffer buffer;
+    StringIOBuffer buffer;
 
 };
 
@@ -379,31 +379,31 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-const char8 *StreamString::Buffer() {
+const char8 *String::Buffer() {
     buffer.Terminate();
     return buffer.Buffer();
 }
 
-char8 *StreamString::BufferReference() {
+char8 *String::BufferReference() {
     buffer.Terminate();
     return buffer.BufferReference();
 }
 
-const char8 *StreamString::Tail(const uint32 ix) const {
+const char8 *String::Tail(const uint32 ix) const {
     bool ok = (ix <= (buffer.UsedSize() - 1u));
 
     return ok ? &(buffer.BufferReference()[(buffer.UsedSize() - ix) - 1u]) : static_cast<const char8 *>(NULL);
 }
 
-bool StreamString::operator=(const char8 c) {
+bool String::operator=(const char8 c) {
     return Set(c);
 }
 
-bool StreamString::operator=(const char8 * const s) {
+bool String::operator=(const char8 * const s) {
     return Set(s);
 }
 
-StreamString& StreamString::operator=(const StreamString &s) {
+String& String::operator=(const String &s) {
     if (&s != this) {
         if (!Set(s)) {
             //TODO
@@ -412,26 +412,26 @@ StreamString& StreamString::operator=(const StreamString &s) {
     return *this;
 }
 
-bool StreamString::operator+=(const char8 c) {
+bool String::operator+=(const char8 c) {
     return Append(c);
 }
 
-bool StreamString::operator+=(const char8 * const s) {
+bool String::operator+=(const char8 * const s) {
     return Append(s);
 }
 
-bool StreamString::operator+=(const StreamString &s) {
+bool String::operator+=(const String &s) {
     return Append(s);
 }
 
-bool StreamString::operator==(const StreamString &s) const {
+bool String::operator==(const String &s) const {
     bool ok1 = (buffer.UsedSize() == s.buffer.UsedSize());
     bool ok2 = (StringHelper::CompareN(buffer.Buffer(), s.buffer.Buffer(), buffer.UsedSize()) == 0);
 
     return ok1 && ok2;
 }
 
-bool StreamString::operator==(const char8 * const s) const {
+bool String::operator==(const char8 * const s) const {
     bool ok1 = (s != NULL);
     bool ok2 = (StringHelper::Length(s) == buffer.UsedSize());
     bool ok3 = (StringHelper::CompareN(buffer.Buffer(), s, buffer.UsedSize()) == 0);
@@ -439,15 +439,15 @@ bool StreamString::operator==(const char8 * const s) const {
 
 }
 
-bool StreamString::operator!=(const StreamString &s) const {
+bool String::operator!=(const String &s) const {
     return !((*this) == s);
 }
 
-bool StreamString::operator!=(const char8 * const s) const {
+bool String::operator!=(const char8 * const s) const {
     return !((*this) == s);
 }
 
-char8 StreamString::operator[](const uint32 pos) const {
+char8 String::operator[](const uint32 pos) const {
     char8 ret = static_cast<char8>(0);
     if (pos < buffer.UsedSize()) {
         ret = buffer.BufferReference()[pos];
@@ -456,5 +456,5 @@ char8 StreamString::operator[](const uint32 pos) const {
 }
 
 }
+#endif /* L3STREAMS_STRING_H_ */
 
-#endif /* STREAMSTRING_H_ */

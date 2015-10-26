@@ -1,7 +1,7 @@
 /**
- * @file StreamI.cpp
- * @brief Source file for class StreamI
- * @date 05/10/2015
+ * @file BufferedStreamI.cpp
+ * @brief Source file for class BufferedStreamI
+ * @date 26/10/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,9 +17,10 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StreamI (public, protected, and private). Be aware that some
+ * the class BufferedStreamI (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+
 #define DLL_API
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -29,7 +30,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StreamI.h"
+#include "BufferedStreamI.h"
 #include "AdvancedErrorManagement.h"
 #include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
@@ -42,17 +43,18 @@
 
 namespace MARTe {
 
-StreamI::StreamI() {
+BufferedStreamI::BufferedStreamI() :
+        StreamI() {
 }
 
-StreamI::~StreamI() {
+BufferedStreamI::~BufferedStreamI() {
 }
 
-bool StreamI::GetToken(char8 * const outputBuffer,
-                       const char8 * const terminator,
-                       const uint32 outputBufferSize,
-                       char8 &saveTerminator,
-                       const char8 * const skipCharacters) {
+bool BufferedStreamI::GetToken(char8 * const outputBuffer,
+                               const char8 * const terminator,
+                               const uint32 outputBufferSize,
+                               char8 &saveTerminator,
+                               const char8 * const skipCharacters) {
 
     bool retval = false;
 // retrieve stream mechanism
@@ -65,10 +67,10 @@ bool StreamI::GetToken(char8 * const outputBuffer,
     return retval;
 }
 
-bool StreamI::GetToken(StreamI & output,
-                       const char8 * const terminator,
-                       char8 &saveTerminator,
-                       const char8 * const skipCharacters) {
+bool BufferedStreamI::GetToken(BufferedStreamI & output,
+                               const char8 * const terminator,
+                               char8 &saveTerminator,
+                               const char8 * const skipCharacters) {
 
 // retrieve stream mechanism
     IOBuffer *inputIOBuffer = GetReadBuffer();
@@ -85,8 +87,8 @@ bool StreamI::GetToken(StreamI & output,
     return ret;
 }
 
-bool StreamI::SkipTokens(const uint32 count,
-                         const char8 * const terminator) {
+bool BufferedStreamI::SkipTokens(const uint32 count,
+                                 const char8 * const terminator) {
 
     bool ret = CanRead();
     if (ret) {
@@ -100,8 +102,8 @@ bool StreamI::SkipTokens(const uint32 count,
     return ret;
 }
 
-bool StreamI::GetLine(StreamI & output,
-                      const bool skipTerminators) {
+bool BufferedStreamI::GetLine(BufferedStreamI & output,
+                              const bool skipTerminators) {
     const char8 *skipCharacters = "\r";
     if (!skipTerminators) {
         /*lint -e{774} [MISRA C++ Rule 0-1-1], [MISRA C++ Rule 0-1-2], [MISRA C++ Rule 0-1-9]. Justification: It is a compilation time platform constant. */
@@ -115,9 +117,9 @@ bool StreamI::GetLine(StreamI & output,
     return GetToken(output, "\n", terminator, skipCharacters);
 }
 
-bool StreamI::GetLine(char8 * const outputBuffer,
-                      const uint32 outputBufferSize,
-                      const bool skipTerminators) {
+bool BufferedStreamI::GetLine(char8 * const outputBuffer,
+                              const uint32 outputBufferSize,
+                              const bool skipTerminators) {
     const char8 *skipCharacters = "\r";
     if (!skipTerminators) {
         /*lint -e{774} [MISRA C++ Rule 0-1-1], [MISRA C++ Rule 0-1-2], [MISRA C++ Rule 0-1-9]. Justification: It is a compilation time platform constant. */
@@ -131,8 +133,8 @@ bool StreamI::GetLine(char8 * const outputBuffer,
     return GetToken(outputBuffer, "\n", outputBufferSize, terminator, skipCharacters);
 }
 
-bool StreamI::PrintFormatted(const char8 * const format,
-                             const AnyType pars[]) {
+bool BufferedStreamI::PrintFormatted(const char8 * const format,
+                                     const AnyType pars[]) {
 
     bool ret = CanWrite();
 // retrieve stream mechanism
@@ -148,7 +150,7 @@ bool StreamI::PrintFormatted(const char8 * const format,
     return ret;
 }
 
-bool StreamI::Copy(const char8 * const buffer) {
+bool BufferedStreamI::Copy(const char8 * const buffer) {
 
     bool ret = false;
     if (buffer != NULL) {
@@ -161,7 +163,7 @@ bool StreamI::Copy(const char8 * const buffer) {
     return ret;
 }
 
-bool StreamI::Copy(StreamI &stream) {
+bool BufferedStreamI::Copy(BufferedStreamI &stream) {
 
     char8 buffer[256];
     uint32 size = static_cast<uint32>(sizeof(buffer));
@@ -195,7 +197,5 @@ bool StreamI::Copy(StreamI &stream) {
     return ret;
 
 }
-
-
 
 }

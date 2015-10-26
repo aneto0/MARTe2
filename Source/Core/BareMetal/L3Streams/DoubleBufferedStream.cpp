@@ -44,7 +44,7 @@
 namespace MARTe {
 
 DoubleBufferedStream::DoubleBufferedStream() :
-        StreamI(),
+        BufferedStreamI(),
         readBuffer(this),
         writeBuffer(this) {
     bufferSizeSet = true;
@@ -59,7 +59,7 @@ DoubleBufferedStream::DoubleBufferedStream() :
 }
 
 DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &timeoutIn) :
-        StreamI(),
+        BufferedStreamI(),
         readBuffer(this),
         writeBuffer(this) {
     SetTimeout(timeoutIn);

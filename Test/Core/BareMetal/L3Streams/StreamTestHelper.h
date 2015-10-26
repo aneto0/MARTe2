@@ -32,7 +32,6 @@
 /*---------------------------------------------------------------------------*/
 #include "DoubleBufferedStream.h"
 #include "SingleBufferedStream.h"
-#include "StreamString.h"
 #include "MemoryOperationsHelper.h"
 #include "AnyType.h"
 #include "stdio.h"

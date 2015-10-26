@@ -42,20 +42,20 @@
 namespace MARTe {
 
 StreamMemoryReference::StreamMemoryReference() :
-        StreamI(),
+        BufferedStreamI(),
         buffer() {
 
 }
 
 StreamMemoryReference::StreamMemoryReference(char8 * const bufferIn,
                                              const uint32 bufferSize) :
-        StreamI() {
+        BufferedStreamI() {
     buffer.SetBufferReferencedMemory(bufferIn, bufferSize, 0u);
 }
 
 StreamMemoryReference::StreamMemoryReference(const char8 * const bufferIn,
                                              const uint32 bufferSize) :
-        StreamI() {
+        BufferedStreamI() {
     buffer.SetBufferReadOnlyReferencedMemory(bufferIn, bufferSize, 0u);
     buffer.SetUsedSize(bufferSize);
 }
