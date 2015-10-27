@@ -152,7 +152,7 @@ bool StringTest::TestAnyTypeOperator(const char8* initializationString) {
 }
 
 bool StringTest::TestRead(const char8* inputString,
-                                uint32 sizeToRead) {
+                          uint32 sizeToRead) {
     String myString;
     myString = inputString;
 
@@ -168,8 +168,26 @@ bool StringTest::TestRead(const char8* inputString,
     return (sizeToRead > size) ? (StringHelper::Compare(inputString, outputBuffer) == 0) : (StringHelper::CompareN(inputString, outputBuffer, sizeToRead) == 0);
 }
 
+bool StringTest::TestReadTimeout(const char8* inputString,
+                          uint32 sizeToRead) {
+    String myString;
+    myString = inputString;
+
+    myString.Seek(0);
+
+    char8 outputBuffer[32];
+    cleanOutputBuffer(outputBuffer, 32);
+
+    //size equal to inputString length (+1 for the terminated char8).
+    uint32 size = StringHelper::Length(inputString);
+    myString.Read(outputBuffer, sizeToRead, 500);
+
+    return (sizeToRead > size) ? (StringHelper::Compare(inputString, outputBuffer) == 0) : (StringHelper::CompareN(inputString, outputBuffer, sizeToRead) == 0);
+}
+
+
 bool StringTest::TestWrite(const char8* inputString,
-                                 uint32 sizeToWrite) {
+                           uint32 sizeToWrite) {
 
     String myString;
     myString = inputString;
@@ -187,6 +205,25 @@ bool StringTest::TestWrite(const char8* inputString,
     return (sizeToWrite > size) ?
             (StringHelper::Compare(inputString, myString.Buffer()) == 0) : (StringHelper::CompareN(inputString, myString.Buffer(), sizeToWrite) == 0);
 
+}
+
+bool StringTest::TestWriteTimeout(const char* inputString,
+                      uint32 sizeToWrite) {
+    String myString;
+    myString = inputString;
+
+    myString.Seek(0);
+
+    const uint32 bufferSize = 32;
+    char8 inputBuffer[bufferSize];
+    StringHelper::Copy(inputBuffer, inputString);
+
+    //size equal to inputString length (+1 for the terminated char8).
+    uint32 size = StringHelper::Length(inputString);
+    myString.Write(inputBuffer, sizeToWrite, 500);
+
+    return (sizeToWrite > size) ?
+            (StringHelper::Compare(inputString, myString.Buffer()) == 0) : (StringHelper::CompareN(inputString, myString.Buffer(), sizeToWrite) == 0);
 }
 
 bool StringTest::TestCanWrite() {
@@ -244,8 +281,8 @@ bool StringTest::TestBufferReference(const char8 * input) {
 }
 
 bool StringTest::TestSeek(uint32 usedSize,
-                                uint32 seek,
-                                bool expected) {
+                          uint32 seek,
+                          bool expected) {
 
     String myString;
     char8 toWrite[64];
@@ -277,8 +314,8 @@ bool StringTest::TestSeek(uint32 usedSize,
 }
 
 bool StringTest::TestRelativeSeek(uint32 initialPos,
-                                        int32 delta,
-                                        bool expected) {
+                                  int32 delta,
+                                  bool expected) {
     String string;
 
     uint32 usedSize = 2 * initialPos;
@@ -363,7 +400,7 @@ bool StringTest::TestPosition() {
 }
 
 bool StringTest::TestTail(const char8* input,
-                                uint32 index) {
+                          uint32 index) {
     String string(input);
     uint32 size = StringHelper::Length(input);
 
@@ -506,7 +543,7 @@ bool StringTest::TestIsDifferentOperator_StreamString(const char8 *input) {
 }
 
 bool StringTest::TestGetCharacterOperator(const char8 *input,
-                                                uint32 index) {
+                                          uint32 index) {
     String string = input;
     uint32 size = StringHelper::Length(input);
 
@@ -515,15 +552,15 @@ bool StringTest::TestGetCharacterOperator(const char8 *input,
 }
 
 bool StringTest::TestLocate_Char(const char8 *input,
-                                       char8 c,
-                                       int32 expected) {
+                                 char8 c,
+                                 int32 expected) {
     String string = input;
     return (string.Locate(c) == expected);
 }
 
 bool StringTest::TestLocate_String(const char8 *input,
-                                         const char8* toSearch,
-                                         int32 expected) {
+                                   const char8* toSearch,
+                                   int32 expected) {
     String string = input;
     return (string.Locate(toSearch) == expected);
 }
@@ -553,12 +590,12 @@ bool StringTest::TestGetToken(const TokenTestTableRow *table) {
     bool result = true;
 
     while (result && (row->toTokenize != NULL)) {
-        myStream=row->toTokenize;
+        myStream = row->toTokenize;
         myStream.Seek(0);
         char saveTerminator;
         uint32 t = 0u;
 
-        uint32 outBuffSize=64;
+        uint32 outBuffSize = 64;
         char8 outputBuff[64] = { 0 };
 
         while (myStream.GetToken(outputBuff, row->terminators, outBuffSize, saveTerminator, row->skipCharacters)) {

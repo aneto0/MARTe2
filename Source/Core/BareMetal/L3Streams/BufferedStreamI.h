@@ -126,6 +126,8 @@ public:
      */
     inline operator AnyType();
 
+
+
     /**
      * @brief Reads a token from the stream into a character buffer.
      * @details Extracts a token from the stream until a terminator or \0

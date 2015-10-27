@@ -35,7 +35,6 @@
 #include "MemoryOperationsHelper.h"
 #include "AnyType.h"
 #include "stdio.h"
-#include "OperatingSystemStream.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -74,10 +73,10 @@ public:
 };
 
 /**
- * @brief Minimal OperatingSystemStream implementation for the Buffer and Stream tests.
+ * @brief Minimal StreamI implementation for the Buffer and Stream tests.
  * It is implemented over a char buffer with dimension MAX_STREAM_DIMENSION
  */
-class DummyOSStream: public OperatingSystemStream {
+class DummyOSStream: public StreamI {
 
 public:
 
@@ -95,6 +94,7 @@ public:
         readable = canRead;
         writable = canWrite;
         size = 0;
+        usedTimeout = false;
         buffer = (char8 *) malloc(MAX_STREAM_DIMENSION);
         for (uint32 i = 0; i < MAX_STREAM_DIMENSION; i++) {
             buffer[i] = 0;
@@ -137,6 +137,13 @@ public:
               uint32 &inSize,
               const TimeoutType &timeout) {
 
+        if (timeout.GetTimeoutMSec() < TTDefault.GetTimeoutMSec()) {
+            usedTimeout = true;
+        }
+        else {
+            usedTimeout = false;
+        }
+
         if ((position + inSize) >= MAX_STREAM_DIMENSION) {
             inSize = MAX_STREAM_DIMENSION - position - 1;
         }
@@ -154,6 +161,12 @@ public:
                uint32 &outSize,
                const TimeoutType &timeout) {
 
+        if (timeout.GetTimeoutMSec() < TTDefault.GetTimeoutMSec()) {
+            usedTimeout = true;
+        }
+        else {
+            usedTimeout = false;
+        }
         if ((size + outSize) >= MAX_STREAM_DIMENSION) {
             outSize = MAX_STREAM_DIMENSION - size - 1;
         }
@@ -213,6 +226,8 @@ public:
     bool readable;
 
     bool writable;
+
+    bool usedTimeout;
 
 };
 
@@ -276,6 +291,18 @@ public:
     bool Write(const char8 * const outBuffer,
                uint32 &inSize) {
         return SingleBufferedStream::Write(outBuffer, inSize);
+    }
+
+    bool Read(char8 * const outBuffer,
+              uint32 &inSize,
+              const TimeoutType &timeout) {
+        return SingleBufferedStream::Read(outBuffer, inSize, timeout);
+    }
+
+    bool Write(const char8 * const outBuffer,
+               uint32 &inSize,
+               const TimeoutType &timeout) {
+        return SingleBufferedStream::Write(outBuffer, inSize, timeout);
     }
 
     uint64 Size() {
@@ -371,6 +398,7 @@ public:
 
         return DummyOSStream::Write(inBuffer, outSize, GetTimeout());
     }
+
     bool Read(char8 * const outBuffer,
               uint32 &inSize) {
         return DoubleBufferedStream::Read(outBuffer, inSize);
@@ -379,6 +407,18 @@ public:
     bool Write(const char8 * const outBuffer,
                uint32 &inSize) {
         return DoubleBufferedStream::Write(outBuffer, inSize);
+    }
+
+    bool Read(char8 * const outBuffer,
+              uint32 &inSize,
+              const TimeoutType &timeout) {
+        return DoubleBufferedStream::Read(outBuffer, inSize, timeout);
+    }
+
+    bool Write(const char8 * const outBuffer,
+               uint32 &inSize,
+               const TimeoutType &timeout) {
+        return DoubleBufferedStream::Write(outBuffer, inSize, timeout);
     }
 
     uint64 Size() {

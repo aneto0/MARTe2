@@ -90,11 +90,35 @@ public:
     bool TestCanSeek();
 
     /**
+     * @brief Tests if the function reads min(bufferSize, readSize) characters from the stream.
+     */
+    bool TestRead(const char8 *string,
+                   uint32 readSize,
+                   const uint32 bufferSize);
+
+    /**
+     * @brief Tests if the write with timeout has the same behavior of the normal Read.
+     */
+    bool TestReadTimeout(const char8 *string,
+                   uint32 readSize,
+                   const uint32 bufferSize);
+
+
+    /**
      * @brief Tests if the function writes min(bufferSize, writeSize) characters on the stream.
      */
     bool TestWrite(const char8 *string,
                    uint32 writeSize,
                    const uint32 bufferSize);
+
+    /**
+     * @brief Tests if the write with timeout has the same behavior of the normal Write.
+     */
+    bool TestWriteTimeout(const char8 *string,
+                   uint32 writeSize,
+                   const uint32 bufferSize);
+
+
 
     /**
      * @brief Tests if the function returns false in case of read only stream.
