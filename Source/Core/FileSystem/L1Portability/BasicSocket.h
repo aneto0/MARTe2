@@ -32,60 +32,108 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "InternetAddress.h"
+#include "StreamI.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketCore.h)
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-/** Implements basic generic socket functions */
-class BasicSocket {
 
-public:
+    /**
+     * @brief Implementation of the most common socket functions shared by UDP and TCP sockets.
+     */
+    class BasicSocket: public StreamI {
 
-    BasicSocket();
+    public:
 
-    /** constructor  */
-    BasicSocket(int32 socket);
+        /**
+         * @brief Default constructor.
+         */
+        BasicSocket();
 
-    /** destructor */
-    ~BasicSocket();
+        /**
+         * @brief Copy constructor.
+         * @param[in] socketIn is the socket handle to set.
+         * @post
+         *  connectionSocket=socketIn
+         */
+        BasicSocket(const SocketCore socketIn);
 
-    /**  set blocking mode for the stream! */
-    bool SetBlocking(bool flag);
+        /**
+         * @brief Destructor
+         * @post
+         * Close()
+         */
+        ~BasicSocket();
 
-    /** returns the socket number */
-    int32 Socket();
+        /**
+         * @brief Set\UnSet blocking mode.
+         * @param[in] flag specifies if blocking mode must be set(true) or unset(false).
+         * @return true if the desired mode is set correctly, false otherwise.
+         */
+        bool SetBlocking(const bool flag) const;
 
-    /** closes the socket */
-    bool Close();
+        /**
+         * @brief Closes the socket.
+         * @return true if the socket is closed correctly, false otherwise.
+         */
+        bool Close();
 
-    /** where the packet came from */
-    InternetAddress &GetSource();
+        /**
+         * @brief Full access to the source host InternetAddress structure.
+         */
+        InternetAddress &GetSource();
 
-    /** where the packet is going to */
-    InternetAddress &GetDestination();
+        /**
+         * @brief Full access to the destination host InternetAddress structure.
+         */
+        InternetAddress &GetDestination();
 
+        /*
+         * @brief Retrieves the socket handle.
+         */
+        SocketCore GetConnectionSocket() const;
 
-    int32 GetConnectionSocket() const;
+        /**
+         * @brief Sets the destination host parameters.
+         * @param[in] destinationIn is an InternetAddress which contains all the
+         * necessary informations for the destination host handling.
+         */
+        void SetDestination(const InternetAddress &destinationIn);
 
-    void SetDestination(const InternetAddress &destinationIn);
+        /**
+         * @brief Sets the source host parameters.
+         * @param[in] sourceIn is an InternetAddress which contains all the
+         * necessary informations for the source host handling.
+         */
+        void SetSource(const InternetAddress &sourceIn);
 
-    void SetSource(const InternetAddress &sourceIn);
+        /**
+         * @brief Sets the socket handle.
+         * @param[in] connectionSocketIn is the socket handle to set.
+         */
+        void SetConnectionSocket(const SocketCore connectionSocketIn);
 
-    void SetConnectionSocket(int32 connectionSocketIn);
+    private:
 
-private:
+        /**
+         * Where the packets go to
+         */
+        InternetAddress destination;
 
-    /** where the packet goes to */
-    InternetAddress destination;
+        /**
+         * Where packets come from
+         */
+        InternetAddress source;
 
-    /** where packets comes from */
-    InternetAddress source;
+        /**
+         * The socket handle
+         */
+        SocketCore connectionSocket;
 
-    /** the socket handle */
-    int32 connectionSocket;
-
-};
+    };
 
 }
 /*---------------------------------------------------------------------------*/

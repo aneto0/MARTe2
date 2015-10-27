@@ -39,6 +39,8 @@
 #include "BasicSocket.h"
 #include "BasicTCPSocket.h"
 #include "Sleep.h"
+#include "SocketSelect.h"
+#include "InternetService.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -47,424 +49,342 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 #define sock_errno()  errno
 
 namespace MARTe {
 
-static const uint32 SELECT_WIDTH= 256u;
-
-
-/** Allows synchronising to a group of sockets.
-CAN ONLY SELECT SOCKETS FROM A SINGLE SOURCE TYPE. CANNOT MIX ATM and UDP (on NT only?) */
-class  SocketSelect {
-private:
-    /** */
-    fd_set readFDS;
-
-    /** */
-    fd_set writeFDS;
-
-    /** */
-    fd_set exceptFDS;
-
-    /** */
-    fd_set readFDS_done;
-
-    /** */
-    fd_set writeFDS_done;
-
-    /** */
-    fd_set exceptFDS_done;
-
-    /** */
-    int32 readySockets;
-
-public:
-    /** */
-    SocketSelect(){
-        Reset();
-    }
-
-    /** */
-    void Reset(){
-        FD_ZERO(&readFDS);
-        FD_ZERO(&writeFDS);
-        FD_ZERO(&exceptFDS);
-        FD_ZERO(&readFDS_done);
-        FD_ZERO(&writeFDS_done);
-        FD_ZERO(&exceptFDS_done);
-    }
-
-    /** */
-    void AddWaitOnWriteReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_SET(s->Socket(),&writeFDS);
-    }
-    /** */
-    void DeleteWaitOnWriteReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_CLR(s->Socket(),&writeFDS);
-    }
-    /** */
-    void AddWaitOnReadReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_SET(s->Socket(),&readFDS);
-    }
-    /** */
-    void DeleteWaitOnReadReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_CLR(s->Socket(),&readFDS);
-    }
-    /** */
-    void AddWaitOnExceptReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_SET(s->Socket(),&exceptFDS);
-    }
-    /** */
-    void DeleteWaitOnExceptReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_CLR(s->Socket(),&exceptFDS);
-    }
-    /** Wait for all the event*/
-    bool Wait(TimeoutType msecTimeout = TTInfiniteWait){
-        readFDS_done   = readFDS;
-        writeFDS_done  = writeFDS;
-        exceptFDS_done = exceptFDS;
-
-        timeval timeWait;
-        if (msecTimeout == TTInfiniteWait) {
-            readySockets = select(SELECT_WIDTH,&readFDS_done,&writeFDS_done,&exceptFDS_done,NULL);
-        } else {
-            timeWait.tv_sec  = msecTimeout.GetTimeoutMSec() / 1000;
-            timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
-            readySockets = select(SELECT_WIDTH,&readFDS_done,&writeFDS_done,&exceptFDS_done,&timeWait);
-        }
-        return (readySockets > 0);
-    }
-
-    /** wait for data on the input */
-    bool WaitRead(TimeoutType msecTimeout = TTInfiniteWait){
-        readFDS_done   = readFDS;
-
-        timeval timeWait;
-        if (msecTimeout == TTInfiniteWait) {
-            readySockets = select(SELECT_WIDTH,&readFDS_done,NULL,NULL,NULL);
-        } else {
-            timeWait.tv_sec  = msecTimeout.GetTimeoutMSec() / 1000;
-            timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
-            readySockets = select(SELECT_WIDTH,&readFDS_done,NULL,NULL,&timeWait);
-        }
-        return (readySockets > 0);
-    }
-
-    /** wait on free space on the output buffer*/
-    bool WaitWrite(TimeoutType msecTimeout = TTInfiniteWait){
-        writeFDS_done   = writeFDS;
-
-        timeval timeWait;
-        if (msecTimeout == TTInfiniteWait) {
-            readySockets = select(SELECT_WIDTH,NULL,&writeFDS_done,NULL,NULL);
-        } else {
-            timeWait.tv_sec  = msecTimeout.GetTimeoutMSec() / 1000;
-            timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
-            readySockets = select(SELECT_WIDTH,NULL,&writeFDS_done,NULL,&timeWait);
-        }
-        return (readySockets > 0);
-    }
-
-    /** wait for an exception */
-    bool WaitExcept(TimeoutType msecTimeout = TTInfiniteWait){
-        exceptFDS_done = exceptFDS;
-
-        timeval timeWait;
-        if (msecTimeout == TTInfiniteWait) {
-            readySockets = select(SELECT_WIDTH,NULL,NULL,&exceptFDS_done,NULL);
-        } else {
-            timeWait.tv_sec  = msecTimeout.GetTimeoutMSec() / 1000;
-            timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
-            readySockets = select(SELECT_WIDTH,NULL,NULL,&exceptFDS_done,&timeWait);
-        }
-        return (readySockets > 0);
-    }
-
-    /** */
-    int32 ReadySockets(){ return readySockets; }
-
-    /** */
-    bool CheckRead(BasicSocket *s){ return (FD_ISSET(s->Socket(),&readFDS_done)!= 0); }
-
-    /** */
-    bool CheckWrite(BasicSocket *s){ return (FD_ISSET(s->Socket(),&writeFDS_done)!= 0); }
-
-    /** */
-    bool CheckExcept(BasicSocket *s){ return (FD_ISSET(s->Socket(),&exceptFDS_done)!= 0); }
-
-    /** */
-    fd_set &ReadFDS(){ return readFDS_done; }
-
-    /** */
-    fd_set &WriteFDS(){ return readFDS_done; }
-
-    /** */
-    fd_set &ExceptFDS(){ return readFDS_done; }
-
-};
-
-
-
-
-/**
- * @file
- * Allows handling ports by name
- */
-
-class InternetService{
-    /** */
-    servent service;
-
-public:
-    /** */
-    bool SearchByName(const char8 *name,char8 *protocol=NULL){
-        servent *serv = getservbyname(name,protocol);
-        if (serv == NULL) return false;
-        service = *serv;
-        return true;
-
-    }
-
-    /** */
-    bool SearchByPort(int32 port,char8 *protocol=NULL){
-        servent *serv = getservbyport(port,protocol);
-        if (serv == NULL) return false;
-        service = *serv;
-        return true;
-
-    }
-
-    /** */
-    int32 Port() {
-        return service.s_port;
-    }
-
-    /** */
-    const char8 *Name() {
-        return service.s_name;
-    }
-
-    /** */
-    const char8 *Protocol() {
-        return service.s_proto;
-    }
-
-    /** */
-    static int32 GetPortByName(const char8 *name){
-        InternetService service;
-        service.SearchByName(name);
-        return service.Port();
-    }
-};
-
-
-
-
-
-
-
-/** basic Read*/
-bool BasicTCPSocket::BasicRead(void* buffer,
-                               uint32 &size) {
-    int32 ret = recv(GetConnectionSocket(), (char8 *) buffer, size, 0);
-    if (ret < 0) {
-        size = 0;
-        return false;
-    }
-    size = ret;
-    // to avoid polling continuously release CPU time when reading 0 bytes
-    if (size == 0)
-        Sleep::MSec(1);
-    return true;
-}
-
-/** basic write */
-bool BasicTCPSocket::BasicWrite(const void* buffer,
-                                uint32 &size) {
-    int32 ret = send(GetConnectionSocket(), (char8 *) buffer, size, 0);
-    if (ret < 0) {
-        size = 0;
-        return false;
-    }
-    size = ret;
-    return true;
-}
-
 /** Read without consuming */
-bool BasicTCPSocket::Peek(void* buffer,
-                          uint32 &size) {
-    int32 ret = recv(GetConnectionSocket(), (char8 *) buffer, size, MSG_PEEK);
+bool BasicTCPSocket::Peek(char8* const buffer,
+                          uint32 &size) const {
+    int32 ret = static_cast<int32>(recv(GetConnectionSocket(), buffer, static_cast<size_t>(size), MSG_PEEK));
     if (ret < 0) {
-        size = 0;
-        return false;
+        size = 0u;
     }
-    size = ret;
-    return true;
+    else {
+        /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
+        size = static_cast<uint32>(ret);
+    }
+    return (ret >= 0);
+}
+
+/** just a constructor */
+BasicTCPSocket::BasicTCPSocket() :
+        BasicSocket() {
+    /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: C-style cast made at operating system api level.*/
+    /*lint -e{923} [MISRA C++ Rule 5-2-7]. Justification: cast from int to pointer made at operating system api level. */
+    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
+        //TODO
+    }
+}
+
+BasicTCPSocket::~BasicTCPSocket(){
+
 }
 
 
 /** just a constructor */
-BasicTCPSocket::BasicTCPSocket() {
-    signal(SIGPIPE, SIG_IGN);
-}
-
-/** just a constructor */
-BasicTCPSocket::BasicTCPSocket(int32 socket) {
-    signal(SIGPIPE, SIG_IGN);
-    SetConnectionSocket(socket);
+BasicTCPSocket::BasicTCPSocket(const int32 socketIn) :
+        BasicSocket() {
+    /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: C-style cast made at operating system api level.*/
+    /*lint -e{923} [MISRA C++ Rule 5-2-7]. Justification: cast from int to pointer made at operating system api level. */
+    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
+        //TODO
+    }
+    SetConnectionSocket(socketIn);
 }
 
 /** Opens a stream socket */
 bool BasicTCPSocket::Open() {
-    InternetAddress::SocketInit();
+
+    /*lint e{641} .Justification: The function socket returns an int.*/
     SetConnectionSocket(socket(PF_INET, SOCK_STREAM, 0));
     const int32 one = 1;
-    if (setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)) < 0) {
-        return false;
-    }
+    bool ret = false;
+    if (setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_REUSEADDR, &one, static_cast<uint32>(sizeof(one))) >= 0) {
 
-    if (GetConnectionSocket() < 0) {
-        return false;
+        if (GetConnectionSocket() >= 0) {
+            ret = true;
+        }
     }
-
-    return true;
+    return ret;
 }
 
-
 /** Opens a socket as a server at port port */
-bool BasicTCPSocket::Listen(int32 port,
-                            int32 maxConnections) {
+bool BasicTCPSocket::Listen(const uint16 port,
+                            const int32 maxConnections) const {
     InternetAddress server;
 
     server.SetPort(port);
-    int32 errorCode = bind(GetConnectionSocket(), server.GetAddress(), server.Size());
-    if (errorCode < 0) {
-        return false;
+    int32 errorCode = bind(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(server.GetAddress()), server.Size());
+    bool ret = false;
+    if (errorCode >= 0) {
+
+        errorCode = listen(GetConnectionSocket(), maxConnections);
+        if (errorCode >= 0) {
+            ret = true;
+        }
     }
 
-    errorCode = listen(GetConnectionSocket(), maxConnections);
-    if (errorCode < 0) {
-        return false;
-    }
-
-    return true;
+    return ret;
 }
 
 /** Opens a socket as a server at port port */
-bool BasicTCPSocket::Listen(char8 *serviceName,
-                            int32 maxConnections) {
+bool BasicTCPSocket::Listen(const char8 * const serviceName,
+                            const int32 maxConnections) const {
     int32 port = InternetService::GetPortByName(serviceName);
-    if (port == -1)
-        return false;
-    return Listen(port, maxConnections);
+    /*lint -e{9119} -e{9117} -e{734} [MISRA C++ Rule 5-0-6] [MISRA C++ Rule 5-0-4]. Justification: the low level InternetAddress struct has
+     * an unsigned short "port" member attribute. */
+    return (port == -1) ? (false) : (Listen(static_cast<uint16>(port), maxConnections));
 }
 
 /** connects an unconnected socket to address address and with port port
  if msecTimeout is TTDefault then select is not used */
-bool BasicTCPSocket::Connect(const char8 *address,
-                             int32 port,
-                             TimeoutType msecTimeout,
+bool BasicTCPSocket::Connect(const char8 * const address,
+                             const uint16 port,
+                             const TimeoutType &msecTimeout,
                              int32 retry) {
     GetDestination().SetPort(port);
-    if (GetDestination().SetAddressByDotName(address) == false) {
-        if (GetDestination().SetAddressByName(address) == false) {
-            return false;
+    bool ret = false;
+    if (GetDestination().SetAddressByDotName(address)) {
+        if (GetDestination().SetAddressByName(address)) {
+
+            int32 errorCode = connect(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(GetDestination().GetAddress()), GetDestination().Size());
+            if (errorCode < 0) {
+                errorCode = sock_errno();
+                switch (errorCode) {
+                case (EINTR): {
+                    if (retry > 0) {
+                        retry--;
+                        ret = Connect(address, port, msecTimeout, retry);
+                    }
+                    else {
+                        ret = false;
+                    }
+                }
+                    break;
+                case (EINPROGRESS):
+                case (EWOULDBLOCK): {
+                    if (msecTimeout.IsFinite()) {
+                        SocketSelect sel;
+                        sel.AddWaitOnWriteReady(this);
+                        ret = sel.WaitWrite(msecTimeout);
+                    }
+                    else {
+                        ret = false;
+                    }
+                }
+                    break;
+                default: {
+                    ret = false;
+                }
+                }
+            }
         }
     }
-
-    int32 errorCode = connect(GetConnectionSocket(), GetDestination().GetAddress(), GetDestination().Size());
-    if (errorCode < 0) {
-
-        errorCode = sock_errno();
-        if (errorCode == EINTR) {
-            if (retry > 0) {
-                return Connect(address, port, msecTimeout, retry--);
-            }
-            else {
-                return false;
-            }
-        }
-        if ((errorCode != 0) && (errorCode != EINPROGRESS) && (errorCode != EWOULDBLOCK)) {
-            return false;
-        }
-        else {
-            if (msecTimeout != TTDefault) {
-                SocketSelect sel;
-                sel.AddWaitOnWriteReady(this);
-                bool ret = sel.WaitWrite(msecTimeout);
-                if (ret)
-                    return true;
-            }
-            return false;
-        }
-    }
-    return true;
+    return ret;
 }
 
 /** connects an unconnected socket to address address and with port port */
-bool BasicTCPSocket::Connect(const char8 *address,
-                             const char8 *serviceName,
-                             TimeoutType msecTimeout) {
+bool BasicTCPSocket::Connect(const char8 * const address,
+                             const char8 * const serviceName,
+                             const TimeoutType &msecTimeout) {
     int32 port = InternetService::GetPortByName(serviceName);
-    if (port == -1)
-        return false;
-    return Connect(address, port, msecTimeout);
+    /*lint -e{9119} -e{9117} -e{734} [MISRA C++ Rule 5-0-6] [MISRA C++ Rule 5-0-4]. Justification: the low level InternetAddress struct has
+     * an unsigned short "port" member attribute. */
+    return (port == -1) ? (false) : (Connect(address, static_cast<uint16>(port), msecTimeout));
 }
 
 /** true if we are still connected  Still experimental */
-bool BasicTCPSocket::IsConnected() {
+bool BasicTCPSocket::IsConnected() const {
 
-    int32 errorCode;
     InternetAddress information;
 
     socklen_t len = information.Size();
 
-    int32 ret = getpeername(GetConnectionSocket(), information.GetAddress(), &len);
-
-    errorCode = sock_errno();
+    int32 ret = getpeername(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(information.GetAddress()), &len);
 
     return (ret == 0);
 
 }
 
 /** this is a BasicTCPSocket constructor .. */
-BasicTCPSocket *BasicTCPSocket::WaitConnection(TimeoutType msecTimeout,
+BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &msecTimeout,
                                                BasicTCPSocket *client) {
-    int32 size = GetSource().Size();
-    int32 newSocket = accept(GetConnectionSocket(), GetSource().GetAddress(), (socklen_t *) &size);
+    uint32 size = GetSource().Size();
+    int32 newSocket = accept(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(GetSource().GetAddress()), reinterpret_cast<socklen_t *>(&size));
 
+    BasicTCPSocket *ret = static_cast<BasicTCPSocket *>(NULL);
     if (newSocket != -1) {
-        if (!client)
+        if (client == NULL) {
             client = new BasicTCPSocket(newSocket);
+        }
         client->SetDestination(GetSource());
-        client->SetSource(GetSource());
+        client->SetSource(GetDestination());/////
         client->SetConnectionSocket(newSocket);
-        return client;
+        ret = client;
     }
-    else if (msecTimeout != TTDefault) {
-        int32 errorCode;
-        errorCode = sock_errno();
+    else {
+        if (msecTimeout.IsFinite()) {
+            int32 errorCode;
+            errorCode = sock_errno();
+            if ((errorCode == 0) || (errorCode == EINPROGRESS) || (errorCode == EWOULDBLOCK)) {
+                SocketSelect sel;
+                sel.AddWaitOnReadReady(this);
+                if (sel.WaitRead(msecTimeout)) {
+                    ret = WaitConnection(TTDefault, client);
+                }
+            }
+        }
+    }
+    return ret;
+}
 
-        if ((errorCode != 0) && (errorCode != EINPROGRESS) && (errorCode != EWOULDBLOCK)) {
-            return NULL;
+/** basic Read*/
+bool BasicTCPSocket::Read(char8* const output,
+                          uint32 &size) {
+    int32 readBytes = static_cast<int32>(recv(GetConnectionSocket(), output, static_cast<size_t>(size), 0));
+    bool ret = (readBytes >= 0);
+
+    if (ret) {
+        /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
+        size = static_cast<uint32>(readBytes);
+        // to avoid polling continuously release CPU time when reading 0 bytes
+        if (size == 0u) {
+            Sleep::MSec(1);
+        }
+    }
+    else {
+        size = 0u;
+    }
+    return ret;
+}
+
+/** basic write */
+bool BasicTCPSocket::Write(const char8* const input,
+                           uint32 &size) {
+    int32 writtenBytes = static_cast<int32>(send(GetConnectionSocket(), input, static_cast<size_t>(size), 0));
+    bool ret = (writtenBytes >= 0);
+    if (ret) {
+        /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
+        size = static_cast<uint32>(writtenBytes);
+    }
+    else {
+        size = 0u;
+    }
+
+    return ret;
+}
+
+/** basic Read*/
+bool BasicTCPSocket::Read(char8* const output,
+                          uint32 &size,
+                          const TimeoutType &msecTimeout) {
+    struct timeval timeout;
+    /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+    timeout.tv_sec = static_cast<int32>(msecTimeout.GetTimeoutMSec() / 1000u);
+    /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+    timeout.tv_usec = static_cast<int32>((msecTimeout.GetTimeoutMSec() % 1000u) * 1000u);
+    int32 ret = setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
+
+    bool retVal = true;
+
+    if (ret < 0) {
+        size = 0u;
+        retVal = false;
+    }
+    else {
+        ret = static_cast<int32>(recv(GetConnectionSocket(), output, static_cast<size_t>(size), 0));
+
+        if (ret < 0) {
+            size = 0u;
+
+            retVal = false;
         }
         else {
-            SocketSelect sel;
-            sel.AddWaitOnReadReady(this);
-            bool ret = sel.WaitRead(msecTimeout);
-            if (ret) return WaitConnection(TTDefault,client);
-            return NULL;
-        }
 
+            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
+            size = static_cast<uint32>(ret);
+        }
     }
-    return NULL;}
+
+    if (setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeout)))<0) {
+        //TODO
+    }
+    return retVal;
+}
+
+/** basic write */
+bool BasicTCPSocket::Write(const char8* const input,
+                           uint32 &size,
+                           const TimeoutType &msecTimeout) {
+    struct timeval timeout;
+    /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+    timeout.tv_sec = msecTimeout.GetTimeoutMSec() / 1000u;
+    /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+    timeout.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+    int32 ret = setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
+
+    bool retVal = true;
+
+    if (ret < 0) {
+        size = 0u;
+        retVal = false;
+    }
+    else {
+        ret = static_cast<int32>(send(GetConnectionSocket(), input, static_cast<size_t>(size), 0));
+
+        if (ret < 0) {
+            size = 0u;
+
+            retVal = false;
+        }
+        else {
+
+            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
+            size = static_cast<uint32>(ret);
+        }
+    }
+    if (setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeout))) < 0) {
+        //TODO
+        retVal = false;
+    }
+    return retVal;
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: sockets cannot seek. */
+bool BasicTCPSocket::Seek(const uint64 pos) {
+    return false;
+}
+
+uint64 BasicTCPSocket::Size() {
+    return 0xffffffffffffffffu;
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: sockets cannot seek. */
+bool BasicTCPSocket::RelativeSeek(const int32 deltaPos) {
+    return false;
+}
+
+uint64 BasicTCPSocket::Position() {
+    return 0xffffffffffffffffu;
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the size of a socket is undefined. */
+bool BasicTCPSocket::SetSize(const uint64 size) {
+    return false;
+}
+
+bool BasicTCPSocket::CanWrite() const {
+    return true;
+}
+
+bool BasicTCPSocket::CanRead() const {
+    return true;
+}
+
+bool BasicTCPSocket::CanSeek() const {
+    return false;
+}
 
 }
+

@@ -31,85 +31,136 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "String.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,InternetAddressCore.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-#include "String.h"
 
 
 namespace MARTe{
 
+
+/**
+ * @brief A class to store IP address, port and host name associated to a generic host.
+ */
 class InternetAddress {
-
-friend class BasicTCPSocket;
-friend class BasicUDPSocket;
-friend class BasicSocket;
-friend class BasicATMSocket;
-
 
 
 public:
-    /** creates an InternetAddress with the given information
-        a NULL value for addr will select the INADDR_ANY  */
-    InternetAddress(uint16 port=0,const char8 *addr=NULL);
 
-    /**  returns the port number associated */
-    int16 GetPort();
+    /**
+     * @brief Default constructor.
+     * @param[in] port is the desired port number.
+     * @param[in] addr is the desired IP address in the format x.x.x.x
+     * @pre The IP address should be made by four 3-digits numbers in [0-255] separated by dots.
+     * @post
+     * address.(port)=port\n
+     * address.(IP address)=addr
+     */
+    InternetAddress(const uint16 port=0u,const char8 * const addr=static_cast<const char8 *>(NULL));
 
-    /** returns the host name in the x.x.x.x format
-        the return is pointer to the BString buffer */
-    const char8 *GetDotName(String &dotName);
+    /**
+     * @brief Retrieves the port number.
+     */
+    uint16 GetPort() const;
 
-    /** returns the host name (as a pointer to the BString buffer)
-     * by searching the name server. NULL means failure*/
-    const char8 *GetHostName(String &hostName);
+    /**
+     * @brief Returns the host name in the x.x.x.x format as a String
+     */
+    String GetDotName() const;
+
+    /**
+     * @brief Returns the host name as a String. In case of failure the String returned is empty.
+     */
+    String GetHostName() const;
 
 
-    /**  returns the host number associated to this InternetAddress*/
-    uint32 GetHostNumber();
+    /**
+     * @brief Returns the host number associated to this InternetAddress.
+     */
+    uint32 GetHostNumber() const;
 
-    /**  do not use to initialize objects. It is valid after static objects initializations */
+    /**
+     * @brief Retrieves the local host name.
+     */
     static const char8 *GetLocalAddress();
 
 
-    /**  do not use to initialize objects. It is valid after static objects initializations */
+    /**
+     * @brief Retrieves the local IP address in the format x.x.x.x
+     */
     static const char8 *GetLocalIpNumber();
 
+    /**
+     * @brief Initializes the socket.
+     */
     static void SocketInit();
 
-    /** The same as LocalAddress but returns a 32 bit integer*/
+    /**
+     * @brief Retrieves the IP address a.b.c.d as [d + 256*c + (256^2)*b + (256^3)*a]
+     */
     static uint32 GetLocalAddressAsNumber();
+
+
+
+    /**
+     * @brief Sets the port number.
+     * @param[in] port is the desired port number.
+     */
+    void SetPort(const uint16 port);
+
+    /**
+     * @brief Sets the IP address passing a string with the format x.x.x.x
+     * @param[in] addr is the desired IP number.
+     * @return false if the input format is wrong, true otherwise.
+     * @pre addr must have the format x.x.x.x with x in [0-255].
+     */
+    bool SetAddressByDotName(const char8 * const addr);
+
+    /**
+     * @brief Sets the desired host name.
+     * @param[in] hostName is the desired host name.
+     * @return true if the host name is set correctly, false otherwise.
+     */
+    bool SetAddressByName(const char8 * hostName);
+
+    /**
+     * @brief Set the IP address a.b.c.d passing the equivalent input [d + 256*c + (256^2)*b + (256^3)*a].
+     * @param[in] number is the IP address in unsigned int format.
+     */
+    void SetAddressByNumber(const uint32 number);
+
+    /**
+     * @brief Sets the address of the local host, putting the host name equal to "localhost"
+     * @return true if the local host name is set correctly, false otherwise.
+     */
+    bool SetLocalAddress();
+
+    /**
+     * @brief Full access to the handle.
+     * @return a pointer to the handle of this structure containing all
+     * the Internet informations.
+     * @warning The handle type depends by the operating system below.
+     */
+    InternetAddressCore *GetAddress();
+
+    /**
+     * @brief Gets the size in bytes of the handle.
+     * @return the size of InternetAddressCore.
+     */
+    uint32 Size() const;
 
 
 private:
 
-    /** */
-    sockaddr_in address;
+    /**
+     * The InternetAddress handle.
+     */
+    InternetAddressCore address;
 
-    /** sets the port value  */
-    void SetPort(uint16 port);
-
-    /** sets the address using a x.x.x.x notation
-        a NULL value will select the INADDR_ANY
-        it will return True on success */
-    bool SetAddressByDotName(const char8 *addr);
-
-    /**  The routine searches the NameServer for the name and gets the ip-number. returns True in case of success */
-    bool SetAddressByName(const char8 *hostName);
-
-    /**  The address number is set, the value passed must be in the internet format */
-    void SetAddressByNumber(uint32 number);
-
-    /**  The address of the local host */
-    bool SetLocalAddress();
-
-    /**  returns the sockaddr pointer*/
-    struct sockaddr *GetAddress();
-
-    /**   */
-    uint32 Size();
 };
 
 }

@@ -36,7 +36,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BasicSocket.h"
-#include "TimeoutType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -48,63 +47,60 @@
 
 namespace MARTe {
 
-
-BasicSocket::BasicSocket() {
+BasicSocket::BasicSocket() :
+        StreamI() {
     connectionSocket = 0;
 }
 
-BasicSocket::BasicSocket(int32 socket) {
-    connectionSocket = socket;
+BasicSocket::BasicSocket(const SocketCore socketIn) :
+        StreamI() {
+    connectionSocket = socketIn;
 }
 
-/** destructor */
+/*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
 BasicSocket::~BasicSocket() {
-    Close();
+    if(!Close()){
+        //TODO
+    }
 }
 
-/**  set blocking mode for the stream! */
-bool BasicSocket::SetBlocking(bool flag) {
-    int stat;
-    if (flag == true)
+bool BasicSocket::SetBlocking(const bool flag) const{
+    int32 stat = 0;
+    if (flag) {
         stat = 0;
-    else
+    }
+    else {
         stat = 1;
+    }
 
-    int ret = ioctl(connectionSocket, FIONBIO, (char *) &stat, sizeof(stat));
+    int32 ret = ioctl(connectionSocket, static_cast<osulong>(FIONBIO), reinterpret_cast<char8 *> (&stat), sizeof(stat));
     return (ret >= 0);
 }
 
-/** returns the socket number */
-int32 BasicSocket::Socket() {
-    return connectionSocket;
-}
-
-/** closes the socket */
 bool BasicSocket::Close() {
+    int32 ret = -1;
     if (connectionSocket != 0) {
-        int ret = close(connectionSocket);
+        ret = close(connectionSocket);
         connectionSocket = 0;
-        if (ret < 0) {
-            return false;
-        }
     }
-    else
-        return false;
-    return true;
+    return (ret >= 0);
 }
 
-/** where the packet came from */
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: the member is exposed
+ * because some operating system functions may change it.
+ */
 InternetAddress &BasicSocket::GetSource() {
     return source;
 }
 
-/** where the packet is going to */
+/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: the member is exposed
+ * because some operating system functions may change it.
+ */
 InternetAddress &BasicSocket::GetDestination() {
     return destination;
 }
 
-
-int32 BasicSocket::GetConnectionSocket() const {
+SocketCore BasicSocket::GetConnectionSocket() const {
     return connectionSocket;
 }
 
@@ -116,7 +112,7 @@ void BasicSocket::SetSource(const InternetAddress &sourceIn) {
     source = sourceIn;
 }
 
-void BasicSocket::SetConnectionSocket(int32 connectionSocketIn) {
+void BasicSocket::SetConnectionSocket(const SocketCore connectionSocketIn) {
     connectionSocket = connectionSocketIn;
 }
 
