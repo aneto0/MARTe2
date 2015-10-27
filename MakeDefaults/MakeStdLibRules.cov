@@ -46,6 +46,7 @@ $(BUILD_DIR)/%.a : $(OBJS)
 	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $@
 
 $(BUILD_DIR)/%.so : $(OBJS)
+	mkdir -p cov
 	touch dummy.cpp	
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  dummy.cpp -o dummy.o
 	$(COMPILER) $(LFLAGS) -shared -fPIC dummy.o $(OBJS) $(LIBRARIES) -o $(BUILD_DIR)/$*.so
@@ -67,27 +68,33 @@ $(BUILD_DIR)/%.def :
 	objdump -t $(@:%.def=%.a) > $@
 	rm a.out
 
-$(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o 
+$(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o
+	mkdir -p cov 
 	touch $(BUILD_DIR)/$*.exe
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
 $(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.o $(OBJS)
+	mkdir -p cov
 	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
 
 depends.cov: dependsRaw.cov
+	mkdir -p cov
 	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > CreateLinuxDepends.sed
 	sed -f CreateLinuxDepends.sed dependsRaw.cov >depends.cov
 	rm -f CreateLinuxDepends.sed 
 
-dependsRaw.cov: 
+dependsRaw.cov:
+	mkdir -p cov 
 	$(COMPILER) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.cov
 	@mkdir -p temp
 	@mkdir -p $(BUILD_DIR)
 
 $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.o $(OBJS)
+	mkdir -p cov
 	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
 
 $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
+	mkdir -p cov
 	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
 
 %.spb : 
