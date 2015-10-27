@@ -1,8 +1,8 @@
 /**
- * @file StreamITest.h
- * @brief Header file for class StreamITest
- * @date 15/10/2015
- * @author Andre' Neto
+ * @file BufferedStreamITest.h
+ * @brief Header file for class BufferedStreamITest
+ * @date 26/10/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StreamITest
+ * @details This header file contains the declaration of the class BufferedStreamITest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STREAMITEST_H_
-#define STREAMITEST_H_
+#ifndef BUFFEREDSTREAMITEST_H_
+#define BUFFEREDSTREAMITEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -40,7 +40,7 @@
 /**
  * @brief Class for testing of StreamI functions.
  */
-class StreamITest {
+class BufferedStreamITest {
 public:
     /**
      * @brief Tests the default constructor
@@ -130,5 +130,6 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* BUFFEREDSTREAMTEST_H_ */
+
+#endif /* BUFFEREDSTREAMITEST_H_ */
 

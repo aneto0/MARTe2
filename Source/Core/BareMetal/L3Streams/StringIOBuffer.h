@@ -1,7 +1,7 @@
 /**
- * @file StreamStringIOBuffer.h
- * @brief Header file for class StreamStringIOBuffer
- * @date 02/10/2015
+ * @file StringIOBuffer.h
+ * @brief Header file for class StringIOBuffer
+ * @date 26/10/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StreamStringIOBuffer
+ * @details This header file contains the declaration of the class StringIOBuffer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STREAMSTRINGIOBUFFER_H_
-#define STREAMSTRINGIOBUFFER_H_
+#ifndef STRINGIOBUFFER_H_
+#define STRINGIOBUFFER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,6 +31,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
 
 #include "GeneralDefinitions.h"
 #include "HeapManager.h"
@@ -44,7 +49,7 @@
 namespace MARTe {
 
 /**
- * @brief The StreamString buffer.
+ * @brief The String buffer.
  *
  * @details This class inherits from IOBuffer and specialize the function NoMoreSpaceToWrite accordingly to
  * the string requirements, namely allocating new space when the buffer is full in case of write operations.
@@ -52,7 +57,7 @@ namespace MARTe {
  * @details For memory allocations it adds one to the desired size passed by argument and sets reservedSpaceAtEnd = 1 for the
  * final '\0' character.
  */
-class DLL_API StreamStringIOBuffer: public IOBuffer {
+class DLL_API StringIOBuffer: public IOBuffer {
 
 public:
 
@@ -71,7 +76,7 @@ public:
      *   AllocationGranularity() == 64u &&
      *   UndoLevel() == 0
      */
-    StreamStringIOBuffer();
+    StringIOBuffer();
 
     /**
      * @brief Constructor specifying granularity
@@ -88,12 +93,12 @@ public:
      *   AllocationGranularity() == granularity &&
      *   UndoLevel() == 0
      */
-    StreamStringIOBuffer(const uint32 granularity);
+    StringIOBuffer(const uint32 granularity);
 
     /**
      * @brief Destructor.
      */
-    virtual ~StreamStringIOBuffer();
+    virtual ~StringIOBuffer();
 
     /**
      * @brief Sets the size of the buffer to be desiredSize.
@@ -131,10 +136,9 @@ protected:
 };
 
 }
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* STREAMSTRINGIOBUFFER_H_ */
+#endif /* STRINGIOBUFFER_H_ */
 

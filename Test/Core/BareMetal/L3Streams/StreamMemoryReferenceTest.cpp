@@ -182,6 +182,39 @@ bool StreamMemoryReferenceTest::TestCanSeek() {
     return sMR.CanSeek();
 }
 
+bool StreamMemoryReferenceTest::TestRead(const char8 *string,
+                                         uint32 readSize,
+                                         const uint32 bufferSize) {
+
+    char8 bufferIn[64];
+    StreamMemoryReference sMR(bufferIn, bufferSize);
+    uint32 writeSize=StringHelper::Length(string);
+    sMR.Write(string, writeSize);
+
+    char8 bufferOut[64];
+    sMR.Read(bufferOut, readSize);
+    uint32 compareSize = (bufferSize > readSize) ? (readSize) : (bufferSize);
+
+    return StringHelper::CompareN(bufferOut, sMR.Buffer(), compareSize) == 0;
+}
+
+bool StreamMemoryReferenceTest::TestReadTimeout(const char8 *string,
+                                                uint32 readSize,
+                                                const uint32 bufferSize) {
+
+    char8 bufferIn[64];
+    StreamMemoryReference sMR(bufferIn, bufferSize);
+    uint32 writeSize=StringHelper::Length(string);
+    sMR.Write(string, writeSize);
+
+    char8 bufferOut[64];
+    sMR.Read(bufferOut, readSize, 1);
+    uint32 compareSize = (bufferSize > readSize) ? (readSize) : (bufferSize);
+
+    return StringHelper::CompareN(bufferOut, sMR.Buffer(), compareSize) == 0;
+
+}
+
 bool StreamMemoryReferenceTest::TestWrite(const char8 *string,
                                           uint32 writeSize,
                                           const uint32 bufferSize) {
@@ -191,6 +224,27 @@ bool StreamMemoryReferenceTest::TestWrite(const char8 *string,
     StreamMemoryReference sMR(bufferIn, bufferSize);
 
     if (!sMR.Write(string, writeSize)) {
+        return false;
+    }
+
+    uint32 compareSize = (bufferSize > writeSize) ? (writeSize) : (bufferSize);
+
+    if (sMR.Size() != compareSize) {
+        return false;
+    }
+
+    return StringHelper::CompareN(sMR.Buffer(), string, compareSize) == 0;
+
+}
+
+bool StreamMemoryReferenceTest::TestWriteTimeout(const char8 *string,
+                      uint32 writeSize,
+                      const uint32 bufferSize) {
+    char8 bufferIn[64];
+
+    StreamMemoryReference sMR(bufferIn, bufferSize);
+
+    if (!sMR.Write(string, writeSize, 1)) {
         return false;
     }
 

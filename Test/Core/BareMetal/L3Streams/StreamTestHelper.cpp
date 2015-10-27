@@ -479,7 +479,7 @@ const BitSetToBitSetTableRow *GeneratedBitSetToBitSetTable(){
             //16 bit pointer to 32. Sign padding.
             {104, 77, 16, 5, (uint32*)source, 3, 0xfff122, true, true},
             //64 bit pointer to 128. Padding
-            //{32, 48, 32, 30, (int64*) source, 1, 0xf3330000, true, true}
+            {32, 48, 32, 30, (uint32*) source, 1, 0xf3330000, true, true},
             {0, 0, 0, 0, (uint32*)NULL, 0, 0, true, true},
 
     };

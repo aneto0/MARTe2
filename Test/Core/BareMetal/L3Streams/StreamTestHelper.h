@@ -32,11 +32,9 @@
 /*---------------------------------------------------------------------------*/
 #include "DoubleBufferedStream.h"
 #include "SingleBufferedStream.h"
-#include "StreamString.h"
 #include "MemoryOperationsHelper.h"
 #include "AnyType.h"
 #include "stdio.h"
-#include "OperatingSystemStream.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -75,10 +73,10 @@ public:
 };
 
 /**
- * @brief Minimal OperatingSystemStream implementation for the Buffer and Stream tests.
+ * @brief Minimal StreamI implementation for the Buffer and Stream tests.
  * It is implemented over a char buffer with dimension MAX_STREAM_DIMENSION
  */
-class DummyOSStream: public OperatingSystemStream {
+class DummyOSStream: public StreamI {
 
 public:
 
@@ -88,41 +86,44 @@ public:
      * CanRead() = canRead
      * CanWrite() = canWrite
      */
-    DummyOSStream(bool canSeek = true, bool canRead = true, bool canWrite = true) {
+    DummyOSStream(bool canSeek = true,
+                  bool canRead = true,
+                  bool canWrite = true) {
         position = 0;
         seekable = canSeek;
         readable = canRead;
         writable = canWrite;
         size = 0;
-        buffer = (char8 *)malloc(MAX_STREAM_DIMENSION);
+        usedTimeout = false;
+        buffer = (char8 *) malloc(MAX_STREAM_DIMENSION);
         for (uint32 i = 0; i < MAX_STREAM_DIMENSION; i++) {
             buffer[i] = 0;
         }
     }
 
-    ~DummyOSStream(){
+    ~DummyOSStream() {
         free(buffer);
     }
 
-    uint64 UnbufferedSize() {
+    uint64 Size() {
         return size;
     }
 
-    bool UnbufferedSeek(uint64 seek) {
+    bool Seek(uint64 seek) {
         position = seek;
         return true;
     }
 
-    bool UnbufferedRelativeSeek(int32 delta) {
+    bool RelativeSeek(int32 delta) {
         position += delta;
         return true;
     }
 
-    uint64 UnbufferedPosition() {
+    uint64 Position() {
         return position;
     }
 
-    bool UnbufferedSetSize(uint64 desSize) {
+    bool SetSize(uint64 desSize) {
         size = desSize;
         return true;
     }
@@ -132,10 +133,16 @@ public:
         return true;
     }
 
-    bool UnbufferedRead(char8 * const outBuffer,
-                        uint32 &inSize,
-                        const TimeoutType &timeout) {
+    bool Read(char8 * const outBuffer,
+              uint32 &inSize,
+              const TimeoutType &timeout) {
 
+        if (timeout.GetTimeoutMSec() < TTDefault.GetTimeoutMSec()) {
+            usedTimeout = true;
+        }
+        else {
+            usedTimeout = false;
+        }
 
         if ((position + inSize) >= MAX_STREAM_DIMENSION) {
             inSize = MAX_STREAM_DIMENSION - position - 1;
@@ -150,11 +157,16 @@ public:
 
     }
 
-    bool UnbufferedWrite(const char8 * const inBuffer,
-                         uint32 &outSize,
-                         const TimeoutType &timeout) {
+    bool Write(const char8 * const inBuffer,
+               uint32 &outSize,
+               const TimeoutType &timeout) {
 
-
+        if (timeout.GetTimeoutMSec() < TTDefault.GetTimeoutMSec()) {
+            usedTimeout = true;
+        }
+        else {
+            usedTimeout = false;
+        }
         if ((size + outSize) >= MAX_STREAM_DIMENSION) {
             outSize = MAX_STREAM_DIMENSION - size - 1;
         }
@@ -215,6 +227,8 @@ public:
 
     bool writable;
 
+    bool usedTimeout;
+
 };
 
 /**
@@ -228,8 +242,9 @@ public:
             SingleBufferedStream(timeout) {
     }
 
-
-    DummySingleBufferedStream(bool canSeek=true, bool canRead = true, bool canWrite = true) :
+    DummySingleBufferedStream(bool canSeek = true,
+                              bool canRead = true,
+                              bool canWrite = true) :
             DummyOSStream(canSeek, canRead, canWrite),
             SingleBufferedStream() {
     }
@@ -238,34 +253,76 @@ public:
     }
 
     uint64 OSSize() {
-        return DummyOSStream::UnbufferedSize();
+        return DummyOSStream::Size();
     }
 
     bool OSSeek(uint64 seek) {
-        return DummyOSStream::UnbufferedSeek(seek);
+        return DummyOSStream::Seek(seek);
     }
 
     bool OSRelativeSeek(int32 delta) {
-        return DummyOSStream::UnbufferedRelativeSeek(delta);
+        return DummyOSStream::RelativeSeek(delta);
     }
 
     uint64 OSPosition() {
-        return DummyOSStream::UnbufferedPosition();
+        return DummyOSStream::Position();
     }
 
     bool OSSetSize(uint64 desSize) {
-        return DummyOSStream::UnbufferedSetSize(desSize);
+        return DummyOSStream::SetSize(desSize);
     }
 
     bool OSRead(char8 * const outBuffer,
-                        uint32 &inSize) {
-        return DummyOSStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
+                uint32 &inSize) {
+        return DummyOSStream::Read(outBuffer, inSize, GetTimeout());
     }
 
     bool OSWrite(const char8 * const inBuffer,
-                         uint32 &outSize) {
+                 uint32 &outSize) {
 
-        return DummyOSStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());
+        return DummyOSStream::Write(inBuffer, outSize, GetTimeout());
+    }
+
+    bool Read(char8 * const outBuffer,
+              uint32 &inSize) {
+        return SingleBufferedStream::Read(outBuffer, inSize);
+    }
+
+    bool Write(const char8 * const outBuffer,
+               uint32 &inSize) {
+        return SingleBufferedStream::Write(outBuffer, inSize);
+    }
+
+    bool Read(char8 * const outBuffer,
+              uint32 &inSize,
+              const TimeoutType &timeout) {
+        return SingleBufferedStream::Read(outBuffer, inSize, timeout);
+    }
+
+    bool Write(const char8 * const outBuffer,
+               uint32 &inSize,
+               const TimeoutType &timeout) {
+        return SingleBufferedStream::Write(outBuffer, inSize, timeout);
+    }
+
+    uint64 Size() {
+        return SingleBufferedStream::Size();
+    }
+
+    bool Seek(uint64 pos) {
+        return SingleBufferedStream::Seek(pos);
+    }
+
+    bool RelativeSeek(const int32 deltaPos) {
+        return SingleBufferedStream::RelativeSeek(deltaPos);
+    }
+
+    uint64 Position() {
+        return SingleBufferedStream::Position();
+    }
+
+    bool SetSize(uint64 size) {
+        return SingleBufferedStream::SetSize(size);
     }
 
     bool CanWrite() const {
@@ -301,8 +358,9 @@ public:
             DoubleBufferedStream(timeout) {
     }
 
-
-    DummyDoubleBufferedStream(bool canSeek=true, bool canRead = true, bool canWrite = true) :
+    DummyDoubleBufferedStream(bool canSeek = true,
+                              bool canRead = true,
+                              bool canWrite = true) :
             DummyOSStream(canSeek, canRead, canWrite),
             DoubleBufferedStream() {
     }
@@ -311,34 +369,76 @@ public:
     }
 
     uint64 OSSize() {
-        return DummyOSStream::UnbufferedSize();
+        return DummyOSStream::Size();
     }
 
     bool OSSeek(uint64 seek) {
-        return DummyOSStream::UnbufferedSeek(seek);
+        return DummyOSStream::Seek(seek);
     }
 
     bool OSRelativeSeek(int32 delta) {
-        return DummyOSStream::UnbufferedRelativeSeek(delta);
+        return DummyOSStream::RelativeSeek(delta);
     }
 
     uint64 OSPosition() {
-        return DummyOSStream::UnbufferedPosition();
+        return DummyOSStream::Position();
     }
 
     bool OSSetSize(uint64 desSize) {
-        return DummyOSStream::UnbufferedSetSize(desSize);
+        return DummyOSStream::SetSize(desSize);
     }
 
     bool OSRead(char8 * const outBuffer,
-                        uint32 &inSize) {
-        return DummyOSStream::UnbufferedRead(outBuffer, inSize, GetTimeout());
+                uint32 &inSize) {
+        return DummyOSStream::Read(outBuffer, inSize, GetTimeout());
     }
 
     bool OSWrite(const char8 * const inBuffer,
-                         uint32 &outSize) {
+                 uint32 &outSize) {
 
-        return DummyOSStream::UnbufferedWrite(inBuffer, outSize, GetTimeout());
+        return DummyOSStream::Write(inBuffer, outSize, GetTimeout());
+    }
+
+    bool Read(char8 * const outBuffer,
+              uint32 &inSize) {
+        return DoubleBufferedStream::Read(outBuffer, inSize);
+    }
+
+    bool Write(const char8 * const outBuffer,
+               uint32 &inSize) {
+        return DoubleBufferedStream::Write(outBuffer, inSize);
+    }
+
+    bool Read(char8 * const outBuffer,
+              uint32 &inSize,
+              const TimeoutType &timeout) {
+        return DoubleBufferedStream::Read(outBuffer, inSize, timeout);
+    }
+
+    bool Write(const char8 * const outBuffer,
+               uint32 &inSize,
+               const TimeoutType &timeout) {
+        return DoubleBufferedStream::Write(outBuffer, inSize, timeout);
+    }
+
+    uint64 Size() {
+        return DoubleBufferedStream::Size();
+    }
+
+    bool Seek(uint64 pos) {
+        return DoubleBufferedStream::Seek(pos);
+    }
+
+    bool RelativeSeek(const int32 deltaPos) {
+        return DoubleBufferedStream::RelativeSeek(deltaPos);
+    }
+
+    uint64 Position() {
+        return DoubleBufferedStream::Position();
+    }
+
+    bool SetSize(uint64 size) {
+        return DoubleBufferedStream::SetSize(size);
     }
 
     bool CanWrite() const {
@@ -409,46 +509,26 @@ struct TokenTestTableRow {
     const char8 * expectedResult[32];
 };
 
-
 /**
  * Table focused on testing the correct function of the terminators
  */
-const TokenTestTableRow TokenTestTableTerminators[] = {
-        {"This.is.a.test",     "",   "",        NULL, {"This.is.a.test"}},
-        {"This.is.a.test",     ".",  "...",     NULL, {"This", "is", "a", "test"}},
-        {".This.is.a.test",    ".",  "....",    NULL, {"This", "is", "a", "test"}},
-        {".This.is.a.test.",   ".",  ".....",   NULL, {"This", "is", "a", "test"}},
-        {".This...is.a.test.", ".",  ".......", NULL, {"This", "is", "a", "test"}},
-        {"This.is:a.test",     ".:", ".:.",     NULL, {"This", "is", "a", "test"}},
-        {"This.is.a.test:",    ".:", "...:",    NULL, {"This", "is", "a", "test"}},
-        {NULL}
-};
+const TokenTestTableRow TokenTestTableTerminators[] = { { "This.is.a.test", "", "", NULL, { "This.is.a.test" } }, { "This.is.a.test", ".", "...", NULL, {
+        "This", "is", "a", "test" } }, { ".This.is.a.test", ".", "....", NULL, { "This", "is", "a", "test" } }, { ".This.is.a.test.", ".", ".....", NULL, {
+        "This", "is", "a", "test" } }, { ".This...is.a.test.", ".", ".......", NULL, { "This", "is", "a", "test" } }, { "This.is:a.test", ".:", ".:.", NULL, {
+        "This", "is", "a", "test" } }, { "This.is.a.test:", ".:", "...:", NULL, { "This", "is", "a", "test" } }, { NULL } };
 
 /**
  * Table focused on testing the correct function of the skip characters
  */
-const TokenTestTableRow TokenTestTableSkipCharacters[] = {
-        {"This.is.a.test",     "",   "",        "",     {"This.is.a.test"}},
-        {"This.is.a.test",     ".",  "...",     "",     {"This", "is", "a", "test"}},
-        {".This.is.a.test",    ".",  "....",    "",     {"", "This", "is", "a", "test"}},
-        {".This.is.a.test.",   ".",  ".....",   "",     {"", "This", "is", "a", "test", ""}},
-        {".This...is.a.test.", ".",  ".......", "",     {"", "This", "", "", "is", "a", "test", ""}},
-        {"This.is:a.test",     ".:", ".:.",     "",     {"This", "is", "a", "test"}},
-        {"This.is.a.test:",    ".:", "...:",    "",     {"This", "is", "a", "test", ""}},
-        {"This.is.a.test",     "",   "",        ".",    {"Thisisatest"}},
-        {"This.is.a.test",     ".",  "...",     ".",    {"This", "is", "a", "test"}},
-        {".This.is.a.test",    ".",  "....",    ".",    {"This", "is", "a", "test"}},
-        {".This.is.a.test.",   ".",  ".....",   ".",    {"This", "is", "a", "test"}},
-        {".This...is.a.test.", ".",  ".......", ".",    {"This", "is", "a", "test"}},
-        {"This.is:a.test",     ".:", ".:.",     ".",    {"This", "is", "a", "test"}},
-        {"This.is.a.test:",    ".:", "...:",    ".",    {"This", "is", "a", "test", ""}},
-        {"This.is.a.test:",    ".:", "...:",    ":.",   {"This", "is", "a", "test"}},
-        {"This.is.a.test:",    ".:", "..:",    ":.a",   {"This", "is", "test"}},
-        {"This.is.a.test:",    ".:", "..:",    ":i.a",  {"Ths", "s", "test"}},
-        {"This.is.a.test:",    ".:", ".:",    ":.hisa", {"T", "tet"}},
-        {NULL}
-};
-
+const TokenTestTableRow TokenTestTableSkipCharacters[] = { { "This.is.a.test", "", "", "", { "This.is.a.test" } }, { "This.is.a.test", ".", "...", "", { "This",
+        "is", "a", "test" } }, { ".This.is.a.test", ".", "....", "", { "", "This", "is", "a", "test" } }, { ".This.is.a.test.", ".", ".....", "", { "", "This",
+        "is", "a", "test", "" } }, { ".This...is.a.test.", ".", ".......", "", { "", "This", "", "", "is", "a", "test", "" } }, { "This.is:a.test", ".:", ".:.",
+        "", { "This", "is", "a", "test" } }, { "This.is.a.test:", ".:", "...:", "", { "This", "is", "a", "test", "" } }, { "This.is.a.test", "", "", ".", {
+        "Thisisatest" } }, { "This.is.a.test", ".", "...", ".", { "This", "is", "a", "test" } }, { ".This.is.a.test", ".", "....", ".", { "This", "is", "a",
+        "test" } }, { ".This.is.a.test.", ".", ".....", ".", { "This", "is", "a", "test" } }, { ".This...is.a.test.", ".", ".......", ".", { "This", "is", "a",
+        "test" } }, { "This.is:a.test", ".:", ".:.", ".", { "This", "is", "a", "test" } }, { "This.is.a.test:", ".:", "...:", ".", { "This", "is", "a", "test",
+        "" } }, { "This.is.a.test:", ".:", "...:", ":.", { "This", "is", "a", "test" } }, { "This.is.a.test:", ".:", "..:", ":.a", { "This", "is", "test" } }, {
+        "This.is.a.test:", ".:", "..:", ":i.a", { "Ths", "s", "test" } }, { "This.is.a.test:", ".:", ".:", ":.hisa", { "T", "tet" } }, { NULL } };
 
 /**
  * Each row defines a different SkipTokens test
@@ -475,27 +555,13 @@ struct SkipTokensTestTableRow {
 /**
  * Table focused on testing the correct function of the terminators
  */
-const SkipTokensTestTableRow SkipTokensTestTable[] = {
-        {"This.is.a.test",     "",   0,   {"This.is.a.test", NULL}},
-        {"This.is.a.test",     "",   1,   {NULL}},
-        {"This.is.a.test",     ".",  0,   {"This", "is", "a", "test", NULL}},
-        {"This.is.a.test",     ".",  1,   {"is", "a", "test", NULL}},
-        {"This.is.a.test",     ".",  2,   {"a", "test", NULL}},
-        {"This.is.a.test",     ".",  3,   {"test", NULL}},
-        {"This.is.a.test",     ".",  4,   {NULL}},
-        {"...This.is.a.test",  ".",  2,   {"a", "test", NULL}},
-        {"This..:..is.a.test", ".",  2,   {"is", "a", "test", NULL}},
-        {"This..:..is.a.test", ".:", 2,   {"a", "test", NULL}},
-        {"This.:.:.is.a.test", ".:", 2,   {"a", "test", NULL}},
-        {NULL}
-};
+const SkipTokensTestTableRow SkipTokensTestTable[] = { { "This.is.a.test", "", 0, { "This.is.a.test", NULL } }, { "This.is.a.test", "", 1, { NULL } }, {
+        "This.is.a.test", ".", 0, { "This", "is", "a", "test", NULL } }, { "This.is.a.test", ".", 1, { "is", "a", "test", NULL } }, { "This.is.a.test", ".", 2,
+        { "a", "test", NULL } }, { "This.is.a.test", ".", 3, { "test", NULL } }, { "This.is.a.test", ".", 4, { NULL } }, { "...This.is.a.test", ".", 2, { "a",
+        "test", NULL } }, { "This..:..is.a.test", ".", 2, { "is", "a", "test", NULL } }, { "This..:..is.a.test", ".:", 2, { "a", "test", NULL } }, {
+        "This.:.:.is.a.test", ".:", 2, { "a", "test", NULL } }, { NULL } };
 
-
-
-
-
-
-struct BitSetToBitSetTableRow{
+struct BitSetToBitSetTableRow {
     uint8 destShift;
     uint8 sourceShift;
     uint8 destSize;
@@ -507,8 +573,6 @@ struct BitSetToBitSetTableRow{
     bool destIsSigned;
 };
 
-
 const BitSetToBitSetTableRow *GeneratedBitSetToBitSetTable();
-
 
 #endif

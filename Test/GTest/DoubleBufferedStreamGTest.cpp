@@ -147,6 +147,16 @@ TEST_F(DoubleBufferedStreamGTest,TestRead_Size_1024) {
     ASSERT_TRUE(streamtest.TestRead(1024, 1024));
 }
 
+TEST_F(DoubleBufferedStreamGTest,TestRead_Size_8_timeout) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestRead_Timeout(0, 1, 500));
+    ASSERT_TRUE(streamtest.TestRead_Timeout(1, 8, 500));
+    ASSERT_TRUE(streamtest.TestRead_Timeout(2, 8, 500));
+    ASSERT_TRUE(streamtest.TestRead_Timeout(8, 8, 500));
+    ASSERT_TRUE(streamtest.TestRead_Timeout(64, 8, 500));
+    ASSERT_TRUE(streamtest.TestRead_Timeout(1024, 8, 500));
+}
+
 TEST_F(DoubleBufferedStreamGTest,TestWrite_NotCanWrite) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite_NotCanWrite());
@@ -202,13 +212,17 @@ TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_1024) {
     ASSERT_TRUE(streamtest.TestWrite(1024, 1024));
 }
 
+TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_8_timeout) {
+    DoubleBufferedStreamTest streamtest;
+    ASSERT_TRUE(streamtest.TestWrite_Timeout(8, 64, 500));
+}
+
 TEST_F(DoubleBufferedStreamGTest,TestWrite_OverflowInternalBuffer_Size) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(8, 256));
     ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(32, 256));
     ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(64, 256));
 }
-
 
 TEST_F(DoubleBufferedStreamGTest,TestSize_1) {
     DoubleBufferedStreamTest streamtest;
