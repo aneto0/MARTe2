@@ -43,7 +43,7 @@
 using namespace MARTe;
 
 /**
- * @brief Test the StreamString public methods.
+ * @brief Test the String public methods.
  */
 class StringTest {
 
@@ -62,7 +62,7 @@ public:
     bool TestConstructor_CCString(const char8 * initializationString);
 
     /**
-     * @brief Tests if the buffer of the StreamString in input is duplicated correctly into the new instantiated object buffer.
+     * @brief Tests if the buffer of the String in input is duplicated correctly into the new instantiated object buffer.
      */
     bool TestCopyConstructor(const char8 * initializationString);
 
@@ -72,7 +72,7 @@ public:
     bool TestDestructor();
 
     /**
-     * @brief Tests if the StreamString is considered as a const char string by in the conversion to AnyType.
+     * @brief Tests if the String is considered as a const char string by in the conversion to AnyType.
      */
     bool TestAnyTypeOperator(const char8* initializationString);
 
@@ -175,9 +175,9 @@ public:
     bool TestCopyOperator_CCString(const char8 * input);
 
     /**
-     * @brief Tests if a StreamString in input is copied in the stream.
+     * @brief Tests if a String in input is copied in the stream.
      */
-    bool TestCopyOperator_StreamString(const char8 * input);
+    bool TestCopyOperator_String(const char8 * input);
 
     /**
      * @brief Tests if the char in input is appended on the stream queue.
@@ -190,9 +190,9 @@ public:
     bool TestConcatenateOperator_CCString(const char8 *input);
 
     /**
-     * @brief Tests if a the buffer of a StreamString in input is appended on the stream queue.
+     * @brief Tests if a the buffer of a String in input is appended on the stream queue.
      */
-    bool TestConcatenateOperator_StreamString(const char8 *input);
+    bool TestConcatenateOperator_String(const char8 *input);
 
     /**
      * @brief Tests if the function returns true if the buffers contain the same data of the C string in input.
@@ -200,9 +200,9 @@ public:
     bool TestIsEqualOperator_CCString(const char8 *input);
 
     /**
-     * @brief Tests if the function returns true if the buffers of the two compared StreamString contain the same data.
+     * @brief Tests if the function returns true if the buffers of the two compared String contain the same data.
      */
-    bool TestIsEqualOperator_StreamString(const char8 *input);
+    bool TestIsEqualOperator_String(const char8 *input);
 
     /**
      * @See TestIsEqualOperator_CCString. It returns the opposite value.
@@ -210,9 +210,9 @@ public:
     bool TestIsDifferentOperator_CCString(const char8 *input);
 
     /**
-     * @See TestIsEqualOperator_StreamString. It returns the opposite value.
+     * @See TestIsEqualOperator_String. It returns the opposite value.
      */
-    bool TestIsDifferentOperator_StreamString(const char8 *input);
+    bool TestIsDifferentOperator_String(const char8 *input);
 
     /**
      * @brief Tests if the function returns the character at the specified position or if it fails if the index is

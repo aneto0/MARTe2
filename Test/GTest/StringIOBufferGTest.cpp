@@ -43,111 +43,111 @@
 /*---------------------------------------------------------------------------*/
 
 TEST(StringIOBufferGTest, TestDefaultConstructor) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestDefaultConstructor());
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestDefaultConstructor());
 }
 
 TEST(StringIOBufferGTest, TestGranularityConstructor_1) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(1, 1));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestGranularityConstructor(1, 1));
 }
 
 TEST(StringIOBufferGTest, TestGranularityConstructor_2) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(2, 2));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestGranularityConstructor(2, 2));
 }
 
 TEST(StringIOBufferGTest, TestGranularityConstructor_3) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(3, 2));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestGranularityConstructor(3, 2));
 }
 
 TEST(StringIOBufferGTest, TestGranularityConstructor_5) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(5, 4));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestGranularityConstructor(5, 4));
 }
 
 TEST(StringIOBufferGTest, TestGranularityConstructor_10) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(10, 8));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestGranularityConstructor(10, 8));
 }
 
 TEST(StringIOBufferGTest, TestGranularityConstructor_16) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(16, 16));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestGranularityConstructor(16, 16));
 }
 
 TEST(StringIOBufferGTest, TestGranularityConstructor_20) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(20, 16));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestGranularityConstructor(20, 16));
 }
 
 TEST(StringIOBufferGTest, TestGranularityConstructor_33) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(33, 32));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestGranularityConstructor(33, 32));
 }
 
 TEST(StringIOBufferGTest, TestGranularityConstructor_127) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(127, 64));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestGranularityConstructor(127, 64));
 }
 
 TEST(StringIOBufferGTest, TestGranularityConstructor_0) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(0, 1));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestGranularityConstructor(0, 1));
 }
 
 TEST(StringIOBufferGTest, TestGranularityConstructor_MAX) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestGranularityConstructor(0xffffffff, 0x80000000));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestGranularityConstructor(0xffffffff, 0x80000000));
 }
 
 
 TEST(StringIOBufferGTest, TestSetBufferAllocationSize_size_in_granularity) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestSetBufferAllocationSize(10, 32));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestSetBufferAllocationSize(10, 32));
 }
 
 TEST(StringIOBufferGTest, TestSetBufferAllocationSize_granularity_in_size) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestSetBufferAllocationSize(10, 16));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestSetBufferAllocationSize(10, 16));
 }
 
 TEST(StringIOBufferGTest, TestSetBufferAllocationSize_zero_size) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestSetBufferAllocationSize(0, 16));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestSetBufferAllocationSize(0, 16));
 }
 
 
 TEST(StringIOBufferGTest, TestWrite_minor_size) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestWrite(5, "HelloWorld"));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestWrite(5, "HelloWorld"));
 }
 
 TEST(StringIOBufferGTest, TestWrite_equal_size) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestWrite(11, "HelloWorld"));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestWrite(11, "HelloWorld"));
 }
 
 TEST(StringIOBufferGTest, TestTerminate_minor_size) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestTerminate(3, "HelloWorld"));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestTerminate(3, "HelloWorld"));
 }
 
 TEST(StringIOBufferGTest, TestTerminate_equal_size) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestTerminate(11, "HelloWorld"));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestTerminate(11, "HelloWorld"));
 }
 
 
 TEST(StringIOBufferGTest, TestWriteAll_minor_size) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestWriteAll(5, "HelloWorld"));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestWriteAll(5, "HelloWorld"));
 }
 
 TEST(StringIOBufferGTest, TestWriteAll_equal_size) {
-    StringIOBufferTest myStreamStringIOBufferTest;
-    ASSERT_TRUE(myStreamStringIOBufferTest.TestWriteAll(11, "HelloWorld"));
+    StringIOBufferTest myStringIOBufferTest;
+    ASSERT_TRUE(myStringIOBufferTest.TestWriteAll(11, "HelloWorld"));
 }
 
 	
