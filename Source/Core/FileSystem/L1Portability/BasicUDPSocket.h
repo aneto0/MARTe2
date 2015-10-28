@@ -113,7 +113,7 @@ public:
      * @brief Select the destination of next sends.
      * @param[in] dest contains all the destination informations (IP address, port, ...).
      */
-    bool Connect(const InternetAddress &dest);
+    bool Connect(const InternetHost &dest);
 
     /**
      * @brief If the socket allows write operations.

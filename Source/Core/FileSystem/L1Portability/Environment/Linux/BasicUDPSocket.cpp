@@ -63,7 +63,7 @@ BasicUDPSocket::~BasicUDPSocket() {
 bool BasicUDPSocket::Read(char8* const output,
                           uint32 &size) {
     uint32 sourceSize = GetSource().Size();
-    int32 ret = static_cast<int32>(recvfrom(GetConnectionSocket(), output, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(GetSource().GetAddress()), static_cast<socklen_t*>(&sourceSize)));
+    int32 ret = static_cast<int32>(recvfrom(GetConnectionSocket(), output, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(GetSource().GetInternetHost()), static_cast<socklen_t*>(&sourceSize)));
     if (ret >= 0) {
         /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
         size = static_cast<uint32>(ret);
@@ -80,7 +80,7 @@ bool BasicUDPSocket::Read(char8* const output,
 
 bool BasicUDPSocket::Write(const char8* const input,
                            uint32 &size) {
-    int32 ret = static_cast<int32>(sendto(GetConnectionSocket(), input, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(GetDestination().GetAddress()), GetDestination().Size()));
+    int32 ret = static_cast<int32>(sendto(GetConnectionSocket(), input, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(GetDestination().GetInternetHost()), GetDestination().Size()));
     if (ret >= 0) {
         /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
         size = static_cast<uint32>(ret);
@@ -105,26 +105,26 @@ bool BasicUDPSocket::Open() {
 /*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
 bool BasicUDPSocket::Listen(const uint16 port,
                             const int32 maxConnections) {
-    InternetAddress server;
+    InternetHost server;
     server.SetPort(port);
 
-    int32 errorCode = bind(GetConnectionSocket(),reinterpret_cast<struct sockaddr*>(server.GetAddress()), static_cast<socklen_t>(server.Size()));
+    int32 errorCode = bind(GetConnectionSocket(),reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
     return (errorCode >= 0);
 }
 
 bool BasicUDPSocket::Connect(const char8 * const address,
                              const uint16 port) {
     GetDestination().SetPort(port);
-    bool ret = false;
-    if (GetDestination().SetAddressByDotName(address)) {
-        if (GetDestination().SetAddressByName(address)) {
-            ret = true;
+    bool ret = true;
+    if (!GetDestination().SetAddress(address)) {
+        if (!GetDestination().SetAddressByHostName(address)) {
+            ret = false;
         }
     }
     return ret;
 }
 
-bool BasicUDPSocket::Connect(const InternetAddress &dest) {
+bool BasicUDPSocket::Connect(const InternetHost &dest) {
     SetDestination(dest);
     return true;
 }
