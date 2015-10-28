@@ -1,7 +1,7 @@
 /**
- * @file InternetAddress.cpp
- * @brief Source file for class InternetAddress
- * @date 26/ott/2015
+ * @file InternetHost.cpp
+ * @brief Source file for class InternetHost
+ * @date 28/ott/2015
  * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,10 +17,9 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class InternetAddress (public, protected, and private). Be aware that some 
+ * the class InternetHost (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
-
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -35,7 +34,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "InternetAddress.h"
+#include "InternetHost.h"
 #include "Sleep.h"
 #include "FastPollingMutexSem.h"
 #include "ErrorManagement.h"
@@ -51,17 +50,17 @@ namespace MARTe {
 
 FastPollingMutexSem hostnameFastSem;
 
-class InternetAddressInfo {
+class LocalHostInfo {
 
 public:
     //
 
-    static InternetAddressInfo *Instance() {
-        static InternetAddressInfo instance;
+    static LocalHostInfo *Instance() {
+        static LocalHostInfo instance;
         return &instance;
     }
     //
-    ~InternetAddressInfo() {
+    ~LocalHostInfo() {
         if (ipNumber != NULL) {
             /*lint -e{586} -e{1551} [MISRA C++ Rule 18-4-1]. Justification: Use of free required. */
             free(reinterpret_cast<void *>(const_cast<char8 *>(ipNumber)));
@@ -93,7 +92,7 @@ private:
     FastPollingMutexSem internalFastSem;
 
     /*lint -e{1704} .Justification: The constructor is private because this is a singleton.*/
-    InternetAddressInfo():localAddress(static_cast<const char8*>(NULL)),ipNumber(static_cast<const char8*>(NULL)),internetAddressInfoInitialised(false),internalFastSem() {
+    LocalHostInfo():localAddress(static_cast<const char8*>(NULL)),ipNumber(static_cast<const char8*>(NULL)),internetAddressInfoInitialised(false),internalFastSem() {
         Init();
     }
 
@@ -123,7 +122,7 @@ private:
                 internetAddressInfoInitialised = true;
                 internalFastSem.FastUnLock();
             }
-            else{
+            else {
                 REPORT_ERROR(ErrorManagement::FatalError,"Error: Failed local address initialization");
             }
         }
@@ -132,13 +131,12 @@ private:
 
 };
 
-
-String InternetAddress::GetHostName() const {
+String InternetHost::GetHostName() const {
 
     if (hostnameFastSem.FastLock() != ErrorManagement::NoError) {
-        REPORT_ERROR(ErrorManagement::FatalError,"Error: Failed FastPollingMutexSem::FastLock() in initialization of local address");
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed FastPollingMutexSem::FastLock() in initialization of local address");
     }
-    String hostName = GetDotName();
+    String hostName = GetAddress();
 
     struct hostent *h = gethostbyaddr((&address.sin_addr.s_addr), 4u, AF_INET);
 
@@ -149,7 +147,7 @@ String InternetAddress::GetHostName() const {
     if (h != NULL) {
         hostName = h->h_name;
     }
-    else{
+    else {
         REPORT_ERROR(ErrorManagement::OSError,"Error: Failed gethostbyaddr()");
     }
     hostnameFastSem.FastUnLock();
@@ -157,22 +155,22 @@ String InternetAddress::GetHostName() const {
     return (hostName.Size() == 0u) ? (static_cast<const char8 *>(NULL)):(hostName);
 }
 
-void InternetAddress::SocketInit() {
+void InternetHost::SocketInit() {
 }
 
-const char8 *InternetAddress::GetLocalAddress() {
-    return InternetAddressInfo::Instance()->GetLocalAddress();
+const char8 *InternetHost::GetLocalHostName() {
+    return LocalHostInfo::Instance()->GetLocalAddress();
 }
 
-const char8 *InternetAddress::GetLocalIpNumber() {
-    return InternetAddressInfo::Instance()->GetIpNumber();
+const char8 *InternetHost::GetLocalAddress() {
+    return LocalHostInfo::Instance()->GetIpNumber();
 }
 
-uint32 InternetAddress::GetLocalAddressAsNumber() {
+uint32 InternetHost::GetLocalAddressAsNumber() {
 
     uint32 ret = 0u;
     uint32 comp[4];
-    const char8* name = InternetAddressInfo::Instance()->GetIpNumber();
+    const char8* name = LocalHostInfo::Instance()->GetIpNumber();
     if (name != NULL) {
         sscanf(name, "%u.%u.%u.%u", &comp[3], &comp[2], &comp[1], &comp[0]);
         uint32 addressN = (comp[3] + (256u * (comp[2] + (256u * (comp[1] + (256u * comp[0]))))));
@@ -181,38 +179,36 @@ uint32 InternetAddress::GetLocalAddressAsNumber() {
     return ret;
 }
 
-InternetAddress::InternetAddress(const uint16 port,
-                                 const char8 * const addr) {
+InternetHost::InternetHost(const uint16 port,
+                           const char8 * const addr) {
 
     address.sin_family = static_cast<uint16>(AF_INET);
     SetPort(port);
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
-    if(!SetAddressByDotName(addr)){
+    if (!SetAddress(addr)) {
     }
 }
 
-uint16 InternetAddress::GetPort() const {
+uint16 InternetHost::GetPort() const {
     return htons(address.sin_port);
 }
 
-
-String InternetAddress::GetDotName() const {
+String InternetHost::GetAddress() const {
     String dotName(inet_ntoa(address.sin_addr));
     return dotName;
 }
 
-/**  returns the host number associated to this InternetAddress*/
-uint32 InternetAddress::GetHostNumber() const {
+/**  returns the host number associated to this InternetHost*/
+uint32 InternetHost::GetAddressAsNumber() const {
     return static_cast<uint32>(address.sin_addr.s_addr);
 }
 
 /** sets the port value  */
-void InternetAddress::SetPort(const uint16 port) {
+void InternetHost::SetPort(const uint16 port) {
     address.sin_port = htons(port);
 }
 
-
-bool InternetAddress::SetAddressByDotName(const char8 * const addr) {
+bool InternetHost::SetAddress(const char8 * const addr) {
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
     address.sin_addr.s_addr = INADDR_ANY;
     bool ret = (addr != NULL);
@@ -224,14 +220,14 @@ bool InternetAddress::SetAddressByDotName(const char8 * const addr) {
             address.sin_addr.s_addr = iaddr;
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError,"Error: Failed inet_addr(), address=0xFFFFFFFF");
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed inet_addr(), address=0xFFFFFFFF");
             ret = false;
         }
     }
     return ret;
 }
 
-bool InternetAddress::SetAddressByName(const char8 * hostName) {
+bool InternetHost::SetAddressByHostName(const char8 * hostName) {
     if (hostName == NULL) {
         hostName = "localhost";
     }
@@ -242,31 +238,32 @@ bool InternetAddress::SetAddressByName(const char8 * hostName) {
         address.sin_addr.s_addr = *(reinterpret_cast<uint32 *>(h->h_addr_list[0]));
         ret= true;
     }
-    else{
+    else {
         REPORT_ERROR(ErrorManagement::OSError,"Error: Failed gethostbyname()");
 
     }
     return ret;
 }
 
-void InternetAddress::SetAddressByNumber(const uint32 number) {
+void InternetHost::SetAddressByNumber(const uint32 number) {
     address.sin_addr.s_addr = number;
 }
 
 /**  The address of the local host */
-bool InternetAddress::SetLocalAddress() {
-    return SetAddressByName(static_cast<const char8*>(NULL));
+bool InternetHost::SetLocalAddress() {
+    return SetAddressByHostName(static_cast<const char8*>(NULL));
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: sockets will change this attribute then the full access to this
  * member is allowed.
  */
-InternetAddressCore *InternetAddress::GetAddress() {
+InternetHostCore *InternetHost::GetInternetHost() {
     return &address;
 }
 
-uint32 InternetAddress::Size() const {
+uint32 InternetHost::Size() const {
     return static_cast<uint32>(sizeof(address));
 }
 
 }
+

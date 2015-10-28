@@ -1,6 +1,6 @@
 /**
- * @file InternetAddressTest.h
- * @brief Header file for class InternetAddressTest
+ * @file InternetHostTest.h
+ * @brief Header file for class InternetHostTest
  * @date 28/10/2015
  * @author Giuseppe Ferrò
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class InternetAddressTest
+ * @details This header file contains the declaration of the class InternetHostTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef INTERNETADDRESSTEST_H_
-#define INTERNETADDRESSTEST_H_
+#ifndef INTERNETHOSTTEST_H_
+#define INTERNETHOSTTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "InternetAddress.h"
+#include "InternetHost.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -42,7 +42,7 @@ using namespace MARTe;
 /**
  * @brief A structure used for InternetAddress tests
  */
-struct InternetAddressTestTable {
+struct InternetHostTestTable {
     const char8* address;
     uint32 relatedNumber;
     uint16 port;
@@ -52,7 +52,7 @@ struct InternetAddressTestTable {
 /**
  * @brief Tests all the InternetAddress public functions
  */
-class InternetAddressTest {
+class InternetHostTest {
 
 public:
 
@@ -76,7 +76,7 @@ public:
     /**
      * @brief Tests if the function returns the IP address in the format x.x.x.x
      */
-    bool TestGetDotName(const char8 *table[][2]);
+    bool TestGetAddress(const char8 *table[][2]);
 
     /**
      * @brief Tests if the function returns the correct host name.
@@ -86,20 +86,20 @@ public:
     /**
      * @brief Test if the function returns the IP in number format.
      */
-    bool TestGetHostNumber(const InternetAddressTestTable *table);
+    bool TestGetAddressAsNumber(const InternetHostTestTable *table);
 
     /**
      * @brief Tests if the local host name is returned.
      */
-    bool TestGetLocalAddress();
+    bool TestGetLocalHostName();
 
     /**
      * @brief Tests if the local IP is returned.
      */
-    bool TestGetLocalIpNumber();
+    bool TestGetLocalAddress();
 
     /**
-     * @brief Tests if the socket is initializated.
+     * @brief Tests if the socket is initialized.
      */
     bool TestSocketInit();
 
@@ -116,17 +116,17 @@ public:
     /**
      * @brief Tests if the IP is set correctly passing a string in the format x.x.x.x
      */
-    bool TestSetAddressByDotName(const char8 *table[][2]);
+    bool TestSetAddress(const char8 *table[][2]);
 
     /**
      * @brief Tests if the IP is set correctly passing the host name.
      */
-    bool TestSetAddressByName(const char8 *table[][2]);
+    bool TestSetAddressByHostName(const char8 *table[][2]);
 
     /**
      * @brief Tests if the IP is set correctly if initialized by number format.
      */
-    bool TestSetAddressByNumber(const InternetAddressTestTable *table);
+    bool TestSetAddressByNumber(const InternetHostTestTable *table);
 
     /**
      * @brief Tests if the function sets the IP to localhost.
@@ -136,7 +136,7 @@ public:
     /**
      * @brief Tests if the InternetAddressCore structure is returned correctly.
      */
-    bool TestGetAddress(const InternetAddressTestTable *table);
+    bool TestGetInternetHost(const InternetHostTestTable *table);
 
     /**
      * @brief Tests if the function returns sizeof(InternetAddressCore).
@@ -148,5 +148,6 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* INTERNETADDRESSTEST_H_ */
+
+#endif /* INTERNETHOSTTEST_H_ */
 

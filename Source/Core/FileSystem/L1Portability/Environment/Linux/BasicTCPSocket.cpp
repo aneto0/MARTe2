@@ -72,21 +72,20 @@ BasicTCPSocket::BasicTCPSocket() :
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: C-style cast made at operating system API.*/
     /*lint -e{923} [MISRA C++ Rule 5-2-7]. Justification: cast from integer to pointer made at operating system API level. */
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed signal() trying to ignore SIGPIPE signal");
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed signal() trying to ignore SIGPIPE signal");
     }
 }
 
-BasicTCPSocket::~BasicTCPSocket(){
+BasicTCPSocket::~BasicTCPSocket() {
 
 }
-
 
 BasicTCPSocket::BasicTCPSocket(const int32 socketIn) :
         BasicSocket() {
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: C-style cast made at operating system API.*/
     /*lint -e{923} [MISRA C++ Rule 5-2-7]. Justification: cast from integer to pointer made at operating system API level. */
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed signal() trying to ignore SIGPIPE signal");
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed signal() trying to ignore SIGPIPE signal");
     }
     SetConnectionSocket(socketIn);
 }
@@ -103,8 +102,8 @@ bool BasicTCPSocket::Open() {
             ret = true;
         }
     }
-    else{
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() setting the address as reusable");
+    else {
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the address as reusable");
 
     }
     return ret;
@@ -112,10 +111,10 @@ bool BasicTCPSocket::Open() {
 
 bool BasicTCPSocket::Listen(const uint16 port,
                             const int32 maxConnections) const {
-    InternetAddress server;
+    InternetHost server;
 
     server.SetPort(port);
-    int32 errorCode = bind(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(server.GetAddress()), server.Size());
+    int32 errorCode = bind(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(server.GetInternetHost()), server.Size());
     bool ret = false;
     if (errorCode >= 0) {
 
@@ -123,13 +122,13 @@ bool BasicTCPSocket::Listen(const uint16 port,
         if (errorCode >= 0) {
             ret = true;
         }
-        else{
-            REPORT_ERROR(ErrorManagement::OSError,"Error: Failed listen()");
+        else {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed listen()");
 
         }
     }
-    else{
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed bind()");
+    else {
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed bind()");
 
     }
 
@@ -139,56 +138,58 @@ bool BasicTCPSocket::Listen(const uint16 port,
 bool BasicTCPSocket::Listen(const char8 * const serviceName,
                             const int32 maxConnections) const {
     int32 port = InternetService::GetPortByName(serviceName);
-    /*lint -e{9119} -e{9117} -e{734} [MISRA C++ Rule 5-0-6] [MISRA C++ Rule 5-0-4]. Justification: the operating system InternetAddress struct has
+    /*lint -e{9119} -e{9117} -e{734} [MISRA C++ Rule 5-0-6] [MISRA C++ Rule 5-0-4]. Justification: the operating system InternetHost struct has
      * an unsigned short "port" member attribute. */
     return (port == -1) ? (false) : (Listen(static_cast<uint16>(port), maxConnections));
 }
-
 
 bool BasicTCPSocket::Connect(const char8 * const address,
                              const uint16 port,
                              const TimeoutType &msecTimeout,
                              int32 retry) {
     GetDestination().SetPort(port);
-    bool ret = false;
-    if (GetDestination().SetAddressByDotName(address)) {
-        if (GetDestination().SetAddressByName(address)) {
-
-            int32 errorCode = connect(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(GetDestination().GetAddress()), GetDestination().Size());
-            if (errorCode < 0) {
-                errorCode = sock_errno();
-                switch (errorCode) {
-                case (EINTR): {
-                    if (retry > 0) {
-                        retry--;
-                        ret = Connect(address, port, msecTimeout, retry);
-                    }
-                    else {
-                        REPORT_ERROR(ErrorManagement::OSError,"Error: failed connect() because interrupted");
-                        ret = false;
-                    }
+    bool ret = true;
+    if (!GetDestination().SetAddress(address)) {
+        if (!GetDestination().SetAddressByHostName(address)) {
+            ret = false;
+        }
+    }
+    if (ret) {
+        int32 errorCode = connect(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(GetDestination().GetInternetHost()), GetDestination().Size());
+        if (errorCode < 0) {
+            errorCode = sock_errno();
+            switch (errorCode) {
+            case (EINTR): {
+                if (retry > 0) {
+                    retry--;
+                    ret = Connect(address, port, msecTimeout, retry);
                 }
-                    break;
-                case (EINPROGRESS):
-                case (EWOULDBLOCK): {
-                    if (msecTimeout.IsFinite()) {
-                        SocketSelect sel;
-                        sel.AddWaitOnWriteReady(this);
-                        ret = sel.WaitWrite(msecTimeout);
-                    }
-                    else {
-                        ret = false;
-                        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed connect() because the socked is blocked");
-                    }
-                }
-                    break;
-                default: {
+                else {
+                    REPORT_ERROR(ErrorManagement::OSError, "Error: failed connect() because interrupted");
                     ret = false;
-                    REPORT_ERROR(ErrorManagement::OSError,"Error: Failed connect()");
-                }
                 }
             }
+                break;
+            case (EINPROGRESS):
+            case (EWOULDBLOCK): {
+                if (msecTimeout.IsFinite()) {
+                    SocketSelect sel;
+                    sel.AddWaitOnWriteReady(this);
+                    ret = sel.WaitWrite(msecTimeout);
+                }
+                else {
+                    ret = false;
+                    REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connect() because the socked is blocked");
+                }
+            }
+                break;
+            default: {
+                ret = false;
+                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connect()");
+            }
+            }
         }
+
     }
     return ret;
 }
@@ -197,18 +198,18 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                              const char8 * const serviceName,
                              const TimeoutType &msecTimeout) {
     int32 port = InternetService::GetPortByName(serviceName);
-    /*lint -e{9119} -e{9117} -e{734} [MISRA C++ Rule 5-0-6] [MISRA C++ Rule 5-0-4]. Justification: the operating system InternetAddress struct has
+    /*lint -e{9119} -e{9117} -e{734} [MISRA C++ Rule 5-0-6] [MISRA C++ Rule 5-0-4]. Justification: the operating system InternetHost struct has
      * an unsigned short "port" member attribute. */
     return (port == -1) ? (false) : (Connect(address, static_cast<uint16>(port), msecTimeout));
 }
 
 bool BasicTCPSocket::IsConnected() const {
 
-    InternetAddress information;
+    InternetHost information;
 
     socklen_t len = information.Size();
 
-    int32 ret = getpeername(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(information.GetAddress()), &len);
+    int32 ret = getpeername(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(information.GetInternetHost()), &len);
 
     return (ret == 0);
 
@@ -217,7 +218,7 @@ bool BasicTCPSocket::IsConnected() const {
 BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &msecTimeout,
                                                BasicTCPSocket *client) {
     uint32 size = GetSource().Size();
-    int32 newSocket = accept(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(GetSource().GetAddress()), reinterpret_cast<socklen_t *>(&size));
+    int32 newSocket = accept(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(GetSource().GetInternetHost()), reinterpret_cast<socklen_t *>(&size));
 
     BasicTCPSocket *ret = static_cast<BasicTCPSocket *>(NULL);
     if (newSocket != -1) {
@@ -225,7 +226,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &msecTimeout,
             client = new BasicTCPSocket(newSocket);
         }
         client->SetDestination(GetSource());
-        client->SetSource(GetDestination());/////
+        client->SetSource(GetDestination()); /////
         client->SetConnectionSocket(newSocket);
         ret = client;
     }
@@ -259,7 +260,7 @@ bool BasicTCPSocket::Read(char8* const output,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed recv()");
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed recv()");
         size = 0u;
     }
     return ret;
@@ -274,7 +275,7 @@ bool BasicTCPSocket::Write(const char8* const input,
         size = static_cast<uint32>(writtenBytes);
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed send()");
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed send()");
         size = 0u;
     }
 
@@ -295,7 +296,7 @@ bool BasicTCPSocket::Read(char8* const output,
 
     if (ret < 0) {
         size = 0u;
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() setting the socket timeout");
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeout");
         retVal = false;
     }
     else {
@@ -322,7 +323,7 @@ bool BasicTCPSocket::Write(const char8* const input,
 
     if (ret < 0) {
         size = 0u;
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() setting the socket timeout");
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeout");
         retVal = false;
     }
     else {

@@ -1,7 +1,7 @@
 /**
- * @file InternetAddress.h
- * @brief Header file for class InternetAddress
- * @date 26/10/2015
+ * @file InternetHost.h
+ * @brief Header file for class InternetHost
+ * @date 28/10/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class InternetAddress
+ * @details This header file contains the declaration of the class InternetHost
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef INTERNETADDRESS_H_
-#define INTERNETADDRESS_H_
+#ifndef INTERNETHOST_H_
+#define INTERNETHOST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "String.h"
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,InternetAddressCore.h)
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,InternetHostCore.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -46,7 +46,7 @@ namespace MARTe{
 /**
  * @brief A class to store IP address, port and host name associated to a generic host.
  */
-class InternetAddress {
+class InternetHost {
 
 
 public:
@@ -61,7 +61,7 @@ public:
      * address.(IP address)=addr
      * if the address format is wrong ----> address.(IP address)=0.0.0.0
      */
-    InternetAddress(const uint16 port=0u,const char8 * const addr=static_cast<const char8 *>(NULL));
+    InternetHost(const uint16 port=0u,const char8 * const addr=static_cast<const char8 *>(NULL));
 
     /**
      * @brief Retrieves the port number.
@@ -71,7 +71,7 @@ public:
     /**
      * @brief Returns the host name in the x.x.x.x format as a String
      */
-    String GetDotName() const;
+    String GetAddress() const;
 
     /**
      * @brief Returns the host name as a String. In case of failure the String returned is empty.
@@ -80,20 +80,20 @@ public:
 
 
     /**
-     * @brief Returns the host number associated to this InternetAddress.
+     * @brief Returns the IP address as an integer number.
      */
-    uint32 GetHostNumber() const;
+    uint32 GetAddressAsNumber() const;
 
     /**
      * @brief Retrieves the local host name.
      */
-    static const char8 *GetLocalAddress();
+    static const char8 *GetLocalHostName();
 
 
     /**
      * @brief Retrieves the local IP address in the format x.x.x.x
      */
-    static const char8 *GetLocalIpNumber();
+    static const char8 *GetLocalAddress();
 
     /**
      * @brief Initializes the socket.
@@ -119,14 +119,14 @@ public:
      * @return false if the input format is wrong, true otherwise.
      * @pre addr must have the format x.x.x.x with x in [0-255].
      */
-    bool SetAddressByDotName(const char8 * const addr);
+    bool SetAddress(const char8 * const addr);
 
     /**
      * @brief Sets the desired host name.
      * @param[in] hostName is the desired host name.
      * @return true if the host name is set correctly, false otherwise.
      */
-    bool SetAddressByName(const char8 * hostName);
+    bool SetAddressByHostName(const char8 * hostName);
 
     /**
      * @brief Set the IP address a.b.c.d passing the equivalent input [a + 256*b + (256^2)*c + (256^3)*d].
@@ -146,11 +146,11 @@ public:
      * the Internet informations.
      * @warning The handle type depends by the operating system below.
      */
-    InternetAddressCore *GetAddress();
+    InternetHostCore *GetInternetHost();
 
     /**
      * @brief Gets the size in bytes of the handle.
-     * @return the size of InternetAddressCore.
+     * @return the size of InternetHostCore.
      */
     uint32 Size() const;
 
@@ -158,18 +158,17 @@ public:
 private:
 
     /**
-     * The InternetAddress handle.
+     * The InternetHost handle.
      */
-    InternetAddressCore address;
+    InternetHostCore address;
 
 };
 
 }
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* INTERNETADDRESS_H_ */
+#endif /* INTERNETHOST_H_ */
 

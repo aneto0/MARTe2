@@ -23,7 +23,7 @@
 #############################################################
 
 
-OBJSX= InternetAddressGTest.x
+OBJSX= InternetHostGTest.x
 #DoubleIntegerGTest.x \
 		TypeCharacteristicsGTest.x \
         ShiftGTest.x \

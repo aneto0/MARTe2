@@ -29,7 +29,7 @@ ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  BasicSocket.x \
-        InternetAddress.x \
+        InternetHost.x \
         BasicTCPSocket.x \
         SocketSelect.x \
         InternetService.x

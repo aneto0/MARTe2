@@ -1,6 +1,6 @@
 /**
- * @file InternetAddressTest.cpp
- * @brief Source file for class InternetAddressTest
+ * @file InternetHostTest.cpp
+ * @brief Source file for class InternetHostTest
  * @date 28/10/2015
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class InternetAddressTest (public, protected, and private). Be aware that some 
+ * the class InternetHostTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,18 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "InternetAddressTest.h"
+#include "InternetHostTest.h"
+
+/*---------------------------------------------------------------------------*/
+/*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+
+#include "InternetHostTest.h"
 #include "String.h"
 #include "stdio.h"
 
@@ -41,47 +52,47 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-bool InternetAddressTest::TestDefaultConstructor() {
+bool InternetHostTest::TestDefaultConstructor() {
 
-    InternetAddress addr;
+    InternetHost addr;
     if (addr.GetPort() != 0) {
         return false;
     }
 
-    String ret = addr.GetDotName();
+    String ret = addr.GetAddress();
 
     printf("\n%s\n", ret.Buffer());
     return ret == "0.0.0.0";
 }
 
-bool InternetAddressTest::TestFullConstructor(uint16 port,
+bool InternetHostTest::TestFullConstructor(uint16 port,
                                               const char8 * address,
                                               const char8 * expected) {
 
-    InternetAddress addr(port, address);
+    InternetHost addr(port, address);
     if (addr.GetPort() != port) {
         return false;
     }
 
-    String ret = addr.GetDotName();
+    String ret = addr.GetAddress();
 
     printf("\n%s\n", ret.Buffer());
     return (ret == expected);
 
 }
 
-bool InternetAddressTest::TestGetPort(uint16 port) {
-    InternetAddress addr(port);
+bool InternetHostTest::TestGetPort(uint16 port) {
+    InternetHost addr(port);
     printf("\n%d\n", addr.GetPort());
     return addr.GetPort() == port;
 }
 
-bool InternetAddressTest::TestGetDotName(const char8 *table[][2]) {
+bool InternetHostTest::TestGetAddress(const char8 *table[][2]) {
 
     uint32 i = 0;
     while (table[i][0] != NULL) {
-        InternetAddress addr(0, table[i][0]);
-        String ret = addr.GetDotName();
+        InternetHost addr(0, table[i][0]);
+        String ret = addr.GetAddress();
         printf("\n%s\n", ret.Buffer());
         if (ret != table[i][1]) {
             return false;
@@ -91,11 +102,11 @@ bool InternetAddressTest::TestGetDotName(const char8 *table[][2]) {
     return true;
 }
 
-bool InternetAddressTest::TestGetHostName(const char8 *table[][2]) {
+bool InternetHostTest::TestGetHostName(const char8 *table[][2]) {
 
     uint32 i = 0;
     while (table[i][0] != NULL) {
-        InternetAddress addr(0, table[i][0]);
+        InternetHost addr(0, table[i][0]);
         String ret = addr.GetHostName();
         printf("\n%s\n", ret.Buffer());
         if (ret != table[i][1]) {
@@ -106,12 +117,12 @@ bool InternetAddressTest::TestGetHostName(const char8 *table[][2]) {
     return true;
 }
 
-bool InternetAddressTest::TestGetHostNumber(const InternetAddressTestTable *table) {
+bool InternetHostTest::TestGetAddressAsNumber(const InternetHostTestTable *table) {
 
     uint32 i = 0;
     while (table[i].address != NULL) {
-        InternetAddress addr(0, table[i].address);
-        uint32 ret = addr.GetHostNumber();
+        InternetHost addr(0, table[i].address);
+        uint32 ret = addr.GetAddressAsNumber();
         printf("\n%x %d\n", ret, i);
         if (ret != table[i].relatedNumber) {
             return false;
@@ -122,9 +133,9 @@ bool InternetAddressTest::TestGetHostNumber(const InternetAddressTestTable *tabl
 
 }
 
-bool InternetAddressTest::TestGetLocalAddress() {
+bool InternetHostTest::TestGetLocalHostName() {
 
-    String ret = InternetAddress::GetLocalAddress();
+    String ret = InternetHost::GetLocalHostName();
 
     printf("\n%s\n", ret.Buffer());
 
@@ -132,44 +143,44 @@ bool InternetAddressTest::TestGetLocalAddress() {
 
 }
 
-bool InternetAddressTest::TestGetLocalIpNumber() {
+bool InternetHostTest::TestGetLocalAddress() {
 
-    String ret = InternetAddress::GetLocalIpNumber();
+    String ret = InternetHost::GetLocalAddress();
 
     printf("\n%s\n", ret.Buffer());
 
     return ((ret == "127.0.1.1") || (ret == "127.0.0.1"));
 }
 
-bool InternetAddressTest::TestSocketInit() {
+bool InternetHostTest::TestSocketInit() {
 
-    InternetAddress::SocketInit();
+    InternetHost::SocketInit();
 
     return true;
 }
 
-bool InternetAddressTest::TestGetLocalAddressAsNumber() {
-    printf("\n%x\n", InternetAddress::GetLocalAddressAsNumber());
+bool InternetHostTest::TestGetLocalAddressAsNumber() {
+    printf("\n%x\n", InternetHost::GetLocalAddressAsNumber());
 
-    return (InternetAddress::GetLocalAddressAsNumber() == 0x0101007f) || (InternetAddress::GetLocalAddressAsNumber() == 0x0100007f);
+    return (InternetHost::GetLocalAddressAsNumber() == 0x0101007f) || (InternetHost::GetLocalAddressAsNumber() == 0x0100007f);
 
 }
 
-bool InternetAddressTest::TestSetPort(uint16 port) {
-    InternetAddress addr;
+bool InternetHostTest::TestSetPort(uint16 port) {
+    InternetHost addr;
 
     addr.SetPort(port);
 
     return addr.GetPort() == port;
 }
 
-bool InternetAddressTest::TestSetAddressByDotName(const char8 *table[][2]) {
-    InternetAddress addr;
+bool InternetHostTest::TestSetAddress(const char8 *table[][2]) {
+    InternetHost addr;
 
     uint32 i = 0;
     while (table[i][0] != NULL) {
-        addr.SetAddressByDotName(table[i][0]);
-        String ret = addr.GetDotName();
+        addr.SetAddress(table[i][0]);
+        String ret = addr.GetAddress();
         printf("\n%s\n", ret.Buffer());
         if (ret != table[i][1]) {
             return false;
@@ -180,14 +191,14 @@ bool InternetAddressTest::TestSetAddressByDotName(const char8 *table[][2]) {
 
 }
 
-bool InternetAddressTest::TestSetAddressByName(const char8 *table[][2]) {
+bool InternetHostTest::TestSetAddressByHostName(const char8 *table[][2]) {
 
-    InternetAddress addr;
+    InternetHost addr;
 
     uint32 i = 0;
     while (table[i][0] != NULL) {
-        addr.SetAddressByName(table[i][1]);
-        String ret = addr.GetDotName();
+        addr.SetAddressByHostName(table[i][1]);
+        String ret = addr.GetAddress();
         printf("\n%s\n", ret.Buffer());
         if (ret != table[i][0]) {
             return false;
@@ -198,13 +209,13 @@ bool InternetAddressTest::TestSetAddressByName(const char8 *table[][2]) {
 
 }
 
-bool InternetAddressTest::TestSetAddressByNumber(const InternetAddressTestTable *table) {
-    InternetAddress addr;
+bool InternetHostTest::TestSetAddressByNumber(const InternetHostTestTable *table) {
+    InternetHost addr;
 
     uint32 i = 0;
     while (table[i].address != NULL) {
         addr.SetAddressByNumber(table[i].relatedNumber);
-        String ret = addr.GetDotName();
+        String ret = addr.GetAddress();
         printf("\n%s %d\n", ret.Buffer(), i);
         if (ret != table[i].address) {
             return false;
@@ -215,24 +226,24 @@ bool InternetAddressTest::TestSetAddressByNumber(const InternetAddressTestTable 
 
 }
 
-bool InternetAddressTest::TestSetLocalAddress() {
-    InternetAddress addr;
+bool InternetHostTest::TestSetLocalAddress() {
+    InternetHost addr;
     addr.SetLocalAddress();
 
     String hostname = addr.GetHostName();
-    String dotAddr = addr.GetDotName();
+    String dotAddr = addr.GetAddress();
     return ((hostname == "localhost") && ((dotAddr == "127.0.1.1") || (dotAddr == "127.0.0.1")));
 }
 
-bool InternetAddressTest::TestGetAddress(const InternetAddressTestTable *table) {
+bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
 
     uint32 i = 0;
     while (table[i].address != NULL) {
-        InternetAddress addr(table[i].port, table[i].address);
-        InternetAddressCore *copy = addr.GetAddress();
+        InternetHost addr(table[i].port, table[i].address);
+        InternetHostCore *copy = addr.GetInternetHost();
 #if OPERATING_SYSTEM==Linux
-        if (copy->sin_addr.s_addr != addr.GetHostNumber()) {
-            printf("\n%x %x %d\n", copy->sin_addr.s_addr, addr.GetHostNumber(), i);
+        if (copy->sin_addr.s_addr != addr.GetAddressAsNumber()) {
+            printf("\n%x %x %d\n", copy->sin_addr.s_addr, addr.GetAddressAsNumber(), i);
             return false;
         }
         if (copy->sin_port != htons(addr.GetPort())) {
@@ -246,9 +257,9 @@ bool InternetAddressTest::TestGetAddress(const InternetAddressTestTable *table) 
     return true;
 }
 
-bool InternetAddressTest::TestSize() {
+bool InternetHostTest::TestSize() {
 
-    InternetAddress addr;
-    return addr.Size() == sizeof(InternetAddressCore);
+    InternetHost addr;
+    return addr.Size() == sizeof(InternetHostCore);
 }
 
