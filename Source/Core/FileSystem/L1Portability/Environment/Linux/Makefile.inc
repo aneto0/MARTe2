@@ -32,7 +32,8 @@ OBJSX=  BasicSocket.x \
         InternetAddress.x \
         BasicTCPSocket.x \
         SocketSelect.x \
-        InternetService.x
+        InternetService.x \
+        BasicUDPSocket.x
 
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
