@@ -59,6 +59,7 @@ public:
      * @post
      * address.(port)=port\n
      * address.(IP address)=addr
+     * if the address format is wrong ----> address.(IP address)=0.0.0.0
      */
     InternetAddress(const uint16 port=0u,const char8 * const addr=static_cast<const char8 *>(NULL));
 
@@ -100,7 +101,7 @@ public:
     static void SocketInit();
 
     /**
-     * @brief Retrieves the IP address a.b.c.d as [d + 256*c + (256^2)*b + (256^3)*a]
+     * @brief Retrieves the IP address a.b.c.d as [a + 256*b + (256^2)*c + (256^3)*d]
      */
     static uint32 GetLocalAddressAsNumber();
 
@@ -128,7 +129,7 @@ public:
     bool SetAddressByName(const char8 * hostName);
 
     /**
-     * @brief Set the IP address a.b.c.d passing the equivalent input [d + 256*c + (256^2)*b + (256^3)*a].
+     * @brief Set the IP address a.b.c.d passing the equivalent input [a + 256*b + (256^2)*c + (256^3)*d].
      * @param[in] number is the IP address in unsigned int format.
      */
     void SetAddressByNumber(const uint32 number);

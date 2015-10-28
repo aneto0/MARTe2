@@ -140,8 +140,7 @@ String InternetAddress::GetHostName() const {
     }
     String hostName = GetDotName();
 
-    /*lint -e{923} [MISRA C++ Rule 5-2-7], [MISRA C++ Rule 5-2-8]. Justification: Cast from unsigned integer to pointer required by this implementation.*/
-    struct hostent *h = gethostbyaddr(reinterpret_cast<char8 *>(address.sin_addr.s_addr), 4u, AF_INET);
+    struct hostent *h = gethostbyaddr((&address.sin_addr.s_addr), 4u, AF_INET);
 
 // what's the point ??
 // and it crashes if h is NULL
@@ -176,7 +175,7 @@ uint32 InternetAddress::GetLocalAddressAsNumber() {
     const char8* name = InternetAddressInfo::Instance()->GetIpNumber();
     if (name != NULL) {
         sscanf(name, "%u.%u.%u.%u", &comp[3], &comp[2], &comp[1], &comp[0]);
-        uint32 addressN = (comp[0] + (256u * (comp[1] + (256u * (comp[2] + (256u * comp[3]))))));
+        uint32 addressN = (comp[3] + (256u * (comp[2] + (256u * (comp[1] + (256u * comp[0]))))));
         ret= addressN;
     }
     return ret;
@@ -188,9 +187,7 @@ InternetAddress::InternetAddress(const uint16 port,
     address.sin_family = static_cast<uint16>(AF_INET);
     SetPort(port);
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
-    address.sin_addr.s_addr = INADDR_ANY;
-    if (addr != NULL) {
-        address.sin_addr.s_addr = inet_addr(const_cast<char8 *>(addr));
+    if(!SetAddressByDotName(addr)){
     }
 }
 
@@ -227,8 +224,7 @@ bool InternetAddress::SetAddressByDotName(const char8 * const addr) {
             address.sin_addr.s_addr = iaddr;
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError,"Error: Failed inet_addr()");
-
+            REPORT_ERROR(ErrorManagement::OSError,"Error: Failed inet_addr(), address=0xFFFFFFFF");
             ret = false;
         }
     }
