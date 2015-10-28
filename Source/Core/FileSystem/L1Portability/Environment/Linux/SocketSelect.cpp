@@ -33,6 +33,8 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/time.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -49,156 +51,161 @@
 
 namespace MARTe {
 
-/** */
 SocketSelect::SocketSelect() {
     Reset();
 }
 
-/** */
+/*lint -e{970} -e{1960} -e{9146} -e{529} -e{717} -e{909} . Justification: Operating system API are not linted.*/
+/*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
 void SocketSelect::Reset() {
-    FD_ZERO(&readFDS);
-    FD_ZERO(&writeFDS);
-    FD_ZERO(&exceptFDS);
-    FD_ZERO(&readFDS_done);
-    FD_ZERO(&writeFDS_done);
-    FD_ZERO(&exceptFDS_done);
+    FD_ZERO(&(selectHandle.readFDS));
+    FD_ZERO(&(selectHandle.writeFDS));
+    FD_ZERO(&(selectHandle.exceptFDS));
+    FD_ZERO(&(selectHandle.readFDS_done));
+    FD_ZERO(&(selectHandle.writeFDS_done));
+    FD_ZERO(&(selectHandle.exceptFDS_done));
+    readySockets = 0;
 }
 
-/** */
-void SocketSelect::AddWaitOnWriteReady(BasicSocket *s) {
-    if (s == NULL)
-        return;
-    FD_SET(s->GetConnectionSocket(), &writeFDS);
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+void SocketSelect::AddWaitOnWriteReady(const BasicSocket * const s) {
+    if (s != NULL) {
+
+        FD_SET(s->GetConnectionSocket(), &selectHandle.writeFDS);
+    }
 }
-/** */
-void SocketSelect::DeleteWaitOnWriteReady(BasicSocket *s) {
-    if (s == NULL)
-        return;
-    FD_CLR(s->GetConnectionSocket(), &writeFDS);
+
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+void SocketSelect::DeleteWaitOnWriteReady(const BasicSocket * const s) {
+    if (s != NULL) {
+        FD_CLR(s->GetConnectionSocket(), &selectHandle.writeFDS);
+    }
 }
-/** */
-void SocketSelect::AddWaitOnReadReady(BasicSocket *s) {
-    if (s == NULL)
-        return;
-    FD_SET(s->GetConnectionSocket(), &readFDS);
+
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+void SocketSelect::AddWaitOnReadReady(const BasicSocket * const s) {
+    if (s != NULL) {
+        FD_SET(s->GetConnectionSocket(), &selectHandle.readFDS);
+    }
 }
-/** */
-void SocketSelect::DeleteWaitOnReadReady(BasicSocket *s) {
-    if (s == NULL)
-        return;
-    FD_CLR(s->GetConnectionSocket(), &readFDS);
+
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+void SocketSelect::DeleteWaitOnReadReady(const BasicSocket * const s) {
+    if (s != NULL) {
+        FD_CLR(s->GetConnectionSocket(), &selectHandle.readFDS);
+    }
 }
-/** */
-void SocketSelect::AddWaitOnExceptReady(BasicSocket *s) {
-    if (s == NULL)
-        return;
-    FD_SET(s->GetConnectionSocket(), &exceptFDS);
+
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+void SocketSelect::AddWaitOnExceptReady(const BasicSocket * const s) {
+    if (s != NULL) {
+        FD_SET(s->GetConnectionSocket(), &selectHandle.exceptFDS);
+    }
 }
-/** */
-void SocketSelect::DeleteWaitOnExceptReady(BasicSocket *s) {
-    if (s == NULL)
-        return;
-    FD_CLR(s->GetConnectionSocket(), &exceptFDS);
+
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+void SocketSelect::DeleteWaitOnExceptReady(const BasicSocket * const s) {
+    if (s != NULL) {
+        FD_CLR(s->GetConnectionSocket(), &selectHandle.exceptFDS);
+    }
 }
-/** Wait for all the event*/
-bool SocketSelect::Wait(TimeoutType msecTimeout) {
-    readFDS_done = readFDS;
-    writeFDS_done = writeFDS;
-    exceptFDS_done = exceptFDS;
+
+bool SocketSelect::Wait(const TimeoutType &msecTimeout) {
+    selectHandle.readFDS_done = selectHandle.readFDS;
+    selectHandle.writeFDS_done = selectHandle.writeFDS;
+    selectHandle.exceptFDS_done = selectHandle.exceptFDS;
 
     timeval timeWait;
-    if (msecTimeout == TTInfiniteWait) {
-        readySockets = select(SELECT_WIDTH, &readFDS_done, &writeFDS_done, &exceptFDS_done, NULL);
+    if (msecTimeout.IsFinite()) {
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeWait.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+        readySockets = select(SELECT_WIDTH, &selectHandle.readFDS_done, &selectHandle.writeFDS_done, &selectHandle.exceptFDS_done, &timeWait);
+
     }
     else {
-        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
-        timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
-        readySockets = select(SELECT_WIDTH, &readFDS_done, &writeFDS_done, &exceptFDS_done, &timeWait);
+        readySockets = select(SELECT_WIDTH, &selectHandle.readFDS_done, &selectHandle.writeFDS_done, &selectHandle.exceptFDS_done,
+                              static_cast<struct timeval*>(NULL));
     }
     return (readySockets > 0);
 }
 
-/** wait for data on the input */
-bool SocketSelect::WaitRead(TimeoutType msecTimeout) {
-    readFDS_done = readFDS;
+bool SocketSelect::WaitRead(const TimeoutType &msecTimeout) {
+    selectHandle.readFDS_done = selectHandle.readFDS;
 
     timeval timeWait;
-    if (msecTimeout == TTInfiniteWait) {
-        readySockets = select(SELECT_WIDTH, &readFDS_done, NULL, NULL, NULL);
+    if (msecTimeout.IsFinite()) {
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeWait.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+        readySockets = select(SELECT_WIDTH, &selectHandle.readFDS_done, static_cast<fd_set*>(NULL), static_cast<fd_set*>(NULL), &timeWait);
     }
     else {
-        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
-        timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
-        readySockets = select(SELECT_WIDTH, &readFDS_done, NULL, NULL, &timeWait);
+        readySockets = select(SELECT_WIDTH, &selectHandle.readFDS_done, static_cast<fd_set*>(NULL),static_cast<fd_set*>(NULL), static_cast<timeval *>(NULL));
+
     }
     return (readySockets > 0);
 }
 
-/** wait on free space on the output buffer*/
-bool SocketSelect::WaitWrite(TimeoutType msecTimeout) {
-    writeFDS_done = writeFDS;
+bool SocketSelect::WaitWrite(const TimeoutType &msecTimeout) {
+    selectHandle.writeFDS_done = selectHandle.writeFDS;
 
     timeval timeWait;
-    if (msecTimeout == TTInfiniteWait) {
-        readySockets = select(SELECT_WIDTH, NULL, &writeFDS_done, NULL, NULL);
+    if (msecTimeout.IsFinite()) {
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeWait.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+        readySockets = select(SELECT_WIDTH, static_cast<fd_set*>(NULL), &selectHandle.writeFDS_done, static_cast<fd_set*>(NULL), &timeWait);
     }
     else {
-        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
-        timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
-        readySockets = select(SELECT_WIDTH, NULL, &writeFDS_done, NULL, &timeWait);
+        readySockets = select(SELECT_WIDTH, static_cast<fd_set*>(NULL), &selectHandle.writeFDS_done, static_cast<fd_set*>(NULL), static_cast<timeval *>(NULL));
+
     }
     return (readySockets > 0);
 }
 
-/** wait for an exception */
-bool SocketSelect::WaitExcept(TimeoutType msecTimeout) {
-    exceptFDS_done = exceptFDS;
+bool SocketSelect::WaitExcept(const TimeoutType &msecTimeout) {
+    selectHandle.exceptFDS_done = selectHandle.exceptFDS;
 
     timeval timeWait;
-    if (msecTimeout == TTInfiniteWait) {
-        readySockets = select(SELECT_WIDTH, NULL, NULL, &exceptFDS_done, NULL);
+    if (msecTimeout.IsFinite()) {
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeWait.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+        readySockets = select(SELECT_WIDTH, static_cast<fd_set*>(NULL), static_cast<fd_set*>(NULL), &selectHandle.exceptFDS_done, &timeWait);
+
     }
     else {
-        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
-        timeWait.tv_usec = 1000 * (msecTimeout.GetTimeoutMSec() - (timeWait.tv_sec * 1000));
-        readySockets = select(SELECT_WIDTH, NULL, NULL, &exceptFDS_done, &timeWait);
+        readySockets = select(SELECT_WIDTH, static_cast<fd_set*>(NULL), static_cast<fd_set*>(NULL), &selectHandle.exceptFDS_done, static_cast<timeval *>(NULL));
     }
     return (readySockets > 0);
 }
 
-/** */
-int32 SocketSelect::ReadySockets() {
+int32 SocketSelect::ReadySockets() const {
     return readySockets;
 }
 
-/** */
-bool SocketSelect::CheckRead(BasicSocket *s) {
-    return (FD_ISSET(s->GetConnectionSocket(), &readFDS_done) != 0);
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
+bool SocketSelect::CheckRead(const BasicSocket * const s) {
+    return (s == NULL)?(false):(FD_ISSET(s->GetConnectionSocket(), &selectHandle.readFDS_done) != 0);
 }
 
-/** */
-bool SocketSelect::CheckWrite(BasicSocket *s) {
-    return (FD_ISSET(s->GetConnectionSocket(), &writeFDS_done) != 0);
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
+bool SocketSelect::CheckWrite(const BasicSocket * const s) {
+    return (s == NULL)?(false):(FD_ISSET(s->GetConnectionSocket(), &selectHandle.writeFDS_done) != 0);
 }
 
-/** */
-bool SocketSelect::CheckExcept(BasicSocket *s) {
-    return (FD_ISSET(s->GetConnectionSocket(), &exceptFDS_done) != 0);
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
+bool SocketSelect::CheckExcept(const BasicSocket * const s) {
+    return (s == NULL)?(false):(FD_ISSET(s->GetConnectionSocket(), &selectHandle.exceptFDS_done) != 0);
 }
 
-/** */
-fd_set &SocketSelect::ReadFDS() {
-    return readFDS_done;
-}
-
-/** */
-fd_set &SocketSelect::WriteFDS() {
-    return readFDS_done;
-}
-
-/** */
-fd_set &SocketSelect::ExceptFDS() {
-    return readFDS_done;
+SocketSelectCore &SocketSelect::FDSet() {
+    return selectHandle;
 }
 
 }

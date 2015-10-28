@@ -33,101 +33,153 @@
 /*---------------------------------------------------------------------------*/
 #include "TimeoutType.h"
 #include "BasicSocket.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketSelectCore.h)
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+namespace MARTe {
 
-static const uint32 SELECT_WIDTH= 256u;
+    /**
+     * @brief the maximum number of checkable sockets.
+     */
+    static const int32 SELECT_WIDTH= 256;
 
+    /**
+     * @brief A class using to check if sockets are ready for a read, write operation or if
+     * an exception is throw.
+     */
+    class SocketSelect {
 
-/** Allows synchronising to a group of sockets.
-CAN ONLY SELECT SOCKETS FROM A SINGLE SOURCE TYPE. CANNOT MIX ATM and UDP (on NT only?) */
-class  SocketSelect {
+    public:
+        /**
+         * @brief Default constructor.
+         * @post
+         * The state of the sockets select mask is reset.
+         * readySockets = 0.
+         */
+        SocketSelect();
 
+        /**
+         * @brief Reset the state of the socket select mask.
+         * @post
+         * readySocket = 0.
+         */
+        void Reset();
 
-public:
-    /** */
-    SocketSelect();
+        /**
+         * @brief Set a specific socket to check when it is ready for write operations.
+         * @param[in] s is the socket to set.
+         */
+        void AddWaitOnWriteReady(const BasicSocket * const s);
 
-    /** */
-    void Reset();
+        /**
+         * @brief UnSet a specific socket from the checking when it is ready for write operations.
+         * @param[in] s is the socket to unset.
+         */
+        void DeleteWaitOnWriteReady(const BasicSocket * const s);
 
-    /** */
-    void AddWaitOnWriteReady(BasicSocket *s);
+        /**
+         * @brief Set a specific socket to check when it is ready for read operations.
+         * @param[in] s is the socket to set.
+         */
+        void AddWaitOnReadReady(const BasicSocket * const s);
 
-    /** */
-    void DeleteWaitOnWriteReady(BasicSocket *s);
+        /**
+         * @brief UnSet a specific socket from the checking when it is ready for read operations.
+         * @param[in] s is the socket to unset.
+         */
+        void DeleteWaitOnReadReady(const BasicSocket * const s);
 
-    /** */
-    void AddWaitOnReadReady(BasicSocket *s);
+        /**
+         * @brief Set a specific socket to check when an exception is throw.
+         * @param[in] s is the socket to set.
+         */
+        void AddWaitOnExceptReady(const BasicSocket * const s);
 
-    /** */
-    void DeleteWaitOnReadReady(BasicSocket *s);
+        /**
+         * @brief UnSet a specific socket from the checking for an exception.
+         * @param[in] s is the socket to unset.
+         */
+        void DeleteWaitOnExceptReady(const BasicSocket * const s);
 
-    /** */
-    void AddWaitOnExceptReady(BasicSocket *s);
+        /**
+         * @brief Wait for all the events within a timeout.
+         * @param[in] msecTimeout is the maximum time to wait for an event.
+         * @post
+         * readySocket is the number of the sockets when an event happened.
+         * @return true if at least one socket is ready before the timeout expire.
+         */
+        bool Wait(const TimeoutType &msecTimeout = TTInfiniteWait);
 
-    /** */
-    void DeleteWaitOnExceptReady(BasicSocket *s);
+        /**
+         * @brief Wait for all the read events within a timeout.
+         * @param[in] msecTimeout is the maximum time to wait for a read event.
+         * @post
+         * readySocket is the number of the sockets when a read event happened.
+         * @return true if at least one socket is ready before the timeout expire.
+         */
+        bool WaitRead(const TimeoutType &msecTimeout = TTInfiniteWait);
 
-    /** Wait for all the event*/
-    bool Wait(TimeoutType msecTimeout = TTInfiniteWait);
+        /**
+         * @brief Wait for all the write events within a timeout.
+         * @param[in] msecTimeout is the maximum time to wait for a write event.
+         * @post
+         * readySocket is the number of the sockets when a write event happened.
+         * @return true if at least one socket is ready before the timeout expire.
+         */
+        bool WaitWrite(const TimeoutType &msecTimeout = TTInfiniteWait);
 
-    /** wait for data on the input */
-    bool WaitRead(TimeoutType msecTimeout = TTInfiniteWait);
+        /**
+         * @brief Wait for all the exception events within a timeout.
+         * @param[in] msecTimeout is the maximum time to wait for an exception.
+         * @post
+         * readySocket is the number of the sockets when an exception happened.
+         * @return true if at least one socket is ready before the timeout expire.
+         */
+        bool WaitExcept(const TimeoutType &msecTimeout = TTInfiniteWait);
 
-    /** wait on free space on the output buffer*/
-    bool WaitWrite(TimeoutType msecTimeout = TTInfiniteWait);
+        /**
+         * @brief Retrieve the number of ready sockets for the specified operation requested.
+         */
+        int32 ReadySockets() const;
 
-    /** wait for an exception */
-    bool WaitExcept(TimeoutType msecTimeout = TTInfiniteWait);
+        /**
+         * @brief Check if a socket is ready for a read operation.
+         * @param[in] s is the socket to check.
+         */
+        bool CheckRead(const BasicSocket * const s);
 
-    /** */
-    int32 ReadySockets();
+        /**
+         * @brief Check if a socket is ready for a write operation.
+         * @param[in] s is the socket to check.
+         */
+        bool CheckWrite(const BasicSocket * const s);
 
-    /** */
-    bool CheckRead(BasicSocket *s);
+        /**
+         * @brief Check if an exception is throw on the specified socket.
+         * @param[in] s is the socket to check.
+         */
+        bool CheckExcept(const BasicSocket * const s);
 
-    /** */
-    bool CheckWrite(BasicSocket *s);
+        /**
+         * @brief Return the mask of the set sockets.
+         */
+        SocketSelectCore &FDSet();
 
-    /** */
-    bool CheckExcept(BasicSocket *s);
+    private:
 
-    /** */
-    fd_set &ReadFDS();
+        /**
+         * The SocketSelect handle
+         */
+        SocketSelectCore selectHandle;
 
-    /** */
-    fd_set &WriteFDS();
+        /**
+         * The number of ready sockets.
+         */
+        int32 readySockets;
 
-    /** */
-    fd_set &ExceptFDS();
-
-
-private:
-    /** */
-    fd_set readFDS;
-
-    /** */
-    fd_set writeFDS;
-
-    /** */
-    fd_set exceptFDS;
-
-    /** */
-    fd_set readFDS_done;
-
-    /** */
-    fd_set writeFDS_done;
-
-    /** */
-    fd_set exceptFDS_done;
-
-    /** */
-    int32 readySockets;
-
-};
+    };
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
