@@ -38,6 +38,7 @@
 #include "InternetAddress.h"
 #include "Sleep.h"
 #include "FastPollingMutexSem.h"
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -91,7 +92,7 @@ private:
     bool internetAddressInfoInitialised;
     FastPollingMutexSem internalFastSem;
 
-    /*lint -e{1704} .Justification: The constructor is private because this is a single specification.*/
+    /*lint -e{1704} .Justification: The constructor is private because this is a singleton.*/
     InternetAddressInfo():localAddress(static_cast<const char8*>(NULL)),ipNumber(static_cast<const char8*>(NULL)),internetAddressInfoInitialised(false),internalFastSem() {
         Init();
     }
@@ -100,7 +101,7 @@ private:
         if (!internetAddressInfoInitialised) {
 
             if(internalFastSem.FastLock()!=ErrorManagement::NoError) {
-                //TODO
+                REPORT_ERROR(ErrorManagement::FatalError,"Error: Failed FastPollingMutexSem::FastLock() in initialization of local address");
             }
 
             localAddress = static_cast<const char8*>(NULL);
@@ -122,6 +123,9 @@ private:
                 internetAddressInfoInitialised = true;
                 internalFastSem.FastUnLock();
             }
+            else{
+                REPORT_ERROR(ErrorManagement::FatalError,"Error: Failed local address initialization");
+            }
         }
         return;
     }
@@ -132,11 +136,11 @@ private:
 String InternetAddress::GetHostName() const {
 
     if (hostnameFastSem.FastLock() != ErrorManagement::NoError) {
-        //TODO
+        REPORT_ERROR(ErrorManagement::FatalError,"Error: Failed FastPollingMutexSem::FastLock() in initialization of local address");
     }
     String hostName = GetDotName();
 
-    /*lint -e{923} [MISRA C++ Rule 5-2-7], [MISRA C++ Rule 5-2-8]. Justification: Cast from unsigned int to pointer required by this implementation.*/
+    /*lint -e{923} [MISRA C++ Rule 5-2-7], [MISRA C++ Rule 5-2-8]. Justification: Cast from unsigned integer to pointer required by this implementation.*/
     struct hostent *h = gethostbyaddr(reinterpret_cast<char8 *>(address.sin_addr.s_addr), 4u, AF_INET);
 
 // what's the point ??
@@ -145,6 +149,9 @@ String InternetAddress::GetHostName() const {
 
     if (h != NULL) {
         hostName = h->h_name;
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed gethostbyaddr()");
     }
     hostnameFastSem.FastUnLock();
 
@@ -180,7 +187,7 @@ InternetAddress::InternetAddress(const uint16 port,
 
     address.sin_family = static_cast<uint16>(AF_INET);
     SetPort(port);
-    /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the os low level function.*/
+    /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
     address.sin_addr.s_addr = INADDR_ANY;
     if (addr != NULL) {
         address.sin_addr.s_addr = inet_addr(const_cast<char8 *>(addr));
@@ -209,7 +216,7 @@ void InternetAddress::SetPort(const uint16 port) {
 
 
 bool InternetAddress::SetAddressByDotName(const char8 * const addr) {
-    /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the os low level function.*/
+    /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
     address.sin_addr.s_addr = INADDR_ANY;
     bool ret = (addr != NULL);
 
@@ -220,6 +227,8 @@ bool InternetAddress::SetAddressByDotName(const char8 * const addr) {
             address.sin_addr.s_addr = iaddr;
         }
         else {
+            REPORT_ERROR(ErrorManagement::OSError,"Error: Failed inet_addr()");
+
             ret = false;
         }
     }
@@ -236,6 +245,10 @@ bool InternetAddress::SetAddressByName(const char8 * hostName) {
     if (h != NULL) {
         address.sin_addr.s_addr = *(reinterpret_cast<uint32 *>(h->h_addr_list[0]));
         ret= true;
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed gethostbyname()");
+
     }
     return ret;
 }
