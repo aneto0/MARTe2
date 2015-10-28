@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=  DoubleIntegerGTest.x \
+OBJSX= InternetHostGTest.x
+#DoubleIntegerGTest.x \
 		TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
@@ -76,7 +77,7 @@ OBJSX=  DoubleIntegerGTest.x \
         StreamMemoryReferenceGTest.x \
         BufferedStreamIGTest.x \
         IOBufferGTest.x \
-        BitSetToIntegerGTest.x
+        BitSetToIntegerGTest.x \
 
 	
 	
@@ -94,11 +95,13 @@ INCLUDES += -I../Core/BareMetal/L1Portability
 INCLUDES += -I../Core/BareMetal/L2Objects
 INCLUDES += -I../Core/BareMetal/L3Streams
 INCLUDES += -I../Core/Scheduler/L1Portability
+INCLUDES += -I../Core/FileSystem/L1Portability
 INCLUDES += -I../../Source/Core/BareMetal/L0Types
 INCLUDES += -I../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../Source/Core/Scheduler/L1Portability
+INCLUDES += -I../../Source/Core/FileSystem/L1Portability
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 all: $(OBJS)    \

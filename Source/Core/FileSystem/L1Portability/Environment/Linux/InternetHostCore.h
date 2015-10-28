@@ -1,7 +1,7 @@
 /**
- * @file InternetAddressCore.h
- * @brief Header file for class InternetAddressCore
- * @date 27/10/2015
+ * @file InternetHostCore.h
+ * @brief Header file for class InternetHostCore
+ * @date 28/10/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,14 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class InternetAddressCore
+ * @details This header file contains the declaration of the class InternetHostCore
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef INTERNETADDRESSCORE_H_
-#define INTERNETADDRESSCORE_H_
+#ifndef INTERNETHOSTCORE_H_
+#define INTERNETHOSTCORE_H_
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -43,12 +44,12 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe{
 
-typedef sockaddr_in InternetAddressCore;
+typedef sockaddr_in InternetHostCore;
 
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* INTERNETADDRESSCORE_H_ */
+#endif /* INTERNETHOSTCORE_H_ */
 

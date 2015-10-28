@@ -24,13 +24,13 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <netdb.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "InternetService.h"
-#include <netdb.h>
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,6 +49,9 @@ bool InternetService::SearchByName(const char8 * const name,
 
         service = *serv;
     }
+    else{
+        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed getservbyname()");
+    }
     return ret;
 
 }
@@ -59,6 +62,10 @@ bool InternetService::SearchByPort(const int32 port,
     bool ret = (serv != NULL);
     if (ret) {
         service = *serv;
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed getservbyport()");
+
     }
     return ret;
 
@@ -78,10 +85,8 @@ const char8 *InternetService::Protocol() const {
 
 int32 InternetService::GetPortByName(const char8 * const name) {
     InternetService serviceT;
-    if(serviceT.SearchByName(name)){
-       //TODO
-    }
-    return serviceT.Port();
+
+    return (serviceT.SearchByName(name))?(serviceT.Port()):(-1);
 }
 
 }

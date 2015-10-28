@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "InternetAddress.h"
+#include "InternetHost.h"
 #include "StreamI.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketCore.h)
 
@@ -82,14 +82,14 @@ namespace MARTe {
         bool Close();
 
         /**
-         * @brief Full access to the source host InternetAddress structure.
+         * @brief Full access to the source host InternetHost structure.
          */
-        InternetAddress &GetSource();
+        InternetHost &GetSource();
 
         /**
-         * @brief Full access to the destination host InternetAddress structure.
+         * @brief Full access to the destination host InternetHost structure.
          */
-        InternetAddress &GetDestination();
+        InternetHost &GetDestination();
 
         /*
          * @brief Retrieves the socket handle.
@@ -98,17 +98,17 @@ namespace MARTe {
 
         /**
          * @brief Sets the destination host parameters.
-         * @param[in] destinationIn is an InternetAddress which contains all the
+         * @param[in] destinationIn is an InternetHost which contains all the
          * necessary informations for the destination host handling.
          */
-        void SetDestination(const InternetAddress &destinationIn);
+        void SetDestination(const InternetHost &destinationIn);
 
         /**
          * @brief Sets the source host parameters.
-         * @param[in] sourceIn is an InternetAddress which contains all the
+         * @param[in] sourceIn is an InternetHost which contains all the
          * necessary informations for the source host handling.
          */
-        void SetSource(const InternetAddress &sourceIn);
+        void SetSource(const InternetHost &sourceIn);
 
         /**
          * @brief Sets the socket handle.
@@ -121,12 +121,12 @@ namespace MARTe {
         /**
          * Where the packets go to
          */
-        InternetAddress destination;
+        InternetHost destination;
 
         /**
          * Where packets come from
          */
-        InternetAddress source;
+        InternetHost source;
 
         /**
          * The socket handle
