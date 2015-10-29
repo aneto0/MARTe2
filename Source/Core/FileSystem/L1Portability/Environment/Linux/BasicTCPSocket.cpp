@@ -80,16 +80,6 @@ BasicTCPSocket::~BasicTCPSocket() {
 
 }
 
-BasicTCPSocket::BasicTCPSocket(const int32 socketIn) :
-        BasicSocket() {
-    /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: C-style cast made at operating system API.*/
-    /*lint -e{923} [MISRA C++ Rule 5-2-7]. Justification: cast from integer to pointer made at operating system API level. */
-    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed signal() trying to ignore SIGPIPE signal");
-    }
-    SetConnectionSocket(socketIn);
-}
-
 bool BasicTCPSocket::Open() {
 
     /*lint e{641} .Justification: The function socket returns an integer.*/
@@ -223,7 +213,8 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &msecTimeout,
     BasicTCPSocket *ret = static_cast<BasicTCPSocket *>(NULL);
     if (newSocket != -1) {
         if (client == NULL) {
-            client = new BasicTCPSocket(newSocket);
+            client = new BasicTCPSocket();
+            client->SetConnectionSocket(newSocket);
         }
         client->SetDestination(GetSource());
         client->SetSource(GetDestination()); /////

@@ -110,6 +110,8 @@ namespace MARTe {
          */
         void SetSource(const InternetHost &sourceIn);
 
+
+    protected:
         /**
          * @brief Sets the socket handle.
          * @param[in] connectionSocketIn is the socket handle to set.
