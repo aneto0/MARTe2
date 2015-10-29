@@ -99,11 +99,6 @@ public:
     bool TestGetLocalAddress();
 
     /**
-     * @brief Tests if the socket is initialized.
-     */
-    bool TestSocketInit();
-
-    /**
      * @brief Tests if the local IP in number format is returned.
      */
     bool TestGetLocalAddressAsNumber();

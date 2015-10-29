@@ -155,8 +155,6 @@ String InternetHost::GetHostName() const {
     return (hostName.Size() == 0u) ? (static_cast<const char8 *>(NULL)):(hostName);
 }
 
-void InternetHost::SocketInit() {
-}
 
 const char8 *InternetHost::GetLocalHostName() {
     return LocalHostInfo::Instance()->GetLocalAddress();
