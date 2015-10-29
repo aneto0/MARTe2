@@ -55,13 +55,6 @@ public:
     BasicUDPSocket();
 
     /**
-     * @brief Copy constructor.
-     * @post
-     * BasicSocket(socketIn)
-     */
-    BasicUDPSocket(const SocketCore socketIn = 0);
-
-    /**
      * @brief Destructor.
      */
     virtual ~BasicUDPSocket();
@@ -96,8 +89,7 @@ public:
      * @param[in] port is the port number in input.
      * @param[in] maxConnection is the maximum number of pending connection requests in the queue.
      */
-    bool Listen(const uint16 port,
-                const int32 maxConnections = 1);
+    bool Listen(const uint16 port);
 
     /**
      * @brief Select the destination of next sends.
