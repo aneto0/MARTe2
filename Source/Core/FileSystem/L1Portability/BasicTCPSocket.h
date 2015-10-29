@@ -62,6 +62,7 @@ public:
      * @brief Read without timeout.
      * @param[out] output is the buffer where the read data must be stored.
      * @param [in,out] size is the number of bytes to read.
+     * @return false in case of errors.
      * @post size is the number of read bytes.
      */
     virtual bool Read(char8* const output,
@@ -71,6 +72,7 @@ public:
      * @brief Write without timeout.
      * @param[in] input is the buffer which contains the data to be written.
      * @param[in,out] size is the number of bytes to write.
+     * @return false in case of errors.
      * @post size is the number of written bytes
      */
     virtual bool Write(const char8* const input,
@@ -80,7 +82,8 @@ public:
      * @brief Read with timeout.
      * @param[out] output is the buffer where the read data must be stored.
      * @param [in,out] size is the number of bytes to read.
-     * @param[in] timeout is the desired timeout.
+     * @param[in] timeout is the desired timeout in milliseconds.
+     * @return false in case of errors or timeout.
      * @post size is the number of read bytes.
      */
     virtual bool Read(char8* const output,
@@ -92,6 +95,7 @@ public:
      * @param[in] input is the buffer which contains the data to be written.
      * @param[in,out] size is the number of bytes to write.
      * @param[in] timeout is the desired timeout.
+     * @return false in case of errors or timeout.
      * @post size is the number of read bytes.
      */
     virtual bool Write(const char8* const input,
@@ -150,6 +154,7 @@ public:
      * @brief Read without removing data from the socket pipe.
      * @param[out] buffer is the buffer used to store the read data.
      * @param[in,out] size is the number of bytes to read.
+     * @return false in case of errors.
      * @post size is the number of read bytes.
      */
     bool Peek(char8 * const buffer,
@@ -157,6 +162,7 @@ public:
 
     /**
      * @brief Opens a stream socket
+     * @return false if the socket can't be opened.
      */
     bool Open();
 
@@ -164,6 +170,7 @@ public:
      * @brief Listen for a connection on a specific port. (server function)
      * @param[in] port is the listen port.
      * @param[in] maxConnections is the size of the pending connections queue not accepted yet.
+     * @return false in case of errors.
      */
     bool Listen(const uint16 port,
                 const int32 maxConnections = 1) const;
@@ -172,6 +179,7 @@ public:
      * @brief Listen for a connection on the port specified by the internet service in input. (server function)
      * @param[in] serviceName is the internet service in input.
      * @param[in] maxConnections is the size of the pending connections queue not accepted yet.
+     * @return false in case of errors.
      */
     bool Listen(const char8 * const serviceName,
                 const int32 maxConnections = 1) const;
@@ -182,6 +190,7 @@ public:
      * @param[in] port is the server port.
      * @param[in] timeout is the desired timeout.
      * @param[in] retry is the maximum number of times to call the connect function in case of interruptions.
+     * @return false in case of errors.
      */
     bool Connect(const char8 * const address,
                  const uint16 port,
@@ -193,6 +202,7 @@ public:
      * @param[in] address is the IP address of the server.
      * @param[in] port is the server service name.
      * @param[in] timeout is the desired timeout.
+     * @return false in case of error.
      */
     bool Connect(const char8 * const address,
                  const char8 * const serviceName,
