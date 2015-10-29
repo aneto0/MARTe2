@@ -101,7 +101,7 @@ public:
     static const char8 *GetLocalAddress();
 
     /**
-     * @brief Initializes the socket.
+     * @brief Initialises the socket.
      */
     static void SocketInit();
 
