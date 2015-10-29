@@ -101,10 +101,8 @@ bool BasicUDPSocket::Open() {
 }
 
 
-/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the parameter maxConnections is not necessary in this implementation.*/
 /*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
-bool BasicUDPSocket::Listen(const uint16 port,
-                            const int32 maxConnections) {
+bool BasicUDPSocket::Listen(const uint16 port) {
     InternetHost server;
     server.SetPort(port);
 
@@ -124,8 +122,8 @@ bool BasicUDPSocket::Connect(const char8 * const address,
     return ret;
 }
 
-bool BasicUDPSocket::Connect(const InternetHost &dest) {
-    SetDestination(dest);
+bool BasicUDPSocket::Connect(const InternetHost &address) {
+    SetDestination(address);
     return true;
 }
 
