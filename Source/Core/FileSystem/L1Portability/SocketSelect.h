@@ -40,10 +40,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-    /**
-     * @brief the maximum number of checkable sockets.
-     */
-    static const int32 SELECT_WIDTH= 256;
+
 
     /**
      * @brief A class using to check if sockets are ready for a read, write operation or if
@@ -162,10 +159,6 @@ namespace MARTe {
          */
         bool CheckExcept(const BasicSocket * const s);
 
-        /**
-         * @brief Return the mask of the set sockets.
-         */
-        SocketSelectCore &FDSet();
 
     private:
 

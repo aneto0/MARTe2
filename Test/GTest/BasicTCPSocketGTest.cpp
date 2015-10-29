@@ -1,7 +1,7 @@
 /**
- * @file BasicSocket.cpp
- * @brief Source file for class BasicSocket
- * @date 26/10/2015
+ * @file BasicTCPSocketGTest.cpp
+ * @brief Source file for class BasicTCPSocketGTest
+ * @date 29/10/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,26 +17,23 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class BasicSocket (public, protected, and private). Be aware that some 
+ * the class BasicTCPSocketGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <sys/socket.h>
-#include <net/if.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
+
+#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "BasicSocket.h"
-#include "ErrorManagement.h"
+#include "gtest/gtest.h"
+#include "BasicTCPSocketTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -45,66 +42,48 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
-BasicSocket::BasicSocket() :
-        StreamI() {
-    connectionSocket = -1;
+TEST(BasicTCPSocketGTest,TesDefaultConstructor) {
+    BasicTCPSocketTest basicTCPSocketTest;
+    ASSERT_TRUE(basicTCPSocketTest.TestDefaultConstructor());
 }
 
-/*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
-BasicSocket::~BasicSocket() {
-    if (!Close()) {
-        //TODO
-    }
+TEST(BasicTCPSocketGTest,TestSeek) {
+    BasicTCPSocketTest basicTCPSocketTest;
+    ASSERT_TRUE(basicTCPSocketTest.TestSeek());
 }
 
-bool BasicSocket::SetBlocking(const bool flag) const {
-    int32 ret = -1;
-    if (IsValid()) {
-        int32 stat = 0;
-        if (flag) {
-            stat = 0;
-        }
-        else {
-            stat = 1;
-        }
-
-        ret = ioctl(connectionSocket, static_cast<osulong>(FIONBIO), reinterpret_cast<char8 *>(&stat), sizeof(stat));
-    }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is invalid");
-    }
-    return (ret >= 0);
+TEST(BasicTCPSocketGTest,TestSize) {
+    BasicTCPSocketTest basicTCPSocketTest;
+    ASSERT_TRUE(basicTCPSocketTest.TestSize());
 }
 
-bool BasicSocket::Close() {
-    int32 ret = -1;
-    if (IsValid()) {
-        ret = close(connectionSocket);
-        connectionSocket = -1;
-    }
-    return (ret >= 0);
+TEST(BasicTCPSocketGTest,TestRelativeSeek) {
+    BasicTCPSocketTest basicTCPSocketTest;
+    ASSERT_TRUE(basicTCPSocketTest.TestRelativeSeek());
 }
 
-InternetHost BasicSocket::GetSource() const{
-    return source;
+TEST(BasicTCPSocketGTest,TestPosition) {
+    BasicTCPSocketTest basicTCPSocketTest;
+    ASSERT_TRUE(basicTCPSocketTest.TestPosition());
 }
 
-InternetHost BasicSocket::GetDestination() const{
-    return destination;
+TEST(BasicTCPSocketGTest,TestSetSize) {
+    BasicTCPSocketTest basicTCPSocketTest;
+    ASSERT_TRUE(basicTCPSocketTest.TestSetSize());
 }
 
-void BasicSocket::SetDestination(const InternetHost &destinationIn) {
-    destination = destinationIn;
+TEST(BasicTCPSocketGTest,TestCanWrite) {
+    BasicTCPSocketTest basicTCPSocketTest;
+    ASSERT_TRUE(basicTCPSocketTest.TestCanWrite());
 }
 
-void BasicSocket::SetSource(const InternetHost &sourceIn) {
-    source = sourceIn;
+TEST(BasicTCPSocketGTest,TestCanRead) {
+    BasicTCPSocketTest basicTCPSocketTest;
+    ASSERT_TRUE(basicTCPSocketTest.TestCanRead());
 }
 
-bool BasicSocket::IsValid() const {
-    return (connectionSocket >= 0);
+TEST(BasicTCPSocketGTest,TestCanSeek) {
+    BasicTCPSocketTest basicTCPSocketTest;
+    ASSERT_TRUE(basicTCPSocketTest.TestCanSeek());
 }
 
-}

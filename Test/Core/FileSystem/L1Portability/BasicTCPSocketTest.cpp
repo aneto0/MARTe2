@@ -1,7 +1,7 @@
 /**
- * @file BasicSocket.cpp
- * @brief Source file for class BasicSocket
- * @date 26/10/2015
+ * @file BasicTCPSocketTest.cpp
+ * @brief Source file for class BasicTCPSocketTest
+ * @date 29/10/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,26 +17,20 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class BasicSocket (public, protected, and private). Be aware that some 
+ * the class BasicTCPSocketTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <sys/socket.h>
-#include <net/if.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "BasicSocket.h"
-#include "ErrorManagement.h"
+#include "BasicTCPSocketTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -45,66 +39,70 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+using namespace MARTe;
 
-BasicSocket::BasicSocket() :
-        StreamI() {
-    connectionSocket = -1;
-}
+bool BasicTCPSocketTest::TestDefaultConstructor() {
 
-/*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
-BasicSocket::~BasicSocket() {
-    if (!Close()) {
-        //TODO
+    BasicTCPSocket basicTCPSocket;
+
+    if (basicTCPSocket.GetDestination().GetAddress() != "0.0.0.0") {
+        return false;
     }
-}
 
-bool BasicSocket::SetBlocking(const bool flag) const {
-    int32 ret = -1;
-    if (IsValid()) {
-        int32 stat = 0;
-        if (flag) {
-            stat = 0;
-        }
-        else {
-            stat = 1;
-        }
-
-        ret = ioctl(connectionSocket, static_cast<osulong>(FIONBIO), reinterpret_cast<char8 *>(&stat), sizeof(stat));
+    if (basicTCPSocket.GetDestination().GetPort() != 0) {
+        return false;
     }
-    else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is invalid");
+
+    if (basicTCPSocket.GetSource().GetAddress() != "0.0.0.0") {
+        return false;
     }
-    return (ret >= 0);
-}
 
-bool BasicSocket::Close() {
-    int32 ret = -1;
-    if (IsValid()) {
-        ret = close(connectionSocket);
-        connectionSocket = -1;
+    if (basicTCPSocket.GetSource().GetPort() != 0) {
+        return false;
     }
-    return (ret >= 0);
-}
 
-InternetHost BasicSocket::GetSource() const{
-    return source;
-}
-
-InternetHost BasicSocket::GetDestination() const{
-    return destination;
-}
-
-void BasicSocket::SetDestination(const InternetHost &destinationIn) {
-    destination = destinationIn;
-}
-
-void BasicSocket::SetSource(const InternetHost &sourceIn) {
-    source = sourceIn;
-}
-
-bool BasicSocket::IsValid() const {
-    return (connectionSocket >= 0);
-}
+    return !basicTCPSocket.IsValid();
 
 }
+
+bool BasicTCPSocketTest::TestSeek() {
+    BasicTCPSocket basicTCPSocket;
+    return !basicTCPSocket.Seek(0);
+}
+
+bool BasicTCPSocketTest::TestSize() {
+    BasicTCPSocket basicTCPSocket;
+    return basicTCPSocket.Size() == 0xffffffffffffffff;
+}
+
+bool BasicTCPSocketTest::TestRelativeSeek() {
+    BasicTCPSocket basicTCPSocket;
+    return !basicTCPSocket.RelativeSeek(0);
+}
+
+bool BasicTCPSocketTest::TestPosition() {
+    BasicTCPSocket basicTCPSocket;
+    return basicTCPSocket.Position() == 0xffffffffffffffff;
+}
+
+bool BasicTCPSocketTest::TestSetSize() {
+    BasicTCPSocket basicTCPSocket;
+    return !basicTCPSocket.SetSize(1);
+}
+
+bool BasicTCPSocketTest::TestCanWrite() {
+    BasicTCPSocket basicTCPSocket;
+    return basicTCPSocket.CanWrite();
+}
+
+bool BasicTCPSocketTest::TestCanRead() {
+
+    BasicTCPSocket basicTCPSocket;
+    return basicTCPSocket.CanRead();
+}
+
+bool BasicTCPSocketTest::TestCanSeek() {
+    BasicTCPSocket basicTCPSocket;
+    return !basicTCPSocket.CanSeek();
+}
+

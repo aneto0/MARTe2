@@ -32,7 +32,6 @@
 #include <netdb.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-#include <errno.h>
 #include <sys/time.h>
 
 /*---------------------------------------------------------------------------*/
@@ -40,6 +39,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "SocketSelect.h"
+#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -51,6 +51,10 @@
 
 namespace MARTe {
 
+
+static const int32 SELECT_WIDTH= 256;
+
+/*lint -e{1566} . Justification: The object is initialized called another function */
 SocketSelect::SocketSelect() {
     Reset();
 }
@@ -67,47 +71,99 @@ void SocketSelect::Reset() {
     readySockets = 0;
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 void SocketSelect::AddWaitOnWriteReady(const BasicSocket * const s) {
     if (s != NULL) {
-
-        FD_SET(s->connectionSocket, &selectHandle.writeFDS);
+        if(s->IsValid()) {
+            FD_SET(s->connectionSocket, &selectHandle.writeFDS);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
     }
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+/*lint -e{970} -e{502} -e{1924} -e{9130} -e{731} -e{703} -e{666}  . Justification: Operating system API are not linted.*/
 void SocketSelect::DeleteWaitOnWriteReady(const BasicSocket * const s) {
     if (s != NULL) {
-        FD_CLR(s->connectionSocket, &selectHandle.writeFDS);
+        if(s->IsValid()) {
+            FD_CLR(s->connectionSocket, &selectHandle.writeFDS);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+        }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+    }
+
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 void SocketSelect::AddWaitOnReadReady(const BasicSocket * const s) {
     if (s != NULL) {
-        FD_SET(s->connectionSocket, &selectHandle.readFDS);
+        if(s->IsValid()) {
+            FD_SET(s->connectionSocket, &selectHandle.readFDS);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+        }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+    }
+
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+/*lint -e{970} -e{502} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 void SocketSelect::DeleteWaitOnReadReady(const BasicSocket * const s) {
     if (s != NULL) {
-        FD_CLR(s->connectionSocket, &selectHandle.readFDS);
+        if(s->IsValid()) {
+            FD_CLR(s->connectionSocket, &selectHandle.readFDS);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+        }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+    }
+
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 void SocketSelect::AddWaitOnExceptReady(const BasicSocket * const s) {
     if (s != NULL) {
-        FD_SET(s->connectionSocket, &selectHandle.exceptFDS);
+        if(s->IsValid()) {
+            FD_SET(s->connectionSocket, &selectHandle.exceptFDS);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+        }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+    }
+
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} e{666} . Justification: Operating system API are not linted.*/
+/*lint -e{970} -e{502} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 void SocketSelect::DeleteWaitOnExceptReady(const BasicSocket * const s) {
     if (s != NULL) {
-        FD_CLR(s->connectionSocket, &selectHandle.exceptFDS);
+        if(s->IsValid()) {
+            FD_CLR(s->connectionSocket, &selectHandle.exceptFDS);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+        }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+    }
+
 }
 
 bool SocketSelect::Wait(const TimeoutType &msecTimeout) {
@@ -192,23 +248,62 @@ int32 SocketSelect::ReadySockets() const {
 /*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 /*lint -e{1762} [MISRA C++ Rule 9-3-3]. Justification: Another Operating system could have another implementation of this function. */
 bool SocketSelect::CheckRead(const BasicSocket * const s) {
-    return (s == NULL)?(false):(FD_ISSET(s->connectionSocket, &selectHandle.readFDS_done) != 0);
+
+    bool ret = false;
+    if (s != NULL) {
+        if(s->IsValid()) {
+            ret=FD_ISSET(s->connectionSocket, &selectHandle.readFDS_done);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+    }
+
+    return ret;
 }
 
 /*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 /*lint -e{1762} [MISRA C++ Rule 9-3-3]. Justification: Another Operating system could have another implementation of this function. */
 bool SocketSelect::CheckWrite(const BasicSocket * const s) {
-    return (s == NULL)?(false):(FD_ISSET(s->connectionSocket, &selectHandle.writeFDS_done) != 0);
+
+    bool ret = false;
+    if (s != NULL) {
+        if(s->IsValid()) {
+            ret=FD_ISSET(s->connectionSocket, &selectHandle.writeFDS_done);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+    }
+
+    return ret;
 }
 
 /*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 /*lint -e{1762} [MISRA C++ Rule 9-3-3]. Justification: Another Operating system could have another implementation of this function. */
 bool SocketSelect::CheckExcept(const BasicSocket * const s) {
-    return (s == NULL)?(false):(FD_ISSET(s->connectionSocket, &selectHandle.exceptFDS_done) != 0);
+
+    bool ret = false;
+    if (s != NULL) {
+        if(s->IsValid()) {
+            ret=FD_ISSET(s->connectionSocket, &selectHandle.exceptFDS_done);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+    }
+
+    return ret;
 }
 
-SocketSelectCore &SocketSelect::FDSet() {
-    return selectHandle;
-}
 
 }

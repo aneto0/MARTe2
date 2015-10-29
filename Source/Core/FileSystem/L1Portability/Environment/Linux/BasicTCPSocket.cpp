@@ -68,9 +68,8 @@ BasicTCPSocket::~BasicTCPSocket() {
 
 }
 
+/*lint -e{641} .Justification: The function socket returns an integer.*/
 bool BasicTCPSocket::Open() {
-
-    /*lint e{641} .Justification: The function socket returns an integer.*/
     connectionSocket = socket(PF_INET, SOCK_STREAM, 0);
     const int32 one = 1;
     bool ret = false;
@@ -303,7 +302,7 @@ bool BasicTCPSocket::Write(const char8* const input,
     bool ret = false;
     if (IsValid()) {
         int32 writtenBytes = static_cast<int32>(send(connectionSocket, input, static_cast<size_t>(size), 0));
-        bool ret = (writtenBytes >= 0);
+        ret = (writtenBytes >= 0);
         if (ret) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(writtenBytes);
@@ -356,29 +355,28 @@ bool BasicTCPSocket::Write(const char8* const input,
                            const TimeoutType &msecTimeout) {
     bool retVal = IsValid();
 
-    if(retVal){
-    struct timeval timeout;
-    /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeout.tv_sec = msecTimeout.GetTimeoutMSec() / 1000u;
-    /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeout.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
-    int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
+    if (retVal) {
+        struct timeval timeout;
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeout.tv_sec = msecTimeout.GetTimeoutMSec() / 1000u;
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeout.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+        int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
 
-
-    if (ret < 0) {
-        size = 0u;
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeout");
-        retVal = false;
+        if (ret < 0) {
+            size = 0u;
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeout");
+            retVal = false;
+        }
+        else {
+            retVal = Write(input, size);
+        }
+        if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeout))) < 0) {
+            REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() removing the socket timeout");
+            retVal = false;
+        }
     }
     else {
-        retVal = Write(input, size);
-    }
-    if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeout))) < 0) {
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() removing the socket timeout");
-        retVal = false;
-    }
-    }
-    else{
         REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
     return retVal;

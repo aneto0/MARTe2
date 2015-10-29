@@ -73,17 +73,17 @@ namespace MARTe {
          * @brief Closes the socket.
          * @return true if the socket is closed correctly, false otherwise.
          */
-        virtual bool Close();
+        bool Close();
 
         /**
          * @brief The source host InternetHost structure.
          */
-        InternetHost GetSource();
+        InternetHost GetSource() const;
 
         /**
          * @brief The destination host InternetHost structure.
          */
-        InternetHost GetDestination();
+        InternetHost GetDestination() const;
 
 
         /**
