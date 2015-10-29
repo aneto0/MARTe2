@@ -196,11 +196,9 @@ static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
  */
 static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 
 TypeDescriptor::TypeDescriptor(const uint16 x) {
     all = x;
@@ -223,9 +221,8 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
 }
 
 bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
-    bool ret1 = (structuredDataIdCode == typeDescriptor.structuredDataIdCode);
-    bool ret2 = (isStructuredData == typeDescriptor.isStructuredData);
-    return ret1 && ret2;
+    bool ret = (all && typeDescriptor.all);
+    return ret;
 }
 
 }

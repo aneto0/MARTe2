@@ -258,6 +258,11 @@ public:
     inline AnyType(const Object &obj);
 
     /**
+     * TODO
+     */
+    inline AnyType & operator=(const AnyType &src);
+
+    /**
      * @brief Constructor by BitBoolean.
      * @param[in] bitBool is the BitBoolean object input.
      */
@@ -332,12 +337,12 @@ public:
     /**
      * TODO
      */
-    inline virtual uint32 GetNumberOfDimensions() const;
+    inline uint32 GetNumberOfDimensions() const;
 
     /**
      * TODO
      */
-    inline virtual uint32 GetNumberOfElements(uint32 dimension) const;
+    inline uint32 GetNumberOfElements(uint32 dimension) const;
 
 protected:
 
@@ -359,6 +364,16 @@ protected:
      */
     uint8 bitAddress;
 
+    /**
+     * TODO
+     */
+    uint8 numberOfDimensions;
+
+    /**
+     * TODO
+     */
+    uint32 numberOfElements[3];
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -369,6 +384,10 @@ AnyType::AnyType(void) {
     dataPointer = static_cast<void *>(NULL);
     bitAddress = 0u;
     dataDescriptor = VoidType;
+    numberOfDimensions = 0u;
+    numberOfElements[0] = 0u;
+    numberOfElements[1] = 0u;
+    numberOfElements[2] = 0u;
 }
 
 AnyType::AnyType(const AnyType &x) {
@@ -376,6 +395,13 @@ AnyType::AnyType(const AnyType &x) {
     this->dataPointer = x.dataPointer;
     this->bitAddress = x.bitAddress;
     this->dataDescriptor = x.dataDescriptor;
+    printf("->HERE\n");
+    this->numberOfDimensions = x.numberOfDimensions;
+    this->numberOfElements[0] = x.numberOfElements[0];
+    this->numberOfElements[1] = x.numberOfElements[1];
+    this->numberOfElements[2] = x.numberOfElements[2];
+    printf("HERE<-%d\n", this->numberOfDimensions);
+    printf("HERE<-%d\n", this->numberOfElements[0]);
 }
 
 AnyType::AnyType(const TypeDescriptor &dataDescriptorIn,
@@ -517,6 +543,10 @@ AnyType::AnyType(float32 &i) {
     dataPointer = static_cast<void *>(&i);
     bitAddress = 0u;
     dataDescriptor = Float32Bit;
+    numberOfDimensions = 0u;
+    numberOfElements[0] = 0u;
+    numberOfElements[1] = 0u;
+    numberOfElements[2] = 0u;
 }
 
 AnyType::AnyType(const float32 &i) {
@@ -524,6 +554,10 @@ AnyType::AnyType(const float32 &i) {
     bitAddress = 0u;
     dataDescriptor = Float32Bit;
     dataDescriptor.isConstant = true;
+    numberOfDimensions = 0u;
+    numberOfElements[0] = 0u;
+    numberOfElements[1] = 0u;
+    numberOfElements[2] = 0u;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -568,6 +602,22 @@ AnyType::AnyType(const char8 * const p) {
     dataDescriptor.isConstant = true;
     dataDescriptor.type = CCString;
     dataDescriptor.numberOfBits = sizeof(const char8*) * 8u;
+}
+
+AnyType &AnyType::operator=(const AnyType &src) {
+    if (this != &src) {
+        dataPointer = src.dataPointer;
+        bitAddress = src.bitAddress;
+        dataDescriptor = src.dataDescriptor;
+        printf(":-)->HERE\n");
+        numberOfDimensions = src.numberOfDimensions;
+        numberOfElements[0] = src.numberOfElements[0];
+        numberOfElements[1] = src.numberOfElements[1];
+        numberOfElements[2] = src.numberOfElements[2];
+        printf(":-)HERE<-%d\n", numberOfDimensions);
+        printf(":-)HERE<-%d\n", numberOfElements[0]);
+    }
+    return *this;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -691,11 +741,11 @@ uint8 AnyType::GetBitAddress() const {
 }
 
 uint32 AnyType::GetNumberOfDimensions() const {
-    return 0u;
+    return numberOfDimensions;
 }
 
 uint32 AnyType::GetNumberOfElements(uint32 dimension) const {
-    return 0u;
+    return numberOfElements[dimension];
 }
 
 /**

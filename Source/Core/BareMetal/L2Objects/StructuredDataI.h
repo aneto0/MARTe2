@@ -27,13 +27,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "AnyType.h"
-#include "ReferenceT.h"
-#include "ReferenceContainer.h"
-#include "ReferenceContainerFilterObjectName.h"
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "AnyType.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -45,19 +43,12 @@ namespace MARTe {
  * @brief TODO
  * @details TODO
  */
-//TODO
-class AnyType;
-
 class StructuredDataI {
 public:
     /**
      * TODO
      */
-    virtual bool ReadAnyType(const char * const name, AnyType &value) = 0;
-
-    template<typename T>
-        bool Read(const char * const name,
-                  T &value);
+    virtual bool Read(const char * const name, const AnyType &value) = 0;
 
     /**
      * TODO
@@ -90,28 +81,6 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-template<typename T>
-bool StructuredDataI::Read(const char * const name,
-                                 T &value) {
-
-    //TODO might need to use optimised filter which works only on leaf name
-    ReferenceContainerFilterObjectName filter(1, 0u, name);
-    ReferenceContainer resultSingle;
-    currentNode->Find(resultSingle, filter);
-    printf("Looking for %s in %s\n", name, currentNode->GetName());
-    bool ok = (resultSingle.Size() > 0);
-    if (ok) {
-        ReferenceT<AnyObject> objToRead = resultSingle.Get(0);
-        printf("Something was found: %s\n", objToRead->GetName());
-        AnyType anyTypeToConvert = value;
-        ok = TypeConvert(anyTypeToConvert, objToRead->GetType());
-        printf("Value is: %f\n", *(float32 *)objToRead->GetType().GetDataPointer());
-        value = *(static_cast<T *> (anyTypeToConvert.GetDataPointer()));
-    }
-
-    return ok;
-}
 }
 #endif /* CONFIGURATION_DATABASE_H_ */
 

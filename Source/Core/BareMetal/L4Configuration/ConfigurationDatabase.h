@@ -65,11 +65,8 @@ public:
     /**
      * TODO
      */
-    /*template<typename T>
-    bool Read(const char * const name,
-              T &value);*/
 
-    virtual bool ReadAnyType(const char * const name, AnyType &value);
+    virtual bool Read(const char * const name, const AnyType &value);
 
     /**
      * TODO
@@ -117,28 +114,6 @@ private:
     FastPollingMutexSem mux;
 
 };
-
-/*template<typename T>
-bool ConfigurationDatabase::Read(const char * const name,
-                                 T &value, uint32 nOfElementsDim1 = 0, uint32 nOfElementsDim2 = 0, uint32 nOfElementsDim3 = 0) {
-
-    //TODO might need to use optimised filter which works only on leaf name
-    ReferenceContainerFilterObjectName filter(1, 0u, name);
-    ReferenceContainer resultSingle;
-    currentNode->Find(resultSingle, filter);
-    printf("Looking for %s in %s\n", name, currentNode->GetName());
-    bool ok = (resultSingle.Size() > 0);
-    if (ok) {
-        ReferenceT<AnyObject> objToRead = resultSingle.Get(0);
-        printf("Something was found: %s\n", objToRead->GetName());
-        AnyType anyTypeToConvert = value;
-        ok = TypeConvert(anyTypeToConvert, objToRead->GetType());
-        printf("Value is: %f\n", *(float32 *)objToRead->GetType().GetDataPointer());
-        value = *(static_cast<T *> (anyTypeToConvert.GetDataPointer()));
-    }
-
-    return ok;
-}*/
 
 
 }

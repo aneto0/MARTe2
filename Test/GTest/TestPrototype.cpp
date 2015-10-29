@@ -28,12 +28,12 @@ int main(int argc,
 
     float32 fa[] = {1.2f, 2.0f, 3.0f};
     AnyVector v(fa);
-    ok &= cdb.Write("ArrayValues", fa);
+    ok &= cdb.Write("ArrayValues", v);
 
     float32 readV[3];
-    AnyVector arr(&readV[0]);
+    AnyVector arr(readV);
     printf("dataPointer = %p\n", readV);
-    ok &= cdb.ReadAnyType("ArrayValues", arr);
+    ok &= cdb.Read("ArrayValues", arr);
     printf("[%f][%f][%f]\n", readV[0], readV[1], readV[2]);
 
     return 0;

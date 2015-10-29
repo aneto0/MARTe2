@@ -39,8 +39,8 @@
 namespace MARTe {
 class AnyVector: public AnyType {
 public:
-    template<typename T>
-    AnyVector(T source[]);
+    template<typename T, uint32 size>
+    AnyVector(T(&source)[size]);
 
     template<typename T>
     void Load(T *source, uint32 nOfElements);
@@ -48,39 +48,35 @@ public:
     template<typename T>
     void Load(const T *source, uint32 nOfElements);
 
-    uint32 GetNumberOfDimensions() const {
-        return 1u;
-    }
-
-    uint32 GetNumberOfElements(uint32 dimension) const {
-        return numberOfElements;
-    }
-
-    uint32 numberOfElements;
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-template<typename T>
-AnyVector::AnyVector(T source[]) {
+
+
+template<typename T, uint32 size>
+AnyVector::AnyVector(T(&source)[size]) {
     dataPointer = static_cast<void *>(&source[0]);
     printf("dataPointer = %p\n", dataPointer);
     bitAddress = 0u;
     dataDescriptor.isConstant = false;
-    if(sizeof(dataPointer) > 0u){
+    numberOfDimensions = 1u;
+    if(size > 0u){
         AnyType descriptor(source[0]);
         dataDescriptor = descriptor.GetTypeDescriptor();
-        numberOfElements = sizeof(source) / (dataDescriptor.numberOfBits / 8u);
+        numberOfElements[0] = size;
+        printf("numberOfElements = %u\n", numberOfElements[0]);
     }
 }
 
 template<typename T>
 void AnyVector::Load(T *source, uint32 nOfElements) {
     dataPointer = static_cast<void *>(source);
-    numberOfElements = nOfElements;
+    numberOfElements[0] = nOfElements;
     bitAddress = 0u;
     dataDescriptor.isConstant = false;
+    numberOfDimensions = 1u;
     if(nOfElements > 0u){
         AnyType descriptor(source[0]);
         dataDescriptor = descriptor.GetTypeDescriptor();
@@ -93,6 +89,7 @@ void AnyVector::Load(const T *source, uint32 nOfElements) {
     numberOfElements = nOfElements;
     bitAddress = 0u;
     dataDescriptor.isConstant = true;
+    numberOfDimensions = 1u;
     if(nOfElements > 0u){
         AnyType descriptor(source[0]);
         dataDescriptor = descriptor.GetTypeDescriptor();

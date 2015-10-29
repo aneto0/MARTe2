@@ -57,13 +57,14 @@ bool AnyObject::Load(const AnyType &typeIn) {
     else {
         copySize = typeSize;
     }
-printf("copySize is %d\n", copySize);
     value = HeapManager::Malloc(copySize);
     if (!MemoryOperationsHelper::Copy(value, typeIn.GetDataPointer(), copySize)) {
         //TODO
     }
-    printf("AnyObject::Load:: Value is %f\n", *(float32 *) typeIn.GetDataPointer());
+    printf("HERE! %d\n", typeIn.GetNumberOfDimensions());
+    printf("HERE! %d\n", typeIn.GetNumberOfElements(0));
     type = typeIn;
+    printf("!HERE\n");
 }
 
 AnyObject::~AnyObject() {

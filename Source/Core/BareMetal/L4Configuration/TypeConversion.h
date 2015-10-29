@@ -29,6 +29,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AnyType.h"
 #include "FormatDescriptor.h"
+#include "MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -39,15 +40,36 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-static bool TypeConvert(AnyType &destination,
+static bool TypeConvert(const AnyType &destination,
                         const AnyType &source) {
-    if (source.GetNumberOfDimensions() == 0) {
-        destination = source;
+    bool ok = true;
+    uint16 t1 = source.GetTypeDescriptor().all;
+    uint16 t2 = destination.GetTypeDescriptor().all;
+    printf("source = %u destination = %u\n", t1, t2);
+    //TODO must check if the dimensions and the number of elements are the same...
+    if (destination.GetTypeDescriptor() == source.GetTypeDescriptor()) {
+        uint32 typeSize = source.GetTypeDescriptor().numberOfBits / 8u;
+        uint32 nOfDimensions = source.GetNumberOfDimensions();
+        uint32 copySize = 0u;
+        if (nOfDimensions > 0) {
+            uint32 i;
+            for (i = 0u; i < nOfDimensions; i++) {
+                printf("source.GetNumberOfElements(%d) = %d\n", i, source.GetNumberOfElements(i));
+                copySize += source.GetNumberOfElements(i) * typeSize;
+            }
+        }
+        else {
+            copySize = typeSize;
+        }
+        printf("copySize = [%d]\n", copySize);
+        if (!MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize)) {
+            ok = false;
+        }
     }
     else {
-
+        ok = false;
     }
-    return true;
+    return ok;
 }
 
 static bool TypeConvert(AnyType &destination,

@@ -38,6 +38,7 @@
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
 #include "StructuredDataI.h"
+#include "AnyType.h"
 
 namespace MARTe {
 /*---------------------------------------------------------------------------*/

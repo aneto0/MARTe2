@@ -77,8 +77,8 @@ bool ConfigurationDatabase::Copy(StructuredDataI &destination,
     return false;
 }
 
-bool ConfigurationDatabase::ReadAnyType(const char * const name,
-                                 AnyType &value) {
+bool ConfigurationDatabase::Read(const char * const name,
+                                 const AnyType &value) {
 
     //TODO might need to use optimised filter which works only on leaf name
     ReferenceContainerFilterObjectName filter(1, 0u, name);
@@ -89,13 +89,6 @@ bool ConfigurationDatabase::ReadAnyType(const char * const name,
     if (ok) {
         ReferenceT<AnyObject> objToRead = resultSingle.Get(0);
         ok = TypeConvert(value, objToRead->GetType());
-        printf("!!! Value is: %f\n", *(float32 *)value.GetDataPointer());
-        float32 *fff = (float32 *)value.GetDataPointer();
-        printf("!!! Value is: %p\n", value.GetDataPointer());
-        printf("!!! Value is: %f\n", fff[0]);
-        printf("!!! Value is: %f\n", fff[1]);
-        printf("!!! Value is: %f\n", fff[2]);
-
     }
 
     return ok;
