@@ -56,7 +56,7 @@ namespace MARTe {
 
 bool BasicTCPSocket::Peek(char8* const buffer,
                           uint32 &size) const {
-    int32 ret = static_cast<int32>(recv(GetConnectionSocket(), buffer, static_cast<size_t>(size), MSG_PEEK));
+    int32 ret = static_cast<int32>(recv(connectionSocket, buffer, static_cast<size_t>(size), MSG_PEEK));
     if (ret < 0) {
         size = 0u;
     }
@@ -80,25 +80,15 @@ BasicTCPSocket::~BasicTCPSocket() {
 
 }
 
-BasicTCPSocket::BasicTCPSocket(const int32 socketIn) :
-        BasicSocket() {
-    /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: C-style cast made at operating system API.*/
-    /*lint -e{923} [MISRA C++ Rule 5-2-7]. Justification: cast from integer to pointer made at operating system API level. */
-    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed signal() trying to ignore SIGPIPE signal");
-    }
-    SetConnectionSocket(socketIn);
-}
-
 bool BasicTCPSocket::Open() {
 
     /*lint e{641} .Justification: The function socket returns an integer.*/
-    SetConnectionSocket(socket(PF_INET, SOCK_STREAM, 0));
+    connectionSocket = socket(PF_INET, SOCK_STREAM, 0);
     const int32 one = 1;
     bool ret = false;
-    if (setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_REUSEADDR, &one, static_cast<uint32>(sizeof(one))) >= 0) {
+    if (setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, &one, static_cast<uint32>(sizeof(one))) >= 0) {
 
-        if (GetConnectionSocket() >= 0) {
+        if (connectionSocket >= 0) {
             ret = true;
         }
     }
@@ -114,11 +104,11 @@ bool BasicTCPSocket::Listen(const uint16 port,
     InternetHost server;
 
     server.SetPort(port);
-    int32 errorCode = bind(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(server.GetInternetHost()), server.Size());
+    int32 errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr *>(server.GetInternetHost()), server.Size());
     bool ret = false;
     if (errorCode >= 0) {
 
-        errorCode = listen(GetConnectionSocket(), maxConnections);
+        errorCode = listen(connectionSocket, maxConnections);
         if (errorCode >= 0) {
             ret = true;
         }
@@ -147,15 +137,15 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                              const uint16 port,
                              const TimeoutType &msecTimeout,
                              int32 retry) {
-    GetDestination().SetPort(port);
+    destination.SetPort(port);
     bool ret = true;
-    if (!GetDestination().SetAddress(address)) {
-        if (!GetDestination().SetAddressByHostName(address)) {
+    if (!destination.SetAddress(address)) {
+        if (!destination.SetAddressByHostName(address)) {
             ret = false;
         }
     }
     if (ret) {
-        int32 errorCode = connect(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(GetDestination().GetInternetHost()), GetDestination().Size());
+        int32 errorCode = connect(connectionSocket, reinterpret_cast<struct sockaddr *>(destination.GetInternetHost()), destination.Size());
         if (errorCode < 0) {
             errorCode = sock_errno();
             switch (errorCode) {
@@ -209,7 +199,7 @@ bool BasicTCPSocket::IsConnected() const {
 
     socklen_t len = information.Size();
 
-    int32 ret = getpeername(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(information.GetInternetHost()), &len);
+    int32 ret = getpeername(connectionSocket, reinterpret_cast<struct sockaddr *>(information.GetInternetHost()), &len);
 
     return (ret == 0);
 
@@ -217,17 +207,18 @@ bool BasicTCPSocket::IsConnected() const {
 
 BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &msecTimeout,
                                                BasicTCPSocket *client) {
-    uint32 size = GetSource().Size();
-    int32 newSocket = accept(GetConnectionSocket(), reinterpret_cast<struct sockaddr *>(GetSource().GetInternetHost()), reinterpret_cast<socklen_t *>(&size));
+    uint32 size = source.Size();
+    int32 newSocket = accept(connectionSocket, reinterpret_cast<struct sockaddr *>(source.GetInternetHost()), reinterpret_cast<socklen_t *>(&size));
 
     BasicTCPSocket *ret = static_cast<BasicTCPSocket *>(NULL);
     if (newSocket != -1) {
         if (client == NULL) {
-            client = new BasicTCPSocket(newSocket);
+            client = new BasicTCPSocket();
+            client->connectionSocket=newSocket;
         }
-        client->SetDestination(GetSource());
-        client->SetSource(GetDestination()); /////
-        client->SetConnectionSocket(newSocket);
+        client->SetDestination(source);
+        client->SetSource(destination); /////
+        client->connectionSocket=newSocket;
         ret = client;
     }
     else {
@@ -248,7 +239,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &msecTimeout,
 
 bool BasicTCPSocket::Read(char8* const output,
                           uint32 &size) {
-    int32 readBytes = static_cast<int32>(recv(GetConnectionSocket(), output, static_cast<size_t>(size), 0));
+    int32 readBytes = static_cast<int32>(recv(connectionSocket, output, static_cast<size_t>(size), 0));
     bool ret = (readBytes >= 0);
 
     if (ret) {
@@ -268,7 +259,7 @@ bool BasicTCPSocket::Read(char8* const output,
 
 bool BasicTCPSocket::Write(const char8* const input,
                            uint32 &size) {
-    int32 writtenBytes = static_cast<int32>(send(GetConnectionSocket(), input, static_cast<size_t>(size), 0));
+    int32 writtenBytes = static_cast<int32>(send(connectionSocket, input, static_cast<size_t>(size), 0));
     bool ret = (writtenBytes >= 0);
     if (ret) {
         /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
@@ -290,7 +281,7 @@ bool BasicTCPSocket::Read(char8* const output,
     timeout.tv_sec = static_cast<int32>(msecTimeout.GetTimeoutMSec() / 1000u);
     /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
     timeout.tv_usec = static_cast<int32>((msecTimeout.GetTimeoutMSec() % 1000u) * 1000u);
-    int32 ret = setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
+    int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
 
     bool retVal = true;
 
@@ -303,7 +294,7 @@ bool BasicTCPSocket::Read(char8* const output,
         retVal = Read(output, size);
     }
 
-    if (setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeout)))<0) {
+    if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeout)))<0) {
         REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() removing the socket timeout");
     }
     return retVal;
@@ -317,7 +308,7 @@ bool BasicTCPSocket::Write(const char8* const input,
     timeout.tv_sec = msecTimeout.GetTimeoutMSec() / 1000u;
     /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
     timeout.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
-    int32 ret = setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
+    int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
 
     bool retVal = true;
 
@@ -329,7 +320,7 @@ bool BasicTCPSocket::Write(const char8* const input,
     else {
         retVal = Write(input, size);
     }
-    if (setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeout))) < 0) {
+    if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeout))) < 0) {
         REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() removing the socket timeout");
         retVal = false;
     }

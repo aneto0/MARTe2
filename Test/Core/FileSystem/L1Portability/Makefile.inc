@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX= InternetHostTest.x  
+OBJSX= InternetHostTest.x \
+	InternetServiceTest.x  
 
 
 PACKAGE=Core/FileSystem

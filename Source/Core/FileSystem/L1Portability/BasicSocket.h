@@ -54,14 +54,6 @@ namespace MARTe {
         BasicSocket();
 
         /**
-         * @brief Copy constructor.
-         * @param[in] socketIn is the socket handle to set.
-         * @post
-         *  connectionSocket=socketIn
-         */
-        BasicSocket(const SocketCore socketIn);
-
-        /**
          * @brief Destructor
          * @post
          * Close()
@@ -110,13 +102,9 @@ namespace MARTe {
          */
         void SetSource(const InternetHost &sourceIn);
 
-        /**
-         * @brief Sets the socket handle.
-         * @param[in] connectionSocketIn is the socket handle to set.
-         */
-        void SetConnectionSocket(const SocketCore connectionSocketIn);
 
-    private:
+    protected:
+
 
         /**
          * Where the packets go to

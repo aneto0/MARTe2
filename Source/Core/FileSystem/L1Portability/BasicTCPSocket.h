@@ -51,11 +51,6 @@ public:
      */
     BasicTCPSocket();
 
-    /**
-     * @brief Copy constructor.
-     * @param[in] socketIn is the socket to set.
-     */
-    BasicTCPSocket(const SocketCore socketIn);
 
     /**
      * @brief Destructor

@@ -190,16 +190,19 @@ int32 SocketSelect::ReadySockets() const {
 }
 
 /*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
+/*lint -e{1762} [MISRA C++ Rule 9-3-3]. Justification: Another Operating system could have another implementation of this function. */
 bool SocketSelect::CheckRead(const BasicSocket * const s) {
     return (s == NULL)?(false):(FD_ISSET(s->GetConnectionSocket(), &selectHandle.readFDS_done) != 0);
 }
 
 /*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
+/*lint -e{1762} [MISRA C++ Rule 9-3-3]. Justification: Another Operating system could have another implementation of this function. */
 bool SocketSelect::CheckWrite(const BasicSocket * const s) {
     return (s == NULL)?(false):(FD_ISSET(s->GetConnectionSocket(), &selectHandle.writeFDS_done) != 0);
 }
 
 /*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
+/*lint -e{1762} [MISRA C++ Rule 9-3-3]. Justification: Another Operating system could have another implementation of this function. */
 bool SocketSelect::CheckExcept(const BasicSocket * const s) {
     return (s == NULL)?(false):(FD_ISSET(s->GetConnectionSocket(), &selectHandle.exceptFDS_done) != 0);
 }
