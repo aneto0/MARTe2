@@ -45,9 +45,8 @@ namespace MARTe {
  * @brief Implementation of the common socket functions that are shared by UDP and TCP sockets.
  */
 class BasicSocket: public StreamI {
-
 public:
-
+friend class SocketSelect;
     /**
      * @brief Default constructor.
      */
@@ -101,6 +100,10 @@ public:
       */
      void SetSource(const InternetHost &sourceIn);
 
+     /**
+      * @brief Checks if the socket handle is valid or not.
+      */
+     virtual bool IsValid() const;
 protected:
 
      /**

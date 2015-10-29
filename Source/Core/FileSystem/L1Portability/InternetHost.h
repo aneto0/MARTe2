@@ -100,10 +100,6 @@ public:
      */
     static const char8 *GetLocalAddress();
 
-    /**
-     * @brief Initialises the socket.
-     */
-    static void SocketInit();
 
     /**
      * @brief Returns the IP address a.b.c.d as [a + 256*b + (256^2)*c + (256^3)*d]

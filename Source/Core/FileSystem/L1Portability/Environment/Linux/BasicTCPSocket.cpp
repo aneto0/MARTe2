@@ -54,21 +54,9 @@
 
 namespace MARTe {
 
-bool BasicTCPSocket::Peek(char8* const buffer,
-                          uint32 &size) const {
-    int32 ret = static_cast<int32>(recv(connectionSocket, buffer, static_cast<size_t>(size), MSG_PEEK));
-    if (ret < 0) {
-        size = 0u;
-    }
-    else {
-        /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
-        size = static_cast<uint32>(ret);
-    }
-    return (ret >= 0);
-}
-
 BasicTCPSocket::BasicTCPSocket() :
         BasicSocket() {
+
     /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: C-style cast made at operating system API.*/
     /*lint -e{923} [MISRA C++ Rule 5-2-7]. Justification: cast from integer to pointer made at operating system API level. */
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
@@ -101,25 +89,32 @@ bool BasicTCPSocket::Open() {
 
 bool BasicTCPSocket::Listen(const uint16 port,
                             const int32 maxConnections) const {
-    InternetHost server;
 
-    server.SetPort(port);
-    int32 errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr *>(server.GetInternetHost()), server.Size());
     bool ret = false;
-    if (errorCode >= 0) {
+    if (IsValid()) {
+        InternetHost server;
 
-        errorCode = listen(connectionSocket, maxConnections);
+        server.SetPort(port);
+        int32 errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr *>(server.GetInternetHost()), server.Size());
+
         if (errorCode >= 0) {
-            ret = true;
+
+            errorCode = listen(connectionSocket, maxConnections);
+            if (errorCode >= 0) {
+                ret = true;
+            }
+            else {
+                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed listen()");
+
+            }
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed listen()");
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed bind()");
 
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed bind()");
-
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
 
     return ret;
@@ -138,48 +133,55 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                              const TimeoutType &timeout,
                              int32 retry) {
     destination.SetPort(port);
-    bool ret = true;
-    if (!destination.SetAddress(address)) {
-        if (!destination.SetAddressByHostName(address)) {
-            ret = false;
+    bool ret = IsValid();
+
+    if (ret) {
+
+        if (!destination.SetAddress(address)) {
+            if (!destination.SetAddressByHostName(address)) {
+                ret = false;
+            }
+        }
+        if (ret) {
+            int32 errorCode = connect(connectionSocket, reinterpret_cast<struct sockaddr *>(destination.GetInternetHost()), destination.Size());
+            if (errorCode < 0) {
+                errorCode = sock_errno();
+                switch (errorCode) {
+                case (EINTR): {
+                    if (retry > 0) {
+                        retry--;
+                        ret = Connect(address, port, timeout, retry);
+                    }
+                    else {
+                        REPORT_ERROR(ErrorManagement::OSError, "Error: failed connect() because interrupted");
+                        ret = false;
+                    }
+                }
+                    break;
+                case (EINPROGRESS):
+                case (EWOULDBLOCK): {
+                    if (timeout.IsFinite()) {
+                        SocketSelect sel;
+                        sel.AddWaitOnWriteReady(this);
+                        ret = sel.WaitWrite(timeout);
+                    }
+                    else {
+                        ret = false;
+                        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connect() because the socked is blocked");
+                    }
+                }
+                    break;
+                default: {
+                    ret = false;
+                    REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connect()");
+                }
+                }
+            }
+
         }
     }
-    if (ret) {
-        int32 errorCode = connect(connectionSocket, reinterpret_cast<struct sockaddr *>(destination.GetInternetHost()), destination.Size());
-        if (errorCode < 0) {
-            errorCode = sock_errno();
-            switch (errorCode) {
-            case (EINTR): {
-                if (retry > 0) {
-                    retry--;
-                    ret = Connect(address, port, timeout, retry);
-                }
-                else {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: failed connect() because interrupted");
-                    ret = false;
-                }
-            }
-                break;
-            case (EINPROGRESS):
-            case (EWOULDBLOCK): {
-                if (timeout.IsFinite()) {
-                    SocketSelect sel;
-                    sel.AddWaitOnWriteReady(this);
-                    ret = sel.WaitWrite(timeout);
-                }
-                else {
-                    ret = false;
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connect() because the socked is blocked");
-                }
-            }
-                break;
-            default: {
-                ret = false;
-                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connect()");
-            }
-            }
-        }
-
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
     return ret;
 }
@@ -195,107 +197,156 @@ bool BasicTCPSocket::Connect(const char8 * const address,
 
 bool BasicTCPSocket::IsConnected() const {
 
-    InternetHost information;
+    int32 ret = -1;
+    if (IsValid()) {
+        InternetHost information;
 
-    socklen_t len = information.Size();
+        socklen_t len = information.Size();
 
-    int32 ret = getpeername(connectionSocket, reinterpret_cast<struct sockaddr *>(information.GetInternetHost()), &len);
-
+        ret = getpeername(connectionSocket, reinterpret_cast<struct sockaddr *>(information.GetInternetHost()), &len);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
+    }
     return (ret == 0);
 
 }
 
 BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                                                BasicTCPSocket *client) {
-    uint32 size = source.Size();
-    int32 newSocket = accept(connectionSocket, reinterpret_cast<struct sockaddr *>(source.GetInternetHost()), reinterpret_cast<socklen_t *>(&size));
-
     BasicTCPSocket *ret = static_cast<BasicTCPSocket *>(NULL);
-    if (newSocket != -1) {
-        if (client == NULL) {
-            client = new BasicTCPSocket();
+
+    if(IsValid()) {
+        uint32 size = source.Size();
+        int32 newSocket = accept(connectionSocket, reinterpret_cast<struct sockaddr *>(source.GetInternetHost()), reinterpret_cast<socklen_t *>(&size));
+
+        if (newSocket != -1) {
+            if (client == NULL) {
+                client = new BasicTCPSocket();
+                client->connectionSocket=newSocket;
+            }
+            client->SetDestination(source);
+            client->SetSource(destination); /////
             client->connectionSocket=newSocket;
+            ret = client;
         }
-        client->SetDestination(source);
-        client->SetSource(destination); /////
-        client->connectionSocket=newSocket;
-        ret = client;
-    }
-    else {
-        if (timeout.IsFinite()) {
-            int32 errorCode;
-            errorCode = sock_errno();
-            if ((errorCode == 0) || (errorCode == EINPROGRESS) || (errorCode == EWOULDBLOCK)) {
-                SocketSelect sel;
-                sel.AddWaitOnReadReady(this);
-                if (sel.WaitRead(timeout)) {
-                    ret = WaitConnection(TTDefault, client);
+        else {
+            if (timeout.IsFinite()) {
+                int32 errorCode;
+                errorCode = sock_errno();
+                if ((errorCode == 0) || (errorCode == EINPROGRESS) || (errorCode == EWOULDBLOCK)) {
+                    SocketSelect sel;
+                    sel.AddWaitOnReadReady(this);
+                    if (sel.WaitRead(timeout)) {
+                        ret = WaitConnection(TTDefault, client);
+                    }
                 }
             }
         }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
+    }
+
     return ret;
+}
+
+bool BasicTCPSocket::Peek(char8* const buffer,
+                          uint32 &size) const {
+    int32 ret = -1;
+
+    if (IsValid()) {
+        ret = static_cast<int32>(recv(connectionSocket, buffer, static_cast<size_t>(size), MSG_PEEK));
+        if (ret < 0) {
+            size = 0u;
+        }
+        else {
+            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
+            size = static_cast<uint32>(ret);
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
+    }
+    return (ret >= 0);
 }
 
 bool BasicTCPSocket::Read(char8* const output,
                           uint32 &size) {
-    int32 readBytes = static_cast<int32>(recv(connectionSocket, output, static_cast<size_t>(size), 0));
-    bool ret = (readBytes >= 0);
 
-    if (ret) {
-        /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
-        size = static_cast<uint32>(readBytes);
-        // to avoid polling continuously release CPU time when reading 0 bytes
-        if (size == 0u) {
-            Sleep::MSec(1);
+    bool ret = false;
+    if (IsValid()) {
+        int32 readBytes = static_cast<int32>(recv(connectionSocket, output, static_cast<size_t>(size), 0));
+        ret = (readBytes >= 0);
+
+        if (ret) {
+            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
+            size = static_cast<uint32>(readBytes);
+            // to avoid polling continuously release CPU time when reading 0 bytes
+            if (size == 0u) {
+                Sleep::MSec(1);
+            }
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed recv()");
+            size = 0u;
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed recv()");
-        size = 0u;
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
     return ret;
 }
 
 bool BasicTCPSocket::Write(const char8* const input,
                            uint32 &size) {
-    int32 writtenBytes = static_cast<int32>(send(connectionSocket, input, static_cast<size_t>(size), 0));
-    bool ret = (writtenBytes >= 0);
-    if (ret) {
-        /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
-        size = static_cast<uint32>(writtenBytes);
+    bool ret = false;
+    if (IsValid()) {
+        int32 writtenBytes = static_cast<int32>(send(connectionSocket, input, static_cast<size_t>(size), 0));
+        bool ret = (writtenBytes >= 0);
+        if (ret) {
+            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
+            size = static_cast<uint32>(writtenBytes);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed send()");
+            size = 0u;
+        }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed send()");
-        size = 0u;
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
-
     return ret;
 }
 
 bool BasicTCPSocket::Read(char8* const output,
                           uint32 &size,
                           const TimeoutType &timeout) {
-    struct timeval timeoutVal;
-    /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
-    /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
-    int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
 
-    bool retVal = true;
+    bool retVal = IsValid();
+    if (retVal) {
+        struct timeval timeoutVal;
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
+        /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
+        int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
 
-    if (ret < 0) {
-        size = 0u;
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeoutVal");
-        retVal = false;
+        if (ret < 0) {
+            size = 0u;
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeoutVal");
+            retVal = false;
+        }
+        else {
+            retVal = Read(output, size);
+        }
+
+        if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeoutVal)))<0) {
+            REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() removing the socket timeoutVal");
+        }
     }
     else {
-        retVal = Read(output, size);
-    }
-
-    if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeoutVal)))<0) {
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() removing the socket timeoutVal");
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
     return retVal;
 }
@@ -303,6 +354,9 @@ bool BasicTCPSocket::Read(char8* const output,
 bool BasicTCPSocket::Write(const char8* const input,
                            uint32 &size,
                            const TimeoutType &timeout) {
+    bool retVal = IsValid();
+
+    if(retVal){
     struct timeval timeoutVal;
     /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
     timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
@@ -310,7 +364,6 @@ bool BasicTCPSocket::Write(const char8* const input,
     timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
     int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
 
-    bool retVal = true;
 
     if (ret < 0) {
         size = 0u;
@@ -323,6 +376,10 @@ bool BasicTCPSocket::Write(const char8* const input,
     if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
         REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() removing the socket timeoutVal");
         retVal = false;
+    }
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
     return retVal;
 }

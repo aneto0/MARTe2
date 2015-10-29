@@ -152,12 +152,6 @@ bool InternetHostTest::TestGetLocalAddress() {
     return ((ret == "127.0.1.1") || (ret == "127.0.0.1"));
 }
 
-bool InternetHostTest::TestSocketInit() {
-
-    InternetHost::SocketInit();
-
-    return true;
-}
 
 bool InternetHostTest::TestGetLocalAddressAsNumber() {
     printf("\n%x\n", InternetHost::GetLocalAddressAsNumber());

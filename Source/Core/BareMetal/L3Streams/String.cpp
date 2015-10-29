@@ -98,7 +98,7 @@ bool String::Write(const char8* const input,
  * used by other buffered streams. */
 bool String::Read(char8 * const output,
                   uint32 & size,
-                  const TimeoutType &msecTimeout) {
+                  const TimeoutType &timeout) {
     return Read(output, size);
 }
 
@@ -106,7 +106,7 @@ bool String::Read(char8 * const output,
  * used by other buffered streams. */
 bool String::Write(const char8 * const input,
                    uint32 & size,
-                   const TimeoutType &msecTimeout) {
+                   const TimeoutType &timeout) {
     return Write(input, size);
 }
 

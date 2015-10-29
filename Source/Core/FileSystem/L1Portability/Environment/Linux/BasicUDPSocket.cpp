@@ -48,11 +48,10 @@
 
 namespace MARTe {
 
-
-BasicUDPSocket::BasicUDPSocket():BasicSocket(){
+BasicUDPSocket::BasicUDPSocket() :
+        BasicSocket() {
 
 }
-
 
 BasicUDPSocket::~BasicUDPSocket() {
 
@@ -60,56 +59,79 @@ BasicUDPSocket::~BasicUDPSocket() {
 
 bool BasicUDPSocket::Read(char8* const output,
                           uint32 &size) {
-    uint32 sourceSize = source.Size();
-    int32 ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<socklen_t*>(&sourceSize)));
-    if (ret >= 0) {
-        /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
-        size = static_cast<uint32>(ret);
-        // to avoid polling continuously release CPU time when reading 0 bytes
-        if (size == 0u) {
-            Sleep::MSec(1);
+
+    int32 ret = -1;
+    if (IsValid()) {
+        uint32 sourceSize = source.Size();
+        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()),
+                                          static_cast<socklen_t*>(&sourceSize)));
+        if (ret >= 0) {
+            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
+            size = static_cast<uint32>(ret);
+            // to avoid polling continuously release CPU time when reading 0 bytes
+            if (size == 0u) {
+                Sleep::MSec(1);
+            }
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: recvfrom()");
         }
     }
-    else{
-         REPORT_ERROR(ErrorManagement::OSError, "Error: recvfrom()");
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is not valid");
     }
     return (ret > 0);
 }
 
 bool BasicUDPSocket::Write(const char8* const input,
                            uint32 &size) {
-    int32 ret = static_cast<int32>(sendto(connectionSocket, input, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(destination.GetInternetHost()), destination.Size()));
-    if (ret >= 0) {
-        /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
-        size = static_cast<uint32>(ret);
-        // to avoid polling continuously release CPU time when reading 0 bytes
-        if (size == 0u) {
-            Sleep::MSec(1);
+
+    int32 ret = -1;
+    if (IsValid()) {
+        ret = static_cast<int32>(sendto(connectionSocket, input, static_cast<size_t>(size), 0,
+                                        reinterpret_cast<struct sockaddr*>(destination.GetInternetHost()), destination.Size()));
+        if (ret >= 0) {
+            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
+            size = static_cast<uint32>(ret);
+            // to avoid polling continuously release CPU time when reading 0 bytes
+            if (size == 0u) {
+                Sleep::MSec(1);
+            }
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: sendto()");
         }
     }
-    else{
-         REPORT_ERROR(ErrorManagement::OSError, "Error: sendto()");
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is not valid");
+
     }
     return (ret > 0);
 }
 
 bool BasicUDPSocket::Open() {
-    connectionSocket=(socket(PF_INET, SOCK_DGRAM, 0));
+    connectionSocket = (socket(PF_INET, SOCK_DGRAM, 0));
     return (connectionSocket >= 0);
 }
 
-
 /*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
 bool BasicUDPSocket::Listen(const uint16 port) {
-    InternetHost server;
-    server.SetPort(port);
+    int32 errorCode = -1;
+    if (IsValid()) {
+        InternetHost server;
+        server.SetPort(port);
 
-    int32 errorCode = bind(connectionSocket,reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
+        errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is not valid");
+    }
     return (errorCode >= 0);
 }
 
 bool BasicUDPSocket::Connect(const char8 * const address,
                              const uint16 port) {
+
     destination.SetPort(port);
     bool ret = true;
     if (!destination.SetAddress(address)) {
@@ -140,27 +162,32 @@ bool BasicUDPSocket::CanSeek() const {
 bool BasicUDPSocket::Read(char8 * const output,
                           uint32 & size,
                           const TimeoutType &timeout) {
-
-    struct timeval timeoutVal;
-    /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
-    /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
-    int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
-
     bool retVal = true;
 
-    if (ret < 0) {
-        size = 0u;
-        REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
-        retVal = false;
+    if (IsValid()) {
+
+        struct timeval timeoutVal;
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
+        /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
+        int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
+
+        if (ret < 0) {
+            size = 0u;
+            REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
+            retVal = false;
+        }
+        else {
+            retVal = Read(output, size);
+        }
+
+        if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeoutVal)))<0) {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
+        }
     }
     else {
-        retVal = Read(output, size);
-    }
-
-    if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeoutVal)))<0) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is not valid");
     }
     return retVal;
 }
@@ -168,25 +195,31 @@ bool BasicUDPSocket::Read(char8 * const output,
 bool BasicUDPSocket::Write(const char8 * const input,
                            uint32 & size,
                            const TimeoutType &timeout) {
-    struct timeval timeoutVal;
-    /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
-    /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
-    int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
     bool retVal = true;
 
-    if (ret < 0) {
-        size = 0u;
-        retVal = false;
-        REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
+    if (IsValid()) {
+        struct timeval timeoutVal;
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
+        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+        timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
+        int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
+
+        if (ret < 0) {
+            size = 0u;
+            retVal = false;
+            REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
+        }
+        else {
+            retVal = Write(input, size);
+        }
+        if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
+            retVal = false;
+        }
     }
     else {
-        retVal = Write(input, size);
-    }
-    if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
-        retVal = false;
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is not valid");
     }
     return retVal;
 }
