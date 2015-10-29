@@ -105,39 +105,39 @@ namespace MARTe {
 
         /**
          * @brief Wait for all the events within a timeout.
-         * @param[in] msecTimeout is the maximum time to wait for an event.
+         * @param[in] timeout is the maximum time to wait for an event.
          * @post
          * readySocket is the number of the sockets when an event happened.
          * @return true if at least one socket is ready before the timeout expire.
          */
-        bool Wait(const TimeoutType &msecTimeout = TTInfiniteWait);
+        bool Wait(const TimeoutType &timeout = TTInfiniteWait);
 
         /**
          * @brief Wait for all the read events within a timeout.
-         * @param[in] msecTimeout is the maximum time to wait for a read event.
+         * @param[in] timeout is the maximum time to wait for a read event.
          * @post
          * readySocket is the number of the sockets when a read event happened.
          * @return true if at least one socket is ready before the timeout expire.
          */
-        bool WaitRead(const TimeoutType &msecTimeout = TTInfiniteWait);
+        bool WaitRead(const TimeoutType &timeout = TTInfiniteWait);
 
         /**
          * @brief Wait for all the write events within a timeout.
-         * @param[in] msecTimeout is the maximum time to wait for a write event.
+         * @param[in] timeout is the maximum time to wait for a write event.
          * @post
          * readySocket is the number of the sockets when a write event happened.
          * @return true if at least one socket is ready before the timeout expire.
          */
-        bool WaitWrite(const TimeoutType &msecTimeout = TTInfiniteWait);
+        bool WaitWrite(const TimeoutType &timeout = TTInfiniteWait);
 
         /**
          * @brief Wait for all the exception events within a timeout.
-         * @param[in] msecTimeout is the maximum time to wait for an exception.
+         * @param[in] timeout is the maximum time to wait for an exception.
          * @post
          * readySocket is the number of the sockets when an exception happened.
          * @return true if at least one socket is ready before the timeout expire.
          */
-        bool WaitExcept(const TimeoutType &msecTimeout = TTInfiniteWait);
+        bool WaitExcept(const TimeoutType &timeout = TTInfiniteWait);
 
         /**
          * @brief Retrieve the number of ready sockets for the specified operation requested.

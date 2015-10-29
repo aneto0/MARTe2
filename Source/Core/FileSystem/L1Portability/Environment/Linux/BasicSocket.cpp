@@ -85,19 +85,15 @@ bool BasicSocket::Close() {
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: the member is exposed
  * because some operating system functions may change it.
  */
-InternetHost &BasicSocket::GetSource() {
+InternetHost BasicSocket::GetSource() {
     return source;
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: the member is exposed
  * because some operating system functions may change it.
  */
-InternetHost &BasicSocket::GetDestination() {
+InternetHost BasicSocket::GetDestination() {
     return destination;
-}
-
-SocketCore BasicSocket::GetConnectionSocket() const {
-    return connectionSocket;
 }
 
 void BasicSocket::SetDestination(const InternetHost &destinationIn) {

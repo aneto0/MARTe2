@@ -80,23 +80,23 @@ public:
      * @brief Read with timeout.
      * @param[out] output is the buffer where the read data must be stored.
      * @param [in,out] size is the number of bytes to read.
-     * @param[in] msecTimeout is the desired timeout.
+     * @param[in] timeout is the desired timeout.
      * @post size is the number of read bytes.
      */
     virtual bool Read(char8* const output,
                       uint32 &size,
-                      const TimeoutType &msecTimeout);
+                      const TimeoutType &timeout);
 
     /**
      * @brief Write with timeout.
      * @param[in] input is the buffer which contains the data to be written.
      * @param[in,out] size is the number of bytes to write.
-     * @param[in] msecTimeout is the desired timeout.
+     * @param[in] timeout is the desired timeout.
      * @post size is the number of read bytes.
      */
     virtual bool Write(const char8* const input,
                        uint32 &size,
-                       const TimeoutType &msecTimeout);
+                       const TimeoutType &timeout);
 
     /**
      * @brief Unsupported feature.
@@ -180,23 +180,23 @@ public:
      * @brief Connect to a specific host.
      * @param[in] address is the IP address of the server.
      * @param[in] port is the server port.
-     * @param[in] msecTimeout is the desired timeout.
+     * @param[in] timeout is the desired timeout.
      * @param[in] retry is the maximum number of times to call the connect function in case of interruptions.
      */
     bool Connect(const char8 * const address,
                  const uint16 port,
-                 const TimeoutType &msecTimeout = TTInfiniteWait,
+                 const TimeoutType &timeout = TTInfiniteWait,
                  int32 retry = 12);
 
     /**
      * @brief Connect to a specific host.
      * @param[in] address is the IP address of the server.
      * @param[in] port is the server service name.
-     * @param[in] msecTimeout is the desired timeout.
+     * @param[in] timeout is the desired timeout.
      */
     bool Connect(const char8 * const address,
                  const char8 * const serviceName,
-                 const TimeoutType &msecTimeout = TTInfiniteWait);
+                 const TimeoutType &timeout = TTInfiniteWait);
 
     /**
      * @brief Returns true if the connection is alive, false otherwise
@@ -207,7 +207,7 @@ public:
      * @brief Accepts the next connection in the pending queue returning the relative socket.
      * @return NULL in case of failure, the new created socket otherwise.
      */
-    BasicTCPSocket *WaitConnection(const TimeoutType &msecTimeout = TTInfiniteWait,
+    BasicTCPSocket *WaitConnection(const TimeoutType &timeout = TTInfiniteWait,
                                    BasicTCPSocket *client = static_cast<BasicTCPSocket *>(NULL));
 
 };
