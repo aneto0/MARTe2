@@ -43,9 +43,9 @@ namespace MARTe {
 
 InternetService::InternetService() {
     service.s_aliases = static_cast<char8 **>(NULL);
-    service.s_name=static_cast<char*>(NULL);
+    service.s_name=static_cast<char8*>(NULL);
     service.s_port=0;
-    service.s_proto=static_cast<char*>(NULL);
+    service.s_proto=static_cast<char8*>(NULL);
 }
 
 bool InternetService::SearchByName(const char8 * const name,

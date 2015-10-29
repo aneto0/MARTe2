@@ -52,10 +52,6 @@ BasicSocket::BasicSocket() :
     connectionSocket = 0;
 }
 
-BasicSocket::BasicSocket(const SocketCore socketIn) :
-        StreamI() {
-    connectionSocket = socketIn;
-}
 
 /*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
 BasicSocket::~BasicSocket() {
@@ -112,8 +108,5 @@ void BasicSocket::SetSource(const InternetHost &sourceIn) {
     source = sourceIn;
 }
 
-void BasicSocket::SetConnectionSocket(const SocketCore connectionSocketIn) {
-    connectionSocket = connectionSocketIn;
-}
 
 }
