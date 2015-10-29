@@ -166,17 +166,17 @@ void SocketSelect::DeleteWaitOnExceptReady(const BasicSocket * const s) {
 
 }
 
-bool SocketSelect::Wait(const TimeoutType &msecTimeout) {
+bool SocketSelect::Wait(const TimeoutType &timeout) {
     selectHandle.readFDS_done = selectHandle.readFDS;
     selectHandle.writeFDS_done = selectHandle.writeFDS;
     selectHandle.exceptFDS_done = selectHandle.exceptFDS;
 
     timeval timeWait;
-    if (msecTimeout.IsFinite()) {
+    if (timeout.IsFinite()) {
         /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
+        timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
         /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeWait.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+        timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
         readySockets = select(SELECT_WIDTH, &selectHandle.readFDS_done, &selectHandle.writeFDS_done, &selectHandle.exceptFDS_done, &timeWait);
 
     }
@@ -187,15 +187,15 @@ bool SocketSelect::Wait(const TimeoutType &msecTimeout) {
     return (readySockets > 0);
 }
 
-bool SocketSelect::WaitRead(const TimeoutType &msecTimeout) {
+bool SocketSelect::WaitRead(const TimeoutType &timeout) {
     selectHandle.readFDS_done = selectHandle.readFDS;
 
     timeval timeWait;
-    if (msecTimeout.IsFinite()) {
+    if (timeout.IsFinite()) {
         /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
+        timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
         /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeWait.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+        timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
         readySockets = select(SELECT_WIDTH, &selectHandle.readFDS_done, static_cast<fd_set*>(NULL), static_cast<fd_set*>(NULL), &timeWait);
     }
     else {
@@ -205,15 +205,15 @@ bool SocketSelect::WaitRead(const TimeoutType &msecTimeout) {
     return (readySockets > 0);
 }
 
-bool SocketSelect::WaitWrite(const TimeoutType &msecTimeout) {
+bool SocketSelect::WaitWrite(const TimeoutType &timeout) {
     selectHandle.writeFDS_done = selectHandle.writeFDS;
 
     timeval timeWait;
-    if (msecTimeout.IsFinite()) {
+    if (timeout.IsFinite()) {
         /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
+        timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
         /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeWait.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+        timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
         readySockets = select(SELECT_WIDTH, static_cast<fd_set*>(NULL), &selectHandle.writeFDS_done, static_cast<fd_set*>(NULL), &timeWait);
     }
     else {
@@ -223,15 +223,15 @@ bool SocketSelect::WaitWrite(const TimeoutType &msecTimeout) {
     return (readySockets > 0);
 }
 
-bool SocketSelect::WaitExcept(const TimeoutType &msecTimeout) {
+bool SocketSelect::WaitExcept(const TimeoutType &timeout) {
     selectHandle.exceptFDS_done = selectHandle.exceptFDS;
 
     timeval timeWait;
-    if (msecTimeout.IsFinite()) {
+    if (timeout.IsFinite()) {
         /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeWait.tv_sec = msecTimeout.GetTimeoutMSec() / 1000;
+        timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
         /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeWait.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
+        timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
         readySockets = select(SELECT_WIDTH, static_cast<fd_set*>(NULL), static_cast<fd_set*>(NULL), &selectHandle.exceptFDS_done, &timeWait);
 
     }

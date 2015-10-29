@@ -68,8 +68,9 @@ BasicTCPSocket::~BasicTCPSocket() {
 
 }
 
-/*lint -e{641} .Justification: The function socket returns an integer.*/
 bool BasicTCPSocket::Open() {
+
+    /*lint -e{641} .Justification: The function socket returns an integer.*/
     connectionSocket = socket(PF_INET, SOCK_STREAM, 0);
     const int32 one = 1;
     bool ret = false;
@@ -129,7 +130,7 @@ bool BasicTCPSocket::Listen(const char8 * const serviceName,
 
 bool BasicTCPSocket::Connect(const char8 * const address,
                              const uint16 port,
-                             const TimeoutType &msecTimeout,
+                             const TimeoutType &timeout,
                              int32 retry) {
     destination.SetPort(port);
     bool ret = IsValid();
@@ -149,7 +150,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                 case (EINTR): {
                     if (retry > 0) {
                         retry--;
-                        ret = Connect(address, port, msecTimeout, retry);
+                        ret = Connect(address, port, timeout, retry);
                     }
                     else {
                         REPORT_ERROR(ErrorManagement::OSError, "Error: failed connect() because interrupted");
@@ -159,10 +160,10 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                     break;
                 case (EINPROGRESS):
                 case (EWOULDBLOCK): {
-                    if (msecTimeout.IsFinite()) {
+                    if (timeout.IsFinite()) {
                         SocketSelect sel;
                         sel.AddWaitOnWriteReady(this);
-                        ret = sel.WaitWrite(msecTimeout);
+                        ret = sel.WaitWrite(timeout);
                     }
                     else {
                         ret = false;
@@ -187,11 +188,11 @@ bool BasicTCPSocket::Connect(const char8 * const address,
 
 bool BasicTCPSocket::Connect(const char8 * const address,
                              const char8 * const serviceName,
-                             const TimeoutType &msecTimeout) {
+                             const TimeoutType &timeout) {
     int32 port = InternetService::GetPortByName(serviceName);
     /*lint -e{9119} -e{9117} -e{734} [MISRA C++ Rule 5-0-6] [MISRA C++ Rule 5-0-4]. Justification: the operating system InternetHost struct has
      * an unsigned short "port" member attribute. */
-    return (port == -1) ? (false) : (Connect(address, static_cast<uint16>(port), msecTimeout));
+    return (port == -1) ? (false) : (Connect(address, static_cast<uint16>(port), timeout));
 }
 
 bool BasicTCPSocket::IsConnected() const {
@@ -211,7 +212,7 @@ bool BasicTCPSocket::IsConnected() const {
 
 }
 
-BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &msecTimeout,
+BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                                                BasicTCPSocket *client) {
     BasicTCPSocket *ret = static_cast<BasicTCPSocket *>(NULL);
 
@@ -230,13 +231,13 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &msecTimeout,
             ret = client;
         }
         else {
-            if (msecTimeout.IsFinite()) {
+            if (timeout.IsFinite()) {
                 int32 errorCode;
                 errorCode = sock_errno();
                 if ((errorCode == 0) || (errorCode == EINPROGRESS) || (errorCode == EWOULDBLOCK)) {
                     SocketSelect sel;
                     sel.AddWaitOnReadReady(this);
-                    if (sel.WaitRead(msecTimeout)) {
+                    if (sel.WaitRead(timeout)) {
                         ret = WaitConnection(TTDefault, client);
                     }
                 }
@@ -320,28 +321,28 @@ bool BasicTCPSocket::Write(const char8* const input,
 
 bool BasicTCPSocket::Read(char8* const output,
                           uint32 &size,
-                          const TimeoutType &msecTimeout) {
+                          const TimeoutType &timeout) {
 
     bool retVal = IsValid();
     if (retVal) {
-        struct timeval timeout;
+        struct timeval timeoutVal;
         /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeout.tv_sec = static_cast<int32>(msecTimeout.GetTimeoutMSec() / 1000u);
+        timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
         /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeout.tv_usec = static_cast<int32>((msecTimeout.GetTimeoutMSec() % 1000u) * 1000u);
-        int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
+        timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
+        int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
 
         if (ret < 0) {
             size = 0u;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeout");
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeoutVal");
             retVal = false;
         }
         else {
             retVal = Read(output, size);
         }
 
-        if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeout)))<0) {
-            REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() removing the socket timeout");
+        if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeoutVal)))<0) {
+            REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() removing the socket timeoutVal");
         }
     }
     else {
@@ -352,27 +353,27 @@ bool BasicTCPSocket::Read(char8* const output,
 
 bool BasicTCPSocket::Write(const char8* const input,
                            uint32 &size,
-                           const TimeoutType &msecTimeout) {
+                           const TimeoutType &timeout) {
     bool retVal = IsValid();
 
     if (retVal) {
-        struct timeval timeout;
+        struct timeval timeoutVal;
         /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeout.tv_sec = msecTimeout.GetTimeoutMSec() / 1000u;
+        timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
         /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeout.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
-        int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
+        timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
+        int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
 
         if (ret < 0) {
             size = 0u;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeout");
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeoutVal");
             retVal = false;
         }
         else {
             retVal = Write(input, size);
         }
-        if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeout))) < 0) {
-            REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() removing the socket timeout");
+        if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
+            REPORT_ERROR(ErrorManagement::OSError,"Error: Failed setsockopt() removing the socket timeoutVal");
             retVal = false;
         }
     }

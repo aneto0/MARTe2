@@ -42,15 +42,13 @@
 namespace MARTe {
 
 /**
- * @brief Implementation of UDP socket.
+ * @brief Unbuffered UDP socket.
  */
 class BasicUDPSocket: public BasicSocket {
 public:
 
     /**
      * @brief Default constructor.
-     * @post
-     * BasicSocket()
      */
     BasicUDPSocket();
 
@@ -60,94 +58,83 @@ public:
     virtual ~BasicUDPSocket();
 
     /**
-     * @brief Receive data from socket.
-     * @param[out] output is where read data will be stored.
-     * @param[in,out] size is the number of bytes to read.
-     * @post size is the number of read bytes.
+     * @see StreamI::Read
      */
     virtual bool Read(char8* const output,
                       uint32 &size);
 
     /**
-     * @brief Send data to socket.
-     * @param[in] input contains the data to send.
-     * @param[in,out] size is the number of bytes to write.
-     * @post size is the number of written bytes.
+     * @see StreamI::Write
      */
     virtual bool Write(const char8* const input,
                        uint32 &size);
 
     /**
-     * @brief Open an UDP socket.
-     * @post
-     * The socket is initialized.
+     * @brief Opens an UDP socket.
+     * @return true if the socket is successfully initialised.
      */
     bool Open();
 
     /**
-     * @brief Set the port to listen from.
-     * @param[in] port is the port number in input.
-     * @param[in] maxConnection is the maximum number of pending connection requests in the queue.
+     * @brief Sets the port where the socket will listen from.
+     * @param[in] port the port number.
+     * @return true if the socket is successfully bind into the \a port.
      */
     bool Listen(const uint16 port);
 
     /**
-     * @brief Select the destination of next sends.
-     * @param[in] address is the destination IP address.
-     * @param[in] port is the destination port.
+     * @brief Sets the writing destination address.
+     * @param[in] address the destination IP address.
+     * @param[in] port the destination port.
+     * @return true if the address is successfully set.
      * @pre
-     * address must have the format x.x.x.x
+     *   address must have the IPv4 format x.x.x.x
+     * @post
+     *   GetDestination() == InternetHost(port, address)
      */
     bool Connect(const char8 * const address,
                  const uint16 port);
 
     /**
-     * @brief Select the destination of next sends.
-     * @param[in] dest contains all the destination informations (IP address, port, ...).
+     * @brief Sets the writing destination address.
+     * @param[in] address the destination IP address.
+     * @return true if the address is successfully set.
+     * @post
+     *   GetDestination() == address
      */
-    bool Connect(const InternetHost &dest);
+    bool Connect(const InternetHost &address);
 
     /**
-     * @brief If the socket allows write operations.
+     * @brief The UDP socket support writing.
      * @return true.
      */
     virtual bool CanWrite() const;
 
     /**
-     * @brief If the socket allows read operations.
+     * @brief The UDP socket support reading.
      * @return true.
      */
     virtual bool CanRead() const;
 
     /**
-     * @brief If the socket allows seek operations.
+     * @brief The UDP socket does not support seeking.
      * @return false.
      */
     virtual bool CanSeek() const;
 
     /**
-     * @brief Receive data from socket within timeout.
-     * @param[out] output is where read data will be stored.
-     * @param[in,out] size is the number of bytes to read.
-     * @param[in] msecTimeout is the desired timeout.
-     * @return false if the timeout expires before reading.
-     * @post size is the number of read bytes.
+     * @see StreamI::Read
      */
     virtual bool Read(char8 * const output,
                       uint32 & size,
-                      const TimeoutType &msecTimeout);
+                      const TimeoutType &timeout);
 
     /**
-     * @brief Send data to socket within timeout.
-     * @param[in] input contains the data to send.
-     * @param[in,out] size is the number of bytes to write.
-     * @param[in] msecTimeout is the desired timeout.
-     * @return false if the timeout expires before writing.
-     * @post size is the number of written bytes.
+     * @see StreamI::Write
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size,
-                       const TimeoutType &msecTimeout);
+                       const TimeoutType &timeout);
 
     /**
      * @brief Unsupported feature.

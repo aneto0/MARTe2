@@ -112,7 +112,7 @@ public:
      */
     virtual bool Read(char8 * const output,
                       uint32 & size,
-                      const TimeoutType &msecTimeout);
+                      const TimeoutType &timeout);
 
     /**
      * @see StreamI::Write
@@ -126,7 +126,7 @@ public:
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size,
-                       const TimeoutType &msecTimeout);
+                       const TimeoutType &timeout);
 
 
     /**
@@ -228,12 +228,6 @@ private:
      * FlushAndResync call) the buffer is flushed on the stream.
      */
     BufferedStreamIOBuffer internalBuffer;
-
-
-    /**
-     * Timeout for the read/write operations
-     */
-    TimeoutType timeout;
 
 };
 

@@ -15,6 +15,7 @@
 -i./Source/Core/Scheduler/L1Portability/Environment/Generic
 
 -i./Source/Core/FileSystem/L1Portability/
+-i./Source/Core/FileSystem/L1Portability/Environment/Linux
 
 /* 
  * Enable all warnings 

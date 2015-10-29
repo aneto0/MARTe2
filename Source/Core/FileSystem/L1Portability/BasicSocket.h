@@ -41,91 +41,87 @@
 
 namespace MARTe {
 
+/**
+ * @brief Implementation of the common socket functions that are shared by UDP and TCP sockets.
+ */
+class BasicSocket: public StreamI {
+public:
+friend class SocketSelect;
     /**
-     * @brief Implementation of the most common socket functions shared by UDP and TCP sockets.
+     * @brief Default constructor.
      */
-    class BasicSocket: public StreamI {
+    BasicSocket();
 
-        friend class SocketSelect;
+    /**
+     * @brief Destructor
+     * @post
+     *   Close()
+    */
+    virtual ~BasicSocket();
 
-    public:
+    /**
+     * @brief Set\UnSet blocking mode.
+     * @param[in] flag specifies if blocking mode must be set(true) or unset(false).
+     * @return true if the desired mode is set correctly.
+     */
+    bool SetBlocking(const bool flag) const;
 
-        /**
-         * @brief Default constructor.
-         */
-        BasicSocket();
+    /**
+     * @brief Closes the socket.
+     * @return true if the socket is closed correctly.
+     */
+    bool Close();
 
-        /**
-         * @brief Destructor
-         * @post
-         * Close()
-         */
-        virtual ~BasicSocket();
+    /**
+     * @brief Returns the Internet host address of the connection source, where the packets are received from.
+     * @return the the Internet host address of the connection source
+     */
+     InternetHost GetSource() const;
 
-        /**
-         * @brief Set\UnSet blocking mode.
-         * @param[in] flag specifies if blocking mode must be set(true) or unset(false).
-         * @return true if the desired mode is set correctly, false otherwise.
-         */
-        virtual bool SetBlocking(const bool flag) const;
+     /**
+      * @brief Returns the Internet host address of the socket destination, where the packets are sent to.
+      * @return the Internet host address of the socket destination.
+      */
+     InternetHost GetDestination() const;
 
-        /**
-         * @brief Closes the socket.
-         * @return true if the socket is closed correctly, false otherwise.
-         */
-        bool Close();
+     /**
+      * @brief Sets the destination Internet host address, where the packets are sent to.
+      * @param[in] destinationIn the Internet host address of the socket destination.
+      * @post
+      *   GetDestination() == destinationIn
+      */
+     void SetDestination(const InternetHost &destinationIn);
 
-        /**
-         * @brief The source host InternetHost structure.
-         */
-        InternetHost GetSource() const;
+     /**
+      * @brief Sets the source Internet host address, where the packets are received from.
+      * @param[in] sourceIn the Internet host address of the socket source connection.
+      * @post
+      *   GetSource() == sourceIn
+      */
+     void SetSource(const InternetHost &sourceIn);
 
-        /**
-         * @brief The destination host InternetHost structure.
-         */
-        InternetHost GetDestination() const;
+     /**
+      * @brief Checks if the socket handle is valid or not.
+      */
+     virtual bool IsValid() const;
+protected:
 
+     /**
+      * Address of the destination target, where the packets are sent to.
+      */
+     InternetHost destination;
 
-        /**
-         * @brief Sets the destination host parameters.
-         * @param[in] destinationIn is an InternetHost which contains all the
-         * necessary informations for the destination host handling.
-         */
-        void SetDestination(const InternetHost &destinationIn);
+     /**
+      * Address of the source connection, where the packets are received from.
+      */
+     InternetHost source;
 
-        /**
-         * @brief Sets the source host parameters.
-         * @param[in] sourceIn is an InternetHost which contains all the
-         * necessary informations for the source host handling.
-         */
-        void SetSource(const InternetHost &sourceIn);
+     /**
+      * The socket low-level handle.
+      */
+     SocketCore connectionSocket;
 
-
-        /**
-         * @brief Checks if the socket handle is valid or not.
-         */
-        virtual bool IsValid() const;
-
-
-    protected:
-
-
-        /**
-         * Where the packets go to.
-         */
-        InternetHost destination;
-
-        /**
-         * Where packets come from.
-         */
-        InternetHost source;
-
-        /**
-         * The socket handle.
-         */
-        SocketCore connectionSocket;
-
-    };
+};
 
 }
 /*---------------------------------------------------------------------------*/

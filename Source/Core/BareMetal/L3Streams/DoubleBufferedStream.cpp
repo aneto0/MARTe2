@@ -166,9 +166,9 @@ bool DoubleBufferedStream::Read(char8 * const output,
 
 bool DoubleBufferedStream::Read(char8 * const output,
                                 uint32 & size,
-                                const TimeoutType &msecTimeout){
+                                const TimeoutType &timeout){
     TimeoutType prevTimeout=GetTimeout();
-    SetTimeout(msecTimeout);
+    SetTimeout(timeout);
     bool ret=Read(output, size);
     SetTimeout(prevTimeout);
     return ret;
@@ -235,9 +235,9 @@ bool DoubleBufferedStream::Write(const char8 * const input,
 
 bool DoubleBufferedStream::Write(const char8 * const input,
                                  uint32 & size,
-                                 const TimeoutType &msecTimeout) {
+                                 const TimeoutType &timeout) {
     TimeoutType prevTimeout = GetTimeout();
-    SetTimeout(msecTimeout);
+    SetTimeout(timeout);
     bool ret = Write(input, size);
     SetTimeout(prevTimeout);
     return ret;
