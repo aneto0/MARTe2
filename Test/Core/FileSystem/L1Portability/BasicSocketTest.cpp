@@ -57,16 +57,26 @@ bool BasicSocketTest::TestDefaultConstructor() {
         return false;
     }
 
-    return (basicSocket.GetSource().GetPort() == 0);
+    if (basicSocket.GetSource().GetPort() != 0) {
+        return false;
+    }
 
-
+    return !basicSocket.IsValid();
 }
 
 bool BasicSocketTest::TestSetBlocking(bool isBlocked) {
 
     BasicTCPSocket basicSocket;
 
+    basicSocket.Open();
     return basicSocket.SetBlocking(isBlocked);
+
+}
+
+bool BasicSocketTest::TestSetBlocking_false(bool isBlocked) {
+    BasicTCPSocket basicSocket;
+
+    return !basicSocket.SetBlocking(isBlocked);
 
 }
 
@@ -77,6 +87,15 @@ bool BasicSocketTest::TestClose() {
     basicSocket.Open();
     return basicSocket.Close();
 }
+
+
+bool BasicSocketTest::TestClose_false(){
+
+    BasicTCPSocket basicSocket;
+
+    return !basicSocket.Close();
+}
+
 
 bool BasicSocketTest::TestGetSource() {
 
@@ -132,12 +151,11 @@ bool BasicSocketTest::TestGetDestination() {
     return copy.GetPort() == 8080;
 }
 
-
-bool BasicSocketTest::TestSetSource(){
+bool BasicSocketTest::TestSetSource() {
     return TestGetSource();
 }
 
-bool BasicSocketTest::TestSetDestination(){
+bool BasicSocketTest::TestSetDestination() {
     return TestGetDestination();
 }
 

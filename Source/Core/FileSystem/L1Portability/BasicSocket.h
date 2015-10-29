@@ -60,20 +60,20 @@ namespace MARTe {
          * @post
          * Close()
          */
-        ~BasicSocket();
+        virtual ~BasicSocket();
 
         /**
          * @brief Set\UnSet blocking mode.
          * @param[in] flag specifies if blocking mode must be set(true) or unset(false).
          * @return true if the desired mode is set correctly, false otherwise.
          */
-        bool SetBlocking(const bool flag) const;
+        virtual bool SetBlocking(const bool flag) const;
 
         /**
          * @brief Closes the socket.
          * @return true if the socket is closed correctly, false otherwise.
          */
-        bool Close();
+        virtual bool Close();
 
         /**
          * @brief The source host InternetHost structure.
@@ -101,21 +101,27 @@ namespace MARTe {
         void SetSource(const InternetHost &sourceIn);
 
 
+        /**
+         * @brief Checks if the socket handle is valid or not.
+         */
+        virtual bool IsValid() const;
+
+
     protected:
 
 
         /**
-         * Where the packets go to
+         * Where the packets go to.
          */
         InternetHost destination;
 
         /**
-         * Where packets come from
+         * Where packets come from.
          */
         InternetHost source;
 
         /**
-         * The socket handle
+         * The socket handle.
          */
         SocketCore connectionSocket;
 

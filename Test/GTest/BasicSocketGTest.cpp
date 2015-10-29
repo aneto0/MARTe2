@@ -42,22 +42,39 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-
 TEST(BasicSocketGTest,TesDefaultConstructor) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestDefaultConstructor());
 }
 
-
-TEST(BasicSocketGTest,TestSetBlocking_true) {
+TEST(BasicSocketGTest,TestSetBlocking_block) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestSetBlocking(true));
 }
 
-TEST(BasicSocketGTest,TestSetBlocking_false) {
+TEST(BasicSocketGTest,TestSetBlocking_nonblock) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestSetBlocking(false));
+}
+
+TEST(BasicSocketGTest,TestSetBlocking_false_block) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestSetBlocking_false(true));
+}
+
+TEST(BasicSocketGTest,TestSetBlocking_false_nonblock) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestSetBlocking_false(false));
+}
+
+TEST(BasicSocketGTest,TestClose) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestClose());
+}
+
+TEST(BasicSocketGTest,TestClose_false) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestClose_false());
 }
 
 TEST(BasicSocketGTest,TestGetSource) {

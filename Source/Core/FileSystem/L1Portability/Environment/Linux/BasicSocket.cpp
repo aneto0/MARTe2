@@ -36,7 +36,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BasicSocket.h"
-
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,49 +49,51 @@ namespace MARTe {
 
 BasicSocket::BasicSocket() :
         StreamI() {
-    connectionSocket = 0;
+    connectionSocket = -1;
 }
-
 
 /*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
 BasicSocket::~BasicSocket() {
-    if(!Close()){
+    if (!Close()) {
         //TODO
     }
 }
 
-bool BasicSocket::SetBlocking(const bool flag) const{
-    int32 stat = 0;
-    if (flag) {
-        stat = 0;
+bool BasicSocket::SetBlocking(const bool flag) const {
+    int32 ret = -1;
+    if (IsValid()) {
+        int32 stat = 0;
+        if (flag) {
+            stat = 0;
+        }
+        else {
+            stat = 1;
+        }
+
+        ret = ioctl(connectionSocket, static_cast<osulong>(FIONBIO), reinterpret_cast<char8 *>(&stat), sizeof(stat));
     }
     else {
-        stat = 1;
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is invalid");
     }
-
-    int32 ret = ioctl(connectionSocket, static_cast<osulong>(FIONBIO), reinterpret_cast<char8 *> (&stat), sizeof(stat));
     return (ret >= 0);
 }
 
 bool BasicSocket::Close() {
     int32 ret = -1;
-    if (connectionSocket != 0) {
+    if (IsValid()) {
         ret = close(connectionSocket);
-        connectionSocket = 0;
+        connectionSocket = -1;
     }
     return (ret >= 0);
 }
-
 
 InternetHost BasicSocket::GetSource() {
     return source;
 }
 
-
 InternetHost BasicSocket::GetDestination() {
     return destination;
 }
-
 
 void BasicSocket::SetDestination(const InternetHost &destinationIn) {
     destination = destinationIn;
@@ -101,5 +103,8 @@ void BasicSocket::SetSource(const InternetHost &sourceIn) {
     source = sourceIn;
 }
 
+bool BasicSocket::IsValid() const {
+    return (connectionSocket >= 0);
+}
 
 }

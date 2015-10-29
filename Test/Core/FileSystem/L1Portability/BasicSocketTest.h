@@ -38,21 +38,55 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the BasicSocket public functions.
+ */
 class BasicSocketTest {
 public:
+
+    /**
+     * @brief Tests if the source and destination hosts are correctly initialized.
+     */
     bool TestDefaultConstructor();
 
-
+    /**
+     * @brief Tests if the function returns true if the socket handle is valid.
+     */
     bool TestSetBlocking(bool isBlock);
 
+    /**
+     * @brief Tests if the function returns true if the socket handle is invalid.
+     */
+    bool TestSetBlocking_false(bool isBlock);
+
+    /**
+     * @brief Tests if the function returns true if the socket handle is valid.
+     */
     bool TestClose();
 
+    /**
+     * @brief Tests if the function returns true if the socket handle is invalid.
+     */
+    bool TestClose_false();
+
+    /**
+     * @brief Tests if the function returns the source host.
+     */
     bool TestGetSource();
 
+    /**
+     * @brief Tests if the function returns the destination host.
+     */
     bool TestGetDestination();
 
+    /**
+     * @brief Tests if the function sets the source host correctly.
+     */
     bool TestSetSource();
 
+    /**
+     * @brief Tests if the function sets the destination host correctly.
+     */
     bool TestSetDestination();
 
 };
