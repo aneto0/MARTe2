@@ -46,6 +46,8 @@ namespace MARTe {
      */
     class BasicSocket: public StreamI {
 
+        friend class SocketSelect;
+
     public:
 
         /**
@@ -74,19 +76,15 @@ namespace MARTe {
         bool Close();
 
         /**
-         * @brief Full access to the source host InternetHost structure.
+         * @brief The source host InternetHost structure.
          */
-        InternetHost &GetSource();
+        InternetHost GetSource();
 
         /**
-         * @brief Full access to the destination host InternetHost structure.
+         * @brief The destination host InternetHost structure.
          */
-        InternetHost &GetDestination();
+        InternetHost GetDestination();
 
-        /*
-         * @brief Retrieves the socket handle.
-         */
-        SocketCore GetConnectionSocket() const;
 
         /**
          * @brief Sets the destination host parameters.

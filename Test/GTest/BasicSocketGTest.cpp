@@ -1,7 +1,7 @@
 /**
- * @file BasicSocket.cpp
- * @brief Source file for class BasicSocket
- * @date 26/10/2015
+ * @file BasicSocketGTest.cpp
+ * @brief Source file for class BasicSocketGTest
+ * @date 29/10/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,25 +17,22 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class BasicSocket (public, protected, and private). Be aware that some 
+ * the class BasicSocketGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <sys/socket.h>
-#include <net/if.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
+
+#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "BasicSocket.h"
+#include "gtest/gtest.h"
+#include "BasicSocketTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -45,61 +42,40 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
 
-BasicSocket::BasicSocket() :
-        StreamI() {
-    connectionSocket = 0;
+
+TEST(BasicSocketGTest,TesDefaultConstructor) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestDefaultConstructor());
 }
 
 
-/*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
-BasicSocket::~BasicSocket() {
-    if(!Close()){
-        //TODO
-    }
+TEST(BasicSocketGTest,TestSetBlocking_true) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestSetBlocking(true));
 }
 
-bool BasicSocket::SetBlocking(const bool flag) const{
-    int32 stat = 0;
-    if (flag) {
-        stat = 0;
-    }
-    else {
-        stat = 1;
-    }
-
-    int32 ret = ioctl(connectionSocket, static_cast<osulong>(FIONBIO), reinterpret_cast<char8 *> (&stat), sizeof(stat));
-    return (ret >= 0);
+TEST(BasicSocketGTest,TestSetBlocking_false) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestSetBlocking(false));
 }
 
-bool BasicSocket::Close() {
-    int32 ret = -1;
-    if (connectionSocket != 0) {
-        ret = close(connectionSocket);
-        connectionSocket = 0;
-    }
-    return (ret >= 0);
+TEST(BasicSocketGTest,TestGetSource) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestGetSource());
 }
 
-
-InternetHost BasicSocket::GetSource() {
-    return source;
+TEST(BasicSocketGTest,TestGetDestination) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestGetDestination());
 }
 
-
-InternetHost BasicSocket::GetDestination() {
-    return destination;
+TEST(BasicSocketGTest,TestSetSource) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestGetSource());
 }
 
-
-void BasicSocket::SetDestination(const InternetHost &destinationIn) {
-    destination = destinationIn;
-}
-
-void BasicSocket::SetSource(const InternetHost &sourceIn) {
-    source = sourceIn;
-}
-
-
+TEST(BasicSocketGTest,TestSetDestination) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestGetDestination());
 }
