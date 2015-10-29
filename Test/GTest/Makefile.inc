@@ -24,7 +24,8 @@
 
 
 OBJSX= InternetHostGTest.x \
-	   InternetServiceGTest.x
+	   InternetServiceGTest.x \
+	   BasicSocketGTest.x
 #DoubleIntegerGTest.x \
 		TypeCharacteristicsGTest.x \
         ShiftGTest.x \
