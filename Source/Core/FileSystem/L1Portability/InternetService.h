@@ -42,11 +42,17 @@ namespace MARTe {
 
     /**
      * @brief Implementation of an internet service which allows to retrieve
-     * the connection port by name.
+     * the name, the port number and the internet protocol associated to an internet service.
      */
     class InternetService {
 
     public:
+
+        /**
+         * @brief Initializes the InternetServiceCore structure.
+         */
+        InternetService();
+
 
         /**
          * @brief Sets the InternetService handle structure searching in the
@@ -63,12 +69,18 @@ namespace MARTe {
          * database by port.
          * @param[in] name is the port to search.
          * @param[in] protocol is the protocol used in the search.
+         * @warning The port number must be provided in the network format (array of bytes from the less significative to the most)\n
+         * port=1 ---> 0x0100\n
+         * port=256 ---> 0x0001\n
          * @details if protocol is NULL any protocol will be matched.
          */
         bool SearchByPort(const int32 port,const char8 *const protocol=static_cast<char8 *>(NULL));
 
         /**
-         * @brief gets the internet service port.
+         * @brief Retrieves the internet service port.
+         * @warning The port number is in the network format (array of bytes from the less significative to the most)\n
+         * port=1 ---> 0x0100\n
+         * port=256 ---> 0x0001\n
          */
         int32 Port() const;
 
@@ -90,6 +102,9 @@ namespace MARTe {
 
     private:
 
+        /**
+         * The InternetService handle.
+         */
         InternetServiceCore service;
     };
 

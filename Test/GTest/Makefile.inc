@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX= InternetHostGTest.x
+OBJSX= InternetHostGTest.x \
+	   InternetServiceGTest.x
 #DoubleIntegerGTest.x \
 		TypeCharacteristicsGTest.x \
         ShiftGTest.x \
