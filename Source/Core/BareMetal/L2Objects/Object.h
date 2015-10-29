@@ -34,11 +34,10 @@
 #include "HeapI.h"
 #include "HeapManager.h"
 #include "GeneralDefinitions.h"
-#include "StructuredData.h"
 #include "Introspection.h"
 #include "ClassProperties.h"
 #include "ClassRegistryItem.h"
-#include <typeinfo>
+#include "StructuredDataI.h"
 
 namespace MARTe {
 /*---------------------------------------------------------------------------*/
@@ -211,7 +210,7 @@ public:
 	 * @return true if all the input \a data is valid and can be successfully assigned
 	 * to the Object member variables.
 	 */
-	virtual bool Initialise(const StructuredData &data);
+	virtual bool Initialise(const StructuredDataI &data);
 
 	/**
 	 * @brief Returns a copy to the object introspection properties.
@@ -252,6 +251,12 @@ public:
 	 * @pre newName != NULL
 	 */
 	void SetName(const char8 * const newName);
+
+        /**
+         * @brief Returns the AnyType representation of the object.
+         * @return the AnyType representation of the object.
+         */
+        operator AnyType();
 
 private:
 

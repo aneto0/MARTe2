@@ -91,7 +91,7 @@ uint32 Object::NumberOfReferences() const {
 }
 
 /*lint -e{715} data is not used as this is not implemented on purpose*/
-bool Object::Initialise(const StructuredData &data) {
+bool Object::Initialise(const StructuredDataI &data) {
     return false;
 }
 
@@ -184,6 +184,18 @@ void Object::SetName(const char8 * const newName) {
         }
     }
     name = StringHelper::StringDup(newName);
+}
+
+Object::operator AnyType() {
+    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+    const ClassRegistryItem *classItem = classDatabase->Find(GetClassProperties()->GetName());
+    TypeDescriptor dataDescriptor;
+    if (classItem != NULL_PTR(ClassRegistryItem *)) {
+        dataDescriptor.isStructuredData = true;
+        dataDescriptor.isConstant = true;
+        dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
+    }
+    return AnyType(dataDescriptor, 0u, this);
 }
 
 CLASS_REGISTER(Object, "1.0")

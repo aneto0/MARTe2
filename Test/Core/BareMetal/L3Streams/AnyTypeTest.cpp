@@ -459,6 +459,8 @@ bool AnyTypeTest::TestAnyType_ConstCharPointerToConst() {
     return retVal;
 }
 
+//TODO MOVE TO Object tests
+#if 0
 bool AnyTypeTest::TestAnyType_Object() {
     TestObjectHelper1 obj;
     AnyType anytype(obj);
@@ -548,3 +550,4 @@ bool AnyTypeTest::TestCreateFromOtherConstType() {
     }
     return retVal;
 }
+#endif

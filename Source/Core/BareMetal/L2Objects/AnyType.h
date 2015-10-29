@@ -38,8 +38,7 @@
 #include "BitBoolean.h"
 #include "FractionalInteger.h"
 #include "BitRange.h"
-#include "Object.h"
-
+#include <typeinfo>
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -296,7 +295,7 @@ public:
      * @brief Returns the pointer to the data.
      * @return the pointer to the data.
      */
-    inline void* GetDataPointer();
+    inline void* GetDataPointer() const;
 
     /**
      * @brief Returns the pointed data TypeDescriptor.
@@ -330,7 +329,17 @@ public:
     static void CreateFromOtherType(AnyType &dest,
                                     const baseType &obj);
 
-private:
+    /**
+     * TODO
+     */
+    inline virtual uint32 GetNumberOfDimensions() const;
+
+    /**
+     * TODO
+     */
+    inline virtual uint32 GetNumberOfElements(uint32 dimension) const;
+
+protected:
 
     /**
      * Pointer to the data.
@@ -349,6 +358,7 @@ private:
      * It is used for BitSet types,and the maximum range is 255.
      */
     uint8 bitAddress;
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -561,48 +571,48 @@ AnyType::AnyType(const char8 * const p) {
 }
 
 /*---------------------------------------------------------------------------*/
-AnyType::AnyType(Object &obj) {
-    dataPointer = static_cast<void *>(&obj);
-    bitAddress = 0u;
+/*AnyType::AnyType(Object &obj) {
+ dataPointer = static_cast<void *>(&obj);
+ bitAddress = 0u;
 
-    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
-    const char8 *className = obj.GetClassProperties()->GetName();
-    const ClassRegistryItem *classItem = classDatabase->Find(className);
-    if (classItem != NULL_PTR(ClassRegistryItem *)) {
-        dataDescriptor.isStructuredData = true;
-        dataDescriptor.isConstant = false;
-        dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
-    }
-}
+ ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+ const char8 *className = obj.GetClassProperties()->GetName();
+ const ClassRegistryItem *classItem = classDatabase->Find(className);
+ if (classItem != NULL_PTR(ClassRegistryItem *)) {
+ dataDescriptor.isStructuredData = true;
+ dataDescriptor.isConstant = false;
+ dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
+ }
+ }
 
-AnyType::AnyType(const Object &obj) {
-    dataPointer = static_cast<void *>(const_cast<Object *>(&obj));
-    bitAddress = 0u;
+ AnyType::AnyType(const Object &obj) {
+ dataPointer = static_cast<void *>(const_cast<Object *>(&obj));
+ bitAddress = 0u;
 
-    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
-    const char8 *className = obj.GetClassProperties()->GetName();
-    const ClassRegistryItem *classItem = classDatabase->Find(className);
-    if (classItem != NULL_PTR(ClassRegistryItem *)) {
-        dataDescriptor.isStructuredData = true;
-        dataDescriptor.isConstant = true;
-        dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
-    }
-}
+ ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+ const char8 *className = obj.GetClassProperties()->GetName();
+ const ClassRegistryItem *classItem = classDatabase->Find(className);
+ if (classItem != NULL_PTR(ClassRegistryItem *)) {
+ dataDescriptor.isStructuredData = true;
+ dataDescriptor.isConstant = true;
+ dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
+ }
+ }
 
-template<typename baseType>
-void AnyType::CreateFromOtherType(AnyType &dest,
-                                  baseType &obj) {
-    dest.dataPointer = static_cast<void *>(&obj);
-    dest.bitAddress = 0u;
+ template<typename baseType>
+ void AnyType::CreateFromOtherType(AnyType &dest,
+ baseType &obj) {
+ dest.dataPointer = static_cast<void *>(&obj);
+ dest.bitAddress = 0u;
 
-    ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
-    const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(obj).name());
-    if (classItem != NULL_PTR(ClassRegistryItem *)) {
-        dest.dataDescriptor.isStructuredData = true;
-        dest.dataDescriptor.isConstant = false;
-        dest.dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
-    }
-}
+ ClassRegistryDatabase *classDatabase = ClassRegistryDatabase::Instance();
+ const ClassRegistryItem *classItem = classDatabase->FindTypeIdName(typeid(obj).name());
+ if (classItem != NULL_PTR(ClassRegistryItem *)) {
+ dest.dataDescriptor.isStructuredData = true;
+ dest.dataDescriptor.isConstant = false;
+ dest.dataDescriptor.structuredDataIdCode = static_cast<uint14>(classItem->GetClassProperties()->GetUniqueIdentifier());
+ }
+ }*/
 
 template<typename baseType>
 void AnyType::CreateFromOtherType(AnyType &dest,
@@ -664,7 +674,7 @@ AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
 
 /*---------------------------------------------------------------------------*/
 
-void* AnyType::GetDataPointer() {
+void* AnyType::GetDataPointer() const {
     return dataPointer;
 }
 
@@ -678,6 +688,14 @@ TypeDescriptor AnyType::GetTypeDescriptor() const {
 
 uint8 AnyType::GetBitAddress() const {
     return bitAddress;
+}
+
+uint32 AnyType::GetNumberOfDimensions() const {
+    return 0u;
+}
+
+uint32 AnyType::GetNumberOfElements(uint32 dimension) const {
+    return 0u;
 }
 
 /**

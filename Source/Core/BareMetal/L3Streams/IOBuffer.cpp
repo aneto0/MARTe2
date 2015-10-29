@@ -263,7 +263,7 @@ static bool PrintToStream(IOBuffer & iobuff,
         //if the element is structured, the print is not supported.
         bool isStructured = (par.GetTypeDescriptor()).isStructuredData;
         if (isStructured) {
-            //ErrorManagement::ReportError(UnsupportedError, "Streamable::Print StructuredData not supported");
+            //ErrorManagement::ReportError(UnsupportedError, "Streamable::Print StructuredDataI not supported");
             ret = false;
         }
         else {

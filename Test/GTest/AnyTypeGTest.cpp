@@ -183,6 +183,8 @@ TEST(AnyTypeGTest, TestAnyType_ConstCharPointerToConst) {
     ASSERT_TRUE(myAnyTypeTest.TestAnyType_ConstCharPointerToConst());
 }
 
+//TODO Move to Object tests
+#if 0
 TEST(AnyTypeGTest, TestAnyType_Object) {
     AnyTypeTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestAnyType_Object());
@@ -202,6 +204,7 @@ TEST(AnyTypeGTest, TestCreateFromOtherConstType) {
     AnyTypeTest myAnyTypeTest;
     ASSERT_TRUE(myAnyTypeTest.TestCreateFromOtherConstType());
 }
+#endif
 
 TEST(AnyTypeGTest, TestAnyType_BitBooleanUInt8) {
     AnyTypeTest myAnyTypeTest;

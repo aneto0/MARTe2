@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Object.h"
-#include "StructuredData.h"
+#include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -90,7 +90,7 @@ public:
      * @param[in] createOnly if true the object Initialise method is not called.
      * @return true if the object was successfully created and initialized, false otherwise.
      */
-    virtual bool Initialise(const StructuredData &data,
+    virtual bool Initialise(const StructuredDataI &data,
                             const bool &createOnly);
 
     /**

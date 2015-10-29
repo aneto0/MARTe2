@@ -91,7 +91,7 @@ Reference::~Reference() {
 }
 
 /*lint -e{715} data and createOnly not referenced to be removed when the method is implemented in the future*/
-bool Reference::Initialise(const StructuredData &data, const bool &createOnly) {
+bool Reference::Initialise(const StructuredDataI &data, const bool &createOnly) {
 //TODO
     return true;
 }
