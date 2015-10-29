@@ -53,8 +53,6 @@ BasicUDPSocket::BasicUDPSocket():BasicSocket(){
 
 }
 
-BasicUDPSocket::BasicUDPSocket(const SocketCore socketIn): BasicSocket(socketIn) {
-}
 
 BasicUDPSocket::~BasicUDPSocket() {
 
@@ -62,8 +60,8 @@ BasicUDPSocket::~BasicUDPSocket() {
 
 bool BasicUDPSocket::Read(char8* const output,
                           uint32 &size) {
-    uint32 sourceSize = GetSource().Size();
-    int32 ret = static_cast<int32>(recvfrom(GetConnectionSocket(), output, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(GetSource().GetInternetHost()), static_cast<socklen_t*>(&sourceSize)));
+    uint32 sourceSize = source.Size();
+    int32 ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<socklen_t*>(&sourceSize)));
     if (ret >= 0) {
         /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
         size = static_cast<uint32>(ret);
@@ -80,7 +78,7 @@ bool BasicUDPSocket::Read(char8* const output,
 
 bool BasicUDPSocket::Write(const char8* const input,
                            uint32 &size) {
-    int32 ret = static_cast<int32>(sendto(GetConnectionSocket(), input, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(GetDestination().GetInternetHost()), GetDestination().Size()));
+    int32 ret = static_cast<int32>(sendto(connectionSocket, input, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(destination.GetInternetHost()), destination.Size()));
     if (ret >= 0) {
         /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
         size = static_cast<uint32>(ret);
@@ -96,8 +94,8 @@ bool BasicUDPSocket::Write(const char8* const input,
 }
 
 bool BasicUDPSocket::Open() {
-    SetConnectionSocket(socket(PF_INET, SOCK_DGRAM, 0));
-    return (GetConnectionSocket() >= 0);
+    connectionSocket=(socket(PF_INET, SOCK_DGRAM, 0));
+    return (connectionSocket >= 0);
 }
 
 
@@ -106,16 +104,16 @@ bool BasicUDPSocket::Listen(const uint16 port) {
     InternetHost server;
     server.SetPort(port);
 
-    int32 errorCode = bind(GetConnectionSocket(),reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
+    int32 errorCode = bind(connectionSocket,reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<socklen_t>(server.Size()));
     return (errorCode >= 0);
 }
 
 bool BasicUDPSocket::Connect(const char8 * const address,
                              const uint16 port) {
-    GetDestination().SetPort(port);
+    destination.SetPort(port);
     bool ret = true;
-    if (!GetDestination().SetAddress(address)) {
-        if (!GetDestination().SetAddressByHostName(address)) {
+    if (!destination.SetAddress(address)) {
+        if (!destination.SetAddressByHostName(address)) {
             ret = false;
         }
     }
@@ -141,14 +139,14 @@ bool BasicUDPSocket::CanSeek() const {
 
 bool BasicUDPSocket::Read(char8 * const output,
                           uint32 & size,
-                          const TimeoutType &msecTimeout) {
+                          const TimeoutType &timeout) {
 
-    struct timeval timeout;
+    struct timeval timeoutVal;
     /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeout.tv_sec = static_cast<int32>(msecTimeout.GetTimeoutMSec() / 1000u);
+    timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
     /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeout.tv_usec = static_cast<int32>((msecTimeout.GetTimeoutMSec() % 1000u) * 1000u);
-    int32 ret = setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
+    timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
+    int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
 
     bool retVal = true;
 
@@ -161,7 +159,7 @@ bool BasicUDPSocket::Read(char8 * const output,
         retVal = Read(output, size);
     }
 
-    if (setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeout)))<0) {
+    if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeoutVal)))<0) {
         REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
     }
     return retVal;
@@ -169,13 +167,13 @@ bool BasicUDPSocket::Read(char8 * const output,
 
 bool BasicUDPSocket::Write(const char8 * const input,
                            uint32 & size,
-                           const TimeoutType &msecTimeout) {
-    struct timeval timeout;
+                           const TimeoutType &timeout) {
+    struct timeval timeoutVal;
     /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeout.tv_sec = msecTimeout.GetTimeoutMSec() / 1000u;
+    timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
     /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-    timeout.tv_usec = (msecTimeout.GetTimeoutMSec() % 1000u) * 1000u;
-    int32 ret = setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeout), static_cast<socklen_t>(sizeof(timeout)));
+    timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
+    int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
     bool retVal = true;
 
     if (ret < 0) {
@@ -186,7 +184,7 @@ bool BasicUDPSocket::Write(const char8 * const input,
     else {
         retVal = Write(input, size);
     }
-    if (setsockopt(GetConnectionSocket(), SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeout))) < 0) {
+    if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
         REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
         retVal = false;
     }

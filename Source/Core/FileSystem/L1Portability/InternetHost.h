@@ -44,7 +44,7 @@ namespace MARTe{
 
 
 /**
- * @brief A class to store IP address, port and host name associated to a generic host.
+ * @brief A wrapper class to store the IPv4 address, port and host name associated to a generic host.
  */
 class InternetHost {
 
@@ -53,45 +53,50 @@ public:
 
     /**
      * @brief Default constructor.
-     * @param[in] port is the desired port number.
-     * @param[in] addr is the desired IP address in the format x.x.x.x
-     * @pre The IP address should be made by four 3-digits numbers in [0-255] separated by dots.
+     * @param[in] port the port number.
+     * @param[in] addr the IPv4 address in the format x.x.x.x.
+     * @pre
+     *    The address must be in the IPv4 format (3-digits numbers in [0-255] separated by dots).
+     *    A wrong format => GetAddress()==0.0.0.0
      * @post
-     * address.(port)=port\n
-     * address.(IP address)=addr
-     * if the address format is wrong ----> address.(IP address)=0.0.0.0
+     *    GetPort() == port\n
+     *    GetAddress() == addr
      */
     InternetHost(const uint16 port=0u,const char8 * const addr=static_cast<const char8 *>(NULL));
 
     /**
-     * @brief Retrieves the port number.
+     * @brief Returns the port number.
+     * @return the port number.
      */
     uint16 GetPort() const;
 
     /**
-     * @brief Returns the host name in the x.x.x.x format as a String
+     * @brief Returns the IP address in the IPv4 format.
+     * @return the IP address in the IPv4 format.
      */
     String GetAddress() const;
 
     /**
-     * @brief Returns the host name as a String. In case of failure the String returned is empty.
+     * @brief Returns the host name as a String.
+     * @return the host name as a String. In case of failure the returned String is empty.
      */
     String GetHostName() const;
 
-
     /**
      * @brief Returns the IP address as an integer number.
+     * @return the IP address as an integer number.
      */
     uint32 GetAddressAsNumber() const;
 
     /**
-     * @brief Retrieves the local host name.
+     * @brief Returns the host name of the machine where the library is being executed.
+     * @return the host name of the machine where the library is being executed.
      */
     static const char8 *GetLocalHostName();
 
-
     /**
-     * @brief Retrieves the local IP address in the format x.x.x.x
+     * @brief Returns the IP address of the machine where the library is being executed in the IPv4 format.
+     * @return the IP address of the machine where the library is being executed in the IPv4 format.
      */
     static const char8 *GetLocalAddress();
 
@@ -101,29 +106,31 @@ public:
     static void SocketInit();
 
     /**
-     * @brief Retrieves the IP address a.b.c.d as [a + 256*b + (256^2)*c + (256^3)*d]
+     * @brief Returns the IP address a.b.c.d as [a + 256*b + (256^2)*c + (256^3)*d]
+     * @return the IP address a.b.c.d as [a + 256*b + (256^2)*c + (256^3)*d]
      */
     static uint32 GetLocalAddressAsNumber();
-
-
 
     /**
      * @brief Sets the port number.
      * @param[in] port is the desired port number.
+     * @post
+     *   GetPort() == port
      */
     void SetPort(const uint16 port);
 
     /**
-     * @brief Sets the IP address passing a string with the format x.x.x.x
-     * @param[in] addr is the desired IP number.
-     * @return false if the input format is wrong, true otherwise.
-     * @pre addr must have the format x.x.x.x with x in [0-255].
+     * @brief Sets the IP address in the IPv4 format.
+     * @param[in] addr the desired IP number.
+     * @return false if the input format is incorrect.
+     * @pre
+     *    addr must be in the IPv4 format (3-digits numbers in [0-255] separated by dots).
      */
     bool SetAddress(const char8 * const addr);
 
     /**
-     * @brief Sets the desired host name.
-     * @param[in] hostName is the desired host name.
+     * @brief Sets the host name.
+     * @param[in] hostName the host name to be set.
      * @return true if the host name is set correctly, false otherwise.
      */
     bool SetAddressByHostName(const char8 * hostName);
@@ -135,22 +142,24 @@ public:
     void SetAddressByNumber(const uint32 number);
 
     /**
-     * @brief Sets the address of the local host, putting the host name equal to "localhost"
+     * @brief Sets the address of the local hostname as "localhost"
      * @return true if the local host name is set correctly, false otherwise.
+     * @post
+     *    GetLocalHostName() == "localhost"
      */
     bool SetLocalAddress();
 
     /**
-     * @brief Full access to the handle.
-     * @return a pointer to the handle of this structure containing all
-     * the Internet informations.
-     * @warning The handle type depends by the operating system below.
+     * @brief Returns access to the low-level handle.
+     * @return a pointer to the handle of this structure containing
+     * the InternetHostCore information.
+     * @warning The handle type definition is specific to the operating system.
      */
     InternetHostCore *GetInternetHost();
 
     /**
      * @brief Gets the size in bytes of the handle.
-     * @return the size of InternetHostCore.
+     * @return the size of InternetHostCore handle.
      */
     uint32 Size() const;
 

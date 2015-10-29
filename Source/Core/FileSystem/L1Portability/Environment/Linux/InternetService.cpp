@@ -41,6 +41,13 @@
 
 namespace MARTe {
 
+InternetService::InternetService() {
+    service.s_aliases = static_cast<char8 **>(NULL);
+    service.s_name=static_cast<char8*>(NULL);
+    service.s_port=0;
+    service.s_proto=static_cast<char8*>(NULL);
+}
+
 bool InternetService::SearchByName(const char8 * const name,
                                    const char8 * const protocol) {
     servent *serv = getservbyname(name, protocol);
@@ -49,8 +56,8 @@ bool InternetService::SearchByName(const char8 * const name,
 
         service = *serv;
     }
-    else{
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed getservbyname()");
+    else {
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed getservbyname()");
     }
     return ret;
 
@@ -63,8 +70,8 @@ bool InternetService::SearchByPort(const int32 port,
     if (ret) {
         service = *serv;
     }
-    else{
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed getservbyport()");
+    else {
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed getservbyport()");
 
     }
     return ret;
@@ -86,7 +93,7 @@ const char8 *InternetService::Protocol() const {
 int32 InternetService::GetPortByName(const char8 * const name) {
     InternetService serviceT;
 
-    return (serviceT.SearchByName(name))?(serviceT.Port()):(-1);
+    return (serviceT.SearchByName(name)) ? (serviceT.Port()) : (-1);
 }
 
 }

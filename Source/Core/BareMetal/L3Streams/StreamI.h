@@ -159,7 +159,7 @@ public:
      * @brief Reads data from the stream to a char8* buffer.
      * @details As much as size byte are read, actual read size is returned
      * in size. (unless complete = true)
-     * msecTimeout is how much the operation should last - no more - if not
+     * timeout is how much the operation should last - no more - if not
      * any (all) data read then return false
      * timeout behaviour depends on class characteristics and sync mode.
      * return false implies failure to comply with minimum requirements:
@@ -171,22 +171,22 @@ public:
      * @param[out] buffer is the buffer where data must be copied
      * from the stream.
      * @param[in,out] size is the desired number of bytes to read.
-     * @param[in] msecTimeout is the desired timeout.
+     * @param[in] timeout is the desired timeout.
      */
     virtual bool Read(char8 * const output,
             uint32 & size,
-            const TimeoutType &msecTimeout) = 0;
+            const TimeoutType &timeout) = 0;
 
     /**
      * @brief Writes from a const char8* buffer to the stream.
      * @param[in] buffer contains the data which must be copied
      * on the stream.
      * @param[in,out] size is the desired number of bytes to write.
-     * @param[in] msecTimeout is the desired timeout.
+     * @param[in] timeout is the desired timeout.
      *
      * @details As much as size byte are written, actual written size is
      * returned in size.
-     * msecTimeout is how much the operation should last.
+     * timeout is how much the operation should last.
      * timeout behaviour depends on class characteristics and sync mode.
      * return false implies failure to comply with minimum requirements:
      *   timeout and complete and data written  != size
@@ -197,7 +197,7 @@ public:
      */
     virtual bool Write(const char8 * const input,
             uint32 & size,
-            const TimeoutType &msecTimeout) = 0;
+            const TimeoutType &timeout) = 0;
 
     /**
      * @brief Gets the size of the stream.

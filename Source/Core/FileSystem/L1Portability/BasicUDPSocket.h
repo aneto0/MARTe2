@@ -53,33 +53,18 @@ public:
     BasicUDPSocket();
 
     /**
-     * @brief Copy constructor.
-     */
-    BasicUDPSocket(const SocketCore socketIn = 0);
-
-    /**
      * @brief Destructor.
      */
     virtual ~BasicUDPSocket();
 
     /**
-     * @brief Reads data from the socket.
-     * @param[out] output pointer to an array where read data is stored.
-     * @param[in,out] size number of bytes to read.
-     * @return true if at least one byte is successfully read.
-     * @post
-     *   size is the number of bytes actually read.
+     * @see StreamI::Read
      */
     virtual bool Read(char8* const output,
                       uint32 &size);
 
     /**
-     * @brief Writes data to the socket.
-     * @param[in] input pointer to an array with the data to send.
-     * @param[in,out] size the number of bytes to write.
-     * @return true if at least one byte is successfully written.
-     * @post
-     *   size is the number of bytes actually written.
+     * @see StreamI::Write
      */
     virtual bool Write(const char8* const input,
                        uint32 &size);
@@ -138,25 +123,14 @@ public:
     virtual bool CanSeek() const;
 
     /**
-     * @brief Reads data from the socket.
-     * @param[out] output pointer to an array where read data is stored.
-     * @param[in,out] size number of bytes to read.
-     * @param[in] msecTimeout is the desired timeout.
-     * @return true if at least one byte is successfully read within the specified timeout.
-     * @post
-     *   size is the number of bytes actually read.
+     * @see StreamI::Read
      */
     virtual bool Read(char8 * const output,
                       uint32 & size,
                       const TimeoutType &msecTimeout);
 
     /**
-     * @brief Send data to socket within timeout.
-     * @param[in] input contains the data to send.
-     * @param[in,out] size is the number of bytes to write.
-     * @param[in] msecTimeout is the desired timeout.
-     * @return false if the timeout expires before writing.
-     * @post size is the number of written bytes.
+     * @see StreamI::Write
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size,
