@@ -30,11 +30,9 @@ LIBRARIES0   = kernel32.lib wsock32.lib user32.lib advapi32.lib ws2_32.lib
 LIBRARIES += $(LIBRARIES0) $(BLCOMPONENTS) 
 LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT)
 LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF$(LIBEXT)
 
 IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB.def
 IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS.def
-IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF.def
 
 
 
