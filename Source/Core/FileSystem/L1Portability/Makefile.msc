@@ -1,6 +1,7 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
 #
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
@@ -22,23 +23,19 @@
 # $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
+
 TARGET=msc
 
 include Makefile.inc
+ 
+LIBRARIES += $(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
-LIBRARIES0   = kernel32.lib wsock32.lib user32.lib advapi32.lib ws2_32.lib
-LIBRARIES += $(LIBRARIES0) $(BLCOMPONENTS) 
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 
-IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB.def
-IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS.def
-IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF.def
+IMPDEFS += $(BUILD_DIR)/$(ENVIRONMENT)/L1Portability.def
 
 
 
-OPTIM= -G6 -O2 -Ob2
 
 
 

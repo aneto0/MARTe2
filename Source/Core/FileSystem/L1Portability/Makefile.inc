@@ -1,7 +1,8 @@
 #############################################################
 #
-# Copyright 2011 EFDA | European Fusion Development Agreement
-#
+# Copyright 2015 F4E | European Joint Undertaking for ITER 
+#  and the Development of Fusion Energy ('Fusion for Energy')
+# 
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -19,26 +20,26 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
-# $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
-#
 #############################################################
-TARGET=msc
 
-include Makefile.inc
+PACKAGE=Core/FileSystem
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-LIBRARIES0   = kernel32.lib wsock32.lib user32.lib advapi32.lib ws2_32.lib
-LIBRARIES += $(LIBRARIES0) $(BLCOMPONENTS) 
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS$(LIBEXT)
-LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF$(LIBEXT)
+SPB=Environment/$(ENVIRONMENT).x
 
-IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\MARTeCoreB.def
-IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\Scheduler\MARTeCoreS.def
-IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\MARTeCoreF.def
+OBJSX=
 
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
+INCLUDES+=-I../../FileSystem/L1Portability -I../../BareMetal/L0Types
 
-OPTIM= -G6 -O2 -Ob2
+all: $(OBJS) $(SUBPROJ)   \
+		$(BUILD_DIR)/L1PortabilityF$(LIBEXT) \
+		$(BUILD_DIR)/L1PortabilityF.def
+		
+	echo  $(OBJS)
 
+include depends.$(TARGET)
 
-
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
