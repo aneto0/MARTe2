@@ -29,6 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AnyObject.h"
+#include "StreamI.h"
+#include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
@@ -47,30 +49,73 @@ AnyObject::AnyObject() {
 bool AnyObject::Load(const AnyType &typeIn) {
     uint32 typeSize = typeIn.GetTypeDescriptor().numberOfBits / 8u;
     uint32 nOfDimensions = typeIn.GetNumberOfDimensions();
-    uint32 copySize;
-    if (nOfDimensions > 0) {
+    uint32 copySize = 0u;
+    uint32 totalElements = 1u;
+    bool ok = true;
+
+    if (typeIn.GetTypeDescriptor().type == Stream) {
+        StreamI *stream = static_cast<StreamI *>(typeIn.GetDataPointer());
+        if (stream != NULL) {
+            copySize = stream->Size();
+        }
+        else {
+            ok = false;
+        }
+    }
+    else if ((nOfDimensions == 0u) && (typeIn.GetTypeDescriptor().type == CCString)) {
+        copySize = (StringHelper::Length(static_cast<const char *>(typeIn.GetDataPointer())) + 1u);
+    }
+    else {
         uint32 i;
         for (i = 0u; i < nOfDimensions; i++) {
-            copySize += typeIn.GetNumberOfElements(i) * typeSize;
+            if (typeIn.GetNumberOfElements(i) != 0u) {
+                totalElements *= typeIn.GetNumberOfElements(i);
+            }
+        }
+        copySize = typeSize * totalElements;
+    }
+
+    value = HeapManager::Malloc(copySize);
+
+    if (typeIn.GetTypeDescriptor().type == Stream) {
+        StreamI *stream = static_cast<StreamI*>(typeIn.GetDataPointer());
+        ok = stream->Seek(0u);
+        if (ok) {
+            stream->Read(static_cast<char8 *>(value), copySize);
+        }
+    }
+    else if ((nOfDimensions == 1u) && (typeIn.GetTypeDescriptor().type == CCString)) {
+        uint32 j;
+        char **destArray = static_cast<char **>(value);
+        const char **stringArray = static_cast<const char **>(typeIn.GetDataPointer());
+        //TODO .GetNumberOfElements(0u) should walk all the dimension
+        for (j = 0; ok && (j < typeIn.GetNumberOfElements(0u)); j++) {
+            copySize = (StringHelper::Length(stringArray[j]) + 1u);
+            destArray[j] = static_cast<char *>(HeapManager::Malloc(copySize));
+            if (!MemoryOperationsHelper::Copy(static_cast<void *>(destArray[j]), static_cast<const void *>(stringArray[j]), copySize)) {
+                ok = false;
+            }
         }
     }
     else {
-        copySize = typeSize;
+        if (!MemoryOperationsHelper::Copy(value, typeIn.GetDataPointer(), copySize)) {
+            ok = false;
+        }
     }
-    value = HeapManager::Malloc(copySize);
-    if (!MemoryOperationsHelper::Copy(value, typeIn.GetDataPointer(), copySize)) {
-        //TODO
-    }
-    printf("HERE! %d\n", typeIn.GetNumberOfDimensions());
-    printf("HERE! %d\n", typeIn.GetNumberOfElements(0));
+
     type = typeIn;
-    printf("!HERE\n");
+    type.SetDataPointer(value);
+    if (typeIn.GetTypeDescriptor().type == Stream) {
+        type.SetNumberOfElements(2u, copySize);
+    }
+    return ok;
 }
 
 AnyObject::~AnyObject() {
     if (value != NULL_PTR(void *)) {
         HeapManager::Free(value);
     }
+    //TODO must destroy multidim types
 }
 
 AnyType AnyObject::GetType() {

@@ -28,6 +28,8 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AnyType.h"
+#include "StreamI.h"
+#include "StringHelper.h"
 #include "FormatDescriptor.h"
 #include "MemoryOperationsHelper.h"
 
@@ -43,32 +45,61 @@ namespace MARTe {
 static bool TypeConvert(const AnyType &destination,
                         const AnyType &source) {
     bool ok = true;
-    uint16 t1 = source.GetTypeDescriptor().all;
-    uint16 t2 = destination.GetTypeDescriptor().all;
-    printf("source = %u destination = %u\n", t1, t2);
-    //TODO must check if the dimensions and the number of elements are the same...
+    uint32 nOfDimensions = source.GetNumberOfDimensions();
+    uint32 copySize = 0u;
+    uint32 totalElements = 1u;
+
+    uint32 i;
+    for (i = 0u; i < nOfDimensions; i++) {
+        if (source.GetNumberOfElements(i) != 0u) {
+            totalElements *= source.GetNumberOfElements(i);
+        }
+    }
+
+    //TODO must check if the dimensions and the number of elements are the same in source and destination...
     if (destination.GetTypeDescriptor() == source.GetTypeDescriptor()) {
         uint32 typeSize = source.GetTypeDescriptor().numberOfBits / 8u;
-        uint32 nOfDimensions = source.GetNumberOfDimensions();
-        uint32 copySize = 0u;
-        if (nOfDimensions > 0) {
-            uint32 i;
-            for (i = 0u; i < nOfDimensions; i++) {
-                printf("source.GetNumberOfElements(%d) = %d\n", i, source.GetNumberOfElements(i));
-                copySize += source.GetNumberOfElements(i) * typeSize;
+
+        if (source.GetTypeDescriptor().type == Stream) {
+            copySize = source.GetNumberOfElements(2u);
+        }
+        else if ((nOfDimensions == 0u) && (source.GetTypeDescriptor().type == CCString)) {
+            copySize = (StringHelper::Length(static_cast<const char *>(source.GetDataPointer())) + 1u);
+        }
+        else {
+            copySize = typeSize * totalElements;
+        }
+
+        if (source.GetTypeDescriptor().type == Stream) {
+            StreamI *stream = static_cast<StreamI *>(destination.GetDataPointer());
+            ok = stream->Seek(0u);
+            if (ok) {
+                stream->Write(static_cast<char8 *>(source.GetDataPointer()), copySize);
+            }
+        }
+        //TODO should we support tables of strings?
+        else if ((nOfDimensions == 1u) && (source.GetTypeDescriptor().type == CCString)) {
+            uint32 j;
+            char **destArray = static_cast<char **>(destination.GetDataPointer());
+            const char **sourceArray = static_cast<const char **>(source.GetDataPointer());
+            //TODO .GetNumberOfElements(0u) should walk all the dimension
+            for (j = 0; j < source.GetNumberOfElements(0u); j++) {
+                copySize = (StringHelper::Length(sourceArray[j]) + 1u);
+                if (!MemoryOperationsHelper::Copy(static_cast<void *>(destArray[j]), static_cast<const void *>(sourceArray[j]), copySize)) {
+                    //TODO
+                }
             }
         }
         else {
-            copySize = typeSize;
-        }
-        printf("copySize = [%d]\n", copySize);
-        if (!MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize)) {
-            ok = false;
+            if (!MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize)) {
+                ok = false;
+            }
         }
     }
     else {
         ok = false;
     }
+
     return ok;
 }
 

@@ -54,8 +54,6 @@ ConfigurationDatabase::~ConfigurationDatabase() {
 
 bool ConfigurationDatabase::Write(const char * const name,
                                   const AnyType &value) {
-
-    printf("ConfigurationDatabase::Write = %f\n", *(float32 *) value.GetDataPointer());
     ReferenceT<AnyObject> objToWrite(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     bool ok = objToWrite.IsValid();
     if (ok) {
@@ -148,7 +146,6 @@ bool ConfigurationDatabase::CreateNodes(const char * const path,
     char c;
 
     while (ok && (pathStr.GetToken(token, ".", c))) {
-        printf("-%s-\n", token.Buffer());
         ok = (token.Size() > 0);
         if (ok) {
             if (!rootNode.IsValid()) {
@@ -161,7 +158,6 @@ bool ConfigurationDatabase::CreateNodes(const char * const path,
                 ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                 container->SetName(token.Buffer());
                 ok = currentNode->Insert(container);
-                printf("Created container with name %s\n", container->GetName());
                 if (ok) {
                     currentNode = container;
                 }
@@ -173,8 +169,6 @@ bool ConfigurationDatabase::CreateNodes(const char * const path,
                     ok = token.SetSize(0u);
                 }
             }
-            printf("Root node is %s\n", rootNode->GetName());
-            printf("Current node is %s\n", currentNode->GetName());
         }
     }
     return ok;
