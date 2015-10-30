@@ -38,11 +38,8 @@ INCLUDES+=-I../../
 INCLUDES+=-I../../../../BareMetal/L0Types
 INCLUDES+=-I../../../../BareMetal/L1Portability
 INCLUDES+=-I../../../../BareMetal/L2Objects
-<<<<<<< HEAD
 INCLUDES+=-I../../../../BareMetal/L3Streams
-=======
->>>>>>> refs/remotes/origin/#249_BufferedStreamGenerator
-INCLUDES+=-I../../../../Scheduler/L1Portability
+#INCLUDES+=-I../../../../Scheduler/L1Portability
 
 all: $(OBJS) $(CPPS) \
      $(BUILD_DIR)/L1Portability$(LIBEXT)

@@ -34,6 +34,8 @@
 
 #include "GeneralDefinitions.h"
 #include "StreamI.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,BasicFileProperties.h)
+
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -41,13 +43,78 @@
 
 namespace MARTe {
 
+const uint32 ACCESS_MODE_R   = 0x00000000;
+/** */
+const uint32 ACCESS_MODE_W   = 0x00000001;
+/** */
+const uint32 ACCESS_MODE_R_W = 0x00000002;
+
+const uint32 FLAG_APPEND     = 0x00000010;
+
+const uint32 FLAG_CREAT      = 0x00000020;
+
+const uint32 FLAG_TRUNC      = 0x00000040;
+
+const uint32 FLAG_EXCL       = 0x00000080;
+
 class BasicFile: public StreamI {
 public:
+    /**
+     * @brief Default constructor
+     * @post
+     *   not CanRead() &&
+     *   not CanWrite() &&
+     *   not CanSeek() &&
+     *   Size() == 0 &&
+     *   Position() == 0
+     */
     BasicFile();
 
-    virtual bool Read(char8* const output, uint32 & size);
+    void SetMode(const uint32 setMode);
 
-    virtual bool Write(const char8 * const input, uint32 & size);
+    /**
+     * @brief ...
+     * @pre IsOpen()
+     * @post
+     */
+    void SetFlags(const uint32 setFlags);
+
+    uint32 getFlags();
+
+    virtual bool CanWrite() const;
+
+    virtual bool CanRead() const;
+
+    virtual bool CanSeek() const;
+
+    /**
+     * @brief ...
+     * @post
+     *   CanRead() == (flags | ACCESS_MODE_R) &&
+     *   not CanWrite() &&
+     *   not CanSeek() &&
+     *   Size() == 0 &&
+     *   Position() == 0
+     */
+    bool Open(const char * pathname, const uint32 flags);
+
+    bool IsOpen();
+
+    bool Close();
+
+    virtual bool Read(char8* const output,
+                      uint32 & size);
+
+    virtual bool Read(char8 * const output,
+                      uint32 & size,
+                      const TimeoutType &msecTimeout);
+
+    virtual bool Write(const char8 * const input,
+                       uint32 & size);
+
+    virtual bool Write(const char8 * const input,
+                       uint32 & size,
+                       const TimeoutType &msecTimeout);
 
     virtual uint64 Size();
 
@@ -59,6 +126,8 @@ public:
 
     virtual bool SetSize(uint64 size);
 
+private:
+    BasicFileProperties fileProperties;
 };
 }
 
