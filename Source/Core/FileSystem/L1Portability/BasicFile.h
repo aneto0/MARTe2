@@ -48,7 +48,7 @@ const uint32 ACCESS_MODE_R   = 0x00000000;
 const uint32 ACCESS_MODE_W   = 0x00000001;
 /** */
 const uint32 ACCESS_MODE_R_W = 0x00000002;
-
+//TODO: Perhaps the APPEND flag is not necessary, because it can be achieved with a Seek(Size()) call anyway.
 const uint32 FLAG_APPEND     = 0x00000010;
 
 const uint32 FLAG_CREAT      = 0x00000020;
@@ -56,6 +56,20 @@ const uint32 FLAG_CREAT      = 0x00000020;
 const uint32 FLAG_TRUNC      = 0x00000040;
 
 const uint32 FLAG_EXCL       = 0x00000080;
+
+//TODO: Define what is a BasicFile:
+/**
+ * It is a wrapper for a specific OS file handle.
+ * The OS handle is a kind of pointer/identifier of a memory structure
+ * which maintains state of an open file.
+ * The OS structure and its handle is created when the file is opened.
+ * While the handles are always open by definition, the class, as a wrapper,
+ * maintains a double state {open, closed}, which means that when in closed
+ * state, it wraps an invalid handle.
+ * It is not intended that this class made cache of any file properties,
+ * like mode, flags, pathname, etc.
+ *
+ */
 
 class BasicFile: public StreamI {
 public:
@@ -68,6 +82,11 @@ public:
      *   Size() == 0 &&
      *   Position() == 0
      */
+     
+     //TODO: Copy constructor?? --> BasicFile(const BasicFile& obj);
+    //Define copy semantics:
+    //  a) Copy the handle as is?
+    //  b) Use a handle duplication function supplied by the OS, like dup() in Linux?
     BasicFile();
 
     void SetMode(const uint32 setMode);
@@ -123,10 +142,18 @@ public:
     virtual bool RelativeSeek(const int32 deltaPos);
 
     virtual uint64 Position();
+    
+     /**
+     * @pre IsOpen() && CanWrite && �CanSeek()?
+     * @post Size() == size &&
+     *       this'old->Position() >= size => Position() == size &&
+     *       this'old->Position() < size => Position() == this'old->Position()
+     */
 
     virtual bool SetSize(uint64 size);
 
 private:
+//TODO: Hide the OS specific implementation
     BasicFileProperties fileProperties;
 };
 }
