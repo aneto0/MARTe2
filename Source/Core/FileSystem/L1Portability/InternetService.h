@@ -74,7 +74,7 @@ namespace MARTe {
          * port=256 ---> 0x0001\n
          * @details if protocol is NULL any protocol will be matched.
          */
-        bool SearchByPort(const int32 port,const char8 *const protocol=static_cast<char8 *>(NULL));
+        bool SearchByPort(const uint16 port,const char8 *const protocol=static_cast<char8 *>(NULL));
 
         /**
          * @brief Retrieves the internet service port.
@@ -82,7 +82,7 @@ namespace MARTe {
          * port=1 ---> 0x0100\n
          * port=256 ---> 0x0001\n
          */
-        int32 Port() const;
+        uint16 Port() const;
 
         /**
          * @brief Retrieves the internet service name.
@@ -94,11 +94,6 @@ namespace MARTe {
          */
         const char8 *Protocol() const;
 
-        /**
-         * @brief Returns the port associated to an internet service with the provided name.
-         * @param[in] name is the internet service name in input.
-         */
-        static int32 GetPortByName(const char8 * const name);
 
     private:
 

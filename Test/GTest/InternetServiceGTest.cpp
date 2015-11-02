@@ -54,14 +54,14 @@ TEST(InternetServiceGTest,TesDefaultConstructor) {
 TEST(InternetServiceGTest,TestSearchByName) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
-            {NULL, NULL, 0x1500, "tcp", false},
-            {"ftp", NULL, 0x1500, "tcp", true},
-            {"http", NULL, 0x5000, "tcp", true},
-            {"http", "tcp", 0x5000, "tcp", true},
-            {"http", "udp", 0x5000, "udp", true},
-            {"smtp", "tcp", 0x1900, "tcp", true},
-            {"smtp", "udp", 0x1900, "udp", false},
-            {"git", "tcp", 0xca24, "tcp", true},
+            {NULL, NULL, 0, "tcp", false},
+            {"ftp", NULL, 21, "tcp", true},
+            {"http", NULL, 80, "tcp", true},
+            {"http", "tcp", 80, "tcp", true},
+            {"http", "udp", 80, "udp", true},
+            {"smtp", "tcp", 25, "tcp", true},
+            {"smtp", "udp", 25, "udp", false},
+            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -73,13 +73,13 @@ TEST(InternetServiceGTest,TestSearchByName) {
 TEST(InternetServiceGTest,TestSearchByPort) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
-            {"ftp", NULL, 0x1500, "tcp", true},
-            {"http", NULL, 0x5000, "tcp", true},
-            {"http", "tcp", 0x5000, "tcp", true},
-            {"http", "udp", 0x5000, "udp", true},
-            {"smtp", "tcp", 0x1900, "tcp", true},
-            {"smtp", "udp", 0x1900, "udp", false},
-            {"git", "tcp", 0xca24, "tcp", true},
+            {"ftp", NULL, 21, "tcp", true},
+            {"http", NULL, 80, "tcp", true},
+            {"http", "tcp", 80, "tcp", true},
+            {"http", "udp", 80, "udp", true},
+            {"smtp", "tcp", 25, "tcp", true},
+            {"smtp", "udp", 25, "udp", false},
+            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -90,13 +90,13 @@ TEST(InternetServiceGTest,TestSearchByPort) {
 TEST(InternetServiceGTest,TestPort) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
-            {"ftp", NULL, 0x1500, "tcp", true},
-            {"http", NULL, 0x5000, "tcp", true},
-            {"http", "tcp", 0x5000, "tcp", true},
-            {"http", "udp", 0x5000, "udp", true},
-            {"smtp", "tcp", 0x1900, "tcp", true},
-            {"smtp", "udp", 0x1900, "udp", false},
-            {"git", "tcp", 0xca24, "tcp", true},
+            {"ftp", NULL, 21, "tcp", true},
+            {"http", NULL, 80, "tcp", true},
+            {"http", "tcp", 80, "tcp", true},
+            {"http", "udp", 80, "udp", true},
+            {"smtp", "tcp", 25, "tcp", true},
+            {"smtp", "udp", 25, "udp", false},
+            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -107,13 +107,13 @@ TEST(InternetServiceGTest,TestPort) {
 TEST(InternetServiceGTest,TestName) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
-            {"ftp", NULL, 0x1500, "tcp", true},
-            {"http", NULL, 0x5000, "tcp", true},
-            {"http", "tcp", 0x5000, "tcp", true},
-            {"http", "udp", 0x5000, "udp", true},
-            {"smtp", "tcp", 0x1900, "tcp", true},
-            {"smtp", "udp", 0x1900, "udp", false},
-            {"git", "tcp", 0xca24, "tcp", true},
+            {"ftp", NULL, 21, "tcp", true},
+            {"http", NULL, 80, "tcp", true},
+            {"http", "tcp", 80, "tcp", true},
+            {"http", "udp", 80, "udp", true},
+            {"smtp", "tcp", 25, "tcp", true},
+            {"smtp", "udp", 25, "udp", false},
+            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -125,13 +125,13 @@ TEST(InternetServiceGTest,TestName) {
 TEST(InternetServiceGTest,TestProtocol) {
     InternetServiceTest internetServiceTest;
     const InternetServiceTestTable table[] ={
-            {"ftp", NULL, 0x1500, "tcp", true},
-            {"http", NULL, 0x5000, "tcp", true},
-            {"http", "tcp", 0x5000, "tcp", true},
-            {"http", "udp", 0x5000, "udp", true},
-            {"smtp", "tcp", 0x1900, "tcp", true},
-            {"smtp", "udp", 0x1900, "udp", false},
-            {"git", "tcp", 0xca24, "tcp", true},
+            {"ftp", NULL, 21, "tcp", true},
+            {"http", NULL, 80, "tcp", true},
+            {"http", "tcp", 80, "tcp", true},
+            {"http", "udp", 80, "udp", true},
+            {"smtp", "tcp", 25, "tcp", true},
+            {"smtp", "udp", 25, "udp", false},
+            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -139,20 +139,6 @@ TEST(InternetServiceGTest,TestProtocol) {
 }
 
 
-TEST(InternetServiceGTest,TestGetPortByName) {
-    InternetServiceTest internetServiceTest;
-    const InternetServiceTestTable table[] ={
-            {"ftp", NULL, 0x1500, "tcp", true},
-            {"http", NULL, 0x5000, "tcp", true},
-            {"http", "tcp", 0x5000, "tcp", true},
-            {"http", "udp", 0x5000, "udp", true},
-            {"smtp", "tcp", 0x1900, "tcp", true},
-            {"git", "tcp", 0xca24, "tcp", true},
-            {0,0,0,0,0}
-    };
-
-    ASSERT_TRUE(internetServiceTest.TestGetPortByName(table));
-}
 
 
 

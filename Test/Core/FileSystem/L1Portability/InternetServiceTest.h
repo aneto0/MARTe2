@@ -85,10 +85,7 @@ public:
      */
     bool TestProtocol(const InternetServiceTestTable* table);
 
-    /**
-     * @brief Tests if the function returns the port related to provided service name.
-     */
-    bool TestGetPortByName(const InternetServiceTestTable* table);
+
 };
 
 /*---------------------------------------------------------------------------*/

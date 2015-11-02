@@ -50,6 +50,7 @@ namespace MARTe {
 BasicSocket::BasicSocket() :
         StreamI() {
     connectionSocket = -1;
+    isBlocking = true;
 }
 
 /*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
@@ -59,7 +60,7 @@ BasicSocket::~BasicSocket() {
     }
 }
 
-bool BasicSocket::SetBlocking(const bool flag) const {
+bool BasicSocket::SetBlocking(const bool flag) {
     int32 ret = -1;
     if (IsValid()) {
         int32 stat = 0;
@@ -71,6 +72,10 @@ bool BasicSocket::SetBlocking(const bool flag) const {
         }
 
         ret = ioctl(connectionSocket, static_cast<osulong>(FIONBIO), reinterpret_cast<char8 *>(&stat), sizeof(stat));
+
+        if (ret >= 0) {
+            isBlocking = flag;
+        }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is invalid");
@@ -87,11 +92,11 @@ bool BasicSocket::Close() {
     return (ret >= 0);
 }
 
-InternetHost BasicSocket::GetSource() const{
+InternetHost BasicSocket::GetSource() const {
     return source;
 }
 
-InternetHost BasicSocket::GetDestination() const{
+InternetHost BasicSocket::GetDestination() const {
     return destination;
 }
 
@@ -105,6 +110,10 @@ void BasicSocket::SetSource(const InternetHost &sourceIn) {
 
 bool BasicSocket::IsValid() const {
     return (connectionSocket >= 0);
+}
+
+bool BasicSocket::IsBlocking() const {
+    return isBlocking;
 }
 
 }

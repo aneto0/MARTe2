@@ -63,9 +63,10 @@ bool InternetService::SearchByName(const char8 * const name,
 
 }
 
-bool InternetService::SearchByPort(const int32 port,
+bool InternetService::SearchByPort(const uint16 port,
                                    const char8 * const protocol) {
-    servent *serv = getservbyport(port, protocol);
+
+    servent *serv = getservbyport(static_cast<int32>(htons(port)), protocol);
     bool ret = (serv != NULL);
     if (ret) {
         service = *serv;
@@ -78,8 +79,8 @@ bool InternetService::SearchByPort(const int32 port,
 
 }
 
-int32 InternetService::Port() const {
-    return service.s_port;
+uint16 InternetService::Port() const {
+    return htons(static_cast<uint16>(service.s_port));
 }
 
 const char8 *InternetService::Name() const {
@@ -90,10 +91,5 @@ const char8 *InternetService::Protocol() const {
     return service.s_proto;
 }
 
-int32 InternetService::GetPortByName(const char8 * const name) {
-    InternetService serviceT;
-
-    return (serviceT.SearchByName(name)) ? (serviceT.Port()) : (-1);
-}
 
 }

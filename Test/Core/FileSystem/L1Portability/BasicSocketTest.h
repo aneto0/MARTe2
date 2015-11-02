@@ -89,6 +89,12 @@ public:
      */
     bool TestSetDestination();
 
+
+    /**
+     * @brief Tests if the function returns true if the socket is in blocking mode and false otherwise.
+     */
+    bool TestIsBlocking(bool isBlocked);
+
 };
 
 /*---------------------------------------------------------------------------*/

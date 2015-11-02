@@ -96,3 +96,13 @@ TEST(BasicSocketGTest,TestSetDestination) {
     BasicSocketTest basicSocketTest;
     ASSERT_TRUE(basicSocketTest.TestGetDestination());
 }
+
+TEST(BasicSocketGTest,TestIsBlocking_block) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestIsBlocking(true));
+}
+
+TEST(BasicSocketGTest,TestIsBlocking_nonblock) {
+    BasicSocketTest basicSocketTest;
+    ASSERT_TRUE(basicSocketTest.TestIsBlocking(false));
+}

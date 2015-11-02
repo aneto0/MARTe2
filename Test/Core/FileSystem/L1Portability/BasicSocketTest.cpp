@@ -88,14 +88,12 @@ bool BasicSocketTest::TestClose() {
     return basicSocket.Close();
 }
 
-
-bool BasicSocketTest::TestClose_false(){
+bool BasicSocketTest::TestClose_false() {
 
     BasicTCPSocket basicSocket;
 
     return !basicSocket.Close();
 }
-
 
 bool BasicSocketTest::TestGetSource() {
 
@@ -157,5 +155,23 @@ bool BasicSocketTest::TestSetSource() {
 
 bool BasicSocketTest::TestSetDestination() {
     return TestGetDestination();
+}
+
+bool BasicSocketTest::TestIsBlocking(bool isBlocked) {
+    BasicTCPSocket socket;
+
+    if (!socket.IsBlocking()) {
+        return false;
+    }
+
+    if (!socket.Open()) {
+        return false;
+    }
+
+    if (!socket.SetBlocking(isBlocked)) {
+        return false;
+    }
+
+    return socket.IsBlocking() == isBlocked;
 }
 

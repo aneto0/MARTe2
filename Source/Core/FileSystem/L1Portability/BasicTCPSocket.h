@@ -146,6 +146,7 @@ public:
      */
     virtual bool CanSeek() const;
 
+
     /**
      * @brief Read without removing data from the socket pipe.
      * @param[out] buffer is the buffer used to store the read data.
@@ -185,8 +186,7 @@ public:
      */
     bool Connect(const char8 * const address,
                  const uint16 port,
-                 const TimeoutType &timeout = TTInfiniteWait,
-                 int32 retry = 12);
+                 const TimeoutType &timeout = TTInfiniteWait);
 
     /**
      * @brief Connect to a specific host.
@@ -209,6 +209,8 @@ public:
      */
     BasicTCPSocket *WaitConnection(const TimeoutType &timeout = TTInfiniteWait,
                                    BasicTCPSocket *client = static_cast<BasicTCPSocket *>(NULL));
+
+
 
 };
 }

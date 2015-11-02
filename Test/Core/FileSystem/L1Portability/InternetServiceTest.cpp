@@ -208,29 +208,4 @@ bool InternetServiceTest::TestProtocol(const InternetServiceTestTable* table) {
     return true;
 }
 
-bool InternetServiceTest::TestGetPortByName(const InternetServiceTestTable* table) {
-
-    uint32 i = 0;
-    while (table[i].name != NULL) {
-
-        int32 port = InternetService::GetPortByName(table[i].name);
-
-        bool ret = (port >= 0);
-        if (table[i].expected) {
-
-            if (port != table[i].port) {
-                printf("\n%x %x %s %d\n",port,table[i].port, table[i].name,i);
-                return false;
-            }
-        }
-        if (ret != table[i].expected) {
-            printf("\n%x %x %s %d\n",port,table[i].port, table[i].name,i);
-
-            return false;
-        }
-        i++;
-    }
-    return true;
-
-}
 

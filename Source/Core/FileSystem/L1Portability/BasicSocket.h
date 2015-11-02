@@ -64,7 +64,10 @@ friend class SocketSelect;
      * @param[in] flag specifies if blocking mode must be set(true) or unset(false).
      * @return true if the desired mode is set correctly.
      */
-    bool SetBlocking(const bool flag) const;
+    bool SetBlocking(const bool flag);
+
+
+    bool IsBlocking() const;
 
     /**
      * @brief Closes the socket.
@@ -120,6 +123,10 @@ protected:
       * The socket low-level handle.
       */
      SocketCore connectionSocket;
+
+private:
+
+     bool isBlocking;
 
 };
 
