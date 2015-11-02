@@ -151,61 +151,71 @@ bool BasicTCPSocket::Connect(const char8 * const address,
             if (timeout.IsFinite()) {
                 //set as unblocking if the timeout is finite.
                 if (wasBlocking) {
-                    SetBlocking(false);
+                    ret = SetBlocking(false);
+                    if (!ret) {
+                        REPORT_ERROR(ErrorManagement::OSError, "Error: Socket set to non-block mode failed.");
+                    }
                 }
             }
+            if (ret) {
 
-            int32 errorCode = connect(connectionSocket, reinterpret_cast<struct sockaddr *>(destination.GetInternetHost()), destination.Size());
-            if (errorCode < 0) {
-                errorCode = sock_errno();
-                switch (errorCode) {
-                case (EINTR): {
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: failed connect() because interrupted by a signal");
-                    ret = false;
+                int32 errorCode = connect(connectionSocket, reinterpret_cast<struct sockaddr *>(destination.GetInternetHost()), destination.Size());
+                if (errorCode < 0) {
+                    errorCode = sock_errno();
+                    switch (errorCode) {
+                    case (EINTR): {
+                        REPORT_ERROR(ErrorManagement::OSError, "Error: failed connect() because interrupted by a signal");
+                        ret = false;
 
-                }
-                    break;
-                case (EINPROGRESS): {
-                    if (timeout.IsFinite()) {
-                        SocketSelect sel;
-                        sel.AddWaitOnWriteReady(this);
-                        if (wasBlocking) {
-                            ret = sel.WaitWrite(timeout);
-                        }
-                        else {
-                            ret = sel.WaitWrite(0u);
-                        }
-                        uint32 lon = static_cast<uint32>(sizeof(int32));
-                        int32 valopt;
-                        if (getsockopt(connectionSocket, SOL_SOCKET, SO_ERROR, (void*) (&valopt), &lon) < 0) {
-                            ret = false;
-                            REPORT_ERROR(ErrorManagement::OSError, "Error: failed getsockopt() trying to check if the connection is alive");
-                        }
-                        else {
-                            if (valopt > 0) {
-                                REPORT_ERROR(ErrorManagement::Timeout, "Error: connection with timeout failed");
+                    }
+                        break;
+                    case (EINPROGRESS): {
+                        if (timeout.IsFinite()) {
+                            SocketSelect sel;
+                            sel.AddWaitOnWriteReady(this);
+                            if (wasBlocking) {
+                                ret = sel.WaitWrite(timeout);
+                            }
+                            else {
+                                ret = sel.WaitWrite(0u);
+                            }
+                            uint32 lon = static_cast<uint32>(sizeof(int32));
+                            int32 valopt;
+                            if (getsockopt(connectionSocket, SOL_SOCKET, SO_ERROR, static_cast<void*>(&valopt), &lon) < 0) {
                                 ret = false;
+                                REPORT_ERROR(ErrorManagement::OSError, "Error: failed getsockopt() trying to check if the connection is alive");
+                            }
+                            else {
+                                if (valopt > 0) {
+                                    REPORT_ERROR(ErrorManagement::Timeout, "Error: connection with timeout failed");
+                                    ret = false;
+                                }
                             }
                         }
-                    }
-                    else {
-                        ret = false;
-                        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connect(); errno = EINPROGRESS");
-                    }
+                        else {
+                            ret = false;
+                            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connect(); errno = EINPROGRESS");
+                        }
 
-                }
-                    break;
-                default: {
-                    ret = false;
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connect()");
-                }
+                    }
+                        break;
+                    default: {
+                        ret = false;
+                        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connect()");
+                    }
+                    }
                 }
             }
 
             if (timeout.IsFinite()) {
                 if (wasBlocking) {
-                    SetBlocking(true);
+                    bool reset = SetBlocking(true);
+                    if (!reset) {
+                        REPORT_ERROR(ErrorManagement::FatalError, "Error: Socket reset to blocking mode failed");
+                        ret = false;
+                    }
                 }
+
             }
         }
         else {
@@ -258,52 +268,61 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
 
     if (IsValid()) {
         bool wasBlocking = IsBlocking();
+        bool ok=true;
+
         if (timeout.IsFinite()) {
-            SetBlocking(false);
-        }
-
-        uint32 size = source.Size();
-        int32 newSocket = accept(connectionSocket, reinterpret_cast<struct sockaddr *>(source.GetInternetHost()), reinterpret_cast<socklen_t *>(&size));
-
-        if (newSocket != -1) {
-            if (client == NULL) {
-                client = new BasicTCPSocket();
-                client->connectionSocket = newSocket;
+            ok=SetBlocking(false);
+            if(!ok) {
+                REPORT_ERROR(ErrorManagement::OSError, "Error: Socket set to non-block mode failed.");
             }
-            client->SetDestination(source);
-            client->SetSource(destination); /////
-            client->connectionSocket = newSocket;
-            ret = client;
-
         }
-        else {
-            if (wasBlocking) {
-                if (timeout.IsFinite()) {
-                    int32 errorCode;
-                    errorCode = sock_errno();
-                    if ((errorCode == 0) || (errorCode == EINPROGRESS) || (errorCode == EWOULDBLOCK)) {
-                        SocketSelect sel;
-                        sel.AddWaitOnReadReady(this);
 
-                        if (sel.WaitRead(timeout)) {
-                            ret = WaitConnection(TTDefault, client);
+        if(ok) {
+            uint32 size = source.Size();
+            int32 newSocket = accept(connectionSocket, reinterpret_cast<struct sockaddr *>(source.GetInternetHost()), reinterpret_cast<socklen_t *>(&size));
+
+            if (newSocket != -1) {
+                if (client == NULL) {
+                    client = new BasicTCPSocket();
+                    client->connectionSocket = newSocket;
+                }
+                client->SetDestination(source);
+                client->SetSource(destination); /////
+                client->connectionSocket = newSocket;
+                ret = client;
+
+            }
+            else {
+                if (wasBlocking) {
+                    if (timeout.IsFinite()) {
+                        int32 errorCode;
+                        errorCode = sock_errno();
+                        if ((errorCode == 0) || (errorCode == EINPROGRESS) || (errorCode == EWOULDBLOCK)) {
+                            SocketSelect sel;
+                            sel.AddWaitOnReadReady(this);
+
+                            if (sel.WaitRead(timeout)) {
+                                ret = WaitConnection(TTDefault, client);
+                            }
+
                         }
+                    }
+                    else {
 
+                        REPORT_ERROR(ErrorManagement::Timeout, "Error: Timeout expired");
                     }
                 }
                 else {
-
-                    REPORT_ERROR(ErrorManagement::Timeout, "Error: Timeout expired");
+                    REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed accept in unblocking mode");
                 }
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed accept in unblocking mode");
-            }
 
+            }
         }
-
         if (timeout.IsFinite()) {
-            SetBlocking(wasBlocking);
+            ok=SetBlocking(wasBlocking);
+            if(!ok) {
+                REPORT_ERROR(ErrorManagement::OSError, "Error: Socket reset to non-block mode failed.");
+            }
         }
     }
     else {
@@ -351,7 +370,9 @@ bool BasicTCPSocket::Read(char8* const output,
             }
         }
         else {
-            if (((sock_errno() == EWOULDBLOCK) || (sock_errno() == EAGAIN)) && (IsBlocking())) {
+            bool ewouldblock = (sock_errno() == EWOULDBLOCK);
+            bool eagain = (sock_errno() == EAGAIN);
+            if ((ewouldblock || eagain) && (IsBlocking())) {
                 REPORT_ERROR(ErrorManagement::Timeout, "Error: Timeout expired in recv()");
             }
             else {
@@ -377,7 +398,9 @@ bool BasicTCPSocket::Write(const char8* const input,
             size = static_cast<uint32>(writtenBytes);
         }
         else {
-            if (((sock_errno() == EWOULDBLOCK) || (sock_errno() == EAGAIN)) && (IsBlocking())) {
+            bool ewouldblock = (sock_errno() == EWOULDBLOCK);
+            bool eagain = (sock_errno() == EAGAIN);
+            if ((ewouldblock || eagain) && (IsBlocking())) {
                 REPORT_ERROR(ErrorManagement::Timeout, "Error: Timeout expired in send()");
             }
             else {
