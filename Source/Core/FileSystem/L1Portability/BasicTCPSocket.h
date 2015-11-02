@@ -63,7 +63,8 @@ public:
      * @param[out] output is the buffer where the read data must be stored.
      * @param [in,out] size is the number of bytes to read.
      * @return false in case of errors.
-     * @post size is the number of read bytes.
+     * @post
+     *   size is the number of read bytes.
      */
     virtual bool Read(char8* const output,
                       uint32 &size);
@@ -73,30 +74,35 @@ public:
      * @param[in] input is the buffer which contains the data to be written.
      * @param[in,out] size is the number of bytes to write.
      * @return false in case of errors.
-     * @post size is the number of written bytes
+     * @post
+     *   size is the number of written bytes
      */
     virtual bool Write(const char8* const input,
                        uint32 &size);
 
     /**
-     * @brief Read with timeout.
+     * @brief Read within timeout.
      * @param[out] output is the buffer where the read data must be stored.
      * @param [in,out] size is the number of bytes to read.
      * @param[in] timeout is the desired timeout in milliseconds.
      * @return false in case of errors or timeout.
-     * @post size is the number of read bytes.
+     * @warning If the socket is in non-block mode, the timeout has no meaning.
+     * @post
+     *   size is the number of read bytes.
      */
     virtual bool Read(char8* const output,
                       uint32 &size,
                       const TimeoutType &timeout);
 
     /**
-     * @brief Write with timeout.
+     * @brief Write within timeout.
      * @param[in] input is the buffer which contains the data to be written.
      * @param[in,out] size is the number of bytes to write.
      * @param[in] timeout is the desired timeout.
      * @return false in case of errors or timeout.
-     * @post size is the number of read bytes.
+     * @warning If the socket is in non-block mode, the timeout has no meaning.
+     * @post
+     *   size is the number of read bytes.
      */
     virtual bool Write(const char8* const input,
                        uint32 &size,
@@ -156,7 +162,8 @@ public:
      * @param[out] buffer is the buffer used to store the read data.
      * @param[in,out] size is the number of bytes to read.
      * @return false in case of errors.
-     * @post size is the number of read bytes.
+     * @post
+     *   size is the number of read bytes.
      */
     bool Peek(char8 * const buffer,
               uint32 &size) const;
@@ -190,7 +197,7 @@ public:
      * @param[in] address is the IP address of the server.
      * @param[in] port is the server port.
      * @param[in] timeout is the desired timeout.
-     * @param[in] retry is the maximum number of times to call the connect function in case of interruptions.
+     * @warning If the socket is in non-block mode, the timeout has no meaning.
      * @return false in case of errors.
      */
     bool Connect(const char8 * const address,
@@ -200,8 +207,9 @@ public:
     /**
      * @brief Connect to a specific host.
      * @param[in] address is the IP address of the server.
-     * @param[in] port is the server service name.
+     * @param[in] serviceName is the server service name.
      * @param[in] timeout is the desired timeout.
+     * @warning If the socket is in non-block mode, the timeout has no meaning.
      * @return false in case of error.
      */
     bool Connect(const char8 * const address,
@@ -209,12 +217,16 @@ public:
                  const TimeoutType &timeout = TTInfiniteWait);
 
     /**
-     * @brief Returns true if the connection is alive, false otherwise
+     * @brief Returns true if the client is connected to a server, false otherwise
      */
     bool IsConnected() const;
 
     /**
      * @brief Accepts the next connection in the pending queue returning the relative socket.
+     * @param[in] timeout is the desired timeout.
+     * @param[in] client is the new BasicTCPSocket which will be created for the new connection.
+     * @warning If the socket is in non-block mode, the timeout has no meaning.\n
+     * If the input client is NULL, a new BasicTCPSocket will be created on heap, and its deallocation is up to the caller.
      * @return NULL in case of failure, the new created socket otherwise.
      */
     BasicTCPSocket *WaitConnection(const TimeoutType &timeout = TTInfiniteWait,

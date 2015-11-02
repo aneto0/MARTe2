@@ -42,7 +42,6 @@
 #include "SocketSelect.h"
 #include "InternetService.h"
 #include "ErrorManagement.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

@@ -67,20 +67,14 @@ namespace MARTe {
         /**
          * @brief Sets the InternetService handle structure searching in the
          * database by port.
-         * @param[in] name is the port to search.
+         * @param[in] port is the port to search.
          * @param[in] protocol is the protocol used in the search.
-         * @warning The port number must be provided in the network format (array of bytes from the less significative to the most)\n
-         * port=1 ---> 0x0100\n
-         * port=256 ---> 0x0001\n
          * @details if protocol is NULL any protocol will be matched.
          */
         bool SearchByPort(const uint16 port,const char8 *const protocol=static_cast<char8 *>(NULL));
 
         /**
          * @brief Retrieves the internet service port.
-         * @warning The port number is in the network format (array of bytes from the less significative to the most)\n
-         * port=1 ---> 0x0100\n
-         * port=256 ---> 0x0001\n
          */
         uint16 Port() const;
 
