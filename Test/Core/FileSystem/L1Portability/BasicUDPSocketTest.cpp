@@ -110,7 +110,32 @@ bool BasicUDPSocketTest::TestCanSeek() {
     return !socket.CanSeek();
 }
 
+bool BasicUDPSocketTest::TestIsValid() {
 
+    BasicUDPSocket socket;
+
+    if (socket.IsValid()) {
+        return false;
+    }
+
+    socket.Open();
+
+    if (!socket.IsValid()) {
+        return false;
+    }
+
+    socket.Close();
+
+    return !socket.IsValid();
+}
+
+bool BasicUDPSocketTest::TestOpen() {
+    return TestIsValid();
+}
+
+bool BasicUDPSocketTest::TestClose() {
+    return TestIsValid();
+}
 
 
 

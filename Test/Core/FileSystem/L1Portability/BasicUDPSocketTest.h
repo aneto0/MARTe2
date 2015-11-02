@@ -60,6 +60,12 @@ public:
 
     bool TestCanSeek();
 
+    bool TestIsValid();
+
+    bool TestOpen();
+
+    bool TestClose();
+
 };
 
 /*---------------------------------------------------------------------------*/

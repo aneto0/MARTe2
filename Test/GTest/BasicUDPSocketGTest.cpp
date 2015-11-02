@@ -86,3 +86,20 @@ TEST(BasicUDPSocketGTest,TestCanSeek) {
     BasicUDPSocketTest basicUDPSocketTest;
     ASSERT_TRUE(basicUDPSocketTest.TestCanSeek());
 }
+
+TEST(BasicUDPSocketGTest,TestIsValid) {
+    BasicUDPSocketTest basicUDPSocketTest;
+    ASSERT_TRUE(basicUDPSocketTest.TestIsValid());
+}
+
+TEST(BasicUDPSocketGTest,TestOpen) {
+    BasicUDPSocketTest basicUDPSocketTest;
+    ASSERT_TRUE(basicUDPSocketTest.TestOpen());
+}
+
+TEST(BasicUDPSocketGTest,TestClose) {
+    BasicUDPSocketTest basicUDPSocketTest;
+    ASSERT_TRUE(basicUDPSocketTest.TestClose());
+}
+
+
