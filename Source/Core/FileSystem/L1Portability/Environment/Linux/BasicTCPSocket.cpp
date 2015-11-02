@@ -128,8 +128,6 @@ bool BasicTCPSocket::Listen(const char8 * const serviceName,
         ret = Listen(port, maxConnections);
     }
 
-    /* lint -e{9119} -e{9117} -e{734} [MISRA C++ Rule 5-0-6] [MISRA C++ Rule 5-0-4]. Justification: the operating system InternetHost struct has
-     * an unsigned short "port" member attribute. */
     return ret;
 }
 
@@ -240,8 +238,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
         port = serviceT.Port();
         ret = Connect(address, port, timeout);
     }
-    /* lint -e{9119} -e{9117} -e{734} [MISRA C++ Rule 5-0-6] [MISRA C++ Rule 5-0-4]. Justification: the operating system InternetHost struct has
-     * an unsigned short "port" member attribute. */
+
     return ret;
 }
 
