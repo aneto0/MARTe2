@@ -27,7 +27,8 @@
 OBJSX= InternetHostTest.x \
 	InternetServiceTest.x \
 	BasicSocketTest.x  \
-	BasicTCPSocketTest.x
+	BasicUDPSocketTest.x \
+	BasicTCPSocketTest.x 
 
 
 PACKAGE=Core/FileSystem

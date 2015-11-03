@@ -117,20 +117,6 @@ bool BasicTCPSocket::Listen(const uint16 port,
     return ret;
 }
 
-bool BasicTCPSocket::Listen(const char8 * const serviceName,
-                            const int32 maxConnections) const {
-
-    bool ret = false;
-    uint16 port = 0u;
-    InternetService serviceT;
-    if (serviceT.SearchByName(serviceName)) {
-        port = serviceT.Port();
-        ret = Listen(port, maxConnections);
-    }
-
-    return ret;
-}
-
 bool BasicTCPSocket::Connect(const char8 * const address,
                              const uint16 port,
                              const TimeoutType &timeout) {
@@ -177,17 +163,22 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                             else {
                                 ret = sel.WaitWrite(0u);
                             }
-                            uint32 lon = static_cast<uint32>(sizeof(int32));
-                            int32 valopt;
-                            if (getsockopt(connectionSocket, SOL_SOCKET, SO_ERROR, static_cast<void*>(&valopt), &lon) < 0) {
-                                ret = false;
-                                REPORT_ERROR(ErrorManagement::OSError, "Error: failed getsockopt() trying to check if the connection is alive");
-                            }
-                            else {
-                                if (valopt > 0) {
-                                    REPORT_ERROR(ErrorManagement::Timeout, "Error: connection with timeout failed");
+                            if (ret) {
+                                uint32 lon = static_cast<uint32>(sizeof(int32));
+                                int32 valopt;
+                                if (getsockopt(connectionSocket, SOL_SOCKET, SO_ERROR, static_cast<void*>(&valopt), &lon) < 0) {
                                     ret = false;
+                                    REPORT_ERROR(ErrorManagement::OSError, "Error: failed getsockopt() trying to check if the connection is alive");
                                 }
+                                else {
+                                    if (valopt > 0) {
+                                        REPORT_ERROR(ErrorManagement::Timeout, "Error: connection with timeout failed");
+                                        ret = false;
+                                    }
+                                }
+                            }
+                            else{
+                                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connection on select().");
                             }
                         }
                         else {
@@ -213,7 +204,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                         ret = false;
                     }
                 }
-
             }
         }
         else {
@@ -222,21 +212,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
-    }
-
-    return ret;
-}
-
-bool BasicTCPSocket::Connect(const char8 * const address,
-                             const char8 * const serviceName,
-                             const TimeoutType &timeout) {
-
-    bool ret = false;
-    uint16 port = 0u;
-    InternetService serviceT;
-    if (serviceT.SearchByName(serviceName)) {
-        port = serviceT.Port();
-        ret = Connect(address, port, timeout);
     }
 
     return ret;

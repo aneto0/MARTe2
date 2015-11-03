@@ -91,89 +91,57 @@ TEST(BasicTCPSocketGTest,TestCanSeek) {
 
 
 const ConnectListenTestTable tableListenConnect[]={
-        {"a",4444,0, 3, 10, true,true, true},
-        {"a",4444,0, 4, 10, false,true, true},
-        {"a",4444,28, 32, 10, false,true, true},
-        {"a",4444,29, 32, 10, true,true, true},
-        {"a",4444,60, 64, 10, false,true, true},
-        {"a",4444,60, 128, 10, false,true, true},
-        {"a",4444,128, 60, 10, true,true, true},
-        {"a",4444,128, 128, 10, true,true, true},
-        {"a",4444,128, 128, 10, false, true, false},
-        {"a",4444,0, 3, 10, true,false, true},
-                {"a",4444,0, 4, 10, false,false, true},
-                {"a",4444,28, 32, 10, false,false, true},
-                {"a",4444,29, 32, 10, true,false, true},
-                {"a",4444,60, 64, 10, false,false, true},
-                {"a",4444,60, 128, 10, false,false, true},
-                {"a",4444,128, 60, 10, true,false, true},
-                {"a",4444,128, 128, 10, true,false, true},
-        {"a",4444,128, 128, 10, false, false, false},
+        {4444,0, 3, 10, true,true, true, true},
+        {4444,0, 4, 10, false,true, true, true},
+        {4444,28, 32, 10, false,true, true, true},
+        {4444,29, 32, 10, true,true, true, true},
+        {4444,60, 64, 10, false,true, true, true},
+        {4444,60, 128, 10, false,true, true, true},
+        {4444,128, 60, 10, true,true, true, true},
+        {4444,128, 128, 10, true,true, true, true},
+        {4444,128, 128, 10, false, true, false, true},
+        {4444,0, 3, 10, true,false, true, true},
+                {4444,0, 4, 10, false,false, true, true},
+                {4444,28, 32, 10, false,false, true, true},
+                {4444,29, 32, 10, true,false, true, true},
+                {4444,60, 64, 10, false,false, true, true},
+                {4444,60, 128, 10, false,false, true, true},
+                {4444,128, 60, 10, true,false, true, true},
+                {4444,128, 128, 10, true,false, true, true},
+        {4444,128, 128, 10, false, false, false, true},
+        {4444,128, 60, 10, false,true, true, false},
         {0,0,0,0,0,0,0,0}
 };
 
-
-const ConnectListenTestTable tableListenConnectByServiceName[]={
-        {"nsca",0,0, 3, 10, true,true, true},
-        {"nsca",0,0, 4, 10, false,true, true},
-        {"nsca",0,28, 32, 10, false,true, true},
-        {"nsca",0,29, 32, 10, true,true, true},
-        {"nsca",0,60, 64, 10, false,true, true},
-        {"nsca",0,60, 128, 10, false,true, true},
-        {"nsca",0,128, 60, 10, true,true, true},
-        {"nsca",0,128, 128, 10, true,true, true},
-        {"nsca",0,128, 128, 10, false, true, false},
-        {"fuffa",0,128, 128, 10, false, true, true},
-        {"nsca",0,0, 3, 10, true,false, true},
-                {"nsca",0,0, 4, 10, false,false, true},
-                {"nsca",0,28, 32, 10, false,false, true},
-                {"nsca",0,29, 32, 10, true,false, true},
-                {"nsca",0,60, 64, 10, false,false, true},
-                {"nsca",0,60, 128, 10, false,false, true},
-                {"nsca",0,128, 60, 10, true,false, true},
-                {"nsca",0,128, 128, 10, true,false, true},
-                {"fuffa",0,128, 128, 10, false,false, true},
-        {"nsca",0,128, 128, 10, false, false, false},
-        {0,0,0,0,0,0,0,0}
-};
 
 TEST(BasicTCPSocketGTest,TestListen) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestListen(tableListenConnect));
 }
 
-TEST(BasicTCPSocketGTest,TestListenByServiceName) {
-    BasicTCPSocketTest basicTCPSocketTest;
-    ASSERT_TRUE(basicTCPSocketTest.TestListenByServiceName(tableListenConnectByServiceName));
-}
 
 TEST(BasicTCPSocketGTest,TestConnect) {
     BasicTCPSocketTest basicTCPSocketTest;
     ASSERT_TRUE(basicTCPSocketTest.TestListen(tableListenConnect));
 }
 
-TEST(BasicTCPSocketGTest,TestConnectByServiceName) {
-    BasicTCPSocketTest basicTCPSocketTest;
-    ASSERT_TRUE(basicTCPSocketTest.TestListenByServiceName(tableListenConnectByServiceName));
-}
-
-
-
 
 TEST(BasicTCPSocketGTest,TestRead) {
     BasicTCPSocketTest basicTCPSocketTest;
 
     const ReadWriteTestTable table[]={
-            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false},
-            {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true},
-            {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false},
-            {66,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, true},
-            {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true},
-            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false},
-            {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false},
-            {66,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false},
-            {11,11,"HelloWorld","HelloWorld", 32, 100, false, true, false, true},
-            {11,11,"HelloWorld","HelloWorld", 32, 100, false, false, false, true},
+            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
+            {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true,true},
+            {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
+            {66,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
+            {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true,true},
+            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false,true},
+            {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
+            {66,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
+            {11,11,"HelloWorld","HelloWorld", 32, 100, false, true, false, true,true},
+            {11,11,"HelloWorld","HelloWorld", 32, 100, false, false, false, true,true},
+            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, false, true, true, true,false},
+            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, false, true, true, false,false},
             {0,0,0,0,0,0,0,0,0}
     };
 
@@ -185,14 +153,16 @@ TEST(BasicTCPSocketGTest,TestPeek) {
     BasicTCPSocketTest basicTCPSocketTest;
 
     const ReadWriteTestTable table[]={
-            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false},
-            {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true},
-            {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false},
-            {66,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, true},
-            {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true},
-            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false},
-            {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false},
-            {66,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false},
+            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
+            {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true,true},
+            {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
+            {66,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
+            {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true,true},
+            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false,true},
+            {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
+            {66,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
+            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, false, true, true, true,false},
+            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, false, true, true, false,false},
             {0,0,0,0,0,0,0,0,0}
     };
 
@@ -205,16 +175,16 @@ TEST(BasicTCPSocketGTest,TestWrite) {
     BasicTCPSocketTest basicTCPSocketTest;
 
     const ReadWriteTestTable table[]={
-            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false},
-            {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true},
-            {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false},
-            {66,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, true},
-            {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true},
-            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false},
-            {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false},
-            {66,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false},
-            {11,11,"HelloWorld","HelloWorld", 32, 100, false, true, false, true},
-            {11,11,"HelloWorld","HelloWorld", 32, 100, false, false, false, true},
+            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false, true},
+            {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true, true},
+            {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false, true},
+            {66,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, true, true},
+            {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true, true},
+            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false, true},
+            {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false, true},
+            {66,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false, true},
+            {11,11,"HelloWorld","HelloWorld", 32, 100, false, true, false, true, true},
+            {11,11,"HelloWorld","HelloWorld", 32, 100, false, false, false, true, true},
             {0,0,0,0,0,0,0,0,0}
     };
 
@@ -226,12 +196,13 @@ TEST(BasicTCPSocketGTest,TestWrite) {
 TEST(BasicTCPSocketGTest,TestWaitConnection) {
     BasicTCPSocketTest basicTCPSocketTest;
     const WaitConnectionTestTable table[]={
-            {10, true, TTInfiniteWait,true, true},
-            {10, false, TTInfiniteWait,true, true},
-            {0, false, 100, true, false},
-            {0, false, 100, false, false},
-            {10, false, 1000, true, true},
-            {0,0,0,0}
+            {10, true, TTInfiniteWait,true, true, true},
+            {10, false, TTInfiniteWait,true, true, true},
+            {0, false, 100, true, false, true},
+            {0, false, 100, false, false, true},
+            {10, false, 1000, true, true, true},
+            {10, true, TTInfiniteWait,true, false, false},
+            {0,0,0,0,0,0}
     };
 
     ASSERT_TRUE(basicTCPSocketTest.TestWaitConnection(table));

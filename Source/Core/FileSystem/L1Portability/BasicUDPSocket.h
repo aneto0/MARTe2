@@ -64,6 +64,17 @@ public:
                       uint32 &size);
 
     /**
+     * @brief Read without removing data from the socket pipe.
+     * @param[out] output is the buffer used to store the read data.
+     * @param[in,out] size is the number of bytes to read.
+     * @return false in case of errors.
+     * @post
+     *   size is the number of read bytes.
+     */
+    virtual bool Peek(char8* const output,
+                      uint32 &size);
+
+    /**
      * @see StreamI::Write
      */
     virtual bool Write(const char8* const input,
@@ -94,15 +105,6 @@ public:
      */
     bool Connect(const char8 * const address,
                  const uint16 port);
-
-    /**
-     * @brief Sets the writing destination address.
-     * @param[in] address the destination IP address.
-     * @return true if the address is successfully set.
-     * @post
-     *   GetDestination() == address
-     */
-    bool Connect(const InternetHost &address);
 
     /**
      * @brief The UDP socket support writing.

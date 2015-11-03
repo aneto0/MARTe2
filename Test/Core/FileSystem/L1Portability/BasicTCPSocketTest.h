@@ -45,7 +45,6 @@ using namespace MARTe;
  * @brief A structure used to test BasicTCPSocketTest::Listen() and BasicTCPSocketTest::Connect().
  */
 struct ConnectListenTestTable {
-    const char8* serviceNameIn;
     uint16 port;
     uint32 maxConnectionsIn;
     uint32 nClientsIn;
@@ -53,6 +52,7 @@ struct ConnectListenTestTable {
     bool expected;
     bool isBlockingIn;
     bool isServer;
+    bool isValid;
 };
 
 /**
@@ -69,6 +69,7 @@ struct ReadWriteTestTable {
     bool isBlockingIn;
     bool isServer;
     bool isTimeoutIn;
+    bool isValid;
 };
 
 /**
@@ -80,6 +81,7 @@ struct WaitConnectionTestTable {
     TimeoutType timeoutIn;
     bool isBlockingIn;
     bool expected;
+    bool isValid;
 };
 
 
@@ -147,17 +149,7 @@ public:
     /**
      * @brief Tests if connecting less clients than the listen queue size, the connect succeeds.
      */
-    bool TestListenByServiceName(const ConnectListenTestTable *table);
-
-    /**
-     * @brief Tests if connecting less clients than the listen queue size, the connect succeeds.
-     */
     bool TestConnect(const ConnectListenTestTable *table);
-
-    /**
-     * @brief Tests if connecting less clients than the listen queue size, the connect succeeds.
-     */
-    bool TestConnectByServiceName(const ConnectListenTestTable *table);
 
     /**
      * @brief Tests if the function behaves as expected, also within timeout and in blocking mode.
@@ -221,6 +213,8 @@ public:
     bool isTimeout;
     bool noError;
     bool createSocketOnHeap;
+    bool isValidClient;
+    bool isValidServer;
 };
 
 /*---------------------------------------------------------------------------*/
