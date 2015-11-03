@@ -60,13 +60,17 @@ friend class SocketSelect;
     virtual ~BasicSocket();
 
     /**
-     * @brief Set\UnSet blocking mode.
+     * @brief Set \ UnSet blocking mode.
      * @param[in] flag specifies if blocking mode must be set(true) or unset(false).
      * @return true if the desired mode is set correctly.
      */
     bool SetBlocking(const bool flag);
 
 
+    /**
+     * @brief Checks if the socket is in blocking mode or not.
+     * @return true if the socket is in blocking mode, false otherwise.
+     */
     bool IsBlocking() const;
 
     /**

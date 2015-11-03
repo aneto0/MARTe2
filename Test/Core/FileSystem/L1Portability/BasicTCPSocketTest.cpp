@@ -31,7 +31,6 @@
 
 #include "BasicTCPSocketTest.h"
 #include "StringHelper.h"
-#include "stdio.h"
 #include "InternetService.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -190,7 +189,6 @@ static void ClientJob_Listen(BasicTCPSocketTest &param) {
     }
 
     param.eventSem.Wait();
-    // printf("\nEnd Client : %d\n", nClient);
 
 }
 
@@ -442,7 +440,6 @@ bool BasicTCPSocketTest::TestRead(const ReadWriteTestTable *table) {
         timeout = table[i].timeoutIn;
         serverJob = (ThreadFunctionType) WriteJob;
 
-// printf("\nisB = %d, maxConn= %d, sName= %s, alives= %d timeout= %d\n", isBlocking, maxConnections, serviceName, alives, timeout);
         Threads::BeginThread((ThreadFunctionType) StartServer_ReadWrite, this);
 
         while (exitCondition < 1) {
@@ -558,7 +555,6 @@ bool BasicTCPSocketTest::TestPeek(const ReadWriteTestTable *table) {
         timeout = table[i].timeoutIn;
         serverJob = (ThreadFunctionType) WriteJob;
 
-// printf("\nisB = %d, maxConn= %d, sName= %s, alives= %d timeout= %d\n", isBlocking, maxConnections, serviceName, alives, timeout);
         Threads::BeginThread((ThreadFunctionType) StartServer_ReadWrite, this);
 
         while (exitCondition < 1) {
@@ -709,7 +705,6 @@ bool BasicTCPSocketTest::TestWrite(const ReadWriteTestTable *table) {
         timeout = table[i].timeoutIn;
         serverJob = (ThreadFunctionType) ReadJob;
 
-// printf("\nisB = %d, maxConn= %d, sName= %s, alives= %d timeout= %d\n", isBlocking, maxConnections, serviceName, alives, timeout);
         Threads::BeginThread((ThreadFunctionType) StartServer_ReadWrite, this);
 
         while (exitCondition < 1) {
@@ -822,7 +817,6 @@ static void ClientJob_WaitConnection(BasicTCPSocketTest &param) {
     }
     else {
         if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort(), param.timeout)) {
-            // printf("\nConnect failed!!\n");
 
             if (param.isValidServer) {
                 param.sem.FastLock();
@@ -834,7 +828,6 @@ static void ClientJob_WaitConnection(BasicTCPSocketTest &param) {
     }
 
     param.eventSem.Wait();
-    // printf("\nEnd Client : %d\n", nClient);
 
 }
 
@@ -859,7 +852,6 @@ bool BasicTCPSocketTest::TestWaitConnection(const WaitConnectionTestTable *table
         createSocketOnHeap = table[i].createOnHeapIn;
         isValidServer = table[i].isValid;
 
-// printf("\nisB = %d, maxConn= %d, sName= %s, alives= %d timeout= %d\n", isBlocking, maxConnections, serviceName, alives, timeout);
         Threads::BeginThread((ThreadFunctionType) StartServer_WaitConnection, this);
 
         while (exitCondition < 1) {
@@ -882,7 +874,6 @@ bool BasicTCPSocketTest::TestWaitConnection(const WaitConnectionTestTable *table
             Sleep::MSec(10);
         }
         if ((retVal != table[i].expected) || (!noError)) {
-            printf("\n%d %d %d %d\n", retVal, table[i].expected, noError, i);
             return false;
         }
         i++;
@@ -984,7 +975,6 @@ static void ClientJob_IsConnected(BasicTCPSocketTest &param) {
     }
     else {
         if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
-            // printf("\nConnect failed!!\n");
         }
 
     }
@@ -1002,7 +992,6 @@ static void ClientJob_IsConnected(BasicTCPSocketTest &param) {
     param.sem.FastUnLock();
 
     param.eventSem.Wait();
-    // printf("\nEnd Client : %d\n", nClient);
 
 }
 

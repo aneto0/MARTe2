@@ -185,6 +185,8 @@ TEST(BasicTCPSocketGTest,TestWrite) {
             {66,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false, true},
             {11,11,"HelloWorld","HelloWorld", 32, 100, false, true, false, true, true},
             {11,11,"HelloWorld","HelloWorld", 32, 100, false, false, false, true, true},
+            {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, false, true, true, true,false},
+            {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, false, true, true, false,false},
             {0,0,0,0,0,0,0,0,0}
     };
 

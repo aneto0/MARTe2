@@ -31,7 +31,6 @@
 
 #include "InternetServiceTest.h"
 #include "StringHelper.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -65,7 +64,6 @@ bool InternetServiceTest::TestSearchByName(const InternetServiceTestTable* table
     while (table[i].name != NULL) {
 
         bool ret = service.SearchByName(table[i].name, table[i].protocol);
-        printf("\n%x %s %s %d\n", service.Port(), service.Name(), service.Protocol(), i);
         if (table[i].expected) {
 
             if (service.Port() != table[i].port) {
@@ -96,7 +94,6 @@ bool InternetServiceTest::TestSearchByPort(const InternetServiceTestTable* table
     while (table[i].name != NULL) {
 
         bool ret = service.SearchByPort(table[i].port, table[i].protocol);
-        printf("\n%x %s %s %d\n", service.Port(), service.Name(), service.Protocol(), i);
         if (table[i].expected) {
 
             if (service.Port() != table[i].port) {
@@ -127,7 +124,6 @@ bool InternetServiceTest::TestPort(const InternetServiceTestTable* table) {
     while (table[i].name != NULL) {
 
         bool ret = service.SearchByName(table[i].name, table[i].protocol);
-        printf("\n%x %s %s %d\n", service.Port(), service.Name(), service.Protocol(), i);
         if (table[i].expected) {
 
             if (service.Port() != table[i].port) {
@@ -150,7 +146,6 @@ bool InternetServiceTest::TestName(const InternetServiceTestTable* table) {
     while (table[i].name != NULL) {
 
         bool ret = service.SearchByPort(table[i].port, table[i].protocol);
-        printf("\n%x %s %s %d\n", service.Port(), service.Name(), service.Protocol(), i);
         if (table[i].expected) {
 
             if (StringHelper::Compare(service.Name(), table[i].name) != 0) {
@@ -175,7 +170,6 @@ bool InternetServiceTest::TestProtocol(const InternetServiceTestTable* table) {
     while (table[i].name != NULL) {
 
         bool ret = service.SearchByPort(table[i].port, table[i].protocol);
-        printf("\n%x %s %s %d\n", service.Port(), service.Name(), service.Protocol(), i);
         if (table[i].expected) {
 
             if (StringHelper::Compare(service.Protocol(), table[i].expectedProtocol) != 0) {
@@ -192,7 +186,6 @@ bool InternetServiceTest::TestProtocol(const InternetServiceTestTable* table) {
     while (table[i].name != NULL) {
 
         bool ret = service.SearchByName(table[i].name, table[i].protocol);
-        printf("\n%x %s %s %d\n", service.Port(), service.Name(), service.Protocol(), i);
         if (table[i].expected) {
 
             if (StringHelper::Compare(service.Protocol(), table[i].expectedProtocol) != 0) {

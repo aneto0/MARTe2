@@ -516,7 +516,6 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
         }
 
         if ((retVal != table[i].expected) || (!noError)) {
-            printf("\n%d %d %d %d\n", retVal, table[i].expected, noError, i);
             return false;
         }
 
@@ -642,7 +641,6 @@ bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
         }
 
         if ((retVal != table[i].expected) || (!noError)) {
-            printf("\n%d %d %d %d\n", retVal, table[i].expected, noError, i);
             return false;
         }
 
@@ -687,7 +685,6 @@ void StartServer_Write(BasicUDPSocketTest &param) {
                     if (sizeRead != param.expectedSize) {
                         param.sem.FastLock();
                         param.retVal = false;
-                        printf("\n%d %d\n", sizeRead, param.expectedSize);
                         param.sem.FastUnLock();
 
                     }
@@ -802,7 +799,6 @@ bool BasicUDPSocketTest::TestWrite(const ReadWriteUDPTestTable* table) {
         }
 
         if ((retVal != table[i].expected) || (!noError)) {
-            printf("\n%d %d %d %d\n", retVal, table[i].expected, noError, i);
             return false;
         }
 

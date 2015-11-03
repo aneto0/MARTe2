@@ -42,7 +42,6 @@
 
 #include "InternetHostTest.h"
 #include "String.h"
-#include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -61,7 +60,6 @@ bool InternetHostTest::TestDefaultConstructor() {
 
     String ret = addr.GetAddress();
 
-    printf("\n%s\n", ret.Buffer());
     return ret == "0.0.0.0";
 }
 
@@ -76,14 +74,12 @@ bool InternetHostTest::TestFullConstructor(uint16 port,
 
     String ret = addr.GetAddress();
 
-    printf("\n%s\n", ret.Buffer());
     return (ret == expected);
 
 }
 
 bool InternetHostTest::TestGetPort(uint16 port) {
     InternetHost addr(port);
-    printf("\n%d\n", addr.GetPort());
     return addr.GetPort() == port;
 }
 
@@ -93,7 +89,6 @@ bool InternetHostTest::TestGetAddress(const char8 *table[][2]) {
     while (table[i][0] != NULL) {
         InternetHost addr(0, table[i][0]);
         String ret = addr.GetAddress();
-        printf("\n%s\n", ret.Buffer());
         if (ret != table[i][1]) {
             return false;
         }
@@ -108,7 +103,6 @@ bool InternetHostTest::TestGetHostName(const char8 *table[][2]) {
     while (table[i][0] != NULL) {
         InternetHost addr(0, table[i][0]);
         String ret = addr.GetHostName();
-        printf("\n%s\n", ret.Buffer());
         if (ret != table[i][1]) {
             return false;
         }
@@ -123,7 +117,6 @@ bool InternetHostTest::TestGetAddressAsNumber(const InternetHostTestTable *table
     while (table[i].address != NULL) {
         InternetHost addr(0, table[i].address);
         uint32 ret = addr.GetAddressAsNumber();
-        printf("\n%x %d\n", ret, i);
         if (ret != table[i].relatedNumber) {
             return false;
         }
@@ -137,7 +130,6 @@ bool InternetHostTest::TestGetLocalHostName() {
 
     String ret = InternetHost::GetLocalHostName();
 
-    printf("\n%s\n", ret.Buffer());
 
     return true;
 
@@ -147,14 +139,12 @@ bool InternetHostTest::TestGetLocalAddress() {
 
     String ret = InternetHost::GetLocalAddress();
 
-    printf("\n%s\n", ret.Buffer());
 
     return ((ret == "127.0.1.1") || (ret == "127.0.0.1"));
 }
 
 
 bool InternetHostTest::TestGetLocalAddressAsNumber() {
-    printf("\n%x\n", InternetHost::GetLocalAddressAsNumber());
 
     return (InternetHost::GetLocalAddressAsNumber() == 0x0101007f) || (InternetHost::GetLocalAddressAsNumber() == 0x0100007f);
 
@@ -175,7 +165,6 @@ bool InternetHostTest::TestSetAddress(const char8 *table[][2]) {
     while (table[i][0] != NULL) {
         addr.SetAddress(table[i][0]);
         String ret = addr.GetAddress();
-        printf("\n%s\n", ret.Buffer());
         if (ret != table[i][1]) {
             return false;
         }
@@ -193,7 +182,6 @@ bool InternetHostTest::TestSetAddressByHostName(const char8 *table[][2]) {
     while (table[i][0] != NULL) {
         addr.SetAddressByHostName(table[i][1]);
         String ret = addr.GetAddress();
-        printf("\n%s\n", ret.Buffer());
         if (ret != table[i][0]) {
             return false;
         }
@@ -210,7 +198,6 @@ bool InternetHostTest::TestSetAddressByNumber(const InternetHostTestTable *table
     while (table[i].address != NULL) {
         addr.SetAddressByNumber(table[i].relatedNumber);
         String ret = addr.GetAddress();
-        printf("\n%s %d\n", ret.Buffer(), i);
         if (ret != table[i].address) {
             return false;
         }
@@ -237,11 +224,9 @@ bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
         InternetHostCore *copy = addr.GetInternetHost();
 #if OPERATING_SYSTEM==Linux
         if (copy->sin_addr.s_addr != addr.GetAddressAsNumber()) {
-            printf("\n%x %x %d\n", copy->sin_addr.s_addr, addr.GetAddressAsNumber(), i);
             return false;
         }
         if (copy->sin_port != htons(addr.GetPort())) {
-            printf("\n%x %x %d\n", copy->sin_port, addr.GetPort(), i);
             return false;
         }
 #endif

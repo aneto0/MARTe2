@@ -148,6 +148,7 @@ TEST(BasicUDPSocketGTest,TestRead) {
             {"HelloWorld","HelloWorld",32,32,4444,100,32,false,false,false,true,true},
             {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,32,false,false,false,false,true},
             {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,true,false},
+            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,false,false},
             {0}
     };
 
@@ -186,6 +187,7 @@ TEST(BasicUDPSocketGTest,TestWrite) {
             {"HelloWorld","HelloWorld",32,32,4444,100,32,false,false,false,true,true},
             {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,32,false,false,false,false,true},
             {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,true,false},
+            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,false,false},
             {0}
     };
 
