@@ -43,14 +43,20 @@
 
 using namespace MARTe;
 
-struct ConnectListenUDPTestTable{
+/**
+ * @brief A structure used to test the connect and listen functions.
+ */
+struct ConnectListenUDPTestTable {
     uint32 port;
     uint32 nClients;
     bool expected;
+    bool isValid;
 };
 
-
-struct ReadWriteUDPTestTable{
+/**
+ * @brief A structure used to test the read and write functions.
+ */
+struct ReadWriteUDPTestTable {
     const char8* string;
     const char8* result;
     uint32 size;
@@ -62,46 +68,103 @@ struct ReadWriteUDPTestTable{
     bool isBlocking;
     bool isServer;
     bool isTimeout;
+    bool isValid;
 };
 
-
+/**
+ * @brief Tests all the BasicUDPSocket public functions.
+ */
 class BasicUDPSocketTest {
 public:
 
+    /**
+     * @brief Tests class constructor.
+     */
     BasicUDPSocketTest();
 
+    /**
+     * @brief Checks if the socket is initialized as invalid.
+     */
     bool TestDefaultConstructor();
 
+    /**
+     * @brief Tests if the function returns the max uint64.
+     */
     bool TestSize();
 
+    /**
+     * @brief Tests if the function returns false.
+     */
     bool TestSeek();
 
+    /**
+     * @brief Tests if the function returns false.
+     */
     bool TestRelativeSeek();
 
+    /**
+     * @brief Tests if the function returns the max uint64.
+     */
     bool TestPosition();
 
+    /**
+     * @brief Tests if the function returns false.
+     */
     bool TestSetSize();
 
+    /**
+     * @brief Tests if the function returns true.
+     */
     bool TestCanWrite();
 
+    /**
+     * @brief Tests if the function returns true.
+     */
     bool TestCanRead();
 
+    /**
+     * @brief Tests if the function returns false.
+     */
     bool TestCanSeek();
 
+    /**
+     * @brief Tests if after Open the function returns false and after Close it returns true.
+     */
     bool TestIsValid();
 
+    /**
+     * @brief Tests if after Open the socket is valid.
+     */
     bool TestOpen();
 
+    /**
+     * @brief Tests if after Close the socket is invalid.
+     */
     bool TestClose();
 
+    /**
+     * @brief Tests if the function initializes correctly the server for connection.
+     */
     bool TestListen(const ConnectListenUDPTestTable* table);
 
+    /**
+     * @brief Tests if the function initializes correctly the client for connection.
+     */
     bool TestConnect(const ConnectListenUDPTestTable* table);
 
+    /**
+     * @brief Tests if the read function behaves correctly, also in non-block mode and within timeout.
+     */
     bool TestRead(const ReadWriteUDPTestTable* table);
 
+    /**
+     * @brief Tests if the peek function behaves correctly, also in non-block mode and within timeout.
+     */
     bool TestPeek(const ReadWriteUDPTestTable* table);
 
+    /**
+     * @brief Tests if the write function behaves correctly, also in non-block mode and within timeout.
+     */
     bool TestWrite(const ReadWriteUDPTestTable* table);
 
 public:
@@ -121,6 +184,8 @@ public:
     bool isServer;
     TimeoutType timeout;
     bool isTimeout;
+    bool isValidServer;
+    bool isValidClient;
 
 };
 

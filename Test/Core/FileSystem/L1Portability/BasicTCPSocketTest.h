@@ -52,6 +52,7 @@ struct ConnectListenTestTable {
     bool expected;
     bool isBlockingIn;
     bool isServer;
+    bool isValid;
 };
 
 /**
@@ -68,6 +69,7 @@ struct ReadWriteTestTable {
     bool isBlockingIn;
     bool isServer;
     bool isTimeoutIn;
+    bool isValid;
 };
 
 /**
@@ -79,6 +81,7 @@ struct WaitConnectionTestTable {
     TimeoutType timeoutIn;
     bool isBlockingIn;
     bool expected;
+    bool isValid;
 };
 
 
@@ -210,6 +213,8 @@ public:
     bool isTimeout;
     bool noError;
     bool createSocketOnHeap;
+    bool isValidClient;
+    bool isValidServer;
 };
 
 /*---------------------------------------------------------------------------*/

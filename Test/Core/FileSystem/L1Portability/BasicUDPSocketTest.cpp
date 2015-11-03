@@ -56,6 +56,8 @@ BasicUDPSocketTest::BasicUDPSocketTest() {
     isServer = true;
     timeout = TTInfiniteWait;
     isTimeout = false;
+    isValidServer = true;
+    isValidClient = true;
 
 }
 
@@ -161,8 +163,15 @@ void StartServer_Listen(BasicUDPSocketTest &param) {
         return;
     }
 
+    if (!param.isValidServer) {
+        serverSocket.Close();
+    }
+
     if (!serverSocket.Listen(param.server.GetPort())) {
-        param.noError = false;
+        param.retVal = false;
+        param.sem.FastLock();
+        param.exitCondition = 1;
+        param.sem.FastUnLock();
         return;
     }
 
@@ -170,7 +179,7 @@ void StartServer_Listen(BasicUDPSocketTest &param) {
     param.exitCondition = 1;
     param.sem.FastUnLock();
 
-    if (param.noError) {
+    if (param.isValidClient) {
         for (uint32 i = 0; i < param.alives; i++) {
             char8 output[32] = { 0 };
             uint32 sizeRead = 32;
@@ -200,6 +209,10 @@ void StartServer_Listen(BasicUDPSocketTest &param) {
 
         }
     }
+    while (Threads::NumberOfThreads() < (param.alives + 1)) {
+        Sleep::MSec(10);
+    }
+
     param.eventSem.Post();
     while (Threads::NumberOfThreads() > 1) {
         Sleep::MSec(10);
@@ -219,6 +232,10 @@ void ClientJob_Listen(BasicUDPSocketTest &param) {
         param.sem.FastUnLock();
     }
     else {
+        if (!param.isValidClient) {
+            clientSocket.Close();
+        }
+
         if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
             param.sem.FastLock();
             param.retVal = false;
@@ -256,23 +273,32 @@ void ClientJob_Listen(BasicUDPSocketTest &param) {
     param.eventSem.Wait();
 }
 
-bool BasicUDPSocketTest::TestListen(const ConnectListenUDPTestTable* table) {
+static bool ListenConnectTest(BasicUDPSocketTest &param,
+                              const ConnectListenUDPTestTable* table,
+                              bool isServer) {
 
     uint32 i = 0;
     while (table[i].port != 0) {
-        server.SetPort(table[i].port);
-        server.SetAddress("127.0.0.1");
+        param.server.SetPort(table[i].port);
+        param.server.SetAddress("127.0.0.1");
 
-        eventSem.Reset();
-        exitCondition = 0;
+        param.eventSem.Reset();
+        param.exitCondition = 0;
 
-        alives = table[i].nClients;
+        param.alives = table[i].nClients;
 
-        Threads::BeginThread((ThreadFunctionType) StartServer_Listen, this);
+        if (isServer) {
+            param.isValidServer = table[i].isValid;
+        }
+        else {
+            param.isValidClient = table[i].isValid;
+        }
 
-        while (exitCondition < 1) {
-            if (!noError) {
-                alives = 0;
+        Threads::BeginThread((ThreadFunctionType) StartServer_Listen, &param);
+
+        while (param.exitCondition < 1) {
+            if (!param.noError) {
+                param.alives = 0;
                 while (Threads::NumberOfThreads() > 0) {
                     Sleep::MSec(10);
                 }
@@ -281,15 +307,19 @@ bool BasicUDPSocketTest::TestListen(const ConnectListenUDPTestTable* table) {
             Sleep::MSec(10);
         }
 
+        if (!param.retVal) {
+            return (!table[i].expected);
+        }
+
         for (uint32 k = 0; k < table[i].nClients; k++) {
-            Threads::BeginThread((ThreadFunctionType) ClientJob_Listen, this);
+            Threads::BeginThread((ThreadFunctionType) ClientJob_Listen, &param);
         }
 
         while (Threads::NumberOfThreads() > 0) {
             Sleep::MSec(10);
         }
 
-        if ((retVal != table[i].expected) || (!noError)) {
+        if ((param.retVal != table[i].expected) || (!param.noError)) {
             return false;
         }
 
@@ -301,9 +331,13 @@ bool BasicUDPSocketTest::TestListen(const ConnectListenUDPTestTable* table) {
 
 }
 
+bool BasicUDPSocketTest::TestListen(const ConnectListenUDPTestTable* table) {
+    return ListenConnectTest(*this, table, true);
+}
+
 bool BasicUDPSocketTest::TestConnect(const ConnectListenUDPTestTable* table) {
 
-    return TestListen(table);
+    return ListenConnectTest(*this, table, false);
 }
 
 void StartServer_Read(BasicUDPSocketTest &param) {
@@ -323,37 +357,38 @@ void StartServer_Read(BasicUDPSocketTest &param) {
     param.exitCondition = 1;
     param.sem.FastUnLock();
 
-    if (param.noError) {
-        for (uint32 i = 0; i < param.alives; i++) {
-            char8 output[32] = { 0 };
-            uint32 sizeRead = 32;
-            if (!serverSocket.Read(output, sizeRead)) {
+    for (uint32 i = 0; i < param.alives; i++) {
+        char8 output[32] = { 0 };
+        uint32 sizeRead = 32;
+        if (!serverSocket.Read(output, sizeRead)) {
+            param.sem.FastLock();
+            param.noError = false;
+            param.sem.FastUnLock();
+        }
+        else {
+            if (StringHelper::Compare(output, "HelloServer") != 0) {
                 param.sem.FastLock();
                 param.noError = false;
                 param.sem.FastUnLock();
             }
-            else {
-                if (StringHelper::Compare(output, "HelloServer") != 0) {
-                    param.sem.FastLock();
-                    param.noError = false;
-                    param.sem.FastUnLock();
-                }
-            }
-
-            if (param.noError && param.isServer) {
-                serverSocket.SetDestination(serverSocket.GetSource());
-
-                uint32 sizeWrite = 64;
-                char8 input[64];
-                StringHelper::Copy(input, param.string);
-                if (!serverSocket.Write(input, sizeWrite)) {
-                    param.sem.FastLock();
-                    param.noError = false;
-                    param.sem.FastUnLock();
-                }
-            }
         }
 
+        if (param.noError && param.isServer && param.isValidClient) {
+            serverSocket.SetDestination(serverSocket.GetSource());
+
+            uint32 sizeWrite = 64;
+            char8 input[64];
+            StringHelper::Copy(input, param.string);
+            if (!serverSocket.Write(input, sizeWrite)) {
+                param.sem.FastLock();
+                param.noError = false;
+                param.sem.FastUnLock();
+            }
+        }
+    }
+
+    while (Threads::NumberOfThreads() < (param.alives + 1)) {
+        Sleep::MSec(10);
     }
     param.eventSem.Post();
     while (Threads::NumberOfThreads() > 1) {
@@ -365,66 +400,75 @@ void StartServer_Read(BasicUDPSocketTest &param) {
 void ClientJob_Read(BasicUDPSocketTest &param) {
 
     BasicUDPSocket clientSocket;
-    bool go = clientSocket.Open();
 
-    if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
+    if (!clientSocket.Open()) {
         param.sem.FastLock();
         param.noError = false;
         param.sem.FastUnLock();
     }
-
     else {
-
-        const char8* toWrite = "HelloServer";
-        uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
-        if (!clientSocket.Write(toWrite, sizeWrite)) {
+        if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
             param.sem.FastLock();
             param.noError = false;
             param.sem.FastUnLock();
         }
+
         else {
 
-            bool ret = clientSocket.SetBlocking(param.isBlocking);
-
-            if (!ret) {
+            const char8* toWrite = "HelloServer";
+            uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
+            if (!clientSocket.Write(toWrite, sizeWrite)) {
                 param.sem.FastLock();
                 param.noError = false;
                 param.sem.FastUnLock();
             }
             else {
-                char8 output[64] = { 0 };
-                uint32 sizeRead = param.size;
-                if (param.isTimeout) {
-                    ret = clientSocket.Read(output, sizeRead, param.timeout);
-                }
-                else {
-                    ret = clientSocket.Read(output, sizeRead);
-                }
+
+                bool ret = clientSocket.SetBlocking(param.isBlocking);
+
                 if (!ret) {
                     param.sem.FastLock();
-                    param.retVal = false;
+                    param.noError = false;
                     param.sem.FastUnLock();
                 }
                 else {
+                    if (!param.isValidClient) {
+                        clientSocket.Close();
+                    }
 
-                    if (sizeRead != param.expectedSize) {
+                    char8 output[64] = { 0 };
+                    uint32 sizeRead = param.size;
+                    if (param.isTimeout) {
+                        ret = clientSocket.Read(output, sizeRead, param.timeout);
+                    }
+                    else {
+                        ret = clientSocket.Read(output, sizeRead);
+                    }
+                    if (!ret) {
                         param.sem.FastLock();
                         param.retVal = false;
                         param.sem.FastUnLock();
-
                     }
                     else {
-                        output[(sizeRead > 63) ? (63) : (sizeRead)] = 0;
-                        if (StringHelper::Compare(output, param.result) != 0) {
+
+                        if (sizeRead != param.expectedSize) {
                             param.sem.FastLock();
                             param.retVal = false;
                             param.sem.FastUnLock();
+
+                        }
+                        else {
+                            output[(sizeRead > 63) ? (63) : (sizeRead)] = 0;
+                            if (StringHelper::Compare(output, param.result) != 0) {
+                                param.sem.FastLock();
+                                param.retVal = false;
+                                param.sem.FastUnLock();
+                            }
                         }
                     }
                 }
             }
         }
-
     }
 
     param.eventSem.Wait();
@@ -448,6 +492,7 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
         expectedSize = table[i].expectedSize;
         isTimeout = table[i].isTimeout;
         isBlocking = table[i].isBlocking;
+        isValidClient = table[i].isValid;
 
         Threads::BeginThread((ThreadFunctionType) StartServer_Read, this);
 
@@ -513,6 +558,10 @@ void ClientJob_Peek(BasicUDPSocketTest &param) {
                 param.sem.FastUnLock();
             }
             else {
+                if(!param.isValidClient){
+                    clientSocket.Close();
+                }
+
                 char8 output[64] = { 0 };
                 uint32 sizeRead = param.size;
 
@@ -569,6 +618,7 @@ bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
         expectedSize = table[i].expectedSize;
         isTimeout = table[i].isTimeout;
         isBlocking = table[i].isBlocking;
+        isValidClient = table[i].isValid;
 
         Threads::BeginThread((ThreadFunctionType) StartServer_Read, this);
 
@@ -582,7 +632,6 @@ bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
             }
             Sleep::MSec(10);
         }
-
 
         for (uint32 k = 0; k < table[i].nClients; k++) {
             Threads::BeginThread((ThreadFunctionType) ClientJob_Peek, this);
@@ -622,7 +671,7 @@ void StartServer_Write(BasicUDPSocketTest &param) {
     param.exitCondition = 1;
     param.sem.FastUnLock();
 
-    if (param.noError) {
+    if (param.isValidClient) {
         for (uint32 i = 0; i < param.alives; i++) {
 
             if (param.isServer) {
@@ -654,6 +703,10 @@ void StartServer_Write(BasicUDPSocketTest &param) {
             }
         }
     }
+
+    while (Threads::NumberOfThreads() < (param.alives + 1)) {
+        Sleep::MSec(10);
+    }
     param.eventSem.Post();
     while (Threads::NumberOfThreads() > 1) {
         Sleep::MSec(10);
@@ -681,6 +734,11 @@ void ClientJob_Write(BasicUDPSocketTest &param) {
             param.sem.FastUnLock();
         }
         else {
+
+            if (!param.isValidClient) {
+                clientSocket.Close();
+            }
+
             char8 input[128];
             StringHelper::Copy(input, param.string);
             uint32 sizeWrite = param.size;
@@ -720,6 +778,7 @@ bool BasicUDPSocketTest::TestWrite(const ReadWriteUDPTestTable* table) {
         expectedSize = table[i].expectedSize;
         isTimeout = table[i].isTimeout;
         isBlocking = table[i].isBlocking;
+        isValidClient = table[i].isValid;
 
         Threads::BeginThread((ThreadFunctionType) StartServer_Write, this);
 

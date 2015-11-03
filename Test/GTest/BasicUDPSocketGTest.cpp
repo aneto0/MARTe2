@@ -106,10 +106,11 @@ TEST(BasicUDPSocketGTest,TestListen) {
     BasicUDPSocketTest basicUDPSocketTest;
 
     const ConnectListenUDPTestTable table[]={
-            {4444,2,true},
-            {4444,32,true},
-            {4444,64,true},
-            {4444,128,true},
+            {4444,2,true, true},
+            {4444,32,true, true},
+            {4444,64,true, true},
+            {4444,128,true, true},
+            {4444,32,false, false},
             {0,0,0}
     };
 
@@ -121,10 +122,11 @@ TEST(BasicUDPSocketGTest,TestConnect) {
     BasicUDPSocketTest basicUDPSocketTest;
 
     const ConnectListenUDPTestTable table[]={
-            {4444,2,true},
-            {4444,32,true},
-            {4444,64,true},
-            {4444,128,true},
+            {4444,2,true,true},
+            {4444,32,true,true},
+            {4444,64,true,true},
+            {4444,128,true, true},
+            {4444,32,false, false},
             {0,0,0}
     };
 
@@ -138,13 +140,14 @@ TEST(BasicUDPSocketGTest,TestRead) {
 
 
     const ReadWriteUDPTestTable table[]={
-            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,2,true,true,true,false},
-            {"abcdefghil","abcde",5,5,4444,TTInfiniteWait,32,true,true,true,true},
-            {"HelloWorld","HelloWorld",66,64,4444,TTInfiniteWait,64,true,true,true,false},
-            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,128,true,true,true,true},
-            {"HelloWorld","HelloWorld",32,32,4444,100,32,false,true,false,true},
-            {"HelloWorld","HelloWorld",32,32,4444,100,32,false,false,false,true},
-            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,32,false,false,false,false},
+            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,2,true,true,true,false,true},
+            {"abcdefghil","abcde",5,5,4444,TTInfiniteWait,32,true,true,true,true,true},
+            {"HelloWorld","HelloWorld",66,64,4444,TTInfiniteWait,64,true,true,true,false,true},
+            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,128,true,true,true,true,true},
+            {"HelloWorld","HelloWorld",32,32,4444,100,32,false,true,false,true,true},
+            {"HelloWorld","HelloWorld",32,32,4444,100,32,false,false,false,true,true},
+            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,32,false,false,false,false,true},
+            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,true,false},
             {0}
     };
 
@@ -156,11 +159,12 @@ TEST(BasicUDPSocketGTest,TestPeek) {
 
 
     const ReadWriteUDPTestTable table[]={
-            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,2,true,true,true,false},
-            {"abcdefghil","abcde",5,5,4444,TTInfiniteWait,32,true,true,true,true},
-            {"HelloWorld","HelloWorld",66,64,4444,TTInfiniteWait,64,true,true,true,false},
-            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,128,true,true,true,true},
-            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,32,false,false,false,false},
+            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,2,true,true,true,false,true},
+            {"abcdefghil","abcde",5,5,4444,TTInfiniteWait,32,true,true,true,true,true},
+            {"HelloWorld","HelloWorld",66,64,4444,TTInfiniteWait,64,true,true,true,false,true},
+            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,128,true,true,true,true,true},
+            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,32,false,false,false,false,true},
+            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,true,false},
             {0}
     };
 
@@ -174,13 +178,14 @@ TEST(BasicUDPSocketGTest,TestWrite) {
 
 
     const ReadWriteUDPTestTable table[]={
-            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,2,true,true,true,false},
-            {"abcdefghil","abcde",5,5,4444,TTInfiniteWait,32,true,true,true,true},
-            {"HelloWorld","HelloWorld",66,64,4444,TTInfiniteWait,64,true,true,true,false},
-            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,128,true,true,true,true},
-            {"HelloWorld","HelloWorld",32,32,4444,100,32,false,true,false,true},
-            {"HelloWorld","HelloWorld",32,32,4444,100,32,false,false,false,true},
-            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,32,false,false,false,false},
+            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,2,true,true,true,false,true},
+            {"abcdefghil","abcde",5,5,4444,TTInfiniteWait,32,true,true,true,true,true},
+            {"HelloWorld","HelloWorld",66,64,4444,TTInfiniteWait,64,true,true,true,false,true},
+            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,128,true,true,true,true,true},
+            {"HelloWorld","HelloWorld",32,32,4444,100,32,false,true,false,true,true},
+            {"HelloWorld","HelloWorld",32,32,4444,100,32,false,false,false,true,true},
+            {"HelloWorld","HelloWorld",32,32,4444,TTInfiniteWait,32,false,false,false,false,true},
+            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,true,false},
             {0}
     };
 

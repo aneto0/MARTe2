@@ -63,8 +63,8 @@ bool BasicUDPSocket::Peek(char8* const output,
     int32 ret = -1;
     if (IsValid()) {
         uint32 sourceSize = source.Size();
-        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(size), MSG_PEEK, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()),
-                                          static_cast<socklen_t*>(&sourceSize)));
+        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(size), MSG_PEEK,
+                                          reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<socklen_t*>(&sourceSize)));
         if (ret >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(ret);
@@ -83,7 +83,6 @@ bool BasicUDPSocket::Peek(char8* const output,
     return (ret > 0);
 
 }
-
 
 bool BasicUDPSocket::Read(char8* const output,
                           uint32 &size) {
@@ -161,13 +160,20 @@ bool BasicUDPSocket::Listen(const uint16 port) {
 bool BasicUDPSocket::Connect(const char8 * const address,
                              const uint16 port) {
 
-    destination.SetPort(port);
-    bool ret = true;
-    if (!destination.SetAddress(address)) {
-        if (!destination.SetAddressByHostName(address)) {
-            ret = false;
+    bool ret = IsValid();
+    if (ret) {
+        destination.SetPort(port);
+        ret = true;
+        if (!destination.SetAddress(address)) {
+            if (!destination.SetAddressByHostName(address)) {
+                ret = false;
+            }
         }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is not valid");
+    }
+
     return ret;
 }
 

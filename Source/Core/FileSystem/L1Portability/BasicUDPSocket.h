@@ -65,7 +65,7 @@ public:
 
     /**
      * @brief Read without removing data from the socket pipe.
-     * @param[out] buffer is the buffer used to store the read data.
+     * @param[out] output is the buffer used to store the read data.
      * @param[in,out] size is the number of bytes to read.
      * @return false in case of errors.
      * @post
