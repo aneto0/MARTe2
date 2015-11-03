@@ -530,70 +530,74 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
 void ClientJob_Peek(BasicUDPSocketTest &param) {
 
     BasicUDPSocket clientSocket;
-    bool go = clientSocket.Open();
-
-    if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
+    if (!clientSocket.Open()) {
         param.sem.FastLock();
         param.noError = false;
         param.sem.FastUnLock();
     }
-
     else {
-
-        const char8* toWrite = "HelloServer";
-        uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
-        if (!clientSocket.Write(toWrite, sizeWrite)) {
+        if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
             param.sem.FastLock();
             param.noError = false;
             param.sem.FastUnLock();
         }
+
         else {
 
-            bool ret = clientSocket.SetBlocking(param.isBlocking);
-
-            if (!ret) {
+            const char8* toWrite = "HelloServer";
+            uint32 sizeWrite = StringHelper::Length(toWrite) + 1;
+            if (!clientSocket.Write(toWrite, sizeWrite)) {
                 param.sem.FastLock();
                 param.noError = false;
                 param.sem.FastUnLock();
             }
             else {
-                if(!param.isValidClient){
-                    clientSocket.Close();
+
+                bool ret = clientSocket.SetBlocking(param.isBlocking);
+
+                if (!ret) {
+                    param.sem.FastLock();
+                    param.noError = false;
+                    param.sem.FastUnLock();
                 }
-
-                char8 output[64] = { 0 };
-                uint32 sizeRead = param.size;
-
-                for (uint32 i = 0; i < 4; i++) {
-                    ret = clientSocket.Peek(output, sizeRead);
-                    if (!ret) {
-                        param.sem.FastLock();
-                        param.retVal = false;
-                        param.sem.FastUnLock();
-                        break;
+                else {
+                    if (!param.isValidClient) {
+                        clientSocket.Close();
                     }
-                    else {
 
-                        if (sizeRead != param.expectedSize) {
+                    char8 output[64] = { 0 };
+                    uint32 sizeRead = param.size;
+
+                    for (uint32 i = 0; i < 4; i++) {
+                        ret = clientSocket.Peek(output, sizeRead);
+                        if (!ret) {
                             param.sem.FastLock();
                             param.retVal = false;
                             param.sem.FastUnLock();
                             break;
                         }
                         else {
-                            output[(sizeRead > 63) ? (63) : (sizeRead)] = 0;
-                            if (StringHelper::Compare(output, param.result) != 0) {
+
+                            if (sizeRead != param.expectedSize) {
                                 param.sem.FastLock();
                                 param.retVal = false;
                                 param.sem.FastUnLock();
                                 break;
+                            }
+                            else {
+                                output[(sizeRead > 63) ? (63) : (sizeRead)] = 0;
+                                if (StringHelper::Compare(output, param.result) != 0) {
+                                    param.sem.FastLock();
+                                    param.retVal = false;
+                                    param.sem.FastUnLock();
+                                    break;
+                                }
                             }
                         }
                     }
                 }
             }
         }
-
     }
 
     param.eventSem.Wait();
@@ -714,45 +718,49 @@ void StartServer_Write(BasicUDPSocketTest &param) {
 void ClientJob_Write(BasicUDPSocketTest &param) {
 
     BasicUDPSocket clientSocket;
-    bool go = clientSocket.Open();
-
-    if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
+    if (!clientSocket.Open()) {
         param.sem.FastLock();
         param.noError = false;
         param.sem.FastUnLock();
     }
-
     else {
-        bool ret = clientSocket.SetBlocking(param.isBlocking);
-
-        if (!ret) {
+        if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort())) {
             param.sem.FastLock();
             param.noError = false;
             param.sem.FastUnLock();
         }
+
         else {
+            bool ret = clientSocket.SetBlocking(param.isBlocking);
 
-            if (!param.isValidClient) {
-                clientSocket.Close();
-            }
-
-            char8 input[128];
-            StringHelper::Copy(input, param.string);
-            uint32 sizeWrite = param.size;
-            if (param.isTimeout) {
-                ret = clientSocket.Write(input, sizeWrite, param.timeout);
-            }
-            else {
-                ret = clientSocket.Write(input, sizeWrite);
-            }
             if (!ret) {
                 param.sem.FastLock();
-                param.retVal = false;
+                param.noError = false;
                 param.sem.FastUnLock();
             }
+            else {
 
+                if (!param.isValidClient) {
+                    clientSocket.Close();
+                }
+
+                char8 input[128];
+                StringHelper::Copy(input, param.string);
+                uint32 sizeWrite = param.size;
+                if (param.isTimeout) {
+                    ret = clientSocket.Write(input, sizeWrite, param.timeout);
+                }
+                else {
+                    ret = clientSocket.Write(input, sizeWrite);
+                }
+                if (!ret) {
+                    param.sem.FastLock();
+                    param.retVal = false;
+                    param.sem.FastUnLock();
+                }
+
+            }
         }
-
     }
 
     param.eventSem.Wait();

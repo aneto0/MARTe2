@@ -40,7 +40,6 @@
 #include "BasicTCPSocket.h"
 #include "Sleep.h"
 #include "SocketSelect.h"
-#include "InternetService.h"
 #include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
