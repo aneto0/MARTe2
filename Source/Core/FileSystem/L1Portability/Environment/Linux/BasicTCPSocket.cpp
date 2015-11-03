@@ -117,21 +117,6 @@ bool BasicTCPSocket::Listen(const uint16 port,
     return ret;
 }
 
-bool BasicTCPSocket::Listen(const char8 * const serviceName,
-                            const int32 maxConnections) const {
-
-    bool ret = false;
-    uint16 port = 0u;
-    InternetService serviceT;
-    if (serviceT.SearchByName(serviceName)) {
-        port = serviceT.Port();
-        ret = Listen(port, maxConnections);
-    }
-
-    /* lint -e{9119} -e{9117} -e{734} [MISRA C++ Rule 5-0-6] [MISRA C++ Rule 5-0-4]. Justification: the operating system InternetHost struct has
-     * an unsigned short "port" member attribute. */
-    return ret;
-}
 
 bool BasicTCPSocket::Connect(const char8 * const address,
                              const uint16 port,
@@ -215,7 +200,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                         ret = false;
                     }
                 }
-
             }
         }
         else {
@@ -229,21 +213,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
     return ret;
 }
 
-bool BasicTCPSocket::Connect(const char8 * const address,
-                             const char8 * const serviceName,
-                             const TimeoutType &timeout) {
-
-    bool ret = false;
-    uint16 port = 0u;
-    InternetService serviceT;
-    if (serviceT.SearchByName(serviceName)) {
-        port = serviceT.Port();
-        ret = Connect(address, port, timeout);
-    }
-    /* lint -e{9119} -e{9117} -e{734} [MISRA C++ Rule 5-0-6] [MISRA C++ Rule 5-0-4]. Justification: the operating system InternetHost struct has
-     * an unsigned short "port" member attribute. */
-    return ret;
-}
 
 bool BasicTCPSocket::IsConnected() const {
 

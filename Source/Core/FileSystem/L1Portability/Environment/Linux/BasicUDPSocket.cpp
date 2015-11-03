@@ -57,6 +57,34 @@ BasicUDPSocket::~BasicUDPSocket() {
 
 }
 
+bool BasicUDPSocket::Peek(char8* const output,
+                          uint32 &size) {
+
+    int32 ret = -1;
+    if (IsValid()) {
+        uint32 sourceSize = source.Size();
+        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(size), MSG_PEEK, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()),
+                                          static_cast<socklen_t*>(&sourceSize)));
+        if (ret >= 0) {
+            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
+            size = static_cast<uint32>(ret);
+            // to avoid polling continuously release CPU time when reading 0 bytes
+            if (size == 0u) {
+                Sleep::MSec(1);
+            }
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: recvfrom()");
+        }
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is not valid");
+    }
+    return (ret > 0);
+
+}
+
+
 bool BasicUDPSocket::Read(char8* const output,
                           uint32 &size) {
 
@@ -143,11 +171,6 @@ bool BasicUDPSocket::Connect(const char8 * const address,
     return ret;
 }
 
-bool BasicUDPSocket::Connect(const InternetHost &address) {
-    SetDestination(address);
-    return true;
-}
-
 bool BasicUDPSocket::CanWrite() const {
     return true;
 }
@@ -167,24 +190,31 @@ bool BasicUDPSocket::Read(char8 * const output,
 
     if (IsValid()) {
 
-        struct timeval timeoutVal;
-        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
-        /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
-        int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
+        if (timeout.IsFinite()) {
+            struct timeval timeoutVal;
+            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+            timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
+            /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+            timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
+            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal),
+                                   static_cast<socklen_t>(sizeof(timeoutVal)));
 
-        if (ret < 0) {
-            size = 0u;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
-            retVal = false;
+            if (ret < 0) {
+                size = 0u;
+                REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt() failed setting the read timeout");
+                retVal = false;
+            }
+            else {
+                retVal = Read(output, size);
+            }
+
+            if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeoutVal)))<0) {
+                REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt() failed removing the read timeout");
+                retVal = false;
+            }
         }
         else {
             retVal = Read(output, size);
-        }
-
-        if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeoutVal)))<0) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
         }
     }
     else {
@@ -199,24 +229,32 @@ bool BasicUDPSocket::Write(const char8 * const input,
     bool retVal = true;
 
     if (IsValid()) {
-        struct timeval timeoutVal;
-        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
-        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
-        timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
-        int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal)));
+        if (timeout.IsFinite()) {
 
-        if (ret < 0) {
-            size = 0u;
-            retVal = false;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
+            struct timeval timeoutVal;
+            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+            timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
+            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
+            timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
+            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal),
+                                   static_cast<socklen_t>(sizeof(timeoutVal)));
+
+            if (ret < 0) {
+                size = 0u;
+                retVal = false;
+                REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt() failed setting the write timeout");
+            }
+            else {
+                retVal = Write(input, size);
+            }
+            if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
+                REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt() failed removing the write timeout");
+                retVal = false;
+            }
         }
         else {
             retVal = Write(input, size);
-        }
-        if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt()");
-            retVal = false;
+
         }
     }
     else {

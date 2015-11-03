@@ -183,14 +183,6 @@ public:
     bool Listen(const uint16 port,
                 const int32 maxConnections = 1) const;
 
-    /**
-     * @brief Listen for a connection on the port specified by the internet service in input. (server function)
-     * @param[in] serviceName is the internet service in input.
-     * @param[in] maxConnections is the size of the pending connections queue not accepted yet.
-     * @return false in case of errors.
-     */
-    bool Listen(const char8 * const serviceName,
-                const int32 maxConnections = 1) const;
 
     /**
      * @brief Connect to a specific host.
@@ -204,17 +196,6 @@ public:
                  const uint16 port,
                  const TimeoutType &timeout = TTInfiniteWait);
 
-    /**
-     * @brief Connect to a specific host.
-     * @param[in] address is the IP address of the server.
-     * @param[in] serviceName is the server service name.
-     * @param[in] timeout is the desired timeout.
-     * @warning If the socket is in non-block mode, the timeout has no meaning.
-     * @return false in case of error.
-     */
-    bool Connect(const char8 * const address,
-                 const char8 * const serviceName,
-                 const TimeoutType &timeout = TTInfiniteWait);
 
     /**
      * @brief Returns true if the client is connected to a server, false otherwise

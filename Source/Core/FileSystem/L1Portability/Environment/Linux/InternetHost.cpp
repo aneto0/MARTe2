@@ -61,24 +61,24 @@ public:
     }
     //
     ~LocalHostInfo() {
-        if (ipNumber != NULL) {
+        if (ipAddress != NULL) {
             /*lint -e{586} -e{1551} [MISRA C++ Rule 18-4-1]. Justification: Use of free required. */
-            free(reinterpret_cast<void *>(const_cast<char8 *>(ipNumber)));
+            free(reinterpret_cast<void *>(const_cast<char8 *>(ipAddress)));
         }
-        if (localAddress != NULL) {
+        if (localHostName != NULL) {
             /*lint -e{586} -e{1551} [MISRA C++ Rule 18-4-1]. Justification: Use of free required. */
-            free(reinterpret_cast<void *>(const_cast<char8 *>(localAddress)));
+            free(reinterpret_cast<void *>(const_cast<char8 *>(localHostName)));
         }
     }
     //
-    const char8 *GetLocalAddress() {
+    const char8 *GetLocalHostName() {
         Init();
-        return localAddress;
+        return localHostName;
     }
     ///
-    const char8 *GetIpNumber() {
+    const char8 *GetIpAddress() {
         Init();
-        return ipNumber;
+        return ipAddress;
     }
 
     bool Initialized() const {
@@ -86,13 +86,13 @@ public:
     }
 
 private:
-    const char8 *localAddress;
-    const char8 *ipNumber;
+    const char8 *localHostName;
+    const char8 *ipAddress;
     bool internetAddressInfoInitialised;
     FastPollingMutexSem internalFastSem;
 
     /*lint -e{1704} .Justification: The constructor is private because this is a singleton.*/
-    LocalHostInfo():localAddress(static_cast<const char8*>(NULL)),ipNumber(static_cast<const char8*>(NULL)),internetAddressInfoInitialised(false),internalFastSem() {
+    LocalHostInfo():localHostName(static_cast<const char8*>(NULL)),ipAddress(static_cast<const char8*>(NULL)),internetAddressInfoInitialised(false),internalFastSem() {
         Init();
     }
 
@@ -103,8 +103,8 @@ private:
                 REPORT_ERROR(ErrorManagement::FatalError,"Error: Failed FastPollingMutexSem::FastLock() in initialization of local address");
             }
 
-            localAddress = static_cast<const char8*>(NULL);
-            ipNumber = static_cast<const char8*>(NULL);
+            localHostName = static_cast<const char8*>(NULL);
+            ipAddress = static_cast<const char8*>(NULL);
 
             char8 hostname[128];
             int32 ret = gethostname(&hostname[0], static_cast<osulong>(128u));
@@ -113,14 +113,20 @@ private:
                 h = gethostbyname(&hostname[0]);
             }
             if (h != NULL) {
-                localAddress = strdup(h->h_name);
+                localHostName = strdup(h->h_name);
                 struct in_addr sin_addr;
-                sin_addr.s_addr = *(reinterpret_cast<uint32 *> (h->h_addr_list[0]));
+                char8* addr=h->h_addr_list[0];
+                if(addr!=static_cast<char8 *>(NULL)) {
+                    sin_addr.s_addr = *(reinterpret_cast<uint32 *> (addr));
 
-                // Convert the ip number in a dot notation string
-                ipNumber = strdup(inet_ntoa(sin_addr));
-                internetAddressInfoInitialised = true;
-                internalFastSem.FastUnLock();
+                    // Convert the ip number in a dot notation string
+                    ipAddress = strdup(inet_ntoa(sin_addr));
+                    internetAddressInfoInitialised = true;
+                    internalFastSem.FastUnLock();
+                }
+                else {
+                    REPORT_ERROR(ErrorManagement::FatalError,"Error: Failed local address initialization");
+                }
             }
             else {
                 REPORT_ERROR(ErrorManagement::FatalError,"Error: Failed local address initialization");
@@ -155,20 +161,19 @@ String InternetHost::GetHostName() const {
     return (hostName.Size() == 0u) ? (static_cast<const char8 *>(NULL)):(hostName);
 }
 
-
 const char8 *InternetHost::GetLocalHostName() {
-    return LocalHostInfo::Instance()->GetLocalAddress();
+    return LocalHostInfo::Instance()->GetLocalHostName();
 }
 
 const char8 *InternetHost::GetLocalAddress() {
-    return LocalHostInfo::Instance()->GetIpNumber();
+    return LocalHostInfo::Instance()->GetIpAddress();
 }
 
 uint32 InternetHost::GetLocalAddressAsNumber() {
 
     uint32 ret = 0u;
     uint32 comp[4];
-    const char8* name = LocalHostInfo::Instance()->GetIpNumber();
+    const char8* name = LocalHostInfo::Instance()->GetIpAddress();
     if (name != NULL) {
         sscanf(name, "%u.%u.%u.%u", &comp[3], &comp[2], &comp[1], &comp[0]);
         uint32 addressN = (comp[3] + (256u * (comp[2] + (256u * (comp[1] + (256u * comp[0]))))));
@@ -226,19 +231,20 @@ bool InternetHost::SetAddress(const char8 * const addr) {
 }
 
 bool InternetHost::SetAddressByHostName(const char8 * hostName) {
+    bool ret = false;
+    //  hostName can be NULL meaning localhost
+
     if (hostName == NULL) {
         hostName = "localhost";
     }
-    //  hostName can be NULL meaning localhost
     struct hostent *h = gethostbyname(hostName);
-    bool ret = false;
+
     if (h != NULL) {
         address.sin_addr.s_addr = *(reinterpret_cast<uint32 *>(h->h_addr_list[0]));
         ret= true;
     }
     else {
         REPORT_ERROR(ErrorManagement::OSError,"Error: Failed gethostbyname()");
-
     }
     return ret;
 }

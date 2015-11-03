@@ -227,4 +227,8 @@ TEST(InternetHostGTest,TestSize) {
     ASSERT_TRUE(internetHostTest.TestSize());
 }
 
+TEST(InternetHostGTest,TestGetLocalHostName) {
+    InternetHostTest internetHostTest;
+    ASSERT_TRUE(internetHostTest.TestGetLocalHostName());
+}
 
