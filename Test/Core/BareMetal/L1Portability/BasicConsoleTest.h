@@ -195,7 +195,7 @@ public:
      * @param[in] numberOfRows is the desired number of rows
      * @return true if the get function returns the values set by the set function.
      */
-    bool TestSetGetSize(uint32 numberOfRows,
+    bool TestSetGetSceneSize(uint32 numberOfRows,
                         uint32 numberOfColumns);
 
     /**

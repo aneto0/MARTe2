@@ -42,7 +42,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+namespace MARTe {
 
 /*lint -e{9109} forward declaration in BasicConsole.h is required to define the class*/
 /*lint -esym(9150, MARTe::BasicConsoleProperties::*) */
@@ -97,12 +97,11 @@ struct BasicConsoleProperties {
 
 };
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-BasicConsole::BasicConsole() {
+BasicConsole::BasicConsole():StreamI() {
     /*lint -e{1732} -e{1733} no default assignment and no default copy constructor.
      *This is safe since none of the struct members point to dynamically allocated memory*/
     handle = new BasicConsoleProperties();
@@ -125,8 +124,8 @@ BasicConsole::~BasicConsole() {
     }
 }
 
-ErrorManagement::ErrorType BasicConsole::Open(const FlagsType &mode) {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+bool BasicConsole::Open(const FlagsType &mode) {
+    bool err = true;
 
     handle->openingMode = mode;
     //In this case read immediately from the console without wait.
@@ -149,20 +148,20 @@ ErrorManagement::ErrorType BasicConsole::Open(const FlagsType &mode) {
 
             ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &(handle->outputConsoleHandle)) >= 0);
             if (!ok) {
-                err = ErrorManagement::OSError;
-                REPORT_ERROR(err,"Error: iocl()");
+                err = false;
+                REPORT_ERROR(ErrorManagement::OSError, "Error: iocl()");
             }
         }
         else {
-            err = ErrorManagement::OSError;
-            REPORT_ERROR(err,"Error: iocl()");
+            err = false;
+            REPORT_ERROR(ErrorManagement::OSError, "Error: iocl()");
         }
     }
-    if (err == ErrorManagement::NoError) {
+    if (err) {
         bool ok = (fflush(stdout) == 0);
         if (!ok) {
-            err = ErrorManagement::OSError;
-            REPORT_ERROR(err,"Error: fflush()");
+            err = false;
+            REPORT_ERROR(ErrorManagement::OSError, "Error: fflush()");
         }
     }
     return err;
@@ -172,9 +171,9 @@ FlagsType BasicConsole::GetOpeningMode() const {
     return handle->openingMode;
 }
 
-ErrorManagement::ErrorType BasicConsole::Close() {
+bool BasicConsole::Close() {
     bool charactedInputSelected = (handle->openingMode & BasicConsoleMode::PerformCharacterInput) != 0u;
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+    bool err = true;
     if (charactedInputSelected) {
         //reset the original console modes
         struct termio &consoleMode = handle->outputConsoleHandle;
@@ -186,31 +185,41 @@ ErrorManagement::ErrorType BasicConsole::Close() {
         consoleMode.c_cc[VTIME] = saveMode.c_cc[VTIME];
         bool ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &handle->initialInfo) >= 0);
         if (!ok) {
-            err = ErrorManagement::OSError;
-            REPORT_ERROR(err,"Error: iocl()");
+            err = false;
+            REPORT_ERROR(ErrorManagement::OSError, "Error: iocl()");
         }
     }
     return err;
 }
 
+bool BasicConsole::Read(char8 * const output,
+                        uint32 & size) {
+    return Read(output, size, TTInfiniteWait);
+}
+
+bool BasicConsole::Write(const char8 * const input,
+                         uint32 & size) {
+    return Write(input, size, TTInfiniteWait);
+}
+
 /*lint -e{715} timeout is not used in Linux*/
-ErrorManagement::ErrorType BasicConsole::Write(const char8 * const buffer,
-                              uint32 & size,
-                              const TimeoutType &timeout) {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+bool BasicConsole::Write(const char8 * const input,
+                         uint32 & size,
+                         const TimeoutType &timeout) {
+    bool err = true;
     if ((handle->openingMode & BasicConsoleMode::EnablePaging) == BasicConsoleMode::EnablePaging) {
-        err = PagedWrite(buffer, size, timeout);
+        err = PagedWrite(input, size, timeout);
     }
     else {
-        err = OSWrite(buffer, size, timeout);
+        err = OSWrite(input, size, timeout);
     }
     return err;
 }
 
 /*lint -e{715} timeout is not used in Linux*/
-ErrorManagement::ErrorType BasicConsole::OSWrite(const char8* const buffer,
-                                uint32 &size,
-                                const TimeoutType &timeout) {
+bool BasicConsole::OSWrite(const char8* const buffer,
+                           uint32 &size,
+                           const TimeoutType &timeout) {
     const char8 *bufferString = buffer;
     const char8 newLine = '\n';
 
@@ -223,8 +232,8 @@ ErrorManagement::ErrorType BasicConsole::OSWrite(const char8* const buffer,
     uint32 sizeToWrite = 0u;
 
     bool sink = false;
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
-    while ((err == ErrorManagement::NoError) && (index < size)) {
+    bool err = true;
+    while ((err == true) && (index < size)) {
         currentChar = bufferString[index];
         if (currentChar == '\n') {
             //reset the currentColumn
@@ -245,8 +254,8 @@ ErrorManagement::ErrorType BasicConsole::OSWrite(const char8* const buffer,
             if (sizeToWrite > 0u) {
                 ssize_t wbytes = write(BasicConsoleProperties::STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
                 if (wbytes == -1) {
-                    err = ErrorManagement::OSError;
-                    REPORT_ERROR(err,"Error: write()");
+                    err = false;
+                    REPORT_ERROR(ErrorManagement::OSError, "Error: write()");
                 }
                 writtenBytes += wbytes;
             }
@@ -256,8 +265,8 @@ ErrorManagement::ErrorType BasicConsole::OSWrite(const char8* const buffer,
         if (currentColumn == handle->nOfColumns) {
             ssize_t wbytes = write(BasicConsoleProperties::STDOUT, &newLine, static_cast<osulong>(1));
             if (wbytes == -1) {
-                err = ErrorManagement::OSError;
-                REPORT_ERROR(err,"Error: write()");
+                err = false;
+                REPORT_ERROR(ErrorManagement::OSError, "Error: write()");
             }
             currentColumn = 0u;
         }
@@ -269,39 +278,39 @@ ErrorManagement::ErrorType BasicConsole::OSWrite(const char8* const buffer,
 
     size = static_cast<uint32>(writtenBytes);
     if (size == 0u) {
-        err = ErrorManagement::Warning;
-        REPORT_ERROR(err,"ErrorManagement::Warning: zero bytes written");
+        err = false;
+        REPORT_ERROR(ErrorManagement::Warning, "Warning: zero bytes written");
     }
     return err;
 }
 
 /*lint -e{715} timeout is not used...*/
-ErrorManagement::ErrorType BasicConsole::Read(char8 * const buffer,
-                             uint32 & size,
-                             const TimeoutType &timeout) {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
-    if ((buffer != NULL) && (size > 0u)) {
+bool BasicConsole::Read(char8 * const output,
+                        uint32 & size,
+                        const TimeoutType &timeout) {
+    bool err = true;
+    if ((output != NULL) && (size > 0u)) {
         if ((handle->openingMode & BasicConsoleMode::PerformCharacterInput) != 0u) {
-            char8 *readChar = buffer;
+            char8 *readChar = output;
             *readChar = static_cast<char8>(getchar());
             int32 eofCheck = static_cast<int32>(*readChar);
             if (eofCheck == EOF) {
-                err = ErrorManagement::OSError;
-                REPORT_ERROR(err,"Error: getchar()");
+                err = false;
+                REPORT_ERROR(ErrorManagement::OSError,"Error: getchar()");
             }
             else {
                 size = 1u;
             }
         }
         else {
-            ssize_t readBytes = read(BasicConsoleProperties::STDIN, buffer, static_cast<osulong>(size));
+            ssize_t readBytes = read(BasicConsoleProperties::STDIN, output, static_cast<osulong>(size));
             if (readBytes == -1) {
-                err = ErrorManagement::OSError;
-                REPORT_ERROR(err,"Error: read()");
+                err = false;
+                REPORT_ERROR(ErrorManagement::OSError,"Error: read()");
             }
             else if (readBytes == 0) {
-                err = ErrorManagement::Warning;
-                REPORT_ERROR(err,"ErrorManagement::Warning: zero bytes read");
+                err = false;
+                REPORT_ERROR(ErrorManagement::Warning,"Warning: zero bytes read");
             }
             else {
                 size = static_cast<uint32>(readBytes);
@@ -309,33 +318,33 @@ ErrorManagement::ErrorType BasicConsole::Read(char8 * const buffer,
         }
     }
     else {
-        err = ErrorManagement::Warning;
-        REPORT_ERROR(err,"ErrorManagement::Warning: invalid input parameters");
+        err = false;
+        REPORT_ERROR(ErrorManagement::Warning,"Warning: invalid input parameters");
     }
     return err;
 }
 
-ErrorManagement::ErrorType BasicConsole::SetSize(const uint32 &numberOfColumns,
+bool BasicConsole::SetSceneSize(const uint32 &numberOfColumns,
                                 const uint32 &numberOfRows) {
     handle->nOfColumns = numberOfColumns;
     handle->nOfRows = numberOfRows;
-    return ErrorManagement::NoError;
+    return true;
 }
 
-ErrorManagement::ErrorType BasicConsole::GetSize(uint32 &numberOfColumns,
+bool BasicConsole::GetSceneSize(uint32 &numberOfColumns,
                                 uint32 &numberOfRows) const {
     numberOfColumns = handle->nOfColumns;
     numberOfRows = handle->nOfRows;
-    return ErrorManagement::NoError;
+    return true;
 }
 
-ErrorManagement::ErrorType BasicConsole::Clear() {
-    ErrorManagement::ErrorType err = ErrorManagement::NoError;
+bool BasicConsole::Clear() {
+    bool err = true;
     for (uint32 i = 0u; i < BasicConsoleProperties::BASIC_CONSOLE_LINUX_CLEAR_ROWS; i++) {
         ssize_t writtenBytes = write(BasicConsoleProperties::STDOUT, "\n", static_cast<osulong>(1u));
         if (writtenBytes == -1) {
-            err = ErrorManagement::OSError;
-            REPORT_ERROR(err,"Error: write()");
+            err = false;
+            REPORT_ERROR(ErrorManagement::OSError, "Error: write()");
         }
     }
     return err;
@@ -366,70 +375,106 @@ bool BasicConsole::TimeoutSupported() const {
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorManagement::ErrorType BasicConsole::ShowBuffer() {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
-    return ErrorManagement::UnsupportedFeature;
+bool BasicConsole::ShowBuffer() {
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    return false;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorManagement::ErrorType BasicConsole::SetColour(const Colours &foregroundColour,
-                                  const Colours &backgroundColour) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
-    return ErrorManagement::UnsupportedFeature;
+bool BasicConsole::SetColour(const Colours &foregroundColour,
+                             const Colours &backgroundColour) {
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    return false;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorManagement::ErrorType BasicConsole::SetTitleBar(const char8 * const title) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
-    return ErrorManagement::UnsupportedFeature;
+bool BasicConsole::SetTitleBar(const char8 * const title) {
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    return false;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorManagement::ErrorType BasicConsole::GetTitleBar(char8 * const title,
-                                    const uint32 &size) const {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
-    return ErrorManagement::UnsupportedFeature;
+bool BasicConsole::GetTitleBar(char8 * const title,
+                               const uint32 &size) const {
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    return false;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorManagement::ErrorType BasicConsole::SetCursorPosition(const uint32 &column,
-                                          const uint32 &row) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
+bool BasicConsole::SetCursorPosition(const uint32 &column,
+                                     const uint32 &row) {
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
 
-    return ErrorManagement::UnsupportedFeature;
+    return false;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorManagement::ErrorType BasicConsole::GetCursorPosition(uint32 &column,
-                                          uint32 &row) const {
-    return ErrorManagement::UnsupportedFeature;
+bool BasicConsole::GetCursorPosition(uint32 &column,
+                                     uint32 &row) const {
+    return false;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorManagement::ErrorType BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
-                                      const uint32 &numberOfRows) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
+bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
+                                 const uint32 &numberOfRows) {
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
 
-    return ErrorManagement::UnsupportedFeature;
+    return false;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorManagement::ErrorType BasicConsole::GetWindowSize(uint32 &numberOfColumns,
-                                      uint32 &numberOfRows) const {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
+bool BasicConsole::GetWindowSize(uint32 &numberOfColumns,
+                                 uint32 &numberOfRows) const {
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
 
-    return ErrorManagement::UnsupportedFeature;
+    return false;
 }
 
 /*lint -e{715} function not implemented in Linux*/
-ErrorManagement::ErrorType BasicConsole::PlotChar(const char8 &c,
-                                 const Colours &foregroundColour,
-                                 const Colours &backgroundColour,
-                                 const uint32 &column,
-                                 const uint32 &row) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature,"Information: function not implemented");
+bool BasicConsole::PlotChar(const char8 &c,
+                            const Colours &foregroundColour,
+                            const Colours &backgroundColour,
+                            const uint32 &column,
+                            const uint32 &row) {
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
 
-    return ErrorManagement::UnsupportedFeature;
+    return false;
+}
+
+/*lint -e{715} function not implemented in Linux*/
+bool BasicConsole::Seek(const uint64 pos) {
+    return false;
+}
+
+/*lint -e{715} function not implemented in Linux*/
+bool BasicConsole::RelativeSeek(const int32 deltaPos) {
+    return false;
+}
+
+uint64 BasicConsole::Position() {
+    return 0xffffffffffffffffu;
+}
+
+
+uint64 BasicConsole::Size() {
+    return 0xffffffffffffffffu;
+}
+
+/*lint -e{715} function not implemented in Linux*/
+bool BasicConsole::SetSize(const uint64 size) {
+    return false;
+}
+
+bool BasicConsole::CanWrite() const {
+    return true;
+}
+
+bool BasicConsole::CanRead() const {
+    return true;
+}
+
+bool BasicConsole::CanSeek() const {
+    return false;
 }
 
 }

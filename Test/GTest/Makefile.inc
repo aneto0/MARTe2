@@ -27,12 +27,12 @@ OBJSX= InternetHostGTest.x \
 	   InternetServiceGTest.x \
 	   BasicSocketGTest.x \
 	   BasicUDPSocketGTest.x \
-	   BasicTCPSocketGTest.x 
+	   BasicTCPSocketGTest.x \
+	   BasicConsoleGTest.x 	   
 #	    DoubleIntegerGTest.x \
 		TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
-        BasicConsoleGTest.x \
         FormatDescriptorGTest.x \
         AnyTypeGTest.x\
         StandardHeap_GenericGTest.x \

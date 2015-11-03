@@ -133,7 +133,7 @@ TEST(BasicConsoleGTest,TestTimeoutRead) {
 
 TEST(BasicConsoleGTest,TestSetGetSize) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestSetGetSize(100, 70));
+    ASSERT_TRUE(console.TestSetGetSceneSize(100, 70));
 }
 
 TEST(BasicConsoleGTest,TestSetGetWindowsSize) {
