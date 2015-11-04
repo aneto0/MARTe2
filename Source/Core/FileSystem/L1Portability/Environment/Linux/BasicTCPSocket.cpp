@@ -258,13 +258,12 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
             if (newSocket != -1) {
                 if (client == NULL) {
                     client = new BasicTCPSocket();
-                    created=(client!=NULL);
+                    created=true;
                 }
-                if(client!=NULL) {
-                    client->SetDestination(source);
-                    client->SetSource(source);
-                    client->connectionSocket = newSocket;
-                }
+
+                client->SetDestination(source);
+                client->SetSource(source);
+                client->connectionSocket = newSocket;
                 ret = client;
 
             }
