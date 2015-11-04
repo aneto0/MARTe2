@@ -343,10 +343,6 @@ bool BasicTCPSocket::Read(char8* const output,
         if (readBytes >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(readBytes);
-            // to avoid polling continuously release CPU time when reading 0 bytes
-            if (size == 0u) {
-                Sleep::MSec(1);
-            }
         }
         else {
             bool ewouldblock = (sock_errno() == EWOULDBLOCK);

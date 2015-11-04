@@ -781,8 +781,8 @@ static void StartServer_WaitConnection(BasicTCPSocketTest &param) {
             newConnection = serverSocket.WaitConnection(param.timeout, &client[acceptedConnections]);
         }
         if (newConnection != NULL) {
-            acceptedConnections++;
             serverParam[acceptedConnections].socket = newConnection;
+            acceptedConnections++;
         }
         else {
             param.sem.FastLock();
