@@ -47,7 +47,6 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-static const char8 DIRECTORY_SEPARATOR = '/';
 
 // This function is called by the scandir and it is used for file filtering
 static char8 *fileFilterSearchMask;
@@ -60,22 +59,22 @@ static int32 fileFilter(const struct dirent * const de) {
 
 DirectoryScanner::DirectoryScanner() :
         LinkedListHolder() {
-    baseAddress = static_cast<char8 *>(NULL);
-    size=0u;
+    basePath = static_cast<char8 *>(NULL);
+    size = 0u;
 }
 
 void DirectoryScanner::CleanUp() {
     LinkedListHolder::CleanUp();
     size = 0u;
-    if (baseAddress != NULL) {
-        if(!HeapManager::Free(reinterpret_cast<void *&>(baseAddress))) {
+    if (basePath != NULL) {
+        if (!HeapManager::Free(reinterpret_cast<void *&>(basePath))) {
 
         }
-        baseAddress = static_cast<char8 *>(NULL);
+        basePath = static_cast<char8 *>(NULL);
     }
 }
 
-bool DirectoryScanner::Scan(const char8 * const address,
+bool DirectoryScanner::Scan(const char8 * const path,
                             const char8 *fileMask,
                             SortFilter * const sorter) {
 
@@ -83,41 +82,41 @@ bool DirectoryScanner::Scan(const char8 * const address,
 
     CleanUp();
 
-    // if address is not null it is copied into baseAddress
-    uint32 addressLen = StringHelper::Length(address);
-    if ((address != NULL) && (addressLen> 0u)) {
-        baseAddress = static_cast<char8 *>(HeapManager::Malloc(addressLen+ 2u));
+    // if path is not null it is copied into basePath
+    uint32 addressLen = StringHelper::Length(path);
+    if ((path != NULL) && (addressLen > 0u)) {
+        basePath = static_cast<char8 *>(HeapManager::Malloc(addressLen + 2u));
 
-        if(!StringHelper::Copy(baseAddress, address)) {
-            ret=false;
+        if (!StringHelper::Copy(basePath, path)) {
+            ret = false;
         }
     }
 
     if (ret) {
-        // if baseAddress is still NULL it becomes "\" (root)
-        if (baseAddress == NULL) {
-            baseAddress = static_cast<char8 *>(HeapManager::Malloc(2u));
-            if(baseAddress!=NULL) {
-                baseAddress[0] = DIRECTORY_SEPARATOR;
-                baseAddress[1] = '\0';
+        // if basePath is still NULL it becomes "\" (root)
+        if (basePath == NULL) {
+            basePath = static_cast<char8 *>(HeapManager::Malloc(2u));
+            if (basePath != NULL) {
+                basePath[0] = DIRECTORY_SEPARATOR;
+                basePath[1] = '\0';
             }
             else {
-                ret=false;
+                ret = false;
             }
         }
         else {
-            // otherwise append the separator at the end of baseAddress
-            uint32 baseAddressLen = StringHelper::Length(baseAddress);
-            if(baseAddressLen>0u) {
-                uint32 index=baseAddressLen - 1u;
-                if ((address[index] != '\\') || (address[index] != '/')) {
-                    baseAddress[baseAddressLen] = DIRECTORY_SEPARATOR;
-                    index=baseAddressLen + 1u;
-                    baseAddress[index] = '\0';
+            // otherwise append the separator at the end of basePath
+            uint32 baseAddressLen = StringHelper::Length(basePath);
+            if (baseAddressLen > 0u) {
+                uint32 index = baseAddressLen - 1u;
+                if ((path[index] != '\\') || (path[index] != '/')) {
+                    basePath[baseAddressLen] = DIRECTORY_SEPARATOR;
+                    index = baseAddressLen + 1u;
+                    basePath[index] = '\0';
                 }
             }
             else {
-                ret=false;
+                ret = false;
             }
         }
     }
@@ -144,9 +143,9 @@ bool DirectoryScanner::Scan(const char8 * const address,
 
         struct dirent **namelist;
 
-        // mallocs the filenames matched in baseAddress into nameList
+        // mallocs the filenames matched in basePath into nameList
         /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: struct dirent*** required by scandir(*) operating system API */
-        int32 n = scandir(baseAddress, &namelist, &fileFilter, &alphasort);
+        int32 n = scandir(basePath, &namelist, &fileFilter, &alphasort);
 
         if (n < 0) {
             REPORT_ERROR(ErrorManagement::OSError, "Error: Failed scandir()");
@@ -156,33 +155,32 @@ bool DirectoryScanner::Scan(const char8 * const address,
             while (n > 0) {
                 Directory *entry = new Directory();
 
-                // store the file name
-                entry->fname = StringHelper::StringDup(&(namelist[n]->d_name[0]));
-
                 // empties statAddr
                 if (!MemoryOperationsHelper::Set(&statAddr[0], '\0', pathSize)) {
                     ret = false;
                 }
 
                 if (ret) {
-                    // put in statAddr the base address
-                    if (!StringHelper::Concatenate(&statAddr[0], baseAddress)) {
+                    // put in statAddr the base path
+                    if (!StringHelper::Concatenate(&statAddr[0], basePath)) {
                         ret = false;
                     }
                 }
 
                 if (ret) {
                     // concatenate it with the file name to create the full path
-                    if (!StringHelper::Concatenate(&statAddr[0], entry->fname)) {
+                    if (!StringHelper::Concatenate(&statAddr[0], &(namelist[n]->d_name[0]))) {
                         ret = false;
                     }
                 }
 
                 if (ret) {
-                    // fill the struct with the file informations
-                    if (stat(&statAddr[0], &entry->dyrectoryHandle) != 0) {
+
+                    // store the file name
+                    if (!entry->SetByName(&(namelist[n]->d_name[0]))) {
                         ret = false;
                     }
+
                 }
 
                 if (ret) {
@@ -217,32 +215,21 @@ bool DirectoryScanner::Scan(const char8 * const address,
 
 DirectoryScanner::~DirectoryScanner() {
     size = 0u;
-    if (baseAddress != NULL) {
+    if (basePath != NULL) {
         /*lint -e{1551} .Justification: Remove the warning "Function may throw exception '...' in destructor".*/
-        if(!HeapManager::Free(reinterpret_cast<void *&>(baseAddress))) {
+        if (!HeapManager::Free(reinterpret_cast<void *&>(basePath))) {
 
         }
-        baseAddress = static_cast<char8 *>(NULL);
+        basePath = static_cast<char8 *>(NULL);
     }
-}
-
-bool DirectoryScanner::Create(const char8 * const address) {
-    return (mkdir(address, static_cast<mode_t>(0777)) == 0);
-}
-
-bool DirectoryScanner::DirectoryExists(const char8 * const address) {
-
-    struct stat fileStats;
-    /*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-4] [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
-    return (stat(address, &fileStats) != 0) ? (S_ISDIR(fileStats.st_mode)) : (false);
 }
 
 uint64 DirectoryScanner::DirectorySize() const {
     return size;
 }
 
-const char8* DirectoryScanner::BaseAddress() const {
-    return baseAddress;
+const char8* DirectoryScanner::BasePath() const {
+    return basePath;
 }
 
 }

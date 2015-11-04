@@ -40,45 +40,119 @@
 
 namespace MARTe {
 
-/** it represents a file or a subdirectory */
+/**
+ * @brief A class which represent a file or a directory.
+ *
+ * @details Providing the path name of a specific file or directory, this class can
+ * retrieve all its main attributes.
+ *
+ * @details Some static methods allows the user to create, delete and check the existence of files-directories.
+ */
 class Directory: public LinkedListable {
 
-    friend class DirectoryScanner;
 
 public:
-    /** constructor */
+    /**
+     * @brief Default constructor.
+     * @param[in] path is the path of the file-directory
+     * @post
+     *   fname = path
+     */
     Directory(const char8 * const path = NULL);
 
-    /** */
+    /**
+     * @brief Default destructor.
+     * @post
+     *   fname = NULL
+     */
     ~Directory();
 
-    /** file name */
+    /**
+     * @brief Set this file-directory providing its path.
+     * @param[in] path is the path of the file-directory in input.
+     * @return true if the file-directory is set correctly, false otherwise.
+     * @post
+     *  fname = path
+     */
+    bool SetByName(const char8 * const path);
+
+    /**
+     * @brief Retrieve the file-directory name.
+     */
     const char8 *Name() const;
 
-    /** is it a directory */
+    /**
+     * @brief Check if this is a directory.
+     * @return true if this is a directory, false otherwise.
+     */
     bool IsDirectory() const;
 
-    /** is it a file */
+    /**
+     * @brief Check if this is a file.
+     * @return true if this is a file, false otherwise.
+     */
     bool IsFile() const;
 
-    /** is it read only */
+    /**
+     * @brief Check if this directory is read only
+     * @return true if this is a read-only file-directory, false otherwise.
+     */
     bool ReadOnly() const;
 
-    /** the file size */
+    /**
+     * @brief Retrieve the file-directory size.
+     * @return the file-directory size
+     */
     uint64 Size() const;
 
-    /** last write time */
-    int32 Time() const;
+    /**
+     * @brief Retrieve the last write time.
+     * @return the last write time.
+     */
+    int32 LastWriteTime() const;
 
-    /** last access time */
+    /**
+     * @brief Retrieve the last access time.
+     * @return the last access time.
+     */
     int32 LastAccessTime() const;
 
+
+    /**
+     * @brief Create a new file-directory.
+     * @param[in] path is the path of the new folder to be created.
+     * @param[in] isFile specifies if a file or a folder should be created.
+     * @return true if the file-directory is created correctly, false otherwise.
+     */
+    static bool Create(const char8 * const path,
+                       const bool isFile = false);
+
+    /**
+     * @brief Delete an existent file-directory.
+     * @param[in] path is the path of the file / directory to be deleted.
+     * @return true if the file-directory is deleted correctly, false otherwise.
+     */
+    static bool Delete(const char8 * const path);
+
+    /**
+     * @brief Check if a file-directory exists.
+     * @param[in] path is the path of the file-directory to check.
+     * @return true if the file-directory exists, false otherwise.
+     * @post
+     *   isFile = true if path refers to a file.
+     */
+    static bool Exists(const char8 * const path);
+
 private:
-    /** the file or directory name */
+    /**
+     * The file or directory name
+     */
     char8 *fname;
 
-    /** attributes of the file */
-    DirectoryCore dyrectoryHandle;
+    /**
+     * File-directory attributes
+     */
+    DirectoryCore directoryHandle;
 
 };
 

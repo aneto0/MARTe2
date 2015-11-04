@@ -24,7 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <fcntl.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -44,32 +44,57 @@ namespace MARTe {
 
 Directory::Directory(const char8 * const path) :
         LinkedListable() {
-    fname = StringHelper::StringDup(path);
-    dyrectoryHandle.st_dev = 0u; /* ID of device containing file */
-    dyrectoryHandle.st_ino = 0u; /* inode number */
-    dyrectoryHandle.st_mode = 0u; /* protection */
-    dyrectoryHandle.st_nlink = 0u; /* number of hard links */
-    dyrectoryHandle.st_uid = 0u; /* user ID of owner */
-    dyrectoryHandle.st_gid = 0u; /* group ID of owner */
-    dyrectoryHandle.st_rdev = 0u; /* device ID (if special file) */
-    dyrectoryHandle.st_size = 0; /* total size, in bytes */
-    dyrectoryHandle.st_blksize = 0; /* blocksize for filesystem I/O */
-    dyrectoryHandle.st_blocks = 0; /* number of 512B blocks allocated */
-    dyrectoryHandle.st_atime = 0; /* time of last access */
-    dyrectoryHandle.st_mtime = 0; /* time of last modification */
-    dyrectoryHandle.st_ctime = 0; /* time of last status change */
 
+    fname = StringHelper::StringDup(path);
+
+    // fill the struct with the file informations
+    if (stat(path, &directoryHandle) != 0) {
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+    }
+    /*
+     directoryHandle.st_dev = 0u; // ID of device containing file
+     directoryHandle.st_ino = 0u; // inode number
+     directoryHandle.st_mode = 0u; // protection
+     directoryHandle.st_nlink = 0u; // number of hard links
+     directoryHandle.st_uid = 0u; // user ID of owner
+     directoryHandle.st_gid = 0u; // group ID of owner
+     directoryHandle.st_rdev = 0u; // device ID (if special file)
+     directoryHandle.st_size = 0; // total size, in bytes
+     directoryHandle.st_blksize = 0; // blocksize for filesystem I/O
+     directoryHandle.st_blocks = 0; // number of 512B blocks allocated
+     directoryHandle.st_atime = 0; // time of last access
+     directoryHandle.st_mtime = 0; // time of last modification
+     directoryHandle.st_ctime = 0; // time of last status change
+     */
 }
 
 /** */
 Directory::~Directory() {
     if (fname != NULL) {
         /*lint -e{1551} .Justification: Remove the warning "Function may throw exception '...' in destructor".*/
-        if(!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
+        if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
 
         }
     }
-    fname =static_cast<char8 *>(NULL);
+    fname = static_cast<char8 *>(NULL);
+}
+
+bool Directory::SetByName(const char8 * const path) {
+    bool ret = true;
+
+    if (fname != NULL) {
+        if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
+            ret=false;
+        }
+    }
+    if (ret) {
+        fname = StringHelper::StringDup(path);
+        if (stat(path, &directoryHandle) != 0) {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+            ret = false;
+        }
+    }
+    return ret;
 }
 
 const char8 *Directory::Name() const {
@@ -78,12 +103,12 @@ const char8 *Directory::Name() const {
 
 bool Directory::IsDirectory() const {
     /*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-4] [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
-    return S_ISDIR(dyrectoryHandle.st_mode);
+    return S_ISDIR(directoryHandle.st_mode);
 }
 
 bool Directory::IsFile() const {
     /*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-4] [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
-    return S_ISREG(dyrectoryHandle.st_mode);
+    return S_ISREG(directoryHandle.st_mode);
 }
 
 bool Directory::ReadOnly() const {
@@ -91,14 +116,30 @@ bool Directory::ReadOnly() const {
 }
 
 uint64 Directory::Size() const {
-    return (dyrectoryHandle.st_size > 0) ? (static_cast<uint64>(dyrectoryHandle.st_size)) : (0u);
+    return (directoryHandle.st_size > 0) ? (static_cast<uint64>(directoryHandle.st_size)) : (0u);
 }
 
-int32 Directory::Time() const {
-    return static_cast<int32>(dyrectoryHandle.st_mtime);
+int32 Directory::LastWriteTime() const {
+    return static_cast<int32>(directoryHandle.st_mtime);
 }
 
 int32 Directory::LastAccessTime() const {
-    return static_cast<int32>(dyrectoryHandle.st_atime);
+    return static_cast<int32>(directoryHandle.st_atime);
 }
+
+bool Directory::Create(const char8 * const path,
+                       const bool isFile) {
+    return (isFile) ? (creat(path, static_cast<mode_t>(0777)) > 0) : (mkdir(path, static_cast<mode_t>(0777)) == 0);
+}
+
+bool Directory::Exists(const char8 * const path) {
+    struct stat fileStats;
+    /*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-4] [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
+    return (stat(path, &fileStats) != 0)?(S_ISDIR(fileStats.st_mode) || S_ISREG(fileStats.st_mode)):(false);
+}
+
+bool Directory::Delete(const char8 * const path) {
+    return (remove(path) == 0);
+}
+
 }

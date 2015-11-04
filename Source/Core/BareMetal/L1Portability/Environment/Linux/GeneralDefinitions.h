@@ -81,6 +81,7 @@ struct EventSemProperties;
 struct BasicConsoleProperties;
 #define BasicConsoleHandle BasicConsoleProperties*
 
+static const char8 DIRECTORY_SEPARATOR = '/';
 
 }
 

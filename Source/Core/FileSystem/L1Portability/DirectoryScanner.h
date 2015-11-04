@@ -39,39 +39,75 @@
 
 namespace MARTe {
 
+/**
+ * @brief This class allows to scan, given a base path and a shell wildcard pattern, all the directories inside
+ * will matches the pattern.
+ *
+ * @details The informations about found directories will be inserted in a list of Directory objects
+ * and the user could peek all the elements using LinkedListHolder functions.
+ */
 class DirectoryScanner: public LinkedListHolder {
 
-
 public:
-    /** constructor */
+
+    /**
+     * @brief Default constructor.
+     * @post
+     *   basePath=NULL;
+     *   size=0;
+     */
     DirectoryScanner();
 
-    /** destructor */
+    /**
+     * @brief Default destructor.
+     * @post
+     *   basePath=NULL;
+     *   size=0;
+     */
     virtual ~DirectoryScanner();
 
-    /** Fills the data in the object*/
-    static bool Create(const char8 * const address);
 
-    /** check for directory existance */
-    static bool DirectoryExists(const char8 * const address);
-
-    /** total size of files in the directory. not recursive */
+    /**
+     * @brief Retrieve the size of the scanned directory.
+     * @return the sum of the contained files / sub-directories sizes.
+     */
     uint64 DirectorySize() const;
 
-    bool Scan(const char8 * const address,
+    /**
+     * @brief Scan the files / sub-directories of a specific directory adding them to the list.
+     * @param[in] path is the path of the directory to scan.
+     * @param[in] fileMask is shell wildcard pattern to match the desired files / sub-directories.
+     * @param[in] sorter specifies the desired sort of the elements in the list.
+     * @return false in case of errors, true otherwise.
+     */
+    bool Scan(const char8 * const path,
               const char8 *fileMask = "*",
               SortFilter * const sorter = NULL);
 
-    const char8 *BaseAddress() const;
+    /**
+     * @brief Retrieve the directory path.
+     * @return the path of the set directory.
+     */
+    const char8 *BasePath() const;
 
+    /**
+     * @brief Deletes all elements from the list.
+     * @post
+     *   basePath = NULL;
+     *   size = 0;
+     */
     virtual void CleanUp();
-
 
 private:
 
-    char8* baseAddress;
+    /**
+     * The directory path.
+     */
+    char8* basePath;
 
-    /** total content size */
+    /**
+     * The total content size.
+     */
     uint64 size;
 
 };
