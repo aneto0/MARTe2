@@ -64,5 +64,6 @@ InternetService.cpp
 BasicTCPSocket.cpp
 SocketSelect.cpp
 BasicUDPSocket.cpp
-
+DirectoryScanner.cpp
+Directory.cpp
 
