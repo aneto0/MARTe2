@@ -58,7 +58,6 @@ public:
         numberOfColumns = 60;
     }
 
-
     /**
      * @brief Tests the BasicConsole constructor.
      * @return true if the initial size of the console is set to zero.
@@ -180,14 +179,12 @@ public:
      */
     bool TestRead(const char8 *stringArg);
 
-
     /**
      * @brief Tests BasicConsole::Read passing a finite timeout.
      * @param[in] timeout is the desired timeout.
      * @return true if the read function returns after the timeout expire, false otherwise.
      */
     bool TestTimeoutRead(uint32 timeout);
-
 
     /**
      * @brief Tests the BasicConsole::SetSize and BasicConsole::GetSize functions
@@ -196,7 +193,7 @@ public:
      * @return true if the get function returns the values set by the set function.
      */
     bool TestSetGetSceneSize(uint32 numberOfRows,
-                        uint32 numberOfColumns);
+                             uint32 numberOfColumns);
 
     /**
      * @brief Tests the BasicConsole::GetWindowSize and BasicConsole::SetWindowSize functions
@@ -265,6 +262,26 @@ public:
                       Colours backgroundColour,
                       int column,
                       int row);
+
+
+    bool TestCanWrite();
+
+    bool TestCanRead();
+
+    bool TestCanSeek();
+
+    bool TestTimeoutWrite(const char8 *string, TimeoutType timeout);
+
+    bool TestSize();
+
+    bool TestSeek();
+
+    bool TestRelativeSeek();
+
+    bool TestPosition();
+
+    bool TestSetSize();
+
     /**
      * @brief Auxiliar function to get the numberOfColumns
      * @return the numberOfColumns

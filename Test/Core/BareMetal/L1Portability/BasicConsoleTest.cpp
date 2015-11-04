@@ -190,7 +190,7 @@ bool BasicConsoleTest::TestWriteNullString() {
     if (size < 0) {
         return false;
     }
-    retValue = (!myConsole.Write(string, size, TTInfiniteWait));
+    retValue = (!myConsole.Write(string, size));
     return retValue;
 }
 
@@ -211,7 +211,7 @@ bool BasicConsoleTest::TestWriteExactSize(const char8 *string) {
     if (size < 0) {
         return false;
     }
-    myConsole.Write(string, size, TTInfiniteWait);
+    myConsole.Write(string, size);
     retValue = (realStringSize == size);
     return retValue;
 }
@@ -250,7 +250,7 @@ bool BasicConsoleTest::TestWriteEndColumn() {
         return false;
     }
     size = realStringSize;
-    myConsole.Write(string, size, TTInfiniteWait);
+    myConsole.Write(string, size);
     retValue = (realStringSize == size);
     return retValue;
 }
@@ -307,7 +307,7 @@ bool BasicConsoleTest::TestRead(const char8 *stringArg) {
     BasicConsoleTestWrite(result, 0, myConsole);
     //read the string
     uint32 totalSize = N_CHARS_NEWLINE + stringSize;
-    ErrorManagement::ErrorType err = myConsole.Read(string, totalSize, TTInfiniteWait);
+    bool err = myConsole.Read(string, totalSize, TTInfiniteWait);
     string[stringSize] = '\0';
     //compare the read string with the argument
     bool stringLengthOK = StringTestHelper::Compare(string, stringArg);
@@ -326,7 +326,7 @@ bool BasicConsoleTest::TestTimeoutRead(uint32 timeout) {
 
     char buffer[32];
     uint32 size = 32;
-    return myConsole.Read(buffer, size, timeout) == ErrorManagement::Timeout;
+    return !myConsole.Read(buffer, size, timeout);
 
 }
 
@@ -513,4 +513,67 @@ bool BasicConsoleTest::TestPlotChar(char8 c,
     bool ok = myConsole.PlotChar(c, foregroundColour, backgroundColour, column, row);
     Sleep::Sec(1.5);
     return ok;
+}
+
+bool BasicConsoleTest::TestCanWrite() {
+    BasicConsole console;
+    return console.CanWrite();
+}
+
+bool BasicConsoleTest::TestCanRead() {
+    BasicConsole console;
+    return console.CanRead();
+}
+
+bool BasicConsoleTest::TestCanSeek() {
+    BasicConsole console;
+    return !console.CanSeek();
+}
+
+bool BasicConsoleTest::TestTimeoutWrite(const char8 *string,
+                                        TimeoutType timeout) {
+    BasicConsole myConsole;
+    uint32 realStringSize;
+    bool retValue;
+    myConsole.Open(BasicConsoleMode::Default);
+    myConsole.SetSceneSize(numberOfColumns, numberOfRows);
+
+    //calculate the size of the string
+    if ((realStringSize = StringTestHelper::Size(string)) < 0) {
+        return false;
+    }
+    //add something to the size to pass as argument to test the write function
+    uint32 size = realStringSize;
+    //invalid parameters
+    if (size < 0) {
+        return false;
+    }
+    myConsole.Write(string, size, timeout);
+    retValue = (realStringSize == size);
+    return retValue;
+}
+
+bool BasicConsoleTest::TestSize() {
+    BasicConsole console;
+    return console.Size() == 0xffffffffffffffff;
+}
+
+bool BasicConsoleTest::TestSeek() {
+    BasicConsole console;
+    return !console.Seek(0);
+}
+
+bool BasicConsoleTest::TestRelativeSeek() {
+    BasicConsole console;
+    return !console.RelativeSeek(0);
+}
+
+bool BasicConsoleTest::TestPosition() {
+    BasicConsole console;
+    return console.Size() == 0xffffffffffffffff;
+}
+
+bool BasicConsoleTest::TestSetSize() {
+    BasicConsole console;
+    return !console.SetSize(1);
 }

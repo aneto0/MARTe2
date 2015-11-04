@@ -101,7 +101,8 @@ struct BasicConsoleProperties {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-BasicConsole::BasicConsole():StreamI() {
+BasicConsole::BasicConsole() :
+        StreamI() {
     /*lint -e{1732} -e{1733} no default assignment and no default copy constructor.
      *This is safe since none of the struct members point to dynamically allocated memory*/
     handle = new BasicConsoleProperties();
@@ -193,30 +194,47 @@ bool BasicConsole::Close() {
 }
 
 bool BasicConsole::Read(char8 * const output,
-                        uint32 & size) {
-    return Read(output, size, TTInfiniteWait);
+                        uint32 & size,
+                        const TimeoutType &timeout) {
+    bool ret = false;
+    if (!timeout.IsFinite()) {
+        ret =  Read(output, size);
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Error: Cannot write with timeout");
+    }
+
+    return ret;
+}
+
+bool BasicConsole::Write(const char8 * const input,
+                         uint32 & size,
+                         const TimeoutType &timeout) {
+
+    bool ret = false;
+    if (!timeout.IsFinite()) {
+        ret = Write(input, size);
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Error: Cannot write with timeout");
+    }
+
+    return ret;
 }
 
 bool BasicConsole::Write(const char8 * const input,
                          uint32 & size) {
-    return Write(input, size, TTInfiniteWait);
-}
-
-/*lint -e{715} timeout is not used in Linux*/
-bool BasicConsole::Write(const char8 * const input,
-                         uint32 & size,
-                         const TimeoutType &timeout) {
     bool err = true;
     if ((handle->openingMode & BasicConsoleMode::EnablePaging) == BasicConsoleMode::EnablePaging) {
-        err = PagedWrite(input, size, timeout);
+        err = PagedWrite(input, size, TTInfiniteWait);
     }
     else {
-        err = OSWrite(input, size, timeout);
+        err = OSWrite(input, size, TTInfiniteWait);
     }
     return err;
 }
 
-/*lint -e{715} timeout is not used in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Write with timeout not implemented. */
 bool BasicConsole::OSWrite(const char8* const buffer,
                            uint32 &size,
                            const TimeoutType &timeout) {
@@ -284,10 +302,8 @@ bool BasicConsole::OSWrite(const char8* const buffer,
     return err;
 }
 
-/*lint -e{715} timeout is not used...*/
 bool BasicConsole::Read(char8 * const output,
-                        uint32 & size,
-                        const TimeoutType &timeout) {
+                        uint32 & size) {
     bool err = true;
     if ((output != NULL) && (size > 0u)) {
         if ((handle->openingMode & BasicConsoleMode::PerformCharacterInput) != 0u) {
@@ -374,7 +390,7 @@ bool BasicConsole::TimeoutSupported() const {
     return false;
 }
 
-/*lint -e{715} function not implemented in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::ShowBuffer() {
     REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
     return false;
@@ -387,20 +403,20 @@ bool BasicConsole::SetColour(const Colours &foregroundColour,
     return false;
 }
 
-/*lint -e{715} function not implemented in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::SetTitleBar(const char8 * const title) {
     REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
     return false;
 }
 
-/*lint -e{715} function not implemented in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::GetTitleBar(char8 * const title,
                                const uint32 &size) const {
     REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
     return false;
 }
 
-/*lint -e{715} function not implemented in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::SetCursorPosition(const uint32 &column,
                                      const uint32 &row) {
     REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
@@ -408,13 +424,13 @@ bool BasicConsole::SetCursorPosition(const uint32 &column,
     return false;
 }
 
-/*lint -e{715} function not implemented in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::GetCursorPosition(uint32 &column,
                                      uint32 &row) const {
     return false;
 }
 
-/*lint -e{715} function not implemented in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
                                  const uint32 &numberOfRows) {
     REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
@@ -422,7 +438,7 @@ bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
     return false;
 }
 
-/*lint -e{715} function not implemented in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::GetWindowSize(uint32 &numberOfColumns,
                                  uint32 &numberOfRows) const {
     REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
@@ -430,7 +446,7 @@ bool BasicConsole::GetWindowSize(uint32 &numberOfColumns,
     return false;
 }
 
-/*lint -e{715} function not implemented in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::PlotChar(const char8 &c,
                             const Colours &foregroundColour,
                             const Colours &backgroundColour,
@@ -441,12 +457,12 @@ bool BasicConsole::PlotChar(const char8 &c,
     return false;
 }
 
-/*lint -e{715} function not implemented in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: console cannot seek. */
 bool BasicConsole::Seek(const uint64 pos) {
     return false;
 }
 
-/*lint -e{715} function not implemented in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: console cannot seek. */
 bool BasicConsole::RelativeSeek(const int32 deltaPos) {
     return false;
 }
@@ -455,12 +471,11 @@ uint64 BasicConsole::Position() {
     return 0xffffffffffffffffu;
 }
 
-
 uint64 BasicConsole::Size() {
     return 0xffffffffffffffffu;
 }
 
-/*lint -e{715} function not implemented in Linux*/
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: size not defined for console. */
 bool BasicConsole::SetSize(const uint64 size) {
     return false;
 }
