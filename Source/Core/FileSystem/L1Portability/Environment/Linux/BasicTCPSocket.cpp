@@ -131,6 +131,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
             }
         }
         if (ret) {
+            source = destination;
             if (timeout.IsFinite()) {
                 //set as unblocking if the timeout is finite.
                 if (wasBlocking) {
@@ -153,7 +154,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                     }
                         break;
                     case (EINPROGRESS): {
-                        if (timeout.IsFinite()) {
+                        if (timeout.IsFinite() || (!wasBlocking)) {
                             SocketSelect sel;
                             sel.AddWaitOnWriteReady(this);
                             if (wasBlocking) {
@@ -176,7 +177,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                                     }
                                 }
                             }
-                            else{
+                            else {
                                 REPORT_ERROR(ErrorManagement::OSError, "Error: Failed connection on select().");
                             }
                         }
@@ -197,8 +198,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
 
             if (timeout.IsFinite()) {
                 if (wasBlocking) {
-                    bool reset = SetBlocking(true);
-                    if (!reset) {
+                    if (!SetBlocking(true)) {
                         REPORT_ERROR(ErrorManagement::FatalError, "Error: Socket reset to blocking mode failed");
                         ret = false;
                     }
@@ -238,13 +238,16 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
     BasicTCPSocket *ret = static_cast<BasicTCPSocket *>(NULL);
 
     if (IsValid()) {
+        bool created=false;
         bool wasBlocking = IsBlocking();
-        bool ok=true;
 
+        bool ok=true;
         if (timeout.IsFinite()) {
-            ok=SetBlocking(false);
-            if(!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: Socket set to non-block mode failed.");
+            if(wasBlocking) {
+                if(!SetBlocking(false)) {
+                    REPORT_ERROR(ErrorManagement::OSError, "Error: Socket set to non-block mode failed.");
+                    ok=false;
+                }
             }
         }
 
@@ -255,11 +258,13 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
             if (newSocket != -1) {
                 if (client == NULL) {
                     client = new BasicTCPSocket();
+                    created=(client!=NULL);
+                }
+                if(client!=NULL) {
+                    client->SetDestination(source);
+                    client->SetSource(source);
                     client->connectionSocket = newSocket;
                 }
-                client->SetDestination(source);
-                client->SetSource(destination); /////
-                client->connectionSocket = newSocket;
                 ret = client;
 
             }
@@ -290,9 +295,14 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
             }
         }
         if (timeout.IsFinite()) {
-            ok=SetBlocking(wasBlocking);
-            if(!ok) {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: Socket reset to non-block mode failed.");
+            if(wasBlocking) {
+                if(!SetBlocking(true)) {
+                    REPORT_ERROR(ErrorManagement::OSError, "Error: Socket reset to non-block mode failed.");
+                    if(created) {
+                        delete client;
+                    }
+                    ret=static_cast<BasicTCPSocket *>(NULL);
+                }
             }
         }
     }
@@ -307,13 +317,12 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
 bool BasicTCPSocket::Peek(char8* const buffer,
                           uint32 &size) const {
     int32 ret = -1;
+    uint32 sizeToRead = size;
+    size = 0u;
 
     if (IsValid()) {
-        ret = static_cast<int32>(recv(connectionSocket, buffer, static_cast<size_t>(size), MSG_PEEK));
-        if (ret < 0) {
-            size = 0u;
-        }
-        else {
+        ret = static_cast<int32>(recv(connectionSocket, buffer, static_cast<size_t>(sizeToRead), MSG_PEEK));
+        if (ret > 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(ret);
         }
@@ -321,18 +330,18 @@ bool BasicTCPSocket::Peek(char8* const buffer,
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
-    return (ret >= 0);
+    return (ret > 0);
 }
 
 bool BasicTCPSocket::Read(char8* const output,
                           uint32 &size) {
-
-    bool ret = false;
+    uint32 sizetoRead = size;
+    size = 0u;
+    int32 readBytes = 0;
     if (IsValid()) {
-        int32 readBytes = static_cast<int32>(recv(connectionSocket, output, static_cast<size_t>(size), 0));
-        ret = (readBytes >= 0);
+        readBytes = static_cast<int32>(recv(connectionSocket, output, static_cast<size_t>(sizetoRead), 0));
 
-        if (ret) {
+        if (readBytes >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(readBytes);
             // to avoid polling continuously release CPU time when reading 0 bytes
@@ -349,22 +358,22 @@ bool BasicTCPSocket::Read(char8* const output,
             else {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: Failed recv()");
             }
-            size = 0u;
         }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
-    return ret;
+    return (readBytes > 0);
 }
 
 bool BasicTCPSocket::Write(const char8* const input,
                            uint32 &size) {
-    bool ret = false;
+    int32 writtenBytes = 0;
+    uint32 sizeToWrite = size;
+    size = 0u;
     if (IsValid()) {
-        int32 writtenBytes = static_cast<int32>(send(connectionSocket, input, static_cast<size_t>(size), 0));
-        ret = (writtenBytes >= 0);
-        if (ret) {
+        writtenBytes = static_cast<int32>(send(connectionSocket, input, static_cast<size_t>(sizeToWrite), 0));
+        if (writtenBytes >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(writtenBytes);
         }
@@ -377,21 +386,21 @@ bool BasicTCPSocket::Write(const char8* const input,
             else {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: Failed send()");
             }
-            size = 0u;
         }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
-    return ret;
+    return (writtenBytes > 0);
 }
 
 bool BasicTCPSocket::Read(char8* const output,
                           uint32 &size,
                           const TimeoutType &timeout) {
 
-    bool retVal = IsValid();
-    if (retVal) {
+    uint32 sizeToRead = size;
+    size = 0u;
+    if (IsValid()) {
         if (timeout.IsFinite()) {
 
             struct timeval timeoutVal;
@@ -403,12 +412,12 @@ bool BasicTCPSocket::Read(char8* const output,
                                    static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
-                size = 0u;
                 REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeout");
-                retVal = false;
             }
             else {
-                retVal = Read(output, size);
+                if (Read(output, sizeToRead)) {
+                    size = sizeToRead;
+                }
             }
 
             if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
@@ -417,21 +426,24 @@ bool BasicTCPSocket::Read(char8* const output,
         }
 
         else {
-            retVal = Read(output, size);
+            if(Read(output, sizeToRead)) {
+                size=sizeToRead;
+            }
         }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
-    return retVal;
+    return (size > 0u);
 }
 
 bool BasicTCPSocket::Write(const char8* const input,
                            uint32 &size,
                            const TimeoutType &timeout) {
-    bool retVal = IsValid();
 
-    if (retVal) {
+    uint32 sizeToWrite = size;
+    size = 0u;
+    if (IsValid()) {
         if (timeout.IsFinite()) {
             struct timeval timeoutVal;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
@@ -442,28 +454,28 @@ bool BasicTCPSocket::Write(const char8* const input,
                                    static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
-                size = 0u;
                 REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() setting the socket timeoutVal");
-                retVal = false;
             }
             else {
-                retVal = Write(input, size);
+                if (Write(input, sizeToWrite)) {
+                    size = sizeToWrite;
+                }
             }
             if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: Failed setsockopt() removing the socket timeoutVal");
-                retVal = false;
             }
         }
         else {
-            retVal = Write(input, size);
-
+            if(Write(input, sizeToWrite)) {
+                size=sizeToWrite;
+            }
         }
     }
 
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "Error: The socked handle is not valid");
     }
-    return retVal;
+    return (size > 0u);
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: sockets cannot seek. */

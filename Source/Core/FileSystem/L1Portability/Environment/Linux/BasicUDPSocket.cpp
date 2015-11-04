@@ -61,9 +61,11 @@ bool BasicUDPSocket::Peek(char8* const output,
                           uint32 &size) {
 
     int32 ret = -1;
+    uint32 sizeToRead = size;
+    size = 0u;
     if (IsValid()) {
         uint32 sourceSize = source.Size();
-        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(size), MSG_PEEK,
+        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(sizeToRead), MSG_PEEK,
                                           reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<socklen_t*>(&sourceSize)));
         if (ret >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
@@ -88,10 +90,12 @@ bool BasicUDPSocket::Read(char8* const output,
                           uint32 &size) {
 
     int32 ret = -1;
+    uint32 sizeToRead = size;
+    size = 0u;
     if (IsValid()) {
         uint32 sourceSize = source.Size();
-        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(size), 0, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()),
-                                          static_cast<socklen_t*>(&sourceSize)));
+        ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(sizeToRead), 0,
+                                          reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<socklen_t*>(&sourceSize)));
         if (ret >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(ret);
@@ -114,8 +118,10 @@ bool BasicUDPSocket::Write(const char8* const input,
                            uint32 &size) {
 
     int32 ret = -1;
+    uint32 sizeToWrite = size;
+    size = 0u;
     if (IsValid()) {
-        ret = static_cast<int32>(sendto(connectionSocket, input, static_cast<size_t>(size), 0,
+        ret = static_cast<int32>(sendto(connectionSocket, input, static_cast<size_t>(sizeToWrite), 0,
                                         reinterpret_cast<struct sockaddr*>(destination.GetInternetHost()), destination.Size()));
         if (ret >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
@@ -192,8 +198,8 @@ bool BasicUDPSocket::CanSeek() const {
 bool BasicUDPSocket::Read(char8 * const output,
                           uint32 & size,
                           const TimeoutType &timeout) {
-    bool retVal = true;
-
+    uint32 sizeToRead = size;
+    size = 0u;
     if (IsValid()) {
 
         if (timeout.IsFinite()) {
@@ -206,34 +212,35 @@ bool BasicUDPSocket::Read(char8 * const output,
                                    static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
-                size = 0u;
                 REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt() failed setting the read timeout");
-                retVal = false;
             }
             else {
-                retVal = Read(output, size);
+                if (Read(output, sizeToRead)) {
+                    size = sizeToRead;
+                }
             }
 
             if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeoutVal)))<0) {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt() failed removing the read timeout");
-                retVal = false;
             }
         }
         else {
-            retVal = Read(output, size);
+            if(Read(output, sizeToRead)) {
+                size=sizeToRead;
+            }
         }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is not valid");
     }
-    return retVal;
+    return (size > 0u);
 }
 
 bool BasicUDPSocket::Write(const char8 * const input,
                            uint32 & size,
                            const TimeoutType &timeout) {
-    bool retVal = true;
-
+    uint32 sizeToWrite = size;
+    size = 0u;
     if (IsValid()) {
         if (timeout.IsFinite()) {
 
@@ -246,27 +253,27 @@ bool BasicUDPSocket::Write(const char8 * const input,
                                    static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
-                size = 0u;
-                retVal = false;
                 REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt() failed setting the write timeout");
             }
             else {
-                retVal = Write(input, size);
+                if (Write(input, sizeToWrite)) {
+                    size = sizeToWrite;
+                }
             }
             if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: setsockopt() failed removing the write timeout");
-                retVal = false;
             }
         }
         else {
-            retVal = Write(input, size);
-
+            if(Write(input, sizeToWrite)) {
+                size=sizeToWrite;
+            }
         }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is not valid");
     }
-    return retVal;
+    return (size > 0u);
 }
 
 uint64 BasicUDPSocket::Size() {

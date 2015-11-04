@@ -233,7 +233,7 @@ static bool ListenConnectTest(BasicTCPSocketTest &param,
                 Sleep::MSec(10);
             }
             if (!param.retVal) {
-                return !table[i].expected;
+                return (!table[i].expected) && (!param.isValidServer);
             }
         }
 
@@ -255,6 +255,7 @@ static bool ListenConnectTest(BasicTCPSocketTest &param,
         }
 
         if ((param.retVal != table[i].expected) || (!param.noError)) {
+            printf("\n%d %d %d %d\n", param.retVal, table[i].expected, param.noError, i);
             return false;
         }
 
@@ -311,7 +312,6 @@ static void StartServer_ReadWrite(BasicTCPSocketTest &param) {
             param.sem.FastLock();
             param.noError = false;
             param.sem.FastUnLock();
-            param.alives = 0;
         }
 
         Sleep::MSec(5);
@@ -462,7 +462,6 @@ bool BasicTCPSocketTest::TestRead(const ReadWriteTestTable *table) {
             Sleep::MSec(10);
         }
         if ((retVal != table[i].expected) || (!noError)) {
-
             return false;
         }
         i++;
@@ -645,15 +644,23 @@ static void ClientJob_Write(BasicTCPSocketTest &param) {
                 clientSocket.Close();
             }
 
-            uint32 size = param.size;
-            bool ret;
+            uint32 size;
+            bool ret = true;
             char8 input[128];
             StringHelper::Copy(input, param.string);
-            if (param.isTimeout) {
-                ret = clientSocket.Write(input, size, param.timeout);
-            }
-            else {
-                ret = clientSocket.Write(input, size);
+            uint32 iterations = ((!param.isBlocking)||(param.isTimeout && param.timeout.IsFinite())) ? (500) : (1);
+            for (uint32 k = 0; k < iterations; k++) {
+                size = param.size;
+
+                if (param.isTimeout) {
+                    ret = clientSocket.Write(input, size, param.timeout);
+                }
+                else {
+                    ret = clientSocket.Write(input, size);
+                }
+                if(!ret){
+                    break;
+                }
             }
 
             if (!ret) {
