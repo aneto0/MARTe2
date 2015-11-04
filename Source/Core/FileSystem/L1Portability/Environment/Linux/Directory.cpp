@@ -129,13 +129,30 @@ int32 Directory::LastAccessTime() const {
 
 bool Directory::Create(const char8 * const path,
                        const bool isFile) {
-    return (isFile) ? (creat(path, static_cast<mode_t>(0777)) > 0) : (mkdir(path, static_cast<mode_t>(0777)) == 0);
+    bool ret = true;
+    if (isFile) {
+        int32 fd = creat(path, static_cast<mode_t>(0777));
+        if (fd < 0) {
+            ret = false;
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed creat()");
+        }
+        else {
+            if(!close(fd)<0){
+                ret = false;
+                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed close()");
+            }
+        }
+    }
+    else {
+        ret = (mkdir(path, static_cast<mode_t>(0777)) == 0);
+    }
+    return ret;
 }
 
 bool Directory::Exists(const char8 * const path) {
     struct stat fileStats;
     /*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-4] [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
-    return (stat(path, &fileStats) != 0)?(S_ISDIR(fileStats.st_mode) || S_ISREG(fileStats.st_mode)):(false);
+    return (stat(path, &fileStats) != 0) ? (S_ISDIR(fileStats.st_mode) || S_ISREG(fileStats.st_mode)) : (false);
 }
 
 bool Directory::Delete(const char8 * const path) {

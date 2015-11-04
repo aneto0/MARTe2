@@ -44,7 +44,7 @@ namespace MARTe {
  * @brief A class which represent a file or a directory.
  *
  * @details Providing the path name of a specific file or directory, this class can
- * retrieve all its main attributes.
+ * obtain all its main attributes (size, last access time, ecc).
  *
  * @details Some static methods allows the user to create, delete and check the existence of files-directories.
  */
