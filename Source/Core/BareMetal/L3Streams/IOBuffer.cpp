@@ -36,7 +36,6 @@
 #include "BitSetToInteger.h"
 #include "StreamI.h"
 
-
 namespace MARTe {
 
 /*lint -e526 . Justification: The following functions are not defined here. */
@@ -214,7 +213,7 @@ static bool PrintStream(IOBuffer & iobuff,
             //write the stream input on the stream buffer output
             char8 c;
             while (streamSizeL > 0u) {
-                uint32 size = 1u;            
+                uint32 size = 1u;
                 if (!stream.Read(&c, size)) {
                     ret = false;
                 }
@@ -255,161 +254,238 @@ static bool PrintToStream(IOBuffer & iobuff,
                           const FormatDescriptor &fd) {
 
     bool ret = true;
-// void anytype
+    // void anytype
     AnyType par = parIn;
     void* dataPointer = par.GetDataPointer();
     if (dataPointer != NULL) {
-
         //if the element is structured, the print is not supported.
         bool isStructured = (par.GetTypeDescriptor()).isStructuredData;
         if (isStructured) {
-            //ErrorManagement::ReportError(UnsupportedError, "Streamable::Print StructuredData not supported");
-            ret = false;
+            if(fd.desiredAction == PrintInfo) {
+                AnyType info="Object";
+                FormatDescriptor newFD=fd;
+                newFD.desiredAction=PrintString;
+                PrintToStream(iobuff, info, newFD);
+            }
+            else {
+                if(fd.desiredAction != PrintStruct) {
+                    ErrorManagement::ReportError(ErrorManagement::Warning, "Type mismatch: a struct will be printed");
+                }
+                //ErrorManagement::ReportError(UnsupportedError, "Streamable::Print StructuredData not supported");
+                ret = false;
+            }
         }
         else {
             if (((par.GetTypeDescriptor()).type) == UnsignedInteger) {
-                //native unsigned integer types.
-                if (par.GetBitAddress() == 0u) {
-                    switch ((par.GetTypeDescriptor()).numberOfBits) {
-                        case 8u: {
-                            uint8 *data = static_cast<uint8 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
-                        }
-                        break;
-                        case 16u: {
-                            uint16 *data = static_cast<uint16 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
-                        }
-                        break;
-                        case 32u: {
-                            uint32 *data = static_cast<uint32 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
-                        }
-                        break;
-                        case 64u: {
-                            uint64 *data = static_cast<uint64 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
-                        }
-                        break;
-                        default: {
-                            // use native standard integer
-                            uint32 *number = static_cast<uint32 *>(dataPointer);
-                            // all the remaining cases here
-                            uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
-                            ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, false, fd);
-                        }
-                    }
+                if(fd.desiredAction == PrintInfo) {
+                    AnyType info="Unsigned Integer";
+                    FormatDescriptor newFD=fd;
+                    newFD.desiredAction=PrintString;
+                    PrintToStream(iobuff, info, newFD);
                 }
                 else {
-                    // use native standard integer
-                    uint32 *number = static_cast<uint32 *>(dataPointer);
-                    // all the remaining cases here
-                    uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
-                    ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, false, fd);
+                    if(fd.desiredAction != PrintInteger) {
+                        ErrorManagement::ReportError(ErrorManagement::Warning, "Type mismatch: an unsigned integer will be printed");
+                    }
+                    //native unsigned integer types.
+                    if (par.GetBitAddress() == 0u) {
+                        switch ((par.GetTypeDescriptor()).numberOfBits) {
+                            case 8u: {
+                                uint8 *data = static_cast<uint8 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                            break;
+                            case 16u: {
+                                uint16 *data = static_cast<uint16 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                            break;
+                            case 32u: {
+                                uint32 *data = static_cast<uint32 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                            break;
+                            case 64u: {
+                                uint64 *data = static_cast<uint64 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                            break;
+                            default: {
+                                // use native standard integer
+                                uint32 *number = static_cast<uint32 *>(dataPointer);
+                                // all the remaining cases here
+                                uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
+                                ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, false, fd);
+                            }
+                        }
+                    }
+                    else {
+                        // use native standard integer
+                        uint32 *number = static_cast<uint32 *>(dataPointer);
+                        // all the remaining cases here
+                        uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
+                        ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, false, fd);
+                    }
                 }
-
             }
 
             if (((par.GetTypeDescriptor()).type) == SignedInteger) {
-                //native signed integer types.
-                if (par.GetBitAddress() == 0u) {
+                if(fd.desiredAction == PrintInfo) {
+                    AnyType info="Signed Integer";
+                    FormatDescriptor newFD=fd;
+                    newFD.desiredAction=PrintString;
+                    PrintToStream(iobuff, info, newFD);
+                }
+                else {
+
+                    if(fd.desiredAction != PrintInteger) {
+                        ErrorManagement::ReportError(ErrorManagement::Warning, "Type mismatch: a signed integer will be printed");
+                    }
+                    //native signed integer types.
+                    if (par.GetBitAddress() == 0u) {
+                        switch ((par.GetTypeDescriptor()).numberOfBits) {
+                            case 8u: {
+                                int8 *data = static_cast<int8 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                            break;
+                            case 16u: {
+                                int16 *data = static_cast<int16 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                            break;
+                            case 32u: {
+                                int32 *data = static_cast<int32 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                            break;
+                            case 64u: {
+                                int64 *data = static_cast<int64 *>(dataPointer);
+                                ret = IntegerToStream(iobuff, *data, fd);
+                            }
+                            break;
+                            default: {
+                                // use native standard integer
+                                uint32 *number = static_cast<uint32 *>(dataPointer);
+                                uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
+                                // all the remaining cases here
+                                ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, true, fd);
+                            }
+                        }
+                    }
+                    else {
+                        // use native standard integer
+                        uint32 *number = static_cast<uint32 *>(dataPointer);
+                        uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
+                        // all the remaining cases here
+                        ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, true, fd);
+                    }
+                }
+            }
+            if (((par.GetTypeDescriptor()).type) == Float) {
+                if(fd.desiredAction == PrintInfo) {
+                    AnyType info="Float";
+                    FormatDescriptor newFD=fd;
+                    newFD.desiredAction=PrintString;
+                    PrintToStream(iobuff, info, newFD);
+                }
+                else {
+                    if(fd.desiredAction != PrintFloat) {
+                        ErrorManagement::ReportError(ErrorManagement::Warning, "Type mismatch: a float number will be printed");
+                    }
+                    //native float32 types. Float 128 bit is not supported.
                     switch ((par.GetTypeDescriptor()).numberOfBits) {
-                        case 8u: {
-                            int8 *data = static_cast<int8 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
-                        }
-                        break;
-                        case 16u: {
-                            int16 *data = static_cast<int16 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
-                        }
-                        break;
                         case 32u: {
-                            int32 *data = static_cast<int32 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
+                            float32 *data = static_cast<float32 *>(dataPointer);
+                            ret = FloatToStream(iobuff, *data, fd);
                         }
                         break;
                         case 64u: {
-                            int64 *data = static_cast<int64 *>(dataPointer);
-                            ret = IntegerToStream(iobuff, *data, fd);
+                            float64 *data = static_cast<float64 *>(dataPointer);
+                            ret = FloatToStream(iobuff, *data, fd);
+                        }
+                        break;
+                        case 128u: {
+                            //REPORT_ERROR(UnsupportedError,"unsupported 128 bit float32")
+                            ret = false;
                         }
                         break;
                         default: {
-                            // use native standard integer
-                            uint32 *number = static_cast<uint32 *>(dataPointer);
-                            uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
-                            // all the remaining cases here
-                            ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, true, fd);
+                            //REPORT_ERROR(ParametersError,"non standard float32 size")
+                            ret = false;
                         }
-                    }
-                }
-                else {
-                    // use native standard integer
-                    uint32 *number = static_cast<uint32 *>(dataPointer);
-                    uint8 nBits = static_cast<uint8>((par.GetTypeDescriptor()).numberOfBits);
-                    // all the remaining cases here
-                    ret = BitSetToStream(iobuff, number, par.GetBitAddress(), nBits, true, fd);
-                }
-
-            }
-            if (((par.GetTypeDescriptor()).type) == Float) {
-                //native float32 types. Float 128 bit is not supported.
-                switch ((par.GetTypeDescriptor()).numberOfBits) {
-                    case 32u: {
-                        float32 *data = static_cast<float32 *>(dataPointer);
-                        ret = FloatToStream(iobuff, *data, fd);
-                    }
-                    break;
-                    case 64u: {
-                        float64 *data = static_cast<float64 *>(dataPointer);
-                        ret = FloatToStream(iobuff, *data, fd);
-                    }
-                    break;
-                    case 128u: {
-                        //REPORT_ERROR(UnsupportedError,"unsupported 128 bit float32")
-                        ret = false;
-                    }
-                    break;
-                    default: {
-                        //REPORT_ERROR(ParametersError,"non standard float32 size")
-                        ret = false;
                     }
                 }
             }
 
             //pointer type.
             if (((par.GetTypeDescriptor()).type) == Pointer) {
-                TypeDescriptor newTypeDes(par.GetTypeDescriptor().isConstant, UnsignedInteger, par.GetTypeDescriptor().numberOfBits);
-                AnyType at(newTypeDes, par.GetBitAddress(), static_cast<void *>(&dataPointer));
-                ret = PrintToStream(iobuff, at, fd);
+                if(fd.desiredAction == PrintInfo) {
+                    AnyType info="Pointer";
+                    FormatDescriptor newFD=fd;
+                    newFD.desiredAction=PrintString;
+                    PrintToStream(iobuff, info, newFD);
+                }
+                else {
+                    if(fd.desiredAction != PrintPointer) {
+                        ErrorManagement::ReportError(ErrorManagement::Warning, "Type mismatch: a pointer will be printed");
+                    }
+                    TypeDescriptor newTypeDes(par.GetTypeDescriptor().isConstant, UnsignedInteger, par.GetTypeDescriptor().numberOfBits);
+                    AnyType at(newTypeDes, par.GetBitAddress(), static_cast<void *>(&dataPointer));
+                    FormatDescriptor newFD=fd;
+                    newFD.desiredAction=PrintInteger;
+                    ret = PrintToStream(iobuff, at, newFD);
+                }
             }
             //const char8* string type.
             //if in the format descriptor is specified the hex notation (%p or %x)
             //print the value of the pointer.
             if (((par.GetTypeDescriptor()).type) == CCString) {
-                if (fd.binaryNotation == HexNotation) {
-                    TypeDescriptor newTypeDes(par.GetTypeDescriptor().isConstant, UnsignedInteger, par.GetTypeDescriptor().numberOfBits);
-                    AnyType at(newTypeDes, par.GetBitAddress(), static_cast<void *>(&dataPointer));
-                    ret = PrintToStream(iobuff, at, fd);
+                if(fd.desiredAction == PrintInfo) {
+                    AnyType info="CC String";
+                    FormatDescriptor newFD=fd;
+                    newFD.desiredAction=PrintString;
+                    PrintToStream(iobuff, info, newFD);
                 }
                 else {
-                    const char8 *string = static_cast<const char8 *>(dataPointer);
-                    ret = PrintCCString(iobuff, string, fd);
+                    if (fd.binaryNotation == HexNotation) {
+
+                        TypeDescriptor newTypeDes(par.GetTypeDescriptor().isConstant, UnsignedInteger, par.GetTypeDescriptor().numberOfBits);
+                        AnyType at(newTypeDes, par.GetBitAddress(), static_cast<void *>(&dataPointer));
+                        ret = PrintToStream(iobuff, at, fd);
+                    }
+                    else {
+                        if(fd.desiredAction != PrintString) {
+                            ErrorManagement::ReportError(ErrorManagement::Warning, "Type mismatch: a string will be printed");
+                        }
+                        const char8 *string = static_cast<const char8 *>(dataPointer);
+                        ret = PrintCCString(iobuff, string, fd);
+                    }
                 }
             }
 
             //general stream type.
             if (((par.GetTypeDescriptor()).type) == Stream) {
-                StreamI * stream = static_cast<StreamI *>(dataPointer);
-                ret = PrintStream(iobuff, *stream, fd);
-
+                if(fd.desiredAction == PrintInfo) {
+                    AnyType info="Stream";
+                    FormatDescriptor newFD=fd;
+                    newFD.desiredAction=PrintString;
+                    PrintToStream(iobuff, info, newFD);
+                }
+                else {
+                    if(fd.desiredAction != PrintString) {
+                        ErrorManagement::ReportError(ErrorManagement::Warning, "Type mismatch: a stream will be printed");
+                    }
+                    StreamI * stream = static_cast<StreamI *>(dataPointer);
+                    ret = PrintStream(iobuff, *stream, fd);
+                }
             }
         }
     }
     else {
         ret = false;
     }
-//REPORT_ERROR(UnsupportedError,"unsupported format")
+    //REPORT_ERROR(UnsupportedError,"unsupported format")
     return ret;
 }
 
@@ -418,10 +494,10 @@ static bool PrintToStream(IOBuffer & iobuff,
 /*---------------------------------------------------------------------------*/
 
 bool IOBuffer::GetToken(char8 * const outputBuffer,
-                                  const char8 * const terminator,
-                                  uint32 outputBufferSize,
-                                  char8 &saveTerminator,
-                                  const char8 * skipCharacters) {
+                        const char8 * const terminator,
+                        uint32 outputBufferSize,
+                        char8 &saveTerminator,
+                        const char8 * skipCharacters) {
 
     bool ret = true;
     bool quit = false;
@@ -490,9 +566,9 @@ bool IOBuffer::GetToken(char8 * const outputBuffer,
 }
 
 bool IOBuffer::GetToken(IOBuffer & outputBuffer,
-                                  const char8 * const terminator,
-                                  char8 &saveTerminator,
-                                  const char8 * skipCharacters) {
+                        const char8 * const terminator,
+                        char8 &saveTerminator,
+                        const char8 * skipCharacters) {
 
     if (skipCharacters == NULL) {
         skipCharacters = terminator;
@@ -545,7 +621,7 @@ bool IOBuffer::GetToken(IOBuffer & outputBuffer,
 }
 
 bool IOBuffer::SkipTokens(uint32 count,
-                                  const char8 * const terminator) {
+                          const char8 * const terminator) {
 
     bool ret = true;
     uint32 tokenSize = 0u;
@@ -575,7 +651,7 @@ bool IOBuffer::SkipTokens(uint32 count,
 }
 
 bool IOBuffer::PrintFormatted(const char8 * format,
-                                      const AnyType pars[]) {
+                              const AnyType pars[]) {
 
     bool ret = true;
     bool quit = false;
