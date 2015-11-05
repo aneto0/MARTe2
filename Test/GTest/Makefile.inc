@@ -80,6 +80,7 @@ OBJSX=  DoubleIntegerGTest.x \
 	    InternetServiceGTest.x \
 	    BasicSocketGTest.x \
 	    BasicTCPSocketGTest.x \
+   	    BasicUDPSocketGTest.x \
 	    BasicConsoleGTest.x 	   
 
 	
