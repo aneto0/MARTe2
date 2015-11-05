@@ -137,7 +137,7 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msec
             int64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
                 err = ErrorManagement::Timeout;
-                REPORT_ERROR(ErrorManagement::Timeout,"Information: timeout occurred");
+                REPORT_ERROR(ErrorManagement::Timeout,"FastPollingMutexSem: Timeout expired");
                 break;
             }
         }

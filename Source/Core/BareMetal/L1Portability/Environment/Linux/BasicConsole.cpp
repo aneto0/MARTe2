@@ -150,19 +150,19 @@ bool BasicConsole::Open(const FlagsType &mode) {
             ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &(handle->outputConsoleHandle)) >= 0);
             if (!ok) {
                 err = false;
-                REPORT_ERROR(ErrorManagement::OSError, "Error: iocl()");
+                REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed iocl()");
             }
         }
         else {
             err = false;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: iocl()");
+            REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed iocl()");
         }
     }
     if (err) {
         bool ok = (fflush(stdout) == 0);
         if (!ok) {
             err = false;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: fflush()");
+            REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed fflush()");
         }
     }
     return err;
@@ -187,7 +187,7 @@ bool BasicConsole::Close() {
         bool ok = (ioctl(fileno(stdin), static_cast<osulong>(TCSETAW), &handle->initialInfo) >= 0);
         if (!ok) {
             err = false;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: iocl()");
+            REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed iocl()");
         }
     }
     return err;
@@ -201,7 +201,7 @@ bool BasicConsole::Read(char8 * const output,
         ret =  Read(output, size);
     }
     else{
-        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Error: Cannot write with timeout");
+        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Cannot read within timeout");
     }
 
     return ret;
@@ -216,7 +216,7 @@ bool BasicConsole::Write(const char8 * const input,
         ret = Write(input, size);
     }
     else{
-        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Error: Cannot write with timeout");
+        REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Cannot write within timeout");
     }
 
     return ret;
@@ -273,7 +273,7 @@ bool BasicConsole::OSWrite(const char8* const buffer,
                 ssize_t wbytes = write(BasicConsoleProperties::STDOUT, &bufferString[start], static_cast<osulong>(sizeToWrite));
                 if (wbytes == -1) {
                     err = false;
-                    REPORT_ERROR(ErrorManagement::OSError, "Error: write()");
+                    REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed write()");
                 }
                 writtenBytes += wbytes;
             }
@@ -284,7 +284,7 @@ bool BasicConsole::OSWrite(const char8* const buffer,
             ssize_t wbytes = write(BasicConsoleProperties::STDOUT, &newLine, static_cast<osulong>(1));
             if (wbytes == -1) {
                 err = false;
-                REPORT_ERROR(ErrorManagement::OSError, "Error: write()");
+                REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed write()");
             }
             currentColumn = 0u;
         }
@@ -297,7 +297,7 @@ bool BasicConsole::OSWrite(const char8* const buffer,
     size = static_cast<uint32>(writtenBytes);
     if (size == 0u) {
         err = false;
-        REPORT_ERROR(ErrorManagement::Warning, "Warning: zero bytes written");
+        REPORT_ERROR(ErrorManagement::Warning, "BasicConsole: Zero bytes written");
     }
     return err;
 }
@@ -312,7 +312,7 @@ bool BasicConsole::Read(char8 * const output,
             int32 eofCheck = static_cast<int32>(*readChar);
             if (eofCheck == EOF) {
                 err = false;
-                REPORT_ERROR(ErrorManagement::OSError,"Error: getchar()");
+                REPORT_ERROR(ErrorManagement::OSError,"BasicConsole: Failed getchar()");
             }
             else {
                 size = 1u;
@@ -322,11 +322,11 @@ bool BasicConsole::Read(char8 * const output,
             ssize_t readBytes = read(BasicConsoleProperties::STDIN, output, static_cast<osulong>(size));
             if (readBytes == -1) {
                 err = false;
-                REPORT_ERROR(ErrorManagement::OSError,"Error: read()");
+                REPORT_ERROR(ErrorManagement::OSError,"BasicConsole: Failed read()");
             }
             else if (readBytes == 0) {
                 err = false;
-                REPORT_ERROR(ErrorManagement::Warning,"Warning: zero bytes read");
+                REPORT_ERROR(ErrorManagement::Warning,"BasicConsole: Zero bytes read");
             }
             else {
                 size = static_cast<uint32>(readBytes);
@@ -335,7 +335,7 @@ bool BasicConsole::Read(char8 * const output,
     }
     else {
         err = false;
-        REPORT_ERROR(ErrorManagement::Warning,"Warning: invalid input parameters");
+        REPORT_ERROR(ErrorManagement::Warning,"BasicConsole: Invalid input parameters");
     }
     return err;
 }
@@ -360,7 +360,7 @@ bool BasicConsole::Clear() {
         ssize_t writtenBytes = write(BasicConsoleProperties::STDOUT, "\n", static_cast<osulong>(1u));
         if (writtenBytes == -1) {
             err = false;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: write()");
+            REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed write()");
         }
     }
     return err;
@@ -392,34 +392,34 @@ bool BasicConsole::TimeoutSupported() const {
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::ShowBuffer() {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
     return false;
 }
 
 /*lint -e{715} function not implemented in Linux*/
 bool BasicConsole::SetColour(const Colours &foregroundColour,
                              const Colours &backgroundColour) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
     return false;
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::SetTitleBar(const char8 * const title) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
     return false;
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::GetTitleBar(char8 * const title,
                                const uint32 &size) const {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
     return false;
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::SetCursorPosition(const uint32 &column,
                                      const uint32 &row) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
 
     return false;
 }
@@ -433,7 +433,7 @@ bool BasicConsole::GetCursorPosition(uint32 &column,
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
                                  const uint32 &numberOfRows) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
 
     return false;
 }
@@ -441,7 +441,7 @@ bool BasicConsole::SetWindowSize(const uint32 &numberOfColumns,
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: Not implemented. */
 bool BasicConsole::GetWindowSize(uint32 &numberOfColumns,
                                  uint32 &numberOfRows) const {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
 
     return false;
 }
@@ -452,7 +452,7 @@ bool BasicConsole::PlotChar(const char8 &c,
                             const Colours &backgroundColour,
                             const uint32 &column,
                             const uint32 &row) {
-    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "Information: function not implemented");
+    REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Function not implemented");
 
     return false;
 }

@@ -67,6 +67,7 @@ bool BufferedStreamIOBuffer::Resync() {
             // in read mode the actual stream
             // position is to the character after the buffer end
             if (!stream->OSSeek(stream->OSPosition() - deltaToEnd)) {
+                REPORT_ERROR(ErrorManagement::FatalError,"BufferedStreamIOBuffer: Failed OSSeek");
                 retval = false;
             }
 
@@ -74,6 +75,9 @@ bool BufferedStreamIOBuffer::Resync() {
             Empty();
 
         }
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::FatalError,"BufferedStreamIOBuffer: Invalid stream");
     }
     return retval;
 }
@@ -96,10 +100,14 @@ bool BufferedStreamIOBuffer::NoMoreDataToRead() {
                 retval = true;
             }
             else {
+                REPORT_ERROR(ErrorManagement::FatalError,"BufferedStreamIOBuffer: Failed OSRead");
                 Empty();
             }
 
         }
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::FatalError,"BufferedStreamIOBuffer: Invalid stream");
     }
     return retval;
 }
@@ -122,8 +130,14 @@ bool BufferedStreamIOBuffer::NoMoreSpaceToWrite() {
                     retval = true;
                     Empty();
                 }
+                else{
+                    REPORT_ERROR(ErrorManagement::FatalError,"BufferedStreamIOBuffer: Failed OSWrite");
+                }
             }
         }
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::FatalError,"BufferedStreamIOBuffer: Invalid stream");
     }
     return retval;
 }
