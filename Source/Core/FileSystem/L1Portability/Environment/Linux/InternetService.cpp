@@ -57,7 +57,7 @@ bool InternetService::SearchByName(const char8 * const name,
         service = *serv;
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed getservbyname()");
+        REPORT_ERROR(ErrorManagement::OSError, "InternetService: Failed getservbyname()");
     }
     return ret;
 
@@ -72,7 +72,7 @@ bool InternetService::SearchByPort(const uint16 port,
         service = *serv;
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed getservbyport()");
+        REPORT_ERROR(ErrorManagement::OSError, "InternetService: Failed getservbyport()");
 
     }
     return ret;

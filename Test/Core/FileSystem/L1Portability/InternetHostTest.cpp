@@ -211,9 +211,8 @@ bool InternetHostTest::TestSetLocalAddress() {
     InternetHost addr;
     addr.SetLocalAddress();
 
-    String hostname = addr.GetHostName();
     String dotAddr = addr.GetAddress();
-    return ((hostname == "localhost") && ((dotAddr == "127.0.1.1") || (dotAddr == "127.0.0.1")));
+    return ((dotAddr == "127.0.1.1") || (dotAddr == "127.0.0.1"));
 }
 
 bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {

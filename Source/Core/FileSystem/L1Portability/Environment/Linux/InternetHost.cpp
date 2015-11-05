@@ -35,7 +35,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "InternetHost.h"
-#include "Sleep.h"
 #include "FastPollingMutexSem.h"
 #include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
@@ -100,7 +99,7 @@ private:
         if (!internetAddressInfoInitialised) {
 
             if(internalFastSem.FastLock()!=ErrorManagement::NoError) {
-                REPORT_ERROR(ErrorManagement::FatalError,"Error: Failed FastPollingMutexSem::FastLock() in initialization of local address");
+                REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed FastPollingMutexSem::FastLock() in initialization of local address");
             }
 
             localHostName = static_cast<const char8*>(NULL);
@@ -125,11 +124,11 @@ private:
                     internalFastSem.FastUnLock();
                 }
                 else {
-                    REPORT_ERROR(ErrorManagement::FatalError,"Error: Failed local address initialization");
+                    REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
                 }
             }
             else {
-                REPORT_ERROR(ErrorManagement::FatalError,"Error: Failed local address initialization");
+                REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed local address initialization");
             }
         }
         return;
@@ -140,7 +139,7 @@ private:
 String InternetHost::GetHostName() const {
 
     if (hostnameFastSem.FastLock() != ErrorManagement::NoError) {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed FastPollingMutexSem::FastLock() in initialization of local address");
+        REPORT_ERROR(ErrorManagement::FatalError, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
     }
     String hostName = GetAddress();
 
@@ -154,7 +153,7 @@ String InternetHost::GetHostName() const {
         hostName = h->h_name;
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed gethostbyaddr()");
+        REPORT_ERROR(ErrorManagement::OSError,"InternetHost: Failed gethostbyaddr()");
     }
     hostnameFastSem.FastUnLock();
 
@@ -223,7 +222,7 @@ bool InternetHost::SetAddress(const char8 * const addr) {
             address.sin_addr.s_addr = iaddr;
         }
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed inet_addr(), address=0xFFFFFFFF");
+            REPORT_ERROR(ErrorManagement::OSError, "InternetHost: Failed inet_addr(), address=0xFFFFFFFF");
             ret = false;
         }
     }
@@ -244,7 +243,7 @@ bool InternetHost::SetAddressByHostName(const char8 * hostName) {
         ret= true;
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError,"Error: Failed gethostbyname()");
+        REPORT_ERROR(ErrorManagement::OSError,"InternetHost: Failed gethostbyname()");
     }
     return ret;
 }
