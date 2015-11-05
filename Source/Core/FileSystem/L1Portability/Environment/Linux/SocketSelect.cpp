@@ -78,11 +78,11 @@ void SocketSelect::AddWaitOnWriteReady(const BasicSocket * const s) {
             FD_SET(s->connectionSocket, &selectHandle.writeFDS);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+            REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The socket handle is not valid");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+        REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The input is NULL");
     }
 }
 
@@ -93,11 +93,11 @@ void SocketSelect::DeleteWaitOnWriteReady(const BasicSocket * const s) {
             FD_CLR(s->connectionSocket, &selectHandle.writeFDS);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+            REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The socket handle is not valid");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+        REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The input is NULL");
     }
 
 }
@@ -109,11 +109,11 @@ void SocketSelect::AddWaitOnReadReady(const BasicSocket * const s) {
             FD_SET(s->connectionSocket, &selectHandle.readFDS);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+            REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The socket handle is not valid");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+        REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The input is NULL");
     }
 
 }
@@ -125,11 +125,11 @@ void SocketSelect::DeleteWaitOnReadReady(const BasicSocket * const s) {
             FD_CLR(s->connectionSocket, &selectHandle.readFDS);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+            REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The socket handle is not valid");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+        REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The input is NULL");
     }
 
 }
@@ -141,11 +141,11 @@ void SocketSelect::AddWaitOnExceptReady(const BasicSocket * const s) {
             FD_SET(s->connectionSocket, &selectHandle.exceptFDS);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+            REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The socket handle is not valid");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+        REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The input is NULL");
     }
 
 }
@@ -157,11 +157,11 @@ void SocketSelect::DeleteWaitOnExceptReady(const BasicSocket * const s) {
             FD_CLR(s->connectionSocket, &selectHandle.exceptFDS);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+            REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The socket handle is not valid");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+        REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The input is NULL");
     }
 
 }
@@ -255,11 +255,11 @@ bool SocketSelect::CheckRead(const BasicSocket * const s) {
             ret=FD_ISSET(s->connectionSocket, &selectHandle.readFDS_done);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+            REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The socket handle is not valid");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+        REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The input is NULL");
     }
 
     return ret;
@@ -275,11 +275,11 @@ bool SocketSelect::CheckWrite(const BasicSocket * const s) {
             ret=FD_ISSET(s->connectionSocket, &selectHandle.writeFDS_done);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+            REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The socket handle is not valid");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+        REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The input is NULL");
     }
 
     return ret;
@@ -295,11 +295,11 @@ bool SocketSelect::CheckExcept(const BasicSocket * const s) {
             ret=FD_ISSET(s->connectionSocket, &selectHandle.exceptFDS_done);
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError,"Error: The socket handle is not valid");
+            REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The socket handle is not valid");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"Error: The input is NULL");
+        REPORT_ERROR(ErrorManagement::FatalError,"SocketSelect: The input is NULL");
     }
 
     return ret;
