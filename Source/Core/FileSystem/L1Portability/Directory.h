@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "LinkedListHolder.h"
+#include "GeneralDefinitions.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
 
 /*---------------------------------------------------------------------------*/
@@ -79,7 +80,7 @@ public:
     /**
      * @brief Retrieve the file-directory name.
      */
-    const char8 *Name() const;
+    const char8 *GetName() const;
 
     /**
      * @brief Check if this is a directory.
@@ -103,19 +104,19 @@ public:
      * @brief Retrieve the file-directory size.
      * @return the file-directory size
      */
-    uint64 Size() const;
+    uint64 GetSize() const;
 
     /**
      * @brief Retrieve the last write time.
      * @return the last write time.
      */
-    int32 LastWriteTime() const;
+    TimeValues GetLastWriteTime() const;
 
     /**
      * @brief Retrieve the last access time.
      * @return the last access time.
      */
-    int32 LastAccessTime() const;
+    TimeValues GetLastAccessTime() const;
 
 
     /**
