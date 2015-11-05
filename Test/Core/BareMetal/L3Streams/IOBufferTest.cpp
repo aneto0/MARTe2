@@ -1192,6 +1192,7 @@ bool IOBufferTest::TestPrintFormatted(uint32 allocationGranularity,
 
         ioBuffer.PrintFormatted(testTable[i].format, testTable[i].inputs);
         if (StringHelper::Compare(testTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
+
             return false;
         }
         i++;
@@ -1261,12 +1262,20 @@ bool IOBufferTest::TestPrintFormatted_Pointer() {
     }
     if (sizeof(void*) == 4) {
         AnyType toPrintPointer = pointer;
-        AnyType toPrintUInt32=(uint32)UIntPointer;
+        AnyType toPrintUInt32 = (uint32) UIntPointer;
         ioBuffer1.PrintFormatted("%p", &toPrintPointer);
         ioBuffer2.PrintFormatted("% #0x", &toPrintUInt32);
     }
 
     if (StringHelper::Compare(ioBuffer1.Buffer(), ioBuffer2.Buffer()) != 0) {
+        return false;
+    }
+
+    Clear(ioBuffer1);
+    AnyType toPrintPointer = pointer;
+    ioBuffer1.PrintFormatted("%?", &toPrintPointer);
+
+    if (StringHelper::Compare(ioBuffer1.Buffer(), "Pointer") != 0) {
         return false;
     }
 
@@ -1283,10 +1292,10 @@ bool IOBufferTest::TestPrintFormatted_Stream() {
     stream.SetBufferSize(32);
 
     uint32 i = 0;
-    while (printfCStringTable[i][0] != NULL) {
+    while (printfStreamTable[i][0] != NULL) {
         Clear(ioBuffer);
         stream.Clear();
-        const char8 * toWrite = printfCStringTable[i][1];
+        const char8 * toWrite = printfStreamTable[i][1];
 
         uint32 writeSize = StringHelper::Length(toWrite);
         stream.Write(toWrite, writeSize);
@@ -1294,8 +1303,8 @@ bool IOBufferTest::TestPrintFormatted_Stream() {
         stream.Seek(0);
 
         AnyType toPrint = stream;
-        ioBuffer.PrintFormatted(printfCStringTable[i][0], &toPrint);
-        if (StringHelper::Compare(ioBuffer.Buffer(), printfCStringTable[i][2]) != 0) {
+        ioBuffer.PrintFormatted(printfStreamTable[i][0], &toPrint);
+        if (StringHelper::Compare(ioBuffer.Buffer(), printfStreamTable[i][2]) != 0) {
             return false;
         }
         stream.FlushAndResync();

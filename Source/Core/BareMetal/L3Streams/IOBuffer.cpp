@@ -262,10 +262,11 @@ static bool PrintToStream(IOBuffer & iobuff,
         bool isStructured = (par.GetTypeDescriptor()).isStructuredData;
         if (isStructured) {
             if(fd.desiredAction == PrintInfo) {
-                AnyType info="Object";
+                const char8* infoName="Object";
+                AnyType info=infoName;
                 FormatDescriptor newFD=fd;
                 newFD.desiredAction=PrintString;
-                PrintToStream(iobuff, info, newFD);
+                ret=PrintToStream(iobuff, info, newFD);
             }
             else {
                 if(fd.desiredAction != PrintStruct) {
@@ -278,10 +279,11 @@ static bool PrintToStream(IOBuffer & iobuff,
         else {
             if (((par.GetTypeDescriptor()).type) == UnsignedInteger) {
                 if(fd.desiredAction == PrintInfo) {
-                    AnyType info="Unsigned Integer";
+                    const char8* infoName="Unsigned Integer";
+                    AnyType info=infoName;
                     FormatDescriptor newFD=fd;
                     newFD.desiredAction=PrintString;
-                    PrintToStream(iobuff, info, newFD);
+                    ret=PrintToStream(iobuff, info, newFD);
                 }
                 else {
                     if(fd.desiredAction != PrintInteger) {
@@ -331,10 +333,11 @@ static bool PrintToStream(IOBuffer & iobuff,
 
             if (((par.GetTypeDescriptor()).type) == SignedInteger) {
                 if(fd.desiredAction == PrintInfo) {
-                    AnyType info="Signed Integer";
+                    const char8* infoName="Signed Integer";
+                    AnyType info=infoName;
                     FormatDescriptor newFD=fd;
                     newFD.desiredAction=PrintString;
-                    PrintToStream(iobuff, info, newFD);
+                    ret=PrintToStream(iobuff, info, newFD);
                 }
                 else {
 
@@ -384,10 +387,11 @@ static bool PrintToStream(IOBuffer & iobuff,
             }
             if (((par.GetTypeDescriptor()).type) == Float) {
                 if(fd.desiredAction == PrintInfo) {
-                    AnyType info="Float";
+                    const char8* infoName="Float";
+                    AnyType info=infoName;
                     FormatDescriptor newFD=fd;
                     newFD.desiredAction=PrintString;
-                    PrintToStream(iobuff, info, newFD);
+                    ret=PrintToStream(iobuff, info, newFD);
                 }
                 else {
                     if(fd.desiredAction != PrintFloat) {
@@ -421,10 +425,11 @@ static bool PrintToStream(IOBuffer & iobuff,
             //pointer type.
             if (((par.GetTypeDescriptor()).type) == Pointer) {
                 if(fd.desiredAction == PrintInfo) {
-                    AnyType info="Pointer";
+                    const char8* infoName="Pointer";
+                    AnyType info=infoName;
                     FormatDescriptor newFD=fd;
                     newFD.desiredAction=PrintString;
-                    PrintToStream(iobuff, info, newFD);
+                    ret=PrintToStream(iobuff, info, newFD);
                 }
                 else {
                     if(fd.desiredAction != PrintPointer) {
@@ -442,10 +447,11 @@ static bool PrintToStream(IOBuffer & iobuff,
             //print the value of the pointer.
             if (((par.GetTypeDescriptor()).type) == CCString) {
                 if(fd.desiredAction == PrintInfo) {
-                    AnyType info="CC String";
+                    const char8* infoName="CC String";
+                    AnyType info=infoName;
                     FormatDescriptor newFD=fd;
                     newFD.desiredAction=PrintString;
-                    PrintToStream(iobuff, info, newFD);
+                    ret=PrintToStream(iobuff, info, newFD);
                 }
                 else {
                     if (fd.binaryNotation == HexNotation) {
@@ -467,10 +473,11 @@ static bool PrintToStream(IOBuffer & iobuff,
             //general stream type.
             if (((par.GetTypeDescriptor()).type) == Stream) {
                 if(fd.desiredAction == PrintInfo) {
-                    AnyType info="Stream";
+                    const char8* infoName="Stream";
+                    AnyType info=infoName;
                     FormatDescriptor newFD=fd;
                     newFD.desiredAction=PrintString;
-                    PrintToStream(iobuff, info, newFD);
+                    ret=PrintToStream(iobuff, info, newFD);
                 }
                 else {
                     if(fd.desiredAction != PrintString) {
