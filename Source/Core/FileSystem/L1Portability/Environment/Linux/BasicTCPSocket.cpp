@@ -340,7 +340,6 @@ bool BasicTCPSocket::Read(char8* const output,
         readBytes = static_cast<int32>(recv(connectionSocket, output, static_cast<size_t>(sizetoRead), 0));
 
         if (readBytes >= 0) {
-            printf("\nFail0 %d\n",readBytes);
 
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(readBytes);
@@ -352,7 +351,6 @@ bool BasicTCPSocket::Read(char8* const output,
                 REPORT_ERROR(ErrorManagement::Timeout, "BasicTCPSocket: Timeout expired in recv()");
             }
             else {
-                printf("\nFail\n");
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed recv()");
             }
         }
@@ -371,6 +369,7 @@ bool BasicTCPSocket::Write(const char8* const input,
     if (IsValid()) {
         writtenBytes = static_cast<int32>(send(connectionSocket, input, static_cast<size_t>(sizeToWrite), 0));
         if (writtenBytes >= 0) {
+
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(writtenBytes);
         }
@@ -408,7 +407,6 @@ bool BasicTCPSocket::Read(char8* const output,
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal),
                                    static_cast<socklen_t>(sizeof(timeoutVal)));
 
-            printf("\n%d %d\n",timeoutVal.tv_sec,timeoutVal.tv_usec);
             if (ret < 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() setting the socket timeout");
             }
