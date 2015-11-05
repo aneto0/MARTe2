@@ -89,6 +89,10 @@ bool ClassRegistryDatabaseTest::TestAdd() {
     //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
     ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
 
+    if (myItem == NULL) {
+        return false;
+    }
+
     uint32 newSizeDB = db->GetSize();
 
     if (sizeDB != (newSizeDB - 1)) {
@@ -127,6 +131,10 @@ bool ClassRegistryDatabaseTest::TestFind(const MARTe::char8 *name,
 
         //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
         ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+        if (myItem == NULL) {
+            return false;
+        }
+
         bool found = (db->Find(name) != NULL);
         //These are deleted by the the ClassRegistryDatabase destructor
         return found;
@@ -146,6 +154,9 @@ bool ClassRegistryDatabaseTest::TestFindLongName(bool create) {
 
         //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
         ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
+        if (myItem == NULL) {
+            return false;
+        }
         bool found = (db->Find(name) != NULL);
         //These are deleted by the the ClassRegistryDatabase destructor
         return !found;
@@ -172,17 +183,17 @@ bool ClassRegistryDatabaseTest::TestGetSize() {
 
     uint32 prevSize = db->GetSize();
 
-    ClassRegistryItem *root;
 
     uint32 i = 0;
     //add the elements to the database.
     while (names[i] != NULL) {
         ClassProperties *testClassProperties = new ClassProperties(names[i], names[i], "V");
         ClassRegistryItem *element = new ClassRegistryItem(*testClassProperties, NULL);
-        delete testClassProperties;
-        if (i == 0) {
-            root = element;
+        if (element == NULL) {
+            return false;
         }
+        delete testClassProperties;
+
         i++;
     }
 
