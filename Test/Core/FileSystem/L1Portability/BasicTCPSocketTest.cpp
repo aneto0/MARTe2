@@ -376,6 +376,7 @@ static void ClientJob_Read(BasicTCPSocketTest &param) {
             uint32 size = param.size;
             bool ret;
             if (param.isTimeout) {
+                printf("\nQUI\n");
                 ret = clientSocket.Read(output, size, param.timeout);
             }
             else {
@@ -439,6 +440,8 @@ bool BasicTCPSocketTest::TestRead(const ReadWriteTestTable *table) {
         alives = table[i].nClientsIn;
         timeout = table[i].timeoutIn;
         serverJob = (ThreadFunctionType) WriteJob;
+
+        printf("\nisBlocking= %d, isServer=%d, isTimeout=%d,\n", isBlocking, isServer, isTimeout);
 
         Threads::BeginThread((ThreadFunctionType) StartServer_ReadWrite, this);
 
