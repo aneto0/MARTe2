@@ -38,7 +38,6 @@
 /*---------------------------------------------------------------------------*/
 #include "BasicSocket.h"
 #include "BasicTCPSocket.h"
-#include "Sleep.h"
 #include "SocketSelect.h"
 #include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/

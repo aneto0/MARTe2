@@ -61,7 +61,6 @@ TEST(InternetServiceGTest,TestSearchByName) {
             {"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
             {"smtp", "udp", 25, "udp", false},
-            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -79,7 +78,6 @@ TEST(InternetServiceGTest,TestSearchByPort) {
             {"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
             {"smtp", "udp", 25, "udp", false},
-            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -96,7 +94,6 @@ TEST(InternetServiceGTest,TestPort) {
             {"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
             {"smtp", "udp", 25, "udp", false},
-            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -113,7 +110,6 @@ TEST(InternetServiceGTest,TestName) {
             {"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
             {"smtp", "udp", 25, "udp", false},
-            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -131,7 +127,6 @@ TEST(InternetServiceGTest,TestProtocol) {
             {"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
             {"smtp", "udp", 25, "udp", false},
-            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 

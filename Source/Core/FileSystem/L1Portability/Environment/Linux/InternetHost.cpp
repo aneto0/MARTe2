@@ -35,7 +35,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "InternetHost.h"
-#include "Sleep.h"
 #include "FastPollingMutexSem.h"
 #include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
