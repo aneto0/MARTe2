@@ -26,9 +26,7 @@
 /*---------------------------------------------------------------------------*/
 #include <fcntl.h>
 #include <sys/time.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -72,7 +70,6 @@ Directory::Directory(const char8 * const path) :
      */
 }
 
-/** */
 Directory::~Directory() {
     if (fname != NULL) {
         /*lint -e{1551} .Justification: Remove the warning "Function may throw exception '...' in destructor".*/
@@ -125,12 +122,13 @@ uint64 Directory::GetSize() const {
 
 TimeValues Directory::GetLastWriteTime() const {
 
-    TimeValues timeStamp;
+    TimeValues timeStamp = { 0u, 0u, 0u, 0u, 0u, 0u, 0u };
     //fill the time structure
     time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_mtime);
     const struct tm *tValues = localtime(&secondsFromEpoch32);
     bool ret = (tValues != NULL);
     if (ret) {
+        timeStamp.microseconds = 0u;
         timeStamp.seconds = static_cast<uint32>(tValues->tm_sec);
         timeStamp.minutes = static_cast<uint32>(tValues->tm_min);
         timeStamp.hours = static_cast<uint32>(tValues->tm_hour);
@@ -146,12 +144,13 @@ TimeValues Directory::GetLastWriteTime() const {
 }
 
 TimeValues Directory::GetLastAccessTime() const {
-    TimeValues timeStamp;
+    TimeValues timeStamp = { 0u, 0u, 0u, 0u, 0u, 0u, 0u };
     //fill the time structure
     time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_atime);
     const struct tm *tValues = localtime(&secondsFromEpoch32);
     bool ret = (tValues != NULL);
     if (ret) {
+        timeStamp.microseconds = 0u;
         timeStamp.seconds = static_cast<uint32>(tValues->tm_sec);
         timeStamp.minutes = static_cast<uint32>(tValues->tm_min);
         timeStamp.hours = static_cast<uint32>(tValues->tm_hour);
@@ -176,7 +175,7 @@ bool Directory::Create(const char8 * const path,
             REPORT_ERROR(ErrorManagement::OSError, "Error: Failed creat()");
         }
         else {
-            if (!close(fd) < 0) {
+            if (close(fd) < 0) {
                 ret = false;
                 REPORT_ERROR(ErrorManagement::OSError, "Error: Failed close()");
             }
@@ -199,3 +198,5 @@ bool Directory::Delete(const char8 * const path) {
 }
 
 }
+
+
