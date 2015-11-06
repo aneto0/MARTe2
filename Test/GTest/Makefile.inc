@@ -23,13 +23,14 @@
 #############################################################
 
 
-OBJSX= InternetHostGTest.x \
+OBJSX= DirectoryGTest.x
+#InternetHostGTest.x \
 	   InternetServiceGTest.x \
 	   BasicSocketGTest.x \
 	   BasicTCPSocketGTest.x \
-	   BasicConsoleGTest.x 	   
-#	    DoubleIntegerGTest.x \
-		TypeCharacteristicsGTest.x \
+	   BasicConsoleGTest.x \
+	   DoubleIntegerGTest.x \
+	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
         FormatDescriptorGTest.x \

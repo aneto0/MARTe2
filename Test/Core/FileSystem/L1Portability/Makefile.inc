@@ -24,11 +24,12 @@
 #
 #############################################################
 
-OBJSX= InternetHostTest.x \
+OBJSX=  InternetHostTest.x \
 	InternetServiceTest.x \
 	BasicSocketTest.x  \
 	BasicUDPSocketTest.x \
-	BasicTCPSocketTest.x 
+	BasicTCPSocketTest.x \
+	DirectoryTest.x
 
 
 PACKAGE=Core/FileSystem

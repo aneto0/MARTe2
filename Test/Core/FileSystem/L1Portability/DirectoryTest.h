@@ -1,8 +1,8 @@
 /**
- * @file Directory.h
- * @brief Header file for class Directory
+ * @file DirectoryTest.h
+ * @brief Header file for class DirectoryTest
  * @date 04/11/2015
- * @author Giuseppe Ferrò
+ * @author Frank Perez
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Directory
+ * @details This header file contains the declaration of the class DirectoryTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DIRECTORY_H_
-#define DIRECTORY_H_
+#ifndef DIRECTORYTEST_H_
+#define DIRECTORYTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,110 +31,98 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "Directory.h"
 #include "LinkedListHolder.h"
+#include "stdio.h"
+#include "time.h"
+#include <sys/stat.h>
+#include "dirent.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+using namespace MARTe;
 
-namespace MARTe {
-
-/**
- * @brief A class which represent a file or a directory.
- *
- * @details Providing the path name of a specific file or directory, this class can
- * obtain all its main attributes (size, last access time, ecc).
- *
- * @details Some static methods allows the user to create, delete and check the existence of files-directories.
- */
-class Directory: public LinkedListable {
-
+/** it represents a file or a subdirectory */
+class DirectoryTest {
 
 public:
-    /**
-     * @brief Default constructor.
-     * @param[in] path is the path of the file-directory
-     * @post
-     *   Name() = path
-     */
-    Directory(const char8 * const path = NULL);
+    /** constructor */
+    DirectoryTest();
 
-    /**
-     * @brief Default destructor.
-     * @post
-     *   Name() = NULL
-     */
-    ~Directory();
+    /** */
+    ~DirectoryTest();
 
     /**
      * @brief Set this file-directory providing its path.
      * @param[in] path is the path of the file-directory in input.
      * @return true if the file-directory is set correctly, false otherwise.
      * @post
-     *   Name() = path
+     *  fname = path
      */
-    bool SetByName(const char8 * const path);
+    bool TestSetByName();
+
 
     /**
-     * @brief Gets the file-directory path name (as set in the constructor or by SetByName).
-     * @return the file-directory path name (as set in the constructor or by SetByName).
+     * @brief Retrieve the file-directory name.
      */
-    const char8 *Name() const;
+    bool TestNameInvalid() const;
+    bool TestNameValid() const;
 
     /**
      * @brief Check if this is a directory.
      * @return true if this is a directory, false otherwise.
      */
-    bool IsDirectory() const;
+    bool TestIsDirectoryValid() const;
+    bool TestIsDirectoryInvalid() const;
 
     /**
      * @brief Check if this is a file.
      * @return true if this is a file, false otherwise.
      */
-    bool IsFile() const;
+    bool TestIsFile() const;
+    bool TestIsNoFile()const;
 
     /**
      * @brief Check if this directory is read only
      * @return true if this is a read-only file-directory, false otherwise.
      */
-    bool ReadOnly() const;
+    bool TestReadOnly() const;
 
     /**
      * @brief Retrieve the file-directory size.
      * @return the file-directory size
      */
-    uint64 Size() const;
+    bool TestSizeDir(const char8 * const path) const;
+    bool TestSizeFile(const char8 * const path) const;
 
     /**
      * @brief Retrieve the last write time.
      * @return the last write time.
      */
-    int32 LastWriteTime() const;
+    bool TestLastWriteTime() const;
 
     /**
      * @brief Retrieve the last access time.
      * @return the last access time.
      */
-    int32 LastAccessTime() const;
-
+    bool TestLastAccessTime() const;
 
     /**
      * @brief Create a new file-directory.
      * @param[in] path is the path of the new folder to be created.
      * @param[in] isFile specifies if a file or a folder should be created.
      * @return true if the file-directory is created correctly, false otherwise.
-     * @post
-     *    Name() = path
      */
-    bool Create(const bool isFile = false);
+    bool TestCreate(const char8 * const path,
+            const bool isFile = false);
 
     /**
      * @brief Delete an existent file-directory.
      * @param[in] path is the path of the file / directory to be deleted.
      * @return true if the file-directory is deleted correctly, false otherwise.
      */
-    bool Delete();
+    bool TestDelete(const char8 * const path,bool file);
 
     /**
      * @brief Check if a file-directory exists.
@@ -143,26 +131,19 @@ public:
      * @post
      *   isFile = true if path refers to a file.
      */
-    bool Exists();
+    bool TestExists(const char8 * const path);
 
 private:
-    /**
-     * The file or directory name
-     */
+    /** the file or directory name */
     char8 *fname;
 
-    /**
-     * File-directory attributes
-     */
-    DirectoryCore directoryHandle;
+    /** attributes of the file */
+    DirectoryCore dyrectoryHandle;
 
 };
-
-}
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* DIRECTORY_H_ */
+#endif /* DIRECTORYTEST_H_ */
 

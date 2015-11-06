@@ -33,6 +33,7 @@
 #include "HeapManager.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
+#include "errno.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,7 +50,10 @@ Directory::Directory(const char8 * const path) :
 
     // fill the struct with the file informations
     if (stat(path, &directoryHandle) != 0) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+        //errno = 2 => No such file or directory
+        if(errno != 2){
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+        }
     }
     /*
      directoryHandle.st_dev = 0u; // ID of device containing file
@@ -84,7 +88,7 @@ bool Directory::SetByName(const char8 * const path) {
 
     if (fname != NULL) {
         if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
-            ret=false;
+            ret = false;
         }
     }
     if (ret) {
@@ -127,36 +131,43 @@ int32 Directory::LastAccessTime() const {
     return static_cast<int32>(directoryHandle.st_atime);
 }
 
-bool Directory::Create(const char8 * const path,
-                       const bool isFile) {
+bool Directory::Create(const bool isFile) {
     bool ret = true;
+
     if (isFile) {
-        int32 fd = creat(path, static_cast<mode_t>(0777));
+        int32 fd = creat(fname, static_cast<mode_t>(0777));
         if (fd < 0) {
             ret = false;
             REPORT_ERROR(ErrorManagement::OSError, "Error: Failed creat()");
         }
         else {
-            if(!close(fd)<0){
+            if (!close(fd) < 0) {
                 ret = false;
                 REPORT_ERROR(ErrorManagement::OSError, "Error: Failed close()");
             }
         }
     }
     else {
-        ret = (mkdir(path, static_cast<mode_t>(0777)) == 0);
+        ret = (mkdir(fname, static_cast<mode_t>(0777)) == 0);
+    }
+
+    if (stat(fname, &directoryHandle) != 0) {
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
     }
     return ret;
 }
 
-bool Directory::Exists(const char8 * const path) {
+bool Directory::Exists() {
     struct stat fileStats;
     /*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-4] [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
-    return (stat(path, &fileStats) != 0) ? (S_ISDIR(fileStats.st_mode) || S_ISREG(fileStats.st_mode)) : (false);
+    uint32 ok = (stat(fname, &fileStats) == 0);
+    bool isDir = S_ISDIR(fileStats.st_mode);
+    bool isFile = S_ISREG(fileStats.st_mode);
+    return (ok) ? (isDir || isFile) : (false);
 }
 
-bool Directory::Delete(const char8 * const path) {
-    return (remove(path) == 0);
+bool Directory::Delete() {
+    return (remove(fname) == 0);
 }
 
 }
