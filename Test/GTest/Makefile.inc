@@ -23,11 +23,7 @@
 #############################################################
 
 
-OBJSX= InternetHostGTest.x \
-	   InternetServiceGTest.x \
-	   BasicSocketGTest.x \
-	   BasicTCPSocketGTest.x \
-	   BasicConsoleGTest.x 	   
+OBJSX=  BasicConsoleGTest.x 	   
 #	    DoubleIntegerGTest.x \
 		TypeCharacteristicsGTest.x \
         ShiftGTest.x \
@@ -81,6 +77,10 @@ OBJSX= InternetHostGTest.x \
         BufferedStreamIGTest.x \
         IOBufferGTest.x \
         BitSetToIntegerGTest.x \
+        InternetHostGTest.x \
+	   InternetServiceGTest.x \
+	   BasicSocketGTest.x \
+	   BasicTCPSocketGTest.x \
 
 	
 	
