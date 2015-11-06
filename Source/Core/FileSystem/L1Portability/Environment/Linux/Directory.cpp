@@ -25,6 +25,10 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #include <fcntl.h>
+#include <sys/time.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -101,7 +105,7 @@ bool Directory::SetByName(const char8 * const path) {
     return ret;
 }
 
-const char8 *Directory::Name() const {
+const char8 *Directory::GetName() const {
     return fname;
 }
 
@@ -119,16 +123,51 @@ bool Directory::ReadOnly() const {
     return false;
 }
 
-uint64 Directory::Size() const {
+uint64 Directory::GetSize() const {
     return (directoryHandle.st_size > 0) ? (static_cast<uint64>(directoryHandle.st_size)) : (0u);
 }
 
-int32 Directory::LastWriteTime() const {
-    return static_cast<int32>(directoryHandle.st_mtime);
+TimeValues Directory::GetLastWriteTime() const {
+
+    TimeValues timeStamp;
+    //fill the time structure
+    time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_mtime);
+    const struct tm *tValues = localtime(&secondsFromEpoch32);
+    bool ret = (tValues != NULL);
+    if (ret) {
+        timeStamp.seconds = static_cast<uint32>(tValues->tm_sec);
+        timeStamp.minutes = static_cast<uint32>(tValues->tm_min);
+        timeStamp.hours = static_cast<uint32>(tValues->tm_hour);
+        timeStamp.days = static_cast<uint32>(tValues->tm_mday);
+        timeStamp.month = static_cast<uint32>(tValues->tm_mon);
+        timeStamp.year = static_cast<uint32>(tValues->tm_year);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
+    }
+
+    return timeStamp;
 }
 
-int32 Directory::LastAccessTime() const {
-    return static_cast<int32>(directoryHandle.st_atime);
+TimeValues Directory::GetLastAccessTime() const {
+    TimeValues timeStamp;
+    //fill the time structure
+    time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_atime);
+    const struct tm *tValues = localtime(&secondsFromEpoch32);
+    bool ret = (tValues != NULL);
+    if (ret) {
+        timeStamp.seconds = static_cast<uint32>(tValues->tm_sec);
+        timeStamp.minutes = static_cast<uint32>(tValues->tm_min);
+        timeStamp.hours = static_cast<uint32>(tValues->tm_hour);
+        timeStamp.days = static_cast<uint32>(tValues->tm_mday);
+        timeStamp.month = static_cast<uint32>(tValues->tm_mon);
+        timeStamp.year = static_cast<uint32>(tValues->tm_year);
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
+    }
+
+    return timeStamp;
 }
 
 bool Directory::Create(const bool isFile) {
