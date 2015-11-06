@@ -79,26 +79,26 @@ TEST(DirectoryGTest, TestReadOnly) {
 
 TEST(DirectoryGTest, TestSizeDir) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestSizeDir("WWWW/TestSizeDir"));
+    ASSERT_TRUE(myClassTest.TestGetSize_Dir("GTestDirectoryTest/TestSizeDir"));
 }
 TEST(DirectoryGTest, TestSizeDirNULL) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestSizeDir("WWWW/"));
+    ASSERT_TRUE(myClassTest.TestGetSize_Dir("GTestDirectoryTest/"));
 }
 
 
 TEST(DirectoryGTest, TestSizeFileFile) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestSizeFile("WWWW/TestSizeFileFile.txt"));
+    ASSERT_TRUE(myClassTest.TestGetSize_File("GTestDirectoryTest/TestSizeFileFile.txt"));
 }
 TEST(DirectoryGTest, TestSizeFileFileC) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestSizeFile("WWWW/TestSizeFileFileC.c"));
+    ASSERT_TRUE(myClassTest.TestGetSize_File("GTestDirectoryTest/TestSizeFileFileC.c"));
 }
 
 TEST(DirectoryGTest, TestCreateDir) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestCreate("WWWW/TestCreateDir",false));
+    ASSERT_TRUE(myClassTest.TestCreate("GTestDirectoryTest/TestCreateDir",false));
 }
 TEST(DirectoryGTest, TestCreateDir0) {
     DirectoryTest myClassTest;
@@ -106,7 +106,7 @@ TEST(DirectoryGTest, TestCreateDir0) {
 }
 TEST(DirectoryGTest, TestCreateFile) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestCreate("WWWW/TestCreateFile.txt",true));
+    ASSERT_TRUE(myClassTest.TestCreate("GTestDirectoryTest/TestCreateFile.txt",true));
 }
 TEST(DirectoryGTest, TestCreateFileNull) {
     DirectoryTest myClassTest;
@@ -119,18 +119,28 @@ TEST(DirectoryGTest, TestDeleteNULL) {
 }
 TEST(DirectoryGTest, TestDeleteFile) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestDelete("WWWW/TestDeleteFile.txt",true));
+    ASSERT_TRUE(myClassTest.TestDelete("GTestDirectoryTest/TestDeleteFile.txt",true));
 }
 TEST(DirectoryGTest, TestDeleteDir) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestDelete("WWWW/TestDeleteDir",false));
+    ASSERT_TRUE(myClassTest.TestDelete("GTestDirectoryTest/TestDeleteDir",false));
 }
 
 TEST(DirectoryGTest, TestExists_NULL) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestExists("WWWW/NULL"));
+    ASSERT_TRUE(myClassTest.TestExists("GTestDirectoryTest/NULL"));
 }
 TEST(DirectoryGTest, TestExists_Exist) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestExists("WWWW/TestExists_Exist"));
+    ASSERT_TRUE(myClassTest.TestExists("GTestDirectoryTest/TestExists_Exist"));
+}
+
+TEST(DirectoryGTest, TestGetLastAccessTime) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestGetLastAccessTime());
+}
+
+TEST(DirectoryGTest, TestGetLastWriteTime) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestGetLastWriteTime());
 }

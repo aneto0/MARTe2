@@ -29,7 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "DirectoryTest.h"
-#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,109 +39,154 @@
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
+
+const char8 * const BASE_PATH = "GTestDirectoryTest";
+
 DirectoryTest::DirectoryTest() {
     fname = NULL;
-    Directory dir("WWWW");
+    Directory dir("GTestDirectoryTest");
     dir.Create(false);
 }
 
 DirectoryTest::~DirectoryTest() {
-    Directory dir("WWWW");
+    Directory dir("GTestDirectoryTest");
     dir.Create(false);
     dir.Delete();
 }
 
 bool DirectoryTest::TestSetByName() {
-    const char8 * const path = "WWWW/TestSetByName";
+    char8 path[128];
+    DirectoryCreateN(path, "TestSetByName");
+
     Directory dir(path);
     dir.Create(false);
     bool ok = dir.SetByName(path);
     if (ok) {
-        ok = (StringHelper::Compare(dir.Name(), path) == 0);
+        ok = (StringHelper::Compare(dir.GetName(), path) == 0);
     }
     return ok;
 }
 
-bool DirectoryTest::TestNameInvalid() const {
+bool DirectoryTest::TestNameInvalid() {
     const char8 * const path = NULL;
     Directory dir(path);
-    return (dir.Name() == path);
+    return (StringHelper::Compare(dir.GetName(), path) == 0);
 }
 
-bool DirectoryTest::TestNameValid() const {
-    const char8 * const path = "WWWW/TestNameValid";
+bool DirectoryTest::TestNameValid() {
+    char8 path[128];
+    DirectoryCreateN(path, "TestNameValid");
     Directory dir(path);
     dir.Create(false);
-    return StringHelper::Compare(dir.Name(), path) == 0;
+    return StringHelper::Compare(dir.GetName(), path) == 0;
 }
 
-bool DirectoryTest::TestIsDirectoryInvalid() const {
-    const char8 * const path = "WWWW/TestIsDirectoryInvalid.txt";
+bool DirectoryTest::TestIsDirectoryInvalid() {
+    const char8 * const path = "GTestDirectoryTest/TestIsDirectoryInvalid.txt";
     Directory dir(path);
     dir.Create(true);
     return !dir.IsDirectory();
 }
-bool DirectoryTest::TestIsDirectoryValid() const {
-    const char8 * const path = "WWWW/TestIsDirectoryValid";
+bool DirectoryTest::TestIsDirectoryValid() {
+    const char8 * const path = "GTestDirectoryTest/TestIsDirectoryValid";
     Directory dir(path);
     dir.Create(false);
     return dir.IsDirectory();
 }
 
-bool DirectoryTest::TestIsNoFile() const {
-    const char8 * const path = "WWWW/TestIsNoFile";
+bool DirectoryTest::TestIsNoFile() {
+    const char8 * const path = "GTestDirectoryTest/TestIsNoFile";
     Directory dir(path);
     dir.Create(false);
     return !dir.IsFile();
 }
-bool DirectoryTest::TestIsFile() const {
-    const char8 * const path = "WWWW/TestIsFile.txt";
+bool DirectoryTest::TestIsFile() {
+    const char8 * const path = "GTestDirectoryTest/TestIsFile.txt";
     Directory dir(path);
     dir.Create(true);
     return dir.IsFile();
 }
 ///no tiene sentido el readOnly del cpp
-bool DirectoryTest::TestReadOnly() const {
+bool DirectoryTest::TestReadOnly() {
     Directory dir;
     return !dir.ReadOnly();
 }
 
-bool DirectoryTest::TestSizeDir(const char8 * const path) const {
+bool DirectoryTest::TestGetSize_Dir(const char8 * const path) {
     Directory dir(path);
     dir.Create(false);
     DIR *directory;
     directory = opendir(path);
     seekdir(directory, 0L);
-    return (dir.Size() == (uint64)telldir(directory));
+    return (dir.GetSize() == (uint64) telldir(directory));
 }
 
-bool DirectoryTest::TestSizeFile(const char8 * const path) const {
+bool DirectoryTest::TestGetSize_File(const char8 * const path) {
     Directory dir(path);
     dir.Create(true);
     FILE *file;
     file = fopen(path, "r+");
     fputs("Hello this is to confirm the size of file", file);
     fseek(file, 0L, SEEK_END);
-    return (dir.Size() == (uint64) ftell(file));
+    return (dir.GetSize() == (uint64) ftell(file));
 }
-/*
-bool TestLastWriteTime() const {
-    const char8 * const path = "TestF18.txt";
+
+bool DirectoryTest::TestGetLastAccessTime() {
+    const char8 * const path = "GTestDirectoryTest/TestF18.txt";
     struct stat buf;
     Directory dir(path);
-    dir.Create(path, true);
+    dir.Create(true);
     FILE *fich;
     fich = fopen(path, "r+");
     fputc('a', fich);
     fclose(fich);
     stat(path, &buf);
-    return (dir.LastAccessTime() == buf.st_atim);
+    time_t secondsFromEpoch32 = static_cast<time_t>(buf.st_atime);
+    const struct tm *tValues = localtime(&secondsFromEpoch32);
+    if(tValues->tm_sec == (int32)dir.GetLastAccessTime().seconds){
+        if (tValues->tm_min == (int32)dir.GetLastAccessTime().minutes){
+            if(tValues->tm_hour == (int32)dir.GetLastAccessTime().hours){
+                if (tValues->tm_mday == (int32)dir.GetLastAccessTime().days){
+                    if(tValues->tm_mon == (int32)dir.GetLastAccessTime().month){
+                        if(tValues->tm_year == (int32)dir.GetLastAccessTime().year){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
 }
 
-bool TestLastAccessTime() const {
-    return 0;
+bool DirectoryTest::TestGetLastWriteTime() {
+    const char8 * const path = "GTestDirectoryTest/TestF19.txt";
+        struct stat buf;
+        Directory dir(path);
+        dir.Create(true);
+        FILE *fich;
+        fich = fopen(path, "r+");
+        fputc('a', fich);
+        fclose(fich);
+        stat(path, &buf);
+        time_t secondsFromEpoch32 = static_cast<time_t>(buf.st_mtime);
+        const struct tm *tValues = localtime(&secondsFromEpoch32);
+        if(tValues->tm_sec == (int32)dir.GetLastWriteTime().seconds){
+            if (tValues->tm_min == (int32)dir.GetLastWriteTime().minutes){
+                if(tValues->tm_hour == (int32)dir.GetLastWriteTime().hours){
+                    if (tValues->tm_mday == (int32)dir.GetLastWriteTime().days){
+                        if(tValues->tm_mon == (int32)dir.GetLastWriteTime().month){
+                            if(tValues->tm_year == (int32)dir.GetLastWriteTime().year){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
 }
-*/
+
 bool DirectoryTest::TestCreate(const char8 * const path,
                                const bool isFile) {
     Directory dir(path);
@@ -169,7 +213,7 @@ bool DirectoryTest::TestDelete(const char8 * const path,
 bool DirectoryTest::TestExists(const char8 * const path) {
     Directory dir(path);
     dir.Create(false);
-    if (StringHelper::Compare(dir.Name(), path) == 0) {
+    if (StringHelper::Compare(dir.GetName(), path) == 0) {
         return dir.Exists();
     }
     else {
@@ -177,3 +221,10 @@ bool DirectoryTest::TestExists(const char8 * const path) {
     }
 }
 
+void DirectoryTest::DirectoryCreateN(char8 *destination, char8 *path) {
+    Directory dir;
+    dir.Create(BASE_PATH);
+    StringHelper::Concatenate(destination, BASE_PATH);
+    StringHelper::Concatenate(destination, &DIRECTORY_SEPARATOR);
+    StringHelper::Concatenate(destination, path);
+}

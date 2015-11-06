@@ -96,12 +96,6 @@ public:
     bool IsFile() const;
 
     /**
-     * @brief Check if this directory is read only
-     * @return true if this is a read-only file-directory, false otherwise.
-     */
-    bool ReadOnly() const;
-
-    /**
      * @brief Retrieve the file-directory size.
      * @return the file-directory size
      */

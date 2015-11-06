@@ -35,6 +35,7 @@
 #include "LinkedListHolder.h"
 #include "stdio.h"
 #include "time.h"
+#include "StringHelper.h"
 #include <sys/stat.h>
 #include "dirent.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
@@ -62,51 +63,50 @@ public:
      */
     bool TestSetByName();
 
-
     /**
      * @brief Retrieve the file-directory name.
      */
-    bool TestNameInvalid() const;
-    bool TestNameValid() const;
+    bool TestNameInvalid();
+    bool TestNameValid();
 
     /**
      * @brief Check if this is a directory.
      * @return true if this is a directory, false otherwise.
      */
-    bool TestIsDirectoryValid() const;
-    bool TestIsDirectoryInvalid() const;
+    bool TestIsDirectoryValid();
+    bool TestIsDirectoryInvalid();
 
     /**
      * @brief Check if this is a file.
      * @return true if this is a file, false otherwise.
      */
-    bool TestIsFile() const;
-    bool TestIsNoFile()const;
+    bool TestIsFile();
+    bool TestIsNoFile();
 
     /**
      * @brief Check if this directory is read only
      * @return true if this is a read-only file-directory, false otherwise.
      */
-    bool TestReadOnly() const;
+    bool TestReadOnly();
 
     /**
      * @brief Retrieve the file-directory size.
      * @return the file-directory size
      */
-    bool TestSizeDir(const char8 * const path) const;
-    bool TestSizeFile(const char8 * const path) const;
+    bool TestGetSize_Dir(const char8 * const path);
+    bool TestGetSize_File(const char8 * const path);
 
     /**
      * @brief Retrieve the last write time.
      * @return the last write time.
      */
-    bool TestLastWriteTime() const;
+    bool TestGetLastWriteTime();
 
     /**
      * @brief Retrieve the last access time.
      * @return the last access time.
      */
-    bool TestLastAccessTime() const;
+    bool TestGetLastAccessTime();
 
     /**
      * @brief Create a new file-directory.
@@ -115,14 +115,15 @@ public:
      * @return true if the file-directory is created correctly, false otherwise.
      */
     bool TestCreate(const char8 * const path,
-            const bool isFile = false);
+                    const bool isFile = false);
 
     /**
      * @brief Delete an existent file-directory.
      * @param[in] path is the path of the file / directory to be deleted.
      * @return true if the file-directory is deleted correctly, false otherwise.
      */
-    bool TestDelete(const char8 * const path,bool file);
+    bool TestDelete(const char8 * const path,
+                    bool file);
 
     /**
      * @brief Check if a file-directory exists.
@@ -133,13 +134,17 @@ public:
      */
     bool TestExists(const char8 * const path);
 
+    /**
+     * @brief Create a test directory
+     */
+    void DirectoryCreateN(char8 *destination, char8 *path);
+
 private:
     /** the file or directory name */
     char8 *fname;
 
     /** attributes of the file */
     DirectoryCore dyrectoryHandle;
-
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

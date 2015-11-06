@@ -119,10 +119,6 @@ bool Directory::IsFile() const {
     return S_ISREG(directoryHandle.st_mode);
 }
 
-bool Directory::ReadOnly() const {
-    return false;
-}
-
 uint64 Directory::GetSize() const {
     return (directoryHandle.st_size > 0) ? (static_cast<uint64>(directoryHandle.st_size)) : (0u);
 }
