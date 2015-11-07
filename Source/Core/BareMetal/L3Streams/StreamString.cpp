@@ -66,7 +66,7 @@ StreamString::StreamString(const StreamString &toCopy) :
 
 StreamString::operator AnyType() {
     void *dataPointer = static_cast<void *>(this);
-    TypeDescriptor dataDescriptor(false, Stream, 0u);
+    TypeDescriptor dataDescriptor(false, StreamStringType, 0u);
 
     return AnyType(dataDescriptor, 0u, dataPointer);
 }

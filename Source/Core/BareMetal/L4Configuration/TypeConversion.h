@@ -28,7 +28,10 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AnyType.h"
+#include "Vector.h"
+#include "Matrix.h"
 #include "StreamI.h"
+#include "StreamString.h"
 #include "StringHelper.h"
 #include "FormatDescriptor.h"
 #include "MemoryOperationsHelper.h"
@@ -42,8 +45,9 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+#if 0
 static bool TypeConvert(const AnyType &destination,
-                        const AnyType &source) {
+        const AnyType &source) {
     bool ok = true;
     uint32 nOfDimensions = source.GetNumberOfDimensions();
     uint32 copySize = 0u;
@@ -102,10 +106,188 @@ static bool TypeConvert(const AnyType &destination,
 
     return ok;
 }
+#endif
+
+static bool BasicTypeConvert(const AnyType &destination,
+                             const AnyType &source) {
+    return false;
+}
+
+static bool TypeConvert(const AnyType &destination,
+                        const AnyType &source) {
+    bool ok = true;
+    uint32 copySize = 0u;
+    uint32 totalCopySize = 0u;
+
+    //Source and destination dimensions must be the same
+    ok = (destination.GetNumberOfDimensions() == source.GetNumberOfDimensions());
+    //The number of elements in all dimensions must be the same
+    uint32 i;
+    for (i = 0; ok && (i < 3u); i++) {
+        ok = (destination.GetNumberOfElements(i) == source.GetNumberOfElements(i));
+    }
+
+    if (ok) {
+        if (source.GetNumberOfDimensions() == 0u) {
+            if ((source.GetTypeDescriptor().type == StreamStringType) || (source.GetTypeDescriptor().type == CCString)) {
+                copySize = (StringHelper::Length(static_cast<char *>(source.GetDataPointer())) + 1u);
+            }
+            else {
+                copySize = source.GetTypeDescriptor().numberOfBits / 8u;
+            }
+
+            if (destination.GetTypeDescriptor().type == StreamStringType) {
+                StreamString *stream = static_cast<StreamString *>(destination.GetDataPointer());
+                stream->Write(static_cast<char8 *>(source.GetDataPointer()), copySize);
+            }
+            else {
+                ok = MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize);
+            }
+        }
+        else if(source.GetNumberOfDimensions() == 1u) {
+            VectorCore vecToDeser(destination);
+            vecToDeser.SetDataPointer(destination.GetDataPointer());
+            ok = vecToDeser.Deserialize(source);
+        }
+        else if(source.GetNumberOfDimensions() == 2u) {
+            MatrixCore matToDeser(destination);
+            matToDeser.SetDataPointer(destination.GetDataPointer());
+            ok = matToDeser.Deserialize(source);
+        }
+    }
+#if 0
+        uint32 c = 0u;
+        uint32 r = 0u;
+        uint32 z = 0u;
+        uint32 numberOfColumns = source.GetNumberOfElements(0u);
+        uint32 numberOfRows = source.GetNumberOfElements(1u);
+        uint32 numberOfZ = source.GetNumberOfElements(2u);
+        if (numberOfColumns == 0u) {
+            numberOfColumns = 1u;
+        }
+        if (numberOfRows == 0u) {
+            numberOfRows = 1u;
+        }
+        if (numberOfZ == 0u) {
+            numberOfZ = 1u;
+        }
+
+        void **copyArray = static_cast<void **>(source.GetDataPointer());
+
+        for (z = 0u; ok && (z < numberOfZ); z++) {
+            for (r = 0u; ok && (r < numberOfRows); r++) {
+                for (c = 0u; ok && (c < numberOfColumns); c++) {
+
+                    uint32 idx = c + (r * numberOfColumns) + (z * numberOfRows * numberOfColumns);
+
+                    if ((source.GetTypeDescriptor().type == StreamStringType) || (source.GetTypeDescriptor().type == CCString)) {
+                        const char *srcArray = static_cast<const char *>(copyArray[idx]);
+                        copySize = (StringHelper::Length(srcArray) + 1u);
+                    }
+                    else {
+                        copySize = source.GetTypeDescriptor().numberOfBits / 8u;
+                    }
+
+                    ok = (copySize > 0u);
+
+                    if (ok) {
+                        if (source.GetTypeDescriptor().type == StreamStringType) {
+                            const char *srcArray = static_cast<const char *>(copyArray[idx]);
+                            if (destination.GetTypeDescriptor().type == StreamStringType) {
+                                if (destination.IsStaticDeclared() || (destination.GetNumberOfDimensions() < 2u)) {
+                                    StreamString *streamDest = static_cast<StreamString *>(destination.GetDataPointer());
+                                    streamDest += idx;
+                                    ok = streamDest->Write(srcArray, copySize);
+                                }
+                                else {
+                                    StreamString **streamDest = static_cast<StreamString **>(destination.GetDataPointer());
+                                    ok = streamDest[r][c].Write(srcArray, copySize);
+                                }
+                            }
+                            else if (destination.GetTypeDescriptor().type == CCString) {
+                                if (destination.GetNumberOfDimensions() < 2u) {
+                                    //If the destination size is not sufficient this is going to have an ugly end...
+                                    char *destArray = static_cast<char *>(destination.GetDataPointer());
+                                    destArray += (idx * sizeof(char *));
+                                    ok = MemoryOperationsHelper::Copy(destArray, srcArray, copySize);
+                                }
+                                else if (destination.IsStaticDeclared()) {
+                                    char *destArray = reinterpret_cast<char **>(destination.GetDataPointer())[idx];
+                                    ok = MemoryOperationsHelper::Copy(destArray, srcArray, copySize);
+                                }
+                                else {
+                                    char **destArray = static_cast<char **>(destination.GetDataPointer());
+                                    ok = MemoryOperationsHelper::Copy(&destArray[r][c], srcArray, copySize);
+                                }
+                            }
+                            else {
+                                StreamString sourceStreamString = srcArray;
+                                ok = BasicTypeConvert(destination, sourceStreamString);
+                            }
+                        }
+                        else if (source.GetTypeDescriptor().type == CCString) {
+                            const char *srcArray = static_cast<const char *>(copyArray[idx]);
+                            if (destination.GetTypeDescriptor().type == CCString) {
+                                if (destination.GetNumberOfDimensions() < 2u) {
+                                    //If the destination size is not sufficient this is going to have an ugly end...
+                                    char *destArray = static_cast<char *>(destination.GetDataPointer());
+                                    destArray += (idx * sizeof(char *));
+                                    ok = MemoryOperationsHelper::Copy(destArray, srcArray, copySize);
+                                }
+                                else if (destination.IsStaticDeclared()) {
+                                    char *destArray = reinterpret_cast<char **>(destination.GetDataPointer())[idx];
+                                    ok = MemoryOperationsHelper::Copy(destArray, srcArray, copySize);
+                                }
+                                else {
+                                    char **destArray = static_cast<char **>(destination.GetDataPointer());
+                                    ok = MemoryOperationsHelper::Copy(&destArray[r][c], srcArray, copySize);
+                                    printf("-->%s\n", srcArray);
+                                    printf("-->[%d][%d]=%s\n", r, c, destArray[r][c]);
+                                }
+                            }
+                            else if (destination.GetTypeDescriptor().type == StreamStringType) {
+                                if (destination.IsStaticDeclared() || (destination.GetNumberOfDimensions() < 2u)) {
+                                    StreamString *streamDest = static_cast<StreamString *>(destination.GetDataPointer());
+                                    streamDest += idx;
+                                    ok = streamDest->Write(srcArray, copySize);
+                                }
+                                else {
+                                    StreamString **streamDest = static_cast<StreamString **>(destination.GetDataPointer());
+                                    ok = streamDest[r][c].Write(srcArray, copySize);
+                                }
+                            }
+                            else {
+                                AnyType sourceCCString(srcArray);
+                                ok = BasicTypeConvert(destination, sourceCCString);
+                            }
+                        }
+                        else {
+                            void *srcArray = copyArray[idx];
+                            void *destArray = static_cast<char *>(destination.GetDataPointer()) + totalCopySize;
+                            if (source.GetTypeDescriptor() == destination.GetTypeDescriptor()) {
+                                ok = MemoryOperationsHelper::Copy(destArray, srcArray, copySize);
+                            }
+                            else {
+                                AnyType sourceBasicType(source);
+                                AnyType destinationBasicType(destination);
+                                sourceBasicType.SetDataPointer(srcArray);
+                                destinationBasicType.SetDataPointer(destArray);
+                                ok = BasicTypeConvert(destinationBasicType, sourceBasicType);
+                            }
+                        }
+                        totalCopySize += copySize;
+                    }
+                }
+            }
+        }
+    }
+#endif
+        return ok;
+    }
 
 static bool TypeConvert(AnyType &destination,
-                        const AnyType& source,
-                        const FormatDescriptor &conversionFormat) {
+        const AnyType& source,
+        const FormatDescriptor &conversionFormat) {
     return false;
 }
 

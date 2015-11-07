@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
+class Reference;
 /**
  * @brief TODO
  * @details TODO
@@ -48,17 +48,34 @@ public:
     /**
      * TODO
      */
-    virtual bool Read(const char * const name, const AnyType &value) = 0;
+    virtual bool Read(const char * const name,
+                      const AnyType &value) = 0;
 
     /**
      * TODO
      */
-    virtual bool Write(const char * const name, const AnyType &value) = 0;
+    virtual AnyType GetType(const char * const name) = 0;
 
     /**
      * TODO
      */
-    virtual bool Copy(StructuredDataI &destination, bool fromRoot) = 0;
+    virtual bool Write(const char * const name,
+                       const AnyType &value) = 0;
+
+    /**
+     * TODO
+     */
+    virtual bool Copy(StructuredDataI &destination) = 0;
+
+    /**
+     * TODO
+     */
+    virtual bool AddToCurrentNode(Reference node) = 0;
+
+    /**
+     * TODO
+     */
+    virtual bool MoveToRoot() = 0;
 
     /**
      * TODO
@@ -68,15 +85,16 @@ public:
     /**
      * TODO. Delete empty nodes?
      */
-    virtual bool Move(const char * const path, bool relative) = 0;
+    virtual bool Move(const char * const path,
+                      bool relative) = 0;
 
     /**
      * TODO
      */
-    virtual bool CreateNodes(const char * const path, bool relative) = 0;
+    virtual bool CreateNodes(const char * const path,
+                             bool relative) = 0;
 
 };
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

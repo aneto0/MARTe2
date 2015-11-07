@@ -147,6 +147,7 @@ public:
 
     /**
      * @brief Gets the size of the stream.
+     * TODO Check if it can be assumed that it is zero terminated!
      * @return the current stream size.
      */
     virtual uint64 Size();

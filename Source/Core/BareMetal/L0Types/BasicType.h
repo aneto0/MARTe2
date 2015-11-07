@@ -84,7 +84,7 @@ const BasicType CArray = 10u;
 /**
  * The type is a StreamString class.
  */
-const BasicType String = 11u;
+const BasicType StreamStringType = 11u;
 
 /**
  * The type is a StreamInterface class.

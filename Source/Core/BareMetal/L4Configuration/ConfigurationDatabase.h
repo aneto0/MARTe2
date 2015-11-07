@@ -65,8 +65,13 @@ public:
     /**
      * TODO
      */
+    virtual bool Read(const char * const name,
+                      const AnyType &value);
 
-    virtual bool Read(const char * const name, const AnyType &value);
+    /**
+     * TODO
+     */
+    virtual AnyType GetType(const char * const name);
 
     /**
      * TODO
@@ -74,11 +79,51 @@ public:
     virtual bool Write(const char * const name,
                        const AnyType &value);
 
+    template<typename T>
+    bool Write(const char * const name,
+               T *source,
+               uint32 nOfColumns);
+
+    template<typename T>
+    bool Write(const char * const name,
+               T **source,
+               uint32 nOfRows,
+               uint32 nOfColumns);
+
+    template<typename T>
+    bool Write(const char * const name,
+               T *** source,
+               uint32 nOfRows,
+               uint32 nOfColumns,
+               uint32 nOfZ);
+
+    template<typename T>
+    bool Read(const char * const name,
+              T *source,
+              uint32 nOfColumns);
+
+    template<typename T>
+    bool Read(const char * const name,
+              T **source,
+              uint32 nOfRows,
+              uint32 nOfColumns);
+
+    template<typename T>
+    bool Read(const char * const name,
+              T ***source,
+              uint32 nOfRows,
+              uint32 nOfColumns,
+              uint32 nOfZ);
+
     /**
      * TODO
      */
-    virtual bool Copy(StructuredDataI &destination,
-                      bool fromRoot);
+    virtual bool Copy(StructuredDataI &destination);
+
+    /**
+     * TODO
+     */
+    virtual bool MoveToRoot();
 
     /**
      * TODO
@@ -96,6 +141,8 @@ public:
      */
     virtual bool CreateNodes(const char * const path,
                              bool relative);
+
+    virtual bool AddToCurrentNode(Reference node);
 
 private:
     /**
@@ -115,7 +162,59 @@ private:
 
 };
 
+template<typename T>
+bool ConfigurationDatabase::Write(const char * const name,
+                                  T *source,
+                                  uint32 nOfColumns) {
+    AnyType vec(source, nOfColumns);
+    return Write(name, vec);
+}
 
+template<typename T>
+bool ConfigurationDatabase::Write(const char * const name,
+                                  T **source,
+                                  uint32 nOfRows,
+                                  uint32 nOfColumns) {
+    AnyType mat(source, nOfRows, nOfColumns);
+    return Write(name, mat);
+}
+
+template<typename T>
+bool ConfigurationDatabase::Write(const char * const name,
+                                  T ***source,
+                                  uint32 nOfRows,
+                                  uint32 nOfColumns,
+                                  uint32 nOfZ) {
+    AnyType mat(source, nOfRows, nOfColumns, nOfZ);
+    return Write(name, mat);
+}
+
+template<typename T>
+bool ConfigurationDatabase::Read(const char * const name,
+                                 T *source,
+                                 uint32 nOfColumns) {
+    AnyType vec(source, nOfColumns);
+    return Read(name, vec);
+}
+
+template<typename T>
+bool ConfigurationDatabase::Read(const char * const name,
+                                 T **source,
+                                 uint32 nOfRows,
+                                 uint32 nOfColumns) {
+    AnyType mat(source, nOfRows, nOfColumns);
+    return Read(name, mat);
+}
+
+template<typename T>
+bool ConfigurationDatabase::Read(const char * const name,
+                                 T ***source,
+                                 uint32 nOfRows,
+                                 uint32 nOfColumns,
+                                 uint32 nOfZ) {
+    AnyType mat(source, nOfRows, nOfColumns, nOfZ);
+    return Read(name, mat);
+}
 }
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

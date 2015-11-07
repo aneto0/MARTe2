@@ -63,30 +63,63 @@ bool ConfigurationDatabase::Write(const char * const name,
             ok = currentNode.IsValid();
             if (ok) {
                 ok = currentNode->Insert(objToWrite);
-                printf("Object with name %s inserted into %s\n", objToWrite->GetName(), currentNode->GetName());
             }
         }
     }
     return ok;
 }
 
-bool ConfigurationDatabase::Copy(StructuredDataI &destination,
-                                 bool fromRoot) {
-    return false;
+AnyType ConfigurationDatabase::GetType(const char * const name) {
+    bool found = false;
+    Reference foundReference;
+    uint32 i;
+    for (i = 0; (!found) && (i < currentNode->Size()); i++) {
+        foundReference = currentNode->Get(i);
+        found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
+    }
+
+    AnyType retType;
+    if (found) {
+        ReferenceT<AnyObject> objToRead = foundReference;
+        if (objToRead.IsValid()) {
+            retType = objToRead->GetType();
+        }
+    }
+
+    return retType;
+}
+
+bool ConfigurationDatabase::Copy(StructuredDataI &destination) {
+    return destination.AddToCurrentNode(currentNode);
+}
+
+bool ConfigurationDatabase::MoveToRoot() {
+    bool ok = rootNode.IsValid();
+    if (ok) {
+        currentNode = rootNode;
+    }
+    return ok;
 }
 
 bool ConfigurationDatabase::Read(const char * const name,
                                  const AnyType &value) {
 
-    //TODO might need to use optimised filter which works only on leaf name
-    ReferenceContainerFilterObjectName filter(1, 0u, name);
-    ReferenceContainer resultSingle;
-    currentNode->Find(resultSingle, filter);
+    //Could have used the ReferenceContainerFilterObjectName but this way is faster given that no complex paths are involved
+    bool found = false;
+    Reference foundReference;
+    uint32 i;
+    for (i = 0; (!found) && (i < currentNode->Size()); i++) {
+        foundReference = currentNode->Get(i);
+        found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
+    }
 
-    bool ok = (resultSingle.Size() > 0);
+    bool ok = found;
     if (ok) {
-        ReferenceT<AnyObject> objToRead = resultSingle.Get(0);
-        ok = TypeConvert(value, objToRead->GetType());
+        ReferenceT<AnyObject> objToRead = foundReference;
+        ok = objToRead.IsValid();
+        if (ok) {
+            ok = TypeConvert(value, objToRead->GetType());
+        }
     }
 
     return ok;
@@ -95,7 +128,6 @@ bool ConfigurationDatabase::Read(const char * const name,
 bool ConfigurationDatabase::Move(const char * const path,
                                  bool relative) {
 
-    //TODO might need to use optimised filter which works only on leaf name
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
     ReferenceContainer resultSingle;
     if (relative) {
@@ -170,6 +202,15 @@ bool ConfigurationDatabase::CreateNodes(const char * const path,
                 }
             }
         }
+    }
+    return ok;
+}
+
+bool ConfigurationDatabase::AddToCurrentNode(Reference node) {
+    ReferenceT<ReferenceContainer> nodeToAdd = node;
+    bool ok = nodeToAdd.IsValid();
+    if (ok) {
+        ok = currentNode->Insert(nodeToAdd);
     }
     return ok;
 }
