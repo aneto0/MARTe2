@@ -123,6 +123,9 @@ void TestVectorCharStarDynamic() {
     vectorWrite[2] = "ccc";
     cdb.Write("VectorFromArray", vectorWrite);
     Vector<char *> vectorRead(3);
+    vectorRead[0] = (char *) HeapManager::Malloc(3);
+    vectorRead[1] = (char *) HeapManager::Malloc(3);
+    vectorRead[2] = (char *) HeapManager::Malloc(3);
     cdb.Read("VectorFromArray", vectorRead);
     printf("[%s][%s][%s]\n", vectorRead[0], vectorRead[1], vectorRead[2]);
 }
@@ -138,8 +141,11 @@ void TestVectorCharStarExistentArray() {
     arr[2] = "ccc";
     Vector<const char *> vectorWrite(arr, 3);
     cdb.Write("VectorFromArray", vectorWrite);
-    const char **arrRead = new const char*[3];
-    Vector<const char *> vectorRead(arrRead, 3);
+    char **arrRead = new char*[3];
+    arrRead[0] = (char *) HeapManager::Malloc(3);
+    arrRead[1] = (char *) HeapManager::Malloc(3);
+    arrRead[2] = (char *) HeapManager::Malloc(3);
+    Vector<char *> vectorRead(arrRead, 3);
     cdb.Read("VectorFromArray", vectorRead);
     printf("[%s][%s][%s]\n", vectorRead[0], vectorRead[1], vectorRead[2]);
     printf("[%s][%s][%s]\n", arrRead[0], arrRead[1], arrRead[2]);
@@ -418,8 +424,8 @@ int main(int argc,
     TestVectorNumbersDynamic();
     TestVectorNumbersExistentArray();
     TestScalarCharStar();
-    TestVectorCharStarStatic();
     TestVectorCharStarDynamic();
+    TestVectorCharStarStatic();
     TestVectorCharStarExistentArray();
     TestVectorCharArray();
     TestScalarString();
@@ -438,128 +444,6 @@ int main(int argc,
     TestMatrixStreamStringDynamic();
     TestMatrixStreamStringExistentArray();
 
-#if 0
-
-    printf("\nTable===========\n");
-    float32 floatTableWrite[2][3] = { {3.2f, 4.0f, 5.0f}, {-1.2f, -2.0f, -3.0f}};
-    ok &= cdb.Write("TableValues", floatTableWrite);
-    float32 floatTableRead[2][3];
-    ok &= cdb.Read("TableValues", floatTableRead);
-    printf("[%f][%f][%f]\n", floatTableRead[0][0], floatTableRead[0][1], floatTableRead[0][2]);
-    printf("[%f][%f][%f]\n", floatTableRead[1][0], floatTableRead[1][1], floatTableRead[1][2]);
-
-    printf("\n*Table===========\n");
-    float32 **floatTableWriteStar = reinterpret_cast<float32 **>(floatTableWrite);
-    ok &= cdb.Write("TableValuesStar", floatTableWriteStar, 2, 3);
-    float32 **floatTableReadStart = reinterpret_cast<float32 **>(floatTableRead);
-    ok &= cdb.Read("TableValuesStar", floatTableReadStart, 2, 3);
-    printf("[%f][%f][%f]\n", floatTableRead[0][0], floatTableRead[0][1], floatTableRead[0][2]);
-    printf("[%f][%f][%f]\n", floatTableRead[1][0], floatTableRead[1][1], floatTableRead[1][2]);
-
-    printf("\nStreamString===========\n");
-    StreamString writeStreamString = "ABCDEF";
-    ok &= cdb.Write("StreamString", writeStreamString);
-    StreamString readStreamString;
-    ok &= cdb.Read("StreamString", readStreamString);
-    readStreamString.Seek(0);
-    printf("[%s]\n", readStreamString.Buffer());
-
-    printf("\nStreamString[]===========\n");
-    StreamString writeStreamStringArray[2];
-    writeStreamStringArray[0] = "1ABCDEF2";
-    writeStreamStringArray[1] = "2FEDCBA1";
-    Vector<StreamString> vecWriteStreamStringArray(writeStreamStringArray);
-    ok &= cdb.Write("StreamStringArray", vecWriteStreamStringArray);
-    StreamString readStreamStringArray[2];
-    Vector<StreamString> vecReadStreamStringArray(readStreamStringArray);
-    ok &= cdb.Read("StreamStringArray", vecReadStreamStringArray);
-
-    printf("[%s][%s]\n", vecReadStreamStringArray[0].Buffer(), vecReadStreamStringArray[1].Buffer());
-
-    printf("\n*StreamString===========\n");
-    StreamString *writeStreamStringArrayStar = new StreamString[2];
-    writeStreamStringArrayStar[0] = "-1ABCDEF2-";
-    writeStreamStringArrayStar[1] = "-2FEDCBA1-";
-    Vector<StreamString> writeStreamStringArrayStarAT(writeStreamStringArrayStar, 2);
-
-    ok &= cdb.Write("StreamStringArray2", writeStreamStringArrayStarAT);
-
-    Vector<StreamString> readStreamStringArrayStarAT(2);
-    ok &= cdb.Read("StreamStringArray2", readStreamStringArrayStarAT);
-
-    printf("[%s][%s]\n", readStreamStringArrayStarAT[0].Buffer(), readStreamStringArrayStarAT[1].Buffer());
-
-    printf("\nStreamString[][]===========\n");
-    StreamString writeStreamStringTable[2][3];
-    writeStreamStringTable[0][0] = "[0][0]";
-    writeStreamStringTable[0][1] = "[0][1]";
-    writeStreamStringTable[0][2] = "[0][2]";
-    writeStreamStringTable[1][0] = "[1][0]";
-    writeStreamStringTable[1][1] = "[1][1]";
-    writeStreamStringTable[1][2] = "[1][2]";
-
-    ok &= cdb.Write("StreamStringTable", writeStreamStringTable);
-    Matrix<StreamString> readStreamStringTable(2, 3);
-    ok &= cdb.Read("StreamStringTable", readStreamStringTable);
-    printf("[%s][%s][%s]\n", readStreamStringTable[0][0].Buffer(), readStreamStringTable[0][1].Buffer(), readStreamStringTable[0][2].Buffer());
-    printf("[%s][%s][%s]\n", readStreamStringTable[1][0].Buffer(), readStreamStringTable[1][1].Buffer(), readStreamStringTable[1][2].Buffer());
-
-    printf("\nStreamString[][] 2===========\n");
-    Matrix<StreamString> readStreamStringTableStatic(writeStreamStringTable);
-    ok &= cdb.Read("StreamStringTable", readStreamStringTableStatic);
-    printf("[%s][%s][%s]\n", readStreamStringTableStatic[0][0].Buffer(), readStreamStringTableStatic[0][1].Buffer(),
-            readStreamStringTableStatic[0][2].Buffer());
-    printf("[%s][%s][%s]\n", readStreamStringTableStatic[1][0].Buffer(), readStreamStringTableStatic[1][1].Buffer(),
-            readStreamStringTableStatic[1][2].Buffer());
-
-    printf("\nStreamString 2 String===========\n");
-    StreamString writeStreamStringToString = "ABCDEF";
-    ok &= cdb.Write("StreamStringToString", writeStreamString);
-    char readStreamStringToString[20];
-    ok &= cdb.Read("StreamStringToString", (char *) readStreamStringToString);
-    printf("[%s]\n", readStreamStringToString);
-
-    printf("\nString 2 nStreamString===========\n");
-    const char *writeStringToStreamString = "#ABCDEF$";
-    ok &= cdb.Write("StringToStreamString", writeStringToStreamString);
-    StreamString readStringToStreamString;
-    ok &= cdb.Read("StringToStreamString", readStringToStreamString);
-    readStringToStreamString.Seek(0);
-    printf("[%s]\n", readStringToStreamString.Buffer());
-
-    printf("\nVector===========\n");
-    Vector<float> vecFloatWrite(3);
-    vecFloatWrite[0] = 1.0f;
-    vecFloatWrite[1] = -1.0f;
-    vecFloatWrite[2] = 2.0f;
-    ok &= cdb.Write("Vector", vecFloatWrite);
-    Vector<float> vecFloatRead(3);
-    ok &= cdb.Read("Vector", vecFloatRead);
-    printf("[%f][%f][%f]\n", vecFloatRead[0], vecFloatRead[1], vecFloatRead[2]);
-
-    printf("\nMatrix===========\n");
-    Matrix<float> matFloatWrite(3, 2);
-    matFloatWrite[0][0] = 1.0f;
-    matFloatWrite[0][1] = -1.0f;
-    matFloatWrite[1][0] = 2.0f;
-    matFloatWrite[1][1] = -2.0f;
-    matFloatWrite[2][0] = 3.0f;
-    matFloatWrite[2][1] = -3.0f;
-    ok &= cdb.Write("Matrix", matFloatWrite);
-    Matrix<float> matFloatRead(3, 2);
-    ok &= cdb.Read("Matrix", matFloatRead);
-    printf("[%f][%f]\n", matFloatRead[0][0], matFloatRead[0][1]);
-    printf("[%f][%f]\n", matFloatRead[1][0], matFloatRead[1][1]);
-    printf("[%f][%f]\n", matFloatRead[2][0], matFloatRead[2][1]);
-
-    printf("\nMatrix from array===========\n");
-    Matrix<float> matFloatWriteFromArray(floatTableWrite);
-    ok &= cdb.Write("MatrixFromArray", matFloatWriteFromArray);
-    Matrix<float> matFloatReadFromArray(floatTableRead);
-    ok &= cdb.Read("MatrixFromArray", matFloatReadFromArray);
-    printf("[%f][%f][%f]\n", matFloatReadFromArray[0][0], matFloatReadFromArray[0][1], matFloatReadFromArray[0][2]);
-    printf("[%f][%f][%f]\n", matFloatReadFromArray[1][0], matFloatReadFromArray[1][1], matFloatReadFromArray[1][2]);
-#endif
     return 0;
 }
 

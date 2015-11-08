@@ -260,65 +260,6 @@ public:
     /**
      * TODO
      */
-    template<typename T, uint32 nOfElements>
-    inline AnyType(T (&source)[nOfElements]);
-
-    /**
-     * TODO
-     */
-    template<typename T, uint32 nOfRows, uint32 nOfColumns>
-    inline AnyType(T (&source)[nOfRows][nOfColumns]);
-
-    /**
-     * TODO
-     */
-    template<typename T>
-    inline AnyType(T *source,
-                   uint32 nOfElements);
-
-    /**
-     * TODO
-     */
-    template<typename T>
-    inline AnyType(const T *source,
-                   uint32 nOfElements);
-
-    /**
-     * TODO
-     */
-    template<typename T>
-    inline AnyType(T **source,
-                   uint32 nOfRows,
-                   uint32 nOfColumns);
-
-    /**
-     * TODO
-     */
-    template<typename T>
-    inline AnyType(const T **source,
-                   uint32 nOfRows,
-                   uint32 nOfColumns);
-
-    /**
-     * TODO
-     */
-    template<typename T>
-    inline AnyType(T ***source,
-                   uint32 nOfRows,
-                   uint32 nOfColumns,
-                   uint32 nOfZ);
-
-    /**
-     * TODO
-     */
-    template<typename T>
-    inline AnyType(const T ***source,
-                   uint32 nOfRows,
-                   uint32 nOfColumns,
-                   uint32 nOfZ);
-    /**
-     * TODO
-     */
     inline AnyType & operator=(const AnyType &src);
 
     /**
@@ -401,6 +342,11 @@ public:
     /**
      * TODO
      */
+    inline void SetNumberOfDimensions(uint32 nOfDimensions);
+
+    /**
+     * TODO
+     */
     inline uint32 GetNumberOfElements(uint32 dimension) const;
 
     /**
@@ -413,6 +359,11 @@ public:
      * TODO
      */
     inline bool IsStaticDeclared() const;
+
+    /**
+     * TODO
+     */
+    inline void SetStaticDeclared(bool isStaticDeclared);
 
 protected:
 
@@ -472,6 +423,7 @@ AnyType::AnyType(const AnyType &x) {
     this->dataPointer = x.dataPointer;
     this->bitAddress = x.bitAddress;
     this->dataDescriptor = x.dataDescriptor;
+    this->staticDeclared = false;
     this->numberOfDimensions = x.numberOfDimensions;
     this->numberOfElements[0] = x.numberOfElements[0];
     this->numberOfElements[1] = x.numberOfElements[1];
@@ -700,6 +652,7 @@ AnyType &AnyType::operator=(const AnyType &src) {
         dataPointer = src.dataPointer;
         bitAddress = src.bitAddress;
         dataDescriptor = src.dataDescriptor;
+        staticDeclared = src.staticDeclared;
         numberOfDimensions = src.numberOfDimensions;
         numberOfElements[0] = src.numberOfElements[0];
         numberOfElements[1] = src.numberOfElements[1];
@@ -814,136 +767,6 @@ AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
     InitDimensions();
 }
 
-template<typename T, uint32 nOfElements>
-AnyType::AnyType(T (&source)[nOfElements]) {
-    dataPointer = static_cast<void *>(&source);
-    bitAddress = 0u;
-    dataDescriptor.isConstant = false;
-    InitDimensions();
-    numberOfDimensions = 1u;
-    if (nOfElements > 0u) {
-        AnyType descriptor(source[0]);
-        dataDescriptor = descriptor.GetTypeDescriptor();
-        numberOfElements[0] = nOfElements;
-    }
-}
-
-template<typename T, uint32 nOfRows, uint32 nOfColumns>
-AnyType::AnyType(T (&source)[nOfRows][nOfColumns]) {
-    dataPointer = static_cast<void *>(&source);
-    bitAddress = 0u;
-    dataDescriptor.isConstant = false;
-    InitDimensions();
-    numberOfDimensions = 2u;
-    if ((nOfRows > 0u) && (nOfColumns > 0u)) {
-        AnyType descriptor(source[0]);
-        dataDescriptor = descriptor.GetTypeDescriptor();
-        numberOfElements[0] = nOfColumns;
-        numberOfElements[1] = nOfRows;
-    }
-}
-
-template<typename T>
-AnyType::AnyType(T *source,
-                 uint32 nOfElements) {
-    dataPointer = static_cast<void *>(source);
-    bitAddress = 0u;
-    dataDescriptor.isConstant = false;
-    InitDimensions();
-    numberOfDimensions = 1u;
-    if (nOfElements > 0u) {
-        AnyType descriptor(source[0]);
-        dataDescriptor = descriptor.GetTypeDescriptor();
-        numberOfElements[0] = nOfElements;
-    }
-}
-
-template<typename T>
-AnyType::AnyType(const T *source,
-                 uint32 nOfElements) {
-    dataPointer = static_cast<void *>(source);
-    bitAddress = 0u;
-    dataDescriptor.isConstant = true;
-    InitDimensions();
-    numberOfDimensions = 1u;
-    if (nOfElements > 0u) {
-        AnyType descriptor(source[0]);
-        dataDescriptor = descriptor.GetTypeDescriptor();
-        numberOfElements[0] = nOfElements;
-    }
-}
-
-template<typename T>
-AnyType::AnyType(const T **source,
-                 uint32 nOfRows,
-                 uint32 nOfColumns) {
-    dataPointer = static_cast<void *>(source);
-    bitAddress = 0u;
-    dataDescriptor.isConstant = true;
-    InitDimensions();
-    numberOfDimensions = 2u;
-    if ((nOfRows > 0u) && (nOfColumns > 0u)) {
-        AnyType descriptor(source[0][0]);
-        dataDescriptor = descriptor.GetTypeDescriptor();
-        numberOfElements[0] = nOfColumns;
-        numberOfElements[1] = nOfRows;
-    }
-}
-
-template<typename T>
-AnyType::AnyType(T **source,
-                 uint32 nOfRows,
-                 uint32 nOfColumns) {
-    dataPointer = static_cast<void *>(source);
-    bitAddress = 0u;
-    dataDescriptor.isConstant = false;
-    InitDimensions();
-    numberOfDimensions = 2u;
-    if ((nOfRows > 0u) && (nOfColumns > 0u)) {
-        AnyType descriptor(source[0][0]);
-        dataDescriptor = descriptor.GetTypeDescriptor();
-        numberOfElements[0] = nOfColumns;
-        numberOfElements[1] = nOfRows;
-    }
-}
-
-template<typename T>
-AnyType::AnyType(const T ***source,
-                 uint32 nOfRows,
-                 uint32 nOfColumns,
-                 uint32 nOfZ) {
-    dataPointer = static_cast<void *>(source);
-    bitAddress = 0u;
-    dataDescriptor.isConstant = true;
-    InitDimensions();
-    numberOfDimensions = 2u;
-    if ((nOfRows > 0u) && (nOfColumns > 0u) && (nOfZ > 0u)) {
-        AnyType descriptor(source[0][0][0]);
-        dataDescriptor = descriptor.GetTypeDescriptor();
-        numberOfElements[0] = nOfColumns;
-        numberOfElements[1] = nOfRows;
-        numberOfElements[2] = nOfZ;
-    }
-}
-
-template<typename T>
-AnyType::AnyType(T ***source,
-                 uint32 nOfRows,
-                 uint32 nOfColumns,
-                 uint32 nOfZ) {
-    dataPointer = static_cast<void *>(source);
-    bitAddress = 0u;
-    dataDescriptor.isConstant = false;
-    InitDimensions();
-    numberOfDimensions = 2u;
-    if ((nOfRows > 0u) && (nOfColumns > 0u) && (nOfZ > 0u)) {
-        AnyType descriptor(source[0][0][0]);
-        dataDescriptor = descriptor.GetTypeDescriptor();
-        numberOfElements[0] = nOfColumns;
-        numberOfElements[1] = nOfRows;
-        numberOfElements[2] = nOfZ;
-    }
-}
 /*---------------------------------------------------------------------------*/
 
 void* AnyType::GetDataPointer() const {
@@ -966,9 +789,18 @@ uint32 AnyType::GetNumberOfDimensions() const {
     return numberOfDimensions;
 }
 
+void AnyType::SetNumberOfDimensions(uint32 nOfDimensions) {
+    numberOfDimensions = nOfDimensions;
+}
+
 bool AnyType::IsStaticDeclared() const {
     return staticDeclared;
 }
+
+void AnyType::SetStaticDeclared(bool isStaticDeclared){
+    staticDeclared = isStaticDeclared;;
+}
+
 
 uint32 AnyType::GetNumberOfElements(uint32 dimension) const {
     return numberOfElements[dimension];

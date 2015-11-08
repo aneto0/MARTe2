@@ -25,6 +25,7 @@
 #############################################################
 
 OBJSX=ConfigurationDatabase.x\
+    TypeConversion.x\
     AnyObject.x
         
 PACKAGE=Core/BareMetal

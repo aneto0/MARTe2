@@ -86,9 +86,6 @@ bool ClassRegistryDatabaseTest::TestAdd() {
 
     ClassProperties testClassProperties("TestAdd", "TestAdd", "V");
 
-    //The add function is called directly by the constructor. It cannot be deleted before the execution of the program.
-    ClassRegistryItem *myItem = new ClassRegistryItem(testClassProperties, NULL);
-
     uint32 newSizeDB = db->GetSize();
 
     if (sizeDB != (newSizeDB - 1)) {

@@ -70,7 +70,12 @@ private:
     /**
      * TODO
      */
-    void *value;
+    bool SerializeVector();
+
+    /**
+     * TODO
+     */
+    bool SerializeMatrix();
 };
 }
 
