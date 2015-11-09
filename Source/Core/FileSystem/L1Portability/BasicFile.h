@@ -338,7 +338,7 @@ namespace MARTe {
          * @brief Queries the pathname.
          * @return a pointer to a pathname of the open file.
          */
-        String GetPathName();
+        String GetPathName() const;
 
     private:
         BasicFileProperties fileProperties;

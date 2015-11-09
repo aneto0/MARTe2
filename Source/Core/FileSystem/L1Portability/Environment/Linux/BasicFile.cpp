@@ -103,10 +103,11 @@ MARTe::uint32 ConvertToBasicFileFlags(const MARTe::uint32 flags) {
 MARTe::uint32 CheckFlags(MARTe::uint32 flags) {
 
     //If APPEND and Read mode are set at the same time the APPEND mode is deleted from the flags
-    if ((flags & (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)
-            && !((flags & MARTe::BasicFile::ACCESS_MODE_W) == (MARTe::BasicFile::ACCESS_MODE_W))) {
-        MARTe::uint32 clean_APPEND = ~MARTe::BasicFile::FLAG_APPEND;
-        flags &= clean_APPEND;
+    if ((flags & (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)) {
+        if ((flags & MARTe::BasicFile::ACCESS_MODE_W) != (MARTe::BasicFile::ACCESS_MODE_W)) {
+            MARTe::uint32 clean_APPEND = ~MARTe::BasicFile::FLAG_APPEND;
+            flags &= clean_APPEND;
+        }
     }
 
     if ((flags & (MARTe::BasicFile::FLAG_CREAT | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE))
@@ -114,10 +115,11 @@ MARTe::uint32 CheckFlags(MARTe::uint32 flags) {
         MARTe::uint32 clean_CREAT_EXCLUSIVE = ~MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE;
         flags &= clean_CREAT_EXCLUSIVE;
     }
-    if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)
-            && !((flags & MARTe::BasicFile::ACCESS_MODE_W) == (MARTe::BasicFile::ACCESS_MODE_W))) {
-        MARTe::uint32 clean_TRUNC = ~MARTe::BasicFile::FLAG_TRUNC;
-        flags &= clean_TRUNC;
+    if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)) {
+        if ((flags & MARTe::BasicFile::ACCESS_MODE_W) != (MARTe::BasicFile::ACCESS_MODE_W)) {
+            MARTe::uint32 clean_TRUNC = ~MARTe::BasicFile::FLAG_TRUNC;
+            flags &= clean_TRUNC;
+        }
     }
     if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE))
             == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE)) {
@@ -225,6 +227,7 @@ bool BasicFile::Open(const char8 * const pathname,
 
         uint32 flagsChecked = CheckFlags(flags);
         uint32 linuxFlags = ConvertToLinuxFlags(flagsChecked);
+        /*lint -e{9130} Signed value*/
         fileProperties.identifier = open(pathname, static_cast<int32>(linuxFlags), (S_IRWXU | S_IRWXG | S_IRWXO));
         if (!IsOpen()) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Open(). File cannot be opened");
@@ -443,7 +446,7 @@ bool BasicFile::RelativeSeek(const int32 deltaPos) {
         else {
             localPos = position + deltaPos;
         }
-        retSeek = lseek(fileProperties.identifier, localPos, SEEK_CUR);
+        retSeek = lseek(fileProperties.identifier, localPos, SEEK_SET);
         if (retSeek < 0) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::RelativeSeek(). The position cannot be set");
             retVal = false;
@@ -485,7 +488,7 @@ bool BasicFile::SetSize(const uint64 size) {
     return retVal;
 }
 
-String BasicFile::GetPathName() {
+String BasicFile::GetPathName() const{
     return fileProperties.pathName;
 }
 }
