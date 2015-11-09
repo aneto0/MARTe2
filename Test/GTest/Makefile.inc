@@ -23,11 +23,7 @@
 #############################################################
 
 
-OBJSX=  InternetHostGTest.x \
-	InternetServiceGTest.x \
-	BasicSocketGTest.x \
-	BasicTCPSocketGTest.x  \
-	DoubleIntegerGTest.x \
+OBJSX=  DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
@@ -81,15 +77,11 @@ OBJSX=  InternetHostGTest.x \
         IOBufferGTest.x \
         BitSetToIntegerGTest.x \
         InternetHostGTest.x \
-	    InternetServiceGTest.x \
-	    BasicSocketGTest.x \
-	    BasicTCPSocketGTest.x \
-   	    BasicUDPSocketGTest.x \
-	    BasicConsoleGTest.x 	   
-
-	
-	
-
+        InternetServiceGTest.x \
+	BasicSocketGTest.x \
+	BasicTCPSocketGTest.x \
+   	BasicUDPSocketGTest.x \
+	BasicConsoleGTest.x
 
 PACKAGE=
 ROOT_DIR=../..

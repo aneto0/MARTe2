@@ -278,3 +278,9 @@
  * Justification: this function change the internal private attributes.
  */
 -estring(1960,"*MARTe::DoubleInteger<<1>>*") 
+
+/*
+ * Rule 0-1-8
+ * Justification: Sleep is not a class.
+ */
+-estring(1960,"*MARTe::Sleep::Busy(double)*") 
