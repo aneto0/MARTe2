@@ -40,11 +40,8 @@
 namespace MARTe {
 
 /**
- * @brief This class allows to scan, given a base path and a shell wildcard pattern, all the directories inside
- * will matches the pattern.
- *
- * @details The informations about found directories will be inserted in a list of Directory objects
- * and the user could peek all the elements using LinkedListHolder functions.
+ * @brief Given a base path and a shell wildcard pattern this class allows to scan for all
+ * the directories and files inside a given directory.
  */
 class DirectoryScanner: public LinkedListHolder {
 
@@ -53,30 +50,30 @@ public:
     /**
      * @brief Default constructor.
      * @post
-     *   basePath=NULL;
-     *   size=0;
+     *   BasePath() = NULL &&
+     *   DirectorySize() = 0
      */
     DirectoryScanner();
 
     /**
      * @brief Default destructor.
      * @post
-     *   basePath=NULL;
-     *   size=0;
+     *   BasePath() = NULL &&
+     *   DirectorySize() = 0
      */
     virtual ~DirectoryScanner();
 
 
     /**
      * @brief Retrieve the size of the scanned directory.
-     * @return the sum of the contained files / sub-directories sizes.
+     * @return the sum of the contained files and sub-directories sizes.
      */
     uint64 DirectorySize() const;
 
     /**
      * @brief Scan the files / sub-directories of a specific directory adding them to the list.
-     * @param[in] path is the path of the directory to scan.
-     * @param[in] fileMask is shell wildcard pattern to match the desired files / sub-directories.
+     * @param[in] path the path of the directory to scan.
+     * @param[in] fileMask shell wildcard pattern to match the desired files / sub-directories.
      * @param[in] sorter specifies the desired sort of the elements in the list.
      * @return false in case of errors, true otherwise.
      */
@@ -85,16 +82,16 @@ public:
               SortFilter * const sorter = NULL);
 
     /**
-     * @brief Retrieve the directory path.
-     * @return the path of the set directory.
+     * @brief Gets the directory absolute path.
+     * @return the the directory absolute path.
      */
     const char8 *BasePath() const;
 
     /**
-     * @brief Deletes all elements from the list.
+     * @brief Removes all the elements from the list.
      * @post
-     *   basePath = NULL;
-     *   size = 0;
+     *   BasePath() = NULL &&
+     *   DirectorySize() = 0
      */
     virtual void CleanUp();
 

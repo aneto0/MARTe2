@@ -42,12 +42,7 @@
 namespace MARTe {
 
 /**
- * @brief A class which represent a file or a directory.
- *
- * @details Providing the path name of a specific file or directory, this class can
- * obtain all its main attributes (size, last access time, ecc).
- *
- * @details Some static methods allows the user to create, delete and check the existence of files-directories.
+ * @brief A class which encapsulates attributes and information about a file or a directory.
  */
 class Directory: public LinkedListable {
 
@@ -55,92 +50,90 @@ class Directory: public LinkedListable {
 public:
     /**
      * @brief Default constructor.
-     * @param[in] path is the path of the file-directory
+     * @param[in] path is the path of the file/directory
      * @post
-     *   fname = path
+     *   GetName() = path
      */
     Directory(const char8 * const path = NULL);
 
     /**
      * @brief Default destructor.
      * @post
-     *   fname = NULL
+     *   GetName() = NULL
      */
     ~Directory();
 
     /**
-     * @brief Set this file-directory providing its path.
-     * @param[in] path is the path of the file-directory in input.
-     * @return true if the file-directory is set correctly, false otherwise.
+     * @brief Sets this file/directory absolute path.
+     * @param[in] path is the absolute path of the file/directory.
+     * @return true if the file/directory path is correctly set.
      * @post
-     *  fname = path
+     *   GetName() = path
      */
     bool SetByName(const char8 * const path);
 
     /**
-     * @brief Retrieve the file-directory name.
+     * @brief Gets the file/directory name.
+     * @return the file/directory absolute path name.
      */
     const char8 *GetName() const;
 
     /**
-     * @brief Check if this is a directory.
-     * @return true if this is a directory, false otherwise.
+     * @brief Check if this instance represents is a directory.
+     * @return true if this instance represents is a directory.
      */
     bool IsDirectory() const;
 
     /**
-     * @brief Check if this is a file.
-     * @return true if this is a file, false otherwise.
+     * @brief Check if this instance represents a file.
+     * @return true if this instance represents a file.
      */
     bool IsFile() const;
 
     /**
-     * @brief Check if this directory is read only
-     * @return true if this is a read-only file-directory, false otherwise.
-     */
-    bool ReadOnly() const;
-
-    /**
-     * @brief Retrieve the file-directory size.
-     * @return the file-directory size
+     * @brief Gets the file/directory size.
+     * @return the file/directory size.
      */
     uint64 GetSize() const;
 
     /**
-     * @brief Retrieve the last write time.
+     * @brief Gets the last write time.
      * @return the last write time.
      */
     TimeValues GetLastWriteTime() const;
 
     /**
-     * @brief Retrieve the last access time.
+     * @brief Gets the last access time.
      * @return the last access time.
      */
     TimeValues GetLastAccessTime() const;
 
 
     /**
-     * @brief Create a new file-directory.
-     * @param[in] path is the path of the new folder to be created.
+     * @brief Creates a new file/directory.
+     * @param[in] path the absolute path of the new file/directory to be created.
      * @param[in] isFile specifies if a file or a folder should be created.
-     * @return true if the file-directory is created correctly, false otherwise.
+     * @return true if the file/directory is created correctly. Note that if a file is being
+     * created and it already exists, this will not affect the creation of the file.
+     * @pre
+     *    IsDirectory() = true && Exists() = false
+     * @post
+     *    GetName() = path
      */
     static bool Create(const char8 * const path,
                        const bool isFile = false);
 
     /**
-     * @brief Delete an existent file-directory.
-     * @param[in] path is the path of the file / directory to be deleted.
-     * @return true if the file-directory is deleted correctly, false otherwise.
+     * @brief Deletes an existent file/directory.
+     * @param[in] path the path of the file/directory to be deleted.
+     * @return true if the file/directory is deleted correctly, false otherwise.
      */
     static bool Delete(const char8 * const path);
 
     /**
-     * @brief Check if a file-directory exists.
-     * @param[in] path is the path of the file-directory to check.
-     * @return true if the file-directory exists, false otherwise.
-     * @post
-     *   isFile = true if path refers to a file.
+     * @brief Check if a file/directory exists.
+     * @param[in] path the path of the file/directory to check.
+     * @return true if the file/directory exists, false otherwise.
      */
     static bool Exists(const char8 * const path);
 
@@ -151,7 +144,7 @@ private:
     char8 *fname;
 
     /**
-     * File-directory attributes
+     * File/directory attributes.
      */
     DirectoryCore directoryHandle;
 
