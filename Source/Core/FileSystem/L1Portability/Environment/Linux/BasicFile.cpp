@@ -37,6 +37,7 @@
 
 #include "BasicFile.h"
 #include "ErrorManagement.h"
+#include "String.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -137,21 +138,21 @@ namespace MARTe {
 
 BasicFile::BasicFile() :
         StreamI::StreamI() {
-    fileProperties.identifier = INVALID_FD;
-    fileProperties.pathName = "";
+    properties.identifier = INVALID_FD;
+    properties.pathName = "";
 }
 
 BasicFile::BasicFile(const BasicFile & bf) :
         /*lint -e{1738} THe StreamI does not have a copy constructor*/
         StreamI::StreamI() {
-    fileProperties.identifier = dup(bf.fileProperties.identifier);
-    fileProperties.pathName = bf.fileProperties.pathName;
+    properties.identifier = dup(bf.properties.identifier);
+    properties.pathName = bf.properties.pathName;
 }
 
 BasicFile & BasicFile::operator=(const BasicFile &bf) {
     if (&bf != this) {
-        fileProperties.identifier = dup(bf.fileProperties.identifier);
-        fileProperties.pathName = bf.fileProperties.pathName;
+        properties.identifier = dup(bf.properties.identifier);
+        properties.pathName = bf.properties.pathName;
     }
     return *this;
 }
@@ -169,7 +170,7 @@ bool BasicFile::SetFlags(const uint32 setFlags) const {
 
     if (IsOpen()) {
         uint32 linuxFlags = ConvertToLinuxFlags(setFlags);
-        uint32 retFcntl = static_cast<uint32>(fcntl(fileProperties.identifier, F_SETFL, linuxFlags));
+        uint32 retFcntl = static_cast<uint32>(fcntl(properties.identifier, F_SETFL, linuxFlags));
         if ((retFcntl & linuxFlags) != linuxFlags) {
             retVal = false;
         }
@@ -183,7 +184,7 @@ bool BasicFile::SetFlags(const uint32 setFlags) const {
 uint32 BasicFile::GetFlags() const {
     uint32 retVal = 0xFFFFFFFFU;
     if (IsOpen()) {
-        retVal = static_cast<uint32>(fcntl(fileProperties.identifier, F_GETFL));
+        retVal = static_cast<uint32>(fcntl(properties.identifier, F_GETFL));
         retVal = ConvertToBasicFileFlags(retVal);
     }
     return retVal;
@@ -195,7 +196,7 @@ bool BasicFile::CanWrite() const {
         retVal = false;
     }
     else {
-        uint32 flags = static_cast<uint32>(fcntl(fileProperties.identifier, F_GETFL));
+        uint32 flags = static_cast<uint32>(fcntl(properties.identifier, F_GETFL));
         retVal = (((flags & static_cast<uint32>(O_RDWR)) == static_cast<uint32>(O_RDWR))
                 || ((flags & static_cast<uint32>(O_WRONLY)) == static_cast<uint32>(O_WRONLY)));
     }
@@ -208,7 +209,7 @@ bool BasicFile::CanRead() const {
         retVal = false;
     }
     else {
-        uint32 flags = static_cast<uint32>(fcntl(fileProperties.identifier, F_GETFL));
+        uint32 flags = static_cast<uint32>(fcntl(properties.identifier, F_GETFL));
         retVal = (((flags & static_cast<uint32>(O_RDWR)) == static_cast<uint32>(O_RDWR))
                 || ((flags & static_cast<uint32>(O_WRONLY)) == static_cast<uint32>(O_RDONLY)));
     }
@@ -228,13 +229,13 @@ bool BasicFile::Open(const char8 * const pathname,
         uint32 flagsChecked = CheckFlags(flags);
         uint32 linuxFlags = ConvertToLinuxFlags(flagsChecked);
         /*lint -e{9130} Signed value*/
-        fileProperties.identifier = open(pathname, static_cast<int32>(linuxFlags), (S_IRWXU | S_IRWXG | S_IRWXO));
+        properties.identifier = open(pathname, static_cast<int32>(linuxFlags), (S_IRWXU | S_IRWXG | S_IRWXO));
         if (!IsOpen()) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Open(). File cannot be opened");
             retVal = false;
         }
         else {
-            fileProperties.pathName = pathname;
+            properties.pathName = pathname;
         }
     }
     else {
@@ -245,19 +246,19 @@ bool BasicFile::Open(const char8 * const pathname,
 }
 
 bool BasicFile::IsOpen() const {
-    return (fileProperties.identifier >= 0);
+    return (properties.identifier >= 0);
 }
 
 bool BasicFile::Close() {
     bool retVal = true;
     if (IsOpen()) {
-        int32 retClose = close(fileProperties.identifier);
+        int32 retClose = close(properties.identifier);
         if (retClose == -1) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Close().File cannot be closed");
             retVal = false;
         }
         else {
-            fileProperties.identifier = INVALID_FD;
+            properties.identifier = INVALID_FD;
         }
     }
     else {
@@ -271,7 +272,7 @@ bool BasicFile::Read(char8* const output,
                      uint32 & size) {
     bool retVal = true;
     if (IsOpen()) {
-        size = static_cast<uint32>(read(fileProperties.identifier, output, static_cast<uint64>(size)));
+        size = static_cast<uint32>(read(properties.identifier, output, static_cast<uint64>(size)));
         retVal = (size != 0xFFFFFFFFU);
         if (retVal == false) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read().File cannot be read");
@@ -303,10 +304,10 @@ bool BasicFile::Read(char8 * const output,
         /*lint -e{970} use modifier or type int outside of a typedef [MISRA C++ Rule 3-9-2]*/
         /*lint -e{703} Shift left of a signed quantity*/
         /*lint -e{1924} C-style cast*/
-        FD_SET(fileProperties.identifier, &set1);
+        FD_SET(properties.identifier, &set1);
         /*lint -e{9114} implicit conversion of integer cvalue expression*/
         timeout.tv_usec = static_cast<int64>(msecTimeout.GetTimeoutMSec()) * 1000;
-        retSelect = select((fileProperties.identifier + 1), &set1, static_cast<fd_set *>(NULL), static_cast<fd_set *>(NULL), &timeout);
+        retSelect = select((properties.identifier + 1), &set1, static_cast<fd_set *>(NULL), static_cast<fd_set *>(NULL), &timeout);
         if (retSelect == -1) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read(). Error while waiting to read a file");
             retVal = false;
@@ -329,7 +330,7 @@ bool BasicFile::Write(const char8 * const input,
                       uint32 & size) {
     bool retVal = true;
     if (IsOpen()) {
-        size = static_cast<uint32>(write(fileProperties.identifier, input, static_cast<uint64>(size)));
+        size = static_cast<uint32>(write(properties.identifier, input, static_cast<uint64>(size)));
         if (size == 0xFFFFFFFFU) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write(). File cannot be written");
             retVal = false;
@@ -361,10 +362,10 @@ bool BasicFile::Write(const char8 * const input,
         /*lint -e{970} use modifier or type int outside of a typedef [MISRA C++ Rule 3-9-2]*/
         /*lint -e{703} Shift left of a signed quantity*/
         /*lint -e{1924} C-style cast*/
-        FD_SET(fileProperties.identifier, &set);
+        FD_SET(properties.identifier, &set);
         /*lint -e{9114} implicit conversion of integer cvalue expression*/
         timeout.tv_usec = static_cast<int64>(msecTimeout.GetTimeoutMSec()) * 1000;
-        retSelect = select(fileProperties.identifier + 1, static_cast<fd_set *>(NULL), &set, static_cast<fd_set *>(NULL), &timeout);
+        retSelect = select(properties.identifier + 1, static_cast<fd_set *>(NULL), &set, static_cast<fd_set *>(NULL), &timeout);
         if (retSelect == -1) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write. Error while waiting to write a file");
             retVal = false;
@@ -387,7 +388,7 @@ uint64 BasicFile::Size() {
     uint64 numberOfCharactersFile = 0U;
     if (IsOpen()) {
         struct stat statusFile;
-        int32 retFstat = fstat(fileProperties.identifier, &statusFile);
+        int32 retFstat = fstat(properties.identifier, &statusFile);
         if (retFstat < 0) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Size(). Error while reading size");
             numberOfCharactersFile = 0xFFFFFFFFU;
@@ -417,7 +418,7 @@ bool BasicFile::Seek(const uint64 pos) {
             else {
                 localPos = static_cast<int64>(pos);
             }
-            retSeek = lseek64(fileProperties.identifier, localPos, SEEK_SET);
+            retSeek = lseek64(properties.identifier, localPos, SEEK_SET);
             if (retSeek < 0) {
                 REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Seek(). The position cannot be set");
                 retVal = false;
@@ -446,7 +447,7 @@ bool BasicFile::RelativeSeek(const int32 deltaPos) {
         else {
             localPos = position + deltaPos;
         }
-        retSeek = lseek(fileProperties.identifier, localPos, SEEK_SET);
+        retSeek = lseek(properties.identifier, localPos, SEEK_SET);
         if (retSeek < 0) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::RelativeSeek(). The position cannot be set");
             retVal = false;
@@ -461,7 +462,7 @@ bool BasicFile::RelativeSeek(const int32 deltaPos) {
 uint64 BasicFile::Position() {
     int64 pos = 0;
     if (IsOpen()) {
-        pos = lseek(fileProperties.identifier, static_cast<int64>(0), SEEK_CUR);
+        pos = lseek(properties.identifier, static_cast<int64>(0), SEEK_CUR);
         if (pos < 0) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Position(). The position cannot be read");
         }
@@ -476,7 +477,7 @@ bool BasicFile::SetSize(const uint64 size) {
         if (size >= static_cast<uint64>(MAX_INT64)) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::SetSize(). The size is too large");
         }
-        ret = ftruncate(fileProperties.identifier, static_cast<int64>(size));
+        ret = ftruncate(properties.identifier, static_cast<int64>(size));
         if (ret == -1) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::SetSize(). The size cannot be set");
             retVal = false;
@@ -489,7 +490,7 @@ bool BasicFile::SetSize(const uint64 size) {
 }
 
 String BasicFile::GetPathName() const{
-    return fileProperties.pathName;
+    return properties.pathName;
 }
 }
 

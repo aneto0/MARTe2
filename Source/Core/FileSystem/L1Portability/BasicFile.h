@@ -34,6 +34,7 @@
 
 #include "GeneralDefinitions.h"
 #include "StreamI.h"
+#include "String.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,BasicFileProperties.h)
 
 /*---------------------------------------------------------------------------*/
@@ -310,7 +311,7 @@ namespace MARTe {
          *   pos + deltaPos < 0 => Position() == 0 &&
          *   Position() == this'old->Position() + deltaPos&&
          *   deltaPos + Position() > Size() => Position() == Size();
-         * @return True if the pointer is is moved to the new position.
+         * @return True if the pointer is moved to the new position.
          */
         virtual bool RelativeSeek(const int32 deltaPos);
 
@@ -336,12 +337,15 @@ namespace MARTe {
 
         /**
          * @brief Queries the pathname.
-         * @return a pointer to a pathname of the open file.
          */
         String GetPathName() const;
 
     private:
-        BasicFileProperties fileProperties;
+
+        /*
+         * Hidden implementation of the class attributes.
+         */
+        BasicFileProperties properties;
     };
 }
 
