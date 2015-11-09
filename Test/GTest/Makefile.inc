@@ -23,8 +23,12 @@
 #############################################################
 
 
-OBJSX=  DoubleIntegerGTest.x \
-		TypeCharacteristicsGTest.x \
+OBJSX=  InternetHostGTest.x \
+	InternetServiceGTest.x \
+	BasicSocketGTest.x \
+	BasicTCPSocketGTest.x  \
+	DoubleIntegerGTest.x \
+	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
         FormatDescriptorGTest.x \

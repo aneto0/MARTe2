@@ -255,7 +255,6 @@ static bool ListenConnectTest(BasicTCPSocketTest &param,
         }
 
         if ((param.retVal != table[i].expected) || (!param.noError)) {
-            printf("\n%d %d %d %d\n", param.retVal, table[i].expected, param.noError, i);
             return false;
         }
 
@@ -291,7 +290,7 @@ static void StartServer_ReadWrite(BasicTCPSocketTest &param) {
 
     ServerParam serverParam[256];
 
-    if (!serverSocket.Listen(param.server.GetPort(), 30)) {
+    if (!serverSocket.Listen(param.server.GetPort(), 64)) {
         param.noError = false;
         return;
     }
@@ -325,6 +324,10 @@ static void StartServer_ReadWrite(BasicTCPSocketTest &param) {
         Sleep::MSec(10);
     }
 
+    for (uint32 i = 0; i < acceptedConnections; i++) {
+        delete serverParam[i].socket;
+    }
+
 }
 
 static void WriteJob(ServerParam &param) {
@@ -342,7 +345,6 @@ static void WriteJob(ServerParam &param) {
 
     param.testObj->eventSem.Wait();
     param.testObj->sem.FastLock();
-    delete param.socket;
     param.testObj->sem.FastUnLock();
 
 }
@@ -439,6 +441,8 @@ bool BasicTCPSocketTest::TestRead(const ReadWriteTestTable *table) {
         alives = table[i].nClientsIn;
         timeout = table[i].timeoutIn;
         serverJob = (ThreadFunctionType) WriteJob;
+
+    //    printf("\nisBlocking= %d, isServer=%d, isTimeout=%d %d\n", isBlocking, isServer, isTimeout,i);
 
         Threads::BeginThread((ThreadFunctionType) StartServer_ReadWrite, this);
 
@@ -615,7 +619,6 @@ static void ReadJob(ServerParam &param) {
 
     param.testObj->eventSem.Wait();
     param.testObj->sem.FastLock();
-    delete param.socket;
     param.testObj->sem.FastUnLock();
 
 }
@@ -644,13 +647,16 @@ static void ClientJob_Write(BasicTCPSocketTest &param) {
                 clientSocket.Close();
             }
 
-            uint32 size;
+
             bool ret = true;
-            char8 input[128];
+            const uint32 maxSize=(param.size>1000)?(512):(128);
+            char8 input[maxSize];
             StringHelper::Copy(input, param.string);
-            uint32 iterations = ((!param.isBlocking)||(param.isTimeout && param.timeout.IsFinite())) ? (500) : (1);
-            for (uint32 k = 0; k < iterations; k++) {
-                size = param.size;
+            uint32 size=param.size;
+            uint32 remainedSize=size;
+            //  for (uint32 k = 0; k < iterations; k++) {
+            while ((remainedSize>0) && (ret)) {
+                size = (remainedSize > maxSize) ? (maxSize) : (remainedSize);
 
                 if (param.isTimeout) {
                     ret = clientSocket.Write(input, size, param.timeout);
@@ -658,10 +664,14 @@ static void ClientJob_Write(BasicTCPSocketTest &param) {
                 else {
                     ret = clientSocket.Write(input, size);
                 }
-                if(!ret){
-                    break;
-                }
+
+                remainedSize -= size;
+
             }
+
+            //}
+
+            //printf("\n%d\n",iterations);
 
             if (!ret) {
                 param.sem.FastLock();
@@ -711,6 +721,8 @@ bool BasicTCPSocketTest::TestWrite(const ReadWriteTestTable *table) {
         alives = table[i].nClientsIn;
         timeout = table[i].timeoutIn;
         serverJob = (ThreadFunctionType) ReadJob;
+
+     //   printf("\nisBlocking= %d, isServer=%d, isTimeout=%d,\n", isBlocking, isServer, isTimeout);
 
         Threads::BeginThread((ThreadFunctionType) StartServer_ReadWrite, this);
 
