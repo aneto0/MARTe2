@@ -196,6 +196,7 @@ const PrintfNode *GeneratePrintFormattedDecimalTable(){
         //integers
         //decimal notations
         PrintfNode("%d", "255",     *SaveNumber((uint8) 255)),
+        PrintfNode("%?", "Unsigned Integer",     *SaveNumber((uint8) 255)),
         PrintfNode("%5d", "255",    *SaveNumber((uint8) 255)),
         PrintfNode("% 5d", "  255", *SaveNumber((uint8) 255)),
         PrintfNode("%-5d", "255  ", *SaveNumber((uint8) 255)),
@@ -205,12 +206,14 @@ const PrintfNode *GeneratePrintFormattedDecimalTable(){
         PrintfNode("%u", "12345", *SaveNumber((uint16) 12345)),
         PrintfNode("%-#8d", "+12345  ", *SaveNumber((uint16) 12345)),
         PrintfNode("%d", "-12345", *SaveNumber((int16) -12345)),
+        PrintfNode("% 7?", "Signed ", *SaveNumber((int16) -12345)),
         PrintfNode("%i", "-32768", *SaveNumber((int16) 0x8000)),
         PrintfNode("%d", "123456789", *SaveNumber((uint32) 123456789)),
         PrintfNode("% #11u", " +123456789", *SaveNumber((uint32) 123456789)),
         PrintfNode("%i", "-123456789", *SaveNumber((int32) -123456789)),
         PrintfNode("%i", "-2147483648", *SaveNumber((int32) 0x80000000)),
         PrintfNode("%u", "12345678912345678", *SaveNumber((uint64) 12345678912345678)),
+        PrintfNode("%-18?", "Signed Integer    ", *SaveNumber((int16) -12345)),
         PrintfNode("%i", "-12345678912345678", *SaveNumber((int64) -12345678912345678)),
         PrintfNode("%i", "-9223372036854775808", *SaveNumber((int64) 0x8000000000000000)),
         PrintfNode("% #11d", "          ?", *SaveNumber((int64) 0x8000000000000000)),
@@ -324,6 +327,7 @@ const PrintfNode *GeneratePrintFormattedFloatFPRTable(){
         PrintfNode("%-12.0F", "0           ", *SaveNumber(-1.1234567f)),
         PrintfNode("%-12.4F", "-1.123      ", *SaveNumber(-1.1234567f)),
         PrintfNode("% 12.8F", "   112345.67", *SaveNumber(112345.67f)),
+        PrintfNode("% 12.8?", "       Float", *SaveNumber(112345.67f)),
         PrintfNode("% 10.8F", " 12346.000", *SaveNumber(12345.9999)),
         PrintfNode("% 10.3F", "     12300", *SaveNumber(12345.9999)),
         PrintfNode("% 17.15F", " 999999.999960000", *SaveNumber(999999.99996)),
@@ -333,6 +337,7 @@ const PrintfNode *GeneratePrintFormattedFloatFPRTable(){
         PrintfNode("%7.10F", "-222223", *SaveNumber(-222222.5255)),
         PrintfNode("% 8.10F", " -222223", *SaveNumber(-222222.5255)),
         PrintfNode("% 9.10F", "-222222.5", *SaveNumber(-222222.5255)),
+        PrintfNode("%-9?", "Float    ", *SaveNumber(-222222.5255)),
         PrintfNode("% 10.10F", "-222222.53", *SaveNumber(-222222.5255)),
         PrintfNode("% 5.10F", "    ?", *SaveNumber(-222222.5255)),
         PrintfNode("% 12.12F","           0", *SaveNumber(1e-12)),
@@ -448,6 +453,21 @@ const char8* printfCStringTable[][3] = {
             { "string:%5s", "HelloWorld", "string:Hello" },
             { "string:% 11s", "HelloWorld", "string: HelloWorld" },
             { "string:%-11s", "HelloWorld", "string:HelloWorld " },
+            { "string:%-11?", "HelloWorld", "string:CC String  " },
+            { "string:% 11?", "HelloWorld", "string:  CC String" },
+            { "% 5s", "  ", "     " },
+            { "%-5s", "  ", "     " },
+            { "%s", (const char8*) NULL, "" },
+            { NULL, NULL, NULL }
+    };
+
+const char8* printfStreamTable[][3] = {
+            { "string:%s", "HelloWorld", "string:HelloWorld" },
+            { "string:%5s", "HelloWorld", "string:Hello" },
+            { "string:% 11s", "HelloWorld", "string: HelloWorld" },
+            { "string:%-11s", "HelloWorld", "string:HelloWorld " },
+            { "string:%-11?", "HelloWorld", "string:Stream     " },
+            { "string:% 11?", "HelloWorld", "string:     Stream" },
             { "% 5s", "  ", "     " },
             { "%-5s", "  ", "     " },
             { "%s", (const char8*) NULL, "" },
@@ -479,7 +499,7 @@ const BitSetToBitSetTableRow *GeneratedBitSetToBitSetTable(){
             //16 bit pointer to 32. Sign padding.
             {104, 77, 16, 5, (uint32*)source, 3, 0xfff122, true, true},
             //64 bit pointer to 128. Padding
-            //{32, 48, 32, 30, (int64*) source, 1, 0xf3330000, true, true}
+            {32, 48, 32, 30, (uint32*) source, 1, 0xf3330000, true, true},
             {0, 0, 0, 0, (uint32*)NULL, 0, 0, true, true},
 
     };

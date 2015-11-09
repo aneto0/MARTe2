@@ -23,10 +23,10 @@
 #############################################################
 
 
-OBJSX=	TypeCharacteristicsGTest.x \
+OBJSX=  DoubleIntegerGTest.x \
+	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
-        BasicConsoleGTest.x \
         FormatDescriptorGTest.x \
         AnyTypeGTest.x\
         StandardHeap_GenericGTest.x \
@@ -67,19 +67,21 @@ OBJSX=	TypeCharacteristicsGTest.x \
  	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x  \
 	CharBufferGTest.x \
-        IOBufferGTest.x \
-        StreamStringIOBufferGTest.x \
-        StreamIGTest.x \
+        StringIOBufferGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
-        StreamStringGTest.x \
+        StringGTest.x \
         StreamMemoryReferenceGTest.x \
-        BitSetToIntegerGTest.x
-
-	
-	
-
+        BufferedStreamIGTest.x \
+        IOBufferGTest.x \
+        BitSetToIntegerGTest.x \
+        InternetHostGTest.x \
+        InternetServiceGTest.x \
+	BasicSocketGTest.x \
+	BasicTCPSocketGTest.x \
+   	BasicUDPSocketGTest.x \
+	BasicConsoleGTest.x
 
 PACKAGE=
 ROOT_DIR=../..
@@ -93,11 +95,13 @@ INCLUDES += -I../Core/BareMetal/L1Portability
 INCLUDES += -I../Core/BareMetal/L2Objects
 INCLUDES += -I../Core/BareMetal/L3Streams
 INCLUDES += -I../Core/Scheduler/L1Portability
+INCLUDES += -I../Core/FileSystem/L1Portability
 INCLUDES += -I../../Source/Core/BareMetal/L0Types
 INCLUDES += -I../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../Source/Core/Scheduler/L1Portability
+INCLUDES += -I../../Source/Core/FileSystem/L1Portability
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 all: $(OBJS)    \

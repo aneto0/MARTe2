@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
+#include "DoubleInteger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -40,7 +41,8 @@
 
 namespace MARTe {
 
-/** @brief A collector of functions that implements logical and mathematical shift in safe mode.
+/**
+ * @brief A collector of functions that implements logical and mathematical shift in safe mode.
  * @detail These methods implements shift operations in the right way, returning zero when the shift is
  * greater than the size of the number. Furthermore they implements the logical shift which
  * does not extend the sign for negative numbers and it is very useful in many functionalities.
@@ -50,7 +52,7 @@ class Shift {
 public:
 
     /**
-     * @brief implementation of a template function for safe logical right shifts.
+     * @brief Implementation of a template function for safe logical right shifts.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -60,7 +62,7 @@ public:
                                           uint8 shift);
 
     /**
-     * @brief implementation of a template function for safe logical shifts.
+     * @brief Implementation of a template function for safe logical shifts.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -70,7 +72,7 @@ public:
                                          uint8 shift);
 
     /**
-     * @brief implementation of a template function for safe mathematical right shifts.
+     * @brief Implementation of a template function for safe mathematical right shifts.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -80,7 +82,7 @@ public:
                                              uint8 shift);
 
     /**
-     * @brief implementation of a template function for safe mathematical left shifts.
+     * @brief Implementation of a template function for safe mathematical left shifts.
      * @param[in] number is the number to be shifted.
      * @param[in] shift is the number of bits shifted.
      * @return the number shifted.
@@ -92,7 +94,7 @@ public:
 private:
 
     /**
-     * @brief logical right shift for uint8 numbers.
+     * @brief Logical right shift for uint8 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the number of bits shifted.
      * @return the number right shifted.
@@ -101,7 +103,7 @@ private:
                                           uint8 shift);
 
     /**
-     * @brief logical right shift for uint16 numbers.
+     * @brief Logical right shift for uint16 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the number of bits shifted.
      * @return the number right shifted.
@@ -119,7 +121,7 @@ private:
                                            uint8 shift);
 
     /**
-     * @brief logical right shift for uint64 numbers.
+     * @brief Logical right shift for uint64 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the shift in bits.
      * @return the number right shifted.
@@ -137,7 +139,7 @@ private:
                                          uint8 shift);
 
     /**
-     * @brief logical right shift for int16 numbers.
+     * @brief Logical right shift for int16 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the number of bits shifted.
      * @return the number right shifted.
@@ -146,7 +148,7 @@ private:
                                           uint8 shift);
 
     /**
-     * @brief logical right shift for int32 numbers.
+     * @brief Logical right shift for int32 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the number of bits shifted.
      * @return the number right shifted.
@@ -155,13 +157,23 @@ private:
                                           uint8 shift);
 
     /**
-     * @brief logical right shift for int64 numbers.
+     * @brief Logical right shift for int64 numbers.
      * @param[in] number is the number to shift.
      * @param[in] shift is the number of bits shifted.
      * @return the number right shifted.
      */
     static inline int64 LogicalRightShift(int64 number,
                                           uint8 shift);
+
+    /**
+     * @brief Logical right shift for DoubleInteger.
+     * @param[in] number is the number to shift.
+     * @param[in] shift is the number of bits shifted.
+     * @return the number right shifted.
+     */
+    template<typename T2>
+    static inline DoubleInteger<T2> LogicalRightShift(DoubleInteger<T2> number,
+                                                      uint8 shift);
 };
 
 /*---------------------------------------------------------------------------*/
@@ -261,6 +273,52 @@ int64 Shift::LogicalRightShift(int64 number,
     return ((uint64) number) >> shift;
 }
 
+template<typename T2>
+DoubleInteger<T2> Shift::LogicalRightShift(DoubleInteger<T2> number,
+                                           uint8 shift) {
+
+    if (static_cast<T2>(-1) < 0) {
+
+        // shift of sizeof(T)*8 is treated as shift 0
+        // for this reason exit here to avoid this pitfall
+        if (shift > 0u) {
+            T2 lower = number.GetLower();
+            T2 upper = number.GetUpper();
+
+            // calculates n of bits of T
+            uint16 bitSize = static_cast<uint16>(sizeof(T2) * 8u);
+            // shift within one half
+            if (shift < bitSize) {
+                // shift lower first
+                lower = lower >> shift;
+                // add overflow from upper
+                // this would fail if shift is 0
+                lower |= (upper << (bitSize - shift));
+                // complete the upper
+                upper = upper >> shift;
+            }
+            else { // more than half!
+                   // remove half
+                shift -= bitSize;
+                // swap upper -> lower and shift with the remainder
+                lower = upper >> shift;
+                // upper is 0
+                if (upper < static_cast<T2>(0)) {
+                    upper = static_cast<T2>(-1);
+                }
+                else {
+                    upper = static_cast<T2>(0);
+                }
+            }
+            number.SetLower(lower);
+            number.SetUpper(upper);
+        }
+    }
+    else {
+        number >>= shift;
+    }
+    return number;
+}
 }
 
 #endif /* L0TYPES_SHIFT_H_ */

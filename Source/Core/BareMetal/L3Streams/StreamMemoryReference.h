@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "GeneralDefinitions.h"
-#include "StreamI.h"
+#include "BufferedStreamI.h"
 #include "IOBuffer.h"
 
 /*---------------------------------------------------------------------------*/
@@ -46,7 +46,7 @@ namespace MARTe {
  * @brief A basic implementation of a stream which allows reading and writing
  * to an underlying bounded and preallocated memory location.
  */
-class DLL_API StreamMemoryReference: public StreamI {
+class DLL_API StreamMemoryReference: public BufferedStreamI {
 
 public:
 
@@ -141,6 +141,26 @@ public:
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size);
+
+
+    /**
+     * @brief Default implementation for buffered streams: calls StreamI::Read(*)
+     * with infinite timeout.
+     * @see StreamI::Read(*).
+     */
+    virtual bool Read(char8 * const output,
+            uint32 & size,
+            const TimeoutType &timeout);
+
+    /**
+     * @brief Default implementation for buffered streams: calls StreamI::Write(*)
+     * with infinite timeout.
+     * @see StreamI::Write(*)
+     */
+    virtual bool Write(const char8 * const input,
+            uint32 & size,
+            const TimeoutType &timeout);
+
 
     /**
      * @brief Queries if the stream is writable.

@@ -39,10 +39,9 @@
 #include "TimeoutType.h"
 #include "IOBuffer.h"
 #include "AnyType.h"
-#include "StreamI.h"
+#include "BufferedStreamI.h"
 #include "FormatDescriptor.h"
 #include "BufferedStreamIOBuffer.h"
-#include "StreamI.h"
 #include "OperatingSystemCallbacksI.h"
 
 namespace MARTe {
@@ -50,10 +49,8 @@ namespace MARTe {
 /**
  * @brief Buffered stream implementation (double buffer).
  * @details This class offers a buffering mechanism for character streams.
- * It supplements two independent low-level RawStreams (which implement the
- * low-level calls such as Read, Write, ...) with a buffering scheme.
  */
-class DLL_API DoubleBufferedStream: public StreamI, public OperatingSystemCallbacksI {
+class DLL_API DoubleBufferedStream: public BufferedStreamI, public OperatingSystemCallbacksI {
 
 public:
     /**
@@ -103,16 +100,33 @@ public:
                                uint32 writeBufferSize);
 
     /**
-     * @see StreamI::Read
+     * @see BufferedStreamI::Read
      */
     virtual bool Read(char8 * const output,
                       uint32 & size);
 
     /**
-     * @see StreamI::Write
+     * @see BufferedStreamI::Write
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size);
+
+
+    /**
+     * @see StreamI::Read
+     */
+    virtual bool Read(char8 * const output,
+                      uint32 & size,
+                      const TimeoutType &timeout);
+
+
+    /**
+     * @see StreamI::Write
+     */
+    virtual bool Write(const char8 * const input,
+                       uint32 & size,
+                       const TimeoutType &timeout);
+
 
     /**
      * @brief Gets the read buffer size.

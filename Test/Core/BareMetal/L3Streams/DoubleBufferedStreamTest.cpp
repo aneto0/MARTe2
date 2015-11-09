@@ -31,7 +31,7 @@
 #include "DoubleBufferedStreamTest.h"
 #include "StreamI.h"
 #include "StreamTestHelper.h"
-
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -70,7 +70,6 @@ bool DoubleBufferedStreamTest::TestSetTimeout() {
     myStream.SetTimeout(tt);
     return (myStream.GetTimeout() == tt);
 }
-
 
 bool DoubleBufferedStreamTest::TestSetBufferSize(uint32 bufferSize) {
     DummyDoubleBufferedStream stream;
@@ -121,7 +120,7 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
 
         bufferRead[readSize - 1] = '\0';
         bufferWrite[readSize - 1] = '\0';
-        bool ok = (StringHelper::Compare(bufferRead, bufferWrite) == 0);
+        ok = (StringHelper::Compare(bufferRead, bufferWrite) == 0);
 
         free(bufferRead);
         free(bufferWrite);
@@ -130,9 +129,40 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
     return ok;
 }
 
+bool DoubleBufferedStreamTest::TestRead_Timeout(MARTe::uint32 bufferSize,
+                                                MARTe::uint32 readSize,
+                                                MARTe::TimeoutType timeout) {
+
+    DummyDoubleBufferedStream stream(true);
+    stream.SetBufferSize(bufferSize, bufferSize);
+
+    char8 toWrite[64];
+    uint32 writeSize = 64;
+    stream.Write(toWrite, writeSize);
+    stream.Seek(0);
+    stream.Read(toWrite, readSize, timeout);
+
+    return (stream.usedTimeout);
+
+}
+
 bool DoubleBufferedStreamTest::TestWrite(uint32 bufferSize,
                                          uint32 readSize) {
     return TestRead(bufferSize, readSize);
+}
+
+bool DoubleBufferedStreamTest::TestWrite_Timeout(MARTe::uint32 bufferSize,
+                                                 MARTe::uint32 writeSize,
+                                                 MARTe::TimeoutType timeout) {
+
+    DummyDoubleBufferedStream stream(true);
+    stream.SetBufferSize(bufferSize, bufferSize);
+
+    char8 toWrite[64];
+
+    stream.Write(toWrite, writeSize, timeout);
+    return (stream.usedTimeout);
+
 }
 
 bool DoubleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSize,
@@ -252,7 +282,7 @@ bool DoubleBufferedStreamTest::TestWrite_NotCanWrite() {
 }
 
 bool DoubleBufferedStreamTest::TestGetToken(uint32 bufferSize,
-                                      const TokenTestTableRow *table) {
+                                            const TokenTestTableRow *table) {
     DummyDoubleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize, bufferSize);
 

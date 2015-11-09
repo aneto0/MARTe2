@@ -37,7 +37,7 @@
 #include "StreamI.h"
 #include "FormatDescriptor.h"
 #include "BufferedStreamIOBuffer.h"
-#include "StreamI.h"
+#include "BufferedStreamI.h"
 #include "OperatingSystemCallbacksI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -52,7 +52,7 @@ namespace MARTe {
  * It supplements a low-level OperatingSystemStream (which implements the
  * low-level calls such as Read, Write, Seek, ...) with a buffering scheme.
  */
-class DLL_API SingleBufferedStream: public StreamI , public OperatingSystemCallbacksI{
+class DLL_API SingleBufferedStream: public BufferedStreamI , public OperatingSystemCallbacksI{
 
 public:
     /**
@@ -108,10 +108,26 @@ public:
                       uint32 & size);
 
     /**
+     * @see StreamI::Read
+     */
+    virtual bool Read(char8 * const output,
+                      uint32 & size,
+                      const TimeoutType &timeout);
+
+    /**
      * @see StreamI::Write
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size);
+
+
+    /**
+     * @see StreamI::Write
+     */
+    virtual bool Write(const char8 * const input,
+                       uint32 & size,
+                       const TimeoutType &timeout);
+
 
     /**
      * @see StreamI::Size
@@ -212,12 +228,6 @@ private:
      * FlushAndResync call) the buffer is flushed on the stream.
      */
     BufferedStreamIOBuffer internalBuffer;
-
-
-    /**
-     * Timeout for the read/write operations
-     */
-    TimeoutType timeout;
 
 };
 

@@ -35,6 +35,7 @@
 #include "FormatDescriptor.h"
 #include "IOBuffer.h"
 #include "Shift.h"
+#include "DoubleInteger.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -271,15 +272,15 @@ static inline bool BitSetToBitSet(T *& destination,
 
         BSToBS(destination64, destinationBitShift, destinationBitSize, destinationIsSigned, source64, sourceBitShift, sourceBitSize, sourceIsSigned);
     }
-    /*
-     else if ((sourceBitEnd <= 128u) && (destinationBitEnd <= 128u) && (granularity <= 128u)) {
-     // if 128 is fine then operate with float64(uint64)
-     DoubleInteger<uint64> *destination128 = reinterpret_cast<DoubleInteger<uint64> *>(destination);
-     DoubleInteger<uint64> *source128 = reinterpret_cast<DoubleInteger<uint64> *>(source);
 
-     BSToBS(destination128, destinationBitShift, destinationBitSize, destinationIsSigned, source128, sourceBitShift, sourceBitSize, sourceIsSigned);
-     }
-     */
+    else if ((sourceBitEnd <= 128u) && (destinationBitEnd <= 128u) && (granularity <= 128u)) {
+        // if 128 is fine then operate with float64(uint64)
+        DoubleInteger<uint64> *destination128 = reinterpret_cast<DoubleInteger<uint64> *>(destination);
+        DoubleInteger<uint64> *source128 = reinterpret_cast<DoubleInteger<uint64> *>(source);
+
+        BSToBS(destination128, destinationBitShift, destinationBitSize, destinationIsSigned, source128, sourceBitShift, sourceBitSize, sourceIsSigned);
+    }
+
     else {
         ret = false;
     }

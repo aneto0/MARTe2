@@ -79,7 +79,7 @@ struct BasicConsoleProperties {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-BasicConsole::BasicConsole() {
+BasicConsole::BasicConsole():StreamI {
     handle = new BasicConsoleProperties();
     handle->nOfColumns = 0u;
     handle->nOfRows = 0u;

@@ -28,11 +28,11 @@ OBJSX=CharBuffer.x \
     IOBuffer.x \
     IOBufferIntegerPrint.x \
     IOBufferFloatPrint.x \
-    StreamI.x \
+    BufferedStreamI.x \
     DoubleBufferedStream.x \
     BufferedStreamIOBuffer.x \
-    StreamStringIOBuffer.x \
-    StreamString.x \
+    StringIOBuffer.x \
+    String.x \
     StreamMemoryReference.x \
     SingleBufferedStream.x 
         

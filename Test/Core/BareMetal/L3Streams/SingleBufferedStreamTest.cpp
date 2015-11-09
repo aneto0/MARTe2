@@ -31,7 +31,7 @@
 #include "SingleBufferedStreamTest.h"
 #include "SingleBufferedStream.h"
 #include "StreamTestHelper.h"
-
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -68,7 +68,6 @@ bool SingleBufferedStreamTest::TestSetTimeout() {
     myStream.SetTimeout(tt);
     return (myStream.GetTimeout() == tt);
 }
-
 
 bool SingleBufferedStreamTest::TestSetBufferSize(uint32 bufferSize) {
     DummySingleBufferedStream stream;
@@ -129,9 +128,40 @@ bool SingleBufferedStreamTest::TestRead(uint32 bufferSize,
     return ok;
 }
 
+bool SingleBufferedStreamTest::TestRead_Timeout(MARTe::uint32 bufferSize,
+                                                MARTe::uint32 readSize,
+                                                MARTe::TimeoutType timeout) {
+
+    DummySingleBufferedStream stream(true);
+    stream.SetBufferSize(bufferSize);
+
+    char8 toWrite[64];
+    uint32 writeSize = 64;
+    stream.Write(toWrite, writeSize);
+    stream.Seek(0);
+    stream.Read(toWrite, readSize, timeout);
+
+    return (stream.usedTimeout);
+
+}
+
 bool SingleBufferedStreamTest::TestWrite(uint32 bufferSize,
                                          uint32 writeSize) {
     return TestRead(bufferSize, writeSize);
+}
+
+bool SingleBufferedStreamTest::TestWrite_Timeout(MARTe::uint32 bufferSize,
+                                                 MARTe::uint32 writeSize,
+                                                 MARTe::TimeoutType timeout) {
+
+    DummySingleBufferedStream stream(true);
+    stream.SetBufferSize(bufferSize);
+
+    char8 toWrite[64];
+
+    stream.Write(toWrite, writeSize, timeout);
+    return (stream.usedTimeout);
+
 }
 
 bool SingleBufferedStreamTest::TestWrite_OverflowInternalBuffer(uint32 bufferSize,
