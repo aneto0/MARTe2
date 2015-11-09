@@ -36,7 +36,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief Template version of the shared pointer implementation (see Reference).
@@ -205,8 +205,8 @@ ReferenceT<T>& ReferenceT<T>::operator=(const Reference& sourceReference) {
         if (typeTObjectPointer == NULL) {
             RemoveReference();
         }
-        else{
-            REPORT_ERROR(ErrorManagement::FatalError,"ReferenceT: Dynamic cast failed.");
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
 
@@ -233,7 +233,7 @@ bool ReferenceT<T>::Initialise(const StructuredData &data,
         ok = IsValid();
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceT: Failed Reference::Initialise()");
+        REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Failed Reference::Initialise()");
         ok = false;
     }
     return ok;
@@ -267,8 +267,8 @@ ReferenceT<T>::ReferenceT(HeapI* const heap) :
             Reference::operator=(obj);
             typeTObjectPointer = p;
         }
-        else{
-            REPORT_ERROR(ErrorManagement::FatalError,"ReferenceT: Dynamic cast failed.");
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
 }
@@ -309,8 +309,8 @@ ReferenceT<T>::ReferenceT(const char8* const typeName,
             Reference::RemoveReference();
             typeTObjectPointer = static_cast<T *>(NULL);
         }
-        else{
-            REPORT_ERROR(ErrorManagement::FatalError,"ReferenceT: Dynamic cast failed.");
+        else {
+            REPORT_ERROR(ErrorManagement::FatalError, "ReferenceT: Dynamic cast failed.");
         }
     }
 }

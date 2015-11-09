@@ -91,8 +91,8 @@ void ClassRegistryItem::DecrementNumberOfInstances() {
     if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
         numberOfInstances--;
     }
-    else{
-        REPORT_ERROR(ErrorManagement::FatalError,"ClassRegistryItem: Failed FastLock()");
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryItem: Failed FastLock()");
     }
     classRegistryItemMuxSem.FastUnLock();
 }

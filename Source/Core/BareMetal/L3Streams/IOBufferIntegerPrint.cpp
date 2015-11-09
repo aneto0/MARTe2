@@ -416,16 +416,16 @@ static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
             }
             // fill up with zeros
             for (i = (5 - numberFillLength); i <= index; i++) {
-                if(!s.PutC('0')){
-                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                if (!s.PutC('0')) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferFloatPrint: Failed IOBuffer::PutC()");
                     break;
                 }
             }
         }
         // then complete by outputting all digits
         for (i = index + 1; i <= 4; i++) {
-            if(!s.PutC(buffer[i])){
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferFloatPrint: Failed IOBuffer::PutC()");
+            if (!s.PutC(buffer[i])) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferFloatPrint: Failed IOBuffer::PutC()");
                 break;
             }
         }
@@ -674,28 +674,28 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
     if (positiveNumber < static_cast<T>(0)) {
         if ((sizeof(T) == 8u) && (maximumSize >= 20u)) {
             if (!PutS(ioBuffer, "-9223372036854775808")) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
             ret = true;
         }
         if ((sizeof(T) == 4u) && (maximumSize >= 10u)) {
             if (!PutS(ioBuffer, "-2147483648")) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
             ret = true;
         }
         if ((sizeof(T) == 2u) && (maximumSize >= 6u)) {
             if (!PutS(ioBuffer, "-32768")) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
             ret = true;
         }
         if ((sizeof(T) == 1u) && (maximumSize >= 4u)) {
             if (!PutS(ioBuffer, "-128")) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
             ret = true;
@@ -722,7 +722,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
             if ((padded) && (!leftAligned)) {
                 for (uint32 i = 1u; ok && (i < maximumSize); i++) {
                     if (!ioBuffer.PutC(' ')) {
-                        REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                        REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                         ok = false;
                     }
                 }
@@ -730,7 +730,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
 
             // put the ?
             if (!ioBuffer.PutC('?')) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
 
@@ -741,7 +741,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
             if ((padded) && (!leftAligned)) {
                 for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
                     if (!ioBuffer.PutC(' ')) {
-                        REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                        REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                         ok = false;
                     }
                 }
@@ -750,14 +750,14 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
             // add sign
             if (number < static_cast<T>(0)) {
                 if (!ioBuffer.PutC('-')) {
-                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
             else {
                 if (addPositiveSign) {
                     if (!ioBuffer.PutC('+')) {
-                        REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                        REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                         ok = false;
                     }
                 }
@@ -771,7 +771,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
         if ((padded) && (leftAligned)) {
             for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -845,14 +845,14 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
         if ((padded) && (!leftAligned)) {
             for (uint32 i = 1u; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
         }
         // put the ?
         if (!ioBuffer.PutC('?')) {
-            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
 
@@ -896,11 +896,11 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
         // add header
         if (addHeader) {
             if (!ioBuffer.PutC('0')) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
             if (!ioBuffer.PutC('x')) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -923,14 +923,14 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
             if (digit < 10u) {
                 /*lint -e(9125) -e(9117) */
                 if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
-                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
             else {
                 /*lint -e(9125) -e(9117) */
                 if (!ioBuffer.PutC(static_cast<char8>((ten + digit) - 10u))) {
-                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -942,7 +942,7 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
     if ((padded) && (leftAligned)) {
         for (uint16 i = numberSize; ok && (i < maximumSize); i++) {
             if (!ioBuffer.PutC(' ')) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1014,14 +1014,14 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
         if ((padded) && (!leftAligned)) {
             for (uint32 i = 1u; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
         }
         // put the ?
         if (!ioBuffer.PutC('?')) {
-            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
 
@@ -1058,7 +1058,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
         if ((padded) && (!leftAligned)) {
             for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -1067,11 +1067,11 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
         // add header
         if (addHeader) {
             if (!ioBuffer.PutC('0')) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
             if (!ioBuffer.PutC('o')) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1088,7 +1088,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
             uint8 zero = static_cast<uint8>('0');
             /*lint -e(9125) -e(9117) */
             if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1098,7 +1098,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
     if ((padded) && (leftAligned)) {
         for (uint16 i = numberSize; ok && (i < maximumSize); i++) {
             if (!ioBuffer.PutC(' ')) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1170,14 +1170,14 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
         if ((padded) && (!leftAligned)) {
             for (uint32 i = 1u; i < maximumSize; i++) {
                 if (!ioBuffer.PutC(' ')) {
-                    REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
         }
         // put the ?
         if (!ioBuffer.PutC('?')) {
-            REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+            REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
 
@@ -1220,11 +1220,11 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
         // add header
         if (addHeader) {
             if (!ioBuffer.PutC('0')) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
             if (!ioBuffer.PutC('b')) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1243,7 +1243,7 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
             // skips trailing zeros until we encounter the first non zero, or if putTrailingZeros was already set
             /*lint -e(9125) -e(9117) */
             if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
 
@@ -1254,7 +1254,7 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
     if (padded && leftAligned) {
         for (uint16 i = 0u; ok && (i < (maximumSize - numberSize)); i++) {
             if (!ioBuffer.PutC(' ')) {
-                REPORT_ERROR(ErrorManagement::FatalError,"IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
