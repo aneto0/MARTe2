@@ -25,7 +25,7 @@
 
 OBJSX=  BasicFileGTest.x \
         StringGTest.x
-#        DoubleIntegerGTest.x \
+        DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
