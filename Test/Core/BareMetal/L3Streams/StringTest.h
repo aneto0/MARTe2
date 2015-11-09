@@ -1,8 +1,8 @@
 /**
- * @file StreamStringTest.h
- * @brief Header file for class StreamStringTest
- * @date 16/10/2015
- * @author Giuseppe Ferrò
+ * @file StringTest.h
+ * @brief Header file for class StringTest
+ * @date 26/ott/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StreamStringTest
+ * @details This header file contains the declaration of the class StringTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STREAMSTRINGTEST_H_
-#define STREAMSTRINGTEST_H_
+#ifndef STRINGTEST_H_
+#define STRINGTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "StreamString.h"
+#include "String.h"
 #include "FormatDescriptor.h"
 #include "StreamTestHelper.h"
 
@@ -43,9 +43,9 @@
 using namespace MARTe;
 
 /**
- * @brief Test the StreamString public methods.
+ * @brief Test the String public methods.
  */
-class StreamStringTest {
+class StringTest {
 
 private:
 
@@ -62,7 +62,7 @@ public:
     bool TestConstructor_CCString(const char8 * initializationString);
 
     /**
-     * @brief Tests if the buffer of the StreamString in input is duplicated correctly into the new instantiated object buffer.
+     * @brief Tests if the buffer of the String in input is duplicated correctly into the new instantiated object buffer.
      */
     bool TestCopyConstructor(const char8 * initializationString);
 
@@ -72,7 +72,7 @@ public:
     bool TestDestructor();
 
     /**
-     * @brief Tests if the StreamString is considered as a const char string by in the conversion to AnyType.
+     * @brief Tests if the String is considered as a const char string by in the conversion to AnyType.
      */
     bool TestAnyTypeOperator(const char8* initializationString);
 
@@ -82,10 +82,24 @@ public:
     bool TestRead(const char8* inputString,
                   uint32 sizeToRead);
 
+
     /**
-     * @brief TEsts if the specified number of chars are correctly write on the string.
+     * @brief Tests if the behavior is the same of the normal Read.
+     */
+    bool TestReadTimeout(const char* inputString,
+                   uint32 sizeToWrite);
+
+    /**
+     * @brief Tests if the specified number of chars are correctly write on the string.
      */
     bool TestWrite(const char* inputString,
+                   uint32 sizeToWrite);
+
+
+    /**
+     * @brief Tests if the behavior is the same of the normal Write.
+     */
+    bool TestWriteTimeout(const char* inputString,
                    uint32 sizeToWrite);
 
     /**
@@ -161,9 +175,9 @@ public:
     bool TestCopyOperator_CCString(const char8 * input);
 
     /**
-     * @brief Tests if a StreamString in input is copied in the stream.
+     * @brief Tests if a String in input is copied in the stream.
      */
-    bool TestCopyOperator_StreamString(const char8 * input);
+    bool TestCopyOperator_String(const char8 * input);
 
     /**
      * @brief Tests if the char in input is appended on the stream queue.
@@ -176,9 +190,9 @@ public:
     bool TestConcatenateOperator_CCString(const char8 *input);
 
     /**
-     * @brief Tests if a the buffer of a StreamString in input is appended on the stream queue.
+     * @brief Tests if a the buffer of a String in input is appended on the stream queue.
      */
-    bool TestConcatenateOperator_StreamString(const char8 *input);
+    bool TestConcatenateOperator_String(const char8 *input);
 
     /**
      * @brief Tests if the function returns true if the buffers contain the same data of the C string in input.
@@ -186,9 +200,9 @@ public:
     bool TestIsEqualOperator_CCString(const char8 *input);
 
     /**
-     * @brief Tests if the function returns true if the buffers of the two compared StreamString contain the same data.
+     * @brief Tests if the function returns true if the buffers of the two compared String contain the same data.
      */
-    bool TestIsEqualOperator_StreamString(const char8 *input);
+    bool TestIsEqualOperator_String(const char8 *input);
 
     /**
      * @See TestIsEqualOperator_CCString. It returns the opposite value.
@@ -196,9 +210,9 @@ public:
     bool TestIsDifferentOperator_CCString(const char8 *input);
 
     /**
-     * @See TestIsEqualOperator_StreamString. It returns the opposite value.
+     * @See TestIsEqualOperator_String. It returns the opposite value.
      */
-    bool TestIsDifferentOperator_StreamString(const char8 *input);
+    bool TestIsDifferentOperator_String(const char8 *input);
 
     /**
      * @brief Tests if the function returns the character at the specified position or if it fails if the index is
@@ -242,5 +256,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* STREAMSTRINGTEST_H_ */
+#endif /* STRINGTEST_H_ */
 

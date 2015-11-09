@@ -46,13 +46,16 @@ GlobalObjectsDatabase.cpp
 GlobalObjectI.cpp
 CharBuffer.cpp
 IOBuffer.cpp
-StreamStringIOBuffer.cpp
+StringIOBuffer.cpp
 BufferedStreamIOBuffer.cpp
-StreamI.cpp
-StreamString.cpp
+StreamI.h
+BufferedStreamI.cpp
+String.cpp
 StreamMemoryReference.cpp
 DoubleBufferedStream.cpp
 SingleBufferedStream.cpp
 IOBufferIntegerPrint.cpp
 IOBufferFloatPrint.cpp
+DoubleInteger.h
+AdvancedErrorManagement.h
 

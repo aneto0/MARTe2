@@ -1,7 +1,7 @@
 /**
- * @file StreamStringIOBufferTest.h
- * @brief Header file for class StreamStringIOBufferTest
- * @date 14/10/2015
+ * @file StringIOBufferTest.h
+ * @brief Header file for class StringIOBufferTest
+ * @date 26/10/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,14 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StreamStringIOBufferTest
+ * @details This header file contains the declaration of the class StringIOBufferTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef STREAMSTRINGIOBUFFERTEST_H_
-#define STREAMSTRINGIOBUFFERTEST_H_
+#ifndef STRINGIOBUFFERTEST_H_
+#define STRINGIOBUFFERTEST_H_
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,13 +32,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "StreamStringIOBuffer.h"
+#include "StringIOBuffer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
-class StreamStringIOBufferTest {
+class StringIOBufferTest {
 
 public:
 
@@ -92,5 +93,5 @@ public:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* STREAMSTRINGIOBUFFERTEST_H_ */
+#endif /* STRINGIOBUFFERTEST_H_ */
 

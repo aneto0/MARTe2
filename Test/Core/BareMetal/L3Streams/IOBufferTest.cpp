@@ -1356,7 +1356,7 @@ bool IOBufferTest::TestPrintFormatted_BitSet_Unsigned() {
     uint32* source = (uint32*) data;
 
     //from size =4 to size = 64
-    for (uint32 size = 4; size < 32; size += 4) {
+    for (uint32 size = 4; size < 64; size += 4) {
         int32 beg = 0;
         int32 end = 0;
 
@@ -1404,7 +1404,7 @@ bool IOBufferTest::TestPrintFormatted_BitSet_Signed() {
     int32* source = (int32*) data;
 
     //from size =4 to size = 64
-    for (uint32 size = 4; size < 32; size += 4) {
+    for (uint32 size = 4; size < 64; size += 4) {
         int32 beg = 0;
         int32 end = 0;
 

@@ -44,7 +44,7 @@
 namespace MARTe {
 
 SingleBufferedStream::SingleBufferedStream() :
-        StreamI(),
+        BufferedStreamI(),
         internalBuffer(this) {
     mutexReadMode = true;
     mutexWriteMode = false;
@@ -56,7 +56,7 @@ SingleBufferedStream::SingleBufferedStream() :
 }
 
 SingleBufferedStream::SingleBufferedStream(const TimeoutType &timeoutIn) :
-        StreamI(),
+        BufferedStreamI(),
         internalBuffer(this) {
     mutexReadMode = true;
     mutexWriteMode = false;
@@ -175,6 +175,16 @@ bool SingleBufferedStream::Read(char8 * const output,
     return ret;
 }
 
+bool SingleBufferedStream::Read(char8 * const output,
+                                uint32 & size,
+                                const TimeoutType &msecTimeout) {
+    TimeoutType prevTimeout = GetTimeout();
+    SetTimeout(msecTimeout);
+    bool ret = Read(output, size);
+    SetTimeout(prevTimeout);
+    return ret;
+}
+
 bool SingleBufferedStream::Write(const char8 * const input,
                                  uint32 & size) {
 
@@ -235,6 +245,16 @@ bool SingleBufferedStream::Write(const char8 * const input,
     }
     return ret;
 
+}
+
+bool SingleBufferedStream::Write(const char8 * const input,
+                                 uint32 & size,
+                                 const TimeoutType &msecTimeout) {
+    TimeoutType prevTimeout = GetTimeout();
+    SetTimeout(msecTimeout);
+    bool ret = Write(input, size);
+    SetTimeout(prevTimeout);
+    return ret;
 }
 
 uint64 SingleBufferedStream::Size() {

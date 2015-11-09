@@ -1,8 +1,8 @@
 /**
- * @file StreamITest.cpp
- * @brief Source file for class StreamITest
- * @date 15/10/2015
- * @author Andre' Neto
+ * @file BufferedStreamITest.cpp
+ * @brief Source file for class BufferedStreamITest
+ * @date 26/10/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StreamITest (public, protected, and private). Be aware that some 
+ * the class BufferedStreamITest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,7 +28,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "StreamITest.h"
+#include "BufferedStreamITest.h"
+#include "StringHelper.h"
 
 using namespace MARTe;
 /*---------------------------------------------------------------------------*/
@@ -38,12 +39,12 @@ using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-bool StreamITest::TestDefaultConstructor() {
+bool BufferedStreamITest::TestDefaultConstructor() {
     DummySingleBufferedStream myStream;
     return (myStream.GetTimeout() == TTInfiniteWait);
 }
 
-bool StreamITest::TestAnyType() {
+bool BufferedStreamITest::TestAnyType() {
     DummySingleBufferedStream myStream;
     AnyType anyStream = myStream;
     bool ok = anyStream.GetDataPointer() == &myStream;
@@ -54,7 +55,7 @@ bool StreamITest::TestAnyType() {
 
 
 
-bool StreamITest::TestGetToken(uint32 bufferSize,
+bool BufferedStreamITest::TestGetToken(uint32 bufferSize,
                                const TokenTestTableRow *table) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
@@ -94,7 +95,7 @@ bool StreamITest::TestGetToken(uint32 bufferSize,
     return result;
 }
 
-bool StreamITest::TestGetToken_Stream(uint32 bufferSize,
+bool BufferedStreamITest::TestGetToken_Stream(uint32 bufferSize,
                                       const TokenTestTableRow *table) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
@@ -136,7 +137,7 @@ bool StreamITest::TestGetToken_Stream(uint32 bufferSize,
     return result;
 }
 
-bool StreamITest::TestSkipTokens(uint32 bufferSize,
+bool BufferedStreamITest::TestSkipTokens(uint32 bufferSize,
                                  const SkipTokensTestTableRow *table) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
@@ -167,7 +168,7 @@ bool StreamITest::TestSkipTokens(uint32 bufferSize,
     return result;
 }
 
-bool StreamITest::TestGetLine(uint32 bufferSize,
+bool BufferedStreamITest::TestGetLine(uint32 bufferSize,
                               bool skipCharacter) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
@@ -207,7 +208,7 @@ bool StreamITest::TestGetLine(uint32 bufferSize,
     return result;
 }
 
-bool StreamITest::TestGetLine_Stream(uint32 bufferSize,
+bool BufferedStreamITest::TestGetLine_Stream(uint32 bufferSize,
                                      bool skipCharacter) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
@@ -250,7 +251,7 @@ bool StreamITest::TestGetLine_Stream(uint32 bufferSize,
     return result;
 }
 
-bool StreamITest::TestCopy(uint32 bufferSize) {
+bool BufferedStreamITest::TestCopy(uint32 bufferSize) {
     const char *line = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.\nAenean commodo ligula eget dolor. "
             "Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
             "Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.";
@@ -260,7 +261,7 @@ bool StreamITest::TestCopy(uint32 bufferSize) {
     return (StringHelper::Compare(myStream.buffer, line) == 0);
 }
 
-bool StreamITest::TestCopy_Stream(uint32 bufferSize) {
+bool BufferedStreamITest::TestCopy_Stream(uint32 bufferSize) {
     const char *line = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.\nAenean commodo ligula eget dolor. "
             "Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
             "Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.";
@@ -277,7 +278,7 @@ bool StreamITest::TestCopy_Stream(uint32 bufferSize) {
     return (StringHelper::Compare(myStream.Buffer(), line) == 0);
 }
 
-bool StreamITest::TestPrintFormatted(uint32 bufferSize,
+bool BufferedStreamITest::TestPrintFormatted(uint32 bufferSize,
                                      const PrintfNode testTable[]) {
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
@@ -296,7 +297,7 @@ bool StreamITest::TestPrintFormatted(uint32 bufferSize,
     return true;
 }
 
-bool StreamITest::TestPrintFormatted_Pointer(uint32 bufferSize) {
+bool BufferedStreamITest::TestPrintFormatted_Pointer(uint32 bufferSize) {
 
     DummySingleBufferedStream stream1;
     DummySingleBufferedStream stream2;
@@ -349,7 +350,7 @@ bool StreamITest::TestPrintFormatted_Pointer(uint32 bufferSize) {
     return true;
 }
 
-bool StreamITest::TestPrintf() {
+bool BufferedStreamITest::TestPrintf() {
     DummySingleBufferedStream myStream;
     myStream.Clear();
     myStream.Printf("%d", 8);
@@ -375,7 +376,7 @@ bool StreamITest::TestPrintf() {
     return result;
 }
 
-bool StreamITest::TestPrintFormatted_CCString(uint32 bufferSize) {
+bool BufferedStreamITest::TestPrintFormatted_CCString(uint32 bufferSize) {
 
     DummySingleBufferedStream myStream;
     myStream.SetBufferSize(bufferSize);
@@ -402,7 +403,7 @@ bool StreamITest::TestPrintFormatted_CCString(uint32 bufferSize) {
 
 }
 
-bool StreamITest::TestPrintFormatted_BitSet_Unsigned(uint32 bufferSize) {
+bool BufferedStreamITest::TestPrintFormatted_BitSet_Unsigned(uint32 bufferSize) {
 
     uint64 data[5] = { 0x13579BDF02468ACE, 0x13579BDF02468ACE, 0x123456789ABCDEF0, 0xDEADBABEBAB00111 };
     const char streamString[] = "DEADBABEBAB00111123456789ABCDEF013579BDF02468ACE13579BDF02468ACE";
@@ -415,7 +416,7 @@ bool StreamITest::TestPrintFormatted_BitSet_Unsigned(uint32 bufferSize) {
     uint32* source = (uint32*) data;
 
     //from size =4 to size = 64
-    for (uint32 size = 4; size < 32; size += 4) {
+    for (uint32 size = 4; size < 64; size += 4) {
         int32 beg = 0;
         int32 end = 0;
 
@@ -450,7 +451,7 @@ bool StreamITest::TestPrintFormatted_BitSet_Unsigned(uint32 bufferSize) {
 
 }
 
-bool StreamITest::TestPrintFormatted_BitSet_Signed(uint32 bufferSize) {
+bool BufferedStreamITest::TestPrintFormatted_BitSet_Signed(uint32 bufferSize) {
 
     int64 data[5] = { (int64)0x13579BDF02468ACE, (int64)0x13579BDF02468ACE, (int64)0x123456789ABCDEF0, (int64)0xDEADBABEBAB00111 };
     const char streamString[] = "DEADBABEBAB00111123456789ABCDEF013579BDF02468ACE13579BDF02468ACE";
@@ -463,7 +464,7 @@ bool StreamITest::TestPrintFormatted_BitSet_Signed(uint32 bufferSize) {
     int32* source = (int32*) data;
 
     //from size =4 to size = 64
-    for (uint32 size = 4; size < 32; size += 4) {
+    for (uint32 size = 4; size < 64; size += 4) {
         int32 beg = 0;
         int32 end = 0;
 
@@ -515,4 +516,3 @@ bool StreamITest::TestPrintFormatted_BitSet_Signed(uint32 bufferSize) {
 
     return true;
 }
-

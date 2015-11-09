@@ -42,20 +42,20 @@
 namespace MARTe {
 
 StreamMemoryReference::StreamMemoryReference() :
-        StreamI(),
+        BufferedStreamI(),
         buffer() {
 
 }
 
 StreamMemoryReference::StreamMemoryReference(char8 * const bufferIn,
                                              const uint32 bufferSize) :
-        StreamI() {
+        BufferedStreamI() {
     buffer.SetBufferReferencedMemory(bufferIn, bufferSize, 0u);
 }
 
 StreamMemoryReference::StreamMemoryReference(const char8 * const bufferIn,
                                              const uint32 bufferSize) :
-        StreamI() {
+        BufferedStreamI() {
     buffer.SetBufferReadOnlyReferencedMemory(bufferIn, bufferSize, 0u);
     buffer.SetUsedSize(bufferSize);
 }
@@ -131,6 +131,23 @@ uint64 StreamMemoryReference::Position() {
 
 bool StreamMemoryReference::CanSeek() const {
     return true;
+}
+
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
+ * used by other buffered streams. */
+bool StreamMemoryReference::Read(char8 * const output,
+                                   uint32 & size,
+                                   const TimeoutType &msecTimeout) {
+    return Read(output, size);
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
+ * used by other buffered streams. */
+bool StreamMemoryReference::Write(const char8 * const input,
+                                    uint32 & size,
+                                    const TimeoutType &msecTimeout) {
+    return Write(input, size);
 }
 
 }

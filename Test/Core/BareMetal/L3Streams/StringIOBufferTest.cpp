@@ -1,8 +1,8 @@
 /**
- * @file StreamStringIOBufferTest.cpp
- * @brief Source file for class StreamStringIOBufferTest
- * @date 14/10/2015
- * @author Giuseppe Ferrò
+ * @file StringIOBufferTest.cpp
+ * @brief Source file for class StringIOBufferTest
+ * @date 26/ott/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StreamStringIOBufferTest (public, protected, and private). Be aware that some 
+ * the class StringIOBufferTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StreamStringIOBufferTest.h"
+
+#include "StringIOBufferTest.h"
 #include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
@@ -41,9 +42,9 @@
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
-bool StreamStringIOBufferTest::TestDefaultConstructor() {
+bool StringIOBufferTest::TestDefaultConstructor() {
 
-    StreamStringIOBuffer stringBuffer;
+    StringIOBuffer stringBuffer;
 
     if (stringBuffer.AmountLeft() != 0) {
         return false;
@@ -68,9 +69,9 @@ bool StreamStringIOBufferTest::TestDefaultConstructor() {
     return stringBuffer.AllocationGranularity() == 64;
 }
 
-bool StreamStringIOBufferTest::TestGranularityConstructor(uint32 granularity,
+bool StringIOBufferTest::TestGranularityConstructor(uint32 granularity,
                                                           uint32 expected) {
-    StreamStringIOBuffer stringBuffer(granularity);
+    StringIOBuffer stringBuffer(granularity);
 
     if (stringBuffer.AmountLeft() != 0) {
         return false;
@@ -96,8 +97,8 @@ bool StreamStringIOBufferTest::TestGranularityConstructor(uint32 granularity,
 
 }
 
-bool StreamStringIOBufferTest::TestDestructor() {
-    StreamStringIOBuffer stringBuffer;
+bool StringIOBufferTest::TestDestructor() {
+    StringIOBuffer stringBuffer;
     uint32 allocationSize=1;
     stringBuffer.SetBufferAllocationSize(allocationSize);
 
@@ -105,14 +106,14 @@ bool StreamStringIOBufferTest::TestDestructor() {
         return false;
     }
 
-    stringBuffer.~StreamStringIOBuffer();
+    stringBuffer.~StringIOBuffer();
 
     return stringBuffer.Buffer() == NULL;
 }
 
-bool StreamStringIOBufferTest::TestSetBufferAllocationSize(uint32 size,
+bool StringIOBufferTest::TestSetBufferAllocationSize(uint32 size,
                                                            uint32 granularity) {
-    StreamStringIOBuffer stringBuffer(granularity);
+    StringIOBuffer stringBuffer(granularity);
 
     // the function allocates space for the 0 char.
     size++;
@@ -131,10 +132,10 @@ bool StreamStringIOBufferTest::TestSetBufferAllocationSize(uint32 size,
     return (stringBuffer.GetBufferSize() == ((size / granularity) + addChunk) * granularity) && (stringBuffer.MaxUsableAmount() == (stringBuffer.GetBufferSize() - 1));
 }
 
-bool StreamStringIOBufferTest::TestWrite(uint32 writeSize,
+bool StringIOBufferTest::TestWrite(uint32 writeSize,
                                          const char8 *string) {
 
-    StreamStringIOBuffer stringBuffer;
+    StringIOBuffer stringBuffer;
 
     if (!stringBuffer.Write(string, writeSize)) {
         return false;
@@ -143,18 +144,18 @@ bool StreamStringIOBufferTest::TestWrite(uint32 writeSize,
     return StringHelper::CompareN(stringBuffer.Buffer(), string, writeSize) == 0;
 }
 
-bool StreamStringIOBufferTest::TestWrite_NULL_Buffer() {
-    StreamStringIOBuffer stringBuffer;
+bool StringIOBufferTest::TestWrite_NULL_Buffer() {
+    StringIOBuffer stringBuffer;
 
     uint32 size = 32;
     const char8 *bufferIn = NULL;
     return !stringBuffer.Write(bufferIn, size);
 }
 
-bool StreamStringIOBufferTest::TestTerminate(uint32 writeSize,
+bool StringIOBufferTest::TestTerminate(uint32 writeSize,
                                              const char8 *string) {
 
-    StreamStringIOBuffer stringBuffer;
+    StringIOBuffer stringBuffer;
 
     char8 buffer[32];
 
@@ -175,9 +176,9 @@ bool StreamStringIOBufferTest::TestTerminate(uint32 writeSize,
 }
 
 
-bool StreamStringIOBufferTest::TestWriteAll(uint32 writeSize,
+bool StringIOBufferTest::TestWriteAll(uint32 writeSize,
                                             const char8 *string){
-    StreamStringIOBuffer stringBuffer;
+    StringIOBuffer stringBuffer;
 
     if (!stringBuffer.WriteAll(string, writeSize)) {
         return false;
@@ -186,4 +187,3 @@ bool StreamStringIOBufferTest::TestWriteAll(uint32 writeSize,
     return StringHelper::CompareN(stringBuffer.Buffer(), string, writeSize) == 0;
 
 }
-

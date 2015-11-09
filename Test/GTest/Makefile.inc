@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX=	TypeCharacteristicsGTest.x \
+OBJSX=  DoubleIntegerGTest.x \
+		TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
         BasicConsoleGTest.x \
@@ -67,14 +68,14 @@ OBJSX=	TypeCharacteristicsGTest.x \
  	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x  \
 	CharBufferGTest.x \
-        IOBufferGTest.x \
-        StreamStringIOBufferGTest.x \
-        StreamIGTest.x \
+        StringIOBufferGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
-        StreamStringGTest.x \
+        StringGTest.x \
         StreamMemoryReferenceGTest.x \
+        BufferedStreamIGTest.x \
+        IOBufferGTest.x \
         BitSetToIntegerGTest.x
 
 	
