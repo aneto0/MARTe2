@@ -31,62 +31,106 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "System.h"
-#include "InternetAddress.h"
-#include "ErrorManagement.h"
-#include "TimeoutType.h"
+#include "InternetHost.h"
+#include "StreamI.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketCore.h)
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-/** Implements basic generic socket functions */
-class BasicSocket {
 
+/**
+ * @brief Implementation of the common socket functions that are shared by UDP and TCP sockets.
+ */
+class BasicSocket: public StreamI {
 public:
-
+friend class SocketSelect;
+    /**
+     * @brief Default constructor.
+     */
     BasicSocket();
 
-    /** constructor  */
-    BasicSocket(int32 socket);
+    /**
+     * @brief Destructor
+     * @post
+     *   Close()
+    */
+    virtual ~BasicSocket();
 
-    /** destructor */
-    ~BasicSocket();
+    /**
+     * @brief Set \ UnSet blocking mode.
+     * @param[in] flag specifies if blocking mode must be set(true) or unset(false).
+     * @return true if the desired mode is set correctly.
+     */
+    bool SetBlocking(const bool flag);
 
-    /**  set blocking mode for the stream! */
-    bool SetBlocking(bool flag);
 
-    /** returns the socket number */
-    int32 Socket();
+    /**
+     * @brief Checks if the socket is in blocking mode or not.
+     * @return true if the socket is in blocking mode, false otherwise.
+     */
+    bool IsBlocking() const;
 
-    /** closes the socket */
+    /**
+     * @brief Closes the socket.
+     * @return true if the socket is closed correctly.
+     */
     bool Close();
 
-    /** where the packet came from */
-    InternetAddress &GetSource();
+    /**
+     * @brief Returns the Internet host address of the connection source, where the packets are received from.
+     * @return the the Internet host address of the connection source
+     */
+     InternetHost GetSource() const;
 
-    /** where the packet is going to */
-    InternetAddress &GetDestination();
+     /**
+      * @brief Returns the Internet host address of the socket destination, where the packets are sent to.
+      * @return the Internet host address of the socket destination.
+      */
+     InternetHost GetDestination() const;
 
+     /**
+      * @brief Sets the destination Internet host address, where the packets are sent to.
+      * @param[in] destinationIn the Internet host address of the socket destination.
+      * @post
+      *   GetDestination() == destinationIn
+      */
+     void SetDestination(const InternetHost &destinationIn);
 
-    int32 GetConnectionSocket() const;
+     /**
+      * @brief Sets the source Internet host address, where the packets are received from.
+      * @param[in] sourceIn the Internet host address of the socket source connection.
+      * @post
+      *   GetSource() == sourceIn
+      */
+     void SetSource(const InternetHost &sourceIn);
 
-    void SetDestination(const InternetAddress &destinationIn);
+     /**
+      * @brief Checks if the socket handle is valid or not.
+      */
+     virtual bool IsValid() const;
+protected:
 
-    void SetSource(const InternetAddress &sourceIn);
+     /**
+      * Address of the destination target, where the packets are sent to.
+      */
+     InternetHost destination;
 
-    void SetConnectionSocket(int32 connectionSocketIn);
+     /**
+      * Address of the source connection, where the packets are received from.
+      */
+     InternetHost source;
+
+     /**
+      * The socket low-level handle.
+      */
+     SocketCore connectionSocket;
 
 private:
 
-    /** where the packet goes to */
-    InternetAddress destination;
-
-    /** where packets comes from */
-    InternetAddress source;
-
-    /** the socket handle */
-    int32 connectionSocket;
+     bool isBlocking;
 
 };
 

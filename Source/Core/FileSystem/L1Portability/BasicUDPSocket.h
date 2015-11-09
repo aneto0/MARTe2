@@ -1,131 +1,180 @@
-/*
- * Copyright 2011 EFDA | European Fusion Development Agreement
- *
- * Licensed under the EUPL, Version 1.1 or - as soon they 
-   will be approved by the European Commission - subsequent  
-   versions of the EUPL (the "Licence"); 
- * You may not use this work except in compliance with the 
-   Licence. 
- * You may obtain a copy of the Licence at: 
- *  
- * http://ec.europa.eu/idabc/eupl
- *
- * Unless required by applicable law or agreed to in 
-   writing, software distributed under the Licence is 
-   distributed on an "AS IS" basis, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-   express or implied. 
- * See the Licence for the specific language governing 
-   permissions and limitations under the Licence. 
- *
- * $Id: BasicUDPSocket.h 3 2012-01-15 16:26:07Z aneto $
- *
-**/
-
 /**
- * @file
- * Basic definitions and implementation of the UDP socket
+ * @file BasicUDPSocket.h
+ * @brief Header file for class BasicUDPSocket
+ * @date 28/10/2015
+ * @author Giuseppe Ferrò
+ *
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ *
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
+
+ * @details This header file contains the declaration of the class BasicUDPSocket
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
-#if !defined( BASIC_UDP_SOCKET_H)
-#define BASIC_UDP_SOCKET_H
+
+#ifndef BASICUDPSOCKET_H_
+#define BASICUDPSOCKET_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 
 #include "BasicSocket.h"
 #include "Sleep.h"
 
-#define BasicUDPSocketVersion "$Id: BasicUDPSocket.h 3 2012-01-15 16:26:07Z aneto $"
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
+/**
+ * @brief Unbuffered UDP socket.
+ */
 class BasicUDPSocket: public BasicSocket {
 public:
 
-    // PURE STREAMING
-    /** The basic Read function */
-    bool BasicRead(void* buffer, uint32 &size){
-        uint32 total = size;
-        char *p = (char *)buffer;
-#if (defined(_RTAI) || defined(_LINUX) || (defined _SOLARIS) || defined(_MACOSX))
-        socklen_t sz = (socklen_t)source.Size();
-#else
-        int sz = source.Size();
-#endif
+    /**
+     * @brief Default constructor.
+     */
+    BasicUDPSocket();
 
-        int32 ret = recvfrom(connectionSocket,p,total,0,source.Address(),&sz);
-        if (ret == -1) return False;
+    /**
+     * @brief Destructor.
+     */
+    virtual ~BasicUDPSocket();
 
-        size = ret;
-        // to avoid polling continuously release CPU time when reading 0 bytes
-        if (size<=0) SleepMsec(1);
-        return (ret >0);
-    }
+    /**
+     * @see StreamI::Read
+     */
+    virtual bool Read(char8* const output,
+                      uint32 &size);
 
-    /** The basic write function */
-    bool BasicWrite(const void* buffer, uint32 &size){
-        uint32 total = size;
-        char *p = (char *)buffer;
-        int32 ret = sendto(connectionSocket,p,size,0,destination.Address(),destination.Size());
-        size = ret;
-        // to avoid polling continuously release CPU time when reading 0 bytes
-        if (size<=0) SleepMsec(1);
-        return (ret >0);
-    }
+    /**
+     * @brief Read without removing data from the socket pipe.
+     * @param[out] output is the buffer used to store the read data.
+     * @param[in,out] size is the number of bytes to read.
+     * @return false in case of errors.
+     * @post
+     *   size is the number of read bytes.
+     */
+    virtual bool Peek(char8* const output,
+                      uint32 &size);
 
-// class specific functions
-    /** a constructor */
-    BasicUDPSocket(int32 socket = 0){
-        connectionSocket = socket;
-    }
+    /**
+     * @see StreamI::Write
+     */
+    virtual bool Write(const char8* const input,
+                       uint32 &size);
 
-    /** Opens a socket to address address and with port port */
-    bool Open(){
-        SocketInit();
-        connectionSocket = socket(PF_INET,SOCK_DGRAM,0);
-        if (connectionSocket < 0){
-            AssertSocketErrorCondition(OSError,"BasicUDPSocket::Open");
-            return False;
-        }
+    /**
+     * @brief Opens an UDP socket.
+     * @return true if the socket is successfully initialised.
+     */
+    bool Open();
 
-        return True;
-    };
+    /**
+     * @brief Sets the port where the socket will listen from.
+     * @param[in] port the port number.
+     * @return true if the socket is successfully bind into the \a port.
+     */
+    bool Listen(const uint16 port);
 
-    /** Sets the port to listen from */
-    bool Listen(int port,int maxConnections=1){
-        InternetAddress    server;
-        server.SetPort(port);
+    /**
+     * @brief Sets the writing destination address.
+     * @param[in] address the destination IP address.
+     * @param[in] port the destination port.
+     * @return true if the address is successfully set.
+     * @pre
+     *   address must have the IPv4 format x.x.x.x
+     * @post
+     *   GetDestination() == InternetHost(port, address)
+     */
+    bool Connect(const char8 * const address,
+                 const uint16 port);
 
-        int errorCode = bind(connectionSocket, server.Address(),server.Size());
-            if (errorCode < 0) {
-            AssertSocketErrorCondition(OSError,"BasicUDPSocket::Listen::bind");
-            return False;
-        }
+    /**
+     * @brief The UDP socket support writing.
+     * @return true.
+     */
+    virtual bool CanWrite() const;
 
-        return True;
-    }
+    /**
+     * @brief The UDP socket support reading.
+     * @return true.
+     */
+    virtual bool CanRead() const;
 
-    /** selects the destination of next sends */
-    bool Connect(const char *address,int port){
-        destination.SetPort(port);
-        if (destination.SetAddressByDotName(address) == False)
-            if (destination.SetAddressByName(address) == False) {
-                CStaticAssertErrorCondition(ParametersError,"BasicUDPSocket::Connect:wrong address");
-                return False;
-            }
-        return True;
-    }
+    /**
+     * @brief The UDP socket does not support seeking.
+     * @return false.
+     */
+    virtual bool CanSeek() const;
 
-    /** selects the destination of next sends */
-    bool Connect(InternetAddress &dest){
-        destination = dest;
-        return True;
-    }
+    /**
+     * @see StreamI::Read
+     */
+    virtual bool Read(char8 * const output,
+                      uint32 & size,
+                      const TimeoutType &timeout);
+
+    /**
+     * @see StreamI::Write
+     */
+    virtual bool Write(const char8 * const input,
+                       uint32 & size,
+                       const TimeoutType &timeout);
+
+    /**
+     * @brief Unsupported feature.
+     * @return 0xFFFFFFFFFFFFFFFF.
+     */
+    virtual uint64 Size();
+
+    /**
+     * @brief Unsupported feature.
+     * @return false.
+     */
+    virtual bool Seek(uint64 pos);
+
+    /**
+     * @brief Unsupported feature.
+     * @return false.
+     */
+    virtual bool RelativeSeek(const int32 deltaPos);
+
+    /**
+     * @brief Unsupported feature.
+     * @return 0xFFFFFFFFFFFFFFFF.
+     */
+    virtual uint64 Position();
+
+    /**
+     * @brief Unsupported feature.
+     * @return false.
+     */
+    virtual bool SetSize(uint64 size);
 
 };
 
-#endif
+}
 
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
-
-
-
-
-
-
+#endif /* BASICUDPSOCKET_H_ */
 

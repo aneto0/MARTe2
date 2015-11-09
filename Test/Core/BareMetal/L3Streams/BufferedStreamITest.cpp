@@ -289,7 +289,6 @@ bool BufferedStreamITest::TestPrintFormatted(uint32 bufferSize,
         myStream.PrintFormatted(testTable[i].format, testTable[i].inputs);
         myStream.FlushAndResync();
         if (StringHelper::Compare(testTable[i].expectedResult, myStream.Buffer()) != 0) {
-            AnyType data = testTable[i].inputs[i];
             return false;
         }
         i++;

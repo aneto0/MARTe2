@@ -120,7 +120,7 @@ bool DoubleBufferedStreamTest::TestRead(uint32 bufferSize,
 
         bufferRead[readSize - 1] = '\0';
         bufferWrite[readSize - 1] = '\0';
-        bool ok = (StringHelper::Compare(bufferRead, bufferWrite) == 0);
+        ok = (StringHelper::Compare(bufferRead, bufferWrite) == 0);
 
         free(bufferRead);
         free(bufferWrite);

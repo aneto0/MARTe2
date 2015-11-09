@@ -150,7 +150,7 @@ public:
      */
     virtual bool Read(char8 * const output,
             uint32 & size,
-            const TimeoutType &msecTimeout);
+            const TimeoutType &timeout);
 
     /**
      * @brief Default implementation for buffered streams: calls StreamI::Write(*)
@@ -159,7 +159,7 @@ public:
      */
     virtual bool Write(const char8 * const input,
             uint32 & size,
-            const TimeoutType &msecTimeout);
+            const TimeoutType &timeout);
 
 
     /**

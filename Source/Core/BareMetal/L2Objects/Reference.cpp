@@ -31,7 +31,7 @@
 #include "ClassRegistryItem.h"
 #include "Reference.h"
 #include "ClassRegistryDatabase.h"
-
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -55,14 +55,10 @@ Reference::Reference(const char8* const typeName, HeapI* const heap) {
     Object *objPtr = CreateByName(typeName, heap);
     if (objPtr != NULL_PTR(Object*)) {
         objectPointer = objPtr;
-    }
-
-    if (objectPointer == NULL_PTR(Object*)) {
-        delete objPtr;
-        objectPointer = NULL_PTR(Object*);
-    }
-    else {
         objectPointer->IncrementReferences();
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::FatalError,"Reference: Failed CreateByName() in constructor");
     }
 }
 

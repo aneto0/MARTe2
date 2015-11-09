@@ -32,88 +32,189 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "System.h"
+#include "TimeoutType.h"
 #include "BasicSocket.h"
-#include "SocketSelect.h"
-#include "InternetService.h"
-#include "Sleep.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
+/**
+ * @brief Implementation of TCP socket.
+ */
 class BasicTCPSocket: public BasicSocket {
 public:
 
-    /** just a constructor */
-    BasicTCPSocket(int32 socket = 0);
+    /**
+     * @brief Default constructor.
+     */
+    BasicTCPSocket();
 
-    /** destructor */
-    ~BasicTCPSocket();
 
-    /**  set blocking mode for the stream! */
-    bool SetBlocking(bool flag);
+    /**
+     * @brief Destructor
+     * @details Closes the socket.
+     */
+    virtual ~BasicTCPSocket();
 
-    /** returns the socket number */
-    int32 Socket();
+    /**
+     * @brief Read without timeout.
+     * @param[out] output is the buffer where the read data must be stored.
+     * @param [in,out] size is the number of bytes to read.
+     * @return false in case of errors.
+     * @post
+     *   size is the number of read bytes.
+     */
+    virtual bool Read(char8* const output,
+                      uint32 &size);
 
-    /** closes the socket */
-    bool Close();
+    /**
+     * @brief Write without timeout.
+     * @param[in] input is the buffer which contains the data to be written.
+     * @param[in,out] size is the number of bytes to write.
+     * @return false in case of errors.
+     * @post
+     *   size is the number of written bytes
+     */
+    virtual bool Write(const char8* const input,
+                       uint32 &size);
 
-    /** where the packet came from */
-    InternetAddress &Source();
+    /**
+     * @brief Read within timeout.
+     * @param[out] output is the buffer where the read data must be stored.
+     * @param [in,out] size is the number of bytes to read.
+     * @param[in] timeout is the desired timeout in milliseconds.
+     * @return false in case of errors or timeout.
+     * @warning If the socket is in non-block mode, the timeout has no meaning.
+     * @post
+     *   size is the number of read bytes.
+     */
+    virtual bool Read(char8* const output,
+                      uint32 &size,
+                      const TimeoutType &timeout);
 
-    /** where the packet is going to */
-    InternetAddress &Destination();
+    /**
+     * @brief Write within timeout.
+     * @param[in] input is the buffer which contains the data to be written.
+     * @param[in,out] size is the number of bytes to write.
+     * @param[in] timeout is the desired timeout.
+     * @return false in case of errors or timeout.
+     * @warning If the socket is in non-block mode, the timeout has no meaning.
+     * @post
+     *   size is the number of read bytes.
+     */
+    virtual bool Write(const char8* const input,
+                       uint32 &size,
+                       const TimeoutType &timeout);
 
-    /** basic Read*/
-    bool BasicRead(void* buffer,
-                   uint32 &size);
+    /**
+     * @brief Unsupported feature.
+     * @return false.
+     */
+    virtual bool Seek(uint64 pos);
 
-    /** basic write */
-    bool BasicWrite(const void* buffer,
-                    uint32 &size);
+    /**
+     * @brief Unsupported feature.
+     * @return max uint64 0xFFFFFFFFFFFFFFFF.
+     */
+    virtual uint64 Size();
 
-    /** Read without consuming */
-    bool Peek(void* buffer,
-              uint32 &size);
+    /**
+     * @brief Unsupported feature.
+     * @return false.
+     */
+    virtual bool RelativeSeek(const int32 deltaPos);
 
-    /** Opens a stream socket */
+    /**
+     * @brief Unsupported feature.
+     * @return max uint64 0xFFFFFFFFFFFFFFFF.
+     */
+    virtual uint64 Position();
+
+    /**
+     * @brief Unsupported feature.
+     * @return false.
+     */
+    virtual bool SetSize(uint64 size);
+
+    /**
+     * @see StreamI::CanWrite()
+     * @return true.
+     */
+    virtual bool CanWrite() const;
+
+    /**
+     * @see StreamI::CanRead()
+     * @return true.
+     */
+    virtual bool CanRead() const;
+
+    /**
+     * @see StreamI::CanSeek()
+     * @return false.
+     */
+    virtual bool CanSeek() const;
+
+
+    /**
+     * @brief Read without removing data from the socket pipe.
+     * @param[out] buffer is the buffer used to store the read data.
+     * @param[in,out] size is the number of bytes to read.
+     * @return false in case of errors.
+     * @post
+     *   size is the number of read bytes.
+     */
+    bool Peek(char8 * const buffer,
+              uint32 &size) const;
+
+    /**
+     * @brief Opens a stream socket
+     * @return false if the socket can't be opened.
+     */
     bool Open();
 
-    /** Opens a socket as a server at port port */
-    bool Listen(int32 port,
-                int32 maxConnections = 1);
+    /**
+     * @brief Listen for a connection on a specific port. (server function)
+     * @param[in] port is the listen port.
+     * @param[in] maxConnections is the size of the pending connections queue not accepted yet.
+     * @return false in case of errors.
+     */
+    bool Listen(const uint16 port,
+                const int32 maxConnections = 1) const;
 
-    /** Opens a socket as a server at port port */
-    bool Listen(char8 *serviceName,
-                int32 maxConnections = 1);
+
+    /**
+     * @brief Connect to a specific host.
+     * @param[in] address is the IP address of the server.
+     * @param[in] port is the server port.
+     * @param[in] timeout is the desired timeout.
+     * @warning If the socket is in non-block mode, the timeout has no meaning.
+     * @return false in case of errors.
+     */
+    bool Connect(const char8 * const address,
+                 const uint16 port,
+                 const TimeoutType &timeout = TTInfiniteWait);
 
 
-    /** connects an unconnected socket to address address and with port port */
-    bool Connect(const char8 *address,
-                 const char8 *serviceName,
-                 TimeoutType msecTimeout = TTInfiniteWait);
+    /**
+     * @brief Returns true if the client is connected to a server, false otherwise
+     */
+    bool IsConnected() const;
 
-    /** True if we are still connected  Still experimental */
-    bool IsConnected();
+    /**
+     * @brief Accepts the next connection in the pending queue returning the relative socket.
+     * @param[in] timeout is the desired timeout.
+     * @param[in] client is the new BasicTCPSocket which will be created for the new connection.
+     * @warning If the socket is in non-block mode, the timeout has no meaning.\n
+     * If the input client is NULL, a new BasicTCPSocket will be created on heap, and its deallocation is up to the caller.
+     * @return NULL in case of failure, the new created socket otherwise.
+     */
+    BasicTCPSocket *WaitConnection(const TimeoutType &timeout = TTInfiniteWait,
+                                   BasicTCPSocket *client = static_cast<BasicTCPSocket *>(NULL));
 
-    /** this is a BasicTCPSocket constructor .. */
-    BasicTCPSocket *WaitConnection(TimeoutType msecTimeout = TTInfiniteWait,
-                                   BasicTCPSocket *client = NULL);
 
-private:
 
-    /** where the packet goes to */
-    InternetAddress destination;
-
-    /** where packets comes from */
-    InternetAddress source;
-
-    /** the socket handle */
-    int32 connectionSocket;
 };
 }
 

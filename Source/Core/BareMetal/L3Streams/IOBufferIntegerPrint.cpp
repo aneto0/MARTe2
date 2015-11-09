@@ -309,9 +309,9 @@ static uint16 GetNumberOfDigitsBinaryNotation(T number) {
  * the different between it and the minimum necessary space with zeros.
  */
 template<typename T>
-static void Number2StreamDecimalNotationPrivate(IOBuffer &s,
-                                                T positiveNumber,
-                                                int16 numberFillLength = 0) {
+static inline void Number2StreamDecimalNotationPrivate(IOBuffer &s,
+                                                       T positiveNumber,
+                                                       int16 numberFillLength = 0) {
 
     // no negative!
     if (numberFillLength < 0) {
@@ -409,23 +409,24 @@ static void Number2StreamDecimalNotationPrivate(IOBuffer &s,
 
         // first fill in all necessary zeros
         int16 i = 0;
-        bool ok = true;
         if (numberFillLength > 0) {
             // clamp to 5
             if (numberFillLength > 5) {
                 numberFillLength = 5;
             }
             // fill up with zeros
-            for (i = (5 - numberFillLength); ok && (i <= index); i++) {
+            for (i = (5 - numberFillLength); i <= index; i++) {
                 if (!s.PutC('0')) {
-                    ok = false;
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                    break;
                 }
             }
         }
         // then complete by outputting all digits
-        for (i = index + 1; ok && (i <= 4); i++) {
+        for (i = index + 1; i <= 4; i++) {
             if (!s.PutC(buffer[i])) {
-                ok = false;
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferFloatPrint: Failed IOBuffer::PutC()");
+                break;
             }
         }
     }
@@ -438,7 +439,7 @@ static void Number2StreamDecimalNotationPrivate(IOBuffer &s,
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<class ioBufferer>
-static void PutS(ioBufferer & ioBuffer,
+static bool PutS(ioBufferer & ioBuffer,
                  const char8 *s) {
     bool ok = true;
     while (ok && (s[0] != '\0')) {
@@ -449,6 +450,7 @@ static void PutS(ioBufferer & ioBuffer,
             ok = false;
         }
     }
+    return ok;
 }
 
 /**
@@ -636,8 +638,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
                                     uint16 maximumSize = 0u,
                                     bool padded = false,
                                     const bool leftAligned = false,
-                                    const bool addPositiveSign = false)
-                                    {
+                                    const bool addPositiveSign = false) {
 
     bool ret = false;
 
@@ -667,22 +668,36 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
         }
     }
 
+    bool ok = true;
+
     // 0x800000....
     if (positiveNumber < static_cast<T>(0)) {
         if ((sizeof(T) == 8u) && (maximumSize >= 20u)) {
-            PutS(ioBuffer, "-9223372036854775808");
+            if (!PutS(ioBuffer, "-9223372036854775808")) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                ok = false;
+            }
             ret = true;
         }
         if ((sizeof(T) == 4u) && (maximumSize >= 10u)) {
-            PutS(ioBuffer, "-2147483648");
+            if (!PutS(ioBuffer, "-2147483648")) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                ok = false;
+            }
             ret = true;
         }
         if ((sizeof(T) == 2u) && (maximumSize >= 6u)) {
-            PutS(ioBuffer, "-32768");
+            if (!PutS(ioBuffer, "-32768")) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                ok = false;
+            }
             ret = true;
         }
         if ((sizeof(T) == 1u) && (maximumSize >= 4u)) {
-            PutS(ioBuffer, "-128");
+            if (!PutS(ioBuffer, "-128")) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
+                ok = false;
+            }
             ret = true;
         }
 
@@ -696,7 +711,6 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
         numberSize += GetOrderOfMagnitude(positiveNumber);
     }
 
-    bool ok = true;
     if (!ret) {
 
         // is there enough space for the number?
@@ -708,6 +722,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
             if ((padded) && (!leftAligned)) {
                 for (uint32 i = 1u; ok && (i < maximumSize); i++) {
                     if (!ioBuffer.PutC(' ')) {
+                        REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                         ok = false;
                     }
                 }
@@ -715,6 +730,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
 
             // put the ?
             if (!ioBuffer.PutC('?')) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
 
@@ -725,6 +741,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
             if ((padded) && (!leftAligned)) {
                 for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
                     if (!ioBuffer.PutC(' ')) {
+                        REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                         ok = false;
                     }
                 }
@@ -733,12 +750,14 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
             // add sign
             if (number < static_cast<T>(0)) {
                 if (!ioBuffer.PutC('-')) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
             else {
                 if (addPositiveSign) {
                     if (!ioBuffer.PutC('+')) {
+                        REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                         ok = false;
                     }
                 }
@@ -752,6 +771,7 @@ bool IntegerToStreamDecimalNotation(IOBuffer &ioBuffer,
         if ((padded) && (leftAligned)) {
             for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -795,8 +815,7 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
                                        bool padded = false,
                                        const bool leftAligned = false,
                                        const uint16 zeroPaddedBitSize = 0u,
-                                       const bool addHeader = false)
-                                       {
+                                       const bool addHeader = false) {
     // put here size of number
     uint16 headerSize = 0u;
 
@@ -826,12 +845,14 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
         if ((padded) && (!leftAligned)) {
             for (uint32 i = 1u; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
         }
         // put the ?
         if (!ioBuffer.PutC('?')) {
+            REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
 
@@ -875,9 +896,11 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
         // add header
         if (addHeader) {
             if (!ioBuffer.PutC('0')) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
             if (!ioBuffer.PutC('x')) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -900,12 +923,14 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
             if (digit < 10u) {
                 /*lint -e(9125) -e(9117) */
                 if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
             else {
                 /*lint -e(9125) -e(9117) */
                 if (!ioBuffer.PutC(static_cast<char8>((ten + digit) - 10u))) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -917,6 +942,7 @@ bool IntegerToStreamExadecimalNotation(IOBuffer &ioBuffer,
     if ((padded) && (leftAligned)) {
         for (uint16 i = numberSize; ok && (i < maximumSize); i++) {
             if (!ioBuffer.PutC(' ')) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -958,8 +984,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
                                   bool padded = false,
                                   const bool leftAligned = false,
                                   const uint16 zeroPaddedBitSize = 0u,
-                                  bool addHeader = false)
-                                  {
+                                  bool addHeader = false) {
 
     // put here size of number
     uint16 headerSize = 0u;
@@ -989,12 +1014,14 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
         if ((padded) && (!leftAligned)) {
             for (uint32 i = 1u; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
         }
         // put the ?
         if (!ioBuffer.PutC('?')) {
+            REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
 
@@ -1031,6 +1058,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
         if ((padded) && (!leftAligned)) {
             for (uint32 i = numberSize; ok && (i < maximumSize); i++) {
                 if (!ioBuffer.PutC(' ')) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
@@ -1039,9 +1067,11 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
         // add header
         if (addHeader) {
             if (!ioBuffer.PutC('0')) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
             if (!ioBuffer.PutC('o')) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1058,6 +1088,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
             uint8 zero = static_cast<uint8>('0');
             /*lint -e(9125) -e(9117) */
             if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1067,6 +1098,7 @@ bool IntegerToStreamOctalNotation(IOBuffer &ioBuffer,
     if ((padded) && (leftAligned)) {
         for (uint16 i = numberSize; ok && (i < maximumSize); i++) {
             if (!ioBuffer.PutC(' ')) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1107,8 +1139,7 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
                                    bool padded = false,
                                    const bool leftAligned = false,
                                    const uint16 zeroPaddedBitSize = 0u,
-                                   const bool addHeader = false)
-                                   {
+                                   const bool addHeader = false) {
 
 // 1000 = no limits
     if (maximumSize == 0u) {
@@ -1139,12 +1170,14 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
         if ((padded) && (!leftAligned)) {
             for (uint32 i = 1u; i < maximumSize; i++) {
                 if (!ioBuffer.PutC(' ')) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                     ok = false;
                 }
             }
         }
         // put the ?
         if (!ioBuffer.PutC('?')) {
+            REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
             ok = false;
         }
 
@@ -1187,9 +1220,11 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
         // add header
         if (addHeader) {
             if (!ioBuffer.PutC('0')) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
             if (!ioBuffer.PutC('b')) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }
@@ -1208,6 +1243,7 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
             // skips trailing zeros until we encounter the first non zero, or if putTrailingZeros was already set
             /*lint -e(9125) -e(9117) */
             if (!ioBuffer.PutC(static_cast<char8>(zero + digit))) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
 
@@ -1218,6 +1254,7 @@ bool IntegerToStreamBinaryNotation(IOBuffer &ioBuffer,
     if (padded && leftAligned) {
         for (uint16 i = 0u; ok && (i < (maximumSize - numberSize)); i++) {
             if (!ioBuffer.PutC(' ')) {
+                REPORT_ERROR(ErrorManagement::FatalError, "IOBufferIntegerPrint: Failed IOBuffer::PutC()");
                 ok = false;
             }
         }

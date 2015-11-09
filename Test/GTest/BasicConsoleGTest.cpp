@@ -133,7 +133,7 @@ TEST(BasicConsoleGTest,TestTimeoutRead) {
 
 TEST(BasicConsoleGTest,TestSetGetSize) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestSetGetSize(100, 70));
+    ASSERT_TRUE(console.TestSetGetSceneSize(100, 70));
 }
 
 TEST(BasicConsoleGTest,TestSetGetWindowsSize) {
@@ -176,4 +176,53 @@ TEST(BasicConsoleGTest,TestSetColour) {
 TEST(BasicConsoleGTest,TestPlotChar) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestPlotChar('c', Blue, Yellow, 20, 10));
+}
+
+
+TEST(BasicConsoleGTest,TestCanWrite) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestCanWrite());
+}
+
+
+TEST(BasicConsoleGTest,TestCanRead) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestCanRead());
+}
+
+
+TEST(BasicConsoleGTest,TestCanSeek) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestCanSeek());
+}
+
+TEST(BasicConsoleGTest,TestTimeoutWrite) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestTimeoutWrite("HelloWorld",500));
+}
+
+TEST(BasicConsoleGTest,TestSize) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestSize());
+}
+
+
+TEST(BasicConsoleGTest,TestSeek) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestSeek());
+}
+
+TEST(BasicConsoleGTest,TestRelativeSeek) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestRelativeSeek());
+}
+
+TEST(BasicConsoleGTest,TestPosition) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestPosition());
+}
+
+TEST(BasicConsoleGTest,TestSetSize) {
+    BasicConsoleTest console;
+    ASSERT_TRUE(console.TestSetSize());
 }

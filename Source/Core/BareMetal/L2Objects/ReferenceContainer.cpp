@@ -34,7 +34,7 @@
 #include "ReferenceContainerNode.h"
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceT.h"
-
+#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -60,6 +60,7 @@ Reference ReferenceContainer::Get(const uint32 idx) {
                 ref = node->GetReference();
             }
         }
+        REPORT_ERROR(ErrorManagement::Warning,"ReferenceContainer: input greater than the list size.");
     }
     mux.FastUnLock();
     return ref;
@@ -102,6 +103,9 @@ bool ReferenceContainer::Insert(Reference ref,
             delete newItem;
             ok = false;
         }
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed FastLock()");
     }
     mux.FastUnLock();
     return ok;
@@ -152,7 +156,13 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                                     index--;
                                 }
                             }
+                            else{
+                                REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed StaticList::Delete()");
+                            }
                         }
+                    }
+                    else{
+                        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed StaticList::Insert()");
                     }
                 }
             }
@@ -184,6 +194,12 @@ void ReferenceContainer::Find(ReferenceContainer &result,
                             }
                         }
                     }
+                    else{
+                        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed FastLock()");
+                    }
+                }
+                else{
+                    REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed StaticList::Insert()");
                 }
             }
             if (!filter.IsReverse()) {
@@ -201,6 +217,9 @@ uint32 ReferenceContainer::Size() {
     uint32 size = 0u;
     if (mux.FastLock(muxTimeout) == ErrorManagement::NoError) {
         size = list.ListSize();
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainer: Failed FastLock()");
     }
     mux.FastUnLock();
     return size;

@@ -113,7 +113,7 @@ bool StreamMemoryReference::Seek(const uint64 pos) {
     if (pos > usedSize) {
 //REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
         if (!buffer.Seek(usedSize)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "StreammemoryReference: Failed in the buffer Seek function");
+            REPORT_ERROR(ErrorManagement::FatalError, "StreamMemoryReference: Failed IOBuffer::Seek");
         }
         ret = false;
     }
@@ -138,7 +138,7 @@ bool StreamMemoryReference::CanSeek() const {
  * used by other buffered streams. */
 bool StreamMemoryReference::Read(char8 * const output,
                                    uint32 & size,
-                                   const TimeoutType &msecTimeout) {
+                                   const TimeoutType &timeout) {
     return Read(output, size);
 }
 
@@ -146,7 +146,7 @@ bool StreamMemoryReference::Read(char8 * const output,
  * used by other buffered streams. */
 bool StreamMemoryReference::Write(const char8 * const input,
                                     uint32 & size,
-                                    const TimeoutType &msecTimeout) {
+                                    const TimeoutType &timeout) {
     return Write(input, size);
 }
 

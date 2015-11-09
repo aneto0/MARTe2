@@ -117,7 +117,7 @@ public:
      */
     virtual bool Read(char8 * const output,
                       uint32 & size,
-                      const TimeoutType &msecTimeout);
+                      const TimeoutType &timeout);
 
 
     /**
@@ -125,7 +125,7 @@ public:
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size,
-                       const TimeoutType &msecTimeout);
+                       const TimeoutType &timeout);
 
 
     /**

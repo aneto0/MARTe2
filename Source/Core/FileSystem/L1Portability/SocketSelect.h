@@ -1,200 +1,182 @@
-/*
- * Copyright 2011 EFDA | European Fusion Development Agreement
+/**
+ * @file SocketSelect.h
+ * @brief Header file for class SocketSelect
+ * @date 27/10/2015
+ * @author Giuseppe Ferrò
  *
- * Licensed under the EUPL, Version 1.1 or - as soon they 
-   will be approved by the European Commission - subsequent  
-   versions of the EUPL (the "Licence"); 
- * You may not use this work except in compliance with the 
-   Licence. 
- * You may obtain a copy of the Licence at: 
- *  
- * http://ec.europa.eu/idabc/eupl
+ * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
+ * the Development of Fusion Energy ('Fusion for Energy').
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence")
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in 
-   writing, software distributed under the Licence is 
-   distributed on an "AS IS" basis, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-   express or implied. 
- * See the Licence for the specific language governing 
-   permissions and limitations under the Licence. 
- *
- * $Id: SocketSelect.h 3 2012-01-15 16:26:07Z aneto $
- *
-**/
+ * @warning Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Licence is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the Licence permissions and limitations under the Licence.
 
-/** 
- * @file
- * A wrapper of the select function for sockets
+ * @details This header file contains the declaration of the class SocketSelect
+ * with all of its public, protected and private members. It may also include
+ * definitions for inline methods which need to be visible to the compiler.
  */
-#if !defined SocketSelect_
-#define SocketSelect_
 
-#include "System.h"
-#include "BasicSocket.h"
+#ifndef SOCKETSELECT_H_
+#define SOCKETSELECT_H_
+
+/*---------------------------------------------------------------------------*/
+/*                        Standard header includes                           */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 #include "TimeoutType.h"
+#include "BasicSocket.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketSelectCore.h)
 
-#if defined(_VX5100) || defined(_VX5500) || defined(_V6X5100) || defined(_V6X5500)
-#define SELECT_WIDTH FD_SETSIZE
-#else
-#define SELECT_WIDTH 256
-#endif
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+namespace MARTe {
 
 
-/** Allows synchronising to a group of sockets.
-CAN ONLY SELECT SOCKETS FROM A SINGLE SOURCE TYPE. CANNOT MIX ATM and UDP (on NT only?) */
-class  SocketSelect {
-protected:
-    /** */
-    fd_set readFDS;
 
-    /** */
-    fd_set writeFDS;
+    /**
+     * @brief A class using to check if sockets are ready for a read, write operation or if
+     * an exception is thrown.
+     */
+    class SocketSelect {
 
-    /** */
-    fd_set exceptFDS;
+    public:
+        /**
+         * @brief Default constructor.
+         * @post
+         * The state of the sockets select mask is reset.
+         * readySockets = 0.
+         */
+        SocketSelect();
 
-    /** */
-    fd_set readFDS_done;
+        /**
+         * @brief Reset the state of the socket select mask.
+         * @post
+         * readySocket = 0.
+         */
+        void Reset();
 
-    /** */
-    fd_set writeFDS_done;
+        /**
+         * @brief Set a specific socket to check when it is ready for write operations.
+         * @param[in] s is the socket to set.
+         */
+        void AddWaitOnWriteReady(const BasicSocket * const s);
 
-    /** */
-    fd_set exceptFDS_done;
+        /**
+         * @brief UnSet a specific socket from the checking when it is ready for write operations.
+         * @param[in] s is the socket to unset.
+         */
+        void DeleteWaitOnWriteReady(const BasicSocket * const s);
 
-    /** */
-    int32 readySockets;
+        /**
+         * @brief Set a specific socket to check when it is ready for read operations.
+         * @param[in] s is the socket to set.
+         */
+        void AddWaitOnReadReady(const BasicSocket * const s);
 
-public:
-    /** */
-    SocketSelect(){
-        Reset();
-    }
+        /**
+         * @brief UnSet a specific socket from the checking when it is ready for read operations.
+         * @param[in] s is the socket to unset.
+         */
+        void DeleteWaitOnReadReady(const BasicSocket * const s);
 
-    /** */
-    void Reset(){
-        FD_ZERO(&readFDS);
-        FD_ZERO(&writeFDS);
-        FD_ZERO(&exceptFDS);
-        FD_ZERO(&readFDS_done);
-        FD_ZERO(&writeFDS_done);
-        FD_ZERO(&exceptFDS_done);
-    }
+        /**
+         * @brief Set a specific socket to check when an exception is throw.
+         * @param[in] s is the socket to set.
+         */
+        void AddWaitOnExceptReady(const BasicSocket * const s);
 
-    /** */
-    void AddWaitOnWriteReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_SET(s->Socket(),&writeFDS);
-    }
-    /** */
-    void DeleteWaitOnWriteReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_CLR(s->Socket(),&writeFDS);
-    }
-    /** */
-    void AddWaitOnReadReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_SET(s->Socket(),&readFDS);
-    }
-    /** */
-    void DeleteWaitOnReadReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_CLR(s->Socket(),&readFDS);
-    }
-    /** */
-    void AddWaitOnExceptReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_SET(s->Socket(),&exceptFDS);
-    }
-    /** */
-    void DeleteWaitOnExceptReady(BasicSocket *s){
-        if (s==NULL) return ;
-        FD_CLR(s->Socket(),&exceptFDS);
-    }
-    /** Wait for all the event*/
-    bool Wait(TimeoutType msecTimeout = TTInfiniteWait){
-        readFDS_done   = readFDS;
-        writeFDS_done  = writeFDS;
-        exceptFDS_done = exceptFDS;
+        /**
+         * @brief UnSet a specific socket from the checking for an exception.
+         * @param[in] s is the socket to unset.
+         */
+        void DeleteWaitOnExceptReady(const BasicSocket * const s);
 
-        timeval timeWait;
-        if (msecTimeout == TTInfiniteWait) {
-            readySockets = select(SELECT_WIDTH,&readFDS_done,&writeFDS_done,&exceptFDS_done,NULL);
-        } else {
-            timeWait.tv_sec  = msecTimeout.msecTimeout / 1000;
-            timeWait.tv_usec = 1000 * (msecTimeout.msecTimeout - (timeWait.tv_sec * 1000));
-            readySockets = select(SELECT_WIDTH,&readFDS_done,&writeFDS_done,&exceptFDS_done,&timeWait);
-        }
-        return (readySockets > 0);
-    }
+        /**
+         * @brief Wait for all the events within a timeout.
+         * @param[in] timeout is the maximum time to wait for an event.
+         * @post
+         * readySocket is the number of the sockets when an event happened.
+         * @return true if at least one socket is ready before the timeout expire.
+         */
+        bool Wait(const TimeoutType &timeout = TTInfiniteWait);
 
-    /** wait for data on the input */
-    bool WaitRead(TimeoutType msecTimeout = TTInfiniteWait){
-        readFDS_done   = readFDS;
+        /**
+         * @brief Wait for all the read events within a timeout.
+         * @param[in] timeout is the maximum time to wait for a read event.
+         * @post
+         * readySocket is the number of the sockets when a read event happened.
+         * @return true if at least one socket is ready before the timeout expire.
+         */
+        bool WaitRead(const TimeoutType &timeout = TTInfiniteWait);
 
-        timeval timeWait;
-        if (msecTimeout == TTInfiniteWait) {
-            readySockets = select(SELECT_WIDTH,&readFDS_done,NULL,NULL,NULL);
-        } else {
-            timeWait.tv_sec  = msecTimeout.msecTimeout / 1000;
-            timeWait.tv_usec = 1000 * (msecTimeout.msecTimeout - (timeWait.tv_sec * 1000));
-            readySockets = select(SELECT_WIDTH,&readFDS_done,NULL,NULL,&timeWait);
-        }
-        return (readySockets > 0);
-    }
+        /**
+         * @brief Wait for all the write events within a timeout.
+         * @param[in] timeout is the maximum time to wait for a write event.
+         * @post
+         * readySocket is the number of the sockets when a write event happened.
+         * @return true if at least one socket is ready before the timeout expire.
+         */
+        bool WaitWrite(const TimeoutType &timeout = TTInfiniteWait);
 
-    /** wait on free space on the output buffer*/
-    bool WaitWrite(TimeoutType msecTimeout = TTInfiniteWait){
-        writeFDS_done   = writeFDS;
+        /**
+         * @brief Wait for all the exception events within a timeout.
+         * @param[in] timeout is the maximum time to wait for an exception.
+         * @post
+         * readySocket is the number of the sockets when an exception happened.
+         * @return true if at least one socket is ready before the timeout expire.
+         */
+        bool WaitExcept(const TimeoutType &timeout = TTInfiniteWait);
 
-        timeval timeWait;
-        if (msecTimeout == TTInfiniteWait) {
-            readySockets = select(SELECT_WIDTH,NULL,&writeFDS_done,NULL,NULL);
-        } else {
-            timeWait.tv_sec  = msecTimeout.msecTimeout / 1000;
-            timeWait.tv_usec = 1000 * (msecTimeout.msecTimeout - (timeWait.tv_sec * 1000));
-            readySockets = select(SELECT_WIDTH,NULL,&writeFDS_done,NULL,&timeWait);
-        }
-        return (readySockets > 0);
-    }
+        /**
+         * @brief Retrieve the number of ready sockets for the specified operation requested.
+         */
+        int32 ReadySockets() const;
 
-    /** wait for an exception */
-    bool WaitExcept(TimeoutType msecTimeout = TTInfiniteWait){
-        exceptFDS_done = exceptFDS;
+        /**
+         * @brief Check if a socket is ready for a read operation.
+         * @param[in] s is the socket to check.
+         */
+        bool CheckRead(const BasicSocket * const s);
 
-        timeval timeWait;
-        if (msecTimeout == TTInfiniteWait) {
-            readySockets = select(SELECT_WIDTH,NULL,NULL,&exceptFDS_done,NULL);
-        } else {
-            timeWait.tv_sec  = msecTimeout.msecTimeout / 1000;
-            timeWait.tv_usec = 1000 * (msecTimeout.msecTimeout - (timeWait.tv_sec * 1000));
-            readySockets = select(SELECT_WIDTH,NULL,NULL,&exceptFDS_done,&timeWait);
-        }
-        return (readySockets > 0);
-    }
+        /**
+         * @brief Check if a socket is ready for a write operation.
+         * @param[in] s is the socket to check.
+         */
+        bool CheckWrite(const BasicSocket * const s);
 
-    /** */
-    int32 ReadySockets(){ return readySockets; }
+        /**
+         * @brief Check if an exception is throw on the specified socket.
+         * @param[in] s is the socket to check.
+         */
+        bool CheckExcept(const BasicSocket * const s);
 
-    /** */
-    bool CheckRead(BasicSocket *s){ return (FD_ISSET(s->Socket(),&readFDS_done)!= 0); }
 
-    /** */
-    bool CheckWrite(BasicSocket *s){ return (FD_ISSET(s->Socket(),&writeFDS_done)!= 0); }
+    private:
 
-    /** */
-    bool CheckExcept(BasicSocket *s){ return (FD_ISSET(s->Socket(),&exceptFDS_done)!= 0); }
+        /**
+         * The SocketSelect handle
+         */
+        SocketSelectCore selectHandle;
 
-    /** */
-    fd_set &ReadFDS(){ return readFDS_done; }
+        /**
+         * The number of ready sockets.
+         */
+        int32 readySockets;
 
-    /** */
-    fd_set &WriteFDS(){ return readFDS_done; }
+    };
+}
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
-    /** */
-    fd_set &ExceptFDS(){ return readFDS_done; }
-
-};
-
-#endif
+#endif /* SOCKETSELECT_H_ */
 

@@ -97,7 +97,7 @@ bool BitSetToIntegerTest::TestBitSetToInteger_64() {
 
     //Source automatic shift
     BitSetToInteger(sDest, sPointer, sourceShift, sourceSize, true);
-    if (sDest != 0xffffffffffff0000) {
+    if (sDest !=(int64) 0xffffffffffff0000) {
 
         return false;
     }
@@ -331,7 +331,7 @@ bool BitSetToIntegerTest::TestIntegerToBitSet_64() {
     sSource64 = (int64) 0x121234121234;
     dPointer = dest;
     IntegerToBitSet(dPointer, destShift, destSize, false, sSource64);
-    if ((int32) dest[0] != 0xffffffff) {
+    if ((int32) dest[0] != -1) {
 
         return false;
     }
@@ -410,7 +410,7 @@ bool BitSetToIntegerTest::TestIntegerToBitSet_16() {
 
     //Copy a signed 16 bit number in the stream.
     IntegerToBitSet(dPointer, destShift, destSize, true, sSource16);
-    if (sSource16 != dest[1]) {
+    if (sSource16 != (int16)dest[1]) {
 
         return false;
     }

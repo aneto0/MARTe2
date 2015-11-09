@@ -481,6 +481,8 @@ const PrintfNode *GeneratePrintFormattedFloatSmartTable();
 const PrintfNode *GeneratePrintFormattedFloatCompactTable();
 const PrintfNode *GeneratePrintFormattedGenericTable();
 extern const char8 *printfCStringTable[][3];
+extern const char8 *printfStreamTable[][3];
+
 
 /**
  * Each row defines a different GetToken test
