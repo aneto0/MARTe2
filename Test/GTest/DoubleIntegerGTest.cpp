@@ -1243,6 +1243,8 @@ TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_int32) {
             testTableLogicDI<int32>(0xffffffffffffffff, 0xfffffffffffffffe, 1),
             testTableLogicDI<int32>(0x7fffffffffffffff, 0x7ffffffffffffffe, 1),
             testTableLogicDI<int32>(0x7fffffffffffffff, 0x7fffffffffffffff, 1),
+            testTableLogicDI<int32>(0x7fffffff7fffffff, 0x7fffffffffffffff, 0),
+            testTableLogicDI<int32>(0x7fffffffffffffff, 0x7fffffff7fffffff, 1),
             testTableLogicDI<int32>(0, 0, 0, false)
     };
     DoubleIntegerTest<int32> numbertest;

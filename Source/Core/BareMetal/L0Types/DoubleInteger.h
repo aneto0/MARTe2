@@ -52,19 +52,30 @@ class DoubleInteger {
 public:
     /**
      * @brief Default constructor.
+     * @post lower=0\n
+     * upper=0.
      */
     DoubleInteger();
 
     /**
      * @brief Copy constructor.
+     * @post lower = n.lower\n
+     * upper = n.upper.
      */
     DoubleInteger(const DoubleInteger<T> &n);
 
+
+    /**
+     * @brief Constructor by upper and lower part.
+     * @post lower = lowerIn\n
+     * upper = upperIn.
+     */
     DoubleInteger(const T &upperIn,
                   const T &lowerIn);
 
     /**
-     * @brief Smart copy constructor.
+     * @brief Smart copy constructor by generic integer type.
+     * @details Builds the double integer depending on the size of T2.
      */
     template<typename T2>
     DoubleInteger(T2 n);
@@ -72,56 +83,52 @@ public:
 
     /**
      * @brief Implementation of arithmetic left shift.
-     * @param shift is the desired shift.
+     * @param[in] shift is the desired shift.
      */
-    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator<<=(uint16 shift);
 
     /**
      * @brief Implementation of arithmetic right shift.
-     * @param shift is the desired shift.
+     * @param[in] shift is the desired shift.
      */
-    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator>>=(uint16 shift);
 
     /**
      * @brief Implementation of arithmetic right shift.
-     * @param shift is the desired shift.
+     * @param[in] shift is the desired shift.
      * @return this right shifted of shift.
      */
     DoubleInteger<T> operator>>(const uint8 shift) const;
 
     /**
      * @brief Implementation of arithmetic left shift.
-     * @param shift is the desired shift.
+     * @param[in] shift is the desired shift.
      * @return this left shifted of shift.
      */
     DoubleInteger<T> operator<<(const uint8 shift) const;
 
     /**
      * @brief Bitwise and operator.
-     * @param n is the DoubleInteger argument.
+     * @param[in] n is the DoubleInteger argument.
      */
-    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator&=(const DoubleInteger<T> &n);
 
     /**
      * @brief Bitwise or operator.
-     * @param n is the DoubleInteger argument.
+     * @param[in] n is the DoubleInteger argument.
      */
-    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator|=(const DoubleInteger<T> &n);
 
     /**
      * @brief Is Different operator.
-     * @param n is the DoubleInteger argument for comparison.
+     * @param[in] n is the DoubleInteger argument for comparison.
      * @return false if this and n are equal, true otherwise.
      */
     bool operator!=(const DoubleInteger<T> &n) const;
 
     /**
      * @brief Is Equal operator.
-     * @param n is the DoubleInteger argument for comparison.
+     * @param[in] n is the DoubleInteger to be compared.
      * @return true if this and n are equal, false otherwise.
      */
     bool operator==(const DoubleInteger<T> &n) const;
@@ -133,72 +140,70 @@ public:
 
     /**
      * @brief Bitwise and.
-     * @param n is the DoubleInteger argument.
+     * @param[in] n is the DoubleInteger argument.
      * @return the result of the bitwise and between this and n.
      */
     DoubleInteger<T> operator&(const DoubleInteger<T> &n) const;
 
     /**
      * @brief Bitwise or.
-     * @param n is the DoubleInteger argument.
+     * @param[in] n is the DoubleInteger argument.
      * @return the result of the bitwise or between this and n.
      */
     DoubleInteger<T> operator|(const DoubleInteger<T> &n) const;
 
     /**
      * @brief Math subtraction.
-     * @param n is the number to subtract.
+     * @param[in] n is the number to subtract.
      * @return the result of the subtraction.
      */
     DoubleInteger<T> operator-(const DoubleInteger<T> &n) const;
 
     /**
      * @brief Math sum.
-     * @param n is the number to add.
+     * @param[in] n is the number to add.
      * @return the sum.
      */
     DoubleInteger<T> operator+(const DoubleInteger<T> &n) const;
 
     /**
      * @brief Logical >.
-     * @param n is the DoubleInteger for the comparison.
+     * @param[in] n is the DoubleInteger to be compared.
      * @return true if this is greater than n.
      */
     bool operator>(const DoubleInteger<T> &n) const;
 
     /**
      * @brief Logical <.
-     * @param n is the DoubleInteger for the comparison.
+     * @param[in] n is the DoubleInteger to be compared.
      * @return true if this is minor than n.
      */
     bool operator<(const DoubleInteger<T> &n) const;
 
     /**
      * @brief Logical >=.
-     * @param n is the DoubleInteger for the comparison.
+     * @param[in] n is the DoubleInteger be compared.
      * @return true if this is greater or equal than n.
      */
     bool operator>=(const DoubleInteger<T> &n) const;
 
     /**
      * @brief Logical <=.
-     * @param n is the DoubleInteger for the comparison.
+     * @param[in] n is the DoubleInteger for be compared.
      * @return true if this is minor than n.
      */
     bool operator<=(const DoubleInteger<T> &n) const;
 
     /**
      * @brief Math subtraction.
-     * @param n is the number to subtract.
+     * @param[in] n is the number to subtract.
      */
-    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator-=(const DoubleInteger<T> &n);
 
     /**
      * @brief Math sum.
-     * @param n is the number to add.
+     * @param[in] n is the number to add.
      */
-    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attributes. */
     void operator+=(const DoubleInteger<T> &n);
 
     /**
@@ -216,14 +221,12 @@ public:
     /**
      * @brief Sets the the second part of the number.
      */
-    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attribute. */
     void SetLower(T lowerIn);
 
 
     /**
      * @brief Sets the the first part of the number.
      */
-    /*lint -e{1960} [MISRA Rule 0-1-8]. Justification: this function change the internal private attribute. */
     void SetUpper(T upperIn);
 
 private:
