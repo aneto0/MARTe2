@@ -58,7 +58,7 @@ bool AnyObject::SerializeMatrix() {
 
     bool ok = true;
 
-    void *value = malloc(numberOfRows * numberOfColumns * sizeof(void *));
+    void *value = HeapManager::Malloc(numberOfRows * numberOfColumns * sizeof(void *));
     type.SetDataPointer(value);
     void **copyArray = static_cast<void **>(value);
 
@@ -96,7 +96,7 @@ bool AnyObject::SerializeMatrix() {
             ok = (copySize > 0u);
 
             if (ok) {
-                copyArray[idx] = malloc(copySize);
+                copyArray[idx] = HeapManager::Malloc(copySize);
                 const char8 *srcArray = NULL_PTR(const char8 *);
                 if (dataDescriptor.type == StreamStringType) {
                     StreamString *stream = NULL;
@@ -138,7 +138,7 @@ bool AnyObject::SerializeVector() {
     void *srcDataPointer = type.GetDataPointer();
     bool ok = true;
 
-    void *value = malloc(numberOfElements * sizeof(void *));
+    void *value = HeapManager::Malloc(numberOfElements * sizeof(void *));
     type.SetDataPointer(value);
     void **copyArray = static_cast<void **>(value);
     for (idx = 0; ok && (idx < numberOfElements); idx++) {
@@ -163,7 +163,7 @@ bool AnyObject::SerializeVector() {
         ok = (copySize > 0u);
 
         if (ok) {
-            copyArray[idx] = malloc(copySize);
+            copyArray[idx] = HeapManager::Malloc(copySize);
             const char8 *srcArray = NULL_PTR(const char8 *);
             if (dataDescriptor.type == StreamStringType) {
                 StreamString *stream = NULL_PTR(StreamString *);
@@ -203,7 +203,7 @@ bool AnyObject::Load(const AnyType &typeIn) {
         else {
             copySize = typeIn.GetTypeDescriptor().numberOfBits / 8u;
         }
-        void *value = malloc(copySize);
+        void *value = HeapManager::Malloc(copySize);
         type.SetDataPointer(value);
         if (typeIn.GetTypeDescriptor().type == StreamStringType) {
             StreamString *stream = static_cast<StreamString *>(typeIn.GetDataPointer());
@@ -255,13 +255,13 @@ AnyObject::~AnyObject() {
             uint32 idx = 0u;
             for (idx = 0u; idx < nOfElements; idx++) {
                 if (multiDimMem[idx] != NULL_PTR(void *)) {
-                    free(multiDimMem[idx]);
+                    HeapManager::Free(multiDimMem[idx]);
                 }
             }
         }
     }
     if (mem != NULL_PTR(void *)) {
-        free(mem);
+        HeapManager::Free(mem);
     }
 }
 
