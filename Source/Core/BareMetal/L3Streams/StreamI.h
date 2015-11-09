@@ -214,7 +214,7 @@ public:
      *   pos <= Size() => Position() == pos &&
      *   pos > Size() => Position() == Size()
      */
-    virtual bool Seek(uint64 pos) = 0;
+    virtual bool Seek(const uint64 pos) = 0;
 
     /**
      * @brief Moves within the stream to a position that is relative to the
@@ -248,12 +248,12 @@ public:
 
     /**
      * @brief Clips the stream size.
-     * @param size the new size of the stream.
+     * @param[in] size the new size of the stream.
      * @return true if the size of the stream is set to \a size.
      * @pre true
      * @post Size() == size
      */
-    virtual bool SetSize(uint64 size) = 0;
+    virtual bool SetSize(const uint64 size) = 0;
 
 };
 

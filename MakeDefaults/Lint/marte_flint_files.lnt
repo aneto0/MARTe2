@@ -58,4 +58,5 @@ IOBufferIntegerPrint.cpp
 IOBufferFloatPrint.cpp
 DoubleInteger.h
 AdvancedErrorManagement.h
+BasicFile.cpp
 

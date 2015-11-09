@@ -36,126 +36,313 @@
 #include "StreamI.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,BasicFileProperties.h)
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-const uint32 ACCESS_MODE_R   = 0x00000000;
-/** */
-const uint32 ACCESS_MODE_W   = 0x00000001;
-/** */
-const uint32 ACCESS_MODE_R_W = 0x00000002;
-//TODO: Perhaps the APPEND flag is not necessary, because it can be achieved with a Seek(Size()) call anyway.
-const uint32 FLAG_APPEND     = 0x00000010;
-
-const uint32 FLAG_CREAT      = 0x00000020;
-
-const uint32 FLAG_TRUNC      = 0x00000040;
-
-const uint32 FLAG_EXCL       = 0x00000080;
-
-//TODO: Define what is a BasicFile:
-/**
- * It is a wrapper for a specific OS file handle.
- * The OS handle is a kind of pointer/identifier of a memory structure
- * which maintains state of an open file.
- * The OS structure and its handle is created when the file is opened.
- * While the handles are always open by definition, the class, as a wrapper,
- * maintains a double state {open, closed}, which means that when in closed
- * state, it wraps an invalid handle.
- * It is not intended that this class made cache of any file properties,
- * like mode, flags, pathname, etc.
- *
- */
-
-class BasicFile: public StreamI {
-public:
     /**
-     * @brief Default constructor
-     * @post
-     *   not CanRead() &&
-     *   not CanWrite() &&
-     *   not CanSeek() &&
-     *   Size() == 0 &&
-     *   Position() == 0
+     * @brief The BasicFile class is wrapper for OS file management. This class allows to read and write from and to a file.
+     *
+     * @detail When a file is opened the OS assign a handle/identifier allowing to access to structure which maintains the state and flags of a file. Since the class
+     * is a wrapper the object can be instanced with a default values without the OS generates the entry structure to holds a file and most of the function are disable
+     * until a file is opened and the OS generates the structure to support the file.
+     *
+     * When the Open() method is called the flags attributes have to be specified. Not all the combination flags are allowed. The following list shows the flags combinations which are NOT possible:
+     *    flag = FLAG_APPEND | ACCESS_MODE_R (only) -->(if it happens the FLAG_APPEND is deleted)
+     *    flag = FLAG_CREAT | FLAG_CREAT_EXCLUSIVE -->(if it happens the FLAG_CREAT_EXCLUSIVE is deleted)
+     *    flag = FLAG_TRUNC | ACCESS_MODE_R (only) -->(if it happens the FLAG_TRUNC is deleted)
+     *    flag = FLAG_TRUNC | FLAG_CREAT_EXCLUSIVE -->(if it happens the FLAG_TRUNC is deleted)
+     *
+     * @invariant
+     *    Size() >= 0;
      */
-     
-     //TODO: Copy constructor?? --> BasicFile(const BasicFile& obj);
-    //Define copy semantics:
-    //  a) Copy the handle as is?
-    //  b) Use a handle duplication function supplied by the OS, like dup() in Linux?
-    BasicFile();
+    class DLL_API BasicFile: public StreamI {
+    public:
+        /**
+         * Flag for read only mode. It is status flag
+         */
+        static const uint32 ACCESS_MODE_R = static_cast<uint32>(0x00000001);
 
-    void SetMode(const uint32 setMode);
+        /**
+         * Flag for write only mode. It is status flag
+         */
+        static const uint32 ACCESS_MODE_W = static_cast<uint32>(0x00000002);
 
-    /**
-     * @brief ...
-     * @pre IsOpen()
-     * @post
-     */
-    void SetFlags(const uint32 setFlags);
+        /**
+         * Flag to write automatically at the end of the file. In this mode, before each write the pointer is positioned at the end of the file.
+         */
+        static const uint32 FLAG_APPEND = static_cast<uint32>(0x00000010);
 
-    uint32 getFlags();
+        /**
+         * Flag to create a file. In this mode if the file does not exist it will be created and opened, if the file exist it will be only opened. It is a creation flag
+         */
+        static const uint32 FLAG_CREAT = static_cast<uint32>(0x00000020);
 
-    virtual bool CanWrite() const;
+        /**
+         * Flag to truncate the file. In this mode if the file exists the contents are deleted and the size of the file is set to 0. This flag is only possible if the file is opened with ACCESS_MODE_W. It is a creation flag
+         */
+        static const uint32 FLAG_TRUNC = static_cast<uint32>(0x00000040);
 
-    virtual bool CanRead() const;
+        /**
+         * Flag to create a file. In this mode, if the file does not exist it will be created, but if it already exist the open() will fail.
+         */
+        static const uint32 FLAG_CREAT_EXCLUSIVE = static_cast<uint32>(0x00000080);
 
-    virtual bool CanSeek() const;
+        /**
+         * @brief Default constructor
+         * @post
+         *   not CanRead() &&
+         *   not CanWrite() &&
+         *   not CanSeek() &&
+         *   not IsOpen() &&
+         *   Size() == 0 &&
+         *   Position() == 0 &&
+         *   GetFlags() == 0xFFFFFFFF &&
+         *   GetPathName() == "" &&
+         *   !IsOpen()
+         */
+        BasicFile();
 
-    /**
-     * @brief ...
-     * @post
-     *   CanRead() == (flags | ACCESS_MODE_R) &&
-     *   not CanWrite() &&
-     *   not CanSeek() &&
-     *   Size() == 0 &&
-     *   Position() == 0
-     */
-    bool Open(const char * pathname, const uint32 flags);
+        /**
+         * @brief Copy constructor
+         */
+        BasicFile(const BasicFile &bf);
 
-    bool IsOpen();
+        /**
+         * @brief Copy assignment operator
+         * @post
+         *    copybf.fileProperties.identifier != bf.fileProperties.identifier
+         *    The copybf points to the same file description.
+         */
+        BasicFile & operator=(const BasicFile &bf);
 
-    bool Close();
+        /**
+         * @brief Destructor.
+         */
+        virtual ~BasicFile();
 
-    virtual bool Read(char8* const output,
-                      uint32 & size);
+        /**
+         * @brief Changes the flags files indicated by the fileProperties.identifier
+         * @detail When the file is already opened not all the flags can be
+         * changed, ONLY the following list can be modified:
+         *    FLAG_APPEND
+         * The rest of the flags are ignored.
+         * @param[in] setFlags indicates the flags changes to perform.
+         * @pre IsOpen()
+         * @return true if the flags are changed.
+         */
+        bool SetFlags(const uint32 setFlags) const;
 
-    virtual bool Read(char8 * const output,
-                      uint32 & size,
-                      const TimeoutType &msecTimeout);
+        /**
+         * @brief Gets the status flags of the opened file.
+         * @detail If the file is not opened the returned value is 0xFFFFFFFF.
+         * return An uint32 containing the status flags information.;
+         */
+        uint32 GetFlags() const;
 
-    virtual bool Write(const char8 * const input,
-                       uint32 & size);
+        /**
+         * @brief Queries if the file is writable.
+         * @return true if IsOpen && ((GetFlags() & ACCESS_MODE_W) == ACCESS_MODE_W)
+         */
+        virtual bool CanWrite() const;
 
-    virtual bool Write(const char8 * const input,
-                       uint32 & size,
-                       const TimeoutType &msecTimeout);
+        /**
+         * @brief Queries if the file readable.
+         * @return true if IsOpen && ((GetFlags() & ACCESS_MODE_R) == ACCESS_MODE_R)
+         */
+        virtual bool CanRead() const;
 
-    virtual uint64 Size();
+        /**
+         * @brief Queries if the file is seekable.
+         * @return true if IsOpen()
+         */
+        virtual bool CanSeek() const;
 
-    virtual bool Seek(uint64 pos);
+        /**
+         * @brief Opens a file indicated by the pathname allowing to access to the contents of a file.
+         * @param[in] pathname Indicates the file to be opened.
+         * @param[in] flags Indicates the behaviour of the file.
+         * @pre
+         *    !IsOpen() &&
+         *    flags have to be valid
+         * @post
+         *   ((flags & ACCESS_MODE_R ==  ACCESS_MODE_R ) => CanRead()) &&
+         *   ((flags & ACCESS_MODE_W ==  ACCESS_MODE_W ) => CanWrtie()) &&
+         *   CanSeek() &&
+         *   IsOpen()
+         * @return true if the file is open successfully.
+         */
+        bool Open(const char8 * const pathname, const uint32 flags);
 
-    virtual bool RelativeSeek(const int32 deltaPos);
+        /**
+         * @brief Queries if the file is opened.
+         * @return true if the file is opened.
+         */
+        bool IsOpen() const;
 
-    virtual uint64 Position();
-    
-     /**
-     * @pre IsOpen() && CanWrite && �CanSeek()?
-     * @post Size() == size &&
-     *       this'old->Position() >= size => Position() == size &&
-     *       this'old->Position() < size => Position() == this'old->Position()
-     */
+        /**
+         * @brief Closes an open file.
+         * @pre true
+         * @post
+         *   not CanRead() &&
+         *   not CanWrite() &&
+         *   not CanSeek() &&
+         *   not IsOpen() &&
+         *   Size() == 0 &&
+         *   Position() == 0 &&
+         *   GetFlags() == 0xFFFFFFFF
+         * @return True if the file is closed successfully.
+         */
+        bool Close();
 
-    virtual bool SetSize(uint64 size);
+        /**
+         * @brief Reads size characters from a file and updates the position.
+         * @param[out] output Is a pointer which indicates where the read characters have to be saved.
+         * @param[in,out] size Indicates how many characters have to be read. At the end it is modified with the characters actually read.
+         * @pre
+         *    IsOpen() &&
+         *    CanRead() &&
+         *    size >=0
+         * @post
+         *    Position() == this'old->Position() + size &&
+         *    size is updated with the actual number of bytes read &&
+         *    size <= size'old &&
+         *    output contains a copy of size bytes read from the file starting at this'old->Position() in the same order.
+         * @return false if the read fails.
+         */
+        virtual bool Read(char8* const output,
+                uint32 & size);
 
-private:
-//TODO: Hide the OS specific implementation
-    BasicFileProperties fileProperties;
-};
+        /**
+         * @brief Reads size characters from a file and updates the position.
+         * @detail The timeout is the time waiting for reading, not the time while reading. If the timeout is exceeded the read fails.
+         * @param[out] output Is a pointer which indicates where the read characters have to be saved.
+         * @param[in,out] size Indicates how many characters have to be read. At the end it is modified with the characters actually read.
+         * @param[in] timeout indicates the maximum time that the method can wait for beginning reading.
+         * @pre
+         *    IsOpen() &&
+         *    CanRead() &&
+         *    size >= 0
+         * @post
+         *    Position() == this'old->Position() + size &&
+         *    size is updated with the actual number of bytes read &&
+         *    size <= size'old &&
+         *    output contains a copy of size bytes read from the file starting at this'old->Position() in the same order.
+         * @return false if the read fails.
+         **/
+        virtual bool Read(char8 * const output,
+                uint32 & size,
+                const TimeoutType &msecTimeout);
+
+        /**
+         * @brief Writes size characters to a file and updates the position and the size.
+         * @param[in] input Is a pointer which contains the characters to be write to.
+         * @param[in,out] size Indicates how many characters have to be written. At the end it is modified with the characters actually written.
+         * @pre
+         *    IsOpen() &&
+         *    CanWrite() &&
+         *    size >= 0
+         * @post
+         *    Position() == this'old->Position() + size &&
+         *    size is updated with the actual number of bytes written &&
+         *    size <= size'old &&
+         *    The file contains at this'old->Position() size bytes copied from input in the same order &&
+         *    ((size > 0) && (this'old->Position() + size > this'old->Size())) => Size() == this'old->Position() + size
+         * @return false if the write fails.
+         */
+        virtual bool Write(const char8 * const input,
+                uint32 & size);
+
+        /**
+         * @brief Writes size characters to a file and updates the position and the size.
+         * @detail The timeout is the time waiting for writing, not the time while writing. If the timeout is exceeded the write fails.
+         * @param[in] input Is a pointer which contains the characters to be write to.
+         * @param[in,out] size Indicates how many characters have to be written. At the end it is modified with the characters actually written.
+         * @param[in] timeout indicates the maximum time that the method can wait for beginning writing.
+         * @pre
+         *    IsOpen() &&
+         *    CanWrite() &&
+         *    size >= 0
+         * @post
+         *    Position() == this'old->Position() + size
+         *    size is updated with the actual number of bytes written &&
+         *    size <= size'old &&
+         *    The file contains at this'old->Position() size bytes copied from input in the same order &&
+         *    ((size > 0) && (this'old->Position() + size > this'old->Size())) => Size() == this'old->Position() + size
+         * @return false if the write fails.
+         **/
+        virtual bool Write(const char8 * const input,
+                uint32 & size,
+                const TimeoutType &msecTimeout);
+
+        /**
+         * @brief Queries the size.
+         * @post
+         *    !IsOpen() => Size() == 0
+         * @return the number of characters in the file if it succeeds or 0xFFFFFFFF otherwise.
+         */
+        virtual uint64 Size();
+
+        /**
+         * @brief Move the pointer to the specified position.
+         * @detail The position is relative to the beginning of the file. If the pos is larger than the size of the file the pointer is moved
+         * to the end of the file.
+         * @pre
+         *    IsOpen()&&
+         *    CanSeek()
+         * @post
+         *   pos < Size() => Position() == pos &&
+         *   pos > Size() => Position() == Size()
+         * @return true if the pointer points to the position pos.
+         */
+        virtual bool Seek(const uint64 pos);
+
+        /**
+         * @brief Move the pointer to the specified position.
+         * @detail The function move the pointer deltaPos from the current position. If the deltaPos plus current position is beyond the size of the file the pointer is moved
+         * to the end of the file.
+         * @pre
+         *   IsOpen() &&
+         *   CanSeek()
+         * @post
+         *   pos + deltaPos < 0 => Position() == 0 &&
+         *   Position() == this'old->Position() + deltaPos&&
+         *   deltaPos + Position() > Size() => Position() == Size();
+         * @return True if the pointer is is moved to the new position.
+         */
+        virtual bool RelativeSeek(const int32 deltaPos);
+
+        /**
+         * @brief Queries the actual position.
+         * @return The actual position of the pointer if it succeeds or 0xFFFFFFFF otherwise.
+         */
+        virtual uint64 Position();
+
+        /**
+         * @brief Changes the size of the file.
+         * @detail If the new size is smaller than the old size the extra data is lost. Instead, if the size is larger than the old size,
+         * the size is extended and the gaps are filled with "\0" characters.
+         * @pre
+         *    IsOpen() &&
+         *    CanWrite()
+         * @post
+         *    Size() == size &&
+         *    size > this'old->Position() => From this'old->Size() to Size() - 1 the file is filled with "\0"
+         * @return If size is succeed.
+         */
+        virtual bool SetSize(const uint64 size);
+
+        /**
+         * @brief Queries the pathname.
+         * @return a pointer to a pathname of the open file.
+         */
+        String GetPathName();
+
+    private:
+        BasicFileProperties fileProperties;
+    };
 }
 
 /*---------------------------------------------------------------------------*/

@@ -31,14 +31,8 @@ MAKEDEFAULTDIR=../../../MakeDefaults
 ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-<<<<<<< HEAD
-#LIBRARIES_STATIC+=$(BUILD_DIR)/L0Types/L0TypesF$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityF$(LIBEXT)
-#LIBRARIES_STATIC+=$(BUILD_DIR)/L2Objects/L2ObjectsF$(LIBEXT)
-#LIBRARIES_STATIC+=$(BUILD_DIR)/L3Streams/L3StreamsF$(LIBEXT)
-=======
-LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityF$(LIBEXT)
->>>>>>> refs/remotes/origin/#244_Windows_File
+
 
 all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTeCoreF$(LIBEXT) \

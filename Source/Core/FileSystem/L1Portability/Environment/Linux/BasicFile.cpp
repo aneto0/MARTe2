@@ -30,7 +30,9 @@
 #include <sys/types.h>
 #include <sys/select.h>
 #include <unistd.h>
-
+#include "iostream"
+#include "bitset"
+using namespace std;
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -42,164 +44,308 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-static MARTe::uint32 ConvertToLinuxFlags(const MARTe::uint32 flags){
-    MARTe::uint32 linuxFlags = 0;
-    if((flags & MARTe::ACCESS_MODE_R) == MARTe::ACCESS_MODE_R){
-        linuxFlags |= O_RDONLY;
-    }else if ((flags & MARTe::ACCESS_MODE_W) == MARTe::ACCESS_MODE_W){
-        linuxFlags |= O_WRONLY;
-    }else if ((flags & MARTe::ACCESS_MODE_R_W) == MARTe::ACCESS_MODE_R_W){
-        linuxFlags |= O_RDWR;
-    }else {
-        MARTe::REPORT_ERROR(MARTe::ErrorManagement::InitialisationError, "BasicFile::ConvertToLinuxFlags(). Incorrect ACCESS_MODE");
+namespace {
+static MARTe::int32 INVALID_FD = -1;
+
+MARTe::uint32 ConvertToLinuxFlags(const MARTe::uint32 flags) {
+    MARTe::uint32 linuxFlags = static_cast<MARTe::uint32>(0);
+    if ((flags & (MARTe::BasicFile::ACCESS_MODE_R | MARTe::BasicFile::ACCESS_MODE_W)) == (MARTe::BasicFile::ACCESS_MODE_R | MARTe::BasicFile::ACCESS_MODE_W)) {
+        linuxFlags |= static_cast<MARTe::uint32>(O_RDWR);
     }
-    if((flags & MARTe::FLAG_APPEND) == MARTe::FLAG_APPEND){
-        linuxFlags |= O_APPEND;
-    }else if ((flags & MARTe::FLAG_CREAT) == MARTe::FLAG_CREAT){
-        linuxFlags |= O_CREAT;
-    }else if ((flags & MARTe::FLAG_TRUNC) == MARTe::FLAG_TRUNC){
-            linuxFlags |= O_TRUNC;
-    }else if ((flags & MARTe::FLAG_EXCL) == MARTe::FLAG_EXCL){
-        linuxFlags |= O_EXCL;
-    }else{
-        MARTe::REPORT_ERROR(MARTe::ErrorManagement::InitialisationError, "BasicFile::ConvertToLinuxFlags(). Incorrect FLAG_MODE");
+    else if ((flags & MARTe::BasicFile::ACCESS_MODE_W) == MARTe::BasicFile::ACCESS_MODE_W) {
+        linuxFlags |= static_cast<MARTe::uint32>(O_WRONLY);
+    }
+    else {
+        //O_RDONLY is a 0, then at the end no operation is needed
+        //linuxFlags |= static_cast<MARTe::uint32>(O_RDONLY)
+    }
+    if ((flags & MARTe::BasicFile::FLAG_APPEND) == MARTe::BasicFile::FLAG_APPEND) {
+        linuxFlags |= static_cast<MARTe::uint32>(O_APPEND);
+    }
+    if ((flags & MARTe::BasicFile::FLAG_CREAT) == MARTe::BasicFile::FLAG_CREAT) {
+        linuxFlags |= static_cast<MARTe::uint32>(O_CREAT);
+    }
+    if ((flags & MARTe::BasicFile::FLAG_TRUNC) == MARTe::BasicFile::FLAG_TRUNC) {
+        linuxFlags |= static_cast<MARTe::uint32>(O_TRUNC);
+    }
+    if ((flags & MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE) == MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE) {
+        linuxFlags |= static_cast<MARTe::uint32>(O_EXCL);
+        linuxFlags |= static_cast<MARTe::uint32>(O_CREAT);
     }
     return linuxFlags;
 }
 
-static MARTe::uint32 ConvertToBasicFileFlags(const MARTe::uint32 flags){
-    MARTe::uint32 BasicFileFlags = 0;
-    if((flags & O_RDONLY) == O_RDONLY){
-        BasicFileFlags |= MARTe::ACCESS_MODE_R;
-    }else if ((flags & O_WRONLY) == O_WRONLY){
-        BasicFileFlags |= MARTe::ACCESS_MODE_W;
-    }else if ((flags & O_RDWR) == O_RDWR){
-        BasicFileFlags |= MARTe::ACCESS_MODE_R_W;
-    }else {
-        MARTe::REPORT_ERROR(MARTe::ErrorManagement::InitialisationError, "BasicFile::ConvertToLinuxFlags(). Incorrect ACCESS_MODE");
+MARTe::uint32 ConvertToBasicFileFlags(const MARTe::uint32 flags) {
+    MARTe::uint32 BasicFileFlags = (0u);
+    if ((flags & static_cast<MARTe::uint32>(O_RDWR)) == static_cast<MARTe::uint32>(O_RDWR)) {
+        BasicFileFlags |= MARTe::BasicFile::ACCESS_MODE_R;
+        BasicFileFlags |= MARTe::BasicFile::ACCESS_MODE_W;
     }
-    if((flags & O_APPEND) == O_APPEND){
-        BasicFileFlags |= MARTe::FLAG_APPEND;
-    }else if ((flags & O_CREAT) == O_CREAT){
-        BasicFileFlags |= MARTe::FLAG_CREAT;
-    }else if ((flags & O_TRUNC) == O_TRUNC){
-        BasicFileFlags |= MARTe::FLAG_TRUNC;
-    }else if ((flags & O_EXCL) == O_EXCL){
-        BasicFileFlags |= MARTe::FLAG_EXCL;
-    }else{
-        MARTe::REPORT_ERROR(MARTe::ErrorManagement::InitialisationError, "BasicFile::ConvertToLinuxFlags(). Incorrect FLAG_MODE");
+    else if ((flags & static_cast<MARTe::uint32>(O_WRONLY)) == static_cast<MARTe::uint32>(O_WRONLY)) {
+        BasicFileFlags |= MARTe::BasicFile::ACCESS_MODE_W;
+    }
+    else {
+        BasicFileFlags |= MARTe::BasicFile::ACCESS_MODE_R;
+    }
+    if ((flags & static_cast<MARTe::uint32>(O_APPEND)) == static_cast<MARTe::uint32>(O_APPEND)) {
+        BasicFileFlags |= MARTe::BasicFile::FLAG_APPEND;
+    }
+    if ((flags & static_cast<MARTe::uint32>(O_CREAT)) == static_cast<MARTe::uint32>(O_CREAT)) {
+        BasicFileFlags |= MARTe::BasicFile::FLAG_CREAT;
+    }
+    if ((flags & static_cast<MARTe::uint32>(O_TRUNC)) == static_cast<MARTe::uint32>(O_TRUNC)) {
+        BasicFileFlags |= MARTe::BasicFile::FLAG_TRUNC;
+    }
+    if ((flags & static_cast<MARTe::uint32>(O_EXCL)) == static_cast<MARTe::uint32>(O_EXCL)) {
+        BasicFileFlags |= MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE;
     }
     return BasicFileFlags;
 }
 
+MARTe::uint32 CheckFlags(MARTe::uint32 flags) {
 
+    cout << bitset<32>(flags) << " CheckFlags: flags\n";
+
+    //If APPEND and Read mode are set at the same time the APPEND mode is deleted from the flags
+    if ((flags & (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R) && !((flags & MARTe::BasicFile::ACCESS_MODE_W) == (MARTe::BasicFile::ACCESS_MODE_W))) {
+        MARTe::uint32 clean_APPEND = ~MARTe::BasicFile::FLAG_APPEND;
+        flags &= clean_APPEND;
+        cout << "1\n";
+    }
+    cout << bitset<32>(MARTe::BasicFile::FLAG_TRUNC) << " CheckFlags: FLAG_TRUNC\n";
+    cout << bitset<32>(MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE) << " CheckFlags: FLAG_CREAT_EXCLUSIVE\n";
+
+    if ((flags & (MARTe::BasicFile::FLAG_CREAT | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE))
+            == (MARTe::BasicFile::FLAG_CREAT | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE)) {
+        MARTe::uint32 clean_CREAT_EXCLUSIVE = ~MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE;
+        flags &= clean_CREAT_EXCLUSIVE;
+        cout << "2\n";
+    }
+    if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R) && !((flags & MARTe::BasicFile::ACCESS_MODE_W) == (MARTe::BasicFile::ACCESS_MODE_W))) {
+        MARTe::uint32 clean_TRUNC = ~MARTe::BasicFile::FLAG_TRUNC;
+        flags &= clean_TRUNC;
+        cout << "3\n";
+    }
+    if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE))
+            == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE)) {
+        MARTe::uint32 clean_TRUNC = ~MARTe::BasicFile::FLAG_TRUNC;
+        flags &= clean_TRUNC;
+        cout << "4\n";
+    }
+    return flags;
+}
+}
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-BasicFile::BasicFile(){
-
+BasicFile::BasicFile() :
+        StreamI::StreamI() {
+    fileProperties.identifier = INVALID_FD;
+    fileProperties.pathName = "";
 }
 
-void BasicFile::SetMode(const uint32 setMode) {
-    mode = setMode;
-    if (mode != ACCESS_MODE_W || mode != ACCESS_MODE_R || mode != ACCESS_MODE_R_W) {
-        REPORT_ERROR(ErrorManagement::InitialisationError, "BasicFile::SetMode(). Incorrect mode");
+BasicFile::BasicFile(const BasicFile & bf) :
+        /*lint -e{1738} THe StreamI does not have a copy constructor*/
+        StreamI::StreamI() {
+    fileProperties.identifier = dup(bf.fileProperties.identifier);
+    fileProperties.pathName = bf.fileProperties.pathName;
+}
+
+BasicFile & BasicFile::operator=(const BasicFile &bf) {
+    if (&bf != this) {
+        fileProperties.identifier = dup(bf.fileProperties.identifier);
+        fileProperties.pathName = bf.fileProperties.pathName;
+    }
+    return *this;
+}
+
+BasicFile::~BasicFile() {
+    /*lint -e{1551} Function may throw exceptions*/
+    if (IsOpen()) {
+        /*lint -e{534} Ignoring the return value of the function*/
+        Close();
     }
 }
 
-void BasicFile::SetFlags(const uint32 setFlags){
-    //the MSB have information about which bits have to be cleaned.
-    uint32 mask = setFlags >> 16;
-    uint32 clean = ~mask;
-    uint32 value = setFlags & 0xFFFF;
-    //Set to 0 the bits that will be set again.
-    flags &= clean;
-    //Set the values given by the less significant bits.
-    flags |= value;
+bool BasicFile::SetFlags(const uint32 setFlags) const {
+    bool retVal = true;
+
+    if (IsOpen()) {
+        uint32 linuxFlags = ConvertToLinuxFlags(setFlags);
+        uint32 retFcntl = static_cast<uint32>(fcntl(fileProperties.identifier, F_SETFL, linuxFlags));
+        if ((retFcntl & linuxFlags) != linuxFlags) {
+            retVal = false;
+        }
+    }
+    else {
+        retVal = false;
+    }
+    return retVal;
 }
 
-uint32 BasicFile::getFlags(){
-    uint32 retVal = 0xFFFFFFFF;
-    if (fileProperties < 0){
-
-    }else {
-        retVal = fcntl(fileProperties, F_GETFL);
+uint32 BasicFile::GetFlags() const {
+    uint32 retVal = 0xFFFFFFFFU;
+    if (IsOpen()) {
+        retVal = static_cast<uint32>(fcntl(fileProperties.identifier, F_GETFL));
         retVal = ConvertToBasicFileFlags(retVal);
     }
     return retVal;
 }
 
-bool BasicFile::CanWrite() const{
-    return ((((flags & 0xF) == ACCESS_MODE_W) || ((flags & 0xF) == ACCESS_MODE_R_W)) && (fileProperties > 0));
+bool BasicFile::CanWrite() const {
+    bool retVal = true;
+    if (!IsOpen()) {
+        retVal = false;
+    }
+    else {
+        uint32 flags = static_cast<uint32>(fcntl(fileProperties.identifier, F_GETFL));
+        retVal = (((flags & static_cast<uint32>(O_RDWR)) == static_cast<uint32>(O_RDWR))
+                || ((flags & static_cast<uint32>(O_WRONLY)) == static_cast<uint32>(O_WRONLY)));
+    }
+    return retVal;
 }
 
-bool BasicFile::CanRead() const{
-    return ((((flags & 0xF) == ACCESS_MODE_R) || ((flags & 0xF) == ACCESS_MODE_R_W)) && (fileProperties > 0));
+bool BasicFile::CanRead() const {
+    bool retVal = true;
+    if (!IsOpen()) {
+        retVal = false;
+    }
+    else {
+        uint32 flags = static_cast<uint32>(fcntl(fileProperties.identifier, F_GETFL));
+        retVal = (((flags & static_cast<uint32>(O_RDWR)) == static_cast<uint32>(O_RDWR))
+                || ((flags & static_cast<uint32>(O_WRONLY)) == static_cast<uint32>(O_RDONLY)));
+    }
+    return retVal;
 }
 
-bool BasicFile::CanSeek() const{
-    return (fileProperties > 0);
+bool BasicFile::CanSeek() const {
+    return IsOpen();
 }
 
-bool BasicFile::Open(const char * pathname, const int32 flags) {
-    uint32 linuxMode = 0;
-    uint32 linuxFlags = 0;
-    bool retVal;
-    linuxFlags = ConvertToLinuxFlags(flags);
-    fileProperties = open(pathname, linuxMode);
-    retVal = (fileProperties > 0);
-    if (retVal == false) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Open(). File cannot be opened");
+bool BasicFile::Open(const char8 * const pathname,
+                     const uint32 flags) {
+    bool retVal = true;
+
+    if (!IsOpen()) {
+        cout << bitset<32>(flags) << " Open: flags\n";
+        uint32 flagsChecked = CheckFlags(flags);
+        cout << bitset<32>(flagsChecked) << " Open: flagsChecked\n";
+        uint32 linuxFlags = ConvertToLinuxFlags(flagsChecked);
+        cout << bitset<32>(linuxFlags) << " Open: linuxFlags\n";
+        cout << bitset<32>(O_CREAT) << " Open: O_CREAT\n";
+        cout << bitset<32>(O_EXCL) << " Open: O_EXCL\n";
+        fileProperties.identifier = open(pathname, static_cast<int32>(linuxFlags), (S_IRWXU | S_IRWXG | S_IRWXO));
+        if (!IsOpen()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Open(). File cannot be opened");
+            retVal = false;
+        }
+        else {
+            fileProperties.pathName = pathname;
+        }
+    }
+    else {
+        retVal = false;
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Open(). File is already opened");
+    }
+    return retVal;
+}
+
+bool BasicFile::IsOpen() const {
+    return (fileProperties.identifier >= 0);
+}
+
+bool BasicFile::Close() {
+    bool retVal = true;
+    if (IsOpen()) {
+        int32 retClose = close(fileProperties.identifier);
+        if (retClose == -1) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Close().File cannot be closed");
+            retVal = false;
+        }
+        else {
+            fileProperties.identifier = INVALID_FD;
+        }
+    }
+    else {
+        retVal = false;
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Close().The file is not open");
     }
     return retVal;
 }
 
 bool BasicFile::Read(char8* const output,
                      uint32 & size) {
-    bool retVal;
-    size = read(fileProperties, output, size);
-    retVal = (size >= 0);
-    if (retVal == false) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read().File cannot be read");
+    bool retVal = true;
+    if (IsOpen()) {
+        size = static_cast<uint32>(read(fileProperties.identifier, output, static_cast<uint64>(size)));
+        retVal = (size != 0xFFFFFFFFU);
+        if (retVal == false) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read().File cannot be read");
+        }
+    }
+    else {
+        retVal = false;
     }
     return (retVal);
 }
 
-virtual bool BasicFile::Read(char8 * const output,
-                             uint32 & size,
-                             const TimeoutType &msecTimeout) {
+bool BasicFile::Read(char8 * const output,
+                     uint32 & size,
+                     const TimeoutType &msecTimeout) {
     bool retVal;
-    fd_set set;
+    fd_set set1;
     struct timeval timeout;
     int32 retSelect;
-    FD_ZERO(&set);
-    FD_SET(fileProperties, &set);
-    timeout.tv_usec = msecTimeout.GetTimeoutMSec() * 1000;
-    retSelect = select(fileProperties + 1, &set, NULL, NULL, &timeout);
-    if (retSelect == -1) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read(). Error while waiting to read a file");
-        retVal = false;
-    }
-    else if (retSelect == 0) {
-        REPORT_ERROR(ErrorManagement::Timeout, "BasicFile::Read(). Timeout file not read");
-        retVal = false;
+    if (IsOpen()) {
+        /*lint -e{529} symbol subsequently not used*/
+        /*lint -e{1960} violates MISRA 17-0-2*/
+        /*lint -e{970} use modifier or type int outside of a typedef [MISRA C++ Rule 3-9-2]*/
+        /*lint -e{717} while(0)*/
+        /*lint -e{9146} multiple declaration in a declaration*/
+        /*lint -e{909} Implicit conversion*/
+        FD_ZERO(&set1);
+        /*lint -e{530} Symbol not initialized*/
+        /*lint -e{9130} bitwise operator applied to signed underlying type*/
+        /*lint -e{970} use modifier or type int outside of a typedef [MISRA C++ Rule 3-9-2]*/
+        /*lint -e{703} Shift left of a signed quantity*/
+        /*lint -e{1924} C-style cast*/
+        FD_SET(fileProperties.identifier, &set1);
+        /*lint -e{9114} implicit conversion of integer cvalue expression*/
+        timeout.tv_usec = static_cast<int64>(msecTimeout.GetTimeoutMSec()) * 1000;
+        retSelect = select((fileProperties.identifier + 1), &set1, static_cast<fd_set *>(NULL), static_cast<fd_set *>(NULL), &timeout);
+        if (retSelect == -1) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Read(). Error while waiting to read a file");
+            retVal = false;
+        }
+        else if (retSelect == 0) {
+            REPORT_ERROR(ErrorManagement::Timeout, "BasicFile::Read(). Timeout file not read");
+            retVal = false;
+        }
+        else {
+            retVal = BasicFile::Read(output, size);
+        }
     }
     else {
-        retVal = BasicFile::Read(output, size);
+        retVal = false;
     }
     return retVal;
 }
 
 bool BasicFile::Write(const char8 * const input,
                       uint32 & size) {
-    bool retVal;
-    size = write(fileProperties, input, size);
-    retVal = (size >= 0);
-    if (size == false) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write(). File cannot be written");
+    bool retVal = true;
+    if (IsOpen()) {
+        size = static_cast<uint32>(write(fileProperties.identifier, input, static_cast<uint64>(size)));
+        if (size == 0xFFFFFFFFU) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write(). File cannot be written");
+            retVal = false;
+        }
+    }
+    else {
+        retVal = false;
     }
     return retVal;
 }
@@ -211,52 +357,84 @@ bool BasicFile::Write(const char8 * const input,
     fd_set set;
     struct timeval timeout;
     int32 retSelect;
-    FD_ZERO(&set);
-    FD_SET(fileProperties, &set);
-    timeout.tv_usec = msecTimeout.GetTimeoutMSec() * 1000;
-    retSelect = select(fileProperties + 1, NULL, &set, NULL, &timeout);
-    if (retSelect == -1) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Wirte. Error while waiting to write a file");
-        retVal = false;
-    }
-    else if (retSelect == 0) {
-        REPORT_ERROR(ErrorManagement::Timeout, "BasicFile::Write(). Timeout file not written");
-        retVal = false;
+    if (IsOpen()) {
+        /*lint -e{529} symbol subsequently not used*/
+        /*lint -e{1960} violates MISRA 17-0-2*/
+        /*lint -e{970} use modifier or type int outside of a typedef [MISRA C++ Rule 3-9-2]*/
+        /*lint -e{717} while(0)*/
+        /*lint -e{9146} multiple declaration in a declaration*/
+        /*lint -e{909} Implicit conversion*/
+        FD_ZERO(&set);
+        /*lint -e{530} Symbol not initialized*/
+        /*lint -e{9130} bitwise operator applied to signed underlying type*/
+        /*lint -e{970} use modifier or type int outside of a typedef [MISRA C++ Rule 3-9-2]*/
+        /*lint -e{703} Shift left of a signed quantity*/
+        /*lint -e{1924} C-style cast*/
+        FD_SET(fileProperties.identifier, &set);
+        /*lint -e{9114} implicit conversion of integer cvalue expression*/
+        timeout.tv_usec = static_cast<int64>(msecTimeout.GetTimeoutMSec()) * 1000;
+        retSelect = select(fileProperties.identifier + 1, static_cast<fd_set *>(NULL), &set, static_cast<fd_set *>(NULL), &timeout);
+        if (retSelect == -1) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write. Error while waiting to write a file");
+            retVal = false;
+        }
+        else if (retSelect == 0) {
+            REPORT_ERROR(ErrorManagement::Timeout, "BasicFile::Write(). Timeout file not written");
+            retVal = false;
+        }
+        else {
+            retVal = BasicFile::Write(input, size);
+        }
     }
     else {
-        retVal = BasicFile::Write(input, size);
+        retVal = false;
     }
     return retVal;
 }
 
 uint64 BasicFile::Size() {
-    struct stat statusFile;
-    int retFstat = -1;
-    uint64 numberOfCharactersFile = -1;
-    retFstat = fstat(fileProperties, &statusFile);
-    if (retFstat < 0) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Size(). Error while reading size");
-    }
-    else {
-        numberOfCharactersFile = statusFile.st_size;
+    uint64 numberOfCharactersFile = 0U;
+    if (IsOpen()) {
+        struct stat statusFile;
+        int32 retFstat = fstat(fileProperties.identifier, &statusFile);
+        if (retFstat < 0) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Size(). Error while reading size");
+            numberOfCharactersFile = 0xFFFFFFFFU;
+        }
+        else {
+            numberOfCharactersFile = static_cast<uint64>(statusFile.st_size);
+        }
     }
     return numberOfCharactersFile;
 }
 
-bool BasicFile::Seek(uint64 pos) {
+bool BasicFile::Seek(const uint64 pos) {
     int64 retSeek;
     bool retVal = true;
-    //The offset of lseek is long int which is 8 signed bit in 64bit architecture.
-    if (pos > 9223372036854775807) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Seek(). Too large position");
-        retVal = false;
-    }
-    else {
-        retSeek = lseek64(fileProperties, pos, SEEK_SET);
-        if (retSeek < 0) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Seek(). The position cannot be set");
+    if (CanSeek()) {
+        //The offset of lseek is long int which is 8 signed bit in 64bit architecture.
+        if (pos > static_cast<uint64>(MAX_INT64)) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Seek(). Too large position");
             retVal = false;
         }
+        else {
+            int64 localPos;
+            uint64 size = Size();
+            if (size < pos) {
+                localPos = static_cast<int64>(size);
+            }
+            else {
+                localPos = static_cast<int64>(pos);
+            }
+            retSeek = lseek64(fileProperties.identifier, localPos, SEEK_SET);
+            if (retSeek < 0) {
+                REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Seek(). The position cannot be set");
+                retVal = false;
+            }
+        }
+    }
+    else {
+        retVal = false;
     }
     return retVal;
 }
@@ -264,10 +442,26 @@ bool BasicFile::Seek(uint64 pos) {
 bool BasicFile::RelativeSeek(const int32 deltaPos) {
     int64 retSeek;
     bool retVal = true;
-
-    retSeek = lseek(fileProperties, static_cast<int64>(deltaPos), SEEK_CUR);
-    if (retSeek < 0) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::RelativeSeek(). The position cannot be set");
+    if (CanSeek()) {
+        int64 localPos;
+        int64 size = static_cast<int64>(Size());
+        int64 position = static_cast<int64>(Position());
+        if ((deltaPos + position) > size) {
+            localPos = size;
+        }
+        else if (static_cast<int32>(deltaPos + position) < 0) {
+            localPos = 0;
+        }
+        else {
+            localPos = position + deltaPos;
+        }
+        retSeek = lseek(fileProperties.identifier, localPos, SEEK_CUR);
+        if (retSeek < 0) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::RelativeSeek(). The position cannot be set");
+            retVal = false;
+        }
+    }
+    else {
         retVal = false;
     }
     return retVal;
@@ -275,25 +469,36 @@ bool BasicFile::RelativeSeek(const int32 deltaPos) {
 
 uint64 BasicFile::Position() {
     int64 pos = 0;
-    pos = lseek(fileProperties, 0,SEEK_CUR);
-    if (pos < 0){
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Position(). The position cannot be read");
+    if (IsOpen()) {
+        pos = lseek(fileProperties.identifier, static_cast<int64>(0), SEEK_CUR);
+        if (pos < 0) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Position(). The position cannot be read");
+        }
     }
     return (static_cast<uint64>(pos));
 }
 
-bool BasicFile::SetSize(uint64 size) {
+bool BasicFile::SetSize(const uint64 size) {
     bool retVal = true;
     int32 ret = -1;
-    if(size >= (1 << 64)){
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::SetSize(). The size is too large");
+    if (IsOpen()) {
+        if (size >= static_cast<uint64>(MAX_INT64)) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::SetSize(). The size is too large");
+        }
+        ret = ftruncate(fileProperties.identifier, static_cast<int64>(size));
+        if (ret == -1) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::SetSize(). The size cannot be set");
+            retVal = false;
+        }
     }
-    ret = ftruncate(fileProperties, static_cast<int64>(size));
-    if(ret == -1){
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::SetSize(). The size cannot be set");
+    else {
         retVal = false;
     }
     return retVal;
+}
+
+String BasicFile::GetPathName() {
+    return fileProperties.pathName;
 }
 }
 
