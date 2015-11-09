@@ -30,9 +30,7 @@
 #include <sys/types.h>
 #include <sys/select.h>
 #include <unistd.h>
-#include "iostream"
-#include "bitset"
-using namespace std;
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -104,33 +102,27 @@ MARTe::uint32 ConvertToBasicFileFlags(const MARTe::uint32 flags) {
 
 MARTe::uint32 CheckFlags(MARTe::uint32 flags) {
 
-    cout << bitset<32>(flags) << " CheckFlags: flags\n";
-
     //If APPEND and Read mode are set at the same time the APPEND mode is deleted from the flags
-    if ((flags & (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R) && !((flags & MARTe::BasicFile::ACCESS_MODE_W) == (MARTe::BasicFile::ACCESS_MODE_W))) {
+    if ((flags & (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)
+            && !((flags & MARTe::BasicFile::ACCESS_MODE_W) == (MARTe::BasicFile::ACCESS_MODE_W))) {
         MARTe::uint32 clean_APPEND = ~MARTe::BasicFile::FLAG_APPEND;
         flags &= clean_APPEND;
-        cout << "1\n";
     }
-    cout << bitset<32>(MARTe::BasicFile::FLAG_TRUNC) << " CheckFlags: FLAG_TRUNC\n";
-    cout << bitset<32>(MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE) << " CheckFlags: FLAG_CREAT_EXCLUSIVE\n";
 
     if ((flags & (MARTe::BasicFile::FLAG_CREAT | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE))
             == (MARTe::BasicFile::FLAG_CREAT | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE)) {
         MARTe::uint32 clean_CREAT_EXCLUSIVE = ~MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE;
         flags &= clean_CREAT_EXCLUSIVE;
-        cout << "2\n";
     }
-    if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R) && !((flags & MARTe::BasicFile::ACCESS_MODE_W) == (MARTe::BasicFile::ACCESS_MODE_W))) {
+    if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)
+            && !((flags & MARTe::BasicFile::ACCESS_MODE_W) == (MARTe::BasicFile::ACCESS_MODE_W))) {
         MARTe::uint32 clean_TRUNC = ~MARTe::BasicFile::FLAG_TRUNC;
         flags &= clean_TRUNC;
-        cout << "3\n";
     }
     if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE))
             == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE)) {
         MARTe::uint32 clean_TRUNC = ~MARTe::BasicFile::FLAG_TRUNC;
         flags &= clean_TRUNC;
-        cout << "4\n";
     }
     return flags;
 }
@@ -230,13 +222,9 @@ bool BasicFile::Open(const char8 * const pathname,
     bool retVal = true;
 
     if (!IsOpen()) {
-        cout << bitset<32>(flags) << " Open: flags\n";
+
         uint32 flagsChecked = CheckFlags(flags);
-        cout << bitset<32>(flagsChecked) << " Open: flagsChecked\n";
         uint32 linuxFlags = ConvertToLinuxFlags(flagsChecked);
-        cout << bitset<32>(linuxFlags) << " Open: linuxFlags\n";
-        cout << bitset<32>(O_CREAT) << " Open: O_CREAT\n";
-        cout << bitset<32>(O_EXCL) << " Open: O_EXCL\n";
         fileProperties.identifier = open(pathname, static_cast<int32>(linuxFlags), (S_IRWXU | S_IRWXG | S_IRWXO));
         if (!IsOpen()) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Open(). File cannot be opened");
