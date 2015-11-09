@@ -53,7 +53,7 @@ Directory::Directory(const char8 * const path) :
     // fill the struct with the file informations
     if (stat(path, &directoryHandle) != 0) {
         //errno = 2 => No such file or directory
-        if(errno != 2){
+        if (errno != 2) {
             REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
         }
     }
@@ -116,77 +116,93 @@ bool Directory::IsFile() const {
     return S_ISREG(directoryHandle.st_mode);
 }
 
-uint64 Directory::GetSize() const {
-    return (directoryHandle.st_size > 0) ? (static_cast<uint64>(directoryHandle.st_size)) : (0u);
+uint64 Directory::GetSize() {
+    uint64 size = 0u;
+    if (stat(GetName(), &directoryHandle) == 0) {
+        size = static_cast<uint64>(directoryHandle.st_size);
+    }
+    return size;
 }
 
-TimeValues Directory::GetLastWriteTime() const {
+TimeValues Directory::GetLastWriteTime() {
 
     TimeValues timeStamp = { 0u, 0u, 0u, 0u, 0u, 0u, 0u };
     //fill the time structure
-    time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_mtime);
-    const struct tm *tValues = localtime(&secondsFromEpoch32);
-    bool ret = (tValues != NULL);
-    if (ret) {
-        timeStamp.microseconds = 0u;
-        timeStamp.seconds = static_cast<uint32>(tValues->tm_sec);
-        timeStamp.minutes = static_cast<uint32>(tValues->tm_min);
-        timeStamp.hours = static_cast<uint32>(tValues->tm_hour);
-        timeStamp.days = static_cast<uint32>(tValues->tm_mday);
-        timeStamp.month = static_cast<uint32>(tValues->tm_mon);
-        timeStamp.year = static_cast<uint32>(tValues->tm_year);
+    if (stat(GetName(), &directoryHandle) == 0) {
+        time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_mtime);
+        const struct tm *tValues = localtime(&secondsFromEpoch32);
+        bool ret = (tValues != NULL);
+        if (ret) {
+            timeStamp.microseconds = 0u;
+            timeStamp.seconds = static_cast<uint32>(tValues->tm_sec);
+            timeStamp.minutes = static_cast<uint32>(tValues->tm_min);
+            timeStamp.hours = static_cast<uint32>(tValues->tm_hour);
+            timeStamp.days = static_cast<uint32>(tValues->tm_mday);
+            timeStamp.month = static_cast<uint32>(tValues->tm_mon);
+            timeStamp.year = static_cast<uint32>(tValues->tm_year);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
+        }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
+        REPORT_ERROR(ErrorManagement::OSError, "Error: stat()");
     }
 
     return timeStamp;
 }
 
-TimeValues Directory::GetLastAccessTime() const {
+TimeValues Directory::GetLastAccessTime() {
     TimeValues timeStamp = { 0u, 0u, 0u, 0u, 0u, 0u, 0u };
-    //fill the time structure
-    time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_atime);
-    const struct tm *tValues = localtime(&secondsFromEpoch32);
-    bool ret = (tValues != NULL);
-    if (ret) {
-        timeStamp.microseconds = 0u;
-        timeStamp.seconds = static_cast<uint32>(tValues->tm_sec);
-        timeStamp.minutes = static_cast<uint32>(tValues->tm_min);
-        timeStamp.hours = static_cast<uint32>(tValues->tm_hour);
-        timeStamp.days = static_cast<uint32>(tValues->tm_mday);
-        timeStamp.month = static_cast<uint32>(tValues->tm_mon);
-        timeStamp.year = static_cast<uint32>(tValues->tm_year);
+    if (stat(GetName(), &directoryHandle) == 0) {
+        //fill the time structure
+        time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_atime);
+        const struct tm *tValues = localtime(&secondsFromEpoch32);
+        bool ret = (tValues != NULL);
+        if (ret) {
+            timeStamp.microseconds = 0u;
+            timeStamp.seconds = static_cast<uint32>(tValues->tm_sec);
+            timeStamp.minutes = static_cast<uint32>(tValues->tm_min);
+            timeStamp.hours = static_cast<uint32>(tValues->tm_hour);
+            timeStamp.days = static_cast<uint32>(tValues->tm_mday);
+            timeStamp.month = static_cast<uint32>(tValues->tm_mon);
+            timeStamp.year = static_cast<uint32>(tValues->tm_year);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
+        }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
+        REPORT_ERROR(ErrorManagement::OSError, "Error: stat()");
     }
 
     return timeStamp;
 }
 
 bool Directory::Create(const bool isFile) {
-    bool ret = true;
+    bool ret = (fname != NULL_PTR(char8 *));
 
-    if (isFile) {
-        int32 fd = creat(fname, static_cast<mode_t>(0777));
-        if (fd < 0) {
-            ret = false;
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed creat()");
-        }
-        else {
-            if (close(fd) < 0) {
+    if (ret) {
+        if (isFile) {
+            int32 fd = creat(fname, static_cast<mode_t>(0777));
+            if (fd < 0) {
                 ret = false;
-                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed close()");
+                REPORT_ERROR(ErrorManagement::OSError, "Error: Failed creat()");
+            }
+            else {
+                if (close(fd) < 0) {
+                    ret = false;
+                    REPORT_ERROR(ErrorManagement::OSError, "Error: Failed close()");
+                }
             }
         }
-    }
-    else {
-        ret = (mkdir(fname, static_cast<mode_t>(0777)) == 0);
-    }
+        else {
+            ret = (mkdir(fname, static_cast<mode_t>(0777)) == 0);
+        }
 
-    if (stat(fname, &directoryHandle) != 0) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+        if (stat(fname, &directoryHandle) != 0) {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed stat() in initialization");
+        }
     }
     return ret;
 }
@@ -201,9 +217,12 @@ bool Directory::Exists() {
 }
 
 bool Directory::Delete() {
-    return (remove(fname) == 0);
+    bool ok = (fname != NULL_PTR(char8 *));
+    if (ok) {
+        ok = (remove(fname) == 0);
+    }
+    return ok;
 }
 
 }
-
 

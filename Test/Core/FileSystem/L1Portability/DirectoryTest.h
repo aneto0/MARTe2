@@ -66,35 +66,29 @@ public:
     /**
      * @brief Retrieve the file-directory name.
      */
-    bool TestNameInvalid();
-    bool TestNameValid();
+    bool TestName_Invalid();
+    bool TestName_Valid();
 
     /**
      * @brief Check if this is a directory.
      * @return true if this is a directory, false otherwise.
      */
-    bool TestIsDirectoryValid();
-    bool TestIsDirectoryInvalid();
+    bool TestIsDirectory_Valid();
+    bool TestIsDirectory_Invalid();
 
     /**
      * @brief Check if this is a file.
      * @return true if this is a file, false otherwise.
      */
-    bool TestIsFile();
-    bool TestIsNoFile();
-
-    /**
-     * @brief Check if this directory is read only
-     * @return true if this is a read-only file-directory, false otherwise.
-     */
-    bool TestReadOnly();
+    bool TestIsFile_Yes();
+    bool TestIsFile_No();
 
     /**
      * @brief Retrieve the file-directory size.
      * @return the file-directory size
      */
-    bool TestGetSize_Dir(const char8 * const path);
-    bool TestGetSize_File(const char8 * const path);
+    bool TestGetSize_Dir();
+    bool TestGetSize_File();
 
     /**
      * @brief Retrieve the last write time.
@@ -114,7 +108,7 @@ public:
      * @param[in] isFile specifies if a file or a folder should be created.
      * @return true if the file-directory is created correctly, false otherwise.
      */
-    bool TestCreate(const char8 * const path,
+    bool TestCreate(char8 * path,
                     const bool isFile = false);
 
     /**
@@ -122,7 +116,7 @@ public:
      * @param[in] path is the path of the file / directory to be deleted.
      * @return true if the file-directory is deleted correctly, false otherwise.
      */
-    bool TestDelete(const char8 * const path,
+    bool TestDelete(char8 *  path,
                     bool file);
 
     /**
@@ -132,7 +126,7 @@ public:
      * @post
      *   isFile = true if path refers to a file.
      */
-    bool TestExists(const char8 * const path);
+    bool TestExists(char8 * path);
 
     /**
      * @brief Create a test directory

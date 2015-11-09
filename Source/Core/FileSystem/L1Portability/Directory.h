@@ -99,19 +99,19 @@ public:
      * @brief Retrieve the file-directory size.
      * @return the file-directory size
      */
-    uint64 GetSize() const;
+    uint64 GetSize();
 
     /**
      * @brief Retrieve the last write time.
      * @return the last write time.
      */
-    TimeValues GetLastWriteTime() const;
+    TimeValues GetLastWriteTime();
 
     /**
      * @brief Retrieve the last access time.
      * @return the last access time.
      */
-    TimeValues GetLastAccessTime() const;
+    TimeValues GetLastAccessTime();
 
 
     /**

@@ -44,20 +44,14 @@ const char8 * const BASE_PATH = "GTestDirectoryTest";
 
 DirectoryTest::DirectoryTest() {
     fname = NULL;
-    Directory dir("GTestDirectoryTest");
-    dir.Create(false);
 }
 
 DirectoryTest::~DirectoryTest() {
-    Directory dir("GTestDirectoryTest");
-    dir.Create(false);
-    dir.Delete();
 }
 
 bool DirectoryTest::TestSetByName() {
     char8 path[128];
     DirectoryCreateN(path, "TestSetByName");
-
     Directory dir(path);
     dir.Create(false);
     bool ok = dir.SetByName(path);
@@ -67,13 +61,13 @@ bool DirectoryTest::TestSetByName() {
     return ok;
 }
 
-bool DirectoryTest::TestNameInvalid() {
+bool DirectoryTest::TestName_Invalid() {
     const char8 * const path = NULL;
     Directory dir(path);
-    return (StringHelper::Compare(dir.GetName(), path) == 0);
+    return (StringHelper::Compare(dir.GetName(), path) == -1);
 }
 
-bool DirectoryTest::TestNameValid() {
+bool DirectoryTest::TestName_Valid() {
     char8 path[128];
     DirectoryCreateN(path, "TestNameValid");
     Directory dir(path);
@@ -81,128 +75,139 @@ bool DirectoryTest::TestNameValid() {
     return StringHelper::Compare(dir.GetName(), path) == 0;
 }
 
-bool DirectoryTest::TestIsDirectoryInvalid() {
-    const char8 * const path = "GTestDirectoryTest/TestIsDirectoryInvalid.txt";
+bool DirectoryTest::TestIsDirectory_Invalid() {
+    char8 path[128];
+    DirectoryCreateN(path, "TestIsDirectoryInvalid.txt");
     Directory dir(path);
     dir.Create(true);
     return !dir.IsDirectory();
 }
-bool DirectoryTest::TestIsDirectoryValid() {
-    const char8 * const path = "GTestDirectoryTest/TestIsDirectoryValid";
+bool DirectoryTest::TestIsDirectory_Valid() {
+    char8 path[128];
+    DirectoryCreateN(path, "TestIsDirectoryValid");
     Directory dir(path);
     dir.Create(false);
     return dir.IsDirectory();
 }
 
-bool DirectoryTest::TestIsNoFile() {
-    const char8 * const path = "GTestDirectoryTest/TestIsNoFile";
+bool DirectoryTest::TestIsFile_No() {
+    char8 path[128];
+    DirectoryCreateN(path, "TestIsNoFile");
     Directory dir(path);
     dir.Create(false);
     return !dir.IsFile();
 }
-bool DirectoryTest::TestIsFile() {
-    const char8 * const path = "GTestDirectoryTest/TestIsFile.txt";
+bool DirectoryTest::TestIsFile_Yes() {
+    char8 path[128];
+    DirectoryCreateN(path, "TestIsFile.txt");
     Directory dir(path);
     dir.Create(true);
     return dir.IsFile();
 }
-///no tiene sentido el readOnly del cpp
-bool DirectoryTest::TestReadOnly() {
-    Directory dir;
-    return !dir.ReadOnly();
-}
 
-bool DirectoryTest::TestGetSize_Dir(const char8 * const path) {
+bool DirectoryTest::TestGetSize_Dir() {
+    char8 path[128];
+    char8 path2[128];
+    //path2[0] = '\0';
+    struct stat structure;
+    DirectoryCreateN(path, "TestGetSize_Dir");
+    StringHelper::Copy(path2, path);
     Directory dir(path);
     dir.Create(false);
+    StringHelper::Concatenate(path2, &DIRECTORY_SEPARATOR);
+    StringHelper::Concatenate(path2, "TestGetSize_Dir.txt");
+    FILE *file;
+    file = fopen(path2, "w");
+    fputs("Hello this confirm my question", file);
+    fclose(file);
     DIR *directory;
     directory = opendir(path);
-    seekdir(directory, 0L);
-    return (dir.GetSize() == (uint64) telldir(directory));
+    stat(readdir(directory)->d_name, &structure);
+    bool ok = (dir.GetSize() == (uint64) structure.st_size);
+    return ok;
 }
 
-bool DirectoryTest::TestGetSize_File(const char8 * const path) {
+bool DirectoryTest::TestGetSize_File() {
+    char8 path[128];
+    DirectoryCreateN(path, "TestGetSize_File.txt");
+    struct stat structure;
+    Directory dir(path);
+    dir.Create(true);
+    FILE *file;
+    file = fopen(path, "w");
+    fputs("Hello this confirm my question", file);
+    fclose(file);
+    stat(path, &structure);
+    uint64 leng = dir.GetSize();
+    return (leng == (uint64) structure.st_size);
+}
+
+bool DirectoryTest::TestGetLastAccessTime() {
+    char8 path[128];
+    DirectoryCreateN(path, "TestGetLastAccessTime.txt");
+    struct stat buf;
     Directory dir(path);
     dir.Create(true);
     FILE *file;
     file = fopen(path, "r+");
-    fputs("Hello this is to confirm the size of file", file);
-    fseek(file, 0L, SEEK_END);
-    return (dir.GetSize() == (uint64) ftell(file));
-}
-
-bool DirectoryTest::TestGetLastAccessTime() {
-    const char8 * const path = "GTestDirectoryTest/TestF18.txt";
-    struct stat buf;
-    Directory dir(path);
-    dir.Create(true);
-    FILE *fich;
-    fich = fopen(path, "r+");
-    fputc('a', fich);
-    fclose(fich);
+    fputc('a', file);
+    fclose(file);
     stat(path, &buf);
     time_t secondsFromEpoch32 = static_cast<time_t>(buf.st_atime);
     const struct tm *tValues = localtime(&secondsFromEpoch32);
-    if(tValues->tm_sec == (int32)dir.GetLastAccessTime().seconds){
-        if (tValues->tm_min == (int32)dir.GetLastAccessTime().minutes){
-            if(tValues->tm_hour == (int32)dir.GetLastAccessTime().hours){
-                if (tValues->tm_mday == (int32)dir.GetLastAccessTime().days){
-                    if(tValues->tm_mon == (int32)dir.GetLastAccessTime().month){
-                        if(tValues->tm_year == (int32)dir.GetLastAccessTime().year){
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return false;
+    TimeValues lastAccessTime = dir.GetLastAccessTime();
+    bool ok = (tValues->tm_sec == (int32) lastAccessTime.seconds);
+    ok &= (tValues->tm_min == (int32) lastAccessTime.minutes);
+    ok &= (tValues->tm_hour == (int32) lastAccessTime.hours);
+    ok &= (tValues->tm_mday == (int32) lastAccessTime.days);
+    ok &= (tValues->tm_mon == (int32) lastAccessTime.month);
+    ok &= (tValues->tm_year == (int32) lastAccessTime.year);
+    return ok;
 }
 
 bool DirectoryTest::TestGetLastWriteTime() {
-    const char8 * const path = "GTestDirectoryTest/TestF19.txt";
-        struct stat buf;
-        Directory dir(path);
-        dir.Create(true);
-        FILE *fich;
-        fich = fopen(path, "r+");
-        fputc('a', fich);
-        fclose(fich);
-        stat(path, &buf);
-        time_t secondsFromEpoch32 = static_cast<time_t>(buf.st_mtime);
-        const struct tm *tValues = localtime(&secondsFromEpoch32);
-        if(tValues->tm_sec == (int32)dir.GetLastWriteTime().seconds){
-            if (tValues->tm_min == (int32)dir.GetLastWriteTime().minutes){
-                if(tValues->tm_hour == (int32)dir.GetLastWriteTime().hours){
-                    if (tValues->tm_mday == (int32)dir.GetLastWriteTime().days){
-                        if(tValues->tm_mon == (int32)dir.GetLastWriteTime().month){
-                            if(tValues->tm_year == (int32)dir.GetLastWriteTime().year){
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false;
+    char8 path[128];
+    DirectoryCreateN(path, "TestGetLastWriteTime.txt");
+    struct stat buf;
+    Directory dir(path);
+    dir.Create(true);
+    FILE *file;
+    file = fopen(path, "r+");
+    fputc('a', file);
+    fclose(file);
+    stat(path, &buf);
+    time_t secondsFromEpoch32 = static_cast<time_t>(buf.st_mtime);
+    const struct tm *tValues = localtime(&secondsFromEpoch32);
+    TimeValues lastWriteTime = dir.GetLastWriteTime();
+    bool ok = (tValues->tm_sec == (int32) lastWriteTime.seconds);
+    ok &= (tValues->tm_min == (int32) lastWriteTime.minutes);
+    ok &= (tValues->tm_hour == (int32) lastWriteTime.hours);
+    ok &= (tValues->tm_mday == (int32) lastWriteTime.days);
+    ok &= (tValues->tm_mon == (int32) lastWriteTime.month);
+    ok &= (tValues->tm_year == (int32) lastWriteTime.year);
+    return ok;
 }
 
-bool DirectoryTest::TestCreate(const char8 * const path,
+bool DirectoryTest::TestCreate(char8 *pathin,
                                const bool isFile) {
+    char8 path[128];
+    DirectoryCreateN(path, pathin);
     Directory dir(path);
-    if (path == NULL) {
-        return !dir.Create(isFile);
-    }
-    else {
+    if ((!dir.Exists()) && (pathin != NULL)) {
         return dir.Create(isFile);
     }
+    else {
+        return !dir.Create(isFile);
+    }
 }
 
-bool DirectoryTest::TestDelete(const char8 * const path,
+bool DirectoryTest::TestDelete(char8 * pathin,
                                bool file) {
+    char8 path[128];
+    DirectoryCreateN(path, pathin);
     Directory dir(path);
     dir.Create(file);
-    if (dir.Exists()) {
+    if (pathin != NULL) {
         return dir.Delete();
     }
     else {
@@ -210,10 +215,12 @@ bool DirectoryTest::TestDelete(const char8 * const path,
     }
 }
 
-bool DirectoryTest::TestExists(const char8 * const path) {
+bool DirectoryTest::TestExists(char8 * pathin) {
+    char8 path[128];
+    DirectoryCreateN(path, pathin);
     Directory dir(path);
     dir.Create(false);
-    if (StringHelper::Compare(dir.GetName(), path) == 0) {
+    if (StringHelper::Compare(dir.GetName(), pathin) == 0) {
         return dir.Exists();
     }
     else {
@@ -221,9 +228,11 @@ bool DirectoryTest::TestExists(const char8 * const path) {
     }
 }
 
-void DirectoryTest::DirectoryCreateN(char8 *destination, char8 *path) {
-    Directory dir;
-    dir.Create(BASE_PATH);
+void DirectoryTest::DirectoryCreateN(char8 *destination,
+                                     char8 *path) {
+    Directory dir(BASE_PATH);
+    dir.Create(false);
+    destination[0] = '\0';
     StringHelper::Concatenate(destination, BASE_PATH);
     StringHelper::Concatenate(destination, &DIRECTORY_SEPARATOR);
     StringHelper::Concatenate(destination, path);

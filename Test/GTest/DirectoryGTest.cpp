@@ -49,81 +49,72 @@ TEST(DirectoryGTest, TestSetByName) {
 }
 
 
-TEST(DirectoryGTest, TestNameInvalid) {
+TEST(DirectoryGTest, TestName_Invalid) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestNameInvalid());
+    ASSERT_TRUE(myClassTest.TestName_Invalid());
 }
-TEST(DirectoryGTest, TestNameValid) {
+TEST(DirectoryGTest, TestName_Valid) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestNameValid());
-}
-
-TEST(DirectoryGTest, TestIsDirectoryInvalid) {
-    DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestIsDirectoryInvalid());
-}
-TEST(DirectoryGTest, TestIsNoFile) {
-    DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestIsNoFile());
+    ASSERT_TRUE(myClassTest.TestName_Valid());
 }
 
-TEST(DirectoryGTest, TestIsFile) {
+TEST(DirectoryGTest, TestIsDirectory_Invalid) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestIsFile());
+    ASSERT_TRUE(myClassTest.TestIsDirectory_Invalid());
+}
+TEST(DirectoryGTest, TestIsDirectory_Valid) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestIsDirectory_Valid());
 }
 
-TEST(DirectoryGTest, TestReadOnly) {
+TEST(DirectoryGTest, TestIsFile_No) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestReadOnly());
+    ASSERT_TRUE(myClassTest.TestIsFile_No());
 }
 
-TEST(DirectoryGTest, TestSizeDir) {
+TEST(DirectoryGTest, TestIsFile_Yes) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestGetSize_Dir("GTestDirectoryTest/TestSizeDir"));
-}
-TEST(DirectoryGTest, TestSizeDirNULL) {
-    DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestGetSize_Dir("GTestDirectoryTest/"));
+    ASSERT_TRUE(myClassTest.TestIsFile_Yes());
 }
 
-
-TEST(DirectoryGTest, TestSizeFileFile) {
+TEST(DirectoryGTest, TestGetSize_Dir) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestGetSize_File("GTestDirectoryTest/TestSizeFileFile.txt"));
-}
-TEST(DirectoryGTest, TestSizeFileFileC) {
-    DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestGetSize_File("GTestDirectoryTest/TestSizeFileFileC.c"));
+    ASSERT_TRUE(myClassTest.TestGetSize_Dir());
 }
 
-TEST(DirectoryGTest, TestCreateDir) {
+TEST(DirectoryGTest, TestGetSize_File) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestCreate("GTestDirectoryTest/TestCreateDir",false));
+    ASSERT_TRUE(myClassTest.TestGetSize_File());
 }
-TEST(DirectoryGTest, TestCreateDir0) {
+
+TEST(DirectoryGTest, TestCreate_Dir) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestCreate("TestCreateDir",false));
+}
+TEST(DirectoryGTest, TestCreate_DirNull) {
     DirectoryTest myClassTest;
     ASSERT_TRUE(myClassTest.TestCreate(NULL,false));
 }
-TEST(DirectoryGTest, TestCreateFile) {
+TEST(DirectoryGTest, TestCreate_File) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestCreate("GTestDirectoryTest/TestCreateFile.txt",true));
+    ASSERT_TRUE(myClassTest.TestCreate("TestCreateFile.txt",true));
 }
-TEST(DirectoryGTest, TestCreateFileNull) {
+TEST(DirectoryGTest, TestCreate_FileNull) {
     DirectoryTest myClassTest;
     ASSERT_TRUE(myClassTest.TestCreate(NULL,true));
 }
 
-TEST(DirectoryGTest, TestDeleteNULL) {
+TEST(DirectoryGTest, TestDelete_NULL) {
     DirectoryTest myClassTest;
     ASSERT_TRUE(myClassTest.TestDelete(NULL,false));
 }
-TEST(DirectoryGTest, TestDeleteFile) {
+TEST(DirectoryGTest, TestDelete_File) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestDelete("GTestDirectoryTest/TestDeleteFile.txt",true));
+    ASSERT_TRUE(myClassTest.TestDelete("TestDeleteFile.txt",true));
 }
-TEST(DirectoryGTest, TestDeleteDir) {
+TEST(DirectoryGTest, TestDelete_Dir) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestDelete("GTestDirectoryTest/TestDeleteDir",false));
+    ASSERT_TRUE(myClassTest.TestDelete("TestDeleteDir",false));
 }
 
 TEST(DirectoryGTest, TestExists_NULL) {
