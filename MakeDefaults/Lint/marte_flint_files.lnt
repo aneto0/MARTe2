@@ -66,4 +66,6 @@ SocketSelect.cpp
 BasicUDPSocket.cpp
 DirectoryScanner.cpp
 Directory.cpp
+BasicFile.cpp
+
 

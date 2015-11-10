@@ -28,8 +28,8 @@ TARGET=cov
 
 include Makefile.inc
 
-OPTIM=-finline-functions
-
-
-
 LIBRARIES_STATIC+=Environment/Linux/cov/L1Portability$(LIBEXT)
+
+LIBRARIES += -lm
+
+OPTIM=-finline-functions

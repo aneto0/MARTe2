@@ -20,28 +20,31 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
-PACKAGE=Core/FileSystem
-ROOT_DIR=../../../..
+PACKAGE=Core/FileSystem/L1Portability
+ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-SPB=Environment/$(ENVIRONMENT).x
+OBJSX=  BasicFile.x
 
-OBJSX=
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES+=-I../../BareMetal/L0Types
-INCLUDES+=-I../../BareMetal/L1Portability
-INCLUDES+=-I../../BareMetal/L2Objects
-INCLUDES+=-I../../BareMetal/L3Streams
+INCLUDES+=-I../../
+INCLUDES+=-I../../../../BareMetal/L0Types/
+INCLUDES+=-I../../../../BareMetal/L1Portability
+INCLUDES+=-I../../../../BareMetal/L2Objects
+INCLUDES+=-I../../../../BareMetal/L3Streams
 
-all: $(OBJS) $(SUBPROJ)   \
-    $(BUILD_DIR)/L1PortabilityF$(LIBEXT) \
-    $(BUILD_DIR)/L1PortabilityF.def
+all: $(OBJS) $(CPPS) \
+     $(BUILD_DIR)/L1Portability$(LIBEXT) \
+     $(BUILD_DIR)/L1Portability.def
 	echo  $(OBJS)
 
 include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+

@@ -23,6 +23,7 @@
 # $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
+<<<<<<< HEAD
 TARGET=msc
 
 include Makefile.inc
@@ -31,6 +32,14 @@ LIBRARIES += $(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 LIBRARIES   += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L0Types\L0TypesB$(LIBEXT) 
 LIBRARIES   += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L1Portability\L1PortabilityB$(LIBEXT) 
 LIBRARIES   += $(ROOT_DIR)\Build\$(TARGET)\Core\BareMetal\L2Objects\L2ObjectsB$(LIBEXT)
+=======
+
+TARGET=msc
+
+include Makefile.inc
+ 
+LIBRARIES += $(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
+>>>>>>> refs/remotes/origin/#244_Windows_File
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
 

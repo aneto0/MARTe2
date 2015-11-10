@@ -25,7 +25,8 @@
 
 OBJSX= DirectoryScannerGTest.x \
         DirectoryGTest.x
-#InternetHostGTest.x \
+#BasicFileGTest.x \
+	InternetHostGTest.x \
 	   InternetServiceGTest.x \
 	   BasicSocketGTest.x \
 	   BasicTCPSocketGTest.x \

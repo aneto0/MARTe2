@@ -29,6 +29,7 @@ OBJSX=  InternetHostTest.x \
 	BasicSocketTest.x  \
 	BasicUDPSocketTest.x \
 	BasicTCPSocketTest.x \
+	BasicFileTest.x \
 	DirectoryTest.x \
 	DirectoryScannerTest.x
 
