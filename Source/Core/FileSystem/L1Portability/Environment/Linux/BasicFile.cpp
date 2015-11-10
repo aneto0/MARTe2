@@ -164,8 +164,8 @@ BasicFile::~BasicFile() {
         Close();
     }
 }
-
-bool BasicFile::SetFlags(const uint32 setFlags) const {
+/*lint -e{1762} The function changes the  status of the OS structure*/
+bool BasicFile::SetFlags(const uint32 setFlags) {
     bool retVal = true;
 
     if (IsOpen()) {
@@ -271,7 +271,7 @@ bool BasicFile::Close() {
 bool BasicFile::Read(char8* const output,
                      uint32 & size) {
     bool retVal = true;
-    if (IsOpen()) {
+    if (CanRead()) {
         size = static_cast<uint32>(read(properties.identifier, output, static_cast<uint64>(size)));
         retVal = (size != 0xFFFFFFFFU);
         if (retVal == false) {
@@ -291,7 +291,7 @@ bool BasicFile::Read(char8 * const output,
     fd_set set1;
     struct timeval timeout;
     int32 retSelect;
-    if (IsOpen()) {
+    if (CanRead()) {
         /*lint -e{529} symbol subsequently not used*/
         /*lint -e{1960} violates MISRA 17-0-2*/
         /*lint -e{970} use modifier or type int outside of a typedef [MISRA C++ Rule 3-9-2]*/
@@ -329,7 +329,7 @@ bool BasicFile::Read(char8 * const output,
 bool BasicFile::Write(const char8 * const input,
                       uint32 & size) {
     bool retVal = true;
-    if (IsOpen()) {
+    if (CanWrite()) {
         size = static_cast<uint32>(write(properties.identifier, input, static_cast<uint64>(size)));
         if (size == 0xFFFFFFFFU) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Write(). File cannot be written");
@@ -349,7 +349,7 @@ bool BasicFile::Write(const char8 * const input,
     fd_set set;
     struct timeval timeout;
     int32 retSelect;
-    if (IsOpen()) {
+    if (CanWrite()) {
         /*lint -e{529} symbol subsequently not used*/
         /*lint -e{1960} violates MISRA 17-0-2*/
         /*lint -e{970} use modifier or type int outside of a typedef [MISRA C++ Rule 3-9-2]*/
@@ -489,7 +489,7 @@ bool BasicFile::SetSize(const uint64 size) {
     return retVal;
 }
 
-String BasicFile::GetPathName() const{
+String BasicFile::GetPathName() const {
     return properties.pathName;
 }
 }

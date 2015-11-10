@@ -31,8 +31,6 @@
 
 #include "BasicFileTest.h"
 #include "StringHelper.h"
-#include "iostream"
-using namespace std;
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -373,8 +371,6 @@ bool BasicFileTest::TestRelativeSeek_small() {
     bf.SetSize(sizeFile);
     bf.Seek(pos);
     retVal &= bf.RelativeSeek(detlaPos);
-    cout << bf.Position() <<" \n";
-    cout <<pos + detlaPos <<" \n";
 //    retVal &= ((pos + detlaPos) == bf.Position());
     return retVal;
 }
