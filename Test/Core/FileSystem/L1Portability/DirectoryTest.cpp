@@ -2,7 +2,7 @@
  * @file DirectoryTest.cpp
  * @brief Source file for class DirectoryTest
  * @date Nov 4, 2015
- * @author fperez
+ * @author Frank Perez Paz
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -47,11 +47,19 @@ DirectoryTest::DirectoryTest() {
 }
 
 DirectoryTest::~DirectoryTest() {
+    fname = NULL;
 }
 
-bool DirectoryTest::TestSetByName() {
+bool DirectoryTest::TestDirectoryTest(char8 * pathin) {
     char8 path[128];
-    DirectoryCreateN(path, "TestSetByName");
+    DirectoryCreateN(path, pathin);
+    Directory dir(path);
+    return (StringHelper::Compare(dir.GetName(), path) == 0);
+}
+
+bool DirectoryTest::TestSetByName_Valid() {
+    char8 path[128];
+    DirectoryCreateN(path, "TestSetByName_Valid");
     Directory dir(path);
     dir.Create(false);
     bool ok = dir.SetByName(path);
@@ -61,18 +69,30 @@ bool DirectoryTest::TestSetByName() {
     return ok;
 }
 
-bool DirectoryTest::TestName_Invalid() {
-    const char8 * const path = NULL;
+bool DirectoryTest::TestSetByName_Invalid() {
+    char8 path[128];
+    DirectoryCreateN(path, NULL);
     Directory dir(path);
-    return (StringHelper::Compare(dir.GetName(), path) == -1);
+    dir.Create(false);
+    bool ok = dir.SetByName(path);
+    if (ok) {
+        ok = (StringHelper::Compare(dir.GetName(), path) == 0);
+    }
+    return ok;
 }
 
-bool DirectoryTest::TestName_Valid() {
+bool DirectoryTest::TestGetName_Valid() {
     char8 path[128];
     DirectoryCreateN(path, "TestNameValid");
     Directory dir(path);
     dir.Create(false);
     return StringHelper::Compare(dir.GetName(), path) == 0;
+}
+
+bool DirectoryTest::TestGetName_Invalid() {
+    const char8 * const path = NULL;
+    Directory dir(path);
+    return (StringHelper::Compare(dir.GetName(), path) == -1);
 }
 
 bool DirectoryTest::TestIsDirectory_Invalid() {
@@ -82,6 +102,7 @@ bool DirectoryTest::TestIsDirectory_Invalid() {
     dir.Create(true);
     return !dir.IsDirectory();
 }
+
 bool DirectoryTest::TestIsDirectory_Valid() {
     char8 path[128];
     DirectoryCreateN(path, "TestIsDirectoryValid");
@@ -97,6 +118,7 @@ bool DirectoryTest::TestIsFile_No() {
     dir.Create(false);
     return !dir.IsFile();
 }
+
 bool DirectoryTest::TestIsFile_Yes() {
     char8 path[128];
     DirectoryCreateN(path, "TestIsFile.txt");
@@ -108,7 +130,6 @@ bool DirectoryTest::TestIsFile_Yes() {
 bool DirectoryTest::TestGetSize_Dir() {
     char8 path[128];
     char8 path2[128];
-    //path2[0] = '\0';
     struct stat structure;
     DirectoryCreateN(path, "TestGetSize_Dir");
     StringHelper::Copy(path2, path);
@@ -124,6 +145,7 @@ bool DirectoryTest::TestGetSize_Dir() {
     directory = opendir(path);
     stat(readdir(directory)->d_name, &structure);
     bool ok = (dir.GetSize() == (uint64) structure.st_size);
+    remove(path2);
     return ok;
 }
 
@@ -193,7 +215,7 @@ bool DirectoryTest::TestCreate(char8 *pathin,
     char8 path[128];
     DirectoryCreateN(path, pathin);
     Directory dir(path);
-    if ((!dir.Exists()) && (pathin != NULL)) {
+    if ((!dir.Exists() || isFile) && (pathin != NULL && (StringHelper::Compare(pathin, "") != 0))) {
         return dir.Create(isFile);
     }
     else {
@@ -202,12 +224,12 @@ bool DirectoryTest::TestCreate(char8 *pathin,
 }
 
 bool DirectoryTest::TestDelete(char8 * pathin,
-                               bool file) {
+                               bool isFile) {
     char8 path[128];
     DirectoryCreateN(path, pathin);
     Directory dir(path);
-    dir.Create(file);
-    if (pathin != NULL) {
+    dir.Create(isFile);
+    if ((pathin != NULL) && (StringHelper::Compare(pathin, "") != 0)) {
         return dir.Delete();
     }
     else {
@@ -215,12 +237,13 @@ bool DirectoryTest::TestDelete(char8 * pathin,
     }
 }
 
-bool DirectoryTest::TestExists(char8 * pathin) {
+bool DirectoryTest::TestExists(char8 * pathin,
+                               bool isFile) {
     char8 path[128];
     DirectoryCreateN(path, pathin);
     Directory dir(path);
-    dir.Create(false);
-    if (StringHelper::Compare(dir.GetName(), pathin) == 0) {
+    dir.Create(isFile);
+    if (StringHelper::Compare(dir.GetName(), path) == 0) {
         return dir.Exists();
     }
     else {
@@ -230,10 +253,31 @@ bool DirectoryTest::TestExists(char8 * pathin) {
 
 void DirectoryTest::DirectoryCreateN(char8 *destination,
                                      char8 *path) {
-    Directory dir(BASE_PATH);
-    dir.Create(false);
     destination[0] = '\0';
     StringHelper::Concatenate(destination, BASE_PATH);
     StringHelper::Concatenate(destination, &DIRECTORY_SEPARATOR);
     StringHelper::Concatenate(destination, path);
+}
+
+bool DirectoryTest::Create_Directory() {
+    Directory dir(BASE_PATH);
+    dir.Create(false);
+    return dir.IsDirectory();
+}
+
+bool DirectoryTest::Delete_Directory() {
+    char8 dest[128];
+    struct dirent *files;
+    DIR *dir2;
+    if ((dir2 = opendir(BASE_PATH)) != NULL) {
+        while ((files = readdir(dir2)) != NULL) {
+            StringHelper::Copy(dest, BASE_PATH);
+            StringHelper::Concatenate(dest, &DIRECTORY_SEPARATOR);
+            StringHelper::Concatenate(dest, files->d_name);
+            remove(dest);
+        }
+        closedir(dir2);
+    }
+    Directory dir(BASE_PATH);
+    return dir.Delete();
 }

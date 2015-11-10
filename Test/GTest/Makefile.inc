@@ -23,7 +23,8 @@
 #############################################################
 
 
-OBJSX= DirectoryGTest.x
+OBJSX= DirectoryScannerGTest.x \
+        DirectoryGTest.x
 #InternetHostGTest.x \
 	   InternetServiceGTest.x \
 	   BasicSocketGTest.x \

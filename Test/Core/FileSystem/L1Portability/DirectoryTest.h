@@ -2,7 +2,7 @@
  * @file DirectoryTest.h
  * @brief Header file for class DirectoryTest
  * @date 04/11/2015
- * @author Frank Perez
+ * @author Frank Perez Paz
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -44,12 +44,13 @@
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
-/** it represents a file or a subdirectory */
+/** it represents a file or a sub-directory */
 class DirectoryTest {
 
 public:
     /** constructor */
     DirectoryTest();
+    bool TestDirectoryTest(char8 * pathin);
 
     /** */
     ~DirectoryTest();
@@ -61,13 +62,14 @@ public:
      * @post
      *  fname = path
      */
-    bool TestSetByName();
+    bool TestSetByName_Valid();
+    bool TestSetByName_Invalid();
 
     /**
      * @brief Retrieve the file-directory name.
      */
-    bool TestName_Invalid();
-    bool TestName_Valid();
+    bool TestGetName_Invalid();
+    bool TestGetName_Valid();
 
     /**
      * @brief Check if this is a directory.
@@ -116,7 +118,7 @@ public:
      * @param[in] path is the path of the file / directory to be deleted.
      * @return true if the file-directory is deleted correctly, false otherwise.
      */
-    bool TestDelete(char8 *  path,
+    bool TestDelete(char8 * path,
                     bool file);
 
     /**
@@ -126,12 +128,24 @@ public:
      * @post
      *   isFile = true if path refers to a file.
      */
-    bool TestExists(char8 * path);
+    bool TestExists(char8 * path,
+                    bool isFile);
 
     /**
      * @brief Create a test directory
      */
-    void DirectoryCreateN(char8 *destination, char8 *path);
+    void DirectoryCreateN(char8 *destination,
+                          char8 *path);
+
+    /**
+     * @brief Create test directory folder
+     */
+    bool Create_Directory();
+
+    /**
+     * @brief Delete test directory folder
+     */
+    bool Delete_Directory();
 
 private:
     /** the file or directory name */

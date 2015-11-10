@@ -66,7 +66,7 @@ public:
      * @post
      *   Name() = NULL
      */
-    ~Directory();
+    virtual ~Directory();
 
     /**
      * @brief Set this file-directory providing its path.

@@ -57,9 +57,9 @@ static int32 fileFilter(const struct dirent * const de) {
     return static_cast<int32>(fnmatch(fileFilterSearchMask, &de->d_name[0], 0) == 0);
 }
 
-DirectoryScanner::DirectoryScanner() :
+DirectoryScanner::DirectoryScanner(const char8 * const path) :
         LinkedListHolder() {
-    basePath = static_cast<char8 *>(NULL);
+    basePath = StringHelper::StringDup(path);
     size = 0u;
 }
 
@@ -152,7 +152,8 @@ bool DirectoryScanner::Scan(const char8 * const path,
             ret = false;
         }
         else {
-            while (n > 0) {
+            n--;
+            while (n >= 0) {
                 Directory *entry = new Directory();
 
                 // empties statAddr

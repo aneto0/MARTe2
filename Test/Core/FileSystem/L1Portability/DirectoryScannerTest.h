@@ -1,8 +1,8 @@
 /**
- * @file DirectoryScanner.h
- * @brief Header file for class DirectoryScanner
- * @date 04/11/2015
- * @author Giuseppe Ferrò
+ * @file DirectoryScannerTest.h
+ * @brief Header file for class DirectoryScannerTest
+ * @date Nov 9, 2015
+ * @author Frank Perez Paz
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class DirectoryScanner
+ * @details This header file contains the declaration of the class DirectoryScannerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef DIRECTORYSCANNER_H_
-#define DIRECTORYSCANNER_H_
+#ifndef DIRECTORYSCANNERTEST_H_
+#define DIRECTORYSCANNERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,47 +31,31 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "LinkedListHolder.h"
 #include "Directory.h"
+#include "DirectoryScanner.h"
+#include "LinkedListHolder.h"
+#include "stdio.h"
+#include "time.h"
+#include "StringHelper.h"
+#include <sys/stat.h>
+#include "dirent.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+using namespace MARTe;
 
-namespace MARTe {
-
-/**
- * @brief This class allows to scan, given a base path and a shell wildcard pattern, all the directories inside
- * will matches the pattern.
- *
- * @details The informations about found directories will be inserted in a list of Directory objects
- * and the user could peek all the elements using LinkedListHolder functions.
- */
-class DirectoryScanner: public LinkedListHolder {
-
+class DirectoryScannerTest {
 public:
+    DirectoryScannerTest();
 
-    /**
-     * @brief Default constructor.
-     * @post
-     *   basePath=NULL;
-     *   size=0;
-     */
-    DirectoryScanner(const char8 * const path);
-
-    /**
-     * @brief Default destructor.
-     * @post
-     *   basePath=NULL;
-     *   size=0;
-     */
-    virtual ~DirectoryScanner();
-
+    ~DirectoryScannerTest();
 
     /**
      * @brief Retrieve the size of the scanned directory.
-     * @return the sum of the contained files / sub-directories sizes.
+     * @return uint64 the sum of the contained files / sub-directories sizes.
      */
-    uint64 DirectorySize() const;
+    bool TestDirectorySize();
 
     /**
      * @brief Scan the files / sub-directories of a specific directory adding them to the list.
@@ -80,15 +64,16 @@ public:
      * @param[in] sorter specifies the desired sort of the elements in the list.
      * @return false in case of errors, true otherwise.
      */
-    bool Scan(const char8 * const path,
-              const char8 *fileMask = "*",
-              SortFilter * const sorter = NULL);
+    bool TestScan(char8 * pathin,
+                  char8 *fileMask = "*");
+
+    bool TestScan_Filter();
 
     /**
      * @brief Retrieve the directory path.
-     * @return the path of the set directory.
+     * @return char8* the path of the set directory.
      */
-    const char8 *BasePath() const;
+    bool TestBasePath(char8 * pathin);
 
     /**
      * @brief Deletes all elements from the list.
@@ -96,26 +81,23 @@ public:
      *   basePath = NULL;
      *   size = 0;
      */
-    virtual void CleanUp();
-
-private:
+    bool TestCleanUp();
 
     /**
-     * The directory path.
+     * @brief Create test directory folder
      */
-    char8* basePath;
+    bool CreateDirectoryFolder();
 
     /**
-     * The total content size.
+     * @brief Create test directory
      */
-    uint64 size;
-
+    void DirectoryCreateN(char8 *destination,
+                          char8 *path);
 };
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* DIRECTORYSCANNER_H_ */
+#endif /* TEST_CORE_FILESYSTEM_L1PORTABILITY_DIRECTORYSCANNERTEST_H_ */
 
