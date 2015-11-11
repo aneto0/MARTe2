@@ -196,11 +196,13 @@ const PrintfNode *GeneratePrintFormattedDecimalTable(){
         //integers
         //decimal notations
         PrintfNode("%d", "255",     *SaveNumber((uint8) 255)),
+        PrintfNode("%s", "255",     *SaveNumber((uint8) 255)),
         PrintfNode("%?", "Unsigned Integer",     *SaveNumber((uint8) 255)),
         PrintfNode("%5d", "255",    *SaveNumber((uint8) 255)),
         PrintfNode("% 5d", "  255", *SaveNumber((uint8) 255)),
         PrintfNode("%-5d", "255  ", *SaveNumber((uint8) 255)),
         PrintfNode("%d", "-127", *SaveNumber((int8) -127)),
+        PrintfNode("%f", "-127", *SaveNumber((int8) -127)),
         PrintfNode("%-6i", "-127  ", *SaveNumber((int8) -127)),
         PrintfNode("%d", "-128", *SaveNumber((int8) 0x80)),
         PrintfNode("%u", "12345", *SaveNumber((uint16) 12345)),
@@ -288,6 +290,7 @@ const PrintfNode *GeneratePrintFormattedBinaryTable(){
 const PrintfNode *GeneratePrintFormattedFloatFPTable(){
     static const PrintfNode printfFloatFPTable[] = {
         PrintfNode("%f", "-1.123457", *SaveNumber(-1.1234567f)),
+        PrintfNode("%s", "-1.123457", *SaveNumber(-1.1234567f)),
         PrintfNode("%- 12.7f", "-1.1234567  ", *SaveNumber(-1.1234567f)),
         PrintfNode("%- 12.3f", "-1.123      ", *SaveNumber(-1.1234567f)),
         PrintfNode("% 12.2f", "   112345.67", *SaveNumber(112345.67f)),
@@ -450,6 +453,7 @@ const PrintfNode *GeneratePrintFormattedGenericTable(){
 
 const char8* printfCStringTable[][3] = {
             { "string:%s", "HelloWorld", "string:HelloWorld" },
+            { "string:%d", "HelloWorld", "string:HelloWorld" },
             { "string:%5s", "HelloWorld", "string:Hello" },
             { "string:% 11s", "HelloWorld", "string: HelloWorld" },
             { "string:%-11s", "HelloWorld", "string:HelloWorld " },
@@ -463,6 +467,7 @@ const char8* printfCStringTable[][3] = {
 
 const char8* printfStreamTable[][3] = {
             { "string:%s", "HelloWorld", "string:HelloWorld" },
+            { "string:%d", "HelloWorld", "string:HelloWorld" },
             { "string:%5s", "HelloWorld", "string:Hello" },
             { "string:% 11s", "HelloWorld", "string: HelloWorld" },
             { "string:%-11s", "HelloWorld", "string:HelloWorld " },
