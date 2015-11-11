@@ -27,7 +27,9 @@ OBJSX= InternetHostGTest.x \
 	   InternetServiceGTest.x \
 	   BasicSocketGTest.x \
 	   BasicTCPSocketGTest.x \
-	   BasicConsoleGTest.x 	   
+	   HighResolutionTimerGTest.x \
+	   BasicConsoleGTest.x \
+	   TimeStampGTest.x 	   
 #	    DoubleIntegerGTest.x \
 		TypeCharacteristicsGTest.x \
         ShiftGTest.x \
@@ -42,7 +44,6 @@ OBJSX= InternetHostGTest.x \
 	AtomicGTest.x \
 	ProcessorTypeGTest.x \
 	EventSemGTest.x \
-	HighResolutionTimerGTest.x \
 	MemoryGTest.x \
 	FastPollingMutexSemGTest.x \
 	StringHelperGTest.x \

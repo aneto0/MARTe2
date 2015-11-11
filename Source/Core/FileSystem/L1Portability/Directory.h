@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "LinkedListHolder.h"
 #include "GeneralDefinitions.h"
+#include "TimeStamp.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
 
 /*---------------------------------------------------------------------------*/
@@ -100,13 +101,13 @@ public:
      * @brief Gets the last write time.
      * @return the last write time.
      */
-    TimeValues GetLastWriteTime() const;
+    TimeStamp GetLastWriteTime() const;
 
     /**
      * @brief Gets the last access time.
      * @return the last access time.
      */
-    TimeValues GetLastAccessTime() const;
+    TimeStamp GetLastAccessTime() const;
 
 
     /**

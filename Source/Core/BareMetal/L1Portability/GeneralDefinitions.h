@@ -56,32 +56,6 @@ typedef enum {
 
 }Colours;
 
-/**
- * @brief A structure containing the time stamp informations.
- */
-struct TimeValues {
-
-    /** nanoseconds 0-999999 */
-    uint32 microseconds;
-
-    /** seconds 0-59 */
-    uint32 seconds;
-
-    /** minutes 0-59 */
-    uint32 minutes;
-
-    /** hours 0-23 */
-    uint32 hours;
-
-    /** days 1-31 */
-    uint32 days;
-
-    /** month 0-11 */
-    uint32 month;
-
-    /** year since 1900 */
-    uint32 year;
-};
 
 }
 

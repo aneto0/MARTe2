@@ -91,7 +91,7 @@ namespace HighResolutionTimer {
      * @param[out] date is a TimeValues structure which must be filled by this method.
      * @return true if the operating system calls returns with no errors.
      */
-    inline bool GetTimeStamp(TimeValues &date);
+    inline bool GetTimeStamp(TimeStamp &date);
 }
 
 }

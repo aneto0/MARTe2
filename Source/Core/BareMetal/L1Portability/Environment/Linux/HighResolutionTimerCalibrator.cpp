@@ -34,9 +34,9 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HighResolutionTimerCalibrator.h"
-#include "../../HighResolutionTimer.h"
-#include "../../StringHelper.h"
-
+#include "HighResolutionTimer.h"
+#include "StringHelper.h"
+#include "TimeStamp.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -94,7 +94,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     }
 }
 
-bool HighResolutionTimerCalibrator::GetTimeStamp(TimeValues &timeStamp) const {
+bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) const {
 
     int64 ticksFromStart = HighResolutionTimer::Counter() - initialTicks;
 
@@ -105,29 +105,23 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeValues &timeStamp) const {
     //Add HRT to the the initial time saved in the calibration.
     float64 secondsFromEpoch = static_cast<float64>(initialTime.tv_sec) + secondsFromStart;
     float64 uSecondsFromEpoch = static_cast<float64>(initialTime.tv_usec) + uSecondsFromStart;
-    timeStamp.microseconds = static_cast<uint32>(uSecondsFromEpoch);
+
+    uint32 microseconds=static_cast<uint32>(uSecondsFromEpoch);
+
 
     //Check the overflow
-    if (timeStamp.microseconds >= 1000000u) {
-        timeStamp.microseconds -= 1000000u;
+    if (microseconds >= 1000000u) {
+        microseconds -= 1000000u;
         secondsFromEpoch++;
     }
 
+    timeStamp.SetMicroseconds(microseconds);
+
     //fill the time structure
     time_t secondsFromEpoch32 = static_cast<time_t>(secondsFromEpoch);
-    const struct tm *tValues = localtime(&secondsFromEpoch32);
-    bool ret = (tValues != NULL);
-    if (ret) {
-        timeStamp.seconds = static_cast<uint32>(tValues->tm_sec);
-        timeStamp.minutes = static_cast<uint32>(tValues->tm_min);
-        timeStamp.hours = static_cast<uint32>(tValues->tm_hour);
-        timeStamp.days = static_cast<uint32>(tValues->tm_mday);
-        timeStamp.month = static_cast<uint32>(tValues->tm_mon);
-        timeStamp.year = static_cast<uint32>(tValues->tm_year);
-    }
-    else{
-        REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
-    }
+
+    bool ret=timeStamp.ConvertFromEpoch(secondsFromEpoch32);
+
     return ret;
 }
 
