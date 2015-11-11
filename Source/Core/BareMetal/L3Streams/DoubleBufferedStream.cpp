@@ -44,7 +44,7 @@
 namespace MARTe {
 
 DoubleBufferedStream::DoubleBufferedStream() :
-        StreamI(),
+        BufferedStreamI(),
         readBuffer(this),
         writeBuffer(this) {
     bufferSizeSet = true;
@@ -59,7 +59,7 @@ DoubleBufferedStream::DoubleBufferedStream() :
 }
 
 DoubleBufferedStream::DoubleBufferedStream(const TimeoutType &timeoutIn) :
-        StreamI(),
+        BufferedStreamI(),
         readBuffer(this),
         writeBuffer(this) {
     SetTimeout(timeoutIn);
@@ -160,8 +160,20 @@ bool DoubleBufferedStream::Read(char8 * const output,
     }
 
     // if needed read directly from stream
-    return (ret) ? (OSRead(&output[0], size)) : (false);
+    return ret;
 }
+
+
+bool DoubleBufferedStream::Read(char8 * const output,
+                                uint32 & size,
+                                const TimeoutType &timeout){
+    TimeoutType prevTimeout=GetTimeout();
+    SetTimeout(timeout);
+    bool ret=Read(output, size);
+    SetTimeout(prevTimeout);
+    return ret;
+}
+
 
 bool DoubleBufferedStream::Write(const char8 * const input,
                                  uint32 & size) {
@@ -216,8 +228,19 @@ bool DoubleBufferedStream::Write(const char8 * const input,
         }
 
     }
-    return (ret) ? (OSWrite(&input[0], size)) : (false);
+    return ret;
 
+}
+
+
+bool DoubleBufferedStream::Write(const char8 * const input,
+                                 uint32 & size,
+                                 const TimeoutType &timeout) {
+    TimeoutType prevTimeout = GetTimeout();
+    SetTimeout(timeout);
+    bool ret = Write(input, size);
+    SetTimeout(prevTimeout);
+    return ret;
 }
 
 uint64 DoubleBufferedStream::Size() {

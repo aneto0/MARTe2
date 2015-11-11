@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "ConfigurationDatabase.h"
-#include "StreamString.h"
+#include "String.h"
 #include "Vector.h"
 #include "Matrix.h"
 
@@ -156,9 +156,9 @@ void TestScalarString() {
     ConfigurationDatabase cdb;
     bool ok = cdb.CreateNodes("MyControllers.PID1", false);
 
-    StreamString strWrite = "ThisIsAString";
+    String strWrite = "ThisIsAString";
     ok &= cdb.Write("AString", strWrite);
-    StreamString strRead;
+    String strRead;
     ok &= cdb.Read("AString", strRead);
     printf("[%s]\n", strRead.Buffer());
 }
@@ -168,11 +168,11 @@ void TestVectorStreamStringStatic() {
     ConfigurationDatabase cdb;
     bool ok = cdb.CreateNodes("MyControllers.PID1", false);
 
-    StreamString strArrWrite[2] = { "a", "bb" };
-    Vector<StreamString> vecStrArrWrite(strArrWrite);
+    String strArrWrite[2] = { "a", "bb" };
+    Vector<String> vecStrArrWrite(strArrWrite);
     ok &= cdb.Write("AStringArray", vecStrArrWrite);
-    StreamString strArrRead[2];
-    Vector<StreamString> vecStrArrRead(strArrRead);
+    String strArrRead[2];
+    Vector<String> vecStrArrRead(strArrRead);
     ok &= cdb.Read("AStringArray", vecStrArrRead);
     printf("[%s][%s]\n", vecStrArrRead[0].Buffer(), vecStrArrRead[1].Buffer());
 }
@@ -182,12 +182,12 @@ void TestVectorStreamStringDynamic() {
     ConfigurationDatabase cdb;
     cdb.CreateNodes("MyControllers.PID1", false);
 
-    Vector<StreamString> vectorWrite(3);
+    Vector<String> vectorWrite(3);
     vectorWrite[0] = "a";
     vectorWrite[1] = "bb";
     vectorWrite[2] = "ccc";
     cdb.Write("VectorFromArray", vectorWrite);
-    Vector<StreamString> vectorRead(3);
+    Vector<String> vectorRead(3);
     cdb.Read("VectorFromArray", vectorRead);
     printf("[%s][%s][%s]\n", vectorRead[0].Buffer(), vectorRead[1].Buffer(), vectorRead[2].Buffer());
 }
@@ -197,14 +197,14 @@ void TestVectorStreamStringExistentArray() {
     ConfigurationDatabase cdb;
     cdb.CreateNodes("MyControllers.PID1", false);
 
-    StreamString *arr = new StreamString[3];
+    String *arr = new String[3];
     arr[0] = "a";
     arr[1] = "bb";
     arr[2] = "ccc";
-    Vector<StreamString> vectorWrite(arr, 3);
+    Vector<String> vectorWrite(arr, 3);
     cdb.Write("VectorFromArray", vectorWrite);
-    StreamString *arrRead = new StreamString[3];
-    Vector<StreamString> vectorRead(arrRead, 3);
+    String *arrRead = new String[3];
+    Vector<String> vectorRead(arrRead, 3);
     cdb.Read("VectorFromArray", vectorRead);
     printf("[%s][%s][%s]\n", vectorRead[0].Buffer(), vectorRead[1].Buffer(), vectorRead[2].Buffer());
     printf("[%s][%s][%s]\n", arrRead[0].Buffer(), arrRead[1].Buffer(), arrRead[2].Buffer());
@@ -357,11 +357,11 @@ void TestMatrixStreamStringStatic() {
     ConfigurationDatabase cdb;
     cdb.CreateNodes("MyControllers.PID1", false);
 
-    StreamString arr[2][3] = { { "a", "bb", "ccc" }, { "d", "ee", "fff" } };
-    Matrix<StreamString> matWrite(arr);
+    String arr[2][3] = { { "a", "bb", "ccc" }, { "d", "ee", "fff" } };
+    Matrix<String> matWrite(arr);
     cdb.Write("ArrayValues", matWrite);
-    StreamString arrRead[2][3];
-    Matrix<StreamString> matRead(arrRead);
+    String arrRead[2][3];
+    Matrix<String> matRead(arrRead);
     cdb.Read("ArrayValues", matRead);
 
     printf("[%s][%s][%s]\n", matRead[0][0].Buffer(), matRead[0][1].Buffer(), matRead[0][2].Buffer());
@@ -374,7 +374,7 @@ void TestMatrixStreamStringDynamic() {
     ConfigurationDatabase cdb;
     cdb.CreateNodes("MyControllers.PID1", false);
 
-    Matrix<StreamString> matWrite(2, 3);
+    Matrix<String> matWrite(2, 3);
     matWrite[0][0] = "[0][0]";
     matWrite[0][1] = "[0][1]";
     matWrite[0][2] = "[0][2]";
@@ -382,7 +382,7 @@ void TestMatrixStreamStringDynamic() {
     matWrite[1][1] = "[1][1]";
     matWrite[1][2] = "[1][2]";
     cdb.Write("MatrixFromArray", matWrite);
-    Matrix<StreamString> matRead(2, 3);
+    Matrix<String> matRead(2, 3);
     cdb.Read("MatrixFromArray", matRead);
     printf("[%s][%s][%s]\n", matRead[0][0].Buffer(), matRead[0][1].Buffer(), matRead[0][2].Buffer());
     printf("[%s][%s][%s]\n", matRead[1][0].Buffer(), matRead[1][1].Buffer(), matRead[1][2].Buffer());
@@ -393,11 +393,11 @@ void TestMatrixStreamStringExistentArray() {
     ConfigurationDatabase cdb;
     cdb.CreateNodes("MyControllers.PID1", false);
 
-    StreamString **arr = new StreamString*[2];
-    arr[0] = new StreamString[3];
-    arr[1] = new StreamString[3];
+    String **arr = new String*[2];
+    arr[0] = new String[3];
+    arr[1] = new String[3];
 
-    Matrix<StreamString> matWrite(arr, 2, 3);
+    Matrix<String> matWrite(arr, 2, 3);
     matWrite[0][0] = "[0][0]";
     matWrite[0][1] = "[0][1]";
     matWrite[0][2] = "[0][2]";
@@ -406,11 +406,11 @@ void TestMatrixStreamStringExistentArray() {
     matWrite[1][2] = "[1][2]";
     cdb.Write("MatrixFromArray", matWrite);
 
-    StreamString **arrRead = new StreamString*[2];
-    arrRead[0] = new StreamString[3];
-    arrRead[1] = new StreamString[3];
+    String **arrRead = new String*[2];
+    arrRead[0] = new String[3];
+    arrRead[1] = new String[3];
 
-    Matrix<StreamString> matRead(arrRead, 2, 3);
+    Matrix<String> matRead(arrRead, 2, 3);
     cdb.Read("MatrixFromArray", matRead);
     printf("[%s][%s][%s]\n", matRead[0][0].Buffer(), matRead[0][1].Buffer(), matRead[0][2].Buffer());
     printf("[%s][%s][%s]\n", matRead[1][0].Buffer(), matRead[1][1].Buffer(), matRead[1][2].Buffer());

@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
 #include "StreamTestHelper.h"
+#include "DoubleBufferedStream.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -84,9 +85,26 @@ public:
     bool TestRead_NotCanRead();
 
     /**
+     * @brief Tests that readSize bytes can be successfully read from the stream.
+     */
+    bool TestRead_Timeout(MARTe::uint32 bufferSize,
+                          MARTe::uint32 readSize,
+                          MARTe::TimeoutType timeout);
+
+
+    /**
      * @brief Tests that the Write function returns false when CanWrite() == false
      */
     bool TestWrite_NotCanWrite();
+
+
+    /**
+     * @brief Tests that writeSize bytes can be successfully written to the stream.
+     */
+    bool TestWrite_Timeout(MARTe::uint32 bufferSize,
+                           MARTe::uint32 writeSize,
+                           MARTe::TimeoutType timeout);
+
 
     /**
      * @brief Tests that writeSize bytes can be successfully written to the stream even when

@@ -42,20 +42,20 @@
 namespace MARTe {
 
 StreamMemoryReference::StreamMemoryReference() :
-        StreamI(),
+        BufferedStreamI(),
         buffer() {
 
 }
 
 StreamMemoryReference::StreamMemoryReference(char8 * const bufferIn,
                                              const uint32 bufferSize) :
-        StreamI() {
+        BufferedStreamI() {
     buffer.SetBufferReferencedMemory(bufferIn, bufferSize, 0u);
 }
 
 StreamMemoryReference::StreamMemoryReference(const char8 * const bufferIn,
                                              const uint32 bufferSize) :
-        StreamI() {
+        BufferedStreamI() {
     buffer.SetBufferReadOnlyReferencedMemory(bufferIn, bufferSize, 0u);
     buffer.SetUsedSize(bufferSize);
 }
@@ -113,7 +113,7 @@ bool StreamMemoryReference::Seek(const uint64 pos) {
     if (pos > usedSize) {
 //REPORT_ERROR_PARAMETERS(ParametersError,"pos=%i out of range=[0-%i] , moving to end of stream",pos,usedSize)
         if (!buffer.Seek(usedSize)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "StreammemoryReference: Failed in the buffer Seek function");
+            REPORT_ERROR(ErrorManagement::FatalError, "StreamMemoryReference: Failed IOBuffer::Seek");
         }
         ret = false;
     }
@@ -131,6 +131,23 @@ uint64 StreamMemoryReference::Position() {
 
 bool StreamMemoryReference::CanSeek() const {
     return true;
+}
+
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
+ * used by other buffered streams. */
+bool StreamMemoryReference::Read(char8 * const output,
+                                   uint32 & size,
+                                   const TimeoutType &timeout) {
+    return Read(output, size);
+}
+
+/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
+ * used by other buffered streams. */
+bool StreamMemoryReference::Write(const char8 * const input,
+                                    uint32 & size,
+                                    const TimeoutType &timeout) {
+    return Write(input, size);
 }
 
 }

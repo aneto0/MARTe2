@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AnyType.h"
 #include "HeapManager.h"
-#include "StreamString.h"
+#include "String.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */

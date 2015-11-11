@@ -32,7 +32,7 @@
 #include "ConfigurationDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
-#include "StreamString.h"
+#include "String.h"
 #include "TypeConversion.h"
 
 /*---------------------------------------------------------------------------*/
@@ -166,7 +166,7 @@ bool ConfigurationDatabase::MoveToAncestor(uint32 generations) {
 
 bool ConfigurationDatabase::CreateNodes(const char * const path,
                                         bool relative) {
-    StreamString pathStr = path;
+    String pathStr = path;
     pathStr.Seek(0u);
     bool ok = (pathStr.Size() > 0u);
     if (ok) {
@@ -174,7 +174,7 @@ bool ConfigurationDatabase::CreateNodes(const char * const path,
             currentNode = rootNode;
         }
     }
-    StreamString token;
+    String token;
     char c;
 
     while (ok && (pathStr.GetToken(token, ".", c))) {

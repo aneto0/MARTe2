@@ -55,7 +55,7 @@ Object::~Object() {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
         bool ok = HeapManager::Free(reinterpret_cast<void *&>(name));
         if (!ok) {
-            //TODO Error message here
+            REPORT_ERROR(ErrorManagement::FatalError,"Object: Failed HeapManager::Free() in destructor");
         }
     }
 }
@@ -71,6 +71,9 @@ uint32 Object::DecrementReferences() {
         --referenceCounter;
         ret = referenceCounter;
     }
+    else{
+        REPORT_ERROR(ErrorManagement::FatalError,"Object: Failed FastLock()");
+    }
     refMux.FastUnLock();
     return ret;
 }
@@ -78,6 +81,9 @@ uint32 Object::DecrementReferences() {
 void Object::IncrementReferences() {
     if (refMux.FastLock() == ErrorManagement::NoError) {
         ++referenceCounter;
+    }
+    else{
+        REPORT_ERROR(ErrorManagement::FatalError,"Object: Failed FastLock()");
     }
     refMux.FastUnLock();
 }
@@ -180,7 +186,7 @@ void Object::SetName(const char8 * const newName) {
         /*lint -e{929} cast required to be able to use Memory::Free interface.*/
         bool ok = HeapManager::Free(reinterpret_cast<void *&>(name));
         if (!ok) {
-            //TODO error here.
+            REPORT_ERROR(ErrorManagement::FatalError,"Object: Failed HeapManager::Free()");
         }
     }
     name = StringHelper::StringDup(newName);
