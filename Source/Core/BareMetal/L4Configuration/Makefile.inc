@@ -26,7 +26,9 @@
 
 OBJSX=ConfigurationDatabase.x\
     TypeConversion.x\
-    AnyObject.x
+    AnyObject.x \
+    StringToInteger.x\
+    StringToFloat.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

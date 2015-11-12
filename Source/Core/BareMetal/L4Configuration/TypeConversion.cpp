@@ -30,11 +30,117 @@
 /*---------------------------------------------------------------------------*/
 #include "TypeConversion.h"
 #include "AnyType.h"
-
+#include "BitSetToInteger.h"
+#include "String.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
+
+extern bool StringToInteger(const char8 *input,
+                            uint8 &number);
+
+extern bool StringToInteger(const char8 *input,
+                            uint16 &number);
+
+extern bool StringToInteger(const char8 *input,
+                            uint32 &number);
+
+extern bool StringToInteger(const char8 *input,
+                            uint64 &number);
+
+extern bool StringToInteger(const char8 *input,
+                            int8 &number);
+
+extern bool StringToInteger(const char8 *input,
+                            int16 &number);
+
+extern bool StringToInteger(const char8 *input,
+                            int32 &number);
+
+extern bool StringToInteger(const char8 *input,
+                            int64 &number);
+
+extern bool StringToFloat(const char8 *input,
+                          float32 &number);
+
+extern bool StringToFloat(const char8 *input,
+                          float64 &number);
+
+template<typename IntegerType, typename FloatType>
+bool IntegerToFloat(IntegerType integerNumber,
+                    FloatType &floatNumber) {
+
+    bool ret = true;
+    floatNumber = static_cast<FloatType>(0.0);
+    FloatType test = integerNumber / static_cast<FloatType>(1.0);
+
+    if (isNaN(test) || isInf(test)) {
+        //TODO overflow or underflow
+        ret = false;
+    }
+    else {
+        floatNumber = test;
+    }
+
+    if ((integerNumber - floatNumber) >= 1 || (integerNumber - floatNumber) <= -1) {
+        //TODO loss of precision
+    }
+
+    return ret;
+}
+
+template<typename FloatType, typename IntegerType>
+bool FloatToInteger(FloatType floatNumber,
+                    IntegerType &integerNumber) {
+
+    bool ret = true;
+
+    bool isSigned = (static_cast<IntegerType>(-1) < static_cast<IntegerType>(0));
+    IntegerType max = ~static_cast<IntegerType>(0);
+
+    IntegerType min = static_cast<IntegerType>(0);
+
+    if (isSigned) {
+        Shift::LogicalRightSafeShift(max, 1u);
+        min = static_cast<IntegerType>(1) << (sizeof(IntegerType) * 8u - 1u);
+    }
+
+    if ((floatNumber > max) || (floatNumber < min)) {
+        //TODO Saturation.
+    }
+
+    integerNumber = static_cast<IntegerType>(floatNumber);
+
+    if (((integerNumber - floatNumber) >= 1) || ((integerNumber - floatNumber) <= -1)) {
+        //TODO loss of precision
+    }
+
+    return ret;
+}
+
+template<typename FloatType1, typename FloatType2>
+bool FloatToFloat(FloatType1 source,
+                  FloatType2 &destination) {
+
+    bool ret = true;
+    destination = static_cast<FloatType2>(0.0);
+    FloatType2 test = static_cast<FloatType2>(source);
+
+    if ((isNaN(test)) || (isInf(test))) {
+        ret = false;
+    }
+    else {
+        if (sizeof(FloatType1) > sizeof(FloatType2)) {
+            if (static_cast<FloatType1>(test) != source) {
+                //TODO Loss of precision
+            }
+        }
+        destination = test;
+    }
+    return ret;
+}
+
 /**
  * @brief BasicType conversion between two scalar types.
  * @param[out] destination the converted type.
@@ -44,7 +150,78 @@ namespace MARTe {
  */
 static bool ScalarBasicTypeConvert(const AnyType &destination,
                                    const AnyType &source) {
-    return false;
+
+    void* destinationPointer = destination.GetDataPointer();
+    const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
+    void* sourcePointer = source.GetDataPointer();
+    const TypeDescriptor sourceDescriptor = destination.GetTypeDescriptor();
+
+    bool ret = false;
+
+    if ((sourceDescriptor.type == SignedInteger) || (sourceDescriptor.type == UnsignedInteger)) {
+        if (destinationDescriptor.type == CCString) {
+            String tempString;
+            tempString.PrintFormatted("%s", &source);
+            StringHelper::Copy(static_cast<char8*>(destinationPointer), tempString.Buffer());
+        }
+        if (destinationDescriptor.type == SString) {
+            String tempString;
+            tempString.PrintFormatted("%s", &source);
+            *(static_cast<String*>(destinationPointer)) = tempString.BufferReference();
+        }
+        if (destinationDescriptor.type == SignedInteger) {
+            if ((sourceDescriptor.type == SignedInteger)) {
+                uint8* destinationInput = static_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = static_cast<uint8*>(sourcePointer);
+                uint8 destShift=static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift=static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits),
+                                     true, sourceInput, sourceShift, static_cast<uint8>(sourceDescriptor.numberOfBits), true);
+
+            }
+            if (sourceDescriptor.type == UnsignedInteger) {
+                uint8* destinationInput = static_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = static_cast<uint8*>(sourcePointer);
+                uint8 destShift=static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift=static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits),
+                                     true, sourceInput, sourceShift, static_cast<uint8>(sourceDescriptor.numberOfBits), false);
+            }
+        }
+        if (destinationDescriptor.type == UnsignedInteger) {
+            if ((sourceDescriptor.type == SignedInteger)) {
+                uint8* destinationInput = static_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = static_cast<uint8*>(sourcePointer);
+                uint8 destShift=static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift=static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits),
+                                     false, sourceInput, sourceShift, static_cast<uint8>(sourceDescriptor.numberOfBits), true);
+            }
+            if (sourceDescriptor.type == UnsignedInteger) {
+                uint8* destinationInput = static_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = static_cast<uint8*>(sourcePointer);
+                uint8 destShift=static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift=static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits),
+                                     false, sourceInput, sourceShift, static_cast<uint8>(sourceDescriptor.numberOfBits), false);
+            }
+        }
+/*
+        if (destinationDescriptor.type == Float) {
+            if ((sourceDescriptor.type == SignedInteger)) {
+                CastIntegerPointer<static_cast<uint8>(sourceDescriptor.numberOfBits), true> sourceCastPtr(sourcePointer);
+                CastFloatPointer < static_cast<uint8>(sourceDescriptor.numberOfBits) > destCastPtr(destinationPointer);
+
+                IntegerToFloat(*(sourceCastPtr.pointer), *(destCastPtr.pointer));
+            }
+            if (sourceDescriptor.type == UnsignedInteger) {
+                CastIntegerPointer<static_cast<uint8>(sourceDescriptor.numberOfBits), false> sourceCastPtr(sourcePointer);
+                CastFloatPointer < static_cast<uint8>(sourceDescriptor.numberOfBits) > destCastPtr(destinationPointer);
+                IntegerToFloat(*(sourceCastPtr.pointer), *(destCastPtr.pointer));
+            }
+        }*/
+    }
+
 }
 
 /**
@@ -310,9 +487,9 @@ bool TypeConvert(const AnyType &destination,
     bool ok = true;
     uint32 copySize = 0u;
 
-    //Source and destination dimensions must be the same
+//Source and destination dimensions must be the same
     ok = (destination.GetNumberOfDimensions() == source.GetNumberOfDimensions());
-    //The number of elements in all dimensions must be the same
+//The number of elements in all dimensions must be the same
     uint32 i;
     for (i = 0; ok && (i < 3u); i++) {
         ok = (destination.GetNumberOfElements(i) == source.GetNumberOfElements(i));
