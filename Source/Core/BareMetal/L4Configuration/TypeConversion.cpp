@@ -67,24 +67,272 @@ extern bool StringToFloat(const char8 *input,
 extern bool StringToFloat(const char8 *input,
                           float64 &number);
 
+bool StringToBitSet(const char8* source,
+                    uint8 *dest,
+                    const uint8 destBitSize,
+                    uint8 destBitShift,
+                    const bool isSigned) {
+
+    bool ret = false;
+    if (destBitSize <= 8u) {
+        if (isSigned) {
+            int8 tempDest;
+            ret = StringToInteger(source, tempDest);
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<int8*>(dest)) = tempDest;
+                }
+            }
+        }
+        else {
+            uint8 tempDest;
+            ret = StringToInteger(source, tempDest);
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *dest = tempDest;
+                }
+            }
+        }
+    }
+    if ((destBitSize > 8u) && (destBitSize <= 16u)) {
+        if (isSigned) {
+            int16 tempDest;
+            ret = StringToInteger(source, tempDest);
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<int16*>(dest)) = tempDest;
+                }
+            }
+        }
+        else {
+            uint16 tempDest;
+            ret = StringToInteger(source, tempDest);
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<uint16*>(dest)) = tempDest;
+                }
+            }
+        }
+    }
+    if ((destBitSize > 16u) && (destBitSize <= 32u)) {
+
+        if (isSigned) {
+            int32 tempDest;
+            ret = StringToInteger(source, tempDest);
+
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<int32*>(dest)) = tempDest;
+                }
+            }
+        }
+        else {
+            uint32 tempDest;
+            ret = StringToInteger(source, tempDest);
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<uint32*>(dest)) = tempDest;
+                }
+            }
+        }
+    }
+    if ((destBitSize > 32u) && (destBitSize <= 64u)) {
+        if (isSigned) {
+            int64 tempDest;
+            ret = StringToInteger(source, tempDest);
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<int64*>(dest)) = tempDest;
+                }
+            }
+        }
+        else {
+            uint64 tempDest;
+            ret = StringToInteger(source, tempDest);
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<uint64*>(dest)) = tempDest;
+                }
+            }
+        }
+    }
+    return ret;
+}
+
 template<typename IntegerType, typename FloatType>
-bool IntegerToFloat(IntegerType integerNumber,
-                    FloatType &floatNumber) {
+bool IntegerToFloat(IntegerType source,
+                    FloatType &dest) {
 
     bool ret = true;
-    floatNumber = static_cast<FloatType>(0.0);
-    FloatType test = integerNumber / static_cast<FloatType>(1.0);
+    dest = static_cast<FloatType>(0.0);
+    FloatType test = source / static_cast<FloatType>(1.0);
 
     if (isNaN(test) || isInf(test)) {
         //TODO overflow or underflow
         ret = false;
     }
     else {
-        floatNumber = test;
+        dest = test;
     }
 
-    if ((integerNumber - floatNumber) >= 1 || (integerNumber - floatNumber) <= -1) {
+    if (((source - dest) >= 1) || ((source - dest) <= -1)) {
         //TODO loss of precision
+    }
+
+    return ret;
+
+}
+
+bool BitSetToFloat(uint8 *source,
+                   const uint8 sourceBitSize,
+                   uint8 sourceBitShift,
+                   float32 *dest,
+                   const uint8 destBitSize,
+                   const bool isSigned) {
+
+    bool ret = true;
+
+    if (ret) {
+        ret = false;
+        if (sourceBitSize <= 8u) {
+            if (isSigned) {
+                int8 newSource = *(reinterpret_cast<int8*>(source));
+
+                if (sourceBitShift > 0u) {
+                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
+                }
+
+                if (destBitSize == 32u) {
+                    ret = IntegerToFloat(newSource, *dest);
+                }
+                if (destBitSize == 64u) {
+                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
+                }
+            }
+            else {
+                uint8 newSource = *source;
+
+                if (sourceBitShift > 0u) {
+                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
+                }
+
+                if (destBitSize == 32u) {
+                    ret = IntegerToFloat(newSource, *dest);
+                }
+                if (destBitSize == 64u) {
+                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
+                }
+            }
+        }
+        if ((sourceBitSize > 8u) && (sourceBitSize <= 16u)) {
+            if (isSigned) {
+                int16 newSource = *(reinterpret_cast<int16*>(source));
+
+                if (sourceBitShift > 0u) {
+                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
+                }
+
+                if (destBitSize == 32u) {
+                    ret = IntegerToFloat(newSource, *dest);
+                }
+                if (destBitSize == 64u) {
+                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
+                }
+            }
+            else {
+                uint16 newSource = *(reinterpret_cast<uint16*>(source));
+                if (sourceBitShift > 0u) {
+                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
+                }
+
+                if (destBitSize == 32u) {
+                    ret = IntegerToFloat(newSource, *dest);
+                }
+                if (destBitSize == 64u) {
+                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
+                }
+            }
+        }
+        if ((sourceBitSize > 16u) && (sourceBitSize <= 32u)) {
+            if (isSigned) {
+                int32 newSource = *(reinterpret_cast<int32*>(source));
+                if (sourceBitShift > 0u) {
+                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
+                }
+
+                if (destBitSize == 32u) {
+                    ret = IntegerToFloat(newSource, *dest);
+                }
+                if (destBitSize == 64u) {
+                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
+                }
+            }
+            else {
+                uint32 newSource = *(reinterpret_cast<uint32*>(source));
+                if (sourceBitShift > 0u) {
+                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
+                }
+
+                if (destBitSize == 32u) {
+                    ret = IntegerToFloat(newSource, *dest);
+                }
+                if (destBitSize == 64u) {
+                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
+                }
+            }
+        }
+        if ((sourceBitSize > 32u) && (sourceBitSize <= 64u)) {
+            if (isSigned) {
+                int64 newSource = *(reinterpret_cast<int64*>(source));
+                if (sourceBitShift > 0u) {
+                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
+                }
+
+                if (destBitSize == 32u) {
+                    ret = IntegerToFloat(newSource, *dest);
+                }
+                if (destBitSize == 64u) {
+                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
+                }
+            }
+            else {
+                uint64 newSource = *(reinterpret_cast<uint64*>(source));
+                if (sourceBitShift > 0u) {
+                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
+                }
+
+                if (destBitSize == 32u) {
+                    ret = IntegerToFloat(newSource, *dest);
+                }
+                if (destBitSize == 64u) {
+                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
+                }
+            }
+        }
     }
 
     return ret;
@@ -96,26 +344,191 @@ bool FloatToInteger(FloatType floatNumber,
 
     bool ret = true;
 
+    integerNumber = static_cast<IntegerType>(0);
+
     bool isSigned = (static_cast<IntegerType>(-1) < static_cast<IntegerType>(0));
-    IntegerType max = ~static_cast<IntegerType>(0);
 
-    IntegerType min = static_cast<IntegerType>(0);
+    if ((isSigned) || (floatNumber > static_cast<FloatType>(0.0))) {
+        IntegerType max = ~static_cast<IntegerType>(0);
+        IntegerType min = static_cast<IntegerType>(0);
 
-    if (isSigned) {
-        Shift::LogicalRightSafeShift(max, 1u);
-        min = static_cast<IntegerType>(1) << (sizeof(IntegerType) * 8u - 1u);
+        if (isSigned) {
+            Shift::LogicalRightSafeShift(max, 1u);
+            min = static_cast<IntegerType>(1) << (sizeof(IntegerType) * 8u - 1u);
+        }
+
+        if ((floatNumber > max) || (floatNumber < min)) {
+            //TODO Saturation.
+        }
+
+        integerNumber = static_cast<IntegerType>(floatNumber);
+
+        if (((integerNumber - floatNumber) >= 1) || ((integerNumber - floatNumber) <= -1)) {
+            //TODO loss of precision
+        }
     }
 
-    if ((floatNumber > max) || (floatNumber < min)) {
-        //TODO Saturation.
+    return ret;
+}
+
+bool FloatToBitSet(float32 *source,
+                   const uint8 sourceBitSize,
+                   uint8 *dest,
+                   const uint8 destBitSize,
+                   uint8 destBitShift,
+                   const bool isSigned) {
+
+    bool ret = false;
+
+    if (destBitSize <= 8u) {
+        if (isSigned) {
+            int8 tempDest;
+            if (sourceBitSize == 32u) {
+                ret = FloatToInteger(*source, tempDest);
+            }
+            if (sourceBitSize == 64u) {
+                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+            }
+
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<int8*>(dest)) = tempDest;
+                }
+            }
+        }
+        else {
+            uint8 tempDest;
+            if (sourceBitSize == 32u) {
+                ret = FloatToInteger(*source, tempDest);
+            }
+            if (sourceBitSize == 64u) {
+                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+            }
+
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *dest = tempDest;
+                }
+            }
+        }
+
     }
-
-    integerNumber = static_cast<IntegerType>(floatNumber);
-
-    if (((integerNumber - floatNumber) >= 1) || ((integerNumber - floatNumber) <= -1)) {
-        //TODO loss of precision
+    if ((destBitSize > 8u) && (destBitSize <= 16u)) {
+        if (isSigned) {
+            int16 tempDest;
+            if (sourceBitSize == 32u) {
+                ret = FloatToInteger(*source, tempDest);
+            }
+            if (sourceBitSize == 64u) {
+                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+            }
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<int16*>(dest)) = tempDest;
+                }
+            }
+        }
+        else {
+            uint16 tempDest;
+            if (sourceBitSize == 32u) {
+                ret = FloatToInteger(*source, tempDest);
+            }
+            if (sourceBitSize == 64u) {
+                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+            }
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<uint16*>(dest)) = tempDest;
+                }
+            }
+        }
     }
+    if ((destBitSize > 16u) && (destBitSize <= 32u)) {
+        if (isSigned) {
+            int32 tempDest;
+            if (sourceBitSize == 32u) {
+                ret = FloatToInteger(*source, tempDest);
+            }
+            if (sourceBitSize == 64u) {
+                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+            }
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<int32*>(dest)) = tempDest;
+                }
+            }
+        }
+        else {
+            uint32 tempDest;
+            if (sourceBitSize == 32u) {
+                ret = FloatToInteger(*source, tempDest);
+            }
+            if (sourceBitSize == 64u) {
+                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+            }
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<uint32*>(dest)) = tempDest;
+                }
+            }
+        }
+    }
+    if ((destBitSize > 32u) && (destBitSize <= 64u)) {
+        if (isSigned) {
 
+            int64 tempDest;
+            if (sourceBitSize == 32u) {
+                ret = FloatToInteger(*source, tempDest);
+            }
+            if (sourceBitSize == 64u) {
+                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+            }
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<int64*>(dest)) = tempDest;
+                }
+            }
+        }
+        else {
+
+            uint64 tempDest;
+            if (sourceBitSize == 32u) {
+                ret = FloatToInteger(*source, tempDest);
+            }
+            if (sourceBitSize == 64u) {
+                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+            }
+            if (ret) {
+                if (destBitShift > 0u) {
+                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+                }
+                else {
+                    *(reinterpret_cast<uint64*>(dest)) = tempDest;
+                }
+            }
+        }
+    }
     return ret;
 }
 
@@ -154,74 +567,158 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
     void* destinationPointer = destination.GetDataPointer();
     const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
     void* sourcePointer = source.GetDataPointer();
-    const TypeDescriptor sourceDescriptor = destination.GetTypeDescriptor();
+    const TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
 
     bool ret = false;
 
     if ((sourceDescriptor.type == SignedInteger) || (sourceDescriptor.type == UnsignedInteger)) {
         if (destinationDescriptor.type == CCString) {
             String tempString;
-            tempString.PrintFormatted("%s", &source);
-            StringHelper::Copy(static_cast<char8*>(destinationPointer), tempString.Buffer());
+            ret = tempString.PrintFormatted("%d", &source);
+            if (ret) {
+                ret = StringHelper::Copy(static_cast<char8*>(destinationPointer), tempString.Buffer());
+            }
         }
         if (destinationDescriptor.type == SString) {
             String tempString;
-            tempString.PrintFormatted("%s", &source);
-            *(static_cast<String*>(destinationPointer)) = tempString.BufferReference();
+            ret = tempString.PrintFormatted("%d", &source);
+            if (ret) {
+                *(static_cast<String*>(destinationPointer)) = tempString.BufferReference();
+                ret = (*(static_cast<String*>(destinationPointer))) == tempString;
+            }
         }
         if (destinationDescriptor.type == SignedInteger) {
             if ((sourceDescriptor.type == SignedInteger)) {
-                uint8* destinationInput = static_cast<uint8*>(destinationPointer);
-                uint8* sourceInput = static_cast<uint8*>(sourcePointer);
-                uint8 destShift=static_cast<uint8>(destination.GetBitAddress());
-                uint8 sourceShift=static_cast<uint8>(source.GetBitAddress());
-                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits),
-                                     true, sourceInput, sourceShift, static_cast<uint8>(sourceDescriptor.numberOfBits), true);
+                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), true, sourceInput, sourceShift,
+                                     static_cast<uint8>(sourceDescriptor.numberOfBits), true);
 
             }
             if (sourceDescriptor.type == UnsignedInteger) {
-                uint8* destinationInput = static_cast<uint8*>(destinationPointer);
-                uint8* sourceInput = static_cast<uint8*>(sourcePointer);
-                uint8 destShift=static_cast<uint8>(destination.GetBitAddress());
-                uint8 sourceShift=static_cast<uint8>(source.GetBitAddress());
-                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits),
-                                     true, sourceInput, sourceShift, static_cast<uint8>(sourceDescriptor.numberOfBits), false);
+                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), true, sourceInput, sourceShift,
+                                     static_cast<uint8>(sourceDescriptor.numberOfBits), false);
             }
         }
         if (destinationDescriptor.type == UnsignedInteger) {
             if ((sourceDescriptor.type == SignedInteger)) {
-                uint8* destinationInput = static_cast<uint8*>(destinationPointer);
-                uint8* sourceInput = static_cast<uint8*>(sourcePointer);
-                uint8 destShift=static_cast<uint8>(destination.GetBitAddress());
-                uint8 sourceShift=static_cast<uint8>(source.GetBitAddress());
-                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits),
-                                     false, sourceInput, sourceShift, static_cast<uint8>(sourceDescriptor.numberOfBits), true);
+                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
+                                     static_cast<uint8>(sourceDescriptor.numberOfBits), true);
             }
             if (sourceDescriptor.type == UnsignedInteger) {
-                uint8* destinationInput = static_cast<uint8*>(destinationPointer);
-                uint8* sourceInput = static_cast<uint8*>(sourcePointer);
-                uint8 destShift=static_cast<uint8>(destination.GetBitAddress());
-                uint8 sourceShift=static_cast<uint8>(source.GetBitAddress());
-                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits),
-                                     false, sourceInput, sourceShift, static_cast<uint8>(sourceDescriptor.numberOfBits), false);
+                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
+                                     static_cast<uint8>(sourceDescriptor.numberOfBits), false);
             }
         }
-/*
+
         if (destinationDescriptor.type == Float) {
             if ((sourceDescriptor.type == SignedInteger)) {
-                CastIntegerPointer<static_cast<uint8>(sourceDescriptor.numberOfBits), true> sourceCastPtr(sourcePointer);
-                CastFloatPointer < static_cast<uint8>(sourceDescriptor.numberOfBits) > destCastPtr(destinationPointer);
-
-                IntegerToFloat(*(sourceCastPtr.pointer), *(destCastPtr.pointer));
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
+                ret = BitSetToFloat(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), static_cast<uint8>(source.GetBitAddress()),
+                                    destinationInput, static_cast<uint8>(destinationDescriptor.numberOfBits), true);
             }
             if (sourceDescriptor.type == UnsignedInteger) {
-                CastIntegerPointer<static_cast<uint8>(sourceDescriptor.numberOfBits), false> sourceCastPtr(sourcePointer);
-                CastFloatPointer < static_cast<uint8>(sourceDescriptor.numberOfBits) > destCastPtr(destinationPointer);
-                IntegerToFloat(*(sourceCastPtr.pointer), *(destCastPtr.pointer));
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
+                ret = BitSetToFloat(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), static_cast<uint8>(source.GetBitAddress()),
+                                    destinationInput, static_cast<uint8>(destinationDescriptor.numberOfBits), false);
             }
-        }*/
+        }
     }
 
+    if (sourceDescriptor.type == Float) {
+        if (destinationDescriptor.type == CCString) {
+            String tempString;
+            ret = tempString.PrintFormatted("%f", &source);
+            if (ret) {
+                ret = StringHelper::Copy(reinterpret_cast<char8*>(destinationPointer), tempString.Buffer());
+            }
+        }
+        if (destinationDescriptor.type == SString) {
+            String tempString;
+            ret = tempString.PrintFormatted("%f", &source);
+            if (ret) {
+                *(reinterpret_cast<String*>(destinationPointer)) = tempString.BufferReference();
+                ret = (*(reinterpret_cast<String*>(destinationPointer))) == tempString;
+            }
+        }
+        if (destinationDescriptor.type == SignedInteger) {
+
+            ret = FloatToBitSet(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
+                                reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits),
+                                static_cast<uint8>(destination.GetBitAddress()), true);
+        }
+        if (destinationDescriptor.type == UnsignedInteger) {
+            ret = FloatToBitSet(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
+                                reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits),
+                                static_cast<uint8>(destination.GetBitAddress()), false);
+        }
+        if (destinationDescriptor.type == Float) {
+            if (destinationDescriptor.numberOfBits == 32u) {
+                if (sourceDescriptor.numberOfBits == 64u) {
+                    FloatToFloat(*(reinterpret_cast<float64*>(sourcePointer)), *(reinterpret_cast<float32*>(destinationPointer)));
+                }
+            }
+            if (destinationDescriptor.numberOfBits == 64u) {
+                if (sourceDescriptor.numberOfBits == 32u) {
+                    FloatToFloat(*(reinterpret_cast<float32*>(sourcePointer)), *(reinterpret_cast<float64*>(destinationPointer)));
+                }
+            }
+        }
+    }
+
+    if ((sourceDescriptor.type == CCString) || (sourceDescriptor.type == SString)) {
+        char8* token = static_cast<char8>(NULL);
+        if(sourceDescriptor.type == CCString) {
+            token=reinterpret_cast<char8*>(sourcePointer);
+        }
+        else {
+            token=(reinterpret_cast<String*>(sourcePointer))->BufferReference();
+        }
+        if(destinationDescriptor.type==SignedInteger) {
+
+            ret=StringToBitSet(static_cast<const char8*> (sourcePointer),
+                    reinterpret_cast<uint8*>(destinationPointer),
+                    static_cast<uint8>(destinationDescriptor.numberOfBits),
+                    static_cast<uint8>(destination.GetBitAddress()),true);
+        }
+        if(destinationDescriptor.type==UnsignedInteger) {
+
+            ret=StringToBitSet(static_cast<const char8*> (sourcePointer),
+                    reinterpret_cast<uint8*>(destinationPointer),
+                    static_cast<uint8>(destinationDescriptor.numberOfBits),
+                    static_cast<uint8>(destination.GetBitAddress()),false);
+        }
+        if(destinationDescriptor.type==Float) {
+            if(destinationDescriptor.numberOfBits==32u) {
+                if(sourceDescriptor.numberOfBits==64u) {
+                    ret=StringToFloat(reinterpret_cast<const char8*>(sourcePointer),*(reinterpret_cast<float32*>(destinationPointer)));
+                }
+            }
+            if(destinationDescriptor.numberOfBits==64u) {
+                if(sourceDescriptor.numberOfBits==32u) {
+                    ret=StringToFloat(reinterpret_cast<const char8*>(sourcePointer),*(reinterpret_cast<float64*>(destinationPointer)));
+                }
+            }
+        }
+    }
+
+    return ret;
 }
 
 /**
@@ -234,7 +731,7 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
     uint32 idx = 0u;
     uint32 numberOfElements = source.GetNumberOfElements(0u);
 
-    //Check that the dimensions are correct
+//Check that the dimensions are correct
     bool ok = (source.GetNumberOfDimensions() == destination.GetNumberOfDimensions());
     if (ok) {
         ok = (numberOfElements == destination.GetNumberOfElements(0u));
@@ -336,7 +833,7 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
     uint32 copySize = 0u;
     uint32 totalCopySize = 0u;
 
-    //The deserialisation assumes that the source dataPointer is an array of pointers to the element values.
+//The deserialisation assumes that the source dataPointer is an array of pointers to the element values.
     void **sourceArray = static_cast<void **>(source.GetDataPointer());
 
     uint32 r = 0u;
@@ -345,7 +842,7 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
     uint32 numberOfRows = destination.GetNumberOfElements(1u);
     uint32 numberOfColumns = destination.GetNumberOfElements(0u);
 
-    //Check that the dimensions are correct
+//Check that the dimensions are correct
     bool ok = (source.GetNumberOfDimensions() == destination.GetNumberOfDimensions());
     if (ok) {
         ok = (numberOfRows == source.GetNumberOfElements(1u));
@@ -487,6 +984,7 @@ bool TypeConvert(const AnyType &destination,
     bool ok = true;
     uint32 copySize = 0u;
 
+
 //Source and destination dimensions must be the same
     ok = (destination.GetNumberOfDimensions() == source.GetNumberOfDimensions());
 //The number of elements in all dimensions must be the same
@@ -528,8 +1026,7 @@ bool TypeConvert(const AnyType &destination,
                     ok = MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize);
                 } //To another BasicType
                 else {
-                    String sourceString = srcString;
-                    ok = ScalarBasicTypeConvert(destination, sourceString);
+                    ok = ScalarBasicTypeConvert(destination, source);
                 }
             } //From a BasicType
             else { //Destination and source are the same

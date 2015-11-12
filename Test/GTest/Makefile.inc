@@ -23,7 +23,7 @@
 #############################################################
 
 
-OBJSX=  
+OBJSX=TypeConversionGTest.x
 #DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
@@ -82,7 +82,7 @@ OBJSX=
 	BasicSocketGTest.x \
 	BasicTCPSocketGTest.x \
    	BasicUDPSocketGTest.x \
-	BasicConsoleGTest.x
+	BasicConsoleGTest.x \
 
 PACKAGE=
 ROOT_DIR=../..

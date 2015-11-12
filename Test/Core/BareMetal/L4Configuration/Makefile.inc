@@ -24,7 +24,7 @@
 #
 #############################################################
 
-OBJSX=
+OBJSX=TypeConversionTest.x
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
@@ -38,8 +38,10 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 
-all: $(OBJS)
+all: $(OBJS) \
+                $(BUILD_DIR)/L4ConfigurationTest$(LIBEXT)
 	echo  $(OBJS)
+
 
 include depends.$(TARGET)
 
