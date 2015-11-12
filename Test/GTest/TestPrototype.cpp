@@ -216,8 +216,8 @@ void TestMatrixNumbersStatic() {
     cdb.CreateNodes("MyControllers.PID1", false);
 
     float32 floatTableWrite[2][3] = { { 3.2f, 4.0f, 5.0f }, { -1.2f, -2.0f, -3.0f } };
-    Matrix<float32> matWrite(floatTableWrite);
-    cdb.Write("ArrayValues", matWrite);
+    //Matrix<float32> matWrite(floatTableWrite);
+    cdb.Write("ArrayValues", floatTableWrite);
     float32 floatTableRead[2][3];
     Matrix<float32> matRead(floatTableRead);
     cdb.Read("ArrayValues", matRead);
@@ -306,6 +306,8 @@ void TestMatrixCharStarDynamic() {
     matWrite[1][0] = "[1][0]";
     matWrite[1][1] = "[1][1]";
     matWrite[1][2] = "[1][2]";
+    printf("[%s][%s][%s]\n", matWrite[0][0], matWrite[0][1], matWrite[0][2]);
+    printf("[%s][%s][%s]\n", matWrite[1][0], matWrite[1][1], matWrite[1][2]);
     cdb.Write("MatrixFromArray", matWrite);
     Matrix<char *> matRead(2, 3);
     matRead[0][0] = (char *) HeapManager::Malloc(12);

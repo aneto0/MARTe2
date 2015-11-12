@@ -26,7 +26,8 @@ PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  ClassRegistryItem.x \
+OBJSX=  AnyType.x\
+    ClassRegistryItem.x \
     Object.x \
     ClassProperties.x \
     Reference.x \
