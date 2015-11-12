@@ -32,19 +32,42 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "GeneralDefinitions.h"
+#include "TimeoutType.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT, SelectProperties.h)
+
 namespace MARTe{
 
-class Select {
+class DLL_API Select {
 public:
     /**
      * @Brief Default constructor
      */
     Select();
 
+    bool AddReadHandle(const StreamI &stream);
+    bool AddWriteHandle(const StreamI &stream);
+    bool AddExceptionHandle(const StreamI &stream);
+    bool RemoveReadHandle(const StreamI &stream);
+    bool RemoveWriteHandle(const StreamI &stream);
+    bool RemoveExceptionHandle(const StreamI &stream);
+    bool ClearAllHandle();
+    int32 WaitUntil(TimeoutType msecTimeout);
+
+private:
+    SetIdentifier readHandle;
+    int32 numberOfSetReadHandle;
+    SetIdentifier writeHandle;
+    int32 numberOfSetWriteHandle;
+    SetIdentifier exceptionsHandle;
+    int32 numberOfSetExceptionsHandle;
+    /* It is the maximum number of file descriptors that a SetIdentifier object can hold information about*/
+    const int32 MAX_numberHandle;
 };
 }
 
