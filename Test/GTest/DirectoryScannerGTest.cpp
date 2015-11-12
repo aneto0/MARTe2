@@ -50,12 +50,42 @@ TEST(DirectoryGTest, TestDirectorySize) {
 
 TEST(DirectoryGTest, TestScan) {
     DirectoryScannerTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestScan("TestScan","exe"));
+    ASSERT_TRUE(myClassTest.TestScan("TestScan"));
+}
+
+TEST(DirectoryGTest, TestScan2) {
+    DirectoryScannerTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestScan("TestScan1",NULL));
 }
 
 TEST(DirectoryGTest, TestScan_NULL) {
     DirectoryScannerTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestScan(NULL,"txt"));
+    ASSERT_TRUE(myClassTest.TestScan_NULL(NULL,NULL));
+}
+
+TEST(DirectoryGTest, TestScan_Empy) {
+    DirectoryScannerTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestScan_NULL("",""));
+}
+
+TEST(DirectoryGTest, TestScan_FailMix) {
+    DirectoryScannerTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestScan_NULL(NULL,""));
+}
+
+TEST(DirectoryGTest, TestScan_FailMix2) {
+    DirectoryScannerTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestScan_NULL("",NULL));
+}
+
+TEST(DirectoryGTest, TestScan_FailMix3) {
+    DirectoryScannerTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestScan_NoExist("abc",NULL));
+}
+
+TEST(DirectoryGTest, TestScan_Mask) {
+    DirectoryScannerTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestScan_Mask());
 }
 
 TEST(DirectoryGTest, TestScan_Filter) {

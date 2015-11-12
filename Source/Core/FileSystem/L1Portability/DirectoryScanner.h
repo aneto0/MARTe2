@@ -53,7 +53,7 @@ public:
      *   BasePath() = NULL &&
      *   DirectorySize() = 0
      */
-    DirectoryScanner(const char8 * const path);
+    DirectoryScanner(const char8 * const path = NULL);
 
     /**
      * @brief Default destructor.

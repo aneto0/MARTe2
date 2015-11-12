@@ -207,9 +207,9 @@ bool Directory::Create(const bool isFile) {
     return ret;
 }
 
+/*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-4] [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
 bool Directory::Exists() {
     struct stat fileStats;
-    /*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-4] [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
     uint32 ok = (stat(fname, &fileStats) == 0);
     bool isDir = S_ISDIR(fileStats.st_mode);
     bool isFile = S_ISREG(fileStats.st_mode);

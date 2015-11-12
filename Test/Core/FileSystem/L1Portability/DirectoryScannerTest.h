@@ -64,16 +64,18 @@ public:
      * @param[in] sorter specifies the desired sort of the elements in the list.
      * @return false in case of errors, true otherwise.
      */
-    bool TestScan(char8 * pathin,
-                  char8 *fileMask = "*");
+    bool TestScan(const char8 * path, const char8 *fileMask = "*");
+    bool TestScan_NULL(const char8 * path, const char8 *fileMask = "*");
+    bool TestScan_NoExist(const char8 * path, const char8 *fileMask = "*");
 
     bool TestScan_Filter();
+    bool TestScan_Mask();
 
     /**
      * @brief Retrieve the directory path.
      * @return char8* the path of the set directory.
      */
-    bool TestBasePath(char8 * pathin);
+    bool TestBasePath(const char8 * pathin);
 
     /**
      * @brief Deletes all elements from the list.
@@ -92,7 +94,7 @@ public:
      * @brief Create test directory
      */
     void DirectoryCreateN(char8 *destination,
-                          char8 *path);
+                          const char8 *path);
 };
 
 /*---------------------------------------------------------------------------*/

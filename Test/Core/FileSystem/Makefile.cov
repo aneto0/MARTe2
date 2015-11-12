@@ -27,16 +27,9 @@ TARGET=cov
 
 include Makefile.inc
 
-<<<<<<< HEAD
 LIBRARIES_STATIC+=L1Portability/cov/L1PortabilityTest$(LIBEXT)
 
-
 OPTIM=-finline-functions
-=======
-OPTIM=-finline-functions
-
-LIBRARIES_STATIC+=L1Portability/cov/L1PortabilityTest$(LIBEXT)
 
 LIBRARIES += -lm
->>>>>>> refs/remotes/origin/#243_Linux_File
 

@@ -32,7 +32,10 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Directory.h"
+#include "DirectoryScanner.h"
+#include "BasicFile.h"
 #include "LinkedListHolder.h"
+#include "Sleep.h"
 #include "stdio.h"
 #include "time.h"
 #include "StringHelper.h"
@@ -50,7 +53,7 @@ class DirectoryTest {
 public:
     /** constructor */
     DirectoryTest();
-    bool TestDirectoryTest(char8 * pathin);
+    bool TestDirectoryTest(const char8 * pathin);
 
     /** */
     ~DirectoryTest();
@@ -90,19 +93,22 @@ public:
      * @return the file-directory size
      */
     bool TestGetSize_Dir();
-    bool TestGetSize_File();
+    bool TestGetSize_FileCorrect();
+    bool TestGetSize_FileIncorrect();
 
     /**
      * @brief Retrieve the last write time.
      * @return the last write time.
      */
     bool TestGetLastWriteTime();
+    bool TestGetLastWriteTime_Incorrect();
 
     /**
      * @brief Retrieve the last access time.
      * @return the last access time.
      */
     bool TestGetLastAccessTime();
+    bool TestGetLastAccessTime_Incorrect();
 
     /**
      * @brief Create a new file-directory.
@@ -110,7 +116,7 @@ public:
      * @param[in] isFile specifies if a file or a folder should be created.
      * @return true if the file-directory is created correctly, false otherwise.
      */
-    bool TestCreate(char8 * path,
+    bool TestCreate(const char8 * path,
                     const bool isFile = false);
 
     /**
@@ -118,7 +124,7 @@ public:
      * @param[in] path is the path of the file / directory to be deleted.
      * @return true if the file-directory is deleted correctly, false otherwise.
      */
-    bool TestDelete(char8 * path,
+    bool TestDelete(const char8 * path,
                     bool file);
 
     /**
@@ -128,14 +134,14 @@ public:
      * @post
      *   isFile = true if path refers to a file.
      */
-    bool TestExists(char8 * path,
+    bool TestExists(const char8 * path,
                     bool isFile);
 
     /**
      * @brief Create a test directory
      */
     void DirectoryCreateN(char8 *destination,
-                          char8 *path);
+                          const char8 *path);
 
     /**
      * @brief Create test directory folder
@@ -149,10 +155,10 @@ public:
 
 private:
     /** the file or directory name */
-    char8 *fname;
+    //char8 *fname;
 
     /** attributes of the file */
-    DirectoryCore dyrectoryHandle;
+    //DirectoryCore dyrectoryHandle;
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

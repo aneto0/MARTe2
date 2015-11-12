@@ -166,6 +166,10 @@ bool DirectoryScanner::Scan(const char8 * const path,
                     if (!StringHelper::Concatenate(&statAddr[0], basePath)) {
                         ret = false;
                     }
+                    // put the separator
+                    //if (!StringHelper::Concatenate(&statAddr[0], &DIRECTORY_SEPARATOR)) {
+                    //    ret = false;
+                    //}
                 }
 
                 if (ret) {
@@ -178,7 +182,7 @@ bool DirectoryScanner::Scan(const char8 * const path,
                 if (ret) {
 
                     // store the file name
-                    if (!entry->SetByName(&(namelist[n]->d_name[0]))) {
+                    if (!entry->SetByName(&statAddr[0])) {
                         ret = false;
                     }
 
@@ -198,7 +202,11 @@ bool DirectoryScanner::Scan(const char8 * const path,
                 }
 
                 // refresh the directory size adding the size of the current file
-                size += entry->Size();
+                //size += entry->Size();
+                if ((StringHelper::Compare(&(namelist[n]->d_name[0]),".")!=0) && (StringHelper::Compare(&(namelist[n]->d_name[0]),"..") != 0)){
+                    size += entry->GetSize();
+                }
+
                 n--;
             }
         }

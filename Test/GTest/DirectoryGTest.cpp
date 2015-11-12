@@ -146,14 +146,24 @@ TEST(DirectoryGTest, TestGetSize_Dir2) {
     ASSERT_TRUE(myClassTest.TestGetSize_Dir());
 }
 
-TEST(DirectoryGTest, TestGetSize_File) {
+TEST(DirectoryGTest, TestGetSize_FileCorrect) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestGetSize_File());
+    ASSERT_TRUE(myClassTest.TestGetSize_FileCorrect());
 }
 
-TEST(DirectoryGTest, TestGetSize_File2) {
+TEST(DirectoryGTest, TestGetSize_FileCorrect2) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestGetSize_File());
+    ASSERT_TRUE(myClassTest.TestGetSize_FileCorrect());
+}
+
+TEST(DirectoryGTest, TestGetSize_FileIncorrect) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestGetSize_FileIncorrect());
+}
+
+TEST(DirectoryGTest, TestGetSize_FileIncorrect2) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestGetSize_FileIncorrect());
 }
 
 TEST(DirectoryGTest, TestCreate_Dir) {
@@ -316,6 +326,16 @@ TEST(DirectoryGTest, TestGetLastAccessTime2) {
     ASSERT_TRUE(myClassTest.TestGetLastAccessTime());
 }
 
+TEST(DirectoryGTest, TestGetLastAccessTime_Incorrect) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestGetLastAccessTime_Incorrect());
+}
+
+TEST(DirectoryGTest, TestGetLastAccessTime_Incorrect2) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestGetLastAccessTime_Incorrect());
+}
+
 TEST(DirectoryGTest, TestGetLastWriteTime) {
     DirectoryTest myClassTest;
     ASSERT_TRUE(myClassTest.TestGetLastWriteTime());
@@ -324,6 +344,16 @@ TEST(DirectoryGTest, TestGetLastWriteTime) {
 TEST(DirectoryGTest, TestGetLastWriteTime2) {
     DirectoryTest myClassTest;
     ASSERT_TRUE(myClassTest.TestGetLastWriteTime());
+}
+
+TEST(DirectoryGTest, TestGetLastWriteTime_Incorrect) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestGetLastWriteTime_Incorrect());
+}
+
+TEST(DirectoryGTest, TestGetLastWriteTime_Incorrect2) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestGetLastWriteTime_Incorrect());
 }
 
 TEST(DirectoryGTest, Delete_Directory) {

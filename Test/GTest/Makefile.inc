@@ -23,8 +23,8 @@
 #############################################################
 
 
-OBJSX= DirectoryScannerGTest.x \
-        DirectoryGTest.x
+OBJSX=DirectoryGTest.x \
+        DirectoryScannerGTest.x
 #BasicFileGTest.x \
 	InternetHostGTest.x \
 	   InternetServiceGTest.x \
