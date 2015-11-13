@@ -54,6 +54,11 @@ namespace MARTe {
     public:
         /**
          * @Brief Default constructor
+         * @post
+         *    readHandle is empty &&
+         *    writeHandle is empty &&
+         *    exceptionHandle is empty &&
+         *    highestHandle = -1
          */
         Select();
         /**
@@ -69,7 +74,7 @@ namespace MARTe {
          *     The handle has not to be included previously.
          * @return True if the handle is added to be monitored.
          */
-        bool AddReadHandle(const HandleI &handel);
+        bool AddReadHandle(const HandleI &handle);
 
         /**
          * @brief Adds a handle to be monitored in the write mode.
@@ -79,7 +84,7 @@ namespace MARTe {
          *     The handle has not to be included previously.
          * @return True if the handle is added to be monitored.
          */
-        bool AddWriteHandle(const HandleI &handel);
+        bool AddWriteHandle(const HandleI &handle);
 
         /**
          * @brief Adds a handle to be monitored in the exception mode.
@@ -89,7 +94,7 @@ namespace MARTe {
          *     The handle has not to be included previously.
          * @return True if the handle is added to be monitored.
          */
-        bool AddExceptionHandle(const HandleI &handel);
+        bool AddExceptionHandle(const HandleI &handle);
 
         /**
          * @brief Removes a handle from being monitored in the read mode.
@@ -99,7 +104,7 @@ namespace MARTe {
          *     The handle must be included previously.
          * @return True if the handle is removed from being monitored.
          */
-        bool RemoveReadHandle(const HandleI &handel);
+        bool RemoveReadHandle(const HandleI &handle);
 
         /**
          * @brief Removes a handle from being monitored in the write removed.
@@ -109,7 +114,7 @@ namespace MARTe {
          *     The handle must be included previously.
          * @return True if the handle is removed from being monitored.
          */
-        bool RemoveWriteHandle(const HandleI &handel);
+        bool RemoveWriteHandle(const HandleI &handle);
 
         /**
          * @brief Removes a handle from being monitored in the exception mode.
@@ -119,7 +124,7 @@ namespace MARTe {
          *     The handle must be included previously.
          * @return True if the handle is removed from being monitored.
          */
-        bool RemoveExceptionHandle(const HandleI &handel);
+        bool RemoveExceptionHandle(const HandleI &handle);
 
         /**
          * @brief Removes all handles from being monitored in all modes.
@@ -136,14 +141,14 @@ namespace MARTe {
          * @param[in] handle indicates the handle to be search for.
          * @return True if the handle is set.
          */
-        bool IsSet(const HandleI &handel);
+        bool IsSet(const HandleI &handle) const;
 
         /**
          * @brief Blocks until an event occurs or the msecTimeout unblocks
          * @param[in] msecTimeout is the maximum time waiting,
          * @return -1 if it fails, 0 if the msecTimeout is reached or the sum of occurrences happened, otherwise.
          */
-        int32 WaitUntil(TimeoutType msecTimeout = TTInfiniteWait);
+        int32 WaitUntil(const TimeoutType &msecTimeout = TTInfiniteWait);
 
     private:
         /*Contains informations about the read handles used in the select. Every AddReadHandle() action an handle informations is added to readHadle.*/
