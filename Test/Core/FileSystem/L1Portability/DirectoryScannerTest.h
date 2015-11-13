@@ -34,19 +34,22 @@
 #include "Directory.h"
 #include "DirectoryScanner.h"
 #include "LinkedListHolder.h"
-#include "stdio.h"
-#include "time.h"
 #include "StringHelper.h"
-#include <sys/stat.h>
-#include "dirent.h"
+#include "SortFilter.h"
+#include "BasicFile.h"
+#include "stdio.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
+/**
+ * @brief Tests the DirectoryScanner class.
+ */
 class DirectoryScannerTest {
 public:
+
     /**
      * Constructor of DirectoryScannerTest
      */
@@ -58,48 +61,52 @@ public:
     ~DirectoryScannerTest();
 
     /**
-     * @brief Retrieve the size of the scanned directory.
-     * @return true if the variable private size is equal to sum of the contents of directory.
+     * @brief Check the size of the scanned directory.
      */
     bool TestDirectorySize();
 
     /**
-     * @brief Scan the files / sub-directories of a specific directory adding them to the list.
+     * @brief Check if Scan add all file/directory to the List.
      * @param[in] path is the path of the directory to scan.
      * @param[in] fileMask is shell wildcard pattern to match the desired files / sub-directories.
-     * @return true if Scanner found the elements of directory concrete.
      */
     bool TestScan(const char8 * path,
                   const char8 *fileMask = "*");
+
+    /**
+     * @brief Check if Scan add all file/directory to the List.
+     * @param[in] path Contain NULL.
+     * @param[in] fileMask is shell wildcard pattern to match the desired files / sub-directories.
+     */
     bool TestScan_NULL(const char8 * path,
                        const char8 *fileMask = "*");
+
+    /**
+     * @brief Check if Scan add all file/directory to the List.
+     * @param[in] path Contain a path that not exist.
+     * @param[in] fileMask is shell wildcard pattern to match the desired files / sub-directories.
+     */
     bool TestScan_NoExist(const char8 * path,
                           const char8 *fileMask = "*");
 
     /**
-     * @brief Sorter specifies the desired sort of the elements in the list.
-     * return true if the order of elements in the list are correct.
+     * @brief Check if the elements in the list are sort, in this occasion by size.
      */
     bool TestScan_Filter();
 
     /**
-     * @brief Is shell wildcard pattern to match the desired files / sub-directories.
-     * return true if the search was successful.
+     * @brief Check if after the mask, in the list only appear the elements searched.
      */
     bool TestScan_Mask();
 
     /**
-     * @brief Retrieve the directory path.
+     * @brief Check if after the scan, the basePath are the same that the pathin .
      * @param[in] pathin is the path to directory.
-     * @return true if basePath is equal to pathin directory.
      */
     bool TestBasePath(const char8 * pathin);
 
     /**
-     * @brief Deletes all elements from the list.
-     * @post
-     *   basePath = NULL;
-     *   size = 0;
+     * @brief Check if all elements from the list are been deleted.
      */
     bool TestCleanUp();
 

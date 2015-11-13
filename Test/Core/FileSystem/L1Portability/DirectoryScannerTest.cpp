@@ -29,9 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "DirectoryScannerTest.h"
-#include "SortFilter.h"
-#include "Directory.h"
-#include "BasicFile.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -66,6 +66,16 @@ TEST(DirectoryGTest, TestSetByName_Valid2) {
     ASSERT_TRUE(myClassTest.TestSetByName_Valid());
 }
 
+TEST(DirectoryGTest, TestSetByName_NULL) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestSetByName_NULL());
+}
+
+TEST(DirectoryGTest, TestSetByName_NULL2) {
+    DirectoryTest myClassTest;
+    ASSERT_TRUE(myClassTest.TestSetByName_NULL());
+}
+
 TEST(DirectoryGTest, TestSetByName_Invalid) {
     DirectoryTest myClassTest;
     ASSERT_TRUE(myClassTest.TestSetByName_Invalid());
@@ -326,14 +336,14 @@ TEST(DirectoryGTest, TestGetLastAccessTime2) {
     ASSERT_TRUE(myClassTest.TestGetLastAccessTime());
 }
 
-TEST(DirectoryGTest, TestGetLastAccessTime_Incorrect) {
+TEST(DirectoryGTest, TestGetLastAccessTime_ReRead) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestGetLastAccessTime_Incorrect());
+    ASSERT_TRUE(myClassTest.TestGetLastAccessTime_ReRead());
 }
 
-TEST(DirectoryGTest, TestGetLastAccessTime_Incorrect2) {
+TEST(DirectoryGTest, TestGetLastAccessTime_ReRead2) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestGetLastAccessTime_Incorrect());
+    ASSERT_TRUE(myClassTest.TestGetLastAccessTime_ReRead());
 }
 
 TEST(DirectoryGTest, TestGetLastWriteTime) {
@@ -346,14 +356,14 @@ TEST(DirectoryGTest, TestGetLastWriteTime2) {
     ASSERT_TRUE(myClassTest.TestGetLastWriteTime());
 }
 
-TEST(DirectoryGTest, TestGetLastWriteTime_Incorrect) {
+TEST(DirectoryGTest, TestGetLastWriteTime_ReWrite) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestGetLastWriteTime_Incorrect());
+    ASSERT_TRUE(myClassTest.TestGetLastWriteTime_ReWrite());
 }
 
-TEST(DirectoryGTest, TestGetLastWriteTime_Incorrect2) {
+TEST(DirectoryGTest, TestGetLastWriteTime_ReWrite2) {
     DirectoryTest myClassTest;
-    ASSERT_TRUE(myClassTest.TestGetLastWriteTime_Incorrect());
+    ASSERT_TRUE(myClassTest.TestGetLastWriteTime_ReWrite());
 }
 
 TEST(DirectoryGTest, Delete_Directory) {

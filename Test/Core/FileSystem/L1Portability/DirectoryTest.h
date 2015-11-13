@@ -33,14 +33,11 @@
 /*---------------------------------------------------------------------------*/
 #include "Directory.h"
 #include "DirectoryScanner.h"
-#include "BasicFile.h"
 #include "LinkedListHolder.h"
+#include "StringHelper.h"
+#include "BasicFile.h"
 #include "Sleep.h"
 #include "stdio.h"
-#include "time.h"
-#include "StringHelper.h"
-#include <sys/stat.h>
-#include "dirent.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -56,9 +53,10 @@ public:
     /**
      * Constructor */
     DirectoryTest();
+
     /**
      * @brief Constructor test
-     * param[in] pathin Content the directory that will create for be tested
+     * param[in] pathin Content the directory that will create for be tested.
      */
     bool TestDirectoryTest(const char8 * pathin);
 
@@ -74,6 +72,11 @@ public:
 
     /**
      * @brief Test to set directory NULL.
+     */
+    bool TestSetByName_NULL();
+
+    /**
+     * @brief Test to set directory Invalid.
      */
     bool TestSetByName_Invalid();
 
@@ -113,58 +116,63 @@ public:
     bool TestGetSize_Dir();
 
     /**
-     * @brief Check the size of two file with the same length
+     * @brief Check the size of two file with the same length.
      */
     bool TestGetSize_FileCorrect();
 
     /**
-     * @brief Check the size of two file with different length
+     * @brief Check the size of two file with different length.
      */
     bool TestGetSize_FileIncorrect();
 
     /**
-     * @brief Check if the file was wrote one second after without write again
+     * @brief Check if the file was wrote one second after without write again.
      */
     bool TestGetLastWriteTime();
 
     /**
-     * @brief Check if the file was wrote one second after write again
+     * @brief Check if the file was wrote one second after write again.
      */
-    bool TestGetLastWriteTime_Incorrect();
+    bool TestGetLastWriteTime_ReWrite();
 
     /**
-     * @brief Check if the file was read one second after without write again
+     * @brief Check if the file was read one second after without read again.
      */
     bool TestGetLastAccessTime();
-    bool TestGetLastAccessTime_Incorrect();
+
+    /**
+     * @brief Check if the file was read one second after read again.
+     */
+    bool TestGetLastAccessTime_ReRead();
 
     /**
      * @brief Create a new file-directory.
      * @param[in] path is the path of the new folder to be created.
      * @param[in] isFile specifies if a file or a folder should be created.
-     * @return true if the file-directory is created correctly, false otherwise.
      */
     bool TestCreate(const char8 * path,
                     const bool isFile = false);
 
     /**
-     * @brief Delete an existent file-directory.
+     * @brief Check is deleted an existent file-directory.
      * @param[in] path is the path of the file / directory to be deleted.
-     * @return true if the file-directory is deleted correctly, false otherwise.
+     * @param[in] file is for know if it will create a file or a folder to be deleted.
      */
     bool TestDelete(const char8 * path,
                     bool file);
 
     /**
      * @brief Check if a file-directory exists.
-     * @param[in] path is the path of the file-directory to check.
-     * @return true if the file-directory exists, false otherwise.
+     * @param[in] path is the path of the file-directory to will be create.
+     * @param[in] file is for know if it will create a file or a folder to check if exist.
      */
     bool TestExists(const char8 * path,
                     bool isFile);
 
     /**
      * @brief Create a test directory
+     * @param[in] destination is the path of the file-directory to will be create.
+     * @param[in] path is the sub-directory that we want create.
      */
     void DirectoryCreateN(char8 *destination,
                           const char8 *path);

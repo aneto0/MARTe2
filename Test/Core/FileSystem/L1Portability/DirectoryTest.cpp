@@ -69,15 +69,22 @@ bool DirectoryTest::TestSetByName_Valid() {
     return ok;
 }
 
-bool DirectoryTest::TestSetByName_Invalid() {
+bool DirectoryTest::TestSetByName_NULL() {
     char8 path[128];
     DirectoryCreateN(path, NULL);
     Directory dir(path);
-    dir.Create(false);
     bool ok = dir.SetByName(path);
     if (ok) {
         ok = (StringHelper::Compare(dir.GetName(), path) == 0);
     }
+    return ok;
+}
+
+bool DirectoryTest::TestSetByName_Invalid() {
+    char8 path[128];
+    DirectoryCreateN(path, "abc");
+    Directory dir(path);
+    bool ok = !dir.SetByName(path);
     return ok;
 }
 
@@ -131,7 +138,6 @@ bool DirectoryTest::TestGetSize_Dir() {
     char8 path[128];
     char8 path2[128];
 
-    struct stat structure;
     DirectoryCreateN(path, "TestGetSize_Dir1");
     Directory dir(path);
     dir.Create(false);
@@ -215,7 +221,7 @@ bool DirectoryTest::TestGetLastAccessTime() {
     return ok;
 }
 
-bool DirectoryTest::TestGetLastAccessTime_Incorrect() {
+bool DirectoryTest::TestGetLastAccessTime_ReRead() {
     char8 path[128];
     DirectoryCreateN(path, "TestGetLastAccessTime_Incorrect.txt");
     Directory dir(path);
@@ -257,7 +263,7 @@ bool DirectoryTest::TestGetLastWriteTime() {
     return ok;
 }
 
-bool DirectoryTest::TestGetLastWriteTime_Incorrect() {
+bool DirectoryTest::TestGetLastWriteTime_ReWrite() {
     char8 path[128];
     DirectoryCreateN(path, "TestGetLastWriteTime_Incorrect.txt");
     Directory dir(path);
