@@ -23,7 +23,9 @@
 #############################################################
 
 
-OBJSX=  DoubleIntegerGTest.x \
+OBJSX=  BasicFileGTest.x \
+        StringGTest.x \
+        DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
@@ -71,7 +73,6 @@ OBJSX=  DoubleIntegerGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
-        StringGTest.x \
         StreamMemoryReferenceGTest.x \
         BufferedStreamIGTest.x \
         IOBufferGTest.x \
