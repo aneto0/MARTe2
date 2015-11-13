@@ -1,8 +1,8 @@
 /**
- * @file BasicType.h
- * @brief Header file for class BasicType
- * @date 28/08/2015
- * @author Filippo Sartori
+ * @file BasicFileProperties.h
+ * @brief Header file for class BasicFileProperties
+ * @date Oct 29, 2015
+ * @author llcapella
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,85 +16,37 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BasicType
+ * @details This header file contains the declaration of the class BasicFileProperties
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BASICTYPE_H_
-#define BASICTYPE_H_
+#ifndef BASICFILEPROPERTIES_H_
+#define BASICFILEPROPERTIES_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "CompilerTypes.h"
-#include "FractionalInteger.h"
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
 
+#include "String.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-/**
- * @brief Definition of BasicType as a 4 bit integer.
- */
-typedef uint4 BasicType;
-
-
-/**
- * The type is a signed integer.
- */
-const BasicType SignedInteger = 0u;
-
-/**
- * The type is an unsigned integer.
- */
-const BasicType UnsignedInteger = 1u;
-
-/**
- * The type is a float number.
- */
-const BasicType Float = 2u;
-
-/**
- * The type is a pointer.
- */
-const BasicType Pointer = 3u;
-
-/**
- * The type is a C string
- * (const char *)
- */
-const BasicType CCString = 8u;
-
-/**
- * The type is a pointer to a C string allocated on heap.
- * (char **)
- */
-const BasicType PCString = 9u;
-
-/**
- * The type is an array of bytes with the size
- * specified in the size field.
- */
-const BasicType CArray = 10u;
-
-/**
- * The type is a String class.
- */
-const BasicType SString = 11u;
-
-/**
- * The type is a StreamInterface class.
- */
-const BasicType Stream = 12u;
-
+struct BasicFileProperties {
+    MARTe::int32 identifier;
+    MARTe::String pathName;
+};
 }
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* BASICTYPE_H_ */
+#endif /*BASICFILEPROPERTIES_H_ */
+

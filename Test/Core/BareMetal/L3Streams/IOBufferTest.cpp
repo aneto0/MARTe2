@@ -1192,7 +1192,7 @@ bool IOBufferTest::TestPrintFormatted(uint32 allocationGranularity,
 
         ioBuffer.PrintFormatted(testTable[i].format, testTable[i].inputs);
         if (StringHelper::Compare(testTable[i].expectedResult, ioBuffer.Buffer()) != 0) {
-
+            printf("\n|%s| |%s|\n",testTable[i].expectedResult, ioBuffer.Buffer());
             return false;
         }
         i++;

@@ -272,4 +272,15 @@
  * Justification: Re-use of C++ identifier required to guarantee a portable and unique interpretation of the implementation of PRETTY_FUNCTION  
  */
  -esym(1960, __ERROR_FUNCTION_NAME__)
- 
+
+/*
+ * Rule 0-1-8
+ * Justification: this function change the internal private attributes.
+ */
+-estring(1960,"*MARTe::DoubleInteger<<1>>*") 
+
+/*
+ * Rule 0-1-8
+ * Justification: Sleep is not a class.
+ */
+-estring(1960,"*MARTe::Sleep::Busy(double)*") 

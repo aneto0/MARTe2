@@ -55,7 +55,7 @@ namespace MARTe {
  * have the notion of cursor, which can be positioned randomly on any byte of
  * the stream; size, which allows to know the actual size of the stream; and
  * timeout, which allows to define a time out for read and write operations,
- * so they will not last for ever in case of I/O problems. Moreover, the
+ * so they will not last forever in case of I/O problems. Moreover, the
  * stream have implicit reading and writing buffers which are expected to be
  * defined by subclasses of the stream, but used by upper level functions
  * like read or write.
@@ -89,7 +89,7 @@ namespace MARTe {
  *
  * @warning The generic capabilities for reading, writing, and seeking can not
  * assured to be available on all kind of mapped streams, so an additional set
- * of "CanXXX" methods will advise the user what can be done with the stream.
+ * of "CanXXX" methods is provided to verify the capabilities of the stream itself.
  *
  * - CanRead: Queries if the stream is readable, i.e. if the operation Read
  *   is implemented.
@@ -99,10 +99,9 @@ namespace MARTe {
  *   and RelativeSeek are implemented.
  *
  * @warning The size and position attributes can be meaningless in some kind
- * of mapped streams, so in these cases, size and position will be set to the
+ * of streams, so in these cases size and position will be set to the
  * maximum value of uint64. This also implies that operations like read and
- * write, which increments position and/or size, will saturate them at the
- * maximum value on these cases.
+ * write, which increments position and/or size, will not change this value.
  */
 
 class DLL_API BufferedStreamI: public StreamI {

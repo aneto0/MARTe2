@@ -106,7 +106,6 @@ TEST(InternetHostGTest,TestGetAddress) {
 TEST(InternetHostGTest,TestGetHostName) {
     InternetHostTest internetHostTest;
     const char8 *table[][2]={
-            {"127.0.0.1","localhost"},
             {"8.8.8.8","google-public-dns-a.google.com"},
             {0,0}
     };

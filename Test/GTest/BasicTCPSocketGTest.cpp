@@ -183,7 +183,7 @@ TEST(BasicTCPSocketGTest,TestWrite) {
             {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false, true},
             {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false, true},
             {66,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false, true},
-            {0x7fffffff,11,"HelloWorld","HelloWorld", 32, 100, false, true, false, true, true},
+            {0x7fffffff,11,"HelloWorld","HelloWorld", 32, 10, false, true, false, true, true},
             {0x7fffffff,11,"HelloWorld","HelloWorld", 32, TTInfiniteWait, false, false, false, true, true},
             {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, false, true, true, true,false},
             {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, false, true, true, false,false},

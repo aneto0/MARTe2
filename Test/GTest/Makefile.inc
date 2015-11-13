@@ -23,8 +23,10 @@
 #############################################################
 
 
-OBJSX=  DoubleIntegerGTest.x \
-		TypeCharacteristicsGTest.x \
+OBJSX=  BasicFileGTest.x \
+        StringGTest.x \
+        DoubleIntegerGTest.x \
+	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
         FormatDescriptorGTest.x \
@@ -71,20 +73,16 @@ OBJSX=  DoubleIntegerGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
-        StringGTest.x \
         StreamMemoryReferenceGTest.x \
         BufferedStreamIGTest.x \
         IOBufferGTest.x \
         BitSetToIntegerGTest.x \
         InternetHostGTest.x \
-	    InternetServiceGTest.x \
-	    BasicSocketGTest.x \
-	    BasicTCPSocketGTest.x \
-	    BasicConsoleGTest.x 	   
-
-	
-	
-
+        InternetServiceGTest.x \
+	BasicSocketGTest.x \
+	BasicTCPSocketGTest.x \
+   	BasicUDPSocketGTest.x \
+	BasicConsoleGTest.x
 
 PACKAGE=
 ROOT_DIR=../..

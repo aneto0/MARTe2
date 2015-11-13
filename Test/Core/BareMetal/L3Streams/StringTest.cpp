@@ -60,7 +60,7 @@ bool StringTest::TestDefaultConstructor() {
         return false;
     }
 
-    if (string.Buffer() != NULL) {
+    if (string.Buffer() == NULL) {
         return false;
     }
 
@@ -438,7 +438,7 @@ bool StringTest::TestCopyOperator_CCString(const char8 * input) {
 
 }
 
-bool StringTest::TestCopyOperator_StreamString(const char8 * input) {
+bool StringTest::TestCopyOperator_String(const char8 * input) {
 
     String inputString = input;
 
@@ -475,7 +475,7 @@ bool StringTest::TestConcatenateOperator_CCString(const char8 *input) {
     return StringHelper::Compare(test, string.Buffer()) == 0;
 }
 
-bool StringTest::TestConcatenateOperator_StreamString(const char8 *input) {
+bool StringTest::TestConcatenateOperator_String(const char8 *input) {
     const char8 *initial = "DUMMY";
     String string = initial;
     String toConcatenate = input;
@@ -500,7 +500,7 @@ bool StringTest::TestIsEqualOperator_CCString(const char8 *input) {
     return string == input;
 }
 
-bool StringTest::TestIsEqualOperator_StreamString(const char8 *input) {
+bool StringTest::TestIsEqualOperator_String(const char8 *input) {
     String inputString = input;
     String string = inputString;
 
@@ -528,7 +528,7 @@ bool StringTest::TestIsDifferentOperator_CCString(const char8 *input) {
 
 }
 
-bool StringTest::TestIsDifferentOperator_StreamString(const char8 *input) {
+bool StringTest::TestIsDifferentOperator_String(const char8 *input) {
     String inputString = input;
     String string = inputString;
 

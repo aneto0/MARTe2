@@ -57,11 +57,11 @@ bool Copy(void* const destination,
     if ((source != NULL) && (destination != NULL)) {
         ret = memcpy(destination, source, static_cast<osulong>(size)) != NULL;
         if (!ret) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: memcpy()");
+            REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memcpy()");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
 
     return ret;
@@ -87,7 +87,7 @@ int32 Compare(const void * const mem1,
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
 
     return ret;
@@ -104,7 +104,7 @@ const void* Search(const void * const mem,
 
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
 
     return ret;
@@ -120,11 +120,11 @@ bool Move(void * const destination,
 
         ret = memmove(destination, source, static_cast<osulong>(size)) != NULL;
         if (!ret) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: memmove()");
+            REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memmove()");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
     return ret;
 
@@ -138,11 +138,11 @@ bool Set(void * const mem,
 
         ret = memset(mem, c, static_cast<osulong>(size)) != NULL;
         if (!ret) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: memset()");
+            REPORT_ERROR(ErrorManagement::OSError, "MemoryOperationsHelper: Failed memset()");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: invalid input arguments");
+        REPORT_ERROR(ErrorManagement::FatalError, "MemoryOperationsHelper: Invalid input arguments");
     }
 
     return ret;

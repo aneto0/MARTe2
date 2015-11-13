@@ -60,8 +60,6 @@ TEST(InternetServiceGTest,TestSearchByName) {
             {"http", "tcp", 80, "tcp", true},
             {"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
-            {"smtp", "udp", 25, "udp", false},
-            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -78,8 +76,6 @@ TEST(InternetServiceGTest,TestSearchByPort) {
             {"http", "tcp", 80, "tcp", true},
             {"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
-            {"smtp", "udp", 25, "udp", false},
-            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -95,8 +91,6 @@ TEST(InternetServiceGTest,TestPort) {
             {"http", "tcp", 80, "tcp", true},
             {"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
-            {"smtp", "udp", 25, "udp", false},
-            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -112,8 +106,6 @@ TEST(InternetServiceGTest,TestName) {
             {"http", "tcp", 80, "tcp", true},
             {"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
-            {"smtp", "udp", 25, "udp", false},
-            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 
@@ -130,8 +122,6 @@ TEST(InternetServiceGTest,TestProtocol) {
             {"http", "tcp", 80, "tcp", true},
             {"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
-            {"smtp", "udp", 25, "udp", false},
-            {"git", "tcp", 9418, "tcp", true},
             {0,0,0,0,0}
     };
 

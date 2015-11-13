@@ -49,8 +49,6 @@ namespace MARTe {
 /**
  * @brief Buffered stream implementation (double buffer).
  * @details This class offers a buffering mechanism for character streams.
- * It supplements two independent low-level RawStreams (which implement the
- * low-level calls such as Read, Write, ...) with a buffering scheme.
  */
 class DLL_API DoubleBufferedStream: public BufferedStreamI, public OperatingSystemCallbacksI {
 

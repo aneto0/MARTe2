@@ -78,7 +78,7 @@ bool BasicSocket::SetBlocking(const bool flag) {
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Error: The socket handle is invalid");
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
     }
     return (ret >= 0);
 }

@@ -31,6 +31,7 @@
 #include "ClassRegistryDatabase.h"
 #include "ClassRegistryItem.h"
 #include "FastPollingMutexSem.h"
+#include "ErrorManagement.h"
 
 namespace MARTe {
 /*---------------------------------------------------------------------------*/
@@ -89,6 +90,9 @@ void ClassRegistryItem::IncrementNumberOfInstances() {
 void ClassRegistryItem::DecrementNumberOfInstances() {
     if (classRegistryItemMuxSem.FastLock() == ErrorManagement::NoError) {
         numberOfInstances--;
+    }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "ClassRegistryItem: Failed FastLock()");
     }
     classRegistryItemMuxSem.FastUnLock();
 }

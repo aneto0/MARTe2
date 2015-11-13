@@ -44,23 +44,46 @@ namespace MARTe {
 
 String::String() :
         BufferedStreamI() {
+    //Initialise and terminate an empty string
+    bool ret;
+    ret = buffer.SetBufferAllocationSize(0u);
+
+    if (!ret) {
+        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed initialization of the String buffer during construction.");
+    }
 }
 
 String::String(const char8 * const initialisationString) :
         BufferedStreamI() {
+    //Initialise and terminate an empty string
+    bool ret;
+    ret = buffer.SetBufferAllocationSize(0u);
+
+    if (!ret) {
+        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed initialization of the String buffer during construction.");
+    }
+
     if (initialisationString != static_cast<const char8 *>(NULL)) {
         if (!Set(initialisationString)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed in the Set function");
+            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed Set() function");
         }
     }
 }
 
-/*lint -e{1738} . Justification: StreamaI is only an interface there is nothing to be copied. */
+/*lint -e{1738} . Justification: StreamI is only an interface there is nothing to be copied. */
 String::String(const String &toCopy) :
         BufferedStreamI() {
+    //Initialise and terminate an empty string
+    bool ret;
+    ret = buffer.SetBufferAllocationSize(0u);
+
+    if (!ret) {
+        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed initialization of the String buffer during construction.");
+    }
+
     if (&toCopy != this) {
         if (!Set(toCopy)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed in the Set function");
+            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed Set() function");
         }
     }
 }
@@ -127,7 +150,7 @@ bool String::Seek(const uint64 pos) {
     uint32 usedSize = buffer.UsedSize();
     if (pos > usedSize) {
         if (!buffer.Seek(usedSize)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed in the buffer Seek function");
+            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed IOBuffer::Seek() function");
         }
         retval = false;
     }
@@ -154,7 +177,7 @@ bool String::CanSeek() const {
 bool String::Append(const char8 c) {
     bool ret = false;
     if (!buffer.Seek(buffer.UsedSize())) {
-        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed in the buffer Seek function");
+        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed IOBuffer::Seek() function");
     }
     else {
         ret = buffer.PutC(c);
@@ -175,7 +198,7 @@ bool String::Append(const char8 * const s) {
     if (s != NULL) {
         uint32 size = StringHelper::Length(s);
         if (!buffer.Seek(buffer.UsedSize())) {
-            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed in the buffer Seek function");
+            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed IOBuffer::Seek() function");
         }
         else {
             ret = buffer.Write(s, size);
@@ -197,7 +220,7 @@ bool String::Set(const char8 * const s) {
 bool String::Append(const String &s) {
     bool ret = false;
     if (!buffer.Seek(buffer.UsedSize())) {
-        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed in the buffer Seek function");
+        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed IOBuffer::Seek() function");
     }
     else {
         uint32 size = s.buffer.UsedSize();

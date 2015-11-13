@@ -82,7 +82,6 @@ CharBuffer::CharBuffer(const uint32 allocationGranularity) {
             granularity <<= 1u;
         }
 
-
         // sets the allocation granularity mask
         allocationGranularityMask = ~(granularity - 1u);
     }
@@ -129,6 +128,9 @@ bool CharBuffer::SetBufferSize(const uint32 desiredSize) {
     if (desiredSize > allocationBoundary) {
         ok = false;
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "CharBuffer: It is not possible allocate more than 2^32-1 bytes");
+    }
 
     if (ok) {
         // Increase up to granularity boundaries
@@ -151,6 +153,7 @@ bool CharBuffer::SetBufferSize(const uint32 desiredSize) {
         else {
             bufferSize = 0u;
             ok = false;
+            REPORT_ERROR(ErrorManagement::FatalError, "CharBuffer: Failed HeapManager::Malloc() or HeapManager::Realloc()");
         }
     }
     return ok;
