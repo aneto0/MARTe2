@@ -34,6 +34,7 @@
 
 #include "GeneralDefinitions.h"
 #include "TimeoutType.h"
+#include "HandleI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -43,20 +44,105 @@
 
 namespace MARTe {
 
+    /**
+     * @brief Select implementation OS independent.
+     * @details The Select class provides a set of functions to monitor several sockets events at the same time.
+     * The class allows to add, remove or clear all sockets in read, write or exception mode. When the desired sockets are chosen the WaitUtil()
+     * start to monitoring the sockets until an even occurs. The IsSet() can be used to know which event was triggered.
+     */
     class DLL_API Select {
     public:
         /**
          * @Brief Default constructor
          */
         Select();
+        /**
+         * @brief Default destructor.
+         */
+        void ~Select();
 
-        bool AddReadHandle(const StreamI &stream);
-        bool AddWriteHandle(const StreamI &stream);
-        bool AddExceptionHandle(const StreamI &stream);
-        bool RemoveReadHandle(const StreamI &stream);
-        bool RemoveWriteHandle(const StreamI &stream);
-        bool RemoveExceptionHandle(const StreamI &stream);
-        bool ClearAllHandle();
+        /**
+         * @brief Adds a handle to be monitored in the read mode.
+         * @param[in] handle indicates the handle to be added.
+         * @pre
+         *     The handle must be valid
+         *     The handle has not to be included previously.
+         * @return True if the handle is added to be monitored.
+         */
+        bool AddReadHandle(const HandleI &handel);
+
+        /**
+         * @brief Adds a handle to be monitored in the write mode.
+         *          * @param[in] handle indicates the handle to be added.
+         * @pre
+         *     The handle must be valid &&
+         *     The handle has not to be included previously.
+         * @return True if the handle is added to be monitored.
+         */
+        bool AddWriteHandle(const HandleI &handel);
+
+        /**
+         * @brief Adds a handle to be monitored in the exception mode.
+         * @param[in] handle indicates the handle to be added.
+         * @pre
+         *     The handle must be valid &&
+         *     The handle has not to be included previously.
+         * @return True if the handle is added to be monitored.
+         */
+        bool AddExceptionHandle(const HandleI &handel);
+
+        /**
+         * @brief Removes a handle from being monitored in the read mode.
+         * @param[in] handle indicates the handle to be removed.
+         * @pre
+         *     The handle must be valid &&
+         *     The handle must be included previously.
+         * @return True if the handle is removed from being monitored.
+         */
+        bool RemoveReadHandle(const HandleI &handel);
+
+        /**
+         * @brief Removes a handle from being monitored in the write removed.
+         * @param[in] handle indicates the handle to be added.
+         * @pre
+         *     The handle must be valid &&
+         *     The handle must be included previously.
+         * @return True if the handle is removed from being monitored.
+         */
+        bool RemoveWriteHandle(const HandleI &handel);
+
+        /**
+         * @brief Removes a handle from being monitored in the exception mode.
+         * @param[in] handle indicates the handle to be removed.
+         * @pre
+         *     The handle must be valid &&
+         *     The handle must be included previously.
+         * @return True if the handle is removed from being monitored.
+         */
+        bool RemoveExceptionHandle(const HandleI &handel);
+
+        /**
+         * @brief Removes all handles from being monitored in all modes.
+         * @pre
+         *     true
+         * @post
+         *    !IsSet()
+         * @return True if the handle is removed from being monitored.
+         */
+        void ClearAllHandle();
+
+        /**
+         * @brief Queries if the handle is set in one of the three modes.
+         * @param[in] handle indicates the handle to be search for.
+         * @return True if the handle is set.
+         */
+        bool IsSet(const HandleI &handel);
+
+        /**
+         * @brief Blocks until an event occurs or the msecTimeout unblocks
+         * @param[in] msecTimeout is the maximum time waiting,
+         * @return -1 if it fails, 0 if the msecTimeout is reached or the sum of occurrences happened, otherwise.
+         */
         int32 WaitUntil(TimeoutType msecTimeout = TTInfiniteWait);
 
     private:

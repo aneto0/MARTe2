@@ -52,9 +52,9 @@ Select::Select() {
     highestHandle = -1;
 }
 
-bool Select::AddReadHandle(const StreamI &stream) {
+bool Select::AddReadHandle(const HandleI &handle) {
     bool retVal = true;
-    int32 descriptor = stream.GetHandle();
+    int32 descriptor = handle.GetHandle();
     //Check that the descriptor is valid
     if (descriptor >= 0) {
         if (!FD_ISSET(descriptor, &readHandle)) {
@@ -74,9 +74,9 @@ bool Select::AddReadHandle(const StreamI &stream) {
     return retVal;
 }
 
-bool Select::AddWriteHandle(const StreamI &stream) {
+bool Select::AddWriteHandle(const HandleI &handle) {
     bool retVal = true;
-    int32 descriptor = stream.GetHandle();
+    int32 descriptor = handle.GetHandle();
     if (descriptor >= 0) {
         if (!FD_ISSET(descriptor, &writeHandle)) {
             FD_SET(descriptor, &writeHandle);
@@ -95,9 +95,9 @@ bool Select::AddWriteHandle(const StreamI &stream) {
     return retVal;
 }
 
-bool Select::AddExceptionHandle(const StreamI &stream) {
+bool Select::AddExceptionHandle(const HandleI &handle) {
     bool retVal = true;
-    int32 descriptor = stream.GetHandle();
+    int32 descriptor = handle.GetHandle();
     if (descriptor >= 0) {
         if (!FD_ISSET(descriptor, &exceptionHandle)) {
             FD_SET(descriptor, &exceptionHandle);
@@ -116,9 +116,9 @@ bool Select::AddExceptionHandle(const StreamI &stream) {
     return retVal;
 }
 
-bool Select::RemoveReadHandle(const StreamI &stream) {
+bool Select::RemoveReadHandle(const HandleI &handle) {
     bool retVal = true;
-    int32 descriptor = stream.GetHandle();
+    int32 descriptor = handle.GetHandle();
     if (descriptor >= 0) {
         if (!FD_ISSET(descriptor, &readHandle)) {
             FD_CLR(descriptor, &readHandle);
@@ -135,9 +135,9 @@ bool Select::RemoveReadHandle(const StreamI &stream) {
     return retVal;
 }
 
-bool Select::RemoveWriteHandle(const StreamI &stream) {
+bool Select::RemoveWriteHandle(const HandleI &handle) {
     bool retVal = true;
-    int32 descriptor = stream.GetHandle();
+    int32 descriptor = handle.GetHandle();
     if (descriptor >= 0) {
         if (!FD_ISSET(descriptor, &writeHandle)) {
             FD_CLR(descriptor, &writeHandle);
@@ -154,9 +154,9 @@ bool Select::RemoveWriteHandle(const StreamI &stream) {
     return retVal;
 }
 
-bool Select::RemoveExceptionHandle(const StreamI &stream) {
+bool Select::RemoveExceptionHandle(const HandleI &handle) {
     bool retVal = true;
-    int32 descriptor = stream.GetHandle();
+    int32 descriptor = handle.GetHandle();
     if (descriptor >= 0) {
         if (!FD_ISSET(descriptor, &exceptionHandle)) {
             FD_CLR(descriptor, &exceptionHandle);
@@ -173,12 +173,24 @@ bool Select::RemoveExceptionHandle(const StreamI &stream) {
     return retVal;
 }
 
-bool Select::ClearAllHandle() {
+void Select::ClearAllHandle() {
     bool retVal = true;
     FD_ZERO(&readHandle);
     FD_ZERO(&writeHandle);
     FD_ZERO(&exceptionHandle);
     highestHandle = 0;
+    return;
+}
+
+bool Select::IsSet(const HandleI &handle) {
+    int32 descriptor = handle.GetHandle();
+    bool retVal = FD_ISSET(descriptor, &readHandle);
+    if (!retVal) {
+        retVal = FD_ISSET(descriptor, &writeHandle);
+    }
+    if (!retVal) {
+        retVal = FD_ISSET(descriptor, &exceptionHandle);
+    }
     return retVal;
 }
 
