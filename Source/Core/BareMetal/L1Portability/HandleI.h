@@ -46,21 +46,22 @@ public:
     /**
      * Default constructor
      */
-    HandleI();
+    HandleI() {
+    }
 
     /**
      * @brief Default destructor
      */
-    virtual ~HandleI();
+    virtual ~HandleI() {
+    }
 
-    virtual Handle GetHandle()const = 0;
+    virtual Handle GetHandle() const = 0;
 };
 }
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /*HANDLEI_H_ */
-	
+

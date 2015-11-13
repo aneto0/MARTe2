@@ -112,6 +112,10 @@ bool BasicSocket::IsValid() const {
     return (connectionSocket >= 0);
 }
 
+Handle BasicSocket::GetHandle() const {
+    return connectionSocket;
+}
+
 bool BasicSocket::IsBlocking() const {
     return isBlocking;
 }

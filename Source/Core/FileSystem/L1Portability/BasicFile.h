@@ -35,6 +35,7 @@
 
 #include "GeneralDefinitions.h"
 #include "StreamI.h"
+#include "HandleI.h"
 #include "String.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,BasicFileProperties.h)
 
@@ -67,7 +68,7 @@ namespace MARTe {
      * @invariant
      *    Size() >= 0;
      */
-    class DLL_API BasicFile: public StreamI {
+    class DLL_API BasicFile: public StreamI, public HandleI {
 
     public:
 
@@ -346,6 +347,11 @@ namespace MARTe {
          * @brief Queries the pathname of the file
          */
         String GetPathName() const;
+
+        /**
+         * @brief Quieres the handle of the file.
+         */
+        Handle GetHandle() const;
 
     private:
 
