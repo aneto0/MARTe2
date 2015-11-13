@@ -58,6 +58,7 @@ IOBufferIntegerPrint.cpp
 IOBufferFloatPrint.cpp
 DoubleInteger.h
 AdvancedErrorManagement.h
+BasicFile.cpp
 InternetHost.cpp
 BasicSocket.cpp
 InternetService.cpp

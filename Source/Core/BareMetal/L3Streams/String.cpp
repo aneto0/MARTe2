@@ -44,10 +44,25 @@ namespace MARTe {
 
 String::String() :
         BufferedStreamI() {
+    //Initialise and terminate an empty string
+    bool ret;
+    ret = buffer.SetBufferAllocationSize(0u);
+
+    if (!ret) {
+        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed initialization of the String buffer during construction.");
+    }
 }
 
 String::String(const char8 * const initialisationString) :
         BufferedStreamI() {
+    //Initialise and terminate an empty string
+    bool ret;
+    ret = buffer.SetBufferAllocationSize(0u);
+
+    if (!ret) {
+        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed initialization of the String buffer during construction.");
+    }
+
     if (initialisationString != static_cast<const char8 *>(NULL)) {
         if (!Set(initialisationString)) {
             REPORT_ERROR(ErrorManagement::FatalError, "String: Failed Set() function");
@@ -55,9 +70,17 @@ String::String(const char8 * const initialisationString) :
     }
 }
 
-/*lint -e{1738} . Justification: StreamaI is only an interface there is nothing to be copied. */
+/*lint -e{1738} . Justification: StreamI is only an interface there is nothing to be copied. */
 String::String(const String &toCopy) :
         BufferedStreamI() {
+    //Initialise and terminate an empty string
+    bool ret;
+    ret = buffer.SetBufferAllocationSize(0u);
+
+    if (!ret) {
+        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed initialization of the String buffer during construction.");
+    }
+
     if (&toCopy != this) {
         if (!Set(toCopy)) {
             REPORT_ERROR(ErrorManagement::FatalError, "String: Failed Set() function");
