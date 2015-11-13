@@ -53,7 +53,7 @@ public:
      * @brief Deallocates all the contents of the list.
      * @details This functions deletes all the elements of the list, sets its size to 0 and the root element to NULL.
      */
-    virtual void CleanUp();
+    void CleanUp();
 
     /**
      * @brief Resets the list without deleting the objects.

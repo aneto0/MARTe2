@@ -26,6 +26,7 @@
 /*---------------------------------------------------------------------------*/
 #include <fcntl.h>
 #include <sys/time.h>
+#include <errno.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -35,7 +36,6 @@
 #include "HeapManager.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
-#include "errno.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -207,18 +207,21 @@ bool Directory::Create(const bool isFile) {
     return ret;
 }
 
-/*lint -e{9130} -e{9117} [MISRA C++ Rule 5-0-4] [MISRA C++ Rule 5-0-4]. Justification: Operating system APIs are not linted.*/
+/*lint -e{9130} -e{9117} -e{1762} [MISRA C++ Rule 5-0-4] [MISRA C++ Rule 5-0-4] [MISRA C++ Rule 9-3-3].
+ * Justification: Operating system APIs are not linted. In other operating systems Exists() might not be constant.*/
 bool Directory::Exists() {
     struct stat fileStats;
-    uint32 ok = (stat(fname, &fileStats) == 0);
+    bool ok = (stat(fname, &fileStats) == 0);
     bool isDir = S_ISDIR(fileStats.st_mode);
     bool isFile = S_ISREG(fileStats.st_mode);
     return (ok) ? (isDir || isFile) : (false);
 }
 
+/*lint -e{1762} [MISRA C++ Rule 9-3-3] in other operating systems Delete() might not be constant*/
 bool Directory::Delete() {
     bool ok = (fname != NULL_PTR(char8 *));
     if (ok) {
+        /*lint -e{668} fname cannot be NULL (checked in line above)*/
         ok = (remove(fname) == 0);
     }
     return ok;

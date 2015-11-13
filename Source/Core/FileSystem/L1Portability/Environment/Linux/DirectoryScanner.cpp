@@ -48,6 +48,7 @@
 
 namespace MARTe {
 
+/*lint -estring(459, *MARTe::fileFilter*) global variable required for file filtering with scandir in Linux*/
 // This function is called by the scandir and it is used for file filtering
 static char8 *fileFilterSearchMask;
 
@@ -201,9 +202,9 @@ bool DirectoryScanner::Scan(const char8 * const path,
                     break;
                 }
 
-                // refresh the directory size adding the size of the current file
-                //size += entry->Size();
-                if ((StringHelper::Compare(&(namelist[n]->d_name[0]),".")!=0) && (StringHelper::Compare(&(namelist[n]->d_name[0]),"..") != 0)){
+                bool testOneDot = (StringHelper::Compare(&(namelist[n]->d_name[0]), ".") != 0);
+                bool testTwoDots = (StringHelper::Compare(&(namelist[n]->d_name[0]), "..") != 0);
+                if (testOneDot && testTwoDots) {
                     size += entry->GetSize();
                 }
 

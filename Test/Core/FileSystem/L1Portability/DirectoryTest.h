@@ -47,65 +47,93 @@
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
-/** it represents a file or a sub-directory */
+/**
+ * @brief Tests the Directory class.
+ */
 class DirectoryTest {
 
 public:
-    /** constructor */
+    /**
+     * Constructor */
     DirectoryTest();
+    /**
+     * @brief Constructor test
+     * param[in] pathin Content the directory that will create for be tested
+     */
     bool TestDirectoryTest(const char8 * pathin);
 
-    /** */
+    /**
+     * @brief Destructor
+     */
     ~DirectoryTest();
 
     /**
-     * @brief Set this file-directory providing its path.
-     * @param[in] path is the path of the file-directory in input.
-     * @return true if the file-directory is set correctly, false otherwise.
-     * @post
-     *  fname = path
+     * @brief Test to set directory correctly.
      */
     bool TestSetByName_Valid();
+
+    /**
+     * @brief Test to set directory NULL.
+     */
     bool TestSetByName_Invalid();
 
     /**
-     * @brief Retrieve the file-directory name.
+     * @brief Tests the GetName function with an invalid path.
      */
     bool TestGetName_Invalid();
+
+    /**
+     * @brief Tests the GetName with a valid path.
+     */
     bool TestGetName_Valid();
 
     /**
-     * @brief Check if this is a directory.
-     * @return true if this is a directory, false otherwise.
+     * @brief Check if this is a valid directory.
      */
     bool TestIsDirectory_Valid();
+
+    /**
+     * @brief Check if this is a invalid directory.
+     */
     bool TestIsDirectory_Invalid();
 
     /**
-     * @brief Check if this is a file.
-     * @return true if this is a file, false otherwise.
+     * @brief Check if this is a file with a file.
      */
     bool TestIsFile_Yes();
+
+    /**
+     * @brief Check if this is a file with a folder.
+     */
     bool TestIsFile_No();
 
     /**
-     * @brief Retrieve the file-directory size.
-     * @return the file-directory size
+     * @brief Check the size of a directory.
      */
     bool TestGetSize_Dir();
+
+    /**
+     * @brief Check the size of two file with the same length
+     */
     bool TestGetSize_FileCorrect();
+
+    /**
+     * @brief Check the size of two file with different length
+     */
     bool TestGetSize_FileIncorrect();
 
     /**
-     * @brief Retrieve the last write time.
-     * @return the last write time.
+     * @brief Check if the file was wrote one second after without write again
      */
     bool TestGetLastWriteTime();
+
+    /**
+     * @brief Check if the file was wrote one second after write again
+     */
     bool TestGetLastWriteTime_Incorrect();
 
     /**
-     * @brief Retrieve the last access time.
-     * @return the last access time.
+     * @brief Check if the file was read one second after without write again
      */
     bool TestGetLastAccessTime();
     bool TestGetLastAccessTime_Incorrect();
@@ -131,8 +159,6 @@ public:
      * @brief Check if a file-directory exists.
      * @param[in] path is the path of the file-directory to check.
      * @return true if the file-directory exists, false otherwise.
-     * @post
-     *   isFile = true if path refers to a file.
      */
     bool TestExists(const char8 * path,
                     bool isFile);
@@ -152,13 +178,6 @@ public:
      * @brief Delete test directory folder
      */
     bool Delete_Directory();
-
-private:
-    /** the file or directory name */
-    //char8 *fname;
-
-    /** attributes of the file */
-    //DirectoryCore dyrectoryHandle;
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

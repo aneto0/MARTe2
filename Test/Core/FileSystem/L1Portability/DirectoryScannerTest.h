@@ -47,13 +47,19 @@ using namespace MARTe;
 
 class DirectoryScannerTest {
 public:
+    /**
+     * Constructor of DirectoryScannerTest
+     */
     DirectoryScannerTest();
 
+    /**
+     * Destructor of DirectoryScannerTest
+     */
     ~DirectoryScannerTest();
 
     /**
      * @brief Retrieve the size of the scanned directory.
-     * @return uint64 the sum of the contained files / sub-directories sizes.
+     * @return true if the variable private size is equal to sum of the contents of directory.
      */
     bool TestDirectorySize();
 
@@ -61,19 +67,31 @@ public:
      * @brief Scan the files / sub-directories of a specific directory adding them to the list.
      * @param[in] path is the path of the directory to scan.
      * @param[in] fileMask is shell wildcard pattern to match the desired files / sub-directories.
-     * @param[in] sorter specifies the desired sort of the elements in the list.
-     * @return false in case of errors, true otherwise.
+     * @return true if Scanner found the elements of directory concrete.
      */
-    bool TestScan(const char8 * path, const char8 *fileMask = "*");
-    bool TestScan_NULL(const char8 * path, const char8 *fileMask = "*");
-    bool TestScan_NoExist(const char8 * path, const char8 *fileMask = "*");
+    bool TestScan(const char8 * path,
+                  const char8 *fileMask = "*");
+    bool TestScan_NULL(const char8 * path,
+                       const char8 *fileMask = "*");
+    bool TestScan_NoExist(const char8 * path,
+                          const char8 *fileMask = "*");
 
+    /**
+     * @brief Sorter specifies the desired sort of the elements in the list.
+     * return true if the order of elements in the list are correct.
+     */
     bool TestScan_Filter();
+
+    /**
+     * @brief Is shell wildcard pattern to match the desired files / sub-directories.
+     * return true if the search was successful.
+     */
     bool TestScan_Mask();
 
     /**
      * @brief Retrieve the directory path.
-     * @return char8* the path of the set directory.
+     * @param[in] pathin is the path to directory.
+     * @return true if basePath is equal to pathin directory.
      */
     bool TestBasePath(const char8 * pathin);
 
