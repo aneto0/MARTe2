@@ -168,8 +168,9 @@ static inline void BSToBS(T * const & destination,
     // merge into sourceCopy
     sourceCopy |= destinationMask;
     // finally write result
-    *destination = sourceCopy;
-
+    uint32 addByte = ((destinationBitSize % 8u) == 0u) ? 0u : 1u;
+    // copy only the correct size
+    MemoryOperationsHelper::Copy(destination, &sourceCopy, (destinationBitSize / 8u) + addByte);
 }
 
 /**

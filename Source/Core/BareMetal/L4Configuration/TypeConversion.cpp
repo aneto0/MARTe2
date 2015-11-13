@@ -78,25 +78,21 @@ bool StringToBitSet(const char8* source,
         if (isSigned) {
             int8 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<int8*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<int8*>(dest)) = tempDest;
             }
         }
         else {
             uint8 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *dest = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *dest = tempDest;
             }
         }
     }
@@ -104,25 +100,21 @@ bool StringToBitSet(const char8* source,
         if (isSigned) {
             int16 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<int16*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<int16*>(dest)) = tempDest;
             }
         }
         else {
             uint16 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<uint16*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<uint16*>(dest)) = tempDest;
             }
         }
     }
@@ -132,25 +124,21 @@ bool StringToBitSet(const char8* source,
             int32 tempDest;
             ret = StringToInteger(source, tempDest);
 
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<int32*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<int32*>(dest)) = tempDest;
             }
         }
         else {
             uint32 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<uint32*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<uint32*>(dest)) = tempDest;
             }
         }
     }
@@ -158,25 +146,21 @@ bool StringToBitSet(const char8* source,
         if (isSigned) {
             int64 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<int64*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<int64*>(dest)) = tempDest;
             }
         }
         else {
             uint64 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<uint64*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<uint64*>(dest)) = tempDest;
             }
         }
     }
@@ -390,13 +374,11 @@ bool FloatToBitSet(float32 *source,
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
 
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<int8*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<int8*>(dest)) = tempDest;
             }
         }
         else {
@@ -408,13 +390,11 @@ bool FloatToBitSet(float32 *source,
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
 
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *dest = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *dest = tempDest;
             }
         }
 
@@ -428,13 +408,11 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<int16*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<int16*>(dest)) = tempDest;
             }
         }
         else {
@@ -445,13 +423,11 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<uint16*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<uint16*>(dest)) = tempDest;
             }
         }
     }
@@ -464,13 +440,11 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<int32*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<int32*>(dest)) = tempDest;
             }
         }
         else {
@@ -481,13 +455,11 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<uint32*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<uint32*>(dest)) = tempDest;
             }
         }
     }
@@ -501,13 +473,11 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<int64*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<int64*>(dest)) = tempDest;
             }
         }
         else {
@@ -519,13 +489,11 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (ret) {
-                if (destBitShift > 0u) {
-                    ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-                }
-                else {
-                    *(reinterpret_cast<uint64*>(dest)) = tempDest;
-                }
+            if (destBitShift > 0u) {
+                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
+            }
+            else {
+                *(reinterpret_cast<uint64*>(dest)) = tempDest;
             }
         }
     }
@@ -572,6 +540,8 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
     bool ret = false;
 
     if ((sourceDescriptor.type == SignedInteger) || (sourceDescriptor.type == UnsignedInteger)) {
+
+
         if (destinationDescriptor.type == CCString) {
             String tempString;
             ret = tempString.PrintFormatted("%d", &source);
@@ -683,37 +653,32 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
     }
 
     if ((sourceDescriptor.type == CCString) || (sourceDescriptor.type == SString)) {
-        char8* token = static_cast<char8>(NULL);
+        const char8* token = static_cast<char8>(NULL);
         if(sourceDescriptor.type == CCString) {
             token=reinterpret_cast<char8*>(sourcePointer);
         }
         else {
-            token=(reinterpret_cast<String*>(sourcePointer))->BufferReference();
+            token=(reinterpret_cast<String*>(sourcePointer))->Buffer();
         }
         if(destinationDescriptor.type==SignedInteger) {
-
-            ret=StringToBitSet(static_cast<const char8*> (sourcePointer),
+            ret=StringToBitSet(static_cast<const char8*> (token),
                     reinterpret_cast<uint8*>(destinationPointer),
                     static_cast<uint8>(destinationDescriptor.numberOfBits),
                     static_cast<uint8>(destination.GetBitAddress()),true);
         }
         if(destinationDescriptor.type==UnsignedInteger) {
 
-            ret=StringToBitSet(static_cast<const char8*> (sourcePointer),
+            ret=StringToBitSet(static_cast<const char8*> (token),
                     reinterpret_cast<uint8*>(destinationPointer),
                     static_cast<uint8>(destinationDescriptor.numberOfBits),
                     static_cast<uint8>(destination.GetBitAddress()),false);
         }
         if(destinationDescriptor.type==Float) {
             if(destinationDescriptor.numberOfBits==32u) {
-                if(sourceDescriptor.numberOfBits==64u) {
-                    ret=StringToFloat(reinterpret_cast<const char8*>(sourcePointer),*(reinterpret_cast<float32*>(destinationPointer)));
-                }
+                ret=StringToFloat(reinterpret_cast<const char8*>(token),*(reinterpret_cast<float32*>(destinationPointer)));
             }
             if(destinationDescriptor.numberOfBits==64u) {
-                if(sourceDescriptor.numberOfBits==32u) {
-                    ret=StringToFloat(reinterpret_cast<const char8*>(sourcePointer),*(reinterpret_cast<float64*>(destinationPointer)));
-                }
+                ret=StringToFloat(reinterpret_cast<const char8*>(token),*(reinterpret_cast<float64*>(destinationPointer)));
             }
         }
     }
@@ -983,7 +948,6 @@ bool TypeConvert(const AnyType &destination,
                  const AnyType &source) {
     bool ok = true;
     uint32 copySize = 0u;
-
 
 //Source and destination dimensions must be the same
     ok = (destination.GetNumberOfDimensions() == source.GetNumberOfDimensions());
