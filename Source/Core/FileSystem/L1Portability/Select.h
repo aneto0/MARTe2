@@ -41,41 +41,42 @@
 
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT, SelectProperties.h)
 
-namespace MARTe{
+namespace MARTe {
 
-class DLL_API Select {
-public:
-    /**
-     * @Brief Default constructor
-     */
-    Select();
+    class DLL_API Select {
+    public:
+        /**
+         * @Brief Default constructor
+         */
+        Select();
 
-    bool AddReadHandle(const StreamI &stream);
-    bool AddWriteHandle(const StreamI &stream);
-    bool AddExceptionHandle(const StreamI &stream);
-    bool RemoveReadHandle(const StreamI &stream);
-    bool RemoveWriteHandle(const StreamI &stream);
-    bool RemoveExceptionHandle(const StreamI &stream);
-    bool ClearAllHandle();
-    int32 WaitUntil(TimeoutType msecTimeout);
+        bool AddReadHandle(const StreamI &stream);
+        bool AddWriteHandle(const StreamI &stream);
+        bool AddExceptionHandle(const StreamI &stream);
+        bool RemoveReadHandle(const StreamI &stream);
+        bool RemoveWriteHandle(const StreamI &stream);
+        bool RemoveExceptionHandle(const StreamI &stream);
+        bool ClearAllHandle();
+        int32 WaitUntil(TimeoutType msecTimeout = TTInfiniteWait);
 
-private:
-    SetIdentifier readHandle;
-    int32 numberOfSetReadHandle;
-    SetIdentifier writeHandle;
-    int32 numberOfSetWriteHandle;
-    SetIdentifier exceptionsHandle;
-    int32 numberOfSetExceptionsHandle;
-    /* It is the maximum number of file descriptors that a SetIdentifier object can hold information about*/
-    const int32 MAX_numberHandle;
-};
+    private:
+        /*Contains informations about the read handles used in the select. Every AddReadHandle() action an handle informations is added to readHadle.*/
+        SetIdentifier readHandle;
+
+        /*Contains informations about the write handles used in the select. Every AddWriteHandle() action an handle informations is added to writeHandle.*/
+        SetIdentifier writeHandle;
+
+        /*Contains informations about the exceptions handles used in the select. Every AddExceptionHandle() action an handle informations is added to exceptionHandle.*/
+        SetIdentifier exceptionHandle;
+
+        /*It is the highest number of a handle that readHandle, writeHandle or exceptionHandle contains*/
+        int32 highestHandle;
+    };
 }
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* _SELECT_H_ */
-	
+

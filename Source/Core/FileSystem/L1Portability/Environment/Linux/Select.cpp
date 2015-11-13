@@ -45,33 +45,30 @@
 
 namespace MARTe {
 
-Select::Select() :
-        MAX_numberHandle(FD_SETSIZE) {
+Select::Select() {
     FD_ZERO(&readHandle);
-    numberOfSetReadHandle = 0;
     FD_ZERO(&writeHandle);
-    numberOfSetWriteHandle = 0;
-    FD_ZERO(&exceptionsHandle);
-    numberOfSetExceptionsHandle = 0;
+    FD_ZERO(&exceptionHandle);
+    highestHandle = -1;
 }
 
 bool Select::AddReadHandle(const StreamI &stream) {
     bool retVal = true;
-    //verify that another handle can be added
-    if (numberOfSetReadHandle < MAX_numberHandle) {
-        int32 descriptor = stream.GetHandle();
-        //Check that the descriptor is valid
-        if (descriptor >= 0) {
+    int32 descriptor = stream.GetHandle();
+    //Check that the descriptor is valid
+    if (descriptor >= 0) {
+        if (!FD_ISSET(descriptor, &readHandle)) {
             FD_SET(retVal, &readHandle);
-            numberOfSetReadHandle++;
+            if (descriptor > highestHandle) {
+                highestHandle = descriptor;
+            }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Select::AddReadHandle(). Invalid descriptor.");
-            retVal = false;
+            REPORT_ERROR(ErrorManagement::Information, "Select::AddReadHandle(). The descriptor is still in the readHandle.");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddReadHandle(). readHandle cannot hold more handles.");
+        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddReadHandle(). Invalid descriptor.");
         retVal = false;
     }
     return retVal;
@@ -79,19 +76,20 @@ bool Select::AddReadHandle(const StreamI &stream) {
 
 bool Select::AddWriteHandle(const StreamI &stream) {
     bool retVal = true;
-    if (numberOfSetWriteHandle < MAX_numberHandle) {
-        int32 descriptor = stream.GetHandle();
-        if (descriptor >= 0) {
+    int32 descriptor = stream.GetHandle();
+    if (descriptor >= 0) {
+        if (!FD_ISSET(descriptor, &writeHandle)) {
             FD_SET(descriptor, &writeHandle);
-            numberOfSetWriteHandle++;
+            if (descriptor > highestHandle) {
+                highestHandle = descriptor;
+            }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Select::AddWriteHandle(). Invalid descriptor.");
-            retVal = false;
+            REPORT_ERROR(ErrorManagement::Information, "Select::AddWriteHandle(). The descriptor is still in the writeHandle.");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddWriteHandle(). writeHandle cannot hold more handles.");
+        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddWriteHandle(). Invalid descriptor.");
         retVal = false;
     }
     return retVal;
@@ -99,19 +97,20 @@ bool Select::AddWriteHandle(const StreamI &stream) {
 
 bool Select::AddExceptionHandle(const StreamI &stream) {
     bool retVal = true;
-    if (numberOfSetExceptionsHandle < MAX_numberHandle) {
-        int32 descriptor = stream.GetHandle();
-        if (descriptor >= 0) {
-            FD_SET(descriptor, &writeHandle);
-            numberOfSetExceptionsHandle++;
+    int32 descriptor = stream.GetHandle();
+    if (descriptor >= 0) {
+        if (!FD_ISSET(descriptor, &exceptionHandle)) {
+            FD_SET(descriptor, &exceptionHandle);
+            if (descriptor > highestHandle) {
+                highestHandle = descriptor;
+            }
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "Select::AddExceptionHandle(). Invalid descriptor.");
-            retVal = false;
+            REPORT_ERROR(ErrorManagement::Information, "Select::AddExceptionHandle(). The descriptor is still in the exceptionHandle.");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddExceptionHandle(). exceptionHandle cannot hold more handles.");
+        REPORT_ERROR(ErrorManagement::FatalError, "Select::AddExceptionHandle(). Invalid descriptor.");
         retVal = false;
     }
     return retVal;
@@ -121,11 +120,17 @@ bool Select::RemoveReadHandle(const StreamI &stream) {
     bool retVal = true;
     int32 descriptor = stream.GetHandle();
     if (descriptor >= 0) {
-        FD_CLR(descriptor, &readHandle);
-        numberOfSetReadHandle--;
+        if (!FD_ISSET(descriptor, &readHandle)) {
+            FD_CLR(descriptor, &readHandle);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::Information, "Select::RemoveReadHandle(). The descriptor is not in the readHandle.");
+            return false;
+        }
     }
     else {
         retVal = false;
+        REPORT_ERROR(ErrorManagement::Information, "Select::RemoveReadHandle(). The descriptor is invalid.");
     }
     return retVal;
 }
@@ -134,11 +139,17 @@ bool Select::RemoveWriteHandle(const StreamI &stream) {
     bool retVal = true;
     int32 descriptor = stream.GetHandle();
     if (descriptor >= 0) {
-        FD_CLR(descriptor, &writeHandle);
-        numberOfSetWriteHandle--;
+        if (!FD_ISSET(descriptor, &writeHandle)) {
+            FD_CLR(descriptor, &writeHandle);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::Information, "Select::RemoveWriteHandle(). The descriptor is not in the writeHandle.");
+            return false;
+        }
     }
     else {
         retVal = false;
+        REPORT_ERROR(ErrorManagement::Information, "Select::RemoveWriteHandle(). The descriptor is invalid.");
     }
     return retVal;
 }
@@ -147,11 +158,17 @@ bool Select::RemoveExceptionHandle(const StreamI &stream) {
     bool retVal = true;
     int32 descriptor = stream.GetHandle();
     if (descriptor >= 0) {
-        FD_CLR(descriptor, &exceptionsHandle);
-        numberOfSetExceptionsHandle--;
+        if (!FD_ISSET(descriptor, &exceptionHandle)) {
+            FD_CLR(descriptor, &exceptionHandle);
+        }
+        else {
+            REPORT_ERROR(ErrorManagement::Information, "Select::RemoveExceptionHandle(). The descriptor is not in the exceptionHandle.");
+            return false;
+        }
     }
     else {
         retVal = false;
+        REPORT_ERROR(ErrorManagement::Information, "Select::RemoveExceptionHandle(). The descriptor is invalid.");
     }
     return retVal;
 }
@@ -159,27 +176,17 @@ bool Select::RemoveExceptionHandle(const StreamI &stream) {
 bool Select::ClearAllHandle() {
     bool retVal = true;
     FD_ZERO(&readHandle);
-    numberOfSetReadHandle = 0;
     FD_ZERO(&writeHandle);
-    numberOfSetWriteHandle = 0;
-    FD_ZERO(&exceptionsHandle);
-    numberOfSetExceptionsHandle = 0;
+    FD_ZERO(&exceptionHandle);
+    highestHandle = 0;
     return retVal;
 }
 
 int32 Select::WaitUntil(TimeoutType timeout) {
-    int32 maximum = numberOfSetReadHandle;
-    //Calculate the maximum
-    if (numberOfSetWriteHandle > maximum) {
-        maximum = numberOfSetWriteHandle;
-    }
-    if (numberOfSetExceptionsHandle > maximum) {
-        maximum = numberOfSetExceptionsHandle;
-    }
     struct timeval timeoutLinux;
     timeoutLinux.tv_usec = static_cast<int64>(timeout.GetTimeoutMSec()) * 1000;
-    return (select(maximum + 1, &readHandle, &writeHandle, &exceptionsHandle, &timeoutLinux));
+    return (select(highestHandle + 1, &readHandle, &writeHandle, &exceptionHandle, &timeoutLinux));
 }
 
-}
+}/*End namespace MARTe*/
 
