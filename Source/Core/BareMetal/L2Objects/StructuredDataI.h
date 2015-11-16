@@ -40,65 +40,134 @@
 namespace MARTe {
 class Reference;
 /**
- * @brief TODO
- * @details TODO
+ * @brief Interface definition for any database that can store and retrieve AnyType values.
+ * @details Classes that implement this interface are capable of storing and retrieving,
+ * against any given name, data that is represented as an AnyType.
+ * Irrespectively of the interface the implementation shall support the concepts of navigable nodes and leafs
+ * and shall support the following features:
+ *
+ * - Nodes shall be identified by a name;
+ * - Leafs shall be identified by a name;
+ * - One node may contain one or more nodes;
+ * - One node may contain one or more leafs;
+ * - One node shall not contain any AnyType value;
+ * - One leaf shall contain one, and only one, AnyType value;
+ * - Leafs shall not contain nodes;
+ * - A write operation shall create a new leaf;
+ * - A read operation shall be performed in an existing leaf;
+ * - The database shall know at any time what is the current node (i.e. the node against which the latest Move or
+ * Create operation was performed).
  */
 class StructuredDataI {
 public:
     /**
-     * TODO
+     * Default destructor. NOOP.
+     */
+    inline virtual ~StructuredDataI();
+
+    /**
+     * @brief Reads a previously stored AnyType.
+     * @param[in] name the name of the leaf used to store the AnyType \a value.
+     * @param[out] value the read AnyType will be stored in this parameter. If the AnyType
+     * cannot be successfully read its value will be set to VoidType and the function will return false.
+     * @return true if the AnyType is successfully read.
      */
     virtual bool Read(const char * const name,
                       const AnyType &value) = 0;
 
     /**
-     * TODO
+     * @brief Gets the type of a previously stored AnyType.
+     * @param[in] name the name of the leaf used to store the AnyType \a value.
+     * @return the type of the stored AnyType or VoidType if this does not exist.
      */
     virtual AnyType GetType(const char * const name) = 0;
 
     /**
-     * TODO
+     * @brief Writes an AnyType against the provided \a name.
+     * @param[in] name the name of the leaf against which the AnyType will be stored.
+     * @param[in] value the AnyType to store.
+     * @return true if the AnyType is successfully stored.
      */
     virtual bool Write(const char * const name,
                        const AnyType &value) = 0;
 
     /**
-     * TODO
+     * @brief Copies the database from the current node to the provided destination.
+     * @param[in] destination where the database will be coppied to.
+     * @return if the copy is successful.
      */
     virtual bool Copy(StructuredDataI &destination) = 0;
 
     /**
-     * TODO
+     * @brief Adds a node to the current node.
+     * @param[in] node a reference to the node to add.
+     * @return true if the node is successfully added.
+     * @post
+     *   If successful: the current node will be node
+     *   If unsuccessful: the current node will not be changed
      */
     virtual bool AddToCurrentNode(Reference node) = 0;
 
     /**
-     * TODO
+     * @brief Moves the current node to the root node.
+     * @return true if the move is successful and the current node is now the root node.
      */
     virtual bool MoveToRoot() = 0;
 
     /**
-     * TODO
+     * @brief Moves to the generations-th node containing this node.
+     * @param[in] generations number of parent nodes to climb.
+     * @return true if the move is successful and the current node is now the parent node which is n-generations above.
      */
     virtual bool MoveToAncestor(uint32 generations) = 0;
 
     /**
-     * TODO. Delete empty nodes?
+     * @brief Moves the current node to a new node address specified by an absolute path.
+     * @param[in] path a path with the node address.
+     * @return true if the move was successful and the current node is the node described by \a path. If unsuccessful the current node
+     * is not changed.
      */
-    virtual bool Move(const char * const path,
-                      bool relative) = 0;
+    virtual bool MoveAbsolute(const char * const path) = 0;
 
     /**
-     * TODO
+     * @brief Moves the current node to an address specified by a path relative to the current node address.
+     * @param[in] path a path with the node address.
+     * @return true if the move was successful and the current node is the node described by \a path. If unsuccessful the current node
+     * is not changed.
      */
-    virtual bool CreateNodes(const char * const path,
-                             bool relative) = 0;
+    virtual bool MoveRelative(const char * const path) = 0;
+
+    /**
+     * @brief Create a new series of nodes based on the provided absolute path.
+     * @param[in] path the path of nodes to be created.
+     * @return true if the nodes were successfully created.
+     * @post
+     *   If successful: the current node will be the last node specified in the path.
+     *   If unsuccessful: the current node will not be changed.
+     */
+    virtual bool CreateNodesAbsolute(const char * const path) = 0;
+
+    /**
+     * @brief Create a new series of nodes based on the provided relative path.
+     * @param[in] path the path of nodes to be created, relative to the current node.
+     * @return true if the nodes were successfully created.
+     * @post
+     *   If successful: the current node will be the last node specified in the path.
+     *   If unsuccessful: the current node will not be changed.
+     */
+    virtual bool CreateNodesRelative(const char * const path) = 0;
 
 };
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+namespace MARTe {
+StructuredDataI::~StructuredDataI() {
+
 }
+}
+
 #endif /* CONFIGURATION_DATABASE_H_ */
 
