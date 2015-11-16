@@ -305,6 +305,30 @@ TEST(TypeConversionGTest,TestCCStringToFloat64) {
 }
 
 
+
+TEST(TypeConversionGTest,TestCCStringToString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,String> table[]={
+            {"Hello","Hello", true},
+            {"123.12345","123.12345", true},
+            {"","", true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(TypeConversionGTest,TestStringToString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<String,String> table[]={
+            {"Hello","Hello", true},
+            {"123.12345","123.12345", true},
+            {"","", true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
 TEST(TypeConversionGTest,TestSStringToInt8) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<String,int8> table[]={
@@ -1635,3 +1659,556 @@ TEST(TypeConversionGTest,TestUInt64ToFloat64) {
 }
 
 /////////////////////////////////////////////////////////////////
+
+
+TEST(TypeConversionGTest,TestFloat32ToInt8) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,int8> table[]={
+            {1.9,2, true},
+            {126.5, 126, true},
+            {126.51, 127, true},
+            {127.999, 127, true},
+            {127.49, 127, true},
+            {127.51, 127, true},
+            {128.0, 127, true},
+            {-1.0, -1, true},
+            {-127.5,-127,true},
+            {-127.51, -128, true},
+            {-128.9, -128, true},
+            {-129.0, -128, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+TEST(TypeConversionGTest,TestFloat32ToUInt8) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,uint8> table[]={
+            {1.9,2, true},
+            {255.0, 255, true},
+            {254.499, 254, true},
+            {254.5001, 255, true},
+            {255.99, 255, true},
+            {256.0, 255, true},
+            {-1E-9, 0, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+/////////////////////////////////////////////////////////////////
+
+
+TEST(TypeConversionGTest,TestFloat32ToInt16) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,int16> table[]={
+            {1.9,2, true},
+            {32766.5, 32766, true},
+            {32766.51, 32767, true},
+            {32767.999, 32767, true},
+            {32767.49, 32767, true},
+            {32767.51, 32767, true},
+            {32768.0, 32767, true},
+            {-1.0, -1, true},
+            {-32767.5,-32767,true},
+            {-32767.51, -32768, true},
+            {-32768.9, -32768, true},
+            {-32769.0, -32768, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+TEST(TypeConversionGTest,TestFloat32ToUInt16) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,uint16> table[]={
+            {1.9,2, true},
+            {65535.0, 65535, true},
+            {65534.499, 65534, true},
+            {65534.505, 65535, true},
+            {65535.99, 65535, true},
+            {65536.0, 65535, true},
+            {-1E-9, 0, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+/////////////////////////////////////////////////////////////////
+
+
+TEST(TypeConversionGTest,TestFloat32ToInt32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,int32> table[]={
+            {1.9,2, true},
+            // precision lost!!
+            {214748364.0f, 214748368, true},
+            // precision lost!!
+            {2147483646.5f, 2147483647, true},
+            {-1.0, -1, true},
+            {-2147483647.5,-2147483648,true},
+            {-2147483649.0, -2147483648, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+TEST(TypeConversionGTest,TestFloat32ToUInt32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,uint32> table[]={
+            {1.9,2, true},
+            //loss of precision !
+            {4294967295.0, 4294967295, true},
+            {4294967294.499, 4294967295, true},
+            {4294967294.505, 4294967295, true},
+            {4294967295.99, 4294967295, true},
+            {4294967296.0,4294967295, true},
+            {65536.0, 65536, true},
+            {-1E-9, 0, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+/////////////////////////////////////////////////////////////////
+
+
+TEST(TypeConversionGTest,TestFloat32ToInt64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,int64> table[]={
+            {1.9,2, true},
+            {99223372036854775809.0f, 9223372036854775807, true},
+            {99223372036854775807.0f, 9223372036854775807, true},
+            // precision lost!!
+            {9223372036854775807.0f, 9223372036854775807, true},
+            // precision lost!!
+            {9223372036854775806.5f, 9223372036854775807, true},
+            {-1.0, -1, true},
+            // precision lost!!
+            {-9223372036854775807.0,-9223372036854775808,true},
+            // precision lost!!
+            {-9223372036854775807.5,-9223372036854775808,true},
+            {-9223372036854775808.0, -9223372036854775808, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(TypeConversionGTest,TestFloat32ToUInt64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,uint64> table[]={
+            {1.9,2, true},
+            {18446744073709551617.0, 18446744073709551615, true},
+            //loss of precision !
+            {18446744073709551615.0, 18446744073709551615, true},
+            {18446744073709551614.499, 18446744073709551615, true},
+            {18446744073709551613.9, 18446744073709551615, true},
+            {-1E-9, 0, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+/////////////////////////////////////////////////////////////////
+
+
+TEST(TypeConversionGTest,TestFloat64ToInt8) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,int8> table[]={
+            {1.9,2, true},
+            {126.5, 126, true},
+            {126.51, 127, true},
+            {127.999, 127, true},
+            {127.49, 127, true},
+            {127.51, 127, true},
+            {128.0, 127, true},
+            {-1.0, -1, true},
+            {-127.5,-127,true},
+            {-127.51, -128, true},
+            {-128.9, -128, true},
+            {-129.0, -128, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+TEST(TypeConversionGTest,TestFloat64ToUInt8) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,uint8> table[]={
+            {1.9,2, true},
+            {255.0, 255, true},
+            {254.499, 254, true},
+            {254.5001, 255, true},
+            {255.99, 255, true},
+            {256.0, 255, true},
+            {-1E-9, 0, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+/////////////////////////////////////////////////////////////////
+
+
+TEST(TypeConversionGTest,TestFloat64ToInt16) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,int16> table[]={
+            {1.9,2, true},
+            {32766.5, 32766, true},
+            {32766.51, 32767, true},
+            {32767.999, 32767, true},
+            {32767.49, 32767, true},
+            {32767.51, 32767, true},
+            {32768.0, 32767, true},
+            {-1.0, -1, true},
+            {-32767.5,-32767,true},
+            {-32767.51, -32768, true},
+            {-32768.9, -32768, true},
+            {-32769.0, -32768, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+TEST(TypeConversionGTest,TestFloat64ToUInt16) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,uint16> table[]={
+            {1.9,2, true},
+            {65535.0, 65535, true},
+            {65534.499, 65534, true},
+            {65534.505, 65535, true},
+            {65535.99, 65535, true},
+            {65536.0, 65535, true},
+            {-1E-9, 0, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+/////////////////////////////////////////////////////////////////
+
+
+TEST(TypeConversionGTest,TestFloat64ToInt32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,int32> table[]={
+            {1.9,2, true},
+            {2147483646.5, 2147483646, true},
+            {-1.0, -1, true},
+            {-2147483647.5,-2147483647,true},
+            {-2147483649.0, -2147483648, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+TEST(TypeConversionGTest,TestFloat64ToUInt32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,uint32> table[]={
+            {1.9,2, true},
+            //loss of precision !
+            {4294967295.0, 4294967295, true},
+            {4294967294.499, 4294967294, true},
+            {4294967294.505, 4294967295, true},
+            {4294967295.99, 4294967295, true},
+            {4294967296.0,4294967295, true},
+            {65536.0, 65536, true},
+            {-1E-9, 0, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+/////////////////////////////////////////////////////////////////
+
+
+TEST(TypeConversionGTest,TestFloat64ToInt64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,int64> table[]={
+            {1.9,2, true},
+            {99223372036854775809.0f, 9223372036854775807, true},
+            {99223372036854775807.0f, 9223372036854775807, true},
+            // precision lost!!
+            {9223372036854775807.0f, 9223372036854775807, true},
+            // precision lost!!
+            {9223372036854775806.5f, 9223372036854775807, true},
+            {-1.0, -1, true},
+            // precision lost!!
+            {-9223372036854775807.0,-9223372036854775808,true},
+            // precision lost!!
+            {-9223372036854775807.5,-9223372036854775808,true},
+            {-9223372036854775808.0, -9223372036854775808, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(TypeConversionGTest,TestFloat64ToUInt64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,uint64> table[]={
+            {1.9,2, true},
+            {18446744073709551617.0, 18446744073709551615, true},
+            //loss of precision !
+            {18446744073709551615.0, 18446744073709551615, true},
+            {18446744073709551614.499, 18446744073709551615, true},
+            {18446744073709551613.9, 18446744073709551615, true},
+            {-1E-9, 0, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+/////////////////////////////////////////////////////////////////
+
+
+
+TEST(TypeConversionGTest,TestFloat32ToFloat32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,float32> table[]={
+            {1.9,1.9, true},
+            {-1.9, -1.9, true},
+            {340282346638528859811704183484516925440.000000,340282346638528859811704183484516925440.000000, true},
+            {-340282346638528859811704183484516925440.000000,-340282346638528859811704183484516925440.000000, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(TypeConversionGTest,TestFloat32ToFloat64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,float64> table[]={
+            {1.5,1.5, true},
+            {-1.5, -1.5, true},
+            {340282346638528859811704183484516925440.000000,340282346638528859811704183484516925440.000000, true},
+            {-340282346638528859811704183484516925440.000000,-340282346638528859811704183484516925440.000000, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(TypeConversionGTest,TestFloat64ToFloat64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,float64> table[]={
+            {1.9,1.9, true},
+            {-1.9, -1.9, true},
+            {179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.000000,179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.000000, true},
+            {-179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.000000,-179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.000000, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+TEST(TypeConversionGTest,TestFloat64ToFloat32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,float32> table[]={
+            {1.5,1.5, true},
+            {-1.5, -1.5, true},
+            {340282346638528859811704183484516925440.000000,340282346638528859811704183484516925440.000000, true},
+            {-340282346638528859811704183484516925440.000000,-340282346638528859811704183484516925440.000000, true},
+
+            // Saturation
+            {340282346638528859811704183484516925480.000000,340282346638528859811704183484516925440.000000, true},
+            {-340282346638528859811704183484516925480.000000,-340282346638528859811704183484516925440.000000, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+TEST(TypeConversionGTest,TestInt8ToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int8,String> table[]={
+            {0,"0",true},
+            {123, "123", true},
+            {-1,"-1", true},
+            {127,"127", true},
+            {-128,"-128", true},
+            {255,"-1",true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+
+TEST(TypeConversionGTest,TestUInt8ToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint8,String> table[]={
+            {123,"123", true},
+            {255,"255", true},
+            {127,"127", true},
+            {-1,"255",true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(TypeConversionGTest,TestInt16ToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int16,String> table[]={
+            {0,"0",true},
+            {123, "123", true},
+            {-1,"-1", true},
+            {32767,"32767", true},
+            {-32768,"-32768", true},
+            {65535,"-1", true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+TEST(TypeConversionGTest,TestUInt16ToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint16,String> table[]={
+            {123,"123", true},
+            {65535,"65535", true},
+            {65536,"0", true},
+            {32767,"32767", true},
+            {-1,"65535",true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+TEST(TypeConversionGTest,TestInt32ToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int32,String> table[]={
+            {0,"0",true},
+            {123, "123", true},
+            {-1,"-1", true},
+            {2147483647,"2147483647", true},
+            {2147483648,"-2147483648", true},
+            {-2147483648,"-2147483648", true},
+            {-2147483649,"2147483647", true},
+            {4294967295,"-1", true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+TEST(TypeConversionGTest,TestUInt32ToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint32,String> table[]={
+            {123,"123", true},
+            {4294967295,"4294967295", true},
+            {4294967296,"0", true},
+            {2147483647,"2147483647", true},
+            {-1,"4294967295",true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+
+TEST(TypeConversionGTest,TestInt64ToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int64,String> table[]={
+            {0,"0",true},
+            {123, "123", true},
+            {-1,"-1", true},
+            {9223372036854775807,"9223372036854775807", true},
+            {9223372036854775808,"-9223372036854775808", true},
+            {-9223372036854775808,"-9223372036854775808", true},
+            {-9223372036854775809,"9223372036854775807", true},
+            {18446744073709551615,"-1", true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+TEST(TypeConversionGTest,TestUInt64ToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint64,String> table[]={
+            {123,"123", true},
+            {18446744073709551615,"18446744073709551615", true},
+            {18446744073709551616,"0", true},
+            {9223372036854775808,"9223372036854775808", true},
+            {-1,"18446744073709551615",true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+TEST(TypeConversionGTest,float32ToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,String> table[]={
+            {123.5,"123.5000", true},
+            {123.12345,"123.1234", true},
+            {123.123456,"123.1235", true},
+            {100,"100.0000", true},
+            {10E+2,"1.000000E+3", true},
+            {12345.678E+2,"1.234568E+6", true},
+            {1E-2,"10.00000E-3", true},
+            {0.1E-2,"1.000000E-3", true},
+            {16E-2,"160.0000E-3", true},
+            {1E+20,"100.0000E+18", true},
+            {1E-7,"100.0000E-9", true},
+            {1E-9,"1.000000E-9", true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+
+
+TEST(TypeConversionGTest,TestFloat64ToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,String> table[]={
+            {123.5,"123.500000000000", true},
+            {123.12345,"123.123450000000", true},
+            {123.123456,"123.123456000000", true},
+            {100,"100.000000000000", true},
+            {10E+2,"1.00000000000000E+3", true},
+            {12345.678E+2,"1.23456780000000E+6", true},
+            {1E-2,"10.0000000000000E-3", true},
+            {0.1E-2,"1.00000000000000E-3", true},
+            {16E-2,"160.000000000000E-3", true},
+            {123E+63,"123.000000000000E+63", true},
+            {123E+83,"12.3000000000000E+84", true},
+            {1E-7,"100.000000000000E-9", true},
+            {1E-9,"1.00000000000000E-9", true},
+            {1E-25,"100.000000000000E-27", true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
+}
+
+
+
+
+
+TEST(TypeConversionGTest,TestInt32ToInt32Vector) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int32[3],int32[3]> table[]={
+            {{1,2,3},{1,2,3}, true},
+            {0,0,0}
+    };
+
+    const uint32 cols=3;
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVector(table,cols));
+}
+
+
+
+
+
+
+
+
+

@@ -72,7 +72,6 @@ OBJSX=TypeConversionGTest.x
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
-        StringGTest.x \
         StreamMemoryReferenceGTest.x \
         BufferedStreamIGTest.x \
         IOBufferGTest.x \

@@ -337,18 +337,35 @@ bool FloatToInteger(FloatType floatNumber,
         IntegerType min = static_cast<IntegerType>(0);
 
         if (isSigned) {
-            Shift::LogicalRightSafeShift(max, 1u);
+            max = Shift::LogicalRightSafeShift(max, 1u);
             min = static_cast<IntegerType>(1) << (sizeof(IntegerType) * 8u - 1u);
         }
 
-        if ((floatNumber > max) || (floatNumber < min)) {
+        if (floatNumber >= max) {
             //TODO Saturation.
+            integerNumber = max;
         }
+        else if (floatNumber <= min) {
+            //TODO Saturation
+            integerNumber = min;
+        }
+        else {
 
-        integerNumber = static_cast<IntegerType>(floatNumber);
+            integerNumber = static_cast<IntegerType>(floatNumber);
 
-        if (((integerNumber - floatNumber) >= 1) || ((integerNumber - floatNumber) <= -1)) {
-            //TODO loss of precision
+            if ((floatNumber - integerNumber) > 0.5) {
+                //approximation
+                if (integerNumber < max) {
+                    integerNumber++;
+                }
+            }
+            else {
+                if ((floatNumber - integerNumber) < -0.5) {
+                    if (integerNumber > min) {
+                        integerNumber--;
+                    }
+                }
+            }
         }
     }
 
@@ -435,6 +452,8 @@ bool FloatToBitSet(float32 *source,
         if (isSigned) {
             int32 tempDest;
             if (sourceBitSize == 32u) {
+                if (*source > 0xffffffff) {
+                }
                 ret = FloatToInteger(*source, tempDest);
             }
             if (sourceBitSize == 64u) {
@@ -500,24 +519,54 @@ bool FloatToBitSet(float32 *source,
     return ret;
 }
 
+template<typename FloatType>
+static bool MinMaxFloat(bool isPositive,
+                        uint8 numberOfBits,
+                        FloatType &number) {
+
+    bool ret = false;
+    if (isPositive) {
+        if (numberOfBits == 4u) {
+            uint32 maxFloat32Mask = 0x7f7fffffu;
+            MemoryOperationsHelper::Copy(&number, &maxFloat32Mask, 4u);
+            ret = true;
+        }
+    }
+    else {
+        if (numberOfBits == 4u) {
+            uint32 maxFloat32Mask = 0xff7fffffu;
+            MemoryOperationsHelper::Copy(&number, &maxFloat32Mask, 4u);
+            ret = true;
+        }
+    }
+    return ret;
+}
+
 template<typename FloatType1, typename FloatType2>
 bool FloatToFloat(FloatType1 source,
                   FloatType2 &destination) {
 
-    bool ret = true;
-    destination = static_cast<FloatType2>(0.0);
-    FloatType2 test = static_cast<FloatType2>(source);
+    bool ret = ((!isNaN(source)) && (!isInf(source)));
+    if (ret) {
+        destination = static_cast<FloatType2>(0.0);
+        FloatType2 test = static_cast<FloatType2>(source);
 
-    if ((isNaN(test)) || (isInf(test))) {
-        ret = false;
-    }
-    else {
-        if (sizeof(FloatType1) > sizeof(FloatType2)) {
-            if (static_cast<FloatType1>(test) != source) {
-                //TODO Loss of precision
+        if ((isNaN(test)) || (isInf(test))) {
+            if (sizeof(FloatType2) < sizeof(FloatType1)) {
+                ret = MinMaxFloat((source > 0.0), sizeof(FloatType2), destination);
+            }
+            else {
+                ret = false;
             }
         }
-        destination = test;
+        else {
+            if (sizeof(FloatType1) > sizeof(FloatType2)) {
+                if (static_cast<FloatType1>(test) != source) {
+                    //TODO Loss of precision
+                }
+            }
+            destination = test;
+        }
     }
     return ret;
 }
@@ -540,20 +589,19 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
     bool ret = false;
 
     if ((sourceDescriptor.type == SignedInteger) || (sourceDescriptor.type == UnsignedInteger)) {
-
-
-        if (destinationDescriptor.type == CCString) {
-            String tempString;
-            ret = tempString.PrintFormatted("%d", &source);
-            if (ret) {
-                ret = StringHelper::Copy(static_cast<char8*>(destinationPointer), tempString.Buffer());
-            }
-        }
+        /*
+         if (destinationDescriptor.type == CCString) {
+         String tempString;
+         ret = tempString.PrintFormatted("%d", &source);
+         if (ret) {
+         ret = StringHelper::Copy(static_cast<char8*>(destinationPointer), tempString.Buffer());
+         }
+         }*/
         if (destinationDescriptor.type == SString) {
             String tempString;
             ret = tempString.PrintFormatted("%d", &source);
             if (ret) {
-                *(static_cast<String*>(destinationPointer)) = tempString.BufferReference();
+                *(static_cast<String*>(destinationPointer)) = tempString;
                 ret = (*(static_cast<String*>(destinationPointer))) == tempString;
             }
         }
@@ -612,23 +660,22 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
     }
 
     if (sourceDescriptor.type == Float) {
-        if (destinationDescriptor.type == CCString) {
-            String tempString;
-            ret = tempString.PrintFormatted("%f", &source);
-            if (ret) {
-                ret = StringHelper::Copy(reinterpret_cast<char8*>(destinationPointer), tempString.Buffer());
-            }
-        }
+        /*   if (destinationDescriptor.type == CCString) {
+         String tempString;
+         ret = tempString.PrintFormatted("%f", &source);
+         if (ret) {
+         ret = StringHelper::Copy(reinterpret_cast<char8*>(destinationPointer), tempString.Buffer());
+         }
+         }*/
         if (destinationDescriptor.type == SString) {
             String tempString;
-            ret = tempString.PrintFormatted("%f", &source);
+            ret = tempString.PrintFormatted("%E", &source);
             if (ret) {
-                *(reinterpret_cast<String*>(destinationPointer)) = tempString.BufferReference();
+                *(reinterpret_cast<String*>(destinationPointer)) = tempString;
                 ret = (*(reinterpret_cast<String*>(destinationPointer))) == tempString;
             }
         }
         if (destinationDescriptor.type == SignedInteger) {
-
             ret = FloatToBitSet(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
                                 reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits),
                                 static_cast<uint8>(destination.GetBitAddress()), true);
@@ -655,30 +702,30 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
     if ((sourceDescriptor.type == CCString) || (sourceDescriptor.type == SString)) {
         const char8* token = static_cast<char8>(NULL);
         if(sourceDescriptor.type == CCString) {
-            token=reinterpret_cast<char8*>(sourcePointer);
+            token=reinterpret_cast<const char8*>(sourcePointer);
         }
         else {
             token=(reinterpret_cast<String*>(sourcePointer))->Buffer();
         }
         if(destinationDescriptor.type==SignedInteger) {
-            ret=StringToBitSet(static_cast<const char8*> (token),
+            ret=StringToBitSet(token,
                     reinterpret_cast<uint8*>(destinationPointer),
                     static_cast<uint8>(destinationDescriptor.numberOfBits),
                     static_cast<uint8>(destination.GetBitAddress()),true);
         }
         if(destinationDescriptor.type==UnsignedInteger) {
 
-            ret=StringToBitSet(static_cast<const char8*> (token),
+            ret=StringToBitSet(token,
                     reinterpret_cast<uint8*>(destinationPointer),
                     static_cast<uint8>(destinationDescriptor.numberOfBits),
                     static_cast<uint8>(destination.GetBitAddress()),false);
         }
         if(destinationDescriptor.type==Float) {
             if(destinationDescriptor.numberOfBits==32u) {
-                ret=StringToFloat(reinterpret_cast<const char8*>(token),*(reinterpret_cast<float32*>(destinationPointer)));
+                ret=StringToFloat(token,*(reinterpret_cast<float32*>(destinationPointer)));
             }
             if(destinationDescriptor.numberOfBits==64u) {
-                ret=StringToFloat(reinterpret_cast<const char8*>(token),*(reinterpret_cast<float64*>(destinationPointer)));
+                ret=StringToFloat(token,*(reinterpret_cast<float64*>(destinationPointer)));
             }
         }
     }
@@ -735,6 +782,7 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
                     if (destination.GetTypeDescriptor().type == SString) {
                         String *streamDest = static_cast<String *>(destination.GetDataPointer());
                         streamDest += idx;
+                        copySize--;
                         ok = streamDest->Write(srcArray, copySize);
                     }
                     else if (destination.GetTypeDescriptor().type == CCString) {
@@ -760,6 +808,7 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
                     else if (destination.GetTypeDescriptor().type == SString) {
                         String *streamDest = static_cast<String *>(destination.GetDataPointer());
                         streamDest += idx;
+                        copySize--;
                         ok = streamDest->Write(srcArray, copySize);
                     }
                     else {
@@ -968,6 +1017,7 @@ bool TypeConvert(const AnyType &destination,
                 //To Stream
                 if (destination.GetTypeDescriptor().type == SString) {
                     String *stream = static_cast<String *>(destination.GetDataPointer());
+                    copySize--;
                     ok = stream->Write(srcString, copySize);
                 } //To CCString
                 else if (destination.GetTypeDescriptor().type == CCString) {
@@ -978,12 +1028,13 @@ bool TypeConvert(const AnyType &destination,
                 }
             } //From CCString
             else if (source.GetTypeDescriptor().type == CCString) {
-                char8 *srcString = static_cast<char8 *>(source.GetDataPointer());
+                const char8 *srcString = static_cast<const char8 *>(source.GetDataPointer());
                 copySize = (StringHelper::Length(srcString) + 1u);
 
                 //To Stream
                 if (destination.GetTypeDescriptor().type == SString) {
                     String *stream = static_cast<String *>(destination.GetDataPointer());
+                    copySize--;
                     ok = stream->Write(srcString, copySize);
                 } //To CString
                 else if (destination.GetTypeDescriptor().type == CCString) {

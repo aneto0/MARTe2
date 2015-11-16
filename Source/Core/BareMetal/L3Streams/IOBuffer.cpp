@@ -439,6 +439,7 @@ static bool PrintToStream(IOBuffer & iobuff,
                     TypeDescriptor newTypeDes(par.GetTypeDescriptor().isConstant, UnsignedInteger, par.GetTypeDescriptor().numberOfBits);
                     AnyType at(newTypeDes, par.GetBitAddress(), static_cast<void *>(&dataPointer));
                     FormatDescriptor newFD = fd;
+                    newFD.binaryNotation = HexNotation;
                     newFD.desiredAction = PrintInteger;
                     ret = PrintToStream(iobuff, at, newFD);
                 }

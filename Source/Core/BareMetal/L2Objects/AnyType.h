@@ -245,6 +245,7 @@ public:
      */
     inline AnyType(const char8 * const p);
 
+
     /**
      * @brief Constructor from Object (or inherited class).
      * @param[in] obj the source Object.
@@ -646,6 +647,8 @@ AnyType::AnyType(const char8 * const p) {
     dataDescriptor.numberOfBits = sizeof(const char8*) * 8u;
     InitDimensions();
 }
+
+
 
 AnyType &AnyType::operator=(const AnyType &src) {
     if (this != &src) {

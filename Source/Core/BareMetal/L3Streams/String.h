@@ -60,7 +60,7 @@ public:
      * @pre
      *   true
      * @post
-     *   Buffer() == NULL &&
+     *   Buffer() != NULL &&
      *   CanRead() &&
      *   CanWrite() &&
      *   CanSeek() &&
@@ -76,7 +76,7 @@ public:
      * @pre
      *   true
      * @post
-     *   Buffer() == NULL &&
+     *   Buffer() != NULL &&
      *   CanRead() &&
      *   CanWrite() &&
      *   CanSeek() &&
@@ -85,13 +85,11 @@ public:
      */
     String(const char8 * const initialisationString);
 
-
     /**
      * @brief Copy Constructor.
      *
      */
     String(const String &toCopy);
-
 
     /**
      * @brief Destructor
@@ -126,7 +124,6 @@ public:
     virtual bool Write(const char8 * const input,
                        uint32 & size);
 
-
     /**
      * @brief Default implementation for buffered streams: calls StreamI::Read(*)
      * with infinite timeout.
@@ -156,7 +153,6 @@ public:
      * @return true.
      */
     virtual bool CanRead() const;
-
 
     /**
      * @brief Queries if seek operations can be performed on the stream.
@@ -200,8 +196,6 @@ public:
      * @return true if successful. false otherwise.
      */
     virtual bool SetSize(const uint64 size);
-
-
 
     /*---------------------------------------------------------------------------*/
 

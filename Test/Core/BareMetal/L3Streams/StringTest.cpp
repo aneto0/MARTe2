@@ -60,7 +60,7 @@ bool StringTest::TestDefaultConstructor() {
         return false;
     }
 
-    if (string.Buffer() != NULL) {
+    if (string.Buffer() == NULL) {
         return false;
     }
 

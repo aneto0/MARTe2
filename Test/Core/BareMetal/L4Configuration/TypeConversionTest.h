@@ -52,6 +52,9 @@ public:
     template<typename T1, typename T2>
     bool TestTypeConvert(const TypeToTypeTableTest<T1, T2>* table);
 
+    template<typename T1, typename T2>
+    bool TestTypeConvertVector(const TypeToTypeTableTest<T1, T2>* table,
+                               uint32 cols);
 };
 
 /*---------------------------------------------------------------------------*/
@@ -66,16 +69,39 @@ bool TypeConversionTest::TestTypeConvert(const TypeToTypeTableTest<T1, T2>* tabl
         T2 result = table[i].result;
         T1 toConvert = table[i].typeToConvert;
 
-        float32 x=-9223372036854775808.0;
-        printf("\n%f\n",x);
-        printf("\n%f\n", table[i].result);
-
         TypeConvert(element, toConvert);
 
         if (element != result) {
-            printf("\n%f %f\n",element, table[i].result);
+            //  printf("\n%s %s %d\n", element.Buffer(), result.Buffer(), i);
 
             return false;
+        }
+
+        i++;
+    }
+    return true;
+
+}
+
+template<typename T1, typename T2>
+bool TypeConversionTest::TestTypeConvertVector(const TypeToTypeTableTest<T1, T2>* table,
+                                               const uint32 cols) {
+
+    uint32 i = 0;
+    while (table[i].go) {
+        T2 element;
+        //T2 result = table[i].result;
+        //T1 toConvert = table[i].typeToConvert;
+
+        TypeConvert(element, table[i].typeToConvert);
+
+        for (uint32 j = 0; j < cols; j++) {
+
+            if (element[j] != table[i].result[j]) {
+                  printf("\n%d %d %d\n", element[j], table[i].result[j], i);
+
+                return false;
+            }
         }
 
         i++;
