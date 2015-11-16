@@ -45,15 +45,15 @@
 namespace MARTe {
 
 /**
- * @brief TODO
- * @details TODO
+ * @brief An implementation of StructuredDataI where node paths are identified and separated by dots.
+ * @details Paths are constructed by concatenating node names with dots (e.g. A.B.C.D), where D is a leaf
+ * and A, B and C are nodes.
  */
-//TODO
 class ConfigurationDatabase: public StructuredDataI {
 public:
 
     /**
-     * TODO
+     * @brief Default constructor. NOOP.
      */
     ConfigurationDatabase();
 
@@ -97,18 +97,25 @@ public:
     /**
      * TODO. Delete empty nodes?
      */
-    virtual bool Move(const char * const path,
-                      bool relative);
+    virtual bool MoveAbsolute(const char * const path);
+
+    virtual bool MoveRelative(const char * const path);
 
     /**
      * TODO
      */
-    virtual bool CreateNodes(const char * const path,
-                             bool relative);
+    virtual bool CreateNodesAbsolute(const char * const path);
+
+    virtual bool CreateNodesRelative(const char * const path);
 
     virtual bool AddToCurrentNode(Reference node);
 
 private:
+    /**
+     * TODO
+     */
+    bool CreateNodes(const char * const path);
+
     /**
      * TODO
      */

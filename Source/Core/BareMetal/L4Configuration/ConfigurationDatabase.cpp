@@ -125,17 +125,29 @@ bool ConfigurationDatabase::Read(const char * const name,
     return ok;
 }
 
-bool ConfigurationDatabase::Move(const char * const path,
-                                 bool relative) {
+bool ConfigurationDatabase::MoveAbsolute(const char * const path) {
 
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
     ReferenceContainer resultSingle;
-    if (relative) {
-        currentNode->Find(resultSingle, filter);
+    rootNode->Find(resultSingle, filter);
+
+    bool ok = (resultSingle.Size() > 0);
+    if (ok) {
+        //Invalidate move to leafs
+        ReferenceT<ReferenceContainer> container = resultSingle.Get(0);
+        if (container.IsValid()) {
+            currentNode = container;
+        }
     }
-    else {
-        rootNode->Find(resultSingle, filter);
-    }
+
+    return ok;
+}
+
+bool ConfigurationDatabase::MoveRelative(const char * const path) {
+
+    ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
+    ReferenceContainer resultSingle;
+    currentNode->Find(resultSingle, filter);
 
     bool ok = (resultSingle.Size() > 0);
     if (ok) {
@@ -164,16 +176,10 @@ bool ConfigurationDatabase::MoveToAncestor(uint32 generations) {
     return ok;
 }
 
-bool ConfigurationDatabase::CreateNodes(const char * const path,
-                                        bool relative) {
+bool ConfigurationDatabase::CreateNodes(const char * const path) {
     String pathStr = path;
     pathStr.Seek(0u);
     bool ok = (pathStr.Size() > 0u);
-    if (ok) {
-        if (!relative) {
-            currentNode = rootNode;
-        }
-    }
     String token;
     char c;
 
@@ -204,6 +210,15 @@ bool ConfigurationDatabase::CreateNodes(const char * const path,
         }
     }
     return ok;
+}
+
+bool ConfigurationDatabase::CreateNodesAbsolute(const char * const path) {
+    currentNode = rootNode;
+    return CreateNodes(path);
+}
+
+bool ConfigurationDatabase::CreateNodesRelative(const char * const path) {
+    return CreateNodes(path);
 }
 
 bool ConfigurationDatabase::AddToCurrentNode(Reference node) {

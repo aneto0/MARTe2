@@ -253,12 +253,6 @@ public:
 	 */
 	void SetName(const char8 * const newName);
 
-        /**
-         * @brief Returns the AnyType representation of the object.
-         * @return the AnyType representation of the object.
-         */
-        operator AnyType();
-
 private:
 
 	/**
