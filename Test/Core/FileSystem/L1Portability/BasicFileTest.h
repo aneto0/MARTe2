@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BasicFile.h"
-#include "String.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -328,8 +328,8 @@ private:
     uint32 defaultRFlags;
     const char8 * nameFileTarget;
     const char8 * stringTarget;
-    String str1;
-    String str2;
+    StreamString str1;
+    StreamString str2;
 };
 
 /*---------------------------------------------------------------------------*/

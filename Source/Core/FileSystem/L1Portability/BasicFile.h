@@ -35,7 +35,7 @@
 
 #include "GeneralDefinitions.h"
 #include "StreamI.h"
-#include "String.h"
+#include "StreamString.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,BasicFileProperties.h)
 
 /*---------------------------------------------------------------------------*/
@@ -345,7 +345,7 @@ namespace MARTe {
         /**
          * @brief Queries the pathname of the file
          */
-        String GetPathName() const;
+        StreamString GetPathName() const;
 
     private:
 

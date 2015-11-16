@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "String.h"
+#include "StreamString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -40,7 +40,7 @@
 namespace MARTe {
 struct BasicFileProperties {
     MARTe::int32 identifier;
-    MARTe::String pathName;
+    MARTe::StreamString pathName;
 };
 }
 

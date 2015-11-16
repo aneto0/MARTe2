@@ -24,7 +24,7 @@
 
 
 OBJSX=  BasicFileGTest.x \
-        StringGTest.x \
+        StreamStringGTest.x \
         DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
@@ -69,7 +69,7 @@ OBJSX=  BasicFileGTest.x \
  	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x  \
 	CharBufferGTest.x \
-        StringIOBufferGTest.x \
+	StreamStringIOBufferGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \

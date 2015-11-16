@@ -1,6 +1,6 @@
 /**
- * @file StringIOBuffer.h
- * @brief Header file for class StringIOBuffer
+ * @file StreamStringIOBuffer.h
+ * @brief Header file for class StreamStringIOBuffer
  * @date 26/10/2015
  * @author Giuseppe Ferrò
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StringIOBuffer
+ * @details This header file contains the declaration of the class StreamStringIOBuffer
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -49,7 +49,7 @@
 namespace MARTe {
 
 /**
- * @brief The String buffer.
+ * @brief The StreamString buffer.
  *
  * @details This class inherits from IOBuffer and specialize the function NoMoreSpaceToWrite accordingly to
  * the string requirements, namely allocating new space when the buffer is full in case of write operations.
@@ -57,7 +57,7 @@ namespace MARTe {
  * @details For memory allocations it adds one to the desired size passed by argument and sets reservedSpaceAtEnd = 1 for the
  * final '\0' character.
  */
-class DLL_API StringIOBuffer: public IOBuffer {
+class DLL_API StreamStringIOBuffer: public IOBuffer {
 
 public:
 
@@ -76,7 +76,7 @@ public:
      *   AllocationGranularity() == 64u &&
      *   UndoLevel() == 0
      */
-    StringIOBuffer();
+    StreamStringIOBuffer();
 
     /**
      * @brief Constructor specifying granularity
@@ -93,12 +93,12 @@ public:
      *   AllocationGranularity() == granularity &&
      *   UndoLevel() == 0
      */
-    StringIOBuffer(const uint32 granularity);
+    StreamStringIOBuffer(const uint32 granularity);
 
     /**
      * @brief Destructor.
      */
-    virtual ~StringIOBuffer();
+    virtual ~StreamStringIOBuffer();
 
     /**
      * @brief Sets the size of the buffer to be desiredSize.

@@ -1,6 +1,6 @@
 /**
- * @file StringIOBuffer.cpp
- * @brief Source file for class StringIOBuffer
+ * @file StreamStringIOBuffer.cpp
+ * @brief Source file for class StreamStringIOBuffer
  * @date 26/10/2015
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StringIOBuffer (public, protected, and private). Be aware that some 
+ * the class StreamStringIOBuffer (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -30,7 +30,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StringIOBuffer.h"
+#include <StreamStringIOBuffer.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,21 +42,21 @@
 
 namespace MARTe {
 
-StringIOBuffer::StringIOBuffer() :
+StreamStringIOBuffer::StreamStringIOBuffer() :
         IOBuffer(64u, 0u) {
 
 }
 
-StringIOBuffer::StringIOBuffer(const uint32 granularity) :
+StreamStringIOBuffer::StreamStringIOBuffer(const uint32 granularity) :
         IOBuffer(granularity, 0u) {
 
 }
 
-StringIOBuffer::~StringIOBuffer() {
+StreamStringIOBuffer::~StreamStringIOBuffer() {
 
 }
 
-bool StringIOBuffer::SetBufferAllocationSize(const uint32 desiredSize) {
+bool StreamStringIOBuffer::SetBufferAllocationSize(const uint32 desiredSize) {
 
     bool ret;
 
@@ -70,7 +70,7 @@ bool StringIOBuffer::SetBufferAllocationSize(const uint32 desiredSize) {
     return ret;
 }
 
-bool StringIOBuffer::Write(const char8 * const buffer,
+bool StreamStringIOBuffer::Write(const char8 * const buffer,
                                  uint32 &size) {
 
     bool ret = true;
@@ -86,7 +86,7 @@ bool StringIOBuffer::Write(const char8 * const buffer,
     return ret;
 }
 
-bool StringIOBuffer::NoMoreSpaceToWrite() {
+bool StreamStringIOBuffer::NoMoreSpaceToWrite() {
 
     bool ret;
 
@@ -98,7 +98,7 @@ bool StringIOBuffer::NoMoreSpaceToWrite() {
     return ret;
 }
 
-bool StringIOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
+bool StreamStringIOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
 
     bool ret;
 
@@ -110,7 +110,7 @@ bool StringIOBuffer::NoMoreSpaceToWrite(const uint32 neededSize) {
     return ret;
 }
 
-void StringIOBuffer::Terminate() {
+void StreamStringIOBuffer::Terminate() {
     if (BufferReference() != NULL) {
         BufferReference()[UsedSize()] = '\0';
     }

@@ -37,7 +37,7 @@
 
 #include "BasicFile.h"
 #include "ErrorManagement.h"
-#include "String.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -489,7 +489,7 @@ bool BasicFile::SetSize(const uint64 size) {
     return retVal;
 }
 
-String BasicFile::GetPathName() const {
+StreamString BasicFile::GetPathName() const {
     return properties.pathName;
 }
 }

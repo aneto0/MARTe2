@@ -60,8 +60,8 @@ BasicFileTest::~BasicFileTest() {
 }
 
 bool BasicFileTest::TestDefaultConstructor() {
-    String char1 = "";
-    String char2 = bf.GetPathName();
+    StreamString char1 = "";
+    StreamString char2 = bf.GetPathName();
     retVal &= (char1 == char2);
     retVal &= !bf.CanRead();
     retVal &= !bf.CanSeek();
@@ -74,8 +74,8 @@ bool BasicFileTest::TestDefaultConstructor() {
 
 bool BasicFileTest::TestCopyConstructor() {
     BasicFile copybf(bf);
-    String char1 = bf.GetPathName();
-    String char2 = copybf.GetPathName();
+    StreamString char1 = bf.GetPathName();
+    StreamString char2 = copybf.GetPathName();
     retVal &= (char1 == char2);
     retVal &= !copybf.CanRead();
     retVal &= !copybf.CanSeek();
