@@ -211,13 +211,13 @@ bool DirectoryTest::TestGetLastAccessTime() {
     uint32 size = sizeof("Confirm the lastAccess");
     file.Write("Confirm the lastAccess", size);
     file.Close();
-    TimeValues lastAccessTime = dir.GetLastAccessTime();
+    TimeStamp lastAccessTime = dir.GetLastAccessTime();
 
     Sleep::Sec(1.1e-0);
-    TimeValues lastAccessTime2 = dir.GetLastAccessTime();
+    TimeStamp lastAccessTime2 = dir.GetLastAccessTime();
 
-    bool ok = (lastAccessTime.microseconds == lastAccessTime2.microseconds);
-    ok &= (lastAccessTime.seconds == lastAccessTime2.seconds);
+    bool ok = (lastAccessTime.GetMicroseconds() == lastAccessTime2.GetMicroseconds());
+    ok &= (lastAccessTime.GetSeconds() == lastAccessTime2.GetSeconds());
     return ok;
 }
 
@@ -231,15 +231,15 @@ bool DirectoryTest::TestGetLastAccessTime_ReRead() {
     uint32 size = sizeof("Confirm the last access read again");
     file.Write("Confirm the last access read again", size);
     file.Close();
-    TimeValues lastAccessTime = dir.GetLastAccessTime();
+    TimeStamp lastAccessTime = dir.GetLastAccessTime();
 
     Sleep::Sec(1.1e-0);
     file.Open(path, file.ACCESS_MODE_R);
     file.Read(path, size);
     file.Close();
-    TimeValues lastAccessTime2 = dir.GetLastAccessTime();
+    TimeStamp lastAccessTime2 = dir.GetLastAccessTime();
 
-    bool ok = !(lastAccessTime.seconds == lastAccessTime2.seconds);
+    bool ok = !(lastAccessTime.GetSeconds() == lastAccessTime2.GetSeconds());
     return ok;
 }
 
@@ -253,13 +253,13 @@ bool DirectoryTest::TestGetLastWriteTime() {
     uint32 size = sizeof("Confirm the last Write");
     file.Write("Confirm the last Write", size);
     file.Close();
-    TimeValues lastWriteTime = dir.GetLastWriteTime();
+    TimeStamp lastWriteTime = dir.GetLastWriteTime();
 
     Sleep::Sec(1e-0);
-    TimeValues lastWriteTime2 = dir.GetLastWriteTime();
+    TimeStamp lastWriteTime2 = dir.GetLastWriteTime();
 
-    bool ok = (lastWriteTime.microseconds == lastWriteTime2.microseconds);
-    ok &= (lastWriteTime.seconds == lastWriteTime2.seconds);
+    bool ok = (lastWriteTime.GetMicroseconds() == lastWriteTime2.GetMicroseconds());
+    ok &= (lastWriteTime.GetSeconds() == lastWriteTime2.GetSeconds());
     return ok;
 }
 
@@ -273,17 +273,17 @@ bool DirectoryTest::TestGetLastWriteTime_ReWrite() {
     uint32 size = sizeof("Confirm writing again");
     file.Write("Confirm writing again", size);
     file.Close();
-    TimeValues lastWriteTime = dir.GetLastWriteTime();
+    TimeStamp lastWriteTime = dir.GetLastWriteTime();
 
     Sleep::Sec(1e-0);
     file.Open(path, file.ACCESS_MODE_W);
     size = sizeof("to be confirmed it is need write again");
     file.Write("to be confirmed it is need write again", size);
     file.Close();
-    TimeValues lastWriteTime2 = dir.GetLastWriteTime();
+    TimeStamp lastWriteTime2 = dir.GetLastWriteTime();
 
-    bool ok = (lastWriteTime.microseconds == lastWriteTime2.microseconds);
-    ok &= !(lastWriteTime.seconds == lastWriteTime2.seconds);
+    bool ok = (lastWriteTime.GetMicroseconds() == lastWriteTime2.GetMicroseconds());
+    ok &= !(lastWriteTime.GetSeconds() == lastWriteTime2.GetSeconds());
     return ok;
 }
 

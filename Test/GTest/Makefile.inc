@@ -24,13 +24,14 @@
 
 
 OBJSX=DirectoryGTest.x \
-        DirectoryScannerGTest.x
-#BasicFileGTest.x \
-	InternetHostGTest.x \
+        DirectoryScannerGTest.x \
+  BasicFileGTest.x
+#	InternetHostGTest.x \
 	   InternetServiceGTest.x \
 	   BasicSocketGTest.x \
 	   BasicTCPSocketGTest.x \
 	   BasicConsoleGTest.x \
+	   TimeStampGTest.x \
 	   DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
@@ -83,7 +84,7 @@ OBJSX=DirectoryGTest.x \
         StreamMemoryReferenceGTest.x \
         BufferedStreamIGTest.x \
         IOBufferGTest.x \
-        BitSetToIntegerGTest.x \
+        BitSetToIntegerGTest.x
 
 	
 	

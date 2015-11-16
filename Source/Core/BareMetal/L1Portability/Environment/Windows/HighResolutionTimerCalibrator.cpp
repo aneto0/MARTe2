@@ -103,18 +103,12 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeValues &timeStamp) {
         sec++;
     }
 
-    //fill the time structure
-    struct tm tValues;
-    if (localtime_s(&tValues, static_cast<const time_t*>(&sec)) != 0u) {
-        return false;
-    }
-    timeStamp.seconds = tValues.tm_sec;
-    timeStamp.minutes = tValues.tm_min;
-    timeStamp.hours = tValues.tm_hour;
-    timeStamp.days = tValues.tm_mday;
-    timeStamp.month = tValues.tm_mon;
-    timeStamp.year = tValues.tm_year;
-    return true;
+    time_t secondsFromEpoch32 = static_cast<time_t>(sec);
+
+    bool ret=timeStamp.ConvertFromEpoch(secondsFromEpoch32);
+
+
+    return ret;
 }
 
 int64 HighResolutionTimerCalibrator::GetFrequency() const {

@@ -37,7 +37,9 @@ OBJSX=  MemoryOperationsHelper_CLIB_Gen.x \
         HighResolutionTimerCalibrator.x \
         LoadableLibrary.x  \
         MemoryCheck_Gen.x \
-        ErrorManagement_Gen.x
+        ErrorManagement_Gen.x \
+        TimeStamp.x
+        
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

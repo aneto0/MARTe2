@@ -99,11 +99,11 @@ bool HighResolutionTimerTest::TestTicksToTime() {
 }
 
 bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
-    TimeValues myTimeStamp1;
-    TimeValues myTimeStamp2;
-    uint32 conversions[] = { 1000, 60000, 3600000, 3600000 * 24 };
+    TimeStamp myTimeStamp1;
+    TimeStamp myTimeStamp2;
+    int32 conversions[] = { 1000, 60000, 3600000, 3600000 * 24 };
     //Arbitrary tolerance
-    int32 tolerance = int32(0.1 * millisecs);
+    int32 tolerance = int32(3 * millisecs);
     //tolerance has to greater than 0
     if (tolerance == 0) {
         tolerance = 1;
@@ -112,24 +112,25 @@ bool HighResolutionTimerTest::TestGetTimeStamp(uint32 millisecs) {
     Sleep::MSec(millisecs);
     HighResolutionTimer::GetTimeStamp(myTimeStamp2);
     //it could fail if you are unlucky and launch the test across one month and the other at least!
-    uint32 elapsed = (myTimeStamp2.days - myTimeStamp1.days) * conversions[3] + (myTimeStamp2.hours - myTimeStamp1.hours) * conversions[2]
-            + (myTimeStamp2.minutes - myTimeStamp1.minutes) * conversions[1] + (myTimeStamp2.seconds - myTimeStamp1.seconds) * conversions[0]
-            + (myTimeStamp2.microseconds - myTimeStamp1.microseconds) / conversions[0];
+    int32 elapsed = (myTimeStamp2.GetDay() - myTimeStamp1.GetDay()) * conversions[3] + (myTimeStamp2.GetHour()- myTimeStamp1.GetHour()) * conversions[2]
+            + (myTimeStamp2.GetMinutes()- myTimeStamp1.GetMinutes()) * conversions[1] + (myTimeStamp2.GetSeconds()- myTimeStamp1.GetSeconds()) * conversions[0]
+            + ((int32)(myTimeStamp2.GetMicroseconds() - myTimeStamp1.GetMicroseconds())) / conversions[0];
     int32 diff = (int32) (elapsed - millisecs);
+
     if (diff > tolerance || diff < -tolerance) {
         return false;
     }
     //checks the boundaries
-    if (myTimeStamp1.minutes > 59) {
+    if (myTimeStamp1.GetMinutes() > 59) {
         return false;
     }
-    if (myTimeStamp1.hours > 23) {
+    if (myTimeStamp1.GetHour() > 23) {
         return false;
     }
-    if (myTimeStamp1.days > 31 || myTimeStamp1.days == 0) {
+    if (myTimeStamp1.GetDay() > 30 ) {
         return false;
     }
-    if (myTimeStamp1.month > 11) {
+    if (myTimeStamp1.GetMonth() > 11) {
         return false;
     }
     return true;

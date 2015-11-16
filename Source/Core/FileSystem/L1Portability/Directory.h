@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "LinkedListHolder.h"
 #include "GeneralDefinitions.h"
+#include "TimeStamp.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
 
 /*---------------------------------------------------------------------------*/
@@ -61,7 +62,7 @@ public:
      * @post
      *   GetName() = NULL
      */
-    virtual ~Directory();
+    ~Directory();
 
     /**
      * @brief Sets this file/directory absolute path.
@@ -73,8 +74,8 @@ public:
     bool SetByName(const char8 * const path);
 
     /**
-     * @brief Gets the file/directory path name (as set in the constructor or by SetByName).
-     * @return the file/directory path name (as set in the constructor or by SetByName).
+     * @brief Gets the file/directory name.
+     * @return the file/directory absolute path name.
      */
     const char8 *GetName() const;
 
@@ -100,13 +101,13 @@ public:
      * @brief Gets the last write time.
      * @return the last write time.
      */
-    TimeValues GetLastWriteTime();
+    TimeStamp GetLastWriteTime();
 
     /**
      * @brief Gets the last access time.
      * @return the last access time.
      */
-    TimeValues GetLastAccessTime();
+    TimeStamp GetLastAccessTime();
 
 
     /**
@@ -119,8 +120,6 @@ public:
      *    IsDirectory() = true && Exists() = false
      * @post
      *    GetName() = path
-     * @post
-     *    Name() = path
      */
     bool Create(const bool isFile = false);
 

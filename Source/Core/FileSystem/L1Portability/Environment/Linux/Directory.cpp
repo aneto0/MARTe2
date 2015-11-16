@@ -118,64 +118,40 @@ bool Directory::IsFile() const {
 
 uint64 Directory::GetSize() {
     uint64 size = 0u;
-    if (stat(GetName(), &directoryHandle) == 0) {
+    if (stat(GetName(), &directoryHandle ) == 0) {
         size = static_cast<uint64>(directoryHandle.st_size);
     }
     return size;
 }
 
-TimeValues Directory::GetLastWriteTime() {
-
-    TimeValues timeStamp = { 0u, 0u, 0u, 0u, 0u, 0u, 0u };
-    //fill the time structure
+TimeStamp Directory::GetLastWriteTime() {
+    TimeStamp timeStamp;
+    
     if (stat(GetName(), &directoryHandle) == 0) {
         time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_mtime);
-        const struct tm *tValues = localtime(&secondsFromEpoch32);
-        bool ret = (tValues != NULL);
-        if (ret) {
-            timeStamp.microseconds = 0u;
-            timeStamp.seconds = static_cast<uint32>(tValues->tm_sec);
-            timeStamp.minutes = static_cast<uint32>(tValues->tm_min);
-            timeStamp.hours = static_cast<uint32>(tValues->tm_hour);
-            timeStamp.days = static_cast<uint32>(tValues->tm_mday);
-            timeStamp.month = static_cast<uint32>(tValues->tm_mon);
-            timeStamp.year = static_cast<uint32>(tValues->tm_year);
-        }
-        else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
+        if(!timeStamp.ConvertFromEpoch(secondsFromEpoch32)){
+            REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
         }
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: stat()");
+    	REPORT_ERROR(ErrorManagement::OSError, "Error: stat()");
     }
 
     return timeStamp;
 }
 
-TimeValues Directory::GetLastAccessTime() {
-    TimeValues timeStamp = { 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+TimeStamp Directory::GetLastAccessTime() {
+    TimeStamp timeStamp;
     if (stat(GetName(), &directoryHandle) == 0) {
-        //fill the time structure
-        time_t secondsFromEpoch32 = static_cast<time_t>(directoryHandle.st_atime);
-        const struct tm *tValues = localtime(&secondsFromEpoch32);
-        bool ret = (tValues != NULL);
-        if (ret) {
-            timeStamp.microseconds = 0u;
-            timeStamp.seconds = static_cast<uint32>(tValues->tm_sec);
-            timeStamp.minutes = static_cast<uint32>(tValues->tm_min);
-            timeStamp.hours = static_cast<uint32>(tValues->tm_hour);
-            timeStamp.days = static_cast<uint32>(tValues->tm_mday);
-            timeStamp.month = static_cast<uint32>(tValues->tm_mon);
-            timeStamp.year = static_cast<uint32>(tValues->tm_year);
+        time_t secondsFromEpoch32 = static_cast<int32>(directoryHandle.st_atime);
+	if(!timeStamp.ConvertFromEpoch(secondsFromEpoch32)){
+            REPORT_ERROR(ErrorManagement::FatalError, "Error: Failed TimeStamp::ConvertFromEpoch");
         }
-        else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
-        }
-    }
+    } 
     else {
         REPORT_ERROR(ErrorManagement::OSError, "Error: stat()");
     }
-
+    
     return timeStamp;
 }
 

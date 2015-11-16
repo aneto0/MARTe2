@@ -45,7 +45,8 @@ OBJSX=  StandardHeap_GenericTest.x \
 	ErrorManagementTest.x \
 	StaticListTest.x \
 	GlobalObjectsDatabaseTest.x \
-	FormatDescriptorTest.x
+	FormatDescriptorTest.x \
+	TimeStampTest.x
 
 
 PACKAGE=Core/BareMetal
