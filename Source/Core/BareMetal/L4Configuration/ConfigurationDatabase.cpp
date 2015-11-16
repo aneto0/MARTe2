@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "AnyObject.h"
+#include "ErrorType.h"
 #include "ConfigurationDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
@@ -45,11 +46,10 @@
 namespace MARTe {
 
 ConfigurationDatabase::ConfigurationDatabase() {
-
+    mux.Create();
 }
 
 ConfigurationDatabase::~ConfigurationDatabase() {
-
 }
 
 bool ConfigurationDatabase::Write(const char * const name,
@@ -228,6 +228,14 @@ bool ConfigurationDatabase::AddToCurrentNode(Reference node) {
         ok = currentNode->Insert(nodeToAdd);
     }
     return ok;
+}
+
+bool ConfigurationDatabase::Lock(const TimeoutType &timeout){
+    return mux.FastLock(timeout);
+}
+
+void ConfigurationDatabase::Unlock(){
+    mux.FastUnLock();
 }
 
 }

@@ -37,17 +37,23 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+/**
+ * @brief An helper class to store the data in the ConfigurationDatabase.
+ * @details This class allows to associate a name and a reference to an AnyType.
+ * It also holds and manages a memory address to copy and store the actual data of the AnyType.
+ */
 namespace MARTe {
 class AnyObject: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
     /**
-     * TODO
+     * @brief Default constructor. NOOP.
      */
     AnyObject();
 
     /**
-     * TODO
+     * @brief Default destructor.
+     * @details Frees any memory allocated to store the AnyType.
      */
     virtual ~AnyObject();
 
