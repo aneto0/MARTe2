@@ -217,33 +217,40 @@ bool AnyObject::SerializeVector() {
     return ok;
 }
 
+bool AnyObject::SerializeScalar() {
+    uint32 copySize = 0u;
+    bool ok = true;
+
+    if (type.GetTypeDescriptor().type == SString) {
+        String *stream = static_cast<String *>(type.GetDataPointer());
+        copySize = stream->Size() + 1u;
+    }
+    else if (type.GetTypeDescriptor().type == CCString) {
+        copySize = (StringHelper::Length(static_cast<char8 *>(type.GetDataPointer())) + 1u);
+    }
+    else {
+        copySize = type.GetTypeDescriptor().numberOfBits / 8u;
+    }
+    void *value = HeapManager::Malloc(copySize);
+    if (type.GetTypeDescriptor().type == SString) {
+        String *stream = static_cast<String *>(type.GetDataPointer());
+        ok = MemoryOperationsHelper::Copy(value, stream->Buffer(), copySize);
+    }
+    else {
+        ok = MemoryOperationsHelper::Copy(value, type.GetDataPointer(), copySize);
+    }
+
+    type.SetDataPointer(value);
+    return ok;
+}
+
 bool AnyObject::Load(const AnyType &typeIn) {
     uint32 nOfDimensions = typeIn.GetNumberOfDimensions();
-    uint32 copySize = 0u;
     bool ok = true;
     type = typeIn;
 
     if (nOfDimensions == 0u) {
-        if (typeIn.GetTypeDescriptor().type == SString) {
-            String *stream = static_cast<String *>(typeIn.GetDataPointer());
-            copySize = stream->Size() + 1u;
-        }
-        else if (typeIn.GetTypeDescriptor().type == CCString) {
-            copySize = (StringHelper::Length(static_cast<char8 *>(typeIn.GetDataPointer())) + 1u);
-        }
-        else {
-            copySize = typeIn.GetTypeDescriptor().numberOfBits / 8u;
-        }
-        void *value = HeapManager::Malloc(copySize);
-        type.SetDataPointer(value);
-        if (typeIn.GetTypeDescriptor().type == SString) {
-            String *stream = static_cast<String *>(typeIn.GetDataPointer());
-            ok = MemoryOperationsHelper::Copy(value, stream->Buffer(), copySize);
-        }
-        else {
-            ok = MemoryOperationsHelper::Copy(value, typeIn.GetDataPointer(), copySize);
-        }
-
+        ok = SerializeScalar();
     }
     else if (nOfDimensions == 1u) {
         ok = SerializeVector();
