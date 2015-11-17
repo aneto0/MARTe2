@@ -1015,7 +1015,7 @@ AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
 
 template<typename T, uint32 nOfElementsStatic>
 AnyType::AnyType(T (&source)[nOfElementsStatic]) {
-    dataPointer = reinterpret_cast<T *>(&source[0]);
+    dataPointer = (void*)(&source[0]);
     InitDimensions();
     numberOfDimensions = 1u;
     numberOfElements[0] = nOfElementsStatic;
@@ -1028,7 +1028,7 @@ AnyType::AnyType(T (&source)[nOfElementsStatic]) {
 
 template<typename T, uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
 AnyType::AnyType(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
-    dataPointer = reinterpret_cast<T *>(&source);
+    dataPointer = (void *)(&source);
     InitDimensions();
     numberOfDimensions = 2u;
     numberOfElements[0] = nOfColumnsStatic;

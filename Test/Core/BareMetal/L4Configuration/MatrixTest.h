@@ -1,7 +1,7 @@
 /**
- * @file TypeConversionTest.h
- * @brief Header file for class TypeConversionTest
- * @date 12/11/2015
+ * @file MatrixTest.h
+ * @brief Header file for class MatrixTest
+ * @date 17/11/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class TypeConversionTest
+ * @details This header file contains the declaration of the class MatrixTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TYPECONVERSIONTEST_H_
-#define TYPECONVERSIONTEST_H_
+#ifndef MATRIXTEST_H_
+#define MATRIXTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,94 +31,69 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "TypeConversion.h"
-#include "String.h"
-
+#include "Matrix.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
 
-template<typename T1, typename T2>
-struct TypeToTypeTableTest {
-    T1 typeToConvert;
-    T2 result;
-    bool go;
-    bool expected;
-};
+class MatrixTest {
 
-template<typename T1, typename T2, uint32 nCols>
-struct TypeToTypeVectorTableTest {
-    T1 typeToConvert[nCols];
-    T2 result[nCols];
-    bool go;
-};
-
-class TypeConversionTest {
 public:
-    template<typename T1, typename T2>
-    bool TestTypeConvert(const TypeToTypeTableTest<T1, T2>* table);
 
-    template<typename T1, typename T2, uint32 nCols>
-    bool TestTypeConvertVector(const TypeToTypeVectorTableTest<T1, T2, nCols>* table);
+    bool TestDefaultConstructor();
+
+    bool TestConstructorOnHeap();
+
+    template<typename T>
+    bool TestConstructorByPointerHeap(T** matrix,
+                                      uint32 nRows,
+                                      uint32 nCols);
+
+    template<typename T, uint32 nRows, uint32 nCols>
+    bool TestConstructorByTable(T (&matrix)[nRows][nCols]);
+
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-template<typename T1, typename T2>
-bool TypeConversionTest::TestTypeConvert(const TypeToTypeTableTest<T1, T2>* table) {
 
-    uint32 i = 0;
-    while (table[i].go) {
-        T2 element;
-        T2 result = table[i].result;
-        T1 toConvert = table[i].typeToConvert;
+template<typename T>
+bool MatrixTest::TestConstructorByPointerHeap(T** matrix,
+                                              uint32 nRows,
+                                              uint32 nCols) {
 
-        bool ret = TypeConvert(element, toConvert);
+    Matrix<T> myMatrix(matrix, nRows, nCols);
 
-        if (element != result) {
-            //  printf("\n%s %s %d\n", element.Buffer(), result.Buffer(), i);
-
-            return false;
-        }
-        if (ret != table[i].expected) {
-            printf("\n%d\n",i);
-            return false;
-        }
-
-        i++;
-    }
-    return true;
-
-}
-
-template<typename T1, typename T2, uint32 nCols>
-bool TypeConversionTest::TestTypeConvertVector(const TypeToTypeVectorTableTest<T1, T2, nCols>* table) {
-
-    uint32 i = 0;
-    while (table[i].go) {
-        T2 element[nCols];
-        //T2 result = table[i].result;
-        //T1 toConvert = table[i].typeToConvert;
-
-        TypeConvert(element, table[i].typeToConvert);
-
+    for (uint32 i = 0; i < nRows; i++) {
         for (uint32 j = 0; j < nCols; j++) {
-
-            if (element[j] != table[i].result[j]) {
-                printf("\n%d %d %d\n", element[j], table[i].result[j], i);
-
+            if (myMatrix[i][j] != matrix[i][j]) {
                 return false;
             }
         }
-
-        i++;
     }
+
     return true;
 
 }
 
-#endif /* TYPECONVERSIONTEST_H_ */
+template<typename T, uint32 nRows, uint32 nCols>
+bool MatrixTest::TestConstructorByTable(T (&matrix)[nRows][nCols]) {
+
+    Matrix<T> myMatrix(matrix);
+
+    for (uint32 i = 0; i < nRows; i++) {
+        for (uint32 j = 0; j < nCols; j++) {
+            if (myMatrix[i][j] != matrix[i][j]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+#endif /* MATRIXTEST_H_ */
 

@@ -24,7 +24,9 @@
 #
 #############################################################
 
-OBJSX=TypeConversionTest.x
+OBJSX=TypeConversionTest.x \
+	VectorTest.x \
+	MatrixTest.x
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -65,5 +65,7 @@ InternetService.cpp
 BasicTCPSocket.cpp
 SocketSelect.cpp
 BasicUDPSocket.cpp
-
-
+StringToInteger.cpp
+StringToFloat.cpp
+Vector.h
+Matrix.h

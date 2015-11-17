@@ -37,85 +37,64 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-extern bool StringToInteger(const char8 *input,
+extern bool StringToInteger(const char8 * const input,
                             uint8 &number);
 
-extern bool StringToInteger(const char8 *input,
+extern bool StringToInteger(const char8 * const input,
                             uint16 &number);
 
-extern bool StringToInteger(const char8 *input,
+extern bool StringToInteger(const char8 * const input,
                             uint32 &number);
 
-extern bool StringToInteger(const char8 *input,
+extern bool StringToInteger(const char8 * const input,
                             uint64 &number);
 
-extern bool StringToInteger(const char8 *input,
+extern bool StringToInteger(const char8 * const input,
                             int8 &number);
 
-extern bool StringToInteger(const char8 *input,
+extern bool StringToInteger(const char8 * const input,
                             int16 &number);
 
-extern bool StringToInteger(const char8 *input,
+extern bool StringToInteger(const char8 * const input,
                             int32 &number);
 
-extern bool StringToInteger(const char8 *input,
+extern bool StringToInteger(const char8 * const input,
                             int64 &number);
 
-extern bool StringToFloat(const char8 *input,
+extern bool StringToFloat(const char8 * const input,
                           float32 &number);
 
-extern bool StringToFloat(const char8 *input,
+extern bool StringToFloat(const char8 * const input,
                           float64 &number);
 
-bool StringToBitSet(const char8* source,
-                    uint8 *dest,
-                    const uint8 destBitSize,
-                    uint8 destBitShift,
-                    const bool isSigned) {
+bool StringToIntegerGeneric(const char8* source,
+                            uint8 *dest,
+                            const uint8 destBitSize,
+                            const bool isSigned) {
 
     bool ret = false;
     if (destBitSize <= 8u) {
         if (isSigned) {
             int8 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<int8*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<int8*>(dest)) = tempDest;
         }
         else {
             uint8 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *dest = tempDest;
-            }
+            *dest = tempDest;
         }
     }
     if ((destBitSize > 8u) && (destBitSize <= 16u)) {
         if (isSigned) {
             int16 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<int16*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<int16*>(dest)) = tempDest;
         }
         else {
             uint16 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<uint16*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<uint16*>(dest)) = tempDest;
         }
     }
     if ((destBitSize > 16u) && (destBitSize <= 32u)) {
@@ -123,45 +102,24 @@ bool StringToBitSet(const char8* source,
         if (isSigned) {
             int32 tempDest;
             ret = StringToInteger(source, tempDest);
-
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<int32*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<int32*>(dest)) = tempDest;
         }
         else {
             uint32 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<uint32*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<uint32*>(dest)) = tempDest;
         }
     }
     if ((destBitSize > 32u) && (destBitSize <= 64u)) {
         if (isSigned) {
             int64 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<int64*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<int64*>(dest)) = tempDest;
         }
         else {
             uint64 tempDest;
             ret = StringToInteger(source, tempDest);
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<uint64*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<uint64*>(dest)) = tempDest;
         }
     }
     return ret;
@@ -191,12 +149,11 @@ bool IntegerToFloat(IntegerType source,
 
 }
 
-bool BitSetToFloat(uint8 *source,
-                   const uint8 sourceBitSize,
-                   uint8 sourceBitShift,
-                   float32 *dest,
-                   const uint8 destBitSize,
-                   const bool isSigned) {
+bool IntegerToFloatGeneric(uint8 *source,
+                           const uint8 sourceBitSize,
+                           float32 *dest,
+                           const uint8 destBitSize,
+                           const bool isSigned) {
 
     bool ret = true;
 
@@ -205,10 +162,6 @@ bool BitSetToFloat(uint8 *source,
         if (sourceBitSize <= 8u) {
             if (isSigned) {
                 int8 newSource = *(reinterpret_cast<int8*>(source));
-
-                if (sourceBitShift > 0u) {
-                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
-                }
 
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
@@ -219,10 +172,6 @@ bool BitSetToFloat(uint8 *source,
             }
             else {
                 uint8 newSource = *source;
-
-                if (sourceBitShift > 0u) {
-                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
-                }
 
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
@@ -235,11 +184,6 @@ bool BitSetToFloat(uint8 *source,
         if ((sourceBitSize > 8u) && (sourceBitSize <= 16u)) {
             if (isSigned) {
                 int16 newSource = *(reinterpret_cast<int16*>(source));
-
-                if (sourceBitShift > 0u) {
-                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
-                }
-
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }
@@ -249,10 +193,6 @@ bool BitSetToFloat(uint8 *source,
             }
             else {
                 uint16 newSource = *(reinterpret_cast<uint16*>(source));
-                if (sourceBitShift > 0u) {
-                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
-                }
-
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }
@@ -264,10 +204,6 @@ bool BitSetToFloat(uint8 *source,
         if ((sourceBitSize > 16u) && (sourceBitSize <= 32u)) {
             if (isSigned) {
                 int32 newSource = *(reinterpret_cast<int32*>(source));
-                if (sourceBitShift > 0u) {
-                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
-                }
-
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }
@@ -277,10 +213,6 @@ bool BitSetToFloat(uint8 *source,
             }
             else {
                 uint32 newSource = *(reinterpret_cast<uint32*>(source));
-                if (sourceBitShift > 0u) {
-                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
-                }
-
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }
@@ -292,10 +224,6 @@ bool BitSetToFloat(uint8 *source,
         if ((sourceBitSize > 32u) && (sourceBitSize <= 64u)) {
             if (isSigned) {
                 int64 newSource = *(reinterpret_cast<int64*>(source));
-                if (sourceBitShift > 0u) {
-                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
-                }
-
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }
@@ -305,10 +233,6 @@ bool BitSetToFloat(uint8 *source,
             }
             else {
                 uint64 newSource = *(reinterpret_cast<uint64*>(source));
-                if (sourceBitShift > 0u) {
-                    ret = BitSetToInteger(newSource, source, sourceBitShift, sourceBitSize, isSigned);
-                }
-
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }
@@ -372,12 +296,11 @@ bool FloatToInteger(FloatType floatNumber,
     return ret;
 }
 
-bool FloatToBitSet(float32 *source,
-                   const uint8 sourceBitSize,
-                   uint8 *dest,
-                   const uint8 destBitSize,
-                   uint8 destBitShift,
-                   const bool isSigned) {
+bool FloatToIntegerGeneric(float32 *source,
+                           const uint8 sourceBitSize,
+                           uint8 *dest,
+                           const uint8 destBitSize,
+                           const bool isSigned) {
 
     bool ret = false;
 
@@ -391,12 +314,7 @@ bool FloatToBitSet(float32 *source,
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
 
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<int8*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<int8*>(dest)) = tempDest;
         }
         else {
             uint8 tempDest;
@@ -407,12 +325,7 @@ bool FloatToBitSet(float32 *source,
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
 
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *dest = tempDest;
-            }
+            *dest = tempDest;
         }
 
     }
@@ -425,12 +338,7 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<int16*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<int16*>(dest)) = tempDest;
         }
         else {
             uint16 tempDest;
@@ -440,12 +348,7 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<uint16*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<uint16*>(dest)) = tempDest;
         }
     }
     if ((destBitSize > 16u) && (destBitSize <= 32u)) {
@@ -459,12 +362,7 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<int32*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<int32*>(dest)) = tempDest;
         }
         else {
             uint32 tempDest;
@@ -474,12 +372,7 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<uint32*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<uint32*>(dest)) = tempDest;
         }
     }
     if ((destBitSize > 32u) && (destBitSize <= 64u)) {
@@ -492,12 +385,7 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<int64*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<int64*>(dest)) = tempDest;
         }
         else {
 
@@ -508,12 +396,7 @@ bool FloatToBitSet(float32 *source,
             if (sourceBitSize == 64u) {
                 ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
             }
-            if (destBitShift > 0u) {
-                ret = IntegerToBitSet(dest, destBitShift, destBitSize, isSigned, tempDest);
-            }
-            else {
-                *(reinterpret_cast<uint64*>(dest)) = tempDest;
-            }
+            *(reinterpret_cast<uint64*>(dest)) = tempDest;
         }
     }
     return ret;
@@ -546,9 +429,10 @@ template<typename FloatType1, typename FloatType2>
 bool FloatToFloat(FloatType1 source,
                   FloatType2 &destination) {
 
+    destination = static_cast<FloatType2>(0.0);
+
     bool ret = ((!isNaN(source)) && (!isInf(source)));
     if (ret) {
-        destination = static_cast<FloatType2>(0.0);
         FloatType2 test = static_cast<FloatType2>(source);
 
         if ((isNaN(test)) || (isInf(test))) {
@@ -568,6 +452,7 @@ bool FloatToFloat(FloatType1 source,
             destination = test;
         }
     }
+
     return ret;
 }
 
@@ -647,14 +532,14 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
             if ((sourceDescriptor.type == SignedInteger)) {
                 uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
                 float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
-                ret = BitSetToFloat(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), static_cast<uint8>(source.GetBitAddress()),
-                                    destinationInput, static_cast<uint8>(destinationDescriptor.numberOfBits), true);
+                ret = IntegerToFloatGeneric(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), destinationInput,
+                                            static_cast<uint8>(destinationDescriptor.numberOfBits), true);
             }
             if (sourceDescriptor.type == UnsignedInteger) {
                 uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
                 float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
-                ret = BitSetToFloat(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), static_cast<uint8>(source.GetBitAddress()),
-                                    destinationInput, static_cast<uint8>(destinationDescriptor.numberOfBits), false);
+                ret = IntegerToFloatGeneric(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), destinationInput,
+                                            static_cast<uint8>(destinationDescriptor.numberOfBits), false);
             }
         }
     }
@@ -676,24 +561,22 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
             }
         }
         if (destinationDescriptor.type == SignedInteger) {
-            ret = FloatToBitSet(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
-                                reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits),
-                                static_cast<uint8>(destination.GetBitAddress()), true);
+            ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
+                                        reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits), true);
         }
         if (destinationDescriptor.type == UnsignedInteger) {
-            ret = FloatToBitSet(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
-                                reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits),
-                                static_cast<uint8>(destination.GetBitAddress()), false);
+            ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
+                                        reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits), false);
         }
         if (destinationDescriptor.type == Float) {
             if (destinationDescriptor.numberOfBits == 32u) {
                 if (sourceDescriptor.numberOfBits == 64u) {
-                    FloatToFloat(*(reinterpret_cast<float64*>(sourcePointer)), *(reinterpret_cast<float32*>(destinationPointer)));
+                    ret = FloatToFloat(*(reinterpret_cast<float64*>(sourcePointer)), *(reinterpret_cast<float32*>(destinationPointer)));
                 }
             }
             if (destinationDescriptor.numberOfBits == 64u) {
                 if (sourceDescriptor.numberOfBits == 32u) {
-                    FloatToFloat(*(reinterpret_cast<float32*>(sourcePointer)), *(reinterpret_cast<float64*>(destinationPointer)));
+                    ret = FloatToFloat(*(reinterpret_cast<float32*>(sourcePointer)), *(reinterpret_cast<float64*>(destinationPointer)));
                 }
             }
         }
@@ -708,17 +591,15 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
             token=(reinterpret_cast<String*>(sourcePointer))->Buffer();
         }
         if(destinationDescriptor.type==SignedInteger) {
-            ret=StringToBitSet(token,
+            ret=StringToIntegerGeneric(token,
                     reinterpret_cast<uint8*>(destinationPointer),
-                    static_cast<uint8>(destinationDescriptor.numberOfBits),
-                    static_cast<uint8>(destination.GetBitAddress()),true);
+                    static_cast<uint8>(destinationDescriptor.numberOfBits),true);
         }
         if(destinationDescriptor.type==UnsignedInteger) {
 
-            ret=StringToBitSet(token,
+            ret=StringToIntegerGeneric(token,
                     reinterpret_cast<uint8*>(destinationPointer),
-                    static_cast<uint8>(destinationDescriptor.numberOfBits),
-                    static_cast<uint8>(destination.GetBitAddress()),false);
+                    static_cast<uint8>(destinationDescriptor.numberOfBits),false);
         }
         if(destinationDescriptor.type==Float) {
             if(destinationDescriptor.numberOfBits==32u) {
