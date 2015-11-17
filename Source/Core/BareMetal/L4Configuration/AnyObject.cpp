@@ -60,7 +60,8 @@ bool AnyObject::SerializeMatrix() {
 
     char *value = NULL_PTR(char *);
     if (type.IsStaticDeclared()) {
-        value = static_cast<char *>(HeapManager::Malloc(numberOfRows * numberOfColumns * dataDescriptor.numberOfBits / 8u));
+        value = static_cast<char *>(HeapManager::Malloc(
+                numberOfRows * numberOfColumns * dataDescriptor.numberOfBits / 8u));
     }
     else {
         value = static_cast<char *>(HeapManager::Malloc(numberOfRows * sizeof(void *)));
@@ -71,11 +72,10 @@ bool AnyObject::SerializeMatrix() {
     uint32 c = 0u;
     uint32 idx = 0u;
     for (r = 0; ok && (r < numberOfRows); r++) {
-        if ((dataDescriptor.type == SString) || (dataDescriptor.type == CCString)) {
-            if (!type.IsStaticDeclared()) {
-                char8 ***destStr = reinterpret_cast<char8 ***>(value);
-                destStr[r] = static_cast<char **>(HeapManager::Malloc(sizeof(void *) * numberOfColumns));
-            }
+        if (!type.IsStaticDeclared()) {
+            void **destStr = reinterpret_cast<void **>(value);
+            destStr[r] = static_cast<char **>(HeapManager::Malloc(sizeof(void *) * numberOfColumns));
+            totalCopySize = 0u;
         }
 
         for (c = 0; ok && (c < numberOfColumns); c++) {
@@ -142,8 +142,18 @@ bool AnyObject::SerializeMatrix() {
                     }
                 }
                 else {
-                    srcArray = static_cast<char8 *>(srcDataPointer) + totalCopySize;
-                    destArray = value + totalCopySize;
+                    if (type.IsStaticDeclared()) {
+                        srcArray = static_cast<char8 *>(srcDataPointer) + totalCopySize;
+                        destArray = value + totalCopySize;
+                    }
+                    else {
+                        char **src = reinterpret_cast<char **>(srcDataPointer);
+                        srcArray = src[r] + totalCopySize;
+                        char **dest = reinterpret_cast<char **>(value);
+                        destArray = dest[r] + totalCopySize;
+                        /*srcArray = static_cast<char8 *>(srcDataPointer) + totalCopySize;
+                         destArray = value + totalCopySize;*/
+                    }
                 }
                 ok = MemoryOperationsHelper::Copy(destArray, srcArray, copySize);
                 totalCopySize += copySize;
@@ -259,7 +269,7 @@ bool AnyObject::Load(const AnyType &typeIn) {
         ok = SerializeMatrix();
     }
 
-    //Strings are serialised as arrays of CCString. The type as to be updated accordingly.
+//Strings are serialised as arrays of CCString. The type as to be updated accordingly.
     if (typeIn.GetTypeDescriptor().type == SString) {
         void *tmp = type.GetDataPointer();
         type = AnyType(static_cast<char8 *>(typeIn.GetDataPointer()));
@@ -296,24 +306,22 @@ AnyObject::~AnyObject() {
         uint32 numberOfColumns = type.GetNumberOfElements(0u);
         uint32 numberOfRows = type.GetNumberOfElements(1u);
 
-        if ((type.GetTypeDescriptor().type == CCString) || (type.GetTypeDescriptor().type == SString)) {
-            uint32 r = 0u;
-            uint32 c = 0u;
-            uint32 idx = 0u;
-            for (r = 0; r < numberOfRows; r++) {
-                for (c = 0; c < numberOfColumns; c++) {
-                    void *charMem = NULL_PTR(void *);
-                    if (type.IsStaticDeclared()) {
-                        idx = c + r * numberOfColumns;
-                        char **destStr = reinterpret_cast<char **>(mem);
-                        charMem = reinterpret_cast<void *>(destStr[idx]);
-                    }
-                    else {
-                        char8 ***destStr = reinterpret_cast<char8 ***>(mem);
-                        charMem = reinterpret_cast<void *>(destStr[r][c]);
-                    }
-                    HeapManager::Free(charMem);
+        uint32 r = 0u;
+        uint32 c = 0u;
+        uint32 idx = 0u;
+        for (r = 0; r < numberOfRows; r++) {
+            for (c = 0; c < numberOfColumns; c++) {
+                void *charMem = NULL_PTR(void *);
+                if (type.IsStaticDeclared()) {
+                    idx = c + r * numberOfColumns;
+                    char **destStr = reinterpret_cast<char **>(mem);
+                    charMem = reinterpret_cast<void *>(destStr[idx]);
                 }
+                else {
+                    char8 ***destStr = reinterpret_cast<char8 ***>(mem);
+                    charMem = reinterpret_cast<void *>(destStr[r][c]);
+                }
+                HeapManager::Free(charMem);
             }
         }
     }

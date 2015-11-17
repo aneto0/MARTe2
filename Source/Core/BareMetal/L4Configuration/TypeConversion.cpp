@@ -42,16 +42,14 @@ namespace MARTe {
  * @return true if the conversion is both types are indeed scalar and if the
  * conversion is successful.
  */
-static bool ScalarBasicTypeConvert(const AnyType &destination,
-                                   const AnyType &source) {
+static bool ScalarBasicTypeConvert(const AnyType &destination, const AnyType &source) {
     return false;
 }
 
 /**
  * TODO
  */
-static bool VectorBasicTypeConvert(const AnyType &destination,
-                                   const AnyType &source) {
+static bool VectorBasicTypeConvert(const AnyType &destination, const AnyType &source) {
     uint32 copySize = 0u;
     uint32 totalCopySize = 0u;
     uint32 idx = 0u;
@@ -157,12 +155,11 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
 /**
  * TODO
  */
-static bool MatrixBasicTypeConvert(const AnyType &destination,
-                                   const AnyType &source) {
+static bool MatrixBasicTypeConvert(const AnyType &destination, const AnyType &source) {
     uint32 copySize = 0u;
-    uint32 totalCopySize = 0u;
+    uint32 destinationTotalCopySize = 0u;
+    uint32 sourceTotalCopySize = 0u;
 
-    //The deserialisation assumes that the source dataPointer is an array of pointers to the element values.
     //void **sourceArray = static_cast<void **>(source.GetDataPointer());
     char *sourceArray = static_cast<char *>(source.GetDataPointer());
 
@@ -182,6 +179,13 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
     }
     if (ok) {
         for (r = 0; ok && (r < numberOfRows); r++) {
+            if (!destination.IsStaticDeclared()) {
+                destinationTotalCopySize = 0u;
+            }
+            if (!source.IsStaticDeclared()) {
+                sourceTotalCopySize = 0u;
+            }
+
             for (c = 0; ok && (c < numberOfColumns); c++) {
                 idx = c + r * numberOfColumns;
                 //Compute the size
@@ -256,7 +260,17 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
                         //To any other BasicType
                         else {
                             String sourceStreamString = srcArray;
-                            ok = ScalarBasicTypeConvert(destination, sourceStreamString);
+                            AnyType destinationConvertionType(destination);
+                            destinationConvertionType.SetNumberOfDimensions(0u);
+                            if (destination.IsStaticDeclared()) {
+                                destinationConvertionType.SetDataPointer(
+                                        static_cast<char8 *>(destination.GetDataPointer()) + destinationTotalCopySize);
+                            }
+                            else {
+                                char **destStr = reinterpret_cast<char **>(destination.GetDataPointer());
+                                destinationConvertionType.SetDataPointer(destStr[r] + destinationTotalCopySize);
+                            }
+                            ok = ScalarBasicTypeConvert(destinationConvertionType, sourceStreamString);
                         }
                     }
                     //From CCString
@@ -296,24 +310,55 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
                         }
                         else {
                             AnyType sourceCCString(str);
-                            ok = ScalarBasicTypeConvert(destination, sourceCCString);
+                            AnyType destinationConvertionType(destination);
+                            destinationConvertionType.SetNumberOfDimensions(0u);
+                            if (destination.IsStaticDeclared()) {
+                                destinationConvertionType.SetDataPointer(
+                                        static_cast<char8 *>(destination.GetDataPointer()) + destinationTotalCopySize);
+                            }
+                            else {
+                                char **destStr = reinterpret_cast<char **>(destination.GetDataPointer());
+                                destinationConvertionType.SetDataPointer(destStr[r] + destinationTotalCopySize);
+                            }
+                            ok = ScalarBasicTypeConvert(destinationConvertionType, sourceCCString);
                         }
                     }
                     else {
-                        void *srcArray = static_cast<char8 *>(source.GetDataPointer()) + totalCopySize;
-                        void *destArray = static_cast<char8 *>(destination.GetDataPointer()) + totalCopySize;
+                        void *srcArray = NULL_PTR(void *);
+                        void *destArray = NULL_PTR(void *);
+                        if (destination.IsStaticDeclared()) {
+                            destArray = static_cast<char8 *>(destination.GetDataPointer()) + destinationTotalCopySize;
+                        }
+                        else {
+                            char **destStr = reinterpret_cast<char **>(destination.GetDataPointer());
+                            destArray = (destStr[r] + destinationTotalCopySize);
+
+                        }
+                        if (source.IsStaticDeclared()) {
+                            srcArray = static_cast<char8 *>(source.GetDataPointer()) + sourceTotalCopySize;
+                        }
+                        else {
+                            char **src = reinterpret_cast<char **>(source.GetDataPointer());
+                            srcArray = (src[r] + destinationTotalCopySize);
+                        }
+
                         if (source.GetTypeDescriptor() == destination.GetTypeDescriptor()) {
                             ok = MemoryOperationsHelper::Copy(destArray, srcArray, copySize);
                         }
                         else {
                             AnyType sourceBasicType(source);
+                            sourceBasicType.SetNumberOfDimensions(0u);
                             sourceBasicType.SetDataPointer(srcArray);
+
                             AnyType destinationBasicType(destination);
+                            destinationBasicType.SetNumberOfDimensions(0u);
                             destinationBasicType.SetDataPointer(destArray);
+
                             ok = ScalarBasicTypeConvert(destinationBasicType, sourceBasicType);
                         }
                     }
-                    totalCopySize += copySize;
+                    destinationTotalCopySize += copySize;
+                    sourceTotalCopySize += copySize;
                 }
             }
         }
@@ -321,8 +366,7 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
     return ok;
 }
 
-static bool PointBasicTypeConvert(const AnyType &destination,
-                                  const AnyType &source) {
+static bool PointBasicTypeConvert(const AnyType &destination, const AnyType &source) {
     bool ok = true;
     uint32 copySize = 0u;
     //From Stream
@@ -378,10 +422,8 @@ static bool PointBasicTypeConvert(const AnyType &destination,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-bool TypeConvert(const AnyType &destination,
-                 const AnyType &source) {
+bool TypeConvert(const AnyType &destination, const AnyType &source) {
     bool ok = true;
-    uint32 copySize = 0u;
 
     //Source and destination dimensions must be the same
     ok = (destination.GetNumberOfDimensions() == source.GetNumberOfDimensions());
