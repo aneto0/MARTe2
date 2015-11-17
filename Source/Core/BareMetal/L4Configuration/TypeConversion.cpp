@@ -64,7 +64,8 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
     }
     if (ok) {
         //The deserialisation assumes that source dataPointer is an array of pointers to each individual element value.
-        void **sourceArray = static_cast<void **>(source.GetDataPointer());
+        //void **sourceArray = static_cast<void **>(source.GetDataPointer());
+        char *sourceArray = static_cast<char *>(source.GetDataPointer());
 
         for (idx = 0; ok && (idx < numberOfElements); idx++) {
             //Get the source element size (must treat strings and CCString specially...
@@ -76,7 +77,8 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
             }
             //From CCString
             else if (source.GetTypeDescriptor().type == CCString) {
-                const char8 *srcArray = static_cast<const char8 *>(sourceArray[idx]);
+                char **sourceString = reinterpret_cast<char **>(sourceArray);
+                const char8 *srcArray = static_cast<const char8 *>(sourceString[idx]);
                 copySize = (StringHelper::Length(srcArray) + 1u);
             }
             //From any other BasicType
@@ -111,7 +113,8 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
                 }
                 //From CCString
                 else if (source.GetTypeDescriptor().type == CCString) {
-                    const char8 *srcArray = static_cast<const char8 *>(sourceArray[idx]);
+                    char **sourceString = reinterpret_cast<char **>(sourceArray);
+                    const char8 *srcArray = static_cast<const char8 *>(sourceString[idx]);
                     if (destination.GetTypeDescriptor().type == CCString) {
                         //If the destination size is not sufficient this is going to have an ugly end...
                         char8 *destArray = static_cast<char8 *>(destination.GetDataPointer());
@@ -130,7 +133,7 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
                 }
                 //From any other BasicType
                 else {
-                    void *srcArray = sourceArray[idx];
+                    void *srcArray = sourceArray + totalCopySize;
                     void *destArray = static_cast<char8 *>(destination.GetDataPointer()) + totalCopySize;
                     //Source and destination are the same. Easy.
                     if (source.GetTypeDescriptor() == destination.GetTypeDescriptor()) {
@@ -160,7 +163,8 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
     uint32 totalCopySize = 0u;
 
     //The deserialisation assumes that the source dataPointer is an array of pointers to the element values.
-    void **sourceArray = static_cast<void **>(source.GetDataPointer());
+    //void **sourceArray = static_cast<void **>(source.GetDataPointer());
+    char *sourceArray = static_cast<char *>(source.GetDataPointer());
 
     uint32 r = 0u;
     uint32 c = 0u;
@@ -195,8 +199,16 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
                 }
                 //From CCString
                 else if (source.GetTypeDescriptor().type == CCString) {
-                    const char8 *srcArray = static_cast<const char8 *>(sourceArray[idx]);
-                    copySize = (StringHelper::Length(srcArray) + 1u);
+                    const char8 *str = NULL_PTR(const char8 *);
+                    if (source.IsStaticDeclared()) {
+                        char8 **sourceString = reinterpret_cast<char8 **>(sourceArray);
+                        str = static_cast<const char8 *>(sourceString[idx]);
+                    }
+                    else {
+                        char8 ***sourceString = reinterpret_cast<char8 ***>(sourceArray);
+                        str = static_cast<const char8 *>(sourceString[r][c]);
+                    }
+                    copySize = (StringHelper::Length(str) + 1u);
                 }
                 //From any other BasicType
                 else {
@@ -249,7 +261,16 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
                     }
                     //From CCString
                     else if (source.GetTypeDescriptor().type == CCString) {
-                        const char8 *srcArray = static_cast<const char8 *>(sourceArray[idx]);
+                        const char8 *str = NULL_PTR(const char8 *);
+                        if (source.IsStaticDeclared()) {
+                            char8 **sourceString = reinterpret_cast<char8 **>(sourceArray);
+                            str = static_cast<const char8 *>(sourceString[idx]);
+                        }
+                        else {
+                            char8 ***sourceString = reinterpret_cast<char8 ***>(sourceArray);
+                            str = static_cast<const char8 *>(sourceString[r][c]);
+                        }
+
                         //To CCString
                         if (destination.GetTypeDescriptor().type == CCString) {
                             char8 *destArray = NULL_PTR(char8 *);
@@ -259,7 +280,7 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
                             else {
                                 destArray = static_cast<char8 ***>(destination.GetDataPointer())[r][c];
                             }
-                            ok = MemoryOperationsHelper::Copy(destArray, srcArray, copySize);
+                            ok = MemoryOperationsHelper::Copy(destArray, str, copySize);
                         }
                         //To String
                         else if (destination.GetTypeDescriptor().type == SString) {
@@ -271,15 +292,15 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
                             else {
                                 stream = &static_cast<String **>(destination.GetDataPointer())[r][c];
                             }
-                            stream->Write(srcArray, copySize);
+                            stream->Write(str, copySize);
                         }
                         else {
-                            AnyType sourceCCString(srcArray);
+                            AnyType sourceCCString(str);
                             ok = ScalarBasicTypeConvert(destination, sourceCCString);
                         }
                     }
                     else {
-                        void *srcArray = sourceArray[idx];
+                        void *srcArray = static_cast<char8 *>(source.GetDataPointer()) + totalCopySize;
                         void *destArray = static_cast<char8 *>(destination.GetDataPointer()) + totalCopySize;
                         if (source.GetTypeDescriptor() == destination.GetTypeDescriptor()) {
                             ok = MemoryOperationsHelper::Copy(destArray, srcArray, copySize);

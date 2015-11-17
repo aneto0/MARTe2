@@ -361,6 +361,8 @@ void TestMatrixStreamStringStatic() {
 
     String arr[2][3] = { { "a", "bb", "ccc" }, { "d", "ee", "fff" } };
     Matrix<String> matWrite(arr);
+    printf("[%s][%s][%s]\n", matWrite[0][0].Buffer(), matWrite[0][1].Buffer(), matWrite[0][2].Buffer());
+    printf("[%s][%s][%s]\n", matWrite[1][0].Buffer(), matWrite[1][1].Buffer(), matWrite[1][2].Buffer());
     cdb.Write("ArrayValues", matWrite);
     String arrRead[2][3];
     Matrix<String> matRead(arrRead);

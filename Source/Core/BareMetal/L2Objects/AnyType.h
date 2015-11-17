@@ -691,7 +691,7 @@ AnyType::AnyType(const AnyType &x) {
     this->dataPointer = x.dataPointer;
     this->bitAddress = x.bitAddress;
     this->dataDescriptor = x.dataDescriptor;
-    this->staticDeclared = false;
+    this->staticDeclared = x.IsStaticDeclared();
     this->numberOfDimensions = x.numberOfDimensions;
     this->numberOfElements[0] = x.numberOfElements[0];
     this->numberOfElements[1] = x.numberOfElements[1];

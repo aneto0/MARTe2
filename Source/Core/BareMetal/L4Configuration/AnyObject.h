@@ -76,6 +76,11 @@ private:
     /**
      * TODO
      */
+    bool SerializeScalar();
+
+    /**
+     * TODO
+     */
     bool SerializeVector();
 
     /**
