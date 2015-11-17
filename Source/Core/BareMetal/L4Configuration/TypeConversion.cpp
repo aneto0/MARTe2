@@ -321,6 +321,58 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
     return ok;
 }
 
+static bool PointBasicTypeConvert(const AnyType &destination,
+                                  const AnyType &source) {
+    bool ok = true;
+    uint32 copySize = 0u;
+    //From Stream
+    if (source.GetTypeDescriptor().type == SString) {
+        String *stream = static_cast<String *>(source.GetDataPointer());
+        char8 *srcString = static_cast<char8 *>(stream->BufferReference());
+        copySize = stream->Size() + 1u;
+
+        //To Stream
+        if (destination.GetTypeDescriptor().type == SString) {
+            String *stream = static_cast<String *>(destination.GetDataPointer());
+            ok = stream->Write(srcString, copySize);
+        } //To CCString
+        else if (destination.GetTypeDescriptor().type == CCString) {
+            ok = MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize);
+        } //To another BasicType
+        else {
+            ok = ScalarBasicTypeConvert(destination, source);
+        }
+    } //From CCString
+    else if (source.GetTypeDescriptor().type == CCString) {
+        char8 *srcString = static_cast<char8 *>(source.GetDataPointer());
+        copySize = (StringHelper::Length(srcString) + 1u);
+
+        //To Stream
+        if (destination.GetTypeDescriptor().type == SString) {
+            String *stream = static_cast<String *>(destination.GetDataPointer());
+            ok = stream->Write(srcString, copySize);
+        } //To CString
+        else if (destination.GetTypeDescriptor().type == CCString) {
+            ok = MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize);
+        } //To another BasicType
+        else {
+            String sourceString = srcString;
+            ok = ScalarBasicTypeConvert(destination, sourceString);
+        }
+    } //From a BasicType
+    else { //Destination and source are the same
+        if (source.GetTypeDescriptor() == destination.GetTypeDescriptor()) {
+            copySize = source.GetTypeDescriptor().numberOfBits / 8u;
+            ok = MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize);
+        }
+        else {
+            ok = ScalarBasicTypeConvert(destination, source);
+        }
+    }
+
+    return ok;
+}
+
 }
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -341,50 +393,7 @@ bool TypeConvert(const AnyType &destination,
 
     if (ok) {
         if (source.GetNumberOfDimensions() == 0u) {
-            //From Stream
-            if (source.GetTypeDescriptor().type == SString) {
-                String *stream = static_cast<String *>(source.GetDataPointer());
-                char8 *srcString = static_cast<char8 *>(stream->BufferReference());
-                copySize = stream->Size() + 1u;
-
-                //To Stream
-                if (destination.GetTypeDescriptor().type == SString) {
-                    String *stream = static_cast<String *>(destination.GetDataPointer());
-                    ok = stream->Write(srcString, copySize);
-                } //To CCString
-                else if (destination.GetTypeDescriptor().type == CCString) {
-                    ok = MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize);
-                } //To another BasicType
-                else {
-                    ok = ScalarBasicTypeConvert(destination, source);
-                }
-            } //From CCString
-            else if (source.GetTypeDescriptor().type == CCString) {
-                char8 *srcString = static_cast<char8 *>(source.GetDataPointer());
-                copySize = (StringHelper::Length(srcString) + 1u);
-
-                //To Stream
-                if (destination.GetTypeDescriptor().type == SString) {
-                    String *stream = static_cast<String *>(destination.GetDataPointer());
-                    ok = stream->Write(srcString, copySize);
-                } //To CString
-                else if (destination.GetTypeDescriptor().type == CCString) {
-                    ok = MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize);
-                } //To another BasicType
-                else {
-                    String sourceString = srcString;
-                    ok = ScalarBasicTypeConvert(destination, sourceString);
-                }
-            } //From a BasicType
-            else { //Destination and source are the same
-                if (source.GetTypeDescriptor() == destination.GetTypeDescriptor()) {
-                    copySize = source.GetTypeDescriptor().numberOfBits / 8u;
-                    ok = MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize);
-                }
-                else {
-                    ok = ScalarBasicTypeConvert(destination, source);
-                }
-            }
+            ok = PointBasicTypeConvert(destination, source);
         }
         else if (source.GetNumberOfDimensions() == 1u) {
             ok = VectorBasicTypeConvert(destination, source);
