@@ -91,7 +91,7 @@ struct BasicConsoleProperties;
  * The specificities of the behaviour are delegated to the underlying operating system.
  * Not all of the features are necessarily implemented in all the operating systems.
  */
-class BasicConsole: public StreamI {
+class DLL_API BasicConsole: public StreamI {
 
 public:
 
@@ -329,19 +329,19 @@ public:
     virtual bool TimeoutSupported() const;
 
     /**
-     * @brief The UDP socket support writing.
+     * @brief The console supports writing.
      * @return true.
      */
     virtual bool CanWrite() const;
 
     /**
-     * @brief The UDP socket support reading.
+     * @brief The console supports reading.
      * @return true.
      */
     virtual bool CanRead() const;
 
     /**
-     * @brief The UDP socket does not support seeking.
+     * @brief The console does not support seeking.
      * @return false.
      */
     virtual bool CanSeek() const;

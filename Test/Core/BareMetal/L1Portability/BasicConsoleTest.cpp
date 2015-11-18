@@ -32,7 +32,7 @@
 #include "GeneralDefinitions.h"
 #include "BasicConsoleTest.h"
 #include "StringTestHelper.h"
-
+#include "stdio.h"
 using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
@@ -144,7 +144,7 @@ bool BasicConsoleTestWrite(const char8 *string,
     if (size < 0) {
         return false;
     }
-    ErrorManagement::ErrorType ret = myConsole.Write(string, size, TTInfiniteWait);
+    bool ret = myConsole.Write(string, size, TTInfiniteWait);
     return (ret);
 }
 

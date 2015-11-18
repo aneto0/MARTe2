@@ -24,6 +24,8 @@
 #ifndef GENERALDEFINITIONS_ENV_H_
 #define GENERALDEFINITIONS_ENV_H_
 
+#include <windows.h>
+
 namespace MARTe{
 
 
