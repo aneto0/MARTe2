@@ -23,7 +23,7 @@
 #############################################################
 
 
-OBJSX=  
+OBJSX=  AnyTypeGTest.x
 #DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
