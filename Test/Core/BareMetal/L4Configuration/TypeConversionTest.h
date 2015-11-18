@@ -48,10 +48,17 @@ struct TypeToTypeTableTest {
     bool expected;
 };
 
-template<typename T1, typename T2, uint32 nCols>
+template<typename T1, typename T2, uint32 nElements>
 struct TypeToTypeVectorTableTest {
-    T1 typeToConvert[nCols];
-    T2 result[nCols];
+    T1 typeToConvert[nElements];
+    T2 result[nElements];
+    bool go;
+};
+
+template<typename T1, typename T2, uint32 nRows, uint32 nCols>
+struct TypeToTypeMatrixTableTest {
+    T1 typeToConvert[nRows][nCols];
+    T2 result[nRows][nCols];
     bool go;
 };
 
@@ -60,8 +67,22 @@ public:
     template<typename T1, typename T2>
     bool TestTypeConvert(const TypeToTypeTableTest<T1, T2>* table);
 
-    template<typename T1, typename T2, uint32 nCols>
-    bool TestTypeConvertVector(const TypeToTypeVectorTableTest<T1, T2, nCols>* table);
+    template<typename T1, typename T2, uint32 nElements>
+    bool TestTypeConvertVector(const TypeToTypeVectorTableTest<T1, T2, nElements>* table);
+
+    template<typename T1, typename T2, uint32 nRows, uint32 nCols>
+    bool TestTypeConvertMatrixStaticToStatic(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table);
+
+
+    template<typename T1, typename T2, uint32 nRows, uint32 nCols>
+    bool TestTypeConvertMatrixStaticToHeap(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table);
+
+    template<typename T1, typename T2, uint32 nRows, uint32 nCols>
+    bool TestTypeConvertMatrixHeapToStatic(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table);
+
+    template<typename T1, typename T2, uint32 nRows, uint32 nCols>
+    bool TestTypeConvertMatrixHeapToHeap(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table);
+
 };
 
 /*---------------------------------------------------------------------------*/
@@ -84,7 +105,7 @@ bool TypeConversionTest::TestTypeConvert(const TypeToTypeTableTest<T1, T2>* tabl
             return false;
         }
         if (ret != table[i].expected) {
-            printf("\n%d\n",i);
+            printf("\n%d\n", i);
             return false;
         }
 
@@ -94,23 +115,66 @@ bool TypeConversionTest::TestTypeConvert(const TypeToTypeTableTest<T1, T2>* tabl
 
 }
 
-template<typename T1, typename T2, uint32 nCols>
-bool TypeConversionTest::TestTypeConvertVector(const TypeToTypeVectorTableTest<T1, T2, nCols>* table) {
+template<typename T1, typename T2, uint32 nElements>
+bool TypeConversionTest::TestTypeConvertVector(const TypeToTypeVectorTableTest<T1, T2, nElements>* table) {
 
     uint32 i = 0;
     while (table[i].go) {
-        T2 element[nCols];
+        T2 element[nElements];
         //T2 result = table[i].result;
         //T1 toConvert = table[i].typeToConvert;
+        T1 toConvert[nElements];
+        for (uint32 j = 0; j < nElements; j++) {
+            // to avoid const errors
+            toConvert[j] = table[i].typeToConvert[j];
+        }
 
-        TypeConvert(element, table[i].typeToConvert);
+        TypeConvert(element, toConvert);
 
-        for (uint32 j = 0; j < nCols; j++) {
+        for (uint32 j = 0; j < nElements; j++) {
 
+            //  T2 result=table[i].result[j];
             if (element[j] != table[i].result[j]) {
-                printf("\n%d %d %d\n", element[j], table[i].result[j], i);
+                //printf("\n%s %s %d\n", element[j].Buffer(), result.Buffer(), j);
 
                 return false;
+            }
+
+        }
+
+        i++;
+    }
+    return true;
+
+}
+
+template<typename T1, typename T2, uint32 nRows, uint32 nCols>
+bool TypeConversionTest::TestTypeConvertMatrixStaticToStatic(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table) {
+    uint32 i = 0;
+    while (table[i].go) {
+        T2 element[nRows][nCols];
+        //T2 result = table[i].result;
+        //T1 toConvert = table[i].typeToConvert;
+        T1 toConvert[nRows][nCols];
+        for (uint32 j = 0; j < nRows; j++) {
+            for (uint32 k = 0; k < nCols; k++) {
+                // to avoid const errors
+                toConvert[j][k] = table[i].typeToConvert[j][k];
+            }
+        }
+
+        TypeConvert(element, toConvert);
+
+        for (uint32 j = 0; j < nRows; j++) {
+            for (uint32 k = 0; k < nCols; k++) {
+
+                //  T2 result=table[i].result[j];
+                if (element[j][k] != table[i].result[j][k]) {
+                    //printf("\n%d %d %d\n", toConvert[j][k], element[j][k], table[i].result[j][k]);
+                    //printf("\n%s %s %d\n", element[j].Buffer(), result.Buffer(), j);
+
+                    return false;
+                }
             }
         }
 
@@ -119,6 +183,193 @@ bool TypeConversionTest::TestTypeConvertVector(const TypeToTypeVectorTableTest<T
     return true;
 
 }
+
+
+
+template<typename T1, typename T2, uint32 nRows, uint32 nCols>
+bool TypeConversionTest::TestTypeConvertMatrixStaticToHeap(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table) {
+    uint32 i = 0;
+
+    T2** matrix=new T2*[nRows];
+
+    for(uint32 j=0; j<nRows; j++){
+        matrix[j]=new T2[nCols];
+    }
+    Matrix<T2> element(matrix, nRows, nCols);
+
+    while (table[i].go) {
+
+
+        //T2 result = table[i].result;
+        //T1 toConvert = table[i].typeToConvert;
+        T1 toConvert[nRows][nCols];
+        for (uint32 j = 0; j < nRows; j++) {
+            for (uint32 k = 0; k < nCols; k++) {
+                // to avoid const errors
+                toConvert[j][k] = table[i].typeToConvert[j][k];
+            }
+        }
+
+        TypeConvert(element, toConvert);
+
+        for (uint32 j = 0; j < nRows; j++) {
+            for (uint32 k = 0; k < nCols; k++) {
+
+                //  T2 result=table[i].result[j];
+                if (element[j][k] != table[i].result[j][k]) {
+                    //printf("\n%d %d %d\n", toConvert[j][k], element[j][k], table[i].result[j][k]);
+                    //printf("\n%s %s %d\n", element[j].Buffer(), result.Buffer(), j);
+
+                    return false;
+                }
+            }
+        }
+
+        i++;
+    }
+
+
+    for(uint32 j=0; j<nRows; j++){
+        delete[] matrix[j];
+    }
+
+    delete[] matrix;
+
+
+
+    return true;
+
+}
+
+
+
+template<typename T1, typename T2, uint32 nRows, uint32 nCols>
+bool TypeConversionTest::TestTypeConvertMatrixHeapToStatic(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table) {
+    uint32 i = 0;
+
+    T1** matrix=new T1*[nRows];
+
+    for(uint32 j=0; j<nRows; j++){
+        matrix[j]=new T1[nCols];
+    }
+    Matrix<T1> toConvert(matrix, nRows, nCols);
+
+    while (table[i].go) {
+
+
+        //T2 result = table[i].result;
+        //T1 toConvert = table[i].typeToConvert;
+        T2 element[nRows][nCols];
+        for (uint32 j = 0; j < nRows; j++) {
+            for (uint32 k = 0; k < nCols; k++) {
+                // to avoid const errors
+                toConvert[j][k] = table[i].typeToConvert[j][k];
+            }
+        }
+
+        TypeConvert(element, toConvert);
+
+        for (uint32 j = 0; j < nRows; j++) {
+            for (uint32 k = 0; k < nCols; k++) {
+
+                //  T2 result=table[i].result[j];
+                if (element[j][k] != table[i].result[j][k]) {
+                    //printf("\n%d %d %d\n", toConvert[j][k], element[j][k], table[i].result[j][k]);
+                    //printf("\n%s %s %d\n", element[j].Buffer(), result.Buffer(), j);
+
+                    return false;
+                }
+            }
+        }
+
+        i++;
+    }
+
+
+    for(uint32 j=0; j<nRows; j++){
+        delete[] matrix[j];
+    }
+
+    delete[] matrix;
+
+
+
+    return true;
+
+}
+
+
+template<typename T1, typename T2, uint32 nRows, uint32 nCols>
+bool TypeConversionTest::TestTypeConvertMatrixHeapToHeap(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table) {
+    uint32 i = 0;
+
+    T1** input=new T1*[nRows];
+
+    for(uint32 j=0; j<nRows; j++){
+        input[j]=new T1[nCols];
+    }
+    Matrix<T1> toConvert(input, nRows, nCols);
+
+    T2** output=new T2*[nRows];
+
+    for(uint32 j=0; j<nRows; j++){
+        output[j]=new T2[nCols];
+    }
+    Matrix<T2> element(output, nRows, nCols);
+
+
+
+    while (table[i].go) {
+
+
+        //T2 result = table[i].result;
+        //T1 toConvert = table[i].typeToConvert;
+        T2 element[nRows][nCols];
+        for (uint32 j = 0; j < nRows; j++) {
+            for (uint32 k = 0; k < nCols; k++) {
+                // to avoid const errors
+                toConvert[j][k] = table[i].typeToConvert[j][k];
+            }
+        }
+
+        TypeConvert(element, toConvert);
+
+        for (uint32 j = 0; j < nRows; j++) {
+            for (uint32 k = 0; k < nCols; k++) {
+
+                //  T2 result=table[i].result[j];
+                if (element[j][k] != table[i].result[j][k]) {
+                    //printf("\n%d %d %d\n", toConvert[j][k], element[j][k], table[i].result[j][k]);
+                    //printf("\n%s %s %d\n", element[j].Buffer(), result.Buffer(), j);
+
+                    return false;
+                }
+            }
+        }
+
+        i++;
+    }
+
+
+    for(uint32 j=0; j<nRows; j++){
+        delete[] input[j];
+    }
+
+    delete[] input;
+
+    for(uint32 j=0; j<nRows; j++){
+        delete[] output[j];
+    }
+
+    delete[] output;
+
+
+    return true;
+
+}
+
+
+
 
 #endif /* TYPECONVERSIONTEST_H_ */
 

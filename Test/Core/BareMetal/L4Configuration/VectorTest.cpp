@@ -84,7 +84,7 @@ bool VectorTest::TestIsStaticDeclared() {
     int32 *staticPointer = staticArray;
     Vector<int32> vector2(staticPointer, nElements);
 
-    if (!vector2.IsStaticDeclared()) {
+    if (vector2.IsStaticDeclared()) {
         return false;
     }
 
@@ -92,7 +92,7 @@ bool VectorTest::TestIsStaticDeclared() {
 
     Vector<int32> vector3(heapPointer, nElements);
 
-    if (!vector3.IsStaticDeclared()) {
+    if (vector3.IsStaticDeclared()) {
         return false;
     }
 

@@ -331,3 +331,47 @@ TEST(MatrixGTest,TestConstructorByTable_Float64) {
 
     ASSERT_TRUE(matrixTest.TestConstructorByTable(matrix));
 }
+
+
+
+
+TEST(MatrixGTest,TestGetNumberOfColumns_32) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestGetNumberOfColumns(32));
+}
+
+TEST(MatrixGTest,TestGetNumberOfColumns_0) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestGetNumberOfColumns(0));
+}
+
+TEST(MatrixGTest,TestGetNumberOfRows_32) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestGetNumberOfRows(32));
+}
+
+TEST(MatrixGTest,TestGetNumberOfRows_0) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestGetNumberOfRows(0));
+}
+
+TEST(MatrixGTest,TestMatrixOperator_Static) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestMatrixOperator_Static());
+}
+
+TEST(MatrixGTest,TestMatrixOperator_Heap) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestMatrixOperator_Heap());
+}
+
+TEST(MatrixGTest,TestGetDataPointer) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestGetDataPointer());
+}
+
+TEST(MatrixGTest,TestIsStaticDeclared) {
+    MatrixTest matrixTest;
+    ASSERT_TRUE(matrixTest.TestIsStaticDeclared());
+}
+

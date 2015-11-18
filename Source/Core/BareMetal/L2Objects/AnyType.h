@@ -415,7 +415,6 @@ public:
      */
     inline AnyType(const char8 * const p);
 
-
     /**
      * @brief Constructor from Object (or inherited class).
      * @param[in] obj the source Object.
@@ -692,7 +691,7 @@ AnyType::AnyType(const AnyType &x) {
     this->dataPointer = x.dataPointer;
     this->bitAddress = x.bitAddress;
     this->dataDescriptor = x.dataDescriptor;
-    this->staticDeclared = false;
+    this->staticDeclared = x.IsStaticDeclared();
     this->numberOfDimensions = x.numberOfDimensions;
     this->numberOfElements[0] = x.numberOfElements[0];
     this->numberOfElements[1] = x.numberOfElements[1];
@@ -907,7 +906,7 @@ AnyType::AnyType(const void * const p) {
 }
 
 AnyType::AnyType(const char8 * const p) {
-    dataPointer = static_cast<void *>(const_cast<char8 *>(p)); // we will either print the variable or the string
+    dataPointer = reinterpret_cast<void *>(const_cast<char8 *>(p)); // we will either print the variable or the string
     bitAddress = 0u;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = true;
@@ -915,8 +914,6 @@ AnyType::AnyType(const char8 * const p) {
     dataDescriptor.numberOfBits = sizeof(const char8*) * 8u;
     InitDimensions();
 }
-
-
 
 AnyType &AnyType::operator=(const AnyType &src) {
     if (this != &src) {
@@ -1015,7 +1012,7 @@ AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
 
 template<typename T, uint32 nOfElementsStatic>
 AnyType::AnyType(T (&source)[nOfElementsStatic]) {
-    dataPointer = (void*)(&source[0]);
+    dataPointer = (void*) (&source[0]);
     InitDimensions();
     numberOfDimensions = 1u;
     numberOfElements[0] = nOfElementsStatic;
@@ -1024,11 +1021,12 @@ AnyType::AnyType(T (&source)[nOfElementsStatic]) {
     T typeDiscovery = static_cast<T>(0);
     AnyType anyTypeDiscovery(typeDiscovery);
     dataDescriptor = anyTypeDiscovery.GetTypeDescriptor();
+    bitAddress = anyTypeDiscovery.GetBitAddress();
 }
 
 template<typename T, uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
 AnyType::AnyType(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
-    dataPointer = (void *)(&source);
+    dataPointer = (void *) (&source);
     InitDimensions();
     numberOfDimensions = 2u;
     numberOfElements[0] = nOfColumnsStatic;
@@ -1038,6 +1036,7 @@ AnyType::AnyType(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
     T typeDiscovery = static_cast<T>(0);
     AnyType anyTypeDiscovery(typeDiscovery);
     dataDescriptor = anyTypeDiscovery.GetTypeDescriptor();
+    bitAddress = anyTypeDiscovery.GetBitAddress();
 }
 
 template<typename T>
@@ -1052,6 +1051,7 @@ AnyType::AnyType(Matrix<T> &mat) {
     T typeDiscovery = static_cast<T>(0);
     AnyType anyTypeDiscovery(typeDiscovery);
     dataDescriptor = anyTypeDiscovery.GetTypeDescriptor();
+    bitAddress = anyTypeDiscovery.GetBitAddress();
 }
 
 template<typename T>
@@ -1065,6 +1065,8 @@ AnyType::AnyType(Vector<T> &vec) {
     T typeDiscovery = static_cast<T>(vec[0]);
     AnyType anyTypeDiscovery(typeDiscovery);
     dataDescriptor = anyTypeDiscovery.GetTypeDescriptor();
+    bitAddress = anyTypeDiscovery.GetBitAddress();
+
 }
 
 void* AnyType::GetDataPointer() const {

@@ -239,6 +239,12 @@ void TestMatrixNumbersDynamic() {
     matWrite[1][1] = -2.1;
     matWrite[1][2] = -3.1;
     cdb.Write("MatrixFromArray", matWrite);
+    matWrite[0][0] = 0.0;
+    matWrite[0][1] = 0.0;
+    matWrite[0][2] = 0.0;
+    matWrite[1][0] = 0.0;
+    matWrite[1][1] = 0.0;
+    matWrite[1][2] = 0.0;
     Matrix<float32> matRead(2, 3);
     cdb.Read("MatrixFromArray", matRead);
     printf("[%f][%f][%f]\n", matRead[0][0], matRead[0][1], matRead[0][2]);
@@ -262,7 +268,12 @@ void TestMatrixExistentArray() {
     matWrite[1][1] = -2.1;
     matWrite[1][2] = -3.1;
     cdb.Write("MatrixFromArray", matWrite);
-
+    matWrite[0][0] = 0.0;
+    matWrite[0][1] = 0.0;
+    matWrite[0][2] = 0.0;
+    matWrite[1][0] = 0.0;
+    matWrite[1][1] = 0.0;
+    matWrite[1][2] = 0.0;
     float32 **arrRead = new float32*[2];
     arrRead[0] = new float32[3];
     arrRead[1] = new float32[3];
@@ -361,6 +372,8 @@ void TestMatrixStreamStringStatic() {
 
     String arr[2][3] = { { "a", "bb", "ccc" }, { "d", "ee", "fff" } };
     Matrix<String> matWrite(arr);
+    printf("[%s][%s][%s]\n", matWrite[0][0].Buffer(), matWrite[0][1].Buffer(), matWrite[0][2].Buffer());
+    printf("[%s][%s][%s]\n", matWrite[1][0].Buffer(), matWrite[1][1].Buffer(), matWrite[1][2].Buffer());
     cdb.Write("ArrayValues", matWrite);
     String arrRead[2][3];
     Matrix<String> matRead(arrRead);

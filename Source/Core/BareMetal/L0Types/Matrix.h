@@ -86,6 +86,7 @@ public:
     template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
     Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]);
 
+    ~Matrix();
     /**
      * @brief Gets the number of columns.
      * @return the number of columns.
@@ -138,6 +139,8 @@ private:
      */
     bool staticDeclared;
 
+    bool canDestroy;
+
 };
 }
 
@@ -152,20 +155,22 @@ Matrix<T>::Matrix() {
     numberOfRows=0u;
     numberOfColumns=0u;
     staticDeclared=true;
+    canDestroy=false;
 }
 
 template<typename T>
 Matrix<T>::Matrix(uint32 nOfRows,
                   uint32 nOfColumns) {
     T** rows = new T*[nOfRows];
-    dataPointer=reinterpret_cast<void *>(rows);
+    dataPointer = reinterpret_cast<void *>(rows);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
     staticDeclared = false;
     uint32 i;
     for (i = 0; i < nOfRows; i++) {
-        rows [i] = new T[nOfColumns];
+        rows[i] = new T[nOfColumns];
     }
+    canDestroy = true;
 }
 
 template<typename T>
@@ -176,6 +181,7 @@ Matrix<T>::Matrix(T **existingArray,
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
     staticDeclared = false;
+    canDestroy = false;
 }
 
 template<typename T>
@@ -185,6 +191,18 @@ Matrix<T>::Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
     numberOfColumns = nOfColumnsStatic;
     numberOfRows = nOfRowsStatic;
     staticDeclared = true;
+    canDestroy = false;
+}
+
+template<typename T>
+Matrix<T>::~Matrix(){
+    if(canDestroy){
+        T** ponterToDestroy=reinterpret_cast<T**>(dataPointer);
+        for(uint32 i=0; i<numberOfRows; i++){
+            delete[] ponterToDestroy[i];
+        }
+        delete[] ponterToDestroy;
+    }
 }
 
 template<typename T>
@@ -202,11 +220,11 @@ Vector<T> Matrix<T>::operator [](uint32 element) {
     Vector<T> vec;
 
     if (!staticDeclared) {
-        T** rows=reinterpret_cast<T**>(dataPointer);
+        T** rows = reinterpret_cast<T**>(dataPointer);
         vec = Vector<T>(rows[element], numberOfColumns);
     }
     else {
-        T* beginMemory=reinterpret_cast<T*>(dataPointer);
+        T* beginMemory = reinterpret_cast<T*>(dataPointer);
         vec = Vector<T>(&beginMemory[element * numberOfColumns], numberOfColumns);
     }
     return vec;

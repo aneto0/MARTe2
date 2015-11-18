@@ -54,6 +54,18 @@ public:
     template<typename T, uint32 nRows, uint32 nCols>
     bool TestConstructorByTable(T (&matrix)[nRows][nCols]);
 
+    bool TestGetNumberOfColumns(uint32 nCols);
+
+    bool TestGetNumberOfRows(uint32 nRows);
+
+    bool TestMatrixOperator_Static();
+
+    bool TestMatrixOperator_Heap();
+
+    bool TestGetDataPointer();
+
+    bool TestIsStaticDeclared();
+
 };
 
 /*---------------------------------------------------------------------------*/

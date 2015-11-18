@@ -132,6 +132,8 @@ private:
      * True if this dataPointer is pointing at a statically allocated matrix memory block [][].
      */
     bool staticDeclared;
+
+    bool canDestroy;
 };
 }
 
@@ -145,6 +147,7 @@ Vector<T>::Vector() {
     numberOfElements = 0u;
     dataPointer = NULL_PTR(T *);
     staticDeclared = true;
+    canDestroy=false;
 }
 
 template<typename T>
@@ -152,6 +155,7 @@ Vector<T>::Vector(uint32 nOfElements) {
     dataPointer = new T[nOfElements];
     numberOfElements = nOfElements;
     staticDeclared = false;
+    canDestroy=true;
 }
 
 template<typename T>
@@ -159,8 +163,8 @@ Vector<T>::Vector(T *existingArray,
                   uint32 nOfElements) {
     dataPointer = existingArray;
     numberOfElements = nOfElements;
-    //staticDeclared = false;
-    staticDeclared = true;
+    staticDeclared = false;
+    canDestroy=false;
 }
 
 template<typename T>
@@ -169,12 +173,13 @@ Vector<T>::Vector(T (&source)[nOfElementsStatic]) {
     dataPointer = reinterpret_cast<T *>(&source[0]);
     numberOfElements = nOfElementsStatic;
     staticDeclared = true;
+    canDestroy=false;
 }
 
 template<typename T>
 Vector<T>::~Vector() {
-    if (!staticDeclared) {
-        HeapManager::Free(reinterpret_cast<void*&>(dataPointer));
+    if (canDestroy) {
+        delete[] reinterpret_cast<T*>(dataPointer);
     }
 }
 

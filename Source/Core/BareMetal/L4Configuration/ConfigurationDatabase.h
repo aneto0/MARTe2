@@ -48,86 +48,112 @@ namespace MARTe {
  * @brief An implementation of StructuredDataI where node paths are identified and separated by dots.
  * @details Paths are constructed by concatenating node names with dots (e.g. A.B.C.D), where D is a leaf
  * and A, B and C are nodes.
+ *
+ * A shared semaphore that can be used by the users of a database instance to have concurrent access to the database.
  */
 class ConfigurationDatabase: public StructuredDataI {
 public:
 
     /**
-     * @brief Default constructor. NOOP.
+     * @brief Default constructor. Initialises the shared mutex Semaphore.
      */
     ConfigurationDatabase();
 
     /**
-     * TODO
+     * Default constructor.
      */
     virtual ~ConfigurationDatabase();
 
     /**
-     * TODO
+     * @see StructuredDataI::Read
      */
     virtual bool Read(const char * const name,
                       const AnyType &value);
 
     /**
-     * TODO
+     * @see StructuredDataI::GetType
      */
     virtual AnyType GetType(const char * const name);
 
     /**
-     * TODO
+     * @see StructuredDataI::Write
      */
     virtual bool Write(const char * const name,
                        const AnyType &value);
 
     /**
-     * TODO
+     * @see StructuredDataI::Copy
      */
     virtual bool Copy(StructuredDataI &destination);
 
     /**
-     * TODO
+     * @see StructuredDataI::MoveToRoot
      */
     virtual bool MoveToRoot();
 
     /**
-     * TODO
+     * @see StructuredDataI::MoveToAncestor
      */
     virtual bool MoveToAncestor(uint32 generations);
 
     /**
-     * TODO. Delete empty nodes?
+     * @see StructuredDataI::MoveAbsolute
      */
     virtual bool MoveAbsolute(const char * const path);
 
+    /**
+     * @see StructuredDataI::MoveRelative
+     */
     virtual bool MoveRelative(const char * const path);
 
     /**
-     * TODO
+     * @see StructuredDataI::CreateNodesAbsolute
      */
     virtual bool CreateNodesAbsolute(const char * const path);
 
+    /**
+     * @see StructuredDataI::CreateNodesRelative
+     */
     virtual bool CreateNodesRelative(const char * const path);
 
+    /**
+     * @see StructuredDataI::AddToCurrentNode
+     */
     virtual bool AddToCurrentNode(Reference node);
+
+    /**
+     * @brief Locks the shared semaphore.
+     * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
+     * @return true if the shared semaphore is successfully locked.
+     */
+    bool Lock(const TimeoutType &timeout);
+
+    /**
+     * @brief Unlocks the shared semaphore.
+     * @return true if the shared semaphore is successfully unlocked.
+     */
+    void Unlock();
 
 private:
     /**
-     * TODO
+     * @brief Create nodes relative to the currentNode.
+     * @param path the path to be created.
+     * @return true if the path creation is successful.
      */
     bool CreateNodes(const char * const path);
 
     /**
-     * TODO
+     * The current node to where the database is pointing.
      */
     ReferenceT<ReferenceContainer> currentNode;
 
     /**
-     * TODO
+     * The root node of the database.
      */
     ReferenceT<ReferenceContainer> rootNode;
 
     /**
-     * TODO
+     * The shared mutex semaphore.
      */
     FastPollingMutexSem mux;
 
