@@ -57,7 +57,7 @@ bool ConfigurationDatabase::Write(const char * const name,
     ReferenceT<AnyObject> objToWrite(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     bool ok = objToWrite.IsValid();
     if (ok) {
-        ok = objToWrite->Load(value);
+        ok = objToWrite->Serialise(value);
         if (ok) {
             objToWrite->SetName(name);
             ok = currentNode.IsValid();

@@ -60,8 +60,7 @@ bool AnyObject::SerializeMatrix() {
 
     char *value = NULL_PTR(char *);
     if (type.IsStaticDeclared()) {
-        value = static_cast<char *>(HeapManager::Malloc(
-                numberOfRows * numberOfColumns * dataDescriptor.numberOfBits / 8u));
+        value = static_cast<char *>(HeapManager::Malloc(numberOfRows * numberOfColumns * dataDescriptor.numberOfBits / 8u));
     }
     else {
         value = static_cast<char *>(HeapManager::Malloc(numberOfRows * sizeof(void *)));
@@ -254,31 +253,34 @@ bool AnyObject::SerializeScalar() {
     return ok;
 }
 
-bool AnyObject::Load(const AnyType &typeIn) {
+bool AnyObject::Serialise(const AnyType &typeIn) {
     uint32 nOfDimensions = typeIn.GetNumberOfDimensions();
     bool ok = true;
-    type = typeIn;
 
-    if (nOfDimensions == 0u) {
-        ok = SerializeScalar();
-    }
-    else if (nOfDimensions == 1u) {
-        ok = SerializeVector();
-    }
-    else if (nOfDimensions == 2u) {
-        ok = SerializeMatrix();
-    }
+    ok = (type.GetDataPointer() == NULL_PTR(void *));
+    if (ok) {
+        type = typeIn;
+        if (nOfDimensions == 0u) {
+            ok = SerializeScalar();
+        }
+        else if (nOfDimensions == 1u) {
+            ok = SerializeVector();
+        }
+        else if (nOfDimensions == 2u) {
+            ok = SerializeMatrix();
+        }
 
 //Strings are serialised as arrays of CCString. The type as to be updated accordingly.
-    if (typeIn.GetTypeDescriptor().type == SString) {
-        void *tmp = type.GetDataPointer();
-        type = AnyType(static_cast<char8 *>(typeIn.GetDataPointer()));
-        type.SetDataPointer(tmp);
-        type.SetStaticDeclared(typeIn.IsStaticDeclared());
-        type.SetNumberOfDimensions(typeIn.GetNumberOfDimensions());
-        type.SetNumberOfElements(0u, typeIn.GetNumberOfElements(0u));
-        type.SetNumberOfElements(1u, typeIn.GetNumberOfElements(1u));
-        type.SetNumberOfElements(2u, typeIn.GetNumberOfElements(2u));
+        if (typeIn.GetTypeDescriptor().type == SString) {
+            void *tmp = type.GetDataPointer();
+            type = AnyType(static_cast<char8 *>(typeIn.GetDataPointer()));
+            type.SetDataPointer(tmp);
+            type.SetStaticDeclared(typeIn.IsStaticDeclared());
+            type.SetNumberOfDimensions(typeIn.GetNumberOfDimensions());
+            type.SetNumberOfElements(0u, typeIn.GetNumberOfElements(0u));
+            type.SetNumberOfElements(1u, typeIn.GetNumberOfElements(1u));
+            type.SetNumberOfElements(2u, typeIn.GetNumberOfElements(2u));
+        }
     }
 
     return ok;
