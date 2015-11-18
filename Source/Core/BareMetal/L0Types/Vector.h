@@ -121,7 +121,7 @@ private:
     /**
      * The data pointer to the raw data.
      */
-    T *dataPointer;
+    void *dataPointer;
 
     /**
      * The number of elements.
@@ -180,7 +180,8 @@ Vector<T>::~Vector() {
 
 template<typename T>
 T &Vector<T>::operator [](uint32 idx) {
-    return dataPointer[idx];
+    T* array=reinterpret_cast<T*>(dataPointer);
+    return array[idx];
 }
 
 template<typename T>

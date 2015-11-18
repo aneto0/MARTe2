@@ -1669,14 +1669,15 @@ TEST(TypeConversionGTest,TestFloat32ToInt8) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<float32,int8> table[]={
             {1.9,2, true, true},
-            {126.5, 126, true, true},
+            {126.5, 127, true, true},
             {126.51, 127, true, true},
             {127.999, 127, true, true},
             {127.49, 127, true, true},
             {127.51, 127, true, true},
             {128.0, 127, true, true},
             {-1.0, -1, true, true},
-            {-127.5,-127,true, true},
+            {-127.49,-127,true, true},
+            {-127.5,-128,true, true},
             {-127.51, -128, true, true},
             {-128.9, -128, true, true},
             {-129.0, -128, true, true},
@@ -1708,14 +1709,15 @@ TEST(TypeConversionGTest,TestFloat32ToInt16) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<float32,int16> table[]={
             {1.9,2, true, true},
-            {32766.5, 32766, true, true},
+            {32766.5, 32767, true, true},
             {32766.51, 32767, true, true},
             {32767.999, 32767, true, true},
             {32767.49, 32767, true, true},
             {32767.51, 32767, true, true},
             {32768.0, 32767, true, true},
             {-1.0, -1, true, true},
-            {-32767.5,-32767,true, true},
+            {-32767.49,-32767,true, true},
+            {-32767.5,-32768,true, true},
             {-32767.51, -32768, true, true},
             {-32768.9, -32768, true, true},
             {-32769.0, -32768, true, true},
@@ -1730,7 +1732,7 @@ TEST(TypeConversionGTest,TestFloat32ToUInt16) {
     const TypeToTypeTableTest<float32,uint16> table[]={
             {1.9,2, true, true},
             {65535.0, 65535, true, true},
-            {65534.499, 65534, true, true},
+            {65534.49, 65534, true, true},
             {65534.505, 65535, true, true},
             {65535.99, 65535, true, true},
             {65536.0, 65535, true, true},
@@ -1823,14 +1825,15 @@ TEST(TypeConversionGTest,TestFloat64ToInt8) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<float64,int8> table[]={
             {1.9,2, true, true},
-            {126.5, 126, true, true},
+            {126.5, 127, true, true},
             {126.51, 127, true, true},
             {127.999, 127, true, true},
             {127.49, 127, true, true},
             {127.51, 127, true, true},
             {128.0, 127, true, true},
             {-1.0, -1, true, true},
-            {-127.5,-127,true, true},
+            {-127.49,-127,true, true},
+            {-127.5,-128,true, true},
             {-127.51, -128, true, true},
             {-128.9, -128, true, true},
             {-129.0, -128, true, true},
@@ -1862,14 +1865,15 @@ TEST(TypeConversionGTest,TestFloat64ToInt16) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<float64,int16> table[]={
             {1.9,2, true, true},
-            {32766.5, 32766, true, true},
+            {32766.5, 32767, true, true},
             {32766.51, 32767, true, true},
             {32767.999, 32767, true, true},
             {32767.49, 32767, true, true},
             {32767.51, 32767, true, true},
             {32768.0, 32767, true, true},
             {-1.0, -1, true, true},
-            {-32767.5,-32767,true, true},
+            {-32767.5,-32768,true, true},
+            {-32767.49,-32767,true, true},
             {-32767.51, -32768, true, true},
             {-32768.9, -32768, true, true},
             {-32769.0, -32768, true, true},
@@ -1901,9 +1905,11 @@ TEST(TypeConversionGTest,TestFloat64ToInt32) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<float64,int32> table[]={
             {1.9,2, true, true},
-            {2147483646.5, 2147483646, true, true},
+            {2147483646.49, 2147483646, true, true},
+            {2147483646.5, 2147483647, true, true},
             {-1.0, -1, true, true},
-            {-2147483647.5,-2147483647,true, true},
+            {-2147483647.5,-2147483648,true, true},
+            {-2147483647.49,-2147483647,true, true},
             {-2147483649.0, -2147483648, true, true},
             {0,0,0}
     };

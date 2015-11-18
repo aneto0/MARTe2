@@ -109,7 +109,7 @@ public:
      * @brief Gets the data pointer associated to the raw matrix data.
      * @return the data pointer associated to the raw matrix data.
      */
-    inline T *GetDataPointer() const;
+    inline void *GetDataPointer() const;
 
     /**
      * @brief Checks if GetDataPointer() is pointing at a statically allocated matrix memory block [][].
@@ -121,7 +121,7 @@ private:
     /**
      * The data pointer to the raw data.
      */
-    T *dataPointer;
+    void *dataPointer;
 
     /**
      * The number of rows.
@@ -148,7 +148,7 @@ namespace MARTe {
 
 template<typename T>
 Matrix<T>::Matrix() {
-    dataPointer = static_cast<T*>(NULL);
+    dataPointer = static_cast<void *>(NULL);
     numberOfRows=0u;
     numberOfColumns=0u;
     staticDeclared=true;
@@ -157,22 +157,22 @@ Matrix<T>::Matrix() {
 template<typename T>
 Matrix<T>::Matrix(uint32 nOfRows,
                   uint32 nOfColumns) {
-    T** rows = (new T*[nOfRows]);
+    T** rows = new T*[nOfRows];
+    dataPointer=reinterpret_cast<void *>(rows);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
     staticDeclared = false;
     uint32 i;
     for (i = 0; i < nOfRows; i++) {
-        rows[i] = new T[nOfColumns];
+        rows [i] = new T[nOfColumns];
     }
-    dataPointer = rows[0];
 }
 
 template<typename T>
 Matrix<T>::Matrix(T **existingArray,
                   uint32 nOfRows,
                   uint32 nOfColumns) {
-    dataPointer = existingArray[0];
+    dataPointer = reinterpret_cast<void *>(existingArray);
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
     staticDeclared = false;
@@ -181,7 +181,7 @@ Matrix<T>::Matrix(T **existingArray,
 template<typename T>
 template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
 Matrix<T>::Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
-    dataPointer = &(source[0][0]);
+    dataPointer = reinterpret_cast<void*>(&(source[0][0]));
     numberOfColumns = nOfColumnsStatic;
     numberOfRows = nOfRowsStatic;
     staticDeclared = true;
@@ -202,17 +202,18 @@ Vector<T> Matrix<T>::operator [](uint32 element) {
     Vector<T> vec;
 
     if (!staticDeclared) {
-        T** rows = &dataPointer;
+        T** rows=reinterpret_cast<T**>(dataPointer);
         vec = Vector<T>(rows[element], numberOfColumns);
     }
     else {
-        vec = Vector<T>(&dataPointer[element * numberOfColumns], numberOfColumns);
+        T* beginMemory=reinterpret_cast<T*>(dataPointer);
+        vec = Vector<T>(&beginMemory[element * numberOfColumns], numberOfColumns);
     }
     return vec;
 }
 
 template<typename T>
-inline T* Matrix<T>::GetDataPointer() const {
+inline void* Matrix<T>::GetDataPointer() const {
     return dataPointer;
 }
 

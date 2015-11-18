@@ -277,14 +277,14 @@ bool FloatToInteger(FloatType floatNumber,
 
             integerNumber = static_cast<IntegerType>(floatNumber);
 
-            if ((floatNumber - integerNumber) > 0.5) {
+            if ((floatNumber - integerNumber) >= 0.5) {
                 //approximation
                 if (integerNumber < max) {
                     integerNumber++;
                 }
             }
             else {
-                if ((floatNumber - integerNumber) < -0.5) {
+                if ((floatNumber - integerNumber) <= -0.5) {
                     if (integerNumber > min) {
                         integerNumber--;
                     }

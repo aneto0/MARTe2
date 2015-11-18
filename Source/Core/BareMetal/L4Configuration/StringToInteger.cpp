@@ -80,19 +80,8 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
     // in case of - check if the type is signed, otherwise return 0
     if (input[i] == '-') {
         i++;
-        if (!isSigned) {
-            // take the following number
-            //put a warning if is not a -0
-            if (input[i] != '0') {
-                canReturn = true;
-                REPORT_ERROR(ErrorManagement::Warning, "StringToIntegerDecimalNotation: A negative number to unsigned type will be saturated to 0.");
-            }
-        }
-        else {
-
-            // take it as negative
-            isNegative = true;
-        }
+        // take it as negative
+        isNegative = true;
     }
     else {
         // skip the eventual sign
@@ -101,80 +90,78 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
         }
     }
 
-    if (!canReturn) {
+    // flag to check if the number is 0x8000...
+    bool isMin = false;
 
-        // flag to check if the number is 0x8000...
-        bool isMin = false;
+    // the maximum before add a digit
+    //T maxmax = (~static_cast<T>(0));
+    T maxmax = static_cast<T>(-1);
 
-        // the maximum before add a digit
-        //T maxmax = (~static_cast<T>(0));
-        T maxmax = static_cast<T>(-1);
+    /*lint -e{9125} [MISRA C++ Rule 5-0-9]. Justification: the result is always in [0-9] */
+    int8 maxLastDigit = static_cast<int8>(maxmax % static_cast<T>(10));
 
+    if (isSigned) {
+        maxmax = Shift::LogicalRightSafeShift(maxmax, 1u);
         /*lint -e{9125} [MISRA C++ Rule 5-0-9]. Justification: the result is always in [0-9] */
-        int8 maxLastDigit = static_cast<int8>(maxmax % static_cast<T>(10));
-
-        if (isSigned) {
-            maxmax = Shift::LogicalRightSafeShift(maxmax, 1u);
-            /*lint -e{9125} [MISRA C++ Rule 5-0-9]. Justification: the result is always in [0-9] */
-            maxLastDigit = static_cast<int8>(maxmax % static_cast<T>(10));
-            if (isNegative) {
-                maxLastDigit++;
-            }
+        maxLastDigit = static_cast<int8>(maxmax % static_cast<T>(10));
+        if (isNegative) {
+            maxLastDigit++;
         }
+    }
 
-        T max = maxmax / static_cast<T>(10);
+    T max = maxmax / static_cast<T>(10);
 
-        for (; (!canReturn) && (i < 1000u); i++) {
-            //get the new digit
-            char8 digit = input[i];
-            int8 zero = static_cast<int8>('0');
-            int8 newDigit = (static_cast<int8>(digit) - zero);
+    for (; (!canReturn) && (i < 1000u); i++) {
+        //get the new digit
+        char8 digit = input[i];
+        int8 zero = static_cast<int8>('0');
+        int8 newDigit = (static_cast<int8>(digit) - zero);
 
-            // break in case of incorrect digit
-            if ((newDigit >= 0) && (newDigit <= 9)) {
+        // break in case of incorrect digit
+        if ((newDigit >= 0) && (newDigit <= 9)) {
 
-                // number > max
-                if (number > max) {
+            // number > max
+            if (number > max) {
+                REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Overflow.");
+                canReturn = true;
+                ret = false;
+            }
+            if (number == max) {
+
+                if (newDigit <= maxLastDigit) {
+                    // you can add one in case of negative number
+                    if ((newDigit == maxLastDigit) && (isNegative)) {
+                        isMin = true;
+                        newDigit--;
+                    }
+                    number *= static_cast<T>(10);
+                    /*lint -e{571} .Justification: Remove the warning: Suspicious cast. */
+                    number += static_cast<T>(newDigit);
+                    // it will exit at the next loop
+                }
+                else {
                     REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Overflow.");
                     canReturn = true;
                     ret = false;
                 }
-                if (number == max) {
-
-                    if (newDigit <= maxLastDigit) {
-                        // you can add one in case of negative number
-                        if ((newDigit == maxLastDigit) && (isNegative)) {
-                            isMin = true;
-                            newDigit--;
-                        }
-                        number *= static_cast<T>(10);
-                        /*lint -e{571} .Justification: Remove the warning: Suspicious cast. */
-                        number += static_cast<T>(newDigit);
-                        // it will exit at the next loop
-                    }
-                    else {
-                        REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Overflow.");
-                        canReturn = true;
-                        ret = false;
-                    }
-                }
-                if (number < max) {
-                    number *= static_cast<T>(10);
-                    /*lint -e{571} .Justification: Removing the warning: Suspicious cast. */
-                    number += static_cast<T>(newDigit);
-                }
             }
-            else {
-                if (digit != '\0') {
-                    ret = false;
-                    REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Invalid token.");
-                }
-                canReturn = true;
+            if (number < max) {
+                number *= static_cast<T>(10);
+                /*lint -e{571} .Justification: Removing the warning: Suspicious cast. */
+                number += static_cast<T>(newDigit);
             }
         }
+        else {
+            if (digit != '\0') {
+                ret = false;
+                REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Invalid token.");
+            }
+            canReturn = true;
+        }
+    }
 
-        if ((isNegative) && (isSigned)) {
-
+    if (isNegative) {
+        if (isSigned) {
             /*lint -e{732} -e{501} -e{9134}  [MISRA C++ Rule 5-3-2]. Justification: the type is signed. */
             number = -number;
 
@@ -183,12 +170,14 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
                 number--;
             }
         }
+        else {
+            number = static_cast<T>(0);
+            REPORT_ERROR(ErrorManagement::Warning, "StringToIntegerDecimalNotation: A negative number to unsigned type will be saturated to 0.");
+        }
     }
 
     return ret;
 }
-
-
 
 /**
  * @brief Converts a 0-terminated C-String token representing an integer in hexadecimal notation to an integer.
@@ -254,7 +243,6 @@ static bool StringToIntegerExadecimalNotation(const char8* const input,
     return ret;
 
 }
-
 
 /**
  * @brief Converts a 0-terminated C-String token representing an integer in octal notation to an integer.
@@ -337,7 +325,6 @@ static bool StringToIntegerOctalNotation(const char8 * const input,
     return ret;
 }
 
-
 /**
  * @brief Converts a 0-terminated C-String token representing an integer in binary notation to an integer.
  * @param[in] input is the token to be converted.
@@ -397,8 +384,6 @@ static bool StringToIntegerBinaryNotation(const char8* const input,
 
     return ret;
 }
-
-
 
 /**
  * @brief Recognizes the integer notation in the input token and calls the related conversion functions.
