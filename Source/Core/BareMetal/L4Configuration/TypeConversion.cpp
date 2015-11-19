@@ -42,14 +42,16 @@ namespace MARTe {
  * @return true if the conversion is both types are indeed scalar and if the
  * conversion is successful.
  */
-static bool ScalarBasicTypeConvert(const AnyType &destination, const AnyType &source) {
+static bool ScalarBasicTypeConvert(const AnyType &destination,
+                                   const AnyType &source) {
     return false;
 }
 
 /**
  * TODO
  */
-static bool VectorBasicTypeConvert(const AnyType &destination, const AnyType &source) {
+static bool VectorBasicTypeConvert(const AnyType &destination,
+                                   const AnyType &source) {
     uint32 copySize = 0u;
     uint32 totalCopySize = 0u;
     uint32 idx = 0u;
@@ -155,7 +157,8 @@ static bool VectorBasicTypeConvert(const AnyType &destination, const AnyType &so
 /**
  * TODO
  */
-static bool MatrixBasicTypeConvert(const AnyType &destination, const AnyType &source) {
+static bool MatrixBasicTypeConvert(const AnyType &destination,
+                                   const AnyType &source) {
     uint32 copySize = 0u;
     uint32 destinationTotalCopySize = 0u;
     uint32 sourceTotalCopySize = 0u;
@@ -263,8 +266,7 @@ static bool MatrixBasicTypeConvert(const AnyType &destination, const AnyType &so
                             AnyType destinationConvertionType(destination);
                             destinationConvertionType.SetNumberOfDimensions(0u);
                             if (destination.IsStaticDeclared()) {
-                                destinationConvertionType.SetDataPointer(
-                                        static_cast<char8 *>(destination.GetDataPointer()) + destinationTotalCopySize);
+                                destinationConvertionType.SetDataPointer(static_cast<char8 *>(destination.GetDataPointer()) + destinationTotalCopySize);
                             }
                             else {
                                 char **destStr = reinterpret_cast<char **>(destination.GetDataPointer());
@@ -313,8 +315,7 @@ static bool MatrixBasicTypeConvert(const AnyType &destination, const AnyType &so
                             AnyType destinationConvertionType(destination);
                             destinationConvertionType.SetNumberOfDimensions(0u);
                             if (destination.IsStaticDeclared()) {
-                                destinationConvertionType.SetDataPointer(
-                                        static_cast<char8 *>(destination.GetDataPointer()) + destinationTotalCopySize);
+                                destinationConvertionType.SetDataPointer(static_cast<char8 *>(destination.GetDataPointer()) + destinationTotalCopySize);
                             }
                             else {
                                 char **destStr = reinterpret_cast<char **>(destination.GetDataPointer());
@@ -366,7 +367,8 @@ static bool MatrixBasicTypeConvert(const AnyType &destination, const AnyType &so
     return ok;
 }
 
-static bool PointBasicTypeConvert(const AnyType &destination, const AnyType &source) {
+static bool PointBasicTypeConvert(const AnyType &destination,
+                                  const AnyType &source) {
     bool ok = true;
     uint32 copySize = 0u;
     //From Stream
@@ -404,8 +406,12 @@ static bool PointBasicTypeConvert(const AnyType &destination, const AnyType &sou
             ok = ScalarBasicTypeConvert(destination, sourceString);
         }
     } //From a BasicType
-    else { //Destination and source are the same
-        if (source.GetTypeDescriptor() == destination.GetTypeDescriptor()) {
+    else { //Destination and source are the same (ignore constant)
+        bool sameType = (source.GetTypeDescriptor().numberOfBits == destination.GetTypeDescriptor().numberOfBits);
+        if (sameType) {
+            sameType = (source.GetTypeDescriptor().type == destination.GetTypeDescriptor().type);
+        }
+        if (sameType) {
             copySize = source.GetTypeDescriptor().numberOfBits / 8u;
             ok = MemoryOperationsHelper::Copy(destination.GetDataPointer(), source.GetDataPointer(), copySize);
         }
@@ -422,7 +428,8 @@ static bool PointBasicTypeConvert(const AnyType &destination, const AnyType &sou
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
-bool TypeConvert(const AnyType &destination, const AnyType &source) {
+bool TypeConvert(const AnyType &destination,
+                 const AnyType &source) {
     bool ok = true;
 
     //Source and destination dimensions must be the same

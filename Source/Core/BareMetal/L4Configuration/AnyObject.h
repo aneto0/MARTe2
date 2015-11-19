@@ -77,7 +77,7 @@ public:
      * @brief Gets the serialised AnyType.
      * @return the serialised AnyType.
      */
-    AnyType GetType();
+    AnyType GetType() const;
 
 private:
     /**

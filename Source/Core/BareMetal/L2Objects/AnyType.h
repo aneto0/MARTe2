@@ -679,6 +679,7 @@ private:
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
+/*lint -sem(MARTe::AnyType::InitDimensions,initializer)*/
 AnyType::AnyType(void) {
     dataPointer = static_cast<void *>(NULL);
     bitAddress = 0u;
@@ -1084,7 +1085,7 @@ uint32 AnyType::GetNumberOfDimensions() const {
     return numberOfDimensions;
 }
 
-void AnyType::SetNumberOfDimensions(uint32 nOfDimensions) {
+void AnyType::SetNumberOfDimensions(const uint32 nOfDimensions) {
     numberOfDimensions = nOfDimensions;
 }
 
@@ -1092,7 +1093,7 @@ bool AnyType::IsStaticDeclared() const {
     return staticDeclared;
 }
 
-void AnyType::SetStaticDeclared(bool isStaticDeclared) {
+void AnyType::SetStaticDeclared(const bool isStaticDeclared) {
     staticDeclared = isStaticDeclared;
 }
 
@@ -1100,8 +1101,8 @@ uint32 AnyType::GetNumberOfElements(uint32 dimension) const {
     return numberOfElements[dimension];
 }
 
-void AnyType::SetNumberOfElements(uint32 dimension,
-                                  uint32 nOfElements) {
+void AnyType::SetNumberOfElements(const uint32 dimension,
+                                  const uint32 nOfElements) {
     numberOfElements[dimension] = nOfElements;
 }
 

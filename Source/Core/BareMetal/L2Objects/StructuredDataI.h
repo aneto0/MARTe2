@@ -63,7 +63,7 @@ public:
     /**
      * Default destructor. NOOP.
      */
-    inline virtual ~StructuredDataI();
+    virtual ~StructuredDataI(){}
 
     /**
      * @brief Reads a previously stored AnyType.
@@ -72,7 +72,7 @@ public:
      * cannot be successfully read its value will be set to VoidType and the function will return false.
      * @return true if the AnyType is successfully read.
      */
-    virtual bool Read(const char * const name,
+    virtual bool Read(const char8 * const name,
                       const AnyType &value) = 0;
 
     /**
@@ -80,7 +80,7 @@ public:
      * @param[in] name the name of the leaf used to store the AnyType \a value.
      * @return the type of the stored AnyType or VoidType if this does not exist.
      */
-    virtual AnyType GetType(const char * const name) = 0;
+    virtual AnyType GetType(const char8 * const name) = 0;
 
     /**
      * @brief Writes an AnyType against the provided \a name.
@@ -88,7 +88,7 @@ public:
      * @param[in] value the AnyType to store.
      * @return true if the AnyType is successfully stored.
      */
-    virtual bool Write(const char * const name,
+    virtual bool Write(const char8 * const name,
                        const AnyType &value) = 0;
 
     /**
@@ -127,7 +127,7 @@ public:
      * @return true if the move was successful and the current node is the node described by \a path. If unsuccessful the current node
      * is not changed.
      */
-    virtual bool MoveAbsolute(const char * const path) = 0;
+    virtual bool MoveAbsolute(const char8 * const path) = 0;
 
     /**
      * @brief Moves the current node to an address specified by a path relative to the current node address.
@@ -135,7 +135,7 @@ public:
      * @return true if the move was successful and the current node is the node described by \a path. If unsuccessful the current node
      * is not changed.
      */
-    virtual bool MoveRelative(const char * const path) = 0;
+    virtual bool MoveRelative(const char8 * const path) = 0;
 
     /**
      * @brief Create a new series of nodes based on the provided absolute path.
@@ -145,7 +145,7 @@ public:
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.
      */
-    virtual bool CreateNodesAbsolute(const char * const path) = 0;
+    virtual bool CreateNodesAbsolute(const char8 * const path) = 0;
 
     /**
      * @brief Create a new series of nodes based on the provided relative path.
@@ -155,7 +155,7 @@ public:
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.
      */
-    virtual bool CreateNodesRelative(const char * const path) = 0;
+    virtual bool CreateNodesRelative(const char8 * const path) = 0;
 
 };
 }
@@ -163,11 +163,6 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-StructuredDataI::~StructuredDataI() {
-
-}
-}
 
 #endif /* CONFIGURATION_DATABASE_H_ */
 
