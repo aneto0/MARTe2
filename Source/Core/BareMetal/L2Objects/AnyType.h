@@ -493,6 +493,20 @@ public:
     AnyType(T (&source)[nOfElementsStatic]);
 
     /**
+     * @brief Constructor from a statically declared array of characters [].
+     * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
+     * @param[in] source address of the statically declared array.
+     * @post
+     *   GetNumberOfDimensions() == 1 &&
+     *   GetNumberOfElements(0) == nOfElementsStatic &&
+     *   GetDataPointer() == &source[0] &&
+     *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
+     *   IsStaticDeclared == true
+     */
+    template<uint32 nOfElementsStatic>
+    AnyType(char8 (&source)[nOfElementsStatic]);
+
+    /**
      * @brief Constructor from a statically declared table [][].
      * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
      * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
@@ -509,6 +523,36 @@ public:
     AnyType(T (&source)[nOfRowsStatic][nOfColumnsStatic]);
 
     /**
+     * @brief Constructor from a statically declared table of characters [][].
+     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
+     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @param[in] source address of the statically declared table.
+     * @post
+     *   GetNumberOfDimensions() == 1 &&
+     *   GetNumberOfElements(0) == nOfRowStatic &&
+     *   GetDataPointer() == &source[0] &&
+     *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
+     *   IsStaticDeclared == true
+     */
+    template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
+    AnyType(char8 (&source)[nOfRowsStatic][nOfColumnsStatic]);
+
+    /**
+     * @brief Constructor from a statically declared table of characters [][][].
+     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
+     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @param[in] source address of the statically declared table.
+     * @post
+     *   GetNumberOfDimensions() == 1 &&
+     *   GetNumberOfElements(0) == nOfRowStatic &&
+     *   GetDataPointer() == &source[0] &&
+     *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
+     *   IsStaticDeclared == true
+     */
+    template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic, uint32 nOfChars>
+    AnyType(char8 (&source)[nOfRowsStatic][nOfColumnsStatic][nOfChars]);
+
+    /**
      * @brief Constructor from an existent Matrix.
      * @param[in] mat the matrix from whose this AnyType will be constructed.
      * @post
@@ -523,6 +567,18 @@ public:
     AnyType(Matrix<T> &mat);
 
     /**
+     * @brief Constructor from an existent Matrix of characters (considered as an array of string buffers).
+     * @param[in] mat the matrix from whose this AnyType will be constructed.
+     * @post
+     *   GetNumberOfDimensions() == 1 &&
+     *   GetNumberOfElements(0) == mat.GetNumberOfRows() &&
+     *   GetDataPointer() == mat.GetDataPointer() &&
+     *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
+     *   IsStaticDeclared == mat.IsStaticDeclared()
+     */
+    inline AnyType(Matrix<char8> &mat);
+
+    /**
      * @brief Constructor from an existent Vector.
      * @param[in] vec the vector from whose this AnyType will be constructed.
      * @post
@@ -534,6 +590,17 @@ public:
      */
     template<typename T>
     AnyType(Vector<T> &vec);
+
+    /**
+      * @brief Constructor from an existent Vector of characters (considered as a string buffer).
+      * @param[in] vec the vector from whose this AnyType will be constructed.
+      * @post
+      *   GetNumberOfDimensions() == 0 &&
+      *   GetDataPointer() == vec.GetDataPointer() &&
+      *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
+      *   IsStaticDeclared == vec.IsStaticDeclared()
+      */
+     inline AnyType(Vector<char8> &vec);
 
     /**
      * @brief Sets the data pointer hold by this AnyType instance.
@@ -1003,7 +1070,7 @@ AnyType::AnyType(const FractionalInteger<baseType, bitSize> &fractionalInt) {
     dataDescriptor.isConstant = true;
     dataDescriptor.type = type;
     dataDescriptor.numberOfBits = fractionalInt.GetNumberOfBits();
-    bitAddress = 0;
+    bitAddress = 0u;
     dataPointer = static_cast<void *>(const_cast<FractionalInteger<baseType, bitSize> *>(&fractionalInt));
     InitDimensions();
 }
@@ -1024,6 +1091,18 @@ AnyType::AnyType(T (&source)[nOfElementsStatic]) {
     bitAddress = anyTypeDiscovery.GetBitAddress();
 }
 
+template<uint32 nOfElementsStatic>
+AnyType::AnyType(char8 (&source)[nOfElementsStatic]) {
+    dataPointer = (void*) (&source[0]);
+    staticDeclared = true;
+    dataDescriptor.numberOfBits = nOfElementsStatic * 8u;
+    dataDescriptor.isStructuredData = false;
+    dataDescriptor.type = CArray;
+    dataDescriptor.isConstant = false;
+    bitAddress = 0u;
+    InitDimensions();
+}
+
 template<typename T, uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
 AnyType::AnyType(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
     dataPointer = (void *) (&source);
@@ -1037,6 +1116,35 @@ AnyType::AnyType(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
     AnyType anyTypeDiscovery(typeDiscovery);
     dataDescriptor = anyTypeDiscovery.GetTypeDescriptor();
     bitAddress = anyTypeDiscovery.GetBitAddress();
+}
+
+template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
+AnyType::AnyType(char8 (&source)[nOfRowsStatic][nOfColumnsStatic]) {
+    dataPointer = (void *) (&source);
+    InitDimensions();
+    numberOfDimensions = 1u;
+    numberOfElements[0] = nOfRowsStatic;
+    staticDeclared = true;
+    dataDescriptor.numberOfBits = nOfColumnsStatic * 8u;
+    dataDescriptor.isStructuredData = false;
+    dataDescriptor.type = CArray;
+    dataDescriptor.isConstant = false;
+    bitAddress = 0u;
+}
+
+template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic, uint32 nOfChars>
+AnyType::AnyType(char8 (&source)[nOfRowsStatic][nOfColumnsStatic][nOfChars]) {
+    dataPointer = (void *) (&source);
+    InitDimensions();
+    numberOfDimensions = 2u;
+    numberOfElements[0] = nOfRowsStatic;
+    numberOfElements[1] = nOfColumnsStatic;
+    staticDeclared = true;
+    dataDescriptor.numberOfBits = nOfChars * 8u;
+    dataDescriptor.isStructuredData = false;
+    dataDescriptor.type = CArray;
+    dataDescriptor.isConstant = false;
+    bitAddress = 0u;
 }
 
 template<typename T>
@@ -1054,6 +1162,19 @@ AnyType::AnyType(Matrix<T> &mat) {
     bitAddress = anyTypeDiscovery.GetBitAddress();
 }
 
+AnyType::AnyType(Matrix<char8> &mat) {
+    dataPointer = mat.GetDataPointer();
+    InitDimensions();
+    numberOfDimensions = 1u;
+    numberOfElements[0] = mat.GetNumberOfRows();
+    staticDeclared = mat.IsStaticDeclared();
+    dataDescriptor.numberOfBits = mat.GetNumberOfColumns() * 8u;
+    dataDescriptor.isStructuredData = false;
+    dataDescriptor.type = CArray;
+    dataDescriptor.isConstant = false;
+    bitAddress = 0u;
+}
+
 template<typename T>
 AnyType::AnyType(Vector<T> &vec) {
     InitDimensions();
@@ -1068,6 +1189,20 @@ AnyType::AnyType(Vector<T> &vec) {
     bitAddress = anyTypeDiscovery.GetBitAddress();
 
 }
+
+
+AnyType::AnyType(Vector<char8> &vec) {
+    InitDimensions();
+    dataPointer = vec.GetDataPointer();
+    numberOfDimensions = 0u;
+    staticDeclared = vec.IsStaticDeclared();
+    dataDescriptor.numberOfBits = vec.GetNumberOfElements() * 8u;
+    dataDescriptor.isStructuredData = false;
+    dataDescriptor.type = CArray;
+    dataDescriptor.isConstant = false;
+    bitAddress = 0u;
+}
+
 
 void* AnyType::GetDataPointer() const {
     return dataPointer;
@@ -1112,9 +1247,9 @@ void AnyType::SetNumberOfElements(uint32 dimension,
 
 inline void AnyType::InitDimensions() {
     numberOfDimensions = 0u;
-    numberOfElements[0] = 0u;
-    numberOfElements[1] = 0u;
-    numberOfElements[2] = 0u;
+    numberOfElements[0] = 1u;
+    numberOfElements[1] = 1u;
+    numberOfElements[2] = 1u;
     staticDeclared = false;
 }
 

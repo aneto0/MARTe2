@@ -3135,10 +3135,606 @@ TEST(TypeConversionGTest,TestFloat32ToSStringMatrixHeapToHeap) {
 
 TEST(TypeConversionGTest,TestCCStringToStringMatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
-    const TypeToTypeMatrixTableTest<const char8*,String,2,2> table[]={
-            {{{"-200E-6","123.4500E+6"},{"10000000000000000000000000000E-6","HelloWorld"}},{{"-200E-6","123.4500E+6"},{"10000000000000000000000000000E-6","HelloWorld"}}, true},
+    const TypeToTypeMatrixTableTest<const char8*,String,2,3> table[]={
+            {{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}},{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}}, true},
             {{0},{0},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////
+
+TEST(TypeConversionGTest,TestInt8ToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int8,const char8 *> table[]={
+            {0,"0",true,true},
+            {123, "123", true,true},
+            {-1,"-1", true,true},
+            {127,"127", true,true},
+            {-128,"-128", true,true},
+            {255,"-1",true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+
+
+TEST(TypeConversionGTest,TestUInt8ToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint8,const char8 *> table[]={
+            {123,"123", true,true},
+            {255,"255", true,true},
+            {127,"127", true,true},
+            {-1,"255",true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+TEST(TypeConversionGTest,TestInt16ToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int16,const char8 *> table[]={
+            {0,"0",true,true},
+            {123, "123", true,true},
+            {-1,"-1", true,true},
+            {32767,"32767", true,true},
+            {-32768,"-32768", true,true},
+            {65535,"-1", true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestUInt16ToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint16,const char8 *> table[]={
+            {123,"123", true,true},
+            {65535,"65535", true,true},
+            {65536,"0", true,true},
+            {32767,"32767", true,true},
+            {-1,"65535",true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestInt32ToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int32,const char8 *> table[]={
+            {0,"0",true,true},
+            {123, "123", true,true},
+            {-1,"-1", true,true},
+            {2147483647,"2147483647", true,true},
+            {2147483648,"-2147483648", true,true},
+            {-2147483648,"-2147483648", true,true},
+            {-2147483649,"2147483647", true,true},
+            {4294967295,"-1", true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestUInt32ToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint32,const char8 *> table[]={
+            {123,"123", true,true},
+            {4294967295,"4294967295", true,true},
+            {4294967296,"0", true,true},
+            {2147483647,"2147483647", true,true},
+            {-1,"4294967295",true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+
+
+TEST(TypeConversionGTest,TestInt64ToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<int64,const char8 *> table[]={
+            {0,"0",true,true},
+            {123, "123", true,true},
+            {-1,"-1", true,true},
+            {9223372036854775807,"9223372036854775807", true,true},
+            {9223372036854775808,"-9223372036854775808", true,true},
+            {-9223372036854775808,"-9223372036854775808", true,true},
+            {-9223372036854775809,"9223372036854775807", true,true},
+            {18446744073709551615,"-1", true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestUInt64ToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<uint64,const char8 *> table[]={
+            {123,"123", true,true},
+            {18446744073709551615,"18446744073709551615", true,true},
+            {18446744073709551616,"0", true,true},
+            {9223372036854775808,"9223372036854775808", true,true},
+            {-1,"18446744073709551615",true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+TEST(TypeConversionGTest,float32ToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float32,const char8 *> table[]={
+            {123.5,"123.5000", true,true},
+            {123.12345,"123.1234", true,true},
+            {123.123456,"123.1235", true,true},
+            {100,"100.0000", true,true},
+            {10E+2,"1.000000E+3", true,true},
+            {12345.678E+2,"1.234568E+6", true,true},
+            {1E-2,"10.00000E-3", true,true},
+            {0.1E-2,"1.000000E-3", true,true},
+            {16E-2,"160.0000E-3", true,true},
+            {1E+20,"100.0000E+18", true,true},
+            {1E-7,"100.0000E-9", true,true},
+            {1E-9,"1.000000E-9", true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+
+
+
+TEST(TypeConversionGTest,TestFloat64ToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<float64,const char8 *> table[]={
+            {123.5,"123.500000000000", true,true},
+            {123.12345,"123.123450000000", true,true},
+            {123.123456,"123.123456000000", true,true},
+            {100,"100.000000000000", true,true},
+            {10E+2,"1.00000000000000E+3", true,true},
+            {12345.678E+2,"1.23456780000000E+6", true,true},
+            {1E-2,"10.0000000000000E-3", true,true},
+            {0.1E-2,"1.00000000000000E-3", true,true},
+            {16E-2,"160.000000000000E-3", true,true},
+            {123E+63,"123.000000000000E+63", true,true},
+            {123E+83,"12.3000000000000E+84", true,true},
+            {1E-7,"100.000000000000E-9", true,true},
+            {1E-9,"1.00000000000000E-9", true,true},
+            {1E-25,"100.000000000000E-27", true,true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+///////////////////////////////
+
+
+
+TEST(TypeConversionGTest,TestCCStringToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,const char8*> table[]={
+            {"Hello","Hello", true, true},
+            {"123.12345","123.12345", true, true},
+            {"","", true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+TEST(TypeConversionGTest,TestSStringToCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<String,const char8*> table[]={
+            {"Hello","Hello", true, true},
+            {"123.12345","123.12345", true, true},
+            {"","", true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
+}
+
+//////////////////////////////
+
+
+TEST(TypeConversionGTest,TestCArrayToInt8) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,int8> table[]={
+            {"123",123, true,true},
+            {"123s",123, true,false},
+            {"a123s5",0, true,false},
+            {"0xFF",-1, true,true},
+            {"0xFF1",-1, true,false},
+            {"0xABCD",0xab, true,false},
+            {"0o12",10, true,true},
+            {"0x7F",127, true,true},
+            {"0x7F1",127, true,false},
+            {"0x80",-128, true,true},
+            {"0o377",-1, true,true},
+            {"0o577",47, true,false},
+            {"0b11111111",-1, true,true},
+            {"0b111111111",-1, true,false},
+            {"0b01111111",127, true,true},
+            {"0b011111111",127, true,false},
+            {"127",127, true,true},
+            {"128",12, true,false},
+            {"-128",-128, true,true},
+            {"-129",-12, true,false},
+            {0,0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
+}
+
+
+
+TEST(TypeConversionGTest,TestCArrayToUInt8) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,uint8> table[]={
+            {"123",123, true, true},
+            {"123s1",123, true, false},
+            {"a123s5",0, true, false},
+            {"0xFF",255, true, true},
+            {"0xFF1",255, true, false},
+            {"0xABCD",0xab, true, false},
+            {"0o12",10, true, true},
+            {"0x7F",127, true, true},
+            {"0x80",128, true, true},
+            {"0o377",255, true, true},
+            {"0o577",47, true, false},
+            {"0b11111111",255, true, true},
+            {"0b111111111",255, true, false},
+            {"0b01111111",127, true, true},
+            {"0b011111111",127, true, false},
+            {"255",255, true, true},
+            {"256",25, true, false},
+            {"-1",0, true, true},
+            {0,0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestCArrayToInt16) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,int16> table[]={
+            {"123",123, true, true},
+            {"123s1",123, true, false},
+            {"a123s5",0, true, false},
+            {"0xFFFF",-1, true, true},
+            {"0xFFFF1",-1, true, false},
+            {"0x7FFF",32767, true, true},
+            {"0o177777",-1, true, true},
+            {"0o77777",32767, true, true},
+            {"0o277777",12287, true, false},
+            {"0b1111111111111111",-1, true, true},
+            {"0b11111111111111111",-1, true, false},
+            {"0b0111111111111111",32767, true, true},
+            {"0b01111111111111111",32767, true, false},
+            {"32767",32767, true, true},
+            {"32768",3276, true, false},
+            {"-32768",-32768, true, true},
+            {"-32769",-3276, true, false},
+            {0,0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
+}
+
+TEST(TypeConversionGTest,TestCArrayToUInt16) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,uint16> table[]={
+            {"123",123, true, true},
+            {"123s1",123, true, false},
+            {"a123s5",0, true, false},
+            {"0xFFFF",65535, true, true},
+            {"0xFFFF1",65535, true, false},
+            {"0x7FFF",32767, true, true},
+            {"0o177777",65535, true, true},
+            {"0o77777",32767, true, true},
+            {"0o277777",12287, true, false},
+            {"0b1111111111111111",65535, true, true},
+            {"0b11111111111111111",65535, true, false},
+            {"32767",32767, true, true},
+            {"65536",6553, true, false},
+            {"-1",0, true, true},
+            {0,0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestCArrayToInt32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,int32> table[]={
+            {"123",123, true, true},
+            {"123s1",123, true, false},
+            {"a123s5",0, true, false},
+            {"0xFFFFFFFF",-1, true, true},
+            {"0xFFFFFFFF1",-1, true, false},
+            {"0x7FFFFFFF",2147483647, true, true},
+            {"0o37777777777",-1, true, true},
+            {"0o17777777777",2147483647, true, true},
+            {"0o47777777777",671088639, true, false},
+            {"2147483647",2147483647, true, true},
+            {"2147483648",214748364, true, false},
+            {"0b11111111111111111111111111111111",-1, true, true},
+            {"0b111111111111111111111111111111111",-1, true, false},
+            {"0b01111111111111111111111111111111",2147483647, true, true},
+            {"0b011111111111111111111111111111111",2147483647, true, false},
+            {"-2147483648",-2147483648, true, true},
+            {"-2147483649",-214748364, true, false},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestCArrayToUInt32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,uint32> table[]={
+            {"123",123, true, true},
+            {"123s1",123, true, false},
+            {"a123s5",0, true, false},
+            {"0xFFFFFFFF",4294967295, true, true},
+            {"0xFFFFFFFF1",4294967295, true, false},
+            {"0x7FFFFFFF",2147483647, true, true},
+            {"0o37777777777",4294967295, true, true},
+            {"0o17777777777",2147483647, true, true},
+            {"0o47777777777",671088639, true, false},
+            {"0b11111111111111111111111111111111",4294967295, true, true},
+            {"0b111111111111111111111111111111111",4294967295, true, false},
+            {"4294967295",4294967295, true, true},
+            {"4294967296",429496729, true, false},
+            {"-1",0, true, true},
+            {0,0, 0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestCArrayToInt64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,int64> table[]={
+            {"123",123, true, true},
+            {"123s1",123, true, false},
+            {"a123s5",0, true, false},
+            {"0xFFFFFFFFFFFFFFFF",-1, true, true},
+            {"0xFFFFFFFFFFFFFFFF1",-1, true, false},
+            {"0x7FFFFFFFFFFFFFFF",9223372036854775807, true, true},
+            {"0o1777777777777777777777",-1, true, true},
+            {"0o777777777777777777777",9223372036854775807, true, true},
+            {"0o2777777777777777777777",3458764513820540927, true, false},
+            {"0b1111111111111111111111111111111111111111111111111111111111111111",-1, true, true},
+            {"0b11111111111111111111111111111111111111111111111111111111111111111",-1, true, false},
+            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, true},
+            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, false},
+            {"9223372036854775807",9223372036854775807, true, true},
+            {"9223372036854775808",922337203685477580, true, false},
+            {"-9223372036854775808",-9223372036854775808, true, true},
+            {"-9223372036854775809",-922337203685477580, true, false},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestCArrayToUInt64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,uint64> table[]={
+            {"123",123, true, true},
+            {"123s1",123, true, false},
+            {"a123s5",0, true, false},
+            {"0xFFFFFFFFFFFFFFFF",18446744073709551615, true, true},
+            {"0xFFFFFFFFFFFFFFFF1",18446744073709551615, true, false},
+            {"0x7FFFFFFFFFFFFFFF",9223372036854775807, true, true},
+            {"0o1777777777777777777777",18446744073709551615, true, true},
+            {"0o777777777777777777777",9223372036854775807, true, true},
+            {"0o2777777777777777777777",3458764513820540927, true, false},
+            {"0b1111111111111111111111111111111111111111111111111111111111111111",18446744073709551615, true, true},
+            {"0b11111111111111111111111111111111111111111111111111111111111111111",18446744073709551615, true, false},
+            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, true},
+            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, false},
+            {"18446744073709551615",18446744073709551615, true, true},
+            {"18446744073709551616",1844674407370955161, true, false},
+            {"-1",0, true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestCArrayToFloat32) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,float32> table[]={
+            {"123.5",123.5, true, true},
+            {"123.12345",123.12345, true, true},
+            {"1E+2",100, true,true},
+            {"10E+2",1000, true,true},
+            {"12345.678E2",1234567.8, true,true},
+            {"1E-2",0.01, true,true},
+            {"0.1E-2",0.001, true,true},
+            {"16E-2",0.16, true,true},
+            // see the precision is not the same!
+            {"12345.678E-2",123.456772, true,true},
+            {"1E+20",1E+20, true,true},
+            // this is overflow!
+            {"123E+42",123, true,false},
+            {"1E-25",1E-25, true,true},
+            {"0.000000001",1E-9, true,true},
+            //Overflow!
+     //       {"340282346638528859811704183484516999999",340282346638528859811704183484516925440},
+     //       {"340282346638528859811704183484516925440",340282346638528859811704183484516925440},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestCArrayToFloat64) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,float64> table[]={
+            {"123.5",123.5, true, true},
+            {"123.12345",123.12345, true, true},
+            {"1E+2",100, true, true},
+            {"10E+2",1000, true, true},
+            {"12345.678E2",1234567.8, true, true},
+            {"1E-2",0.01, true, true},
+            {"0.1E-2",0.001, true, true},
+            {"16E-2",0.16, true, true},
+            // see the precision now is the same!
+            {"12345.678E-2",123.45678, true, true},
+            {"1E+20",1E+20, true, true},
+            {"123E+63",123E+63, true, true},
+            {"123E+83",123E+83, true, true},
+            // this is overflow!
+            {"123E+510",123, true, false},
+            {"1E-32",1E-32, true, true},
+            {"0.000000001",1E-9, true, true},
+            //Overflow!
+     //       {"179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368",179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368},
+     //       {"179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368",179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
+}
+
+
+
+TEST(TypeConversionGTest,TestCArrayToSString) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeTableTest<const char8*,String> table[]={
+            {"Hello","Hello", true, true},
+            {"123.12345","123.12345", true, true},
+            {"","", true, true},
+            {0,0,0}
+    };
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestInt32ToCArrayVector) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<int32,const char8*,3> table[]={
+            {{2147483648,4294967295,2147483647},{"-2147483648","-1","2147483647"}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVectorCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestUInt32ToCArrayVector) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<uint32,const char8 *,3> table[]={
+            {{-1,2147483647,4294967295},{"4294967295","2147483647","4294967295"}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVectorCArray(table));
+}
+
+TEST(TypeConversionGTest,TestFloat32ToCArrayVector) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<float32,const char8 *,3> table[]={
+            {{-0.02E-2,1234.5E+5,1E-5},{"-200.0000E-6","123.4500E+6","10.00000E-6"}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVectorCArray(table));
+}
+
+
+TEST(TypeConversionGTest,TestCCStringToCArrayVector) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<const char8*,const char8 *,3> table[]={
+            {{"-200E-6","123.4500E+6","10000000000000000000000000000E-6"},{"-200E-6","123.4500E+6","10000000000000000000000000000E-6"}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVectorCArray(table));
+}
+
+
+
+
+
+TEST(TypeConversionGTest,TestCArrayToInt32Vector) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<const char8 *,int32,3> table[]={
+            {{"1","0","2147483647"},{1,0,2147483647}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVectorFromCArray(table));
+}
+
+TEST(TypeConversionGTest,TestCArrayToUInt32Vector) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<const char8 *,uint32,3> table[]={
+            {{"-1","2147483647","4294967295"},{0,2147483647,4294967295}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVectorFromCArray(table));
+}
+
+
+
+
+TEST(TypeConversionGTest,TestCArrayToFloat32Vector) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<const char8 *,float32,3> table[]={
+            {{"-0.02E-2","1234.5E+5","0.00001"},{-0.02E-2,1234.5E+5,1E-5}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVectorFromCArray(table));
+}
+
+
+
+///////////////////////////////////////////////////////////
+
+TEST(TypeConversionGTest,TestFloat32ToCArrayMatrixStaticToStatic) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<float32,const char8*,2,2> table[]={
+            {{{-0.02E-2,1234.5E+5},{1E-5,0.123}},{{"-200.0000E-6","123.4500E+6"},{"10.00000E-6","123.0000E-3"}}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStaticCArray(table));
+}
+
+TEST(TypeConversionGTest,TestCArrayToFloat32MatrixStaticToStatic) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<const char8 *,float32,2,2> table[]={
+            {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStaticFromCArray(table));
+}
+
+/////////////////////////
+
+TEST(TypeConversionGTest,TestTypeConvertVectorStaticToHeapMatrixCArray) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeVectorTableTest<int32,const char8*,3> table[]={
+            {{2147483648,4294967295,2147483647},{"-2147483648","-1","2147483647"}, true},
+            {{0},{0},0}
+    };
+
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertVectorStaticToHeapMatrixCArray(table));
+}
+
+TEST(TypeConversionGTest,TestCArrayToFloat32MatrixStaticToHeap) {
+    TypeConversionTest myTypeConversionTest;
+    const TypeToTypeMatrixTableTest<const char8 *,float32,2,2> table[]={
+            {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
+            {{0},{0},0}
+    };
+
+    ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeapFromCArray(table));
 }

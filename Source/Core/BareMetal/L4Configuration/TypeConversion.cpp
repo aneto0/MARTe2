@@ -37,30 +37,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-extern bool StringToInteger(const char8 * const input,
-                            uint8 &number);
-
-extern bool StringToInteger(const char8 * const input,
-                            uint16 &number);
-
-extern bool StringToInteger(const char8 * const input,
-                            uint32 &number);
-
-extern bool StringToInteger(const char8 * const input,
-                            uint64 &number);
-
-extern bool StringToInteger(const char8 * const input,
-                            int8 &number);
-
-extern bool StringToInteger(const char8 * const input,
-                            int16 &number);
-
-extern bool StringToInteger(const char8 * const input,
-                            int32 &number);
-
-extern bool StringToInteger(const char8 * const input,
-                            int64 &number);
-
 extern bool StringToFloat(const char8 * const input,
                           float32 &number);
 
@@ -70,337 +46,19 @@ extern bool StringToFloat(const char8 * const input,
 bool StringToIntegerGeneric(const char8* source,
                             uint8 *dest,
                             const uint8 destBitSize,
-                            const bool isSigned) {
+                            const bool isSigned);
 
-    bool ret = false;
-    if (destBitSize <= 8u) {
-        if (isSigned) {
-            int8 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<int8*>(dest)) = tempDest;
-        }
-        else {
-            uint8 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *dest = tempDest;
-        }
-    }
-    if ((destBitSize > 8u) && (destBitSize <= 16u)) {
-        if (isSigned) {
-            int16 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<int16*>(dest)) = tempDest;
-        }
-        else {
-            uint16 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<uint16*>(dest)) = tempDest;
-        }
-    }
-    if ((destBitSize > 16u) && (destBitSize <= 32u)) {
+extern bool IntegerToFloatGeneric(uint8 *source,
+                                  const uint8 sourceBitSize,
+                                  float32 *dest,
+                                  const uint8 destBitSize,
+                                  const bool isSigned);
 
-        if (isSigned) {
-            int32 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<int32*>(dest)) = tempDest;
-        }
-        else {
-            uint32 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<uint32*>(dest)) = tempDest;
-        }
-    }
-    if ((destBitSize > 32u) && (destBitSize <= 64u)) {
-        if (isSigned) {
-            int64 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<int64*>(dest)) = tempDest;
-        }
-        else {
-            uint64 tempDest;
-            ret = StringToInteger(source, tempDest);
-            *(reinterpret_cast<uint64*>(dest)) = tempDest;
-        }
-    }
-    return ret;
-}
-
-template<typename IntegerType, typename FloatType>
-bool IntegerToFloat(IntegerType source,
-                    FloatType &dest) {
-
-    bool ret = true;
-    dest = static_cast<FloatType>(0.0);
-    FloatType test = source / static_cast<FloatType>(1.0);
-
-    if (isNaN(test) || isInf(test)) {
-        //TODO overflow or underflow
-        ret = false;
-    }
-    else {
-        dest = test;
-    }
-
-    if (((source - dest) >= 1) || ((source - dest) <= -1)) {
-        //TODO loss of precision
-    }
-
-    return ret;
-
-}
-
-bool IntegerToFloatGeneric(uint8 *source,
-                           const uint8 sourceBitSize,
-                           float32 *dest,
-                           const uint8 destBitSize,
-                           const bool isSigned) {
-
-    bool ret = true;
-
-    if (ret) {
-        ret = false;
-        if (sourceBitSize <= 8u) {
-            if (isSigned) {
-                int8 newSource = *(reinterpret_cast<int8*>(source));
-
-                if (destBitSize == 32u) {
-                    ret = IntegerToFloat(newSource, *dest);
-                }
-                if (destBitSize == 64u) {
-                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
-                }
-            }
-            else {
-                uint8 newSource = *source;
-
-                if (destBitSize == 32u) {
-                    ret = IntegerToFloat(newSource, *dest);
-                }
-                if (destBitSize == 64u) {
-                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
-                }
-            }
-        }
-        if ((sourceBitSize > 8u) && (sourceBitSize <= 16u)) {
-            if (isSigned) {
-                int16 newSource = *(reinterpret_cast<int16*>(source));
-                if (destBitSize == 32u) {
-                    ret = IntegerToFloat(newSource, *dest);
-                }
-                if (destBitSize == 64u) {
-                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
-                }
-            }
-            else {
-                uint16 newSource = *(reinterpret_cast<uint16*>(source));
-                if (destBitSize == 32u) {
-                    ret = IntegerToFloat(newSource, *dest);
-                }
-                if (destBitSize == 64u) {
-                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
-                }
-            }
-        }
-        if ((sourceBitSize > 16u) && (sourceBitSize <= 32u)) {
-            if (isSigned) {
-                int32 newSource = *(reinterpret_cast<int32*>(source));
-                if (destBitSize == 32u) {
-                    ret = IntegerToFloat(newSource, *dest);
-                }
-                if (destBitSize == 64u) {
-                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
-                }
-            }
-            else {
-                uint32 newSource = *(reinterpret_cast<uint32*>(source));
-                if (destBitSize == 32u) {
-                    ret = IntegerToFloat(newSource, *dest);
-                }
-                if (destBitSize == 64u) {
-                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
-                }
-            }
-        }
-        if ((sourceBitSize > 32u) && (sourceBitSize <= 64u)) {
-            if (isSigned) {
-                int64 newSource = *(reinterpret_cast<int64*>(source));
-                if (destBitSize == 32u) {
-                    ret = IntegerToFloat(newSource, *dest);
-                }
-                if (destBitSize == 64u) {
-                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
-                }
-            }
-            else {
-                uint64 newSource = *(reinterpret_cast<uint64*>(source));
-                if (destBitSize == 32u) {
-                    ret = IntegerToFloat(newSource, *dest);
-                }
-                if (destBitSize == 64u) {
-                    ret = IntegerToFloat(newSource, *(reinterpret_cast<float64*>(dest)));
-                }
-            }
-        }
-    }
-
-    return ret;
-}
-
-template<typename FloatType, typename IntegerType>
-bool FloatToInteger(FloatType floatNumber,
-                    IntegerType &integerNumber) {
-
-    bool ret = true;
-
-    integerNumber = static_cast<IntegerType>(0);
-
-    bool isSigned = (static_cast<IntegerType>(-1) < static_cast<IntegerType>(0));
-
-    if ((isSigned) || (floatNumber > static_cast<FloatType>(0.0))) {
-        IntegerType max = ~static_cast<IntegerType>(0);
-        IntegerType min = static_cast<IntegerType>(0);
-
-        if (isSigned) {
-            max = Shift::LogicalRightSafeShift(max, 1u);
-            min = static_cast<IntegerType>(1) << (sizeof(IntegerType) * 8u - 1u);
-        }
-
-        if (floatNumber >= max) {
-            //TODO Saturation.
-            integerNumber = max;
-        }
-        else if (floatNumber <= min) {
-            //TODO Saturation
-            integerNumber = min;
-        }
-        else {
-
-            integerNumber = static_cast<IntegerType>(floatNumber);
-
-            if ((floatNumber - integerNumber) >= 0.5) {
-                //approximation
-                if (integerNumber < max) {
-                    integerNumber++;
-                }
-            }
-            else {
-                if ((floatNumber - integerNumber) <= -0.5) {
-                    if (integerNumber > min) {
-                        integerNumber--;
-                    }
-                }
-            }
-        }
-    }
-
-    return ret;
-}
-
-bool FloatToIntegerGeneric(float32 *source,
-                           const uint8 sourceBitSize,
-                           uint8 *dest,
-                           const uint8 destBitSize,
-                           const bool isSigned) {
-
-    bool ret = false;
-
-    if (destBitSize <= 8u) {
-        if (isSigned) {
-            int8 tempDest;
-            if (sourceBitSize == 32u) {
-                ret = FloatToInteger(*source, tempDest);
-            }
-            if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
-            }
-
-            *(reinterpret_cast<int8*>(dest)) = tempDest;
-        }
-        else {
-            uint8 tempDest;
-            if (sourceBitSize == 32u) {
-                ret = FloatToInteger(*source, tempDest);
-            }
-            if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
-            }
-
-            *dest = tempDest;
-        }
-
-    }
-    if ((destBitSize > 8u) && (destBitSize <= 16u)) {
-        if (isSigned) {
-            int16 tempDest;
-            if (sourceBitSize == 32u) {
-                ret = FloatToInteger(*source, tempDest);
-            }
-            if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
-            }
-            *(reinterpret_cast<int16*>(dest)) = tempDest;
-        }
-        else {
-            uint16 tempDest;
-            if (sourceBitSize == 32u) {
-                ret = FloatToInteger(*source, tempDest);
-            }
-            if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
-            }
-            *(reinterpret_cast<uint16*>(dest)) = tempDest;
-        }
-    }
-    if ((destBitSize > 16u) && (destBitSize <= 32u)) {
-        if (isSigned) {
-            int32 tempDest;
-            if (sourceBitSize == 32u) {
-                if (*source > 0xffffffff) {
-                }
-                ret = FloatToInteger(*source, tempDest);
-            }
-            if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
-            }
-            *(reinterpret_cast<int32*>(dest)) = tempDest;
-        }
-        else {
-            uint32 tempDest;
-            if (sourceBitSize == 32u) {
-                ret = FloatToInteger(*source, tempDest);
-            }
-            if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
-            }
-            *(reinterpret_cast<uint32*>(dest)) = tempDest;
-        }
-    }
-    if ((destBitSize > 32u) && (destBitSize <= 64u)) {
-        if (isSigned) {
-
-            int64 tempDest;
-            if (sourceBitSize == 32u) {
-                ret = FloatToInteger(*source, tempDest);
-            }
-            if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
-            }
-            *(reinterpret_cast<int64*>(dest)) = tempDest;
-        }
-        else {
-
-            uint64 tempDest;
-            if (sourceBitSize == 32u) {
-                ret = FloatToInteger(*source, tempDest);
-            }
-            if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
-            }
-            *(reinterpret_cast<uint64*>(dest)) = tempDest;
-        }
-    }
-    return ret;
-}
+extern bool FloatToIntegerGeneric(float32 *source,
+                                  const uint8 sourceBitSize,
+                                  uint8 *dest,
+                                  const uint8 destBitSize,
+                                  const bool isSigned);
 
 template<typename FloatType>
 static bool MinMaxFloat(bool isPositive,
@@ -493,6 +151,22 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
                     ret = (reinterpret_cast<String*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
                 }
             }
+            if (destinationDescriptor.type == CArray) {
+                String tempString;
+                ret = tempString.PrintFormatted("%d", &source);
+                if (ret) {
+                    uint32 stringLength = static_cast<uint32>(tempString.Size()) + 1u;
+                    uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
+                    if (stringLength > arraySize) {
+                        //TODO warning clip string
+                        ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
+                        reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
+                    }
+                    else {
+                        ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
+                    }
+                }
+            }
             if (destinationDescriptor.type == SignedInteger) {
                 if ((sourceDescriptor.type == SignedInteger)) {
                     uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
@@ -557,6 +231,22 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
                     ret = (*(reinterpret_cast<String*>(destinationPointer))) == tempString;
                 }
             }
+            if (destinationDescriptor.type == CArray) {
+                String tempString;
+                ret = tempString.PrintFormatted("%E", &source);
+                if (ret) {
+                    uint32 stringLength = static_cast<uint32>(tempString.Size()) + 1u;
+                    uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
+                    if (stringLength > arraySize) {
+                        //TODO warning clip string
+                        ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
+                        reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
+                    }
+                    else {
+                        ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
+                    }
+                }
+            }
             if (destinationDescriptor.type == SignedInteger) {
                 ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
                                             reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits), true);
@@ -579,7 +269,8 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
             }
         }
 
-        if ((sourceDescriptor.type == CCString) || (sourceDescriptor.type == SString)) {
+        if ((sourceDescriptor.type == CCString) || (sourceDescriptor.type == SString) || (sourceDescriptor.type == CArray)) {
+
             const char8* token = static_cast<const char8 *>(NULL);
             if(sourceDescriptor.type == CCString) {
                 if(source.GetNumberOfDimensions() == 0u) {
@@ -589,13 +280,27 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
                     token=*reinterpret_cast<const char8**>(sourcePointer);
                 }
             }
-            else {
+            if(sourceDescriptor.type == CArray) {
+                token=reinterpret_cast<const char8*>(sourcePointer);
+            }
+            if((sourceDescriptor.type == SString)) {
                 token=(reinterpret_cast<String*>(sourcePointer))->Buffer();
             }
             uint32 tokenLength=StringHelper::Length(token);
             if(destinationDescriptor.type==SString) {
                 String* tempString=reinterpret_cast<String*>(destinationPointer);
                 ret=tempString->Write(token, tokenLength);
+            }
+            if (destinationDescriptor.type == CArray) {
+                uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
+                if (tokenLength > arraySize) {
+                    //TODO warning clip string
+                    ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);
+                    reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
+                }
+                else {
+                    ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
+                }
             }
             if(destinationDescriptor.type==SignedInteger) {
                 ret=StringToIntegerGeneric(token,
@@ -635,14 +340,32 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
     bool ok = true;
 
     for (idx = 0; (idx < numberOfElements); idx++) {
-
-        char8 *sourceArray = static_cast<char8 *>(source.GetDataPointer());
-        char8 *destinationArray = static_cast<char8 *>(destination.GetDataPointer());
         uint32 sourceElementByteSize = static_cast<uint32>(source.GetTypeDescriptor().numberOfBits) / 8u;
         uint32 destinationElementByteSize = static_cast<uint32>(destination.GetTypeDescriptor().numberOfBits) / 8u;
-
         uint32 sourceIndex = idx * sourceElementByteSize;
         uint32 destinationIndex = idx * destinationElementByteSize;
+
+        char8 *sourceArray = reinterpret_cast<char8 *>(source.GetDataPointer());
+
+        bool isSourceCArray = (source.GetTypeDescriptor().type == CArray);
+        bool isSourceStaticDeclared = source.IsStaticDeclared();
+
+        // Consider the special case of matrix of characters
+        if ((isSourceCArray) && (!isSourceStaticDeclared)) {
+            sourceArray = reinterpret_cast<char8 **>(source.GetDataPointer())[idx];
+            sourceIndex = 0u;
+        }
+
+        char8 *destinationArray = reinterpret_cast<char8 *>(destination.GetDataPointer());
+
+        bool isDestinationCArray = (destination.GetTypeDescriptor().type == CArray);
+        bool isDestinationStaticDeclared = destination.IsStaticDeclared();
+
+        // Consider the special case of matrix of characters
+        if ((isDestinationCArray) && (!isDestinationStaticDeclared)) {
+            destinationArray = reinterpret_cast<char8 **>(destination.GetDataPointer())[idx];
+            destinationIndex = 0u;
+        }
 
         AnyType elementSource(source);
         elementSource.SetDataPointer(&sourceArray[sourceIndex]);
@@ -670,23 +393,26 @@ static bool StaticToStaticMatrix(const AnyType &destination,
     bool ok = true;
     for (uint32 r = 0u; (r < numberOfRows); r++) {
 
-        for (uint32 c = 0u; (c < numberOfColumns); c++) {
-            char8* sourceArray = reinterpret_cast<char8 *>(sourcePointer);
-            char8* destinationArray = reinterpret_cast<char8 *>(destinationPointer);
+        char8* sourceArray = reinterpret_cast<char8 *>(sourcePointer);
+        char8* destinationArray = reinterpret_cast<char8 *>(destinationPointer);
 
-            uint32 sourceElementByteSize = static_cast<uint32>(sourceDescriptor.numberOfBits) / 8u;
-            uint32 destinationElementByteSize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
-            uint32 sourceIndex = ((r * numberOfColumns) + c) * sourceElementByteSize;
-            uint32 destinationIndex = ((r * numberOfColumns) + c) * destinationElementByteSize;
+        uint32 sourceElementByteSize = static_cast<uint32>(sourceDescriptor.numberOfBits) / 8u;
+        uint32 destinationElementByteSize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
 
-            AnyType elementSource(source);
-            elementSource.SetDataPointer(&sourceArray[sourceIndex]);
-            AnyType elementDestination(destination);
-            elementDestination.SetDataPointer(&destinationArray[destinationIndex]);
+        uint32 sourceRowIndex = ((r * numberOfColumns) * sourceElementByteSize);
+        AnyType sourceRow(sourceDescriptor, source.GetBitAddress(), &sourceArray[sourceRowIndex]);
+        sourceRow.SetNumberOfDimensions(1u);
+        sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        sourceRow.SetStaticDeclared(true);
 
-            if (!ScalarBasicTypeConvert(elementDestination, elementSource)) {
-                ok = false;
-            }
+        uint32 destinationRowIndex = ((r * numberOfColumns) * destinationElementByteSize);
+        AnyType destinationRow(destinationDescriptor, destination.GetBitAddress(), &destinationArray[destinationRowIndex]);
+        destinationRow.SetNumberOfDimensions(1u);
+        destinationRow.SetNumberOfElements(0u, numberOfColumns);
+        destinationRow.SetStaticDeclared(true);
+
+        if (!VectorBasicTypeConvert(destinationRow, sourceRow)) {
+            ok = false;
         }
     }
     return ok;
@@ -704,23 +430,25 @@ static bool StaticToHeapMatrix(const AnyType &destination,
     bool ok = true;
     for (uint32 r = 0u; (r < numberOfRows); r++) {
 
-        for (uint32 c = 0u; (c < numberOfColumns); c++) {
-            char8* sourceArray = reinterpret_cast<char8 *>(sourcePointer);
-            char8* destinationArray = reinterpret_cast<char8 **>(destinationPointer)[r];
+        char8* sourceArray = reinterpret_cast<char8 *>(sourcePointer);
+        char8* destinationArray = reinterpret_cast<char8 **>(destinationPointer)[r];
 
-            uint32 sourceElementByteSize = static_cast<uint32>(sourceDescriptor.numberOfBits) / 8u;
-            uint32 destinationElementByteSize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
-            uint32 sourceIndex = (r * numberOfColumns + c) * sourceElementByteSize;
-            uint32 destinationIndex = c * destinationElementByteSize;
+        uint32 sourceElementByteSize = static_cast<uint32>(sourceDescriptor.numberOfBits) / 8u;
+        uint32 destinationElementByteSize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
 
-            AnyType elementSource(source);
-            elementSource.SetDataPointer(&sourceArray[sourceIndex]);
-            AnyType elementDestination(destination);
-            elementDestination.SetDataPointer(&destinationArray[destinationIndex]);
+        uint32 sourceRowIndex = ((r * numberOfColumns) * sourceElementByteSize);
+        AnyType sourceRow(sourceDescriptor, source.GetBitAddress(), &sourceArray[sourceRowIndex]);
+        sourceRow.SetNumberOfDimensions(1u);
+        sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        sourceRow.SetStaticDeclared(true);
 
-            if (!ScalarBasicTypeConvert(elementDestination, elementSource)) {
-                ok = false;
-            }
+        AnyType destinationRow(destinationDescriptor, destination.GetBitAddress(), destinationArray);
+        destinationRow.SetNumberOfDimensions(1u);
+        destinationRow.SetNumberOfElements(0u, numberOfColumns);
+        destinationRow.SetStaticDeclared(false);
+
+        if (!VectorBasicTypeConvert(destinationRow, sourceRow)) {
+            ok = false;
         }
     }
     return ok;
@@ -737,24 +465,23 @@ static bool HeapToStaticMatrix(const AnyType &destination,
 
     bool ok = true;
     for (uint32 r = 0u; (r < numberOfRows); r++) {
+        char8* sourceArray = reinterpret_cast<char8 **>(sourcePointer)[r];
+        char8* destinationArray = reinterpret_cast<char8 *>(destinationPointer);
 
-        for (uint32 c = 0u; (c < numberOfColumns); c++) {
-            char8* sourceArray = reinterpret_cast<char8 **>(sourcePointer)[r];
-            char8* destinationArray = reinterpret_cast<char8 *>(destinationPointer);
+        AnyType sourceRow(sourceDescriptor, source.GetBitAddress(), sourceArray);
+        sourceRow.SetNumberOfDimensions(1u);
+        sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        sourceRow.SetStaticDeclared(false);
 
-            uint32 sourceElementByteSize = static_cast<uint32>(sourceDescriptor.numberOfBits) / 8u;
-            uint32 destinationElementByteSize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
-            uint32 sourceIndex = c * sourceElementByteSize;
-            uint32 destinationIndex = (r * numberOfColumns + c) * destinationElementByteSize;
+        uint32 destinationElementByteSize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
+        uint32 destinationRowIndex = r * numberOfColumns * destinationElementByteSize;
+        AnyType destinationRow(destinationDescriptor, destination.GetBitAddress(), &destinationArray[destinationRowIndex]);
+        destinationRow.SetNumberOfDimensions(1u);
+        destinationRow.SetNumberOfElements(0u, numberOfColumns);
+        destinationRow.SetStaticDeclared(true);
 
-            AnyType elementSource(source);
-            elementSource.SetDataPointer(&sourceArray[sourceIndex]);
-            AnyType elementDestination(destination);
-            elementDestination.SetDataPointer(&destinationArray[destinationIndex]);
-
-            if (!ScalarBasicTypeConvert(elementDestination, elementSource)) {
-                ok = false;
-            }
+        if (!VectorBasicTypeConvert(destinationRow, sourceRow)) {
+            ok = false;
         }
     }
     return ok;
@@ -771,24 +498,21 @@ static bool HeapToHeapMatrix(const AnyType &destination,
 
     bool ok = true;
     for (uint32 r = 0u; (r < numberOfRows); r++) {
+        char8* sourceArray = reinterpret_cast<char8 **>(sourcePointer)[r];
+        char8* destinationArray = reinterpret_cast<char8 **>(destinationPointer)[r];
 
-        for (uint32 c = 0u; (c < numberOfColumns); c++) {
-            char8* sourceArray = reinterpret_cast<char8 **>(sourcePointer)[r];
-            char8* destinationArray = reinterpret_cast<char8 **>(destinationPointer)[r];
+        AnyType sourceRow(sourceDescriptor, source.GetBitAddress(), sourceArray);
+        sourceRow.SetNumberOfDimensions(1u);
+        sourceRow.SetNumberOfElements(0u, numberOfColumns);
+        sourceRow.SetStaticDeclared(false);
 
-            uint32 sourceElementByteSize = static_cast<uint32>(sourceDescriptor.numberOfBits) / 8u;
-            uint32 destinationElementByteSize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
-            uint32 sourceIndex = c * sourceElementByteSize;
-            uint32 destinationIndex = c * destinationElementByteSize;
+        AnyType destinationRow(destinationDescriptor, destination.GetBitAddress(), destinationArray);
+        destinationRow.SetNumberOfDimensions(1u);
+        destinationRow.SetNumberOfElements(0u, numberOfColumns);
+        destinationRow.SetStaticDeclared(false);
 
-            AnyType elementSource(source);
-            elementSource.SetDataPointer(&sourceArray[sourceIndex]);
-            AnyType elementDestination(destination);
-            elementDestination.SetDataPointer(&destinationArray[destinationIndex]);
-
-            if (!ScalarBasicTypeConvert(elementDestination, elementSource)) {
-                ok = false;
-            }
+        if (!VectorBasicTypeConvert(destinationRow, sourceRow)) {
+            ok = false;
         }
     }
     return ok;
@@ -803,7 +527,7 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
     bool isSourceStatic = source.IsStaticDeclared();
     bool isDestinationStatic = destination.IsStaticDeclared();
 
-    bool ok = true;
+    bool ok = false;
 
     if ((isSourceStatic) && (isDestinationStatic)) {
         ok = StaticToStaticMatrix(destination, source);
@@ -831,25 +555,27 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
 namespace MARTe {
 bool TypeConvert(const AnyType &destination,
                  const AnyType &source) {
-    bool ok = true;
 
-    //Source and destination dimensions must be the same
-    ok = (destination.GetNumberOfDimensions() == source.GetNumberOfDimensions());
-    //The number of elements in all dimensions must be the same
-    uint32 i;
-    for (i = 0; ok && (i < 3u); i++) {
-        ok = (destination.GetNumberOfElements(i) == source.GetNumberOfElements(i));
-    }
-
+    bool ok = (!destination.GetTypeDescriptor().isConstant);
     if (ok) {
-        if (source.GetNumberOfDimensions() == 0u) {
-            ok = ScalarBasicTypeConvert(destination, source);                    //PointBasicTypeConvert(destination, source);
+
+        //Source and destination dimensions must be the same
+        ok = (destination.GetNumberOfDimensions() == source.GetNumberOfDimensions());
+        //The number of elements in all dimensions must be the same
+        for (uint32 i = 0; ok && (i < 3u); i++) {
+            ok = (destination.GetNumberOfElements(i) == source.GetNumberOfElements(i));
         }
-        else if (source.GetNumberOfDimensions() == 1u) {
-            ok = VectorBasicTypeConvert(destination, source);
-        }
-        else if (source.GetNumberOfDimensions() == 2u) {
-            ok = MatrixBasicTypeConvert(destination, source);
+
+        if (ok) {
+            if (source.GetNumberOfDimensions() == 0u) {
+                ok = ScalarBasicTypeConvert(destination, source); //PointBasicTypeConvert(destination, source);
+            }
+            else if (source.GetNumberOfDimensions() == 1u) {
+                ok = VectorBasicTypeConvert(destination, source);
+            }
+            else if (source.GetNumberOfDimensions() == 2u) {
+                ok = MatrixBasicTypeConvert(destination, source);
+            }
         }
     }
 

@@ -400,8 +400,8 @@ static bool StringToIntegerBinaryNotation(const char8* const input,
  *   number is the result of the conversion from the const char* token.
  */
 template<typename T>
-static bool StringToIntegerPrivate(const char8 * const input,
-                                   T &number) {
+static bool StringToInteger(const char8 * const input,
+                            T &number) {
 
     number = static_cast<T>(0);
     bool ret = false;
@@ -438,68 +438,62 @@ static bool StringToIntegerPrivate(const char8 * const input,
     return ret;
 }
 
-/**
- * @see StringToIntegerPrivate(*).
- */
-bool StringToInteger(const char8 * const input,
-                     uint8 &number) {
-    return StringToIntegerPrivate(input, number);
-}
+bool StringToIntegerGeneric(const char8* source,
+                            uint8 *dest,
+                            const uint8 destBitSize,
+                            const bool isSigned) {
 
-/**
- * @see StringToIntegerPrivate(*).
- */
-bool StringToInteger(const char8 * const input,
-                     uint16 &number) {
-    return StringToIntegerPrivate(input, number);
-}
+    bool ret = false;
+    if (destBitSize <= 8u) {
+        if (isSigned) {
+            int8 tempDest;
+            ret = StringToInteger(source, tempDest);
+            *(reinterpret_cast<int8*>(dest)) = tempDest;
+        }
+        else {
+            uint8 tempDest;
+            ret = StringToInteger(source, tempDest);
+            *dest = tempDest;
+        }
+    }
+    if ((destBitSize > 8u) && (destBitSize <= 16u)) {
+        if (isSigned) {
+            int16 tempDest;
+            ret = StringToInteger(source, tempDest);
+            *(reinterpret_cast<int16*>(dest)) = tempDest;
+        }
+        else {
+            uint16 tempDest;
+            ret = StringToInteger(source, tempDest);
+            *(reinterpret_cast<uint16*>(dest)) = tempDest;
+        }
+    }
+    if ((destBitSize > 16u) && (destBitSize <= 32u)) {
 
-/**
- * @see StringToIntegerPrivate(*).
- */
-bool StringToInteger(const char8 * const input,
-                     uint32 &number) {
-    return StringToIntegerPrivate(input, number);
-}
-
-/**
- * @see StringToIntegerPrivate(*).
- */
-bool StringToInteger(const char8 * const input,
-                     uint64 &number) {
-    return StringToIntegerPrivate(input, number);
-}
-
-/**
- * @see StringToIntegerPrivate(*).
- */
-bool StringToInteger(const char8 * const input,
-                     int8 &number) {
-    return StringToIntegerPrivate(input, number);
-}
-
-/**
- * @see StringToIntegerPrivate(*).
- */
-bool StringToInteger(const char8 * const input,
-                     int16 &number) {
-    return StringToIntegerPrivate(input, number);
-}
-
-/**
- * @see StringToIntegerPrivate(*).
- */
-bool StringToInteger(const char8 * const input,
-                     int32 &number) {
-    return StringToIntegerPrivate(input, number);
-}
-
-/**
- * @see StringToIntegerPrivate(*).
- */
-bool StringToInteger(const char8 * const input,
-                     int64 &number) {
-    return StringToIntegerPrivate(input, number);
+        if (isSigned) {
+            int32 tempDest;
+            ret = StringToInteger(source, tempDest);
+            *(reinterpret_cast<int32*>(dest)) = tempDest;
+        }
+        else {
+            uint32 tempDest;
+            ret = StringToInteger(source, tempDest);
+            *(reinterpret_cast<uint32*>(dest)) = tempDest;
+        }
+    }
+    if ((destBitSize > 32u) && (destBitSize <= 64u)) {
+        if (isSigned) {
+            int64 tempDest;
+            ret = StringToInteger(source, tempDest);
+            *(reinterpret_cast<int64*>(dest)) = tempDest;
+        }
+        else {
+            uint64 tempDest;
+            ret = StringToInteger(source, tempDest);
+            *(reinterpret_cast<uint64*>(dest)) = tempDest;
+        }
+    }
+    return ret;
 }
 
 }
