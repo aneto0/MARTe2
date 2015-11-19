@@ -182,7 +182,7 @@ bool BasicFile::SetFlags(const uint32 setFlags) {
 }
 
 uint32 BasicFile::GetFlags() const {
-    uint32 retVal = 0xFFFFFFFFU;
+    uint32 retVal = 0U;
     if (IsOpen()) {
         retVal = static_cast<uint32>(fcntl(properties.identifier, F_GETFL));
         retVal = ConvertToBasicFileFlags(retVal);
