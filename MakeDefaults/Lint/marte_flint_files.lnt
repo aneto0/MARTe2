@@ -64,5 +64,6 @@ InternetService.cpp
 BasicTCPSocket.cpp
 SocketSelect.cpp
 BasicUDPSocket.cpp
+AnyType.cpp
 AnyObject.cpp
 ConfigurationDatabase.cpp

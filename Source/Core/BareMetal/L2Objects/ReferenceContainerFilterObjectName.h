@@ -121,8 +121,7 @@ private:
      */
     bool TestPath(ReferenceContainer &previouslyFound) const;
 
-}
-;
+};
 
 }
 /*---------------------------------------------------------------------------*/

@@ -41,7 +41,7 @@
 //TODO!
 namespace MARTe {
 AnyType::AnyType(Object &obj) {
-    InitDimensions();
+    Init();
     dataPointer = static_cast<void *>(&obj);
     bitAddress = 0u;
 
@@ -56,7 +56,7 @@ AnyType::AnyType(Object &obj) {
 }
 
 AnyType::AnyType(const Object &obj) {
-    InitDimensions();
+    Init();
     dataPointer = static_cast<void *>(const_cast<Object *>(&obj));
     bitAddress = 0u;
 

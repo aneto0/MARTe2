@@ -54,6 +54,7 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
         ReferenceContainerFilter(occurrenceNumber, modeToSet) {
 
     addressNumberNodes = 0u;
+    addressToSearch = static_cast<char8 **>(NULL);
     SetAddress(address);
 }
 
