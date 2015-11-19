@@ -55,27 +55,29 @@ BasicFile::BasicFile() :
 BasicFile::BasicFile(const BasicFile &bf) :
         StreamI() {
     bool ok = true;
+    HANDLE handle;
     if (bf.properties.handle == INVALID_HANDLE_VALUE) {
-        properties.handle = INVALID_HANDLE_VALUE;
+        handle = INVALID_HANDLE_VALUE;
     }
     else {
         ok = DuplicateHandle(GetCurrentProcess(),
                              bf.properties.handle,
                              GetCurrentProcess(),
-                             &properties.handle,
+                             &handle,
                              0,
                              FALSE,
                              DUPLICATE_SAME_ACCESS);
         if (!ok) {
-            properties.handle = INVALID_HANDLE_VALUE;
             REPORT_ERROR(ErrorManagement::OSError, "Error: DuplicateHandle()");
         }
     }
     if (ok) {
+        properties.handle = handle;
         properties.flags = bf.properties.flags;
         properties.pathname = bf.properties.pathname;
     }
     else {
+        properties.handle = INVALID_HANDLE_VALUE;
         properties.flags = 0u;
         properties.pathname = "";
     }
@@ -84,29 +86,32 @@ BasicFile::BasicFile(const BasicFile &bf) :
 BasicFile& BasicFile::operator=(const BasicFile &bf) {
     if (this != &bf) {
         bool ok = true;
+        HANDLE handle;
         if (bf.properties.handle == INVALID_HANDLE_VALUE) {
-            properties.handle = INVALID_HANDLE_VALUE;
+            handle = INVALID_HANDLE_VALUE;
         }
         else {
             ok = DuplicateHandle(GetCurrentProcess(),
                                  bf.properties.handle,
                                  GetCurrentProcess(),
-                                 &properties.handle,
+                                 &handle,
                                  0,
                                  FALSE,
                                  DUPLICATE_SAME_ACCESS);
             if (!ok) {
-                properties.handle = INVALID_HANDLE_VALUE;
                 REPORT_ERROR(ErrorManagement::OSError, "Error: DuplicateHandle()");
             }
         }
         if (ok) {
+            if (properties.handle != INVALID_HANDLE_VALUE) {
+                ok = CloseHandle(properties.handle);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::OSError, "Error: CloseHandle()");
+                }
+            }
+            properties.handle = handle;
             properties.flags = bf.properties.flags;
             properties.pathname = bf.properties.pathname;
-        }
-        else {
-            properties.flags = 0u;
-            properties.pathname = "";
         }
     }
     return *this;
