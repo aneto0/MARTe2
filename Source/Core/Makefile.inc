@@ -23,12 +23,14 @@
 # $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
+
 OBJSX=
 SPB    = BareMetal.x Scheduler.x FileSystem.x
 PACKAGE=
 MAKEDEFAULTDIR=../../MakeDefaults
 
 ROOT_DIR=../..
+
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 all: $(OBJS) $(SUBPROJ) \

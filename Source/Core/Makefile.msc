@@ -22,6 +22,7 @@
 # $Id: Makefile.msc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
+
 TARGET=msc
 
 include Makefile.inc

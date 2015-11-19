@@ -2,7 +2,8 @@
  * @file BasicFileTest.h
  * @brief Header file for class TestBasicFile
  * @date 04/11/2015
- * @author Lloren√ß Capell√†
+ * @author LlorenÁ Capell‡
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -319,7 +320,7 @@ private:
     /*Is used to save and return the result of the test. If retVal is false the test fails */
     bool retVal;
     /*Indicates how much characters have to be read or write. size has to be smaller than the size of the str2 otherwise some test will fail.*/
-    const uint32 size;
+    static const uint32 size;
     /*Default flags to perform some test. This flags have to create a file if does not exist and remove the contests of a file if it exists */
     uint32 defaultRWFlags;
     /*Default flags to perform some test. This flags have to create a file if does not exist and remove the contests of a file if it exists */

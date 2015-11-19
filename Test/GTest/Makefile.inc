@@ -77,12 +77,12 @@ OBJSX=  BasicFileGTest.x \
         BufferedStreamIGTest.x \
         IOBufferGTest.x \
         BitSetToIntegerGTest.x \
-        InternetHostGTest.x \
+	BasicConsoleGTest.x        
+#        InternetHostGTest.x \
         InternetServiceGTest.x \
 	BasicSocketGTest.x \
 	BasicTCPSocketGTest.x \
    	BasicUDPSocketGTest.x \
-	BasicConsoleGTest.x
 
 PACKAGE=
 ROOT_DIR=../..

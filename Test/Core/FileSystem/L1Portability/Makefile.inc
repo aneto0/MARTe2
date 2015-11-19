@@ -24,13 +24,12 @@
 #
 #############################################################
 
-OBJSX= InternetHostTest.x \
+OBJSX= BasicFileTest.x
+#InternetHostTest.x \
 	InternetServiceTest.x \
 	BasicSocketTest.x  \
 	BasicUDPSocketTest.x \
 	BasicTCPSocketTest.x \
-	BasicFileTest.x
-
 
 PACKAGE=Core/FileSystem
 ROOT_DIR=../../../..
@@ -42,8 +41,8 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
 INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
-INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
+INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 
 
 all: $(OBJS) \
