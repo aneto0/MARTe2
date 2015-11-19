@@ -76,7 +76,7 @@ void TestScalarCharStar() {
     bool ok = cdb.CreateNodesAbsolute("MyControllers.PID1");
     const char *strWrite = "ThisIsAString";
     ok &= cdb.Write("AString", strWrite);
-    char strRead[StringHelper::Length(strWrite)];
+    char strRead[64];
     ok &= cdb.Read("AString", strRead);
     printf("[%s]\n", strRead);
 }

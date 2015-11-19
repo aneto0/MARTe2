@@ -438,8 +438,20 @@ static bool StringToInteger(const char8 * const input,
     return ret;
 }
 
-bool StringToIntegerGeneric(const char8* source,
-                            uint8 *dest,
+
+/**
+ * @brief Reinterprets the generic destination pointer in input recognizing the related integer type by the bit size.
+ * @param[in] source is the string to be converted in integer number.
+ * @param[in,out] dest is the pointer to the integer type in output.
+ * @param[in] destBitSize is the bit size of the output integer type.
+ * @param[in] isSigned specifies if the integer type is signed.
+ * @return true if the conversion succeeds, false otherwise.
+ * @pre
+ *   source != NULL &&
+ *   dest != NULL
+ */
+bool StringToIntegerGeneric(const char8* const source,
+                            uint8 * const dest,
                             const uint8 destBitSize,
                             const bool isSigned) {
 

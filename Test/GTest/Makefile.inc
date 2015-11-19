@@ -112,7 +112,8 @@ INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 
 all: $(OBJS)    \
-        $(BUILD_DIR)/MainGTest$(EXEEXT) 
+        $(BUILD_DIR)/MainGTest$(EXEEXT) \
+        $(BUILD_DIR)/TestPrototype$(EXEEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

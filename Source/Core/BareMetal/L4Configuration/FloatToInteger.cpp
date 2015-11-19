@@ -41,45 +41,58 @@
 
 namespace MARTe {
 
+
+/**
+ * @brief Performs the conversion from a float number to an integer number.
+ * @param[in] floatNumber is the float number to be converted.
+ * @param[out] integerNumber is the converted integer number in output.
+ * @return true.
+ * @post
+ *   If the source float number is negative and the destination type is unsigned, a warning will be generated an
+ */
+/*lint -e{550} [MISRA C++ Rule 0-1-6], [MISRA C++ Rule 0-1-9]. Justification: the symbol could be not accessed because it depends by input. */
+/*lint -e{438} [MISRA C++ Rule 0-1-6], [MISRA C++ Rule 0-1-9]. Justification: the variable could be not used because it depends by input.*/
 template<typename FloatType, typename IntegerType>
-bool FloatToInteger(FloatType floatNumber,
+bool FloatToInteger(const FloatType floatNumber,
                     IntegerType &integerNumber) {
 
     bool ret = true;
 
     integerNumber = static_cast<IntegerType>(0);
 
-    bool isSigned = (static_cast<IntegerType>(-1) < static_cast<IntegerType>(0));
+    bool isDestSigned = (static_cast<IntegerType>(-1) < static_cast<IntegerType>(0));
+    bool isSourcePositive = (floatNumber > static_cast<FloatType>(0.0));
 
-    if ((isSigned) || (floatNumber > static_cast<FloatType>(0.0))) {
-        IntegerType max = ~static_cast<IntegerType>(0);
+    // exit if dest is unsigned and source negative.
+    if ((isDestSigned) || (isSourcePositive)) {
+        IntegerType max = static_cast<IntegerType>(-1);
         IntegerType min = static_cast<IntegerType>(0);
 
-        if (isSigned) {
+        if (isDestSigned) {
             max = Shift::LogicalRightSafeShift(max, 1u);
-            min = static_cast<IntegerType>(1) << (sizeof(IntegerType) * 8u - 1u);
+            min = Shift::LogicalLeftSafeShift(static_cast<IntegerType>(1), static_cast<uint8>((sizeof(IntegerType) * 8u) - 1u));
         }
 
-        if (floatNumber >= max) {
-            //TODO Saturation.
+        if (floatNumber >= static_cast<FloatType>(max)) {
+            REPORT_ERROR(ErrorManagement::Warning, "FloatToInteger: Saturation to the maximum value");
             integerNumber = max;
         }
-        else if (floatNumber <= min) {
-            //TODO Saturation
+        else if (floatNumber <= static_cast<FloatType>(min)) {
+            REPORT_ERROR(ErrorManagement::Warning, "FloatToInteger: Saturation to the minimum value");
             integerNumber = min;
         }
         else {
 
             integerNumber = static_cast<IntegerType>(floatNumber);
 
-            if ((floatNumber - integerNumber) >= 0.5) {
+            if ((floatNumber - static_cast<FloatType>(integerNumber)) >= static_cast<FloatType>(0.5)) {
                 //approximation
                 if (integerNumber < max) {
                     integerNumber++;
                 }
             }
             else {
-                if ((floatNumber - integerNumber) <= -0.5) {
+                if ((floatNumber - static_cast<FloatType>(integerNumber)) <= static_cast<FloatType>(-0.5)) {
                     if (integerNumber > min) {
                         integerNumber--;
                     }
@@ -87,13 +100,16 @@ bool FloatToInteger(FloatType floatNumber,
             }
         }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::Warning, "FloatToInteger: Assignment of negative float to unsigned integer type; saturation to 0");
+    }
 
     return ret;
 }
 
-bool FloatToIntegerGeneric(float32 *source,
+bool FloatToIntegerGeneric(const float32 * const source,
                            const uint8 sourceBitSize,
-                           uint8 *dest,
+                           uint8 * const dest,
                            const uint8 destBitSize,
                            const bool isSigned) {
 
@@ -101,23 +117,23 @@ bool FloatToIntegerGeneric(float32 *source,
 
     if (destBitSize <= 8u) {
         if (isSigned) {
-            int8 tempDest;
+            int8 tempDest = 0;
             if (sourceBitSize == 32u) {
                 ret = FloatToInteger(*source, tempDest);
             }
             if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+                ret = FloatToInteger(*(reinterpret_cast<const float64*>(source)), tempDest);
             }
 
             *(reinterpret_cast<int8*>(dest)) = tempDest;
         }
         else {
-            uint8 tempDest;
+            uint8 tempDest = 0u;
             if (sourceBitSize == 32u) {
                 ret = FloatToInteger(*source, tempDest);
             }
             if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+                ret = FloatToInteger(*(reinterpret_cast<const float64*>(source)), tempDest);
             }
 
             *dest = tempDest;
@@ -126,46 +142,44 @@ bool FloatToIntegerGeneric(float32 *source,
     }
     if ((destBitSize > 8u) && (destBitSize <= 16u)) {
         if (isSigned) {
-            int16 tempDest;
+            int16 tempDest = 0;
             if (sourceBitSize == 32u) {
                 ret = FloatToInteger(*source, tempDest);
             }
             if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+                ret = FloatToInteger(*(reinterpret_cast<const float64*>(source)), tempDest);
             }
             *(reinterpret_cast<int16*>(dest)) = tempDest;
         }
         else {
-            uint16 tempDest;
+            uint16 tempDest = 0u;
             if (sourceBitSize == 32u) {
                 ret = FloatToInteger(*source, tempDest);
             }
             if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+                ret = FloatToInteger(*(reinterpret_cast<const float64*>(source)), tempDest);
             }
             *(reinterpret_cast<uint16*>(dest)) = tempDest;
         }
     }
     if ((destBitSize > 16u) && (destBitSize <= 32u)) {
         if (isSigned) {
-            int32 tempDest;
+            int32 tempDest = 0;
             if (sourceBitSize == 32u) {
-                if (*source > 0xffffffff) {
-                }
                 ret = FloatToInteger(*source, tempDest);
             }
             if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+                ret = FloatToInteger(*(reinterpret_cast<const float64*>(source)), tempDest);
             }
             *(reinterpret_cast<int32*>(dest)) = tempDest;
         }
         else {
-            uint32 tempDest;
+            uint32 tempDest = 0u;
             if (sourceBitSize == 32u) {
                 ret = FloatToInteger(*source, tempDest);
             }
             if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+                ret = FloatToInteger(*(reinterpret_cast<const float64*>(source)), tempDest);
             }
             *(reinterpret_cast<uint32*>(dest)) = tempDest;
         }
@@ -173,23 +187,23 @@ bool FloatToIntegerGeneric(float32 *source,
     if ((destBitSize > 32u) && (destBitSize <= 64u)) {
         if (isSigned) {
 
-            int64 tempDest;
+            int64 tempDest = 0;
             if (sourceBitSize == 32u) {
                 ret = FloatToInteger(*source, tempDest);
             }
             if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+                ret = FloatToInteger(*(reinterpret_cast<const float64*>(source)), tempDest);
             }
             *(reinterpret_cast<int64*>(dest)) = tempDest;
         }
         else {
 
-            uint64 tempDest;
+            uint64 tempDest = 0u;
             if (sourceBitSize == 32u) {
                 ret = FloatToInteger(*source, tempDest);
             }
             if (sourceBitSize == 64u) {
-                ret = FloatToInteger(*(reinterpret_cast<float64*>(source)), tempDest);
+                ret = FloatToInteger(*(reinterpret_cast<const float64*>(source)), tempDest);
             }
             *(reinterpret_cast<uint64*>(dest)) = tempDest;
         }

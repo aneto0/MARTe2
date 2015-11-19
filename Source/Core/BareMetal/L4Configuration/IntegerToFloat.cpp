@@ -41,43 +41,55 @@
 
 namespace MARTe {
 
+/**
+ * @brief Converts an integer number to a float number.
+ * @param[in] source is the integer number to be converted.
+ * @param[out] dest is the converted float number in output.
+ * @return false if the conversion fails, true otherwise.
+ */
 template<typename IntegerType, typename FloatType>
-static bool IntegerToFloat(IntegerType source,
+static bool IntegerToFloat(const IntegerType source,
                            FloatType &dest) {
 
     bool ret = true;
     dest = static_cast<FloatType>(0.0);
-    FloatType test = source / static_cast<FloatType>(1.0);
+    FloatType test = static_cast<FloatType>(source);
 
-    if (isNaN(test) || isInf(test)) {
-        //TODO overflow or underflow
+    bool isTestNan = (isNaN(test));
+    bool isTestInf = (isInf(test));
+    if ((isTestNan) || (isTestInf)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "IntegerToFloat: Conversion Failed, the result is NaN or Inf");
         ret = false;
     }
     else {
         dest = test;
     }
 
-    if (((source - dest) >= 1) || ((source - dest) <= -1)) {
-        //TODO loss of precision
-    }
-
     return ret;
 
 }
 
-bool IntegerToFloatGeneric(uint8 *source,
+/**
+ * @brief Reinterprets the generic source and destination pointers in input recognizing the source integer type and the destination
+ * float type by the bit size.
+ * @param[in] source is a pointer to the integer number to be converted.
+ * @param[in] sourceBitSize is the size in bit of the integer type in input.
+ * @param[in,out] dest is a pointer to the float number in output.
+ * @param[in] isSigned specifies if the integer type is signed.
+ * @return true if the conversion succeeds, false otherwise.
+ */
+bool IntegerToFloatGeneric(const uint8 * const source,
                            const uint8 sourceBitSize,
-                           float32 *dest,
+                           float32 * const dest,
                            const uint8 destBitSize,
                            const bool isSigned) {
 
     bool ret = true;
-
     if (ret) {
         ret = false;
         if (sourceBitSize <= 8u) {
             if (isSigned) {
-                int8 newSource = *(reinterpret_cast<int8*>(source));
+                int8 newSource = *(reinterpret_cast<const int8*>(source));
 
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
@@ -99,7 +111,7 @@ bool IntegerToFloatGeneric(uint8 *source,
         }
         if ((sourceBitSize > 8u) && (sourceBitSize <= 16u)) {
             if (isSigned) {
-                int16 newSource = *(reinterpret_cast<int16*>(source));
+                int16 newSource = *(reinterpret_cast<const int16*>(source));
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }
@@ -108,7 +120,7 @@ bool IntegerToFloatGeneric(uint8 *source,
                 }
             }
             else {
-                uint16 newSource = *(reinterpret_cast<uint16*>(source));
+                uint16 newSource = *(reinterpret_cast<const uint16*>(source));
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }
@@ -119,7 +131,7 @@ bool IntegerToFloatGeneric(uint8 *source,
         }
         if ((sourceBitSize > 16u) && (sourceBitSize <= 32u)) {
             if (isSigned) {
-                int32 newSource = *(reinterpret_cast<int32*>(source));
+                int32 newSource = *(reinterpret_cast<const int32*>(source));
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }
@@ -128,7 +140,7 @@ bool IntegerToFloatGeneric(uint8 *source,
                 }
             }
             else {
-                uint32 newSource = *(reinterpret_cast<uint32*>(source));
+                uint32 newSource = *(reinterpret_cast<const uint32*>(source));
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }
@@ -139,7 +151,7 @@ bool IntegerToFloatGeneric(uint8 *source,
         }
         if ((sourceBitSize > 32u) && (sourceBitSize <= 64u)) {
             if (isSigned) {
-                int64 newSource = *(reinterpret_cast<int64*>(source));
+                int64 newSource = *(reinterpret_cast<const int64*>(source));
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }
@@ -148,7 +160,7 @@ bool IntegerToFloatGeneric(uint8 *source,
                 }
             }
             else {
-                uint64 newSource = *(reinterpret_cast<uint64*>(source));
+                uint64 newSource = *(reinterpret_cast<const uint64*>(source));
                 if (destBitSize == 32u) {
                     ret = IntegerToFloat(newSource, *dest);
                 }

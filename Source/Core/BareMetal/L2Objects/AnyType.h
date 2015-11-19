@@ -732,6 +732,10 @@ protected:
     bool staticDeclared;
 
 private:
+
+
+
+
     /**
      * @brief Initialises all the dimensions to zero.
      *   GetNumberOfDimensions() == 0 &&
@@ -973,7 +977,7 @@ AnyType::AnyType(const void * const p) {
 }
 
 AnyType::AnyType(const char8 * const p) {
-    dataPointer = reinterpret_cast<void *>(const_cast<char8 *>(p)); // we will either print the variable or the string
+    dataPointer = reinterpret_cast<void *>(const_cast<char8 *>(p));
     bitAddress = 0u;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = true;
@@ -981,6 +985,7 @@ AnyType::AnyType(const char8 * const p) {
     dataDescriptor.numberOfBits = sizeof(const char8*) * 8u;
     InitDimensions();
 }
+
 
 AnyType &AnyType::operator=(const AnyType &src) {
     if (this != &src) {

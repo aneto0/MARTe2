@@ -47,12 +47,13 @@ namespace MARTe {
 
 /**
  * @brief Converts between two types.
- * @details If the source type is a String or a CCString
  * @param[out] destination the converted type.
  * @param[in] source the type to be converted.
  * @return true if the types have the same dimension and the same number of elements
  * on each dimension is the same. Finally, for each element, the conversion from the source
  * type to the destination must be supported and successful.
+ * @pre
+ *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
 bool TypeConvert(const AnyType &destination,
                  const AnyType &source);

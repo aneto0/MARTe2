@@ -69,3 +69,6 @@ StringToInteger.cpp
 StringToFloat.cpp
 Vector.h
 Matrix.h
+IntegerToFloat.cpp
+FloatToInteger.cpp
+TypeConversion.cpp
