@@ -174,25 +174,16 @@ bool BasicFile::Open(const char * pathname,
         if ((flags & ACCESS_MODE_W) == ACCESS_MODE_W) {
             desiredAccess |= GENERIC_WRITE;
         }
-       // desiredAccess |= FILE_READ_ATTRIBUTES;
 
         //Sets the creation disposition
-        /* The parameter creationDisposition must be one of
-         * the following values, which cannot be combined:
-         * CREATE_ALWAYS
-         * CREATE_NEW
-         * OPEN_ALWAYS
-         * OPEN_EXISTING
-         * TRUNCATE_EXISTING
-         */
-        if ((flags & FLAG_APPEND) == FLAG_APPEND) {
-            creationDisposition |= OPEN_EXISTING;
+        if ((flags & FLAG_CREAT) == FLAG_CREAT) {
+            creationDisposition = OPEN_ALWAYS;
         }
-        else if (((flags & FLAG_CREAT) == FLAG_CREAT) || ((flags & FLAG_TRUNC) == FLAG_TRUNC)) {
-            creationDisposition |= OPEN_ALWAYS;
+        else if ((flags & FLAG_CREAT_EXCLUSIVE) == FLAG_CREAT_EXCLUSIVE) {
+            creationDisposition = CREATE_NEW;
         }
         else {
-            creationDisposition |= OPEN_EXISTING;
+            creationDisposition = OPEN_EXISTING;
         }
 
         //Opens the file by pathname with the right flags
@@ -211,7 +202,7 @@ bool BasicFile::Open(const char * pathname,
 
         //Truncates the file if needed
         if (ok) {
-            if ((flags & FLAG_TRUNC) == FLAG_TRUNC) {
+            if (((flags & FLAG_TRUNC) == FLAG_TRUNC) && ((flags & ACCESS_MODE_W) == ACCESS_MODE_W)) {
                 SetSize(0u);
             }
         }

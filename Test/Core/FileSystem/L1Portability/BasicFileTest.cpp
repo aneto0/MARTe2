@@ -276,7 +276,7 @@ bool BasicFileTest::TestClose() {
 bool BasicFileTest::TestWrite() {
     uint32 oldSize = size;
     uint32 newSize = size;
-    bf.Open(nameFileTarget, BasicFile::FLAG_TRUNC | /*BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R |*/ BasicFile::ACCESS_MODE_W);
+    bf.Open(nameFileTarget, BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | /*BasicFile::ACCESS_MODE_R |*/ BasicFile::ACCESS_MODE_W);
     retVal &= bf.Write(stringTarget, newSize);
     retVal &= (oldSize >= newSize);
     retVal &= (bf.Position() == newSize);
