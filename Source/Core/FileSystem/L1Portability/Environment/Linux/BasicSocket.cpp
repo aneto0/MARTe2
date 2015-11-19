@@ -48,7 +48,8 @@
 namespace MARTe {
 
 BasicSocket::BasicSocket() :
-        StreamI() {
+        StreamI(),
+        HandleI() {
     connectionSocket = -1;
     isBlocking = true;
 }
@@ -70,7 +71,6 @@ bool BasicSocket::SetBlocking(const bool flag) {
         else {
             stat = 1;
         }
-
         ret = ioctl(connectionSocket, static_cast<osulong>(FIONBIO), reinterpret_cast<char8 *>(&stat), sizeof(stat));
 
         if (ret >= 0) {
@@ -112,7 +112,11 @@ bool BasicSocket::IsValid() const {
     return (connectionSocket >= 0);
 }
 
-Handle BasicSocket::GetHandle() const {
+Handle BasicSocket::GetReadHandle() const {
+    return connectionSocket;
+}
+
+Handle BasicSocket::GetWriteHandle() const {
     return connectionSocket;
 }
 

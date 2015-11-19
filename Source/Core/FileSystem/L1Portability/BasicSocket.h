@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "InternetHost.h"
 #include "StreamI.h"
+#include "HandleI.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketCore.h)
 
 /*---------------------------------------------------------------------------*/
@@ -44,7 +45,7 @@ namespace MARTe {
     /**
      * @brief Implementation of the common socket functions that are shared by UDP and TCP sockets.
      */
-    class BasicSocket: public StreamI {
+    class BasicSocket: public StreamI, public HandleI {
     public:
         friend class SocketSelect;
         /**
@@ -112,10 +113,19 @@ namespace MARTe {
         virtual bool IsValid() const;
 
         /**
-         * @brief Queries the socked handle
+         * @brief Queries the read socked handle.
+         * @detail For the BasicSocket the read handle and the write handle are the same,
+         * however the BasicConsol has two different handles: one for read and one for write.
          */
+        virtual Handle GetReadHandle() const;
 
-        virtual Handle GetHandle() const;
+        /**
+         * @brief Queries the write socked handle.
+         * @detail For the BasicSocket the read handle and the write handle are the same,
+         * however the BasicConsol has two different handles: one for read and one for write.
+         */
+        virtual Handle GetWriteHandle() const;
+
     protected:
 
         /**

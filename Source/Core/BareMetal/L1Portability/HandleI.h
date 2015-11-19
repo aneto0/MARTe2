@@ -40,6 +40,14 @@
 
 namespace MARTe {
 
+/**
+ * @brief Abstract class for classes which have a Handle
+ * @detail This class implements an interface to get the handle of the files, sockets and consoles.
+ * Due to the BasicConsol has two handles (one for read and one for write) the interface implements
+ * two get handle functions.
+ * In the case of the BasicFile and BasicSocket, which only have one handle,
+ * the two functions return the same handle and for hence they are interchangeable.
+ */
 class DLL_API HandleI {
 public:
 
@@ -55,7 +63,15 @@ public:
     virtual ~HandleI() {
     }
 
-    virtual Handle GetHandle() const = 0;
+    /**
+     * @brief Queries the read handle
+     */
+    virtual Handle GetReadHandle() const = 0;
+
+    /**
+     * @brief Queries the write handle
+     */
+    virtual Handle GetWriteHandle() const = 0;
 };
 }
 

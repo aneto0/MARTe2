@@ -349,9 +349,20 @@ namespace MARTe {
         String GetPathName() const;
 
         /**
-         * @brief Quieres the handle of the file.
+         * @brief Queries the read handle of the file.
+         * @detail For the BasicFile the read handle and the write handle are the same,
+         * however the BasicConsol has two different handles: one for read and one for write.
+         * @return The handle independently if the flag is ACCESS_MODE_R or ACCESS_MODE_W.
          */
-        Handle GetHandle() const;
+        virtual Handle GetReadHandle() const;
+
+        /**
+         * @brief Queries the write handle of the file.
+         * @detail For the BasicFile the read handle and the write handle are the same,
+         * however the BasicConsol has two different handles: one for read and one for write.
+         * @return The handle independently if the flag is ACCESS_MODE_R or ACCESS_MODE_W.
+         */
+        virtual Handle GetWriteHandle() const;
 
     private:
 

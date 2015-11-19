@@ -48,10 +48,12 @@ namespace MARTe {
      * @brief Select implementation OS independent.
      * @details The Select class provides a set of functions to monitor several sockets events at the same time.
      * The class allows to add, remove or clear all sockets in read, write or exception mode. When the desired sockets are chosen the WaitUtil()
-     * start to monitoring the sockets until an even occurs. The IsSet() can be used to know which event was triggered.
+     * start to monitoring the sockets until an even occurs. The IsSet() can be used to know which events were triggered.
      */
     class DLL_API Select {
+
     public:
+
         /**
          * @Brief Default constructor
          * @post
@@ -61,10 +63,12 @@ namespace MARTe {
          *    highestHandle = -1
          */
         Select();
+
         /**
          * @brief Default destructor.
          */
-        void ~Select();
+        virtual ~Select() {
+        }
 
         /**
          * @brief Adds a handle to be monitored in the read mode.
@@ -78,7 +82,7 @@ namespace MARTe {
 
         /**
          * @brief Adds a handle to be monitored in the write mode.
-         *          * @param[in] handle indicates the handle to be added.
+         * @param[in] handle indicates the handle to be added.
          * @pre
          *     The handle must be valid &&
          *     The handle has not to be included previously.
@@ -88,6 +92,7 @@ namespace MARTe {
 
         /**
          * @brief Adds a handle to be monitored in the exception mode.
+         * @details If a BasicConsole object is added to exception the two handles of BasicConsol will be added.
          * @param[in] handle indicates the handle to be added.
          * @pre
          *     The handle must be valid &&
@@ -146,7 +151,7 @@ namespace MARTe {
         /**
          * @brief Blocks until an event occurs or the msecTimeout unblocks
          * @param[in] msecTimeout is the maximum time waiting,
-         * @return -1 if it fails, 0 if the msecTimeout is reached or the sum of occurrences happened, otherwise.
+         * @return -1 if it fails, 0 if the msecTimeout is reached or the sum of occurrences happened.
          */
         int32 WaitUntil(const TimeoutType &msecTimeout = TTInfiniteWait);
 

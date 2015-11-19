@@ -137,8 +137,8 @@ MARTe::uint32 CheckFlags(MARTe::uint32 flags) {
 namespace MARTe {
 
 BasicFile::BasicFile() :
-        StreamI::StreamI(),
-        HandleI::HandleI() {
+        StreamI(),
+        HandleI() {
     properties.identifier = INVALID_FD;
     properties.pathName = "";
 }
@@ -495,7 +495,11 @@ String BasicFile::GetPathName() const {
     return properties.pathName;
 }
 
-Handle BasicFile::GetHandle() const {
+Handle BasicFile::GetReadHandle() const {
+    return properties.identifier;
+}
+
+Handle BasicFile::GetWriteHandle() const {
     return properties.identifier;
 }
 }

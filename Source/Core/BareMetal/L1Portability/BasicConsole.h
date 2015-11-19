@@ -39,6 +39,7 @@
 #include "StringHelper.h"
 #include "TimeoutType.h"
 #include "StreamI.h"
+#include "HandleI.h"
 
 namespace MARTe {
 
@@ -91,7 +92,7 @@ struct BasicConsoleProperties;
  * The specificities of the behaviour are delegated to the underlying operating system.
  * Not all of the features are necessarily implemented in all the operating systems.
  */
-class BasicConsole: public StreamI {
+class BasicConsole: public StreamI, public HandleI {
 
 public:
 
@@ -134,8 +135,6 @@ public:
      * system related problem while performing the operation.
      */
     bool Close();
-
-
 
     /**
      * @brief Update the console size.
@@ -358,7 +357,6 @@ public:
     virtual bool Write(const char8 * const input,
                        uint32 & size);
 
-
     /**
      * @brief Writes to the console.
      * @details A specified number of bytes of the buffer are written to the console output.
@@ -393,7 +391,6 @@ public:
                       uint32 & size,
                       const TimeoutType &timeout);
 
-
     /**
      * @brief Unsupported feature.
      * @return 0xFFFFFFFFFFFFFFFF.
@@ -423,6 +420,16 @@ public:
      * @return false.
      */
     virtual bool SetSize(uint64 size);
+
+    /**
+     * @brief Queries the read console handle.
+     */
+    virtual Handle GetReadHandle() const;
+
+    /**
+     * @brief Queries the write console handle.
+     */
+    virtual Handle GetWriteHandle() const;
 
 private:
 

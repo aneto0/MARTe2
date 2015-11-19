@@ -34,7 +34,8 @@ OBJSX=  BasicSocket.x \
         SocketSelect.x \
         InternetService.x \
         BasicUDPSocket.x \
-        BasicFile.x
+        BasicFile.x\
+        Select.x
 
 
 
