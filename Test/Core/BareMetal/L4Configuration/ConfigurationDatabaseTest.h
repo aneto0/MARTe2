@@ -1,8 +1,8 @@
 /**
- * @file ConfigurationDatabase.h
- * @brief Header file for class ConfigurationDatabase
- * @date 27/10/2015
- * @author Andre' Neto
+ * @file ConfigurationDatabaseTest.h
+ * @brief Header file for class ConfigurationDatabaseTest
+ * @date 19/11/2015
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ConfigurationDatabase
+ * @details This header file contains the declaration of the class ConfigurationDatabaseTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef CONFIGURATIONDATABASE_H_
-#define CONFIGURATIONDATABASE_H_
+#ifndef CONFIGURATIONDATABASETEST_H_
+#define CONFIGURATIONDATABASETEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,100 +31,79 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "AnyObject.h"
-#include "TypeConversion.h"
-#include "StructuredDataI.h"
-#include "ReferenceT.h"
-#include "ReferenceContainer.h"
-#include "ReferenceContainerFilterObjectName.h"
-
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-
 /**
- * @brief An implementation of StructuredDataI where node paths are identified and separated by dots.
- * @details Paths are constructed by concatenating node names with dots (e.g. A.B.C.D), where D is a leaf
- * and A, B and C are nodes.
- *
- * A shared semaphore that can be used by the users of a database instance to have concurrent access to the database.
+ * @brief Tests the ClassRegistryDatabase functions.
  */
-class ConfigurationDatabase: public StructuredDataI {
+class ConfigurationDatabaseTest {
 public:
-
     /**
-     * @brief Default constructor. Initialises the shared mutex Semaphore.
+     * @brief Tests that the default constructor initialises the shared mutex Semaphore.
      */
-    ConfigurationDatabase();
-
-    /**
-     * Default constructor.
-     */
-    virtual ~ConfigurationDatabase();
+    bool TestDefaultConstructor();
 
     /**
      * @see StructuredDataI::Read
      */
-    virtual bool Read(const char8 * const name,
-                      const AnyType &value);
+    //virtual bool Read(const char8 * const name, const AnyType &value);
 
     /**
      * @see StructuredDataI::GetType
      */
-    virtual AnyType GetType(const char8 * const name);
+    //virtual AnyType GetType(const char8 * const name);
 
     /**
      * @see StructuredDataI::Write
      */
-    virtual bool Write(const char8 * const name,
-                       const AnyType &value);
+    //virtual bool Write(const char8 * const name, const AnyType &value);
 
     /**
      * @see StructuredDataI::Copy
      */
-    virtual bool Copy(StructuredDataI &destination);
+    //virtual bool Copy(StructuredDataI &destination);
 
     /**
      * @see StructuredDataI::MoveToRoot
      */
-    virtual bool MoveToRoot();
+    //virtual bool MoveToRoot();
 
     /**
      * @see StructuredDataI::MoveToAncestor
      */
-    virtual bool MoveToAncestor(const uint32 generations);
+    //virtual bool MoveToAncestor(const uint32 generations);
 
     /**
      * @see StructuredDataI::MoveAbsolute
      */
-    virtual bool MoveAbsolute(const char8 * const path);
+    //virtual bool MoveAbsolute(const char8 * const path);
 
     /**
      * @see StructuredDataI::MoveRelative
      */
-    virtual bool MoveRelative(const char8 * const path);
+    //virtual bool MoveRelative(const char8 * const path);
 
     /**
      * @see StructuredDataI::CreateAbsolute
      */
-    virtual bool CreateAbsolute(const char8 * const path);
+    //virtual bool CreateAbsolute(const char8 * const path);
 
     /**
      * @see StructuredDataI::CreateRelative
      */
-    virtual bool CreateRelative(const char8 * const path);
+    //virtual bool CreateRelative(const char8 * const path);
 
     /**
      * @see StructuredDataI::AddToCurrentNode
      */
-    virtual bool AddToCurrentNode(Reference node);
+    //virtual bool AddToCurrentNode(Reference node);
 
     /**
      * @see StructuredDataI::Delete
      */
-    virtual bool Delete();
+    //virtual bool Delete();
 
 
     /**
@@ -132,43 +111,17 @@ public:
      * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
      * @return true if the shared semaphore is successfully locked.
      */
-    bool Lock(const TimeoutType &timeout);
+    //bool Lock(const TimeoutType &timeout);
 
     /**
      * @brief Unlocks the shared semaphore.
      * @return true if the shared semaphore is successfully unlocked.
      */
-    void Unlock();
-
-private:
-    /**
-     * @brief Create nodes relative to the currentNode.
-     * @param path the path to be created.
-     * @return true if the path creation is successful.
-     */
-    bool CreateNodes(const char8 * const path);
-
-    /**
-     * The current node to where the database is pointing.
-     */
-    ReferenceT<ReferenceContainer> currentNode;
-
-    /**
-     * The root node of the database.
-     */
-    ReferenceT<ReferenceContainer> rootNode;
-
-    /**
-     * The shared mutex semaphore.
-     */
-    FastPollingMutexSem mux;
-
+    //void Unlock();
 };
-
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* CONFIGURATIONDATABASE_H_ */
+#endif /* CONFIGURATIONDATABASETEST_H_ */
 

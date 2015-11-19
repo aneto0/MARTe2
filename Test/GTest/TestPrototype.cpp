@@ -9,7 +9,7 @@ using namespace MARTe;
 void TestScalar() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    bool ok = cdb.CreateNodesAbsolute("MyControllers.PID1");
+    bool ok = cdb.CreateAbsolute("MyControllers.PID1");
     ok &= cdb.Write("Kp", (float32) 10.0);
     ok &= cdb.Write("Kd", (float32) 2.0);
     ok &= cdb.Write("Ki", (float32) -1.0);
@@ -28,7 +28,7 @@ void TestScalar() {
 void TestVectorNumbersStatic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     float32 floatArrWrite[] = { 1.2f, 2.0f, 3.0f };
     cdb.Write("ArrayValues", floatArrWrite);
@@ -40,7 +40,7 @@ void TestVectorNumbersStatic() {
 void TestVectorNumbersDynamic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     Vector<float> vecFloatWriteFromArray(3);
     vecFloatWriteFromArray[0] = 1.0f;
@@ -55,7 +55,7 @@ void TestVectorNumbersDynamic() {
 void TestVectorNumbersExistentArray() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    bool ok = cdb.CreateNodesAbsolute("MyControllers.PID1");
+    bool ok = cdb.CreateAbsolute("MyControllers.PID1");
 
     float32 *vector = new float32[10];
     Vector<float> vecFloatWriteFromArrayBrackets(vector, 10);
@@ -73,7 +73,7 @@ void TestVectorNumbersExistentArray() {
 void TestScalarCharStar() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    bool ok = cdb.CreateNodesAbsolute("MyControllers.PID1");
+    bool ok = cdb.CreateAbsolute("MyControllers.PID1");
     const char *strWrite = "ThisIsAString";
     ok &= cdb.Write("AString", strWrite);
     char strRead[StringHelper::Length(strWrite)];
@@ -84,7 +84,7 @@ void TestScalarCharStar() {
 void TestVectorCharArray() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    bool ok = cdb.CreateNodesAbsolute("MyControllers.PID1");
+    bool ok = cdb.CreateAbsolute("MyControllers.PID1");
     char charArrayWrite[7];
     memcpy(charArrayWrite, "456789", 6);
     charArrayWrite[6] = '\0';
@@ -99,7 +99,7 @@ void TestVectorCharArray() {
 void TestVectorCharStarStatic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    bool ok = cdb.CreateNodesAbsolute("MyControllers.PID1");
+    bool ok = cdb.CreateAbsolute("MyControllers.PID1");
 
     const char *strArrWrite[2] = { "a", "bb" };
     Vector<const char *> vecStrArrWrite(strArrWrite);
@@ -115,7 +115,7 @@ void TestVectorCharStarStatic() {
 void TestVectorCharStarDynamic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     Vector<const char *> vectorWrite(3);
     vectorWrite[0] = "a";
@@ -133,7 +133,7 @@ void TestVectorCharStarDynamic() {
 void TestVectorCharStarExistentArray() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     const char **arr = new const char*[3];
     arr[0] = "a";
@@ -154,7 +154,7 @@ void TestVectorCharStarExistentArray() {
 void TestScalarString() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    bool ok = cdb.CreateNodesAbsolute("MyControllers.PID1");
+    bool ok = cdb.CreateAbsolute("MyControllers.PID1");
 
     String strWrite = "ThisIsAString";
     ok &= cdb.Write("AString", strWrite);
@@ -166,7 +166,7 @@ void TestScalarString() {
 void TestVectorStreamStringStatic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    bool ok = cdb.CreateNodesAbsolute("MyControllers.PID1");
+    bool ok = cdb.CreateAbsolute("MyControllers.PID1");
 
     String strArrWrite[2] = { "a", "bb" };
     Vector<String> vecStrArrWrite(strArrWrite);
@@ -180,7 +180,7 @@ void TestVectorStreamStringStatic() {
 void TestVectorStreamStringDynamic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     Vector<String> vectorWrite(3);
     vectorWrite[0] = "a";
@@ -195,7 +195,7 @@ void TestVectorStreamStringDynamic() {
 void TestVectorStreamStringExistentArray() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     String *arr = new String[3];
     arr[0] = "a";
@@ -213,7 +213,7 @@ void TestVectorStreamStringExistentArray() {
 void TestMatrixNumbersStatic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     float32 floatTableWrite[2][3] = { { 3.2f, 4.0f, 5.0f }, { -1.2f, -2.0f, -3.0f } };
     //Matrix<float32> matWrite(floatTableWrite);
@@ -229,7 +229,7 @@ void TestMatrixNumbersStatic() {
 void TestMatrixNumbersDynamic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     Matrix<float32> matWrite(2, 3);
     matWrite[0][0] = 1.1;
@@ -254,7 +254,7 @@ void TestMatrixNumbersDynamic() {
 void TestMatrixExistentArray() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     float32 **arr = new float32*[2];
     arr[0] = new float32[3];
@@ -286,7 +286,7 @@ void TestMatrixExistentArray() {
 void TestMatrixCharStarStatic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     const char *arr[2][3] = { { "g", "hh", "iii" }, { "jjj", "kk", "l" } };
     Matrix<const char *> matWrite(arr);
@@ -308,7 +308,7 @@ void TestMatrixCharStarStatic() {
 void TestMatrixCharStarDynamic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     Matrix<char *> matWrite(2, 3);
     matWrite[0][0] = "[0][0]";
@@ -335,7 +335,7 @@ void TestMatrixCharStarDynamic() {
 void TestMatrixCharStarExistentArray() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     char ***arr = new char**[2];
     arr[0] = new char *[3];
@@ -368,7 +368,7 @@ void TestMatrixCharStarExistentArray() {
 void TestMatrixStreamStringStatic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     String arr[2][3] = { { "a", "bb", "ccc" }, { "d", "ee", "fff" } };
     Matrix<String> matWrite(arr);
@@ -387,7 +387,7 @@ void TestMatrixStreamStringStatic() {
 void TestMatrixStreamStringDynamic() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     Matrix<String> matWrite(2, 3);
     matWrite[0][0] = "[0][0]";
@@ -406,7 +406,7 @@ void TestMatrixStreamStringDynamic() {
 void TestMatrixStreamStringExistentArray() {
     printf("==== %s ====\n", __FUNCTION__);
     ConfigurationDatabase cdb;
-    cdb.CreateNodesAbsolute("MyControllers.PID1");
+    cdb.CreateAbsolute("MyControllers.PID1");
 
     String **arr = new String*[2];
     arr[0] = new String[3];

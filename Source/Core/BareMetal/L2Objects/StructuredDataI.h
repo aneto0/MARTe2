@@ -145,7 +145,7 @@ public:
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.
      */
-    virtual bool CreateNodesAbsolute(const char8 * const path) = 0;
+    virtual bool CreateAbsolute(const char8 * const path) = 0;
 
     /**
      * @brief Create a new series of nodes based on the provided relative path.
@@ -155,7 +155,13 @@ public:
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.
      */
-    virtual bool CreateNodesRelative(const char8 * const path) = 0;
+    virtual bool CreateRelative(const char8 * const path) = 0;
+
+    /**
+     * @brief Deletes the current node (and as a consequence all the nodes underneath).
+     * @return true if the current node is successfully removed.
+     */
+    virtual bool Delete() = 0;
 
 };
 }

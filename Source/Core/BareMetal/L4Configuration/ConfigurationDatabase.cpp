@@ -214,13 +214,31 @@ bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
     return ok;
 }
 
-bool ConfigurationDatabase::CreateNodesAbsolute(const char8 * const path) {
+bool ConfigurationDatabase::CreateAbsolute(const char8 * const path) {
     currentNode = rootNode;
     return CreateNodes(path);
 }
 
-bool ConfigurationDatabase::CreateNodesRelative(const char8 * const path) {
+bool ConfigurationDatabase::CreateRelative(const char8 * const path) {
     return CreateNodes(path);
+}
+
+bool ConfigurationDatabase::Delete() {
+    bool ok = true;
+    if (currentNode == rootNode) {
+        while (rootNode->NumberOfReferences() > 0u) {
+            ok = rootNode->Delete(rootNode->Get(0u));
+        }
+        rootNode = static_cast<Object *>(NULL);
+    }
+    else {
+        ReferenceT<ReferenceContainer> currentNodeOld = currentNode;
+        ok = MoveToAncestor(1u);
+        if (ok) {
+            ok = currentNode->Delete(currentNodeOld);
+        }
+    }
+    return ok;
 }
 
 bool ConfigurationDatabase::AddToCurrentNode(Reference node) {
