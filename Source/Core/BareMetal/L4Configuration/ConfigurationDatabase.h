@@ -55,7 +55,10 @@ class ConfigurationDatabase: public StructuredDataI {
 public:
 
     /**
-     * @brief Default constructor. Initialises the shared mutex Semaphore.
+     * @brief Default constructor.
+     * Initialises the shared mutex Semaphore.
+     * @post
+     *   MoveToRoot() == true
      */
     ConfigurationDatabase();
 
@@ -67,18 +70,18 @@ public:
     /**
      * @see StructuredDataI::Read
      */
-    virtual bool Read(const char * const name,
+    virtual bool Read(const char8 * const name,
                       const AnyType &value);
 
     /**
      * @see StructuredDataI::GetType
      */
-    virtual AnyType GetType(const char * const name);
+    virtual AnyType GetType(const char8 * const name);
 
     /**
      * @see StructuredDataI::Write
      */
-    virtual bool Write(const char * const name,
+    virtual bool Write(const char8 * const name,
                        const AnyType &value);
 
     /**
@@ -94,32 +97,38 @@ public:
     /**
      * @see StructuredDataI::MoveToAncestor
      */
-    virtual bool MoveToAncestor(uint32 generations);
+    virtual bool MoveToAncestor(const uint32 generations);
 
     /**
      * @see StructuredDataI::MoveAbsolute
      */
-    virtual bool MoveAbsolute(const char * const path);
+    virtual bool MoveAbsolute(const char8 * const path);
 
     /**
      * @see StructuredDataI::MoveRelative
      */
-    virtual bool MoveRelative(const char * const path);
+    virtual bool MoveRelative(const char8 * const path);
 
     /**
-     * @see StructuredDataI::CreateNodesAbsolute
+     * @see StructuredDataI::CreateAbsolute
      */
-    virtual bool CreateNodesAbsolute(const char * const path);
+    virtual bool CreateAbsolute(const char8 * const path);
 
     /**
-     * @see StructuredDataI::CreateNodesRelative
+     * @see StructuredDataI::CreateRelative
      */
-    virtual bool CreateNodesRelative(const char * const path);
+    virtual bool CreateRelative(const char8 * const path);
 
     /**
      * @see StructuredDataI::AddToCurrentNode
      */
     virtual bool AddToCurrentNode(Reference node);
+
+    /**
+     * @see StructuredDataI::Delete
+     */
+    virtual bool Delete();
+
 
     /**
      * @brief Locks the shared semaphore.
@@ -140,7 +149,7 @@ private:
      * @param path the path to be created.
      * @return true if the path creation is successful.
      */
-    bool CreateNodes(const char * const path);
+    bool CreateNodes(const char8 * const path);
 
     /**
      * The current node to where the database is pointing.

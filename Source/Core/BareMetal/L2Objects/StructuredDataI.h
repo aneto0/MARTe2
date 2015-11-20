@@ -43,6 +43,11 @@ class Reference;
  * @brief Interface definition for any database that can store and retrieve AnyType values.
  * @details Classes that implement this interface are capable of storing and retrieving,
  * against any given name, data that is represented as an AnyType.
+ *
+ * The root node always exits and is anonymous to the users of the interface. This implies that the following
+ * function calls are valid: CreateAbsolute("A.B.C")  && CreateAbsolute("D.E.F") &&
+ * MoveToRoot() && MoveAbsolute("A.B.C") && MoveAbsolute("D.E.F")
+ *
  * Irrespectively of the interface the implementation shall support the concepts of navigable nodes and leafs
  * and shall support the following features:
  *
@@ -63,7 +68,7 @@ public:
     /**
      * Default destructor. NOOP.
      */
-    inline virtual ~StructuredDataI();
+    virtual ~StructuredDataI(){}
 
     /**
      * @brief Reads a previously stored AnyType.
@@ -72,7 +77,7 @@ public:
      * cannot be successfully read its value will be set to VoidType and the function will return false.
      * @return true if the AnyType is successfully read.
      */
-    virtual bool Read(const char * const name,
+    virtual bool Read(const char8 * const name,
                       const AnyType &value) = 0;
 
     /**
@@ -80,7 +85,7 @@ public:
      * @param[in] name the name of the leaf used to store the AnyType \a value.
      * @return the type of the stored AnyType or VoidType if this does not exist.
      */
-    virtual AnyType GetType(const char * const name) = 0;
+    virtual AnyType GetType(const char8 * const name) = 0;
 
     /**
      * @brief Writes an AnyType against the provided \a name.
@@ -88,7 +93,7 @@ public:
      * @param[in] value the AnyType to store.
      * @return true if the AnyType is successfully stored.
      */
-    virtual bool Write(const char * const name,
+    virtual bool Write(const char8 * const name,
                        const AnyType &value) = 0;
 
     /**
@@ -127,7 +132,7 @@ public:
      * @return true if the move was successful and the current node is the node described by \a path. If unsuccessful the current node
      * is not changed.
      */
-    virtual bool MoveAbsolute(const char * const path) = 0;
+    virtual bool MoveAbsolute(const char8 * const path) = 0;
 
     /**
      * @brief Moves the current node to an address specified by a path relative to the current node address.
@@ -135,7 +140,7 @@ public:
      * @return true if the move was successful and the current node is the node described by \a path. If unsuccessful the current node
      * is not changed.
      */
-    virtual bool MoveRelative(const char * const path) = 0;
+    virtual bool MoveRelative(const char8 * const path) = 0;
 
     /**
      * @brief Create a new series of nodes based on the provided absolute path.
@@ -145,7 +150,7 @@ public:
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.
      */
-    virtual bool CreateNodesAbsolute(const char * const path) = 0;
+    virtual bool CreateAbsolute(const char8 * const path) = 0;
 
     /**
      * @brief Create a new series of nodes based on the provided relative path.
@@ -155,7 +160,13 @@ public:
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.
      */
-    virtual bool CreateNodesRelative(const char * const path) = 0;
+    virtual bool CreateRelative(const char8 * const path) = 0;
+
+    /**
+     * @brief Deletes the current node (and as a consequence all the nodes underneath).
+     * @return true if the current node is successfully removed.
+     */
+    virtual bool Delete() = 0;
 
 };
 }
@@ -163,11 +174,6 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-StructuredDataI::~StructuredDataI() {
-
-}
-}
 
 #endif /* CONFIGURATION_DATABASE_H_ */
 

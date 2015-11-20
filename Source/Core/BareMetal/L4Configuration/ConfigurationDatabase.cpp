@@ -47,17 +47,20 @@ namespace MARTe {
 
 ConfigurationDatabase::ConfigurationDatabase() {
     mux.Create();
+    ReferenceT<ReferenceContainer> rootContainer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    rootNode = rootContainer;
+    currentNode = rootNode;
 }
 
 ConfigurationDatabase::~ConfigurationDatabase() {
 }
 
-bool ConfigurationDatabase::Write(const char * const name,
+bool ConfigurationDatabase::Write(const char8 * const name,
                                   const AnyType &value) {
     ReferenceT<AnyObject> objToWrite(GlobalObjectsDatabase::Instance()->GetStandardHeap());
     bool ok = objToWrite.IsValid();
     if (ok) {
-        ok = objToWrite->Load(value);
+        ok = objToWrite->Serialise(value);
         if (ok) {
             objToWrite->SetName(name);
             ok = currentNode.IsValid();
@@ -69,11 +72,11 @@ bool ConfigurationDatabase::Write(const char * const name,
     return ok;
 }
 
-AnyType ConfigurationDatabase::GetType(const char * const name) {
+AnyType ConfigurationDatabase::GetType(const char8 * const name) {
     bool found = false;
     Reference foundReference;
     uint32 i;
-    for (i = 0; (!found) && (i < currentNode->Size()); i++) {
+    for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
         foundReference = currentNode->Get(i);
         found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
     }
@@ -101,14 +104,14 @@ bool ConfigurationDatabase::MoveToRoot() {
     return ok;
 }
 
-bool ConfigurationDatabase::Read(const char * const name,
+bool ConfigurationDatabase::Read(const char8 * const name,
                                  const AnyType &value) {
 
     //Could have used the ReferenceContainerFilterObjectName but this way is faster given that no complex paths are involved
     bool found = false;
     Reference foundReference;
     uint32 i;
-    for (i = 0; (!found) && (i < currentNode->Size()); i++) {
+    for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
         foundReference = currentNode->Get(i);
         found = (StringHelper::Compare(foundReference->GetName(), name) == 0);
     }
@@ -125,16 +128,16 @@ bool ConfigurationDatabase::Read(const char * const name,
     return ok;
 }
 
-bool ConfigurationDatabase::MoveAbsolute(const char * const path) {
+bool ConfigurationDatabase::MoveAbsolute(const char8 * const path) {
 
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
     ReferenceContainer resultSingle;
     rootNode->Find(resultSingle, filter);
 
-    bool ok = (resultSingle.Size() > 0);
+    bool ok = (resultSingle.Size() > 0u);
     if (ok) {
         //Invalidate move to leafs
-        ReferenceT<ReferenceContainer> container = resultSingle.Get(0);
+        ReferenceT<ReferenceContainer> container = resultSingle.Get(0u);
         if (container.IsValid()) {
             currentNode = container;
         }
@@ -143,16 +146,16 @@ bool ConfigurationDatabase::MoveAbsolute(const char * const path) {
     return ok;
 }
 
-bool ConfigurationDatabase::MoveRelative(const char * const path) {
+bool ConfigurationDatabase::MoveRelative(const char8 * const path) {
 
     ReferenceContainerFilterObjectName filter(1, ReferenceContainerFilterMode::RECURSIVE, path);
     ReferenceContainer resultSingle;
     currentNode->Find(resultSingle, filter);
 
-    bool ok = (resultSingle.Size() > 0);
+    bool ok = (resultSingle.Size() > 0u);
     if (ok) {
         //Invalidate move to leafs
-        ReferenceT<ReferenceContainer> container = resultSingle.Get(0);
+        ReferenceT<ReferenceContainer> container = resultSingle.Get(0u);
         if (container.IsValid()) {
             currentNode = container;
         }
@@ -161,64 +164,93 @@ bool ConfigurationDatabase::MoveRelative(const char * const path) {
     return ok;
 }
 
-bool ConfigurationDatabase::MoveToAncestor(uint32 generations) {
+bool ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
     ReferenceContainerFilterReferences filter(1, ReferenceContainerFilterMode::RECURSIVE | ReferenceContainerFilterMode::PATH, currentNode);
     ReferenceContainer resultPath;
     currentNode->Find(resultPath, filter);
-    bool ok = (resultPath.Size() > 0);
+    bool ok = (resultPath.Size() > 0u);
     if (ok) {
-        int32 newPositionIdx = resultPath.Size() - generations;
+        int32 newPositionIdx = static_cast<int32>(resultPath.Size()) - static_cast<int32>(generations);
         ok = (newPositionIdx >= 0);
         if (ok) {
-            currentNode = resultPath.Get(newPositionIdx);
+            currentNode = resultPath.Get(static_cast<uint32>(newPositionIdx));
         }
     }
     return ok;
 }
 
-bool ConfigurationDatabase::CreateNodes(const char * const path) {
+bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
     String pathStr = path;
-    pathStr.Seek(0u);
-    bool ok = (pathStr.Size() > 0u);
+    bool ok = pathStr.Seek(0Lu);
+    if (ok) {
+        ok = (pathStr.Size() > 0u);
+    }
     String token;
-    char c;
+    char8 c;
+    bool created = false;
 
-    while (ok && (pathStr.GetToken(token, ".", c))) {
-        ok = (token.Size() > 0);
+    while ((pathStr.GetToken(token, ".", c)) && (ok)) {
+        ok = (token.Size() > 0u);
         if (ok) {
-            if (!rootNode.IsValid()) {
-                ReferenceT<ReferenceContainer> rootContainer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-                rootNode = rootContainer;
-                rootNode->SetName(token.Buffer());
-                currentNode = rootNode;
+            //Check if a node with this name already exists
+            bool found = false;
+            Reference foundReference;
+            uint32 i;
+            for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
+                foundReference = currentNode->Get(i);
+                found = (StringHelper::Compare(foundReference->GetName(), token.Buffer()) == 0);
             }
-            else {
+
+            if (found) {
+                currentNode = foundReference;
+            }
+            else{
                 ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                 container->SetName(token.Buffer());
                 ok = currentNode->Insert(container);
                 if (ok) {
                     currentNode = container;
-                }
-            }
-
-            if (ok) {
-                ok = token.Seek(0u);
-                if (ok) {
-                    ok = token.SetSize(0u);
+                    created = true;
                 }
             }
         }
+
+        if (ok) {
+            ok = token.Seek(0Lu);
+            if (ok) {
+                ok = token.SetSize(0Lu);
+            }
+
+        }
     }
-    return ok;
+    return (ok && created);
 }
 
-bool ConfigurationDatabase::CreateNodesAbsolute(const char * const path) {
+bool ConfigurationDatabase::CreateAbsolute(const char8 * const path) {
     currentNode = rootNode;
     return CreateNodes(path);
 }
 
-bool ConfigurationDatabase::CreateNodesRelative(const char * const path) {
+bool ConfigurationDatabase::CreateRelative(const char8 * const path) {
     return CreateNodes(path);
+}
+
+bool ConfigurationDatabase::Delete() {
+    bool ok = true;
+    if (currentNode == rootNode) {
+        while (rootNode->NumberOfReferences() > 0u) {
+            ok = rootNode->Delete(rootNode->Get(0u));
+        }
+        rootNode = static_cast<Object *>(NULL);
+    }
+    else {
+        ReferenceT<ReferenceContainer> currentNodeOld = currentNode;
+        ok = MoveToAncestor(1u);
+        if (ok) {
+            ok = currentNode->Delete(currentNodeOld);
+        }
+    }
+    return ok;
 }
 
 bool ConfigurationDatabase::AddToCurrentNode(Reference node) {
@@ -230,11 +262,11 @@ bool ConfigurationDatabase::AddToCurrentNode(Reference node) {
     return ok;
 }
 
-bool ConfigurationDatabase::Lock(const TimeoutType &timeout){
-    return mux.FastLock(timeout);
+bool ConfigurationDatabase::Lock(const TimeoutType &timeout) {
+    return (mux.FastLock(timeout) == ErrorManagement::NoError);
 }
 
-void ConfigurationDatabase::Unlock(){
+void ConfigurationDatabase::Unlock() {
     mux.FastUnLock();
 }
 

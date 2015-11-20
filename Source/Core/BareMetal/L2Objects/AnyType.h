@@ -592,15 +592,15 @@ public:
     AnyType(Vector<T> &vec);
 
     /**
-      * @brief Constructor from an existent Vector of characters (considered as a string buffer).
-      * @param[in] vec the vector from whose this AnyType will be constructed.
-      * @post
-      *   GetNumberOfDimensions() == 0 &&
-      *   GetDataPointer() == vec.GetDataPointer() &&
-      *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
-      *   IsStaticDeclared == vec.IsStaticDeclared()
-      */
-     inline AnyType(Vector<char8> &vec);
+     * @brief Constructor from an existent Vector of characters (considered as a string buffer).
+     * @param[in] vec the vector from whose this AnyType will be constructed.
+     * @post
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetDataPointer() == vec.GetDataPointer() &&
+     *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
+     *   IsStaticDeclared == vec.IsStaticDeclared()
+     */
+    inline AnyType(Vector<char8> &vec);
 
     /**
      * @brief Sets the data pointer hold by this AnyType instance.
@@ -696,6 +696,10 @@ public:
      */
     inline void SetStaticDeclared(bool isStaticDeclared);
 
+    inline uint32 GetByteSize() const;
+
+    inline uint32 GetBitSize() const;
+
 protected:
 
     /**
@@ -732,9 +736,6 @@ protected:
     bool staticDeclared;
 
 private:
-
-
-
 
     /**
      * @brief Initialises all the dimensions to zero.
@@ -986,7 +987,6 @@ AnyType::AnyType(const char8 * const p) {
     InitDimensions();
 }
 
-
 AnyType &AnyType::operator=(const AnyType &src) {
     if (this != &src) {
         dataPointer = src.dataPointer;
@@ -1195,7 +1195,6 @@ AnyType::AnyType(Vector<T> &vec) {
 
 }
 
-
 AnyType::AnyType(Vector<char8> &vec) {
     InitDimensions();
     dataPointer = vec.GetDataPointer();
@@ -1207,7 +1206,6 @@ AnyType::AnyType(Vector<char8> &vec) {
     dataDescriptor.isConstant = false;
     bitAddress = 0u;
 }
-
 
 void* AnyType::GetDataPointer() const {
     return dataPointer;
@@ -1256,6 +1254,14 @@ inline void AnyType::InitDimensions() {
     numberOfElements[1] = 1u;
     numberOfElements[2] = 1u;
     staticDeclared = false;
+}
+
+uint32 AnyType::GetByteSize() const {
+    return ((dataDescriptor.numberOfBits + bitAddress) + 7u) / 8u;
+}
+
+uint32 AnyType::GetBitSize() const {
+    return (dataDescriptor.numberOfBits + bitAddress);
 }
 
 /**
