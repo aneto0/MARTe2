@@ -57,10 +57,7 @@ namespace MARTe {
         /**
          * @Brief Default constructor
          * @post
-         *    readHandle is empty &&
-         *    writeHandle is empty &&
-         *    exceptionHandle is empty &&
-         *    highestHandle = -1
+         *   For all handleI, !IsSet(handleI)
          */
         Select();
 
