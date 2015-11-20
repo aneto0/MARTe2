@@ -29,11 +29,16 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "ConfigurationDatabaseTest.h"
+#include "AnyObject.h"
 
 using namespace MARTe;
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 bool ConfigurationDatabaseTest::TestDefaultConstructor() {
     ConfigurationDatabase cdb;
@@ -45,79 +50,42 @@ bool ConfigurationDatabaseTest::TestDefaultConstructor() {
 bool ConfigurationDatabaseTest::TestCreateAbsolute_ValidPath() {
     ConfigurationDatabase cdb;
     bool ok = cdb.CreateAbsolute("A");
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = cdb.MoveAbsolute("A");
-    }
-
-    ok = cdb.CreateAbsolute("A.B");
-    if (ok) {
-        ok = cdb.MoveAbsolute("A.B");
-    }
-
-    ok = cdb.CreateAbsolute("A.B.C");
-
-    ok = cdb.CreateAbsolute("D.E.F");
-
-    if (ok) {
-        ok = cdb.MoveAbsolute("D.E.F");
-    }
-    if (ok) {
-        ok = cdb.MoveAbsolute("A.B.C");
-    }
-
+    ok = cdb.MoveToRoot();
+    ok &= cdb.MoveAbsolute("A");
+    ok &= cdb.CreateAbsolute(".A.B");
+    ok &= cdb.MoveAbsolute("A.B.");
+    ok &= cdb.CreateAbsolute("A.B.C");
+    ok &= cdb.CreateAbsolute("D.E.F");
+    ok &= cdb.MoveAbsolute("D.E.F");
+    ok &= cdb.MoveAbsolute("A.B.C");
     return ok;
 }
 
 bool ConfigurationDatabaseTest::TestCreateAbsolute_InvalidPath() {
     ConfigurationDatabase cdb;
     bool ok = !cdb.MoveAbsolute("A.B");
-
-    if (ok) {
-        ok = cdb.CreateAbsolute("A.B");
-    }
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = cdb.MoveAbsolute("A.B");
-    }
-
-    ok = !cdb.CreateAbsolute("A.B");
-
+    ok &= cdb.CreateAbsolute("A.B");
+    ok &= cdb.MoveToRoot();
+    ok &= cdb.MoveAbsolute("A.B");
+    ok &= !cdb.CreateAbsolute("A.B");
+    ok &= !cdb.CreateAbsolute("A");
+    ok &= cdb.CreateAbsolute("A.B...C");
+    ok &= cdb.MoveAbsolute("A.B.C");
     return ok;
 }
 
 bool ConfigurationDatabaseTest::TestCreateRelative_ValidPath() {
     ConfigurationDatabase cdb;
     bool ok = cdb.CreateRelative("A");
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    if (ok) {
-        ok = cdb.MoveAbsolute("A");
-    }
-
-    ok = cdb.CreateRelative("A.B");
-    if (ok) {
-        ok = cdb.MoveAbsolute("A.A.B");
-    }
-    if (ok) {
-        ok = !cdb.MoveAbsolute("A.B");
-    }
-    if (ok) {
-        ok = cdb.MoveToRoot();
-    }
-    ok = cdb.CreateRelative("D.E.F");
-
-    if (ok) {
-        ok = cdb.CreateRelative("D.E.F");
-    }
-    if (ok) {
-        ok = cdb.MoveAbsolute("D.E.F.D.E.F");
-    }
+    ok &= cdb.MoveToRoot();
+    ok &= cdb.MoveAbsolute("A");
+    ok &= cdb.CreateRelative("A.B");
+    ok &= cdb.MoveAbsolute("A.A.B");
+    ok &= !cdb.MoveAbsolute("A.B");
+    ok &= cdb.MoveToRoot();
+    ok &= cdb.CreateRelative("D.E.F");
+    ok &= cdb.CreateRelative("D.E.F");
+    ok &= cdb.MoveAbsolute("D.E.F.D.E.F");
 
     return ok;
 }
@@ -126,55 +94,262 @@ bool ConfigurationDatabaseTest::TestCreateRelative_InvalidPath() {
     ConfigurationDatabase cdb;
     bool ok = !cdb.MoveRelative("A.B");
 
-    if (ok) {
-        ok = cdb.CreateRelative("A.B");
-    }
-    if (ok) {
-        ok = cdb.CreateRelative("C");
-    }
-    ok = cdb.MoveToAncestor(1);
-    if (ok) {
-        ok = !cdb.CreateRelative("C");
-    }
-    if (ok) {
-        ok = cdb.CreateRelative("B");
-    }
-    if (ok) {
-        ok = cdb.MoveAbsolute("A.B.B");
-    }
-    cdb.MoveToRoot();
-    ok = !cdb.CreateRelative("A.B");
+    ok &= cdb.CreateRelative("A.B");
+    ok &= cdb.CreateRelative("C");
+    ok &= cdb.MoveToAncestor(1);
+    ok &= !cdb.CreateRelative("C");
+    ok &= cdb.CreateRelative("B");
+    ok &= cdb.MoveAbsolute("A.B.B");
+    ok &= cdb.MoveToRoot();
+    ok &= !cdb.CreateRelative("A.B");
 
     return ok;
 }
 
-/*bool ConfigurationDatabaseTest::TestMoveToRoot() {
+bool ConfigurationDatabaseTest::TestMoveToRoot() {
     ConfigurationDatabase cdb;
-    bool ok = !cdb.MoveRelative("A.B");
+    bool ok = cdb.MoveToRoot();
+    ok &= cdb.CreateAbsolute("A.B");
+    ok &= cdb.MoveToRoot();
+    ok &= cdb.MoveAbsolute("A.B");
+    ok &= cdb.MoveToRoot();
+    ok &= !cdb.CreateAbsolute("A.B");
+    return ok;
+}
 
-    if (ok) {
-        ok = cdb.CreateRelative("A.B");
-    }
-    if (ok) {
-        ok = cdb.CreateRelative("C");
-    }
-    ok = cdb.MoveToAncestor(1);
-    if (ok) {
-        ok = !cdb.CreateRelative("C");
-    }
-    if (ok) {
-        ok = cdb.CreateRelative("B");
-    }
-    if (ok) {
-        ok = cdb.MoveAbsolute("A.B.B");
-    }
-    cdb.MoveToRoot();
-    ok = !cdb.CreateRelative("A.B");
+bool ConfigurationDatabaseTest::TestMoveToAncestor_ValidNumberOfGenerations() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.MoveToRoot();
+    ok &= cdb.CreateAbsolute("A.B.C.D.E");
+    ok &= cdb.CreateAbsolute("A.B.C.F.G");
+    ok &= cdb.MoveToAncestor(2);
+    ok &= !cdb.CreateRelative("D");
+    ok &= !cdb.CreateRelative("D.E");
+    ok &= !cdb.CreateRelative("F");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    ok &= cdb.MoveToAncestor(2);
+    ok &= !cdb.CreateRelative("B");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    ok &= cdb.MoveToAncestor(3);
+    ok &= !cdb.CreateRelative("A");
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestMoveToAncestor_InvalidNumberOfGenerations() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.MoveToRoot();
+    ok &= cdb.CreateAbsolute("A.B.C.D.E");
+    ok &= cdb.CreateAbsolute("A.B.C.F.G");
+    ok &= cdb.MoveToAncestor(2);
+    ok &= !cdb.CreateRelative("D");
+    ok &= !cdb.CreateRelative("D.E");
+    ok &= !cdb.CreateRelative("F");
+    //Invalid move
+    ok &= !cdb.MoveToAncestor(4);
+    ok &= cdb.MoveToAncestor(2);
+    ok &= !cdb.CreateRelative("B");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    ok &= cdb.MoveToAncestor(3);
+    ok &= !cdb.CreateRelative("A");
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestMoveAbsolute_ValidPaths() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.MoveToRoot();
+    ok &= cdb.CreateAbsolute("A.B.C.D.E");
+    ok &= cdb.CreateAbsolute("A.C.D.E");
+    ok &= cdb.CreateAbsolute("E.D.C.B.A");
+    ok &= cdb.CreateAbsolute("E.D.C.A");
+    ok &= cdb.MoveAbsolute("A");
+    ok &= cdb.MoveAbsolute("A.B");
+    ok &= cdb.MoveAbsolute("E.D");
+    ok &= cdb.MoveAbsolute("E.D.C");
+    ok &= cdb.MoveAbsolute("E.D.C.B");
+    ok &= cdb.MoveAbsolute("E.D.C.B.A");
+    ok &= cdb.MoveAbsolute("E.D.C");
+    ok &= cdb.MoveAbsolute("A.B.C.D.E");
+    ok &= cdb.MoveAbsolute("A.C.D.E");
+    ok &= cdb.MoveAbsolute("A.C.D.E");
+    ok &= cdb.MoveAbsolute("A.C.D.E");
+    ok &= cdb.MoveAbsolute("A.C.D.E");
+    ok &= cdb.MoveAbsolute("A.C.D.E");
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestMoveAbsolute_InvalidPaths() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.MoveToRoot();
+    ok &= cdb.CreateAbsolute("A.B.C.D.E");
+    ok &= cdb.CreateAbsolute("A.C.D.E");
+    ok &= cdb.CreateAbsolute("E.D.C.B.A");
+    ok &= cdb.CreateAbsolute("E.D.C.A");
+    ok &= cdb.MoveAbsolute("E.D.C.B.A");
+    ok &= !cdb.MoveAbsolute("F.D.C");
+    ok &= cdb.MoveAbsolute("E.D.C");
+    ok &= !cdb.MoveAbsolute("F.D.C");
+    ok &= cdb.MoveAbsolute("A.B.C.D.E");
+    ok &= cdb.MoveAbsolute("A.C.D.E");
+    ok &= !cdb.MoveAbsolute("A.C.D.E.E");
+    ok &= !cdb.MoveAbsolute("A.B.C.D.E.F");
+    ok &= !cdb.MoveAbsolute("");
+    ok &= cdb.MoveAbsolute("A.C.D.E");
+    ok &= !cdb.MoveAbsolute(".");
+    ok &= cdb.MoveAbsolute("A.C.D.E");
+    ok &= !cdb.MoveAbsolute("..");
+    ok &= cdb.MoveAbsolute("A.C.D.E");
+    ok &= !cdb.MoveAbsolute("...");
+    ok &= cdb.MoveAbsolute("A.C.D.E");
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestMoveRelative_ValidPaths() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.MoveToRoot();
+    ok &= cdb.CreateAbsolute("A.B.C.D.E");
+    ok &= cdb.CreateAbsolute("A.C.D.E");
+    ok &= cdb.CreateAbsolute("A.B.C.D.F");
+
+    ok &= cdb.MoveToRoot();
+    ok &= cdb.MoveRelative("A");
+    ok &= cdb.MoveRelative("B");
+    ok &= cdb.MoveRelative("C.D.E");
+    ok &= cdb.MoveAbsolute("A");
+    ok &= cdb.MoveRelative("C.D.E");
+
+    ok &= cdb.MoveAbsolute("A");
+    ok &= !cdb.MoveRelative("A");
+    ok &= cdb.MoveRelative("B");
+    ok &= cdb.MoveRelative("C");
+    ok &= !cdb.MoveRelative("");
+    ok &= cdb.MoveRelative("D.E");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    ok &= !cdb.MoveAbsolute(".");
+    ok &= cdb.MoveRelative("D.E");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    ok &= !cdb.MoveAbsolute("..");
+    ok &= cdb.MoveRelative(".D.E");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    ok &= !cdb.MoveAbsolute("...");
+    ok &= cdb.MoveRelative("D.E.");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestMoveRelative_InvalidPaths() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.MoveToRoot();
+    ok &= cdb.CreateAbsolute("A.B.C.D.E");
+    ok &= cdb.CreateAbsolute("A.C.D.E");
+    ok &= cdb.CreateAbsolute("A.B.C.D.F");
+
+    ok &= cdb.MoveAbsolute("A");
+    //We are in A so we cannot move to A
+    ok &= !cdb.MoveRelative("A");
+    ok &= cdb.MoveRelative("B");
+    ok &= cdb.MoveRelative("C");
+    //Do not move to an invalid node
+    ok &= !cdb.MoveRelative("");
+    //Returned false and the node should not have moved
+    ok &= cdb.MoveRelative("D.E");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    ok &= !cdb.MoveAbsolute(".");
+    ok &= cdb.MoveRelative("D.E");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    ok &= !cdb.MoveAbsolute("..");
+    ok &= cdb.MoveRelative(".D.E");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    ok &= !cdb.MoveAbsolute("...");
+    ok &= cdb.MoveRelative("D.E.");
+    ok &= cdb.MoveAbsolute("A.B.C");
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestDelete() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A.B.C.D.E");
+    ok = cdb.CreateAbsolute("A.B.C.F.G");
+
+    ok &= cdb.MoveAbsolute("A.B.C");
+    //Delete node D
+    ok &= cdb.Delete("D");
+    //D no longer exist
+    ok &= !cdb.MoveAbsolute("A.B.C.D");
+    //Buf F.G should still exist
+    ok &= cdb.MoveAbsolute("A.B.C.F.G");
+    //Guarantee that we can recreate (only possible if it was indeed deleted)
+    ok &= cdb.CreateAbsolute("A.B.C.D.E");
+    ok &= cdb.MoveAbsolute("A.B.C.D.E");
+
+    //Make sure we can delete under the root node
+    ok &= cdb.MoveToRoot();
+    ok &= cdb.Delete("A");
+    ok = cdb.CreateAbsolute("A.B.C.D.E");
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestRead_Valid() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A.B.C");
+    uint32 writeValue = 5;
+    ok &= cdb.Write("value", writeValue);
+    uint32 readValue;
+    ok &= cdb.Read("value", readValue);
+    ok &= (writeValue == readValue);
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestRead_Invalid() {
+    ConfigurationDatabase cdb;
+    uint32 readValue;
+    bool ok = !cdb.Read("", readValue);
+    ok = !cdb.Read(NULL, readValue);
+    ok = cdb.CreateAbsolute("A.B.C");
+    uint32 writeValue = 5;
+    ok &= cdb.Write("value", writeValue);
+    ok &= !cdb.Read("value1", readValue);
+    ok &= (writeValue != readValue);
 
     return ok;
-}*/
+}
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
+bool ConfigurationDatabaseTest::TestAddToCurrentNode() {
+    ConfigurationDatabase cdb;
+    ReferenceT<ReferenceContainer> obj(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    return cdb.AddToCurrentNode(obj);
+}
 
+bool ConfigurationDatabaseTest::TestWrite_Valid() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A.B.C");
+    uint32 writeValue = 5;
+    ok &= cdb.Write("value", writeValue);
+    uint32 readValue;
+    ok &= cdb.Read("value", readValue);
+    ok &= (writeValue == readValue);
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestWrite_Overwrite() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A.B.C");
+    uint32 writeValue = 5;
+    ok &= cdb.Write("value", writeValue);
+    uint32 readValue;
+    ok &= cdb.Read("value", readValue);
+    ok &= (writeValue == readValue);
+    writeValue = 7;
+    ok &= cdb.Write("value", writeValue);
+    readValue = 3;
+    ok &= cdb.Read("value", readValue);
+    ok &= (writeValue == readValue);
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestWrite_Invalid() {
+    ConfigurationDatabase cdb;
+    uint32 writeValue = 5;
+    bool ok = !cdb.Write("", writeValue);
+
+    return ok;
+}

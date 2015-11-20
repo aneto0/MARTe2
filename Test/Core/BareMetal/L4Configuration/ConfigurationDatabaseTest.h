@@ -66,63 +66,89 @@ public:
     bool TestCreateRelative_InvalidPath();
 
     /**
-     * @see Tests the MoveToRoot function.
+     * @brief Tests the MoveToRoot function.
      */
     bool TestMoveToRoot();
 
     /**
-     * @see StructuredDataI::MoveToAncestor
+     * @brief Tests the MoveToRoot function.
      */
-    //virtual bool MoveToAncestor(const uint32 generations);
+    bool TestMoveToAncestor_ValidNumberOfGenerations();
 
     /**
-     * @see StructuredDataI::MoveAbsolute
+     * @brief Tests the MoveToRoot function.
      */
-    //virtual bool MoveAbsolute(const char8 * const path);
+    bool TestMoveToAncestor_InvalidNumberOfGenerations();
 
     /**
-     * @see StructuredDataI::MoveRelative
+     * @brief Tests the MoveAbsolute function with valid paths.
      */
-    //virtual bool MoveRelative(const char8 * const path);
+    bool TestMoveAbsolute_ValidPaths();
 
     /**
-     * @see StructuredDataI::Read
+     * @brief Tests the MoveAbsolute function with invalid paths.
      */
-    //virtual bool Read(const char8 * const name, const AnyType &value);
+    bool TestMoveAbsolute_InvalidPaths();
+
+    /**
+     * @brief Tests the MoveRelative function with valid paths.
+     */
+    bool TestMoveRelative_ValidPaths();
+
+    /**
+     * @brief Tests the MoveRelative function with invalid paths.
+     */
+    bool TestMoveRelative_InvalidPaths();
+
+    /**
+     * @brief Tests the MoveRelative function.
+     */
+    bool TestDelete();
+
+    /**
+     * @brief Tests the Read function with a valid name
+     */
+    bool TestRead_Valid();
+
+    /**
+     * @brief Tests the Read function with an invalid name
+     */
+    bool TestRead_Invalid();
+
+    /**
+     * @brief Tests the AddToCurrentNode function.
+     */
+    bool TestAddToCurrentNode();
+
+    /**
+     * @brief Tests the Write function with a valid name
+     */
+    bool TestWrite_Valid();
+
+    /**
+     * @brief Tests the Write function with a name that already exists
+     */
+    bool TestWrite_Overwrite();
+
+    /**
+     * @brief Tests the Write function with an invalid name
+     */
+    bool TestWrite_Invalid();
 
     /**
      * @see StructuredDataI::GetType
      */
     //virtual AnyType GetType(const char8 * const name);
-
-    /**
-     * @see StructuredDataI::Write
-     */
-    //virtual bool Write(const char8 * const name, const AnyType &value);
-
     /**
      * @see StructuredDataI::Copy
      */
     //virtual bool Copy(StructuredDataI &destination);
-
-    /**
-     * @see StructuredDataI::AddToCurrentNode
-     */
-    //virtual bool AddToCurrentNode(Reference node);
-
-    /**
-     * @see StructuredDataI::Delete
-     */
-    //virtual bool Delete();
-
-
     /**
      * @brief Locks the shared semaphore.
      * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
      * @return true if the shared semaphore is successfully locked.
      */
     //bool Lock(const TimeoutType &timeout);
-
     /**
      * @brief Unlocks the shared semaphore.
      * @return true if the shared semaphore is successfully unlocked.

@@ -127,8 +127,7 @@ public:
     /**
      * @see StructuredDataI::Delete
      */
-    virtual bool Delete();
-
+    virtual bool Delete(const char8 * const name);
 
     /**
      * @brief Locks the shared semaphore.

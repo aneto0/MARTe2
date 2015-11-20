@@ -64,7 +64,72 @@ TEST(ConfigurationDatabaseGTest,TestCreateRelative_InvalidPath) {
     ASSERT_TRUE(cdbTest.TestCreateRelative_InvalidPath());
 }
 
+TEST(ConfigurationDatabaseGTest,TestMoveToRoot) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestMoveToRoot());
+}
 
+TEST(ConfigurationDatabaseGTest,TestMoveToAncestor_ValidNumberOfGenerations) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestMoveToAncestor_ValidNumberOfGenerations());
+}
 
+TEST(ConfigurationDatabaseGTest,TestMoveToAncestor_InvalidNumberOfGenerations) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestMoveToAncestor_InvalidNumberOfGenerations());
+}
 
-	
+TEST(ConfigurationDatabaseGTest,TestMoveAbsolute_ValidPaths) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestMoveAbsolute_ValidPaths());
+}
+
+TEST(ConfigurationDatabaseGTest,TestMoveAbsolute_InvalidPaths) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestMoveAbsolute_InvalidPaths());
+}
+
+TEST(ConfigurationDatabaseGTest,TestMoveRelative_ValidPaths) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestMoveRelative_ValidPaths());
+}
+
+TEST(ConfigurationDatabaseGTest,TestMoveRelative_InvalidPaths) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestMoveRelative_InvalidPaths());
+}
+
+TEST(ConfigurationDatabaseGTest,TestDelete) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestDelete());
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Valid) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Valid());
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Invalid) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Invalid());
+}
+
+TEST(ConfigurationDatabaseGTest,TestAddToCurrentNode) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestAddToCurrentNode());
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Valid) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid());
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Overwrite) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Overwrite());
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Invalid) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Invalid());
+}
