@@ -43,6 +43,11 @@ class Reference;
  * @brief Interface definition for any database that can store and retrieve AnyType values.
  * @details Classes that implement this interface are capable of storing and retrieving,
  * against any given name, data that is represented as an AnyType.
+ *
+ * The root node always exits and is anonymous to the users of the interface. This implies that the following
+ * function calls are valid: CreateAbsolute("A.B.C")  && CreateAbsolute("D.E.F") &&
+ * MoveToRoot() && MoveAbsolute("A.B.C") && MoveAbsolute("D.E.F")
+ *
  * Irrespectively of the interface the implementation shall support the concepts of navigable nodes and leafs
  * and shall support the following features:
  *

@@ -41,6 +41,45 @@ bool ConfigurationDatabaseTest::TestDefaultConstructor() {
     cdb.Unlock();
     return ok;
 }
+
+bool ConfigurationDatabaseTest::TestCreateAbsolute_ValidPath() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A");
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = cdb.MoveAbsolute("A");
+    }
+
+    ok = cdb.CreateAbsolute("A.B");
+    if (ok) {
+        ok = cdb.MoveAbsolute("A.B");
+    }
+
+    ok = cdb.CreateAbsolute("A.B.C");
+    if (ok) {
+        ok = cdb.MoveAbsolute("A.B.C");
+    }
+
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestCreateAbsolute_InvalidPath() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A.B");
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = cdb.MoveAbsolute("A.B");
+    }
+
+    ok = !cdb.CreateAbsolute("A.B");
+
+    return ok;
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/

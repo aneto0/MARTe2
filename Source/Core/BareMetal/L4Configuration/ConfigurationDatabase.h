@@ -55,7 +55,10 @@ class ConfigurationDatabase: public StructuredDataI {
 public:
 
     /**
-     * @brief Default constructor. Initialises the shared mutex Semaphore.
+     * @brief Default constructor.
+     * Initialises the shared mutex Semaphore.
+     * @post
+     *   MoveToRoot() == true
      */
     ConfigurationDatabase();
 

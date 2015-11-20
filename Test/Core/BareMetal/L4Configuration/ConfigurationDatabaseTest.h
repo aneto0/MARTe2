@@ -46,6 +46,17 @@ public:
     bool TestDefaultConstructor();
 
     /**
+     * @brief Tests the CreateAbsolute function with a valid path
+     */
+    bool TestCreateAbsolute_ValidPath();
+
+    /**
+     * @brief Tests the CreateAbsolute function trying to create a node that already exists
+     */
+    bool TestCreateAbsolute_InvalidPath();
+
+
+    /**
      * @see StructuredDataI::Read
      */
     //virtual bool Read(const char8 * const name, const AnyType &value);

@@ -47,6 +47,9 @@ namespace MARTe {
 
 ConfigurationDatabase::ConfigurationDatabase() {
     mux.Create();
+    ReferenceT<ReferenceContainer> rootContainer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
+    rootNode = rootContainer;
+    currentNode = rootNode;
 }
 
 ConfigurationDatabase::~ConfigurationDatabase() {
@@ -184,34 +187,43 @@ bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
     }
     String token;
     char8 c;
+    bool created = false;
 
     while ((pathStr.GetToken(token, ".", c)) && (ok)) {
         ok = (token.Size() > 0u);
         if (ok) {
-            if (!rootNode.IsValid()) {
-                ReferenceT<ReferenceContainer> rootContainer(GlobalObjectsDatabase::Instance()->GetStandardHeap());
-                rootNode = rootContainer;
-                rootNode->SetName(token.Buffer());
-                currentNode = rootNode;
+            //Check if a node with this name already exists
+            bool found = false;
+            Reference foundReference;
+            uint32 i;
+            for (i = 0u; (i < currentNode->Size()) && (!found); i++) {
+                foundReference = currentNode->Get(i);
+                found = (StringHelper::Compare(foundReference->GetName(), token.Buffer()) == 0);
             }
-            else {
+
+            if (found) {
+                currentNode = foundReference;
+            }
+            else{
                 ReferenceT<ReferenceContainer> container(GlobalObjectsDatabase::Instance()->GetStandardHeap());
                 container->SetName(token.Buffer());
                 ok = currentNode->Insert(container);
                 if (ok) {
                     currentNode = container;
-                }
-            }
-
-            if (ok) {
-                ok = token.Seek(0Lu);
-                if (ok) {
-                    ok = token.SetSize(0Lu);
+                    created = true;
                 }
             }
         }
+
+        if (ok) {
+            ok = token.Seek(0Lu);
+            if (ok) {
+                ok = token.SetSize(0Lu);
+            }
+
+        }
     }
-    return ok;
+    return (ok && created);
 }
 
 bool ConfigurationDatabase::CreateAbsolute(const char8 * const path) {
