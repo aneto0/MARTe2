@@ -67,7 +67,7 @@ String::String(const String &toCopy) :
 
 String::operator AnyType() {
     void *dataPointer = static_cast<void *>(this);
-    TypeDescriptor dataDescriptor(false, SString, static_cast<uint16>(sizeof(char8 *) * 8u));
+    TypeDescriptor dataDescriptor(false, SString, sizeof(String)*8u);
 
     return AnyType(dataDescriptor, 0u, dataPointer);
 }

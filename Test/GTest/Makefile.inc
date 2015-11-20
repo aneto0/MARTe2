@@ -23,7 +23,10 @@
 #############################################################
 
 
-OBJSX=  AnyTypeGTest.x\
+OBJSX=  TypeConversionGTest.x \
+	VectorGTest.x \
+	MatrixGTest.x \
+	AnyTypeGTest.x\
         DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
@@ -108,7 +111,8 @@ INCLUDES += -I../../Source/Core/FileSystem/L1Portability
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 all: $(OBJS)    \
-        $(BUILD_DIR)/MainGTest$(EXEEXT)
+        $(BUILD_DIR)/MainGTest$(EXEEXT) \
+        $(BUILD_DIR)/TestPrototype$(EXEEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

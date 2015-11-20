@@ -695,6 +695,10 @@ public:
      */
     inline void SetStaticDeclared(const bool isStaticDeclared);
 
+    inline uint32 GetByteSize() const;
+
+    inline uint32 GetBitSize() const;
+
 private:
 
     /**
@@ -729,6 +733,7 @@ private:
      * If true => GetDataPointer() is pointing at a statically allocated memory block.
      */
     bool staticDeclared;
+
 
     /**
      * @brief Initialises all the dimensions to zero.
@@ -967,7 +972,7 @@ AnyType::AnyType(const void * const p) {
 
 AnyType::AnyType(const char8 * const p) {
     Init();
-    dataPointer = reinterpret_cast<void *>(const_cast<char8 *>(p)); // we will either print the variable or the string
+    dataPointer = reinterpret_cast<void *>(const_cast<char8 *>(p));
     bitAddress = 0u;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = true;
@@ -1248,6 +1253,14 @@ inline void AnyType::Init() {
     dataPointer = static_cast<void *>(NULL);
     bitAddress = 0u;
     dataDescriptor = VoidType;
+}
+
+uint32 AnyType::GetByteSize() const {
+    return ((dataDescriptor.numberOfBits + bitAddress) + 7u) / 8u;
+}
+
+uint32 AnyType::GetBitSize() const {
+    return (dataDescriptor.numberOfBits + bitAddress);
 }
 
 /**

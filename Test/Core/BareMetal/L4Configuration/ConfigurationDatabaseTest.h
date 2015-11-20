@@ -55,6 +55,35 @@ public:
      */
     bool TestCreateAbsolute_InvalidPath();
 
+    /**
+     * @brief Tests the CreateRelative function with a valid path
+     */
+    bool TestCreateRelative_ValidPath();
+
+    /**
+     * @brief Tests the CreateRelative function trying to create a node that already exists
+     */
+    bool TestCreateRelative_InvalidPath();
+
+    /**
+     * @see Tests the MoveToRoot function.
+     */
+    bool TestMoveToRoot();
+
+    /**
+     * @see StructuredDataI::MoveToAncestor
+     */
+    //virtual bool MoveToAncestor(const uint32 generations);
+
+    /**
+     * @see StructuredDataI::MoveAbsolute
+     */
+    //virtual bool MoveAbsolute(const char8 * const path);
+
+    /**
+     * @see StructuredDataI::MoveRelative
+     */
+    //virtual bool MoveRelative(const char8 * const path);
 
     /**
      * @see StructuredDataI::Read
@@ -75,36 +104,6 @@ public:
      * @see StructuredDataI::Copy
      */
     //virtual bool Copy(StructuredDataI &destination);
-
-    /**
-     * @see StructuredDataI::MoveToRoot
-     */
-    //virtual bool MoveToRoot();
-
-    /**
-     * @see StructuredDataI::MoveToAncestor
-     */
-    //virtual bool MoveToAncestor(const uint32 generations);
-
-    /**
-     * @see StructuredDataI::MoveAbsolute
-     */
-    //virtual bool MoveAbsolute(const char8 * const path);
-
-    /**
-     * @see StructuredDataI::MoveRelative
-     */
-    //virtual bool MoveRelative(const char8 * const path);
-
-    /**
-     * @see StructuredDataI::CreateAbsolute
-     */
-    //virtual bool CreateAbsolute(const char8 * const path);
-
-    /**
-     * @see StructuredDataI::CreateRelative
-     */
-    //virtual bool CreateRelative(const char8 * const path);
 
     /**
      * @see StructuredDataI::AddToCurrentNode

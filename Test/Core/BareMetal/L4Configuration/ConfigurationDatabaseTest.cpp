@@ -58,6 +58,12 @@ bool ConfigurationDatabaseTest::TestCreateAbsolute_ValidPath() {
     }
 
     ok = cdb.CreateAbsolute("A.B.C");
+
+    ok = cdb.CreateAbsolute("D.E.F");
+
+    if (ok) {
+        ok = cdb.MoveAbsolute("D.E.F");
+    }
     if (ok) {
         ok = cdb.MoveAbsolute("A.B.C");
     }
@@ -67,7 +73,11 @@ bool ConfigurationDatabaseTest::TestCreateAbsolute_ValidPath() {
 
 bool ConfigurationDatabaseTest::TestCreateAbsolute_InvalidPath() {
     ConfigurationDatabase cdb;
-    bool ok = cdb.CreateAbsolute("A.B");
+    bool ok = !cdb.MoveAbsolute("A.B");
+
+    if (ok) {
+        ok = cdb.CreateAbsolute("A.B");
+    }
     if (ok) {
         ok = cdb.MoveToRoot();
     }
@@ -79,6 +89,90 @@ bool ConfigurationDatabaseTest::TestCreateAbsolute_InvalidPath() {
 
     return ok;
 }
+
+bool ConfigurationDatabaseTest::TestCreateRelative_ValidPath() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.CreateRelative("A");
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    if (ok) {
+        ok = cdb.MoveAbsolute("A");
+    }
+
+    ok = cdb.CreateRelative("A.B");
+    if (ok) {
+        ok = cdb.MoveAbsolute("A.A.B");
+    }
+    if (ok) {
+        ok = !cdb.MoveAbsolute("A.B");
+    }
+    if (ok) {
+        ok = cdb.MoveToRoot();
+    }
+    ok = cdb.CreateRelative("D.E.F");
+
+    if (ok) {
+        ok = cdb.CreateRelative("D.E.F");
+    }
+    if (ok) {
+        ok = cdb.MoveAbsolute("D.E.F.D.E.F");
+    }
+
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestCreateRelative_InvalidPath() {
+    ConfigurationDatabase cdb;
+    bool ok = !cdb.MoveRelative("A.B");
+
+    if (ok) {
+        ok = cdb.CreateRelative("A.B");
+    }
+    if (ok) {
+        ok = cdb.CreateRelative("C");
+    }
+    ok = cdb.MoveToAncestor(1);
+    if (ok) {
+        ok = !cdb.CreateRelative("C");
+    }
+    if (ok) {
+        ok = cdb.CreateRelative("B");
+    }
+    if (ok) {
+        ok = cdb.MoveAbsolute("A.B.B");
+    }
+    cdb.MoveToRoot();
+    ok = !cdb.CreateRelative("A.B");
+
+    return ok;
+}
+
+/*bool ConfigurationDatabaseTest::TestMoveToRoot() {
+    ConfigurationDatabase cdb;
+    bool ok = !cdb.MoveRelative("A.B");
+
+    if (ok) {
+        ok = cdb.CreateRelative("A.B");
+    }
+    if (ok) {
+        ok = cdb.CreateRelative("C");
+    }
+    ok = cdb.MoveToAncestor(1);
+    if (ok) {
+        ok = !cdb.CreateRelative("C");
+    }
+    if (ok) {
+        ok = cdb.CreateRelative("B");
+    }
+    if (ok) {
+        ok = cdb.MoveAbsolute("A.B.B");
+    }
+    cdb.MoveToRoot();
+    ok = !cdb.CreateRelative("A.B");
+
+    return ok;
+}*/
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */

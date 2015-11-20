@@ -183,8 +183,8 @@ bool AnyObject::SerializeVector() {
             copySize += 1u;
         }
         else if (dataDescriptor.type == CCString) {
-            const char8 *srcArray = static_cast<const char8 *>(srcDataPointer);
-            copySize = (StringHelper::Length(&srcArray[idx * sizeof(char8 *)]) + 1u);
+            const char8 *srcArray = (static_cast<const char8 **>(srcDataPointer))[idx];
+            copySize = (StringHelper::Length(srcArray) + 1u);
         }
         else {
             copySize = dataDescriptor.numberOfBits;
@@ -206,7 +206,7 @@ bool AnyObject::SerializeVector() {
             else if (dataDescriptor.type == CCString) {
                 char8 **destStr = reinterpret_cast<char8 **>(value);
                 destStr[idx] = static_cast<char8 *>(HeapManager::Malloc(copySize));
-                srcArray = &static_cast<const char8 *>(srcDataPointer)[idx * sizeof(char8 *)];
+                srcArray = (static_cast<const char8 **>(srcDataPointer))[idx];
                 destArray = destStr[idx];
             }
             else {

@@ -72,36 +72,6 @@ number *= 10E ## step ## Q; \
 namespace MARTe {
 
 /**
- * @brief Checks if the given float is a not-a-number value.
- */
-static inline bool isNaN(const float32 x) {
-    /*lint -e{9137} -e{777} [MISRA C++ Rule 6-2-2]. Justification: It is a trick to detect nan floats in standard IEEE.*/
-    return (x != x);
-}
-
-/**
- * @brief Checks if the given float is a not-a-number value.
- */
-static inline bool isNaN(const float64 x) {
-    /*lint -e{9137} -e{777} [MISRA C++ Rule 6-2-2]. Justification: It is a trick to detect nan floats in standard IEEE.*/
-    return (x != x);
-}
-
-/**
- * @brief Checks if the given float is a positive or negative infinity.
- */
-static inline bool isInf(const float32 x) {
-    return (!isNaN(x)) && (isNaN(x - x));
-}
-
-/**
- * @brief Checks if the given float is a positive or negative infinity
- */
-static inline bool isInf(const float64 x) {
-    return (!isNaN(x)) && (isNaN(x - x));
-}
-
-/**
  * @brief Prints an integer number on a general buffer in decimal notation.
  * @details This function implements a 2 step conversion - step1 32/64 to 16bit
  * step2 10bit to decimal.  This way the number of 32/64 bit operations are

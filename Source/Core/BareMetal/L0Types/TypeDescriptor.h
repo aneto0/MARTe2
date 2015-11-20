@@ -221,7 +221,7 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
 }
 
 bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
-    bool ret = (all == typeDescriptor.all);
+    bool ret = ((all|(0x0002u)) == (typeDescriptor.all|(0x0002u)));
     return ret;
 }
 

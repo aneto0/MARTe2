@@ -145,7 +145,9 @@ public:
     /**
      * @brief Create a new series of nodes based on the provided absolute path.
      * @param[in] path the path of nodes to be created.
-     * @return true if the nodes were successfully created.
+     * @return true if the nodes were successfully created and if the path does not already exist.
+     * @pre
+     *   MoveAbsolute(path) == false
      * @post
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.
@@ -155,7 +157,9 @@ public:
     /**
      * @brief Create a new series of nodes based on the provided relative path.
      * @param[in] path the path of nodes to be created, relative to the current node.
-     * @return true if the nodes were successfully created.
+     * @return true if the nodes were successfully created and if the path does not already exist.
+     * @pre
+     *   MoveRelative(path) == false
      * @post
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.

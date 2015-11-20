@@ -75,9 +75,7 @@ public:
            uint32 nOfElements);
 
     /**
-     * @brief Constructs a new matrix from a statically declared table [][].
-     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
-     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @brief Constructs a new matrix from a statically declared table [].
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfElements() == nOfElementsStatic &&
@@ -86,6 +84,13 @@ public:
      */
     template<uint32 nOfElementsStatic>
     Vector(T (&source)[nOfElementsStatic]);
+
+    /**
+     * @brief Destructor.
+     * @post
+     *   If IsStaticDeclared frees \a dataPointer
+     */
+    ~Vector();
 
     /**
      * @brief Returns the element at position \a idx.
@@ -127,6 +132,8 @@ private:
      * True if this dataPointer is pointing at a statically allocated matrix memory block [][].
      */
     bool staticDeclared;
+
+    bool canDestroy;
 };
 }
 
@@ -139,7 +146,8 @@ template<typename T>
 Vector<T>::Vector() {
     numberOfElements = 0u;
     dataPointer = NULL_PTR(T *);
-    staticDeclared = false;
+    staticDeclared = true;
+    canDestroy=false;
 }
 
 template<typename T>
@@ -147,6 +155,7 @@ Vector<T>::Vector(uint32 nOfElements) {
     dataPointer = new T[nOfElements];
     numberOfElements = nOfElements;
     staticDeclared = false;
+    canDestroy=true;
 }
 
 template<typename T>
@@ -155,6 +164,7 @@ Vector<T>::Vector(T *existingArray,
     dataPointer = existingArray;
     numberOfElements = nOfElements;
     staticDeclared = false;
+    canDestroy=false;
 }
 
 template<typename T>
@@ -163,12 +173,20 @@ Vector<T>::Vector(T (&source)[nOfElementsStatic]) {
     dataPointer = reinterpret_cast<T *>(&source[0]);
     numberOfElements = nOfElementsStatic;
     staticDeclared = true;
+    canDestroy=false;
+}
+
+template<typename T>
+Vector<T>::~Vector() {
+    if (canDestroy) {
+        delete[] reinterpret_cast<T*>(dataPointer);
+    }
 }
 
 template<typename T>
 T &Vector<T>::operator [](uint32 idx) {
-    T* t = reinterpret_cast<T *>(dataPointer);
-    return t[idx];
+    T* array=reinterpret_cast<T*>(dataPointer);
+    return array[idx];
 }
 
 template<typename T>
@@ -187,8 +205,6 @@ inline uint32 Vector<T>::GetNumberOfElements() {
 }
 
 }
-
-
 
 #endif /* VECTOR_H_ */
 

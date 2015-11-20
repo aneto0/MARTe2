@@ -54,6 +54,16 @@ TEST(ConfigurationDatabaseGTest,TestCreateAbsolute_InvalidPath) {
     ASSERT_TRUE(cdbTest.TestCreateAbsolute_InvalidPath());
 }
 
+TEST(ConfigurationDatabaseGTest,TestCreateRelative_ValidPath) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestCreateRelative_ValidPath());
+}
+
+TEST(ConfigurationDatabaseGTest,TestCreateRelative_InvalidPath) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestCreateRelative_InvalidPath());
+}
+
 
 
 
