@@ -115,6 +115,7 @@ bool TypeConversionTest::TestTypeConvert(const TypeToTypeTableTest<T1, T2>* tabl
 
     uint32 i = 0;
     while (table[i].go) {
+
         T2 element;
         T2 result = table[i].result;
         T1 toConvert = table[i].typeToConvert;

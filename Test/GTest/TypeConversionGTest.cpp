@@ -3738,3 +3738,5 @@ TEST(TypeConversionGTest,TestCArrayToFloat32MatrixStaticToHeap) {
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeapFromCArray(table));
 }
+
+

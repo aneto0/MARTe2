@@ -153,7 +153,7 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
             uint32 stringLength = static_cast<uint32>(stringSource->Size());
             ret = stringDestination->Write(stringSource->Buffer(), stringLength);
         }
-        if (sourceDescriptor.type == CCString) {
+        else if (sourceDescriptor.type == CCString) {
             if (source.GetNumberOfDimensions() == 0u) {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), reinterpret_cast<const char8 *>(sourcePointer));
             }
@@ -673,6 +673,7 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 bool TypeConvert(const AnyType &destination,
                  const AnyType &source) {

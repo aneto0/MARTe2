@@ -55,6 +55,7 @@ namespace MARTe {
  * @pre
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
+// NO CHAR ARRAY > 125 CHARS
 bool TypeConvert(const AnyType &destination,
                  const AnyType &source);
 
