@@ -130,6 +130,298 @@ static bool FloatToFloat(const FloatType1 source,
     return ret;
 }
 
+
+/**
+ * @brief Performs the conversion from integer to any type.
+ * @param[out] destination is the any type in output.
+ * @param[in] source is the any type representing an integer number.
+ * @return true if the conversion succeeds, false otherwise.
+ * @pre
+ *   source.GetTypeDescriptor == SignedInteger ||
+ *   source.GetTypeDescriptor == UnsignedInteger;
+ */
+static bool IntegerToType(const AnyType &destination,
+                          const AnyType &source) {
+
+    void* destinationPointer = destination.GetDataPointer();
+    const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
+    void* sourcePointer = source.GetDataPointer();
+    const TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
+
+    bool ret = false;
+
+    bool isSourceSignedInteger = (sourceDescriptor.type == SignedInteger);
+    bool isSourceUnsignedInteger = (sourceDescriptor.type == UnsignedInteger);
+
+    if ((isSourceSignedInteger) || (isSourceUnsignedInteger)) {
+
+        if (destinationDescriptor.type == SString) {
+            String tempString;
+            ret = tempString.PrintFormatted("%d", &source);
+            if (ret) {
+                uint32 stringLength = static_cast<uint32>(tempString.Size());
+                ret = (reinterpret_cast<String*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
+            }
+        }
+        if (destinationDescriptor.type == CArray) {
+            String tempString;
+            ret = tempString.PrintFormatted("%d", &source);
+            if (ret) {
+                uint32 stringLength = static_cast<uint32>(tempString.Size()) + 1u;
+                uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
+                if (stringLength > arraySize) {
+                    REPORT_ERROR(ErrorManagement::Warning, "ScalarBasicTypeConvert: The string in input is too long for the output buffer.");
+                    ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
+                    reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
+                }
+                else {
+                    ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
+                }
+            }
+        }
+        if (destinationDescriptor.type == CCString) {
+            String tempString;
+            ret = tempString.PrintFormatted("%d", &source);
+            if (ret) {
+                // in this case the data pointer is the const char*
+                if (destination.GetNumberOfDimensions() == 0u) {
+                    ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
+                }
+                // in this case the data pointer points to the const char *
+                else {
+                    ret = StringHelper::Copy(*reinterpret_cast<char8 **>(destinationPointer), tempString.Buffer());
+                }
+            }
+        }
+        if (destinationDescriptor.type == SignedInteger) {
+            if ((sourceDescriptor.type == SignedInteger)) {
+                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), true, sourceInput, sourceShift,
+                                     static_cast<uint8>(sourceDescriptor.numberOfBits), true);
+
+            }
+            if (sourceDescriptor.type == UnsignedInteger) {
+                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), true, sourceInput, sourceShift,
+                                     static_cast<uint8>(sourceDescriptor.numberOfBits), false);
+            }
+        }
+        if (destinationDescriptor.type == UnsignedInteger) {
+            if ((sourceDescriptor.type == SignedInteger)) {
+                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
+                                     static_cast<uint8>(sourceDescriptor.numberOfBits), true);
+            }
+            if (sourceDescriptor.type == UnsignedInteger) {
+                uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
+                uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
+                ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
+                                     static_cast<uint8>(sourceDescriptor.numberOfBits), false);
+            }
+        }
+
+        if (destinationDescriptor.type == Float) {
+            if ((sourceDescriptor.type == SignedInteger)) {
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
+                ret = IntegerToFloatGeneric(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), destinationInput,
+                                            static_cast<uint8>(destinationDescriptor.numberOfBits), true);
+            }
+            if (sourceDescriptor.type == UnsignedInteger) {
+                uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
+                float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
+                ret = IntegerToFloatGeneric(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), destinationInput,
+                                            static_cast<uint8>(destinationDescriptor.numberOfBits), false);
+            }
+        }
+    }
+    return ret;
+
+}
+
+/**
+ * @brief Performs the conversion from float to any type.
+ * @param[out] destination is the any type in output.
+ * @param[in] source is the any type representing a float number.
+ * @return true if the conversion succeeds, false otherwise.
+ * @pre
+ *   source.GetTypeDescriptor == Float;
+ */
+static bool FloatToType(const AnyType &destination,
+                        const AnyType &source) {
+
+    void* destinationPointer = destination.GetDataPointer();
+    const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
+    void* sourcePointer = source.GetDataPointer();
+    const TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
+
+    bool ret = false;
+
+    if (sourceDescriptor.type == Float) {
+
+        if (destinationDescriptor.type == SString) {
+            String tempString;
+            ret = tempString.PrintFormatted("%E", &source);
+            if (ret) {
+                *(reinterpret_cast<String*>(destinationPointer)) = tempString;
+                ret = (*(reinterpret_cast<String*>(destinationPointer))) == tempString;
+            }
+        }
+        if (destinationDescriptor.type == CArray) {
+            String tempString;
+            ret = tempString.PrintFormatted("%E", &source);
+            if (ret) {
+                uint32 stringLength = static_cast<uint32>(tempString.Size()) + 1u;
+                uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
+                if (stringLength > arraySize) {
+                    //TODO warning clip string
+                    ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
+                    reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
+                }
+                else {
+                    ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
+                }
+            }
+        }
+        if (destinationDescriptor.type == CCString) {
+            String tempString;
+            ret = tempString.PrintFormatted("%E", &source);
+            if (ret) {
+                // in this case the data pointer is the const char*
+                if (destination.GetNumberOfDimensions() == 0u) {
+                    ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
+                }
+                // in this case the data pointer points to the const char *
+                else {
+                    ret = StringHelper::Copy(*reinterpret_cast<char8 **>(destinationPointer), tempString.Buffer());
+                }
+            }
+        }
+        if (destinationDescriptor.type == SignedInteger) {
+            ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
+                                        reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits), true);
+        }
+        if (destinationDescriptor.type == UnsignedInteger) {
+            ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
+                                        reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits), false);
+        }
+        if (destinationDescriptor.type == Float) {
+            if (destinationDescriptor.numberOfBits == 32u) {
+                if (sourceDescriptor.numberOfBits == 64u) {
+                    ret = FloatToFloat(*(reinterpret_cast<float64*>(sourcePointer)), *(reinterpret_cast<float32*>(destinationPointer)));
+                }
+            }
+            if (destinationDescriptor.numberOfBits == 64u) {
+                if (sourceDescriptor.numberOfBits == 32u) {
+                    ret = FloatToFloat(*(reinterpret_cast<float32*>(sourcePointer)), *(reinterpret_cast<float64*>(destinationPointer)));
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+
+/**
+ * @brief Performs the conversion from string types (CCString, String, CArray) to any type.
+ * @param[out] destination is the any type in output.
+ * @param[in] source is the any type representing a string.
+ * @return true if the conversion succeeds, false otherwise.
+ * @pre
+ *   source.GetTypeDescriptor == String ||
+ *   source.GetTypeDescriptor == CCString ||
+ *   source.GetTypeDescriptor == CArray;
+ */
+static bool StringToType(const AnyType &destination,
+                         const AnyType &source) {
+
+    void* destinationPointer = destination.GetDataPointer();
+    const TypeDescriptor destinationDescriptor = destination.GetTypeDescriptor();
+    void* sourcePointer = source.GetDataPointer();
+    const TypeDescriptor sourceDescriptor = source.GetTypeDescriptor();
+
+    bool ret = false;
+
+    const char8* token = static_cast<const char8 *>(NULL);
+    if (sourceDescriptor.type == CCString) {
+        // in this case the data pointer is the const char*
+        if (source.GetNumberOfDimensions() == 0u) {
+            token = reinterpret_cast<const char8*>(sourcePointer);
+        }
+        // in this case the data pointer points to the const char *
+        else {
+            token = *reinterpret_cast<const char8**>(sourcePointer);
+        }
+    }
+    if (sourceDescriptor.type == CArray) {
+        token = reinterpret_cast<const char8*>(sourcePointer);
+    }
+    if ((sourceDescriptor.type == SString)) {
+        token = (reinterpret_cast<String*>(sourcePointer))->Buffer();
+    }
+
+    if (token != NULL) {
+        uint32 tokenLength = StringHelper::Length(token);
+        if(destinationDescriptor.type==SString) {
+            String* tempString=reinterpret_cast<String*>(destinationPointer);
+            ret=tempString->Write(token, tokenLength);
+        }
+        if (destinationDescriptor.type == CArray) {
+            uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
+            if (tokenLength > arraySize) {
+                //TODO warning clip string
+                ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);
+                reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
+            }
+            else {
+                ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
+            }
+        }
+        if(destinationDescriptor.type==CCString) {
+            // in this case the data pointer is the const char*
+            if (destination.GetNumberOfDimensions() == 0u) {
+                ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
+            }
+            // in this case the data pointer points to the const char *
+            else {
+                ret = StringHelper::Copy(*reinterpret_cast<char8 **>(destinationPointer), token);
+            }
+        }
+        if(destinationDescriptor.type==SignedInteger) {
+            ret=StringToIntegerGeneric(token,
+                    reinterpret_cast<uint8*>(destinationPointer),
+                    static_cast<uint8>(destinationDescriptor.numberOfBits),true);
+
+        }
+        if(destinationDescriptor.type==UnsignedInteger) {
+
+            ret=StringToIntegerGeneric(token,
+                    reinterpret_cast<uint8*>(destinationPointer),
+                    static_cast<uint8>(destinationDescriptor.numberOfBits),false);
+        }
+        if(destinationDescriptor.type==Float) {
+            if(destinationDescriptor.numberOfBits==32u) {
+                ret=StringToFloat(token,*(reinterpret_cast<float32*>(destinationPointer)));
+            }
+            if(destinationDescriptor.numberOfBits==64u) {
+                ret=StringToFloat(token,*(reinterpret_cast<float64*>(destinationPointer)));
+            }
+        }
+    }
+    return ret;
+}
+
 /**
  * @brief Performs the basic type conversion.
  * @param[out] destination is the converted type in output.
@@ -171,227 +463,15 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
         bool isSourceUnsignedInteger = (sourceDescriptor.type == UnsignedInteger);
 
         if ((isSourceSignedInteger) || (isSourceUnsignedInteger)) {
-
-            if (destinationDescriptor.type == SString) {
-                String tempString;
-                ret = tempString.PrintFormatted("%d", &source);
-                if (ret) {
-                    uint32 stringLength = static_cast<uint32>(tempString.Size());
-                    ret = (reinterpret_cast<String*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
-                }
-            }
-            if (destinationDescriptor.type == CArray) {
-                String tempString;
-                ret = tempString.PrintFormatted("%d", &source);
-                if (ret) {
-                    uint32 stringLength = static_cast<uint32>(tempString.Size()) + 1u;
-                    uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
-                    if (stringLength > arraySize) {
-                        REPORT_ERROR(ErrorManagement::Warning, "ScalarBasicTypeConvert: The string in input is too long for the output buffer.");
-                        ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
-                        reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
-                    }
-                    else {
-                        ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
-                    }
-                }
-            }
-            if (destinationDescriptor.type == CCString) {
-                String tempString;
-                ret = tempString.PrintFormatted("%d", &source);
-                if (ret) {
-                    // in this case the data pointer is the const char*
-                    if (destination.GetNumberOfDimensions() == 0u) {
-                        ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
-                    }
-                    // in this case the data pointer points to the const char *
-                    else {
-                        ret = StringHelper::Copy(*reinterpret_cast<char8 **>(destinationPointer), tempString.Buffer());
-                    }
-                }
-            }
-            if (destinationDescriptor.type == SignedInteger) {
-                if ((sourceDescriptor.type == SignedInteger)) {
-                    uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
-                    uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                    uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
-                    uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
-                    ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), true, sourceInput, sourceShift,
-                                         static_cast<uint8>(sourceDescriptor.numberOfBits), true);
-
-                }
-                if (sourceDescriptor.type == UnsignedInteger) {
-                    uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
-                    uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                    uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
-                    uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
-                    ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), true, sourceInput, sourceShift,
-                                         static_cast<uint8>(sourceDescriptor.numberOfBits), false);
-                }
-            }
-            if (destinationDescriptor.type == UnsignedInteger) {
-                if ((sourceDescriptor.type == SignedInteger)) {
-                    uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
-                    uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                    uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
-                    uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
-                    ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
-                                         static_cast<uint8>(sourceDescriptor.numberOfBits), true);
-                }
-                if (sourceDescriptor.type == UnsignedInteger) {
-                    uint8* destinationInput = reinterpret_cast<uint8*>(destinationPointer);
-                    uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                    uint8 destShift = static_cast<uint8>(destination.GetBitAddress());
-                    uint8 sourceShift = static_cast<uint8>(source.GetBitAddress());
-                    ret = BitSetToBitSet(destinationInput, destShift, static_cast<uint8>(destinationDescriptor.numberOfBits), false, sourceInput, sourceShift,
-                                         static_cast<uint8>(sourceDescriptor.numberOfBits), false);
-                }
-            }
-
-            if (destinationDescriptor.type == Float) {
-                if ((sourceDescriptor.type == SignedInteger)) {
-                    uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                    float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
-                    ret = IntegerToFloatGeneric(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), destinationInput,
-                                                static_cast<uint8>(destinationDescriptor.numberOfBits), true);
-                }
-                if (sourceDescriptor.type == UnsignedInteger) {
-                    uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
-                    float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
-                    ret = IntegerToFloatGeneric(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), destinationInput,
-                                                static_cast<uint8>(destinationDescriptor.numberOfBits), false);
-                }
-            }
+            ret = IntegerToType(destination, source);
+        }
+        else if (sourceDescriptor.type == Float) {
+            ret = FloatToType(destination, source);
+        }
+        else {
+            ret = StringToType(destination, source);
         }
 
-        if (sourceDescriptor.type == Float) {
-
-            if (destinationDescriptor.type == SString) {
-                String tempString;
-                ret = tempString.PrintFormatted("%E", &source);
-                if (ret) {
-                    *(reinterpret_cast<String*>(destinationPointer)) = tempString;
-                    ret = (*(reinterpret_cast<String*>(destinationPointer))) == tempString;
-                }
-            }
-            if (destinationDescriptor.type == CArray) {
-                String tempString;
-                ret = tempString.PrintFormatted("%E", &source);
-                if (ret) {
-                    uint32 stringLength = static_cast<uint32>(tempString.Size()) + 1u;
-                    uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
-                    if (stringLength > arraySize) {
-                        //TODO warning clip string
-                        ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
-                        reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
-                    }
-                    else {
-                        ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
-                    }
-                }
-            }
-            if (destinationDescriptor.type == CCString) {
-                String tempString;
-                ret = tempString.PrintFormatted("%E", &source);
-                if (ret) {
-                    // in this case the data pointer is the const char*
-                    if (destination.GetNumberOfDimensions() == 0u) {
-                        ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
-                    }
-                    // in this case the data pointer points to the const char *
-                    else {
-                        ret = StringHelper::Copy(*reinterpret_cast<char8 **>(destinationPointer), tempString.Buffer());
-                    }
-                }
-            }
-            if (destinationDescriptor.type == SignedInteger) {
-                ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
-                                            reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits), true);
-            }
-            if (destinationDescriptor.type == UnsignedInteger) {
-                ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
-                                            reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits), false);
-            }
-            if (destinationDescriptor.type == Float) {
-                if (destinationDescriptor.numberOfBits == 32u) {
-                    if (sourceDescriptor.numberOfBits == 64u) {
-                        ret = FloatToFloat(*(reinterpret_cast<float64*>(sourcePointer)), *(reinterpret_cast<float32*>(destinationPointer)));
-                    }
-                }
-                if (destinationDescriptor.numberOfBits == 64u) {
-                    if (sourceDescriptor.numberOfBits == 32u) {
-                        ret = FloatToFloat(*(reinterpret_cast<float32*>(sourcePointer)), *(reinterpret_cast<float64*>(destinationPointer)));
-                    }
-                }
-            }
-        }
-
-        const char8* token = static_cast<const char8 *>(NULL);
-        if (sourceDescriptor.type == CCString) {
-            // in this case the data pointer is the const char*
-            if (source.GetNumberOfDimensions() == 0u) {
-                token = reinterpret_cast<const char8*>(sourcePointer);
-            }
-            // in this case the data pointer points to the const char *
-            else {
-                token = *reinterpret_cast<const char8**>(sourcePointer);
-            }
-        }
-        if (sourceDescriptor.type == CArray) {
-            token = reinterpret_cast<const char8*>(sourcePointer);
-        }
-        if ((sourceDescriptor.type == SString)) {
-            token = (reinterpret_cast<String*>(sourcePointer))->Buffer();
-        }
-
-        if (token != NULL) {
-            uint32 tokenLength = StringHelper::Length(token);
-            if(destinationDescriptor.type==SString) {
-                String* tempString=reinterpret_cast<String*>(destinationPointer);
-                ret=tempString->Write(token, tokenLength);
-            }
-            if (destinationDescriptor.type == CArray) {
-                uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
-                if (tokenLength > arraySize) {
-                    //TODO warning clip string
-                    ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);
-                    reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
-                }
-                else {
-                    ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
-                }
-            }
-            if(destinationDescriptor.type==CCString) {
-                // in this case the data pointer is the const char*
-                if (destination.GetNumberOfDimensions() == 0u) {
-                    ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
-                }
-                // in this case the data pointer points to the const char *
-                else {
-                    ret = StringHelper::Copy(*reinterpret_cast<char8 **>(destinationPointer), token);
-                }
-            }
-            if(destinationDescriptor.type==SignedInteger) {
-                ret=StringToIntegerGeneric(token,
-                        reinterpret_cast<uint8*>(destinationPointer),
-                        static_cast<uint8>(destinationDescriptor.numberOfBits),true);
-
-            }
-            if(destinationDescriptor.type==UnsignedInteger) {
-
-                ret=StringToIntegerGeneric(token,
-                        reinterpret_cast<uint8*>(destinationPointer),
-                        static_cast<uint8>(destinationDescriptor.numberOfBits),false);
-            }
-            if(destinationDescriptor.type==Float) {
-                if(destinationDescriptor.numberOfBits==32u) {
-                    ret=StringToFloat(token,*(reinterpret_cast<float32*>(destinationPointer)));
-                }
-                if(destinationDescriptor.numberOfBits==64u) {
-                    ret=StringToFloat(token,*(reinterpret_cast<float64*>(destinationPointer)));
-                }
-            }
-        }
     }
 
     return ret;
@@ -689,9 +769,9 @@ bool TypeConvert(const AnyType &destination,
     }
     if (ok) {
 
-        //Source and destination dimensions must be the same
+//Source and destination dimensions must be the same
         ok = (destination.GetNumberOfDimensions() == source.GetNumberOfDimensions());
-        //The number of elements in all dimensions must be the same
+//The number of elements in all dimensions must be the same
         for (uint32 i = 0u; ok && (i < 3u); i++) {
             ok = (destination.GetNumberOfElements(i) == source.GetNumberOfElements(i));
         }
