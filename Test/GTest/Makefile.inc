@@ -82,7 +82,8 @@ OBJSX=  BasicFileGTest.x \
 	BasicSocketGTest.x \
 	BasicTCPSocketGTest.x \
    	BasicUDPSocketGTest.x \
-	BasicConsoleGTest.x
+	BasicConsoleGTest.x \
+	SelectGTest.x
 
 PACKAGE=
 ROOT_DIR=../..
