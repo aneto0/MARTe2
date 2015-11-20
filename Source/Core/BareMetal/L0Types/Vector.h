@@ -132,7 +132,7 @@ private:
      * True if this dataPointer is pointing at a statically allocated matrix memory block [][].
      */
     bool staticDeclared;
-
+    //TODO
     bool canDestroy;
 };
 }

@@ -1,8 +1,9 @@
 /**
  * @file BasicFile.h
  * @brief Header file for class BasicFile
- * @date 23/10/2015
+ * @date 26/10/2015
  * @author Llorenç Capellà
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -32,389 +33,328 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "GeneralDefinitions.h"
+#include "StreamI.h"
+#include "String.h"
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,BasicFileProperties.h)
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
-#include "EventSem.h"
+namespace MARTe {
+
+    /**
+     * @brief The BasicFile class is a wrapper for the underlaying operating
+     * system file type, which allows to read and write from and to a file.
+     *
+     * @detail This class has two states: open and closed. When the file is
+     * opened, this class holds an internal reference to an specific operating
+     * system structure, which maintains the status and flags of the file.
+     * When the file is closed the class maintains its own status and does not
+     * need to wrap any operating system structure. Be aware that when the
+     * file is closed, most of the functions are disabled until a file is
+     * opened.
+     *
+     * When the Open() method is called the flags attributes have to be
+     * specified. Not all the combination flags are allowed. The following
+     * list shows the flags combinations which are NOT possible:
+     *    flag = FLAG_APPEND | ACCESS_MODE_R (only) -->(if it happens the FLAG_APPEND is deleted)
+     *    flag = FLAG_CREAT | FLAG_CREAT_EXCLUSIVE -->(if it happens the FLAG_CREAT_EXCLUSIVE is deleted)
+     *    flag = FLAG_TRUNC | ACCESS_MODE_R (only) -->(if it happens the FLAG_TRUNC is deleted)
+     *    flag = FLAG_TRUNC | FLAG_CREAT_EXCLUSIVE -->(if it happens the FLAG_TRUNC is deleted)
+     *
+     * @invariant
+     *    Size() >= 0;
+     */
+    class DLL_API BasicFile: public StreamI {
+
+    public:
+
+        /**
+         * Flag for read only mode
+         */
+        static const uint32 ACCESS_MODE_R = 0x00000001;
+
+        /**
+         * Flag for write only mode
+         */
+        static const uint32 ACCESS_MODE_W = 0x00000002;
+
+        /**
+         * Flag to write automatically at the end of the file. In this mode, before each write the pointer is positioned at the end of the file.
+         */
+        static const uint32 FLAG_APPEND = 0x00000010;
+
+        /**
+         * Flag to create a file. In this mode if the file does not exist it will be created and opened, if the file exist it will be only opened.
+         */
+        static const uint32 FLAG_CREAT = 0x00000020;
+
+        /**
+         * Flag to truncate the file. In this mode if the file exists the contents are deleted and the size of the file is set to 0. This flag is only possible if the file is opened with ACCESS_MODE_W.
+         */
+        static const uint32 FLAG_TRUNC = 0x00000040;
+
+        /**
+         * Flag to create a file. In this mode, if the file does not exist it will be created, but if it already exist the open() will fail.
+         */
+        static const uint32 FLAG_CREAT_EXCLUSIVE = 0x00000080;
+
+        /**
+         * @brief Default constructor
+         * @post
+         *   not CanRead() &&
+         *   not CanWrite() &&
+         *   not CanSeek() &&
+         *   not IsOpen() &&
+         *   Size() == 0 &&
+         *   Position() == 0 &&
+         *   GetFlags() == 0xFFFFFFFF &&
+         *   GetPathName() == ""
+         */
+        BasicFile();
+
+        /**
+         * @brief Copy constructor
+         * @details The copied object will be wrapping the same file.
+         */
+        BasicFile(const BasicFile &bf);
+
+        /**
+         * @brief Copy assignment operator
+         * @details The assigned object will be wrapping the same file.
+         */
+        BasicFile& operator=(const BasicFile &bf);
+
+        /**
+         * @brief Destructor.
+         */
+        virtual ~BasicFile();
+
+        /**
+         * @brief Changes the flags of the file.
+         * @detail When the file is already opened not all the flags can be
+         * changed, ONLY the following list can be modified:
+         *    FLAG_APPEND
+         * The rest of the flags are ignored.
+         * @param[in] setFlags indicates the flags changes to perform.
+         * @pre IsOpen()
+         * @return true if the flags are changed.
+         */
+        bool SetFlags(const uint32 setFlags);
+
+        /**
+         * @brief Gets the flags of the opened file.
+         * @detail If the file is not opened the returned value is 0xFFFFFFFF.
+         * @return An uint32 containing the flags information.
+         */
+        uint32 GetFlags() const;
+
+        /**
+         * @brief Queries if the file is writable.
+         * @return true if IsOpen && ((GetFlags() & ACCESS_MODE_W) == ACCESS_MODE_W)
+         */
+        virtual bool CanWrite() const;
+
+        /**
+         * @brief Queries if the file readable.
+         * @return true if IsOpen && ((GetFlags() & ACCESS_MODE_R) == ACCESS_MODE_R)
+         */
+        virtual bool CanRead() const;
+
+        /**
+         * @brief Queries if the file is seekable.
+         * @return true if IsOpen()
+         */
+        virtual bool CanSeek() const;
+
+        /**
+         * @brief Opens a file indicated by the pathname allowing to access to the contents of a file.
+         * @param[in] pathname Indicates the file to be opened.
+         * @param[in] flags Indicates the behaviour of the file.
+         * @pre
+         *    !IsOpen() &&
+         *    flags have to be valid
+         * @post
+         *   (((flags & ACCESS_MODE_R) == ACCESS_MODE_R) => CanRead()) &&
+         *   (((flags & ACCESS_MODE_W) == ACCESS_MODE_W)) => CanWrite()) &&
+         *   CanSeek() &&
+         *   IsOpen() &&
+         *   GetPathName() == pathname
+         * @return true if the file is open successfully.
+         */
+        bool Open(const char * pathname, const uint32 flags);
+
+        /**
+         * @brief Queries if the file is opened.
+         * @return true if the file is opened.
+         */
+        bool IsOpen() const;
+
+        /**
+         * @brief Closes an open file.
+         * @pre true
+         * @post
+         *   not CanRead() &&
+         *   not CanWrite() &&
+         *   not CanSeek() &&
+         *   not IsOpen() &&
+         *   Size() == 0 &&
+         *   Position() == 0 &&
+         *   GetFlags() == 0xFFFFFFFF &&
+         *   GetPathName() == ""
+         * @return True if the file is closed successfully.
+         */
+        bool Close();
+
+        /**
+         * @brief Reads size characters from a file and updates the position.
+         * @param[out] output Is a pointer which indicates where the read characters have to be saved.
+         * @param[in,out] size Indicates how many characters have to be read. At the end it is modified with the characters actually read.
+         * @pre
+         *    IsOpen() &&
+         *    CanRead() &&
+         *    size >= 0
+         * @post
+         *    Position() == this'old->Position() + size &&
+         *    size is updated with the actual number of bytes read &&
+         *    size <= size'old &&
+         *    output contains a copy of size bytes read from the file starting at this'old->Position() in the same order.
+         * @return false if the read fails.
+         */
+        virtual bool Read(char8* const output,
+                uint32 & size);
+
+        /**
+         * @brief Reads size characters from a file and updates the position.
+         * @details The timeout is the time waiting for reading, not the time while reading. If the timeout is exceeded the read fails.
+         * @param[out] output Is a pointer which indicates where the read characters have to be saved.
+         * @param[in,out] size Indicates how many characters have to be read. At the end it is modified with the characters actually read.
+         * @param[in] timeout indicates the maximum time that the method can wait for beginning reading.
+         * @pre
+         *    IsOpen() &&
+         *    CanRead() &&
+         *    size >= 0
+         * @post
+         *    Position() == this'old->Position() + size &&
+         *    size is updated with the actual number of bytes read &&
+         *    size <= size'old &&
+         *    output contains a copy of size bytes read from the file starting at this'old->Position() in the same order.
+         * @return false if the read fails.
+         **/
+        virtual bool Read(char8 * const output,
+                uint32 & size,
+                const TimeoutType &msecTimeout);
+
+        /**
+         * @brief Writes size characters to a file and updates the position and the size.
+         * @param[in] input Is a pointer which contains the characters to be write to.
+         * @param[in,out] size Indicates how many characters have to be written. At the end it is modified with the characters actually written.
+         * @pre
+         *    IsOpen() &&
+         *    CanWrite() &&
+         *    size >= 0
+         * @post
+         *    Position() == this'old->Position() + size &&
+         *    size is updated with the actual number of bytes written &&
+         *    size <= size'old &&
+         *    The file contains at this'old->Position() size bytes copied from input in the same order &&
+         *    ((size > 0) && (this'old->Position() + size > this'old->Size())) => Size() == this'old->Position() + size
+         * @return false if the write fails.
+         */
+        virtual bool Write(const char8 * const input,
+                uint32 & size);
+
+        /**
+         * @brief Writes size characters to a file and updates the position and the size.
+         * @details The timeout is the time waiting for writing, not the time while writing. If the timeout is exceeded the write fails.
+         * @param[in] input Is a pointer which contains the characters to be write to.
+         * @param[in,out] size Indicates how many characters have to be written. At the end it is modified with the characters actually written.
+         * @param[in] timeout indicates the maximum time that the method can wait for beginning writing.
+         * @pre
+         *    IsOpen() &&
+         *    CanWrite() &&
+         *    size >= 0
+         * @post
+         *    Position() == this'old->Position() + size
+         *    size is updated with the actual number of bytes written &&
+         *    size <= size'old &&
+         *    The file contains at this'old->Position() size bytes copied from input in the same order &&
+         *    ((size > 0) && (this'old->Position() + size > this'old->Size())) => Size() == this'old->Position() + size
+         * @return false if the write fails.
+         **/
+        virtual bool Write(const char8 * const input,
+                uint32 & size,
+                const TimeoutType &msecTimeout);
+
+        /**
+         * @brief Queries the size.
+         * @return the number of characters in the file if it succeeds or 0xFFFFFFFF otherwise.
+         */
+        virtual uint64 Size();
+
+        /**
+         * @brief Move the pointer to the specified position.
+         * @detail The position is relative to the beginning of the file. If the pos is larger than the size of the file the pointer is moved
+         * to the end of the file.
+         * @pre
+         *    IsOpen() &&
+         *    CanSeek()
+         * @post
+         *   pos <= Size() => Position() == pos &&
+         *   pos > Size() => Position() == Size()
+         * @return true if the pointer points to the position pos.
+         */
+        virtual bool Seek(const uint64 pos);
+
+        /**
+         * @brief Move the pointer to the specified position.
+         * @detail The function move the pointer deltaPos from the current position. If the deltaPos plus current position is beyond the size of the file the pointer is moved
+         * to the end of the file.
+         * @pre
+         *   IsOpen() &&
+         *   CanSeek()
+         * @post
+         *   this'old->Position() + deltaPos < 0 => Position() == 0 &&
+         *   0 <= this'old->Position() + deltaPos <= Size() => Position() == this'old->Position() + deltaPos &&
+         *   this'old->Position() + deltaPos > Size() => Position() == Size();
+         * @return True if the pointer is is moved to the new position.
+         */
+        virtual bool RelativeSeek(const int32 deltaPos);
+
+        /**
+         * @brief Queries the actual position.
+         * @return The actual position of the pointer if it succeeds or 0xFFFFFFFF otherwise.
+         */
+        virtual uint64 Position();
+
+        /**
+         * @brief Changes the size of the file
+         * @detail If the new size is smaller than the old size the extra data is lost. Instead, if the size is larger than the old size, the size is extended and the gaps are filled with "\0" characters.
+         * @pre
+         *    IsOpen() &&
+         *    CanWrite()
+         * @post
+         *    Size() == size &&
+         *    size > this'old->Position() => From this'old->Size() to Size() - 1 the contents of the file is undefined
+         * @return true if the size is changed, false otherwise
+         */
+        virtual bool SetSize(uint64 size);
+
+        /**
+         * @brief Queries the pathname of the file
+         */
+        String GetPathName() const;
+
+    private:
+
+        BasicFileProperties properties;
+    };
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
-/** To enable the change of the opening mode    */
-const uint32 openingFlagsMask1 = 0x00000003;
-/** creates a file. fails if it already exists  */
-const uint32 createNewFile = 0x00030000;
-/** creates a file. overwrites existing files   */
-const uint32 createOverwrite = 0x00030001;
-/** opens an existing file. fails if it does not exist */
-const uint32 openFile = 0x00030002;
-/** opens an existing file. creates if it does not exist */
-const uint32 openCreate = 0x00030003;
-/** */
-const uint32 openingModeMask1 = 0x00000030;
-/** */
-const uint32 localityNone = 0x00300000;
-/** */
-const uint32 localitySequential = 0x00300010;
-/** */
-const uint32 localityRandom = 0x00300020;
-/** */
-const uint32 localityMixed = 0x00300030;
-/** */
-const uint32 openingModeMask2 = 0x000000C0;
-/** */
-const uint32 shareModeNoRW = 0x00C00000;
-/** */
-const uint32 shareModeNoW = 0x00C00040;
-/** */
-const uint32 shareModeNoR = 0x00C00080;
-/** */
-const uint32 shareModeAll = 0x00C000C0;
-/** */
-const uint32 openingModeMask3 = 0x00000300;
-/** */
-const uint32 accessModeR = 0x03000000;
-/** */
-const uint32 accessModeW = 0x03000100;
-/** */
-const uint32 accessModeRW = 0x03000200;
-/** */
-const uint32 devDriverMode = 0x0400D000;
-
-/** */
-const uint32 openWasOpen = 0;
-/** */
-const uint32 openWasCreate = 1;
-/** */
-const uint32 openWasOverWrite = 2;
-
-class BasicFile;
-
-extern "C" {
-/** BasicFile::Open */
-bool FileOpen(BasicFile &f,
-              const char *name);
-
-/** BasicFile::Lock */
-bool FileLock(BasicFile &f,
-              int64 start,
-              int64 size,
-              TimeoutType msecTimeout = TTInfiniteWait);
-
-/** BasicFile::UnLock */
-bool FileUnLock(BasicFile &f,
-                int64 start,
-                int64 size,
-                TimeoutType msecTimeout = TTInfiniteWait);
-
-/** Set the system value for the number of files */
-bool FileSetMaxNumberOfFiles(uint32 number);
-
-/** BasicFile::EraseFile */
-bool FileEraseFile(const char *fname,
-                   ...);
-
-/** */
-void FileSetFileName(BasicFile &f,
-                     const char *name);
-
-/** */
-bool FileRead(BasicFile &f,
-              void* buffer,
-              uint32 &size,
-              TimeoutType msecTimeout);
-
-/** */
-bool FileWrite(BasicFile &f,
-               const void* buffer,
-               uint32 &size,
-               TimeoutType msecTimeout);
-
-/** */
-int64 FileSize(BasicFile &f);
-
-/** */
-bool FileSeek(BasicFile &f,
-              int64 pos);
-
-/** */
-int64 FilePosition(BasicFile &f);
-
-/** */
-bool FileSetSize(BasicFile &f,
-                 int64 size);
-
-/** */
-bool FileRelativeSeek(BasicFile &f,
-                      int64 pos);
-
-/** */
-bool FilePositionSeek(BasicFile &f,
-                      int64 &pos);
-}
-
-/** The file */
-class BasicFile {
-
-    friend bool FileOpen(BasicFile &f,
-                         const char *name);
-    friend bool FileLock(BasicFile &f,
-                         int64 start,
-                         int64 size,
-                         TimeoutType msecTimeout);
-    friend bool FileUnLock(BasicFile &f,
-                           int64 start,
-                           int64 size,
-                           TimeoutType msecTimeout);
-    friend bool FileRead(BasicFile &f,
-                         void* buffer,
-                         uint32 &size,
-                         TimeoutType msecTimeout);
-    friend void FileSetFileName(BasicFile &f,
-                                const char *name);
-    friend bool FileWrite(BasicFile &f,
-                          const void* buffer,
-                          uint32 &size,
-                          TimeoutType msecTimeout);
-    friend int64 FileSize(BasicFile &f);
-    friend bool FileSeek(BasicFile &f,
-                         int64 pos);
-    friend int64 FilePosition(BasicFile &f);
-    friend bool FileSetSize(BasicFile &f,
-                            int64 size);
-    friend bool FileRelativeSeek(BasicFile &f,
-                                 int64 pos);
-    friend bool FilePositionSeek(BasicFile &f,
-                                 int64 &pos);
-
-protected:
-    /** the file handle */
-    HFILE file;
-
-    /** the mode the file will be opened or has been opened */
-    uint32 fileMode;
-
-    /** what happened during a creation, or the error code in case of failure */
-    int32 action;
-
-    /** the name of the file opened */
-    char *fileName;
-
-    /** Change the file name*/
-    void SetFileName(const char *name) {
-        FileSetFileName(*this, name);
-    }
-
-public:
-    /** constructor */
-    BasicFile() {
-        file = (HFILE) 0;
-        fileMode = openCreate | localityMixed | accessModeRW | shareModeAll;
-        action = 0xFFFF;
-        fileName = NULL;
-    }
-
-    /** */
-    virtual ~BasicFile() {
-        Close();
-        SetFileName(NULL);
-    }
-
-    /**
-     * Returns the file handle
-     */
-    const HFILE Handle() {
-        return file;
-    }
-
-    // PURE STREAMING
-    inline bool Read(void* buffer,
-                     uint32 & size,
-                     TimeoutType msecTimeout = TTDefault) {
-        return FileRead(*this, buffer, size, msecTimeout);
-    }
-
-    /** This function is for the final class to implement. */
-    inline bool Write(const void* buffer,
-                      uint32 & size,
-                      TimeoutType msecTimeout = TTDefault) {
-        return FileWrite(*this, buffer, size, msecTimeout);
-    }
-
-    /** Can you read from this file? */
-    inline bool CanRead() {
-        uint32 rwaccess = fileMode & (accessModeR >> 16);
-        return ((rwaccess == (accessModeR & 0xFFFF)) || (rwaccess == (accessModeRW & 0xFFFF)));
-    }
-
-    /** Can you write to this file */
-    inline bool CanWrite() {
-        uint32 rwaccess = fileMode & (accessModeW >> 16);
-        return ((rwaccess == (accessModeW & 0xFFFF)) || (rwaccess == (accessModeRW & 0xFFFF)));
-    }
-
-    // RANDOM ACCESS INTERFACE
-
-    /** The file size */
-    inline int64 Size() {
-        return FileSize(*this);
-    }
-
-    /** Move to specified file position */
-    inline bool Seek(int64 pos) {
-        return FileSeek(*this, pos);
-    }
-
-    /** The current file position */
-    inline int64 Position(void) {
-        return FilePosition(*this);
-    }
-
-    /** Set the file size by either truncating or extending */
-    inline bool SetSize(int64 size) {
-        return FileSetSize(*this, size);
-    }
-
-    /** Can you seek in this file ?*/
-    inline bool CanSeek() {
-        return true;
-    }
-
-    // Extended Attributes or Multiple Streams INTERFACE
-
-    /** The file name */
-    inline const char * FileName() {
-        return fileName;
-    }
-
-    /** Moves upwards or backwards so many bytes */
-    inline bool RelativeSeek(int64 pos) {
-        return FileRelativeSeek(*this, pos);
-    }
-
-    /** Moves to position pos and returns new position on pos */
-    inline bool PositionSeek(int64 &pos) {
-        return FilePositionSeek(*this, pos);
-    }
-
-    /** Clip the file size to the current seek point */
-    inline bool Truncate() {
-        return SetSize(Position());
-    }
-
-    /**
-     set opening modes: use a selctions of flags
-     example : accessModeRW | createNewFile   */
-    inline void SetOpeningModes(uint32 modeSet) {
-        uint32 mask = modeSet >> 16;
-        uint32 value = modeSet & 0xFFFF;
-        fileMode &= ~mask;
-        fileMode |= value;
-    }
-
-    /** open for read/write create if missing */
-    inline bool Open(const char *fname,
-                     ...) {
-        if (fname == NULL)
-            return false;
-        char name[256];
-        va_list argList;
-        va_start(argList, fname);
-        vsnprintf(name, 256, fname, argList);
-        va_end(argList);
-        return FileOpen(*this, name);
-    }
-
-    /** Close the file handle */
-    inline bool Close() {
-        if (file != (HFILE) 0)
-            file = (HFILE) 0;
-        return true;
-    }
-
-    /** open for read-write */
-    inline bool OpenWrite(const char *fname,
-                          ...) {
-        if (fname == NULL)
-            return false;
-        SetOpeningModes(openCreate | accessModeRW);
-        char name[256];
-        va_list argList;
-        va_start(argList, fname);
-        vsnprintf(name, 256, fname, argList);
-        va_end(argList);
-        return Open(name);
-    }
-
-    /** open for read-only create never */
-    inline bool OpenRead(const char *fname,
-                         ...) {
-        if (fname == NULL)
-            return false;
-        SetOpeningModes(openFile | accessModeR);
-        char name[256];
-        va_list argList;
-        va_start(argList, fname);
-        vsnprintf(name, 256, fname, argList);
-        va_end(argList);
-        return Open(name);
-    }
-
-    /** open for read/write create always */
-    inline bool OpenNew(const char *fname,
-                        ...) {
-        if (fname == NULL)
-            return false;
-        SetOpeningModes(createOverwrite | accessModeRW);
-        char name[256];
-        va_list argList;
-        va_start(argList, fname);
-        vsnprintf(name, 256, fname, argList);
-        va_end(argList);
-        return Open(name);
-    }
-
-    /** What happened during opening? {openWasOpen,openWasCreate,openWasOverWrite} */
-    inline int32 OpenAction() {
-        return action;
-    }
-
-    /** What happened during an action. Only supported on open for now */
-    int32 ErrorReason() {
-        return action;
-    }
-
-//@{ Locking region of a file
-    /**
-     Locks to the application the access of the filke region starting from start
-     and size bytes long. If it was locked wait as much as timeout
-     */
-    inline bool Lock(int64 start,
-                     int64 size,
-                     TimeoutType msecTimeout = TTInfiniteWait) {
-        return FileLock(*this, start, size, msecTimeout);
-    }
-
-    /** Undo the locking. */
-    inline bool UnLock(int64 start,
-                       int64 size,
-                       TimeoutType msecTimeout = TTInfiniteWait) {
-        return FileUnLock(*this, start, size, msecTimeout);
-    }
-//@}
-
-    /** Set the system value for the number of files handles (only WIN32 and OS2) */
-    static inline bool SetMaxNumberOfFiles(uint32 number) {
-        return FileSetMaxNumberOfFiles(number);
-    }
-
-};
-
-}
-#endif /* BASICFILE_H_ */
-
+#endif /*BASICFILE_H_ */

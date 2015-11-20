@@ -1249,35 +1249,45 @@ bool IOBufferTest::TestPrintFormatted_Pointer() {
         return false;
     }
 
+    void* pointer = (void*) charPointer;
+    AnyType toPrintPointer = pointer;
+
+    Clear(ioBuffer1);
+    ioBuffer1.PrintFormatted("%f", &toPrintPointer);
+
+    if (StringHelper::Compare(ioBuffer1.Buffer(), ioBuffer2.Buffer()) != 0) {
+        return false;
+    }
+
+
     Clear(ioBuffer1);
     Clear(ioBuffer2);
     //%p format as the complete 32 bit pointer with header
 
-    void* pointer = (void*) charPointer;
 
     if (sizeof(void*) == 8) {
-        AnyType toPrintPointer = pointer;
         ioBuffer1.PrintFormatted("%p", &toPrintPointer);
         ioBuffer2.PrintFormatted("% #0x", &toPrintUInt64);
     }
     if (sizeof(void*) == 4) {
-        AnyType toPrintPointer = pointer;
         AnyType toPrintUInt32 = (uint32) UIntPointer;
         ioBuffer1.PrintFormatted("%p", &toPrintPointer);
         ioBuffer2.PrintFormatted("% #0x", &toPrintUInt32);
     }
+
 
     if (StringHelper::Compare(ioBuffer1.Buffer(), ioBuffer2.Buffer()) != 0) {
         return false;
     }
 
     Clear(ioBuffer1);
-    AnyType toPrintPointer = pointer;
     ioBuffer1.PrintFormatted("%?", &toPrintPointer);
 
     if (StringHelper::Compare(ioBuffer1.Buffer(), "Pointer") != 0) {
         return false;
     }
+
+
 
     return true;
 }

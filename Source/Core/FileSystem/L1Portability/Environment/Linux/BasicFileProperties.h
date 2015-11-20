@@ -1,8 +1,8 @@
 /**
- * @file TypeConversion.h
- * @brief Header file for class TypeConversion
- * @date Oct 28, 2015
- * @author aneto
+ * @file BasicFileProperties.h
+ * @brief Header file for class BasicFileProperties
+ * @date Oct 29, 2015
+ * @author llcapella
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,54 +16,37 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class TypeConversion
+ * @details This header file contains the declaration of the class BasicFileProperties
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TYPECONVERSION_H_
-#define TYPECONVERSION_H_
+#ifndef BASICFILEPROPERTIES_H_
+#define BASICFILEPROPERTIES_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "AnyType.h"
-#include "Vector.h"
-#include "Matrix.h"
-#include "StreamI.h"
-#include "String.h"
-#include "StringHelper.h"
-#include "FormatDescriptor.h"
-#include "MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "String.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
-
-/**
- * @brief Converts between two types.
- * @param[out] destination the converted type.
- * @param[in] source the type to be converted.
- * @return true if the types have the same dimension and the same number of elements
- * on each dimension is the same. Finally, for each element, the conversion from the source
- * type to the destination must be supported and successful.
- * @pre
- *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
- */
-// NO CHAR ARRAY > 125 CHARS
-bool TypeConvert(const AnyType &destination,
-                 const AnyType &source);
-
+struct BasicFileProperties {
+    MARTe::int32 identifier;
+    MARTe::String pathName;
+};
 }
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TYPECONVERSION_H_ */
+#endif /*BASICFILEPROPERTIES_H_ */
 

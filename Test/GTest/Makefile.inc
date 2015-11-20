@@ -26,7 +26,8 @@
 OBJSX=  TypeConversionGTest.x \
 	VectorGTest.x \
 	MatrixGTest.x \
-	AnyTypeGTest.x\
+	ConfigurationDatabaseGTest.x
+#	AnyTypeGTest.x\
         DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
@@ -84,8 +85,7 @@ OBJSX=  TypeConversionGTest.x \
 	BasicSocketGTest.x \
 	BasicTCPSocketGTest.x \
    	BasicUDPSocketGTest.x \
-	BasicConsoleGTest.x \
-	ConfigurationDatabaseGTest.x
+	BasicConsoleGTest.x 
 
 PACKAGE=
 ROOT_DIR=../..

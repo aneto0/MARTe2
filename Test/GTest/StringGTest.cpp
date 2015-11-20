@@ -92,8 +92,6 @@ TEST(StringGTest,TestRead_bigger_size_timeout) {
     ASSERT_TRUE(stringtest.TestReadTimeout("HelloWorld", 20));
 }
 
-
-
 TEST(StringGTest,TestWrite_minor_size) {
     StringTest stringtest;
     ASSERT_TRUE(stringtest.TestWrite("HelloWorld", 5));
@@ -194,7 +192,6 @@ TEST(StringGTest,TestTail_out_size) {
     ASSERT_TRUE(stringtest.TestTail("abcdefg", 8));
 }
 
-
 TEST(StringGTest, TestSeek_in_range) {
     StringTest stringtest;
     ASSERT_TRUE(stringtest.TestSeek(32, 16, true));
@@ -255,9 +252,19 @@ TEST(StringGTest, TestIsEqualOperator_CCString) {
     ASSERT_TRUE(stringtest.TestIsEqualOperator_CCString("HelloWorld"));
 }
 
+TEST(StringGTest, TestIsEqualOperator_EmptyCCString) {
+    StringTest stringtest;
+    ASSERT_TRUE(stringtest.TestIsEqualOperator_CCString(""));
+}
+
 TEST(StringGTest, TestIsEqualOperator_String) {
     StringTest stringtest;
     ASSERT_TRUE(stringtest.TestIsEqualOperator_String("HelloWorld"));
+}
+
+TEST(StringGTest, TestIsEqualOperator_EmptyString) {
+    StringTest stringtest;
+    ASSERT_TRUE(stringtest.TestIsEqualOperator_String(""));
 }
 
 TEST(StringGTest, TestIsDifferentOperator_CCString) {

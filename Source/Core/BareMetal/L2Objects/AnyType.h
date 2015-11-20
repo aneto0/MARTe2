@@ -695,8 +695,10 @@ public:
      */
     inline void SetStaticDeclared(const bool isStaticDeclared);
 
+	//TODO
     inline uint32 GetByteSize() const;
 
+	//TODO
     inline uint32 GetBitSize() const;
 
 private:
