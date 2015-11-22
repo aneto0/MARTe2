@@ -32,6 +32,7 @@ LIBRARIES_STATIC=L0Types/cov/L0TypesB$(LIBEXT)
 LIBRARIES_STATIC+=L1Portability/cov/L1PortabilityB$(LIBEXT)
 LIBRARIES_STATIC+=L2Objects/cov/L2ObjectsB$(LIBEXT)
 LIBRARIES_STATIC+=L3Streams/cov/L3StreamsB$(LIBEXT)
+LIBRARIES_STATIC+=L4Configuration/cov/L4ConfigurationB$(LIBEXT)
 
 LIBRARIES += -lm
 

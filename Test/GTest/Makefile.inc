@@ -26,8 +26,9 @@
 OBJSX=  TypeConversionGTest.x \
 	VectorGTest.x \
 	MatrixGTest.x \
-	ConfigurationDatabaseGTest.x
-#	AnyTypeGTest.x\
+	ConfigurationDatabaseGTest.x \
+	AnyObjectGTest.x \
+	AnyTypeGTest.x\
         DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \

@@ -25,6 +25,7 @@
 #############################################################
 
 OBJSX=ConfigurationDatabaseTest.x \
+        AnyObjectTest.x \
 	TypeConversionTest.x \
 	VectorTest.x \
 	MatrixTest.x
