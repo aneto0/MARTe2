@@ -104,9 +104,54 @@ TEST(ConfigurationDatabaseGTest,TestDelete) {
     ASSERT_TRUE(cdbTest.TestDelete());
 }
 
-TEST(ConfigurationDatabaseGTest,TestRead_Valid) {
+TEST(ConfigurationDatabaseGTest,TestRead_Valid_UInt8) {
     ConfigurationDatabaseTest cdbTest;
-    ASSERT_TRUE(cdbTest.TestRead_Valid());
+    ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::uint8(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Valid_Int8) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::int8(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Valid_UInt16) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::uint16(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Valid_Int16) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::int16(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Valid_UInt32) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::uint32(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Valid_Int32) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::int32(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Valid_UInt64) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::uint64(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Valid_Int64) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::int64(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Valid_Float32) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::float32(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestRead_Valid_Float64) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestRead_Valid(MARTe::float64(7)));
 }
 
 TEST(ConfigurationDatabaseGTest,TestRead_Invalid) {
@@ -119,9 +164,59 @@ TEST(ConfigurationDatabaseGTest,TestAddToCurrentNode) {
     ASSERT_TRUE(cdbTest.TestAddToCurrentNode());
 }
 
-TEST(ConfigurationDatabaseGTest,TestWrite_Valid) {
+TEST(ConfigurationDatabaseGTest,TestAddToCurrentNode_InvalidReference) {
     ConfigurationDatabaseTest cdbTest;
-    ASSERT_TRUE(cdbTest.TestWrite_Valid());
+    ASSERT_TRUE(cdbTest.TestAddToCurrentNode_InvalidReference());
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Valid_UInt8) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::uint8(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Int8) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::int8(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Valid_UInt16) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::uint16(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Int16) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::int16(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Valid_UInt32) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::uint32(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Int32) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::int32(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Valid_UInt64) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::uint64(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Int64) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::int64(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Float32) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::float32(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestWrite_Valid_Float64) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestWrite_Valid(MARTe::float64(7)));
 }
 
 TEST(ConfigurationDatabaseGTest,TestWrite_Overwrite) {
@@ -132,4 +227,74 @@ TEST(ConfigurationDatabaseGTest,TestWrite_Overwrite) {
 TEST(ConfigurationDatabaseGTest,TestWrite_Invalid) {
     ConfigurationDatabaseTest cdbTest;
     ASSERT_TRUE(cdbTest.TestWrite_Invalid());
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetType_Invalid) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Invalid());
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetType_Valid_UInt8) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::uint8(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Int8) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::int8(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetType_Valid_UInt16) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::uint16(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Int16) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::int16(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetType_Valid_UInt32) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::uint32(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Int32) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::int32(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetType_Valid_UInt64) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::uint64(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Int64) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::int64(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Float32) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::float32(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestGetType_Valid_Float64) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestGetType_Valid(MARTe::float64(7)));
+}
+
+TEST(ConfigurationDatabaseGTest,TestCopy) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestCopy());
+}
+
+TEST(ConfigurationDatabaseGTest,TestLock) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestLock());
+}
+
+TEST(ConfigurationDatabaseGTest,TestUnlock) {
+    ConfigurationDatabaseTest cdbTest;
+    ASSERT_TRUE(cdbTest.TestUnlock());
 }

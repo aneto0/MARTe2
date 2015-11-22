@@ -288,17 +288,6 @@ bool ConfigurationDatabaseTest::TestDelete() {
     return ok;
 }
 
-bool ConfigurationDatabaseTest::TestRead_Valid() {
-    ConfigurationDatabase cdb;
-    bool ok = cdb.CreateAbsolute("A.B.C");
-    uint32 writeValue = 5;
-    ok &= cdb.Write("value", writeValue);
-    uint32 readValue;
-    ok &= cdb.Read("value", readValue);
-    ok &= (writeValue == readValue);
-    return ok;
-}
-
 bool ConfigurationDatabaseTest::TestRead_Invalid() {
     ConfigurationDatabase cdb;
     uint32 readValue;
@@ -319,15 +308,10 @@ bool ConfigurationDatabaseTest::TestAddToCurrentNode() {
     return cdb.AddToCurrentNode(obj);
 }
 
-bool ConfigurationDatabaseTest::TestWrite_Valid() {
+bool ConfigurationDatabaseTest::TestAddToCurrentNode_InvalidReference() {
     ConfigurationDatabase cdb;
-    bool ok = cdb.CreateAbsolute("A.B.C");
-    uint32 writeValue = 5;
-    ok &= cdb.Write("value", writeValue);
-    uint32 readValue;
-    ok &= cdb.Read("value", readValue);
-    ok &= (writeValue == readValue);
-    return ok;
+    ReferenceT<ReferenceContainer> obj;
+    return !cdb.AddToCurrentNode(obj);
 }
 
 bool ConfigurationDatabaseTest::TestWrite_Overwrite() {
@@ -352,4 +336,49 @@ bool ConfigurationDatabaseTest::TestWrite_Invalid() {
     bool ok = !cdb.Write("", writeValue);
 
     return ok;
+}
+
+bool ConfigurationDatabaseTest::TestGetType_Invalid() {
+    ConfigurationDatabase cdb;
+    AnyType t = cdb.GetType("");
+    bool ok = (t.GetTypeDescriptor() == VoidType);
+    t = cdb.GetType("Node");
+    ok = (t.GetTypeDescriptor() == VoidType);
+    t = cdb.GetType(NULL);
+    ok = (t.GetTypeDescriptor() == VoidType);
+
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestCopy() {
+    ConfigurationDatabase sourceCDB;
+    sourceCDB.CreateAbsolute("A.B.C");
+    bool ok = sourceCDB.Write("value", 1);
+    sourceCDB.CreateAbsolute("A.B.D");
+    ok &= sourceCDB.Write("value", 2);
+    ConfigurationDatabase destinationCDB;
+    ok &= sourceCDB.MoveAbsolute("A.B");
+    ok &= sourceCDB.Copy(destinationCDB);
+    ok &= destinationCDB.MoveRelative("C");
+    ok &= !destinationCDB.MoveAbsolute("A");
+    ok &= destinationCDB.MoveAbsolute("B.C");
+    uint32 readValue;
+    ok &= destinationCDB.Read("value", readValue);
+    ok &= (readValue == 1);
+    ok &= destinationCDB.MoveAbsolute("B.D");
+    ok &= destinationCDB.Read("value", readValue);
+    ok &= (readValue == 2);
+    return ok;
+}
+
+bool ConfigurationDatabaseTest::TestLock() {
+    ConfigurationDatabase cdb;
+    return cdb.Lock(TTInfiniteWait);
+}
+
+bool ConfigurationDatabaseTest::TestUnlock() {
+    ConfigurationDatabase cdb;
+    bool ok = cdb.Lock(TTInfiniteWait);
+    cdb.Unlock();
+    return cdb.Lock(TTInfiniteWait);
 }

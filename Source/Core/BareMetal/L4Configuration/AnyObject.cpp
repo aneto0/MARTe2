@@ -44,7 +44,8 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-AnyObject::AnyObject() : Object() {
+AnyObject::AnyObject() :
+        Object() {
 }
 
 /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: Three pointer indirection levels required for matrices of char *. */
@@ -60,9 +61,11 @@ bool AnyObject::SerializeMatrix() {
 
     uint32 memoryAllocationSize;
     if (type.IsStaticDeclared()) {
+        //Memory is treated as a linear arrangement of the elements
         memoryAllocationSize = (numberOfRows * numberOfColumns * dataDescriptor.numberOfBits) / 8u;
     }
     else {
+        //Equivalent to new T[], i.e. each row is a pointer to the first column with the data
         memoryAllocationSize = static_cast<uint32>(numberOfRows * sizeof(void *));
     }
     char8 *value = static_cast<char8 *>(HeapManager::Malloc(memoryAllocationSize));
@@ -73,13 +76,17 @@ bool AnyObject::SerializeMatrix() {
     uint32 idx;
     for (r = 0u; ok && (r < numberOfRows); r++) {
         if (!type.IsStaticDeclared()) {
+            //If it was not statically declared, for each row, allocate space for all the columns row[r] = new T[]
             void **destStr = reinterpret_cast<void **>(value);
-            destStr[r] = static_cast<char8 **>(HeapManager::Malloc(static_cast<uint32>(sizeof(void *) * numberOfColumns)));
+            destStr[r] = static_cast<char8 **>(HeapManager::Malloc(static_cast<uint32>((dataDescriptor.numberOfBits / 8u) * numberOfColumns)));
             totalCopySize = 0u;
         }
 
         for (c = 0u; ok && (c < numberOfColumns); c++) {
+            //For static arrays move linearly
             idx = c + (r * numberOfColumns);
+
+            //String and CString contain pointers to the memory address actually containing the data and thus require malloc
             if (dataDescriptor.type == SString) {
                 String *stream;
                 if (type.IsStaticDeclared()) {
@@ -289,11 +296,11 @@ bool AnyObject::Serialise(const AnyType &typeIn) {
  * No exceptions should be thrown given that the memory is managed exclusively managed by this class.". */
 AnyObject::~AnyObject() {
     void *mem = type.GetDataPointer();
+    bool cString = (type.GetTypeDescriptor().type == CCString);
+    bool sString = (type.GetTypeDescriptor().type == SString);
 
     if (type.GetNumberOfDimensions() == 1u) {
         uint32 numberOfColumns = type.GetNumberOfElements(0u);
-        bool cString = (type.GetTypeDescriptor().type == CCString);
-        bool sString = (type.GetTypeDescriptor().type == SString);
         if (cString || sString) {
             char8 **charArray = static_cast<char8 **>(mem);
             uint32 idx;
@@ -315,20 +322,30 @@ AnyObject::~AnyObject() {
         uint32 c;
         uint32 idx;
         for (r = 0u; r < numberOfRows; r++) {
-            for (c = 0u; c < numberOfColumns; c++) {
-                void *charMem = NULL_PTR(void *);
-                if (type.IsStaticDeclared()) {
-                    idx = c + (r * numberOfColumns);
-                    char8 **destStr = reinterpret_cast<char8 **>(mem);
-                    charMem = reinterpret_cast<void *>(destStr[idx]);
+            if (cString || sString) {
+                for (c = 0u; c < numberOfColumns; c++) {
+                    void *charMem = NULL_PTR(void *);
+                    if (type.IsStaticDeclared()) {
+                        idx = c + (r * numberOfColumns);
+                        char8 **destStr = reinterpret_cast<char8 **>(mem);
+                        charMem = reinterpret_cast<void *>(destStr[idx]);
+                    }
+                    else {
+                        /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: Three pointer indirection levels required for matrices of char *. */
+                        char8 ***destStr = reinterpret_cast<char8 ***>(mem);
+                        charMem = reinterpret_cast<void *>(destStr[r][c]);
+                    }
+                    if (!HeapManager::Free(charMem)) {
+                        REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. Matrix memory not deallocated.");
+                    }
                 }
-                else {
-                    /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: Three pointer indirection levels required for matrices of char *. */
-                    char8 ***destStr = reinterpret_cast<char8 ***>(mem);
-                    charMem = reinterpret_cast<void *>(destStr[r][c]);
-                }
-                if (!HeapManager::Free(charMem)) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. Matrix memory not deallocated.");
+            }
+
+            //Free each of the rows
+            if (!type.IsStaticDeclared()) {
+                void **destStr = reinterpret_cast<void **>(mem);
+                if (!HeapManager::Free(destStr[r])) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. Matrix row memory not deallocated.");
                 }
             }
         }

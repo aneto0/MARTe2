@@ -36,7 +36,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 /**
- * @brief Tests the ClassRegistryDatabase functions.
+ * @brief Tests the ConfigurationDatabase functions.
  */
 class ConfigurationDatabaseTest {
 public:
@@ -108,7 +108,8 @@ public:
     /**
      * @brief Tests the Read function with a valid name
      */
-    bool TestRead_Valid();
+    template <typename T>
+    bool TestRead_Valid(T value);
 
     /**
      * @brief Tests the Read function with an invalid name
@@ -121,9 +122,15 @@ public:
     bool TestAddToCurrentNode();
 
     /**
+     * @brief Tests the AddToCurrentNode function with an invalid reference.
+     */
+    bool TestAddToCurrentNode_InvalidReference();
+
+    /**
      * @brief Tests the Write function with a valid name
      */
-    bool TestWrite_Valid();
+    template <typename T>
+    bool TestWrite_Valid(T valie);
 
     /**
      * @brief Tests the Write function with a name that already exists
@@ -136,28 +143,65 @@ public:
     bool TestWrite_Invalid();
 
     /**
-     * @see StructuredDataI::GetType
+     * @brief Tests the GetType function with a valid name
      */
-    //virtual AnyType GetType(const char8 * const name);
+    template <typename T>
+    bool TestGetType_Valid(T value);
+
     /**
-     * @see StructuredDataI::Copy
+     * @brief Tests the GetType function with an invalid name
      */
-    //virtual bool Copy(StructuredDataI &destination);
+    bool TestGetType_Invalid();
+
     /**
-     * @brief Locks the shared semaphore.
-     * @param[in] timeout maximum time to wait for the semaphore to be unlocked.
-     * @return true if the shared semaphore is successfully locked.
+     * @brief Tests the Copy function
      */
-    //bool Lock(const TimeoutType &timeout);
+    bool TestCopy();
+
     /**
-     * @brief Unlocks the shared semaphore.
-     * @return true if the shared semaphore is successfully unlocked.
+     * @brief Tests the Lock function
      */
-    //void Unlock();
+    bool TestLock();
+
+    /**
+     * @brief Tests the Unlock function.
+     */
+    bool TestUnlock();
 };
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+template <typename T>
+bool ConfigurationDatabaseTest::TestWrite_Valid(T value) {
+    MARTe::ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A.B.C");
+    ok &= cdb.Write("value", value);
+    T readValue;
+    ok &= cdb.Read("value", readValue);
+    ok &= (value == readValue);
+    return ok;
+}
 
+template <typename T>
+bool ConfigurationDatabaseTest::TestRead_Valid(T value) {
+    MARTe::ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A.B.C");
+    ok &= cdb.Write("value", value);
+    T readValue;
+    ok &= cdb.Read("value", readValue);
+    ok &= (value == readValue);
+    return ok;
+}
+
+template <typename T>
+bool ConfigurationDatabaseTest::TestGetType_Valid(T value) {
+    MARTe::ConfigurationDatabase cdb;
+    bool ok = cdb.CreateAbsolute("A.B.C");
+    ok &= cdb.Write("value", value);
+    MARTe::AnyType inValue(value);
+    MARTe::AnyType readValue = cdb.GetType("value");
+    ok &= (inValue.GetTypeDescriptor() == readValue.GetTypeDescriptor());
+    return ok;
+}
 #endif /* CONFIGURATIONDATABASETEST_H_ */
 
