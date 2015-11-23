@@ -63,6 +63,7 @@ namespace MARTe {
  *   function returns true generating a warning and the number is set to 0;
  *   number is the result of the conversion from the const char* token;
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
 static bool StringToIntegerDecimalNotation(const char8* const input,
                                            T &number) {
@@ -194,6 +195,7 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
  *   false and the number read until the exception. (i.e "8ABFMA" will return 0x8ABF);
  *   number is the result of the conversion from the const char* token;
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
 static bool StringToIntegerExadecimalNotation(const char8* const input,
                                               T &number) {
@@ -259,6 +261,7 @@ static bool StringToIntegerExadecimalNotation(const char8* const input,
  *   false and the number read until the exception. (i.e "12381" will return 0o123);
  *   number is the result of the conversion from the const char* token;
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
 static bool StringToIntegerOctalNotation(const char8 * const input,
                                          T &number) {
@@ -340,6 +343,7 @@ static bool StringToIntegerOctalNotation(const char8 * const input,
  *   false and the number read until the exception. (i.e "10012111" will return 0b1001);
  *   number is the result of the conversion from the const char* token;
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
 static bool StringToIntegerBinaryNotation(const char8* const input,
                                           T &number) {
@@ -399,6 +403,7 @@ static bool StringToIntegerBinaryNotation(const char8* const input,
  * @post
  *   number is the result of the conversion from the const char* token.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
 static bool StringToInteger(const char8 * const input,
                             T &number) {
@@ -452,7 +457,7 @@ static bool StringToInteger(const char8 * const input,
  */
 bool StringToIntegerGeneric(const char8* const source,
                             uint8 * const dest,
-                            const uint8 destBitSize,
+                            const uint32 destBitSize,
                             const bool isSigned) {
 
     bool ret = false;

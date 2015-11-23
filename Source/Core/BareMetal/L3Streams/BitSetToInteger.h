@@ -168,7 +168,10 @@ static inline void BSToBS(T * const & destination,
     // merge into sourceCopy
     sourceCopy |= destinationMask;
     // copy only the correct size
-    MemoryOperationsHelper::Copy(destination, &sourceCopy, ((destinationBitSize + destinationBitShift) +7u) / 8u);
+    uint32 copySize = ((static_cast<uint32>(destinationBitSize) + static_cast<uint32>(destinationBitShift)) + 7u) / 8u;
+    if (!MemoryOperationsHelper::Copy(destination, &sourceCopy, copySize)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
+    }
 }
 
 /**

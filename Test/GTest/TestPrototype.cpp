@@ -231,7 +231,7 @@ void TestMatrixNumbersDynamic() {
     ConfigurationDatabase cdb;
     cdb.CreateAbsolute("MyControllers.PID1");
 
-    Matrix<float32> matWrite(2, 3);
+    Matrix<float64> matWrite(2, 3);
     matWrite[0][0] = 1.1;
     matWrite[0][1] = 2.1;
     matWrite[0][2] = 3.1;
@@ -245,7 +245,7 @@ void TestMatrixNumbersDynamic() {
     matWrite[1][0] = 0.0;
     matWrite[1][1] = 0.0;
     matWrite[1][2] = 0.0;
-    Matrix<float32> matRead(2, 3);
+    Matrix<float64> matRead(2, 3);
     cdb.Read("MatrixFromArray", matRead);
     printf("[%f][%f][%f]\n", matRead[0][0], matRead[0][1], matRead[0][2]);
     printf("[%f][%f][%f]\n", matRead[1][0], matRead[1][1], matRead[1][2]);
@@ -448,6 +448,8 @@ int main(int argc,
     TestVectorStreamStringDynamic();
     TestVectorStreamStringExistentArray();
     TestMatrixNumbersStatic();
+    uint32 i=0;
+    for(i=0; i<1000; i++)
     TestMatrixNumbersDynamic();
     TestMatrixExistentArray();
 

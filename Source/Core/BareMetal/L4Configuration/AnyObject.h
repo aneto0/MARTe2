@@ -59,6 +59,12 @@ public:
      */
     virtual ~AnyObject();
 
+
+    /**
+     * @brief Frees the memory of the internal serialised AnyType to be ready for a new serialisation.
+     */
+    void CleanUp() const;
+
     /**
      * @brief Serialises an AnyType.
      * @details The input AnyType \a typeIn will be copied and its contents
@@ -85,35 +91,6 @@ private:
      */
     AnyType type;
 
-    /**
-     * @brief Serialises a scalar AnyType (i.e. one with GetNumberOfElements(0) == 0).
-     * @return true if all the memory allocation and copy operations are successful.
-     * @pre
-     *   type.GetNumberOfElements(0) == 0
-     * @post
-     *   type.GetDataPointer() != NULL
-     */
-    bool SerializeScalar();
-
-    /**
-     * @brief Serialises a vector AnyType (i.e. one with GetNumberOfElements(0) > 0).
-     * @return true if all the memory allocation and copy operations are successful.
-     * @pre
-     *   type.GetNumberOfElements(0) > 0
-     * @post
-     *   type.GetDataPointer() != NULL
-     */
-    bool SerializeVector();
-
-    /**
-     * @brief Serialises a scalar AnyType (i.e. one with GetNumberOfElements(0) > 0 && GetNumberOfElements(1) > 0).
-     * @return true if all the memory allocation and copy operations are successful.
-     * @pre
-     *   type.GetNumberOfElements(0) > 0 && type.GetNumberOfElements(1) > 0
-     * @post
-     *   type.GetDataPointer() != NULL
-     */
-    bool SerializeMatrix();
 };
 }
 

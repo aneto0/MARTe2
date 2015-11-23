@@ -9,6 +9,7 @@
 -i./Source/Core/BareMetal/L1Portability/Environment/Generic
 -i./Source/Core/BareMetal/L2Objects/
 -i./Source/Core/BareMetal/L3Streams/
+-i./Source/Core/BareMetal/L4Configuration/
 
 -i./Source/Core/Scheduler/L1Portability/
 -i./Source/Core/Scheduler/L1Portability/Environment/Linux

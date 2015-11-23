@@ -24,7 +24,9 @@
 #
 #############################################################
 
-OBJSX=TypeConversionTest.x \
+OBJSX=ConfigurationDatabaseTest.x \
+        AnyObjectTest.x \
+	TypeConversionTest.x \
 	VectorTest.x \
 	MatrixTest.x
 		
@@ -41,9 +43,8 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 
 all: $(OBJS) \
-                $(BUILD_DIR)/L4ConfigurationTest$(LIBEXT)
+    $(BUILD_DIR)/L4ConfigurationTest$(LIBEXT)
 	echo  $(OBJS)
-
 
 include depends.$(TARGET)
 

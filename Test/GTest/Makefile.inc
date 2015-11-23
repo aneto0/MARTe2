@@ -23,15 +23,17 @@
 #############################################################
 
 
-OBJSX=TypeConversionGTest.x \
+OBJSX=  TypeConversionGTest.x \
 	VectorGTest.x \
-	MatrixGTest.x
-#DoubleIntegerGTest.x \
+	MatrixGTest.x \
+	ConfigurationDatabaseGTest.x \
+	AnyObjectGTest.x \
+	AnyTypeGTest.x\
+        DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
         FormatDescriptorGTest.x \
-        AnyTypeGTest.x\
         StandardHeap_GenericGTest.x \
         HeapManagerGTest.x \
         EndianityGTest.x \
@@ -74,6 +76,7 @@ OBJSX=TypeConversionGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
+        StringGTest.x \
         StreamMemoryReferenceGTest.x \
         BufferedStreamIGTest.x \
         IOBufferGTest.x \
@@ -83,7 +86,7 @@ OBJSX=TypeConversionGTest.x \
 	BasicSocketGTest.x \
 	BasicTCPSocketGTest.x \
    	BasicUDPSocketGTest.x \
-	BasicConsoleGTest.x \
+	BasicConsoleGTest.x 
 
 PACKAGE=
 ROOT_DIR=../..
@@ -107,9 +110,6 @@ INCLUDES += -I../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../Source/Core/Scheduler/L1Portability
 INCLUDES += -I../../Source/Core/FileSystem/L1Portability
 INCLUDES += -I../../Lib/gtest-1.7.0/include
-
-#$(BUILD_DIR)/TestPrototype$(EXEEXT)
-
 
 all: $(OBJS)    \
         $(BUILD_DIR)/MainGTest$(EXEEXT) \

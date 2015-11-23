@@ -59,7 +59,7 @@ class Reference;
  * - One leaf shall contain one, and only one, AnyType value;
  * - Leafs shall not contain nodes;
  * - A write operation shall create a new leaf;
- * - A read operation shall be performed in an existing leaf;
+ * - A read operation shall be performed on an existing leaf;
  * - The database shall know at any time what is the current node (i.e. the node against which the latest Move or
  * Create operation was performed).
  */
@@ -71,11 +71,13 @@ public:
     virtual ~StructuredDataI(){}
 
     /**
-     * @brief Reads a previously stored AnyType.
+     * @brief Reads a previously stored AnyType. The node with this name has to be a child of the current node.
      * @param[in] name the name of the leaf used to store the AnyType \a value.
      * @param[out] value the read AnyType will be stored in this parameter. If the AnyType
      * cannot be successfully read its value will be set to VoidType and the function will return false.
      * @return true if the AnyType is successfully read.
+     * @pre
+     *   GetType(name).GetTypeDescriptor() != VoidType
      */
     virtual bool Read(const char8 * const name,
                       const AnyType &value) = 0;
@@ -88,17 +90,21 @@ public:
     virtual AnyType GetType(const char8 * const name) = 0;
 
     /**
-     * @brief Writes an AnyType against the provided \a name.
+     * @brief Writes an AnyType against the provided \a name and adds it to the current node.
+     * @details If the name already exists the value will be overridden.
      * @param[in] name the name of the leaf against which the AnyType will be stored.
      * @param[in] value the AnyType to store.
      * @return true if the AnyType is successfully stored.
+     * @pre
+     *   name != NULL &&
+     *   StringHelper::Length(name) > 0
      */
     virtual bool Write(const char8 * const name,
                        const AnyType &value) = 0;
 
     /**
      * @brief Copies the database from the current node to the provided destination.
-     * @param[in] destination where the database will be coppied to.
+     * @param[in] destination where the database will be copied to.
      * @return if the copy is successful.
      */
     virtual bool Copy(StructuredDataI &destination) = 0;
@@ -123,6 +129,8 @@ public:
      * @brief Moves to the generations-th node containing this node.
      * @param[in] generations number of parent nodes to climb.
      * @return true if the move is successful and the current node is now the parent node which is n-generations above.
+     * @pre
+     *   generations > 0
      */
     virtual bool MoveToAncestor(uint32 generations) = 0;
 
@@ -145,7 +153,9 @@ public:
     /**
      * @brief Create a new series of nodes based on the provided absolute path.
      * @param[in] path the path of nodes to be created.
-     * @return true if the nodes were successfully created.
+     * @return true if the nodes were successfully created and if the path does not already exist.
+     * @pre
+     *   MoveAbsolute(path) == false
      * @post
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.
@@ -155,7 +165,9 @@ public:
     /**
      * @brief Create a new series of nodes based on the provided relative path.
      * @param[in] path the path of nodes to be created, relative to the current node.
-     * @return true if the nodes were successfully created.
+     * @return true if the nodes were successfully created and if the path does not already exist.
+     * @pre
+     *   MoveRelative(path) == false
      * @post
      *   If successful: the current node will be the last node specified in the path.
      *   If unsuccessful: the current node will not be changed.
@@ -163,10 +175,11 @@ public:
     virtual bool CreateRelative(const char8 * const path) = 0;
 
     /**
-     * @brief Deletes the current node (and as a consequence all the nodes underneath).
+     * @brief Deletes the node with \a name under the current node (and as a consequence all the nodes underneath).
+     * @param[in] name the name of the node to be deleted.
      * @return true if the current node is successfully removed.
      */
-    virtual bool Delete() = 0;
+    virtual bool Delete(const char8 * const name) = 0;
 
 };
 }

@@ -44,232 +44,275 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-AnyObject::AnyObject() : Object() {
+AnyObject::AnyObject() :
+        Object() {
+}
+
+static bool SerializeStaticMatrix(const AnyType &typeIn,
+                                  AnyType &typeOut) {
+    uint32 numberOfColumns = typeIn.GetNumberOfElements(0u);
+    uint32 numberOfRows = typeIn.GetNumberOfElements(1u);
+    TypeDescriptor sourceDescriptor = typeIn.GetTypeDescriptor();
+    void *sourcePointer = typeIn.GetDataPointer();
+
+    // allocate the memory block on destination
+    uint32 memoryAllocationSize = 0u;
+    bool isString = (sourceDescriptor.type == SString);
+    bool isCCString = (sourceDescriptor.type == CCString);
+
+    // the SString will be changed into a CCString
+    if (isString) {
+        memoryAllocationSize = static_cast<uint32>(sizeof(char8 *) * numberOfRows * numberOfColumns);
+    }
+    else {
+        memoryAllocationSize = typeIn.GetByteSize() * numberOfRows * numberOfColumns;
+    }
+
+    void* destPointer = HeapManager::Malloc(memoryAllocationSize);
+    typeOut = typeIn;
+    typeOut.SetDataPointer(destPointer);
+
+    bool ret = true;
+
+    if ((isString) || (isCCString)) {
+        // matrix of pointers; copy element by element
+        for (uint32 r = 0u; (r < numberOfRows) && (ret); r++) {
+            for (uint32 c = 0u; (c < numberOfColumns) && (ret); c++) {
+                uint32 index = (r * numberOfColumns) + c;
+                const char8 *token = static_cast<const char8*>(NULL);
+                if (isCCString) {
+                    token = reinterpret_cast<const char8**>(sourcePointer)[index];
+                }
+                if (isString) {
+                    token = (reinterpret_cast<String*>(sourcePointer)[index]).Buffer();
+                }
+                char8 **destBegin = static_cast<char8 **>(destPointer);
+                uint32 tokenSize = StringHelper::Length(token) + 1u;
+                destBegin[index] = static_cast<char8*>(HeapManager::Malloc(tokenSize));
+                ret = StringHelper::Copy(destBegin[index], token);
+            }
+        }
+    }
+    else {
+        // copy all the block
+        ret = MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
+    }
+    return ret;
 }
 
 /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: Three pointer indirection levels required for matrices of char *. */
-bool AnyObject::SerializeMatrix() {
-    uint32 copySize = 0u;
-    uint32 totalCopySize = 0u;
-    uint32 numberOfColumns = type.GetNumberOfElements(0u);
-    uint32 numberOfRows = type.GetNumberOfElements(1u);
-    TypeDescriptor dataDescriptor = type.GetTypeDescriptor();
-    void *srcDataPointer = type.GetDataPointer();
+static bool SerializeHeapMatrix(const AnyType &typeIn,
+                                AnyType &typeOut) {
 
-    bool ok = true;
+    uint32 numberOfColumns = typeIn.GetNumberOfElements(0u);
+    uint32 numberOfRows = typeIn.GetNumberOfElements(1u);
+    TypeDescriptor sourceDescriptor = typeIn.GetTypeDescriptor();
+    void **sourcePointer = static_cast<void **>(typeIn.GetDataPointer());
 
-    uint32 memoryAllocationSize;
-    if (type.IsStaticDeclared()) {
-        memoryAllocationSize = (numberOfRows * numberOfColumns * dataDescriptor.numberOfBits) / 8u;
+    // allocate space for pointers (one for each row)
+    uint32 sizeRows = static_cast<uint32>(sizeof(void *) * numberOfRows);
+    void **destPointer = static_cast<void **>(HeapManager::Malloc(sizeRows));
+
+    typeOut = typeIn;
+    typeOut.SetDataPointer(destPointer);
+
+    bool ret = true;
+    bool isString = (sourceDescriptor.type == SString);
+    bool isCCString = (sourceDescriptor.type == CCString);
+
+    uint32 rowSize = 0u;
+
+    // the string will be changed into a CCString
+    if (isString) {
+        rowSize = static_cast<uint32>(sizeof(char8*) * numberOfColumns);
     }
     else {
-        memoryAllocationSize = static_cast<uint32>(numberOfRows * sizeof(void *));
+        rowSize = typeIn.GetByteSize() * numberOfColumns;
     }
-    char8 *value = static_cast<char8 *>(HeapManager::Malloc(memoryAllocationSize));
-    type.SetDataPointer(value);
-
-    uint32 r;
-    uint32 c;
-    uint32 idx;
-    for (r = 0u; ok && (r < numberOfRows); r++) {
-        if (!type.IsStaticDeclared()) {
-            void **destStr = reinterpret_cast<void **>(value);
-            destStr[r] = static_cast<char8 **>(HeapManager::Malloc(static_cast<uint32>(sizeof(void *) * numberOfColumns)));
-            totalCopySize = 0u;
-        }
-
-        for (c = 0u; ok && (c < numberOfColumns); c++) {
-            idx = c + (r * numberOfColumns);
-            if (dataDescriptor.type == SString) {
-                String *stream;
-                if (type.IsStaticDeclared()) {
-                    stream = &static_cast<String *>(srcDataPointer)[idx];
+    for (uint32 r = 0u; (r < numberOfRows) && (ret); r++) {
+        destPointer[r] = HeapManager::Malloc(rowSize);
+        if ((isString) || (isCCString)) {
+            // matrix of pointers; copy element by element
+            for (uint32 c = 0u; (c < numberOfColumns) && (ret); c++) {
+                const char8 *token = static_cast<const char8 *>(NULL);
+                if (isCCString) {
+                    token = reinterpret_cast<const char8 ***>(sourcePointer)[r][c];
                 }
-                else {
-                    stream = &static_cast<String **>(srcDataPointer)[r][c];
+                if (isString) {
+                    token = (reinterpret_cast<String**>(sourcePointer)[r][c]).Buffer();
                 }
-                copySize = static_cast<uint32>(stream->Size());
-                copySize += 1u;
+                char8 ***destBegin = reinterpret_cast<char8 ***>(destPointer);
+                uint32 tokenSize = StringHelper::Length(token) + 1u;
+                destBegin[r][c] = static_cast<char8*>(HeapManager::Malloc(tokenSize));
+                ret = StringHelper::Copy(destBegin[r][c], token);
             }
-            else if (dataDescriptor.type == CCString) {
-                const char8 *srcArray = NULL_PTR(const char8 *);
-                if (type.IsStaticDeclared()) {
-                    srcArray = static_cast<const char8 **>(srcDataPointer)[idx];
-                }
-                else {
-                    srcArray = static_cast<char8 ***>(srcDataPointer)[r][c];
-                }
-                copySize = (StringHelper::Length(srcArray) + 1u);
-            }
-            else {
-                copySize = dataDescriptor.numberOfBits;
-                copySize /= 8u;
-            }
-
-            ok = (copySize > 0u);
-
-            if (ok) {
-                char8 *destArray = NULL_PTR(char8 *);
-                const char8 *srcArray = NULL_PTR(const char8 *);
-                if (dataDescriptor.type == SString) {
-                    String *stream = NULL_PTR(String *);
-                    if (type.IsStaticDeclared()) {
-                        stream = &static_cast<String *>(srcDataPointer)[idx];
-                        char8 **destStr = reinterpret_cast<char8 **>(value);
-                        destStr[idx] = static_cast<char8 *>(HeapManager::Malloc(copySize));
-                        destArray = destStr[idx];
-                    }
-                    else {
-                        stream = &static_cast<String **>(srcDataPointer)[r][c];
-                        char8 ***destStr = reinterpret_cast<char8 ***>(value);
-                        destStr[r][c] = static_cast<char8 *>(HeapManager::Malloc(copySize));
-                        destArray = destStr[r][c];
-                    }
-                    srcArray = stream->Buffer();
-                }
-                else if (dataDescriptor.type == CCString) {
-                    if (type.IsStaticDeclared()) {
-                        char8 **destStr = reinterpret_cast<char8 **>(value);
-                        srcArray = static_cast<const char8 **>(srcDataPointer)[idx];
-                        destStr[idx] = static_cast<char8 *>(HeapManager::Malloc(copySize));
-                        destArray = destStr[idx];
-                    }
-                    else {
-                        char8 ***destStr = reinterpret_cast<char8 ***>(value);
-                        srcArray = static_cast<char8 ***>(srcDataPointer)[r][c];
-                        destStr[r][c] = static_cast<char8 *>(HeapManager::Malloc(copySize));
-                        destArray = destStr[r][c];
-                    }
-                }
-                else {
-                    if (type.IsStaticDeclared()) {
-                        srcArray = &static_cast<char8 *>(srcDataPointer)[totalCopySize];
-                        destArray = &value[totalCopySize];
-                    }
-                    else {
-                        char8 **src = reinterpret_cast<char8 **>(srcDataPointer);
-                        char8 *srcRow = src[r];
-                        srcArray = &srcRow[totalCopySize];
-                        char8 **dest = reinterpret_cast<char8 **>(value);
-                        char8 *destRow = dest[r];
-                        destArray = &destRow[totalCopySize];
-                    }
-                }
-                ok = MemoryOperationsHelper::Copy(destArray, srcArray, copySize);
-                totalCopySize += copySize;
-            }
-        }
-    }
-
-    return ok;
-}
-
-bool AnyObject::SerializeVector() {
-    uint32 copySize = 0u;
-    uint32 totalCopySize = 0u;
-    uint32 idx;
-    uint32 numberOfElements = type.GetNumberOfElements(0u);
-    TypeDescriptor dataDescriptor = type.GetTypeDescriptor();
-    void *srcDataPointer = type.GetDataPointer();
-    bool ok = true;
-
-    char8 *value = static_cast<char8 *>(HeapManager::Malloc((numberOfElements * dataDescriptor.numberOfBits) / 8u));
-    type.SetDataPointer(value);
-    for (idx = 0u; ok && (idx < numberOfElements); idx++) {
-        if (dataDescriptor.type == SString) {
-            String *stream = static_cast<String *>(srcDataPointer);
-            copySize = static_cast<uint32>(stream[idx].Size());
-            //Assume it is zero terminated...
-            copySize += 1u;
-        }
-        else if (dataDescriptor.type == CCString) {
-            const char8 *srcArray = (static_cast<const char8 **>(srcDataPointer))[idx];
-            copySize = (StringHelper::Length(srcArray) + 1u);
         }
         else {
-            copySize = dataDescriptor.numberOfBits;
-            copySize /= 8u;
-        }
-
-        ok = (copySize > 0u);
-
-        if (ok) {
-            const char8 *srcArray = NULL_PTR(const char8 *);
-            char8 *destArray = NULL_PTR(char8 *);
-            if (dataDescriptor.type == SString) {
-                char8 **destStr = reinterpret_cast<char8 **>(value);
-                destStr[idx] = static_cast<char8 *>(HeapManager::Malloc(copySize));
-                String *stream = static_cast<String *>(srcDataPointer);
-                srcArray = stream[idx].Buffer();
-                destArray = destStr[idx];
-            }
-            else if (dataDescriptor.type == CCString) {
-                char8 **destStr = reinterpret_cast<char8 **>(value);
-                destStr[idx] = static_cast<char8 *>(HeapManager::Malloc(copySize));
-                srcArray = (static_cast<const char8 **>(srcDataPointer))[idx];
-                destArray = destStr[idx];
-            }
-            else {
-                srcArray = &static_cast<char8 *>(srcDataPointer)[totalCopySize];
-                destArray = &value[totalCopySize];
-            }
-            ok = MemoryOperationsHelper::Copy(destArray, srcArray, copySize);
-            totalCopySize += copySize;
+            // copy all the row block
+            ret = MemoryOperationsHelper::Copy(destPointer[r], sourcePointer[r], rowSize);
         }
     }
-
-    return ok;
+    return ret;
 }
 
-bool AnyObject::SerializeScalar() {
-    uint32 copySize = 0u;
-    bool ok = true;
-
-    if (type.GetTypeDescriptor().type == SString) {
-        String *stream = static_cast<String *>(type.GetDataPointer());
-        copySize = static_cast<uint32>(stream->Size()) + 1u;
-    }
-    else if (type.GetTypeDescriptor().type == CCString) {
-        copySize = StringHelper::Length(static_cast<char8 *>(type.GetDataPointer()));
-        copySize += 1u;
-    }
-    else {
-        copySize = type.GetTypeDescriptor().numberOfBits;
-        copySize /= 8u;
-    }
-    void *value = HeapManager::Malloc(copySize);
-    if (type.GetTypeDescriptor().type == SString) {
-        String *stream = static_cast<String *>(type.GetDataPointer());
-        ok = MemoryOperationsHelper::Copy(value, stream->Buffer(), copySize);
+/**
+ * @brief Serialises a matrix AnyType (i.e. one with GetNumberOfElements(0) > 1 && GetNumberOfElements(1) > 1).
+ * @return true if all the memory allocation and copy operations are successful.
+ * @pre
+ *   type.GetNumberOfElements(0) > 0 && type.GetNumberOfElements(1) > 0
+ * @post
+ *   type.GetDataPointer() != NULL
+ */
+static bool SerializeMatrix(const AnyType &typeIn,
+                            AnyType &typeOut) {
+    bool ret = false;
+    if (typeIn.IsStaticDeclared()) {
+        ret = SerializeStaticMatrix(typeIn, typeOut);
     }
     else {
-        ok = MemoryOperationsHelper::Copy(value, type.GetDataPointer(), copySize);
+        ret = SerializeHeapMatrix(typeIn, typeOut);
     }
 
-    type.SetDataPointer(value);
-    return ok;
+    return ret;
+}
+
+/**
+ * @brief Serialises a vector AnyType (i.e. one with GetNumberOfElements(0) > 1).
+ * @return true if all the memory allocation and copy operations are successful.
+ * @pre
+ *   type.GetNumberOfElements(0) > 0
+ * @post
+ *   type.GetDataPointer() != NULL
+ */
+static bool SerializeVector(const AnyType &typeIn,
+                            AnyType &typeOut) {
+
+    uint32 numberOfElements = typeIn.GetNumberOfElements(0u);
+    TypeDescriptor sourceDescriptor = typeIn.GetTypeDescriptor();
+    void *sourcePointer = typeIn.GetDataPointer();
+
+    // allocate the memory block on destination
+    uint32 memoryAllocationSize = 0u;
+    bool isString = (sourceDescriptor.type == SString);
+    bool isCCString = (sourceDescriptor.type == CCString);
+    bool isCArray = (sourceDescriptor.type == CArray);
+    bool isStaticDeclared = (typeIn.IsStaticDeclared());
+
+    bool isCArrayOnHeap = ((isCArray) && (!isStaticDeclared));
+
+    // the SString will be changed into a CCString
+    if ((isString) || (isCArrayOnHeap)) {
+        memoryAllocationSize = static_cast<uint32>(sizeof(char8 *) * numberOfElements);
+    }
+    else {
+        memoryAllocationSize = typeIn.GetByteSize() * numberOfElements;
+    }
+
+    void* destPointer = HeapManager::Malloc(memoryAllocationSize);
+
+    typeOut = typeIn;
+    typeOut.SetDataPointer(destPointer);
+
+    bool ret = true;
+    if ((isString) || (isCCString) || (isCArrayOnHeap)) {
+        for (uint32 i = 0u; (i < numberOfElements) && (ret); i++) {
+            const char8 *token = static_cast<const char8 *>(NULL);
+            uint32 tokenLength = 0u;
+            if (isCCString) {
+                token = reinterpret_cast<const char8 **>(sourcePointer)[i];
+                tokenLength = StringHelper::Length(token) + 1u;
+            }
+            if(isCArrayOnHeap) {
+                printf("\nHERE %d\n",typeIn.GetByteSize());
+                token = reinterpret_cast<const char8 **>(sourcePointer)[i];
+                tokenLength = typeIn.GetByteSize();
+            }
+            if (isString) {
+                token=(reinterpret_cast<String *>(sourcePointer)[i]).Buffer();
+                tokenLength = StringHelper::Length(token) + 1u;
+            }
+            char8 **destBegin = reinterpret_cast<char8 **>(destPointer);
+            destBegin[i] = static_cast<char8 *>(HeapManager::Malloc(tokenLength));
+            ret = MemoryOperationsHelper::Copy(destBegin[i], token, tokenLength);
+        }
+    }
+    else {
+        // it works also for static matrix of characters!!
+        ret=MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
+    }
+
+    return ret;
+
+}
+
+/**
+ * @brief Serialises a scalar AnyType (i.e. one with GetNumberOfElements(0) == 1).
+ * @return true if all the memory allocation and copy operations are successful.
+ * @pre
+ *   type.GetNumberOfElements(0) == 0
+ * @post
+ *   type.GetDataPointer() != NULL
+ */
+static bool SerializeScalar(const AnyType &typeIn,
+                            AnyType &typeOut) {
+
+    bool ret = true;
+
+    TypeDescriptor sourceDescriptor = typeIn.GetTypeDescriptor();
+    void* sourcePointer = typeIn.GetDataPointer();
+
+    bool isString = (sourceDescriptor.type == SString);
+    bool isCCString = (sourceDescriptor.type == CCString);
+    bool isCArray = (sourceDescriptor.type == CArray);
+    bool isStaticDeclared = (typeIn.IsStaticDeclared());
+    bool isCArrayOnHeap = ((isCArray) && (!isStaticDeclared));
+
+    void* destPointer = static_cast<void *>(NULL);
+
+    if ((isString) || (isCCString) || (isCArrayOnHeap)) {
+        const char8 *token = static_cast<const char8 *>(NULL);
+        if(isString) {
+            token=reinterpret_cast<String*>(sourcePointer)->Buffer();
+        }
+        if((isCCString) || (isCArrayOnHeap)) {
+            token=reinterpret_cast<const char8*>(sourcePointer);
+        }
+        uint32 tokenLength=StringHelper::Length(token)+1u;
+        destPointer=HeapManager::Malloc(tokenLength);
+        ret=MemoryOperationsHelper::Copy(destPointer, token, tokenLength);
+    }
+    else {
+        uint32 memoryAllocationSize=typeIn.GetByteSize();
+        destPointer=HeapManager::Malloc(memoryAllocationSize);
+        ret=MemoryOperationsHelper::Copy(destPointer, sourcePointer, memoryAllocationSize);
+    }
+
+    typeOut = typeIn;
+    typeOut.SetDataPointer(destPointer);
+
+    return ret;
 }
 
 bool AnyObject::Serialise(const AnyType &typeIn) {
+    CleanUp();
     uint32 nOfDimensions = typeIn.GetNumberOfDimensions();
     bool ok = (type.GetDataPointer() == NULL_PTR(void *));
     if (ok) {
-        type = typeIn;
         if (nOfDimensions == 0u) {
-            ok = SerializeScalar();
+            ok = SerializeScalar(typeIn, type);
         }
         else if (nOfDimensions == 1u) {
-            ok = SerializeVector();
+            ok = SerializeVector(typeIn, type);
         }
         else if (nOfDimensions == 2u) {
-            ok = SerializeMatrix();
+            ok = SerializeMatrix(typeIn, type);
         }
         else {
             REPORT_ERROR(ErrorManagement::FatalError, "Serialisation of AnyType with dimension > 2 not supported!");
             ok = false;
         }
 
-//Strings are serialised as arrays of CCString. The type as to be updated accordingly.
+        //Strings are serialised as arrays of CCString. The type as to be updated accordingly.
         if (typeIn.GetTypeDescriptor().type == SString) {
             void *tmp = type.GetDataPointer();
             type = AnyType(static_cast<char8 *>(typeIn.GetDataPointer()));
@@ -285,66 +328,80 @@ bool AnyObject::Serialise(const AnyType &typeIn) {
     return ok;
 }
 
-/*lint -e{1551} Justification: Memory has to be freed in the destructor.
- * No exceptions should be thrown given that the memory is managed exclusively managed by this class.". */
-AnyObject::~AnyObject() {
-    void *mem = type.GetDataPointer();
+void AnyObject::CleanUp() const {
+    void *typePointer = type.GetDataPointer();
+    bool cString = (type.GetTypeDescriptor().type == CCString);
+    bool sString = (type.GetTypeDescriptor().type == SString);
+    bool cArray = (type.GetTypeDescriptor().type == CArray);
+    bool staticDeclared = type.IsStaticDeclared();
+    bool cArrayOnHeap = ((cArray) && (!staticDeclared));
 
-    if (type.GetNumberOfDimensions() == 1u) {
-        uint32 numberOfColumns = type.GetNumberOfElements(0u);
-        bool cString = (type.GetTypeDescriptor().type == CCString);
-        bool sString = (type.GetTypeDescriptor().type == SString);
-        if (cString || sString) {
-            char8 **charArray = static_cast<char8 **>(mem);
-            uint32 idx;
-            for (idx = 0u; idx < numberOfColumns; idx++) {
-                if (charArray[idx] != NULL_PTR(void *)) {
+    if (typePointer != NULL) {
+        if (type.GetNumberOfDimensions() == 1u) {
+            uint32 numberOfColumns = type.GetNumberOfElements(0u);
+            if ((cString) || (sString) || (cArrayOnHeap)) {
+                char8 **charArray = static_cast<char8 **>(typePointer);
+                for (uint32 idx = 0u; idx < numberOfColumns; idx++) {
                     void *charMem = reinterpret_cast<void *>(charArray[idx]);
+                    printf("\nfree here %s\n", (char8*)charMem);
                     if (!HeapManager::Free(charMem)) {
+                        printf("\nsomething wrong\n");
                         REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. Vector memory not deallocated.");
                     }
                 }
             }
         }
-    }
-    else if (type.GetNumberOfDimensions() == 2u) {
-        uint32 numberOfColumns = type.GetNumberOfElements(0u);
-        uint32 numberOfRows = type.GetNumberOfElements(1u);
+        if (type.GetNumberOfDimensions() == 2u) {
 
-        uint32 r;
-        uint32 c;
-        uint32 idx;
-        for (r = 0u; r < numberOfRows; r++) {
-            for (c = 0u; c < numberOfColumns; c++) {
-                void *charMem = NULL_PTR(void *);
-                if (type.IsStaticDeclared()) {
-                    idx = c + (r * numberOfColumns);
-                    char8 **destStr = reinterpret_cast<char8 **>(mem);
-                    charMem = reinterpret_cast<void *>(destStr[idx]);
+            uint32 numberOfColumns = type.GetNumberOfElements(0u);
+            uint32 numberOfRows = type.GetNumberOfElements(1u);
+
+            for (uint32 r = 0u; r < numberOfRows; r++) {
+                for (uint32 c = 0u; c < numberOfColumns; c++) {
+                    if (type.IsStaticDeclared()) {
+                        if (cString || sString) {
+                            uint32 idx = c + (r * numberOfColumns);
+                            char8 **destStr = reinterpret_cast<char8 **>(typePointer);
+                            void *charMem = reinterpret_cast<void *>(destStr[idx]);
+                            if(!HeapManager::Free(charMem)) {
+                                REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
+                            }
+                        }
+                    }
+                    else {
+                        if (cString || sString) {
+                            /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: Three pointer indirection levels required for matrices of char *. */
+                            char8 ***destStr = reinterpret_cast<char8 ***>(typePointer);
+                            char8 **charRow = destStr[r];
+                            if(charRow!=NULL) {
+                                void *charMem=reinterpret_cast<void*>(charRow[c]);
+                                if(!HeapManager::Free(charMem)) {
+                                    REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
+                                }
+                            }
+                        }
+                    }
                 }
-                else {
-                    /*lint -e{9025} [MISRA C++ Rule 5-0-19]. Justification: Three pointer indirection levels required for matrices of char *. */
-                    char8 ***destStr = reinterpret_cast<char8 ***>(mem);
-                    charMem = reinterpret_cast<void *>(destStr[r][c]);
-                }
-                if (!HeapManager::Free(charMem)) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. Matrix memory not deallocated.");
+                if (!staticDeclared) {
+                    void **destStr = reinterpret_cast<void **>(typePointer);
+                    void* charMem = reinterpret_cast<void *>(destStr[r]);
+                    if(!HeapManager::Free(charMem)) {
+                        REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
+                    }
                 }
             }
         }
-    }
-    else {
-        if (type.GetNumberOfDimensions() != 0u) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Tried to free memory of AnyObject with dimensions > 2.");
-        }
-    }
 
-    if (mem != NULL_PTR(void *)) {
-        if (!HeapManager::Free(mem)) {
+        if (!HeapManager::Free(typePointer)) {
             REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
         }
     }
+}
 
+/*lint -e{1551} Justification: Memory has to be freed in the destructor.
+ * No exceptions should be thrown given that the memory is managed exclusively managed by this class.". */
+AnyObject::~AnyObject() {
+    CleanUp();
 }
 
 AnyType AnyObject::GetType() const {

@@ -46,7 +46,7 @@ namespace MARTe {
 template<typename T>
 class Matrix {
 public:
-
+//TODO
     Matrix();
 
     /**
@@ -85,7 +85,7 @@ public:
      */
     template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
     Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]);
-
+    //TODO
     ~Matrix();
     /**
      * @brief Gets the number of columns.
@@ -138,7 +138,7 @@ private:
      * True if this dataPointer is pointing at a statically allocated matrix memory block [][].
      */
     bool staticDeclared;
-
+    //TODO
     bool canDestroy;
 
 };

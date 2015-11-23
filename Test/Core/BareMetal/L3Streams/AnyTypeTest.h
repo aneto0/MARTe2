@@ -215,8 +215,6 @@ public:
      */
     template<typename baseType>
     bool TestAnyType_ConstFractionalInteger();
-    //TODO MOVE TO Object tests
-#if 0
     /**
      * @brief Tests the AnyType constructor with an Object variable.
      */
@@ -236,7 +234,6 @@ public:
      * @brief Tests the AnyType::CreateFromOtherType function with an element that is registered in the database.
      */
     bool TestCreateFromOtherConstType();
-#endif
 
 private:
 

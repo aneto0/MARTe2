@@ -47,6 +47,7 @@ namespace MARTe {
  * @param[out] dest is the converted float number in output.
  * @return false if the conversion fails, true otherwise.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename IntegerType, typename FloatType>
 static bool IntegerToFloat(const IntegerType source,
                            FloatType &dest) {
@@ -78,10 +79,11 @@ static bool IntegerToFloat(const IntegerType source,
  * @param[in] isSigned specifies if the integer type is signed.
  * @return true if the conversion succeeds, false otherwise.
  */
+/*lint -e{740} -e{826} -e{927}  [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to pointer cast requested from this implementation.*/
 bool IntegerToFloatGeneric(const uint8 * const source,
-                           const uint8 sourceBitSize,
+                           const uint32 sourceBitSize,
                            float32 * const dest,
-                           const uint8 destBitSize,
+                           const uint32 destBitSize,
                            const bool isSigned) {
 
     bool ret = true;

@@ -48,11 +48,11 @@ namespace MARTe {
 /**
  * @brief Converts between two types.
  * @details The allowed basic type conversions are between the following types:
- *   (u)int{8,16,32,64} | float{32,64} | String | char8[1:125] | char8 * (char array created on heap) | Vector<char8>;
+ *   (u)int{8,16,32,64} | float{32,64} | String | char8[1:127] | char8 * (char array created on heap) | Vector<char8>;
  * It is possible converting vectors of these types between them if the number of elements in the two vectors is the same:
- *   (u)int{8,16,32,64}[] | float{32,64}[] | String[] | char8[1:125][1:125] | char8 ** (memory created on heap) | Matrix<char8>;
+ *   (u)int{8,16,32,64}[] | float{32,64}[] | String[] | char8[1:127][1:127] | char8 ** (memory created on heap) | Matrix<char8>;
  * It is possible converting matrices of these types between them if the numbers of rows and columns in the two matrices are the same:
- *   (u)int{8,16,32,64}[][] | float{32,64}[][] | String[][] | char8[1:125][1:125][1:125] | char8 *** (memory created on heap);
+ *   (u)int{8,16,32,64}[][] | float{32,64}[][] | String[][] | char8[1:127][1:127][1:127] | char8 *** (memory created on heap);
  * @param[out] destination the converted type.
  * @param[in] source the type to be converted.
  * @return true if the types have the same dimension and the same number of elements
@@ -60,7 +60,7 @@ namespace MARTe {
  * type to the destination must be supported and successful.
  * @pre
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
- *   In case of source or destination representing a char8 table, the size must be minor than 125 characters for each dimension.
+ *   In case of source or destination representing a char8 array or table, the size must be minor than 127 characters for each dimension.
  */
 bool TypeConvert(const AnyType &destination,
                  const AnyType &source);

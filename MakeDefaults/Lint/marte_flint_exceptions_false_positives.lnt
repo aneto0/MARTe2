@@ -82,3 +82,11 @@
   * DLL_API is not used in Linux
   */
  -estring(767,"*DLL_API*")
+ 
+ /**
+  * Rule flexelint 766
+  * typeid is used and as a consequence typeinfo has to be included
+  */
+ -efile(766,AnyType.h) 
+ 
+ 

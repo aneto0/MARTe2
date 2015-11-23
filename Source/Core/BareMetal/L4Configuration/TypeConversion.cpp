@@ -37,27 +37,32 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 extern bool StringToFloat(const char8 * const input,
                           float32 &number);
 
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 extern bool StringToFloat(const char8 * const input,
                           float64 &number);
 
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 extern bool StringToIntegerGeneric(const char8* const source,
                                    uint8 * const dest,
-                                   const uint8 destBitSize,
+                                   const uint32 destBitSize,
                                    const bool isSigned);
 
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 extern bool IntegerToFloatGeneric(const uint8 * const source,
-                                  const uint8 sourceBitSize,
+                                  const uint32 sourceBitSize,
                                   float32 * const dest,
-                                  const uint8 destBitSize,
+                                  const uint32 destBitSize,
                                   const bool isSigned);
 
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 extern bool FloatToIntegerGeneric(const float32 * const source,
-                                  const uint8 sourceBitSize,
+                                  const uint32 sourceBitSize,
                                   uint8 * const dest,
-                                  const uint8 destBitSize,
+                                  const uint32 destBitSize,
                                   const bool isSigned);
 
 /**
@@ -66,6 +71,7 @@ extern bool FloatToIntegerGeneric(const float32 * const source,
  * @param[in] numberOfBits specifies the bit-size of the number in input.
  * @param[in, out] number is the float number to be set.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename FloatType>
 static bool MinMaxFloat(const bool isPositive,
                         const uint8 numberOfBits,
@@ -99,6 +105,7 @@ static bool MinMaxFloat(const bool isPositive,
  *   the output will be saturated at the maximum or minimum depending on the sign of the source number and a warning will
  *   be generated.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename FloatType1, typename FloatType2>
 static bool FloatToFloat(const FloatType1 source,
                          FloatType2 &destination) {
@@ -130,7 +137,6 @@ static bool FloatToFloat(const FloatType1 source,
     return ret;
 }
 
-
 /**
  * @brief Performs the conversion from integer to any type.
  * @param[out] destination is the any type in output.
@@ -140,6 +146,7 @@ static bool FloatToFloat(const FloatType1 source,
  *   source.GetTypeDescriptor == SignedInteger ||
  *   source.GetTypeDescriptor == UnsignedInteger;
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool IntegerToType(const AnyType &destination,
                           const AnyType &source) {
 
@@ -235,14 +242,12 @@ static bool IntegerToType(const AnyType &destination,
             if ((sourceDescriptor.type == SignedInteger)) {
                 uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
                 float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
-                ret = IntegerToFloatGeneric(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), destinationInput,
-                                            static_cast<uint8>(destinationDescriptor.numberOfBits), true);
+                ret = IntegerToFloatGeneric(sourceInput, source.GetBitSize(), destinationInput, destination.GetBitSize(), true);
             }
             if (sourceDescriptor.type == UnsignedInteger) {
                 uint8* sourceInput = reinterpret_cast<uint8*>(sourcePointer);
                 float32* destinationInput = reinterpret_cast<float32*>(destinationPointer);
-                ret = IntegerToFloatGeneric(sourceInput, static_cast<uint8>(sourceDescriptor.numberOfBits), destinationInput,
-                                            static_cast<uint8>(destinationDescriptor.numberOfBits), false);
+                ret = IntegerToFloatGeneric(sourceInput, source.GetBitSize(), destinationInput, destination.GetBitSize(), false);
             }
         }
     }
@@ -258,6 +263,7 @@ static bool IntegerToType(const AnyType &destination,
  * @pre
  *   source.GetTypeDescriptor == Float;
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool FloatToType(const AnyType &destination,
                         const AnyType &source) {
 
@@ -274,8 +280,8 @@ static bool FloatToType(const AnyType &destination,
             String tempString;
             ret = tempString.PrintFormatted("%E", &source);
             if (ret) {
-                *(reinterpret_cast<String*>(destinationPointer)) = tempString;
-                ret = (*(reinterpret_cast<String*>(destinationPointer))) == tempString;
+                uint32 stringLength = static_cast<uint32>(tempString.Size());
+                ret = (reinterpret_cast<String*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
             }
         }
         if (destinationDescriptor.type == CArray) {
@@ -310,20 +316,20 @@ static bool FloatToType(const AnyType &destination,
         }
         if (destinationDescriptor.type == SignedInteger) {
             ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
-                                        reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits), true);
+                                        reinterpret_cast<uint8*>(destinationPointer), destination.GetBitSize(), true);
         }
         if (destinationDescriptor.type == UnsignedInteger) {
             ret = FloatToIntegerGeneric(reinterpret_cast<float32*>(sourcePointer), static_cast<uint8>(sourceDescriptor.numberOfBits),
-                                        reinterpret_cast<uint8*>(destinationPointer), static_cast<uint8>(destinationDescriptor.numberOfBits), false);
+                                        reinterpret_cast<uint8*>(destinationPointer), destination.GetBitSize(), false);
         }
         if (destinationDescriptor.type == Float) {
-            if (destinationDescriptor.numberOfBits == 32u) {
-                if (sourceDescriptor.numberOfBits == 64u) {
+            if (destination.GetBitSize() == 32u) {
+                if (source.GetBitSize() == 64u) {
                     ret = FloatToFloat(*(reinterpret_cast<float64*>(sourcePointer)), *(reinterpret_cast<float32*>(destinationPointer)));
                 }
             }
-            if (destinationDescriptor.numberOfBits == 64u) {
-                if (sourceDescriptor.numberOfBits == 32u) {
+            if (destination.GetBitSize() == 64u) {
+                if (source.GetBitSize() == 32u) {
                     ret = FloatToFloat(*(reinterpret_cast<float32*>(sourcePointer)), *(reinterpret_cast<float64*>(destinationPointer)));
                 }
             }
@@ -331,7 +337,6 @@ static bool FloatToType(const AnyType &destination,
     }
     return ret;
 }
-
 
 /**
  * @brief Performs the conversion from string types (CCString, String, CArray) to any type.
@@ -343,6 +348,7 @@ static bool FloatToType(const AnyType &destination,
  *   source.GetTypeDescriptor == CCString ||
  *   source.GetTypeDescriptor == CArray;
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool StringToType(const AnyType &destination,
                          const AnyType &source) {
 
@@ -378,7 +384,7 @@ static bool StringToType(const AnyType &destination,
             ret=tempString->Write(token, tokenLength);
         }
         if (destinationDescriptor.type == CArray) {
-            uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
+            uint32 arraySize = destination.GetByteSize();
             if (tokenLength > arraySize) {
                 //TODO warning clip string
                 ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);
@@ -401,20 +407,20 @@ static bool StringToType(const AnyType &destination,
         if(destinationDescriptor.type==SignedInteger) {
             ret=StringToIntegerGeneric(token,
                     reinterpret_cast<uint8*>(destinationPointer),
-                    static_cast<uint8>(destinationDescriptor.numberOfBits),true);
+                    destination.GetBitSize(),true);
 
         }
         if(destinationDescriptor.type==UnsignedInteger) {
 
             ret=StringToIntegerGeneric(token,
                     reinterpret_cast<uint8*>(destinationPointer),
-                    static_cast<uint8>(destinationDescriptor.numberOfBits),false);
+                    destination.GetBitSize(),false);
         }
         if(destinationDescriptor.type==Float) {
-            if(destinationDescriptor.numberOfBits==32u) {
+            if(destination.GetBitSize()==32u) {
                 ret=StringToFloat(token,*(reinterpret_cast<float32*>(destinationPointer)));
             }
-            if(destinationDescriptor.numberOfBits==64u) {
+            if(destination.GetBitSize()==64u) {
                 ret=StringToFloat(token,*(reinterpret_cast<float64*>(destinationPointer)));
             }
         }
@@ -428,6 +434,7 @@ static bool StringToType(const AnyType &destination,
  * @param[in] source is the type to be converted.
  * @return true if the conversion succeeds, false otherwise.
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool ScalarBasicTypeConvert(const AnyType &destination,
                                    const AnyType &source) {
 
@@ -487,6 +494,7 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
  *   destination.GetNumberOfDimension() == 1 &&
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool VectorBasicTypeConvert(const AnyType &destination,
                                    const AnyType &source) {
     uint32 numberOfElements = source.GetNumberOfElements(0u);
@@ -545,6 +553,7 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
  *   destination.GetNumberOfDimension() == 2 &&
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool StaticToStaticMatrix(const AnyType &destination,
                                  const AnyType &source) {
 
@@ -593,6 +602,7 @@ static bool StaticToStaticMatrix(const AnyType &destination,
  *   destination.GetNumberOfDimension() == 2 &&
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool StaticToHeapMatrix(const AnyType &destination,
                                const AnyType &source) {
     uint32 numberOfRows = destination.GetNumberOfElements(1u);
@@ -638,6 +648,7 @@ static bool StaticToHeapMatrix(const AnyType &destination,
  *   destination.GetNumberOfDimension() == 2 &&
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool HeapToStaticMatrix(const AnyType &destination,
                                const AnyType &source) {
     uint32 numberOfRows = destination.GetNumberOfElements(1u);
@@ -681,6 +692,7 @@ static bool HeapToStaticMatrix(const AnyType &destination,
  *   destination.GetNumberOfDimension() == 2 &&
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool HeapToHeapMatrix(const AnyType &destination,
                              const AnyType &source) {
     uint32 numberOfRows = destination.GetNumberOfElements(1u);
@@ -722,6 +734,7 @@ static bool HeapToHeapMatrix(const AnyType &destination,
  *   destination.GetNumberOfDimension() == 1 &&
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool MatrixBasicTypeConvert(const AnyType &destination,
                                    const AnyType &source) {
 
@@ -769,9 +782,9 @@ bool TypeConvert(const AnyType &destination,
     }
     if (ok) {
 
-//Source and destination dimensions must be the same
+        //Source and destination dimensions must be the same
         ok = (destination.GetNumberOfDimensions() == source.GetNumberOfDimensions());
-//The number of elements in all dimensions must be the same
+        //The number of elements in all dimensions must be the same
         for (uint32 i = 0u; ok && (i < 3u); i++) {
             ok = (destination.GetNumberOfElements(i) == source.GetNumberOfElements(i));
         }

@@ -42,8 +42,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
 #define CHECK_AND_MUL(number,step,exponent)\
 if (exponent >= step){ \
 number *= static_cast<T>(1E ## step); \
@@ -56,6 +54,7 @@ number *= static_cast<T>(1E- ## step); \
 exponent-=step;\
 }
 
+namespace MARTe {
 
 /**
  * @brief Given number and exponent performs the operation number*(10^exponent).
@@ -65,10 +64,11 @@ exponent-=step;\
  * @post
  *   number=number*(10^(+/- exponent));
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
 static void AddExponent(T &number,
-                 int32 exponent,
-                 const bool expPositive) {
+                        int32 exponent,
+                        const bool expPositive) {
 
     // check and mul/div progressively following a logarithmic pattern
     if (expPositive) {
@@ -82,7 +82,9 @@ static void AddExponent(T &number,
         CHECK_AND_MUL(number, 8, exponent)
         CHECK_AND_MUL(number, 4, exponent)
         CHECK_AND_MUL(number, 2, exponent)
-        CHECK_AND_MUL(number, 1, exponent)
+        if (exponent >= 1) {
+            number *= static_cast<T>(10.0);
+        }
     }
     else {
         if (sizeof(T) > 4u) {
@@ -95,10 +97,11 @@ static void AddExponent(T &number,
         CHECK_AND_DIV(number, 8, exponent)
         CHECK_AND_DIV(number, 4, exponent)
         CHECK_AND_DIV(number, 2, exponent)
-        CHECK_AND_DIV(number, 1, exponent)
+        if (exponent >= 1) {
+            number /= static_cast<T>(10.0);
+        }
     }
 }
-
 
 /**
  * @brief Performs the conversion from a token to a float number.
@@ -117,9 +120,10 @@ static void AddExponent(T &number,
  *   If an invalid character is read, the conversion will stop returning false
  *   and the number converted until the overflow exception (i.e "123.5e+100" will return 123 because 'e' is invalid);
  */
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
 static bool StringToFloatPrivate(const char8 * const input,
-                          T &number) {
+                                 T &number) {
 
     bool canReturn = false;
     bool ret = true;
@@ -313,7 +317,7 @@ static bool StringToFloatPrivate(const char8 * const input,
 }
 
 /**
- * @see StringToFloat(*).
+ * @see StringToFloatPrivate(*).
  */
 bool StringToFloat(const char8 * const input,
                    float32 &number) {
@@ -321,7 +325,7 @@ bool StringToFloat(const char8 * const input,
 }
 
 /**
- * @see StringToFloat(*).
+ * @see StringToFloatPrivate(*).
  */
 bool StringToFloat(const char8 * const input,
                    float64 &number) {

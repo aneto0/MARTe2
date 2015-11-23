@@ -52,6 +52,8 @@ namespace MARTe {
  */
 /*lint -e{550} [MISRA C++ Rule 0-1-6], [MISRA C++ Rule 0-1-9]. Justification: the symbol could be not accessed because it depends by input. */
 /*lint -e{438} [MISRA C++ Rule 0-1-6], [MISRA C++ Rule 0-1-9]. Justification: the variable could be not used because it depends by input.*/
+/*lint -e{774} [MISRA C++ Rule 0-1-1], [MISRA C++ Rule 0-1-2], [MISRA C++ Rule 0-1-9]. Justification: the integer type could be signed or not depending on the template type.*/
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename FloatType, typename IntegerType>
 bool FloatToInteger(const FloatType floatNumber,
                     IntegerType &integerNumber) {
@@ -107,10 +109,11 @@ bool FloatToInteger(const FloatType floatNumber,
     return ret;
 }
 
+/*lint -e{740} -e{826} -e{927}  [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to pointer cast requested from this implementation.*/
 bool FloatToIntegerGeneric(const float32 * const source,
-                           const uint8 sourceBitSize,
+                           const uint32 sourceBitSize,
                            uint8 * const dest,
-                           const uint8 destBitSize,
+                           const uint32 destBitSize,
                            const bool isSigned) {
 
     bool ret = false;
