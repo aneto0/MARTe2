@@ -41,7 +41,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 TEST(AnyObjectGTest,TestConstructor) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestDefaultConstructor());
@@ -527,12 +526,10 @@ TEST(AnyObjectGTest,TestSerialise_Matrix_Array_Static_Float64) {
     ASSERT_TRUE(anyObjTest.TestSerialise_Matrix_Array_Static(MARTe::float64(7)));
 }
 
-
 TEST(AnyObjectGTest,TestGetType_Matrix_Char8) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestGetType_Matrix(MARTe::char8('a')));
 }
-
 
 TEST(AnyObjectGTest,TestGetType_Matrix_UInt8) {
     AnyObjectTest anyObjTest;
@@ -619,3 +616,13 @@ TEST(AnyObjectGTest,TestGetObjectBuildFunction) {
     ASSERT_TRUE(anyObjTest.TestGetObjectBuildFunction());
 }
 
+
+TEST(AnyObjectGTest,TestSerialise_StaticMatrixChar) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_StaticMatrixChar());
+}
+
+TEST(AnyObjectGTest,TestSerialise_StaticMeshChar) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestSerialise_StaticMeshChar());
+}

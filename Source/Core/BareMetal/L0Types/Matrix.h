@@ -85,7 +85,15 @@ public:
      */
     template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
     Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]);
-    //TODO
+
+    /**
+     * @brief Destructor.
+     * @details If the matrix is allocated internally, the memory will be freed.
+     * @post
+     *   numberOfRows == 0 &&
+     *   numberOfColumns == 0 &&
+     *   dataPointer == NULL;
+     */
     ~Matrix();
     /**
      * @brief Gets the number of columns.
@@ -116,7 +124,26 @@ public:
      * @brief Checks if GetDataPointer() is pointing at a statically allocated matrix memory block [][].
      * @return true if GetDataPointer() is pointing at a statically allocated matrix memory block [][].
      */
-    inline bool IsStaticDeclared();
+    inline bool IsStaticDeclared() const;
+
+    /**
+     * @brief Performs the matrix product.
+     * @param[in] factor is the matrix to be multiplied with.
+     * @param[out] result is the matrix product result.
+     * @return true if the dimensions of \a factor and \a result are correct, false otherwise.
+     * @pre
+     *   numberOfColumns == factor.numberOfRows &&
+     *   numberOfRows == result.numberOfRows &&
+     *   factor.numberOfColumns == result.numberOfColumns;
+     */
+    bool Product(Matrix<T> factor,
+                 Matrix<T> &result);
+
+    bool SubMatrix(uint32 beginRow,
+                   uint32 endRow,
+                   uint32 beginColumn,
+                   uint32 endColumn,
+                   Matrix<T> &subMatrix);
 
 private:
     /**
@@ -138,7 +165,10 @@ private:
      * True if this dataPointer is pointing at a statically allocated matrix memory block [][].
      */
     bool staticDeclared;
-    //TODO
+
+    /**
+     * True if the vector is allocated internally on heap and has to be destroyed by the destructor.
+     */
     bool canDestroy;
 
 };
@@ -195,14 +225,17 @@ Matrix<T>::Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
 }
 
 template<typename T>
-Matrix<T>::~Matrix(){
-    if(canDestroy){
-        T** ponterToDestroy=reinterpret_cast<T**>(dataPointer);
-        for(uint32 i=0; i<numberOfRows; i++){
-            delete[] ponterToDestroy[i];
+Matrix<T>::~Matrix() {
+    if (canDestroy) {
+        T** pointerToDestroy = reinterpret_cast<T**>(dataPointer);
+        for (uint32 i = 0; i < numberOfRows; i++) {
+            delete[] pointerToDestroy[i];
         }
-        delete[] ponterToDestroy;
+        delete[] pointerToDestroy;
     }
+    dataPointer = NULL;
+    numberOfColumns = 0u;
+    numberOfRows = 0u;
 }
 
 template<typename T>
@@ -236,8 +269,62 @@ inline void* Matrix<T>::GetDataPointer() const {
 }
 
 template<typename T>
-inline bool Matrix<T>::IsStaticDeclared() {
+inline bool Matrix<T>::IsStaticDeclared() const {
     return staticDeclared;
+}
+
+template<typename T>
+bool Matrix<T>::Product(Matrix<T> factor,
+                        Matrix<T> &result) {
+    bool cond1 = (factor.numberOfRows == numberOfColumns);
+    bool cond2 = (result.numberOfRows == numberOfRows);
+    bool cond3 = (result.numberOfColumns == factor.numberOfColumns);
+    bool ret = ((cond1) && (cond2) && (cond3));
+    if (ret) {
+        for (uint32 i = 0u; i < numberOfRows; i++) {
+            for (uint32 j = 0u; j < numberOfColumns; j++) {
+                result[i][j] = static_cast<T>(0);
+                for (uint32 k = 0u; k < numberOfColumns; k++) {
+                    result[i][j] += ((*this)[i][k]) * factor[k][j];
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+template<typename T>
+bool Matrix<T>::SubMatrix(uint32 beginRow,
+                          uint32 endRow,
+                          uint32 beginColumn,
+                          uint32 endColumn,
+                          Matrix<T> &subMatrix) {
+    bool cond1 = (endRow > beginRow);
+    bool cond2 = (endColumn > beginColumn);
+    bool cond3 = (endRow < numberOfRows);
+    bool cond4 = (endColumn < numberOfColumns);
+
+    bool ret = ((cond1) && (cond2) && (cond3) && (cond4));
+    if (ret) {
+        uint32 outputNRows = (endRow - beginRow) + 1u;
+        uint32 outputNCols = (endColumn - beginColumn) + 1u;
+
+        bool cond5 = (subMatrix.numberOfRows == (outputNRows));
+        bool cond6 = (subMatrix.numberOfColumns == (outputNCols));
+        ret = ((cond5) && (cond6));
+
+        if (ret) {
+            for (uint32 i = 0; i < outputNRows; i++) {
+                for (uint32 j = 0; j < outputNCols; j++) {
+                    uint32 rowIndex = (beginRow + i);
+                    uint32 columnIndex = (beginColumn + j);
+                    subMatrix[i][j] = ((*this)[rowIndex][columnIndex]);
+                }
+            }
+        }
+    }
+
+    return ret;
 }
 
 }

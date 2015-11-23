@@ -141,11 +141,12 @@ bool MatrixTest::TestMatrixOperator_Heap() {
 
     Matrix<int32> myMatrix(matrix, nRows, nCols);
 
+    bool ret = true;
     for (uint32 i = 0; i < nRows; i++) {
         Vector<int32> row = myMatrix[i];
         for (uint32 j = 0; j < nCols; j++) {
             if (row[j] != matrix[i][j]) {
-                return false;
+                ret = false;
             }
         }
     }
@@ -156,7 +157,7 @@ bool MatrixTest::TestMatrixOperator_Heap() {
 
     delete[] matrix;
 
-    return true;
+    return ret;
 }
 
 bool MatrixTest::TestGetDataPointer() {
@@ -211,5 +212,61 @@ bool MatrixTest::TestIsStaticDeclared() {
     Matrix<int32> matrix4(2, 2);
 
     return !matrix4.IsStaticDeclared();
+}
+
+bool MatrixTest::TestProduct() {
+
+    int32 matrix1[4][3] = { { 1, 2, -3 }, { -4, 5, 6 }, { 7, 8, 9 }, { -3, 2, 1 } };
+    int32 matrix2[3][2] = { { 1, 2 }, { -4, 5 }, { 7, 8 } };
+
+    int32 matrix3[4][2];
+
+    Matrix<int32> factor1(matrix1);
+    Matrix<int32> factor2(matrix2);
+    Matrix<int32> result(matrix3);
+
+    if (!factor1.Product(factor2, result)) {
+        return false;
+    }
+
+    // se lo sposto prima sfancula!!
+    int32 testResult[4][2] = { { -28, -12 }, { 18, 65 }, { 38, 126 }, { -4, 12 } };
+
+    for (int32 i = 0; i < 4; i++) {
+        for (int32 j = 0; j < 2; j++) {
+            if (result[i][j] != testResult[i][j]) {
+                return false;
+            }
+        }
+    }
+
+    // test the failure
+    int32 matrix4[5][2];
+    Matrix<int32> result_failure(matrix4);
+
+    return (!factor1.Product(factor2, result_failure));
+}
+
+bool MatrixTest::TestSubMatrix() {
+    int32 matrix1[4][3] = { { 1, 2, -3 }, { -4, 5, 6 }, { 7, 8, 9 }, { -3, 2, 1 } };
+
+    int32 matrix2[2][2];
+
+    Matrix<int32> bigMatrix(matrix1);
+    Matrix<int32> subMatrix(matrix2);
+
+    bigMatrix.SubMatrix(1, 2, 1, 2, subMatrix);
+    int32 test[][2] = { { 5, 6 }, { 8, 9 } };
+
+    for (int32 i = 0; i < 2; i++) {
+        for (int32 j = 0; j < 2; j++) {
+            if (subMatrix[i][j] != test[i][j]) {
+
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 

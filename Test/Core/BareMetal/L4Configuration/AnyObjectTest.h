@@ -103,6 +103,10 @@ public:
      */
     bool TestSerialise_StaticArrayCharStar();
 
+    bool TestSerialise_StaticMatrixChar();
+
+    bool TestSerialise_StaticMeshChar();
+
     /**
      * @brief Tests the Serialise function with a String
      */

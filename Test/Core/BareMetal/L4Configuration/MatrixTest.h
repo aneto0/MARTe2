@@ -66,6 +66,10 @@ public:
 
     bool TestIsStaticDeclared();
 
+    bool TestProduct();
+
+    bool TestSubMatrix();
+
 };
 
 /*---------------------------------------------------------------------------*/

@@ -109,13 +109,24 @@ public:
      * @brief Checks if GetDataPointer() is pointing at a statically allocated array memory block [].
      * @return true if GetDataPointer() is pointing at a statically allocated array memory block [].
      */
-    inline bool IsStaticDeclared();
+    inline bool IsStaticDeclared() const;
 
     /**
      * @brief Gets the number of elements in the vector.
      * @return the number of elements in the vector.
      */
     inline uint32 GetNumberOfElements();
+
+    /**
+     * @brief Performs the vector scalar product.
+     * @param[in] factor is the vector to be multiplied with.
+     * @param[out] result is the result of the scalar product of this vector multiplied with \a factor.
+     * @return true if \a factor has the same number of elements of this vector, false otherwise.
+     * @pre
+     *   numberOfElements == factor.numberOfElements;
+     */
+    bool Product(Vector<T> factor,
+                 T &result) const;
 
 private:
     /**
@@ -132,7 +143,10 @@ private:
      * True if this dataPointer is pointing at a statically allocated matrix memory block [][].
      */
     bool staticDeclared;
-    //TODO
+
+    /**
+     * True if the vector is allocated internally on heap and has to be destroyed by the destructor.
+     */
     bool canDestroy;
 };
 }
@@ -147,7 +161,7 @@ Vector<T>::Vector() {
     numberOfElements = 0u;
     dataPointer = NULL_PTR(T *);
     staticDeclared = true;
-    canDestroy=false;
+    canDestroy = false;
 }
 
 template<typename T>
@@ -155,7 +169,7 @@ Vector<T>::Vector(uint32 nOfElements) {
     dataPointer = new T[nOfElements];
     numberOfElements = nOfElements;
     staticDeclared = false;
-    canDestroy=true;
+    canDestroy = true;
 }
 
 template<typename T>
@@ -164,7 +178,7 @@ Vector<T>::Vector(T *existingArray,
     dataPointer = existingArray;
     numberOfElements = nOfElements;
     staticDeclared = false;
-    canDestroy=false;
+    canDestroy = false;
 }
 
 template<typename T>
@@ -173,7 +187,7 @@ Vector<T>::Vector(T (&source)[nOfElementsStatic]) {
     dataPointer = reinterpret_cast<T *>(&source[0]);
     numberOfElements = nOfElementsStatic;
     staticDeclared = true;
-    canDestroy=false;
+    canDestroy = false;
 }
 
 template<typename T>
@@ -185,7 +199,7 @@ Vector<T>::~Vector() {
 
 template<typename T>
 T &Vector<T>::operator [](uint32 idx) {
-    T* array=reinterpret_cast<T*>(dataPointer);
+    T* array = reinterpret_cast<T*>(dataPointer);
     return array[idx];
 }
 
@@ -195,13 +209,27 @@ inline void* Vector<T>::GetDataPointer() const {
 }
 
 template<typename T>
-inline bool Vector<T>::IsStaticDeclared() {
+inline bool Vector<T>::IsStaticDeclared() const {
     return staticDeclared;
 }
 
 template<typename T>
 inline uint32 Vector<T>::GetNumberOfElements() {
     return numberOfElements;
+}
+
+template<typename T>
+bool Vector<T>::Product(Vector<T> factor,
+                        T &result) const {
+    bool ret = (factor.numberOfElements == numberOfElements);
+    if (ret) {
+        result = static_cast<T>(0);
+        T* array = reinterpret_cast<T*>(dataPointer);
+        for (uint32 i = 0u; i < numberOfElements; i++) {
+            result += array[i] * factor[i];
+        }
+    }
+    return ret;
 }
 
 }

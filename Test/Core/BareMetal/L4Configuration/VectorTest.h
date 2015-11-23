@@ -64,13 +64,13 @@ public:
 
     bool TestVectorOperator_Static();
     bool TestVectorOperator_Heap();
-    };
+
+    bool TestProduct();
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-
 
 template<typename T, uint32 nElements>
 bool VectorTest::TestConstructorByPointerStatic(T (&array)[nElements]) {
@@ -89,7 +89,7 @@ bool VectorTest::TestConstructorByPointerStatic(T (&array)[nElements]) {
 
 template<typename T>
 bool VectorTest::TestConstructorByPointerHeap(T* array,
-                                                 uint32 nElements) {
+                                              uint32 nElements) {
 
     Vector<T> myVector(array, nElements);
 

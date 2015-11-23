@@ -174,12 +174,13 @@ static bool IntegerToType(const AnyType &destination,
             String tempString;
             ret = tempString.PrintFormatted("%d", &source);
             if (ret) {
-                uint32 stringLength = static_cast<uint32>(tempString.Size()) + 1u;
-                uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
-                if (stringLength > arraySize) {
-                    REPORT_ERROR(ErrorManagement::Warning, "ScalarBasicTypeConvert: The string in input is too long for the output buffer.");
+                uint32 stringLength = static_cast<uint32>(tempString.Size());
+                uint32 arraySize = destination.GetByteSize();
+                if (stringLength >= arraySize) {
+                    REPORT_ERROR(ErrorManagement::Warning, "IntegerToType: The input is too long for the output buffer.");
                     ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
-                    reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
+                    uint32 lastCharIndex = arraySize - 1u;
+                    reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
                 }
                 else {
                     ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
@@ -288,12 +289,13 @@ static bool FloatToType(const AnyType &destination,
             String tempString;
             ret = tempString.PrintFormatted("%E", &source);
             if (ret) {
-                uint32 stringLength = static_cast<uint32>(tempString.Size()) + 1u;
-                uint32 arraySize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
-                if (stringLength > arraySize) {
-                    //TODO warning clip string
+                uint32 stringLength = static_cast<uint32>(tempString.Size());
+                uint32 arraySize = destination.GetByteSize();
+                if (stringLength >= arraySize) {
+                    REPORT_ERROR(ErrorManagement::Warning, "FloatToType: The input is too long for the output buffer.");
                     ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer(), arraySize);
-                    reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
+                    uint32 lastCharIndex = arraySize - 1u;
+                    reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
                 }
                 else {
                     ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), tempString.Buffer());
@@ -385,10 +387,11 @@ static bool StringToType(const AnyType &destination,
         }
         if (destinationDescriptor.type == CArray) {
             uint32 arraySize = destination.GetByteSize();
-            if (tokenLength > arraySize) {
-                //TODO warning clip string
+            if (tokenLength >= arraySize) {
+                REPORT_ERROR(ErrorManagement::Warning, "StringToType: The input is too long for the output buffer.");
                 ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);
-                reinterpret_cast<char8 *>(destinationPointer)[arraySize] = '\0';
+                uint32 lastCharIndex=arraySize-1u;
+                reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
             }
             else {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);

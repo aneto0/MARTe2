@@ -159,7 +159,7 @@ static bool SerializeHeapMatrix(const AnyType &typeIn,
  * @brief Serialises a matrix AnyType (i.e. one with GetNumberOfElements(0) > 1 && GetNumberOfElements(1) > 1).
  * @return true if all the memory allocation and copy operations are successful.
  * @pre
- *   type.GetNumberOfElements(0) > 0 && type.GetNumberOfElements(1) > 0
+ *   type.GetNumberOfElements(0) > 1 && type.GetNumberOfElements(1) > 1
  * @post
  *   type.GetDataPointer() != NULL
  */
@@ -180,7 +180,7 @@ static bool SerializeMatrix(const AnyType &typeIn,
  * @brief Serialises a vector AnyType (i.e. one with GetNumberOfElements(0) > 1).
  * @return true if all the memory allocation and copy operations are successful.
  * @pre
- *   type.GetNumberOfElements(0) > 0
+ *   type.GetNumberOfElements(0) > 1
  * @post
  *   type.GetDataPointer() != NULL
  */
@@ -223,7 +223,6 @@ static bool SerializeVector(const AnyType &typeIn,
                 tokenLength = StringHelper::Length(token) + 1u;
             }
             if(isCArrayOnHeap) {
-                printf("\nHERE %d\n",typeIn.GetByteSize());
                 token = reinterpret_cast<const char8 **>(sourcePointer)[i];
                 tokenLength = typeIn.GetByteSize();
             }
@@ -343,9 +342,7 @@ void AnyObject::CleanUp() const {
                 char8 **charArray = static_cast<char8 **>(typePointer);
                 for (uint32 idx = 0u; idx < numberOfColumns; idx++) {
                     void *charMem = reinterpret_cast<void *>(charArray[idx]);
-                    printf("\nfree here %s\n", (char8*)charMem);
                     if (!HeapManager::Free(charMem)) {
-                        printf("\nsomething wrong\n");
                         REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. Vector memory not deallocated.");
                     }
                 }

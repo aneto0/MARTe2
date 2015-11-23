@@ -188,7 +188,7 @@ bool VectorTest::TestVectorOperator_Static() {
 bool VectorTest::TestVectorOperator_Heap() {
 
     const uint32 nElements = 32;
-    int32 *array=(int32*)HeapManager::Malloc(sizeof(int32)*nElements);
+    int32 *array = (int32*) HeapManager::Malloc(sizeof(int32) * nElements);
 
     for (uint32 i = 0; i < nElements; i++) {
         array[i] = i;
@@ -203,3 +203,18 @@ bool VectorTest::TestVectorOperator_Heap() {
     }
     return true;
 }
+
+bool VectorTest::TestProduct() {
+
+    int32 factor1[] = { 1, 2, 3 };
+    int32 factor2[] = { 4, 5, -1 };
+
+    Vector<int32> vector1(factor1);
+    Vector<int32> vector2(factor2);
+
+    int32 result;
+
+    vector1.Product(vector2, result);
+    return result == 11;
+}
+

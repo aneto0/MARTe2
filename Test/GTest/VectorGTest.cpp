@@ -50,7 +50,6 @@ TEST(VectorGTest,TestDefaultConstructor) {
     ASSERT_TRUE(vectorTest.TestDefaultConstructor());
 }
 
-
 TEST(VectorGTest,TestConstructorCreateOnHeap) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestConstructorCreateOnHeap(32));
@@ -272,12 +271,10 @@ TEST(VectorGTest,TestConstructorByPointerHeap_Float64) {
     array[2] = 0.0001E-3;
     array[3] = 9999.9;
 
-
     ASSERT_TRUE(vectorTest.TestConstructorByPointerHeap(array, size));
 
     HeapManager::Free((void*&) array);
 }
-
 
 TEST(VectorGTest,TestConstructorByTable_Int8) {
     VectorTest vectorTest;
@@ -356,7 +353,6 @@ TEST(VectorGTest,TestConstructorByTable_CCString) {
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
-
 TEST(VectorGTest,TestIsStaticDeclared) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestIsStaticDeclared());
@@ -366,7 +362,6 @@ TEST(VectorGTest,TestGetNumberOfElements) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestGetNumberOfElements());
 }
-
 
 TEST(VectorGTest,TestGetDataPointer) {
     VectorTest vectorTest;
@@ -378,18 +373,13 @@ TEST(VectorGTest,TestVectorOperator_Static) {
     ASSERT_TRUE(vectorTest.TestVectorOperator_Static());
 }
 
-
 TEST(VectorGTest,TestVectorOperator_Heap) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestVectorOperator_Heap());
 }
 
-
-
-
-
-
-
-
-
+TEST(VectorGTest,TestProduct) {
+    VectorTest vectorTest;
+    ASSERT_TRUE(vectorTest.TestProduct());
+}
 

@@ -104,6 +104,37 @@ bool AnyObjectTest::TestSerialise_StaticArrayCharStar() {
     return ok;
 }
 
+bool AnyObjectTest::TestSerialise_StaticMatrixChar() {
+    char8 strArrWrite[2][3] = { { 'a', 'a', 0 }, { 'b', 'b', 0 } };
+    AnyObject anyObj;
+    bool ok = anyObj.Serialise(strArrWrite);
+
+    char8 *readStr = static_cast<char8 *>(anyObj.GetType().GetDataPointer());
+
+    ok &= (StringHelper::Compare(&(readStr[0]), &(strArrWrite[0][0])) == 0);
+    ok &= (StringHelper::Compare(&(readStr[3]), &(strArrWrite[1][0])) == 0);
+
+    return ok;
+}
+
+bool AnyObjectTest::TestSerialise_StaticMeshChar() {
+    char8 strArrWrite[2][3][4] = { { { 'a', 'a', 'a', 0 }, { 'b', 'b', 'b', 0 }, { 'c', 'c', 'c', 0 } }, { { 'd', 'd', 'd', 0 }, { 'e', 'e', 'e', 0 }, {
+            'f', 'f', 0, 0 } } };
+    AnyObject anyObj;
+    bool ok = anyObj.Serialise(strArrWrite);
+
+    char8 *readStr = static_cast<char8 *>(anyObj.GetType().GetDataPointer());
+
+    ok &= (StringHelper::Compare(&(readStr[0]), &(strArrWrite[0][0][0])) == 0);
+    ok &= (StringHelper::Compare(&(readStr[4]), &(strArrWrite[0][1][0])) == 0);
+    ok &= (StringHelper::Compare(&(readStr[8]), &(strArrWrite[0][2][0])) == 0);
+    ok &= (StringHelper::Compare(&(readStr[12]), &(strArrWrite[1][0][0])) == 0);
+    ok &= (StringHelper::Compare(&(readStr[16]), &(strArrWrite[1][1][0])) == 0);
+    ok &= (StringHelper::Compare(&(readStr[20]), &(strArrWrite[1][2][0])) == 0);
+
+    return ok;
+}
+
 bool AnyObjectTest::TestSerialise_ScalarString() {
     String strWrite = "ThisIsAString";
     AnyObject anyObj;

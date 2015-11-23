@@ -122,11 +122,11 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
         if ((newDigit >= 0) && (newDigit <= 9)) {
 
             // number > max
-            if (number > max) {
-                REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Overflow.");
-                canReturn = true;
-                ret = false;
-            }
+            /* if (number > max) {
+             REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Overflow.");
+             canReturn = true;
+             ret = false;
+             }*/
             if (number == max) {
 
                 if (newDigit <= maxLastDigit) {
@@ -364,7 +364,7 @@ static bool StringToIntegerBinaryNotation(const char8* const input,
         int8 newDigit = (static_cast<int8>(digit) - zero);
 
         // break in case of incorrect digit
-        if ((newDigit < 0) || (newDigit > 2)) {
+        if ((newDigit < 0) || (newDigit > 1)) {
             if (digit != '\0') {
                 ret = false;
                 REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerExadecimalNotation: Invalid token.");
@@ -442,7 +442,6 @@ static bool StringToInteger(const char8 * const input,
 
     return ret;
 }
-
 
 /**
  * @brief Reinterprets the generic destination pointer in input recognizing the related integer type by the bit size.

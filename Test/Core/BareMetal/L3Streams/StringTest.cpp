@@ -138,14 +138,14 @@ bool StringTest::TestAnyTypeOperator(const char8* initializationString) {
         return false;
     }
 
-    if (td.type != CCString) {
+    if (td.type != SString) {
         return false;
     }
-    if (td.numberOfBits != (sizeof(const char8*) * 8)) {
+    if (td.numberOfBits != (sizeof(String) * 8)) {
         return false;
     }
 
-    if (test.GetDataPointer() != string.Buffer()) {
+    if (test.GetDataPointer() != &string) {
         return false;
     }
     return test.GetBitAddress() == 0;
