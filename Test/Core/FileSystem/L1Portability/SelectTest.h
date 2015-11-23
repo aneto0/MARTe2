@@ -203,7 +203,7 @@ public:
     /**
      * @brief Test Select::WaitUntil()
      * @details add a read UPDSocked handle, lunched a thread which wait to write, Select::WaitUtil() on the socket to read and finally writes on the port.
-     * @return True if the returned value of Select::WaitUntil is one and Select::IsSet() is true.
+     * @return True if the returned value of Select::WaitUntil() is one and Select::IsSet() is true.
      */
     bool TestWaitUntil_waitRead();
 
@@ -224,15 +224,19 @@ public:
     /**
      * @brief Select::WaitUntil().
      * @details Select::WaitUtil() without adding any handle.
-     * @return True if the returned value of Select::WaitUntil is 1 and Select::IsSet() is true.
+     * @return True if the returned value of Select::WaitUntil is -1.
      */
     bool TestWaitUntil_emptyList();
 
-    const char8 *name;
+    /* Timeout used in some of the tests*/
     TimeoutType defaultTo;
+    /*Select variable to test the Select class*/
     Select sel;
+    /*Auxiliary variable used to test some of the Select class functions. In general for tests where were necessary a valid handles is used the bc (basic console) variable*/
     BasicConsole bc;
+    /*Auxiliary variable used to test some of the Select class functions. In general for tests where were necessary an invalid handles is used the bf (basic file) variable*/
     BasicFile bf;
+    /*retVal is the returned value of the tests.*/
     bool retVal;
 
 };

@@ -45,10 +45,10 @@
 namespace MARTe {
 
     /**
-     * @brief Select implementation OS independent.
-     * @details The Select class provides a set of functions to monitor several sockets events at the same time.
-     * The class allows to add, remove or clear all sockets in read, write or exception mode. When the desired sockets are chosen the WaitUtil()
-     * start to monitoring the sockets until an even occurs. The IsSet() can be used to know which events were triggered.
+     * @brief OS-independent implementation of the select() function.
+     * @details The Select class provides a set of functions to monitor several I/O (files, sockets, console...) events at the same time.
+     * The class allows to add, remove or clear handles in read, write or exception mode. Once the handles are selected, the WaitUntil()
+     * function starts to monitor them returning when an even occurs. The IsSet() function can be used to know which events were triggered.
      */
     class DLL_API Select {
 
@@ -68,33 +68,33 @@ namespace MARTe {
         }
 
         /**
-         * @brief Adds a handle to be monitored in the read mode.
+         * @brief Adds a handle to be monitored in read mode.
          * @param[in] handle indicates the handle to be added.
          * @pre
          *     The handle must be valid
-         *     The handle has not to be included previously.
-         * @return True if the handle is added to be monitored.
+         *     The handle must not have been added previously.
+         * @return True if the handle is correctly added to the watch list.
          */
         bool AddReadHandle(const HandleI &handle);
 
         /**
-         * @brief Adds a handle to be monitored in the write mode.
+         * @brief Adds a handle to be monitored in write mode.
          * @param[in] handle indicates the handle to be added.
          * @pre
          *     The handle must be valid &&
-         *     The handle has not to be included previously.
-         * @return True if the handle is added to be monitored.
+         *     The handle must not have been added previously.
+         * @return True if the handle is correctly added to the watch list.
          */
         bool AddWriteHandle(const HandleI &handle);
 
         /**
-         * @brief Adds a handle to be monitored in the exception mode.
+         * @brief Adds a handle to be monitored in exception mode.
          * @details If a BasicConsole object is added to exception the two handles of BasicConsol will be added.
          * @param[in] handle indicates the handle to be added.
          * @pre
          *     The handle must be valid &&
-         *     The handle has not to be included previously.
-         * @return True if the handle is added to be monitored.
+         *     The handle must not have been added previously.
+         * @return True if the handle is correctly added to the watch list.
          */
         bool AddExceptionHandle(const HandleI &handle);
 
@@ -103,28 +103,28 @@ namespace MARTe {
          * @param[in] handle indicates the handle to be removed.
          * @pre
          *     The handle must be valid &&
-         *     The handle must be included previously.
-         * @return True if the handle is removed from being monitored.
+         *     The handle must have been added previously.
+         * @return True if the handle is correctly removed from the watch list.
          */
         bool RemoveReadHandle(const HandleI &handle);
 
         /**
-         * @brief Removes a handle from being monitored in the write removed.
-         * @param[in] handle indicates the handle to be added.
+         * @brief Removes a handle from being monitored in write mode.
+         * @param[in] handle indicates the handle to be removed.
          * @pre
          *     The handle must be valid &&
-         *     The handle must be included previously.
-         * @return True if the handle is removed from being monitored.
+         *     The handle must have been added previously.
+         * @return True if the handle is correctly removed from the watch list.
          */
         bool RemoveWriteHandle(const HandleI &handle);
 
         /**
-         * @brief Removes a handle from being monitored in the exception mode.
+         * @brief Removes a handle from being monitored in exception mode.
          * @param[in] handle indicates the handle to be removed.
          * @pre
          *     The handle must be valid &&
-         *     The handle must be included previously.
-         * @return True if the handle is removed from being monitored.
+         *     The handle must have been added previously.
+         * @return True if the handle is correctly removed from the watch list.
          */
         bool RemoveExceptionHandle(const HandleI &handle);
 
@@ -145,23 +145,23 @@ namespace MARTe {
         bool IsSet(const HandleI &handle) const;
 
         /**
-         * @brief Blocks until an event occurs or the msecTimeout unblocks
-         * @param[in] msecTimeout is the maximum time waiting,
-         * @return -1 if it fails, 0 if the msecTimeout is reached or the sum of occurrences happened.
+         * @brief Blocks until an I/O event occurs in one of the added handles, or the function timeouts.
+         * @param[in] msecTimeout is the timeout of the function, in ms. Default is no timeout.
+         * @return -1 in case of errors, otherwise the number of handles which received an I/O event.
          */
         int32 WaitUntil(const TimeoutType &msecTimeout = TTInfiniteWait);
 
     private:
-        /*Contains informations about the read handles used in the select. Every AddReadHandle() action an handle informations is added to readHadle.*/
+        /*Contains informations about the read handles used in the select. AddReadHandle() adds handles to it.*/
         SetIdentifier readHandle;
 
-        /*Contains informations about the write handles used in the select. Every AddWriteHandle() action an handle informations is added to writeHandle.*/
+        /*Contains informations about the write handles used in the select. AddWriteHandle() adds handles to it.*/
         SetIdentifier writeHandle;
 
-        /*Contains informations about the exceptions handles used in the select. Every AddExceptionHandle() action an handle informations is added to exceptionHandle.*/
+        /*Contains informations about the exceptions handles used in the select. AddExceptionHandle() adds handles to it.*/
         SetIdentifier exceptionHandle;
 
-        /*It is the highest number of a handle that readHandle, writeHandle or exceptionHandle contains*/
+        /*The highest handle that readHandle, writeHandle or exceptionHandle contain.*/
         int32 highestHandle;
     };
 }
