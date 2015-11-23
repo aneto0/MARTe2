@@ -31,10 +31,41 @@
 
 #include "SelectTest.h"
 #include "Select.h"
+#include "Threads.h"
+#include "ThreadInformation.h"
+#include "Sleep.h"
+#include "stdio.h"
+#include "BasicUDPSocket.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+static void ThreadWrite(SelectTest &tt) {
+    /*
+     //Sleep half of defaultTo (in sec)
+     Sleep::MSec(static_cast<int>(tt.defaultTo.GetTimeoutMSec()));
+     uint32 size = 11U;
+     BasicFile bf1;
+     bf1.Open(tt.name, BasicFile::ACCESS_MODE_W);
+     bf1.Write("Please work", size);
+     bf1.Close();
+     */
+    BasicUDPSocket bUDPsWrite;
+    if (!bUDPsWrite.Open()) {
+        printf("bUDPsWrite.Open() error \n");
+        return;
+    }
+    if (!bUDPsWrite.Connect("192.168.130.44", 4444)) {
+        printf("bUDPsWrite.Connect() error \n");
+        return;
+    }
+    uint32 size = 3;
+    Sleep::MSec(tt.defaultTo.GetTimeoutMSec() / 2);
+    bUDPsWrite.Write("Hey", size);
+    bUDPsWrite.Close();
+    return;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -42,8 +73,10 @@
 
 using namespace MARTe;
 
-SelectTest::SelectTest() {
+SelectTest::SelectTest() :
+        name("../SelectTest.txt") {
     retVal = true;
+    defaultTo = 2000;
 }
 
 bool SelectTest::TestDefaultConstructor() {
@@ -94,7 +127,7 @@ bool SelectTest::TestAddExceptionHandle_SameHandle() {
     return retVal;
 }
 
-bool SelectTest::TestAddExceptionHandle_Invaliddle() {
+bool SelectTest::TestAddExceptionHandle_Invalidle() {
     retVal &= !sel.AddExceptionHandle(bf);
     return retVal;
 }
@@ -106,7 +139,196 @@ bool SelectTest::TestRemoveReadHandle() {
     return retVal;
 }
 
+bool SelectTest::TestRemoveReadHandle_SameHandle() {
+    sel.AddReadHandle(bc);
+    sel.RemoveReadHandle(bc);
+    retVal &= !sel.RemoveReadHandle(bc);
+    return retVal;
+}
+
 bool SelectTest::TestRemoveReadHandle_InvalidHandle() {
     retVal &= !sel.RemoveReadHandle(bf);
     return retVal;
+}
+
+bool SelectTest::TestRemoveWriteHandle() {
+    sel.AddWriteHandle(bc);
+    retVal &= sel.RemoveWriteHandle(bc);
+    retVal &= !sel.IsSet(bc);
+    return retVal;
+}
+
+bool SelectTest::TestRemoveWriteHandle_SameHandle() {
+    sel.AddWriteHandle(bc);
+    sel.RemoveWriteHandle(bc);
+    retVal &= !sel.RemoveWriteHandle(bc);
+    return retVal;
+}
+
+bool SelectTest::TestRemoveWriteHandle_InvalidHandle() {
+    retVal &= !sel.RemoveWriteHandle(bf);
+    return retVal;
+}
+
+bool SelectTest::TestRemoveExceptionHandle() {
+    sel.AddExceptionHandle(bc);
+    retVal &= sel.RemoveExceptionHandle(bc);
+    retVal &= !sel.IsSet(bc);
+    return retVal;
+}
+
+bool SelectTest::TestRemoveExceptionHandle_SameHandle() {
+    sel.AddExceptionHandle(bc);
+    sel.RemoveExceptionHandle(bc);
+    retVal &= !sel.RemoveExceptionHandle(bc);
+    return retVal;
+}
+
+bool SelectTest::TestRemoveExceptionHandle_InvalidHandle() {
+    retVal &= !sel.RemoveExceptionHandle(bf);
+    return retVal;
+}
+
+bool SelectTest::TesClearAllHandle() {
+    retVal &= sel.AddWriteHandle(bc);
+    retVal &= sel.AddExceptionHandle(bc);
+    retVal &= sel.AddReadHandle(bc);
+    sel.ClearAllHandle();
+    retVal &= !sel.IsSet(bc);
+    return retVal;
+}
+
+bool SelectTest::TestIsSet() {
+    retVal &= !sel.IsSet(bc);
+    retVal &= sel.AddWriteHandle(bc);
+    retVal &= sel.IsSet(bc);
+    return retVal;
+}
+
+bool SelectTest::TestWaitUntil_waitTimeout() {
+    sel.AddReadHandle(bc);
+    retVal &= (0 == sel.WaitUntil(defaultTo));
+    return retVal;
+}
+
+bool SelectTest::TestWaitUntil_waitRead() {
+    BasicUDPSocket bUDPsRead;
+    if (!bUDPsRead.Open()) {
+        retVal = false;
+        return retVal;
+    }
+    if (!bUDPsRead.Listen(4444)) {
+        retVal = false;
+        return retVal;
+    }
+    sel.AddReadHandle(bUDPsRead);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, this);
+    retVal &= (sel.WaitUntil(defaultTo) == 1);
+    retVal &= bUDPsRead.IsValid();
+    while (Threads::IsAlive(tid)) {
+        Sleep::MSec(1);
+    }
+    bUDPsRead.Close();
+    return retVal;
+}
+
+bool SelectTest::TestWaitUntil_severaDifferentWaitRead() {
+    BasicUDPSocket bUDPsRead;
+    BasicUDPSocket dummy1;
+    BasicUDPSocket dummy2;
+
+    if (!bUDPsRead.Open()) {
+        retVal = false;
+        return retVal;
+    }
+    if (!bUDPsRead.Listen(4444)) {
+        retVal = false;
+        return retVal;
+    }
+    if (!dummy1.Open()) {
+        retVal = false;
+        return retVal;
+    }
+    if (!dummy1.Listen(4445)) {
+        retVal = false;
+        return retVal;
+    }
+    if (!dummy2.Open()) {
+        retVal = false;
+        return retVal;
+    }
+    if (!dummy2.Listen(4446)) {
+        retVal = false;
+        return retVal;
+    }
+
+    sel.AddReadHandle(bUDPsRead);
+    sel.AddReadHandle(dummy1);
+    sel.AddReadHandle(dummy2);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, this);
+    retVal &= (sel.WaitUntil(defaultTo) == 1);
+    retVal &= sel.IsSet(bUDPsRead);
+    retVal &= !sel.IsSet(dummy1);
+    retVal &= !sel.IsSet(dummy2);
+    while (Threads::IsAlive(tid)) {
+        Sleep::MSec(1);
+    }
+    bUDPsRead.Close();
+    dummy1.Close();
+    dummy2.Close();
+    return retVal;
+}
+
+bool SelectTest::TestWaitUntil_removeSomeWaitRead() {
+    BasicUDPSocket bUDPsRead;
+    BasicUDPSocket dummy1;
+    BasicUDPSocket dummy2;
+
+    if (!bUDPsRead.Open()) {
+        retVal = false;
+        return retVal;
+    }
+    if (!bUDPsRead.Listen(4444)) {
+        retVal = false;
+        return retVal;
+    }
+    if (!dummy1.Open()) {
+        retVal = false;
+        return retVal;
+    }
+    if (!dummy1.Listen(4445)) {
+        retVal = false;
+        return retVal;
+    }
+    if (!dummy2.Open()) {
+        retVal = false;
+        return retVal;
+    }
+    if (!dummy2.Listen(4446)) {
+        retVal = false;
+        return retVal;
+    }
+
+    sel.AddReadHandle(bUDPsRead);
+    sel.AddReadHandle(dummy1);
+    sel.AddReadHandle(dummy2);
+    sel.RemoveReadHandle(dummy2);
+    sel.RemoveReadHandle(dummy1);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, this);
+    retVal &= (sel.WaitUntil(defaultTo) == 1);
+    retVal &= sel.IsSet(bUDPsRead);
+    retVal &= !sel.IsSet(dummy1);
+    retVal &= !sel.IsSet(dummy2);
+    while (Threads::IsAlive(tid)) {
+        Sleep::MSec(1);
+    }
+    bUDPsRead.Close();
+    dummy1.Close();
+    dummy2.Close();
+    return retVal;
+}
+
+bool SelectTest::TestWaitUntil_emptyList() {
+    int32 retSel = sel.WaitUntil(defaultTo);
+    return (retSel == -1);
 }

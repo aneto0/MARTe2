@@ -84,12 +84,12 @@ TEST(SelectGTest, TestAddExceptionHandle) {
 
 TEST(SelectGTest, TestAddExceptionHandle_SameHandle) {
     SelectTest myTest;
-    ASSERT_TRUE(myTest.TestAddExceptionHandle());
+    ASSERT_TRUE(myTest.TestAddExceptionHandle_SameHandle());
 }
 
-TEST(SelectGTest, TestAddExceptionHandle_Invaliddle) {
+TEST(SelectGTest, TestAddExceptionHandle_Invalidle) {
     SelectTest myTest;
-    ASSERT_TRUE(myTest.TestAddExceptionHandle_Invaliddle());
+    ASSERT_TRUE(myTest.TestAddExceptionHandle_Invalidle());
 }
 
 TEST(SelectGTest, TestRemoveReadHandle) {
@@ -97,8 +97,77 @@ TEST(SelectGTest, TestRemoveReadHandle) {
     ASSERT_TRUE(myTest.TestRemoveReadHandle());
 }
 
+TEST(SelectGTest, TestRemoveReadHandle_SameHandle) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestRemoveReadHandle_SameHandle());
+}
+
 TEST(SelectGTest, TestRemoveReadHandle_InvalidHandle) {
     SelectTest myTest;
     ASSERT_TRUE(myTest.TestRemoveReadHandle_InvalidHandle());
 }
 
+TEST(SelectGTest, TestRemoveWriteHandle) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestRemoveWriteHandle());
+}
+
+TEST(SelectGTest, TestRemoveWriteHandle_SameHandle) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestRemoveWriteHandle_SameHandle());
+}
+
+TEST(SelectGTest, TestRemoveWriteHandle_InvalidHandle) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestRemoveWriteHandle_InvalidHandle());
+}
+
+TEST(SelectGTest, TestRemoveExceptionHandle) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestRemoveExceptionHandle());
+}
+
+TEST(SelectGTest, TestRemoveExceptionHandle_SameHandle) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestRemoveExceptionHandle_SameHandle());
+}
+
+TEST(SelectGTest, TestRemoveExceptionHandle_InvalidHandle) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestRemoveExceptionHandle_InvalidHandle());
+}
+
+TEST(SelectGTest, TesClearAllHandle) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TesClearAllHandle());
+}
+
+TEST(SelectGTest, TestIsSet) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestIsSet());
+}
+
+TEST(SelectGTest, TestWaitUntil_waitTimeout) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestWaitUntil_waitTimeout());
+}
+
+TEST(SelectGTest, TestWaitUntil_waitRead) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestWaitUntil_waitRead());
+}
+
+TEST(SelectGTest, TestWaitUntil_severaDifferentWaitRead) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestWaitUntil_severaDifferentWaitRead());
+}
+
+TEST(SelectGTest, TestWaitUntil_removeSomeWaitRead) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestWaitUntil_removeSomeWaitRead());
+}
+
+TEST(SelectGTest, TestWaitUntil_emptyList) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestWaitUntil_emptyList());
+}

@@ -134,7 +134,6 @@ namespace MARTe {
          *     true
          * @post
          *    !IsSet()
-         * @return True if the handle is removed from being monitored.
          */
         void ClearAllHandle();
 
