@@ -103,8 +103,14 @@ public:
      */
     bool TestSerialise_StaticArrayCharStar();
 
+    /**
+     * @brief Tests the Serialise function with a char[][].
+     */
     bool TestSerialise_StaticMatrixChar();
 
+    /**
+     * @brief Tests the Serialise function with a char[][][].
+     */
     bool TestSerialise_StaticMeshChar();
 
     /**

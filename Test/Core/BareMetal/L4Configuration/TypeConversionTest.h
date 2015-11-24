@@ -40,6 +40,10 @@
 
 using namespace MARTe;
 
+
+/**
+ * @brief A table node used to test the TypeConvert function between basic elements.
+ */
 template<typename T1, typename T2>
 struct TypeToTypeTableTest {
     T1 typeToConvert;
@@ -48,6 +52,9 @@ struct TypeToTypeTableTest {
     bool expected;
 };
 
+/**
+ * @brief A table node used to test the TypeConvert function between vectors.
+ */
 template<typename T1, typename T2, uint32 nElements>
 struct TypeToTypeVectorTableTest {
     T1 typeToConvert[nElements];
@@ -55,6 +62,9 @@ struct TypeToTypeVectorTableTest {
     bool go;
 };
 
+/**
+ * @brief A table node used to test the TypeConvert function between matrices.
+ */
 template<typename T1, typename T2, uint32 nRows, uint32 nCols>
 struct TypeToTypeMatrixTableTest {
     T1 typeToConvert[nRows][nCols];
@@ -62,94 +72,200 @@ struct TypeToTypeMatrixTableTest {
     bool go;
 };
 
+
+/**
+ * @brief Tests all the TypeConversion functions.
+ */
 class TypeConversionTest {
 public:
+
+    /**
+     * @brief Tests the type conversion between scalar types.
+     */
     template<typename T1, typename T2>
     bool TestTypeConvert(const TypeToTypeTableTest<T1, T2>* table);
 
+    /**
+     * @brief Tests the type conversion between scalar types in input and a char* pointing to a C-String heap memory in output.
+     */
     template<typename T1>
     bool TestTypeConvertToCCString(const TypeToTypeTableTest<T1, const char8*>* table);
 
+    /**
+     * @brief Tests the type conversion between scalar types in input and a char[] in output.
+     */
     template<typename T1>
     bool TestTypeConvertCArray(const TypeToTypeTableTest<T1, const char8 *>* table);
 
+    /**
+     * @brief Tests the type conversion between char[] in input and scalar types in output.
+     */
     template<typename T2>
     bool TestTypeConvertFromCArray(const TypeToTypeTableTest<const char8 *, T2>* table);
 
+    /**
+     * @brief Tests the type conversion between scalar types in input and a Vector<char> in output.
+     */
     template<typename T1>
     bool TestTypeConvertToCharVector(const TypeToTypeTableTest<T1, const char8 *>* table);
 
+    /**
+     * @brief Tests the type conversion between Vector<char> in input and scalar types in output.
+     */
     template<typename T2>
     bool TestTypeConvertFromCharVector(const TypeToTypeTableTest<const char8 *, T2>* table);
 
+    /**
+     * @brief Tests the type conversion between vectors.
+     */
     template<typename T1, typename T2, uint32 nElements>
     bool TestTypeConvertVector(const TypeToTypeVectorTableTest<T1, T2, nElements>* table);
 
+    /**
+     * @brief Tests the type conversion between vectors in input and a char[][] in output.
+     */
     template<typename T1, uint32 nElements>
     bool TestTypeConvertVectorCArray(const TypeToTypeVectorTableTest<T1, const char8*, nElements>* table);
 
+    /**
+     * @brief Tests the type conversion between char[][] in input and vectors in output.
+     */
     template<typename T2, uint32 nElements>
     bool TestTypeConvertVectorFromCArray(const TypeToTypeVectorTableTest<const char8*, T2, nElements>* table);
 
+    /**
+     * @brief Tests the type conversion between vectors in input and a Matrix<char> in output.
+     */
     template<typename T1, uint32 nElements>
     bool TestTypeConvertVectorToCharMatrix(const TypeToTypeVectorTableTest<T1, const char8*, nElements>* table);
 
+    /**
+     * @brief Tests the type conversion between Matrix<char> in input and vectors in output.
+     */
     template<typename T2, uint32 nElements>
     bool TestTypeConvertVectorFromCharMatrix(const TypeToTypeVectorTableTest<const char8*, T2, nElements>* table);
 
+    /**
+     * @brief Tests the type conversion between vectors in input and a Vector<char*> in output.
+     */
     template<typename T1, uint32 nElements>
     bool TestTypeConvertVectorToCharStarVector(const TypeToTypeVectorTableTest<T1, const char8*, nElements>* table);
 
+    /**
+     * @brief Tests the type conversion from a static matrix to a static matrix.
+     */
     template<typename T1, typename T2, uint32 nRows, uint32 nCols>
     bool TestTypeConvertMatrixStaticToStatic(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table);
 
+    /**
+     * @brief Tests the type conversion from a static matrix to a heap matrix.
+     */
     template<typename T1, typename T2, uint32 nRows, uint32 nCols>
     bool TestTypeConvertMatrixStaticToHeap(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table);
 
+    /**
+     * @brief Tests the type conversion from a heap matrix to a static matrix.
+     */
     template<typename T1, typename T2, uint32 nRows, uint32 nCols>
     bool TestTypeConvertMatrixHeapToStatic(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table);
 
+    /**
+     * @brief Tests the type conversion from a heap matrix to a heap matrix.
+     */
     template<typename T1, typename T2, uint32 nRows, uint32 nCols>
     bool TestTypeConvertMatrixHeapToHeap(const TypeToTypeMatrixTableTest<T1, T2, nRows, nCols>* table);
 
+    /**
+     * @brief Tests the type conversion from a static matrix to a char[][][].
+     */
     template<typename T1, uint32 nRows, uint32 nCols>
     bool TestTypeConvertMatrixStaticToStaticCArray(const TypeToTypeMatrixTableTest<T1, const char8*, nRows, nCols>* table);
 
+    /**
+     * @brief Tests the type conversion from a char[][][] to static matrix.
+     */
     template<typename T2, uint32 nRows, uint32 nCols>
     bool TestTypeConvertMatrixStaticToStaticFromCArray(const TypeToTypeMatrixTableTest<const char8*, T2, nRows, nCols>* table);
 
+    /**
+     * @brief Tests the type conversion from a heap matrix to a char[][][].
+     */
     template<typename T1, uint32 nElements>
     bool TestTypeConvertVectorStaticToHeapMatrixCArray(const TypeToTypeVectorTableTest<T1, const char8*, nElements>* table);
 
+    /**
+     * @brief Tests the type conversion from a char[][][] to heap matrix.
+     */
     template<typename T2, uint32 nRows, uint32 nCols>
     bool TestTypeConvertMatrixStaticToHeapFromCArray(const TypeToTypeMatrixTableTest<const char8*, T2, nRows, nCols>* table);
 
+    /**
+     * @brief Tests the type conversion from a static matrix to a Matrix<char*> on heap.
+     */
     template<typename T1, uint32 nRows, uint32 nCols>
     bool TestTypeConvertMatrixStaticToHeapCCString(const TypeToTypeMatrixTableTest<T1, const char8*, nRows, nCols>* table);
 
+    /**
+     * @brief Tests the type conversion from a static matrix to a static Matrix<char*>.
+     */
     template<typename T1, uint32 nRows, uint32 nCols>
     bool TestTypeConvertMatrixStaticToStaticCCString(const TypeToTypeMatrixTableTest<T1, const char8*, nRows, nCols>* table);
 
+    /**
+     * @brief Tests the type conversion from a heap matrix to a Matrix<char*> on heap.
+     */
     template<typename T1, uint32 nRows, uint32 nCols>
     bool TestTypeConvertMatrixHeapToHeapCCString(const TypeToTypeMatrixTableTest<T1, const char8*, nRows, nCols>* table);
 
+    /**
+     * @brief Tests the type conversion from a heap matrix to a static Matrix<char*>.
+     */
     template<typename T1, uint32 nRows, uint32 nCols>
     bool TestTypeConvertMatrixHeapToStaticCCString(const TypeToTypeMatrixTableTest<T1, const char8*, nRows, nCols>* table);
 
+    /**
+     * @brief Tests the conversion from a char[] to a char*.
+     */
     bool TestCArrayToCCStringScalar();
 
+    /**
+     * @brief Tests the conversion from a char[][] to a Vector<char*>
+     */
     bool TestCArrayToCCStringVector();
 
+    /**
+     * @brief Tests the conversion from a char[][][] to a Matrix<char*>
+     */
     bool TestCArrayToCCStringMatrix();
 
+    /**
+     * @brief Tests the conversion from an integer to a char[] truncating the string in output
+     * because of the too small array size.
+     */
     bool TestIntegerToCArrayScalar_Trunc();
 
+    /**
+     * @brief Tests the conversion from a float to a char[] truncating the string in output
+     * because of the too small array size.
+     */
     bool TestFloatToCArrayScalar_Trunc();
 
+    /**
+     * @brief Tests the conversion from a const char* to a char[] truncating the string in output
+     * because of the too small array size.
+     */
     bool TestCCStringToCArrayScalar_Trunc();
 
+    /**
+     * @brief Tests the conversion from a Vector<const char*> to a char[][] truncating the string in output
+     * because of the too small array size.
+     */
     bool TestCCStringToCArrayVector_Trunc();
 
+    /**
+     * @brief Tests the conversion from a Matrix<const char*> to a char[][][] truncating the string in output
+     * because of the too small array size.
+     */
     bool TestCCStringToCArrayMatrix_Trunc();
 
 };
