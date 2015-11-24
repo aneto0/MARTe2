@@ -94,8 +94,6 @@ public:
 
     /**
      * @brief Constructs a new matrix from a statically declared table [][].
-     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
-     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfRows() == nOfRowsStatic &&
@@ -130,7 +128,7 @@ public:
 
     /**
      * @brief Returns the vector associated to the specified row.
-     * @param[in] row the row to retrieve.
+     * @param[in] rows the row to retrieve.
      * @return the vector associated to the specified row.
      */
     Vector<T> operator [](uint32 rows);

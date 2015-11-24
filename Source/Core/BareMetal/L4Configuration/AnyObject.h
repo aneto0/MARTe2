@@ -37,12 +37,13 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 /**
  * @brief An helper class to serialise the contents of an AnyType (i.e. of the data pointed by an AnyType.GetDataPointer()).
  * @details This class allows to associate a name and a reference to an AnyType.
  * It holds and manages a memory space to store a copy of the data of the serialised AnyType.
  */
-namespace MARTe {
 class AnyObject: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
