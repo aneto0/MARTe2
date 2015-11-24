@@ -327,7 +327,7 @@ bool AnyObject::Serialise(const AnyType &typeIn) {
     return ok;
 }
 
-void AnyObject::CleanUp() const {
+void AnyObject::CleanUp() {
     void *typePointer = type.GetDataPointer();
     bool cString = (type.GetTypeDescriptor().type == CCString);
     bool sString = (type.GetTypeDescriptor().type == SString);
@@ -392,6 +392,7 @@ void AnyObject::CleanUp() const {
         if (!HeapManager::Free(typePointer)) {
             REPORT_ERROR(ErrorManagement::FatalError, "HeapManager::Free failed. AnyObject memory not deallocated.");
         }
+        type=voidAnyType;
     }
 }
 

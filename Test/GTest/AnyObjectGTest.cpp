@@ -626,3 +626,9 @@ TEST(AnyObjectGTest,TestSerialise_StaticMeshChar) {
     AnyObjectTest anyObjTest;
     ASSERT_TRUE(anyObjTest.TestSerialise_StaticMeshChar());
 }
+
+TEST(AnyObjectGTest,TestCleanUp) {
+    AnyObjectTest anyObjTest;
+    ASSERT_TRUE(anyObjTest.TestCleanUp());
+}
+

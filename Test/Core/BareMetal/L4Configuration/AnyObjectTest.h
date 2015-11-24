@@ -186,6 +186,12 @@ public:
      * @brief Tests the TestGetObjectBuildFunction (from Object)
      */
     bool TestGetObjectBuildFunction();
+
+
+    /**
+     * @brief Tests the CleanUp function.
+     */
+    bool TestCleanUp();
 };
 
 /*---------------------------------------------------------------------------*/

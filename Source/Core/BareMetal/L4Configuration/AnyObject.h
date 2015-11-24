@@ -64,7 +64,7 @@ public:
     /**
      * @brief Frees the memory of the internal serialised AnyType to be ready for a new serialisation.
      */
-    void CleanUp() const;
+    void CleanUp();
 
     /**
      * @brief Serialises an AnyType.

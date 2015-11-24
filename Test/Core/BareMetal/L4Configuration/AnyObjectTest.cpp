@@ -118,8 +118,8 @@ bool AnyObjectTest::TestSerialise_StaticMatrixChar() {
 }
 
 bool AnyObjectTest::TestSerialise_StaticMeshChar() {
-    char8 strArrWrite[2][3][4] = { { { 'a', 'a', 'a', 0 }, { 'b', 'b', 'b', 0 }, { 'c', 'c', 'c', 0 } }, { { 'd', 'd', 'd', 0 }, { 'e', 'e', 'e', 0 }, {
-            'f', 'f', 0, 0 } } };
+    char8 strArrWrite[2][3][4] = { { { 'a', 'a', 'a', 0 }, { 'b', 'b', 'b', 0 }, { 'c', 'c', 'c', 0 } }, { { 'd', 'd', 'd', 0 }, { 'e', 'e', 'e', 0 }, { 'f',
+            'f', 0, 0 } } };
     AnyObject anyObj;
     bool ok = anyObj.Serialise(strArrWrite);
 
@@ -280,3 +280,29 @@ bool AnyObjectTest::TestGetObjectBuildFunction() {
     Reference ref("AnyObject");
     return ref.IsValid();
 }
+
+bool AnyObjectTest::TestCleanUp() {
+
+    AnyObject anyObj;
+    if (anyObj.GetType().GetDataPointer() != NULL) {
+        return false;
+    }
+
+    int32 element = 4;
+    anyObj.Serialise(element);
+
+    int32 *serialized = (int32*) (anyObj.GetType().GetDataPointer());
+    if (serialized != NULL) {
+        if(serialized[0]!=4) {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    anyObj.CleanUp();
+
+    return anyObj.GetType().GetDataPointer() == NULL;
+}
+
