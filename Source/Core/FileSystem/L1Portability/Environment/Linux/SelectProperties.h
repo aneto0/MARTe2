@@ -1,8 +1,8 @@
 /**
- * @file BasicFileProperties.h
- * @brief Header file for class BasicFileProperties
- * @date Oct 29, 2015
- * @author llcapella
+ * @file SelectProperties.h
+ * @brief Header file for class SelectProperties
+ * @date 12-11-2015
+ * @author Llorenç Capellà
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BasicFileProperties
+ * @details This header file contains the declaration of the class SelectProperties
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BASICFILEPROPERTIES_H_
-#define BASICFILEPROPERTIES_H_
+#ifndef SELECTPROPERTIES_H_
+#define SELECTPROPERTIES_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,22 +32,19 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "StreamString.h"
-#include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-struct BasicFileProperties {
-    MARTe::Handle identifier;
-    MARTe::StreamString pathName;
-};
+typedef fd_set SetIdentifier;
 }
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /*BASICFILEPROPERTIES_H_ */
-
+#endif /*SELECTPROPERTIES_H_ */
+	

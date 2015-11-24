@@ -81,6 +81,7 @@ struct EventSemProperties;
 struct BasicConsoleProperties;
 #define BasicConsoleHandle BasicConsoleProperties*
 
+typedef int32 Handle;
 
 }
 

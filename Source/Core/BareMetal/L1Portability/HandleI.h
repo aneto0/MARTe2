@@ -1,8 +1,8 @@
 /**
- * @file BasicFileProperties.h
- * @brief Header file for class BasicFileProperties
- * @date Oct 29, 2015
- * @author llcapella
+ * @file HandleI.h
+ * @brief Header file for class HandleI
+ * @date 13/11/2015
+ * @author Llorenç Capellà
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class BasicFileProperties
+ * @details This header file contains the declaration of the class HandleI
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef BASICFILEPROPERTIES_H_
-#define BASICFILEPROPERTIES_H_
+#ifndef HANDLEI_H_
+#define HANDLEI_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,16 +32,46 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "StreamString.h"
 #include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-struct BasicFileProperties {
-    MARTe::Handle identifier;
-    MARTe::StreamString pathName;
+
+/**
+ * @brief Abstract class for classes which have a Handle
+ * @detail This class implements an interface to get the handle of the files, sockets and consoles.
+ * Due to the BasicConsol has two handles (one for read and one for write) the interface implements
+ * two get handle functions.
+ * In the case of the BasicFile and BasicSocket, which only have one handle,
+ * the two functions return the same handle and for hence they are interchangeable.
+ */
+class DLL_API HandleI {
+public:
+
+    /**
+     * Default constructor
+     */
+    HandleI() {
+    }
+
+    /**
+     * @brief Default destructor
+     */
+    virtual ~HandleI() {
+    }
+
+    /**
+     * @brief Queries the read handle
+     */
+    virtual Handle GetReadHandle() const = 0;
+
+    /**
+     * @brief Queries the write handle
+     */
+    virtual Handle GetWriteHandle() const = 0;
 };
 }
 
@@ -49,5 +79,5 @@ struct BasicFileProperties {
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /*BASICFILEPROPERTIES_H_ */
+#endif /*HANDLEI_H_ */
 

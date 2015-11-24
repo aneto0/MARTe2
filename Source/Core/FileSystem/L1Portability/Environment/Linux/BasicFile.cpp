@@ -137,14 +137,16 @@ MARTe::uint32 CheckFlags(MARTe::uint32 flags) {
 namespace MARTe {
 
 BasicFile::BasicFile() :
-        StreamI::StreamI() {
+        StreamI(),
+        HandleI() {
     properties.identifier = INVALID_FD;
     properties.pathName = "";
 }
 
 BasicFile::BasicFile(const BasicFile & bf) :
         /*lint -e{1738} THe StreamI does not have a copy constructor*/
-        StreamI::StreamI() {
+        StreamI::StreamI(),
+        HandleI::HandleI() {
     properties.identifier = dup(bf.properties.identifier);
     properties.pathName = bf.properties.pathName;
 }
@@ -491,6 +493,14 @@ bool BasicFile::SetSize(const uint64 size) {
 
 StreamString BasicFile::GetPathName() const {
     return properties.pathName;
+}
+
+Handle BasicFile::GetReadHandle() const {
+    return properties.identifier;
+}
+
+Handle BasicFile::GetWriteHandle() const {
+    return properties.identifier;
 }
 }
 
