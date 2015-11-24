@@ -32,36 +32,28 @@
 #include "SelectTest.h"
 #include "Select.h"
 #include "Threads.h"
-#include "ThreadInformation.h"
 #include "Sleep.h"
-#include "stdio.h"
 #include "BasicUDPSocket.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-static void ThreadWrite(SelectTest &tt) {
-    /*
-     //Sleep half of defaultTo (in sec)
-     Sleep::MSec(static_cast<int>(tt.defaultTo.GetTimeoutMSec()));
-     uint32 size = 11U;
-     BasicFile bf1;
-     bf1.Open(tt.name, BasicFile::ACCESS_MODE_W);
-     bf1.Write("Please work", size);
-     bf1.Close();
-     */
+static const char8 LOCALHOST_IP[] = "127.0.0.1";
+static const uint16 ACTUAL_TESTING_PORT = 49152;
+static const uint16 DUMMY_TESTING_PORT_1 = 49153;
+static const uint16 DUMMY_TESTING_PORT_2 = 49154;
+
+static void ThreadWrite(TimeoutType &defaultTo) {
     BasicUDPSocket bUDPsWrite;
     if (!bUDPsWrite.Open()) {
-        printf("bUDPsWrite.Open() error \n");
         return;
     }
-    if (!bUDPsWrite.Connect("192.168.130.44", 4444)) {
-        printf("bUDPsWrite.Connect() error \n");
+    if (!bUDPsWrite.Connect(LOCALHOST_IP, ACTUAL_TESTING_PORT)) {
         return;
     }
     uint32 size = 3;
-    Sleep::MSec(tt.defaultTo.GetTimeoutMSec() / 2);
+    Sleep::MSec(defaultTo.GetTimeoutMSec() / 2);
     bUDPsWrite.Write("Hey", size);
     bUDPsWrite.Close();
     return;
@@ -76,6 +68,9 @@ using namespace MARTe;
 SelectTest::SelectTest() {
     retVal = true;
     defaultTo = 2000;
+}
+
+SelectTest::~SelectTest() {
 }
 
 bool SelectTest::TestDefaultConstructor() {
@@ -188,11 +183,11 @@ bool SelectTest::TestRemoveExceptionHandle_InvalidHandle() {
     return retVal;
 }
 
-bool SelectTest::TesClearAllHandle() {
+bool SelectTest::TesClearAllHandles() {
     retVal &= sel.AddWriteHandle(bc);
     retVal &= sel.AddExceptionHandle(bc);
     retVal &= sel.AddReadHandle(bc);
-    sel.ClearAllHandle();
+    sel.ClearAllHandles();
     retVal &= !sel.IsSet(bc);
     return retVal;
 }
@@ -216,14 +211,14 @@ bool SelectTest::TestWaitUntil_waitRead() {
         retVal = false;
         return retVal;
     }
-    if (!bUDPsRead.Listen(4444)) {
+    if (!bUDPsRead.Listen(ACTUAL_TESTING_PORT)) {
         retVal = false;
         return retVal;
     }
     sel.AddReadHandle(bUDPsRead);
-    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, this);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, &defaultTo);
     retVal &= (sel.WaitUntil(defaultTo) == 1);
-    retVal &= bUDPsRead.IsValid();
+    retVal &= sel.IsSet(bUDPsRead);
     while (Threads::IsAlive(tid)) {
         Sleep::MSec(1);
     }
@@ -240,7 +235,7 @@ bool SelectTest::TestWaitUntil_severaDifferentWaitRead() {
         retVal = false;
         return retVal;
     }
-    if (!bUDPsRead.Listen(4444)) {
+    if (!bUDPsRead.Listen(ACTUAL_TESTING_PORT)) {
         retVal = false;
         return retVal;
     }
@@ -248,7 +243,7 @@ bool SelectTest::TestWaitUntil_severaDifferentWaitRead() {
         retVal = false;
         return retVal;
     }
-    if (!dummy1.Listen(4445)) {
+    if (!dummy1.Listen(DUMMY_TESTING_PORT_1)) {
         retVal = false;
         return retVal;
     }
@@ -256,7 +251,7 @@ bool SelectTest::TestWaitUntil_severaDifferentWaitRead() {
         retVal = false;
         return retVal;
     }
-    if (!dummy2.Listen(4446)) {
+    if (!dummy2.Listen(DUMMY_TESTING_PORT_2)) {
         retVal = false;
         return retVal;
     }
@@ -264,7 +259,7 @@ bool SelectTest::TestWaitUntil_severaDifferentWaitRead() {
     sel.AddReadHandle(bUDPsRead);
     sel.AddReadHandle(dummy1);
     sel.AddReadHandle(dummy2);
-    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, this);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, &defaultTo);
     retVal &= (sel.WaitUntil(defaultTo) == 1);
     retVal &= sel.IsSet(bUDPsRead);
     retVal &= !sel.IsSet(dummy1);
@@ -287,7 +282,7 @@ bool SelectTest::TestWaitUntil_removeSomeWaitRead() {
         retVal = false;
         return retVal;
     }
-    if (!bUDPsRead.Listen(4444)) {
+    if (!bUDPsRead.Listen(ACTUAL_TESTING_PORT)) {
         retVal = false;
         return retVal;
     }
@@ -295,7 +290,7 @@ bool SelectTest::TestWaitUntil_removeSomeWaitRead() {
         retVal = false;
         return retVal;
     }
-    if (!dummy1.Listen(4445)) {
+    if (!dummy1.Listen(DUMMY_TESTING_PORT_1)) {
         retVal = false;
         return retVal;
     }
@@ -303,7 +298,7 @@ bool SelectTest::TestWaitUntil_removeSomeWaitRead() {
         retVal = false;
         return retVal;
     }
-    if (!dummy2.Listen(4446)) {
+    if (!dummy2.Listen(DUMMY_TESTING_PORT_2)) {
         retVal = false;
         return retVal;
     }
@@ -313,7 +308,7 @@ bool SelectTest::TestWaitUntil_removeSomeWaitRead() {
     sel.AddReadHandle(dummy2);
     sel.RemoveReadHandle(dummy2);
     sel.RemoveReadHandle(dummy1);
-    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, this);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, &defaultTo);
     retVal &= (sel.WaitUntil(defaultTo) == 1);
     retVal &= sel.IsSet(bUDPsRead);
     retVal &= !sel.IsSet(dummy1);

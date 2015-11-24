@@ -36,22 +36,26 @@
 #include "BasicConsole.h"
 #include "BasicFile.h"
 #include "TimeoutType.h"
-#include "EventSem.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
+
 class SelectTest {
+
 public:
+
     /**
      * @Brief Default constructor
      */
     SelectTest();
-    virtual ~SelectTest() {
 
-    }
+    /**
+     * @brief Destructor
+     */
+    virtual ~SelectTest();
 
     /**
      * @brief Test the constructor.
@@ -62,65 +66,65 @@ public:
     bool TestDefaultConstructor();
 
     /**
-     * @brief Test Select::AddReadHandle
+     * @brief Test Select::AddReadHandle()
      * @return True if the Select::AddReadHandle(bf) returns true.
      */
     bool TestAddReadHandle();
 
     /**
      * @brief Test Select::AddReadHandle()
-     * @brief add the same handle twice.
+     * @details add the same handle twice.
      * @return True if the Select::AddReadHandle(bf) returns true the first time and false the second attempt.
      */
     bool TestAddReadHandle_SameHandle();
 
     /**
-     * @brief Test Select::AddReadHandle
-     * @brief Add an invalid handle.
+     * @brief Test Select::AddReadHandle()
+     * @details Add an invalid handle.
      * @return True if the Select::AddReadHandle(bf) returns false.
      */
     bool TestAddReadHandle_InvalidHandle();
 
     /**
-     * @brief Select::TestAddReadHandle
+     * @brief Select::AddWriteHandle()
      * @return True if the Select::AddWriteHandle(bc) returns true.
      */
     bool TestAddWriteHandle();
 
     /**
-     * @brief Test Select::AddWriteHandle
-     * @brief Add the same handle twice.
+     * @brief Test Select::AddWriteHandle()
+     * @details Add the same handle twice.
      * @return True if the Select::AddWriteHandle(bc) returns true the first time and false the second attempt.
      */
     bool TestAddWritedHandle_SameHandle();
 
     /**
-     * @brief Select::TestAddWriteHandle
-     * @brief Add an invalid handle.
+     * @brief Select::TestAddWriteHandle()
+     * @details Add an invalid handle.
      * @return True if the Select::AddWriteHandle(bf) returns false.
      */
     bool TestAddWritedHandle_InvalidHandle();
 
     /**
-     * @brief Test Select::AddExceptionHandle using a valid handle
+     * @brief Test Select::AddExceptionHandle() using a valid handle
      * @return True if Select::AddExceptionHandle() return true.
      */
     bool TestAddExceptionHandle();
 
     /**
-     * Test Select::AddExceptionHandle adding the same handle twice.
+     * @brief Test Select::AddExceptionHandle() adding the same handle twice.
      * @return True if the first add succeeds and the second fails.
      */
     bool TestAddExceptionHandle_SameHandle();
 
     /**
-     * Test Select::AddExceptionHandle using an invalid handle.
+     * @brief Test Select::AddExceptionHandle() using an invalid handle.
      * @return True if the add fails.
      */
     bool TestAddExceptionHandle_Invalidle();
 
     /**
-     * @brief Test Select::RemoveReadHandle in normal conditions.
+     * @brief Test Select::RemoveReadHandle() in normal conditions.
      * @details First add an element then try to remove it and check if it is really removed.
      * @return True if Select::RemoveReadHandle(bc) returns true and Select::IsSet(bc) returns false.
      */
@@ -134,13 +138,13 @@ public:
     bool TestRemoveReadHandle_SameHandle();
 
     /**
-     * @brief Test RemoveReadHandle using an invalid handle.
+     * @brief Test RemoveReadHandle() using an invalid handle.
      * @return True if Select::RemoveReadHandle(bc) returns false.
      */
     bool TestRemoveReadHandle_InvalidHandle();
 
     /**
-     * @brief Test RemoveWriteHandle in normal conditions.
+     * @brief Test RemoveWriteHandle() in normal conditions.
      * @details First add an element then try to remove it and check if it is really removed.
      * @return True if Select::RemoveWriteHandle(bc) returns true and Select::IsSet(bc) returns false.
      */
@@ -154,13 +158,13 @@ public:
     bool TestRemoveWriteHandle_SameHandle();
 
     /**
-     * @brief Test Select::RemoveWriteHandle using an invalid handle.
+     * @brief Test Select::RemoveWriteHandle() using an invalid handle.
      * @return True if Select::RemoveWriteHandle(bc) returns false.
      */
     bool TestRemoveWriteHandle_InvalidHandle();
 
     /**
-     * @brief Test Select::RemoveExceptionHandle using a valid handle.
+     * @brief Test Select::RemoveExceptionHandle() using a valid handle.
      * @details First add an element then try to remove it and check if it is really removed.
      * @return True if Select::RemoveExceptionHandle(bc) returns true and Select::IsSet(bc) returns false.
      */
@@ -174,17 +178,17 @@ public:
     bool TestRemoveExceptionHandle_SameHandle();
 
     /**
-     * @brief Test Select::RemoveExceptionHandle using an invalid handle.
+     * @brief Test Select::RemoveExceptionHandle() using an invalid handle.
      * @return True if Select::RemoveExceptionHandle(bc) returns false.
      */
     bool TestRemoveExceptionHandle_InvalidHandle();
 
     /**
-     * @brief Test Select::ClearAllHandle() using valid handles
+     * @brief Test Select::ClearAllHandles() using valid handles
      * @details add handles to read, write and exception modes, then clear all handle and check if they are removed
      * @return True if all handles are added and removed successfully.
      */
-    bool TesClearAllHandle();
+    bool TesClearAllHandles();
 
     /**
      * @brief Test Select::IsSet()
@@ -228,15 +232,31 @@ public:
      */
     bool TestWaitUntil_emptyList();
 
-    /* Timeout used in some of the tests*/
+private:
+
+    /**
+     * Timeout used in some of the tests, expressed in msec
+     */
     TimeoutType defaultTo;
-    /*Select variable to test the Select class*/
+
+    /**
+     * Select variable to test the Select class
+     */
     Select sel;
-    /*Auxiliary variable used to test some of the Select class functions. In general for tests where were necessary a valid handles is used the bc (basic console) variable*/
+
+    /**
+     * Auxiliary variable used to test some of the Select class functions. In general for tests where were necessary a valid handles is used the bc (basic console) variable
+     */
     BasicConsole bc;
-    /*Auxiliary variable used to test some of the Select class functions. In general for tests where were necessary an invalid handles is used the bf (basic file) variable*/
+
+    /**
+     * Auxiliary variable used to test some of the Select class functions. In general for tests where were necessary an invalid handles is used the bf (basic file) variable
+     */
     BasicFile bf;
-    /*retVal is the returned value of the tests.*/
+
+    /**
+     * retVal is the returned value of the tests.
+     */
     bool retVal;
 
 };

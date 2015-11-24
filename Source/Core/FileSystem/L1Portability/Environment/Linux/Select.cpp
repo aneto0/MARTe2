@@ -44,6 +44,7 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 /*lint -e{1401} .Justification: Removes the warning "not initialized by constructor [MISRA C++ Rule 8-5-1]". */
 Select::Select() {
     /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
@@ -68,7 +69,9 @@ Select::Select() {
     /*lint -e{909} .Justification: Removes the warning "Implicit conversion from int to bool [MISRA C++ Rule 5-0-13], [MISRA C++ Rule 5-0-14], [MISRA C++ Rule 5-3-1]". */
     FD_ZERO(&exceptionHandle);
     highestHandle = -1;
+}
 
+Select::~Select() {
 }
 
 bool Select::AddReadHandle(const HandleI &handle) {
@@ -268,7 +271,7 @@ bool Select::RemoveExceptionHandle(const HandleI &handle) {
     return retVal;
 }
 
-void Select::ClearAllHandle() {
+void Select::ClearAllHandles() {
     /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
     /*lint -e{1960} .Justification: Removes the warning "Violates MISRA C++ 2008 Required Rule 17-0-2, Re-use of C++ identifier pattern: __d0". */
     /*lint -e{9146} .Justification: Removes the warning "multiple declarators in a declaration [MISRA C++ Rule 8-0-1]". */
@@ -316,7 +319,7 @@ bool Select::IsSet(const HandleI &handle) const {
         retVal = FD_ISSET(descriptor, &exceptionHandle);
     }
     if (!retVal) {
-        //It checks if it is a BasicConsol.
+        //It checks if it has a double handle (i.e. a different handle for reading and writing).
         if (handle.GetWriteHandle() != descriptor) {
             descriptor = handle.GetWriteHandle();
             /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
@@ -368,5 +371,4 @@ int32 Select::WaitUntil(const TimeoutType &msecTimeout) {
     return retSel;
 }
 
-}/*End namespace MARTe*/
-
+}
