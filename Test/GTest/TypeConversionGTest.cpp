@@ -38,6 +38,9 @@
 #include "gtest/gtest.h"
 #include "TypeConversionTest.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnarrowing"
+#pragma GCC diagnostic ignored "-Woverflow"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -214,18 +217,18 @@ TEST(TypeConversionGTest,TestCCStringToInt64) {
             {"a123s5",0, true, false},
             {"0xFFFFFFFFFFFFFFFF",-1, true, true},
             {"0xFFFFFFFFFFFFFFFF1",-1, true, false},
-            {"0x7FFFFFFFFFFFFFFF",9223372036854775807, true, true},
+            {"0x7FFFFFFFFFFFFFFF",9223372036854775807ul, true, true},
             {"0o1777777777777777777777",-1, true, true},
-            {"0o777777777777777777777",9223372036854775807, true, true},
-            {"0o2777777777777777777777",3458764513820540927, true, false},
+            {"0o777777777777777777777",9223372036854775807ul, true, true},
+            {"0o2777777777777777777777",3458764513820540927ul, true, false},
             {"0b1111111111111111111111111111111111111111111111111111111111111111",-1, true, true},
             {"0b11111111111111111111111111111111111111111111111111111111111111111",-1, true, false},
-            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, true},
-            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, false},
-            {"9223372036854775807",9223372036854775807, true, true},
-            {"9223372036854775808",922337203685477580, true, false},
-            {"-9223372036854775808",-9223372036854775808, true, true},
-            {"-9223372036854775809",-922337203685477580, true, false},
+            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, true},
+            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
+            {"9223372036854775807",9223372036854775807ul, true, true},
+            {"9223372036854775808",922337203685477580ul, true, false},
+            {"-9223372036854775808",-9223372036854775808ul, true, true},
+            {"-9223372036854775809",-922337203685477580ul, true, false},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -238,18 +241,18 @@ TEST(TypeConversionGTest,TestCCStringToUInt64) {
             {"123",123, true, true},
             {"123s1",123, true, false},
             {"a123s5",0, true, false},
-            {"0xFFFFFFFFFFFFFFFF",18446744073709551615, true, true},
-            {"0xFFFFFFFFFFFFFFFF1",18446744073709551615, true, false},
-            {"0x7FFFFFFFFFFFFFFF",9223372036854775807, true, true},
-            {"0o1777777777777777777777",18446744073709551615, true, true},
-            {"0o777777777777777777777",9223372036854775807, true, true},
-            {"0o2777777777777777777777",3458764513820540927, true, false},
-            {"0b1111111111111111111111111111111111111111111111111111111111111111",18446744073709551615, true, true},
-            {"0b11111111111111111111111111111111111111111111111111111111111111111",18446744073709551615, true, false},
-            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, true},
-            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, false},
-            {"18446744073709551615",18446744073709551615, true, true},
-            {"18446744073709551616",1844674407370955161, true, false},
+            {"0xFFFFFFFFFFFFFFFF",18446744073709551615ul, true, true},
+            {"0xFFFFFFFFFFFFFFFF1",18446744073709551615ul, true, false},
+            {"0x7FFFFFFFFFFFFFFF",9223372036854775807ul, true, true},
+            {"0o1777777777777777777777",18446744073709551615ul, true, true},
+            {"0o777777777777777777777",9223372036854775807ul, true, true},
+            {"0o2777777777777777777777",3458764513820540927ul, true, false},
+            {"0b1111111111111111111111111111111111111111111111111111111111111111",18446744073709551615ul, true, true},
+            {"0b11111111111111111111111111111111111111111111111111111111111111111",18446744073709551615ul, true, false},
+            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, true},
+            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
+            {"18446744073709551615",18446744073709551615ul, true, true},
+            {"18446744073709551616",1844674407370955161ul, true, false},
             {"-1",0, true, true},
             {0,0,0}
     };
@@ -540,7 +543,7 @@ TEST(TypeConversionGTest,TestSStringToInt64) {
             {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, false},
             {"9223372036854775807",9223372036854775807, true, true},
             {"9223372036854775808",922337203685477580, true, false},
-            {"-9223372036854775808",-9223372036854775808, true, true},
+            {"-9223372036854775808",-9223372036854775808ul, true, true},
             {"-9223372036854775809",-922337203685477580, true, false},
             {0,0,0}
     };
@@ -554,18 +557,18 @@ TEST(TypeConversionGTest,TestSStringToUInt64) {
             {"123",123, true, true},
             {"123s1",123, true, false},
             {"a123s5",0, true, false},
-            {"0xFFFFFFFFFFFFFFFF",18446744073709551615, true, true},
-            {"0xFFFFFFFFFFFFFFFF1",18446744073709551615, true, false},
-            {"0x7FFFFFFFFFFFFFFF",9223372036854775807, true, true},
-            {"0o1777777777777777777777",18446744073709551615, true, true},
-            {"0o777777777777777777777",9223372036854775807, true, true},
-            {"0o2777777777777777777777",3458764513820540927, true, false},
-            {"0b1111111111111111111111111111111111111111111111111111111111111111",18446744073709551615, true, true},
-            {"0b11111111111111111111111111111111111111111111111111111111111111111",18446744073709551615, true, false},
-            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, true},
-            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, false},
-            {"18446744073709551615",18446744073709551615, true, true},
-            {"18446744073709551616",1844674407370955161, true, false},
+            {"0xFFFFFFFFFFFFFFFF",18446744073709551615ul, true, true},
+            {"0xFFFFFFFFFFFFFFFF1",18446744073709551615ul, true, false},
+            {"0x7FFFFFFFFFFFFFFF",9223372036854775807ul, true, true},
+            {"0o1777777777777777777777",18446744073709551615ul, true, true},
+            {"0o777777777777777777777",9223372036854775807ul, true, true},
+            {"0o2777777777777777777777",3458764513820540927ul, true, false},
+            {"0b1111111111111111111111111111111111111111111111111111111111111111",18446744073709551615ul, true, true},
+            {"0b11111111111111111111111111111111111111111111111111111111111111111",18446744073709551615ul, true, false},
+            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, true},
+            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
+            {"18446744073709551615",18446744073709551615ul, true, true},
+            {"18446744073709551616",1844674407370955161ul, true, false},
             {"-1",0, true, true},
             {0,0,0}
     };
@@ -733,10 +736,10 @@ TEST(TypeConversionGTest,TestInt8ToInt64) {
 TEST(TypeConversionGTest,TestInt8ToUInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<int8,uint64> table[]={
-            {1,1, true, true},
-            {-1,0,true, true},
-            {127,127,true, true},
-            {-128, 0, true, true},
+            {1,1ul, true, true},
+            {-1,0ul,true, true},
+            {127,127ul,true, true},
+            {-128, 0ul, true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -835,8 +838,8 @@ TEST(TypeConversionGTest,TestUInt8ToInt64) {
 TEST(TypeConversionGTest,TestUInt8ToUInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint8,uint64> table[]={
-            {1,1, true, true},
-            {255,255,true, true},
+            {1,1ul, true, true},
+            {255,255ul,true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -946,9 +949,9 @@ TEST(TypeConversionGTest,TestInt16ToInt64) {
 TEST(TypeConversionGTest,TestInt16ToUInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<int16,uint64> table[]={
-            {1,1, true, true},
-            {32767,32767,true, true},
-            {-1, 0, true, true},
+            {1,1ul, true, true},
+            {32767,32767ul,true, true},
+            {-1, 0ul, true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1046,8 +1049,8 @@ TEST(TypeConversionGTest,TestUInt16ToInt64) {
 TEST(TypeConversionGTest,TestUInt16ToUInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint16,uint64> table[]={
-            {1,1, true, true},
-            {65535,65535,true, true},
+            {1,1ul, true, true},
+            {65535,65535ul,true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1159,9 +1162,9 @@ TEST(TypeConversionGTest,TestInt32ToInt64) {
 TEST(TypeConversionGTest,TestInt32ToUInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<int32,uint64> table[]={
-            {1,1, true, true},
-            {2147483647,2147483647,true, true},
-            {-1, 0, true, true},
+            {1,1ul, true, true},
+            {2147483647,2147483647ul,true, true},
+            {-1, 0ul, true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1262,8 +1265,8 @@ TEST(TypeConversionGTest,TestUInt32ToInt64) {
 TEST(TypeConversionGTest,TestUInt32ToUInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint32,uint64> table[]={
-            {1,1, true, true},
-            {4294967295,4294967295,true, true},
+            {1,1ul, true, true},
+            {4294967295,4294967295ul,true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1368,7 +1371,7 @@ TEST(TypeConversionGTest,TestInt64ToInt64) {
             {1,1, true, true},
             {-1,-1,true, true},
             {9223372036854775807,9223372036854775807,true, true},
-            {-9223372036854775808, -9223372036854775808, true, true},
+            {-9223372036854775808ul, -9223372036854775808ul, true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1380,9 +1383,9 @@ TEST(TypeConversionGTest,TestInt64ToInt64) {
 TEST(TypeConversionGTest,TestInt64ToUInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<int64,uint64> table[]={
-            {1,1, true, true},
-            {9223372036854775807,9223372036854775807,true, true},
-            {-1, 0, true, true},
+            {1,1ul, true, true},
+            {9223372036854775807,9223372036854775807ul,true, true},
+            {-1, 0ul, true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1472,8 +1475,8 @@ TEST(TypeConversionGTest,TestUInt64ToInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,int64> table[]={
             {1,1, true, true},
-            {9223372036854775807,9223372036854775807,true, true},
-            {9223372036854775808,9223372036854775807,true, true},
+            {9223372036854775807ul,9223372036854775807,true, true},
+            {9223372036854775808ul,9223372036854775807,true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1486,7 +1489,7 @@ TEST(TypeConversionGTest,TestUInt64ToUInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,uint64> table[]={
             {1,1, true, true},
-            {18446744073709551615,18446744073709551615,true, true},
+            {18446744073709551615ul,18446744073709551615ul,true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1658,7 +1661,7 @@ TEST(TypeConversionGTest,TestInt64ToFloat32) {
             {1,1, true, true},
             {-1,-1,true, true},
             {9223372036854775807,9223372036854775807,true, true},
-            {-9223372036854775808,-9223372036854775808.0,true, true},
+            {-9223372036854775808ul,-9223372036854775808.0,true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1671,7 +1674,7 @@ TEST(TypeConversionGTest,TestInt64ToFloat64) {
             {1,1, true, true},
             {-1,-1,true, true},
             {9223372036854775807,9223372036854775807,true, true},
-            {-9223372036854775808,-9223372036854775808.0,true, true},
+            {-9223372036854775808ul,-9223372036854775808.0,true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1685,7 +1688,7 @@ TEST(TypeConversionGTest,TestUInt64ToFloat32) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,float32> table[]={
             {1,1, true, true},
-            {18446744073709551615,18446744073709551615,true, true},
+            {18446744073709551615ul,18446744073709551615.0f,true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1696,7 +1699,7 @@ TEST(TypeConversionGTest,TestUInt64ToFloat64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,float64> table[]={
             {1,1, true, true},
-            {18446744073709551615,18446744073709551615,true, true},
+            {18446744073709551615ul,18446744073709551615.0,true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1837,10 +1840,10 @@ TEST(TypeConversionGTest,TestFloat32ToInt64) {
             {9223372036854775806.5f, 9223372036854775807, true, true},
             {-1.0, -1, true,true},
             // precision lost!!
-            {-9223372036854775807.0,-9223372036854775808,true, true},
+            {-9223372036854775807.0,-9223372036854775808ul,true, true},
             // precision lost!!
-            {-9223372036854775807.5,-9223372036854775808,true, true},
-            {-9223372036854775808.0, -9223372036854775808, true, true},
+            {-9223372036854775807.5,-9223372036854775808ul, true, true},
+            {-9223372036854775808.0, -9223372036854775808ul, true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1850,11 +1853,11 @@ TEST(TypeConversionGTest,TestFloat32ToUInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<float32,uint64> table[]={
             {1.9,2, true,true},
-            {18446744073709551617.0, 18446744073709551615, true, true},
+            {18446744073709551617.0, 18446744073709551615ul, true, true},
             //loss of precision !
-            {18446744073709551615.0, 18446744073709551615, true, true},
-            {18446744073709551614.499, 18446744073709551615, true, true},
-            {18446744073709551613.9, 18446744073709551615, true, true},
+            {18446744073709551615.0, 18446744073709551615ul, true, true},
+            {18446744073709551614.499, 18446744073709551615ul, true, true},
+            {18446744073709551613.9, 18446744073709551615ul, true, true},
             {-1E-9, 0, true, true},
             {-2.33,0,true,true},
             {0,0,0}
@@ -1996,10 +1999,10 @@ TEST(TypeConversionGTest,TestFloat64ToInt64) {
             {9223372036854775806.5f, 9223372036854775807, true, true},
             {-1.0, -1, true,true},
             // precision lost!!
-            {-9223372036854775807.0,-9223372036854775808,true, true},
+            {-9223372036854775807.0,-9223372036854775808ul,true, true},
             // precision lost!!
-            {-9223372036854775807.5,-9223372036854775808,true, true},
-            {-9223372036854775808.0, -9223372036854775808, true, true},
+            {-9223372036854775807.5,-9223372036854775808ul,true, true},
+            {-9223372036854775808.0, -9223372036854775808ul, true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -2009,11 +2012,11 @@ TEST(TypeConversionGTest,TestFloat64ToUInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<float64,uint64> table[]={
             {1.9,2, true, true},
-            {18446744073709551617.0, 18446744073709551615, true,true},
+            {18446744073709551617.0, 18446744073709551615ul, true,true},
             //loss of precision !
-            {18446744073709551615.0, 18446744073709551615, true,true},
-            {18446744073709551614.499, 18446744073709551615, true,true},
-            {18446744073709551613.9, 18446744073709551615, true,true},
+            {18446744073709551615.0, 18446744073709551615ul, true,true},
+            {18446744073709551614.499, 18446744073709551615ul, true,true},
+            {18446744073709551613.9, 18446744073709551615ul, true,true},
             {-2.33,0,true,true},
             {-1E-9, 0, true,true},
             {0,0,0}
@@ -2179,10 +2182,10 @@ TEST(TypeConversionGTest,TestInt64ToSString) {
             {123, "123", true,true},
             {-1,"-1", true,true},
             {9223372036854775807,"9223372036854775807", true,true},
-            {9223372036854775808,"-9223372036854775808", true,true},
-            {-9223372036854775808,"-9223372036854775808", true,true},
-            {-9223372036854775809,"9223372036854775807", true,true},
-            {18446744073709551615,"-1", true,true},
+            {9223372036854775808ul,"-9223372036854775808", true,true},
+            {-9223372036854775808ul,"-9223372036854775808", true,true},
+            {-9223372036854775809ul,"9223372036854775807", true,true},
+            {(int64)18446744073709551615ul,"-1", true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -2193,10 +2196,10 @@ TEST(TypeConversionGTest,TestUInt64ToSString) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,String> table[]={
             {123,"123", true,true},
-            {18446744073709551615,"18446744073709551615", true,true},
-            {18446744073709551616,"0", true,true},
-            {9223372036854775808,"9223372036854775808", true,true},
-            {-1,"18446744073709551615",true,true},
+            {18446744073709551615ul,"18446744073709551615", true,true},
+            {0ul,"0", true,true},
+            {9223372036854775808ul,"9223372036854775808", true,true},
+            {-1ul,"18446744073709551615",true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -2347,10 +2350,10 @@ TEST(TypeConversionGTest,TestInt64ToCCString) {
             {123, "123", true,true},
             {-1,"-1", true,true},
             {9223372036854775807,"9223372036854775807", true,true},
-            {9223372036854775808,"-9223372036854775808", true,true},
-            {-9223372036854775808,"-9223372036854775808", true,true},
-            {-9223372036854775809,"9223372036854775807", true,true},
-            {18446744073709551615,"-1", true,true},
+            {9223372036854775808ul,"-9223372036854775808", true,true},
+            {-9223372036854775808ul,"-9223372036854775808", true,true},
+            {-9223372036854775809ul,"9223372036854775807", true,true},
+            {-1,"-1", true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertToCCString(table));
@@ -2361,10 +2364,10 @@ TEST(TypeConversionGTest,TestUInt64ToCCString) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,const char8*> table[]={
             {123,"123", true,true},
-            {18446744073709551615,"18446744073709551615", true,true},
-            {18446744073709551616,"0", true,true},
-            {9223372036854775808,"9223372036854775808", true,true},
-            {-1,"18446744073709551615",true,true},
+            {18446744073709551615ul,"18446744073709551615", true,true},
+            {0ul,"0", true,true},
+            {9223372036854775808ul,"9223372036854775808", true,true},
+            {-1ul,"18446744073709551615",true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertToCCString(table));
@@ -3502,10 +3505,10 @@ TEST(TypeConversionGTest,TestInt64ToCArray) {
             {123, "123", true,true},
             {-1,"-1", true,true},
             {9223372036854775807,"9223372036854775807", true,true},
-            {9223372036854775808,"-9223372036854775808", true,true},
-            {-9223372036854775808,"-9223372036854775808", true,true},
-            {-9223372036854775809,"9223372036854775807", true,true},
-            {18446744073709551615,"-1", true,true},
+            {9223372036854775808ul,"-9223372036854775808", true,true},
+            {-9223372036854775808ul,"-9223372036854775808", true,true},
+            {-9223372036854775809ul,"9223372036854775807", true,true},
+            {18446744073709551615ul,"-1", true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
@@ -3516,10 +3519,10 @@ TEST(TypeConversionGTest,TestUInt64ToCArray) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,const char8 *> table[]={
             {123,"123", true,true},
-            {18446744073709551615,"18446744073709551615", true,true},
-            {18446744073709551616,"0", true,true},
-            {9223372036854775808,"9223372036854775808", true,true},
-            {-1,"18446744073709551615",true,true},
+            {18446744073709551615ul,"18446744073709551615", true,true},
+            {0ul,"0", true,true},
+            {9223372036854775808ul,"9223372036854775808", true,true},
+            {-1ul,"18446744073709551615",true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
@@ -3693,10 +3696,10 @@ TEST(TypeConversionGTest,TestInt64ToCharVector) {
             {123, "123", true,true},
             {-1,"-1", true,true},
             {9223372036854775807,"9223372036854775807", true,true},
-            {9223372036854775808,"-9223372036854775808", true,true},
-            {-9223372036854775808,"-9223372036854775808", true,true},
-            {-9223372036854775809,"9223372036854775807", true,true},
-            {18446744073709551615,"-1", true,true},
+            {9223372036854775808ul,"-9223372036854775808", true,true},
+            {-9223372036854775808ul,"-9223372036854775808", true,true},
+            {-9223372036854775809ul,"9223372036854775807", true,true},
+            {18446744073709551615ul,"-1", true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertToCharVector(table));
@@ -3707,10 +3710,10 @@ TEST(TypeConversionGTest,TestUInt64ToCharVector) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,const char8 *> table[]={
             {123,"123", true,true},
-            {18446744073709551615,"18446744073709551615", true,true},
-            {18446744073709551616,"0", true,true},
-            {9223372036854775808,"9223372036854775808", true,true},
-            {-1,"18446744073709551615",true,true},
+            {18446744073709551615ul,"18446744073709551615", true,true},
+            {0ul,"0", true,true},
+            {9223372036854775808ul,"9223372036854775808", true,true},
+            {-1ul,"18446744073709551615",true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertToCharVector(table));
@@ -3961,7 +3964,7 @@ TEST(TypeConversionGTest,TestCArrayToInt64) {
             {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, false},
             {"9223372036854775807",9223372036854775807, true, true},
             {"9223372036854775808",922337203685477580, true, false},
-            {"-9223372036854775808",-9223372036854775808, true, true},
+            {"-9223372036854775808",-9223372036854775808ul, true, true},
             {"-9223372036854775809",-922337203685477580, true, false},
             {0,0,0}
     };
@@ -3975,18 +3978,18 @@ TEST(TypeConversionGTest,TestCArrayToUInt64) {
             {"123",123, true, true},
             {"123s1",123, true, false},
             {"a123s5",0, true, false},
-            {"0xFFFFFFFFFFFFFFFF",18446744073709551615, true, true},
-            {"0xFFFFFFFFFFFFFFFF1",18446744073709551615, true, false},
-            {"0x7FFFFFFFFFFFFFFF",9223372036854775807, true, true},
-            {"0o1777777777777777777777",18446744073709551615, true, true},
-            {"0o777777777777777777777",9223372036854775807, true, true},
-            {"0o2777777777777777777777",3458764513820540927, true, false},
-            {"0b1111111111111111111111111111111111111111111111111111111111111111",18446744073709551615, true, true},
-            {"0b11111111111111111111111111111111111111111111111111111111111111111",18446744073709551615, true, false},
-            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, true},
-            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, false},
-            {"18446744073709551615",18446744073709551615, true, true},
-            {"18446744073709551616",1844674407370955161, true, false},
+            {"0xFFFFFFFFFFFFFFFF",18446744073709551615ul, true, true},
+            {"0xFFFFFFFFFFFFFFFF1",18446744073709551615ul, true, false},
+            {"0x7FFFFFFFFFFFFFFF",9223372036854775807ul, true, true},
+            {"0o1777777777777777777777",18446744073709551615ul, true, true},
+            {"0o777777777777777777777",9223372036854775807ul, true, true},
+            {"0o2777777777777777777777",3458764513820540927ul, true, false},
+            {"0b1111111111111111111111111111111111111111111111111111111111111111",18446744073709551615ul, true, true},
+            {"0b11111111111111111111111111111111111111111111111111111111111111111",18446744073709551615ul, true, false},
+            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, true},
+            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
+            {"18446744073709551615",18446744073709551615ul, true, true},
+            {"18446744073709551616",1844674407370955161ul, true, false},
             {"-1",0, true, true},
             {0,0,0}
     };
@@ -4237,7 +4240,7 @@ TEST(TypeConversionGTest,TestCharVectorToInt64) {
             {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, false},
             {"9223372036854775807",9223372036854775807, true, true},
             {"9223372036854775808",922337203685477580, true, false},
-            {"-9223372036854775808",-9223372036854775808, true, true},
+            {"-9223372036854775808",-9223372036854775808ul, true, true},
             {"-9223372036854775809",-922337203685477580, true, false},
             {0,0,0}
     };
@@ -4251,18 +4254,18 @@ TEST(TypeConversionGTest,TestCharVectorToUInt64) {
             {"123",123, true, true},
             {"123s1",123, true, false},
             {"a123s5",0, true, false},
-            {"0xFFFFFFFFFFFFFFFF",18446744073709551615, true, true},
-            {"0xFFFFFFFFFFFFFFFF1",18446744073709551615, true, false},
-            {"0x7FFFFFFFFFFFFFFF",9223372036854775807, true, true},
-            {"0o1777777777777777777777",18446744073709551615, true, true},
-            {"0o777777777777777777777",9223372036854775807, true, true},
-            {"0o2777777777777777777777",3458764513820540927, true, false},
-            {"0b1111111111111111111111111111111111111111111111111111111111111111",18446744073709551615, true, true},
-            {"0b11111111111111111111111111111111111111111111111111111111111111111",18446744073709551615, true, false},
-            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, true},
-            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807, true, false},
-            {"18446744073709551615",18446744073709551615, true, true},
-            {"18446744073709551616",1844674407370955161, true, false},
+            {"0xFFFFFFFFFFFFFFFF",18446744073709551615ul, true, true},
+            {"0xFFFFFFFFFFFFFFFF1",18446744073709551615ul, true, false},
+            {"0x7FFFFFFFFFFFFFFF",9223372036854775807ul, true, true},
+            {"0o1777777777777777777777",18446744073709551615ul, true, true},
+            {"0o777777777777777777777",9223372036854775807ul, true, true},
+            {"0o2777777777777777777777",3458764513820540927ul, true, false},
+            {"0b1111111111111111111111111111111111111111111111111111111111111111",18446744073709551615ul, true, true},
+            {"0b11111111111111111111111111111111111111111111111111111111111111111",18446744073709551615ul, true, false},
+            {"0b0111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, true},
+            {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
+            {"18446744073709551615",18446744073709551615ul, true, true},
+            {"18446744073709551616",1844674407370955161ul, true, false},
             {"-1",0, true, true},
             {0,0,0}
     };
@@ -4827,3 +4830,4 @@ TEST(TypeConversionGTest,TestFloatToCArrayScalar_Trunc) {
 }
 
 
+#pragma GCC diagnostic pop
