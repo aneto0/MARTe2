@@ -73,8 +73,7 @@ static void ThreadWrite(SelectTest &tt) {
 
 using namespace MARTe;
 
-SelectTest::SelectTest() :
-        name("../SelectTest.txt") {
+SelectTest::SelectTest() {
     retVal = true;
     defaultTo = 2000;
 }
