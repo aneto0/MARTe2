@@ -72,11 +72,11 @@ OBJSX=  TypeConversionGTest.x \
  	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x  \
 	CharBufferGTest.x \
-        StringIOBufferGTest.x \
+        StreamStringIOBufferGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
-        StringGTest.x \
+        StreamStringGTest.x \
         StreamMemoryReferenceGTest.x \
         BufferedStreamIGTest.x \
         IOBufferGTest.x \

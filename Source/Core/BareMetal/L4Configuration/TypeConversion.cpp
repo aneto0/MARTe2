@@ -31,7 +31,7 @@
 #include "TypeConversion.h"
 #include "AnyType.h"
 #include "BitSetToInteger.h"
-#include "String.h"
+#include "StreamString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -163,15 +163,15 @@ static bool IntegerToType(const AnyType &destination,
     if ((isSourceSignedInteger) || (isSourceUnsignedInteger)) {
 
         if (destinationDescriptor.type == SString) {
-            String tempString;
+            StreamString tempString;
             ret = tempString.PrintFormatted("%d", &source);
             if (ret) {
                 uint32 stringLength = static_cast<uint32>(tempString.Size());
-                ret = (reinterpret_cast<String*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
+                ret = (reinterpret_cast<StreamString*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
             }
         }
         if (destinationDescriptor.type == CArray) {
-            String tempString;
+            StreamString tempString;
             ret = tempString.PrintFormatted("%d", &source);
             if (ret) {
                 uint32 stringLength = static_cast<uint32>(tempString.Size());
@@ -188,7 +188,7 @@ static bool IntegerToType(const AnyType &destination,
             }
         }
         if (destinationDescriptor.type == CCString) {
-            String tempString;
+            StreamString tempString;
             ret = tempString.PrintFormatted("%d", &source);
             if (ret) {
                 // in this case the data pointer is the const char*
@@ -278,15 +278,15 @@ static bool FloatToType(const AnyType &destination,
     if (sourceDescriptor.type == Float) {
 
         if (destinationDescriptor.type == SString) {
-            String tempString;
+            StreamString tempString;
             ret = tempString.PrintFormatted("%E", &source);
             if (ret) {
                 uint32 stringLength = static_cast<uint32>(tempString.Size());
-                ret = (reinterpret_cast<String*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
+                ret = (reinterpret_cast<StreamString*>(destinationPointer))->Write(tempString.Buffer(), stringLength);
             }
         }
         if (destinationDescriptor.type == CArray) {
-            String tempString;
+            StreamString tempString;
             ret = tempString.PrintFormatted("%E", &source);
             if (ret) {
                 uint32 stringLength = static_cast<uint32>(tempString.Size());
@@ -303,7 +303,7 @@ static bool FloatToType(const AnyType &destination,
             }
         }
         if (destinationDescriptor.type == CCString) {
-            String tempString;
+            StreamString tempString;
             ret = tempString.PrintFormatted("%E", &source);
             if (ret) {
                 // in this case the data pointer is the const char*
@@ -341,12 +341,12 @@ static bool FloatToType(const AnyType &destination,
 }
 
 /**
- * @brief Performs the conversion from string types (CCString, String, CArray) to any type.
+ * @brief Performs the conversion from string types (CCString, StreamString, CArray) to any type.
  * @param[out] destination is the any type in output.
  * @param[in] source is the any type representing a string.
  * @return true if the conversion succeeds, false otherwise.
  * @pre
- *   source.GetTypeDescriptor == String ||
+ *   source.GetTypeDescriptor == StreamString ||
  *   source.GetTypeDescriptor == CCString ||
  *   source.GetTypeDescriptor == CArray;
  */
@@ -376,13 +376,13 @@ static bool StringToType(const AnyType &destination,
         token = reinterpret_cast<const char8*>(sourcePointer);
     }
     if ((sourceDescriptor.type == SString)) {
-        token = (reinterpret_cast<String*>(sourcePointer))->Buffer();
+        token = (reinterpret_cast<StreamString*>(sourcePointer))->Buffer();
     }
 
     if (token != NULL) {
         uint32 tokenLength = StringHelper::Length(token);
         if(destinationDescriptor.type==SString) {
-            String* tempString=reinterpret_cast<String*>(destinationPointer);
+            StreamString* tempString=reinterpret_cast<StreamString*>(destinationPointer);
             ret=tempString->Write(token, tokenLength);
         }
         if (destinationDescriptor.type == CArray) {
@@ -450,8 +450,8 @@ static bool ScalarBasicTypeConvert(const AnyType &destination,
 
     if (sourceDescriptor == destinationDescriptor) {
         if (sourceDescriptor.type == SString) {
-            String *stringSource = reinterpret_cast<String*>(sourcePointer);
-            String *stringDestination = reinterpret_cast<String*>(destinationPointer);
+            StreamString *stringSource = reinterpret_cast<StreamString*>(sourcePointer);
+            StreamString *stringDestination = reinterpret_cast<StreamString*>(destinationPointer);
             uint32 stringLength = static_cast<uint32>(stringSource->Size());
             ret = stringDestination->Write(stringSource->Buffer(), stringLength);
         }

@@ -61,11 +61,11 @@ StandardHeap_Generic.cpp
 StaticListHolder.cpp
 StreamI.h
 StreamMemoryReference.cpp
-String.cpp
+StreamString.cpp
+StreamStringIOBuffer.cpp
 StringHelper.cpp
 StringHelperExtras_Generic.cpp
 StringHelper_CLIB_Generic.cpp
-StringIOBuffer.cpp
 StringToFloat.cpp
 StringToInteger.cpp
 ThreadInformation_Generic.cpp

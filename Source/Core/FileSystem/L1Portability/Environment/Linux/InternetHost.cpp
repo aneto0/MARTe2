@@ -136,12 +136,12 @@ private:
 
 };
 
-String InternetHost::GetHostName() const {
+StreamString InternetHost::GetHostName() const {
 
     if (hostnameFastSem.FastLock() != ErrorManagement::NoError) {
         REPORT_ERROR(ErrorManagement::FatalError, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
     }
-    String hostName = GetAddress();
+    StreamString hostName = GetAddress();
 
     struct hostent *h = gethostbyaddr((&address.sin_addr.s_addr), 4u, AF_INET);
 
@@ -195,8 +195,8 @@ uint16 InternetHost::GetPort() const {
     return htons(address.sin_port);
 }
 
-String InternetHost::GetAddress() const {
-    String dotName(inet_ntoa(address.sin_addr));
+StreamString InternetHost::GetAddress() const {
+    StreamString dotName(inet_ntoa(address.sin_addr));
     return dotName;
 }
 

@@ -31,7 +31,7 @@
 #include "AnyObject.h"
 #include "Vector.h"
 #include "Matrix.h"
-#include "String.h"
+#include "StreamString.h"
 #include "StringHelper.h"
 #include "MemoryOperationsHelper.h"
 
@@ -84,7 +84,7 @@ static bool SerializeStaticMatrix(const AnyType &typeIn,
                     token = reinterpret_cast<const char8**>(sourcePointer)[index];
                 }
                 if (isString) {
-                    token = (reinterpret_cast<String*>(sourcePointer)[index]).Buffer();
+                    token = (reinterpret_cast<StreamString*>(sourcePointer)[index]).Buffer();
                 }
                 char8 **destBegin = static_cast<char8 **>(destPointer);
                 uint32 tokenSize = StringHelper::Length(token) + 1u;
@@ -139,7 +139,7 @@ static bool SerializeHeapMatrix(const AnyType &typeIn,
                     token = reinterpret_cast<const char8 ***>(sourcePointer)[r][c];
                 }
                 if (isString) {
-                    token = (reinterpret_cast<String**>(sourcePointer)[r][c]).Buffer();
+                    token = (reinterpret_cast<StreamString**>(sourcePointer)[r][c]).Buffer();
                 }
                 char8 ***destBegin = reinterpret_cast<char8 ***>(destPointer);
                 uint32 tokenSize = StringHelper::Length(token) + 1u;
@@ -227,7 +227,7 @@ static bool SerializeVector(const AnyType &typeIn,
                 tokenLength = typeIn.GetByteSize();
             }
             if (isString) {
-                token=(reinterpret_cast<String *>(sourcePointer)[i]).Buffer();
+                token=(reinterpret_cast<StreamString *>(sourcePointer)[i]).Buffer();
                 tokenLength = StringHelper::Length(token) + 1u;
             }
             char8 **destBegin = reinterpret_cast<char8 **>(destPointer);
@@ -271,7 +271,7 @@ static bool SerializeScalar(const AnyType &typeIn,
     if ((isString) || (isCCString) || (isCArrayOnHeap)) {
         const char8 *token = static_cast<const char8 *>(NULL);
         if(isString) {
-            token=reinterpret_cast<String*>(sourcePointer)->Buffer();
+            token=reinterpret_cast<StreamString*>(sourcePointer)->Buffer();
         }
         if((isCCString) || (isCArrayOnHeap)) {
             token=reinterpret_cast<const char8*>(sourcePointer);

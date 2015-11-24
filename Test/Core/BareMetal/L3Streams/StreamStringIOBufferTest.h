@@ -1,6 +1,6 @@
 /**
- * @file StringIOBufferTest.h
- * @brief Header file for class StringIOBufferTest
+ * @file StreamStringIOBufferTest.h
+ * @brief Header file for class StreamStringIOBufferTest
  * @date 26/10/2015
  * @author Giuseppe Ferrò
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StringIOBufferTest
+ * @details This header file contains the declaration of the class StreamStringIOBufferTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -32,13 +32,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "StringIOBuffer.h"
+#include "StreamStringIOBuffer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
-class StringIOBufferTest {
+class StreamStringIOBufferTest {
 
 public:
 

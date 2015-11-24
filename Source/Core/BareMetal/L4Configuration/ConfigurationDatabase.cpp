@@ -33,7 +33,7 @@
 #include "ConfigurationDatabase.h"
 #include "ReferenceContainerFilterObjectName.h"
 #include "ReferenceContainerFilterReferences.h"
-#include "String.h"
+#include "StreamString.h"
 #include "TypeConversion.h"
 
 /*---------------------------------------------------------------------------*/
@@ -184,7 +184,7 @@ bool ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
         rootNode->Find(resultPath, filter);
         ok = (resultPath.Size() > 0u);
         if (ok) {
-            int32 newPositionIdx = static_cast<int32>(resultPath.Size()) - 1u - static_cast<int32>(generations);
+            int32 newPositionIdx = (static_cast<int32>(resultPath.Size()) - 1) - static_cast<int32>(generations);
             ok = (newPositionIdx >= -1);
             if (ok) {
                 if (newPositionIdx == -1) {
@@ -200,12 +200,12 @@ bool ConfigurationDatabase::MoveToAncestor(const uint32 generations) {
 }
 
 bool ConfigurationDatabase::CreateNodes(const char8 * const path) {
-    String pathStr = path;
+    StreamString pathStr = path;
     bool ok = pathStr.Seek(0Lu);
     if (ok) {
         ok = (pathStr.Size() > 0u);
     }
-    String token;
+    StreamString token;
     char8 c;
     bool created = false;
     ReferenceT<ReferenceContainer> currentNodeOld = currentNode;

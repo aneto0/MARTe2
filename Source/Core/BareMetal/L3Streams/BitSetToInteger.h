@@ -213,6 +213,7 @@ static inline bool BitSetToBitSet(T *& destination,
     // exponent of the power of 2 that is granularity (log2 of the number of bits in T)
     uint8 granularityShift = 3u;
     uint8 temp = static_cast<uint8>(sizeof(T));
+    /*lint -e{681} .Justification: Entering or not in the loop depends by the template type size */
     while (temp > 1u) {
         granularityShift++;
         temp = Shift::LogicalRightSafeShift(temp, 1u);

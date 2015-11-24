@@ -37,7 +37,7 @@
 
 #include "BasicFile.h"
 #include "ErrorManagement.h"
-#include "String.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -182,7 +182,7 @@ bool BasicFile::SetFlags(const uint32 setFlags) {
 }
 
 uint32 BasicFile::GetFlags() const {
-    uint32 retVal = 0xFFFFFFFFU;
+    uint32 retVal = 0U;
     if (IsOpen()) {
         retVal = static_cast<uint32>(fcntl(properties.identifier, F_GETFL));
         retVal = ConvertToBasicFileFlags(retVal);
@@ -489,7 +489,7 @@ bool BasicFile::SetSize(const uint64 size) {
     return retVal;
 }
 
-String BasicFile::GetPathName() const {
+StreamString BasicFile::GetPathName() const {
     return properties.pathName;
 }
 }

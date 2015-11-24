@@ -1,6 +1,6 @@
 /**
- * @file StringTest.h
- * @brief Header file for class StringTest
+ * @file StreamStringTest.h
+ * @brief Header file for class StreamStringTest
  * @date 26/ott/2015
  * @author pc
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class StringTest
+ * @details This header file contains the declaration of the class StreamStringTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "String.h"
+#include "StreamString.h"
 #include "FormatDescriptor.h"
 #include "StreamTestHelper.h"
 
@@ -43,9 +43,9 @@
 using namespace MARTe;
 
 /**
- * @brief Test the String public methods.
+ * @brief Test the StreamString public methods.
  */
-class StringTest {
+class StreamStringTest {
 
 private:
 
@@ -62,7 +62,7 @@ public:
     bool TestConstructor_CCString(const char8 * initializationString);
 
     /**
-     * @brief Tests if the buffer of the String in input is duplicated correctly into the new instantiated object buffer.
+     * @brief Tests if the buffer of the StreamString in input is duplicated correctly into the new instantiated object buffer.
      */
     bool TestCopyConstructor(const char8 * initializationString);
 
@@ -72,7 +72,7 @@ public:
     bool TestDestructor();
 
     /**
-     * @brief Tests if the String is considered as a const char string by in the conversion to AnyType.
+     * @brief Tests if the StreamString is considered as a const char string by in the conversion to AnyType.
      */
     bool TestAnyTypeOperator(const char8* initializationString);
 
@@ -175,7 +175,7 @@ public:
     bool TestCopyOperator_CCString(const char8 * input);
 
     /**
-     * @brief Tests if a String in input is copied in the stream.
+     * @brief Tests if a StreamString in input is copied in the stream.
      */
     bool TestCopyOperator_String(const char8 * input);
 
@@ -190,7 +190,7 @@ public:
     bool TestConcatenateOperator_CCString(const char8 *input);
 
     /**
-     * @brief Tests if a the buffer of a String in input is appended on the stream queue.
+     * @brief Tests if a the buffer of a StreamString in input is appended on the stream queue.
      */
     bool TestConcatenateOperator_String(const char8 *input);
 
@@ -200,7 +200,7 @@ public:
     bool TestIsEqualOperator_CCString(const char8 *input);
 
     /**
-     * @brief Tests if the function returns true if the buffers of the two compared String contain the same data.
+     * @brief Tests if the function returns true if the buffers of the two compared StreamString contain the same data.
      */
     bool TestIsEqualOperator_String(const char8 *input);
 

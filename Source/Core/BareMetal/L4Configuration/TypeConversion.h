@@ -31,7 +31,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 #include "StreamI.h"
-#include "String.h"
+#include "StreamString.h"
 #include "StringHelper.h"
 #include "FormatDescriptor.h"
 #include "MemoryOperationsHelper.h"
@@ -48,11 +48,11 @@ namespace MARTe {
 /**
  * @brief Converts between two types.
  * @details The allowed basic type conversions are between the following types:
- *   (u)int{8,16,32,64} | float{32,64} | String | char8[1:127] | char8 * (char array created on heap) | Vector<char8>;
+ *   (u)int{8,16,32,64} | float{32,64} | StreamString | char8[1:127] | char8 * (char array created on heap) | Vector<char8>;
  * It is possible converting vectors of these types between them if the number of elements in the two vectors is the same:
- *   (u)int{8,16,32,64}[] | float{32,64}[] | String[] | char8[1:127][1:127] | char8 ** (memory created on heap) | Matrix<char8>;
+ *   (u)int{8,16,32,64}[] | float{32,64}[] | StreamString[] | char8[1:127][1:127] | char8 ** (memory created on heap) | Matrix<char8>;
  * It is possible converting matrices of these types between them if the numbers of rows and columns in the two matrices are the same:
- *   (u)int{8,16,32,64}[][] | float{32,64}[][] | String[][] | char8[1:127][1:127][1:127] | char8 *** (memory created on heap);
+ *   (u)int{8,16,32,64}[][] | float{32,64}[][] | StreamString[][] | char8[1:127][1:127][1:127] | char8 *** (memory created on heap);
  * @param[out] destination the converted type.
  * @param[in] source the type to be converted.
  * @return true if the types have the same dimension and the same number of elements

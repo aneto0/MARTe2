@@ -28,8 +28,7 @@ PACKAGE=Core/FileSystem/L1Portability
 ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  BasicFile.x
-
+OBJSX= BasicFile.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

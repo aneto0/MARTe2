@@ -73,7 +73,7 @@ public:
     bool TestGetType_Scalar(T value);
 
     /**
-     * @brief Tests the GetType function with a String
+     * @brief Tests the GetType function with a StreamString
      */
     bool TestGetType_Scalar_String();
 
@@ -108,17 +108,17 @@ public:
     bool TestSerialise_StaticMeshChar();
 
     /**
-     * @brief Tests the Serialise function with a String
+     * @brief Tests the Serialise function with a StreamString
      */
     bool TestSerialise_ScalarString();
 
     /**
-     * @brief Tests the Serialise function with a static array of String
+     * @brief Tests the Serialise function with a static array of StreamString
      */
     bool TestSerialise_StaticStringArray();
 
     /**
-     * @brief Tests the Serialise function with a Vector<String>
+     * @brief Tests the Serialise function with a Vector<StreamString>
      */
     bool TestSerialise_VectorString();
 
@@ -157,12 +157,12 @@ public:
     bool TestSerialise_MatrixCharStar();
 
     /**
-     * @brief Tests the Serialise function with a String[][]
+     * @brief Tests the Serialise function with a StreamString[][]
      */
     bool TestSerialise_StaticMatrixString();
 
     /**
-     * @brief Tests the Serialise function with a Matrix<String>
+     * @brief Tests the Serialise function with a Matrix<StreamString>
      */
     bool TestSerialise_MatrixString();
 

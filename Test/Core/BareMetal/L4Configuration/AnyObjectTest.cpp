@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 #include "AnyObjectTest.h"
 #include "StringHelper.h"
-#include "String.h"
+#include "StreamString.h"
 #include "Reference.h"
 using namespace MARTe;
 /*---------------------------------------------------------------------------*/
@@ -47,7 +47,7 @@ bool AnyObjectTest::TestDefaultConstructor() {
 
 bool AnyObjectTest::TestGetType_Scalar_String() {
     MARTe::AnyObject anyObj;
-    String s = "ThisIsAString";
+    StreamString s = "ThisIsAString";
     bool ok = anyObj.Serialise(s);
     ok = (anyObj.GetType().GetTypeDescriptor().type == CCString);
     return ok;
@@ -136,7 +136,7 @@ bool AnyObjectTest::TestSerialise_StaticMeshChar() {
 }
 
 bool AnyObjectTest::TestSerialise_ScalarString() {
-    String strWrite = "ThisIsAString";
+    StreamString strWrite = "ThisIsAString";
     AnyObject anyObj;
     bool ok = anyObj.Serialise(strWrite);
     ok &= (StringHelper::Compare(strWrite.Buffer(), static_cast<char8 *>(anyObj.GetType().GetDataPointer())) == 0);
@@ -144,7 +144,7 @@ bool AnyObjectTest::TestSerialise_ScalarString() {
 }
 
 bool AnyObjectTest::TestSerialise_StaticStringArray() {
-    String strArrWrite[2] = { "a", "bb" };
+    StreamString strArrWrite[2] = { "a", "bb" };
     AnyObject anyObj;
     bool ok = anyObj.Serialise(strArrWrite);
     char8 **readStr = static_cast<char8 **>(anyObj.GetType().GetDataPointer());
@@ -155,7 +155,7 @@ bool AnyObjectTest::TestSerialise_StaticStringArray() {
 
 bool AnyObjectTest::TestSerialise_VectorString() {
     AnyObject anyObj;
-    Vector<String> vecArrWrite(3);
+    Vector<StreamString> vecArrWrite(3);
     vecArrWrite[0] = "a";
     vecArrWrite[1] = "bb";
     vecArrWrite[2] = "ccc";
@@ -216,7 +216,7 @@ bool AnyObjectTest::TestSerialise_MatrixCharStar() {
 }
 
 bool AnyObjectTest::TestSerialise_StaticMatrixString() {
-    String strArrWrite[3][2] = { { "a", "bb" }, { "ccc", "dd" }, { "eeeeee", "ff" } };
+    StreamString strArrWrite[3][2] = { { "a", "bb" }, { "ccc", "dd" }, { "eeeeee", "ff" } };
     AnyObject anyObj;
     bool ok = anyObj.Serialise(strArrWrite);
 
@@ -243,7 +243,7 @@ bool AnyObjectTest::TestSerialise_MatrixString() {
     uint32 nOfColumns = 2;
     const char8 *strArrWrite[3][2] = { { "a", "bb" }, { "ccc", "dd" }, { "eeeeee", "ff" } };
 
-    Matrix<String> mat(nOfRows, nOfColumns);
+    Matrix<StreamString> mat(nOfRows, nOfColumns);
     for (i = 0; i < nOfRows; i++) {
         for (j = 0; j < nOfColumns; j++) {
             mat[i][j] = strArrWrite[i][j];

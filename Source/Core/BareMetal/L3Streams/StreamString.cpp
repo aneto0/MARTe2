@@ -1,6 +1,6 @@
 /**
- * @file String.cpp
- * @brief Source file for class String
+ * @file StreamString.cpp
+ * @brief Source file for class StreamString
  * @date 26/10/2015
  * @author Giuseppe Ferrò
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class String (public, protected, and private). Be aware that some
+ * the class StreamString (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -30,7 +30,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "String.h"
+#include "StreamString.h"
 #include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -42,117 +42,117 @@
 
 namespace MARTe {
 
-String::String() :
+StreamString::StreamString() :
         BufferedStreamI() {
     //Initialise and terminate an empty string
     bool ret;
     ret = buffer.SetBufferAllocationSize(0u);
 
     if (!ret) {
-        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed initialization of the String buffer during construction.");
+        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
     }
 }
 
-String::String(const char8 * const initialisationString) :
+StreamString::StreamString(const char8 * const initialisationString) :
         BufferedStreamI() {
     //Initialise and terminate an empty string
     bool ret;
     ret = buffer.SetBufferAllocationSize(0u);
 
     if (!ret) {
-        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed initialization of the String buffer during construction.");
+        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
     }
 
     if (initialisationString != static_cast<const char8 *>(NULL)) {
         if (!Set(initialisationString)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed Set() function");
+            REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed Set() function");
         }
     }
 }
 
 /*lint -e{1738} . Justification: StreamI is only an interface there is nothing to be copied. */
-String::String(const String &toCopy) :
+StreamString::StreamString(const StreamString &toCopy) :
         BufferedStreamI() {
     //Initialise and terminate an empty string
     bool ret;
     ret = buffer.SetBufferAllocationSize(0u);
 
     if (!ret) {
-        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed initialization of the String buffer during construction.");
+        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed initialization of the StreamString buffer during construction.");
     }
 
     if (&toCopy != this) {
         if (!Set(toCopy)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed Set() function");
+            REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed Set() function");
         }
     }
 }
 
-String::operator AnyType() {
+StreamString::operator AnyType() {
     void *dataPointer = static_cast<void *>(this);
-    TypeDescriptor dataDescriptor(false, SString, sizeof(String)*8u);
+    TypeDescriptor dataDescriptor(false, SString, static_cast<uint16>(sizeof(StreamString) * 8u));
 
-    return AnyType(dataDescriptor, 0u, dataPointer);
+    return AnyType(dataDescriptor, static_cast<uint8>(0u), dataPointer);
 }
 
-String::~String() {
+StreamString::~StreamString() {
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStreamI must have the access to the final buffers.*/
-IOBuffer *String::GetReadBuffer() {
+IOBuffer *StreamString::GetReadBuffer() {
     return &buffer;
 }
 
 /*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: BufferedStreamI must have the access to the final buffers.*/
-IOBuffer *String::GetWriteBuffer() {
+IOBuffer *StreamString::GetWriteBuffer() {
     return &buffer;
 }
 
-bool String::Read(char8* const output,
-                  uint32 & size) {
+bool StreamString::Read(char8* const output,
+                        uint32 & size) {
     return this->buffer.Read(&output[0], size);
 }
 
-bool String::Write(const char8* const input,
-                   uint32 & size) {
+bool StreamString::Write(const char8* const input,
+                         uint32 & size) {
     return this->buffer.Write(&input[0], size);
 
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
  * used by other buffered streams. */
-bool String::Read(char8 * const output,
-                  uint32 & size,
-                  const TimeoutType &timeout) {
+bool StreamString::Read(char8 * const output,
+                        uint32 & size,
+                        const TimeoutType &timeout) {
     return Read(output, size);
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
  * used by other buffered streams. */
-bool String::Write(const char8 * const input,
-                   uint32 & size,
-                   const TimeoutType &timeout) {
+bool StreamString::Write(const char8 * const input,
+                         uint32 & size,
+                         const TimeoutType &timeout) {
     return Write(input, size);
 }
 
-bool String::CanWrite() const {
+bool StreamString::CanWrite() const {
     return true;
 }
 
-bool String::CanRead() const {
+bool StreamString::CanRead() const {
     return true;
 }
 
-uint64 String::Size() {
+uint64 StreamString::Size() {
     return buffer.UsedSize();
 }
 
-bool String::Seek(const uint64 pos) {
+bool StreamString::Seek(const uint64 pos) {
     bool retval = true;
     uint32 usedSize = buffer.UsedSize();
     if (pos > usedSize) {
         if (!buffer.Seek(usedSize)) {
-            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed IOBuffer::Seek() function");
+            REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
         }
         retval = false;
     }
@@ -160,26 +160,26 @@ bool String::Seek(const uint64 pos) {
     return (retval) ? (buffer.Seek(static_cast<uint32>(pos))) : false;
 }
 
-bool String::RelativeSeek(const int32 deltaPos) {
+bool StreamString::RelativeSeek(const int32 deltaPos) {
     return buffer.RelativeSeek(deltaPos);
 }
 
-uint64 String::Position() {
+uint64 StreamString::Position() {
     return buffer.Position();
 }
 
-bool String::SetSize(const uint64 size) {
+bool StreamString::SetSize(const uint64 size) {
     return buffer.SetBufferAllocationSize(static_cast<uint32>(size) + 1u);
 }
 
-bool String::CanSeek() const {
+bool StreamString::CanSeek() const {
     return true;
 }
 
-bool String::Append(const char8 c) {
+bool StreamString::Append(const char8 c) {
     bool ret = false;
     if (!buffer.Seek(buffer.UsedSize())) {
-        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed IOBuffer::Seek() function");
+        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
     }
     else {
         ret = buffer.PutC(c);
@@ -188,19 +188,19 @@ bool String::Append(const char8 c) {
     return ret;
 }
 
-bool String::Set(const char8 c) {
+bool StreamString::Set(const char8 c) {
     buffer.Empty();
     bool ret = buffer.PutC(c);
     //TODO: Call to buffer.Terminate(); ??
     return ret;
 }
 
-bool String::Append(const char8 * const s) {
+bool StreamString::Append(const char8 * const s) {
     bool ret = false;
     if (s != NULL) {
         uint32 size = StringHelper::Length(s);
         if (!buffer.Seek(buffer.UsedSize())) {
-            REPORT_ERROR(ErrorManagement::FatalError, "String: Failed IOBuffer::Seek() function");
+            REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
         }
         else {
             ret = buffer.Write(s, size);
@@ -209,7 +209,7 @@ bool String::Append(const char8 * const s) {
     return ret;
 }
 
-bool String::Set(const char8 * const s) {
+bool StreamString::Set(const char8 * const s) {
     bool ret = false;
     if (s != NULL) {
         uint32 size = StringHelper::Length(s);
@@ -219,10 +219,10 @@ bool String::Set(const char8 * const s) {
     return ret;
 }
 
-bool String::Append(const String &s) {
+bool StreamString::Append(const StreamString &s) {
     bool ret = false;
     if (!buffer.Seek(buffer.UsedSize())) {
-        REPORT_ERROR(ErrorManagement::FatalError, "String: Failed IOBuffer::Seek() function");
+        REPORT_ERROR(ErrorManagement::FatalError, "StreamString: Failed IOBuffer::Seek() function");
     }
     else {
         uint32 size = s.buffer.UsedSize();
@@ -231,13 +231,13 @@ bool String::Append(const String &s) {
     return ret;
 }
 
-bool String::Set(const String &s) {
+bool StreamString::Set(const StreamString &s) {
     buffer.Empty();
     uint32 size = s.buffer.UsedSize();
     return buffer.Write(s.buffer.Buffer(), size);
 }
 
-int32 String::Locate(const char8 c) const {
+int32 StreamString::Locate(const char8 c) const {
 
     uint32 ret = 0xffffffffu;
     if (buffer.UsedSize() > 0u) {
@@ -258,7 +258,7 @@ int32 String::Locate(const char8 c) const {
     return static_cast<int32>(ret);
 }
 
-int32 String::Locate(const String &x) const {
+int32 StreamString::Locate(const StreamString &x) const {
 
     bool ok = (x.buffer.UsedSize() > 0u) && (buffer.UsedSize() > 0u) && (x.buffer.UsedSize() <= buffer.UsedSize());
 

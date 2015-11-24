@@ -35,7 +35,7 @@
 
 #include "GeneralDefinitions.h"
 #include "StreamI.h"
-#include "String.h"
+#include "StreamString.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,BasicFileProperties.h)
 
 /*---------------------------------------------------------------------------*/
@@ -110,7 +110,7 @@ namespace MARTe {
          *   not IsOpen() &&
          *   Size() == 0 &&
          *   Position() == 0 &&
-         *   GetFlags() == 0xFFFFFFFF &&
+         *   GetFlags() == 0 &&
          *   GetPathName() == ""
          */
         BasicFile();
@@ -146,7 +146,7 @@ namespace MARTe {
 
         /**
          * @brief Gets the flags of the opened file.
-         * @detail If the file is not opened the returned value is 0xFFFFFFFF.
+         * @detail If the file is not opened the returned value is 0.
          * @return An uint32 containing the flags information.
          */
         uint32 GetFlags() const;
@@ -345,7 +345,7 @@ namespace MARTe {
         /**
          * @brief Queries the pathname of the file
          */
-        String GetPathName() const;
+        StreamString GetPathName() const;
 
     private:
 
