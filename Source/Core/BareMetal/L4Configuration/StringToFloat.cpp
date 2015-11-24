@@ -205,27 +205,15 @@ static bool StringToFloatPrivate(const char8 * const input,
                 int8 newDigit = (static_cast<int8>(digit) - zero);
 
                 if ((newDigit >= 0) && (newDigit <= 9)) {
-                    T numberTemp = decimalPart * static_cast<T>(10.0);
-                    bool nanNumber = isNaN(numberTemp);
-                    bool infNumber = isInf(numberTemp);
-                    if ((!nanNumber) && (!infNumber)) {
-                        numberTemp += static_cast<T>(newDigit);
-                        nanNumber = isNaN(numberTemp);
-                        infNumber = isInf(numberTemp);
-                        if ((!nanNumber) && (!infNumber)) {
-                            decimalPart = numberTemp;
-                            decimalExp *= static_cast<T>(10.0);
-                        }
-                        else {
-                            canReturn = true;
-                            ret = false;
-                            REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
-                        }
+                    decimalExp *= static_cast<T>(10.0);
+                    bool nanExp = isNaN(decimalExp);
+                    bool infExp = isInf(decimalExp);
+                    if ((!nanExp) && (!infExp)) {
+                        decimalPart += static_cast<T>(newDigit)/decimalExp;
                     }
                     else {
                         canReturn = true;
-                        ret = false;
-                        REPORT_ERROR(ErrorManagement::FatalError, "StringToFloatPrivate: Overflow");
+                        REPORT_ERROR(ErrorManagement::Warning, "StringToFloatPrivate: Too much decimal precision for this float type");
                     }
                 }
                 else {
@@ -243,7 +231,7 @@ static bool StringToFloatPrivate(const char8 * const input,
                 }
             }
             T numberTemp = number;
-            numberTemp += (decimalPart / decimalExp);
+            numberTemp += decimalPart;
             bool nanNumber = isNaN(numberTemp);
             bool infNumber = isInf(numberTemp);
             if ((!nanNumber) && (!infNumber)) {

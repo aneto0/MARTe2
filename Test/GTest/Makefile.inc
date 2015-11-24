@@ -111,9 +111,11 @@ INCLUDES += -I../../Source/Core/Scheduler/L1Portability
 INCLUDES += -I../../Source/Core/FileSystem/L1Portability
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
+#$(BUILD_DIR)/TestPrototype$(EXEEXT)
+
+
 all: $(OBJS)    \
-        $(BUILD_DIR)/MainGTest$(EXEEXT) \
-        $(BUILD_DIR)/TestPrototype$(EXEEXT)
+        $(BUILD_DIR)/MainGTest$(EXEEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

@@ -51,6 +51,11 @@ public:
                                       uint32 nRows,
                                       uint32 nCols);
 
+    template<typename T>
+    bool TestConstructorByPointerStatic(T* matrix,
+                                      uint32 nRows,
+                                      uint32 nCols);
+
     template<typename T, uint32 nRows, uint32 nCols>
     bool TestConstructorByTable(T (&matrix)[nRows][nCols]);
 
@@ -69,6 +74,28 @@ public:
     bool TestProduct();
 
     bool TestSubMatrix();
+
+    bool TestDeterminant();
+
+    bool TestTranspose();
+
+    bool TestInverse_float32();
+
+    bool TestInverse_float64();
+
+    bool TestInverse_NullDeterminant();
+
+    bool TestProduct_Heap();
+
+    bool TestSubMatrix_Heap();
+
+    bool TestDeterminant_Heap();
+
+    bool TestTranspose_Heap();
+
+    bool TestInverse_float32_Heap();
+
+    bool TestInverse_float64_Heap();
 
 };
 
@@ -91,7 +118,27 @@ bool MatrixTest::TestConstructorByPointerHeap(T** matrix,
         }
     }
 
-    return true;
+    return !myMatrix.IsStaticDeclared();
+
+}
+
+
+template<typename T>
+bool MatrixTest::TestConstructorByPointerStatic(T* matrix,
+                                              uint32 nRows,
+                                              uint32 nCols) {
+
+    Matrix<T> myMatrix(matrix, nRows, nCols);
+
+    for (uint32 i = 0; i < nRows; i++) {
+        for (uint32 j = 0; j < nCols; j++) {
+            if (myMatrix[i][j] != matrix[i*nCols+j]) {
+                return false;
+            }
+        }
+    }
+
+    return myMatrix.IsStaticDeclared();
 
 }
 
@@ -108,7 +155,7 @@ bool MatrixTest::TestConstructorByTable(T (&matrix)[nRows][nCols]) {
         }
     }
 
-    return true;
+    return myMatrix.IsStaticDeclared();
 }
 
 #endif /* MATRIXTEST_H_ */

@@ -46,7 +46,15 @@ namespace MARTe {
 template<typename T>
 class Matrix {
 public:
-//TODO
+
+    /**
+     * @brief Default constructor.
+     * @post
+     *   GetDataPointer() == NULL &&
+     *   GetNumberOfRows() == 0u &&
+     *   GetNumberOfColumns() == 0u &&
+     *   IsStaticDeclared() == true.
+     */
     Matrix();
 
     /**
@@ -73,6 +81,18 @@ public:
            uint32 nOfColumns);
 
     /**
+     * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
+     * @post
+     *   GetNumberOfRows() == nOfRows &&
+     *   GetNumberOfColumns() == nOfColumns &&
+     *   GetDataPointer() == existingArray &&
+     *   IsStaticDeclared() == true
+     */
+    Matrix(T *existingArray,
+           uint32 nOfRows,
+           uint32 nOfColumns);
+
+    /**
      * @brief Constructs a new matrix from a statically declared table [][].
      * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
      * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
@@ -90,11 +110,12 @@ public:
      * @brief Destructor.
      * @details If the matrix is allocated internally, the memory will be freed.
      * @post
-     *   numberOfRows == 0 &&
-     *   numberOfColumns == 0 &&
-     *   dataPointer == NULL;
+     *   GetNumberOfRows() == 0 &&
+     *   GetNumberOfColumns() == 0 &&
+     *   GetDataPointer() == NULL;
      */
     ~Matrix();
+
     /**
      * @brief Gets the number of columns.
      * @return the number of columns.
@@ -136,15 +157,66 @@ public:
      *   numberOfRows == result.numberOfRows &&
      *   factor.numberOfColumns == result.numberOfColumns;
      */
-    bool Product(Matrix<T> factor,
-                 Matrix<T> &result);
+    bool Product(Matrix<T> &factor,
+                 Matrix<T> &result) const;
 
-    bool SubMatrix(uint32 beginRow,
-                   uint32 endRow,
-                   uint32 beginColumn,
-                   uint32 endColumn,
-                   Matrix<T> &subMatrix);
+    /**
+     * @brief Retrieves the sub matrix between the row and columns ranges specified.
+     * @param[in] beginRow is the top boundary of the block.
+     * @param[in] endRow is the bottom boundary of the block.
+     * @param[in] beginColumn is the left boundary of the block.
+     * @param[in] endColumn is the right boundary of the block.
+     * @param[out] subMatrix is the desired sub matrix in output.
+     * @return true if the preconditions are satisfied, false otherwise.
+     * @pre
+     *   beginRow <= endRow &&
+     *   beginColumn <= endColumn &&
+     *   endRow < numberOfRows &&
+     *   endColumn < numberOfColumns &&
+     *   subMatrix.numberOfRows == (endRows - beginRows)+1 &&
+     *   subMatrix.numberOfColumns == (endColumn - beginColumn)+1;
+     */
+    bool SubMatrix(const uint32 beginRow,
+                   const uint32 endRow,
+                   const uint32 beginColumn,
+                   const uint32 endColumn,
+                   Matrix<T> &subMatrix) const;
 
+
+    /**
+     * @brief Retrieves the transpose of this matrix.
+     * @param[out] transpose is the transpose matrix in output.
+     * @return true if the preconditions are satisfied, false otherwise.
+     * @pre
+     *   numberOfRows == transpose.numberOfColumns &&
+     *   numberOfColumns == transpose.numberOfRows.
+     */
+    bool Transpose(Matrix<T> &transpose) const;
+
+    /**
+     * @brief Calculates the matrix determinant.
+     * @details This operation is allowed only for float matrices.
+     * @param[out] det is the calculated determinant in output.
+     * @return true if the preconditions are satisfied, false otherwise.
+     * @pre
+     *   numberOfRows == numberOfColumns &&
+     *   T == float32 || T== float64.
+     */
+    bool Determinant(T &det) const;
+
+    /**
+     * @brief Retrieves the inverse of this matrix.
+     * @details This operations is allowed only for float matrices.
+     * @param[out] inverse is the calculated inverse matrix in output.
+     * @return true if the preconditions are satisfied, false otherwise.
+     * @pre
+     *   numberOfRows == numberOfColumns &&
+     *   T == float32 || T == float64 &&
+     *   this->Determinant(*) returns a determinant != 0.0 &&
+     *   numberOfRows == inverse.numberOfRows &&
+     *   numberOfColumns == inverse.numberOfColumns.
+     */
+    bool Inverse(Matrix<T> &inverse) const;
 private:
     /**
      * The data pointer to the raw data.
@@ -196,8 +268,7 @@ Matrix<T>::Matrix(uint32 nOfRows,
     numberOfColumns = nOfColumns;
     numberOfRows = nOfRows;
     staticDeclared = false;
-    uint32 i;
-    for (i = 0; i < nOfRows; i++) {
+    for (uint32 i = 0u; i < nOfRows; i++) {
         rows[i] = new T[nOfColumns];
     }
     canDestroy = true;
@@ -215,6 +286,17 @@ Matrix<T>::Matrix(T **existingArray,
 }
 
 template<typename T>
+Matrix<T>::Matrix(T *existingArray,
+                  uint32 nOfRows,
+                  uint32 nOfColumns) {
+    dataPointer = reinterpret_cast<void *>(existingArray);
+    numberOfColumns = nOfColumns;
+    numberOfRows = nOfRows;
+    staticDeclared = true;
+    canDestroy = false;
+}
+
+template<typename T>
 template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
 Matrix<T>::Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
     dataPointer = reinterpret_cast<void*>(&(source[0][0]));
@@ -228,7 +310,7 @@ template<typename T>
 Matrix<T>::~Matrix() {
     if (canDestroy) {
         T** pointerToDestroy = reinterpret_cast<T**>(dataPointer);
-        for (uint32 i = 0; i < numberOfRows; i++) {
+        for (uint32 i = 0u; i < numberOfRows; i++) {
             delete[] pointerToDestroy[i];
         }
         delete[] pointerToDestroy;
@@ -274,18 +356,25 @@ inline bool Matrix<T>::IsStaticDeclared() const {
 }
 
 template<typename T>
-bool Matrix<T>::Product(Matrix<T> factor,
-                        Matrix<T> &result) {
+bool Matrix<T>::Product(Matrix<T> &factor,
+                        Matrix<T> &result) const {
     bool cond1 = (factor.numberOfRows == numberOfColumns);
     bool cond2 = (result.numberOfRows == numberOfRows);
     bool cond3 = (result.numberOfColumns == factor.numberOfColumns);
     bool ret = ((cond1) && (cond2) && (cond3));
     if (ret) {
+        Matrix<T> temp;
+        if (staticDeclared) {
+            temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        else {
+            temp = Matrix<T>(static_cast<T**>(dataPointer), numberOfRows, numberOfColumns);
+        }
         for (uint32 i = 0u; i < numberOfRows; i++) {
             for (uint32 j = 0u; j < numberOfColumns; j++) {
                 result[i][j] = static_cast<T>(0);
                 for (uint32 k = 0u; k < numberOfColumns; k++) {
-                    result[i][j] += ((*this)[i][k]) * factor[k][j];
+                    result[i][j] += temp[i][k] * factor[k][j];
                 }
             }
         }
@@ -294,13 +383,13 @@ bool Matrix<T>::Product(Matrix<T> factor,
 }
 
 template<typename T>
-bool Matrix<T>::SubMatrix(uint32 beginRow,
-                          uint32 endRow,
-                          uint32 beginColumn,
-                          uint32 endColumn,
-                          Matrix<T> &subMatrix) {
-    bool cond1 = (endRow > beginRow);
-    bool cond2 = (endColumn > beginColumn);
+bool Matrix<T>::SubMatrix(const uint32 beginRow,
+                          const uint32 endRow,
+                          const uint32 beginColumn,
+                          const uint32 endColumn,
+                          Matrix<T> &subMatrix)  const{
+    bool cond1 = (endRow >= beginRow);
+    bool cond2 = (endColumn >= beginColumn);
     bool cond3 = (endRow < numberOfRows);
     bool cond4 = (endColumn < numberOfColumns);
 
@@ -314,16 +403,225 @@ bool Matrix<T>::SubMatrix(uint32 beginRow,
         ret = ((cond5) && (cond6));
 
         if (ret) {
-            for (uint32 i = 0; i < outputNRows; i++) {
-                for (uint32 j = 0; j < outputNCols; j++) {
+            Matrix<T> temp;
+            if (staticDeclared) {
+                temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
+            }
+            else {
+                temp = Matrix<T>(static_cast<T**>(dataPointer), numberOfRows, numberOfColumns);
+            }
+            for (uint32 i = 0u; i < outputNRows; i++) {
+                for (uint32 j = 0u; j < outputNCols; j++) {
                     uint32 rowIndex = (beginRow + i);
                     uint32 columnIndex = (beginColumn + j);
-                    subMatrix[i][j] = ((*this)[rowIndex][columnIndex]);
+                    subMatrix[i][j] = temp[rowIndex][columnIndex];
                 }
             }
         }
     }
 
+    return ret;
+}
+
+template<typename T>
+bool Matrix<T>::Transpose(Matrix<T> &transpose)  const{
+
+    bool cond1 = (numberOfRows == transpose.numberOfColumns);
+    bool cond2 = (numberOfColumns == transpose.numberOfRows);
+
+    bool ret = ((cond1) && (cond2));
+
+    if (ret) {
+        Matrix<T> temp;
+        if (staticDeclared) {
+            temp = Matrix<T>(static_cast<T*>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        else {
+            temp = Matrix<T>(static_cast<T**>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        for (uint32 i = 0u; i < numberOfRows; i++) {
+            for (uint32 j = 0u; j < numberOfColumns; j++) {
+                transpose[j][i] = temp[i][j];
+            }
+        }
+    }
+
+    return ret;
+}
+
+template<> inline
+bool Matrix<float32>::Determinant(float32 &det)  const{
+    bool ret = (numberOfRows == numberOfColumns);
+
+    if (ret) {
+        Matrix<float32> temp;
+        if (staticDeclared) {
+            temp = Matrix<float32>(static_cast<float32*>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        else {
+            temp = Matrix<float32>(static_cast<float32**>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        if (numberOfRows == 1u) {
+            det = temp[0][0];
+        }
+        else {
+            det = 0.0f;
+            // loop on the first row
+            for (uint32 k = 0u; k < numberOfColumns; k++) {
+                Matrix<float32> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+                uint32 n = 0u;
+                for (uint32 i = 1u; i < numberOfRows; i++) {
+                    uint32 m = 0u;
+                    for (uint32 j = 0u; j < numberOfColumns; j++) {
+                        if (j != k) {
+                            subMatrix[n][m] = temp[i][j];
+                            m++;
+                        }
+                    }
+                    n++;
+                }
+                float32 subDet = 0.0f;
+                subMatrix.Determinant(subDet);
+                float32 sign = (((k) & (1u)) == 0u) ? (1.0f) : (-1.0f);
+                det += (sign * temp[0][k]) * subDet;
+            }
+        }
+    }
+
+    return ret;
+}
+
+template<> inline
+bool Matrix<float64>::Determinant(float64 &det)  const{
+    bool ret = (numberOfRows == numberOfColumns);
+
+    if (ret) {
+        Matrix<float64> temp;
+        if (staticDeclared) {
+            temp = Matrix<float64>(static_cast<float64*>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        else {
+            temp = Matrix<float64>(static_cast<float64**>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        if (numberOfRows == 1u) {
+            det = temp[0][0];
+        }
+        else {
+            det = 0.0;
+            // loop on the first row
+            for (uint32 k = 0u; k < numberOfColumns; k++) {
+                Matrix<float64> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+                uint32 n = 0u;
+                for (uint32 i = 1u; i < numberOfRows; i++) {
+                    uint32 m = 0u;
+                    for (uint32 j = 0u; j < numberOfColumns; j++) {
+                        if (j != k) {
+                            subMatrix[n][m] = temp[i][j];
+                            m++;
+                        }
+                    }
+                    n++;
+                }
+                float64 subDet = 0.0;
+                subMatrix.Determinant(subDet);
+                float64 sign = (((k) & (1u)) == 0u) ? (1.0) : (-1.0);
+                det += (sign * temp[0][k]) * subDet;
+            }
+        }
+    }
+    return ret;
+}
+
+template<> inline
+bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
+    bool cond1 = (numberOfColumns == numberOfRows);
+    bool cond2 = (inverse.numberOfRows == numberOfRows);
+    bool cond3 = (inverse.numberOfColumns == numberOfColumns);
+    float32 determinant = 0.0f;
+
+    bool cond4 = Determinant(determinant);
+    bool cond5 = (determinant != 0.0f);
+    bool ret = ((cond1) && (cond2) && (cond3) && (cond4) && (cond5));
+
+    if (ret) {
+        Matrix<float32> temp;
+        if (staticDeclared) {
+            temp = Matrix<float32>(static_cast<float32*>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        else {
+            temp = Matrix<float32>(static_cast<float32**>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        Matrix<float32> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+        for (uint32 i = 0u; i < numberOfRows; i++) {
+            for (uint32 j = 0u; j < numberOfColumns; j++) {
+                Matrix<float32> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+                uint32 n = 0u;
+                for (uint32 h = 0u; h < numberOfRows; h++) {
+                    uint32 m = 0u;
+                    if (h != i) {
+                        for (uint32 k = 0u; k < numberOfColumns; k++) {
+                            if (k != j) {
+                                subMatrix[n][m] = temp[h][k];
+                                m++;
+                            }
+                        }
+                        n++;
+                    }
+                }
+                float32 subDet = 0.0f;
+                subMatrix.Determinant(subDet);
+                float32 sign = (((i + j) & (1u)) == 0u) ? (1.0) : (-1.0);
+                inverse[j][i] = (subDet * sign) / determinant;
+            }
+        }
+    }
+
+    return ret;
+}
+
+template<> inline
+bool Matrix<float64>::Inverse(Matrix<float64> &inverse)  const{
+    bool cond1 = (numberOfColumns == numberOfRows);
+    bool cond2 = (inverse.numberOfRows == numberOfRows);
+    bool cond3 = (inverse.numberOfColumns == numberOfColumns);
+    float64 determinant = 0.0;
+
+    bool cond4 = Determinant(determinant);
+    bool cond5 = (determinant != 0.0);
+    bool ret = ((cond1) && (cond2) && (cond3) && (cond4) && (cond5));
+
+    if (ret) {
+        Matrix<float64> temp;
+        if (staticDeclared) {
+            temp = Matrix<float64>(static_cast<float64*>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        else {
+            temp = Matrix<float64>(static_cast<float64**>(dataPointer), numberOfRows, numberOfColumns);
+        }
+        Matrix<float64> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+        for (uint32 i = 0u; i < numberOfRows; i++) {
+            for (uint32 j = 0u; j < numberOfColumns; j++) {
+                Matrix<float64> subMatrix(numberOfRows - 1u, numberOfColumns - 1u);
+                uint32 n = 0u;
+                for (uint32 h = 0u; h < numberOfRows; h++) {
+                    uint32 m = 0u;
+                    if (h != i) {
+                        for (uint32 k = 0u; k < numberOfColumns; k++) {
+                            if (k != j) {
+                                subMatrix[n][m] = temp[h][k];
+                                m++;
+                            }
+                        }
+                        n++;
+                    }
+                }
+                float64 subDet = 0.0;
+                subMatrix.Determinant(subDet);
+                float64 sign = (((i + j) & (1u)) == 0u) ? (1.0) : (-1.0);
+                inverse[j][i] = (subDet * sign) / determinant;
+            }
+        }
+    }
     return ret;
 }
 

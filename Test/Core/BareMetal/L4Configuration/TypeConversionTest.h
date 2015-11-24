@@ -170,11 +170,13 @@ bool TypeConversionTest::TestTypeConvert(const TypeToTypeTableTest<T1, T2>* tabl
         bool ret = TypeConvert(element, toConvert);
 
         if (element != result) {
-            //  printf("\n%s %s %d\n", element.Buffer(), result.Buffer(), i);
+             printf("\n%d \n", i);
 
             return false;
         }
         if (ret != table[i].expected) {
+            printf("\n%d \n", i);
+
             return false;
         }
 

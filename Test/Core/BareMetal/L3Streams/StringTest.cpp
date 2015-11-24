@@ -134,7 +134,7 @@ bool StringTest::TestAnyTypeOperator(const char8* initializationString) {
         return false;
     }
 
-    if (!td.isConstant) {
+    if (td.isConstant) {
         return false;
     }
 
