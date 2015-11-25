@@ -167,9 +167,11 @@ static inline void BSToBS(T * const & destination,
     destinationMask &= *destination;
     // merge into sourceCopy
     sourceCopy |= destinationMask;
-    // finally write result
-    *destination = sourceCopy;
-
+    // copy only the correct size
+    uint32 copySize = ((static_cast<uint32>(destinationBitSize) + static_cast<uint32>(destinationBitShift)) + 7u) / 8u;
+    if (!MemoryOperationsHelper::Copy(destination, &sourceCopy, copySize)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "BSToBS: Failed MemoryOperationsHelper::Copy()");
+    }
 }
 
 /**
@@ -211,6 +213,7 @@ static inline bool BitSetToBitSet(T *& destination,
     // exponent of the power of 2 that is granularity (log2 of the number of bits in T)
     uint8 granularityShift = 3u;
     uint8 temp = static_cast<uint8>(sizeof(T));
+    /*lint -e{681} .Justification: Entering or not in the loop depends by the template type size */
     while (temp > 1u) {
         granularityShift++;
         temp = Shift::LogicalRightSafeShift(temp, 1u);
@@ -350,7 +353,7 @@ static inline bool IntegerToBitSet(T *& destination,
     T *source = reinterpret_cast<T*>(&src);
     uint8 sourceBitShift = 0u;
     uint8 sourceBitSize = static_cast<uint8>(sizeof(T2) * 8u);
-    // detect if T2 has sign by seing if we can initialise a number negative
+    // detect if T2 has sign by seeing if we can initialise a number negative
     bool sourceIsSigned = ((static_cast<T2>(-1)) < static_cast<T2>(0));
 
     return BitSetToBitSet(destination, destinationBitShift, destinationBitSize, destinationIsSigned, source, sourceBitShift, sourceBitSize, sourceIsSigned);

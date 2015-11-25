@@ -131,8 +131,17 @@ public:
      * @return In case of native types returns true if type and size fields are equal.
      * If the type is an object compares the structuredDataIdCode.
      */
-    /*lint -e(1739) , operation uint16 == TypeDescriptor will not be supported*/
+    /*lint -e(1739) , operation basic_type == TypeDescriptor will not be supported*/
     inline bool operator==(const TypeDescriptor &typeDescriptor) const;
+
+    /**
+     * @brief Inequality operator used to compare types.
+     * @param[in] typeDescriptor is the type to be compared with.
+     * @return In case of native types returns true if type and size fields are equal.
+     * If the type is an object compares the structuredDataIdCode.
+     */
+    /*lint -e(1739) , operation basic_type != TypeDescriptor will not be supported*/
+    inline bool operator!=(const TypeDescriptor &typeDescriptor) const;
 
 };
 
@@ -196,11 +205,9 @@ static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
  */
 static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 
 TypeDescriptor::TypeDescriptor(const uint16 x) {
     all = x;
@@ -223,9 +230,13 @@ TypeDescriptor::TypeDescriptor(const bool isConstantIn,
 }
 
 bool TypeDescriptor::operator==(const TypeDescriptor &typeDescriptor) const {
-    bool ret1 = (structuredDataIdCode == typeDescriptor.structuredDataIdCode);
-    bool ret2 = (isStructuredData == typeDescriptor.isStructuredData);
-    return ret1 && ret2;
+    bool ret = ((all | (0x0002u)) == (typeDescriptor.all | (0x0002u)));
+    return ret;
+}
+
+bool TypeDescriptor::operator!=(const TypeDescriptor &typeDescriptor) const {
+    bool ret = ((all | (0x0002u)) != (typeDescriptor.all | (0x0002u)));
+    return ret;
 }
 
 }
