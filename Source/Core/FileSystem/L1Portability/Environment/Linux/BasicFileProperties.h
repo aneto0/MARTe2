@@ -40,8 +40,9 @@
 
 namespace MARTe {
 struct BasicFileProperties {
-    MARTe::Handle identifier;
-    MARTe::StreamString pathName;
+    Handle identifier;
+    uint32 saveFlags;
+    StreamString pathName;
 };
 }
 

@@ -2,7 +2,7 @@
  * @file BasicFileTest.cpp
  * @brief Source file for class TestBasicFile
  * @date 04/11/2015
- * @author Llorenç Capellà
+ * @author Llorenï¿½ Capellï¿½
  * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -51,7 +51,7 @@ BasicFileTest::BasicFileTest() {
     retVal = true;
     defaultRWFlags = BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W;
     defaultWFlags = BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_W;
-    defaultRFlags = BasicFile::FLAG_APPEND | BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R;
+    defaultRFlags = BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R;
     str1 = "../TargetFile.txt";
     str2 = "abcdefghi";
     nameFileTarget = str1.Buffer();
@@ -74,7 +74,8 @@ bool BasicFileTest::TestDefaultConstructor() {
     return retVal;
 }
 
-bool BasicFileTest::TestCopyConstructor() {
+bool BasicFileTest::TestCopyConstructor_withOpenFile() {
+    bf.Open("../TestCopyConstructor", defaultRWFlags);
     BasicFile copybf(bf);
     retVal &= (copybf.CanRead() == bf.CanRead());
     retVal &= (copybf.CanSeek() == bf.CanSeek());
@@ -87,7 +88,54 @@ bool BasicFileTest::TestCopyConstructor() {
     return retVal;
 }
 
-bool BasicFileTest::TestAssignmentOperator() {
+bool BasicFileTest::TestCopyConstructor_withClosedFile() {
+    BasicFile copybf(bf);
+    retVal &= (copybf.CanRead() == bf.CanRead());
+    retVal &= (copybf.CanSeek() == bf.CanSeek());
+    retVal &= (copybf.CanWrite() == bf.CanWrite());
+    retVal &= (copybf.IsOpen() == bf.IsOpen());
+    retVal &= (copybf.Size() == bf.Size());
+    retVal &= (copybf.Position() == bf.Position());
+    retVal &= (copybf.GetFlags() == bf.GetFlags());
+    retVal &= (copybf.GetPathName() == bf.GetPathName());
+    return retVal;
+}
+
+bool BasicFileTest::TestAssignmentOperator_withOpenFile() {
+    bf.Open("../TestAssignmentOperator_withOpenFile", defaultRWFlags);
+    BasicFile copybf;
+    copybf.Open("../TestAssignmentOperator_withOpenFile1", defaultRWFlags);
+    copybf = bf;
+    retVal &= (copybf.CanRead() == bf.CanRead());
+    retVal &= (copybf.CanSeek() == bf.CanSeek());
+    retVal &= (copybf.CanWrite() == bf.CanWrite());
+    retVal &= (copybf.IsOpen() == bf.IsOpen());
+    retVal &= (copybf.Size() == bf.Size());
+    retVal &= (copybf.Position() == bf.Position());
+    retVal &= (copybf.GetFlags() == bf.GetFlags());
+    retVal &= (copybf.GetPathName() == bf.GetPathName());
+    bf.Close();
+    copybf.Close();
+    return retVal;
+}
+
+bool BasicFileTest::TestAssignmentOperator_withClosedFile() {
+    BasicFile copybf;
+    copybf = bf;
+    retVal &= (copybf.CanRead() == bf.CanRead());
+    retVal &= (copybf.CanSeek() == bf.CanSeek());
+    retVal &= (copybf.CanWrite() == bf.CanWrite());
+    retVal &= (copybf.IsOpen() == bf.IsOpen());
+    retVal &= (copybf.Size() == bf.Size());
+    retVal &= (copybf.Position() == bf.Position());
+    retVal &= (copybf.GetFlags() == bf.GetFlags());
+    retVal &= (copybf.GetPathName() == bf.GetPathName());
+    bf.Close();
+    copybf.Close();
+    return retVal;
+}
+
+bool BasicFileTest::TestAssignmentOperator_checkPointsToSameFile() {
     BasicFile copybf;
     const char8 * writeString = str2.Buffer();
     uint32 size1 = 3;
@@ -107,13 +155,13 @@ bool BasicFileTest::TestAssignmentOperator() {
 
 bool BasicFileTest::TestSetFlags() {
     bf.Open("../TestSetFlags.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W | BasicFile::FLAG_APPEND /*defaultRWFlags*/);
-    //First check that the flag is not set to APPEND
+    //First check that the flag is set to APPEND
     uint32 retFlags = bf.GetFlags();
     retVal &= ((retFlags & BasicFile::FLAG_APPEND) == BasicFile::FLAG_APPEND);
     //Remove the BasicFile::FLAG_APPEND
     bf.SetFlags(0);
     retFlags = bf.GetFlags();
-    retVal &= !((retFlags & BasicFile::FLAG_APPEND) == BasicFile::FLAG_APPEND);
+    retVal &= ((retFlags & BasicFile::FLAG_APPEND) != BasicFile::FLAG_APPEND);
     bf.Close();
     return retVal;
 }
@@ -131,17 +179,17 @@ bool BasicFileTest::TestGetFlags() {
 }
 
 bool BasicFileTest::TestGetFlags_defaultWFlags() {
-    bf.Open("../TestGetFlags_defaultWFlags.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W /*defaultRWFlags*/);
+    bf.Open("../TestGetFlags_defaultWFlags.txt", defaultWFlags);
     uint32 retFlags = bf.GetFlags();
-    retVal &= (retFlags == (BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W));
+    retVal &= (retFlags == (defaultWFlags));
     bf.Close();
     return retVal;
 }
 
 bool BasicFileTest::TestGetFlags_defaultRFlags() {
-    bf.Open("../TestGetFlags_defaultRFlags.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W /*defaultRWFlags*/);
+    bf.Open("../TestGetFlags_defaultRFlags.txt", defaultRFlags);
     uint32 retFlags = bf.GetFlags();
-    retVal &= (retFlags == (BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W));
+    retVal &= (retFlags == defaultRFlags);
     bf.Close();
     return retVal;
 }
@@ -205,6 +253,7 @@ bool BasicFileTest::TestOpen() {
 
 bool BasicFileTest::TestOpen_FLAG_CREAT_EXCLUSIVE() {
     retVal &= bf.Open("../TestOpen_FLAG_CREAT_EXCLUSIVE.txt", BasicFile::FLAG_CREAT_EXCLUSIVE | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W);
+    retVal &= ((bf.GetFlags() & BasicFile::FLAG_CREAT_EXCLUSIVE) == BasicFile::FLAG_CREAT_EXCLUSIVE);
     retVal &= bf.CanRead();
     retVal &= bf.CanWrite();
     retVal &= bf.CanSeek();
@@ -226,6 +275,8 @@ bool BasicFileTest::TestOpen_IncompatibleFlags1() {
     bf.Close();
     //If the file exist and the activated flag is FLAG_CREAT_EXCLUSIVE the Open should fail. If it doesn't fail means FLAG_CREAT is activated.
     retVal &= bf.Open("../TestOpen_IncompatibleFlags1.txt", BasicFile::FLAG_CREAT | BasicFile::FLAG_CREAT_EXCLUSIVE);
+    retVal &= ((bf.GetFlags() & BasicFile::FLAG_CREAT) == BasicFile::FLAG_CREAT);
+    retVal &= ((bf.GetFlags() & BasicFile::FLAG_CREAT_EXCLUSIVE) != BasicFile::FLAG_CREAT_EXCLUSIVE);
     bf.Close();
     return retVal;
 }
@@ -236,6 +287,30 @@ bool BasicFileTest::TestOpen_IncompatibleFlags2() {
     bf.Close();
     //The open should fail because the file already exists.
     retVal &= !(bf.Open("../TestOpen_IncompatibleFlags2.txt", BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT_EXCLUSIVE));
+    bf.Close();
+    return retVal;
+}
+
+bool BasicFileTest::TestOpen_IncompatibleFlags3() {
+    //If not exist create the file
+    bf.Open("../TestOpen_IncompatibleFlags3.txt", defaultRWFlags);
+    bf.Close();
+    //The open should fail because the file already exists.
+    retVal &= (bf.Open("../TestOpen_IncompatibleFlags3.txt", BasicFile::FLAG_APPEND | BasicFile::ACCESS_MODE_R));
+    retVal &= ((bf.GetFlags() & BasicFile::ACCESS_MODE_R) == BasicFile::ACCESS_MODE_R);
+    retVal &= ((bf.GetFlags() & BasicFile::FLAG_APPEND) != BasicFile::FLAG_APPEND);
+    bf.Close();
+    return retVal;
+}
+
+bool BasicFileTest::TestOpen_IncompatibleFlags4() {
+    //If not exist create the file
+    bf.Open("../TestOpen_IncompatibleFlags4.txt", defaultRWFlags);
+    bf.Close();
+    //The open should fail because the file already exists.
+    retVal &= (bf.Open("../TestOpen_IncompatibleFlags4.txt", BasicFile::FLAG_TRUNC | BasicFile::ACCESS_MODE_R));
+    retVal &= ((bf.GetFlags() & BasicFile::ACCESS_MODE_R) == BasicFile::ACCESS_MODE_R);
+    retVal &= ((bf.GetFlags() & BasicFile::FLAG_TRUNC) != BasicFile::FLAG_TRUNC);
     bf.Close();
     return retVal;
 }
@@ -269,14 +344,14 @@ bool BasicFileTest::TestClose() {
     retVal &= (bf.Size() == 0);
     retVal &= (bf.Position() == 0);
     retVal &= (bf.GetFlags() == 0);
-    retVal &= (bf.GetPathName().Size()==0);
+    retVal &= (bf.GetPathName().Size() == 0);
     return retVal;
 }
 
 bool BasicFileTest::TestWrite() {
     uint32 oldSize = size;
     uint32 newSize = size;
-    bf.Open(nameFileTarget, BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | /*BasicFile::ACCESS_MODE_R |*/ BasicFile::ACCESS_MODE_W);
+    bf.Open(nameFileTarget, BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | /*BasicFile::ACCESS_MODE_R |*/BasicFile::ACCESS_MODE_W);
     retVal &= bf.Write(stringTarget, newSize);
     retVal &= (oldSize >= newSize);
     retVal &= (bf.Position() == newSize);
@@ -292,7 +367,7 @@ bool BasicFileTest::TestWrite_close() {
 bool BasicFileTest::TestWrite_timeout() {
     uint32 oldSize = size;
     uint32 newSize = size;
-    bf.Open(nameFileTarget, BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | /*BasicFile::ACCESS_MODE_R |*/ BasicFile::ACCESS_MODE_W);
+    bf.Open(nameFileTarget, BasicFile::FLAG_TRUNC | BasicFile::FLAG_CREAT | /*BasicFile::ACCESS_MODE_R |*/BasicFile::ACCESS_MODE_W);
     retVal &= bf.Write(stringTarget, newSize, 100);
     retVal &= (oldSize >= newSize);
     retVal &= (bf.Position() == newSize);
@@ -488,5 +563,17 @@ bool BasicFileTest::TestSetSize_reducing() {
 bool BasicFileTest::TestGetPathName() {
     bf.Open(nameFileTarget, defaultRWFlags);
     return (bf.GetPathName() == nameFileTarget);
+}
+
+bool BasicFileTest::TestGetReadHandle() {
+    bf.Open(nameFileTarget, defaultRWFlags);
+    retVal = (bf.GetReadHandle() >= 0);
+    return retVal;
+}
+
+bool BasicFileTest::TestGetWriteHandle() {
+    bf.Open(nameFileTarget, defaultRWFlags);
+    retVal = (bf.GetWriteHandle() >= 0);
+    return retVal;
 }
 
