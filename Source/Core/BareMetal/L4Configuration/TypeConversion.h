@@ -1,8 +1,8 @@
 /**
  * @file TypeConversion.h
  * @brief Header file for class TypeConversion
- * @date Oct 28, 2015
- * @author aneto
+ * @date 28/10/2015
+ * @author Andre' Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -27,6 +27,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                        Project header includes                            */
+/*---------------------------------------------------------------------------*/
+
 #include "AnyType.h"
 #include "Vector.h"
 #include "Matrix.h"
@@ -37,12 +42,9 @@
 #include "MemoryOperationsHelper.h"
 
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -61,6 +63,8 @@ namespace MARTe {
  * @pre
  *   source.GetNumberOfElements([0:2]) == destination.GetNumberOfElements([0:2]);
  *   In case of source or destination representing a char8 array or table, the size must be minor than 127 characters for each dimension.
+ * @post
+ *   destination holds the converted type of source
  */
 bool TypeConvert(const AnyType &destination,
                  const AnyType &source);

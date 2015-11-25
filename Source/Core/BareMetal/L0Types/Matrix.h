@@ -31,11 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Vector.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
@@ -45,36 +47,42 @@ namespace MARTe {
  */
 template<typename T>
 class Matrix {
+
 public:
 
     /**
      * @brief Default constructor.
      * @post
-     *   GetDataPointer() == NULL &&
      *   GetNumberOfRows() == 0u &&
      *   GetNumberOfColumns() == 0u &&
-     *   IsStaticDeclared() == true.
+     *   GetDataPointer() == NULL &&
+     *   IsStaticDeclared()
      */
     Matrix();
 
     /**
      * @brief Constructs a new matrix with size: [nOfRows]x[nOfColumns]
+     * @param[in] nOfRows The number of rows
+     * @param[in] nOfColumns The number of columns
      * @post
      *   GetNumberOfRows() == nOfRows &&
      *   GetNumberOfColumns() == nOfColumns &&
      *   GetDataPointer() != NULL &&
-     *   IsStaticDeclared() == false
+     *   not IsStaticDeclared()
      */
     Matrix(uint32 nOfRows,
            uint32 nOfColumns);
 
     /**
      * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
+     * @param[in] existingArray The pointer to the existing array
+     * @param[in] nOfRows The number of rows
+     * @param[in] nOfColumns The number of columns
      * @post
      *   GetNumberOfRows() == nOfRows &&
      *   GetNumberOfColumns() == nOfColumns &&
      *   GetDataPointer() == existingArray &&
-     *   IsStaticDeclared() == false
+     *   not IsStaticDeclared()
      */
     Matrix(T **existingArray,
            uint32 nOfRows,
@@ -82,11 +90,14 @@ public:
 
     /**
      * @brief Constructs a new matrix and associates it to an existent table with size: [nOfRows]x[nOfColumns]
+     * @param[in] existingArray The pointer to the existing array
+     * @param[in] nOfRows The number of rows
+     * @param[in] nOfColumns The number of columns
      * @post
      *   GetNumberOfRows() == nOfRows &&
      *   GetNumberOfColumns() == nOfColumns &&
      *   GetDataPointer() == existingArray &&
-     *   IsStaticDeclared() == true
+     *   IsStaticDeclared()
      */
     Matrix(T *existingArray,
            uint32 nOfRows,
@@ -94,23 +105,20 @@ public:
 
     /**
      * @brief Constructs a new matrix from a statically declared table [][].
-     * @param[in] source address of the statically declared table.
+     * @param[in] source The address of the statically declared table.
      * @post
      *   GetNumberOfRows() == nOfRowsStatic &&
      *   GetNumberOfColumns() == nOfColumnsStatic &&
      *   GetDataPointer() == &source[0] &&
-     *   IsStaticDeclared == true
+     *   IsStaticDeclared()
      */
     template<uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
     Matrix(T (&source)[nOfRowsStatic][nOfColumnsStatic]);
 
     /**
      * @brief Destructor.
-     * @details If the matrix is allocated internally, the memory will be freed.
-     * @post
-     *   GetNumberOfRows() == 0 &&
-     *   GetNumberOfColumns() == 0 &&
-     *   GetDataPointer() == NULL;
+     * @details If IsStaticDeclared(), then it frees the memory pointed
+     * by \a GetDataPointer().
      */
     ~Matrix();
 
@@ -128,7 +136,7 @@ public:
 
     /**
      * @brief Returns the vector associated to the specified row.
-     * @param[in] rows the row to retrieve.
+     * @param[in] rows The row to retrieve.
      * @return the vector associated to the specified row.
      */
     Vector<T> operator [](uint32 rows);
@@ -151,9 +159,11 @@ public:
      * @param[out] result is the matrix product result.
      * @return true if the dimensions of \a factor and \a result are correct, false otherwise.
      * @pre
-     *   numberOfColumns == factor.numberOfRows &&
-     *   numberOfRows == result.numberOfRows &&
-     *   factor.numberOfColumns == result.numberOfColumns;
+     *   GetNumberOfColumns() == factor.GetNumberOfRows() &&
+     *   GetNumberOfRows() == result.GetNumberOfRows() &&
+     *   factor.GetNumberOfColumns() == result.GetNumberOfColumns()
+     * @post
+     *   result holds the product matrix between *this and factor
      */
     bool Product(Matrix<T> &factor,
                  Matrix<T> &result) const;
@@ -169,10 +179,12 @@ public:
      * @pre
      *   beginRow <= endRow &&
      *   beginColumn <= endColumn &&
-     *   endRow < numberOfRows &&
-     *   endColumn < numberOfColumns &&
-     *   subMatrix.numberOfRows == (endRows - beginRows)+1 &&
-     *   subMatrix.numberOfColumns == (endColumn - beginColumn)+1;
+     *   endRow < GetNumberOfRows() &&
+     *   endColumn < GetNumberOfColumns() &&
+     *   subMatrix.GetNumberOfRows() == (endRows - beginRows) + 1 &&
+     *   subMatrix.GetNumberOfColumns() == (endColumn - beginColumn) + 1
+     * @post
+     *   subMatrix holds the requested sub matrix from *this
      */
     bool SubMatrix(const uint32 beginRow,
                    const uint32 endRow,
@@ -180,14 +192,15 @@ public:
                    const uint32 endColumn,
                    Matrix<T> &subMatrix) const;
 
-
     /**
      * @brief Retrieves the transpose of this matrix.
      * @param[out] transpose is the transpose matrix in output.
      * @return true if the preconditions are satisfied, false otherwise.
      * @pre
-     *   numberOfRows == transpose.numberOfColumns &&
-     *   numberOfColumns == transpose.numberOfRows.
+     *   GetNumberOfRows() == transpose.GetNumberOfColumns() &&
+     *   GetNumberOfColumns() == transpose.GetNumberOfRows()
+     * @post
+     *   transpose holds the transpose matrix of *this
      */
     bool Transpose(Matrix<T> &transpose) const;
 
@@ -197,8 +210,10 @@ public:
      * @param[out] det is the calculated determinant in output.
      * @return true if the preconditions are satisfied, false otherwise.
      * @pre
-     *   numberOfRows == numberOfColumns &&
-     *   T == float32 || T== float64.
+     *   GetNumberOfRows() == GetNumberOfColumns() &&
+     *   (typeid(T) == typeid(float32) || typeid(T) == typeid(float64))
+     * @post
+     *   det holds the determinant of *this
      */
     bool Determinant(T &det) const;
 
@@ -208,14 +223,18 @@ public:
      * @param[out] inverse is the calculated inverse matrix in output.
      * @return true if the preconditions are satisfied, false otherwise.
      * @pre
-     *   numberOfRows == numberOfColumns &&
-     *   T == float32 || T == float64 &&
+     *   GetNumberOfRows() == GetNumberOfColumns() &&
+     *   (typeid(T) == typeid(float32) || typeid(T) == typeid(float64)) &&
      *   this->Determinant(*) returns a determinant != 0.0 &&
-     *   numberOfRows == inverse.numberOfRows &&
-     *   numberOfColumns == inverse.numberOfColumns.
+     *   GetNumberOfRows() == inverse.GetNumberOfRows() &&
+     *   GetNumberOfColumns() == inverse.GetNumberOfColumns()
+     * @post
+     *   inverse holds the inverse matrix of *this
      */
     bool Inverse(Matrix<T> &inverse) const;
+
 private:
+
     /**
      * The data pointer to the raw data.
      */
@@ -247,6 +266,7 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 template<typename T>
@@ -624,5 +644,6 @@ bool Matrix<float64>::Inverse(Matrix<float64> &inverse)  const{
 }
 
 }
-#endif /*MATRIX_H_ */
+
+#endif /* MATRIX_H_ */
 

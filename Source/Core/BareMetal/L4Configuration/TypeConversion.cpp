@@ -28,13 +28,16 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "TypeConversion.h"
 #include "AnyType.h"
 #include "BitSetToInteger.h"
 #include "StreamString.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
@@ -143,8 +146,8 @@ static bool FloatToFloat(const FloatType1 source,
  * @param[in] source is the any type representing an integer number.
  * @return true if the conversion succeeds, false otherwise.
  * @pre
- *   source.GetTypeDescriptor == SignedInteger ||
- *   source.GetTypeDescriptor == UnsignedInteger;
+ *   source.GetTypeDescriptor() == SignedInteger ||
+ *   source.GetTypeDescriptor() == UnsignedInteger;
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool IntegerToType(const AnyType &destination,
@@ -262,7 +265,7 @@ static bool IntegerToType(const AnyType &destination,
  * @param[in] source is the any type representing a float number.
  * @return true if the conversion succeeds, false otherwise.
  * @pre
- *   source.GetTypeDescriptor == Float;
+ *   source.GetTypeDescriptor() == Float;
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool FloatToType(const AnyType &destination,
@@ -346,9 +349,9 @@ static bool FloatToType(const AnyType &destination,
  * @param[in] source is the any type representing a string.
  * @return true if the conversion succeeds, false otherwise.
  * @pre
- *   source.GetTypeDescriptor == StreamString ||
- *   source.GetTypeDescriptor == CCString ||
- *   source.GetTypeDescriptor == CArray;
+ *   source.GetTypeDescriptor() == StreamString ||
+ *   source.GetTypeDescriptor() == CCString ||
+ *   source.GetTypeDescriptor() == CArray;
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 static bool StringToType(const AnyType &destination,
@@ -771,6 +774,7 @@ static bool MatrixBasicTypeConvert(const AnyType &destination,
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 bool TypeConvert(const AnyType &destination,
                  const AnyType &source) {
 
@@ -807,4 +811,5 @@ bool TypeConvert(const AnyType &destination,
 
     return ok;
 }
+
 }

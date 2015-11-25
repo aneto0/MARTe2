@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "AnyObject.h"
 #include "TypeConversion.h"
 #include "StructuredDataI.h"
@@ -52,6 +53,7 @@ namespace MARTe {
  * A shared semaphore that can be used by the users of a database instance to have concurrent access to the database.
  */
 class ConfigurationDatabase: public StructuredDataI {
+
 public:
 
     /**
@@ -63,7 +65,7 @@ public:
     ConfigurationDatabase();
 
     /**
-     * Default constructor.
+     * @brief Destructor.
      */
     virtual ~ConfigurationDatabase();
 
@@ -143,9 +145,10 @@ public:
     void Unlock();
 
 private:
+
     /**
      * @brief Create nodes relative to the currentNode.
-     * @param path the path to be created.
+     * @param[in] path the path to be created.
      * @return true if the path creation is successful.
      */
     bool CreateNodes(const char8 * const path);
@@ -168,6 +171,7 @@ private:
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

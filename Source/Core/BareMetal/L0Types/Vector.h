@@ -31,70 +31,78 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "HeapManager.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
  * @brief Fixed size array of values.
- * @details The Vector can allocate and manage its own memory or it can be associated
- * to an existent memory array.
+ * @details The Vector can allocate and manage its own memory or it can be
+ * associated to an existent memory array.
  */
 template<typename T>
 class Vector {
+
 public:
+
     /**
      * @brief Default constructor
      * @post
      *    GetNumberOfElements() == 0u &&
      *    GetDataPointer() == NULL &&
-     *    IsStaticDeclared()== false
+     *    IsStaticDeclared()
      */
     Vector();
 
     /**
-     * @brief Constructs a new vector with size: [nOfElements]
+     * @brief Constructs a new vector with a given size
+     * @param[in] nOfElements The number of elements of the vector
      * @post
      *    GetNumberOfElements() == nOfElements &&
      *    GetDataPointer() != NULL &&
-     *    IsStaticDeclared() == false
+     *    not IsStaticDeclared()
      */
     Vector(uint32 nOfElements);
 
     /**
-     * @brief Constructs a new vector and associates it to an existent array with size: [nOfElements]
+     * @brief Constructs a new vector and associates it to an existent
+     * array with a given size.
+     * @param[in] existingArray The pointer to the existing array
+     * @param[in] nOfElements The number of elements of the vector
      * @post
      *    GetNumberOfElements() == nOfElements &&
      *    GetDataPointer() == existingArray &&
-     *    IsStaticDeclared() == false
+     *    not IsStaticDeclared()
      */
     Vector(T *existingArray,
            uint32 nOfElements);
 
     /**
      * @brief Constructs a new matrix from a statically declared table [].
-     * @param[in] source address of the statically declared table.
+     * @param[in] source The address of the statically declared table.
      * @post
      *   GetNumberOfElements() == nOfElementsStatic &&
      *   GetDataPointer() == &source[0] &&
-     *   IsStaticDeclared == true
+     *   IsStaticDeclared
      */
     template<uint32 nOfElementsStatic>
     Vector(T (&source)[nOfElementsStatic]);
 
     /**
      * @brief Destructor.
-     * @post
-     *   If IsStaticDeclared frees \a dataPointer
+     * @details If IsStaticDeclared(), then it frees the memory pointed
+     * by \a GetDataPointer().
      */
     ~Vector();
 
     /**
      * @brief Returns the element at position \a idx.
-     * @param[in] idx the index of the element to retrieve.
+     * @param[in] idx The index of the element to retrieve.
      * @return the element at position \a idx.
      */
     T &operator [](uint32 idx);
@@ -115,7 +123,7 @@ public:
      * @brief Gets the number of elements in the vector.
      * @return the number of elements in the vector.
      */
-    inline uint32 GetNumberOfElements();
+    inline uint32 GetNumberOfElements() const;
 
     /**
      * @brief Performs the vector scalar product.
@@ -124,11 +132,14 @@ public:
      * @return true if \a factor has the same number of elements of this vector, false otherwise.
      * @pre
      *   numberOfElements == factor.numberOfElements;
+     * @post
+     *   result holds the result of the scalar product of this vector multiplied with \a factor
      */
     bool Product(Vector<T> factor,
                  T &result) const;
 
 private:
+
     /**
      * The data pointer to the raw data.
      */
@@ -154,6 +165,7 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 template<typename T>
@@ -214,7 +226,7 @@ inline bool Vector<T>::IsStaticDeclared() const {
 }
 
 template<typename T>
-inline uint32 Vector<T>::GetNumberOfElements() {
+inline uint32 Vector<T>::GetNumberOfElements() const{
     return numberOfElements;
 }
 

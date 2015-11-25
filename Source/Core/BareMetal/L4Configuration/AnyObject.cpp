@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "AnyObject.h"
 #include "Vector.h"
 #include "Matrix.h"
@@ -39,14 +40,7 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                           Method definitions                              */
-/*---------------------------------------------------------------------------*/
 namespace MARTe {
-
-AnyObject::AnyObject() :
-        Object() {
-}
 
 static bool SerializeStaticMatrix(const AnyType &typeIn,
                                   AnyType &typeOut) {
@@ -292,6 +286,24 @@ static bool SerializeScalar(const AnyType &typeIn,
     return ret;
 }
 
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
+
+AnyObject::AnyObject() :
+        Object() {
+}
+
+/*lint -e{1551} Justification: Memory has to be freed in the destructor.
+ * No exceptions should be thrown given that the memory is managed exclusively managed by this class.". */
+AnyObject::~AnyObject() {
+    CleanUp();
+}
+
 bool AnyObject::Serialise(const AnyType &typeIn) {
     CleanUp();
     uint32 nOfDimensions = typeIn.GetNumberOfDimensions();
@@ -394,12 +406,6 @@ void AnyObject::CleanUp() {
         }
         type=voidAnyType;
     }
-}
-
-/*lint -e{1551} Justification: Memory has to be freed in the destructor.
- * No exceptions should be thrown given that the memory is managed exclusively managed by this class.". */
-AnyObject::~AnyObject() {
-    CleanUp();
 }
 
 AnyType AnyObject::GetType() const {
