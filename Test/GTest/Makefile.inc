@@ -32,6 +32,7 @@ OBJSX=  DirectoryGTest.x \
 	ConfigurationDatabaseGTest.x \
 	AnyObjectGTest.x \
 	AnyTypeGTest.x\
+	TimeStampGTest.x \
         DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \

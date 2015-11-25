@@ -68,6 +68,7 @@ StreamStringIOBuffer.cpp
 Select.cpp
 StringToFloat.cpp
 StringToInteger.cpp
+TimeStamp.cpp
 TypeConversion.cpp
 Vector.h
 
