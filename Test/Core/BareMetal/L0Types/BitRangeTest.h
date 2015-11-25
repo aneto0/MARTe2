@@ -149,8 +149,19 @@ bool BitRangeTest<T>::TestBasicTypeCastMinorSize(T2 input) {
     bool isInputSigned = TypeCharacteristics::IsSigned<T2>();
 
     // max and min values of the input
-    T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T) 1) : ((T2) -1);
-    T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T) 1) : 0;
+    T2 maxValue = 0;
+    T2 minValue = 0;
+    if (isInputSigned) {
+        maxValue = (((T2) 1) << (inputSize - (T2) 1));
+        maxValue -= (T2) 1;
+        minValue = (((T2) 1) << (inputSize - (T2) 1));
+        minValue = ~(minValue - (T2) 1);
+    }
+    else {
+        maxValue = (T2) -1;
+        minValue = 0;
+    }
+
     T2 zero = (T2) 0;
 
     bool isSigned = TypeCharacteristics::IsSigned<T>();
@@ -180,7 +191,7 @@ bool BitRangeTest<T>::TestBasicTypeCastMinorSize(T2 input) {
     }
 
     myBitRange = zero;
-    if (myBitRange != zero) {
+    if (myBitRange != static_cast<T>(zero)) {
 
         return false;
     }
@@ -200,8 +211,18 @@ bool BitRangeTest<T>::TestBasicTypeCastMajorSize(T2 input) {
     BitRange<T, majorSize, half> myBitRange;
 
     bool isInputSigned = TypeCharacteristics::IsSigned<T2>();
-    T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : ((T2) -1);
-    T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : 0;
+    T2 maxValue = 0;
+    T2 minValue = 0;
+    if (isInputSigned) {
+        maxValue = (((T2) 1) << (inputSize - (T2) 1));
+        maxValue -= ((T2) 1);
+        minValue = (((T2) 1) << (inputSize - (T2) 1));
+        minValue = ~(minValue - (T2) 1);
+    }
+    else {
+        maxValue = (T2) -1;
+        minValue = 0;
+    }
     T2 zero = (T2) 0;
 
     bool isSigned = TypeCharacteristics::IsSigned<T>();
@@ -210,14 +231,14 @@ bool BitRangeTest<T>::TestBasicTypeCastMajorSize(T2 input) {
 
     // since the bit range has a size greater than the input,
     // the bit range should contain the max input value
-    if (myBitRange != maxValue) {
+    if (myBitRange != static_cast<T>(maxValue)) {
 
         return false;
     }
 
     // normally the bit range should contain the min input value
     myBitRange = minValue;
-    if (myBitRange != minValue) {
+    if (myBitRange != static_cast<T>(minValue)) {
 
         // if the bit range is unsigned and the input signed,
         // the negative value is saturated to zero in the bit range
@@ -232,7 +253,7 @@ bool BitRangeTest<T>::TestBasicTypeCastMajorSize(T2 input) {
     }
 
     myBitRange = zero;
-    if (myBitRange != zero) {
+    if (myBitRange != static_cast<T>(zero)) {
 
         return false;
     }

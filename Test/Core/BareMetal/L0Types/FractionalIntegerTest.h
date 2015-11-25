@@ -98,7 +98,7 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMinorSize(T2 input) {
 
     const uint8 max = sizeof(T) * 8;
     const uint8 half = max / 2;
-    const uint8 inputSize = sizeof(T2) * 8;
+    const uint8 inputSize = sizeof(T2) * 8 - 1;
 
     // the size of the bit range
     const uint8 minorSize = (inputSize < max) ? (inputSize - 1) : (half - 1);
@@ -125,10 +125,10 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMinorSize(T2 input) {
         return false;
     }
     myFractionalInteger = minValue;
-    if (myFractionalInteger != thisMinValue) {
+    if (myFractionalInteger != static_cast<T>(thisMinValue)) {
         //if the input is unsigned and the bit range signed, the minValue passed is zero
         if ((!isInputSigned) && (isSigned)) {
-            if (myFractionalInteger != minValue) {
+            if (static_cast<T2>(myFractionalInteger) != minValue) {
                 return false;
             }
         }
@@ -139,7 +139,7 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMinorSize(T2 input) {
     }
 
     myFractionalInteger = zero;
-    if (myFractionalInteger != zero) {
+    if (static_cast<T2>(myFractionalInteger) != zero) {
 
         return false;
     }
@@ -157,9 +157,20 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMajorSize(T2 input) {
     FractionalInteger<T, majorSize> myFractionalInteger;
 
     bool isInputSigned = TypeCharacteristics::IsSigned<T2>();
-    T2 maxValue = isInputSigned ? ((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : ((T2) -1);
-    T2 minValue = isInputSigned ? ~((((T2) 1) << (inputSize - (T2) 1)) - (T2) 1) : 0;
+    T2 maxValue = 0;
+    T2 minValue = 0;
     T2 zero = (T2) 0;
+
+    if (isInputSigned) {
+        maxValue = (((T2) 1) << (inputSize - (T2) 1));
+        maxValue -= (T2) 1;
+        minValue = (((T2) 1) << (inputSize - (T2) 1));
+        minValue = ~(minValue-(T2) 1);
+    }
+    else {
+        maxValue = (T2) - 1;
+        minValue = 0;
+    }
 
     bool isSigned = TypeCharacteristics::IsSigned<T>();
 
@@ -167,13 +178,13 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMajorSize(T2 input) {
 
     // since the bit range has a size greater than the input,
     // the bit range should contain the max input value
-    if (myFractionalInteger != maxValue) {
+    if (myFractionalInteger != static_cast<T>(maxValue)) {
         return false;
     }
 
     // normally the bit range should contain the min input value
     myFractionalInteger = minValue;
-    if (myFractionalInteger != minValue) {
+    if (myFractionalInteger != static_cast<T>(minValue)) {
 
         // if the bit range is unsigned and the input signed,
         // the negative value is saturated to zero in the bit range
@@ -189,7 +200,7 @@ bool FractionalIntegerTest<T>::TestBasicTypeCastMajorSize(T2 input) {
     }
 
     myFractionalInteger = zero;
-    if (myFractionalInteger != zero) {
+    if (myFractionalInteger != static_cast<T>(zero)) {
 
         return false;
     }
