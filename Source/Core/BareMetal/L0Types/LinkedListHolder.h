@@ -60,7 +60,7 @@ public:
      * @details This functions sets the size of the list to 0 and the root element to NULL.
      * Note that the element of the list are not destroyed. This could lead to memory leaks.
      */
-    void Reset();
+    virtual void Reset();
 
     /**
      * @brief Constructor.

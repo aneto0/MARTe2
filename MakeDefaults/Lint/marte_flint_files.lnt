@@ -17,6 +17,8 @@ ClassProperties.cpp
 ClassRegistryDatabase.cpp
 ClassRegistryItem.cpp
 ConfigurationDatabase.cpp
+DirectoryScanner.cpp
+Directory.cpp
 DoubleBufferedStream.cpp
 DoubleInteger.h
 Endianity.h

@@ -1,8 +1,8 @@
 /**
- * @file HighResolutionTimer.h
- * @brief Header file for module HighResolutionTimer
- * @date 05/07/2015
- * @author André Neto
+ * @file DirectoryCore.h
+ * @brief Header file for class DirectoryCore
+ * @date 04/11/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,60 +16,37 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the module HighResolutionTimer
+ * @details This header file contains the declaration of the class DirectoryCore
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef HIGHRESOLUTIONTIMER_ENV_H_
-#define HIGHRESOLUTIONTIMER_ENV_H_
+#ifndef DIRECTORYCORE_H_
+#define DIRECTORYCORE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "HighResolutionTimer.h"
-#include "HighResolutionTimerCalibrator.h"
-#include "TimeStamp.h"
 /*---------------------------------------------------------------------------*/
-/*                           Module declaration                               */
+/*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe{
+typedef struct stat DirectoryCore;
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+#endif /* DIRECTORYCORE_H_ */
 
-DLL_API extern HighResolutionTimerCalibrator calibratedHighResolutionTimer;
-
-
-namespace HighResolutionTimer {
-
-
-inline int64 Frequency() {
-    return calibratedHighResolutionTimer.GetFrequency();
-}
-
-inline float64 Period() {
-    return calibratedHighResolutionTimer.GetPeriod();
-}
-
-inline float64 TicksToTime(int64 tStop,
-                           int64 tStart) {
-    int64 dT = tStop - tStart;
-    return dT * Period();
-}
-
-inline bool GetTimeStamp(TimeStamp &date) {
-    return calibratedHighResolutionTimer.GetTimeStamp(date);
-}
-
-}
-
-}
-#endif /* HIGHRESOLUTIONTIMER_ENV_H_ */

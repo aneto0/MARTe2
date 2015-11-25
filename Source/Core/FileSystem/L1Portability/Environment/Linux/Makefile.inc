@@ -35,9 +35,9 @@ OBJSX=  BasicSocket.x \
         InternetService.x \
         BasicUDPSocket.x \
         BasicFile.x\
-        Select.x
-
-
+        Select.x \
+        Directory.x \
+        DirectoryScanner.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

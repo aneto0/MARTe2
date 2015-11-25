@@ -23,7 +23,9 @@
 #############################################################
 
 
-OBJSX=  BasicFileGTest.x \
+OBJSX=  DirectoryGTest.x \
+        DirectoryScannerGTest.x \
+        BasicFileGTest.x \
     TypeConversionGTest.x \
 	VectorGTest.x \
 	MatrixGTest.x \
