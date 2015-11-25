@@ -70,10 +70,6 @@ bool BasicUDPSocket::Peek(char8* const output,
         if (ret >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(ret);
-            // to avoid polling continuously release CPU time when reading 0 bytes
-            if (size == 0u) {
-                Sleep::MSec(1);
-            }
         }
         else {
             REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
@@ -99,10 +95,6 @@ bool BasicUDPSocket::Read(char8* const output,
         if (ret >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(ret);
-            // to avoid polling continuously release CPU time when reading 0 bytes
-            if (size == 0u) {
-                Sleep::MSec(1);
-            }
         }
         else {
             REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed recvfrom()");
@@ -126,10 +118,6 @@ bool BasicUDPSocket::Write(const char8* const input,
         if (ret >= 0) {
             /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(ret);
-            // to avoid polling continuously release CPU time when reading 0 bytes
-            if (size == 0u) {
-                Sleep::MSec(1);
-            }
         }
         else {
             REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed sendto()");
@@ -219,14 +207,15 @@ bool BasicUDPSocket::Read(char8 * const output,
                     size = sizeToRead;
                 }
             }
-
-            if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<void*>(NULL), static_cast<socklen_t> (sizeof(timeoutVal)))<0) {
+            timeoutVal.tv_sec = 0;
+            timeoutVal.tv_usec = 0;
+            if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() removing the read timeout");
             }
         }
         else {
-            if(Read(output, sizeToRead)) {
-                size=sizeToRead;
+            if (Read(output, sizeToRead)) {
+                size = sizeToRead;
             }
         }
     }
@@ -260,13 +249,15 @@ bool BasicUDPSocket::Write(const char8 * const input,
                     size = sizeToWrite;
                 }
             }
-            if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<void*>(NULL), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
+            timeoutVal.tv_sec = 0;
+            timeoutVal.tv_usec = 0;
+            if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() removing the write timeout");
             }
         }
         else {
-            if(Write(input, sizeToWrite)) {
-                size=sizeToWrite;
+            if (Write(input, sizeToWrite)) {
+                size = sizeToWrite;
             }
         }
     }
