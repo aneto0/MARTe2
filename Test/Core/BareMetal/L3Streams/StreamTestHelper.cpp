@@ -445,7 +445,8 @@ const PrintfNode *GeneratePrintFormattedFloatCompactTable(){
 
 const PrintfNode *GeneratePrintFormattedGenericTable(){
     static const PrintfNode printfGenericTable[] = {
-        PrintfNode("%.9G %5x%u :) %s A very very very long long....................very very very long long string!!!!", "-11.2345671 EA12345 :) Hello! A very very very long long....................very very very long long string!!!!", *SaveNumber(-11.234567f), *SaveNumber((int8) 0xea), *SaveNumber((uint16) 12345), "Hello!"),
+        PrintfNode("%.9G %5x%u :) %s ", "-11.2345671 EA12345 :) Hello! ", *SaveNumber(-11.234567f), *SaveNumber((int8) 0xea), *SaveNumber((uint16) 12345), "Hello!"),
+        PrintfNode("%.9G %5x%u :) %s Very very very long long long long striiiiiiiiiiiiiinnnnnggggggg!", "-11.2345671 EA12345 :) Hello! Very very very long long long long striiiiiiiiiiiiiinnnnnggggggg!", *SaveNumber(-11.234567f), *SaveNumber((int8) 0xea), *SaveNumber((uint16) 12345), "Hello!"),
         PrintfNode("", "")
     };
     return printfGenericTable;
