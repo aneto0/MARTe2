@@ -47,14 +47,29 @@ TEST(BasicFileGTest, TestDefaultConstructor) {
     ASSERT_TRUE(myBasicFileTest.TestDefaultConstructor());
 }
 
-TEST(BasicFileGTest, TestCopyConstructor) {
+TEST(BasicFileGTest, TestCopyConstructor_withOpenFile) {
     BasicFileTest myBasicFileTest;
-    ASSERT_TRUE(myBasicFileTest.TestCopyConstructor());
+    ASSERT_TRUE(myBasicFileTest.TestCopyConstructor_withOpenFile());
 }
 
-TEST(BasicFileGTest, TestAssignmentOperator) {
+TEST(BasicFileGTest, TestCopyConstructor_withClosedFile) {
     BasicFileTest myBasicFileTest;
-    ASSERT_TRUE(myBasicFileTest.TestAssignmentOperator());
+    ASSERT_TRUE(myBasicFileTest.TestCopyConstructor_withClosedFile());
+}
+
+TEST(BasicFileGTest, TestAssignmentOperator_withOpenFile) {
+    BasicFileTest myBasicFileTest;
+    ASSERT_TRUE(myBasicFileTest.TestAssignmentOperator_withOpenFile());
+}
+
+TEST(BasicFileGTest, TestAssignmentOperator_withClosedFile) {
+    BasicFileTest myBasicFileTest;
+    ASSERT_TRUE(myBasicFileTest.TestAssignmentOperator_withClosedFile());
+}
+
+TEST(BasicFileGTest, TestAssignmentOperator_checkPointsToSameFile) {
+    BasicFileTest myBasicFileTest;
+    ASSERT_TRUE(myBasicFileTest.TestAssignmentOperator_checkPointsToSameFile());
 }
 
 TEST(BasicFileGTest, TestSetFlags) {
@@ -145,6 +160,16 @@ TEST(BasicFileGTest, TestOpen_IncompatibleFlags1) {
 TEST(BasicFileGTest, TestOpen_IncompatibleFlags2) {
     BasicFileTest myBasicFileTest;
     ASSERT_TRUE(myBasicFileTest.TestOpen_IncompatibleFlags2());
+}
+
+TEST(BasicFileGTest, TestOpen_IncompatibleFlags3) {
+    BasicFileTest myBasicFileTest;
+    ASSERT_TRUE(myBasicFileTest.TestOpen_IncompatibleFlags3());
+}
+
+TEST(BasicFileGTest, TestOpen_IncompatibleFlags4) {
+    BasicFileTest myBasicFileTest;
+    ASSERT_TRUE(myBasicFileTest.TestOpen_IncompatibleFlags4());
 }
 
 TEST(BasicFileGTest, TestIsOpen) {
@@ -260,4 +285,14 @@ TEST(BasicFileGTest, TestSetSize_reducing) {
 TEST(BasicFileGTest, TestGetPathName) {
     BasicFileTest myBasicFileTest;
     ASSERT_TRUE(myBasicFileTest.TestGetPathName());
+}
+
+TEST(BasicFileGTest, TestGetReadHandle) {
+    BasicFileTest myBasicFileTest;
+    ASSERT_TRUE(myBasicFileTest.TestGetReadHandle());
+}
+
+TEST(BasicFileGTest, TestGetWriteHandle) {
+    BasicFileTest myBasicFileTest;
+    ASSERT_TRUE(myBasicFileTest.TestGetWriteHandle());
 }

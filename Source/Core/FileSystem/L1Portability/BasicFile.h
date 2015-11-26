@@ -338,7 +338,8 @@ namespace MARTe {
          *    CanWrite()
          * @post
          *    Size() == size &&
-         *    size > this'old->Position() => From this'old->Size() to Size() - 1 the contents of the file is undefined
+         *    size > this'old->Position() => From this'old->Size() to Size() - 1 the contents of the file is undefined &&
+         *    size < this'old->Size() => this->Position() = size
          * @return true if the size is changed, false otherwise
          */
         virtual bool SetSize(uint64 size);
