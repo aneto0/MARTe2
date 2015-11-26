@@ -1,7 +1,7 @@
 /**
- * @file Token.h
- * @brief Header file for class Token
- * @date 25/11/2015
+ * @file TokenInfo.h
+ * @brief Header file for class TokenInfo
+ * @date 26/11/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class Token
+ * @details This header file contains the declaration of the class TokenInfo
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TOKEN_H_
-#define TOKEN_H_
+#ifndef TOKENINFO_H_
+#define TOKENINFO_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,75 +31,54 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "StreamString.h"
-#include "TokenInfo.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-/**
- * @brief The element produced by the LexicalAnalyzer.
- */
-class Token {
+/** information abouta a lexicala element */
+class TokenInfo {
 
 public:
-    /**
-     * @brief Builds a token providing all the informations.
-     * @post
-     *   GetId() == id &&
-     *   GetDescription() == description &&
-     *   GetData() == data &&
-     *   GetLineNumber() == lineNumber;
-     */
-    Token(const uint32 id,
-          const char8 *description,
-          void *data,
-          uint32 dataSize);
+
+    /** constructor */
+    TokenInfo();
+
+    /** setup */
+    void Set(int32 tokenIdIn,
+             const char8 *descriptionIn,
+             uint32 dataSizeIn);
+
+    int32 GetTokenId() const;
+
+    const char8* GetDescription() const;
+
+    uint32 GetDataSize() const;
 
 
-    Token(TokenInfo tokenInfo,
-          void *data);
+    void CleanUp();
 
-
-    /** destructor */
-    ~Token();
-    /** returns the TokenDataType */
-    uint32 GetId() const;
-
-    /** copy content */
-    void operator=(const Token &td);
-
-    /** content description */
-    const char8 * GetDescription() const;
-
-    /** content */
-    void * GetData() const;
-
+    /** constructor */
+    ~TokenInfo();
 
 private:
+
     /** the code identifying the lexical meaning of this part of the text */
-    uint32 tokenId;
+    int32 tokenId;
 
-    /** copied from a LA_TokenInfo, the meaning of the token */
-    StreamString tokenDescription;
+    /** the meaning of the token */
+    const char8 * description;
 
-    /** the parsed part of the text */
-    void* tokenData;
-
-    /** what line the token was found at*/
+    uint32 dataSize;
 
 };
-}
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
-}
-
-#endif /* TOKEN_H_ */
+#endif /* TOKENINFO_H_ */
 

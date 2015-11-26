@@ -31,13 +31,87 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "Object.h"
+#include "StreamI.h"
+#include "StaticListHolder.h"
+#include "LexicalAnalyzer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-class Parser {
+namespace MARTe{
+
+/** a base class for parsers. Use slk and CreateParserData to create the actual parser data from a ll file*/
+class Parser: public Object {
+
+    typedef int32 TokenDataType;
+
+    CLASS_REGISTER_DECLARATION()
+
+
+public:
+    /** */
+    Parser();
+    /** */
+    virtual ~Parser();
+
+    /** @param errorLevel
+     0 means do not display
+     1 means show actions
+     2 means show productions
+     0xFFFFFFFF means show all      */
+    bool Parse(StreamI &stream,
+               StreamI *err = NULL,
+               int32 errorLevel = 0);
+
+protected:
+
+    /** automatically created and contained in ParserData.cpp */
+    virtual void InitTokens() = 0;
+
+    /** the action to be performed */
+    virtual void Action(int32 actionNumber,
+                        Token *latd) = 0;
+
+    virtual TokenDataType GetParse(int32 index) = 0;
+
+    virtual int32 GetParseRow(int32 index) = 0;
+
+    virtual TokenDataType GetConflict(int32 index) = 0;
+
+    virtual int32 GetConflictRow(int32 index) = 0;
+
+    virtual TokenDataType GetProduction(int32 index) = 0;
+
+    virtual int32 GetProductionRow(int32 index) = 0;
+
+    virtual TokenDataType GetTerminal2Index(int32 index) = 0;
+
+    virtual const char8 * GetProductionName(int32 index) = 0;
+
+    virtual const char8 * GetNonTerminalName(int32 index) = 0;
+
+    virtual const char8 * GetTerminalName(int32 index) = 0;
+
+    virtual const char8 * GetActionName(int32 index) = 0;
+
+    virtual TokenDataType GetStartSymbol() = 0;
+
+
+    /** a lexicala analyzer */
+    LexicalAnalyzer lexicalAnalyzer;
+
+    /** */
+    StaticListHolder stack;
+
+
+private:
+    /** */
+    const char8 *GetSymbolName(int32 symbol);
+
 };
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

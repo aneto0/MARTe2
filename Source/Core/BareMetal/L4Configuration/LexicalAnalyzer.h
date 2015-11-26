@@ -31,14 +31,84 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "Token.h"
+#include "StreamI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+namespace MARTe {
+
+/** A slightly programmable lexical analyzer.
+ It recognizes Identifiers, Numbers and Floats.
+ It allows to browse ahead without consuming the token,
+ Tokenisation is performed on demand  */
 class LexicalAnalyzer {
+
+public:
+    // initialisation functions
+
+    /** constructor */
+    LexicalAnalyzer();
+
+    /** constructor */
+    ~LexicalAnalyzer();
+
+    /** reset status */
+    void Reset();
+
+    /** set these characters as separators */
+    void AddSeparators(const char8 *s);
+
+    /** set these characters/LA_TokenValue as separators */
+    void AddTerminals(const char8 *s);
+
+    /** change the token code associated with a given complex terminal.
+     valid tokenNames are "EOF","IDENT","NUMBER","FLOAT","ERROR" */
+    bool ChangeTokenCode(const char8 *tokenName,
+                         int32 token);
+
+    /** retrieve the toaken value associated with a certain tokenName */
+    int32 GetTokenValue(const char8 *tokenName);
+
+    /** takes one token from the stack or processes the input for a new one
+     moves the token into lasToken. The class allocates the data but does
+     not provide to the deallocation once the structure has been extracted */
+    Token *GetToken(StreamI &stream);
+
+    /** reads in the stack at position lookAhead or increases the stack to allow for it
+     it returns the token but it still keeps hold of it */
+    Token *PeekToken(uint32 lookAhead,
+                     StreamI &stream);
+
+    static void SetParseNumbers(bool parseNumbersIn);
+
+
+private:
+
+    /** a string made of separators, plus the  */
+    StreamString separators;
+
+    /** a string composed of the terminal characters in the order */
+    StreamString terminals;
+
+    TokenInfo tokenInfo[8];
+
+    Token *token;
+
+    bool isTerminal;
+
+    char8 terminal;
+
+    /**
+     * Switches the parsing of numbers. If off the Lexical Analyser will not try
+     * to check if the string is a number
+     */
+    static bool parseNumbers;
+
 };
 
+}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
