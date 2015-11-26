@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "ConfigurationDatabase.h"
-#include "String.h"
+#include "StreamString.h"
 #include "Vector.h"
 #include "Matrix.h"
 
