@@ -58,7 +58,7 @@ OPTIM =
 INCLUDE =
 LFLAGS = -Wl,--no-as-needed  
 CFLAGS = -fPIC -Wall
-CPPFLAGS = -fPIC -frtti -Wall 
+CPPFLAGS = -fPIC -frtti -Wall -std=c++98
 CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
