@@ -76,6 +76,7 @@ struct EventSemProperties;
 struct BasicConsoleProperties;
 #define BasicConsoleHandle BasicConsoleProperties*
 
+typedef HANDLE Handle;
 
 }
 #endif /* GENERALDEFINITIONS_ENV_H_ */

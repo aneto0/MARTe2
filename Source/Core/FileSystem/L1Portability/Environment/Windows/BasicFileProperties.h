@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StreamString.h"
+#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -44,7 +45,7 @@ struct DLL_API BasicFileProperties {
     /**
      * The Windows handle set when opening the file
      */
-    HANDLE handle;
+    Handle handle;
 
     /**
      * The cached flags set when opening the file

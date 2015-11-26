@@ -39,6 +39,35 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+static MARTe::uint32 CheckFlags(MARTe::uint32 flags) {
+
+    //If APPEND and Read mode are set at the same time the APPEND mode is deleted from the flags
+    if ((flags & (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)) {
+        if ((flags & MARTe::BasicFile::ACCESS_MODE_W) != (MARTe::BasicFile::ACCESS_MODE_W)) {
+            MARTe::uint32 clean_APPEND = ~MARTe::BasicFile::FLAG_APPEND;
+            flags &= clean_APPEND;
+        }
+    }
+
+    if ((flags & (MARTe::BasicFile::FLAG_CREAT | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE))
+            == (MARTe::BasicFile::FLAG_CREAT | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE)) {
+        MARTe::uint32 clean_CREAT_EXCLUSIVE = ~MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE;
+        flags &= clean_CREAT_EXCLUSIVE;
+    }
+    if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)) {
+        if ((flags & MARTe::BasicFile::ACCESS_MODE_W) != (MARTe::BasicFile::ACCESS_MODE_W)) {
+            MARTe::uint32 clean_TRUNC = ~MARTe::BasicFile::FLAG_TRUNC;
+            flags &= clean_TRUNC;
+        }
+    }
+    if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE))
+            == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE)) {
+        MARTe::uint32 clean_TRUNC = ~MARTe::BasicFile::FLAG_TRUNC;
+        flags &= clean_TRUNC;
+    }
+    return flags;
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -201,7 +230,7 @@ bool BasicFile::Open(const char * pathname,
         //Sets the properties
         if (ok) {
             properties.handle = handle;
-            properties.flags = flags;
+            properties.flags = CheckFlags(flags);
             properties.pathname = pathname;
         }
 
@@ -656,5 +685,12 @@ StreamString BasicFile::GetPathName() const {
     return properties.pathname;
 }
 
+Handle BasicFile::GetReadHandle() const {
+    return properties.handle;
+}
+
+Handle BasicFile::GetWriteHandle() const {
+    return properties.handle;
+}
 }
 
