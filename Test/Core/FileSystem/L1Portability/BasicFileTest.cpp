@@ -75,7 +75,7 @@ bool BasicFileTest::TestDefaultConstructor() {
 }
 
 bool BasicFileTest::TestCopyConstructor_withOpenFile() {
-    bf.Open("../TestCopyConstructor", defaultRWFlags);
+    bf.Open("../TestCopyConstructor.txt", defaultRWFlags);
     BasicFile copybf(bf);
     retVal &= (copybf.CanRead() == bf.CanRead());
     retVal &= (copybf.CanSeek() == bf.CanSeek());
@@ -102,9 +102,9 @@ bool BasicFileTest::TestCopyConstructor_withClosedFile() {
 }
 
 bool BasicFileTest::TestAssignmentOperator_withOpenFile() {
-    bf.Open("../TestAssignmentOperator_withOpenFile", defaultRWFlags);
+    bf.Open("../TestAssignmentOperator_withOpenFile.txt", defaultRWFlags);
     BasicFile copybf;
-    copybf.Open("../TestAssignmentOperator_withOpenFile1", defaultRWFlags);
+    copybf.Open("../TestAssignmentOperator_withOpenFile1.txt", defaultRWFlags);
     copybf = bf;
     retVal &= (copybf.CanRead() == bf.CanRead());
     retVal &= (copybf.CanSeek() == bf.CanSeek());
