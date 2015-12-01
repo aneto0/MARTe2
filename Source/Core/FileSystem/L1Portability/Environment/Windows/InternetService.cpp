@@ -1,7 +1,7 @@
 /**
- * @file BasicSocket.cpp
- * @brief Source file for class BasicSocket
- * @date Nov 18, 2015
+ * @file InternetService.cpp
+ * @brief Source file for class InternetService
+ * @date Nov 25, 2015
  * @author Frank Perez Paz
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class BasicSocket (public, protected, and private). Be aware that some 
+ * the class InternetService (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 #define DLL_API
@@ -30,9 +30,8 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "BasicSocket.h"
+#include "InternetService.h"
 #include "ErrorManagement.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,79 +39,60 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
-BasicSocket::BasicSocket() :
-        StreamI() {
-    connectionSocket = -1;
-    isBlocking = true;
+
+InternetService::InternetService() {
+    service.s_name=static_cast<char8*>(NULL);
+    service.s_aliases = static_cast<char8 **>(NULL);
+    service.s_port=0;
+    service.s_proto=static_cast<char8*>(NULL);
 }
 
-BasicSocket::~BasicSocket() {
-    if (!Close()) {
-        //TODO
-    }
-}
-bool BasicSocket::SetBlocking(const bool flag) {
-    int32 ret = -1;
-    if (IsValid()) {
-        u_long iMode = 0;
-        if (flag) {
-            iMode = 0; ///If iMode = 0, blocking is enable
-        }
-        else {
-            iMode = 1;
-        }
-        ret = ioctlsocket(connectionSocket, static_cast<osulong>(FIONBIO), &iMode);
-
-        if (ret == 0) {
-            isBlocking = flag;
-        }
+bool InternetService::SearchByName(const char8 * const name,
+                                   const char8 * const protocol) {
+    servent *serv = getservbyname(name, protocol);
+    bool ret = (serv != NULL);
+    if (ret) {
+        service = *serv;
     }
     else {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
+        REPORT_ERROR(ErrorManagement::OSError, "InternetService: Failed getservbyname()");
     }
-    return (ret == 0);
+    return ret;
+
 }
 
-bool BasicSocket::Close() {
-    int32 ret = -1;
-    if (IsValid()) {
-        ret = closesocket(connectionSocket);
-        connectionSocket = -1;
-        if (ret != 0) {
-            REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket::Close failed returning");
-            ret = -1;
-        }
+bool InternetService::SearchByPort(const uint16 port,
+                                   const char8 * const protocol) {
+
+    servent *serv = getservbyport(static_cast<int32>(htons(port)), protocol);
+    bool ret = (serv != NULL);
+    if (ret) {
+        service = *serv;
     }
     else {
-        ret = -1;
+        REPORT_ERROR(ErrorManagement::OSError, "InternetService: Failed getservbyport()");
+
     }
-    return (ret == 0);
+    return ret;
+
 }
 
-InternetHost BasicSocket::GetSource() const {
-    return source;
+uint16 InternetService::Port() const {
+    return htons(static_cast<uint16>(service.s_port));
 }
 
-InternetHost BasicSocket::GetDestination() const {
-    return destination;
+const char8 *InternetService::Name() const {
+    return service.s_name;
 }
 
-void BasicSocket::SetDestination(const InternetHost &destinationIn) {
-    destination = destinationIn;
+const char8 *InternetService::Protocol() const {
+    return service.s_proto;
 }
 
-void BasicSocket::SetSource(const InternetHost &sourceIn) {
-    source = sourceIn;
+
 }
 
-bool BasicSocket::IsValid() const {
-    ///Modified the return, in windows socket not is a int32 and the comparison is true, it's necessary a cast
-    return (static_cast<int32>(connectionSocket) >= 0);
-}
 
-bool BasicSocket::IsBlocking() const {
-    return isBlocking;
-}
-}
-
+	

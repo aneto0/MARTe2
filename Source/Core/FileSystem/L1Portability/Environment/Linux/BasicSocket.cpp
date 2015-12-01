@@ -88,6 +88,13 @@ bool BasicSocket::Close() {
     if (IsValid()) {
         ret = close(connectionSocket);
         connectionSocket = -1;
+        if (ret < 0) {
+            CStaticAssertErrorCondition(OSError, "BasicSocket::Close failed returning %i\n", ret);
+            ret = 0;
+        }
+    }
+    else{
+        ret = -1;
     }
     return (ret >= 0);
 }

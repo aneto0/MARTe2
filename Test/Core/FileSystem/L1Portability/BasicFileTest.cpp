@@ -31,7 +31,7 @@
 
 #include "BasicFileTest.h"
 #include "StringHelper.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -60,6 +60,8 @@ BasicFileTest::~BasicFileTest() {
 }
 
 bool BasicFileTest::TestDefaultConstructor() {
+
+
     StreamString char1 = "";
     StreamString char2 = bf.GetPathName();
     retVal &= (char1 == char2);
@@ -291,7 +293,7 @@ bool BasicFileTest::TestWrite_timeout_close() {
 }
 
 bool BasicFileTest::TestRead() {
-    char8 buffer[size + 1];
+    char8 *buffer = new char8[size + 1];
     uint32 newSize = size;
     retVal &= TestWrite();
     bf.Open(nameFileTarget, BasicFile::ACCESS_MODE_R);
@@ -301,13 +303,13 @@ bool BasicFileTest::TestRead() {
 }
 
 bool BasicFileTest::TestRead_close() {
-    char8 buffer[size + 1];
+    char8 *buffer = new char8[size + 1];
     uint32 newSize = size;
     return !bf.Read(buffer, newSize);
 }
 
 bool BasicFileTest::TestRead_timeout() {
-    char8 buffer[size + 1];
+    char8 *buffer = new char8[size + 1];
     uint32 newSize = size;
     retVal &= TestWrite();
     bf.Open(nameFileTarget, BasicFile::ACCESS_MODE_R);
@@ -317,7 +319,7 @@ bool BasicFileTest::TestRead_timeout() {
 }
 
 bool BasicFileTest::TestRead_timeout_close() {
-    char8 buffer[size + 1];
+    char8 *buffer = new char8[size + 1];
     uint32 newSize = size;
     return !bf.Read(buffer, newSize, 100);
 }

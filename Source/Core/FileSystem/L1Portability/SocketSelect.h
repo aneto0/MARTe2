@@ -46,7 +46,7 @@ namespace MARTe {
      * @brief A class using to check if sockets are ready for a read, write operation or if
      * an exception is thrown.
      */
-    class SocketSelect {
+    class DLL_API SocketSelect {
 
     public:
         /**

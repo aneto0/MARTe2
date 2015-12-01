@@ -23,10 +23,16 @@
 #############################################################
 
 
-OBJSX=  BasicFileGTest.x \
+OBJSX=InternetHostGTest.x \
+    InternetServiceGTest.x \
+    BasicSocketGTest.x \
+    BasicUDPSocketGTest.x \
+    BasicTCPSocketGTest.x
+#BasicConsoleGTest.x \
+BasicFileGTest.x \
         StreamStringGTest.x \
         DoubleIntegerGTest.x \
-	TypeCharacteristicsGTest.x \
+        TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
         FormatDescriptorGTest.x \
@@ -34,55 +40,50 @@ OBJSX=  BasicFileGTest.x \
         StandardHeap_GenericGTest.x \
         HeapManagerGTest.x \
         EndianityGTest.x \
-	SleepGTest.x \
-	ProcessorGTest.x \
-	AtomicGTest.x \
-	ProcessorTypeGTest.x \
-	EventSemGTest.x \
-	HighResolutionTimerGTest.x \
-	MemoryGTest.x \
-	FastPollingMutexSemGTest.x \
-	StringHelperGTest.x \
-	StringPortableGTest.x \
-	ThreadsGTest.x \
-	MutexSemGTest.x \
-	TimeoutTypeGTest.x \
-	LoadableLibraryGTest.x \
-	FastMathGTest.x \
-	LinkedListableGTest.x \
-	LinkedListHolderGTest.x \
-	ClassRegistryDatabaseGTest.x \
-	ClassPropertiesGTest.x \
-	ClassRegistryItemGTest.x \
-	ObjectGTest.x \
-	ReferenceGTest.x \
-	ReferenceContainerGTest.x \
-	ReferenceTGTest.x \
-	ReferenceContainerNodeGTest.x \
-	ReferenceContainerFilterReferencesGTest.x \
-	ReferenceContainerFilterObjectNameGTest.x \
- 	ErrorManagementGTest.x \
-    	BitBooleanGTest.x \
- 	FractionalIntegerGTest.x \
- 	BitRangeGTest.x \
- 	StaticListGTest.x \
- 	GlobalObjectsDatabaseGTest.x \
-	TypeDescriptorGTest.x  \
-	CharBufferGTest.x \
-	StreamStringIOBufferGTest.x \
+        SleepGTest.x \
+        ProcessorGTest.x \
+        AtomicGTest.x \
+        ProcessorTypeGTest.x \
+        EventSemGTest.x \
+        HighResolutionTimerGTest.x \
+        MemoryGTest.x \
+        FastPollingMutexSemGTest.x \
+        StringHelperGTest.x \
+        StringPortableGTest.x \
+        ThreadsGTest.x \
+        MutexSemGTest.x \
+        TimeoutTypeGTest.x \
+        LoadableLibraryGTest.x \
+        FastMathGTest.x \
+        LinkedListableGTest.x \
+        LinkedListHolderGTest.x \
+        ClassRegistryDatabaseGTest.x \
+        ClassPropertiesGTest.x \
+        ClassRegistryItemGTest.x \
+        ObjectGTest.x \
+        ReferenceGTest.x \
+        ReferenceContainerGTest.x \
+        ReferenceTGTest.x \
+        ReferenceContainerNodeGTest.x \
+        ReferenceContainerFilterReferencesGTest.x \
+        ReferenceContainerFilterObjectNameGTest.x \
+        ErrorManagementGTest.x \
+    	    BitBooleanGTest.x \
+    	    FractionalIntegerGTest.x \
+    	    BitRangeGTest.x \
+    	    StaticListGTest.x \
+    	    GlobalObjectsDatabaseGTest.x \
+    	    TypeDescriptorGTest.x  \
+    	    CharBufferGTest.x \
+    	    StreamStringIOBufferGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
         StreamMemoryReferenceGTest.x \
         BufferedStreamIGTest.x \
         IOBufferGTest.x \
-        BitSetToIntegerGTest.x \
-        InternetHostGTest.x \
-        InternetServiceGTest.x \
-	BasicSocketGTest.x \
-	BasicTCPSocketGTest.x \
-   	BasicUDPSocketGTest.x \
-	BasicConsoleGTest.x
+        BitSetToIntegerGTest.x
+
 
 PACKAGE=
 ROOT_DIR=../..

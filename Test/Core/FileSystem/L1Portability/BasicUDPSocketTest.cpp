@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BasicUDPSocketTest.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -376,9 +376,10 @@ void StartServer_Read(BasicUDPSocketTest &param) {
         if (param.noError && param.isServer && param.isValidClient) {
             serverSocket.SetDestination(serverSocket.GetSource());
 
-            uint32 sizeWrite = 64;
+            //uint32 sizeWrite = 64;
             char8 input[64];
             StringHelper::Copy(input, param.string);
+            uint32 sizeWrite = param.size;
             if (!serverSocket.Write(input, sizeWrite)) {
                 param.sem.FastLock();
                 param.noError = false;
@@ -425,7 +426,6 @@ void ClientJob_Read(BasicUDPSocketTest &param) {
             else {
 
                 bool ret = clientSocket.SetBlocking(param.isBlocking);
-
                 if (!ret) {
                     param.sem.FastLock();
                     param.noError = false;
@@ -437,7 +437,7 @@ void ClientJob_Read(BasicUDPSocketTest &param) {
                     }
 
                     char8 output[64] = { 0 };
-                    uint32 sizeRead = param.size;
+                    uint32 sizeRead = 64; //param.size;
                     if (param.isTimeout) {
                         ret = clientSocket.Read(output, sizeRead, param.timeout);
                     }
@@ -455,7 +455,6 @@ void ClientJob_Read(BasicUDPSocketTest &param) {
                             param.sem.FastLock();
                             param.retVal = false;
                             param.sem.FastUnLock();
-
                         }
                         else {
                             output[(sizeRead > 63) ? (63) : (sizeRead)] = 0;
@@ -470,7 +469,6 @@ void ClientJob_Read(BasicUDPSocketTest &param) {
             }
         }
     }
-
     param.eventSem.Wait();
 }
 
@@ -505,14 +503,17 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
                 return false;
             }
             Sleep::MSec(10);
+
         }
 
         for (uint32 k = 0; k < table[i].nClients; k++) {
             Threads::BeginThread((ThreadFunctionType) ClientJob_Read, this);
+
         }
 
         while (Threads::NumberOfThreads() > 0) {
-            Sleep::MSec(10);
+            Sleep::MSec(50);
+
         }
 
         if ((retVal != table[i].expected) || (!noError)) {
@@ -566,10 +567,11 @@ void ClientJob_Peek(BasicUDPSocketTest &param) {
                     }
 
                     char8 output[64] = { 0 };
-                    uint32 sizeRead = param.size;
+                    uint32 sizeRead = 64;//param.size;
 
                     for (uint32 i = 0; i < 4; i++) {
                         ret = clientSocket.Peek(output, sizeRead);
+
                         if (!ret) {
                             param.sem.FastLock();
                             param.retVal = false;
@@ -690,7 +692,6 @@ void StartServer_Write(BasicUDPSocketTest &param) {
                         param.sem.FastLock();
                         param.retVal = false;
                         param.sem.FastUnLock();
-
                     }
                     else {
                         output[(sizeRead > 63) ? (63) : (sizeRead)] = 0;

@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "stdio.h"
 #include "InternetServiceTest.h"
 #include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
@@ -94,6 +94,7 @@ bool InternetServiceTest::TestSearchByPort(const InternetServiceTestTable* table
     while (table[i].name != NULL) {
 
         bool ret = service.SearchByPort(table[i].port, table[i].protocol);
+
         if (table[i].expected) {
 
             if (service.Port() != table[i].port) {

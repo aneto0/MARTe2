@@ -28,9 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "StringHelper.h"
 #include "InternetHostTest.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -138,16 +138,22 @@ bool InternetHostTest::TestGetLocalHostName() {
 bool InternetHostTest::TestGetLocalAddress() {
 
     StreamString ret = InternetHost::GetLocalAddress();
-
-
-    return ((ret == "127.0.1.1") || (ret == "127.0.0.1"));
+    bool ok = (15u == StringHelper::Length(ret.Buffer()));
+    char * line;
+    StringHelper::Copy(line,ret.Buffer());
+    char* pth = strtok(line,".");
+    uint8 i = 0;
+    while(pth !=NULL){
+        i++;
+        pth = strtok(NULL,".");;
+    }
+    ok &= (i == 4u);
+    return ok;
 }
 
 
 bool InternetHostTest::TestGetLocalAddressAsNumber() {
-
-    return (InternetHost::GetLocalAddressAsNumber() == 0x0101007f) || (InternetHost::GetLocalAddressAsNumber() == 0x0100007f);
-
+    return (InternetHost::GetLocalAddressAsNumber() != NULL);
 }
 
 bool InternetHostTest::TestSetPort(uint16 port) {
@@ -221,13 +227,22 @@ bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
     while (table[i].address != NULL) {
         InternetHost addr(table[i].port, table[i].address);
         InternetHostCore *copy = addr.GetInternetHost();
-#if OPERATING_SYSTEM==Linux
+#if ENVIRONMENT != Windows
         if (copy->sin_addr.s_addr != addr.GetAddressAsNumber()) {
             return false;
         }
         if (copy->sin_port != htons(addr.GetPort())) {
             return false;
         }
+
+#else
+        //ENVIRONMENT==Windows
+        /*if (copy->sin_addr.s_addr != addr.GetAddressAsNumber()) {
+            return false;
+        }
+        if (copy->sin_port != htons(addr.GetPort())) {
+            return false;
+        }*/
 #endif
 
         i++;

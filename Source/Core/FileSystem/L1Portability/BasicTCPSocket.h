@@ -43,7 +43,7 @@ namespace MARTe {
 /**
  * @brief Implementation of TCP socket.
  */
-class BasicTCPSocket: public BasicSocket {
+class DLL_API BasicTCPSocket: public BasicSocket {
 public:
 
     /**

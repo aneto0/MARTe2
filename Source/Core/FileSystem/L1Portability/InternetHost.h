@@ -46,7 +46,7 @@ namespace MARTe{
 /**
  * @brief A wrapper class to store the IPv4 address, port and host name associated to a generic host.
  */
-class InternetHost {
+class DLL_API InternetHost {
 
 
 public:

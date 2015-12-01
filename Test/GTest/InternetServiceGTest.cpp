@@ -58,7 +58,7 @@ TEST(InternetServiceGTest,TestSearchByName) {
             {"ftp", NULL, 21, "tcp", true},
             {"http", NULL, 80, "tcp", true},
             {"http", "tcp", 80, "tcp", true},
-            {"http", "udp", 80, "udp", true},
+            {"ntp", "udp", 123, "udp", true},//change because port 80 is tcp{"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
             {0,0,0,0,0}
     };
@@ -74,7 +74,7 @@ TEST(InternetServiceGTest,TestSearchByPort) {
             {"ftp", NULL, 21, "tcp", true},
             {"http", NULL, 80, "tcp", true},
             {"http", "tcp", 80, "tcp", true},
-            {"http", "udp", 80, "udp", true},
+            {"ntp", "udp", 123, "udp", true}, //change because port 80 is tcp{"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
             {0,0,0,0,0}
     };
@@ -89,7 +89,7 @@ TEST(InternetServiceGTest,TestPort) {
             {"ftp", NULL, 21, "tcp", true},
             {"http", NULL, 80, "tcp", true},
             {"http", "tcp", 80, "tcp", true},
-            {"http", "udp", 80, "udp", true},
+            {"ntp", "udp", 123, "udp", true},//change because port 80 is tcp{"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
             {0,0,0,0,0}
     };
@@ -104,7 +104,7 @@ TEST(InternetServiceGTest,TestName) {
             {"ftp", NULL, 21, "tcp", true},
             {"http", NULL, 80, "tcp", true},
             {"http", "tcp", 80, "tcp", true},
-            {"http", "udp", 80, "udp", true},
+            {"ntp", "udp", 123, "udp", true},//change because port 80 is tcp{"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
             {0,0,0,0,0}
     };
@@ -120,7 +120,7 @@ TEST(InternetServiceGTest,TestProtocol) {
             {"ftp", NULL, 21, "tcp", true},
             {"http", NULL, 80, "tcp", true},
             {"http", "tcp", 80, "tcp", true},
-            {"http", "udp", 80, "udp", true},
+            {"ntp", "udp", 123, "udp", true},//change because port 80 is tcp{"http", "udp", 80, "udp", true},
             {"smtp", "tcp", 25, "tcp", true},
             {0,0,0,0,0}
     };

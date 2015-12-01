@@ -28,7 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include "stdio.h"
 #include "BasicTCPSocketTest.h"
 #include "StringHelper.h"
 #include "InternetService.h"
@@ -179,13 +179,11 @@ static void ClientJob_Listen(BasicTCPSocketTest &param) {
         if (!param.isValidClient) {
             clientSocket.Close();
         }
-
         if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort(), param.timeout)) {
             param.sem.FastLock();
             param.retVal = false;
             param.sem.FastUnLock();
         }
-
     }
 
     param.eventSem.Wait();
@@ -221,7 +219,6 @@ static bool ListenConnectTest(BasicTCPSocketTest &param,
 
         if (table[i].isServer) {
             Threads::BeginThread((ThreadFunctionType) StartServer_Listen, &param);
-
             while (param.exitCondition < 1) {
                 if (!param.noError) {
                     param.alives = 0;
@@ -442,8 +439,6 @@ bool BasicTCPSocketTest::TestRead(const ReadWriteTestTable *table) {
         timeout = table[i].timeoutIn;
         serverJob = (ThreadFunctionType) WriteJob;
 
-    //    printf("\nisBlocking= %d, isServer=%d, isTimeout=%d %d\n", isBlocking, isServer, isTimeout,i);
-
         Threads::BeginThread((ThreadFunctionType) StartServer_ReadWrite, this);
 
         while (exitCondition < 1) {
@@ -647,15 +642,14 @@ static void ClientJob_Write(BasicTCPSocketTest &param) {
                 clientSocket.Close();
             }
 
-
             bool ret = true;
-            const uint32 maxSize=(param.size>1000)?(512):(128);
-            char8 input[maxSize];
+            const uint32 maxSize = (param.size > 1000) ? (512) : (128);
+            char8 *input = new char8[maxSize];
             StringHelper::Copy(input, param.string);
-            uint32 size=param.size;
-            uint32 remainedSize=size;
+            uint32 size = param.size;
+            uint32 remainedSize = size;
             //  for (uint32 k = 0; k < iterations; k++) {
-            while ((remainedSize>0) && (ret)) {
+            while ((remainedSize > 0) && (ret)) {
                 size = (remainedSize > maxSize) ? (maxSize) : (remainedSize);
 
                 if (param.isTimeout) {
@@ -671,7 +665,6 @@ static void ClientJob_Write(BasicTCPSocketTest &param) {
 
             //}
 
-            //printf("\n%d\n",iterations);
 
             if (!ret) {
                 param.sem.FastLock();
@@ -721,8 +714,6 @@ bool BasicTCPSocketTest::TestWrite(const ReadWriteTestTable *table) {
         alives = table[i].nClientsIn;
         timeout = table[i].timeoutIn;
         serverJob = (ThreadFunctionType) ReadJob;
-
-     //   printf("\nisBlocking= %d, isServer=%d, isTimeout=%d,\n", isBlocking, isServer, isTimeout);
 
         Threads::BeginThread((ThreadFunctionType) StartServer_ReadWrite, this);
 

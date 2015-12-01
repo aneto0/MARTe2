@@ -34,8 +34,8 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 
 all: $(OBJS) $(SUBPROJ) \
-		$(BUILD_DIR)/MARTeCoreF$(LIBEXT) \
-		$(BUILD_DIR)/MARTeCoreF.def 
+		    $(BUILD_DIR)/MARTeCoreF$(LIBEXT) \
+		    $(BUILD_DIR)/MARTeCoreF.def
 	echo  $(OBJS)
 
 
