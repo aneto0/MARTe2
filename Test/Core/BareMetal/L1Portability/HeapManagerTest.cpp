@@ -92,8 +92,9 @@ bool HeapManagerTest::TestFree() {
 }
 
 bool HeapManagerTest::TestFreeInvalidPointer() {
-    ptr = &sh;
-    retVal = !Free(ptr);
+    int32 a = 0;
+    void *invalidPointer = &a;
+    retVal = !Free(invalidPointer);
     return retVal;
 }
 

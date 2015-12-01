@@ -23,9 +23,7 @@
 #############################################################
 
 
-OBJSX=  DirectoryGTest.x \
-        DirectoryScannerGTest.x \
-        BasicFileGTest.x \
+OBJSX=  BasicFileGTest.x \
     TypeConversionGTest.x \
 	VectorGTest.x \
 	MatrixGTest.x \
@@ -92,7 +90,11 @@ OBJSX=  DirectoryGTest.x \
    	BasicUDPSocketGTest.x \
 	BasicConsoleGTest.x 
 
-PACKAGE=
+	#	SelecGTest.x \
+DirectoryGTest.x \
+        DirectoryScannerGTest.x \
+
+	PACKAGE=
 ROOT_DIR=../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 

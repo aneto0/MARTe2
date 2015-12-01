@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_INTERNETSERVICECORE_H_
-		#define 		SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_INTERNETSERVICECORE_H_
+		#ifndef INTERNETSERVICECORE_H_
+		#define 		INTERNETSERVICECORE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -49,5 +49,5 @@ typedef servent InternetServiceCore;
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-		#endif /* SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_INTERNETSERVICECORE_H_ */
+		#endif /* INTERNETSERVICECORE_H_ */
 	

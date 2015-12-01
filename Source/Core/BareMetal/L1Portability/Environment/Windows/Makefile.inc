@@ -44,7 +44,6 @@ OBJSX=  MemoryOperationsHelper_CLIB_Gen.x \
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
-
 INCLUDES+=-I../../../L0Types
 
 all: $(OBJS)  $(CPPS)  \

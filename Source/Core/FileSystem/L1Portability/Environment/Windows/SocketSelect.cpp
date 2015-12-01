@@ -46,13 +46,10 @@ namespace MARTe {
 
 static const int32 SELECT_WIDTH= 256;
 
-/*lint -e{1566} . Justification: The object is initialized called another function */
 SocketSelect::SocketSelect() {
     Reset();
 }
 
-/*lint -e{970} -e{1960} -e{9146} -e{529} -e{717} -e{909} . Justification: Operating system API are not linted.*/
-/*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
 void SocketSelect::Reset() {
     FD_ZERO(&(selectHandle.readFDS));
     FD_ZERO(&(selectHandle.writeFDS));
@@ -63,7 +60,6 @@ void SocketSelect::Reset() {
     readySockets = 0;
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 void SocketSelect::AddWaitOnWriteReady(const BasicSocket * const s) {
     if (s != NULL) {
         if(s->IsValid()) {
@@ -78,7 +74,6 @@ void SocketSelect::AddWaitOnWriteReady(const BasicSocket * const s) {
     }
 }
 
-/*lint -e{970} -e{502} -e{1924} -e{9130} -e{731} -e{703} -e{666}  . Justification: Operating system API are not linted.*/
 void SocketSelect::DeleteWaitOnWriteReady(const BasicSocket * const s) {
     if (s != NULL) {
         if(s->IsValid()) {
@@ -94,7 +89,6 @@ void SocketSelect::DeleteWaitOnWriteReady(const BasicSocket * const s) {
 
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 void SocketSelect::AddWaitOnReadReady(const BasicSocket * const s) {
     if (s != NULL) {
         if(s->IsValid()) {
@@ -110,7 +104,6 @@ void SocketSelect::AddWaitOnReadReady(const BasicSocket * const s) {
 
 }
 
-/*lint -e{970} -e{502} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 void SocketSelect::DeleteWaitOnReadReady(const BasicSocket * const s) {
     if (s != NULL) {
         if(s->IsValid()) {
@@ -126,7 +119,6 @@ void SocketSelect::DeleteWaitOnReadReady(const BasicSocket * const s) {
 
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 void SocketSelect::AddWaitOnExceptReady(const BasicSocket * const s) {
     if (s != NULL) {
         if(s->IsValid()) {
@@ -142,7 +134,6 @@ void SocketSelect::AddWaitOnExceptReady(const BasicSocket * const s) {
 
 }
 
-/*lint -e{970} -e{502} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
 void SocketSelect::DeleteWaitOnExceptReady(const BasicSocket * const s) {
     if (s != NULL) {
         if(s->IsValid()) {
@@ -165,9 +156,7 @@ bool SocketSelect::Wait(const TimeoutType &timeout) {
 
     timeval timeWait;
     if (timeout.IsFinite()) {
-        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
         timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
-        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
         timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
         readySockets = select(SELECT_WIDTH, &selectHandle.readFDS_done, &selectHandle.writeFDS_done, &selectHandle.exceptFDS_done, &timeWait);
     }
@@ -183,9 +172,7 @@ bool SocketSelect::WaitRead(const TimeoutType &timeout) {
 
     timeval timeWait;
     if (timeout.IsFinite()) {
-        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
         timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
-        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
         timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
         readySockets = select(SELECT_WIDTH, &selectHandle.readFDS_done, static_cast<fd_set*>(NULL), static_cast<fd_set*>(NULL), &timeWait);
     }
@@ -201,9 +188,7 @@ bool SocketSelect::WaitWrite(const TimeoutType &timeout) {
 
     timeval timeWait;
     if (timeout.IsFinite()) {
-        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
         timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
-        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
         timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
         readySockets = select(SELECT_WIDTH, static_cast<fd_set*>(NULL), &selectHandle.writeFDS_done, static_cast<fd_set*>(NULL), &timeWait);
     }
@@ -218,9 +203,7 @@ bool SocketSelect::WaitExcept(const TimeoutType &timeout) {
 
     timeval timeWait;
     if (timeout.IsFinite()) {
-        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
         timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
-        /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
         timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
         readySockets = select(SELECT_WIDTH, static_cast<fd_set*>(NULL), static_cast<fd_set*>(NULL), &selectHandle.exceptFDS_done, &timeWait);
     }
@@ -234,8 +217,6 @@ int32 SocketSelect::ReadySockets() const {
     return readySockets;
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
-/*lint -e{1762} [MISRA C++ Rule 9-3-3]. Justification: Another Operating system could have another implementation of this function. */
 bool SocketSelect::CheckRead(const BasicSocket * const s) {
 
     bool ret = false;
@@ -254,8 +235,6 @@ bool SocketSelect::CheckRead(const BasicSocket * const s) {
     return ret;
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
-/*lint -e{1762} [MISRA C++ Rule 9-3-3]. Justification: Another Operating system could have another implementation of this function. */
 bool SocketSelect::CheckWrite(const BasicSocket * const s) {
 
     bool ret = false;
@@ -274,10 +253,7 @@ bool SocketSelect::CheckWrite(const BasicSocket * const s) {
     return ret;
 }
 
-/*lint -e{970} -e{1924} -e{9130} -e{731} -e{703} -e{666} . Justification: Operating system API are not linted.*/
-/*lint -e{1762} [MISRA C++ Rule 9-3-3]. Justification: Another Operating system could have another implementation of this function. */
 bool SocketSelect::CheckExcept(const BasicSocket * const s) {
-
     bool ret = false;
     if (s != NULL) {
         if(s->IsValid()) {

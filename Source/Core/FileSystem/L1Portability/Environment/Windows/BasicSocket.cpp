@@ -42,14 +42,15 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 BasicSocket::BasicSocket() :
-        StreamI() {
+        StreamI(),
+        HandleI() {
     connectionSocket = -1;
     isBlocking = true;
 }
 
 BasicSocket::~BasicSocket() {
     if (!Close()) {
-        //TODO
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: failed to close socket");
     }
 }
 bool BasicSocket::SetBlocking(const bool flag) {
@@ -57,7 +58,7 @@ bool BasicSocket::SetBlocking(const bool flag) {
     if (IsValid()) {
         u_long iMode = 0;
         if (flag) {
-            iMode = 0; ///If iMode = 0, blocking is enable
+            iMode = 0; ///If iMode = 0, blocking is enabled
         }
         else {
             iMode = 1;
@@ -107,12 +108,21 @@ void BasicSocket::SetSource(const InternetHost &sourceIn) {
 }
 
 bool BasicSocket::IsValid() const {
-    ///Modified the return, in windows socket not is a int32 and the comparison is true, it's necessary a cast
+    ///Modified the return, in windows socket is not an int32 and the comparison is true, it's necessary a cast
     return (static_cast<int32>(connectionSocket) >= 0);
 }
 
 bool BasicSocket::IsBlocking() const {
     return isBlocking;
 }
+
+Handle BasicSocket::GetReadHandle() const {
+    return (Handle)(connectionSocket);
+}
+
+Handle BasicSocket::GetWriteHandle() const {
+    return (Handle)(connectionSocket);
+}
+
 }
 

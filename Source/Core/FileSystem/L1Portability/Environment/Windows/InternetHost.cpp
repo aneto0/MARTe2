@@ -27,15 +27,14 @@
 #include <winsock2.h>
 #include <winsock.h>
 #include <windows.h>
+#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "InternetHost.h"
-#include "FastPollingMutexSem.h"
 #include "ErrorManagement.h"
+#include "FastPollingMutexSem.h"
+#include "InternetHost.h"
 #include "StringHelper.h"
-#include "stdio.h"
-#include "stdlib.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -50,29 +49,26 @@ FastPollingMutexSem hostnameFastSem;
 
 class LocalHostInfo {
 public:
-    //
 
     static LocalHostInfo *Instance() {
         static LocalHostInfo instance;
         return &instance;
     }
-    //
+
     ~LocalHostInfo() {
         if (ipAddress != NULL) {
-            /*lint -e{586} -e{1551} [MISRA C++ Rule 18-4-1]. Justification: Use of free required. */
             free(reinterpret_cast<void *>(const_cast<char8 *>(ipAddress)));
         }
         if (localHostName != NULL) {
-            /*lint -e{586} -e{1551} [MISRA C++ Rule 18-4-1]. Justification: Use of free required. */
             free(reinterpret_cast<void *>(const_cast<char8 *>(localHostName)));
         }
     }
-    //
+
     const char8 *GetLocalHostName() {
         Init();
         return localHostName;
     }
-    ///
+
     const char8 *GetIpAddress() {
         Init();
         return ipAddress;
@@ -87,7 +83,6 @@ private:
     bool internetAddressInfoInitialised;
     FastPollingMutexSem internalFastSem;
 
-    /*lint -e{1704} .Justification: The constructor is private because this is a singleton.*/
     LocalHostInfo():localHostName(static_cast<const char8*>(NULL)),ipAddress(static_cast<const char8*>(NULL)),internetAddressInfoInitialised(false),internalFastSem() {
         Init();
     }
@@ -148,9 +143,7 @@ StreamString InternetHost::GetHostName() const {
         REPORT_ERROR(ErrorManagement::FatalError, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
     }
     WSADATA wsaData;
-    int iResult;
-    // Initialize Winsock
-    iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
         REPORT_ERROR(ErrorManagement::FatalError, "LocalHostInfo: Failed WSAStartup");
         return static_cast<const char8 *>(NULL);
@@ -158,10 +151,6 @@ StreamString InternetHost::GetHostName() const {
     StreamString hostName = GetAddress();
 
     struct hostent *h = gethostbyaddr(reinterpret_cast<const char8 *>(&address.sin_addr.s_addr), 4, AF_INET);
-
-// what's the point ??
-// and it crashes if h is NULL
-//       ia.address.sin_addr.s_addr = *((int *)(h->h_addr_list[0]));
 
     if (h != NULL) {
         hostName = h->h_name;
@@ -199,9 +188,8 @@ InternetHost::InternetHost(const uint16 port,
     address.sin_family = static_cast<uint16>(AF_INET);
     SetPort(port);
 
-    /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
     if (!SetAddress(addr)) {
-
+        REPORT_ERROR(ErrorManagement::OSError, "InternetHost: Failed SetAddress");
     }
 }
 
@@ -214,18 +202,15 @@ StreamString InternetHost::GetAddress() const {
     return dotName;
 }
 
-/**  returns the host number associated to this InternetHost*/
 uint32 InternetHost::GetAddressAsNumber() const {
     return static_cast<uint32>(address.sin_addr.s_addr);
 }
 
-/** sets the port value  */
 void InternetHost::SetPort(const uint16 port) {
     address.sin_port = htons(port);
 }
 
 bool InternetHost::SetAddress(const char8 * const addr) {
-    /*lint -e{1924} [MISRA C++ Rule 5-2-4]. Justification: The C-style cast is made by the operating system API.*/
     address.sin_addr.s_addr = INADDR_ANY;
     bool ret = (addr != NULL);
 
@@ -265,14 +250,10 @@ void InternetHost::SetAddressByNumber(const uint32 number) {
     address.sin_addr.s_addr = number;
 }
 
-/**  The address of the local host */
 bool InternetHost::SetLocalAddress() {
     return SetAddressByHostName(static_cast<const char8*>(NULL));
 }
 
-/*lint -e{1536} [MISRA C++ Rule 9-3-1], [MISRA C++ Rule 9-3-2]. Justification: sockets will change this attribute then the full access to this
- * member is allowed.
- */
 InternetHostCore *InternetHost::GetInternetHost() {
     return &address;
 }

@@ -127,7 +127,7 @@ friend class SocketSelect;
      */
     virtual Handle GetWriteHandle() const;
 
-    protected:
+protected:
 
     /**
      * Address of the destination target, where the packets are sent to.

@@ -46,6 +46,9 @@ BasicUDPSocket::BasicUDPSocket() :
     WSADATA wsaData;
     // Initialize Winsock
     int32 iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (iResult != 0) {
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: fail WSAStartup");
+    }
 }
 
 BasicUDPSocket::~BasicUDPSocket() {
@@ -63,7 +66,6 @@ bool BasicUDPSocket::Peek(char8* const output,
         ret = static_cast<int32>(recvfrom(connectionSocket, output, static_cast<size_t>(sizeToRead), MSG_PEEK,
                                           reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), reinterpret_cast<int32 *>(&sourceSize)));
         if (ret != SOCKET_ERROR) {
-            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(ret);
             // to avoid polling continuously release CPU time when reading 0 bytes
             if (size <= 0u) {
@@ -88,11 +90,7 @@ bool BasicUDPSocket::Read(char8* const output,
     if (IsValid()) {
         int32 sourceSize = source.Size();
         ret = static_cast<int32>(recvfrom(connectionSocket, output, sizeToRead, 0, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), &sourceSize));
-
-        //printf("inside read: ret= %d  output= %s  size= %d\n",ret,output,sizeToRead);
         if (ret > 0) {
-
-            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = ret;
             // to avoid polling continuously release CPU time when reading 0 bytes
             if (size <= 0u) {
@@ -106,7 +104,6 @@ bool BasicUDPSocket::Read(char8* const output,
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: The socket handle is not valid");
     }
-    //printf("leaving the read with value %d\n",(ret > 0));
     return (ret > 0);
 }
 
@@ -120,12 +117,7 @@ bool BasicUDPSocket::Write(const char8* const input,
         ret = static_cast<int32>(sendto(connectionSocket, input, sizeToWrite, 0, reinterpret_cast<struct sockaddr*>(destination.GetInternetHost()),
                                         destination.Size()));
         if (ret != SOCKET_ERROR) {
-            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(ret);
-            // to avoid polling continuously release CPU time when reading 0 bytes
-            if (size <= 0u) {
-                Sleep::MSec(1);
-            }
         }
         else {
             REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed sendto()");
@@ -140,14 +132,12 @@ bool BasicUDPSocket::Write(const char8* const input,
 
 bool BasicUDPSocket::Open() {
     WSADATA wsaData;
-    int iResult;
     // Initialize Winsock
-    iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
         REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: fail WSAStartup");
     }
 
-    /*lint -e{641} .Justification the socket type descriptor is an integer */
     connectionSocket = (socket(PF_INET, SOCK_DGRAM, 0));
     if (connectionSocket == INVALID_SOCKET) {
         REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: connectionSocket == INVALID_SOCKET");
@@ -155,7 +145,6 @@ bool BasicUDPSocket::Open() {
     return (connectionSocket >= 0);
 }
 
-/*lint -e{1762}  [MISRA C++ Rule 9-3-3]. Justification: The function member could be non-const in other operating system implementations*/
 bool BasicUDPSocket::Listen(const uint16 port) {
     int32 errorCode = -1;
     if (IsValid()) {
@@ -214,14 +203,12 @@ bool BasicUDPSocket::Read(char8 * const output,
 
         if (timeout.IsFinite()) {
             struct timeval timeoutVal;
-            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
-            /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
 
             int32 iResult = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<int32>(source.Size()));
             if (iResult == SOCKET_ERROR) {
-                closesocket (connectionSocket);
+                closesocket(connectionSocket);
                 WSACleanup();
                 return 0;
             }
@@ -262,9 +249,7 @@ bool BasicUDPSocket::Write(const char8 * const input,
         if (timeout.IsFinite()) {
 
             struct timeval timeoutVal;
-            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
-            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<int32>(sizeof(timeoutVal)));
 
@@ -282,7 +267,7 @@ bool BasicUDPSocket::Write(const char8 * const input,
         }
         else {
             if(Write(input, sizeToWrite)) {
-                size=sizeToWrite;
+                size = sizeToWrite;
             }
         }
     }
@@ -296,12 +281,10 @@ uint64 BasicUDPSocket::Size() {
     return 0xffffffffffffffffu;
 }
 
-/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: sockets cannot seek. */
 bool BasicUDPSocket::Seek(const uint64 pos) {
     return false;
 }
 
-/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: sockets cannot seek. */
 bool BasicUDPSocket::RelativeSeek(const int32 deltaPos) {
     return false;
 }
@@ -310,7 +293,6 @@ uint64 BasicUDPSocket::Position() {
     return 0xffffffffffffffffu;
 }
 
-/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the size of a socket is undefined. */
 bool BasicUDPSocket::SetSize(const uint64 size) {
     return false;
 }

@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_SOCKETCORE_H_
-		#define 		SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_SOCKETCORE_H_
+		#ifndef SOCKETCORE_H_
+		#define 		SOCKETCORE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -40,9 +40,7 @@
 
 namespace MARTe {
 
-
 typedef SOCKET SocketCore;
-
 
 }
 
@@ -51,5 +49,5 @@ typedef SOCKET SocketCore;
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-		#endif /* SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_SOCKETCORE_H_ */
+		#endif /* SOCKETCORE_H_ */
 	

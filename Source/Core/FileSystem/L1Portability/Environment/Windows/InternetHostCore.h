@@ -21,8 +21,8 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_INTERNETHOSTCORE_H_
-		#define 		SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_INTERNETHOSTCORE_H_
+		#ifndef INTERNETHOSTCORE_H_
+		#define 		INTERNETHOSTCORE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -49,5 +49,5 @@ typedef sockaddr_in InternetHostCore;
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-		#endif /* SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_INTERNETHOSTCORE_H_ */
+		#endif /* INTERNETHOSTCORE_H_ */
 	

@@ -28,6 +28,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#define DLL_API
 
 #include "TypeConversion.h"
 #include "AnyType.h"
@@ -342,7 +343,7 @@ static bool FloatToType(const AnyType &destination,
     }
     return ret;
 }
-
+#include <stdio.h>
 /**
  * @brief Performs the conversion from string types (CCString, StreamString, CArray) to any type.
  * @param[out] destination is the any type in output.
@@ -390,6 +391,7 @@ static bool StringToType(const AnyType &destination,
         }
         if (destinationDescriptor.type == CArray) {
             uint32 arraySize = destination.GetByteSize();
+            printf("Here %s %d\n",token,arraySize);
             if (tokenLength >= arraySize) {
                 REPORT_ERROR(ErrorManagement::Warning, "StringToType: The input is too long for the output buffer.");
                 ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);

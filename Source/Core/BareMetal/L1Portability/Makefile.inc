@@ -41,6 +41,7 @@ OBJSX=  FastMath.x \
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
+INCLUDES+=-I.
 INCLUDES+=-I../L0Types
 
 all: $(OBJS) $(SUBPROJ)   \

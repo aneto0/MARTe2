@@ -20,6 +20,7 @@
  * the class TimeStamp (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+#define DLL_API
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -53,7 +54,8 @@ TimeStamp::TimeStamp() {
 bool TimeStamp::ConvertFromEpoch(const oslong secondsFromEpoch) {
     //fill the time structure
     struct tm tValues;
-    if (localtime_s(&tValues, static_cast<const time_t*>(&secondsFromEpoch)) != 0) {
+    time_t secondsFromEpochTimeT = secondsFromEpoch;
+    if (localtime_s(&tValues, static_cast<const time_t*>(&secondsFromEpochTimeT)) != 0) {
         return false;
     }
     seconds = tValues.tm_sec;
@@ -65,3 +67,5 @@ bool TimeStamp::ConvertFromEpoch(const oslong secondsFromEpoch) {
 
     return true;
 }
+}
+

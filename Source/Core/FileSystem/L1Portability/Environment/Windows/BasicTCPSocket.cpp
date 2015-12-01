@@ -32,10 +32,10 @@
 /*---------------------------------------------------------------------------*/
 #include "BasicSocket.h"
 #include "BasicTCPSocket.h"
-#include "SocketSelect.h"
 #include "ErrorManagement.h"
+#include "SocketSelect.h"
 #include "StringHelper.h"
-#include "stdio.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -96,7 +96,6 @@ bool BasicTCPSocket::Listen(const uint16 port,
             }
         }
         else {
-
             REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed bind()");
         }
     }
@@ -114,7 +113,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
     bool ret = IsValid();
     bool wasBlocking = IsBlocking();
     if (ret) {
-
         if (!destination.SetAddress(address)) {
             if (!destination.SetAddressByHostName(address)) {
                 ret = false;
@@ -155,8 +153,8 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                             int32 lon = static_cast<int32>(sizeof(int32));
                             int32 valopt;
                             if (getsockopt(connectionSocket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char8 *>(&valopt), &lon) < 0) {
-                                ret = false;
                                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: failed getsockopt() trying to check if the connection is alive");
+                                ret = false;
                             }
                             else {
                                 if (valopt > 0) {
@@ -180,8 +178,8 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                                 int32 lon = static_cast<int32>(sizeof(int32));
                                 int32 valopt;
                                 if (getsockopt(connectionSocket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char8 *>(&valopt), &lon) < 0) {
-                                    ret = false;
                                     REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: failed getsockopt() trying to check if the connection is alive");
+                                    ret = false;
                                 }
                                 else {
                                     if (valopt > 0) {
@@ -195,15 +193,15 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                             }
                         }
                         else {
-                            ret = false;
                             REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed connect(); errno = EINPROGRESS");
+                            ret = false;
                         }
 
                     }
                         break;
                     default: {
-                        ret = false;
                         REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed connect()");
+                        ret = false;
                     }
                     }
                 }
@@ -270,14 +268,13 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
             if (newSocket != -1) {
                 if (client == NULL) {
                     client = new BasicTCPSocket();
-                    created=true;
+                    created = true;
                 }
 
                 client->SetDestination(source);
                 client->SetSource(source);
                 client->connectionSocket = newSocket;
                 ret = client;
-
             }
             else {
                 if (wasBlocking) {
@@ -291,18 +288,15 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                             if (sel.WaitRead(timeout)) {
                                 ret = WaitConnection(TTDefault, client);
                             }
-
                         }
                     }
                     else {
-
                         REPORT_ERROR(ErrorManagement::Timeout, "BasicTCPSocket: Timeout expired");
                     }
                 }
                 else {
                     REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: Failed accept in unblocking mode");
                 }
-
             }
         }
         if (timeout.IsFinite()) {
@@ -318,7 +312,6 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
         }
     }
     else {
-
         REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
     }
 
@@ -334,7 +327,6 @@ bool BasicTCPSocket::Peek(char8* const buffer,
     if (IsValid()) {
         ret = static_cast<int32>(recv(connectionSocket, buffer, static_cast<size_t>(sizeToRead), MSG_PEEK));
         if (ret > 0) {
-            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(ret);
         }
     }
@@ -347,14 +339,13 @@ bool BasicTCPSocket::Peek(char8* const buffer,
 bool BasicTCPSocket::Read(char8* const output,
                           uint32 &size) {
     uint32 sizetoRead = size;
-    size = 0u;
     int32 readBytes = 0;
+    size = 0u;
+
     if (IsValid()) {
         readBytes = static_cast<int32>(recv(connectionSocket, output, static_cast<size_t>(sizetoRead), 0));
 
         if (readBytes > 0) {
-
-            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(readBytes);
         }
         else if (readBytes == 0) {
@@ -379,11 +370,10 @@ bool BasicTCPSocket::Write(const char8* const input,
     int32 writtenBytes = 0;
     uint32 sizeToWrite = size;
     size = 0u;
+
     if (IsValid()) {
         writtenBytes = static_cast<int32>(send(connectionSocket, input, static_cast<size_t>(sizeToWrite), 0));
         if (writtenBytes >= 0) {
-
-            /*lint -e{9117} -e{732}  [MISRA C++ Rule 5-0-4]. Justification: the casted number is positive. */
             size = static_cast<uint32>(writtenBytes);
         }
         else {
@@ -413,9 +403,7 @@ bool BasicTCPSocket::Read(char8* const output,
         if (timeout.IsFinite()) {
 
             struct timeval timeoutVal;
-            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
-            /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
 
             int32 iResult = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<int32>(source.Size()));
@@ -440,11 +428,8 @@ bool BasicTCPSocket::Read(char8* const output,
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() removing the socket timeout");
             }
         }
-
-        else {
-            if (Read(output, sizeToRead)) {
-                size = sizeToRead;
-            }
+        else if (Read(output, sizeToRead)) {
+            size = sizeToRead;
         }
     }
     else {
@@ -462,9 +447,7 @@ bool BasicTCPSocket::Write(const char8* const input,
     if (IsValid()) {
         if (timeout.IsFinite()) {
             struct timeval timeoutVal;
-            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
-            /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
 
             int32 iResult = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<int32>(source.Size()));
@@ -479,31 +462,26 @@ bool BasicTCPSocket::Write(const char8* const input,
             if (ret != 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() setting the socket timeoutVal");
             }
-            else {
-                if (Write(input, sizeToWrite)) {
-                    size = sizeToWrite;
-                }
+            else if (Write(input, sizeToWrite)) {
+                size = sizeToWrite;
             }
+
             timeoutVal.tv_sec = 0;
             timeoutVal.tv_usec = 0;
             if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<uint32>(sizeof(timeoutVal))) < 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() removing the socket timeoutVal");
             }
         }
-        else {
-            if (Write(input, sizeToWrite)) {
-                size = sizeToWrite;
-            }
+        else if (Write(input, sizeToWrite)) {
+            size = sizeToWrite;
         }
     }
-
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
     }
     return (size > 0u);
 }
 
-/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: sockets cannot seek. */
 bool BasicTCPSocket::Seek(const uint64 pos) {
     return false;
 }
@@ -512,7 +490,6 @@ uint64 BasicTCPSocket::Size() {
     return 0xffffffffffffffffu;
 }
 
-/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: sockets cannot seek. */
 bool BasicTCPSocket::RelativeSeek(const int32 deltaPos) {
     return false;
 }
@@ -521,7 +498,6 @@ uint64 BasicTCPSocket::Position() {
     return 0xffffffffffffffffu;
 }
 
-/*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the size of a socket is undefined. */
 bool BasicTCPSocket::SetSize(const uint64 size) {
     return false;
 }
