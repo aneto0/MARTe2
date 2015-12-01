@@ -35,5 +35,3 @@ LIBRARIES   += ../../Source/Core/FileSystem/$(TARGET)/MARTeCoreF$(LIBEXT)
 LIBRARIES   += ../../Test/Core/FileSystem/$(TARGET)/MARTeCoreFTest$(LIBEXT)
 
 LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
-
-OPTIM=-finline-functions
