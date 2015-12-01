@@ -29,15 +29,15 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 SPB=Environment/$(ENVIRONMENT).x
 
 OBJSX=  FastMath.x \
-        ProcessorType.x \
-        HeapManager.x \
-        FastPollingMutexSem.x \
-        GlobalObjectI.x \
-        GlobalObjectsDatabase.x \
-        StringHelper.x \
-        StaticListHolder.x \
-        StaticList.x \
-        FormatDescriptor.x
+		FastPollingMutexSem.x \
+		FormatDescriptor.x \
+		GlobalObjectI.x \
+		GlobalObjectsDatabase.x \
+		HeapManager.x \
+		ProcessorType.x \
+		StaticList.x \
+		StaticListHolder.x \
+		StringHelper.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

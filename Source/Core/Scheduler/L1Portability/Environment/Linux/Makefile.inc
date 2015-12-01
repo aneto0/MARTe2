@@ -30,12 +30,11 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 
 OBJSX=  EventSem.x \
-        MutexSem.x \
-        Processor.x \
-        Threads.x \
-        ThreadsDatabase_Gen.x \
-        ThreadInformation_Gen.x
-
+		MutexSem.x \
+		Processor.x \
+		ThreadInformation_Gen.x \
+		Threads.x \
+		ThreadsDatabase_Gen.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

@@ -28,18 +28,17 @@ PACKAGE=Core/BareMetal/L1Portability
 ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  MemoryOperationsHelper_CLIB_Gen.x \
-        StringHelper_CLIB_Gen.x \
-        StringHelperExtras_Gen.x \
-        StandardHeap_Gen.x \
-        BasicConsole.x \
-        Sleep.x \
-        HighResolutionTimerCalibrator.x \
-        LoadableLibrary.x  \
-        MemoryCheck_Gen.x  \
-        ErrorManagement_Gen.x \
-        TimeStamp.x
-
+OBJSX=  BasicConsole.x \
+		ErrorManagement_Gen.x \
+		HighResolutionTimerCalibrator.x \
+		LoadableLibrary.x  \
+		MemoryCheck_Gen.x  \
+		MemoryOperationsHelper_CLIB_Gen.x \
+		Sleep.x \
+		StandardHeap_Gen.x \
+		StringHelperExtras_Gen.x \
+		StringHelper_CLIB_Gen.x \
+		TimeStamp.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
