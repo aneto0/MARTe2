@@ -24,7 +24,7 @@
 #
 #############################################################
 OBJSX=
-SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x
+SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x
 PACKAGE=Core
 MAKEDEFAULTDIR=../../../MakeDefaults
 

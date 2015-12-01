@@ -31,8 +31,8 @@ OBJSX=CharBuffer.x \
     BufferedStreamI.x \
     DoubleBufferedStream.x \
     BufferedStreamIOBuffer.x \
-    StringIOBuffer.x \
-    String.x \
+    StreamStringIOBuffer.x \
+    StreamString.x \
     StreamMemoryReference.x \
     SingleBufferedStream.x 
         

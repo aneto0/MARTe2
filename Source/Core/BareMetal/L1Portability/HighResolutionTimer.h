@@ -31,10 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ErrorManagement.h"
 #include "GeneralDefinitions.h"
+#include "TimeStamp.h"
 #include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,HighResolutionTimer.h)
+
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -91,7 +94,7 @@ namespace HighResolutionTimer {
      * @param[out] date is a TimeValues structure which must be filled by this method.
      * @return true if the operating system calls returns with no errors.
      */
-    inline bool GetTimeStamp(TimeValues &date);
+    inline bool GetTimeStamp(TimeStamp &date);
 }
 
 }

@@ -34,7 +34,7 @@
 
 #include "HighResolutionTimer.h"
 #include "HighResolutionTimerCalibrator.h"
-
+#include "TimeStamp.h"
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -65,7 +65,7 @@ inline float64 TicksToTime(int64 tStop,
     return dT * Period();
 }
 
-inline bool GetTimeStamp(TimeValues &date) {
+inline bool GetTimeStamp(TimeStamp &date) {
     return calibratedHighResolutionTimer.GetTimeStamp(date);
 }
 

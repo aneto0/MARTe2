@@ -215,7 +215,6 @@ public:
      */
     template<typename baseType>
     bool TestAnyType_ConstFractionalInteger();
-
     /**
      * @brief Tests the AnyType constructor with an Object variable.
      */

@@ -41,7 +41,7 @@
 
 
 #include "InternetHostTest.h"
-#include "String.h"
+#include "StreamString.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -58,7 +58,7 @@ bool InternetHostTest::TestDefaultConstructor() {
         return false;
     }
 
-    String ret = addr.GetAddress();
+    StreamString ret = addr.GetAddress();
 
     return ret == "0.0.0.0";
 }
@@ -72,7 +72,7 @@ bool InternetHostTest::TestFullConstructor(uint16 port,
         return false;
     }
 
-    String ret = addr.GetAddress();
+    StreamString ret = addr.GetAddress();
 
     return (ret == expected);
 
@@ -88,7 +88,7 @@ bool InternetHostTest::TestGetAddress(const char8 *table[][2]) {
     uint32 i = 0;
     while (table[i][0] != NULL) {
         InternetHost addr(0, table[i][0]);
-        String ret = addr.GetAddress();
+        StreamString ret = addr.GetAddress();
         if (ret != table[i][1]) {
             return false;
         }
@@ -102,7 +102,7 @@ bool InternetHostTest::TestGetHostName(const char8 *table[][2]) {
     uint32 i = 0;
     while (table[i][0] != NULL) {
         InternetHost addr(0, table[i][0]);
-        String ret = addr.GetHostName();
+        StreamString ret = addr.GetHostName();
         if (ret != table[i][1]) {
             return false;
         }
@@ -128,7 +128,7 @@ bool InternetHostTest::TestGetAddressAsNumber(const InternetHostTestTable *table
 
 bool InternetHostTest::TestGetLocalHostName() {
 
-    String ret = InternetHost::GetLocalHostName();
+    StreamString ret = InternetHost::GetLocalHostName();
 
 
     return true;
@@ -137,7 +137,7 @@ bool InternetHostTest::TestGetLocalHostName() {
 
 bool InternetHostTest::TestGetLocalAddress() {
 
-    String ret = InternetHost::GetLocalAddress();
+    StreamString ret = InternetHost::GetLocalAddress();
 
 
     return ((ret == "127.0.1.1") || (ret == "127.0.0.1"));
@@ -164,7 +164,7 @@ bool InternetHostTest::TestSetAddress(const char8 *table[][2]) {
     uint32 i = 0;
     while (table[i][0] != NULL) {
         addr.SetAddress(table[i][0]);
-        String ret = addr.GetAddress();
+        StreamString ret = addr.GetAddress();
         if (ret != table[i][1]) {
             return false;
         }
@@ -181,7 +181,7 @@ bool InternetHostTest::TestSetAddressByHostName(const char8 *table[][2]) {
     uint32 i = 0;
     while (table[i][0] != NULL) {
         addr.SetAddressByHostName(table[i][1]);
-        String ret = addr.GetAddress();
+        StreamString ret = addr.GetAddress();
         if (ret != table[i][0]) {
             return false;
         }
@@ -197,7 +197,7 @@ bool InternetHostTest::TestSetAddressByNumber(const InternetHostTestTable *table
     uint32 i = 0;
     while (table[i].address != NULL) {
         addr.SetAddressByNumber(table[i].relatedNumber);
-        String ret = addr.GetAddress();
+        StreamString ret = addr.GetAddress();
         if (ret != table[i].address) {
             return false;
         }
@@ -211,7 +211,7 @@ bool InternetHostTest::TestSetLocalAddress() {
     InternetHost addr;
     addr.SetLocalAddress();
 
-    String dotAddr = addr.GetAddress();
+    StreamString dotAddr = addr.GetAddress();
     return ((dotAddr == "127.0.1.1") || (dotAddr == "127.0.0.1"));
 }
 

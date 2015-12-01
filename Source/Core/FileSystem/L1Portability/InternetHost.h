@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "String.h"
+#include "StreamString.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,InternetHostCore.h)
 
 /*---------------------------------------------------------------------------*/
@@ -74,13 +74,13 @@ public:
      * @brief Returns the IP address in the IPv4 format.
      * @return the IP address in the IPv4 format.
      */
-    String GetAddress() const;
+    StreamString GetAddress() const;
 
     /**
-     * @brief Returns the host name as a String.
-     * @return the host name as a String. In case of failure the returned String is empty.
+     * @brief Returns the host name as a StreamString.
+     * @return the host name as a StreamString. In case of failure the returned StreamString is empty.
      */
-    String GetHostName() const;
+    StreamString GetHostName() const;
 
     /**
      * @brief Returns the IP address as an integer number.

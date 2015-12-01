@@ -56,32 +56,37 @@ typedef enum {
 
 }Colours;
 
+
+
 /**
- * @brief A structure containing the time stamp informations.
+ * @brief Checks if the given float is a not-a-number value.
  */
-struct TimeValues {
+static inline bool isNaN(const float32 x) {
+    /*lint -e{9137} -e{777} [MISRA C++ Rule 6-2-2]. Justification: It is a trick to detect nan floats in standard IEEE.*/
+    return (x != x);
+}
 
-    /** nanoseconds 0-999999 */
-    uint32 microseconds;
+/**
+ * @brief Checks if the given float is a not-a-number value.
+ */
+static inline bool isNaN(const float64 x) {
+    /*lint -e{9137} -e{777} [MISRA C++ Rule 6-2-2]. Justification: It is a trick to detect nan floats in standard IEEE.*/
+    return (x != x);
+}
 
-    /** seconds 0-59 */
-    uint32 seconds;
+/**
+ * @brief Checks if the given float is a positive or negative infinity.
+ */
+static inline bool isInf(const float32 x) {
+    return (!isNaN(x)) && (isNaN(x - x));
+}
 
-    /** minutes 0-59 */
-    uint32 minutes;
-
-    /** hours 0-23 */
-    uint32 hours;
-
-    /** days 1-31 */
-    uint32 days;
-
-    /** month 0-11 */
-    uint32 month;
-
-    /** year since 1900 */
-    uint32 year;
-};
+/**
+ * @brief Checks if the given float is a positive or negative infinity
+ */
+static inline bool isInf(const float64 x) {
+    return (!isNaN(x)) && (isNaN(x - x));
+}
 
 }
 

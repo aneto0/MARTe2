@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Object.h"
-#include "StructuredData.h"
+#include "StructuredDataI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -48,6 +48,7 @@ namespace MARTe {
  *
  * The Reference might also own no object, in which case the function IsValid will return false.
  */
+/*lint -e{9109} [MISRA C++ Rule 3-2-3] Justification: forward declaration of Reference in Object and StructureDataI required.*/
 class DLL_API Reference {
 public:
 
@@ -90,7 +91,7 @@ public:
      * @param[in] createOnly if true the object Initialise method is not called.
      * @return true if the object was successfully created and initialized, false otherwise.
      */
-    virtual bool Initialise(const StructuredData &data,
+    virtual bool Initialise(const StructuredDataI &data,
                             const bool &createOnly);
 
     /**

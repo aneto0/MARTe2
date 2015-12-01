@@ -141,7 +141,7 @@ public:
      * @param[in] createOnly if true the object Initialise method is not called.
      * @return true if the object was successfully created and initialized.
      */
-    virtual bool Initialise(const StructuredData &data,
+    virtual bool Initialise(const StructuredDataI &data,
                             const bool &createOnly);
 
 private:
@@ -224,7 +224,7 @@ ReferenceT<T>* ReferenceT<T>::operator&() {
 }
 
 template<typename T>
-bool ReferenceT<T>::Initialise(const StructuredData &data,
+bool ReferenceT<T>::Initialise(const StructuredDataI &data,
                                const bool &createOnly) {
     Reference ref;
     bool ok = true;

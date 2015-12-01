@@ -82,7 +82,7 @@ const BasicType PCString = 9u;
 const BasicType CArray = 10u;
 
 /**
- * The type is a String class.
+ * The type is a StreamString class.
  */
 const BasicType SString = 11u;
 

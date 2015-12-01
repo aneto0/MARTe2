@@ -253,7 +253,7 @@ public:
      * @brief Puts a character on the buffer.
      * @details This function is called by formatted print-like functions for buffered streams. The
      * implementation of NoMoreSpaceToWrite depends on children classes and it could be
-     * for example a flush (BufferedStreamIOBuffer) or a new allocation (StringIOBuffer).\n
+     * for example a flush (BufferedStreamIOBuffer) or a new allocation (StreamStringIOBuffer).\n
      *
      * The value of UndoLevel() could be used to trigger the call to NoMoreSpaceToWrite when
      * the cursor is at a specific position.
@@ -424,7 +424,7 @@ protected:
      * namely the cursor arrived to a specific position.
      * @details This basic implementation only returns false.\n
      *
-     * In StringIOBuffer UndoLevel() is zero, so when the cursor arrived
+     * In StreamStringIOBuffer UndoLevel() is zero, so when the cursor arrived
      * at the end of the memory, this function allocated a new portion of
      * memory in the queue.\n
      *

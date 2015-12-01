@@ -23,12 +23,21 @@
 #############################################################
 
 
-OBJSX=  DoubleIntegerGTest.x \
+OBJSX=  DirectoryGTest.x \
+        DirectoryScannerGTest.x \
+        BasicFileGTest.x \
+    TypeConversionGTest.x \
+	VectorGTest.x \
+	MatrixGTest.x \
+	ConfigurationDatabaseGTest.x \
+	AnyObjectGTest.x \
+	AnyTypeGTest.x\
+	TimeStampGTest.x \
+        DoubleIntegerGTest.x \
 	TypeCharacteristicsGTest.x \
         ShiftGTest.x \
         BasicTypeGTest.x \
         FormatDescriptorGTest.x \
-        AnyTypeGTest.x\
         StandardHeap_GenericGTest.x \
         HeapManagerGTest.x \
         EndianityGTest.x \
@@ -67,11 +76,11 @@ OBJSX=  DoubleIntegerGTest.x \
  	GlobalObjectsDatabaseGTest.x \
 	TypeDescriptorGTest.x  \
 	CharBufferGTest.x \
-        StringIOBufferGTest.x \
+        StreamStringIOBufferGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
         BufferedStreamIOBufferGTest.x \
-        StringGTest.x \
+        StreamStringGTest.x \
         StreamMemoryReferenceGTest.x \
         BufferedStreamIGTest.x \
         IOBufferGTest.x \
@@ -81,7 +90,8 @@ OBJSX=  DoubleIntegerGTest.x \
 	BasicSocketGTest.x \
 	BasicTCPSocketGTest.x \
    	BasicUDPSocketGTest.x \
-	BasicConsoleGTest.x
+	BasicConsoleGTest.x \
+	SelectGTest.x
 
 PACKAGE=
 ROOT_DIR=../..
@@ -94,18 +104,20 @@ INCLUDES += -I../Core/BareMetal/L0Types
 INCLUDES += -I../Core/BareMetal/L1Portability
 INCLUDES += -I../Core/BareMetal/L2Objects
 INCLUDES += -I../Core/BareMetal/L3Streams
+INCLUDES += -I../Core/BareMetal/L4Configuration
 INCLUDES += -I../Core/Scheduler/L1Portability
 INCLUDES += -I../Core/FileSystem/L1Portability
 INCLUDES += -I../../Source/Core/BareMetal/L0Types
 INCLUDES += -I../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../Source/Core/BareMetal/L3Streams
+INCLUDES += -I../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../Source/Core/Scheduler/L1Portability
 INCLUDES += -I../../Source/Core/FileSystem/L1Portability
 INCLUDES += -I../../Lib/gtest-1.7.0/include
 
 all: $(OBJS)    \
-        $(BUILD_DIR)/MainGTest$(EXEEXT)
+        $(BUILD_DIR)/MainGTest$(EXEEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

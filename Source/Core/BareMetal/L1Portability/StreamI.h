@@ -34,7 +34,6 @@
 
 #include "TimeoutType.h"
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -135,7 +134,7 @@ public:
      * written into \a output.
      */
     virtual bool Read(char8 * const output,
-            uint32 & size) = 0;
+                      uint32 & size) = 0;
 
     /**
      * @brief Writes data into the stream.
@@ -151,7 +150,7 @@ public:
      * written into the stream.
      */
     virtual bool Write(const char8 * const input,
-            uint32 & size) = 0;
+                       uint32 & size) = 0;
 
     /**
      * @brief Reads data from the stream to a char8* buffer.
@@ -172,8 +171,8 @@ public:
      * @param[in] timeout is the desired timeout.
      */
     virtual bool Read(char8 * const output,
-            uint32 & size,
-            const TimeoutType &timeout) = 0;
+                      uint32 & size,
+                      const TimeoutType &timeout) = 0;
 
     /**
      * @brief Writes from a const char8* buffer to the stream.
@@ -194,8 +193,8 @@ public:
      * Note: The behaviour depends by derived classes implementation.
      */
     virtual bool Write(const char8 * const input,
-            uint32 & size,
-            const TimeoutType &timeout) = 0;
+                       uint32 & size,
+                       const TimeoutType &timeout) = 0;
 
     /**
      * @brief Gets the size of the stream.

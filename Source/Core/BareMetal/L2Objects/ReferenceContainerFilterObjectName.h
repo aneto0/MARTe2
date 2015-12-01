@@ -37,7 +37,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief ReferenceContainerFilter for object names.
@@ -47,7 +47,7 @@ public:
     /**
      * @brief Default constructor.
      */
-     ReferenceContainerFilterObjectName();
+    ReferenceContainerFilterObjectName();
 
     /**
      * @brief Sets the filter to look for the address.
@@ -59,7 +59,7 @@ public:
      * A full path is specified by separating with dots the path (e.g. A.B.C). If a full path is specified only the first
      * occurrence can be searched and the mode will be set to ReferenceContainerFilterMode::RECURSIVE and ReferenceContainerFilterMode::PATH.
      */
-     ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
+    ReferenceContainerFilterObjectName(const int32 &occurrenceNumber,
                                        const uint32 &modeToSet,
                                        const char8 * const address);
 
@@ -68,7 +68,7 @@ public:
      * @details Copies all the parameters from another filter. This instance of the filter will be Reset().
      * @param[in] other the source ReferenceContainerFilterObjectName where to copy the information from.
      */
-     ReferenceContainerFilterObjectName(const ReferenceContainerFilterObjectName &other);
+    ReferenceContainerFilterObjectName(const ReferenceContainerFilterObjectName &other);
 
     /**
      * @brief Assignment operator.
@@ -76,12 +76,12 @@ public:
      * @param[in] other the source ReferenceContainerFilterObjectName where to copy the information from.
      * @return this object.
      */
-     ReferenceContainerFilterObjectName &operator =(const ReferenceContainerFilterObjectName &other);
+    ReferenceContainerFilterObjectName &operator =(const ReferenceContainerFilterObjectName &other);
 
     /**
      * @brief Destructor. Frees all the allocated memory.
      */
-     virtual ~ReferenceContainerFilterObjectName();
+    virtual ~ReferenceContainerFilterObjectName();
 
     /**
      * @brief Tests if the name of the object hold by referenceToTest is compatible with the address.
@@ -94,7 +94,13 @@ public:
      * @param[in] referenceToTest the reference to test (where the name of object will be extracted from).
      * @return true if the name of the object hold by referenceToTest is compatible with the address.
      */
-     virtual bool Test(ReferenceContainer &previouslyFound, Reference &referenceToTest);
+    virtual bool Test(ReferenceContainer &previouslyFound,
+                      Reference &referenceToTest);
+
+    /**
+     * TODO
+     */
+    void SetAddress(const char8 * const address);
 
 private:
     /**
@@ -113,7 +119,7 @@ private:
      * @return true if all all the elements in previouslyFound are in the exact same order specified in
      * the address parameter of the constructor.
      */
-     bool TestPath(ReferenceContainer &previouslyFound) const;
+    bool TestPath(ReferenceContainer &previouslyFound) const;
 
 };
 
