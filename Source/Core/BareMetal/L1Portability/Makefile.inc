@@ -43,6 +43,8 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../L0Types
 
+LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
+
 all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L1PortabilityB$(LIBEXT) \
 		$(BUILD_DIR)/L1PortabilityB.def

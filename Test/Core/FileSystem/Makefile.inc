@@ -31,6 +31,8 @@ MAKEDEFAULTDIR=../../../MakeDefaults
 ROOT_DIR=../../..
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
+LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityTest$(LIBEXT)
+
 all: $(OBJS) $(SUBPROJ) \
 		$(BUILD_DIR)/MARTeCoreFTest$(LIBEXT)
 	echo  $(OBJS)

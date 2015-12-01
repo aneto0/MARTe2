@@ -29,5 +29,3 @@ TARGET=linux
 include Makefile.inc
 
 OPTIM=-finline-functions
-
-LIBRARIES_STATIC+=$(BUILD_DIR)/$(ENVIRONMENT)/L1Portability$(LIBEXT)
