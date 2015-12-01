@@ -1,8 +1,8 @@
 /**
  * @file BasicFileProperties.h
  * @brief Header file for class BasicFileProperties
- * @date Nov 23, 2015
- * @author Frank Perez Paz
+ * @date 02/11/2015
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -21,35 +21,48 @@
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-		#ifndef SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_BASICFILEPROPERTIES_H_
-		#define 		SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_BASICFILEPROPERTIES_H_
+#ifndef BASICFILEPROPERTIES_H_
+#define 		BASICFILEPROPERTIES_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "StreamString.h"
+#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-struct BasicFileProperties {
-    HANDLE handle;
-    int32 flags;
-    char8* pathname;
-};
-}
 
+struct DLL_API BasicFileProperties {
+    /**
+     * The Windows handle set when opening the file
+     */
+    Handle handle;
+
+    /**
+     * The cached flags set when opening the file
+     */
+    uint32 flags;
+
+    /**
+     * The cached pathname set when opening the file
+     */
+    StreamString pathname;
+};
+
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-		#endif /* SOURCE_CORE_FILESYSTEM_L1PORTABILITY_ENVIRONMENT_WINDOWS_BASICFILEPROPERTIES_H_ */
-	
+#endif /* BASICFILEPROPERTIES_H_ */
+

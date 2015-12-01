@@ -36,7 +36,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "../../GeneralDefinitions.h"
-
+#include "../../TimeStamp.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -63,7 +63,7 @@ public:
      * @param[in] timeStamp is a structure which contains the time stamp fields.
      * @return true if the time can be successfully retrieved from the operating system.
      */
-    bool GetTimeStamp(TimeValues &timeStamp);
+    bool GetTimeStamp(TimeStamp &timeStamp);
 
     /**
      * @brief Returns the calibrated CPU frequency.

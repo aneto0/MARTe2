@@ -2,7 +2,8 @@
  * @file BasicFileTest.h
  * @brief Header file for class TestBasicFile
  * @date 04/11/2015
- * @author Llorenç Capellà
+ * @author Lloren� Capell�
+ * @author Ivan Herrero
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -51,17 +52,35 @@ public:
     bool TestDefaultConstructor();
 
     /**
-     * @brief Test the BasicFile copy constructor and the postconditions
+     * @brief Test the BasicFile copy constructor with an open file and the postconditions
      * @return True if all the postconditions are true.
      */
-    bool TestCopyConstructor();
+    bool TestCopyConstructor_withOpenFile();
 
     /**
-     * @brief Test the BasicFile copy assignment operator.
+     * @brief Test the BasicFile copy constructor with an closed file and the postconditions
+     * @return True if all the postconditions are true.
+     */
+    bool TestCopyConstructor_withClosedFile();
+
+    /**
+     * @brief Test the BasicFile copy assignment operator with an open file.
+     * @return True if all the postconditions are true.
+     */
+    bool TestAssignmentOperator_withOpenFile();
+
+    /**
+     * @brief Test the BasicFile copy assignment operator with a closed file.
+     * @return True if all the postconditions are true.
+     */
+    bool TestAssignmentOperator_withClosedFile();
+
+    /**
+     * @brief Test the BasicFile copy assignment operator with a closed file.
      * @detail Use bf to open a file, copy bf into copybf, use the bf to write on a file and then read with copybf and compare the write with the write.
      * @return True if the action done by the copy is reflected in the file pointed by the original.
      */
-    bool TestAssignmentOperator();
+    bool TestAssignmentOperator_checkPointsToSameFile();
 
     /**
      * @brief Test SetFlags() opening a file and then change the flags.
@@ -173,6 +192,18 @@ public:
      * @return true if the flag is set FLAG_TRUNC
      */
     bool TestOpen_IncompatibleFlags2();
+
+    /**
+     * @brief Test Open with the flags FLAG_APPEND | ACCESS_MODE_R
+     * @return true if the flag is set ACCESS_MODE_R
+     */
+    bool TestOpen_IncompatibleFlags3();
+
+    /**
+     * @brief Test Open with the flags FLAG_TRUNC | ACCESS_MODE_R
+     * @return true if the flag is set ACCESS_MODE_R
+     */
+    bool TestOpen_IncompatibleFlags4();
 
     /**
      * @brief Test IsOpen().
@@ -313,13 +344,25 @@ public:
      */
     bool TestGetPathName();
 
+    /**
+     * @brief Test GetReadHandle() reducing the size.
+     * @return True if GetReadHandle() > 0.
+     */
+    bool TestGetReadHandle();
+
+    /**
+     * @brief Test GetWriteHandle().
+     * @return True if GetWriteHandle() > 0.
+     */
+    bool TestGetWriteHandle();
+
 private:
     /* bf is used in each function to test the behaviour of the class*/
     BasicFile bf;
     /*Is used to save and return the result of the test. If retVal is false the test fails */
     bool retVal;
     /*Indicates how much characters have to be read or write. size has to be smaller than the size of the str2 otherwise some test will fail.*/
-    const uint32 size;
+    static const uint32 size;
     /*Default flags to perform some test. This flags have to create a file if does not exist and remove the contests of a file if it exists */
     uint32 defaultRWFlags;
     /*Default flags to perform some test. This flags have to create a file if does not exist and remove the contests of a file if it exists */

@@ -40,7 +40,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 TEST(FractionalIntegerGTest,TestBasicTypeCastMinorSizeUnsignedUnsigned16in32) {
     FractionalIntegerTest<uint32> fractionalInteger;
     uint16 input = 0;
@@ -245,4 +244,3 @@ TEST(FractionalIntegerGTest,TestBitSize) {
     FractionalIntegerTest<uint32> fractionalInteger;
     ASSERT_TRUE(fractionalInteger.TestGetNumberOfBits());
 }
-

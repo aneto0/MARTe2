@@ -39,7 +39,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+namespace MARTe {
 
 ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName() :
         ReferenceContainerFilter() {
@@ -54,6 +54,12 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
         ReferenceContainerFilter(occurrenceNumber, modeToSet) {
 
     addressNumberNodes = 0u;
+    addressToSearch = static_cast<char8 **>(NULL);
+    SetAddress(address);
+}
+
+/*lint -e{929} -e{925} the current implementation of the ReferenceContainerFilterObjects requires pointer to pointer casting*/
+void ReferenceContainerFilterObjectName::SetAddress(const char8 * const address) {
     const char8 *lastOccurrence = address;
     addressToSearch = static_cast<char8 **>(NULL);
 
@@ -89,7 +95,9 @@ ReferenceContainerFilterObjectName::ReferenceContainerFilterObjectName(const int
 
             //ignore the last dot if it exists.
             if (address[length - 1u] == '.') {
-                addressNumberNodes--;
+                if (addressNumberNodes > 0u) {
+                    addressNumberNodes--;
+                }
             }
         }
 
@@ -145,7 +153,7 @@ ReferenceContainerFilterObjectName &ReferenceContainerFilterObjectName::operator
             for (uint32 i = 0u; i < addressNumberNodes; i++) {
                 bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
                 if (!ok) {
-                    REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
+                    REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
                 }
             }
         }
@@ -178,7 +186,7 @@ ReferenceContainerFilterObjectName::~ReferenceContainerFilterObjectName() {
         for (uint32 i = 0u; i < addressNumberNodes; i++) {
             bool ok = HeapManager::Free(reinterpret_cast<void *&>(addressToSearch[i]));
             if (!ok) {
-                REPORT_ERROR(ErrorManagement::FatalError,"ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
+                REPORT_ERROR(ErrorManagement::FatalError, "ReferenceContainerFilterObjectName: Failed HeapManager::Free()");
             }
         }
         delete[] addressToSearch;

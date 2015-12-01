@@ -24,7 +24,7 @@
 #
 #############################################################
 OBJSX=
-SPB    = L1Portability.x 
+SPB    = L1Portability.x
 PACKAGE=Core
 MAKEDEFAULTDIR=../../../MakeDefaults
 

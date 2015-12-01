@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "InternetHost.h"
 #include "StreamI.h"
+#include "HandleI.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,SocketCore.h)
 
 /*---------------------------------------------------------------------------*/
@@ -44,9 +45,10 @@ namespace MARTe {
 /**
  * @brief Implementation of the common socket functions that are shared by UDP and TCP sockets.
  */
-class DLL_API BasicSocket: public StreamI {
+class DLL_API BasicSocket: public StreamI, public HandleI {
 public:
 friend class SocketSelect;
+
     /**
      * @brief Default constructor.
      */
@@ -56,7 +58,7 @@ friend class SocketSelect;
      * @brief Destructor
      * @post
      *   Close()
-    */
+     */
     virtual ~BasicSocket();
 
     /**
@@ -65,7 +67,6 @@ friend class SocketSelect;
      * @return true if the desired mode is set correctly.
      */
     bool SetBlocking(const bool flag);
-
 
     /**
      * @brief Checks if the socket is in blocking mode or not.
@@ -83,54 +84,69 @@ friend class SocketSelect;
      * @brief Returns the Internet host address of the connection source, where the packets are received from.
      * @return the the Internet host address of the connection source
      */
-     InternetHost GetSource() const;
+    InternetHost GetSource() const;
 
-     /**
-      * @brief Returns the Internet host address of the socket destination, where the packets are sent to.
-      * @return the Internet host address of the socket destination.
-      */
-     InternetHost GetDestination() const;
+    /**
+     * @brief Returns the Internet host address of the socket destination, where the packets are sent to.
+     * @return the Internet host address of the socket destination.
+     */
+    InternetHost GetDestination() const;
 
-     /**
-      * @brief Sets the destination Internet host address, where the packets are sent to.
-      * @param[in] destinationIn the Internet host address of the socket destination.
-      * @post
-      *   GetDestination() == destinationIn
-      */
-     void SetDestination(const InternetHost &destinationIn);
+    /**
+     * @brief Sets the destination Internet host address, where the packets are sent to.
+     * @param[in] destinationIn the Internet host address of the socket destination.
+     * @post
+     *   GetDestination() == destinationIn
+     */
+    void SetDestination(const InternetHost &destinationIn);
 
-     /**
-      * @brief Sets the source Internet host address, where the packets are received from.
-      * @param[in] sourceIn the Internet host address of the socket source connection.
-      * @post
-      *   GetSource() == sourceIn
-      */
-     void SetSource(const InternetHost &sourceIn);
+    /**
+     * @brief Sets the source Internet host address, where the packets are received from.
+     * @param[in] sourceIn the Internet host address of the socket source connection.
+     * @post
+     *   GetSource() == sourceIn
+     */
+    void SetSource(const InternetHost &sourceIn);
 
-     /**
-      * @brief Checks if the socket handle is valid or not.
-      */
-     virtual bool IsValid() const;
-protected:
+    /**
+     * @brief Checks if the socket handle is valid or not.
+     */
+    virtual bool IsValid() const;
 
-     /**
-      * Address of the destination target, where the packets are sent to.
-      */
-     InternetHost destination;
+    /**
+     * @brief Queries the read socked handle.
+     * @detail For the BasicSocket the read handle and the write handle are the same,
+     * however the BasicConsol has two different handles: one for read and one for write.
+     */
+    virtual Handle GetReadHandle() const;
 
-     /**
-      * Address of the source connection, where the packets are received from.
-      */
-     InternetHost source;
+    /**
+     * @brief Queries the write socked handle.
+     * @detail For the BasicSocket the read handle and the write handle are the same,
+     * however the BasicConsol has two different handles: one for read and one for write.
+     */
+    virtual Handle GetWriteHandle() const;
 
-     /**
-      * The socket low-level handle.
-      */
-     SocketCore connectionSocket;
+    protected:
+
+    /**
+     * Address of the destination target, where the packets are sent to.
+     */
+    InternetHost destination;
+
+    /**
+     * Address of the source connection, where the packets are received from.
+     */
+    InternetHost source;
+
+    /**
+     * The socket low-level handle.
+     */
+    SocketCore connectionSocket;
 
 private:
 
-     bool isBlocking;
+    bool isBlocking;
 
 };
 

@@ -33,14 +33,16 @@
 /*---------------------------------------------------------------------------*/
 
 #include "StreamString.h"
+#include "GeneralDefinitions.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 struct BasicFileProperties {
-    MARTe::int32 identifier;
-    MARTe::StreamString pathName;
+    Handle identifier;
+    uint32 saveFlags;
+    StreamString pathName;
 };
 }
 

@@ -50,11 +50,13 @@ struct BasicConsoleProperties {
     /**
      * Standard output file descriptor.
      */
-    static const int32 STDOUT = 1;
+    static const Handle STDOUT = 1;
+
     /**
      * Standard input file descriptor.
      */
-    static const int32 STDIN = 0;
+    static const Handle STDIN = 0;
+
     /**
      * Number of rows that will be cleared when BasicConsoleClear is called
      */
@@ -102,7 +104,8 @@ struct BasicConsoleProperties {
 /*---------------------------------------------------------------------------*/
 
 BasicConsole::BasicConsole() :
-        StreamI() {
+        StreamI(),
+        HandleI() {
     /*lint -e{1732} -e{1733} no default assignment and no default copy constructor.
      *This is safe since none of the struct members point to dynamically allocated memory*/
     handle = new BasicConsoleProperties();
@@ -198,9 +201,9 @@ bool BasicConsole::Read(char8 * const output,
                         const TimeoutType &timeout) {
     bool ret = false;
     if (!timeout.IsFinite()) {
-        ret =  Read(output, size);
+        ret = Read(output, size);
     }
-    else{
+    else {
         REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Cannot read within timeout");
     }
 
@@ -215,7 +218,7 @@ bool BasicConsole::Write(const char8 * const input,
     if (!timeout.IsFinite()) {
         ret = Write(input, size);
     }
-    else{
+    else {
         REPORT_ERROR(ErrorManagement::UnsupportedFeature, "BasicConsole: Cannot write within timeout");
     }
 
@@ -312,7 +315,7 @@ bool BasicConsole::Read(char8 * const output,
             int32 eofCheck = static_cast<int32>(*readChar);
             if (eofCheck == EOF) {
                 err = false;
-                REPORT_ERROR(ErrorManagement::OSError,"BasicConsole: Failed getchar()");
+                REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed getchar()");
             }
             else {
                 size = 1u;
@@ -322,11 +325,11 @@ bool BasicConsole::Read(char8 * const output,
             ssize_t readBytes = read(BasicConsoleProperties::STDIN, output, static_cast<osulong>(size));
             if (readBytes == -1) {
                 err = false;
-                REPORT_ERROR(ErrorManagement::OSError,"BasicConsole: Failed read()");
+                REPORT_ERROR(ErrorManagement::OSError, "BasicConsole: Failed read()");
             }
             else if (readBytes == 0) {
                 err = false;
-                REPORT_ERROR(ErrorManagement::Warning,"BasicConsole: Zero bytes read");
+                REPORT_ERROR(ErrorManagement::Warning, "BasicConsole: Zero bytes read");
             }
             else {
                 size = static_cast<uint32>(readBytes);
@@ -335,7 +338,7 @@ bool BasicConsole::Read(char8 * const output,
     }
     else {
         err = false;
-        REPORT_ERROR(ErrorManagement::Warning,"BasicConsole: Invalid input parameters");
+        REPORT_ERROR(ErrorManagement::Warning, "BasicConsole: Invalid input parameters");
     }
     return err;
 }
@@ -478,6 +481,14 @@ uint64 BasicConsole::Size() {
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: size not defined for console. */
 bool BasicConsole::SetSize(const uint64 size) {
     return false;
+}
+
+Handle BasicConsole::GetReadHandle() const {
+    return BasicConsoleProperties::STDIN;
+}
+
+Handle BasicConsole::GetWriteHandle() const {
+    return BasicConsoleProperties::STDOUT;
 }
 
 bool BasicConsole::CanWrite() const {

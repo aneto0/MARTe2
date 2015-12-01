@@ -127,8 +127,6 @@ bool CharBuffer::SetBufferSize(const uint32 desiredSize) {
     // stay within mathematical limits
     if (desiredSize > allocationBoundary) {
         ok = false;
-    }
-    else {
         REPORT_ERROR(ErrorManagement::FatalError, "CharBuffer: It is not possible allocate more than 2^32-1 bytes");
     }
 

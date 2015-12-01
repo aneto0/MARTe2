@@ -34,11 +34,39 @@
 
 #include "BasicFile.h"
 #include "ErrorManagement.h"
-#include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+static MARTe::uint32 CheckFlags(MARTe::uint32 flags) {
+
+    //If APPEND and Read mode are set at the same time the APPEND mode is deleted from the flags
+    if ((flags & (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_APPEND | MARTe::BasicFile::ACCESS_MODE_R)) {
+        if ((flags & MARTe::BasicFile::ACCESS_MODE_W) != (MARTe::BasicFile::ACCESS_MODE_W)) {
+            MARTe::uint32 clean_APPEND = ~MARTe::BasicFile::FLAG_APPEND;
+            flags &= clean_APPEND;
+        }
+    }
+
+    if ((flags & (MARTe::BasicFile::FLAG_CREAT | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE))
+            == (MARTe::BasicFile::FLAG_CREAT | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE)) {
+        MARTe::uint32 clean_CREAT_EXCLUSIVE = ~MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE;
+        flags &= clean_CREAT_EXCLUSIVE;
+    }
+    if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)) == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::ACCESS_MODE_R)) {
+        if ((flags & MARTe::BasicFile::ACCESS_MODE_W) != (MARTe::BasicFile::ACCESS_MODE_W)) {
+            MARTe::uint32 clean_TRUNC = ~MARTe::BasicFile::FLAG_TRUNC;
+            flags &= clean_TRUNC;
+        }
+    }
+    if ((flags & (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE))
+            == (MARTe::BasicFile::FLAG_TRUNC | MARTe::BasicFile::FLAG_CREAT_EXCLUSIVE)) {
+        MARTe::uint32 clean_TRUNC = ~MARTe::BasicFile::FLAG_TRUNC;
+        flags &= clean_TRUNC;
+    }
+    return flags;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -55,25 +83,27 @@ BasicFile::BasicFile() :
 
 BasicFile::BasicFile(const BasicFile &bf) :
         StreamI() {
-    if (IsOpen()) {
-        bool ok = true;
+    bool ok = true;
+    HANDLE handle;
+    if (bf.properties.handle == INVALID_HANDLE_VALUE) {
+        handle = INVALID_HANDLE_VALUE;
+    }
+    else {
         ok = DuplicateHandle(GetCurrentProcess(),
                              bf.properties.handle,
                              GetCurrentProcess(),
-                             &properties.handle,
+                             &handle,
                              0,
                              FALSE,
                              DUPLICATE_SAME_ACCESS);
-        if (ok) {
-            properties.flags = bf.properties.flags;
-            properties.pathname = bf.properties.pathname;
-        }
-        else {
-            properties.handle = INVALID_HANDLE_VALUE;
-            properties.flags = 0u;
-            properties.pathname = "";
+        if (!ok) {
             REPORT_ERROR(ErrorManagement::OSError, "Error: DuplicateHandle()");
         }
+    }
+    if (ok) {
+        properties.handle = handle;
+        properties.flags = bf.properties.flags;
+        properties.pathname = bf.properties.pathname;
     }
     else {
         properties.handle = INVALID_HANDLE_VALUE;
@@ -85,29 +115,32 @@ BasicFile::BasicFile(const BasicFile &bf) :
 BasicFile& BasicFile::operator=(const BasicFile &bf) {
     if (this != &bf) {
         bool ok = true;
-        if (IsOpen()) {
+        HANDLE handle;
+        if (bf.properties.handle == INVALID_HANDLE_VALUE) {
+            handle = INVALID_HANDLE_VALUE;
+        }
+        else {
             ok = DuplicateHandle(GetCurrentProcess(),
                                  bf.properties.handle,
                                  GetCurrentProcess(),
-                                 &properties.handle,
+                                 &handle,
                                  0,
                                  FALSE,
                                  DUPLICATE_SAME_ACCESS);
-            if (ok) {
-                properties.flags = bf.properties.flags;
-                properties.pathname = bf.properties.pathname;
-            }
-            else {
-                properties.handle = INVALID_HANDLE_VALUE;
-                properties.flags = 0u;
-                properties.pathname = "";
+            if (!ok) {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: DuplicateHandle()");
             }
         }
-        else {
-            properties.handle = INVALID_HANDLE_VALUE;
-            properties.flags = 0u;
-            properties.pathname = "";
+        if (ok) {
+            if (properties.handle != INVALID_HANDLE_VALUE) {
+                ok = CloseHandle(properties.handle);
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::OSError, "Error: CloseHandle()");
+                }
+            }
+            properties.handle = handle;
+            properties.flags = bf.properties.flags;
+            properties.pathname = bf.properties.pathname;
         }
     }
     return *this;
@@ -175,25 +208,16 @@ bool BasicFile::Open(const char * pathname,
         if ((flags & ACCESS_MODE_W) == ACCESS_MODE_W) {
             desiredAccess |= GENERIC_WRITE;
         }
-       // desiredAccess |= FILE_READ_ATTRIBUTES;
 
         //Sets the creation disposition
-        /* The parameter creationDisposition must be one of
-         * the following values, which cannot be combined:
-         * CREATE_ALWAYS
-         * CREATE_NEW
-         * OPEN_ALWAYS
-         * OPEN_EXISTING
-         * TRUNCATE_EXISTING
-         */
-        if ((flags & FLAG_APPEND) == FLAG_APPEND) {
-            creationDisposition |= OPEN_EXISTING;
+        if ((flags & FLAG_CREAT) == FLAG_CREAT) {
+            creationDisposition = OPEN_ALWAYS;
         }
-        else if (((flags & FLAG_CREAT) == FLAG_CREAT) || ((flags & FLAG_TRUNC) == FLAG_TRUNC)) {
-            creationDisposition |= OPEN_ALWAYS;
+        else if ((flags & FLAG_CREAT_EXCLUSIVE) == FLAG_CREAT_EXCLUSIVE) {
+            creationDisposition = CREATE_NEW;
         }
         else {
-            creationDisposition |= OPEN_EXISTING;
+            creationDisposition = OPEN_EXISTING;
         }
 
         //Opens the file by pathname with the right flags
@@ -206,13 +230,13 @@ bool BasicFile::Open(const char * pathname,
         //Sets the properties
         if (ok) {
             properties.handle = handle;
-            properties.flags = flags;
-            StringHelper::Copy(properties.pathname , pathname);
+            properties.flags = CheckFlags(flags);
+            properties.pathname = pathname;
         }
 
         //Truncates the file if needed
         if (ok) {
-            if ((flags & FLAG_TRUNC) == FLAG_TRUNC) {
+            if (((flags & FLAG_TRUNC) == FLAG_TRUNC) && ((flags & ACCESS_MODE_W) == ACCESS_MODE_W)) {
                 SetSize(0u);
             }
         }
@@ -661,5 +685,12 @@ StreamString BasicFile::GetPathName() const {
     return properties.pathname;
 }
 
+Handle BasicFile::GetReadHandle() const {
+    return properties.handle;
+}
+
+Handle BasicFile::GetWriteHandle() const {
+    return properties.handle;
+}
 }
 

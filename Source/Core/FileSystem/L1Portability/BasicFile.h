@@ -35,6 +35,7 @@
 
 #include "GeneralDefinitions.h"
 #include "StreamI.h"
+#include "HandleI.h"
 #include "StreamString.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,BasicFileProperties.h)
 
@@ -67,7 +68,7 @@ namespace MARTe {
      * @invariant
      *    Size() >= 0;
      */
-    class DLL_API BasicFile: public StreamI {
+    class DLL_API BasicFile: public StreamI, public HandleI {
 
     public:
 
@@ -110,7 +111,7 @@ namespace MARTe {
          *   not IsOpen() &&
          *   Size() == 0 &&
          *   Position() == 0 &&
-         *   GetFlags() == 0xFFFFFFFF &&
+         *   GetFlags() == 0 &&
          *   GetPathName() == ""
          */
         BasicFile();
@@ -146,7 +147,7 @@ namespace MARTe {
 
         /**
          * @brief Gets the flags of the opened file.
-         * @detail If the file is not opened the returned value is 0xFFFFFFFF.
+         * @detail If the file is not opened the returned value is 0.
          * @return An uint32 containing the flags information.
          */
         uint32 GetFlags() const;
@@ -337,7 +338,8 @@ namespace MARTe {
          *    CanWrite()
          * @post
          *    Size() == size &&
-         *    size > this'old->Position() => From this'old->Size() to Size() - 1 the contents of the file is undefined
+         *    size > this'old->Position() => From this'old->Size() to Size() - 1 the contents of the file is undefined &&
+         *    size < this'old->Size() => this->Position() = size
          * @return true if the size is changed, false otherwise
          */
         virtual bool SetSize(uint64 size);
@@ -346,6 +348,22 @@ namespace MARTe {
          * @brief Queries the pathname of the file
          */
         StreamString GetPathName() const;
+
+        /**
+         * @brief Queries the read handle of the file.
+         * @detail For the BasicFile the read handle and the write handle are the same,
+         * however the BasicConsol has two different handles: one for read and one for write.
+         * @return The handle independently if the flag is ACCESS_MODE_R or ACCESS_MODE_W.
+         */
+        virtual Handle GetReadHandle() const;
+
+        /**
+         * @brief Queries the write handle of the file.
+         * @detail For the BasicFile the read handle and the write handle are the same,
+         * however the BasicConsol has two different handles: one for read and one for write.
+         * @return The handle independently if the flag is ACCESS_MODE_R or ACCESS_MODE_W.
+         */
+        virtual Handle GetWriteHandle() const;
 
     private:
 

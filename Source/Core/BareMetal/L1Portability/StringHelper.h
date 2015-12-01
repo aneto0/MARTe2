@@ -148,7 +148,7 @@ DLL_API int32 SearchIndex(const char8* const string1,
                   const char8* const string2);
 
 /**
- * @brief Returns the length of a string.
+ * @brief Returns the length of a string (not including the terminating \0 character).
  * @param[in] string the source string.
  * @return the length of the string.
  */

@@ -89,8 +89,10 @@ StreamString::StreamString(const StreamString &toCopy) :
 }
 
 StreamString::operator AnyType() {
-    AnyType at(Buffer());
-    return at;
+    void *dataPointer = static_cast<void *>(this);
+    TypeDescriptor dataDescriptor(false, SString, static_cast<uint16>(sizeof(StreamString) * 8u));
+
+    return AnyType(dataDescriptor, static_cast<uint8>(0u), dataPointer);
 }
 
 StreamString::~StreamString() {
@@ -107,12 +109,12 @@ IOBuffer *StreamString::GetWriteBuffer() {
 }
 
 bool StreamString::Read(char8* const output,
-                  uint32 & size) {
+                        uint32 & size) {
     return this->buffer.Read(&output[0], size);
 }
 
 bool StreamString::Write(const char8* const input,
-                   uint32 & size) {
+                         uint32 & size) {
     return this->buffer.Write(&input[0], size);
 
 }
@@ -120,16 +122,16 @@ bool StreamString::Write(const char8* const input,
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
  * used by other buffered streams. */
 bool StreamString::Read(char8 * const output,
-                  uint32 & size,
-                  const TimeoutType &timeout) {
+                        uint32 & size,
+                        const TimeoutType &timeout) {
     return Read(output, size);
 }
 
 /*lint -e{715} [MISRA C++ Rule 0-1-11], [MISRA C++ Rule 0-1-12]. Justification: the timeout parameter is not used here but it is
  * used by other buffered streams. */
 bool StreamString::Write(const char8 * const input,
-                   uint32 & size,
-                   const TimeoutType &timeout) {
+                         uint32 & size,
+                         const TimeoutType &timeout) {
     return Write(input, size);
 }
 

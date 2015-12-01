@@ -137,22 +137,66 @@ MARTe::uint32 CheckFlags(MARTe::uint32 flags) {
 namespace MARTe {
 
 BasicFile::BasicFile() :
-        StreamI::StreamI() {
+        StreamI(),
+        HandleI() {
     properties.identifier = INVALID_FD;
     properties.pathName = "";
 }
 
 BasicFile::BasicFile(const BasicFile & bf) :
         /*lint -e{1738} THe StreamI does not have a copy constructor*/
-        StreamI::StreamI() {
-    properties.identifier = dup(bf.properties.identifier);
-    properties.pathName = bf.properties.pathName;
+        StreamI::StreamI(),
+        HandleI::HandleI() {
+    Handle handle;
+    bool ok = true;
+    if (bf.properties.identifier == INVALID_FD) {
+        handle = INVALID_FD;
+    }
+    else {
+        handle = dup(bf.properties.identifier);
+        ok = (handle >= 0);
+        if (!ok) {
+            REPORT_ERROR(ErrorManagement::OSError, "BasicFile::BasicFile(bf). Error::dup");
+        }
+    }
+    if (ok) {
+        properties.identifier = handle;
+        properties.saveFlags = bf.properties.saveFlags;
+        properties.pathName = bf.properties.pathName;
+    }
+    else {
+        properties.identifier = INVALID_FD;
+        properties.saveFlags = 0u;
+        properties.pathName = "";
+    }
 }
 
 BasicFile & BasicFile::operator=(const BasicFile &bf) {
+    Handle handle;
+    bool ok = true;
     if (&bf != this) {
-        properties.identifier = dup(bf.properties.identifier);
-        properties.pathName = bf.properties.pathName;
+
+        if (bf.properties.identifier == INVALID_FD) {
+            handle = INVALID_FD;
+        }
+        else {
+            handle = dup(bf.properties.identifier);
+            ok = (handle >= 0);
+            if (!ok) {
+                REPORT_ERROR(ErrorManagement::OSError, "BasicFile::BasicFile(bf). Error::dup");
+            }
+        }
+        if (ok) {
+            if (properties.identifier != INVALID_FD) {
+                ok = static_cast<bool>(close(properties.identifier));
+                if (!ok) {
+                    REPORT_ERROR(ErrorManagement::OSError, "BasicFile::BasicFile assignment. Error::close()");
+                }
+            }
+            properties.identifier = handle;
+            properties.saveFlags = bf.properties.saveFlags;
+            properties.pathName = bf.properties.pathName;
+        }
     }
     return *this;
 }
@@ -170,8 +214,11 @@ bool BasicFile::SetFlags(const uint32 setFlags) {
 
     if (IsOpen()) {
         uint32 linuxFlags = ConvertToLinuxFlags(setFlags);
-        uint32 retFcntl = static_cast<uint32>(fcntl(properties.identifier, F_SETFL, linuxFlags));
-        if ((retFcntl & linuxFlags) != linuxFlags) {
+        uint32 clear = ~(static_cast<uint32>(O_APPEND));
+        properties.saveFlags &= clear; //remove the APPEND. It is the only changed flag.
+        properties.saveFlags |= linuxFlags; // Add the new flag to the existing saveFlags.
+        uint32 retFcntl = static_cast<uint32>(fcntl(properties.identifier, F_SETFL, properties.saveFlags));
+        if ((retFcntl & properties.saveFlags) != properties.saveFlags) {
             retVal = false;
         }
     }
@@ -182,10 +229,9 @@ bool BasicFile::SetFlags(const uint32 setFlags) {
 }
 
 uint32 BasicFile::GetFlags() const {
-    uint32 retVal = 0xFFFFFFFFU;
+    uint32 retVal = 0u;
     if (IsOpen()) {
-        retVal = static_cast<uint32>(fcntl(properties.identifier, F_GETFL));
-        retVal = ConvertToBasicFileFlags(retVal);
+        retVal = ConvertToBasicFileFlags(properties.saveFlags);
     }
     return retVal;
 }
@@ -236,6 +282,7 @@ bool BasicFile::Open(const char8 * const pathname,
         }
         else {
             properties.pathName = pathname;
+            properties.saveFlags = linuxFlags;
         }
     }
     else {
@@ -259,11 +306,12 @@ bool BasicFile::Close() {
         }
         else {
             properties.identifier = INVALID_FD;
+            properties.saveFlags = 0U;
+            properties.pathName = "";
         }
     }
     else {
-        retVal = false;
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::Close().The file is not open");
+        REPORT_ERROR(ErrorManagement::Information, "BasicFile::Close().The file is not open");
     }
     return retVal;
 }
@@ -482,6 +530,12 @@ bool BasicFile::SetSize(const uint64 size) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicFile::SetSize(). The size cannot be set");
             retVal = false;
         }
+        //Update the new position if it is pointing outside of the size
+        if (Position() > size) {
+            if (!Seek(size)) {
+                retVal = false;
+            }
+        }
     }
     else {
         retVal = false;
@@ -491,6 +545,14 @@ bool BasicFile::SetSize(const uint64 size) {
 
 StreamString BasicFile::GetPathName() const {
     return properties.pathName;
+}
+
+Handle BasicFile::GetReadHandle() const {
+    return properties.identifier;
+}
+
+Handle BasicFile::GetWriteHandle() const {
+    return properties.identifier;
 }
 }
 

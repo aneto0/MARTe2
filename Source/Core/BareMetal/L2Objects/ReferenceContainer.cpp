@@ -35,6 +35,8 @@
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceT.h"
 #include "ErrorManagement.h"
+#include <typeinfo>
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -86,6 +88,7 @@ ReferenceContainer::~ReferenceContainer() {
     }
 }
 
+/*lint -e{593} .Justification: The node (newItem) will be deleted by the destructor. */
 bool ReferenceContainer::Insert(Reference ref,
                                 const int32 &position) {
     bool ok = (mux.FastLock(muxTimeout) == ErrorManagement::NoError);

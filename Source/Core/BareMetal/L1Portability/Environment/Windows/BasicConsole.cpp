@@ -653,4 +653,12 @@ uint64 BasicConsole::Position() {
     return 0xffffffffffffffff;
 }
 
+Handle BasicConsole::GetReadHandle() const {
+    return handle->inputConsoleHandle;
+}
+
+Handle BasicConsole::GetWriteHandle() const {
+    return handle->outputConsoleHandle;
+}
+
 }
