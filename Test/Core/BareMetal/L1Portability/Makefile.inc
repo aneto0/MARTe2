@@ -24,30 +24,29 @@
 #
 #############################################################
 
-OBJSX=  StandardHeap_GenericTest.x \
-        HeapManagerTest.x \
-        AuxHeap.x\
-        MemoryCheckTest.x \
-        MemoryOperationsHelperTest.x\
-        EndianityTest.x \
-        SleepTest.x \
-        AtomicTest.x \
-        ProcessorTypeTest.x \
-	BasicConsoleTest.x \
-	HighResolutionTimerTest.x \
-	MemoryTest.x \
-	FastPollingMutexSemTest.x \
-	StringHelperTest.x \
-	TimeoutTypeTest.x \
-	LoadableLibraryTest.x \
-	FastMathTest.x \
-	StringPortableTest.x \
-	ErrorManagementTest.x \
-	StaticListTest.x \
-	GlobalObjectsDatabaseTest.x \
-	FormatDescriptorTest.x \
-	TimeStampTest.x
-
+OBJSX=  AtomicTest.x \
+		AuxHeap.x\
+		BasicConsoleTest.x \
+		EndianityTest.x \
+		ErrorManagementTest.x \
+		FastMathTest.x \
+		FastPollingMutexSemTest.x \
+		FormatDescriptorTest.x \
+		GlobalObjectsDatabaseTest.x \
+		HeapManagerTest.x \
+		HighResolutionTimerTest.x \
+		LoadableLibraryTest.x \
+		MemoryCheckTest.x \
+		MemoryOperationsHelperTest.x\
+		MemoryTest.x \
+		ProcessorTypeTest.x \
+		SleepTest.x \
+		StandardHeap_GenericTest.x \
+		StaticListTest.x \
+		StringHelperTest.x \
+		StringPortableTest.x \
+		TimeStampTest.x \
+		TimeoutTypeTest.x
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

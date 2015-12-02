@@ -28,7 +28,5 @@ include Makefile.inc
 
 LIBRARIES_STATIC = Environment/Linux/cov/L1Portability$(LIBEXT)
 
-OPTIM = -finline-functions
-
 LIBRARIES += -lm
 

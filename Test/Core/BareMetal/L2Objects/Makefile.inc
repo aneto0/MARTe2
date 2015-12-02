@@ -24,19 +24,19 @@
 #
 #############################################################
 
-OBJSX=  ClassRegistryDatabaseTest.x \
-	ClassPropertiesTest.x \
-	ClassRegistryItemTest.x \
-	TestObjectHelper1.x \
-	TestObjectHelper2.x \
-	ObjectTest.x \
-	ObjectTestHelper.x \
-	ReferenceTest.x \
-	ReferenceContainerTest.x \
-	ReferenceTTest.x \
-	ReferenceContainerNodeTest.x \
-	ReferenceContainerFilterReferencesTest.x \
-	ReferenceContainerFilterObjectNameTest.x
+OBJSX=  ClassPropertiesTest.x \
+		ClassRegistryDatabaseTest.x \
+		ClassRegistryItemTest.x \
+		ObjectTest.x \
+		ObjectTestHelper.x \
+		ReferenceContainerFilterObjectNameTest.x \
+		ReferenceContainerFilterReferencesTest.x \
+		ReferenceContainerNodeTest.x \
+		ReferenceContainerTest.x \
+		ReferenceTTest.x \
+		ReferenceTest.x \
+		TestObjectHelper1.x \
+		TestObjectHelper2.x
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

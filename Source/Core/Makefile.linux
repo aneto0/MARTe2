@@ -26,8 +26,6 @@ TARGET=linux
 
 include Makefile.inc
 
-OPTIM = -finline-functions
-
 LIBRARIES += -lm
 
 LIBRARIES += $(ROOT_DIR)/Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT)

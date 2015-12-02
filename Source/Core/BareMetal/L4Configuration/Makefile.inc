@@ -24,13 +24,13 @@
 #
 #############################################################
 
-OBJSX=ConfigurationDatabase.x\
-    TypeConversion.x\
-    AnyObject.x \
-    StringToInteger.x\
-    StringToFloat.x \
-    IntegerToFloat.x \
-    FloatToInteger.x
+OBJSX=	AnyObject.x \
+		ConfigurationDatabase.x\
+		FloatToInteger.x \
+		IntegerToFloat.x \
+		StringToFloat.x \
+		StringToInteger.x \
+		TypeConversion.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

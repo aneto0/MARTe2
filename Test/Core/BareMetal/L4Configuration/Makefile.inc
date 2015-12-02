@@ -24,9 +24,9 @@
 #
 #############################################################
 
-OBJSX=ConfigurationDatabaseTest.x \
-        AnyObjectTest.x \
-	TypeConversionTest.x 
+OBJSX=	AnyObjectTest.x \
+		ConfigurationDatabaseTest.x \
+		TypeConversionTest.x 
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -27,5 +27,3 @@
 TARGET=linux
 
 include Makefile.inc
-
-OPTIM=-finline-functions
