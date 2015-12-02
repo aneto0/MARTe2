@@ -23,7 +23,9 @@
 #############################################################
 
 
-OBJSX=  BasicFileGTest.x \
+OBJSX=  DirectoryGTest.x \
+DirectoryScannerGTest.x
+#BasicFileGTest.x \
         TypeConversionGTest.x \
 	VectorGTest.x \
 	MatrixGTest.x \
@@ -68,12 +70,12 @@ OBJSX=  BasicFileGTest.x \
 	ReferenceContainerFilterObjectNameGTest.x \
  	ErrorManagementGTest.x \
     	BitBooleanGTest.x \
- 	FractionalIntegerGTest.x \
- 	BitRangeGTest.x \
- 	StaticListGTest.x \
- 	GlobalObjectsDatabaseGTest.x \
-	TypeDescriptorGTest.x  \
-	CharBufferGTest.x \
+    	 FractionalIntegerGTest.x \
+ 	    BitRangeGTest.x \
+ 	    StaticListGTest.x \
+ 	    GlobalObjectsDatabaseGTest.x \
+ 	    TypeDescriptorGTest.x  \
+ 	    CharBufferGTest.x \
         StreamStringIOBufferGTest.x \
         SingleBufferedStreamGTest.x \
         DoubleBufferedStreamGTest.x \
@@ -85,13 +87,12 @@ OBJSX=  BasicFileGTest.x \
         BitSetToIntegerGTest.x \
         InternetHostGTest.x \
         InternetServiceGTest.x \
-	BasicSocketGTest.x \
-	BasicTCPSocketGTest.x \
-   	BasicUDPSocketGTest.x \
-	BasicConsoleGTest.x \
-	SelectGTest.x \
-	DirectoryGTest.x \
-        DirectoryScannerGTest.x
+        BasicSocketGTest.x \
+        BasicTCPSocketGTest.x \
+        BasicUDPSocketGTest.x \
+        BasicConsoleGTest.x \
+        SelectGTest.x
+
 
 ROOT_DIR=../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults

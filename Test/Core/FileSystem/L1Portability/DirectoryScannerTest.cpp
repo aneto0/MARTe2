@@ -56,7 +56,7 @@ class DirectorySizeSorter: public SortFilter {
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
-static const char8 * const BASE_PATH = "C:\GTestDirectoryScannerTest";
+static const char8 * const BASE_PATH = "GTestDirectoryScannerTest";
 
 DirectoryScannerTest::DirectoryScannerTest() {
 
@@ -84,7 +84,7 @@ bool DirectoryScannerTest::TestDirectorySize() {
 
     BasicFile file;
     file.Open(path2, file.ACCESS_MODE_W | file.FLAG_CREAT);
-    uint size = sizeof("TestDirectorySize");
+    uint32 size = StringHelper::Length("TestDirectorySize");
     file.Write("TestDirectorySize", size);
     file.Close();
 
@@ -128,13 +128,13 @@ bool DirectoryScannerTest::TestScan(const char8 * pathin,
 
     BasicFile file;
     file.Open(path3, file.ACCESS_MODE_W | file.FLAG_CREAT);
-    uint size = sizeof("File to scan");
+    uint32 size = StringHelper::Length("File to scan");
     file.Write("File to scan", size);
     file.Close();
 
     DirectoryScanner directoryScann;
     directoryScann.Scan(path, fileMask);
-    int i = 0;
+    uint32 i = 0;
     bool ok = true;
     ///Compare the result of the search with the created files
     while (directoryScann.ListPeek(i) != NULL) {
@@ -153,35 +153,36 @@ bool DirectoryScannerTest::TestScan(const char8 * pathin,
         }
         i++;
     }
-    dir2.Delete();
     dir3.Delete();
+    dir2.Delete();
     dir.Delete();
     return ok;
 }
 
-bool DirectoryScannerTest::TestScan_NoExist(const char8 * pathin, const char8 *fileMask){
+bool DirectoryScannerTest::TestScan_NoExist(const char8 * pathin,
+                                            const char8 *fileMask) {
     char8 path[128];
     char8 compare[128];
     DirectoryCreateN(path, pathin);
-    StringHelper::Copy(compare,path);
-    StringHelper::Concatenate(compare,"/");
+    StringHelper::Copy(compare, path);
+    StringHelper::Concatenate(compare, &DIRECTORY_SEPARATOR);
     Directory directory(path);
     DirectoryScanner dir;
-    bool ok = dir.Scan(path,fileMask);
-    ok &= (StringHelper::Compare(dir.BasePath(),compare)==0);
-    if(!directory.Exists()){
+    bool ok = dir.Scan(path, fileMask);
+    ok &= (StringHelper::Compare(dir.BasePath(), compare) == 0);
+    if (!directory.Exists()) {
         ok = !ok;
     }
     return ok;
 }
 
-bool DirectoryScannerTest::TestScan_NULL(const char8 * pathin, const char8 *fileMask){
+bool DirectoryScannerTest::TestScan_NULL(const char8 * pathin,
+                                         const char8 *fileMask) {
     DirectoryScanner dir;
-    bool ok = dir.Scan(pathin,fileMask);
-    ok &= (StringHelper::Compare(dir.BasePath(),"/")==0);
+    bool ok = dir.Scan(pathin, fileMask);
+    ok &= (StringHelper::Compare(dir.BasePath(), &DIRECTORY_SEPARATOR) == 0);
     return ok;
 }
-
 
 bool DirectoryScannerTest::TestScan_Mask() {
     char8 path[128];
@@ -189,24 +190,42 @@ bool DirectoryScannerTest::TestScan_Mask() {
     char8 pathB[128];
     char8 pathC[128];
     bool ok = true;
-    DirectoryCreateN(pathB, "B");
-    Directory dir(pathB);
-    dir.Create(true);
     DirectoryCreateN(pathC, "C");
     Directory dir1(pathC);
     dir1.Create(true);
-    DirectoryCreateN(pathA, "A");
+    DirectoryCreateN(pathB, "B");
+    Directory dir(pathB);
+    dir.Create(true);
+    DirectoryCreateN(pathA, "CA");
     Directory dir2(pathA);
     dir2.Create(true);
+
+    BasicFile file;
+    file.Open(pathB, file.ACCESS_MODE_W | file.FLAG_CREAT);
+    uint32 size = StringHelper::Length("TestScan_Mask");
+    file.Write("TestScan_Mask", size);
+    file.Close();
+
+    file.Open(pathC, file.ACCESS_MODE_W | file.FLAG_CREAT);
+    size = StringHelper::Length("TestScan_Mask");
+    file.Write("TestScan_Mask", size);
+    file.Close();
+
+    file.Open(pathA, file.ACCESS_MODE_W | file.FLAG_CREAT);
+    size = StringHelper::Length("TestScan_Mask");
+    file.Write("TestScan_Mask", size);
+    file.Close();
 
     StringHelper::Copy(path, BASE_PATH);
     DirectoryScanner directoryScann;
 
-    directoryScann.Scan(path, "C");
-    int i = 0;
+    uint32 i = 0;
+    directoryScann.Scan(path, "B");
+    ///Look at list in search of the file correct
     while (directoryScann.ListPeek(i) != NULL) {
-        Directory *fileC = static_cast<Directory *>(directoryScann.ListPeek(i));
-        if (StringHelper::Compare(fileC->GetName(), pathC) == 0) {
+        Directory *fileB = static_cast<Directory *>(directoryScann.ListPeek(i));
+        if (StringHelper::Compare(fileB->GetName(), pathB) == 0) {
+            printf("TestScan_Mask: %s\n",fileB->GetName());
             ok &= true;
         }
         else {
@@ -214,12 +233,15 @@ bool DirectoryScannerTest::TestScan_Mask() {
         }
         i++;
     }
+
     i = 0;
-    directoryScann.Scan(path, "B");
-    ///Look at list in search of the file correct, but if in List exist other file different, is false
+    directoryScann.Scan(path, "C*");
     while (directoryScann.ListPeek(i) != NULL) {
-        Directory *fileB = static_cast<Directory *>(directoryScann.ListPeek(i));
-        if (StringHelper::Compare(fileB->GetName(), pathB) == 0) {
+        Directory *fileC = static_cast<Directory *>(directoryScann.ListPeek(i));
+        if (StringHelper::Compare(fileC->GetName(), pathC) == 0) {
+            ok &= true;
+        }
+        else if (StringHelper::Compare(fileC->GetName(), pathA) == 0) {
             ok &= true;
         }
         else {
@@ -235,38 +257,43 @@ bool DirectoryScannerTest::TestScan_Mask() {
 }
 
 bool DirectoryScannerTest::TestScan_Filter() {
-    char8 path[128];
+
     char8 pathA[128];
     char8 pathB[128];
     char8 pathC[128];
     bool ok = false;
-    DirectoryCreateN(pathB, "B");
+
+    DirectoryCreateN(pathB, "B.txt");
     Directory dir(pathB);
+    dir.Create(true);
+    DirectoryCreateN(pathC, "C.txt");
+    Directory dir1(pathC);
+    dir1.Create(true);
+    DirectoryCreateN(pathA, "A.txt");
+    Directory dir2(pathA);
+    dir2.Create(true);
+
     BasicFile file;
     file.Open(pathB, file.ACCESS_MODE_W | file.FLAG_CREAT);
-    uint size = sizeof("Medium size");
+    uint32 size = StringHelper::Length("Medium size");
     file.Write("Medium size", size);
     file.Close();
 
-    DirectoryCreateN(pathC, "C");
-    Directory dir1(pathC);
     file.Open(pathC, file.ACCESS_MODE_W | file.FLAG_CREAT);
-    size = sizeof("Long size are the file C");
+    size = StringHelper::Length("Long size are the file C");
     file.Write("Long size are the file C", size);
     file.Close();
 
-    DirectoryCreateN(pathA, "A");
-    Directory dir2(pathA);
     file.Open(pathA, file.ACCESS_MODE_W | file.FLAG_CREAT);
-    size = sizeof("Little");
+    size = StringHelper::Length("Little");
     file.Write("Little", size);
     file.Close();
 
-    StringHelper::Copy(path, BASE_PATH);
     DirectoryScanner directoryScann;
     DirectorySizeSorter sorter;
-    directoryScann.Scan(path, "*", &sorter);
-    int i = 0;
+    directoryScann.Scan(BASE_PATH, "*", &sorter);
+
+    uint32 i = 0;
     while (directoryScann.ListPeek(i + 1) != NULL) {
         Directory *file = static_cast<Directory *>(directoryScann.ListPeek(i));
         Directory *file2 = static_cast<Directory *>(directoryScann.ListPeek(i + 1));
@@ -304,14 +331,22 @@ bool DirectoryScannerTest::TestCleanUp() {
     DirectoryCreateN(path, "TestCleanUp");
     Directory dir1(path);
     dir1.Create(false);
-    DirectoryScanner dir;
-    dir.Scan(path);
+    DirectoryScanner dir(path);
     dir.CleanUp();
-    bool ok = (dir.DirectorySize() == 0);
-    ok &= StringHelper::Compare(dir.BasePath(), NULL);
-    dir1.Delete();
-    Directory dirClean(BASE_PATH);
-    dirClean.Delete();
+    bool ok = (dir.BasePath() == NULL );
+
+    DirectoryScanner directory;
+    directory.Scan(BASE_PATH);
+
+    uint32 i = 0;
+    while (directory.ListPeek(i) != NULL) {
+        Directory *direc = static_cast<Directory *>(directory.ListPeek(i));
+        Directory dirDel(direc->GetName());
+        dirDel.Delete();
+        i++;
+    }
+    Directory dirBase(BASE_PATH);
+    dirBase.Delete();
     return ok;
 }
 

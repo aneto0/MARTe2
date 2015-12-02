@@ -43,7 +43,7 @@ namespace MARTe {
  * @brief Given a base path and a shell wildcard pattern this class allows to scan for all
  * the directories and files inside a given directory.
  */
-class DirectoryScanner: public LinkedListHolder {
+class DLL_API DirectoryScanner: public LinkedListHolder {
 
 public:
 

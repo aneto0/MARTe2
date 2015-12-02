@@ -40,7 +40,7 @@
 
 using namespace MARTe;
 
-static const char8 * const BASE_PATH = "C:\GTestDirectoryTest";
+static const char8 * const BASE_PATH = "GTestDirectoryTest";
 
 DirectoryTest::DirectoryTest() {
 
@@ -162,16 +162,17 @@ bool DirectoryTest::TestGetSize_FileCorrect() {
 
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = sizeof("The sizes of files are equals");
+    uint32 size = StringHelper::Length("The sizes of files are equals");
     file.Write("The sizes of files are equals", size);
     file.Close();
 
     file.Open(path2, file.ACCESS_MODE_W);
-    size = sizeof("The sizes of files are equals");
+    size = StringHelper::Length("The sizes of files are equals");
     file.Write("The sizes of files are equals", size);
     file.Close();
 
     bool ok = (dir.GetSize() == dir2.GetSize());
+
     return ok;
 }
 
@@ -187,12 +188,12 @@ bool DirectoryTest::TestGetSize_FileIncorrect() {
 
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = sizeof("the size of file are different in this file");
+    uint32 size = StringHelper::Length("the size of file are different in this file");
     file.Write("the size of file are different in this file", size);
     file.Close();
 
     file.Open(path2, file.ACCESS_MODE_W);
-    size = sizeof("that in this");
+    size = StringHelper::Length("that in this");
     file.Write("that in this", size);
     file.Close();
 
@@ -208,7 +209,7 @@ bool DirectoryTest::TestGetLastAccessTime() {
     dir.Create(true);
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = sizeof("Confirm the lastAccess");
+    uint32 size = StringHelper::Length("Confirm the lastAccess");
     file.Write("Confirm the lastAccess", size);
     file.Close();
     TimeStamp lastAccessTime = dir.GetLastAccessTime();
@@ -223,23 +224,32 @@ bool DirectoryTest::TestGetLastAccessTime() {
 
 bool DirectoryTest::TestGetLastAccessTime_ReRead() {
     char8 path[128];
-    DirectoryCreateN(path, "TestGetLastAccessTime_Incorrect.txt");
+    char8 pathR[128];
+    DirectoryCreateN(path, "TestGetLastAccessTime_ReRead.txt");
+    //printf("path %s", path);
     Directory dir(path);
     dir.Create(true);
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = sizeof("Confirm the last access read again");
+    uint32 size = StringHelper::Length("Confirm the last access read again");
     file.Write("Confirm the last access read again", size);
     file.Close();
-    TimeStamp lastAccessTime = dir.GetLastAccessTime();
 
-    Sleep::Sec(1.1e-0);
-    file.Open(path, file.ACCESS_MODE_R);
-    file.Read(path, size);
+    file.Open(path, BasicFile::ACCESS_MODE_R);
+    file.Read(pathR, size);
     file.Close();
-    TimeStamp lastAccessTime2 = dir.GetLastAccessTime();
 
-    bool ok = !(lastAccessTime.GetSeconds() == lastAccessTime2.GetSeconds());
+    TimeStamp lastAccessTime = dir.GetLastAccessTime();
+    //printf("Read before: %d %d %d %d\n", lastAccessTime.hours, lastAccessTime.minutes, lastAccessTime.seconds, lastAccessTime.microseconds);
+    Sleep::Sec(1.1e-0);
+    file.Open(path, BasicFile::ACCESS_MODE_R);
+    file.Read(pathR, size);
+    file.Close();
+
+    TimeStamp lastAccessTime2 = dir.GetLastAccessTime();
+    //printf("Read After: %d %d %d %d\n", lastAccessTime2.hours, lastAccessTime2.minutes, lastAccessTime2.seconds, lastAccessTime2.microseconds);
+    bool ok = (lastAccessTime.GetMicroseconds() != lastAccessTime2.GetMicroseconds());
+    ok &= (lastAccessTime.GetSeconds() != lastAccessTime2.GetSeconds());
     return ok;
 }
 
@@ -250,7 +260,7 @@ bool DirectoryTest::TestGetLastWriteTime() {
     dir.Create(true);
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = sizeof("Confirm the last Write");
+    uint32 size = StringHelper::Length("Confirm the last Write");
     file.Write("Confirm the last Write", size);
     file.Close();
     TimeStamp lastWriteTime = dir.GetLastWriteTime();
@@ -265,19 +275,20 @@ bool DirectoryTest::TestGetLastWriteTime() {
 
 bool DirectoryTest::TestGetLastWriteTime_ReWrite() {
     char8 path[128];
-    DirectoryCreateN(path, "TestGetLastWriteTime_Incorrect.txt");
+
+    DirectoryCreateN(path, "TestGetLastWriteTime_ReWrite.txt");
     Directory dir(path);
     dir.Create(true);
     BasicFile file;
     file.Open(path, file.ACCESS_MODE_W);
-    uint32 size = sizeof("Confirm writing again");
+    uint32 size = StringHelper::Length("Confirm writing again");
     file.Write("Confirm writing again", size);
     file.Close();
     TimeStamp lastWriteTime = dir.GetLastWriteTime();
 
-    Sleep::Sec(1e-0);
+    Sleep::Sec(1.1e-0);
     file.Open(path, file.ACCESS_MODE_W);
-    size = sizeof("to be confirmed it is need write again");
+    size = StringHelper::Length("to be confirmed it is need write again");
     file.Write("to be confirmed it is need write again", size);
     file.Close();
     TimeStamp lastWriteTime2 = dir.GetLastWriteTime();
@@ -345,7 +356,8 @@ bool DirectoryTest::Create_Directory() {
 bool DirectoryTest::Delete_Directory() {
     DirectoryScanner directory;
     directory.Scan(BASE_PATH);
-    int i = 0;
+
+    uint32 i = 0;
     while (directory.ListPeek(i) != NULL) {
         Directory *direc = static_cast<Directory *>(directory.ListPeek(i));
         Directory dirDel(direc->GetName());

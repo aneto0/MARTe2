@@ -45,7 +45,7 @@ namespace MARTe {
 /**
  * @brief A class which encapsulates attributes and information about a file or a directory.
  */
-class Directory: public LinkedListable {
+class DLL_API Directory: public LinkedListable {
 
 
 public:
