@@ -104,6 +104,8 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
 %.spc : 
 	$(MAKE) -C $* -f Makefile.$(TARGET) clean
 
+%.spcg : 
+	$(MAKE) -C $* -f Makefile.$(TARGET) clean_gen
 
 clean:  $(SUBPROJC)
 	@rm -f depends*
@@ -119,7 +121,7 @@ clean:  $(SUBPROJC)
 	@rm -f *_Gen.cpp
 	@rm -f *_Gen.c
 	
-clean_gen: $(SUBPROJC)
+clean_gen: $(SUBPROJCG)
 	@rm -f *_Gen.cpp
 	@rm -f *_Gen.c
 

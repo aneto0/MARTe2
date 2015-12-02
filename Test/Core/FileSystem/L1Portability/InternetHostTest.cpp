@@ -138,14 +138,14 @@ bool InternetHostTest::TestGetLocalHostName() {
 bool InternetHostTest::TestGetLocalAddress() {
 
     StreamString ret = InternetHost::GetLocalAddress();
-    bool ok = (15u == StringHelper::Length(ret.Buffer()));
-    char * line;
-    StringHelper::Copy(line,ret.Buffer());
-    char* pth = strtok(line,".");
-    uint8 i = 0;
-    while(pth !=NULL){
+    bool ok = (StringHelper::Length(ret.Buffer()) > 0);
+    StreamString tok;
+    uint32 i=0;
+    char8 terminator;
+    ret.Seek(0);
+    while(ret.GetToken(tok, ".", terminator)){
+        tok = "";
         i++;
-        pth = strtok(NULL,".");;
     }
     ok &= (i == 4u);
     return ok;

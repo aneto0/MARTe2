@@ -333,7 +333,7 @@ bool BasicConsoleTest::TestTimeoutRead(uint32 timeout) {
 bool BasicConsoleTest::TestSetGetSceneSize(uint32 columnIn,
                                            uint32 rowIn) {
     BasicConsole myConsole;
-    ErrorManagement::ErrorType error = true;
+    bool error = true;
     uint32 rowOut = 0;
     uint32 columnOut = 0;
     myConsole.Open(BasicConsoleMode::Default);

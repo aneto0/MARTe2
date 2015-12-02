@@ -57,7 +57,7 @@ BasicSocket::BasicSocket() :
 /*lint -e{1551} .Justification: Removes the warning "Function may throw exception '...' in destructor". */
 BasicSocket::~BasicSocket() {
     if (!Close()) {
-        //TODO
+        REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: The socket handle is invalid");
     }
 }
 
@@ -89,7 +89,7 @@ bool BasicSocket::Close() {
         ret = close(connectionSocket);
         connectionSocket = -1;
         if (ret < 0) {
-            CStaticAssertErrorCondition(OSError, "BasicSocket::Close failed returning %i\n", ret);
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket::Close failed");
             ret = 0;
         }
     }
