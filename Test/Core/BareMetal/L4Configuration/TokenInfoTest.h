@@ -1,7 +1,7 @@
 /**
- * @file TokenInfo.h
- * @brief Header file for class TokenInfo
- * @date 26/11/2015
+ * @file TokenInfoTest.h
+ * @brief Header file for class TokenInfoTest
+ * @date 02/12/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class TokenInfo
+ * @details This header file contains the declaration of the class TokenInfoTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TOKENINFO_H_
-#define TOKENINFO_H_
+#ifndef TOKENINFOTEST_H_
+#define TOKENINFOTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,74 +31,26 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
-#include "StreamString.h"
+#include "TokenInfo.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe {
-
-/**
- * @brief An object providing informations about a Token.
- */
-class TokenInfo {
-
+using namespace MARTe;
+class TokenInfoTest {
 public:
+    bool TestDefaultConstructor();
+    bool TestSet(const char8* description,
+                 uint32 id);
 
-    /**
-     * @brief Default Constructor
-     * @post
-     *   GetTokenId() == 0 &&
-     *   GetDescription() == ""
-     */
-    TokenInfo();
+    bool TestGetTokenId(uint32 id);
 
-    /**
-     * @brief Sets the token id and description.
-     * @param[in] tokenIdIn is the token identifier.
-     * @param[in] descriptionIn is the token description.
-     * @post
-     *   GetTokenId() == tokenIdIn &&
-     *   GetDescription() == descriptionIn
-     */
-    void Set(const uint32 tokenIdIn,
-             const char8 * const descriptionIn);
+    bool TestGetDescription(const char8* description);
 
-    /**
-     * @brief Retrieves the token identifier.
-     * @return the token identifier.
-     */
-    uint32 GetTokenId() const;
-
-    /**
-     * @brief Retrieves the token description.
-     * @return the token description.
-     */
-    const char8* GetDescription();
-
-    /**
-     * @brief Destructor.
-     */
-    ~TokenInfo();
-
-private:
-
-    /**
-     * The code identifying the lexical meaning of this part of the text
-     */
-    uint32 tokenId;
-
-    /**
-     * The meaning of the token
-     */
-    StreamString description;
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TOKENINFO_H_ */
+#endif /* TOKENINFOTEST_H_ */
 

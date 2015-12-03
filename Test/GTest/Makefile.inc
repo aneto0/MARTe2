@@ -23,7 +23,11 @@
 #############################################################
 
 
-OBJSX=  TypeConversionGTest.x \
+OBJSX=  LexicalAnalyzerGTest.x \
+	ParserGTest.x \
+	TokenInfoGTest.x \
+	TokenGTest.x 	  
+#TypeConversionGTest.x \
 	VectorGTest.x \
 	MatrixGTest.x \
 	ConfigurationDatabaseGTest.x \

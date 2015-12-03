@@ -1,6 +1,6 @@
 /**
- * @file TokenInfo.h
- * @brief Header file for class TokenInfo
+ * @file LexicalAnalyzerGTest.cpp
+ * @brief Source file for class LexicalAnalyzerGTest
  * @date 26/11/2015
  * @author Giuseppe Ferrò
  *
@@ -16,89 +16,52 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class TokenInfo
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class LexicalAnalyzerGTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef TOKENINFO_H_
-#define TOKENINFO_H_
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
+#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
-#include "StreamString.h"
+
+#include "gtest/gtest.h"
+#include "LexicalAnalyzerTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
-/**
- * @brief An object providing informations about a Token.
- */
-class TokenInfo {
-
-public:
-
-    /**
-     * @brief Default Constructor
-     * @post
-     *   GetTokenId() == 0 &&
-     *   GetDescription() == ""
-     */
-    TokenInfo();
-
-    /**
-     * @brief Sets the token id and description.
-     * @param[in] tokenIdIn is the token identifier.
-     * @param[in] descriptionIn is the token description.
-     * @post
-     *   GetTokenId() == tokenIdIn &&
-     *   GetDescription() == descriptionIn
-     */
-    void Set(const uint32 tokenIdIn,
-             const char8 * const descriptionIn);
-
-    /**
-     * @brief Retrieves the token identifier.
-     * @return the token identifier.
-     */
-    uint32 GetTokenId() const;
-
-    /**
-     * @brief Retrieves the token description.
-     * @return the token description.
-     */
-    const char8* GetDescription();
-
-    /**
-     * @brief Destructor.
-     */
-    ~TokenInfo();
-
-private:
-
-    /**
-     * The code identifying the lexical meaning of this part of the text
-     */
-    uint32 tokenId;
-
-    /**
-     * The meaning of the token
-     */
-    StreamString description;
-};
-
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TOKENINFO_H_ */
+TEST(LexicalAnalyzerGTest, TestDefaultConstructor) {
+    LexicalAnalyzerTest laTest;
+    ASSERT_TRUE(laTest.TestConstructor());
+}
 
+TEST(LexicalAnalyzerGTest, TestGetToken) {
+    LexicalAnalyzerTest laTest;
+    ASSERT_TRUE(laTest.TestGetToken());
+}
+
+TEST(LexicalAnalyzerGTest, TestPeekToken) {
+    LexicalAnalyzerTest laTest;
+    ASSERT_TRUE(laTest.TestPeekToken());
+}
+
+TEST(LexicalAnalyzerGTest, TestEscape) {
+    LexicalAnalyzerTest laTest;
+    ASSERT_TRUE(laTest.TestEscape());
+}

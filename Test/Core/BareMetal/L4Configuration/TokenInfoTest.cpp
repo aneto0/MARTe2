@@ -1,7 +1,7 @@
 /**
- * @file Token.cpp
- * @brief Source file for class Token
- * @date 25/11/2015
+ * @file TokenInfoTest.cpp
+ * @brief Source file for class TokenInfoTest
+ * @date 02/12/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class Token (public, protected, and private). Be aware that some 
+ * the class TokenInfoTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,69 +28,51 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "Token.h"
+
+#include "TokenInfoTest.h"
+#include "StringHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+using namespace MARTe;
+bool TokenInfoTest::TestDefaultConstructor() {
+    TokenInfo tokenInfo;
+    if (tokenInfo.GetTokenId() != 0) {
+        return false;
+    }
 
-Token::Token() {
-    tokenId = 0u;
-    tokenLineNumber = 0u;
+    return (StringHelper::Compare(tokenInfo.GetDescription(), "") == 0);
+}
+
+bool TokenInfoTest::TestSet(const char8* description,
+                            uint32 id) {
+    TokenInfo tokenInfo;
+
+    tokenInfo.Set(id, description);
+    if (tokenInfo.GetTokenId() != id) {
+        return false;
+    }
+
+    return (description != NULL) ? (StringHelper::Compare(tokenInfo.GetDescription(), description) == 0) : (StringHelper::Compare(tokenInfo.GetDescription(), "") == 0);
+}
+
+bool TokenInfoTest::TestGetTokenId(uint32 id) {
+    TokenInfo tokenInfo;
+
+    tokenInfo.Set(id, NULL);
+    return (tokenInfo.GetTokenId() == id);
 
 }
 
-Token::Token(const uint32 id,
-             const char8 * const description,
-             const char8 * const data,
-             const uint32 lineNumber) {
-    tokenId = id;
-    tokenDescription = description;
-    tokenData = data;
-    tokenLineNumber = lineNumber;
-}
+bool TokenInfoTest::TestGetDescription(const char8* description) {
+    TokenInfo tokenInfo;
 
-Token::Token(TokenInfo tokenInfo,
-             const char8 * const data,
-             const uint32 lineNumber) {
-    tokenId = tokenInfo.GetTokenId();
-    tokenDescription = tokenInfo.GetDescription();
-    tokenData = data;
-    tokenLineNumber = lineNumber;
-}
+    tokenInfo.Set(0, description);
 
-Token::~Token() {
-
-}
-
-uint32 Token::GetId() const {
-    return tokenId;
-}
-
-/*lint -e{1529} . Justification: Remove the warning */
-Token &Token::operator=(const Token &td) {
-    tokenId = td.tokenId;
-    tokenData = td.tokenData;
-    tokenDescription = td.tokenDescription;
-    tokenLineNumber = td.tokenLineNumber;
-    return *this;
-}
-
-const char8 * Token::GetDescription() {
-    return tokenDescription.Buffer();
-}
-
-const char8 * Token::GetData() {
-    return tokenData.Buffer();
-}
-
-uint32 Token::GetLineNumber() const {
-    return tokenLineNumber;
-}
-
+    return (description != NULL) ? (StringHelper::Compare(tokenInfo.GetDescription(), description) == 0) : (StringHelper::Compare(tokenInfo.GetDescription(), "") == 0);
 }
 

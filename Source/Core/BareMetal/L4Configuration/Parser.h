@@ -33,82 +33,76 @@
 /*---------------------------------------------------------------------------*/
 #include "Object.h"
 #include "StreamI.h"
-#include "StaticListHolder.h"
+#include "BufferedStreamI.h"
 #include "LexicalAnalyzer.h"
+#include "ParserGrammatic.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
-/** a base class for parsers. Use slk and CreateParserData to create the actual parser data from a ll file*/
+/**
+ * @brief Implementation of a parser capable to create a ConfigurationDatabase structure
+ * reading data from the provided stream.
+ */
 class Parser: public Object {
-
-    typedef int32 TokenDataType;
-
+public:
     CLASS_REGISTER_DECLARATION()
 
+    /**
+     * @brief Default constructor.
+     * @param[in] grammaticIn specifies the separators and terminals characters for the parser.
+     * @pre
+     *   grammaticIn must be valid for this parser. @see ParserGrammatic
+     * @post
+     *   GetGrammatic() == grammaticIn
+     */
+    Parser(const ParserGrammatic &grammaticIn = StandardGrammatic);
 
-public:
-    /** */
-    Parser();
-    /** */
+    /**
+     * @brief Destructor.
+     */
     virtual ~Parser();
 
-    /** @param errorLevel
-     0 means do not display
-     1 means show actions
-     2 means show productions
-     0xFFFFFFFF means show all      */
+    /**
+     * @brief Parses the stream in input and build the configuration database accordingly.
+     * @param[in] stream is the stream to be parsed.
+     * @param[in,out] database is the built configuration database in output.
+     * @param[out] err is a stream showing parse error messages.
+     * @return true if the stream in input is parsed correctly, false otherwise. In case of failure, the
+     * error causing the failure is printed on the \a err stream in input (if it is not NULL).
+     * @details Assuming that the StandardGrammatic is used, the stream to parse must have this syntax:
+     *   - BLOCK     ---> STRING = { STRING = ... }
+     *   - SCALAR    ---> STRING = NUMBER | STRING
+     *   - VECTOR    ---> STRING = { NUMBER ... } | { STRING ... }
+     *   - MATRIX    ---> STRING = {{ NUMBER ... } ... } | {{ STRING ... } ... }
+     *   - TYPE CAST ---> ( STRING )
+     *
+     * @details
+     *   - All the elements of a vector or matrix must be of the same token type (NUMBER or STRING).
+     *   - Variables cannot be empty (i.e "scalar = " or vector = {}" or "matrix = {{}}").
+     *   - If the type specified in the TYPE CAST expression is invalid, the value will be
+     *   saved in the database as a C-string (default), otherwise the token will be converted to the
+     *   specified type and then saved in the database.
+     *   - Comments must begin after a separator or a terminal, otherwise they will be appended to the
+     *   token (i.e 12//comment is recognized as the STRING token ---> "12//comment")
+     *   - The error messages printed on the \a err stream are in the format "error description [line number]".
+     */
     bool Parse(StreamI &stream,
-               StreamI *err = NULL,
-               int32 errorLevel = 0);
+               ConfigurationDatabase &database,
+               BufferedStreamI * const err =  static_cast<BufferedStreamI *>(NULL)) const;
 
-protected:
-
-    /** automatically created and contained in ParserData.cpp */
-    virtual void InitTokens() = 0;
-
-    /** the action to be performed */
-    virtual void Action(int32 actionNumber,
-                        Token *latd) = 0;
-
-    virtual TokenDataType GetParse(int32 index) = 0;
-
-    virtual int32 GetParseRow(int32 index) = 0;
-
-    virtual TokenDataType GetConflict(int32 index) = 0;
-
-    virtual int32 GetConflictRow(int32 index) = 0;
-
-    virtual TokenDataType GetProduction(int32 index) = 0;
-
-    virtual int32 GetProductionRow(int32 index) = 0;
-
-    virtual TokenDataType GetTerminal2Index(int32 index) = 0;
-
-    virtual const char8 * GetProductionName(int32 index) = 0;
-
-    virtual const char8 * GetNonTerminalName(int32 index) = 0;
-
-    virtual const char8 * GetTerminalName(int32 index) = 0;
-
-    virtual const char8 * GetActionName(int32 index) = 0;
-
-    virtual TokenDataType GetStartSymbol() = 0;
-
-
-    /** a lexicala analyzer */
-    LexicalAnalyzer lexicalAnalyzer;
-
-    /** */
-    StaticListHolder stack;
-
+    /**
+     * @brief Retrieves the grammatic used by this parser.
+     * @return the grammatic used by this parser.
+     */
+    ParserGrammatic GetGrammatic() const;
 
 private:
-    /** */
-    const char8 *GetSymbolName(int32 symbol);
 
+    ParserGrammatic grammatic;
 };
 
 }

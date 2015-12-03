@@ -30,520 +30,773 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Parser.h"
-
+#include "StaticListHolder.h"
+#include "TypeConversion.h"
+#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
+
+namespace MARTe {
+
+struct TypeCastInfo {
+    TypeDescriptor typeDes;
+    const char8 *castName;
+};
+
+static const TypeCastInfo castTypes[] = { { ConstCharString, "string" }, { SignedInteger8Bit, "int8" }, { SignedInteger16Bit, "int16" }, { SignedInteger32Bit,
+        "int32" }, { SignedInteger64Bit, "int64" }, { UnsignedInteger8Bit, "uint8" }, { UnsignedInteger16Bit, "uint16" }, { UnsignedInteger32Bit, "uint32" }, {
+        UnsignedInteger64Bit, "uint64" }, { Float32Bit, "float32" }, { Float64Bit, "float64" }, { ConstCharString, static_cast<const char8*>(NULL) } };
+
+
+
+static void PrintErrorOnStream(const char8 * const format,
+                               const uint32 lineNumber,
+                               BufferedStreamI * const err) {
+    if (err != NULL) {
+        if (!err->Printf(format, lineNumber)) {
+            REPORT_ERROR(ErrorManagement::FatalError, "PrintErrorOnStream: Failed Printf() on error stream");
+        }
+        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, format, lineNumber);
+    }
+}
+
+static bool isLValue(Token* &token,
+                     LexicalAnalyzer &lexicalAnalyzer,
+                     const char8 assignmentTerminator,
+                     StreamString &varName) {
+
+    bool ret = true;
+    varName = static_cast<const char8*>(NULL);
+
+    Token* storeToken = token;
+
+    if (token->GetId() != STRING_TOKEN) {
+        ret = false;
+    }
+    else {
+        const char8* possibleBlockName = token->GetData();
+        token = lexicalAnalyzer.PeekToken(0u);
+        if (token->GetId() != TERMINAL_TOKEN) {
+            ret = false;
+        }
+        else {
+            if (token->GetData()[0] != assignmentTerminator) {
+                ret = false;
+            }
+            else {
+                varName = possibleBlockName;
+                // success! Get the next two tokens
+                token = lexicalAnalyzer.GetToken();
+                token = lexicalAnalyzer.GetToken();
+            }
+        }
+    }
+    // in case of failure reset the token
+    if (!ret) {
+        token = storeToken;
+    }
+
+    return ret;
+}
+
+static void SetType(const uint32 typeIndex,
+                    void * const dataPointer,
+                    AnyType &element,
+                    const uint8 nOfDimensions) {
+
+    if ((castTypes[typeIndex].typeDes.type == CCString) && (nOfDimensions == 0u)) {
+        element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), *static_cast<char8**>(dataPointer));
+    }
+    else {
+        element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), dataPointer);
+    }
+    element.SetNumberOfDimensions(nOfDimensions);
+}
+
+static bool CheckCloseBlock(Token* &token,
+                            LexicalAnalyzer &lexicalAnalyzer,
+                            ConfigurationDatabase &database,
+                            const char8 closedBlockTerminal,
+                            int32 &totalNumberBlockTerminals) {
+    bool ok = true;
+    while ((token->GetId() == TERMINAL_TOKEN) && (ok)) {
+        char8 terminal = *reinterpret_cast<const char8*>(token->GetData());
+        if (terminal == closedBlockTerminal) {
+            totalNumberBlockTerminals--;
+            ok = (totalNumberBlockTerminals >= 0);
+            if (ok) {
+                //?? could fail ?
+                ok = database.MoveToAncestor(1u);
+            }
+        }
+        token = lexicalAnalyzer.GetToken();
+    }
+    return ok;
+}
+
+static bool ToType(const char8 * const tokenBuffer,
+                   const uint32 typeIndex,
+                   const uint32 granularity,
+                   StaticListHolder *&memory) {
+
+    bool ret = false;
+    if (castTypes[typeIndex].typeDes == ConstCharString) {
+        if (memory == NULL) {
+            memory = new StaticListHolder(static_cast<uint32>(sizeof(char8 *)), granularity);
+        }
+        uint32 size = StringHelper::Length(tokenBuffer) + 1u;
+        char8 *cString = static_cast<char8 *>(HeapManager::Malloc(size));
+        if (StringHelper::Copy(cString, tokenBuffer)) {
+            ret = memory->Add(reinterpret_cast<void*>(&cString));
+        }
+    }
+    if (castTypes[typeIndex].typeDes == SignedInteger8Bit) {
+        if (memory == NULL) {
+            memory = new StaticListHolder(static_cast<uint32>(sizeof(int8)), granularity);
+        }
+        int8 possibleInt8 = 0;
+        if (TypeConvert(possibleInt8, tokenBuffer)) {
+            ret = memory->Add(reinterpret_cast<void*>(&possibleInt8));
+        }
+    }
+    if (castTypes[typeIndex].typeDes == SignedInteger16Bit) {
+        if (memory == NULL) {
+            memory = new StaticListHolder(static_cast<uint32>(sizeof(int16)), granularity);
+        }
+        int16 possibleInt16 = 0;
+        if (TypeConvert(possibleInt16, tokenBuffer)) {
+            ret = memory->Add(reinterpret_cast<void*>(&possibleInt16));
+        }
+    }
+    if (castTypes[typeIndex].typeDes == SignedInteger32Bit) {
+        if (memory == NULL) {
+            memory = new StaticListHolder(static_cast<uint32>(sizeof(int32)), granularity);
+        }
+        int32 possibleInt32 = 0;
+        if (TypeConvert(possibleInt32, tokenBuffer)) {
+            ret = memory->Add(reinterpret_cast<void*>(&possibleInt32));
+        }
+    }
+    if (castTypes[typeIndex].typeDes == SignedInteger64Bit) {
+        if (memory == NULL) {
+            memory = new StaticListHolder(static_cast<uint32>(sizeof(int64)), granularity);
+        }
+        int64 possibleInt64 = 0;
+        if (TypeConvert(possibleInt64, tokenBuffer)) {
+            ret = memory->Add(reinterpret_cast<void*>(&possibleInt64));
+        }
+    }
+    if (castTypes[typeIndex].typeDes == UnsignedInteger8Bit) {
+        if (memory == NULL) {
+            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint8)), granularity);
+        }
+        uint8 possibleUInt8 = 0u;
+        if (TypeConvert(possibleUInt8, tokenBuffer)) {
+            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt8));
+        }
+    }
+    if (castTypes[typeIndex].typeDes == UnsignedInteger16Bit) {
+        if (memory == NULL) {
+            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint16)), granularity);
+        }
+        uint16 possibleUInt16 = 0u;
+        if (TypeConvert(possibleUInt16, tokenBuffer)) {
+            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt16));
+        }
+    }
+    if (castTypes[typeIndex].typeDes == UnsignedInteger32Bit) {
+        if (memory == NULL) {
+            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint32)), granularity);
+        }
+        uint32 possibleUInt32 = 0u;
+        if (TypeConvert(possibleUInt32, tokenBuffer)) {
+            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt32));
+        }
+    }
+    if (castTypes[typeIndex].typeDes == UnsignedInteger64Bit) {
+        if (memory == NULL) {
+            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint64)), granularity);
+        }
+        uint64 possibleUInt64 = 0u;
+        if (TypeConvert(possibleUInt64, tokenBuffer)) {
+            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt64));
+        }
+    }
+    if (castTypes[typeIndex].typeDes == Float32Bit) {
+        if (memory == NULL) {
+            memory = new StaticListHolder(static_cast<uint32>(sizeof(float32)), granularity);
+        }
+        float32 possibleFloat32 = 0.0F;
+        if (TypeConvert(possibleFloat32, tokenBuffer)) {
+            ret = memory->Add(reinterpret_cast<void*>(&possibleFloat32));
+        }
+    }
+    if (castTypes[typeIndex].typeDes == Float64Bit) {
+        if (memory == NULL) {
+            memory = new StaticListHolder(static_cast<uint32>(sizeof(float64)), granularity);
+        }
+        float64 possibleFloat64 = 0.0;
+        if (TypeConvert(possibleFloat64, tokenBuffer)) {
+            ret = memory->Add(reinterpret_cast<void*>(&possibleFloat64));
+        }
+    }
+
+    if (!ret) {
+        delete memory;
+        memory = static_cast<StaticListHolder*>(NULL);
+    }
+
+    return ret;
+}
+
+static bool SetTypeCast(Token* &token,
+                 LexicalAnalyzer &lexicalAnalyzer,
+                 const char8 terminalCloseTypeCast,
+                 uint32 &typeIndex,
+                 BufferedStreamI * const err) {
+
+    typeIndex = 0u;
+    bool found = false;
+    if (token->GetId() == STRING_TOKEN) {
+        while ((castTypes[typeIndex].castName != NULL) && (!found)) {
+            if (StringHelper::Compare(token->GetData(), castTypes[typeIndex].castName) == 0) {
+                found = true;
+            }
+            else {
+                typeIndex++;
+            }
+        }
+        if (!found) {
+            PrintErrorOnStream("\nSpecified type not found, automatic cast to string! [%d]", token->GetLineNumber(), err);
+            typeIndex = 0u;
+        }
+        token = lexicalAnalyzer.GetToken();
+    }
+
+    bool ret = true;
+    if (token->GetId() != TERMINAL_TOKEN) {
+        PrintErrorOnStream("\nExpected type cast close terminal! [%d]", token->GetLineNumber(), err);
+        ret = false;
+    }
+    else {
+        char8 terminal = token->GetData()[0];
+        if (terminal != terminalCloseTypeCast) {
+            PrintErrorOnStream("\nInvalid terminal! [%d]", token->GetLineNumber(), err);
+            ret = false;
+        }
+    }
+    return ret;
+
+}
+
+static bool ReadScalar(Token* &token,
+                       LexicalAnalyzer &lexicalAnalyzer,
+                       ConfigurationDatabase &database,
+                       const char8 * const name,
+                       const uint32 typeIndex) {
+
+    StaticListHolder *memory = static_cast<StaticListHolder *>(NULL);
+    bool ret = ToType(token->GetData(), typeIndex, 1u, memory);
+    if (ret) {
+        AnyType element;
+        /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
+        SetType(typeIndex, memory->GetAllocatedMemory(), element, 0u);
+        ret = database.Write(name, element);
+        // read the new token
+        token = lexicalAnalyzer.GetToken();
+    }
+    if (memory != NULL) {
+        // in this case delete the string on heap
+        if (memory->GetSize() > 0u) {
+            if (castTypes[typeIndex].typeDes == ConstCharString) {
+                char8* stringElement = reinterpret_cast<char8 **>(memory)[0];
+                if (!HeapManager::Free(reinterpret_cast<void* &>(stringElement))) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "ReadMatrix: Failed HeapManager::Free()");
+                }
+            }
+        }
+        delete memory;
+    }
+
+    return ret;
+}
+
+static bool ReadVector(Token* &token,
+                       LexicalAnalyzer &lexicalAnalyzer,
+                       ConfigurationDatabase &database,
+                       const char8 vectorCloseTerminal,
+                       const char8 * const name,
+                       const uint32 typeIndex,
+                       BufferedStreamI * const err) {
+
+    uint32 tokenType = 0u;
+
+    StaticListHolder *memory = static_cast<StaticListHolder *>(NULL);
+
+    bool ok = true;
+    uint32 numberOfElements = 0u;
+
+    while (ok) {
+        // take the type at the beginning
+        tokenType = token->GetId();
+        bool isString = (token->GetId() == STRING_TOKEN);
+        bool isNumber = (token->GetId() == NUMBER_TOKEN);
+        bool continueRead = (isString) || (isNumber);
+        // check if a token is not end or terminal
+        while ((continueRead) && (ok)) {
+            if (token->GetId() != tokenType) {
+                // can be the vector terminator... go to END_VECTOR
+                continueRead = false;
+            }
+            else {
+                if (!ToType(token->GetData(), typeIndex, 4u, memory)) {
+                    PrintErrorOnStream("\nFailed type conversion! [%d]", token->GetLineNumber(), err);
+                    ok = false;
+                }
+                else {
+                    numberOfElements++;
+                    token = lexicalAnalyzer.GetToken();
+                }
+            }
+        }
+        if (ok) {
+            if (token->GetId() != TERMINAL_TOKEN) {
+                PrintErrorOnStream("\nInvalid token! [%d]", token->GetLineNumber(), err);
+                ok = false;
+            }
+            else {
+                char8 terminal = token->GetData()[0];
+                if (terminal != vectorCloseTerminal) {
+                    PrintErrorOnStream("\nInvalid terminal! [%d]", token->GetLineNumber(), err);
+                    ok = false;
+                }
+                else {
+                    // done!
+                    break;
+                }
+            }
+        }
+    }
+
+    // be sure that the vector is not empty!
+    if (ok) {
+        if (memory == NULL) {
+            PrintErrorOnStream("\nEmpty vector! [%d]", token->GetLineNumber(), err);
+            ok = false;
+        }
+    }
+    // serialize the element
+    if (ok) {
+        AnyType element;
+        /*lint -e{613} . Justification: if (memory==NULL) ---> (ok==false) */
+        SetType(typeIndex, memory->GetAllocatedMemory(), element, static_cast<uint8>(1u));
+        element.SetNumberOfElements(0u, numberOfElements);
+        ok = database.Write(name, element);
+        // read the new token
+        token = lexicalAnalyzer.GetToken();
+    }
+    if (memory != NULL) {
+        if (castTypes[typeIndex].typeDes == ConstCharString) {
+            uint32 memorySize = memory->GetSize();
+            for (uint32 i = 0u; i < memorySize; i++) {
+                char8* elementToFree = reinterpret_cast<char8 **>(memory->GetAllocatedMemory())[i];
+                if (!HeapManager::Free(reinterpret_cast<void* &>(elementToFree))) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "ReadMatrix: Failed HeapManager::Free()");
+                }
+            }
+        }
+        delete memory;
+    }
+    return ok;
+}
+
+static bool ReadMatrix(Token* &token,
+                       LexicalAnalyzer &lexicalAnalyzer,
+                       ConfigurationDatabase &database,
+                       const char8 vectorOpenTerminal,
+                       const char8 vectorCloseTerminal,
+                       const char8 matrixCloseTerminal,
+                       const char8 * const name,
+                       const uint32 typeIndex,
+                       BufferedStreamI * const err) {
+
+    uint32 tokenType = 0u;
+
+    StaticListHolder *memory = static_cast<StaticListHolder *>(NULL);
+
+    bool ok = true;
+    uint32 numberOfColumns = 0u;
+    uint32 numberOfRows = 0u;
+    uint32 testNumberOfColumns = numberOfColumns;
+
+    const uint32 BEGIN_VECTOR = 0u;
+    const uint32 READ = 1u;
+    const uint32 END_VECTOR = 2u;
+
+    uint32 status = BEGIN_VECTOR;
+
+    while (ok) {
+        if (status == BEGIN_VECTOR) {
+            if (token->GetId() != TERMINAL_TOKEN) {
+                PrintErrorOnStream("\nExpected open vector or close matrix terminals! [%d]", token->GetLineNumber(), err);
+                ok = false;
+            }
+            else {
+                char8 terminal = token->GetData()[0];
+                if (terminal == matrixCloseTerminal) {
+                    // done!!!
+                    break;
+                }
+                else if (terminal != vectorOpenTerminal) {
+                    PrintErrorOnStream("\nExpected open vector or close matrix terminals! [%d]", token->GetLineNumber(), err);
+                    ok = false;
+                }
+                else {
+                    status = READ;
+                    token = lexicalAnalyzer.GetToken();
+                }
+            }
+        }
+
+        if (status == READ) {
+            // take the type at the beginning
+            tokenType = token->GetId();
+            bool isString = (token->GetId() == STRING_TOKEN);
+            bool isNumber = (token->GetId() == NUMBER_TOKEN);
+            bool continueRead = (isString) || (isNumber);
+            testNumberOfColumns = 0u;
+            // check if a token is not end or terminal
+            while ((continueRead) && (ok)) {
+                if (token->GetId() != tokenType) {
+                    // can be the vector terminator... go to END_VECTOR
+                    continueRead = false;
+                }
+                else {
+                    if (!ToType(token->GetData(), typeIndex, 16u, memory)) {
+                        PrintErrorOnStream("\nFailed type conversion! [%d]", token->GetLineNumber(), err);
+                        ok = false;
+                    }
+                    else {
+                        if (numberOfRows == 0u) {
+                            numberOfColumns++;
+                            testNumberOfColumns++;
+                        }
+                        else {
+                            testNumberOfColumns++;
+                        }
+                        token = lexicalAnalyzer.GetToken();
+                    }
+                }
+            }
+            if (ok) {
+                status = END_VECTOR;
+            }
+        }
+
+        if (status == END_VECTOR) {
+            if (token->GetId() != TERMINAL_TOKEN) {
+                PrintErrorOnStream("\nInvalid token! [%d]", token->GetLineNumber(), err);
+                ok = false;
+            }
+            else {
+                char8 terminal = token->GetData()[0];
+                if (terminal != vectorCloseTerminal) {
+                    PrintErrorOnStream("\nInvalid terminal! [%d]", token->GetLineNumber(), err);
+                    ok = false;
+                }
+                else {
+                    if (testNumberOfColumns != numberOfColumns) {
+                        PrintErrorOnStream("\nIncorrect matrix format! [%d]", token->GetLineNumber(), err);
+                        ok = false;
+                    }
+                    else {
+                        numberOfRows++;
+                        token = lexicalAnalyzer.GetToken();
+                        status = BEGIN_VECTOR;
+                    }
+                }
+            }
+        }
+    }
+
+    //be sure that the matrix is not empty!
+    if (ok) {
+        if (memory == NULL) {
+            PrintErrorOnStream("\nEmpty matrix! [%d]", token->GetLineNumber(), err);
+            ok = false;
+        }
+    }
+
+    // serialize the element
+    if (ok) {
+        AnyType element;
+        /*lint -e{613} . Justification: if (memory==NULL) ---> (ok==false) */
+        SetType(typeIndex, memory->GetAllocatedMemory(), element, static_cast<uint8>(2u));
+        element.SetNumberOfElements(0u, numberOfColumns);
+        element.SetNumberOfElements(1u, numberOfRows);
+        ok = database.Write(name, element);
+
+        // read the new token
+        token = lexicalAnalyzer.GetToken();
+    }
+
+    if (memory != NULL) {
+        uint32 memorySize = memory->GetSize();
+        if (castTypes[typeIndex].typeDes == ConstCharString) {
+            for (uint32 i = 0u; i < memorySize; i++) {
+                char8* elementToFree = reinterpret_cast<char8 **>(memory->GetAllocatedMemory())[i];
+                if (!HeapManager::Free(reinterpret_cast<void* &>(elementToFree))) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "ReadMatrix: Failed HeapManager::Free()");
+                }
+            }
+        }
+        delete memory;
+    }
+    return ok;
+}
+
+static bool IsVector(Token * const &token,
+                     const char8 terminal,
+                     const char8 vectorOpenTerminal,
+                     const char8 matrixOpenTerminal) {
+
+    bool ret = false;
+    if (terminal == vectorOpenTerminal) {
+        if (terminal == matrixOpenTerminal) {
+            if (token->GetId() == TERMINAL_TOKEN) {
+                char8 readTerminal = token->GetData()[0];
+                // this is a matrix for sure!
+                ret = (readTerminal != vectorOpenTerminal);
+            }
+            else {
+                ret = true;
+            }
+        }
+        else {
+            ret = true;
+        }
+    }
+    return ret;
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
-
-/** */
-Parser::Parser() :
-        stack(sizeof(TokenDataType), 64u) {
-    lexicalAnalyzer.AddSeparators("\n\r\t ");
-    lexicalAnalyzer.AddTerminals("{}()=*");
+Parser::Parser(const ParserGrammatic &grammaticIn) :
+        Object() {
+    grammatic = grammaticIn;
 }
 
-/** */
-virtual Parser::~Parser() {
+ParserGrammatic Parser::GetGrammatic() const {
+    return grammatic;
 }
 
-/** @param errorLevel
- 0 means do not display
- 1 means show actions
- 2 means show productions
- 0xFFFFFFFF means show all      */
+Parser::~Parser() {
+}
+
 bool Parser::Parse(StreamI &stream,
-                   StreamI *err,
-                   int32 errorLevel) {
+                   ConfigurationDatabase &database,
+                   BufferedStreamI * const err) const {
 
-    // the parser status in the processing of the stream
-    const CDBParserState * status = &CDBPS_lvalue;
-    // the name of the variable
-    FString lValue;
-    // the value of the variable
-    FString rValue;
-    // contains the array ?
-    FString array;
-    // count the opened parenthesys within the assignment
-    int parLevel = 0;
-    // counts the overall parenthesys (opened and closed)
-    int parCount = 0;
-    // line Counter
-    int lineCount = 1;
-    // the name of the variable
-    FString typeValue;
-    //
-    CDBTYPE cdbType = CDBTYPE_Interpret;
+    LexicalAnalyzer lexicalAnalyzer(stream, &grammatic.assignment, grammatic.separators);
 
-    typeValue = "";
-    static int linkCounter = 0;
+    char8 genericTerminal = '\0';
+    StreamString varName = "";
+    StreamString nodeName = "";
+    // loop here
 
-    if (err && parserReportEnabled)
-        err->Printf(">>START<<\n");
+    Token *token = lexicalAnalyzer.GetToken();
 
-    bool globalRet = True;
+    //Index of types table
+    // default is CString. See castTypes on top
+    uint32 typeIndex = 0u;
 
-    CDBNode *node = this;
+    int32 totalBlockTerminals = 0;
 
-    LexicalAnalyzer la;
-    la.AddSeparators("\n\r\t ");
-    la.AddTerminals("{}(),=");
-    la.ChangeTokenCode("EOF", CDBTV_EOF);
-    la.ChangeTokenCode("IDENT", CDBTV_Ident);
-    la.ChangeTokenCode("NUMBER", CDBTV_Number);
-    la.ChangeTokenCode("FLOAT", CDBTV_Float);
-    la.ChangeTokenCode("ERROR", CDBTV_Error);
+    const uint32 LVALUE = 0u;
+    const uint32 BLOCK = 1u;
+    const uint32 RVALUE = 2u;
+    const uint32 VARIABLE = 3u;
 
-    LA_TokenData *latd;
+    uint32 status = LVALUE;
 
-    // stores the terminator
-    while ((latd = la.GetToken(stream)) != NULL) {
+    bool ok = true;
+    while (ok) {
 
-        // if the token is the terminator, exit
-        if (latd->Token() == CDBTV_EOF)
+        if (token->GetId() == EOF_TOKEN) {
+            if (totalBlockTerminals != 0) {
+                PrintErrorOnStream("\nUnmatched close block terminals! [%d]", token->GetLineNumber(), err);
+                ok = false;
+            }
+            // done!!
             break;
-
-        // exit with error in case of error token
-        if (latd->Token() == CDBTV_Error) {
-            if (err)
-                err->Printf("Line[%i] lexical error %s %s\n", latd->LineNumber(), latd->Description(), latd->Data());
-            AssertErrorCondition(SyntaxError, "Line[%i] lexical error %s %s\n", latd->LineNumber(), latd->Description(), latd->Data());
-            return False;
         }
 
-        // print informations about the new node on the output stream
-        if ((err != NULL) && parserReportEnabled) {
-            FString location;
-            node->SubTreeName(location, ".");
-            err->Printf("Line[%i] {C=%i,L=%i} base=%s type=%s status=%s value=%s\n", latd->LineNumber(), parCount, parLevel, location.Buffer(),
-                        latd->Description(), status->name, latd->Data());
+        if (token->GetId() == ERROR_TOKEN) {
+            PrintErrorOnStream("\nInvalid token! [%d]", token->GetLineNumber(), err);
+            ok = false;
         }
 
-        switch (status->value) {
-        // left value
-        case CDBPSV_lvalue: {
-            // get the new token
-            switch (latd->Token()) {
-            case CDBTV_Number:
-            case CDBTV_Ident: {
-                // if number of ident if there is a star means a link
-                if (latd->Data()[0] == '*') {
-                    FString name;
-                    // the name of the node
-                    name.Printf("link%i", linkCounter++);
-                    // build the name of the link (begin after the *)
-                    const char *linkTo = latd->Data() + 1;
-                    // write the node
-                    bool ret = node->WriteArray(name.Buffer(), &linkTo, CDBTYPE_String, NULL, 1, CDBN_CreateLinkNode, sorter);
-                    globalRet = globalRet && ret;
+        // Read the lvalue ( string = )
+        if (status == LVALUE) {
+            if (!isLValue(token, lexicalAnalyzer, grammatic.assignment, varName)) {
+                // block checking... this is not a block
+                if (genericTerminal != '\0') {
+                    status = VARIABLE;
                 }
-                // in this case expects an =
                 else {
-                    status = &CDBPS_equal;
-                    lValue = latd->Data();
+                    // not an LValue without a previous block. This is something like:
+                    //a=10
+                    //ab1234
+                    PrintErrorOnStream("\nExpected lvalue! [%d]", token->GetLineNumber(), err);
+                    ok = false;
                 }
             }
-                break;
-
-                // if there is a } (and the block is not finished) moves to the father and expects a new lvalue
-            case CDBTV_CloseCurly: {
-                if (parCount > 0) {
-                    parCount--;
-                    node = node->Father();
-                    status = &CDBPS_lvalue;
-                    lValue = "";
-                }
-                // if the block is finished...
-                else {
-                    if (err != NULL) {
-                        err->Printf("Line[%i] unmatched %s at state %s\n", latd->LineNumber(), latd->Description(), status->name);
-                    }
-                    AssertErrorCondition(SyntaxError, "Line[%i] unmatched %s at state %s\n", latd->LineNumber(), latd->Description(), status->name);
-                    return False;
-                }
-
-            }
-                break;
-            default: {
-                if (err != NULL) {
-                    err->Printf("Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                }
-                AssertErrorCondition(SyntaxError, "Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                return False;
-            }
-            }
-        }
-            break;
-
-            // expects an =
-        case CDBPSV_equal: {
-            // if an = is matched expects an rvalue
-            if (latd->Token() == CDBTV_Equal) {
-                status = &CDBPS_rvalue;
-                // not assigned type at this stage
-                typeValue = "";
-                cdbType.containerClassName = NULL;
-            }
-            // else return false
             else {
-                if (err != NULL) {
-                    err->Printf("Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                }
-                AssertErrorCondition(SyntaxError, "Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                status = &CDBPS_lvalue;
-                return False;
-            }
-        }
-            break;
-
-            // expects an rvalue
-        case CDBPSV_rvalue: {
-            switch (latd->Token()) {
-            // expects one of this token types
-            // and write them as strings
-            case CDBTV_Number:
-            case CDBTV_Float:
-            case CDBTV_Ident: {
-
-                FString buffer;
-                // encapsulate with curlies to allow parsing of strings with spaces ????????????????????????????????? NO
-                buffer.Printf("\"%s\"", latd->Data());
-                const char *buf = buffer.Buffer();
-
-                bool ret = node->WriteArray(lValue.Buffer(), &buf, cdbType, NULL, 1, CDBN_CreateStringNode, sorter);
-                if (!ret) {
-                    if (err)
-                        err->Printf("Line[%i] cannot write %s at node %s\n", latd->LineNumber(), latd->Data(), lValue.Buffer());
-                    globalRet = False;
-                    AssertErrorCondition(FatalError, "Line[%i] cannot write %s at node %s\n", latd->LineNumber(), latd->Data(), lValue.Buffer());
-                }
-
-                // NEXT STATUS !
-                status = &CDBPS_lvalue;
-            }
-                break;
-
-                // if a { is found expects a new block
-            case CDBTV_OpenCurly: {
-                // NEXT STATUS !
-                status = &CDBPS_block;
-                parCount++;
-                rValue = "";
-                array = "";
-                array = "{\n";
-                parLevel = 1;
-            }
-                break;
-
-                // if a ( is found expects a type cast
-            case CDBTV_OpenRound: {
-                // NEXT STATUS !
-                status = &CDBPS_typeCast;
-            }
-                break;
-
-                // no valid rvalue found, expects again a new lvalue
-            default: {
-                // NEXT STATUS !
-                status = &CDBPS_lvalue;
-
-                if (err)
-                    err->Printf("Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                AssertErrorCondition(SyntaxError, "Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                return False;
-            }
-            }
-        }
-            break;
-
-            // if typecast (..
-        case CDBPSV_typeCast: {
-            switch (latd->Token()) {
-            case CDBTV_Ident: {
-                // a type is already defined ! Return false
-                if (typeValue.Size() != 0) {
-                    if (err)
-                        err->Printf("Line[%i] double definition of type was %s now set to %s\n", latd->LineNumber(), typeValue.Buffer(), latd->Data());
-                    AssertErrorCondition(SyntaxError, "Line[%i] double definition of type was %s now set to %s\n", latd->LineNumber(), typeValue.Buffer(),
-                                         latd->Data());
-                    status = &CDBPS_lvalue;
-                    return False;
-                }
-
-                typeValue = latd->Data();
-                cdbType.containerClassName = typeValue.Buffer();
-            }
-                break;
-
-                // expects an rvalue e go on
-            case CDBTV_CloseRound: {
-                status = &CDBPS_rvalue;
-            }
-                break;
-
-            default: {
-                if (err)
-                    err->Printf("Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                AssertErrorCondition(SyntaxError, "Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                status = &CDBPS_lvalue;
-                return False;
-            }
-            }
-        }
-            break;
-
-            // block found {...
-        case CDBPSV_block: {
-            switch (latd->Token()) {
-
-            // if the token is valid create a child (or move to it if exists)
-            case CDBTV_Number:
-            case CDBTV_Float:
-            case CDBTV_Ident: {
-                // we find a link, this means we are in a GroupNode
-                if (latd->Data()[0] == '*') {
-                    node = node->Children(lValue.Buffer(), CDBN_SearchAndCreate | CDBN_CreateGroupNode, sorter, typeValue.Buffer());
-
-                    typeValue = "";
-                    cdbType.containerClassName = NULL;
-
-                    if (node == NULL) {
-                        if (err)
-                            err->Printf("Line[%i] cannot move/create node %s\n", lineCount, lValue.Buffer());
-                        AssertErrorCondition(FatalError, "Line[%i] cannot move/create node %s\n", lineCount, lValue.Buffer());
-                        return False;
+                // it is a block!
+                if (genericTerminal != '\0') {
+                    if (database.CreateRelative(nodeName.Buffer())) {
+                        totalBlockTerminals++;
+                        genericTerminal = '\0';
+                        nodeName = "";
                     }
-
-                    FString name;
-                    name.Printf("link%i", linkCounter++);
-                    const char *linkTo = latd->Data() + 1;
-                    bool ret = node->WriteArray(name.Buffer(), &linkTo, CDBTYPE_String, NULL, 1, CDBN_CreateLinkNode, sorter);
-                    globalRet = globalRet && ret;
-
-                    status = &CDBPS_lvalue;
-                    array = "";
-                    lValue = "";
-                    rValue = "";
-                    parLevel = 0;
-                }
-                // this is not a link!
-                else {
-                    rValue = latd->Data();
-                    status = &CDBPS_block2;
-                    array += " \"";
-                    array += latd->Data();
-                    array += "\" ";
-                }
-            }
-                break;
-
-                // found { this is an array!
-            case CDBTV_OpenCurly: {
-                parCount++;
-                parLevel++;
-                array += "{\n";
-                status = &CDBPS_block;
-            }
-                break;
-
-            case CDBTV_CloseCurly: {
-                if (parCount > 0) {
-                    parCount--;
-                }
-                // something wrong... i am in a block and the number of total {} is 0 !
-                else {
-                    if (err)
-                        err->Printf("Line[%i] unmatched %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                    AssertErrorCondition(SyntaxError, "Line[%i] unmatched %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                    return False;
-                }
-                parLevel--;
-                array += "}\n";
-                // close the array and write it on the node!
-                if (parLevel == 0) {
-                    const char *buffer = array.Buffer();
-                    bool ret = node->WriteArray(lValue.Buffer(), &buffer, cdbType, NULL, 1, CDBN_CreateStringNode, sorter);
-                    if (!ret) {
-                        if (err)
-                            err->Printf("Line[%i] cannot write %s at node %s\n", latd->LineNumber(), array.Buffer(), lValue.Buffer());
-                        globalRet = False;
-                        AssertErrorCondition(FatalError, "Line[%i] cannot write %s at node %s\n", latd->LineNumber(), array.Buffer(), lValue.Buffer());
+                    else {
+                        ok = false;
+                        PrintErrorOnStream("\nFailed new node creation! [%d]", token->GetLineNumber(), err);
                     }
-
-                    array = "";
-                    status = &CDBPS_lvalue;
                 }
-                else {
-                    // the array is not finished, we are still in the block.
-                    status = &CDBPS_block;
+                if (ok) {
+                    // check if a block follows
+                    status = BLOCK;
                 }
-            }
-                break;
-
-            default: {
-                if (err)
-                    err->Printf("Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                AssertErrorCondition(SyntaxError, "Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                status = &CDBPS_lvalue;
-                return False;
-            }
             }
         }
-            break;
 
-        // i am in a block and this is not a link
-        case CDBPSV_block2: {
-            // add something to the array
-            switch (latd->Token()) {
-            case CDBTV_Number:
-            case CDBTV_Float:
-            case CDBTV_Ident: {
-                rValue = "";
-                //array += latd->Data();
-                array += " \"";
-                array += latd->Data();
-                array += "\" ";
-                array += ' ';
-            }
-                break;
-
-            // begin the array and return to block
-            case CDBTV_OpenCurly: {
-                parCount++;
-                parLevel++;
-                array += "{\n";
-                status = &CDBPS_block;
-            }
-                break;
-
-            // found }
-            case CDBTV_CloseCurly: {
-
-                if (parCount > 0) {
-                    parCount--;
+        if (status == BLOCK) {
+            if (token->GetId() == TERMINAL_TOKEN) {
+                // a terminal found! block or matrix
+                genericTerminal = *(token->GetData());
+                if (genericTerminal == grammatic.openBlock) {
+                    nodeName = varName;
+                    token = lexicalAnalyzer.GetToken();
+                    status = LVALUE;
                 }
                 else {
-                    // error inside a block the total number of {} is 0!
-                    if (err)
-                        err->Printf("Line[%i] unmatched %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                    AssertErrorCondition(SyntaxError, "Line[%i] unmatched %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                    return False;
-                }
-                parLevel--;
-                // impossible?
-                if (parLevel < 0) {
-                    if (err)
-                        err->Printf("Line[%i] unexpected Negative parLevel %i at status %s\n", latd->LineNumber(), parLevel, status->name);
-                    AssertErrorCondition(SyntaxError, "Line[%i] unexpected Negative parLevel %i at status %s\n", latd->LineNumber(), parLevel, status->name);
-                    return False;
-                }
-                array += "}\n";
-                // the array is finished
-                if (parLevel == 0) {
-
-                    const char *buffer = array.Buffer();
-                    bool ret = node->WriteArray(lValue.Buffer(), &buffer, cdbType, NULL, 1, CDBN_CreateStringNode, sorter);
-                    if (!ret) {
-                        if (err)
-                            err->Printf("Line[%i] cannot write %s at node %s\n", latd->LineNumber(), array.Buffer(), lValue.Buffer());
-                        AssertErrorCondition(FatalError, "Line[%i] cannot write %s at node %s\n", latd->LineNumber(), array.Buffer(), lValue.Buffer());
-                        globalRet = False;
-                    }
-
-                    array = "";
-                    status = &CDBPS_lvalue;
-                }
-                else{
-                    // return to block
-                    status = &CDBPS_block;
+                    // could be a vector or matrix
+                    status = RVALUE;
                 }
             }
-                break;
+            else {
+                // could be a scalar
+                status = RVALUE;
+            }
+        }
 
-            // found =
-            case CDBTV_Equal: {
-                // if this is an element not yet assigned
-                if (parLevel == 1) {
+        if (status == RVALUE) {
+            // an lvalue found!
+            // create a node in the CGDB using varName
+            bool isString = (token->GetId() == STRING_TOKEN);
+            bool isNumber = (token->GetId() == NUMBER_TOKEN);
 
-                    // find the node with the lvalue name and set status to rvalue
-                    node = node->Find(lValue.Buffer(), CDBN_SearchAndCreate | CDBN_CreateGroupNode, sorter, typeValue.Buffer());
+            bool isVariable = (isString) || (isNumber);
 
-                    typeValue = "";
-                    cdbType.containerClassName = NULL;
+            if (isVariable) {
+                status = VARIABLE;
+            }
+            if (token->GetId() == TERMINAL_TOKEN) {
 
-                    if (node == NULL) {
-                        if (err){
-                            err->Printf("Line[%i] cannot move/create node %s\n", latd->LineNumber(), lValue.Buffer());
+                // a terminal found! block or matrix
+                genericTerminal = *(token->GetData());
+                if ((genericTerminal == grammatic.openMatrix) || (genericTerminal == grammatic.openVector)) {
+                    token = lexicalAnalyzer.GetToken();
+                    status = VARIABLE;
+                }
+                else if (genericTerminal == grammatic.openTypeCast) {
+                    token = lexicalAnalyzer.GetToken();
+                    // next has to be scalar or matrix
+                    if (SetTypeCast(token, lexicalAnalyzer, grammatic.closeTypeCast, typeIndex, err)) {
+                        token = lexicalAnalyzer.GetToken();
+                        status = RVALUE;
+                    }
+                    else {
+                        PrintErrorOnStream("\nError in type cast expression \"(type)\"! [%d]", token->GetLineNumber(), err);
+                        ok = false;
+                    }
+                }
+                else {
+                    PrintErrorOnStream("\nUnexpected Terminal! [%d]", token->GetLineNumber(), err);
+                    ok = false;
+                }
+            }
+        }
+
+        if (status == VARIABLE) {
+            if ((genericTerminal == grammatic.openMatrix) || (genericTerminal == grammatic.openVector)) {
+                if (IsVector(token, genericTerminal, grammatic.openVector, grammatic.openMatrix)) {
+                    if (ReadVector(token, lexicalAnalyzer, database, grammatic.closeVector, varName.Buffer(), typeIndex, err)) {
+                        if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
+                            status = LVALUE;
                         }
-                        AssertErrorCondition(FatalError, "Line[%i] cannot move/create node %s\n", latd->LineNumber(), lValue.Buffer());
-                        return False;
+                        else {
+                            PrintErrorOnStream("\nToo many closed block terminals! [%d]", token->GetLineNumber(), err);
+                            ok = false;
+                        }
                     }
-
-                    array = "";
-                    lValue = rValue;
-                    rValue = "";
-                    status = &CDBPS_rvalue;
-                    parLevel = 0;
-
+                    else {
+                        PrintErrorOnStream("\nFailed read vector operation! [%d]", token->GetLineNumber(), err);
+                        ok = false;
+                    }
                 }
                 else {
-                    // ??
-                    status = &CDBPS_lvalue;
+                    if (ReadMatrix(token, lexicalAnalyzer, database, grammatic.openVector, grammatic.closeVector, grammatic.closeMatrix, varName.Buffer(),
+                                   typeIndex, err)) {
+                        if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
+                            status = LVALUE;
+                        }
+                        else {
+                            PrintErrorOnStream("\nToo many closed block terminals! [%d]", token->GetLineNumber(), err);
+                            ok = false;
+                        }
+                    }
+                    else {
+                        PrintErrorOnStream("\nFailed read matrix operation! [%d]", token->GetLineNumber(), err);
+                        ok = false;
+                    }
                 }
             }
-                break;
-
-            default: {
-                if (err)
-                    err->Printf("Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-                status = &CDBPS_lvalue;
-                return False;
+            else {
+                // this is a scalar!!
+                if (ReadScalar(token, lexicalAnalyzer, database, varName.Buffer(), typeIndex)) {
+                    if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
+                        status = LVALUE;
+                    }
+                    else {
+                        PrintErrorOnStream("\nToo many closed block terminals! [%d]", token->GetLineNumber(), err);
+                        ok = false;
+                    }
+                }
+                else {
+                    PrintErrorOnStream("\nFailed read scalar operation! [%d]", token->GetLineNumber(), err);
+                    ok = false;
+                }
             }
-            }
+            genericTerminal = '\0';
+            // reset the default type
+            typeIndex = 0u;
         }
-            break;
-
-        default: {
-            if (err)
-                err->Printf("Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-            AssertErrorCondition(SyntaxError, "Line[%i] unexpected type %s at status %s\n", latd->LineNumber(), latd->Description(), status->name);
-            return False;
-        }
-
-        }
-
-        delete latd;
-        latd = NULL;
     }
 
-    if (parCount != 0) {
-        if (err)
-            err->Printf("unexpected parCount = %i. Should be 0!\n", parCount);
-        AssertErrorCondition(SyntaxError, "unexpected parCount = %i. Should be 0!\n", parCount);
-        return False;
+    // database created correctly! Move to Root
+    if (ok) {
+        if (!database.MoveToRoot()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "Parse: Failed ConfigurationDatabase::MoveToRoot at the end of parsing");
+        }
     }
 
-    if (err && parserReportEnabled)
-        err->Printf(">>END<<\n");
-    return globalRet;
+    return ok;
 }
 
-/** */
-const char8 *Parser::GetSymbolName(int32 symbol) {
-    if (symbol >= GetStartSymbol()) {
-        return GetNonTerminalName(symbol - (GetStartSymbol() - 1));
-    }
-    else if (symbol > 0) {
-        return GetTerminalName(GetTerminal2Index(symbol));
-    }
-    else {
-        return GetActionName(-symbol);
-    }
-}
-
-CLASS_REGISTER(AnyObject, "1.0")
+CLASS_REGISTER(Parser, "1.0")
 }

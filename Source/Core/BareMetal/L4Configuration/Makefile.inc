@@ -30,7 +30,11 @@ OBJSX=ConfigurationDatabase.x\
     StringToInteger.x\
     StringToFloat.x \
     IntegerToFloat.x \
-    FloatToInteger.x
+    FloatToInteger.x \
+    LexicalAnalyzer.x \
+    TokenInfo.x \
+    Token.x \
+    Parser.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

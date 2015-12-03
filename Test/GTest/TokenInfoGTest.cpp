@@ -1,7 +1,7 @@
 /**
- * @file Token.cpp
- * @brief Source file for class Token
- * @date 25/11/2015
+ * @file TokenInfoGTest.cpp
+ * @brief Source file for class TokenInfoGTest
+ * @date 02/12/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class Token (public, protected, and private). Be aware that some 
+ * the class TokenInfoGTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -28,69 +28,67 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "Token.h"
+#include <limits.h>
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+#include "gtest/gtest.h"
+#include "TokenInfoTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe {
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-Token::Token() {
-    tokenId = 0u;
-    tokenLineNumber = 0u;
-
+TEST(TokenInfoGTest,TestDefaultConstructor) {
+    TokenInfoTest tokenInfo;
+    ASSERT_TRUE(tokenInfo.TestDefaultConstructor());
 }
 
-Token::Token(const uint32 id,
-             const char8 * const description,
-             const char8 * const data,
-             const uint32 lineNumber) {
-    tokenId = id;
-    tokenDescription = description;
-    tokenData = data;
-    tokenLineNumber = lineNumber;
+TEST(TokenInfoGTest,TestSet) {
+    TokenInfoTest tokenInfo;
+    ASSERT_TRUE(tokenInfo.TestSet("Hello",1));
 }
 
-Token::Token(TokenInfo tokenInfo,
-             const char8 * const data,
-             const uint32 lineNumber) {
-    tokenId = tokenInfo.GetTokenId();
-    tokenDescription = tokenInfo.GetDescription();
-    tokenData = data;
-    tokenLineNumber = lineNumber;
+TEST(TokenInfoGTest,TestSet_0) {
+    TokenInfoTest tokenInfo;
+    ASSERT_TRUE(tokenInfo.TestSet("Hello",0));
 }
 
-Token::~Token() {
-
+TEST(TokenInfoGTest,TestSet_NULL) {
+    TokenInfoTest tokenInfo;
+    ASSERT_TRUE(tokenInfo.TestSet(NULL,1));
 }
 
-uint32 Token::GetId() const {
-    return tokenId;
+
+
+TEST(TokenInfoGTest,TestSet_0_NULL) {
+    TokenInfoTest tokenInfo;
+    ASSERT_TRUE(tokenInfo.TestSet(NULL,0));
 }
 
-/*lint -e{1529} . Justification: Remove the warning */
-Token &Token::operator=(const Token &td) {
-    tokenId = td.tokenId;
-    tokenData = td.tokenData;
-    tokenDescription = td.tokenDescription;
-    tokenLineNumber = td.tokenLineNumber;
-    return *this;
+TEST(TokenInfoGTest,TestGetTokenId) {
+    TokenInfoTest tokenInfo;
+    ASSERT_TRUE(tokenInfo.TestGetTokenId(1));
 }
 
-const char8 * Token::GetDescription() {
-    return tokenDescription.Buffer();
+TEST(TokenInfoGTest,TestGetTokenId_0) {
+    TokenInfoTest tokenInfo;
+    ASSERT_TRUE(tokenInfo.TestGetTokenId(0));
 }
 
-const char8 * Token::GetData() {
-    return tokenData.Buffer();
+
+TEST(TokenInfoGTest,TestGetDescription) {
+    TokenInfoTest tokenInfo;
+    ASSERT_TRUE(tokenInfo.TestGetDescription("Hello"));
 }
 
-uint32 Token::GetLineNumber() const {
-    return tokenLineNumber;
+TEST(TokenInfoGTest,TestGetDescription_NULL) {
+    TokenInfoTest tokenInfo;
+    ASSERT_TRUE(tokenInfo.TestGetDescription(NULL));
 }
-
-}
-

@@ -1,8 +1,8 @@
 /**
- * @file TokenInfo.h
- * @brief Header file for class TokenInfo
- * @date 26/11/2015
- * @author Giuseppe Ferrò
+ * @file TokenTest.h
+ * @brief Header file for class TokenTest
+ * @date 02/12/2015
+ * @author Giuseppe ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class TokenInfo
+ * @details This header file contains the declaration of the class TokenTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TOKENINFO_H_
-#define TOKENINFO_H_
+#ifndef TOKENTEST_H_
+#define TOKENTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,74 +31,44 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
-#include "StreamString.h"
+#include "Token.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+using namespace MARTe;
 
-/**
- * @brief An object providing informations about a Token.
- */
-class TokenInfo {
-
+class TokenTest {
 public:
+    bool TestDefaultConstructor();
 
-    /**
-     * @brief Default Constructor
-     * @post
-     *   GetTokenId() == 0 &&
-     *   GetDescription() == ""
-     */
-    TokenInfo();
+    bool TestFullConstructor(uint32 id,
+                             const char8 *description,
+                             const char8 *data,
+                             uint32 lineNumber);
 
-    /**
-     * @brief Sets the token id and description.
-     * @param[in] tokenIdIn is the token identifier.
-     * @param[in] descriptionIn is the token description.
-     * @post
-     *   GetTokenId() == tokenIdIn &&
-     *   GetDescription() == descriptionIn
-     */
-    void Set(const uint32 tokenIdIn,
-             const char8 * const descriptionIn);
+    bool TestConstructorFromTokenInfo(uint32 id,
+                                      const char8 * description,
+                                      const char8 * const data,
+                                      const uint32 lineNumber);
 
-    /**
-     * @brief Retrieves the token identifier.
-     * @return the token identifier.
-     */
-    uint32 GetTokenId() const;
+    bool TestGetId(uint32 id);
 
-    /**
-     * @brief Retrieves the token description.
-     * @return the token description.
-     */
-    const char8* GetDescription();
+    bool TestAssignOperator(uint32 id,
+                            const char8 * description,
+                            const char8 * const data,
+                            const uint32 lineNumber);
 
-    /**
-     * @brief Destructor.
-     */
-    ~TokenInfo();
+    bool TestGetDescription(const char8 * description);
 
-private:
+    bool TestGetData(const char8 * data);
 
-    /**
-     * The code identifying the lexical meaning of this part of the text
-     */
-    uint32 tokenId;
-
-    /**
-     * The meaning of the token
-     */
-    StreamString description;
+    bool TestGetLineNumber(uint32 lineNumber);
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TOKENINFO_H_ */
+#endif /* TOKENTEST_H_ */
 

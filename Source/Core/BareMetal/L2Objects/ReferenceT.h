@@ -189,7 +189,6 @@ void ReferenceT<T>::RemoveReference() {
 
 template<typename T>
 bool ReferenceT<T>::IsValid() const {
-
     return (Reference::IsValid()) ? (typeTObjectPointer != NULL) : false;
 }
 

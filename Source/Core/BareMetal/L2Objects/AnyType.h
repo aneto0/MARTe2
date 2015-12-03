@@ -390,8 +390,7 @@ public:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline AnyType(void * const p);
-
+    inline AnyType(volatile void * const p);
     /**
      * @brief Constructor from constant void pointer.
      * @param[in] p is the constant void pointer input.
@@ -401,8 +400,7 @@ public:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline AnyType(const void * const p);
-
+    inline AnyType(volatile const void * const p);
     /**
      * @brief Constructor from C string.
      * @param[in] p is the C string input.
@@ -412,7 +410,9 @@ public:
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline AnyType(const char8 * const p);
+    inline AnyType(volatile const char8 * const p);
+
+    inline AnyType(volatile char8 * const p);
 
     /**
      * @brief Constructor from Object (or inherited class).
@@ -591,15 +591,15 @@ public:
     AnyType(Vector<T> &vec);
 
     /**
-      * @brief Constructor from an existent Vector of characters (considered as a string buffer).
-      * @param[in] vec the vector from whose this AnyType will be constructed.
-      * @post
-      *   GetNumberOfDimensions() == 0 &&
-      *   GetDataPointer() == vec.GetDataPointer() &&
-      *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
-      *   IsStaticDeclared == vec.IsStaticDeclared()
-      */
-     inline AnyType(Vector<char8> &vec);
+     * @brief Constructor from an existent Vector of characters (considered as a string buffer).
+     * @param[in] vec the vector from whose this AnyType will be constructed.
+     * @post
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetDataPointer() == vec.GetDataPointer() &&
+     *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
+     *   IsStaticDeclared == vec.IsStaticDeclared()
+     */
+    inline AnyType(Vector<char8> &vec);
 
     /**
      * @brief Sets the data pointer hold by this AnyType instance.
@@ -695,10 +695,10 @@ public:
      */
     inline void SetStaticDeclared(const bool isStaticDeclared);
 
-	//TODO
+    //TODO
     inline uint32 GetByteSize() const;
 
-	//TODO
+    //TODO
     inline uint32 GetBitSize() const;
 
 private:
@@ -735,7 +735,6 @@ private:
      * If true => GetDataPointer() is pointing at a statically allocated memory block.
      */
     bool staticDeclared;
-
 
     /**
      * @brief Initialises all the dimensions to zero.
@@ -952,9 +951,11 @@ AnyType::AnyType(const float64 &i) {
 }
 
 /*---------------------------------------------------------------------------*/
-AnyType::AnyType(void * const p) {
+
+inline AnyType::AnyType(volatile void * const p) {
     Init();
-    dataPointer = p;
+    //printf("\nvoid*\n");
+    dataPointer = (void*)p;
     bitAddress = 0u;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = false;
@@ -962,7 +963,7 @@ AnyType::AnyType(void * const p) {
     dataDescriptor.numberOfBits = sizeof(void*) * 8u;
 }
 
-AnyType::AnyType(const void * const p) {
+inline AnyType::AnyType(volatile const void * const p) {
     Init();
     dataPointer = const_cast<void *>(p);
     bitAddress = 0u;
@@ -972,8 +973,20 @@ AnyType::AnyType(const void * const p) {
     dataDescriptor.numberOfBits = sizeof(void*) * 8u;
 }
 
-AnyType::AnyType(const char8 * const p) {
+AnyType::AnyType(volatile const char8 * const p) {
     Init();
+   // printf("\nconst char8*\n");
+    dataPointer = reinterpret_cast<void *>(const_cast<char8 *>(p));
+    bitAddress = 0u;
+    dataDescriptor.isStructuredData = false;
+    dataDescriptor.isConstant = true;
+    dataDescriptor.type = CCString;
+    dataDescriptor.numberOfBits = sizeof(const char8*) * 8u;
+}
+
+AnyType::AnyType(volatile char8 * const p) {
+    Init();
+    //printf("\nchar8*\n");
     dataPointer = reinterpret_cast<void *>(const_cast<char8 *>(p));
     bitAddress = 0u;
     dataDescriptor.isStructuredData = false;
@@ -1094,6 +1107,7 @@ AnyType::AnyType(T (&source)[nOfElementsStatic]) {
 template<uint32 nOfElementsStatic>
 AnyType::AnyType(char8 (&source)[nOfElementsStatic]) {
     Init();
+  //  printf("\nchar8[]\n");
     dataPointer = (void*) (&source[0]);
     staticDeclared = true;
     dataDescriptor.numberOfBits = nOfElementsStatic * 8u;
@@ -1190,7 +1204,6 @@ AnyType::AnyType(Vector<T> &vec) {
 
 }
 
-
 AnyType::AnyType(Vector<char8> &vec) {
     Init();
     dataPointer = vec.GetDataPointer();
@@ -1251,7 +1264,7 @@ inline void AnyType::Init() {
     numberOfElements[0] = 1u;
     numberOfElements[1] = 1u;
     numberOfElements[2] = 1u;
-    staticDeclared = false;
+    staticDeclared = true;
     dataPointer = static_cast<void *>(NULL);
     bitAddress = 0u;
     dataDescriptor = VoidType;

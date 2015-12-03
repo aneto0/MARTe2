@@ -33,79 +33,110 @@
 /*---------------------------------------------------------------------------*/
 #include "Token.h"
 #include "StreamI.h"
+#include "ParserGrammatic.h"
+#include "StaticList.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-/** A slightly programmable lexical analyzer.
- It recognizes Identifiers, Numbers and Floats.
- It allows to browse ahead without consuming the token,
- Tokenisation is performed on demand  */
+/**
+ * @brief Implementation of a lexical analyzer which will be used by the Parser.
+ */
+/*lint -e1712 . Justification: This class must be initialized like the unique constructor requires; no need a default constructor.*/
 class LexicalAnalyzer {
 
 public:
-    // initialisation functions
 
-    /** constructor */
-    LexicalAnalyzer();
+    /**
+     * @brief Default constructor.
+     * @param[in] stream is the stream to be tokenized.
+     * @param[in] terminalsIn is a C-string containing the terminal characters.
+     * @param[in] separatorsIn is a C-string containing the separator characters.
+     * @details
+     *   - If the token represents a number (also in hex, oct, or bin format) its type will be NUMBER_TOKEN.
+     *   - If the token represents a string (begin with a " or a non-number character) its type will be STRING_TOKEN.
+     *   - If the token is invalid (i.e 1234a56) its type will be ERROR_TOKEN.
+     *   - If the token is a terminal its type will be TERMINAL_TOKEN.
+     *   - If the read operation from the stream fails, a token with the EOF_TOKEN type will be returned.
+     * @post
+     *   separators == separatorsIn &&
+     *   terminals == terminalsIn &&
+     *   inputStream == &stream &&
+     *   token == NULL &&
+     *   tokenInfo[0].Set(EOF_TOKEN, "EOF") &&
+     *   tokenInfo[1].Set(STRING_TOKEN, "STRING") &&
+     *   tokenInfo[2].Set(NUMBER_TOKEN, "NUMBER") &&
+     *   tokenInfo[3].Set(ERROR_TOKEN, "ERROR") &&
+     *   tokenInfo[4].Set(TERMINAL_TOKEN, "TERMINAL")
+     */
+    LexicalAnalyzer(StreamI &stream,
+                    const char8 * const terminalsIn,
+                    const char8 * const separatorsIn);
 
-    /** constructor */
+    /**
+     * @brief Destructor.
+     * @post
+     *   The token queue will be deallocated.
+     */
     ~LexicalAnalyzer();
 
-    /** reset status */
-    void Reset();
+    /**
+     * @brief Extracts the next token from the internal queue.
+     * @return a pointer to the next token found in the queue.
+     */
+    Token *GetToken();
 
-    /** set these characters as separators */
-    void AddSeparators(const char8 *s);
-
-    /** set these characters/LA_TokenValue as separators */
-    void AddTerminals(const char8 *s);
-
-    /** change the token code associated with a given complex terminal.
-     valid tokenNames are "EOF","IDENT","NUMBER","FLOAT","ERROR" */
-    bool ChangeTokenCode(const char8 *tokenName,
-                         int32 token);
-
-    /** retrieve the toaken value associated with a certain tokenName */
-    int32 GetTokenValue(const char8 *tokenName);
-
-    /** takes one token from the stack or processes the input for a new one
-     moves the token into lasToken. The class allocates the data but does
-     not provide to the deallocation once the structure has been extracted */
-    Token *GetToken(StreamI &stream);
-
-    /** reads in the stack at position lookAhead or increases the stack to allow for it
-     it returns the token but it still keeps hold of it */
-    Token *PeekToken(uint32 lookAhead,
-                     StreamI &stream);
-
-    static void SetParseNumbers(bool parseNumbersIn);
-
+    /**
+     * @brief Returns the token at the specified position in the queue without consuming it.
+     * @param[in] position is the position in the queue of the desired token (0 means the next).
+     * @return the token in the specified position found in the internal queue.
+     */
+    Token *PeekToken(const uint32 position);
 
 private:
 
-    /** a string made of separators, plus the  */
-    StreamString separators;
-
-    /** a string composed of the terminal characters in the order */
-    StreamString terminals;
-
-    TokenInfo tokenInfo[8];
-
-    Token *token;
-
-    bool isTerminal;
-
-    char8 terminal;
+    /**
+     * @brief Tokenizes the stream in input adding tokens in the internal queue.
+     * @param[in] level is the number of tokens to add.
+     */
+    void TokenizeInput(const uint32 level = 1u);
 
     /**
-     * Switches the parsing of numbers. If off the Lexical Analyser will not try
-     * to check if the string is a number
+     * Internal token queue
      */
-    static bool parseNumbers;
+    StaticList<Token *> tokenQueue;
 
+    /**
+     * Separator characters
+     */
+    StreamString separators;
+
+    /**
+     * Terminal characters
+     */
+    StreamString terminals;
+
+    /**
+     * Default token types
+     */
+    TokenInfo tokenInfo[6];
+
+    /**
+     * The last token returned
+     */
+    Token *token;
+
+    /**
+     * Pointer to the stream to be tokenized
+     */
+    StreamI *inputStream;
+
+    /**
+     * Line number counter
+     */
+    uint32 lineNumber;
 };
 
 }

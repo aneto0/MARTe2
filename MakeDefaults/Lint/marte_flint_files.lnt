@@ -38,6 +38,7 @@ IOBufferIntegerPrint.cpp
 IntegerToFloat.cpp
 InternetHost.cpp
 InternetService.cpp
+LexicalAnalyzer.cpp
 LinkedListHolder.cpp
 LinkedListable.cpp
 LoadableLibrary.cpp
@@ -45,6 +46,8 @@ Matrix.h
 MemoryOperationsHelper_CLIB_Generic.cpp
 MutexSem.cpp
 Object.cpp
+Parser.cpp
+ParserGrammatic.h
 Processor.cpp  
 ProcessorType.cpp
 Reference.cpp
@@ -71,6 +74,8 @@ StringToInteger.cpp
 ThreadInformation_Generic.cpp
 Threads.cpp
 ThreadsDatabase_Generic.cpp
+Token.cpp
+TokenInfo.cpp
 TypeCharacteristics.h
 TypeConversion.cpp
 TypeDescriptor.h

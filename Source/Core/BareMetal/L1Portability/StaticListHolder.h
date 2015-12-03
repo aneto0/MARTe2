@@ -250,6 +250,10 @@ public:
     bool Extract(const uint32 position,
                  void * const copyTo);
 
+
+
+    void* GetAllocatedMemory() const;
+
 private:
 
     /**

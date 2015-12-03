@@ -1,6 +1,6 @@
 /**
- * @file TokenInfo.h
- * @brief Header file for class TokenInfo
+ * @file LexicalAnalyzerTest.h
+ * @brief Header file for class LexicalAnalyzerTest
  * @date 26/11/2015
  * @author Giuseppe Ferrò
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class TokenInfo
+ * @details This header file contains the declaration of the class LexicalAnalyzerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TOKENINFO_H_
-#define TOKENINFO_H_
+#ifndef LEXICALANALYZERTEST_H_
+#define LEXICALANALYZERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,74 +31,28 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
-#include "StreamString.h"
+#include "LexicalAnalyzer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-
-/**
- * @brief An object providing informations about a Token.
- */
-class TokenInfo {
+using namespace MARTe;
+class LexicalAnalyzerTest {
 
 public:
 
-    /**
-     * @brief Default Constructor
-     * @post
-     *   GetTokenId() == 0 &&
-     *   GetDescription() == ""
-     */
-    TokenInfo();
+    bool TestConstructor();
 
-    /**
-     * @brief Sets the token id and description.
-     * @param[in] tokenIdIn is the token identifier.
-     * @param[in] descriptionIn is the token description.
-     * @post
-     *   GetTokenId() == tokenIdIn &&
-     *   GetDescription() == descriptionIn
-     */
-    void Set(const uint32 tokenIdIn,
-             const char8 * const descriptionIn);
+    bool TestGetToken();
 
-    /**
-     * @brief Retrieves the token identifier.
-     * @return the token identifier.
-     */
-    uint32 GetTokenId() const;
+    bool TestPeekToken();
 
-    /**
-     * @brief Retrieves the token description.
-     * @return the token description.
-     */
-    const char8* GetDescription();
-
-    /**
-     * @brief Destructor.
-     */
-    ~TokenInfo();
-
-private:
-
-    /**
-     * The code identifying the lexical meaning of this part of the text
-     */
-    uint32 tokenId;
-
-    /**
-     * The meaning of the token
-     */
-    StreamString description;
+    bool TestEscape();
 };
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TOKENINFO_H_ */
+#endif /* LEXICALANALYZERTEST_H_ */
 

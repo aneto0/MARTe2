@@ -159,7 +159,7 @@ extern "C" {
     It recognizes Identifiers, Numbers and Floats.
     It allows to browse ahead without consuming the token,
     Tokenisation is performed on demand  */
-class LexicalAnalyzer{
+class LexicalAnalyzer-old{
 
     /** a queue of pre-cooked tokens*/
     StaticQueueHolder       tokenQueue;

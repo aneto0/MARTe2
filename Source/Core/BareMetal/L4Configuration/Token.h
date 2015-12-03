@@ -46,7 +46,21 @@ class Token {
 
 public:
     /**
+     * @brief Default constructor.
+     * @post
+     *   GetId() == 0 &&
+     *   GetDescription() == "" &&
+     *   GetData() == "" &&
+     *   GetLineNumber() == 0;
+     */
+    Token();
+
+    /**
      * @brief Builds a token providing all the informations.
+     * @param[in] id is the token identifier.
+     * @param[in] description is the token description.
+     * @param[in] data is the token data.
+     * @param[in] lineNumber is the line number of the token in the stream.
      * @post
      *   GetId() == id &&
      *   GetDescription() == description &&
@@ -54,43 +68,110 @@ public:
      *   GetLineNumber() == lineNumber;
      */
     Token(const uint32 id,
-          const char8 *description,
-          void *data,
-          uint32 dataSize);
+          const char8 * const description,
+          const char8 * const data,
+          const uint32 lineNumber);
 
-
+    /**
+     * @brief Constructor from TokenInfo.
+     * @post
+     *   GetId() == id &&
+     *   GetDescription() == description &&
+     *   GetData() == data &&
+     *   GetLineNumber() == lineNumber;
+     */
     Token(TokenInfo tokenInfo,
-          void *data);
+          const char8 * const data,
+          const uint32 lineNumber);
 
-
-    /** destructor */
+    /**
+     * @brief Destructor.
+     */
     ~Token();
-    /** returns the TokenDataType */
+
+    /**
+     * @brief Retrieves the token identifier.
+     * @return the token identifier.
+     */
     uint32 GetId() const;
 
-    /** copy content */
-    void operator=(const Token &td);
+    /**
+     * @brief Copy operator.
+     * @param[in] td is the Token to be copied in this.
+     */
+    Token &operator=(const Token &td);
 
-    /** content description */
-    const char8 * GetDescription() const;
+    /**
+     * @brief Retrieves the token description.
+     * @return the token description.
+     */
+    const char8 * GetDescription();
 
-    /** content */
-    void * GetData() const;
+    /**
+     * @brief Retrieves the token data.
+     * @return the token data.
+     */
+    const char8 * GetData();
 
+    /**
+     * @brief Retrieves the token line number.
+     * @return the token line number.
+     */
+    uint32 GetLineNumber() const;
 
 private:
-    /** the code identifying the lexical meaning of this part of the text */
+    /**
+     * The code identifying the lexical meaning of this part of the text
+     */
     uint32 tokenId;
 
-    /** copied from a LA_TokenInfo, the meaning of the token */
+    /**
+     * The meaning of the token
+     */
     StreamString tokenDescription;
 
-    /** the parsed part of the text */
-    void* tokenData;
+    /**
+     * The parsed part of the text
+     */
+    StreamString tokenData;
 
-    /** what line the token was found at*/
+    /**
+     * What line the token was found at
+     */
+    uint32 tokenLineNumber;
 
 };
+
+/**
+ * Indicates EOF
+ */
+static const uint32 EOF_TOKEN = 0u;
+
+/**
+ * Indicates an identifier or a string
+ */
+static const uint32 STRING_TOKEN = 1u;
+
+/**
+ * Indicates an number
+ */
+static const uint32 NUMBER_TOKEN = 2u;
+
+/**
+ * Indicates a wrongly constructed element
+ */
+static const uint32 ERROR_TOKEN = 3u;
+
+/**
+ * Indicates an element that is a token on its own
+ */
+static const uint32 TERMINAL_TOKEN = 4u;
+
+/**
+ * Indicates an element that separates parts of the phrase
+ */
+static const uint32 SEPARATOR_TOKEN = 5u;
+
 }
 
 /*---------------------------------------------------------------------------*/

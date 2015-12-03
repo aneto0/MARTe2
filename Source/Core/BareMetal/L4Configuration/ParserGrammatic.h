@@ -1,7 +1,7 @@
 /**
- * @file TokenInfo.h
- * @brief Header file for class TokenInfo
- * @date 26/11/2015
+ * @file ParserGrammatic.h
+ * @brief Header file for class ParserGrammatic
+ * @date 27/11/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class TokenInfo
+ * @details This header file contains the declaration of the class ParserGrammatic
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef TOKENINFO_H_
-#define TOKENINFO_H_
+#ifndef PARSERGRAMMATIC_H_
+#define PARSERGRAMMATIC_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "GeneralDefinitions.h"
-#include "StreamString.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -40,65 +39,68 @@
 namespace MARTe {
 
 /**
- * @brief An object providing informations about a Token.
+ * @brief Contains the terminal and separator characters used by Parser and LexicalAnalyzer.
+ * @details
+ *   In order to specify a valid grammatic for the implemented parser, all the characters must be !='\0'
+ *   and the \a openTypeCast character must be different from the other open terminals.
  */
-class TokenInfo {
-
-public:
-
+struct ParserGrammatic {
     /**
-     * @brief Default Constructor
-     * @post
-     *   GetTokenId() == 0 &&
-     *   GetDescription() == ""
+     * List of separator characters.
      */
-    TokenInfo();
-
+    const char8 *separators;
     /**
-     * @brief Sets the token id and description.
-     * @param[in] tokenIdIn is the token identifier.
-     * @param[in] descriptionIn is the token description.
-     * @post
-     *   GetTokenId() == tokenIdIn &&
-     *   GetDescription() == descriptionIn
+     *Aassignment operator
      */
-    void Set(const uint32 tokenIdIn,
-             const char8 * const descriptionIn);
-
+    char8 assignment;
     /**
-     * @brief Retrieves the token identifier.
-     * @return the token identifier.
+     * Specifies that a block begins
      */
-    uint32 GetTokenId() const;
-
+    char8 openBlock;
     /**
-     * @brief Retrieves the token description.
-     * @return the token description.
+     * Specifies that a block ends
      */
-    const char8* GetDescription();
-
+    char8 closeBlock;
     /**
-     * @brief Destructor.
+     * Specifies that a vector begins
      */
-    ~TokenInfo();
-
-private:
-
+    char8 openVector;
     /**
-     * The code identifying the lexical meaning of this part of the text
+     * Specifies that a vector ends
      */
-    uint32 tokenId;
-
+    char8 closeVector;
     /**
-     * The meaning of the token
+     * Specifies that a matrix begins
      */
-    StreamString description;
+    char8 openMatrix;
+    /**
+     * Specifies that a matrix ends
+     */
+    char8 closeMatrix;
+    /**
+     * Specifies that a type cast expression begins
+     */
+    char8 openTypeCast;
+    /**
+     * Specifies that a type cast expression ends
+     */
+    char8 closeTypeCast;
+    /**
+     * Allows to get the terminals as a C-string.
+     */
+    char8 terminal;
 };
 
+/**
+ * The most used terminal and separator characters in MARTe configuration streams.
+ */
+static const ParserGrammatic StandardGrammatic = { "\n\r\t, ", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0'};
+
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* TOKENINFO_H_ */
+#endif /* PARSERGRAMMATIC_H_ */
 
