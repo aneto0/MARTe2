@@ -59,6 +59,7 @@ OBJSX=  AnyObjectGTest.x \
 		IOBufferGTest.x \
 		InternetHostGTest.x \
 		InternetServiceGTest.x \
+		LexicalAnalyzerGTest.x \
 		LinkedListHolderGTest.x \
 		LinkedListableGTest.x \
 		LoadableLibraryGTest.x \
@@ -66,6 +67,7 @@ OBJSX=  AnyObjectGTest.x \
 		MemoryGTest.x \
 		MutexSemGTest.x \
 		ObjectGTest.x \
+		ParserGTest.x \
 		ProcessorGTest.x \
 		ProcessorTypeGTest.x \
 		ReferenceContainerFilterObjectNameGTest.x \
@@ -88,6 +90,8 @@ OBJSX=  AnyObjectGTest.x \
 		ThreadsGTest.x \
 		TimeStampGTest.x \
 		TimeoutTypeGTest.x \
+		TokenGTest.x \
+		TokenInfoGTest.x \
 		TypeCharacteristicsGTest.x \
 		TypeConversionGTest.x \
 		TypeDescriptorGTest.x  \

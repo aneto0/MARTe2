@@ -173,7 +173,8 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
         }
         else {
             number = static_cast<T>(0);
-            REPORT_ERROR(ErrorManagement::Warning, "StringToIntegerDecimalNotation: A negative number to unsigned type will be saturated to 0.");
+            ret = false;
+            REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: The string represents a negative number and output type is unsigned.");
         }
     }
 

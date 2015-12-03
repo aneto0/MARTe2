@@ -1,7 +1,7 @@
 /**
- * @file AdvancedErrorManagement.h
- * @brief Header file for class AdvancedErrorManagement
- * @date 21/10/2015
+ * @file ParserGrammatic.h
+ * @brief Header file for class ParserGrammatic
+ * @date 27/11/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class AdvancedErrorManagement
+ * @details This header file contains the declaration of the class ParserGrammatic
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ADVANCEDERRORMANAGEMENT_H_
-#define ADVANCEDERRORMANAGEMENT_H_
+#ifndef PARSERGRAMMATIC_H_
+#define PARSERGRAMMATIC_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,34 +31,76 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "ErrorManagement.h"
-#include "StreamMemoryReference.h"
-
+#include "GeneralDefinitions.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
 
-#define REPORT_ERROR_PARAMETERS(code, message,...)                                           \
-{                                                                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    if(smr.Printf(reinterpret_cast<const char8 *>(message),__VA_ARGS__)) {                       \
-        buffer[smr.Size()]='\0';                                                               \
-        ErrorManagement::ReportError(code,&buffer[0],__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);\
-    }                                                                                       \
-    else{                                                                                   \
-        ErrorManagement::ReportError(code,reinterpret_cast<const char8 *>(message),__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);\
-    }                                                                                       \
+/**
+ * @brief Contains the terminal and separator characters used by Parser and LexicalAnalyzer.
+ * @details
+ *   In order to specify a valid grammatic for the implemented parser, all the characters must be !='\0'
+ *   and the \a openTypeCast character must be different from the other open terminals.
+ */
+struct ParserGrammatic {
+    /**
+     * List of separator characters.
+     */
+    const char8 *separators;
+    /**
+     *Aassignment operator
+     */
+    char8 assignment;
+    /**
+     * Specifies that a block begins
+     */
+    char8 openBlock;
+    /**
+     * Specifies that a block ends
+     */
+    char8 closeBlock;
+    /**
+     * Specifies that a vector begins
+     */
+    char8 openVector;
+    /**
+     * Specifies that a vector ends
+     */
+    char8 closeVector;
+    /**
+     * Specifies that a matrix begins
+     */
+    char8 openMatrix;
+    /**
+     * Specifies that a matrix ends
+     */
+    char8 closeMatrix;
+    /**
+     * Specifies that a type cast expression begins
+     */
+    char8 openTypeCast;
+    /**
+     * Specifies that a type cast expression ends
+     */
+    char8 closeTypeCast;
+    /**
+     * Allows to get the terminals as a C-string.
+     */
+    char8 terminal;
+};
+
+/**
+ * The most used terminal and separator characters in MARTe configuration streams.
+ */
+static const ParserGrammatic StandardGrammatic = { "\n\r\t, ", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0'};
+
 }
 
-}
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* ADVANCEDERRORMANAGEMENT_H_ */
+#endif /* PARSERGRAMMATIC_H_ */
 

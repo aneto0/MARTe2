@@ -1,7 +1,7 @@
 /**
- * @file AdvancedErrorManagement.h
- * @brief Header file for class AdvancedErrorManagement
- * @date 21/10/2015
+ * @file LexicalAnalyzerTest.h
+ * @brief Header file for class LexicalAnalyzerTest
+ * @date 26/11/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class AdvancedErrorManagement
+ * @details This header file contains the declaration of the class LexicalAnalyzerTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ADVANCEDERRORMANAGEMENT_H_
-#define ADVANCEDERRORMANAGEMENT_H_
+#ifndef LEXICALANALYZERTEST_H_
+#define LEXICALANALYZERTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,34 +31,28 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "ErrorManagement.h"
-#include "StreamMemoryReference.h"
-
+#include "LexicalAnalyzer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
+using namespace MARTe;
+class LexicalAnalyzerTest {
 
-#define REPORT_ERROR_PARAMETERS(code, message,...)                                           \
-{                                                                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    if(smr.Printf(reinterpret_cast<const char8 *>(message),__VA_ARGS__)) {                       \
-        buffer[smr.Size()]='\0';                                                               \
-        ErrorManagement::ReportError(code,&buffer[0],__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);\
-    }                                                                                       \
-    else{                                                                                   \
-        ErrorManagement::ReportError(code,reinterpret_cast<const char8 *>(message),__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);\
-    }                                                                                       \
-}
+public:
 
-}
+    bool TestConstructor();
+
+    bool TestGetToken();
+
+    bool TestPeekToken();
+
+    bool TestEscape();
+};
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* ADVANCEDERRORMANAGEMENT_H_ */
+#endif /* LEXICALANALYZERTEST_H_ */
 

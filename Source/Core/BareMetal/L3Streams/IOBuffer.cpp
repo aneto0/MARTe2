@@ -956,6 +956,9 @@ bool IOBuffer::Read(char8 * const buffer,
             positionPtr = &positionPtr[size];
         }
     }
+    else {
+        retval = false;
+    }
     return retval;
 }
 

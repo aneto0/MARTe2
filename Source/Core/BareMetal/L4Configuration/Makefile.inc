@@ -28,9 +28,13 @@ OBJSX=	AnyObject.x \
 		ConfigurationDatabase.x\
 		FloatToInteger.x \
 		IntegerToFloat.x \
+		LexicalAnalyzer.x \
+		Parser.x \
 		StringToFloat.x \
 		StringToInteger.x \
-		TypeConversion.x
+		TypeConversion.x \
+		TokenInfo.x \
+		Token.x		
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

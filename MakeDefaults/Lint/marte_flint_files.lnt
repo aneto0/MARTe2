@@ -58,6 +58,7 @@ InternetServiceCore.h
 Introspection.h
 Iterator.h
 IteratorT.h
+LexicalAnalyzer.cpp
 LinkedListHolder.cpp
 LinkedListable.cpp
 LoadableLibrary.cpp
@@ -69,6 +70,8 @@ MemoryOperationsHelper_CLIB_Generic.cpp
 MutexSem.cpp
 Object.cpp
 OperatingSystemCallbacksI.h
+Parser.cpp
+ParserGrammatic.h
 Processor.cpp
 ProcessorType.cpp
 Reference.cpp
@@ -115,6 +118,8 @@ ThreadsDatabase_Generic.cpp
 ThreadsDatabase_Generic.h
 TimeStamp.cpp
 TimeoutType.h
+Token.cpp
+TokenInfo.cpp
 TypeCharacteristics.h
 TypeConversion.cpp
 TypeDescriptor.h

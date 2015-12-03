@@ -1,7 +1,7 @@
 /**
- * @file AdvancedErrorManagement.h
- * @brief Header file for class AdvancedErrorManagement
- * @date 21/10/2015
+ * @file TokenInfoTest.h
+ * @brief Header file for class TokenInfoTest
+ * @date 02/12/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class AdvancedErrorManagement
+ * @details This header file contains the declaration of the class TokenInfoTest
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef ADVANCEDERRORMANAGEMENT_H_
-#define ADVANCEDERRORMANAGEMENT_H_
+#ifndef TOKENINFOTEST_H_
+#define TOKENINFOTEST_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,34 +31,26 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
-#include "ErrorManagement.h"
-#include "StreamMemoryReference.h"
-
+#include "TokenInfo.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
+using namespace MARTe;
+class TokenInfoTest {
+public:
+    bool TestDefaultConstructor();
+    bool TestSet(const char8* description,
+                 uint32 id);
 
-namespace MARTe {
-static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
+    bool TestGetTokenId(uint32 id);
 
-#define REPORT_ERROR_PARAMETERS(code, message,...)                                           \
-{                                                                                           \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
-    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
-    if(smr.Printf(reinterpret_cast<const char8 *>(message),__VA_ARGS__)) {                       \
-        buffer[smr.Size()]='\0';                                                               \
-        ErrorManagement::ReportError(code,&buffer[0],__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);\
-    }                                                                                       \
-    else{                                                                                   \
-        ErrorManagement::ReportError(code,reinterpret_cast<const char8 *>(message),__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);\
-    }                                                                                       \
-}
+    bool TestGetDescription(const char8* description);
 
-}
+};
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* ADVANCEDERRORMANAGEMENT_H_ */
+#endif /* TOKENINFOTEST_H_ */
 
