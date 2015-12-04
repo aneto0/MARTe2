@@ -206,9 +206,15 @@ static const TypeDescriptor SignedInteger64Bit(false, SignedInteger, 64u);
 static const TypeDescriptor UnsignedInteger64Bit(false, UnsignedInteger, 64u);
 
 /**
- * 64 bit unsigned integer descriptor
+ * Constant char pointer descriptor
  */
-static const TypeDescriptor ConstCharString(false, CCString, sizeof(const char8*) * 8u);
+static const TypeDescriptor ConstCharString(true, CCString, sizeof(const char8*) * 8u);
+
+/**
+ * Char pointer descriptor
+ */
+static const TypeDescriptor CharString(false, CCString, sizeof(char8*) * 8u);
+
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

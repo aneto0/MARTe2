@@ -36,14 +36,32 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
+
+/**
+ * @brief Tests all the TokenInfo functions
+ */
 class TokenInfoTest {
 public:
+
+    /**
+     * @brief Tests the default constructor.
+     */
     bool TestDefaultConstructor();
+
+    /**
+     * @brief Tests if the function sets the class members correctly.
+     */
     bool TestSet(const char8* description,
                  uint32 id);
 
+    /**
+     * @brief Tests if the function returns the correct token id.
+     */
     bool TestGetTokenId(uint32 id);
 
+    /**
+     * @brief Tests if the function returns the correct token description.
+     */
     bool TestGetDescription(const char8* description);
 
 };

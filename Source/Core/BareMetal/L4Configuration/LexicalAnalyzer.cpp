@@ -38,12 +38,18 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+static bool GetC(StreamI &stream,
+                 char8 &c) {
+    uint32 charSize = 1u;
+    bool ret = stream.Read(&c, charSize);
+    return (ret) && (charSize == 1u);
+}
+
 static void ReadCommentOneLine(StreamI &stream) {
 
     char8 c = ' ';
-    uint32 charSize = 1u;
     while (c != '\n') {
-        if (!stream.Read(&c, charSize)) {
+        if (!GetC(stream, c)) {
             break;
         }
     }
@@ -54,12 +60,11 @@ static void ReadCommentMultipleLines(StreamI &stream,
                                      uint32 &lineNumber) {
 
     char8 c = ' ';
-    uint32 charSize = 1u;
     bool go = true;
     while (go) {
-        if (stream.Read(&c, charSize)) {
+        if (GetC(stream, c)) {
             if (c == '*') {
-                if (stream.Read(&c, charSize)) {
+                if (GetC(stream, c)) {
                     if (c == '/') {
                         go = false;
                     }
@@ -87,7 +92,6 @@ static bool SkipComment(StreamI &stream,
                         char8 &separator) {
 
     char8 c = ' ';
-    uint32 charSize = 1u;
 
     bool isEOF = false;
     // if it is a new token needs to skip separators at the beginning
@@ -97,7 +101,7 @@ static bool SkipComment(StreamI &stream,
 
     // skip separators before
     while (skip) {
-        if (stream.Read(&c, charSize)) {
+        if (GetC(stream, c)) {
             // exit, found a terminal!
             if (StringHelper::SearchChar(terminals, c) != NULL) {
                 skip = false;
@@ -125,7 +129,7 @@ static bool SkipComment(StreamI &stream,
     if (isComment) {
         isComment = (c == '/');
         if (isComment) {
-            if (stream.Read(&c, charSize)) {
+            if (GetC(stream, c)) {
                 // found double /, comment on one line
                 if (c == '/') {
                     ReadCommentOneLine(stream);
@@ -267,7 +271,6 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
 
     while (nTokens < level) {
         char8 c = '\0';
-        uint32 charSize = 1u;
         char8 terminal = '\0';
         char8 separator = '\0';
         // the token
@@ -281,14 +284,10 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                 lineNumber++;
             }
         }
-
         separator = '\0';
-
         isEOF = !ok;
-
         // if a '\' is found take the next to respect the special string characters
         bool escape = false;
-
         // it begins with "?
         bool isString1 = false;
         // take the tokenString
@@ -337,13 +336,12 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                     tokenString += c;
                 }
             }
-
             if (ok) {
                 if (c == '\n') {
                     lineNumber++;
                 }
                 if (isString1) {
-                    ok = inputStream->Read(&c, charSize);
+                    ok = GetC(*inputStream, c);
                 }
                 else {
                     ok = SkipComment(*inputStream, tokenString, c, lineNumber, separators.Buffer(), terminals.Buffer(), separator);

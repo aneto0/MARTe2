@@ -45,9 +45,9 @@ struct TypeCastInfo {
     const char8 *castName;
 };
 
-static const TypeCastInfo castTypes[] = { { ConstCharString, "string" }, { SignedInteger8Bit, "int8" }, { SignedInteger16Bit, "int16" }, { SignedInteger32Bit,
+static const TypeCastInfo castTypes[] = { { CharString, "string" }, { SignedInteger8Bit, "int8" }, { SignedInteger16Bit, "int16" }, { SignedInteger32Bit,
         "int32" }, { SignedInteger64Bit, "int64" }, { UnsignedInteger8Bit, "uint8" }, { UnsignedInteger16Bit, "uint16" }, { UnsignedInteger32Bit, "uint32" }, {
-        UnsignedInteger64Bit, "uint64" }, { Float32Bit, "float32" }, { Float64Bit, "float64" }, { ConstCharString, static_cast<const char8*>(NULL) } };
+        UnsignedInteger64Bit, "uint64" }, { Float32Bit, "float32" }, { Float64Bit, "float64" }, { CharString, static_cast<const char8*>(NULL) } };
 
 
 
@@ -142,7 +142,7 @@ static bool ToType(const char8 * const tokenBuffer,
                    StaticListHolder *&memory) {
 
     bool ret = false;
-    if (castTypes[typeIndex].typeDes == ConstCharString) {
+    if (castTypes[typeIndex].typeDes == CharString) {
         if (memory == NULL) {
             memory = new StaticListHolder(static_cast<uint32>(sizeof(char8 *)), granularity);
         }
@@ -310,7 +310,7 @@ static bool ReadScalar(Token* &token,
     if (memory != NULL) {
         // in this case delete the string on heap
         if (memory->GetSize() > 0u) {
-            if (castTypes[typeIndex].typeDes == ConstCharString) {
+            if (castTypes[typeIndex].typeDes == CharString) {
                 char8* stringElement = reinterpret_cast<char8 **>(memory->GetAllocatedMemory())[0];
                 if (!HeapManager::Free(reinterpret_cast<void* &>(stringElement))) {
                     REPORT_ERROR(ErrorManagement::FatalError, "ReadMatrix: Failed HeapManager::Free()");
@@ -398,7 +398,7 @@ static bool ReadVector(Token* &token,
         token = lexicalAnalyzer.GetToken();
     }
     if (memory != NULL) {
-        if (castTypes[typeIndex].typeDes == ConstCharString) {
+        if (castTypes[typeIndex].typeDes == CharString) {
             uint32 memorySize = memory->GetSize();
             for (uint32 i = 0u; i < memorySize; i++) {
                 char8* elementToFree = reinterpret_cast<char8 **>(memory->GetAllocatedMemory())[i];
@@ -544,7 +544,7 @@ static bool ReadMatrix(Token* &token,
 
     if (memory != NULL) {
         uint32 memorySize = memory->GetSize();
-        if (castTypes[typeIndex].typeDes == ConstCharString) {
+        if (castTypes[typeIndex].typeDes == CharString) {
             for (uint32 i = 0u; i < memorySize; i++) {
                 char8* elementToFree = reinterpret_cast<char8 **>(memory->GetAllocatedMemory())[i];
                 if (!HeapManager::Free(reinterpret_cast<void* &>(elementToFree))) {

@@ -86,8 +86,6 @@ public:
      *   - If the type specified in the TYPE CAST expression is invalid, the value will be
      *   saved in the database as a C-string (default), otherwise the token will be converted to the
      *   specified type and then saved in the database.
-     *   - Comments must begin after a separator or a terminal, otherwise they will be appended to the
-     *   token (i.e 12//comment is recognized as the STRING token ---> "12//comment")
      *   - The error messages printed on the \a err stream are in the format "error description [line number]".
      */
     bool Parse(StreamI &stream,

@@ -329,7 +329,7 @@ bool BasicFile::Read(char8* const output,
     else {
         retVal = false;
     }
-    return (retVal) && (size > 0u);
+    return retVal;
 }
 
 bool BasicFile::Read(char8 * const output,
@@ -371,7 +371,7 @@ bool BasicFile::Read(char8 * const output,
     else {
         retVal = false;
     }
-    return (retVal) && (size > 0u);
+    return retVal;
 }
 
 bool BasicFile::Write(const char8 * const input,

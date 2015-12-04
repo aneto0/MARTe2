@@ -50,6 +50,11 @@ TEST(ParserGTest,TestConstructor) {
     ASSERT_TRUE(parserTest.TestConstructor());
 }
 
+TEST(ParserGTest,TestGetGrammatic) {
+    ParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestGetGrammatic());
+}
+
 TEST(ParserGTest,TestParseScalar) {
     ParserTest parserTest;
     ASSERT_TRUE(parserTest.TestParseScalar());
@@ -72,7 +77,7 @@ TEST(ParserGTest,TestNestedBlocks) {
 
 TEST(ParserGTest,TestTypeCast_Scalar_int8) {
     ParserTest parserTest;
-    const TypeCastTableTest<int8> table[]{
+    const TypeCastTableTest<int8> table[]={
             {"var1=(int8) 127", "var1", 127, true},
             {"var2= (int8)-128", "var2", -128, true},
             {"var3=(int8)0b1", "var3", 1, true},
@@ -88,7 +93,7 @@ TEST(ParserGTest,TestTypeCast_Scalar_int8) {
 
 TEST(ParserGTest,TestTypeCast_Scalar_uint8) {
     ParserTest parserTest;
-    const TypeCastTableTest<uint8> table[]{
+    const TypeCastTableTest<uint8> table[]={
             {"var1=(uint8) 127", "var1", 127, true},
             {"var2= (uint8)255", "var2", 255, true},
             {"var3=(uint8)0b1", "var3", 1, true},
@@ -103,7 +108,7 @@ TEST(ParserGTest,TestTypeCast_Scalar_uint8) {
 
 TEST(ParserGTest,TestTypeCast_Scalar_int16) {
     ParserTest parserTest;
-    const TypeCastTableTest<int16> table[]{
+    const TypeCastTableTest<int16> table[]={
             {"var1=(int16) 32767", "var1", 32767, true},
             {"var2= (int16)-32768", "var2", -32768, true},
             {"var3=(int16)0b1", "var3", 1, true},
@@ -119,7 +124,7 @@ TEST(ParserGTest,TestTypeCast_Scalar_int16) {
 
 TEST(ParserGTest,TestTypeCast_Scalar_uint16) {
     ParserTest parserTest;
-    const TypeCastTableTest<uint16> table[]{
+    const TypeCastTableTest<uint16> table[]={
             {"var1=(uint16) 32767", "var1", 32767, true},
             {"var2= (uint16)65535", "var2", 65535, true},
             {"var3=(uint16)0b1", "var3", 1, true},
@@ -136,7 +141,7 @@ TEST(ParserGTest,TestTypeCast_Scalar_uint16) {
 
 TEST(ParserGTest,TestTypeCast_Scalar_int32) {
     ParserTest parserTest;
-    const TypeCastTableTest<int32> table[]{
+    const TypeCastTableTest<int32> table[]={
             {"var1=(int32) 2147483647", "var1", 2147483647, true},
             {"var2= (int32)-2147483648", "var2", -2147483648, true},
             {"var3=(int32)0b1", "var3", 1, true},
@@ -152,7 +157,7 @@ TEST(ParserGTest,TestTypeCast_Scalar_int32) {
 
 TEST(ParserGTest,TestTypeCast_Scalar_uint32) {
     ParserTest parserTest;
-    const TypeCastTableTest<uint32> table[]{
+    const TypeCastTableTest<uint32> table[]={
             {"var1=(uint32) 2147483647", "var1", 2147483647, true},
             {"var2= (uint32)4294967295", "var2", 4294967295, true},
             {"var3=(uint32)0b1", "var3", 1, true},
@@ -168,11 +173,11 @@ TEST(ParserGTest,TestTypeCast_Scalar_uint32) {
 
 TEST(ParserGTest,TestTypeCast_Scalar_int64) {
     ParserTest parserTest;
-    const TypeCastTableTest<int64> table[]{
-            {"var1=(int64) 9223372036854775807", "var1", 9223372036854775807ul, true},
-            {"var2= (int64)-9223372036854775808", "var2", -9223372036854775808ul, true},
+    const TypeCastTableTest<int64> table[]={
+            {"var1=(int64) 9223372036854775807", "var1", (int64)9223372036854775807ul, true},
+            {"var2= (int64)-9223372036854775808", "var2", (int64)-9223372036854775808ul, true},
             {"var3=(int64)0b1", "var3", 1, true},
-            {"var4=(int64)0x8000000000000000", "var4", -9223372036854775808ul, true},
+            {"var4=(int64)0x8000000000000000", "var4", (int64)-9223372036854775808ul, true},
             {"var5=(int64) 0xFFFFFFFFFFFFFFFF", "var5", -1, true},
             {"var6=(int64) 9223372036854775808", "var6", 0, false},
             {0, 0, 0}
@@ -184,8 +189,8 @@ TEST(ParserGTest,TestTypeCast_Scalar_int64) {
 
 TEST(ParserGTest,TestTypeCast_Scalar_uint64) {
     ParserTest parserTest;
-    const TypeCastTableTest<uint64> table[]{
-            {"var1=(uint64) 9223372036854775807", "var1", 9223372036854775807, true},
+    const TypeCastTableTest<uint64> table[]={
+            {"var1=(uint64) 9223372036854775807", "var1", 9223372036854775807ul, true},
             {"var2= (uint64)18446744073709551615", "var2", 18446744073709551615ul, true},
             {"var3=(uint64)0b1", "var3", 1, true},
             {"var4=(uint64) 0xFFFFFFFFFFFFFFFF", "var4", 18446744073709551615ul, true},
@@ -199,13 +204,13 @@ TEST(ParserGTest,TestTypeCast_Scalar_uint64) {
 
 TEST(ParserGTest,TestTypeCast_Scalar_float32) {
     ParserTest parserTest;
-    const TypeCastTableTest<float32> table[]{
-            {"var1=(float32) 0xFF", "var1", 255.0, true},
+    const TypeCastTableTest<float32> table[]={
+            {"var1=(float32) 0xFF", "var1", 255.0f, true},
             {"var2= (float32)-340282346638528859811704183484516925440", "var2", -340282346638528859811704183484516925440.0f, true},
             {"var3=(float32)0b1", "var3", 1.0, true},
             {"var4=(float32) 340282346638528859811704183484516925440", "var4", 340282346638528859811704183484516925440.0f, true},
             // overflow
-            {"var4=(float32) 123E+42", "var4", 0.0, false},
+            {"var4=(float32) 123E+42", "var4", 0.0f, false},
             {0, 0, 0}
     };
 
@@ -215,7 +220,7 @@ TEST(ParserGTest,TestTypeCast_Scalar_float32) {
 
 TEST(ParserGTest,TestTypeCast_Scalar_float64) {
     ParserTest parserTest;
-    const TypeCastTableTest<float64> table[]{
+    const TypeCastTableTest<float64> table[]={
             {"var1=(float64) 0xFF", "var1", 255.0, true},
             {"var2= (float64)-340282346638528859811704183484516925440", "var2", -340282346638528859811704183484516925440.0f, true},
             {"var3=(float64)0b1", "var3", 1.0, true},
@@ -230,7 +235,7 @@ TEST(ParserGTest,TestTypeCast_Scalar_float64) {
 
 TEST(ParserGTest,TestTypeCast_Vector_int8) {
     ParserTest parserTest;
-    const TypeCastTableTestVector<int8, 5> table[]{
+    const TypeCastTableTestVector<int8, 5> table[]={
             {"var1=(int8) {127 -128 0b1, 0x80 0xFF}", "var1", {127, -128, 1 , -128, -1}, true},
             {"var1=(int8) {127 -129 0b1, 0x80 0xFF}", "var1", {127, -128, 1 , -128, -1}, false},
             {0, 0, {0}, 0}
@@ -242,7 +247,7 @@ TEST(ParserGTest,TestTypeCast_Vector_int8) {
 
 TEST(ParserGTest,TestTypeCast_Vector_uint8) {
     ParserTest parserTest;
-    const TypeCastTableTestVector<uint8, 4> table[]{
+    const TypeCastTableTestVector<uint8, 4> table[]={
             {"var1=(uint8) {127 255 0b1 0xFF}", "var1", {127, 255, 1, 255}, true},
             {"var1=(uint8) {1 0 -1 2}", "var1", {0}, false},
             {0, 0, {0}, 0}
@@ -256,7 +261,7 @@ TEST(ParserGTest,TestTypeCast_Vector_uint8) {
 
 TEST(ParserGTest,TestTypeCast_Vector_int16) {
     ParserTest parserTest;
-    const TypeCastTableTestVector<int16, 5> table[]{
+    const TypeCastTableTestVector<int16, 5> table[]={
             {"var1=(int16) {32767 -32768 0b1 0x8000 0xFFFF}", "var1", {32767,-32768,1, -32768, -1}, true},
             {"var1=(int16) {32768 -32768 0b1 0x8000 0xFFFF}", "var1", {32767,-32768,1, -32768, -1}, false},
             {0, 0, {0}, 0}
@@ -268,7 +273,7 @@ TEST(ParserGTest,TestTypeCast_Vector_int16) {
 
 TEST(ParserGTest,TestTypeCast_Vector_uint16) {
     ParserTest parserTest;
-    const TypeCastTableTestVector<uint16, 4> table[]{
+    const TypeCastTableTestVector<uint16, 4> table[]={
             {"var1=(uint16) {32767 65535 0b1 0xFFFF}", "var1", {32767, 65535, 1, 65535}, true},
             {"var1=(uint8) {1 0 -1 2}", "var1", {0}, false},
             {0, 0, {0}, 0}
@@ -280,7 +285,7 @@ TEST(ParserGTest,TestTypeCast_Vector_uint16) {
 
 TEST(ParserGTest,TestTypeCast_Vector_int32) {
     ParserTest parserTest;
-    const TypeCastTableTestVector<int32, 5> table[]{
+    const TypeCastTableTestVector<int32, 5> table[]={
             {"var1=(int32) {2147483647 -2147483648 0b1 0x80000000 0xFFFFFFFF}", "var1", {2147483647, -2147483648, 1,-2147483648, -1}, true},
             {"var1=(int32) {2147483647 -2147483648 0b1 0x80000000 0x1FFFFFFFF}", "var1", {2147483647, -2147483648, 1,-2147483648, -1}, false},
             {0, 0, {0}, 0}
@@ -292,7 +297,7 @@ TEST(ParserGTest,TestTypeCast_Vector_int32) {
 
 TEST(ParserGTest,TestTypeCast_Vector_uint32) {
     ParserTest parserTest;
-    const TypeCastTableTestVector<uint32, 4> table[]{
+    const TypeCastTableTestVector<uint32, 4> table[]={
             {"var1=(uint32) {2147483647, 4294967295 0b1 0xFFFFFFFF}", "var1", {2147483647, 4294967295, 1, 4294967295}, true},
             {"var1=(uint8) {1 0 -1 2}", "var1", {0}, false},
             {0, 0, {0}, 0}
@@ -305,9 +310,9 @@ TEST(ParserGTest,TestTypeCast_Vector_uint32) {
 
 TEST(ParserGTest,TestTypeCast_Vector_int64) {
     ParserTest parserTest;
-    const TypeCastTableTestVector<int64, 5> table[]{
-            {"var1=(int64) {9223372036854775807 -9223372036854775808 0b1 0x8000000000000000 0xFFFFFFFFFFFFFFFF}", "var1", {9223372036854775807ul, -9223372036854775808ul,1,-9223372036854775808ul,-1}, true},
-            {"var1=(int64) {9223372036854775808 -9223372036854775808 0b1 0x8000000000000000 0xFFFFFFFFFFFFFFFF}", "var1", {9223372036854775807ul, -9223372036854775808ul,1,-9223372036854775808ul,-1}, false},
+    const TypeCastTableTestVector<int64, 5> table[]={
+            {"var1=(int64) {9223372036854775807 -9223372036854775808 0b1 0x8000000000000000 0xFFFFFFFFFFFFFFFF}", "var1", {(int64)9223372036854775807ul, (int64)-9223372036854775808ul,1,(int64)-9223372036854775808ul,-1}, true},
+            {"var1=(int64) {9223372036854775808 -9223372036854775808 0b1 0x8000000000000000 0xFFFFFFFFFFFFFFFF}", "var1", {(int64)9223372036854775807ul, (int64)-9223372036854775808ul,1,(int64)-9223372036854775808ul,-1}, false},
             {0, 0, {0}, 0}
     };
 
@@ -317,8 +322,8 @@ TEST(ParserGTest,TestTypeCast_Vector_int64) {
 
 TEST(ParserGTest,TestTypeCast_Vector_uint64) {
     ParserTest parserTest;
-    const TypeCastTableTestVector<uint64, 4> table[]{
-            {"var1=(uint64) {9223372036854775807 18446744073709551615 0b1 0xFFFFFFFFFFFFFFFF}", "var1", {9223372036854775807, 18446744073709551615, 1, 18446744073709551615}, true},
+    const TypeCastTableTestVector<uint64, 4> table[]={
+            {"var1=(uint64) {9223372036854775807 18446744073709551615 0b1 0xFFFFFFFFFFFFFFFF}", "var1", {9223372036854775807ul, 18446744073709551615ul, 1, 18446744073709551615ul}, true},
             {"var1=(uint8) {1 0 -1 2}", "var1", {0}, false},
             {0, 0, {0}, 0}
     };
@@ -328,7 +333,7 @@ TEST(ParserGTest,TestTypeCast_Vector_uint64) {
 
 TEST(ParserGTest,TestTypeCast_Vector_float32) {
     ParserTest parserTest;
-    const TypeCastTableTestVector<float32, 4> table[]{
+    const TypeCastTableTestVector<float32, 4> table[]={
             {"var1=(float32) {0xFF -340282346638528859811704183484516925440.0 0b1 340282346638528859811704183484516925440.0}", "var1", {255.0f, -340282346638528859811704183484516925440.0f, 1.0f, 340282346638528859811704183484516925440.0f}, true},
             {"var1=(uint8) {1.2 0.01 -1.2E+42 2}", "var1", {0}, false},
             {0, 0, {0}, 0}
@@ -340,7 +345,7 @@ TEST(ParserGTest,TestTypeCast_Vector_float32) {
 
 TEST(ParserGTest,TestTypeCast_Vector_float64) {
     ParserTest parserTest;
-    const TypeCastTableTestVector<float64, 4> table[]{
+    const TypeCastTableTestVector<float64, 4> table[]={
             {"var1=(float64) {0xFF -340282346638528859811704183484516925440.0 0b1 340282346638528859811704183484516925440.0}", "var1", {255.0, -340282346638528859811704183484516925440.0, 1.0, 340282346638528859811704183484516925440.0}, true},
             {"var1=(uint8) {1.2 0.01 -1.2E+510 2}", "var1", {0}, false},
             {0, 0, {0}, 0}
@@ -352,7 +357,7 @@ TEST(ParserGTest,TestTypeCast_Vector_float64) {
 
 TEST(ParserGTest,TestTypeCast_Matrix_int8) {
     ParserTest parserTest;
-    const TypeCastTableTestMatrix<int8, 2,3> table[]{
+    const TypeCastTableTestMatrix<int8, 2,3> table[]={
             {"var1=(int8) {{127 -128 0b1} {0x80 0xFF, -1}}", "var1", {{127, -128, 1 },{ -128, -1, -1}}, true},
             {"var1=(int8) {{127 -128 0b1} {0x180 0xFF, -1}}", "var1", {{127, -128, 1 },{ -128, -1, -1}}, false},
             {0, 0, {{0}}, 0}
@@ -364,7 +369,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_int8) {
 
 TEST(ParserGTest,TestTypeCast_Matrix_uint8) {
     ParserTest parserTest;
-    const TypeCastTableTestMatrix<uint8, 2,2> table[]{
+    const TypeCastTableTestMatrix<uint8, 2,2> table[]={
             {"var1=(uint8) {{127 255}{0b1 0xFF}}", "var1", {{127, 255},{1, 255}}, true},
             {"var1=(uint8) {{127 -1}{0b1 0xFF}}", "var1", {{127, 255},{1, 255}}, false},
             {0, 0, {{0}}, 0}
@@ -378,7 +383,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_uint8) {
 
 TEST(ParserGTest,TestTypeCast_Matrix_int16) {
     ParserTest parserTest;
-    const TypeCastTableTestMatrix<int16, 2,3> table[]{
+    const TypeCastTableTestMatrix<int16, 2,3> table[]={
             {"var1=(int16) {{32767 -32768 0b1}{ 0x8000 0xFFFF -1}}", "var1", {{32767,-32768,1},{ -32768, -1, -1}}, true},
             {"var1=(int16) {{32767 -32769 0b1}{ 0x8000 0xFFFF -1}}", "var1", {{32767,-32768,1},{ -32768, -1, -1}}, false},
             {0, 0, {{0}}, 0}
@@ -390,7 +395,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_int16) {
 
 TEST(ParserGTest,TestTypeCast_Matrix_uint16) {
     ParserTest parserTest;
-    const TypeCastTableTestMatrix<uint16, 2,2> table[]{
+    const TypeCastTableTestMatrix<uint16, 2,2> table[]={
             {"var1=(uint16) {{32767 65535}{ 0b1 0xFFFF}}", "var1", {{32767, 65535},{ 1, 65535}}, true},
             {"var1=(uint8) {{127 1}{0b1 0x10000}}", "var1", {{127, 255},{1, 255}}, false},
             {0, 0, {{0}}, 0}
@@ -402,7 +407,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_uint16) {
 
 TEST(ParserGTest,TestTypeCast_Matrix_int32) {
     ParserTest parserTest;
-    const TypeCastTableTestMatrix<int32, 2,3> table[]{
+    const TypeCastTableTestMatrix<int32, 2,3> table[]={
             {"var1=(int32) {{2147483647 -2147483648 0b1}{ 0x80000000 0xFFFFFFFF -1}}", "var1", {{2147483647, -2147483648, 1},{-2147483648, -1, -1}}, true},
             {"var1=(int32) {{2147483648 -2147483648 0b1}{ 0x80000000 0xFFFFFFFF -1}}", "var1", {{2147483647, -2147483648, 1},{-2147483648, -1, -1}}, false},
             {0, 0, {{0}}, 0}
@@ -414,7 +419,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_int32) {
 
 TEST(ParserGTest,TestTypeCast_Matrix_uint32) {
     ParserTest parserTest;
-    const TypeCastTableTestMatrix<uint32, 2,2> table[]{
+    const TypeCastTableTestMatrix<uint32, 2,2> table[]={
             {"var1=(uint32) {{2147483647, 4294967295 }{0b1 0xFFFFFFFF}}", "var1", {{2147483647, 4294967295},{ 1, 4294967295}}, true},
             {"var1=(uint32) {{2147483647, 4294967296 }{0b1 0xFFFFFFFF}}", "var1", {{2147483647, 4294967295},{ 1, 4294967295}}, false},
             {0, 0, {{0}}, 0}
@@ -427,9 +432,9 @@ TEST(ParserGTest,TestTypeCast_Matrix_uint32) {
 
 TEST(ParserGTest,TestTypeCast_Matrix_int64) {
     ParserTest parserTest;
-    const TypeCastTableTestMatrix<int64, 2,3> table[]{
-            {"var1=(int64) {{9223372036854775807 -9223372036854775808 0b1}{ 0x8000000000000000 0xFFFFFFFFFFFFFFFF -1}}", "var1", {{9223372036854775807ul, -9223372036854775808ul,1},{-9223372036854775808ul,-1, -1}}, true},
-            {"var1=(int64) {{9223372036854775807 -9223372036854775808 0b1}{ 0x18000000000000000 0xFFFFFFFFFFFFFFFF -1}}", "var1", {{9223372036854775807ul, -9223372036854775808ul,1},{-9223372036854775808ul,-1, -1}}, false},
+    const TypeCastTableTestMatrix<int64, 2,3> table[]={
+            {"var1=(int64) {{9223372036854775807 -9223372036854775808 0b1}{ 0x8000000000000000 0xFFFFFFFFFFFFFFFF -1}}", "var1", {{(int64)9223372036854775807ul, (int64)-9223372036854775808ul,1},{(int64)-9223372036854775808ul,-1, -1}}, true},
+            {"var1=(int64) {{9223372036854775807 -9223372036854775808 0b1}{ 0x18000000000000000 0xFFFFFFFFFFFFFFFF -1}}", "var1", {{(int64)9223372036854775807ul, (int64)-9223372036854775808ul,1},{(int64)-9223372036854775808ul,-1, -1}}, false},
             {0, 0, {{0}}, 0}
     };
 
@@ -439,9 +444,9 @@ TEST(ParserGTest,TestTypeCast_Matrix_int64) {
 
 TEST(ParserGTest,TestTypeCast_Matrix_uint64) {
     ParserTest parserTest;
-    const TypeCastTableTestMatrix<uint64, 2,2> table[]{
-            {"var1=(uint64) {{9223372036854775807 18446744073709551615}{ 0b1 0xFFFFFFFFFFFFFFFF}}", "var1", {{9223372036854775807, 18446744073709551615},{ 1, 18446744073709551615}}, true},
-            {"var1=(uint64) {{9223372036854775807 18446744073709551615}{ -1 0xFFFFFFFFFFFFFFFF}}", "var1", {{9223372036854775807, 18446744073709551615},{ 1, 18446744073709551615}}, false},
+    const TypeCastTableTestMatrix<uint64, 2,2> table[]={
+            {"var1=(uint64) {{9223372036854775807 18446744073709551615}{ 0b1 0xFFFFFFFFFFFFFFFF}}", "var1", {{9223372036854775807ul, 18446744073709551615ul},{ 1, 18446744073709551615ul}}, true},
+            {"var1=(uint64) {{9223372036854775807 18446744073709551615}{ -1 0xFFFFFFFFFFFFFFFF}}", "var1", {{9223372036854775807ul, 18446744073709551615ul},{ 1, 18446744073709551615ul}}, false},
             {0, 0, {{0}}, 0}
     };
 
@@ -450,7 +455,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_uint64) {
 
 TEST(ParserGTest,TestTypeCast_Matrix_float32) {
     ParserTest parserTest;
-    const TypeCastTableTestMatrix<float32, 2,2> table[]{
+    const TypeCastTableTestMatrix<float32, 2,2> table[]={
             {"var1=(float32) {{0xFF -340282346638528859811704183484516925440.0}{ 0b1 340282346638528859811704183484516925440.0}}", "var1", {{255.0f, -340282346638528859811704183484516925440.0f}, {1.0f, 340282346638528859811704183484516925440.0f}}, true},
             {"var1=(uint8) {1.2 0.01 -1.2E+42 2}", "var1", {0}, false},
             {0, 0, {{0}}, 0}
@@ -462,7 +467,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_float32) {
 
 TEST(ParserGTest,TestTypeCast_Matrix_float64) {
     ParserTest parserTest;
-    const TypeCastTableTestMatrix<float64, 2,2> table[]{
+    const TypeCastTableTestMatrix<float64, 2,2> table[]={
             {"var1=(float64) {{0xFF -340282346638528859811704183484516925440.0}{ 0b1 340282346638528859811704183484516925440.0}}", "var1", {{255.0, -340282346638528859811704183484516925440.0},{ 1.0, 340282346638528859811704183484516925440.0}}, true},
             {"var1=(uint8) {1.2 0.01 -1.2E+510 2}", "var1", {0}, false},
             {0, 0, {{0}}, 0}

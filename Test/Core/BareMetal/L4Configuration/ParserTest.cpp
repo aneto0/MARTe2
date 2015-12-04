@@ -55,6 +55,10 @@ bool ParserTest::TestConstructor() {
     return (MemoryOperationsHelper::Compare((void*) &testGrammatic, (void*) &myGrammatic, sizeof(ParserGrammatic)) == 0);
 }
 
+bool ParserTest::TestGetGrammatic() {
+    return TestConstructor();
+}
+
 bool ParserTest::TestParseScalar() {
     ConfigurationDatabase database;
     StreamString errors;
@@ -206,6 +210,7 @@ bool ParserTest::TestParseVector() {
      char8* out3=output;
      AnyType at3(out3);
      */
+    AnyType at2("Hello");
     return true;
 }
 

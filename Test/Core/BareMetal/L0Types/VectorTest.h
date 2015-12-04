@@ -76,11 +76,6 @@ public:
     bool TestConstructorByTable(T (&array)[nElements]);
 
     /**
-     * @brief Tests if the function returns true only if the Vector is built by a static array.
-     */
-    bool TestIsStaticDeclared();
-
-    /**
      * @brief Tests if the function returns the correct number of elements in the vector.
      */
     bool TestGetNumberOfElements();
@@ -122,7 +117,7 @@ bool VectorTest::TestConstructorByPointerStatic(T (&array)[nElements]) {
         }
     }
 
-    return !myVector.IsStaticDeclared();
+    return true;
 }
 
 template<typename T>
@@ -137,7 +132,7 @@ bool VectorTest::TestConstructorByPointerHeap(T* array,
         }
     }
 
-    return !myVector.IsStaticDeclared();
+    return true;
 }
 
 template<typename T, uint32 nElements>
@@ -151,7 +146,7 @@ bool VectorTest::TestConstructorByTable(T (&array)[nElements]) {
         }
     }
 
-    return myVector.IsStaticDeclared();
+    return true;
 
 }
 

@@ -221,11 +221,15 @@ static bool StringToIntegerExadecimalNotation(const char8* const input,
             int8 ten = static_cast<int8>('A');
             newDigit = 10 + (static_cast<int8>(digit) - ten);
             if ((newDigit < 10) || (newDigit > 15)) {
-                if (digit != '\0') {
-                    ret = false;
-                    REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerExadecimalNotation: Invalid token.");
+                ten = static_cast<int8>('a');
+                newDigit = 10 + (static_cast<int8>(digit) - ten);
+                if ((newDigit < 10) || (newDigit > 15)) {
+                    if (digit != '\0') {
+                        ret = false;
+                        REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerExadecimalNotation: Invalid token.");
+                    }
+                    canReturn = true;
                 }
-                canReturn = true;
             }
         }
         if (!canReturn) {

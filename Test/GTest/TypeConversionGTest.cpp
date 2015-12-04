@@ -93,7 +93,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt8) {
             {"a123s5",0, true, false},
             {"0xFF",255, true, true},
             {"0xFF1",255, true, false},
-            {"0xABCD",0xab, true, false},
+            {"0xABcD",0xab, true, false},
             {"0o12",10, true, true},
             {"0x7F",127, true, true},
             {"0x80",128, true, true},
@@ -105,7 +105,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt8) {
             {"0b011111111",127, true, false},
             {"255",255, true, true},
             {"256",25, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -153,7 +153,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt16) {
             {"0b11111111111111111",65535, true, false},
             {"32767",32767, true, true},
             {"65536",6553, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -202,7 +202,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt32) {
             {"0b111111111111111111111111111111111",4294967295, true, false},
             {"4294967295",4294967295, true, true},
             {"4294967296",429496729, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0, 0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -253,7 +253,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt64) {
             {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
             {"18446744073709551615",18446744073709551615ul, true, true},
             {"18446744073709551616",1844674407370955161ul, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -423,7 +423,7 @@ TEST(TypeConversionGTest,TestSStringToUInt8) {
             {"0b011111111",127, true, false},
             {"255",255, true, true},
             {"256",25, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -471,7 +471,7 @@ TEST(TypeConversionGTest,TestSStringToUInt16) {
             {"0b11111111111111111",65535, true, false},
             {"32767",32767, true, true},
             {"65536",6553, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -520,7 +520,7 @@ TEST(TypeConversionGTest,TestSStringToUInt32) {
             {"0b111111111111111111111111111111111",4294967295, true, false},
             {"4294967295",4294967295, true, true},
             {"4294967296",429496729, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0, 0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -571,7 +571,7 @@ TEST(TypeConversionGTest,TestSStringToUInt64) {
             {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
             {"18446744073709551615",18446744073709551615ul, true, true},
             {"18446744073709551616",1844674407370955161ul, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -613,18 +613,18 @@ TEST(TypeConversionGTest,TestSStringToFloat64) {
             {"1E+2",100, true, true},
             {"10E+2",1000, true, true},
             {"12345.678E2",1234567.8, true, true},
-            {"1E-2",0.01, true, true},
+            {"1e-2",0.01, true, true},
             {"0.1E-2",0.001, true, true},
             {"16E-2",0.16, true, true},
             // see the precision now is the same!
             {"12345.678E-2",123.45678, true, true},
             {"1E+20",1E+20, true, true},
             {"123E+63",123E+63, true, true},
-            {"123E+83",123E+83, true, true},
+            {"123e+83",123E+83, true, true},
             // this is overflow!
             {"123E+510",123, true, false},
             {"123E+513",123, true, false},
-            {"1E-32",1E-32, true, true},
+            {"1e-32",1E-32, true, true},
             {"0.000000001",1E-9, true, true},
             //Overflow!
      //       {"179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368",179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368},
@@ -3846,7 +3846,7 @@ TEST(TypeConversionGTest,TestCArrayToUInt8) {
             {"0b011111111",127, true, false},
             {"255",255, true, true},
             {"256",25, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
@@ -3894,7 +3894,7 @@ TEST(TypeConversionGTest,TestCArrayToUInt16) {
             {"0b11111111111111111",65535, true, false},
             {"32767",32767, true, true},
             {"65536",6553, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
@@ -3943,7 +3943,7 @@ TEST(TypeConversionGTest,TestCArrayToUInt32) {
             {"0b111111111111111111111111111111111",4294967295, true, false},
             {"4294967295",4294967295, true, true},
             {"4294967296",429496729, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0, 0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
@@ -3984,7 +3984,7 @@ TEST(TypeConversionGTest,TestCArrayToUInt64) {
             {"a123s5",0, true, false},
             {"0xFFFFFFFFFFFFFFFF",18446744073709551615ul, true, true},
             {"0xFFFFFFFFFFFFFFFF1",18446744073709551615ul, true, false},
-            {"0x7FFFFFFFFFFFFFFF",9223372036854775807ul, true, true},
+            {"0x7FFFFFFfFFFFFFFF",9223372036854775807ul, true, true},
             {"0o1777777777777777777777",18446744073709551615ul, true, true},
             {"0o777777777777777777777",9223372036854775807ul, true, true},
             {"0o2777777777777777777777",3458764513820540927ul, true, false},
@@ -3994,7 +3994,7 @@ TEST(TypeConversionGTest,TestCArrayToUInt64) {
             {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
             {"18446744073709551615",18446744073709551615ul, true, true},
             {"18446744073709551616",1844674407370955161ul, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
@@ -4122,7 +4122,7 @@ TEST(TypeConversionGTest,TestCharVectorToUInt8) {
             {"0b011111111",127, true, false},
             {"255",255, true, true},
             {"256",25, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCharVector(table));
@@ -4170,7 +4170,7 @@ TEST(TypeConversionGTest,TestCharVectorToUInt16) {
             {"0b11111111111111111",65535, true, false},
             {"32767",32767, true, true},
             {"65536",6553, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCharVector(table));
@@ -4219,7 +4219,7 @@ TEST(TypeConversionGTest,TestCharVectorToUInt32) {
             {"0b111111111111111111111111111111111",4294967295, true, false},
             {"4294967295",4294967295, true, true},
             {"4294967296",429496729, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0, 0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCharVector(table));
@@ -4270,7 +4270,7 @@ TEST(TypeConversionGTest,TestCharVectorToUInt64) {
             {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
             {"18446744073709551615",18446744073709551615ul, true, true},
             {"18446744073709551616",1844674407370955161ul, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCharVector(table));

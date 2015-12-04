@@ -472,6 +472,22 @@ static bool PrintToStream(IOBuffer & iobuff,
                 }
             }
 
+            if (((par.GetTypeDescriptor()).type) == CArray) {
+                if (fd.desiredAction == PrintInfo) {
+                    const char8* infoName = "C Array";
+                    AnyType info = infoName;
+                    FormatDescriptor newFD = fd;
+                    newFD.desiredAction = PrintString;
+                    ret = PrintToStream(iobuff, info, newFD);
+                }
+                else {
+                    if (fd.desiredAction != PrintString) {
+                        REPORT_ERROR(ErrorManagement::Warning, "IOBuffer: Type mismatch: a string will be printed");
+                    }
+                    const char8 *string = static_cast<const char8 *>(dataPointer);
+                    ret = PrintCCString(iobuff, string, fd);
+                }
+            }
             //general stream type.
             if (((par.GetTypeDescriptor()).type) == Stream) {
                 if (fd.desiredAction == PrintInfo) {
@@ -956,9 +972,7 @@ bool IOBuffer::Read(char8 * const buffer,
             positionPtr = &positionPtr[size];
         }
     }
-    else {
-        retval = false;
-    }
+
     return retval;
 }
 

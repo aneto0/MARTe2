@@ -37,6 +37,9 @@
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
+/**
+ * @brief A table used for type cast parsing tests on scalars.
+ */
 template<typename T>
 struct TypeCastTableTest {
     const char8 *configString;
@@ -45,6 +48,9 @@ struct TypeCastTableTest {
     bool expectedRet;
 };
 
+/**
+ * @brief A table used for type cast parsing tests on vectors.
+ */
 template<typename T, uint32 nElements>
 struct TypeCastTableTestVector {
     const char8 *configString;
@@ -53,6 +59,9 @@ struct TypeCastTableTestVector {
     bool expectedRet;
 };
 
+/**
+ * @brief A table used for type cast parsing tests on matrices.
+ */
 template<typename T, uint32 nRows, uint32 nCols>
 struct TypeCastTableTestMatrix {
     const char8 *configString;
@@ -61,34 +70,75 @@ struct TypeCastTableTestMatrix {
     bool expectedRet;
 };
 
+
+/**
+ * @brief Tests all the parser functions
+ */
 class ParserTest {
 
 public:
 
+    /**
+     * @brief Tests if the constructor sets the desired grammatic.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function returns the grammatic set by constructor.
+     */
+    bool TestGetGrammatic();
+
+    /**
+     * @brief Tests the parsing of scalar variables.
+     */
     bool TestParseScalar();
 
+    /**
+     * @brief Tests the parsing of vector variables.
+     */
     bool TestParseVector();
 
+    /**
+     * @brief Tests the parsing of matrix variables.
+     */
     bool TestParseMatrix();
 
+    /**
+     * @brief Tests the parsing of an input with a big number of blocks.
+     */
     bool TestNestedBlocks();
 
+    /**
+     * @brief Tests the type cast parsing with scalar variables.
+     */
     template<typename T>
     bool TestTypeCast_Scalar(const TypeCastTableTest<T> *table);
 
+    /**
+     * @brief Tests the type cast parsing with vector variables.
+     */
     template<typename T, uint32 nElements>
     bool TestTypeCast_Vector(const TypeCastTableTestVector<T, nElements> *table);
 
+    /**
+     * @brief Tests the type cast parsing with matrix variables.
+     */
     template<typename T, uint32 nRows, uint32 nCols>
     bool TestTypeCast_Matrix(const TypeCastTableTestMatrix<T, nRows, nCols> *table);
 
-
+    /**
+     * @brief Tests if the Parse function returns false in case of errors in the input stream.
+     */
     bool TestParseErrors(const char8 *configStringIn);
 
+    /**
+     * @brief Tests if passing a bad type in the type cast expression the automatic cast to string will be used.
+     */
     bool TestStandardCast();
 
+    /**
+     * @brief tests the parsing on an external configuration file.
+     */
     bool TestExistentFile();
 };
 

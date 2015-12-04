@@ -388,7 +388,7 @@ static bool StringToType(const AnyType &destination,
         }
         if (destinationDescriptor.type == CArray) {
             uint32 arraySize = destination.GetByteSize();
-            printf("Here %s %d\n",token,arraySize);
+            printf("Here %s %d\n", token, arraySize);
             if (tokenLength >= arraySize) {
                 REPORT_ERROR(ErrorManagement::Warning, "StringToType: The input is too long for the output buffer.");
                 ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);
@@ -770,12 +770,7 @@ bool TypeConvert(const AnyType &destination,
 
     bool ok = true;
     if (static_cast<bool>(destination.GetTypeDescriptor().isConstant)) {
-        if (destination.GetTypeDescriptor().type == CCString) {
-            REPORT_ERROR(ErrorManagement::Warning, "TypeConvert: The destination buffer could be constant !");
-        }
-        else {
-            ok = false;
-        }
+        ok = false;
     }
     if (ok) {
 

@@ -55,8 +55,8 @@ public:
      * @param[in] terminalsIn is a C-string containing the terminal characters.
      * @param[in] separatorsIn is a C-string containing the separator characters.
      * @details
-     *   - If the token represents a number (also in hex, oct, or bin format) its type will be NUMBER_TOKEN.
-     *   - If the token represents a string (begin with a " or a non-number character) its type will be STRING_TOKEN.
+     *   - If the token represents a number (also in hexadecimal, octal, or binary format) its type will be NUMBER_TOKEN.
+     *   - If the token represents a string (begin with a ' " ' or a 'non-number' character at the beginning) its type will be STRING_TOKEN.
      *   - If the token is invalid (i.e 1234a56) its type will be ERROR_TOKEN.
      *   - If the token is a terminal its type will be TERMINAL_TOKEN.
      *   - If the read operation from the stream fails, a token with the EOF_TOKEN type will be returned.
@@ -99,7 +99,7 @@ private:
 
     /**
      * @brief Tokenizes the stream in input adding tokens in the internal queue.
-     * @param[in] level is the number of tokens to add.
+     * @param[in] level is the number of tokens to add to the queue.
      */
     void TokenizeInput(const uint32 level = 1u);
 

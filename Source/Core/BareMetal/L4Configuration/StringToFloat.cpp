@@ -178,7 +178,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
             }
         }
         else {
-            if ((digit == '.') || (digit == 'E')) {
+            if ((digit == '.') || (digit == 'E') || (digit == 'e')) {
                 break;
             }
             else {
@@ -219,7 +219,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
                 }
                 else {
 
-                    if (digit == 'E') {
+                    if ((digit == 'E') || (digit == 'e')) {
                         break;
                     }
                     else {
@@ -246,7 +246,7 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
         }
 
         // take the exponent (in case of compact...)
-        if ((digit == 'E') && (!canReturn)) {
+        if (((digit == 'E') || (digit == 'e')) && (!canReturn)) {
             i++;
             int32 exponent = 0;
             bool expPositive = true;
@@ -304,7 +304,6 @@ static bool StringToNormalFloatPrivate(const char8 * const input,
 
     return ret;
 }
-
 
 /**
  * @brief In case of number in hexadecimal, octal or binary format, converts it to a float number, otherwise calls StringToNormalFloatPrivate(*).
