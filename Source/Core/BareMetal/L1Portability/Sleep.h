@@ -41,16 +41,6 @@
 
 namespace MARTe{
 
-/**
- * @brief Sleep functions.
- *
- * @details This functions allows tasks to sleep for a desired time. There are functions which sleeps wasting cpu time using
- * HighResolutionTimer and functions which sleeps yielding cpu using system call functions.
- * These functions are generally used in multithreading applications for example to allows threads to wait on a
- * condition without use cpu.
- *
- * Most of the implementation is delegated to Sleep.h which provides system calls to allows sleep functions.
- */
 namespace Sleep {
 
 /**

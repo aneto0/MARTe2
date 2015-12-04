@@ -40,10 +40,6 @@
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief Defines all the framework possible error types.
- */
-
 namespace MARTe {
 
 namespace ErrorManagement {

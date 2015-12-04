@@ -39,9 +39,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe{
 
-/**
- * @brief Namespace to define the possible modes of search.
- */
 namespace ReferenceContainerFilterMode {
 
 /**

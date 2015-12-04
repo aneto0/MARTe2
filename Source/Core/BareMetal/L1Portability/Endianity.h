@@ -41,18 +41,6 @@
 
 namespace MARTe{
 
-/**
- * @brief Converts any basic type to (from) the target architecture, from (to)
- * the requested endianity.
- *
- * @details The target architecture is the one of the machine where the code is being executed.
- * Most of the implementation is therefore delegated to the EndianityA.h implementation,
- * which will be specific for each type of supported architecture.
- *
- * @details These methods are particularly useful in the implementation of functionality that requires
- * the exchange of data with external producers that might have a different endianity. Examples
- * are drivers and network interfaces.
- */
 namespace Endianity {
 
     /**

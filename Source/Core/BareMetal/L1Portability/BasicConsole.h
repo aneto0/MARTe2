@@ -43,10 +43,6 @@
 
 namespace MARTe {
 
-/**
- * FlagsType determining the console operating modes.\n
- * These are usually set when the console is constructed.
- */
 namespace BasicConsoleMode {
 
 /**

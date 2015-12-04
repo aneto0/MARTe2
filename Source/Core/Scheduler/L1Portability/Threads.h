@@ -52,13 +52,6 @@ class ThreadInformation;
  */
 typedef void (*ThreadFunctionType)(const void * const parameters);
 
-/**
- * @brief Threads management module.
- *
- * @details These module allows to create, manage and monitor the life-cycle of any framework thread/
- * The default stack size associated to a thread THREADS_DEFAULT_STACKSIZE is defined in GeneralDefinitions.h
- * for each different operating system.
- */
 namespace Threads {
 
 /**

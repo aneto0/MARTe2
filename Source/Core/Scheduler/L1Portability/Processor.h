@@ -40,14 +40,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-/**
- * @brief General information about the processor executing the framework code.
- *
- * @details This module enables the retrieval of runtime information about the
- * processor executing the framework code.
- * Based on this information framework users are allowed to take runtime decisions
- * against specific processor characteristics.
- */
 namespace Processor {
 
     /**

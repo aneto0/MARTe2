@@ -44,14 +44,6 @@
 
 namespace MARTe{
 
-/**
- * @brief This module implements useful functions for high resolution timing using the cpu clock.
- *
- * @details These functions are used when a timeout implementation is required like for examples for semaphores.\n
- * Most of the implementation is delegated to HighResolutionTimerA.h which use very low level code (assembly)
- * for the Counter functions, while the Frequency and Period functions are delegated to HighResolutionTimerCalibratorOs.h
- * which returns the current cpu frequency.
- */
 /*lint -e{762} the functions are declared in the public header file and defined in the header file of the specific architecture.*/
 namespace HighResolutionTimer {
 

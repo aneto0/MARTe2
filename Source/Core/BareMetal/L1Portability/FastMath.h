@@ -40,9 +40,6 @@
 
 namespace MARTe{
 
-/**
- * @brief Performs mathematical operations using fast processor instructions.
- */
 namespace FastMath {
 
 /**

@@ -40,12 +40,6 @@
 
 namespace MARTe{
 
-/**
- * @brief Implementation of functions for the heap memory management.
- * @details Using these functions is possible adding different HeapI
- * objects in a hidden static database and using their specific functions for the
- * desired heap management.
- */
 namespace HeapManager {
 
 /**

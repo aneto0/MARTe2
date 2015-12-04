@@ -43,13 +43,6 @@
 
 namespace MARTe{
 
-/**
- * @brief Collection of functions and  types to manage error reporting.
- * @details These functions allows an error reporting mechanism. The user should only pass the code of the error
- * and a description but automatically the name of the file, the line number and the function
- * are stored in the ErrorInformation structure. The user can implement a routine that will be called
- * by the report error function to manage errors in specific ways.
- */
 namespace ErrorManagement {
 
 /**

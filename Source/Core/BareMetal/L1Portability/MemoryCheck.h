@@ -40,9 +40,6 @@
 
 namespace MARTe{
 
-/**
- * @brief Implementation of functions for the memory checking.
- */
 namespace MemoryCheck {
 
 /**
