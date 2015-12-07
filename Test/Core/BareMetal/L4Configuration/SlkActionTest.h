@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "SlkAction.h"
+#include "ParserTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -55,11 +56,155 @@ public:
     bool TestParseVectorXMLGrammar();
 
     bool TestParseMatrixXMLGrammar();
+
+    bool TestNestedBlocks();
+
+    bool TestParseErrors(const char8 *configStringIn);
+
+    bool TestStandardCast();
+
+    bool TestExistentFile();
+
+    template<typename T>
+    bool TestTypeCast_Scalar(const TypeCastTableTest<T> *table);
+
+    template<typename T, uint32 nElements>
+    bool TestTypeCast_Vector(const TypeCastTableTestVector<T, nElements> *table);
+
+    template<typename T, uint32 nRows, uint32 nCols>
+    bool TestTypeCast_Matrix(const TypeCastTableTestMatrix<T, nRows, nCols> *table);
+
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+
+
+template<typename T>
+bool SlkActionTest::TestTypeCast_Scalar(const TypeCastTableTest<T> *table) {
+    ConfigurationDatabase database;
+    StreamString errors;
+
+    uint32 i = 0;
+    while (table[i].configString != NULL) {
+        StreamString configString = table[i].configString;
+
+        configString.Seek(0);
+        SlkAction myParser(configString, database, &errors);
+        bool ret = myParser.Parse();
+
+        if (table[i].expectedRet != ret) {
+            printf("failed ret %d\n", i);
+            return false;
+        }
+        if (table[i].expectedRet) {
+
+            T output;
+            if (!database.Read(table[i].varName, output)) {
+                printf("failed read %d\n", i);
+                return false;
+            }
+            if (output != table[i].expectedResult) {
+                printf("\nfailed result %d\n", i);
+                return false;
+            }
+        }
+        else {
+            printf("\nerrors=%s, %d\n", errors.Buffer(), i);
+        }
+
+        i++;
+    }
+    return true;
+}
+
+template<typename T, uint32 nElements>
+bool SlkActionTest::TestTypeCast_Vector(const TypeCastTableTestVector<T, nElements> *table) {
+    ConfigurationDatabase database;
+    StreamString errors;
+
+    uint32 i = 0;
+    while (table[i].configString != NULL) {
+        StreamString configString = table[i].configString;
+
+        configString.Seek(0);
+        SlkAction myParser(configString, database, &errors);
+        bool ret = myParser.Parse();
+
+        if (table[i].expectedRet != ret) {
+            printf("failed ret %d\n", i);
+            return false;
+        }
+        if (table[i].expectedRet) {
+
+            T output[nElements];
+            if (!database.Read(table[i].varName, output)) {
+                printf("failed read %d\n", i);
+                return false;
+            }
+            for (uint32 h = 0; h < nElements; h++) {
+                if (table[i].expectedResult[h] != output[h]) {
+                    printf("\nfailed result %d %d\n", i, h);
+                    return false;
+                }
+            }
+
+        }
+        else {
+            printf("\nerrors=%s, %d\n", errors.Buffer(), i);
+        }
+
+        i++;
+    }
+    return true;
+}
+
+template<typename T, uint32 nRows, uint32 nCols>
+bool SlkActionTest::TestTypeCast_Matrix(const TypeCastTableTestMatrix<T, nRows, nCols> *table) {
+    ConfigurationDatabase database;
+    StreamString errors;
+
+    uint32 i = 0;
+    while (table[i].configString != NULL) {
+        StreamString configString = table[i].configString;
+
+        configString.Seek(0);
+        SlkAction myParser(configString, database, &errors);
+        bool ret = myParser.Parse();
+
+        if (table[i].expectedRet != ret) {
+            printf("failed ret %d\n", i);
+            return false;
+        }
+        if (table[i].expectedRet) {
+
+            T output[nRows][nCols];
+            if (!database.Read(table[i].varName, output)) {
+                printf("failed read %d\n", i);
+                return false;
+            }
+            for (uint32 h = 0; h < nRows; h++) {
+                for (uint32 k = 0; k < nCols; k++) {
+                    if (table[i].expectedResult[h][k] != output[h][k]) {
+                        printf("\nfailed result %d %d %d\n", i, h, k);
+                        return false;
+                    }
+                }
+            }
+
+        }
+        else {
+            printf("\nerrors=%s, %d\n", errors.Buffer(), i);
+        }
+
+        i++;
+    }
+    return true;
+}
+
+
 
 #endif /* SLKACTIONTEST_H_ */
 

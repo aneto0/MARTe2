@@ -53,6 +53,10 @@ public:
 
     const char8 *GetTokenData();
 
+    uint32 GetLineNumber() const;
+
+    uint16 GetTokenId() const;
+
 private:
     uint32 tokenLineNumber;
 

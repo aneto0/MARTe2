@@ -275,7 +275,7 @@ TEST(ParserGTest,TestTypeCast_Vector_uint16) {
     ParserTest parserTest;
     const TypeCastTableTestVector<uint16, 4> table[]={
             {"var1=(uint16) {32767 65535 0b1 0xFFFF}", "var1", {32767, 65535, 1, 65535}, true},
-            {"var1=(uint8) {1 0 -1 2}", "var1", {0}, false},
+            {"var1=(uint16) {1 0 -1 2}", "var1", {0}, false},
             {0, 0, {0}, 0}
     };
 
@@ -299,7 +299,7 @@ TEST(ParserGTest,TestTypeCast_Vector_uint32) {
     ParserTest parserTest;
     const TypeCastTableTestVector<uint32, 4> table[]={
             {"var1=(uint32) {2147483647, 4294967295 0b1 0xFFFFFFFF}", "var1", {2147483647, 4294967295, 1, 4294967295}, true},
-            {"var1=(uint8) {1 0 -1 2}", "var1", {0}, false},
+            {"var1=(uint32) {1 0 -1 2}", "var1", {0}, false},
             {0, 0, {0}, 0}
     };
 
@@ -324,7 +324,7 @@ TEST(ParserGTest,TestTypeCast_Vector_uint64) {
     ParserTest parserTest;
     const TypeCastTableTestVector<uint64, 4> table[]={
             {"var1=(uint64) {9223372036854775807 18446744073709551615 0b1 0xFFFFFFFFFFFFFFFF}", "var1", {9223372036854775807ul, 18446744073709551615ul, 1, 18446744073709551615ul}, true},
-            {"var1=(uint8) {1 0 -1 2}", "var1", {0}, false},
+            {"var1=(uint64) {1 0 -1 2}", "var1", {0}, false},
             {0, 0, {0}, 0}
     };
 
@@ -335,7 +335,7 @@ TEST(ParserGTest,TestTypeCast_Vector_float32) {
     ParserTest parserTest;
     const TypeCastTableTestVector<float32, 4> table[]={
             {"var1=(float32) {0xFF -340282346638528859811704183484516925440.0 0b1 340282346638528859811704183484516925440.0}", "var1", {255.0f, -340282346638528859811704183484516925440.0f, 1.0f, 340282346638528859811704183484516925440.0f}, true},
-            {"var1=(uint8) {1.2 0.01 -1.2E+42 2}", "var1", {0}, false},
+            {"var1=(float32) {1.2 0.01 -1.2E+42 2}", "var1", {0}, false},
             {0, 0, {0}, 0}
     };
 
@@ -347,7 +347,7 @@ TEST(ParserGTest,TestTypeCast_Vector_float64) {
     ParserTest parserTest;
     const TypeCastTableTestVector<float64, 4> table[]={
             {"var1=(float64) {0xFF -340282346638528859811704183484516925440.0 0b1 340282346638528859811704183484516925440.0}", "var1", {255.0, -340282346638528859811704183484516925440.0, 1.0, 340282346638528859811704183484516925440.0}, true},
-            {"var1=(uint8) {1.2 0.01 -1.2E+510 2}", "var1", {0}, false},
+            {"var1=(float64) {1.2 0.01 -1.2E+510 2}", "var1", {0}, false},
             {0, 0, {0}, 0}
     };
 
@@ -397,7 +397,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_uint16) {
     ParserTest parserTest;
     const TypeCastTableTestMatrix<uint16, 2,2> table[]={
             {"var1=(uint16) {{32767 65535}{ 0b1 0xFFFF}}", "var1", {{32767, 65535},{ 1, 65535}}, true},
-            {"var1=(uint8) {{127 1}{0b1 0x10000}}", "var1", {{127, 255},{1, 255}}, false},
+            {"var1=(uint16) {{127 1}{0b1 0x10000}}", "var1", {{127, 255},{1, 255}}, false},
             {0, 0, {{0}}, 0}
     };
 
@@ -457,7 +457,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_float32) {
     ParserTest parserTest;
     const TypeCastTableTestMatrix<float32, 2,2> table[]={
             {"var1=(float32) {{0xFF -340282346638528859811704183484516925440.0}{ 0b1 340282346638528859811704183484516925440.0}}", "var1", {{255.0f, -340282346638528859811704183484516925440.0f}, {1.0f, 340282346638528859811704183484516925440.0f}}, true},
-            {"var1=(uint8) {1.2 0.01 -1.2E+42 2}", "var1", {0}, false},
+            {"var1=(float32) {1.2 0.01 -1.2E+42 2}", "var1", {0}, false},
             {0, 0, {{0}}, 0}
     };
 
@@ -469,7 +469,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_float64) {
     ParserTest parserTest;
     const TypeCastTableTestMatrix<float64, 2,2> table[]={
             {"var1=(float64) {{0xFF -340282346638528859811704183484516925440.0}{ 0b1 340282346638528859811704183484516925440.0}}", "var1", {{255.0, -340282346638528859811704183484516925440.0},{ 1.0, 340282346638528859811704183484516925440.0}}, true},
-            {"var1=(uint8) {1.2 0.01 -1.2E+510 2}", "var1", {0}, false},
+            {"var1=(float64) {1.2 0.01 -1.2E+510 2}", "var1", {0}, false},
             {0, 0, {{0}}, 0}
     };
 

@@ -33,23 +33,12 @@
 #include "StaticListHolder.h"
 #include "TypeConversion.h"
 #include "AdvancedErrorManagement.h"
+#include "AnyTypeCreator.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 namespace MARTe {
-
-struct TypeCastInfo {
-    TypeDescriptor typeDes;
-    const char8 *castName;
-};
-
-static const TypeCastInfo castTypes[] = { { CharString, "string" }, { SignedInteger8Bit, "int8" }, { SignedInteger16Bit, "int16" }, { SignedInteger32Bit,
-        "int32" }, { SignedInteger64Bit, "int64" }, { UnsignedInteger8Bit, "uint8" }, { UnsignedInteger16Bit, "uint16" }, { UnsignedInteger32Bit, "uint32" }, {
-        UnsignedInteger64Bit, "uint64" }, { Float32Bit, "float32" }, { Float64Bit, "float64" }, { CharString, static_cast<const char8*>(NULL) } };
-
-
 
 static void PrintErrorOnStream(const char8 * const format,
                                const uint32 lineNumber,
@@ -101,20 +90,6 @@ static bool isLValue(Token* &token,
     return ret;
 }
 
-static void SetType(const uint32 typeIndex,
-                    void * const dataPointer,
-                    AnyType &element,
-                    const uint8 nOfDimensions) {
-
-    if ((castTypes[typeIndex].typeDes.type == CCString) && (nOfDimensions == 0u)) {
-        element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), *static_cast<char8**>(dataPointer));
-    }
-    else {
-        element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), dataPointer);
-    }
-    element.SetNumberOfDimensions(nOfDimensions);
-}
-
 static bool CheckCloseBlock(Token* &token,
                             LexicalAnalyzer &lexicalAnalyzer,
                             ConfigurationDatabase &database,
@@ -136,142 +111,15 @@ static bool CheckCloseBlock(Token* &token,
     return ok;
 }
 
-static bool ToType(const char8 * const tokenBuffer,
-                   const uint32 typeIndex,
-                   const uint32 granularity,
-                   StaticListHolder *&memory) {
-
-    bool ret = false;
-    if (castTypes[typeIndex].typeDes == CharString) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(char8 *)), granularity);
-        }
-        uint32 size = StringHelper::Length(tokenBuffer) + 1u;
-        char8 *cString = static_cast<char8 *>(HeapManager::Malloc(size));
-        if (StringHelper::Copy(cString, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&cString));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == SignedInteger8Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(int8)), granularity);
-        }
-        int8 possibleInt8 = 0;
-        if (TypeConvert(possibleInt8, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleInt8));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == SignedInteger16Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(int16)), granularity);
-        }
-        int16 possibleInt16 = 0;
-        if (TypeConvert(possibleInt16, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleInt16));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == SignedInteger32Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(int32)), granularity);
-        }
-        int32 possibleInt32 = 0;
-        if (TypeConvert(possibleInt32, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleInt32));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == SignedInteger64Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(int64)), granularity);
-        }
-        int64 possibleInt64 = 0;
-        if (TypeConvert(possibleInt64, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleInt64));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger8Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint8)), granularity);
-        }
-        uint8 possibleUInt8 = 0u;
-        if (TypeConvert(possibleUInt8, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt8));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger16Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint16)), granularity);
-        }
-        uint16 possibleUInt16 = 0u;
-        if (TypeConvert(possibleUInt16, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt16));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger32Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint32)), granularity);
-        }
-        uint32 possibleUInt32 = 0u;
-        if (TypeConvert(possibleUInt32, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt32));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger64Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint64)), granularity);
-        }
-        uint64 possibleUInt64 = 0u;
-        if (TypeConvert(possibleUInt64, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt64));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == Float32Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(float32)), granularity);
-        }
-        float32 possibleFloat32 = 0.0F;
-        if (TypeConvert(possibleFloat32, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleFloat32));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == Float64Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(float64)), granularity);
-        }
-        float64 possibleFloat64 = 0.0;
-        if (TypeConvert(possibleFloat64, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleFloat64));
-        }
-    }
-
-    if (!ret) {
-        delete memory;
-        memory = static_cast<StaticListHolder*>(NULL);
-    }
-
-    return ret;
-}
-
 static bool SetTypeCast(Token* &token,
-                 LexicalAnalyzer &lexicalAnalyzer,
-                 const char8 terminalCloseTypeCast,
-                 uint32 &typeIndex,
-                 BufferedStreamI * const err) {
+                        LexicalAnalyzer &lexicalAnalyzer,
+                        const char8 terminalCloseTypeCast,
+                        StreamString &type,
+                        BufferedStreamI * const err) {
 
-    typeIndex = 0u;
-    bool found = false;
+    type = "string";
     if (token->GetId() == STRING_TOKEN) {
-        while ((castTypes[typeIndex].castName != NULL) && (!found)) {
-            if (StringHelper::Compare(token->GetData(), castTypes[typeIndex].castName) == 0) {
-                found = true;
-            }
-            else {
-                typeIndex++;
-            }
-        }
-        if (!found) {
-            PrintErrorOnStream("\nSpecified type not found, automatic cast to string! [%d]", token->GetLineNumber(), err);
-            typeIndex = 0u;
-        }
+        type = token->GetData();
         token = lexicalAnalyzer.GetToken();
     }
 
@@ -295,29 +143,18 @@ static bool ReadScalar(Token* &token,
                        LexicalAnalyzer &lexicalAnalyzer,
                        ConfigurationDatabase &database,
                        const char8 * const name,
-                       const uint32 typeIndex) {
+                       const char8 * const type) {
 
-    StaticListHolder *memory = static_cast<StaticListHolder *>(NULL);
-    bool ret = ToType(token->GetData(), typeIndex, 1u, memory);
+    AnyTypeCreator scalarCreator(1u);
+    bool ret = (scalarCreator.ToType(type, token->GetData()));
     if (ret) {
         AnyType element;
+        uint32 dimSizes[3] = { 1u, 1u, 1u };
         /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
-        SetType(typeIndex, memory->GetAllocatedMemory(), element, 0u);
+        scalarCreator.SetType(element, 0u, dimSizes);
         ret = database.Write(name, element);
         // read the new token
         token = lexicalAnalyzer.GetToken();
-    }
-    if (memory != NULL) {
-        // in this case delete the string on heap
-        if (memory->GetSize() > 0u) {
-            if (castTypes[typeIndex].typeDes == CharString) {
-                char8* stringElement = reinterpret_cast<char8 **>(memory->GetAllocatedMemory())[0];
-                if (!HeapManager::Free(reinterpret_cast<void* &>(stringElement))) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "ReadMatrix: Failed HeapManager::Free()");
-                }
-            }
-        }
-        delete memory;
     }
 
     return ret;
@@ -328,12 +165,12 @@ static bool ReadVector(Token* &token,
                        ConfigurationDatabase &database,
                        const char8 vectorCloseTerminal,
                        const char8 * const name,
-                       const uint32 typeIndex,
+                       const char8 * const type,
                        BufferedStreamI * const err) {
 
     uint32 tokenType = 0u;
 
-    StaticListHolder *memory = static_cast<StaticListHolder *>(NULL);
+    AnyTypeCreator vectorCreator(4u);
 
     bool ok = true;
     uint32 numberOfElements = 0u;
@@ -351,7 +188,7 @@ static bool ReadVector(Token* &token,
                 continueRead = false;
             }
             else {
-                if (!ToType(token->GetData(), typeIndex, 4u, memory)) {
+                if (!vectorCreator.ToType(type, token->GetData())) {
                     PrintErrorOnStream("\nFailed type conversion! [%d]", token->GetLineNumber(), err);
                     ok = false;
                 }
@@ -382,7 +219,7 @@ static bool ReadVector(Token* &token,
 
     // be sure that the vector is not empty!
     if (ok) {
-        if (memory == NULL) {
+        if (vectorCreator.GetSize() == 0u) {
             PrintErrorOnStream("\nEmpty vector! [%d]", token->GetLineNumber(), err);
             ok = false;
         }
@@ -390,24 +227,12 @@ static bool ReadVector(Token* &token,
     // serialize the element
     if (ok) {
         AnyType element;
+        uint32 dimSizes[3] = { numberOfElements, 1u, 1u };
         /*lint -e{613} . Justification: if (memory==NULL) ---> (ok==false) */
-        SetType(typeIndex, memory->GetAllocatedMemory(), element, static_cast<uint8>(1u));
-        element.SetNumberOfElements(0u, numberOfElements);
+        vectorCreator.SetType(element, 1u, dimSizes);
         ok = database.Write(name, element);
         // read the new token
         token = lexicalAnalyzer.GetToken();
-    }
-    if (memory != NULL) {
-        if (castTypes[typeIndex].typeDes == CharString) {
-            uint32 memorySize = memory->GetSize();
-            for (uint32 i = 0u; i < memorySize; i++) {
-                char8* elementToFree = reinterpret_cast<char8 **>(memory->GetAllocatedMemory())[i];
-                if (!HeapManager::Free(reinterpret_cast<void* &>(elementToFree))) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "ReadMatrix: Failed HeapManager::Free()");
-                }
-            }
-        }
-        delete memory;
     }
     return ok;
 }
@@ -419,12 +244,11 @@ static bool ReadMatrix(Token* &token,
                        const char8 vectorCloseTerminal,
                        const char8 matrixCloseTerminal,
                        const char8 * const name,
-                       const uint32 typeIndex,
+                       const char8* const type,
                        BufferedStreamI * const err) {
 
     uint32 tokenType = 0u;
-
-    StaticListHolder *memory = static_cast<StaticListHolder *>(NULL);
+    AnyTypeCreator matrixCreator(16u);
 
     bool ok = true;
     uint32 numberOfColumns = 0u;
@@ -461,8 +285,10 @@ static bool ReadMatrix(Token* &token,
         }
 
         if (status == READ) {
-            // take the type at the beginning
-            tokenType = token->GetId();
+            if (tokenType == 0u) {
+                // take the type at the beginning
+                tokenType = token->GetId();
+            }
             bool isString = (token->GetId() == STRING_TOKEN);
             bool isNumber = (token->GetId() == NUMBER_TOKEN);
             bool continueRead = (isString) || (isNumber);
@@ -474,7 +300,7 @@ static bool ReadMatrix(Token* &token,
                     continueRead = false;
                 }
                 else {
-                    if (!ToType(token->GetData(), typeIndex, 16u, memory)) {
+                    if (!matrixCreator.ToType(type, token->GetData())) {
                         PrintErrorOnStream("\nFailed type conversion! [%d]", token->GetLineNumber(), err);
                         ok = false;
                     }
@@ -523,7 +349,7 @@ static bool ReadMatrix(Token* &token,
 
     //be sure that the matrix is not empty!
     if (ok) {
-        if (memory == NULL) {
+        if (matrixCreator.GetSize() == 0u) {
             PrintErrorOnStream("\nEmpty matrix! [%d]", token->GetLineNumber(), err);
             ok = false;
         }
@@ -532,27 +358,13 @@ static bool ReadMatrix(Token* &token,
     // serialize the element
     if (ok) {
         AnyType element;
+        uint32 dimSizes[3] = { numberOfColumns, numberOfRows, 1u };
         /*lint -e{613} . Justification: if (memory==NULL) ---> (ok==false) */
-        SetType(typeIndex, memory->GetAllocatedMemory(), element, static_cast<uint8>(2u));
-        element.SetNumberOfElements(0u, numberOfColumns);
-        element.SetNumberOfElements(1u, numberOfRows);
+        matrixCreator.SetType(element, 2u, dimSizes);
         ok = database.Write(name, element);
 
         // read the new token
         token = lexicalAnalyzer.GetToken();
-    }
-
-    if (memory != NULL) {
-        uint32 memorySize = memory->GetSize();
-        if (castTypes[typeIndex].typeDes == CharString) {
-            for (uint32 i = 0u; i < memorySize; i++) {
-                char8* elementToFree = reinterpret_cast<char8 **>(memory->GetAllocatedMemory())[i];
-                if (!HeapManager::Free(reinterpret_cast<void* &>(elementToFree))) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "ReadMatrix: Failed HeapManager::Free()");
-                }
-            }
-        }
-        delete memory;
     }
     return ok;
 }
@@ -605,13 +417,12 @@ bool Parser::Parse(StreamI &stream,
     char8 genericTerminal = '\0';
     StreamString varName = "";
     StreamString nodeName = "";
+    // default is CString.
+    StreamString typeName = "string";
+
     // loop here
 
     Token *token = lexicalAnalyzer.GetToken();
-
-    //Index of types table
-    // default is CString. See castTypes on top
-    uint32 typeIndex = 0u;
 
     int32 totalBlockTerminals = 0;
 
@@ -716,7 +527,7 @@ bool Parser::Parse(StreamI &stream,
                 else if (genericTerminal == grammatic.openTypeCast) {
                     token = lexicalAnalyzer.GetToken();
                     // next has to be scalar or matrix
-                    if (SetTypeCast(token, lexicalAnalyzer, grammatic.closeTypeCast, typeIndex, err)) {
+                    if (SetTypeCast(token, lexicalAnalyzer, grammatic.closeTypeCast, typeName, err)) {
                         token = lexicalAnalyzer.GetToken();
                         status = RVALUE;
                     }
@@ -735,7 +546,7 @@ bool Parser::Parse(StreamI &stream,
         if (status == VARIABLE) {
             if ((genericTerminal == grammatic.openMatrix) || (genericTerminal == grammatic.openVector)) {
                 if (IsVector(token, genericTerminal, grammatic.openVector, grammatic.openMatrix)) {
-                    if (ReadVector(token, lexicalAnalyzer, database, grammatic.closeVector, varName.Buffer(), typeIndex, err)) {
+                    if (ReadVector(token, lexicalAnalyzer, database, grammatic.closeVector, varName.Buffer(), typeName.Buffer(), err)) {
                         if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
                             status = LVALUE;
                         }
@@ -751,7 +562,7 @@ bool Parser::Parse(StreamI &stream,
                 }
                 else {
                     if (ReadMatrix(token, lexicalAnalyzer, database, grammatic.openVector, grammatic.closeVector, grammatic.closeMatrix, varName.Buffer(),
-                                   typeIndex, err)) {
+                                   typeName.Buffer(), err)) {
                         if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
                             status = LVALUE;
                         }
@@ -768,7 +579,7 @@ bool Parser::Parse(StreamI &stream,
             }
             else {
                 // this is a scalar!!
-                if (ReadScalar(token, lexicalAnalyzer, database, varName.Buffer(), typeIndex)) {
+                if (ReadScalar(token, lexicalAnalyzer, database, varName.Buffer(), typeName.Buffer())) {
                     if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
                         status = LVALUE;
                     }
@@ -784,7 +595,7 @@ bool Parser::Parse(StreamI &stream,
             }
             genericTerminal = '\0';
             // reset the default type
-            typeIndex = 0u;
+            typeName = "string";
         }
     }
 

@@ -96,6 +96,9 @@ struct ParserGrammatic {
  */
 static const ParserGrammatic StandardGrammatic = { "\n\r\t, ", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0'};
 
+static const ParserGrammatic XMLGrammatic = { "\n\r\t, ", '<', '>', '<', '>', '/', '<', '>', '(', ')', '\0'};
+
+
 }
 
 /*---------------------------------------------------------------------------*/

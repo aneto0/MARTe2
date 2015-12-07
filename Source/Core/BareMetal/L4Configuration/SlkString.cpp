@@ -22,12 +22,12 @@ static char * Nonterminal_name[] ={"0"
 
 static char * Terminal_name[] ={"0"
 
-,"<"
 ,"STRING"
-,">"
-,"/"
+,"="
 ,"("
 ,")"
+,"{"
+,"}"
 ,"NUMBER"
 ,"END_OF_SLK_INPUT"
 };
@@ -39,40 +39,41 @@ static char * Action_name[] ={"0"
 ,"__AddLeaf"
 ,"__GetTypeCast"
 ,"__CreateNode"
-,"__BlockEnd"
 ,"__AddScalar"
-,"__EndRow"
+,"__EndVector"
+,"__EndMatrix"
+,"__BlockEnd"
 };
 
 static char * Production_name[] ={"0"
 
 ,"expression --> cdbFile __End"
 ,"cdbFile --> expressions expressions_*"
-,"expressions --> < __GetNodeName STRING > variables < / STRING > __AddLeaf"
-,"expressions --> < __GetNodeName STRING > ( STRING __GetTypeCast ) variables < / STRING > __AddLeaf"
-,"expressions --> < __CreateNode STRING > block < / STRING > __BlockEnd"
+,"expressions --> __GetNodeName STRING = variables __AddLeaf"
+,"expressions --> __GetNodeName STRING = ( __GetTypeCast STRING ) variables __AddLeaf"
+,"expressions --> __CreateNode STRING = block"
 ,"variables --> scalar"
 ,"variables --> vector"
 ,"variables --> matrix"
 ,"scalar --> __AddScalar token"
-,"vector --> < > scalar scalar_* < / >"
-,"matrix --> < > vector __EndRow vector_* < / >"
-,"block --> expressions expressions_2_*"
+,"vector --> { scalar scalar_* }"
+,"matrix --> { vector vector_* }"
+,"block --> { expressions expressions_2_* }"
 ,"token --> STRING"
 ,"token --> NUMBER"
 ,"expressions_* --> expressions expressions_*"
 ,"expressions_* -->"
 ,"scalar_* --> scalar scalar_*"
-,"scalar_* -->"
-,"vector_* --> vector __EndRow vector_*"
-,"vector_* -->"
+,"scalar_* --> __EndVector"
+,"vector_* --> vector vector_*"
+,"vector_* --> __EndMatrix"
 ,"expressions_2_* --> expressions expressions_2_*"
-,"expressions_2_* -->"
+,"expressions_2_* --> __BlockEnd"
 };
 
 #define START_SYMBOL 9
 #define START_ACTION 22
-#define END_ACTION 30
+#define END_ACTION 31
 #define GET_NONTERMINAL_NAME(symbol) (Nonterminal_name [symbol - 8])
 #define GET_TERMINAL_NAME(symbol) (Terminal_name [symbol])
 #define GET_ACTION_NAME(symbol) (Action_name [symbol-(START_ACTION-1)])

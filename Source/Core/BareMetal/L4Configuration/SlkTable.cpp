@@ -13,7 +13,8 @@ initialize_table ( void )
     Action [ 3 ] = &SlkAction::AddLeaf;
     Action [ 4 ] = &SlkAction::GetTypeCast;
     Action [ 5 ] = &SlkAction::CreateNode;
-    Action [ 6 ] = &SlkAction::BlockEnd;
-    Action [ 7 ] = &SlkAction::AddScalar;
-    Action [ 8 ] = &SlkAction::EndRow;
+    Action [ 6 ] = &SlkAction::AddScalar;
+    Action [ 7 ] = &SlkAction::EndVector;
+    Action [ 8 ] = &SlkAction::EndMatrix;
+    Action [ 9 ] = &SlkAction::BlockEnd;
 }

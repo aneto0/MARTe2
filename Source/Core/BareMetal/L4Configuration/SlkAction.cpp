@@ -82,15 +82,6 @@ using namespace MARTe;
 
 using namespace MARTe;
 
-struct TypeCastInfo {
-    TypeDescriptor typeDes;
-    const char8 *castName;
-};
-
-static const TypeCastInfo castTypes[] = { { CharString, "string" }, { SignedInteger8Bit, "int8" }, { SignedInteger16Bit, "int16" }, { SignedInteger32Bit,
-        "int32" }, { SignedInteger64Bit, "int64" }, { UnsignedInteger8Bit, "uint8" }, { UnsignedInteger16Bit, "uint16" }, { UnsignedInteger32Bit, "uint32" }, {
-        UnsignedInteger64Bit, "uint64" }, { Float32Bit, "float32" }, { Float64Bit, "float64" }, { CharString, static_cast<const char8*>(NULL) } };
-
 static void PrintErrorOnStream(const char8 * const format,
                                const uint32 lineNumber,
                                BufferedStreamI * const err) {
@@ -102,149 +93,30 @@ static void PrintErrorOnStream(const char8 * const format,
     }
 }
 
-static void SetType(const uint32 typeIndex,
-                    void * const dataPointer,
-                    AnyType &element,
-                    const uint8 nOfDimensions) {
-
-    if ((castTypes[typeIndex].typeDes.type == CCString) && (nOfDimensions == 0u)) {
-        element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), *static_cast<char8**>(dataPointer));
-    }
-    else {
-        element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), dataPointer);
-    }
-    element.SetNumberOfDimensions(nOfDimensions);
-}
-
-static bool ToType(const char8 * const tokenBuffer,
-                   const uint32 typeIndex,
-                   const uint32 granularity,
-                   StaticListHolder *&memory) {
-
-    bool ret = false;
-    if (castTypes[typeIndex].typeDes == CharString) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(char8 *)), granularity);
-        }
-        uint32 size = StringHelper::Length(tokenBuffer) + 1u;
-        char8 *cString = static_cast<char8 *>(HeapManager::Malloc(size));
-        if (StringHelper::Copy(cString, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&cString));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == SignedInteger8Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(int8)), granularity);
-        }
-        int8 possibleInt8 = 0;
-        if (TypeConvert(possibleInt8, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleInt8));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == SignedInteger16Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(int16)), granularity);
-        }
-        int16 possibleInt16 = 0;
-        if (TypeConvert(possibleInt16, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleInt16));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == SignedInteger32Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(int32)), granularity);
-        }
-        int32 possibleInt32 = 0;
-        if (TypeConvert(possibleInt32, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleInt32));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == SignedInteger64Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(int64)), granularity);
-        }
-        int64 possibleInt64 = 0;
-        if (TypeConvert(possibleInt64, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleInt64));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger8Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint8)), granularity);
-        }
-        uint8 possibleUInt8 = 0u;
-        if (TypeConvert(possibleUInt8, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt8));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger16Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint16)), granularity);
-        }
-        uint16 possibleUInt16 = 0u;
-        if (TypeConvert(possibleUInt16, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt16));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger32Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint32)), granularity);
-        }
-        uint32 possibleUInt32 = 0u;
-        if (TypeConvert(possibleUInt32, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt32));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger64Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(uint64)), granularity);
-        }
-        uint64 possibleUInt64 = 0u;
-        if (TypeConvert(possibleUInt64, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleUInt64));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == Float32Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(float32)), granularity);
-        }
-        float32 possibleFloat32 = 0.0F;
-        if (TypeConvert(possibleFloat32, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleFloat32));
-        }
-    }
-    if (castTypes[typeIndex].typeDes == Float64Bit) {
-        if (memory == NULL) {
-            memory = new StaticListHolder(static_cast<uint32>(sizeof(float64)), granularity);
-        }
-        float64 possibleFloat64 = 0.0;
-        if (TypeConvert(possibleFloat64, tokenBuffer)) {
-            ret = memory->Add(reinterpret_cast<void*>(&possibleFloat64));
-        }
-    }
-
-    if (!ret) {
-        delete memory;
-        memory = static_cast<StaticListHolder*>(NULL);
-    }
-
-    return ret;
-}
-
 SlkAction::SlkAction(StreamI &stream,
                      ConfigurationDatabase &databaseIn,
-                     const char8* terminals,
-                     const char8* separators,
-                     BufferedStreamI * const err) :
-        parseError(),
-        token(stream, terminals, separators) {
-    typeIndex = 0u;
+                     BufferedStreamI * const err,
+                     ParserGrammatic grammaticIn) :
+        parseError(err),
+        token(stream, &grammaticIn.assignment, grammaticIn.separators),
+        memory(1u) {
     numberOfColumns = 0u;
     firstNumberOfColumns = 0u;
     numberOfRows = 0u;
-    memory = static_cast<StaticListHolder*>(NULL);
     database = &databaseIn;
+    errorStream = err;
+    tokenType = 0u;
+    numberOfDimensions = 0u;
+    grammatic = grammaticIn;
     initialize_table();
+}
+
+SlkAction::~SlkAction() {
+
+}
+
+ParserGrammatic SlkAction::GetGrammatic() const {
+    return grammatic;
 }
 
 void SlkAction::predict(uint16 a) {
@@ -252,27 +124,16 @@ void SlkAction::predict(uint16 a) {
 }
 
 void SlkAction::GetTypeCast() {
-
-    typeIndex = 0u;
-    bool found = false;
-    if (token.get() == STRING_TOKEN) {
-        while ((castTypes[typeIndex].castName != NULL) && (!found)) {
-            if (StringHelper::Compare(token.GetTokenData(), castTypes[typeIndex].castName) == 0) {
-                found = true;
-            }
-            else {
-                typeIndex++;
-            }
-        }
-        if (!found) {
-            typeIndex = 0u;
-        }
-    }
+    printf("\nget type cast %s\n", token.GetTokenData());
+    typeName = token.GetTokenData();
 }
 
 void SlkAction::BlockEnd() {
     printf("\nEnd the block!\n");
-    database->MoveToAncestor(1u);
+    if (!database->MoveToAncestor(1u)) {
+        PrintErrorOnStream("\nFailed ConfigurationDatabase::MoveToAncestor(1)! [%d]", token.GetLineNumber(), errorStream);
+        parseError.SetError();
+    }
 }
 
 void SlkAction::CreateNode() {
@@ -283,50 +144,42 @@ void SlkAction::CreateNode() {
 
 void SlkAction::AddLeaf() {
     printf("\nAdding leaf... %s\n", nodeName.Buffer());
-    uint32 nDimensions = 0u;
-    // use numberOfRows and numberOfColumns as dimensions # elements
-    // a matrix!
-    if (numberOfRows > 0u) {
-        nDimensions = 2u;
-    }
-    // a vector!
-    else if (firstNumberOfColumns > 1u) {
-        numberOfColumns = firstNumberOfColumns;
+// use numberOfRows and numberOfColumns as dimensions # elements
+// a matrix!
+// a vector!
+    if (numberOfDimensions == 1u) {
+        //numberOfColumns = firstNumberOfColumns;
         numberOfRows = 1u;
-        nDimensions = 1u;
     }
-    // a scalar
-    else {
+// a scalar
+    if (numberOfDimensions == 0u) {
         numberOfRows = 1u;
         numberOfColumns = firstNumberOfColumns;
     }
 
-    printf("\nnDim=%d nRows=%d nCols=%d\n", nDimensions, numberOfRows, numberOfColumns);
     AnyType element;
+    printf("\n%d %d %d\n", numberOfColumns, numberOfRows, 1u);
+    uint32 dimSizes[3] = { numberOfColumns, numberOfRows, 1u };
     /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
-    printf("\n%s\n", *(const char8**)memory->GetAllocatedMemory());
-    SetType(typeIndex, memory->GetAllocatedMemory(), element, nDimensions);
-    element.SetNumberOfElements(0u, numberOfColumns);
-    element.SetNumberOfElements(1u, numberOfRows);
-    bool ret = database->Write(nodeName.Buffer(), element);
-
-    typeIndex = 0u;
+    bool ret = memory.SetType(element, numberOfDimensions, dimSizes);
+    if (ret) {
+        ret = database->Write(nodeName.Buffer(), element);
+        if (!ret) {
+            PrintErrorOnStream("\nFailed adding a leaf to the configuration database! [%d]", token.GetLineNumber(), errorStream);
+            parseError.SetError();
+        }
+    }
+    else {
+        PrintErrorOnStream("\nPossible empty vector or matrix! [%d]", token.GetLineNumber(), errorStream);
+        parseError.SetError();
+    }
+    typeName = defaultTypeName;
     numberOfColumns = 0u;
     firstNumberOfColumns = 0u;
     numberOfRows = 0u;
-    if (memory != NULL) {
-        if (castTypes[typeIndex].typeDes == CharString) {
-            uint32 nElements = memory->GetSize();
-            for (uint32 i = 0u; i < nElements; i++) {
-                char8 * elementToFree = static_cast<char8 **>(memory->GetAllocatedMemory())[i];
-                if (!HeapManager::Free(reinterpret_cast<void*&>(elementToFree))) {
-                    //  TODO
-                }
-            }
-        }
-        delete memory;
-        memory = static_cast<StaticListHolder*>(NULL);
-    }
+    tokenType = 0u;
+    numberOfDimensions = 0u;
+    memory.CleanUp(1u);
 }
 
 void SlkAction::GetNodeName() {
@@ -335,63 +188,94 @@ void SlkAction::GetNodeName() {
 }
 
 void SlkAction::AddScalar() {
-    printf("\nAdding a scalar %s\n",token.GetTokenData());
-    bool ret = ToType(token.GetTokenData(), typeIndex, 1u, memory);
+    printf("\nAdding a scalar %s\n", token.GetTokenData());
+    if (tokenType == 0u) {
+        tokenType = token.GetTokenId();
+    }
 
-    if (ret) {
-        firstNumberOfColumns++;
+    if (tokenType == token.GetTokenId()) {
+        bool ret = memory.ToType(typeName.Buffer(), token.GetTokenData());
+
+        if (ret) {
+            firstNumberOfColumns++;
+        }
+        else {
+            PrintErrorOnStream("\nFailed read or conversion! [%d]", token.GetLineNumber(), errorStream);
+            parseError.SetError();
+        }
     }
     else {
-        printf("\nAdd scalar error!\n");
+        PrintErrorOnStream("\nCannot mix different types in a vector or matrix! [%d]", token.GetLineNumber(), errorStream);
         parseError.SetError();
-    }
 
+    }
 }
 
 void SlkAction::CreateClassLeaf() {
     printf("\nAdd The class name!\n");
-    // Aggiungi un elemento alla memoria
-    bool ret = ToType(token.GetTokenData(), 0u, 1u, memory);
+// Aggiungi un elemento alla memoria
+    bool ret = memory.ToType(typeName.Buffer(), token.GetTokenData());
     if (ret) {
         AnyType element;
+        uint32 dimSizes[3] = { 1u, 1u, 1u };
         /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
-        SetType(typeIndex, memory->GetAllocatedMemory(), element, 0u);
-        ret = database->Write("ClassName", element);
-    }
-    if (memory != NULL) {
-        char8 * elementToFree = static_cast<char8 **>(memory->GetAllocatedMemory())[0];
-        if (!HeapManager::Free(reinterpret_cast<void*&>(elementToFree))) {
-            //  TODO
+        ret = memory.SetType(element, 0u, dimSizes);
+        if (ret) {
+            ret = database->Write("ClassName", element);
+            if(!ret){
+                PrintErrorOnStream("\nFailed adding the class name leaf to the configuration database! [%d]", token.GetLineNumber(), errorStream);
+                parseError.SetError();
+            }
         }
-        delete memory;
-        memory = static_cast<StaticListHolder*>(NULL);
+        else{
+            PrintErrorOnStream("\nPossible empty vector or matrix! [%d]", token.GetLineNumber(), errorStream);
+            parseError.SetError();
+        }
     }
+    else {
+        PrintErrorOnStream("\nFailed read or conversion! [%d]", token.GetLineNumber(), errorStream);
+        parseError.SetError();
+    }
+
+    memory.CleanUp(1u);
 }
 
-void SlkAction::EndRow() {
+void SlkAction::EndVector() {
     printf("\nEnd Row\n");
     if (numberOfColumns == 0u) {
         numberOfColumns = firstNumberOfColumns;
     }
     else {
         if (numberOfColumns != firstNumberOfColumns) {
-            // TODO malformed matrix
+            PrintErrorOnStream("\nIncorrect matrix format! [%d]", token.GetLineNumber(), errorStream);
             parseError.SetError();
         }
     }
     firstNumberOfColumns = 0u;
     numberOfRows++;
+    if (numberOfDimensions == 0u) {
+        numberOfDimensions = 1u;
+    }
+}
+
+void SlkAction::EndMatrix() {
+    numberOfDimensions = 2u;
 }
 
 void SlkAction::End() {
-    database->MoveToRoot();
+    if (!database->MoveToRoot()) {
+        PrintErrorOnStream("\nFailed ConfigurationDatabase::MoveToRoot() at the end! [%d]", token.GetLineNumber(), errorStream);
+        parseError.SetError();
+    }
 }
 
-void SlkAction::Parse() {
+bool SlkAction::Parse() {
+    typeName = defaultTypeName;
 
-    while (!parseError.IsError()) {
+    while ((!parseError.IsError()) && (!parseError.IsEOF())) {
         SlkParse(*this, token, parseError, 0u);
     }
 
+    return !parseError.IsError();
 }
 

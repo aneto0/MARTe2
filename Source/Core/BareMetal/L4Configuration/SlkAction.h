@@ -35,6 +35,8 @@
 #include "SlkToken.h"
 #include "StaticListHolder.h"
 #include "ConfigurationDatabase.h"
+#include "StreamString.h"
+#include "AnyTypeCreator.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -47,56 +49,65 @@ class SlkAction {
 
     SlkAction(StreamI &stream,
               ConfigurationDatabase &databaseIn,
-              const char8* terminals,
-              const char8* separators,
-              BufferedStreamI * const err);
+              BufferedStreamI * const err = NULL,
+              ParserGrammatic grammaticIn = StandardGrammatic);
 
-    void Parse();
+              ~SlkAction();
 
-    void predict(uint16 a);
+              bool Parse();
 
-private:
-/*
-    void GetTypeCast();
+              ParserGrammatic GetGrammatic() const;
 
-    void BlockEnd();
+              void predict(uint16 a);
 
-    void CreateNode();
+          private:
+              /*
+               void GetTypeCast();
 
-    void AddLeaf();
+               void BlockEnd();
 
-    void GetNodeName();
+               void CreateNode();
 
-    void AddScalar();
+               void AddLeaf();
 
-    void EndRow();
-*/
-    void CreateClassLeaf();
+               void GetNodeName();
 
-    uint32 typeIndex;
+               void AddScalar();
 
-    StreamString nodeName;
+               void EndRow();
+               */
+              void CreateClassLeaf();
 
-    ConfigurationDatabase *database;
+              StreamString typeName;
 
-    SlkError parseError;
+              StreamString nodeName;
 
-    SlkToken token;
+              ConfigurationDatabase *database;
 
-    uint32 numberOfColumns;
+              SlkError parseError;
 
-    uint32 firstNumberOfColumns;
+              SlkToken token;
 
-    uint32 numberOfRows;
+              uint32 numberOfColumns;
 
-    StaticListHolder* memory;
+              uint32 firstNumberOfColumns;
 
-};
+              uint32 numberOfRows;
 
+              AnyTypeCreator memory;
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+              BufferedStreamI *errorStream;
+
+              uint32 tokenType;
+
+              uint32 numberOfDimensions;
+
+              ParserGrammatic grammatic;
+          };
+
+          /*---------------------------------------------------------------------------*/
+          /*                        Inline method definitions                          */
+          /*---------------------------------------------------------------------------*/
 
 #endif /* SLKACTION_H_ */
 

@@ -14,12 +14,12 @@ typedef struct _Slk_terminal {
 } Slk_terminal_t;
 
 static Slk_terminal_t Slk_terminal [] = { 
- { LESS_, "<" } 
-,{ STRING_, "STRING" } 
-,{ GREATER_, ">" } 
-,{ SLASH_, "/" } 
+ { STRING_, "STRING" } 
+,{ EQUAL_, "=" } 
 ,{ LPAREN_, "(" } 
 ,{ RPAREN_, ")" } 
+,{ LBRACE_, "{" } 
+,{ RBRACE_, "}" } 
 ,{ NUMBER_, "NUMBER" } 
 ,{ END_OF_SLK_INPUT_, "END_OF_SLK_INPUT" } 
 ,{ 0, NULL } 

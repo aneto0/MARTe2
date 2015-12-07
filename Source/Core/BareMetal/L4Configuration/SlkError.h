@@ -31,30 +31,31 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "GeneralDefinitions.h"
+#include "BufferedStreamI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
 
-class SlkError{
+class SlkError {
 
 public:
 
-    SlkError();
+    SlkError(BufferedStreamI* err = NULL);
 
-    uint16 no_entry(uint16 expectedId,
-                    uint16 tokenId,
-                        int32 level);
+    uint16 no_entry(uint16 symbol,
+            uint16 token,
+            int32 level);
 
-    uint16 mismatch(uint16 expectedId,
-                    uint16 tokenId);
+    uint16 mismatch(uint16 symbol,
+            uint16 token);
 
     void input_left();
 
-
     bool IsError() const;
+
+    bool IsEOF() const;
 
 
     void SetError();
@@ -62,8 +63,11 @@ private:
 
     bool isError;
 
-};
+    bool isEOF;
 
+    BufferedStreamI *errorStream;
+
+};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

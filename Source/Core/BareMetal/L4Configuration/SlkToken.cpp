@@ -92,7 +92,7 @@ uint16 SlkToken::peek(uint16 position) {
             ret = i;
         }
     }
-    printf("\npeek position = %d %s\n", position, tok->GetData());
+    //printf("\npeek position = %d %s\n", position, tok->GetData());
 
     return ret;
 }
@@ -101,3 +101,10 @@ const char8 *SlkToken::GetTokenData() {
     return tokenData.Buffer();
 }
 
+uint32 SlkToken::GetLineNumber() const {
+    return tokenLineNumber;
+}
+
+uint16 SlkToken::GetTokenId() const {
+    return tokenId;
+}

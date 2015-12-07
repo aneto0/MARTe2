@@ -30,10 +30,21 @@
 /*---------------------------------------------------------------------------*/
 #include "SlkError.h"
 #include "SlkConstants.h"
+#include "BufferedStreamI.h"
 #include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
+static void PrintOnStream(const char8 * const message,
+                          BufferedStreamI* err) {
+    if (err != NULL) {
+        if (!err->Printf("%s", message)) {
+            REPORT_ERROR(ErrorManagement::FatalError, "PrintErrorOnStream: Failed Printf() on error stream");
+        }
+        REPORT_ERROR(ErrorManagement::FatalError, message);
+    }
+}
 
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
@@ -41,34 +52,46 @@
 
 using namespace MARTe;
 
-SlkError::SlkError() {
+SlkError::SlkError(BufferedStreamI* err) {
+    errorStream = err;
     isError = false;
+    isEOF = false;
 }
 
-uint16 SlkError::no_entry(uint16 a,
-                          uint16 b,
+uint16 SlkError::no_entry(uint16 symbol,
+                          uint16 token,
                           int32 level) {
-    printf("\nNo entry!\n");
-    isError = true;
+    // if it is not EOF!
+    if (token != 0u) {
+        PrintOnStream("\nInvalid Token!", errorStream);
+        isError = true;
+    }
+    else {
+        isEOF = true;
+    }
     return END_OF_SLK_INPUT_;
 }
 
-uint16 SlkError::mismatch(uint16 a,
-                          uint16 b) {
-    printf("\nmismatch!\n");
+uint16 SlkError::mismatch(uint16 symbol,
+                          uint16 token) {
+    PrintOnStream("\nInvalid Expression!", errorStream);
     isError = true;
     return END_OF_SLK_INPUT_;
 }
 
 void SlkError::input_left() {
-    printf("\ninput left!\n");
+    isError = true;
+    PrintOnStream("\nEOF found with tokens on internal parser stack!", errorStream);
 }
 
 bool SlkError::IsError() const {
     return isError;
 }
 
+bool SlkError::IsEOF() const {
+    return isEOF;
+}
+
 void SlkError::SetError() {
-    printf("\nmanual error set!\n");
     isError = true;
 }

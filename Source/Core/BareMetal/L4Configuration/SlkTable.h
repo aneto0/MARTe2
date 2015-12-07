@@ -11,11 +11,12 @@ void    GetNodeName ( void );
 void    AddLeaf ( void );
 void    GetTypeCast ( void );
 void    CreateNode ( void );
-void    BlockEnd ( void );
 void    AddScalar ( void );
-void    EndRow ( void );
+void    EndVector ( void );
+void    EndMatrix ( void );
+void    BlockEnd ( void );
 
-void    ( SlkAction::*Action [ 9 ] ) ( void );
+void    ( SlkAction::*Action [ 10 ] ) ( void );
 
 void    initialize_table ( void );
 void

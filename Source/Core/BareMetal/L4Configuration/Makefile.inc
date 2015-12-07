@@ -25,6 +25,7 @@
 #############################################################
 
 OBJSX=	AnyObject.x \
+		AnyTypeCreator.x \
 		ConfigurationDatabase.x\
 		FloatToInteger.x \
 		IntegerToFloat.x \
