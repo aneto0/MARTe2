@@ -5,12 +5,12 @@
 #define _SlkCONSTANTS_H
 
 enum _Slk_token_defines { 
-  STRING_ = 1 
-, EQUAL_ = 2 
-, LPAREN_ = 3 
-, RPAREN_ = 4 
-, LBRACE_ = 5 
-, RBRACE_ = 6 
+  LESS_ = 1 
+, STRING_ = 2 
+, GREATER_ = 3 
+, SLASH_ = 4 
+, LPAREN_ = 5 
+, RPAREN_ = 6 
 , NUMBER_ = 7 
 , END_OF_SLK_INPUT_ = 8 
 }; 
