@@ -37,16 +37,31 @@
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
+/**
+ * @brief Tests all the LexicalAnalyzer functions
+ */
 class LexicalAnalyzerTest {
 
 public:
 
+    /**
+     * @brief Tests that the constructor correctly sets the tokens.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests the GetToken function by tokenising a multi-line string containing all the known terminals.
+     */
     bool TestGetToken();
 
+    /**
+     * @brief Tests the PeekToken function by tokenising a multi-line string containing all the known terminals.
+     */
     bool TestPeekToken();
 
+    /**
+     * @brief Tests that the GetToken correctly handles the escape characters.
+     */
     bool TestEscape();
 };
 
