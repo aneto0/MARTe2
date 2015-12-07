@@ -40,7 +40,7 @@
 namespace MARTe {
 
 /**
- * @brief An object providing informations about a Token.
+ * @brief A Token wrapper described by an identifier and a value (description).
  */
 class TokenInfo {
 

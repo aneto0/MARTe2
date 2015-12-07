@@ -449,7 +449,8 @@ bool ParserTest::TestStandardCast() {
 bool ParserTest::TestExistentFile() {
     BasicFile configurationFile;
     if (!configurationFile.Open("MARTe-WaterTank.cfg", BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
-        printf("\nError! The file is not opened!\n");
+        printf("\nError! Could not open file MARTe-WaterTank.cfg!\n");
+        return false;
     }
 
     configurationFile.Seek(0);
