@@ -139,7 +139,8 @@ static void SetType(const uint32 typeIndex,
 
 
 /**
- * @brief Checks that the total number of block terminals it is not negative after reading a variable and for each close block terminal,
+ * @brief Checks that the total number of block terminals is not negative after reading a variable.
+ * If the block is successfully closed, moves the database to the parent node.
  * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
  * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
  * @param[in] closedBlockTerminal is the close block terminal character.
