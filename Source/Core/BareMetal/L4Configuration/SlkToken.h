@@ -40,12 +40,14 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
+namespace MARTe {
 
-class SlkToken{
+class SlkToken {
 
 public:
-    SlkToken(StreamI &stream, const char8 *terminals, const char8 *separators);
+    SlkToken(StreamI &stream,
+             const char8 *terminals,
+             const char8 *separators);
 
     uint16 get();
 
@@ -67,7 +69,7 @@ private:
     LexicalAnalyzer lexicalAnalyzer;
 };
 
-
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

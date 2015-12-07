@@ -39,7 +39,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-using namespace MARTe;
 
 /**
  * @file Parser.cpp
@@ -80,7 +79,7 @@ using namespace MARTe;
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
+namespace MARTe {
 
 static void PrintErrorOnStream(const char8 * const format,
                                const uint32 lineNumber,
@@ -222,12 +221,12 @@ void SlkAction::CreateClassLeaf() {
         ret = memory.SetType(element, 0u, dimSizes);
         if (ret) {
             ret = database->Write("ClassName", element);
-            if(!ret){
+            if (!ret) {
                 PrintErrorOnStream("\nFailed adding the class name leaf to the configuration database! [%d]", token.GetLineNumber(), errorStream);
                 parseError.SetError();
             }
         }
-        else{
+        else {
             PrintErrorOnStream("\nPossible empty vector or matrix! [%d]", token.GetLineNumber(), errorStream);
             parseError.SetError();
         }
@@ -278,4 +277,4 @@ bool SlkAction::Parse() {
 
     return !parseError.IsError();
 }
-
+}

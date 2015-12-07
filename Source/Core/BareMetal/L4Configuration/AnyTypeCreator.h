@@ -1,7 +1,7 @@
 /**
- * @file SlkError.h
- * @brief Header file for class SlkError
- * @date 04/12/2015
+ * @file AnyTypeCreator.h
+ * @brief Header file for class AnyTypeCreator
+ * @date 07/12/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SlkError
+ * @details This header file contains the declaration of the class AnyTypeCreator
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SLKERROR_H_
-#define SLKERROR_H_
+#ifndef ANYTYPECREATOR_H_
+#define ANYTYPECREATOR_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -31,48 +31,48 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "BufferedStreamI.h"
+
+#include "StaticListHolder.h"
+#include "AnyType.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
-class SlkError {
+class AnyTypeCreator {
 
 public:
 
-    SlkError(BufferedStreamI* err = NULL);
+    AnyTypeCreator(uint32 granularityIn = 1u);
 
-    uint16 no_entry(uint16 symbol,
-            uint16 token,
-            int32 level);
+    bool SetType(AnyType &element,
+                 const uint8 nOfDimensions,
+                 const uint32 dimensionSize[3]);
 
-    uint16 mismatch(uint16 symbol,
-            uint16 token);
+    bool ToType(const char8 * const type,
+                const char8 * const data);
 
-    void input_left();
+    ~AnyTypeCreator();
 
-    bool IsError() const;
+    void CleanUp(uint32 granularityIn);
 
-    bool IsEOF() const;
+    uint32 GetSize();
 
-
-    void SetError();
 private:
-
-    bool isError;
-
-    bool isEOF;
-
-    BufferedStreamI *errorStream;
+    StaticListHolder *memory;
+    uint32 granularity;
+    uint32 typeIndex;
 
 };
+
+const char8 * const defaultTypeName = "string";
+
 }
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SLKERROR_H_ */
+#endif /* ANYTYPECREATOR_H_ */
 

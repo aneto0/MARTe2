@@ -3,6 +3,8 @@
 
 #include "SlkAction.h"
 
+namespace MARTe {
+
 void
 SlkAction ::
 initialize_table ( void )
@@ -17,4 +19,7 @@ initialize_table ( void )
     Action [ 7 ] = &SlkAction::EndVector;
     Action [ 8 ] = &SlkAction::EndMatrix;
     Action [ 9 ] = &SlkAction::BlockEnd;
+}
+
+
 }

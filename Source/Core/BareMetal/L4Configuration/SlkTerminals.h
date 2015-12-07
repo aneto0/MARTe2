@@ -6,6 +6,8 @@
 #ifndef _SlkTERMINALS_H
 #define _SlkTERMINALS_H
 
+namespace MARTe {
+
 #include "SlkConstants.h" 
 
 typedef struct _Slk_terminal { 
@@ -25,5 +27,8 @@ static Slk_terminal_t Slk_terminal [] = {
 ,{ 0, NULL } 
 }; 
 
+
+
+}
 
 #endif

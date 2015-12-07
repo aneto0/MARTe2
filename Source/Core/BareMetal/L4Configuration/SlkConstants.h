@@ -4,6 +4,8 @@
 #ifndef _SlkCONSTANTS_H
 #define _SlkCONSTANTS_H
 
+namespace MARTe {
+
 enum _Slk_token_defines { 
   STRING_ = 1 
 , EQUAL_ = 2 
@@ -45,5 +47,8 @@ int SlkIsNonterminal ( slk_size_t symbol );
 int SlkIsTerminal ( slk_size_t symbol );
 int SlkIsAction ( slk_size_t symbol );
 
+
+
+}
 
 #endif

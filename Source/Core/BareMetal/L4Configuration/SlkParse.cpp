@@ -3,6 +3,8 @@
 
 #include "SlkParse.h"
 
+namespace MARTe {
+
 static slk_size_t Production[] = {0
 
 ,3,9,10,22 ,3,10,11,18 ,6,11,23,1,2,12,24 ,10,11,23,1,2,3,25,1,4,12,24 
@@ -208,3 +210,6 @@ void SlkParse ( SlkAction  &action,
  }
 }
 
+
+
+}

@@ -35,6 +35,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+namespace MARTe{
 
 static void PrintOnStream(const char8 * const message,
                           BufferedStreamI* err) {
@@ -50,7 +51,6 @@ static void PrintOnStream(const char8 * const message,
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
 
 SlkError::SlkError(BufferedStreamI* err) {
     errorStream = err;
@@ -94,4 +94,6 @@ bool SlkError::IsEOF() const {
 
 void SlkError::SetError() {
     isError = true;
+}
+
 }
