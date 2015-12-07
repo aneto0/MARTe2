@@ -38,7 +38,6 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 namespace MARTe {
 
 struct TypeCastInfo {
@@ -51,7 +50,12 @@ static const TypeCastInfo castTypes[] = { { CharString, "string" }, { SignedInte
         UnsignedInteger64Bit, "uint64" }, { Float32Bit, "float32" }, { Float64Bit, "float64" }, { CharString, static_cast<const char8*>(NULL) } };
 
 
-
+/**
+ * @brief Prints the specified error on the error stream.
+ * @param[in] format is the printf-like format of the error message.
+ * @param[in] lineNumber is the token line number where the error happened.
+ * @param[in] err is the stream where the error message is printed to.
+ */
 static void PrintErrorOnStream(const char8 * const format,
                                const uint32 lineNumber,
                                BufferedStreamI * const err) {
@@ -63,6 +67,16 @@ static void PrintErrorOnStream(const char8 * const format,
     }
 }
 
+
+
+/**
+ * @brief Determines if the next expression is an l-value.
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in] assignmentTerminator is the assign operator terminal.
+ * @param[in] varName is the name of the l-value if found.
+ * @return true if the next expression is an l-value, false otherwise.
+ */
 static bool IsLValue(Token* &token,
                      LexicalAnalyzer &lexicalAnalyzer,
                      const char8 assignmentTerminator,
@@ -102,6 +116,13 @@ static bool IsLValue(Token* &token,
     return ret;
 }
 
+/**
+ * @brief Sets the type of the element which will be saved in the database after a read operation.
+ * @param[in] typeIndex is the type identifier.
+ * @param[in] dataPointer is a pointer to the element memory.
+ * @param[out] element is the built AnyType in output ready to be saved on the database.
+ * @param[in] nOfDimensions specifies if the element is a scalar, a vector or a matrix.
+ */
 static void SetType(const uint32 typeIndex,
                     void * const dataPointer,
                     AnyType &element,
@@ -116,6 +137,15 @@ static void SetType(const uint32 typeIndex,
     element.SetNumberOfDimensions(nOfDimensions);
 }
 
+
+/**
+ * @brief Checks that the total number of block terminals it is not negative after reading a variable and for each close block terminal,
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in] closedBlockTerminal is the close block terminal character.
+ * @param[in, out] totalNumberBlockTerminals is the total number of block terminals.
+ * @return false if the totalNumberBlockTerminals becomes negative.
+ */
 static bool CheckCloseBlock(Token* &token,
                             LexicalAnalyzer &lexicalAnalyzer,
                             StructuredDataI &database,
@@ -137,6 +167,14 @@ static bool CheckCloseBlock(Token* &token,
     return ok;
 }
 
+
+/**
+ * @brief Converts the token data to the specified type.
+ * @param[in] tokenBuffer is the token data.
+ * @param[in] granularity is the desired granularity for the memory list.
+ * @param[out] memory is a pointer to the allocated memory.
+ * return true if the conversion succeeds, false otherwise.
+ */
 static bool ToType(const char8 * const tokenBuffer,
                    const uint32 typeIndex,
                    const uint32 granularity,
@@ -252,11 +290,21 @@ static bool ToType(const char8 * const tokenBuffer,
     return ret;
 }
 
+
+/**
+ * @brief Reading the type cast string, returns the type identifier for the token storing.
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in] terminalCloseTypeCast is the close terminal character of the type cast expression.
+ * @param[out] typeIndex is the type identifier.
+ * @param[out] err is the stream to print eventual error messages.
+ * @return true if the type cast expression is read correctly, false otherwise.
+ */
 static bool SetTypeCast(Token* &token,
-                 LexicalAnalyzer &lexicalAnalyzer,
-                 const char8 terminalCloseTypeCast,
-                 uint32 &typeIndex,
-                 BufferedStreamI * const err) {
+                        LexicalAnalyzer &lexicalAnalyzer,
+                        const char8 terminalCloseTypeCast,
+                        uint32 &typeIndex,
+                        BufferedStreamI * const err) {
 
     typeIndex = 0u;
     bool found = false;
@@ -292,6 +340,15 @@ static bool SetTypeCast(Token* &token,
 
 }
 
+/**
+ * @brief Reads a scalar.
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in, out] database is the ConfigurationDatabase where the scalar will be stored.
+ * @param[in] name is the name of the vector variable.
+ * @param[in] typeIndex represents the type the token will be converted to.
+ * @return true if the scalar variable expression is read correctly, false otherwise.
+ */
 static bool ReadScalar(Token* &token,
                        LexicalAnalyzer &lexicalAnalyzer,
                        StructuredDataI &database,
@@ -324,6 +381,18 @@ static bool ReadScalar(Token* &token,
     return ret;
 }
 
+
+/**
+ * @brief Reads a vector.
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in, out] database is the ConfigurationDatabase where the vector will be stored.
+ * @param[in] vectorCloseTerminal is the close vector terminal character.
+ * @param[in] name is the name of the vector variable.
+ * @param[in] typeIndex represents the type the token will be converted to.
+ * @param[out] err is the stream used to print eventual error messages.
+ * @return true if the vector variable expression is read correctly, false otherwise.
+ */
 static bool ReadVector(Token* &token,
                        LexicalAnalyzer &lexicalAnalyzer,
                        StructuredDataI &database,
@@ -413,6 +482,19 @@ static bool ReadVector(Token* &token,
     return ok;
 }
 
+/**
+ * @brief Reads a matrix.
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in, out] database is the ConfigurationDatabase where the matrix will be stored.
+ * @param[in] vectorOpenTerminal is the open vector terminal character.
+ * @param[in] vectorCloseTerminal is the close vector terminal character.
+ * @param[in] matrixOpenTerminal is the close matrix terminal character.
+ * @param[in] name is the name of the matrix variable.
+ * @param[in] typeIndex represents the type the token will be converted to.
+ * @param[out] err is the stream used to print eventual error messages.
+ * @return true if the matrix variable expression is read correctly, false otherwise.
+ */
 static bool ReadMatrix(Token* &token,
                        LexicalAnalyzer &lexicalAnalyzer,
                        StructuredDataI &database,
@@ -558,6 +640,14 @@ static bool ReadMatrix(Token* &token,
     return ok;
 }
 
+/**
+ * @brief Determines if the next variable is a matrix or a vector.
+ * @param[in] token is the token to be checked.
+ * @param[in] terminal is the previous token found (an open vector terminal or open matrix terminal).
+ * @param[in] vectorOpenTerminal is the open vector terminal character.
+ * @param[in] vectorOpenTerminal is the open matrix terminal character.
+ * @return true if a vector variable is matched, false if it is a matrix.
+ */
 static bool IsVector(Token * const &token,
                      const char8 terminal,
                      const char8 vectorOpenTerminal,
@@ -751,8 +841,8 @@ bool Parser::Parse(StreamI &stream,
                     }
                 }
                 else {
-                    if (ReadMatrix(token, lexicalAnalyzer, database, grammar.openVector, grammar.closeVector, grammar.closeMatrix, varName.Buffer(),
-                                   typeIndex, err)) {
+                    if (ReadMatrix(token, lexicalAnalyzer, database, grammar.openVector, grammar.closeVector, grammar.closeMatrix, varName.Buffer(), typeIndex,
+                                   err)) {
                         if (CheckCloseBlock(token, lexicalAnalyzer, database, grammar.closeBlock, totalBlockTerminals)) {
                             status = LVALUE;
                         }

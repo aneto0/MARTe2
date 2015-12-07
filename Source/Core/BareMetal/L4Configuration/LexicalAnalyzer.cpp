@@ -43,6 +43,7 @@ namespace MARTe {
  * @brief Gets the next character from the stream.
  * @param[in] stream is the stream to be read.
  * @param[out] c is the read character.
+ * @return false if EOF, true otherwise.
  */
 static bool GetC(StreamI &stream,
                  char8 &c) {
@@ -108,6 +109,7 @@ static void ReadCommentMultipleLines(StreamI &stream,
  * @param[in] separators is the separator characters list.
  * @param[in] terminals is the terminal characters list.
  * @param[out] separator returns the separator char found at the end of the comment.
+ * @return false if EOF, true otherwise.
  */
 static bool SkipComment(StreamI &stream,
                         StreamString& tokenString,
@@ -192,6 +194,7 @@ static bool SkipComment(StreamI &stream,
 /**
  * @brief Builds the escape character in case when '\' is read.
  * @param[out] c is the character in output.
+ * @return true if the character in input matches a known escape sequence, false otherwise.
  */
 bool EscapeChar(char8 &c) {
     bool ret = true;
