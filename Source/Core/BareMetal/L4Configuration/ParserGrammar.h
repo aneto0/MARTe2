@@ -1,6 +1,6 @@
 /**
- * @file ParserGrammatic.h
- * @brief Header file for class ParserGrammatic
+ * @file ParserGrammar.h
+ * @brief Header file for class ParserGrammar
  * @date 27/11/2015
  * @author Giuseppe Ferrò
  *
@@ -16,13 +16,13 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ParserGrammatic
+ * @details This header file contains the declaration of the class ParserGrammar
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef PARSERGRAMMATIC_H_
-#define PARSERGRAMMATIC_H_
+#ifndef PARSERGRAMMAR_H_
+#define PARSERGRAMMAR_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
@@ -41,16 +41,16 @@ namespace MARTe {
 /**
  * @brief Contains the terminal and separator characters used by Parser and LexicalAnalyzer.
  * @details
- *   In order to specify a valid grammatic for the implemented parser, all the characters must be !='\0'
+ *   In order to specify a valid grammar for the implemented parser, all the characters must be !='\0'
  *   and the \a openTypeCast character must be different from the other open terminals.
  */
-struct ParserGrammatic {
+struct ParserGrammar {
     /**
      * List of separator characters.
      */
     const char8 *separators;
     /**
-     *Aassignment operator
+     * Assignment operator
      */
     char8 assignment;
     /**
@@ -92,9 +92,9 @@ struct ParserGrammatic {
 };
 
 /**
- * The most used terminal and separator characters in MARTe configuration streams.
+ * The terminal and separator characters in standard MARTe configuration streams.
  */
-static const ParserGrammatic StandardGrammatic = { "\n\r\t, ", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0'};
+static const ParserGrammar StandardGrammar = { "\n\r\t, ", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0'};
 
 }
 
@@ -102,5 +102,5 @@ static const ParserGrammatic StandardGrammatic = { "\n\r\t, ", '=', '{', '}', '{
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* PARSERGRAMMATIC_H_ */
+#endif /* PARSERGRAMMAR_H_ */
 

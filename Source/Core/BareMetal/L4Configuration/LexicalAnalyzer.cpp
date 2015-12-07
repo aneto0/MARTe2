@@ -28,11 +28,11 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#define DLL_API
+#include "ErrorManagement.h"
 #include "LexicalAnalyzer.h"
 #include "StreamString.h"
 #include "TypeConversion.h"
-#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/

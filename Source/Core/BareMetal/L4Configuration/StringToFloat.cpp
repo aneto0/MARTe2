@@ -29,11 +29,11 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
-#include "FormatDescriptor.h"
-#include "IOBuffer.h"
 #include "BitSetToInteger.h"
 #include "ErrorManagement.h"
+#include "FormatDescriptor.h"
+#include "GeneralDefinitions.h"
+#include "IOBuffer.h"
 #include "TypeConversion.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
