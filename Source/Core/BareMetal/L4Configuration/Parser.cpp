@@ -28,11 +28,12 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+#define DLL_API
 
+#include "AdvancedErrorManagement.h"
 #include "Parser.h"
 #include "StaticListHolder.h"
 #include "TypeConversion.h"
-#include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -62,7 +63,7 @@ static void PrintErrorOnStream(const char8 * const format,
     }
 }
 
-static bool isLValue(Token* &token,
+static bool IsLValue(Token* &token,
                      LexicalAnalyzer &lexicalAnalyzer,
                      const char8 assignmentTerminator,
                      StreamString &varName) {
@@ -117,7 +118,7 @@ static void SetType(const uint32 typeIndex,
 
 static bool CheckCloseBlock(Token* &token,
                             LexicalAnalyzer &lexicalAnalyzer,
-                            ConfigurationDatabase &database,
+                            StructuredDataI &database,
                             const char8 closedBlockTerminal,
                             int32 &totalNumberBlockTerminals) {
     bool ok = true;
@@ -293,7 +294,7 @@ static bool SetTypeCast(Token* &token,
 
 static bool ReadScalar(Token* &token,
                        LexicalAnalyzer &lexicalAnalyzer,
-                       ConfigurationDatabase &database,
+                       StructuredDataI &database,
                        const char8 * const name,
                        const uint32 typeIndex) {
 
@@ -325,7 +326,7 @@ static bool ReadScalar(Token* &token,
 
 static bool ReadVector(Token* &token,
                        LexicalAnalyzer &lexicalAnalyzer,
-                       ConfigurationDatabase &database,
+                       StructuredDataI &database,
                        const char8 vectorCloseTerminal,
                        const char8 * const name,
                        const uint32 typeIndex,
@@ -414,7 +415,7 @@ static bool ReadVector(Token* &token,
 
 static bool ReadMatrix(Token* &token,
                        LexicalAnalyzer &lexicalAnalyzer,
-                       ConfigurationDatabase &database,
+                       StructuredDataI &database,
                        const char8 vectorOpenTerminal,
                        const char8 vectorCloseTerminal,
                        const char8 matrixCloseTerminal,
@@ -584,23 +585,23 @@ static bool IsVector(Token * const &token,
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-Parser::Parser(const ParserGrammatic &grammaticIn) :
+Parser::Parser(const ParserGrammar &grammarIn) :
         Object() {
-    grammatic = grammaticIn;
+    grammar = grammarIn;
 }
 
-ParserGrammatic Parser::GetGrammatic() const {
-    return grammatic;
+ParserGrammar Parser::GetGrammar() const {
+    return grammar;
 }
 
 Parser::~Parser() {
 }
 
 bool Parser::Parse(StreamI &stream,
-                   ConfigurationDatabase &database,
+                   StructuredDataI &database,
                    BufferedStreamI * const err) const {
 
-    LexicalAnalyzer lexicalAnalyzer(stream, &grammatic.assignment, grammatic.separators);
+    LexicalAnalyzer lexicalAnalyzer(stream, &grammar.assignment, grammar.separators);
 
     char8 genericTerminal = '\0';
     StreamString varName = "";
@@ -641,7 +642,7 @@ bool Parser::Parse(StreamI &stream,
 
         // Read the lvalue ( string = )
         if (status == LVALUE) {
-            if (!isLValue(token, lexicalAnalyzer, grammatic.assignment, varName)) {
+            if (!IsLValue(token, lexicalAnalyzer, grammar.assignment, varName)) {
                 // block checking... this is not a block
                 if (genericTerminal != '\0') {
                     status = VARIABLE;
@@ -678,7 +679,7 @@ bool Parser::Parse(StreamI &stream,
             if (token->GetId() == TERMINAL_TOKEN) {
                 // a terminal found! block or matrix
                 genericTerminal = *(token->GetData());
-                if (genericTerminal == grammatic.openBlock) {
+                if (genericTerminal == grammar.openBlock) {
                     nodeName = varName;
                     token = lexicalAnalyzer.GetToken();
                     status = LVALUE;
@@ -709,14 +710,14 @@ bool Parser::Parse(StreamI &stream,
 
                 // a terminal found! block or matrix
                 genericTerminal = *(token->GetData());
-                if ((genericTerminal == grammatic.openMatrix) || (genericTerminal == grammatic.openVector)) {
+                if ((genericTerminal == grammar.openMatrix) || (genericTerminal == grammar.openVector)) {
                     token = lexicalAnalyzer.GetToken();
                     status = VARIABLE;
                 }
-                else if (genericTerminal == grammatic.openTypeCast) {
+                else if (genericTerminal == grammar.openTypeCast) {
                     token = lexicalAnalyzer.GetToken();
                     // next has to be scalar or matrix
-                    if (SetTypeCast(token, lexicalAnalyzer, grammatic.closeTypeCast, typeIndex, err)) {
+                    if (SetTypeCast(token, lexicalAnalyzer, grammar.closeTypeCast, typeIndex, err)) {
                         token = lexicalAnalyzer.GetToken();
                         status = RVALUE;
                     }
@@ -733,10 +734,10 @@ bool Parser::Parse(StreamI &stream,
         }
 
         if (status == VARIABLE) {
-            if ((genericTerminal == grammatic.openMatrix) || (genericTerminal == grammatic.openVector)) {
-                if (IsVector(token, genericTerminal, grammatic.openVector, grammatic.openMatrix)) {
-                    if (ReadVector(token, lexicalAnalyzer, database, grammatic.closeVector, varName.Buffer(), typeIndex, err)) {
-                        if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
+            if ((genericTerminal == grammar.openMatrix) || (genericTerminal == grammar.openVector)) {
+                if (IsVector(token, genericTerminal, grammar.openVector, grammar.openMatrix)) {
+                    if (ReadVector(token, lexicalAnalyzer, database, grammar.closeVector, varName.Buffer(), typeIndex, err)) {
+                        if (CheckCloseBlock(token, lexicalAnalyzer, database, grammar.closeBlock, totalBlockTerminals)) {
                             status = LVALUE;
                         }
                         else {
@@ -750,9 +751,9 @@ bool Parser::Parse(StreamI &stream,
                     }
                 }
                 else {
-                    if (ReadMatrix(token, lexicalAnalyzer, database, grammatic.openVector, grammatic.closeVector, grammatic.closeMatrix, varName.Buffer(),
+                    if (ReadMatrix(token, lexicalAnalyzer, database, grammar.openVector, grammar.closeVector, grammar.closeMatrix, varName.Buffer(),
                                    typeIndex, err)) {
-                        if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
+                        if (CheckCloseBlock(token, lexicalAnalyzer, database, grammar.closeBlock, totalBlockTerminals)) {
                             status = LVALUE;
                         }
                         else {
@@ -769,7 +770,7 @@ bool Parser::Parse(StreamI &stream,
             else {
                 // this is a scalar!!
                 if (ReadScalar(token, lexicalAnalyzer, database, varName.Buffer(), typeIndex)) {
-                    if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
+                    if (CheckCloseBlock(token, lexicalAnalyzer, database, grammar.closeBlock, totalBlockTerminals)) {
                         status = LVALUE;
                     }
                     else {
@@ -791,7 +792,7 @@ bool Parser::Parse(StreamI &stream,
     // database created correctly! Move to Root
     if (ok) {
         if (!database.MoveToRoot()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Parse: Failed ConfigurationDatabase::MoveToRoot at the end of parsing");
+            REPORT_ERROR(ErrorManagement::FatalError, "Parse: Failed StructuredDataI::MoveToRoot at the end of parsing");
         }
     }
 

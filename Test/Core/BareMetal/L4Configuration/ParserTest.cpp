@@ -43,19 +43,19 @@ using namespace MARTe;
 
 bool ParserTest::TestConstructor() {
     Parser myParser;
-    ParserGrammatic defaultGrammatic = myParser.GetGrammatic();
-    if (MemoryOperationsHelper::Compare((void*) &defaultGrammatic, (void*) &StandardGrammatic, sizeof(ParserGrammatic)) != 0) {
+    ParserGrammar defaultGrammar = myParser.GetGrammar();
+    if (MemoryOperationsHelper::Compare((void*) &defaultGrammar, (void*) &StandardGrammar, sizeof(ParserGrammar)) != 0) {
         return false;
     }
 
-    ParserGrammatic myGrammatic = { "\n\r\t, ", '=', '{', '}', '[', ']', '[', ']', '<', '>', 0 };
+    ParserGrammar myGrammar = { "\n\r\t, ", '=', '{', '}', '[', ']', '[', ']', '<', '>', 0 };
 
-    Parser myParser2(myGrammatic);
-    ParserGrammatic testGrammatic = myParser2.GetGrammatic();
-    return (MemoryOperationsHelper::Compare((void*) &testGrammatic, (void*) &myGrammatic, sizeof(ParserGrammatic)) == 0);
+    Parser myParser2(myGrammar);
+    ParserGrammar testGrammar = myParser2.GetGrammar();
+    return (MemoryOperationsHelper::Compare((void*) &testGrammar, (void*) &myGrammar, sizeof(ParserGrammar)) == 0);
 }
 
-bool ParserTest::TestGetGrammatic() {
+bool ParserTest::TestGetGrammar() {
     return TestConstructor();
 }
 

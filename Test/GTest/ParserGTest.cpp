@@ -50,9 +50,9 @@ TEST(ParserGTest,TestConstructor) {
     ASSERT_TRUE(parserTest.TestConstructor());
 }
 
-TEST(ParserGTest,TestGetGrammatic) {
+TEST(ParserGTest,TestGetGrammar) {
     ParserTest parserTest;
-    ASSERT_TRUE(parserTest.TestGetGrammatic());
+    ASSERT_TRUE(parserTest.TestGetGrammar());
 }
 
 TEST(ParserGTest,TestParseScalar) {
@@ -457,7 +457,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_float32) {
     ParserTest parserTest;
     const TypeCastTableTestMatrix<float32, 2,2> table[]={
             {"var1=(float32) {{0xFF -340282346638528859811704183484516925440.0}{ 0b1 340282346638528859811704183484516925440.0}}", "var1", {{255.0f, -340282346638528859811704183484516925440.0f}, {1.0f, 340282346638528859811704183484516925440.0f}}, true},
-            {"var1=(uint8) {1.2 0.01 -1.2E+42 2}", "var1", {0}, false},
+            {"var1=(uint8) {1.2 0.01 -1.2E+42 2}", "var1", {{0}}, false},
             {0, 0, {{0}}, 0}
     };
 
@@ -469,7 +469,7 @@ TEST(ParserGTest,TestTypeCast_Matrix_float64) {
     ParserTest parserTest;
     const TypeCastTableTestMatrix<float64, 2,2> table[]={
             {"var1=(float64) {{0xFF -340282346638528859811704183484516925440.0}{ 0b1 340282346638528859811704183484516925440.0}}", "var1", {{255.0, -340282346638528859811704183484516925440.0},{ 1.0, 340282346638528859811704183484516925440.0}}, true},
-            {"var1=(uint8) {1.2 0.01 -1.2E+510 2}", "var1", {0}, false},
+            {"var1=(uint8) {1.2 0.01 -1.2E+510 2}", "var1", {{0}}, false},
             {0, 0, {{0}}, 0}
     };
 

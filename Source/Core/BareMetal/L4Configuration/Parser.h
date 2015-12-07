@@ -31,12 +31,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Object.h"
-#include "StreamI.h"
 #include "BufferedStreamI.h"
 #include "LexicalAnalyzer.h"
-#include "ParserGrammatic.h"
-#include "ConfigurationDatabase.h"
+#include "Object.h"
+#include "ParserGrammar.h"
+#include "StreamI.h"
+#include "StructuredDataI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -44,22 +44,28 @@
 namespace MARTe {
 
 /**
- * @brief Implementation of a parser capable to create a ConfigurationDatabase structure
- * reading data from the provided stream.
- */
-class Parser: public Object {
+ * @brief Parser for the default MARTe configuration language.
+ * @details Implementation of a parser capable of interpreting the standard MARTe configuration
+ * language, which is defined by the following syntax:
+ *   - BLOCK     ---> STRING = { STRING = ... }
+ *   - SCALAR    ---> STRING = NUMBER | STRING
+ *   - VECTOR    ---> STRING = { NUMBER ... } | { STRING ... }
+ *   - MATRIX    ---> STRING = {{ NUMBER ... } ... } | {{ STRING ... } ... }
+ *   - TYPE CAST ---> ( STRING )
+*/
+class DLL_API Parser: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
 
     /**
      * @brief Default constructor.
-     * @param[in] grammaticIn specifies the separators and terminals characters for the parser.
+     * @param[in] grammarIn specifies the separators and terminals characters for the parser.
      * @pre
-     *   grammaticIn must be valid for this parser. @see ParserGrammatic
+     *   grammarIn must be valid for this parser. @see ParserGrammar
      * @post
-     *   GetGrammatic() == grammaticIn
+     *   GetGrammar() == grammarIn
      */
-    Parser(const ParserGrammatic &grammaticIn = StandardGrammatic);
+    Parser(const ParserGrammar &grammarIn = StandardGrammar);
 
     /**
      * @brief Destructor.
@@ -67,13 +73,13 @@ public:
     virtual ~Parser();
 
     /**
-     * @brief Parses the stream in input and build the configuration database accordingly.
-     * @param[in] stream is the stream to be parsed.
-     * @param[in,out] database is the built configuration database in output.
-     * @param[out] err is a stream showing parse error messages.
+     * @brief Parses the stream in input and builds the configuration database accordingly.
+     * @param[in] stream the stream to be parsed.
+     * @param[in,out] database built configuration database in output.
+     * @param[out] err is a stream where parse error messages are written into.
      * @return true if the stream in input is parsed correctly, false otherwise. In case of failure, the
      * error causing the failure is printed on the \a err stream in input (if it is not NULL).
-     * @details Assuming that the StandardGrammatic is used, the stream to parse must have this syntax:
+     * @details Assuming that the StandardGrammar is used, the stream to parse must have this syntax:
      *   - BLOCK     ---> STRING = { STRING = ... }
      *   - SCALAR    ---> STRING = NUMBER | STRING
      *   - VECTOR    ---> STRING = { NUMBER ... } | { STRING ... }
@@ -89,18 +95,18 @@ public:
      *   - The error messages printed on the \a err stream are in the format "error description [line number]".
      */
     bool Parse(StreamI &stream,
-               ConfigurationDatabase &database,
+               StructuredDataI &database,
                BufferedStreamI * const err =  static_cast<BufferedStreamI *>(NULL)) const;
 
     /**
-     * @brief Retrieves the grammatic used by this parser.
-     * @return the grammatic used by this parser.
+     * @brief Retrieves the grammar used by this parser.
+     * @return the grammar used by this parser.
      */
-    ParserGrammatic GetGrammatic() const;
+    ParserGrammar GetGrammar() const;
 
 private:
 
-    ParserGrammatic grammatic;
+    ParserGrammar grammar;
 };
 
 }
