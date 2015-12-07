@@ -34,7 +34,13 @@ OBJSX=	AnyObject.x \
 		StringToInteger.x \
 		TypeConversion.x \
 		TokenInfo.x \
-		Token.x		
+		Token.x \
+		SlkToken.x \
+		SlkParse.x \
+		SlkAction.x \
+		SlkError.x \
+		SlkString.x \
+		SlkTable.x		
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

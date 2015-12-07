@@ -95,7 +95,8 @@ OBJSX=  AnyObjectGTest.x \
 		TypeCharacteristicsGTest.x \
 		TypeConversionGTest.x \
 		TypeDescriptorGTest.x  \
-		VectorGTest.x
+		VectorGTest.x \
+		SlkActionGTest.x
 
 PACKAGE=
 ROOT_DIR=../..
