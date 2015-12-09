@@ -32,7 +32,8 @@ OBJSX=	AnyObjectTest.x \
 	    TypeConversionTest.x \
 		TokenInfoTest.x \
 		TokenTest.x \
-		SlkActionTest.x	
+		SlkActionTest.x	\
+		StandardParserTest.x
 			
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -51,7 +51,6 @@ static void PrintErrorOnStream(const char8 * const format,
     }
 }
 
-
 /**
  * @brief Determines if the next expression is an l-value.
  * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
@@ -99,7 +98,6 @@ static bool isLValue(Token* &token,
     return ret;
 }
 
-
 /**
  * @brief Checks that the total number of block terminals is not negative after reading a variable.
  * If the block is successfully closed, moves the database to the parent node.
@@ -129,7 +127,6 @@ static bool CheckCloseBlock(Token* &token,
     }
     return ok;
 }
-
 
 /**
  * @brief Reading the type cast string, returns the type identifier for the token storing.
@@ -168,7 +165,6 @@ static bool SetTypeCast(Token* &token,
 
 }
 
-
 /**
  * @brief Reads a scalar.
  * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
@@ -198,7 +194,6 @@ static bool ReadScalar(Token* &token,
 
     return ret;
 }
-
 
 /**
  * @brief Reads a vector.
@@ -287,7 +282,6 @@ static bool ReadVector(Token* &token,
     }
     return ok;
 }
-
 
 /**
  * @brief Reads a matrix.
@@ -485,7 +479,9 @@ bool Parser::Parse(StreamI &stream,
                    StructuredDataI &database,
                    BufferedStreamI * const err) const {
 
-    LexicalAnalyzer lexicalAnalyzer(stream, &grammar.assignment, grammar.separators);
+
+    LexicalAnalyzer lexicalAnalyzer(stream, &grammar.assignment, grammar.separators, grammar.beginOneLineComment, grammar.beginMultipleLinesComment,
+                                    grammar.endMultipleLinesComment);
 
     char8 genericTerminal = '\0';
     StreamString varName = "";

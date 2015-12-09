@@ -41,12 +41,14 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 SlkToken::SlkToken(StreamI &stream,
                    const char8 *terminals,
-                   const char8 *separators) :
+                   const char8 *separators,
+                   const char8 * const oneLineCommentBeginIn,
+                   const char8 * const multipleLineCommentBeginIn,
+                   const char8 * const multipleLineCommentEndIn) :
         tokenData(),
-        lexicalAnalyzer(stream, terminals, separators) {
+        lexicalAnalyzer(stream, terminals, separators, oneLineCommentBeginIn, multipleLineCommentBeginIn, multipleLineCommentEndIn) {
     tokenLineNumber = 0u;
     tokenId = 0u;
 }

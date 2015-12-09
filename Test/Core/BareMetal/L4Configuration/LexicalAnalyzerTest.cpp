@@ -45,7 +45,7 @@ bool LexicalAnalyzerTest::TestConstructor() {
 
     StreamString configString = " Hello ";
     configString.Seek(0);
-    LexicalAnalyzer la(configString, "", " ");
+    LexicalAnalyzer la(configString, "", " ", "", "", "");
 
     Token *tok = la.GetToken();
 
@@ -54,6 +54,7 @@ bool LexicalAnalyzerTest::TestConstructor() {
     }
 
     const char8* token = (const char8*) (tok->GetData());
+    printf("\n%s\n", token);
     if (StringHelper::Compare(token, "Hello") != 0) {
         return false;
     }
@@ -75,7 +76,7 @@ bool LexicalAnalyzerTest::TestGetToken() {
 
     configString.Seek(0);
 
-    LexicalAnalyzer la(configString, "{}=", " ,\n");
+    LexicalAnalyzer la(configString, "{}=", " ,\n", "//", "/*", "*/");
 
     // get +PID
     Token *tok = la.GetToken();
@@ -285,7 +286,7 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     configString.Seek(0);
 
-    LexicalAnalyzer la(configString, "{}=", " ,\n");
+    LexicalAnalyzer la(configString, "{}=", " ,\n", "//", "/*", "*/");
 
     // get +PID
     Token *tok = la.PeekToken(0u);
@@ -520,7 +521,7 @@ bool LexicalAnalyzerTest::TestEscape() {
     StreamString configString = "Hello\\nWorld Hello\\tWorld\nHello\\rWorld \"\\\"Hello\\\"World\\\"\" Hello\\World";
     configString.Seek(0);
 
-    LexicalAnalyzer la(configString, "{}=", " ,\n");
+    LexicalAnalyzer la(configString, "{}=", " ,\n", "//", "/*", "*/");
 
     Token *tok = la.GetToken();
 

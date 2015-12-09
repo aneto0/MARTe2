@@ -1,7 +1,7 @@
 /**
- * @file SlkToken.h
- * @brief Header file for class SlkToken
- * @date 04/12/2015
+ * @file XMLParser.h
+ * @brief Header file for class XMLParser
+ * @date 09/12/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,65 +16,66 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SlkToken
+ * @details This header file contains the declaration of the class XMLParser
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SLKTOKEN_H_
-#define SLKTOKEN_H_
+#ifndef XMLPARSER_H_
+#define XMLPARSER_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#include "ParserI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "StreamString.h"
-#include "LexicalAnalyzer.h"
-#include "StreamI.h"
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-using namespace MARTe;
+namespace MARTe{
 
-class SlkToken {
-
+class XMLParser: public ParserI {
 public:
-    SlkToken(StreamI &stream,
-             const char8 *terminals,
-             const char8 *separators,
-             const char8 * const oneLineCommentBeginIn,
-             const char8 * const multipleLineCommentBeginIn,
-             const char8 * const multipleLineCommentEndIn);
 
-    uint16 get();
+    XMLParser(StreamI &stream,
+            ConfigurationDatabase &databaseIn,
+            BufferedStreamI * const err=NULL);
 
-    uint16 peek(uint16 position);
+    virtual ~XMLParser();
 
-    const char8 *GetTokenData();
+    virtual uint16 &GetProduction(uint32 index);
 
-    uint32 GetLineNumber() const;
+    virtual uint16 GetProductionRow(uint32 index);
 
-    uint16 GetTokenId() const;
+    virtual uint16 GetParse(uint32 index);
 
-private:
-    uint32 tokenLineNumber;
+    virtual uint16 GetParseRow(uint32 index);
 
-    uint16 tokenId;
+    virtual uint16 GetConflict(uint32 index);
 
-    StreamString tokenData;
+    virtual uint16 GetConflictRow(uint32 index);
 
-    LexicalAnalyzer lexicalAnalyzer;
+    virtual uint16 GetConditionalProduction(uint16 symbol);
+
+    virtual uint16 GetPredictedEntry(SlkToken tokenProducer,
+                                     uint16 productionNumber,
+                                     uint16 tokenId,
+                                     uint16 level,
+                                     uint16 x);
+
+    virtual uint16 GetConstant(uint32 index);
+
 };
+}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SLKTOKEN_H_ */
+#endif /* XMLPARSER_H_ */
 

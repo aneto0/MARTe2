@@ -79,7 +79,6 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 static void PrintErrorOnStream(const char8 * const format,
                                const uint32 lineNumber,
                                BufferedStreamI * const err) {
@@ -96,7 +95,8 @@ SlkAction::SlkAction(StreamI &stream,
                      BufferedStreamI * const err,
                      ParserGrammar grammarIn) :
         parseError(err),
-        token(stream, &grammarIn.assignment, grammarIn.separators),
+        token(stream, &grammarIn.assignment, grammarIn.separators, grammarIn.beginOneLineComment, grammarIn.beginMultipleLinesComment,
+              grammarIn.endMultipleLinesComment),
         memory(1u) {
     numberOfColumns = 0u;
     firstNumberOfColumns = 0u;

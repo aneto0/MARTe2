@@ -1,7 +1,7 @@
 /**
- * @file SlkActionTest.cpp
- * @brief Source file for class SlkActionTest
- * @date 07/12/2015
+ * @file StandardParserTest.cpp
+ * @brief Source file for class StandardParserTest
+ * @date 09/12/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class SlkActionTest (public, protected, and private). Be aware that some 
+ * the class StandardParserTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "SlkActionTest.h"
+#include "StandardParserTest.h"
 #include "BasicFile.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -38,23 +38,22 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 using namespace MARTe;
 
-bool SlkActionTest::TestConstructor() {
+bool StandardParserTest::TestConstructor() {
 
     StreamString configString = "";
     ConfigurationDatabase database;
 
     StreamString err;
 
-    SlkAction myParser(configString, database, &err);
+    StandardParser myParser(configString, database, &err);
 
     return true;
 
 }
 
-bool SlkActionTest::TestParseScalarStandardGrammar() {
+bool StandardParserTest::TestParseScalar() {
     ConfigurationDatabase database;
     StreamString errors;
     StreamString configString = "+PID={\n"
@@ -64,7 +63,7 @@ bool SlkActionTest::TestParseScalarStandardGrammar() {
             "}";
 
     configString.Seek(0);
-    SlkAction myParser(configString, database, &errors);
+    StandardParser myParser(configString, database, &errors);
     if (!myParser.Parse()) {
         return false;
     }
@@ -99,7 +98,7 @@ bool SlkActionTest::TestParseScalarStandardGrammar() {
     return true;
 }
 
-bool SlkActionTest::TestParseVectorStandardGrammar() {
+bool StandardParserTest::TestParseVector() {
     ConfigurationDatabase database;
     StreamString errors;
     StreamString configString = "+PID={\n"
@@ -115,7 +114,7 @@ bool SlkActionTest::TestParseVectorStandardGrammar() {
 
     configString.Seek(0);
 
-    SlkAction myParser(configString, database, &errors);
+    StandardParser myParser(configString, database, &errors);
     if (!myParser.Parse()) {
         printf("\nerrors=%s\n", errors.Buffer());
         return false;
@@ -198,7 +197,7 @@ bool SlkActionTest::TestParseVectorStandardGrammar() {
     return true;
 }
 
-bool SlkActionTest::TestParseMatrixStandardGrammar() {
+bool StandardParserTest::TestParseMatrix() {
 
     ConfigurationDatabase database;
     StreamString errors;
@@ -216,7 +215,7 @@ bool SlkActionTest::TestParseMatrixStandardGrammar() {
             "}\n";
 
     configString.Seek(0);
-    SlkAction myParser(configString, database, &errors);
+    StandardParser myParser(configString, database, &errors);
 
     if(!myParser.Parse()){
         return false;
@@ -308,65 +307,7 @@ bool SlkActionTest::TestParseMatrixStandardGrammar() {
     return true;
 }
 
-bool SlkActionTest::TestParseVectorXMLGrammar() {
-
-    StreamString configString = "<block>\n"
-            "                           <var><> 1 2 3 </></var>\n"
-            "                           </block>";
-    configString.Seek(0);
-    ConfigurationDatabase database;
-
-    StreamString err = "";
-
-    SlkAction myParser(configString, database, &err, XMLGrammar);
-
-    myParser.Parse();
-
-    if (!database.MoveAbsolute("block")) {
-        return false;
-    }
-
-    int32 var[3] = { 0 };
-    database.Read("var", var);
-
-    bool ok = var[0] == 1;
-    ok = var[1] == 2;
-    ok = var[2] == 3;
-
-    return ok;
-}
-
-bool SlkActionTest::TestParseMatrixXMLGrammar() {
-
-    StreamString configString = "<block>\n"
-            "                           <var><><>1 2</><>3,4</></></var>\n"
-            "                           </block>";
-
-    configString.Seek(0);
-    ConfigurationDatabase database;
-
-    StreamString err = "";
-
-    SlkAction myParser(configString, database, &err, XMLGrammar);
-
-    myParser.Parse();
-
-    if (!database.MoveAbsolute("block")) {
-        return false;
-    }
-
-    int32 var[2][2] = { { 0 } };
-
-    printf("\n%d\n", var);
-    bool ok = var[0][0] == 1;
-    ok = var[0][1] == 2;
-    ok = var[1][0] == 3;
-    ok = var[1][1] == 4;
-
-    return ok;
-}
-
-bool SlkActionTest::TestNestedBlocks() {
+bool StandardParserTest::TestNestedBlocks() {
 
     ConfigurationDatabase database;
     StreamString errors;
@@ -389,7 +330,7 @@ bool SlkActionTest::TestNestedBlocks() {
             "}\n";
 
     configString.Seek(0);
-    SlkAction myParser(configString, database, &errors);
+    StandardParser myParser(configString, database, &errors);
 
     if(!myParser.Parse()){
         return false;
@@ -451,14 +392,14 @@ bool SlkActionTest::TestNestedBlocks() {
     return var == 5;
 }
 
-bool SlkActionTest::TestParseErrors(const char8 *configStringIn) {
+bool StandardParserTest::TestParseErrors(const char8 *configStringIn) {
 
     StreamString configString = configStringIn;
     configString.Seek(0);
     StreamString errors;
     ConfigurationDatabase database;
 
-    SlkAction myParser(configString, database, &errors);
+    StandardParser myParser(configString, database, &errors);
 
     bool ret = myParser.Parse();
     printf("\nerrors=%s\n", errors.Buffer());
@@ -466,13 +407,13 @@ bool SlkActionTest::TestParseErrors(const char8 *configStringIn) {
 
 }
 
-bool SlkActionTest::TestStandardCast() {
+bool StandardParserTest::TestStandardCast() {
     StreamString configString = "var1= (boh) 1\n";
     configString.Seek(0);
     StreamString errors;
     ConfigurationDatabase database;
 
-    SlkAction myParser(configString, database, &errors);
+    StandardParser myParser(configString, database, &errors);
     if (!myParser.Parse()) {
         return false;
     }
@@ -485,7 +426,7 @@ bool SlkActionTest::TestStandardCast() {
 }
 
 
-bool SlkActionTest::TestExistentFile() {
+bool StandardParserTest::TestExistentFile() {
     BasicFile configurationFile;
     if (!configurationFile.Open("MARTe-WaterTank.cfg", BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
         printf("\nError! The file is not opened!\n");
@@ -495,7 +436,7 @@ bool SlkActionTest::TestExistentFile() {
     StreamString errors;
 
     ConfigurationDatabase database;
-    SlkAction myParser(configurationFile, database, &errors);
+    StandardParser myParser(configurationFile, database, &errors);
     if (!myParser.Parse()) {
         printf("\nerrors=%s\n", errors.Buffer());
 
@@ -504,3 +445,5 @@ bool SlkActionTest::TestExistentFile() {
 
     return true;
 }
+
+

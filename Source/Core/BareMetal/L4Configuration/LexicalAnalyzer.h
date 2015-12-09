@@ -72,8 +72,11 @@ public:
      *   tokenInfo[4].Set(TERMINAL_TOKEN, "TERMINAL")
      */
     LexicalAnalyzer(StreamI &stream,
-                    const char8 * const terminalsIn,
-                    const char8 * const separatorsIn);
+            const char8 * const terminalsIn,
+            const char8 * const separatorsIn,
+            const char8 * const oneLineCommentBeginIn,
+            const char8 * const multipleLineCommentBeginIn,
+            const char8 * const multipleLineCommentBeginEnd);
 
     /**
      * @brief Destructor.
@@ -103,6 +106,10 @@ private:
      */
     void TokenizeInput(const uint32 level = 1u);
 
+    void AddToken(char8 * const tokenBuffer, const bool isString1);
+
+    void AddTerminal(const char8 terminal);
+
     /**
      * Internal token queue
      */
@@ -117,6 +124,12 @@ private:
      * Terminal characters
      */
     StreamString terminals;
+
+    StreamString oneLineCommentBegin;
+
+    StreamString multipleLineCommentBegin;
+
+    StreamString multipleLineCommentEnd;
 
     /**
      * Default token types
@@ -137,6 +150,7 @@ private:
      * Line number counter
      */
     uint32 lineNumber;
+
 };
 
 }

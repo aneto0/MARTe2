@@ -38,7 +38,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-
 /**
  * @brief Gets the next character from the stream.
  * @param[in] stream is the stream to be read.
@@ -73,32 +72,41 @@ static void ReadCommentOneLine(StreamI &stream) {
  * @param[out] lineNumber is the token line number.
  */
 static void ReadCommentMultipleLines(StreamI &stream,
-                                     uint32 &lineNumber) {
+                                     uint32 &lineNumber,
+                                     const char8 * const multipleLineEnd) {
 
     char8 c = ' ';
-    bool go = true;
-    while (go) {
-        if (GetC(stream, c)) {
-            if (c == '*') {
-                if (GetC(stream, c)) {
-                    if (c == '/') {
-                        go = false;
-                    }
-                }
-                else {
-                    go = false;
-                }
-            }
-            if (c == '\n') {
-                lineNumber++;
-            }
+    uint32 size = StringHelper::Length(multipleLineEnd);
+    char8 buffer[16];
+
+    // read the next characters to match the end of comment
+    for (uint32 i = 0u; i < size; i++) {
+        if (!GetC(stream, c)) {
+            break;
         }
-        else {
-            go = false;
+        if (c == '\n') {
+            lineNumber++;
         }
+        buffer[i] = c;
+    }
+    buffer[size] = '\0';
+
+    while (StringHelper::Compare(buffer, multipleLineEnd) != 0) {
+
+        if (!GetC(stream, c)) {
+            break;
+        }
+        for (uint32 i = 1u; i < size; i++) {
+            buffer[i - 1u] = buffer[i];
+        }
+        if (c == '\n') {
+            lineNumber++;
+        }
+        buffer[size - 1u] = c;
+        buffer[size] = '\0';
+
     }
 }
-
 
 /**
  * @brief Skips the comments in the stream.
@@ -112,18 +120,23 @@ static void ReadCommentMultipleLines(StreamI &stream,
  * @return false if EOF, true otherwise.
  */
 static bool SkipComment(StreamI &stream,
-                        StreamString& tokenString,
+                        char8 *buffer,
                         char8 &nextChar,
                         uint32 &lineNumber,
                         const char8 * const separators,
                         const char8 * const terminals,
-                        char8 &separator) {
+                        const char8 * const oneLineBegin,
+                        const char8 * const multipleLineBegin,
+                        const char8 * const multipleLineEnd,
+                        char8 &separator,
+                        char8 &terminal,
+                        const bool isNewToken) {
 
-    char8 c = ' ';
+    char8 c = '\0';
 
+    buffer[0] = '\0';
     bool isEOF = false;
     // if it is a new token needs to skip separators at the beginning
-    bool isNewToken = (tokenString.Size() == 0u);
     bool isComment = true;
     bool skip = true;
 
@@ -133,7 +146,12 @@ static bool SkipComment(StreamI &stream,
             // exit, found a terminal!
             if (StringHelper::SearchChar(terminals, c) != NULL) {
                 skip = false;
-                isComment = false;
+                terminal=c;
+                if (!GetC(stream, c)) {
+                    isEOF = true;
+                    isComment = false;
+                    skip = false;
+                }
             }
             else {
                 //stop loop, not a separator
@@ -155,27 +173,79 @@ static bool SkipComment(StreamI &stream,
 
     // could be a comment ?
     if (isComment) {
-        isComment = (c == '/');
-        if (isComment) {
-            if (GetC(stream, c)) {
-                // found double /, comment on one line
-                if (c == '/') {
-                    ReadCommentOneLine(stream);
-                    separator = '\n';
+        uint32 i = 0u;
+        isComment = true;
+        // check if it is a one line comment
+        while (isComment) {
+            if (oneLineBegin[i] != '\0') {
+                isComment = (c == oneLineBegin[i]);
+                buffer[i] = c;
+                if (isComment) {
+                    if (!GetC(stream, c)) {
+                        isComment = false;
+                        isEOF = true;
+                        c = '\0';
+                    }
                 }
-                // found /* , comment on multiple line
-                else if (c == '*') {
-                    ReadCommentMultipleLines(stream, lineNumber);
-                    separator = '\0';
-                }
-                else {
-                    tokenString += '/';
-                    isComment = false;
-                }
+                i++;
             }
             else {
-                isComment = false;
-                isEOF = true;
+                buffer[i] = c;
+                isComment = (i != 0u);
+                i++;
+                break;
+            }
+        }
+        // add the terminal
+        buffer[i] = '\0';
+        if (isComment) {
+            // comment on one line
+            ReadCommentOneLine(stream);
+            separator = '\n';
+        }
+        else {
+            isComment = true;
+            uint32 bufferSize1 = i;
+            i = 0u;
+            // check if it is a multiple line comment
+            while (isComment) {
+                if (multipleLineBegin[i] != '\0') {
+                    if (i < bufferSize1) {
+                        c = buffer[i];
+                    }
+                    else {
+                        if (!GetC(stream, c)) {
+                            isComment = false;
+                            isEOF = true;
+                            c = '\0';
+                        }
+                    }
+                    isComment = (c == multipleLineBegin[i]);
+                    if (isComment) {
+                        buffer[i] = c;
+                        i++;
+                    }
+                }
+                else {
+                    isComment = (i != 0u);
+                    break;
+                }
+            }
+
+            if (isComment) {
+                // comment on multiple line
+                ReadCommentMultipleLines(stream, lineNumber, multipleLineEnd);
+                separator = '\0';
+            }
+            else {
+                bufferSize1--;
+                if (i >= bufferSize1) {
+                    buffer[i] = '\0';
+                }
+                else {
+                    c = buffer[bufferSize1];
+                    buffer[bufferSize1] = '\0';
+                }
             }
         }
     }
@@ -183,6 +253,7 @@ static bool SkipComment(StreamI &stream,
     // allows to understand if a comment is found
     if (isComment) {
         nextChar = '\0';
+        terminal = '\0';
     }
     else {
         nextChar = c;
@@ -227,7 +298,7 @@ bool EscapeChar(char8 &c) {
 /*---------------------------------------------------------------------------*/
 
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
-Token *LexicalAnalyzer::GetToken() {
+Token * LexicalAnalyzer::GetToken() {
     // delete the previous token
     if (token != NULL) {
         delete token;
@@ -259,12 +330,18 @@ Token *LexicalAnalyzer::PeekToken(const uint32 position) {
 
 LexicalAnalyzer::LexicalAnalyzer(StreamI &stream,
                                  const char8 * const terminalsIn,
-                                 const char8 * const separatorsIn) {
+                                 const char8 * const separatorsIn,
+                                 const char8 * const oneLineCommentBeginIn,
+                                 const char8 * const multipleLineCommentBeginIn,
+                                 const char8 * const multipleLineCommentEndIn) {
     token = static_cast<Token *>(NULL);
     inputStream = &stream;
     lineNumber = 1u;
     terminals = terminalsIn;
     separators = separatorsIn;
+    oneLineCommentBegin=oneLineCommentBeginIn;
+    multipleLineCommentBegin=multipleLineCommentBeginIn;
+    multipleLineCommentEnd= multipleLineCommentEndIn;
     tokenInfo[0].Set(EOF_TOKEN, "EOF");
     tokenInfo[1].Set(STRING_TOKEN, "STRING");
     tokenInfo[2].Set(NUMBER_TOKEN, "NUMBER");
@@ -290,6 +367,79 @@ LexicalAnalyzer::~LexicalAnalyzer() {
     inputStream = static_cast<StreamI*>(NULL);
 }
 
+void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
+                               const bool isString1) {
+
+    Token* toAdd = static_cast<Token*>(NULL);
+
+    if (StringHelper::Length(tokenBuffer) > 0u) {
+
+        // a string for sure!
+        uint32 firstDigit = 0u;
+        if ((tokenBuffer[0] == '+') || (tokenBuffer[0] == '-')) {
+            firstDigit = 1u;
+        }
+        int8 zero = static_cast<int8>('0');
+        bool isString2 = (((static_cast<int8>(tokenBuffer[firstDigit]) - zero) > 9) || ((static_cast<int8>(tokenBuffer[firstDigit]) - zero) < 0));
+
+        bool converted = false;
+
+        // a string for sure!
+        if ((isString1) || (isString2)) {
+            uint32 begin = 0u;
+            uint32 end = StringHelper::Length(tokenBuffer) - 1u;
+            if (tokenBuffer[begin] == '"') {
+                begin++;
+            }
+            if (isString1) {
+                if (tokenBuffer[end] == '"') {
+                    tokenBuffer[end] = '\0';
+                }
+            }
+            /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
+            toAdd = new Token(tokenInfo[STRING_TOKEN], &tokenBuffer[begin], lineNumber);
+            if (!tokenQueue.Add(toAdd)) {
+                REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
+            }
+            converted = true;
+        }
+
+        if (!converted) {
+            // not an integer! Try a float (number)
+            float64 possibleFloat = 0.0;
+            if (TypeConvert(possibleFloat, tokenBuffer)) {
+                /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
+                toAdd = new Token(tokenInfo[NUMBER_TOKEN], &tokenBuffer[0], lineNumber);
+                if (!tokenQueue.Add(toAdd)) {
+                    REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
+                }
+                converted = true;
+            }
+        }
+
+        // error!
+        if (!converted) {
+            /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
+            toAdd = new Token(tokenInfo[ERROR_TOKEN], "", lineNumber);
+            if (!tokenQueue.Add(toAdd)) {
+                REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
+            }
+        }
+    }
+
+}
+
+void LexicalAnalyzer::AddTerminal(const char8 terminal) {
+    Token* toAdd = static_cast<Token*>(NULL);
+
+    char8 terminalBuffer[2] = {terminal, '\0'};
+    /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
+    toAdd = new Token(tokenInfo[TERMINAL_TOKEN], &terminalBuffer[0], lineNumber);
+    if (!tokenQueue.Add(toAdd)) {
+        REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
+    }
+}
+
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 void LexicalAnalyzer::TokenizeInput(const uint32 level) {
     bool ok = true;
@@ -306,17 +456,25 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         char8 c = '\0';
         char8 terminal = '\0';
         char8 separator = '\0';
-        // the token
-        StreamString tokenString = "";
-        // skips one or consecutive comments
-        bool isTerminal = false;
+
+        char8 commentBuffer[16];
         // skips one or consecutive comments and controls EOF
         while ((ok) && (c == '\0')) {
-            ok = SkipComment(*inputStream, tokenString, c, lineNumber, separators.Buffer(), terminals.Buffer(), separator);
+            ok = SkipComment(*inputStream, commentBuffer, c, lineNumber, separators.Buffer(), terminals.Buffer(), oneLineCommentBegin.Buffer(),
+                             multipleLineCommentBegin.Buffer(), multipleLineCommentEnd.Buffer(), separator, terminal, true);
             if (separator == '\n') {
                 lineNumber++;
             }
         }
+
+        // the token
+        StreamString tokenString = &commentBuffer[0];
+
+        if (terminal != '\0') {
+            AddTerminal(terminal);
+            terminal = '\0';
+        }
+
         separator = '\0';
         isEOF = !ok;
         // if a '\' is found take the next to respect the special string characters
@@ -341,7 +499,6 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
             }
             else if ((StringHelper::SearchChar(terminalsUsed.Buffer(), c) != NULL) && (!escape)) {
                 terminal = c;
-                isTerminal = true;
                 ok = false;
             }
             else {
@@ -377,78 +534,35 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                     ok = GetC(*inputStream, c);
                 }
                 else {
-                    ok = SkipComment(*inputStream, tokenString, c, lineNumber, separators.Buffer(), terminals.Buffer(), separator);
+                    ok = SkipComment(*inputStream, commentBuffer, c, lineNumber, separators.Buffer(), terminals.Buffer(), oneLineCommentBegin.Buffer(),
+                    multipleLineCommentBegin.Buffer(), multipleLineCommentEnd.Buffer(), separator, terminal, false);
                     if (ok) {
                         // stop if a comment is found at the end!
-                        ok = (c != '\0');
+                        if(c == '\0') {
+                            ok=false;
+                        }
+                        else {
+                            // not a comment with a terminal as the next char! Add token, terminal and continue with the buffer
+                            if (terminal != '\0') {
+                                AddToken(tokenString.BufferReference(), false);
+                                AddTerminal(terminal);
+                                tokenString = &commentBuffer[0];
+                                terminal = '\0';
+                            }
+                            else{
+                                tokenString += &commentBuffer[0];
+                            }
+                        }
                     }
                 }
             }
         }
-        if (tokenString.Size() > 0u) {
-            char8* tokenBuffer = tokenString.BufferReference();
 
-            // a string for sure!
-            uint32 firstDigit = 0u;
-            if ((tokenBuffer[0] == '+') || (tokenBuffer[0] == '-')) {
-                firstDigit = 1u;
-            }
-            int8 zero = static_cast<int8>('0');
-            bool isString2 = (((static_cast<int8>(tokenBuffer[firstDigit]) - zero) > 9) || ((static_cast<int8>(tokenBuffer[firstDigit]) - zero) < 0));
-
-            bool converted = false;
-
-            // a string for sure!
-            if ((isString1) || (isString2)) {
-                uint32 begin = 0u;
-                uint32 end = StringHelper::Length(tokenBuffer) - 1u;
-                if (tokenBuffer[begin] == '"') {
-                    begin++;
-                }
-                if (isString1) {
-                    if (tokenBuffer[end] == '"') {
-                        tokenBuffer[end] = '\0';
-                    }
-                }
-                /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
-                toAdd = new Token(tokenInfo[STRING_TOKEN], &tokenBuffer[begin], lineNumber);
-                if (!tokenQueue.Add(toAdd)) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
-                }
-                converted = true;
-            }
-
-            if (!converted) {
-                // not an integer! Try a float (number)
-                float64 possibleFloat = 0.0;
-                if (TypeConvert(possibleFloat, tokenBuffer)) {
-                    /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
-                    toAdd = new Token(tokenInfo[NUMBER_TOKEN], &tokenBuffer[0], lineNumber);
-                    if (!tokenQueue.Add(toAdd)) {
-                        REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
-                    }
-                    converted = true;
-                }
-            }
-
-            // error!
-            if (!converted) {
-                /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
-                toAdd = new Token(tokenInfo[ERROR_TOKEN], "", lineNumber);
-                if (!tokenQueue.Add(toAdd)) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
-                }
-            }
+        AddToken(tokenString.BufferReference(), isString1);
+        if (terminal != '\0') {
+            AddTerminal(terminal);
         }
 
-        if (isTerminal) {
-            char8 terminalBuffer[2] = { terminal, '\0' };
-            /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
-            toAdd = new Token(tokenInfo[TERMINAL_TOKEN], &terminalBuffer[0], lineNumber);
-            if (!tokenQueue.Add(toAdd)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
-            }
-        }
         if (isEOF) {
             /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
             toAdd = new Token(tokenInfo[EOF_TOKEN], "", lineNumber);
@@ -461,6 +575,8 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         if (separator == '\n') {
             lineNumber++;
         }
+
+        // at least one token added!
         nTokens++;
     }
 }

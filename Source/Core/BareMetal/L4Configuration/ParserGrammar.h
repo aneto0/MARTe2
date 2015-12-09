@@ -49,6 +49,13 @@ struct ParserGrammar {
      * List of separator characters.
      */
     const char8 *separators;
+
+    const char8 *beginOneLineComment;
+
+    const char8 *beginMultipleLinesComment;
+
+    const char8 *endMultipleLinesComment;
+
     /**
      * Assignment operator
      */
@@ -94,9 +101,9 @@ struct ParserGrammar {
 /**
  * The terminal and separator characters in standard MARTe configuration streams.
  */
-static const ParserGrammar StandardGrammar = { "\n\r\t, ", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0'};
+static const ParserGrammar StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
 
-static const ParserGrammar XMLGrammatic = { "\n\r\t, ", '<', '>', '<', '>', '/', '<', '>', '(', ')', '\0'};
+static const ParserGrammar XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>', '<', '>', '/', '<', '>', '(', ')', '\0' };
 
 }
 

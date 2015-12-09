@@ -41,7 +41,10 @@ OBJSX=	AnyObject.x \
 		SlkAction.x \
 		SlkError.x \
 		SlkString.x \
-		SlkTable.x		
+		SlkTable.x \
+		ParserI.x \
+		StandardParser.x \
+		XMLParser.x		
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

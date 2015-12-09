@@ -48,7 +48,7 @@ bool ParserTest::TestConstructor() {
         return false;
     }
 
-    ParserGrammar myGrammar = { "\n\r\t, ", '=', '{', '}', '[', ']', '[', ']', '<', '>', 0 };
+    ParserGrammar myGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', '{', '}', '[', ']', '[', ']', '<', '>', 0 };
 
     Parser myParser2(myGrammar);
     ParserGrammar testGrammar = myParser2.GetGrammar();
