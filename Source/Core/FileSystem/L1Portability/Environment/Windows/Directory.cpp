@@ -30,13 +30,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "Directory.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "time.h"
-#include "StringHelper.h"
-#include "HeapManager.h"
-#include "TimeStamp.h"
-#include "MemoryOperationsHelper.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,21 +42,26 @@ namespace MARTe {
 
 Directory::Directory(const char8 * const path) :
         LinkedListable() {
+    if (fname != NULL) {
+        if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free");
+        }
+    }
     fname = StringHelper::StringDup(path);
     if (path == NULL) {
         HeapManager::Free(reinterpret_cast<void *&>(fname));
     }
     HANDLE h = FindFirstFile(fname, &directoryHandle);
     if (h == INVALID_HANDLE_VALUE) {
-        //free((void *&) fname);
-        HeapManager::Free(reinterpret_cast<void *&>(directoryHandle));
+        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed INVALID_HANDLE_VALUE");
     }
+    FindClose(h);
 }
 
 Directory::~Directory() {
     if (fname != NULL) {
         if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
-            //REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free()");
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free()");
         }
     }
     fname = static_cast<char8 *>(NULL);
@@ -72,14 +70,12 @@ Directory::~Directory() {
 bool Directory::SetByName(const char8 * const path) {
     bool ret = true;
 
-    /*if (fname != NULL) {
-     if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
-     ret = false;
-     }
-     }*/
-    if (StringHelper::Compare(fname, path) != 0) {
-        fname = StringHelper::StringDup(path);
+    if (fname != NULL) {
+        if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
+            ret = false;
+        }
     }
+    fname = StringHelper::StringDup(path);
     uint32 size = StringHelper::Length(path);
     char8* fnameTemp;
     if (path[size - 1] != '\\') {
@@ -91,15 +87,15 @@ bool Directory::SetByName(const char8 * const path) {
     }
 
     if (ret) {
-
         HANDLE h = FindFirstFile(fnameTemp, &directoryHandle);
         if (h == INVALID_HANDLE_VALUE) {
-            HeapManager::Free(reinterpret_cast<void *&>(fname));
-            HeapManager::Free(reinterpret_cast<void *&>(fnameTemp));
-            HeapManager::Free(reinterpret_cast<void *&>(directoryHandle));
+            REPORT_ERROR(ErrorManagement::OSError, "Error: SetByName Failed INVALID_HANDLE_VALUE");
             ret = false;
         }
+        FindClose(h);
     }
+    HeapManager::Free(reinterpret_cast<void *&>(fnameTemp));
+
     return ret;
 }
 
@@ -113,41 +109,29 @@ bool Directory::IsDirectory() const {
 }
 
 bool Directory::IsFile() const {
-    bool ok = (IsDirectory() == false);
-    return ok;
+    return (IsDirectory() == false);
 }
 
 uint64 Directory::GetSize() {
     HANDLE h = FindFirstFile(fname, &directoryHandle);
     if (h == INVALID_HANDLE_VALUE) {
-        HeapManager::Free(reinterpret_cast<void *&>(fname));
-        HeapManager::Free(reinterpret_cast<void *&>(directoryHandle));
+        REPORT_ERROR(ErrorManagement::OSError, "Error: GetSize Failed INVALID_HANDLE_VALUE");
     }
-    uint64 size = 0L;
-    //size = directoryHandle.nFileSizeHigh;
-    //size <<= 32;
-    //size += directoryHandle.nFileSizeLow;
-    size = (((uint64)directoryHandle.nFileSizeHigh) * (MAXDWORD) + 1) + directoryHandle.nFileSizeLow;
+    FindClose(h);
 
+    uint64 size = 0L;
+    size = (((uint64) directoryHandle.nFileSizeHigh) * (MAXDWORD) + 1) + directoryHandle.nFileSizeLow;
     return size;
 }
 
 TimeStamp Directory::GetLastWriteTime() {
     TimeStamp timeStamp;
-    /*uint64 t = *((uint64 *) &directoryHandle.ftLastWriteTime);
-     uint64 div = 10000000;
-     uint64 t2 = t / div;
-     t2 -= 0x2B61082f0;
-     uint32 *p2 = (uint32 *) &t2;
-     //(time_t) p2[0];
-     struct tm *dt = localtime((const time_t *)p2);
-     bool ret = (dt != NULL);*/
     SYSTEMTIME systemTime;
     HANDLE h = FindFirstFile(fname, &directoryHandle);
     if (h == INVALID_HANDLE_VALUE) {
-        HeapManager::Free(reinterpret_cast<void *&>(fname));
-        HeapManager::Free(reinterpret_cast<void *&>(directoryHandle));
+        REPORT_ERROR(ErrorManagement::OSError, "Error: GetLastWriteTime Failed INVALID_HANDLE_VALUE");
     }
+    FindClose(h);
     bool ret = FileTimeToSystemTime(&directoryHandle.ftLastWriteTime, &systemTime);
     if (ret) {
         timeStamp.SetMicroseconds(static_cast<uint32>(systemTime.wMilliseconds));
@@ -159,26 +143,19 @@ TimeStamp Directory::GetLastWriteTime() {
         timeStamp.SetYear(static_cast<uint32>(systemTime.wYear));
     }
     else {
-        //REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
+        REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
     }
     return timeStamp;
 }
 
 TimeStamp Directory::GetLastAccessTime() {
     TimeStamp timeStamp;
-    /*uint64 t = *((uint64 *) &directoryHandle.ftLastAccessTime);
-     uint64 div = 10000000;
-     uint64 t2 = t / div;
-     t2 -= 0x2B61082f0;
-     uint32 *p2 = (uint32 *) &t2;
-     struct tm *dt = localtime(&p2);
-     bool ret = (dt != NULL);*/
     SYSTEMTIME systemTime;
     HANDLE h = FindFirstFile(fname, &directoryHandle);
     if (h == INVALID_HANDLE_VALUE) {
-        HeapManager::Free(reinterpret_cast<void *&>(fname));
-        HeapManager::Free(reinterpret_cast<void *&>(directoryHandle));
+        REPORT_ERROR(ErrorManagement::OSError, "Error: GetLastAccessTime Failed INVALID_HANDLE_VALUE");
     }
+    FindClose(h);
     bool ret = FileTimeToSystemTime(&directoryHandle.ftLastAccessTime, &systemTime);
     if (ret) {
         timeStamp.SetMicroseconds(static_cast<uint32>(systemTime.wMilliseconds));
@@ -190,7 +167,7 @@ TimeStamp Directory::GetLastAccessTime() {
         timeStamp.SetYear(static_cast<uint32>(systemTime.wYear));
     }
     else {
-        //REPORT_ERROR(ErrorManagement::OSError, "Error: localtime()");
+        REPORT_ERROR(ErrorManagement::OSError, "Error: FileTimeToSystemTime()");
     }
     return timeStamp;
 }
@@ -212,13 +189,14 @@ bool Directory::Create(const bool isFile) {
                 ret = false;
             }
         }
+    }
+    if(ret) {
         HANDLE h = FindFirstFile(fname, &directoryHandle);
         if (h == INVALID_HANDLE_VALUE) {
-            HeapManager::Free(reinterpret_cast<void *&>(fname));
-            HeapManager::Free(reinterpret_cast<void *&>(directoryHandle));
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed FindFirstFile() in Create");
             ret = false;
-            //REPORT_ERROR(ErrorManagement::OSError, "Error: Failed FindFirstFile() in initialization");
         }
+        FindClose(h);
     }
     return ret;
 }
@@ -235,7 +213,12 @@ bool Directory::Exists() {
 bool Directory::Delete() {
     bool del = (fname != NULL);
     if (del) {
-        if(SetByName(fname)) {
+        HANDLE h = FindFirstFile(fname, &directoryHandle);
+        if (h == INVALID_HANDLE_VALUE) {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed FindFirstFile() in Delete");
+            del = false;
+        }
+        else {
             if (IsDirectory()) {
                 if (RemoveDirectory(fname) == 0) {
                     del = false;
@@ -247,7 +230,7 @@ bool Directory::Delete() {
                 }
             }
         }
-        else {
+        if (FindClose(h) == 0) {
             del = false;
         }
     }

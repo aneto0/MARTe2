@@ -85,49 +85,67 @@ bool BasicTCPSocketTest::TestDefaultConstructor() {
         return false;
     }
 
-    return !basicTCPSocket.IsValid();
+//    return !basicTCPSocket.IsValid();
+    bool ok = !basicTCPSocket.IsValid();
+    basicTCPSocket.Close();
+    return ok;
 
 }
 
 bool BasicTCPSocketTest::TestSeek() {
     BasicTCPSocket basicTCPSocket;
-    return !basicTCPSocket.Seek(0);
+//    return !basicTCPSocket.Seek(0);
+    bool ok = !basicTCPSocket.Seek(0);
+    return ok;
 }
 
 bool BasicTCPSocketTest::TestSize() {
     BasicTCPSocket basicTCPSocket;
-    return basicTCPSocket.Size() == 0xffffffffffffffff;
+//    return basicTCPSocket.Size() == 0xffffffffffffffff;
+    bool ok = basicTCPSocket.Size() == 0xffffffffffffffff;
+    return ok;
 }
 
 bool BasicTCPSocketTest::TestRelativeSeek() {
     BasicTCPSocket basicTCPSocket;
-    return !basicTCPSocket.RelativeSeek(0);
+//    return !basicTCPSocket.RelativeSeek(0);
+    bool ok = !basicTCPSocket.RelativeSeek(0);
+    return ok;
 }
 
 bool BasicTCPSocketTest::TestPosition() {
     BasicTCPSocket basicTCPSocket;
-    return basicTCPSocket.Position() == 0xffffffffffffffff;
+//    return basicTCPSocket.Position() == 0xffffffffffffffff;
+    bool ok = basicTCPSocket.Position() == 0xffffffffffffffff;
+    return ok;
 }
 
 bool BasicTCPSocketTest::TestSetSize() {
     BasicTCPSocket basicTCPSocket;
-    return !basicTCPSocket.SetSize(1);
+//    return !basicTCPSocket.SetSize(1);
+    bool ok = !basicTCPSocket.SetSize(1);
+    return ok;
 }
 
 bool BasicTCPSocketTest::TestCanWrite() {
     BasicTCPSocket basicTCPSocket;
-    return basicTCPSocket.CanWrite();
+//    return basicTCPSocket.CanWrite();
+    bool ok = basicTCPSocket.CanWrite();
+    return ok;
 }
 
 bool BasicTCPSocketTest::TestCanRead() {
-
     BasicTCPSocket basicTCPSocket;
-    return basicTCPSocket.CanRead();
+//    return basicTCPSocket.CanRead();
+    bool ok = basicTCPSocket.CanRead();
+    return ok;
 }
 
 bool BasicTCPSocketTest::TestCanSeek() {
     BasicTCPSocket basicTCPSocket;
-    return !basicTCPSocket.CanSeek();
+//    return !basicTCPSocket.CanSeek();
+    bool ok = !basicTCPSocket.CanSeek();
+    return ok;
 }
 
 static void StartServer_Listen(BasicTCPSocketTest &param) {
@@ -161,7 +179,7 @@ static void StartServer_Listen(BasicTCPSocketTest &param) {
     while (Threads::NumberOfThreads() > 1) {
         Sleep::MSec(10);
     }
-
+    serverSocket.Close();
 }
 
 static void ClientJob_Listen(BasicTCPSocketTest &param) {
@@ -187,7 +205,7 @@ static void ClientJob_Listen(BasicTCPSocketTest &param) {
     }
 
     param.eventSem.Wait();
-
+    clientSocket.Close();
 }
 
 static bool ListenConnectTest(BasicTCPSocketTest &param,
@@ -324,7 +342,7 @@ static void StartServer_ReadWrite(BasicTCPSocketTest &param) {
     for (uint32 i = 0; i < acceptedConnections; i++) {
         delete serverParam[i].socket;
     }
-
+    serverSocket.Close();
 }
 
 static void WriteJob(ServerParam &param) {
@@ -343,6 +361,7 @@ static void WriteJob(ServerParam &param) {
     param.testObj->eventSem.Wait();
     param.testObj->sem.FastLock();
     param.testObj->sem.FastUnLock();
+    param.socket->Close();
 
 }
 
@@ -407,7 +426,7 @@ static void ClientJob_Read(BasicTCPSocketTest &param) {
     }
 
     param.eventSem.Wait();
-
+    clientSocket.Close();
 }
 
 bool BasicTCPSocketTest::TestRead(const ReadWriteTestTable *table) {
@@ -523,7 +542,7 @@ static void ClientJob_Peek(BasicTCPSocketTest &param) {
     }
 
     param.eventSem.Wait();
-
+    clientSocket.Close();
 }
 
 bool BasicTCPSocketTest::TestPeek(const ReadWriteTestTable *table) {
@@ -665,7 +684,6 @@ static void ClientJob_Write(BasicTCPSocketTest &param) {
 
             //}
 
-
             if (!ret) {
                 param.sem.FastLock();
                 param.retVal = false;
@@ -683,7 +701,7 @@ static void ClientJob_Write(BasicTCPSocketTest &param) {
     }
 
     param.eventSem.Wait();
-
+    clientSocket.Close();
 }
 
 bool BasicTCPSocketTest::TestWrite(const ReadWriteTestTable *table) {
@@ -811,7 +829,7 @@ static void StartServer_WaitConnection(BasicTCPSocketTest &param) {
     while (Threads::NumberOfThreads() > 1) {
         Sleep::MSec(10);
     }
-
+    serverSocket.Close();
 }
 
 static void ClientJob_WaitConnection(BasicTCPSocketTest &param) {
@@ -838,7 +856,7 @@ static void ClientJob_WaitConnection(BasicTCPSocketTest &param) {
     }
 
     param.eventSem.Wait();
-
+    clientSocket.Close();
 }
 
 bool BasicTCPSocketTest::TestWaitConnection(const WaitConnectionTestTable *table) {
@@ -970,7 +988,7 @@ static void StartServer_IsConnected(BasicTCPSocketTest &param) {
     while (Threads::NumberOfThreads() > 1) {
         Sleep::MSec(10);
     }
-
+    serverSocket.Close();
 }
 
 static void ClientJob_IsConnected(BasicTCPSocketTest &param) {
@@ -1002,7 +1020,7 @@ static void ClientJob_IsConnected(BasicTCPSocketTest &param) {
     param.sem.FastUnLock();
 
     param.eventSem.Wait();
-
+    clientSocket.Close();
 }
 
 bool BasicTCPSocketTest::TestIsConnected(bool connect,

@@ -117,11 +117,11 @@ bool BasicSocket::IsBlocking() const {
 }
 
 Handle BasicSocket::GetReadHandle() const {
-    return (Handle)(connectionSocket);
+    return (Handle)connectionSocket;
 }
 
 Handle BasicSocket::GetWriteHandle() const {
-    return (Handle)(connectionSocket);
+    return (Handle)connectionSocket;
 }
 
 }

@@ -34,7 +34,7 @@
 #include "Threads.h"
 #include "Sleep.h"
 #include "BasicUDPSocket.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -59,6 +59,12 @@ static void ThreadWrite(TimeoutType &defaultTo) {
     return;
 }
 
+static void ThreadWriteFile(BasicFile &basicFile) {
+    Sleep::MSec(100);
+    uint32 size = StringHelper::Length("Write File\n");
+    basicFile.Write("Write File\n", size);
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -75,17 +81,24 @@ SelectTest::~SelectTest() {
 
 bool SelectTest::TestDefaultConstructor() {
     BasicConsole bc1;
-    return (!sel.IsSet(bc1));
+    bc1.Open(BasicConsoleMode::Default);
+    bool ok = (!sel.IsSet(bc1));
+    bc1.Close();
+    return ok;
 }
 
 bool SelectTest::TestAddReadHandle() {
+    bc.Open(BasicConsoleMode::Default);
     retVal &= sel.AddReadHandle(bc);
+    bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddReadHandle_SameHandle() {
+    bc.Open(BasicConsoleMode::Default);
     retVal &= sel.AddReadHandle(bc);
     retVal &= !sel.AddReadHandle(bc);
+    bc.Close();
     return retVal;
 }
 
@@ -95,13 +108,17 @@ bool SelectTest::TestAddReadHandle_InvalidHandle() {
 }
 
 bool SelectTest::TestAddWriteHandle() {
+    bc.Open(BasicConsoleMode::Default);
     retVal &= sel.AddWriteHandle(bc);
+    bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddWritedHandle_SameHandle() {
+    bc.Open(BasicConsoleMode::Default);
     retVal &= sel.AddWriteHandle(bc);
     retVal &= !sel.AddWriteHandle(bc);
+    bc.Close();
     return retVal;
 }
 
@@ -111,13 +128,17 @@ bool SelectTest::TestAddWritedHandle_InvalidHandle() {
 }
 
 bool SelectTest::TestAddExceptionHandle() {
+    bc.Open(BasicConsoleMode::Default);
     retVal &= sel.AddExceptionHandle(bc);
+    bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestAddExceptionHandle_SameHandle() {
+    bc.Open(BasicConsoleMode::Default);
     retVal &= sel.AddExceptionHandle(bc);
     retVal &= !sel.AddExceptionHandle(bc);
+    bc.Close();
     return retVal;
 }
 
@@ -127,16 +148,20 @@ bool SelectTest::TestAddExceptionHandle_Invalidle() {
 }
 
 bool SelectTest::TestRemoveReadHandle() {
+    bc.Open(BasicConsoleMode::Default);
     sel.AddReadHandle(bc);
     retVal &= sel.RemoveReadHandle(bc);
     retVal &= !sel.IsSet(bc);
+    bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveReadHandle_SameHandle() {
+    bc.Open(BasicConsoleMode::Default);
     sel.AddReadHandle(bc);
     sel.RemoveReadHandle(bc);
     retVal &= !sel.RemoveReadHandle(bc);
+    bc.Close();
     return retVal;
 }
 
@@ -146,16 +171,20 @@ bool SelectTest::TestRemoveReadHandle_InvalidHandle() {
 }
 
 bool SelectTest::TestRemoveWriteHandle() {
+    bc.Open(BasicConsoleMode::Default);
     sel.AddWriteHandle(bc);
     retVal &= sel.RemoveWriteHandle(bc);
     retVal &= !sel.IsSet(bc);
+    bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveWriteHandle_SameHandle() {
+    bc.Open(BasicConsoleMode::Default);
     sel.AddWriteHandle(bc);
     sel.RemoveWriteHandle(bc);
     retVal &= !sel.RemoveWriteHandle(bc);
+    bc.Close();
     return retVal;
 }
 
@@ -165,16 +194,20 @@ bool SelectTest::TestRemoveWriteHandle_InvalidHandle() {
 }
 
 bool SelectTest::TestRemoveExceptionHandle() {
+    bc.Open(BasicConsoleMode::Default);
     sel.AddExceptionHandle(bc);
     retVal &= sel.RemoveExceptionHandle(bc);
     retVal &= !sel.IsSet(bc);
+    bc.Close();
     return retVal;
 }
 
 bool SelectTest::TestRemoveExceptionHandle_SameHandle() {
+    bc.Open(BasicConsoleMode::Default);
     sel.AddExceptionHandle(bc);
     sel.RemoveExceptionHandle(bc);
     retVal &= !sel.RemoveExceptionHandle(bc);
+    bc.Close();
     return retVal;
 }
 
@@ -184,24 +217,47 @@ bool SelectTest::TestRemoveExceptionHandle_InvalidHandle() {
 }
 
 bool SelectTest::TesClearAllHandles() {
+#if ENVIRONMENT == Windows
+    bc.Open(BasicConsoleMode::Default);
+    retVal &= sel.AddReadHandle(bc);
+    BasicFile bf;
+    bf.Open("Test.txt", BasicFile::ACCESS_MODE_R | BasicFile::FLAG_CREAT);
+    retVal &= sel.AddReadHandle(bf);
+#else
     retVal &= sel.AddWriteHandle(bc);
     retVal &= sel.AddExceptionHandle(bc);
     retVal &= sel.AddReadHandle(bc);
+#endif
     sel.ClearAllHandles();
+#if ENVIRONMENT == Windows
     retVal &= !sel.IsSet(bc);
+    retVal &= !sel.IsSet(bf);
+    bf.Close();
+    bc.Close();
+    DeleteFile("Test.txt");
+#else
+    retVal &= !sel.IsSet(bc);
+#endif
     return retVal;
 }
 
 bool SelectTest::TestIsSet() {
-    retVal &= !sel.IsSet(bc);
-    retVal &= sel.AddWriteHandle(bc);
-    retVal &= sel.IsSet(bc);
+    BasicFile bf;
+    bf.Open("Test.txt", BasicFile::ACCESS_MODE_W | BasicFile::FLAG_CREAT);
+    retVal &= sel.AddReadHandle(bf);
+    ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWriteFile, &bf);
+    sel.WaitUntil(defaultTo);
+    retVal &= sel.IsSet(bf);
+    bf.Close();
+    DeleteFile("Test.txt");
     return retVal;
 }
 
 bool SelectTest::TestWaitUntil_waitTimeout() {
+    bc.Open(BasicConsoleMode::Default);
     sel.AddReadHandle(bc);
     retVal &= (0 == sel.WaitUntil(defaultTo));
+    bc.Close();
     return retVal;
 }
 
@@ -211,6 +267,7 @@ bool SelectTest::TestWaitUntil_waitRead() {
         retVal = false;
         return retVal;
     }
+    bUDPsRead.SetBlocking(true);
     if (!bUDPsRead.Listen(ACTUAL_TESTING_PORT)) {
         retVal = false;
         return retVal;
@@ -219,6 +276,9 @@ bool SelectTest::TestWaitUntil_waitRead() {
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, &defaultTo);
     retVal &= (sel.WaitUntil(defaultTo) == 1);
     retVal &= sel.IsSet(bUDPsRead);
+    char8 buffer[32];
+    uint32 size = 32;
+    bUDPsRead.Read(buffer, size);
     while (Threads::IsAlive(tid)) {
         Sleep::MSec(1);
     }

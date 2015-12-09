@@ -58,9 +58,9 @@ static int32 fileFilter(const struct dirent * const de) {
     return static_cast<int32>(fnmatch(fileFilterSearchMask, &de->d_name[0], 0) == 0);
 }
 
-DirectoryScanner::DirectoryScanner(const char8 * const path) :
+DirectoryScanner::DirectoryScanner() :
         LinkedListHolder() {
-    basePath = StringHelper::StringDup(path);
+    basePath = static_cast<char8 *>(NULL);
     size = 0u;
 }
 

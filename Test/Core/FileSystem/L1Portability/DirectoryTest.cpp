@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "DirectoryTest.h"
+#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -204,7 +205,6 @@ bool DirectoryTest::TestGetSize_FileIncorrect() {
 bool DirectoryTest::TestGetLastAccessTime() {
     char8 path[128];
     DirectoryCreateN(path, "TestGetLastAccessTime.txt");
-    //struct stat buf;
     Directory dir(path);
     dir.Create(true);
     BasicFile file;
@@ -226,7 +226,6 @@ bool DirectoryTest::TestGetLastAccessTime_ReRead() {
     char8 path[128];
     char8 pathR[128];
     DirectoryCreateN(path, "TestGetLastAccessTime_ReRead.txt");
-    //printf("path %s", path);
     Directory dir(path);
     dir.Create(true);
     BasicFile file;
@@ -238,18 +237,14 @@ bool DirectoryTest::TestGetLastAccessTime_ReRead() {
     file.Open(path, BasicFile::ACCESS_MODE_R);
     file.Read(pathR, size);
     file.Close();
-
     TimeStamp lastAccessTime = dir.GetLastAccessTime();
-    //printf("Read before: %d %d %d %d\n", lastAccessTime.hours, lastAccessTime.minutes, lastAccessTime.seconds, lastAccessTime.microseconds);
+
     Sleep::Sec(1.1e-0);
     file.Open(path, BasicFile::ACCESS_MODE_R);
     file.Read(pathR, size);
     file.Close();
-
     TimeStamp lastAccessTime2 = dir.GetLastAccessTime();
-    //printf("Read After: %d %d %d %d\n", lastAccessTime2.hours, lastAccessTime2.minutes, lastAccessTime2.seconds, lastAccessTime2.microseconds);
-    bool ok = (lastAccessTime.GetMicroseconds() != lastAccessTime2.GetMicroseconds());
-    ok &= (lastAccessTime.GetSeconds() != lastAccessTime2.GetSeconds());
+    bool ok = (lastAccessTime.GetSeconds() != lastAccessTime2.GetSeconds());
     return ok;
 }
 
@@ -264,12 +259,9 @@ bool DirectoryTest::TestGetLastWriteTime() {
     file.Write("Confirm the last Write", size);
     file.Close();
     TimeStamp lastWriteTime = dir.GetLastWriteTime();
-
-    Sleep::Sec(1e-0);
+    Sleep::Sec(1.1e-0);
     TimeStamp lastWriteTime2 = dir.GetLastWriteTime();
-
-    bool ok = (lastWriteTime.GetMicroseconds() == lastWriteTime2.GetMicroseconds());
-    ok &= (lastWriteTime.GetSeconds() == lastWriteTime2.GetSeconds());
+    bool ok = (lastWriteTime.GetSeconds() == lastWriteTime2.GetSeconds());
     return ok;
 }
 
@@ -293,8 +285,7 @@ bool DirectoryTest::TestGetLastWriteTime_ReWrite() {
     file.Close();
     TimeStamp lastWriteTime2 = dir.GetLastWriteTime();
 
-    bool ok = (lastWriteTime.GetMicroseconds() == lastWriteTime2.GetMicroseconds());
-    ok &= !(lastWriteTime.GetSeconds() == lastWriteTime2.GetSeconds());
+    bool ok = (lastWriteTime.GetSeconds() != lastWriteTime2.GetSeconds());
     return ok;
 }
 
@@ -303,7 +294,11 @@ bool DirectoryTest::TestCreate(const char8 *pathin,
     char8 path[128];
     DirectoryCreateN(path, pathin);
     Directory dir(path);
-    if ((!dir.Exists() || isFile) && (pathin != NULL && (StringHelper::Compare(pathin, "") != 0))) {
+#if ENVIRONMENT == Windows
+    if ((!dir.Exists()) && (pathin != NULL && (StringHelper::Compare(pathin, "") != 0))) {
+#else if ENVIRONMENT == Linux
+        if (((!dir.Exists() || isFile)) && (pathin != NULL && (StringHelper::Compare(pathin, "") != 0))) {
+#endif
         return dir.Create(isFile);
     }
     else {

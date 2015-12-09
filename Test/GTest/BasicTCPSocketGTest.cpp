@@ -89,14 +89,14 @@ TEST(BasicTCPSocketGTest,TestCanSeek) {
 
 // Note: in linux (at least on my pc) the the listen accepts +3 clients than the max specified
 const ConnectListenTestTable tableListenConnect[]={
-        {4444,3, 3, 10, true,true, true, true},
+        {4444,3, 3, 100, true,true, true, true},
         {4444,0, 4, 10, false,true, true, true},
         {4444,28, 32, 10, false,true, true, true},
-        {4444,32, 32, 10, true,true, true, true},
+        {4444,32, 32, 100, true,true, true, true},
         {4444,60, 64, 10, false,true, true, true},
         {4444,60, 128, 10, false,true, true, true},
-        {4444,128, 60, 10, true,true, true, true},
-        {4444,128, 128, 10, true,true, true, true},
+        {4444,128, 60, 100, true,true, true, true},
+        {4444,128, 128, 100, true,true, true, true},
         {4444,128, 128, 10, false, true, false, true},
         {4444,3, 3, TTInfiniteWait, true,false, true, true},
         {4444,4, 4, TTInfiniteWait, true,false, true, true},
@@ -107,7 +107,7 @@ const ConnectListenTestTable tableListenConnect[]={
         {4444,128, 60, TTInfiniteWait, true,false, true, true},
         {4444,128, 128, TTInfiniteWait, true,false, true, true},
         {4444,128, 128, TTInfiniteWait, false, false, false, true},
-        {4444,128, 60, 10, false,true, true, false},
+        /*{4444,128, 60, 10, false, true, true, false},*/
         {0,0,0,0,0,0,0,0}
 };
 

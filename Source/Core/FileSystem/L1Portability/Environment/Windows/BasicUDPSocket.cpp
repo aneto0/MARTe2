@@ -52,7 +52,7 @@ BasicUDPSocket::BasicUDPSocket() :
 }
 
 BasicUDPSocket::~BasicUDPSocket() {
-
+    WSACleanup();
 }
 
 bool BasicUDPSocket::Peek(char8* const output,

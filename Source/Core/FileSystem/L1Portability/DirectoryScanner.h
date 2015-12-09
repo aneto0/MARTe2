@@ -31,8 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "LinkedListHolder.h"
 #include "Directory.h"
+#include "LinkedListHolder.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -53,7 +53,7 @@ public:
      *   BasePath() = NULL &&
      *   DirectorySize() = 0
      */
-    DirectoryScanner(const char8 * const path = NULL);
+    DirectoryScanner();
 
     /**
      * @brief Default destructor.

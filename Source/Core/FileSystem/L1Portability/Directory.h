@@ -31,8 +31,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "LinkedListHolder.h"
 #include "GeneralDefinitions.h"
+#include "HeapManager.h"
+#include "LinkedListHolder.h"
+#include "MemoryOperationsHelper.h"
+#include "StringHelper.h"
 #include "TimeStamp.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
 

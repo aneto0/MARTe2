@@ -28,17 +28,13 @@
 #include <windows.h>
 #include <iostream>
 #include <stdio.h>
-#include <tchar.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "DirectoryScanner.h"
-#include "Directory.h"
-#include "StringHelper.h"
-#include "HeapManager.h"
-#include "MemoryOperationsHelper.h"
-#include "LinkedListHolder.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -49,18 +45,17 @@
 
 namespace MARTe {
 
-DirectoryScanner::DirectoryScanner(const char8 * const path) :
+DirectoryScanner::DirectoryScanner() :
         LinkedListHolder() {
-    basePath = StringHelper::StringDup(path);
+    basePath = static_cast<char8 *>(NULL);
     size = 0u;
 }
 
 DirectoryScanner::~DirectoryScanner() {
     size = 0u;
     if (basePath != NULL) {
-
         if (!HeapManager::Free(reinterpret_cast<void *&>(basePath))) {
-
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free");
         }
         basePath = static_cast<char8 *>(NULL);
     }
@@ -71,7 +66,7 @@ void DirectoryScanner::CleanUp() {
     size = 0u;
     if (basePath != NULL) {
         if (!HeapManager::Free(reinterpret_cast<void *&>(basePath))) {
-
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free");
         }
         basePath = static_cast<char8 *>(NULL);
     }
@@ -88,8 +83,8 @@ bool DirectoryScanner::Scan(const char8 * const path,
     uint32 addressLen = StringHelper::Length(path);
     if ((path != NULL) && (addressLen > 0u)) {
         basePath = static_cast<char8 *>(HeapManager::Malloc(addressLen + 2u));
-
         if (!StringHelper::Copy(basePath, path)) {
+            HeapManager::Free(reinterpret_cast<void *&>(basePath));
             ret = false;
         }
     }
@@ -125,23 +120,21 @@ bool DirectoryScanner::Scan(const char8 * const path,
     if (ret) {
         uint32 pathSize = 512u;
         char8 statAddr[512];
-        char *searchMask = NULL;
+        char8 *searchMask = NULL;
         if (fileMask != NULL) {
             searchMask = static_cast<char8 *>(HeapManager::Malloc(strlen(basePath)+strlen(fileMask)+2u));
             StringHelper::Copy(searchMask,basePath);
-            //StringHelper::Concatenate(searchMask,&DIRECTORY_SEPARATOR);
+
             if(StringHelper::Compare(fileMask, "") != 0) {
                 StringHelper::Concatenate(searchMask,fileMask);
             }
             else {
                 StringHelper::Concatenate(searchMask,"*");
-
             }
         }
         else {
-            searchMask = static_cast<char8 *>(HeapManager::Malloc(strlen(basePath)+3u));
+            searchMask = static_cast<char8 *>(HeapManager::Malloc(strlen(basePath)+2u));
             searchMask = StringHelper::StringDup(basePath);
-            //StringHelper::Concatenate(searchMask,&DIRECTORY_SEPARATOR);
             StringHelper::Concatenate(searchMask,"*");
 
         }
@@ -149,23 +142,31 @@ bool DirectoryScanner::Scan(const char8 * const path,
         WIN32_FIND_DATA lpFindFileData;
         HANDLE h = FindFirstFile(searchMask, &lpFindFileData);
         if (h == INVALID_HANDLE_VALUE) {
-            HeapManager::Free(reinterpret_cast<void *&>(searchMask));
-            HeapManager::Free(reinterpret_cast<void *&>(basePath));
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed FindFirstFile() in initialization");
+            FindClose(h);
             ret = false;
-            printf("FindFirstFile invalid");
-            //REPORT_ERROR(ErrorManagement::OSError, "Error: Failed FindFirstFile() in initialization");
         }
         if (ret) {
-            Directory *entry = new Directory();
-            entry->SetByName(searchMask);
 
-            if (sorter == NULL) {
-                ListInsert(entry);
-                printf("ListInsert:%s\n", entry->GetName());
+            if (!StringHelper::Copy(&statAddr[0], basePath)) {
+                ret = false;
             }
-            else {
-                ListInsert(entry,sorter);
-                printf("ListInsertsorter:%s\n", entry->GetName());
+            // concatenate it with the file name to create the full path
+            if (ret) {
+                if (!StringHelper::Concatenate(&statAddr[0], (char8 *) lpFindFileData.cFileName)) {
+                    ret = false;
+                }
+            }
+            if (StringHelper::Compare((char8 *) lpFindFileData.cFileName, ".") != 0) {
+                Directory *entry = new Directory(&statAddr[0]);
+                if (ret) {
+                    if (sorter == NULL) {
+                        ListInsert(entry);
+                    }
+                    else {
+                        ListInsert(entry,sorter);
+                    }
+                }
             }
 
             while (FindNextFile(h, &lpFindFileData)) {
@@ -174,40 +175,29 @@ bool DirectoryScanner::Scan(const char8 * const path,
                     ret = false;
                 }
 
-                /*if (!StringHelper::Concatenate(&statAddr[0], &DIRECTORY_SEPARATOR)) {
-                 ret = false;
-                 }*/
-
                 if (ret) {
                     // concatenate it with the file name to create the full path
                     if (!StringHelper::Concatenate(&statAddr[0], (char8 *) lpFindFileData.cFileName)) {
                         ret = false;
                     }
-
                 }
 
-                entry->SetByName(&statAddr[0]);
-                if (StringHelper::Compare((char8 *) lpFindFileData.cFileName, "..") == 0) {
+                if (StringHelper::Compare((char8 *) lpFindFileData.cFileName, "..") != 0) {
 
-                }
-                else {
-                    size += entry->GetSize();
-                }
-                Directory * temp = new Directory(&statAddr[0]);
-                if (sorter == NULL) {
-                    //ListInsert(entry);
-                    ListInsert(temp);
-                    printf("ListInsert:%s\n", temp->GetName());
-                }
-                else {
-                    ListInsert(temp, sorter);
-                    printf("ListInsertsorter:%s\n", temp->GetName());
+                    Directory * temp = new Directory(&statAddr[0]);
+                    if (sorter == NULL) {
+                        ListInsert(temp);
+                    }
+                    else {
+                        ListInsert(temp, sorter);
+                    }
+                    size += temp->GetSize();
                 }
             }
-
         }
 
         HeapManager::Free(reinterpret_cast<void *&>(searchMask));
+
         if (!ret) {
             CleanUp();
         }

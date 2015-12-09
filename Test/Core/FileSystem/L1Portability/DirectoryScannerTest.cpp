@@ -93,9 +93,9 @@ bool DirectoryScannerTest::TestDirectorySize() {
     directoryScann.Scan(path);
     ///Compare the directoryScanner size with the sum of the both files/directory created
     bool ok = (directoryScann.DirectorySize() == (dir2.GetSize() + dir3.GetSize()));
-    dir2.Delete();
-    dir3.Delete();
-    dir.Delete();
+    ok &= dir2.Delete();
+    ok &= dir3.Delete();
+    ok &= dir.Delete();
     return ok;
 }
 
@@ -153,9 +153,9 @@ bool DirectoryScannerTest::TestScan(const char8 * pathin,
         }
         i++;
     }
-    dir3.Delete();
-    dir2.Delete();
-    dir.Delete();
+    ok &= dir3.Delete();
+    ok &= dir2.Delete();
+    ok &= dir.Delete();
     return ok;
 }
 
@@ -221,11 +221,10 @@ bool DirectoryScannerTest::TestScan_Mask() {
 
     uint32 i = 0;
     directoryScann.Scan(path, "B");
-    ///Look at list in search of the file correct
+    ///Look at list in search of the correct file
     while (directoryScann.ListPeek(i) != NULL) {
         Directory *fileB = static_cast<Directory *>(directoryScann.ListPeek(i));
         if (StringHelper::Compare(fileB->GetName(), pathB) == 0) {
-            printf("TestScan_Mask: %s\n",fileB->GetName());
             ok &= true;
         }
         else {
@@ -250,9 +249,9 @@ bool DirectoryScannerTest::TestScan_Mask() {
         i++;
     }
 
-    dir.Delete();
-    dir1.Delete();
-    dir2.Delete();
+    ok &= dir.Delete();
+    ok &= dir1.Delete();
+    ok &= dir2.Delete();
     return ok;
 }
 
@@ -307,9 +306,9 @@ bool DirectoryScannerTest::TestScan_Filter() {
         i++;
     }
 
-    dir.Delete();
-    dir1.Delete();
-    dir2.Delete();
+    ok &= dir.Delete();
+    ok &= dir1.Delete();
+    ok &= dir2.Delete();
     return ok;
 }
 
@@ -322,7 +321,7 @@ bool DirectoryScannerTest::TestBasePath(const char8 * pathin) {
     directoryScann.Scan(path);
     StringHelper::Concatenate(path, &DIRECTORY_SEPARATOR);
     bool ok = (StringHelper::Compare(directoryScann.BasePath(), path) == 0);
-    dir.Delete();
+    ok &= dir.Delete();
     return ok;
 }
 
@@ -331,10 +330,9 @@ bool DirectoryScannerTest::TestCleanUp() {
     DirectoryCreateN(path, "TestCleanUp");
     Directory dir1(path);
     dir1.Create(false);
-    DirectoryScanner dir(path);
+    DirectoryScanner dir;
     dir.CleanUp();
-    bool ok = (dir.BasePath() == NULL );
-
+    bool ok = (dir.BasePath() == NULL);
     DirectoryScanner directory;
     directory.Scan(BASE_PATH);
 
@@ -345,8 +343,9 @@ bool DirectoryScannerTest::TestCleanUp() {
         dirDel.Delete();
         i++;
     }
+
     Directory dirBase(BASE_PATH);
-    dirBase.Delete();
+    ok &= dirBase.Delete();
     return ok;
 }
 

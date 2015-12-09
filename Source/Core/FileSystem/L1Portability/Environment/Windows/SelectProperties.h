@@ -31,14 +31,19 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "HandleI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-typedef fd_set SetIdentifier;
+//typedef Handle *SetIdentifier;
+    typedef struct SetIdentifier {
+        Handle *registeredHandles;
+        Handle *selectHandles;
+        Handle selectedHandle;
+    };
 }
 
 
