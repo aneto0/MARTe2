@@ -50,9 +50,9 @@ TEST(ParserGTest,TestConstructor) {
     ASSERT_TRUE(parserTest.TestConstructor());
 }
 
-TEST(ParserGTest,TestGetGrammatic) {
+TEST(ParserGTest,TestGetGrammar) {
     ParserTest parserTest;
-    ASSERT_TRUE(parserTest.TestGetGrammatic());
+    ASSERT_TRUE(parserTest.TestGetGrammar());
 }
 
 TEST(ParserGTest,TestParseScalar) {

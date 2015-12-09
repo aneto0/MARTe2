@@ -31,10 +31,10 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "Token.h"
-#include "StreamI.h"
-#include "ParserGrammatic.h"
+#include "ParserGrammar.h"
 #include "StaticList.h"
+#include "StreamI.h"
+#include "Token.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -44,19 +44,19 @@ namespace MARTe {
 /**
  * @brief Implementation of a lexical analyzer which will be used by the Parser.
  */
-/*lint -e1712 . Justification: This class must be initialized like the unique constructor requires; no need a default constructor.*/
-class LexicalAnalyzer {
+/*lint -e1712 . Justification: This class must be as per the only defined constructor. No need for a default constructor.*/
+class DLL_API LexicalAnalyzer {
 
 public:
 
     /**
      * @brief Default constructor.
-     * @param[in] stream is the stream to be tokenized.
-     * @param[in] terminalsIn is a C-string containing the terminal characters.
-     * @param[in] separatorsIn is a C-string containing the separator characters.
+     * @param[in] stream the stream to be tokenized.
+     * @param[in] terminalsIn C-string containing the terminal characters.
+     * @param[in] separatorsIn C-string containing the separator characters.
      * @details
      *   - If the token represents a number (also in hexadecimal, octal, or binary format) its type will be NUMBER_TOKEN.
-     *   - If the token represents a string (begin with a ' " ' or a 'non-number' character at the beginning) its type will be STRING_TOKEN.
+     *   - If the token represents a string (beginning with a ' " ' or a 'non-number' character at the beginning) its type will be STRING_TOKEN.
      *   - If the token is invalid (i.e 1234a56) its type will be ERROR_TOKEN.
      *   - If the token is a terminal its type will be TERMINAL_TOKEN.
      *   - If the read operation from the stream fails, a token with the EOF_TOKEN type will be returned.

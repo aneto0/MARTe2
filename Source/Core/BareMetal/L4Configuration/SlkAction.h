@@ -50,13 +50,13 @@ class SlkAction {
     SlkAction(StreamI &stream,
               ConfigurationDatabase &databaseIn,
               BufferedStreamI * const err = NULL,
-              ParserGrammatic grammaticIn = StandardGrammatic);
+              ParserGrammar grammarIn = StandardGrammar);
 
               ~SlkAction();
 
               bool Parse();
 
-              ParserGrammatic GetGrammatic() const;
+              ParserGrammar GetGrammar() const;
 
               void predict(uint16 a);
 
@@ -102,7 +102,7 @@ class SlkAction {
 
               uint32 numberOfDimensions;
 
-              ParserGrammatic grammatic;
+              ParserGrammar grammar;
           };
 
           /*---------------------------------------------------------------------------*/

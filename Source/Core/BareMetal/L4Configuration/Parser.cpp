@@ -51,6 +51,15 @@ static void PrintErrorOnStream(const char8 * const format,
     }
 }
 
+
+/**
+ * @brief Determines if the next expression is an l-value.
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in] assignmentTerminator is the assign operator terminal.
+ * @param[in] varName is the name of the l-value if found.
+ * @return true if the next expression is an l-value, false otherwise.
+ */
 static bool isLValue(Token* &token,
                      LexicalAnalyzer &lexicalAnalyzer,
                      const char8 assignmentTerminator,
@@ -90,9 +99,19 @@ static bool isLValue(Token* &token,
     return ret;
 }
 
+
+/**
+ * @brief Checks that the total number of block terminals is not negative after reading a variable.
+ * If the block is successfully closed, moves the database to the parent node.
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in] closedBlockTerminal is the close block terminal character.
+ * @param[in, out] totalNumberBlockTerminals is the total number of block terminals.
+ * @return false if the totalNumberBlockTerminals becomes negative.
+ */
 static bool CheckCloseBlock(Token* &token,
                             LexicalAnalyzer &lexicalAnalyzer,
-                            ConfigurationDatabase &database,
+                            StructuredDataI &database,
                             const char8 closedBlockTerminal,
                             int32 &totalNumberBlockTerminals) {
     bool ok = true;
@@ -111,6 +130,16 @@ static bool CheckCloseBlock(Token* &token,
     return ok;
 }
 
+
+/**
+ * @brief Reading the type cast string, returns the type identifier for the token storing.
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in] terminalCloseTypeCast is the close terminal character of the type cast expression.
+ * @param[out] typeIndex is the type identifier.
+ * @param[out] err is the stream to print eventual error messages.
+ * @return true if the type cast expression is read correctly, false otherwise.
+ */
 static bool SetTypeCast(Token* &token,
                         LexicalAnalyzer &lexicalAnalyzer,
                         const char8 terminalCloseTypeCast,
@@ -139,9 +168,19 @@ static bool SetTypeCast(Token* &token,
 
 }
 
+
+/**
+ * @brief Reads a scalar.
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in, out] database is the StructuredDataI where the scalar will be stored.
+ * @param[in] name is the name of the vector variable.
+ * @param[in] typeIndex represents the type the token will be converted to.
+ * @return true if the scalar variable expression is read correctly, false otherwise.
+ */
 static bool ReadScalar(Token* &token,
                        LexicalAnalyzer &lexicalAnalyzer,
-                       ConfigurationDatabase &database,
+                       StructuredDataI &database,
                        const char8 * const name,
                        const char8 * const type) {
 
@@ -160,9 +199,21 @@ static bool ReadScalar(Token* &token,
     return ret;
 }
 
+
+/**
+ * @brief Reads a vector.
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in, out] database is the StructuredDataI where the vector will be stored.
+ * @param[in] vectorCloseTerminal is the close vector terminal character.
+ * @param[in] name is the name of the vector variable.
+ * @param[in] typeIndex represents the type the token will be converted to.
+ * @param[out] err is the stream used to print eventual error messages.
+ * @return true if the vector variable expression is read correctly, false otherwise.
+ */
 static bool ReadVector(Token* &token,
                        LexicalAnalyzer &lexicalAnalyzer,
-                       ConfigurationDatabase &database,
+                       StructuredDataI &database,
                        const char8 vectorCloseTerminal,
                        const char8 * const name,
                        const char8 * const type,
@@ -237,9 +288,23 @@ static bool ReadVector(Token* &token,
     return ok;
 }
 
+
+/**
+ * @brief Reads a matrix.
+ * @param[in, out] token is a pointer to the token returned by the lexical analyzer.
+ * @param[in] lexicalAnalyzer is the lexical analyzer used to read tokens from the stream.
+ * @param[in, out] database is the StructuredDataI where the matrix will be stored.
+ * @param[in] vectorOpenTerminal is the open vector terminal character.
+ * @param[in] vectorCloseTerminal is the close vector terminal character.
+ * @param[in] matrixOpenTerminal is the close matrix terminal character.
+ * @param[in] name is the name of the matrix variable.
+ * @param[in] typeIndex represents the type the token will be converted to.
+ * @param[out] err is the stream used to print eventual error messages.
+ * @return true if the matrix variable expression is read correctly, false otherwise.
+ */
 static bool ReadMatrix(Token* &token,
                        LexicalAnalyzer &lexicalAnalyzer,
-                       ConfigurationDatabase &database,
+                       StructuredDataI &database,
                        const char8 vectorOpenTerminal,
                        const char8 vectorCloseTerminal,
                        const char8 matrixCloseTerminal,
@@ -369,6 +434,14 @@ static bool ReadMatrix(Token* &token,
     return ok;
 }
 
+/**
+ * @brief Determines if the next variable is a matrix or a vector.
+ * @param[in] token is the token to be checked.
+ * @param[in] terminal is the previous token found (an open vector terminal or open matrix terminal).
+ * @param[in] vectorOpenTerminal is the open vector terminal character.
+ * @param[in] vectorOpenTerminal is the open matrix terminal character.
+ * @return true if a vector variable is matched, false if it is a matrix.
+ */
 static bool IsVector(Token * const &token,
                      const char8 terminal,
                      const char8 vectorOpenTerminal,
@@ -396,23 +469,23 @@ static bool IsVector(Token * const &token,
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-Parser::Parser(const ParserGrammatic &grammaticIn) :
+Parser::Parser(const ParserGrammar &grammarIn) :
         Object() {
-    grammatic = grammaticIn;
+    grammar = grammarIn;
 }
 
-ParserGrammatic Parser::GetGrammatic() const {
-    return grammatic;
+ParserGrammar Parser::GetGrammar() const {
+    return grammar;
 }
 
 Parser::~Parser() {
 }
 
 bool Parser::Parse(StreamI &stream,
-                   ConfigurationDatabase &database,
+                   StructuredDataI &database,
                    BufferedStreamI * const err) const {
 
-    LexicalAnalyzer lexicalAnalyzer(stream, &grammatic.assignment, grammatic.separators);
+    LexicalAnalyzer lexicalAnalyzer(stream, &grammar.assignment, grammar.separators);
 
     char8 genericTerminal = '\0';
     StreamString varName = "";
@@ -452,7 +525,7 @@ bool Parser::Parse(StreamI &stream,
 
         // Read the lvalue ( string = )
         if (status == LVALUE) {
-            if (!isLValue(token, lexicalAnalyzer, grammatic.assignment, varName)) {
+            if (!isLValue(token, lexicalAnalyzer, grammar.assignment, varName)) {
                 // block checking... this is not a block
                 if (genericTerminal != '\0') {
                     status = VARIABLE;
@@ -489,7 +562,7 @@ bool Parser::Parse(StreamI &stream,
             if (token->GetId() == TERMINAL_TOKEN) {
                 // a terminal found! block or matrix
                 genericTerminal = *(token->GetData());
-                if (genericTerminal == grammatic.openBlock) {
+                if (genericTerminal == grammar.openBlock) {
                     nodeName = varName;
                     token = lexicalAnalyzer.GetToken();
                     status = LVALUE;
@@ -520,14 +593,14 @@ bool Parser::Parse(StreamI &stream,
 
                 // a terminal found! block or matrix
                 genericTerminal = *(token->GetData());
-                if ((genericTerminal == grammatic.openMatrix) || (genericTerminal == grammatic.openVector)) {
+                if ((genericTerminal == grammar.openMatrix) || (genericTerminal == grammar.openVector)) {
                     token = lexicalAnalyzer.GetToken();
                     status = VARIABLE;
                 }
-                else if (genericTerminal == grammatic.openTypeCast) {
+                else if (genericTerminal == grammar.openTypeCast) {
                     token = lexicalAnalyzer.GetToken();
                     // next has to be scalar or matrix
-                    if (SetTypeCast(token, lexicalAnalyzer, grammatic.closeTypeCast, typeName, err)) {
+                    if (SetTypeCast(token, lexicalAnalyzer, grammar.closeTypeCast, typeName, err)) {
                         token = lexicalAnalyzer.GetToken();
                         status = RVALUE;
                     }
@@ -544,10 +617,10 @@ bool Parser::Parse(StreamI &stream,
         }
 
         if (status == VARIABLE) {
-            if ((genericTerminal == grammatic.openMatrix) || (genericTerminal == grammatic.openVector)) {
-                if (IsVector(token, genericTerminal, grammatic.openVector, grammatic.openMatrix)) {
-                    if (ReadVector(token, lexicalAnalyzer, database, grammatic.closeVector, varName.Buffer(), typeName.Buffer(), err)) {
-                        if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
+            if ((genericTerminal == grammar.openMatrix) || (genericTerminal == grammar.openVector)) {
+                if (IsVector(token, genericTerminal, grammar.openVector, grammar.openMatrix)) {
+                    if (ReadVector(token, lexicalAnalyzer, database, grammar.closeVector, varName.Buffer(), typeName.Buffer(), err)) {
+                        if (CheckCloseBlock(token, lexicalAnalyzer, database, grammar.closeBlock, totalBlockTerminals)) {
                             status = LVALUE;
                         }
                         else {
@@ -561,9 +634,9 @@ bool Parser::Parse(StreamI &stream,
                     }
                 }
                 else {
-                    if (ReadMatrix(token, lexicalAnalyzer, database, grammatic.openVector, grammatic.closeVector, grammatic.closeMatrix, varName.Buffer(),
+                    if (ReadMatrix(token, lexicalAnalyzer, database, grammar.openVector, grammar.closeVector, grammar.closeMatrix, varName.Buffer(),
                                    typeName.Buffer(), err)) {
-                        if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
+                        if (CheckCloseBlock(token, lexicalAnalyzer, database, grammar.closeBlock, totalBlockTerminals)) {
                             status = LVALUE;
                         }
                         else {
@@ -580,7 +653,7 @@ bool Parser::Parse(StreamI &stream,
             else {
                 // this is a scalar!!
                 if (ReadScalar(token, lexicalAnalyzer, database, varName.Buffer(), typeName.Buffer())) {
-                    if (CheckCloseBlock(token, lexicalAnalyzer, database, grammatic.closeBlock, totalBlockTerminals)) {
+                    if (CheckCloseBlock(token, lexicalAnalyzer, database, grammar.closeBlock, totalBlockTerminals)) {
                         status = LVALUE;
                     }
                     else {
@@ -602,7 +675,7 @@ bool Parser::Parse(StreamI &stream,
     // database created correctly! Move to Root
     if (ok) {
         if (!database.MoveToRoot()) {
-            REPORT_ERROR(ErrorManagement::FatalError, "Parse: Failed ConfigurationDatabase::MoveToRoot at the end of parsing");
+            REPORT_ERROR(ErrorManagement::FatalError, "Parse: Failed StructuredDataI::MoveToRoot at the end of parsing");
         }
     }
 

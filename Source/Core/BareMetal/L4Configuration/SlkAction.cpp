@@ -94,9 +94,9 @@ static void PrintErrorOnStream(const char8 * const format,
 SlkAction::SlkAction(StreamI &stream,
                      ConfigurationDatabase &databaseIn,
                      BufferedStreamI * const err,
-                     ParserGrammatic grammaticIn) :
+                     ParserGrammar grammarIn) :
         parseError(err),
-        token(stream, &grammaticIn.assignment, grammaticIn.separators),
+        token(stream, &grammarIn.assignment, grammarIn.separators),
         memory(1u) {
     numberOfColumns = 0u;
     firstNumberOfColumns = 0u;
@@ -105,7 +105,7 @@ SlkAction::SlkAction(StreamI &stream,
     errorStream = err;
     tokenType = 0u;
     numberOfDimensions = 0u;
-    grammatic = grammaticIn;
+    grammar = grammarIn;
     initialize_table();
 }
 
@@ -113,8 +113,8 @@ SlkAction::~SlkAction() {
 
 }
 
-ParserGrammatic SlkAction::GetGrammatic() const {
-    return grammatic;
+ParserGrammar SlkAction::GetGrammar() const {
+    return grammar;
 }
 
 void SlkAction::predict(uint16 a) {

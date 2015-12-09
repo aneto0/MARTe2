@@ -32,6 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Parser.h"
+#include "ConfigurationDatabase.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -79,14 +80,14 @@ class ParserTest {
 public:
 
     /**
-     * @brief Tests if the constructor sets the desired grammatic.
+     * @brief Tests if the constructor sets the desired grammar.
      */
     bool TestConstructor();
 
     /**
-     * @brief Tests if the function returns the grammatic set by constructor.
+     * @brief Tests if the function returns the grammar set by constructor.
      */
-    bool TestGetGrammatic();
+    bool TestGetGrammar();
 
     /**
      * @brief Tests the parsing of scalar variables.

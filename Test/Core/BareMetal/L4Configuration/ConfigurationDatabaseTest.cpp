@@ -378,7 +378,7 @@ bool ConfigurationDatabaseTest::TestLock() {
 
 bool ConfigurationDatabaseTest::TestUnlock() {
     ConfigurationDatabase cdb;
-    bool ok = cdb.Lock(TTInfiniteWait);
+    cdb.Lock(TTInfiniteWait);
     cdb.Unlock();
     return cdb.Lock(TTInfiniteWait);
 }

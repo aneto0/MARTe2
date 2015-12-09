@@ -71,7 +71,7 @@ MutexSem.cpp
 Object.cpp
 OperatingSystemCallbacksI.h
 Parser.cpp
-ParserGrammatic.h
+ParserGrammar.h
 Processor.cpp
 ProcessorType.cpp
 Reference.cpp

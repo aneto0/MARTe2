@@ -28,16 +28,23 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#define DLL_API
+#include "ErrorManagement.h"
 #include "LexicalAnalyzer.h"
 #include "StreamString.h"
 #include "TypeConversion.h"
-#include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+
+/**
+ * @brief Gets the next character from the stream.
+ * @param[in] stream is the stream to be read.
+ * @param[out] c is the read character.
+ * @return false if EOF, true otherwise.
+ */
 static bool GetC(StreamI &stream,
                  char8 &c) {
     uint32 charSize = 1u;
@@ -45,6 +52,10 @@ static bool GetC(StreamI &stream,
     return (ret) && (charSize == 1u);
 }
 
+/**
+ * @brief Reads the comment on single lines.
+ * @param[in] stream is the stream to be read.
+ */
 static void ReadCommentOneLine(StreamI &stream) {
 
     char8 c = ' ';
@@ -56,6 +67,11 @@ static void ReadCommentOneLine(StreamI &stream) {
 
 }
 
+/**
+ * @brief Reads the comment on multiple lines.
+ * @param[in] stream is the stream to be read.
+ * @param[out] lineNumber is the token line number.
+ */
 static void ReadCommentMultipleLines(StreamI &stream,
                                      uint32 &lineNumber) {
 
@@ -83,6 +99,18 @@ static void ReadCommentMultipleLines(StreamI &stream,
     }
 }
 
+
+/**
+ * @brief Skips the comments in the stream.
+ * @param[in] stream is the stream to be read.
+ * @param[out] tokenString is the token.
+ * @param[out] nextChar returns the next char read from the input stream if a comment is found, 0 otherwise.
+ * @param[out] lineNumber is the token line number.
+ * @param[in] separators is the separator characters list.
+ * @param[in] terminals is the terminal characters list.
+ * @param[out] separator returns the separator char found at the end of the comment.
+ * @return false if EOF, true otherwise.
+ */
 static bool SkipComment(StreamI &stream,
                         StreamString& tokenString,
                         char8 &nextChar,
@@ -163,6 +191,11 @@ static bool SkipComment(StreamI &stream,
     return !isEOF;
 }
 
+/**
+ * @brief Builds the escape character in case when '\' is read.
+ * @param[out] c is the character in output.
+ * @return true if the character in input matches a known escape sequence, false otherwise.
+ */
 bool EscapeChar(char8 &c) {
     bool ret = true;
     switch (c) {
