@@ -42,12 +42,9 @@
 namespace MARTe {
 
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-extern bool StringToFloat(const char8 * const input,
-                          float32 &number);
-
-/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
-extern bool StringToFloat(const char8 * const input,
-                          float64 &number);
+extern bool StringToFloatGeneric(const char8 * const input,
+                                 float32 * const number,
+                                 const uint32 destBitSize);
 
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 extern bool StringToIntegerGeneric(const char8* const source,
@@ -385,24 +382,24 @@ static bool StringToType(const AnyType &destination,
 
     if (token != NULL) {
         uint32 tokenLength = StringHelper::Length(token);
-        if(destinationDescriptor.type==SString) {
-            StreamString* tempString=reinterpret_cast<StreamString*>(destinationPointer);
-            ret=tempString->Write(token, tokenLength);
+        if (destinationDescriptor.type == SString) {
+            StreamString* tempString = reinterpret_cast<StreamString*>(destinationPointer);
+            ret = tempString->Write(token, tokenLength);
         }
         if (destinationDescriptor.type == CArray) {
             uint32 arraySize = destination.GetByteSize();
-            printf("Here %s %d\n",token,arraySize);
+            printf("Here %s %d\n", token, arraySize);
             if (tokenLength >= arraySize) {
                 REPORT_ERROR(ErrorManagement::Warning, "StringToType: The input is too long for the output buffer.");
                 ret = StringHelper::CopyN(reinterpret_cast<char8 *>(destinationPointer), token, arraySize);
-                uint32 lastCharIndex=arraySize-1u;
+                uint32 lastCharIndex = arraySize - 1u;
                 reinterpret_cast<char8 *>(destinationPointer)[lastCharIndex] = '\0';
             }
             else {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
             }
         }
-        if(destinationDescriptor.type==CCString) {
+        if (destinationDescriptor.type == CCString) {
             // in this case the data pointer is the const char*
             if (destination.GetNumberOfDimensions() == 0u) {
                 ret = StringHelper::Copy(reinterpret_cast<char8 *>(destinationPointer), token);
@@ -412,25 +409,16 @@ static bool StringToType(const AnyType &destination,
                 ret = StringHelper::Copy(*reinterpret_cast<char8 **>(destinationPointer), token);
             }
         }
-        if(destinationDescriptor.type==SignedInteger) {
-            ret=StringToIntegerGeneric(token,
-                    reinterpret_cast<uint8*>(destinationPointer),
-                    destination.GetBitSize(),true);
+        if (destinationDescriptor.type == SignedInteger) {
+            ret = StringToIntegerGeneric(token, reinterpret_cast<uint8*>(destinationPointer), destination.GetBitSize(), true);
 
         }
-        if(destinationDescriptor.type==UnsignedInteger) {
+        if (destinationDescriptor.type == UnsignedInteger) {
 
-            ret=StringToIntegerGeneric(token,
-                    reinterpret_cast<uint8*>(destinationPointer),
-                    destination.GetBitSize(),false);
+            ret = StringToIntegerGeneric(token, reinterpret_cast<uint8*>(destinationPointer), destination.GetBitSize(), false);
         }
-        if(destinationDescriptor.type==Float) {
-            if(destination.GetBitSize()==32u) {
-                ret=StringToFloat(token,*(reinterpret_cast<float32*>(destinationPointer)));
-            }
-            if(destination.GetBitSize()==64u) {
-                ret=StringToFloat(token,*(reinterpret_cast<float64*>(destinationPointer)));
-            }
+        if (destinationDescriptor.type == Float) {
+            ret = StringToFloatGeneric(token, (reinterpret_cast<float32*>(destinationPointer)), destination.GetBitSize());
         }
     }
     return ret;
@@ -511,9 +499,9 @@ static bool VectorBasicTypeConvert(const AnyType &destination,
     bool ok = true;
 
     for (uint32 idx = 0u; (idx < numberOfElements); idx++) {
-        uint32 sourceElementByteSize = static_cast<uint32>(source.GetTypeDescriptor().numberOfBits) / 8u;
+        uint32 sourceElementByteSize = static_cast<uint32>(source.GetByteSize());
         uint32 sourceIndex = idx * sourceElementByteSize;
-        uint32 destinationElementByteSize = static_cast<uint32>(destination.GetTypeDescriptor().numberOfBits) / 8u;
+        uint32 destinationElementByteSize = static_cast<uint32>(destination.GetByteSize());
         uint32 destinationIndex = idx * destinationElementByteSize;
 
         char8 *sourceArray = reinterpret_cast<char8 *>(source.GetDataPointer());
@@ -578,8 +566,8 @@ static bool StaticToStaticMatrix(const AnyType &destination,
         char8* sourceArray = reinterpret_cast<char8 *>(sourcePointer);
         char8* destinationArray = reinterpret_cast<char8 *>(destinationPointer);
 
-        uint32 sourceElementByteSize = static_cast<uint32>(sourceDescriptor.numberOfBits) / 8u;
-        uint32 destinationElementByteSize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
+        uint32 sourceElementByteSize = static_cast<uint32>(source.GetByteSize());
+        uint32 destinationElementByteSize = static_cast<uint32>(destination.GetByteSize());
 
         uint32 sourceRowIndex = ((r * numberOfColumns) * sourceElementByteSize);
         AnyType sourceRow(sourceDescriptor, source.GetBitAddress(), &sourceArray[sourceRowIndex]);
@@ -626,7 +614,7 @@ static bool StaticToHeapMatrix(const AnyType &destination,
         char8* sourceArray = reinterpret_cast<char8 *>(sourcePointer);
         char8* destinationArray = reinterpret_cast<char8 **>(destinationPointer)[r];
 
-        uint32 sourceElementByteSize = static_cast<uint32>(sourceDescriptor.numberOfBits) / 8u;
+        uint32 sourceElementByteSize = static_cast<uint32>(source.GetByteSize());
 
         uint32 sourceRowIndex = ((r * numberOfColumns) * sourceElementByteSize);
         AnyType sourceRow(sourceDescriptor, source.GetBitAddress(), &sourceArray[sourceRowIndex]);
@@ -676,7 +664,7 @@ static bool HeapToStaticMatrix(const AnyType &destination,
         sourceRow.SetNumberOfElements(0u, numberOfColumns);
         sourceRow.SetStaticDeclared(false);
 
-        uint32 destinationElementByteSize = static_cast<uint32>(destinationDescriptor.numberOfBits) / 8u;
+        uint32 destinationElementByteSize = static_cast<uint32>(destination.GetByteSize());
         uint32 destinationRowIndex = r * numberOfColumns * destinationElementByteSize;
         AnyType destinationRow(destinationDescriptor, destination.GetBitAddress(), &destinationArray[destinationRowIndex]);
         destinationRow.SetNumberOfDimensions(1u);
@@ -782,12 +770,7 @@ bool TypeConvert(const AnyType &destination,
 
     bool ok = true;
     if (static_cast<bool>(destination.GetTypeDescriptor().isConstant)) {
-        if (destination.GetTypeDescriptor().type == CCString) {
-            REPORT_ERROR(ErrorManagement::Warning, "TypeConvert: The destination buffer could be constant !");
-        }
-        else {
-            ok = false;
-        }
+        ok = false;
     }
     if (ok) {
 

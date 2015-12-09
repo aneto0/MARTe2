@@ -42,13 +42,17 @@
 namespace MARTe {
 static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
 
-#define REPORT_ERROR_PARAMETERS(code,message,...)                                 \
-{                                                                                 \
-    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1];                                       \
-    StreamMemoryReference smr(buffer,MAX_ERROR_MESSAGE_SIZE);                     \
-    smr.Printf(message,__VA_ARGS__);                                              \
-    buffer[smr.Size()]=0;                                                         \
-    ErrorManagement::ReportError(code,buffer,__FILE__,__LINE__,__FUNCTION_NAME__);\
+#define REPORT_ERROR_PARAMETERS(code, message,...)                                           \
+{                                                                                           \
+    char8 buffer[MAX_ERROR_MESSAGE_SIZE+1u];                                                 \
+    StreamMemoryReference smr(&buffer[0],MAX_ERROR_MESSAGE_SIZE);                               \
+    if(smr.Printf(reinterpret_cast<const char8 *>(message),__VA_ARGS__)) {                       \
+        buffer[smr.Size()]='\0';                                                               \
+        ErrorManagement::ReportError(code,&buffer[0],__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);\
+    }                                                                                       \
+    else{                                                                                   \
+        ErrorManagement::ReportError(code,reinterpret_cast<const char8 *>(message),__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);\
+    }                                                                                       \
 }
 
 }

@@ -29,11 +29,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
-#include "FormatDescriptor.h"
-#include "IOBuffer.h"
 #include "BitSetToInteger.h"
 #include "ErrorManagement.h"
+#include "FormatDescriptor.h"
+#include "GeneralDefinitions.h"
+#include "IOBuffer.h"
+#include "TypeConversion.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -122,8 +123,8 @@ static void AddExponent(T &number,
  */
 /*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
 template<typename T>
-static bool StringToFloatPrivate(const char8 * const input,
-                                 T &number) {
+static bool StringToNormalFloatPrivate(const char8 * const input,
+                                       T &number) {
 
     bool canReturn = false;
     bool ret = true;
@@ -177,7 +178,7 @@ static bool StringToFloatPrivate(const char8 * const input,
             }
         }
         else {
-            if ((digit == '.') || (digit == 'E')) {
+            if ((digit == '.') || (digit == 'E') || (digit == 'e')) {
                 break;
             }
             else {
@@ -209,7 +210,7 @@ static bool StringToFloatPrivate(const char8 * const input,
                     bool nanExp = isNaN(decimalExp);
                     bool infExp = isInf(decimalExp);
                     if ((!nanExp) && (!infExp)) {
-                        decimalPart += static_cast<T>(newDigit)/decimalExp;
+                        decimalPart += static_cast<T>(newDigit) / decimalExp;
                     }
                     else {
                         canReturn = true;
@@ -218,7 +219,7 @@ static bool StringToFloatPrivate(const char8 * const input,
                 }
                 else {
 
-                    if (digit == 'E') {
+                    if ((digit == 'E') || (digit == 'e')) {
                         break;
                     }
                     else {
@@ -245,7 +246,7 @@ static bool StringToFloatPrivate(const char8 * const input,
         }
 
         // take the exponent (in case of compact...)
-        if ((digit == 'E') && (!canReturn)) {
+        if (((digit == 'E') || (digit == 'e')) && (!canReturn)) {
             i++;
             int32 exponent = 0;
             bool expPositive = true;
@@ -305,19 +306,48 @@ static bool StringToFloatPrivate(const char8 * const input,
 }
 
 /**
- * @see StringToFloatPrivate(*).
+ * @brief In case of number in hexadecimal, octal or binary format, converts it to a float number, otherwise calls StringToNormalFloatPrivate(*).
  */
-bool StringToFloat(const char8 * const input,
-                   float32 &number) {
-    return StringToFloatPrivate(input, number);
+/*lint -e{1573} [MISRA C++ Rule 14-5-1]. Justification: MARTe::HighResolutionTimerCalibrator is not a possible argument for this function template.*/
+template<typename T>
+static bool StringToFloatPrivate(const char8 * const input,
+                                 T &number) {
+
+    bool ret = false;
+    if (input[0] == '0') {
+        // performs the conversion from integer in hex, oct and bin format to float.
+        if ((input[1] == 'x') || (input[1] == 'o') || (input[1] == 'b')) {
+            uint64 numberTemp = 0u;
+            ret = TypeConvert(numberTemp, input);
+            if (ret) {
+                ret = TypeConvert(number, numberTemp);
+            }
+        }
+        else {
+            ret = StringToNormalFloatPrivate(input, number);
+        }
+    }
+    else {
+        ret = StringToNormalFloatPrivate(input, number);
+    }
+    return ret;
 }
 
 /**
  * @see StringToFloatPrivate(*).
  */
-bool StringToFloat(const char8 * const input,
-                   float64 &number) {
-    return StringToFloatPrivate(input, number);
+bool StringToFloatGeneric(const char8 * const input,
+                          float32 * const number,
+                          const uint32 destBitSize) {
+    bool ret = false;
+    if (destBitSize == 32u) {
+        ret = StringToFloatPrivate(input, *number);
+    }
+    if (destBitSize == 64u) {
+        ret = StringToFloatPrivate(input, *reinterpret_cast<float64*>(number));
+
+    }
+    return ret;
 }
 
 }

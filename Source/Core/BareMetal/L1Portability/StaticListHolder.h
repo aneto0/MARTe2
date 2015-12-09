@@ -250,6 +250,14 @@ public:
     bool Extract(const uint32 position,
                  void * const copyTo);
 
+
+
+    /**
+     * @brief Retrieves the pointer to the allocated memory area.
+     * @return the pointer to the allocated memory area.
+     */
+    void* GetAllocatedMemory() const;
+
 private:
 
     /**

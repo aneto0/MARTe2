@@ -33,5 +33,3 @@ LIBRARIES_STATIC+=L2Objects/cov/L2ObjectsTest$(LIBEXT)
 LIBRARIES_STATIC+=L3Streams/cov/L3StreamsTest$(LIBEXT)
 LIBRARIES_STATIC+=L4Configuration/cov/L4ConfigurationTest$(LIBEXT)
 
-OPTIM=-finline-functions
-

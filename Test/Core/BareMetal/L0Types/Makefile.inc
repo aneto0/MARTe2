@@ -24,18 +24,18 @@
 #
 #############################################################
 
-OBJSX=  BitBooleanTest.x\
-	BitRangeTest.x \
-        FractionalIntegerTest.x \
-        BasicTypeTest.x \
-        TypeCharacteristicsTest.x \
-        LinkedListableTest.x \
-        LinkedListHolderTest.x \
-        TypeDescriptorTest.x \
-        ShiftTest.x \
-        DoubleIntegerTest.x \
-        VectorTest.x \
-        MatrixTest.x
+OBJSX=  BasicTypeTest.x \
+		BitBooleanTest.x\
+		BitRangeTest.x \
+		DoubleIntegerTest.x \
+		FractionalIntegerTest.x \
+		LinkedListHolderTest.x \
+		LinkedListableTest.x \
+		MatrixTest.x \
+		ShiftTest.x \
+		TypeCharacteristicsTest.x \
+		TypeDescriptorTest.x \
+		VectorTest.x
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

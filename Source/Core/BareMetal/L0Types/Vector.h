@@ -151,11 +151,6 @@ private:
     uint32 numberOfElements;
 
     /**
-     * True if this dataPointer is pointing at a statically allocated matrix memory block [][].
-     */
-    bool staticDeclared;
-
-    /**
      * True if the vector is allocated internally on heap and has to be destroyed by the destructor.
      */
     bool canDestroy;
@@ -172,7 +167,6 @@ template<typename T>
 Vector<T>::Vector() {
     numberOfElements = 0u;
     dataPointer = NULL_PTR(T *);
-    staticDeclared = true;
     canDestroy = false;
 }
 
@@ -180,7 +174,6 @@ template<typename T>
 Vector<T>::Vector(uint32 nOfElements) {
     dataPointer = new T[nOfElements];
     numberOfElements = nOfElements;
-    staticDeclared = false;
     canDestroy = true;
 }
 
@@ -189,7 +182,6 @@ Vector<T>::Vector(T *existingArray,
                   uint32 nOfElements) {
     dataPointer = existingArray;
     numberOfElements = nOfElements;
-    staticDeclared = false;
     canDestroy = false;
 }
 
@@ -198,7 +190,6 @@ template<uint32 nOfElementsStatic>
 Vector<T>::Vector(T (&source)[nOfElementsStatic]) {
     dataPointer = reinterpret_cast<T *>(&source[0]);
     numberOfElements = nOfElementsStatic;
-    staticDeclared = true;
     canDestroy = false;
 }
 
@@ -220,10 +211,6 @@ inline void* Vector<T>::GetDataPointer() const {
     return dataPointer;
 }
 
-template<typename T>
-inline bool Vector<T>::IsStaticDeclared() const {
-    return staticDeclared;
-}
 
 template<typename T>
 inline uint32 Vector<T>::GetNumberOfElements() const{

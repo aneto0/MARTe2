@@ -24,10 +24,10 @@
 #
 #############################################################
 
-OBJSX=  ThreadsTest.x \
-        ProcessorTest.x \
-        EventSemTest.x \
-	MutexSemTest.x
+OBJSX=  EventSemTest.x \
+		MutexSemTest.x \
+		ProcessorTest.x \
+		ThreadsTest.x
 
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..

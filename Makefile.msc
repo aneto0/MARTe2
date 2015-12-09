@@ -31,7 +31,5 @@ LIBRARIES   += $(LIBRARIES0) $(BLCOMPONENTS)
 
 
 
-OPTIM= -G6 -O2 -Ob2
-
 
 
