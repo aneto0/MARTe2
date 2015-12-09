@@ -188,7 +188,7 @@ public:
      * @details add handles to read, write and exception modes, then clear all handle and check if they are removed
      * @return True if all handles are added and removed successfully.
      */
-    bool TesClearAllHandles();
+    bool TestClearAllHandles();
 
     /**
      * @brief Test Select::IsSet()

@@ -35,6 +35,8 @@
 #include "Sleep.h"
 #include "BasicUDPSocket.h"
 #include "stdio.h"
+#include "Directory.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -216,32 +218,43 @@ bool SelectTest::TestRemoveExceptionHandle_InvalidHandle() {
     return retVal;
 }
 
-bool SelectTest::TesClearAllHandles() {
-#if ENVIRONMENT == Windows
-    bc.Open(BasicConsoleMode::Default);
-    retVal &= sel.AddReadHandle(bc);
+bool SelectTest::TestClearAllHandles() {
+    bool ok;
+    Directory dir;
     BasicFile bf;
-    bf.Open("Test.txt", BasicFile::ACCESS_MODE_R | BasicFile::FLAG_CREAT);
-    retVal &= sel.AddReadHandle(bf);
-#else
-    retVal &= sel.AddWriteHandle(bc);
-    retVal &= sel.AddExceptionHandle(bc);
-    retVal &= sel.AddReadHandle(bc);
-#endif
-    sel.ClearAllHandles();
-#if ENVIRONMENT == Windows
-    retVal &= !sel.IsSet(bc);
-    retVal &= !sel.IsSet(bf);
-    bf.Close();
-    bc.Close();
-    DeleteFile("Test.txt");
-#else
-    retVal &= !sel.IsSet(bc);
-#endif
+    ok = bc.Open(BasicConsoleMode::Default);
+    if (ok) {
+        ok = bf.Open("Test.txt", BasicFile::ACCESS_MODE_R | BasicFile::FLAG_CREAT);
+        if (ok) {
+            retVal &= sel.AddReadHandle(bc);
+            retVal &= sel.AddReadHandle(bf);
+            retVal &= sel.AddWriteHandle(bc);
+            retVal &= sel.AddWriteHandle(bf);
+            retVal &= sel.AddExceptionHandle(bc);
+            retVal &= sel.AddExceptionHandle(bf);
+            sel.ClearAllHandles();
+            retVal &= !sel.IsSet(bc);
+            retVal &= !sel.IsSet(bf);
+            ok = bf.Close();
+            if (ok) {
+                ok = bc.Close();
+                if (ok) {
+                    ok = dir.SetByName("Test.txt");
+                    if (ok) {
+                        ok = dir.Delete();
+                    }
+                }
+            }
+        }
+    }
+    if (!ok) {
+        retVal = false;
+    }
     return retVal;
 }
 
 bool SelectTest::TestIsSet() {
+    Directory d;
     BasicFile bf;
     bf.Open("Test.txt", BasicFile::ACCESS_MODE_W | BasicFile::FLAG_CREAT);
     retVal &= sel.AddReadHandle(bf);
@@ -249,7 +262,8 @@ bool SelectTest::TestIsSet() {
     sel.WaitUntil(defaultTo);
     retVal &= sel.IsSet(bf);
     bf.Close();
-    DeleteFile("Test.txt");
+    d.SetByName("Test.txt");
+    d.Delete();
     return retVal;
 }
 
