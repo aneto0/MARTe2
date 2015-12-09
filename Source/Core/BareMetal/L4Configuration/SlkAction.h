@@ -41,7 +41,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+using namespace MARTe;
 
 class SlkAction {
 
@@ -104,7 +104,6 @@ class SlkAction {
 
               ParserGrammatic grammatic;
           };
-}
 
           /*---------------------------------------------------------------------------*/
           /*                        Inline method definitions                          */

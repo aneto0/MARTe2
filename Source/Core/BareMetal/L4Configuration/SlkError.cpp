@@ -35,7 +35,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
 
 static void PrintOnStream(const char8 * const message,
                           BufferedStreamI* err) {
@@ -96,4 +95,3 @@ void SlkError::SetError() {
     isError = true;
 }
 
-}

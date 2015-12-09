@@ -4,13 +4,8 @@
 #ifndef _SlkSTRING_H
 #define _SlkSTRING_H
 
-namespace MARTe {
-
 char *SlkGetSymbolName ( unsigned int   symbol );
 char *SlkGetProductionName ( unsigned int  production_number );
 
-
-
-}
 
 #endif

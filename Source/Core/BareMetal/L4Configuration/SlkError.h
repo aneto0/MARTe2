@@ -36,7 +36,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+using namespace MARTe;
 
 class SlkError {
 
@@ -68,7 +68,6 @@ private:
     BufferedStreamI *errorStream;
 
 };
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

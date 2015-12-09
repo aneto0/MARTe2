@@ -41,7 +41,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
 
 SlkToken::SlkToken(StreamI &stream,
                    const char8 *terminals,
@@ -107,5 +106,4 @@ uint32 SlkToken::GetLineNumber() const {
 
 uint16 SlkToken::GetTokenId() const {
     return tokenId;
-}
 }

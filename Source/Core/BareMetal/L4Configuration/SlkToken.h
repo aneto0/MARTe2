@@ -40,7 +40,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
+using namespace MARTe;
 
 class SlkToken {
 
@@ -69,7 +69,6 @@ private:
     LexicalAnalyzer lexicalAnalyzer;
 };
 
-}
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */

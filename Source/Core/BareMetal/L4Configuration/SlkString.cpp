@@ -3,8 +3,6 @@
 
 #include "SlkString.h"
 
-namespace MARTe {
-
 static char * Nonterminal_name[] ={"0"
 
 ,"expression"
@@ -98,6 +96,3 @@ char *SlkGetProductionName ( unsigned int  production_number )
   return ( GET_PRODUCTION_NAME (production_number) );
 }
 
-
-
-}

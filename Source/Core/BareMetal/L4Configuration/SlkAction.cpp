@@ -79,7 +79,6 @@
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
 
 static void PrintErrorOnStream(const char8 * const format,
                                const uint32 lineNumber,
@@ -277,4 +276,4 @@ bool SlkAction::Parse() {
 
     return !parseError.IsError();
 }
-}
+

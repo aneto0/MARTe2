@@ -4,11 +4,6 @@
 #ifndef _SlkPARSE_H
 #define _SlkPARSE_H
 
-#include "SlkToken.h"
-#include "SlkError.h"
-#include "SlkAction.h"
-namespace MARTe {
-
 typedef unsigned short   slk_size_t;
 
 #define NOT_A_SYMBOL       0
@@ -23,6 +18,9 @@ int SlkIsNonterminal ( slk_size_t symbol );
 int SlkIsTerminal ( slk_size_t symbol );
 int SlkIsAction ( slk_size_t symbol );
 
+#include "SlkToken.h"
+#include "SlkError.h"
+#include "SlkAction.h"
  
 slk_size_t SlkGetProduction ( slk_size_t   conflict_number,
                               SlkToken   &tokens ) ;
@@ -31,8 +29,5 @@ void SlkParse ( SlkAction  &action,
                 SlkError   &error, 
                 slk_size_t  start_symbol ) ;
 
-
-
-}
 
 #endif

@@ -4,7 +4,6 @@
 #ifndef _SlkTABLE_H
 #define _SlkTABLE_H
 
-
 public:
 
 void    End ( void );
@@ -22,7 +21,5 @@ void    ( SlkAction::*Action [ 10 ] ) ( void );
 void    initialize_table ( void );
 void
 execute ( int  number )   { ( this->*Action [ number ] ) (); }
-
-
 
 #endif
