@@ -261,6 +261,9 @@ bool SelectTest::TestIsSet() {
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWriteFile, &bf);
     sel.WaitUntil(defaultTo);
     retVal &= sel.IsSet(bf);
+    while (Threads::IsAlive(tid)) {
+        Sleep::MSec(1);
+    }
     bf.Close();
     d.SetByName("Test.txt");
     d.Delete();
