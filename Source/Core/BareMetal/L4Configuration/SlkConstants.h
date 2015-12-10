@@ -5,30 +5,32 @@
 #define _SlkCONSTANTS_H
 
 enum _Slk_token_defines { 
-  STRING_ = 1 
-, EQUAL_ = 2 
-, LPAREN_ = 3 
-, RPAREN_ = 4 
-, LBRACE_ = 5 
-, RBRACE_ = 6 
-, NUMBER_ = 7 
-, END_OF_SLK_INPUT_ = 8 
+  LESS_ = 1 
+, STRING_ = 2 
+, GREATER_ = 3 
+, SLASH_ = 4 
+, LPAREN_ = 5 
+, RPAREN_ = 6 
+, LBRACE_ = 7 
+, RBRACE_ = 8 
+, NUMBER_ = 9 
+, END_OF_SLK_INPUT_ = 10 
 }; 
 
 enum _Slk_Nonterminal_defines { 
-  NT_EXPRESSION_ = 9 
-, NT_CDBFILE_ = 10 
-, NT_EXPRESSIONS_ = 11 
-, NT_VARIABLES_ = 12 
-, NT_SCALAR_ = 13 
-, NT_VECTOR_ = 14 
-, NT_MATRIX_ = 15 
-, NT_BLOCK_ = 16 
-, NT_TOKEN_ = 17 
-, NT_EXPRESSIONS_STAR_ = 18 
-, NT_SCALAR_STAR_ = 19 
-, NT_VECTOR_STAR_ = 20 
-, NT_EXPRESSIONS_2_STAR_ = 21 
+  NT_EXPRESSION_ = 11 
+, NT_CDBFILE_ = 12 
+, NT_EXPRESSIONS_ = 13 
+, NT_VARIABLES_ = 14 
+, NT_SCALAR_ = 15 
+, NT_VECTOR_ = 16 
+, NT_MATRIX_ = 17 
+, NT_BLOCK_ = 18 
+, NT_TOKEN_ = 19 
+, NT_EXPRESSIONS_STAR_ = 20 
+, NT_SCALAR_STAR_ = 21 
+, NT_VECTOR_STAR_ = 22 
+, NT_EXPRESSIONS_2_STAR_ = 23 
 }; 
 
 typedef unsigned short   slk_size_t;

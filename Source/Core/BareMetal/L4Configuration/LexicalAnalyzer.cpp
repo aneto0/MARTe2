@@ -63,7 +63,6 @@ static void ReadCommentOneLine(StreamI &stream) {
             break;
         }
     }
-
 }
 
 /**
@@ -121,7 +120,7 @@ static void ReadCommentMultipleLines(StreamI &stream,
  */
 static bool SkipComment(StreamI &stream,
                         char8 *buffer,
-                        char8 &nextChar,
+                        uint32 &bufferSize,
                         uint32 &lineNumber,
                         const char8 * const separators,
                         const char8 * const terminals,
@@ -129,12 +128,12 @@ static bool SkipComment(StreamI &stream,
                         const char8 * const multipleLineBegin,
                         const char8 * const multipleLineEnd,
                         char8 &separator,
-                        char8 &terminal,
                         const bool isNewToken) {
 
     char8 c = '\0';
-
+    bufferSize = 0u;
     buffer[0] = '\0';
+    separator = '\0';
     bool isEOF = false;
     // if it is a new token needs to skip separators at the beginning
     bool isComment = true;
@@ -143,21 +142,20 @@ static bool SkipComment(StreamI &stream,
     // skip separators before
     while (skip) {
         if (GetC(stream, c)) {
-            // exit, found a terminal!
-            if (StringHelper::SearchChar(terminals, c) != NULL) {
+            //stop loop, not a separator
+            if (StringHelper::SearchChar(separators, c) == NULL) {
                 skip = false;
-                terminal=c;
-                if (!GetC(stream, c)) {
-                    isEOF = true;
-                    isComment = false;
-                    skip = false;
-                }
             }
             else {
-                //stop loop, not a separator
-                if ((StringHelper::SearchChar(separators, c) == NULL) || (!isNewToken)) {
-                    skip = false;
+                // if it is a separator at the end exit without doing nothing else
+                if (!isNewToken) {
+                    isComment=false;
+                    separator=c;
                 }
+            }
+            // in any case do not skip if it is not a new token
+            if(!isNewToken) {
+                skip=false;
             }
         }
         // EOF!
@@ -169,6 +167,7 @@ static bool SkipComment(StreamI &stream,
         if ((skip) && (c == '\n')) {
             lineNumber++;
         }
+
     }
 
     // could be a comment ?
@@ -201,6 +200,7 @@ static bool SkipComment(StreamI &stream,
         if (isComment) {
             // comment on one line
             ReadCommentOneLine(stream);
+            buffer[0] = '\0';
             separator = '\n';
         }
         else {
@@ -221,10 +221,8 @@ static bool SkipComment(StreamI &stream,
                         }
                     }
                     isComment = (c == multipleLineBegin[i]);
-                    if (isComment) {
-                        buffer[i] = c;
-                        i++;
-                    }
+                    buffer[i] = c;
+                    i++;
                 }
                 else {
                     isComment = (i != 0u);
@@ -235,28 +233,20 @@ static bool SkipComment(StreamI &stream,
             if (isComment) {
                 // comment on multiple line
                 ReadCommentMultipleLines(stream, lineNumber, multipleLineEnd);
-                separator = '\0';
+                buffer[0] = '\0';
             }
             else {
-                bufferSize1--;
                 if (i >= bufferSize1) {
                     buffer[i] = '\0';
+                    bufferSize = i;
                 }
                 else {
                     c = buffer[bufferSize1];
                     buffer[bufferSize1] = '\0';
+                    bufferSize = bufferSize1;
                 }
             }
         }
-    }
-
-    // allows to understand if a comment is found
-    if (isComment) {
-        nextChar = '\0';
-        terminal = '\0';
-    }
-    else {
-        nextChar = c;
     }
 
     return !isEOF;
@@ -457,23 +447,23 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
         char8 terminal = '\0';
         char8 separator = '\0';
 
-        char8 commentBuffer[16];
+        char8 buffer[16];
+        uint32 bufferSize;
         // skips one or consecutive comments and controls EOF
         while ((ok) && (c == '\0')) {
-            ok = SkipComment(*inputStream, commentBuffer, c, lineNumber, separators.Buffer(), terminals.Buffer(), oneLineCommentBegin.Buffer(),
-                             multipleLineCommentBegin.Buffer(), multipleLineCommentEnd.Buffer(), separator, terminal, true);
+            ok = SkipComment(*inputStream, buffer, bufferSize, lineNumber, separators.Buffer(), terminals.Buffer(), oneLineCommentBegin.Buffer(),
+                             multipleLineCommentBegin.Buffer(), multipleLineCommentEnd.Buffer(), separator, true);
+            c = buffer[0];
+            // need to do this for one line comments at the end of the tokens
             if (separator == '\n') {
                 lineNumber++;
             }
         }
 
         // the token
-        StreamString tokenString = &commentBuffer[0];
-
-        if (terminal != '\0') {
-            AddTerminal(terminal);
-            terminal = '\0';
-        }
+        StreamString tokenString = "";
+        uint32 bufferIndex = 1u;
+        bufferSize--;
 
         separator = '\0';
         isEOF = !ok;
@@ -499,7 +489,15 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
             }
             else if ((StringHelper::SearchChar(terminalsUsed.Buffer(), c) != NULL) && (!escape)) {
                 terminal = c;
-                ok = false;
+                if(bufferSize>0u) {
+                    AddToken(tokenString.BufferReference(), isString1);
+                    AddTerminal(terminal);
+                    tokenString="";
+                    terminal='\0';
+                }
+                else {
+                    ok = false;
+                }
             }
             else {
                 if (escape) {
@@ -530,27 +528,26 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
                 if (c == '\n') {
                     lineNumber++;
                 }
-                if (isString1) {
-                    ok = GetC(*inputStream, c);
+                if(bufferSize>0u) {
+                    c=buffer[bufferIndex];
+                    bufferIndex++;
+                    bufferSize--;
                 }
                 else {
-                    ok = SkipComment(*inputStream, commentBuffer, c, lineNumber, separators.Buffer(), terminals.Buffer(), oneLineCommentBegin.Buffer(),
-                    multipleLineCommentBegin.Buffer(), multipleLineCommentEnd.Buffer(), separator, terminal, false);
-                    if (ok) {
-                        // stop if a comment is found at the end!
-                        if(c == '\0') {
-                            ok=false;
-                        }
-                        else {
-                            // not a comment with a terminal as the next char! Add token, terminal and continue with the buffer
-                            if (terminal != '\0') {
-                                AddToken(tokenString.BufferReference(), false);
-                                AddTerminal(terminal);
-                                tokenString = &commentBuffer[0];
-                                terminal = '\0';
-                            }
-                            else{
-                                tokenString += &commentBuffer[0];
+                    if (isString1) {
+                        ok = GetC(*inputStream, c);
+                    }
+                    else {
+                        ok = SkipComment(*inputStream, buffer, bufferSize, lineNumber, separators.Buffer(), terminals.Buffer(), oneLineCommentBegin.Buffer(),
+                        multipleLineCommentBegin.Buffer(), multipleLineCommentEnd.Buffer(), separator, false);
+                        if (ok) {
+                            // not a comment with a terminal as the next char!
+                            bufferIndex=1u;
+                            bufferSize--;
+                            c=buffer[0];
+                            // stop if a comment or separator is found at the end!
+                            if(c == '\0') {
+                                ok=false;
                             }
                         }
                     }

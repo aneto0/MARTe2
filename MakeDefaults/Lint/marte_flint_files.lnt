@@ -72,6 +72,8 @@ Object.cpp
 OperatingSystemCallbacksI.h
 Parser.cpp
 ParserGrammar.h
+ParserI.h
+ParserI.cpp
 Processor.cpp
 ProcessorType.cpp
 Reference.cpp

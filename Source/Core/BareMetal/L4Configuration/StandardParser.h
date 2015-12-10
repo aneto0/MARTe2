@@ -48,27 +48,37 @@ public:
 
     virtual ~StandardParser();
 
-    virtual uint16 &GetProduction(uint32 index);
+protected:
 
-    virtual uint16 GetProductionRow(uint32 index);
+    virtual uint32 &GetProduction(const uint32 index)const ;
 
-    virtual uint16 GetParse(uint32 index);
+    virtual uint32 GetProductionRow(const uint32 index)const ;
 
-    virtual uint16 GetParseRow(uint32 index);
+    virtual uint32 GetParse(const uint32 index)const ;
 
-    virtual uint16 GetConflict(uint32 index);
+    virtual uint32 GetParseRow(const uint32 index)const ;
 
-    virtual uint16 GetConflictRow(uint32 index);
+    virtual uint32 GetConflict(const uint32 index)const ;
 
-    virtual uint16 GetConditionalProduction(uint16 symbol);
+    virtual uint32 GetConflictRow(const uint32 index)const ;
 
-    virtual uint16 GetPredictedEntry(SlkToken tokenProducer,
-                                     uint16 productionNumber,
-                                     uint16 tokenId,
-                                     uint16 level,
-                                     uint16 x);
+    virtual uint32 GetConditionalProduction(const uint32 symbol)const ;
 
-    virtual uint16 GetConstant(uint32 index);
+    virtual uint32 GetPredictedEntry(const uint32 productionNumber,
+                                     const uint32 tokenId,
+                                     const uint32 level,
+                                     const uint32 x)const ;
+
+    virtual uint32 GetConstant(const uint32 index)const ;
+
+    virtual const char8 *GetSymbolName(const uint32 symbol)const ;
+
+    virtual void Execute(uint32 number);
+
+
+private:
+    // functions void f()
+    void (StandardParser::*Action[10])(void);
 
 };
 

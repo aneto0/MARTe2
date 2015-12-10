@@ -103,7 +103,9 @@ struct ParserGrammar {
  */
 static const ParserGrammar StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
 
-static const ParserGrammar XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>', '<', '>', '/', '<', '>', '(', ')', '\0' };
+static const ParserGrammar XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>', '{', '}', '/', '(', ')', '<', '>', '\0' };
+
+static const ParserGrammar JsonGrammar = { "\n\r\t, ", "", "", "", ':', '{', '}', '[', ']', '[', ']', '\0', '\0', '\0' };
 
 }
 

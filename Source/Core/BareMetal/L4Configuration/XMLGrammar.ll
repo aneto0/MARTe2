@@ -7,8 +7,8 @@ cdbFile:
 
 expressions:
         < __GetNodeName STRING > variables < / STRING >	                            __AddLeaf
-        < __GetNodeName STRING > ( STRING __GetTypeCast ) variables < / STRING >    __AddLeaf
-        < __CreateNode  STRING >  block  < / STRING >          	                    __BlockEnd
+        < __GetNodeName STRING > ( __GetTypeCast STRING ) variables < / STRING >    __AddLeaf
+        < __CreateNode  STRING >  block  < / STRING >          	                    
 
 variables:
 		scalar
@@ -19,13 +19,13 @@ scalar:
 		__AddScalar token 
 
 vector:
-        < > { scalar }+ < / >
+        \{ { scalar }+ __EndVector \} 
 
 matrix:
-        < > { vector __EndRow }+ < / >
+        \{ { vector }+ __EndMatrix \}
 
 block:
-        expressions { expressions } 
+        expressions { expressions } __BlockEnd
 
 token:
 	STRING

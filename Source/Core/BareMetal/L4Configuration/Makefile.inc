@@ -44,7 +44,8 @@ OBJSX=	AnyObject.x \
 		SlkTable.x \
 		ParserI.x \
 		StandardParser.x \
-		XMLParser.x		
+		XMLParser.x \
+		JsonParser.x		
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

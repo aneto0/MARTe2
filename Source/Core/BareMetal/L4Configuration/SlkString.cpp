@@ -22,8 +22,10 @@ static char * Nonterminal_name[] ={"0"
 
 static char * Terminal_name[] ={"0"
 
+,"<"
 ,"STRING"
-,"="
+,">"
+,"/"
 ,"("
 ,")"
 ,"{"
@@ -49,16 +51,16 @@ static char * Production_name[] ={"0"
 
 ,"expression --> cdbFile __End"
 ,"cdbFile --> expressions expressions_*"
-,"expressions --> __GetNodeName STRING = variables __AddLeaf"
-,"expressions --> __GetNodeName STRING = ( __GetTypeCast STRING ) variables __AddLeaf"
-,"expressions --> __CreateNode STRING = block"
+,"expressions --> < __GetNodeName STRING > variables < / STRING > __AddLeaf"
+,"expressions --> < __GetNodeName STRING > ( __GetTypeCast STRING ) variables < / STRING > __AddLeaf"
+,"expressions --> < __CreateNode STRING > block < / STRING >"
 ,"variables --> scalar"
 ,"variables --> vector"
 ,"variables --> matrix"
 ,"scalar --> __AddScalar token"
 ,"vector --> { scalar scalar_* }"
 ,"matrix --> { vector vector_* }"
-,"block --> { expressions expressions_2_* }"
+,"block --> expressions expressions_2_*"
 ,"token --> STRING"
 ,"token --> NUMBER"
 ,"expressions_* --> expressions expressions_*"
@@ -71,10 +73,10 @@ static char * Production_name[] ={"0"
 ,"expressions_2_* --> __BlockEnd"
 };
 
-#define START_SYMBOL 9
-#define START_ACTION 22
-#define END_ACTION 31
-#define GET_NONTERMINAL_NAME(symbol) (Nonterminal_name [symbol - 8])
+#define START_SYMBOL 11
+#define START_ACTION 24
+#define END_ACTION 33
+#define GET_NONTERMINAL_NAME(symbol) (Nonterminal_name [symbol - 10])
 #define GET_TERMINAL_NAME(symbol) (Terminal_name [symbol])
 #define GET_ACTION_NAME(symbol) (Action_name [symbol-(START_ACTION-1)])
 #define GET_PRODUCTION_NAME(number) (Production_name [number])

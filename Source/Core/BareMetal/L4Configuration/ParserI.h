@@ -31,12 +31,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "SlkError.h"
-#include "SlkToken.h"
+#include "Token.h"
 #include "StaticListHolder.h"
 #include "ConfigurationDatabase.h"
 #include "StreamString.h"
 #include "AnyTypeCreator.h"
+#include "LexicalAnalyzer.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -50,7 +50,7 @@ public:
     ParserI(StreamI &stream,
             ConfigurationDatabase &databaseIn,
             BufferedStreamI * const err,
-            ParserGrammar grammarIn);
+            const ParserGrammar &grammarIn);
 
     virtual ~ParserI();
 
@@ -58,7 +58,7 @@ public:
 
     ParserGrammar GetGrammar() const;
 
-private:
+protected:
 
     virtual void End();
     virtual void GetNodeName();
@@ -69,53 +69,59 @@ private:
     virtual void EndVector();
     virtual void EndMatrix();
     virtual void BlockEnd();
-    virtual void Predict(uint16 entry);
+    virtual void CreateClassLeaf();
+    virtual void Predict(const uint32 entry);
 
-    virtual uint16 &GetProduction(uint32 index)=0;
+    virtual uint32 &GetProduction(const uint32 index)const =0;
 
-    virtual uint16 GetProductionRow(uint32 index)=0;
+    virtual uint32 GetProductionRow(const uint32 index)const =0;
 
-    virtual uint16 GetParse(uint32 index)=0;
+    virtual uint32 GetParse(const uint32 index)const =0;
 
-    virtual uint16 GetParseRow(uint32 index)=0;
+    virtual uint32 GetParseRow(const uint32 index)const =0;
 
-    virtual uint16 GetConflict(uint32 index)=0;
+    virtual uint32 GetConflict(const uint32 index)const =0;
 
-    virtual uint16 GetConflictRow(uint32 index)=0;
+    virtual uint32 GetConflictRow(const uint32 index)const =0;
 
-    virtual uint16 GetConditionalProduction(uint16 symbol)=0;
+    virtual uint32 GetConditionalProduction(const uint32 symbol)const =0;
 
-    virtual uint16 GetPredictedEntry(SlkToken tokenProducer,
-                                     uint16 productionNumber,
-                                     uint16 tokenId,
-                                     uint16 level,
-                                     uint16 x)=0;
+    virtual uint32 GetPredictedEntry(const uint32 productionNumber,
+                                     const uint32 tokenId,
+                                     const uint32 level,
+                                     const uint32 x)const =0;
 
-    virtual uint16 GetConstant(uint32 index)=0;
+    virtual uint32 GetConstant(const uint32 index)const =0;
 
-    inline void StackPush(uint16 symbol,
-                          uint16* &stack,
-                          uint16* &top);
+    virtual const char8 *GetSymbolName(const uint32 symbol)const =0;
 
-    inline uint16 StackPop(uint16* &top);
+    virtual uint32 GetNextTokenType();
+
+    virtual uint32 PeekNextTokenType(const uint32 position);
+
+    inline void StackPush(const uint32 symbol,
+                          const uint32 * const stack,
+                          uint32* &top) const;
+
+    inline uint32 StackPop(uint32* &top) const;
 
     //void CreateClassLeaf();
 
-    void InitializeTable();
-    void Execute(int32 number);
+    virtual void Execute(uint32 number)=0;
 
-    // functions void f()
-    void (ParserI::*Action[10])(void);
+    Token *currentToken;
 
+private:
     StreamString typeName;
 
     StreamString nodeName;
 
     ConfigurationDatabase *database;
 
-    SlkError parseError;
+    bool isError;
 
-    SlkToken tokenProducer;
+    LexicalAnalyzer tokenProducer;
+
 
     uint32 numberOfColumns;
 
@@ -129,7 +135,7 @@ private:
 
     uint32 tokenType;
 
-    uint32 numberOfDimensions;
+    uint8 numberOfDimensions;
 
     ParserGrammar grammar;
 
@@ -152,20 +158,18 @@ static const uint32 PARSE_STACK_SIZE = 512u;
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-//#define StackPush(symbol,stack,top) if ( top > stack ) *--top = symbol
-//#define StackPop(top)   (*top ? *top++ : 0)
 
-void ParserI::StackPush(uint16 symbol,
-                        uint16 *&stack,
-                        uint16 *&top) {
+void ParserI::StackPush(const uint32 symbol,
+                        const uint32 * const stack,
+                        uint32 *&top) const {
     if (top > stack) {
         top--;
         *top = symbol;
     }
 }
 
-uint16 ParserI::StackPop(uint16 * &top) {
-    uint16 ret = 0u;
+uint32 ParserI::StackPop(uint32 * &top) const {
+    uint32 ret = 0u;
     if (*top != 0u) {
         ret = *top;
         top++;

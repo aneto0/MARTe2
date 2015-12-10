@@ -1,8 +1,8 @@
 /**
- * @file StandardParserTest.cpp
- * @brief Source file for class StandardParserTest
- * @date 09/12/2015
- * @author Giuseppe Ferrò
+ * @file JsonParserTest.cpp
+ * @brief Source file for class JsonParserTest
+ * @date 10/dic/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class StandardParserTest (public, protected, and private). Be aware that some 
+ * the class JsonParserTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "StandardParserTest.h"
+#include "JsonParserTest.h"
 #include "BasicFile.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -40,30 +40,30 @@
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
-bool StandardParserTest::TestConstructor() {
+bool JsonParserTest::TestConstructor() {
 
     StreamString configString = "";
     ConfigurationDatabase database;
 
     StreamString err;
 
-    StandardParser myParser(configString, database, &err);
+    JsonParser myParser(configString, database, &err);
 
     return true;
 
 }
 
-bool StandardParserTest::TestParseScalar() {
+bool JsonParserTest::TestParseScalar() {
     ConfigurationDatabase database;
     StreamString errors;
-    StreamString configString = "+PID={\n"
-            "Kp=100.5\n"
-            "Ki=(uint8)2\n"
-            "Kd=(float32)5\n"
+    StreamString configString = "+PID:{\n"
+            "Kp:100.5\n"
+            "Ki: 2\n"
+            "Kd : 5\n"
             "}";
 
     configString.Seek(0);
-    StandardParser myParser(configString, database, &errors);
+    JsonParser myParser(configString, database, &errors);
     if (!myParser.Parse()) {
         printf("\nFailed Parse %s\n", errors.Buffer());
         return false;
@@ -99,23 +99,23 @@ bool StandardParserTest::TestParseScalar() {
     return true;
 }
 
-bool StandardParserTest::TestParseVector() {
+bool JsonParserTest::TestParseVector() {
     ConfigurationDatabase database;
     StreamString errors;
-    StreamString configString = "+PID={\n"
-            "    Gains={100.5,2,5}\n"
+    StreamString configString = "+PID: {\n"
+            "    Gains: [100.5,2,5]\n"
             "}\n"
-            "+Process={\n"
-            "    Names={\"Pendulum\" , \"ChemicalPlant\"}\n"
-            "    FDT={\n"
-            "        Num=(uint8){ 1 } ,\n"
-            "        Den=(float32){1 2.5 30.25}\n"
+            "+Process: {\n"
+            "    Names: [\"Pendulum\" , \"ChemicalPlant\"]\n"
+            "    FDT: {\n"
+            "        Num: [ 1 ] ,\n"
+            "        Den: [1 2.5 30.25]\n"
             "    }\n"
             "}\n";
 
     configString.Seek(0);
 
-    StandardParser myParser(configString, database, &errors);
+    JsonParser myParser(configString, database, &errors);
     if (!myParser.Parse()) {
         printf("\nerrors=%s\n", errors.Buffer());
         return false;
@@ -198,25 +198,25 @@ bool StandardParserTest::TestParseVector() {
     return true;
 }
 
-bool StandardParserTest::TestParseMatrix() {
+bool JsonParserTest::TestParseMatrix() {
 
     ConfigurationDatabase database;
     StreamString errors;
-    StreamString configString = "+MatrixTest={\n"
-            "    Matrix={{-100.5, 0xFF -1}{2, -5, +7.5}}\n"
+    StreamString configString = "+MatrixTest: {\n"
+            "    Matrix: [[-100.5, 0xFF -1][2, -5, +7.5]]\n"
             "}\n"
-            "+Process={\n"
-            "    FDT={\n"
-            "        A = (uint8){{1 2}{3 4}} ,\n"
-            "        B = (int16){{0}{-1}}\n"
-            "        C = (float64){{ -0.125 100.5 }}\n"
-            "        D=0"
+            "+Process: {\n"
+            "    FDT: {\n"
+            "        A :  [[1 2][3 4]] ,\n"
+            "        B :  [[0][-1]]\n"
+            "        C :  [[ -0.125 100.5 ]]\n"
+            "        D: 0"
             "    }\n"
-            "    Names={{\"Pend} {ulum\"} , {\"ChemicalPlant\"}}\n"
+            "    Names: [[\"Pend} {ulum\"] , [\"ChemicalPlant\"]]\n"
             "}\n";
 
     configString.Seek(0);
-    StandardParser myParser(configString, database, &errors);
+    JsonParser myParser(configString, database, &errors);
 
     if(!myParser.Parse()){
         return false;
@@ -308,30 +308,30 @@ bool StandardParserTest::TestParseMatrix() {
     return true;
 }
 
-bool StandardParserTest::TestNestedBlocks() {
+bool JsonParserTest::TestNestedBlocks() {
 
     ConfigurationDatabase database;
     StreamString errors;
-    StreamString configString = "block1={\n"
-            "    block2={block3={var=1}}\n"
+    StreamString configString = "block1: {\n"
+            "    block2: {block3: {var: 1}}\n"
             "}\n"
-            "block4={\n"
-            "    block5={\n"
-            "        var=2\n"
+            "block4: {\n"
+            "    block5: {\n"
+            "        var: 2\n"
             "    }\n"
-            "    block6={\n"
-            "        var={3}\n"
-            "        block7={\n"
-            "               block8={\n"
-            "                  var=4\n"
+            "    block6: {\n"
+            "        var: [3]\n"
+            "        block7: {\n"
+            "               block8: {\n"
+            "                  var: 4\n"
             "               }"
             "        }"
             "    }\n"
-            "    var=5\n"
+            "    var: 5\n"
             "}\n";
 
     configString.Seek(0);
-    StandardParser myParser(configString, database, &errors);
+    JsonParser myParser(configString, database, &errors);
 
     if(!myParser.Parse()){
         return false;
@@ -393,14 +393,14 @@ bool StandardParserTest::TestNestedBlocks() {
     return var == 5;
 }
 
-bool StandardParserTest::TestParseErrors(const char8 *configStringIn) {
+bool JsonParserTest::TestParseErrors(const char8 *configStringIn) {
 
     StreamString configString = configStringIn;
     configString.Seek(0);
     StreamString errors;
     ConfigurationDatabase database;
 
-    StandardParser myParser(configString, database, &errors);
+    JsonParser myParser(configString, database, &errors);
 
     bool ret = myParser.Parse();
     printf("\nerrors=%s\n", errors.Buffer());
@@ -408,14 +408,17 @@ bool StandardParserTest::TestParseErrors(const char8 *configStringIn) {
 
 }
 
-bool StandardParserTest::TestStandardCast() {
-    StreamString configString = "var1= (boh) 1\n";
+bool JsonParserTest::TestStandardCast() {
+    StreamString configString = "var1: 1\n";
     configString.Seek(0);
     StreamString errors;
     ConfigurationDatabase database;
 
-    StandardParser myParser(configString, database, &errors);
+    JsonParser myParser(configString, database, &errors);
+
     if (!myParser.Parse()) {
+        printf("\nerrors=%s\n", errors.Buffer());
+
         return false;
     }
 
@@ -423,11 +426,12 @@ bool StandardParserTest::TestStandardCast() {
     database.Read("var1", var);
 
 
+    printf("\n%d\n", var);
     return var == 1;
 }
 
 
-bool StandardParserTest::TestExistentFile() {
+bool JsonParserTest::TestExistentFile() {
     BasicFile configurationFile;
     if (!configurationFile.Open("MARTe-WaterTank.cfg", BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
         printf("\nError! The file is not opened!\n");
@@ -437,7 +441,7 @@ bool StandardParserTest::TestExistentFile() {
     StreamString errors;
 
     ConfigurationDatabase database;
-    StandardParser myParser(configurationFile, database, &errors);
+    JsonParser myParser(configurationFile, database, &errors);
     if (!myParser.Parse()) {
         printf("\nerrors=%s\n", errors.Buffer());
 
