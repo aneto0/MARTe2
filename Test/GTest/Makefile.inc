@@ -99,7 +99,8 @@ OBJSX=  AnyObjectGTest.x \
 		SlkActionGTest.x \
 		StandardParserGTest.x \
 		XMLParserGTest.x \
-		JsonParserGTest.x
+		JsonParserGTest.x \
+		AnyTypeCreatorGTest.x
 
 PACKAGE=
 ROOT_DIR=../..

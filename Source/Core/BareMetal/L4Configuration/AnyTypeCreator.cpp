@@ -37,6 +37,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
+/*lint -e9150 [MISRA C++ Rule 11-0-1]. Justification: Used a structure instead of a class. */
 struct TypeCastInfo {
     TypeDescriptor typeDes;
     const char8 *castName;
@@ -50,17 +51,20 @@ static const TypeCastInfo castTypes[] = { { CharString, "string" }, { SignedInte
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-AnyTypeCreator::AnyTypeCreator(uint32 granularityIn) {
+AnyTypeCreator::AnyTypeCreator(const uint32 granularityIn) {
     typeIndex = 0u;
     memory = static_cast<StaticListHolder *>(NULL);
     granularity = granularityIn;
 }
 
+/*lint -e{1579} .Justification: The destructor calls an external function. */
+/*lint -e{1551} Justification: Memory has to be freed in the destructor.
+ * No exceptions should be thrown given that the memory is managed exclusively managed by this class.". */
 AnyTypeCreator::~AnyTypeCreator() {
     CleanUp(0u);
 }
 
-void AnyTypeCreator::CleanUp(uint32 granularityIn) {
+void AnyTypeCreator::CleanUp(const uint32 granularityIn) {
     if (memory != NULL) {
         // in this case delete the string on heap
         if (memory->GetSize() > 0u) {
@@ -80,16 +84,19 @@ void AnyTypeCreator::CleanUp(uint32 granularityIn) {
 
 bool AnyTypeCreator::SetType(AnyType &element,
                              const uint8 nOfDimensions,
-                             const uint32 dimensionSize[3]) {
+                             const uint32 dimensionSize[3]) const {
 
     bool ret = (memory != NULL);
     if (ret) {
+        /*lint -e{613} .Justification: possible NULL memory is checked before entering here*/
         ret=(((dimensionSize[0]*dimensionSize[1])*dimensionSize[2])==(memory->GetSize()));
         if(ret) {
             if ((castTypes[typeIndex].typeDes.type == CCString) && (nOfDimensions == 0u)) {
+                /*lint -e{613} .Justification: possible NULL memory is checked before entering here*/
                 element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), *static_cast<char8**>(memory->GetAllocatedMemory()));
             }
             else {
+                /*lint -e{613} .Justification: possible NULL memory is checked before entering here*/
                 element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), memory->GetAllocatedMemory());
             }
             element.SetNumberOfDimensions(nOfDimensions);
@@ -106,18 +113,27 @@ bool AnyTypeCreator::ToType(const char8 * const type,
                             const char8 * const data) {
 
     bool ret = false;
-    typeIndex = 0u;
-    while ((castTypes[typeIndex].castName != NULL) && (!ret)) {
-        if (StringHelper::Compare(type, castTypes[typeIndex].castName) == 0) {
-            ret = true;
+
+    // try to insert an element with a different size
+    if (memory != NULL) {
+        if(StringHelper::Compare(type, castTypes[typeIndex].castName) != 0) {
+            REPORT_ERROR(ErrorManagement::FatalError, "ToType: Type mismatch!");
         }
-        else {
-            typeIndex++;
+    }
+    else {
+        typeIndex = 0u;
+        while ((castTypes[typeIndex].castName != NULL) && (!ret)) {
+            if (StringHelper::Compare(type, castTypes[typeIndex].castName) == 0) {
+                ret = true;
+            }
+            else {
+                typeIndex++;
+            }
         }
     }
 
     if (!ret) {
-        //TODO Warning
+        REPORT_ERROR(ErrorManagement::Warning, "ToType: Type not found; automatic cast to C-string");
     }
 
     ret = false;
@@ -131,7 +147,7 @@ bool AnyTypeCreator::ToType(const char8 * const type,
             ret = memory->Add(reinterpret_cast<void*>(&cString));
         }
     }
-    if (castTypes[typeIndex].typeDes == SignedInteger8Bit) {
+    else if (castTypes[typeIndex].typeDes == SignedInteger8Bit) {
         if (memory == NULL) {
             memory = new StaticListHolder(static_cast<uint32>(sizeof(int8)), granularity);
         }
@@ -140,7 +156,7 @@ bool AnyTypeCreator::ToType(const char8 * const type,
             ret = memory->Add(reinterpret_cast<void*>(&possibleInt8));
         }
     }
-    if (castTypes[typeIndex].typeDes == SignedInteger16Bit) {
+    else if (castTypes[typeIndex].typeDes == SignedInteger16Bit) {
         if (memory == NULL) {
             memory = new StaticListHolder(static_cast<uint32>(sizeof(int16)), granularity);
         }
@@ -149,7 +165,7 @@ bool AnyTypeCreator::ToType(const char8 * const type,
             ret = memory->Add(reinterpret_cast<void*>(&possibleInt16));
         }
     }
-    if (castTypes[typeIndex].typeDes == SignedInteger32Bit) {
+    else if (castTypes[typeIndex].typeDes == SignedInteger32Bit) {
         if (memory == NULL) {
             memory = new StaticListHolder(static_cast<uint32>(sizeof(int32)), granularity);
         }
@@ -158,7 +174,7 @@ bool AnyTypeCreator::ToType(const char8 * const type,
             ret = memory->Add(reinterpret_cast<void*>(&possibleInt32));
         }
     }
-    if (castTypes[typeIndex].typeDes == SignedInteger64Bit) {
+    else if (castTypes[typeIndex].typeDes == SignedInteger64Bit) {
         if (memory == NULL) {
             memory = new StaticListHolder(static_cast<uint32>(sizeof(int64)), granularity);
         }
@@ -167,7 +183,7 @@ bool AnyTypeCreator::ToType(const char8 * const type,
             ret = memory->Add(reinterpret_cast<void*>(&possibleInt64));
         }
     }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger8Bit) {
+    else if (castTypes[typeIndex].typeDes == UnsignedInteger8Bit) {
         if (memory == NULL) {
             memory = new StaticListHolder(static_cast<uint32>(sizeof(uint8)), granularity);
         }
@@ -176,7 +192,7 @@ bool AnyTypeCreator::ToType(const char8 * const type,
             ret = memory->Add(reinterpret_cast<void*>(&possibleUInt8));
         }
     }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger16Bit) {
+    else if (castTypes[typeIndex].typeDes == UnsignedInteger16Bit) {
         if (memory == NULL) {
             memory = new StaticListHolder(static_cast<uint32>(sizeof(uint16)), granularity);
         }
@@ -185,7 +201,7 @@ bool AnyTypeCreator::ToType(const char8 * const type,
             ret = memory->Add(reinterpret_cast<void*>(&possibleUInt16));
         }
     }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger32Bit) {
+    else if (castTypes[typeIndex].typeDes == UnsignedInteger32Bit) {
         if (memory == NULL) {
             memory = new StaticListHolder(static_cast<uint32>(sizeof(uint32)), granularity);
         }
@@ -194,7 +210,7 @@ bool AnyTypeCreator::ToType(const char8 * const type,
             ret = memory->Add(reinterpret_cast<void*>(&possibleUInt32));
         }
     }
-    if (castTypes[typeIndex].typeDes == UnsignedInteger64Bit) {
+    else if (castTypes[typeIndex].typeDes == UnsignedInteger64Bit) {
         if (memory == NULL) {
             memory = new StaticListHolder(static_cast<uint32>(sizeof(uint64)), granularity);
         }
@@ -203,7 +219,7 @@ bool AnyTypeCreator::ToType(const char8 * const type,
             ret = memory->Add(reinterpret_cast<void*>(&possibleUInt64));
         }
     }
-    if (castTypes[typeIndex].typeDes == Float32Bit) {
+    else if (castTypes[typeIndex].typeDes == Float32Bit) {
         if (memory == NULL) {
             memory = new StaticListHolder(static_cast<uint32>(sizeof(float32)), granularity);
         }
@@ -212,7 +228,7 @@ bool AnyTypeCreator::ToType(const char8 * const type,
             ret = memory->Add(reinterpret_cast<void*>(&possibleFloat32));
         }
     }
-    if (castTypes[typeIndex].typeDes == Float64Bit) {
+    else if (castTypes[typeIndex].typeDes == Float64Bit) {
         if (memory == NULL) {
             memory = new StaticListHolder(static_cast<uint32>(sizeof(float64)), granularity);
         }
@@ -221,17 +237,23 @@ bool AnyTypeCreator::ToType(const char8 * const type,
             ret = memory->Add(reinterpret_cast<void*>(&possibleFloat64));
         }
     }
+    else {
+        REPORT_ERROR(ErrorManagement::FatalError, "ToType: Invalid type in input!");
+    }
 
     if (!ret) {
-        delete memory;
-        memory = static_cast<StaticListHolder*>(NULL);
+        REPORT_ERROR(ErrorManagement::FatalError, "ToType: Failed conversion to the specified type!");
     }
 
     return ret;
 }
 
-uint32 AnyTypeCreator::GetSize() {
+uint32 AnyTypeCreator::GetSize() const {
     return (memory == NULL)?(0u):(memory->GetSize());
+}
+
+uint32 AnyTypeCreator::GetGranularity() const {
+    return granularity;
 }
 
 }

@@ -41,33 +41,32 @@
 
 namespace MARTe {
 
-static uint32 Production[] = { 0
+static uint32 Production[] = { 0u
 
-, 3, 9, 10, 22, 3, 10, 11, 18, 6, 11, 23, 1, 2, 12, 24, 10, 11, 23, 1, 2, 3, 25, 1, 4, 12, 24, 5, 11, 26, 1, 2, 16, 2, 12, 13, 2, 12, 14, 2, 12, 15, 3, 13, 27,
-        17, 5, 14, 5, 13, 19, 6, 5, 15, 5, 14, 20, 6, 5, 16, 5, 11, 21, 6, 2, 17, 1, 2, 17, 7, 3, 18, 11, 18, 1, 18, 3, 19, 13, 19, 2, 19, 28, 3, 20, 14, 20, 2,
-        20, 29, 3, 21, 11, 21, 2, 21, 30
+, 3u, 9u, 10u, 22u, 3u, 10u, 11u, 18u, 6u, 11u, 23u, 1u, 2u, 12u, 24u, 10u, 11u, 23u, 1u, 2u, 3u, 25u, 1u, 4u, 12u, 24u, 5u, 11u, 26u, 1u, 2u, 16u, 2u, 12u, 13u, 2u, 12u, 14u, 2u, 12u, 15u, 3u, 13u, 27u,
+        17u, 5u, 14u, 5u, 13u, 19u, 6u, 5u, 15u, 5u, 14u, 20u, 6u, 5u, 16u, 5u, 11u, 21u, 6u, 2u, 17u, 1u, 2u, 17u, 7u, 3u, 18u, 11u, 18u, 1u, 18u, 3u, 19u, 13u, 19u, 2u, 19u, 28u, 3u, 20u, 14u, 20u, 2u,
+        20u, 29u, 3u, 21u, 11u, 21u, 2u, 21u, 30u
+        , 0u };
 
-        , 0 };
+static uint32 Production_row[] = { 0u
 
-static uint32 Production_row[] = { 0
-
-, 1, 5, 9, 16, 27, 33, 36, 39, 42, 46, 52, 58, 64, 67, 70, 74, 76, 80, 83, 87, 90, 94, 0 };
+, 1u, 5u, 9u, 16u, 27u, 33u, 36u, 39u, 42u, 46u, 52u, 58u, 64u, 67u, 70u, 74u, 76u, 80u, 83u, 87u, 90u, 94u, 0u };
 
 static uint32 ParseArray[] = {
 
-0, 0, 6, 1, 17, 9, 24, 13, 6, 18, 17, 9, 15, 14, 19, 20, 21, 2, 23, 16, 10, 22, 11, 12, 0, 0, 0 };
+0u, 0u, 6u, 1u, 17u, 9u, 24u, 13u, 6u, 18u, 17u, 9u, 15u, 14u, 19u, 20u, 21u, 2u, 23u, 16u, 10u, 22u, 11u, 12u, 0u, 0u, 0u };
 
-static uint32 Parse_row[] = { 0
+static uint32 Parse_row[] = { 0u
 
-, 2, 16, 17, 1, 4, 15, 17, 18, 6, 11, 3, 9, 15, 0 };
+, 2u, 16u, 17u, 1u, 4u, 15u, 17u, 18u, 6u, 11u, 3u, 9u, 15u, 0u };
 
 static uint32 Conflict[] = {
 
-0, 0, 7, 25, 0, 3, 8, 4, 7, 26, 27, 3, 3, 5, 3, 0, 3, 3, 3 };
+0u, 0u, 7u, 25u, 0u, 3u, 8u, 4u, 7u, 26u, 27u, 3u, 3u, 5u, 3u, 0u, 3u, 3u, 3u };
 
-static uint32 Conflict_row[] = { 0
+static uint32 Conflict_row[] = { 0u
 
-, 1, 1, 4, 9, 11, 0 };
+, 1u, 1u, 4u, 9u, 11u, 0u };
 
 /*
  #define START_SYMBOL 9
@@ -111,7 +110,7 @@ StandardParser::StandardParser(StreamI &stream,
                                ConfigurationDatabase &databaseIn,
                                BufferedStreamI * const err) :
         ParserI(stream, databaseIn, err, StandardGrammar) {
-    Action[0] = 0;
+    Action[0] = static_cast<void (StandardParser::*)(void)>(NULL);
     Action[1] = &StandardParser::End;
     Action[2] = &StandardParser::GetNodeName;
     Action[3] = &StandardParser::AddLeaf;
@@ -128,7 +127,7 @@ StandardParser::~StandardParser() {
 }
 
 
-void StandardParser::Execute(uint32 number) {
+void StandardParser::Execute(const uint32 number) {
     (this->*Action[number])();
 }
 
@@ -177,15 +176,5 @@ uint32 StandardParser::GetConstant(const uint32 index)const  {
     return Constants[index];
 }
 
-uint32 StandardParser::GetConditionalProduction(const uint32 symbol)const  {
-    return 0u;
-}
-
-uint32 StandardParser::GetPredictedEntry(const uint32 productionNumber,
-                                         const uint32 tokenId,
-                                         const uint32 level,
-                                         const uint32 x)const  {
-    return 0u;
-}
 
 }

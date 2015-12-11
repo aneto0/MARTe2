@@ -37,6 +37,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/*lint -save -e754 -e750 -e753*/
 namespace MARTe {
 
 class XMLParser: public ParserI {
@@ -44,44 +45,41 @@ public:
 
     XMLParser(StreamI &stream,
               ConfigurationDatabase &databaseIn,
-              BufferedStreamI * const err = NULL);
+              BufferedStreamI * const err = static_cast<BufferedStreamI*>(NULL));
 
-              virtual ~XMLParser();
+    virtual ~XMLParser();
 
-          protected:
+protected:
 
-              virtual uint32 &GetProduction(const uint32 index)const ;
+    virtual uint32 &GetProduction(const uint32 index) const;
 
-              virtual uint32 GetProductionRow(const uint32 index)const ;
+    virtual uint32 GetProductionRow(const uint32 index) const;
 
-              virtual uint32 GetParse(const uint32 index)const ;
+    virtual uint32 GetParse(const uint32 index) const;
 
-              virtual uint32 GetParseRow(const uint32 index)const ;
+    virtual uint32 GetParseRow(const uint32 index) const;
 
-              virtual uint32 GetConflict(const uint32 index)const ;
+    virtual uint32 GetConflict(const uint32 index) const;
 
-              virtual uint32 GetConflictRow(const uint32 index)const ;
+    virtual uint32 GetConflictRow(const uint32 index) const;
 
-              virtual uint32 GetConditionalProduction(const uint32 symbol)const ;
+    virtual uint32 GetConstant(const uint32 index) const;
 
-              virtual uint32 GetPredictedEntry(const uint32 productionNumber, const uint32 tokenId, const uint32 level, const uint32 x)const ;
+    virtual const char8 *GetSymbolName(const uint32 symbol) const;
 
-              virtual uint32 GetConstant(const uint32 index)const ;
-
-              virtual const char8 *GetSymbolName(const uint32 symbol)const ;
+    virtual void Execute(const uint32 number);
 
 
-              virtual void Execute(uint32 number);
-          private:
-              // functions void f()
-                      void (XMLParser::*Action[10])(void);
+private:
+    // functions void f()
+    void (XMLParser::*Action[10])(void);
 
-                  };
-              }
+};
+}
 
-              /*---------------------------------------------------------------------------*/
-              /*                        Inline method definitions                          */
-              /*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*/
+/*                        Inline method definitions                          */
+/*---------------------------------------------------------------------------*/
 
 #endif /* XMLPARSER_H_ */
 

@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #include "Token.h"
-#include "StaticListHolder.h"
 #include "ConfigurationDatabase.h"
 #include "StreamString.h"
 #include "AnyTypeCreator.h"
@@ -70,7 +69,6 @@ protected:
     virtual void EndMatrix();
     virtual void BlockEnd();
     virtual void CreateClassLeaf();
-    virtual void Predict(const uint32 entry);
 
     virtual uint32 &GetProduction(const uint32 index)const =0;
 
@@ -83,13 +81,6 @@ protected:
     virtual uint32 GetConflict(const uint32 index)const =0;
 
     virtual uint32 GetConflictRow(const uint32 index)const =0;
-
-    virtual uint32 GetConditionalProduction(const uint32 symbol)const =0;
-
-    virtual uint32 GetPredictedEntry(const uint32 productionNumber,
-                                     const uint32 tokenId,
-                                     const uint32 level,
-                                     const uint32 x)const =0;
 
     virtual uint32 GetConstant(const uint32 index)const =0;
 
@@ -107,7 +98,7 @@ protected:
 
     //void CreateClassLeaf();
 
-    virtual void Execute(uint32 number)=0;
+    virtual void Execute(const uint32 number)=0;
 
     Token *currentToken;
 
@@ -162,7 +153,9 @@ static const uint32 PARSE_STACK_SIZE = 512u;
 void ParserI::StackPush(const uint32 symbol,
                         const uint32 * const stack,
                         uint32 *&top) const {
+    /*lint -e{946} [MISRA C++ Rule 5-0-15], [MISRA C++ Rule 5-0-17]. Justification: stack implementation requires operational applied to pointer. */
     if (top > stack) {
+        /*lint -e{165} , [MISRA C++ Rule 5-0-18]. Justification: stack implementation requires subtraction applied to pointer. */
         top--;
         *top = symbol;
     }

@@ -36,6 +36,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/*lint -save -e754 -e750 -e753*/
 namespace MARTe{
 
 class StandardParser: public ParserI {
@@ -44,7 +45,7 @@ public:
 
     StandardParser(StreamI &stream,
                    ConfigurationDatabase &databaseIn,
-                   BufferedStreamI * const err=NULL);
+                   BufferedStreamI * const err=static_cast<BufferedStreamI*>(NULL));
 
     virtual ~StandardParser();
 
@@ -62,18 +63,11 @@ protected:
 
     virtual uint32 GetConflictRow(const uint32 index)const ;
 
-    virtual uint32 GetConditionalProduction(const uint32 symbol)const ;
-
-    virtual uint32 GetPredictedEntry(const uint32 productionNumber,
-                                     const uint32 tokenId,
-                                     const uint32 level,
-                                     const uint32 x)const ;
-
     virtual uint32 GetConstant(const uint32 index)const ;
 
     virtual const char8 *GetSymbolName(const uint32 symbol)const ;
 
-    virtual void Execute(uint32 number);
+    virtual void Execute(const uint32 number);
 
 
 private:

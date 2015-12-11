@@ -53,6 +53,7 @@ static const uint32 MAX_ERROR_MESSAGE_SIZE = 200u;
     else{                                                                                   \
         ErrorManagement::ReportError(code,reinterpret_cast<const char8 *>(message),__FILE__,__LINE__,__ERROR_FUNCTION_NAME__);\
     }                                                                                       \
+    \
 }
 
 }

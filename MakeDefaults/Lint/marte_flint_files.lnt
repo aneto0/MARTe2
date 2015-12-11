@@ -1,6 +1,8 @@
 AdvancedErrorManagement.h
 AnyObject.cpp
 AnyType.cpp
+AnyTypeCreator.h
+AnyTypeCreator.cpp
 Atomic.h
 BasicConsole.cpp
 BasicFile.cpp
@@ -42,6 +44,8 @@ FractionalInteger.h
 GeneralDefinitions.h
 GlobalObjectI.cpp
 GlobalObjectsDatabase.cpp
+JsonParser.h
+JsonParser.cpp
 HandleI.h
 HeapI.h
 HeapManager.cpp
@@ -98,6 +102,8 @@ SortFilter.h
 SortFilterT.h
 StandardHeap.h
 StandardHeap_Generic.cpp
+StandardParser.h
+StandardParser.cpp
 StaticList.cpp
 StaticListHolder.cpp
 StreamI.h
@@ -126,3 +132,5 @@ TypeCharacteristics.h
 TypeConversion.cpp
 TypeDescriptor.h
 Vector.h
+XMLParser.h
+XMLParser.cpp

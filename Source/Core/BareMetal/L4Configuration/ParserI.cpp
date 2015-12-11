@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ParserI.h"
-#include "StaticListHolder.h"
 #include "TypeConversion.h"
 #include "AdvancedErrorManagement.h"
 /*---------------------------------------------------------------------------*/
@@ -83,7 +82,9 @@ ParserI::ParserI(StreamI &stream,
 }
 
 ParserI::~ParserI() {
-
+    currentToken = static_cast<Token*>(NULL);
+    errorStream=static_cast<BufferedStreamI*>(NULL);
+    database=static_cast<ConfigurationDatabase*>(NULL);
 }
 
 uint32 ParserI::GetNextTokenType() {
@@ -115,7 +116,7 @@ uint32 ParserI::PeekNextTokenType(const uint32 position) {
     uint32 ret = 0u;
 
     Token* tok = tokenProducer.PeekToken(position);
-    uint32 endTokendId = GetConstant(ParserConstant::START_SYMBOL); //StringHelper::Length(terminals)+2u;
+    uint32 endTokendId = GetConstant(ParserConstant::START_SYMBOL);
     const char8* toCompare = static_cast<const char8 *>(NULL);
 
     if (tok->GetId() == TERMINAL_TOKEN) {
@@ -137,10 +138,6 @@ ParserGrammar ParserI::GetGrammar() const {
     return grammar;
 }
 
-void ParserI::Predict(const uint32 entry) {
-
-}
-
 void ParserI::GetTypeCast() {
     printf("\nget type cast %s\n", GetCurrentTokenData(currentToken));
     typeName = GetCurrentTokenData(currentToken);
@@ -156,20 +153,22 @@ void ParserI::BlockEnd() {
 
 void ParserI::CreateNode() {
     printf("\nCreating node... %s\n", GetCurrentTokenData(currentToken));
-    database->CreateRelative(GetCurrentTokenData(currentToken));
-
+    if (!database->CreateRelative(GetCurrentTokenData(currentToken))) {
+        PrintErrorOnStream("\nFailed ConfigurationDatabase::CreateRelative(*)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        isError = true;
+    }
 }
 
 void ParserI::AddLeaf() {
     printf("\nAdding leaf... %s\n", nodeName.Buffer());
-// use numberOfRows and numberOfColumns as dimensions # elements
-// a matrix!
-// a vector!
+    // use numberOfRows and numberOfColumns as dimensions # elements
+    // a matrix!
+    // a vector!
     if (numberOfDimensions == 1u) {
         //numberOfColumns = firstNumberOfColumns;
         numberOfRows = 1u;
     }
-// a scalar
+    // a scalar
     if (numberOfDimensions == 0u) {
         numberOfRows = 1u;
         numberOfColumns = firstNumberOfColumns;
@@ -208,7 +207,7 @@ void ParserI::GetNodeName() {
 void ParserI::AddScalar() {
     printf("\nAdding a scalar %s\n", GetCurrentTokenData(currentToken));
     if (tokenType == 0u) {
-        tokenType = GetCurrentTokenId(currentToken); //tokenProducer.GetTokenId();
+        tokenType = GetCurrentTokenId(currentToken);
     }
 
     if (tokenType == GetCurrentTokenId(currentToken)) {
@@ -297,13 +296,12 @@ bool ParserI::Parse() {
         uint32 stackArray[ParserConstant::PARSE_STACK_SIZE];
         uint32 *stack = &stackArray[0];
 
-
         uint32 *top = &stackArray[ParserConstant::PARSE_STACK_SIZE - 1u];
         *top = 0u;
         uint32 start_symbol = GetConstant(ParserConstant::START_SYMBOL);
 
         StackPush(start_symbol, stack, top);
-        uint32 token = GetNextTokenType(); //tokenProducer.get();
+        uint32 token = GetNextTokenType();
         uint32 new_token = token;
 
         for (uint32 symbol = StackPop(top); (symbol > 0u) && (!isError);) {
@@ -315,9 +313,9 @@ bool ParserI::Parse() {
                 uint32 entry = 0u;
                 uint32 level = 0u; // before was 1
 
-                uint32 production_number = GetConditionalProduction(symbol);
-                if (production_number) {
-                    entry = GetPredictedEntry(production_number, token, level, 1u);
+                uint32 production_number = 0u;
+                if (production_number > 0u) {
+                    entry = 0u;
                 }
                 if (entry == 0u) {
                     uint32 index = GetParseRow(symbol - (GetConstant(ParserConstant::START_SYMBOL) - 1u));
@@ -326,7 +324,7 @@ bool ParserI::Parse() {
                 }
                 while (entry >= GetConstant(ParserConstant::START_CONFLICT)) {
                     uint32 index = GetConflictRow(entry - (GetConstant(ParserConstant::START_CONFLICT) - 1u));
-                    index += PeekNextTokenType(level); //tokenProducer.peek(level);
+                    index += PeekNextTokenType(level);
                     entry = GetConflict(index);
                     ++level;
                 }
@@ -334,15 +332,16 @@ bool ParserI::Parse() {
                     uint32 *production = &GetProduction(GetProductionRow(entry));
                     uint32 production_length = *production - 1u;
                     production = &production[1];
+                    /*lint -e{415} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
                     if (*production == symbol) {
-                        Predict(entry);
+                        /*lint -e{661} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
                         for (; production_length > 0u; production_length--) {
+                            /*lint -e{662} [MISRA C++ Rule 5-0-16]. Justification: Remove the warning "Likely access of out-of-bounds pointer"*/
                             uint32 toPush = production[production_length];
                             StackPush(toPush, stack, top);
                         }
                     }
                     else {
-//                        new_token = parseError.no_entry(symbol, token, level - 1);
                         (token == 0u) ? (isEOF = true) : (isError = true);
                         if (isError) {
                             PrintErrorOnStream("\nInvalid Token! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
@@ -351,7 +350,6 @@ bool ParserI::Parse() {
                     }
                 }
                 else {
-                    //                  new_token = parseError.no_entry(symbol, token, level - 1);
                     (token == 0u) ? (isEOF = true) : (isError = true);
                     if (isError) {
                         PrintErrorOnStream("\nInvalid Token! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
@@ -362,11 +360,10 @@ bool ParserI::Parse() {
             else {
                 if (symbol > 0u) {
                     if (symbol == token) {
-                        token = GetNextTokenType(); //tokenProducer.get();
+                        token = GetNextTokenType();
                         new_token = token;
                     }
                     else {
-                        //                new_token = parseError.mismatch(symbol, token);
                         isError = true;
                         PrintErrorOnStream("\nInvalid Expression! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
                         new_token = GetConstant(ParserConstant::END_OF_SLK_INPUT);
@@ -374,7 +371,7 @@ bool ParserI::Parse() {
                 }
             }
             if (token != new_token) {
-                if (new_token) {
+                if (new_token > 0u) {
                     token = new_token;
                 }
                 if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
@@ -386,7 +383,6 @@ bool ParserI::Parse() {
         if (token != GetConstant(ParserConstant::END_OF_SLK_INPUT)) {
             PrintErrorOnStream("\nEOF found with tokens on internal parser stack! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
             isError = true;
-            //      parseError.input_left();
         }
     }
 

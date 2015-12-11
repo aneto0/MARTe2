@@ -38,26 +38,29 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
+/*lint -save -e754 -e750 -e753*/
 namespace MARTe {
 
 class AnyTypeCreator {
 
 public:
 
-    AnyTypeCreator(uint32 granularityIn = 1u);
+    AnyTypeCreator(const uint32 granularityIn = 1u);
 
     bool SetType(AnyType &element,
                  const uint8 nOfDimensions,
-                 const uint32 dimensionSize[3]);
+                 const uint32 dimensionSize[3]) const;
 
     bool ToType(const char8 * const type,
                 const char8 * const data);
 
     ~AnyTypeCreator();
 
-    void CleanUp(uint32 granularityIn);
+    void CleanUp(const uint32 granularityIn);
 
-    uint32 GetSize();
+    uint32 GetSize() const;
+
+    uint32 GetGranularity() const;
 
 private:
     StaticListHolder *memory;

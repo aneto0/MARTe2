@@ -293,10 +293,7 @@ Token * LexicalAnalyzer::GetToken() {
     if (token != NULL) {
         delete token;
     }
-
-    if (tokenQueue.GetSize() == 0u) {
-        TokenizeInput();
-    }
+    TokenizeInput();
     if (!tokenQueue.Extract(0u, token)) {
         REPORT_ERROR(ErrorManagement::FatalError, "GetToken: Failed Extract() of the token from the token stack");
     }
@@ -306,10 +303,7 @@ Token * LexicalAnalyzer::GetToken() {
 /*lint -e{429} . Justification: the allocated memory is freed by the class destructor. */
 Token *LexicalAnalyzer::PeekToken(const uint32 position) {
 
-    uint32 queueSize = tokenQueue.GetSize();
-    if (position >= queueSize) {
-        TokenizeInput((position - queueSize) + 1u);
-    }
+    TokenizeInput(position);
     Token *peekToken = static_cast<Token*>(NULL);
     if (!tokenQueue.Peek(position, peekToken)) {
         REPORT_ERROR(ErrorManagement::FatalError, "PeekToken: Failed Peek() of the token from the token stack");
@@ -440,9 +434,7 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
     StreamString separatorsUsed = separators.Buffer();
     StreamString terminalsUsed = terminals.Buffer();
 
-    uint32 nTokens = 0u;
-
-    while (nTokens < level) {
+    while (tokenQueue.GetSize() < (level + 1u)) {
         char8 c = '\0';
         char8 terminal = '\0';
         char8 separator = '\0';
@@ -573,8 +565,6 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
             lineNumber++;
         }
 
-        // at least one token added!
-        nTokens++;
     }
 }
 

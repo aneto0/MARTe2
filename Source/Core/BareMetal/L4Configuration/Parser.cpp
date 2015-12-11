@@ -186,10 +186,12 @@ static bool ReadScalar(Token* &token,
         AnyType element;
         uint32 dimSizes[3] = { 1u, 1u, 1u };
         /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
-        scalarCreator.SetType(element, 0u, dimSizes);
-        ret = database.Write(name, element);
-        // read the new token
-        token = lexicalAnalyzer.GetToken();
+        ret = scalarCreator.SetType(element, 0u, &dimSizes[0]);
+        if (ret) {
+            ret = database.Write(name, element);
+            // read the new token
+            token = lexicalAnalyzer.GetToken();
+        }
     }
 
     return ret;
@@ -275,10 +277,12 @@ static bool ReadVector(Token* &token,
         AnyType element;
         uint32 dimSizes[3] = { numberOfElements, 1u, 1u };
         /*lint -e{613} . Justification: if (memory==NULL) ---> (ok==false) */
-        vectorCreator.SetType(element, 1u, dimSizes);
-        ok = database.Write(name, element);
-        // read the new token
-        token = lexicalAnalyzer.GetToken();
+        ok = vectorCreator.SetType(element, 1u, &dimSizes[0]);
+        if (ok) {
+            ok = database.Write(name, element);
+            // read the new token
+            token = lexicalAnalyzer.GetToken();
+        }
     }
     return ok;
 }
@@ -419,11 +423,13 @@ static bool ReadMatrix(Token* &token,
         AnyType element;
         uint32 dimSizes[3] = { numberOfColumns, numberOfRows, 1u };
         /*lint -e{613} . Justification: if (memory==NULL) ---> (ok==false) */
-        matrixCreator.SetType(element, 2u, dimSizes);
-        ok = database.Write(name, element);
+        ok = matrixCreator.SetType(element, 2u, &dimSizes[0]);
+        if (ok) {
+            ok = database.Write(name, element);
 
-        // read the new token
-        token = lexicalAnalyzer.GetToken();
+            // read the new token
+            token = lexicalAnalyzer.GetToken();
+        }
     }
     return ok;
 }
@@ -478,7 +484,6 @@ Parser::~Parser() {
 bool Parser::Parse(StreamI &stream,
                    StructuredDataI &database,
                    BufferedStreamI * const err) const {
-
 
     LexicalAnalyzer lexicalAnalyzer(stream, &grammar.assignment, grammar.separators, grammar.beginOneLineComment, grammar.beginMultipleLinesComment,
                                     grammar.endMultipleLinesComment);

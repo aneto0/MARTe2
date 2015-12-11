@@ -41,30 +41,29 @@
 
 namespace MARTe {
 
-static uint32 Production[] = { 0
+static uint32 Production[] = { 0u
 
-, 3, 9, 10, 22, 3, 10, 11, 18, 6, 11, 23, 1, 2, 12, 24, 5, 11, 25, 1, 2, 16, 2, 12, 13, 2, 12, 14, 2, 12, 15, 3, 13, 26, 17, 5, 14, 3, 13, 19, 4, 5, 15, 3, 14,
-        20, 4, 5, 16, 5, 11, 21, 6, 2, 17, 1, 2, 17, 7, 3, 18, 11, 18, 1, 18, 3, 19, 13, 19, 2, 19, 27, 3, 20, 14, 20, 2, 20, 28, 3, 21, 11, 21, 2, 21, 29, 0 };
+, 3u, 9u, 10u, 22u, 3u, 10u, 11u, 18u, 6u, 11u, 23u, 1u, 2u, 12u, 24u, 5u, 11u, 25u, 1u, 2u, 16u, 2u, 12u, 13u, 2u, 12u, 14u, 2u, 12u, 15u, 3u, 13u, 26u, 17u, 5u, 14u, 3u, 13u, 19u, 4u, 5u, 15u, 3u, 14u,
+        20u, 4u, 5u, 16u, 5u, 11u, 21u, 6u, 2u, 17u, 1u, 2u, 17u, 7u, 3u, 18u, 11u, 18u, 1u, 18u, 3u, 19u, 13u, 19u, 2u, 19u, 27u, 3u, 20u, 14u, 20u, 2u, 20u, 28u, 3u, 21u, 11u, 21u, 2u, 21u, 29u, 0u };
 
-static uint32 Production_row[] = { 0
+static uint32 Production_row[] = { 0u
 
-, 1, 5, 9, 16, 22, 25, 28, 31, 35, 41, 47, 53, 56, 59, 63, 65, 69, 72, 76, 79, 83, 0 };
+, 1u, 5u, 9u, 16u, 22u, 25u, 28u, 31u, 35u, 41u, 47u, 53u, 56u, 59u, 63u, 65u, 69u, 72u, 76u, 79u, 83u, 0u};
 
 static uint32 ParseArray[] = {
 
-0, 0, 5, 16, 23, 8, 17, 12, 5, 16, 14, 8, 1, 13, 18, 19, 20, 15, 2, 22, 9, 21, 10, 11, 0, 0, 0, 0 };
+0u, 0u, 5u, 16u, 23u, 8u, 17u, 12u, 5u, 16u, 14u, 8u, 1u, 13u, 18u, 19u, 20u, 15u, 2u, 22u, 9u, 21u, 10u, 11u, 0u, 0u, 0u, 0u };
 
-static uint32 Parse_row[] = { 0
+static uint32 Parse_row[] = { 0u
 
-, 11, 17, 18, 1, 4, 17, 19, 18, 6, 9, 2, 11, 15, 0 };
+, 11u, 17u, 18u, 1u, 4u, 17u, 19u, 18u, 6u, 9u, 2u, 11u, 15u, 0u };
 
 static uint32 Conflict[] = {
 
-0, 0, 6, 24, 7, 3, 0, 3, 6, 4, 0, 3 };
+0u, 0u, 6u, 24u, 7u, 3u, 0u, 3u, 6u, 4u, 0u, 3u };
 
-static uint32 Conflict_row[] = { 0
-
-, 1, 1, 4, 0 };
+static uint32 Conflict_row[] = { 0u
+, 1u, 1u, 4u, 0u };
 /*
  #define START_SYMBOL 9
  #define END_OF_SLK_INPUT_ 8
@@ -109,7 +108,7 @@ JsonParser::JsonParser(StreamI &stream,
                        ConfigurationDatabase &databaseIn,
                        BufferedStreamI * const err) :
         ParserI(stream, databaseIn, err, JsonGrammar) {
-    Action[0] = 0;
+    Action[0] = static_cast<void (JsonParser::*)(void)>(NULL);
     Action[1] = &JsonParser::End;
     Action[2] = &JsonParser::GetNodeName;
     Action[3] = &JsonParser::AddLeaf;
@@ -124,7 +123,7 @@ JsonParser::~JsonParser() {
 
 }
 
-void JsonParser::Execute(uint32 number) {
+void JsonParser::Execute(const uint32 number) {
     (this->*Action[number])();
 }
 
@@ -171,17 +170,6 @@ uint32 JsonParser::GetConflictRow(const uint32 index)const  {
 
 uint32 JsonParser::GetConstant(const uint32 index)const  {
     return Constants[index];
-}
-
-uint32 JsonParser::GetConditionalProduction(const uint32 symbol)const  {
-    return 0u;
-}
-
-uint32 JsonParser::GetPredictedEntry(const uint32 productionNumber,
-                                     const uint32 tokenId,
-                                     const uint32 level,
-                                     const uint32 x)const  {
-    return 0u;
 }
 
 }

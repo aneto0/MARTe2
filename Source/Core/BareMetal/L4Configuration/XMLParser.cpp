@@ -41,31 +41,31 @@
 
 namespace MARTe {
 
-static uint32 Production[] = { 0
+static uint32 Production[] = { 0u
 
-, 3, 11, 12, 24, 3, 12, 13, 20, 11, 13, 1, 25, 2, 3, 14, 1, 4, 2, 3, 26, 15, 13, 1, 25, 2, 3, 5, 27, 2, 6, 14, 1, 4, 2, 3, 26, 10, 13, 1, 28, 2, 3, 18, 1, 4, 2,
-        3, 2, 14, 15, 2, 14, 16, 2, 14, 17, 3, 15, 29, 19, 5, 16, 7, 15, 21, 8, 5, 17, 7, 16, 22, 8, 3, 18, 13, 23, 2, 19, 2, 2, 19, 9, 3, 20, 13, 20, 1, 20, 3,
-        21, 15, 21, 2, 21, 30, 3, 22, 16, 22, 2, 22, 31, 3, 23, 13, 23, 2, 23, 32, 0 };
+, 3u, 11u, 12u, 24u, 3u, 12u, 13u, 20u, 11u, 13u, 1u, 25u, 2u, 3u, 14u, 1u, 4u, 2u, 3u, 26u, 15u, 13u, 1u, 25u, 2u, 3u, 5u, 27u, 2u, 6u, 14u, 1u, 4u, 2u, 3u, 26u, 10u, 13u, 1u, 28u, 2u, 3u, 18u, 1u, 4u, 2u,
+        3u, 2u, 14u, 15u, 2u, 14u, 16u, 2u, 14u, 17u, 3u, 15u, 29u, 19u, 5u, 16u, 7u, 15u, 21u, 8u, 5u, 17u, 7u, 16u, 22u, 8u, 3u, 18u, 13u, 23u, 2u, 19u, 2u, 2u, 19u, 9u, 3u, 20u, 13u, 20u, 1u, 20u, 3u,
+        21u, 15u, 21u, 2u, 21u, 30u, 3u, 22u, 16u, 22u, 2u, 22u, 31u, 3u, 23u, 13u, 23u, 2u, 23u, 32u, 0u };
 
-static uint32 Production_row[] = { 0
+static uint32 Production_row[] = { 0u
 
-, 1, 5, 9, 21, 37, 48, 51, 54, 57, 61, 67, 73, 77, 80, 83, 87, 89, 93, 96, 100, 103, 107, 0 };
+, 1u, 5u, 9u, 21u, 37u, 48u, 51u, 54u, 57u, 61u, 67u, 73u, 77u, 80u, 83u, 87u, 89u, 93u, 96u, 100u, 103u, 107u, 0u };
 
 static uint32 ParseArray[] = {
 
-0, 0, 1, 6, 2, 17, 9, 13, 24, 15, 6, 18, 17, 9, 14, 19, 20, 23, 16, 10, 11, 12, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+0u, 0u, 1u, 6u, 2u, 17u, 9u, 13u, 24u, 15u, 6u, 18u, 17u, 9u, 14u, 19u, 20u, 23u, 16u, 10u, 11u, 12u, 25u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
 
-static uint32 Parse_row[] = { 0
+static uint32 Parse_row[] = { 0u
 
-, 1, 3, 16, 1, 4, 12, 13, 20, 5, 8, 3, 8, 21, 0 };
+, 1u, 3u, 16u, 1u, 4u, 12u, 13u, 20u, 5u, 8u, 3u, 8u, 21u, 0u };
 
 static uint32 Conflict[] = {
 
-0, 0, 0, 26, 7, 21, 27, 22, 0, 8, 0, 7, 5, 3, 0, 0, 4, 0, 3, 0, 3 };
+0u, 0u, 0u, 26u, 7u, 21u, 27u, 22u, 0u, 8u, 0u, 7u, 5u, 3u, 0u, 0u, 4u, 0u, 3u, 0u, 3u };
 
-static uint32 Conflict_row[] = { 0
+static uint32 Conflict_row[] = { 0u
 
-, 1, 2, 3, 3, 11, 0 };
+, 1u, 2u, 3u, 3u, 11u, 0u };
 
 /*
  #define START_SYMBOL 11
@@ -119,7 +119,7 @@ XMLParser::XMLParser(StreamI &stream,
                      ConfigurationDatabase &databaseIn,
                      BufferedStreamI * const err) :
         ParserI(stream, databaseIn, err, XMLGrammar) {
-    Action[0] = 0;
+    Action[0] = static_cast<void (XMLParser::*)(void)>(NULL);
     Action[1] = &XMLParser::End;
     Action[2] = &XMLParser::GetNodeName;
     Action[3] = &XMLParser::AddLeaf;
@@ -129,14 +129,13 @@ XMLParser::XMLParser(StreamI &stream,
     Action[7] = &XMLParser::EndVector;
     Action[8] = &XMLParser::EndMatrix;
     Action[9] = &XMLParser::BlockEnd;
-
 }
 
 XMLParser::~XMLParser() {
 
 }
 
-void XMLParser::Execute(uint32 number) {
+void XMLParser::Execute(const uint32 number) {
     (this->*Action[number])();
 }
 
@@ -185,15 +184,5 @@ uint32 XMLParser::GetConstant(const uint32 index)const  {
     return Constants[index];
 }
 
-uint32 XMLParser::GetConditionalProduction(const uint32 symbol)const  {
-    return 0u;
-}
-
-uint32 XMLParser::GetPredictedEntry(const uint32 productionNumber,
-                                    const uint32 tokenId,
-                                    const uint32 level,
-                                    const uint32 x)const  {
-    return 0u;
-}
 
 }
