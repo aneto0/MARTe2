@@ -42,32 +42,63 @@
 
 using namespace MARTe;
 
+/**
+ * @brief Tests all the JsonParser functions.
+ */
 class JsonParserTest {
 
 public:
 
+    /**
+     * @brief Tests the constructor.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function returns the Json grammar.
+     */
+    bool TestGetGrammar();
+
+    /**
+     * @brief Tests the parsing of scalar variables.
+     */
     bool TestParseScalar();
 
+    /**
+     * @brief Tests the parsing of vector variables.
+     */
     bool TestParseVector();
 
+    /**
+     * @brief Tests the parsing of matrix variables.
+     */
     bool TestParseMatrix();
 
+    /**
+     * @brief Tests the parsing of an input with a big number of blocks.
+     */
     bool TestNestedBlocks();
 
+    /**
+     * @brief Tests if the Parse function returns false in case of errors in the input stream.
+     */
     bool TestParseErrors(const char8 *configStringIn);
 
-    bool TestStandardCast();
-
-    bool TestExistentFile();
-
+    /**
+     * @brief Tests the type cast parsing with scalar variables.
+     */
     template<typename T>
     bool TestTypeCast_Scalar(const TypeCastTableTest<T> *table);
 
+    /**
+     * @brief Tests the type cast parsing with vector variables.
+     */
     template<typename T, uint32 nElements>
     bool TestTypeCast_Vector(const TypeCastTableTestVector<T, nElements> *table);
 
+    /**
+     * @brief Tests the type cast parsing with matrix variables.
+     */
     template<typename T, uint32 nRows, uint32 nCols>
     bool TestTypeCast_Matrix(const TypeCastTableTestMatrix<T, nRows, nCols> *table);
 
@@ -76,8 +107,6 @@ public:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
-
 
 template<typename T>
 bool JsonParserTest::TestTypeCast_Scalar(const TypeCastTableTest<T> *table) {

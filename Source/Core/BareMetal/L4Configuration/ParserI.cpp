@@ -63,7 +63,7 @@ static uint32 GetCurrentTokenLineNumber(const Token * const token) {
 }
 
 ParserI::ParserI(StreamI &stream,
-                 ConfigurationDatabase &databaseIn,
+                 StructuredDataI &databaseIn,
                  BufferedStreamI * const err,
                  const ParserGrammar &grammarIn) :
         tokenProducer(stream, &grammarIn.assignment, grammarIn.separators, grammarIn.beginOneLineComment, grammarIn.beginMultipleLinesComment,
@@ -84,7 +84,7 @@ ParserI::ParserI(StreamI &stream,
 ParserI::~ParserI() {
     currentToken = static_cast<Token*>(NULL);
     errorStream=static_cast<BufferedStreamI*>(NULL);
-    database=static_cast<ConfigurationDatabase*>(NULL);
+    database=static_cast<StructuredDataI*>(NULL);
 }
 
 uint32 ParserI::GetNextTokenType() {
@@ -139,33 +139,26 @@ ParserGrammar ParserI::GetGrammar() const {
 }
 
 void ParserI::GetTypeCast() {
-    printf("\nget type cast %s\n", GetCurrentTokenData(currentToken));
     typeName = GetCurrentTokenData(currentToken);
 }
 
 void ParserI::BlockEnd() {
-    printf("\nEnd the block!\n");
     if (!database->MoveToAncestor(1u)) {
-        PrintErrorOnStream("\nFailed ConfigurationDatabase::MoveToAncestor(1)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        PrintErrorOnStream("\nFailed StructuredDataI::MoveToAncestor(1)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
         isError = true;
     }
 }
 
 void ParserI::CreateNode() {
-    printf("\nCreating node... %s\n", GetCurrentTokenData(currentToken));
     if (!database->CreateRelative(GetCurrentTokenData(currentToken))) {
-        PrintErrorOnStream("\nFailed ConfigurationDatabase::CreateRelative(*)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        PrintErrorOnStream("\nFailed StructuredDataI::CreateRelative(*)! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
         isError = true;
     }
 }
 
 void ParserI::AddLeaf() {
-    printf("\nAdding leaf... %s\n", nodeName.Buffer());
     // use numberOfRows and numberOfColumns as dimensions # elements
-    // a matrix!
-    // a vector!
     if (numberOfDimensions == 1u) {
-        //numberOfColumns = firstNumberOfColumns;
         numberOfRows = 1u;
     }
     // a scalar
@@ -175,7 +168,6 @@ void ParserI::AddLeaf() {
     }
 
     AnyType element;
-    printf("\n%d %d %d\n", numberOfColumns, numberOfRows, 1u);
     uint32 dimSizes[3] = { numberOfColumns, numberOfRows, 1u };
     /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
     bool ret = memory.SetType(element, numberOfDimensions, &dimSizes[0]);
@@ -200,12 +192,10 @@ void ParserI::AddLeaf() {
 }
 
 void ParserI::GetNodeName() {
-    printf("\nGetting node name %s\n", GetCurrentTokenData(currentToken));
     nodeName = GetCurrentTokenData(currentToken);
 }
 
 void ParserI::AddScalar() {
-    printf("\nAdding a scalar %s\n", GetCurrentTokenData(currentToken));
     if (tokenType == 0u) {
         tokenType = GetCurrentTokenId(currentToken);
     }
@@ -228,13 +218,11 @@ void ParserI::AddScalar() {
 }
 
 void ParserI::CreateClassLeaf() {
-    printf("\nAdd The class name!\n");
-    // Aggiungi un elemento alla memoria
+    // add an element to the memory
     bool ret = memory.ToType(typeName.Buffer(), GetCurrentTokenData(currentToken));
     if (ret) {
         AnyType element;
         uint32 dimSizes[3] = { 1u, 1u, 1u };
-        // lint -e{613} . Justification: if (memory==NULL) ---> (ret==false)
         ret = memory.SetType(element, 0u, &dimSizes[0]);
         if (ret) {
             ret = database->Write("ClassName", element);
@@ -258,7 +246,6 @@ void ParserI::CreateClassLeaf() {
 }
 
 void ParserI::EndVector() {
-    printf("\nEnd Row\n");
     if (numberOfColumns == 0u) {
         numberOfColumns = firstNumberOfColumns;
     }
@@ -281,7 +268,7 @@ void ParserI::EndMatrix() {
 
 void ParserI::End() {
     if (!database->MoveToRoot()) {
-        PrintErrorOnStream("\nFailed ConfigurationDatabase::MoveToRoot() at the end! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
+        PrintErrorOnStream("\nFailed StructuredDataI::MoveToRoot() at the end! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
         isError = true;
     }
 }
@@ -310,20 +297,13 @@ bool ParserI::Parse() {
 
             }
             else if (symbol >= GetConstant(ParserConstant::START_SYMBOL)) {
-                uint32 entry = 0u;
                 uint32 level = 0u; // before was 1
 
-                uint32 production_number = 0u;
-                if (production_number > 0u) {
-                    entry = 0u;
-                }
-                if (entry == 0u) {
-                    uint32 index = GetParseRow(symbol - (GetConstant(ParserConstant::START_SYMBOL) - 1u));
-                    index += token;
-                    entry = GetParse(index);
-                }
+                uint32 index = GetParseRow(symbol - (GetConstant(ParserConstant::START_SYMBOL) - 1u));
+                index += token;
+                uint32 entry = GetParse(index);
                 while (entry >= GetConstant(ParserConstant::START_CONFLICT)) {
-                    uint32 index = GetConflictRow(entry - (GetConstant(ParserConstant::START_CONFLICT) - 1u));
+                    index = GetConflictRow(entry - (GetConstant(ParserConstant::START_CONFLICT) - 1u));
                     index += PeekNextTokenType(level);
                     entry = GetConflict(index);
                     ++level;

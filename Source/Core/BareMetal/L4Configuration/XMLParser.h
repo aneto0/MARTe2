@@ -37,41 +37,105 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/*lint -save -e754 -e750 -e753*/
 namespace MARTe {
-
+/**
+ * @brief Implementation of the parser for the XML language.
+ *
+ * @details: Follows the grammar with the functions called if the parser matches the related expression.
+ * |EXPRESSION|
+ *   <STRING --> GetNodeName() > VARIABLE </STRING>  --> AddLeaf()
+ *   <STRING --> GetNodeName() > ( STRING --> GetTypeCast() ) VARIABLE </STRING>  --> AddLeaf()
+ *   <STRING --> CreateNode()  > { EXPRESSION ... } </STRING>  --> EndBlock()
+ *
+ * |VARIABLE|
+ *   SCALAR
+ *   VECTOR
+ *   MATRIX
+ *
+ * |SCALAR|
+ *   TOKEN --> AddScalar()
+ *
+ * |VECTOR|
+ *   { SCALAR ... } --> EndVector()
+ *
+ * |MATRIX|
+ *   { VECTOR ... } --> EndMatrix()
+ *
+ * |TOKEN|
+ *   STRING
+ *   NUMBER
+ */
 class XMLParser: public ParserI {
 public:
 
+    /**
+     * @see ParserI::ParserI(*)
+     * @post
+     *   ParserI::grammar == XMLGrammar.
+     */
     XMLParser(StreamI &stream,
-              ConfigurationDatabase &databaseIn,
+              StructuredDataI &databaseIn,
               BufferedStreamI * const err = static_cast<BufferedStreamI*>(NULL));
 
+    /**
+     * @brief Destructor.
+     */
     virtual ~XMLParser();
 
 protected:
 
+    /**
+     * @see ParserI::GetProduction(*)
+     */
     virtual uint32 &GetProduction(const uint32 index) const;
 
+    /**
+     * @see ParserI::GetProductionRow(*)
+     */
     virtual uint32 GetProductionRow(const uint32 index) const;
 
+    /**
+     * @see ParserI::GetParse(*)
+     */
     virtual uint32 GetParse(const uint32 index) const;
 
+    /**
+     * @see ParserI::GetParseRow(*)
+     */
     virtual uint32 GetParseRow(const uint32 index) const;
 
+    /**
+     * @see ParserI::GetConflict(*)
+     */
     virtual uint32 GetConflict(const uint32 index) const;
 
+    /**
+     * @see ParserI::GetConflictRow(*)
+     */
     virtual uint32 GetConflictRow(const uint32 index) const;
 
+    /**
+     * @see ParserI::GetConstant(*)
+     */
     virtual uint32 GetConstant(const uint32 index) const;
 
+    /**
+     * @see ParserI::GetSymbolName(*)
+     */
     virtual const char8 *GetSymbolName(const uint32 symbol) const;
 
+    /**
+     * @see ParserI::Execute(*)
+     */
     virtual void Execute(const uint32 number);
 
 
+
 private:
-    // functions void f()
+
+    /**
+     * The array of functions needed by the parser.
+     */
     void (XMLParser::*Action[10])(void);
 
 };

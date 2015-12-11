@@ -96,7 +96,6 @@ OBJSX=  AnyObjectGTest.x \
 		TypeConversionGTest.x \
 		TypeDescriptorGTest.x  \
 		VectorGTest.x \
-		SlkActionGTest.x \
 		StandardParserGTest.x \
 		XMLParserGTest.x \
 		JsonParserGTest.x \

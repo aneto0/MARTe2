@@ -76,7 +76,7 @@ public:
             const char8 * const separatorsIn,
             const char8 * const oneLineCommentBeginIn,
             const char8 * const multipleLineCommentBeginIn,
-            const char8 * const multipleLineCommentBeginEnd);
+            const char8 * const multipleLineCommentEndIn);
 
     /**
      * @brief Destructor.
@@ -101,13 +101,22 @@ public:
 private:
 
     /**
-     * @brief Tokenizes the stream in input adding tokens in the internal queue.
-     * @param[in] level is the number of tokens to add to the queue.
+     * @brief Tokenizes the stream in input adding tokens to the internal queue.
+     * @param[in] level is the number of tokens to add to the queue - 1.
      */
-    void TokenizeInput(const uint32 level = 1u);
+    void TokenizeInput(const uint32 level = 0u);
 
-    void AddToken(char8 * const tokenBuffer, const bool isString1);
+    /**
+     * @brief Adds a token to the internal queue.
+     * @param[in] tokenBuffer contains the token data.
+     * @param[in] isString spcifies if the token represents a string.
+     */
+    void AddToken(char8 * const tokenBuffer, const bool isString);
 
+    /**
+     * @brief Adds a terminal to the internal queue.
+     * @param[in] terminal is the terminal character.
+     */
     void AddTerminal(const char8 terminal);
 
     /**
@@ -125,10 +134,19 @@ private:
      */
     StreamString terminals;
 
+    /**
+     * The begin of single line comment pattern.
+     */
     StreamString oneLineCommentBegin;
 
+    /**
+     * The end of multiple line comment pattern.
+     */
     StreamString multipleLineCommentBegin;
 
+    /**
+     * The end of multiple line comment pattern.
+     */
     StreamString multipleLineCommentEnd;
 
     /**

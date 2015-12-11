@@ -49,8 +49,19 @@ bool StandardParserTest::TestConstructor() {
 
     StandardParser myParser(configString, database, &err);
 
-    return true;
+    ParserGrammar myGrammar=myParser.GetGrammar();
 
+    bool ok=(StringHelper::Compare(myGrammar.separators, StandardGrammar.separators)==0);
+
+    ok &= (StringHelper::Compare(myGrammar.beginOneLineComment, StandardGrammar.beginOneLineComment)==0);
+    ok &= (StringHelper::Compare(myGrammar.beginMultipleLinesComment, StandardGrammar.beginMultipleLinesComment)==0);
+    ok &= (StringHelper::Compare(myGrammar.endMultipleLinesComment, StandardGrammar.endMultipleLinesComment)==0);
+    ok &= (StringHelper::Compare(&myGrammar.assignment, &StandardGrammar.assignment)==0);
+    return ok;
+}
+
+bool StandardParserTest::TestGetGrammar() {
+    return TestConstructor();
 }
 
 bool StandardParserTest::TestParseScalar() {
@@ -218,7 +229,7 @@ bool StandardParserTest::TestParseMatrix() {
     configString.Seek(0);
     StandardParser myParser(configString, database, &errors);
 
-    if(!myParser.Parse()){
+    if (!myParser.Parse()) {
         return false;
     }
 
@@ -333,7 +344,7 @@ bool StandardParserTest::TestNestedBlocks() {
     configString.Seek(0);
     StandardParser myParser(configString, database, &errors);
 
-    if(!myParser.Parse()){
+    if (!myParser.Parse()) {
         return false;
     }
 
@@ -422,29 +433,7 @@ bool StandardParserTest::TestStandardCast() {
     int32 var = 0;
     database.Read("var1", var);
 
-
     return var == 1;
-}
-
-
-bool StandardParserTest::TestExistentFile() {
-    BasicFile configurationFile;
-    if (!configurationFile.Open("MARTe-WaterTank.cfg", BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
-        printf("\nError! The file is not opened!\n");
-    }
-
-    configurationFile.Seek(0);
-    StreamString errors;
-
-    ConfigurationDatabase database;
-    StandardParser myParser(configurationFile, database, &errors);
-    if (!myParser.Parse()) {
-        printf("\nerrors=%s\n", errors.Buffer());
-
-        return false;
-    }
-
-    return true;
 }
 
 

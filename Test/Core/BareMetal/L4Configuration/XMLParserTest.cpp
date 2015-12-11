@@ -48,9 +48,21 @@ bool XMLParserTest::TestConstructor() {
     StreamString err;
 
     XMLParser myParser(configString, database, &err);
+    ParserGrammar myGrammar=myParser.GetGrammar();
 
-    return true;
+    bool ok=(StringHelper::Compare(myGrammar.separators, XMLGrammar.separators)==0);
 
+    ok &= (StringHelper::Compare(myGrammar.beginOneLineComment, XMLGrammar.beginOneLineComment)==0);
+    ok &= (StringHelper::Compare(myGrammar.beginMultipleLinesComment, XMLGrammar.beginMultipleLinesComment)==0);
+    ok &= (StringHelper::Compare(myGrammar.endMultipleLinesComment, XMLGrammar.endMultipleLinesComment)==0);
+    ok &= (StringHelper::Compare(&myGrammar.assignment, &XMLGrammar.assignment)==0);
+    return ok;
+
+}
+
+
+bool XMLParserTest::TestGetGrammar(){
+    return TestConstructor();
 }
 
 bool XMLParserTest::TestParseScalar() {
@@ -427,22 +439,3 @@ bool XMLParserTest::TestStandardCast() {
 }
 
 
-bool XMLParserTest::TestExistentFile() {
-    BasicFile configurationFile;
-    if (!configurationFile.Open("MARTe-WaterTank.cfg", BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
-        printf("\nError! The file is not opened!\n");
-    }
-
-    configurationFile.Seek(0);
-    StreamString errors;
-
-    ConfigurationDatabase database;
-    XMLParser myParser(configurationFile, database, &errors);
-    if (!myParser.Parse()) {
-        printf("\nerrors=%s\n", errors.Buffer());
-
-        return false;
-    }
-
-    return true;
-}

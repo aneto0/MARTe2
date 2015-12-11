@@ -46,6 +46,11 @@ TEST(StandardParserGTest,TestConstructor) {
     ASSERT_TRUE(parserTest.TestConstructor());
 }
 
+TEST(StandardParserGTest,TestGetGrammar) {
+    StandardParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestGetGrammar());
+}
+
 TEST(StandardParserGTest,TestParseScalar) {
     StandardParserTest parserTest;
     ASSERT_TRUE(parserTest.TestParseScalar());

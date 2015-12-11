@@ -32,7 +32,6 @@ OBJSX=	AnyObjectTest.x \
 	    TypeConversionTest.x \
 		TokenInfoTest.x \
 		TokenTest.x \
-		SlkActionTest.x	\
 		StandardParserTest.x \
 		XMLParserTest.x \
 		JsonParserTest.x \

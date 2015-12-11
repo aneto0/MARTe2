@@ -38,7 +38,6 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/*lint -save -e754 -e750 -e753*/
 namespace MARTe {
 
 class AnyTypeCreator {

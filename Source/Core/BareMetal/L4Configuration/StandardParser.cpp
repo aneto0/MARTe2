@@ -81,33 +81,18 @@ static uint32 Conflict_row[] = { 0u
 
 static const uint32 Constants[] = { 9u, 8u, 0u, 23u, 28u, 22u, 31u, 5u };
 
-static const char8 * Nonterminal_name[] = { "0"
-
-, "expression", "cdbFile", "expressions", "variables", "scalar", "vector", "matrix", "block", "token", "expressions_*", "scalar_*", "vector_*",
-        "expressions_2_*" };
 
 static const char8 * Terminal_name[] = { "0"
 
 , "STRING", "=", "(", ")", "{", "}", "NUMBER", "END_OF_SLK_INPUT" };
 
-static const char8 * Action_name[] = { "0"
-
-, "__End", "__GetNodeName", "__AddLeaf", "__GetTypeCast", "__CreateNode", "__AddScalar", "__EndVector", "__EndMatrix", "__BlockEnd" };
-
-static const char8 *GetActionName(const uint32 symbol) {
-    return Action_name[symbol - (Constants[ParserConstant::START_ACTION] - 1u)];
-}
-
-static const char8 *GetNonTerminalName(const uint32 symbol) {
-    return Nonterminal_name[symbol - (Constants[ParserConstant::START_SYMBOL] - 1u)];
-}
 
 static const char8 *GetTerminalName(const uint32 symbol) {
     return Terminal_name[symbol];
 }
 
 StandardParser::StandardParser(StreamI &stream,
-                               ConfigurationDatabase &databaseIn,
+                               StructuredDataI &databaseIn,
                                BufferedStreamI * const err) :
         ParserI(stream, databaseIn, err, StandardGrammar) {
     Action[0] = static_cast<void (StandardParser::*)(void)>(NULL);
@@ -133,13 +118,8 @@ void StandardParser::Execute(const uint32 number) {
 
 const char8 *StandardParser::GetSymbolName(const uint32 symbol)const  {
     const char8 *symbolName = static_cast<const char8 *>(NULL);
-    if((symbol >= Constants[ParserConstant::START_ACTION]) && (symbol < Constants[ParserConstant::END_ACTION])) {
-        symbolName=GetActionName(symbol);
-    }
-    else if(symbol >= Constants[ParserConstant::START_SYMBOL]) {
-        symbolName=GetNonTerminalName(symbol);
-    }
-    else if(symbol > 0u) {
+
+    if((symbol > 0u) && (symbol < Constants[ParserConstant::START_SYMBOL])) {
         symbolName=GetTerminalName(symbol);
     }
     else {

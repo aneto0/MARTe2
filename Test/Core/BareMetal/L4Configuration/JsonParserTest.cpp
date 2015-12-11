@@ -48,9 +48,19 @@ bool JsonParserTest::TestConstructor() {
     StreamString err;
 
     JsonParser myParser(configString, database, &err);
+    ParserGrammar myGrammar = myParser.GetGrammar();
 
-    return true;
+    bool ok=(StringHelper::Compare(myGrammar.separators, JsonGrammar.separators)==0);
 
+    ok &= (StringHelper::Compare(myGrammar.beginOneLineComment, JsonGrammar.beginOneLineComment)==0);
+    ok &= (StringHelper::Compare(myGrammar.beginMultipleLinesComment, JsonGrammar.beginMultipleLinesComment)==0);
+    ok &= (StringHelper::Compare(myGrammar.endMultipleLinesComment, JsonGrammar.endMultipleLinesComment)==0);
+    ok &= (StringHelper::Compare(&myGrammar.assignment, &JsonGrammar.assignment)==0);
+    return ok;
+}
+
+bool JsonParserTest::TestGetGrammar() {
+    return TestConstructor();
 }
 
 bool JsonParserTest::TestParseScalar() {
@@ -218,7 +228,7 @@ bool JsonParserTest::TestParseMatrix() {
     configString.Seek(0);
     JsonParser myParser(configString, database, &errors);
 
-    if(!myParser.Parse()){
+    if (!myParser.Parse()) {
         return false;
     }
 
@@ -333,7 +343,7 @@ bool JsonParserTest::TestNestedBlocks() {
     configString.Seek(0);
     JsonParser myParser(configString, database, &errors);
 
-    if(!myParser.Parse()){
+    if (!myParser.Parse()) {
         return false;
     }
 
@@ -408,47 +418,6 @@ bool JsonParserTest::TestParseErrors(const char8 *configStringIn) {
 
 }
 
-bool JsonParserTest::TestStandardCast() {
-    StreamString configString = "var1: 1\n";
-    configString.Seek(0);
-    StreamString errors;
-    ConfigurationDatabase database;
 
-    JsonParser myParser(configString, database, &errors);
-
-    if (!myParser.Parse()) {
-        printf("\nerrors=%s\n", errors.Buffer());
-
-        return false;
-    }
-
-    int32 var = 0;
-    database.Read("var1", var);
-
-
-    printf("\n%d\n", var);
-    return var == 1;
-}
-
-
-bool JsonParserTest::TestExistentFile() {
-    BasicFile configurationFile;
-    if (!configurationFile.Open("MARTe-WaterTank.cfg", BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
-        printf("\nError! The file is not opened!\n");
-    }
-
-    configurationFile.Seek(0);
-    StreamString errors;
-
-    ConfigurationDatabase database;
-    JsonParser myParser(configurationFile, database, &errors);
-    if (!myParser.Parse()) {
-        printf("\nerrors=%s\n", errors.Buffer());
-
-        return false;
-    }
-
-    return true;
-}
 
 

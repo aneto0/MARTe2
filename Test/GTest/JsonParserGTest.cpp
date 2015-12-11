@@ -47,6 +47,11 @@ TEST(JsonParserGTest,TestConstructor) {
     ASSERT_TRUE(parserTest.TestConstructor());
 }
 
+TEST(JsonParserGTest,TestGetGrammar) {
+    JsonParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestGetGrammar());
+}
+
 TEST(JsonParserGTest,TestParseScalar) {
     JsonParserTest parserTest;
     ASSERT_TRUE(parserTest.TestParseScalar());
@@ -712,8 +717,3 @@ TEST(JsonParserGTest,TestParseErrors_Unexpected_EOF) {
     ASSERT_TRUE(parserTest.TestParseErrors(configString));
 }
 
-
-TEST(JsonParserGTest,TestStandardCast) {
-    JsonParserTest parserTest;
-    ASSERT_TRUE(parserTest.TestStandardCast());
-}

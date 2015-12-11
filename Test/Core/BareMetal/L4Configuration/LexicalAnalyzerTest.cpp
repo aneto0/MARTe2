@@ -54,7 +54,6 @@ bool LexicalAnalyzerTest::TestConstructor() {
     }
 
     const char8* token = (const char8*) (tok->GetData());
-    printf("\n%s\n", token);
     if (StringHelper::Compare(token, "Hello") != 0) {
         return false;
     }
@@ -547,4 +546,87 @@ bool LexicalAnalyzerTest::TestEscape() {
 
     tok = la.GetToken();
     return (StringHelper::Compare("Hello\\World", tok->GetData()) == 0);
+
+}
+
+bool LexicalAnalyzerTest::TestComments() {
+    StreamString configString = "<a<!--comment-->b"
+            "                    <c,,//comment >\n"
+            "                    <!-fake -->d<!-- comment->--<!--> ";
+    configString.Seek(0);
+
+    LexicalAnalyzer la(configString, "<>/", " ,\n", "//", "<!--", "-->");
+
+    Token *tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "<") != 0) {
+        return false;
+    }
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "a") != 0) {
+        return false;
+    }
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "b") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "<") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "c") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "<") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "!-fake") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "--") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), ">") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "d") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    return tok->GetId() == EOF_TOKEN;
+
 }

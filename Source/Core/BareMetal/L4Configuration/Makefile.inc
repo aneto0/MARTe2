@@ -36,12 +36,6 @@ OBJSX=	AnyObject.x \
 		TypeConversion.x \
 		TokenInfo.x \
 		Token.x \
-		SlkToken.x \
-		SlkParse.x \
-		SlkAction.x \
-		SlkError.x \
-		SlkString.x \
-		SlkTable.x \
 		ParserI.x \
 		StandardParser.x \
 		XMLParser.x \

@@ -36,42 +36,105 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/*lint -save -e754 -e750 -e753*/
-namespace MARTe{
+namespace MARTe {
 
+/**
+ * @brief Implementation of the parser for the standard MARTe configuration language.
+ *
+ * @details: Follows the grammar with the functions called if the parser matches the related expression.
+ * |EXPRESSION|
+ *   STRING --> GetNodeName()   = VARIABLE --> AddLeaf()
+ *   STRING --> GetNodeName()   = ( STRING --> GetTypeCast() ) VARIABLE --> AddLeaf()
+ *   STRING --> CreateNode()    = { EXPRESSION ... } --> EndBlock()
+ *
+ * |VARIABLE|
+ *   SCALAR
+ *   VECTOR
+ *   MATRIX
+ *
+ * |SCALAR|
+ *   TOKEN --> AddScalar()
+ *
+ * |VECTOR|
+ *   { SCALAR ... } --> EndVector()
+ *
+ * |MATRIX|
+ *   { VECTOR ... } --> EndMatrix()
+ *
+ * |TOKEN|
+ *   STRING
+ *   NUMBER
+ */
 class StandardParser: public ParserI {
 
 public:
 
+    /**
+     * @see ParserI::ParserI(*)
+     * @post
+     *   ParserI::grammar == StandardGrammar.
+     */
     StandardParser(StreamI &stream,
-                   ConfigurationDatabase &databaseIn,
-                   BufferedStreamI * const err=static_cast<BufferedStreamI*>(NULL));
+                   StructuredDataI &databaseIn,
+                   BufferedStreamI * const err = static_cast<BufferedStreamI*>(NULL));
 
+    /**
+     * @brief Destructor.
+     */
     virtual ~StandardParser();
 
 protected:
 
-    virtual uint32 &GetProduction(const uint32 index)const ;
+    /**
+     * @see ParserI::GetProduction(*).
+     */
+    virtual uint32 &GetProduction(const uint32 index) const;
 
-    virtual uint32 GetProductionRow(const uint32 index)const ;
+    /**
+     * @see ParserI::GetProductionRow(*).
+     */
+    virtual uint32 GetProductionRow(const uint32 index) const;
 
-    virtual uint32 GetParse(const uint32 index)const ;
+    /**
+     * @see ParserI::GetParse(*).
+     */
+    virtual uint32 GetParse(const uint32 index) const;
 
-    virtual uint32 GetParseRow(const uint32 index)const ;
+    /**
+     * @see ParserI::GetParseRow(*).
+     */
+    virtual uint32 GetParseRow(const uint32 index) const;
 
-    virtual uint32 GetConflict(const uint32 index)const ;
+    /**
+     * @see ParserI::GetConflict(*).
+     */
+    virtual uint32 GetConflict(const uint32 index) const;
 
-    virtual uint32 GetConflictRow(const uint32 index)const ;
+    /**
+     * @see ParserI::GetConflictRow(*).
+     */
+    virtual uint32 GetConflictRow(const uint32 index) const;
 
-    virtual uint32 GetConstant(const uint32 index)const ;
+    /**
+     * @see ParserI::GetConstant(*).
+     */
+    virtual uint32 GetConstant(const uint32 index) const;
 
-    virtual const char8 *GetSymbolName(const uint32 symbol)const ;
+    /**
+     * @see ParserI::GetSymbolName(*).
+     */
+    virtual const char8 *GetSymbolName(const uint32 symbol) const;
 
+    /**
+     * @see ParserI::Execute(*).
+     */
     virtual void Execute(const uint32 number);
 
-
 private:
-    // functions void f()
+
+    /**
+     * The array of functions needed by the parser.
+     */
     void (StandardParser::*Action[10])(void);
 
 };

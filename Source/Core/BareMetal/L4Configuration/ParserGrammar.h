@@ -50,10 +50,19 @@ struct ParserGrammar {
      */
     const char8 *separators;
 
+    /**
+     * One line comment begin pattern.
+     */
     const char8 *beginOneLineComment;
 
+    /**
+     * Multiple line comment begin pattern.
+     */
     const char8 *beginMultipleLinesComment;
 
+    /**
+     * Multiple line comment end pattern.
+     */
     const char8 *endMultipleLinesComment;
 
     /**
@@ -103,8 +112,14 @@ struct ParserGrammar {
  */
 static const ParserGrammar StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
 
+/**
+ * The terminal and separator characters for XML language.
+ */
 static const ParserGrammar XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>', '{', '}', '/', '(', ')', '<', '>', '\0' };
 
+/**
+ * The terminal and separator characters for Json language.
+ */
 static const ParserGrammar JsonGrammar = { "\n\r\t, ", "", "", "", ':', '{', '}', '[', ']', '[', ']', '\0', '\0', '\0' };
 
 }
