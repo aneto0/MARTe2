@@ -95,14 +95,14 @@ public:
         writable = canWrite;
         size = 0;
         usedTimeout = false;
-        buffer = (char8 *) malloc(MAX_STREAM_DIMENSION);
+        buffer = (char8 *) GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(MAX_STREAM_DIMENSION);
         for (uint32 i = 0; i < MAX_STREAM_DIMENSION; i++) {
             buffer[i] = 0;
         }
     }
 
     ~DummyOSStream() {
-        free(buffer);
+        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(reinterpret_cast<void *&>(buffer));
     }
 
     uint64 Size() {

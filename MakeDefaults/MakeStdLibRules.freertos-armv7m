@@ -48,9 +48,7 @@ $(BUILD_DIR)/%.a : $(OBJS) $(ROOT_DIR)/createLibrary.o
 	$(LINKER) -r $(OBJS) $(LIBRARIES_STATIC) -o $@
 
 $(BUILD_DIR)/%.so : $(OBJS) $(ROOT_DIR)/createLibrary.o
-	touch $@
-	rm -f $(BUILD_DIR)/$*.a
-	$(LINKER) -r $(OBJS) $(LIBRARIES_STATIC) -o $@
+	echo "Only static linking supported"
 
 %.ifo :  %.h
 	$(COMPILER) -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp

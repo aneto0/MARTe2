@@ -1,6 +1,6 @@
 /**
- * @file AuxHeap.cpp
- * @brief Source file for class AuxHeap
+ * @file StandardHeap.cpp
+ * @brief Source file for class StandardHeap
  * @date 13/08/2015
  * @author Filippo Sartori
  *
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class AuxHeap (public, protected, and private). Be aware that some
+ * the class StandardHeap (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,10 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "AuxHeap.h"
-#include "StringHelper.h"
-#include "GlobalObjectsDatabase.h"
-
+#include "StandardHeap.h"
+#include <string.h>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,38 +39,29 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe {
-/**
- * @brief constructor
- */
-AuxHeap::AuxHeap() {
 
-    /** initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
+namespace MARTe{
+
+StandardHeap::StandardHeap() {
+    /* initialise memory addresses to NULL as we have no way to obtain this information until malloc is called */
     firstAddress = 0U;
     lastAddress = 0U;
 }
-/**
- * @brief destructor
- */
-AuxHeap::~AuxHeap() {
+
+StandardHeap::~StandardHeap() {
     lastAddress = 0U;
     firstAddress = 0U;
 }
 
-
-/**
- * @brief allocates size bytes of data in the heap. Maximum allocated size is 4Gbytes
- * @return a pointer to the allocated memory or NULL if the allocation fails.
- */
 /*lint -e{586} use of malloc function (deprecated) */
-void *AuxHeap::Malloc(const uint32 size) {
+void *StandardHeap::Malloc(const uint32 size) {
     //void *pointer = malloc(size);
     //void *pointer = new char8[size];
 
     void* pointer = NULL_PTR(void*);
 
     if (size != 0u) {
-        pointer = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Malloc(static_cast<osulong>(size));
+        pointer = pvPortMalloc(static_cast<osulong>(size));
     }
 
     if (pointer != NULL) {
@@ -91,20 +80,16 @@ void *AuxHeap::Malloc(const uint32 size) {
 
     }
     else {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()");
+        REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed Failed malloc()");
     }
     return pointer;
 
 }
 
-/**
- * @brief free the pointer data and its associated memory.
- * @param data the data to be freed.
- */
 /*lint -e{586} use of free function (deprecated) */
-void AuxHeap::Free(void *&data) {
+void StandardHeap::Free(void *&data) {
     if (data != NULL) {
-        GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(data);
+        vPortFree(data);
     }
 //    delete[] (reinterpret_cast<char8 *>(data));
     data = NULL_PTR(void *);
@@ -112,59 +97,48 @@ void AuxHeap::Free(void *&data) {
 }
 
 /*lint -e{586} use of realloc function (deprecated) */
-void *AuxHeap::Realloc(void *&data,
+void *StandardHeap::Realloc(void *&data,
                             const uint32 newSize) {
 
     if (data == NULL) {
-        data = AuxHeap::Malloc(newSize);
+        data = StandardHeap::Malloc(newSize);
     }
     else {
         if (newSize == 0u) {
-            AuxHeap::Free(data);
+            StandardHeap::Free(data);
         }
         else {
-            data = GlobalObjectsDatabase::Instance()->GetStandardHeap()->Realloc(data, static_cast<osulong>(newSize));
-            if (data != NULL) {
-                /*lint -e{9091} -e{923} the casting from pointer type to integer type is required
-                 * in order to be able to update the range of addresses provided by this heap
-                 * uintp is an integer type that has by design the same span as a pointer in all systems*/
-                uintp address = reinterpret_cast<uintp>(data);
-                if ((firstAddress > address) || (firstAddress == 0U)) {
-                    firstAddress = address;
-                }
-                address += newSize;
-                if ((lastAddress < address) || (lastAddress == 0U)) {
-                    lastAddress = address;
-                }
-            }
-            else {
-                REPORT_ERROR(ErrorManagement::OSError, "Error: realloc()");
-            }
+            void *oldData = data;
+            data = Malloc(newSize);
+            //Will copy garbage as well...
+            memcpy(data, oldData, static_cast<size_t>(newSize));
+            StandardHeap::Free(oldData);
         }
     }
     return data;
-
 }
 
 /*lint -e{925} cast pointer to pointer required */
-void *AuxHeap::Duplicate(const void * const data,
+void *StandardHeap::Duplicate(const void * const data,
                               uint32 size) {
 
     void *duplicate = NULL_PTR(void *);
 
-    // check if 0 zerminated copy to be done
+    // check if 0 terminated copy to be done
     if (size == 0U) {
         const char8* inputData = static_cast<const char8 *>(data);
-        size = StringHelper::Length(inputData);
+        /*lint -e{586} the use of strlen is necessary because
+         * the size of the array is unknown */
+        size = static_cast<uint32>(strlen(inputData));
         if (data != NULL) {
-            duplicate = StringHelper::StringDup(inputData);
+            duplicate = strdup(inputData);
         }
         if (duplicate == NULL) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: strdup()");
+            REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed strdup()");
         }
     }
     else { // strdup style
-        duplicate = AuxHeap::Malloc(size);
+        duplicate = StandardHeap::Malloc(size);
         if (duplicate != NULL) {
             const char8 *source = static_cast<const char8 *>(data);
             char8 *destination = static_cast<char8 *>(duplicate);
@@ -176,7 +150,7 @@ void *AuxHeap::Duplicate(const void * const data,
             } //copy loop
         } //check Malloc success
         else {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: malloc()");
+            REPORT_ERROR(ErrorManagement::OSError, "StandardHeap: Failed malloc()");
         }
     } // copy bound by size
 
@@ -197,28 +171,16 @@ void *AuxHeap::Duplicate(const void * const data,
     return duplicate;
 }
 
-/**
- * @brief start of range of memory addresses served by this heap.
- * @return first memory address
- */
-uintp AuxHeap::FirstAddress() const {
+uintp StandardHeap::FirstAddress() const {
     return firstAddress;
 }
 
-/**
- * @brief end (inclusive) of range of memory addresses served by this heap.
- * @return last memory address
- */
-uintp AuxHeap::LastAddress() const {
+uintp StandardHeap::LastAddress() const {
     return lastAddress;
 }
 
-/**
- * @brief Returns the name of the heap
- * @return name of the heap
- */
-const char8 *AuxHeap::Name() const {
-    return "AuxHeap";
+const char8 *StandardHeap::Name() const {
+    return "StandardHeap";
 }
 
 }

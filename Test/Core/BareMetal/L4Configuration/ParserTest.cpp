@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ParserTest.h"
-#include "BasicFile.h"
+//#include "BasicFile.h"
 #include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
@@ -423,7 +423,7 @@ bool ParserTest::TestStandardCast() {
     return var == 2;
 }
 
-bool ParserTest::TestExistentFile() {
+/*bool ParserTest::TestExistentFile() {
     BasicFile configurationFile;
     if (!configurationFile.Open("MARTe-WaterTank.cfg", BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
         printf("\nError! Could not open file MARTe-WaterTank.cfg!\n");
@@ -442,5 +442,5 @@ bool ParserTest::TestExistentFile() {
     }
 
     return true;
-}
+}*/
 

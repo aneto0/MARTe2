@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 #include "Parser.h"
 #include "ConfigurationDatabase.h"
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -140,7 +141,7 @@ public:
     /**
      * @brief tests the parsing on an external configuration file.
      */
-    bool TestExistentFile();
+    //bool TestExistentFile();
 };
 
 /*---------------------------------------------------------------------------*/
