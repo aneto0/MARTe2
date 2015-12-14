@@ -133,6 +133,8 @@ $(BUILD_DIR)/%.gam : $(BUILD_DIR)/%.obj $(OBJS)  $(LIBRARIES)  %.def
 %.spc : 
 	$(MAKE) -C $* -f Makefile.$(TARGET) clean
 
+clean_test_files:
+	@rm -f ../*_Test.*
 
 clean:  $(SUBPROJC)
 	@if exist depends.* rm -f depends*
