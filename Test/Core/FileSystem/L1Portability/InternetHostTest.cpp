@@ -153,7 +153,7 @@ bool InternetHostTest::TestGetLocalAddress() {
 
 
 bool InternetHostTest::TestGetLocalAddressAsNumber() {
-    return (InternetHost::GetLocalAddressAsNumber() != NULL);
+    return (InternetHost::GetLocalAddressAsNumber() != 0u);
 }
 
 bool InternetHostTest::TestSetPort(uint16 port) {
@@ -227,7 +227,8 @@ bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
     while (table[i].address != NULL) {
         InternetHost addr(table[i].port, table[i].address);
         InternetHostCore *copy = addr.GetInternetHost();
-#if ENVIRONMENT != Windows
+
+#if ENVIRONMENT == Linux
         if (copy->sin_addr.s_addr != addr.GetAddressAsNumber()) {
             return false;
         }
