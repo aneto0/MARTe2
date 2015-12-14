@@ -25,6 +25,7 @@
 
 OBJSX=  AnyObjectGTest.x \
 		AnyTypeGTest.x \
+		AnyTypeCreatorGTest.x \
 		AtomicGTest.x \
 		BasicConsoleGTest.x \
 		BasicFileGTest.x \
@@ -59,6 +60,7 @@ OBJSX=  AnyObjectGTest.x \
 		IOBufferGTest.x \
 		InternetHostGTest.x \
 		InternetServiceGTest.x \
+		JsonParserGTest.x \
 		LexicalAnalyzerGTest.x \
 		LinkedListHolderGTest.x \
 		LinkedListableGTest.x \
@@ -97,9 +99,7 @@ OBJSX=  AnyObjectGTest.x \
 		TypeDescriptorGTest.x  \
 		VectorGTest.x \
 		StandardParserGTest.x \
-		XMLParserGTest.x \
-		JsonParserGTest.x \
-		AnyTypeCreatorGTest.x
+		XMLParserGTest.x 
 
 PACKAGE=
 ROOT_DIR=../..

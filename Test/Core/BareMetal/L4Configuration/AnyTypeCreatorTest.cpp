@@ -63,7 +63,7 @@ bool AnyTypeCreatorTest::TestCleanUp() {
     uint32 dimSizes[3] = { 1, 1, 1 };
     AnyType element = type.Create(0, dimSizes);
 
-    if (type.GetSize() != 1) {
+    if ((type.GetSize() != 1) && (element.GetDataPointer()!=NULL)) {
         return false;
     }
 
