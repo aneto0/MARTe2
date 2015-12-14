@@ -24,10 +24,8 @@
 #
 #############################################################
 OBJSX=
-SPB    = Source/Core/L0Portability.x Source/Core/L1Objects.x \
-    Test/Core/L0Portability.x Test/Core/L1Objects.x Test/GTest.x
+SPB    = Source/Core.x Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test/GTest.x
 
- 
 MAKEDEFAULTDIR=MakeDefaults
 
 ROOT_DIR=.
@@ -35,6 +33,8 @@ include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 all: $(OBJS) $(SUBPROJ)
 	echo  $(OBJS)
+
+
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
 

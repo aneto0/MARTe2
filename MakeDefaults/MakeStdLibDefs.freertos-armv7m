@@ -25,7 +25,8 @@
 
 BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
 
-OPERATING_SYSTEM=FreeRTOS
+ENVIRONMENT=FreeRTOS
+ARCHITECTURE=armv7m_gcc
 EXEEXT=.ex
 DLLEXT=.so
 LIBEXT=.a
@@ -61,7 +62,7 @@ LFLAGS = -Wl,--no-as-needed
 
 CFLAGS = -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -flto -g -Wall
 CPPFLAGS = $(CFLAGS) 
-CFLAGSPEC= -DARCHITECTURE=armv7m_gcc -DOPERATING_SYSTEM=FreeRTOS
+CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
 LIBRARIES =  -lm -lnsl -lrt -lncurses -ldl -lgcc -lc
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

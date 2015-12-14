@@ -67,5 +67,26 @@
   * False positives related to sched.h
   */
  -esym(9018,stackSizeAttribute)
- -esym(526,__builtin_memset)
- -esym(628,__builtin_memset)
+ -esym(526,MARTe::Threads::__builtin_memset)
+ -esym(628,MARTe::Threads::__builtin_memset)
+
+ /*
+  * Rule flexelint 495.
+  * This is a false alarm. The access to the variables is protected by a semaphore wrapped
+  * in ThreadsDatabase::Lock and ThreadsDatabase::UnLock
+  */
+ -esym(459, MARTe::Threads::SystemThreadFunction*) 
+ 
+ /**
+  * Rule flexelint 767.
+  * DLL_API is not used in Linux
+  */
+ -estring(767,"*DLL_API*")
+ 
+ /**
+  * Rule flexelint 766
+  * typeid is used and as a consequence typeinfo has to be included
+  */
+ -efile(766,AnyType.h) 
+ 
+ 

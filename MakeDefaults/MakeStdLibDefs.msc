@@ -23,12 +23,10 @@
 #
 #############################################################
 
-#BUILD_DIR=..\..\..\Build\$(TARGET)\$(lastword $(subst \\,\ ,$(CURDIR)))
-#BUILD_DIR=..\..\..\Build\$(TARGET)\$(lastword $(CURDIR))
 BUILD_DIR=$(subst /,\,$(ROOT_DIR))\Build\$(TARGET)\$(subst /,\,$(PACKAGE))\$(lastword $(subst /,\\ ,$(CURDIR)))
-#BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
 
-OPERATING_SYSTEM=Windows
+ENVIRONMENT=Windows
+ARCHITECTURE=x86_cl
 EXEEXT=.exe
 DLLEXT=.dll
 LIBEXT=.lib
@@ -40,6 +38,7 @@ GCNOEXT=.gcno
 GCDAEXT=.gcda
 ILKEXT=.ilk
 PDBEXT=.pdb
+DEFEXT=.def
 
 OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.obj) 
 OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.obj) 
@@ -63,7 +62,9 @@ COMPILER =   cl
 FCOMPILER =  f77
 DEBUG    =   -Zi
 OPTIM    =   -W1 -O2 -Ob2
-CFLAGSPEC=   -MD -GR -DARCHITECTURE=x86_cl -DOPERATING_SYSTEM=Windows
+CFLAGSPEC=   -MD -GR -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
+#ASSEMBLER=   -Fa
+ASSEMBLER=   
 LFLAGS   =   
 LOPTS    =  
 CFLAGS   =    

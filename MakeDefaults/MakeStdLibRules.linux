@@ -25,8 +25,17 @@
 ctags : %.cpp %.c %.h
 	ctags -R
 
+%_Gen.cpp : ../Generic/%_Generic.cpp
+	cp ../Generic/$*_Generic.cpp $*_Gen.cpp
+
+$(ROOT_DIR)/createLibrary.o:
+	touch $(ROOT_DIR)/createLibrary.cpp
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $(ROOT_DIR)/createLibrary.cpp -o $(ROOT_DIR)/createLibrary.o
+	rm -f $(ROOT_DIR)/createLibrary.cpp
+
 $(BUILD_DIR)/%.o : %.cpp
 	mkdir -p $(BUILD_DIR)
+	rm -f $(ROOT_DIR)/createLibrary.o
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(OPTIM) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 
@@ -35,17 +44,21 @@ $(BUILD_DIR)/%.o : %.c
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM)  $*.c -o $(BUILD_DIR)/$*.s
 
-$(BUILD_DIR)/%.a : $(OBJS)
+$(BUILD_DIR)/%.a : $(OBJS) $(ROOT_DIR)/createLibrary.o
 	touch $@
 	rm $(BUILD_DIR)/$*.a
 	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $@
+	rm -f $(ROOT_DIR)/createLibrary.o
+	
 
-$(BUILD_DIR)/%.so : $(BUILD_DIR)/%.o $(OBJS)
-#	$(COMPILER) -shared -fPIC $(OBJS) $(LIBRARIES) $(BUILD_DIR)/$*.o -o $@
-	$(COMPILER) $(LFLAGS) -shared -fPIC $(OBJS) $(BUILD_DIR)/$*.o $(LIBRARIES) -o $@
+$(BUILD_DIR)/%.so : $(OBJS)
+	touch dummy.cpp	
+	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  dummy.cpp -o dummy.o	
+	$(COMPILER) $(LFLAGS) -shared -fPIC dummy.o $(OBJS) $(LIBRARIES) -o $@
 	touch $(BUILD_DIR)/lib$*.so
 	rm  $(BUILD_DIR)/lib$*.so
 	ln -fns $*.so $(BUILD_DIR)/lib$*.so
+	rm dummy.*
 
 %.ifo :  %.h
 	$(COMPILER) -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
@@ -55,12 +68,19 @@ $(BUILD_DIR)/%.so : $(BUILD_DIR)/%.o $(OBJS)
 	$(COMPILER) -D_CINT -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
 	cint   -i  $(MAKEDEFAULTDIR)/MakeIfo.cxx $* > $*.sinfo.cpp
 
+$(BUILD_DIR)/%.def : 
+	touch a.out
+	objdump -t $(@:%.def=%.a) > $@
+	rm a.out
+
 $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o 
 	touch $(BUILD_DIR)/$*.exe
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
-$(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.o $(OBJS)
+$(BUILD_DIR)/%.ex : $(ROOT_DIR)/createLibrary.o $(BUILD_DIR)/%.o $(OBJS)
 	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
+	rm -f $(ROOT_DIR)/createLibrary.o
+	
 
 depends.linux: dependsRaw.linux 
 	@echo "/\.o:/s/^/$(subst /,\/,$(BUILD_DIR))\//" > CreateLinuxDepends.sed
@@ -95,4 +115,7 @@ clean:  $(SUBPROJC)
 	@rm -f $(BUILD_DIR)/*$(ASMEXT)
 	@rm -f $(BUILD_DIR)/*$(GCNOEXT)
 	@rm -f $(BUILD_DIR)/*$(GCDAEXT)
+	@rm -f $(BUILD_DIR)/*$(DEFEXT)
+	@rm -f *_Gen.cpp
+	@rm -f *_Gen.c
 

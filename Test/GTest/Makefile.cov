@@ -27,10 +27,11 @@ TARGET=cov
 
 include Makefile.inc
 
-LIBRARIES   += ../../Source/Core/L0Portability/$(TARGET)/L0Portability$(LIBEXT) 
-LIBRARIES   += ../../Test/Core/L0Portability/$(TARGET)/L0PortabilityTest$(LIBEXT) 
+LIBRARIES   += ../../Source/Core/BareMetal/$(TARGET)/MARTeCoreB$(LIBEXT) 
+LIBRARIES   += ../../Test/Core/BareMetal/$(TARGET)/MARTeCoreBTest$(LIBEXT) 
+LIBRARIES   += ../../Source/Core/Scheduler/$(TARGET)/MARTeCoreS$(LIBEXT) 
+LIBRARIES   += ../../Test/Core/Scheduler/$(TARGET)/MARTeCoreSTest$(LIBEXT)
+LIBRARIES   += ../../Source/Core/FileSystem/$(TARGET)/MARTeCoreF$(LIBEXT) 
+LIBRARIES   += ../../Test/Core/FileSystem/$(TARGET)/MARTeCoreFTest$(LIBEXT)
+
 LIBRARIES   += ../../Lib/gtest-1.7.0/libgtest.a ../../Lib/gtest-1.7.0/libgtest_main.a 
-
-
-OPTIM=-finline-functions
-

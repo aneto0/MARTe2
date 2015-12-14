@@ -78,6 +78,11 @@ TEST(ReferenceGTest,TestCopyFromObjPtrConstructorNullPtr) {
     ASSERT_TRUE(referenceTest.TestCopyFromObjPtrConstructorNullPtr());
 }
 
+TEST(ReferenceGTest,TestDestructor) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestDestructor());
+}
+
 TEST(ReferenceGTest,TestInitialise) {
     ReferenceTest referenceTest;
     ASSERT_TRUE(referenceTest.TestInitialise());
@@ -87,3 +92,73 @@ TEST(ReferenceGTest,TestRemoveReference) {
     ReferenceTest referenceTest;
     ASSERT_TRUE(referenceTest.TestRemoveReference());
 }
+
+TEST(ReferenceGTest,TestCopyOperatorReference) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyOperatorReference());
+}
+
+
+TEST(ReferenceGTest,TestCopyOperatorReferenceNull) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyOperatorReferenceNull());
+}
+
+TEST(ReferenceGTest,TestCopyOperatorObject) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyOperatorObject());
+}
+
+
+TEST(ReferenceGTest,TestCopyOperatorObjectNull) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestCopyOperatorObjectNull());
+}
+
+TEST(ReferenceGTest,TestIsValid) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestIsValid());
+}
+
+TEST(ReferenceGTest,TestEqualOperator) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestEqualOperator());
+}
+
+TEST(ReferenceGTest,TestDifferentOperator) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestDifferentOperator());
+}
+
+
+TEST(ReferenceGTest,TestNumberOfReferences) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestNumberOfReferences());
+}
+
+TEST(ReferenceGTest,TestInFunctionOnStack) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestInFunctionOnStack());
+}
+
+TEST(ReferenceGTest,TestInFunctionOnHeap) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestInFunctionOnHeap(32));
+}
+
+
+TEST(ReferenceGTest,TestRightInherithance) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestRightInherithance());
+}
+
+TEST(ReferenceGTest,TestWrongInherithance) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.TestWrongInherithance());
+}
+
+TEST(ReferenceGTest,HugeTest) {
+    ReferenceTest referenceTest;
+    ASSERT_TRUE(referenceTest.HugeTest(64));
+}
+

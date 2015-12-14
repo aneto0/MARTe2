@@ -25,7 +25,8 @@
 
 BUILD_DIR=cov
 
-OPERATING_SYSTEM=Linux
+ENVIRONMENT=Linux
+ARCHITECTURE=x86_gcc
 EXEEXT=.ex
 DLLEXT=.so
 LIBEXT=.a
@@ -37,13 +38,16 @@ GCNOEXT=.gcno
 GCDAEXT=.gcda
 
 OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
+CPPS=   $(OBJSX:%.x=%.cpp)
 OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.o) 
 OBJS3=  $(OBJSX3:%.x=$(BUILD_DIR)/%.o) 
 
 SUBPROJ = $(SPB:%.x=%.spb)
 SUBPROJC = $(SPB:%.x=%.spc)
+SUBPROJCG = $(SPB:%.x=%.spcg)
 SUBPROJ2 = $(SPB2:%.x=%.spb)
 SUBPROJC += $(SPB2:%.x=%.spc)
+SUBPROJCG += $(SPB2:%.x=%.spcg)
 
 COMPILER = g++
 CCOMPILER = gcc
@@ -55,7 +59,7 @@ OPTIM =
 LFLAGS = -Wl,--no-as-needed  
 CFLAGS = -fPIC -Wall -fprofile-arcs -ftest-coverage 
 CPPFLAGS = -fPIC -frtti -fprofile-arcs -ftest-coverage 
-CFLAGSPEC= -DARCHITECTURE=x86_gcc -DOPERATING_SYSTEM=Linux -DUSE_PTHREAD -pthread
+CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl -lgcov
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

@@ -1,8 +1,8 @@
 /**
  * @file ClassRegistryDatabaseGTest.cpp
  * @brief Source file for class ClassRegistryDatabaseGTest
- * @date Aug 6, 2015
- * @author aneto
+ * @date 06/08/2015
+ * @author Andre Neto
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,10 +40,72 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-TEST(ClassRegistryDatabaseGTest,TestConstructor) {
+TEST(ClassRegistryDatabaseGTest,TestInstance) {
     ClassRegistryDatabaseTest classRegistryDatabaseTest;
-    ASSERT_TRUE(classRegistryDatabaseTest.TestConstructor());
+    ASSERT_TRUE(classRegistryDatabaseTest.TestInstance());
 }
 
+TEST(ClassRegistryDatabaseGTest,TestAdd) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestAdd());
+}
 
-	
+TEST(ClassRegistryDatabaseGTest,TestFindTrue) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFind("abcdefg", true));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindLongName) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFindLongName(true));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindFalse) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFind("abcd", false));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindByTypeIdName) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFindTypeIdName());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameTrue) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFindDLL("boh","IntegerObject",true));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestFindDLLOnlyClassNameFalse) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestFindDLL("boh","boh",false));
+}
+
+TEST(ClassRegistryDatabaseGTest,TestGetSize) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestGetSize());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestPeek) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestPeek());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestCreateInstances) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestCreateInstances());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestPolimorphismChild2Father) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestPolimorphismChild2Father());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestPolimorphismFather2Child) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestPolimorphismFather2Child());
+}
+
+TEST(ClassRegistryDatabaseGTest,TestGetClassName) {
+    ClassRegistryDatabaseTest classRegistryDatabaseTest;
+    ASSERT_TRUE(classRegistryDatabaseTest.TestGetClassName());
+}

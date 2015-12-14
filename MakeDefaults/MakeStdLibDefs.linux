@@ -25,7 +25,8 @@
 
 BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDIR)))
 
-OPERATING_SYSTEM=Linux
+ENVIRONMENT=Linux
+ARCHITECTURE=x86_gcc
 EXEEXT=.ex
 DLLEXT=.so
 LIBEXT=.a
@@ -36,6 +37,7 @@ GAMEXT=.gam
 GCNOEXT=.gcno
 GCDAEXT=.gcda
 GCOVEXT=.gcov
+DEFEXT=.def
 
 OBJS=   $(OBJSX:%.x=$(BUILD_DIR)/%.o) 
 OBJS2=  $(OBJSX2:%.x=$(BUILD_DIR)/%.o) 
@@ -56,8 +58,8 @@ OPTIM =
 INCLUDE =
 LFLAGS = -Wl,--no-as-needed  
 CFLAGS = -fPIC -Wall
-CPPFLAGS = -fPIC -frtti -Wall
-CFLAGSPEC= -DARCHITECTURE=x86_gcc -DOPERATING_SYSTEM=Linux -DUSE_PTHREAD -pthread
+CPPFLAGS = -fPIC -frtti -Wall -std=c++98
+CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_PTHREAD -pthread
 LIBRARIES =  -lm -lnsl -lpthread -lrt -lncurses -ldl
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 
