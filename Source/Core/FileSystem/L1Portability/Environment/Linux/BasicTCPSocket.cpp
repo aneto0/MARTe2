@@ -92,6 +92,7 @@ bool BasicTCPSocket::Listen(const uint16 port,
         InternetHost server;
 
         server.SetPort(port);
+        /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
         int32 errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr *>(server.GetInternetHost()), server.Size());
 
         if (errorCode >= 0) {
@@ -141,7 +142,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                 }
             }
             if (ret) {
-
+                /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
                 int32 errorCode = connect(connectionSocket, reinterpret_cast<struct sockaddr *>(destination.GetInternetHost()), destination.Size());
                 if (errorCode < 0) {
                     errorCode = sock_errno();
@@ -222,7 +223,7 @@ bool BasicTCPSocket::IsConnected() const {
         InternetHost information;
 
         socklen_t len = information.Size();
-
+        /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
         ret = getpeername(connectionSocket, reinterpret_cast<struct sockaddr *>(information.GetInternetHost()), &len);
     }
     else {
@@ -252,6 +253,7 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
 
         if(ok) {
             uint32 size = source.Size();
+            /*lint -e{740} [MISRA C++ Rule 5-2-6], [MISRA C++ Rule 5-2-7]. Justification: Pointer to Pointer cast required by operating system API.*/
             int32 newSocket = accept(connectionSocket, reinterpret_cast<struct sockaddr *>(source.GetInternetHost()), reinterpret_cast<socklen_t *>(&size));
 
             if (newSocket != -1) {
@@ -404,7 +406,7 @@ bool BasicTCPSocket::Read(char8* const output,
             timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
             /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
-            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal),
+            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal,
                                    static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
@@ -417,7 +419,7 @@ bool BasicTCPSocket::Read(char8* const output,
             }
             timeoutVal.tv_sec = 0;
             timeoutVal.tv_usec = 0;
-            if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
+            if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() removing the socket timeout");
             }
         }
@@ -447,7 +449,7 @@ bool BasicTCPSocket::Write(const char8* const input,
             timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
-            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal),
+            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal,
                                    static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
@@ -460,7 +462,7 @@ bool BasicTCPSocket::Write(const char8* const input,
             }
             timeoutVal.tv_sec = 0;
             timeoutVal.tv_usec = 0;
-            if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
+            if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal))) < 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() removing the socket timeoutVal");
             }
         }

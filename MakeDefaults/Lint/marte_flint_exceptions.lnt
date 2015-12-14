@@ -70,17 +70,23 @@
  * Justification: Not applicable to a framework
  */
 /* global macro not referenced */
--esym(755,REPORT_ERROR,REPORT_ERROR_FULL)
--esym(755,MAX_NO_OF_MEMORY_MONITORS,MAX_NO_OF_MEMORY_MONITORS)
+-esym(755,*)
+
+/*
+ * Local enumeration not referenced
+ */
+-esym(749,*)
+
+/*
+ * Local class not referenced
+ */
+-esym(753,*)
+
 
 /*
  * Local macro not referenced
  */
--esym(750,ATOMIC_H_)
--esym(750,ENDIANITY_H_)
--esym(750,TYPEDESCRIPTOR_H_)
--esym(750,FORMATDESCRIPTOR_H_)
--esym(750,ANYTYPE_H_)
+-esym(750,*)
 
 /*
  * Local declarator not referenced 
@@ -91,7 +97,7 @@
 /*
  * Local class member not referenced
  */
--esym(754,MARTe::FormatDescriptor::*)
+-esym(754,MARTe::*)
 
 
 

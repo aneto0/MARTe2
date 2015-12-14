@@ -256,7 +256,7 @@ public:
      * @brief Retrieves the pointer to the allocated memory area.
      * @return the pointer to the allocated memory area.
      */
-    void* GetAllocatedMemory() const;
+    void* GetAllocatedMemory();
 
 private:
 

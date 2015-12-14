@@ -80,7 +80,7 @@ public:
      * @brief Wraps bufferedStream::Read(*).
      * @see BufferedStreamI::Read(*).
      */
-    virtual bool Read(char8 * const outBuffer,
+    virtual bool Read(char8 * const output,
                       uint32 &size);
 
     /**

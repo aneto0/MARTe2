@@ -85,7 +85,6 @@ SearchFilter.h
 SearchFilterT.h
 Select.cpp
 SelectProperties.h
-SemCore.h
 Shift.h
 SingleBufferedStream.cpp
 Sleep.cpp

@@ -33,8 +33,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ThreadInformation.h"
-#include "FastPollingMutexSem.h"
-#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */

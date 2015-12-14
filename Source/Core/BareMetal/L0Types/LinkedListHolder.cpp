@@ -75,6 +75,7 @@ uint32 LinkedListHolder::ListSize() const {
     return llhSize;
 }
 
+/*lint -e{429} . Justification: A possible pointer to allocated memory will be freed by LinkedListHolder::CleanUp in the destructor.*/
 void LinkedListHolder::ListInsert(LinkedListable * const p) {
     if (p != NULL) {
 
@@ -83,6 +84,7 @@ void LinkedListHolder::ListInsert(LinkedListable * const p) {
     }
 }
 
+/*lint -e{429} . Justification: A possible pointer to allocated memory will be freed by LinkedListHolder::CleanUp in the destructor.*/
 void LinkedListHolder::ListInsert(LinkedListable * const p,
                                   SortFilter * const sorter) {
     if (p != NULL) {
