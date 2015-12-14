@@ -287,6 +287,10 @@ const PrintfNode *GeneratePrintFormattedBinaryTable(){
     return printfBinTable;
 }
 
+
+#define Windows 2
+#define Linux 1
+
 const PrintfNode *GeneratePrintFormattedFloatFPTable(){
     static const PrintfNode printfFloatFPTable[] = {
         PrintfNode("%f", "-1.123457", *SaveNumber(-1.1234567f)),
@@ -322,6 +326,8 @@ const PrintfNode *GeneratePrintFormattedFloatFPTable(){
     };
     return printfFloatFPTable;
 }
+
+
 
 const PrintfNode *GeneratePrintFormattedFloatFPRTable(){
     static const PrintfNode printfFloatFPRTable[] = {

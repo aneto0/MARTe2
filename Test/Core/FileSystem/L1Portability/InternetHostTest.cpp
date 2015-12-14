@@ -221,6 +221,8 @@ bool InternetHostTest::TestSetLocalAddress() {
     return ((dotAddr == "127.0.1.1") || (dotAddr == "127.0.0.1"));
 }
 
+#define Windows 2
+#define Linux 1
 bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
 
     uint32 i = 0;
