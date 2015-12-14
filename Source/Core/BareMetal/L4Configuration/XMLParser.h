@@ -41,27 +41,28 @@ namespace MARTe {
 /**
  * @brief Implementation of the parser for the XML language.
  *
- * @details: Follows the grammar with the functions called if the parser matches the related expression.
- * |EXPRESSION|
- *   <STRING --> GetNodeName() > VARIABLE </STRING>  --> AddLeaf()
- *   <STRING --> GetNodeName() > ( STRING --> GetTypeCast() ) VARIABLE </STRING>  --> AddLeaf()
- *   <STRING --> CreateNode()  > { EXPRESSION ... } </STRING>  --> EndBlock()
+ * @details: Follows the grammar with the functions called if the parser matches the related expression. The grammar is written using
+ * the SLK language.
+ * EXPRESSION:
+ *   <STRING __GetNodeName > VARIABLE </STRING>  __AddLeaf
+ *   <STRING __GetNodeName > ( STRING __GetTypeCast ) VARIABLE </STRING>  __AddLeaf
+ *   <STRING __CreateNode  > { EXPRESSION }+ </STRING>  __EndBlock
  *
- * |VARIABLE|
+ * VARIABLE:
  *   SCALAR
  *   VECTOR
  *   MATRIX
  *
- * |SCALAR|
- *   TOKEN --> AddScalar()
+ * SCALAR:
+ *   TOKEN __AddScalar
  *
- * |VECTOR|
- *   { SCALAR ... } --> EndVector()
+ * VECTOR:
+ *   \{ { SCALAR }+ \} __EndVector
  *
- * |MATRIX|
- *   { VECTOR ... } --> EndMatrix()
+ * MATRIX:
+ *   \{ { VECTOR }+ \} __EndMatrix
  *
- * |TOKEN|
+ * TOKEN:
  *   STRING
  *   NUMBER
  */
@@ -69,7 +70,10 @@ class XMLParser: public ParserI {
 public:
 
     /**
-     * @see ParserI::ParserI(*)
+     * @brief Default constructor.
+     * @param[in] stream is the stream to be parsed.
+     * @param[out] databaseIn is the built StructuredData in output.
+     * @param[out] err is the stream where error messages are printed to.
      * @post
      *   ParserI::grammar == XMLGrammar.
      */

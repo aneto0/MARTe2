@@ -82,35 +82,45 @@ void AnyTypeCreator::CleanUp(const uint32 granularityIn) {
     granularity=granularityIn;
 }
 
-bool AnyTypeCreator::SetType(AnyType &element,
-                             const uint8 nOfDimensions,
-                             const uint32 dimensionSize[3]) const {
+AnyType AnyTypeCreator::Create(const uint8 nOfDimensions,
+                               const uint32 dimensionSize[3]) const {
 
+    AnyType element;
     bool ret = (memory != NULL);
     if (ret) {
         /*lint -e{613} .Justification: possible NULL memory is checked before entering here*/
-        ret=(((dimensionSize[0]*dimensionSize[1])*dimensionSize[2])==(memory->GetSize()));
-        if(ret) {
-            if ((castTypes[typeIndex].typeDes.type == CCString) && (nOfDimensions == 0u)) {
-                /*lint -e{613} .Justification: possible NULL memory is checked before entering here*/
-                element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), *static_cast<char8**>(memory->GetAllocatedMemory()));
-            }
-            else {
-                /*lint -e{613} .Justification: possible NULL memory is checked before entering here*/
-                element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), memory->GetAllocatedMemory());
-            }
-            element.SetNumberOfDimensions(nOfDimensions);
+        ret = (((dimensionSize[0] * dimensionSize[1]) * dimensionSize[2]) == (memory->GetSize()));
+        if (ret) {
+            uint32 dimCheck = 0u;
             for (uint32 i = 0u; i < 3u; i++) {
-                element.SetNumberOfElements(i, dimensionSize[i]);
+                if (dimensionSize[i] > 1u) {
+                    dimCheck = (i + 1u);
+                }
+            }
+            ret = (nOfDimensions >= dimCheck) && (nOfDimensions < 3u);
+            if (ret) {
+
+                if ((castTypes[typeIndex].typeDes.type == CCString) && (nOfDimensions == 0u)) {
+                    /*lint -e{613} .Justification: possible NULL memory is checked before entering here*/
+                    element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), *static_cast<char8**>(memory->GetAllocatedMemory()));
+                }
+                else {
+                    /*lint -e{613} .Justification: possible NULL memory is checked before entering here*/
+                    element = AnyType(castTypes[typeIndex].typeDes, static_cast<uint8>(0u), memory->GetAllocatedMemory());
+                }
+                element.SetNumberOfDimensions(nOfDimensions);
+                for (uint32 i = 0u; i < 3u; i++) {
+                    element.SetNumberOfElements(i, dimensionSize[i]);
+                }
             }
         }
     }
 
-    return ret;
+    return element;
 }
 
-bool AnyTypeCreator::ToType(const char8 * const type,
-                            const char8 * const data) {
+bool AnyTypeCreator::Add(const char8 * const type,
+                         const char8 * const data) {
 
     bool ret = false;
 

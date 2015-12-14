@@ -552,7 +552,7 @@ bool LexicalAnalyzerTest::TestEscape() {
 bool LexicalAnalyzerTest::TestComments() {
     StreamString configString = "<a<!--comment-->b"
             "                    <c,,//comment >\n"
-            "                    <!-fake -->d<!-- comment->--<!--> ";
+            "                    <!-\n-fake -->d<!-- comment->--<!--> <!--\n unterminated comment --";
     configString.Seek(0);
 
     LexicalAnalyzer la(configString, "<>/", " ,\n", "//", "<!--", "-->");
@@ -599,7 +599,13 @@ bool LexicalAnalyzerTest::TestComments() {
 
     tok = la.GetToken();
 
-    if (StringHelper::Compare(tok->GetData(), "!-fake") != 0) {
+    if (StringHelper::Compare(tok->GetData(), "!-") != 0) {
+        return false;
+    }
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "-fake") != 0) {
         return false;
     }
 

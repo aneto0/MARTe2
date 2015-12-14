@@ -167,10 +167,11 @@ void ParserI::AddLeaf() {
         numberOfColumns = firstNumberOfColumns;
     }
 
-    AnyType element;
+    ;
     uint32 dimSizes[3] = { numberOfColumns, numberOfRows, 1u };
     /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
-    bool ret = memory.SetType(element, numberOfDimensions, &dimSizes[0]);
+    AnyType element = memory.Create(numberOfDimensions, &dimSizes[0]);
+    bool ret = (element.GetDataPointer() != NULL);
     if (ret) {
         ret = database->Write(nodeName.Buffer(), element);
         if (!ret) {
@@ -201,7 +202,7 @@ void ParserI::AddScalar() {
     }
 
     if (tokenType == GetCurrentTokenId(currentToken)) {
-        bool ret = memory.ToType(typeName.Buffer(), GetCurrentTokenData(currentToken));
+        bool ret = memory.Add(typeName.Buffer(), GetCurrentTokenData(currentToken));
 
         if (ret) {
             firstNumberOfColumns++;
@@ -217,13 +218,14 @@ void ParserI::AddScalar() {
     }
 }
 
+/*
 void ParserI::CreateClassLeaf() {
     // add an element to the memory
-    bool ret = memory.ToType(typeName.Buffer(), GetCurrentTokenData(currentToken));
+    bool ret = memory.Add(typeName.Buffer(), GetCurrentTokenData(currentToken));
     if (ret) {
-        AnyType element;
         uint32 dimSizes[3] = { 1u, 1u, 1u };
-        ret = memory.SetType(element, 0u, &dimSizes[0]);
+        AnyType element = memory.Create(0u, &dimSizes[0]);
+        ret = (element.GetDataPointer() != NULL);
         if (ret) {
             ret = database->Write("ClassName", element);
             if (!ret) {
@@ -244,6 +246,7 @@ void ParserI::CreateClassLeaf() {
 
     memory.CleanUp(1u);
 }
+*/
 
 void ParserI::EndVector() {
     if (numberOfColumns == 0u) {

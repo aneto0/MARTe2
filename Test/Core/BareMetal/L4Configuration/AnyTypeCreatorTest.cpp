@@ -58,11 +58,10 @@ bool AnyTypeCreatorTest::TestCleanUp() {
     }
 
     const char8 *integer = "1";
-    type.ToType("int8", integer);
+    type.Add("int8", integer);
 
-    AnyType element;
     uint32 dimSizes[3] = { 1, 1, 1 };
-    type.SetType(element, 0, dimSizes);
+    AnyType element = type.Create(0, dimSizes);
 
     if (type.GetSize() != 1) {
         return false;
@@ -76,7 +75,7 @@ bool AnyTypeCreatorTest::TestGetSize(uint32 size) {
     AnyTypeCreator type;
 
     for (uint32 i = 0; i < size; i++) {
-        type.ToType("int8", "1");
+        type.Add("int8", "1");
     }
 
     return (type.GetSize() == size);
@@ -88,12 +87,12 @@ bool AnyTypeCreatorTest::TestGetGranularity(uint32 granularity) {
     return type.GetGranularity() == granularity;
 }
 
-bool AnyTypeCreatorTest::TestToType(const char8* table[][3]) {
+bool AnyTypeCreatorTest::TestAdd(const char8* table[][3]) {
     uint32 i = 0u;
     uint32 size = 0u;
     AnyTypeCreator type;
     while (table[i][0] != NULL) {
-        bool ret=type.ToType(table[i][0], table[i][1]);
+        bool ret=type.Add(table[i][0], table[i][1]);
         if(ret!=(table[i][2]!=NULL)) {
             return false;
         }
@@ -107,49 +106,55 @@ bool AnyTypeCreatorTest::TestToType(const char8* table[][3]) {
     return type.GetSize() == size;
 }
 
-bool AnyTypeCreatorTest::TestToType_TypeMismatch() {
+bool AnyTypeCreatorTest::TestAdd_TypeMismatch() {
     AnyTypeCreator type;
 
-    type.ToType("uint8", "1");
+    type.Add("uint8", "1");
 
-    return !type.ToType("int8", "-1");
+    return !type.Add("int8", "-1");
 }
 
-bool AnyTypeCreatorTest::TestSetType_NullMemory() {
+bool AnyTypeCreatorTest::TestCreate_NullMemory() {
     AnyTypeCreator type;
-    AnyType element;
     uint32 dimSizes[3] = { 0, 0, 0 };
-    return !type.SetType(element, 0, dimSizes);
+    return type.Create(0, dimSizes).GetDataPointer() == NULL;
 }
 
-bool AnyTypeCreatorTest::TestSetType_SizeMismatch() {
+bool AnyTypeCreatorTest::TestCreate_SizeMismatch() {
     AnyTypeCreator type;
-    AnyType element;
-
-    type.ToType("uint8", "1");
+    type.Add("uint8", "1");
     uint32 dimSizes[3] = { 1, 1, 2 };
-    return !type.SetType(element, 0, dimSizes);
+    return type.Create(0, dimSizes).GetDataPointer() == NULL;
 }
 
-bool AnyTypeCreatorTest::TestSetType_String() {
+bool AnyTypeCreatorTest::TestCreate_DimensionMismatch() {
+    AnyTypeCreator type;
+    type.Add("uint8", "1");
+    type.Add("uint8", "2");
+    uint32 dimSizes[3] = { 1, 2, 1 };
+    return type.Create(1, dimSizes).GetDataPointer() == NULL;
+}
+
+bool AnyTypeCreatorTest::TestCreate_String() {
     AnyTypeCreator type;
 
     const char8* input = "Hello";
 
-    type.ToType("string", input);
+    type.Add("string", input);
     uint32 dimSizes[3] = { 1, 1, 1 };
-    AnyType element;
-    if (!type.SetType(element, 0, dimSizes)) {
+    AnyType element = type.Create(0, dimSizes);
+    if (element.GetDataPointer() == NULL) {
         return false;
     }
     if (StringHelper::Compare((const char8*) (element.GetDataPointer()), input) != 0) {
         return false;
     }
     //add another
-    type.ToType("string", input);
-    dimSizes[1] = 2;
+    type.Add("string", input);
+    dimSizes[0] = 2;
 
-    if (!type.SetType(element, 1, dimSizes)) {
+    element = type.Create(1, dimSizes);
+    if (element.GetDataPointer() == NULL) {
         return false;
     }
     if (StringHelper::Compare(((const char8**) (element.GetDataPointer()))[0], input) != 0) {

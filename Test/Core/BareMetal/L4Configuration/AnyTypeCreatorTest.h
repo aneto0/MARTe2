@@ -38,44 +38,81 @@
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
+/**
+ * @brief Tests all the AnyTypeCreator functions.
+ */
 class AnyTypeCreatorTest {
 
 public:
 
+    /**
+     * @brief Tests if the constructor sets the granularity.
+     */
     bool TestConstructor();
 
+    /**
+     * @brief Tests if the function frees the memory and updates the granularity.
+     */
     bool TestCleanUp();
 
+    /**
+     * @brief Tests if the function returns the number of elements in the memory.
+     */
     bool TestGetSize(uint32 size);
 
+    /**
+     * @brief Tests if the function returns the memory allocation granularity.
+     */
     bool TestGetGranularity(uint32 granularity);
 
-    bool TestToType(const char8* table[][3]);
+    /**
+     * @brief Tests if the function adds elements to the memory.
+     */
+    bool TestAdd(const char8* table[][3]);
 
-    bool TestToType_TypeMismatch();
+    /**
+     * @brief Tests if the Add function returns false trying to add an element with a different type respect to the others in the memory.
+     */
+    bool TestAdd_TypeMismatch();
 
+    /**
+     * @brief Tests if the function creates correctly the AnyType desired.
+     */
     template<typename T>
-    bool TestSetType(uint32 nDim,
-                     uint32 rows,
-                     uint32 cols,
-                     TypeDescriptor descriptor,
-                     const char8* typeIn,
-                     const char8* data,
-                     T typeS);
+    bool TestCreate(uint32 nDim,
+                    uint32 rows,
+                    uint32 cols,
+                    TypeDescriptor descriptor,
+                    const char8* typeIn,
+                    const char8* data,
+                    T typeS);
 
-    bool TestSetType_String();
+    /**
+     * @brief Tests if the function creates correctly the C-String AnyType.
+     */
+    bool TestCreate_String();
 
-    bool TestSetType_NullMemory();
+    /**
+     * @brief Tests if the Create function returns false trying to create an AnyType when the memory is null.
+     */
+    bool TestCreate_NullMemory();
 
-    bool TestSetType_SizeMismatch();
+    /**
+     * @brief Tests if the Create function returns false if the number of elements in the memory is not consistent with the number of elements in input.
+     */
+    bool TestCreate_SizeMismatch();
 
+    /**
+     * @brief Tests if the Create function returns false if the number of elements array is not compatible with the number of dimensions in input.
+     */
+    bool TestCreate_DimensionMismatch();
 };
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 template<typename T>
-bool AnyTypeCreatorTest::TestSetType(uint32 nDim,
+bool AnyTypeCreatorTest::TestCreate(uint32 nDim,
                                      uint32 rows,
                                      uint32 cols,
                                      TypeDescriptor descriptor,
@@ -86,12 +123,12 @@ bool AnyTypeCreatorTest::TestSetType(uint32 nDim,
 
     uint32 size = rows * cols;
     for (uint32 i = 0; i < size; i++) {
-        type.ToType(typeIn, data);
+        type.Add(typeIn, data);
     }
 
     uint32 dimSizes[3] = { cols, rows, 1 };
-    AnyType element;
-    if (!type.SetType(element, nDim, dimSizes)) {
+    AnyType element = type.Create(nDim, dimSizes);
+    if (element.GetDataPointer() == NULL) {
         return false;
     }
 

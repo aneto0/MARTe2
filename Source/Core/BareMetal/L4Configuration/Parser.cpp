@@ -30,7 +30,6 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Parser.h"
-#include "StaticListHolder.h"
 #include "TypeConversion.h"
 #include "AdvancedErrorManagement.h"
 #include "AnyTypeCreator.h"
@@ -181,12 +180,13 @@ static bool ReadScalar(Token* &token,
                        const char8 * const type) {
 
     AnyTypeCreator scalarCreator(1u);
-    bool ret = (scalarCreator.ToType(type, token->GetData()));
+    bool ret = (scalarCreator.Add(type, token->GetData()));
     if (ret) {
-        AnyType element;
+
         uint32 dimSizes[3] = { 1u, 1u, 1u };
         /*lint -e{613} . Justification: if (memory==NULL) ---> (ret==false) */
-        ret = scalarCreator.SetType(element, 0u, &dimSizes[0]);
+        AnyType element = scalarCreator.Create(0u, &dimSizes[0]);
+        ret = (element.GetDataPointer() != NULL);
         if (ret) {
             ret = database.Write(name, element);
             // read the new token
@@ -236,7 +236,7 @@ static bool ReadVector(Token* &token,
                 continueRead = false;
             }
             else {
-                if (!vectorCreator.ToType(type, token->GetData())) {
+                if (!vectorCreator.Add(type, token->GetData())) {
                     PrintErrorOnStream("\nFailed type conversion! [%d]", token->GetLineNumber(), err);
                     ok = false;
                 }
@@ -274,10 +274,10 @@ static bool ReadVector(Token* &token,
     }
     // serialize the element
     if (ok) {
-        AnyType element;
         uint32 dimSizes[3] = { numberOfElements, 1u, 1u };
         /*lint -e{613} . Justification: if (memory==NULL) ---> (ok==false) */
-        ok = vectorCreator.SetType(element, 1u, &dimSizes[0]);
+        AnyType element = vectorCreator.Create(1u, &dimSizes[0]);
+        ok = (element.GetDataPointer() != NULL);
         if (ok) {
             ok = database.Write(name, element);
             // read the new token
@@ -363,7 +363,7 @@ static bool ReadMatrix(Token* &token,
                     continueRead = false;
                 }
                 else {
-                    if (!matrixCreator.ToType(type, token->GetData())) {
+                    if (!matrixCreator.Add(type, token->GetData())) {
                         PrintErrorOnStream("\nFailed type conversion! [%d]", token->GetLineNumber(), err);
                         ok = false;
                     }
@@ -420,10 +420,10 @@ static bool ReadMatrix(Token* &token,
 
     // serialize the element
     if (ok) {
-        AnyType element;
         uint32 dimSizes[3] = { numberOfColumns, numberOfRows, 1u };
         /*lint -e{613} . Justification: if (memory==NULL) ---> (ok==false) */
-        ok = matrixCreator.SetType(element, 2u, &dimSizes[0]);
+        AnyType element = matrixCreator.Create(2u, &dimSizes[0]);
+        ok = (element.GetDataPointer() != NULL);
         if (ok) {
             ok = database.Write(name, element);
 

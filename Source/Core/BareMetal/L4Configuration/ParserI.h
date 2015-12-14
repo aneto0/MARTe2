@@ -166,10 +166,8 @@ protected:
      */
     virtual void BlockEnd();
 
-    /**
-     * @brief Adds the special leaf containing the class name.
-     */
-    virtual void CreateClassLeaf();
+    // @brief Adds the special leaf containing the class name.
+    //virtual void CreateClassLeaf();
 
     /**
      * @brief Retrieves the next expected token identifiers to be pushed on the stack.

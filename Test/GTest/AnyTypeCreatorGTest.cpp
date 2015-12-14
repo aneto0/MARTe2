@@ -67,7 +67,7 @@ TEST(AnyTypeCreatorGTest, TestGetGranularity) {
     ASSERT_TRUE(myAnyTypeTest.TestGetGranularity(32));
 }
 
-TEST(AnyTypeCreatorGTest, TestToType_uint8) {
+TEST(AnyTypeCreatorGTest, TestAdd_uint8) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"uint8", "255",""},
@@ -75,10 +75,10 @@ TEST(AnyTypeCreatorGTest, TestToType_uint8) {
             {0,0,0}
     };
 
-    ASSERT_TRUE(myAnyTypeTest.TestToType(table));
+    ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestToType_int8) {
+TEST(AnyTypeCreatorGTest, TestAdd_int8) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"int8", "127",""},
@@ -88,10 +88,10 @@ TEST(AnyTypeCreatorGTest, TestToType_int8) {
             {0,0,0}
     };
 
-    ASSERT_TRUE(myAnyTypeTest.TestToType(table));
+    ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestToType_uint16) {
+TEST(AnyTypeCreatorGTest, TestAdd_uint16) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"uint16", "65535",""},
@@ -99,10 +99,10 @@ TEST(AnyTypeCreatorGTest, TestToType_uint16) {
             {0,0,0}
     };
 
-    ASSERT_TRUE(myAnyTypeTest.TestToType(table));
+    ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestToType_int16) {
+TEST(AnyTypeCreatorGTest, TestAdd_int16) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"int16", "32767",""},
@@ -112,10 +112,10 @@ TEST(AnyTypeCreatorGTest, TestToType_int16) {
             {0,0,0}
     };
 
-    ASSERT_TRUE(myAnyTypeTest.TestToType(table));
+    ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestToType_uint32) {
+TEST(AnyTypeCreatorGTest, TestAdd_uint32) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"uint32", "4294967295",""},
@@ -123,10 +123,10 @@ TEST(AnyTypeCreatorGTest, TestToType_uint32) {
             {0,0,0}
     };
 
-    ASSERT_TRUE(myAnyTypeTest.TestToType(table));
+    ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestToType_int32) {
+TEST(AnyTypeCreatorGTest, TestAdd_int32) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"int32", "2147483647",""},
@@ -136,10 +136,10 @@ TEST(AnyTypeCreatorGTest, TestToType_int32) {
             {0,0,0}
     };
 
-    ASSERT_TRUE(myAnyTypeTest.TestToType(table));
+    ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestToType_uint64) {
+TEST(AnyTypeCreatorGTest, TestAdd_uint64) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"uint64", "18446744073709551615",""},
@@ -147,10 +147,10 @@ TEST(AnyTypeCreatorGTest, TestToType_uint64) {
             {0,0,0}
     };
 
-    ASSERT_TRUE(myAnyTypeTest.TestToType(table));
+    ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestToType_int64) {
+TEST(AnyTypeCreatorGTest, TestAdd_int64) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"int64", "9223372036854775807",""},
@@ -160,11 +160,11 @@ TEST(AnyTypeCreatorGTest, TestToType_int64) {
             {0,0,0}
     };
 
-    ASSERT_TRUE(myAnyTypeTest.TestToType(table));
+    ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestToType_float32) {
+TEST(AnyTypeCreatorGTest, TestAdd_float32) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"float32", "123.4",""},
@@ -172,11 +172,11 @@ TEST(AnyTypeCreatorGTest, TestToType_float32) {
             {0,0,0}
     };
 
-    ASSERT_TRUE(myAnyTypeTest.TestToType(table));
+    ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestToType_float64) {
+TEST(AnyTypeCreatorGTest, TestAdd_float64) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"float64", "123.4",""},
@@ -184,10 +184,10 @@ TEST(AnyTypeCreatorGTest, TestToType_float64) {
             {0,0,0}
     };
 
-    ASSERT_TRUE(myAnyTypeTest.TestToType(table));
+    ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestToType_string) {
+TEST(AnyTypeCreatorGTest, TestAdd_string) {
     AnyTypeCreatorTest myAnyTypeTest;
     const char8 *table[][3]={
             {"string", "Hello",""},
@@ -196,95 +196,100 @@ TEST(AnyTypeCreatorGTest, TestToType_string) {
             {0,0,0}
     };
 
-    ASSERT_TRUE(myAnyTypeTest.TestToType(table));
+    ASSERT_TRUE(myAnyTypeTest.TestAdd(table));
 }
 
-TEST(AnyTypeCreatorGTest, TestToType_TypeMismatch) {
+TEST(AnyTypeCreatorGTest, TestAdd_TypeMismatch) {
     AnyTypeCreatorTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestToType_TypeMismatch());
+    ASSERT_TRUE(myAnyTypeTest.TestAdd_TypeMismatch());
 }
 
 
-TEST(AnyTypeCreatorGTest, TestSetType_NullMemory) {
+TEST(AnyTypeCreatorGTest, TestCreate_NullMemory) {
     AnyTypeCreatorTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType_NullMemory());
+    ASSERT_TRUE(myAnyTypeTest.TestCreate_NullMemory());
 }
 
-TEST(AnyTypeCreatorGTest, TestSetType_SizeMismatch) {
+TEST(AnyTypeCreatorGTest, TestCreate_SizeMismatch) {
     AnyTypeCreatorTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType_SizeMismatch());
+    ASSERT_TRUE(myAnyTypeTest.TestCreate_SizeMismatch());
 }
 
-TEST(AnyTypeCreatorGTest, TestSetType_int8) {
+TEST(AnyTypeCreatorGTest, TestCreate_int8) {
     AnyTypeCreatorTest myAnyTypeTest;
     int8 x=0;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType(2, 12, 15,SignedInteger8Bit, "int8", "1", x));
+    ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 12, 15,SignedInteger8Bit, "int8", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestSetType_uint8) {
+TEST(AnyTypeCreatorGTest, TestCreate_uint8) {
     AnyTypeCreatorTest myAnyTypeTest;
     uint8 x=0;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType(2, 15, 12,UnsignedInteger8Bit, "uint8", "1", x));
+    ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 15, 12,UnsignedInteger8Bit, "uint8", "1", x));
 }
 
-TEST(AnyTypeCreatorGTest, TestSetType_int16) {
+TEST(AnyTypeCreatorGTest, TestCreate_int16) {
     AnyTypeCreatorTest myAnyTypeTest;
     int16 x=0;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType(2, 4, 22,SignedInteger16Bit, "int16", "1", x));
+    ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 4, 22,SignedInteger16Bit, "int16", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestSetType_uint16) {
+TEST(AnyTypeCreatorGTest, TestCreate_uint16) {
     AnyTypeCreatorTest myAnyTypeTest;
     uint16 x=0;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType(1, 13, 1,UnsignedInteger16Bit, "uint16", "1", x));
+    ASSERT_TRUE(myAnyTypeTest.TestCreate(1, 1, 13,UnsignedInteger16Bit, "uint16", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestSetType_int32) {
+TEST(AnyTypeCreatorGTest, TestCreate_int32) {
     AnyTypeCreatorTest myAnyTypeTest;
     int32 x=0;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType(2, 24, 2,SignedInteger32Bit, "int32", "1", x));
+    ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 24, 2,SignedInteger32Bit, "int32", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestSetType_uint32) {
+TEST(AnyTypeCreatorGTest, TestCreate_uint32) {
     AnyTypeCreatorTest myAnyTypeTest;
     uint32 x=0;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType(0, 1, 1,UnsignedInteger32Bit, "uint32", "1", x));
+    ASSERT_TRUE(myAnyTypeTest.TestCreate(0, 1, 1,UnsignedInteger32Bit, "uint32", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestSetType_int64) {
+TEST(AnyTypeCreatorGTest, TestCreate_int64) {
     AnyTypeCreatorTest myAnyTypeTest;
     int64 x=0;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType(2, 4, 2,SignedInteger64Bit, "int64", "1", x));
+    ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 4, 2,SignedInteger64Bit, "int64", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestSetType_uint64) {
+TEST(AnyTypeCreatorGTest, TestCreate_uint64) {
     AnyTypeCreatorTest myAnyTypeTest;
     uint64 x=0;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType(2, 13, 13,UnsignedInteger64Bit, "uint64", "1", x));
+    ASSERT_TRUE(myAnyTypeTest.TestCreate(2, 13, 13,UnsignedInteger64Bit, "uint64", "1", x));
 }
 
 
-TEST(AnyTypeCreatorGTest, TestSetType_float32) {
+TEST(AnyTypeCreatorGTest, TestCreate_float32) {
     AnyTypeCreatorTest myAnyTypeTest;
     float32 x=0.0f;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType(1, 13, 1,Float32Bit, "float32", "1", x));
+    ASSERT_TRUE(myAnyTypeTest.TestCreate(1, 1, 13,Float32Bit, "float32", "1", x));
 }
 
-TEST(AnyTypeCreatorGTest, TestSetType_float64) {
+TEST(AnyTypeCreatorGTest, TestCreate_float64) {
     AnyTypeCreatorTest myAnyTypeTest;
     float64 x=0.0;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType(1, 13, 1,Float64Bit, "float64", "1", x));
+    ASSERT_TRUE(myAnyTypeTest.TestCreate(1, 1, 13,Float64Bit, "float64", "1", x));
 }
 
-TEST(AnyTypeCreatorGTest, TestSetType_String) {
+TEST(AnyTypeCreatorGTest, TestCreate_DimensionMismatch) {
     AnyTypeCreatorTest myAnyTypeTest;
-    ASSERT_TRUE(myAnyTypeTest.TestSetType_String());
+    ASSERT_TRUE(myAnyTypeTest.TestCreate_DimensionMismatch());
+}
+
+TEST(AnyTypeCreatorGTest, TestCreate_String) {
+    AnyTypeCreatorTest myAnyTypeTest;
+    ASSERT_TRUE(myAnyTypeTest.TestCreate_String());
 }
 
 

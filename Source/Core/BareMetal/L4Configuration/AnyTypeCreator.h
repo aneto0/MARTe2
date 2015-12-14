@@ -39,35 +39,99 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
+/**
+ * @brief Creates a new AnyType object which could be a scalar, vector or matrix.
+ */
 class AnyTypeCreator {
 
 public:
 
+    /**
+     * @brief Default constructor.
+     * @param[in] granularityIn is the granularity of the allocated memory (the
+     * number of new elements which could be added after a reallocation).
+     * @post
+     *   GetGranularity() == granularityIn &&
+     */
     AnyTypeCreator(const uint32 granularityIn = 1u);
 
-    bool SetType(AnyType &element,
-                 const uint8 nOfDimensions,
-                 const uint32 dimensionSize[3]) const;
+    /**
+     * @brief Creates the AnyType.
+     * @param[in] nOfDimensions specifies if the type is a scalar, vector or matrix.
+     * @param[in] dimensionSize specifies the number of elements for each dimension.
+     * @return the AnyType created using the parameters in input and the internal allocated memory.
+     * voidAnyType is returned in case of input parameters inconsistency.
+     * @pre
+     *   memory != NULL &&
+     *   nOfDimensions < 3 &&
+     *   dimensionSize[0]*dimensionSize[1]*dimensionSize[2] == memory.GetSize() &&
+     *   nOfDimensions == 0 --> dimensionSize[0:2] == 1 &&
+     *   nOfDimensions == 1 --> dimensionSize[0] >= 1 dimensionSize[1:2] == 1 &&
+     *   nOfDimensions == 1 --> dimensionSize[0:1] >= 1 dimensionSize[2] == 1
+     */
+    AnyType Create(const uint8 nOfDimensions,
+                   const uint32 dimensionSize[3]) const;
 
-    bool ToType(const char8 * const type,
-                const char8 * const data);
+    /**
+     * @brief Adds an element to the memory converting it from a string token.
+     * @param[in] type is the desired type for the element to be added.
+     * @param[in] data is the element in string format which has to be converted.
+     * @return false if in the memory there are already element with a different type or if
+     * the conversion fails. True otherwise.
+     * @details If the type is unrecognized, the default type "string" will be considered.
+     */
+    bool Add(const char8 * const type,
+             const char8 * const data);
 
+    /**
+     * @brief Destructor.
+     * @post
+     *   memory == NULL.
+     */
     ~AnyTypeCreator();
 
+    /**
+     * @brief Frees the memory and sets the new granularity.
+     * @param[in] granularityIn is the granularity for the new memory allocation.
+     * @post
+     *   GetGranularity() == granularityIn.
+     */
     void CleanUp(const uint32 granularityIn);
 
+    /**
+     * @brief Retrieves how many elements currently are in the memory.
+     * @return The current number of elements in the memory
+     */
     uint32 GetSize() const;
 
+    /**
+     * @brief Retrieves the memory allocation granularity.
+     * @return The memory allocation granularity.
+     */
     uint32 GetGranularity() const;
 
 private:
+
+    /**
+     * The AnyType memory.
+     */
     StaticListHolder *memory;
+
+    /**
+     * The memory allocation granularity.
+     */
     uint32 granularity;
+
+    /**
+     * The type identifier.
+     */
     uint32 typeIndex;
 
 };
 
+/**
+ * The default type (C-String)
+ */
 const char8 * const defaultTypeName = "string";
 
 }
