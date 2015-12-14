@@ -89,8 +89,6 @@ Shift.h
 SingleBufferedStream.cpp
 Sleep.cpp
 SocketCore.h
-SocketSelect.cpp
-SocketSelectCore.h
 SortFilter.h
 SortFilterT.h
 StandardHeap.h

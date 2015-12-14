@@ -33,7 +33,7 @@
 #include "BasicSocket.h"
 #include "BasicTCPSocket.h"
 #include "ErrorManagement.h"
-#include "SocketSelect.h"
+#include "Select.h"
 #include "StringHelper.h"
 
 /*---------------------------------------------------------------------------*/
@@ -145,10 +145,10 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                         //On Windows a non-blocking socket is very likely to call WSAEWOULDBLOCK so this has to be trapped and retried with an
                         //arbitrary timeout
                     case (WSAEWOULDBLOCK): {
-                        SocketSelect sel;
-                        sel.AddWaitOnWriteReady(this);
+                        Select sel;
+                        sel.AddWriteHandle(*this);
                         TimeoutType timeoutWouldBlock = 10;
-                        ret = sel.WaitWrite(timeoutWouldBlock);
+                        ret = (sel.WaitUntil(timeoutWouldBlock) > 0);
                         if (ret) {
                             int32 lon = static_cast<int32>(sizeof(int32));
                             int32 valopt;
@@ -171,9 +171,9 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                         break;
                     case (WSAEINPROGRESS): {
                         if (timeout.IsFinite()) {
-                            SocketSelect sel;
-                            sel.AddWaitOnWriteReady(this);
-                            ret = sel.WaitWrite(timeout);
+                            Select sel;
+                            sel.AddWriteHandle(*this);
+                            ret = (sel.WaitUntil(timeout) > 0);
                             if (ret) {
                                 int32 lon = static_cast<int32>(sizeof(int32));
                                 int32 valopt;
@@ -282,10 +282,10 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                         int32 errorCode;
                         errorCode = WSAGetLastError();
                         if ((errorCode == 0) || (errorCode == WSAEINPROGRESS) || (errorCode == WSAEWOULDBLOCK)) {
-                            SocketSelect sel;
-                            sel.AddWaitOnReadReady(this);
+                            Select sel;
+                            sel.AddReadHandle(*this);
 
-                            if (sel.WaitRead(timeout)) {
+                            if (sel.WaitUntil(timeout)>0) {
                                 ret = WaitConnection(TTDefault, client);
                             }
                         }
@@ -408,7 +408,7 @@ bool BasicTCPSocket::Read(char8* const output,
 
             int32 iResult = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<int32>(source.Size()));
             if (iResult == SOCKET_ERROR) {
-                closesocket(connectionSocket);
+                closesocket (connectionSocket);
                 WSACleanup();
                 return 0;
             }
@@ -452,7 +452,7 @@ bool BasicTCPSocket::Write(const char8* const input,
 
             int32 iResult = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<int32>(source.Size()));
             if (iResult == SOCKET_ERROR) {
-                closesocket(connectionSocket);
+                closesocket (connectionSocket);
                 WSACleanup();
                 return 0;
             }

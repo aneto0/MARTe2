@@ -164,7 +164,7 @@ namespace MARTe {
          * @param[in] msecTimeout is the timeout of the function, in ms. Default is no timeout.
          * @return -1 in case of errors, 0 if timeout expires, otherwise the number of handles which received an I/O event.
          */
-        int32 WaitUntil(const TimeoutType &msecTimeout = TTInfiniteWait);
+        int32 WaitUntil(const TimeoutType &timeout = TTInfiniteWait);
 
     private:
 

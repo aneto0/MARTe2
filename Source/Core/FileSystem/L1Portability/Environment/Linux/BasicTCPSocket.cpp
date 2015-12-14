@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 #include "BasicSocket.h"
 #include "BasicTCPSocket.h"
-#include "SocketSelect.h"
+#include "Select.h"
 #include "ErrorManagement.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -155,13 +155,15 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                         break;
                     case (EINPROGRESS): {
                         if (timeout.IsFinite() || (!wasBlocking)) {
-                            SocketSelect sel;
-                            sel.AddWaitOnWriteReady(this);
-                            if (wasBlocking) {
-                                ret = sel.WaitWrite(timeout);
-                            }
-                            else {
-                                ret = sel.WaitWrite(0u);
+                            Select sel;
+                            ret = sel.AddWriteHandle(*this);
+                            if (ret) {
+                                if (wasBlocking) {
+                                    ret = (sel.WaitUntil(timeout) > 0);
+                                }
+                                else {
+                                    ret = (sel.WaitUntil(0u) > 0);
+                                }
                             }
                             if (ret) {
                                 uint32 lon = static_cast<uint32>(sizeof(int32));
@@ -274,11 +276,11 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                         int32 errorCode;
                         errorCode = sock_errno();
                         if ((errorCode == 0) || (errorCode == EINPROGRESS) || (errorCode == EWOULDBLOCK)) {
-                            SocketSelect sel;
-                            sel.AddWaitOnReadReady(this);
-
-                            if (sel.WaitRead(timeout)) {
-                                ret = WaitConnection(TTDefault, client);
+                            Select sel;
+                            if(sel.AddReadHandle(*this)) {
+                                if (sel.WaitUntil(timeout)>0) {
+                                    ret = WaitConnection(TTDefault, client);
+                                }
                             }
 
                         }
@@ -406,8 +408,7 @@ bool BasicTCPSocket::Read(char8* const output,
             timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
             /*lint -e{9117} -e{9114} -e{9125} [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
-            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal,
-                                   static_cast<socklen_t>(sizeof(timeoutVal)));
+            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() setting the socket timeout");
@@ -449,8 +450,7 @@ bool BasicTCPSocket::Write(const char8* const input,
             timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
             /*lint -e{9117} -e{9114} -e{9125}  [MISRA C++ Rule 5-0-3] [MISRA C++ Rule 5-0-4]. Justification: the time structure requires a signed integer. */
             timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
-            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal,
-                                   static_cast<socklen_t>(sizeof(timeoutVal)));
+            int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal, static_cast<socklen_t>(sizeof(timeoutVal)));
 
             if (ret < 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() setting the socket timeoutVal");

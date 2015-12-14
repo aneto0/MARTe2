@@ -47,7 +47,6 @@ namespace MARTe {
  */
 class DLL_API BasicSocket: public StreamI, public HandleI {
 public:
-friend class SocketSelect;
 
     /**
      * @brief Default constructor.

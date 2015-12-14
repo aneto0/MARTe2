@@ -278,7 +278,7 @@ bool SelectTest::TestWaitUntil_waitTimeout() {
     return retVal;
 }
 
-bool SelectTest::TestWaitUntil_waitRead() {
+bool SelectTest::TestWaitUntil_waitRead(TimeoutType timeout) {
     BasicUDPSocket bUDPsRead;
     if (!bUDPsRead.Open()) {
         retVal = false;
@@ -291,7 +291,7 @@ bool SelectTest::TestWaitUntil_waitRead() {
     }
     sel.AddReadHandle(bUDPsRead);
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, &defaultTo);
-    retVal &= (sel.WaitUntil(defaultTo) == 1);
+    retVal &= (sel.WaitUntil(timeout) == 1);
     retVal &= sel.IsSet(bUDPsRead);
     char8 buffer[32];
     uint32 size = 32;
