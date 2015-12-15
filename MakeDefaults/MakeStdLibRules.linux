@@ -104,9 +104,6 @@ $(BUILD_DIR)/%.drv : $(BUILD_DIR)/%.o $(OBJS)
 %.spc : 
 	$(MAKE) -C $* -f Makefile.$(TARGET) clean
 
-clean_test_files:
-	@rm -f ../*_Test.*
-
 clean:  $(SUBPROJC)
 	@rm -f depends*
 	@rm -f $(BUILD_DIR)/*$(OBJEXT)

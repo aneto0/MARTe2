@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "BasicFileTest.h"
+#include "DirectoryScanner.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -295,4 +296,14 @@ TEST(BasicFileGTest, TestGetReadHandle) {
 TEST(BasicFileGTest, TestGetWriteHandle) {
     BasicFileTest myBasicFileTest;
     ASSERT_TRUE(myBasicFileTest.TestGetWriteHandle());
+}
+
+TEST(BasicFileGTest, CleanEnvironment) {
+    DirectoryScanner toDelete;
+    toDelete.Scan("./", "*_Test.*");
+    for(uint32 i=0u; i<toDelete.ListSize(); i++){
+        Directory* entry=(Directory*)(toDelete.ListPeek(i));
+        entry->Delete();
+    }
+
 }
