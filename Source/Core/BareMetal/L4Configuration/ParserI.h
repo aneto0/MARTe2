@@ -31,11 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "Token.h"
 #include "StructuredDataI.h"
 #include "StreamString.h"
 #include "AnyTypeCreator.h"
 #include "LexicalAnalyzer.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -46,7 +48,7 @@ namespace MARTe {
  *
  * @details Implements the standard functions to build the StructuredData in output.
  */
-class ParserI {
+class DLL_API ParserI {
 
 public:
 

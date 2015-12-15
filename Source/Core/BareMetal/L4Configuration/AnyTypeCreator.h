@@ -42,7 +42,7 @@ namespace MARTe {
 /**
  * @brief Creates a new AnyType object which could be a scalar, vector or matrix.
  */
-class AnyTypeCreator {
+class DLL_API AnyTypeCreator {
 
 public:
 

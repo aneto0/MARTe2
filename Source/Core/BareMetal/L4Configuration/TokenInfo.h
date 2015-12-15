@@ -42,7 +42,7 @@ namespace MARTe {
 /**
  * @brief A Token wrapper described by an identifier and a value (description).
  */
-class TokenInfo {
+class DLL_API TokenInfo {
 
 public:
 

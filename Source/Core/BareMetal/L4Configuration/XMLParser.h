@@ -66,7 +66,7 @@ namespace MARTe {
  *   STRING
  *   NUMBER
  */
-class XMLParser: public ParserI {
+class DLL_API XMLParser: public ParserI {
 public:
 
     /**
