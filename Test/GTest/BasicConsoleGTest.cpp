@@ -35,7 +35,6 @@
 #include "BasicConsoleTest.h"
 #include "BasicFile.h"
 #include "Directory.h"
-#include "unistd.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
