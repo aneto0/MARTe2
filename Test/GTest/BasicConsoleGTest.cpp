@@ -47,11 +47,13 @@ void RedirectConsoleInput(BasicFile &inputFile,
                           const char8* inputString) {
     inputFile.Open("inputFile_Test.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W);
     uint32 size = StringHelper::Length(inputString);
-    inputFile.Write("inputString", size);
+    inputFile.Write(inputString, size);
     if (N_CHARS_NEWLINE == 1u) {
+        size = 1u;
         inputFile.Write("\n", size);
     }
     else {
+        size = 2u;
         inputFile.Write("\r\n", size);
     }
     inputFile.Seek(0);
