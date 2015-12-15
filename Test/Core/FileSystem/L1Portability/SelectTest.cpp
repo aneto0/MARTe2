@@ -24,17 +24,15 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-
 #include "SelectTest.h"
 #include "Select.h"
 #include "Threads.h"
 #include "Sleep.h"
 #include "BasicUDPSocket.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -52,7 +50,7 @@ static void ThreadWrite(TimeoutType &defaultTo) {
     if (!bUDPsWrite.Connect(LOCALHOST_IP, ACTUAL_TESTING_PORT)) {
         return;
     }
-    uint32 size = 3;
+    uint32 size = 4;
     Sleep::MSec(defaultTo.GetTimeoutMSec() / 2);
     bUDPsWrite.Write("Hey", size);
     bUDPsWrite.Close();

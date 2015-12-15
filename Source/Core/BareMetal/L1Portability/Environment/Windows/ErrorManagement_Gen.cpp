@@ -45,7 +45,6 @@ namespace MARTe{
 
 namespace ErrorManagement {
 
-
 void NullErrorProcessFunction(const ErrorInformation &errorInfo,
                                                  const char8 * const errorDescription) {
 }

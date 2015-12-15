@@ -42,20 +42,19 @@ namespace MARTe {
 
 Directory::Directory(const char8 * const path) :
         LinkedListable() {
-    if (fname != NULL) {
-        if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free");
+    fname = static_cast<char8 *>(NULL);
+    if (path != NULL) {
+        fname = StringHelper::StringDup(path);
+        HANDLE h = FindFirstFile(fname, &directoryHandle);
+        if (h == INVALID_HANDLE_VALUE) {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed INVALID_HANDLE_VALUE");
         }
+        FindClose(h);
     }
-    fname = StringHelper::StringDup(path);
-    if (path == NULL) {
-        HeapManager::Free(reinterpret_cast<void *&>(fname));
+    else {
+        directoryHandle = {0};
+        fname = static_cast<char8 *>(NULL);
     }
-    HANDLE h = FindFirstFile(fname, &directoryHandle);
-    if (h == INVALID_HANDLE_VALUE) {
-        REPORT_ERROR(ErrorManagement::OSError, "Error: Failed INVALID_HANDLE_VALUE");
-    }
-    FindClose(h);
 }
 
 Directory::~Directory() {
@@ -64,7 +63,6 @@ Directory::~Directory() {
             REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free()");
         }
     }
-    fname = static_cast<char8 *>(NULL);
 }
 
 bool Directory::SetByName(const char8 * const path) {
@@ -173,7 +171,7 @@ TimeStamp Directory::GetLastAccessTime() {
 }
 
 bool Directory::Create(const bool isFile) {
-    bool ret = (fname != NULL); //NULL_PTR(char8 *)
+    bool ret = (fname != NULL);
     if (ret) {
         if (isFile) {
             HANDLE file = CreateFile(fname, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_DELETE|FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -232,6 +230,11 @@ bool Directory::Delete() {
         }
         if (FindClose(h) == 0) {
             del = false;
+        }
+    }
+    if(del) {
+        if (!HeapManager::Free(reinterpret_cast<void *&>(fname))) {
+            REPORT_ERROR(ErrorManagement::OSError, "Error: Failed HeapManager::Free()");
         }
     }
     return del;

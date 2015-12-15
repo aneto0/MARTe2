@@ -24,8 +24,9 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <windows.h>
+#include <winsock2.h>
 #include <winsock.h>
+#include <windows.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -131,12 +132,12 @@ bool BasicUDPSocket::Write(const char8* const input,
 }
 
 bool BasicUDPSocket::Open() {
-    WSADATA wsaData;
-    // Initialize Winsock
-    int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (iResult != 0) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: fail WSAStartup");
-    }
+    /*    WSADATA wsaData;
+     // Initialize Winsock
+     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+     if (iResult != 0) {
+     REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: fail WSAStartup");
+     }*/
 
     connectionSocket = (socket(PF_INET, SOCK_DGRAM, 0));
     if (connectionSocket == INVALID_SOCKET) {
@@ -200,18 +201,10 @@ bool BasicUDPSocket::Read(char8 * const output,
     uint32 sizeToRead = size;
     size = 0u;
     if (IsValid()) {
-
         if (timeout.IsFinite()) {
             struct timeval timeoutVal;
             timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
             timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
-
-            int32 iResult = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<int32>(source.Size()));
-            if (iResult == SOCKET_ERROR) {
-                closesocket(connectionSocket);
-                WSACleanup();
-                return 0;
-            }
 
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<int32>(sizeof(timeoutVal))); //int32 -> socklen_t
 
@@ -223,14 +216,15 @@ bool BasicUDPSocket::Read(char8 * const output,
                     size = sizeToRead;
                 }
             }
-
-            if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<char*>(NULL), static_cast<int32> (sizeof(timeoutVal)))<0) {
+            timeoutVal.tv_sec = 0;
+            timeoutVal.tv_usec = 0;
+            if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, static_cast<char*>(NULL), static_cast<int32>(sizeof(timeoutVal)))<0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() removing the read timeout");
             }
         }
         else {
-            if(Read(output, sizeToRead)) {
-                size=sizeToRead;
+            if (Read(output, sizeToRead)) {
+                size = sizeToRead;
             }
         }
     }
@@ -261,12 +255,14 @@ bool BasicUDPSocket::Write(const char8 * const input,
                     size = sizeToWrite;
                 }
             }
+            timeoutVal.tv_sec = 0;
+            timeoutVal.tv_usec = 0;
             if (setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, static_cast<char*>(NULL), static_cast<uint32>(sizeof(timeoutVal))) < 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicUDPSocket: Failed setsockopt() removing the write timeout");
             }
         }
         else {
-            if(Write(input, sizeToWrite)) {
+            if (Write(input, sizeToWrite)) {
                 size = sizeToWrite;
             }
         }

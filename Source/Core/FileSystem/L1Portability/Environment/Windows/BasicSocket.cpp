@@ -27,12 +27,12 @@
 #include <winsock2.h>
 #include <winsock.h>
 #include <windows.h>
+#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "BasicSocket.h"
 #include "ErrorManagement.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -46,13 +46,20 @@ BasicSocket::BasicSocket() :
         HandleI() {
     connectionSocket = -1;
     isBlocking = true;
+    WSADATA wsaData;
+    // Initialize Winsock
+    int32 iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 }
 
 BasicSocket::~BasicSocket() {
-    if (!Close()) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: failed to close socket");
+    if (IsValid()) {
+        if (!Close()) {
+            REPORT_ERROR(ErrorManagement::FatalError, "BasicSocket: failed to close socket");
+        }
     }
+    WSACleanup();
 }
+
 bool BasicSocket::SetBlocking(const bool flag) {
     int32 ret = -1;
     if (IsValid()) {
@@ -78,6 +85,14 @@ bool BasicSocket::SetBlocking(const bool flag) {
 bool BasicSocket::Close() {
     int32 ret = -1;
     if (IsValid()) {
+/*        struct linger so_linger;
+        so_linger.l_onoff = 1;
+        so_linger.l_linger = 0;
+        int32 z = setsockopt(connectionSocket,
+            SOL_SOCKET,
+            SO_LINGER,
+            (const char8*)(&so_linger),
+            sizeof so_linger);*/
         ret = closesocket(connectionSocket);
         connectionSocket = -1;
         if (ret != 0) {
@@ -117,11 +132,11 @@ bool BasicSocket::IsBlocking() const {
 }
 
 Handle BasicSocket::GetReadHandle() const {
-    return (Handle)connectionSocket;
+    return (Handle) connectionSocket;
 }
 
 Handle BasicSocket::GetWriteHandle() const {
-    return (Handle)connectionSocket;
+    return (Handle) connectionSocket;
 }
 
 }
