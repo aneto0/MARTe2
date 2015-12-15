@@ -137,9 +137,9 @@ TEST(SelectGTest, TestRemoveExceptionHandle_InvalidHandle) {
     ASSERT_TRUE(myTest.TestRemoveExceptionHandle_InvalidHandle());
 }
 
-TEST(SelectGTest, TesClearAllHandles) {
+TEST(SelectGTest, TestClearAllHandles) {
     SelectTest myTest;
-    ASSERT_TRUE(myTest.TesClearAllHandles());
+    ASSERT_TRUE(myTest.TestClearAllHandles());
 }
 
 TEST(SelectGTest, TestIsSet) {

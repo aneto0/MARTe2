@@ -50,7 +50,7 @@ static void ThreadWrite(TimeoutType &defaultTo) {
     if (!bUDPsWrite.Connect(LOCALHOST_IP, ACTUAL_TESTING_PORT)) {
         return;
     }
-    uint32 size = 4;
+    uint32 size = 3;
     Sleep::MSec(defaultTo.GetTimeoutMSec() / 2);
     bUDPsWrite.Write("Hey", size);
     bUDPsWrite.Close();
