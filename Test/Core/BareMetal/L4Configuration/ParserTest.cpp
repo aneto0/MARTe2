@@ -75,21 +75,18 @@ bool ParserTest::TestParseScalar() {
     }
 
     if (!database.MoveAbsolute("+PID")) {
-        printf("\n2\n");
         return false;
     }
     float32 Kp = 0.0;
     database.Read("Kp", Kp);
 
     if (Kp != 100.5) {
-        printf("\n %s Kp=%f\n", errors.Buffer(), Kp);
         return false;
     }
 
     uint8 Ki = 0;
     database.Read("Ki", Ki);
     if (Ki != 2) {
-        printf("\nKi=%d\n", Ki);
         return false;
     }
 
@@ -97,7 +94,6 @@ bool ParserTest::TestParseScalar() {
 
     database.Read("Kd", Kd);
     if (Kd != 5.0) {
-        printf("\nKd=%f\n", Kd);
         return false;
     }
 
@@ -121,18 +117,15 @@ bool ParserTest::TestParseVector() {
     configString.Seek(0);
     Parser myParser;
     if (!myParser.Parse(configString, database, &errors)) {
-        printf("\nerrors=%s\n", errors.Buffer());
         return false;
     }
 
     if (!database.MoveRelative("+PID")) {
-        printf("\n0\n");
         return false;
     }
 
     float32 gains[3];
     if (!database.Read("Gains", gains)) {
-        printf("\n1\n");
         return false;
     }
 
@@ -142,53 +135,42 @@ bool ParserTest::TestParseVector() {
     ok &= gains[2] == 5.0;
 
     if (!ok) {
-        printf("\n2\n");
         return false;
     }
 
     if (!database.MoveAbsolute("+Process")) {
-        printf("\n3\n");
         return false;
     }
 
     char8 processName[2][16];
     if (!database.Read("Names", processName)) {
-        printf("\n4\n");
         return false;
     }
 
     if (StringHelper::Compare(&processName[0][0], "Pendulum") != 0) {
-        printf("\n%s\n", &processName[0][0]);
-        printf("\n%s\n", &processName[1][0]);
-        printf("\n5\n");
         return false;
     }
 
     if (StringHelper::Compare(&processName[1][0], "ChemicalPlant") != 0) {
-        printf("\n5a\n");
         return false;
     }
 
     if (!database.MoveAbsolute("+Process.FDT")) {
-        printf("\n6\n");
         return false;
     }
 
     uint8 num[1];
 
     if (!database.Read("Num", num)) {
-        printf("\n7\n");
         return false;
     }
 
     if (num[0] != 1) {
-        printf("\n8\n");
         return false;
     }
 
     float32 den[3];
     if (!database.Read("Den", den)) {
-        printf("\n9\n");
         return false;
     }
     ok &= den[0] == 1.0;
@@ -196,7 +178,6 @@ bool ParserTest::TestParseVector() {
     ok &= den[2] == 30.25;
 
     if (!ok) {
-        printf("\n10\n");
         return false;
     }
     /*
@@ -234,7 +215,6 @@ bool ParserTest::TestParseMatrix() {
     configString.Seek(0);
     Parser myParser;
     if (!myParser.Parse(configString, database, &errors)) {
-        printf("\nerrors=%s\n", errors.Buffer());
         return false;
     }
 
@@ -242,7 +222,6 @@ bool ParserTest::TestParseMatrix() {
     float32 matrix[2][3];
 
     if (!database.Read("Matrix", matrix)) {
-        printf("\n0\n");
         return false;
     }
     bool ok = true;
@@ -254,18 +233,15 @@ bool ParserTest::TestParseMatrix() {
     ok &= matrix[1][2] == 7.5;
 
     if (!ok) {
-        printf("\n1\n");
         return false;
     }
 
     if (!database.MoveAbsolute("+Process.FDT")) {
-        printf("\n2\n");
         return false;
     }
 
     uint8 A[2][2];
     if (!database.Read("A", A)) {
-        printf("\n3\n");
         return false;
     }
 
@@ -280,7 +256,6 @@ bool ParserTest::TestParseMatrix() {
 
     int16 B[2][1];
     if (!database.Read("B", B)) {
-        printf("\n4\n");
         return false;
     }
 
@@ -288,13 +263,11 @@ bool ParserTest::TestParseMatrix() {
     ok &= B[1][0] == -1;
 
     if (!ok) {
-        printf("\n5\n");
         return false;
     }
 
     float64 C[1][2];
     if (!database.Read("C", C)) {
-        printf("\n6\n");
         return false;
     }
 
@@ -302,23 +275,19 @@ bool ParserTest::TestParseMatrix() {
     ok &= C[0][1] == 100.5;
 
     if (!ok) {
-        printf("\n7\n");
         return false;
     }
 
     char8 names[2][1][16];
     database.MoveToAncestor(1u);
     if (!database.Read("Names", names)) {
-        printf("\n8a\n");
         return false;
     }
 
     if (StringHelper::Compare(&names[0][0][0], "Pend} {ulum") != 0) {
-        printf("\n8 %s\n", &names[0][0][0]);
         return false;
     }
     if (StringHelper::Compare(&names[0][1][0], "ChemicalPlant") != 0) {
-        printf("\n9\n");
         return false;
     }
     return true;
@@ -349,7 +318,6 @@ bool ParserTest::TestNestedBlocks() {
     configString.Seek(0);
     Parser myParser;
     if (!myParser.Parse(configString, database, &errors)) {
-        printf("\nerrors=%s\n", errors.Buffer());
         return false;
     }
 
@@ -418,7 +386,6 @@ bool ParserTest::TestParseErrors(const char8 *configStringIn) {
 
     Parser myParser;
     bool ret = myParser.Parse(configString, database, &errors);
-    printf("\nerrors=%s\n", errors.Buffer());
     return !ret;
 
 }
@@ -449,7 +416,6 @@ bool ParserTest::TestStandardCast() {
 bool ParserTest::TestExistentFile() {
     BasicFile configurationFile;
     if (!configurationFile.Open("MARTe-WaterTank.cfg", BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
-        printf("\nError! Could not open file MARTe-WaterTank.cfg!\n");
         return false;
     }
 
@@ -459,7 +425,6 @@ bool ParserTest::TestExistentFile() {
     ConfigurationDatabase database;
     Parser myParser;
     if (!myParser.Parse(configurationFile, database, &errors)) {
-        printf("\nerrors=%s\n", errors.Buffer());
 
         return false;
     }

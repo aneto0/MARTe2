@@ -300,7 +300,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 4) {
         return false;
-        printf("\n0  %d\n", tok->GetLineNumber());
     }
 
     // get {
@@ -315,7 +314,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
     }
     if (tok->GetLineNumber() != 4) {
         return false;
-        printf("\n1  %d\n", tok->GetLineNumber());
     }
 
     // get Kp
@@ -331,7 +329,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 5) {
         return false;
-        printf("\n2  %d\n", tok->GetLineNumber());
     }
 
     // get =
@@ -347,7 +344,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 5) {
         return false;
-        printf("\n3  %d\n", tok->GetLineNumber());
     }
 
     // get 10
@@ -363,7 +359,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 5) {
         return false;
-        printf("\n4  %d\n", tok->GetLineNumber());
     }
 
     // get Ki
@@ -379,7 +374,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 6) {
         return false;
-        printf("\n5  %d\n", tok->GetLineNumber());
     }
     // get =
     tok = la.PeekToken(6u);
@@ -394,7 +388,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 6) {
         return false;
-        printf("\n6  %d\n", tok->GetLineNumber());
     }
     // get 100.2
     tok = la.PeekToken(7u);
@@ -409,7 +402,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 6) {
         return false;
-        printf("\n7  %d\n", tok->GetLineNumber());
     }
     // get Kd
     tok = la.PeekToken(8u);
@@ -423,7 +415,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
     }
     if (tok->GetLineNumber() != 7) {
         return false;
-        printf("\n8  %d\n", tok->GetLineNumber());
     }
     // get =
     tok = la.PeekToken(9u);
@@ -438,7 +429,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 7) {
         return false;
-        printf("\n9  %d\n", tok->GetLineNumber());
     }
     // get -10
     tok = la.PeekToken(10u);
@@ -454,7 +444,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 7) {
         return false;
-        printf("\n10  %d\n", tok->GetLineNumber());
     }
     // get }
     tok = la.PeekToken(11u);
@@ -468,7 +457,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
     }
     if (tok->GetLineNumber() != 7) {
         return false;
-        printf("\n11  %d\n", tok->GetLineNumber());
     }
 
     // get END
@@ -498,7 +486,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 4) {
         return false;
-        printf("\n0  %d\n", tok->GetLineNumber());
     }
 
     // peek the next
