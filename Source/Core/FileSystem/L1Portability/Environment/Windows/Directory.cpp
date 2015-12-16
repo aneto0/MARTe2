@@ -24,12 +24,16 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
 #include <windows.h>
 #include <iostream>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "Directory.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -52,7 +56,19 @@ Directory::Directory(const char8 * const path) :
         FindClose(h);
     }
     else {
-        directoryHandle = {0};
+        directoryHandle.dwFileAttributes = static_cast<DWORD>(0u);
+        directoryHandle.ftCreationTime.dwLowDateTime = static_cast<DWORD>(0u);
+        directoryHandle.ftCreationTime.dwHighDateTime = static_cast<DWORD>(0u);
+        directoryHandle.ftLastAccessTime.dwLowDateTime = static_cast<DWORD>(0u);
+        directoryHandle.ftLastAccessTime.dwHighDateTime = static_cast<DWORD>(0u);
+        directoryHandle.ftLastWriteTime.dwLowDateTime = static_cast<DWORD>(0u);
+        directoryHandle.ftLastWriteTime.dwHighDateTime = static_cast<DWORD>(0u);
+        directoryHandle.nFileSizeHigh = static_cast<DWORD>(0u);
+        directoryHandle.nFileSizeLow = static_cast<DWORD>(0u);
+        directoryHandle.dwReserved0 = static_cast<DWORD>(0u);
+        directoryHandle.dwReserved1 = static_cast<DWORD>(0u);
+        directoryHandle.cFileName[0] = 0u;
+        directoryHandle.cAlternateFileName[0] = 0u;
         fname = static_cast<char8 *>(NULL);
     }
 }

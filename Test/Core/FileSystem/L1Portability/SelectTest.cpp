@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 
 static const char8 LOCALHOST_IP[] = "127.0.0.1";
-static const uint16 ACTUAL_TESTING_PORT = 49152;
+static const uint16 ACTUAL_TESTING_PORT = 49155;//49152;
 static const uint16 DUMMY_TESTING_PORT_1 = 49153;
 static const uint16 DUMMY_TESTING_PORT_2 = 49154;
 
@@ -214,7 +214,7 @@ bool SelectTest::TestRemoveExceptionHandle_InvalidHandle() {
     return retVal;
 }
 
-bool SelectTest::TesClearAllHandles() {
+bool SelectTest::TestClearAllHandles() {
 #if ENVIRONMENT == Windows
     bc.Open(BasicConsoleMode::Default);
     retVal &= sel.AddReadHandle(bc);
@@ -319,6 +319,7 @@ bool SelectTest::TestWaitUntil_severaDifferentWaitRead() {
     sel.AddReadHandle(dummy2);
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, &defaultTo);
     retVal &= (sel.WaitUntil(defaultTo) == 1);
+
     retVal &= sel.IsSet(bUDPsRead);
     retVal &= !sel.IsSet(dummy1);
     retVal &= !sel.IsSet(dummy2);

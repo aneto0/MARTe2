@@ -132,15 +132,8 @@ bool BasicUDPSocket::Write(const char8* const input,
 }
 
 bool BasicUDPSocket::Open() {
-    /*    WSADATA wsaData;
-     // Initialize Winsock
-     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-     if (iResult != 0) {
-     REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: fail WSAStartup");
-     }*/
-
     connectionSocket = (socket(PF_INET, SOCK_DGRAM, 0));
-    if (connectionSocket == INVALID_SOCKET) {
+    if (connectionSocket != INVALID_SOCKET) {
         REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: connectionSocket == INVALID_SOCKET");
     }
     return (connectionSocket >= 0);
@@ -151,7 +144,6 @@ bool BasicUDPSocket::Listen(const uint16 port) {
     if (IsValid()) {
         InternetHost server;
         server.SetPort(port);
-
         errorCode = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(server.GetInternetHost()), static_cast<int32>(server.Size()));
         if (errorCode < 0) {
             REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: Listen made a errorCode");
