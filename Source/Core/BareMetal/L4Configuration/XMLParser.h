@@ -27,6 +27,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "ParserI.h"
 
 /*---------------------------------------------------------------------------*/
@@ -38,11 +39,29 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 /**
- * @brief Implementation of the parser for the XML language.
+ * @brief Concrete class for MARTe::ParserI abstract class, configured
+ * for streams of characters encoded in XML.
  *
- * @details: Follows the grammar with the functions called if the parser matches the related expression. The grammar is written using
- * the SLK language.
+ * @details This class is a concrete class for MARTe::ParserI providing the
+ * actual lexical elements and parsing rules for interpreting a stream of
+ * characters encoded in XML.
+ *
+ * Each instance of the parser is bound when it is constructed, with all the
+ * objects involved in the parsing analysis, as follows:
+ * - An input stream of characters that contains the serialization of a
+ * hierarchy of objects, encoded into XML.
+ * - An output structured data store where the parser will build the in-
+ * memory objects defined into the input stream of characters.
+ * - An output stream of characters where the parser will write all the errors
+ * found on the input stream of characters.
+ *
+ * All the instances of the parser use the lexical elements defined
+ * in MARTe::XMLGrammar and apply the parsing rules of the following
+ * grammar:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.py
  * EXPRESSION:
  *   <STRING __GetNodeName > VARIABLE </STRING>  __AddLeaf
  *   <STRING __GetNodeName > ( STRING __GetTypeCast ) VARIABLE </STRING>  __AddLeaf
@@ -57,14 +76,18 @@ namespace MARTe {
  *   TOKEN __AddScalar
  *
  * VECTOR:
- *   \{ { SCALAR }+ \} __EndVector
+ *   \\{ { SCALAR }+ \\} __EndVector
  *
  * MATRIX:
- *   \{ { VECTOR }+ \} __EndMatrix
+ *   \\{ { VECTOR }+ \\} __EndMatrix
  *
  * TOKEN:
  *   STRING
  *   NUMBER
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Note: This grammar is written in the SLK language and refers to functions
+ * declared in MARTe::ParserI.
  */
 class DLL_API XMLParser: public ParserI {
 public:
@@ -143,6 +166,7 @@ private:
     void (XMLParser::*Action[10])(void);
 
 };
+
 }
 
 /*---------------------------------------------------------------------------*/

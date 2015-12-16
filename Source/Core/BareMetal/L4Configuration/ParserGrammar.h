@@ -31,7 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -39,12 +41,14 @@
 namespace MARTe {
 
 /**
- * @brief Contains the terminal and separator characters used by Parser and LexicalAnalyzer.
- * @details
- *   In order to specify a valid grammar for the implemented parser, all the characters must be !='\0'
- *   and the \a openTypeCast character must be different from the other open terminals.
+ * @brief Structure which contains the lexical elements for a language, like
+ * terminals, separators, operators, and delimiters.
+ *
+ * @invariant All the characters must be !='\0' and the \a openTypeCast
+ * character must be different from the other open terminals.
  */
 struct ParserGrammar {
+
     /**
      * List of separator characters.
      */
@@ -69,56 +73,66 @@ struct ParserGrammar {
      * Assignment operator
      */
     char8 assignment;
+
     /**
      * Specifies that a block begins
      */
     char8 openBlock;
+
     /**
      * Specifies that a block ends
      */
     char8 closeBlock;
+
     /**
      * Specifies that a vector begins
      */
     char8 openVector;
+
     /**
      * Specifies that a vector ends
      */
     char8 closeVector;
+
     /**
      * Specifies that a matrix begins
      */
     char8 openMatrix;
+
     /**
      * Specifies that a matrix ends
      */
     char8 closeMatrix;
+
     /**
      * Specifies that a type cast expression begins
      */
     char8 openTypeCast;
+
     /**
      * Specifies that a type cast expression ends
      */
     char8 closeTypeCast;
+
     /**
      * Allows to get the terminals as a C-string.
      */
     char8 terminal;
+
 };
 
 /**
- * The terminal and separator characters in standard MARTe configuration streams.
+ * The lexical elements for MARTe configuration streams encoded in standard MARTe configuration language.
  */
 static const ParserGrammar StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
 
 /**
- * The terminal and separator characters for XML language.
+ * The lexical elements for MARTe configuration streams encoded in XML language.
  */
 static const ParserGrammar XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>', '{', '}', '/', '(', ')', '<', '>', '\0' };
 
 /**
- * The terminal and separator characters for Json language.
+ * The lexical elements for MARTe configuration streams encoded in JSON language.
  */
 static const ParserGrammar JsonGrammar = { "\n\r\t, ", "", "", "", ':', '{', '}', '[', ']', '[', ']', '\0', '\0', '\0' };
 

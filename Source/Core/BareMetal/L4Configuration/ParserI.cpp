@@ -2,7 +2,7 @@
  * @file ParserI.cpp
  * @brief Source file for class ParserI
  * @date 09/dic/2015
- * @author pc
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -34,6 +34,7 @@
 #include "ParserI.h"
 #include "TypeConversion.h"
 #include "AdvancedErrorManagement.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -63,6 +64,14 @@ static uint32 GetCurrentTokenId(const Token * const token) {
 static uint32 GetCurrentTokenLineNumber(const Token * const token) {
     return (token != NULL)?(token->GetLineNumber()):0u;
 }
+
+}
+
+/*---------------------------------------------------------------------------*/
+/*                           Method definitions                              */
+/*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 ParserI::ParserI(StreamI &stream,
                  StructuredDataI &databaseIn,

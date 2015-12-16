@@ -21,6 +21,8 @@
  * methods, such as those inline could be defined on the header file, instead.
  */
 
+#define DLL_API
+
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
@@ -28,19 +30,21 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#define DLL_API
+
 #include "ErrorManagement.h"
 #include "LexicalAnalyzer.h"
 #include "StreamString.h"
 #include "TypeConversion.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /**
  * @brief Gets the next character from the stream.
- * @param[in] stream is the stream to be read.
+ * @param[in] stream is the stream of characters to be read.
  * @param[out] c is the read character.
  * @return false if EOF, true otherwise.
  */
@@ -53,7 +57,7 @@ static bool GetC(StreamI &stream,
 
 /**
  * @brief Reads the comment on single lines.
- * @param[in] stream is the stream to be read.
+ * @param[in] stream is the stream of characters to be read.
  */
 static void ReadCommentOneLine(StreamI &stream) {
 
@@ -67,8 +71,10 @@ static void ReadCommentOneLine(StreamI &stream) {
 
 /**
  * @brief Reads the comment on multiple lines.
- * @param[in] stream is the stream to be read.
+ * @param[in] stream is the stream of characters to be read.
  * @param[out] lineNumber is the token line number.
+ * @param[in] multipleLineEnd C-string containing the pattern
+ * that it is used for marking the end of a multiple line comment.
  */
 static void ReadCommentMultipleLines(StreamI &stream,
                                      uint32 &lineNumber,
@@ -109,10 +115,17 @@ static void ReadCommentMultipleLines(StreamI &stream,
 
 /**
  * @brief Skips the comments in the stream.
- * @param[in] stream is the stream to be read.
+ * @param[in] stream is the stream of characters to be read.
  * @param[out] buffer contains the data read from the stream.
+ * @param[out] bufferSize the actual size of the data in buffer
  * @param[out] lineNumber is the token line number.
  * @param[in] separators is the separator characters list.
+ * @param[in] oneLineBegin C-string containing the pattern that
+ * it is used for marking the beginning of a single line comment.
+ * @param[in] multipleLineBegin C-string containing the pattern that
+ * it is used for marking the beginning of a multiple line comment.
+ * @param[in] multipleLineEnd C-string containing the pattern that
+ * it is used for marking the end of a multiple line comment.
  * @param[out] separator returns the separator char found at the end of the comment.
  * @param[in] isNewToken specifies if the separators at the beginning must be skipped or not.
  * @return false if EOF, true otherwise.
@@ -293,7 +306,7 @@ Token * LexicalAnalyzer::GetToken() {
     }
     TokenizeInput();
     if (!tokenQueue.Extract(0u, token)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "GetToken: Failed Extract() of the token from the token stack");
+        REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Extract() of the token from the token stack");
     }
     return token;
 }
@@ -304,7 +317,7 @@ Token *LexicalAnalyzer::PeekToken(const uint32 position) {
     TokenizeInput(position);
     Token *peekToken = static_cast<Token*>(NULL);
     if (!tokenQueue.Peek(position, peekToken)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "PeekToken: Failed Peek() of the token from the token stack");
+        REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Peek() of the token from the token stack");
     }
     return peekToken;
 
@@ -340,7 +353,7 @@ LexicalAnalyzer::~LexicalAnalyzer() {
             delete toDelete;
         }
         else {
-            REPORT_ERROR(ErrorManagement::FatalError, "~LexicalAnalyzer: Failed Extract() of the token from the token stack");
+            REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Extract() of the token from the token stack");
         }
     }
     if (token != NULL) {
@@ -381,7 +394,7 @@ void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
             /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
             Token *toAdd = new Token(tokenInfo[STRING_TOKEN], &tokenBuffer[begin], lineNumber);
             if (!tokenQueue.Add(toAdd)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
+                REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
             }
             converted = true;
         }
@@ -393,7 +406,7 @@ void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
                 /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
                 Token *toAdd = new Token(tokenInfo[NUMBER_TOKEN], &tokenBuffer[0], lineNumber);
                 if (!tokenQueue.Add(toAdd)) {
-                    REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
+                    REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
                 }
                 converted = true;
             }
@@ -404,7 +417,7 @@ void LexicalAnalyzer::AddToken(char8 * const tokenBuffer,
             /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
             Token *toAdd = new Token(tokenInfo[ERROR_TOKEN], "", lineNumber);
             if (!tokenQueue.Add(toAdd)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
+                REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
             }
         }
     }
@@ -418,7 +431,7 @@ void LexicalAnalyzer::AddTerminal(const char8 terminal) {
     /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
     Token *toAdd = new Token(tokenInfo[TERMINAL_TOKEN], &terminalBuffer[0], lineNumber);
     if (!tokenQueue.Add(toAdd)) {
-        REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
+        REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
     }
 }
 
@@ -554,7 +567,7 @@ void LexicalAnalyzer::TokenizeInput(const uint32 level) {
             /*lint -e{423} .Justification: The pointer is added to a stack and the memory is freed by the class destructor */
             Token *toAdd = new Token(tokenInfo[EOF_TOKEN], "", lineNumber);
             if (!tokenQueue.Add(toAdd)) {
-                REPORT_ERROR(ErrorManagement::FatalError, "TokenizeInput: Failed Add() of the token to the token stack");
+                REPORT_ERROR(ErrorManagement::FatalError, "StaticList<Token *>: Failed Add() of the token to the token stack");
             }
         }
 

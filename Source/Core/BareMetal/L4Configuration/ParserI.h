@@ -43,35 +43,59 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 /**
- * @brief Parser interface implementation.
+ * @brief Abstract parser which allows to transform a stream of characters
+ * into a structured data store, applying lexical rules set at instance level
+ * and parsing rules implemented into subclasses.
  *
- * @details Implements the standard functions to build the StructuredData in output.
+ * @details This class is a partial abstract class providing the generic
+ * functionality of a parser while expecting subclasses to provide the specific
+ * rules for each concrete language (each subclass must implement the pure
+ * abstract functions).
+ *
+ * Each instance of the parser is bound when it is constructed, with all the
+ * objects involved in the parsing analysis, as follows:
+ * - An input stream of characters that contains the serialization of a
+ * hierarchy of objects, encoded into a given language (e.g. XML, JSON, etc).
+ * - An output structured data store where the parser will build the in-
+ * memory objects defined into the input stream of characters.
+ * - An output stream of characters where the parser will write all the errors
+ * found on the input stream of characters.
+ *
+ * At construction time, too, the parser is initialized with the lexical
+ * elements that the language used in the input stream of characters needs,
+ * while the grammar of that language is expected to be implemented in
+ * subclasses.
+ *
+ * After being properly created, each instance is ready to parse the input
+ * stream of characters, whenever the user calls the method Parse().
+ *
+ * Notes about the input stream of characters:
+ * - All the elements of a vector or matrix must be of the same token type
+ * (NUMBER or STRING).
+ * - Variables cannot be empty (i.e "scalar = " or vector = {}" or
+ * "matrix = {{}}").
+ * - If the type specified in the TYPE CAST expression is invalid, the value
+ * will be saved in the database as a C-string (default), otherwise the token
+ * will be converted to the specified type and then saved in the database.
+ * - The error messages printed on the \a err stream are in the format
+ * "error description [line number]".
  */
 class DLL_API ParserI {
 
 public:
 
     /**
-     * @brief Default constructor.
+     * @brief Constructor which initializes the instance with all the items
+     * involved into the parsing (input, output, and grammar configuration).
      * @param[in] stream is the stream to be read and parsed.
      * @param[in,out] databaseIn is the StructuredData in output.
      * @param[out] err is a stream where parse error messages are written into.
-     * @param[in] grammarIn contains the comments patterns, the separator and terminal characters.
+     * @param[in] grammarIn contains the comments patterns, the separator and
+     * terminal characters.
      * @post
-     *   typeName == "" &&
-     *   nodeName == "" &&
-     *   database == &databaseIn &&
-     *   isError == false &&
-     *   tokenProducer(grammarIn info) &&
-     *   numberOfColumns == 0 &&
-     *   numberOfRows == 0 &&
-     *   firstNumberOfColumns == 0 &&
-     *   memory (granularity=1) &&
-     *   errorStream == err &&
-     *   tokenType == 0 (EOF_TOKEN) &&
-     *   numberOfDimensions == 0 &&
-     *   grammar == grammarIn
+     *   GetGrammar() == grammarIn
      */
     ParserI(StreamI &stream,
             StructuredDataI &databaseIn,
@@ -84,20 +108,11 @@ public:
     virtual ~ParserI();
 
     /**
-     * @brief Parses the stream in input and builds the configuration database accordingly.
-     * @param[in] stream the stream to be parsed.
-     * @param[in,out] database built configuration database in output.
-     * @param[out] err is a stream where parse error messages are written into.
-     * @return true if the stream in input is parsed correctly, false otherwise. In case of failure, the
-     * error causing the failure is printed on the \a err stream in input (if it is not NULL).
-     *
-     * @details
-     *   - All the elements of a vector or matrix must be of the same token type (NUMBER or STRING).
-     *   - Variables cannot be empty (i.e "scalar = " or vector = {}" or "matrix = {{}}").
-     *   - If the type specified in the TYPE CAST expression is invalid, the value will be
-     *   saved in the database as a C-string (default), otherwise the token will be converted to the
-     *   specified type and then saved in the database.
-     *   - The error messages printed on the \a err stream are in the format "error description [line number]".
+     * @brief Parses the stream in input and builds the configuration database
+     * accordingly.
+     * @return true if the stream in input is parsed correctly, false otherwise.
+     * In case of failure, the error causing the failure is printed on the
+     * \a err stream in input (if it is not NULL).
      */
     bool Parse();
 
@@ -115,9 +130,7 @@ protected:
     virtual void End();
 
     /**
-     * @brief Stores the node or the variable name.
-     * @post
-     *   nodeName == token.GetData()
+     * @brief Gets the node or the variable name.
      */
     virtual void GetNodeName();
 
@@ -127,44 +140,33 @@ protected:
     virtual void AddLeaf();
 
     /**
-     * @brief Stored the type name.
-     * @post
-     *   typeName == token.GetData()
+     * @brief Gets the variable type.
      */
     virtual void GetTypeCast();
 
     /**
      * @brief Creates a new node in the StructuredData.
-     * @post
-     *   StructuredDataI::Write(*)
      */
     virtual void CreateNode();
 
     /**
      * @brief Stores a read scalar in the memory.
-     * @post
-     *   memory.ToType(*)
      */
     virtual void AddScalar();
 
     /**
-     * @brief Sets the number of dimensions to one and checks if the matrix is well formed.
-     * @post
-     *   numberOfDimensions >= 1
+     * @brief Sets the number of dimensions to one and checks if
+     * the matrix is well formed.
      */
     virtual void EndVector();
 
     /**
      * @brief Sets the number of dimensions to two.
-     * @post
-     *   numberOfDimensions == 2
      */
     virtual void EndMatrix();
 
     /**
      * @brief Moves into the structuredData to the father.
-     * @post
-     *   StructuredDataI::MoveToAncestor(1)
      */
     virtual void BlockEnd();
 
@@ -172,9 +174,11 @@ protected:
     //virtual void CreateClassLeaf();
 
     /**
-     * @brief Retrieves the next expected token identifiers to be pushed on the stack.
+     * @brief Retrieves the next expected token identifiers to be
+     * pushed on the stack.
      * @param[in] index is the production row.
-     * @return the next expected tokens identifiers to be pushed on the stack.
+     * @return the next expected tokens identifiers to be pushed
+     * on the stack.
      */
     virtual uint32 &GetProduction(const uint32 index) const =0;
 
@@ -214,7 +218,8 @@ protected:
 
     /**
      * @brief Retrieves the constants used by the parser.
-     * @param[in] index is one of the ParserConstant, to retrieve the related constant.
+     * @param[in] index is one of the ParserConstant, to retrieve the
+     * related constant.
      * @return the desired constant.
      */
     virtual uint32 GetConstant(const uint32 index) const =0;
@@ -226,14 +231,16 @@ protected:
     virtual const char8 *GetSymbolName(const uint32 symbol) const =0;
 
     /**
-     * @brief Retrieves the identifier of the next token produced by the lexical analyzer.
-     * @return the identifier of the next token produced by the lexical analyzer.
+     * @brief Retrieves the identifier of the next token produced by the
+     * lexical analyzer.
+     * @return the identifier of the next token produced by the lexical
+     * analyzer.
      */
     virtual uint32 GetNextTokenType();
 
     /**
-     * @brief Peeking in the token stack produced by the lexical analyzer, retrieves the
-     * identifier of the token in the next \a position index.
+     * @brief Peeks in the token stack produced by the lexical analyzer,
+     * retrieves the identifier of the token in the next \a position index.
      * @return the identifier of the token in the next \a position index.
      */
     virtual uint32 PeekNextTokenType(const uint32 position);
@@ -379,11 +386,16 @@ static const uint32 TOTAL_CONFLICTS = 7u;
  * The internal stack size for the expected token identifiers.
  */
 static const uint32 PARSE_STACK_SIZE = 512u;
+
+}
+
 }
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 void ParserI::StackPush(const uint32 symbol,
                         const uint32 * const stack,
@@ -406,5 +418,6 @@ uint32 ParserI::StackPop(uint32 * &top) const {
 }
 
 }
+
 #endif /* PARSERI_H_ */
 

@@ -34,11 +34,13 @@
 
 #include "StaticListHolder.h"
 #include "AnyType.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
+
 /**
  * @brief Creates a new AnyType object which could be a scalar, vector or matrix.
  */
@@ -47,7 +49,7 @@ class DLL_API AnyTypeCreator {
 public:
 
     /**
-     * @brief Default constructor.
+     * @brief Constructor which initializes the instance with a given granularity.
      * @param[in] granularityIn is the granularity of the allocated memory (the
      * number of new elements which could be added after a reallocation).
      * @post
@@ -62,12 +64,10 @@ public:
      * @return the AnyType created using the parameters in input and the internal allocated memory.
      * voidAnyType is returned in case of input parameters inconsistency.
      * @pre
-     *   memory != NULL &&
      *   nOfDimensions < 3 &&
-     *   dimensionSize[0]*dimensionSize[1]*dimensionSize[2] == memory.GetSize() &&
-     *   nOfDimensions == 0 --> dimensionSize[0:2] == 1 &&
-     *   nOfDimensions == 1 --> dimensionSize[0] >= 1 dimensionSize[1:2] == 1 &&
-     *   nOfDimensions == 1 --> dimensionSize[0:1] >= 1 dimensionSize[2] == 1
+     *   nOfDimensions == 0 => dimensionSize[0:2] == 1 &&
+     *   nOfDimensions == 1 => dimensionSize[0] >= 1 dimensionSize[1:2] == 1 &&
+     *   nOfDimensions == 1 => dimensionSize[0:1] >= 1 dimensionSize[2] == 1
      */
     AnyType Create(const uint8 nOfDimensions,
                    const uint32 dimensionSize[3]) const;
@@ -85,8 +85,6 @@ public:
 
     /**
      * @brief Destructor.
-     * @post
-     *   memory == NULL.
      */
     ~AnyTypeCreator();
 

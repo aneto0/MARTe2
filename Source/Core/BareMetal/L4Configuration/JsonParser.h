@@ -1,8 +1,8 @@
 /**
  * @file JsonParser.h
  * @brief Header file for class JsonParser
- * @date 10/dic/2015
- * @author pc
+ * @date 10/12/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -31,7 +31,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ParserI.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -39,13 +41,30 @@
 namespace MARTe {
 
 /**
- * @brief Implementation of the parser for Json language.
+ * @brief Concrete class for MARTe::ParserI abstract class, configured
+ * for streams of characters encoded in JSON.
  *
- * @details: Follows the grammar with the functions called if the parser matches the related expression. The grammar is written using
- * the SLK language.
+ * @details This class is a concrete class for MARTe::ParserI providing the
+ * actual lexical elements and parsing rules for interpreting a stream of
+ * characters encoded in JSON.
+ *
+ * Each instance of the parser is bound when it is constructed, with all the
+ * objects involved in the parsing analysis, as follows:
+ * - An input stream of characters that contains the serialization of a
+ * hierarchy of objects, encoded into JSON.
+ * - An output structured data store where the parser will build the in-
+ * memory objects defined into the input stream of characters.
+ * - An output stream of characters where the parser will write all the errors
+ * found on the input stream of characters.
+ *
+ * All the instances of the parser use the lexical elements defined
+ * in MARTe::JsonGrammar and apply the parsing rules of the following
+ * grammar:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.py
  * EXPRESSION:
  *   STRING --> GetNodeName()   \: VARIABLE __AddLeaf
- *   STRING __CreateNode    \: \{ { EXPRESSION }+  \} __EndBlock
+ *   STRING __CreateNode    \: \\{ { EXPRESSION }+  \\} __EndBlock
  *
  * VARIABLE:
  *   SCALAR
@@ -56,14 +75,18 @@ namespace MARTe {
  *   TOKEN __AddScalar
  *
  * VECTOR
- *   \[ SCALAR ... \] __EndVector
+ *   \\[ SCALAR ... \\] __EndVector
  *
  * MATRIX:
- *   \[ VECTOR ... \] __EndMatrix
+ *   \\[ VECTOR ... \\] __EndMatrix
  *
  * TOKEN:
  *   STRING
  *   NUMBER
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Note: This grammar is written in the SLK language and refers to functions
+ * declared in MARTe::ParserI.
  */
 class DLL_API JsonParser: public ParserI {
 
@@ -74,8 +97,6 @@ public:
      * @param[in] stream is the stream to be parsed.
      * @param[out] databaseIn is the built StructuredData in output.
      * @param[out] err is the stream where error messages are printed to.
-     * @post
-     *   ParserI::grammar == JsonGrammar.
      */
     JsonParser(StreamI &stream,
                StructuredDataI &databaseIn,

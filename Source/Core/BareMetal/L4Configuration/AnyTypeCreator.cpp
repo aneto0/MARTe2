@@ -34,9 +34,11 @@
 #include "AnyTypeCreator.h"
 #include "TypeConversion.h"
 #include "StringHelper.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /*lint -e9150 [MISRA C++ Rule 11-0-1]. Justification: Used a structure instead of a class. */
@@ -49,9 +51,13 @@ static const TypeCastInfo castTypes[] = { { CharString, "string" }, { SignedInte
         "int32" }, { SignedInteger64Bit, "int64" }, { UnsignedInteger8Bit, "uint8" }, { UnsignedInteger16Bit, "uint16" }, { UnsignedInteger32Bit, "uint32" }, {
         UnsignedInteger64Bit, "uint64" }, { Float32Bit, "float32" }, { Float64Bit, "float64" }, { CharString, static_cast<const char8*>(NULL)}};
 
+}
+
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
+namespace MARTe {
 
 AnyTypeCreator::AnyTypeCreator(const uint32 granularityIn) {
     typeIndex = 0u;

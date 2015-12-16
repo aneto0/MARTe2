@@ -31,10 +31,12 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ParserGrammar.h"
 #include "StaticList.h"
 #include "StreamI.h"
 #include "Token.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -42,34 +44,52 @@
 namespace MARTe {
 
 /**
- * @brief Implementation of a lexical analyzer which will be used by the Parser.
+ * @brief Generic lexical analyzer (lexer) which allows to interpret a stream
+ * of characters as a sequence of tokens, applying specific lexical rules set
+ * at instance level.
+ *
+ * @details Each instance of the lexer is bound when it is constructed, with
+ * the stream of characters to be analysed, which will remain the same during
+ * the object lifetime. At construction time, too, the lexer is initialized
+ * with the configuration of lexical elements that will rule the analysis
+ * (terminals, separators, and comment markers).
+ *
+ * Once the lexer is created, it allows its users to read tokens from the
+ * stream of characters one by one, being the lexer responsible of applying
+ * the lexical rules of the configuration.
+ *
+ * Note: Each read token is an instance of the class Token which can be of
+ * one of the following types:
+ * - NUMBER_TOKEN: If the token represents a number (also in hexadecimal,
+ *   octal, or binary format).
+ * - STRING_TOKEN: If the token represents a string (beginning with a ' " '
+ *   or a 'non-number' character at the beginning).
+ * - ERROR_TOKEN: If the token is invalid (e.g. 1234a56).
+ * - TERMINAL_TOKEN: If the token is a terminal.
+ * - EOF_TOKEN: If the read operation from the stream fails.
+ *
  */
-/*lint -e1712 . Justification: This class must be as per the only defined constructor. No need for a default constructor.*/
+/*lint -e1712 . Justification: This class must be as per the only defined
+ * constructor. No need for a default constructor.*/
 class DLL_API LexicalAnalyzer {
 
 public:
 
     /**
-     * @brief Default constructor.
-     * @param[in] stream the stream to be tokenized.
-     * @param[in] terminalsIn C-string containing the terminal characters.
-     * @param[in] separatorsIn C-string containing the separator characters.
-     * @details
-     *   - If the token represents a number (also in hexadecimal, octal, or binary format) its type will be NUMBER_TOKEN.
-     *   - If the token represents a string (beginning with a ' " ' or a 'non-number' character at the beginning) its type will be STRING_TOKEN.
-     *   - If the token is invalid (i.e 1234a56) its type will be ERROR_TOKEN.
-     *   - If the token is a terminal its type will be TERMINAL_TOKEN.
-     *   - If the read operation from the stream fails, a token with the EOF_TOKEN type will be returned.
-     * @post
-     *   separators == separatorsIn &&
-     *   terminals == terminalsIn &&
-     *   inputStream == &stream &&
-     *   token == NULL &&
-     *   tokenInfo[0].Set(EOF_TOKEN, "EOF") &&
-     *   tokenInfo[1].Set(STRING_TOKEN, "STRING") &&
-     *   tokenInfo[2].Set(NUMBER_TOKEN, "NUMBER") &&
-     *   tokenInfo[3].Set(ERROR_TOKEN, "ERROR") &&
-     *   tokenInfo[4].Set(TERMINAL_TOKEN, "TERMINAL")
+     * @brief Constructor which initializes the instance with the stream of
+     * characters to analyze and the configuration of the analyzer (terminals,
+     * separators, and comment markers).
+     * @param[in] stream the stream of characters to be tokenized.
+     * @param[in] terminalsIn C-string containing the list of terminal
+     * characters, being each character a terminal.
+     * @param[in] separatorsIn C-string containing the list of separator
+     * characters, being each character a terminal.
+     * @param[in] oneLineCommentBeginIn C-string containing the pattern that
+     * it is used for marking the beginning of a single line comment.
+     * @param[in] multipleLineCommentBeginIn C-string containing the pattern
+     * that it is used for marking the beginning of a multiple line comment.
+     * @param[in] multipleLineCommentEndIn C-string containing the pattern
+     * that it is used for marking the end of a multiple line comment.
      */
     LexicalAnalyzer(StreamI &stream,
             const char8 * const terminalsIn,
@@ -80,25 +100,29 @@ public:
 
     /**
      * @brief Destructor.
-     * @post
-     *   The token queue will be deallocated.
      */
     ~LexicalAnalyzer();
 
     /**
-     * @brief Extracts the next token from the internal queue.
-     * @return a pointer to the next token found in the queue.
+     * @brief Extracts the next token from the stream.
+     * @return a pointer to the next token found in the stream.
      */
     Token *GetToken();
 
     /**
-     * @brief Returns the token at the specified position in the queue without consuming it.
-     * @param[in] position is the position in the queue of the desired token (0 means the next).
-     * @return the token in the specified position found in the internal queue.
+     * @brief Returns the nth token in the stream without consuming it.
+     * @param[in] position is the position of the nth token in the stream (0 means the next).
+     * @return the nth token found in the stream.
      */
     Token *PeekToken(const uint32 position);
 
 private:
+
+    /*
+     * Implementation details of the class:
+     * The implementation adopts a lazy strategy, so it tokenizes the stream of
+     * characters on demand, each time GetToken or PeekToken are called.
+     */
 
     /**
      * @brief Tokenizes the stream in input adding tokens to the internal queue.
@@ -109,7 +133,7 @@ private:
     /**
      * @brief Adds a token to the internal queue.
      * @param[in] tokenBuffer contains the token data.
-     * @param[in] isString spcifies if the token represents a string.
+     * @param[in] isString specifies if the token represents a string.
      */
     void AddToken(char8 * const tokenBuffer, const bool isString);
 
@@ -140,7 +164,7 @@ private:
     StreamString oneLineCommentBegin;
 
     /**
-     * The end of multiple line comment pattern.
+     * The begin of multiple line comment pattern.
      */
     StreamString multipleLineCommentBegin;
 
@@ -172,6 +196,7 @@ private:
 };
 
 }
+
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
