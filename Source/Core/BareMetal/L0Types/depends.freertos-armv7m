@@ -1,6 +1,0 @@
-../../../../Build/freertos-armv7m/Core/BareMetal/L0Types/LinkedListable.o: LinkedListable.cpp LinkedListable.h CompilerTypes.h \
- Architecture/armv7m_gcc/CompilerTypes.h Iterator.h SearchFilter.h \
- SortFilter.h
-../../../../Build/freertos-armv7m/Core/BareMetal/L0Types/LinkedListHolder.o: LinkedListHolder.cpp LinkedListHolder.h \
- LinkedListable.h CompilerTypes.h Architecture/armv7m_gcc/CompilerTypes.h \
- Iterator.h SearchFilter.h SortFilter.h

@@ -2,7 +2,7 @@
 #
 # Copyright 2015 F4E | European Joint Undertaking for ITER 
 #  and the Development of Fusion Energy ('Fusion for Energy')
-# 
+#
 # Licensed under the EUPL, Version 1.1 or - as soon they 
 # will be approved by the European Commission - subsequent  
 # versions of the EUPL (the "Licence"); 
@@ -20,24 +20,14 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.linux 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
-OBJSX=
-SPB = BareMetal.x Scheduler.x FileSystem.x 
+TARGET=freertos-arduino-uno
 
-PACKAGE=
-ROOT_DIR=../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+#include Makefile.inc
+clean:
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
-INCLUDES += -I../../Lib/gtest-1.7.0/include
-
-all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/MainGTest$(EXEEXT) 
-	echo  $(OBJS)
-
-include depends.$(TARGET)
-
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+OPTIM=-finline-functions
 

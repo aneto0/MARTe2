@@ -22,22 +22,30 @@
 #
 #############################################################
 
-OBJSX=
-SPB = BareMetal.x Scheduler.x FileSystem.x 
 
-PACKAGE=
-ROOT_DIR=../..
+SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x 
+
+PACKAGE=GTest
+ROOT_DIR=../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES += -I../../Lib/gtest-1.7.0/include
 
-all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/MainGTest$(EXEEXT) 
+LIBRARIES_STATIC=$(BUILD_DIR)/L0Types/L0TypesBGTest$(LIBEXT)
+LIBRARIES_STATIC=$(BUILD_DIR)/L1Portability/L1PortabilityBGTest$(LIBEXT)
+LIBRARIES_STATIC=$(BUILD_DIR)/L2Objects/L2ObjectsBGTest$(LIBEXT)
+LIBRARIES_STATIC=$(BUILD_DIR)/L3Streams/L3StreamsBGTest$(LIBEXT)
+LIBRARIES_STATIC=$(BUILD_DIR)/L4Configuration/L4ConfigurationBGTest$(LIBEXT)
+
+
+
+all: $(OBJS)  $(SUBPROJ)  \
+        $(BUILD_DIR)/MARTeBGTest$(LIBEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)
 
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
 
