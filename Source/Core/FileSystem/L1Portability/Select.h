@@ -36,11 +36,11 @@
 #include "TimeoutType.h"
 #include "HandleI.h"
 
+#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT, SelectProperties.h)
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT, SelectProperties.h)
 
 namespace MARTe {
 

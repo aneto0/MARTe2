@@ -44,7 +44,7 @@ namespace MARTe {
 class DLL_API Introspection {
 public:
     //TODO
-    Introspection(){}
+    Introspection() {}
 };
 
 }

@@ -128,7 +128,6 @@ public:
      */
     inline TimeoutType GetTimeout() const;
 
-
     /**
      * Sets the timeout for read and write operations.
      */

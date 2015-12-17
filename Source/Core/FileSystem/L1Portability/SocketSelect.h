@@ -40,8 +40,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-
-
     /**
      * @brief A class using to check if sockets are ready for a read, write operation or if
      * an exception is thrown.
@@ -158,7 +156,6 @@ namespace MARTe {
          * @param[in] s is the socket to check.
          */
         bool CheckExcept(const BasicSocket * const s);
-
 
     private:
 

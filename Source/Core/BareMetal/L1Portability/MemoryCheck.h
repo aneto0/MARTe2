@@ -2,7 +2,7 @@
  * @file MemoryCheck.h
  * @brief Header file for module MemoryCheck
  * @date 18/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -38,7 +38,7 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 namespace MemoryCheck {
 
@@ -67,8 +67,8 @@ enum MemoryTestAccessMode {
  * @return true if the process has the access to the memory with the specified permissions, false otherwise.
  */
 DLL_API bool Check(const void * const address,
-           const MemoryTestAccessMode accessMode,
-           const uint32 size = 4u);
+                   const MemoryTestAccessMode accessMode,
+                   const uint32 size = 4u);
 
 }
 

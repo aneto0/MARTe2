@@ -63,7 +63,6 @@ public:
      */
     virtual ~DirectoryScanner();
 
-
     /**
      * @brief Retrieve the size of the scanned directory.
      * @return the sum of the contained files and sub-directories sizes.
@@ -81,38 +80,38 @@ public:
               const char8 *fileMask = "*",
               SortFilter * const sorter = NULL);
 
-    /**
-     * @brief Gets the directory absolute path.
-     * @return the the directory absolute path.
-     */
-    const char8 *BasePath() const;
+              /**
+               * @brief Gets the directory absolute path.
+               * @return the the directory absolute path.
+               */
+              const char8 *BasePath() const;
 
-    /**
-     * @brief Removes all the elements from the list.
-     * @post
-     *   BasePath() = NULL &&
-     *   DirectorySize() = 0
-     */
-    virtual void CleanUp();
+              /**
+               * @brief Removes all the elements from the list.
+               * @post
+               *   BasePath() = NULL &&
+               *   DirectorySize() = 0
+               */
+              virtual void CleanUp();
 
-private:
+          private:
 
-    /**
-     * The directory path.
-     */
-    char8* basePath;
+              /**
+               * The directory path.
+               */
+              char8* basePath;
 
-    /**
-     * The total content size.
-     */
-    uint64 size;
+              /**
+               * The total content size.
+               */
+              uint64 size;
 
-};
-}
+          };
+      }
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+      /*---------------------------------------------------------------------------*/
+      /*                        Inline method definitions                          */
+      /*---------------------------------------------------------------------------*/
 
 #endif /* DIRECTORYSCANNER_H_ */
 

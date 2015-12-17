@@ -184,118 +184,119 @@ namespace MARTe {
 /*lint -e{9109} Object is forward declared in ClassRegistryItem (in order to be able to have access the function pointer to
  * create new instances.*/
 class DLL_API Object {
-	/**
-	 * This allows the Reference class to be the only interface to manage the number of instances pointing to this object.
-	 */
-	friend class Reference;
+    /**
+     * This allows the Reference class to be the only interface to manage the number of instances pointing to this object.
+     */
+    friend class Reference;
 public:
-	CLASS_REGISTER_DECLARATION()
+    CLASS_REGISTER_DECLARATION()
 
-	/**
-	 * @brief Default constructor. Sets the number of references to zero.
-	 */
-	Object();
+    /**
+     * @brief Default constructor. Sets the number of references to zero.
+     */
+    Object();
 
-	/**
-	 * @brief Virtual destructor. No operation.
-	 */
-	virtual ~Object();
+    /**
+     * @brief Virtual destructor. No operation.
+     */
+    virtual ~Object();
 
-	/**
-	 * @brief Initialises the object against a structured list of elements.
-	 * @details Upon a successful instantiation of the Object the framework will
-	 * call the Initialise method. The Object instance is then responsible for
-	 * retrieving the initialisation data from the input data and of assigning
-	 * these value to its internal variables.
-	 * @param[in] data the input initialisation data.
-	 * @return true if all the input \a data is valid and can be successfully assigned
-	 * to the Object member variables.
-	 */
-	virtual bool Initialise(const StructuredDataI &data);
+    /**
+     * @brief Initialises the object against a structured list of elements.
+     * @details Upon a successful instantiation of the Object the framework will
+     * call the Initialise method. The Object instance is then responsible for
+     * retrieving the initialisation data from the input data and of assigning
+     * these value to its internal variables.
+     * @param[in] data the input initialisation data.
+     * @return true if all the input \a data is valid and can be successfully assigned
+     * to the Object member variables.
+     */
+    virtual bool Initialise(const StructuredDataI &data);
 
-	/**
-	 * @brief Returns a copy to the object introspection properties.
-	 * @param[out] destination Copies the object introspection properties to the \a destination.
-	 */
-	void GetIntrospectionCopy(Introspection &destination) const;
+    /**
+     * @brief Returns a copy to the object introspection properties.
+     * @param[out] destination Copies the object introspection properties to the \a destination.
+     */
+    void GetIntrospectionCopy(Introspection &destination) const;
 
-	/**
-	 * @brief Returns the number of references.
-	 * @return the number of references pointing to this object.
-	 */
-	uint32 NumberOfReferences() const;
+    /**
+     * @brief Returns the number of references.
+     * @return the number of references pointing to this object.
+     */
+    uint32 NumberOfReferences() const;
 
-	/**
-	 * @brief Returns the object name.
-	 * @return the object name (which might be NULL).
-	 */
-	const char8 * const GetName() const;
+    /**
+     * @brief Returns the object name.
+     * @return the object name (which might be NULL).
+     */
+    const char8 * const GetName() const;
 
-	/**
-	 * @brief Returns an object name which is guaranteed to be unique.
-	 * @details The object unique name is composed by the object memory
-	 *  address and by the object name as returned by GetName().
-	 *
-	 * If GetName() returns NULL the unique name will be the object memory address.
-	 * The format of the unique name is xMemoryAddress::Name. The leading zeros of the
-	 * memory address are discarded.
-	 * @param[in, out] destination the destination where to write the unique object to.
-	 * If enough space is available the string will be zero terminated.
-	 * @param[in] size the size of the \a destination input string.
-	 */
-	void GetUniqueName(char8 * const destination, const uint32 &size) const;
+    /**
+     * @brief Returns an object name which is guaranteed to be unique.
+     * @details The object unique name is composed by the object memory
+     *  address and by the object name as returned by GetName().
+     *
+     * If GetName() returns NULL the unique name will be the object memory address.
+     * The format of the unique name is xMemoryAddress::Name. The leading zeros of the
+     * memory address are discarded.
+     * @param[in, out] destination the destination where to write the unique object to.
+     * If enough space is available the string will be zero terminated.
+     * @param[in] size the size of the \a destination input string.
+     */
+    void GetUniqueName(char8 * const destination,
+                       const uint32 &size) const;
 
-	/**
-	 * @brief Sets the object name.
-	 * @details If a name had already been set the object name will be updated to this name.
-	 * @param newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
-	 * @pre newName != NULL
-	 */
-	void SetName(const char8 * const newName);
+    /**
+     * @brief Sets the object name.
+     * @details If a name had already been set the object name will be updated to this name.
+     * @param newName the new name of the Object. A private copy of the \a name will be performed and managed by the Object.
+     * @pre newName != NULL
+     */
+    void SetName(const char8 * const newName);
 
 private:
 
-	/**
-	 * @brief Decrements the number of references to this object.
-	 * @details Only accessible to the Reference class.
-	 * @return the number of references after the operation.
-	 */
-	uint32 DecrementReferences();
+    /**
+     * @brief Decrements the number of references to this object.
+     * @details Only accessible to the Reference class.
+     * @return the number of references after the operation.
+     */
+    uint32 DecrementReferences();
 
-	/**
-	 * @brief Increments the number of references to this object.
-	 * @details Only accessible to the Reference class.
-	 */
-	void IncrementReferences();
+    /**
+     * @brief Increments the number of references to this object.
+     * @details Only accessible to the Reference class.
+     */
+    void IncrementReferences();
 
-	/**
-	 * @brief Clones the object.
-	 * @details To enable cloning of objects using references the final class must implement clone.
-	 * Only accessible to the Reference class.
-	 * @return a clone of this object.
-	 */
-	virtual Object* Clone() const;
+    /**
+     * @brief Clones the object.
+     * @details To enable cloning of objects using references the final class must implement clone.
+     * Only accessible to the Reference class.
+     * @return a clone of this object.
+     */
+    virtual Object* Clone() const;
 
-	/**
-	 * @brief Disallow the usage of new.
-	 * @param[in] size the size of the object.
-	 */
-	static void *operator new(osulong size) throw ();
+    /**
+     * @brief Disallow the usage of new.
+     * @param[in] size the size of the object.
+     */
+    static void *operator new(osulong size) throw ();
 
-	/**
-	 * Object introspection properties.
-	 */
-	Introspection introspection;
+    /**
+     * Object introspection properties.
+     */
+    Introspection introspection;
 
-	/**
-	 * The number of references to this object.
-	 */
-	volatile uint32 referenceCounter;
+    /**
+     * The number of references to this object.
+     */
+    volatile uint32 referenceCounter;
 
-	/**
-	 * The name of this object.
-	 */
-	char8 *name;
+    /**
+     * The name of this object.
+     */
+    char8 *name;
 };
 
 }

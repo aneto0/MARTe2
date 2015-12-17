@@ -2,7 +2,7 @@
  * @file Sleep.h
  * @brief Header file for module Sleep
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -39,7 +39,7 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 namespace Sleep {
 
@@ -89,7 +89,7 @@ inline void Busy(float64 sec);
  * @param[in] nonBusySleepSec is the time to sleep without use cpu.
  */
 DLL_API void SemiBusy(const float64 totalSleepSec,
-              const float64 nonBusySleepSec);
+                      const float64 nonBusySleepSec);
 }
 
 /*---------------------------------------------------------------------------*/

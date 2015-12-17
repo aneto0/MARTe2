@@ -142,7 +142,7 @@ public:
      * @return true if the object was successfully created and initialized.
      */
     virtual bool Initialise(const StructuredDataI &data,
-                            const bool &createOnly);
+    const bool &createOnly);
 
 private:
 

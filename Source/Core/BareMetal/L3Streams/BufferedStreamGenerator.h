@@ -39,8 +39,6 @@
 
 namespace MARTe {
 
-
-
 /**
  * @brief A class to add buffering support to OperatingSystemStream.
  *

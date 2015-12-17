@@ -111,7 +111,6 @@ public:
     virtual bool Write(const char8 * const input,
                        uint32 & size);
 
-
     /**
      * @see StreamI::Read
      */
@@ -119,14 +118,12 @@ public:
                       uint32 & size,
                       const TimeoutType &timeout);
 
-
     /**
      * @see StreamI::Write
      */
     virtual bool Write(const char8 * const input,
                        uint32 & size,
                        const TimeoutType &timeout);
-
 
     /**
      * @brief Gets the read buffer size.

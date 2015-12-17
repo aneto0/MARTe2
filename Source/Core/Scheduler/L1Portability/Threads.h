@@ -2,7 +2,7 @@
  * @file Threads.h
  * @brief Header file for module Threads
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -126,8 +126,8 @@ enum PriorityClassType {
  * value between 0 and 15.
  */
 DLL_API void SetPriority(const ThreadIdentifier &threadId,
-                 const PriorityClassType &priorityClass,
-                 const uint8 &priorityLevel);
+                         const PriorityClassType &priorityClass,
+                         const uint8 &priorityLevel);
 
 /**
  * @brief Start a new thread.
@@ -144,11 +144,11 @@ DLL_API void SetPriority(const ThreadIdentifier &threadId,
  * @return The thread identification number.
  */
 DLL_API ThreadIdentifier BeginThread(const ThreadFunctionType function,
-                             const void * const parameters = static_cast<void *>(NULL),
-                             const uint32 &stacksize = static_cast<uint32>(THREADS_DEFAULT_STACKSIZE),
-                             const char8 * name = static_cast<char8*>(NULL),
-                             uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
-                             ProcessorType runOnCPUs = UndefinedCPUs);
+                                     const void * const parameters = static_cast<void *>(NULL),
+const uint32 &stacksize = static_cast<uint32>(THREADS_DEFAULT_STACKSIZE),
+const char8 * name = static_cast<char8*>(NULL),
+uint32 exceptionHandlerBehaviour = ExceptionHandler::NotHandled,
+ProcessorType runOnCPUs = UndefinedCPUs);
 
 /**
  * @brief Gets the current thread id;
@@ -226,7 +226,7 @@ DLL_API uint32 NumberOfThreads();
  * @return true if the requested element is in the database, false otherwise.
  */
 DLL_API bool GetThreadInfoCopy(ThreadInformation & copy,
-                       const uint32 &n);
+                               const uint32 &n);
 
 /**
  * @brief Get a copy of the thread information stored in the database.
@@ -235,7 +235,7 @@ DLL_API bool GetThreadInfoCopy(ThreadInformation & copy,
  * @return true if the requested element is in the database, false otherwise.
  */
 DLL_API bool GetThreadInfoCopy(ThreadInformation & copy,
-                       const ThreadIdentifier &threadId);
+                               const ThreadIdentifier &threadId);
 
 /**
  * @brief Search the thread with the specified name.

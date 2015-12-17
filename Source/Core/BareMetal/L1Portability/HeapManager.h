@@ -38,7 +38,7 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 namespace HeapManager {
 
@@ -66,7 +66,7 @@ DLL_API HeapI *FindHeap(const char8 * const name);
  * @pre All the heaps added have to have different names. AddHeap does not check if it is already include
  * a heap with the same name.
  */
-DLL_API bool AddHeap(HeapI *const newHeap);
+DLL_API bool AddHeap(HeapI * const newHeap);
 
 /**
  * @brief Removes a specified HeapI object from the database.
@@ -96,7 +96,7 @@ DLL_API bool Free(void *&data);
  * @return The pointer to the allocated memory. NULL if allocation failed.
  */
 DLL_API void *Malloc(uint32 size,
-             const char8 * const heapName = NULL_PTR(char8 *));
+                     const char8 * const heapName = NULL_PTR(char8 *));
 
 /**
  * @brief Reallocates a memory portion possibly contiguously with the specified already existent memory area.
@@ -107,7 +107,7 @@ DLL_API void *Malloc(uint32 size,
  * @return The pointer to the new data block. NULL if reallocation failed.
  */
 DLL_API void *Realloc(void *&data,
-              const uint32 newSize);
+                      const uint32 newSize);
 
 /**
  * @brief Duplicates a memory section into a new area from the specified heap.
@@ -122,8 +122,8 @@ DLL_API void *Realloc(void *&data,
  * @pre If size = 0 the memory area pointed by \a data must be a zero terminated string.
  */
 DLL_API void *Duplicate(const void * const data,
-                const uint32 size = 0U,
-                const char8 * const heapName = NULL_PTR(char8 *));
+                        const uint32 size = 0U,
+                        const char8 * const heapName = NULL_PTR(char8 *));
 
 }
 

@@ -142,15 +142,14 @@ public:
     virtual bool Write(const char8 * const input,
                        uint32 & size);
 
-
     /**
      * @brief Default implementation for buffered streams: calls StreamI::Read(*)
      * with infinite timeout.
      * @see StreamI::Read(*).
      */
     virtual bool Read(char8 * const output,
-            uint32 & size,
-            const TimeoutType &timeout);
+                      uint32 & size,
+                      const TimeoutType &timeout);
 
     /**
      * @brief Default implementation for buffered streams: calls StreamI::Write(*)
@@ -158,9 +157,8 @@ public:
      * @see StreamI::Write(*)
      */
     virtual bool Write(const char8 * const input,
-            uint32 & size,
-            const TimeoutType &timeout);
-
+                       uint32 & size,
+                       const TimeoutType &timeout);
 
     /**
      * @brief Queries if the stream is writable.
@@ -218,8 +216,6 @@ public:
      * @return true.
      */
     virtual bool SetSize(const uint64 size);
-
-
 
     /*-----------------------------------------------------------------------*/
 

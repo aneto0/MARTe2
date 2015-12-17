@@ -94,7 +94,7 @@ struct ParserGrammar {
 /**
  * The terminal and separator characters in standard MARTe configuration streams.
  */
-static const ParserGrammar StandardGrammar = { "\n\r\t, ", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0'};
+static const ParserGrammar StandardGrammar = { "\n\r\t, ", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
 
 }
 

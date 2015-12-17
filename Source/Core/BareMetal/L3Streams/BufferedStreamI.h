@@ -126,8 +126,6 @@ public:
      */
     inline operator AnyType();
 
-
-
     /**
      * @brief Reads a token from the stream into a character buffer.
      * @details Extracts a token from the stream until a terminator or \0
@@ -151,10 +149,10 @@ public:
      * @post see brief
      */
     virtual bool GetToken(char8 * const outputBuffer,
-            const char8 * const terminator,
-            const uint32 outputBufferSize,
-            char8 &saveTerminator,
-            const char8 * const skipCharacters);
+                          const char8 * const terminator,
+                          const uint32 outputBufferSize,
+                          char8 &saveTerminator,
+                          const char8 * const skipCharacters);
 
     /**
      * @brief Reads a token from the stream into another stream.
@@ -179,9 +177,9 @@ public:
      * @post see brief
      */
     bool GetToken(BufferedStreamI & output,
-            const char8 * const terminator,
-            char8 &saveTerminator,
-            const char8 * const skipCharacters = NULL_PTR(const char8 *));
+                  const char8 * const terminator,
+                  char8 &saveTerminator,
+                  const char8 * const skipCharacters = NULL_PTR(const char8 *));
 
     /**
      * @brief Skips a series of tokens delimited by terminators or \0.
@@ -195,7 +193,7 @@ public:
      * @post see brief
      */
     bool SkipTokens(const uint32 count,
-            const char8 * const terminator);
+                    const char8 * const terminator);
 
     /**
      * @brief Extracts a line from this stream into another stream.
@@ -207,7 +205,7 @@ public:
      * @post see brief
      */
     bool GetLine(BufferedStreamI & output,
-            bool skipTerminators = true);
+                 bool skipTerminators = true);
 
     /**
      * @brief Extracts a line from this stream into a character buffer.
@@ -221,8 +219,8 @@ public:
      * @post see brief
      */
     bool GetLine(char8 *outputBuffer,
-            const uint32 outputBufferSize,
-            bool skipTerminators = true);
+                 const uint32 outputBufferSize,
+                 bool skipTerminators = true);
 
     /**
      * @brief Printf implementation.
@@ -236,7 +234,7 @@ public:
      * @post see brief
      */
     bool PrintFormatted(const char8 * const format,
-            const AnyType pars[]);
+                        const AnyType pars[]);
 
     /**
      * @brief Copies a character buffer.
@@ -264,31 +262,31 @@ public:
      * @see PrintFormatted.
      */
     inline bool Printf(const char8 * const format,
-            const AnyType& par1);
+                       const AnyType& par1);
 
     /**
      * @see PrintFormatted.
      */
     inline bool Printf(const char8 * const format,
-            const AnyType& par1,
-            const AnyType& par2);
+                       const AnyType& par1,
+                       const AnyType& par2);
 
     /**
      * @see PrintFormatted.
      */
     inline bool Printf(const char8 * const format,
-            const AnyType& par1,
-            const AnyType& par2,
-            const AnyType& par3);
+                       const AnyType& par1,
+                       const AnyType& par2,
+                       const AnyType& par3);
 
     /**
      * @see PrintFormatted.
      */
     inline bool Printf(const char8 * const format,
-            const AnyType& par1,
-            const AnyType& par2,
-            const AnyType& par3,
-            const AnyType& par4);
+                       const AnyType& par1,
+                       const AnyType& par2,
+                       const AnyType& par3,
+                       const AnyType& par4);
 
 protected:
 
@@ -320,31 +318,31 @@ BufferedStreamI::operator AnyType() {
 }
 
 bool BufferedStreamI::Printf(const char8 * const format,
-                     const AnyType& par1) {
+                             const AnyType& par1) {
     AnyType pars[2] = { par1, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 
 bool BufferedStreamI::Printf(const char8 * const format,
-                     const AnyType& par1,
-                     const AnyType& par2) {
+                             const AnyType& par1,
+                             const AnyType& par2) {
     AnyType pars[3] = { par1, par2, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 
 bool BufferedStreamI::Printf(const char8 * const format,
-                     const AnyType& par1,
-                     const AnyType& par2,
-                     const AnyType& par3) {
+                             const AnyType& par1,
+                             const AnyType& par2,
+                             const AnyType& par3) {
     AnyType pars[4] = { par1, par2, par3, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }
 
 bool BufferedStreamI::Printf(const char8 * const format,
-                     const AnyType& par1,
-                     const AnyType& par2,
-                     const AnyType& par3,
-                     const AnyType& par4) {
+                             const AnyType& par1,
+                             const AnyType& par2,
+                             const AnyType& par3,
+                             const AnyType& par4) {
     AnyType pars[5] = { par1, par2, par3, par4, voidAnyType };
     return PrintFormatted(format, &pars[0]);
 }

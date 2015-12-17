@@ -52,7 +52,7 @@ namespace MARTe {
  *   - VECTOR    ---> STRING = { NUMBER ... } | { STRING ... }
  *   - MATRIX    ---> STRING = {{ NUMBER ... } ... } | {{ STRING ... } ... }
  *   - TYPE CAST ---> ( STRING )
-*/
+ */
 class DLL_API Parser: public Object {
 public:
     CLASS_REGISTER_DECLARATION()
@@ -96,24 +96,24 @@ public:
      */
     bool Parse(StreamI &stream,
                StructuredDataI &database,
-               BufferedStreamI * const err =  static_cast<BufferedStreamI *>(NULL)) const;
+               BufferedStreamI * const err = static_cast<BufferedStreamI *>(NULL)) const;
 
-    /**
-     * @brief Retrieves the grammar used by this parser.
-     * @return the grammar used by this parser.
-     */
-    ParserGrammar GetGrammar() const;
+               /**
+                * @brief Retrieves the grammar used by this parser.
+                * @return the grammar used by this parser.
+                */
+               ParserGrammar GetGrammar() const;
 
-private:
+           private:
 
-    ParserGrammar grammar;
-};
+               ParserGrammar grammar;
+           };
 
-}
+       }
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+       /*---------------------------------------------------------------------------*/
+       /*                        Inline method definitions                          */
+       /*---------------------------------------------------------------------------*/
 
 #endif /* PARSER_H_ */
 
