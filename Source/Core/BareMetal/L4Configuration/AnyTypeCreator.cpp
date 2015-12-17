@@ -50,7 +50,6 @@ struct TypeCastInfo {
 static const TypeCastInfo castTypes[] = { { CharString, "string" }, { SignedInteger8Bit, "int8" }, { SignedInteger16Bit, "int16" }, { SignedInteger32Bit,
         "int32" }, { SignedInteger64Bit, "int64" }, { UnsignedInteger8Bit, "uint8" }, { UnsignedInteger16Bit, "uint16" }, { UnsignedInteger32Bit, "uint32" }, {
         UnsignedInteger64Bit, "uint64" }, { Float32Bit, "float32" }, { Float64Bit, "float64" }, { CharString, static_cast<const char8*>(NULL)}};
-
 }
 
 /*---------------------------------------------------------------------------*/

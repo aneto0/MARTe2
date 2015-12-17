@@ -1,7 +1,7 @@
 /**
  * @file ParserI.cpp
  * @brief Source file for class ParserI
- * @date 09/dic/2015
+ * @date 09/12/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -228,36 +228,6 @@ void ParserI::AddScalar() {
         isError = true;
     }
 }
-
-/*
-void ParserI::CreateClassLeaf() {
-    // add an element to the memory
-    bool ret = memory.Add(typeName.Buffer(), GetCurrentTokenData(currentToken));
-    if (ret) {
-        uint32 dimSizes[3] = { 1u, 1u, 1u };
-        AnyType element = memory.Create(0u, &dimSizes[0]);
-        ret = (element.GetDataPointer() != NULL);
-        if (ret) {
-            ret = database->Write("ClassName", element);
-            if (!ret) {
-                PrintErrorOnStream("\nFailed adding the class name leaf to the configuration database! [%d]", GetCurrentTokenLineNumber(currentToken),
-                                   errorStream);
-                isError = true;
-            }
-        }
-        else {
-            PrintErrorOnStream("\nPossible empty vector or matrix! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-            isError = true;
-        }
-    }
-    else {
-        PrintErrorOnStream("\nFailed read or conversion! [%d]", GetCurrentTokenLineNumber(currentToken), errorStream);
-        isError = true;
-    }
-
-    memory.CleanUp(1u);
-}
-*/
 
 void ParserI::EndVector() {
     if (numberOfColumns == 0u) {

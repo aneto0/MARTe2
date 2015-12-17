@@ -53,7 +53,7 @@ public:
      * @param[in] granularityIn is the granularity of the allocated memory (the
      * number of new elements which could be added after a reallocation).
      * @post
-     *   GetGranularity() == granularityIn &&
+     *   GetGranularity() == granularityIn
      */
     AnyTypeCreator(const uint32 granularityIn = 1u);
 
@@ -74,11 +74,11 @@ public:
 
     /**
      * @brief Adds an element to the memory converting it from a string token.
+     * @details If the type is unrecognized, the default type "string" will be considered.
      * @param[in] type is the desired type for the element to be added.
      * @param[in] data is the element in string format which has to be converted.
      * @return false if in the memory there are already element with a different type or if
      * the conversion fails. True otherwise.
-     * @details If the type is unrecognized, the default type "string" will be considered.
      */
     bool Add(const char8 * const type,
              const char8 * const data);

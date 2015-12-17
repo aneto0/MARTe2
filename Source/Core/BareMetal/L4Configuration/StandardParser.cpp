@@ -1,8 +1,8 @@
 /**
  * @file StandardParser.cpp
  * @brief Source file for class StandardParser
- * @date 09/dic/2015
- * @author pc
+ * @date 09/12/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -70,16 +70,6 @@ static uint32 Conflict_row[] = { 0u
 
 , 1u, 1u, 4u, 9u, 11u, 0u };
 
-/*
- #define START_SYMBOL 9
- #define END_OF_SLK_INPUT_ 8
- #define START_STATE 0
- #define START_CONFLICT 23
- #define END_CONFLICT 28
- #define START_ACTION 22
- #define END_ACTION 31
- #define TOTAL_CONFLICTS 5
- */
 
 static const uint32 Constants[] = { 9u, 8u, 0u, 23u, 28u, 22u, 31u, 5u };
 
