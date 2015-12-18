@@ -144,16 +144,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                         //On Windows a non-blocking socket is very likely to call WSAEWOULDBLOCK so this has to be trapped and retried with an
                         //arbitrary timeout
                     case (WSAEWOULDBLOCK): {
-                        /*Select sel;
-                         sel.AddWriteHandle(*this);
-                         if (wasBlocking) {
-                         ret = sel.WaitUntil(timeout);
-                         printf("Con timeout\n");
-                         }
-                         else {
-                         ret = sel.WaitUntil(1000u);
-                         printf("Sin timeout\n");
-                         }*/
                         fd_set writeFDS;
                         FD_ZERO(&writeFDS);
                         FD_SET(connectionSocket, &writeFDS);
@@ -167,7 +157,7 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                             timeWait.tv_usec = 0u;
                         }
                         uint32 readySockets = select(256, static_cast<fd_set*>(NULL), &writeFDS, static_cast<fd_set*>(NULL), &timeWait);
-                        //printf("readySockets=%d error=%ld\n", readySockets, GetLastError());
+
                         ret = (readySockets > 0);
 
                         if (ret) {
@@ -272,25 +262,17 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                         int32 errorCode;
                         errorCode = WSAGetLastError();
                         if ((errorCode == 0) || (errorCode == WSAEINPROGRESS) || (errorCode == WSAEWOULDBLOCK)) {
-                            /*Select sel;
-                             sel.AddWriteHandle(*this);
-
-                             if (sel.WaitUntil(timeout)) {
-                             ret = WaitConnection(TTDefault, client);
-                             }*/
-                            fd_set writeFDS;
-                            FD_ZERO(&writeFDS);
-                            FD_CLR(connectionSocket, &writeFDS);
-                            FD_SET(connectionSocket, &writeFDS);
+                            fd_set readFDS;
+                            FD_ZERO(&readFDS);
+                            FD_SET(connectionSocket, &readFDS);
                             timeval timeWait;
                             timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
                             timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
 
-                            uint32 readySockets = select(256, static_cast<fd_set*>(NULL), &writeFDS, static_cast<fd_set*>(NULL), &timeWait);
+                            uint32 readySockets = select(256, &readFDS, &readFDS, static_cast<fd_set*>(NULL), &timeWait);
                             if(readySockets > 0) {
                                 ret = WaitConnection(TTDefault, client);
                             }
-                            //printf("Connect ret=%d\n", ret);
                         }
                     }
                     else {
