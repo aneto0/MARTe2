@@ -26,4 +26,48 @@
 
 TARGET=freertos-armv7m
 
-all:
+
+OBJSX=
+SPB = BareMetal.x
+PACKAGE=
+ROOT_DIR=../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+INCLUDES += -I../../Lib/EmbeddedTestEngine
+EXT_PACKAGE=/home/pc/STM32Cube_FW_F4_V1.5.0
+
+CFLAGS+= -DSTM32F407xx
+INCLUDES+= -I../../Lib/EmbeddedTestEngine/STM32F4-Discovery/Inc
+INCLUDES+= -I$(EXT_PACKAGE)/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+INCLUDES+= -I$(EXT_PACKAGE)/Drivers/STM32F4xx_HAL_Driver/Inc/
+INCLUDES+= -I$(EXT_PACKAGE)/Drivers/BSP/STM32F4-Discovery/
+INCLUDES+= -I$(EXT_PACKAGE)/Drivers/CMSIS/Include/
+INCLUDES+= -I$(EXT_PACKAGE)/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/
+INCLUDES+= -I$(EXT_PACKAGE)/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/
+INCLUDES += -I../Core/BareMetal/L0Types
+INCLUDES += -I../../Source/Core/BareMetal/L0Types
+
+
+
+
+LIBRARIES   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT) 
+LIBRARIES   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreBTest$(LIBEXT) 
+#LIBRARIES   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT) 
+#LIBRARIES   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
+#LIBRARIES   += ../../Build/$(TARGET)/GTest/BareMetal/MARTeBGTest$(LIBEXT)
+#LIBRARIES   += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
+LIBRARIES   += ../../Lib/EmbeddedTestEngine/embedded$(LIBEXT)
+
+
+
+all: $(OBJS) $(SUBPROJ)   \
+        $(BUILD_DIR)/MainGTest_$(TARGET)$(EXEEXT) 
+	echo  $(OBJS)
+
+include depends.$(TARGET)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+
+

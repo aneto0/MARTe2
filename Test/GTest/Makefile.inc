@@ -23,18 +23,15 @@
 #############################################################
 
 OBJSX=
-SPB = BareMetal.x Scheduler.x FileSystem.x 
-
+SPB = BareMetal.x Scheduler.x FileSystem.x
 PACKAGE=
 ROOT_DIR=../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-INCLUDES += -I../../Lib/gtest-1.7.0/include
-
 all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/MainGTest$(EXEEXT) 
+        $(BUILD_DIR)/MainGTest_$(TARGET)$(EXEEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

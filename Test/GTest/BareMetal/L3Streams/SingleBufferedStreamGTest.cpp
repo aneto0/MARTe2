@@ -34,65 +34,54 @@
 #include "SingleBufferedStreamTest.h"
 #include "gtest/gtest.h"
 
-class SingleBufferedStreamGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
 
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
 
-TEST_F(SingleBufferedStreamGTest,TestDefaultConstructor) {
+TEST(SingleBufferedStreamGTest,TestDefaultConstructor) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestDefaultConstructor());
 }
 
-TEST_F(SingleBufferedStreamGTest,TestConstructor_Timeout) {
+TEST(SingleBufferedStreamGTest,TestConstructor_Timeout) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestConstructor_Timeout());
 }
 
-TEST_F(SingleBufferedStreamGTest,TestGetTimeout) {
+TEST(SingleBufferedStreamGTest,TestGetTimeout) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetTimeout());
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSetTimeout) {
+TEST(SingleBufferedStreamGTest,TestSetTimeout) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetTimeout());
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSetBufferSize_Buffer_1) {
+TEST(SingleBufferedStreamGTest,TestSetBufferSize_Buffer_1) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(1));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSetBufferSize_Buffer_2) {
+TEST(SingleBufferedStreamGTest,TestSetBufferSize_Buffer_2) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(2));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSetBufferSize_Buffer_8) {
+TEST(SingleBufferedStreamGTest,TestSetBufferSize_Buffer_8) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(8));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSetBufferSize_Buffer_64) {
+TEST(SingleBufferedStreamGTest,TestSetBufferSize_Buffer_64) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(64));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSetBufferSize_Buffer_1024) {
+TEST(SingleBufferedStreamGTest,TestSetBufferSize_Buffer_1024) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(1024));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestRead_Size_1) {
+TEST(SingleBufferedStreamGTest,TestRead_Size_1) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead(0, 1));
     ASSERT_TRUE(streamtest.TestRead(1, 1));
@@ -102,7 +91,7 @@ TEST_F(SingleBufferedStreamGTest,TestRead_Size_1) {
     ASSERT_TRUE(streamtest.TestRead(1024, 1));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestRead_Size_2) {
+TEST(SingleBufferedStreamGTest,TestRead_Size_2) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead(0, 1));
     ASSERT_TRUE(streamtest.TestRead(1, 2));
@@ -112,7 +101,7 @@ TEST_F(SingleBufferedStreamGTest,TestRead_Size_2) {
     ASSERT_TRUE(streamtest.TestRead(1024, 2));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestRead_Size_8) {
+TEST(SingleBufferedStreamGTest,TestRead_Size_8) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead(0, 1));
     ASSERT_TRUE(streamtest.TestRead(1, 8));
@@ -122,7 +111,7 @@ TEST_F(SingleBufferedStreamGTest,TestRead_Size_8) {
     ASSERT_TRUE(streamtest.TestRead(1024, 8));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestRead_Size_64) {
+TEST(SingleBufferedStreamGTest,TestRead_Size_64) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead(0, 1));
     ASSERT_TRUE(streamtest.TestRead(1, 64));
@@ -132,7 +121,7 @@ TEST_F(SingleBufferedStreamGTest,TestRead_Size_64) {
     ASSERT_TRUE(streamtest.TestRead(1024, 64));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestRead_Size_1024) {
+TEST(SingleBufferedStreamGTest,TestRead_Size_1024) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead(0, 1));
     ASSERT_TRUE(streamtest.TestRead(1, 1024));
@@ -142,7 +131,7 @@ TEST_F(SingleBufferedStreamGTest,TestRead_Size_1024) {
     ASSERT_TRUE(streamtest.TestRead(1024, 1024));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestRead_Size_8_timeout) {
+TEST(SingleBufferedStreamGTest,TestRead_Size_8_timeout) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead_Timeout(0, 1, 500));
     ASSERT_TRUE(streamtest.TestRead_Timeout(1, 8, 500));
@@ -153,12 +142,12 @@ TEST_F(SingleBufferedStreamGTest,TestRead_Size_8_timeout) {
 }
 
 
-TEST_F(SingleBufferedStreamGTest,TestWrite_NotCanWrite) {
+TEST(SingleBufferedStreamGTest,TestWrite_NotCanWrite) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite_NotCanWrite());
 }
 
-TEST_F(SingleBufferedStreamGTest,TestWrite_Size_1) {
+TEST(SingleBufferedStreamGTest,TestWrite_Size_1) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite(0, 1));
     ASSERT_TRUE(streamtest.TestWrite(1, 1));
@@ -168,7 +157,7 @@ TEST_F(SingleBufferedStreamGTest,TestWrite_Size_1) {
     ASSERT_TRUE(streamtest.TestWrite(1024, 1));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestWrite_Size_2) {
+TEST(SingleBufferedStreamGTest,TestWrite_Size_2) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite(0, 1));
     ASSERT_TRUE(streamtest.TestWrite(1, 2));
@@ -178,7 +167,7 @@ TEST_F(SingleBufferedStreamGTest,TestWrite_Size_2) {
     ASSERT_TRUE(streamtest.TestWrite(1024, 2));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestWrite_Size_8) {
+TEST(SingleBufferedStreamGTest,TestWrite_Size_8) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite(0, 1));
     ASSERT_TRUE(streamtest.TestWrite(1, 8));
@@ -188,7 +177,7 @@ TEST_F(SingleBufferedStreamGTest,TestWrite_Size_8) {
     ASSERT_TRUE(streamtest.TestWrite(1024, 8));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestWrite_Size_64) {
+TEST(SingleBufferedStreamGTest,TestWrite_Size_64) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite(0, 1));
     ASSERT_TRUE(streamtest.TestWrite(1, 64));
@@ -198,7 +187,7 @@ TEST_F(SingleBufferedStreamGTest,TestWrite_Size_64) {
     ASSERT_TRUE(streamtest.TestWrite(1024, 64));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestWrite_Size_1024) {
+TEST(SingleBufferedStreamGTest,TestWrite_Size_1024) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite(0, 1));
     ASSERT_TRUE(streamtest.TestWrite(1, 1024));
@@ -208,116 +197,116 @@ TEST_F(SingleBufferedStreamGTest,TestWrite_Size_1024) {
     ASSERT_TRUE(streamtest.TestWrite(1024, 1024));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestWrite_Size_8_timeout) {
+TEST(SingleBufferedStreamGTest,TestWrite_Size_8_timeout) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite_Timeout(8, 64, 500));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestWrite_OverflowInternalBuffer_Size) {
+TEST(SingleBufferedStreamGTest,TestWrite_OverflowInternalBuffer_Size) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(8, 256));
     ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(32, 256));
     ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(64, 256));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestRead_NotCanRead) {
+TEST(SingleBufferedStreamGTest,TestRead_NotCanRead) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead_NotCanRead());
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSize_1) {
+TEST(SingleBufferedStreamGTest,TestSize_1) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSize(1));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSize_2) {
+TEST(SingleBufferedStreamGTest,TestSize_2) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSize(2));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSize_8) {
+TEST(SingleBufferedStreamGTest,TestSize_8) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSize(8));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSize_64) {
+TEST(SingleBufferedStreamGTest,TestSize_64) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSize(64));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSize_1024) {
+TEST(SingleBufferedStreamGTest,TestSize_1024) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSize(1024));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSetSize_1) {
+TEST(SingleBufferedStreamGTest,TestSetSize_1) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetSize(1));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSetSize_2) {
+TEST(SingleBufferedStreamGTest,TestSetSize_2) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetSize(2));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSetSize_8) {
+TEST(SingleBufferedStreamGTest,TestSetSize_8) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetSize(8));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSetSize_64) {
+TEST(SingleBufferedStreamGTest,TestSetSize_64) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetSize(64));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSetSize_1024) {
+TEST(SingleBufferedStreamGTest,TestSetSize_1024) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetSize(1024));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestSeek) {
+TEST(SingleBufferedStreamGTest,TestSeek) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSeek());
 }
 
-TEST_F(SingleBufferedStreamGTest,TestRelativeSeek) {
+TEST(SingleBufferedStreamGTest,TestRelativeSeek) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRelativeSeek());
 }
 
-TEST_F(SingleBufferedStreamGTest,TestRelativeSeek_OverflowInternalBuffer_Size) {
+TEST(SingleBufferedStreamGTest,TestRelativeSeek_OverflowInternalBuffer_Size) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRelativeSeek_OverflowInternalBuffer(8, 256));
     ASSERT_TRUE(streamtest.TestRelativeSeek_OverflowInternalBuffer(32, 256));
     ASSERT_TRUE(streamtest.TestRelativeSeek_OverflowInternalBuffer(64, 256));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestPosition) {
+TEST(SingleBufferedStreamGTest,TestPosition) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestPosition());
 }
 
-TEST_F(SingleBufferedStreamGTest,TestFlushAndResync_1) {
+TEST(SingleBufferedStreamGTest,TestFlushAndResync_1) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestFlushAndResync(1));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestFlushAndResync_2) {
+TEST(SingleBufferedStreamGTest,TestFlushAndResync_2) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestFlushAndResync(2));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestFlushAndResync_8) {
+TEST(SingleBufferedStreamGTest,TestFlushAndResync_8) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestFlushAndResync(8));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestFlushAndResync_64) {
+TEST(SingleBufferedStreamGTest,TestFlushAndResync_64) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestFlushAndResync(64));
 }
 
-TEST_F(SingleBufferedStreamGTest,TestFlushAndResync_1024) {
+TEST(SingleBufferedStreamGTest,TestFlushAndResync_1024) {
     SingleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestFlushAndResync(1024));
 }

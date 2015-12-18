@@ -42,6 +42,8 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+TestInfo TestFunctions[32] = { 0 };
+volatile int numberOfTests = 0;
 
 
 TEST(BasicTypeGTest,TestConstructorInt8) {

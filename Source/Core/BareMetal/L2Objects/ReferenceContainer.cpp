@@ -35,7 +35,7 @@
 #include "ReferenceContainerFilterReferences.h"
 #include "ReferenceT.h"
 #include "ErrorManagement.h"
-#include <typeinfo>
+#include "TypeInfo.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

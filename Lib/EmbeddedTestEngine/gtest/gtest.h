@@ -36,11 +36,15 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+#ifndef GTEST_H
+#define GTEST_H
 
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "FreeRTOS.h"
+#include "task.h"
 
 #define TEST_DBGRANULARITY 64
 
@@ -52,56 +56,50 @@ struct TestInfo {
     TestFunctionType function;
 };
 
-TestInfo *TestFunctions;
-int numberOfTests = 0;
+extern TestInfo TestFunctions[32];
+extern volatile int numberOfTests;
 
 class AddTest {
 public:
-    AddTest(TestFunctionType x,
+    AddTest(/*TestFunctionType x,
             const char *className,
-            const char *functionName) {
-        Allocate();
+            const char *functionName*/) {
+        //Allocate();
+        /*
         TestFunctions[numberOfTests].function = x;
         TestFunctions[numberOfTests].className = className;
-        TestFunctions[numberOfTests].functionName = functionName;
+        TestFunctions[numberOfTests].functionName = functionName;*/
         numberOfTests++;
     }
 
 private:
     void Allocate() {
-        TestInfo* oldData = TestFunctions;
+       /* TestInfo* oldData = TestFunctions;
         int size=numberOfTests*sizeof(TestInfo);
         if ((numberOfTests % TEST_DBGRANULARITY) == 0) {
-            TestFunctions = (TestInfo*) (/*pvPortMalloc*/malloc((numberOfTests + TEST_DBGRANULARITY) * sizeof(TestInfo)));
+            TestFunctions = (TestInfo*) (pvPortMalloc((numberOfTests + TEST_DBGRANULARITY) * sizeof(TestInfo)));
 
         }
         if (size != 0) {
             memcpy(TestFunctions, oldData, size);
-            /*vPortFree*/free((void*) oldData);
-        }
+            vPortFree((void*) oldData);
+        }*/
     }
+
+
 };
 
-#define TEST(className, functionName) \
-    bool functionName (); \
-    static AddTest ADD##functionName(functionName, #className, #functionName); \
-    bool functionName ()
 
-#define ASSERT_TRUE(boolean) return boolean
+
+
+#define TEST(className, functionName) \
+    bool className##_##functionName (); \
+    static AddTest ADD_##functionName();\
+    bool className##_##functionName ()
+
+
+#define ASSERT_TRUE(boolean) numberOfTests++; return boolean
 
 #define ASSERT_FALSE(boolean) return !boolean
 
-#include "BasicTypeGTest.cpp"
-
-int main() {
-    for (int i = 0; i < numberOfTests; i++) {
-        if (TestFunctions[i].function()) {
-            // here print su uart
-            printf("\n%s::%s Passed !!\n", TestFunctions[i].className, TestFunctions[i].functionName);
-        }
-        else {
-            printf("\n%s::%s Failed!!\n", TestFunctions[i].className, TestFunctions[i].functionName);
-        }
-    }
-    return 0;
-}
+#endif

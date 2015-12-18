@@ -27,7 +27,7 @@ BUILD_DIR=$(ROOT_DIR)/Build/$(TARGET)/$(PACKAGE)/$(lastword $(subst /,\ ,$(CURDI
 
 ENVIRONMENT=FreeRTOS
 ARCHITECTURE=armv7m_gcc
-EXEEXT=.ex
+EXEEXT=.bin
 DLLEXT=.so
 LIBEXT=.a
 OBJEXT=.o
@@ -47,22 +47,29 @@ SUBPROJC = $(SPB:%.x=%.spc)
 SUBPROJ2 = $(SPB2:%.x=%.spb)
 SUBPROJC += $(SPB2:%.x=%.spc)
 
-COMPILER = arm-none-eabi-gcc
+COMPILER = arm-none-eabi-g++
 CCOMPILER = arm-none-eabi-gcc
+OBJCOPY = arm-none-eabi-objcopy
+OBJDUMP = arm-none-eabi-objdump
+NM = arm-none-eabi-nm
 MAKE     = make
 
 FREE_RTOS_DIRECTORY=$(FREE_RTOS_STM)
 PORT_MACRO_H_DIRECTORY=$(FREE_RTOS_STM)/Source/portable/GCC/ARM_CM4F
 DEBUG = -g 
-OPTIM = -Os
-INCLUDES=-I$(FREE_RTOS_DIRECTORY)/Source/include -I$(PORT_MACRO_H_DIRECTORY) -I$(FREE_RTOS_CONFIG_DIRECTORY)
+OPTIM = -O2
+FREE_RTOS_DIRECTORY=/home/pc/STM32Cube_FW_F4_V1.5.0/Middlewares/Third_Party/FreeRTOS
+PORT_MACRO_H_DIRECTORY=/home/pc/STM32Cube_FW_F4_V1.5.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+FREE_RTOS_CONFIG_DIRECTORY=/home/pc/STM32Cube_FW_F4_V1.5.0
+INCLUDES=-I$(FREE_RTOS_DIRECTORY)/Source/include -I$(PORT_MACRO_H_DIRECTORY) -I$(FREE_RTOS_CONFIG_DIRECTORY) 
 LINKER = arm-none-eabi-ld
-LFLAGS = -Wl,--no-as-needed  
+LFLAGS = -Wl,--no-as-needed  --specs=nosys.specs
+LINKER_FILE=$(ROOT_DIR)/Lib/EmbeddedTestEngine/stm32_flash.ld
 
-
-CFLAGS = -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -flto -g -Wall
+CFLAGS = -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -z muldefs -flto -g -Wall
+#-ffreestanding -std=gnu99
 CPPFLAGS = $(CFLAGS) 
 CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
-LIBRARIES =  -lm -lnsl -lrt -lncurses -ldl -lgcc -lc
+LIBRARIES =  -lm -lgcc -lc
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

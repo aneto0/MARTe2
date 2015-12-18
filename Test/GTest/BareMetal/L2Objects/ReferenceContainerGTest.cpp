@@ -281,7 +281,7 @@ TEST(ReferenceContainerGTest,TestFindPerformanceReferenceFilter) {
     ReferenceT<ReferenceContainer> largeTree = referenceContainerTest.GenerateTestTreeLarge(5000);
     ReferenceContainerFilterReferences filter(3, ReferenceContainerFilterMode::RECURSIVE, referenceContainerTest.leafU3);
     float totalTime = referenceContainerTest.TestFindPerformance(largeTree, filter);
-    printf("Total time for TestFindPerformanceReferenceFilter = %e\n", totalTime);
+    //printf("Total time for TestFindPerformanceReferenceFilter = %e\n", totalTime);
     ASSERT_TRUE(totalTime < 1.0);
 }
 
@@ -290,7 +290,7 @@ TEST(ReferenceContainerGTest,TestFindPerformanceObjectNameFilter) {
     ReferenceT<ReferenceContainer> largeTree = referenceContainerTest.GenerateTestTreeLarge(5000);
     ReferenceContainerFilterObjectName filter(3, ReferenceContainerFilterMode::RECURSIVE, "U3");
     float totalTime = referenceContainerTest.TestFindPerformance(largeTree, filter);
-    printf("Total time for TestFindPerformanceReferenceFilter = %e\n", totalTime);
+    //printf("Total time for TestFindPerformanceReferenceFilter = %e\n", totalTime);
     ASSERT_TRUE(totalTime < 1.0);
 }
 

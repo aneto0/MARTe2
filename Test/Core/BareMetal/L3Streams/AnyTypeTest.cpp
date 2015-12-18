@@ -31,7 +31,7 @@
 
 #include "AnyTypeTest.h"
 #include "TestObjectHelper1.h"
-#include <typeinfo>
+#include "TypeInfo.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

@@ -26,4 +26,6 @@
 
 TARGET=freertos-armv7m
 
-all:
+include Makefile.inc
+
+INCLUDES += -I../../../../Lib/EmbeddedTestEngine

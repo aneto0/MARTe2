@@ -34,7 +34,7 @@
 #include "MemoryCheck.h"
 #include "StringHelper.h"
 #include "ClassRegistryDatabase.h"
-#include <typeinfo>
+#include "TypeInfo.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

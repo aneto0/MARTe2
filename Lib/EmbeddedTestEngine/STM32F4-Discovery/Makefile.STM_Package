@@ -1,0 +1,131 @@
+#User defs
+#this is the path of your stm cube folder
+MAINDIR=/home/pc/STM32Cube_FW_F4_V1.5.0/
+STM_TARGET=embedded
+
+RTOSDIR=$(MAINDIR)Middlewares/Third_Party/FreeRTOS/Source/
+CROSSPATH?=
+CROSSPFX=$(CROSSPATH)arm-none-eabi-
+CC=$(CROSSPFX)gcc
+CXX=$(CROSSPFX)g++
+OBJCOPY=$(CROSSPFX)objcopy
+OBJDUMP=$(CROSSPFX)objdump
+AS=$(CROSSPFX)as
+LD=$(CROSSPFX)g++
+LINKER=$(CROSSPFX)ld
+NM=$(CROSSPFX)nm
+FLAGS=-mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -flto  
+
+#include the stm headers
+INCPATHS= -I./Inc
+INCPATHS+= -I$(MAINDIR)Drivers/CMSIS/Device/ST/STM32F4xx/Include
+INCPATHS+= -I$(MAINDIR)Drivers/STM32F4xx_HAL_Driver/Inc/
+INCPATHS+= -I$(MAINDIR)Drivers/BSP/STM32F4-Discovery/
+INCPATHS+= -I$(MAINDIR)Drivers/CMSIS/Include/
+INCPATHS+= -I$(MAINDIR)Middlewares/ST/STM32_USB_Device_Library/Core/Inc/
+INCPATHS+= -I$(MAINDIR)Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/
+#INCPATHS+= -I$(MAINDIR)Drivers/BSP/Components/lis3dsh/
+#INCPATHS+= -I$(MAINDIR)Drivers/BSP/Components/lis302dl/
+INCPATHS+= -I$(RTOSDIR)portable/GCC/ARM_CM4F/
+INCPATHS+= -I$(RTOSDIR)CMSIS_RTOS/
+INCPATHS+= -I$(RTOSDIR)include/
+#INCPATHS+= -I/usr/include
+#INCPATHS+= -I/usr/include/x86_64-linux-gnu
+
+CFLAGS=$(FLAGS) -Wall
+OPTFLAGS=-Os
+#Remember to substitute it with stm macros.
+SPECFLAGS=-DPLATFORM=STM32F4_Discovery -DUSE_USB_FS -DUSE_FREERTOS -DARCHITECTURE=armv7m_gcc -DOPERATING_SYSTEM=FreeRTOS -DSTM32F407xx
+CFLAGS+= $(INCPATHS) $(OPTFLAGS) -g
+
+
+#all the source paths
+SRC=Src/
+HALPATH=$(MAINDIR)Drivers/STM32F4xx_HAL_Driver/Src/
+BSPPATH=$(MAINDIR)Drivers/BSP/STM32F4-Discovery/
+CMSISPATH=$(MAINDIR)Drivers/CMSIS/Device/ST/STM32F4xx/Source/
+PORTABLEPATH=$(RTOSDIR)portable/GCC/ARM_CM4F/
+MEMORYMANPATH=$(RTOSDIR)portable/MemMang/
+USBPATH=$(MAINDIR)Middlewares/ST/STM32_USB_Device_Library/Core/Src/
+USB_CDC_PATH=$(MAINDIR)Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/
+ACCELPATH=$(MAINDIR)Drivers/BSP/Components/lis3dsh/
+ACCELPATH2=$(MAINDIR)Drivers/BSP/Components/lis302dl/
+
+
+CFILES:=$(shell ls $(SRC)*.c 2>/dev/null)
+CFILES+=$(shell ls $(HALPATH)*.c 2>/dev/null)
+CFILES+=$(shell ls $(BSPPATH)*.c 2>/dev/null)
+CFILES+=$(shell ls $(CMSISPATH)*.c 2>/dev/null)
+CFILES+=$(shell ls $(RTOSDIR)*.c 2>/dev/null)
+CFILES+=$(shell ls $(RTOSDIR)CMSIS_RTOS/*.c 2>/dev/null)
+CFILES+=$(shell ls $(PORTABLEPATH)*.c 2>/dev/null)
+CFILES+=$(shell ls $(MEMORYMANPATH)heap_1.c 2>/dev/null)
+CFILES+=$(shell ls $(USBPATH)*.c 2>/dev/null)
+CFILES+=$(shell ls $(USB_CDC_PATH)*.c 2>/dev/null)
+CFILES+=$(shell ls $(ACCELPATH)*.c 2>/dev/null)
+CFILES+=$(shell ls $(ACCELPATH2)*.c 2>/dev/null)
+
+
+CPPFILES+= $(shell ls *.cpp 2>/dev/null)
+#CPPFILES+= $(shell ls $(SRC)*.cpp 2>/dev/null)
+
+#startup.s should be in this directory
+AFILES:=$(shell ls $(SRC)*.s 2>/dev/null)
+#AFILES+=$(shell ls $(HALPATH)*.s 2>/dev/null)
+#AFILES+=$(shell ls $(BSPPATH)*.s 2>/dev/null)
+#AFILES+=$(shell ls $(CMSISPATH)*.s 2>/dev/null)
+COBJS:=$(CFILES:%.c=%.o)
+CPPOBJSTMP:=$(CPPFILES:%.cpp=%.o)
+CPPOBJS = $(addprefix $(BUILDPATH), $(CPPOBJSTMP))
+AOBJS:=$(AFILES:%.s=%.o)
+ALLOBJS=$(COBJS) $(AOBJS) $(CPPOBJS)
+#LPATH=$(MAINDIR)Projects/STM32F4-Discovery/Templates/TrueSTUDIO/STM32F4-Discovery/
+LPATH=
+#LTARGET=$(LPATH)STM32F407VG_FLASH.ld
+LTARGET=$(LPATH)stm32_flash.ld
+LFLAGS=-Wl,--gc-sections -g
+
+all: $(STM_TARGET).a 
+
+boh:
+	echo $(ALLOBJS)
+	echo $(CPPOBJSTMP)
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(SPECFLAGS) -c $< -o $@ 
+
+$(HALPATH)%.o: $(HALPATH)%.c
+	$(CC) $(CFLAGS) $(SPECFLAGS) -c $< -o $@
+
+$(BSPPATH)%.o: $(BSPPATH)%.c
+	$(CC) $(CFLAGS) $(SPECFLAGS) -c $< -o $@
+
+$(CMSISPATH)%.o: $(CMSISPATH)%.c
+	$(CC) $(CFLAGS) $(SPECFLAGS) -c $< -o $@
+
+
+$(RTOSDIR)%.o: $(RTOSDIR)%.c
+	$(CC) $(CFLAGS) $(SPECFLAGS) -c $< -o $@
+
+$(RTOSDIR)CMSIS_RTOS/%.o: $(RTOSDIR)CMSIS_RTOS/%.c
+	$(CC) $(CFLAGS) $(SPECFLAGS) -c $< -o $@
+
+$(PORTABLEPATH)%.o: $(PORTABLEPATH)%.c
+	$(CC) $(CFLAGS) $(SPECFLAGS) -c $< -o $@
+
+$(MEMORYMANPATH)%.o: $(MEMORYMANPATH)%.c
+	$(CC) $(CFLAGS) $(SPECFLAGS) -c $< -o $@
+
+$(BUILDPATH)%.o: %.cpp
+	$(CXX) $(CFLAGS) $(SPECFLAGS) -c $< -o $@
+
+$(BUILDPATH)%.o: %.s
+	$(CC) $(CFLAGS) -c $*.s -o $(BUILDPATH)$*.o
+
+$(STM_TARGET).a: $(ALLOBJS) 
+	$(LD) -r $(ALLOBJS) $(LIBS) -o $@ 
+
+.PHONY: clean
+
+clean:
+	rm -f $(ALLOBJS) *.a

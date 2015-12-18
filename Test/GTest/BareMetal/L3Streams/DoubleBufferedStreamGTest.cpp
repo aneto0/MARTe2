@@ -34,70 +34,59 @@
 #include "DoubleBufferedStreamTest.h"
 #include "gtest/gtest.h"
 
-class DoubleBufferedStreamGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
 
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
 
-TEST_F(DoubleBufferedStreamGTest,TestDefaultConstructor) {
+TEST(DoubleBufferedStreamGTest,TestDefaultConstructor) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestDefaultConstructor());
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestConstructor_Timeout) {
+TEST(DoubleBufferedStreamGTest,TestConstructor_Timeout) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestConstructor_Timeout());
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetTimeout) {
+TEST(DoubleBufferedStreamGTest,TestGetTimeout) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetTimeout());
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSetTimeout) {
+TEST(DoubleBufferedStreamGTest,TestSetTimeout) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetTimeout());
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_1) {
+TEST(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_1) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(1));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_2) {
+TEST(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_2) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(2));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_8) {
+TEST(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_8) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(8));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_64) {
+TEST(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_64) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(64));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_1024) {
+TEST(DoubleBufferedStreamGTest,TestSetBufferSize_Buffer_1024) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetBufferSize(1024));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestRead_NotCanRead) {
+TEST(DoubleBufferedStreamGTest,TestRead_NotCanRead) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead_NotCanRead());
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestRead_Size_1) {
+TEST(DoubleBufferedStreamGTest,TestRead_Size_1) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead(0, 1));
     ASSERT_TRUE(streamtest.TestRead(1, 1));
@@ -107,7 +96,7 @@ TEST_F(DoubleBufferedStreamGTest,TestRead_Size_1) {
     ASSERT_TRUE(streamtest.TestRead(1024, 1));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestRead_Size_2) {
+TEST(DoubleBufferedStreamGTest,TestRead_Size_2) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead(0, 1));
     ASSERT_TRUE(streamtest.TestRead(1, 2));
@@ -117,7 +106,7 @@ TEST_F(DoubleBufferedStreamGTest,TestRead_Size_2) {
     ASSERT_TRUE(streamtest.TestRead(1024, 2));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestRead_Size_8) {
+TEST(DoubleBufferedStreamGTest,TestRead_Size_8) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead(0, 1));
     ASSERT_TRUE(streamtest.TestRead(1, 8));
@@ -127,7 +116,7 @@ TEST_F(DoubleBufferedStreamGTest,TestRead_Size_8) {
     ASSERT_TRUE(streamtest.TestRead(1024, 8));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestRead_Size_64) {
+TEST(DoubleBufferedStreamGTest,TestRead_Size_64) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead(0, 1));
     ASSERT_TRUE(streamtest.TestRead(1, 64));
@@ -137,7 +126,7 @@ TEST_F(DoubleBufferedStreamGTest,TestRead_Size_64) {
     ASSERT_TRUE(streamtest.TestRead(1024, 64));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestRead_Size_1024) {
+TEST(DoubleBufferedStreamGTest,TestRead_Size_1024) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead(0, 1));
     ASSERT_TRUE(streamtest.TestRead(1, 1024));
@@ -147,7 +136,7 @@ TEST_F(DoubleBufferedStreamGTest,TestRead_Size_1024) {
     ASSERT_TRUE(streamtest.TestRead(1024, 1024));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestRead_Size_8_timeout) {
+TEST(DoubleBufferedStreamGTest,TestRead_Size_8_timeout) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRead_Timeout(0, 1, 500));
     ASSERT_TRUE(streamtest.TestRead_Timeout(1, 8, 500));
@@ -157,12 +146,12 @@ TEST_F(DoubleBufferedStreamGTest,TestRead_Size_8_timeout) {
     ASSERT_TRUE(streamtest.TestRead_Timeout(1024, 8, 500));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestWrite_NotCanWrite) {
+TEST(DoubleBufferedStreamGTest,TestWrite_NotCanWrite) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite_NotCanWrite());
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_1) {
+TEST(DoubleBufferedStreamGTest,TestWrite_Size_1) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite(0, 1));
     ASSERT_TRUE(streamtest.TestWrite(1, 1));
@@ -172,7 +161,7 @@ TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_1) {
     ASSERT_TRUE(streamtest.TestWrite(1024, 1));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_2) {
+TEST(DoubleBufferedStreamGTest,TestWrite_Size_2) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite(0, 1));
     ASSERT_TRUE(streamtest.TestWrite(1, 2));
@@ -182,7 +171,7 @@ TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_2) {
     ASSERT_TRUE(streamtest.TestWrite(1024, 2));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_8) {
+TEST(DoubleBufferedStreamGTest,TestWrite_Size_8) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite(0, 1));
     ASSERT_TRUE(streamtest.TestWrite(1, 8));
@@ -192,7 +181,7 @@ TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_8) {
     ASSERT_TRUE(streamtest.TestWrite(1024, 8));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_64) {
+TEST(DoubleBufferedStreamGTest,TestWrite_Size_64) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite(0, 1));
     ASSERT_TRUE(streamtest.TestWrite(1, 64));
@@ -202,7 +191,7 @@ TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_64) {
     ASSERT_TRUE(streamtest.TestWrite(1024, 64));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_1024) {
+TEST(DoubleBufferedStreamGTest,TestWrite_Size_1024) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite(0, 1));
     ASSERT_TRUE(streamtest.TestWrite(1, 1024));
@@ -212,164 +201,164 @@ TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_1024) {
     ASSERT_TRUE(streamtest.TestWrite(1024, 1024));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestWrite_Size_8_timeout) {
+TEST(DoubleBufferedStreamGTest,TestWrite_Size_8_timeout) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite_Timeout(8, 64, 500));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestWrite_OverflowInternalBuffer_Size) {
+TEST(DoubleBufferedStreamGTest,TestWrite_OverflowInternalBuffer_Size) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(8, 256));
     ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(32, 256));
     ASSERT_TRUE(streamtest.TestWrite_OverflowInternalBuffer(64, 256));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSize_1) {
+TEST(DoubleBufferedStreamGTest,TestSize_1) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSize(1));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSize_2) {
+TEST(DoubleBufferedStreamGTest,TestSize_2) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSize(2));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSize_8) {
+TEST(DoubleBufferedStreamGTest,TestSize_8) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSize(8));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSize_64) {
+TEST(DoubleBufferedStreamGTest,TestSize_64) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSize(64));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSize_1024) {
+TEST(DoubleBufferedStreamGTest,TestSize_1024) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSize(1024));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSetSize_1) {
+TEST(DoubleBufferedStreamGTest,TestSetSize_1) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetSize(1));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSetSize_2) {
+TEST(DoubleBufferedStreamGTest,TestSetSize_2) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetSize(2));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSetSize_8) {
+TEST(DoubleBufferedStreamGTest,TestSetSize_8) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetSize(8));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSetSize_64) {
+TEST(DoubleBufferedStreamGTest,TestSetSize_64) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetSize(64));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSetSize_1024) {
+TEST(DoubleBufferedStreamGTest,TestSetSize_1024) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSetSize(1024));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestSeek) {
+TEST(DoubleBufferedStreamGTest,TestSeek) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestSeek());
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestRelativeSeek) {
+TEST(DoubleBufferedStreamGTest,TestRelativeSeek) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestRelativeSeek());
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestPosition) {
+TEST(DoubleBufferedStreamGTest,TestPosition) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestPosition());
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestFlush_1) {
+TEST(DoubleBufferedStreamGTest,TestFlush_1) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestFlush(1));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestFlush_2) {
+TEST(DoubleBufferedStreamGTest,TestFlush_2) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestFlush(2));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestFlush_8) {
+TEST(DoubleBufferedStreamGTest,TestFlush_8) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestFlush(8));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestFlush_64) {
+TEST(DoubleBufferedStreamGTest,TestFlush_64) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestFlush(64));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestFlush_1024) {
+TEST(DoubleBufferedStreamGTest,TestFlush_1024) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestFlush(1024));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_1) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_1) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(1, &TokenTestTableTerminators[0]));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_2) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_2) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(2, &TokenTestTableTerminators[0]));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_8) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_8) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(8, &TokenTestTableTerminators[0]));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_64) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_64) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(64, &TokenTestTableTerminators[0]));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_128) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_128) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(128, &TokenTestTableTerminators[0]));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_1024) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableTerminators_BufferSize_1024) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(1024, &TokenTestTableTerminators[0]));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_1) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_1) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(1, &TokenTestTableSkipCharacters[0]));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_2) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_2) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(2, &TokenTestTableSkipCharacters[0]));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_8) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_8) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(8, &TokenTestTableSkipCharacters[0]));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_64) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_64) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(64, &TokenTestTableSkipCharacters[0]));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_128) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_128) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(128, &TokenTestTableSkipCharacters[0]));
 }
 
-TEST_F(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_1024) {
+TEST(DoubleBufferedStreamGTest,TestGetToken_TableSkipCharacters_BufferSize_1024) {
     DoubleBufferedStreamTest streamtest;
     ASSERT_TRUE(streamtest.TestGetToken(1024, &TokenTestTableSkipCharacters[0]));
 }

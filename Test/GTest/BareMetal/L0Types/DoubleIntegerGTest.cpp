@@ -7,23 +7,9 @@
 #include "gtest/gtest.h"
 #include "DoubleIntegerTest.h"
 
-class DoubleIntegerGTest: public ::testing::Test {
-protected:
-    virtual void SetUp() {
-        // Code here will be called immediately after the constructor
-        // (right before each test).
-    }
-
-    virtual void TearDown() {
-        // Code here will be called immediately after each test
-        // (right before the destructor).
-    }
-};
 
 
-
-
-TEST_F(DoubleIntegerGTest,TestDefaultConstructor_64) {
+TEST(DoubleIntegerGTest,TestDefaultConstructor_64) {
 
     DoubleIntegerTest<uint64> Unumbertest;
     ASSERT_TRUE(Unumbertest.TestDefaultConstructor());
@@ -32,7 +18,7 @@ TEST_F(DoubleIntegerGTest,TestDefaultConstructor_64) {
 
 }
 
-TEST_F(DoubleIntegerGTest,TestDefaultConstructor_32) {
+TEST(DoubleIntegerGTest,TestDefaultConstructor_32) {
 
     DoubleIntegerTest<uint32> Unumbertest;
     ASSERT_TRUE(Unumbertest.TestDefaultConstructor());
@@ -41,7 +27,7 @@ TEST_F(DoubleIntegerGTest,TestDefaultConstructor_32) {
 
 }
 
-TEST_F(DoubleIntegerGTest,TestDefaultConstructor_16) {
+TEST(DoubleIntegerGTest,TestDefaultConstructor_16) {
 
     DoubleIntegerTest<uint16> Unumbertest;
     ASSERT_TRUE(Unumbertest.TestDefaultConstructor());
@@ -50,7 +36,7 @@ TEST_F(DoubleIntegerGTest,TestDefaultConstructor_16) {
 
 }
 
-TEST_F(DoubleIntegerGTest,TestDefaultConstructor_8) {
+TEST(DoubleIntegerGTest,TestDefaultConstructor_8) {
 
     DoubleIntegerTest<uint8> Unumbertest;
     ASSERT_TRUE(Unumbertest.TestDefaultConstructor());
@@ -59,7 +45,7 @@ TEST_F(DoubleIntegerGTest,TestDefaultConstructor_8) {
 
 }
 
-TEST_F(DoubleIntegerGTest,TestConstructorByType_8) {
+TEST(DoubleIntegerGTest,TestConstructorByType_8) {
 
     DoubleIntegerTest<uint8> Unumbertest;
     uint16 u16x1=0xff;
@@ -83,7 +69,7 @@ TEST_F(DoubleIntegerGTest,TestConstructorByType_8) {
 
 }
 
-TEST_F(DoubleIntegerGTest,TestConstructorByType_16) {
+TEST(DoubleIntegerGTest,TestConstructorByType_16) {
 
     DoubleIntegerTest<uint16> Unumbertest;
     uint32 u32x1=0xffff;
@@ -114,7 +100,7 @@ TEST_F(DoubleIntegerGTest,TestConstructorByType_16) {
 
 }
 
-TEST_F(DoubleIntegerGTest,TestConstructorByType_32) {
+TEST(DoubleIntegerGTest,TestConstructorByType_32) {
 
     DoubleIntegerTest<uint32> Unumbertest;
     uint64 u64x1=0xffffffff;
@@ -154,7 +140,7 @@ TEST_F(DoubleIntegerGTest,TestConstructorByType_32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestCopyConstructor_64) {
+TEST(DoubleIntegerGTest,TestCopyConstructor_64) {
 
     DoubleIntegerTest<uint64> Unumbertest;
     for(uint32 i=0; i<64; i++){
@@ -174,7 +160,7 @@ TEST_F(DoubleIntegerGTest,TestCopyConstructor_64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestCopyConstructor_32) {
+TEST(DoubleIntegerGTest,TestCopyConstructor_32) {
 
     DoubleIntegerTest<uint32> Unumbertest;
     for(uint32 i=0; i<32; i++){
@@ -194,7 +180,7 @@ TEST_F(DoubleIntegerGTest,TestCopyConstructor_32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestCopyConstructor_16) {
+TEST(DoubleIntegerGTest,TestCopyConstructor_16) {
 
     DoubleIntegerTest<uint16> Unumbertest;
     for(uint32 i=0; i<16; i++){
@@ -214,7 +200,7 @@ TEST_F(DoubleIntegerGTest,TestCopyConstructor_16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestCopyConstructor_8) {
+TEST(DoubleIntegerGTest,TestCopyConstructor_8) {
 
     DoubleIntegerTest<uint8> Unumbertest;
     for(uint32 i=0; i<8; i++){
@@ -233,7 +219,7 @@ TEST_F(DoubleIntegerGTest,TestCopyConstructor_8) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestConstructorByParts_64) {
+TEST(DoubleIntegerGTest,TestConstructorByParts_64) {
 
     DoubleIntegerTest<uint64> Unumbertest;
     for(uint32 i=0; i<64; i++){
@@ -254,7 +240,7 @@ TEST_F(DoubleIntegerGTest,TestConstructorByParts_64) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestConstructorByParts_32) {
+TEST(DoubleIntegerGTest,TestConstructorByParts_32) {
 
     DoubleIntegerTest<uint32> Unumbertest;
     for(uint32 i=0; i<32; i++){
@@ -273,7 +259,7 @@ TEST_F(DoubleIntegerGTest,TestConstructorByParts_32) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestConstructorByParts_16) {
+TEST(DoubleIntegerGTest,TestConstructorByParts_16) {
 
     DoubleIntegerTest<uint16> Unumbertest;
     for(uint32 i=0; i<16; i++){
@@ -290,7 +276,7 @@ TEST_F(DoubleIntegerGTest,TestConstructorByParts_16) {
 
 }
 
-TEST_F(DoubleIntegerGTest,TestConstructorByParts_8) {
+TEST(DoubleIntegerGTest,TestConstructorByParts_8) {
 
     DoubleIntegerTest<uint8> Unumbertest;
     for(uint32 i=0; i<8; i++){
@@ -307,7 +293,7 @@ TEST_F(DoubleIntegerGTest,TestConstructorByParts_8) {
 
 }
 
-TEST_F(DoubleIntegerGTest,TestGetLower_8) {
+TEST(DoubleIntegerGTest,TestGetLower_8) {
     DoubleIntegerTest<uint8> Unumbertest;
     for(uint32 i=0; i<8; i++){
         uint8 lower=(1<<i);
@@ -320,7 +306,7 @@ TEST_F(DoubleIntegerGTest,TestGetLower_8) {
     }
 }
 
-TEST_F(DoubleIntegerGTest,TestGetLower_16) {
+TEST(DoubleIntegerGTest,TestGetLower_16) {
     DoubleIntegerTest<uint16> Unumbertest;
     for(uint32 i=0; i<16; i++){
         uint8 lower=(1<<i);
@@ -334,7 +320,7 @@ TEST_F(DoubleIntegerGTest,TestGetLower_16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestGetLower_32) {
+TEST(DoubleIntegerGTest,TestGetLower_32) {
     DoubleIntegerTest<uint32> Unumbertest;
     for(uint32 i=0; i<32; i++){
         uint8 lower=(1<<i);
@@ -348,7 +334,7 @@ TEST_F(DoubleIntegerGTest,TestGetLower_32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestGetLower_64) {
+TEST(DoubleIntegerGTest,TestGetLower_64) {
     DoubleIntegerTest<uint64> Unumbertest;
     for(uint32 i=0; i<64; i++){
         uint8 lower=(1<<i);
@@ -362,7 +348,7 @@ TEST_F(DoubleIntegerGTest,TestGetLower_64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSetLower_8) {
+TEST(DoubleIntegerGTest,TestSetLower_8) {
     DoubleIntegerTest<uint8> Unumbertest;
     for(uint32 i=0; i<8; i++){
         uint8 lower=(1<<i);
@@ -375,7 +361,7 @@ TEST_F(DoubleIntegerGTest,TestSetLower_8) {
     }
 }
 
-TEST_F(DoubleIntegerGTest,TestSetLower_16) {
+TEST(DoubleIntegerGTest,TestSetLower_16) {
     DoubleIntegerTest<uint16> Unumbertest;
     for(uint32 i=0; i<16; i++){
         uint8 lower=(1<<i);
@@ -389,7 +375,7 @@ TEST_F(DoubleIntegerGTest,TestSetLower_16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSetLower_32) {
+TEST(DoubleIntegerGTest,TestSetLower_32) {
     DoubleIntegerTest<uint32> Unumbertest;
     for(uint32 i=0; i<32; i++){
         uint8 lower=(1<<i);
@@ -403,7 +389,7 @@ TEST_F(DoubleIntegerGTest,TestSetLower_32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSetLower_64) {
+TEST(DoubleIntegerGTest,TestSetLower_64) {
     DoubleIntegerTest<uint64> Unumbertest;
     for(uint32 i=0; i<64; i++){
         uint8 lower=(1<<i);
@@ -417,7 +403,7 @@ TEST_F(DoubleIntegerGTest,TestSetLower_64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestGetUpper_8) {
+TEST(DoubleIntegerGTest,TestGetUpper_8) {
     DoubleIntegerTest<uint8> Unumbertest;
     for(uint32 i=0; i<8; i++){
         uint8 upper=(1<<i);
@@ -430,7 +416,7 @@ TEST_F(DoubleIntegerGTest,TestGetUpper_8) {
     }
 }
 
-TEST_F(DoubleIntegerGTest,TestGetUpper_16) {
+TEST(DoubleIntegerGTest,TestGetUpper_16) {
     DoubleIntegerTest<uint16> Unumbertest;
     for(uint32 i=0; i<16; i++){
         uint8 upper=(1<<i);
@@ -444,7 +430,7 @@ TEST_F(DoubleIntegerGTest,TestGetUpper_16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestGetUpper_32) {
+TEST(DoubleIntegerGTest,TestGetUpper_32) {
     DoubleIntegerTest<uint32> Unumbertest;
     for(uint32 i=0; i<32; i++){
         uint8 upper=(1<<i);
@@ -458,7 +444,7 @@ TEST_F(DoubleIntegerGTest,TestGetUpper_32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestGetUpper_64) {
+TEST(DoubleIntegerGTest,TestGetUpper_64) {
     DoubleIntegerTest<uint64> Unumbertest;
     for(uint32 i=0; i<64; i++){
         uint8 upper=(1<<i);
@@ -474,7 +460,7 @@ TEST_F(DoubleIntegerGTest,TestGetUpper_64) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestSetUpper_8) {
+TEST(DoubleIntegerGTest,TestSetUpper_8) {
     DoubleIntegerTest<uint8> Unumbertest;
     for(uint32 i=0; i<8; i++){
         uint8 upper=(1<<i);
@@ -487,7 +473,7 @@ TEST_F(DoubleIntegerGTest,TestSetUpper_8) {
     }
 }
 
-TEST_F(DoubleIntegerGTest,TestSetUpper_16) {
+TEST(DoubleIntegerGTest,TestSetUpper_16) {
     DoubleIntegerTest<uint16> Unumbertest;
     for(uint32 i=0; i<16; i++){
         uint8 upper=(1<<i);
@@ -501,7 +487,7 @@ TEST_F(DoubleIntegerGTest,TestSetUpper_16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSetUpper_32) {
+TEST(DoubleIntegerGTest,TestSetUpper_32) {
     DoubleIntegerTest<uint32> Unumbertest;
     for(uint32 i=0; i<32; i++){
         uint8 upper=(1<<i);
@@ -515,7 +501,7 @@ TEST_F(DoubleIntegerGTest,TestSetUpper_32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSetUpper_64) {
+TEST(DoubleIntegerGTest,TestSetUpper_64) {
     DoubleIntegerTest<uint64> Unumbertest;
     for(uint32 i=0; i<64; i++){
         uint8 upper=(1<<i);
@@ -531,7 +517,7 @@ TEST_F(DoubleIntegerGTest,TestSetUpper_64) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestRightShift_int64) {
+TEST(DoubleIntegerGTest,TestRightShift_int64) {
     const testTableShiftDI<int64> testTable[]={
             testTableShiftDI<int64>(DoubleInteger<int64>(0xf000000000000000, 0), 124, -1),
             testTableShiftDI<int64>(DoubleInteger<int64>(0x8000000000000000, 0), 3, DoubleInteger<int64>(0xf000000000000000, 0)),
@@ -543,7 +529,7 @@ TEST_F(DoubleIntegerGTest,TestRightShift_int64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestLeftShift_uint64) {
+TEST(DoubleIntegerGTest,TestLeftShift_uint64) {
     const testTableShiftDI<uint64> testTable[]={
             testTableShiftDI<uint64>(DoubleInteger<uint64>(0, 0x000000000000000f), 124, DoubleInteger<uint64>(0xf000000000000000,0)),
             testTableShiftDI<uint64>(DoubleInteger<uint64>(0x1800000000000000, 0), 4, DoubleInteger<uint64>(0x8000000000000000,0)),
@@ -556,7 +542,7 @@ TEST_F(DoubleIntegerGTest,TestLeftShift_uint64) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestRightShift_int32) {
+TEST(DoubleIntegerGTest,TestRightShift_int32) {
     const testTableShiftDI<int32> testTable[]={
             testTableShiftDI<int32>(0xf000000000000000, 60, -1),
             testTableShiftDI<int32>(0x8000000000000000, 3, 0xf000000000000000),
@@ -568,7 +554,7 @@ TEST_F(DoubleIntegerGTest,TestRightShift_int32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestLeftShift_int32) {
+TEST(DoubleIntegerGTest,TestLeftShift_int32) {
     const testTableShiftDI<int32> testTable[]={
             testTableShiftDI<int32>(0x000000000000000f, 60, 0xf000000000000000),
             testTableShiftDI<int32>(0x1800000000000000, 4, 0x8000000000000000),
@@ -579,7 +565,7 @@ TEST_F(DoubleIntegerGTest,TestLeftShift_int32) {
     ASSERT_TRUE(numbertest.TestLeftShift(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestRightShift_uint32) {
+TEST(DoubleIntegerGTest,TestRightShift_uint32) {
 
 
     const testTableShiftDI<uint32> testTable[]={
@@ -594,7 +580,7 @@ TEST_F(DoubleIntegerGTest,TestRightShift_uint32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestLeftShift_uint32) {
+TEST(DoubleIntegerGTest,TestLeftShift_uint32) {
     const testTableShiftDI<uint32> testTable[]={
             testTableShiftDI<uint32>(0x000000000000000f, 60, 0xf000000000000000),
             testTableShiftDI<uint32>(0x1800000000000000, 4, 0x8000000000000000),
@@ -606,7 +592,7 @@ TEST_F(DoubleIntegerGTest,TestLeftShift_uint32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestRightShift_int16) {
+TEST(DoubleIntegerGTest,TestRightShift_int16) {
     const testTableShiftDI<int16> testTable[]={
             testTableShiftDI<int16>(0xf0000000, 30, -1),
             testTableShiftDI<int16>(0x80000000, 3, 0xf0000000),
@@ -618,7 +604,7 @@ TEST_F(DoubleIntegerGTest,TestRightShift_int16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestLeftShift_uint16) {
+TEST(DoubleIntegerGTest,TestLeftShift_uint16) {
     const testTableShiftDI<uint16> testTable[]={
             testTableShiftDI<uint16>(0x0000000f, 28, 0xf0000000),
             testTableShiftDI<uint16>(0x18000000, 4, 0x80000000),
@@ -630,7 +616,7 @@ TEST_F(DoubleIntegerGTest,TestLeftShift_uint16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestRightShift_int8) {
+TEST(DoubleIntegerGTest,TestRightShift_int8) {
     const testTableShiftDI<int8> testTable[]={
             testTableShiftDI<int8>(0xf000, 12, -1),
             testTableShiftDI<int8>(0x8000, 3, 0xf000),
@@ -642,7 +628,7 @@ TEST_F(DoubleIntegerGTest,TestRightShift_int8) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestLeftShift_uint8) {
+TEST(DoubleIntegerGTest,TestLeftShift_uint8) {
     const testTableShiftDI<uint8> testTable[]={
             testTableShiftDI<uint8>(0x000f, 13, 0xe000),
             testTableShiftDI<uint8>(0x1800, 4, 0x8000),
@@ -656,7 +642,7 @@ TEST_F(DoubleIntegerGTest,TestLeftShift_uint8) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestAndOperator_int64) {
+TEST(DoubleIntegerGTest,TestAndOperator_int64) {
 
     const testTableLogicDI<int64> testTable[]={
             testTableLogicDI<int64>(DoubleInteger<int64>(0xffffffffffffffff, 0xffffffffffffffff), 0, 0),
@@ -668,7 +654,7 @@ TEST_F(DoubleIntegerGTest,TestAndOperator_int64) {
     ASSERT_TRUE(numbertest.TestAndOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestAndOperator_uint64) {
+TEST(DoubleIntegerGTest,TestAndOperator_uint64) {
 
     const testTableLogicDI<uint64> testTable[]={
             testTableLogicDI<uint64>(DoubleInteger<uint64>(0xffffffffffffffff, 0xffffffffffffffff), 0, 0),
@@ -681,7 +667,7 @@ TEST_F(DoubleIntegerGTest,TestAndOperator_uint64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestAndOperator_int32) {
+TEST(DoubleIntegerGTest,TestAndOperator_int32) {
 
     const testTableLogicDI<int32> testTable[]={
             testTableLogicDI<int32>(0xffffffffffffffff, 0, 0),
@@ -693,7 +679,7 @@ TEST_F(DoubleIntegerGTest,TestAndOperator_int32) {
     ASSERT_TRUE(numbertest.TestAndOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestAndOperator_uint32) {
+TEST(DoubleIntegerGTest,TestAndOperator_uint32) {
 
     const testTableLogicDI<uint32> testTable[]={
             testTableLogicDI<uint32>(0xffffffffffffffff, 0, 0),
@@ -706,7 +692,7 @@ TEST_F(DoubleIntegerGTest,TestAndOperator_uint32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestAndOperator_int16) {
+TEST(DoubleIntegerGTest,TestAndOperator_int16) {
 
     const testTableLogicDI<int16> testTable[]={
             testTableLogicDI<int16>(0xffffffff, 0, 0),
@@ -718,7 +704,7 @@ TEST_F(DoubleIntegerGTest,TestAndOperator_int16) {
     ASSERT_TRUE(numbertest.TestAndOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestAndOperator_uint16) {
+TEST(DoubleIntegerGTest,TestAndOperator_uint16) {
 
     const testTableLogicDI<uint16> testTable[]={
             testTableLogicDI<uint16>(0xffffffff, 0, 0),
@@ -731,7 +717,7 @@ TEST_F(DoubleIntegerGTest,TestAndOperator_uint16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestAndOperator_int8) {
+TEST(DoubleIntegerGTest,TestAndOperator_int8) {
 
     const testTableLogicDI<int8> testTable[]={
             testTableLogicDI<int8>(0xffff, 0, 0),
@@ -743,7 +729,7 @@ TEST_F(DoubleIntegerGTest,TestAndOperator_int8) {
     ASSERT_TRUE(numbertest.TestAndOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestAndOperator_uint8) {
+TEST(DoubleIntegerGTest,TestAndOperator_uint8) {
 
     const testTableLogicDI<uint8> testTable[]={
             testTableLogicDI<uint8>(0xffff, 0, 0),
@@ -757,7 +743,7 @@ TEST_F(DoubleIntegerGTest,TestAndOperator_uint8) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestInvertOperator_int64) {
+TEST(DoubleIntegerGTest,TestInvertOperator_int64) {
 
     const testTableLogicDI<int64> testTable[]={
             testTableLogicDI<int64>(DoubleInteger<int64>(0xffffffffffffffff,0xffffffffffffffff), 0, 0),
@@ -768,7 +754,7 @@ TEST_F(DoubleIntegerGTest,TestInvertOperator_int64) {
     ASSERT_TRUE(numbertest.TestInvertOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestInvertOperator_uint64) {
+TEST(DoubleIntegerGTest,TestInvertOperator_uint64) {
 
     const testTableLogicDI<uint64> testTable[]={
             testTableLogicDI<uint64>(DoubleInteger<uint64>(0xffffffffffffffff,0xffffffffffffffff), 0, 0),
@@ -781,7 +767,7 @@ TEST_F(DoubleIntegerGTest,TestInvertOperator_uint64) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestInvertOperator_int32) {
+TEST(DoubleIntegerGTest,TestInvertOperator_int32) {
 
     const testTableLogicDI<int32> testTable[]={
             testTableLogicDI<int32>(0xffffffffffffffff, 0, 0),
@@ -792,7 +778,7 @@ TEST_F(DoubleIntegerGTest,TestInvertOperator_int32) {
     ASSERT_TRUE(numbertest.TestInvertOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestInvertOperator_uint32) {
+TEST(DoubleIntegerGTest,TestInvertOperator_uint32) {
 
     const testTableLogicDI<uint32> testTable[]={
             testTableLogicDI<uint32>(0xffffffffffffffff, 0, 0),
@@ -804,7 +790,7 @@ TEST_F(DoubleIntegerGTest,TestInvertOperator_uint32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestInvertOperator_int16) {
+TEST(DoubleIntegerGTest,TestInvertOperator_int16) {
 
     const testTableLogicDI<int16> testTable[]={
             testTableLogicDI<int16>(0xffffffff, 0, 0),
@@ -815,7 +801,7 @@ TEST_F(DoubleIntegerGTest,TestInvertOperator_int16) {
     ASSERT_TRUE(numbertest.TestInvertOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestInvertOperator_uint16) {
+TEST(DoubleIntegerGTest,TestInvertOperator_uint16) {
     const testTableLogicDI<uint16> testTable[]={
             testTableLogicDI<uint16>(0xffffffff, 0, 0),
             testTableLogicDI<uint16>(0xffff0fff, 0, 0x0000f000),
@@ -825,7 +811,7 @@ TEST_F(DoubleIntegerGTest,TestInvertOperator_uint16) {
     ASSERT_TRUE(numbertest.TestInvertOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestInvertOperator_int8) {
+TEST(DoubleIntegerGTest,TestInvertOperator_int8) {
 
     const testTableLogicDI<int8> testTable[]={
             testTableLogicDI<int8>(0xffff, 0, 0),
@@ -837,7 +823,7 @@ TEST_F(DoubleIntegerGTest,TestInvertOperator_int8) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestInvertOperator_uint8) {
+TEST(DoubleIntegerGTest,TestInvertOperator_uint8) {
 
     const testTableLogicDI<uint8> testTable[]={
             testTableLogicDI<uint8>(0xffff, 0, 0),
@@ -850,7 +836,7 @@ TEST_F(DoubleIntegerGTest,TestInvertOperator_uint8) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestOrOperator_int64) {
+TEST(DoubleIntegerGTest,TestOrOperator_int64) {
 
     const testTableLogicDI<int64> testTable[]={
             testTableLogicDI<int64>(DoubleInteger<int64>(0xffffffffffffffff,0xffffffffffffffff), 0, DoubleInteger<int64>(0xffffffffffffffff,0xffffffffffffffff)),
@@ -862,7 +848,7 @@ TEST_F(DoubleIntegerGTest,TestOrOperator_int64) {
     ASSERT_TRUE(numbertest.TestOrOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestOrOperator_uint64) {
+TEST(DoubleIntegerGTest,TestOrOperator_uint64) {
 
     const testTableLogicDI<uint64> testTable[]={
             testTableLogicDI<uint64>(DoubleInteger<uint64>(0xffffffffffffffff,0xffffffffffffffff), 0, DoubleInteger<uint64>(0xffffffffffffffff,0xffffffffffffffff)),
@@ -876,7 +862,7 @@ TEST_F(DoubleIntegerGTest,TestOrOperator_uint64) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestOrOperator_int32) {
+TEST(DoubleIntegerGTest,TestOrOperator_int32) {
 
     const testTableLogicDI<int32> testTable[]={
             testTableLogicDI<int32>(0xffffffffffffffff, 0, 0xffffffffffffffff),
@@ -889,7 +875,7 @@ TEST_F(DoubleIntegerGTest,TestOrOperator_int32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestOrOperator_uint32) {
+TEST(DoubleIntegerGTest,TestOrOperator_uint32) {
 
     const testTableLogicDI<uint32> testTable[]={
             testTableLogicDI<uint32>(0xffffffffffffffff, 0, 0xffffffffffffffff),
@@ -902,7 +888,7 @@ TEST_F(DoubleIntegerGTest,TestOrOperator_uint32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestOrOperator_int16) {
+TEST(DoubleIntegerGTest,TestOrOperator_int16) {
 
     const testTableLogicDI<int16> testTable[]={
             testTableLogicDI<int16>(0xffffffff, 0, 0xffffffff),
@@ -914,7 +900,7 @@ TEST_F(DoubleIntegerGTest,TestOrOperator_int16) {
     ASSERT_TRUE(numbertest.TestOrOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestOrOperator_uint16) {
+TEST(DoubleIntegerGTest,TestOrOperator_uint16) {
 
     const testTableLogicDI<uint16> testTable[]={
             testTableLogicDI<uint16>(0xffffffff, 0, 0xffffffff),
@@ -927,7 +913,7 @@ TEST_F(DoubleIntegerGTest,TestOrOperator_uint16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestOrOperator_int8) {
+TEST(DoubleIntegerGTest,TestOrOperator_int8) {
 
     const testTableLogicDI<int8> testTable[]={
             testTableLogicDI<int8>(0xffff, 0, 0xffff),
@@ -939,7 +925,7 @@ TEST_F(DoubleIntegerGTest,TestOrOperator_int8) {
     ASSERT_TRUE(numbertest.TestOrOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestOrOperator_uint8) {
+TEST(DoubleIntegerGTest,TestOrOperator_uint8) {
 
     const testTableLogicDI<uint8> testTable[]={
             testTableLogicDI<uint8>(0xffff, 0, 0xffff),
@@ -953,7 +939,7 @@ TEST_F(DoubleIntegerGTest,TestOrOperator_uint8) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorOperator_int64) {
+TEST(DoubleIntegerGTest,TestIsMajorOperator_int64) {
 
     const testTableLogicDI<int64> testTable[]={
             testTableLogicDI<int64>(DoubleInteger<int64>(0xffffffffffffffff,0xffffffffffffffff), 0, 0),
@@ -969,7 +955,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorOperator_int64) {
     ASSERT_TRUE(numbertest.TestIsMajorOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsMajorOperator_uint64) {
+TEST(DoubleIntegerGTest,TestIsMajorOperator_uint64) {
 
     const testTableLogicDI<uint64> testTable[]={
             testTableLogicDI<uint64>(DoubleInteger<uint64>(0xffffffffffffffff,0xffffffffffffffff), 0, 1),
@@ -987,7 +973,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorOperator_uint64) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorOperator_int32) {
+TEST(DoubleIntegerGTest,TestIsMajorOperator_int32) {
 
     const testTableLogicDI<int32> testTable[]={
             testTableLogicDI<int32>(0xffffffffffffffff, 0, 0),
@@ -1002,7 +988,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorOperator_int32) {
     ASSERT_TRUE(numbertest.TestIsMajorOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsMajorOperator_uint32) {
+TEST(DoubleIntegerGTest,TestIsMajorOperator_uint32) {
 
     const testTableLogicDI<uint32> testTable[]={
             testTableLogicDI<uint32>(0xffffffffffffffff, 0, 1),
@@ -1018,7 +1004,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorOperator_uint32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorOperator_int16) {
+TEST(DoubleIntegerGTest,TestIsMajorOperator_int16) {
 
     const testTableLogicDI<int16> testTable[]={
             testTableLogicDI<int16>(0xffffffff, 0, 0),
@@ -1034,7 +1020,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorOperator_int16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorOperator_uint16) {
+TEST(DoubleIntegerGTest,TestIsMajorOperator_uint16) {
 
     const testTableLogicDI<uint16> testTable[]={
             testTableLogicDI<uint16>(0xffffffff, 0, 1),
@@ -1050,7 +1036,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorOperator_uint16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorOperator_int8) {
+TEST(DoubleIntegerGTest,TestIsMajorOperator_int8) {
 
     const testTableLogicDI<int8> testTable[]={
             testTableLogicDI<int8>(0xffff, 0, 0),
@@ -1066,7 +1052,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorOperator_int8) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorOperator_uint8) {
+TEST(DoubleIntegerGTest,TestIsMajorOperator_uint8) {
 
     const testTableLogicDI<uint8> testTable[]={
             testTableLogicDI<uint8>(0xffff, 0, 1),
@@ -1081,7 +1067,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorOperator_uint8) {
     ASSERT_TRUE(numbertest.TestIsMajorOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int64) {
+TEST(DoubleIntegerGTest,TestIsMinorOperator_int64) {
 
     const testTableLogicDI<int64> testTable[]={
             testTableLogicDI<int64>(DoubleInteger<int64>(0xffffffffffffffff,0xffffffffffffffff), 0, 1),
@@ -1095,7 +1081,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int64) {
     ASSERT_TRUE(numbertest.TestIsMinorOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsMinorOperator_uint64) {
+TEST(DoubleIntegerGTest,TestIsMinorOperator_uint64) {
 
     const testTableLogicDI<uint64> testTable[]={
             testTableLogicDI<uint64>(0, DoubleInteger<uint64>(0xffffffffffffffff,0xffffffffffffffff), 1),
@@ -1110,7 +1096,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_uint64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int32) {
+TEST(DoubleIntegerGTest,TestIsMinorOperator_int32) {
 
     const testTableLogicDI<int32> testTable[]={
             testTableLogicDI<int32>(0xffffffffffffffff, 0, 1),
@@ -1125,7 +1111,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorOperator_uint32) {
+TEST(DoubleIntegerGTest,TestIsMinorOperator_uint32) {
 
     const testTableLogicDI<uint32> testTable[]={
             testTableLogicDI<uint32>(0xffffffffffffffff, 0, 0),
@@ -1140,7 +1126,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_uint32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int16) {
+TEST(DoubleIntegerGTest,TestIsMinorOperator_int16) {
 
     const testTableLogicDI<int16> testTable[]={
             testTableLogicDI<int16>(0xffffffff, 0, 1),
@@ -1155,7 +1141,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorOperator_uint16) {
+TEST(DoubleIntegerGTest,TestIsMinorOperator_uint16) {
 
     const testTableLogicDI<uint16> testTable[]={
             testTableLogicDI<uint16>(0, 0xffffffff, 1),
@@ -1170,7 +1156,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_uint16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int8) {
+TEST(DoubleIntegerGTest,TestIsMinorOperator_int8) {
 
     const testTableLogicDI<int8> testTable[]={
             testTableLogicDI<int8>(0xffff, 0, 1),
@@ -1185,7 +1171,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_int8) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorOperator_uint8) {
+TEST(DoubleIntegerGTest,TestIsMinorOperator_uint8) {
 
     const testTableLogicDI<uint8> testTable[]={
             testTableLogicDI<uint8>(0, 0xffff, 1),
@@ -1200,7 +1186,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorOperator_uint8) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_int64) {
+TEST(DoubleIntegerGTest,TestIsMajorEqualOperator_int64) {
 
     const testTableLogicDI<int64> testTable[]={
             testTableLogicDI<int64>(DoubleInteger<int64>(0xffffffffffffffff,0xffffffffffffffff), 0, 0),
@@ -1216,7 +1202,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_int64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_uint64) {
+TEST(DoubleIntegerGTest,TestIsMajorEqualOperator_uint64) {
 
     const testTableLogicDI<uint64> testTable[]={
             testTableLogicDI<uint64>(DoubleInteger<uint64>(0xffffffffffffffff,0xffffffffffffffff), 0, 1),
@@ -1235,7 +1221,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_uint64) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_int32) {
+TEST(DoubleIntegerGTest,TestIsMajorEqualOperator_int32) {
 
     const testTableLogicDI<int32> testTable[]={
             testTableLogicDI<int32>(0xffffffffffffffff, 0, 0),
@@ -1253,7 +1239,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_int32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_uint32) {
+TEST(DoubleIntegerGTest,TestIsMajorEqualOperator_uint32) {
 
     const testTableLogicDI<uint32> testTable[]={
             testTableLogicDI<uint32>(0xffffffffffffffff, 0, 1),
@@ -1269,7 +1255,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_uint32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_int16) {
+TEST(DoubleIntegerGTest,TestIsMajorEqualOperator_int16) {
 
     const testTableLogicDI<int16> testTable[]={
             testTableLogicDI<int16>(0xffffffff, 0, 0),
@@ -1285,7 +1271,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_int16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_uint16) {
+TEST(DoubleIntegerGTest,TestIsMajorEqualOperator_uint16) {
 
     const testTableLogicDI<uint16> testTable[]={
             testTableLogicDI<uint16>(0xffffffff, 0, 1),
@@ -1301,7 +1287,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_uint16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_int8) {
+TEST(DoubleIntegerGTest,TestIsMajorEqualOperator_int8) {
 
     const testTableLogicDI<int8> testTable[]={
             testTableLogicDI<int8>(0xffff, 0, 0),
@@ -1316,7 +1302,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_int8) {
     ASSERT_TRUE(numbertest.TestIsMajorEqualOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_uint8) {
+TEST(DoubleIntegerGTest,TestIsMajorEqualOperator_uint8) {
 
     const testTableLogicDI<uint8> testTable[]={
             testTableLogicDI<uint8>(0xffff, 0, 1),
@@ -1332,7 +1318,7 @@ TEST_F(DoubleIntegerGTest,TestIsMajorEqualOperator_uint8) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_int64) {
+TEST(DoubleIntegerGTest,TestIsMinorEqualOperator_int64) {
 
     const testTableLogicDI<int64> testTable[]={
             testTableLogicDI<int64>(DoubleInteger<int64>(0xffffffffffffffff,0xffffffffffffffff), 0, 1),
@@ -1347,7 +1333,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_int64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_uint64) {
+TEST(DoubleIntegerGTest,TestIsMinorEqualOperator_uint64) {
 
     const testTableLogicDI<uint64> testTable[]={
             testTableLogicDI<uint64>(0, DoubleInteger<uint64>(0xffffffffffffffff,0xffffffffffffffff), 1),
@@ -1362,7 +1348,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_uint64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_int32) {
+TEST(DoubleIntegerGTest,TestIsMinorEqualOperator_int32) {
 
     const testTableLogicDI<int32> testTable[]={
             testTableLogicDI<int32>(0xffffffffffffffff, 0, 1),
@@ -1378,7 +1364,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_int32) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_uint32) {
+TEST(DoubleIntegerGTest,TestIsMinorEqualOperator_uint32) {
 
     const testTableLogicDI<uint32> testTable[]={
             testTableLogicDI<uint32>(0xffffffffffffffff, 0, 0),
@@ -1393,7 +1379,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_uint32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_int16) {
+TEST(DoubleIntegerGTest,TestIsMinorEqualOperator_int16) {
 
     const testTableLogicDI<int16> testTable[]={
             testTableLogicDI<int16>(0xffffffff, 0, 1),
@@ -1407,7 +1393,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_int16) {
     ASSERT_TRUE(numbertest.TestIsMinorEqualOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_uint16) {
+TEST(DoubleIntegerGTest,TestIsMinorEqualOperator_uint16) {
 
     const testTableLogicDI<uint16> testTable[]={
             testTableLogicDI<uint16>(0xffffffff, 0, 0),
@@ -1422,7 +1408,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_uint16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_int8) {
+TEST(DoubleIntegerGTest,TestIsMinorEqualOperator_int8) {
 
     const testTableLogicDI<int8> testTable[]={
             testTableLogicDI<int8>(0xffff, 0, 1),
@@ -1436,7 +1422,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_int8) {
     ASSERT_TRUE(numbertest.TestIsMinorEqualOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_uint8) {
+TEST(DoubleIntegerGTest,TestIsMinorEqualOperator_uint8) {
 
     const testTableLogicDI<uint8> testTable[]={
             testTableLogicDI<uint8>(0xffff, 0, 0),
@@ -1451,7 +1437,7 @@ TEST_F(DoubleIntegerGTest,TestIsMinorEqualOperator_uint8) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSumOperator_int64) {
+TEST(DoubleIntegerGTest,TestSumOperator_int64) {
 
     const testTableLogicDI<int64> testTable[]={
             testTableLogicDI<int64>(0x7fffffffffffffff, 0xfffffffffffffffe, DoubleInteger<int64>(1,0x7ffffffffffffffd)),
@@ -1465,7 +1451,7 @@ TEST_F(DoubleIntegerGTest,TestSumOperator_int64) {
     ASSERT_TRUE(numbertest.TestSumOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestSumOperator_uint64) {
+TEST(DoubleIntegerGTest,TestSumOperator_uint64) {
 
     const testTableLogicDI<uint64> testTable[]={
             testTableLogicDI<uint64>(0x7fffffffffffffff, 0xfffffffffffffffe, DoubleInteger<uint64>(1,0x7ffffffffffffffd)),
@@ -1479,7 +1465,7 @@ TEST_F(DoubleIntegerGTest,TestSumOperator_uint64) {
     ASSERT_TRUE(numbertest.TestSumOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestSumOperator_int32) {
+TEST(DoubleIntegerGTest,TestSumOperator_int32) {
 
     const testTableLogicDI<int32> testTable[]={
             testTableLogicDI<int32>(0x7fffffff, 0xfffffffe, 0x17ffffffd),
@@ -1494,7 +1480,7 @@ TEST_F(DoubleIntegerGTest,TestSumOperator_int32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSumOperator_uint32) {
+TEST(DoubleIntegerGTest,TestSumOperator_uint32) {
 
     const testTableLogicDI<uint32> testTable[]={
             testTableLogicDI<uint32>(0x7fffffff, 0xfffffffe, 0x17ffffffd),
@@ -1509,7 +1495,7 @@ TEST_F(DoubleIntegerGTest,TestSumOperator_uint32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSumOperator_int16) {
+TEST(DoubleIntegerGTest,TestSumOperator_int16) {
 
     const testTableLogicDI<int16> testTable[]={
             testTableLogicDI<int16>(0x7fff, 0xfffe, 0x17ffd),
@@ -1524,7 +1510,7 @@ TEST_F(DoubleIntegerGTest,TestSumOperator_int16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSumOperator_uint16) {
+TEST(DoubleIntegerGTest,TestSumOperator_uint16) {
 
     const testTableLogicDI<uint16> testTable[]={
             testTableLogicDI<uint16>(0x7fff, 0xfffe, 0x17ffd),
@@ -1539,7 +1525,7 @@ TEST_F(DoubleIntegerGTest,TestSumOperator_uint16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSumOperator_int8) {
+TEST(DoubleIntegerGTest,TestSumOperator_int8) {
 
     const testTableLogicDI<int8> testTable[]={
             testTableLogicDI<int8>(0x7f, 0xfe, 0x17d),
@@ -1554,7 +1540,7 @@ TEST_F(DoubleIntegerGTest,TestSumOperator_int8) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSumOperator_uint8) {
+TEST(DoubleIntegerGTest,TestSumOperator_uint8) {
 
     const testTableLogicDI<uint8> testTable[]={
             testTableLogicDI<uint8>(0x7f, 0xfe, 0x17d),
@@ -1569,7 +1555,7 @@ TEST_F(DoubleIntegerGTest,TestSumOperator_uint8) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSubOperator_int64) {
+TEST(DoubleIntegerGTest,TestSubOperator_int64) {
 
     const testTableLogicDI<int64> testTable[]={
             testTableLogicDI<int64>(DoubleInteger<int64>(0xf,0x7fffffffffffffff), DoubleInteger<int64>(0xe,0xfffffffffffffffe), 0x8000000000000001),
@@ -1584,7 +1570,7 @@ TEST_F(DoubleIntegerGTest,TestSubOperator_int64) {
     ASSERT_TRUE(numbertest.TestSubOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestSubOperator_uint64) {
+TEST(DoubleIntegerGTest,TestSubOperator_uint64) {
 
     const testTableLogicDI<uint64> testTable[]={
             testTableLogicDI<uint64>(DoubleInteger<uint64>(0xf,0x7fffffffffffffff), DoubleInteger<uint64>(0xe,0xfffffffffffffffe), 0x8000000000000001),
@@ -1600,7 +1586,7 @@ TEST_F(DoubleIntegerGTest,TestSubOperator_uint64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSubOperator_int32) {
+TEST(DoubleIntegerGTest,TestSubOperator_int32) {
 
     const testTableLogicDI<int32> testTable[]={
             testTableLogicDI<int32>(0xf7fffffff, 0xefffffffe, 0x80000001),
@@ -1616,7 +1602,7 @@ TEST_F(DoubleIntegerGTest,TestSubOperator_int32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSubOperator_uint32) {
+TEST(DoubleIntegerGTest,TestSubOperator_uint32) {
 
     const testTableLogicDI<uint32> testTable[]={
             testTableLogicDI<uint32>(0xf7fffffff, 0xefffffffe, 0x80000001),
@@ -1631,7 +1617,7 @@ TEST_F(DoubleIntegerGTest,TestSubOperator_uint32) {
     ASSERT_TRUE(numbertest.TestSubOperator(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestSubOperator_int16) {
+TEST(DoubleIntegerGTest,TestSubOperator_int16) {
 
     const testTableLogicDI<int16> testTable[]={
             testTableLogicDI<int16>(0xf7fff, 0xefffe, 0x8001),
@@ -1647,7 +1633,7 @@ TEST_F(DoubleIntegerGTest,TestSubOperator_int16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSubOperator_uint16) {
+TEST(DoubleIntegerGTest,TestSubOperator_uint16) {
 
     const testTableLogicDI<uint16> testTable[]={
             testTableLogicDI<uint16>(0xf7fff, 0xefffe, 0x8001),
@@ -1663,7 +1649,7 @@ TEST_F(DoubleIntegerGTest,TestSubOperator_uint16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestSubOperator_int8) {
+TEST(DoubleIntegerGTest,TestSubOperator_int8) {
 
     const testTableLogicDI<int8> testTable[]={
             testTableLogicDI<int8>(0xf7f, 0xefe, 0x81),
@@ -1680,7 +1666,7 @@ TEST_F(DoubleIntegerGTest,TestSubOperator_int8) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestIsEqual_int64) {
+TEST(DoubleIntegerGTest,TestIsEqual_int64) {
 
     const testTableLogicDI<int64> testTable[]={
             testTableLogicDI<int64>(1,1,1),
@@ -1696,7 +1682,7 @@ TEST_F(DoubleIntegerGTest,TestIsEqual_int64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsEqual_uint64) {
+TEST(DoubleIntegerGTest,TestIsEqual_uint64) {
 
     const testTableLogicDI<uint64> testTable[]={
             testTableLogicDI<uint64>(1,1,1),
@@ -1713,7 +1699,7 @@ TEST_F(DoubleIntegerGTest,TestIsEqual_uint64) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestIsEqual_int32) {
+TEST(DoubleIntegerGTest,TestIsEqual_int32) {
 
     const testTableLogicDI<int32> testTable[]={
             testTableLogicDI<int32>(1,1,1),
@@ -1731,7 +1717,7 @@ TEST_F(DoubleIntegerGTest,TestIsEqual_int32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsEqual_uint32) {
+TEST(DoubleIntegerGTest,TestIsEqual_uint32) {
 
     const testTableLogicDI<uint32> testTable[]={
             testTableLogicDI<uint32>(1,1,1),
@@ -1751,7 +1737,7 @@ TEST_F(DoubleIntegerGTest,TestIsEqual_uint32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsEqual_int16) {
+TEST(DoubleIntegerGTest,TestIsEqual_int16) {
 
     const testTableLogicDI<int16> testTable[]={
             testTableLogicDI<int16>(1,1,1),
@@ -1767,7 +1753,7 @@ TEST_F(DoubleIntegerGTest,TestIsEqual_int16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsEqual_uint16) {
+TEST(DoubleIntegerGTest,TestIsEqual_uint16) {
 
     const testTableLogicDI<uint16> testTable[]={
             testTableLogicDI<uint16>(1,1,1),
@@ -1782,7 +1768,7 @@ TEST_F(DoubleIntegerGTest,TestIsEqual_uint16) {
     ASSERT_TRUE(numbertest.TestIsEqual(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsEqual_int8) {
+TEST(DoubleIntegerGTest,TestIsEqual_int8) {
 
     const testTableLogicDI<int8> testTable[]={
             testTableLogicDI<int8>(1,1,1),
@@ -1797,7 +1783,7 @@ TEST_F(DoubleIntegerGTest,TestIsEqual_int8) {
     ASSERT_TRUE(numbertest.TestIsEqual(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsEqual_uint8) {
+TEST(DoubleIntegerGTest,TestIsEqual_uint8) {
 
     const testTableLogicDI<uint8> testTable[]={
             testTableLogicDI<uint8>(1,1,1),
@@ -1813,7 +1799,7 @@ TEST_F(DoubleIntegerGTest,TestIsEqual_uint8) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsDifferent_int64) {
+TEST(DoubleIntegerGTest,TestIsDifferent_int64) {
 
     const testTableLogicDI<int64> testTable[]={
             testTableLogicDI<int64>(1,1,0),
@@ -1829,7 +1815,7 @@ TEST_F(DoubleIntegerGTest,TestIsDifferent_int64) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsDifferent_uint64) {
+TEST(DoubleIntegerGTest,TestIsDifferent_uint64) {
 
     const testTableLogicDI<uint64> testTable[]={
             testTableLogicDI<uint64>(1,1,0),
@@ -1844,7 +1830,7 @@ TEST_F(DoubleIntegerGTest,TestIsDifferent_uint64) {
     ASSERT_TRUE(numbertest.TestIsDifferent(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsDifferent_int32) {
+TEST(DoubleIntegerGTest,TestIsDifferent_int32) {
 
     const testTableLogicDI<int32> testTable[]={
             testTableLogicDI<int32>(1,1,0),
@@ -1862,7 +1848,7 @@ TEST_F(DoubleIntegerGTest,TestIsDifferent_int32) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsDifferent_uint32) {
+TEST(DoubleIntegerGTest,TestIsDifferent_uint32) {
 
     const testTableLogicDI<uint32> testTable[]={
             testTableLogicDI<uint32>(1,1,0),
@@ -1884,7 +1870,7 @@ TEST_F(DoubleIntegerGTest,TestIsDifferent_uint32) {
 
 
 
-TEST_F(DoubleIntegerGTest,TestIsDifferent_int16) {
+TEST(DoubleIntegerGTest,TestIsDifferent_int16) {
 
     const testTableLogicDI<int16> testTable[]={
             testTableLogicDI<int16>(1,1,0),
@@ -1900,7 +1886,7 @@ TEST_F(DoubleIntegerGTest,TestIsDifferent_int16) {
 }
 
 
-TEST_F(DoubleIntegerGTest,TestIsDifferent_uint16) {
+TEST(DoubleIntegerGTest,TestIsDifferent_uint16) {
 
     const testTableLogicDI<uint16> testTable[]={
             testTableLogicDI<uint16>(1,1,0),
@@ -1915,7 +1901,7 @@ TEST_F(DoubleIntegerGTest,TestIsDifferent_uint16) {
     ASSERT_TRUE(numbertest.TestIsDifferent(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsDifferent_int8) {
+TEST(DoubleIntegerGTest,TestIsDifferent_int8) {
 
     const testTableLogicDI<int8> testTable[]={
             testTableLogicDI<int8>(1,1,0),
@@ -1930,7 +1916,7 @@ TEST_F(DoubleIntegerGTest,TestIsDifferent_int8) {
     ASSERT_TRUE(numbertest.TestIsDifferent(testTable));
 }
 
-TEST_F(DoubleIntegerGTest,TestIsDifferent_uint8) {
+TEST(DoubleIntegerGTest,TestIsDifferent_uint8) {
 
     const testTableLogicDI<uint8> testTable[]={
             testTableLogicDI<uint8>(1,1,0),

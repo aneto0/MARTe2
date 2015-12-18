@@ -42,6 +42,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 
+
 INCLUDES += -I../../../
 INCLUDES += -I../../../Core/BareMetal/L0Types
 INCLUDES += -I../../../Core/BareMetal/L1Portability
@@ -57,7 +58,7 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
 INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
-INCLUDES += -I../../../../Lib/gtest-1.7.0/include
+
 
 all: $(OBJS)    \
         $(BUILD_DIR)/L2ObjectsBGTest$(LIBEXT) 
