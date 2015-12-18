@@ -310,6 +310,9 @@ bool ThreadsTest::TestGetState() {
 }
 
 static void TestIdFunction(ThreadsTest &tt) {
+    while(tt.tidTest == 0){
+        Sleep::Sec(0.001);
+    }
     if (Threads::Id() != tt.tidTest) {
         tt.retValue = false;
     }
@@ -319,6 +322,7 @@ static void TestIdFunction(ThreadsTest &tt) {
 bool ThreadsTest::TestId(uint32 nOfThreads) {
     for (uint32 i = 0; i < nOfThreads; i++) {
         exitCondition = 0;
+        tidTest = 0;
         tidTest = Threads::BeginThread((ThreadFunctionType) TestIdFunction, this);
         int32 j = 0;
         //waits that the thread finishes
