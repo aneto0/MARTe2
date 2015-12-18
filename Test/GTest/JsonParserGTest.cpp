@@ -47,9 +47,9 @@ TEST(JsonParserGTest,TestConstructor) {
     ASSERT_TRUE(parserTest.TestConstructor());
 }
 
-TEST(JsonParserGTest,TestGetGrammar) {
+TEST(JsonParserGTest,TestGetGrammarInfo) {
     JsonParserTest parserTest;
-    ASSERT_TRUE(parserTest.TestGetGrammar());
+    ASSERT_TRUE(parserTest.TestGetGrammarInfo());
 }
 
 TEST(JsonParserGTest,TestParseScalar) {

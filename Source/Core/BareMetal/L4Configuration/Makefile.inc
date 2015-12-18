@@ -31,7 +31,6 @@ OBJSX=	AnyObject.x \
 		IntegerToFloat.x \
 		JsonParser.x \
 		LexicalAnalyzer.x \
-		Parser.x \
 		StringToFloat.x \
 		StringToInteger.x \
 		TypeConversion.x \

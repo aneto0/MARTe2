@@ -48,7 +48,7 @@ bool JsonParserTest::TestConstructor() {
     StreamString err;
 
     JsonParser myParser(configString, database, &err);
-    ParserGrammar myGrammar = myParser.GetGrammar();
+    GrammarInfo myGrammar = myParser.GetGrammarInfo();
 
     bool ok=(StringHelper::Compare(myGrammar.separators, JsonGrammar.separators)==0);
 
@@ -59,7 +59,7 @@ bool JsonParserTest::TestConstructor() {
     return ok;
 }
 
-bool JsonParserTest::TestGetGrammar() {
+bool JsonParserTest::TestGetGrammarInfo() {
     return TestConstructor();
 }
 

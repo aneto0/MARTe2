@@ -76,7 +76,7 @@ namespace MARTe {
 ParserI::ParserI(StreamI &stream,
                  StructuredDataI &databaseIn,
                  BufferedStreamI * const err,
-                 const ParserGrammar &grammarIn) :
+                 const GrammarInfo &grammarIn) :
         tokenProducer(stream, &grammarIn.assignment, grammarIn.separators, grammarIn.beginOneLineComment, grammarIn.beginMultipleLinesComment,
                       grammarIn.endMultipleLinesComment),
         memory(1u) {
@@ -145,7 +145,7 @@ uint32 ParserI::PeekNextTokenType(const uint32 position) {
     return ret;
 }
 
-ParserGrammar ParserI::GetGrammar() const {
+GrammarInfo ParserI::GetGrammarInfo() const {
     return grammar;
 }
 

@@ -30,13 +30,46 @@
 
 #include "StandardParser.h"
 #include "ConfigurationDatabase.h"
-#include "ParserTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 using namespace MARTe;
+
+/**
+ * @brief A table used for type cast parsing tests on scalars.
+ */
+template<typename T>
+struct TypeCastTableTest {
+    const char8 *configString;
+    const char8 *varName;
+    T expectedResult;
+    bool expectedRet;
+};
+
+/**
+ * @brief A table used for type cast parsing tests on vectors.
+ */
+template<typename T, uint32 nElements>
+struct TypeCastTableTestVector {
+    const char8 *configString;
+    const char8 *varName;
+    T expectedResult[nElements];
+    bool expectedRet;
+};
+
+/**
+ * @brief A table used for type cast parsing tests on matrices.
+ */
+template<typename T, uint32 nRows, uint32 nCols>
+struct TypeCastTableTestMatrix {
+    const char8 *configString;
+    const char8 *varName;
+    T expectedResult[nRows][nCols];
+    bool expectedRet;
+};
+
 
 class StandardParserTest {
 
@@ -49,7 +82,7 @@ public:
     /**
      * @brief Tests if the function returns the Json grammar.
      */
-    bool TestGetGrammar();
+    bool TestGetGrammarInfo();
 
     /**
      * @brief Tests the parsing of scalar variables.

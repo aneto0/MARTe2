@@ -69,7 +69,6 @@ OBJSX=  AnyObjectGTest.x \
 		MemoryGTest.x \
 		MutexSemGTest.x \
 		ObjectGTest.x \
-		ParserGTest.x \
 		ProcessorGTest.x \
 		ProcessorTypeGTest.x \
 		ReferenceContainerFilterObjectNameGTest.x \

@@ -34,7 +34,7 @@
 
 #include "JsonParser.h"
 #include "ConfigurationDatabase.h"
-#include "ParserTest.h"
+#include "StandardParserTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
@@ -57,7 +57,7 @@ public:
     /**
      * @brief Tests if the function returns the Json grammar.
      */
-    bool TestGetGrammar();
+    bool TestGetGrammarInfo();
 
     /**
      * @brief Tests the parsing of scalar variables.

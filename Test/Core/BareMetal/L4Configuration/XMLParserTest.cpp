@@ -48,7 +48,7 @@ bool XMLParserTest::TestConstructor() {
     StreamString err;
 
     XMLParser myParser(configString, database, &err);
-    ParserGrammar myGrammar=myParser.GetGrammar();
+    GrammarInfo myGrammar=myParser.GetGrammarInfo();
 
     bool ok=(StringHelper::Compare(myGrammar.separators, XMLGrammar.separators)==0);
 
@@ -61,7 +61,7 @@ bool XMLParserTest::TestConstructor() {
 }
 
 
-bool XMLParserTest::TestGetGrammar(){
+bool XMLParserTest::TestGetGrammarInfo(){
     return TestConstructor();
 }
 

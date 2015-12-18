@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ParserGrammar.h"
+#include "GrammarInfo.h"
 #include "StaticList.h"
 #include "StreamI.h"
 #include "Token.h"

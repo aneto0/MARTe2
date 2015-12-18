@@ -43,6 +43,9 @@ namespace MARTe {
 
 /**
  * @brief Creates a new AnyType object which could be a scalar, vector or matrix.
+ *
+ * @details The methods implemented allow converting the tokens (C-string type) in input to the desired type and adding them
+ * consecutively in an internal allocated memory to create multidimensional AnyTypes.
  */
 class DLL_API AnyTypeCreator {
 

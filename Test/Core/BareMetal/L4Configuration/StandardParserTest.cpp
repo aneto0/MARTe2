@@ -49,7 +49,7 @@ bool StandardParserTest::TestConstructor() {
 
     StandardParser myParser(configString, database, &err);
 
-    ParserGrammar myGrammar=myParser.GetGrammar();
+    GrammarInfo myGrammar=myParser.GetGrammarInfo();
 
     bool ok=(StringHelper::Compare(myGrammar.separators, StandardGrammar.separators)==0);
 
@@ -60,7 +60,7 @@ bool StandardParserTest::TestConstructor() {
     return ok;
 }
 
-bool StandardParserTest::TestGetGrammar() {
+bool StandardParserTest::TestGetGrammarInfo() {
     return TestConstructor();
 }
 

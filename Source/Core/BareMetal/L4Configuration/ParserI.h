@@ -100,7 +100,7 @@ public:
     ParserI(StreamI &stream,
             StructuredDataI &databaseIn,
             BufferedStreamI * const err,
-            const ParserGrammar &grammarIn);
+            const GrammarInfo &grammarIn);
 
     /**
      * @brief Destructor.
@@ -120,7 +120,7 @@ public:
      * @brief Retrieves the grammar used by this parser.
      * @return the grammar used by this parser.
      */
-    ParserGrammar GetGrammar() const;
+    GrammarInfo GetGrammarInfo() const;
 
 protected:
 
@@ -334,7 +334,7 @@ private:
     /**
      * Stores the information about the language to be parsed.
      */
-    ParserGrammar grammar;
+    GrammarInfo grammar;
 
 };
 
