@@ -49,7 +49,7 @@ namespace MARTe {
      * @brief The BasicFile class is a wrapper for the underlaying operating
      * system file type, which allows to read and write from and to a file.
      *
-     * @detail This class has two states: open and closed. When the file is
+     * @details This class has two states: open and closed. When the file is
      * opened, this class holds an internal reference to an specific operating
      * system structure, which maintains the status and flags of the file.
      * When the file is closed the class maintains its own status and does not

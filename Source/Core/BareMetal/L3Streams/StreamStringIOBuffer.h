@@ -49,7 +49,7 @@ namespace MARTe {
  * @details This class inherits from IOBuffer and specialize the function NoMoreSpaceToWrite accordingly to
  * the string requirements, namely allocating new space when the buffer is full in case of write operations.
  *
- * @details For memory allocations it adds one to the desired size passed by argument and sets reservedSpaceAtEnd = 1 for the
+ * For memory allocations it adds one to the desired size passed by argument and sets reservedSpaceAtEnd = 1 for the
  * final '\0' character.
  */
 class DLL_API StreamStringIOBuffer: public IOBuffer {

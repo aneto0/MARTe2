@@ -42,7 +42,7 @@
 namespace MARTe {
 
 /**
- * @brief timeout type definition.
+ * @brief Timeout type definition.
  *
  * @details These methods define the timeout object which is simply an integer which represent a time in milliseconds.
  * Furthermore here are defined flags for different types of timeout.
