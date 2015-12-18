@@ -149,7 +149,7 @@ bool Select::AddWriteHandle(const HandleI &handle) {
             wsaevent = WSACreateEvent();
             if (wsaevent != WSA_INVALID_EVENT) {
                 int32 hSocket = (int32) h;
-                int32 error = WSAEventSelect(hSocket, wsaevent, FD_READ);
+                int32 error = WSAEventSelect(hSocket, wsaevent, FD_WRITE);
                 if (error != SOCKET_ERROR) {
                     writeHandle.registeredHandles[indexMax] = wsaevent;
                 }
@@ -357,10 +357,11 @@ int32 Select::WaitUntil(const TimeoutType &msecTimeout) {
     }
 
     int32 ret = WaitForMultipleObjectsEx(static_cast<DWORD>(highestHandle), &allHandles[0], false, msecTimeout.GetTimeoutMSec(), true);
-    if (ret == 0x102l) {
+    if (ret == WAIT_TIMEOUT) {
         ret = 0;
     }
     else if (ret != -1) {
+        ret -= WAIT_OBJECT_0;
         if (ret <= regRead) {
             readHandle.selectedHandle = readHandle.selectHandles[ret];
         }
