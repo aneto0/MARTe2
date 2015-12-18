@@ -11,10 +11,10 @@ CXX=$(CROSSPFX)g++
 OBJCOPY=$(CROSSPFX)objcopy
 OBJDUMP=$(CROSSPFX)objdump
 AS=$(CROSSPFX)as
-LD=$(CROSSPFX)g++
-LINKER=$(CROSSPFX)ld
+LD=$(CROSSPFX)gcc
+LINKER=$(CROSSPFX)ar
 NM=$(CROSSPFX)nm
-FLAGS=-mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -flto  
+FLAGS=-ffreestanding -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -flto  
 
 #include the stm headers
 INCPATHS= -I./Inc
@@ -80,10 +80,10 @@ CPPOBJS = $(addprefix $(BUILDPATH), $(CPPOBJSTMP))
 AOBJS:=$(AFILES:%.s=%.o)
 ALLOBJS=$(COBJS) $(AOBJS) $(CPPOBJS)
 #LPATH=$(MAINDIR)Projects/STM32F4-Discovery/Templates/TrueSTUDIO/STM32F4-Discovery/
-LPATH=
+LPATH=..
 #LTARGET=$(LPATH)STM32F407VG_FLASH.ld
-LTARGET=$(LPATH)stm32_flash.ld
-LFLAGS=-Wl,--gc-sections -g
+LINKER_FILE=$(LPATH)/stm32_flash.ld
+LFLAGS= -g
 
 all: $(STM_TARGET).a 
 
@@ -123,7 +123,7 @@ $(BUILDPATH)%.o: %.s
 	$(CC) $(CFLAGS) -c $*.s -o $(BUILDPATH)$*.o
 
 $(STM_TARGET).a: $(ALLOBJS) 
-	$(LD) -r $(ALLOBJS) $(LIBS) -o $@ 
+	$(LD) -r $(FLAGS) $(LFLAGS) $(ALLOBJS) -o $@ 
 
 .PHONY: clean
 

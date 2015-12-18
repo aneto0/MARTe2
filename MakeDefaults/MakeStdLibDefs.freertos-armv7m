@@ -57,7 +57,7 @@ MAKE     = make
 FREE_RTOS_DIRECTORY=$(FREE_RTOS_STM)
 PORT_MACRO_H_DIRECTORY=$(FREE_RTOS_STM)/Source/portable/GCC/ARM_CM4F
 DEBUG = -g 
-OPTIM = -O2
+OPTIM = -Os
 FREE_RTOS_DIRECTORY=/home/pc/STM32Cube_FW_F4_V1.5.0/Middlewares/Third_Party/FreeRTOS
 PORT_MACRO_H_DIRECTORY=/home/pc/STM32Cube_FW_F4_V1.5.0/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
 FREE_RTOS_CONFIG_DIRECTORY=/home/pc/STM32Cube_FW_F4_V1.5.0
@@ -66,10 +66,10 @@ LINKER = arm-none-eabi-ld
 LFLAGS = -Wl,--no-as-needed  --specs=nosys.specs
 LINKER_FILE=$(ROOT_DIR)/Lib/EmbeddedTestEngine/stm32_flash.ld
 
-CFLAGS = -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -z muldefs -flto -g -Wall
+CFLAGS = -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -flto -g -Wall
 #-ffreestanding -std=gnu99
 CPPFLAGS = $(CFLAGS) 
 CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT)
-LIBRARIES =  -lm -lgcc -lc
+LIBRARIES =  -lnosys -lm -lgcc -lc
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 
