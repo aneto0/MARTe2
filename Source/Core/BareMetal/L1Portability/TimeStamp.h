@@ -41,7 +41,7 @@ namespace MARTe {
 /**
  * @brief A structure containing the time stamp informations.
  */
-struct TimeStamp {
+class DLL_API TimeStamp {
 
 public:
 

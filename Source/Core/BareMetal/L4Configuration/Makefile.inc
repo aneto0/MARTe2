@@ -24,13 +24,21 @@
 #
 #############################################################
 
-OBJSX=ConfigurationDatabase.x\
-    TypeConversion.x\
-    AnyObject.x \
-    StringToInteger.x\
-    StringToFloat.x \
-    IntegerToFloat.x \
-    FloatToInteger.x
+OBJSX=	AnyObject.x \
+		AnyTypeCreator.x \
+		ConfigurationDatabase.x\
+		FloatToInteger.x \
+		IntegerToFloat.x \
+		JsonParser.x \
+		LexicalAnalyzer.x \
+		StringToFloat.x \
+		StringToInteger.x \
+		TypeConversion.x \
+		TokenInfo.x \
+		Token.x \
+		ParserI.x \
+		StandardParser.x \
+		XMLParser.x 
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

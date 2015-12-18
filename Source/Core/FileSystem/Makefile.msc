@@ -35,7 +35,5 @@ LIBRARIES += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\L1Portability\L1Portabi
 
 IMPDEFS += $(ROOT_DIR)\Build\$(TARGET)\Core\FileSystem\L1Portability\L1PortabilityF.def
 
-OPTIM= -G6 -O2 -Ob2
-
 
 

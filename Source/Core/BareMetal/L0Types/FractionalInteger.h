@@ -45,7 +45,8 @@ namespace MARTe {
 /**
  * @brief An integer wrapper class parameterisable by bit size.
  *
- * @details This template class is an helper used to define integer types with non-standard bit sizes, such as uint3 or uint63.\n
+ * @details This template class is an helper used to define integer types with non-standard bit sizes, such as uint3 or uint63.
+ *
  * The template requires two parameters: a baseType, i.e. the standard type which is used as a base for the new type; and numberOfBits, i.e.
  * the actual size of the new type.
  *
@@ -62,7 +63,7 @@ namespace MARTe {
  * about the template are guaranteed at compilation time.
  * Operator will always evaluate to true if the template is correctly used, otherwise it will not compile (which the objective)*/
 template<typename baseType, uint8 numberOfBits>
-class FractionalInteger: public TemplateParametersVerificator<((sizeof(baseType)*8u)>=numberOfBits) && (numberOfBits > 0u)> {
+class FractionalInteger: public TemplateParametersVerificator<((sizeof(baseType) * 8u) >= numberOfBits) && (numberOfBits > 0u)> {
 
 public:
 
@@ -722,8 +723,6 @@ typedef FractionalInteger<int64, 62u> int62;
  * Signed 63 bit integer.
  */
 typedef FractionalInteger<int64, 63u> int63;
-
-
 
 /**
  * Class UUID for the Class Registry Database.

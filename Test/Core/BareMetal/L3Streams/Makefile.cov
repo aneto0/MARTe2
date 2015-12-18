@@ -26,5 +26,3 @@
 TARGET=cov
 
 include Makefile.inc
-
-OPTIM=-finline-functions

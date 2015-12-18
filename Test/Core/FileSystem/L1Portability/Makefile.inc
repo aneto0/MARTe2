@@ -24,16 +24,15 @@
 #
 #############################################################
 
-OBJSX= InternetHostTest.x \
-	InternetServiceTest.x \
-	BasicSocketTest.x  \
-	BasicUDPSocketTest.x \
-	BasicTCPSocketTest.x \
-	BasicFileTest.x \
-	SelectTest.x \
-	DirectoryTest.x \
-	DirectoryScannerTest.x
-
+OBJSX=	BasicFileTest.x \
+		BasicSocketTest.x  \
+		BasicTCPSocketTest.x \
+		BasicUDPSocketTest.x \
+		DirectoryScannerTest.x \
+		DirectoryTest.x \
+		InternetHostTest.x \
+		InternetServiceTest.x \
+		SelectTest.x
 
 PACKAGE=Core/FileSystem
 ROOT_DIR=../../../..

@@ -52,7 +52,7 @@ bool VectorTest::TestDefaultConstructor() {
         return false;
     }
 
-    return myVector.IsStaticDeclared();
+    return true;
 }
 
 bool VectorTest::TestConstructorCreateOnHeap(uint32 nElements) {
@@ -66,40 +66,10 @@ bool VectorTest::TestConstructorCreateOnHeap(uint32 nElements) {
         return false;
     }
 
-    return (!myVector.IsStaticDeclared());
+    return true;
 }
 
-bool VectorTest::TestIsStaticDeclared() {
 
-    const uint32 nElements = 32;
-
-    int32 staticArray[nElements];
-
-    Vector<int32> vector1(staticArray);
-
-    if (!vector1.IsStaticDeclared()) {
-        return false;
-    }
-
-    int32 *staticPointer = staticArray;
-    Vector<int32> vector2(staticPointer, nElements);
-
-    if (vector2.IsStaticDeclared()) {
-        return false;
-    }
-
-    int32 *heapPointer = (int32*) HeapManager::Malloc(sizeof(int32) * nElements);
-
-    Vector<int32> vector3(heapPointer, nElements);
-
-    if (vector3.IsStaticDeclared()) {
-        return false;
-    }
-
-    Vector<int32> vector4(nElements);
-
-    return !vector4.IsStaticDeclared();
-}
 
 bool VectorTest::TestGetNumberOfElements() {
 

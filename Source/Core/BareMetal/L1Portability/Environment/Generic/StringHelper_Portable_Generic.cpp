@@ -216,7 +216,7 @@ bool Copy(char8* const destination,
 
 bool CopyN(char8* const destination,
            const char8* const source,
-           uint32 size) {
+           const uint32 size) {
     bool ret = false;
     if ((destination != NULL) && (source != NULL)) {
         destination[0] = '\0';

@@ -66,6 +66,7 @@ bool BufferedStreamIOBuffer::Resync() {
             // adjust seek position
             // in read mode the actual stream
             // position is to the character after the buffer end
+            /*lint -e{613} . Justification: The NULL pointer condition is handled*/
             if (!stream->OSSeek(stream->OSPosition() - deltaToEnd)) {
                 REPORT_ERROR(ErrorManagement::FatalError, "BufferedStreamIOBuffer: Failed OSSeek");
                 retval = false;

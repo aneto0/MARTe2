@@ -1,8 +1,8 @@
 /**
- * @file SemCore.h
- * @brief Header file for class SemCore
- * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @file InternetHostCore.h
+ * @brief Header file for class InternetHostCore
+ * @date Nov 23, 2015
+ * @author Frank Perez Paz
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,79 +16,38 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SemCore
+ * @details This header file contains the declaration of the class InternetHostCore
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
 
-#ifndef SEMCORE_H_
-#define SEMCORE_H_
+		#ifndef INTERNETHOSTCORE_H_
+		#define 		INTERNETHOSTCORE_H_
 
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
-
+#include <windows.h>
+#include <winsock.h>
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-/**
- * @brief This class provides basic facilities to use semaphores.
- */
-class DLL_API SemCore {
+namespace MARTe{
 
-public:
+typedef sockaddr_in InternetHostCore;
 
-    /**
-     * @brief Copy constructor.
-     * @param[in] s is the semaphore handle to be copied in this.
-     */
-    SemCore(const HANDLE const s);
+}
 
-    /**
-     * @brief Constructor.
-     */
-    SemCore();
-
-    /**
-     * @brief Destructor that can be overridden by inherited classes
-     */
-    virtual ~SemCore();
-
-    /**
-     * @brief Set the semaphore handle to 0.
-     */
-    void Init();
-
-    /**
-     * @brief Set the semaphore.
-     * @param[in] s is a pointer to the semaphore structure.
-     */
-    void Init(const HANDLE const s);
-
-    /**
-     * @brief return number associated to the semaphore.
-     * @return the current value associated to the semaphore.
-     */
-    const HANDLE Handle() const;
-
-private:
-
-    /**
-     * The handle associated to the semaphore
-     */
-    const HANDLE semH;
-};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SEMCORE_H_ */
-
+		#endif /* INTERNETHOSTCORE_H_ */
+	

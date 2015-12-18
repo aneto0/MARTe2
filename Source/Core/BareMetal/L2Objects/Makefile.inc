@@ -27,17 +27,17 @@ ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  AnyType.x\
-    ClassRegistryItem.x \
-    Object.x \
-    ClassProperties.x \
-    Reference.x \
-    ReferenceT.x \
-    ReferenceContainer.x \
-    ReferenceContainerNode.x \
-    ReferenceContainerFilter.x \
-    ReferenceContainerFilterReferences.x\
-    ReferenceContainerFilterObjectName.x\
-    ClassRegistryDatabase.x
+		ClassProperties.x \
+		ClassRegistryDatabase.x \
+		ClassRegistryItem.x \
+		Object.x \
+		Reference.x \
+		ReferenceContainer.x \
+		ReferenceContainerNode.x \
+		ReferenceContainerFilter.x \
+		ReferenceContainerFilterReferences.x \
+		ReferenceContainerFilterObjectName.x \
+		ReferenceT.x
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

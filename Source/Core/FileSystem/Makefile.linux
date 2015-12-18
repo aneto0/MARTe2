@@ -26,6 +26,4 @@ TARGET=linux
 
 include Makefile.inc
 
-OPTIM = -finline-functions
-
 LIBRARIES += -lm

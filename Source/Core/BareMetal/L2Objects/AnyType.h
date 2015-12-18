@@ -63,7 +63,7 @@ namespace MARTe {
 /* (9005,1773) Cast away of const required by this implementation of AnyType and justified because in the TypeDescriptor
  * attribute the flag "isConstant" will be set to true.
  */
-class AnyType {
+class DLL_API AnyType {
 
 public:
 
@@ -96,7 +96,7 @@ public:
      *   GetDataPointer() == dataPointerIn &&
      *   GetBitAddress() == bitAddressIn &&
      *   GetDataDescriptor() == dataDescriptorIn &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
@@ -113,7 +113,7 @@ public:
      *   GetDataPointer() == dataPointerIn &&
      *   GetBitAddress() == bitAddressIn &&
      *   GetDataDescriptor() == dataDescriptorIn &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
@@ -132,7 +132,7 @@ public:
      * @param[in] i is the signed 8 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == SignedInteger8Bit &&
      *   GetNumberOfElements(0:2) == 0
@@ -144,7 +144,7 @@ public:
      * @param[in] i is the unsigned 8 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == UnsignedInteger8Bit &&
      *   GetNumberOfElements(0:2) == 0
@@ -156,7 +156,7 @@ public:
      * @param[in] i is the constant signed 8 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == SignedInteger8Bit &&
      *   GetTypeDescriptor().isConstant == true &&
@@ -170,7 +170,7 @@ public:
      * @param[in] i is the constant unsigned 8 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == UnsignedInteger8Bit &&
      *   GetTypeDescriptor().isConstant == true &&
@@ -184,7 +184,7 @@ public:
      * @param[in] i is the signed 16 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == SignedInteger16Bit &&
      *   GetTypeDescriptor().isConstant == false &&
@@ -198,7 +198,7 @@ public:
      * @param[in] i is the unsigned 16 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == UnsignedInteger16Bit &&
      *   GetTypeDescriptor().isConstant == false &&
@@ -212,7 +212,7 @@ public:
      * @param[in] i is the constant signed 16 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == SignedInteger16Bit &&
      *   GetTypeDescriptor().isConstant == true &&
@@ -225,7 +225,7 @@ public:
      * @param[in] i is the constant 16 bit unsigned integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == UnsignedInteger16Bit &&
      *   GetTypeDescriptor().isConstant == true &&
@@ -238,7 +238,7 @@ public:
      * @param[in] i is the signed 32 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == SignedInteger32Bit &&
      *   GetTypeDescriptor().isConstant == false &&
@@ -251,7 +251,7 @@ public:
      * @param[in] i is the unsigned 32 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == UnsignedInteger32Bit &&
      *   GetTypeDescriptor().isConstant == false &&
@@ -264,7 +264,7 @@ public:
      * @param[in] i is the constant signed 32 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == SignedInteger32Bit &&
      *   GetTypeDescriptor().isConstant == true &&
@@ -277,7 +277,7 @@ public:
      * @param[in] i is the constant unsigned 32 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == UnsignedInteger32Bit &&
      *   GetTypeDescriptor().isConstant == true &&
@@ -290,7 +290,7 @@ public:
      * @param[in] i is the signed 64 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == SignedInteger64Bit &&
      *   GetTypeDescriptor().isConstant == false &&
@@ -303,7 +303,7 @@ public:
      * @param[in] i is the unsigned 64 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == UnsignedInteger64Bit &&
      *   GetTypeDescriptor().isConstant == false &&
@@ -316,7 +316,7 @@ public:
      * @param[in] i is the constant signed 64 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == SignedInteger64Bit &&
      *   GetTypeDescriptor().isConstant == true &&
@@ -329,7 +329,7 @@ public:
      * @param[in] i is the constant unsigned 64 bit integer input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetTypeDescriptor() == UnsignedInteger64Bit &&
      *   GetTypeDescriptor().isConstant == true &&
@@ -342,7 +342,7 @@ public:
      * @param[in] i is the 32 bit float32 number input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
@@ -353,7 +353,7 @@ public:
      * @param[in] i is the the constant 32 bit float32 number input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
@@ -364,7 +364,7 @@ public:
      * @param[in] i the 64 bit float32 number input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
@@ -375,7 +375,7 @@ public:
      * @param[in] i is the constant 64 bit float32 number input.
      * @post
      *   GetDataPointer() == &i &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
@@ -386,40 +386,50 @@ public:
      * @param[in] p is the void pointer input.
      * @post
      *   GetDataPointer() == p &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline AnyType(void * const p);
-
+    inline AnyType(volatile void * const p);
     /**
      * @brief Constructor from constant void pointer.
      * @param[in] p is the constant void pointer input.
      * @post
      *   GetDataPointer() == p &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline AnyType(const void * const p);
+    inline AnyType(volatile const void * const p);
 
     /**
-     * @brief Constructor from C string.
+     * @brief Constructor from constant char pointer.
      * @param[in] p is the C string input.
      * @post
      *   GetDataPointer() == p &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
-    inline AnyType(const char8 * const p);
+    inline AnyType(volatile const char8 * const p);
+
+    /**
+     * @brief Constructor from char pointer.
+     * @param[in] p is the C string input.
+     * @post
+     *   GetDataPointer() == p &&
+     *   IsStaticDeclared == true &&
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetNumberOfElements(0:2) == 0
+     */
+    inline AnyType(volatile char8 * const p);
 
     /**
      * @brief Constructor from Object (or inherited class).
      * @param[in] obj the source Object.
      * @post
      *   GetDataPointer() == &obj &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
@@ -430,7 +440,7 @@ public:
      * @param[in] obj the source Object.
      * @post
      *   GetDataPointer() == &obj &&
-     *   IsStaticDeclared == false &&
+     *   IsStaticDeclared == true &&
      *   GetNumberOfDimensions() == 0 &&
      *   GetNumberOfElements(0:2) == 0
      */
@@ -495,15 +505,33 @@ public:
      * @brief Constructor from a statically declared array of characters [].
      * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
      * @param[in] source address of the statically declared array.
+     * @pre
+     *   The C Array must be always 0 terminated like a normal C string.
      * @post
-     *   GetNumberOfDimensions() == 1 &&
-     *   GetNumberOfElements(0) == nOfElementsStatic &&
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetByteSize() == nOfElementsStatic &&
      *   GetDataPointer() == &source[0] &&
      *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
      *   IsStaticDeclared == true
      */
     template<uint32 nOfElementsStatic>
     AnyType(char8 (&source)[nOfElementsStatic]);
+
+    /**
+     * @brief Constructor from a constant statically declared array of characters [].
+     * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
+     * @param[in] source address of the statically declared array.
+     * @pre
+     *   The C Array must be always 0 terminated like a normal C string.
+     * @post
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetByteSize() == nOfElementsStatic &&
+     *   GetDataPointer() == &source[0] &&
+     *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
+     *   IsStaticDeclared == true
+     */
+    template<uint32 nOfElementsStatic>
+    AnyType(const char8 (&source)[nOfElementsStatic]);
 
     /**
      * @brief Constructor from a statically declared table [][].
@@ -591,15 +619,16 @@ public:
     AnyType(Vector<T> &vec);
 
     /**
-      * @brief Constructor from an existent Vector of characters (considered as a string buffer).
-      * @param[in] vec the vector from whose this AnyType will be constructed.
-      * @post
-      *   GetNumberOfDimensions() == 0 &&
-      *   GetDataPointer() == vec.GetDataPointer() &&
-      *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
-      *   IsStaticDeclared == vec.IsStaticDeclared()
-      */
-     inline AnyType(Vector<char8> &vec);
+     * @brief Constructor from an existent Vector of characters (considered as a string buffer).
+     * @param[in] vec the vector from whose this AnyType will be constructed.
+     * @post
+     *   GetNumberOfDimensions() == 0 &&
+     *   GetByteSize() == nOfElementsStatic &&
+     *   GetDataPointer() == vec.GetDataPointer() &&
+     *   GetTypeDescriptor() == AnyType(T).GetTypeDescriptor() &&
+     *   IsStaticDeclared == vec.IsStaticDeclared()
+     */
+    inline AnyType(Vector<char8> &vec);
 
     /**
      * @brief Sets the data pointer hold by this AnyType instance.
@@ -695,10 +724,16 @@ public:
      */
     inline void SetStaticDeclared(const bool isStaticDeclared);
 
-	//TODO
+    /**
+     * @brief Retrieves the byte size of this type.
+     * @return the byte size of this type.
+     */
     inline uint32 GetByteSize() const;
 
-	//TODO
+    /**
+     * @brief Retrieves the bit size of this type.
+     * @return the bit size of this type.
+     */
     inline uint32 GetBitSize() const;
 
 private:
@@ -732,17 +767,16 @@ private:
     uint32 numberOfElements[3];
 
     /**
-     * If true => GetDataPointer() is pointing at a statically allocated memory block.
+     * If true => GetDataPointer() is a matrix dynamically allocated.
      */
     bool staticDeclared;
-
 
     /**
      * @brief Initialises all the dimensions to zero.
      *   GetNumberOfDimensions() == 0 &&
-     *   GetNumberOfElements(0) == 0 &&
-     *   GetNumberOfElements(1) == 0 &&
-     *   GetNumberOfElements(2) == 0
+     *   GetNumberOfElements(0) == 1 &&
+     *   GetNumberOfElements(1) == 1 &&
+     *   GetNumberOfElements(2) == 1
      */
     inline void Init();
 };
@@ -952,9 +986,10 @@ AnyType::AnyType(const float64 &i) {
 }
 
 /*---------------------------------------------------------------------------*/
-AnyType::AnyType(void * const p) {
+
+AnyType::AnyType(volatile void * const p) {
     Init();
-    dataPointer = p;
+    dataPointer = (void*) p;
     bitAddress = 0u;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.isConstant = false;
@@ -962,7 +997,7 @@ AnyType::AnyType(void * const p) {
     dataDescriptor.numberOfBits = sizeof(void*) * 8u;
 }
 
-AnyType::AnyType(const void * const p) {
+AnyType::AnyType(volatile const void * const p) {
     Init();
     dataPointer = const_cast<void *>(p);
     bitAddress = 0u;
@@ -972,14 +1007,18 @@ AnyType::AnyType(const void * const p) {
     dataDescriptor.numberOfBits = sizeof(void*) * 8u;
 }
 
-AnyType::AnyType(const char8 * const p) {
+AnyType::AnyType(volatile const char8 * const p) {
     Init();
     dataPointer = reinterpret_cast<void *>(const_cast<char8 *>(p));
     bitAddress = 0u;
-    dataDescriptor.isStructuredData = false;
-    dataDescriptor.isConstant = true;
-    dataDescriptor.type = CCString;
-    dataDescriptor.numberOfBits = sizeof(const char8*) * 8u;
+    dataDescriptor = ConstCharString;
+}
+
+AnyType::AnyType(volatile char8 * const p) {
+    Init();
+    dataPointer = reinterpret_cast<void *>(const_cast<char8 *>(p));
+    bitAddress = 0u;
+    dataDescriptor = CharString;
 }
 
 /*lint -e{1555} Justification: an AnyType copied from another AnyType points at the same under underlying element memory.*/
@@ -1103,6 +1142,18 @@ AnyType::AnyType(char8 (&source)[nOfElementsStatic]) {
     bitAddress = 0u;
 }
 
+template<uint32 nOfElementsStatic>
+AnyType::AnyType(const char8 (&source)[nOfElementsStatic]) {
+    Init();
+    dataPointer = (void*) (&source[0]);
+    staticDeclared = true;
+    dataDescriptor.numberOfBits = nOfElementsStatic * 8u;
+    dataDescriptor.isStructuredData = false;
+    dataDescriptor.type = CArray;
+    dataDescriptor.isConstant = true;
+    bitAddress = 0u;
+}
+
 template<typename T, uint32 nOfRowsStatic, uint32 nOfColumnsStatic>
 AnyType::AnyType(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
     Init();
@@ -1111,7 +1162,6 @@ AnyType::AnyType(T (&source)[nOfRowsStatic][nOfColumnsStatic]) {
     numberOfElements[0] = nOfColumnsStatic;
     numberOfElements[1] = nOfRowsStatic;
     staticDeclared = true;
-
     T typeDiscovery = static_cast<T>(0);
     AnyType anyTypeDiscovery(typeDiscovery);
     dataDescriptor = anyTypeDiscovery.GetTypeDescriptor();
@@ -1181,7 +1231,6 @@ AnyType::AnyType(Vector<T> &vec) {
     dataPointer = vec.GetDataPointer();
     numberOfDimensions = 1u;
     numberOfElements[0] = vec.GetNumberOfElements();
-    staticDeclared = vec.IsStaticDeclared();
 
     T typeDiscovery = static_cast<T>(vec[0]);
     AnyType anyTypeDiscovery(typeDiscovery);
@@ -1190,12 +1239,10 @@ AnyType::AnyType(Vector<T> &vec) {
 
 }
 
-
 AnyType::AnyType(Vector<char8> &vec) {
     Init();
     dataPointer = vec.GetDataPointer();
     numberOfDimensions = 0u;
-    staticDeclared = vec.IsStaticDeclared();
     dataDescriptor.numberOfBits = vec.GetNumberOfElements() * 8u;
     dataDescriptor.isStructuredData = false;
     dataDescriptor.type = CArray;
@@ -1251,7 +1298,7 @@ inline void AnyType::Init() {
     numberOfElements[0] = 1u;
     numberOfElements[1] = 1u;
     numberOfElements[2] = 1u;
-    staticDeclared = false;
+    staticDeclared = true;
     dataPointer = static_cast<void *>(NULL);
     bitAddress = 0u;
     dataDescriptor = VoidType;

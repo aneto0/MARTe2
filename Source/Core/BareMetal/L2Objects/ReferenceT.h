@@ -142,7 +142,7 @@ public:
      * @return true if the object was successfully created and initialized.
      */
     virtual bool Initialise(const StructuredDataI &data,
-                            const bool &createOnly);
+    const bool &createOnly);
 
 private:
 
@@ -189,7 +189,6 @@ void ReferenceT<T>::RemoveReference() {
 
 template<typename T>
 bool ReferenceT<T>::IsValid() const {
-
     return (Reference::IsValid()) ? (typeTObjectPointer != NULL) : false;
 }
 

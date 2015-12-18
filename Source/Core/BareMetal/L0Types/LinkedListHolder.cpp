@@ -2,7 +2,7 @@
  * @file LinkedListHolder.cpp
  * @brief Source file for class LinkedListHolder
  * @date 06/08/2015
- * @author Giuseppe Ferro'
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -75,6 +75,7 @@ uint32 LinkedListHolder::ListSize() const {
     return llhSize;
 }
 
+/*lint -e{429} . Justification: A possible pointer to allocated memory will be freed by LinkedListHolder::CleanUp in the destructor.*/
 void LinkedListHolder::ListInsert(LinkedListable * const p) {
     if (p != NULL) {
 
@@ -83,6 +84,7 @@ void LinkedListHolder::ListInsert(LinkedListable * const p) {
     }
 }
 
+/*lint -e{429} . Justification: A possible pointer to allocated memory will be freed by LinkedListHolder::CleanUp in the destructor.*/
 void LinkedListHolder::ListInsert(LinkedListable * const p,
                                   SortFilter * const sorter) {
     if (p != NULL) {

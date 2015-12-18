@@ -284,7 +284,6 @@ bool TypeConversionTest::TestTypeConvert(const TypeToTypeTableTest<T1, T2>* tabl
         T1 toConvert = table[i].typeToConvert;
 
         bool ret = TypeConvert(element, toConvert);
-
         if (element != result) {
              printf("\n%d \n", i);
 

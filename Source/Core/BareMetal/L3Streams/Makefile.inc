@@ -24,17 +24,17 @@
 #
 #############################################################
 
-OBJSX=CharBuffer.x \
-    IOBuffer.x \
-    IOBufferIntegerPrint.x \
-    IOBufferFloatPrint.x \
-    BufferedStreamI.x \
-    DoubleBufferedStream.x \
-    BufferedStreamIOBuffer.x \
-    StreamStringIOBuffer.x \
-    StreamString.x \
-    StreamMemoryReference.x \
-    SingleBufferedStream.x 
+OBJSX=	BufferedStreamI.x \
+		BufferedStreamIOBuffer.x \
+		CharBuffer.x \
+		DoubleBufferedStream.x \
+		IOBuffer.x \
+		IOBufferFloatPrint.x \
+		IOBufferIntegerPrint.x \
+		SingleBufferedStream.x \
+		StreamMemoryReference.x \
+		StreamString.x \
+		StreamStringIOBuffer.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -37,6 +37,10 @@
 #include "ClassProperties.h"
 #include "FractionalInteger.h"
 
+/*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 /*lint -e{9141} forward declaration required. Cannot #include Object.h given that Object.h needs to know about ClassRegistryItem (for the registration macros)*/
@@ -48,9 +52,7 @@ class Object;
  * @return a pointer to the created object.
  */
 typedef Object *(ObjectBuildFn)(HeapI* const);
-/*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
-/*---------------------------------------------------------------------------*/
+
 /**
  * @brief Descriptor of framework base classes.
  * @details Most of the framework user classes inherit from Object. As a consequence,

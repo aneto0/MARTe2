@@ -53,7 +53,7 @@ namespace MARTe {
  * This strategy is used to guarantee that certain rules about the template are guaranteed at compilation time.
  * Operator will always evaluate to true if the template is correctly used, otherwise it will not compile (which the objective)*/
 template<typename baseType, uint8 numberOfBits, uint8 bitOffset>
-class BitRange: public TemplateParametersVerificator<((sizeof(baseType)*8u)>=(numberOfBits+bitOffset)) && (numberOfBits > 0u) && (bitOffset >= 0u)> {
+class BitRange: public TemplateParametersVerificator<((sizeof(baseType) * 8u) >= (numberOfBits + bitOffset)) && (numberOfBits > 0u) && (bitOffset >= 0u)> {
 
 public:
 

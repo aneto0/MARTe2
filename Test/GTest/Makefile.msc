@@ -31,7 +31,7 @@ CPPFLAGS+= -fprofile-arcs -ftest-coverage -coverage
 LIBRARIES   += ..\..\Build\$(TARGET)\Core\MARTe2$(LIBEXT) 
 LIBRARIES   += ..\..\Build\$(TARGET)\Core\BareMetal\MARTeCoreBTest$(LIBEXT) 
 LIBRARIES   += ..\..\Build\$(TARGET)\Core\Scheduler\MARTeCoreSTest$(LIBEXT)
-LIBRARIES   += ..\..\Build\$(TARGET)\Core\FileSystem\MARTeCoreFTest$(LIBEXT) 
+LIBRARIES   += ..\..\Build\$(TARGET)\Core\FileSystem\MARTeCoreFTest$(LIBEXT)
 
 LIBRARIES   += ..\..\Lib\gtest-1.7.0\gtest_main-md.lib ..\..\Lib\gtest-1.7.0\gtest-md.lib 
 LIBRARIES   += Winmm.lib

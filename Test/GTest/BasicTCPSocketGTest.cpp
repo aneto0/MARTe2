@@ -88,28 +88,26 @@ TEST(BasicTCPSocketGTest,TestCanSeek) {
 }
 
 // Note: in linux (at least on my pc) the the listen accepts +3 clients than the max specified
-
-
 const ConnectListenTestTable tableListenConnect[]={
-        {4444,0, 3, 10, true,true, true, true},
-        {4444,0, 4, 10, false,true, true, true},
-        {4444,28, 32, 10, false,true, true, true},
-        {4444,29, 32, 10, true,true, true, true},
-        {4444,60, 64, 10, false,true, true, true},
-        {4444,60, 128, 10, false,true, true, true},
-        {4444,128, 60, 10, true,true, true, true},
-        {4444,128, 128, 10, true,true, true, true},
-        {4444,128, 128, 10, false, true, false, true},
-        {4444,0, 3, TTInfiniteWait, true,false, true, true},
-                {4444,0, 4, TTInfiniteWait, false,false, true, true},
-                {4444,28, 32, TTInfiniteWait, false,false, true, true},
-                {4444,29, 32, TTInfiniteWait, true,false, true, true},
-                {4444,60, 64, TTInfiniteWait, false,false, true, true},
-                {4444,60, 128, TTInfiniteWait, false,false, true, true},
-                {4444,128, 60, TTInfiniteWait, true,false, true, true},
-                {4444,128, 128, TTInfiniteWait, true,false, true, true},
-        {4444,128, 128, TTInfiniteWait, false, false, false, true},
-        {4444,128, 60, 10, false,true, true, false},
+        {4444,3, 3, 100, true,true, true, true},
+        {4446,0, 4, 10, false,true, true, true},
+        {4448,28, 32, 10, false,true, true, true},
+        {4450,32, 32, 100, true,true, true, true},
+        {4452,60, 64, 10, false,true, true, true},
+        {4454,60, 128, 10, false,true, true, true},
+        {4456,128, 60, 100, true,true, true, true},
+        {4458,128, 128, 100, true,true, true, true},
+        {4460,128, 128, 10, false, true, false, true},
+        {4462,3, 3, TTInfiniteWait, true,false, true, true},
+        {4464,4, 4, TTInfiniteWait, true,false, true, true},
+        {4466,32, 32, TTInfiniteWait, true,false, true, true},
+        {4468,32, 30, TTInfiniteWait, true,false, true, true},
+        {4470,64, 64, TTInfiniteWait, true,false, true, true},
+        {4472,128, 128, TTInfiniteWait, true,false, true, true},
+        {4474,128, 60, TTInfiniteWait, true,false, true, true},
+        {4476,128, 128, TTInfiniteWait, true,false, true, true},
+        {4478,128, 128, TTInfiniteWait, false, false, false, true},
+        {4480,128, 60, 10, false, true, true, false},
         {0,0,0,0,0,0,0,0}
 };
 
@@ -122,9 +120,8 @@ TEST(BasicTCPSocketGTest,TestListen) {
 
 TEST(BasicTCPSocketGTest,TestConnect) {
     BasicTCPSocketTest basicTCPSocketTest;
-    ASSERT_TRUE(basicTCPSocketTest.TestListen(tableListenConnect));
+    ASSERT_TRUE(basicTCPSocketTest.TestConnect(tableListenConnect));
 }
-
 
 TEST(BasicTCPSocketGTest,TestRead) {
     BasicTCPSocketTest basicTCPSocketTest;
@@ -133,11 +130,11 @@ TEST(BasicTCPSocketGTest,TestRead) {
             {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
             {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true,true},
             {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
-            {66,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
+            {64,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
             {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true,true},
             {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false,true},
             {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
-            {66,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
+            {64,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
             {11,11,"HelloWorld","HelloWorld", 32, 100, false, true, false, true,true},
             {11,11,"HelloWorld","HelloWorld", 32, TTInfiniteWait, false, false, false, true,true},
             {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, false, true, true, true,false},
@@ -156,11 +153,11 @@ TEST(BasicTCPSocketGTest,TestPeek) {
             {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
             {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true,true},
             {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
-            {66,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
+            {64,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false,true},
             {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true,true},
             {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false,true},
             {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
-            {66,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
+            {64,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false,true},
             {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, false, true, true, true,false},
             {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, false, true, true, false,false},
             {0,0,0,0,0,0,0,0,0}
@@ -178,13 +175,14 @@ TEST(BasicTCPSocketGTest,TestWrite) {
             {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, true, true, true, false, true},
             {5,5,"HelloWorld", "Hello", 2, TTInfiniteWait, true, true, true, true, true},
             {32,32,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, false, true},
-            {66,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, true, true},
+            {64,64,"HelloWorld","HelloWorld", 2, TTInfiniteWait, true, true, true, true, true},
             {11,11,"HelloWorld", "HelloWorld", 32, TTInfiniteWait, true, true, true, true, true},
             {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, true, true, true, false, true},
             {32,32,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false, true},
-            {66,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false, true},
-            {0x7fffffff,11,"HelloWorld","HelloWorld", 32, 10, false, true, false, true, true},
-            {0x7fffffff,11,"HelloWorld","HelloWorld", 32, TTInfiniteWait, false, false, false, true, true},
+            {64,64,"HelloWorld","HelloWorld", 32, TTInfiniteWait, true, true, true, false, true},
+            {64,64,"HelloWorld","HelloWorld", 32, 50, true, true, true, false, true},
+            {11,11,"HelloWorld","HelloWorld", 32, 10, true, true, false, true, true},
+            //{0x7fffffff,11,"HelloWorld","HelloWorld", 32, TTInfiniteWait, false, false, false, true, true},
             {5,5,"HelloWorld", "Hello", 32, TTInfiniteWait, false, true, true, true,false},
             {11,11,"HelloWorld", "HelloWorld", 2, TTInfiniteWait, false, true, true, false,false},
             {0,0,0,0,0,0,0,0,0}

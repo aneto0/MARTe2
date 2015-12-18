@@ -353,11 +353,6 @@ TEST(VectorGTest,TestConstructorByTable_CCString) {
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
-TEST(VectorGTest,TestIsStaticDeclared) {
-    VectorTest vectorTest;
-    ASSERT_TRUE(vectorTest.TestIsStaticDeclared());
-}
-
 TEST(VectorGTest,TestGetNumberOfElements) {
     VectorTest vectorTest;
     ASSERT_TRUE(vectorTest.TestGetNumberOfElements());

@@ -28,7 +28,16 @@ PACKAGE=Core/FileSystem/L1Portability
 ROOT_DIR=../../../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
-OBJSX= BasicFile.x
+OBJSX= BasicFile.x \
+    BasicSocket.x \
+    BasicUDPSocket.x \
+    BasiCTCPSocket.x \
+    InternetHost.x \
+    InternetService.x \
+    Directory.x \
+    DirectoryScanner.x \
+    Select.x
+
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 

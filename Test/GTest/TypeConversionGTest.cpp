@@ -38,9 +38,6 @@
 #include "gtest/gtest.h"
 #include "TypeConversionTest.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wnarrowing"
-#pragma GCC diagnostic ignored "-Woverflow"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -93,7 +90,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt8) {
             {"a123s5",0, true, false},
             {"0xFF",255, true, true},
             {"0xFF1",255, true, false},
-            {"0xABCD",0xab, true, false},
+            {"0xABcD",0xab, true, false},
             {"0o12",10, true, true},
             {"0x7F",127, true, true},
             {"0x80",128, true, true},
@@ -105,7 +102,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt8) {
             {"0b011111111",127, true, false},
             {"255",255, true, true},
             {"256",25, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -153,7 +150,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt16) {
             {"0b11111111111111111",65535, true, false},
             {"32767",32767, true, true},
             {"65536",6553, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -202,7 +199,8 @@ TEST(TypeConversionGTest,TestCCStringToUInt32) {
             {"0b111111111111111111111111111111111",4294967295, true, false},
             {"4294967295",4294967295, true, true},
             {"4294967296",429496729, true, false},
-            {"-1",0, true, true},
+            {"10000000000",1000000000, true, false},
+            {"-1",0, true, false},
             {0,0, 0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -253,7 +251,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt64) {
             {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
             {"18446744073709551615",18446744073709551615ul, true, true},
             {"18446744073709551616",1844674407370955161ul, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -318,9 +316,11 @@ TEST(TypeConversionGTest,TestCCStringToFloat64) {
             {"+123.5o",123.5, true, false},
             {"-123E-x",-123.0, true, false},
             //Overflow!
-            {"179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368",179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.0},
-            {"179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368",179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.0},
-            {"279769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368",179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.0},
+#if ENVIRONMENT != Windows
+            {"17976931348623157081452742373170435679807056752584499659891747680315726078002853876058955863276687817154045895351438246423432132688946418276846754670353751698604991057655128207624549009038932894407586850845513394230458323690322294816580855933212334827479782620414472316873817718091929988125040402618412485836",179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.0},
+            {"17976931348623157081452742373170435679807056752584499659891747680315726078002853876058955863276687817154045895351438246423432132688946418276846754670353751698604991057655128207624549009038932894407586850845513394230458323690322294816580855933212334827479782620414472316873817718091929988125040402618412485836",179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.0},
+            {"27976931348623157081452742373170435679807056752584499659891747680315726078002853876058955863276687817154045895351438246423432132688946418276846754670353751698604991057655128207624549009038932894407586850845513394230458323690322294816580855933212334827479782620414472316873817718091929988125040402618412485836",179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.0},
+#endif
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -421,7 +421,7 @@ TEST(TypeConversionGTest,TestSStringToUInt8) {
             {"0b011111111",127, true, false},
             {"255",255, true, true},
             {"256",25, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -469,7 +469,7 @@ TEST(TypeConversionGTest,TestSStringToUInt16) {
             {"0b11111111111111111",65535, true, false},
             {"32767",32767, true, true},
             {"65536",6553, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -518,7 +518,7 @@ TEST(TypeConversionGTest,TestSStringToUInt32) {
             {"0b111111111111111111111111111111111",4294967295, true, false},
             {"4294967295",4294967295, true, true},
             {"4294967296",429496729, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0, 0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -569,7 +569,7 @@ TEST(TypeConversionGTest,TestSStringToUInt64) {
             {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
             {"18446744073709551615",18446744073709551615ul, true, true},
             {"18446744073709551616",1844674407370955161ul, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -611,18 +611,18 @@ TEST(TypeConversionGTest,TestSStringToFloat64) {
             {"1E+2",100, true, true},
             {"10E+2",1000, true, true},
             {"12345.678E2",1234567.8, true, true},
-            {"1E-2",0.01, true, true},
+            {"1e-2",0.01, true, true},
             {"0.1E-2",0.001, true, true},
             {"16E-2",0.16, true, true},
             // see the precision now is the same!
             {"12345.678E-2",123.45678, true, true},
             {"1E+20",1E+20, true, true},
             {"123E+63",123E+63, true, true},
-            {"123E+83",123E+83, true, true},
+            {"123e+83",123E+83, true, true},
             // this is overflow!
             {"123E+510",123, true, false},
             {"123E+513",123, true, false},
-            {"1E-32",1E-32, true, true},
+            {"1e-32",1E-32, true, true},
             {"0.000000001",1E-9, true, true},
             //Overflow!
      //       {"179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368",179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368},
@@ -1147,11 +1147,11 @@ TEST(TypeConversionGTest,TestInt32ToUInt32) {
 TEST(TypeConversionGTest,TestInt32ToInt64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<int32,int64> table[]={
-            {1,1, true, true},
-            {-1,-1,true, true},
-            {2147483647,2147483647,true, true},
-            {-2147483648, -2147483648, true, true},
-            {0,0,0}
+            {1,1LL, true, true},
+            {-1,-1LL,true, true},
+            {2147483647,2147483647LL,true, true},
+            {-2147483648, -2147483648LL, true, true},
+            {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
 }
@@ -1340,10 +1340,10 @@ TEST(TypeConversionGTest,TestInt64ToInt32) {
     const TypeToTypeTableTest<int64,int32> table[]={
             {1,1, true, true},
             {-1,-1,true, true},
-            {2147483647,2147483647,true, true},
-            {-2147483648, -2147483648, true, true},
-            {2147483648,2147483647,true, true},
-            {-2147483649, -2147483648, true, true},
+            {2147483647LL,2147483647,true, true},
+            {-2147483648LL, -2147483648, true, true},
+            {2147483648LL,2147483647,true, true},
+            {-2147483649LL, -2147483648, true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1607,8 +1607,8 @@ TEST(TypeConversionGTest,TestInt32ToFloat32) {
     const TypeToTypeTableTest<int32,float32> table[]={
             {1,1, true, true},
             {-1,-1,true, true},
-            {2147483647,2147483647,true, true},
-            {-2147483648,-2147483648,true, true},
+            {2147483647,2147483647.0,true, true},
+            {-2147483648,-2147483648.0,true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -1618,10 +1618,10 @@ TEST(TypeConversionGTest,TestInt32ToFloat32) {
 TEST(TypeConversionGTest,TestInt32ToFloat64) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<int32,float64> table[]={
-            {1,1, true, true},
-            {-1,-1,true, true},
-            {2147483647,2147483647,true, true},
-            {-2147483648,-2147483648,true, true},
+            {1,1.0, true, true},
+            {-1,-1.0,true, true},
+            {2147483647,2147483647.0,true, true},
+            {-2147483648,-2147483648.0,true, true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -2058,8 +2058,10 @@ TEST(TypeConversionGTest,TestFloat64ToFloat64) {
     const TypeToTypeTableTest<float64,float64> table[]={
             {1.9,1.9, true,true},
             {-1.9, -1.9, true,true},
+#if ENVIRONMENT != Windows
             {179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.000000,179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.000000, true,true},
             {-179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.000000,-179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368.000000, true,true},
+#endif
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -2134,7 +2136,7 @@ TEST(TypeConversionGTest,TestUInt16ToSString) {
     const TypeToTypeTableTest<uint16,StreamString> table[]={
             {123,"123", true,true},
             {65535,"65535", true,true},
-            {65536,"0", true,true},
+            {(uint16)65536,"0", true,true},
             {32767,"32767", true,true},
             {-1,"65535",true,true},
             {0,0,0}
@@ -2152,7 +2154,7 @@ TEST(TypeConversionGTest,TestInt32ToSString) {
             {2147483647,"2147483647", true,true},
             {2147483648,"-2147483648", true,true},
             {-2147483648,"-2147483648", true,true},
-            {-2147483649,"2147483647", true,true},
+            {(int32)-2147483649,"2147483647", true,true},
             {4294967295,"-1", true,true},
             {0,0,0}
     };
@@ -2165,7 +2167,7 @@ TEST(TypeConversionGTest,TestUInt32ToSString) {
     const TypeToTypeTableTest<uint32,StreamString> table[]={
             {123,"123", true,true},
             {4294967295,"4294967295", true,true},
-            {4294967296,"0", true,true},
+            {(uint32)4294967296,"0", true,true},
             {2147483647,"2147483647", true,true},
             {-1,"4294967295",true,true},
             {0,0,0}
@@ -2195,11 +2197,11 @@ TEST(TypeConversionGTest,TestInt64ToSString) {
 TEST(TypeConversionGTest,TestUInt64ToSString) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,StreamString> table[]={
-            {123,"123", true,true},
-            {18446744073709551615ul,"18446744073709551615", true,true},
-            {0ul,"0", true,true},
-            {9223372036854775808ul,"9223372036854775808", true,true},
-            {-1ul,"18446744073709551615",true,true},
+            {123ULL,"123", true,true},
+            {18446744073709551615ULL,"18446744073709551615", true,true},
+            {0ULL,"0", true,true},
+            {9223372036854775808ULL,"9223372036854775808", true,true},
+            {-1ULL,"18446744073709551615",true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvert(table));
@@ -2302,7 +2304,7 @@ TEST(TypeConversionGTest,TestUInt16ToCCString) {
     const TypeToTypeTableTest<uint16,const char8*> table[]={
             {123,"123", true,true},
             {65535,"65535", true,true},
-            {65536,"0", true,true},
+            {(uint16)65536,"0", true,true},
             {32767,"32767", true,true},
             {-1,"65535",true,true},
             {0,0,0}
@@ -2320,7 +2322,7 @@ TEST(TypeConversionGTest,TestInt32ToCCString) {
             {2147483647,"2147483647", true,true},
             {2147483648,"-2147483648", true,true},
             {-2147483648,"-2147483648", true,true},
-            {-2147483649,"2147483647", true,true},
+            {(int32)-2147483649,"2147483647", true,true},
             {4294967295,"-1", true,true},
             {0,0,0}
     };
@@ -2333,7 +2335,7 @@ TEST(TypeConversionGTest,TestUInt32ToCCString) {
     const TypeToTypeTableTest<uint32,const char8*> table[]={
             {123,"123", true,true},
             {4294967295,"4294967295", true,true},
-            {4294967296,"0", true,true},
+            {(uint32)4294967296,"0", true,true},
             {2147483647,"2147483647", true,true},
             {-1,"4294967295",true,true},
             {0,0,0}
@@ -2363,11 +2365,11 @@ TEST(TypeConversionGTest,TestInt64ToCCString) {
 TEST(TypeConversionGTest,TestUInt64ToCCString) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,const char8*> table[]={
-            {123,"123", true,true},
-            {18446744073709551615ul,"18446744073709551615", true,true},
-            {0ul,"0", true,true},
-            {9223372036854775808ul,"9223372036854775808", true,true},
-            {-1ul,"18446744073709551615",true,true},
+            {123ULL,"123", true,true},
+            {18446744073709551615ULL,"18446744073709551615", true,true},
+            {0ULL,"0", true,true},
+            {9223372036854775808ULL,"9223372036854775808", true,true},
+            {-1ULL,"18446744073709551615",true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertToCCString(table));
@@ -2666,7 +2668,7 @@ TEST(TypeConversionGTest,TestInt32ToInt32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,int32,2,2> table[]={
             {{{2147483647,0},{-2147483648,-1}},{{2147483647,0},{-2147483648,-1}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2677,7 +2679,7 @@ TEST(TypeConversionGTest,TestInt32ToUInt32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,uint32,2,2> table[]={
             {{{2147483647,0},{1234,-1}},{{2147483647,0},{1234,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2689,7 +2691,7 @@ TEST(TypeConversionGTest,TestUInt32ToInt32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,int32,2,2> table[]={
             {{{2147483647,2147483648},{1234,0}},{{2147483647,2147483647},{1234,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2700,7 +2702,7 @@ TEST(TypeConversionGTest,TestFloat32ToInt32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,int32,2,2> table[]={
             {{{2147483647.5,-1234.47},{1234.67,0.01}},{{2147483647,-1234},{1235,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2710,7 +2712,7 @@ TEST(TypeConversionGTest,TestFloat32ToUInt32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,uint32,2,2> table[]={
             {{{4294967295.5,-1234.47},{1234.67,0.5}},{{4294967295,0},{1235,1}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2721,7 +2723,7 @@ TEST(TypeConversionGTest,TestInt32ToFloat32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,float32,2,2> table[]={
             {{{2147483647,-1234},{1234,-2147483648}},{{2147483647.0,-1234.0},{1234.0,-2147483648.0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2731,7 +2733,7 @@ TEST(TypeConversionGTest,TestUInt32ToFloat32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,float32,2,2> table[]={
             {{{4294967295,0},{1235,1}},{{4294967295.0,0.0},{1235.0,1.0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2742,7 +2744,7 @@ TEST(TypeConversionGTest,TestCCStringToInt32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,int32,2,2> table[]={
             {{{"-1","0"},{"2147483647","-2147483648"}},{{-1,0},{2147483647,-2147483648}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2752,7 +2754,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,uint32,2,2> table[]={
             {{{"-1","0"},{"2147483647","4294967295"}},{{0,0},{2147483647,4294967295}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2763,7 +2765,7 @@ TEST(TypeConversionGTest,TestSStringToInt32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,int32,2,2> table[]={
             {{{"-1","0"},{"2147483647","-2147483648"}},{{-1,0},{2147483647,-2147483648}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2774,7 +2776,7 @@ TEST(TypeConversionGTest,TestSStringToUInt32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,uint32,2,2> table[]={
             {{{"-1","0"},{"2147483647","4294967295"}},{{0,0},{2147483647,4294967295}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2787,7 +2789,7 @@ TEST(TypeConversionGTest,TestCCStringToFloat32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,float32,2,2> table[]={
             {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2797,7 +2799,7 @@ TEST(TypeConversionGTest,TestSStringToFloat32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,float32,2,2> table[]={
             {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2808,7 +2810,7 @@ TEST(TypeConversionGTest,TestInt32ToSStringMatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,StreamString,2,2> table[]={
             {{{2147483648,4294967295},{2147483647,0}},{{"-2147483648","-1"},{"2147483647","0"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2817,8 +2819,8 @@ TEST(TypeConversionGTest,TestInt32ToSStringMatrixStaticToStatic) {
 TEST(TypeConversionGTest,TestUInt32ToSStringMatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,StreamString,2,2> table[]={
-            {{{-1,2147483647},{4294967295,4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
-            {{0},{0},0}
+            {{{-1,2147483647},{4294967295,(uint32)4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2830,7 +2832,7 @@ TEST(TypeConversionGTest,TestFloat32ToSStringMatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,StreamString,2,2> table[]={
             {{{-0.02E-2,1234.5E+5},{1E-5,0.123}},{{"-200.0000E-6","123.4500E+6"},{"10.00000E-6","123.0000E-3"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2841,7 +2843,7 @@ TEST(TypeConversionGTest,TestCCStringToStringMatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8*,StreamString,2,2> table[]={
             {{{"-200E-6","123.4500E+6"},{"10000000000000000000000000000E-6","HelloWorld"}},{{"-200E-6","123.4500E+6"},{"10000000000000000000000000000E-6","HelloWorld"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStatic(table));
@@ -2854,7 +2856,7 @@ TEST(TypeConversionGTest,TestInt32ToInt32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,int32,2,2> table[]={
             {{{2147483647,0},{-2147483648,-1}},{{2147483647,0},{-2147483648,-1}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2864,7 +2866,7 @@ TEST(TypeConversionGTest,TestInt32ToUInt32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,uint32,2,2> table[]={
             {{{2147483647,0},{1234,-1}},{{2147483647,0},{1234,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2876,7 +2878,7 @@ TEST(TypeConversionGTest,TestUInt32ToInt32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,int32,2,2> table[]={
             {{{2147483647,2147483648},{1234,0}},{{2147483647,2147483647},{1234,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2887,7 +2889,7 @@ TEST(TypeConversionGTest,TestFloat32ToInt32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,int32,2,2> table[]={
             {{{2147483647.5,-1234.47},{1234.67,0.01}},{{2147483647,-1234},{1235,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2897,7 +2899,7 @@ TEST(TypeConversionGTest,TestFloat32ToUInt32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,uint32,2,2> table[]={
             {{{4294967295.5,-1234.47},{1234.67,0.5}},{{4294967295,0},{1235,1}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2908,7 +2910,7 @@ TEST(TypeConversionGTest,TestInt32ToFloat32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,float32,2,2> table[]={
             {{{2147483647,-1234},{1234,-2147483648}},{{2147483647.0,-1234.0},{1234.0,-2147483648.0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2918,7 +2920,7 @@ TEST(TypeConversionGTest,TestUInt32ToFloat32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,float32,2,2> table[]={
             {{{4294967295,0},{1235,1}},{{4294967295.0,0.0},{1235.0,1.0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2929,7 +2931,7 @@ TEST(TypeConversionGTest,TestCCStringToInt32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,int32,2,2> table[]={
             {{{"-1","0"},{"2147483647","-2147483648"}},{{-1,0},{2147483647,-2147483648}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2939,7 +2941,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,uint32,2,2> table[]={
             {{{"-1","0"},{"2147483647","4294967295"}},{{0,0},{2147483647,4294967295}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2950,7 +2952,7 @@ TEST(TypeConversionGTest,TestSStringToInt32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,int32,2,2> table[]={
             {{{"-1","0"},{"2147483647","-2147483648"}},{{-1,0},{2147483647,-2147483648}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2961,7 +2963,7 @@ TEST(TypeConversionGTest,TestSStringToUInt32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,uint32,2,2> table[]={
             {{{"-1","0"},{"2147483647","4294967295"}},{{0,0},{2147483647,4294967295}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2974,7 +2976,7 @@ TEST(TypeConversionGTest,TestCCStringToFloat32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,float32,2,2> table[]={
             {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2984,7 +2986,7 @@ TEST(TypeConversionGTest,TestSStringToFloat32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,float32,2,2> table[]={
             {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -2995,7 +2997,7 @@ TEST(TypeConversionGTest,TestInt32ToSStringMatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,StreamString,2,2> table[]={
             {{{2147483648,4294967295},{2147483647,0}},{{"-2147483648","-1"},{"2147483647","0"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -3004,8 +3006,8 @@ TEST(TypeConversionGTest,TestInt32ToSStringMatrixStaticToHeap) {
 TEST(TypeConversionGTest,TestUInt32ToSStringMatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,StreamString,2,2> table[]={
-            {{{-1,2147483647},{4294967295,4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
-            {{0},{0},0}
+            {{{-1,2147483647},{4294967295,(uint32)4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -3017,7 +3019,7 @@ TEST(TypeConversionGTest,TestFloat32ToSStringMatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,StreamString,2,2> table[]={
             {{{-0.02E-2,1234.5E+5},{1E-5,0.123}},{{"-200.0000E-6","123.4500E+6"},{"10.00000E-6","123.0000E-3"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -3028,7 +3030,7 @@ TEST(TypeConversionGTest,TestCCStringToStringMatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8*,StreamString,2,2> table[]={
             {{{"-200E-6","123.4500E+6"},{"10000000000000000000000000000E-6","HelloWorld"}},{{"-200E-6","123.4500E+6"},{"10000000000000000000000000000E-6","HelloWorld"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeap(table));
@@ -3040,7 +3042,7 @@ TEST(TypeConversionGTest,TestInt32ToInt32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,int32,2,2> table[]={
             {{{2147483647,0},{-2147483648,-1}},{{2147483647,0},{-2147483648,-1}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3051,7 +3053,7 @@ TEST(TypeConversionGTest,TestInt32ToUInt32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,uint32,2,2> table[]={
             {{{2147483647,0},{1234,-1}},{{2147483647,0},{1234,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3063,7 +3065,7 @@ TEST(TypeConversionGTest,TestUInt32ToInt32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,int32,2,2> table[]={
             {{{2147483647,2147483648},{1234,0}},{{2147483647,2147483647},{1234,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3074,7 +3076,7 @@ TEST(TypeConversionGTest,TestFloat32ToInt32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,int32,2,2> table[]={
             {{{2147483647.5,-1234.47},{1234.67,0.01}},{{2147483647,-1234},{1235,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3084,7 +3086,7 @@ TEST(TypeConversionGTest,TestFloat32ToUInt32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,uint32,2,2> table[]={
             {{{4294967295.5,-1234.47},{1234.67,0.5}},{{4294967295,0},{1235,1}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3095,7 +3097,7 @@ TEST(TypeConversionGTest,TestInt32ToFloat32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,float32,2,2> table[]={
             {{{2147483647,-1234},{1234,-2147483648}},{{2147483647.0,-1234.0},{1234.0,-2147483648.0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3105,7 +3107,7 @@ TEST(TypeConversionGTest,TestUInt32ToFloat32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,float32,2,2> table[]={
             {{{4294967295,0},{1235,1}},{{4294967295.0,0.0},{1235.0,1.0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3116,7 +3118,7 @@ TEST(TypeConversionGTest,TestCCStringToInt32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,int32,2,2> table[]={
             {{{"-1","0"},{"2147483647","-2147483648"}},{{-1,0},{2147483647,-2147483648}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3126,7 +3128,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,uint32,2,2> table[]={
             {{{"-1","0"},{"2147483647","4294967295"}},{{0,0},{2147483647,4294967295}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3137,7 +3139,7 @@ TEST(TypeConversionGTest,TestSStringToInt32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,int32,2,2> table[]={
             {{{"-1","0"},{"2147483647","-2147483648"}},{{-1,0},{2147483647,-2147483648}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3148,7 +3150,7 @@ TEST(TypeConversionGTest,TestSStringToUInt32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,uint32,2,2> table[]={
             {{{"-1","0"},{"2147483647","4294967295"}},{{0,0},{2147483647,4294967295}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3161,7 +3163,7 @@ TEST(TypeConversionGTest,TestCCStringToFloat32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,float32,2,2> table[]={
             {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3171,7 +3173,7 @@ TEST(TypeConversionGTest,TestSStringToFloat32MatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,float32,2,2> table[]={
             {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3182,7 +3184,7 @@ TEST(TypeConversionGTest,TestInt32ToSStringMatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,StreamString,2,2> table[]={
             {{{2147483648,4294967295},{2147483647,0}},{{"-2147483648","-1"},{"2147483647","0"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3191,8 +3193,8 @@ TEST(TypeConversionGTest,TestInt32ToSStringMatrixHeapToStatic) {
 TEST(TypeConversionGTest,TestUInt32ToSStringMatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,StreamString,2,2> table[]={
-            {{{-1,2147483647},{4294967295,4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
-            {{0},{0},0}
+            {{{-1,2147483647},{4294967295,(uint32)4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3204,7 +3206,7 @@ TEST(TypeConversionGTest,TestFloat32ToSStringMatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,StreamString,2,2> table[]={
             {{{-0.02E-2,1234.5E+5},{1E-5,0.123}},{{"-200.0000E-6","123.4500E+6"},{"10.00000E-6","123.0000E-3"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3215,7 +3217,7 @@ TEST(TypeConversionGTest,TestCCStringToStringMatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8*,StreamString,2,2> table[]={
             {{{"-200E-6","123.4500E+6"},{"10000000000000000000000000000E-6","HelloWorld"}},{{"-200E-6","123.4500E+6"},{"10000000000000000000000000000E-6","HelloWorld"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStatic(table));
@@ -3225,7 +3227,7 @@ TEST(TypeConversionGTest,TestInt32ToInt32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,int32,2,2> table[]={
             {{{2147483647,0},{-2147483648,-1}},{{2147483647,0},{-2147483648,-1}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3236,7 +3238,7 @@ TEST(TypeConversionGTest,TestInt32ToUInt32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,uint32,2,2> table[]={
             {{{2147483647,0},{1234,-1}},{{2147483647,0},{1234,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3248,7 +3250,7 @@ TEST(TypeConversionGTest,TestUInt32ToInt32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,int32,2,2> table[]={
             {{{2147483647,2147483648},{1234,0}},{{2147483647,2147483647},{1234,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3259,7 +3261,7 @@ TEST(TypeConversionGTest,TestFloat32ToInt32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,int32,2,2> table[]={
             {{{2147483647.5,-1234.47},{1234.67,0.01}},{{2147483647,-1234},{1235,0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3269,7 +3271,7 @@ TEST(TypeConversionGTest,TestFloat32ToUInt32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,uint32,2,2> table[]={
             {{{4294967295.5,-1234.47},{1234.67,0.5}},{{4294967295,0},{1235,1}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3280,7 +3282,7 @@ TEST(TypeConversionGTest,TestInt32ToFloat32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,float32,2,2> table[]={
             {{{2147483647,-1234},{1234,-2147483648}},{{2147483647.0,-1234.0},{1234.0,-2147483648.0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3290,7 +3292,7 @@ TEST(TypeConversionGTest,TestUInt32ToFloat32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,float32,2,2> table[]={
             {{{4294967295,0},{1235,1}},{{4294967295.0,0.0},{1235.0,1.0}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3301,7 +3303,7 @@ TEST(TypeConversionGTest,TestCCStringToInt32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,int32,2,2> table[]={
             {{{"-1","0"},{"2147483647","-2147483648"}},{{-1,0},{2147483647,-2147483648}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3311,7 +3313,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,uint32,2,2> table[]={
             {{{"-1","0"},{"2147483647","4294967295"}},{{0,0},{2147483647,4294967295}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3322,7 +3324,7 @@ TEST(TypeConversionGTest,TestSStringToInt32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,int32,2,2> table[]={
             {{{"-1","0"},{"2147483647","-2147483648"}},{{-1,0},{2147483647,-2147483648}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3333,7 +3335,7 @@ TEST(TypeConversionGTest,TestSStringToUInt32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,uint32,2,2> table[]={
             {{{"-1","0"},{"2147483647","4294967295"}},{{0,0},{2147483647,4294967295}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3346,7 +3348,7 @@ TEST(TypeConversionGTest,TestCCStringToFloat32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,float32,2,2> table[]={
             {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3356,7 +3358,7 @@ TEST(TypeConversionGTest,TestSStringToFloat32MatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,float32,2,2> table[]={
             {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3367,7 +3369,7 @@ TEST(TypeConversionGTest,TestInt32ToSStringMatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,StreamString,2,2> table[]={
             {{{2147483648,4294967295},{2147483647,0}},{{"-2147483648","-1"},{"2147483647","0"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3376,8 +3378,8 @@ TEST(TypeConversionGTest,TestInt32ToSStringMatrixHeapToHeap) {
 TEST(TypeConversionGTest,TestUInt32ToSStringMatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,StreamString,2,2> table[]={
-            {{{-1,2147483647},{4294967295,4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
-            {{0},{0},0}
+            {{{-1,2147483647},{4294967295,(uint32)4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3389,7 +3391,7 @@ TEST(TypeConversionGTest,TestFloat32ToSStringMatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,StreamString,2,2> table[]={
             {{{-0.02E-2,1234.5E+5},{1E-5,0.123}},{{"-200.0000E-6","123.4500E+6"},{"10.00000E-6","123.0000E-3"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3400,7 +3402,7 @@ TEST(TypeConversionGTest,TestCCStringToStringMatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8*,StreamString,2,3> table[]={
             {{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}},{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}}, true},
-            {{0},{0},0}
+            {{{0,0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeap(table));
@@ -3457,7 +3459,7 @@ TEST(TypeConversionGTest,TestUInt16ToCArray) {
     const TypeToTypeTableTest<uint16,const char8 *> table[]={
             {123,"123", true,true},
             {65535,"65535", true,true},
-            {65536,"0", true,true},
+            {(uint16)65536,"0", true,true},
             {32767,"32767", true,true},
             {-1,"65535",true,true},
             {0,0,0}
@@ -3473,10 +3475,10 @@ TEST(TypeConversionGTest,TestInt32ToCArray) {
             {123, "123", true,true},
             {-1,"-1", true,true},
             {2147483647,"2147483647", true,true},
-            {2147483648,"-2147483648", true,true},
+            {(int32)2147483648,"-2147483648", true,true},
             {-2147483648,"-2147483648", true,true},
-            {-2147483649,"2147483647", true,true},
-            {4294967295,"-1", true,true},
+            {(int32)-2147483649,"2147483647", true,true},
+            {(int32)4294967295,"-1", true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
@@ -3488,7 +3490,7 @@ TEST(TypeConversionGTest,TestUInt32ToCArray) {
     const TypeToTypeTableTest<uint32,const char8 *> table[]={
             {123,"123", true,true},
             {4294967295,"4294967295", true,true},
-            {4294967296,"0", true,true},
+            {(uint32)4294967296,"0", true,true},
             {2147483647,"2147483647", true,true},
             {-1,"4294967295",true,true},
             {0,0,0}
@@ -3518,11 +3520,11 @@ TEST(TypeConversionGTest,TestInt64ToCArray) {
 TEST(TypeConversionGTest,TestUInt64ToCArray) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,const char8 *> table[]={
-            {123,"123", true,true},
-            {18446744073709551615ul,"18446744073709551615", true,true},
-            {0ul,"0", true,true},
-            {9223372036854775808ul,"9223372036854775808", true,true},
-            {-1ul,"18446744073709551615",true,true},
+            {123ULL,"123", true,true},
+            {18446744073709551615ULL,"18446744073709551615", true,true},
+            {0ULL,"0", true,true},
+            {9223372036854775808ULL,"9223372036854775808", true,true},
+            {-1ULL,"18446744073709551615",true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertCArray(table));
@@ -3648,7 +3650,7 @@ TEST(TypeConversionGTest,TestUInt16ToCharVector) {
     const TypeToTypeTableTest<uint16,const char8 *> table[]={
             {123,"123", true,true},
             {65535,"65535", true,true},
-            {65536,"0", true,true},
+            {(uint16)65536,"0", true,true},
             {32767,"32767", true,true},
             {-1,"65535",true,true},
             {0,0,0}
@@ -3664,9 +3666,9 @@ TEST(TypeConversionGTest,TestInt32ToCharVector) {
             {123, "123", true,true},
             {-1,"-1", true,true},
             {2147483647,"2147483647", true,true},
-            {2147483648,"-2147483648", true,true},
+            {(int32)2147483648,"-2147483648", true,true},
             {-2147483648,"-2147483648", true,true},
-            {-2147483649,"2147483647", true,true},
+            {(int32)-2147483649,"2147483647", true,true},
             {4294967295,"-1", true,true},
             {0,0,0}
     };
@@ -3679,7 +3681,7 @@ TEST(TypeConversionGTest,TestUInt32ToCharVector) {
     const TypeToTypeTableTest<uint32,const char8 *> table[]={
             {123,"123", true,true},
             {4294967295,"4294967295", true,true},
-            {4294967296,"0", true,true},
+            {(uint32)4294967296,"0", true,true},
             {2147483647,"2147483647", true,true},
             {-1,"4294967295",true,true},
             {0,0,0}
@@ -3709,11 +3711,11 @@ TEST(TypeConversionGTest,TestInt64ToCharVector) {
 TEST(TypeConversionGTest,TestUInt64ToCharVector) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeTableTest<uint64,const char8 *> table[]={
-            {123,"123", true,true},
-            {18446744073709551615ul,"18446744073709551615", true,true},
-            {0ul,"0", true,true},
-            {9223372036854775808ul,"9223372036854775808", true,true},
-            {-1ul,"18446744073709551615",true,true},
+            {123ULL,"123", true,true},
+            {18446744073709551615ULL,"18446744073709551615", true,true},
+            {0ULL,"0", true,true},
+            {9223372036854775808ULL,"9223372036854775808", true,true},
+            {-1ULL,"18446744073709551615",true,true},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertToCharVector(table));
@@ -3842,7 +3844,7 @@ TEST(TypeConversionGTest,TestCArrayToUInt8) {
             {"0b011111111",127, true, false},
             {"255",255, true, true},
             {"256",25, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
@@ -3890,7 +3892,7 @@ TEST(TypeConversionGTest,TestCArrayToUInt16) {
             {"0b11111111111111111",65535, true, false},
             {"32767",32767, true, true},
             {"65536",6553, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
@@ -3939,7 +3941,7 @@ TEST(TypeConversionGTest,TestCArrayToUInt32) {
             {"0b111111111111111111111111111111111",4294967295, true, false},
             {"4294967295",4294967295, true, true},
             {"4294967296",429496729, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0, 0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
@@ -3980,7 +3982,7 @@ TEST(TypeConversionGTest,TestCArrayToUInt64) {
             {"a123s5",0, true, false},
             {"0xFFFFFFFFFFFFFFFF",18446744073709551615ul, true, true},
             {"0xFFFFFFFFFFFFFFFF1",18446744073709551615ul, true, false},
-            {"0x7FFFFFFFFFFFFFFF",9223372036854775807ul, true, true},
+            {"0x7FFFFFFfFFFFFFFF",9223372036854775807ul, true, true},
             {"0o1777777777777777777777",18446744073709551615ul, true, true},
             {"0o777777777777777777777",9223372036854775807ul, true, true},
             {"0o2777777777777777777777",3458764513820540927ul, true, false},
@@ -3990,7 +3992,7 @@ TEST(TypeConversionGTest,TestCArrayToUInt64) {
             {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
             {"18446744073709551615",18446744073709551615ul, true, true},
             {"18446744073709551616",1844674407370955161ul, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCArray(table));
@@ -4118,7 +4120,7 @@ TEST(TypeConversionGTest,TestCharVectorToUInt8) {
             {"0b011111111",127, true, false},
             {"255",255, true, true},
             {"256",25, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCharVector(table));
@@ -4166,7 +4168,7 @@ TEST(TypeConversionGTest,TestCharVectorToUInt16) {
             {"0b11111111111111111",65535, true, false},
             {"32767",32767, true, true},
             {"65536",6553, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCharVector(table));
@@ -4215,7 +4217,7 @@ TEST(TypeConversionGTest,TestCharVectorToUInt32) {
             {"0b111111111111111111111111111111111",4294967295, true, false},
             {"4294967295",4294967295, true, true},
             {"4294967296",429496729, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0, 0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCharVector(table));
@@ -4266,7 +4268,7 @@ TEST(TypeConversionGTest,TestCharVectorToUInt64) {
             {"0b01111111111111111111111111111111111111111111111111111111111111111",9223372036854775807ul, true, false},
             {"18446744073709551615",18446744073709551615ul, true, true},
             {"18446744073709551616",1844674407370955161ul, true, false},
-            {"-1",0, true, true},
+            {"-1",0, true, false},
             {0,0,0}
     };
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertFromCharVector(table));
@@ -4513,7 +4515,7 @@ TEST(TypeConversionGTest,TestFloat32ToCArrayMatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,const char8*,2,2> table[]={
             {{{-0.02E-2,1234.5E+5},{1E-5,0.123}},{{"-200.0000E-6","123.4500E+6"},{"10.00000E-6","123.0000E-3"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStaticCArray(table));
@@ -4523,7 +4525,7 @@ TEST(TypeConversionGTest,TestCArrayToFloat32MatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,float32,2,2> table[]={
             {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStaticFromCArray(table));
@@ -4546,7 +4548,7 @@ TEST(TypeConversionGTest,TestCArrayToFloat32MatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8 *,float32,2,2> table[]={
             {{{"-0.02E-2","1234.5E+5"},{"0.00001","1E-20"}},{{-0.02E-2,1234.5E+5},{1E-5,1E-20}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeapFromCArray(table));
@@ -4558,7 +4560,7 @@ TEST(TypeConversionGTest,TestInt32ToCCStringMatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,const char8*,2,2> table[]={
             {{{2147483648,4294967295},{2147483647,0}},{{"-2147483648","-1"},{"2147483647","0"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeapCCString(table));
@@ -4567,8 +4569,8 @@ TEST(TypeConversionGTest,TestInt32ToCCStringMatrixHeapToHeap) {
 TEST(TypeConversionGTest,TestUInt32ToCCStringMatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,const char8*,2,2> table[]={
-            {{{-1,2147483647},{4294967295,4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
-            {{0},{0},0}
+            {{{-1,2147483647},{4294967295,(uint32)4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeapCCString(table));
@@ -4580,7 +4582,7 @@ TEST(TypeConversionGTest,TestFloat32ToCCStringMatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,const char8*,2,2> table[]={
             {{{-0.02E-2,1234.5E+5},{1E-5,0.123}},{{"-200.0000E-6","123.4500E+6"},{"10.00000E-6","123.0000E-3"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeapCCString(table));
@@ -4591,7 +4593,7 @@ TEST(TypeConversionGTest,TestCCStringToCCStringMatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8*,const char8*,2,3> table[]={
             {{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}},{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeapCCString(table));
@@ -4602,7 +4604,7 @@ TEST(TypeConversionGTest,TestSStringToCCStringMatrixHeapToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,const char8*,2,3> table[]={
             {{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}},{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToHeapCCString(table));
@@ -4615,7 +4617,7 @@ TEST(TypeConversionGTest,TestInt32ToCCStringMatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,const char8*,2,2> table[]={
             {{{2147483648,4294967295},{2147483647,0}},{{"-2147483648","-1"},{"2147483647","0"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeapCCString(table));
@@ -4624,8 +4626,8 @@ TEST(TypeConversionGTest,TestInt32ToCCStringMatrixStaticToHeap) {
 TEST(TypeConversionGTest,TestUInt32ToCCStringMatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,const char8*,2,2> table[]={
-            {{{-1,2147483647},{4294967295,4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
-            {{0},{0},0}
+            {{{-1,2147483647},{4294967295,(uint32)4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeapCCString(table));
@@ -4637,7 +4639,7 @@ TEST(TypeConversionGTest,TestFloat32ToCCStringMatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,const char8*,2,2> table[]={
             {{{-0.02E-2,1234.5E+5},{1E-5,0.123}},{{"-200.0000E-6","123.4500E+6"},{"10.00000E-6","123.0000E-3"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeapCCString(table));
@@ -4648,7 +4650,7 @@ TEST(TypeConversionGTest,TestCCStringToCCStringMatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8*,const char8*,2,3> table[]={
             {{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}},{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeapCCString(table));
@@ -4659,7 +4661,7 @@ TEST(TypeConversionGTest,TestSStringToCCStringMatrixStaticToHeap) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,const char8*,2,3> table[]={
             {{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}},{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToHeapCCString(table));
@@ -4673,7 +4675,7 @@ TEST(TypeConversionGTest,TestInt32ToCCStringMatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,const char8*,2,2> table[]={
             {{{2147483648,4294967295},{2147483647,0}},{{"-2147483648","-1"},{"2147483647","0"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStaticCCString(table));
@@ -4682,8 +4684,8 @@ TEST(TypeConversionGTest,TestInt32ToCCStringMatrixStaticToStatic) {
 TEST(TypeConversionGTest,TestUInt32ToCCStringMatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,const char8*,2,2> table[]={
-            {{{-1,2147483647},{4294967295,4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
-            {{0},{0},0}
+            {{{-1,2147483647},{4294967295,(uint32)4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStaticCCString(table));
@@ -4695,7 +4697,7 @@ TEST(TypeConversionGTest,TestFloat32ToCCStringMatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,const char8*,2,2> table[]={
             {{{-0.02E-2,1234.5E+5},{1E-5,0.123}},{{"-200.0000E-6","123.4500E+6"},{"10.00000E-6","123.0000E-3"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStaticCCString(table));
@@ -4706,7 +4708,7 @@ TEST(TypeConversionGTest,TestCCStringToCCStringMatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8*,const char8*,2,3> table[]={
             {{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}},{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStaticCCString(table));
@@ -4717,7 +4719,7 @@ TEST(TypeConversionGTest,TestSStringToCCStringMatrixStaticToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,const char8*,2,3> table[]={
             {{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}},{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixStaticToStaticCCString(table));
@@ -4729,7 +4731,7 @@ TEST(TypeConversionGTest,TestInt32ToCCStringMatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<int32,const char8*,2,2> table[]={
             {{{2147483648,4294967295},{2147483647,0}},{{"-2147483648","-1"},{"2147483647","0"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStaticCCString(table));
@@ -4738,8 +4740,8 @@ TEST(TypeConversionGTest,TestInt32ToCCStringMatrixHeapToStatic) {
 TEST(TypeConversionGTest,TestUInt32ToCCStringMatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<uint32,const char8*,2,2> table[]={
-            {{{-1,2147483647},{4294967295,4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
-            {{0},{0},0}
+            {{{-1,2147483647},{4294967295,(uint32)4294967296}},{{"4294967295","2147483647"},{"4294967295","0"}}, true},
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStaticCCString(table));
@@ -4751,7 +4753,7 @@ TEST(TypeConversionGTest,TestFloat32ToCCStringMatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<float32,const char8*,2,2> table[]={
             {{{-0.02E-2,1234.5E+5},{1E-5,0.123}},{{"-200.0000E-6","123.4500E+6"},{"10.00000E-6","123.0000E-3"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStaticCCString(table));
@@ -4762,7 +4764,7 @@ TEST(TypeConversionGTest,TestCCStringToCCStringMatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<const char8*,const char8*,2,3> table[]={
             {{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}},{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStaticCCString(table));
@@ -4773,7 +4775,7 @@ TEST(TypeConversionGTest,TestSStringToCCStringMatrixHeapToStatic) {
     TypeConversionTest myTypeConversionTest;
     const TypeToTypeMatrixTableTest<StreamString,const char8*,2,3> table[]={
             {{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}},{{"-200E-6","123.4500E+6","abcd"},{"10000000000000000000000000000E-6","HelloWorld","efgh"}}, true},
-            {{0},{0},0}
+            {{{0},{0}},{{0,0}},0}
     };
 
     ASSERT_TRUE(myTypeConversionTest.TestTypeConvertMatrixHeapToStaticCCString(table));
@@ -4798,7 +4800,8 @@ TEST(TypeConversionGTest,TestCArrayToCCStringMatrix) {
     ASSERT_TRUE(myTypeConversionTest.TestCArrayToCCStringMatrix());
 }
 
-
+//TODO this is currently not supported in msc
+#if ENVIRONMENT != Windows
 TEST(TypeConversionGTest,TestCCStringToCArrayScalar_Trunc) {
     TypeConversionTest myTypeConversionTest;
 
@@ -4828,6 +4831,4 @@ TEST(TypeConversionGTest,TestFloatToCArrayScalar_Trunc) {
 
     ASSERT_TRUE(myTypeConversionTest.TestFloatToCArrayScalar_Trunc());
 }
-
-
-#pragma GCC diagnostic pop
+#endif

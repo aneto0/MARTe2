@@ -1,5 +1,4 @@
 /**
-
  * @file StaticListHolder.h
  * @brief Header file for class StaticListHolder
  * @date 31/08/2015
@@ -202,7 +201,7 @@ public:
      * @return false if precondition is broken or memory allocation fails
      */
     bool Insert(const uint32 position,
-             const void * const copyFrom);
+                const void * const copyFrom);
 
     /**
      * @brief Peeks an element from a given position of the list
@@ -249,6 +248,12 @@ public:
      */
     bool Extract(const uint32 position,
                  void * const copyTo);
+
+    /**
+     * @brief Retrieves the pointer to the allocated memory area.
+     * @return the pointer to the allocated memory area.
+     */
+    void* GetAllocatedMemory();
 
 private:
 

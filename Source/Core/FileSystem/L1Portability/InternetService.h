@@ -44,7 +44,7 @@ namespace MARTe {
      * @brief Implementation of an internet service which allows to retrieve
      * the name, the port number and the internet protocol associated to an internet service.
      */
-    class InternetService {
+    class DLL_API InternetService {
 
     public:
 
@@ -52,7 +52,6 @@ namespace MARTe {
          * @brief Initializes the InternetServiceCore structure.
          */
         InternetService();
-
 
         /**
          * @brief Sets the InternetService handle structure searching in the
@@ -87,7 +86,6 @@ namespace MARTe {
          * @brief Retrieves the internet service protocol.
          */
         const char8 *Protocol() const;
-
 
     private:
 

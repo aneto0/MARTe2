@@ -2,7 +2,7 @@
  * @file FastPollingMutexSem.h
  * @brief Header file for class FastPollingMutexSem
  * @date 18/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -44,7 +44,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief Implementation of semaphore based on spin locks.
@@ -137,7 +137,7 @@ ErrorManagement::ErrorType FastPollingMutexSem::FastLock(const TimeoutType &msec
             int64 ticks = HighResolutionTimer::Counter();
             if (ticks > ticksStop) {
                 err = ErrorManagement::Timeout;
-                REPORT_ERROR(ErrorManagement::Timeout,"FastPollingMutexSem: Timeout expired");
+                REPORT_ERROR(ErrorManagement::Timeout, "FastPollingMutexSem: Timeout expired");
                 break;
             }
         }

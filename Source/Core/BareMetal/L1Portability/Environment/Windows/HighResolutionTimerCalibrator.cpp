@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "HighResolutionTimerCalibrator.h"
-#include "../../HighResolutionTimer.h"
+#include "HighResolutionTimer.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -85,7 +85,7 @@ HighResolutionTimerCalibrator::HighResolutionTimerCalibrator() {
     period = 1.0 / frequency;
 }
 
-bool HighResolutionTimerCalibrator::GetTimeStamp(TimeValues &timeStamp) {
+bool HighResolutionTimerCalibrator::GetTimeStamp(TimeStamp &timeStamp) {
 
     uint64 ticks = HighResolutionTimer::Counter() - initialTicks;
 
@@ -95,11 +95,11 @@ bool HighResolutionTimerCalibrator::GetTimeStamp(TimeValues &timeStamp) {
 
     //Add HRT to the the initial time saved in the calibration.
     time_t sec = static_cast<time_t>(initialTime.tv_sec + secHRT);
-    timeStamp.microseconds = initialTime.tv_usec + uSecHRT;
+    timeStamp.SetMicroseconds(initialTime.tv_usec + uSecHRT);
 
     //Check the overflow
-    if (timeStamp.microseconds >= 1e6) {
-        timeStamp.microseconds -= 1e6;
+    if (timeStamp.GetMicroseconds() >= 1e6) {
+        timeStamp.SetMicroseconds(timeStamp.GetMicroseconds() - 1e6);
         sec++;
     }
 

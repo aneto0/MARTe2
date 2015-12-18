@@ -55,8 +55,8 @@ StaticListHolder::StaticListHolder(const uint32 listElementSize,
 
         //Calculates and initializes the maximum capacity
         maxListCapacity_(
-                ((TypeCharacteristics::MaxValue<uint32>() / (listAllocationGranularity_ * listElementSize_))
-                        * (listAllocationGranularity_ * listElementSize_)) / listElementSize_),
+                ((TypeCharacteristics::MaxValue<uint32>() / (listAllocationGranularity_ * listElementSize_)) * (listAllocationGranularity_ * listElementSize_))
+                        / listElementSize_),
 
         //Initializes the pointer to the first byte of the array of elements
         allocatedMemory_(NULL_PTR(uint8 *)),
@@ -304,6 +304,10 @@ bool StaticListHolder::IncreaseCapacity(void) {
         }
     }
     return ret;
+}
+
+void* StaticListHolder::GetAllocatedMemory() {
+    return reinterpret_cast<void *>(allocatedMemory_);
 }
 
 }

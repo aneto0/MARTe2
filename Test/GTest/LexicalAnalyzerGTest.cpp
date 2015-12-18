@@ -1,7 +1,7 @@
 /**
- * @file SocketSelectCore.h
- * @brief Header file for class SocketSelectCore
- * @date 28/10/2015
+ * @file LexicalAnalyzerGTest.cpp
+ * @brief Source file for class LexicalAnalyzerGTest
+ * @date 26/11/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,49 +16,57 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class SocketSelectCore
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class LexicalAnalyzerGTest (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
 
-#ifndef SOCKETSELECTCORE_H_
-#define SOCKETSELECTCORE_H_
+/*---------------------------------------------------------------------------*/
+/*                         Standard header includes                          */
+/*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
+/*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include <sys/select.h>
+
+#include <limits.h>
+
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
+#include "gtest/gtest.h"
+#include "LexicalAnalyzerTest.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-struct SocketSelectCore {
-    /** */
-    fd_set readFDS;
-
-    /** */
-    fd_set writeFDS;
-
-    /** */
-    fd_set exceptFDS;
-
-    /** */
-    fd_set readFDS_done;
-
-    /** */
-    fd_set writeFDS_done;
-
-    /** */
-    fd_set exceptFDS_done;
-
-};
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* SOCKETSELECTCORE_H_ */
+TEST(LexicalAnalyzerGTest, TestDefaultConstructor) {
+    LexicalAnalyzerTest laTest;
+    ASSERT_TRUE(laTest.TestConstructor());
+}
 
+TEST(LexicalAnalyzerGTest, TestGetToken) {
+    LexicalAnalyzerTest laTest;
+    ASSERT_TRUE(laTest.TestGetToken());
+}
+
+TEST(LexicalAnalyzerGTest, TestPeekToken) {
+    LexicalAnalyzerTest laTest;
+    ASSERT_TRUE(laTest.TestPeekToken());
+}
+
+TEST(LexicalAnalyzerGTest, TestEscape) {
+    LexicalAnalyzerTest laTest;
+    ASSERT_TRUE(laTest.TestEscape());
+}
+
+TEST(LexicalAnalyzerGTest, TestComments) {
+    LexicalAnalyzerTest laTest;
+    ASSERT_TRUE(laTest.TestComments());
+}

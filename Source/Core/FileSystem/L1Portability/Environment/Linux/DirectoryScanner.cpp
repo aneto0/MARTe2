@@ -58,9 +58,9 @@ static int32 fileFilter(const struct dirent * const de) {
     return static_cast<int32>(fnmatch(fileFilterSearchMask, &de->d_name[0], 0) == 0);
 }
 
-DirectoryScanner::DirectoryScanner(const char8 * const path) :
+DirectoryScanner::DirectoryScanner() :
         LinkedListHolder() {
-    basePath = StringHelper::StringDup(path);
+    basePath = static_cast<char8 *>(NULL);
     size = 0u;
 }
 
@@ -75,16 +75,17 @@ void DirectoryScanner::CleanUp() {
     }
 }
 
+/*lint -e{429} . Justification: The pointer will be freed by LinkedListHolder::CleanUp in the destructor.*/
 bool DirectoryScanner::Scan(const char8 * const path,
                             const char8 *fileMask,
                             SortFilter * const sorter) {
 
-    bool ret = true;
-
     CleanUp();
+    bool ret = true;
 
     // if path is not null it is copied into basePath
     uint32 addressLen = StringHelper::Length(path);
+
     if ((path != NULL) && (addressLen > 0u)) {
         basePath = static_cast<char8 *>(HeapManager::Malloc(addressLen + 2u));
 
@@ -110,7 +111,8 @@ bool DirectoryScanner::Scan(const char8 * const path,
             uint32 baseAddressLen = StringHelper::Length(basePath);
             if (baseAddressLen > 0u) {
                 uint32 index = baseAddressLen - 1u;
-                if ((path[index] != '\\') || (path[index] != '/')) {
+                /*lint -e{613} . Justification: The NULL pointer condition is handled*/
+                if (path[index] != DIRECTORY_SEPARATOR) {
                     basePath[baseAddressLen] = DIRECTORY_SEPARATOR;
                     index = baseAddressLen + 1u;
                     basePath[index] = '\0';

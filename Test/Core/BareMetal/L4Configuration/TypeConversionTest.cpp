@@ -76,16 +76,13 @@ bool TypeConversionTest::TestCArrayToCCStringVector() {
     Vector<char8*> output(vector, 2);
 
     if (!TypeConvert(output, input)) {
-        printf("\n1\n");
         ret = false;
     }
 
     if (StringHelper::Compare(&input[0][0], output[0]) != 0) {
-        printf("\n2 %s %s\n", &input[0][0], output[0]);
         ret = false;
     }
     if (StringHelper::Compare(&input[1][0], output[1]) != 0) {
-        printf("\n3 %s %s\n", &input[1][0], output[1]);
         ret = false;
     }
 

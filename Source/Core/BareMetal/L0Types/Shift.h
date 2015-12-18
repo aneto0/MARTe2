@@ -43,7 +43,7 @@ namespace MARTe {
 
 /**
  * @brief A collector of functions that implements logical and mathematical shift in safe mode.
- * @detail These methods implements shift operations in the right way, returning zero when the shift is
+ * @details These methods implements shift operations in the right way, returning zero when the shift is
  * greater than the size of the number. Furthermore they implements the logical shift which
  * does not extend the sign for negative numbers and it is very useful in many functionalities.
  */

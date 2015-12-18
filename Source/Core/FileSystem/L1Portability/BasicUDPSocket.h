@@ -44,7 +44,7 @@ namespace MARTe {
 /**
  * @brief Unbuffered UDP socket.
  */
-class BasicUDPSocket: public BasicSocket {
+class DLL_API BasicUDPSocket: public BasicSocket {
 public:
 
     /**

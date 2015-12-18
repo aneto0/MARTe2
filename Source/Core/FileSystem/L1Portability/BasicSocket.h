@@ -45,9 +45,8 @@ namespace MARTe {
     /**
      * @brief Implementation of the common socket functions that are shared by UDP and TCP sockets.
      */
-    class BasicSocket: public StreamI, public HandleI {
+    class DLL_API BasicSocket: public StreamI, public HandleI {
     public:
-        friend class SocketSelect;
         /**
          * @brief Default constructor.
          */

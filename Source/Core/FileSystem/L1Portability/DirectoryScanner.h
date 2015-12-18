@@ -31,8 +31,8 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "LinkedListHolder.h"
 #include "Directory.h"
+#include "LinkedListHolder.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -43,7 +43,7 @@ namespace MARTe {
  * @brief Given a base path and a shell wildcard pattern this class allows to scan for all
  * the directories and files inside a given directory.
  */
-class DirectoryScanner: public LinkedListHolder {
+class DLL_API DirectoryScanner: public LinkedListHolder {
 
 public:
 
@@ -53,7 +53,7 @@ public:
      *   BasePath() = NULL &&
      *   DirectorySize() = 0
      */
-    DirectoryScanner(const char8 * const path = NULL);
+    DirectoryScanner();
 
     /**
      * @brief Default destructor.
@@ -62,7 +62,6 @@ public:
      *   DirectorySize() = 0
      */
     virtual ~DirectoryScanner();
-
 
     /**
      * @brief Retrieve the size of the scanned directory.
@@ -81,38 +80,38 @@ public:
               const char8 *fileMask = "*",
               SortFilter * const sorter = NULL);
 
-    /**
-     * @brief Gets the directory absolute path.
-     * @return the the directory absolute path.
-     */
-    const char8 *BasePath() const;
+              /**
+               * @brief Gets the directory absolute path.
+               * @return the the directory absolute path.
+               */
+              const char8 *BasePath() const;
 
-    /**
-     * @brief Removes all the elements from the list.
-     * @post
-     *   BasePath() = NULL &&
-     *   DirectorySize() = 0
-     */
-    virtual void CleanUp();
+              /**
+               * @brief Removes all the elements from the list.
+               * @post
+               *   BasePath() = NULL &&
+               *   DirectorySize() = 0
+               */
+              virtual void CleanUp();
 
-private:
+          private:
 
-    /**
-     * The directory path.
-     */
-    char8* basePath;
+              /**
+               * The directory path.
+               */
+              char8* basePath;
 
-    /**
-     * The total content size.
-     */
-    uint64 size;
+              /**
+               * The total content size.
+               */
+              uint64 size;
 
-};
-}
+          };
+      }
 
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+      /*---------------------------------------------------------------------------*/
+      /*                        Inline method definitions                          */
+      /*---------------------------------------------------------------------------*/
 
 #endif /* DIRECTORYSCANNER_H_ */
 

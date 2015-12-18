@@ -24,13 +24,12 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include "stdio.h"
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
 #include "HeapManagerTest.h"
-
 #include <GlobalObjectsDatabase.h>
 #include "HeapI.h"
 #include "StringHelper.h"
@@ -92,8 +91,10 @@ bool HeapManagerTest::TestFree() {
 }
 
 bool HeapManagerTest::TestFreeInvalidPointer() {
-    ptr = &sh;
-    retVal = !Free(ptr);
+    uint32 size = 2;
+    void * invalidPointer = Malloc(size * sizeof(int32));
+    retVal = Free(invalidPointer);
+    retVal = !Free(invalidPointer);
     return retVal;
 }
 
@@ -228,9 +229,11 @@ bool HeapManagerTest::TestFindHeapByAddress() {
 }
 
 bool HeapManagerTest::TestFindHeapByAddressInvalidAddress() {
+    uint32 size = 3;
     void *ptr1 = NULL;
-    ptr = &sh;
-    ptr1 = FindHeap(ptr);
+    void * invalidPointer = Malloc(size * sizeof(int32));
+    retVal = Free(invalidPointer);
+    ptr1 = FindHeap(invalidPointer);
     retVal = (ptr1 == NULL);
     return retVal;
 }
@@ -238,7 +241,7 @@ bool HeapManagerTest::TestFindHeapByAddressInvalidAddress() {
 bool HeapManagerTest::TestFindHeapByAddress2Heaps() {
     uint32 size = 4;
     void *ptr1;
-    void *shptr[3] = { NULL, NULL, NULL };
+    void *shptr[3] = { NULL, NULL, NULL};
     void *ahptr;
     void *copyahptr = NULL;
     AddHeap(&sh);

@@ -24,10 +24,18 @@
 #
 #############################################################
 
-OBJSX=ConfigurationDatabaseTest.x \
-        AnyObjectTest.x \
-	TypeConversionTest.x 
-		
+
+OBJSX=	AnyObjectTest.x \
+	AnyTypeCreatorTest.x \
+	ConfigurationDatabaseTest.x \
+	JsonParserTest.x \
+	LexicalAnalyzerTest.x \
+	StandardParserTest.x \
+	TypeConversionTest.x \
+	TokenInfoTest.x \
+	TokenTest.x \
+	XMLParserTest.x
+					
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
@@ -39,6 +47,7 @@ INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
 INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
 INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
 INCLUDES += -I../../../../Source/Core/BareMetal/L4Configuration
+INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 all: $(OBJS) \
     $(BUILD_DIR)/L4ConfigurationTest$(LIBEXT)

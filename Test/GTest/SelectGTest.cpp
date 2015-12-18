@@ -137,9 +137,9 @@ TEST(SelectGTest, TestRemoveExceptionHandle_InvalidHandle) {
     ASSERT_TRUE(myTest.TestRemoveExceptionHandle_InvalidHandle());
 }
 
-TEST(SelectGTest, TesClearAllHandles) {
+TEST(SelectGTest, TestClearAllHandles) {
     SelectTest myTest;
-    ASSERT_TRUE(myTest.TesClearAllHandles());
+    ASSERT_TRUE(myTest.TestClearAllHandles());
 }
 
 TEST(SelectGTest, TestIsSet) {
@@ -154,7 +154,12 @@ TEST(SelectGTest, TestWaitUntil_waitTimeout) {
 
 TEST(SelectGTest, TestWaitUntil_waitRead) {
     SelectTest myTest;
-    ASSERT_TRUE(myTest.TestWaitUntil_waitRead());
+    ASSERT_TRUE(myTest.TestWaitUntil_waitRead(2000));
+}
+
+TEST(SelectGTest, TestWaitUntil_waitRead_Infinite) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestWaitUntil_waitRead(TTInfiniteWait));
 }
 
 TEST(SelectGTest, TestWaitUntil_severaDifferentWaitRead) {

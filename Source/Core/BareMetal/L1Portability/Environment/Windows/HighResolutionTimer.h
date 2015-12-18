@@ -32,7 +32,7 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "HighResolutionTimer.h"
+#include "../../HighResolutionTimer.h"
 #include "HighResolutionTimerCalibrator.h"
 #include "TimeStamp.h"
 /*---------------------------------------------------------------------------*/

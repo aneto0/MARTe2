@@ -33,17 +33,12 @@
 /*---------------------------------------------------------------------------*/
 
 #include "ThreadInformation.h"
-#include "FastPollingMutexSem.h"
-#include "ErrorManagement.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-/**
- * @brief A database of ThreadInformation objects.
- */
 namespace ThreadsDatabase {
 
     /**

@@ -32,9 +32,9 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "Select.h"
 #include "BasicConsole.h"
 #include "BasicFile.h"
+#include "Select.h"
 #include "TimeoutType.h"
 
 /*---------------------------------------------------------------------------*/
@@ -188,7 +188,7 @@ public:
      * @details add handles to read, write and exception modes, then clear all handle and check if they are removed
      * @return True if all handles are added and removed successfully.
      */
-    bool TesClearAllHandles();
+    bool TestClearAllHandles();
 
     /**
      * @brief Test Select::IsSet()
@@ -209,7 +209,7 @@ public:
      * @details add a read UPDSocked handle, lunched a thread which wait to write, Select::WaitUtil() on the socket to read and finally writes on the port.
      * @return True if the returned value of Select::WaitUntil() is one and Select::IsSet() is true.
      */
-    bool TestWaitUntil_waitRead();
+    bool TestWaitUntil_waitRead(TimeoutType timeout);
 
     /**
      * @brief Test Select::WaitUntil()

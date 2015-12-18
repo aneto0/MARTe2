@@ -31,13 +31,15 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+
 #include "ErrorManagement.h"
 #include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief Heap interface and standard implementation.
@@ -45,7 +47,7 @@ namespace MARTe{
  * This class provides the interface method definitions allowing different ways to
  * manage the heap memory.
  */
-class HeapI {
+class DLL_API HeapI {
 public:
 
     /**
@@ -112,10 +114,8 @@ public:
          * in order to be able to compare the address with a range of addresses
          * uintp is an integer type that has by design the same span as a pointer in all systems*/
         uintp address = reinterpret_cast<uintp>(data);
-
         bool check1 = (address >= FirstAddress());
         bool check2 = (address <= LastAddress());
-
         return check1 && check2;
     }
 

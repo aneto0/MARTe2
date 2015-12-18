@@ -57,7 +57,8 @@ public:
      * @brief Sets the initial value of the mask to the value of initialMask.
      * @param initialMask the value of the mask
      */
-    FlagsType(const uint32 initialMask) : mask(initialMask) {
+    FlagsType(const uint32 initialMask) :
+            mask(initialMask) {
     }
 
     /**

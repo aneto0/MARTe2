@@ -51,33 +51,22 @@ namespace Threads {
  */
 static void * SystemThreadFunction(ThreadInformation * const threadInfo) {
     if (threadInfo != NULL) {
-        bool ok = ThreadsDatabase::Lock();
-        if (ok) {
-            threadInfo->SetThreadIdentifier(Threads::Id());
+        //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
+        ErrorManagement::ErrorType err = threadInfo->ThreadWait();
+        //Start the user thread
+        if (err == ErrorManagement::NoError) {
+            threadInfo->UserThreadFunction();
 
-            ok = ThreadsDatabase::NewEntry(threadInfo);
+            bool ok = ThreadsDatabase::Lock();
+            if (ok) {
+                ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Threads::Id());
+                if (threadInfo != threadInfo2) {
+                    //CStaticAssertErrorCondition(ErrorManagement::FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
+                }
+            }
             ThreadsDatabase::UnLock();
         }
-        if (ok) {
-            threadInfo->SetPriorityLevel(0u);
-            Threads::SetPriority(Threads::Id(), Threads::NormalPriorityClass, 0u);
-            //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
-            ErrorManagement::ErrorType err = threadInfo->ThreadWait();
-            //Start the user thread
-            if (err == ErrorManagement::NoError) {
-                threadInfo->UserThreadFunction();
-
-                ok = ThreadsDatabase::Lock();
-                if (ok) {
-                    ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Threads::Id());
-                    if (threadInfo != threadInfo2) {
-                        //CStaticAssertErrorCondition(ErrorManagement::FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
-                    }
-                }
-                ThreadsDatabase::UnLock();
-            }
-            delete threadInfo;
-        }
+        delete threadInfo;
     }
     return static_cast<void *>(NULL);
 }
@@ -96,11 +85,9 @@ static ThreadInformation * threadInitialisationInterfaceConstructor(const Thread
     return new ThreadInformation(userThreadFunction, userData, threadName);
 }
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 
 /*lint -e{715} Not implemented in Linux.*/
 ThreadStateType GetState(const ThreadIdentifier &threadId) {
@@ -311,6 +298,18 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
             if (!ok) {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_create()");
             }
+            if (ok) {
+                ok = ThreadsDatabase::Lock();
+                if (ok) {
+                    threadInfo->SetThreadIdentifier(threadId);
+                    ok = ThreadsDatabase::NewEntry(threadInfo);
+                    ThreadsDatabase::UnLock();
+                }
+                if(ok) {
+                    threadInfo->SetPriorityLevel(0u);
+                    SetPriority(threadId, Threads::NormalPriorityClass, 0u);
+                }
+            }
         }
         if (ok) {
             ok = (pthread_detach(threadId) == 0);
@@ -334,7 +333,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
             if (ok) {
                 ok = threadInfo->ThreadPost();
             }
-            else{
+            else {
                 REPORT_ERROR(ErrorManagement::OSError, "Error: pthread_setaffinity_np()");
             }
         }

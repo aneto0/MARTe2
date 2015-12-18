@@ -63,12 +63,13 @@ class Reference;
  * - The database shall know at any time what is the current node (i.e. the node against which the latest Move or
  * Create operation was performed).
  */
-class StructuredDataI {
+class DLL_API StructuredDataI {
 public:
     /**
      * Default destructor. NOOP.
      */
-    virtual ~StructuredDataI(){}
+    virtual ~StructuredDataI() {
+    }
 
     /**
      * @brief Reads a previously stored AnyType. The node with this name has to be a child of the current node.
