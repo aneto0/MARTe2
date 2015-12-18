@@ -38,67 +38,67 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(DirectoryGTest, CreateDirectoryFolder) {
+TEST(DirectoryScannerGTest, CreateDirectoryFolder) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.CreateDirectoryFolder());
 }
 
-TEST(DirectoryGTest, TestDirectorySize) {
+TEST(DirectoryScannerGTest, TestDirectorySize) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestDirectorySize());
 }
 
-TEST(DirectoryGTest, TestScan) {
+TEST(DirectoryScannerGTest, TestScan) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan("TestScan"));
 }
 
-TEST(DirectoryGTest, TestScan2) {
+TEST(DirectoryScannerGTest, TestScan2) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan("TestScan1",NULL));
 }
 
-TEST(DirectoryGTest, TestScan_NULL) {
+TEST(DirectoryScannerGTest, TestScan_NULL) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_NULL(NULL,NULL));
 }
 
-TEST(DirectoryGTest, TestScan_Empy) {
+TEST(DirectoryScannerGTest, TestScan_Empy) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_NULL("",""));
 }
 
-TEST(DirectoryGTest, TestScan_FailMix) {
+TEST(DirectoryScannerGTest, TestScan_FailMix) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_NULL(NULL,""));
 }
 
-TEST(DirectoryGTest, TestScan_FailMix2) {
+TEST(DirectoryScannerGTest, TestScan_FailMix2) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_NULL("",NULL));
 }
 
-TEST(DirectoryGTest, TestScan_FailMix3) {
+TEST(DirectoryScannerGTest, TestScan_FailMix3) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_NoExist("abc",NULL));
 }
 
-TEST(DirectoryGTest, TestScan_Mask) {
+TEST(DirectoryScannerGTest, TestScan_Mask) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_Mask());
 }
 
-TEST(DirectoryGTest, TestScan_Filter) {
+TEST(DirectoryScannerGTest, TestScan_Filter) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestScan_Filter());
 }
 
-TEST(DirectoryGTest, TestBasePath) {
+TEST(DirectoryScannerGTest, TestBasePath) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestBasePath("TestBasePath"));
 }
 
-TEST(DirectoryGTest, TestCleanUp) {
+TEST(DirectoryScannerGTest, TestCleanUp) {
     DirectoryScannerTest myClassTest;
     ASSERT_TRUE(myClassTest.TestCleanUp());
 }
