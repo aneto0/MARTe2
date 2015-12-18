@@ -2,7 +2,7 @@
  * @file Processor.h
  * @brief Header file for module Processor
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -40,40 +40,32 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-/**
- * @brief General information about the processor executing the framework code.
- *
- * @details This module enables the retrieval of runtime information about the
- * processor executing the framework code.
- * Based on this information framework users are allowed to take runtime decisions
- * against specific processor characteristics.
- */
-namespace Processor {
+    namespace Processor {
 
-    /**
-     * @brief Returns the processor vendor identifier.
-     * @return a string which contains the processor vendor identifier.
-     */
-    inline const char8 *VendorId();
+        /**
+         * @brief Returns the processor vendor identifier.
+         * @return a string which contains the processor vendor identifier.
+         */
+        inline const char8 *VendorId();
 
-    /**
-     * @brief Returns the processor family.
-     * @return processor family.
-     */
-    inline uint32 Family();
+        /**
+         * @brief Returns the processor family.
+         * @return processor family.
+         */
+        inline uint32 Family();
 
-    /**
-     * @brief Returns the processor model.
-     * @return processor model.
-     */
-    inline uint32 Model();
+        /**
+         * @brief Returns the processor model.
+         * @return processor model.
+         */
+        inline uint32 Model();
 
-    /**
-     * @brief Returns the number of available CPU cores.
-     * @returns the number of available CPU cores.
-     */
-    DLL_API uint32 Available();
-}
+        /**
+         * @brief Returns the number of available CPU cores.
+         * @returns the number of available CPU cores.
+         */
+        DLL_API uint32 Available();
+    }
 
 }
 /*---------------------------------------------------------------------------*/

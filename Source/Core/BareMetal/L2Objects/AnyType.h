@@ -101,8 +101,8 @@ public:
      *   GetNumberOfElements(0:2) == 0
      */
     inline AnyType(const TypeDescriptor &dataDescriptorIn,
-            const uint8 bitAddressIn,
-            const void* const dataPointerIn);
+                   const uint8 bitAddressIn,
+                   const void* const dataPointerIn);
 
     /**
      * @brief Generic constructor for a non-constant type.
@@ -118,8 +118,8 @@ public:
      *   GetNumberOfElements(0:2) == 0
      */
     inline AnyType(const TypeDescriptor &dataDescriptorIn,
-            const uint8 bitAddressIn,
-            void* const dataPointerIn);
+                   const uint8 bitAddressIn,
+                   void* const dataPointerIn);
 
     /**
      * @brief Checks if the AnyType is empty.
@@ -664,7 +664,7 @@ public:
      */
     template<typename baseType>
     static void CreateFromOtherType(AnyType &dest,
-            baseType &obj);
+                                    baseType &obj);
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
@@ -674,7 +674,7 @@ public:
      */
     template<typename baseType>
     static void CreateFromOtherType(AnyType &dest,
-            const baseType &obj);
+                                    const baseType &obj);
 
     /**
      * @brief Gets the number of dimensions associated to this AnyType.
@@ -710,7 +710,7 @@ public:
      *   dimension < 3
      */
     inline void SetNumberOfElements(const uint32 dimension,
-            const uint32 nOfElements);
+                                    const uint32 nOfElements);
 
     /**
      * @brief Checks if GetDataPointer() is pointing at a statically allocated memory block.

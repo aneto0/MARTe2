@@ -211,9 +211,8 @@ inline void* Vector<T>::GetDataPointer() const {
     return dataPointer;
 }
 
-
 template<typename T>
-inline uint32 Vector<T>::GetNumberOfElements() const{
+inline uint32 Vector<T>::GetNumberOfElements() const {
     return numberOfElements;
 }
 

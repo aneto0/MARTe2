@@ -2,7 +2,7 @@
  * @file FastMath.h
  * @brief Header file for module FastMath
  * @date 26/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -38,11 +38,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
-/**
- * @brief Performs mathematical operations using fast processor instructions.
- */
 namespace FastMath {
 
 /**

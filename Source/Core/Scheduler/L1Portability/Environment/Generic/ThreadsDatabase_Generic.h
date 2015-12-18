@@ -39,9 +39,6 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-/**
- * @brief A database of ThreadInformation objects.
- */
 namespace ThreadsDatabase {
 
     /**

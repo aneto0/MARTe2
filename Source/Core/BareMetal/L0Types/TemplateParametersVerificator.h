@@ -1,8 +1,8 @@
 /**
  * @file TemplateParameterVerificator.h
  * @brief Header file for class TemplateParameterVerificator
- * @date Sep 1, 2015
- * @author fsartori
+ * @date 01/09/2015
+ * @author Filippo Sartori
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -32,7 +32,6 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -41,19 +40,16 @@
  */
 
 /*lint -e{431, 9141} No code is generated. This strategy is used to guarantee that templates are used with parameters that respect certain rules at compilation time*/
-template <bool>
+template<bool>
 struct TemplateParametersVerificator;
 
-template <>
-struct TemplateParametersVerificator<true>
-{
+template<>
+struct TemplateParametersVerificator<true> {
 };
-
-
 
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* TEMPLATEPARAMETERVERIFICATOR_H_ */
-	
+

@@ -2,7 +2,7 @@
  * @file LinkedListable.h
  * @brief Header file for class LinkedListable
  * @date 05/08/2015
- * @author Giuseppe Ferro'
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -33,7 +33,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-     class LinkedListable;
+class LinkedListable;
 
 }
 
@@ -52,7 +52,6 @@ namespace MARTe {
  * @details Singly linked list implementation (possible to move only in the forward direction).
  */
 class DLL_API LinkedListable {
-
 
 public:
 
@@ -109,7 +108,8 @@ public:
      * @param[in] p the pointer to the LinkedListable to be inserted .
      * @param[in] sorter implements the comparison criteria for the sorting.
      */
-    void Insert(LinkedListable *p, SortFilter * const sorter);
+    void Insert(LinkedListable *p,
+                SortFilter * const sorter);
 
     /**
      * @brief Appends the first element of the input list \a p to the end of this list.

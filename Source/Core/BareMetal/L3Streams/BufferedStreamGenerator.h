@@ -39,8 +39,6 @@
 
 namespace MARTe {
 
-
-
 /**
  * @brief A class to add buffering support to OperatingSystemStream.
  *
@@ -48,10 +46,10 @@ namespace MARTe {
  * wrap the related functions inherited by the buffered stream in order to implement all advanced
  * read write operations defined in BufferedStreamI with buffering support.
  *
- * @details The functions CanRead(*), CanWrite(*) and CanSeek(*) wrap the operating system stream related functions
+ * The functions CanRead(*), CanWrite(*) and CanSeek(*) wrap the operating system stream related functions
  * defining the permissions stream operations.
  *
- * @details All the other operating system stream functions will be left untouched allowing full access to the specific
+ * All the other operating system stream functions will be left untouched allowing full access to the specific
  * operating system stream implementation.
  */
 template<class bufferedStream, class basicStream>

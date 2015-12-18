@@ -50,13 +50,13 @@ namespace MARTe {
  * beginning. It adds a movable pointer across the memory area and attributes
  * to get the size of the filled area and the readable area of the buffer.
  *
- * @details This class implements basic methods for read, write and seek
- * operations on the buffer which are virtual to avoid overloading in children.
+ * This class implements basic methods for read, write and seek operations
+ * on the buffer which are virtual to avoid overloading in children.
  *
- * @details The most important functions are the inline PutC and GetC which
- * are used in Printf and GetToken functions and are shared by all children
- * (besides the implementation of NoMoreSpaceToWrite and NoMoreDataToRead
- * depends on the specific derived class implementation)
+ * The most important functions are the inline PutC and GetC which are used
+ * in Printf and GetToken functions and are shared by all children (besides
+ * the implementation of NoMoreSpaceToWrite and NoMoreDataToRead depends on
+ * the specific derived class implementation)
  */
 class DLL_API IOBuffer {
 

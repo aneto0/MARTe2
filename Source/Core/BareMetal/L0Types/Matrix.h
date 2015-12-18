@@ -272,10 +272,10 @@ namespace MARTe {
 template<typename T>
 Matrix<T>::Matrix() {
     dataPointer = static_cast<void *>(NULL);
-    numberOfRows=0u;
-    numberOfColumns=0u;
-    staticDeclared=true;
-    canDestroy=false;
+    numberOfRows = 0u;
+    numberOfColumns = 0u;
+    staticDeclared = true;
+    canDestroy = false;
 }
 
 template<typename T>
@@ -405,7 +405,7 @@ bool Matrix<T>::SubMatrix(const uint32 beginRow,
                           const uint32 endRow,
                           const uint32 beginColumn,
                           const uint32 endColumn,
-                          Matrix<T> &subMatrix)  const{
+                          Matrix<T> &subMatrix) const {
     bool cond1 = (endRow >= beginRow);
     bool cond2 = (endColumn >= beginColumn);
     bool cond3 = (endRow < numberOfRows);
@@ -442,7 +442,7 @@ bool Matrix<T>::SubMatrix(const uint32 beginRow,
 }
 
 template<typename T>
-bool Matrix<T>::Transpose(Matrix<T> &transpose)  const{
+bool Matrix<T>::Transpose(Matrix<T> &transpose) const {
 
     bool cond1 = (numberOfRows == transpose.numberOfColumns);
     bool cond2 = (numberOfColumns == transpose.numberOfRows);
@@ -468,7 +468,7 @@ bool Matrix<T>::Transpose(Matrix<T> &transpose)  const{
 }
 
 template<> inline
-bool Matrix<float32>::Determinant(float32 &det)  const{
+bool Matrix<float32>::Determinant(float32 &det) const {
     bool ret = (numberOfRows == numberOfColumns);
 
     if (ret) {
@@ -510,7 +510,7 @@ bool Matrix<float32>::Determinant(float32 &det)  const{
 }
 
 template<> inline
-bool Matrix<float64>::Determinant(float64 &det)  const{
+bool Matrix<float64>::Determinant(float64 &det) const {
     bool ret = (numberOfRows == numberOfColumns);
 
     if (ret) {
@@ -598,7 +598,7 @@ bool Matrix<float32>::Inverse(Matrix<float32> &inverse) const {
 }
 
 template<> inline
-bool Matrix<float64>::Inverse(Matrix<float64> &inverse)  const{
+bool Matrix<float64>::Inverse(Matrix<float64> &inverse) const {
     bool cond1 = (numberOfColumns == numberOfRows);
     bool cond2 = (inverse.numberOfRows == numberOfRows);
     bool cond3 = (inverse.numberOfColumns == numberOfColumns);

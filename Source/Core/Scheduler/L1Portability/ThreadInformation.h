@@ -2,7 +2,7 @@
  * @file ThreadInformation.h
  * @brief Header file for class ThreadInformation
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -85,7 +85,7 @@ public:
      * @brief Returns the name of the thread.
      * @return A reference to the dynamically allocated string containing the name of the thread.
      */
-    const char8 *ThreadName () const;
+    const char8 *ThreadName() const;
 
     /**
      *  @brief Locks an internal EventSem.

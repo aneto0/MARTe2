@@ -51,7 +51,6 @@ public:
      */
     BasicTCPSocket();
 
-
     /**
      * @brief Destructor
      * @details Closes the socket.
@@ -156,7 +155,6 @@ public:
      */
     virtual bool CanSeek() const;
 
-
     /**
      * @brief Read without removing data from the socket pipe.
      * @param[out] buffer is the buffer used to store the read data.
@@ -183,7 +181,6 @@ public:
     bool Listen(const uint16 port,
                 const int32 maxConnections = 1) const;
 
-
     /**
      * @brief Connect to a specific host.
      * @param[in] address is the IP address of the server.
@@ -195,7 +192,6 @@ public:
     bool Connect(const char8 * const address,
                  const uint16 port,
                  const TimeoutType &timeout = TTInfiniteWait);
-
 
     /**
      * @brief Returns true if the client is connected to a server, false otherwise
@@ -213,14 +209,12 @@ public:
     BasicTCPSocket *WaitConnection(const TimeoutType &timeout = TTInfiniteWait,
                                    BasicTCPSocket *client = static_cast<BasicTCPSocket *>(NULL));
 
+                               };
+                           }
 
-
-};
-}
-
-/*---------------------------------------------------------------------------*/
-/*                        Inline method definitions                          */
-/*---------------------------------------------------------------------------*/
+                           /*---------------------------------------------------------------------------*/
+                           /*                        Inline method definitions                          */
+                           /*---------------------------------------------------------------------------*/
 
 #endif /* BASICTCPSOCKET_H_ */
 
