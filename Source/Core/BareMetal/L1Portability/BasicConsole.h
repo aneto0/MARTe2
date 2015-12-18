@@ -36,10 +36,10 @@
 #include "ErrorType.h"
 #include "FlagsType.h"
 #include "GeneralDefinitions.h"
+#include "HandleI.h"
+#include "StreamI.h"
 #include "StringHelper.h"
 #include "TimeoutType.h"
-#include "StreamI.h"
-#include "HandleI.h"
 
 namespace MARTe {
 

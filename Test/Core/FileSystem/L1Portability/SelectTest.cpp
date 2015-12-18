@@ -29,13 +29,11 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "SelectTest.h"
-#include "Select.h"
-#include "Threads.h"
-#include "Sleep.h"
 #include "BasicUDPSocket.h"
-#include "stdio.h"
 #include "Directory.h"
+#include "SelectTest.h"
+#include "Sleep.h"
+#include "Threads.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

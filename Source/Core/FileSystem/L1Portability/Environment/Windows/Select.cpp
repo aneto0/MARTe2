@@ -2,7 +2,7 @@
  * @file Select.cpp
  * @brief Source file for class Select
  * @date Dec 2, 2015
- * @author CCS Portable Station
+ * @author Frank Perez Paz
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -29,10 +29,10 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
+#include "ErrorManagement.h"
 #include "Select.h"
 #include "TimeoutType.h"
-#include "ErrorManagement.h"
-#include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -116,9 +116,9 @@ bool Select::AddReadHandle(const HandleI &handle) {
                     readHandle.registeredHandles[indexMax] = h;
                 }
                 readHandle.selectHandles[indexMax] = h;
+                highestHandle++;
             }
 
-            highestHandle++;
         }
     }
     else {
@@ -157,9 +157,9 @@ bool Select::AddWriteHandle(const HandleI &handle) {
                     writeHandle.registeredHandles[indexMax] = h;
                 }
                 writeHandle.selectHandles[indexMax] = h;
+                highestHandle++;
             }
 
-            highestHandle++;
         }
     }
     else {
@@ -198,9 +198,9 @@ bool Select::AddExceptionHandle(const HandleI &handle) {
                     exceptionHandle.registeredHandles[indexMax] = h;
                 }
                 exceptionHandle.selectHandles[indexMax] = h;
+                highestHandle++;
             }
 
-            highestHandle++;
         }
     }
     else {
@@ -305,21 +305,25 @@ bool Select::IsSet(const HandleI &handle) const {
         if (readHandle.selectedHandle == hr) {
             retVal = true;
         }
-        else if (readHandle.selectedHandle == hw) {
-            retVal = true;
-        }
 
         if (writeHandle.selectedHandle == hr) {
-            retVal = true;
-        }
-        else if (writeHandle.selectedHandle == hw) {
             retVal = true;
         }
 
         if (exceptionHandle.selectedHandle == hr) {
             retVal = true;
         }
-        else if (exceptionHandle.selectedHandle == hw) {
+    }
+    if (reinterpret_cast<int32>(hw) >= 0) {
+        if (readHandle.selectedHandle == hw) {
+            retVal = true;
+        }
+
+        if (writeHandle.selectedHandle == hw) {
+            retVal = true;
+        }
+
+        if (exceptionHandle.selectedHandle == hw) {
             retVal = true;
         }
     }
@@ -328,19 +332,23 @@ bool Select::IsSet(const HandleI &handle) const {
 
 int32 Select::WaitUntil(const TimeoutType &msecTimeout) {
     Handle * allHandles = new Handle[MAXIMUM_WAIT_OBJECTS];
-    uint32 i = 0;
-    uint32 aux = 0;
+    uint8 i = 0;
+    uint8 aux = 0;
+    uint8 regRead = 0;
+    uint8 regWrite = 0;
     while (readHandle.registeredHandles[i] != NULL) {
         allHandles[aux] = readHandle.registeredHandles[i];
         i++;
         aux++;
     }
+    regRead = aux - 1;
     i = 0;
     while (writeHandle.registeredHandles[i] != NULL) {
         allHandles[aux] = writeHandle.registeredHandles[i];
         i++;
         aux++;
     }
+    regWrite = aux - 1;
     i = 0;
     while (exceptionHandle.registeredHandles[i] != NULL) {
         allHandles[aux] = exceptionHandle.registeredHandles[i];
@@ -353,10 +361,19 @@ int32 Select::WaitUntil(const TimeoutType &msecTimeout) {
         ret = 0;
     }
     else if (ret != -1) {
-        readHandle.selectedHandle = readHandle.selectHandles[ret];
+        if (ret <= regRead) {
+            readHandle.selectedHandle = readHandle.selectHandles[ret];
+        }
+        else if (ret <= regWrite) {
+            writeHandle.selectedHandle = readHandle.selectHandles[ret];
+        }
+        else {
+            exceptionHandle.selectedHandle = readHandle.selectHandles[ret];
+        }
         //In Windows only one handle can be identified as the source of the event
         ret = 1;
     }
+    delete[] allHandles;
     return ret;
 }
 

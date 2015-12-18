@@ -2,7 +2,7 @@
  * @file SelectProperties.h
  * @brief Header file for class SelectProperties
  * @date Dec 2, 2015
- * @author CCS Portable Station
+ * @author Frank Perez Paz
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
