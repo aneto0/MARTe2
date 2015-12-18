@@ -1,8 +1,8 @@
 /**
- * @file uartconfig.h
- * @brief Header file for class uartconfig
- * @date 17/dic/2015
- * @author pc
+ * @file UARTConfig.h
+ * @brief Header file for class UARTConfig
+ * @date 16/08/2015
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class uartconfig
+ * @details This header file contains the declaration of the class UARTConfig
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -28,13 +28,14 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
-/*---------------------------------------------------------------------------*/
+#include "usbd_def.h"
+#include "usbd_desc.h"
+#include "usbd_cdc_interface.h"
+#include "usbd_conf.h"
 #include "stm32f4_discovery.h"
 #include "stm32f4xx_hal.h"
 /*---------------------------------------------------------------------------*/
-/*                           Class declaration                               */
+/*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 #define USARTx                           USART2
 #define USARTx_CLK_ENABLE()              __HAL_RCC_USART2_CLK_ENABLE();
@@ -60,7 +61,12 @@
 /* Exported macro ------------------------------------------------------------*/
 #define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
 /*---------------------------------------------------------------------------*/
+/*                           Class declaration                               */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
 #endif /* UARTCONFIG_H_ */
+

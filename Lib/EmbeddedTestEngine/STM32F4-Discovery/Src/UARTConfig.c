@@ -1,7 +1,7 @@
 /**
- * @file EmbeddedTestLauncher.cpp
- * @brief Source file for class EmbeddedTestLauncher
- * @date 16/12/2015
+ * @file UARTConfig.c
+ * @brief Source file for class UARTConfig
+ * @date 16/08/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class EmbeddedTestLauncher (public, protected, and private). Be aware that some 
+ * the class UARTConfig (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,6 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "UARTConfig.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -36,70 +37,53 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-#ifndef GTEST_H
-#define GTEST_H
 
+void HAL_UART_MspInit(UART_HandleTypeDef *huart)
+{
+  GPIO_InitTypeDef  GPIO_InitStruct;
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "FreeRTOS.h"
-#include "task.h"
+  /*##-1- Enable peripherals and GPIO Clocks #################################*/
+  /* Enable GPIO TX/RX clock */
+  USARTx_TX_GPIO_CLK_ENABLE();
+  USARTx_RX_GPIO_CLK_ENABLE();
+  /* Enable USART2 clock */
+  USARTx_CLK_ENABLE();
 
-#define TEST_DBGRANULARITY 64
+  /*##-2- Configure peripheral GPIO ##########################################*/
+  /* UART TX GPIO pin configuration  */
+  GPIO_InitStruct.Pin       = USARTx_TX_PIN;
+  GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull      = GPIO_NOPULL;
+  GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
+  GPIO_InitStruct.Alternate = USARTx_TX_AF;
 
-typedef bool (*TestFunctionType)(void);
+  HAL_GPIO_Init(USARTx_TX_GPIO_PORT, &GPIO_InitStruct);
 
-struct TestInfo {
-    const char *className;
-    const char *functionName;
-    TestFunctionType function;
-};
+  /* UART RX GPIO pin configuration  */
+  GPIO_InitStruct.Pin = USARTx_RX_PIN;
+  GPIO_InitStruct.Alternate = USARTx_RX_AF;
 
-extern TestInfo TestFunctions[32];
-extern volatile int numberOfTests;
+  HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &GPIO_InitStruct);
+}
 
-class AddTest {
-public:
-    AddTest(TestFunctionType x,
-            const char *className,
-            const char *functionName) {
-        //Allocate();
+/**
+  * @brief UART MSP De-Initialization
+  *        This function frees the hardware resources used in this example:
+  *          - Disable the Peripheral's clock
+  *          - Revert GPIO configuration to their default state
+  * @param huart: UART handle pointer
+  * @retval None
+  */
+void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
+{
+  /*##-1- Reset peripherals ##################################################*/
+  USARTx_FORCE_RESET();
+  USARTx_RELEASE_RESET();
 
-        TestFunctions[numberOfTests].function = x;
-        TestFunctions[numberOfTests].className = className;
-        TestFunctions[numberOfTests].functionName = functionName;
-        numberOfTests++;
-    }
+  /*##-2- Disable peripherals and GPIO Clocks #################################*/
+  /* Configure UART Tx as alternate function  */
+  HAL_GPIO_DeInit(USARTx_TX_GPIO_PORT, USARTx_TX_PIN);
+  /* Configure UART Rx as alternate function  */
+  HAL_GPIO_DeInit(USARTx_RX_GPIO_PORT, USARTx_RX_PIN);
+}
 
-private:
-    void Allocate() {
-       /* TestInfo* oldData = TestFunctions;
-        int size=numberOfTests*sizeof(TestInfo);
-        if ((numberOfTests % TEST_DBGRANULARITY) == 0) {
-            TestFunctions = (TestInfo*) (pvPortMalloc((numberOfTests + TEST_DBGRANULARITY) * sizeof(TestInfo)));
-
-        }
-        if (size != 0) {
-            memcpy(TestFunctions, oldData, size);
-            vPortFree((void*) oldData);
-        }*/
-    }
-
-
-};
-
-
-
-
-#define TEST(className, functionName) \
-    bool className##_##functionName (); \
-    static AddTest ADD_##functionName();\
-    bool className##_##functionName ()
-
-
-#define ASSERT_TRUE(boolean) numberOfTests++; return boolean
-
-#define ASSERT_FALSE(boolean) return !boolean
-
-#endif

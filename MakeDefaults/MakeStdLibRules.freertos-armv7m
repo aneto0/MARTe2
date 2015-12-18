@@ -69,7 +69,7 @@ $(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.o $(OBJS)
 	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
 
 $(BUILD_DIR)/%.elf : $(BUILD_DIR)/%.o $(OBJS) 
-	$(COMPILER) $(CFLAGS) $(LFLAGS) -T $(LINKER_FILE) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) -o $@ 
+	$(COMPILER) $(CFLAGS) $(LFLAGS) -T $(LINKER_FILE) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) --specs=nosys.specs -o $@ 
 
 $(BUILD_DIR)/%.bin : $(BUILD_DIR)/%.elf
 	$(OBJCOPY) -S -O binary  $< $@

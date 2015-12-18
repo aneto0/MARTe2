@@ -1,23 +1,26 @@
 #User defs
 #this is the path of your stm cube folder
+MARTE_TARGET=freertos-armv7m
 MAINDIR=/home/pc/STM32Cube_FW_F4_V1.5.0/
-STM_TARGET=embedded
+BUILDPATH=../../../Build/$(MARTE_TARGET)/GTest/
+MARTEDIR=../../../
+
 
 RTOSDIR=$(MAINDIR)Middlewares/Third_Party/FreeRTOS/Source/
-CROSSPATH?=
+CROSSPATH?=/usr/bin/
 CROSSPFX=$(CROSSPATH)arm-none-eabi-
 CC=$(CROSSPFX)gcc
 CXX=$(CROSSPFX)g++
 OBJCOPY=$(CROSSPFX)objcopy
 OBJDUMP=$(CROSSPFX)objdump
 AS=$(CROSSPFX)as
-LD=$(CROSSPFX)gcc
-LINKER=$(CROSSPFX)ld
+LD=$(CROSSPFX)g++
 NM=$(CROSSPFX)nm
-FLAGS=-mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections -flto  
 
+LIBS=$(MARTEDIR)Build/freertos-armv7m/GTest/MainGTest_$(MARTE_TARGET).a
 #include the stm headers
-INCPATHS= -I./Inc
+INCPATHS+= -I../
+INCPATHS+= -I./Inc
 INCPATHS+= -I$(MAINDIR)Drivers/CMSIS/Device/ST/STM32F4xx/Include
 INCPATHS+= -I$(MAINDIR)Drivers/STM32F4xx_HAL_Driver/Inc/
 INCPATHS+= -I$(MAINDIR)Drivers/BSP/STM32F4-Discovery/
@@ -32,12 +35,11 @@ INCPATHS+= -I$(RTOSDIR)include/
 #INCPATHS+= -I/usr/include
 #INCPATHS+= -I/usr/include/x86_64-linux-gnu
 
-CFLAGS=$(FLAGS) -Wall
-OPTFLAGS=-Os
-#Remember to substitute it with stm macros.
-SPECFLAGS=-DPLATFORM=STM32F4_Discovery -DUSE_USB_FS -DUSE_FREERTOS -DARCHITECTURE=armv7m_gcc -DOPERATING_SYSTEM=FreeRTOS -DSTM32F407xx
-CFLAGS+= $(INCPATHS) $(OPTFLAGS) -g
-
+#include the baselib2 headers
+#INCPATHS+= -I$(MARTEDIR)Source/Core/L0Portability/
+#INCPATHS+= -I$(MARTEDIR)Source/Core/L1Objects/
+#INCPATHS+= -I$(MARTEDIR)Source/Core/Drivers/
+#INCPATHS+= -I$(MARTEDIR)Source/Core/Drivers/Platform/STM32F4_Discovery
 
 #all the source paths
 SRC=Src/
@@ -48,8 +50,25 @@ PORTABLEPATH=$(RTOSDIR)portable/GCC/ARM_CM4F/
 MEMORYMANPATH=$(RTOSDIR)portable/MemMang/
 USBPATH=$(MAINDIR)Middlewares/ST/STM32_USB_Device_Library/Core/Src/
 USB_CDC_PATH=$(MAINDIR)Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/
-ACCELPATH=$(MAINDIR)Drivers/BSP/Components/lis3dsh/
-ACCELPATH2=$(MAINDIR)Drivers/BSP/Components/lis302dl/
+#ACCELPATH=$(MAINDIR)Drivers/BSP/Components/lis3dsh/
+#ACCELPATH2=$(MAINDIR)Drivers/BSP/Components/lis302dl/
+
+
+
+FLAGS=-mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections  
+#-flto
+CFLAGS=$(FLAGS) -Wall
+OPTFLAGS=-Os
+#Remember to substitute it with stm macros.
+SPECFLAGS=-DPLATFORM=STM32F4_Discovery -DUSE_USB_FS -DUSE_FREERTOS -DARCHITECTURE=armv7m_gcc -DOPERATING_SYSTEM=FreeRTOS -DSTM32F407xx
+CFLAGS+= $(INCPATHS) $(OPTFLAGS) -g
+
+
+TARGET=MainGTest_$(MARTE_TARGET)
+
+#include CPPFILES objs declared in baselib
+
+#i must include also the input cpp which contain the main.
 
 
 CFILES:=$(shell ls $(SRC)*.c 2>/dev/null)
@@ -62,12 +81,10 @@ CFILES+=$(shell ls $(PORTABLEPATH)*.c 2>/dev/null)
 CFILES+=$(shell ls $(MEMORYMANPATH)heap_1.c 2>/dev/null)
 CFILES+=$(shell ls $(USBPATH)*.c 2>/dev/null)
 CFILES+=$(shell ls $(USB_CDC_PATH)*.c 2>/dev/null)
-CFILES+=$(shell ls $(ACCELPATH)*.c 2>/dev/null)
-CFILES+=$(shell ls $(ACCELPATH2)*.c 2>/dev/null)
-
+#CFILES+=$(shell ls $(ACCELPATH)*.c 2>/dev/null)
+#CFILES+=$(shell ls $(ACCELPATH2)*.c 2>/dev/null)
 
 CPPFILES+= $(shell ls *.cpp 2>/dev/null)
-#CPPFILES+= $(shell ls $(SRC)*.cpp 2>/dev/null)
 
 #startup.s should be in this directory
 AFILES:=$(shell ls $(SRC)*.s 2>/dev/null)
@@ -80,12 +97,17 @@ CPPOBJS = $(addprefix $(BUILDPATH), $(CPPOBJSTMP))
 AOBJS:=$(AFILES:%.s=%.o)
 ALLOBJS=$(COBJS) $(AOBJS) $(CPPOBJS)
 #LPATH=$(MAINDIR)Projects/STM32F4-Discovery/Templates/TrueSTUDIO/STM32F4-Discovery/
-LPATH=..
+LPATH=
 #LTARGET=$(LPATH)STM32F407VG_FLASH.ld
-LINKER_FILE=$(LPATH)/stm32_flash.ld
-LFLAGS=-Wl,--no-as-needed -g
+LTARGET=$(LPATH)stm32_flash.ld
+LFLAGS=-Wl,--gc-sections -g
+#LIBS+=$(MARTEDIR)Build/freertos-armv7m/Core/L0Portability/L0Portability.a
+#LIBS+= $(MARTEDIR)Build/freertos-armv7m/Core/L1Objects/L1Objects.a
+#LIBS+= $(MARTEDIR)Build/freertos-armv7m/Core/Drivers/Drivers.a
 
-all: $(STM_TARGET).a 
+
+all: $(BUILDPATH)$(TARGET).bin 
+#$(BUILDPATH)$(TARGET).lst $(BUILDPATH)$(TARGET).sym
 
 boh:
 	echo $(ALLOBJS)
@@ -122,12 +144,22 @@ $(BUILDPATH)%.o: %.cpp
 $(BUILDPATH)%.o: %.s
 	$(CC) $(CFLAGS) -c $*.s -o $(BUILDPATH)$*.o
 
-$(STM_TARGET).a: $(ALLOBJS)
-	$(LD) -r $(FLAGS) $(LFLAGS) $(ALLOBJS) -o $@ 
-#$(LINKER) -r $(ALLOBJS) -o $@
-	 
+$(BUILDPATH)$(TARGET).elf: $(ALLOBJS) $(LTARGET)
+	$(LD) $(FLAGS) -T $(LTARGET) $(LFLAGS) $(ALLOBJS) $(LIBS) --specs=nosys.specs -o $@ 
+
+$(BUILDPATH)%.bin: $(BUILDPATH)%.elf
+	$(OBJCOPY) -S -O binary  $< $@
+
+$(BUILDPATH)%.lst: $(BUILDPATH)%.elf
+	$(OBJDUMP) -d $^ > $@
+
+$(BUILDPATH)%.sym: $(BUILDPATH)%.elf
+	$(NM)  $^ | sort > $@
+
+.PRECIOUS: $(BUILDPATH)%.elf
 
 .PHONY: clean
 
 clean:
-	rm -f $(ALLOBJS) *.a
+	rm -f $(ALLOBJS) $(BUILDPATH)*.bin $(BUILDPATH)*.lst  $(BUILDPATH)*.sym  $(BUILDPATH)*.elf 
+

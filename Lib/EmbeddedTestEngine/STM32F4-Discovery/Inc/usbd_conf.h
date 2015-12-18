@@ -1,9 +1,9 @@
 /**
   ******************************************************************************
-  * @file    usbd_conf.h
+  * @file    USB_Device/CDC_Standalone/Inc/usbd_conf.h
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date    26-December-2014
+  * @version V1.1.0
+  * @date    26-June-2014 
   * @brief   General low level driver configuration
   ******************************************************************************
   * @attention
@@ -26,131 +26,59 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __USBD_CONF__H__
-#define __USBD_CONF__H__
+#ifndef __USBD_CONF_H
+#define __USBD_CONF_H
 
-#include "stm32f4xx.h"
+/* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx_hal.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-/* Includes ------------------------------------------------------------------*/
-
-/** @addtogroup USBD_OTG_DRIVER
-  * @{
-  */
-  
-/** @defgroup USBD_CONF
-  * @brief usb otg low level driver configuration file
-  * @{
-  */ 
-
-/** @defgroup USBD_CONF_Exported_Defines
-  * @{
-  */ 
-
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
 /* Common Config */
 #define USBD_MAX_NUM_INTERFACES               1
 #define USBD_MAX_NUM_CONFIGURATION            1
 #define USBD_MAX_STR_DESC_SIZ                 0x100
-#define USBD_SUPPORT_USER_STRING              0 
+#define USBD_SUPPORT_USER_STRING              0
 #define USBD_SELF_POWERED                     1
 #define USBD_DEBUG_LEVEL                      0
-
-
-/* MSC Class Config */
-#define MSC_MEDIA_PACKET                       8192  
-
-
-/** @defgroup USBD_Exported_Macros
-  * @{
-  */ 
-
- /* Memory management macros */   
+ 
+/* Exported macro ------------------------------------------------------------*/
+/* Memory management macros */
 #define USBD_malloc               malloc
 #define USBD_free                 free
 #define USBD_memset               memset
 #define USBD_memcpy               memcpy
     
- /* DEBUG macros */  
-
-  
+/* DEBUG macros */
 #if (USBD_DEBUG_LEVEL > 0)
 #define  USBD_UsrLog(...)   printf(__VA_ARGS__);\
                             printf("\n");
 #else
-#define USBD_UsrLog(...)   
-#endif 
-                            
-                            
+#define USBD_UsrLog(...)
+#endif
+
 #if (USBD_DEBUG_LEVEL > 1)
 
 #define  USBD_ErrLog(...)   printf("ERROR: ") ;\
                             printf(__VA_ARGS__);\
                             printf("\n");
 #else
-#define USBD_ErrLog(...)   
-#endif 
-                            
-                            
-#if (USBD_DEBUG_LEVEL > 2)                         
+#define USBD_ErrLog(...)
+#endif
+
+#if (USBD_DEBUG_LEVEL > 2)
 #define  USBD_DbgLog(...)   printf("DEBUG : ") ;\
                             printf(__VA_ARGS__);\
                             printf("\n");
 #else
-#define USBD_DbgLog(...)                         
+#define USBD_DbgLog(...)
 #endif
-                            
-/**
-  * @}
-  */ 
- 
-    
-    
-/**
-  * @}
-  */ 
 
+/* Exported functions ------------------------------------------------------- */
 
-/** @defgroup USBD_CONF_Exported_Types
-  * @{
-  */ 
-/**
-  * @}
-  */ 
+#endif /* __USBD_CONF_H */
 
-
-/** @defgroup USBD_CONF_Exported_Macros
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-/** @defgroup USBD_CONF_Exported_Variables
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-/** @defgroup USBD_CONF_Exported_FunctionsPrototype
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-
-
-#endif //__USBD_CONF__H__
-
-
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
