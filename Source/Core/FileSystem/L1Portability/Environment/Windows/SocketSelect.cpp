@@ -194,8 +194,6 @@ bool SocketSelect::WaitWrite(const TimeoutType &timeout) {
     else {
         readySockets = select(SELECT_WIDTH, static_cast<fd_set*>(NULL), &selectHandle.writeFDS_done, static_cast<fd_set*>(NULL), static_cast<timeval *>(NULL));
     }
-    //printf("readySockets = %ld errorSelect = %ld \n",readySockets, GetLastError());
-
     return (readySockets > 0);
 }
 

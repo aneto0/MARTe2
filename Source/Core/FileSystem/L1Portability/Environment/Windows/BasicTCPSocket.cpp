@@ -62,16 +62,6 @@ BasicTCPSocket::~BasicTCPSocket() {
 }
 
 bool BasicTCPSocket::Open() {
-    /*    bool ret = false;
-     connectionSocket = socket(PF_INET, SOCK_STREAM, 0);
-     if (connectionSocket == INVALID_SOCKET) {
-         REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed");
-         ret = false;
-     }
-     if (connectionSocket >= 0) {
-         ret = true;
-     }
-     return ret;*/
     bool ret = false;
     const int32 one = 1;
     connectionSocket = socket(PF_INET, SOCK_STREAM, 0);
@@ -143,7 +133,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
 
                 if (errorCode != 0) {
                     errorCode = WSAGetLastError();
-                    //printf("ErrorCode = %ld so_error=%ld\n", errorCode,SO_ERROR);
                     switch (errorCode) {
                     case (WSAEINTR): {
                         REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: failed connect() because interrupted function call");
@@ -157,8 +146,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                         sel.DeleteWaitOnWriteReady(this);
 
                         sel.AddWaitOnWriteReady(this);
-                        //TimeoutType timeoutWouldBlock = 10;
-                        //ret = sel.WaitWrite(timeoutWouldBlock);
                         if (wasBlocking) {
                             ret = sel.WaitWrite(timeout);
                         }
@@ -181,7 +168,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                             }
                         }
                         else {
-                            // printf("Error select!\n");
                             REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed connection on select() with errno = WSAEWOULDBLOCK.");
                             ret = false;
                         }

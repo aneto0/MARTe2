@@ -85,14 +85,6 @@ bool BasicSocket::SetBlocking(const bool flag) {
 bool BasicSocket::Close() {
     int32 ret = -1;
     if (IsValid()) {
-/*        struct linger so_linger;
-        so_linger.l_onoff = 1;
-        so_linger.l_linger = 0;
-        int32 z = setsockopt(connectionSocket,
-            SOL_SOCKET,
-            SO_LINGER,
-            (const char8*)(&so_linger),
-            sizeof so_linger);*/
         ret = closesocket(connectionSocket);
         connectionSocket = -1;
         if (ret != 0) {
