@@ -33,7 +33,8 @@
 
 #include "gtest/gtest.h"
 #include "BasicConsoleTest.h"
-
+#include "BasicFile.h"
+#include "Directory.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -41,12 +42,33 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+void RedirectConsoleInput(BasicFile &inputFile,
+                          const char8* inputString) {
+    inputFile.Open("inputFile_Test.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W);
+    uint32 size = StringHelper::Length(inputString);
+    inputFile.Write(inputString, size);
+    if (N_CHARS_NEWLINE == 1u) {
+        size = 1u;
+        inputFile.Write("\n", size);
+    }
+    else {
+        size = 2u;
+        inputFile.Write("\r\n", size);
+    }
+    inputFile.Seek(0);
+    dup2(inputFile.GetWriteHandle(), fileno(stdin));
+}
+
+void Clean(BasicFile &inputFile) {
+    inputFile.Close();
+    Directory remFile("inputFile_Test.txt");
+    remFile.Delete();
+}
 
 TEST(BasicConsoleGTest,TestConstructor) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestConstructor());
 }
-
 
 TEST(BasicConsoleGTest,TestOpenModeDefault) {
     BasicConsoleTest console;
@@ -116,20 +138,28 @@ TEST(BasicConsoleGTest,TestWrite2) {
 //This test needs user intervention. Do not uncomment for automatic tests.
 TEST(BasicConsoleGTest,TestPaging) {
     BasicConsoleTest console;
+    BasicFile inputFile;
+    RedirectConsoleInput(inputFile, "\n");
     ASSERT_TRUE(console.TestPaging(14, 15, 15));
+    Clean(inputFile);
 }
 
 //This test needs user intervention. Do not uncomment for automatic tests.
 TEST(BasicConsoleGTest,TestRead) {
     BasicConsoleTest console;
+    BasicFile inputFile;
+    RedirectConsoleInput(inputFile, "Hello");
     ASSERT_TRUE(console.TestRead("Hello"));
+    Clean(inputFile);
 }
 
 TEST(BasicConsoleGTest,TestTimeoutRead) {
     BasicConsoleTest console;
+    BasicFile inputFile;
+    RedirectConsoleInput(inputFile, "");
     ASSERT_TRUE(console.TestTimeoutRead(100));
+    Clean(inputFile);
 }
-
 
 TEST(BasicConsoleGTest,TestSetGetSize) {
     BasicConsoleTest console;
@@ -178,18 +208,15 @@ TEST(BasicConsoleGTest,TestPlotChar) {
     ASSERT_TRUE(console.TestPlotChar('c', Blue, Yellow, 20, 10));
 }
 
-
 TEST(BasicConsoleGTest,TestCanWrite) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestCanWrite());
 }
 
-
 TEST(BasicConsoleGTest,TestCanRead) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestCanRead());
 }
-
 
 TEST(BasicConsoleGTest,TestCanSeek) {
     BasicConsoleTest console;
@@ -198,14 +225,13 @@ TEST(BasicConsoleGTest,TestCanSeek) {
 
 TEST(BasicConsoleGTest,TestTimeoutWrite) {
     BasicConsoleTest console;
-    ASSERT_TRUE(console.TestTimeoutWrite("HelloWorld",500));
+    ASSERT_TRUE(console.TestTimeoutWrite("HelloWorld", 500));
 }
 
 TEST(BasicConsoleGTest,TestSize) {
     BasicConsoleTest console;
     ASSERT_TRUE(console.TestSize());
 }
-
 
 TEST(BasicConsoleGTest,TestSeek) {
     BasicConsoleTest console;
