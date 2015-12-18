@@ -42,8 +42,12 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+#define Windows 2
+#define Linux 1
+
 void RedirectConsoleInput(BasicFile &inputFile,
                           const char8* inputString) {
+#if ENVIRONMENT == Linux
     inputFile.Open("inputFile_Test.txt", BasicFile::FLAG_CREAT | BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W);
     uint32 size = StringHelper::Length(inputString);
     inputFile.Write(inputString, size);
@@ -57,6 +61,7 @@ void RedirectConsoleInput(BasicFile &inputFile,
     }
     inputFile.Seek(0);
     dup2(inputFile.GetWriteHandle(), fileno(stdin));
+#endif
 }
 
 void Clean(BasicFile &inputFile) {
