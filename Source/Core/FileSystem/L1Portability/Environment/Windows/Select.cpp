@@ -124,7 +124,7 @@ bool Select::AddWriteHandle(const HandleI &handle) {
             wsaevent = WSACreateEvent();
             if (wsaevent != WSA_INVALID_EVENT) {
                 int32 hSocket = (int32) h;
-                int32 error = WSAEventSelect(hSocket, wsaevent, FD_READ);
+                int32 error = WSAEventSelect(hSocket, wsaevent, FD_WRITE);
                 if (error != SOCKET_ERROR) {
                     readHandle.registeredHandles[highestHandle] = wsaevent;
                     printf("saved as event = %d\n",wsaevent);
