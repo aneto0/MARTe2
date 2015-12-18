@@ -31,8 +31,11 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "LinkedListHolder.h"
 #include "GeneralDefinitions.h"
+#include "HeapManager.h"
+#include "LinkedListHolder.h"
+#include "MemoryOperationsHelper.h"
+#include "StringHelper.h"
 #include "TimeStamp.h"
 #include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,DirectoryCore.h)
 
@@ -45,7 +48,7 @@ namespace MARTe {
 /**
  * @brief A class which encapsulates attributes and information about a file or a directory.
  */
-class Directory: public LinkedListable {
+class DLL_API Directory: public LinkedListable {
 
 
 public:

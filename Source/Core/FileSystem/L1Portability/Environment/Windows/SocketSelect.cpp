@@ -43,8 +43,7 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-
-static const int32 SELECT_WIDTH= 256;
+static const int32 SELECT_WIDTH = 256;
 
 SocketSelect::SocketSelect() {
     Reset();
@@ -270,8 +269,5 @@ bool SocketSelect::CheckExcept(const BasicSocket * const s) {
     return ret;
 }
 
-
 }
 
-
-	

@@ -71,9 +71,6 @@ typedef unsigned long      uintp;
 /** A tool to find the size of structures fields. */
 #define msizeof(type,field) sizeof(((type *)0)->field)
 
-#define HANDLE void *
-
-
 #define dll_import __declspec(dllimport)
 #define dll_export __declspec(dllexport)
 

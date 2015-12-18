@@ -20,6 +20,8 @@
  * the class GrammarInfo (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
+#ifndef GRAMMARINFO_H_
+#define GRAMMARINFO_H_
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -125,3 +127,5 @@ struct GrammarInfo {
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
+#endif /* GRAMMARINFO_H_ */

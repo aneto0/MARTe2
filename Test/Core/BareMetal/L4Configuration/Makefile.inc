@@ -26,15 +26,15 @@
 
 
 OBJSX=	AnyObjectTest.x \
-		AnyTypeCreatorTest.x \
-		ConfigurationDatabaseTest.x \
-		LexicalAnalyzerTest.x \
-		JsonParserTest.x \
-	    TypeConversionTest.x \
-		TokenInfoTest.x \
-		TokenTest.x \
-		StandardParserTest.x \
-		XMLParserTest.x 
+	AnyTypeCreatorTest.x \
+	ConfigurationDatabaseTest.x \
+	JsonParserTest.x \
+	LexicalAnalyzerTest.x \
+	StandardParserTest.x \
+	TypeConversionTest.x \
+	TokenInfoTest.x \
+	TokenTest.x \
+	XMLParserTest.x
 					
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

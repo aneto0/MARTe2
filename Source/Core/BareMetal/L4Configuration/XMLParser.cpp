@@ -1,8 +1,8 @@
 /**
  * @file XMLParser.cpp
  * @brief Source file for class XMLParser
- * @date 09/12/2015
- * @author Giuseppe Ferrò
+ * @date 09/dic/2015
+ * @author pc
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -69,7 +69,17 @@ static uint32 Conflict_row[] = { 0u
 
 , 1u, 2u, 3u, 3u, 11u, 0u };
 
-
+/*
+ #define START_SYMBOL 11
+ #define END_OF_SLK_INPUT_ 10
+ #define START_STATE 0
+ #define START_CONFLICT 23
+ #define END_CONFLICT 28
+ #define START_ACTION 24
+ #define END_ACTION 33
+ #define TOTAL_CONFLICTS 5
+ #define PARSE_STACK_SIZE 512
+ */
 static const uint32 Constants[] = { 11u, 10u, 0u, 23u, 28u, 24u, 33u, 5u };
 
 
@@ -77,6 +87,17 @@ static const char8 * Terminal_name[] = { "0"
 
 , "<", "STRING", ">", "/", "(", ")", "{", "}", "NUMBER", "END_OF_SLK_INPUT" };
 
+
+/*
+ #define START_SYMBOL 11
+ #define START_ACTION 24
+ #define END_ACTION 33
+ #define GET_NONTERMINAL_NAME(symbol) (Nonterminal_name [symbol - 10])
+ #define GET_TERMINAL_NAME(symbol) (Terminal_name [symbol])
+ #define GET_ACTION_NAME(symbol) (Action_name [symbol-(START_ACTION-1)])
+ #define GET_PRODUCTION_NAME(number) (Production_name [number])
+
+ */
 
 static const char8 *GetTerminalName(const uint32 symbol) {
     return Terminal_name[symbol];
@@ -145,5 +166,6 @@ uint32 XMLParser::GetConflictRow(const uint32 index)const  {
 uint32 XMLParser::GetConstant(const uint32 index)const  {
     return Constants[index];
 }
+
 
 }

@@ -23,7 +23,7 @@
 #############################################################
 
 
-OBJSX=  AnyObjectGTest.x \
+OBJSX= AnyObjectGTest.x \
 		AnyTypeGTest.x \
 		AnyTypeCreatorGTest.x \
 		AtomicGTest.x \
@@ -55,7 +55,7 @@ OBJSX=  AnyObjectGTest.x \
 		FormatDescriptorGTest.x \
 		FractionalIntegerGTest.x \
 		GlobalObjectsDatabaseGTest.x \
-		HeapManagerGTest.x \
+HeapManagerGTest.x \
 		HighResolutionTimerGTest.x \
 		IOBufferGTest.x \
 		InternetHostGTest.x \

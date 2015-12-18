@@ -223,22 +223,16 @@ HeapI *FindHeap(const void * const address) {
 
             /* retrieve heap information in current slot */
             HeapI *heap = HeapDatabase::Instance()->GetHeap(i);
-
             /* if slot used */
             if (heap != NULL_PTR(HeapI *)) {
-
                 /* check address compatibility */
                 if (heap->Owns(address)) {
-
                     /* check if first occurrence or */
                     if (foundHeap == NULL_PTR(HeapI *)) {
-
                         /* size of memory space */
                         foundSpan = heap->LastAddress() - heap->FirstAddress();
-
                         /* save heap */
                         foundHeap = heap;
-
                     }
                     else { /* further occurrences */
 
@@ -250,10 +244,8 @@ HeapI *FindHeap(const void * const address) {
                          * it can only mean that this heap is a sub-heap of the previously found heap
                          */
                         if (newFoundSpan < foundSpan) {
-
                             /* save size of memory space */
                             foundSpan = newFoundSpan;
-
                             /* save heap */
                             foundHeap = heap;
                         } // end if (newFoundSpan < foundSpan)
@@ -270,7 +262,7 @@ HeapI *FindHeap(const void * const address) {
     }
 
     /* assign to heap the found heap or the default one */
-    if (foundHeap == NULL_PTR(HeapI *)) {
+    if ((foundHeap == NULL_PTR(HeapI *))) {
 
         /* try default heap */
         foundHeap = GlobalObjectsDatabase::Instance()->GetStandardHeap();
@@ -335,12 +327,9 @@ bool Free(void *&data) {
     HeapI *heap = FindHeap(data);
 
     bool ok = false;
-
     /* Does not belong to any heap?*/
-    if (heap != NULL_PTR(HeapI *)) {
-
+    if ((heap != NULL_PTR(HeapI *))) {
         heap->Free(data);
-
         ok = true;
 
     }

@@ -43,8 +43,6 @@ namespace MARTe {
  */
 static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
 
-
-
 /**
  * @brief Concrete class for MARTe::ParserI abstract class, configured
  * for streams of characters encoded in MARTe configuration language.

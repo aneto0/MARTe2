@@ -61,7 +61,7 @@ public:
     /**
      * @brief Read without timeout.
      * @param[out] output is the buffer where the read data must be stored.
-     * @param [in,out] size is the number of bytes to read.
+     * @param[in,out] size is the number of bytes to read.
      * @return false in case of errors.
      * @post
      *   size is the number of read bytes.
