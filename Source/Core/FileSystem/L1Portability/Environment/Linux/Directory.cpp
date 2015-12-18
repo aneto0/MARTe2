@@ -160,7 +160,7 @@ bool Directory::Create(const bool isFile) {
 
     if (ret) {
         if (isFile) {
-            int32 fd = creat(fname, static_cast<mode_t>(0777));
+            int32 fd = open(fname, static_cast<mode_t>(00777|O_EXCL|O_CREAT|O_WRONLY|O_TRUNC));
             if (fd < 0) {
                 ret = false;
                 REPORT_ERROR(ErrorManagement::OSError, "Error: Failed creat()");
