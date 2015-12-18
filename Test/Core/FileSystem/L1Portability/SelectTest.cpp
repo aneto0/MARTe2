@@ -28,18 +28,19 @@
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "BasicUDPSocket.h"
 #include "Directory.h"
-#include "Select.h"
 #include "SelectTest.h"
 #include "Sleep.h"
 #include "Threads.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 static const char8 LOCALHOST_IP[] = "127.0.0.1";
-static const uint16 ACTUAL_TESTING_PORT = 49155;//49152;
+static const uint16 ACTUAL_TESTING_PORT = 49152;
 static const uint16 DUMMY_TESTING_PORT_1 = 49153;
 static const uint16 DUMMY_TESTING_PORT_2 = 49154;
 
@@ -275,7 +276,7 @@ bool SelectTest::TestWaitUntil_waitTimeout() {
     return retVal;
 }
 
-bool SelectTest::TestWaitUntil_waitRead(TimeoutType timeout) {
+bool SelectTest::TestWaitUntil_waitRead() {
     BasicUDPSocket bUDPsRead;
     if (!bUDPsRead.Open()) {
         retVal = false;
@@ -288,7 +289,7 @@ bool SelectTest::TestWaitUntil_waitRead(TimeoutType timeout) {
     }
     sel.AddReadHandle(bUDPsRead);
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, &defaultTo);
-    retVal &= (sel.WaitUntil(timeout) == 1);
+    retVal &= (sel.WaitUntil(defaultTo) == 1);
     retVal &= sel.IsSet(bUDPsRead);
     char8 buffer[32];
     uint32 size = 32;
@@ -335,7 +336,6 @@ bool SelectTest::TestWaitUntil_severaDifferentWaitRead() {
     sel.AddReadHandle(dummy2);
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, &defaultTo);
     retVal &= (sel.WaitUntil(defaultTo) == 1);
-
     retVal &= sel.IsSet(bUDPsRead);
     retVal &= !sel.IsSet(dummy1);
     retVal &= !sel.IsSet(dummy2);
