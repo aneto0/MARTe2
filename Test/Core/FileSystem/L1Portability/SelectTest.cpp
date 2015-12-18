@@ -24,21 +24,25 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <stdio.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "SelectTest.h"
 #include "Select.h"
 #include "Threads.h"
 #include "Sleep.h"
 #include "BasicUDPSocket.h"
+#include "stdio.h"
+#include "Directory.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
 
 static const char8 LOCALHOST_IP[] = "127.0.0.1";
-static const uint16 ACTUAL_TESTING_PORT = 49155;//49152;
+static const uint16 ACTUAL_TESTING_PORT = 49152;
 static const uint16 DUMMY_TESTING_PORT_1 = 49153;
 static const uint16 DUMMY_TESTING_PORT_2 = 49154;
 
@@ -215,39 +219,54 @@ bool SelectTest::TestRemoveExceptionHandle_InvalidHandle() {
 }
 
 bool SelectTest::TestClearAllHandles() {
-#if ENVIRONMENT == Windows
-    bc.Open(BasicConsoleMode::Default);
-    retVal &= sel.AddReadHandle(bc);
+    bool ok;
+    Directory dir;
     BasicFile bf;
-    bf.Open("Test.txt", BasicFile::ACCESS_MODE_R | BasicFile::FLAG_CREAT);
-    retVal &= sel.AddReadHandle(bf);
-#else
-    retVal &= sel.AddWriteHandle(bc);
-    retVal &= sel.AddExceptionHandle(bc);
-    retVal &= sel.AddReadHandle(bc);
-#endif
-    sel.ClearAllHandles();
-#if ENVIRONMENT == Windows
-    retVal &= !sel.IsSet(bc);
-    retVal &= !sel.IsSet(bf);
-    bf.Close();
-    bc.Close();
-    DeleteFile("Test.txt");
-#else
-    retVal &= !sel.IsSet(bc);
-#endif
+    ok = bc.Open(BasicConsoleMode::Default);
+    if (ok) {
+        ok = bf.Open("Test.txt", BasicFile::ACCESS_MODE_R | BasicFile::FLAG_CREAT);
+        if (ok) {
+            retVal &= sel.AddReadHandle(bc);
+            retVal &= sel.AddReadHandle(bf);
+            retVal &= sel.AddWriteHandle(bc);
+            retVal &= sel.AddWriteHandle(bf);
+            retVal &= sel.AddExceptionHandle(bc);
+            retVal &= sel.AddExceptionHandle(bf);
+            sel.ClearAllHandles();
+            retVal &= !sel.IsSet(bc);
+            retVal &= !sel.IsSet(bf);
+            ok = bf.Close();
+            if (ok) {
+                ok = bc.Close();
+                if (ok) {
+                    ok = dir.SetByName("Test.txt");
+                    if (ok) {
+                        ok = dir.Delete();
+                    }
+                }
+            }
+        }
+    }
+    if (!ok) {
+        retVal = false;
+    }
     return retVal;
 }
 
 bool SelectTest::TestIsSet() {
+    Directory d;
     BasicFile bf;
     bf.Open("Test.txt", BasicFile::ACCESS_MODE_W | BasicFile::FLAG_CREAT);
     retVal &= sel.AddReadHandle(bf);
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWriteFile, &bf);
     sel.WaitUntil(defaultTo);
     retVal &= sel.IsSet(bf);
+    while (Threads::IsAlive(tid)) {
+        Sleep::MSec(1);
+    }
     bf.Close();
-    DeleteFile("Test.txt");
+    d.SetByName("Test.txt");
+    d.Delete();
     return retVal;
 }
 
@@ -319,7 +338,6 @@ bool SelectTest::TestWaitUntil_severaDifferentWaitRead() {
     sel.AddReadHandle(dummy2);
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) ThreadWrite, &defaultTo);
     retVal &= (sel.WaitUntil(defaultTo) == 1);
-
     retVal &= sel.IsSet(bUDPsRead);
     retVal &= !sel.IsSet(dummy1);
     retVal &= !sel.IsSet(dummy2);
