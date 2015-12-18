@@ -39,7 +39,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 #include "InternetHostTest.h"
 #include "StreamString.h"
 

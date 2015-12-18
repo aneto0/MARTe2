@@ -35,7 +35,7 @@
 #include "ErrorManagement.h"
 #include "Select.h"
 #include "StringHelper.h"
-
+#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -55,25 +55,23 @@ BasicTCPSocket::BasicTCPSocket() :
 }
 
 BasicTCPSocket::~BasicTCPSocket() {
-
+    if (IsValid()) {
+        Close();
+    }
+    WSACleanup();
 }
 
 bool BasicTCPSocket::Open() {
-    WSADATA wsaData;
-    // Initialize Winsock
-    int32 iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (iResult != 0) {
-        REPORT_ERROR(ErrorManagement::FatalError, "BasicUDPSocket: fail WSAStartup");
-    }
     bool ret = false;
-    /*lint -e{641} .Justification: The function socket returns an integer.*/
+    const int32 one = 1;
     connectionSocket = socket(PF_INET, SOCK_STREAM, 0);
-    if (connectionSocket == INVALID_SOCKET) {
-        REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed");
-        ret = false;
+    if (connectionSocket != INVALID_SOCKET) {
+        if (setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char8*>(&one), static_cast<uint32>(sizeof(one))) >= 0) {
+            ret = true;
+        }
     }
-    if (connectionSocket >= 0) {
-        ret = true;
+    else {
+        REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed");
     }
     return ret;
 }
@@ -84,7 +82,7 @@ bool BasicTCPSocket::Listen(const uint16 port,
     if (IsValid()) {
         InternetHost server;
         server.SetPort(port);
-        int32 errorCode = bind(connectionSocket, reinterpret_cast<sockaddr *>(server.GetInternetHost()), server.Size());
+        int32 errorCode = bind(connectionSocket, reinterpret_cast<SOCKADDR *>(server.GetInternetHost()), server.Size());
 
         if (errorCode == 0) {
             errorCode = listen(connectionSocket, maxConnections);
@@ -135,7 +133,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
 
                 if (errorCode != 0) {
                     errorCode = WSAGetLastError();
-
                     switch (errorCode) {
                     case (WSAEINTR): {
                         REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: failed connect() because interrupted function call");
@@ -146,9 +143,14 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                         //arbitrary timeout
                     case (WSAEWOULDBLOCK): {
                         Select sel;
-                        sel.AddWriteHandle(*this);
-                        TimeoutType timeoutWouldBlock = 10;
-                        ret = (sel.WaitUntil(timeoutWouldBlock) > 0);
+                        sel.AddWriteHandle(this);
+                        if (wasBlocking) {
+                            ret = sel.WaitUntil(timeout);
+                        }
+                        else {
+                            ret = sel.WaitUntil(1000u);
+                        }
+
                         if (ret) {
                             int32 lon = static_cast<int32>(sizeof(int32));
                             int32 valopt;
@@ -167,36 +169,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                             REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed connection on select() with errno = WSAEWOULDBLOCK.");
                             ret = false;
                         }
-                    }
-                        break;
-                    case (WSAEINPROGRESS): {
-                        if (timeout.IsFinite()) {
-                            Select sel;
-                            sel.AddWriteHandle(*this);
-                            ret = (sel.WaitUntil(timeout) > 0);
-                            if (ret) {
-                                int32 lon = static_cast<int32>(sizeof(int32));
-                                int32 valopt;
-                                if (getsockopt(connectionSocket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char8 *>(&valopt), &lon) < 0) {
-                                    REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: failed getsockopt() trying to check if the connection is alive");
-                                    ret = false;
-                                }
-                                else {
-                                    if (valopt > 0) {
-                                        REPORT_ERROR(ErrorManagement::Timeout, "BasicTCPSocket: connection with timeout failed");
-                                        ret = false;
-                                    }
-                                }
-                            }
-                            else {
-                                REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed connection on select().");
-                            }
-                        }
-                        else {
-                            REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed connect(); errno = EINPROGRESS");
-                            ret = false;
-                        }
-
                     }
                         break;
                     default: {
@@ -223,7 +195,6 @@ bool BasicTCPSocket::Connect(const char8 * const address,
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "BasicTCPSocket: The socked handle is not valid");
     }
-
     return ret;
 }
 
@@ -252,12 +223,12 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
         bool created=false;
         bool wasBlocking = IsBlocking();
 
-        bool ok=true;
+        bool ok = true;
         if (timeout.IsFinite()) {
             if(wasBlocking) {
                 if(!SetBlocking(false)) {
                     REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Socket set to non-block mode failed.");
-                    ok=false;
+                    ok = false;
                 }
             }
         }
@@ -283,9 +254,9 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                         errorCode = WSAGetLastError();
                         if ((errorCode == 0) || (errorCode == WSAEINPROGRESS) || (errorCode == WSAEWOULDBLOCK)) {
                             Select sel;
-                            sel.AddReadHandle(*this);
+                            sel.AddWriteHandle(this);
 
-                            if (sel.WaitUntil(timeout)>0) {
+                            if (sel.WaitUntil(timeout)) {
                                 ret = WaitConnection(TTDefault, client);
                             }
                         }
@@ -401,17 +372,9 @@ bool BasicTCPSocket::Read(char8* const output,
     size = 0u;
     if (IsValid()) {
         if (timeout.IsFinite()) {
-
             struct timeval timeoutVal;
             timeoutVal.tv_sec = static_cast<int32>(timeout.GetTimeoutMSec() / 1000u);
             timeoutVal.tv_usec = static_cast<int32>((timeout.GetTimeoutMSec() % 1000u) * 1000u);
-
-            int32 iResult = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<int32>(source.Size()));
-            if (iResult == SOCKET_ERROR) {
-                closesocket (connectionSocket);
-                WSACleanup();
-                return 0;
-            }
 
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<uint32>(sizeof(timeoutVal)));
             if (ret != 0) {
@@ -424,7 +387,7 @@ bool BasicTCPSocket::Read(char8* const output,
             }
             timeoutVal.tv_sec = 0;
             timeoutVal.tv_usec = 0;
-            if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<uint32>(sizeof(timeoutVal))) < 0) {
+            if (setsockopt(connectionSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<uint32>(sizeof(timeoutVal))) != 0) {
                 REPORT_ERROR(ErrorManagement::OSError, "BasicTCPSocket: Failed setsockopt() removing the socket timeout");
             }
         }
@@ -449,13 +412,6 @@ bool BasicTCPSocket::Write(const char8* const input,
             struct timeval timeoutVal;
             timeoutVal.tv_sec = timeout.GetTimeoutMSec() / 1000u;
             timeoutVal.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
-
-            int32 iResult = bind(connectionSocket, reinterpret_cast<struct sockaddr*>(source.GetInternetHost()), static_cast<int32>(source.Size()));
-            if (iResult == SOCKET_ERROR) {
-                closesocket (connectionSocket);
-                WSACleanup();
-                return 0;
-            }
 
             int32 ret = setsockopt(connectionSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char8 *>(&timeoutVal), static_cast<uint32>(sizeof(timeoutVal)));
 

@@ -24,11 +24,11 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "stdio.h"
+
 #include "BasicSocketTest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -67,23 +67,21 @@ bool BasicSocketTest::TestDefaultConstructor() {
 bool BasicSocketTest::TestSetBlocking(bool isBlocked) {
 
     BasicTCPSocket basicSocket;
-
     basicSocket.Open();
-    return basicSocket.SetBlocking(isBlocked);
-
+    bool ok = basicSocket.SetBlocking(isBlocked);
+    basicSocket.Close();
+    return ok;
 }
 
 bool BasicSocketTest::TestSetBlocking_false(bool isBlocked) {
     BasicTCPSocket basicSocket;
 
     return !basicSocket.SetBlocking(isBlocked);
-
 }
 
 bool BasicSocketTest::TestClose() {
 
     BasicTCPSocket basicSocket;
-
     basicSocket.Open();
     return basicSocket.Close();
 }
@@ -91,7 +89,6 @@ bool BasicSocketTest::TestClose() {
 bool BasicSocketTest::TestClose_false() {
 
     BasicTCPSocket basicSocket;
-
     return !basicSocket.Close();
 }
 
@@ -172,6 +169,8 @@ bool BasicSocketTest::TestIsBlocking(bool isBlocked) {
         return false;
     }
 
-    return socket.IsBlocking() == isBlocked;
+    bool ok = socket.IsBlocking() == isBlocked;
+    socket.Close();
+    return ok;
 }
 

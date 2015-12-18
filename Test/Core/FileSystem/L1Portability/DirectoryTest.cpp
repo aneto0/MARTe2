@@ -24,12 +24,11 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-
+#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "DirectoryTest.h"
-#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -147,15 +146,14 @@ bool DirectoryTest::TestGetSize_Dir() {
     Directory dir2(path2);
     dir2.Create(false);
 
-    bool ok = (dir.GetSize() == dir2.GetSize());
-    return ok;
+    return(dir.GetSize() == dir2.GetSize());
 }
 
 bool DirectoryTest::TestGetSize_FileCorrect() {
     char8 path[128];
     char8 path2[128];
-    DirectoryCreateN(path, "TestGetSize_File.txt");
-    DirectoryCreateN(path2, "TestGetSize_File1.txt");
+    DirectoryCreateN(path, "TestGetSize_File_C.txt");
+    DirectoryCreateN(path2, "TestGetSize_File1_C.txt");
     Directory dir(path);
     dir.Create(true);
     Directory dir2(path2);
@@ -172,16 +170,15 @@ bool DirectoryTest::TestGetSize_FileCorrect() {
     file.Write("The sizes of files are equals", size);
     file.Close();
 
-    bool ok = (dir.GetSize() == dir2.GetSize());
+    return (dir.GetSize() == dir2.GetSize());
 
-    return ok;
 }
 
 bool DirectoryTest::TestGetSize_FileIncorrect() {
     char8 path[128];
     char8 path2[128];
-    DirectoryCreateN(path, "TestGetSize_File.txt");
-    DirectoryCreateN(path2, "TestGetSize_File1.txt");
+    DirectoryCreateN(path, "TestGetSize_File_I.txt");
+    DirectoryCreateN(path2, "TestGetSize_File1_I.txt");
     Directory dir(path);
     dir.Create(true);
     Directory dir2(path2);
@@ -198,8 +195,7 @@ bool DirectoryTest::TestGetSize_FileIncorrect() {
     file.Write("that in this", size);
     file.Close();
 
-    bool ok = (dir.GetSize() == dir2.GetSize());
-    return !ok;
+    return (dir.GetSize() != dir2.GetSize());
 }
 
 bool DirectoryTest::TestGetLastAccessTime() {
@@ -217,9 +213,7 @@ bool DirectoryTest::TestGetLastAccessTime() {
     Sleep::Sec(1.1e-0);
     TimeStamp lastAccessTime2 = dir.GetLastAccessTime();
 
-    bool ok = (lastAccessTime.GetMicroseconds() == lastAccessTime2.GetMicroseconds());
-    ok &= (lastAccessTime.GetSeconds() == lastAccessTime2.GetSeconds());
-    return ok;
+    return (lastAccessTime.GetSeconds() == lastAccessTime2.GetSeconds());
 }
 
 bool DirectoryTest::TestGetLastAccessTime_ReRead() {
@@ -244,8 +238,7 @@ bool DirectoryTest::TestGetLastAccessTime_ReRead() {
     file.Read(pathR, size);
     file.Close();
     TimeStamp lastAccessTime2 = dir.GetLastAccessTime();
-    bool ok = (lastAccessTime.GetSeconds() != lastAccessTime2.GetSeconds());
-    return ok;
+    return (lastAccessTime.GetSeconds() != lastAccessTime2.GetSeconds());
 }
 
 bool DirectoryTest::TestGetLastWriteTime() {
@@ -261,8 +254,7 @@ bool DirectoryTest::TestGetLastWriteTime() {
     TimeStamp lastWriteTime = dir.GetLastWriteTime();
     Sleep::Sec(1.1e-0);
     TimeStamp lastWriteTime2 = dir.GetLastWriteTime();
-    bool ok = (lastWriteTime.GetSeconds() == lastWriteTime2.GetSeconds());
-    return ok;
+    return (lastWriteTime.GetSeconds() == lastWriteTime2.GetSeconds());
 }
 
 bool DirectoryTest::TestGetLastWriteTime_ReWrite() {
@@ -285,8 +277,7 @@ bool DirectoryTest::TestGetLastWriteTime_ReWrite() {
     file.Close();
     TimeStamp lastWriteTime2 = dir.GetLastWriteTime();
 
-    bool ok = (lastWriteTime.GetSeconds() != lastWriteTime2.GetSeconds());
-    return ok;
+    return (lastWriteTime.GetSeconds() != lastWriteTime2.GetSeconds());
 }
 
 bool DirectoryTest::TestCreate(const char8 *pathin,

@@ -25,14 +25,15 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 #include <winsock2.h>
-
+#include <windows.h>
+#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "Select.h"
 #include "TimeoutType.h"
 #include "ErrorManagement.h"
-#include "stdio.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -49,6 +50,7 @@ Select::Select() {
     WSADATA wsaData;
     int32 err = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (err != 0) {
+        WSACleanup();
         REPORT_ERROR(ErrorManagement::FatalError, "Select::Select(), Fail WSAStartup.");
     }
     readHandle.registeredHandles = new Handle[MAXIMUM_WAIT_OBJECTS];
@@ -64,6 +66,7 @@ Select::Select() {
 Select::~Select() {
     delete[] readHandle.registeredHandles;
     delete[] readHandle.selectHandles;
+    WSACleanup();
 }
 
 bool Select::AddReadHandle(const HandleI &handle) {
@@ -197,7 +200,7 @@ bool Select::RemoveExceptionHandle(const HandleI &handle) {
 }
 
 void Select::ClearAllHandles() {
-    for (int32 i = 0; i < highestHandle; i++) {
+    for (int32 i = 0; i < MAXIMUM_WAIT_OBJECTS; i++) {
         readHandle.registeredHandles[i] = NULL;
         readHandle.selectHandles[i] = NULL;
     }
@@ -223,7 +226,7 @@ bool Select::IsSet(const HandleI &handle) const {
 int32 Select::WaitUntil(const TimeoutType &msecTimeout) {
 
     int32 ret = WaitForMultipleObjectsEx(static_cast<DWORD>(highestHandle), &readHandle.registeredHandles[0], false, msecTimeout.GetTimeoutMSec(), true);
-    if (ret == 0x102l) {
+    if (ret == 0x102L) {
         ret = 0;
     }
     else if (ret != -1) {
