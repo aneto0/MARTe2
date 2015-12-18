@@ -27,15 +27,17 @@
 #include <winsock2.h>
 #include <winsock.h>
 #include <windows.h>
+#include <stdio.h>
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
+
 #include "BasicSocket.h"
 #include "BasicTCPSocket.h"
 #include "ErrorManagement.h"
 #include "Select.h"
 #include "StringHelper.h"
-#include "stdio.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -142,14 +144,31 @@ bool BasicTCPSocket::Connect(const char8 * const address,
                         //On Windows a non-blocking socket is very likely to call WSAEWOULDBLOCK so this has to be trapped and retried with an
                         //arbitrary timeout
                     case (WSAEWOULDBLOCK): {
-                        Select sel;
-                        sel.AddWriteHandle(this);
+                        /*Select sel;
+                         sel.AddWriteHandle(*this);
+                         if (wasBlocking) {
+                         ret = sel.WaitUntil(timeout);
+                         printf("Con timeout\n");
+                         }
+                         else {
+                         ret = sel.WaitUntil(1000u);
+                         printf("Sin timeout\n");
+                         }*/
+                        fd_set writeFDS;
+                        FD_ZERO(&writeFDS);
+                        FD_SET(connectionSocket, &writeFDS);
+                        timeval timeWait;
                         if (wasBlocking) {
-                            ret = sel.WaitUntil(timeout);
+                            timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
+                            timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
                         }
                         else {
-                            ret = sel.WaitUntil(1000u);
+                            timeWait.tv_sec = 1u;
+                            timeWait.tv_usec = 0u;
                         }
+                        uint32 readySockets = select(256, static_cast<fd_set*>(NULL), &writeFDS, static_cast<fd_set*>(NULL), &timeWait);
+                        //printf("readySockets=%d error=%ld\n", readySockets, GetLastError());
+                        ret = (readySockets > 0);
 
                         if (ret) {
                             int32 lon = static_cast<int32>(sizeof(int32));
@@ -253,12 +272,25 @@ BasicTCPSocket *BasicTCPSocket::WaitConnection(const TimeoutType &timeout,
                         int32 errorCode;
                         errorCode = WSAGetLastError();
                         if ((errorCode == 0) || (errorCode == WSAEINPROGRESS) || (errorCode == WSAEWOULDBLOCK)) {
-                            Select sel;
-                            sel.AddWriteHandle(this);
+                            /*Select sel;
+                             sel.AddWriteHandle(*this);
 
-                            if (sel.WaitUntil(timeout)) {
+                             if (sel.WaitUntil(timeout)) {
+                             ret = WaitConnection(TTDefault, client);
+                             }*/
+                            fd_set writeFDS;
+                            FD_ZERO(&writeFDS);
+                            FD_CLR(connectionSocket, &writeFDS);
+                            FD_SET(connectionSocket, &writeFDS);
+                            timeval timeWait;
+                            timeWait.tv_sec = timeout.GetTimeoutMSec() / 1000;
+                            timeWait.tv_usec = (timeout.GetTimeoutMSec() % 1000u) * 1000u;
+
+                            uint32 readySockets = select(256, static_cast<fd_set*>(NULL), &writeFDS, static_cast<fd_set*>(NULL), &timeWait);
+                            if(readySockets > 0) {
                                 ret = WaitConnection(TTDefault, client);
                             }
+                            //printf("Connect ret=%d\n", ret);
                         }
                     }
                     else {

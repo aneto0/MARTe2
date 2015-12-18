@@ -110,6 +110,7 @@ bool Select::AddWriteHandle(const HandleI &handle) {
     Handle h = handle.GetWriteHandle();
     bool retVal = ((highestHandle + 1) < MAXIMUM_WAIT_OBJECTS);
     if (reinterpret_cast<int32>(h) >= 0) {
+        printf("Is valid handle %d\n",h);
         if (retVal) {
             for (int32 i = 0; i < highestHandle; i++) {
                 if (readHandle.registeredHandles[i] == h) {
@@ -126,20 +127,22 @@ bool Select::AddWriteHandle(const HandleI &handle) {
                 int32 error = WSAEventSelect(hSocket, wsaevent, FD_READ);
                 if (error != SOCKET_ERROR) {
                     readHandle.registeredHandles[highestHandle] = wsaevent;
+                    printf("saved as event = %d\n",wsaevent);
                 }
                 else {
                     readHandle.registeredHandles[highestHandle] = h;
+                    printf("saved as handle = %d\n",h);
                 }
                 readHandle.selectHandles[highestHandle] = h;
+                highestHandle++;
             }
-
-            highestHandle++;
         }
     }
     else {
         REPORT_ERROR(ErrorManagement::FatalError, "Select::AddHandle(). Invalid descriptor.");
         retVal = false;
     }
+    printf("return %d highestHandle=%d\n",retVal,highestHandle);
     return retVal;
 }
 
@@ -224,8 +227,9 @@ bool Select::IsSet(const HandleI &handle) const {
 }
 
 int32 Select::WaitUntil(const TimeoutType &msecTimeout) {
-
+printf("handle in waitUltil = %d\n" ,readHandle.registeredHandles[0]);
     int32 ret = WaitForMultipleObjectsEx(static_cast<DWORD>(highestHandle), &readHandle.registeredHandles[0], false, msecTimeout.GetTimeoutMSec(), true);
+    printf("ret=%d ErorN=%d timeout=%d\n",ret,GetLastError(),msecTimeout.GetTimeoutMSec());
     if (ret == 0x102L) {
         ret = 0;
     }
@@ -234,6 +238,7 @@ int32 Select::WaitUntil(const TimeoutType &msecTimeout) {
         //In Windows only one handle can be identified as the source of the event
         ret = 1;
     }
+    printf("return of WaitUntil=%ld\n",ret);
     return ret;
 }
 

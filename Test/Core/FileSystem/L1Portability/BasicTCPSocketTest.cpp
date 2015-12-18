@@ -859,7 +859,7 @@ bool BasicTCPSocketTest::TestWaitConnection(const WaitConnectionTestTable *table
         eventSem.Reset();
 
         server.SetAddress("127.0.0.1");
-        server.SetPort(4444);
+        server.SetPort(4490);
 
         alives = (table[i].nClientsIn == 0) ? (10) : (table[i].nClientsIn);
         nClients = table[i].nClientsIn;
@@ -890,6 +890,7 @@ bool BasicTCPSocketTest::TestWaitConnection(const WaitConnectionTestTable *table
             Sleep::MSec(10);
         }
         if ((retVal != table[i].expected) || (!noError)) {
+            printf("Row=%d retVal %d==%d expected, noError=%d",i,retVal,table[i].expected,noError);
             return false;
         }
         i++;
