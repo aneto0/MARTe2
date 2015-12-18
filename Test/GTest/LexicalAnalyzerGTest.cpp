@@ -65,3 +65,8 @@ TEST(LexicalAnalyzerGTest, TestEscape) {
     LexicalAnalyzerTest laTest;
     ASSERT_TRUE(laTest.TestEscape());
 }
+
+TEST(LexicalAnalyzerGTest, TestComments) {
+    LexicalAnalyzerTest laTest;
+    ASSERT_TRUE(laTest.TestComments());
+}

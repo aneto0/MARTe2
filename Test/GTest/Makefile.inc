@@ -25,6 +25,7 @@
 
 OBJSX= AnyObjectGTest.x \
 		AnyTypeGTest.x \
+		AnyTypeCreatorGTest.x \
 		AtomicGTest.x \
 		BasicConsoleGTest.x \
 		BasicFileGTest.x \
@@ -59,6 +60,7 @@ HeapManagerGTest.x \
 		IOBufferGTest.x \
 		InternetHostGTest.x \
 		InternetServiceGTest.x \
+		JsonParserGTest.x \
 		LexicalAnalyzerGTest.x \
 		LinkedListHolderGTest.x \
 		LinkedListableGTest.x \
@@ -67,7 +69,6 @@ HeapManagerGTest.x \
 		MemoryGTest.x \
 		MutexSemGTest.x \
 		ObjectGTest.x \
-		ParserGTest.x \
 		ProcessorGTest.x \
 		ProcessorTypeGTest.x \
 		ReferenceContainerFilterObjectNameGTest.x \
@@ -95,7 +96,9 @@ HeapManagerGTest.x \
 		TypeCharacteristicsGTest.x \
 		TypeConversionGTest.x \
 		TypeDescriptorGTest.x  \
-		VectorGTest.x
+		VectorGTest.x \
+		StandardParserGTest.x \
+		XMLParserGTest.x 
 
 PACKAGE=
 ROOT_DIR=../..

@@ -1,7 +1,7 @@
 /**
- * @file ParserTest.cpp
- * @brief Source file for class ParserTest
- * @date 30/11/2015
+ * @file StandardParserTest.cpp
+ * @brief Source file for class StandardParserTest
+ * @date 09/12/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -17,7 +17,7 @@
  * or implied. See the Licence permissions and limitations under the Licence.
 
  * @details This source file contains the definition of all the methods for
- * the class ParserTest (public, protected, and private). Be aware that some 
+ * the class StandardParserTest (public, protected, and private). Be aware that some 
  * methods, such as those inline could be defined on the header file, instead.
  */
 
@@ -29,10 +29,8 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ParserTest.h"
+#include "StandardParserTest.h"
 #include "BasicFile.h"
-#include <stdio.h>
-
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -40,28 +38,33 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-
 using namespace MARTe;
 
-bool ParserTest::TestConstructor() {
-    Parser myParser;
-    ParserGrammar defaultGrammar = myParser.GetGrammar();
-    if (MemoryOperationsHelper::Compare((void*) &defaultGrammar, (void*) &StandardGrammar, sizeof(ParserGrammar)) != 0) {
-        return false;
-    }
+bool StandardParserTest::TestConstructor() {
 
-    ParserGrammar myGrammar = { "\n\r\t, ", '=', '{', '}', '[', ']', '[', ']', '<', '>', 0 };
+    StreamString configString = "";
+    ConfigurationDatabase database;
 
-    Parser myParser2(myGrammar);
-    ParserGrammar testGrammar = myParser2.GetGrammar();
-    return (MemoryOperationsHelper::Compare((void*) &testGrammar, (void*) &myGrammar, sizeof(ParserGrammar)) == 0);
+    StreamString err;
+
+    StandardParser myParser(configString, database, &err);
+
+    GrammarInfo myGrammar=myParser.GetGrammarInfo();
+
+    bool ok=(StringHelper::Compare(myGrammar.separators, StandardGrammar.separators)==0);
+
+    ok &= (StringHelper::Compare(myGrammar.beginOneLineComment, StandardGrammar.beginOneLineComment)==0);
+    ok &= (StringHelper::Compare(myGrammar.beginMultipleLinesComment, StandardGrammar.beginMultipleLinesComment)==0);
+    ok &= (StringHelper::Compare(myGrammar.endMultipleLinesComment, StandardGrammar.endMultipleLinesComment)==0);
+    ok &= (StringHelper::Compare(&myGrammar.assignment, &StandardGrammar.assignment)==0);
+    return ok;
 }
 
-bool ParserTest::TestGetGrammar() {
+bool StandardParserTest::TestGetGrammarInfo() {
     return TestConstructor();
 }
 
-bool ParserTest::TestParseScalar() {
+bool StandardParserTest::TestParseScalar() {
     ConfigurationDatabase database;
     StreamString errors;
     StreamString configString = "+PID={\n"
@@ -71,8 +74,8 @@ bool ParserTest::TestParseScalar() {
             "}";
 
     configString.Seek(0);
-    Parser myParser;
-    if (!myParser.Parse(configString, database, &errors)) {
+    StandardParser myParser(configString, database, &errors);
+    if (!myParser.Parse()) {
         return false;
     }
 
@@ -83,14 +86,12 @@ bool ParserTest::TestParseScalar() {
     database.Read("Kp", Kp);
 
     if (Kp != 100.5) {
-        printf("\n %s Kp=%f\n", errors.Buffer(), Kp);
         return false;
     }
 
     uint8 Ki = 0;
     database.Read("Ki", Ki);
     if (Ki != 2) {
-        printf("\nKi=%d\n", Ki);
         return false;
     }
 
@@ -98,14 +99,13 @@ bool ParserTest::TestParseScalar() {
 
     database.Read("Kd", Kd);
     if (Kd != 5.0) {
-        printf("\nKd=%f\n", Kd);
         return false;
     }
 
     return true;
 }
 
-bool ParserTest::TestParseVector() {
+bool StandardParserTest::TestParseVector() {
     ConfigurationDatabase database;
     StreamString errors;
     StreamString configString = "+PID={\n"
@@ -120,9 +120,9 @@ bool ParserTest::TestParseVector() {
             "}\n";
 
     configString.Seek(0);
-    Parser myParser;
-    if (!myParser.Parse(configString, database, &errors)) {
-        printf("\nerrors=%s\n", errors.Buffer());
+
+    StandardParser myParser(configString, database, &errors);
+    if (!myParser.Parse()) {
         return false;
     }
 
@@ -186,22 +186,10 @@ bool ParserTest::TestParseVector() {
     if (!ok) {
         return false;
     }
-    /*
-     char8 output[32];
-     AnyType at1(output);
-
-     const char8* out2="Hello";
-     AnyType at2(out2);
-
-
-     char8* out3=output;
-     AnyType at3(out3);
-     */
-    AnyType at2("Hello");
     return true;
 }
 
-bool ParserTest::TestParseMatrix() {
+bool StandardParserTest::TestParseMatrix() {
 
     ConfigurationDatabase database;
     StreamString errors;
@@ -219,9 +207,9 @@ bool ParserTest::TestParseMatrix() {
             "}\n";
 
     configString.Seek(0);
-    Parser myParser;
-    if (!myParser.Parse(configString, database, &errors)) {
-        printf("\nerrors=%s\n", errors.Buffer());
+    StandardParser myParser(configString, database, &errors);
+
+    if (!myParser.Parse()) {
         return false;
     }
 
@@ -229,7 +217,6 @@ bool ParserTest::TestParseMatrix() {
     float32 matrix[2][3];
 
     if (!database.Read("Matrix", matrix)) {
-        printf("\n0\n");
         return false;
     }
     bool ok = true;
@@ -301,7 +288,7 @@ bool ParserTest::TestParseMatrix() {
     return true;
 }
 
-bool ParserTest::TestNestedBlocks() {
+bool StandardParserTest::TestNestedBlocks() {
 
     ConfigurationDatabase database;
     StreamString errors;
@@ -324,9 +311,9 @@ bool ParserTest::TestNestedBlocks() {
             "}\n";
 
     configString.Seek(0);
-    Parser myParser;
-    if (!myParser.Parse(configString, database, &errors)) {
-        printf("\nerrors=%s\n", errors.Buffer());
+    StandardParser myParser(configString, database, &errors);
+
+    if (!myParser.Parse()) {
         return false;
     }
 
@@ -386,61 +373,35 @@ bool ParserTest::TestNestedBlocks() {
     return var == 5;
 }
 
-bool ParserTest::TestParseErrors(const char8 *configStringIn) {
+bool StandardParserTest::TestParseErrors(const char8 *configStringIn) {
 
     StreamString configString = configStringIn;
     configString.Seek(0);
     StreamString errors;
     ConfigurationDatabase database;
 
-    Parser myParser;
-    bool ret = myParser.Parse(configString, database, &errors);
-    printf("\nerrors=%s\n", errors.Buffer());
+    StandardParser myParser(configString, database, &errors);
+
+    bool ret = myParser.Parse();
     return !ret;
 
 }
 
-bool ParserTest::TestStandardCast() {
-    StreamString configString = "var1= (boh) 1\n"
-            "                    var2=() 2";
+bool StandardParserTest::TestStandardCast() {
+    StreamString configString = "var1= (boh) 1\n";
     configString.Seek(0);
     StreamString errors;
     ConfigurationDatabase database;
-    Parser myParser;
-    if (!myParser.Parse(configString, database, &errors)) {
+
+    StandardParser myParser(configString, database, &errors);
+    if (!myParser.Parse()) {
         return false;
     }
 
     int32 var = 0;
     database.Read("var1", var);
 
-    if (var != 1) {
-        return false;
-    }
-
-    database.Read("var2", var);
-
-    return var == 2;
+    return var == 1;
 }
 
-bool ParserTest::TestExistentFile() {
-    BasicFile configurationFile;
-    if (!configurationFile.Open("MARTe-WaterTank.cfg", BasicFile::ACCESS_MODE_R | BasicFile::ACCESS_MODE_W)) {
-        printf("\nError! Could not open file MARTe-WaterTank.cfg!\n");
-        return false;
-    }
-
-    configurationFile.Seek(0);
-    StreamString errors;
-
-    ConfigurationDatabase database;
-    Parser myParser;
-    if (!myParser.Parse(configurationFile, database, &errors)) {
-        printf("\nerrors=%s\n", errors.Buffer());
-
-        return false;
-    }
-
-    return true;
-}
 

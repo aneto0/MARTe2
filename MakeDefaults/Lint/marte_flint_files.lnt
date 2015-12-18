@@ -1,6 +1,7 @@
 AdvancedErrorManagement.h
 AnyObject.cpp
 AnyType.cpp
+AnyTypeCreator.cpp
 Atomic.h
 BasicConsole.cpp
 BasicFile.cpp
@@ -42,6 +43,7 @@ FractionalInteger.h
 GeneralDefinitions.h
 GlobalObjectI.cpp
 GlobalObjectsDatabase.cpp
+GrammarInfo.h
 HandleI.h
 HeapI.h
 HeapManager.cpp
@@ -58,6 +60,7 @@ InternetServiceCore.h
 Introspection.h
 Iterator.h
 IteratorT.h
+JsonParser.cpp
 LexicalAnalyzer.cpp
 LinkedListHolder.cpp
 LinkedListable.cpp
@@ -70,8 +73,8 @@ MemoryOperationsHelper_CLIB_Generic.cpp
 MutexSem.cpp
 Object.cpp
 OperatingSystemCallbacksI.h
-Parser.cpp
-ParserGrammar.h
+ParserI.h
+ParserI.cpp
 Processor.cpp
 ProcessorType.cpp
 Reference.cpp
@@ -93,6 +96,7 @@ SortFilter.h
 SortFilterT.h
 StandardHeap.h
 StandardHeap_Generic.cpp
+StandardParser.cpp
 StaticList.cpp
 StaticListHolder.cpp
 StreamI.h
@@ -121,3 +125,4 @@ TypeCharacteristics.h
 TypeConversion.cpp
 TypeDescriptor.h
 Vector.h
+XMLParser.cpp

@@ -46,7 +46,7 @@ bool LexicalAnalyzerTest::TestConstructor() {
 
     StreamString configString = " Hello ";
     configString.Seek(0);
-    LexicalAnalyzer la(configString, "", " ");
+    LexicalAnalyzer la(configString, "", " ", "", "", "");
 
     Token *tok = la.GetToken();
 
@@ -76,7 +76,7 @@ bool LexicalAnalyzerTest::TestGetToken() {
 
     configString.Seek(0);
 
-    LexicalAnalyzer la(configString, "{}=", " ,\n");
+    LexicalAnalyzer la(configString, "{}=", " ,\n", "//", "/*", "*/");
 
     // get +PID
     Token *tok = la.GetToken();
@@ -286,7 +286,7 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     configString.Seek(0);
 
-    LexicalAnalyzer la(configString, "{}=", " ,\n");
+    LexicalAnalyzer la(configString, "{}=", " ,\n", "//", "/*", "*/");
 
     // get +PID
     Token *tok = la.PeekToken(0u);
@@ -301,7 +301,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 4) {
         return false;
-        printf("\n0  %d\n", tok->GetLineNumber());
     }
 
     // get {
@@ -316,7 +315,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
     }
     if (tok->GetLineNumber() != 4) {
         return false;
-        printf("\n1  %d\n", tok->GetLineNumber());
     }
 
     // get Kp
@@ -332,7 +330,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 5) {
         return false;
-        printf("\n2  %d\n", tok->GetLineNumber());
     }
 
     // get =
@@ -348,7 +345,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 5) {
         return false;
-        printf("\n3  %d\n", tok->GetLineNumber());
     }
 
     // get 10
@@ -364,7 +360,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 5) {
         return false;
-        printf("\n4  %d\n", tok->GetLineNumber());
     }
 
     // get Ki
@@ -380,7 +375,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 6) {
         return false;
-        printf("\n5  %d\n", tok->GetLineNumber());
     }
     // get =
     tok = la.PeekToken(6u);
@@ -395,7 +389,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 6) {
         return false;
-        printf("\n6  %d\n", tok->GetLineNumber());
     }
     // get 100.2
     tok = la.PeekToken(7u);
@@ -410,7 +403,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 6) {
         return false;
-        printf("\n7  %d\n", tok->GetLineNumber());
     }
     // get Kd
     tok = la.PeekToken(8u);
@@ -424,7 +416,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
     }
     if (tok->GetLineNumber() != 7) {
         return false;
-        printf("\n8  %d\n", tok->GetLineNumber());
     }
     // get =
     tok = la.PeekToken(9u);
@@ -439,7 +430,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 7) {
         return false;
-        printf("\n9  %d\n", tok->GetLineNumber());
     }
     // get -10
     tok = la.PeekToken(10u);
@@ -455,7 +445,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 7) {
         return false;
-        printf("\n10  %d\n", tok->GetLineNumber());
     }
     // get }
     tok = la.PeekToken(11u);
@@ -469,7 +458,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
     }
     if (tok->GetLineNumber() != 7) {
         return false;
-        printf("\n11  %d\n", tok->GetLineNumber());
     }
 
     // get END
@@ -499,7 +487,6 @@ bool LexicalAnalyzerTest::TestPeekToken() {
 
     if (tok->GetLineNumber() != 4) {
         return false;
-        printf("\n0  %d\n", tok->GetLineNumber());
     }
 
     // peek the next
@@ -521,7 +508,7 @@ bool LexicalAnalyzerTest::TestEscape() {
     StreamString configString = "Hello\\nWorld Hello\\tWorld\nHello\\rWorld \"\\\"Hello\\\"World\\\"\" Hello\\World";
     configString.Seek(0);
 
-    LexicalAnalyzer la(configString, "{}=", " ,\n");
+    LexicalAnalyzer la(configString, "{}=", " ,\n", "//", "/*", "*/");
 
     Token *tok = la.GetToken();
 
@@ -547,4 +534,93 @@ bool LexicalAnalyzerTest::TestEscape() {
 
     tok = la.GetToken();
     return (StringHelper::Compare("Hello\\World", tok->GetData()) == 0);
+
+}
+
+bool LexicalAnalyzerTest::TestComments() {
+    StreamString configString = "<a<!--comment-->b"
+            "                    <c,,//comment >\n"
+            "                    <!-\n-fake -->d<!-- comment->--<!--> <!--\n unterminated comment --";
+    configString.Seek(0);
+
+    LexicalAnalyzer la(configString, "<>/", " ,\n", "//", "<!--", "-->");
+
+    Token *tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "<") != 0) {
+        return false;
+    }
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "a") != 0) {
+        return false;
+    }
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "b") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "<") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "c") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "<") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "!-") != 0) {
+        return false;
+    }
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "-fake") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "--") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), ">") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    if (StringHelper::Compare(tok->GetData(), "d") != 0) {
+        return false;
+    }
+
+
+    tok = la.GetToken();
+
+    return tok->GetId() == EOF_TOKEN;
+
 }

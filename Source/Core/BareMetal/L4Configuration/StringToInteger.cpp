@@ -122,13 +122,12 @@ static bool StringToIntegerDecimalNotation(const char8* const input,
         if ((newDigit >= 0) && (newDigit <= 9)) {
 
             // number > max
-            /* if (number > max) {
-             REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Overflow.");
-             canReturn = true;
-             ret = false;
-             }*/
+            if (number > max) {
+                REPORT_ERROR(ErrorManagement::FatalError, "StringToIntegerDecimalNotation: Overflow.");
+                canReturn = true;
+                ret = false;
+            }
             if (number == max) {
-
                 if (newDigit <= maxLastDigit) {
                     // you can add one in case of negative number
                     if ((newDigit == maxLastDigit) && (isNegative)) {

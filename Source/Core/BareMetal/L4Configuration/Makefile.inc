@@ -25,16 +25,20 @@
 #############################################################
 
 OBJSX=	AnyObject.x \
+		AnyTypeCreator.x \
 		ConfigurationDatabase.x\
 		FloatToInteger.x \
 		IntegerToFloat.x \
+		JsonParser.x \
 		LexicalAnalyzer.x \
-		Parser.x \
 		StringToFloat.x \
 		StringToInteger.x \
 		TypeConversion.x \
 		TokenInfo.x \
-		Token.x		
+		Token.x \
+		ParserI.x \
+		StandardParser.x \
+		XMLParser.x 
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

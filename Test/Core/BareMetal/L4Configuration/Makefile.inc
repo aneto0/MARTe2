@@ -26,13 +26,16 @@
 
 
 OBJSX=	AnyObjectTest.x \
-		ConfigurationDatabaseTest.x \
-		LexicalAnalyzerTest.x \
-	    ParserTest.x \
-	    TypeConversionTest.x \
-		TokenInfoTest.x \
-		TokenTest.x 	
-			
+	AnyTypeCreatorTest.x \
+	ConfigurationDatabaseTest.x \
+	JsonParserTest.x \
+	LexicalAnalyzerTest.x \
+	StandardParserTest.x \
+	TypeConversionTest.x \
+	TokenInfoTest.x \
+	TokenTest.x \
+	XMLParserTest.x
+					
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults

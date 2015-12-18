@@ -1,7 +1,7 @@
 /**
- * @file ParserGrammar.h
- * @brief Header file for class ParserGrammar
- * @date 27/11/2015
+ * @file GrammarInfo.h
+ * @brief Source file for class GrammarInfo
+ * @date 18/12/2015
  * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -16,22 +16,24 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class ParserGrammar
- * with all of its public, protected and private members. It may also include
- * definitions for inline methods which need to be visible to the compiler.
+ * @details This source file contains the definition of all the methods for
+ * the class GrammarInfo (public, protected, and private). Be aware that some 
+ * methods, such as those inline could be defined on the header file, instead.
  */
-
-#ifndef PARSERGRAMMAR_H_
-#define PARSERGRAMMAR_H_
-
-/*---------------------------------------------------------------------------*/
-/*                        Standard header includes                           */
-/*---------------------------------------------------------------------------*/
+#ifndef GRAMMARINFO_H_
+#define GRAMMARINFO_H_
 
 /*---------------------------------------------------------------------------*/
-/*                        Project header includes                            */
+/*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                         Project header includes                           */
+/*---------------------------------------------------------------------------*/
+
+
 #include "GeneralDefinitions.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -39,62 +41,86 @@
 namespace MARTe {
 
 /**
- * @brief Contains the terminal and separator characters used by Parser and LexicalAnalyzer.
- * @details
- *   In order to specify a valid grammar for the implemented parser, all the characters must be !='\0'
- *   and the \a openTypeCast character must be different from the other open terminals.
+ * @brief Structure which contains the lexical elements for a language, like
+ * terminals, separators, operators, and delimiters.
+ *
+ * @invariant All the characters must be !='\0' and the \a openTypeCast
+ * character must be different from the other open terminals.
  */
-struct ParserGrammar {
+struct GrammarInfo {
+
     /**
      * List of separator characters.
      */
     const char8 *separators;
+
+    /**
+     * One line comment begin pattern.
+     */
+    const char8 *beginOneLineComment;
+
+    /**
+     * Multiple line comment begin pattern.
+     */
+    const char8 *beginMultipleLinesComment;
+
+    /**
+     * Multiple line comment end pattern.
+     */
+    const char8 *endMultipleLinesComment;
+
     /**
      * Assignment operator
      */
     char8 assignment;
+
     /**
      * Specifies that a block begins
      */
     char8 openBlock;
+
     /**
      * Specifies that a block ends
      */
     char8 closeBlock;
+
     /**
      * Specifies that a vector begins
      */
     char8 openVector;
+
     /**
      * Specifies that a vector ends
      */
     char8 closeVector;
+
     /**
      * Specifies that a matrix begins
      */
     char8 openMatrix;
+
     /**
      * Specifies that a matrix ends
      */
     char8 closeMatrix;
+
     /**
      * Specifies that a type cast expression begins
      */
     char8 openTypeCast;
+
     /**
      * Specifies that a type cast expression ends
      */
     char8 closeTypeCast;
+
     /**
      * Allows to get the terminals as a C-string.
      */
     char8 terminal;
+
 };
 
-/**
- * The terminal and separator characters in standard MARTe configuration streams.
- */
-static const ParserGrammar StandardGrammar = { "\n\r\t, ", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0'};
 
 }
 
@@ -102,5 +128,4 @@ static const ParserGrammar StandardGrammar = { "\n\r\t, ", '=', '{', '}', '{', '
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
 
-#endif /* PARSERGRAMMAR_H_ */
-
+#endif /* GRAMMARINFO_H_ */
