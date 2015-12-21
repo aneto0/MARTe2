@@ -24,12 +24,16 @@
 
 
 OBJSX=  AnyObjectGTest.x \
+		AnyTypeCreatorGTest.x \
 		ConfigurationDatabaseGTest.x \
+		JsonParserGTest.x \
 		LexicalAnalyzerGTest.x \
-		ParserGTest.x \
+		StandardParserGTest.x \
 		TokenGTest.x \
 		TokenInfoGTest.x \
-		TypeConversionGTest.x 
+		TypeConversionGTest.x\
+		XMLParserGTest.x
+		 
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
