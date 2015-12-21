@@ -37,7 +37,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+namespace MARTe {
 
 /**
  * @brief ReferenceContainerFilter for reference searching.
@@ -48,7 +48,7 @@ public:
     /**
      * @brief Default constructor. NOOP.
      */
-     ReferenceContainerFilterReferences();
+    ReferenceContainerFilterReferences();
 
     /**
      * @brief Sets the searching mode parameters.
@@ -58,7 +58,7 @@ public:
      * ReferenceContainerFilterMode::REVERSE and ReferenceContainerFilterMode::REMOVE.
      * @param[in] refToSearch the reference to be searched.
      */
-     ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
+    ReferenceContainerFilterReferences(const int32 &occurrenceNumber,
                                        const uint32 &modeToSet,
                                        Reference refToSearch);
 
@@ -69,7 +69,7 @@ public:
      * @param[in] referenceToTest the reference to test.
      * @return true if \a referenceToTest == \a referenceToSearch.
      */
-     virtual bool Test(ReferenceContainer &previouslyFound,
+    virtual bool Test(ReferenceContainer &previouslyFound,
                       Reference &referenceToTest);
 
 private:

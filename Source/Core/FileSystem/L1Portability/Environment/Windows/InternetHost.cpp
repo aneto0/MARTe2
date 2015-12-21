@@ -47,7 +47,7 @@ namespace MARTe {
 
 FastPollingMutexSem hostnameFastSem;
 
-class LocalHostInfo {
+class DLL_API LocalHostInfo {
 public:
 
     static LocalHostInfo *Instance() {
@@ -95,7 +95,6 @@ private:
         iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
         if (iResult != 0) {
             REPORT_ERROR(ErrorManagement::FatalError,"LocalHostInfo: Failed WSAStartup");
-            return;
         }
 
         if (!internetAddressInfoInitialised) {
@@ -142,12 +141,7 @@ StreamString InternetHost::GetHostName() const {
     if (hostnameFastSem.FastLock() != ErrorManagement::NoError) {
         REPORT_ERROR(ErrorManagement::FatalError, "InternetHost: Failed FastPollingMutexSem::FastLock() in initialization of local address");
     }
-    WSADATA wsaData;
-    int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (iResult != 0) {
-        REPORT_ERROR(ErrorManagement::FatalError, "LocalHostInfo: Failed WSAStartup");
-        return static_cast<const char8 *>(NULL);
-    }
+
     StreamString hostName = GetAddress();
 
     struct hostent *h = gethostbyaddr(reinterpret_cast<const char8 *>(&address.sin_addr.s_addr), 4, AF_INET);
@@ -185,6 +179,11 @@ uint32 InternetHost::GetLocalAddressAsNumber() {
 
 InternetHost::InternetHost(const uint16 port,
                            const char8 * const addr) {
+    WSADATA wsaData;
+    int32 iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (iResult != 0) {
+        REPORT_ERROR(ErrorManagement::FatalError, "LocalHostInfo: Failed WSAStartup");
+    }
     address.sin_family = static_cast<uint16>(AF_INET);
     SetPort(port);
 
@@ -212,9 +211,8 @@ void InternetHost::SetPort(const uint16 port) {
 
 bool InternetHost::SetAddress(const char8 * const addr) {
     address.sin_addr.s_addr = INADDR_ANY;
-    bool ret = (addr != NULL);
-
-    if (ret) {
+    bool ret = true;
+    if (addr != NULL) {
         uint32 iaddr = inet_addr(const_cast<char8 *>(addr));
         if (iaddr != INADDR_NONE) {
             address.sin_addr.S_un.S_addr = iaddr;

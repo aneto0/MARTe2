@@ -102,7 +102,7 @@ public:
      * @see StaticListHolder::Insert()
      */
     bool Insert(const uint32 position,
-             const elementType &value);
+                const elementType &value);
 
     /**
      * @see StaticListHolder::Remove()
@@ -134,7 +134,7 @@ namespace MARTe {
 
 template<typename elementType, uint32 listAllocationGranularity>
 StaticList<elementType, listAllocationGranularity>::StaticList() :
-    slh(sizeof(elementType), listAllocationGranularity) {
+        slh(sizeof(elementType), listAllocationGranularity) {
 }
 
 template<typename elementType, uint32 listAllocationGranularity>
@@ -175,7 +175,7 @@ bool StaticList<elementType, listAllocationGranularity>::Add(const elementType &
 
 template<typename elementType, uint32 listAllocationGranularity>
 bool StaticList<elementType, listAllocationGranularity>::Insert(const uint32 position,
-                                                             const elementType &value) {
+                                                                const elementType &value) {
     return slh.Insert(position, static_cast<const void *>(&value));
 }
 

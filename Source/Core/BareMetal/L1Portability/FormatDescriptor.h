@@ -41,7 +41,7 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
  * Notations used for float types representation.
@@ -227,12 +227,12 @@ public:
      * @verbatim %[parameter][flags][width][.precision][length]type @endverbatim
      * This syntax is not supported by this function.\n
      */
-     /*
-      * * ######## NON STANDARD TBD
+    /*
+     * * ######## NON STANDARD TBD
      * ! --> Any type is fine - prints the default value
      * ? --> Any type is fine - prints information about the type
      * @ --> Any type is fine - prints full content in case of known structures
-      */
+     */
     bool InitialiseFromString(const char8 *&string);
 
     /**
@@ -377,7 +377,6 @@ static const FormatDescriptor standardFormatDescriptor(PrintAnything, 0u, 0u, fa
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
-
 
 FormatDescriptor::FormatDescriptor() {
     desiredAction = PrintAnything;

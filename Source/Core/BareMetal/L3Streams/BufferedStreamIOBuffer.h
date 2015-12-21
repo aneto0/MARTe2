@@ -51,7 +51,7 @@ namespace MARTe {
  * NoMoreDataToRead refills this buffer from the stream. The Resync function is also adjusts the stream position
  * after a buffered read or write operation.
  *
- * @details Since this buffers has to read and write on the associated stream, the constructor needs a pointer to such stream.
+ * @note Since this buffers has to read and write on the associated stream, the constructor needs a pointer to such stream.
  */
 class DLL_API BufferedStreamIOBuffer: public IOBuffer {
 
@@ -127,7 +127,6 @@ public:
      * Gets the timeout for read and write operations.
      */
     inline TimeoutType GetTimeout() const;
-
 
     /**
      * Sets the timeout for read and write operations.

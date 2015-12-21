@@ -287,6 +287,10 @@ const PrintfNode *GeneratePrintFormattedBinaryTable(){
     return printfBinTable;
 }
 
+
+#define Windows 2
+#define Linux 1
+
 const PrintfNode *GeneratePrintFormattedFloatFPTable(){
     static const PrintfNode printfFloatFPTable[] = {
         PrintfNode("%f", "-1.123457", *SaveNumber(-1.1234567f)),
@@ -310,7 +314,7 @@ const PrintfNode *GeneratePrintFormattedFloatFPTable(){
         PrintfNode("% 5.2f", " 0.01", *SaveNumber(0.009)),
         PrintfNode("% 12.4f", "           0", *SaveNumber(1e-12)),
         PrintfNode("% 1.10f", "0", *SaveNumber(-1e-12)),
-#if OPERATING_SYSTEM != Windows
+#if ENVIRONMENT == Linux
         PrintfNode("%10.10f", "+Inf", *SaveNumber((float64) (1.0 / 0.0))),
         PrintfNode("% 10.10f", "      -Inf", *SaveNumber((float64) (-1.0 / 0.0))),
         PrintfNode("%-1.10f", "?", *SaveNumber((float32) (-1.0 / 0.0))),
@@ -322,6 +326,8 @@ const PrintfNode *GeneratePrintFormattedFloatFPTable(){
     };
     return printfFloatFPTable;
 }
+
+
 
 const PrintfNode *GeneratePrintFormattedFloatFPRTable(){
     static const PrintfNode printfFloatFPRTable[] = {
@@ -344,7 +350,7 @@ const PrintfNode *GeneratePrintFormattedFloatFPRTable(){
         PrintfNode("% 10.10F", "-222222.53", *SaveNumber(-222222.5255)),
         PrintfNode("% 5.10F", "    ?", *SaveNumber(-222222.5255)),
         PrintfNode("% 12.12F","           0", *SaveNumber(1e-12)),
-#if ENVIRONMENT != Windows
+#if ENVIRONMENT == Linux
         PrintfNode("%10.10F", "+Inf", *SaveNumber((float32) 1.0 / 0.0)),
         PrintfNode("% 10.10F", "      -Inf", *SaveNumber((float64) -1.0 / 0.0)),
         PrintfNode("%-1.10F", "?", *SaveNumber((float64) -1.0 / 0.0)),

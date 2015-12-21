@@ -33,7 +33,6 @@ OBJSX= BasicFile.x \
     BasicUDPSocket.x \
     BasiCTCPSocket.x \
     InternetHost.x \
-    SocketSelect.x \
     InternetService.x \
     Directory.x \
     DirectoryScanner.x \

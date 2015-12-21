@@ -217,7 +217,7 @@ void StartServer_Listen(BasicUDPSocketTest &param) {
     while (Threads::NumberOfThreads() > 1) {
         Sleep::MSec(10);
     }
-
+    serverSocket.Close();
 }
 
 void ClientJob_Listen(BasicUDPSocketTest &param) {
@@ -271,6 +271,7 @@ void ClientJob_Listen(BasicUDPSocketTest &param) {
     }
 
     param.eventSem.Wait();
+    clientSocket.Close();
 }
 
 static bool ListenConnectTest(BasicUDPSocketTest &param,
@@ -395,7 +396,7 @@ void StartServer_Read(BasicUDPSocketTest &param) {
     while (Threads::NumberOfThreads() > 1) {
         Sleep::MSec(10);
     }
-
+    serverSocket.Close();
 }
 
 void ClientJob_Read(BasicUDPSocketTest &param) {
@@ -470,6 +471,7 @@ void ClientJob_Read(BasicUDPSocketTest &param) {
         }
     }
     param.eventSem.Wait();
+    clientSocket.Close();
 }
 
 bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
@@ -508,12 +510,10 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
 
         for (uint32 k = 0; k < table[i].nClients; k++) {
             Threads::BeginThread((ThreadFunctionType) ClientJob_Read, this);
-
         }
 
         while (Threads::NumberOfThreads() > 0) {
             Sleep::MSec(50);
-
         }
 
         if ((retVal != table[i].expected) || (!noError)) {
@@ -521,11 +521,8 @@ bool BasicUDPSocketTest::TestRead(const ReadWriteUDPTestTable* table) {
         }
 
         i++;
-
     }
-
     return true;
-
 }
 
 void ClientJob_Peek(BasicUDPSocketTest &param) {
@@ -601,8 +598,8 @@ void ClientJob_Peek(BasicUDPSocketTest &param) {
             }
         }
     }
-
     param.eventSem.Wait();
+    clientSocket.Close();
 }
 
 bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
@@ -651,11 +648,8 @@ bool BasicUDPSocketTest::TestPeek(const ReadWriteUDPTestTable* table) {
         }
 
         i++;
-
     }
-
     return true;
-
 }
 
 void StartServer_Write(BasicUDPSocketTest &param) {
@@ -713,7 +707,7 @@ void StartServer_Write(BasicUDPSocketTest &param) {
     while (Threads::NumberOfThreads() > 1) {
         Sleep::MSec(10);
     }
-
+    serverSocket.Close();
 }
 
 void ClientJob_Write(BasicUDPSocketTest &param) {
@@ -763,8 +757,8 @@ void ClientJob_Write(BasicUDPSocketTest &param) {
             }
         }
     }
-
     param.eventSem.Wait();
+    clientSocket.Close();
 }
 
 bool BasicUDPSocketTest::TestWrite(const ReadWriteUDPTestTable* table) {
@@ -812,8 +806,6 @@ bool BasicUDPSocketTest::TestWrite(const ReadWriteUDPTestTable* table) {
         }
 
         i++;
-
     }
-
     return true;
 }

@@ -346,8 +346,8 @@ bool Select::IsSet(const HandleI &handle) const {
     return retVal;
 }
 
-int32 Select::WaitUntil(const TimeoutType &msecTimeout) {
-    struct timeval timeoutLinux;
+int32 Select::WaitUntil(const TimeoutType &timeout) {
+
     int32 retSel = -1;
     /*lint -e{970} .Justification: Removes the warning "Use of modifier or type 'int' outside of a typedef [MISRA C++ Rule 3-9-2]". */
     /*lint -e{1924} .Justification: Removes the warning "C-style cast [MISRA C++ Rule 5-2-4]". */
@@ -358,17 +358,24 @@ int32 Select::WaitUntil(const TimeoutType &msecTimeout) {
         highestHandle--;
     }
     if (highestHandle < 0) {
-        REPORT_ERROR(ErrorManagement::Information, "Select::WaitUntil(). The highestHandle is negative.");
-        retSel = -1;
+        REPORT_ERROR(ErrorManagement::Information, "Select::WaitAll(). The highestHandle is negative.");
     }
     else {
-        /*lint -e{9114} .Justification: Removes the warning "implicit conversion of integer cvalue expression [MISRA C++ Rule 5-0-3]". */
-        timeoutLinux.tv_usec = static_cast<int64>(msecTimeout.GetTimeoutMSec()) * 1000;
-        /*lint -e{9114} .Justification: Removes the warning "implicit conversion of integer cvalue expression [MISRA C++ Rule 5-0-3]". */
-        timeoutLinux.tv_sec = static_cast<int64>(msecTimeout.GetTimeoutMSec()) / 1000;
-        retSel = select(highestHandle + 1, &readHandle, &writeHandle, &exceptionHandle, &timeoutLinux);
+        if (timeout.IsFinite()) {
+            struct timeval timeoutLinux;
+            /*lint -e{9114} .Justification: Removes the warning "implicit conversion of integer cvalue expression [MISRA C++ Rule 5-0-3]". */
+            timeoutLinux.tv_usec = static_cast<int64>(timeout.GetTimeoutMSec()) * 1000;
+            /*lint -e{9114} .Justification: Removes the warning "implicit conversion of integer cvalue expression [MISRA C++ Rule 5-0-3]". */
+            timeoutLinux.tv_sec = static_cast<int64>(timeout.GetTimeoutMSec()) / 1000;
+            retSel = select(highestHandle + 1, &readHandle, &writeHandle, &exceptionHandle, &timeoutLinux);
+        }
+        else {
+            retSel = select(highestHandle + 1, &readHandle, &writeHandle, &exceptionHandle, static_cast<timeval *>(NULL));
+        }
     }
     return retSel;
 }
+
+
 
 }

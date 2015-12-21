@@ -2,7 +2,7 @@
  * @file Sleep.h
  * @brief Header file for module Sleep
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -39,18 +39,8 @@
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
-/**
- * @brief Sleep functions.
- *
- * @details This functions allows tasks to sleep for a desired time. There are functions which sleeps wasting cpu time using
- * HighResolutionTimer and functions which sleeps yielding cpu using system call functions.
- * These functions are generally used in multithreading applications for example to allows threads to wait on a
- * condition without use cpu.
- *
- * Most of the implementation is delegated to Sleep.h which provides system calls to allows sleep functions.
- */
 namespace Sleep {
 
 /**
@@ -99,7 +89,7 @@ inline void Busy(float64 sec);
  * @param[in] nonBusySleepSec is the time to sleep without use cpu.
  */
 DLL_API void SemiBusy(const float64 totalSleepSec,
-              const float64 nonBusySleepSec);
+                      const float64 nonBusySleepSec);
 }
 
 /*---------------------------------------------------------------------------*/

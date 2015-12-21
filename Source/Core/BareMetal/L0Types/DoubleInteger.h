@@ -42,11 +42,9 @@ namespace MARTe {
 
 /**
  * @brief Implementation of an integer which duplicates the size of the type passed by argument.
- *
  * @details Implementation is endianity dependent.\n
  * Uses operators of T to implement operators.
  */
-
 template<typename T>
 class DoubleInteger {
 public:
@@ -64,7 +62,6 @@ public:
      */
     DoubleInteger(const DoubleInteger<T> &n);
 
-
     /**
      * @brief Constructor by upper and lower part.
      * @post lower = lowerIn\n
@@ -79,7 +76,6 @@ public:
      */
     template<typename T2>
     DoubleInteger(T2 n);
-
 
     /**
      * @brief Implementation of arithmetic left shift.
@@ -216,13 +212,10 @@ public:
      */
     T GetUpper() const;
 
-
-
     /**
      * @brief Sets the the second part of the number.
      */
     void SetLower(T lowerIn);
-
 
     /**
      * @brief Sets the the first part of the number.
@@ -252,6 +245,7 @@ private:
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/
+
 template<typename T>
 bool DoubleInteger<T>::IsSigned() {
     return (static_cast<T>(-1)) < static_cast<T>(0);

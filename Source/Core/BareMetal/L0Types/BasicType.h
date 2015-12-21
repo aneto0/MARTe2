@@ -42,7 +42,6 @@ namespace MARTe {
  */
 typedef uint4 BasicType;
 
-
 /**
  * The type is a signed integer.
  */

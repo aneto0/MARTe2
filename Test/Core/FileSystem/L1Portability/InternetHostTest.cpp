@@ -39,7 +39,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
 #include "InternetHostTest.h"
 #include "StreamString.h"
 
@@ -153,7 +152,7 @@ bool InternetHostTest::TestGetLocalAddress() {
 
 
 bool InternetHostTest::TestGetLocalAddressAsNumber() {
-    return (InternetHost::GetLocalAddressAsNumber() != NULL);
+    return (InternetHost::GetLocalAddressAsNumber() != 0u);
 }
 
 bool InternetHostTest::TestSetPort(uint16 port) {
@@ -221,13 +220,16 @@ bool InternetHostTest::TestSetLocalAddress() {
     return ((dotAddr == "127.0.1.1") || (dotAddr == "127.0.0.1"));
 }
 
+#define Windows 2
+#define Linux 1
 bool InternetHostTest::TestGetInternetHost(const InternetHostTestTable *table) {
 
     uint32 i = 0;
     while (table[i].address != NULL) {
         InternetHost addr(table[i].port, table[i].address);
         InternetHostCore *copy = addr.GetInternetHost();
-#if ENVIRONMENT != Windows
+
+#if ENVIRONMENT == Linux
         if (copy->sin_addr.s_addr != addr.GetAddressAsNumber()) {
             return false;
         }

@@ -25,13 +25,16 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include <stdio.h>
+
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
-#include "stdio.h"
+
 #include "BasicTCPSocketTest.h"
 #include "StringHelper.h"
 #include "InternetService.h"
+
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -85,67 +88,47 @@ bool BasicTCPSocketTest::TestDefaultConstructor() {
         return false;
     }
 
-//    return !basicTCPSocket.IsValid();
-    bool ok = !basicTCPSocket.IsValid();
-    basicTCPSocket.Close();
-    return ok;
-
+    return !basicTCPSocket.IsValid();
 }
 
 bool BasicTCPSocketTest::TestSeek() {
     BasicTCPSocket basicTCPSocket;
-//    return !basicTCPSocket.Seek(0);
-    bool ok = !basicTCPSocket.Seek(0);
-    return ok;
+    return !basicTCPSocket.Seek(0);
 }
 
 bool BasicTCPSocketTest::TestSize() {
     BasicTCPSocket basicTCPSocket;
-//    return basicTCPSocket.Size() == 0xffffffffffffffff;
-    bool ok = basicTCPSocket.Size() == 0xffffffffffffffff;
-    return ok;
+    return basicTCPSocket.Size() == 0xffffffffffffffff;
 }
 
 bool BasicTCPSocketTest::TestRelativeSeek() {
     BasicTCPSocket basicTCPSocket;
-//    return !basicTCPSocket.RelativeSeek(0);
-    bool ok = !basicTCPSocket.RelativeSeek(0);
-    return ok;
+    return !basicTCPSocket.RelativeSeek(0);
 }
 
 bool BasicTCPSocketTest::TestPosition() {
     BasicTCPSocket basicTCPSocket;
-//    return basicTCPSocket.Position() == 0xffffffffffffffff;
-    bool ok = basicTCPSocket.Position() == 0xffffffffffffffff;
-    return ok;
+    return basicTCPSocket.Position() == 0xffffffffffffffff;
 }
 
 bool BasicTCPSocketTest::TestSetSize() {
     BasicTCPSocket basicTCPSocket;
-//    return !basicTCPSocket.SetSize(1);
-    bool ok = !basicTCPSocket.SetSize(1);
-    return ok;
+    return !basicTCPSocket.SetSize(1);
 }
 
 bool BasicTCPSocketTest::TestCanWrite() {
     BasicTCPSocket basicTCPSocket;
-//    return basicTCPSocket.CanWrite();
-    bool ok = basicTCPSocket.CanWrite();
-    return ok;
+    return basicTCPSocket.CanWrite();
 }
 
 bool BasicTCPSocketTest::TestCanRead() {
     BasicTCPSocket basicTCPSocket;
-//    return basicTCPSocket.CanRead();
-    bool ok = basicTCPSocket.CanRead();
-    return ok;
+    return basicTCPSocket.CanRead();
 }
 
 bool BasicTCPSocketTest::TestCanSeek() {
     BasicTCPSocket basicTCPSocket;
-//    return !basicTCPSocket.CanSeek();
-    bool ok = !basicTCPSocket.CanSeek();
-    return ok;
+    return !basicTCPSocket.CanSeek();
 }
 
 static void StartServer_Listen(BasicTCPSocketTest &param) {
@@ -165,21 +148,26 @@ static void StartServer_Listen(BasicTCPSocketTest &param) {
         param.sem.FastLock();
         param.exitCondition = 1;
         param.sem.FastUnLock();
-        return;
-    }
-    param.sem.FastLock();
-    param.exitCondition = 1;
-    param.sem.FastUnLock();
-
-    while (Threads::NumberOfThreads() < (param.alives + 1)) {
-        Sleep::MSec(10);
+        //printf("\nListen fail");
     }
 
-    param.eventSem.Post();
-    while (Threads::NumberOfThreads() > 1) {
-        Sleep::MSec(10);
+
+    if (param.retVal) {
+        param.sem.FastLock();
+        param.exitCondition = 1;
+        param.sem.FastUnLock();
+
+        while (Threads::NumberOfThreads() < (param.alives + 1)) {
+            Sleep::MSec(10);
+        }
+
+        param.eventSem.Post();
+        while (Threads::NumberOfThreads() > 1) {
+            Sleep::MSec(10);
+        }
     }
     serverSocket.Close();
+    //printf("\nClosed!");
 }
 
 static void ClientJob_Listen(BasicTCPSocketTest &param) {
@@ -197,9 +185,11 @@ static void ClientJob_Listen(BasicTCPSocketTest &param) {
         if (!param.isValidClient) {
             clientSocket.Close();
         }
+
         if (!clientSocket.Connect(param.server.GetAddress().Buffer(), param.server.GetPort(), param.timeout)) {
             param.sem.FastLock();
             param.retVal = false;
+            //printf("\nConnect fail");
             param.sem.FastUnLock();
         }
     }
@@ -268,8 +258,8 @@ static bool ListenConnectTest(BasicTCPSocketTest &param,
         while (Threads::NumberOfThreads() > 0) {
             Sleep::MSec(10);
         }
-
         if ((param.retVal != table[i].expected) || (!param.noError)) {
+            printf("fallo en %d %d %d %d\n", i, param.retVal, table[i].expected, param.noError);
             return false;
         }
 
@@ -328,7 +318,7 @@ static void StartServer_ReadWrite(BasicTCPSocketTest &param) {
             param.sem.FastUnLock();
         }
 
-        Sleep::MSec(5);
+        Sleep::MSec(10);
     }
     while (Threads::NumberOfThreads() < (param.alives + acceptedConnections + 1)) {
         Sleep::MSec(10);
@@ -340,6 +330,7 @@ static void StartServer_ReadWrite(BasicTCPSocketTest &param) {
     }
 
     for (uint32 i = 0; i < acceptedConnections; i++) {
+        serverParam[i].socket->Close();
         delete serverParam[i].socket;
     }
     serverSocket.Close();
@@ -362,7 +353,6 @@ static void WriteJob(ServerParam &param) {
     param.testObj->sem.FastLock();
     param.testObj->sem.FastUnLock();
     param.socket->Close();
-
 }
 
 static void ClientJob_Read(BasicTCPSocketTest &param) {
@@ -422,11 +412,9 @@ static void ClientJob_Read(BasicTCPSocketTest &param) {
                 }
             }
         }
-
     }
-
-    param.eventSem.Wait();
     clientSocket.Close();
+    param.eventSem.Wait();
 }
 
 bool BasicTCPSocketTest::TestRead(const ReadWriteTestTable *table) {
@@ -871,7 +859,7 @@ bool BasicTCPSocketTest::TestWaitConnection(const WaitConnectionTestTable *table
         eventSem.Reset();
 
         server.SetAddress("127.0.0.1");
-        server.SetPort(4444);
+        server.SetPort(4490);
 
         alives = (table[i].nClientsIn == 0) ? (10) : (table[i].nClientsIn);
         nClients = table[i].nClientsIn;
@@ -902,6 +890,7 @@ bool BasicTCPSocketTest::TestWaitConnection(const WaitConnectionTestTable *table
             Sleep::MSec(10);
         }
         if ((retVal != table[i].expected) || (!noError)) {
+            printf("Row=%d retVal %d==%d expected, noError=%d",i,retVal,table[i].expected,noError);
             return false;
         }
         i++;

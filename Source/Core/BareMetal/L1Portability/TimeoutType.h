@@ -2,7 +2,7 @@
  * @file TimeoutType.h
  * @brief Header file for class TimeoutType
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -39,10 +39,10 @@
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 /**
- * @brief timeout type definition.
+ * @brief Timeout type definition.
  *
  * @details These methods define the timeout object which is simply an integer which represent a time in milliseconds.
  * Furthermore here are defined flags for different types of timeout.

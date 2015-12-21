@@ -71,7 +71,7 @@ bool BasicSocket::SetBlocking(const bool flag) {
         else {
             stat = 1;
         }
-        ret = ioctl(connectionSocket, static_cast<osulong>(FIONBIO), reinterpret_cast<char8 *>(&stat), sizeof(stat));
+        ret = ioctl(connectionSocket, static_cast<osulong>(FIONBIO), &stat, sizeof(stat));
 
         if (ret >= 0) {
             isBlocking = flag;

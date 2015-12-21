@@ -65,7 +65,6 @@ public:
      */
     virtual ~AnyObject();
 
-
     /**
      * @brief Frees the memory of the internal serialised AnyType to be ready for a new serialisation.
      */

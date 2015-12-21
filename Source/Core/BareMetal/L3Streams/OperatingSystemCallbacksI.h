@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include "GeneralDefinitions.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -56,7 +56,7 @@ protected:
      * @return true if \a size bytes of data are successfully written within the specified \a timeout (see SetTimeout).
      */
     virtual bool OSWrite(const char8 * const data,
-                         uint32 & size)=0;
+            uint32 & size)=0;
 
     /**
      * @brief Reads without buffering.
@@ -65,7 +65,7 @@ protected:
      * @return true if \a size bytes of data are successfully read within the specified \a timeout (see SetTimeout).
      */
     virtual bool OSRead(char8 * const data,
-                        uint32 & size)=0;
+            uint32 & size)=0;
 
     /**
      * @brief Retrieves the size of the low-level, unbuffered, stream implementation.

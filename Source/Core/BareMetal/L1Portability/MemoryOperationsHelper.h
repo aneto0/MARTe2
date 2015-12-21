@@ -39,7 +39,7 @@
 /*                           Module declaration                              */
 /*---------------------------------------------------------------------------*/
 
-namespace MARTe{
+namespace MARTe {
 
 namespace MemoryOperationsHelper {
 
@@ -53,8 +53,8 @@ namespace MemoryOperationsHelper {
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
 DLL_API bool Copy(void * const destination,
-          const void * const source,
-          uint32 size);
+                  const void * const source,
+                  uint32 size);
 
 /**
  * @brief Compares the first specified bytes of two blocks of memories.
@@ -65,8 +65,8 @@ DLL_API bool Copy(void * const destination,
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
 DLL_API int32 Compare(const void * const mem1,
-              const void * const mem2,
-              uint32 size);
+                      const void * const mem2,
+                      uint32 size);
 
 /**
  * @brief Searches a character in the specified memory block.
@@ -77,8 +77,8 @@ DLL_API int32 Compare(const void * const mem1,
  * @pre the size parameter must be minor than the memory block size.
  */
 DLL_API const void *Search(const void * const mem,
-                   const char8 c,
-                   const uint32 size);
+                           const char8 c,
+                           const uint32 size);
 
 /**
  * @brief Copies a block of memory into another allowing overlapping.
@@ -89,8 +89,8 @@ DLL_API const void *Search(const void * const mem,
  * @pre the size parameter must be minor than the memory blocks sizes.
  */
 DLL_API bool Move(void * const destination,
-          const void * const source,
-          const uint32 size);
+                  const void * const source,
+                  const uint32 size);
 
 /**
  * @brief Sets a defined number bytes of the specified memory area equal to a specified character.
@@ -101,8 +101,8 @@ DLL_API bool Move(void * const destination,
  * @pre the size parameter must be minor than the memory block size.
  */
 DLL_API bool Set(void * const mem,
-         const char8 c,
-         const uint32 size);
+                 const char8 c,
+                 const uint32 size);
 
 }
 

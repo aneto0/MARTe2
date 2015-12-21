@@ -2,7 +2,7 @@
  * @file Atomic.h
  * @brief Header file for module Atomic
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferrò
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -39,20 +39,6 @@
 
 namespace MARTe {
 
-    /**
-     * @brief A collector of functions that are executed atomically even on multiprocessor machines.
-     *
-     * @details The target architecture is the one of the machine where the code is being executed.
-     * Most of the implementation is therefore delegated to the AtomicA.h implementation,
-     * which will be specific for each type of supported architecture.
-     *
-     * These methods are particularly useful in the implementation of functionality that requires
-     * protected basic operations between multiple asynchronous accesses like in a multi-thread system.
-     *
-     * These methods are also used to implement fast threading synchronization constructors
-     *
-     * @see FastPollingMutexSem
-     */
     /*lint -e(766) the header file AtomicA.h is not used here. This file is just for declaration and documentation. */
     /*lint -e(762) these declarations are redundant. */
     namespace Atomic {

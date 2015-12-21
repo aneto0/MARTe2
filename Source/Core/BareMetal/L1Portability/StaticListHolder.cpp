@@ -306,7 +306,7 @@ bool StaticListHolder::IncreaseCapacity(void) {
     return ret;
 }
 
-void* StaticListHolder::GetAllocatedMemory() const {
+void* StaticListHolder::GetAllocatedMemory() {
     return reinterpret_cast<void *>(allocatedMemory_);
 }
 

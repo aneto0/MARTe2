@@ -215,7 +215,6 @@ static const TypeDescriptor ConstCharString(true, CCString, sizeof(const char8*)
  */
 static const TypeDescriptor CharString(false, CCString, sizeof(char8*) * 8u);
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

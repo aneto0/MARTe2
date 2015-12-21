@@ -491,7 +491,6 @@ void CreateRefsOnHeap(ReferenceTTest &rt) {
         rt.arrayRefs[i] = new ReferenceT<Object>;
         *(rt.arrayRefs[i]) = rt.storedRef;
     }
-
     rt.eventSem.Wait();
 }
 
@@ -499,21 +498,19 @@ bool ReferenceTTest::TestInFunctionOnHeap(uint32 nRefs) {
 
     storedRef = ReferenceT<Object>("Object");
 
-    Threads::BeginThread((ThreadFunctionType) CreateRefsOnHeap, this);
-
     this->nRefs = nRefs;
+    Threads::BeginThread((ThreadFunctionType) CreateRefsOnHeap, this);
 
     uint32 totalNRefs = (nRefs + 1);
 
     uint32 j = 0;
     while (storedRef.NumberOfReferences() != totalNRefs) {
-        if (j++ > 100) {
+        if (j++ > 1000) {
             return false;
         }
 
         Sleep::MSec(10);
     }
-
     eventSem.Post();
 
     while (Threads::NumberOfThreads() != 0) {

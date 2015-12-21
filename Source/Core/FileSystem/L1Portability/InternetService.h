@@ -53,7 +53,6 @@ namespace MARTe {
          */
         InternetService();
 
-
         /**
          * @brief Sets the InternetService handle structure searching in the
          * database the service name and the protocol provided.
@@ -87,7 +86,6 @@ namespace MARTe {
          * @brief Retrieves the internet service protocol.
          */
         const char8 *Protocol() const;
-
 
     private:
 

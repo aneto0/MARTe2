@@ -63,6 +63,11 @@ public:
      * @brief Tests that the GetToken correctly handles the escape characters.
      */
     bool TestEscape();
+
+    /**
+     * @brief Tests that the lexical analyzer skips correctly comments in the stream.
+     */
+    bool TestComments();
 };
 
 /*---------------------------------------------------------------------------*/

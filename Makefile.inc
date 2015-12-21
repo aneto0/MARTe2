@@ -32,7 +32,7 @@ MAKEDEFAULTDIR=MakeDefaults
 ROOT_DIR=.
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) $(SUBPROJ)
+all: $(OBJS) $(SUBPROJ) 
 	echo  $(OBJS)
 
 

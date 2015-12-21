@@ -46,33 +46,22 @@ bool isRealtimeClass = false;
 
 static void SystemThreadFunction(ThreadInformation * const threadInfo) {
     if (threadInfo != NULL) {
-        bool ok = ThreadsDatabase::Lock();
-        if (ok) {
-            threadInfo->SetThreadIdentifier(Id());
+        //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
+        ErrorManagement::ErrorType err = threadInfo->ThreadWait();
+        //Start the user thread
+        if (err == ErrorManagement::NoError) {
+            threadInfo->UserThreadFunction();
 
-            ok = ThreadsDatabase::NewEntry(threadInfo);
+            bool ok = ThreadsDatabase::Lock();
+            if (ok) {
+                ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Id());
+                if (threadInfo != threadInfo2) {
+                    //CStaticAssertErrorCondition(ErrorManagement::FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
+                }
+            }
             ThreadsDatabase::UnLock();
         }
-        if (ok) {
-            threadInfo->SetPriorityLevel(0u);
-            SetPriority(Id(), NormalPriorityClass, 0u);
-            //Guarantee that the OS finishes the housekeeping before releasing the thread to the user
-            ErrorManagement::ErrorType err = threadInfo->ThreadWait();
-            //Start the user thread
-            if (err == ErrorManagement::NoError) {
-                threadInfo->UserThreadFunction();
-
-                ok = ThreadsDatabase::Lock();
-                if (ok) {
-                    ThreadInformation *threadInfo2 = ThreadsDatabase::RemoveEntry(Id());
-                    if (threadInfo != threadInfo2) {
-                        //CStaticAssertErrorCondition(ErrorManagement::FatalError,"SystemThreadFunction TDB_RemoveEntry returns wrong threadInfo \n");
-                    }
-                }
-                ThreadsDatabase::UnLock();
-            }
-            delete threadInfo;
-        }
+        delete threadInfo;
     }
 }
 
@@ -309,7 +298,17 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
 
     DWORD threadId = 0;
     CreateThread(NULL, stacksize, (LPTHREAD_START_ROUTINE) SystemThreadFunction, threadInfo, 0, &threadId);
+    bool ok = ThreadsDatabase::Lock();
+    if (ok) {
+        threadInfo->SetThreadIdentifier(threadId);
 
+        ok = ThreadsDatabase::NewEntry(threadInfo);
+        ThreadsDatabase::UnLock();
+    }
+    if (ok) {
+        threadInfo->SetPriorityLevel(0u);
+        SetPriority(threadId, NormalPriorityClass, 0u);
+    }
     //HANDLE threadId = (HANDLE)_beginthread((void (__cdecl *)(void *))SystemThreadFunction,stacksize,threadInfo);
 
     //Enable the user thread to run...
