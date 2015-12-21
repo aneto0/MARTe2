@@ -113,4 +113,4 @@ clean:  $(SUBPROJC)
 	@rm -f $(BUILD_DIR)/*$(ASMEXT)
 	@rm -f $(BUILD_DIR)/*$(GCNOEXT)
 	@rm -f $(BUILD_DIR)/*$(GCDAEXT)
-
+	@rm -f $(BUILD_DIR)/*.d

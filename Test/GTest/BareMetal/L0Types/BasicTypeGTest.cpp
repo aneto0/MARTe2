@@ -51,7 +51,7 @@ TEST(BasicTypeGTest,TestConstructorInt8) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorInt8());
 }
-/*
+
 TEST(BasicTypeGTest,TestConstructorUInt8) {
     BasicTypeTest myBasicTypeTest;
     ASSERT_TRUE(myBasicTypeTest.TestConstructorUInt8());
@@ -102,7 +102,7 @@ TEST(BasicTypeGTest,TestConstructorChar8) {
     ASSERT_TRUE(myBasicTypeTest.TestConstructorChar8());
 }
 
-*/
+
 
 
 	

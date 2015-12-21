@@ -25,5 +25,19 @@
 #############################################################
 
 TARGET=freertos-armv7m
+OBJSX=
+SPB    = BareMetal.x 
+PACKAGE=
+MAKEDEFAULTDIR=../../MakeDefaults
 
-include Makefile.inc
+ROOT_DIR=../..
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+all: $(OBJS) $(SUBPROJ) \
+		$(BUILD_DIR)/MARTe2$(DLLEXT) 
+	echo  $(OBJS)
+
+
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+

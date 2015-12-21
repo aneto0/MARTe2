@@ -94,11 +94,11 @@ private:
 
 #define TEST(className, functionName) \
     bool className##_##functionName (); \
-    static AddTest ADD_##functionName();\
+    static AddTest ADD_##functionName(className##_##functionName, #className, #functionName);\
     bool className##_##functionName ()
 
 
-#define ASSERT_TRUE(boolean) numberOfTests++; return boolean
+#define ASSERT_TRUE(boolean) return boolean
 
 #define ASSERT_FALSE(boolean) return !boolean
 

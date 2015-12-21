@@ -70,7 +70,7 @@ CFLAGS =-MD -MP -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-en
 #-ffreestanding -std=gnu99 -z muldefs
 CPPFLAGS = $(CFLAGS) 
 
-CFLAGSPEC=-DUSE_FREERTOS -DUSE_USB_FS -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DSTM32F407xx
+CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) 
 LIBRARIES =  -lnosys -lm -lgcc -lc
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 
