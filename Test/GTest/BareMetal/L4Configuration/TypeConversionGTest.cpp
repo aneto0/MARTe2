@@ -199,6 +199,7 @@ TEST(TypeConversionGTest,TestCCStringToUInt32) {
             {"0b111111111111111111111111111111111",4294967295, true, false},
             {"4294967295",4294967295, true, true},
             {"4294967296",429496729, true, false},
+            {"10000000000",1000000000, true, false},
             {"-1",0, true, false},
             {0,0, 0}
     };

@@ -28,12 +28,11 @@ ctags : %.cpp %.c %.h
 %_Gen.cpp : ../Generic/%_Generic.cpp
 	cp ../Generic/$*_Generic.cpp $*_Gen.cpp
 
-CreateLibrary :
+createLibrary :
 	touch createLibrary
 
 $(BUILD_DIR)/%.o : %.cpp
 	mkdir -p $(BUILD_DIR)
-	rm -f $(ROOT_DIR)/createLibrary.o
 	$(COMPILER) -c $(OPTIM) $(INCLUDES) $(CPPFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.o
 #	$(COMPILER) -S $(OPTIM) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.cpp -o $(BUILD_DIR)/$*.s
 

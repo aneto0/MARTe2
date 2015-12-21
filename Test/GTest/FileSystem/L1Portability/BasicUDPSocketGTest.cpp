@@ -144,11 +144,11 @@ TEST(BasicUDPSocketGTest,TestRead) {
             {"abcdefghil","abcde",5,5,4444,TTInfiniteWait,32,true,true,true,true,true},
             {"HelloWorld1","HelloWorld1",64,64,4444,TTInfiniteWait,64,true,true,true,false,true},
             {"HelloWorld2","HelloWorld2",32,32,4444,TTInfiniteWait,128,true,true,true,true,true},
-            {"HelloWorld3","HelloWorld3",32,32,4444,100,32,false,true,false,true,true},
+            {"HelloWorld3","HelloWorld3",32,32,4444,1000,32,false,true,false,true,true},//{"HelloWorld3","HelloWorld3",32,32,4444,100,32,false,true,false,true,true},
             {"HelloWorld4","HelloWorld4",32,32,4444,TTInfiniteWait,32,false,false,false,true,true},
             {"HelloWorld5","HelloWorld5",32,32,4444,TTInfiniteWait,32,false,false,false,false,true},
-            {"HelloWorld6","HelloWorld6",11,11,4444,TTInfiniteWait,128,false,true,true,true,false},
-            {"HelloWorld7","HelloWorld7",11,11,4444,TTInfiniteWait,128,false,true,true,false,false},
+            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,true,false},
+            {"HelloWorld","HelloWorld",11,11,4444,TTInfiniteWait,128,false,true,true,false,false},
             {0}
     };
 

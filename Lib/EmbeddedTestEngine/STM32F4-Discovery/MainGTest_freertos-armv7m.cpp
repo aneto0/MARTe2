@@ -46,6 +46,12 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
+
+TestInfo TestFunctions[32] = { 0 };
+volatile int numberOfTests = 0;
+
+
+
 static void SystemClock_Config(void) {
     RCC_ClkInitTypeDef RCC_ClkInitStruct;
     RCC_OscInitTypeDef RCC_OscInitStruct;

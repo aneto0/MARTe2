@@ -20,26 +20,25 @@
 # See the Licence for the specific language governing 
 # permissions and limitations under the Licence. 
 #
+# $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
+#
 #############################################################
 
-
-OBJSX=  BasicFileGTest.x\
-	BasicSocketGTest.x\
-	BasicTCPSocketGTest.x\
-	BasicUDPSocketGTest.x\
-	DirectoryGTest.x\
-	DirectoryScannerGTest.x\
-	InternetHostGTest.x\
-	InternetServiceGTest.x\
-	SelectGTest.x
+OBJSX=  BasicFileGTest.x \
+		BasicSocketGTest.x\
+		BasicTCPSocketGTest.x \
+		BasicUDPSocketGTest.x \
+		DirectoryGTest.x \
+		DirectoryScannerGTest.x \
+		InternetHostGTest.x \
+		InternetServiceGTest.x \
+		SelectGTest.x 
 		
-
 PACKAGE=GTest/FileSystem
 ROOT_DIR=../../../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
 
 INCLUDES += -I../../../
 INCLUDES += -I../../../Core/BareMetal/L0Types
@@ -58,8 +57,8 @@ INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
 INCLUDES += -I../../../../Source/Core/FileSystem/L1Portability
 
 
-all: $(OBJS)    \
-        $(BUILD_DIR)/L1PortabilityFGTest$(LIBEXT) 
+all: $(OBJS) \
+                $(BUILD_DIR)/L1PortabilityFGTest$(LIBEXT)
 	echo  $(OBJS)
 
 include depends.$(TARGET)

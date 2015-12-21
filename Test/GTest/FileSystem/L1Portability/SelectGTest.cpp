@@ -154,7 +154,12 @@ TEST(SelectGTest, TestWaitUntil_waitTimeout) {
 
 TEST(SelectGTest, TestWaitUntil_waitRead) {
     SelectTest myTest;
-    ASSERT_TRUE(myTest.TestWaitUntil_waitRead());
+    ASSERT_TRUE(myTest.TestWaitUntil_waitRead(2000));
+}
+
+TEST(SelectGTest, TestWaitUntil_waitRead_Infinite) {
+    SelectTest myTest;
+    ASSERT_TRUE(myTest.TestWaitUntil_waitRead(TTInfiniteWait));
 }
 
 TEST(SelectGTest, TestWaitUntil_severaDifferentWaitRead) {
