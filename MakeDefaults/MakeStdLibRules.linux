@@ -46,7 +46,7 @@ $(BUILD_DIR)/%.a : $(OBJS) createLibrary
 	touch $@
 	rm $(BUILD_DIR)/$*.a
 	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $@
-	rm createLibrary
+	rm -f createLibrary
 	
 
 $(BUILD_DIR)/%.so : $(OBJS)
@@ -77,7 +77,7 @@ $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o
 
 $(BUILD_DIR)/%.ex : createLibrary $(BUILD_DIR)/%.o $(OBJS)
 	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
-	rm createLibrary
+	rm -f createLibrary
 	
 
 depends.linux: dependsRaw.linux 
