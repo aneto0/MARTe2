@@ -111,12 +111,14 @@ TEST(VectorGTest,TestConstructorByPointerStatic_UInt64) {
     ASSERT_TRUE(vectorTest.TestConstructorByPointerStatic(array));
 }
 
+/*
 TEST(VectorGTest,TestConstructorByPointerStatic_Float32) {
     VectorTest vectorTest;
 
     float32 array[] = { 111.5, -902.5E+2, 300.9, -0.004 };
     ASSERT_TRUE(vectorTest.TestConstructorByPointerStatic(array));
 }
+*/
 
 TEST(VectorGTest,TestConstructorByPointerStatic_Float64) {
     VectorTest vectorTest;
@@ -332,13 +334,14 @@ TEST(VectorGTest,TestConstructorByTable_UInt64) {
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
 
+/*
 TEST(VectorGTest,TestConstructorByTable_Float32) {
     VectorTest vectorTest;
 
     float32 array[] = { 111.5, -902.5E+2, 300.9, -0.004 };
     ASSERT_TRUE(vectorTest.TestConstructorByTable(array));
 }
-
+*/
 TEST(VectorGTest,TestConstructorByTable_Float64) {
     VectorTest vectorTest;
 

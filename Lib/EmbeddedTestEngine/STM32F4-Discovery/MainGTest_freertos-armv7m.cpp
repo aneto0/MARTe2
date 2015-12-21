@@ -46,11 +46,8 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-
-TestInfo TestFunctions[32] = { 0 };
+TestInfo TestFunctions[2048] = { 0 };
 volatile int numberOfTests = 0;
-
-
 
 static void SystemClock_Config(void) {
     RCC_ClkInitTypeDef RCC_ClkInitStruct;
@@ -152,46 +149,37 @@ private:
 
 };
 
-//#include "../../../Test/GTest/BareMetal/L0Types/BasicTypeGTest.cpp"
-
-
-/*
- int u = 0;
-
- class boh {
- public:
- boh() {
- u++;
- }
- };
-
- static boh ahah;
-*/
- UARTConsole console;
-
+UARTConsole console;
 
 int main() {
 
     HAL_Init();
     BSP_LED_Init (LED6);
     BSP_LED_Init (LED5);
+    BSP_LED_Init(LED4);
     SystemClock_Config();
 
     console.Open();
-    char buffer[32];
-    unsigned int sizec = 9;
     for (int i = 0; i < numberOfTests; i++) {
+        char buffer[128] = { 0 };
+        sprintf(buffer, "\n\r[ RUN       ] %s.%s", TestFunctions[i].className, TestFunctions[i].functionName);
+        unsigned int sizec = strlen(buffer)+1u;
+        console.Write(buffer, sizec);
         if (TestFunctions[i].function()) {
-            strcpy(buffer, "\n\rPassed");
+            sprintf(buffer, "\n\r[        OK ] %s.%s", TestFunctions[i].className, TestFunctions[i].functionName);
+            sizec=strlen(buffer)+1;
             console.Write(buffer, sizec);
             BSP_LED_Toggle(LED6);
         }
         else {
-            strcpy(buffer, "\n\rFailed");
+            sprintf(buffer, "\n\r[    FAILED ] %s.%s", TestFunctions[i].className, TestFunctions[i].functionName);
+            sizec=strlen(buffer)+1;
             console.Write(buffer, sizec);
-            BSP_LED_Toggle(LED5);
+            BSP_LED_On(LED5);
         }
     }
+
+    BSP_LED_On(LED4);
 
     return 0;
 }

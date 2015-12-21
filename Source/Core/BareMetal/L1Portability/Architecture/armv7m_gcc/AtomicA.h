@@ -145,7 +145,7 @@ inline void Decrement(volatile int8 *p) {
     Decrement(pp);
 }
 
-inline int32 Exchange32(volatile int32 *p, int32 v) {
+inline int32 Exchange(volatile int32 *p, int32 v) {
     EXCHANGE(p, v);
     return v;
 

@@ -25,20 +25,19 @@
 #############################################################
 
 TARGET=freertos-armv7m
-#include Makefile.inc
 
 
-OBJSX=  BasicTypeGTest.x 
-#BitBooleanGTest.x \
+OBJSX=  BasicTypeGTest.x \
+		BitBooleanGTest.x \
 		BitRangeGTest.x \
 		DoubleIntegerGTest.x \
 		FractionalIntegerGTest.x \
 		LinkedListHolderGTest.x \
 		LinkedListableGTest.x \
-		MatrixGTest.x \
 		ShiftGTest.x \
 		TypeCharacteristicsGTest.x \
-		TypeDescriptorGTest.x \
+		TypeDescriptorGTest.x 
+#MatrixGTest.x \
 		VectorGTest.x
 
 

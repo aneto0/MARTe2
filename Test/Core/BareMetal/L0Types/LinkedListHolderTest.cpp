@@ -71,15 +71,16 @@ bool LinkedListHolderTest::TestDestructor() {
 bool LinkedListHolderTest::TestReset(uint32 nElements) {
 
     LinkedListHolder list;
+    // the destructor will call the cleanup
 
-    LinkedListable *firstElement = new LinkedListable;
 
-    list.ListInsert(firstElement);
+    LinkedListable firstElement;
+
+    list.ListInsert(&firstElement);
 
     for (uint32 i = 0; i < nElements; i++) {
-        LinkedListable *element = new LinkedListable;
-
-        list.ListInsert(element);
+        LinkedListable element;
+        list.ListInsert(&element);
     }
 
     if (list.List() == NULL) {
@@ -89,7 +90,7 @@ bool LinkedListHolderTest::TestReset(uint32 nElements) {
     list.Reset();
 
     //the elements should be still valid
-    if (firstElement->Size() == 0) {
+    if (firstElement.Size() == 0) {
         return false;
     }
 
@@ -110,7 +111,7 @@ bool LinkedListHolderTest::TestCleanup(uint32 nElements) {
         return false;
     }
 
-    list.Reset();
+    list.CleanUp();
 
     return (list.ListSize() == 0) && (list.List() == NULL);
 }

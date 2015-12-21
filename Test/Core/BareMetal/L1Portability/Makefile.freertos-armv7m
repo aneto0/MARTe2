@@ -26,4 +26,46 @@
 
 TARGET=freertos-armv7m
 
-include Makefile.inc
+OBJSX=  AtomicTest.x \
+#AuxHeap.x\
+		BasicConsoleTest.x \
+		EndianityTest.x \
+		ErrorManagementTest.x \
+		FastMathTest.x \
+		FastPollingMutexSemTest.x \
+		FormatDescriptorTest.x \
+		GlobalObjectsDatabaseTest.x \
+		HeapManagerTest.x \
+		HighResolutionTimerTest.x \
+		LoadableLibraryTest.x \
+		MemoryCheckTest.x \
+		MemoryOperationsHelperTest.x\
+		MemoryTest.x \
+		ProcessorTypeTest.x \
+		SleepTest.x \
+		StandardHeap_GenericTest.x \
+		StaticListTest.x \
+		StringHelperTest.x \
+		StringPortableTest.x \
+		TimeStampTest.x \
+		TimeoutTypeTest.x
+
+PACKAGE=Core/BareMetal
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
+INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
+INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+
+
+all: $(OBJS) \
+                $(BUILD_DIR)/L1PortabilityTest$(LIBEXT)
+	echo  $(OBJS)
+
+include depends.$(TARGET)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+

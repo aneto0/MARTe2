@@ -40,7 +40,6 @@
 /*---------------------------------------------------------------------------*/
 using namespace MARTe;
 
-
 bool LinkedListableTest::TestConstructor() {
 
     LinkedListable root;
@@ -669,13 +668,14 @@ bool LinkedListableTest::TestDelete() {
         cursor = root->Next();
     }
 
+    delete root;
     return true;
 
 }
 
 bool LinkedListableTest::TestDeleteSearchFilter() {
 
-    const uint32 size = 32;
+    const uint32 size = 30;
 
     IntegerList *root = new IntegerList;
 
@@ -710,8 +710,10 @@ bool LinkedListableTest::TestDeleteSearchFilter() {
         if (root->Size() != (size - 1 - (2 * i))) {
             return false;
         }
+
     }
 
+    delete root;
     return true;
 
 }

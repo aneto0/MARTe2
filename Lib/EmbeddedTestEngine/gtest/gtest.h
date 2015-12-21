@@ -56,7 +56,7 @@ struct TestInfo {
     TestFunctionType function;
 };
 
-extern TestInfo TestFunctions[32];
+extern TestInfo TestFunctions[2048];
 extern volatile int numberOfTests;
 
 class AddTest {
