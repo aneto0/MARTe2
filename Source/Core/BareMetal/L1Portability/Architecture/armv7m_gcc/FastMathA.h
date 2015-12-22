@@ -40,11 +40,11 @@ namespace MARTe {
 namespace FastMath {
 
 inline float Sin(float angle) {
-    return 0.0;
+    return 0.0f;
 }
 
 inline float Cos(float angle) {
-    return 0.0;
+    return 0.0f;
 }
 
 inline int32 FloatToInt(float input) {

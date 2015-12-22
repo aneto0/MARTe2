@@ -32,12 +32,12 @@ OBJSX=  BasicTypeGTest.x \
 		BitRangeGTest.x \
 		DoubleIntegerGTest.x \
 		FractionalIntegerGTest.x \
-		LinkedListHolderGTest.x \
 		LinkedListableGTest.x \
 		ShiftGTest.x \
 		TypeCharacteristicsGTest.x \
 		TypeDescriptorGTest.x 
 #MatrixGTest.x \
+		LinkedListHolderGTest.x \
 		VectorGTest.x
 
 

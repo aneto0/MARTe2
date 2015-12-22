@@ -120,7 +120,8 @@ AtomicTest<T>::AtomicTest(T testValue) {
 template<class T>
 bool AtomicTest<T>::TestIncrement() {
     bool testResult = false;
-    T auxValue = testValue;
+    volatile T auxValue = testValue;
+
 
     Atomic::Increment(&auxValue);
     testResult = (auxValue == (testValue + 1));
@@ -131,7 +132,7 @@ bool AtomicTest<T>::TestIncrement() {
 template<class T>
 bool AtomicTest<T>::TestDecrement() {
     bool testResult = false;
-    T auxValue = testValue;
+    volatile T auxValue = testValue;
 
     Atomic::Decrement(&auxValue);
     testResult = (auxValue == (testValue - 1));
@@ -141,7 +142,7 @@ bool AtomicTest<T>::TestDecrement() {
 
 template<class T>
 bool AtomicTest<T>::TestTestAndSet() {
-    T testVal = 0;
+    volatile T testVal = 0;
     bool ok = false;
 
     // Set the semaphore
@@ -160,7 +161,7 @@ bool AtomicTest<T>::TestTestAndSet() {
 template<class T>
 bool AtomicTest<T>::TestExchange() {
     bool testResult = false;
-    T auxValue = testValue;
+    volatile T auxValue = testValue;
 
     Atomic::Exchange(&auxValue, 1234);
     testResult = (auxValue == 1234);
@@ -171,7 +172,7 @@ bool AtomicTest<T>::TestExchange() {
 template<class T>
 bool AtomicTest<T>::TestAdd() {
     bool testResult = false;
-    T auxValue = testValue;
+    volatile T auxValue = testValue;
 
     Atomic::Add(&auxValue, 10);
     testResult = (auxValue == testValue + 10);
@@ -182,7 +183,7 @@ bool AtomicTest<T>::TestAdd() {
 template<class T>
 bool AtomicTest<T>::TestSub() {
     bool testResult = false;
-    T auxValue = testValue;
+    volatile T auxValue = testValue;
 
     Atomic::Sub(&auxValue, 10);
     testResult = (auxValue == testValue - 10);

@@ -27,15 +27,12 @@
 TARGET=freertos-armv7m
 
 OBJSX=  AtomicGTest.x \
-#BasicConsoleGTest.x \
+		BasicConsoleGTest.x \
 		EndianityGTest.x \
-		ErrorManagementGTest.x \
-		FastMathGTest.x \
-		FastPollingMutexSemGTest.x \
 		FormatDescriptorGTest.x \
 		GlobalObjectsDatabaseGTest.x \
 		HeapManagerGTest.x \
-		HighResolutionTimerGTest.x \
+#HighResolutionTimerGTest.x \
 		LoadableLibraryGTest.x \
 		MemoryGTest.x \
 		SleepGTest.x \
@@ -44,7 +41,12 @@ OBJSX=  AtomicGTest.x \
 		StringHelperGTest.x \
 		StringPortableGTest.x \
 		TimeStampGTest.x \
-		TimeoutTypeGTest.x 
+		TimeoutTypeGTest.x
+#ErrorManagementGTest.x \
+		FastMathGTest.x \
+		FastPollingMutexSemGTest.x 
+		
+		 
 
 
 PACKAGE=GTest/BareMetal

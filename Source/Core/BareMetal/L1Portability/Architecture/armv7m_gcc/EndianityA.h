@@ -1,6 +1,6 @@
 /**
- * @file EndianityA.h
- * @brief Header file for class EndianityA
+ * @file A.h
+ * @brief Header file for class A
  * @date 05/ago/2015
  * @author pc
  *
@@ -16,7 +16,7 @@
  * basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the Licence permissions and limitations under the Licence.
 
- * @details This header file contains the declaration of the class EndianityA
+ * @details This header file contains the declaration of the class A
  * with all of its public, protected and private members. It may also include
  * definitions for inline methods which need to be visible to the compiler.
  */
@@ -39,347 +39,409 @@ namespace MARTe {
 
 namespace Endianity {
 
-inline void EndianitySwap32(volatile void *x) {
-    int32 *xx = (int32 *) x;
-    int __reg1;
-
-    asm(
-            "ldr %0, [%1] \n\t "
-            "rev %0, %0   \n\t "
-            "str %0, [%1] \n"
-            : "=&r" (__reg1) : "r" (xx)
-            : "memory"
-    );
+inline void Swap16(volatile void *x) {
+    char8 *xx = (char8 *) x;
+    char8 high = xx[1];
+    xx[1] = xx[0];
+    xx[0] = high;
 }
 
-inline void EndianitySwap32(volatile void *x, uint32 sizer) {
-    int32 *xx = (int32 *) x;
-    for (uint32 i = 0; i < sizer; i++) {
-
-        void* xptr = (void *) xx;
-        EndianitySwap32(xptr);
-
-        xx++;
-    }
-}
-
-inline void EndianityMemCopySwap32(volatile void *dest, volatile const void *src, uint32 sizer) {
-    int32 *s = (int32 *) src;
-    int32 *d = (int32 *) dest;
-    for (uint32 i = 0; i < sizer; i++) {
-        void* sPtr = (void *) s;
-        EndianitySwap32(sPtr);
-        *d++ = *s++;
-    }
-}
-
-inline void EndianitySwap16(volatile void *x) {
-
-    int16 *xx = (int16 *) x;
-    int __reg1;
-
-    asm(
-            "ldr    %0, [%1] \n\t "
-            "rev16  %0, %0   \n\t "
-            "str    %0, [%1] \n"
-            : "=&r" (__reg1) : "r" (xx)
-            : "memory"
-    );
-}
-
-inline void EndianitySwap16(volatile void *x, uint32 sizer) {
+inline void Swap16(volatile void *x,
+                   uint32 sizer) {
     int16 *xx = (int16 *) x;
 
     for (uint32 i = 0; i < sizer; i++) {
         void* xptr = (void *) xx;
-        EndianitySwap16(xptr);
+        Swap16(xptr);
         xx++;
     }
 }
 
-inline void EndianityMemCopySwap16(volatile void *dest, volatile const void *src, uint32 sizer) {
+inline void MemCopySwap16(volatile void *dest,
+                          volatile const void *src,
+                          uint32 sizer) {
     int16 *s = (int16 *) src;
     int16 *d = (int16 *) dest;
     for (uint32 i = 0; i < sizer; i++) {
-        void* sPtr = (void *) s;
-        EndianitySwap16(sPtr);
-        *d++ = *s++;
-    }
-}
-
-inline void EndianitySwap64(volatile void *x) {
-    uint32 *p = (uint32 *) x;
-    EndianitySwap32(&p[0]);
-    uint32 temp = p[0];
-    EndianitySwap32(&p[1]);
-    p[0] = p[1];
-    p[1] = temp;
-}
-
-inline void EndianityMemCopySwap64(volatile void *dest, volatile const void *src, uint32 sizer) {
-    int64 *s = (int64 *) src;
-    int64 *d = (int64 *) dest;
-    for (uint32 i = 0; i < sizer; i++) {
         *d = *s;
-        EndianitySwap64(d);
+        Swap16(d);
         d++;
         s++;
     }
 }
 
-inline void FromBigEndianDouble(volatile double &x) {
-    EndianitySwap64(&x);
+inline void Swap32(volatile void *x) {
+    int16 *p = (int16 *) x;
+    Swap16(&p[0]);
+    int16 temp = p[0];
+    Swap16(&p[1]);
+    p[0] = p[1];
+    p[1] = temp;
 }
 
-inline void FromBigEndianFloat(volatile float &x) {
-    EndianitySwap32(&x);
+inline void Swap32(volatile void *x,
+                   uint32 sizer) {
+    int32 *xx = (int32 *) x;
+    for (uint32 i = 0; i < sizer; i++) {
+
+        void* xptr = (void *) xx;
+        Swap32(xptr);
+
+        xx++;
+    }
 }
 
-inline void FromBigEndianUInt64(volatile uint64 &x) {
-    EndianitySwap64(&x);
+inline void MemCopySwap32(volatile void *dest,
+                          volatile const void *src,
+                          uint32 sizer) {
+    int32 *s = (int32 *) src;
+    int32 *d = (int32 *) dest;
+    for (uint32 i = 0; i < sizer; i++) {
+        *d = *s;
+        Swap32(d);
+        d++;
+        s++;
+    }
 }
 
-inline void FromBigEndianUInt32(volatile uint32 &x) {
-    EndianitySwap32(&x);
+inline void Swap64(volatile void *x) {
+    int32 *p = (int32 *) x;
+    Swap32(&p[0]);
+    int32 temp = p[0];
+    Swap32(&p[1]);
+    p[0] = p[1];
+    p[1] = temp;
 }
 
-inline void FromBigEndianUInt16(volatile uint16 &x) {
-    EndianitySwap16(&x);
+inline void MemCopySwap64(volatile void *dest,
+                          volatile const void *src,
+                          uint32 sizer) {
+    int64 *s = (int64 *) src;
+    int64 *d = (int64 *) dest;
+    for (uint32 i = 0; i < sizer; i++) {
+        *d = *s;
+        Swap64(d);
+        d++;
+        s++;
+    }
 }
 
-inline void FromBigEndianInt64(volatile int64 &x) {
-    EndianitySwap64(&x);
+inline void FromBigEndian(volatile float64 &x) {
+    Swap64(&x);
 }
 
-inline void FromBigEndianInt32(volatile int32 &x) {
-    EndianitySwap32(&x);
+inline void FromBigEndian(volatile float32 &x) {
+    Swap32(&x);
 }
 
-inline void FromBigEndianInt16(volatile int16 &x) {
-    EndianitySwap16(&x);
+inline void FromBigEndian(volatile uint64 &x) {
+    Swap64(&x);
 }
 
-inline void FromLittleEndianDouble(volatile double &x) {
+inline void FromBigEndian(volatile uint32 &x) {
+    Swap32(&x);
 }
 
-inline void FromLittleEndianFloat(volatile float &x) {
+inline void FromBigEndian(volatile uint16 &x) {
+    Swap16(&x);
 }
 
-inline void FromLittleEndianUInt64(volatile uint64 &x) {
+inline void FromBigEndian(volatile int64 &x) {
+    Swap64(&x);
 }
 
-inline void FromLittleEndianUInt32(volatile uint32 &x) {
+inline void FromBigEndian(volatile int32 &x) {
+    Swap32(&x);
 }
 
-
-inline void FromLittleEndianUInt16(volatile uint16 &x) {
+inline void FromBigEndian(volatile int16 &x) {
+    Swap16(&x);
 }
 
-inline void FromLittleEndianInt64(volatile int64 &x) {
+inline void FromLittleEndian(volatile float64 &x) {
 }
 
-inline void FromLittleEndianInt32(volatile int32 &x) {
+inline void FromLittleEndian(volatile float32 &x) {
 }
 
-inline void FromLittleEndianInt16(volatile int16 &x) {
+inline void FromLittleEndian(volatile uint64 &x) {
 }
 
-inline void ToBigEndianDouble(volatile double &x) {
-    EndianitySwap64(&x);
+inline void FromLittleEndian(volatile uint32 &x) {
 }
 
-inline void ToBigEndianFloat(volatile float &x) {
-    EndianitySwap32(&x);
+inline void FromLittleEndian(volatile uint16 &x) {
 }
 
-inline void ToBigEndianUInt64(volatile uint64 &x) {
-    EndianitySwap64(&x);
+inline void FromLittleEndian(volatile int64 &x) {
 }
 
-inline void ToBigEndianUInt32(volatile uint32 &x) {
-    EndianitySwap32(&x);
+inline void FromLittleEndian(volatile int32 &x) {
 }
 
-inline void ToBigEndianUInt16(volatile uint16 &x) {
-    EndianitySwap16(&x);
+inline void FromLittleEndian(volatile int16 &x) {
 }
 
-inline void ToBigEndianInt64(volatile int64 &x) {
-    EndianitySwap64(&x);
+inline void ToBigEndian(volatile float64 &x) {
+    Swap64(&x);
 }
 
-inline void ToBigEndianInt32(volatile int32 &x) {
-    EndianitySwap32(&x);
+inline void ToBigEndian(volatile float32 &x) {
+    Swap32(&x);
 }
 
-inline void ToBigEndianInt16(volatile int16 &x) {
-    EndianitySwap16(&x);
+inline void ToBigEndian(volatile uint64 &x) {
+    Swap64(&x);
 }
 
-inline void ToLittleEndianDouble(volatile double &x) {
+inline void ToBigEndian(volatile uint32 &x) {
+    Swap32(&x);
 }
 
-inline void ToLittleEndianFloat(volatile float &x) {
+inline void ToBigEndian(volatile uint16 &x) {
+    Swap16(&x);
 }
 
-inline void ToLittleEndianUInt64(volatile uint64 &x) {
+inline void ToBigEndian(volatile int64 &x) {
+    Swap64(&x);
 }
 
-inline void ToLittleEndianUInt32(volatile uint32 &x) {
+inline void ToBigEndian(volatile int32 &x) {
+    Swap32(&x);
 }
 
-inline void ToLittleEndianUInt16(volatile uint16 &x) {
+inline void ToBigEndian(volatile int16 &x) {
+    Swap16(&x);
 }
 
-inline void ToLittleEndianInt64(volatile int64 &x) {
+inline void ToLittleEndian(volatile float64 &x) {
 }
 
-inline void ToLittleEndianInt32(volatile int32 &x) {
+inline void ToLittleEndian(volatile float32 &x) {
 }
 
-inline void ToLittleEndianInt16(volatile int16 &x) {
+inline void ToLittleEndian(volatile uint64 &x) {
 }
 
-inline void MemCopyFromBigEndianDouble(double *dest, const double *src, uint32 size) {
-    EndianityMemCopySwap64(dest, src, size);
+inline void ToLittleEndian(volatile uint32 &x) {
 }
 
-inline void MemCopyFromBigEndianUInt64(uint64 *dest, const uint64 *src, uint32 size) {
-    EndianityMemCopySwap64(dest, src, size);
+inline void ToLittleEndian(volatile uint16 &x) {
 }
 
-inline void MemCopyFromBigEndianInt64(int64 *dest, const int64 *src, uint32 size) {
-    EndianityMemCopySwap64(dest, src, size);
+inline void ToLittleEndian(volatile int64 &x) {
 }
 
-inline void MemCopyFromBigEndianFloat(float *dest, const float *src, uint32 size) {
-    EndianityMemCopySwap32(dest, src, size);
+inline void ToLittleEndian(volatile int32 &x) {
 }
 
-inline void MemCopyFromBigEndianUInt32(uint32 *dest, const uint32 *src, uint32 size) {
-    EndianityMemCopySwap32(dest, src, size);
+inline void ToLittleEndian(volatile int16 &x) {
 }
 
-inline void MemCopyFromBigEndianUInt16(uint16 *dest, const uint16 *src, uint32 size) {
-    EndianityMemCopySwap16(dest, src, size);
+inline void MemCopyFromBigEndian(float64 *dest,
+                                 const float64 *src,
+                                 uint32 size) {
+    MemCopySwap64(dest, src, size);
 }
 
-inline void MemCopyFromBigEndianInt32(int32 *dest, const int32 *src, uint32 size) {
-    EndianityMemCopySwap32(dest, src, size);
+inline void MemCopyFromBigEndian(uint64 *dest,
+                                 const uint64 *src,
+                                 uint32 size) {
+    MemCopySwap64(dest, src, size);
 }
 
-inline void MemCopyFromBigEndianInt16(int16 *dest, const int16 *src, uint32 size) {
-    EndianityMemCopySwap16(dest, src, size);
+inline void MemCopyFromBigEndian(int64 *dest,
+                                 const int64 *src,
+                                 uint32 size) {
+    MemCopySwap64(dest, src, size);
 }
 
-inline void MemCopyFromLittleEndianDouble(double *dest, const double *src, uint32 size) {
+inline void MemCopyFromBigEndian(float32 *dest,
+                                 const float32 *src,
+                                 uint32 size) {
+    MemCopySwap32(dest, src, size);
+}
+
+inline void MemCopyFromBigEndian(uint32 *dest,
+                                 const uint32 *src,
+                                 uint32 size) {
+    MemCopySwap32(dest, src, size);
+}
+
+inline void MemCopyFromBigEndian(uint16 *dest,
+                                 const uint16 *src,
+                                 uint32 size) {
+    MemCopySwap16(dest, src, size);
+}
+
+inline void MemCopyFromBigEndian(int32 *dest,
+                                 const int32 *src,
+                                 uint32 size) {
+    MemCopySwap32(dest, src, size);
+}
+
+inline void MemCopyFromBigEndian(int16 *dest,
+                                 const int16 *src,
+                                 uint32 size) {
+    MemCopySwap16(dest, src, size);
+}
+
+inline void MemCopyFromLittleEndian(float64 *dest,
+                                    const float64 *src,
+                                    uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyFromLittleEndianUInt64(uint64 *dest, const uint64 *src, uint32 size) {
+inline void MemCopyFromLittleEndian(uint64 *dest,
+                                    const uint64 *src,
+                                    uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyFromLittleEndianInt64(int64 *dest, const int64 *src, uint32 size) {
+inline void MemCopyFromLittleEndian(int64 *dest,
+                                    const int64 *src,
+                                    uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyFromLittleEndianFloat(float *dest, const float *src, uint32 size) {
+inline void MemCopyFromLittleEndian(float32 *dest,
+                                    const float32 *src,
+                                    uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyFromLittleEndianUInt32(uint32 *dest, const uint32 *src, uint32 size) {
+inline void MemCopyFromLittleEndian(uint32 *dest,
+                                    const uint32 *src,
+                                    uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyFromLittleEndianUInt16(uint16 *dest, const uint16 *src, uint32 size) {
+inline void MemCopyFromLittleEndian(uint16 *dest,
+                                    const uint16 *src,
+                                    uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyFromLittleEndianInt32(int32 *dest, const int32 *src, uint32 size) {
+inline void MemCopyFromLittleEndian(int32 *dest,
+                                    const int32 *src,
+                                    uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyFromLittleEndianInt16(int16 *dest, const int16 *src, uint32 size) {
+inline void MemCopyFromLittleEndian(int16 *dest,
+                                    const int16 *src,
+                                    uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyToBigEndianDouble(double *dest, const double *src, uint32 size) {
-    EndianityMemCopySwap64(dest, src, size);
+inline void MemCopyToBigEndian(float64 *dest,
+                               const float64 *src,
+                               uint32 size) {
+    MemCopySwap64(dest, src, size);
 }
 
-inline void MemCopyToBigEndianUInt64(uint64 *dest, const uint64 *src, uint32 size) {
-    EndianityMemCopySwap64(dest, src, size);
+inline void MemCopyToBigEndian(uint64 *dest,
+                               const uint64 *src,
+                               uint32 size) {
+    MemCopySwap64(dest, src, size);
 }
 
-inline void MemCopyToBigEndianInt64(int64 *dest, const int64 *src, uint32 size) {
-    EndianityMemCopySwap64(dest, src, size);
+inline void MemCopyToBigEndian(int64 *dest,
+                               const int64 *src,
+                               uint32 size) {
+    MemCopySwap64(dest, src, size);
 }
 
-inline void MemCopyToBigEndianFloat(float *dest, const float *src, uint32 size) {
-    EndianityMemCopySwap32(dest, src, size);
+inline void MemCopyToBigEndian(float32 *dest,
+                               const float32 *src,
+                               uint32 size) {
+    MemCopySwap32(dest, src, size);
 }
 
-inline void MemCopyToBigEndianUInt32(uint32 *dest, const uint32 *src, uint32 size) {
-    EndianityMemCopySwap32(dest, src, size);
+inline void MemCopyToBigEndian(uint32 *dest,
+                               const uint32 *src,
+                               uint32 size) {
+    MemCopySwap32(dest, src, size);
 }
 
-inline void MemCopyToBigEndianUInt16(uint16 *dest, const uint16 *src, uint32 size) {
-    EndianityMemCopySwap16(dest, src, size);
+inline void MemCopyToBigEndian(uint16 *dest,
+                               const uint16 *src,
+                               uint32 size) {
+    MemCopySwap16(dest, src, size);
 }
 
-inline void MemCopyToBigEndianInt32(int32 *dest, const int32 *src, uint32 size) {
-    EndianityMemCopySwap32(dest, src, size);
+inline void MemCopyToBigEndian(int32 *dest,
+                               const int32 *src,
+                               uint32 size) {
+    MemCopySwap32(dest, src, size);
 }
 
-inline void MemCopyToBigEndianInt16(int16 *dest, const int16 *src, uint32 size) {
-    EndianityMemCopySwap16(dest, src, size);
+inline void MemCopyToBigEndian(int16 *dest,
+                               const int16 *src,
+                               uint32 size) {
+    MemCopySwap16(dest, src, size);
 }
 
-inline void MemCopyToLittleEndianDouble(double *dest, const double *src, uint32 size) {
+inline void MemCopyToLittleEndian(float64 *dest,
+                                  const float64 *src,
+                                  uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyToLittleEndianUInt64(uint64 *dest, const uint64 *src, uint32 size) {
+inline void MemCopyToLittleEndian(uint64 *dest,
+                                  const uint64 *src,
+                                  uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyToLittleEndianInt64(int64 *dest, const int64 *src, uint32 size) {
+inline void MemCopyToLittleEndian(int64 *dest,
+                                  const int64 *src,
+                                  uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyToLittleEndianFloat(float *dest, const float *src, uint32 size) {
+inline void MemCopyToLittleEndian(float32 *dest,
+                                  const float32 *src,
+                                  uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyToLittleEndianUInt32(uint32 *dest, const uint32 *src, uint32 size) {
+inline void MemCopyToLittleEndian(uint32 *dest,
+                                  const uint32 *src,
+                                  uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyToLittleEndianUInt16(uint16 *dest, const uint16 *src, uint32 size) {
+inline void MemCopyToLittleEndian(uint16 *dest,
+                                  const uint16 *src,
+                                  uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyToLittleEndianInt32(int32 *dest, const int32 *src, uint32 size) {
+inline void MemCopyToLittleEndian(int32 *dest,
+                                  const int32 *src,
+                                  uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }
 
-inline void MemCopyToLittleEndianInt16(int16 *dest, const int16 *src, uint32 size) {
+inline void MemCopyToLittleEndian(int16 *dest,
+                                  const int16 *src,
+                                  uint32 size) {
     for (uint32 i = 0; i < size; i++)
         *dest++ = *src++;
 }

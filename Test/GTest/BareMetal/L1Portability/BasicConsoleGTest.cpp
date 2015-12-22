@@ -20,6 +20,8 @@
  * the class BasicConsoleGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
+#define Windows 2
+#define Linux 1
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -33,8 +35,12 @@
 
 #include "gtest/gtest.h"
 #include "BasicConsoleTest.h"
+#if ENVIRONMENT == Linux
 #include "BasicFile.h"
 #include "Directory.h"
+#else
+#define BasicFile int32
+#endif
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -42,8 +48,6 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-#define Windows 2
-#define Linux 1
 
 void RedirectConsoleInput(BasicFile &inputFile,
                           const char8* inputString) {
@@ -65,9 +69,11 @@ void RedirectConsoleInput(BasicFile &inputFile,
 }
 
 void Clean(BasicFile &inputFile) {
+#if ENVIRONMENT == Linux
     inputFile.Close();
     Directory remFile("inputFile_Test.txt");
     remFile.Delete();
+#endif
 }
 
 TEST(BasicConsoleGTest,TestConstructor) {

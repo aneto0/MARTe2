@@ -74,7 +74,6 @@ TEST(AtomicGTest,Int32TestBoundaryDecrement) {
     AtomicTest<int32> int32Test(testValue);
     ASSERT_TRUE(int32Test.TestBoundaryDecrement());
 }
-/*
 
 TEST(AtomicGTest,Int16TestIncrement) {
     int32 testValue = 16;
@@ -107,10 +106,9 @@ TEST(AtomicGTest,Int16TestBoundaryDecrement) {
     int32 testValue = 16;
     AtomicTest<int16> int16Test(testValue);
     ASSERT_TRUE(int16Test.TestBoundaryDecrement());
-}*/
+}
 
 
-/*
 TEST(AtomicGTest,Int8TestIncrement) {
     int32 testValue = 8;
     AtomicTest<int8> int8Test(testValue);
@@ -144,7 +142,7 @@ TEST(AtomicGTest,Int8TestBoundaryDecrement) {
     ASSERT_TRUE(int8Test.TestBoundaryDecrement());
 }
 
-*/
+
 TEST(AtomicGTest,ExchangeTest) {
     int32 testValue = 32;
     AtomicTest<int32> exchangeTest(testValue);

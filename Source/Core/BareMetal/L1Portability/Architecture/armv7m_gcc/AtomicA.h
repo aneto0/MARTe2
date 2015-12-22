@@ -24,7 +24,6 @@
 #ifndef ATOMICA_H_
 #define ATOMICA_H_
 
-
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
@@ -38,7 +37,9 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-inline void ATOMIC_INCREMENT(volatile int32 *value) {
+namespace Atomic {
+
+inline void Increment(volatile int32 *p) {
 
     register int32 readValue;
     register int32 ret;
@@ -48,13 +49,25 @@ inline void ATOMIC_INCREMENT(volatile int32 *value) {
                 "add %0, %0, #1\n"
                 "strex %2, %0, [%1]\n"
                 "cmp %2, #0\n"
-                : : "r" (readValue), "r" (value), "r" (ret)
+                : : "r" (readValue), "r" (p), "r" (ret)
         );
     }
     while (ret != 0);
 }
 
-inline void ATOMIC_DECREMENT(volatile int32 *value) {
+inline void Increment(volatile int16 *p) {
+    asm volatile( "cpsid i");
+    (*p)++;
+    asm volatile( "cpsie i");
+}
+
+inline void Increment(volatile int8 *p) {
+    asm volatile( "cpsid i");
+    (*p)++;
+    asm volatile( "cpsie i");
+}
+
+inline void Decrement(volatile int32 *p) {
 
     register int32 readValue;
     register int32 ret;
@@ -64,114 +77,107 @@ inline void ATOMIC_DECREMENT(volatile int32 *value) {
                 "sub %0, %0, #1\n"
                 "strex %2, %0, [%1]\n"
                 "cmp %2, #0\n"
-                : : "r" (readValue), "r" (value), "r" (ret)
+                : : "r" (readValue), "r" (p), "r" (ret)
         );
     }
     while (ret != 0);
 }
 
-inline void EXCHANGE(volatile int32 *oldValue, int32 newValue) {
+inline void Decrement(volatile int16 *p) {
+    asm volatile( "cpsid i");
+    (*p)--;
+    asm volatile( "cpsie i");
+}
 
+inline void Decrement(volatile int8 *p) {
+    asm volatile( "cpsid i");
+    (*p)--;
+    asm volatile( "cpsie i");
+}
+
+inline int32 Exchange(volatile int32 *p,
+                      int32 v) {
     register int32 readValue;
     register int32 ret;
     do {
         asm volatile(
                 "ldrex %0, [%1]\n"
                 "strex %2, %3, [%1]\n"
-                : : "r" (readValue), "r" (oldValue), "r" (ret), "r" (newValue)
+                : : "r" (readValue), "r" (p), "r" (ret), "r" (v)
         );
     }
     while (ret != 0);
-}
-
-inline bool TEST_AND_SET(volatile int32 *value) {
-
-    register int32 readValue = 0;
-    register int32 ret;
-
-    do {
-        asm volatile(
-                "ldrex %0, [%1]"
-                : : "r" (readValue), "r" (value)
-        );
-
-        if (readValue != 0) {
-            break;
-        }
-        asm volatile(
-                "add %0, %0, #1\n"
-                "strex %2, %0, [%1]\n"
-                "mov %0, %2"
-                : : "r" (readValue), "r" (value), "r" (ret)
-        );
-
-    }
-    while (ret != 0);
-
-    return readValue == 0;
-}
-
-namespace Atomic {
-
-inline void Increment(volatile int32 *p) {
-    ATOMIC_INCREMENT(p);
-}
-
-inline void Increment(volatile int16 *p) {
-    void* ptr = (void*) p;
-    volatile int32* pp = (int32*) ptr;
-    Increment(pp);
-}
-
-inline void Increment(volatile int8 *p) {
-    void* ptr = (void*) p;
-    volatile int32* pp = (int32*) ptr;
-    Increment(pp);
-}
-
-inline void Decrement(volatile int32 *p) {
-    ATOMIC_DECREMENT(p);
-}
-
-inline void Decrement(volatile int16 *p) {
-    void* ptr = (void*) p;
-    volatile int32* pp = (int32*) ptr;
-    Decrement(pp);
-}
-
-inline void Decrement(volatile int8 *p) {
-    void* ptr = (void*) p;
-    volatile int32* pp = (int32*) ptr;
-    Decrement(pp);
-}
-
-inline int32 Exchange(volatile int32 *p, int32 v) {
-    EXCHANGE(p, v);
     return v;
 
 }
 
 inline bool TestAndSet(int32 volatile *p) {
-    return TEST_AND_SET(p);
+
+    register int32 readValue;
+    register int32 ret;
+
+    bool ok = (*p == 0);
+
+    if (ok) {
+        do {
+            asm volatile(
+                    "ldrex %0, [%1]"
+                    : : "r" (readValue), "r" (p)
+            );
+
+            if (readValue != 0) {
+                break;
+            }
+            asm volatile(
+                    "add %0, %0, #1\n"
+                    "strex %2, %0, [%1]\n"
+                    "mov %0, %2"
+                    : : "r" (readValue), "r" (p), "r" (ret)
+            );
+
+        }
+        while (ret != 0);
+        ok = (readValue == 0);
+    }
+    return ok;
 }
 
 inline bool TestAndSet(int16 volatile *p) {
-    void* ptr = (void*) p;
-    volatile int32* pp = (int32*) ptr;
-    return TestAndSet(pp);
+    bool ret = (*p == 0);
+    if (ret) {
+        asm volatile( "cpsid i");
+        *p = 1;
+        asm volatile( "cpsie i");
+    }
+    return ret;
+
 }
 
 inline bool TestAndSet(int8 volatile *p) {
-    void* ptr = (void*) p;
-    volatile int32* pp = (int32*) ptr;
-    return TestAndSet(pp);
+    bool ret = (*p == 0);
+     if (ret) {
+         asm volatile( "cpsid i");
+         *p = 1;
+         asm volatile( "cpsie i");
+     }
+     return ret;
 }
 
-inline void Add(volatile int32 *p, int32 value) {
+inline void Add(volatile int32 *p,
+                int32 value) {
+
+    asm volatile( "cpsid i");
+    (*p) += value;
+    asm volatile( "cpsie i");
 
 }
 
-inline void Sub(volatile int32 *p, int32 value) {
+inline void Sub(volatile int32 *p,
+                int32 value) {
+
+    asm volatile( "cpsid i");
+    (*p) -= value;
+    asm volatile( "cpsie i");
 }
 
 }

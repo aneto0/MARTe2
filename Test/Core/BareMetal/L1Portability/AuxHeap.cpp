@@ -155,13 +155,7 @@ void *AuxHeap::Duplicate(const void * const data,
     // check if 0 zerminated copy to be done
     if (size == 0U) {
         const char8* inputData = static_cast<const char8 *>(data);
-        size = StringHelper::Length(inputData);
-        if (data != NULL) {
-            duplicate = StringHelper::StringDup(inputData);
-        }
-        if (duplicate == NULL) {
-            REPORT_ERROR(ErrorManagement::OSError, "Error: strdup()");
-        }
+        size = StringHelper::Length(inputData)+1u;
     }
     else { // strdup style
         duplicate = AuxHeap::Malloc(size);

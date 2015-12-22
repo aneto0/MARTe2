@@ -43,17 +43,18 @@
 
 TEST(FastMathGTest,TestFloatToInt32) {
     FastMathTest MathTest;
-    ASSERT_TRUE(MathTest.TestFloatToInt32(2.0, 2));
+    ASSERT_TRUE(MathTest.TestFloatToInt32(2.0f, 2));
 }
 
 TEST(FastMathGTest,TestSin) {
     FastMathTest MathTest;
-    ASSERT_TRUE(MathTest.TestSin(0, 0));
+    float expected = 0.0f;
+    ASSERT_TRUE(MathTest.TestSin(0.0f, expected));
 }
 
 TEST(FastMathGTest,TestCos) {
     FastMathTest MathTest;
-    ASSERT_TRUE(MathTest.TestCos(0, 1));
+    ASSERT_TRUE(MathTest.TestCos(0.0f, 1.0f));
 }
 
 TEST(FastMathGTest,All) {

@@ -27,16 +27,13 @@
 TARGET=freertos-armv7m
 
 OBJSX=  AtomicTest.x \
-#AuxHeap.x\
+		AuxHeap.x\
 		BasicConsoleTest.x \
 		EndianityTest.x \
-		ErrorManagementTest.x \
-		FastMathTest.x \
-		FastPollingMutexSemTest.x \
 		FormatDescriptorTest.x \
 		GlobalObjectsDatabaseTest.x \
 		HeapManagerTest.x \
-		HighResolutionTimerTest.x \
+#HighResolutionTimerTest.x \
 		LoadableLibraryTest.x \
 		MemoryCheckTest.x \
 		MemoryOperationsHelperTest.x\
@@ -49,6 +46,11 @@ OBJSX=  AtomicTest.x \
 		StringPortableTest.x \
 		TimeStampTest.x \
 		TimeoutTypeTest.x
+#ErrorManagementTest.x \
+		FastMathTest.x \
+		FastPollingMutexSemTest.x 
+
+		
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..

@@ -73,7 +73,6 @@ bool LinkedListHolderTest::TestReset(uint32 nElements) {
     LinkedListHolder list;
     // the destructor will call the cleanup
 
-
     LinkedListable firstElement;
 
     list.ListInsert(&firstElement);
@@ -140,6 +139,7 @@ bool LinkedListHolderTest::TestList(uint32 nElements) {
 
     LinkedListable *newFirstElement = firstElement->Next();
     list.ListExtract(firstElement);
+    delete firstElement;
 
     return list.List() == newFirstElement;
 
@@ -466,41 +466,38 @@ bool LinkedListHolderTest::TestListExtract() {
 
     LinkedListHolder list;
 
-    LinkedListable *stored[size];
+    LinkedListable stored[size];
 
-    for (uint32 i = 0; i < (size - 1); i++) {
-
-        stored[i] = new LinkedListable;
-        list.ListAdd(stored[i]);
+    for (uint32 i = 0; i < size; i++) {
+        list.ListAdd(&stored[i]);
 
     }
 
-    stored[31] = new LinkedListable;
-
-    if (list.ListExtract(stored[size])) {
+    LinkedListable notIn;
+    if (list.ListExtract(&notIn)) {
         return false;
     }
 
-    for (uint32 i = 0; i < (size - 1); i++) {
-        if (!list.ListExtract(stored[i])) {
+    for (int32 i = (size - 1); i >= 0; i--) {
+        if (!list.ListExtract(&stored[i])) {
             return false;
         }
 
-        if (stored[i]->Next() != NULL) {
+        if (stored[i].Next() != NULL) {
             return false;
         }
 
-        if (list.ListSize() != (size - 2 - i)) {
+        if (list.ListSize() != (uint32) i) {
             return false;
         }
     }
 
-    return list.ListSize() == 0;
+    return true;
 }
 
 bool LinkedListHolderTest::TestListExtractSearchFilter() {
 
-    const uint32 size=32;
+    const uint32 size = 32;
 
     LinkedListHolder list;
 
@@ -513,7 +510,7 @@ bool LinkedListHolderTest::TestListExtractSearchFilter() {
 
     }
 
-    SearchInteger searchNotIn(size+1);
+    SearchInteger searchNotIn(size + 1);
 
     if (list.ListExtract(&searchNotIn) != NULL) {
         return false;
@@ -537,9 +534,13 @@ bool LinkedListHolderTest::TestListExtractSearchFilter() {
             return false;
         }
 
-        if (list.ListSize() != (size-1 - i)) {
+        if (list.ListSize() != (size - 1 - i)) {
             return false;
         }
+    }
+
+    for (uint32 i = 0; i < size; i++) {
+        delete stored[i];
     }
 
     return list.ListSize() == 0;
@@ -547,29 +548,26 @@ bool LinkedListHolderTest::TestListExtractSearchFilter() {
 }
 
 bool LinkedListHolderTest::TestListExtractIndex() {
-    const uint32 size=32;
+    const uint32 size = 32;
 
     LinkedListHolder list;
 
-    LinkedListable *stored[size];
+    LinkedListable stored[size];
 
     for (uint32 i = 0; i < size; i++) {
-
-        stored[i] = new LinkedListable;
-        list.ListAdd(stored[i]);
-
+        list.ListAdd(&stored[i]);
     }
 
     if (list.ListExtract(size) != NULL) {
         return false;
     }
 
-    for (int32 i = (size-1); i >= 0; i--) {
-        if (list.ListExtract(i) != stored[i]) {
+    for (int32 i = (size - 1); i >= 0; i--) {
+        if (list.ListExtract(i) != &stored[i]) {
             return false;
         }
 
-        if (stored[i]->Next() != NULL) {
+        if (stored[i].Next() != NULL) {
             return false;
         }
 
@@ -583,14 +581,13 @@ bool LinkedListHolderTest::TestListExtractIndex() {
 
 bool LinkedListHolderTest::TestListDelete() {
 
-    const uint32 size=32;
+    const uint32 size = 32;
+    LinkedListable *stored[size];
 
     LinkedListHolder list;
 
-    LinkedListable *stored[size];
 
     for (uint32 i = 0; i < size; i++) {
-
         stored[i] = new LinkedListable;
         list.ListAdd(stored[i]);
 
@@ -610,7 +607,7 @@ bool LinkedListHolderTest::TestListDelete() {
         if (!list.ListDelete(stored[i])) {
             return false;
         }
-        if (list.ListSize() != (size-1 - i)) {
+        if (list.ListSize() != (size - 1 - i)) {
             return false;
         }
     }
@@ -620,7 +617,7 @@ bool LinkedListHolderTest::TestListDelete() {
 
 bool LinkedListHolderTest::TestListDeleteSearchFilter() {
 
-    const uint32 size=32;
+    const uint32 size = 32;
 
     LinkedListHolder list;
 
@@ -628,12 +625,12 @@ bool LinkedListHolderTest::TestListDeleteSearchFilter() {
 
     for (uint32 i = 0; i < size; i++) {
 
-        stored[i] = new IntegerList(i % (size/2));
+        stored[i] = new IntegerList(i % (size / 2));
         list.ListAdd(stored[i]);
 
     }
 
-    SearchInteger searchNotIn(size+1);
+    SearchInteger searchNotIn(size + 1);
 
     if (list.ListDelete(&searchNotIn)) {
         return false;
@@ -642,8 +639,8 @@ bool LinkedListHolderTest::TestListDeleteSearchFilter() {
         return false;
     }
 
-    for (uint32 i = 0; i < (size/2); i++) {
-        SearchInteger searchNumber(i % (size/2));
+    for (uint32 i = 0; i < (size / 2); i++) {
+        SearchInteger searchNumber(i % (size / 2));
         if (!list.ListDelete(&searchNumber)) {
             return false;
         }
@@ -661,11 +658,9 @@ bool LinkedListHolderTest::TestListDeleteSearchFilter() {
 
 }
 
-
-
 bool LinkedListHolderTest::TestListSafeDelete() {
 
-    const uint32 size=32;
+    const uint32 size = 32;
 
     LinkedListHolder list;
 
@@ -673,12 +668,12 @@ bool LinkedListHolderTest::TestListSafeDelete() {
 
     for (uint32 i = 0; i < size; i++) {
 
-        stored[i] = new IntegerList(i % (size/2));
+        stored[i] = new IntegerList(i % (size / 2));
         list.ListAdd(stored[i]);
 
     }
 
-    SearchInteger searchNotIn(size+1);
+    SearchInteger searchNotIn(size + 1);
 
     if (list.ListSafeDelete(&searchNotIn)) {
         return false;
@@ -687,8 +682,8 @@ bool LinkedListHolderTest::TestListSafeDelete() {
         return false;
     }
 
-    for (uint32 i = 0; i < (size/2); i++) {
-        SearchInteger searchNumber(i % (size/2));
+    for (uint32 i = 0; i < (size / 2); i++) {
+        SearchInteger searchNumber(i % (size / 2));
         if (!list.ListSafeDelete(&searchNumber)) {
             return false;
         }
@@ -765,7 +760,7 @@ bool LinkedListHolderTest::TestListPeek(uint32 nElements) {
 
 bool LinkedListHolderTest::TestListIterateIterator() {
 
-    const uint32 size=32;
+    const uint32 size = 32;
 
     LinkedListHolder list;
 
