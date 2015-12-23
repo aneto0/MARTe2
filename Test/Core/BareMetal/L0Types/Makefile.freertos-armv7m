@@ -32,11 +32,11 @@ OBJSX=  BasicTypeTest.x \
 		DoubleIntegerTest.x \
 		FractionalIntegerTest.x \
 		LinkedListableTest.x \
+		LinkedListHolderTest.x \
 		ShiftTest.x \
 		TypeCharacteristicsTest.x \
 		TypeDescriptorTest.x 
 #MatrixTest.x \
-		LinkedListHolderTest.x \
 		VectorTest.x
 		
 PACKAGE=Core/BareMetal

@@ -29,7 +29,6 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "gtest/gtest.h"
-#include "init_clock.h"
 #include "usbd_def.h"
 #include "usbd_desc.h"
 #include "usbd_cdc_interface.h"
@@ -47,6 +46,8 @@
 /*---------------------------------------------------------------------------*/
 
 TestInfo TestFunctions[2048] = { 0 };
+int FailedTestFunctions[64] = { 0 };
+
 volatile int numberOfTests = 0;
 
 static void SystemClock_Config(void) {
@@ -151,35 +152,68 @@ private:
 
 UARTConsole console;
 
+class prova {
+public:
+    prova() {
+        x = 1;
+    }
+
+    int x;
+};
+
 int main() {
 
     HAL_Init();
     BSP_LED_Init (LED6);
     BSP_LED_Init (LED5);
-    BSP_LED_Init(LED4);
+    BSP_LED_Init (LED4);
+
     SystemClock_Config();
+    unsigned int nFailedTests = 0u;
 
     console.Open();
+    char buffer[128] = { 0 };
+    unsigned int sizec = 0u;
+
     for (int i = 0; i < numberOfTests; i++) {
-        char buffer[128] = { 0 };
-        sprintf(buffer, "\n\r[ RUN       ] %s.%s", TestFunctions[i].className, TestFunctions[i].functionName);
-        unsigned int sizec = strlen(buffer)+1u;
+        HAL_Delay(1);
+        sprintf(buffer, "\n\r[ RUN      ] %s.%s [%u]", TestFunctions[i].className, TestFunctions[i].functionName, HAL_GetTick());
+        sizec = strlen(buffer) + 1u;
         console.Write(buffer, sizec);
         if (TestFunctions[i].function()) {
-            sprintf(buffer, "\n\r[        OK ] %s.%s", TestFunctions[i].className, TestFunctions[i].functionName);
-            sizec=strlen(buffer)+1;
+            sprintf(buffer, "\n\r[       OK ] %s.%s", TestFunctions[i].className, TestFunctions[i].functionName);
+            sizec = strlen(buffer) + 1;
             console.Write(buffer, sizec);
             BSP_LED_Toggle(LED6);
         }
         else {
-            sprintf(buffer, "\n\r[    FAILED ] %s.%s", TestFunctions[i].className, TestFunctions[i].functionName);
-            sizec=strlen(buffer)+1;
+            FailedTestFunctions[nFailedTests] = i;
+            nFailedTests++;
+            sprintf(buffer, "\n\r[   FAILED ] %s.%s", TestFunctions[i].className, TestFunctions[i].functionName);
+            sizec = strlen(buffer) + 1;
             console.Write(buffer, sizec);
             BSP_LED_On(LED5);
         }
     }
 
-    BSP_LED_On(LED4);
+    sprintf(buffer, "\n\r[==========] %d tests ran", numberOfTests);
+    sizec = strlen(buffer) + 1;
+    console.Write(buffer, sizec);
+    sprintf(buffer, "\n\r[  PASSED  ] %d tests", numberOfTests - nFailedTests);
+    sizec = strlen(buffer) + 1;
+    console.Write(buffer, sizec);
+
+    sprintf(buffer, "\n\r[  FAILED  ] %d tests, listed below (the first 64)", nFailedTests);
+    sizec = strlen(buffer) + 1;
+    console.Write(buffer, sizec);
+
+    for (int i = 0; i < nFailedTests; i++) {
+        sprintf(buffer, "\n\r[  FAILED  ] %s.%s", TestFunctions[FailedTestFunctions[i]].className, TestFunctions[FailedTestFunctions[i]].functionName);
+        sizec = strlen(buffer) + 1;
+        console.Write(buffer, sizec);
+    }
+
+    BSP_LED_On(LED6);
 
     return 0;
 }

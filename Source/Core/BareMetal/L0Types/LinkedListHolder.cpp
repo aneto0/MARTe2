@@ -38,16 +38,17 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 
-
 void LinkedListHolder::CleanUp() {
     LinkedListable *p = llhRoot.Next();
-    llhRoot.SetNext(NULL_PTR(LinkedListable *));
-    while (p != NULL) {
+    for (uint32 i = 0u; i < llhSize; i++) {
+        if (p == NULL) {
+            break;
+        }
         LinkedListable *q = p;
         p = p->Next();
         delete q;
     }
-    llhSize = 0u;
+    Reset();
 }
 
 void LinkedListHolder::Reset() {

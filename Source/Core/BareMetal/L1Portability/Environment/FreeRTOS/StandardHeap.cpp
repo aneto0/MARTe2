@@ -31,6 +31,7 @@
 
 #include "StandardHeap.h"
 #include <string.h>
+#include <stdlib.h>
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -60,7 +61,7 @@ void *StandardHeap::Malloc(const uint32 size) {
     void* pointer = NULL_PTR(void*);
 
     if (size != 0u) {
-        pointer = pvPortMalloc(static_cast<osulong>(size));
+        pointer = malloc(static_cast<osulong>(size));
     }
 
     if (pointer != NULL) {
@@ -88,7 +89,7 @@ void *StandardHeap::Malloc(const uint32 size) {
 /*lint -e{586} use of free function (deprecated) */
 void StandardHeap::Free(void *&data) {
     if (data != NULL) {
-        vPortFree(data);
+        free(data);
     }
 //    delete[] (reinterpret_cast<char8 *>(data));
     data = NULL_PTR(void *);
@@ -137,9 +138,7 @@ void *StandardHeap::Duplicate(const void * const data,
         char8 *destination = static_cast<char8 *>(duplicate);
         uint32 i;
         for (i = 0u; i < size; i++) {
-            *destination = *source;
-            destination++;
-            source++;
+            destination[i] = source[i];
         } //copy loop
     } //check Malloc success
     else {

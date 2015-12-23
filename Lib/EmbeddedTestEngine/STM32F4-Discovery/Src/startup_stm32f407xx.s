@@ -95,8 +95,7 @@ LoopFillZerobss:
   cmp  r2, r3
   bcc  FillZerobss
 
-	bl Reset
-
+	bl SystemInit
 /* Call the clock system intitialization function.*/
    bl __libc_init_array
 

@@ -31,7 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-
+#include <math.h>
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
@@ -40,15 +40,15 @@ namespace MARTe {
 namespace FastMath {
 
 inline float Sin(float angle) {
-    return 0.0f;
+    return sin(angle);
 }
 
 inline float Cos(float angle) {
-    return 0.0f;
+    return cos(angle);
 }
 
 inline int32 FloatToInt(float input) {
-    return 0;
+    return static_cast<int32>(input);
 }
 
 }

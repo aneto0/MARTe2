@@ -36,17 +36,27 @@
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
-
-namespace MARTe{
+extern "C" {
+uint32_t HAL_GetTick(void);
+}
+namespace MARTe {
 
 namespace HighResolutionTimer {
 
-inline uint32 Counter32(){
+inline uint32 Counter32() {
+
+#ifdef USE_FREERTOS
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+    {
+        return xTaskGetTickCount();
+    }
+#endif
+    return HAL_GetTick();
     //return xTaskGetTickCountFromISR();
-    return xTaskGetTickCount();
+
 }
 
-inline int64 Counter(){
+inline int64 Counter() {
     return Counter32();
 }
 

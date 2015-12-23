@@ -57,6 +57,7 @@ struct TestInfo {
 };
 
 extern TestInfo TestFunctions[2048];
+extern int FailedTestFunctions[64];
 extern volatile int numberOfTests;
 
 class AddTest {

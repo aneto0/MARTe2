@@ -32,8 +32,7 @@ OBJSX=  AtomicGTest.x \
 		FormatDescriptorGTest.x \
 		GlobalObjectsDatabaseGTest.x \
 		HeapManagerGTest.x \
-#HighResolutionTimerGTest.x \
-		LoadableLibraryGTest.x \
+		HighResolutionTimerGTest.x \
 		MemoryGTest.x \
 		SleepGTest.x \
 		StandardHeap_GenericGTest.x \
@@ -44,6 +43,7 @@ OBJSX=  AtomicGTest.x \
 		TimeoutTypeGTest.x
 #ErrorManagementGTest.x \
 		FastMathGTest.x \
+		LoadableLibraryGTest.x \
 		FastPollingMutexSemGTest.x 
 		
 		 

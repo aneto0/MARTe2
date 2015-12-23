@@ -28,8 +28,8 @@ ctags : %.cpp %.c %.h
 %_Gen.cpp : ../Generic/%_Generic.cpp
 	cp ../Generic/$*_Generic.cpp $*_Gen.cpp
 
-$(ROOT_DIR)/createLibrary.o:
-	touch createLibrary.cpp
+createLibrary :
+	touch createLibrary
 
 $(BUILD_DIR)/%.o : %.cpp
 	mkdir -p $(BUILD_DIR)
@@ -40,12 +40,13 @@ $(BUILD_DIR)/%.o : %.c
 	mkdir -p $(BUILD_DIR)
 	$(CCOMPILER) -c $(OPTIM) $(INCLUDES) $(CFLAGS) $(CFLAGSPEC) $(DEBUG)  $*.c -o $(BUILD_DIR)/$*.o
 
-$(BUILD_DIR)/%.a : $(OBJS) $(ROOT_DIR)/createLibrary.o
+$(BUILD_DIR)/%.a : $(OBJS) createLibrary
 	touch $@
 	rm $(BUILD_DIR)/$*.a
-	$(LINKER) -r $(OBJS) $(LIBRARIES_STATIC) -o $@
+	$(LINKER) -Ur $(OBJS) $(LIBRARIES_STATIC) -o $@
+	rm createLibrary
 
-$(BUILD_DIR)/%.so : $(OBJS) $(ROOT_DIR)/createLibrary.o
+$(BUILD_DIR)/%.so : $(OBJS) 
 	echo "Only static linking supported"
 
 %.ifo :  %.h
@@ -65,8 +66,9 @@ $(BUILD_DIR)/%.exe : $(BUILD_DIR)/%.o
 	touch $(BUILD_DIR)/$*.exe
 	echo cannot build executable $(BUILD_DIR)/$*.exe use $(BUILD_DIR)/$*.ex
 
-$(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.o $(OBJS)
+$(BUILD_DIR)/%.ex : $(BUILD_DIR)/%.o $(OBJS) createLibrary
 	$(COMPILER) $(LFLAGS) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES)  -o $(BUILD_DIR)/$*.ex
+	rm createLibrary
 
 $(BUILD_DIR)/%.elf : $(BUILD_DIR)/%.o $(OBJS) 
 	$(COMPILER) $(CFLAGS) $(LFLAGS) -T $(LINKER_FILE) $(BUILD_DIR)/$*.o $(OBJS) $(LIBRARIES) --specs=nosys.specs -o $@ 

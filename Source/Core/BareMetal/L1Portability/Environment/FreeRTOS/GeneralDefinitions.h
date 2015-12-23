@@ -84,7 +84,7 @@ typedef int32 Handle;
 /** In windows the newline is specified with \r\n */
 #define N_CHARS_NEWLINE 1u
 
-
+/*
 inline void* operator new(size_t x) {
     return pvPortMalloc(x);
 }
@@ -92,6 +92,7 @@ inline void* operator new(size_t x) {
 inline void operator delete(void *ptr) {
     vPortFree(ptr);
 }
+*/
 
 #endif /* GENERALDEFINITIONS_ENV_H_ */
 

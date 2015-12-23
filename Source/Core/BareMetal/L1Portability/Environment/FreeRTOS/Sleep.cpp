@@ -37,27 +37,41 @@
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
+extern "C" {
 
+void HAL_Delay(volatile uint32_t Delay);
+}
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-namespace MARTe{
+namespace MARTe {
 
 namespace Sleep {
 
 void AtLeast(float64 sec) {
-    vTaskDelay(sec * configTICK_RATE_HZ);
+#ifdef USE_FREERTOS
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+        vTaskDelay((msec * configTICK_RATE_HZ) / 1000L);
+    }
+#else
+    HAL_Delay(sec * 1000);
+#endif
 }
 
 void NoMore(float64 sec) {
-    uint32 linuxSleepNoMoreMinUsecTime = 5000u;
     int64 secCounts = static_cast<int64>(sec) * HighResolutionTimer::Frequency();
 
-    sec -= static_cast<float64>(linuxSleepNoMoreMinUsecTime) * 1e-6;
     int64 start = HighResolutionTimer::Counter();
     if (sec > 0.) {
-        vTaskDelay(sec * 1000 / portTICK_PERIOD_MS);
+#ifdef USE_FREERTOS
+        if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+            vTaskDelay(sec * 1000 / portTICK_PERIOD_MS);
+        }
+#else
+        HAL_Delay(sec * 1000);
+#endif
     }
+
     int64 sleepUntil = secCounts + start;
     while (HighResolutionTimer::Counter() < sleepUntil) {
     }
@@ -65,21 +79,42 @@ void NoMore(float64 sec) {
 }
 
 void Sec(float64 sec) {
-    vTaskDelay(sec * configTICK_RATE_HZ);
+#ifdef USE_FREERTOS
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+        vTaskDelay(sec * configTICK_RATE_HZ);
+
+    }
+#else
+    HAL_Delay(sec * 1000);
+#endif
 }
 
 void MSec(int32 msec) {
-    vTaskDelay((msec * configTICK_RATE_HZ) / 1000L);
+#ifdef USE_FREERTOS
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+        vTaskDelay((msec * configTICK_RATE_HZ) / 1000L);
+    }
+#else
+    HAL_Delay(msec);
+#endif
+
 }
 
 void SemiBusy(float64 totalSleepSec,
-                     float64 nonBusySleepSec) {
+              float64 nonBusySleepSec) {
     int64 startCounter = HighResolutionTimer::Counter();
     float64 endCounterF = totalSleepSec * static_cast<float64>(HighResolutionTimer::Frequency());
     int64 sleepUntilCounter = startCounter + static_cast<int64>(endCounterF);
 
     if ((nonBusySleepSec < totalSleepSec) && (nonBusySleepSec > 0.0)) {
-        vTaskDelay(nonBusySleepSec * 1000 / portTICK_PERIOD_MS);
+#ifdef USE_FREERTOS
+        if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+            vTaskDelay(nonBusySleepSec * 1000 / portTICK_PERIOD_MS);
+        }
+#else
+        HAL_Delay(nonBusySleepSec * 1000);
+#endif
+
     }
     while (HighResolutionTimer::Counter() < sleepUntilCounter) {
     }

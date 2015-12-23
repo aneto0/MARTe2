@@ -55,12 +55,13 @@ USB_CDC_PATH=$(MAINDIR)Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/
 
 
 
-FLAGS=-mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -fno-builtin -ffunction-sections -fdata-sections  
-#-flto
+FLAGS=-MD -MP -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -ffunction-sections -fdata-sections  
+#-fno-builtin
 CFLAGS=$(FLAGS) -Wall
 OPTFLAGS=-Os
 #Remember to substitute it with stm macros.
-SPECFLAGS=-DPLATFORM=STM32F4_Discovery -DUSE_USB_FS -DUSE_FREERTOS -DARCHITECTURE=armv7m_gcc -DOPERATING_SYSTEM=FreeRTOS -DSTM32F407xx
+SPECFLAGS= -DUSE_USB_FS -DSTM32F407xx
+#-DUSE_FREERTOS
 CFLAGS+= $(INCPATHS) $(OPTFLAGS) -g
 
 
@@ -78,7 +79,7 @@ CFILES+=$(shell ls $(CMSISPATH)*.c 2>/dev/null)
 CFILES+=$(shell ls $(RTOSDIR)*.c 2>/dev/null)
 CFILES+=$(shell ls $(RTOSDIR)CMSIS_RTOS/*.c 2>/dev/null)
 CFILES+=$(shell ls $(PORTABLEPATH)*.c 2>/dev/null)
-CFILES+=$(shell ls $(MEMORYMANPATH)heap_2.c 2>/dev/null)
+CFILES+=$(shell ls $(MEMORYMANPATH)heap_3.c 2>/dev/null)
 CFILES+=$(shell ls $(USBPATH)*.c 2>/dev/null)
 CFILES+=$(shell ls $(USB_CDC_PATH)*.c 2>/dev/null)
 #CFILES+=$(shell ls $(ACCELPATH)*.c 2>/dev/null)
@@ -92,10 +93,12 @@ AFILES:=$(shell ls $(SRC)*.s 2>/dev/null)
 #AFILES+=$(shell ls $(BSPPATH)*.s 2>/dev/null)
 #AFILES+=$(shell ls $(CMSISPATH)*.s 2>/dev/null)
 COBJS:=$(CFILES:%.c=%.o)
-CPPOBJSTMP:=$(CPPFILES:%.cpp=%.o)
-CPPOBJS = $(addprefix $(BUILDPATH), $(CPPOBJSTMP))
+
+CPPOBJS = $(CPPFILES:%.cpp=%.o) 
+CPPOBJS += $(shell find  ../../../Build/$(MARTE_TARGET)/ -name "*.o")
+
 AOBJS:=$(AFILES:%.s=%.o)
-ALLOBJS=$(COBJS) $(AOBJS) $(CPPOBJS)
+ALLOBJS=$(CPPOBJS) $(COBJS) $(AOBJS)
 #LPATH=$(MAINDIR)Projects/STM32F4-Discovery/Templates/TrueSTUDIO/STM32F4-Discovery/
 LPATH=
 #LTARGET=$(LPATH)STM32F407VG_FLASH.ld
@@ -138,14 +141,14 @@ $(PORTABLEPATH)%.o: $(PORTABLEPATH)%.c
 $(MEMORYMANPATH)%.o: $(MEMORYMANPATH)%.c
 	$(CC) $(CFLAGS) $(SPECFLAGS) -c $< -o $@
 
-$(BUILDPATH)%.o: %.cpp
+%.o: %.cpp
 	$(CXX) $(CFLAGS) $(SPECFLAGS) -c $< -o $@
 
 $(BUILDPATH)%.o: %.s
 	$(CC) $(CFLAGS) -c $*.s -o $(BUILDPATH)$*.o
 
 $(BUILDPATH)$(TARGET).elf: $(ALLOBJS) $(LTARGET)
-	$(LD) $(FLAGS) -T $(LTARGET) $(LFLAGS) $(ALLOBJS) $(LIBS) --specs=nosys.specs -o $@ 
+	$(LD) $(FLAGS) -T $(LTARGET) $(LFLAGS) $(ALLOBJS) --specs=nosys.specs -o $@ 
 
 $(BUILDPATH)%.bin: $(BUILDPATH)%.elf
 	$(OBJCOPY) -S -O binary  $< $@

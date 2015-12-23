@@ -20,8 +20,7 @@
  * the class BasicConsoleGTest (public, protected, and private). Be aware that some
  * methods, such as those inline could be defined on the header file, instead.
  */
-#define Windows 2
-#define Linux 1
+
 
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
@@ -35,7 +34,11 @@
 
 #include "gtest/gtest.h"
 #include "BasicConsoleTest.h"
+#define Windows 2
+#define Linux 1
 #if ENVIRONMENT == Linux
+#undef Linux
+#define Linux Linux
 #include "BasicFile.h"
 #include "Directory.h"
 #else
