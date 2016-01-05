@@ -46,7 +46,29 @@
 namespace MARTe {
 
     /**
-     * @brief A class which encapsulates attributes and information about a file or a directory.
+     * @brief A class which encapsulates attributes and information about
+     * a file or a directory.
+     *
+     * @warning This class needs the target environment being properly
+     * configured, in order to execute some of its methods. For instance,
+     * getting the last access time for a file on Windows could fail,
+     * because it is a feature that can be disabled on that operating
+     * system.
+     *
+     * @details
+     *
+     * **How to verify if the last access time stamping is enabled on
+     * Windows?**
+     *
+     * Execute the following command:
+     *
+     *     fsutil behavior query disablelastaccess
+     *
+     * **How to enable the last access time stamping on Windows?**
+     *
+     * Execute the following command as administrator and restart the computer.
+     *
+     *     fsutil behavior set disablelastaccess 0
      */
     class DLL_API Directory: public LinkedListable {
 
