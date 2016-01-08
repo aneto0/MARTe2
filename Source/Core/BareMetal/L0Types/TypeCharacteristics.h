@@ -44,6 +44,7 @@ namespace TypeCharacteristics {
 
 /**
  *  @brief Returns true if the integer type is signed, false otherwise.
+ *  @tparam T TODO Define T
  *  @return true if the type is signed, false otherwise.
  */
 template<typename T>
@@ -54,6 +55,7 @@ bool IsSigned() {
 
 /**
  * @brief Returns the maximum possible value of the template integer type.
+ * @tparam T TODO Define T
  * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
  */
 template<typename T>
@@ -65,6 +67,7 @@ const T MaxValue() {
 
 /**
  * @brief Returns the minimum possible value of the template integer type.
+ * @tparam T TODO Define T
  * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
  */
 template<typename T>
@@ -77,6 +80,7 @@ const T MinValue() {
 /**
  * @brief Returns the type usable bit size.
  * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1)
+ * @tparam T TODO Define T
  * @return the type usable bit size.
  */
 template<typename T>
@@ -88,6 +92,8 @@ const uint8 UsableBitSize() {
 
 /**
  * @brief Returns the maximum possible value of the template integer type with the specified bit size.
+ * @tparam T TODO Define T
+ * @tparam bitSize TODO Define bitSize
  * @return 0xffff...f if the type is unsigned, 0x7fff...f if it is signed.
  */
 template<typename T, uint8 bitSize>
@@ -103,6 +109,8 @@ const T MaxValue() {
 
 /**
  * @brief Returns the minimum possible value of the template integer type with the specified bit size.
+ * @tparam T TODO Define T
+ * @tparam bitSize TODO Define bitSize
  * @return 0x00...0 if the type is unsigned, 0x80...0 is if it is signed
  */
 template<typename T, uint8 bitSize>
@@ -114,6 +122,8 @@ const T MinValue() {
 
 /**
  * @brief Returns the type usable bit size with the specified bit size.
+ * @tparam T TODO Define T
+ * @tparam bitSize TODO Define bitSize
  * @details For unsigned types the usable bit size is (sizeof(T)*8), for signed types is (sizeof(T)*8-1)
  * @return the type usable bit size.
  */
@@ -128,6 +138,9 @@ const uint8 UsableBitSize() {
 
 /**
  * @brief Saturates the input if it does not fit within the range of numbers with the specified bit size.
+ * @tparam outputType TODO Define outputType
+ * @tparam inputType TODO Define inputType
+ * @tparam bitSize TODO Define bitSize
  * @param[in] input is the input value.
  * @return If the input value is minor than the maximum value (depending on the specified type and bit size)
  * and greater than the minimum value it will be returned untouched. Otherwise this function returns the

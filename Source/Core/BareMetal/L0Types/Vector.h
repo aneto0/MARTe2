@@ -42,6 +42,7 @@ namespace MARTe {
 
 /**
  * @brief Fixed size array of values.
+ * @tparam T TODO Define T
  * @details The Vector can allocate and manage its own memory or it can be
  * associated to an existent memory array.
  */
@@ -84,6 +85,7 @@ public:
 
     /**
      * @brief Constructs a new matrix from a statically declared table [].
+     * @tparam nOfElementsStatic Define nOfElementsStatic
      * @param[in] source The address of the statically declared table.
      * @post
      *   GetNumberOfElements() == nOfElementsStatic &&

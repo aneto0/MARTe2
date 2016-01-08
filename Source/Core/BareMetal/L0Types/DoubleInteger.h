@@ -44,6 +44,7 @@ namespace MARTe {
  * @brief Implementation of an integer which duplicates the size of the type passed by argument.
  * @details Implementation is endianity dependent.\n
  * Uses operators of T to implement operators.
+ * @tparam T TODO Define T
  */
 template<typename T>
 class DoubleInteger {
@@ -73,6 +74,7 @@ public:
     /**
      * @brief Smart copy constructor by generic integer type.
      * @details Builds the double integer depending on the size of T2.
+     * @tparam T2 Define T2
      */
     template<typename T2>
     DoubleInteger(T2 n);

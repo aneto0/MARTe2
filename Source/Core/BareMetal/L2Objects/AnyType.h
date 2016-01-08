@@ -461,6 +461,8 @@ public:
 
     /**
      * @brief Constructor by BitBoolean.
+     * @tparam baseType the standard type which is used as a base for bitBool's type
+     * @tparam bitOffset TODO define bitOffset
      * @param[in] bitBool is the BitBoolean object input.
      */
     template<typename baseType, uint8 bitOffset>
@@ -468,6 +470,9 @@ public:
 
     /**
      * @brief Constructor by BitRange.
+     * @tparam baseType the standard type which is used as a base for bitRange's type
+     * @tparam bitSize the actual size of the bitRange's type
+     * @tparam bitOffset TODO Define bitOffset
      * @param[in] bitRange is the BitRange object input.
      */
     template<typename baseType, uint8 bitSize, uint8 bitOffset>
@@ -475,6 +480,8 @@ public:
 
     /**
      * @brief Constructor by FractionalInteger.
+     * @tparam baseType the standard type which is used as a base for fractionalInt's type
+     * @tparam bitSize the actual size of the fractionalInt's type
      * @param[in] fractionalInt is the FractionalInteger object input.
      */
     template<typename baseType, uint8 bitSize>
@@ -482,6 +489,8 @@ public:
 
     /**
      * @brief Constructor by constant FractionalInteger.
+     * @tparam baseType the standard type which is used as a base for fractionalInt's type
+     * @tparam bitSize the actual size of the fractionalInt's type
      * @param[in] fractionalInt is the constant FractionalInteger object input.
      */
     template<typename baseType, uint8 bitSize>
@@ -489,7 +498,8 @@ public:
 
     /**
      * @brief Constructor from a statically declared array [].
-     * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
+     * @tparam T TODO Define T
+     * @tparam nOfElementsStatic number of elements in the array, automatically computed by the compiler.
      * @param[in] source address of the statically declared array.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -503,7 +513,7 @@ public:
 
     /**
      * @brief Constructor from a statically declared array of characters [].
-     * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
+     * @tparam nOfElementsStatic number of elements in the array, automatically computed by the compiler.
      * @param[in] source address of the statically declared array.
      * @pre
      *   The C Array must be always 0 terminated like a normal C string.
@@ -519,7 +529,7 @@ public:
 
     /**
      * @brief Constructor from a constant statically declared array of characters [].
-     * @param[in] nOfElementsStatic number of elements in the array, automatically computed by the compiler.
+     * @tparam nOfElementsStatic number of elements in the array, automatically computed by the compiler.
      * @param[in] source address of the statically declared array.
      * @pre
      *   The C Array must be always 0 terminated like a normal C string.
@@ -535,8 +545,9 @@ public:
 
     /**
      * @brief Constructor from a statically declared table [][].
-     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
-     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @tparam T TODO Define T
+     * @tparam nOfRowsStatic number of rows in the table, automatically computed by the compiler.
+     * @tparam nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfDimensions() == 2 &&
@@ -551,8 +562,8 @@ public:
 
     /**
      * @brief Constructor from a statically declared table of characters [][].
-     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
-     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @tparam nOfRowsStatic number of rows in the table, automatically computed by the compiler.
+     * @tparam nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -566,8 +577,9 @@ public:
 
     /**
      * @brief Constructor from a statically declared table of characters [][][].
-     * @param[in] nOfRowsStatic number of rows in the table, automatically computed by the compiler.
-     * @param[in] nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @tparam nOfRowsStatic number of rows in the table, automatically computed by the compiler.
+     * @tparam nOfColumnsStatic number of columns in the table, automatically computed by the compiler.
+     * @tparam nOfChars TODO Define nOfChars
      * @param[in] source address of the statically declared table.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -581,6 +593,7 @@ public:
 
     /**
      * @brief Constructor from an existent Matrix.
+     * @tparam T TODO Define T
      * @param[in] mat the matrix from whose this AnyType will be constructed.
      * @post
      *   GetNumberOfDimensions() == 2 &&
@@ -607,6 +620,7 @@ public:
 
     /**
      * @brief Constructor from an existent Vector.
+     * @tparam T TODO Define T
      * @param[in] vec the vector from whose this AnyType will be constructed.
      * @post
      *   GetNumberOfDimensions() == 1 &&
@@ -658,6 +672,7 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
+     * @tparam baseType TODO Define baseType
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegisteredDatabase).
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.
@@ -668,6 +683,7 @@ public:
 
     /**
      * @brief Generate an AnyType from a type registered in the ClassRegistryDatabase.
+     * @tparam baseType TODO Define baseType
      * @details The source \a obj does not have to inherit from Object (but must be registered in the ClassRegistryDatabase).
      * @param[out] dest the generated AnyType is written in this variable.
      * @param[in] obj the source Object.

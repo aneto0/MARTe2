@@ -51,6 +51,9 @@ namespace MARTe {
  *
  * All the other operating system stream functions will be left untouched allowing full access to the specific
  * operating system stream implementation.
+ *
+ * @tparam bufferedStream TODO Define bufferedStream
+ * @tparam basicStream TODO Define basicStream
  */
 template<class bufferedStream, class basicStream>
 class BufferedStreamGenerator: public bufferedStream, public basicStream {

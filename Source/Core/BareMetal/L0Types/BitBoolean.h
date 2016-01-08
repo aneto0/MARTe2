@@ -43,6 +43,8 @@ namespace MARTe {
 /**
  *  @brief Boolean shifted type.
  *  @details This type could be used in an union obtaining the same effect of a one bit boolean in a structure.
+ *  @tparam baseType the standard type which is used as a base for the new type
+ *  @tparam bitOffset TODO define bitOffset
  *  @warning bitOffset must be less than the number of bits of baseType.
  */
 /*lint -e{1721} operator= is not assignment operator. Justification: the input argument is bool because this type must be used as a boolean type.*/

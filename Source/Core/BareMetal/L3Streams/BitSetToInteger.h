@@ -46,6 +46,7 @@ namespace MARTe {
 
 /**
  * @Brief BitSet to BitSet function for private use only.
+ * @tparam T TODO Define T
  * @param[in, out] destination is a pointer to the bitSet destination.
  * @param[in] destinationBitShift is the desired shift in bit in destination variable.
  * @param[in] destinationBitSize is the desired size in bit for the number to copy in destination.
@@ -74,6 +75,7 @@ static inline void BSToBS(T * const & destination,
 
 /**
  * @Brief BitSet to BitSet function for copy a bit range from a source to a destination.
+ * @tparam T TODO Define T
  * @param[in, out] destination is a pointer to the bitSet destination.
  * @param[in, out] destinationBitShift is the desired shift in bit in destination variable.
  * @param[in] destinationBitSize is the desired size in bit for the number to copy in destination.
@@ -104,6 +106,8 @@ static inline bool BitSetToBitSet(T *& destination,
 
 /**
  * @Brief BitSet to Integer function.
+ * @tparam T TODO Define T
+ * @tparam T2 TODO Define T2
  * @param[in, out] dest is the location for the copy of the desired bit range.
  * @param[in, out] source is a pointer to the bitSet source.
  * @param[in, out] sourceBitShift defines the shift from which extract the number.
@@ -126,6 +130,8 @@ static inline bool BitSetToInteger(T2 & dest,
 
 /**
  * @Brief Integer to BitSet function.
+ * @tparam T TODO Define T
+ * @tparam T2 TODO Define T2
  * @param[in, out] destination is a pointer to the bitSet destination.
  * @param[in, out] destinationBitShift is the desired shift in bit in destination variable.
  * @param[in] destinationBitSize is the desired size in bit for the number to copy in destination.

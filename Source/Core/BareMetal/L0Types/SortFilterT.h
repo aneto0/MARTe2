@@ -40,6 +40,7 @@ namespace MARTe {
 
 /**
  * @brief Template implementation of the the SortFilter interface.
+ * @tparam T TODO Define T
  */
 template<typename T>
 class SortFilterT {

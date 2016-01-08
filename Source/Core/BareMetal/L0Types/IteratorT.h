@@ -40,6 +40,7 @@ namespace MARTe {
 
 /**
  * @brief Template implementation of the Iterator interface.
+ * @tparam T TODO Define T
  */
 template<typename T>
 class IteratorT {

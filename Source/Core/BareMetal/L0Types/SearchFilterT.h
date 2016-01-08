@@ -40,6 +40,7 @@ namespace MARTe {
 
 /**
  * @brief Template version of the SearchFilter interface.
+ * @tparam T TODO Define T
  */
 template<typename T>
 class SearchFilterT {
