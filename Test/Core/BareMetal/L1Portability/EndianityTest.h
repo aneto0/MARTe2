@@ -48,6 +48,8 @@ using namespace MARTe;
  * from (to) the target architecture endianity (i.e. the endianity of
  * machine where the code is being executed), to (from) the
  * complementary endianity.
+ *
+ * @tparam T TODO Define T
  */
 template<class T>
 class EndianityTest {
