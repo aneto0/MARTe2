@@ -28,7 +28,8 @@ TARGET=freertos-armv7m
 
 
 OBJSX=
-SPB = BareMetal.x
+SPB =  Scheduler.x 
+#  BareMetal.x
 PACKAGE=
 ROOT_DIR=../..
 MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
@@ -49,11 +50,10 @@ INCLUDES+= -I$(EXT_PACKAGE)/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/In
 
 LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreB$(LIBEXT) 
 LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/BareMetal/MARTeCoreBTest$(LIBEXT) 
-#LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT) 
-#LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
+LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreS$(LIBEXT) 
+LIBRARIES_STATIC   += ../../Build/$(TARGET)/Core/Scheduler/MARTeCoreSTest$(LIBEXT)
 LIBRARIES_STATIC   += ../../Build/$(TARGET)/GTest/BareMetal/MARTeBGTest$(LIBEXT)
-#LIBRARIES_STATIC   += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
-#LIBRARIES   += ../../Lib/EmbeddedTestEngine/embedded$(LIBEXT)
+LIBRARIES_STATIC   += ../../Build/$(TARGET)/GTest/Scheduler/MARTeSGTest$(LIBEXT)
 
 
 

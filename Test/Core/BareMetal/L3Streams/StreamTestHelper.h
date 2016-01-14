@@ -463,7 +463,7 @@ public:
 
 };
 
-static const uint32 numberOfIntegers = 32;
+static const uint32 numberOfIntegers = 64;
 static const uint32 numberOfFloats = 64;
 
 /**

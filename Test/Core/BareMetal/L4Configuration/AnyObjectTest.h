@@ -268,8 +268,8 @@ bool AnyObjectTest::TestGetType_Vector(T value) {
 
 template<typename T>
 bool AnyObjectTest::TestSerialise_Matrix(T value) {
-    MARTe::uint32 nOfRows = 30;
-    MARTe::uint32 nOfColumns = 62;
+    MARTe::uint32 nOfRows = 10;
+    MARTe::uint32 nOfColumns = 12;
     MARTe::AnyObject anyObj;
     MARTe::Matrix<T> sourceMat(nOfRows, nOfColumns);
     MARTe::uint32 i;

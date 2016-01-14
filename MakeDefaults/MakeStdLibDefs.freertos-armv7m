@@ -70,8 +70,8 @@ CFLAGS =-MD -MP -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-en
 #-ffreestanding -std=gnu99 -z muldefs -fno-builtin
 CPPFLAGS = $(CFLAGS) 
 
-CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) 
-#-DUSE_FREERTOS
+CFLAGSPEC= -DARCHITECTURE=$(ARCHITECTURE) -DENVIRONMENT=$(ENVIRONMENT) -DUSE_FREERTOS -DINCLUDE_eTaskGetState=1 -DINCLUDE_pcTaskGetTaskName=1 -DUSE_THREADS_DATABASE 
+
 LIBRARIES =  -lnosys -lm -lgcc -lc
 .SUFFIXES:   .c  .cpp  .o .a .exe .ex .ex_ .so .gam
 

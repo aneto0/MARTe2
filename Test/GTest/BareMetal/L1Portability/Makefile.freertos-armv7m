@@ -29,6 +29,7 @@ TARGET=freertos-armv7m
 OBJSX=  AtomicGTest.x \
 		BasicConsoleGTest.x \
 		EndianityGTest.x \
+		FastMathGTest.x \
 		FormatDescriptorGTest.x \
 		GlobalObjectsDatabaseGTest.x \
 		HeapManagerGTest.x \
@@ -42,7 +43,6 @@ OBJSX=  AtomicGTest.x \
 		TimeStampGTest.x \
 		TimeoutTypeGTest.x
 #ErrorManagementGTest.x \
-		FastMathGTest.x \
 		LoadableLibraryGTest.x \
 		FastPollingMutexSemGTest.x 
 		

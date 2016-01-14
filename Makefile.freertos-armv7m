@@ -27,7 +27,7 @@
 TARGET=freertos-armv7m
 
 OBJSX=
-SPB    = Source/Core.x Test/Core/BareMetal.x Test/GTest.x Lib/EmbeddedTestEngine/STM32F4-Discovery.x
+SPB    = Source/Core.x Test/Core/BareMetal.x Test/Core/Scheduler.x Test/GTest.x Lib/EmbeddedTestEngine/STM32F4-Discovery.x
 #Test/Core/Scheduler.x Test/Core/FileSystem.x 
 
 

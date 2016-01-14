@@ -30,6 +30,7 @@ OBJSX=  AtomicTest.x \
 		AuxHeap.x\
 		BasicConsoleTest.x \
 		EndianityTest.x \
+		FastMathTest.x \
 		FormatDescriptorTest.x \
 		GlobalObjectsDatabaseTest.x \
 		HeapManagerTest.x \
@@ -46,7 +47,6 @@ OBJSX=  AtomicTest.x \
 		TimeStampTest.x \
 		TimeoutTypeTest.x
 #ErrorManagementTest.x \
-		FastMathTest.x \
 		LoadableLibraryTest.x \
 		FastPollingMutexSemTest.x 
 

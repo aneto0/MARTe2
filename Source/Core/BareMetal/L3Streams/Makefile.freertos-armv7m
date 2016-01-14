@@ -26,4 +26,34 @@
 
 TARGET=freertos-armv7m
 
-include Makefile.inc
+OBJSX=	BufferedStreamI.x \
+		BufferedStreamIOBuffer.x \
+		CharBuffer.x \
+		DoubleBufferedStream.x \
+		IOBuffer.x \
+		IOBufferFloatPrint.x \
+		IOBufferIntegerPrint.x \
+		SingleBufferedStream.x \
+		StreamMemoryReference.x \
+		StreamString.x \
+		StreamStringIOBuffer.x
+        
+PACKAGE=Core/BareMetal
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+INCLUDES += -I.
+INCLUDES += -I../L0Types
+INCLUDES += -I../L1Portability
+INCLUDES += -I../L2Objects
+
+all: $(OBJS)    \
+	        $(BUILD_DIR)/L3StreamsB$(LIBEXT) \
+	        $(BUILD_DIR)/L3StreamsB.def
+	echo  $(OBJS)
+
+include depends.$(TARGET)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+

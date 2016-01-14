@@ -6,6 +6,9 @@ BUILDPATH=../../../Build/$(MARTE_TARGET)/GTest/
 MARTEDIR=../../../
 
 
+#include CPPFILES objs declared in baselib
+
+
 RTOSDIR=$(MAINDIR)Middlewares/Third_Party/FreeRTOS/Source/
 CROSSPATH?=/usr/bin/
 CROSSPFX=$(CROSSPATH)arm-none-eabi-
@@ -16,6 +19,16 @@ OBJDUMP=$(CROSSPFX)objdump
 AS=$(CROSSPFX)as
 LD=$(CROSSPFX)g++
 NM=$(CROSSPFX)nm
+
+FLAGS=-MD -MP -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -ffunction-sections -fdata-sections  
+#-fno-builtin
+CFLAGS=$(FLAGS) -Wall
+OPTFLAGS=-Os
+#Remember to substitute it with stm macros.
+SPECFLAGS= -DUSE_USB_FS -DSTM32F407xx -DUSE_FREERTOS -DINCLUDE_eTaskGetState=1 -DINCLUDE_pcTaskGetTaskName=1 -DUSE_THREADS_DATABASE
+
+TARGET=MainGTest_$(MARTE_TARGET)
+
 
 LIBS=$(MARTEDIR)Build/freertos-armv7m/GTest/MainGTest_$(MARTE_TARGET).a
 #include the stm headers
@@ -41,6 +54,10 @@ INCPATHS+= -I$(RTOSDIR)include/
 #INCPATHS+= -I$(MARTEDIR)Source/Core/Drivers/
 #INCPATHS+= -I$(MARTEDIR)Source/Core/Drivers/Platform/STM32F4_Discovery
 
+
+CFLAGS+= $(INCPATHS) $(OPTFLAGS) -g
+
+
 #all the source paths
 SRC=Src/
 HALPATH=$(MAINDIR)Drivers/STM32F4xx_HAL_Driver/Src/
@@ -53,21 +70,6 @@ USB_CDC_PATH=$(MAINDIR)Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/
 #ACCELPATH=$(MAINDIR)Drivers/BSP/Components/lis3dsh/
 #ACCELPATH2=$(MAINDIR)Drivers/BSP/Components/lis302dl/
 
-
-
-FLAGS=-MD -MP -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mlittle-endian -mthumb -mthumb-interwork -ffunction-sections -fdata-sections  
-#-fno-builtin
-CFLAGS=$(FLAGS) -Wall
-OPTFLAGS=-Os
-#Remember to substitute it with stm macros.
-SPECFLAGS= -DUSE_USB_FS -DSTM32F407xx
-#-DUSE_FREERTOS
-CFLAGS+= $(INCPATHS) $(OPTFLAGS) -g
-
-
-TARGET=MainGTest_$(MARTE_TARGET)
-
-#include CPPFILES objs declared in baselib
 
 #i must include also the input cpp which contain the main.
 

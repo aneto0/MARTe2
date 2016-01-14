@@ -198,9 +198,9 @@ public:
      * @param[in] position the index of the thread with the specified name.
      * @return true if can find a thread with "name" and another with "known" as a name, false otherwise.
      */
-    bool TestFindByName(uint32 nOfThreads,
+    bool TestFindByName(int32 nOfThreads,
                         const char8 *name,
-                        uint32 position);
+                        int32 position);
 
     /**
      * A shared variable used for synchronization.

@@ -26,4 +26,38 @@
 
 TARGET=freertos-armv7m
 
-include Makefile.inc
+OBJSX=  AnyTypeTest.x \
+		ClassPropertiesTest.x  \
+		TestObjectHelper1.x \
+		TestObjectHelper2.x\
+		ObjectTestHelper.x \
+		ClassRegistryDatabaseTest.x\
+		ClassRegistryItemTest.x \
+		ObjectTest.x\
+		ReferenceContainerFilterObjectNameTest.x\
+		ReferenceContainerFilterReferencesTest.x\
+		ReferenceContainerNodeTest.x \
+		ReferenceContainerTest.x \
+#ReferenceTTest.x \
+		ReferenceTest.x 
+
+		
+PACKAGE=Core/BareMetal
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
+INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
+INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
+INCLUDES += -I../../../../Source/Core/Scheduler/L1Portability
+
+all: $(OBJS) \
+                $(BUILD_DIR)/L2ObjectsTest$(LIBEXT)
+	echo  $(OBJS)
+
+include depends.$(TARGET)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+

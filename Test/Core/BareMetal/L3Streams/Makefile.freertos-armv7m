@@ -26,4 +26,35 @@
 
 TARGET=freertos-armv7m
 
-include Makefile.inc
+OBJSX=	BitSetToIntegerTest.x\
+		BufferedStreamIOBufferTest.x \
+		BufferedStreamITest.x \
+		CharBufferTest.x \
+		DoubleBufferedStreamTest.x \
+		IOBufferTest.x \
+		SingleBufferedStreamTest.x \
+		StreamMemoryReferenceTest.x \
+		StreamStringIOBufferTest.x \
+		StreamStringTest.x \
+		StreamTestHelper.x\
+		
+PACKAGE=Core/BareMetal
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
+INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
+INCLUDES += -I../../../../Source/Core/BareMetal/L2Objects
+INCLUDES += -I../../../../Source/Core/BareMetal/L3Streams
+INCLUDES += -I../L2Objects
+
+all: $(OBJS) \
+                $(BUILD_DIR)/L3StreamsTest$(LIBEXT)
+	echo  $(OBJS)
+
+include depends.$(TARGET)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+

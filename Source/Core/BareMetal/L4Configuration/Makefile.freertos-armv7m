@@ -26,4 +26,40 @@
 
 TARGET=freertos-armv7m
 
-include Makefile.inc
+
+OBJSX=	AnyObject.x \
+		AnyTypeCreator.x \
+		ConfigurationDatabase.x\
+		FloatToInteger.x \
+		IntegerToFloat.x \
+		JsonParser.x \
+		LexicalAnalyzer.x \
+		StringToFloat.x \
+		StringToInteger.x \
+		TypeConversion.x \
+		TokenInfo.x \
+		Token.x \
+		ParserI.x \
+		StandardParser.x \
+		XMLParser.x 
+        
+PACKAGE=Core/BareMetal
+ROOT_DIR=../../../..
+MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+
+INCLUDES += -I.
+INCLUDES += -I../L0Types
+INCLUDES += -I../L1Portability
+INCLUDES += -I../L2Objects
+INCLUDES += -I../L3Streams
+
+all: $(OBJS)    \
+	        $(BUILD_DIR)/L4ConfigurationB$(LIBEXT) \
+	        $(BUILD_DIR)/L4ConfigurationB.def
+	echo  $(OBJS)
+
+include depends.$(TARGET)
+
+include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+

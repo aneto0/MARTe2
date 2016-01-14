@@ -26,7 +26,7 @@
 
 TARGET=freertos-armv7m
 OBJSX=
-SPB    = BareMetal.x 
+SPB    = BareMetal.x Scheduler.x
 PACKAGE=
 MAKEDEFAULTDIR=../../MakeDefaults
 

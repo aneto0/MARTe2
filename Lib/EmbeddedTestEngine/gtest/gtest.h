@@ -39,7 +39,6 @@
 #ifndef GTEST_H
 #define GTEST_H
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -47,8 +46,10 @@
 #include "task.h"
 
 #define TEST_DBGRANULARITY 64
+#define MAX_NUMBER_TESTS 4096
+#define MAX_NUMBER_FAIL_TESTS 64
 
-typedef bool (*TestFunctionType)(void);
+typedef void (*TestFunctionType)(void);
 
 struct TestInfo {
     const char *className;
@@ -56,51 +57,49 @@ struct TestInfo {
     TestFunctionType function;
 };
 
-extern TestInfo TestFunctions[2048];
-extern int FailedTestFunctions[64];
+//extern TestInfo TestFunctions[MAX_NUMBER_TESTS];
+extern TestInfo *TestFunctions;
+
+extern int FailedTestFunctions[MAX_NUMBER_FAIL_TESTS];
 extern volatile int numberOfTests;
+extern bool TestResult;
 
 class AddTest {
 public:
     AddTest(TestFunctionType x,
             const char *className,
             const char *functionName) {
-        //Allocate();
+        Allocate();
+        if (numberOfTests < MAX_NUMBER_TESTS) {
+            TestFunctions[numberOfTests].function = x;
+            TestFunctions[numberOfTests].className = className;
+            TestFunctions[numberOfTests].functionName = functionName;
+            numberOfTests++;
+        }
+    }
 
-        TestFunctions[numberOfTests].function = x;
-        TestFunctions[numberOfTests].className = className;
-        TestFunctions[numberOfTests].functionName = functionName;
-        numberOfTests++;
+    ~AddTest() {
+        if (TestFunctions) {
+            free(TestFunctions);
+        }
     }
 
 private:
     void Allocate() {
-       /* TestInfo* oldData = TestFunctions;
-        int size=numberOfTests*sizeof(TestInfo);
         if ((numberOfTests % TEST_DBGRANULARITY) == 0) {
-            TestFunctions = (TestInfo*) (pvPortMalloc((numberOfTests + TEST_DBGRANULARITY) * sizeof(TestInfo)));
-
+            TestFunctions = (TestInfo*) (realloc(TestFunctions, (numberOfTests + TEST_DBGRANULARITY) * sizeof(TestInfo)));
         }
-        if (size != 0) {
-            memcpy(TestFunctions, oldData, size);
-            vPortFree((void*) oldData);
-        }*/
     }
-
 
 };
 
-
-
-
 #define TEST(className, functionName) \
-    bool className##_##functionName (); \
+    void className##_##functionName (); \
     static AddTest ADD_##functionName(className##_##functionName, #className, #functionName);\
-    bool className##_##functionName ()
+    void className##_##functionName ()
 
+#define ASSERT_TRUE(boolean) TestResult&=boolean;
 
-#define ASSERT_TRUE(boolean) return boolean
-
-#define ASSERT_FALSE(boolean) return !boolean
+#define ASSERT_FALSE(boolean) TestResult&=!boolean;
 
 #endif
