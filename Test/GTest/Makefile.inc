@@ -31,7 +31,7 @@ MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
 include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
 
 all: $(OBJS) $(SUBPROJ)   \
-        $(BUILD_DIR)/MainGTest_$(TARGET)$(EXEEXT) 
+        $(BUILD_DIR)/MainGTest$(EXEEXT) 
 	echo  $(OBJS)
 
 include depends.$(TARGET)

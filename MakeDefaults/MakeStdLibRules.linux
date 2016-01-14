@@ -43,7 +43,7 @@ $(BUILD_DIR)/%.o : %.c
 
 $(BUILD_DIR)/%.a : $(OBJS) createLibrary
 	touch $@
-	rm $(BUILD_DIR)/$*.a
+	rm -f $(BUILD_DIR)/$*.a
 	ld -r $(OBJS) $(LIBRARIES_STATIC) -o $@
 	rm -f createLibrary
 	

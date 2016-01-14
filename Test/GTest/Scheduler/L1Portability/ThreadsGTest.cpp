@@ -47,6 +47,11 @@ TEST(ThreadsGTest,TestBeginThread) {
     ASSERT_TRUE(myUnitTest.TestBeginThread("hello", THREADS_DEFAULT_STACKSIZE, 32));
 }
 
+TEST(ThreadsGTest,TestEndThread) {
+    ThreadsTest myUnitTest;
+    ASSERT_TRUE(myUnitTest.TestEndThread("hello", THREADS_DEFAULT_STACKSIZE, 32));
+}
+
 TEST(ThreadsGTest,TestBeginThreadStacksize0) {
     ThreadsTest myUnitTest;
     ASSERT_FALSE(myUnitTest.TestBeginThread("hello", 0, 32));

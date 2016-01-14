@@ -43,7 +43,6 @@
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 //extern uint32 nOfEntries=0;
-
 ThreadsTest::ThreadsTest() {
     exitCondition = 0;
     tidTest = 0;
@@ -65,7 +64,6 @@ bool ThreadsTest::TestBeginThread(const char8 *name,
                                   uint32 stackSize,
                                   uint32 nOfThreads) {
 
-
     //test on thread number
     for (uint32 i = 0; i < nOfThreads; i++) {
 
@@ -74,8 +72,6 @@ bool ThreadsTest::TestBeginThread(const char8 *name,
         //Note: in windows if the stack size is zero, the thread is initialized with the default stack size.
         ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) DummyFunction, this, stackSize, name);
         int32 j = 0;
-
-
 
         //Waits for the thread to begin
         while (exitCondition < 1) {
@@ -103,9 +99,16 @@ bool ThreadsTest::TestBeginThread(const char8 *name,
     return true;
 }
 
+bool ThreadsTest::TestEndThread(const char8 *name,
+                                uint32 stackSize,
+                                uint32 nOfThreads) {
+    return TestBeginThread(name, stackSize, nOfThreads);
+
+}
+
 bool ThreadsTest::TestBeginThreadNullFunction(const char8 *name) {
-    //try to launch a thread with null function. The thread is created
-    //but the function is not launched because is null (see ThreadInformation::UserThreadFunction)
+//try to launch a thread with null function. The thread is created
+//but the function is not launched because is null (see ThreadInformation::UserThreadFunction)
     ThreadIdentifier tid = Threads::BeginThread((ThreadFunctionType) NULL, this, THREADS_DEFAULT_STACKSIZE, name);
 
     return tid != (ThreadIdentifier) 0;
@@ -315,7 +318,7 @@ bool ThreadsTest::TestGetState() {
 }
 
 static void TestIdFunction(ThreadsTest &tt) {
-    while(tt.tidTest == 0){
+    while (tt.tidTest == 0) {
         Sleep::Sec(0.001);
     }
     if (Threads::Id() != tt.tidTest) {

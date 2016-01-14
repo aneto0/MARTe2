@@ -24,7 +24,8 @@
 #
 #############################################################
 
-OBJSX=  ClassPropertiesTest.x \
+OBJSX=  AnyTypeTest.x\
+		ClassPropertiesTest.x \
 		ClassRegistryDatabaseTest.x \
 		ClassRegistryItemTest.x \
 		ObjectTest.x \
